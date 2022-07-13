@@ -1,6 +1,6 @@
 import React, {useState, useCallback } from 'react'
 import styled from "styled-components";
-import ForceGraph from './ForceGraph/ForceGraph'
+import KnowledgeMap from './map/knowledgeMap'
 import _ from 'lodash'
 import './body.css'
 
@@ -153,25 +153,24 @@ export default function BodyComponent() {
   }
   
   return(
-    <Body>
-          <form>
-            <input
-              className={isLoading ? 'loading' : ''}
-              disabled={isLoading}
-              style={{borderRadius: '100px', paddingLeft: '10px', marginBottom: '10px'}}
-              type="text" 
-              value={topic}
-              placeholder="Search"
-              onSubmit={(e) => e.preventDefault()}
-              onChange={e => onTopicChange(e.target.value)}
-            />
-          </form>
-          <ForceGraph
-            linksData={graphData.links}
-            nodesData={graphData.nodes}
-            currentTopic={topic}
-            onNodeClicked={(e:any,data:any) => onNodeClicked(e, data, isLoading)}
-          />
+    <Body>  
+      <input
+        className={isLoading ? 'loading' : ''}
+        disabled={isLoading}
+        style={{borderRadius: '100px', paddingLeft: '10px', marginBottom: '10px'}}
+        type="text" 
+        value={topic}
+        placeholder="Search"
+        onSubmit={(e) => e.preventDefault()}
+        onChange={e => onTopicChange(e.target.value)}
+      />
+      
+      <KnowledgeMap
+        linksData={graphData.links}
+        nodesData={graphData.nodes}
+        currentTopic={topic}
+        onNodeClicked={(e:any,data:any) => onNodeClicked(e, data, isLoading)}
+      />
     </Body>
   )
 }
