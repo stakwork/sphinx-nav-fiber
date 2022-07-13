@@ -7,7 +7,8 @@ import './body.css'
 interface Node {
   id: number,
   name: string,
-  type: string
+  type: string,
+  text: string
 }
 
 interface Link {
@@ -20,7 +21,8 @@ interface Moment {
   link: string,
   podcast_title: string,
   timestamp: string,
-  topics: string[]
+  topics: string[],
+  text: string
 }
 
 interface NodesAndLinks{
@@ -62,9 +64,13 @@ export default function BodyComponent() {
     console.log('word', word)
     setIsLoading(true)
     let index = 0
+
+
     fetch(`https://ardent-pastry-basement.wayscript.cloud/prediction/${word}`)
       .then(response => response.json())
       .then((data: Moment[]) => {
+
+        console.log('data',data)
         if(data.length) {
           // setGraphData(data)
           const _nodes: Node[] = []
@@ -75,7 +81,8 @@ export default function BodyComponent() {
             _nodes.push({
               id: index,
               name: moment.podcast_title + ":" + moment.episode_title + ":" + moment.timestamp,
-              type: 'podcast'
+              type: 'podcast',
+              text: moment.text
             })
             index++
             const topics = moment.topics
@@ -88,7 +95,8 @@ export default function BodyComponent() {
               const topicNode: Node = {
                 id: index,
                 name: topic,
-                type: 'topic'
+                type: 'topic',
+                text: topic
               }
               _nodes.push(topicNode)
               index++
