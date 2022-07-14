@@ -39,23 +39,6 @@ export default function BodyComponent() {
   const [isLoading, setIsLoading]: any = useState(false)
   const mapRef: any = useRef(null)
 
- const hStyle = {
-    color: 'white',
-   
-    fontFamily: 'Roboto',
-    fontWeight: 'lighter',
-    fontSize: 30,
-  };
-
-  const bodyStyle = {
-    height: 1000,
-    background: '#212529',
-  };
-
-  const divStyle = {
-    height: 10
-  };
-
   function findNodeByName(name: string, _nodes: Array<Node>) : Node | undefined {
     return _nodes.find(candidate => candidate.name === name)
   }
@@ -73,7 +56,6 @@ export default function BodyComponent() {
 
         console.log('data',data)
         if(data.length) {
-          // setGraphData(data)
           const _nodes: Node[] = []
           const _links: Link[] = []
           const topicMap: any = {}
@@ -143,6 +125,10 @@ export default function BodyComponent() {
 
   const onNodeClicked = (event: PointerEvent, data: any, isLoading: any) => {
     console.log('onNodeClicked.data: ', data, ', isLoading: ', isLoading)
+    if (mapRef?.current) {
+      // mapRef.current.centerAt()
+    }
+
     // if (data.type === 'topic') {
     //   if (!isLoading) {
     //     onTopicChange(data.name)
@@ -152,17 +138,26 @@ export default function BodyComponent() {
   
   return(
     <Body>  
+
+      <Header>
+        <Title>
+          BitcoinBrain
+        </Title>
+
+        <div style={{display:'flex'}}>
+          <Button>Info</Button>
+          <Button>Contribute</Button>
+        </div>
+
+      </Header>
+
       <SearchFloater>
-        <input
+        <Input
           className={isLoading ? 'loading' : ''}
           disabled={isLoading}
-          style={{
-            
-            borderRadius: '100px', paddingLeft: '10px', marginBottom: '10px'
-          }}
           type="text"
           value={searchTerm}
-          placeholder="Search"
+          placeholder="Search ..."
           onSubmit={(e) => e.preventDefault()}
           onChange={e => {
             const value = e.target.value
@@ -182,12 +177,62 @@ export default function BodyComponent() {
   )
 }
 
+const Title = styled.div`
+font-size:30px;
+font-weight:600;
+`
+
+const Input = styled.input`
+pointer-events:auto;
+border-radius: 100px; 
+min-width:300px;
+height:50px;
+padding:0 20px;
+border:none;
+box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+
+:&focus{
+  border:none;
+}
+`
+
+const Button = styled.div`
+display:flex;
+justify-content:center;
+align-items:center;
+padding:15px 20px;
+border:1px solid #000;
+border-radius:40px;
+min-width:100px;
+margin-left:20px;
+cursor:pointer;
+pointer-events:auto;
+`
+
+const Header = styled.div`
+position: absolute;
+top: 0px;
+left: 0px;
+padding:20px;
+display:flex;
+align-items:center;
+justify-content:space-between;
+width:calc(100% - 40px);
+pointer-events:none;
+z-index:100;
+`
+
 const SearchFloater = styled.div`
 position: absolute;
-top: 20px;
-left: 20px;
+top: 0px;
+left: 0px;
+display:flex;
+align-items:center;
+justify-content:center;
+height:100%;
+width:100%;
+pointer-events:none;
 z-index:100;
-  
 `
 
 const Body = styled.div`

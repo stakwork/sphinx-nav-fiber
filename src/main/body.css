@@ -1,12 +1,4 @@
-input[type=text]{
-  position: relative;
-  padding: 12px 60px;
-  margin: 8px 0;
-  display: inline-block;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  box-sizing: border-box;
-}
+
 .loading {
   margin: 20px;
   background-color: #ffffff;
@@ -15,4 +7,16 @@ input[type=text]{
   background-position:right center;
   background-position-x: 95%;
   background-repeat: no-repeat;
+}
+
+input:focus {
+  border:none;
+}
+
+input::before {
+  border:none;
+}
+
+input::after {
+  border:none;
 }
