@@ -1,6 +1,6 @@
-import React, {useState, useCallback } from 'react'
+import {useState, useCallback, useRef } from 'react'
 import styled from "styled-components";
-import ForceGraph from './ForceGraph/ForceGraph'
+import KnowledgeMap from './map/knowledgeMap'
 import _ from 'lodash'
 import './body.css'
 
@@ -34,48 +34,31 @@ const DEBOUNCE_LAG = 800
 
 export default function BodyComponent() {
 
-  const [topic, setTopic]: any = useState("");
+  const [searchTerm, setSearchTerm]: any = useState("");
   const [graphData, setGraphData]: any = useState<NodesAndLinks>({nodes: [], links: []})
   const [isLoading, setIsLoading]: any = useState(false)
-
- const hStyle = {
-    color: 'white',
-   
-    fontFamily: 'Roboto',
-    fontWeight: 'lighter',
-    fontSize: 30,
-  };
-
-  const bodyStyle = {
-    height: 1000,
-    background: '#212529',
-  };
-
-  const divStyle = {
-    height: 10
-  };
+  const mapRef: any = useRef(null)
 
   function findNodeByName(name: string, _nodes: Array<Node>) : Node | undefined {
     return _nodes.find(candidate => candidate.name === name)
   }
   
-  function callApi(word: string) {
+  function callApi(searchterm: string) {
 
-    console.log('word', word)
+    console.log('searchterm', searchterm)
     setIsLoading(true)
     let index = 0
 
 
-    fetch(`https://ardent-pastry-basement.wayscript.cloud/prediction/${word}`)
+    fetch(`https://ardent-pastry-basement.wayscript.cloud/prediction/${searchterm}`)
       .then(response => response.json())
       .then((data: Moment[]) => {
 
         console.log('data',data)
         if(data.length) {
-          // setGraphData(data)
           const _nodes: Node[] = []
           const _links: Link[] = []
-          const topicMap = {}
+          const topicMap: any = {}
           // Populating nodes array with podcasts and constructing a topic map
           data.forEach(moment => {
             _nodes.push({
@@ -87,7 +70,11 @@ export default function BodyComponent() {
             index++
             const topics = moment.topics
             // @ts-ignore
-            topics.forEach((topic: string) => topicMap[topic] = true)
+            topics.forEach((topic: string) => {
+              if (topic !== searchterm) {
+                topicMap[topic] = true  
+              }
+            })
           })
           // Adds topic nodes
           Object.keys(topicMap)
@@ -118,12 +105,12 @@ export default function BodyComponent() {
           })
           console.log(_nodes)
           setGraphData({nodes: _nodes, links: _links})
-          // setNodes(_nodes)
-          // console.log(_links)
-          // setLinks(_links)
         }
       })
-      .catch(console.error)
+      .catch((e) => {
+        console.error(e)
+        setGraphData({nodes: [], links: []})
+      })
       .finally(() => {
         console.log('Running finally block')
         setIsLoading(false)
@@ -131,68 +118,131 @@ export default function BodyComponent() {
       })
   }
 
-  const dispatchNetwork = useCallback(_.debounce((word) => {
-    callApi(word)
+  const dispatchNetwork = useCallback(_.debounce((searchterm) => {
+    callApi(searchterm)
+        
   }, DEBOUNCE_LAG), [isLoading])
-
-  const onTopicChange = (topic: string) => {
-    setTopic(topic)
-    console.log('topic',)
-    // callApi(topic)
-    dispatchNetwork(topic)
-    
-  }
 
   const onNodeClicked = (event: PointerEvent, data: any, isLoading: any) => {
     console.log('onNodeClicked.data: ', data, ', isLoading: ', isLoading)
-    if (data.type === 'topic') {
-      if (!isLoading) {
-        onTopicChange(data.name)
-      }
+    if (mapRef?.current) {
+      // mapRef.current.centerAt()
     }
+
+    // if (data.type === 'topic') {
+    //   if (!isLoading) {
+    //     onTopicChange(data.name)
+    //   }
+    // }
   }
   
   return(
-    <Body>
-          <form>
-            <input
-              className={isLoading ? 'loading' : ''}
-              disabled={isLoading}
-              style={{borderRadius: '100px', paddingLeft: '10px', marginBottom: '10px'}}
-              type="text" 
-              value={topic}
-              placeholder="Search"
-              onSubmit={(e) => e.preventDefault()}
-              onChange={e => onTopicChange(e.target.value)}
-            />
-          </form>
-          <ForceGraph
-            linksData={graphData.links}
-            nodesData={graphData.nodes}
-            currentTopic={topic}
-            onNodeClicked={(e:any,data:any) => onNodeClicked(e, data, isLoading)}
+    <Body>  
+
+      <Header>
+        <Title>
+          BitcoinBrain
+        </Title>
+
+        <div style={{display:'flex'}}>
+          <Button>Info</Button>
+          <Button>Contribute</Button>
+        </div>
+
+      </Header>
+
+      <SearchFloater>
+        <Input
+          className={isLoading ? 'loading' : ''}
+          disabled={isLoading}
+          type="text"
+          value={searchTerm}
+          placeholder="Search ..."
+          onSubmit={(e) => e.preventDefault()}
+          onChange={e => {
+            const value = e.target.value
+            setSearchTerm(value)
+            dispatchNetwork(value)
+          }}
           />
+        </SearchFloater>
+      
+      <KnowledgeMap
+        mapRef={mapRef}
+        graphData={graphData}
+        searchTerm={searchTerm}
+        onNodeClicked={(e:any,data:any) => onNodeClicked(e, data, isLoading)}
+      />
     </Body>
   )
 }
 
+const Title = styled.div`
+font-size:30px;
+font-weight:600;
+`
+
+const Input = styled.input`
+pointer-events:auto;
+border-radius: 100px; 
+min-width:300px;
+height:50px;
+padding:0 20px;
+border:none;
+box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+
+:&focus{
+  border:none;
+}
+`
+
+const Button = styled.div`
+display:flex;
+justify-content:center;
+align-items:center;
+padding:15px 20px;
+border:1px solid #000;
+border-radius:40px;
+min-width:100px;
+margin-left:20px;
+cursor:pointer;
+pointer-events:auto;
+`
+
+const Header = styled.div`
+position: absolute;
+top: 0px;
+left: 0px;
+padding:20px;
+display:flex;
+align-items:center;
+justify-content:space-between;
+width:calc(100% - 40px);
+pointer-events:none;
+z-index:100;
+`
+
+const SearchFloater = styled.div`
+position: absolute;
+top: 0px;
+left: 0px;
+display:flex;
+align-items:center;
+justify-content:center;
+height:100%;
+width:100%;
+pointer-events:none;
+z-index:100;
+`
+
 const Body = styled.div`
   flex:1;
-  height:calc(100vh - 60px);
-  // padding-bottom:80px;
+  display:flex;
+  flex-direction:column;
+  height:100%;
   width:100%;
   overflow:auto;
   background:#272c4b;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-`
-
-const Column = styled.div`
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  margin-top:10px;
-  // max-width:900px;
-  width:100%;
+  
+  
 `
