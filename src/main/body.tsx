@@ -76,7 +76,7 @@ export default function BodyComponent() {
           // setGraphData(data)
           const _nodes: Node[] = []
           const _links: Link[] = []
-          const topicMap = {}
+          const topicMap: any = {}
           // Populating nodes array with podcasts and constructing a topic map
           data.forEach(moment => {
             _nodes.push({
@@ -88,7 +88,11 @@ export default function BodyComponent() {
             index++
             const topics = moment.topics
             // @ts-ignore
-            topics.forEach((topic: string) => topicMap[topic] = true)
+            topics.forEach((topic: string) => {
+              if (topic !== searchterm) {
+                topicMap[topic] = true  
+              }
+            })
           })
           // Adds topic nodes
           Object.keys(topicMap)
