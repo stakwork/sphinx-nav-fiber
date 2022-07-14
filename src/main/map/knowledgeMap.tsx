@@ -19,6 +19,12 @@ export default function KnowledgeMap(props: any) {
   const [graphData, setGraphData]: any = useState<NodesAndLinks>({nodes: [], links: []})
   const [lastClicked, setLastClicked] = useState(null)
 
+  // init with default dataset
+  useEffect(() => {
+    const d = getDefaultDataSet()
+    setGraphData(d)
+  }, [])
+
   // refresh after search term is changed
   useEffect(() => {
     debounce(() => getData(),800)

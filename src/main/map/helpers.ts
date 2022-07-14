@@ -25,6 +25,7 @@ export interface Node {
   }
  
 
+
   async function getGraphData(searchterm: string) {
 
     console.log('searchterm', searchterm)
@@ -52,9 +53,9 @@ export interface Node {
             const topics = moment.topics
             // @ts-ignore
             topics.forEach((topic: string) => {
-              // if (topic !== searchterm) {
+              if (topic !== searchterm) {
                 topicMap[topic] = true  
-              // }
+              }
             })
           })
           // Adds topic nodes
