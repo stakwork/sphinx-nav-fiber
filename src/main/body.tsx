@@ -30,7 +30,13 @@ interface NodesAndLinks{
   links: Link[]
 }
 
-const DEBOUNCE_LAG = 800
+let inDebounce:any = null
+function debounce(func:Function, delay:number) {
+  clearTimeout(inDebounce)
+  inDebounce = setTimeout(() => {
+      func()
+  }, delay)
+}
 
 export default function BodyComponent() {
 
@@ -71,9 +77,9 @@ export default function BodyComponent() {
             const topics = moment.topics
             // @ts-ignore
             topics.forEach((topic: string) => {
-              if (topic !== searchterm) {
+              // if (topic !== searchterm) {
                 topicMap[topic] = true  
-              }
+              // }
             })
           })
           // Adds topic nodes
@@ -118,33 +124,37 @@ export default function BodyComponent() {
       })
   }
 
-  const dispatchNetwork = useCallback(_.debounce((searchterm) => {
-    callApi(searchterm)
-        
-  }, DEBOUNCE_LAG), [isLoading])
-
   const onNodeClicked = (event: PointerEvent, data: any, isLoading: any) => {
-    console.log('onNodeClicked.data: ', data, ', isLoading: ', isLoading)
-    if (mapRef?.current) {
-      // mapRef.current.centerAt()
-    }
-
-    // if (data.type === 'topic') {
-    //   if (!isLoading) {
-    //     onTopicChange(data.name)
-    //   }
-    // }
+    console.log('onNodeClicked.data: ', data, ', isLoading: ', isLoading) 
   }
   
   return(
     <Body>  
 
       <Header>
-        <Title>
+        <Title style={{width:260}}>
           BitcoinBrain
         </Title>
 
-        <div style={{display:'flex'}}>
+        <Input
+          style={{width:'40%'}}
+          className={isLoading ? 'loading' : ''}
+          disabled={isLoading}
+          type="text"
+          value={searchTerm}
+          placeholder="Search ..."
+          // onSubmit={(e) => e.preventDefault()}
+          onChange={e => {
+            const value = e.target.value
+            setSearchTerm(value)
+            debounce(() => {
+              callApi(value)
+            }, 800)
+            
+          }}
+          />
+
+        <div style={{display:'flex', width:330}}>
           <Button>Info</Button>
           <Button>Contribute</Button>
         </div>
@@ -152,19 +162,7 @@ export default function BodyComponent() {
       </Header>
 
       <SearchFloater>
-        <Input
-          className={isLoading ? 'loading' : ''}
-          disabled={isLoading}
-          type="text"
-          value={searchTerm}
-          placeholder="Search ..."
-          onSubmit={(e) => e.preventDefault()}
-          onChange={e => {
-            const value = e.target.value
-            setSearchTerm(value)
-            dispatchNetwork(value)
-          }}
-          />
+        
         </SearchFloater>
       
       <KnowledgeMap
