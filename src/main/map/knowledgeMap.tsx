@@ -1,28 +1,26 @@
-import { useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
+import { ForceGraph3D } from 'react-force-graph';
+import { getFakeGraphData } from './helpers'
 
 
 export default function KnowledgeMap(props: any) {
+    const { graphData, onNodeClicked, searchTerm, mapRef } = props
+  console.log('props', props)
+
+  const [data, setData] = useState(graphData)
+
+  useEffect(() => {
+    let d = graphData
+    if (d?.nodes?.length < 1) {
+      d = getFakeGraphData()
+    }
+    setData(d)
+  },[graphData])
     
-    const { linksData, nodesData, onNodeClicked, currentTopic } = props
-
-  const containerRef = useRef(null);
-
-//   useEffect(() => {
-//     let destroyFn;
-
-//     if (containerRef.current) {
-//       const { destroy } = runForceGraph(containerRef.current, linksData, nodesData, onNodeClicked, currentTopic);
-//       destroyFn = destroy;
-//     }
-
-//     return destroyFn;
-//   }, [linksData, nodesData]);
-    
-    console.log('props',props)
-    
-    
-
-    return <div ref={containerRef}>
-        
-        </div>;
+  return <ForceGraph3D
+      ref={mapRef}
+      graphData={data}
+      nodeLabel={(node:any) => `${node.name}`}
+      nodeAutoColorBy="type"
+      />
 }

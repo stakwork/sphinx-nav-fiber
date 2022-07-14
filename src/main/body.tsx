@@ -1,4 +1,4 @@
-import React, {useState, useCallback } from 'react'
+import {useState, useCallback, useRef } from 'react'
 import styled from "styled-components";
 import KnowledgeMap from './map/knowledgeMap'
 import _ from 'lodash'
@@ -34,9 +34,10 @@ const DEBOUNCE_LAG = 800
 
 export default function BodyComponent() {
 
-  const [topic, setTopic]: any = useState("");
+  const [searchTerm, setSearchTerm]: any = useState("");
   const [graphData, setGraphData]: any = useState<NodesAndLinks>({nodes: [], links: []})
   const [isLoading, setIsLoading]: any = useState(false)
+  const mapRef: any = useRef(null)
 
  const hStyle = {
     color: 'white',
@@ -59,14 +60,14 @@ export default function BodyComponent() {
     return _nodes.find(candidate => candidate.name === name)
   }
   
-  function callApi(word: string) {
+  function callApi(searchterm: string) {
 
-    console.log('word', word)
+    console.log('searchterm', searchterm)
     setIsLoading(true)
     let index = 0
 
 
-    fetch(`https://ardent-pastry-basement.wayscript.cloud/prediction/${word}`)
+    fetch(`https://ardent-pastry-basement.wayscript.cloud/prediction/${searchterm}`)
       .then(response => response.json())
       .then((data: Moment[]) => {
 
@@ -118,12 +119,12 @@ export default function BodyComponent() {
           })
           console.log(_nodes)
           setGraphData({nodes: _nodes, links: _links})
-          // setNodes(_nodes)
-          // console.log(_links)
-          // setLinks(_links)
         }
       })
-      .catch(console.error)
+      .catch((e) => {
+        console.error(e)
+        setGraphData({nodes: [], links: []})
+      })
       .finally(() => {
         console.log('Running finally block')
         setIsLoading(false)
@@ -131,67 +132,68 @@ export default function BodyComponent() {
       })
   }
 
-  const dispatchNetwork = useCallback(_.debounce((word) => {
-    callApi(word)
+  const dispatchNetwork = useCallback(_.debounce((searchterm) => {
+    callApi(searchterm)
+        
   }, DEBOUNCE_LAG), [isLoading])
-
-  const onTopicChange = (topic: string) => {
-    setTopic(topic)
-    console.log('topic',)
-    // callApi(topic)
-    dispatchNetwork(topic)
-    
-  }
 
   const onNodeClicked = (event: PointerEvent, data: any, isLoading: any) => {
     console.log('onNodeClicked.data: ', data, ', isLoading: ', isLoading)
-    if (data.type === 'topic') {
-      if (!isLoading) {
-        onTopicChange(data.name)
-      }
-    }
+    // if (data.type === 'topic') {
+    //   if (!isLoading) {
+    //     onTopicChange(data.name)
+    //   }
+    // }
   }
   
   return(
     <Body>  
-      <input
-        className={isLoading ? 'loading' : ''}
-        disabled={isLoading}
-        style={{borderRadius: '100px', paddingLeft: '10px', marginBottom: '10px'}}
-        type="text" 
-        value={topic}
-        placeholder="Search"
-        onSubmit={(e) => e.preventDefault()}
-        onChange={e => onTopicChange(e.target.value)}
-      />
+      <SearchFloater>
+        <input
+          className={isLoading ? 'loading' : ''}
+          disabled={isLoading}
+          style={{
+            
+            borderRadius: '100px', paddingLeft: '10px', marginBottom: '10px'
+          }}
+          type="text"
+          value={searchTerm}
+          placeholder="Search"
+          onSubmit={(e) => e.preventDefault()}
+          onChange={e => {
+            const value = e.target.value
+            setSearchTerm(value)
+            dispatchNetwork(value)
+          }}
+          />
+        </SearchFloater>
       
       <KnowledgeMap
-        linksData={graphData.links}
-        nodesData={graphData.nodes}
-        currentTopic={topic}
+        mapRef={mapRef}
+        graphData={graphData}
+        searchTerm={searchTerm}
         onNodeClicked={(e:any,data:any) => onNodeClicked(e, data, isLoading)}
       />
     </Body>
   )
 }
 
+const SearchFloater = styled.div`
+position: absolute;
+top: 20px;
+left: 20px;
+z-index:100;
+  
+`
+
 const Body = styled.div`
   flex:1;
-  height:calc(100vh - 60px);
-  // padding-bottom:80px;
+  display:flex;
+  flex-direction:column;
+  height:100%;
   width:100%;
   overflow:auto;
   background:#272c4b;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-`
-
-const Column = styled.div`
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  margin-top:10px;
-  // max-width:900px;
-  width:100%;
+  
+  
 `
