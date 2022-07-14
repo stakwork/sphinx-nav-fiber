@@ -3,128 +3,16 @@ import styled from "styled-components";
 import KnowledgeMap from './map/knowledgeMap'
 import './body.css'
 
-interface Node {
-  id: number,
-  name: string,
-  type: string,
-  text: string
-}
 
-interface Link {
-  source: number,
-  target: number
-}
-
-interface Moment {
-  episode_title: string,
-  link: string,
-  podcast_title: string,
-  timestamp: string,
-  topics: string[],
-  text: string
-}
-
-interface NodesAndLinks{
-  nodes: Node[],
-  links: Link[]
-}
-
-let inDebounce:any = null
-function debounce(func:Function, delay:number) {
-  clearTimeout(inDebounce)
-  inDebounce = setTimeout(() => {
-      func()
-  }, delay)
-}
 
 export default function BodyComponent() {
 
   const [searchTerm, setSearchTerm]: any = useState("");
-  const [graphData, setGraphData]: any = useState<NodesAndLinks>({nodes: [], links: []})
-  const [isLoading, setIsLoading]: any = useState(false)
+  const [loading, setLoading]: any = useState(false)
   const mapRef: any = useRef(null)
-
-  function findNodeByName(name: string, _nodes: Array<Node>) : Node | undefined {
-    return _nodes.find(candidate => candidate.name === name)
-  }
   
-  function callApi(searchterm: string) {
-
-    console.log('searchterm', searchterm)
-    setIsLoading(true)
-    let index = 0
-
-
-    fetch(`https://ardent-pastry-basement.wayscript.cloud/prediction/${searchterm}`)
-      .then(response => response.json())
-      .then((data: Moment[]) => {
-
-        console.log('data',data)
-        if(data.length) {
-          const _nodes: Node[] = []
-          const _links: Link[] = []
-          const topicMap: any = {}
-          // Populating nodes array with podcasts and constructing a topic map
-          data.forEach(moment => {
-            _nodes.push({
-              id: index,
-              name: moment.podcast_title + ":" + moment.episode_title + ":" + moment.timestamp,
-              type: 'podcast',
-              text: moment.text
-            })
-            index++
-            const topics = moment.topics
-            // @ts-ignore
-            topics.forEach((topic: string) => {
-              // if (topic !== searchterm) {
-                topicMap[topic] = true  
-              // }
-            })
-          })
-          // Adds topic nodes
-          Object.keys(topicMap)
-            .forEach(topic => {
-              const topicNode: Node = {
-                id: index,
-                name: topic,
-                type: 'topic',
-                text: topic
-              }
-              _nodes.push(topicNode)
-              index++
-            })
-          // Populating the links array next
-          data.forEach(moment => {
-            const { topics } = moment
-            topics.forEach(topic => {
-              const podcastNode = findNodeByName(moment.podcast_title + ":" + moment.episode_title + ":" + moment.timestamp, _nodes)
-              const topicNode = findNodeByName(topic, _nodes)
-              if (podcastNode && topicNode) {
-                const link: Link = {
-                  source: podcastNode.id,
-                  target: topicNode.id
-                }
-                _links.push(link)
-              }
-            })
-          })
-          console.log(_nodes)
-          setGraphData({nodes: _nodes, links: _links})
-        }
-      })
-      .catch((e) => {
-        console.error(e)
-        setGraphData({nodes: [], links: []})
-      })
-      .finally(() => {
-        console.log('Running finally block')
-        setIsLoading(false)
-        console.log(isLoading)
-      })
-  }
-
-  const onNodeClicked = (event: PointerEvent, data: any, isLoading: any) => {
-    console.log('onNodeClicked.data: ', data, ', isLoading: ', isLoading) 
+  const onNodeClicked = (event: PointerEvent, data: any) => {
+    console.log('onNodeClicked.data: ', data) 
   }
   
   return(
@@ -137,8 +25,8 @@ export default function BodyComponent() {
 
         <Input
           style={{width:'40%'}}
-          className={isLoading ? 'loading' : ''}
-          disabled={isLoading}
+          className={loading ? 'loading' : ''}
+          disabled={loading}
           type="text"
           value={searchTerm}
           placeholder="Search ..."
@@ -146,10 +34,6 @@ export default function BodyComponent() {
           onChange={e => {
             const value = e.target.value
             setSearchTerm(value)
-            debounce(() => {
-              callApi(value)
-            }, 800)
-            
           }}
           />
 
@@ -159,33 +43,16 @@ export default function BodyComponent() {
         </div>
 
       </Header>
-
-      {graphData?.nodes?.length>0 &&
-        <ListWindow>
-        </ListWindow>}
-
-      <SearchFloater>
-        
-        </SearchFloater>
       
       <KnowledgeMap
         mapRef={mapRef}
-        graphData={graphData}
         searchTerm={searchTerm}
-        onNodeClicked={(e:any,data:any) => onNodeClicked(e, data, isLoading)}
+        setLoading={setLoading}
+        onNodeClicked={(e:any,data:any) => onNodeClicked(e, data)}
       />
     </Body>
   )
 }
-
-const ListWindow = styled.div`
-position:absolute;
-left:30px;
-top:30px;
-height:calc(100% - 60px);
-background:#000;
-width:30%
-`
 
 const Title = styled.div`
 font-size:30px;

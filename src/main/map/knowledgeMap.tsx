@@ -1,26 +1,37 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { ForceGraph3D } from 'react-force-graph';
-import { getFakeGraphData, getHugeDataSet } from './helpers'
+import { NodesAndLinks, getGraphData, getDefaultDataSet } from './helpers'
 import * as three from 'three'
+import styled from "styled-components";
 
+
+let inDebounce:any = null
+async function debounce(func:Function, delay:number) {
+  clearTimeout(inDebounce)
+  inDebounce = setTimeout(() => {
+      func()
+  }, delay)
+}
 
 export default function KnowledgeMap(props: any) {
-    const { graphData, onNodeClicked, searchTerm, mapRef } = props
-
-
-  const [data, setData] = useState(graphData)
+  const { onNodeClicked, searchTerm, setLoading, mapRef } = props
+  const [graphData, setGraphData]: any = useState<NodesAndLinks>({nodes: [], links: []})
   const [lastClicked, setLastClicked] = useState(null)
-  const canvasRef = useRef(null)
 
+  // refresh after search term is changed
   useEffect(() => {
-    let d = graphData
-    if (d?.nodes?.length < 1) {
-      d = getHugeDataSet()
+    debounce(() => getData(),800)
+  }, [searchTerm])
+
+  async function getData() {
+    if (searchTerm) {
+      setLoading(true)
+      const d = await getGraphData(searchTerm)  
+      setGraphData(d)
+      setLoading(false)    
     }
-    setData(d)
-    
-  }, [graphData])
+  }
 
   const nodeObject = () => {
       const geometry = new three.SphereGeometry(5, 32, 32); // (radius, widthSegments, heightSegments)
@@ -48,17 +59,20 @@ export default function KnowledgeMap(props: any) {
         z: node.z
       }
 
-      console.log('thisPoint',thisPoint)
       mapRef.current.cameraPosition({ ...thisPoint, z: node.z - 100 }, thisPoint, 3)
-      mapRef.current.pauseAnimation()
-      mapRef.current.resumeAnimation()
     }
   }
-    
+
+  
+
   return <>
+     {graphData?.nodes?.length>0 &&
+        <ListWindow>
+      </ListWindow>}
+    
     <ForceGraph3D
     ref={mapRef}
-    graphData={data}
+    graphData={graphData}
     nodeVisibility={() => {
       // hide nodes if not hovered
       return true
@@ -68,8 +82,9 @@ export default function KnowledgeMap(props: any) {
       return true
     }}
     rendererConfig={{
-      // canvas:canvasRef?.current,
       // depth:false,
+      stencil:false,
+      powerPreference:'low-power',
       precision: 'lowp',
       
     }}
@@ -85,6 +100,16 @@ export default function KnowledgeMap(props: any) {
     nodeThreeObject={nodeObject}
   />
   
-  <canvas ref={canvasRef}></canvas>
+  
     </>
 }
+
+
+const ListWindow = styled.div`
+position:absolute;
+left:30px;
+top:30px;
+height:calc(100% - 60px);
+background:#000;
+width:30%
+`
