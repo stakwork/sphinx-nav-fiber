@@ -161,6 +161,10 @@ export default function BodyComponent() {
 
       </Header>
 
+      {graphData?.nodes?.length>0 &&
+        <ListWindow>
+        </ListWindow>}
+
       <SearchFloater>
         
         </SearchFloater>
@@ -174,6 +178,15 @@ export default function BodyComponent() {
     </Body>
   )
 }
+
+const ListWindow = styled.div`
+position:absolute;
+left:30px;
+top:30px;
+height:calc(100% - 60px);
+background:#000;
+width:30%
+`
 
 const Title = styled.div`
 font-size:30px;
