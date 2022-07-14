@@ -11,6 +11,7 @@ export default function KnowledgeMap(props: any) {
 
   const [data, setData] = useState(graphData)
   const [lastClicked, setLastClicked] = useState(null)
+  const canvasRef = useRef(null)
 
   useEffect(() => {
     let d = graphData
@@ -54,7 +55,8 @@ export default function KnowledgeMap(props: any) {
     }
   }
     
-  return <ForceGraph3D
+  return <>
+    <ForceGraph3D
     ref={mapRef}
     graphData={data}
     nodeVisibility={() => {
@@ -64,6 +66,12 @@ export default function KnowledgeMap(props: any) {
     linkVisibility={() => {
       // hide links if not hovered
       return true
+    }}
+    rendererConfig={{
+      // canvas:canvasRef?.current,
+      // depth:false,
+      precision: 'lowp',
+      
     }}
     nodeRelSize={8}
     linkOpacity={1}
@@ -75,5 +83,8 @@ export default function KnowledgeMap(props: any) {
     nodeAutoColorBy="type"
     linkThreeObject={linkObject}
     nodeThreeObject={nodeObject}
-      />
+  />
+  
+  <canvas ref={canvasRef}></canvas>
+    </>
 }

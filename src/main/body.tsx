@@ -1,7 +1,6 @@
 import {useState, useCallback, useRef } from 'react'
 import styled from "styled-components";
 import KnowledgeMap from './map/knowledgeMap'
-import _ from 'lodash'
 import './body.css'
 
 interface Node {

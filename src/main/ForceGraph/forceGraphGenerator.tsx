@@ -1,4 +1,4 @@
-import * as d3 from 'd3';
+// import * as d3 from 'd3';
 
 const SELECTED_TOPIC_COLOR = '#2dc34e';
 const UNSELECTED_TOPIC_COLOR = '#4a7bd8';
@@ -11,172 +11,174 @@ export function runForceGraph(
   onNodeClicked: any,
   currentTopic: string
 ) {
-  const links = linksData.map((d: any) => Object.assign({}, d));
-  const nodes = nodesData.map((d: any) => Object.assign({}, d));
 
-  if (container.children.length > 0) {
-    // TODO: Check why we need this
-    d3.select('svg').remove()
-  }
-  const containerRect = container.getBoundingClientRect();
-  const height = containerRect.height;
-  const width = containerRect.width;
+//   const links = linksData.map((d: any) => Object.assign({}, d));
+//   const nodes = nodesData.map((d: any) => Object.assign({}, d));
 
-  const color = (d: any) => {
-    if (d.name === currentTopic) return SELECTED_TOPIC_COLOR
-    return d.type === 'podcast' ? PODCAST_COLOR : UNSELECTED_TOPIC_COLOR;
-  };
+//   if (container.children.length > 0) {
+//     // TODO: Check why we need this
+//     d3.select('svg').remove()
+//   }
+//   const containerRect = container.getBoundingClientRect();
+//   const height = containerRect.height;
+//   const width = containerRect.width;
 
-  const drag = (simulation: any) => {
-    const dragstarted = (event: any, d: any) => {
-      if (!d3.active) simulation.alphaTarget(0.3).restart()
-      d.fx = d.x;
-      d.fy = d.y;
-    };
+//   const color = (d: any) => {
+//     if (d.name === currentTopic) return SELECTED_TOPIC_COLOR
+//     return d.type === 'podcast' ? PODCAST_COLOR : UNSELECTED_TOPIC_COLOR;
+//   };
 
-    const dragged = (event: any, d: any) => {
-      d.fx = event.x;
-      d.fy = event.y;
-      simulation.alpha(0.3).restart()
-    };
+//   const drag = (simulation: any) => {
+//     const dragstarted = (event: any, d: any) => {
+//       if (!d3.active) simulation.alphaTarget(0.3).restart()
+//       d.fx = d.x;
+//       d.fy = d.y;
+//     };
 
-    const dragended = (event: any, d: any) => {
-      d.fx = null;
-      d.fy = null;
-    };
+//     const dragged = (event: any, d: any) => {
+//       d.fx = event.x;
+//       d.fy = event.y;
+//       simulation.alpha(0.3).restart()
+//     };
 
-    return d3
-      .drag()
-      .on('start', dragstarted)
-      .on('drag', dragged)
-      .on('end', dragended);
-  };
+//     const dragended = (event: any, d: any) => {
+//       d.fx = null;
+//       d.fy = null;
+//     };
 
-  const simulation = d3
-    .forceSimulation(nodes)
-    .force('link', d3.forceLink(links).id((d: any) => d.id).strength(1))
-    .force('charge', d3.forceManyBody().strength(-400))
-    .force('x', d3.forceX())
-    .force('y', d3.forceY());
+//     return d3
+//       .drag()
+//       .on('start', dragstarted)
+//       .on('drag', dragged)
+//       .on('end', dragended);
+//   };
 
-  const svg = d3
-    .select(container)
-    .append('svg')
-    .attr('viewBox', [-width / 2, -height / 2, width, height])
+//   const simulation = d3
+//     .forceSimulation(nodes)
+//     .force('link', d3.forceLink(links).id((d: any) => d.id).strength(1))
+//     .force('charge', d3.forceManyBody().strength(-400))
+//     .force('x', d3.forceX())
+//     .force('y', d3.forceY());
 
-  const link = svg
-    .append('g')
-    .attr('stroke', '#999')
-    .attr('stroke-opacity', 0.6)
-    .selectAll('line')
-    .data(links)
-    .join('line')
-    .attr('stroke-width', (d: any) => Math.sqrt(d.value));
+//   const svg = d3
+//     .select(container)
+//     .append('svg')
+//     .attr('viewBox', [-width / 2, -height / 2, width, height])
+
+//   const link = svg
+//     .append('g')
+//     .attr('stroke', '#999')
+//     .attr('stroke-opacity', 0.6)
+//     .selectAll('line')
+//     .data(links)
+//     .join('line')
+//     .attr('stroke-width', (d: any) => Math.sqrt(d.value));
   
-  const nodeSize = 15
+//   const nodeSize = 15
 
-  let defs = svg.append('svg:defs');
-  nodes.forEach((node: any) => {
-    defs.append("svg:pattern")
-      .attr("id", "grump_avatar")
-      .attr("width", nodeSize) 
-      .attr("height", nodeSize)
-      .attr("patternUnits", "userSpaceOnUse")
-      .append("svg:image")
-      .attr("xlink:href", "https://bitcoin.org/img/icons/opengraph.png")
-      .attr("width", nodeSize)
-      .attr("height", nodeSize)
-      .attr("x", 0)
-      .attr("y", 0);
-  })
+//   let defs = svg.append('svg:defs');
+//   nodes.forEach((node: any) => {
+//     defs.append("svg:pattern")
+//       .attr("id", "grump_avatar")
+//       .attr("width", nodeSize) 
+//       .attr("height", nodeSize)
+//       .attr("patternUnits", "userSpaceOnUse")
+//       .append("svg:image")
+//       .attr("xlink:href", "https://bitcoin.org/img/icons/opengraph.png")
+//       .attr("width", nodeSize)
+//       .attr("height", nodeSize)
+//       .attr("x", 0)
+//       .attr("y", 0);
+//   })
 
-  const node = svg
-    .append('g')
-    .attr('stroke', '#000')
-    .attr('stroke-width', 2)
-    .selectAll('circle')
-    .data(nodes)
-    .join('circle')
-    .on('click', onNodeClicked)
-    .attr('r', 15)
-    .attr('fill', color)
-    .on("mouseover", function(){
-        // @ts-ignore
-        d3.select(this)
-          .style("fill", "url(#grump_avatar)")
+//   const node = svg
+//     .append('g')
+//     .attr('stroke', '#000')
+//     .attr('stroke-width', 2)
+//     .selectAll('circle')
+//     .data(nodes)
+//     .join('circle')
+//     .on('click', onNodeClicked)
+//     .attr('r', 15)
+//     .attr('fill', color)
+//     .on("mouseover", function(){
+//         // @ts-ignore
+//         d3.select(this)
+//           .style("fill", "url(#grump_avatar)")
       
-        d3.selectAll('text')
-        .style("display", "inherit")
-    })
-    .on("mouseout", function(){
-        // @ts-ignore
-        d3.select(this)
-          .style("fill", color)
+//         d3.selectAll('text')
+//         .style("display", "inherit")
+//     })
+//     .on("mouseout", function(){
+//         // @ts-ignore
+//         d3.select(this)
+//           .style("fill", color)
           
-        d3.selectAll('text')
-          .style("display", 'none')
+//         d3.selectAll('text')
+//           .style("display", 'none')
       
-    })
-    // @ts-ignore
-    .call(drag(simulation));
+//     })
+//     // @ts-ignore
+//     .call(drag(simulation));
 
-  const label = svg.append('g')
-    .attr('class', 'labels')
-    .selectAll('text')
-    .data(nodes)
-    .enter()
-    .append('text')
+//   const label = svg.append('g')
+//     .attr('class', 'labels')
+//     .selectAll('text')
+//     .data(nodes)
+//     .enter()
+//     .append('text')
     
-    .text((d: any) => d.type == 'podcast' ? d.text : d.name)
+//     .text((d: any) => d.type == 'podcast' ? d.text : d.name)
     
-    .on("mouseover", function(){
-      d3.select(this)
-      .style("display", "inherit")
-    })
-    .on("mouseout", function(){
-        d3.select(this)
-          .style("display", 'none')
+//     .on("mouseover", function(){
+//       d3.select(this)
+//       .style("display", "inherit")
+//     })
+//     .on("mouseout", function(){
+//         d3.select(this)
+//           .style("display", 'none')
       
-    })
-    .attr('text-anchor', 'middle')
-    .style('display', 'none')
-    .attr('dominant-baseline', 'central')
-    // @ts-ignore
-    .call(drag(simulation));
+//     })
+//     .attr('text-anchor', 'middle')
+//     .style('display', 'none')
+//     .attr('dominant-baseline', 'central')
+//     // @ts-ignore
+//     .call(drag(simulation));
 
-  simulation.on('tick', () => {
-    //update link positions
-    link
-      .attr('x1', (d: any) => d.source.x)
-      .attr('y1', (d: any) => d.source.y)
-      .attr('x2', (d: any) => d.target.x)
-      .attr('y2', (d: any) => d.target.y);
+//   simulation.on('tick', () => {
+//     //update link positions
+//     link
+//       .attr('x1', (d: any) => d.source.x)
+//       .attr('y1', (d: any) => d.source.y)
+//       .attr('x2', (d: any) => d.target.x)
+//       .attr('y2', (d: any) => d.target.y);
 
-    // update node positions
-    node
-      .attr('cx', (d: any) => d.x)
-      .attr('cy', (d: any) => d.y);
+//     // update node positions
+//     node
+//       .attr('cx', (d: any) => d.x)
+//       .attr('cy', (d: any) => d.y);
 
-    // update label positions
-    label
-      .attr('x', (d: any) => { return d.x; })
-      .attr('y', (d: any) => { return d.y; })
-  });
+//     // update label positions
+//     label
+//       .attr('x', (d: any) => { return d.x; })
+//       .attr('y', (d: any) => { return d.y; })
+//   });
 
-  function handleZoom(e:any) {
-  d3.selectAll('g')
-    .attr('transform', e.transform);
-  }
+//   function handleZoom(e:any) {
+//   d3.selectAll('g')
+//     .attr('transform', e.transform);
+//   }
 
-  let zoom: any = d3.zoom()
-    .on('zoom', handleZoom);
+//   let zoom: any = d3.zoom()
+//     .on('zoom', handleZoom);
   
-  d3.select('svg')
-    .call(zoom);
+//   d3.select('svg')
+//     .call(zoom);
 
-  return {
-    destroy: () => {
-      simulation.stop();
-    }
-  };
+    return <div />
+//     {
+//     destroy: () => {
+//       simulation.stop();
+//     }
+//   };
 }
