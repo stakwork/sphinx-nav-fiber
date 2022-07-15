@@ -3,9 +3,10 @@ import { useState, useRef, useEffect } from 'react';
 import { ForceGraph3D } from 'react-force-graph';
 import { Node, NodesAndLinks, getGraphData, getSampleData } from './helpers'
 import * as three from 'three'
+import SpriteText from 'three-spritetext'
 import styled from "styled-components";
 import ReactAudioPlayer from 'react-audio-player';
-
+import ClipLoader from "react-spinners/ClipLoader";
 
 let inDebounce:any = null
 async function debounce(func:Function, delay:number) {
@@ -14,6 +15,8 @@ async function debounce(func:Function, delay:number) {
       func()
   }, delay)
 }
+
+
 
 export default function KnowledgeMap(props: any) {
   const { onNodeClicked, searchTerm, setLoading, mapRef } = props
@@ -31,7 +34,7 @@ export default function KnowledgeMap(props: any) {
 
   // refresh after search term is changed
   useEffect(() => {
-    debounce(() => getData(),800)
+    debounce(() => getData(), 800)
   }, [searchTerm])
 
   async function getData() {
@@ -46,18 +49,67 @@ export default function KnowledgeMap(props: any) {
 
   useEffect(() => {
     // set scroll to element
+
     if (focusedNode&&focusedNode.details) {
-      const episodeElement = document.getElementById(focusedNode.details.podcast_title)
-      if (episodeElement) episodeElement.scrollIntoView({ behavior: "smooth" })
+      const nodeElement = document.getElementById(focusedNode.details.podcast_title)
+      if (nodeElement) {
+        nodeElement.scrollIntoView({ behavior: "smooth", block: 'center', inline: 'center' })
+        const episodeElement = document.getElementById(focusedNode.details.podcast_title + focusedNode.details.episode_title)
+        if (episodeElement) {
+          episodeElement.scrollIntoView({ behavior: "smooth", block: 'center', inline: 'center' })
+          const se: any = { ...selectedEpisodes }
+
+          let keyname =focusedNode.details.podcast_title
+
+          const selected = () => {
+            if (!selectedEpisodes[keyname]) return true
+            return selectedEpisodes[keyname]?.media_url === focusedNode.details.link
+          }
+
+          const isSelected = selected()
+          if (!isSelected) {
+            se[keyname] = { ...se[keyname], media_url: focusedNode.details.link, loaded: false }
+            console.log('se',se)
+            setSelectedEpisodes(se)  
+          }
+        }
+      }
     }
-    }, [focusedNode])
+  }, [focusedNode])
 
-  const nodeObject = (color:string, size:number) => {
-      const geometry = new three.SphereGeometry(size, 32, 32); // (radius, widthSegments, heightSegments)
-      const material = new three.MeshBasicMaterial( {color: color} );
-      const sphere = new three.Mesh(geometry, material);
 
-      return sphere
+  const nodeObject = (node: any) => {
+
+    let color = (node.colors && node.colors[0]) ? node.colors[0] : 'tomato'
+    
+    if (selectedCluster?.id === node.id) {
+      color = '#300'
+    }
+    
+    if (node.type === 'topic') {
+      const sprite = new SpriteText(node.name);
+      sprite.color = color;
+      sprite.textHeight = 10;
+      return sprite;
+    }
+
+    const sprite = new three.Sprite(new three.SpriteMaterial({
+      color: color,
+      // rotation: Math.PI / 4,
+      transparent:true
+    }));
+
+    let scale = 20
+    let randW = 1 * scale
+    let randH = 1 * scale
+
+    if (randW < scale / 2) randW = scale / 2
+    if (randH < scale / 2) randH = scale / 2
+    
+    sprite.scale.set(randW, randH, 1);
+
+
+    return sprite;
   }
   
   const linkObject = () => {
@@ -69,18 +121,19 @@ export default function KnowledgeMap(props: any) {
   }
   
   function clickNode(node: any) {
+    console.log('node',node)
     setShowList(true)
 
     if (!focusedNode || node.id !== focusedNode.id) {
       setFocusedNode(node)
 
-      const thisPoint = {
-        x: node.x,
-        y: node.y,
-        z: node.z
-      }
+      // const thisPoint = {
+      //   x: node.x,
+      //   y: node.y,
+      //   z: node.z
+      // }
 
-      mapRef.current.cameraPosition({ ...thisPoint, z: node.z - 100 }, thisPoint, 0)
+      // mapRef.current.cameraPosition({ ...thisPoint, z: node.z - 100 }, thisPoint, 0)
     }
   }
 
@@ -125,9 +178,11 @@ export default function KnowledgeMap(props: any) {
             const podcast = groupedPodcasts[keyname]
             const { title, image, episodes } = podcast
 
-            const audioUrl:any = selectedEpisodes[keyname]?selectedEpisodes[keyname]:episodes[0].media_url
+            const audioUrl: any = selectedEpisodes[keyname] ? selectedEpisodes[keyname]?.media_url : episodes[0].media_url
             
-              return <NodePanel key={i + 'ouahsf'}>
+            const highlightNode = focusedNode?.details?.podcast_title === title
+            
+            return <NodePanel key={i + 'ouahsf'} style={{background:highlightNode?'green':''}} id={title}>
 
                 <Avatar />
                 <div style={{ width: 40 }} />
@@ -140,6 +195,12 @@ export default function KnowledgeMap(props: any) {
                       <ReactAudioPlayer
                       style={{width:'100%'}}
                       src={audioUrl}
+                      onLoadedMetadata={() => {
+                        console.log('loaded')
+                        const se: any = { ...selectedEpisodes }
+                        se[keyname] = { media_url:audioUrl, loaded: true }
+                        setSelectedEpisodes(se)
+                      }}
                       controls
                       />
                     
@@ -149,28 +210,39 @@ export default function KnowledgeMap(props: any) {
                   <div style={{marginBottom:5}}>Episodes</div>
                   <Scroller >
                     {episodes.map((e: any, ii: number) => {
+
+                      const se: any = { ...selectedEpisodes }
                       
                       const selected = () => {
                         if (!selectedEpisodes[keyname] && ii === 0) return true
-                        return selectedEpisodes[keyname] === e.media_url
+                        return selectedEpisodes[keyname]?.media_url === e.media_url
                       }
 
+                      const myKey = keyname + '_' + i + '_' + ii
+
                       const isSelected = selected()
-                      return <EpisodePanel id={keyname} key={keyname + '_' + i + '_' + ii}
-                        onClick={() => {
-                          const se: any = { ...selectedEpisodes }
-                          se[keyname] = e.media_url
-                          setSelectedEpisodes(se)
+
+                      return <div key={myKey}>
+                        <EpisodePanel className={'tooltip'}  id={title + e.title}
+                          onClick={() => {
+                          if (!isSelected) {
+                            se[keyname] = { media_url: e.media_url, loaded: false }
+                            setSelectedEpisodes(se)  
+                          }
                         }}
                       style={{fontWeight:isSelected?600:300}}>
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center',fontSize:30,marginRight:20}}>
-                          {ii+1}
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center',fontSize:20,marginRight:10,width:30}}>
+                          {isSelected && selectedEpisodes[keyname]?.loaded === false ? <ClipLoader  loading={true} size={20} /> : <div>{ii + 1}</div>}
                         </div>
                         <div style={{ display: 'flex', flexDirection: 'column' }}>
                           <Subtitle>{e.title}</Subtitle>
-                          {/* <Subtitle>{e.media_url}</Subtitle> */}
                         </div>
-                      </EpisodePanel>
+                        
+                        </EpisodePanel>
+                          <div style={{display:'flex',justifyContent:'center',width:'100%'}}>
+                            <Divider/>
+                          </div>
+                        </div>
                     })}
                     
                   </Scroller>
@@ -201,34 +273,57 @@ export default function KnowledgeMap(props: any) {
       precision: 'lowp',
       
     }}
-    nodeRelSize={8}
-    linkOpacity={1}
-    nodeOpacity={0.8}
-    onNodeDrag={(node: any) => clickNode(node)}
-    onNodeClick={(node: any) => clickNode(node)}
-    backgroundColor={'#f1f1f1'}
-    nodeLabel={(node: any) => `${node.name}`}
-    nodeAutoColorBy="type"
-    linkThreeObject={linkObject}
+    warmupTicks={100}
+    // nodeRelSize={8}
+      onEngineTick={() => {
+        // console.log('tick')
+      }}
+      onEngineStop={() => {
+        // console.log('sim froze')
+      }}
+      // nodePointerAreaPaint={(e) => {
+      //   console.log('e',e)
+        
+      // }}
+      onNodeHover={(node) => {
+        console.log('node',node)
+        if (node?.id !== selectedCluster) {
+          setSelectedCluster(node)
+        }
+      }}
+      nodeLabel={'label'}
+      enableNodeDrag={false}
+      onNodeClick={(node: any) => clickNode(node)}
+      backgroundColor={'#f1f1f1'}
+      nodeAutoColorBy="type"
+      linkThreeObject={linkObject}
       nodeThreeObject={(node:any) => {
         // console.log('node', node)
-        let color = 'red'
-        let size = 5
-        if (node.type === 'podcast') {
-          size = 5
-          color = 'teal'
-        }
-        else if (node.type === 'topic') {
-          size = 10
-          color = 'red'
-        }
-        return nodeObject(color,size)
+        // let color = 'red'
+        // let size = 10
+        // let multi = 1
+        // if (node.type === 'podcast') {
+        //   size = 6*multi
+        //   color = 'teal'
+        // }
+        // else if (node.type === 'topic') {
+        //   size = 15*multi
+        //   color = 'red'
+          
+        // }
+        return nodeObject(node)
       }}
   />
   
   
     </>
 }
+
+const Divider = styled.div`
+height:1px;
+background:#ccc;
+width:95%;
+`
 
 const Row = styled.div`
 display:flex;
@@ -248,7 +343,7 @@ max-width:100%;
 height: 120px; 
 overflow: auto;
 overflow-x:hidden; 
-background: #eee; 
+background: #fff; 
 `
 const NodePanel = styled.div`
 display:flex;
@@ -268,8 +363,9 @@ display:flex;
 align-items:center;
 width:100%;
 padding:10px;
-border-bottom:1px solid #ccc;
+
 opacity:0.8;
+min-height:36px;
 cursor:pointer;
 &:hover{
   opacity:1;
@@ -284,7 +380,7 @@ position:absolute;
 left:30px;
 top:80px;
 height:calc(100% - 100px);
-background:#fff;
+background:#ffffffdd;
 max-width:40%;
 width:40%;
 z-index:30000;

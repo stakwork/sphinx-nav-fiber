@@ -79,6 +79,7 @@ justify-content:center;
 align-items:center;
 padding:15px 20px;
 border:1px solid #000;
+background:#f1f1f1;
 border-radius:40px;
 min-width:100px;
 margin-left:20px;
