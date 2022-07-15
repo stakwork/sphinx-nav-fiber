@@ -110,13 +110,7 @@ export default function KnowledgeMap(props: any) {
   function clickNode(node: any) {
     console.log('node', node)
     if (node.type === 'topic') return     
-    if (!focusedNode || node.id !== focusedNode.id) {
-      setFocusedNode(node)
-      if (!showList) {
-        mapRef.current.zoomToFit()
-      }
-    }
-
+    if (!focusedNode || node.id !== focusedNode.id) setFocusedNode(node)
     setShowList(true)
   }
 

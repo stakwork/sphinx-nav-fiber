@@ -61,6 +61,7 @@ function randomColor() {
         const data: Moment[] = await res.json()
         const _nodes: Node[] = []
         const _links: Link[] = []
+
         
         if(data.length) {
           const topicMap: any = {}
