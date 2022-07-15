@@ -17,35 +17,20 @@ async function debounce(func:Function, delay:number) {
 }
 
 
-
 export default function KnowledgeMap(props: any) {
-  const { onNodeClicked, searchTerm, setLoading, mapRef } = props
+  const { onNodeClicked, mapRef } = props
   const [graphData, setGraphData]: any = useState<NodesAndLinks>({ nodes: [], links: [] })
   const [selectedCluster, setSelectedCluster]: any = useState(null)
   const [focusedNode, setFocusedNode]:any = useState(null)
   const [selectedEpisodes, setSelectedEpisodes]: any = useState({})
   const [showList, setShowList]: any = useState(true)
 
-  // init with default dataset
+   // update dataset
   useEffect(() => {
-    const d = getSampleData()
-    setGraphData(d)
-  }, [])
-
-  // refresh after search term is changed
-  useEffect(() => {
-    debounce(() => getData(), 800)
-  }, [searchTerm])
-
-  async function getData() {
-    if (searchTerm) {
-      setLoading(true)
-      const d = await getGraphData(searchTerm)  
-      setGraphData(d)
-      setShowList(true)
-      setLoading(false)    
-    }
-  }
+      setGraphData(props.data)
+      setShowList(false)
+      mapRef?.current?.zoomToFit()
+  }, [props.data])
 
   useEffect(() => {
     // set scroll to element
@@ -55,6 +40,7 @@ export default function KnowledgeMap(props: any) {
       if (nodeElement) {
         nodeElement.scrollIntoView({ behavior: "smooth", block: 'center', inline: 'center' })
         const episodeElement = document.getElementById(focusedNode.details.podcast_title + focusedNode.details.episode_title)
+        nodeElement.style.setProperty('background', ((focusedNode.colors[0]+'55')||'#8a2be255'))
         if (episodeElement) {
           episodeElement.scrollIntoView({ behavior: "smooth", block: 'center', inline: 'center' })
           const se: any = { ...selectedEpisodes }
@@ -82,10 +68,6 @@ export default function KnowledgeMap(props: any) {
 
     let color = (node.colors && node.colors[0]) ? node.colors[0] : 'tomato'
     
-    if (selectedCluster?.id === node.id) {
-      color = '#300'
-    }
-    
     if (node.type === 'topic') {
       const sprite = new SpriteText(node.name);
       sprite.color = color;
@@ -93,12 +75,17 @@ export default function KnowledgeMap(props: any) {
       return sprite;
     }
 
+    // const map = new three.TextureLoader().load( 'audio_default.svg' );
+    // const material = new three.SpriteMaterial({
+    //   map: map,
+    //   color: color,
+    // });
     const sprite = new three.Sprite(new three.SpriteMaterial({
       color: color,
       // rotation: Math.PI / 4,
       transparent:true
     }));
-
+    
     let scale = 20
     let randW = 1 * scale
     let randH = 1 * scale
@@ -108,8 +95,8 @@ export default function KnowledgeMap(props: any) {
     
     sprite.scale.set(randW, randH, 1);
 
+    return sprite
 
-    return sprite;
   }
   
   const linkObject = () => {
@@ -121,20 +108,16 @@ export default function KnowledgeMap(props: any) {
   }
   
   function clickNode(node: any) {
-    console.log('node',node)
-    setShowList(true)
-
+    console.log('node', node)
+    if (node.type === 'topic') return     
     if (!focusedNode || node.id !== focusedNode.id) {
       setFocusedNode(node)
-
-      // const thisPoint = {
-      //   x: node.x,
-      //   y: node.y,
-      //   z: node.z
-      // }
-
-      // mapRef.current.cameraPosition({ ...thisPoint, z: node.z - 100 }, thisPoint, 0)
+      if (!showList) {
+        mapRef.current.zoomToFit()
+      }
     }
+
+    setShowList(true)
   }
 
   
@@ -182,7 +165,7 @@ export default function KnowledgeMap(props: any) {
             
             const highlightNode = focusedNode?.details?.podcast_title === title
             
-            return <NodePanel key={i + 'ouahsf'} style={{background:highlightNode?'green':''}} id={title}>
+            return <NodePanel key={i + 'ouahsf'} style={{background:highlightNode?'tomato':''}} id={title}>
 
                 <Avatar />
                 <div style={{ width: 40 }} />
@@ -256,6 +239,7 @@ export default function KnowledgeMap(props: any) {
       }
     
     <ForceGraph3D
+
     ref={mapRef}
     graphData={graphData}
     nodeVisibility={() => {
@@ -273,24 +257,19 @@ export default function KnowledgeMap(props: any) {
       precision: 'lowp',
       
     }}
-    warmupTicks={100}
+    warmupTicks={0}
     // nodeRelSize={8}
-      onEngineTick={() => {
-        // console.log('tick')
-      }}
-      onEngineStop={() => {
-        // console.log('sim froze')
-      }}
+      // onEngineTick={() => {
+      //   // console.log('tick')
+      // }}
+      // onEngineStop={() => {
+      //   // console.log('sim froze')
+      // }}
       // nodePointerAreaPaint={(e) => {
       //   console.log('e',e)
         
       // }}
-      onNodeHover={(node) => {
-        console.log('node',node)
-        if (node?.id !== selectedCluster) {
-          setSelectedCluster(node)
-        }
-      }}
+      // enableNavigationControls={true}
       nodeLabel={'label'}
       enableNodeDrag={false}
       onNodeClick={(node: any) => clickNode(node)}
@@ -298,20 +277,7 @@ export default function KnowledgeMap(props: any) {
       nodeAutoColorBy="type"
       linkThreeObject={linkObject}
       nodeThreeObject={(node:any) => {
-        // console.log('node', node)
-        // let color = 'red'
-        // let size = 10
-        // let multi = 1
-        // if (node.type === 'podcast') {
-        //   size = 6*multi
-        //   color = 'teal'
-        // }
-        // else if (node.type === 'topic') {
-        //   size = 15*multi
-        //   color = 'red'
-          
-        // }
-        return nodeObject(node)
+       return nodeObject(node)
       }}
   />
   

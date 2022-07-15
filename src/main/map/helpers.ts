@@ -35,7 +35,19 @@ export interface Cluster {
   }
 
 function randomColor() {
-    return '#'+(0x1000000+Math.random()*0xffffff).toString(16).substr(1,6)
+
+    let coolColors = [
+        '#ff80ed',
+        '#40e0d0',
+        '#ffa500',
+        '#101010',
+        '#8a2be2',
+        '#00ff7f',
+        '#ff7373'
+    ]
+
+    let chosenIndex = Math.floor(Math.random()*coolColors.length)
+    return coolColors[chosenIndex]
     }
 
 
@@ -49,9 +61,6 @@ function randomColor() {
         const data: Moment[] = await res.json()
         const _nodes: Node[] = []
         const _links: Link[] = []
-        
-
-        console.log('data', data)
         
         if(data.length) {
           const topicMap: any = {}
@@ -121,7 +130,9 @@ function randomColor() {
         //         name: n.name,
         //         type: n.type,
         //         text: n.text,
-        //         details: n.details
+        //         details: n.details,
+        //         colors: n.colors,
+        //         label:n.label
         //     }
         // }))
         // console.log('_links', _links.map((n: any) => {
@@ -198,7 +209,12 @@ function getSampleData(){
                         "crypto",
                         "btc"
                     ]
-                }
+                },
+                "colors": [
+                    "#ff7373",
+                    "#00ff7f"
+                ],
+                "label": "The Bad Crypto Podcast"
             },
             {
                 "id": 1,
@@ -215,7 +231,11 @@ function getSampleData(){
                         "bitcoin",
                         "btc"
                     ]
-                }
+                },
+                "colors": [
+                    "#ff7373"
+                ],
+                "label": "The Bad Crypto Podcast"
             },
             {
                 "id": 2,
@@ -233,7 +253,12 @@ function getSampleData(){
                         "bitcoin",
                         "goldman sachs"
                     ]
-                }
+                },
+                "colors": [
+                    "#101010",
+                    "#8a2be2"
+                ],
+                "label": "The Bad Crypto Podcast"
             },
             {
                 "id": 3,
@@ -249,7 +274,9 @@ function getSampleData(){
                     "topics": [
                         "btc"
                     ]
-                }
+                },
+                "colors": [],
+                "label": "Lightning Junkies"
             },
             {
                 "id": 4,
@@ -266,7 +293,11 @@ function getSampleData(){
                         "btc",
                         "bitcoin"
                     ]
-                }
+                },
+                "colors": [
+                    "#40e0d0"
+                ],
+                "label": "The Bad Crypto Podcast"
             },
             {
                 "id": 5,
@@ -282,7 +313,9 @@ function getSampleData(){
                     "topics": [
                         "btc"
                     ]
-                }
+                },
+                "colors": [],
+                "label": "Bitcoin Audible"
             },
             {
                 "id": 6,
@@ -300,7 +333,12 @@ function getSampleData(){
                         "btc",
                         "ray dalio"
                     ]
-                }
+                },
+                "colors": [
+                    "#ff7373",
+                    "#8a2be2"
+                ],
+                "label": "The Bad Crypto Podcast"
             },
             {
                 "id": 7,
@@ -317,7 +355,11 @@ function getSampleData(){
                         "btc",
                         "the blue wizard"
                     ]
-                }
+                },
+                "colors": [
+                    "#40e0d0"
+                ],
+                "label": "The Bad Crypto Podcast"
             },
             {
                 "id": 8,
@@ -334,7 +376,11 @@ function getSampleData(){
                         "bitcoin price prediction",
                         "btc"
                     ]
-                }
+                },
+                "colors": [
+                    "#ff80ed"
+                ],
+                "label": "The Bad Crypto Podcast"
             },
             {
                 "id": 9,
@@ -351,7 +397,11 @@ function getSampleData(){
                         "usd",
                         "btc"
                     ]
-                }
+                },
+                "colors": [
+                    "#40e0d0"
+                ],
+                "label": "The Kevin Rooke Show"
             },
             {
                 "id": 10,
@@ -368,7 +418,11 @@ function getSampleData(){
                         "btc",
                         "bitcoin"
                     ]
-                }
+                },
+                "colors": [
+                    "#ff80ed"
+                ],
+                "label": "The Bad Crypto Podcast"
             },
             {
                 "id": 11,
@@ -387,7 +441,13 @@ function getSampleData(){
                         "btc",
                         "bitcoin king"
                     ]
-                }
+                },
+                "colors": [
+                    "#40e0d0",
+                    "#101010",
+                    "#40e0d0"
+                ],
+                "label": "The Bad Crypto Podcast"
             },
             {
                 "id": 12,
@@ -404,7 +464,11 @@ function getSampleData(){
                         "btc",
                         "china"
                     ]
-                }
+                },
+                "colors": [
+                    "#ff80ed"
+                ],
+                "label": "The Bad Crypto Podcast"
             },
             {
                 "id": 13,
@@ -421,7 +485,11 @@ function getSampleData(){
                         "bitcoin",
                         "btc"
                     ]
-                }
+                },
+                "colors": [
+                    "#ff80ed"
+                ],
+                "label": "The Bad Crypto Podcast"
             },
             {
                 "id": 14,
@@ -438,7 +506,11 @@ function getSampleData(){
                         "btc",
                         "bitcoin addresses"
                     ]
-                }
+                },
+                "colors": [
+                    "#00ff7f"
+                ],
+                "label": "The Bad Crypto Podcast"
             },
             {
                 "id": 15,
@@ -455,7 +527,11 @@ function getSampleData(){
                         "btc",
                         "bitcoin whale"
                     ]
-                }
+                },
+                "colors": [
+                    "#ffa500"
+                ],
+                "label": "The Bad Crypto Podcast"
             },
             {
                 "id": 16,
@@ -473,7 +549,12 @@ function getSampleData(){
                         "btc",
                         "bank of america"
                     ]
-                }
+                },
+                "colors": [
+                    "#ff7373",
+                    "#8a2be2"
+                ],
+                "label": "The Bad Crypto Podcast"
             },
             {
                 "id": 17,
@@ -491,7 +572,12 @@ function getSampleData(){
                         "the bad indicator",
                         "bitcoin"
                     ]
-                }
+                },
+                "colors": [
+                    "#ffa500",
+                    "#00ff7f"
+                ],
+                "label": "The Bad Crypto Podcast"
             },
             {
                 "id": 18,
@@ -508,7 +594,11 @@ function getSampleData(){
                         "btc",
                         "bitcoin"
                     ]
-                }
+                },
+                "colors": [
+                    "#ffa500"
+                ],
+                "label": "The Bad Crypto Podcast"
             },
             {
                 "id": 19,
@@ -525,7 +615,11 @@ function getSampleData(){
                         "bitcoin addresses",
                         "btc"
                     ]
-                }
+                },
+                "colors": [
+                    "#40e0d0"
+                ],
+                "label": "The Bad Crypto Podcast"
             },
             {
                 "id": 20,
@@ -542,7 +636,11 @@ function getSampleData(){
                         "bitcoin",
                         "btc"
                     ]
-                }
+                },
+                "colors": [
+                    "#ffa500"
+                ],
+                "label": "The Bad Crypto Podcast"
             },
             {
                 "id": 21,
@@ -559,7 +657,11 @@ function getSampleData(){
                         "btc",
                         "post - halving"
                     ]
-                }
+                },
+                "colors": [
+                    "#ff7373"
+                ],
+                "label": "The Bad Crypto Podcast"
             },
             {
                 "id": 22,
@@ -577,7 +679,12 @@ function getSampleData(){
                         "btc",
                         "bitcoin"
                     ]
-                }
+                },
+                "colors": [
+                    "#8a2be2",
+                    "#ff80ed"
+                ],
+                "label": "The Bad Crypto Podcast"
             },
             {
                 "id": 23,
@@ -595,7 +702,12 @@ function getSampleData(){
                         "btc",
                         "bitcoin"
                     ]
-                }
+                },
+                "colors": [
+                    "#101010",
+                    "#00ff7f"
+                ],
+                "label": "The Bad Crypto Podcast"
             },
             {
                 "id": 24,
@@ -612,7 +724,11 @@ function getSampleData(){
                         "btc",
                         "winklevoss biographer"
                     ]
-                }
+                },
+                "colors": [
+                    "#101010"
+                ],
+                "label": "The Bad Crypto Podcast"
             },
             {
                 "id": 25,
@@ -629,7 +745,11 @@ function getSampleData(){
                         "intrinsic value",
                         "btc"
                     ]
-                }
+                },
+                "colors": [
+                    "#ff80ed"
+                ],
+                "label": "Bitcoin Audible"
             },
             {
                 "id": 26,
@@ -646,7 +766,11 @@ function getSampleData(){
                         "btc",
                         "bitcoin"
                     ]
-                }
+                },
+                "colors": [
+                    "#ff7373"
+                ],
+                "label": "The Bad Crypto Podcast"
             },
             {
                 "id": 27,
@@ -664,133 +788,222 @@ function getSampleData(){
                         "bitcoin",
                         "google trends"
                     ]
-                }
+                },
+                "colors": [
+                    "#8a2be2",
+                    "#ffa500"
+                ],
+                "label": "The Bad Crypto Podcast"
             },
             {
                 "id": 28,
                 "name": "bitcoin",
                 "type": "topic",
-                "text": "bitcoin"
+                "text": "bitcoin",
+                "colors": [
+                    "#8a2be2"
+                ],
+                "label": "bitcoin"
             },
             {
                 "id": 29,
                 "name": "crypto",
                 "type": "topic",
-                "text": "crypto"
+                "text": "crypto",
+                "colors": [
+                    "#00ff7f"
+                ],
+                "label": "crypto"
             },
             {
                 "id": 30,
                 "name": "goldman sachs",
                 "type": "topic",
-                "text": "goldman sachs"
+                "text": "goldman sachs",
+                "colors": [
+                    "#8a2be2"
+                ],
+                "label": "goldman sachs"
             },
             {
                 "id": 31,
                 "name": "ray dalio",
                 "type": "topic",
-                "text": "ray dalio"
+                "text": "ray dalio",
+                "colors": [
+                    "#8a2be2"
+                ],
+                "label": "ray dalio"
             },
             {
                 "id": 32,
                 "name": "the blue wizard",
                 "type": "topic",
-                "text": "the blue wizard"
+                "text": "the blue wizard",
+                "colors": [
+                    "#40e0d0"
+                ],
+                "label": "the blue wizard"
             },
             {
                 "id": 33,
                 "name": "bitcoin price prediction",
                 "type": "topic",
-                "text": "bitcoin price prediction"
+                "text": "bitcoin price prediction",
+                "colors": [
+                    "#ff80ed"
+                ],
+                "label": "bitcoin price prediction"
             },
             {
                 "id": 34,
                 "name": "usd",
                 "type": "topic",
-                "text": "usd"
+                "text": "usd",
+                "colors": [
+                    "#40e0d0"
+                ],
+                "label": "usd"
             },
             {
                 "id": 35,
                 "name": "brazilian",
                 "type": "topic",
-                "text": "brazilian"
+                "text": "brazilian",
+                "colors": [
+                    "#40e0d0"
+                ],
+                "label": "brazilian"
             },
             {
                 "id": 36,
                 "name": "scam",
                 "type": "topic",
-                "text": "scam"
+                "text": "scam",
+                "colors": [
+                    "#101010"
+                ],
+                "label": "scam"
             },
             {
                 "id": 37,
                 "name": "bitcoin king",
                 "type": "topic",
-                "text": "bitcoin king"
+                "text": "bitcoin king",
+                "colors": [
+                    "#40e0d0"
+                ],
+                "label": "bitcoin king"
             },
             {
                 "id": 38,
                 "name": "china",
                 "type": "topic",
-                "text": "china"
+                "text": "china",
+                "colors": [
+                    "#ff80ed"
+                ],
+                "label": "china"
             },
             {
                 "id": 39,
                 "name": "bitcoin addresses",
                 "type": "topic",
-                "text": "bitcoin addresses"
+                "text": "bitcoin addresses",
+                "colors": [
+                    "#40e0d0"
+                ],
+                "label": "bitcoin addresses"
             },
             {
                 "id": 40,
                 "name": "bitcoin whale",
                 "type": "topic",
-                "text": "bitcoin whale"
+                "text": "bitcoin whale",
+                "colors": [
+                    "#ffa500"
+                ],
+                "label": "bitcoin whale"
             },
             {
                 "id": 41,
                 "name": "bank of america",
                 "type": "topic",
-                "text": "bank of america"
+                "text": "bank of america",
+                "colors": [
+                    "#8a2be2"
+                ],
+                "label": "bank of america"
             },
             {
                 "id": 42,
                 "name": "the bad indicator",
                 "type": "topic",
-                "text": "the bad indicator"
+                "text": "the bad indicator",
+                "colors": [
+                    "#ffa500"
+                ],
+                "label": "the bad indicator"
             },
             {
                 "id": 43,
                 "name": "post - halving",
                 "type": "topic",
-                "text": "post - halving"
+                "text": "post - halving",
+                "colors": [
+                    "#ff7373"
+                ],
+                "label": "post - halving"
             },
             {
                 "id": 44,
                 "name": "whales",
                 "type": "topic",
-                "text": "whales"
+                "text": "whales",
+                "colors": [
+                    "#8a2be2"
+                ],
+                "label": "whales"
             },
             {
                 "id": 45,
                 "name": "simpsons",
                 "type": "topic",
-                "text": "simpsons"
+                "text": "simpsons",
+                "colors": [
+                    "#101010"
+                ],
+                "label": "simpsons"
             },
             {
                 "id": 46,
                 "name": "winklevoss biographer",
                 "type": "topic",
-                "text": "winklevoss biographer"
+                "text": "winklevoss biographer",
+                "colors": [
+                    "#101010"
+                ],
+                "label": "winklevoss biographer"
             },
             {
                 "id": 47,
                 "name": "intrinsic value",
                 "type": "topic",
-                "text": "intrinsic value"
+                "text": "intrinsic value",
+                "colors": [
+                    "#ff80ed"
+                ],
+                "label": "intrinsic value"
             },
             {
                 "id": 48,
                 "name": "google trends",
                 "type": "topic",
-                "text": "google trends"
+                "text": "google trends",
+                "colors": [
+                    "#ffa500"
+                ],
+                "label": "google trends"
             }
         ],
         links:[
@@ -939,5 +1152,6 @@ function getSampleData(){
                 "target": 48
             }
         ]
+
     }
 }

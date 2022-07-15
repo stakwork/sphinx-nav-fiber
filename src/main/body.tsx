@@ -1,18 +1,34 @@
-import {useState, useCallback, useRef } from 'react'
+import {useState, useCallback, useRef, useEffect } from 'react'
 import styled from "styled-components";
 import KnowledgeMap from './map/knowledgeMap'
 import './body.css'
-
+import { NodesAndLinks, getGraphData, getSampleData } from './map/helpers'
 
 
 export default function BodyComponent() {
 
-  const [searchTerm, setSearchTerm]: any = useState("");
+  const [searchTerm, setSearchTerm]: any = useState("btc");
+  const [data, setData]: any = useState<NodesAndLinks>({ nodes: [], links: [] })
   const [loading, setLoading]: any = useState(false)
   const mapRef: any = useRef(null)
+
+  useEffect(() => {
+    const d = getSampleData()
+    setData(d)  
+  },[])
+  
   
   const onNodeClicked = (event: PointerEvent, data: any) => {
     console.log('onNodeClicked.data: ', data) 
+  }
+
+  async function getData() {
+    if (searchTerm) {
+      setLoading(true)
+      const d = await getGraphData(searchTerm)  
+      setData(d)
+      setLoading(false)    
+    }
   }
   
   return(
@@ -23,6 +39,7 @@ export default function BodyComponent() {
           BitcoinBrain
         </Title>
 
+        
         <Input
           style={{width:'40%'}}
           className={loading ? 'loading' : ''}
@@ -30,7 +47,11 @@ export default function BodyComponent() {
           type="text"
           value={searchTerm}
           placeholder="Search ..."
-          // onSubmit={(e) => e.preventDefault()}
+          onKeyPress={(event) => {
+            if (event.key === 'Enter') {
+              getData()
+            }
+          }}
           onChange={e => {
             const value = e.target.value
             setSearchTerm(value)
@@ -46,8 +67,8 @@ export default function BodyComponent() {
       
       <KnowledgeMap
         mapRef={mapRef}
-        searchTerm={searchTerm}
-        setLoading={setLoading}
+        data={data}
+        loading={loading}
         onNodeClicked={(e:any,data:any) => onNodeClicked(e, data)}
       />
     </Body>
