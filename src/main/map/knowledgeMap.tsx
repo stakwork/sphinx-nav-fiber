@@ -108,10 +108,15 @@ export default function KnowledgeMap(props: any) {
   }
   
   function clickNode(node: any) {
-    console.log('node', node)
-    if (node.type === 'topic') return     
-    if (!focusedNode || node.id !== focusedNode.id) setFocusedNode(node)
-    setShowList(true)
+    
+    if (node.type === 'topic') {
+      props.getData(node.label)
+    }
+    else if (!focusedNode || node.id !== focusedNode.id) {
+      setFocusedNode(node)
+      setShowList(true)
+    }
+    
   }
 
   

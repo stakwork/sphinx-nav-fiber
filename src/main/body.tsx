@@ -22,13 +22,20 @@ export default function BodyComponent() {
     console.log('onNodeClicked.data: ', data) 
   }
 
-  async function getData() {
-    if (searchTerm) {
+  async function getData(term?:string) {
+
+    if (term) setSearchTerm(term)
+    let searchWord = term || searchTerm
+    
+    try{
       setLoading(true)
-      const d = await getGraphData(searchTerm)  
+      const d = await getGraphData(searchWord)  
       setData(d)
       setLoading(false)    
+    } catch (e) {
+      console.log('e',e)
     }
+    
   }
   
   return(
@@ -67,6 +74,7 @@ export default function BodyComponent() {
       
       <KnowledgeMap
         mapRef={mapRef}
+        getData={getData}
         data={data}
         loading={loading}
         onNodeClicked={(e:any,data:any) => onNodeClicked(e, data)}
