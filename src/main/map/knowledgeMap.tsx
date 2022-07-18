@@ -1,26 +1,17 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { ForceGraph3D } from 'react-force-graph';
-import { Node, NodesAndLinks, getGraphData, getSampleData } from './helpers'
+import { Node, NodesAndLinks, convertFromISOtoSeconds, sleep } from './helpers'
 import * as three from 'three'
 import SpriteText from 'three-spritetext'
 import styled from "styled-components";
 import ReactAudioPlayer from 'react-audio-player';
 import ClipLoader from "react-spinners/ClipLoader";
 
-let inDebounce:any = null
-async function debounce(func:Function, delay:number) {
-  clearTimeout(inDebounce)
-  inDebounce = setTimeout(() => {
-      func()
-  }, delay)
-}
-
 
 export default function KnowledgeMap(props: any) {
   const { onNodeClicked, mapRef } = props
   const [graphData, setGraphData]: any = useState<NodesAndLinks>({ nodes: [], links: [] })
-  const [selectedCluster, setSelectedCluster]: any = useState(null)
   const [focusedNode, setFocusedNode]:any = useState(null)
   const [selectedEpisodes, setSelectedEpisodes]: any = useState({})
   const [showList, setShowList]: any = useState(true)
@@ -32,35 +23,50 @@ export default function KnowledgeMap(props: any) {
       mapRef?.current?.zoomToFit()
   }, [props.data])
 
+
+  // do audio list changes on node select 
   useEffect(() => {
-    // set scroll to element
+    
+  // start async
+    (async () => {
+      // wait while the render appears
+      await sleep(300)
+      const se: any = { ...selectedEpisodes }
+      let keyname = focusedNode?.details?.podcast_title
+      
+      const selected = () => {
+        if (!selectedEpisodes[keyname]) return true
+        return selectedEpisodes[keyname]?.media_url === focusedNode.details.link
+      }
 
-    if (focusedNode&&focusedNode.details) {
-      const nodeElement = document.getElementById(focusedNode.details.podcast_title)
-      if (nodeElement) {
-        nodeElement.scrollIntoView({ behavior: "smooth", block: 'center', inline: 'center' })
-        const episodeElement = document.getElementById(focusedNode.details.podcast_title + focusedNode.details.episode_title)
-        nodeElement.style.setProperty('background', ((focusedNode.colors[0]+'55')||'#8a2be255'))
-        if (episodeElement) {
-          episodeElement.scrollIntoView({ behavior: "smooth", block: 'center', inline: 'center' })
-          const se: any = { ...selectedEpisodes }
+      const isSelected = selected()
 
-          let keyname =focusedNode.details.podcast_title
-
-          const selected = () => {
-            if (!selectedEpisodes[keyname]) return true
-            return selectedEpisodes[keyname]?.media_url === focusedNode.details.link
-          }
-
-          const isSelected = selected()
-          if (!isSelected) {
-            se[keyname] = { ...se[keyname], media_url: focusedNode.details.link, loaded: false }
-            console.log('se',se)
-            setSelectedEpisodes(se)  
+      if (focusedNode&&focusedNode.details) {
+        const nodeElement = document.getElementById(focusedNode.details.podcast_title)
+        if (nodeElement) {
+          nodeElement.scrollIntoView({ behavior: "smooth", block: 'center', inline: 'center' })
+          const episodeElement = document.getElementById(focusedNode.details.podcast_title + focusedNode.details.episode_title)
+          nodeElement.style.setProperty('background', ((focusedNode.colors[0]+'55')||'#8a2be255'))
+          if (episodeElement) {
+            episodeElement.scrollIntoView({ behavior: "smooth", block: 'center', inline: 'center' }) 
           }
         }
+
+        if (!isSelected) {
+          se[keyname] = {
+            ...se[keyname],
+            media_url: focusedNode.details.link,
+            timestamp: focusedNode.details.timestamp,
+            loaded: false
+          }
+          setSelectedEpisodes(se)  
+        }
+        startPlayback(focusedNode.details.podcast_title, focusedNode.details.timestamp, focusedNode.details.link, true)
       }
-    }
+    })()
+
+    // end async
+    
   }, [focusedNode])
 
 
@@ -109,6 +115,7 @@ export default function KnowledgeMap(props: any) {
   
   function clickNode(node: any) {
     
+    console.log('node',node)
     if (node.type === 'topic') {
       props.getData(node.label)
     }
@@ -116,15 +123,14 @@ export default function KnowledgeMap(props: any) {
       setFocusedNode(node)
       setShowList(true)
     }
-    
   }
 
-  
     const groupedPodcasts: any = {}
     
     graphData?.nodes?.forEach((d: Node, i: number) => {
       if (d.details?.podcast_title && !groupedPodcasts[d.details?.podcast_title]) {
         groupedPodcasts[d.details?.podcast_title] = {
+          ...d.details,
           title: d.details?.podcast_title,
           img: null,
           episodes: [
@@ -136,6 +142,7 @@ export default function KnowledgeMap(props: any) {
         }
       } else if (d.details?.podcast_title){
         groupedPodcasts[d.details?.podcast_title].episodes.push({
+          ...d.details,
           title:d.details?.episode_title,
           media_url: d.details?.link
         })
@@ -143,7 +150,52 @@ export default function KnowledgeMap(props: any) {
     })
    
 
-  
+  function startPlayback(podcastKeyname: string, timestamp:string, audioUrl: string, skipBlock?: boolean) {
+    // set audio at correct spot
+    let start_time, end_time
+    
+    if (!skipBlock && (selectedEpisodes[podcastKeyname]?.media_url !== audioUrl)) {
+      console.log('block play!')
+      return
+    }
+    
+    if (timestamp) {
+      let isStartAndEnd = timestamp.includes('-')
+      if (isStartAndEnd) {
+        let t = timestamp.split('-')
+        start_time = convertFromISOtoSeconds(t[0])  
+        end_time = convertFromISOtoSeconds(t[1])    
+      } else {
+        start_time = convertFromISOtoSeconds(timestamp)  
+      }
+    }
+
+    const audioElement = document.getElementById(audioUrl) as HTMLAudioElement;
+      if (audioElement) {
+        audioElement.currentTime = start_time || 0
+
+        // set style to mark range
+        // if (start_time && end_time) {
+          // audioElement.style.setProperty('background', 'pink')
+        // }
+        
+        console.log('start play!')
+        audioElement.play()
+      }
+  }
+
+  function stopAllOtherPlayback(el: HTMLAudioElement) {
+    const players = Array.from(document.getElementsByClassName('audio-player'))
+    players.forEach((p) => {
+      let playerEl = p as HTMLAudioElement
+      if (playerEl.id != el?.id) {
+        if (!playerEl.paused) {
+          console.log('pause play!')
+          playerEl.pause()  
+        }
+      } 
+    })
+  }
 
   return <>
      {showList&&Object.keys(groupedPodcasts)?.length>0 &&
@@ -158,7 +210,7 @@ export default function KnowledgeMap(props: any) {
 
           {Object.keys(groupedPodcasts).map((keyname: string, i: number) => {
             const podcast = groupedPodcasts[keyname]
-            const { title, image, episodes } = podcast
+            const { title, image, episodes, timestamp } = podcast
 
             const audioUrl: any = selectedEpisodes[keyname] ? selectedEpisodes[keyname]?.media_url : episodes[0].media_url
             
@@ -174,18 +226,23 @@ export default function KnowledgeMap(props: any) {
                     <Title>{title}</Title>
                     <div style={{ height: 10 }} />
                     
-                      <ReactAudioPlayer
+                  <ReactAudioPlayer
+                    id={audioUrl}
+                    onPlay={(e) => {
+                      const el = e.target as HTMLAudioElement
+                      stopAllOtherPlayback(el)
+                    }}
+                      className={'audio-player'}
                       style={{width:'100%'}}
                       src={audioUrl}
                       onLoadedMetadata={() => {
-                        console.log('loaded')
                         const se: any = { ...selectedEpisodes }
-                        se[keyname] = { media_url:audioUrl, loaded: true }
+                        se[keyname] = { ...se[keyname], media_url:audioUrl, loaded: true }
                         setSelectedEpisodes(se)
+                        startPlayback(title, se[keyname].timestamp, se[keyname].media_url)
                       }}
                       controls
                       />
-                    
                   </Col>
                   {/* scrolling list */}
 
@@ -207,9 +264,11 @@ export default function KnowledgeMap(props: any) {
                       return <div key={myKey}>
                         <EpisodePanel className={'tooltip'}  id={title + e.title}
                           onClick={() => {
-                          if (!isSelected) {
-                            se[keyname] = { media_url: e.media_url, loaded: false }
-                            setSelectedEpisodes(se)  
+                            if (isSelected) {
+                              startPlayback(e.podcast_title ,e.timestamp, e.media_url, true)
+                            } else {
+                              se[keyname] = { ...e, media_url: e.media_url, loaded: false }
+                              setSelectedEpisodes(se)  
                           }
                         }}
                       style={{fontWeight:isSelected?600:300}}>

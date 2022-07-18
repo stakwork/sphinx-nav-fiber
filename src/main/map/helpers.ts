@@ -64,9 +64,13 @@ function randomColor() {
 
         
         if(data.length) {
-          const topicMap: any = {}
+            const topicMap: any = {}
+            
+            console.log('data',data)
           // Populating nodes array with podcasts and constructing a topic map
             data.forEach(moment => {
+
+                
                 const topics = moment.topics
                 // @ts-ignore
 
@@ -185,10 +189,25 @@ function getFakeGraphData() {
     return data
 }
 
+function convertFromISOtoSeconds(value: string) {
+    let val: number = 0
 
+    try {
+        let splitValue = value.split(':')
+        const h = parseInt(splitValue[0])
+        const m = parseInt(splitValue[1])
+        const s = parseInt(splitValue[2])
+        val = (h*3600) + (m*60) + s    
+    } catch (e) {
+        console.log(e)
+    }
+    
+    return val
+}
+  
+const sleep = (ms:number) => new Promise(r => setTimeout(r, ms));
 
-
-export { getFakeGraphData, getSampleData, getGraphData }
+export { getFakeGraphData, getSampleData, getGraphData, convertFromISOtoSeconds, sleep }
 
 function getSampleData(){
 
