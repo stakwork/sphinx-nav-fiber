@@ -5,7 +5,8 @@ export interface Node {
     text?: string,
     label?: string,
     colors?: string[],
-    details?: Moment
+    details?: Moment,
+    image_url?: string
 }
 
 export interface Cluster {
@@ -26,7 +27,9 @@ export interface Cluster {
     podcast_title: string,
     timestamp: string,
     topics: string[],
-    text: string
+    text: string,
+    type: string,
+    image_url?: string
   }
   
   export interface NodesAndLinks{
@@ -96,7 +99,7 @@ function randomColor() {
                     id: index,
                         name: moment.podcast_title + ":" + moment.episode_title + ":" + moment.timestamp,
                     label: moment.podcast_title,
-                    type: 'podcast',
+                    type: moment.type||'podcast',
                     text: moment.text,
                     details: moment,
                     colors: nodeColors
@@ -121,7 +124,7 @@ function randomColor() {
               index++
               })
             
-            console.log('topicMap',topicMap)
+            // console.log('topicMap',topicMap)
 
         
           // Populating the links array next
