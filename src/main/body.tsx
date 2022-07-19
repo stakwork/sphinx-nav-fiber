@@ -29,7 +29,7 @@ export default function BodyComponent() {
     
     try{
       setLoading(true)
-      const d = await getGraphData(searchWord)  
+      const d = await getGraphData(searchWord, data)  
       setData(d)
       setLoading(false)    
     } catch (e) {

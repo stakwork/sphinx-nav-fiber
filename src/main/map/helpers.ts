@@ -51,7 +51,7 @@ function randomColor() {
     }
 
 
-  async function getGraphData(searchterm: string) {
+  async function getGraphData(searchterm: string, currentData: NodesAndLinks) {
 
     console.log('searchterm', searchterm)
     let index = 0
@@ -62,6 +62,8 @@ function randomColor() {
         const _nodes: Node[] = []
         const _links: Link[] = []
 
+        // const currentDataNodes = [...currentData.nodes]
+        // console.log('currentDataNodes',currentDataNodes)
         
         if(data.length) {
             const topicMap: any = {}
@@ -69,7 +71,6 @@ function randomColor() {
             console.log('data',data)
           // Populating nodes array with podcasts and constructing a topic map
             data.forEach(moment => {
-
                 
                 const topics = moment.topics
                 // @ts-ignore
@@ -83,15 +84,25 @@ function randomColor() {
                     }
                 })
 
+                // const dataMatchForPreviousSearch = currentDataNodes.find(f => {
+                //     if ((f.details?.link === moment.link &&
+                //         f.details?.timestamp === moment.timestamp )) {
+                //         return true
+                //     }
+                //     return false
+                // })
+
                 _nodes.push({
-                id: index,
-                    name: moment.podcast_title + ":" + moment.episode_title + ":" + moment.timestamp,
-                label: moment.podcast_title,
-                type: 'podcast',
-                text: moment.text,
-                details: moment,
-                colors: nodeColors
-                })
+                    id: index,
+                        name: moment.podcast_title + ":" + moment.episode_title + ":" + moment.timestamp,
+                    label: moment.podcast_title,
+                    type: 'podcast',
+                    text: moment.text,
+                    details: moment,
+                    colors: nodeColors
+                    })
+            
+               
                 index++
           })
           // Adds topic nodes
@@ -146,6 +157,9 @@ function randomColor() {
         //         target:n.target
         //         }
         // }))
+
+        console.log('_nodes', _nodes)
+        console.log('_links',_links)
         return {nodes: _nodes, links: _links}
     }
       catch (e) {
