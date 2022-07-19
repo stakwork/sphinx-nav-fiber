@@ -20,8 +20,8 @@ export default function KnowledgeMap(props: any) {
       setGraphData(props.data)
     setShowList(false)
     setTimeout(() => {
-      mapRef?.current?.zoomToFit(1500,100)
-    },800)
+      mapRef?.current?.zoomToFit(600,100)
+    },400)
   }, [props.data])
 
   // do audio list changes on node select 
