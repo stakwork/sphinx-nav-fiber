@@ -66,6 +66,8 @@ export default function UniverseBrowser(props: any) {
     return <ForceGraph3D
         ref={props.mapRef}
         graphData={props.graphData}
+        width={props.width}
+        height={props.height}
         nodeVisibility={() => {
             // hide nodes if not hovered
             return true

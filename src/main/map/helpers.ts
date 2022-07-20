@@ -54,7 +54,7 @@ function randomColor() {
     }
 
 
-  async function getGraphData(searchterm: string, currentData: NodesAndLinks) {
+  async function getGraphData(searchterm: string) {
 
     console.log('searchterm', searchterm)
     let index = 0
@@ -65,6 +65,7 @@ function randomColor() {
         const _nodes: Node[] = []
         const _links: Link[] = []
 
+        console.log('data',data)
         // const currentDataNodes = [...currentData.nodes]
         // console.log('currentDataNodes',currentDataNodes)
         
@@ -102,6 +103,7 @@ function randomColor() {
                     type: moment.type||'podcast',
                     text: moment.text,
                     details: moment,
+                    image_url: moment.image_url,
                     colors: nodeColors
                     })
             

@@ -1,25 +1,51 @@
-import {useState, useCallback, useRef, useEffect } from 'react'
+import {useState, useRef, useEffect, useLayoutEffect } from 'react'
 import styled from "styled-components";
 import KnowledgeMap from './map/knowledgeMap'
+import ContentBrowser from './map/contentBrowser'
 import './body.css'
 import { NodesAndLinks, getGraphData, getSampleData } from './map/helpers'
+
+const useRefDimensions = (ref:any) => {
+  const [dimensions, setDimensions] = useState({ width: 1, height: 2 })
+  useLayoutEffect(() => {
+    if (ref.current) {
+      const { current } = ref
+      const boundingRect = current.getBoundingClientRect()
+      const { width, height } = boundingRect
+      setDimensions({ width: Math.round(width), height: Math.round(height) })
+    }
+  }, [ref])
+  return dimensions
+}
 
 
 export default function BodyComponent() {
 
   const [searchTerm, setSearchTerm]: any = useState("btc");
+  const [currentSearchTerm, setCurrentSearchTerm]: any = useState("btc");
   const [data, setData]: any = useState<NodesAndLinks>({ nodes: [], links: [] })
   const [loading, setLoading]: any = useState(false)
+  const [focusedNode, setFocusedNode]: any = useState(null)
+  const [showList, setShowList]: any = useState(false)
   const mapRef: any = useRef(null)
+  
+  const windowRef: any = useRef(null)
+  const dimensions = useRefDimensions(windowRef)
 
   useEffect(() => {
     const d = getSampleData()
     setData(d)  
-  },[])
+  }, [])
   
-  
-  const onNodeClicked = (event: PointerEvent, data: any) => {
-    console.log('onNodeClicked.data: ', data) 
+  const onNodeClicked = (node: any) => {
+    console.log('node',node)
+    if (node.type === 'topic') {
+      getData(node.label)
+    }
+    else {
+      setFocusedNode(node)
+      setShowList(true)
+    }
   }
 
   async function getData(term?:string) {
@@ -27,58 +53,79 @@ export default function BodyComponent() {
     if (term) setSearchTerm(term)
     let searchWord = term || searchTerm
     
+    
     try{
       setLoading(true)
-      const d = await getGraphData(searchWord, data)  
+      // setRenderMap(false)
+      const d = await getGraphData(searchWord)  
+      setCurrentSearchTerm(searchWord)
       setData(d)
+      // setRenderMap(true)
       setLoading(false)    
     } catch (e) {
       console.log('e',e)
     }
     
   }
+
+
+  const searchComponent = <Input
+  style={{width:showList?'100%':'40%'}}
+  className={loading ? 'loading' : ''}
+  disabled={loading}
+  type="text"
+  value={searchTerm}
+  placeholder="Search ..."
+  onKeyPress={(event) => {
+    if (event.key === 'Enter') {
+      getData()
+    }
+  }}
+  onChange={e => {
+    const value = e.target.value
+    setSearchTerm(value)
+  }}
+  />
   
   return(
-    <Body>  
+    <Body ref={windowRef}>  
 
-      <Header>
-        <Title style={{width:260}}>
+      {!showList && <Header>
+        <Title style={{ width: 260 }}>
           BitcoinBrain
         </Title>
 
-        
-        <Input
-          style={{width:'40%'}}
-          className={loading ? 'loading' : ''}
-          disabled={loading}
-          type="text"
-          value={searchTerm}
-          placeholder="Search ..."
-          onKeyPress={(event) => {
-            if (event.key === 'Enter') {
-              getData()
-            }
-          }}
-          onChange={e => {
-            const value = e.target.value
-            setSearchTerm(value)
-          }}
-          />
+        {searchComponent}
 
-        <div style={{display:'flex', width:330}}>
+        <div style={{ display: 'flex', width: 330 }}>
           <Button>Info</Button>
           <Button>Contribute</Button>
         </div>
 
       </Header>
+      }
+
+    <ContentBrowser
+        currentSearchTerm={currentSearchTerm}
+        searchComponent={searchComponent}
+        mapRef={mapRef}
+        graphData={data}
+        visible={showList}
+        focusedNode={focusedNode}
+        setFocusedNode={setFocusedNode}
+        close={() => setShowList(false)}
+    />
       
       <KnowledgeMap
+        width={showList ? (dimensions.width - 433) : dimensions.width}
+        height={dimensions.height}
         mapRef={mapRef}
         getData={getData}
         data={data}
         loading={loading}
-        onNodeClicked={(e:any,data:any) => onNodeClicked(e, data)}
+        onNodeClicked={(e: any) => onNodeClicked(e)}
       />
+      
     </Body>
   )
 }
@@ -145,11 +192,9 @@ z-index:100;
 const Body = styled.div`
   flex:1;
   display:flex;
-  flex-direction:column;
+  // flex-direction:column;
   height:100%;
+  min-height:100%;
   width:100%;
-  overflow:auto;
-  background:#272c4b;
-  
-  
+  background:#f1f1f1;
 `

@@ -5,16 +5,20 @@ import ClipLoader from "react-spinners/ClipLoader";
 import { NodesAndLinks, Node, convertFromISOtoSeconds, sleep } from './helpers';
 
 interface ListContent {
+    searchComponent: any,
     graphData: NodesAndLinks,
     visible: boolean,
     close: any,
     focusedNode: any,
+    mapRef: any,
+    currentSearchTerm: string,
+    setFocusedNode:any
 }
 
 export default function ContentBrowser(props: ListContent) {
-    const { graphData, visible, focusedNode, close } = props
+    const { graphData, visible, focusedNode, close, mapRef, searchComponent, currentSearchTerm, setFocusedNode } = props
     const [selectedEpisodes, setSelectedEpisodes]: any = useState({})
-    const [selectedNode, setSelectedNode]: any = useState(null)
+    const [showAudioPlayer, setShowAudioPlayer]: any = useState(true)
 
     // do audio list changes on node select 
     useEffect(() => {
@@ -43,23 +47,31 @@ export default function ContentBrowser(props: ListContent) {
                         episodeElement.scrollIntoView({ behavior: "smooth", block: 'center', inline: 'center' })
                     }
                 }
+
+                clickTimestamp(focusedNode,podcastName,false)
   
-                if (!isSelected) {
-                    se[podcastName] = {
-                        ...se[podcastName],
-                        media_url: focusedNode.details.link,
-                        timestamp: focusedNode.details.timestamp,
-                        loaded: false
-                    }
-                    setSelectedEpisodes(se)
-                }
-                startPlayback(focusedNode.details.podcast_title, focusedNode.details.timestamp, focusedNode.details.link, true)
+                // if (!isSelected) {
+                //     se[podcastName] = {
+                //         ...se[podcastName],
+                //         media_url: focusedNode.details.link,
+                //         timestamp: focusedNode.details.timestamp,
+                //         loaded: false
+                //     }
+                //     setSelectedEpisodes(se)
+                // }
+                // startPlayback(focusedNode.details.podcast_title, focusedNode.details.timestamp, focusedNode.details.link, true)
             }
         })()
   
         // end async
     }, [focusedNode])
 
+    function resetAudioPlayer(){
+        setShowAudioPlayer(false)
+        setTimeout(() => {
+            setShowAudioPlayer(true)
+        },20)
+    }
 
     function startPlayback(podcastpodcastName: string, timestamp: string, audioUrl: string, skipBlock?: boolean) {
         // set audio at correct spot
@@ -92,7 +104,7 @@ export default function ContentBrowser(props: ListContent) {
             // }
             
             console.log('start play!')
-            audioElement.play()
+            // audioElement.play()
         }
     }
     
@@ -108,12 +120,42 @@ export default function ContentBrowser(props: ListContent) {
     //     }
     //   })
     // }
+
+    async function clickTimestamp(t:any, podcastName:string, isSelected:boolean){
+        const se: any = { ...selectedEpisodes }
+        // if (isSelected) {
+        //     startPlayback(t.podcast_title ,t.timestamp, t.media_url, true)
+        //   } else {
+            
+        // }
+
+        // setFocusedNode()
+
+        se[podcastName] = { ...t, loaded: false }
+        setSelectedEpisodes(se)  
+        startPlayback(t.podcast_title ,t.timestamp, t.media_url, true)
+        resetAudioPlayer()
+        console.log('t', t)
+        
+        // let coords = {
+        //     x: t.x,
+        //     y: t.y,
+        //     z: t.z
+        // }
+
+        // mapRef?.current?.zoomToFit(400, 20, (node: any) => {
+        //     console.log('node',node)
+        //     if (node?.details?.link === t.media_url) return true
+        //     return false
+        // })
+        
+    }
     
     
     function formatTimestamp(ts:string) {
-        if (ts.includes('-0')) {
-         ts = ts.replace('-0','')   
-        }
+        // if (ts.includes('-0')) {
+        //  ts = ts.replace('-0','')   
+        // }
 
         return ts
     }
@@ -171,63 +213,85 @@ export default function ContentBrowser(props: ListContent) {
              */}
         {Object.keys(groupedPodcasts).map((podcastName: string, i: number) => {
           const thisPodcast = groupedPodcasts[podcastName]
-          const { title, image_url, timestamps, timestamp } = thisPodcast
+          const { title, image_url, timestamps } = thisPodcast
 
           const selectedEpisode = selectedEpisodes[podcastName] ? selectedEpisodes[podcastName] : Object.keys(timestamps)[0]
           const audioUrl: any = selectedEpisode.media_url
+            
+          const playbackTopics = selectedEpisode?.topics?.map((topic:string) => {
+              return topic
+          }) || []
+            
           
           return <NodePanel key={i + 'ouahsf'} id={title}>
             <Col style={{
-              height: 290,
-              zIndex:2,
+              height: 210,
+                zIndex: 2,
+                  width: '100%',
+              alignItems:'center',
               boxShadow: '0 0 8px 0 rgba(0, 0, 0, 0.2)'
             }}>
-                    <CloseIt onClick={()=>close()}>
-                    x
-                    </CloseIt>
                     
-              <Col style={{alignItems:'center'}}>
-                      <Title>{title}</Title>
-                      
-                      <Avatar src={image_url || 'audio_default.svg'} style={{margin:20}} />
-                    <ReactAudioPlayer
-                      id={audioUrl}
-                      className={'audio-player'}
-                      autoPlay
-                    //   onPlay={(e) => {
-                    //     const el = e.target as HTMLAudioElement
-                    //     stopAllOtherPlayback(el)
-                    //   }}
-                      style={{
-                        width: '80%',
-                      }}
-                      src={audioUrl}
-                      onLoadedMetadata={() => {
-                        const se: any = { ...selectedEpisodes }
-                        se[podcastName] = { ...se[podcastName], timestamp: selectedEpisode.timestamp, media_url:audioUrl, loaded: true }
-                        setSelectedEpisodes(se)
-                        startPlayback(title, se[podcastName].timestamp, se[podcastName].media_url)
-                      }}
-                      controls
-                  />
-              </Col>
+                  <Row style={{ alignItems: 'center' }}>
+                      <Avatar src={image_url || 'audio_default.svg'} style={{ margin: 20 }} />
+                      <Col style={{paddingRight:20}}>
+                          <Title>{title}</Title>
+                          
+                          {showAudioPlayer ? <ReactAudioPlayer
+                              id={audioUrl}
+                              className={'audio-player'}
+                              autoPlay
+                              //   onPlay={(e) => {
+                              //     const el = e.target as HTMLAudioElement
+                              //     stopAllOtherPlayback(el)
+                              //   }}
+                              style={{
+                                  width: '100%',
+                                  marginTop: "20px",
+                              }}
+                              src={audioUrl}
+                              onLoadedMetadata={() => {
+                                  const se: any = { ...selectedEpisodes }
+                                  se[podcastName] = { ...se[podcastName], timestamp: selectedEpisode.timestamp, media_url: audioUrl, loaded: true }
+                                  setSelectedEpisodes(se)
+                                  startPlayback(title, se[podcastName].timestamp, se[podcastName].media_url)
+                              }}
+                              controls
+                          /> : <div style={{ height: 74 }} />}
+                          </Col>
+                  </Row>
+
+                  <Divider />
+                  
+                  <div style={{display:'flex',width:'100%', alignItems:'flex-start'}}>
+                      <div style={{padding:20}}>
+                          {timestamps && Object.keys(timestamps).length} results containing keyword "<Link style={{}}>{currentSearchTerm}</Link>"
+                          <div style={{fontSize:10,marginTop:8,cursor:'pointer'}}>Show all key words...</div>
+                      </div>
+                  </div>
+
+                  {/* popover showing all related terms */}
+              {playbackTopics.length > 0 && false && <div style={{ width: '90%' }}>
+                            {playbackTopics.map((tag: string, i: number) => {
+                                            let end = ','
+                                            if (i === playbackTopics.length -1) end = '.'
+                                return <><Link key={i} > {tag}</Link><span>{end}</span></>
+                            })} 
+                      </div> }
               </Col>
             
             {/* scrolling list */}  
             
-            <Col style={{ height:'calc(100% - 290px)'}}>
+            <Col style={{ height:'calc(100% - 210px)'}}>
                 <Scroller id={title + '_scroller'}>
                 {Object.keys(timestamps).map((episodeName: any, ii: number) => {
                     const thisPodcastTimestamps = timestamps[episodeName]
-                    const se: any = { ...selectedEpisodes }
                     const myKey = episodeName + '_' + i + '_' + ii
                     const defaultTimestamp = thisPodcastTimestamps[0]
 
                     return <div key={myKey}>
                         <EpisodePanel onClick={() => {
-                            // choose first timestamp
-                            se[podcastName] = { ...defaultTimestamp, loaded: false }
-                            setSelectedEpisodes(se)  
+                            clickTimestamp(defaultTimestamp, podcastName,false)
                         }} className={'tooltip'} id={title + episodeName}>
 
                             <div style={{marginRight:20}}>
@@ -247,23 +311,20 @@ export default function ContentBrowser(props: ListContent) {
                                 const isSelected = selected()
 
                                 return <Timestamp
-                                style={{fontWeight: isSelected ? 500 : 300,}}
+                                style={{fontWeight: isSelected ? 500 : 300,width:'100%'}}
                                     key={ii + 'timestamp'}
                                     onClick={(e) => {
                                         e.stopPropagation()
-                                        if (isSelected) {
-                                          startPlayback(t.podcast_title ,t.timestamp, t.media_url, true)
-                                        } else {
-                                          se[podcastName] = { ...t, loaded: false }
-                                          setSelectedEpisodes(se)  
-                                      }
+                                        clickTimestamp(t, podcastName, isSelected)
                                     }}>
-                                    {isSelected && selectedEpisodes[episodeName]?.loaded === false &&
-                                        <ClipLoader loading={true} size={20} />
-                                    }
-                                    <div style={{display:'flex',alignItems:'center'}}>
+                                     
+                                    <div style={{display:'flex',alignItems:'center',marginRight:10}}>
                                     {'' + formatTimestamp(t.timestamp)}
                                     </div>
+
+                                {isSelected && selectedEpisodes[episodeName]?.loaded === false &&
+                                    <ClipLoader loading={true} size={15}  />
+                                }
                                 </Timestamp>
                             })
                             }
@@ -310,31 +371,34 @@ export default function ContentBrowser(props: ListContent) {
             contentView = renderPodcast()
       }  
    
+      if (!visible) return <div/>
 
   return(
-      <div>
-          {visible&&
-              <ListWindow onClick={(e) => e.preventDefault()}> 
-                  {contentView}
+      <ListWindow onClick={(e) => e.preventDefault()}> 
+            <div style={{display:'flex',padding:20, position:'relative'}}>
+              {searchComponent}
+              
+              <CloseIt onClick={()=>close()}>
+                    x
+                    </CloseIt>
+            </div>
+            {contentView}
             </ListWindow>
-            }
-          
-    </div>
   )
 }
 
 const ListWindow = styled.div`
 display:flex;
 flex-direction:column;
-position:absolute;
-left:30px;
-top:80px;
-height:calc(100% - 100px);
-background:#ffffffdd;
-min-width:310px;
-width:410px;
+// position:absolute;
+// left:0px;
+// top:0px;
+height:100%;
+min-height:100%;
+background:#ffffff;
+min-width:433px;
+width:433px;
 z-index:30000;
-border-radius:10px;
 box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
 overflow:hidden;
 
@@ -344,6 +408,10 @@ const Divider = styled.div`
 height:1px;
 background:#ccc;
 width:95%;
+`
+const Link = styled.span`
+color:blue;
+cursor:pointer;
 `
 
 const Row = styled.div`
@@ -387,11 +455,15 @@ cursor:pointer;
 
 `
 const CloseIt = styled.div`
-margin:10px 10px 0;
+position:absolute;
+right:30px;
+top:24px;
+display:flex;
+align-items:center;
+justify-content:center;
 cursor:pointer;
 color:#000;
 padding:10px;
-border-radius:30px;
 width:fit-content;
 `
 
@@ -407,6 +479,8 @@ interface ImgProps {
 const Avatar = styled.div<ImgProps>`
 background-image:url(${p => p.src});
 background-size:contain;
+flex-grow:0;
+flex-shrink:0;
 min-width:70px;
 min-height:70px;
 width:100px;
@@ -432,6 +506,17 @@ text-overflow: ellipsis;
 display: -webkit-box;
 -webkit-line-clamp: 2;
 -webkit-box-orient: vertical;
+// font-family: 'Roboto';
+font-style: normal;
+font-weight: 400;
+font-size: 14px;
+line-height: 16px;
+/* or 114% */
+
+
+/* Primary Text 1 */
+
+color: #292C33;
 `
 
 const Timestamp = styled.div`

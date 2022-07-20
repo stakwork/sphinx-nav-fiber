@@ -4,54 +4,30 @@ import { useState, useEffect } from 'react';
 import { NodesAndLinks } from './helpers'
 
 import styled from "styled-components";
-import ContentBrowser from './contentBrowser'
 import UniverseBrowser from './universeBrowser';
 
 export default function KnowledgeMap(props: any) {
-  const { onNodeClicked, mapRef } = props
-  const [graphData, setGraphData]: any = useState<NodesAndLinks>({ nodes: [], links: [] })
-  const [focusedNode, setFocusedNode]:any = useState(null)
-  const [showList, setShowList]: any = useState(true)
+  const { onNodeClicked, mapRef, data } = props
+  // const [graphData, setGraphData]: any = useState<NodesAndLinks>({ nodes: [], links: [] })
 
    // update dataset
   useEffect(() => {
-      setGraphData(props.data)
-    setShowList(false)
+      // setGraphData(props.data)
+    
     setTimeout(() => {
       mapRef?.current?.zoomToFit(600,100)
     },400)
   }, [props.data])
 
-
-  
-  function clickNode(node: any) {
-    console.log('node',node)
-    if (node.type === 'topic') {
-      props.getData(node.label)
-    }
-    else {
-      setFocusedNode(node)
-      setShowList(true)
-    }
-  }
-
-  
-
   return <>
-
-    <ContentBrowser
-      graphData={graphData}
-      visible={showList}
-      focusedNode={focusedNode}
-      close={() => setShowList(false)}
-    />
-
     <UniverseBrowser
+      width={props.width}
+      height={props.height}
       key={'universe-browser'}
       id={'universe-browser'}
-      clickNode={clickNode}
+      clickNode={onNodeClicked}
       mapRef={mapRef}
-      graphData={graphData}
+      graphData={props.data}
     />
     </>
 }
