@@ -5,7 +5,8 @@ export interface Node {
     text?: string,
     label?: string,
     colors?: string[],
-    details?: Moment
+    details?: Moment,
+    image_url?: string
 }
 
 export interface Cluster {
@@ -26,7 +27,9 @@ export interface Cluster {
     podcast_title: string,
     timestamp: string,
     topics: string[],
-    text: string
+    text: string,
+    type: string,
+    image_url?: string
   }
   
   export interface NodesAndLinks{
@@ -51,17 +54,22 @@ function randomColor() {
     }
 
 
-  async function getGraphData(searchterm: string, currentData: NodesAndLinks) {
+  async function getGraphData(searchterm: string) {
 
     console.log('searchterm', searchterm)
-    let index = 0
+      let index = 0
+      
+      let url = `https://graphite-cactus-universe.wayscript.cloud/prediction/${searchterm}`
+
+    //   url = `https://ardent-pastry-basement.wayscript.cloud/prediction/${searchterm}`
 
     try {
-        const res = await fetch(`https://ardent-pastry-basement.wayscript.cloud/prediction/${searchterm}`)
+        const res = await fetch(url)
         const data: Moment[] = await res.json()
         const _nodes: Node[] = []
         const _links: Link[] = []
 
+        console.log('data',data)
         // const currentDataNodes = [...currentData.nodes]
         // console.log('currentDataNodes',currentDataNodes)
         
@@ -96,9 +104,10 @@ function randomColor() {
                     id: index,
                         name: moment.podcast_title + ":" + moment.episode_title + ":" + moment.timestamp,
                     label: moment.podcast_title,
-                    type: 'podcast',
+                    type: moment.type||'podcast',
                     text: moment.text,
                     details: moment,
+                    image_url: moment.image_url,
                     colors: nodeColors
                     })
             
@@ -121,7 +130,7 @@ function randomColor() {
               index++
               })
             
-            console.log('topicMap',topicMap)
+            // console.log('topicMap',topicMap)
 
         
           // Populating the links array next
