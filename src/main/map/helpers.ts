@@ -57,10 +57,14 @@ function randomColor() {
   async function getGraphData(searchterm: string) {
 
     console.log('searchterm', searchterm)
-    let index = 0
+      let index = 0
+      
+      let url = `https://graphite-cactus-universe.wayscript.cloud/prediction/${searchterm}`
+
+    //   url = `https://ardent-pastry-basement.wayscript.cloud/prediction/${searchterm}`
 
     try {
-        const res = await fetch(`https://ardent-pastry-basement.wayscript.cloud/prediction/${searchterm}`)
+        const res = await fetch(url)
         const data: Moment[] = await res.json()
         const _nodes: Node[] = []
         const _links: Link[] = []

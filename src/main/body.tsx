@@ -43,7 +43,9 @@ export default function BodyComponent() {
       getData(node.label)
     }
     else {
-      setFocusedNode(node)
+      setFocusedNode({
+        ...node
+      })
       setShowList(true)
     }
   }

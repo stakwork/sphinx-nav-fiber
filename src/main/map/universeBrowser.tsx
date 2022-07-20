@@ -1,8 +1,4 @@
 
-
-
-import {useState, useCallback, useRef, useEffect } from 'react'
-import styled from "styled-components";
 import { ForceGraph3D } from 'react-force-graph';
 import * as three from 'three'
 import SpriteText from 'three-spritetext'
@@ -63,7 +59,8 @@ export default function UniverseBrowser(props: any) {
         return line
     }
 
-    return <ForceGraph3D
+    return <>
+        <ForceGraph3D
         ref={props.mapRef}
         graphData={props.graphData}
         width={props.width}
@@ -91,6 +88,8 @@ export default function UniverseBrowser(props: any) {
         nodeThreeObject={(node: any) => {
             return nodeObject(node)
         }}
-    />
-    
+        />
+
+        {props.renderTooltip&&props.renderTooltip}
+        </>
 }
