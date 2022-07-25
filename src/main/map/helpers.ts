@@ -176,7 +176,7 @@ function randomColor() {
       }
   }
 
-
+// test
 function findNodeByName(name: string, _nodes: Array<Node>) : Node | undefined {
     return _nodes.find(candidate => candidate.name === name)
   }
