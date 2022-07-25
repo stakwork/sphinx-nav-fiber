@@ -12,7 +12,8 @@ export default function UniverseBrowser(props: any) {
         if (node.type === 'topic') {
             const sprite = new SpriteText(node.name);
             sprite.color = color;
-            sprite.textHeight = 10;
+            
+            sprite.textHeight = 10 + node.scale;
             return sprite;
         }
 

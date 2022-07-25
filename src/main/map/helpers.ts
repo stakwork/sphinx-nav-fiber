@@ -6,7 +6,8 @@ export interface Node {
     label?: string,
     colors?: string[],
     details?: Moment,
-    image_url?: string
+    image_url?: string,
+    scale?: number
 }
 
 export interface Cluster {
@@ -81,12 +82,11 @@ function randomColor() {
         const _nodes: Node[] = []
         const _links: Link[] = []
 
-        console.log('data',data)
         
         if(data.length) {
             const topicMap: any = {}
             
-            console.log('data',data)
+            // console.log('data',data)
           // Populating nodes array with podcasts and constructing a topic map
             data.forEach(async (moment) => {
                 
@@ -96,9 +96,17 @@ function randomColor() {
                 let nodeColors:any = []
                 topics.forEach((topic: string) => {
                     if (topic !== searchterm) {
-                        let c = randomColor()  
-                        nodeColors.push(c)
-                        topicMap[topic] = c
+                        
+                        if (!topicMap[topic]) {
+                            let c = randomColor()  
+                            nodeColors.push(c)
+                            topicMap[topic] = {
+                                color: c,
+                                scale: 0
+                            }
+                        } else {
+                            topicMap[topic].scale += 1 
+                        }
                     }
                 })
 
@@ -106,20 +114,6 @@ function randomColor() {
 
                 if (smallImage) {
                     smallImage = smallImage.replace('.jpg', '_s.jpg')
-                    // let res = await fetch(smallImage, {
-                    //     method: 'GET', // *GET, POST, PUT, DELETE, etc.
-                    //     mode: 'no-cors', // no-cors, *cors, same-origin
-                    //     headers: {
-                    //         'Access-Control-Allow-Origin': '*'
-                    //     }
-                    // })
-                    // let imgJson = await res.json()  
-                    // console.log("imgJson",imgJson)
-
-                    // let imgBlob = await res.blob() 
-                    // smallImage = await blobToBase64(imgBlob)
-
-                    // console.log('smallImage',smallImage)
                 }
 
                 _nodes.push({
@@ -139,20 +133,21 @@ function randomColor() {
           // Adds topic nodes
           Object.keys(topicMap)
               .forEach(topic => {
-            const color = topicMap[topic]
+                const color = topicMap[topic].color
+                const scale = topicMap[topic].scale
               const topicNode: Node = {
                 id: index,
                 name: topic,
                 label: topic,
                 type: 'topic',
                 text: topic,
+                scale: scale,
                 colors: [color]
               }
               _nodes.push(topicNode)
               index++
               })
             
-            // console.log('topicMap',topicMap)
 
         
           // Populating the links array next
@@ -171,26 +166,8 @@ function randomColor() {
             })
           })
         }
-        // console.log('_nodes', _nodes.map((n:any) => {
-        //     return {
-        //         id: n.id,
-        //         name: n.name,
-        //         type: n.type,
-        //         text: n.text,
-        //         details: n.details,
-        //         colors: n.colors,
-        //         label:n.label
-        //     }
-        // }))
-        // console.log('_links', _links.map((n: any) => {
-        //     return {
-        //         source: n.source,
-        //         target:n.target
-        //         }
-        // }))
 
         console.log('_nodes', _nodes)
-        console.log('_links',_links)
         return {nodes: _nodes, links: _links}
     }
       catch (e) {
