@@ -56,6 +56,16 @@ function randomColor() {
     }
 
 
+    const blobToBase64 = async (blob:any) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(blob);
+        return new Promise(resolve => {
+          reader.onloadend = () => {
+            resolve(reader.result);
+          };
+        });
+      };
+
   async function getGraphData(searchterm: string) {
 
     console.log('searchterm', searchterm)
@@ -72,15 +82,13 @@ function randomColor() {
         const _links: Link[] = []
 
         console.log('data',data)
-        // const currentDataNodes = [...currentData.nodes]
-        // console.log('currentDataNodes',currentDataNodes)
         
         if(data.length) {
             const topicMap: any = {}
             
             console.log('data',data)
           // Populating nodes array with podcasts and constructing a topic map
-            data.forEach(moment => {
+            data.forEach(async (moment) => {
                 
                 const topics = moment.topics
                 // @ts-ignore
@@ -94,18 +102,24 @@ function randomColor() {
                     }
                 })
 
-                // const dataMatchForPreviousSearch = currentDataNodes.find(f => {
-                //     if ((f.details?.link === moment.link &&
-                //         f.details?.timestamp === moment.timestamp )) {
-                //         return true
-                //     }
-                //     return false
-                // })
-
-                let smallImage = moment.image_url
+                let smallImage:any = moment.image_url
 
                 if (smallImage) {
-                    smallImage = smallImage.replace('.jpg','_m.jpg')
+                    smallImage = smallImage.replace('.jpg', '_s.jpg')
+                    // let res = await fetch(smallImage, {
+                    //     method: 'GET', // *GET, POST, PUT, DELETE, etc.
+                    //     mode: 'no-cors', // no-cors, *cors, same-origin
+                    //     headers: {
+                    //         'Access-Control-Allow-Origin': '*'
+                    //     }
+                    // })
+                    // let imgJson = await res.json()  
+                    // console.log("imgJson",imgJson)
+
+                    // let imgBlob = await res.blob() 
+                    // smallImage = await blobToBase64(imgBlob)
+
+                    // console.log('smallImage',smallImage)
                 }
 
                 _nodes.push({

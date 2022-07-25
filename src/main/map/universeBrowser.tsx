@@ -21,7 +21,7 @@ export default function UniverseBrowser(props: any) {
         if (!img) {
             switch (node.type) {
                 case 'youtube':
-                    img = 'youtube_logo.svg'
+                    img = 'youtube_default.jpeg'
                     break;
                 case 'twitter':
                     img = 'twitter_logo.svg'
@@ -31,10 +31,18 @@ export default function UniverseBrowser(props: any) {
                     break;
                 default:
                     img = 'audio_default.svg'
-              }    
-        }
-    
-        const map = new three.TextureLoader().load(node.image_url||'audio_default.svg');
+                }    
+        } 
+
+
+        const loader = new three.TextureLoader()
+
+        loader.requestHeader = {
+            'Access-Control-Allow-Origin': '*',    
+        } 
+          
+
+        const map = loader.load(img);
         const material = new three.SpriteMaterial({
             map: map,
         });
@@ -59,7 +67,7 @@ export default function UniverseBrowser(props: any) {
         return line
     }
 
-    return <>
+    return <div style={{height:'100%',width:'100%',position:'relative'}}>
         <ForceGraph3D
         ref={props.mapRef}
         graphData={props.graphData}
@@ -90,6 +98,20 @@ export default function UniverseBrowser(props: any) {
         }}
         />
 
-        {props.renderTooltip&&props.renderTooltip}
-        </>
+        {props.renderTooltip && props.renderTooltip}
+        
+        {!props.graphData?.nodes?.length && <div style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            height: '100%',
+            width: '100%',
+        }}>
+            <div>No results</div>
+        </div>
+        }
+        </div>
 }
