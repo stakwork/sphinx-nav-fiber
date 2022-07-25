@@ -388,7 +388,15 @@ export default function ContentBrowser(props: ListContent) {
         const { description, podcast_title, episode_title, link, timestamp } = focusedNode.details
         
         const secs = convertFromISOtoSeconds(timestamp)
-        let embeddedUrl = link.replace('watch?v=', 'embed/').split('?')[0] + `?start=${secs}&autoplay=1`
+
+        let embeddedUrl: string = ''
+
+        // to do
+        // if (link.includes('watch?app=desktop&')) {
+            
+        // }
+        
+        embeddedUrl = link.replace('watch?v=', 'embed/').split('?')[0] + `?start=${secs}&autoplay=1`
         
         return <div style={{height:'100%',width:'100%'}}>
                 <div style={{padding:10}}>
