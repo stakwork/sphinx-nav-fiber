@@ -39,18 +39,20 @@ export interface Cluster {
 
 function randomColor() {
 
-    let coolColors = [
-        '#ff80ed',
-        '#40e0d0',
-        '#ffa500',
-        '#101010',
-        '#8a2be2',
-        '#00ff7f',
-        '#ff7373'
-    ]
+    // let coolColors = [
+    //     '#ff80ed',
+    //     '#40e0d0',
+    //     '#ffa500',
+    //     '#101010',
+    //     '#8a2be2',
+    //     '#00ff7f',
+    //     '#ff7373'
+    // ]
 
-    let chosenIndex = Math.floor(Math.random()*coolColors.length)
-    return coolColors[chosenIndex]
+    // let chosenIndex = Math.floor(Math.random()*coolColors.length)
+    // return coolColors[chosenIndex]
+
+    return '#000000'
     }
 
 
@@ -100,6 +102,12 @@ function randomColor() {
                 //     return false
                 // })
 
+                let smallImage = moment.image_url
+
+                if (smallImage) {
+                    smallImage = smallImage.replace('.jpg','_m.jpg')
+                }
+
                 _nodes.push({
                     id: index,
                         name: moment.podcast_title + ":" + moment.episode_title + ":" + moment.timestamp,
@@ -107,7 +115,7 @@ function randomColor() {
                     type: moment.type||'podcast',
                     text: moment.text,
                     details: moment,
-                    image_url: moment.image_url,
+                    image_url: smallImage,
                     colors: nodeColors
                     })
             
