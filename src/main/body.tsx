@@ -21,9 +21,10 @@ const useRefDimensions = (ref:any) => {
 
 export default function BodyComponent() {
 
-  const [searchTerm, setSearchTerm]: any = useState("btc");
-  const [currentSearchTerm, setCurrentSearchTerm]: any = useState("btc");
+  const [searchTerm, setSearchTerm]: any = useState("");
+  const [currentSearchTerm, setCurrentSearchTerm]: any = useState("");
   const [data, setData]: any = useState<NodesAndLinks>({ nodes: [], links: [] })
+  const [dataFilter, setDataFilter]: any = useState([])
   const [loading, setLoading]: any = useState(false)
   const [focusedNode, setFocusedNode]: any = useState(null)
   const [showList, setShowList]: any = useState(false)
@@ -32,10 +33,10 @@ export default function BodyComponent() {
   const windowRef: any = useRef(null)
   const dimensions = useRefDimensions(windowRef)
 
-  useEffect(() => {
-    const d = getSampleData()
-    setData(d)  
-  }, [])
+  // useEffect(() => {
+  //   const d = getSampleData()
+  //   setData(d)  
+  // }, [])
   
   const onNodeClicked = (node: any) => {
     console.log('node',node)
@@ -61,6 +62,7 @@ export default function BodyComponent() {
       // setRenderMap(false)
       const d = await getGraphData(searchWord)  
       setCurrentSearchTerm(searchWord)
+      setDataFilter([searchWord])
       setData(d)
       // setRenderMap(true)
       setLoading(false)    
@@ -107,7 +109,9 @@ export default function BodyComponent() {
       </Header>
       }
 
-    <ContentBrowser
+      <ContentBrowser
+        dataFilter={dataFilter}
+        setDataFilter={setDataFilter}
         currentSearchTerm={currentSearchTerm}
         searchComponent={searchComponent}
         mapRef={mapRef}

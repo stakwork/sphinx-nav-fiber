@@ -1,14 +1,11 @@
 
-import { useState, useEffect } from 'react';
-
-import { NodesAndLinks } from './helpers'
+import { useEffect } from 'react';
 
 import styled from "styled-components";
 import UniverseBrowser from './universeBrowser';
 
 export default function KnowledgeMap(props: any) {
-  const { onNodeClicked, mapRef, data } = props
-  // const [graphData, setGraphData]: any = useState<NodesAndLinks>({ nodes: [], links: [] })
+  const { onNodeClicked, mapRef } = props
 
    // update dataset
   useEffect(() => {

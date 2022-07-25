@@ -6,6 +6,8 @@ import { NodesAndLinks, Node, convertFromISOtoSeconds, sleep } from './helpers';
 import Modal from '../sphinxUI/modal';
 
 interface ListContent {
+    dataFilter: any,
+    setDataFilter: Function,
     searchComponent: any,
     graphData: NodesAndLinks,
     visible: boolean,
@@ -17,10 +19,10 @@ interface ListContent {
 }
 
 export default function ContentBrowser(props: ListContent) {
-    const { graphData, visible, focusedNode, close, mapRef, searchComponent, currentSearchTerm, setFocusedNode } = props
+    const { graphData, visible, focusedNode, close, mapRef, searchComponent, currentSearchTerm, setFocusedNode, dataFilter, setDataFilter } = props
     const [selectedEpisodes, setSelectedEpisodes]: any = useState({})
-    const [showAudioPlayer, setShowAudioPlayer]: any = useState(true)
     const [modalContent, setModalContent]: any = useState(null)
+    const [yesRender, setYesRender]: any = useState(true)
 
     // do audio list changes on node select 
     useEffect(() => {
@@ -51,14 +53,16 @@ export default function ContentBrowser(props: ListContent) {
                 clickTimestamp(nodeWithDetails,podcastName)
             }
         })()
+
+        doResetRender()
   
         // end async
     }, [focusedNode])
 
-    function resetAudioPlayer(){
-        setShowAudioPlayer(false)
+    function doResetRender(){
+        setYesRender(false)
         setTimeout(() => {
-            setShowAudioPlayer(true)
+            setYesRender(true)
         },20)
     }
 
@@ -115,7 +119,7 @@ export default function ContentBrowser(props: ListContent) {
 
         se[podcastName] = { ...t, loaded: false }
         setSelectedEpisodes(se)  
-        resetAudioPlayer()
+        doResetRender()
         console.log('t', t)
         
     }
@@ -193,11 +197,18 @@ export default function ContentBrowser(props: ListContent) {
           const selectedEpisode = selectedEpisodes[podcastName] ? selectedEpisodes[podcastName] : Object.keys(timestamps)[0]
             const audioUrl: any = selectedEpisode.media_url
             
-            // console.log('thisPodcast',thisPodcast)
-            // const allTopics = Object.keys(thisPodcast.timestamps).map((keyna:string) => {
-            //     const ep = thisPodcast.timestamps[keyna]
-            //     return ep.topics
-            // })
+            
+            const allTopics:any = []
+            
+            Object.keys(thisPodcast.timestamps).forEach((keyna: string) => {
+                const ts = thisPodcast.timestamps[keyna]
+                ts.forEach((d:any) => {
+                    d.topics.forEach((t:string) => {
+                        if (!allTopics.includes(t)) allTopics.push(t)
+                    })
+                })
+            })
+
             
           const playbackTopics = selectedEpisode?.topics?.map((topic:string) => {
               return topic
@@ -213,7 +224,7 @@ export default function ContentBrowser(props: ListContent) {
           
           return <NodePanel key={i + 'ouahsf'} id={title}>
             <Col style={{
-              height: 210,
+              height: 255,
                 zIndex: 2,
                 width: '100%',
               alignItems:'center',
@@ -225,7 +236,7 @@ export default function ContentBrowser(props: ListContent) {
                       <Col style={{paddingRight:20}}>
                           <Title>{title}</Title>
                           
-                          {showAudioPlayer ? <ReactAudioPlayer
+                          {yesRender ? <ReactAudioPlayer
                               id={audioUrl}
                               className={'audio-player'}
                               autoPlay
@@ -252,37 +263,56 @@ export default function ContentBrowser(props: ListContent) {
 
                   <Divider />
                   
-                  <div style={{display:'flex',width:'100%', alignItems:'flex-start'}}>
-                      <div style={{padding:20, color: '#292c33'}}>
-                          {tsCount} results containing keyword "<Link style={{}}>{currentSearchTerm}</Link>"
-                          <div
-                              onClick={() => {
-                                  const el = (<div>
-                                      {playbackTopics.length > 0 &&
-                                          playbackTopics.map((tag: string, i: number) => {
-                                                                let end = ','
-                                                                if (i === playbackTopics.length -1) end = '.'
-                                                    return <span key={i}><Link> {tag}</Link><span>{end}</span></span>
-                                                })}
-                                  </div>)
-                                  setModalContent(el)
-                              }}
-                              style={{ fontSize: 10, marginTop: 8, cursor: 'pointer' }}>Show all key words...</div>
+                  <div style={{display:'flex',flexDirection:'column',width:'100%', alignItems:'flex-start'}}>
+                      <div style={{padding:'20px 20px 5px', color: '#292c33'}}>
+                              {tsCount} clips in this podcast contain keyword "<Link style={{}}>{currentSearchTerm}</Link>"
                       </div>
+
+                      <Row style={{overflowX:'auto',flexGrow:0,flexShrink:0, padding:10, width:'calc(100% - 20px)'}}>
+                          {allTopics.length > 0 &&
+                                  allTopics.sort((a:string, b:string)=>{
+                                      if (a === currentSearchTerm) return -1
+                                      return 1
+                                  }).map((tag: string, i: number) => {
+                                      
+                                      const selected = dataFilter.includes(tag)
+                                        return <Pill
+                                            onClick={() => {
+                                                let filter = [...dataFilter]
+                                                if (selected) {
+                                                    const indx = filter.findIndex(f=>f===tag)
+                                                    filter.splice(indx,1)
+                                                } else {
+                                                    filter.push(tag)
+                                                }
+                                                setDataFilter(filter)
+                                            }}
+                                            selected={selected} key={i}>
+                                            {tag}
+                                            </Pill>
+                                        })}
+                          </Row>
                   </div>
 
-                  {/* popover showing all related terms */}
               
               </Col>
             
             {/* scrolling list */}  
             
-            <Col style={{ height:'calc(100% - 210px)'}}>
+            <Col style={{ height:'calc(100% - 255px)'}}>
                 <Scroller id={title + '_scroller'}>
                 {Object.keys(timestamps).map((episodeName: any, ii: number) => {
                     const thisPodcastTimestamps = timestamps[episodeName]
                     const myKey = episodeName + '_' + i + '_' + ii
                     const defaultTimestamp = thisPodcastTimestamps[0]
+                    let episodeImg = defaultTimestamp.image_url
+                        
+                    if (!(episodeImg.includes('_s.jpg') ||
+                        episodeImg.includes('_m.jpg') ||
+                        episodeImg.includes('_l.jpg'))){
+                            episodeImg = episodeImg.replace('.jpg', '_s.jpg')
+                        }
+
 
                     return <div key={myKey}>
                         <EpisodePanel onClick={() => {
@@ -293,7 +323,7 @@ export default function ContentBrowser(props: ListContent) {
                             <div style={{marginRight:20}}>
                                 <Avatar
                                     style={{height:40,width:40}}
-                                    src={defaultTimestamp.image_url || 'audio_default.svg'} />
+                                    src={episodeImg || image_url || 'audio_default.svg'} />
                             </div>
                             
                             <div style={{overflow:'hidden', maxWidth:'calc(100% - 90px)'}}>
@@ -353,9 +383,36 @@ export default function ContentBrowser(props: ListContent) {
     }  
     
     function renderYoutube() {
-        return <div>
-            Youtube
-        </div>
+        if (!focusedNode||!yesRender) return null
+
+        const { description, podcast_title, episode_title, link, timestamp } = focusedNode.details
+        
+        const secs = convertFromISOtoSeconds(timestamp)
+        let embeddedUrl = link.replace('watch?v=', 'embed/').split('?')[0] + `?start=${secs}&autoplay=1`
+        
+        return <div style={{height:'100%',width:'100%'}}>
+                <div style={{padding:10}}>
+                    <Title style={{marginBottom:5}}>
+                        {podcast_title}
+                    </Title>
+                    
+                    <Subtitle>
+                    {episode_title}
+                    </Subtitle>
+                </div>
+                
+
+                <iframe className="youtube-embedded"
+                    height="300px" width="100%"
+                    src={embeddedUrl} title="ViewVideo" frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+                >
+                </iframe>
+                
+                <Desc>
+                    {description}
+                </Desc>
+            </div>
     }
 
     function renderTwitter() {
@@ -528,6 +585,35 @@ line-height: 16px;
 
 /* Primary Text 1 */
 
+`
+
+const Desc = styled.div`
+font-size:14px;
+width:calc(100% - 20px);
+height:100%;
+padding:10px;
+background:#f1f1f1;
+text-align:center;
+`
+interface PillProps {
+    selected: boolean;
+  }
+const Pill = styled.div<PillProps>`
+padding:10px 20px;
+border-radius:20px;
+transition: all 0.8s;
+flex-grow:0;
+flex-shrink:0;
+cursor:pointer;
+margin-right:10px;
+background:${p => p.selected ? '#CDE0FF' : '#F2F3F5'};
+color:${p=>p.selected?'#5D8FDD':'#8E969C'};
+display:flex;
+justify-content:center;
+align-items:center;
+font-weight: 500;
+font-size: 12px;
+line-height: 14px;
 `
 
 const Timestamp = styled.div`
