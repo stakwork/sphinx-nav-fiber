@@ -215,7 +215,7 @@ export default function ContentBrowser(props: ListContent) {
             <Col style={{
               height: 210,
                 zIndex: 2,
-                  width: '100%',
+                width: '100%',
               alignItems:'center',
               boxShadow: '0 0 8px 0 rgba(0, 0, 0, 0.2)'
             }}>
