@@ -56,17 +56,6 @@ function randomColor() {
     return '#000000'
     }
 
-
-    const blobToBase64 = async (blob:any) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(blob);
-        return new Promise(resolve => {
-          reader.onloadend = () => {
-            resolve(reader.result);
-          };
-        });
-      };
-
   async function getGraphData(searchterm: string) {
 
     console.log('searchterm', searchterm)

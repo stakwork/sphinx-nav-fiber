@@ -61,7 +61,11 @@ export default function UniverseBrowser(props: any) {
     }
       
     const linkObject = () => {
-        const material = new three.LineBasicMaterial({ color: '#000' });
+        const material = new three.LineBasicMaterial({
+            opacity: 0.3,
+            transparent:true,
+            color: '#000000'
+        });
         const geometry = new three.BufferGeometry();
         const line = new three.Line(geometry, material);
     
