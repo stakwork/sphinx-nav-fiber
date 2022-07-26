@@ -1,13 +1,29 @@
-
+import React, {useRef,useEffect} from 'react';
 import { ForceGraph3D } from 'react-force-graph';
 import * as three from 'three'
 import SpriteText from 'three-spritetext'
 
-export default function UniverseBrowser(props: any) {
+function UniverseBrowser(props: any) {
+    const mapRef: any = useRef(null)
+
+     // update dataset
+    useEffect(() => {
+        setTimeout(() => {
+            mapRef?.current?.zoomToFit(600,100)
+        },400)
+    }, [props.graphData])
     
     const nodeObject = (node: any) => {
 
         let color = (node.colors && node.colors[0]) ? node.colors[0] : 'tomato'
+
+        if (node.type === 'sun') {
+            const sprite = new SpriteText(node.name);
+            sprite.color = color;
+            sprite.textHeight = 10 + node.scale;
+
+            return sprite;
+        }
         
         if (node.type === 'topic') {
             const sprite = new SpriteText(node.name);
@@ -42,19 +58,12 @@ export default function UniverseBrowser(props: any) {
             'Access-Control-Allow-Origin': '*',    
         } 
           
-
         const map = loader.load(img);
         const material = new three.SpriteMaterial({
             map: map,
         });
         const sprite = new three.Sprite(material);
     
-        // const sprite = new three.Sprite(new three.SpriteMaterial({
-        //   color: color,
-        //   transparent: true,
-        //   fog: false
-        // }));
-        
         sprite.scale.set(20, 20, 1);
     
         return sprite
@@ -62,7 +71,7 @@ export default function UniverseBrowser(props: any) {
       
     const linkObject = () => {
         const material = new three.LineBasicMaterial({
-            opacity: 0.3,
+            opacity: 0.6,
             transparent:true,
             color: '#000000'
         });
@@ -74,10 +83,11 @@ export default function UniverseBrowser(props: any) {
 
     return <div style={{height:'100%',width:'100%',position:'relative'}}>
         <ForceGraph3D
-        ref={props.mapRef}
+        ref={mapRef}
         graphData={props.graphData}
         width={props.width}
         height={props.height}
+        onNodeHover={props.onNodeHovered}
         nodeVisibility={() => {
             // hide nodes if not hovered
             return true
@@ -89,12 +99,17 @@ export default function UniverseBrowser(props: any) {
         rendererConfig={{
             stencil: false,
             powerPreference: 'high-performance',
-            precision: 'highp',
+            precision: 'lowp',
         }}
         warmupTicks={0}
         nodeLabel={'label'}
         enableNodeDrag={false}
-        onNodeClick={(node: any) => props.clickNode(node)}
+        onNodeClick={(node: any) => {
+            if (node.type === 'sun') {
+                mapRef?.current?.zoomToFit(600,100)
+                }
+            props.onNodeClicked(node)
+        }}
         backgroundColor={'#f1f1f1'}
         nodeAutoColorBy="type"
         linkThreeObject={linkObject}
@@ -102,8 +117,6 @@ export default function UniverseBrowser(props: any) {
             return nodeObject(node)
         }}
         />
-
-        {props.renderTooltip && props.renderTooltip}
         
         {!props.graphData?.nodes?.length && <div style={{
             display: 'flex',
@@ -120,3 +133,23 @@ export default function UniverseBrowser(props: any) {
         }
         </div>
 }
+
+function areEqual(prevProps:any, nextProps:any) {
+    /*
+    return true if passing nextProps to render would return
+    the same result as passing prevProps to render,
+    otherwise return false
+    */
+    
+    const {width, height, graphData} = prevProps
+
+    if (width !== nextProps.width
+        || height !== nextProps.height
+        || graphData !== nextProps.graphData) {
+        return false
+    }
+    
+    return true
+  }
+
+export default React.memo(UniverseBrowser,areEqual);
