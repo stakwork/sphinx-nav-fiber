@@ -71,6 +71,7 @@ function randomColor() {
         const _nodes: Node[] = []
         const _links: Link[] = []
 
+       
         
         if(data.length) {
             const topicMap: any = {}
@@ -94,7 +95,7 @@ function randomColor() {
                                 scale: 0
                             }
                         } else {
-                            topicMap[topic].scale += 1 
+                            topicMap[topic].scale += 2 
                         }
                     }
                 })
@@ -155,6 +156,18 @@ function randomColor() {
             })
           })
         }
+
+         // make sun node of search term
+         _nodes.push({
+            id: index,
+            name: searchterm,
+            label: searchterm,
+            type: 'sun',
+            text: searchterm,
+            scale: 80,
+            colors: ['#ff0000']
+          })
+
 
         console.log('_nodes', _nodes)
         return {nodes: _nodes, links: _links}

@@ -1,7 +1,8 @@
 import {useState, useRef, useEffect, useLayoutEffect } from 'react'
 import styled from "styled-components";
-import KnowledgeMap from './map/knowledgeMap'
+import UniverseBrowser from './map/universeBrowser'
 import ContentBrowser from './map/contentBrowser'
+import MouseTracker from './map/mouseTracker'
 import './body.css'
 import { NodesAndLinks, getGraphData, getSampleData } from './map/helpers'
 
@@ -27,20 +28,20 @@ export default function BodyComponent() {
   const [dataFilter, setDataFilter]: any = useState([])
   const [loading, setLoading]: any = useState(false)
   const [focusedNode, setFocusedNode]: any = useState(null)
+  const [hoveredNode, setHoveredNode]: any = useState(null)
   const [showList, setShowList]: any = useState(false)
-  const mapRef: any = useRef(null)
-  
+    
   const windowRef: any = useRef(null)
   const dimensions = useRefDimensions(windowRef)
 
-  // useEffect(() => {
-  //   const d = getSampleData()
-  //   setData(d)  
-  // }, [])
   
   const onNodeClicked = (node: any) => {
-    console.log('node',node)
-    if (node.type === 'topic') {
+    setHoveredNode(null)
+    console.log('node', node)
+    if (node.type === 'sun') {
+      // nothing
+    }
+    else if (node.type === 'topic') {
       getData(node.label)
     }
     else {
@@ -48,6 +49,14 @@ export default function BodyComponent() {
         ...node
       })
       setShowList(true)
+    }
+  }
+
+  const onNodeHovered = (node: any, prevNode: any) => {
+    if (hoveredNode && hoveredNode.id === node.id) {
+      //nothing
+    } else {
+      setHoveredNode(node)
     }
   }
 
@@ -90,6 +99,8 @@ export default function BodyComponent() {
     setSearchTerm(value)
   }}
   />
+
+  const menuWidth = 433
   
   return(
     <Body ref={windowRef}>  
@@ -114,23 +125,46 @@ export default function BodyComponent() {
         setDataFilter={setDataFilter}
         currentSearchTerm={currentSearchTerm}
         searchComponent={searchComponent}
-        mapRef={mapRef}
         graphData={data}
         visible={showList}
         focusedNode={focusedNode}
         setFocusedNode={setFocusedNode}
         close={() => setShowList(false)}
-    />
-      
-      <KnowledgeMap
-        width={showList ? (dimensions.width - 433) : dimensions.width}
-        height={dimensions.height}
-        mapRef={mapRef}
-        getData={getData}
-        data={data}
-        loading={loading}
-        onNodeClicked={(e: any) => onNodeClicked(e)}
       />
+      
+      {/* <div onMouseMove={(e) => {
+        if (!hoveredNode) return
+        let x = e.pageX
+        let y = e.pageY
+
+        if (showList) {
+          x = x - menuWidth
+        }
+        
+        setMousePosition({x,y})
+      }} style={{ position:'relative' }}>
+        
+        <div style={{position:'absolute',pointerEvents:'none',width:100,height:100,background:'red',left:mousePosition.x,top:mousePosition.y,zIndex:100}}>
+
+        </div> */}
+
+      <MouseTracker
+        subtractWidth={showList ? menuWidth : 0}
+        dimensions={dimensions}
+        hoveredNode={hoveredNode}
+      >
+          <UniverseBrowser
+            width={showList ? (dimensions.width - menuWidth) : dimensions.width}
+            height={dimensions.height}
+            key={'universe-browser'}
+            id={'universe-browser'}
+            onNodeClicked={onNodeClicked}
+            onNodeHovered={onNodeHovered}
+            graphData={data}
+            />
+          </MouseTracker>
+        
+        {/* </div> */}
       
     </Body>
   )

@@ -1,4 +1,4 @@
-import {useState, useEffect } from 'react'
+import {memo, useState, useEffect } from 'react'
 import styled from "styled-components";
 import ReactAudioPlayer from 'react-audio-player';
 import ClipLoader from "react-spinners/ClipLoader";
@@ -13,13 +13,12 @@ interface ListContent {
     visible: boolean,
     close: any,
     focusedNode: any,
-    mapRef: any,
     currentSearchTerm: string,
     setFocusedNode:any
 }
 
 export default function ContentBrowser(props: ListContent) {
-    const { graphData, visible, focusedNode, close, mapRef, searchComponent, currentSearchTerm, setFocusedNode, dataFilter, setDataFilter } = props
+    const { graphData, visible, focusedNode, close, searchComponent, currentSearchTerm, setFocusedNode, dataFilter, setDataFilter } = props
     const [selectedEpisodes, setSelectedEpisodes]: any = useState({})
     const [modalContent, setModalContent]: any = useState(null)
     const [yesRender, setYesRender]: any = useState(true)
@@ -609,7 +608,6 @@ interface PillProps {
 const Pill = styled.div<PillProps>`
 padding:10px 20px;
 border-radius:20px;
-transition: all 0.8s;
 flex-grow:0;
 flex-shrink:0;
 cursor:pointer;
