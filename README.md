@@ -1,6 +1,6 @@
-# Getting Started with Create React App
+Connection to the ec2 instance with the sphinx-nav code (ask for the pem key)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+`ssh -i ./pemFiles/knowlege-graph-api.pem ec2-user@3.80.198.201`
 
 ## Available Scripts
 
