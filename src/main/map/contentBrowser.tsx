@@ -306,7 +306,7 @@ export default function ContentBrowser(props: ListContent) {
                     const defaultTimestamp = thisPodcastTimestamps[0]
                     let episodeImg = defaultTimestamp.image_url
                         
-                    if (!(episodeImg.includes('_s.jpg') ||
+                    if (episodeImg && !(episodeImg.includes('_s.jpg') ||
                         episodeImg.includes('_m.jpg') ||
                         episodeImg.includes('_l.jpg'))){
                             episodeImg = episodeImg.replace('.jpg', '_s.jpg')
@@ -326,7 +326,7 @@ export default function ContentBrowser(props: ListContent) {
                             </div>
                             
                             <div style={{overflow:'hidden', maxWidth:'calc(100% - 90px)'}}>
-                            <Subtitle>{episodeName}</Subtitle>
+                            <EpisodeTitle>{episodeName}</EpisodeTitle>
                             </div>
                       
                         </EpisodePanel>
@@ -342,33 +342,59 @@ export default function ContentBrowser(props: ListContent) {
 
                                 const isSelected = selected()
 
+                                const color = isSelected ? '#5D8FDD' : '#3C3F41'
+
+                                const selectedStyle = isSelected ? {
+                                    fontWeight: 500,
+                                    background: '#cde0ff4d',
+                                    color: '#5D8FDD !important'
+                                } : {
+                                        fontWeight:  300,
+                                        background: '#fff',
+                                }
+
                                 const errorStyle = isError() ? {
                                     color: 'red'
                                 } : {}
 
-                                return <div key={ii + 'timestamp'}><Timestamp
-                                style={{fontWeight: isSelected ? 500 : 300,width:'100%', ...errorStyle}}
+                                return <Timestamp
+                                    key={ii + 'timestamp'}
+                                    style={{
+                                        width: '100%',
+                                        ...selectedStyle, ...errorStyle
+                                    }}
                                     // key={ii + 'timestamp'}
                                     onClick={(e) => {
                                         e.stopPropagation()
                                         clickTimestamp(t, podcastName)
                                     }}>
-                                    {isSelected&&selectedEpisodes[podcastName]?.loaded === false ?
-                                        <ClipLoader loading={true} size={10} /> :
-                                        <span className="material-icons" style={{ fontSize: 15 }}>{isError() ? 'error' : 'access_time'}</span>
-                                    }
-                                     
-                                    <div style={{display:'flex',alignItems:'center',marginLeft:8}}>
-                                    {'' + formatTimestamp(t.timestamp)}
+                                    <div style={{display:'flex'}}>
+                                        {isSelected&&selectedEpisodes[podcastName]?.loaded === false ?
+                                            <ClipLoader color={color} loading={true} size={14} /> :
+                                            <span className="material-icons" style={{
+                                                color,
+                                                fontSize: 18
+                                            }}>{isError() ? 'error' : isSelected ? 'play_arrow' : 'access_time'}</span>
+                                        }
+                                    </div>
+
+                                    <div style={{ width: 10 }} />
+
+                                    <div>
+                                        <Time style={{color}}>
+                                            {'' + formatTimestamp(t.timestamp)}
+                                        </Time>
+                                        <Transcript style={{color}}>
+                                            {t.text} test test test
+                                        </Transcript>
                                     </div>
 
                                 </Timestamp>
-                                    <Divider style={{width:'100%'}} />
-                                    </div>
+
                             })
                             }
                         </TimestampEnv>
-                        
+                        <Divider style={{width:'100%'}} />
                       </div>
                   })}
                   
@@ -484,6 +510,31 @@ overflow:hidden;
 
 `
 
+const Time = styled.div`
+font-weight: 400;
+font-size: 14px;
+line-height: 18px;
+/* or 129% */
+
+
+/* Text 2 */
+
+color: #3C3F41;
+`
+
+const Transcript = styled.div`
+
+font-weight: 400;
+font-size: 13px;
+line-height: 18px;
+/* or 138% */
+
+
+/* Main bottom icons */
+
+color: #5F6368;
+`
+
 const Divider = styled.div`
 height:1px;
 background:#ccc;
@@ -543,12 +594,6 @@ cursor:pointer;
 color:#000;
 padding:10px;
 width:fit-content;
-`
-
-
-const Padding = styled.div`
-padding:30px;
-overflow:hidden;
 `
 
 interface ImgProps {
@@ -624,13 +669,12 @@ line-height: 14px;
 
 const Timestamp = styled.div`
 display:flex;
-align-items:center;
-padding:5px 5px 8px;
+padding:8px;
 display:flex;
 font-size:14px;
 width:100%;
 cursor:pointer;
-padding-left:20px;
+padding-left:76px;
 &:hover{
   background:#f1f1f1;
   opacity:1;
@@ -638,6 +682,20 @@ padding-left:20px;
 }
 `
 const TimestampEnv = styled.div`
-background:#eee;
-padding:5px 5px 0;
+margin-bottom:20px;
 `
+const EpisodeTitle = styled.div`
+
+font-weight: 400;
+font-size: 14px;
+line-height: 18px;
+/* or 129% */
+
+display: flex;
+align-items: center;
+
+/* Primary Text 1 */
+
+color: #292C33;
+`
+

@@ -34,6 +34,10 @@ export default function BodyComponent() {
   const windowRef: any = useRef(null)
   const dimensions = useRefDimensions(windowRef)
 
+  // use sample data
+  useEffect(() => {
+    setData(getSampleData())
+  }, [])
   
   const onNodeClicked = (node: any) => {
     setHoveredNode(null)
@@ -51,6 +55,7 @@ export default function BodyComponent() {
       setShowList(true)
     }
   }
+
 
   const onNodeHovered = (node: any, prevNode: any) => {
     if (hoveredNode && hoveredNode.id === node.id) {

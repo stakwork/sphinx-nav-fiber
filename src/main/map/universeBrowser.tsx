@@ -101,8 +101,8 @@ function UniverseBrowser(props: any) {
             powerPreference: 'high-performance',
             precision: 'lowp',
         }}
+        nodeLabel={() => ''}
         warmupTicks={0}
-        nodeLabel={'label'}
         enableNodeDrag={false}
         onNodeClick={(node: any) => {
             if (node.type === 'sun') {
