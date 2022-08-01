@@ -7,7 +7,7 @@ export default function MouseTracker(props: any) {
     const [mousePosition, setMousePosition]: any = useState({ x: 0, y: 0 })
     
     const tooltipW = 300
-    const tooltipH = 180
+    const tooltipH = 150
     const yPadding = 5
 
     let xOffset = 0
@@ -15,21 +15,22 @@ export default function MouseTracker(props: any) {
 
     if (dimensions.height < mousePosition.y + tooltipH) {
         yOffset = tooltipH*-1
-    } else if (0 > mousePosition.y - tooltipH) {
-        // yOffset = tooltipH
     }
 
-    if (dimensions.Width < mousePosition.x + tooltipW/2) {
-        xOffset = tooltipW/2*-1
+    if (dimensions.width < mousePosition.x + tooltipW/2) {
+        xOffset = (tooltipW/2) * -1
     } else if (0 > mousePosition.x - tooltipW/2) {
         xOffset = tooltipW/2
     }
 
     const type = hoveredNode?.type
     let tooltipImg = hoveredNode?.image_url
+    let podcastTitle = hoveredNode?.details?.podcast_title
     let title = hoveredNode?.details?.episode_title
     let description = hoveredNode?.details?.description
     let guest = hoveredNode?.details?.guest
+    let text = hoveredNode?.details?.text
+    let timestamp = hoveredNode?.details?.timestamp
 
     if (type && !tooltipImg) {
         switch (type) {
@@ -44,6 +45,9 @@ export default function MouseTracker(props: any) {
           }  
     }
 
+    const left = mousePosition.x - (tooltipW / 2) + xOffset
+    const top = mousePosition.y + yPadding + yOffset
+
     return <div onMouseMove={(e) => {
         if (!hoveredNode) return
         let x = e.pageX - subtractWidth
@@ -56,16 +60,24 @@ export default function MouseTracker(props: any) {
         
         <Tooltip style={{
             opacity:(type && type !== 'topic' && type !== 'sun') ? 1 : 0,
-            left: mousePosition.x - tooltipW / 2 + xOffset,
-            top: mousePosition.y + yPadding + yOffset,
+            left,
+            top,
             width: tooltipW
         }}>
             <Avatar src={tooltipImg} />
+            
             <div>
-                <Title>{title}</Title>
-                {guest && <Description>Guest: {guest}</Description>}
-                <Description>{description}</Description>
+                <Title>{podcastTitle}</Title>
+                <MainTitle>{title}</MainTitle>
+                <Title> {timestamp}</Title>
+                
+                <Details style={{marginTop:10}}>
+                    {guest && <Description>Guest: {guest}</Description>}
+                    <Details>{description}</Details>
+                    <Details>{text}</Details>
+                </Details>
             </div>
+
         </Tooltip>
         
         
@@ -75,29 +87,69 @@ export default function MouseTracker(props: any) {
 
 const Tooltip = styled.div`
 display: flex; 
-padding:20px; 
-align-items: center;
+padding:11px; 
+align-items: flex-start;
 justify-content:center;
 position: absolute;
 pointer-events: none;
-background: #ffffffee; 
+background: #FFFFFF;
+box-shadow: 0px 1px 6px rgba(0, 0, 0, 0.1);
 color:#000;
-box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.2);
-border-radius:10px;
 z-index: 100;
 transition: opacity 0.1s;
 `
 
 const Title = styled.div`
-font-size:16px;
-font-weight:400;
-margin-bottom:10px;
+font-weight: 400;
+font-size: 11px;
+line-height: 18px;
+/* or 164% */
+
+
+/* Main bottom icons */
+
+color: #5F6368;
+`
+
+const MainTitle = styled.div`
+font-weight: 500;
+font-size: 14px;
+line-height: 18px;
+/* or 164% */
+
+
+/* Main bottom icons */
+
+color: #222;
 `
 
 const Description = styled.div`
-font-size:12px;
-font-weight:400;
-margin-bottom:10px;
+font-weight: 400;
+font-size: 11px;
+line-height: 18px;
+/* or 164% */
+
+
+/* Main bottom icons */
+
+color: #5F6368;
+`
+
+const Details = styled.div`
+font-weight: 400;
+font-size: 11px;
+line-height: 15px;
+/* or 136% */
+
+
+/* Secondary Text 4 */
+
+color: #8E969C;
+
+text-overflow: ellipsis;
+display: -webkit-box;
+-webkit-line-clamp: 10;
+-webkit-box-orient: vertical;
 `
 
 interface ImgProps {
@@ -109,8 +161,8 @@ interface ImgProps {
   background-repeat: no-repeat;
   flex-grow:0;
   flex-shrink:0;
-  margin-right:20px;
-  width:80px;
-  height:80px;
-  border-radius:5px;
+  margin-right:12px;
+  width:45px;
+  height:45px;
+  border-radius:4px;
   `
