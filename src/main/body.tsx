@@ -34,10 +34,10 @@ export default function BodyComponent() {
   const windowRef: any = useRef(null)
   const dimensions = useRefDimensions(windowRef)
 
-  // use sample data
-  useEffect(() => {
-    setData(getSampleData())
-  }, [])
+  // // use sample data
+  // useEffect(() => {
+  //   setData(getSampleData())
+  // }, [])
   
   const onNodeClicked = (node: any) => {
     setHoveredNode(null)
