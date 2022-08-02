@@ -9,11 +9,29 @@ function UniverseBrowser(props: any) {
      // update dataset
     useEffect(() => {
         setTimeout(() => {
-            mapRef?.current?.zoomToFit(600,100)
-        },400)
+            // add topic planet
+            // const sprite = new SpriteText('test');
+            // sprite.color = 'red';
+            // sprite.textHeight = 100
+
+            // console.log('mapRef?.current.scene',mapRef?.current.scene)
+            // mapRef?.current.scene.add( sprite );
+            
+            // zoom out
+            mapRef?.current?.zoomToFit(800,50)
+        },500)
     }, [props.graphData])
     
     const nodeObject = (node: any) => {
+
+        // this is used for startup animation
+        if (node.fakeData) {
+            const sprite = new SpriteText(node.label);
+            sprite.color = '#000000';
+            sprite.textHeight = 10 + node.scale;
+
+            return sprite;
+        }
 
         let color = (node.colors && node.colors[0]) ? node.colors[0] : 'tomato'
 
@@ -81,6 +99,8 @@ function UniverseBrowser(props: any) {
         return line
     }
 
+    // console.log(mapRef?.current)
+
     return <div style={{height:'100%',width:'100%',position:'relative'}}>
         <ForceGraph3D
         ref={mapRef}
@@ -102,7 +122,7 @@ function UniverseBrowser(props: any) {
             precision: 'lowp',
         }}
         nodeLabel={() => ''}
-        warmupTicks={0}
+        // warmupTicks={20}
         enableNodeDrag={false}
         onNodeClick={(node: any) => {
             if (node.type === 'sun') {

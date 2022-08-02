@@ -48,6 +48,31 @@ export default function MouseTracker(props: any) {
     const left = mousePosition.x - (tooltipW / 2) + xOffset
     const top = mousePosition.y + yPadding + yOffset
 
+    let tooltip:any = (<Tooltip style={{
+        opacity:(type && type !== 'topic' && type !== 'sun') ? 1 : 0,
+        left,
+        top,
+        width: tooltipW
+    }}>
+        <Avatar src={tooltipImg} />
+        
+        <div>
+            <Title>{podcastTitle}</Title>
+            <MainTitle>{title}</MainTitle>
+            <Title> {timestamp}</Title>
+            
+            <Details style={{marginTop:10}}>
+                {guest && <Description>Guest: {guest}</Description>}
+                <Details>{description}</Details>
+                <Details>{text}</Details>
+            </Details>
+        </div>
+    </Tooltip>)
+
+    if (hoveredNode?.fakeData) {
+        tooltip = null
+    }
+
     return <div onMouseMove={(e) => {
         if (!hoveredNode) return
         let x = e.pageX - subtractWidth
@@ -57,29 +82,7 @@ export default function MouseTracker(props: any) {
     }}
         style={{ width:'100%',height:'100%',position: 'relative' }}>
         
-        
-        <Tooltip style={{
-            opacity:(type && type !== 'topic' && type !== 'sun') ? 1 : 0,
-            left,
-            top,
-            width: tooltipW
-        }}>
-            <Avatar src={tooltipImg} />
-            
-            <div>
-                <Title>{podcastTitle}</Title>
-                <MainTitle>{title}</MainTitle>
-                <Title> {timestamp}</Title>
-                
-                <Details style={{marginTop:10}}>
-                    {guest && <Description>Guest: {guest}</Description>}
-                    <Details>{description}</Details>
-                    <Details>{text}</Details>
-                </Details>
-            </div>
-
-        </Tooltip>
-        
+        {tooltip}
         
         {props.children}
         </div>
@@ -102,7 +105,7 @@ transition: opacity 0.1s;
 const Title = styled.div`
 font-weight: 400;
 font-size: 11px;
-line-height: 18px;
+margin-bottom:4px;
 /* or 164% */
 
 
@@ -121,6 +124,7 @@ line-height: 18px;
 /* Main bottom icons */
 
 color: #222;
+margin-bottom:4px;
 `
 
 const Description = styled.div`

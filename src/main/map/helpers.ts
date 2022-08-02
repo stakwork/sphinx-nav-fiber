@@ -233,7 +233,57 @@ const sleep = (ms:number) => new Promise(r => setTimeout(r, ms));
 
 export { getFakeGraphData, getSampleData, getGraphData, convertFromISOtoSeconds, sleep }
 
-function getSampleData(){
+
+const welcomes = [
+    'Welcome',
+    'Vitejte',
+    'Velkomst',
+    'Welkom',
+    'Tere tulemast',
+    'Tervetuloa',
+    'Welgekomen',
+    'Bonjour',
+    'Bienvenue',
+    'Willkommen',
+    'Failte',
+    'Benvenuto',
+    'Gaidits',
+    'Laukiamas',
+    'Witamy',
+    'Bienvenido',
+    'Valkommen',
+    'Croeso',
+    'こんにちは',
+    '你好',
+    'привет',
+    'สวัสดี',
+    'привіт',
+    'Halló',
+    'Xin chào',
+    'Kamusta'
+]
+
+function getSampleData() {
+    
+    let nodes: any = []
+    let links: any = []
+    
+    for (let i = 0; i < 300; i++){
+        const scale = 1 + (i % 10) * 3
+        const l = Math.floor(Math.random() * welcomes.length)
+        nodes.push({
+            fakeData: true,
+            label: welcomes[l],
+            id: i,
+            type:'topic',
+            scale
+        })
+    }
+
+    return {
+        nodes,
+        links
+    }
 
     return {
         nodes: [
@@ -1051,150 +1101,150 @@ function getSampleData(){
             }
         ],
         links:[
-            {
-                "source": 0,
-                "target": 28
-            },
-            {
-                "source": 0,
-                "target": 29
-            },
-            {
-                "source": 1,
-                "target": 28
-            },
-            {
-                "source": 2,
-                "target": 28
-            },
-            {
-                "source": 2,
-                "target": 30
-            },
-            {
-                "source": 4,
-                "target": 28
-            },
-            {
-                "source": 6,
-                "target": 28
-            },
-            {
-                "source": 6,
-                "target": 31
-            },
-            {
-                "source": 7,
-                "target": 32
-            },
-            {
-                "source": 8,
-                "target": 33
-            },
-            {
-                "source": 9,
-                "target": 34
-            },
-            {
-                "source": 10,
-                "target": 28
-            },
-            {
-                "source": 11,
-                "target": 35
-            },
-            {
-                "source": 11,
-                "target": 36
-            },
-            {
-                "source": 11,
-                "target": 37
-            },
-            {
-                "source": 12,
-                "target": 38
-            },
-            {
-                "source": 13,
-                "target": 28
-            },
-            {
-                "source": 14,
-                "target": 39
-            },
-            {
-                "source": 15,
-                "target": 40
-            },
-            {
-                "source": 16,
-                "target": 28
-            },
-            {
-                "source": 16,
-                "target": 41
-            },
-            {
-                "source": 17,
-                "target": 42
-            },
-            {
-                "source": 17,
-                "target": 28
-            },
-            {
-                "source": 18,
-                "target": 28
-            },
-            {
-                "source": 19,
-                "target": 39
-            },
-            {
-                "source": 20,
-                "target": 28
-            },
-            {
-                "source": 21,
-                "target": 43
-            },
-            {
-                "source": 22,
-                "target": 44
-            },
-            {
-                "source": 22,
-                "target": 28
-            },
-            {
-                "source": 23,
-                "target": 45
-            },
-            {
-                "source": 23,
-                "target": 28
-            },
-            {
-                "source": 24,
-                "target": 46
-            },
-            {
-                "source": 25,
-                "target": 47
-            },
-            {
-                "source": 26,
-                "target": 28
-            },
-            {
-                "source": 27,
-                "target": 28
-            },
-            {
-                "source": 27,
-                "target": 48
-            }
+            // {
+            //     "source": 0,
+            //     "target": 28
+            // },
+            // {
+            //     "source": 0,
+            //     "target": 29
+            // },
+            // {
+            //     "source": 1,
+            //     "target": 28
+            // },
+            // {
+            //     "source": 2,
+            //     "target": 28
+            // },
+            // {
+            //     "source": 2,
+            //     "target": 30
+            // },
+            // {
+            //     "source": 4,
+            //     "target": 28
+            // },
+            // {
+            //     "source": 6,
+            //     "target": 28
+            // },
+            // {
+            //     "source": 6,
+            //     "target": 31
+            // },
+            // {
+            //     "source": 7,
+            //     "target": 32
+            // },
+            // {
+            //     "source": 8,
+            //     "target": 33
+            // },
+            // {
+            //     "source": 9,
+            //     "target": 34
+            // },
+            // {
+            //     "source": 10,
+            //     "target": 28
+            // },
+            // {
+            //     "source": 11,
+            //     "target": 35
+            // },
+            // {
+            //     "source": 11,
+            //     "target": 36
+            // },
+            // {
+            //     "source": 11,
+            //     "target": 37
+            // },
+            // {
+            //     "source": 12,
+            //     "target": 38
+            // },
+            // {
+            //     "source": 13,
+            //     "target": 28
+            // },
+            // {
+            //     "source": 14,
+            //     "target": 39
+            // },
+            // {
+            //     "source": 15,
+            //     "target": 40
+            // },
+            // {
+            //     "source": 16,
+            //     "target": 28
+            // },
+            // {
+            //     "source": 16,
+            //     "target": 41
+            // },
+            // {
+            //     "source": 17,
+            //     "target": 42
+            // },
+            // {
+            //     "source": 17,
+            //     "target": 28
+            // },
+            // {
+            //     "source": 18,
+            //     "target": 28
+            // },
+            // {
+            //     "source": 19,
+            //     "target": 39
+            // },
+            // {
+            //     "source": 20,
+            //     "target": 28
+            // },
+            // {
+            //     "source": 21,
+            //     "target": 43
+            // },
+            // {
+            //     "source": 22,
+            //     "target": 44
+            // },
+            // {
+            //     "source": 22,
+            //     "target": 28
+            // },
+            // {
+            //     "source": 23,
+            //     "target": 45
+            // },
+            // {
+            //     "source": 23,
+            //     "target": 28
+            // },
+            // {
+            //     "source": 24,
+            //     "target": 46
+            // },
+            // {
+            //     "source": 25,
+            //     "target": 47
+            // },
+            // {
+            //     "source": 26,
+            //     "target": 28
+            // },
+            // {
+            //     "source": 27,
+            //     "target": 28
+            // },
+            // {
+            //     "source": 27,
+            //     "target": 48
+            // }
         ]
 
     }
