@@ -30,16 +30,42 @@ export default function BodyComponent() {
   const [focusedNode, setFocusedNode]: any = useState(null)
   const [hoveredNode, setHoveredNode]: any = useState(null)
   const [showList, setShowList]: any = useState(false)
+
+  const [openingAnimation, setOpeningAnimation]: any = useState(true)
     
   const windowRef: any = useRef(null)
   const dimensions = useRefDimensions(windowRef)
 
-  // // use sample data
-  // useEffect(() => {
-  //   setData(getSampleData())
-  // }, [])
-  
+   // cool animation on startup
+  // search term should be at center on solar system
+
+  // init 
+  useEffect(() => {
+    
+    setData({
+      nodes: [{
+        id: 0,
+        scale:100,
+        name: "FakeData",
+        type: "topic",
+        fakeData: true,
+        noClick: true,
+        label: "Search Bitcoin Knowledge"
+            }],
+      links: []
+    })
+    
+    setTimeout(() => {
+      setOpeningAnimation(false)
+      const initData = getSampleData()
+      setData(initData)
+    },3000)
+  }, [])
+
+
   const onNodeClicked = (node: any) => {
+    if (node.noClick) return
+
     setHoveredNode(null)
     console.log('node', node)
     if (node.type === 'sun') {
@@ -58,6 +84,8 @@ export default function BodyComponent() {
 
 
   const onNodeHovered = (node: any, prevNode: any) => {
+    if (!node||node?.fakeData) return
+
     if (hoveredNode && hoveredNode.id === node.id) {
       //nothing
     } else {
@@ -83,9 +111,7 @@ export default function BodyComponent() {
     } catch (e) {
       console.log('e',e)
     }
-    
   }
-
 
   const searchComponent = <Input
   style={{width:showList?'100%':'40%'}}
@@ -106,20 +132,27 @@ export default function BodyComponent() {
   />
 
   const menuWidth = 433
-  
+
+  function redirect() {
+    let a = document.createElement('a')
+    a.href = 'https://sphinx.chat/'
+    a.target = '_blank'
+    a.click()
+  }  
   return(
     <Body ref={windowRef}>  
 
-      {!showList && <Header>
-        <Title style={{ width: 260 }}>
-          BitcoinBrain
+      {!showList && <Header
+        style={{ opacity: openingAnimation ? 0 : 1 }}>
+        <Title style={{ fontWeight:300, width: 260 }}>
+          <b>Second</b>Brain
         </Title>
 
         {searchComponent}
 
         <div style={{ display: 'flex', width: 330 }}>
-          <Button>Info</Button>
-          <Button>Contribute</Button>
+          <Button onClick={redirect}>Info</Button>
+          <Button onClick={redirect}>Contribute</Button>
         </div>
 
       </Header>
@@ -136,22 +169,6 @@ export default function BodyComponent() {
         setFocusedNode={setFocusedNode}
         close={() => setShowList(false)}
       />
-      
-      {/* <div onMouseMove={(e) => {
-        if (!hoveredNode) return
-        let x = e.pageX
-        let y = e.pageY
-
-        if (showList) {
-          x = x - menuWidth
-        }
-        
-        setMousePosition({x,y})
-      }} style={{ position:'relative' }}>
-        
-        <div style={{position:'absolute',pointerEvents:'none',width:100,height:100,background:'red',left:mousePosition.x,top:mousePosition.y,zIndex:100}}>
-
-        </div> */}
 
       <MouseTracker
         subtractWidth={showList ? menuWidth : 0}
@@ -167,10 +184,8 @@ export default function BodyComponent() {
             onNodeHovered={onNodeHovered}
             graphData={data}
             />
-          </MouseTracker>
+      </MouseTracker>
         
-        {/* </div> */}
-      
     </Body>
   )
 }
@@ -218,6 +233,7 @@ align-items:center;
 justify-content:space-between;
 width:calc(100% - 40px);
 pointer-events:none;
+transition:opacity 1s;
 z-index:100;
 `
 
