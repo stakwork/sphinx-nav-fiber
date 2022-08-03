@@ -1,3 +1,7 @@
+import * as sphinx from "sphinx-bridge-kevkevinpal";
+import { Lsat } from "lsat-js";
+
+
 export interface Node {
     id: number,
     name: string,
@@ -56,6 +60,45 @@ function randomColor() {
     return '#000000'
     }
 
+
+  const getLsat = async (word: String) => {
+    // @ts-ignore
+    // await sphinx.enable(true);
+
+    try {
+      const resp = await fetch("https://knowledge-graph.sphinx.chat/");
+	   
+      const header = resp.headers.get("www-authenticate");
+	    
+      let data = await resp.json();
+      const lsat = Lsat.fromHeader(data.headers);
+
+      // @ts-ignore
+      const LSATRes = await sphinx.saveLsat(
+        lsat.invoice,
+        lsat.baseMacaroon,
+        "knowledge-graph.sphinx.chat"
+      );
+  
+      lsat.setPreimage(LSATRes.lsat.split(":")[1]);
+    
+      
+      let apiRes = await fetch(
+        `https://knowledge-graph.sphinx.chat/search?word=${word}`,
+        {
+          headers: {
+            Authorization: lsat.toToken(),
+          },
+        }
+      );
+      const apiResData = await apiRes.json();
+      return apiResData
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+
   async function getGraphData(searchterm: string) {
 
     console.log('searchterm', searchterm)
@@ -66,8 +109,9 @@ function randomColor() {
     //   url = `https://ardent-pastry-basement.wayscript.cloud/prediction/${searchterm}`
 
     try {
-        const res = await fetch(url)
-        const data: Moment[] = await res.json()
+        // const res = await fetch(url)
+        // const data: Moment[] = await res.json()
+	const data: Moment[] = await getLsat(searchterm)
         const _nodes: Node[] = []
         const _links: Link[] = []
 

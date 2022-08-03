@@ -3,8 +3,10 @@ import styled from "styled-components";
 import UniverseBrowser from './map/universeBrowser'
 import ContentBrowser from './map/contentBrowser'
 import MouseTracker from './map/mouseTracker'
+import * as sphinx from 'sphinx-bridge-kevkevinpal'
 import './body.css'
 import { NodesAndLinks, getGraphData, getSampleData } from './map/helpers'
+
 
 const useRefDimensions = (ref:any) => {
   const [dimensions, setDimensions] = useState({ width: 1, height: 2 })
@@ -63,6 +65,7 @@ export default function BodyComponent() {
   }, [])
 
 
+
   const onNodeClicked = (node: any) => {
     if (node.noClick) return
 
@@ -102,7 +105,7 @@ export default function BodyComponent() {
     try{
       setLoading(true)
       // setRenderMap(false)
-      const d = await getGraphData(searchWord)  
+      const d = await getGraphData(searchWord) 
       setCurrentSearchTerm(searchWord)
       setDataFilter([searchWord])
       setData(d)
@@ -141,7 +144,6 @@ export default function BodyComponent() {
   }  
   return(
     <Body ref={windowRef}>  
-
       {!showList && <Header
         style={{ opacity: openingAnimation ? 0 : 1 }}>
         <Title style={{ fontWeight:300, width: 260 }}>
@@ -169,7 +171,6 @@ export default function BodyComponent() {
         setFocusedNode={setFocusedNode}
         close={() => setShowList(false)}
       />
-
       <MouseTracker
         subtractWidth={showList ? menuWidth : 0}
         dimensions={dimensions}
@@ -185,7 +186,6 @@ export default function BodyComponent() {
             graphData={data}
             />
       </MouseTracker>
-        
     </Body>
   )
 }
