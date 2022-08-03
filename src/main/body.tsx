@@ -35,6 +35,8 @@ export default function BodyComponent() {
 
   const [openingAnimation, setOpeningAnimation]: any = useState(true)
     
+  const mapRef: any = useRef(null)
+  
   const windowRef: any = useRef(null)
   const dimensions = useRefDimensions(windowRef)
 
@@ -98,6 +100,8 @@ export default function BodyComponent() {
 
   async function getData(term?:string) {
 
+    // @ts-ignore
+    await sphinx.enable()
     if (term) setSearchTerm(term)
     let searchWord = term || searchTerm
     
