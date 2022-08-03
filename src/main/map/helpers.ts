@@ -62,11 +62,15 @@ function randomColor() {
       let index = 0
       
       let url = `https://graphite-cactus-universe.wayscript.cloud/prediction/${searchterm}`
+      url = `https://knowledge-graph.sphinx.chat/searching?word=${searchterm}&free=true`
 
     //   url = `https://ardent-pastry-basement.wayscript.cloud/prediction/${searchterm}`
 
     try {
         const res = await fetch(url)
+
+        console.log('res',res)
+
         const data: Moment[] = await res.json()
         const _nodes: Node[] = []
         const _links: Link[] = []
@@ -158,15 +162,15 @@ function randomColor() {
         }
 
          // make sun node of search term
-         _nodes.push({
-            id: index,
-            name: searchterm,
-            label: searchterm,
-            type: 'sun',
-            text: searchterm,
-            scale: 80,
-            colors: ['#ff0000']
-          })
+        //  _nodes.push({
+        //     id: index,
+        //     name: searchterm,
+        //     label: searchterm,
+        //     type: 'sun',
+        //     text: searchterm,
+        //     scale: 80,
+        //     colors: ['#ff0000']
+        //   })
 
 
         console.log('_nodes', _nodes)

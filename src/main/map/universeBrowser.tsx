@@ -73,7 +73,7 @@ function UniverseBrowser(props: any) {
         const loader = new three.TextureLoader()
 
         loader.requestHeader = {
-            'Access-Control-Allow-Origin': '*',    
+            'Access-Control-Allow-Origin': window.location.origin,    
         } 
           
         const map = loader.load(img);

@@ -378,15 +378,15 @@ export default function ContentBrowser(props: ListContent) {
                                         }
                                     </div>
 
-                                    <div style={{ width: 10 }} />
+                                    <div style={{ minWidth: 10 }} />
 
                                     <div>
                                         <Time style={{color}}>
                                             {'' + formatTimestamp(t.timestamp)}
                                         </Time>
-                                        <Transcript style={{color}}>
-                                            {t.text} test test test
-                                        </Transcript>
+                                        {isSelected && <Transcript style={{ color }}>
+                                            "{t.text}"
+                                        </Transcript>}
                                     </div>
 
                                 </Timestamp>
@@ -523,13 +523,12 @@ color: #3C3F41;
 `
 
 const Transcript = styled.div`
-
+margin-top:10px;
 font-weight: 400;
 font-size: 13px;
 line-height: 18px;
-/* or 138% */
-
-
+width:calc(100% - 100px);
+font-style:italic;
 /* Main bottom icons */
 
 color: #5F6368;
