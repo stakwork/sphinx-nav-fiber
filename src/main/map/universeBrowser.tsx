@@ -46,8 +46,10 @@ function UniverseBrowser(props: any) {
         if (node.type === 'topic') {
             const sprite = new SpriteText(node.name);
             sprite.color = color;
+            let textSize = 15 + node.scale;
+            if (textSize > 100) textSize = 100
             
-            sprite.textHeight = 10 + node.scale;
+            sprite.textHeight = textSize
             return sprite;
         }
 
