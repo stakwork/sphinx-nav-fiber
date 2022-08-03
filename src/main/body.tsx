@@ -7,18 +7,31 @@ import * as sphinx from 'sphinx-bridge-kevkevinpal'
 import './body.css'
 import { NodesAndLinks, getGraphData, getSampleData } from './map/helpers'
 
-
-const useRefDimensions = (ref:any) => {
-  const [dimensions, setDimensions] = useState({ width: 1, height: 2 })
-  useLayoutEffect(() => {
-    if (ref.current) {
-      const { current } = ref
-      const boundingRect = current.getBoundingClientRect()
-      const { width, height } = boundingRect
-      setDimensions({ width: Math.round(width), height: Math.round(height) })
+// Hook
+function useWindowSize() {
+  // Initialize state with undefined width/height so server and client renders match
+  // Learn more here: https://joshwcomeau.com/react/the-perils-of-rehydration/
+  const [windowSize, setWindowSize] = useState({
+    width: 0,
+    height: 0,
+  });
+  useEffect(() => {
+    // Handler to call on window resize
+    function handleResize() {
+      // Set window width/height to state
+      setWindowSize({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
     }
-  }, [ref])
-  return dimensions
+    // Add event listener
+    window.addEventListener("resize", handleResize);
+    // Call handler right away so state gets updated with initial window size
+    handleResize();
+    // Remove event listener on cleanup
+    return () => window.removeEventListener("resize", handleResize);
+  }, []); // Empty array ensures that effect is only run on mount
+  return windowSize;
 }
 
 
@@ -34,11 +47,8 @@ export default function BodyComponent() {
   const [showList, setShowList]: any = useState(false)
 
   const [openingAnimation, setOpeningAnimation]: any = useState(true)
-    
-  const mapRef: any = useRef(null)
-  
-  const windowRef: any = useRef(null)
-  const dimensions = useRefDimensions(windowRef)
+
+  const dimensions = useWindowSize();
 
    // cool animation on startup
   // search term should be at center on solar system
@@ -89,7 +99,7 @@ export default function BodyComponent() {
 
 
   const onNodeHovered = (node: any, prevNode: any) => {
-    if (!node||node?.fakeData) return
+    if (node?.fakeData) return
 
     if (hoveredNode && hoveredNode.id === node.id) {
       //nothing
@@ -120,6 +130,9 @@ export default function BodyComponent() {
     }
   }
 
+
+  console.log('dimensions.width',dimensions.width)
+
   const searchComponent = <Input
   style={{width:showList?'100%':'40%'}}
   className={loading ? 'loading' : ''}
@@ -127,7 +140,7 @@ export default function BodyComponent() {
   type="text"
   value={searchTerm}
   placeholder="Search ..."
-  onKeyPress={(event) => {
+  onKeyPress={(event:any) => {
     if (event.key === 'Enter') {
       getData()
     }
@@ -147,7 +160,8 @@ export default function BodyComponent() {
     a.click()
   }  
   return(
-    <Body ref={windowRef}>  
+    <Body>  
+
       {!showList && <Header
         style={{ opacity: openingAnimation ? 0 : 1 }}>
         <Title style={{ fontWeight:300, width: 260 }}>
@@ -257,7 +271,6 @@ z-index:100;
 const Body = styled.div`
   flex:1;
   display:flex;
-  // flex-direction:column;
   height:100%;
   min-height:100%;
   width:100%;

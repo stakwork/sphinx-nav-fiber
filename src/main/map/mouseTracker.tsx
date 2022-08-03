@@ -64,7 +64,9 @@ export default function MouseTracker(props: any) {
             <Details style={{marginTop:10}}>
                 {guest && <Description>Guest: {guest}</Description>}
                 <Details>{description}</Details>
-                <Details>{text}</Details>
+                <Details style={{marginTop:15, fontStyle:'italic'}}>
+                    {text&&'"'+text}
+                </Details>
             </Details>
         </div>
     </Tooltip>)
@@ -149,10 +151,10 @@ line-height: 15px;
 /* Secondary Text 4 */
 
 color: #8E969C;
-
+overflow:hidden;
 text-overflow: ellipsis;
 display: -webkit-box;
--webkit-line-clamp: 10;
+-webkit-line-clamp: 5;
 -webkit-box-orient: vertical;
 `
 
