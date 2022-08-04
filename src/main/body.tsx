@@ -130,9 +130,6 @@ export default function BodyComponent() {
     }
   }
 
-
-  console.log('dimensions.width',dimensions.width)
-
   const searchComponent = <Input
   style={{width:showList?'100%':'40%'}}
   className={loading ? 'loading' : ''}
@@ -194,7 +191,8 @@ export default function BodyComponent() {
         dimensions={dimensions}
         hoveredNode={hoveredNode}
       >
-          <UniverseBrowser
+        <UniverseBrowser
+            openingAnimation={openingAnimation}
             width={showList ? (dimensions.width - menuWidth) : dimensions.width}
             height={dimensions.height}
             key={'universe-browser'}
