@@ -102,24 +102,25 @@ function randomColor() {
   async function getGraphData(searchterm: string) {
 
     console.log('searchterm', searchterm)
-      let index = 0
-      
-      let url = `https://graphite-cactus-universe.wayscript.cloud/prediction/${searchterm}`
-      url = `https://knowledge-graph.sphinx.chat/searching?word=${searchterm}&free=true`
-
-    //   url = `https://ardent-pastry-basement.wayscript.cloud/prediction/${searchterm}`
+      let index = 0      
+      let devUrl = `https://knowledge-graph.sphinx.chat/searching?word=${searchterm}&free=true`
 
     try {
-        // const res = await fetch(url)
-        // const data: Moment[] = await res.json()
-	const data: Moment[] = await getLsat(searchterm)
+        // const res = await fetch(devUrl)
+        // let data: Moment[] = await res.json()
+        let data: Moment[] = await getLsat(searchterm)
         const _nodes: Node[] = []
         const _links: Link[] = []
         
         if(data.length) {
-            const topicMap: any = {}
+          const topicMap: any = {}
+          
+          // FIXME, limit results to 8000 until the animation phase can be skip (d3 set tick(300))
+          if (data.length > 11000) {
+            data = data.splice(0,10000)
+          }
             
-            // console.log('data',data)
+            console.log('data',data)
           // Populating nodes array with podcasts and constructing a topic map
             data.forEach(async (moment) => {
                 

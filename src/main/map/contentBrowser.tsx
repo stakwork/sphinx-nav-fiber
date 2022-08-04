@@ -120,7 +120,6 @@ export default function ContentBrowser(props: ListContent) {
         setSelectedEpisodes(se)  
         doResetRender()
         console.log('t', t)
-        
     }
     
     
@@ -207,11 +206,6 @@ export default function ContentBrowser(props: ListContent) {
                     })
                 })
             })
-
-            
-          const playbackTopics = selectedEpisode?.topics?.map((topic:string) => {
-              return topic
-          }) || []
             
             let tsCount = 0
                 
@@ -223,7 +217,7 @@ export default function ContentBrowser(props: ListContent) {
           
           return <NodePanel key={i + 'ouahsf'} id={title}>
             <Col style={{
-              height: 255,
+              height: 271,
                 zIndex: 2,
                 width: '100%',
               alignItems:'center',
@@ -273,17 +267,15 @@ export default function ContentBrowser(props: ListContent) {
                                       if (a === currentSearchTerm) return -1
                                       return 1
                                   }).map((tag: string, i: number) => {
-                                      
                                       const selected = dataFilter.includes(tag)
                                         return <Pill
                                             onClick={() => {
                                                 let filter = [...dataFilter]
-                                                if (selected) {
-                                                    const indx = filter.findIndex(f=>f===tag)
-                                                    filter.splice(indx,1)
-                                                } else {
-                                                    filter.push(tag)
-                                                }
+                                                if (!selected) {
+                                                    filter = [tag]
+                                                    // const indx = filter.findIndex(f=>f===tag)
+                                                    // filter.splice(indx,1)
+                                                } 
                                                 setDataFilter(filter)
                                             }}
                                             selected={selected} key={i}>
@@ -298,19 +290,33 @@ export default function ContentBrowser(props: ListContent) {
             
             {/* scrolling list */}  
             
-            <Col style={{ height:'calc(100% - 255px)'}}>
+            <Col style={{ height:'calc(100% - 271px)'}}>
                 <Scroller id={title + '_scroller'}>
                 {Object.keys(timestamps).map((episodeName: any, ii: number) => {
                     const thisPodcastTimestamps = timestamps[episodeName]
                     const myKey = episodeName + '_' + i + '_' + ii
                     const defaultTimestamp = thisPodcastTimestamps[0]
                     let episodeImg = defaultTimestamp.image_url
-                        
+
+
+                    // hide if no relevant topic
+                    let epRelevantTopics = false
+     
+                    thisPodcastTimestamps.forEach((t:any) => {
+                        t.topics.forEach((t: string) => {
+                            if (epRelevantTopics) return
+                            if (dataFilter.includes(t)) epRelevantTopics = true
+                        })
+                    })
+                    
+
+                    if (!epRelevantTopics) return null
+                    
                     if (episodeImg && !(episodeImg.includes('_s.jpg') ||
                         episodeImg.includes('_m.jpg') ||
                         episodeImg.includes('_l.jpg'))){
                             episodeImg = episodeImg.replace('.jpg', '_s.jpg')
-                        }
+                    }
 
 
                     return <div key={myKey}>
@@ -333,12 +339,27 @@ export default function ContentBrowser(props: ListContent) {
                         
                         <TimestampEnv>
                             {thisPodcastTimestamps.map((t: any, ii: number) => {
+
+                                let relevantTopics = false
+
+                                t.topics.forEach((t: string) => {
+                                    if (relevantTopics) return
+                                    if (dataFilter.includes(t)) relevantTopics = true
+                                })
+                                
+
+                                if (!relevantTopics) return null
+                                
                                 const selected = () => {
                                     return selectedEpisodes[podcastName]?.media_url === t.media_url && selectedEpisodes[podcastName]?.timestamp === t.timestamp
                                 }
                                 const isError = () => {
                                     return selectedEpisodes[podcastName]?.media_url === t.media_url && selectedEpisodes[podcastName]?.timestamp === t.timestamp && selectedEpisodes[podcastName]?.error
                                 }
+
+                               
+                                    
+
 
                                 const isSelected = selected()
 
