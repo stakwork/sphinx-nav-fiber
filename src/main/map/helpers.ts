@@ -79,7 +79,11 @@ function randomColor() {
         lsat.baseMacaroon,
         "knowledge-graph.sphinx.chat"
       );
-  
+
+	if(LSATRes.success == false){
+		// @ts-ignore
+		await sphinx.topup()
+	}
       lsat.setPreimage(LSATRes.lsat.split(":")[1]);
     
       
