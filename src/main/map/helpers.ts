@@ -66,7 +66,7 @@ function randomColor() {
     // await sphinx.enable(true);
 
     try {
-      const resp = await fetch("https://knowledge-graph.sphinx.chat/");
+      const resp = await fetch("https://knowledge-graph.sphinx.chat/searching");
 	   
       const header = resp.headers.get("www-authenticate");
 	    
