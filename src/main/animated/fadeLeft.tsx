@@ -74,7 +74,6 @@ export default function FadeLeft(props:any) {
                             else if (props.close) props.close()
                         }
                     }}
-                    // onClick={(e) => e.stopPropagation()}
                     style={{ height: 'inherit', ...style, transform: transformValue }}>
                     {children}
                 </Fader>

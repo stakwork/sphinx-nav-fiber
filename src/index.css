@@ -23,6 +23,14 @@ code {
   position: relative;
 }
 
+#search-field {
+  border: 1px solid #D0D5D8 !important;
+}
+
+#search-field:before {
+  border: 1px solid #D0D5D8;
+}
+
 /* Tooltip text */
 .tooltip .tooltiptext {
   visibility: hidden;
