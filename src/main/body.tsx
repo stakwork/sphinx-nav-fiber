@@ -196,9 +196,9 @@ export default function BodyComponent() {
         focusedNode={focusedNode}
         setFocusedNode={setFocusedNode}
         close={() => {
-          if (!focusedNode) setSearchTerm('')
-          else setFocusedNode(null)
-          // setShowList(false)
+          if (focusedNode) setFocusedNode(null)
+          else if (searchTerm)setSearchTerm('')
+          else setShowList(false)
         }}
       />
       <MouseTracker

@@ -55,7 +55,12 @@ export default function ContentBrowser(props: ListContent) {
                     media_url: focusedNode.details.link
                 }
 
-                clickTimestamp(nodeWithDetails,podcastName)
+                if (focusedNode) {
+                    const scroller = document.getElementById('focused_scroller')
+                    if (scroller?.scrollTop) scroller.scrollTop = 0
+                }
+
+                clickTimestamp(nodeWithDetails, podcastName)
             }
         })()
 
@@ -127,13 +132,15 @@ export default function ContentBrowser(props: ListContent) {
 
     async function clickTimestamp(t:any, podcastName:string){
         const se: any = { ...selectedEpisodes }
-        // props.setDataFilter([currentSearchTerm])
-        console.log('t',t)
+        console.log('t', t)
+        
+        
+        
         se[podcastName] = { ...t, loaded: false }
         setSelectedEpisodes(se)  
         setSelectedContent(t)
         doResetRender()
-        console.log('t', t)
+        
     }
     
     
@@ -152,13 +159,13 @@ export default function ContentBrowser(props: ListContent) {
     }
 
 
-    function renderContentByRelevence() {
+    function renderContentByRelevence(isSuggestions?:boolean) {
         
-        const pageSize = 80
+        const pageSize = isSuggestions?30:80
         const startSlice = renderPage*pageSize
         const endSlice = startSlice + pageSize
         
-        const isMore = graphData.nodes.length > endSlice
+        const isMore = (graphData.nodes.length - 1) > endSlice
         const isLess = startSlice > 0
         return (<>
             <Col style={{ height:'calc(100% - 90px)'}}>
@@ -168,7 +175,9 @@ export default function ContentBrowser(props: ListContent) {
                         const { image_url, podcast_title, episode_title, description } = details || {}
                     
                         return (<EpisodePanel
-                            onClick={() => props.setFocusedNode(n)}
+                            onClick={() => {
+                                props.setFocusedNode(n)
+                            }}
                             style={{ alignItems: 'center', cursor:'pointer' }} key={'node' + i}>
 
                             <div style={{ marginRight: 20 }}>
@@ -191,7 +200,7 @@ export default function ContentBrowser(props: ListContent) {
                         </EpisodePanel>)
                     })}
 
-                    <Row style={{justifyContent:'space-between', padding:20, width:'calc(100% - 40px)'}}>
+                    {!isSuggestions && <Row style={{ justifyContent: 'space-between', padding: 20, width: 'calc(100% - 40px)' }}>
                         <Pill onClick={() => {
                             if (isLess) {
                                 setRenderPage(renderPage - 1)
@@ -211,7 +220,7 @@ export default function ContentBrowser(props: ListContent) {
                         }}>
                             Next
                         </Pill>
-                    </Row>
+                    </Row>}
                     
                 </Scroller>
             </Col>
@@ -296,7 +305,7 @@ export default function ContentBrowser(props: ListContent) {
 
             const headPanelHeight = 241
             
-          return <NodePanel key={i + 'ouahsf'} id={title}>
+          return <NodePanel key={i + 'ouahsf'} id={'head-panel'}>
             <Col style={{
               height: headPanelHeight,
                 zIndex: 2,
@@ -379,7 +388,7 @@ export default function ContentBrowser(props: ListContent) {
             {/* scrolling list */}  
             
             <Col style={{ height:`calc(100% - ${headPanelHeight}px)`}}>
-                <Scroller id={title + '_scroller'}>
+                <Scroller id={'focused_scroller'}>
                       {Object.keys(timestamps).filter(f=>f===focusedNode.details.episode_title)
                           .map((episodeName: any, ii: number) => {
                     const thisPodcastTimestamps = timestamps[episodeName]
@@ -498,12 +507,14 @@ export default function ContentBrowser(props: ListContent) {
                             })
                             }
                         </TimestampEnv>
-                        {/* <Divider style={{width:'100%'}} /> */}
+                        
                       </div>
                   })}
                   
                       {/* bottom padding */}
-                      {/* <div style={{height:100, minHeight:100}} /> */}
+                <div style={{minHeight:50, height:50}} />
+
+                {renderSuggestions()}
                 </Scroller>
               </Col>
             </NodePanel>  
@@ -527,15 +538,15 @@ export default function ContentBrowser(props: ListContent) {
         
         embeddedUrl = link.replace('watch?v=', 'embed/').split('?')[0] + `?start=${secs}&autoplay=1`
         
-        return <div style={{height:'100%',width:'100%'}}>
+        return <div style={{height:'100%',width:'100%', overflow:'auto'}}>
                 <div style={{padding:10}}>
-                    <Title style={{marginBottom:5}}>
+                    <PodcastName style={{marginBottom:5}}>
                         {podcast_title}
-                    </Title>
+                    </PodcastName>
                     
-                    <Subtitle>
+                    <Title>
                     {episode_title}
-                    </Subtitle>
+                    </Title>
                 </div>
                 
 
@@ -549,7 +560,27 @@ export default function ContentBrowser(props: ListContent) {
                 <Desc>
                     {description}
                 </Desc>
+
+                {renderSuggestions()}
+            
             </div>
+    }
+
+
+    function renderSuggestions() {
+        
+        return <div>
+            <Divider style={{width:'100%', marginBottom: 20,}} />
+            <div style={{
+                marginLeft: 20, marginBottom: 10,
+                color: '#292C33'
+            }}>
+                More like this...
+            </div>
+                <div>
+                {renderContentByRelevence(true)}
+                </div>
+        </div>
     }
 
     function renderTwitter() {
@@ -610,13 +641,13 @@ export default function ContentBrowser(props: ListContent) {
               {modalContent}
           </Modal>
           
-          <TranscriptEnv style={{ left: width, opacity: showTranscript ? 1 : 0 }}>
-          <div style={{minHeight:40}} />
-                <Transcript>
-                    "{contentTranscript}"
+          {showTranscript && <TranscriptEnv style={{ left: width }}>
+              <div style={{ minHeight: 40 }} />
+              <Transcript>
+                  "{contentTranscript}"
               </Transcript>
-              <div style={{minHeight:40}} />
-          </TranscriptEnv>
+              <div style={{ minHeight: 40 }} />
+          </TranscriptEnv>}
           
           
             </ListWindow>
@@ -756,6 +787,7 @@ border-radius:5px;
 
 const Title = styled.div`
 font-size:20px;
+line-height:25px;
 overflow: hidden;
 text-overflow: ellipsis;
 display: -webkit-box;
@@ -785,12 +817,9 @@ line-height: 16px;
 `
 
 const Desc = styled.div`
-font-size:14px;
-width:calc(100% - 20px);
-height:100%;
-padding:10px;
-background:#f1f1f1;
-text-align:center;
+font-size:11px;
+color:#8E969C;
+padding:20px;
 `
 interface PillProps {
     selected?: boolean;

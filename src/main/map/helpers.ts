@@ -11,7 +11,8 @@ export interface Node {
     colors?: string[],
     details?: Moment,
     image_url?: string,
-    scale?: number
+    scale?: number,
+    weight: number
 }
 
 export interface Cluster {
@@ -34,7 +35,8 @@ export interface Cluster {
     topics: string[],
     text: string,
     type: string,
-    image_url?: string
+    image_url?: string,
+    weight:number
   }
   
   export interface NodesAndLinks{
@@ -145,9 +147,10 @@ function randomColor() {
                     smallImage = smallImage.replace('.jpg', '_s.jpg')
                 }
 
-                _nodes.push({
+              _nodes.push({
+                    weight:moment.weight,
                     id: index,
-                        name: moment.podcast_title + ":" + moment.episode_title + ":" + moment.timestamp,
+                    name: moment.podcast_title + ":" + moment.episode_title + ":" + moment.timestamp,
                     label: moment.podcast_title,
                     type: moment.type||'podcast',
                     text: moment.text,
@@ -167,6 +170,7 @@ function randomColor() {
               const topicNode: Node = {
                 id: index,
                 name: topic,
+                weight: 0,
                 label: topic,
                 type: 'topic',
                 text: topic,
@@ -208,7 +212,8 @@ function randomColor() {
         //   })
 
 
-        console.log('_nodes', _nodes)
+      console.log('_nodes', _nodes)
+      _nodes.sort((a, b) => a.weight - b.weight)
         return {nodes: _nodes, links: _links}
     }
       catch (e) {
