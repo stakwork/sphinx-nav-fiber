@@ -12132,7 +12132,7 @@
   dependencies:
     "flatten-vertex-data" "^1.0.0"
 
-"three-forcegraph@^1.39":
+"three-forcegraph@^1.39", "three-forcegraph@^1.39.4":
   "integrity" "sha512-kbycJcG98q/mwMJ5YIHIDz0nH2Fd8smpudc3QM2eoQPlf2cT7o1dzmrHWggUNnako4sWn7OybWypDSGf/S5/wg=="
   "resolved" "https://registry.npmjs.org/three-forcegraph/-/three-forcegraph-1.39.4.tgz"
   "version" "1.39.4"
@@ -12168,7 +12168,12 @@
   "resolved" "https://registry.npmjs.org/three-spritetext/-/three-spritetext-1.6.5.tgz"
   "version" "1.6.5"
 
-"three@*", "three@^0.142.0", "three@>=0.118 <1", "three@>=0.118.3", "three@>=0.86.0":
+"three-trackballcontrols@^0.9.0":
+  "integrity" "sha512-Z6HmIJnP70r5uONvcPCdLEF0SsG1kbGzNb7qQYj3c7b6v2E3XTlbNpZsgTjt36oKm0Z2tU11D6EbW4i8KIHuqA=="
+  "resolved" "https://registry.npmjs.org/three-trackballcontrols/-/three-trackballcontrols-0.9.0.tgz"
+  "version" "0.9.0"
+
+"three@*", "three@^0.142.0", "three@>= 0.86 <= 1.0", "three@>=0.118 <1", "three@>=0.118.3", "three@>=0.86.0":
   "integrity" "sha512-ESjPO+3geFr+ZUfVMpMnF/eVU2uJPOh0e2ZpMFqjNca1wApS9lJb7E4MjwGIczgt9iuKd8PEm6Pfgp2bJ92Xtg=="
   "resolved" "https://registry.npmjs.org/three/-/three-0.142.0.tgz"
   "version" "0.142.0"

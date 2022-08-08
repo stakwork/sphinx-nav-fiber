@@ -22,7 +22,9 @@
     "sphinx-bridge-kevkevinpal": "^0.2.24",
     "styled-components": "^5.3.5",
     "three": "^0.142.0",
+    "three-forcegraph": "^1.39.4",
     "three-spritetext": "^1.6.5",
+    "three-trackballcontrols": "^0.9.0",
     "typescript": "^4.4.2",
     "web-vitals": "^2.1.0"
   },

@@ -1,5 +1,5 @@
 import React, {useRef,useEffect,useLayoutEffect,useState} from 'react';
-import { ForceGraph3D } from 'react-force-graph';
+import {ForceGraph3D} from 'react-force-graph';
 import * as three from 'three'
 import SpriteText from 'three-spritetext'
 import styled from 'styled-components'
@@ -111,7 +111,7 @@ function UniverseBrowser(props: any) {
           
         const sprite = new three.Sprite(material);
     
-        sprite.scale.set(30, 30, 1);
+        sprite.scale.set(20, 20, 1);
     
         return sprite
     }
@@ -128,44 +128,29 @@ function UniverseBrowser(props: any) {
         return line
     }
 
-    // console.log(mapRef?.current)
 
-    return <div style={{height:'100%',width:'100%',position:'relative'}}>
+    return <div style={{ height: '100%', width: '100%', position: 'relative' }}>
+        
         <ForceGraph3D
         ref={mapRef}
         graphData={props.graphData}
         width={props.width}
         height={props.height}
         onNodeHover={props.onNodeHovered}
-        d3VelocityDecay={0.1}
+            d3VelocityDecay={0.1}
+            nodeRelSize={20}
         nodeVisibility={() => {
             return !loading
         }}
         linkVisibility={() => {
             return !loading
         }}
-        // dagMode={'rl'}
-        // dagLevelDistance={500}
         rendererConfig={{
             stencil: false,
             powerPreference: 'high-performance',
             precision: 'lowp',
         }}
         nodeLabel={() => ''}
-        // skips animation
-        // warmupTicks={engineWarmupTicks}
-        // onEngineTick={() => {
-        //     console.log('tick')  
-        //     if (engineTicks > -1 && engineTicks < callbackTickCount) {
-        //         engineTicks++ 
-        //     } else if (loading) {
-        //         engineTicks = -1
-        //         setLoading(false)
-        //         setTimeout(() => {
-        //             mapRef?.current?.zoomToFit(800, 50)    
-        //         },300)
-        //     }            
-        // }}
         enableNodeDrag={false}
         onNodeClick={(node: any) => {
             if (node.type === 'sun') {

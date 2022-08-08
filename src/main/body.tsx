@@ -1,6 +1,6 @@
 import {useState, useRef, useEffect, useLayoutEffect } from 'react'
 import styled from "styled-components";
-import UniverseBrowser from './map/universeBrowser'
+import UniverseBrowser from './map/universeBrowser2'
 import ContentBrowser from './map/contentBrowser'
 import MouseTracker from './map/mouseTracker'
 import * as sphinx from 'sphinx-bridge-kevkevinpal'
@@ -98,12 +98,18 @@ export default function BodyComponent() {
   }
 
 
-  const onNodeHovered = (node: any, prevNode: any) => {
+  function onNodeHovered(node: any, prevNode: any) {
+    // console.log('node', node)
+    // console.log('hoveredNode', hoveredNode)
     if (node?.fakeData) return
-
-    if (hoveredNode && hoveredNode.id === node.id) {
-      //nothing
+    
+    if (!node?.details) {
+      setHoveredNode(null)
+    } else if (hoveredNode && hoveredNode.id === node.id) {
+      // nothing
+      // console.log("SAME NODE", node)
     } else {
+      // console.log("****SET NODE****", node)
       setHoveredNode(node)
     }
   }
@@ -116,14 +122,14 @@ export default function BodyComponent() {
     let searchWord = term || searchTerm
     
     
-    try{
+    try {
+      setFocusedNode(null)
+      setShowList(true)
       setLoading(true)
-      // setRenderMap(false)
       const d = await getGraphData(searchWord) 
       setCurrentSearchTerm(searchWord)
       setDataFilter([searchWord])
       setData(d)
-      // setRenderMap(true)
       setLoading(false)    
     } catch (e) {
       console.log('e',e)
@@ -131,6 +137,7 @@ export default function BodyComponent() {
   }
 
   const searchComponent = <Input
+  id='search-field'
   style={{width:showList?'100%':'40%'}}
   className={loading ? 'loading' : ''}
   disabled={loading}
@@ -156,6 +163,8 @@ export default function BodyComponent() {
     a.target = '_blank'
     a.click()
   }  
+
+  const contentMenuWidth = 433
   return(
     <Body>  
 
@@ -176,15 +185,21 @@ export default function BodyComponent() {
       }
 
       <ContentBrowser
+        loading={loading}
         dataFilter={dataFilter}
         setDataFilter={setDataFilter}
         currentSearchTerm={currentSearchTerm}
         searchComponent={searchComponent}
         graphData={data}
         visible={showList}
+        width={contentMenuWidth}
         focusedNode={focusedNode}
         setFocusedNode={setFocusedNode}
-        close={() => setShowList(false)}
+        close={() => {
+          if (!focusedNode) setSearchTerm('')
+          else setFocusedNode(null)
+          // setShowList(false)
+        }}
       />
       <MouseTracker
         subtractWidth={showList ? menuWidth : 0}
@@ -194,9 +209,11 @@ export default function BodyComponent() {
         <UniverseBrowser
             openingAnimation={openingAnimation}
             width={showList ? (dimensions.width - menuWidth) : dimensions.width}
+            xOffset={showList ? contentMenuWidth : 0}
             height={dimensions.height}
             key={'universe-browser'}
             id={'universe-browser'}
+            currentSearchTerm={currentSearchTerm}
             onNodeClicked={onNodeClicked}
             onNodeHovered={onNodeHovered}
             graphData={data}
@@ -217,9 +234,10 @@ border-radius: 100px;
 min-width:300px;
 height:50px;
 padding:0 20px;
-border:none;
-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-
+z-index:2000;
+border: 1px solid #D0D5D8;
+box-shadow: 0px 1px 6px rgba(0, 0, 0, 0.1);
+border-radius: 4px;
 :&focus{
   border:none;
 }
@@ -273,4 +291,5 @@ const Body = styled.div`
   min-height:100%;
   width:100%;
   background:#f1f1f1;
+  overflow:hidden;
 `

@@ -1,7 +1,8 @@
-import {memo, useState, useEffect } from 'react'
+import {useState, useEffect } from 'react'
 import styled from "styled-components";
 import ReactAudioPlayer from 'react-audio-player';
 import ClipLoader from "react-spinners/ClipLoader";
+import FadeLeft from '../animated/fadeLeft';
 import { NodesAndLinks, Node, convertFromISOtoSeconds, sleep } from './helpers';
 import Modal from '../sphinxUI/modal';
 
@@ -14,14 +15,19 @@ interface ListContent {
     close: any,
     focusedNode: any,
     currentSearchTerm: string,
-    setFocusedNode:any
+    setFocusedNode: any,
+    width: number,
+    loading:boolean
 }
 
 export default function ContentBrowser(props: ListContent) {
-    const { graphData, visible, focusedNode, close, searchComponent, currentSearchTerm, setFocusedNode, dataFilter, setDataFilter } = props
+    const { graphData, visible, focusedNode, close, searchComponent, currentSearchTerm, setFocusedNode, dataFilter, setDataFilter, width, loading } = props
     const [selectedEpisodes, setSelectedEpisodes]: any = useState({})
     const [modalContent, setModalContent]: any = useState(null)
     const [yesRender, setYesRender]: any = useState(true)
+    const [showTranscript, setShowTranscript]: any = useState(false)
+    const [selectedContent, setSelectedContent]: any = useState(false)
+    const [renderPage, setRenderPage]: any = useState(0)
 
     // do audio list changes on node select 
     useEffect(() => {
@@ -53,10 +59,16 @@ export default function ContentBrowser(props: ListContent) {
             }
         })()
 
+        
+
         doResetRender()
   
         // end async
     }, [focusedNode])
+
+    useEffect(() => {
+        setShowTranscript(false)
+    },[currentSearchTerm])
 
     function doResetRender(){
         setYesRender(false)
@@ -115,9 +127,11 @@ export default function ContentBrowser(props: ListContent) {
 
     async function clickTimestamp(t:any, podcastName:string){
         const se: any = { ...selectedEpisodes }
-
+        // props.setDataFilter([currentSearchTerm])
+        console.log('t',t)
         se[podcastName] = { ...t, loaded: false }
         setSelectedEpisodes(se)  
+        setSelectedContent(t)
         doResetRender()
         console.log('t', t)
     }
@@ -138,7 +152,74 @@ export default function ContentBrowser(props: ListContent) {
     }
 
 
-    function renderPodcast() {
+    function renderContentByRelevence() {
+        
+        const pageSize = 80
+        const startSlice = renderPage*pageSize
+        const endSlice = startSlice + pageSize
+        
+        const isMore = graphData.nodes.length > endSlice
+        const isLess = startSlice > 0
+        return (<>
+            <Col style={{ height:'calc(100% - 90px)'}}>
+                <Scroller id={'top_ranked_scroller'}>
+                    {graphData.nodes.slice(startSlice,endSlice).filter(f => f.type !== 'topic').map((n: any, i) => {
+                        const { details } = n
+                        const { image_url, podcast_title, episode_title, description } = details || {}
+                    
+                        return (<EpisodePanel
+                            onClick={() => props.setFocusedNode(n)}
+                            style={{ alignItems: 'center', cursor:'pointer' }} key={'node' + i}>
+
+                            <div style={{ marginRight: 20 }}>
+                                <Avatar
+                                    style={{ height: 40, width: 40 }}
+                                    src={image_url || 'audio_default.svg'} />
+                            </div>
+                                    
+                            <div style={{ overflow: 'hidden', maxWidth: 'calc(100% - 90px)' }}>
+                                <EpisodeTitle style={{marginBottom:5}}>{episode_title}</EpisodeTitle>
+
+                                <div style={{
+                                    fontWeight: 300, fontSize: 11,
+                                    color: '#3C3F41'
+                                }}>
+                                    {description}
+                                </div>
+                            </div>
+                            
+                        </EpisodePanel>)
+                    })}
+
+                    <Row style={{justifyContent:'space-between', padding:20, width:'calc(100% - 40px)'}}>
+                        <Pill onClick={() => {
+                            if (isLess) {
+                                setRenderPage(renderPage - 1)
+                                const scroller = document.getElementById('top_ranked_scroller')
+                                if (scroller?.scrollTop) scroller.scrollTop = 0
+
+                            }
+                        }}>
+                            Previous
+                        </Pill>
+                        <Pill onClick={() => {
+                            if (isMore) {
+                                setRenderPage(renderPage + 1)
+                                const scroller = document.getElementById('top_ranked_scroller')
+                                if (scroller?.scrollTop) scroller.scrollTop = 0
+                            }
+                        }}>
+                            Next
+                        </Pill>
+                    </Row>
+                    
+                </Scroller>
+            </Col>
+        </>)
+    }
+
+
+    function renderPodcastByCreator() {
 
         const groupedPodcasts: any = {}
         graphData?.nodes?.filter((d: Node) => {
@@ -195,7 +276,6 @@ export default function ContentBrowser(props: ListContent) {
           const selectedEpisode = selectedEpisodes[podcastName] ? selectedEpisodes[podcastName] : Object.keys(timestamps)[0]
             const audioUrl: any = selectedEpisode.media_url
             
-            
             const allTopics:any = []
             
             Object.keys(thisPodcast.timestamps).forEach((keyna: string) => {
@@ -208,26 +288,30 @@ export default function ContentBrowser(props: ListContent) {
             })
             
             let tsCount = 0
-                
+    
             Object.keys(timestamps).map((episodeName: string) => {
                 const thisPodcastTimestamps = timestamps[episodeName]
                 tsCount += thisPodcastTimestamps.length
             })
+
+            const headPanelHeight = 241
             
-          
           return <NodePanel key={i + 'ouahsf'} id={title}>
             <Col style={{
-              height: 271,
+              height: headPanelHeight,
                 zIndex: 2,
                 width: '100%',
               alignItems:'center',
               boxShadow: '0 0 8px 0 rgba(0, 0, 0, 0.2)'
             }}>
                     
-                  <Row style={{ alignItems: 'center' }}>
+                  <Row style={{ alignItems: 'flex-start' }}>
                       <Avatar src={image_url || 'audio_default.svg'} style={{ margin: 20 }} />
-                      <Col style={{paddingRight:20}}>
-                          <Title>{title}</Title>
+
+                      <Col style={{ paddingRight: 20, }}>
+                          <div style={{ height: 20 }} />
+                          <PodcastName>{title}</PodcastName>
+                          <Title>{selectedEpisode.episode_title}</Title>
                           
                           {yesRender ? <ReactAudioPlayer
                               id={audioUrl}
@@ -251,10 +335,14 @@ export default function ContentBrowser(props: ListContent) {
                               }}
                               controls
                           /> : <div style={{ height: 74 }} />}
+
+                          {<Pill selected={showTranscript} style={{width:'fit-content', marginTop:20}}  onClick={() => setShowTranscript(!showTranscript)}>
+                              Transcript
+                          </Pill>}
                           </Col>
                   </Row>
 
-                  <Divider />
+                  {/* <Divider />
                   
                   <div style={{display:'flex',flexDirection:'column',width:'100%', alignItems:'flex-start'}}>
                       <div style={{padding:'20px 20px 5px', color: '#292c33'}}>
@@ -283,16 +371,17 @@ export default function ContentBrowser(props: ListContent) {
                                             </Pill>
                                         })}
                           </Row>
-                  </div>
+                  </div> */}
 
               
               </Col>
             
             {/* scrolling list */}  
             
-            <Col style={{ height:'calc(100% - 271px)'}}>
+            <Col style={{ height:`calc(100% - ${headPanelHeight}px)`}}>
                 <Scroller id={title + '_scroller'}>
-                {Object.keys(timestamps).map((episodeName: any, ii: number) => {
+                      {Object.keys(timestamps).filter(f=>f===focusedNode.details.episode_title)
+                          .map((episodeName: any, ii: number) => {
                     const thisPodcastTimestamps = timestamps[episodeName]
                     const myKey = episodeName + '_' + i + '_' + ii
                     const defaultTimestamp = thisPodcastTimestamps[0]
@@ -300,17 +389,16 @@ export default function ContentBrowser(props: ListContent) {
 
 
                     // hide if no relevant topic
-                    let epRelevantTopics = false
+                    // let epRelevantTopics = false
      
-                    thisPodcastTimestamps.forEach((t:any) => {
-                        t.topics.forEach((t: string) => {
-                            if (epRelevantTopics) return
-                            if (dataFilter.includes(t)) epRelevantTopics = true
-                        })
-                    })
+                    // thisPodcastTimestamps.forEach((t:any) => {
+                    //     t.topics.forEach((t: string) => {
+                    //         if (epRelevantTopics) return
+                    //         if (dataFilter.includes(t)) epRelevantTopics = true
+                    //     })
+                    // })
                     
-
-                    if (!epRelevantTopics) return null
+                    // if (!epRelevantTopics) return null
                     
                     if (episodeImg && !(episodeImg.includes('_s.jpg') ||
                         episodeImg.includes('_m.jpg') ||
@@ -320,9 +408,7 @@ export default function ContentBrowser(props: ListContent) {
 
 
                     return <div key={myKey}>
-                        <EpisodePanel onClick={() => {
-                            clickTimestamp(defaultTimestamp, podcastName)
-                        }} className={'tooltip'} id={title + episodeName}
+                        {/* <EpisodePanel className={'tooltip'} id={title + episodeName}
                         style={{alignItems:'center'}}>
 
                             <div style={{marginRight:20}}>
@@ -335,20 +421,17 @@ export default function ContentBrowser(props: ListContent) {
                             <EpisodeTitle>{episodeName}</EpisodeTitle>
                             </div>
                       
-                        </EpisodePanel>
+                        </EpisodePanel> */}
                         
                         <TimestampEnv>
                             {thisPodcastTimestamps.map((t: any, ii: number) => {
 
-                                let relevantTopics = false
-
-                                t.topics.forEach((t: string) => {
-                                    if (relevantTopics) return
-                                    if (dataFilter.includes(t)) relevantTopics = true
-                                })
-                                
-
-                                if (!relevantTopics) return null
+                                // let relevantTopics = false
+                                // t.topics.forEach((t: string) => {
+                                //     if (relevantTopics) return
+                                //     if (dataFilter.includes(t)) relevantTopics = true
+                                // })
+                                // if (!relevantTopics) return null
                                 
                                 const selected = () => {
                                     return selectedEpisodes[podcastName]?.media_url === t.media_url && selectedEpisodes[podcastName]?.timestamp === t.timestamp
@@ -356,10 +439,6 @@ export default function ContentBrowser(props: ListContent) {
                                 const isError = () => {
                                     return selectedEpisodes[podcastName]?.media_url === t.media_url && selectedEpisodes[podcastName]?.timestamp === t.timestamp && selectedEpisodes[podcastName]?.error
                                 }
-
-                               
-                                    
-
 
                                 const isSelected = selected()
 
@@ -389,6 +468,8 @@ export default function ContentBrowser(props: ListContent) {
                                         e.stopPropagation()
                                         clickTimestamp(t, podcastName)
                                     }}>
+                                    <div style={{ minWidth:20 }} />
+                                    {/* <div style={{ minWidth:76 }} /> */}
                                     <div style={{display:'flex'}}>
                                         {isSelected&&selectedEpisodes[podcastName]?.loaded === false ?
                                             <ClipLoader color={color} loading={true} size={14} /> :
@@ -399,28 +480,30 @@ export default function ContentBrowser(props: ListContent) {
                                         }
                                     </div>
 
-                                    <div style={{ minWidth: 10 }} />
+                                    <div style={{ minWidth: 20 }} />
 
                                     <div>
                                         <Time style={{color}}>
                                             {'' + formatTimestamp(t.timestamp)}
                                         </Time>
-                                        {isSelected && <Transcript style={{ color }}>
-                                            "{t.text}"
-                                        </Transcript>}
+                                        <Transcript style={{ color }}>
+                                            {t.description}
+                                        </Transcript>
                                     </div>
+
+                                    <div style={{ minWidth:20 }} />
 
                                 </Timestamp>
 
                             })
                             }
                         </TimestampEnv>
-                        <Divider style={{width:'100%'}} />
+                        {/* <Divider style={{width:'100%'}} /> */}
                       </div>
                   })}
                   
                       {/* bottom padding */}
-                      <div style={{height:100, minHeight:100}} />
+                      {/* <div style={{height:100, minHeight:100}} /> */}
                 </Scroller>
               </Col>
             </NodePanel>  
@@ -475,40 +558,66 @@ export default function ContentBrowser(props: ListContent) {
         </div>
     }
 
+    if (!visible) return <div/>
 
     let contentView: any = null
+
+    if (!focusedNode && graphData?.nodes?.length) {
+        contentView = renderContentByRelevence()
+    } else if (focusedNode) {
+        switch (focusedNode?.type) {
+            case 'youtube':
+                contentView = renderYoutube()
+                break;
+            case 'twitter':
+                contentView = renderTwitter()
+                break;
+            default:
+                contentView = renderPodcastByCreator()
+          }  
+    }
+
+
+    const contentTranscript = selectedContent ? (selectedContent?.text||'No transcript') : null
     
-    switch (focusedNode?.type) {
-        case 'youtube':
-            contentView = renderYoutube()
-            break;
-        case 'twitter':
-            contentView = renderTwitter()
-            break;
-        default:
-            contentView = renderPodcast()
-      }  
-   
-      if (!visible) return <div/>
 
   return(
-      <ListWindow onClick={(e) => e.preventDefault()}> 
-            <div style={{display:'flex',padding:20, position:'relative'}}>
+      <ListWindow onClick={(e) => e.preventDefault()} style={{width, minWidth:width}}> 
+            <div style={{display:'flex',padding:20, position:'relative', boxShadow: '0 0 8px 0 rgba(0, 0, 0, 0.2)'}}>
               {searchComponent}
               
-              <CloseIt onClick={()=>close()}>
-                <span className="material-icons" style={{ fontSize: 20 }}>close</span>
-                </CloseIt>
+              {!loading && <CloseIt onClick={() => {
+                  if (showTranscript) setShowTranscript(false)
+                  close()
+              }}>
+                  <span className="material-icons" style={{ fontSize: 20 }}>close</span>
+              </CloseIt>}
           </div>
           
-            {contentView}
+          {loading ?
+              <div style={{
+                  display: 'flex', justifyContent: 'center',
+                  alignItems: 'center', height:'100%'
+               }}>
+                <ClipLoader color={'#000'} loading={true} size={14} />
+          </div>
+              : contentView}
           
             <Modal
                 visible={modalContent ? true : false}
                 close={()=>setModalContent(null)}
             >
               {modalContent}
-            </Modal>
+          </Modal>
+          
+          <TranscriptEnv style={{ left: width, opacity: showTranscript ? 1 : 0 }}>
+          <div style={{minHeight:40}} />
+                <Transcript>
+                    "{contentTranscript}"
+              </Transcript>
+              <div style={{minHeight:40}} />
+          </TranscriptEnv>
+          
           
             </ListWindow>
   )
@@ -531,6 +640,31 @@ overflow:hidden;
 
 `
 
+const TranscriptEnv = styled.div`
+display:flex;
+flex-direction:column;
+padding:0 40px;
+overflow:auto;
+position:absolute;
+top:0px;
+left:200px;
+height:100%;
+width:250px;
+transition:opacity 0.2s;
+background:#f0f6ff;
+`
+
+
+const Transcript = styled.div`
+margin-top:10px;
+font-weight: 400;
+font-size: 13px;
+line-height: 18px;
+font-style:italic;
+/* Main bottom icons */
+color:#5d8fdd;
+`
+
 const Time = styled.div`
 font-weight: 400;
 font-size: 14px;
@@ -543,17 +677,6 @@ line-height: 18px;
 color: #3C3F41;
 `
 
-const Transcript = styled.div`
-margin-top:10px;
-font-weight: 400;
-font-size: 13px;
-line-height: 18px;
-width:calc(100% - 100px);
-font-style:italic;
-/* Main bottom icons */
-
-color: #5F6368;
-`
 
 const Divider = styled.div`
 height:1px;
@@ -600,13 +723,15 @@ display:flex;
 width:100%;
 padding:10px 20px;
 opacity:0.8;
-cursor:pointer;
-
+&:hover{
+    opacity:1;
+}
 `
 const CloseIt = styled.div`
 position:absolute;
 right:30px;
 top:24px;
+z-index:10000;
 display:flex;
 align-items:center;
 justify-content:center;
@@ -668,7 +793,7 @@ background:#f1f1f1;
 text-align:center;
 `
 interface PillProps {
-    selected: boolean;
+    selected?: boolean;
   }
 const Pill = styled.div<PillProps>`
 padding:10px 20px;
@@ -685,16 +810,15 @@ align-items:center;
 font-weight: 500;
 font-size: 12px;
 line-height: 14px;
+
 `
 
 const Timestamp = styled.div`
 display:flex;
-padding:8px;
-display:flex;
+padding:10px 8px;
 font-size:14px;
 width:100%;
 cursor:pointer;
-padding-left:76px;
 &:hover{
   background:#f1f1f1;
   opacity:1;
@@ -719,3 +843,15 @@ align-items: center;
 color: #292C33;
 `
 
+const PodcastName = styled.div`
+font-weight: 400;
+font-size: 13px;
+line-height: 18px;
+/* or 138% */
+margin-bottom:10px;
+
+
+/* Secondary Text 4 */
+
+color: #8E969C;
+`

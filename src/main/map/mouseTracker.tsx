@@ -13,6 +13,8 @@ export default function MouseTracker(props: any) {
     let xOffset = 0
     let yOffset = 0
 
+    // console.log('hoveredNode', hoveredNode)
+
     if (dimensions.height < mousePosition.y + tooltipH) {
         yOffset = tooltipH*-1
     }
