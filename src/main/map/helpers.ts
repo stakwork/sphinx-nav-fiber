@@ -68,7 +68,7 @@ function randomColor() {
     // await sphinx.enable(true);
 
     try {
-      const resp = await fetch("https://knowledge-graph.sphinx.chat/");
+      const resp = await fetch("https://knowledge-graph.sphinx.chat/searching");
 	   
       const header = resp.headers.get("www-authenticate");
 	    
@@ -81,7 +81,11 @@ function randomColor() {
         lsat.baseMacaroon,
         "knowledge-graph.sphinx.chat"
       );
-  
+
+	if(LSATRes.success == false){
+		// @ts-ignore
+		await sphinx.topup()
+	}
       lsat.setPreimage(LSATRes.lsat.split(":")[1]);
     
       
