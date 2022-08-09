@@ -108,13 +108,23 @@ function randomColor() {
   async function getGraphData(searchterm: string) {
 
     console.log('searchterm', searchterm)
-      let index = 0      
-      let devUrl = `https://knowledge-graph.sphinx.chat/searching?word=${searchterm}&free=true`
-
+    let index = 0      
+    
     try {
-        const res = await fetch(devUrl)
-        let data: Moment[] = await res.json()
-        // let data: Moment[] = await getLsat(searchterm)
+      let data: Moment[] 
+      const origin = window.location.origin
+
+      const isDev = (origin === 'http://localhost:3000' || origin === 'https://sphinx-jarvis-david.sphinx1.repl.co') ? true : false
+      if (isDev) {
+        console.log('is dev',origin)
+        let devUrl = `https://knowledge-graph.sphinx.chat/searching?word=${searchterm}&free=true`
+        const res = await fetch(devUrl)      
+        data = await res.json()
+      } else {
+        data = await getLsat(searchterm)
+      }
+        
+        
         const _nodes: Node[] = []
         const _links: Link[] = []
         

@@ -512,7 +512,7 @@ export default function ContentBrowser(props: ListContent) {
                   })}
                   
                       {/* bottom padding */}
-                <div style={{minHeight:50, height:50}} />
+                <div style={{height:10}} />
 
                 {renderSuggestions()}
                 </Scroller>
