@@ -172,7 +172,11 @@ export default function ContentBrowser(props: ListContent) {
                 <Scroller id={'top_ranked_scroller'}>
                     {graphData.nodes.slice(startSlice,endSlice).filter(f => f.type !== 'topic').map((n: any, i) => {
                         const { details } = n
-                        const { image_url, podcast_title, episode_title, description } = details || {}
+                        let { image_url, podcast_title, episode_title, description } = details || {}
+
+                        if (image_url) {
+                            image_url = image_url.replace('.jpg', '_s.jpg')
+                        }
                     
                         return (<EpisodePanel
                             onClick={() => {
@@ -325,7 +329,7 @@ export default function ContentBrowser(props: ListContent) {
                           {yesRender ? <ReactAudioPlayer
                               id={audioUrl}
                               className={'audio-player'}
-                              autoPlay
+                            //   autoPlay
                               style={{
                                   width: '100%',
                                   marginTop: "20px",
@@ -495,7 +499,7 @@ export default function ContentBrowser(props: ListContent) {
                                         <Time style={{color}}>
                                             {'' + formatTimestamp(t.timestamp)}
                                         </Time>
-                                        <Transcript style={{ color }}>
+                                        <Transcript style={{ color, fontStyle:'normal' }}>
                                             {t.description}
                                         </Transcript>
                                     </div>

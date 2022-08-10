@@ -9,7 +9,7 @@ import CameraControls from 'camera-controls';
 CameraControls.install({ THREE: THREE });
 
 //constructor
-let graph, scene, renderer, camera, cameraControls, light, raycaster, pointer, clock
+let graph, scene, renderer, camera, cameraControls, light, raycaster, pointer, clock, hoveredNode
 
 let nodeMaterials = {}
 const warmupTicks = 20
@@ -40,21 +40,25 @@ function UniverseBrowser(props) {
         // cameraControls.dampingFactor = 0.001 //default is 0.05, less is more
         // cameraControls.draggingDampingFactor = 0.01 // default is 0.25
 
-        cameraControls.minZoom = -Infinity
-        cameraControls.maxZoom = Infinity
+        // cameraControls.minDistance = -Infinity
+        cameraControls.maxDistance = 30000
 
-        cameraControls.addEventListener('control', (e) => {
-            console.log('control', e)
-            console.log('cameraControls.distance',cameraControls.distance)
-        })
+        cameraControls.dollySpeed = 0.4 // default is 1
+        cameraControls.infinityDolly = true
+        
 
-        cameraControls.addEventListener('controlstart', (e) => {
-            console.log('controlstart', e)
-        })
+        // cameraControls.addEventListener('control', (e) => {
+        //     console.log('cameraControls.distance', cameraControls.distance)
+        //     console.log('camera.zoom', camera.zoom)
+        // })
 
-        cameraControls.addEventListener('controlend', (e) => {
-            console.log('controlend', e)  
-        })
+        // cameraControls.addEventListener('controlstart', (e) => {
+        //     console.log('controlstart', camera.zoom)
+        // })
+
+        // cameraControls.addEventListener('controlend', (e) => {
+        //     console.log('controlend', e)  
+        // })
         
         clock = new THREE.Clock();
         
@@ -66,15 +70,15 @@ function UniverseBrowser(props) {
         graph.d3VelocityDecay(0.05)
      
         graph.onFinishUpdate(() => {
-            for (let i = 0; i < warmupTicks; i++){
-                graph.tickFrame();
-                console.log('i', i)
-                // end with a animation request
-                if (i === (warmupTicks - 1)) {
-                    refreshGraph()
-                    
+                for (let i = 0; i < warmupTicks; i++){
+                    graph.tickFrame();
+                    console.log('i', i)
+                    // end with a animation request
+                    if (i === (warmupTicks - 1)) {
+                        refreshGraph()
+                        
+                    }
                 }
-            }
         })
 
         renderer.render( scene, camera );
@@ -82,9 +86,11 @@ function UniverseBrowser(props) {
         (function animate() {    
             // Frame cycle
             const delta = clock.getDelta();
-            const hasControlsUpdated = cameraControls.update(delta);
+            // const hasControlsUpdated =
+            cameraControls.update(delta);
             requestAnimationFrame(animate);
-            if (!loading && hasControlsUpdated) renderer.render(scene, camera);
+            // if (!loading && hasControlsUpdated)
+            renderer.render(scene, camera);
         })();
 
     }, [])
@@ -93,20 +99,27 @@ function UniverseBrowser(props) {
         // Frame cycle
         const delta = clock.getDelta();
         cameraControls.update(delta);
-        requestAnimationFrame(()=>console.log("animate frame"));
-        renderer.render(scene, camera);
+        // const target = cameraControls.getTarget()
+        // const pos = cameraControls.getPosition()
+
+        cameraControls.distance =  cameraControls.distance + 10
+        
+        requestAnimationFrame(() => console.log("animate frame"));
+        renderer.render(scene, camera);    
+        
     }
     
-    function zoomIt(distance = 3000, zoom = 0.00001) {
-        if (!props.openingAnimation) {
-            console.log(distance,zoom)
-            cameraControls.distance = distance
-            cameraControls.zoomTo(zoom, true )
-            requestAnimationFrame(() => console.log('animate'))
-            
-            // cameraControls.fitToBox( mesh, true, { cover: true } );
-            renderer.render(scene, camera);
-        }
+    function centerCamera(distance = 4000) {
+        
+        cameraControls.distance = distance
+        cameraControls.setTarget( 0, 0, 0, false )
+        requestAnimationFrame(() => console.log('animate'))
+        renderer.render(scene, camera);
+
+        // cameraControls.zoomTo(0.2, true)
+        // requestAnimationFrame(() => console.log('animate'))
+        // renderer.render(scene, camera);
+        
     }
 
     function onPointerMove( event ) {
@@ -141,6 +154,31 @@ function UniverseBrowser(props) {
         props.onNodeHovered(hoveredObject)
     }
 
+    function detectPointerClickDown() {
+        // update the picking ray with the camera and pointer position
+        raycaster.setFromCamera( pointer, camera );
+    
+        // calculate objects intersecting the picking ray
+        const intersects = raycaster.intersectObjects(scene.children);
+
+        // console.log('intersects',intersects)
+        const nodeIndex = intersects.findIndex(f => f.object && !f.object.isLine && f.object.__data.type !== 'topic')
+        const labelIndex = intersects.findIndex(f => f.object && !f.object.isLine && f.object.__data.type === 'topic')
+        // on hover
+
+        let hoveredObject = null
+
+        if (nodeIndex > -1) {
+            hoveredObject = intersects[nodeIndex].object.__data
+        } else if (labelIndex > -1){
+            hoveredObject = intersects[labelIndex].object.__data
+        } else {
+            hoveredObject = null
+        }
+
+        hoveredNode = hoveredObject
+    }
+
     function detectPointerClick() {
         // update the picking ray with the camera and pointer position
         raycaster.setFromCamera( pointer, camera );
@@ -163,7 +201,12 @@ function UniverseBrowser(props) {
             hoveredObject = null
         }
 
-        if (hoveredObject) props.onNodeClicked(hoveredObject)
+        if (hoveredNode && hoveredObject
+            && hoveredObject.id === hoveredNode.id) {
+            props.onNodeClicked(hoveredObject)
+        }
+
+        hoveredNode = null
     }
     
     useEffect(() => {
@@ -175,10 +218,12 @@ function UniverseBrowser(props) {
      // update graph
     useEffect(() => {
         setLoading(true)
-        nodeMaterials = {}
-        graph.clear()
-        graph.graphData(props.graphData);
-        updateCamera()
+        setTimeout(() => {
+            nodeMaterials = {}
+            graph.clear()
+            graph.graphData(props.graphData);
+            updateCamera()    
+        },200)
     }, [props.graphData])
 
     function updateCamera(){
@@ -186,21 +231,15 @@ function UniverseBrowser(props) {
         camera.lookAt(graph.position);
         camera.position.z = Math.cbrt(N) * 180;
         camera.updateProjectionMatrix(); 
-        
         animateFrame()
+        centerCamera()
     }
 
     async function refreshGraph() {
         setLoading(false)
         updateCamera()
-
-        zoomIt()
+        centerCamera()
     }
-
-    // useLayoutEffect(() => {
-    //     if (!loading) zoomIt()
-    // }, [loading])
-    
 
     const nodeObject = (node) => {
         // this is used for startup animation
@@ -272,7 +311,7 @@ function UniverseBrowser(props) {
           
         const sprite = new THREE.Sprite(material);
     
-        sprite.scale.set(30, 30, 1);
+        sprite.scale.set(20, 20, 1);
 
         return sprite
     }
@@ -289,31 +328,34 @@ function UniverseBrowser(props) {
         return line
     }
 
+    function blockInteraction(e) {
+        if (loading) {
+            e.preventDefault()
+            e.stopPropagation()
+            return
+        } 
+    }
+
     return <div style={{ height: '100%', width: '100%', position: 'relative' }}>
 
         <div onMouseMove={(e) => {
-            onPointerMove(e)
-            detectPointer()
-        }} onMouseDown={() => {
-            detectPointerClick()
+            if (loading) blockInteraction(e)
+            else {
+                onPointerMove(e)
+                detectPointer()
+            }
+            
+        }} onMouseDown={(e) => {
+            if (loading) blockInteraction(e)
+            else detectPointerClickDown()
         }}
+            onMouseUp={(e) => {
+                if (loading) blockInteraction(e)
+                else detectPointerClick()
+            }}
             id="3d-graph"></div>
    
         <Shield style={{ opacity: loading ? 1 : 0 }}>
-
-            {/* <div style={{
-                height: 50, width: warmupTicks,
-                border: '1px solid #000',
-                marginBottom:10
-            }}>
-                <div style={{
-                    height: '100%',
-                    width: `${percent}%`,
-                    background: '#000',
-                    transition:'0.5 s'
-                    
-                }} />
-            </div> */}
             <div style={{display:'flex'}}>
                 <ClipLoader color={'#000'} loading={true} size={14} />
                 <div style={{ marginLeft: 10 }}>Mapping {props.graphData?.nodes?.length} results...</div>
@@ -356,6 +398,7 @@ justify-content: center;
 align-items: center;
 position: absolute;
 pointer-events:none;
+user-select:none;
 top: 0px;
 left: 0px;
 height: 100%;
