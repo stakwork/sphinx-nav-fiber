@@ -329,7 +329,7 @@ export default function ContentBrowser(props: ListContent) {
                           {yesRender ? <ReactAudioPlayer
                               id={audioUrl}
                               className={'audio-player'}
-                            //   autoPlay
+                              autoPlay
                               style={{
                                   width: '100%',
                                   marginTop: "20px",
