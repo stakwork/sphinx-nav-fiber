@@ -55,25 +55,11 @@ export default function BodyComponent() {
 
   // init 
   useEffect(() => {
-    
-    setData({
-      nodes: [{
-        id: 0,
-        scale:100,
-        name: "FakeData",
-        type: "topic",
-        fakeData: true,
-        noClick: true,
-        label: "Search Bitcoin Knowledge"
-            }],
-      links: []
-    })
-    
     setTimeout(() => {
       setOpeningAnimation(false)
       const initData = getSampleData()
       setData(initData)
-    },3000)
+    },2000)
   }, [])
 
 
@@ -219,9 +205,28 @@ export default function BodyComponent() {
             graphData={data}
             />
       </MouseTracker>
+
+      {openingAnimation && <Cover>Search Bitcoin Knowledge</Cover>}
     </Body>
   )
 }
+
+
+const Cover = styled.div`
+position:absolute;
+display:flex;
+justify-content:center;
+user-select:none;
+align-items:center;
+top:0px;
+left:0px;
+width:100%;
+height:100%;
+background:#f1f1f1;
+font-size:60px;
+font-weight:400;
+z-index:200000;
+`
 
 const Title = styled.div`
 font-size:30px;
