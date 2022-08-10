@@ -56,18 +56,18 @@ export default function BodyComponent() {
   // init 
   useEffect(() => {
     
-    setData({
-      nodes: [{
-        id: 0,
-        scale:100,
-        name: "FakeData",
-        type: "topic",
-        fakeData: true,
-        noClick: true,
-        label: "Search Bitcoin Knowledge"
-            }],
-      links: []
-    })
+    // setData({
+    //   nodes: [{
+    //     id: 0,
+    //     scale:100,
+    //     name: "FakeData",
+    //     type: "topic",
+    //     fakeData: true,
+    //     noClick: true,
+    //     label: "Search Bitcoin Knowledge"
+    //         }],
+    //   links: []
+    // })
     
     setTimeout(() => {
       setOpeningAnimation(false)

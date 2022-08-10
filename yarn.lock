@@ -3729,6 +3729,11 @@
   "resolved" "https://registry.npmjs.org/camelize/-/camelize-1.0.0.tgz"
   "version" "1.0.0"
 
+"camera-controls@^1.36.1":
+  "integrity" "sha512-muYZT4bgA9iR/lfZwM1TLM/GPttAlRM+fDCjg9qsmH4omDMefGF8/Q5QFkadRGCeCOTFESGYXcOhqV/tt4z6fQ=="
+  "resolved" "https://registry.npmjs.org/camera-controls/-/camera-controls-1.36.1.tgz"
+  "version" "1.36.1"
+
 "caniuse-api@^3.0.0":
   "integrity" "sha512-bsTwuIg/BZZK/vreVTYYbSWoe2F+71P7K5QGEX+pT250DZbfU1MQ5prOKpPR+LL6uWKK3KMwMCAS74QB3Um1uw=="
   "resolved" "https://registry.npmjs.org/caniuse-api/-/caniuse-api-3.0.0.tgz"
@@ -11606,10 +11611,10 @@
     "select-hose" "^2.0.0"
     "spdy-transport" "^3.0.0"
 
-"sphinx-bridge-kevkevinpal@^0.2.24":
-  "integrity" "sha512-r0Dlw5PPtIBA5yTXspLqz3CtqCTvYo1tiDkgrsdaGtKIXXG0sgIZTSxLYy9yuaE5ZskndP+hd2KkkXhG5G62Hg=="
-  "resolved" "https://registry.npmjs.org/sphinx-bridge-kevkevinpal/-/sphinx-bridge-kevkevinpal-0.2.36.tgz"
-  "version" "0.2.36"
+"sphinx-bridge-kevkevinpal@0.2.31":
+  "integrity" "sha512-lTnWpxKOvY5Gw09sKdMq82jJZgkte8sGfUcEH/9XHt3vamZWTxGURDVTK1oK14jD9hMBWWw2kBkVNTtgGWbrHQ=="
+  "resolved" "https://registry.npmjs.org/sphinx-bridge-kevkevinpal/-/sphinx-bridge-kevkevinpal-0.2.31.tgz"
+  "version" "0.2.31"
   dependencies:
     "invoices" "^2.1.0"
 
@@ -12173,7 +12178,7 @@
   "resolved" "https://registry.npmjs.org/three-trackballcontrols/-/three-trackballcontrols-0.9.0.tgz"
   "version" "0.9.0"
 
-"three@*", "three@^0.142.0", "three@>= 0.86 <= 1.0", "three@>=0.118 <1", "three@>=0.118.3", "three@>=0.86.0":
+"three@*", "three@^0.142.0", "three@>= 0.86 <= 1.0", "three@>=0.118 <1", "three@>=0.118.3", "three@>=0.126.1", "three@>=0.86.0":
   "integrity" "sha512-ESjPO+3geFr+ZUfVMpMnF/eVU2uJPOh0e2ZpMFqjNca1wApS9lJb7E4MjwGIczgt9iuKd8PEm6Pfgp2bJ92Xtg=="
   "resolved" "https://registry.npmjs.org/three/-/three-0.142.0.tgz"
   "version" "0.142.0"

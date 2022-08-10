@@ -1,113 +1,117 @@
-import React, {useRef,useEffect,useLayoutEffect,useState} from 'react';
+import React, {useEffect,useLayoutEffect,useState} from 'react';
 import SpriteText from 'three-spritetext'
 import styled from 'styled-components'
 import ClipLoader from "react-spinners/ClipLoader";
 import ThreeForceGraph from 'three-forcegraph';
-// import TrackballControls from 'three-trackballcontrols';
-import { TrackballControls } from 'three/examples/jsm/controls/TrackballControls'
 import * as THREE from 'three'
+import CameraControls from 'camera-controls';
+
+CameraControls.install({ THREE: THREE });
 
 //constructor
-let Graph, scene, renderer, camera, controls, light, raycaster, pointer, selectedObject
+let graph, scene, renderer, camera, cameraControls, light, raycaster, pointer, clock
 
 let nodeMaterials = {}
-let rendererStarted = false
 const warmupTicks = 20
 
 function UniverseBrowser(props) {
     const [loading, setLoading] = useState(false)
-    const [loadingTicks, setLoadingTicks] = useState(0)
+    
 
     // initialize graph with config
     useLayoutEffect(() => {
 
         raycaster = new THREE.Raycaster();
         pointer = new THREE.Vector2();
-
-        Graph = new ThreeForceGraph()
+        clock = new THREE.Clock();
+        graph = new ThreeForceGraph()
         scene = new THREE.Scene();
         scene.background = new THREE.Color( 0xf1f1f1 );
-        scene.add(Graph);
+        scene.add(graph);
         renderer = new THREE.WebGLRenderer();
+        renderer.setSize(props.width, props.height);
+        document.getElementById('3d-graph')?.appendChild(renderer.domElement);
         camera = new THREE.PerspectiveCamera();
-        camera.far = 10000;
-        
-        controls = new TrackballControls(camera, renderer.domElement);
-        controls.rotateSpeed = 1.0;
-        controls.zoomSpeed = 1.2;
-        controls.panSpeed = 0.8;
-        controls.noZoom = false;
-        
-        controls.keys = ['KeyA', 'KeyS', 'KeyD'];
+        camera = new THREE.PerspectiveCamera( 60, props.width / props.height, 0.01, 100000 );
+        camera.position.set( 0, 0, 5 );
 
+        cameraControls = new CameraControls(camera, renderer.domElement);
+
+        // cameraControls.dampingFactor = 0.001 //default is 0.05, less is more
+        // cameraControls.draggingDampingFactor = 0.01 // default is 0.25
+
+        cameraControls.minZoom = -Infinity
+        cameraControls.maxZoom = Infinity
+
+        cameraControls.addEventListener('control', (e) => {
+            console.log('control', e)
+            console.log('cameraControls.distance',cameraControls.distance)
+        })
+
+        cameraControls.addEventListener('controlstart', (e) => {
+            console.log('controlstart', e)
+        })
+
+        cameraControls.addEventListener('controlend', (e) => {
+            console.log('controlend', e)  
+        })
         
+        clock = new THREE.Clock();
         
         light = new THREE.AmbientLight(0xbbbbbb)
         scene.add(light);
         
-        Graph.nodeThreeObject(nodeObject)
-        Graph.linkThreeObject(linkObject)
-        Graph.d3VelocityDecay(0.05)
+        graph.nodeThreeObject(nodeObject)
+        graph.linkThreeObject(linkObject)
+        graph.d3VelocityDecay(0.05)
      
-        Graph.onFinishUpdate((e) => {
-            console.log('finish update', e)
+        graph.onFinishUpdate(() => {
             for (let i = 0; i < warmupTicks; i++){
-                Graph.tickFrame();
-                // console.log('i',i)
+                graph.tickFrame();
+                console.log('i', i)
                 // end with a animation request
                 if (i === (warmupTicks - 1)) {
                     refreshGraph()
+                    
                 }
             }
         })
-        
-        // Graph.onEngineStop((e) => console.log('engine stopped!',e))
-        // Graph.onEngineTick((e) => console.log('engine tick', e))
-        // Graph.onDagError((e) => console.log('dag error', e))
-        // Graph.onLoading((e) => console.log('loading', e))
-    
 
-         // onNodeHover = { props.onNodeHovered }
-        // d3VelocityDecay={0.1}
-        // nodeRelSize={20}
-        // nodeVisibility={() => {
-        //     return !loading
-        // }}
-        // linkVisibility={() => {
-        //     return !loading
-        // }}
-        // rendererConfig={{
-        //     stencil: false,
-        //     powerPreference: 'high-performance',
-        //     precision: 'lowp',
-        // }}
-        // nodeLabel={() => ''}
-        // enableNodeDrag={false}
-        // onNodeClick={(node: any) => {
-        //     if (node.type === 'sun') {
-        //         mapRef?.current?.zoomToFit(600,100)
-        //         }
-        //     props.onNodeClicked(node)
-        // }}
-        // backgroundColor={'#f1f1f1'}
-        // nodeAutoColorBy="type"
-        // linkThreeObject={linkObject}
-        // nodeThreeObject={(node: any) => {
-        //     return nodeObject(node)
-        // }}
+        renderer.render( scene, camera );
+        
+        (function animate() {    
+            // Frame cycle
+            const delta = clock.getDelta();
+            const hasControlsUpdated = cameraControls.update(delta);
+            requestAnimationFrame(animate);
+            if (!loading && hasControlsUpdated) renderer.render(scene, camera);
+        })();
 
     }, [])
+
+    function animateFrame() {    
+        // Frame cycle
+        const delta = clock.getDelta();
+        cameraControls.update(delta);
+        requestAnimationFrame(()=>console.log("animate frame"));
+        renderer.render(scene, camera);
+    }
     
-    function zoomIt() {
-        // setTimeout(() => {
-        //     mapRef?.current?.zoomToFit(800, 10)  
-        // },800)
+    function zoomIt(distance = 3000, zoom = 0.00001) {
+        if (!props.openingAnimation) {
+            console.log(distance,zoom)
+            cameraControls.distance = distance
+            cameraControls.zoomTo(zoom, true )
+            requestAnimationFrame(() => console.log('animate'))
+            
+            // cameraControls.fitToBox( mesh, true, { cover: true } );
+            renderer.render(scene, camera);
+        }
     }
 
     function onPointerMove( event ) {
         // calculate pointer position in normalized device coordinates
         // (-1 to +1) for both components
-         
         pointer.x = ( (event.clientX - props.xOffset) / props.width ) * 2 - 1;
         pointer.y = - (event.clientY / window.innerHeight) * 2 + 1;
     }
@@ -135,60 +139,67 @@ function UniverseBrowser(props) {
         }
 
         props.onNodeHovered(hoveredObject)
-        selectedObject = hoveredObject
     }
 
-    useLayoutEffect(() => {
-        document.getElementById('3d-graph')?.appendChild(renderer.domElement);
-        // Kick-off renderer
-        if (!rendererStarted) {
-            (function animate() {
-                // Frame cycle
-                requestAnimationFrame(animate);
-                controls.update()
-                renderer.render(scene, camera);
-            })();
-            rendererStarted = true
+    function detectPointerClick() {
+        // update the picking ray with the camera and pointer position
+        raycaster.setFromCamera( pointer, camera );
+    
+        // calculate objects intersecting the picking ray
+        const intersects = raycaster.intersectObjects(scene.children);
+
+        // console.log('intersects',intersects)
+        const nodeIndex = intersects.findIndex(f => f.object && !f.object.isLine && f.object.__data.type !== 'topic')
+        const labelIndex = intersects.findIndex(f => f.object && !f.object.isLine && f.object.__data.type === 'topic')
+        // on hover
+
+        let hoveredObject = null
+
+        if (nodeIndex > -1) {
+            hoveredObject = intersects[nodeIndex].object.__data
+        } else if (labelIndex > -1){
+            hoveredObject = intersects[labelIndex].object.__data
+        } else {
+            hoveredObject = null
         }
-    }, [])
+
+        if (hoveredObject) props.onNodeClicked(hoveredObject)
+    }
     
     useEffect(() => {
         renderer.setSize(props.width, props.height);
         camera.aspect = props.width / props.height;
         updateCamera()
     }, [props.width, props.height])
-
-    // useEffect(() => {
-    //     setLoading(true)
-    // },[props.currentSearchTerm])
     
      // update graph
     useEffect(() => {
         setLoading(true)
         nodeMaterials = {}
-        Graph.clear()
-        Graph.graphData(props.graphData);
+        graph.clear()
+        graph.graphData(props.graphData);
         updateCamera()
     }, [props.graphData])
 
     function updateCamera(){
         const N = props.graphData?.nodes?.length
-        camera.lookAt(Graph.position);
+        camera.lookAt(graph.position);
         camera.position.z = Math.cbrt(N) * 180;
         camera.updateProjectionMatrix(); 
+        
+        animateFrame()
     }
 
     async function refreshGraph() {
         setLoading(false)
-        setLoadingTicks(0)
+        updateCamera()
+
+        zoomIt()
     }
 
-    useLayoutEffect(() => {
-        if (props.openingAnimation) zoomIt()
-        else {
-            if (!loading) zoomIt()
-        }
-    }, [props.openingAnimation, loading])
+    // useLayoutEffect(() => {
+    //     if (!loading) zoomIt()
+    // }, [loading])
     
 
     const nodeObject = (node) => {
@@ -278,15 +289,13 @@ function UniverseBrowser(props) {
         return line
     }
 
-    const percent = loadingTicks / warmupTicks
-
     return <div style={{ height: '100%', width: '100%', position: 'relative' }}>
 
         <div onMouseMove={(e) => {
             onPointerMove(e)
             detectPointer()
-        }} onClick={() => {
-            if (selectedObject) props.onNodeClicked(selectedObject)
+        }} onMouseDown={() => {
+            detectPointerClick()
         }}
             id="3d-graph"></div>
    
