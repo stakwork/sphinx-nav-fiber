@@ -111,6 +111,7 @@ function randomColor() {
     let index = 0      
     
     try {
+
       let data: Moment[] 
       const origin = window.location.origin
 
@@ -123,7 +124,6 @@ function randomColor() {
       } else {
         data = await getLsat(searchterm)
       }
-        
         
         const _nodes: Node[] = []
         const _links: Link[] = []
