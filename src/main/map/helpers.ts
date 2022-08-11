@@ -24,8 +24,7 @@ export interface Cluster {
   
   export interface Link {
     source: number,
-    target: number,
-    id: number
+    target: number
   }
   
   export interface Moment {
@@ -207,10 +206,8 @@ function randomColor() {
               if (podcastNode && topicNode) {
                 const link: Link = {
                   source: podcastNode.id,
-                  target: topicNode.id,
-                  id:index
+                  target: topicNode.id
                 }
-                index++
                 _links.push(link)
               }
             })
