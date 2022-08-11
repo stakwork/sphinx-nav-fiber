@@ -5,17 +5,18 @@ import ClipLoader from "react-spinners/ClipLoader";
 import ThreeForceGraph from 'three-forcegraph';
 import * as THREE from 'three'
 import CameraControls from 'camera-controls';
+import gsap from 'gsap'
 
 CameraControls.install({ THREE: THREE });
 
 //constructor
-let graph, scene, renderer, camera, cameraControls, light, raycaster, pointer, clock, hoveredNode
-
+let graph, scene, renderer, camera, cameraControls, light, raycaster, pointer, clock, hoveredNode, rotateCycle
 let nodeMaterials = {}
 const warmupTicks = 20
 
 function UniverseBrowser(props) {
     const [loading, setLoading] = useState(false)
+    const [rotating, setRotating] = useState(false)
     
 
     // initialize graph with config
@@ -24,11 +25,39 @@ function UniverseBrowser(props) {
         raycaster = new THREE.Raycaster();
         pointer = new THREE.Vector2();
         clock = new THREE.Clock();
+
         graph = new ThreeForceGraph()
+                .nodeThreeObject(nodeObject)
+                .linkThreeObject(linkObject)
+                .d3VelocityDecay(0.05)
+                .onFinishUpdate(() => {
+                        for (let i = 0; i < warmupTicks; i++){
+                            graph.tickFrame();
+                            console.log('i', i)
+                            // end with a animation request
+                            if (i === (warmupTicks - 1)) {
+                                refreshGraph()
+                            }
+                        }
+                })
+            // .d3Force('links', (e, d, f) => {
+            //     console.log('e',e,d,f)
+            //     return 10000
+            // })
+        
         scene = new THREE.Scene();
-        scene.background = new THREE.Color( 0xf1f1f1 );
+        scene.background = new THREE.Color(0xf1f1f1);
+        scene.fog = new THREE.Fog( 0xf1f1f1, 0, 10000 ); 
         scene.add(graph);
         renderer = new THREE.WebGLRenderer();
+
+        renderer.parameters = {
+            stencil: false,
+            powerPreference: 'high-performance',
+            precision: 'lowp',
+            depth: false
+        }
+        
         renderer.setSize(props.width, props.height);
         document.getElementById('3d-graph')?.appendChild(renderer.domElement);
         camera = new THREE.PerspectiveCamera();
@@ -37,8 +66,8 @@ function UniverseBrowser(props) {
 
         cameraControls = new CameraControls(camera, renderer.domElement);
 
-        // cameraControls.dampingFactor = 0.001 //default is 0.05, less is more
-        // cameraControls.draggingDampingFactor = 0.01 // default is 0.25
+        cameraControls.dampingFactor = 0.03 //default is 0.05, less is more
+        // cameraControls.draggingDampingFactor = 0.7 // default is 0.25
 
         // cameraControls.minDistance = -Infinity
         cameraControls.maxDistance = 30000
@@ -54,10 +83,12 @@ function UniverseBrowser(props) {
 
         // cameraControls.addEventListener('controlstart', (e) => {
         //     console.log('controlstart', camera.zoom)
+            
         // })
 
         // cameraControls.addEventListener('controlend', (e) => {
         //     console.log('controlend', e)  
+            
         // })
         
         clock = new THREE.Clock();
@@ -65,34 +96,17 @@ function UniverseBrowser(props) {
         light = new THREE.AmbientLight(0xbbbbbb)
         scene.add(light);
         
-        graph.nodeThreeObject(nodeObject)
-        graph.linkThreeObject(linkObject)
-        graph.d3VelocityDecay(0.05)
-     
-        graph.onFinishUpdate(() => {
-                for (let i = 0; i < warmupTicks; i++){
-                    graph.tickFrame();
-                    console.log('i', i)
-                    // end with a animation request
-                    if (i === (warmupTicks - 1)) {
-                        refreshGraph()
-                        
-                    }
-                }
-        })
+       
 
         renderer.render( scene, camera );
         
         (function animate() {    
             // Frame cycle
             const delta = clock.getDelta();
-            // const hasControlsUpdated =
-            cameraControls.update(delta);
+            const hasControlsUpdated = cameraControls.update(delta);
             requestAnimationFrame(animate);
-            // if (!loading && hasControlsUpdated)
-            renderer.render(scene, camera);
+            if (hasControlsUpdated) renderer.render(scene, camera);
         })();
-
     }, [])
 
     function animateFrame() {    
@@ -110,17 +124,42 @@ function UniverseBrowser(props) {
     }
     
     function centerCamera(distance = 4000) {
-        
         cameraControls.distance = distance
         cameraControls.setTarget( 0, 0, 0, false )
-        requestAnimationFrame(() => console.log('animate'))
+        requestAnimationFrame(() => console.log('centerCamera'))
         renderer.render(scene, camera);
 
-        // cameraControls.zoomTo(0.2, true)
-        // requestAnimationFrame(() => console.log('animate'))
-        // renderer.render(scene, camera);
+        setTimeout(() => {
+            rotate45()
+        }, 500)            
         
     }
+
+
+    function rotate45() {
+        if (rotating) return 
+
+        rotateCycle = gsap.to(
+            cameraControls,
+            {
+                azimuthAngle: cameraControls.azimuthAngle + 360 * THREE.MathUtils.DEG2RAD,
+                duration: 160,
+                // https://greensock.com/ease-visualizer/
+                ease: 'power',
+                overwrite:true,
+                paused: true
+            },
+        );
+    
+        rotateCycle.play(0);
+        
+        rotateCycle.eventCallback('onComplete', (e) => {
+            setRotating(false)
+        })
+
+        setRotating(true)
+    }
+    
 
     function onPointerMove( event ) {
         // calculate pointer position in normalized device coordinates
@@ -155,6 +194,10 @@ function UniverseBrowser(props) {
     }
 
     function detectPointerClickDown() {
+        if (rotating) {
+            rotateCycle.kill()
+            setRotating(false)
+        }
         // update the picking ray with the camera and pointer position
         raycaster.setFromCamera( pointer, camera );
     
@@ -213,6 +256,8 @@ function UniverseBrowser(props) {
         renderer.setSize(props.width, props.height);
         camera.aspect = props.width / props.height;
         updateCamera()
+        // for the effect
+        rotate45()
     }, [props.width, props.height])
     
      // update graph
@@ -232,7 +277,6 @@ function UniverseBrowser(props) {
         camera.position.z = Math.cbrt(N) * 180;
         camera.updateProjectionMatrix(); 
         animateFrame()
-        centerCamera()
     }
 
     async function refreshGraph() {

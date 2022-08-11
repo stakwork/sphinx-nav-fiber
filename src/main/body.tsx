@@ -59,7 +59,7 @@ export default function BodyComponent() {
       setOpeningAnimation(false)
       const initData = getSampleData()
       setData(initData)
-    },2000)
+    },1000)
   }, [])
 
 
@@ -206,7 +206,7 @@ export default function BodyComponent() {
             />
       </MouseTracker>
 
-      {openingAnimation && <Cover>Search Bitcoin Knowledge</Cover>}
+      {openingAnimation && <Cover></Cover>}
     </Body>
   )
 }
