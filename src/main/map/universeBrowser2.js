@@ -1,4 +1,4 @@
-import React, {useEffect,useLayoutEffect,useState} from 'react';
+import React, {useEffect,useLayoutEffect,useState,useRef} from 'react';
 import styled from 'styled-components'
 import ClipLoader from "react-spinners/ClipLoader";
 import * as THREE from 'three'
@@ -26,6 +26,7 @@ const warmupTicks = 20
 function UniverseBrowser(props) {
     const [loading, setLoading] = useState(false)
     const [rotating, setRotating] = useState(false)
+    const universeRef = useRef(null)
     
      // update graph
     useEffect(() => {
@@ -96,7 +97,14 @@ function UniverseBrowser(props) {
         renderer.setSize(props.width, props.height);
         renderer.setPixelRatio(window.devicePixelRatio);
 
-        document.getElementById('3d-graph')?.appendChild(renderer.domElement);
+        universeRef.current.appendChild(renderer.domElement);
+        universeRef.current.addEventListener('wheel', (event) => {
+            if (event.deltaY > 0) {
+                dollyOut()
+            } else {
+                dollyIn()
+            }
+        });
         
         camera = new THREE.PerspectiveCamera( 60, props.width / props.height, 0.01, 100000 );
         camera.position.set(0, 0, 5);
@@ -115,14 +123,7 @@ function UniverseBrowser(props) {
 
         // replace wheel action for smooth zoom transitions
         cameraControls.mouseButtons.wheel = 0
-        document.addEventListener('wheel', (event) => {
-            // console.log('wheel', event.deltaY)
-            if (event.deltaY > 0) {
-                dollyOut()
-            } else {
-                dollyIn()
-            }
-        });
+        
 
         renderer.render( scene, camera );
         animate()
@@ -408,7 +409,9 @@ function UniverseBrowser(props) {
 
     return <div style={{ height: '100%', width: '100%', position: 'relative' }}>
 
-        <div onMouseMove={(e) => {
+        <div
+            ref={universeRef}
+            onMouseMove={(e) => {
             if (loading) blockInteraction(e)
             else {
                 onPointerMove(e)
