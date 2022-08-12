@@ -92,6 +92,7 @@ function UniverseBrowser(props) {
             stencil: false,
             powerPreference: 'high-performance',
             precision: 'lowp',
+            // logarithmicDepthBuffer: true
         }
 
         renderer.setSize(props.width, props.height);
@@ -113,24 +114,31 @@ function UniverseBrowser(props) {
         cameraControls.minDistance = -Infinity//30000
         cameraControls.maxDistance = Infinity//30000
         cameraControls.enableTransition = true
-        cameraControls.dollySpeed = 0.4 // default is 1
+        cameraControls.dollySpeed = 0.2 // default is 1
+        cameraControls.dampingFactor = 0.1
         cameraControls.infinityDolly = true
-        // cameraControls.addEventListener('control', (e) => {
-        //     console.log('control',e)
-        // })
         cameraControls.enableDamping = true
-
 
         // replace wheel action for smooth zoom transitions
         cameraControls.mouseButtons.wheel = 0
         
-
         renderer.render( scene, camera );
         animate()
     }, [])
 
-    const dollyIn  = () => cameraControls.dolly( 200, true );
-    const dollyOut = () => cameraControls.dolly( -200, true);
+    const dollyIn = () => {
+        let dollyStep = 40
+        const distance = cameraControls.distance 
+        if (distance > 3000) dollyStep = 140
+        
+        cameraControls.dolly(dollyStep, true);
+    }
+    const dollyOut = () => {
+        let dollyStep = -40
+        const distance = cameraControls.distance 
+        if (distance > 3000) dollyStep = -140
+        cameraControls.dolly(dollyStep, true);
+    }
 
     function animate() {    
         // Frame cycle
@@ -203,38 +211,17 @@ function UniverseBrowser(props) {
         const mouseY = event.clientY
         const xCenter = w/2
         const yCenter = h / 2
-        const dampening = 10
-        const xOff = (mouseX - xCenter)/dampening
+        const dampening = 60
+        const xOff = (mouseX - xCenter) / dampening
         const yOff = (mouseY - yCenter) / dampening
 
         cameraControls.setFocalOffset(xOff,yOff,0,true)
     }
 
+
     function detectPointer() {
-        // update the picking ray with the camera and pointer position
-        raycaster.setFromCamera( pointer, camera );
-    
-        // calculate objects intersecting the picking ray
-        const intersects = raycaster.intersectObjects(scene.children);
-
-        // console.log('intersects',intersects)
-        const nodeIndex = intersects.findIndex(f => f.object && !f.object.isLine && f.object.__data.type !== 'topic')
-        const labelIndex = intersects.findIndex(f => f.object && !f.object.isLine && f.object.__data.type === 'topic')
-        // on hover
-
-        let hoveredObject = null
-
-        if (nodeIndex > -1) {
-            hoveredObject = intersects[nodeIndex].object.__data
-        } else if (labelIndex > -1){
-            hoveredObject = intersects[labelIndex].object.__data
-        } else {
-            hoveredObject = null
-        }
-
+        let hoveredObject = getHoveredObject()
         props.onNodeHovered(hoveredObject)
-
-        
     }
 
     function detectPointerClickDown() {
@@ -242,51 +229,13 @@ function UniverseBrowser(props) {
             rotateCycle.kill()
             setRotating(false)
         }
-        // update the picking ray with the camera and pointer position
-        raycaster.setFromCamera( pointer, camera );
-    
-        // calculate objects intersecting the picking ray
-        const intersects = raycaster.intersectObjects(scene.children);
 
-        // console.log('intersects',intersects)
-        const nodeIndex = intersects.findIndex(f => f.object && !f.object.isLine && f.object.__data.type !== 'topic')
-        const labelIndex = intersects.findIndex(f => f.object && !f.object.isLine && f.object.__data.type === 'topic')
-        // on hover
-
-        let hoveredObject = null
-
-        if (nodeIndex > -1) {
-            hoveredObject = intersects[nodeIndex].object.__data
-        } else if (labelIndex > -1){
-            hoveredObject = intersects[labelIndex].object.__data
-        } else {
-            hoveredObject = null
-        }
-
+        let hoveredObject = getHoveredObject()
         hoveredNode = hoveredObject
     }
 
     function detectPointerClick() {
-        // update the picking ray with the camera and pointer position
-        raycaster.setFromCamera( pointer, camera );
-    
-        // calculate objects intersecting the picking ray
-        const intersects = raycaster.intersectObjects(scene.children);
-
-        // console.log('intersects',intersects)
-        const nodeIndex = intersects.findIndex(f => f.object && !f.object.isLine && f.object.__data.type !== 'topic')
-        const labelIndex = intersects.findIndex(f => f.object && !f.object.isLine && f.object.__data.type === 'topic')
-        // on hover
-
-        let hoveredObject = null
-
-        if (nodeIndex > -1) {
-            hoveredObject = intersects[nodeIndex].object.__data
-        } else if (labelIndex > -1){
-            hoveredObject = intersects[labelIndex].object.__data
-        } else {
-            hoveredObject = null
-        }
+        let hoveredObject = getHoveredObject()
 
         if (hoveredNode && hoveredObject
             && hoveredObject.id === hoveredNode.id) {
@@ -295,8 +244,31 @@ function UniverseBrowser(props) {
 
         hoveredNode = null
     }
+
+    function getHoveredObject() {
+        // update the picking ray with the camera and pointer position
+        raycaster.setFromCamera( pointer, camera );
     
-    
+        // calculate objects intersecting the picking ray
+        const intersects = raycaster.intersectObjects(scene.children);
+
+        // console.log('intersects',intersects)
+        const nodeIndex = intersects.findIndex(f => f.object && !f.object.isLine && f.object.__data.type !== 'topic')
+        const labelIndex = intersects.findIndex(f => f.object && !f.object.isLine && f.object.__data.type === 'topic')
+        // on hover
+
+        let hoveredObject = null
+
+        if (nodeIndex > -1) {
+            hoveredObject = intersects[nodeIndex].object.__data
+        } else if (labelIndex > -1){
+            hoveredObject = intersects[labelIndex].object.__data
+        } else {
+            hoveredObject = null
+        }
+
+        return hoveredObject
+    }
 
     function updateCamera(){
         const N = props.graphData?.nodes?.length
@@ -306,13 +278,20 @@ function UniverseBrowser(props) {
         animateFrame()
     }
 
-    async function refreshGraph() {
+    function refreshGraph() {
         setLoading(false)
         updateCamera()
         centerCamera()
     }
 
-   
+    function blockInteraction(e) {
+        if (loading) {
+            e.preventDefault()
+            e.stopPropagation()
+            return
+        } 
+    }
+
 
     const nodeObject = (node) => {
         if (node.fakeData) {
@@ -397,13 +376,7 @@ function UniverseBrowser(props) {
         return line
     }
 
-    function blockInteraction(e) {
-        if (loading) {
-            e.preventDefault()
-            e.stopPropagation()
-            return
-        } 
-    }
+   
 
     
 
