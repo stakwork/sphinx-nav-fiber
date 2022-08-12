@@ -77,14 +77,20 @@ export default function MouseTracker(props: any) {
         tooltip = null
     }
 
-    return <div onMouseMove={(e) => {
+    return <div
+        onMouseMove={(e) => {
         if (!hoveredNode) return
         let x = e.pageX - subtractWidth
         let y = e.pageY
         
         setMousePosition({x,y})
     }}
-        style={{ width:'100%',height:'100%',position: 'relative' }}>
+        style={{
+            width: '100%',
+            height: '100%',
+            position: 'relative',
+            cursor: hoveredNode ? 'pointer' : 'default'
+        }}>
         
         {tooltip}
         

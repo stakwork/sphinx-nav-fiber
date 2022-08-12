@@ -25,6 +25,7 @@
     "three": "^0.142.0",
     "three-forcegraph": "^1.39.4",
     "three-spritetext": "^1.6.5",
+    "three.meshline": "^1.4.0",
     "typescript": "^4.4.2",
     "web-vitals": "^2.1.0"
   },
