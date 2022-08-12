@@ -11714,6 +11714,11 @@
   "resolved" "https://registry.npmjs.org/three-spritetext/-/three-spritetext-1.6.5.tgz"
   "version" "1.6.5"
 
+"three.meshline@^1.4.0":
+  "integrity" "sha512-A8IsiMrWP8zmHisGDAJ76ZD7t/dOF/oCe/FUKNE6Bu01ZYEx8N6IlU/1Plb2aOZtAuWM2A8s8qS3hvY0OFuvOw=="
+  "resolved" "https://registry.npmjs.org/three.meshline/-/three.meshline-1.4.0.tgz"
+  "version" "1.4.0"
+
 "three@^0.142.0", "three@>=0.118.3", "three@>=0.126.1", "three@>=0.86.0":
   "integrity" "sha512-ESjPO+3geFr+ZUfVMpMnF/eVU2uJPOh0e2ZpMFqjNca1wApS9lJb7E4MjwGIczgt9iuKd8PEm6Pfgp2bJ92Xtg=="
   "resolved" "https://registry.npmjs.org/three/-/three-0.142.0.tgz"

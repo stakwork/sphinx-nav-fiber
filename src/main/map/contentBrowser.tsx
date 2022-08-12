@@ -2,7 +2,6 @@ import {useState, useEffect } from 'react'
 import styled from "styled-components";
 import ReactAudioPlayer from 'react-audio-player';
 import ClipLoader from "react-spinners/ClipLoader";
-import FadeLeft from '../animated/fadeLeft';
 import { NodesAndLinks, Node, convertFromISOtoSeconds, sleep } from './helpers';
 import Modal from '../sphinxUI/modal';
 
@@ -133,9 +132,6 @@ export default function ContentBrowser(props: ListContent) {
     async function clickTimestamp(t:any, podcastName:string){
         const se: any = { ...selectedEpisodes }
         console.log('t', t)
-        
-        
-        
         se[podcastName] = { ...t, loaded: false }
         setSelectedEpisodes(se)  
         setSelectedContent(t)
@@ -395,7 +391,14 @@ export default function ContentBrowser(props: ListContent) {
                 <Scroller id={'focused_scroller'}>
                       {Object.keys(timestamps).filter(f=>f===focusedNode.details.episode_title)
                           .map((episodeName: any, ii: number) => {
-                    const thisPodcastTimestamps = timestamps[episodeName]
+                              const thisPodcastTimestamps = timestamps[episodeName] && timestamps[episodeName].sort((a: any, b: any) => {
+                                  // order episode by time
+                                  let aSplit = a.timestamp.split('-')
+                                  let bSplit = b.timestamp.split('-')
+                                  const aTime = convertFromISOtoSeconds(aSplit[0])
+                                  const bTime = convertFromISOtoSeconds(bSplit[0])  
+                                  return aTime - bTime
+                    })
                     const myKey = episodeName + '_' + i + '_' + ii
                     const defaultTimestamp = thisPodcastTimestamps[0]
                     let episodeImg = defaultTimestamp.image_url
@@ -499,7 +502,7 @@ export default function ContentBrowser(props: ListContent) {
                                         <Time style={{color}}>
                                             {'' + formatTimestamp(t.timestamp)}
                                         </Time>
-                                        <Transcript style={{ color, fontStyle:'normal' }}>
+                                        <Transcript style={{ color, fontStyle:'normal',marginTop:5 }}>
                                             {t.description}
                                         </Transcript>
                                     </div>
@@ -689,6 +692,7 @@ height:100%;
 width:250px;
 transition:opacity 0.2s;
 background:#f0f6ff;
+box-shadow: 4px 8px 8px rgba(0, 0, 0, 0.2);
 `
 
 
