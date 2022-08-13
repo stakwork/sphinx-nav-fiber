@@ -1,5 +1,5 @@
 
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import styled from 'styled-components'
 
 export default function MouseTracker(props: any) {
@@ -12,6 +12,14 @@ export default function MouseTracker(props: any) {
 
     let xOffset = 0
     let yOffset = 0
+
+    const trackDiv = useRef(null)
+
+    // useEffect(() => {
+    //     if (hoveredNode) {
+
+    //     } 
+    // },[hoveredNode])
 
     // console.log('hoveredNode', hoveredNode)
 
@@ -52,8 +60,10 @@ export default function MouseTracker(props: any) {
 
     let tooltip:any = (<Tooltip style={{
         opacity:(type && type !== 'topic' && type !== 'sun') ? 1 : 0,
-        left,
-        top,
+        // left,
+        // top,
+        top: 20,
+        right:20,
         width: tooltipW
     }}>
         <Avatar src={tooltipImg} />
@@ -78,12 +88,12 @@ export default function MouseTracker(props: any) {
     }
 
     return <div
+        ref={trackDiv}
         onMouseMove={(e) => {
-        if (!hoveredNode) return
-        let x = e.pageX - subtractWidth
-        let y = e.pageY
-        
-        setMousePosition({x,y})
+        // if (!hoveredNode) return
+        // let x = e.pageX - subtractWidth
+        // let y = e.pageY
+        // setMousePosition({x,y})
     }}
         style={{
             width: '100%',

@@ -168,7 +168,8 @@ export default function ContentBrowser(props: ListContent) {
                 <Scroller id={'top_ranked_scroller'}>
                     {graphData.nodes.slice(startSlice,endSlice).filter(f => f.type !== 'topic').map((n: any, i) => {
                         const { details } = n
-                        let { image_url, podcast_title, episode_title, description } = details || {}
+                        let { image_url, podcast_title, episode_title, description, date } = details || {}
+
 
                         if (image_url) {
                             image_url = image_url.replace('.jpg', '_s.jpg')
@@ -178,7 +179,7 @@ export default function ContentBrowser(props: ListContent) {
                             onClick={() => {
                                 props.setFocusedNode(n)
                             }}
-                            style={{ alignItems: 'center', cursor:'pointer' }} key={'node' + i}>
+                            style={{ cursor:'pointer' }} key={'node' + i}>
 
                             <div style={{ marginRight: 20 }}>
                                 <Avatar
@@ -187,6 +188,11 @@ export default function ContentBrowser(props: ListContent) {
                             </div>
                                     
                             <div style={{ overflow: 'hidden', maxWidth: 'calc(100% - 90px)' }}>
+                            <div style={{
+                                    fontWeight: 300, fontSize: 11,
+                                    color: '#3C3F41',
+                                    marginBottom:4
+                                }}>{date}</div>
                                 <EpisodeTitle style={{marginBottom:5}}>{episode_title}</EpisodeTitle>
 
                                 <div style={{
@@ -322,13 +328,15 @@ export default function ContentBrowser(props: ListContent) {
                           <PodcastName>{title}</PodcastName>
                           <Title>{selectedEpisode.episode_title}</Title>
                           
-                          {yesRender ? <ReactAudioPlayer
+                        <Pill selected={showTranscript} style={{width:'fit-content', margin:'10px 0 15px'}}  onClick={() => setShowTranscript(!showTranscript)}>
+                        Transcript
+                        </Pill>
+                          {yesRender && <ReactAudioPlayer
                               id={audioUrl}
                               className={'audio-player'}
                               autoPlay
                               style={{
-                                  width: '100%',
-                                  marginTop: "20px",
+                                  width: '100%'
                               }}
                               src={audioUrl}
                               onError={() => {
@@ -343,12 +351,11 @@ export default function ContentBrowser(props: ListContent) {
                                   startPlayback(title, se[podcastName].timestamp, se[podcastName].media_url)
                               }}
                               controls
-                          /> : <div style={{ height: 74 }} />}
+                              /> 
+                                }
 
-                          {<Pill selected={showTranscript} style={{width:'fit-content', marginTop:20}}  onClick={() => setShowTranscript(!showTranscript)}>
-                              Transcript
-                          </Pill>}
-                          </Col>
+                         
+                        </Col>
                   </Row>
 
                   {/* <Divider />
@@ -761,6 +768,7 @@ overflow:hidden;
 
 const EpisodePanel = styled.div`
 display:flex;
+align-items:flex-start;
 width:100%;
 padding:10px 20px;
 opacity:0.8;
