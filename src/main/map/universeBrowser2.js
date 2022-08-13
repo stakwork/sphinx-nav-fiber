@@ -13,15 +13,32 @@ THREE.Cache.enabled = true;
 CameraControls.install({ THREE: THREE });
 
 //constructor
-let graph, scene, renderer, camera, cameraControls, zoomControls, light, raycaster, pointer, clock, hoveredNode, rotateCycle
+let graph, scene, renderer, camera, cameraControls, hoveredNode, light, raycaster, pointer, clock, rotateCycle
 let nodeMaterials = {}
 const warmupTicks = 20
+let nodeStyleCleanedUp = false
 
 // const linkMaterial = new MeshLineMaterial({
 //             opacity: 0.5,
 //             transparent:true,
 //             color: '#000000',
 //         });
+
+const isBrowser = typeof window !== 'undefined';
+const isMac = isBrowser && /Mac/.test(navigator.platform);
+const deltaYFactor = isMac ? -1 : -3;
+
+let _dollyControlAmount = 0,
+    _dollyControlCoord = new THREE.Vector2(),
+    _v3A = new THREE.Vector3(),
+    minDistance = -Infinity,
+    maxDistance = Infinity,
+    enableTransition = true,
+    dollySpeed = 0.2, 
+    dampingFactor = 0.1,
+    infinityDolly = true,
+    enableDamping = true,
+    dollyToCursor = true
 
 function UniverseBrowser(props) {
     const [loading, setLoading] = useState(false)
@@ -100,11 +117,9 @@ function UniverseBrowser(props) {
 
         universeRef.current.appendChild(renderer.domElement);
         universeRef.current.addEventListener('wheel', (event) => {
-            if (event.deltaY > 0) {
-                dollyOut()
-            } else {
-                dollyIn()
-            }
+            
+            doDollyTransition(event)
+            
         });
         
         camera = new THREE.PerspectiveCamera( 60, props.width / props.height, 0.01, 100000 );
@@ -118,6 +133,7 @@ function UniverseBrowser(props) {
         cameraControls.dampingFactor = 0.1
         cameraControls.infinityDolly = true
         cameraControls.enableDamping = true
+        cameraControls.dollyToCursor = true
 
         // replace wheel action for smooth zoom transitions
         cameraControls.mouseButtons.wheel = 0
@@ -126,19 +142,44 @@ function UniverseBrowser(props) {
         animate()
     }, [])
 
-    const dollyIn = () => {
+    const doDollyTransition = (event) => {
+
         let dollyStep = 40
         const distance = cameraControls.distance 
         if (distance > 3000) dollyStep = 140
+        // is dolly out
+        if (event.deltaY > 0) dollyStep = dollyStep * -1
+        cameraControls.dolly(dollyStep, true)
+
+        // const delta = (event.deltaMode === 1) ? event.deltaY / deltaYFactor : event.deltaY / (deltaYFactor * 10);
+        // const x = (event.clientX - pointer.x) / props.width * 2 - 1
+        // const y = (event.clientY - pointer.y) / props.height * -2 + 1 
+
+        // cameraControls.moveTo( x, y, camera.position.z, true )
+
+        // console.log('cameraControls',cameraControls)
+    }
+    
+
+    // function dollyToCursor(delta, x, y) {
+    //     const dollyScale = Math.pow(0.95, -delta * dollySpeed);
+    //     const distance = cameraControls._sphericalEnd.radius * dollyScale;
+    //     const prevRadius = cameraControls._sphericalEnd.radius;
+    //     const signedPrevRadius = prevRadius * (delta >= 0 ? -1 : 1);
+    //     cameraControls.dollyTo(distance);
+    //     if (infinityDolly && (distance < minDistance || maxDistance === minDistance)) {
+    //         camera.getWorldDirection(_v3A);
+    //         cameraControls._targetEnd.add(_v3A.normalize().multiplyScalar(signedPrevRadius));
+    //         cameraControls._target.add(_v3A.normalize().multiplyScalar(signedPrevRadius));
+    //     }
         
-        cameraControls.dolly(dollyStep, true);
-    }
-    const dollyOut = () => {
-        let dollyStep = -40
-        const distance = cameraControls.distance 
-        if (distance > 3000) dollyStep = -140
-        cameraControls.dolly(dollyStep, true);
-    }
+    //     _dollyControlAmount += cameraControls._sphericalEnd.radius - prevRadius;
+    //     if (infinityDolly && (distance < minDistance || maxDistance === minDistance)) {
+    //         _dollyControlAmount -= signedPrevRadius;
+    //     }
+    //     _dollyControlCoord.set(x, y);
+        
+    // };
 
     function animate() {    
         // Frame cycle
@@ -222,6 +263,7 @@ function UniverseBrowser(props) {
     function detectPointer() {
         let hoveredObject = getHoveredObject()
         props.onNodeHovered(hoveredObject)
+        doHoveredNodeStyle(hoveredObject)
     }
 
     function detectPointerClickDown() {
@@ -241,7 +283,6 @@ function UniverseBrowser(props) {
             && hoveredObject.id === hoveredNode.id) {
             props.onNodeClicked(hoveredObject)
         }
-
         hoveredNode = null
     }
 
@@ -263,12 +304,36 @@ function UniverseBrowser(props) {
             hoveredObject = intersects[nodeIndex].object.__data
         } else if (labelIndex > -1){
             hoveredObject = intersects[labelIndex].object.__data
+            // intersects[labelIndex].object.scale.set(40, 40, 1);
         } else {
             hoveredObject = null
+            nodeStyleCleanedUp = false
         }
 
         return hoveredObject
     }
+
+    
+
+    function doHoveredNodeStyle(node) {
+        if (!node && nodeStyleCleanedUp) return
+        
+        const gotData = graph.graphData()
+        gotData.nodes.filter(f=>f.type!=='topic').forEach(n => {
+            const index = gotData.nodes.findIndex(f => f.id === n.id)
+            let scale = 20
+            if (node?.id === n.id) {
+                scale = 50
+            }
+            const currentScale = n.__threeObj.scale.x
+
+            if (currentScale !== scale) {
+                gotData.nodes[index].__threeObj.scale.set(scale, scale, 0)    
+            }
+        })
+        nodeStyleCleanedUp = true
+    }
+    
 
     function updateCamera(){
         const N = props.graphData?.nodes?.length
@@ -291,7 +356,6 @@ function UniverseBrowser(props) {
             return
         } 
     }
-
 
     const nodeObject = (node) => {
         if (node.fakeData) {
@@ -376,9 +440,6 @@ function UniverseBrowser(props) {
         return line
     }
 
-   
-
-    
 
     return <div style={{ height: '100%', width: '100%', position: 'relative' }}>
 
