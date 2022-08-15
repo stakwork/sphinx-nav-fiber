@@ -4471,7 +4471,7 @@
   "resolved" "https://registry.npmjs.org/d3-dispatch/-/d3-dispatch-3.0.1.tgz"
   "version" "3.0.1"
 
-"d3-force-3d@2 - 3":
+"d3-force-3d@^3.0.3", "d3-force-3d@2 - 3":
   "integrity" "sha512-8HGTbw6y35UYManGCPU4+b9/PGgnyjzRq80DRsp7zFsRl0leVz2pzwx18dwkPe4rDxTOEpM4BuWQ2krbVaGQQA=="
   "resolved" "https://registry.npmjs.org/d3-force-3d/-/d3-force-3d-3.0.3.tgz"
   "version" "3.0.3"
