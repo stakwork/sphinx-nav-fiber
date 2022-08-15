@@ -1,6 +1,7 @@
 import React, {useEffect,useLayoutEffect,useState,useRef} from 'react';
 import styled from 'styled-components'
 import ClipLoader from "react-spinners/ClipLoader";
+import * as d3 from "d3-force-3d";
 import * as THREE from 'three'
 import SpriteText from 'three-spritetext'
 import ThreeForceGraph from 'three-forcegraph';
@@ -13,7 +14,7 @@ THREE.Cache.enabled = true;
 CameraControls.install({ THREE: THREE });
 
 //constructor
-let graph, scene, renderer, camera, cameraControls, hoveredNode, light, raycaster, pointer, clock, rotateCycle
+let graph, scene, renderer, camera, cameraControls, hoveredNode, light, raycaster, pointer, clock, rotateCycle, searchTermNode
 let nodeMaterials = {}
 const warmupTicks = 20
 let nodeStyleCleanedUp = false
@@ -28,20 +29,8 @@ const isBrowser = typeof window !== 'undefined';
 const isMac = isBrowser && /Mac/.test(navigator.platform);
 const deltaYFactor = isMac ? -1 : -3;
 
-let _dollyControlAmount = 0,
-    _dollyControlCoord = new THREE.Vector2(),
-    _v3A = new THREE.Vector3(),
-    minDistance = -Infinity,
-    maxDistance = Infinity,
-    enableTransition = true,
-    dollySpeed = 0.2, 
-    dampingFactor = 0.1,
-    infinityDolly = true,
-    enableDamping = true,
-    dollyToCursor = true
-
 function UniverseBrowser(props) {
-    const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState(true)
     const [rotating, setRotating] = useState(false)
     const universeRef = useRef(null)
     
@@ -51,11 +40,19 @@ function UniverseBrowser(props) {
         setTimeout(() => {
             nodeMaterials = {}
             graph.clear()
-            graph.graphData(props.graphData);
+            graph.graphData(props.graphData)
+
+            // if (props.graphData.links.length) {
+                // graph.d3Force("charge", d3.forceManyBody(props.graphData.nodes).distanceMin(300).distanceMax(500))
+                // graph.d3Force("link", d3.forceLink(props.graphData.links).distance(200))    
+            // }
+            
+            // doSearchTermNodeUpdates()
             updateCamera()    
         },200)
     }, [props.graphData])
 
+    
     // update camera and renderer on resize
     useEffect(() => {
         renderer.setSize(props.width, props.height);
@@ -91,10 +88,11 @@ function UniverseBrowser(props) {
                             }
                         }
                 })
-            // .d3Force('links', (e, d, f) => {
-            //     console.log('e',e,d,f)
-            //     return 10000
-            // })
+            .d3Force("charge", d3.forceManyBody().distanceMin(200).distanceMax(500))
+            .d3Force("link", d3.forceLink().distance(200))
+            // .d3Force("link", d3.forceLink())
+            // .d3Force("center", d3.forceCenter());
+            
         
         clock = new THREE.Clock();
         light = new THREE.AmbientLight(0xbbbbbb)
@@ -117,47 +115,67 @@ function UniverseBrowser(props) {
 
         universeRef.current.appendChild(renderer.domElement);
         universeRef.current.addEventListener('wheel', (event) => {
-            
             doDollyTransition(event)
-            
         });
         
         camera = new THREE.PerspectiveCamera( 60, props.width / props.height, 0.01, 100000 );
         camera.position.set(0, 0, 5);
         
         cameraControls = new CameraControls(camera, renderer.domElement);
+        // replace wheel action for smooth zoom transitions
+        cameraControls.mouseButtons.wheel = 0
+
         cameraControls.minDistance = -Infinity//30000
         cameraControls.maxDistance = Infinity//30000
+        cameraControls.minPolarAngle = -Infinity//
+        cameraControls.maxPolarAngle = Infinity
         cameraControls.enableTransition = true
         cameraControls.dollySpeed = 0.2 // default is 1
         cameraControls.dampingFactor = 0.1
         cameraControls.infinityDolly = true
         cameraControls.enableDamping = true
         cameraControls.dollyToCursor = true
-
-        // replace wheel action for smooth zoom transitions
-        cameraControls.mouseButtons.wheel = 0
         
+        const normalizedAzimuthAngle = THREE.MathUtils.euclideanModulo( cameraControls.azimuthAngle, 360 * THREE.MathUtils.DEG2RAD );
+        cameraControls.azimuthAngle = normalizedAzimuthAngle
         renderer.render( scene, camera );
         animate()
     }, [])
 
-    const doDollyTransition = (event) => {
+    function doSearchTermNodeUpdates() {
+        if (scene) {
+            if (searchTermNode) {
+                searchTermNode._text.set(props.currentSearchTerm)
+            }
+            else {
+                searchTermNode = new SpriteText(props.currentSearchTerm||'Welcome');
+                searchTermNode.color = '#000000';
+                searchTermNode.textHeight = 120;
+                searchTermNode.userData = {
+                    type:'searchTerm'
+                }
+                scene.add(searchTermNode);    
+            }
+        }
+    }
+
+
+    const doDollyTransition = async (event) => {
+
+        // console.log('cameraControls',cameraControls)
 
         let dollyStep = 40
         const distance = cameraControls.distance 
         if (distance > 3000) dollyStep = 140
-        // is dolly out
+        
         if (event.deltaY > 0) dollyStep = dollyStep * -1
+
+        // const cameraDirection = camera.getWorldDirection()
+
+        // console.log('cameraDirection',cameraDirection)
+        
         cameraControls.dolly(dollyStep, true)
-
-        // const delta = (event.deltaMode === 1) ? event.deltaY / deltaYFactor : event.deltaY / (deltaYFactor * 10);
-        // const x = (event.clientX - pointer.x) / props.width * 2 - 1
-        // const y = (event.clientY - pointer.y) / props.height * -2 + 1 
-
-        // cameraControls.moveTo( x, y, camera.position.z, true )
-
-        // console.log('cameraControls',cameraControls)
+      
     }
     
 
@@ -294,8 +312,8 @@ function UniverseBrowser(props) {
         const intersects = raycaster.intersectObjects(scene.children);
 
         // console.log('intersects',intersects)
-        const nodeIndex = intersects.findIndex(f => f.object && !f.object.isLine && f.object.__data.type !== 'topic')
-        const labelIndex = intersects.findIndex(f => f.object && !f.object.isLine && f.object.__data.type === 'topic')
+        const nodeIndex = intersects.findIndex(f => f.object && !f.object.isLine && f.object.__data?.type !== 'topic')
+        const labelIndex = intersects.findIndex(f => f.object && !f.object.isLine && f.object.__data?.type === 'topic')
         // on hover
 
         let hoveredObject = null
@@ -335,11 +353,21 @@ function UniverseBrowser(props) {
     }
     
 
-    function updateCamera(){
-        const N = props.graphData?.nodes?.length
-        camera.lookAt(graph.position);
-        camera.position.z = Math.cbrt(N) * 180;
-        camera.updateProjectionMatrix(); 
+    function updateCamera() {
+        // if (!loading && openingAnimation && props.graphData?.nodes.length) {
+        //     //first node 
+        //     let zoomTarget = props.graphData?.nodes[0]
+        //     const { x,y,z,vx,vy,vz} = zoomTarget
+        //     console.log('zoomTarget', zoomTarget)
+        //     setOpeningAnimation(false)
+        //     cameraControls.moveTo(vx, vy, vz, true)    
+        // }
+        // else {
+            const N = props.graphData?.nodes?.length
+            camera.lookAt(graph.position);
+            camera.position.z = Math.cbrt(N) * 180;
+        // }
+        camera.updateProjectionMatrix();
         animateFrame()
     }
 
