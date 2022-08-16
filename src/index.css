@@ -23,11 +23,11 @@ code {
   position: relative;
 }
 
-#search-field {
+input {
   border: 1px solid #D0D5D8 !important;
 }
 
-#search-field:before {
+input {
   border: 1px solid #D0D5D8;
 }
 

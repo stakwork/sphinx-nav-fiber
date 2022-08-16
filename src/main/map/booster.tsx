@@ -15,8 +15,8 @@ export default function Booster(props: BoostProps) {
     const [showModal, setShowModal] = useState(false)
     const [boostAmount, setBoostAmount] = useState('')
     const { refId, content } = props
-    
-    let { image_url, podcast_title, episode_title, timestamp } = content.details || {}
+
+    let { image_url, podcast_title, episode_title, timestamp } = content || {}
     
     if (image_url) {
         image_url = image_url.replace('.jpg','_l.jpg')
@@ -24,10 +24,10 @@ export default function Booster(props: BoostProps) {
 
 
     async function doBoost() {
-        if (submitting || !boostAmount) return
+        if (submitting || !boostAmount || parseInt(boostAmount) === 0) return
         setSubmitting(true)
         try {
-            const res = await boostContent(refId, 100)
+            const res = await boostContent(refId, parseInt(boostAmount))
             console.log('res', res)
             setIsSuccess(true)
 
@@ -53,8 +53,8 @@ export default function Booster(props: BoostProps) {
     Boost
     </Pill>
         <Modal  visible={showModal} close={() => setShowModal(false)}
-        envStyle={{borderRadius:4, position:'relative' }}>
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',padding:'40px 50px 10px' }}>
+        envStyle={{borderRadius:4, position:'relative',padding:'20px 30px 0px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
 
                 <ContentEnv>
                     <Avatar src={image_url} />
@@ -84,7 +84,7 @@ export default function Booster(props: BoostProps) {
                 
                     <div style={{ height: 10 }} />
             
-                    <Pill style={{ width: '100%', margin: '10px 0 15px' }}
+                    <Pill style={{ margin: '10px 0 15px' }}
                         disabled={submitting}
                         onClick={() => doBoost()}>
                         <span className="material-icons" style={{ fontSize: 14 }}>bolt</span>
@@ -112,6 +112,7 @@ interface PillProps {
   }
 const Pill = styled.div<PillProps>`
 padding:10px 20px;
+width: calc(100% - 40px);
 border-radius:20px;
 flex-grow:0;
 flex-shrink:0;
@@ -131,7 +132,7 @@ pointer-events: ${p=>p.disabled?'none':'auto'};
 
 const Input = styled.input`
 pointer-events:auto;
-width:100%;
+width:calc(100% - 40px);
 height:40px;
 padding:0 20px;
 border: 1px solid #D0D5D8;
@@ -145,8 +146,6 @@ border-radius: 4px;
 const ContentEnv = styled.div`
 display: flex; 
 align-items: flex-start;
-justify-content:center;
-
 `
 
 const Title = styled.div`
