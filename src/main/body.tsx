@@ -239,7 +239,7 @@ border-radius: 100px;
 min-width:300px;
 height:50px;
 padding:0 20px;
-z-index:2000;
+z-index:2;
 border: 1px solid #D0D5D8;
 box-shadow: 0px 1px 6px rgba(0, 0, 0, 0.1);
 border-radius: 4px;

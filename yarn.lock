@@ -11197,10 +11197,10 @@
     "select-hose" "^2.0.0"
     "spdy-transport" "^3.0.0"
 
-"sphinx-bridge-kevkevinpal@0.2.31":
-  "integrity" "sha512-lTnWpxKOvY5Gw09sKdMq82jJZgkte8sGfUcEH/9XHt3vamZWTxGURDVTK1oK14jD9hMBWWw2kBkVNTtgGWbrHQ=="
-  "resolved" "https://registry.npmjs.org/sphinx-bridge-kevkevinpal/-/sphinx-bridge-kevkevinpal-0.2.31.tgz"
-  "version" "0.2.31"
+"sphinx-bridge-kevkevinpal@^0.2.41":
+  "integrity" "sha512-toPXl6lZPueC6m+Z5l+anDuqb1DtwiOEux3mxT09q2nfqi5bpVRQwUfR/NFrLe5t/YdWI/jDo2GPbD8XVAL8jQ=="
+  "resolved" "https://registry.npmjs.org/sphinx-bridge-kevkevinpal/-/sphinx-bridge-kevkevinpal-0.2.41.tgz"
+  "version" "0.2.41"
   dependencies:
     "invoices" "^2.1.0"
 

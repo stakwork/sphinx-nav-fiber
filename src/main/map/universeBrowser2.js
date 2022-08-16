@@ -7,7 +7,6 @@ import SpriteText from 'three-spritetext'
 import ThreeForceGraph from 'three-forcegraph';
 import CameraControls from 'camera-controls';
 import gsap from 'gsap'
-// import TrackballControls from 'three-trackballcontrols'
 // import { MeshLine, MeshLineMaterial, MeshLineRaycast } from 'three.meshline';
  
 THREE.Cache.enabled = true;
@@ -18,12 +17,6 @@ let graph, scene, renderer, camera, cameraControls, hoveredNode, light, raycaste
 let nodeMaterials = {}
 const warmupTicks = 20
 let nodeStyleCleanedUp = false
-
-// const linkMaterial = new MeshLineMaterial({
-//             opacity: 0.5,
-//             transparent:true,
-//             color: '#000000',
-//         });
 
 const isBrowser = typeof window !== 'undefined';
 const isMac = isBrowser && /Mac/.test(navigator.platform);
@@ -90,8 +83,6 @@ function UniverseBrowser(props) {
                 })
             .d3Force("charge", d3.forceManyBody().distanceMin(200).distanceMax(500))
             .d3Force("link", d3.forceLink().distance(200))
-            // .d3Force("link", d3.forceLink())
-            // .d3Force("center", d3.forceCenter());
             
         
         clock = new THREE.Clock();

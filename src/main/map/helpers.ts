@@ -12,7 +12,8 @@ export interface Node {
     details?: Moment,
     image_url?: string,
     scale?: number,
-    weight: number
+    weight: number,
+    
 }
 
 export interface Cluster {
@@ -36,7 +37,8 @@ export interface Cluster {
     text: string,
     type: string,
     image_url?: string,
-    weight:number
+    weight: number,
+    keyword?: boolean
   }
   
   export interface NodesAndLinks{
@@ -60,8 +62,29 @@ function randomColor() {
     // return coolColors[chosenIndex]
 
     return '#000000'
+}
+    
+const boostContent = async (refId: String, amount: number) => {
+    try {
+        const body = {
+            ref: refId,
+            amount
+        }
+        console.log('body',body)
+        const res = await fetch('https://knowledge-graph.sphinx.chat/boost',
+        {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+              },
+            body: JSON.stringify(body)
+          })
+        
+      return res
+    } catch (e) {
+      console.log(e);
     }
-
+  };
 
   const getLsat = async (word: String) => {
     // @ts-ignore
@@ -280,7 +303,7 @@ function convertFromISOtoSeconds(value: string) {
   
 const sleep = (ms:number) => new Promise(r => setTimeout(r, ms));
 
-export { getFakeGraphData, getSampleData, getGraphData, convertFromISOtoSeconds, sleep }
+export { boostContent, getFakeGraphData, getSampleData, getGraphData, convertFromISOtoSeconds, sleep }
 
 function getSampleData() {
     return {
