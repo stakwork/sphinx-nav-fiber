@@ -1,9 +1,9 @@
 import {useState, useEffect } from 'react'
 import styled from "styled-components";
 import ReactAudioPlayer from 'react-audio-player';
+import Booster from './booster'
 import ClipLoader from "react-spinners/ClipLoader";
 import { NodesAndLinks, Node, convertFromISOtoSeconds, sleep } from './helpers';
-import Modal from '../sphinxUI/modal';
 
 interface ListContent {
     dataFilter: any,
@@ -22,7 +22,6 @@ interface ListContent {
 export default function ContentBrowser(props: ListContent) {
     const { graphData, visible, focusedNode, close, searchComponent, currentSearchTerm, setFocusedNode, dataFilter, setDataFilter, width, loading } = props
     const [selectedEpisodes, setSelectedEpisodes]: any = useState({})
-    const [modalContent, setModalContent]: any = useState(null)
     const [yesRender, setYesRender]: any = useState(true)
     const [showTranscript, setShowTranscript]: any = useState(false)
     const [selectedContent, setSelectedContent]: any = useState(false)
@@ -290,6 +289,7 @@ export default function ContentBrowser(props: ListContent) {
 
           const selectedEpisode = selectedEpisodes[podcastName] ? selectedEpisodes[podcastName] : Object.keys(timestamps)[0]
             const audioUrl: any = selectedEpisode.media_url
+            const refId: any = selectedContent?.ref_id
             
             const allTopics:any = []
             
@@ -328,9 +328,15 @@ export default function ContentBrowser(props: ListContent) {
                           <PodcastName>{title}</PodcastName>
                           <Title>{selectedEpisode.episode_title}</Title>
                           
-                        <Pill selected={showTranscript} style={{width:'fit-content', margin:'10px 0 15px'}}  onClick={() => setShowTranscript(!showTranscript)}>
-                        Transcript
-                        </Pill>
+                          <div style={{ display: 'flex', alignItems: 'center' }}>
+                          <Pill selected={showTranscript} style={{width:'fit-content', margin:'10px 0 15px'}}  onClick={() => setShowTranscript(!showTranscript)}>
+                                Transcript
+                              </Pill>
+                              
+                              <Booster refId={refId} content={selectedContent} style={{marginLeft:10}} />
+                              
+                              </div>
+
                           {yesRender && <ReactAudioPlayer
                               id={audioUrl}
                               className={'audio-player'}
@@ -357,38 +363,6 @@ export default function ContentBrowser(props: ListContent) {
                          
                         </Col>
                   </Row>
-
-                  {/* <Divider />
-                  
-                  <div style={{display:'flex',flexDirection:'column',width:'100%', alignItems:'flex-start'}}>
-                      <div style={{padding:'20px 20px 5px', color: '#292c33'}}>
-                              {tsCount} clips in this podcast contain keyword "<Link style={{}}>{currentSearchTerm}</Link>"
-                      </div>
-
-                      <Row style={{overflowX:'auto',flexGrow:0,flexShrink:0, padding:10, width:'calc(100% - 20px)'}}>
-                          {allTopics.length > 0 &&
-                                  allTopics.sort((a:string, b:string)=>{
-                                      if (a === currentSearchTerm) return -1
-                                      return 1
-                                  }).map((tag: string, i: number) => {
-                                      const selected = dataFilter.includes(tag)
-                                        return <Pill
-                                            onClick={() => {
-                                                let filter = [...dataFilter]
-                                                if (!selected) {
-                                                    filter = [tag]
-                                                    // const indx = filter.findIndex(f=>f===tag)
-                                                    // filter.splice(indx,1)
-                                                } 
-                                                setDataFilter(filter)
-                                            }}
-                                            selected={selected} key={i}>
-                                            {tag}
-                                            </Pill>
-                                        })}
-                          </Row>
-                  </div> */}
-
               
               </Col>
             
@@ -409,19 +383,6 @@ export default function ContentBrowser(props: ListContent) {
                     const myKey = episodeName + '_' + i + '_' + ii
                     const defaultTimestamp = thisPodcastTimestamps[0]
                     let episodeImg = defaultTimestamp.image_url
-
-
-                    // hide if no relevant topic
-                    // let epRelevantTopics = false
-     
-                    // thisPodcastTimestamps.forEach((t:any) => {
-                    //     t.topics.forEach((t: string) => {
-                    //         if (epRelevantTopics) return
-                    //         if (dataFilter.includes(t)) epRelevantTopics = true
-                    //     })
-                    // })
-                    
-                    // if (!epRelevantTopics) return null
                     
                     if (episodeImg && !(episodeImg.includes('_s.jpg') ||
                         episodeImg.includes('_m.jpg') ||
@@ -429,33 +390,10 @@ export default function ContentBrowser(props: ListContent) {
                             episodeImg = episodeImg.replace('.jpg', '_s.jpg')
                     }
 
-
                     return <div key={myKey}>
-                        {/* <EpisodePanel className={'tooltip'} id={title + episodeName}
-                        style={{alignItems:'center'}}>
-
-                            <div style={{marginRight:20}}>
-                                <Avatar
-                                    style={{height:40,width:40}}
-                                    src={episodeImg || image_url || 'audio_default.svg'} />
-                            </div>
-                            
-                            <div style={{overflow:'hidden', maxWidth:'calc(100% - 90px)'}}>
-                            <EpisodeTitle>{episodeName}</EpisodeTitle>
-                            </div>
-                      
-                        </EpisodePanel> */}
-                        
                         <TimestampEnv>
                             {thisPodcastTimestamps.map((t: any, ii: number) => {
 
-                                // let relevantTopics = false
-                                // t.topics.forEach((t: string) => {
-                                //     if (relevantTopics) return
-                                //     if (dataFilter.includes(t)) relevantTopics = true
-                                // })
-                                // if (!relevantTopics) return null
-                                
                                 const selected = () => {
                                     return selectedEpisodes[podcastName]?.media_url === t.media_url && selectedEpisodes[podcastName]?.timestamp === t.timestamp
                                 }
@@ -486,13 +424,11 @@ export default function ContentBrowser(props: ListContent) {
                                         width: '100%',
                                         ...selectedStyle, ...errorStyle
                                     }}
-                                    // key={ii + 'timestamp'}
                                     onClick={(e) => {
                                         e.stopPropagation()
                                         clickTimestamp(t, podcastName)
                                     }}>
                                     <div style={{ minWidth:20 }} />
-                                    {/* <div style={{ minWidth:76 }} /> */}
                                     <div style={{display:'flex'}}>
                                         {isSelected&&selectedEpisodes[podcastName]?.loaded === false ?
                                             <ClipLoader color={color} loading={true} size={14} /> :
@@ -626,7 +562,6 @@ export default function ContentBrowser(props: ListContent) {
 
 
     const contentTranscript = selectedContent ? (selectedContent?.text||'No transcript') : null
-    
 
   return(
       <ListWindow onClick={(e) => e.preventDefault()} style={{width, minWidth:width}}> 
@@ -649,13 +584,6 @@ export default function ContentBrowser(props: ListContent) {
                 <ClipLoader color={'#000'} loading={true} size={14} />
           </div>
               : contentView}
-          
-            <Modal
-                visible={modalContent ? true : false}
-                close={()=>setModalContent(null)}
-            >
-              {modalContent}
-          </Modal>
           
           {showTranscript && <TranscriptEnv style={{ left: width }}>
               <div style={{ minHeight: 40 }} />
@@ -813,26 +741,6 @@ display: -webkit-box;
 -webkit-box-orient: vertical;
 `
 
-const Subtitle = styled.div`
-font-size:16px;
-overflow: hidden;
-font-style:italic;
-font-weight:400;
-text-overflow: ellipsis;
-display: -webkit-box;
--webkit-line-clamp: 2;
--webkit-box-orient: vertical;
-// font-family: 'Roboto';
-font-style: normal;
-font-weight: 400;
-font-size: 14px;
-line-height: 16px;
-/* or 114% */
-
-
-/* Primary Text 1 */
-
-`
 
 const Desc = styled.div`
 font-size:11px;
