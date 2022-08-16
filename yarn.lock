@@ -11197,7 +11197,7 @@
     "select-hose" "^2.0.0"
     "spdy-transport" "^3.0.0"
 
-"sphinx-bridge-kevkevinpal@^0.2.41":
+"sphinx-bridge-kevkevinpal@^0.2.31":
   "integrity" "sha512-toPXl6lZPueC6m+Z5l+anDuqb1DtwiOEux3mxT09q2nfqi5bpVRQwUfR/NFrLe5t/YdWI/jDo2GPbD8XVAL8jQ=="
   "resolved" "https://registry.npmjs.org/sphinx-bridge-kevkevinpal/-/sphinx-bridge-kevkevinpal-0.2.41.tgz"
   "version" "0.2.41"
