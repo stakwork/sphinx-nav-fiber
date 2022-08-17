@@ -153,6 +153,18 @@ export default function ContentBrowser(props: ListContent) {
         return formatted
     }
 
+    const contentActions = ( <div style={{ display: 'flex', alignItems: 'center' }}>
+    <Pill selected={showTranscript} style={{ width: 'fit-content', margin: '10px 0 15px' }}
+        onClick={() => setShowTranscript(!showTranscript)}>
+      Transcript
+    </Pill>
+    
+    <Booster refId={selectedContent?.ref_id}
+        content={selectedContent}
+        style={{ marginLeft: 10 }} />
+    
+    </div>)
+
 
     function renderContentByRelevence(isSuggestions?:boolean) {
         
@@ -289,7 +301,6 @@ export default function ContentBrowser(props: ListContent) {
 
           const selectedEpisode = selectedEpisodes[podcastName] ? selectedEpisodes[podcastName] : Object.keys(timestamps)[0]
             const audioUrl: any = selectedEpisode.media_url
-            const refId: any = selectedContent?.ref_id
             
             const allTopics:any = []
             
@@ -328,14 +339,7 @@ export default function ContentBrowser(props: ListContent) {
                           <PodcastName>{title}</PodcastName>
                           <Title>{selectedEpisode.episode_title}</Title>
                           
-                          <div style={{ display: 'flex', alignItems: 'center' }}>
-                          <Pill selected={showTranscript} style={{width:'fit-content', margin:'10px 0 15px'}}  onClick={() => setShowTranscript(!showTranscript)}>
-                                Transcript
-                              </Pill>
-                              
-                              <Booster refId={refId} content={selectedContent} style={{marginLeft:10}} />
-                              
-                              </div>
+                         {contentActions}
 
                           {yesRender && <ReactAudioPlayer
                               id={audioUrl}
@@ -491,16 +495,16 @@ export default function ContentBrowser(props: ListContent) {
         embeddedUrl = link.replace('watch?v=', 'embed/').split('?')[0] + `?start=${secs}&autoplay=1`
         
         return <div style={{height:'100%',width:'100%', overflow:'auto'}}>
-                <div style={{padding:10}}>
+                <div style={{padding:20}}>
                     <PodcastName style={{marginBottom:5}}>
                         {podcast_title}
                     </PodcastName>
                     
                     <Title>
                     {episode_title}
-                    </Title>
-                </div>
-                
+                </Title>
+
+                {contentActions}
 
                 <iframe className="youtube-embedded"
                     height="300px" width="100%"
@@ -508,6 +512,9 @@ export default function ContentBrowser(props: ListContent) {
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
                 >
                 </iframe>
+            </div>
+            
+                
                 
                 <Desc>
                     {description}
@@ -601,9 +608,6 @@ export default function ContentBrowser(props: ListContent) {
 const ListWindow = styled.div`
 display:flex;
 flex-direction:column;
-// position:absolute;
-// left:0px;
-// top:0px;
 height:100%;
 min-height:100%;
 background:#ffffff;
@@ -611,8 +615,7 @@ min-width:433px;
 width:433px;
 z-index:30000;
 box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-overflow:hidden;
-
+// overflow:hidden;
 `
 
 const TranscriptEnv = styled.div`
