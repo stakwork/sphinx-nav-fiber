@@ -53,7 +53,7 @@ export default function Booster(props: BoostProps) {
     Boost
     </Pill>
         <Modal  visible={showModal} close={() => setShowModal(false)}
-        envStyle={{borderRadius:4, position:'relative',padding:'20px 30px 0px' }}>
+        envStyle={{borderRadius:4, padding:'20px 30px 0px' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
 
                 <ContentEnv>
@@ -171,35 +171,6 @@ line-height: 18px;
 
 color: #222;
 margin-bottom:4px;
-`
-
-const Description = styled.div`
-font-weight: 400;
-font-size: 11px;
-line-height: 18px;
-/* or 164% */
-
-
-/* Main bottom icons */
-
-color: #5F6368;
-`
-
-const Details = styled.div`
-font-weight: 400;
-font-size: 11px;
-line-height: 15px;
-/* or 136% */
-
-
-/* Secondary Text 4 */
-
-color: #8E969C;
-overflow:hidden;
-text-overflow: ellipsis;
-display: -webkit-box;
--webkit-line-clamp: 5;
--webkit-box-orient: vertical;
 `
 
 interface ImgProps {
