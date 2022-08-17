@@ -325,12 +325,9 @@ export default function ContentBrowser(props: ListContent) {
           return <NodePanel key={i + 'ouahsf'} id={'head-panel'}>
             <Col style={{
               height: headPanelHeight,
-                zIndex: 2,
-                width: '100%',
-              alignItems:'center',
+              width: '100%', alignItems:'center',
               boxShadow: '0 0 8px 0 rgba(0, 0, 0, 0.2)'
             }}>
-                    
                   <Row style={{ alignItems: 'flex-start' }}>
                       <Avatar src={image_url || 'audio_default.svg'} style={{ margin: 20 }} />
 
@@ -613,7 +610,7 @@ min-height:100%;
 background:#ffffff;
 min-width:433px;
 width:433px;
-z-index:30000;
+z-index:30;
 box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
 // overflow:hidden;
 `
