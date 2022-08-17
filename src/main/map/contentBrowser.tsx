@@ -597,7 +597,6 @@ export default function ContentBrowser(props: ListContent) {
               <div style={{ minHeight: 40 }} />
           </TranscriptEnv>}
           
-          
             </ListWindow>
   )
 }

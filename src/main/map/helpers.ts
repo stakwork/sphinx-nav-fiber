@@ -65,20 +65,32 @@ function randomColor() {
 }
     
 const boostContent = async (refId: String, amount: number) => {
+        
     try {
+        const sphinxPubkey = '023d8eb306f0027b902fbdc81d33b49b6558b3434d374626f8c324979c92d47c21'
+
+        // take away sats
+        // @ts-ignore
+        let res: any = await sphinx.keysend(sphinxPubkey, amount)
+        
+        console.log('res1',res);
+
         const body = {
             ref: refId,
-            amount
+            amount: amount
         }
-        console.log('body',body)
-        const res = await fetch('https://knowledge-graph.sphinx.chat/boost',
+
+        // record the boost
+        res = await fetch('https://knowledge-graph.sphinx.chat/boost',
         {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
               },
             body: JSON.stringify(body)
-          })
+            })
+        
+        console.log('res2',res);
         
       return res
     } catch (e) {
