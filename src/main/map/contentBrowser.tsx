@@ -289,7 +289,7 @@ export default function ContentBrowser(props: ListContent) {
             }
         })
         
-        return (<>
+        return (<div style={{height:'100%',width:'100%', overflow:'auto'}}>
 
             {/* 
                 this will only have one object in it,
@@ -475,7 +475,7 @@ export default function ContentBrowser(props: ListContent) {
               </Col>
             </NodePanel>  
         })}
-        </>)
+        </div>)
     }  
     
     function renderYoutube() {
@@ -691,7 +691,7 @@ flex-direction:column;
 align-items:center;
 width:100%;
 height:100%;
-overflow:hidden;
+// overflow:hidden;
 &:hover{
   opacity:1;
 }
