@@ -63,17 +63,35 @@ function randomColor() {
 
     return '#000000'
 }
+
+const sphinxPubkey = '023d8eb306f0027b902fbdc81d33b49b6558b3434d374626f8c324979c92d47c21'
+
+async function boostAgainstBudget(amount:number) {
+    let err = null
+    // @ts-ignore
+    let res: any = await sphinx.keysend(sphinxPubkey, amount)
+    console.log('boostAgainstBudget',res)
+
+    if (!res?.budget || (res.budget < amount)) {
+        // reject, ask for sats budget
+        const [lsatToken, er]:any = await getLsat()
+        if (er) err = er
+    }
+    
+    return err
+}
     
 const boostContent = async (refId: String, amount: number) => {
         
     try {
-        const sphinxPubkey = '023d8eb306f0027b902fbdc81d33b49b6558b3434d374626f8c324979c92d47c21'
-
         // take away sats
         // @ts-ignore
-        let res: any = await sphinx.keysend(sphinxPubkey, amount)
+
+        const err = await boostAgainstBudget(amount)
         
-        console.log('res1',res);
+        if (err) {
+            throw new Error(err)
+        }
 
         const body = {
             ref: refId,
@@ -81,7 +99,7 @@ const boostContent = async (refId: String, amount: number) => {
         }
 
         // record the boost
-        res = await fetch('https://knowledge-graph.sphinx.chat/boost',
+        const res = await fetch('https://knowledge-graph.sphinx.chat/boost',
         {
             method: 'POST',
             headers: {
@@ -90,15 +108,16 @@ const boostContent = async (refId: String, amount: number) => {
             body: JSON.stringify(body)
             })
         
-        console.log('res2',res);
+        console.log('res',res);
         
-      return res
+      return [res, null]
     } catch (e) {
-      console.log(e);
+        console.log(e);
+        return [null, e]
     }
   };
 
-  const getLsat = async (word: String) => {
+  const getLsat = async () => {
     // @ts-ignore
     // await sphinx.enable(true);
 
@@ -120,22 +139,15 @@ const boostContent = async (refId: String, amount: number) => {
 	if(LSATRes.success == false){
 		// @ts-ignore
 		await sphinx.topup()
-	}
+    }
+        
       lsat.setPreimage(LSATRes.lsat.split(":")[1]);
     
-      
-      let apiRes = await fetch(
-        `https://knowledge-graph.sphinx.chat/search?word=${word}`,
-        {
-          headers: {
-            Authorization: lsat.toToken(),
-          },
-        }
-      );
-      const apiResData = await apiRes.json();
-      return apiResData
+      const token = lsat.toToken()
+      return [token, null]
     } catch (e) {
-      console.log(e);
+        console.log(e);
+        return [null, e]
     }
   };
 
@@ -157,7 +169,23 @@ const boostContent = async (refId: String, amount: number) => {
         const res = await fetch(devUrl)      
         data = await res.json()
       } else {
-        data = await getLsat(searchterm)
+          const [lsatToken, err]: any = await getLsat()
+
+          if (err) {
+              throw new Error(err)
+          }
+          
+          let apiRes = await fetch(
+            `https://knowledge-graph.sphinx.chat/search?word=${searchterm}`,
+              {
+            // @ts-ignore
+              headers: {
+                Authorization: lsatToken||'',
+              },
+            }
+          );
+
+          data = await apiRes.json();
       }
         
         const _nodes: Node[] = []

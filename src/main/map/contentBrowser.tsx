@@ -153,15 +153,14 @@ export default function ContentBrowser(props: ListContent) {
         return formatted
     }
 
-    const contentActions = ( <div style={{ display: 'flex', alignItems: 'center' }}>
-    <Pill selected={showTranscript} style={{ width: 'fit-content', margin: '10px 0 15px' }}
+    const contentActions = ( <div style={{ display: 'flex', alignItems: 'center', margin:'10px 0' }}>
+    <Pill selected={showTranscript} style={{ width: 'fit-content' }}
         onClick={() => setShowTranscript(!showTranscript)}>
       Transcript
     </Pill>
     
     <Booster refId={selectedContent?.ref_id}
-        content={selectedContent}
-        style={{ marginLeft: 10 }} />
+        content={selectedContent}/>
     
     </div>)
 

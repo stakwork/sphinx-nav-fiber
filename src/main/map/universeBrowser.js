@@ -117,7 +117,7 @@ function UniverseBrowser(props) {
         // replace wheel action for smooth zoom transitions
         cameraControls.mouseButtons.wheel = 0
 
-        cameraControls.minDistance = -Infinity//30000
+        cameraControls.minDistance = 200//30000
         cameraControls.maxDistance = Infinity//30000
         cameraControls.minPolarAngle = -Infinity//
         cameraControls.maxPolarAngle = Infinity
@@ -154,25 +154,21 @@ function UniverseBrowser(props) {
 
 
     const doDollyTransition = async (event) => {
+        
 
-        // console.log('cameraControls',cameraControls)
-
+        // revert damping to default
         if (cameraControls.dampingFactor < 0.1) {
             cameraControls.dampingFactor = 0.1
         }
 
-        let dollyStep = 40
+        let dollyStep = 140
         const distance = cameraControls.distance 
-        if (distance > 3000) dollyStep = 140
-        
+        if (distance < 3000) dollyStep = 40
+    
+        // scroll back
         if (event.deltaY > 0) dollyStep = dollyStep * -1
 
-        // const cameraDirection = camera.getWorldDirection()
-
-        // console.log('cameraDirection',cameraDirection)
-        
         cameraControls.dolly(dollyStep, true)
-      
     }
     
 
