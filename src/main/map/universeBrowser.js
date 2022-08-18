@@ -13,7 +13,7 @@ THREE.Cache.enabled = true;
 CameraControls.install({ THREE: THREE });
 
 //constructor
-let graph, scene, renderer, camera, cameraControls, hoveredNode, light, raycaster, pointer, clock, rotateCycle, searchTermNode
+let graph, scene, renderer, camera, cameraControls, hoveredNode, light, raycaster, pointer, clock, rotateCycle, rotating, moveCycle, moving, searchTermNode, zoomTimeout
 let nodeMaterials = {}
 const warmupTicks = 20
 let nodeStyleCleanedUp = false
@@ -22,9 +22,10 @@ const isBrowser = typeof window !== 'undefined';
 const isMac = isBrowser && /Mac/.test(navigator.platform);
 const deltaYFactor = isMac ? -1 : -3;
 
+let introZoom = true
+
 function UniverseBrowser(props) {
     const [loading, setLoading] = useState(true)
-    const [rotating, setRotating] = useState(false)
     const universeRef = useRef(null)
     
      // update graph
@@ -123,6 +124,7 @@ function UniverseBrowser(props) {
         cameraControls.enableTransition = true
         cameraControls.dollySpeed = 0.2 // default is 1
         cameraControls.dampingFactor = 0.1
+        // cameraControls.restThreshold = 1
         cameraControls.infinityDolly = true
         cameraControls.enableDamping = true
         cameraControls.dollyToCursor = true
@@ -154,6 +156,10 @@ function UniverseBrowser(props) {
     const doDollyTransition = async (event) => {
 
         // console.log('cameraControls',cameraControls)
+
+        if (cameraControls.dampingFactor < 0.1) {
+            cameraControls.dampingFactor = 0.1
+        }
 
         let dollyStep = 40
         const distance = cameraControls.distance 
@@ -210,6 +216,8 @@ function UniverseBrowser(props) {
         requestAnimationFrame(() => console.log("animate frame"));
         renderer.render(scene, camera);       
     }
+
+    
     
     function centerCamera(distance = 4000) {
         cameraControls.distance = distance
@@ -218,12 +226,119 @@ function UniverseBrowser(props) {
         renderer.render(scene, camera);
         setTimeout(() => {
             rotateWorld()
-        }, 500)            
+        }, 500)          
+
+        if (introZoom) {
+            const gotData = graph.graphData()
+            const { x, y, z } = (gotData.nodes.length && gotData.nodes[0]) || {}
+            console.log('do camera zoomer',x,y,z)
+            if (x&&!zoomTimeout) {
+                zoomTimeout = setInterval(async () => {
+                    doIntroAnimation()
+                    clearInterval(zoomTimeout)
+                }, 1000)
+                introZoom = false
+            }
+        }
+    }
+
+    function killRotation() {
+        rotateCycle.kill()
+        rotating = null
+    }
+
+    function killMovement() {
+        moveCycle.kill()
+        moving = null
+        
+    }
+
+    function doIntroAnimation() {
+        if (moving) return
+        if (rotating) killRotation()
+
+        // start position
+        const { x, y, z } = cameraControls._camera.position
+        
+        // end position
+        // const gotData = graph.graphData()
+        // const randIndex = Math.floor(Math.random() * (gotData.nodes.length - 1))
+        // const destinationNode = gotData.nodes[randIndex]
+
+
+        moving = true
+        // for intro fly
+        const curve = new THREE.CatmullRomCurve3( [
+            new THREE.Vector3( x,y,z ),
+            new THREE.Vector3(   x-500,y-800,z-900 ),
+            new THREE.Vector3(-1900, -2200, -1800)
+        ] );
+        const points = curve.getPoints( 50 );
+        const _tmp = new THREE.Vector3();
+        const animationProgress = { value: 0 };
+        
+        moveCycle = gsap.fromTo(
+            animationProgress,
+            {
+              value: 0,
+            },
+            {
+              value: 1,
+              duration: 2,
+            paused: true,
+              onUpdateParams: [ animationProgress ],
+              onUpdate( { value } ) {
+          
+                      curve.getPoint ( value, _tmp );
+                      const cameraX = _tmp.x;
+                      const cameraY = _tmp.y;
+                      const cameraZ = _tmp.z;
+                      const lookAtX = 0;
+                      const lookAtY = 0;
+                      const lookAtZ = 0;
+          
+                      cameraControls.setLookAt(
+                          cameraX,
+                          cameraY,
+                          cameraZ,
+                          lookAtX,
+                          lookAtY,
+                          lookAtZ,
+                          true
+                      );
+          
+              },
+                  onComplete() {
+                      moving = null
+                      rotateWorld()
+                  }
+            }
+        );
+        
+        moveCycle.play(0)
+        
+    }
+    
+
+    function lookAt(x1,y1,z1) {
+        cameraControls.dampingFactor = 0.05
+        // let viewPos = [x1, y1, z1]
+        // let distance = cameraControls.distance
+        
+        cameraControls.setTarget(
+            x1,
+            y1,
+            z1,
+            true
+        );
     }
 
 
     function rotateWorld() {
-        if (rotating) return 
+
+        if (moving) return 
+        
+        rotating = true
 
         rotateCycle = gsap.to(
             cameraControls,
@@ -240,10 +355,11 @@ function UniverseBrowser(props) {
         rotateCycle.play(0);
         
         rotateCycle.eventCallback('onComplete', (e) => {
-            setRotating(false)
+
+            rotating = null
         })
 
-        setRotating(true)
+        
     }
     
 
@@ -276,10 +392,8 @@ function UniverseBrowser(props) {
     }
 
     function detectPointerClickDown() {
-        if (rotating) {
-            rotateCycle.kill()
-            setRotating(false)
-        }
+        if (rotating) killRotation()
+        if (moving) killMovement()
 
         let hoveredObject = getHoveredObject()
         hoveredNode = hoveredObject
@@ -291,6 +405,7 @@ function UniverseBrowser(props) {
         if (hoveredNode && hoveredObject
             && hoveredObject.id === hoveredNode.id) {
             props.onNodeClicked(hoveredObject)
+            lookAt(hoveredObject.x,hoveredObject.y,hoveredObject.z)
         }
         hoveredNode = null
     }
@@ -332,7 +447,7 @@ function UniverseBrowser(props) {
             const index = gotData.nodes.findIndex(f => f.id === n.id)
             let scale = 20
             if (node?.id === n.id) {
-                scale = 50
+                scale = 35
             }
             const currentScale = n.__threeObj.scale.x
 
@@ -345,19 +460,9 @@ function UniverseBrowser(props) {
     
 
     function updateCamera() {
-        // if (!loading && openingAnimation && props.graphData?.nodes.length) {
-        //     //first node 
-        //     let zoomTarget = props.graphData?.nodes[0]
-        //     const { x,y,z,vx,vy,vz} = zoomTarget
-        //     console.log('zoomTarget', zoomTarget)
-        //     setOpeningAnimation(false)
-        //     cameraControls.moveTo(vx, vy, vz, true)    
-        // }
-        // else {
-            const N = props.graphData?.nodes?.length
-            camera.lookAt(graph.position);
-            camera.position.z = Math.cbrt(N) * 180;
-        // }
+        const N = props.graphData?.nodes?.length
+        camera.lookAt(graph.position);
+        camera.position.z = Math.cbrt(N) * 180;
         camera.updateProjectionMatrix();
         animateFrame()
     }

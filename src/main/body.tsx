@@ -1,6 +1,6 @@
 import {useState, useRef, useEffect, useLayoutEffect } from 'react'
 import styled from "styled-components";
-import UniverseBrowser from './map/universeBrowser2'
+import UniverseBrowser from './map/universeBrowser'
 import ContentBrowser from './map/contentBrowser'
 import MouseTracker from './map/mouseTracker'
 import * as sphinx from 'sphinx-bridge-kevkevinpal'
