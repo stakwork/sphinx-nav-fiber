@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import styled from 'styled-components'
 import { boostContent } from './helpers'
-import Modal from '../sphinxUI/modal'
+// import Modal from '../sphinxUI/modal'
+import ClipLoader from "react-spinners/ClipLoader";
 
 interface BoostProps {
     refId: string,
@@ -16,29 +17,30 @@ export default function Booster(props: BoostProps) {
     const [boostAmount, setBoostAmount] = useState('')
     const { refId, content } = props
 
+    useEffect(() => {
+        setIsSuccess(false)
+    },[refId])
+
     let { image_url, podcast_title, episode_title, timestamp } = content || {}
     
     if (image_url) {
         image_url = image_url.replace('.jpg','_l.jpg')
     }
 
+    const defaultBoostAmount = 5
 
     async function doBoost() {
-        if (submitting || !boostAmount || parseInt(boostAmount) === 0) return
+        if (submitting) return
         setSubmitting(true)
         try {
-            const res = await boostContent(refId, parseInt(boostAmount))
+            const [res, err] = await boostContent(refId, defaultBoostAmount)
+
+            if (err) {
+                throw new Error(err+'') 
+            }
+
             console.log('res', res)
             setIsSuccess(true)
-
-            setTimeout(() => {
-                setShowModal(false)
-                setBoostAmount('')    
-            }, 700)
-            
-            setTimeout(() => {
-                setIsSuccess(false)
-            },1000)
             
         } catch (e) {
             console.log('e',e)
@@ -47,12 +49,27 @@ export default function Booster(props: BoostProps) {
     }
 
     return <div style={{...props.style}}>
-        <Pill style={{ width: 'fit-content', margin:'10px 0 15px', paddingRight:26 }}
-            onClick={() => setShowModal(true)}>
-            <span className="material-icons" style={{ fontSize: 14 }}>bolt</span>
-    Boost
-    </Pill>
-        <Modal  visible={showModal} close={() => setShowModal(false)}
+        {isSuccess ?
+            <Row>
+                <span className="material-icons" style={{ fontSize: 20, color:'#49c998' }}>bolt</span>
+            </Row>
+            : <Pill style={{ width: 50 }}
+                onClick={() => {
+                    if (isSuccess || submitting) return
+                    doBoost()
+                }}
+                disabled={isSuccess || submitting}>
+                {submitting ? <ClipLoader color={'#fff'} loading={true} size={10} /> :
+                    <Row>
+                        <span className="material-icons" style={{ fontSize: 14 }}>bolt</span>
+                        <div style={{ marginRight: 8 }}>Boost</div>
+                    </Row>
+                }
+            </Pill>
+        }
+        
+        
+        {/* <Modal  visible={showModal} close={() => setShowModal(false)}
         envStyle={{borderRadius:4, padding:'20px 30px 0px' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
 
@@ -91,7 +108,6 @@ export default function Booster(props: BoostProps) {
                         Confirm Boost
                 </Pill>
                 
-                {/* success cover */}
                 <div style={{
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     position:'absolute',
@@ -101,10 +117,16 @@ export default function Booster(props: BoostProps) {
                         <span className="material-icons" style={{ fontSize: 80, color: '#49c998' }}>bolt</span>
                 </div>
                 </div>
-        </Modal>
+        </Modal> */}
     </div>
     
 }
+
+const Row = styled.div`
+display:flex;
+justify-content:center;
+align-items:center;
+`
 
 interface PillProps {
     selected?: boolean;
@@ -117,8 +139,7 @@ border-radius:20px;
 flex-grow:0;
 flex-shrink:0;
 cursor:pointer;
-margin-right:10px;
-background:${p=>p.disabled?'#bbb':'#49c998'};
+background:#49c998;
 color:#fff;
 display:flex;
 justify-content:center;
@@ -126,6 +147,7 @@ align-items:center;
 font-weight: 500;
 font-size: 12px;
 line-height: 14px;
+opacity:${p=>p.disabled?'0.7':'1'};
 pointer-events: ${p=>p.disabled?'none':'auto'};
 `
 
