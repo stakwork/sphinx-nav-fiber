@@ -67,15 +67,16 @@ function randomColor() {
 const sphinxPubkey = '023d8eb306f0027b902fbdc81d33b49b6558b3434d374626f8c324979c92d47c21'
 
 async function boostAgainstBudget(amount:number) {
-    let err = null
+    let err:any = null
     // @ts-ignore
     let res: any = await sphinx.keysend(sphinxPubkey, amount)
     console.log('boostAgainstBudget',res)
 
-    if (!res?.budget || (res.budget < amount)) {
-        // reject, ask for sats budget
-        const [lsatToken, er]:any = await getLsat()
-        if (er) err = er
+    if (!res?.budget || (parseInt(res.budget) < amount)) {
+        // reject, ask for topup
+        err = new Error('Topup required')
+        // @ts-ignore
+        await sphinx.topup()
     }
     
     return err
