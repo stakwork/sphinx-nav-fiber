@@ -67,18 +67,31 @@ function randomColor() {
 const sphinxPubkey = '023d8eb306f0027b902fbdc81d33b49b6558b3434d374626f8c324979c92d47c21'
 
 async function boostAgainstBudget(amount:number) {
-    let err:any = null
+    let err: any = null
     // @ts-ignore
-    let res: any = await sphinx.keysend(sphinxPubkey, amount)
-    console.log('boostAgainstBudget',res)
+    let res: any = await sphinx.enable(true);
 
-    if (!res?.budget || (parseInt(res.budget) < amount)) {
-        // reject, ask for topup
-        err = new Error('Topup required')
-        // @ts-ignore
-        await sphinx.topup()
+    if (!res) {
+        console.log('Sphinx enable failed, means no pubkey and no budget (including budget of 0)')
     }
+    // @ts-ignore
+    res = await sphinx.keysend(sphinxPubkey, amount)
     
+    if (!res) {
+        // rejected, ask for topup
+        // @ts-ignore
+        res = await sphinx.topup()
+        if (!res || !res.budget || (res?.budget < amount)) {
+            // topup failed
+            err = new Error('Topup failed')    
+        } else {
+            // retry keysend
+            // @ts-ignore
+            res = await sphinx.keysend(sphinxPubkey, amount)
+            if (!res) err = new Error('Keysend failed after topup')    
+        }
+    }
+
     return err
 }
     
