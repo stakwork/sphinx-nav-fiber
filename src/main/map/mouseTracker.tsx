@@ -24,9 +24,9 @@ export default function MouseTracker(props: any) {
     } else if (0 > mousePosition.x - tooltipW / 2) {
         xOffset = tooltipW / 2
     }
-    console.log('hoveredNode',hoveredNode)
+    // console.log('hoveredNode',hoveredNode)
 
-    const { node_type } = hoveredNode?.details || {}
+    const { node_type, label } = hoveredNode?.details || (hoveredNode || {})
     const type = hoveredNode?.type
     let tooltipImg = hoveredNode?.image_url
     let podcastTitle = hoveredNode?.details?.show_title
@@ -38,6 +38,9 @@ export default function MouseTracker(props: any) {
 
     if (type && !tooltipImg) {
         switch (type) {
+            case 'guest':
+                tooltipImg = 'person_placeholder.png'
+                break;
             case 'youtube':
                 tooltipImg = 'youtube_default.jpeg'
                 break;
@@ -71,7 +74,7 @@ export default function MouseTracker(props: any) {
             <Avatar src={tooltipImg} />
 
             <div>
-                <Title>{podcastTitle}</Title>
+                <Title>{podcastTitle||label}</Title>
                 <MainTitle>{title}</MainTitle>
                 <Title> {timestamp}</Title>
 

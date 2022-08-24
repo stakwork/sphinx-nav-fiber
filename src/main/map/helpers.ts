@@ -322,6 +322,16 @@ async function getGraphData(searchterm: string) {
                 })
         }
 
+        const n_ = _nodes.map((a: any) => {
+            return { ...a }
+        })
+        const l_ = _links.map((a: any) => {
+            return { ...a }
+        })
+        
+        console.log('n_', n_)
+        console.log('l_', l_)
+        
         _nodes.sort((a, b) => b.weight - a.weight)
       
       return { nodes: _nodes, links: _links }
