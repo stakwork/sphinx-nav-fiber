@@ -22,7 +22,7 @@
     "react-dom": "^18.2.0",
     "react-scripts": "4.0.3",
     "react-spinners": "^0.13.3",
-    "sphinx-bridge-kevkevinpal": "^0.2.31",
+    "sphinx-bridge-kevkevinpal": "0.2.31",
     "styled-components": "^5.3.5",
     "three": "^0.142.0",
     "three-forcegraph": "^1.39.4",
