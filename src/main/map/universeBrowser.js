@@ -559,10 +559,14 @@ function UniverseBrowser(props) {
     }
       
     const linkObject = () => {
+
+        let lineWidth = 1
+
         const lineMaterial = new THREE.LineBasicMaterial({
             opacity: 0.6,
             transparent:true,
             color: '#000000',
+            lineWidth
         });
 
         const geometry = new THREE.BufferGeometry();

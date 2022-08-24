@@ -89,7 +89,7 @@ export default function BodyComponent() {
     // console.log('hoveredNode', hoveredNode)
     if (node?.fakeData) return
     
-    if (!node?.details) {
+    if (!node?.details&&node?.type!=='guest') {
       setHoveredNode(null)
     } else if (hoveredNode && hoveredNode.id === node.id) {
       // nothing
