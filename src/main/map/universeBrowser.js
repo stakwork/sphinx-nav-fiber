@@ -7,6 +7,7 @@ import SpriteText from 'three-spritetext'
 import ThreeForceGraph from 'three-forcegraph';
 import CameraControls from 'camera-controls';
 import gsap from 'gsap'
+// import {} from './universeBrowserTools'
 // import { MeshLine, MeshLineMaterial, MeshLineRaycast } from 'three.meshline';
  
 THREE.Cache.enabled = true;
@@ -33,13 +34,17 @@ function UniverseBrowser(props) {
         setLoading(true)
         setTimeout(() => {
             nodeMaterials = {}
+            const manybody = d3.forceManyBody().distanceMin(100).distanceMax(2000);
+            // const x =  d3.forceX(width / 6).strength(0.3)
+            // const y =  d3.forceY().y(function (d, i) { return height / 10 + i * 35; })
+            //                     .strength(0.4)
+            const distance = d3.forceLink().distance(40).strength(0.1);
+                        
             graph.clear()
-            graph.graphData(props.graphData)
-
-            // if (props.graphData.links.length) {
-                // graph.d3Force("charge", d3.forceManyBody(props.graphData.nodes).distanceMin(300).distanceMax(500))
-                // graph.d3Force("link", d3.forceLink(props.graphData.links).distance(200))    
-            // }
+                .graphData(props.graphData)
+                .d3Force("charge", manybody)
+                .d3Force("link", distance)
+                // .d3Force("link", d3.forceLink(props.graphData.links).distance(500))    
             
             // doSearchTermNodeUpdates()
             updateCamera()    
@@ -71,7 +76,7 @@ function UniverseBrowser(props) {
                 .linkResolution(20)
             
                 // .linkMaterial(linkMaterial)
-                .d3VelocityDecay(0.05)
+                .d3VelocityDecay(0.001)
                 .onFinishUpdate(() => {
                         for (let i = 0; i < warmupTicks; i++){
                             graph.tickFrame();
@@ -82,8 +87,8 @@ function UniverseBrowser(props) {
                             }
                         }
                 })
-            .d3Force("charge", d3.forceManyBody().distanceMin(200).distanceMax(500))
-            .d3Force("link", d3.forceLink().distance(200))
+            .d3Force("link", d3.forceLink().strength(0.1))
+            .d3Force("center",d3.forceCenter().strength(0.1)) 
             
         
         clock = new THREE.Clock();
@@ -170,27 +175,7 @@ function UniverseBrowser(props) {
 
         cameraControls.dolly(dollyStep, true)
     }
-    
 
-    // function dollyToCursor(delta, x, y) {
-    //     const dollyScale = Math.pow(0.95, -delta * dollySpeed);
-    //     const distance = cameraControls._sphericalEnd.radius * dollyScale;
-    //     const prevRadius = cameraControls._sphericalEnd.radius;
-    //     const signedPrevRadius = prevRadius * (delta >= 0 ? -1 : 1);
-    //     cameraControls.dollyTo(distance);
-    //     if (infinityDolly && (distance < minDistance || maxDistance === minDistance)) {
-    //         camera.getWorldDirection(_v3A);
-    //         cameraControls._targetEnd.add(_v3A.normalize().multiplyScalar(signedPrevRadius));
-    //         cameraControls._target.add(_v3A.normalize().multiplyScalar(signedPrevRadius));
-    //     }
-        
-    //     _dollyControlAmount += cameraControls._sphericalEnd.radius - prevRadius;
-    //     if (infinityDolly && (distance < minDistance || maxDistance === minDistance)) {
-    //         _dollyControlAmount -= signedPrevRadius;
-    //     }
-    //     _dollyControlCoord.set(x, y);
-        
-    // };
 
     function animate() {    
         // Frame cycle
@@ -398,8 +383,13 @@ function UniverseBrowser(props) {
     function detectPointerClick() {
         let hoveredObject = getHoveredObject()
 
+
         if (hoveredNode && hoveredObject
-            && hoveredObject.id === hoveredNode.id) {
+            && hoveredObject.id === hoveredNode.id
+            // && (
+            //     hoveredNode.node_type === 'clip' || hoveredNode.node_type === 'topic'
+            // )
+        ) {
             props.onNodeClicked(hoveredObject)
             lookAt(hoveredObject.x,hoveredObject.y,hoveredObject.z)
         }
@@ -433,7 +423,25 @@ function UniverseBrowser(props) {
         return hoveredObject
     }
 
-    
+
+    function getNodeScale(nodeType) {
+        let scale = 25
+        let enlarge = 35
+        if (nodeType === 'clip') {
+            scale = 20
+            enlarge = 30
+        } else if (nodeType === 'episode') {
+            scale = 30
+            enlarge = 40
+        } else if (nodeType === 'show') {
+            scale = 60
+            enlarge = 70
+        } else if (nodeType === 'guest') {
+            scale = 80
+            enlarge = 90
+        }
+        return [scale, enlarge]
+    }
 
     function doHoveredNodeStyle(node) {
         if (!node && nodeStyleCleanedUp) return
@@ -441,9 +449,9 @@ function UniverseBrowser(props) {
         const gotData = graph.graphData()
         gotData.nodes.filter(f=>f.type!=='topic').forEach(n => {
             const index = gotData.nodes.findIndex(f => f.id === n.id)
-            let scale = 20
+            let [scale, enlarge] = getNodeScale(n.details?.node_type)
             if (node?.id === n.id) {
-                scale = 35
+                scale = enlarge
             }
             const currentScale = n.__threeObj.scale.x
 
@@ -503,23 +511,25 @@ function UniverseBrowser(props) {
         }
 
         let img = node.image_url
-
-        if (!img) {
-            switch (node.type) {
-                case 'youtube':
-                    img = 'youtube_default.jpeg'
-                    break;
-                case 'twitter':
-                    img = 'twitter_logo.svg'
-                    break;
-                case 'podcast':
-                    img = 'audio_default.svg'
-                    break;
-                default:
-                    img = 'audio_default.svg'
-                }    
-        } 
-
+        
+        switch (node.node_type) {
+            case 'clip':
+                switch (node.type) {
+                    case 'youtube':
+                        img = 'youtube_default.jpeg'
+                        break;
+                    case 'twitter':
+                        img = 'twitter_logo.svg'
+                        break;
+                    default:
+                        img = 'audio_default.svg'
+                }
+                break;
+            case 'guest':
+                img = 'person_placeholder.png'
+                break;
+            }    
+    
 
         const loader = new THREE.TextureLoader()
 
@@ -540,8 +550,10 @@ function UniverseBrowser(props) {
         }
           
         const sprite = new THREE.Sprite(material);
+
+        let [scaler, enlarge] = getNodeScale(node.node_type)
     
-        sprite.scale.set(20, 20, 1);
+        sprite.scale.set(scaler, scaler, 1);
 
         return sprite
     }

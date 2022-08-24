@@ -19,12 +19,12 @@ export default function Booster(props: BoostProps) {
 
     useEffect(() => {
         setIsSuccess(false)
-    },[refId])
+    }, [refId])
 
-    let { image_url, podcast_title, episode_title, timestamp } = content || {}
-    
+    let { image_url, show_title, episode_title, timestamp } = content || {}
+
     if (image_url) {
-        image_url = image_url.replace('.jpg','_l.jpg')
+        image_url = image_url.replace('.jpg', '_l.jpg')
     }
 
     const defaultBoostAmount = 5
@@ -36,22 +36,22 @@ export default function Booster(props: BoostProps) {
             const [res, err] = await boostContent(refId, defaultBoostAmount)
 
             if (err) {
-                throw new Error(err+'') 
+                throw new Error(err + '')
             }
 
             console.log('res', res)
             setIsSuccess(true)
-            
+
         } catch (e) {
-            console.log('e',e)
+            console.log('e', e)
         }
         setSubmitting(false)
     }
 
-    return <div style={{...props.style}}>
+    return <div style={{ ...props.style }}>
         {isSuccess ?
             <Row>
-                <span className="material-icons" style={{ fontSize: 20, color:'#49c998' }}>bolt</span>
+                <span className="material-icons" style={{ fontSize: 20, color: '#49c998' }}>bolt</span>
             </Row>
             : <Pill style={{ width: 50 }}
                 onClick={() => {
@@ -67,8 +67,8 @@ export default function Booster(props: BoostProps) {
                 }
             </Pill>
         }
-        
-        
+
+
         {/* <Modal  visible={showModal} close={() => setShowModal(false)}
         envStyle={{borderRadius:4, padding:'20px 30px 0px' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
@@ -76,7 +76,7 @@ export default function Booster(props: BoostProps) {
                 <ContentEnv>
                     <Avatar src={image_url} />
                     <div>
-                        <Title>{podcast_title}</Title>
+                        <Title>{show_title}</Title>
                         <MainTitle>{episode_title}</MainTitle>
                         <Title> {timestamp}</Title>
                     </div>
@@ -119,7 +119,7 @@ export default function Booster(props: BoostProps) {
                 </div>
         </Modal> */}
     </div>
-    
+
 }
 
 const Row = styled.div`
@@ -131,7 +131,7 @@ align-items:center;
 interface PillProps {
     selected?: boolean;
     disabled?: boolean;
-  }
+}
 const Pill = styled.div<PillProps>`
 padding:10px 20px;
 width: calc(100% - 40px);
@@ -147,8 +147,8 @@ align-items:center;
 font-weight: 500;
 font-size: 12px;
 line-height: 14px;
-opacity:${p=>p.disabled?'0.7':'1'};
-pointer-events: ${p=>p.disabled?'none':'auto'};
+opacity:${p => p.disabled ? '0.7' : '1'};
+pointer-events: ${p => p.disabled ? 'none' : 'auto'};
 `
 
 
@@ -197,8 +197,8 @@ margin-bottom:4px;
 
 interface ImgProps {
     src: string;
-  }
-  const Avatar = styled.div<ImgProps>`
+}
+const Avatar = styled.div<ImgProps>`
   background-image:url(${p => p.src});
   background-size:contain;
   background-repeat: no-repeat;

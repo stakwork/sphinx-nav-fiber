@@ -16,6 +16,7 @@
     "gsap": "^3.10.4",
     "lsat-js": "^2.0.5",
     "material-icons": "^1.11.6",
+    "moment": "^2.29.4",
     "react": "^18.2.0",
     "react-audio-player": "^0.17.0",
     "react-dom": "^18.2.0",
