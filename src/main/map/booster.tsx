@@ -5,23 +5,24 @@ import { boostContent } from './helpers'
 import ClipLoader from "react-spinners/ClipLoader";
 
 interface BoostProps {
-    refId: string,
-    content: any,
-    style?: any
+    refId?: string,
+    content?: any,
+    style?: any,
+    readOnly?: boolean,
+    boostCount?: number
 }
 
 export default function Booster(props: BoostProps) {
     const [submitting, setSubmitting] = useState(false)
     const [isSuccess, setIsSuccess] = useState(false)
-    const [showModal, setShowModal] = useState(false)
-    const [boostAmount, setBoostAmount] = useState('')
     const { refId, content } = props
 
     useEffect(() => {
         setIsSuccess(false)
+        setSubmitting(false)
     }, [refId])
 
-    let { image_url, show_title, episode_title, timestamp } = content || {}
+    let { image_url } = content || {}
 
     if (image_url) {
         image_url = image_url.replace('.jpg', '_l.jpg')
@@ -30,7 +31,7 @@ export default function Booster(props: BoostProps) {
     const defaultBoostAmount = 5
 
     async function doBoost() {
-        if (submitting) return
+        if (submitting||!refId) return
         setSubmitting(true)
         try {
             const [res, err] = await boostContent(refId, defaultBoostAmount)
@@ -46,6 +47,17 @@ export default function Booster(props: BoostProps) {
             console.log('e', e)
         }
         setSubmitting(false)
+    }
+
+    if (props.readOnly) {
+        if (!props.boostCount) return null
+        
+        return <Pill style={{ width: 'fit-content',padding:'1px 8px 1px 3px' }}>
+            <Row>
+                <span className="material-icons" style={{ fontSize: 12 }}>bolt</span>
+                <div style={{fontSize:10}}>{props.boostCount||0}</div>
+            </Row>
+    </Pill>
     }
 
     return <div style={{ ...props.style }}>
@@ -67,57 +79,6 @@ export default function Booster(props: BoostProps) {
                 }
             </Pill>
         }
-
-
-        {/* <Modal  visible={showModal} close={() => setShowModal(false)}
-        envStyle={{borderRadius:4, padding:'20px 30px 0px' }}>
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
-
-                <ContentEnv>
-                    <Avatar src={image_url} />
-                    <div>
-                        <Title>{show_title}</Title>
-                        <MainTitle>{episode_title}</MainTitle>
-                        <Title> {timestamp}</Title>
-                    </div>
-                    </ContentEnv>
-                    <div style={{height:20}} />
-                    <Input
-                        type="number"
-                        value={boostAmount}
-                        disabled={submitting}
-                        placeholder="Enter Boost Amount"
-                        onKeyPress={(event: any) => {
-                            if (event.key === 'Enter') {
-                                doBoost()
-                            }
-                        }}
-                        onChange={e => {
-                            const value = e.target.value
-                            setBoostAmount(value)
-                        }}
-            
-                    />
-                
-                    <div style={{ height: 10 }} />
-            
-                    <Pill style={{ margin: '10px 0 15px' }}
-                        disabled={submitting}
-                        onClick={() => doBoost()}>
-                        <span className="material-icons" style={{ fontSize: 14 }}>bolt</span>
-                        Confirm Boost
-                </Pill>
-                
-                <div style={{
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    position:'absolute',
-                    top: 0, left: 0, height: '100%', width: '100%', background: '#fff', zIndex: 5,
-                    userSelect:'none',pointerEvents:'none',opacity:isSuccess?1:0, transition:'opacity 0.1s'
-                }}>
-                        <span className="material-icons" style={{ fontSize: 80, color: '#49c998' }}>bolt</span>
-                </div>
-                </div>
-        </Modal> */}
     </div>
 
 }

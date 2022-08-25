@@ -14,7 +14,7 @@ export interface Node {
     image_url?: string,
     scale?: number,
     weight: number,
-    
+    boost?:number
 }
 
 export interface Cluster {
@@ -42,7 +42,7 @@ export interface Cluster {
     image_url?: string,
     weight: number,
     ref_id: string,
-    boosts: number,
+    boost: number,
     keyword?: boolean,
     children?: string[],
       
@@ -202,7 +202,7 @@ async function getGraphData(searchterm: string) {
             // Populating nodes array with podcasts and constructing a topic map
             data.forEach(async (moment) => {
                 
-                const { children, topics, guests } = moment
+                const { children, topics, guests, boost } = moment
                 // @ts-ignore
 
                 children && children.forEach((childRefId: string) => {
@@ -242,7 +242,8 @@ async function getGraphData(searchterm: string) {
                     text: moment.text,
                     details: moment,
                     image_url: smallImage,
-                    colors: nodeColors
+                    colors: nodeColors,
+                    boost: boost
                 })
             
                
