@@ -168,7 +168,7 @@ async function getGraphData(searchterm: string) {
         const isDev = (origin === 'http://localhost:3000' || origin === 'http://localhost:3001' || origin === 'https://sphinx-jarvis-david.sphinx1.repl.co') ? true : false
         if (isDev) {
             console.log('is dev', origin)
-            let devUrl = `https://knowledge-graph.sphinx.chat/searching?word=${searchterm}&free=true`
+            let devUrl = `https://knowledge-graph.sphinx.chat/mock_data`
             const res = await fetch(devUrl)
             data = await res.json()
         } else {
