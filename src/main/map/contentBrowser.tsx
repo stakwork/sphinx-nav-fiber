@@ -173,9 +173,8 @@ export default function ContentBrowser(props: ListContent) {
             <Col style={{ height: 'calc(100% - 90px)' }}>
                 <Scroller id={'top_ranked_scroller'}>
                     {graphData.nodes.slice(startSlice, endSlice).filter(f => f.type !== 'topic').map((n: any, i) => {
-                        const { details } = n
-                        let { image_url, show_title, episode_title, description, date } = details || {}
-
+                        const { details} = n
+                        let { image_url, show_title, episode_title, description, date, boost } = details || {}
 
                         if (image_url) {
                             image_url = image_url.replace('.jpg', '_s.jpg')
@@ -195,10 +194,16 @@ export default function ContentBrowser(props: ListContent) {
 
                             <div style={{ overflow: 'hidden', maxWidth: 'calc(100% - 90px)' }}>
                                 <div style={{
+                                    display: 'flex',
+                                    alignItems:'center',
                                     fontWeight: 300, fontSize: 11,
                                     color: '#3C3F41',
                                     marginBottom: 4
-                                }}>{moment.unix(date).format('ll')}</div>
+                                }}>
+                                    <div>{moment.unix(date).format('ll')}</div>
+                                    <div style={{ width: 8 }} />
+                                    <Booster readOnly={true} boostCount={boost} />
+                                </div>
                                 <EpisodeTitle style={{ marginBottom: 5 }}>{episode_title}</EpisodeTitle>
 
                                 <div style={{
@@ -424,6 +429,9 @@ export default function ContentBrowser(props: ListContent) {
                                                     <div>
                                                         <Time style={{ color }}>
                                                             {'' + formatTimestamp(t.timestamp)}
+                                                            <div style={{ marginLeft: 10 }}>
+                                                                <Booster readOnly={true} boostCount={t.boost} />
+                                                            </div>
                                                         </Time>
                                                         <Transcript style={{ color, fontStyle: 'normal', marginTop: 5 }}>
                                                             {t.description}
@@ -633,6 +641,7 @@ color:#5d8fdd;
 `
 
 const Time = styled.div`
+display:flex;
 font-weight: 400;
 font-size: 14px;
 line-height: 18px;

@@ -453,7 +453,7 @@ function UniverseBrowser(props) {
             if (node?.id === n.id) {
                 scale = enlarge
             }
-            const currentScale = n.__threeObj.scale.x
+            const currentScale = n.__threeObj?.scale?.x
 
             if (currentScale !== scale) {
                 gotData.nodes[index].__threeObj.scale.set(scale, scale, 0)    
