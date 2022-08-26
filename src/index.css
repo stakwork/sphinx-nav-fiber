@@ -1,23 +1,24 @@
-html, body {
+html,
+body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  height:100%;
-  width:100%;
-  overflow:hidden;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
 
-#root{
-  height:100%;
-  width:100%;
+#root {
+  height: 100%;
+  width: 100%;
 }
 
 .tooltip {
@@ -25,18 +26,18 @@ code {
 }
 
 input {
-  border: 1px solid #D0D5D8 !important;
+  border: 1px solid #d0d5d8 !important;
 }
 
 input {
-  border: 1px solid #D0D5D8;
+  border: 1px solid #d0d5d8;
 }
 
 /* Tooltip text */
 .tooltip .tooltiptext {
   visibility: hidden;
-  top:0px;
-  right:0px;
+  top: 0px;
+  right: 0px;
   background-color: #fff;
   color: #000;
   text-align: center;

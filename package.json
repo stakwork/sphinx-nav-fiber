@@ -35,7 +35,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "format": "prettier --write ."
   },
   "eslintConfig": {
     "extends": [
@@ -58,6 +59,7 @@
   "devDependencies": {
     "@types/d3": "^7.4.0",
     "@types/styled-components": "^5.1.25",
-    "@types/three": "^0.141.0"
+    "@types/three": "^0.141.0",
+    "prettier": "^2.7.1"
   }
 }

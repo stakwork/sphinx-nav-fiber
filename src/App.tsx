@@ -1,8 +1,7 @@
-import Body from './main/body'
+import Body from "./main/body";
 
 function App() {
-  return ( <Body />
-  );
+  return <Body />;
 }
 
 export default App;
