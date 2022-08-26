@@ -14,7 +14,7 @@ export interface Node {
     image_url?: string,
     scale?: number,
     weight: number,
-    boost?:number
+    boost?: number
 }
 
 export interface Cluster {
@@ -23,13 +23,13 @@ export interface Cluster {
     type: string,
     nodes?: Node[]
 }
-  
-  export interface Link {
+
+export interface Link {
     source: string,
     target: string
-  }
-  
-  export interface Moment {
+}
+
+export interface Moment {
     episode_title: string,
     link: string,
     show_title: string,
@@ -38,24 +38,24 @@ export interface Cluster {
     guests: string[],
     text: string,
     type: string,
-    node_type:string,
+    node_type: string,
     image_url?: string,
     weight: number,
     ref_id: string,
     boost: number,
     keyword?: boolean,
     children?: string[],
-      
-  }
-  
-  export interface NodesAndLinks{
+
+}
+
+export interface NodesAndLinks {
     nodes: Node[],
     links: Link[]
-  }
+}
 
 const sphinxPubkey = '023d8eb306f0027b902fbdc81d33b49b6558b3434d374626f8c324979c92d47c21'
 
-async function boostAgainstBudget(amount:number) {
+async function boostAgainstBudget(amount: number) {
     let err: any = null
     // @ts-ignore
     let res: any = await sphinx.enable(true);
@@ -65,33 +65,33 @@ async function boostAgainstBudget(amount:number) {
     }
     // @ts-ignore
     res = await sphinx.keysend(sphinxPubkey, amount)
-    
+
     if (!res) {
         // rejected, ask for topup
         // @ts-ignore
         res = await sphinx.topup()
         if (!res || !res.budget || (res?.budget < amount)) {
             // topup failed
-            err = new Error('Topup failed')    
+            err = new Error('Topup failed')
         } else {
             // retry keysend
             // @ts-ignore
             res = await sphinx.keysend(sphinxPubkey, amount)
-            if (!res) err = new Error('Keysend failed after topup')    
+            if (!res) err = new Error('Keysend failed after topup')
         }
     }
 
     return err
 }
-    
+
 const boostContent = async (refId: String, amount: number) => {
-        
+
     try {
         // take away sats
         // @ts-ignore
 
         const err = await boostAgainstBudget(amount)
-        
+
         if (err) {
             throw new Error(err)
         }
@@ -103,63 +103,62 @@ const boostContent = async (refId: String, amount: number) => {
 
         // record the boost
         const res = await fetch('https://knowledge-graph.sphinx.chat/boost',
-        {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-              },
-            body: JSON.stringify(body)
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(body)
             })
-        
-        console.log('res',res);
-        
-      return [res, null]
+
+        console.log('res', res);
+
+        return [res, null]
     } catch (e) {
         console.log(e);
         return [null, e]
     }
-  };
+};
 
-  const getLsat = async () => {
+const getLsat = async () => {
     // @ts-ignore
     // await sphinx.enable(true);
 
     try {
-      const resp = await fetch("https://knowledge-graph.sphinx.chat/searching");
-	   
-      const header = resp.headers.get("www-authenticate");
-	    
-      let data = await resp.json();
-      const lsat = Lsat.fromHeader(data.headers);
+        const resp = await fetch("https://knowledge-graph.sphinx.chat/searching");
 
-      // @ts-ignore
-      const LSATRes = await sphinx.saveLsat(
-        lsat.invoice,
-        lsat.baseMacaroon,
-        "knowledge-graph.sphinx.chat"
-      );
+        const header = resp.headers.get("www-authenticate");
 
-	if(LSATRes.success == false){
-		// @ts-ignore
-		await sphinx.topup()
-    }
-        
-      lsat.setPreimage(LSATRes.lsat.split(":")[1]);
-    
-      const token = lsat.toToken()
-      return [token, null]
+        let data = await resp.json();
+        const lsat = Lsat.fromHeader(data.headers);
+
+        // @ts-ignore
+        const LSATRes = await sphinx.saveLsat(
+            lsat.invoice,
+            lsat.baseMacaroon,
+            "knowledge-graph.sphinx.chat"
+        );
+
+        if (LSATRes.success == false) {
+            // @ts-ignore
+            await sphinx.topup()
+        }
+
+        lsat.setPreimage(LSATRes.lsat.split(":")[1]);
+
+        const token = lsat.toToken()
+        return [token, null]
     } catch (e) {
         console.log(e);
         return [null, e]
     }
-  };
+};
 
 
 async function getGraphData(searchterm: string) {
 
     console.log('searchterm', searchterm)
-          
-    
+
     try {
 
         let data: Moment[]
@@ -177,7 +176,7 @@ async function getGraphData(searchterm: string) {
             if (err) {
                 throw new Error(err)
             }
-          
+
             let apiRes = await fetch(
                 `https://knowledge-graph.sphinx.chat/search?word=${searchterm}`,
                 {
@@ -190,40 +189,42 @@ async function getGraphData(searchterm: string) {
 
             data = await apiRes.json();
         }
-        
+
         const _nodes: Node[] = []
         const _links: Link[] = []
-        
+
         if (data.length) {
             const topicMap: any = {}
             const guestMap: any = {}
-            
+
             console.log('data', data)
             // Populating nodes array with podcasts and constructing a topic map
             data.forEach(async (moment) => {
-                
-                const { children, topics, guests, boost } = moment
+
+                const { children, topics, guests, boost, show_title } = moment
                 // @ts-ignore
 
                 children && children.forEach((childRefId: string) => {
                     const link: Link = {
-                        source: moment.ref_id,
-                        target: childRefId
+                        source: childRefId,
+                        target: moment.ref_id
                     }
                     _links.push(link)
                 })
 
                 let nodeColors: any = []
+
                 topics && topics.forEach((topic: string) => {
-                    if (!topicMap[topic]) topicMap[topic] = [moment.ref_id]
-                    else topicMap[topic].push(moment.ref_id)
+                    console.log('show_title',show_title)
+                    if (!topicMap[topic]) topicMap[topic] = [show_title]
+                    else topicMap[topic].push(show_title)
                 })
 
                 if (moment.node_type === 'episode') {
                     guests && guests.forEach((g: string) => {
                         if (!guestMap[g]) guestMap[g] = [moment.ref_id]
                         else guestMap[g].push(moment.ref_id)
-                    })    
+                    })
                 }
 
                 let smallImage: any = moment.image_url
@@ -245,34 +246,36 @@ async function getGraphData(searchterm: string) {
                     colors: nodeColors,
                     boost: boost
                 })
-            
-               
+
+
                 // index++
             })
-            
+
 
 
             let index = 0
-            
+
             // // Adds topic nodes
             Object.keys(topicMap)
                 .forEach(topic => {
                     // dont create topic node for search term (otherwise everything will be linked to it)
                     if (topic === searchterm) return
-                
+
                     const topicChildren = topicMap[topic]
                     const scale = topicMap[topic].length * 2
                     const topicNodeId = 'topicnode_' + index
-            
+
                     // make links to children
-                    // topicChildren.forEach((childRefId: string) => {
-                    //     const link: Link = {
-                    //                 source: childRefId,
-                    //                 target: topicNodeId
-                    //                 }
-                    //     _links.push(link)
-                    // })
-                
+                    topicChildren.forEach((showTitle: string) => {
+                        const show = data.find(f => f.show_title === showTitle && f.node_type === 'episode')
+                        const showRefId = show?.ref_id||''
+                        const link: Link = {
+                                    source: showRefId,
+                                    target: topicNodeId
+                                    }
+                        _links.push(link)
+                    })
+
                     const topicNode: Node = {
                         id: topicNodeId,
                         name: topic,
@@ -284,7 +287,7 @@ async function getGraphData(searchterm: string) {
                         scale: scale,
                         colors: ['#000']
                     }
-                
+
                     _nodes.push(topicNode)
                     index++
                 })
@@ -292,11 +295,11 @@ async function getGraphData(searchterm: string) {
             // Adds guest nodes
             Object.keys(guestMap)
                 .forEach(guest => {
-            
+
                     const guestChildren = guestMap[guest]
                     const scale = guestMap[guest].length * 2
                     const guestNodeId = 'guestnode_' + index
-        
+
                     // make links to children
                     guestChildren.forEach((childRefId: string) => {
                         const link: Link = {
@@ -305,7 +308,7 @@ async function getGraphData(searchterm: string) {
                         }
                         _links.push(link)
                     })
-            
+
                     const guestNode: Node = {
                         id: guestNodeId,
                         name: guest,
@@ -317,7 +320,7 @@ async function getGraphData(searchterm: string) {
                         scale: scale,
                         colors: ['#000']
                     }
-            
+
                     _nodes.push(guestNode)
                     index++
                 })
@@ -330,28 +333,28 @@ async function getGraphData(searchterm: string) {
         // const l_ = _links.map((a: any) => {
         //     return { ...a }
         // })
-        
+
         // console.log('n_', n_)
         // console.log('l_', l_)
-        
+
         _nodes.sort((a, b) => b.weight - a.weight)
-      
-      return { nodes: _nodes, links: _links }
+
+        return { nodes: _nodes, links: _links }
     }
-      catch (e) {
+    catch (e) {
         console.error(e)
-        return {nodes: [], links: []}    
-      }
-  }
+        return { nodes: [], links: [] }
+    }
+}
 
 function getFakeGraphData() {
 
-    let data:any = {
+    let data: any = {
         nodes: [],
-        links:[]
+        links: []
     }
-    
-    for (let i = 0; i < 100; i++){
+
+    for (let i = 0; i < 100; i++) {
         data.nodes.push({
             color: "#a6cee3",
             id: i,
@@ -362,12 +365,12 @@ function getFakeGraphData() {
         })
     }
 
-    data.nodes.forEach((n:any,i:number)=> {
+    data.nodes.forEach((n: any, i: number) => {
         if (n > 0) {
             data.links.push({
                 source: i - 1,
                 target: i
-              })
+            })
         }
     })
 
@@ -382,21 +385,21 @@ function convertFromISOtoSeconds(value: string) {
         const h = parseInt(splitValue[0])
         const m = parseInt(splitValue[1])
         const s = parseInt(splitValue[2])
-        val = (h*3600) + (m*60) + s    
+        val = (h * 3600) + (m * 60) + s
     } catch (e) {
         console.log(e)
     }
-    
+
     return val
 }
-  
-const sleep = (ms:number) => new Promise(r => setTimeout(r, ms));
+
+const sleep = (ms: number) => new Promise(r => setTimeout(r, ms));
 
 export { boostContent, getFakeGraphData, getSampleData, getGraphData, convertFromISOtoSeconds, sleep }
 
 function getSampleData() {
     return {
-        nodes:startNodes,
-        links:startLinks
+        nodes: startNodes,
+        links: startLinks
     }
 }
