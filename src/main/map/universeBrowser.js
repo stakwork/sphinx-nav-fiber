@@ -3,10 +3,11 @@ import styled from 'styled-components'
 import ClipLoader from "react-spinners/ClipLoader";
 import * as d3 from "d3-force-3d";
 import * as THREE from 'three'
-import SpriteText from 'three-spritetext'
 import ThreeForceGraph from 'three-forcegraph';
 import CameraControls from 'camera-controls';
 import gsap from 'gsap'
+import { linkObject, getNodeScale } from './ui/utils'
+import SpriteText from 'three-spritetext'
 // import {} from './universeBrowserTools'
 // import { MeshLine, MeshLineMaterial, MeshLineRaycast } from 'three.meshline';
  
@@ -29,28 +30,57 @@ function UniverseBrowser(props) {
     const [loading, setLoading] = useState(true)
     const universeRef = useRef(null)
     
-     // update graph
+    // update graph
     useEffect(() => {
         setLoading(true)
         setTimeout(() => {
             nodeMaterials = {}
-            const manybody = d3.forceManyBody().distanceMin(100).distanceMax(2000);
-            // const x =  d3.forceX(width / 6).strength(0.3)
-            // const y =  d3.forceY().y(function (d, i) { return height / 10 + i * 35; })
-            //                     .strength(0.4)
-            const distance = d3.forceLink().distance(40).strength(0.1);
-                        
-            graph.clear()
-                .graphData(props.graphData)
-                .d3Force("charge", manybody)
-                .d3Force("link", distance)
-                // .d3Force("link", d3.forceLink(props.graphData.links).distance(500))    
-            
-            // doSearchTermNodeUpdates()
-            updateCamera()    
-        },200)
-    }, [props.graphData])
+        
+            graph.clear().graphData(props.graphData)
+            const { nodes, links } = props.graphData
 
+            const manybody = d3.forceManyBody(props.graphData).strength(-40);
+            // decide distance here
+            const distance = d3.forceLink(props.graphData).distance(d => {
+                let distance = 30
+
+                const sourceType = d.source.node_type
+                const targetType = d.target.node_type
+                
+                switch (targetType) {
+                    case 'show':
+                        distance = 700
+                        break;
+                    case 'topic':
+                        distance = 1000
+                        break;
+                    case 'guest':
+                        distance = 500
+                        break;
+                    case 'clip':
+                        distance = 200
+                        break;
+                    case 'episode':
+                        distance = 300
+                        break;
+                    default:
+                        distance = 100
+                }
+
+                if (sourceType === 'show') distance = 700
+                
+                return distance
+            });    
+
+            // const center = d3.forceCenter().strength(0.5);    
+                
+            graph.d3Force("charge", manybody).d3Force("link", distance)
+                // .d3Force("center", center) 
+        
+                updateCamera()
+           
+        }, 200)
+    }, [props.graphData])
     
     // update camera and renderer on resize
     useEffect(() => {
@@ -140,23 +170,11 @@ function UniverseBrowser(props) {
         animate()
     }, [])
 
-    function doSearchTermNodeUpdates() {
-        if (scene) {
-            if (searchTermNode) {
-                searchTermNode._text.set(props.currentSearchTerm)
-            }
-            else {
-                searchTermNode = new SpriteText(props.currentSearchTerm||'Welcome');
-                searchTermNode.color = '#000000';
-                searchTermNode.textHeight = 120;
-                searchTermNode.userData = {
-                    type:'searchTerm'
-                }
-                scene.add(searchTermNode);    
-            }
+    useEffect(() => {
+        if (props.focusedNode) {
+            lookAt(props.focusedNode.x,props.focusedNode.y,props.focusedNode.z)
         }
-    }
-
+    }, [props.focusedNode])
 
     const doDollyTransition = async (event) => {
         
@@ -391,7 +409,7 @@ function UniverseBrowser(props) {
             // )
         ) {
             props.onNodeClicked(hoveredObject)
-            lookAt(hoveredObject.x,hoveredObject.y,hoveredObject.z)
+            // lookAt(hoveredObject.x,hoveredObject.y,hoveredObject.z)
         }
         hoveredNode = null
     }
@@ -421,26 +439,6 @@ function UniverseBrowser(props) {
         }
 
         return hoveredObject
-    }
-
-
-    function getNodeScale(nodeType) {
-        let scale = 25
-        let enlarge = 35
-        if (nodeType === 'clip') {
-            scale = 20
-            enlarge = 30
-        } else if (nodeType === 'episode') {
-            scale = 30
-            enlarge = 40
-        } else if (nodeType === 'show') {
-            scale = 60
-            enlarge = 70
-        } else if (nodeType === 'guest') {
-            scale = 80
-            enlarge = 90
-        }
-        return [scale, enlarge]
     }
 
     function doHoveredNodeStyle(node) {
@@ -490,13 +488,13 @@ function UniverseBrowser(props) {
             const sprite = new SpriteText(node.label);
             sprite.color = '#000000';
             sprite.textHeight = 10 + node.scale;
-
+    
             sprite.parameters = {
                 precision:'lowp'
             } 
             return sprite
         }
-
+    
         let color = (node.colors && node.colors[0]) ? node.colors[0] : 'tomato'
         
         if (node.type === 'topic') {
@@ -506,10 +504,10 @@ function UniverseBrowser(props) {
             if (textSize > 100) textSize = 100
             
             sprite.textHeight = textSize
-
+    
             return sprite;
         }
-
+    
         let img = node.image_url
         
         switch (node.node_type) {
@@ -521,8 +519,8 @@ function UniverseBrowser(props) {
                     case 'twitter':
                         img = 'twitter_logo.svg'
                         break;
-                    default:
-                        img = 'audio_default.svg'
+                    // default:
+                    //     img = 'audio_default.svg'
                 }
                 break;
             case 'guest':
@@ -530,17 +528,21 @@ function UniverseBrowser(props) {
                 break;
             }    
     
-
+    
         const loader = new THREE.TextureLoader()
-
+    
         loader.requestHeader = {
             'Access-Control-Allow-Origin': window.location.origin,    
         } 
-
+    
         let material = null
-
+    
+        if (!img) img = 'noimage.jpeg'
+    
         if (nodeMaterials[img]) {
             material = nodeMaterials[img]
+    
+            
         } else {
             const map = loader.load(img);
             material = new THREE.SpriteMaterial({
@@ -550,32 +552,13 @@ function UniverseBrowser(props) {
         }
           
         const sprite = new THREE.Sprite(material);
-
+    
         let [scaler, enlarge] = getNodeScale(node.node_type)
     
         sprite.scale.set(scaler, scaler, 1);
-
+    
         return sprite
     }
-      
-    const linkObject = () => {
-
-        let lineWidth = 1
-
-        const lineMaterial = new THREE.LineBasicMaterial({
-            opacity: 0.6,
-            transparent:true,
-            color: '#000000',
-            lineWidth
-        });
-
-        const geometry = new THREE.BufferGeometry();
-        
-        const line = new THREE.Line(geometry, lineMaterial);
-    
-        return line
-    }
-
 
     return <div style={{ height: '100%', width: '100%', position: 'relative' }}>
 
@@ -624,12 +607,13 @@ function areEqual(prevProps, nextProps) {
     otherwise return false
     */
     
-    const { width, height, graphData, currentSearchTerm } = prevProps
+    const { width, height, graphData, currentSearchTerm, focusedNode } = prevProps
     
     if (width !== nextProps.width
         || height !== nextProps.height
         || graphData !== nextProps.graphData
-        || currentSearchTerm !== nextProps.currentSearchTerm) {
+        || currentSearchTerm !== nextProps.currentSearchTerm
+        || focusedNode !== nextProps.focusedNode) {
         return false
     }
     

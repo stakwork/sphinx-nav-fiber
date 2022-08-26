@@ -62,8 +62,6 @@ export default function BodyComponent() {
     },1000)
   }, [])
 
-
-
   const onNodeClicked = (node: any) => {
     if (node.noClick) return
 
@@ -202,6 +200,7 @@ export default function BodyComponent() {
             currentSearchTerm={currentSearchTerm}
             onNodeClicked={onNodeClicked}
             onNodeHovered={onNodeHovered}
+            focusedNode={focusedNode}
             graphData={data}
             />
       </MouseTracker>

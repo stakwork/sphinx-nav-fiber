@@ -63,8 +63,6 @@ export default function ContentBrowser(props: ListContent) {
             }
         })()
 
-
-
         doResetRender()
 
         // end async
@@ -130,8 +128,8 @@ export default function ContentBrowser(props: ListContent) {
         se[podcastName] = { ...t, loaded: false }
         setSelectedEpisodes(se)
         setSelectedContent(t)
+        // setFocusedNode(t)
         doResetRender()
-
     }
 
 
@@ -172,10 +170,11 @@ export default function ContentBrowser(props: ListContent) {
         return (<>
             <Col style={{ height: 'calc(100% - 90px)' }}>
                 <Scroller id={'top_ranked_scroller'}>
-                    {graphData.nodes.slice(startSlice, endSlice).filter(f => f.type !== 'topic').map((n: any, i) => {
+                    {graphData.nodes.slice(startSlice, endSlice).filter(f => f.node_type === 'clip').map((n: any, i) => {
                         const { details} = n
                         let { image_url, show_title, episode_title, description, date, boost } = details || {}
 
+                    
                         if (image_url) {
                             image_url = image_url.replace('.jpg', '_s.jpg')
                         }
