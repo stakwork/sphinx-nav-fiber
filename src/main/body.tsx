@@ -1,11 +1,12 @@
-import { useState, useRef, useEffect, useLayoutEffect } from "react";
-import styled from "styled-components";
-import UniverseBrowser from "./map/universeBrowser";
-import ContentBrowser from "./map/contentBrowser";
-import MouseTracker from "./map/mouseTracker";
+import { useEffect, useState } from "react";
 import * as sphinx from "sphinx-bridge-kevkevinpal";
+import styled from "styled-components";
 import "./body.css";
-import { NodesAndLinks, getGraphData, getSampleData } from "./map/helpers";
+import { SearchBar } from "./components/SearchBar";
+import ContentBrowser from "./map/contentBrowser";
+import { getGraphData, getSampleData, NodesAndLinks } from "./map/helpers";
+import MouseTracker from "./map/mouseTracker";
+import UniverseBrowser from "./map/universeBrowser";
 
 // Hook
 function useWindowSize() {
@@ -116,26 +117,24 @@ export default function BodyComponent() {
     }
   }
 
-  const searchComponent = (
-    <Input
-      id="search-field"
-      style={{ width: showList ? "100%" : "40%" }}
-      className={loading ? "loading" : ""}
-      disabled={loading}
-      type="text"
-      value={searchTerm}
-      placeholder="Search ..."
-      onKeyPress={(event: any) => {
-        if (event.key === "Enter") {
-          getData();
-        }
-      }}
-      onChange={(e) => {
-        const value = e.target.value;
-        setSearchTerm(value);
-      }}
-    />
-  );
+  // const searchComponent = <Input
+  // id='search-field'
+  // style={{width:showList?'100%':'40%'}}
+  // className={loading ? 'loading' : ''}
+  // disabled={loading}
+  // type="text"
+  // value={searchTerm}
+  // placeholder="Search ..."
+  // onKeyPress={(event:any) => {
+  //   if (event.key === 'Enter') {
+  //     getData()
+  //   }
+  // }}
+  // onChange={e => {
+  //   const value = e.target.value
+  //   setSearchTerm(value)
+  // }}
+  // />
 
   const menuWidth = 433;
 
@@ -145,7 +144,6 @@ export default function BodyComponent() {
     a.target = "_blank";
     a.click();
   }
-
   const contentMenuWidth = 433;
   return (
     <Body>
@@ -155,7 +153,12 @@ export default function BodyComponent() {
             <b>Second</b>Brain
           </Title>
 
-          {searchComponent}
+          <SearchBar
+            showList={showList}
+            value={searchTerm}
+            onEnter={getData}
+            onChange={setSearchTerm}
+          />
 
           <div style={{ display: "flex", width: 330 }}>
             <Button onClick={redirect}>Info</Button>
@@ -169,7 +172,14 @@ export default function BodyComponent() {
         dataFilter={dataFilter}
         setDataFilter={setDataFilter}
         currentSearchTerm={currentSearchTerm}
-        searchComponent={searchComponent}
+        searchComponent={
+          <SearchBar
+            showList={showList}
+            value={searchTerm}
+            onEnter={getData}
+            onChange={setSearchTerm}
+          />
+        }
         graphData={data}
         visible={showList}
         width={contentMenuWidth}
