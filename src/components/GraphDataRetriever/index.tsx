@@ -7,9 +7,11 @@ type DataStore = {
   data: GraphData;
   selectedNode: Node | null;
   xOffset: number;
+  hoveredNode: any;
   refresh: (search: string) => void;
   setSelectedNode: (selectedNode: Node) => void;
   setXOffset: (xOffset: number) => void;
+  setHoveredNode: (hoveredNode: any) => void;
 };
 
 const sampleData = getSampleData();
@@ -17,7 +19,9 @@ const sampleData = getSampleData();
 export const useDataStore = create<DataStore>((set) => ({
   data: sampleData,
   selectedNode: null,
-  xOffset:0,
+  xOffset: 0,
+  hoveredNode: null,
+  setHoveredNode: (hoveredNode:number) => set({ hoveredNode }),
   setXOffset: (xOffset:number) => set({ xOffset }),
   setSelectedNode: (selectedNode:any) => set({ selectedNode }),
   refresh: async (search:string) => {

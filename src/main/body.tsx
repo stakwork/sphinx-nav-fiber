@@ -6,7 +6,7 @@ import { SearchBar } from "../components/SearchBar";
 import { Universe } from "../components/Universe";
 import "./body.css";
 import ContentBrowser from "./map/contentBrowser";
-import {MENU_WIDTH} from '../main/map/contentBrowser'
+import { MENU_WIDTH } from '../main/map/contentBrowser'
 
 // Hook
 function useWindowSize() {

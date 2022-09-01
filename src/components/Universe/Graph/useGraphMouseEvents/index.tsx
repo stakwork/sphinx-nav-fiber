@@ -3,7 +3,7 @@ import { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { useMousePosition } from "../../../../hooks/useMousePosition";
 import { Node, NodeMesh } from "../../../../types";
-
+import { useDataStore } from "../../../GraphDataRetriever";
 
 const raycaster = new THREE.Raycaster();
 
@@ -17,6 +17,7 @@ export const useGraphMouseEvents = (
   const previousHoverNode = useRef<Node | null>(null);
   const hoverNode = useRef<Node | null>(null);
   const pointer = useMousePosition();
+  const setHoveredNode = useDataStore(s=>s.setHoveredNode)
 
   useEffect(() => {
     const handleMouseup = () => {
@@ -70,6 +71,7 @@ export const useGraphMouseEvents = (
       onNotHover?.(previousHoverNode.current!);
 
       hoverNode.current = hoveredObject;
+      setHoveredNode(hoveredObject)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [onHover, onNotHover, pointer]);

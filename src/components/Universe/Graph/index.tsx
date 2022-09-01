@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo } from "react";
 import ThreeForceGraph from "three-forcegraph";
 import type { Node } from "../../../types";
 import { useDataStore } from "../../GraphDataRetriever";
+import { Tooltip } from "../Tooltip";
 import { renderLink } from "./renderLink";
 import { renderNode } from "./renderNode";
 import { useGraphMouseEvents } from "./useGraphMouseEvents";
@@ -62,5 +63,5 @@ export const Graph = () => {
     graph.tickFrame();
   });
 
-  return null;
+  return null
 };

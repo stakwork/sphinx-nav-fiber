@@ -9,7 +9,6 @@ export const useMousePosition = () => {
   const canvasElement:any = document.getElementById('universe-canvas')
 
   useEffect(() => {
-    // const canvasElement = document.getElementById('universe-canvas') || document
     canvasElement.addEventListener("mousemove", handleMove);
     return () => canvasElement.removeEventListener("mousemove", handleMove);
   }, [xOffset]);
