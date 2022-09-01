@@ -6,8 +6,10 @@ import { GraphData, Node } from "../../types";
 type DataStore = {
   data: GraphData;
   selectedNode: Node | null;
+  xOffset: number;
   refresh: (search: string) => void;
   setSelectedNode: (selectedNode: Node) => void;
+  setXOffset: (xOffset: number) => void;
 };
 
 const sampleData = getSampleData();
@@ -15,8 +17,10 @@ const sampleData = getSampleData();
 export const useDataStore = create<DataStore>((set) => ({
   data: sampleData,
   selectedNode: null,
-  setSelectedNode: (selectedNode) => set({ selectedNode }),
-  refresh: async (search) => {
+  xOffset:0,
+  setXOffset: (xOffset:number) => set({ xOffset }),
+  setSelectedNode: (selectedNode:any) => set({ selectedNode }),
+  refresh: async (search:string) => {
     if (search?.length) {
       const data = await fetchGraphData(search);
 

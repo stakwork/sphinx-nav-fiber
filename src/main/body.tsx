@@ -6,6 +6,7 @@ import { SearchBar } from "../components/SearchBar";
 import { Universe } from "../components/Universe";
 import "./body.css";
 import ContentBrowser from "./map/contentBrowser";
+import {MENU_WIDTH} from '../main/map/contentBrowser'
 
 // Hook
 function useWindowSize() {
@@ -48,6 +49,14 @@ const Content = () => {
   const [showList, setShowList]: any = useState(false);
 
   const [openingAnimation, setOpeningAnimation] = useState(false);
+
+  const setXOffset = useDataStore((s) => s.setXOffset);
+
+  useEffect(() => {
+    let offset = 0
+    if (currentSearchTerm) offset = MENU_WIDTH
+    setXOffset(offset)
+  },[currentSearchTerm])
 
   // const dimensions = useWindowSize();
 
@@ -136,6 +145,7 @@ const Content = () => {
     () => <SearchBar showList={!!currentSearchTerm} onChange={handleSearch} />,
     [handleSearch, currentSearchTerm]
   );
+  let xOffset = currentSearchTerm ? 411 : 0
 
   return (
     <Wrapper>

@@ -15,6 +15,7 @@ const Content = () => (
 
 export const Universe = () => (
   <Canvas
+    id="universe-canvas"
     shadows
     camera={{ position: [1000, 0, 5], near: 0.01, far: 100000, fov: 60 }}
   >
