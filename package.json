@@ -8,13 +8,14 @@
     "camera-controls": "^1.36.1",
     "d3-force-3d": "^3.0.3",
     "gsap": "^3.10.4",
+    "invariant": "^2.2.4",
+    "leva": "^0.9.30",
     "lsat-js": "^2.0.5",
     "material-icons": "^1.11.6",
     "moment": "^2.29.4",
     "react": "^18.2.0",
     "react-audio-player": "^0.17.0",
     "react-dom": "^18.2.0",
-    "react-force-graph-3d": "^1.21.13",
     "react-scripts": "4.0.3",
     "react-spinners": "^0.13.3",
     "sphinx-bridge-kevkevinpal": "0.2.31",
@@ -24,7 +25,8 @@
     "three-spritetext": "^1.6.5",
     "three.interactive": "^1.4.0",
     "three.meshline": "^1.4.0",
-    "web-vitals": "^2.1.0"
+    "web-vitals": "^2.1.0",
+    "zustand": "^4.1.1"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -57,6 +59,7 @@
     "@testing-library/react": "^13.0.0",
     "@testing-library/user-event": "^13.2.1",
     "@types/d3": "^7.4.0",
+    "@types/invariant": "^2.2.35",
     "@types/jest": "^27.0.1",
     "@types/lodash": "^4.14.182",
     "@types/node": "^16.7.13",

@@ -1,20 +1,21 @@
 import { useFrame, useThree } from "@react-three/fiber";
 import * as d3 from "d3-force-3d";
-import { memo, useEffect, useMemo, useRef } from "react";
-import * as THREE from "three";
+import { useCallback, useEffect, useMemo } from "react";
 import ThreeForceGraph from "three-forcegraph";
-import { useMousePosition } from "../../useMousePosition";
+import type { Node } from "../../../types";
+import { useDataStore } from "../../GraphDataRetriever";
 import { renderLink } from "./renderLink";
 import { renderNode } from "./renderNode";
+import { useGraphMouseEvents } from "./useGraphMouseEvents";
 
-type Props = {
-  data: any;
-};
+const SCALE = 1;
+const HOVER_SCALE = 1.5;
 
-export const Graph = memo(({ data }: Props) => {
-  const { camera, scene } = useThree();
-  const raycasterRef = useRef(new THREE.Raycaster());
-  const pointer = useMousePosition();
+export const Graph = () => {
+  const { scene } = useThree();
+
+  const data = useDataStore((s) => s.data);
+  const setSelectedNode = useDataStore((s) => s.setSelectedNode);
 
   const graph = useMemo(() => {
     return new ThreeForceGraph()
@@ -22,71 +23,44 @@ export const Graph = memo(({ data }: Props) => {
       .nodeResolution(20)
       .linkThreeObject(renderLink)
       .linkResolution(20)
+      .d3VelocityDecay(0.2)
       .d3Force("link", d3.forceLink().strength(0.1))
       .d3Force("center", d3.forceCenter().strength(0.1));
   }, []);
 
   useEffect(() => {
     graph.clear().graphData(data);
-  }, [data]);
+  }, [data, graph]);
 
   useEffect(() => {
     scene.add(graph);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useEffect(() => {
-    const [x, y] = pointer;
+  const onClick = useCallback(
+    (node: Node) => setSelectedNode(node),
+    [setSelectedNode]
+  );
 
-    raycasterRef.current.setFromCamera({ x, y }, camera);
+  const onHover = useCallback((node: Node) => {
+    node?.__threeObj?.scale.set(HOVER_SCALE, HOVER_SCALE, HOVER_SCALE);
+  }, []);
 
-    const intersects = raycasterRef.current.intersectObjects(scene.children);
+  const onNotHover = useCallback((previousHoverNode: Node) => {
+    previousHoverNode?.__threeObj?.scale.set(SCALE, SCALE, SCALE);
+  }, []);
 
-    const nodeIndex = intersects.findIndex(
-      (f: any) =>
-        f.object && !f.object.isLine && f.object.__data?.type !== "topic"
-    );
+  const { hoverNode } = useGraphMouseEvents(onHover, onNotHover, onClick);
 
-    const labelIndex = intersects.findIndex(
-      (f: any) =>
-        f.object && !f.object.isLine && f.object.__data?.type === "topic"
-    );
-
-    let hoveredObject: any = null;
-
-    if (nodeIndex > -1) {
-      // @ts-ignore
-      hoveredObject = intersects[nodeIndex].object.__data;
-    } else if (labelIndex > -1) {
-      // @ts-ignore
-      hoveredObject = intersects[labelIndex].object.__data;
-      // intersects[labelIndex].object.scale.set(40, 40, 1);
+  useFrame(() => {
+    if (hoverNode) {
+      document.body.style.cursor = "pointer";
     } else {
-      hoveredObject = null;
+      document.body.style.cursor = "auto";
     }
 
-    if (hoveredObject) {
-      const gotData = graph.graphData();
-      gotData.nodes
-        .filter((f: any) => f.type !== "topic")
-        .forEach((n: any) => {
-          const index = gotData.nodes.findIndex((f: any) => f.id === n.id);
-
-          //let [scale, enlarge] = getNodeScale(n.details?.node_type);
-          let scale = 1.5;
-          if (hoveredObject.id === n.id) {
-            scale = 2;
-          }
-          const currentScale = n.__threeObj?.scale?.x;
-
-          if (currentScale !== scale) {
-            // @ts-ignore
-            gotData.nodes[index].__threeObj.scale.set(scale, scale, scale);
-          }
-        });
-    }
-  }, [pointer]);
-
-  useFrame(() => graph.tickFrame());
+    graph.tickFrame();
+  });
 
   return null;
-});
+};

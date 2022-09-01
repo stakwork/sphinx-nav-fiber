@@ -67,5 +67,8 @@ export const renderNode = (node: any) => {
 
   const cube = new THREE.Mesh(geometry.clone(), material);
 
+  cube.castShadow = true;
+  cube.receiveShadow = true;
+
   return cube;
 };

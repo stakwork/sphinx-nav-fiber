@@ -3,7 +3,7 @@ import * as THREE from "three";
 const lineMaterial = new THREE.LineBasicMaterial({
   opacity: 0.6,
   transparent: true,
-  color: "#000000",
+  color: "#000",
   linewidth: 1,
 });
 

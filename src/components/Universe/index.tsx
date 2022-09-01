@@ -1,18 +1,23 @@
-import { Environment, OrbitControls } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
+import { Controls } from "./Controls";
 import { Graph } from "./Graph";
+import { Lights } from "./Lights";
 
-type Props = { data: any };
+const Content = () => (
+  <>
+    <Graph />
 
-export const Universe = ({ data }: Props) => (
+    <Lights />
+
+    <Controls />
+  </>
+);
+
+export const Universe = () => (
   <Canvas
     shadows
-    camera={{ position: [1500, 0, 5], near: 0.01, far: 100000, fov: 60 }}
+    camera={{ position: [1000, 0, 5], near: 0.01, far: 100000, fov: 60 }}
   >
-    <Environment preset="night" />
-
-    <Graph data={data} />
-
-    <OrbitControls makeDefault zoomSpeed={1.5} />
+    <Content />
   </Canvas>
 );

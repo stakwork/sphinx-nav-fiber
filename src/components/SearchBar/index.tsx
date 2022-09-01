@@ -1,11 +1,10 @@
+import { DependencyList, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 
 type Props = {
   showList?: boolean;
   loading?: boolean;
-  value?: string;
   onChange: (value: string) => void;
-  onEnter?: () => void;
 };
 
 const Input = styled.input<{ showList?: boolean }>`
@@ -25,29 +24,45 @@ const Input = styled.input<{ showList?: boolean }>`
   width: ${({ showList }) => (showList ? "100%" : "40%")};
 `;
 
-export const SearchBar = ({
-  loading,
-  onEnter,
-  onChange,
-  value = "",
-  showList,
-}: Props) => {
+function useDidUpdateEffect(fn: React.EffectCallback, inputs: DependencyList) {
+  const didMountRef = useRef(false);
+
+  useEffect(() => {
+    if (didMountRef.current) {
+      return fn();
+    }
+    didMountRef.current = true;
+  }, inputs);
+}
+
+export const SearchBar = ({ loading, onChange, showList }: Props) => {
+  const [search, setSearch] = useState<string>();
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+
+    timeoutRef.current = setTimeout(() => {
+      if (search !== undefined) {
+        onChange(search);
+      }
+    }, 500);
+  }, [search]);
+
   return (
     <Input
       showList={showList}
       className={loading ? "loading" : ""}
       disabled={loading}
       type="text"
-      value={value}
-      placeholder="Search ..."
-      onKeyPress={(event: any) => {
-        if (event.key === "Enter") {
-          onEnter?.();
-        }
-      }}
+      value={search || ""}
+      placeholder="Search..."
       onChange={(e) => {
         const value = e.target.value;
-        onChange(value);
+
+        setSearch(value);
       }}
     />
   );
