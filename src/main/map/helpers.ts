@@ -1,56 +1,7 @@
-import * as sphinx from "sphinx-bridge-kevkevinpal";
 import { Lsat } from "lsat-js";
+import * as sphinx from "sphinx-bridge-kevkevinpal";
+import type { Link, Moment, Node } from "../../types";
 import { startLinks, startNodes } from "./fakeData";
-
-export interface Node {
-  id: string;
-  name: string;
-  type: string;
-  node_type: string;
-  text?: string;
-  label?: string;
-  colors?: string[];
-  details?: Moment;
-  image_url?: string;
-  scale?: number;
-  weight: number;
-  boost?: number;
-}
-
-export interface Cluster {
-  id: number;
-  label: string;
-  type: string;
-  nodes?: Node[];
-}
-
-export interface Link {
-  source: string;
-  target: string;
-}
-
-export interface Moment {
-  episode_title: string;
-  link: string;
-  show_title: string;
-  timestamp: string;
-  topics: string[];
-  guests: string[];
-  text: string;
-  type: string;
-  node_type: string;
-  image_url?: string;
-  weight: number;
-  ref_id: string;
-  boost: number;
-  keyword?: boolean;
-  children?: string[];
-}
-
-export interface NodesAndLinks {
-  nodes: Node[];
-  links: Link[];
-}
 
 const sphinxPubkey =
   "023d8eb306f0027b902fbdc81d33b49b6558b3434d374626f8c324979c92d47c21";
@@ -182,7 +133,6 @@ async function getGraphData(searchterm: string) {
       let apiRes = await fetch(
         `https://knowledge-graph.sphinx.chat/search?word=${searchterm}`,
         {
-          // @ts-ignore
           headers: {
             Authorization: lsatToken || "",
           },
@@ -203,9 +153,8 @@ async function getGraphData(searchterm: string) {
       // Populating nodes array with podcasts and constructing a topic map
       data.forEach(async (moment) => {
         const { children, topics, guests, boost, show_title } = moment;
-        // @ts-ignore
 
-        children &&
+        if (children) {
           children.forEach((childRefId: string) => {
             const link: Link = {
               source: childRefId,
@@ -213,15 +162,17 @@ async function getGraphData(searchterm: string) {
             };
             _links.push(link);
           });
+        }
 
         let nodeColors: any = [];
 
-        topics &&
+        if (topics) {
           topics.forEach((topic: string) => {
             console.log("show_title", show_title);
             if (!topicMap[topic]) topicMap[topic] = [show_title];
             else topicMap[topic].push(show_title);
           });
+        }
 
         if (moment.node_type === "episode") {
           guests &&
@@ -342,7 +293,7 @@ async function getGraphData(searchterm: string) {
     // console.log('n_', n_)
     // console.log('l_', l_)
 
-    _nodes.sort((a, b) => b.weight - a.weight);
+    _nodes.sort((a, b) => (b.weight || 0) - (a.weight || 0));
 
     return { nodes: _nodes, links: _links };
   } catch (e) {

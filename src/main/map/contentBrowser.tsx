@@ -1,39 +1,38 @@
-import { useState, useEffect } from "react";
-import styled from "styled-components";
-import ReactAudioPlayer from "react-audio-player";
-import Booster from "./booster";
-import ClipLoader from "react-spinners/ClipLoader";
 import moment from "moment";
-import { NodesAndLinks, Node, convertFromISOtoSeconds, sleep } from "./helpers";
+import { useEffect, useState } from "react";
+import ReactAudioPlayer from "react-audio-player";
+import ClipLoader from "react-spinners/ClipLoader";
+import styled from "styled-components";
+import { useDataStore } from "../../components/GraphDataRetriever";
+import { Node } from "../../types";
+import Booster from "./booster";
+import { convertFromISOtoSeconds, sleep } from "./helpers";
 
 interface ListContent {
   dataFilter: any;
   setDataFilter: Function;
   searchComponent: any;
-  graphData: NodesAndLinks;
-  visible: boolean;
   close: any;
   focusedNode: any;
   currentSearchTerm: string;
   setFocusedNode: any;
-  width: number;
   loading: boolean;
 }
 
-export default function ContentBrowser(props: ListContent) {
-  const {
-    graphData,
-    visible,
-    focusedNode,
-    close,
-    searchComponent,
-    currentSearchTerm,
-    setFocusedNode,
-    dataFilter,
-    setDataFilter,
-    width,
-    loading,
-  } = props;
+export const MENU_WIDTH = 433;
+
+export default function ContentBrowser({
+  focusedNode,
+  close,
+  searchComponent,
+  currentSearchTerm,
+  dataFilter,
+  setDataFilter,
+  setFocusedNode,
+  loading,
+}: ListContent) {
+  const data = useDataStore((s) => s.data);
+
   const [selectedEpisodes, setSelectedEpisodes]: any = useState({});
   const [yesRender, setYesRender]: any = useState(true);
   const [showTranscript, setShowTranscript]: any = useState(false);
@@ -193,13 +192,13 @@ export default function ContentBrowser(props: ListContent) {
     const startSlice = renderPage * pageSize;
     const endSlice = startSlice + pageSize;
 
-    const isMore = graphData.nodes.length - 1 > endSlice;
+    const isMore = data.nodes.length - 1 > endSlice;
     const isLess = startSlice > 0;
     return (
       <>
         <Col style={{ height: "calc(100% - 90px)" }}>
           <Scroller id={"top_ranked_scroller"}>
-            {graphData.nodes
+            {data.nodes
               .slice(startSlice, endSlice)
               .filter((f) => f.node_type === "clip")
               .map((n: any, i) => {
@@ -220,7 +219,7 @@ export default function ContentBrowser(props: ListContent) {
                 return (
                   <EpisodePanel
                     onClick={() => {
-                      props.setFocusedNode(n);
+                      setFocusedNode(n);
                     }}
                     style={{ cursor: "pointer" }}
                     key={"node" + i}
@@ -314,7 +313,7 @@ export default function ContentBrowser(props: ListContent) {
 
   function renderPodcastByCreator() {
     const groupedPodcasts: any = {};
-    graphData?.nodes
+    data?.nodes
       ?.filter((d: Node) => {
         // ignore unrelated data
         return focusedNode?.details?.show_title === d.details?.show_title;
@@ -324,37 +323,39 @@ export default function ContentBrowser(props: ListContent) {
 
         const { show_title, episode_title } = d.details;
 
-        if (show_title && !groupedPodcasts[show_title]) {
-          groupedPodcasts[show_title] = {
-            ...d.details,
-            title: show_title,
-            image_url: d.image_url,
-            timestamps: {
-              [episode_title]: [
-                {
-                  ...d.details,
-                  title: episode_title,
-                  link: d.details?.link,
-                },
-              ],
-            },
-          };
-        } else if (!groupedPodcasts[show_title].timestamps[episode_title]) {
-          groupedPodcasts[show_title].timestamps[episode_title] = [
-            {
+        if (episode_title) {
+          if (show_title && !groupedPodcasts[show_title]) {
+            groupedPodcasts[show_title] = {
+              ...d.details,
+              title: show_title,
+              image_url: d.image_url,
+              timestamps: {
+                [episode_title]: [
+                  {
+                    ...d.details,
+                    title: episode_title,
+                    link: d.details?.link,
+                  },
+                ],
+              },
+            };
+          } else if (!groupedPodcasts[show_title].timestamps[episode_title]) {
+            groupedPodcasts[show_title].timestamps[episode_title] = [
+              {
+                ...d.details,
+                image_url: d.image_url,
+                title: episode_title,
+                link: d.details?.link,
+              },
+            ];
+          } else {
+            groupedPodcasts[show_title].timestamps[episode_title].push({
               ...d.details,
               image_url: d.image_url,
               title: episode_title,
               link: d.details?.link,
-            },
-          ];
-        } else {
-          groupedPodcasts[show_title].timestamps[episode_title].push({
-            ...d.details,
-            image_url: d.image_url,
-            title: episode_title,
-            link: d.details?.link,
-          });
+            });
+          }
         }
       });
 
@@ -688,11 +689,9 @@ export default function ContentBrowser(props: ListContent) {
     );
   }
 
-  if (!visible) return <div />;
-
   let contentView: any = null;
 
-  if (!focusedNode && graphData?.nodes?.length) {
+  if (!focusedNode && data?.nodes?.length) {
     contentView = renderContentByRelevence();
   } else if (focusedNode) {
     switch (focusedNode?.type) {
@@ -714,11 +713,9 @@ export default function ContentBrowser(props: ListContent) {
     ? selectedContent?.text || "No transcript"
     : null;
 
+  console.log("[dd] render");
   return (
-    <ListWindow
-      onClick={(e) => e.preventDefault()}
-      style={{ width, minWidth: width }}
-    >
+    <ListWindow>
       <div
         style={{
           display: "flex",
@@ -759,7 +756,7 @@ export default function ContentBrowser(props: ListContent) {
       )}
 
       {showTranscript && (
-        <TranscriptEnv style={{ left: width }}>
+        <TranscriptEnv style={{ left: MENU_WIDTH }}>
           <div style={{ minHeight: 40 }} />
           <Transcript>"{contentTranscript}"</Transcript>
           <div style={{ minHeight: 40 }} />
@@ -775,8 +772,8 @@ const ListWindow = styled.div`
   height: 100%;
   min-height: 100%;
   background: #ffffff;
-  min-width: 433px;
-  width: 433px;
+  min-width: ${MENU_WIDTH}px;
+  width: ${MENU_WIDTH}px;
   z-index: 30;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
   // overflow:hidden;

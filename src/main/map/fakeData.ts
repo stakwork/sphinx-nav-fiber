@@ -1,5 +1,7 @@
+import { Node } from "../../types";
+
 // results of taproot 8/12/2022
-export const startNodes = [
+export const startNodes: Node[] = [
   {
     weight: 1.6199,
     id: "da61205f-ca0c-4220-864f-f0abbe5568e4",
@@ -14,7 +16,7 @@ export const startNodes = [
       description: "[[Taproot]] Effect on [[Bitcoin]]",
       episode_title:
         "Read 464 - Poolin s Initiative to Activate Taproot  Aaron Van Wirdum ",
-      guest: ["Aaron Van Wirdum"],
+      guests: ["Aaron Van Wirdum"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/0b9229a4-8cef-441c-8fc1-8e622616a44a.jpg",
       keyword: true,
@@ -45,7 +47,7 @@ export const startNodes = [
       date: 1602820800,
       description: "Why [[Taproot]] is Massive Valuable?",
       episode_title: "Guy s Take  34 - TAPROOT IS MERGED  ",
-      guest: [],
+      guests: [],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/6377c14f-551c-44e2-b0d9-564cd519503a.jpg",
       keyword: true,
@@ -76,7 +78,7 @@ export const startNodes = [
       date: 1620360000,
       description: "[[Anita Posch]] The [[Taproot]] activation",
       episode_title: "Last Week in Bitcoin  Don t Mess with Bitcoin",
-      guest: ["Anita Posch"],
+      guests: ["Anita Posch"],
       image_url: "",
       keyword: true,
       link: "https://bitcoinundco.com/en/podlove/file/1858/s/feed/c/mp3/112-en.mp3",
@@ -105,7 +107,7 @@ export const startNodes = [
       date: 1622779200,
       description: "[[Anita Posch]] [[Taproot]] on the way",
       episode_title: "Bitcoin on the Moon - Last Week in Bitcoin",
-      guest: ["Anita Posch"],
+      guests: ["Anita Posch"],
       image_url: "",
       keyword: true,
       link: "https://bitcoinundco.com/en/podlove/file/1933/s/feed/c/mp3/120-en.mp3",
@@ -134,7 +136,7 @@ export const startNodes = [
       date: 1602820800,
       description: "[[Privacy]] Of [[Taproot]]",
       episode_title: "Guy s Take  34 - TAPROOT IS MERGED  ",
-      guest: [],
+      guests: [],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/6377c14f-551c-44e2-b0d9-564cd519503a.jpg",
       keyword: true,
@@ -166,7 +168,7 @@ export const startNodes = [
       description: "The analogy  of [[Taproot]] with [[Bitcoin's script]]",
       episode_title:
         "Read 584 - Yes  Bitcoin is a Smart Contract Platform  Shinobi ",
-      guest: ["Shinobi"],
+      guests: ["Shinobi"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/9e7e229f-2631-4542-b5d7-7fcd502798dc.jpg",
       keyword: true,
@@ -199,7 +201,7 @@ export const startNodes = [
         "Why Should You Care About [[Taproot]], the Next Major [[Bitcoin Upgrade]]",
       episode_title:
         "NEWS ROUNDUP  BTC Price Spikes With Inflation  Taproot Activation Imminent ep214",
-      guest: [],
+      guests: [],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/b8a8edf8-bbe7-45c7-9fb9-5673acb4d1bd.jpg",
       keyword: true,
@@ -230,7 +232,7 @@ export const startNodes = [
       date: 1601006400,
       description: "The drawback to [[Taproot]]",
       episode_title: "Payment Pools and Taproot - NADO 6",
-      guest: [],
+      guests: [],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/aeb47b88-cb7f-4504-bb71-ff46d200e514.jpg",
       keyword: true,
@@ -262,7 +264,7 @@ export const startNodes = [
       description: "Thought on [[Taproot]]",
       episode_title:
         "Chat 44 - 2 Bitcoiners Talking Bitcoin with Citizen Bitcoin",
-      guest: ["Brady of Citizen Bitcoin "],
+      guests: ["Brady of Citizen Bitcoin "],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/9e7e229f-2631-4542-b5d7-7fcd502798dc.jpg",
       keyword: true,
@@ -294,7 +296,7 @@ export const startNodes = [
       description: "[[Taproot]]: Proposed [[Bitcoin]] Protocol ",
       episode_title:
         "Read 518 - Two Taproot Activation Clients   Aaron Van Wirdum ",
-      guest: ["Aaron Van Wirdum"],
+      guests: ["Aaron Van Wirdum"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/9e7e229f-2631-4542-b5d7-7fcd502798dc.jpg",
       keyword: true,
@@ -326,7 +328,7 @@ export const startNodes = [
       description:
         "[[Anita Posch]] [[Bitcoin]] privacy improvements with [[Taproot]]",
       episode_title: "Last Week in Bitcoin  Keep Calm and Carry On",
-      guest: ["Anita Posch"],
+      guests: ["Anita Posch"],
       image_url: "",
       keyword: true,
       link: "https://bitcoinundco.com/en/podlove/file/1913/s/feed/c/mp3/118-en.mp3",
@@ -356,7 +358,7 @@ export const startNodes = [
       description: "Implementation of [[Taproot]]",
       episode_title:
         "Read 618 - Expanding Functionality in Lightning Implementations  Shinobi ",
-      guest: ["Shinobi"],
+      guests: ["Shinobi"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/9e7e229f-2631-4542-b5d7-7fcd502798dc.jpg",
       keyword: true,
@@ -388,7 +390,7 @@ export const startNodes = [
       description: "Does [[Slush Pool]] Support [[Taproot]]?",
       episode_title:
         "Read 464 - Poolin s Initiative to Activate Taproot  Aaron Van Wirdum ",
-      guest: ["Aaron Van Wirdum"],
+      guests: ["Aaron Van Wirdum"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/0b9229a4-8cef-441c-8fc1-8e622616a44a.jpg",
       keyword: true,
@@ -420,7 +422,7 @@ export const startNodes = [
       description: "What is the Power of [[Taproot]]?",
       episode_title:
         "Read 617 - Announcing Taro  Multi-Asset Bitcoin   Lightning  Ryan Gentry ",
-      guest: ["Ryan Gentry"],
+      guests: ["Ryan Gentry"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/9e7e229f-2631-4542-b5d7-7fcd502798dc.jpg",
       keyword: true,
@@ -452,7 +454,7 @@ export const startNodes = [
       description: "[[Taproot]]: Proposed [[Bitcoin Protocol]] upgrade ",
       episode_title:
         "Read 502 - LOT true or false  The Last Hurdle for Taproot  Aaron Van Wirdum ",
-      guest: ["Aaron Van Wirdum"],
+      guests: ["Aaron Van Wirdum"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/9e7e229f-2631-4542-b5d7-7fcd502798dc.jpg",
       keyword: true,
@@ -484,7 +486,7 @@ export const startNodes = [
       description: "Is [[Taproot]] Offers All the Benefits of [[MAST]]?",
       episode_title:
         "CryptoQuikRead 318 - Taproot is Coming  Aaron van Wirdum ",
-      guest: ["Aaron van Wirdum"],
+      guests: ["Aaron van Wirdum"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/9e7e229f-2631-4542-b5d7-7fcd502798dc.jpg",
       keyword: true,
@@ -516,7 +518,7 @@ export const startNodes = [
       description: "How [[Taproot]] Activate without [[Bitcoin Core]]?",
       episode_title:
         "Read 502 - LOT true or false  The Last Hurdle for Taproot  Aaron Van Wirdum ",
-      guest: ["Aaron Van Wirdum"],
+      guests: ["Aaron Van Wirdum"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/9e7e229f-2631-4542-b5d7-7fcd502798dc.jpg",
       keyword: true,
@@ -547,7 +549,7 @@ export const startNodes = [
       date: 1602820800,
       description: "Benefits of [[Taproot]]",
       episode_title: "Guy s Take  34 - TAPROOT IS MERGED  ",
-      guest: [],
+      guests: [],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/6377c14f-551c-44e2-b0d9-564cd519503a.jpg",
       keyword: true,
@@ -579,7 +581,7 @@ export const startNodes = [
       description:
         "[[Taproot]] has Activated #Bitcoin #DeFi #NFT [[Smart Contract]]",
       episode_title: "Sports Stadiums Go Crypto - Bad News For Nov 17th",
-      guest: [],
+      guests: [],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/69b507fc-8462-4d04-af14-2b859735ab00.jpg",
       keyword: true,
@@ -611,7 +613,7 @@ export const startNodes = [
       description: "[[Signature Aggregation]] in [[Taproot]]",
       episode_title:
         "Chat 44 - 2 Bitcoiners Talking Bitcoin with Citizen Bitcoin",
-      guest: ["Brady of Citizen Bitcoin "],
+      guests: ["Brady of Citizen Bitcoin "],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/9e7e229f-2631-4542-b5d7-7fcd502798dc.jpg",
       keyword: true,
@@ -643,7 +645,7 @@ export const startNodes = [
       description: "[[Taro]] using [[Taproot]] scripting behavior",
       episode_title:
         "Read 617 - Announcing Taro  Multi-Asset Bitcoin   Lightning  Ryan Gentry ",
-      guest: ["Ryan Gentry"],
+      guests: ["Ryan Gentry"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/9e7e229f-2631-4542-b5d7-7fcd502798dc.jpg",
       keyword: true,
@@ -675,7 +677,7 @@ export const startNodes = [
       description: "Benefits of [[Taproot]] and [[Schnorr Signature]]",
       episode_title:
         "Read 442 - DLCs are on Bitcoin  New Functionality   Potential  Ben Carman ",
-      guest: ["Ben Carman"],
+      guests: ["Ben Carman"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/9e7e229f-2631-4542-b5d7-7fcd502798dc.jpg",
       keyword: true,
@@ -707,7 +709,7 @@ export const startNodes = [
       description: "Nature of [[Taproot]]",
       episode_title:
         "CryptoQuikRead 318 - Taproot is Coming  Aaron van Wirdum ",
-      guest: ["Aaron van Wirdum"],
+      guests: ["Aaron van Wirdum"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/9e7e229f-2631-4542-b5d7-7fcd502798dc.jpg",
       keyword: true,
@@ -738,7 +740,7 @@ export const startNodes = [
       date: 1623988800,
       description: "Upgrade states and what is [[Taproot]] lock in?",
       episode_title: "Taproot Lock-in - NADO 40",
-      guest: [],
+      guests: [],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/a64d3011-a305-4883-bf1f-8c3933535a24.jpg",
       keyword: true,
@@ -770,7 +772,7 @@ export const startNodes = [
       description: "Does [[Taproot]] Setup Need a Proof?",
       episode_title:
         "CryptoQuikRead 318 - Taproot is Coming  Aaron van Wirdum ",
-      guest: ["Aaron van Wirdum"],
+      guests: ["Aaron van Wirdum"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/9e7e229f-2631-4542-b5d7-7fcd502798dc.jpg",
       keyword: true,
@@ -802,7 +804,7 @@ export const startNodes = [
       description: "Basic Idea of [[Taproot]]",
       episode_title:
         "Read 518 - Two Taproot Activation Clients   Aaron Van Wirdum ",
-      guest: ["Aaron Van Wirdum"],
+      guests: ["Aaron Van Wirdum"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/9e7e229f-2631-4542-b5d7-7fcd502798dc.jpg",
       keyword: true,
@@ -835,7 +837,7 @@ export const startNodes = [
         "Greatest [[Bitcoin Innovations]] are done in [[Bear Markets]] [[Lightning]], [[SegWit]], [[Taproot]]",
       episode_title:
         "WHY ARE WE BULLISH  Bruce Fenton  Len From CAD BTC Pod  Guy Swann ep265",
-      guest: ["Bruce Fenton", "Len From CAD BTC Pod", "Guy Swann"],
+      guests: ["Bruce Fenton", "Len From CAD BTC Pod", "Guy Swann"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/de744984-4b8b-457b-84b8-376288f1a2d6.jpg",
       keyword: true,
@@ -874,7 +876,7 @@ export const startNodes = [
       description: "Start using [[Taproot]] now",
       episode_title:
         "CD71  bitcoin payments with  utxoclub   wiz   dooowta  and  benthecarman",
-      guest: ["@utxoclub", "@wiz", "@dooowta", "@benthecarman"],
+      guests: ["@utxoclub", "@wiz", "@dooowta", "@benthecarman"],
       image_url: "",
       keyword: false,
       link: "https://anchor.fm/s/45563e80/podcast/play/54892881/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2022-6-16%2Fa2c89c48-4031-7fde-ecf5-92ba9511f051.m4a",
@@ -904,7 +906,7 @@ export const startNodes = [
       description: "[[Armory]] to implement [[Taproot]] along with many others",
       episode_title:
         "Bitcoin.Review with NVK - A Review of Updates to Popular Bitcoin Projects",
-      guest: ["NVK", "Matt Odell"],
+      guests: ["NVK", "Matt Odell"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/cd6b8d64-bd52-4f1e-86b3-ca8ba2eb169f.jpg",
       keyword: false,
@@ -936,7 +938,7 @@ export const startNodes = [
       description: "[[Zues]] added [[Taproot]]",
       episode_title:
         "Bitcoin.Review with NVK - A Review of Updates to Popular Bitcoin Projects",
-      guest: ["NVK", "Matt Odell"],
+      guests: ["NVK", "Matt Odell"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/cd6b8d64-bd52-4f1e-86b3-ca8ba2eb169f.jpg",
       keyword: false,
@@ -968,7 +970,7 @@ export const startNodes = [
       description: "Mark 3 pay to [[taproot]] support",
       episode_title:
         "Bitcoin.Review with NVK - A Review of Updates to Popular Bitcoin Projects",
-      guest: ["NVK", "Matt Odell"],
+      guests: ["NVK", "Matt Odell"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/cd6b8d64-bd52-4f1e-86b3-ca8ba2eb169f.jpg",
       keyword: false,
@@ -1000,7 +1002,7 @@ export const startNodes = [
       description:
         "What is [[Taro]] on Bitcoin and Lightning using [[Taproot]]",
       episode_title: "Lyn Alden  Bitcoin  Bear Market and What s Ahead",
-      guest: ["Lyn Alden"],
+      guests: ["Lyn Alden"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/8ad86341-0063-41e7-a78c-27d43c150c5c.jpg",
       keyword: true,
@@ -1031,7 +1033,7 @@ export const startNodes = [
       date: 1601006400,
       description: "Current status of [[Taproot]] and its implementation",
       episode_title: "Explaining Taproot",
-      guest: [],
+      guests: [],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/aeb47b88-cb7f-4504-bb71-ff46d200e514.jpg",
       keyword: false,
@@ -1063,7 +1065,7 @@ export const startNodes = [
       description:
         "How [[Taproot]] allows more privacy and compress more information ",
       episode_title: "Payment Pools and Taproot",
-      guest: [],
+      guests: [],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/aeb47b88-cb7f-4504-bb71-ff46d200e514.jpg",
       keyword: false,
@@ -1094,7 +1096,7 @@ export const startNodes = [
       date: 1601006400,
       description: "[[Schnorr Signature]] as part of [[Taproot]]",
       episode_title: "Schnorr Signatures and Libsec256k9",
-      guest: [],
+      guests: [],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/aeb47b88-cb7f-4504-bb71-ff46d200e514.jpg",
       keyword: false,
@@ -1125,7 +1127,7 @@ export const startNodes = [
       date: 1601006400,
       description: "What to do if [[Taproot]] rules have changed",
       episode_title: "Explaining Signet",
-      guest: [],
+      guests: [],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/aeb47b88-cb7f-4504-bb71-ff46d200e514.jpg",
       keyword: false,
@@ -1156,7 +1158,7 @@ export const startNodes = [
       date: 1611291600,
       description: "[[Taproot]] is now active on [[Signet]]",
       episode_title: "Bitcoin Core 0.21.7",
-      guest: [],
+      guests: [],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/aeb47b88-cb7f-4504-bb71-ff46d200e514.jpg",
       keyword: false,
@@ -1189,7 +1191,7 @@ export const startNodes = [
         "Predictions on how [[Taproot]] implementation will play out ",
       episode_title:
         "Explaining Taproot Activation and LOT True VS LOT False -",
-      guest: [],
+      guests: [],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/aeb47b88-cb7f-4504-bb71-ff46d200e514.jpg",
       keyword: false,
@@ -1222,7 +1224,7 @@ export const startNodes = [
         "Possibility of anarchy due to lack of consensus on when to activate [[Taproot]]",
       episode_title:
         "Explaining Taproot Activation and LOT True VS LOT False -",
-      guest: [],
+      guests: [],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/aeb47b88-cb7f-4504-bb71-ff46d200e514.jpg",
       keyword: false,
@@ -1255,7 +1257,7 @@ export const startNodes = [
         "Arguments for and against [[LOT=True]] vs. [[LOT=False]] in [[Taproot]] activation",
       episode_title:
         "Explaining Taproot Activation and LOT True VS LOT False -",
-      guest: [],
+      guests: [],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/aeb47b88-cb7f-4504-bb71-ff46d200e514.jpg",
       keyword: false,
@@ -1287,7 +1289,7 @@ export const startNodes = [
       description: "Miners blocking and ignoring the [[Taproot]] upgrades",
       episode_title:
         "Explaining Taproot Activation and LOT True VS LOT False -",
-      guest: [],
+      guests: [],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/aeb47b88-cb7f-4504-bb71-ff46d200e514.jpg",
       keyword: false,
@@ -1320,7 +1322,7 @@ export const startNodes = [
         "When miners signal readiness but not really enforce [[Taproot]] rules",
       episode_title:
         "Taproot Activation Update  Speedy Trial And The LOT True Client",
-      guest: [],
+      guests: [],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/aeb47b88-cb7f-4504-bb71-ff46d200e514.jpg",
       keyword: false,
@@ -1353,7 +1355,7 @@ export const startNodes = [
         "How [[Taproot]] rules will take effect at block number 706,632 - [[BIP 9]]",
       episode_title:
         "Taproot Activation Update  Speedy Trial And The LOT True Client",
-      guest: [],
+      guests: [],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/aeb47b88-cb7f-4504-bb71-ff46d200e514.jpg",
       keyword: false,
@@ -1386,7 +1388,7 @@ export const startNodes = [
         "Recap on previous episode re: [[Taproot]] activation - [[Smart Contracts]]",
       episode_title:
         "Taproot Activation Update  Speedy Trial And The LOT True Client",
-      guest: [],
+      guests: [],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/aeb47b88-cb7f-4504-bb71-ff46d200e514.jpg",
       keyword: false,
@@ -1417,7 +1419,7 @@ export const startNodes = [
       date: 1620360000,
       description: "The ongoing debate on how to [[Taproot]]",
       episode_title: "Mara Pool and Mining Censorship",
-      guest: [],
+      guests: [],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/aeb47b88-cb7f-4504-bb71-ff46d200e514.jpg",
       keyword: false,
@@ -1448,7 +1450,7 @@ export const startNodes = [
       date: 1623988800,
       description: "What to expect on [[Taproot]] activation",
       episode_title: "Taproot Lock-in",
-      guest: [],
+      guests: [],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/aeb47b88-cb7f-4504-bb71-ff46d200e514.jpg",
       keyword: false,
@@ -1480,7 +1482,7 @@ export const startNodes = [
       description:
         "The whole idea of the [[Speedy Trial]] was to see if there's any hope of activating [[Taproot]] - [[Eclipse Attack]]",
       episode_title: "Taproot Lock-in",
-      guest: [],
+      guests: [],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/aeb47b88-cb7f-4504-bb71-ff46d200e514.jpg",
       keyword: false,
@@ -1512,7 +1514,7 @@ export const startNodes = [
       description:
         "Adopting  [[Bitcoin Core 0.21.1]] plus upcoming Bitcoin Core release to get ready for [[Taproot]]",
       episode_title: "Taproot Lock-in",
-      guest: [],
+      guests: [],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/aeb47b88-cb7f-4504-bb71-ff46d200e514.jpg",
       keyword: false,
@@ -1543,7 +1545,7 @@ export const startNodes = [
       date: 1623988800,
       description: "What is [[Taproot]] Lock-in",
       episode_title: "Taproot Lock-in",
-      guest: [],
+      guests: [],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/aeb47b88-cb7f-4504-bb71-ff46d200e514.jpg",
       keyword: false,
@@ -1575,7 +1577,7 @@ export const startNodes = [
       description:
         "The first major [[Bitcoin Core]] release that has [[Taproot]] support",
       episode_title: "Bitcoin Core 22.0 Explained",
-      guest: [],
+      guests: [],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/aeb47b88-cb7f-4504-bb71-ff46d200e514.jpg",
       keyword: false,
@@ -1606,7 +1608,7 @@ export const startNodes = [
       date: 1635480000,
       description: "A [[Soft Fork]] on top of [[Taproot]]",
       episode_title: "Lightning Network Upgrades  Eltoo   SIGHASH ANYPREVOUT ",
-      guest: ["Christian Decker"],
+      guests: ["Christian Decker"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/aeb47b88-cb7f-4504-bb71-ff46d200e514.jpg",
       keyword: false,
@@ -1638,7 +1640,7 @@ export const startNodes = [
       description:
         "How to retroactively deal with activation code with [[Taproot]]",
       episode_title: "Burying Soft Forks",
-      guest: [],
+      guests: [],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/aeb47b88-cb7f-4504-bb71-ff46d200e514.jpg",
       keyword: false,
@@ -1669,7 +1671,7 @@ export const startNodes = [
       date: 1650859200,
       description: "Added support for [[Taproot]] in the [[Wallet]]",
       episode_title: "Bitcoin Core 23.0",
-      guest: [],
+      guests: [],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/aeb47b88-cb7f-4504-bb71-ff46d200e514.jpg",
       keyword: false,
@@ -1700,7 +1702,7 @@ export const startNodes = [
       date: 1654833600,
       description: "How this protocol only creates [[Taproot]] outputs",
       episode_title: "Silent Payments",
-      guest: [],
+      guests: [],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/aeb47b88-cb7f-4504-bb71-ff46d200e514.jpg",
       keyword: false,
@@ -1732,7 +1734,7 @@ export const startNodes = [
       description: "The [[Block Size Wars]], [[SegWit]] and [[Taproot]]",
       episode_title:
         " edstromandrew and  bruce pullman discuss Investment Strategies   200",
-      guest: ["Andrew Edstrom&Bruce Pullman"],
+      guests: ["Andrew Edstrom&Bruce Pullman"],
       image_url: "",
       keyword: false,
       link: "https://anchor.fm/s/1346f9e8/podcast/play/41631815/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2021-9-11%2Ffef96814-0dfc-b2bd-6b91-d041f38f62f9.mp3",
@@ -1762,7 +1764,7 @@ export const startNodes = [
       description: "[[Taproot]] Explanation",
       episode_title:
         " douglasbakkum - Does Airgap Make Bitcoin Hardware Wallets More Secure   214",
-      guest: ["Douglas Bakkum"],
+      guests: ["Douglas Bakkum"],
       image_url: "",
       keyword: false,
       link: "https://anchor.fm/s/1346f9e8/podcast/play/43759661/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2021-10-22%2F6c3855eb-82be-1e40-208e-92ba00f927ef.mp3",
@@ -1791,7 +1793,7 @@ export const startNodes = [
       date: 1607058000,
       description: "How are [[P2sh]] and [[Taproot]] different?",
       episode_title: "Pete Rizzo",
-      guest: ["Pete Rizzo"],
+      guests: ["Pete Rizzo"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/0a24ff3e-9e22-42dc-9d73-70d54d85d45c.jpg",
       keyword: false,
@@ -1822,7 +1824,7 @@ export const startNodes = [
       date: 1648785600,
       description: "[[Taproot]]'s consequences and potential",
       episode_title: "Why Everybody Is Choosing Lightning w  Alysee Killeen",
-      guest: ["Alysee Killeen"],
+      guests: ["Alysee Killeen"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/1583c7c4-f4f2-4e52-8f27-a1eaeb6289fd.jpg",
       keyword: false,
@@ -1854,7 +1856,7 @@ export const startNodes = [
       description: "Next step after [[Taproot]]",
       episode_title:
         "Bitcoin Fixes This  46  Listener Questions with Jimmy Song",
-      guest: ["None"],
+      guests: ["None"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/3e178b7d-b8b9-4fd4-ba36-017b834537da.jpg",
       keyword: false,
@@ -1887,7 +1889,7 @@ export const startNodes = [
         "First practical improvements after [[Taproot]] implementation",
       episode_title:
         "Bitcoin Fixes This  46  Listener Questions with Jimmy Song",
-      guest: ["None"],
+      guests: ["None"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/3e178b7d-b8b9-4fd4-ba36-017b834537da.jpg",
       keyword: false,
@@ -1919,7 +1921,7 @@ export const startNodes = [
       description: "Role of [[Taproot]] for [[Bitcoin adoption]]",
       episode_title:
         "Bitcoin Fixes This  46  Listener Questions with Jimmy Song",
-      guest: ["None"],
+      guests: ["None"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/3e178b7d-b8b9-4fd4-ba36-017b834537da.jpg",
       keyword: false,
@@ -1951,7 +1953,7 @@ export const startNodes = [
       description: "[[Taproot]] explained",
       episode_title:
         "Bitcoin Fixes This  46  Listener Questions with Jimmy Song",
-      guest: ["None"],
+      guests: ["None"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/3e178b7d-b8b9-4fd4-ba36-017b834537da.jpg",
       keyword: false,
@@ -1984,7 +1986,7 @@ export const startNodes = [
         "How would [[Taproot]] affect [[Bitcoin]] and [[Lightning?]] ",
       episode_title:
         "Bitcoin Fixes This  46  Listener Questions with Jimmy Song",
-      guest: ["None"],
+      guests: ["None"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/3e178b7d-b8b9-4fd4-ba36-017b834537da.jpg",
       keyword: false,
@@ -2016,7 +2018,7 @@ export const startNodes = [
       description: "[[BlueWallet]] supporting [[Taproot]]?",
       episode_title:
         "Bitcoin Fixes This  71  Listener Questions with Jimmy Song",
-      guest: ["None"],
+      guests: ["None"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/d5c1d55c-73ee-4d1a-bfb4-927f1e706360.jpg",
       keyword: false,
@@ -2048,7 +2050,7 @@ export const startNodes = [
       description: "Next innovation to [[Bitcoin Core]] after [[Taproot]]",
       episode_title:
         "Bitcoin Fixes This  71  Listener Questions with Jimmy Song",
-      guest: ["None"],
+      guests: ["None"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/d5c1d55c-73ee-4d1a-bfb4-927f1e706360.jpg",
       keyword: false,
@@ -2081,7 +2083,7 @@ export const startNodes = [
         "Scripting capabilities enabled by [[Taproot]] compared to [[Ethereum]]",
       episode_title:
         "Bitcoin Fixes This  71  Listener Questions with Jimmy Song",
-      guest: ["None"],
+      guests: ["None"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/d5c1d55c-73ee-4d1a-bfb4-927f1e706360.jpg",
       keyword: false,
@@ -2114,7 +2116,7 @@ export const startNodes = [
         "How long will it take to have half the transactions in [[Taproot]]?",
       episode_title:
         "Bitcoin Fixes This  71  Listener Questions with Jimmy Song",
-      guest: ["None"],
+      guests: ["None"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/d5c1d55c-73ee-4d1a-bfb4-927f1e706360.jpg",
       keyword: false,
@@ -2146,7 +2148,7 @@ export const startNodes = [
       description: "Details on [[Taproot]]",
       episode_title:
         "Bitcoin Fixes This  71  Listener Questions with Jimmy Song",
-      guest: ["None"],
+      guests: ["None"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/d5c1d55c-73ee-4d1a-bfb4-927f1e706360.jpg",
       keyword: false,
@@ -2177,7 +2179,7 @@ export const startNodes = [
       date: 1601006400,
       description: "[[Payment pool]] mechanism and [[Taproot]]'s importance",
       episode_title: "Payment Pools and Taproot - NADO 6",
-      guest: [],
+      guests: [],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/aeb47b88-cb7f-4504-bb71-ff46d200e514.jpg",
       keyword: false,
@@ -2209,7 +2211,7 @@ export const startNodes = [
       description:
         "[[Taproot]] upgrade has locked in, activation expected in November 2021",
       episode_title: "Rabbit Hole Recap  Bitcoin Week of 2021.06.14",
-      guest: ["Matt Odell"],
+      guests: ["Matt Odell"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/1f747a62-4255-422a-85d7-0633d31d27c2.jpg",
       keyword: false,
@@ -2240,7 +2242,7 @@ export const startNodes = [
       date: 1636693200,
       description: "[[taproot]] activates in two days",
       episode_title: "Rabbit Hole Recap  Bitcoin Week of 2021.11.08",
-      guest: ["Matt Odell"],
+      guests: ["Matt Odell"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/1f747a62-4255-422a-85d7-0633d31d27c2.jpg",
       keyword: false,
@@ -2272,7 +2274,7 @@ export const startNodes = [
       description:
         "[[taproot]] activates successfully at block 609732 #muunWallet",
       episode_title: "Rabbit Hole Recap  Bitcoin Week of 2021.11.15",
-      guest: ["Matt Odell"],
+      guests: ["Matt Odell"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/1f747a62-4255-422a-85d7-0633d31d27c2.jpg",
       keyword: false,
@@ -2304,7 +2306,7 @@ export const startNodes = [
       description:
         "[[Ledger]] adds support for [[PSBT]]'s, [[MultiSig]], and [[Taproot]]",
       episode_title: "Rabbit Hole Recap  175  Don t live in fear",
-      guest: ["Matt Odell"],
+      guests: ["Matt Odell"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/1f747a62-4255-422a-85d7-0633d31d27c2.jpg",
       keyword: false,
@@ -2335,7 +2337,7 @@ export const startNodes = [
       date: 1639112400,
       description: "[[Swan]] adds [[taproot]] support and api",
       episode_title: "Rabbit Hole Recap  176  Party rip",
-      guest: ["Matt Odell"],
+      guests: ["Matt Odell"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/1f747a62-4255-422a-85d7-0633d31d27c2.jpg",
       keyword: false,
@@ -2367,7 +2369,7 @@ export const startNodes = [
       description: "[[DLCs]] and [[AJ Towns]]' [[Taproot]] + [[PTLC proposal]]",
       episode_title:
         "Avoiding oblivion  the state of Chicago  and bitcoin smart contracts with Chris Stewart",
-      guest: ["Chris Stewart"],
+      guests: ["Chris Stewart"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/1f747a62-4255-422a-85d7-0633d31d27c2.jpg",
       keyword: false,
@@ -2398,7 +2400,7 @@ export const startNodes = [
       date: 1650600000,
       description: "can [[taproot]] assets be privately issued?",
       episode_title: "Understanding Taro with Olaoluwa Osuntokun",
-      guest: ["Olaoluwa Osuntokun"],
+      guests: ["Olaoluwa Osuntokun"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/1f747a62-4255-422a-85d7-0633d31d27c2.jpg",
       keyword: false,
@@ -2430,7 +2432,7 @@ export const startNodes = [
       description: "How [[Taproot]] Works?",
       episode_title:
         "CryptoQuikRead 318 - Taproot is Coming  Aaron van Wirdum ",
-      guest: ["Aaron van Wirdum"],
+      guests: ["Aaron van Wirdum"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/9e7e229f-2631-4542-b5d7-7fcd502798dc.jpg",
       keyword: false,
@@ -2462,7 +2464,7 @@ export const startNodes = [
       description: "Benefit of [[Taproot]]",
       episode_title:
         "Chat 44 - 2 Bitcoiners Talking Bitcoin with Citizen Bitcoin",
-      guest: ["Brady of Citizen Bitcoin "],
+      guests: ["Brady of Citizen Bitcoin "],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/9e7e229f-2631-4542-b5d7-7fcd502798dc.jpg",
       keyword: true,
@@ -2493,7 +2495,7 @@ export const startNodes = [
       date: 1602820800,
       description: "Positive Impact of [[Taproot]] on [[Bitcoin]]",
       episode_title: "Guy s Take  34 - TAPROOT IS MERGED  ",
-      guest: [],
+      guests: [],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/6377c14f-551c-44e2-b0d9-564cd519503a.jpg",
       keyword: false,
@@ -2524,7 +2526,7 @@ export const startNodes = [
       date: 1602820800,
       description: "[[Taproot]] Making the New Version of [[Lightning]]",
       episode_title: "Guy s Take  34 - TAPROOT IS MERGED  ",
-      guest: [],
+      guests: [],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/6377c14f-551c-44e2-b0d9-564cd519503a.jpg",
       keyword: false,
@@ -2555,7 +2557,7 @@ export const startNodes = [
       date: 1602820800,
       description: "What Makes [[Taproot]] Shines?",
       episode_title: "Guy s Take  34 - TAPROOT IS MERGED  ",
-      guest: [],
+      guests: [],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/6377c14f-551c-44e2-b0d9-564cd519503a.jpg",
       keyword: false,
@@ -2587,7 +2589,7 @@ export const startNodes = [
       description: "What is [[Taproot]]?",
       episode_title:
         "Read 464 - Poolin s Initiative to Activate Taproot  Aaron Van Wirdum ",
-      guest: ["Aaron Van Wirdum"],
+      guests: ["Aaron Van Wirdum"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/0b9229a4-8cef-441c-8fc1-8e622616a44a.jpg",
       keyword: true,
@@ -2619,7 +2621,7 @@ export const startNodes = [
       description: "[[Taproot]] in Bitcoin",
       episode_title:
         "Chat  56 - DLCs  PTLCs  the Oracle Problem   More with SuredBits  Nadav",
-      guest: ["Nadav Kohen"],
+      guests: ["Nadav Kohen"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/7f23843d-1b02-4d4c-92c4-b67960a9353d.jpg",
       keyword: false,
@@ -2651,7 +2653,7 @@ export const startNodes = [
       description: "Will Bitcoin Fine without [[Taproot]]?",
       episode_title:
         "Read 502 - LOT true or false  The Last Hurdle for Taproot  Aaron Van Wirdum ",
-      guest: ["Aaron Van Wirdum"],
+      guests: ["Aaron Van Wirdum"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/9e7e229f-2631-4542-b5d7-7fcd502798dc.jpg",
       keyword: false,
@@ -2683,7 +2685,7 @@ export const startNodes = [
       description: "Essense of [[Taproot]]",
       episode_title:
         "Read 502 - LOT true or false  The Last Hurdle for Taproot  Aaron Van Wirdum ",
-      guest: ["Aaron Van Wirdum"],
+      guests: ["Aaron Van Wirdum"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/9e7e229f-2631-4542-b5d7-7fcd502798dc.jpg",
       keyword: true,
@@ -2715,7 +2717,7 @@ export const startNodes = [
       description: "How does [[Taproot]] work?",
       episode_title:
         "Read 606 - Lightning is a Liquidity Network  Roy Sheinfeld ",
-      guest: ["Roy Sheinfeld"],
+      guests: ["Roy Sheinfeld"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/9e7e229f-2631-4542-b5d7-7fcd502798dc.jpg",
       keyword: false,
@@ -2746,7 +2748,7 @@ export const startNodes = [
       date: 1623384000,
       description: "[[Anita Posch]] [[Taproot]] will lock in successfully",
       episode_title: "A New Bitcoin Epoch - Legal Tender in El Salvador",
-      guest: ["Anita Posch"],
+      guests: ["Anita Posch"],
       image_url: "",
       keyword: false,
       link: "https://bitcoinundco.com/en/podlove/file/1951/s/feed/c/mp3/122-en.mp3",
@@ -2776,7 +2778,7 @@ export const startNodes = [
       description:
         "[[Andreas M. Antonopoulos]] The importance of [[Taproot]] in [[Bitcoin]]",
       episode_title: "Lightning Unleashes Bitcoin",
-      guest: ["Andreas M. Antonopoulos"],
+      guests: ["Andreas M. Antonopoulos"],
       image_url: "",
       keyword: false,
       link: "https://bitcoinundco.com/en/andreas-antonopoulos-lightning/",
@@ -2806,7 +2808,7 @@ export const startNodes = [
       description:
         "[[Anita Posch]] [[Taproot]] and new possibilities in the [[Lightning Network]]",
       episode_title: "The Lightning Network and Greenlight Nodes",
-      guest: ["Christian Decker"],
+      guests: ["Christian Decker"],
       image_url: "",
       keyword: false,
       link: "https://bitcoinundco.com/en/christian-decker-lightning/",
@@ -2835,7 +2837,7 @@ export const startNodes = [
       date: 1635998400,
       description: "[[Anita Posch] Nodes operators can profit in [[Taproot]]",
       episode_title: "Lightning - The Future of Payments",
-      guest: ["Johannes Zweng"],
+      guests: ["Johannes Zweng"],
       image_url: "",
       keyword: false,
       link: "https://bitcoinundco.com/en/lightning-future-payments/",
@@ -2865,7 +2867,7 @@ export const startNodes = [
       description:
         "[[Anita Posch]] What are the advantage of the [[Taproot]] feature",
       episode_title: "Lightning - The Future of Payments",
-      guest: ["Johannes Zweng"],
+      guests: ["Johannes Zweng"],
       image_url: "",
       keyword: false,
       link: "https://bitcoinundco.com/en/lightning-future-payments/",
@@ -2895,7 +2897,7 @@ export const startNodes = [
       description:
         "[[Johannes Zweng]]'s  enable new features by [[Taproot]] in the [[Lightning Network]]",
       episode_title: "Lightning - The Future of Payments",
-      guest: ["Johannes Zweng"],
+      guests: ["Johannes Zweng"],
       image_url: "",
       keyword: false,
       link: "https://bitcoinundco.com/en/lightning-future-payments/",
@@ -2925,7 +2927,7 @@ export const startNodes = [
       description:
         "Why [[Carel van Wyk]] is not interested in stablecoins [[Taproot]], [[Rootstock]]",
       episode_title: "Unleashing Bitcoin s Full Potential",
-      guest: ["Carel van Wyk"],
+      guests: ["Carel van Wyk"],
       image_url: "",
       keyword: false,
       link: "https://bitcoinundco.com/en/unleashing-bitcoin-carel-van-wyk/",
@@ -2955,7 +2957,7 @@ export const startNodes = [
       description:
         "[[Schnorr Signatures]], [[Taproot]], and upgrades to the [[Bitcoin]] code base",
       episode_title: "The Biology of Bitcoin",
-      guest: ["Gigi"],
+      guests: ["Gigi"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/d477227d-0df7-48fe-8832-349e78c5f1c3.jpg",
       keyword: false,
@@ -2986,7 +2988,7 @@ export const startNodes = [
       date: 1603944000,
       description: "[[Kaz]] What is [[Taproot]]",
       episode_title: "Bitcoin Tech",
-      guest: ["Ben Carman & Nadav Kohen"],
+      guests: ["Ben Carman & Nadav Kohen"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/d477227d-0df7-48fe-8832-349e78c5f1c3.jpg",
       keyword: false,
@@ -3018,7 +3020,7 @@ export const startNodes = [
       description: "[[Taro]]: [[Taproot]] Asset Representation Overlay",
       episode_title:
         "Taro  A New Protocol for Multi-Asset Bitcoin and Lightning",
-      guest: [],
+      guests: [],
       image_url: "",
       keyword: false,
       link: "https://www.youtube.com/watch?v=-yiTtO_p3Cw",
@@ -3048,7 +3050,7 @@ export const startNodes = [
       description: "What is [[Taproot]]?",
       episode_title:
         "Unconfirmed  How Taproot Could Improve Bitcoin -- If It Gets Adopted",
-      guest: ["Jeremy Rubin"],
+      guests: ["Jeremy Rubin"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/7de0d293-8ae3-4362-8500-8f7300f3fe41.jpg",
       keyword: false,
@@ -3081,7 +3083,7 @@ export const startNodes = [
         "How [[Taproot]] will make [[Bitcoin]] Transactions More Private",
       episode_title:
         "Unconfirmed  How Taproot Could Improve Bitcoin -- If It Gets Adopted",
-      guest: ["Jeremy Rubin"],
+      guests: ["Jeremy Rubin"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/7de0d293-8ae3-4362-8500-8f7300f3fe41.jpg",
       keyword: false,
@@ -3113,7 +3115,7 @@ export const startNodes = [
       description: "Effects Of [[Taproot]] on On-chain Analytics Companies",
       episode_title:
         "Unconfirmed  How Taproot Could Improve Bitcoin -- If It Gets Adopted",
-      guest: ["Jeremy Rubin"],
+      guests: ["Jeremy Rubin"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/7de0d293-8ae3-4362-8500-8f7300f3fe41.jpg",
       keyword: false,
@@ -3146,7 +3148,7 @@ export const startNodes = [
         "Parts of [[Bitcoin]] Transactions Which will Remain Public if [[Taproot]] Goes Live",
       episode_title:
         "Unconfirmed  How Taproot Could Improve Bitcoin -- If It Gets Adopted",
-      guest: ["Jeremy Rubin"],
+      guests: ["Jeremy Rubin"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/7de0d293-8ae3-4362-8500-8f7300f3fe41.jpg",
       keyword: false,
@@ -3179,7 +3181,7 @@ export const startNodes = [
         "New Wallet Feautures [[Taproot]] will Unlock for [[Bitcoin]]",
       episode_title:
         "Unconfirmed  How Taproot Could Improve Bitcoin -- If It Gets Adopted",
-      guest: ["Jeremy Rubin"],
+      guests: ["Jeremy Rubin"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/7de0d293-8ae3-4362-8500-8f7300f3fe41.jpg",
       keyword: false,
@@ -3211,7 +3213,7 @@ export const startNodes = [
       description: "How [[Taproot]] Signaling Works",
       episode_title:
         "Unconfirmed  How Taproot Could Improve Bitcoin -- If It Gets Adopted",
-      guest: ["Jeremy Rubin"],
+      guests: ["Jeremy Rubin"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/7de0d293-8ae3-4362-8500-8f7300f3fe41.jpg",
       keyword: false,
@@ -3243,7 +3245,7 @@ export const startNodes = [
       description: "When will [[Taproot]] Lock-in",
       episode_title:
         "Unconfirmed  How Taproot Could Improve Bitcoin -- If It Gets Adopted",
-      guest: ["Jeremy Rubin"],
+      guests: ["Jeremy Rubin"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/7de0d293-8ae3-4362-8500-8f7300f3fe41.jpg",
       keyword: false,
@@ -3274,7 +3276,7 @@ export const startNodes = [
       date: 1643864400,
       description: "[[Taproot]]'s Impact on People and Investors",
       episode_title: "Bitcoin Taproot Upgrade",
-      guest: [],
+      guests: [],
       image_url: "",
       keyword: false,
       link: "https://podcasts.google.com/feed/aHR0cHM6Ly9pbmZvMzI5NTEucG9kb21hdGljLmNvbS9yc3MyLnhtbA/episode/aHR0cHM6Ly9pbmZvMzI5NTEucG9kb21hdGljLmNvbS9lbnRyeS8yMDIyLTAyLTAyVDExXzQwXzAzLTA4XzAw?sa=X&ved=0CAgQuIEEahcKEwjY0eC3oJX3AhUAAAAAHQAAAAAQfA",
@@ -3303,7 +3305,7 @@ export const startNodes = [
       date: 1643864400,
       description: "How [[Taproot]] Upgrade Affects [[DeFi]]",
       episode_title: "Bitcoin Taproot Upgrade",
-      guest: [],
+      guests: [],
       image_url: "",
       keyword: false,
       link: "https://podcasts.google.com/feed/aHR0cHM6Ly9pbmZvMzI5NTEucG9kb21hdGljLmNvbS9yc3MyLnhtbA/episode/aHR0cHM6Ly9pbmZvMzI5NTEucG9kb21hdGljLmNvbS9lbnRyeS8yMDIyLTAyLTAyVDExXzQwXzAzLTA4XzAw?sa=X&ved=0CAgQuIEEahcKEwjY0eC3oJX3AhUAAAAAHQAAAAAQfA",
@@ -3333,7 +3335,7 @@ export const startNodes = [
       description: "How [[Taro]] Works with [[Taproot]]",
       episode_title:
         "Announcing Taro  Multi-Asset Bitcoin   Lightning  Ryan Gentry ",
-      guest: [],
+      guests: [],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/9e7e229f-2631-4542-b5d7-7fcd502798dc.jpg",
       keyword: false,
@@ -3365,7 +3367,7 @@ export const startNodes = [
       description: "Major Benefits of [[Taproot]]",
       episode_title:
         "Announcing Taro  Multi-Asset Bitcoin   Lightning  Ryan Gentry ",
-      guest: [],
+      guests: [],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/9e7e229f-2631-4542-b5d7-7fcd502798dc.jpg",
       keyword: false,
@@ -3397,7 +3399,7 @@ export const startNodes = [
       description: "Whether [[Bixin]] plans to support [[Taproot]]",
       episode_title:
         "Mustafa Yiham  Bixin  on the industrial Bitcoin miner perspective",
-      guest: ["Mustafa Yiham"],
+      guests: ["Mustafa Yiham"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/19ee7484-9568-4a5e-884e-8accb3794058.jpg",
       keyword: false,
@@ -3428,7 +3430,7 @@ export const startNodes = [
       date: 1637038800,
       description: "[[Taproot]]",
       episode_title: "El Salvador s Bitcoin Report Card",
-      guest: ["Aaron Van Wirdum"],
+      guests: ["Aaron Van Wirdum"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/4e607036-8fde-48ef-ab76-9c2ac4bab031.jpg",
       keyword: false,
@@ -3459,7 +3461,7 @@ export const startNodes = [
       date: 1614488400,
       description: "[[Taproot]] and [[miner signalling]]",
       episode_title: "Bitcoin Tech  2 - Nodes  Part 1 ",
-      guest: ["Shinobi"],
+      guests: ["Shinobi"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/4e607036-8fde-48ef-ab76-9c2ac4bab031.jpg",
       keyword: false,
@@ -3490,7 +3492,7 @@ export const startNodes = [
       date: 1609477200,
       description: "[[Taproot]]",
       episode_title: "2020 Bitcoin Review with Matt Odell",
-      guest: ["Matt Odell"],
+      guests: ["Matt Odell"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/a35bc6bb-8057-4ce6-b64d-c88e951a9262.jpg",
       keyword: false,
@@ -3521,7 +3523,7 @@ export const startNodes = [
       date: 1608699600,
       description: "[[Taproot]] and [[SegWit]]",
       episode_title: "2020 Bitcoin Tech Review with Shinobi",
-      guest: ["Shinobi"],
+      guests: ["Shinobi"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/20d00aaf-fa00-4709-8d2f-f979384ff3ca.jpg",
       keyword: false,
@@ -3552,7 +3554,7 @@ export const startNodes = [
       date: 1607058000,
       description: "[[Schnorr]] and [[Taproot]]",
       episode_title: "Funding Bitcoin Development with John Newbery",
-      guest: ["John Newbery"],
+      guests: ["John Newbery"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/acf7cb01-d086-42e0-be45-b948bd051898.jpg",
       keyword: false,
@@ -3583,7 +3585,7 @@ export const startNodes = [
       date: 1603166400,
       description: "[[Schnorr]] and [[Taproot]]",
       episode_title: "Becoming a Bitcoin Core Developer with Amiti Uttarwar",
-      guest: ["Amiti Uttarwar"],
+      guests: ["Amiti Uttarwar"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/661f9980-75ac-4441-b52f-04b9a67e7975.jpg",
       keyword: false,
@@ -3615,7 +3617,7 @@ export const startNodes = [
       description: "Update on [[Taproot]]",
       episode_title:
         "All Things Bitcoin with Andrew Poelstra  Giacomo Zucco  Jack Mallers  Matt Odell   Nic Carter",
-      guest: [
+      guests: [
         "Andrew Poelstra",
         "Giacomo Zucco",
         "Jack Mallers",
@@ -3652,7 +3654,7 @@ export const startNodes = [
       description: "Impact of [[Taproot]] on users",
       episode_title:
         "All Things Bitcoin with Andrew Poelstra  Giacomo Zucco  Jack Mallers  Matt Odell   Nic Carter",
-      guest: [
+      guests: [
         "Andrew Poelstra",
         "Giacomo Zucco",
         "Jack Mallers",
@@ -3689,7 +3691,7 @@ export const startNodes = [
       description: "Updating old [[nodes]] for [[Taproot]]",
       episode_title:
         "All Things Bitcoin with Andrew Poelstra  Giacomo Zucco  Jack Mallers  Matt Odell   Nic Carter",
-      guest: [
+      guests: [
         "Andrew Poelstra",
         "Giacomo Zucco",
         "Jack Mallers",
@@ -3726,7 +3728,7 @@ export const startNodes = [
       description:
         "Discussing the [[Taproot]], [[Schnorr]] and [[Mast BIP]], as well as potential [[future Bitcoin projects]]",
       episode_title: "Pieter Wuille on Building Bitcoin",
-      guest: ["Pieter Wuille"],
+      guests: ["Pieter Wuille"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/4e607036-8fde-48ef-ab76-9c2ac4bab031.jpg",
       keyword: false,
@@ -3758,7 +3760,7 @@ export const startNodes = [
       description: "Exploring [[Graft Root]] and how it relates to [[Taproot]]",
       episode_title:
         "Andrew Poelstra on Schnorr  Taproot   Graft Root Coming to Bitcoin",
-      guest: ["Andrew Poelstra"],
+      guests: ["Andrew Poelstra"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/4e607036-8fde-48ef-ab76-9c2ac4bab031.jpg",
       keyword: false,
@@ -3789,7 +3791,7 @@ export const startNodes = [
       date: 1645074000,
       description: "[[Taproot]] support",
       episode_title: "Ledger s New Bitcoin App",
-      guest: ["Salvatore Ingala"],
+      guests: ["Salvatore Ingala"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/b79a3eb8-bcd0-4338-b979-d32aef360785.jpg",
       keyword: false,
@@ -3821,7 +3823,7 @@ export const startNodes = [
       description:
         "Introduction - background for [[Pavel Moravec]] of [[Braiins]] [[SlushPool]], [[firmware development]], [[Bitcoin]], [[mining]], [[mining pool]], [[full stack software]], [[Taproot]], [[signalling]], [[SHA256]] [[hash power]]",
       episode_title: "SlushPool Signalling For Taproot",
-      guest: ["Pavel Moravec"],
+      guests: ["Pavel Moravec"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/b79a3eb8-bcd0-4338-b979-d32aef360785.jpg",
       keyword: false,
@@ -3866,7 +3868,7 @@ export const startNodes = [
       description:
         "[[Taproot]], [[soft fork]] upgrade, [[smart contracts]], [[scripting]], [[privacy]] gains, [[cryptographic primitives]], [[algorithm]], [[multi signature]], [[Lightning]]",
       episode_title: "SlushPool Signalling For Taproot",
-      guest: ["Pavel Moravec"],
+      guests: ["Pavel Moravec"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/b79a3eb8-bcd0-4338-b979-d32aef360785.jpg",
       keyword: false,
@@ -3908,7 +3910,7 @@ export const startNodes = [
       description:
         "Why signal for [[Taproot]] - [[SlushPool]], new better version of [[bitcoin]], [[signalling]], [[soft fork]], [[miner signalling]], upgrade process, rules, rule set, [[bitcoin core]], version bit",
       episode_title: "SlushPool Signalling For Taproot",
-      guest: ["Pavel Moravec"],
+      guests: ["Pavel Moravec"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/b79a3eb8-bcd0-4338-b979-d32aef360785.jpg",
       keyword: false,
@@ -3948,7 +3950,7 @@ export const startNodes = [
       description:
         "Period of [[signalling]] - [[difficulty]], [[blocks]], [[retarget period]], [[Taproot]], enforcing of rules, [[taproot.watch]], [[miner]], [[pools]], [[hash rate]], [[activation]], political games, [[90% threshold]], [[speedy trial]]",
       episode_title: "SlushPool Signalling For Taproot",
-      guest: ["Pavel Moravec"],
+      guests: ["Pavel Moravec"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/b79a3eb8-bcd0-4338-b979-d32aef360785.jpg",
       keyword: false,
@@ -3993,7 +3995,7 @@ export const startNodes = [
       description:
         "Difficulties for [[pools]] [[signalling]] for [[Taproot]] - [[speedy trial]], [[bitcoin core]], [[mining software]], [[miners]], enforce the rules, [[bitcoin network]], [[mining pool]], data centers, servers, [[nodes]], [[hash rate]], software, [[SlushPool]]",
       episode_title: "SlushPool Signalling For Taproot",
-      guest: ["Pavel Moravec"],
+      guests: ["Pavel Moravec"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/b79a3eb8-bcd0-4338-b979-d32aef360785.jpg",
       keyword: false,
@@ -4038,7 +4040,7 @@ export const startNodes = [
       description:
         "What future upgrades might look like - [[soft forks]], identifiable pools, [[hashrate]], [[taproot]], [[privacy]], [[solo-mining]], [[hash power]], big pools, [[sovereignty]], [[anonymity]], [[blockchain analysis]], [[taproot]] brings more [[privacy]], [[SegWit]], [[Lightning]], [[on-chain]], [[bitcoin]], [[miner revenues]] into the future, [[signalling]]",
       episode_title: "SlushPool Signalling For Taproot",
-      guest: ["Pavel Moravec"],
+      guests: ["Pavel Moravec"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/b79a3eb8-bcd0-4338-b979-d32aef360785.jpg",
       keyword: false,
@@ -4089,7 +4091,7 @@ export const startNodes = [
         "Introduction - How [[Bitcoin UASF]] went down, [[taproot]] lot=true, speedy trial, [[small blocks]]",
       episode_title:
         "How Bitcoin UASF went down  taproot lot true  speedy trial  small blocks",
-      guest: ["Luke Dashjr"],
+      guests: ["Luke Dashjr"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/b79a3eb8-bcd0-4338-b979-d32aef360785.jpg",
       keyword: false,
@@ -4121,7 +4123,7 @@ export const startNodes = [
       description: "What are the benefits of [[Taproot]]",
       episode_title:
         "Bitcoin Soft Fork Activation  Taproot  and Playing Chicken",
-      guest: ["Matt Corallo"],
+      guests: ["Matt Corallo"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/b79a3eb8-bcd0-4338-b979-d32aef360785.jpg",
       keyword: false,
@@ -4153,7 +4155,7 @@ export const startNodes = [
       description: "[[Taproot]] activation paths",
       episode_title:
         "Bitcoin Soft Fork Activation  Taproot  and Playing Chicken",
-      guest: ["Matt Corallo"],
+      guests: ["Matt Corallo"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/b79a3eb8-bcd0-4338-b979-d32aef360785.jpg",
       keyword: false,
@@ -4185,7 +4187,7 @@ export const startNodes = [
       description:
         "What Are [[Schnorr signatures]]? What is [[MuSig]]? - [[Taproot]] [[multisig]] [[Zapo]]",
       episode_title: "Schnorr Taproot Tapscript BIPs",
-      guest: ["AJ Towns"],
+      guests: ["AJ Towns"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/b79a3eb8-bcd0-4338-b979-d32aef360785.jpg",
       keyword: false,
@@ -4217,7 +4219,7 @@ export const startNodes = [
       description:
         "[[Taproot]] and [[Tapscript]] - [[pay to pub key]], [[pub key]], [[script hash]], [[hardware wallets]]",
       episode_title: "Schnorr Taproot Tapscript BIPs",
-      guest: ["AJ Towns"],
+      guests: ["AJ Towns"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/b79a3eb8-bcd0-4338-b979-d32aef360785.jpg",
       keyword: false,
@@ -4256,7 +4258,7 @@ export const startNodes = [
       description:
         "[[Threshold signatures]] - [[3of5]], [[5of5]], [[multisig]], [[Schnorr]], [[Taproot]], [[MuSig]]",
       episode_title: "Schnorr Taproot Tapscript BIPs",
-      guest: ["AJ Towns"],
+      guests: ["AJ Towns"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/b79a3eb8-bcd0-4338-b979-d32aef360785.jpg",
       keyword: false,
@@ -4296,7 +4298,7 @@ export const startNodes = [
       description:
         "Policy [[privacy]] - [[pub key]], [[Merkle Tree]], [[multisig]], [[Lightning]], [[Taproot]], [[UTXO]], [[Chain Analysis]]",
       episode_title: "Schnorr Taproot Tapscript BIPs",
-      guest: ["AJ Towns"],
+      guests: ["AJ Towns"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/b79a3eb8-bcd0-4338-b979-d32aef360785.jpg",
       keyword: false,
@@ -4337,7 +4339,7 @@ export const startNodes = [
       description:
         "[[Taproot]] [[L2]] - [[sighash]], [[no input]], [[SegWit]], [[checksig]], [[public key]], [[BIP 118]]",
       episode_title: "Schnorr Taproot Tapscript BIPs",
-      guest: ["AJ Towns"],
+      guests: ["AJ Towns"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/b79a3eb8-bcd0-4338-b979-d32aef360785.jpg",
       keyword: false,
@@ -4378,7 +4380,7 @@ export const startNodes = [
       description:
         "[[No input]] & [[Lightning]] - [[L2]], [[Lightning channels]], [[Mainnet]], [[transactions]], [[transaction ID]], [[state]], [[watchtowers]], [[signatures]], [[taproot]], [[any prev out]]",
       episode_title: "Schnorr Taproot Tapscript BIPs",
-      guest: ["AJ Towns"],
+      guests: ["AJ Towns"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/b79a3eb8-bcd0-4338-b979-d32aef360785.jpg",
       keyword: false,
@@ -4423,7 +4425,7 @@ export const startNodes = [
       description:
         "Review Club - [[Taproot]], [[Schnorr]], [[Taproot BIP]], [[Schnorr BIP]],[[Bitcoin Core]], criticism/feedback, [[SegWit]], [[Quantum computers]]",
       episode_title: "Schnorr Taproot Tapscript BIPs",
-      guest: ["AJ Towns"],
+      guests: ["AJ Towns"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/b79a3eb8-bcd0-4338-b979-d32aef360785.jpg",
       keyword: false,
@@ -4463,7 +4465,7 @@ export const startNodes = [
       description:
         "Upgrade pathway - [[BIPs]], [[Taproot]], New use cases, [[Time locks]], [[smart contracts]], [[future spend]] [[Bitcoin]] ",
       episode_title: "Schnorr Taproot Tapscript BIPs",
-      guest: ["AJ Towns"],
+      guests: ["AJ Towns"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/b79a3eb8-bcd0-4338-b979-d32aef360785.jpg",
       keyword: false,
@@ -4502,7 +4504,7 @@ export const startNodes = [
       description:
         "Activation - debate, [[UASF]], [[BIP148]], [[BIP149]], [[Miner signalling]], [[SegWit]], [[BIP9]] upgrade and activation, [[soft forks]], [[Taproot]], [[BIP8]], risks ",
       episode_title: "Schnorr Taproot Tapscript BIPs",
-      guest: ["AJ Towns"],
+      guests: ["AJ Towns"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/b79a3eb8-bcd0-4338-b979-d32aef360785.jpg",
       keyword: false,
@@ -4544,7 +4546,7 @@ export const startNodes = [
       description:
         "What [[off chain]] capabilities need to be deployed for [[Taproot]] to be considered successful?",
       episode_title: "Fork Wars   the Biggest Innovations Happening in Bitcoin",
-      guest: ["Jonas Nick"],
+      guests: ["Jonas Nick"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/12db0692-468b-4d0e-a73d-cfd33643aed7.jpg",
       keyword: false,
@@ -4577,7 +4579,7 @@ export const startNodes = [
         "Bitcoin scaling innovations that come out of the [[Bear markets]]: [[SegWit]], [[Taproot]], [[Lightning Network]]",
       episode_title:
         "NEWS ROUNDUP  The Wreckage Of Blockfi  3AC  Celsius and More ep269",
-      guest: [],
+      guests: [],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/eeca50f4-77ab-453f-bb40-f7432087759f.jpg",
       keyword: false,
@@ -4610,7 +4612,7 @@ export const startNodes = [
         "Trade-offs Given Back by [[Chainalysis Companies]] to Continue Business Through [[Taproot]]",
       episode_title:
         "WHY ARE WE BULLISH  JoeyTweets  Mario Gibney  Bobby Shell  Len ep215",
-      guest: ["JoeyTweets", "Mario Gibney", "Bobby Shell", "Len"],
+      guests: ["JoeyTweets", "Mario Gibney", "Bobby Shell", "Len"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/f3b67780-d9c2-4a20-ab5c-115032a05b3a.jpg",
       keyword: false,
@@ -4642,7 +4644,7 @@ export const startNodes = [
       description: "Intro",
       episode_title:
         "Explaining Taproot Activation and LOT True VS LOT False - NADO 29",
-      guest: [],
+      guests: [],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/aeb47b88-cb7f-4504-bb71-ff46d200e514.jpg",
       keyword: true,
@@ -4674,7 +4676,7 @@ export const startNodes = [
       description: "Intro",
       episode_title:
         "Read 518 - Two Taproot Activation Clients   Aaron Van Wirdum ",
-      guest: ["Aaron Van Wirdum"],
+      guests: ["Aaron Van Wirdum"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/9e7e229f-2631-4542-b5d7-7fcd502798dc.jpg",
       keyword: true,
@@ -4706,7 +4708,7 @@ export const startNodes = [
       description:
         "The Fight for privacy-- [[Taproot Activation]] and [[Schnorr Signature]]",
       episode_title: "Andreas M. Antonopoulos  Bitcoin Outlook 2021",
-      guest: ["Andrea M. Antonopoulos"],
+      guests: ["Andrea M. Antonopoulos"],
       image_url: "",
       keyword: true,
       link: "https://bitcoinundco.com/en/podlove/file/1601/s/feed/c/mp3/092-en.mp3",
@@ -4735,7 +4737,7 @@ export const startNodes = [
       date: 1602820800,
       description: "Intro",
       episode_title: "Guy s Take  34 - TAPROOT IS MERGED  ",
-      guest: [],
+      guests: [],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/6377c14f-551c-44e2-b0d9-564cd519503a.jpg",
       keyword: true,
@@ -4767,7 +4769,7 @@ export const startNodes = [
       description: "Next innovation to [[Bitcoin Core]] after [[Taproot]]",
       episode_title:
         "Bitcoin Fixes This  71  Listener Questions with Jimmy Song",
-      guest: ["None"],
+      guests: ["None"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/d5c1d55c-73ee-4d1a-bfb4-927f1e706360.jpg",
       keyword: true,
@@ -4800,7 +4802,7 @@ export const startNodes = [
         "What are [[privacy technology]] that align with economic incentives?",
       episode_title:
         "Read 379 - Dont be Misled by Red Herrings - Treatise on Bitcoin   Privacy Part 2  Giacomo Zucco ",
-      guest: ["Giacomo Zucco"],
+      guests: ["Giacomo Zucco"],
       image_url:
         "https://stakwork-uploads.s3.amazonaws.com/knowledge-graph-joe/content-images/9e7e229f-2631-4542-b5d7-7fcd502798dc.jpg",
       keyword: true,

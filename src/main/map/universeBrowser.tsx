@@ -1,62 +1,67 @@
-import React, { useEffect, useLayoutEffect, useState, useRef } from "react";
-import styled from "styled-components";
-import ClipLoader from "react-spinners/ClipLoader";
+import CameraControls from "camera-controls";
 import * as d3 from "d3-force-3d";
+import gsap from "gsap";
+import React, {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
+import ClipLoader from "react-spinners/ClipLoader";
+import styled from "styled-components";
 import * as THREE from "three";
 import ThreeForceGraph from "three-forcegraph";
-import CameraControls from "camera-controls";
-import gsap from "gsap";
-import { linkObject, getNodeScale } from "./ui/utils";
 import SpriteText from "three-spritetext";
+import { getNodeScale, linkObject } from "./ui/utils";
 // import {} from './universeBrowserTools'
 // import { MeshLine, MeshLineMaterial, MeshLineRaycast } from 'three.meshline';
 
 THREE.Cache.enabled = true;
 CameraControls.install({ THREE: THREE });
 
-//constructor
-let graph,
-  scene,
-  renderer,
-  camera,
-  cameraControls,
-  hoveredNode,
-  light,
-  raycaster,
-  pointer,
-  clock,
-  rotateCycle,
-  rotating,
-  moveCycle,
-  moving,
-  searchTermNode,
-  zoomTimeout;
-let nodeMaterials = {};
-const warmupTicks = 20;
-let nodeStyleCleanedUp = false;
+// constructor
+let graph: ThreeForceGraph,
+  scene: any,
+  renderer: any,
+  camera: any,
+  cameraControls: any,
+  hoveredNode: any,
+  light: any,
+  raycaster: any,
+  pointer: any,
+  clock: any,
+  rotateCycle: any,
+  rotating: any,
+  moveCycle: any,
+  moving: any,
+  // searchTermNode: any,
+  zoomTimeout: any;
+let nodeMaterials: any = {};
 
-const isBrowser = typeof window !== "undefined";
-const isMac = isBrowser && /Mac/.test(navigator.platform);
-const deltaYFactor = isMac ? -1 : -3;
+const warmupTicks = 20;
+
+let nodeStyleCleanedUp = false;
 
 let introZoom = true;
 
-function UniverseBrowser(props) {
+const UniverseBrowser = (props: any) => {
   const [loading, setLoading] = useState(true);
-  const universeRef = useRef(null);
+  const universeRef = useRef<any>(null);
 
   // update graph
   useEffect(() => {
     setLoading(true);
+
     setTimeout(() => {
       nodeMaterials = {};
 
       graph.clear().graphData(props.graphData);
-      const { nodes, links } = props.graphData;
+      // const { nodes, links } = props.graphData;
 
       const manybody = d3.forceManyBody(props.graphData).strength(-40);
       // decide distance here
-      const distance = d3.forceLink(props.graphData).distance((d) => {
+      const distance = d3.forceLink(props.graphData).distance((d: any) => {
         let distance = 30;
 
         const sourceType = d.source.node_type;
@@ -112,7 +117,7 @@ function UniverseBrowser(props) {
     clock = new THREE.Clock();
 
     graph = new ThreeForceGraph()
-      .nodeThreeObject(nodeObject)
+      .nodeThreeObject(renderNode)
       .nodeResolution(20)
       // .nodeRelSize(20)
       .linkThreeObject(linkObject)
@@ -153,7 +158,7 @@ function UniverseBrowser(props) {
     renderer.setPixelRatio(window.devicePixelRatio);
 
     universeRef.current.appendChild(renderer.domElement);
-    universeRef.current.addEventListener("wheel", (event) => {
+    universeRef.current.addEventListener("wheel", (event: WheelEvent) => {
       doDollyTransition(event);
     });
 
@@ -196,7 +201,7 @@ function UniverseBrowser(props) {
     }
   }, [props.focusedNode]);
 
-  const doDollyTransition = async (event) => {
+  const doDollyTransition = async (event: any) => {
     // revert damping to default
     if (cameraControls.dampingFactor < 0.1) {
       cameraControls.dampingFactor = 0.1;
@@ -328,7 +333,7 @@ function UniverseBrowser(props) {
     moveCycle.play(0);
   }
 
-  function lookAt(x1, y1, z1) {
+  function lookAt(x1: any, y1: any, z1: any) {
     cameraControls.dampingFactor = 0.05;
     // let viewPos = [x1, y1, z1]
     // let distance = cameraControls.distance
@@ -352,12 +357,12 @@ function UniverseBrowser(props) {
 
     rotateCycle.play(0);
 
-    rotateCycle.eventCallback("onComplete", (e) => {
+    rotateCycle.eventCallback("onComplete", (e: any) => {
       rotating = null;
     });
   }
 
-  function onPointerMove(event) {
+  function onPointerMove(event: any) {
     // calculate pointer position in normalized device coordinates
     // (-1 to +1) for both components
 
@@ -418,10 +423,12 @@ function UniverseBrowser(props) {
 
     // console.log('intersects',intersects)
     const nodeIndex = intersects.findIndex(
-      (f) => f.object && !f.object.isLine && f.object.__data?.type !== "topic"
+      (f: any) =>
+        f.object && !f.object.isLine && f.object.__data?.type !== "topic"
     );
     const labelIndex = intersects.findIndex(
-      (f) => f.object && !f.object.isLine && f.object.__data?.type === "topic"
+      (f: any) =>
+        f.object && !f.object.isLine && f.object.__data?.type === "topic"
     );
     // on hover
 
@@ -440,14 +447,15 @@ function UniverseBrowser(props) {
     return hoveredObject;
   }
 
-  function doHoveredNodeStyle(node) {
+  function doHoveredNodeStyle(node: any) {
     if (!node && nodeStyleCleanedUp) return;
 
     const gotData = graph.graphData();
     gotData.nodes
-      .filter((f) => f.type !== "topic")
-      .forEach((n) => {
-        const index = gotData.nodes.findIndex((f) => f.id === n.id);
+      .filter((f: any) => f.type !== "topic")
+      .forEach((n: any) => {
+        const index = gotData.nodes.findIndex((f: any) => f.id === n.id);
+
         let [scale, enlarge] = getNodeScale(n.details?.node_type);
         if (node?.id === n.id) {
           scale = enlarge;
@@ -455,19 +463,22 @@ function UniverseBrowser(props) {
         const currentScale = n.__threeObj?.scale?.x;
 
         if (currentScale !== scale) {
+          // @ts-ignore
           gotData.nodes[index].__threeObj.scale.set(scale, scale, 0);
         }
       });
     nodeStyleCleanedUp = true;
   }
 
-  function updateCamera() {
+  const updateCamera = useCallback(() => {
     const N = props.graphData?.nodes?.length;
+
     camera.lookAt(graph.position);
     camera.position.z = Math.cbrt(N) * 180;
     camera.updateProjectionMatrix();
+
     animateFrame();
-  }
+  }, [props.graphData?.nodes?.length]);
 
   function refreshGraph() {
     setLoading(false);
@@ -475,7 +486,7 @@ function UniverseBrowser(props) {
     centerCamera();
   }
 
-  function blockInteraction(e) {
+  function blockInteraction(e: any) {
     if (loading) {
       e.preventDefault();
       e.stopPropagation();
@@ -483,15 +494,16 @@ function UniverseBrowser(props) {
     }
   }
 
-  const nodeObject = (node) => {
+  const renderNode = (node: any) => {
+    console.log("[dd]", node);
     if (node.fakeData) {
       const sprite = new SpriteText(node.label);
       sprite.color = "#000000";
       sprite.textHeight = 10 + node.scale;
 
-      sprite.parameters = {
-        precision: "lowp",
-      };
+      // sprite.parameters = {
+      //   precision: "lowp",
+      // };
       return sprite;
     }
 
@@ -508,7 +520,7 @@ function UniverseBrowser(props) {
       return sprite;
     }
 
-    let img = node.image_url;
+    let img: string = node.image_url;
 
     switch (node.node_type) {
       case "clip":
@@ -519,13 +531,15 @@ function UniverseBrowser(props) {
           case "twitter":
             img = "twitter_logo.svg";
             break;
-          // default:
-          //     img = 'audio_default.svg'
+          default:
+            img = "noimage.jpeg";
         }
         break;
       case "guest":
         img = "person_placeholder.png";
         break;
+      default:
+        img = "noimage.jpeg";
     }
 
     const loader = new THREE.TextureLoader();
@@ -535,8 +549,6 @@ function UniverseBrowser(props) {
     };
 
     let material = null;
-
-    if (!img) img = "noimage.jpeg";
 
     if (nodeMaterials[img]) {
       material = nodeMaterials[img];
@@ -550,7 +562,7 @@ function UniverseBrowser(props) {
 
     const sprite = new THREE.Sprite(material);
 
-    let [scaler, enlarge] = getNodeScale(node.node_type);
+    let [scaler] = getNodeScale(node.node_type);
 
     sprite.scale.set(scaler, scaler, 1);
 
@@ -599,9 +611,9 @@ function UniverseBrowser(props) {
       )}
     </div>
   );
-}
+};
 
-function areEqual(prevProps, nextProps) {
+function areEqual(prevProps: any, nextProps: any) {
   /*
     return true if passing nextProps to render would return
     the same result as passing prevProps to render,
