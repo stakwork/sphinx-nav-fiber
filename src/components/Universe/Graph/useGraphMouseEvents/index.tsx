@@ -1,9 +1,10 @@
 import { useThree } from "@react-three/fiber";
+import { useGesture } from "@use-gesture/react";
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
-import { useMousePosition } from "../../../../hooks/useMousePosition";
-import { Node, NodeMesh } from "../../../../types";
-import { useDataStore } from "../../../GraphDataRetriever";
+import { useMousePosition } from "~/hooks/useMousePosition";
+import { useDataStore } from "~/stores/useDataStore";
+import { Node, NodeMesh } from "~/types";
 
 const raycaster = new THREE.Raycaster();
 
@@ -14,22 +15,25 @@ export const useGraphMouseEvents = (
 ) => {
   const { camera, scene } = useThree();
 
-  const previousHoverNode = useRef<Node | null>(null);
-  const hoverNode = useRef<Node | null>(null);
   const pointer = useMousePosition();
-  const setHoveredNode = useDataStore(s=>s.setHoveredNode)
 
-  useEffect(() => {
-    const handleMouseup = () => {
-      if (hoverNode.current) {
-        onClicked?.(hoverNode.current);
-      }
-    };
+  const hoverNode = useRef<Node | null>(null);
 
-    document.addEventListener("mouseup", handleMouseup);
+  const previousHoverNode = useRef<Node | null>(null);
+  const setHoveredNode = useDataStore((s) => s.setHoveredNode);
 
-    return () => document.removeEventListener("mouseup", handleMouseup);
-  }, []);
+  useGesture(
+    {
+      onMouseUp: () => {
+        if (hoverNode.current) {
+          onClicked?.(hoverNode.current);
+        }
+      },
+    },
+    {
+      target: document.getElementById("universe-canvas") || undefined,
+    }
+  );
 
   useEffect(() => {
     const [x, y] = pointer;
@@ -65,13 +69,13 @@ export const useGraphMouseEvents = (
       previousHoverNode.current = hoverNode.current;
 
       if (hoveredObject) {
+        setHoveredNode(hoveredObject);
         onHover?.(hoveredObject);
       }
 
       onNotHover?.(previousHoverNode.current!);
 
       hoverNode.current = hoveredObject;
-      setHoveredNode(hoveredObject)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [onHover, onNotHover, pointer]);

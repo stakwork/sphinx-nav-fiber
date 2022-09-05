@@ -2,9 +2,9 @@ import { useFrame, useThree } from "@react-three/fiber";
 import * as d3 from "d3-force-3d";
 import { useCallback, useEffect, useMemo } from "react";
 import ThreeForceGraph from "three-forcegraph";
-import type { Node } from "../../../types";
-import { useDataStore } from "../../GraphDataRetriever";
-import { Tooltip } from "../Tooltip";
+import { useGraphData } from "~/components/DataRetriever";
+import { useDataStore } from "~/stores/useDataStore";
+import { Node } from "~/types";
 import { renderLink } from "./renderLink";
 import { renderNode } from "./renderNode";
 import { useGraphMouseEvents } from "./useGraphMouseEvents";
@@ -15,7 +15,7 @@ const HOVER_SCALE = 1.5;
 export const Graph = () => {
   const { scene } = useThree();
 
-  const data = useDataStore((s) => s.data);
+  const data = useGraphData();
   const setSelectedNode = useDataStore((s) => s.setSelectedNode);
 
   const graph = useMemo(() => {
@@ -63,5 +63,5 @@ export const Graph = () => {
     graph.tickFrame();
   });
 
-  return null
+  return null;
 };

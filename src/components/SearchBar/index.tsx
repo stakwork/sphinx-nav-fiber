@@ -1,13 +1,13 @@
-import { DependencyList, useEffect, useRef, useState } from "react";
-import styled from "styled-components";
+import { useEffect, useRef, useState } from "react";
+import styled, { css } from "styled-components";
+import { useAppStore } from "~/stores/useAppStore";
 
 type Props = {
   showList?: boolean;
   loading?: boolean;
-  onChange: (value: string) => void;
 };
 
-const Input = styled.input<{ showList?: boolean }>`
+const Input = styled.input<{ loading?: boolean }>`
   pointer-events: auto;
   border-radius: 100px;
   min-width: 300px;
@@ -17,26 +17,33 @@ const Input = styled.input<{ showList?: boolean }>`
   border: 1px solid #d0d5d8;
   box-shadow: 0px 1px 6px rgba(0, 0, 0, 0.1);
   border-radius: 4px;
+  width: 100%;
+
   &:focus {
     border: none;
   }
 
-  width: ${({ showList }) => (showList ? "100%" : "40%")};
+  ${({ loading }) =>
+    loading
+      ? css`
+          background-color: #ffffff;
+          background-image: url("https://i.gifer.com/ZZ5H.gif");
+          background-size: 25px 25px;
+          background-position: right center;
+          background-position-x: 95%;
+          background-repeat: no-repeat;
+        `
+      : ""}
 `;
 
-function useDidUpdateEffect(fn: React.EffectCallback, inputs: DependencyList) {
-  const didMountRef = useRef(false);
+export const SearchBar = ({ loading }: Props) => {
+  const [search, setSearch] = useAppStore((s) => [
+    s.currentSearch,
+    s.setCurrentSearch,
+  ]);
 
-  useEffect(() => {
-    if (didMountRef.current) {
-      return fn();
-    }
-    didMountRef.current = true;
-  }, inputs);
-}
+  const [tempSearch, setTempSearch] = useState(() => search);
 
-export const SearchBar = ({ loading, onChange, showList }: Props) => {
-  const [search, setSearch] = useState<string>();
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
@@ -45,24 +52,23 @@ export const SearchBar = ({ loading, onChange, showList }: Props) => {
     }
 
     timeoutRef.current = setTimeout(() => {
-      if (search !== undefined) {
-        onChange(search);
+      if (tempSearch !== null) {
+        setSearch(tempSearch);
       }
     }, 500);
-  }, [search]);
+  }, [setSearch, tempSearch]);
 
   return (
     <Input
-      showList={showList}
-      className={loading ? "loading" : ""}
+      loading={loading}
       disabled={loading}
       type="text"
-      value={search || ""}
+      value={tempSearch || ""}
       placeholder="Search..."
       onChange={(e) => {
         const value = e.target.value;
 
-        setSearch(value);
+        setTempSearch(value);
       }}
     />
   );

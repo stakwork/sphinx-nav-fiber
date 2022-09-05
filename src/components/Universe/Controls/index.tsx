@@ -1,12 +1,15 @@
 import { extend, useFrame, useThree } from "@react-three/fiber";
+import { createUseGesture, wheelAction } from "@use-gesture/react";
 import CameraControls from "camera-controls";
 import { useCallback, useEffect, useRef } from "react";
 import * as THREE from "three";
-import { useDataStore } from "../../GraphDataRetriever";
+import { useDataStore } from "~/stores/useDataStore";
 
 CameraControls.install({ THREE });
 
 extend({ CameraControls });
+
+const useGesture = createUseGesture([wheelAction]);
 
 export const Controls = () => {
   const selectedNode = useDataStore((s) => s.selectedNode);
@@ -49,11 +52,16 @@ export const Controls = () => {
       //cameraControlsRef.current.enableDamping = true;
       cameraControlsRef.current.dollyToCursor = true;
     }
-
-    document.addEventListener("wheel", doDollyTransition);
-
-    return () => document.removeEventListener("wheel", doDollyTransition);
   }, []);
+
+  useGesture(
+    {
+      onWheel: ({ event }) => doDollyTransition(event),
+    },
+    {
+      target: document.getElementById("universe-canvas") || undefined,
+    }
+  );
 
   useEffect(() => {
     if (selectedNode && cameraControlsRef.current) {
@@ -68,7 +76,6 @@ export const Controls = () => {
 
   useFrame((state, delta) => {
     cameraControlsRef.current?.update(delta);
-    // cameraControlsRef.current?.distance += 10;
   });
 
   return (

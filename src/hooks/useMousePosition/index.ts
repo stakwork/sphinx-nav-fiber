@@ -1,24 +1,31 @@
-import { useEffect, useState } from "react";
-import { useDataStore } from '../../components/GraphDataRetriever'
+import { createUseGesture, moveAction, Vector2 } from "@use-gesture/react";
+import { useState } from "react";
+import { MENU_WIDTH } from "~/components/App/SideBar";
+import { useAppStore } from "~/stores/useAppStore";
 
-type MouseCoords = [number, number];
+const useGesture = createUseGesture([moveAction]);
 
 export const useMousePosition = () => {
-  const [pointer, setPointer] = useState<MouseCoords>([0, 0]);
-  const xOffset = useDataStore(s => s.xOffset);
-  const canvasElement:any = document.getElementById('universe-canvas')
+  const sidebarIsOpen = useAppStore((s) => s.sidebarIsOpen);
 
-  useEffect(() => {
-    canvasElement.addEventListener("mousemove", handleMove);
-    return () => canvasElement.removeEventListener("mousemove", handleMove);
-  }, [xOffset]);
+  const [pointer, setPointer] = useState<Vector2>([0, 0]);
 
-  const handleMove = (e: any) => {
-    const canvasWidth = canvasElement?.offsetWidth || 0
-    const x = ((e.clientX - xOffset) / canvasWidth) * 2 - 1;
-    const y = -(e.clientY / window.innerHeight) * 2 + 1;
-    setPointer([x, y]);
-  };
+  useGesture(
+    {
+      onMove: ({ xy: [clientX, clientY], target }) => {
+        const canvasWidth = (target as HTMLCanvasElement).offsetWidth || 0;
+
+        const x =
+          ((clientX - (sidebarIsOpen ? MENU_WIDTH : 0)) / canvasWidth) * 2 - 1;
+        const y = -(clientY / window.innerHeight) * 2 + 1;
+
+        setPointer([x, y]);
+      },
+    },
+    {
+      target: document.getElementById("universe-canvas") || undefined,
+    }
+  );
 
   return pointer;
 };

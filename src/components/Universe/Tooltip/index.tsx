@@ -1,25 +1,26 @@
-import styled from 'styled-components'
-import { useDataStore } from '../../GraphDataRetriever';
+import styled from "styled-components";
+import { Avatar } from "~/components/common/Avatar";
+import { useDataStore } from "~/stores/useDataStore";
 
-export function Tooltip(){
+export function Tooltip() {
+  const node = useDataStore((s) => s.hoveredNode);
 
-  const node: any = useDataStore((s: any) => s.hoveredNode)
+  if (!node?.details) return null;
 
-  if (!node) return null
+  const {
+    node_type,
+    label,
+    image_url,
+    show_title,
+    episode_title,
+    description,
+    guests,
+    text,
+    timestamp,
+  } = node.details || node || {};
 
-  // @ts-ignore
-  const { node_type, label, image_url, show_title, episode_title, description, guests, text, timestamp} = node?.details || node || {};
-
-  return (<TooltipWrap
-      style={{
-        // opacity: (node_type && node_type !== "topic") ? 1 : 0,
-        // left,
-        // top,
-        top: 20,
-        right: 20,
-        width: 300,
-      }}
-    >
+  return (
+    <TooltipWrap>
       <div
         style={{
           display: "flex",
@@ -33,8 +34,7 @@ export function Tooltip(){
         {node_type}
       </div>
       <TooltipInside>
-        
-        <Avatar src={image_url||''} />
+        <Avatar src={image_url || ""} />
 
         <div>
           <Title>{show_title || label}</Title>
@@ -42,7 +42,11 @@ export function Tooltip(){
           <Title> {timestamp}</Title>
 
           <Details style={{ marginTop: 10 }}>
-            {guests?.length && <Description>Guests: {guests.map((name:string)=>name)}</Description>}
+            {guests?.length && (
+              <Description>
+                Guests: {guests.map((name: string) => name)}
+              </Description>
+            )}
             <Details>{description}</Details>
             <Details style={{ marginTop: 15, fontStyle: "italic" }}>
               {text}
@@ -50,10 +54,9 @@ export function Tooltip(){
           </Details>
         </div>
       </TooltipInside>
-    </TooltipWrap>)
-
-};
-
+    </TooltipWrap>
+  );
+}
 
 const TooltipWrap = styled.div`
   display: flex;
@@ -68,6 +71,10 @@ const TooltipWrap = styled.div`
   color: #000;
   z-index: 100;
   transition: opacity 0.6s;
+
+  top: 20px;
+  right: 20px;
+  width: 300px;
 `;
 
 const TooltipInside = styled.div`
@@ -124,19 +131,4 @@ const Details = styled.div`
   display: -webkit-box;
   -webkit-line-clamp: 5;
   -webkit-box-orient: vertical;
-`;
-
-interface ImgProps {
-  src: string;
-}
-const Avatar = styled.div<ImgProps>`
-  background-image: url(${(p) => p.src});
-  background-size: contain;
-  background-repeat: no-repeat;
-  flex-grow: 0;
-  flex-shrink: 0;
-  margin-right: 12px;
-  width: 45px;
-  height: 45px;
-  border-radius: 4px;
 `;
