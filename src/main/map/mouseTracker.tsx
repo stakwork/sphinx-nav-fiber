@@ -1,5 +1,6 @@
-import { useState, useEffect, useRef } from "react";
+import { useRef, useState } from "react";
 import styled from "styled-components";
+import { Avatar } from "~/components/common/Avatar";
 
 export default function MouseTracker(props: any) {
   const { subtractWidth, hoveredNode, dimensions } = props;
@@ -23,7 +24,6 @@ export default function MouseTracker(props: any) {
   } else if (0 > mousePosition.x - tooltipW / 2) {
     xOffset = tooltipW / 2;
   }
-  // console.log('hoveredNode',hoveredNode)
 
   const { node_type, label } = hoveredNode?.details || hoveredNode || {};
   const type = hoveredNode?.type;
@@ -193,19 +193,4 @@ const Details = styled.div`
   display: -webkit-box;
   -webkit-line-clamp: 5;
   -webkit-box-orient: vertical;
-`;
-
-interface ImgProps {
-  src: string;
-}
-const Avatar = styled.div<ImgProps>`
-  background-image: url(${(p) => p.src});
-  background-size: contain;
-  background-repeat: no-repeat;
-  flex-grow: 0;
-  flex-shrink: 0;
-  margin-right: 12px;
-  width: 45px;
-  height: 45px;
-  border-radius: 4px;
 `;

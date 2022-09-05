@@ -3,10 +3,11 @@ import { useEffect, useState } from "react";
 import ReactAudioPlayer from "react-audio-player";
 import ClipLoader from "react-spinners/ClipLoader";
 import styled from "styled-components";
-import { useDataStore } from "../../components/GraphDataRetriever";
+import { useGraphData } from "~/components/DataRetriever";
+import { videoTimetoSeconds } from "~/utils/videoTimetoSeconds";
 import { Node } from "../../types";
 import Booster from "./booster";
-import { convertFromISOtoSeconds, sleep } from "./helpers";
+import { sleep } from "./helpers";
 
 interface ListContent {
   dataFilter: any;
@@ -31,7 +32,7 @@ export default function ContentBrowser({
   setFocusedNode,
   loading,
 }: ListContent) {
-  const data = useDataStore((s) => s.data);
+  const data = useGraphData();
 
   const [selectedEpisodes, setSelectedEpisodes]: any = useState({});
   const [yesRender, setYesRender]: any = useState(true);
@@ -115,10 +116,10 @@ export default function ContentBrowser({
       let isStartAndEnd = timestamp.includes("-");
       if (isStartAndEnd) {
         let t = timestamp.split("-");
-        start_time = convertFromISOtoSeconds(t[0]);
-        end_time = convertFromISOtoSeconds(t[1]);
+        start_time = videoTimetoSeconds(t[0]);
+        end_time = videoTimetoSeconds(t[1]);
       } else {
-        start_time = convertFromISOtoSeconds(timestamp);
+        start_time = videoTimetoSeconds(timestamp);
       }
     }
 
@@ -200,8 +201,8 @@ export default function ContentBrowser({
           <Scroller id={"top_ranked_scroller"}>
             {data.nodes
               .slice(startSlice, endSlice)
-              .filter((f) => f.node_type === "clip")
-              .map((n: any, i) => {
+              .filter((f: any) => f.node_type === "clip")
+              .map((n: any, i: any) => {
                 const { details } = n;
                 let {
                   image_url,
@@ -455,8 +456,8 @@ export default function ContentBrowser({
                           // order episode by time
                           let aSplit = a.timestamp?.split("-") || [""];
                           let bSplit = b.timestamp?.split("-") || [""];
-                          const aTime = convertFromISOtoSeconds(aSplit[0]);
-                          const bTime = convertFromISOtoSeconds(bSplit[0]);
+                          const aTime = videoTimetoSeconds(aSplit[0]);
+                          const bTime = videoTimetoSeconds(bSplit[0]);
                           return aTime - bTime;
                         });
                       const myKey = episodeName + "_" + i + "_" + ii;
@@ -612,7 +613,7 @@ export default function ContentBrowser({
     const { description, show_title, episode_title, link, timestamp } =
       focusedNode.details;
 
-    const secs = convertFromISOtoSeconds(timestamp);
+    const secs = videoTimetoSeconds(timestamp);
 
     let embeddedUrl: string = "";
 

@@ -1,12 +1,9 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
-import { useDataStore } from "../components/GraphDataRetriever";
-
-import { SearchBar } from "../components/SearchBar";
-import { Universe } from "../components/Universe";
-import "./body.css";
+import { DataRetriever } from "~/components/DataRetriever";
+import { Universe } from "~/components/Universe";
+import { useDataStore } from "~/stores/useDataStore";
 import ContentBrowser from "./map/contentBrowser";
-import { MENU_WIDTH } from '../main/map/contentBrowser'
 
 // Hook
 function useWindowSize() {
@@ -37,7 +34,7 @@ function useWindowSize() {
 }
 
 const Content = () => {
-  const refresh = useDataStore((s) => s.refresh);
+  const fetchData = useDataStore((s) => s.fetchData);
 
   const [searchTerm, setSearchTerm]: any = useState("");
   const [currentSearchTerm, setCurrentSearchTerm]: any = useState("");
@@ -50,13 +47,13 @@ const Content = () => {
 
   const [openingAnimation, setOpeningAnimation] = useState(false);
 
-  const setXOffset = useDataStore((s) => s.setXOffset);
+  // const setXOffset = useDataStore((s) => s.setXOffset);
 
-  useEffect(() => {
-    let offset = 0
-    if (currentSearchTerm) offset = MENU_WIDTH
-    setXOffset(offset)
-  },[currentSearchTerm])
+  // useEffect(() => {
+  //   let offset = 0;
+  //   if (currentSearchTerm) offset = MENU_WIDTH;
+  //   setXOffset(offset);
+  // }, [currentSearchTerm]);
 
   // const dimensions = useWindowSize();
 
@@ -118,7 +115,7 @@ const Content = () => {
       console.log("[dd] handleSearch");
       setCurrentSearchTerm(search);
 
-      await refresh(search);
+      await fetchData(search);
       // setFocusedNode(null);
       // setShowList(true);
       // setLoading(true);
@@ -131,7 +128,7 @@ const Content = () => {
       // setDataFilter([search]);
       // setLoading(false);
     },
-    [refresh]
+    [fetchData]
   );
 
   function redirect() {
@@ -141,11 +138,11 @@ const Content = () => {
     a.click();
   }
 
-  const sharedSearchBar = useMemo(
-    () => <SearchBar showList={!!currentSearchTerm} onChange={handleSearch} />,
-    [handleSearch, currentSearchTerm]
-  );
-  let xOffset = currentSearchTerm ? 411 : 0
+  // const sharedSearchBar = useMemo(
+  //   () => <SearchBar showList={!!currentSearchTerm} onChange={handleSearch} />,
+  //   [handleSearch, currentSearchTerm]
+  // );
+  let xOffset = currentSearchTerm ? 411 : 0;
 
   return (
     <Wrapper>
@@ -154,8 +151,6 @@ const Content = () => {
           <Title style={{ fontWeight: 300, width: 260 }}>
             <b>Second</b>Brain
           </Title>
-
-          {sharedSearchBar}
 
           <div style={{ display: "flex", width: 330 }}>
             <Button onClick={redirect}>Info</Button>
@@ -170,7 +165,7 @@ const Content = () => {
           dataFilter={dataFilter}
           setDataFilter={setDataFilter}
           currentSearchTerm={currentSearchTerm}
-          searchComponent={sharedSearchBar}
+          searchComponent={null}
           focusedNode={focusedNode}
           setFocusedNode={setFocusedNode}
           close={() => {
@@ -189,7 +184,11 @@ const Content = () => {
 };
 
 export default function Body() {
-  return <Content />;
+  return (
+    <DataRetriever>
+      <Content />
+    </DataRetriever>
+  );
 }
 
 const Cover = styled.div`

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { boostContent } from "./helpers";
 // import Modal from '../sphinxUI/modal'
@@ -126,60 +126,4 @@ const Pill = styled.div<PillProps>`
   line-height: 14px;
   opacity: ${(p) => (p.disabled ? "0.7" : "1")};
   pointer-events: ${(p) => (p.disabled ? "none" : "auto")};
-`;
-
-const Input = styled.input`
-  pointer-events: auto;
-  width: calc(100% - 40px);
-  height: 40px;
-  padding: 0 20px;
-  border: 1px solid #d0d5d8;
-  // box-shadow: 0px 1px 6px rgba(0, 0, 0, 0.1);
-  border-radius: 4px;
-  :&focus  {
-    border: none;
-  }
-`;
-
-const ContentEnv = styled.div`
-  display: flex;
-  align-items: flex-start;
-`;
-
-const Title = styled.div`
-  font-weight: 400;
-  font-size: 11px;
-  margin-bottom: 4px;
-  /* or 164% */
-
-  /* Main bottom icons */
-
-  color: #5f6368;
-`;
-
-const MainTitle = styled.div`
-  font-weight: 500;
-  font-size: 14px;
-  line-height: 18px;
-  /* or 164% */
-
-  /* Main bottom icons */
-
-  color: #222;
-  margin-bottom: 4px;
-`;
-
-interface ImgProps {
-  src: string;
-}
-const Avatar = styled.div<ImgProps>`
-  background-image: url(${(p) => p.src});
-  background-size: contain;
-  background-repeat: no-repeat;
-  flex-grow: 0;
-  flex-shrink: 0;
-  margin-right: 12px;
-  width: 45px;
-  height: 45px;
-  border-radius: 4px;
 `;
