@@ -1,7 +1,7 @@
 import { Node } from "../../types";
 
 // results of taproot 8/12/2022
-export const startNodes: Node[] = [
+export const mockNodes: Node[] = [
   {
     weight: 1.6199,
     id: "da61205f-ca0c-4220-864f-f0abbe5568e4",
@@ -9109,7 +9109,7 @@ export const startNodes: Node[] = [
   },
 ];
 
-export const startLinks = [
+export const mockLinks = [
   {
     source: "6cd8dc46-8782-4270-8013-24fa61e9b9e4",
     target: "40f3b12f-0b5c-4233-ab38-d8eb88b4d191",
@@ -10567,3 +10567,8 @@ export const startLinks = [
     target: "guestnode_191",
   },
 ];
+
+export const mockGraphData = {
+  nodes: mockNodes,
+  links: mockLinks,
+};

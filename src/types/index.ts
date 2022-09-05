@@ -1,6 +1,7 @@
 import { Mesh, Object3D } from "three";
 
 export type Moment = {
+  label?: string;
   boost: number;
   children?: string[];
   date: number;
