@@ -29,7 +29,7 @@ export const Controls = () => {
 
     const distance = cameraControlsRef.current?.distance;
 
-    let dollyStep = distance < 3000 ? 40 : 140;
+    let dollyStep = distance < 3000 ? 80 : 140;
 
     if (event.deltaY > 0) {
       dollyStep = dollyStep * -1;

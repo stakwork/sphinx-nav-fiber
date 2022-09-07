@@ -8,6 +8,8 @@ const defautData: GraphData = {
   links: [],
 };
 
+const includeTopics = false
+
 export const fetchGraphData = async (search: string) => {
   // @ts-ignore
   await sphinx.enable();
@@ -28,6 +30,8 @@ async function getGraphData(searchterm: string) {
     if (isDevelopment) {
       console.log("is dev", origin);
       let devUrl = `${API_URL}/mock_data`;
+
+      devUrl = `https://knowledge-graph.sphinx.chat/searching?word=${searchterm}&free=true`
       const res = await fetch(devUrl);
       data = await res.json();
     } else {
@@ -55,7 +59,9 @@ async function getGraphData(searchterm: string) {
 
       // Populating nodes array with podcasts and constructing a topic map
       data.forEach(async (moment) => {
-        const { children, topics, guests, boost, show_title } = moment;
+        const { children, topics, guests, boost, show_title, node_type } = moment;
+
+        if (!includeTopics && node_type === 'topic') return
 
         if (children) {
           children.forEach((childRefId: string) => {
@@ -97,49 +103,51 @@ async function getGraphData(searchterm: string) {
           type: moment.type,
           node_type: moment.node_type,
           text: moment.text,
-          details: moment,
+          details: { ...moment, image_url: smallImage },
           image_url: smallImage,
           colors: nodeColors,
           boost: boost,
         });
       });
 
-      Object.entries(topicMap).forEach(([topic, topicTitles], index) => {
-        // dont create topic node for search term (otherwise everything will be linked to it)
-        if (topic === searchterm) return;
+      if (includeTopics) {
+        Object.entries(topicMap).forEach(([topic, topicTitles], index) => {
+          // dont create topic node for search term (otherwise everything will be linked to it)
+          if (topic === searchterm) return;
 
-        const scale = topicTitles.length * 2;
-        const topicNodeId = "topicnode_" + index;
+          const scale = topicTitles.length * 2;
+          const topicNodeId = "topicnode_" + index;
 
-        // make links to children
-        topicTitles.forEach((showTitle) => {
-          const show = data.find(
-            (f) => f.show_title === showTitle && f.node_type === "episode"
-          );
-          const showRefId = show?.ref_id || "";
+          // make links to children
+          topicTitles.forEach((showTitle) => {
+            const show = data.find(
+              (f) => f.show_title === showTitle && f.node_type === "episode"
+            );
+            const showRefId = show?.ref_id || "";
 
-          const link: Link = {
-            source: showRefId,
-            target: topicNodeId,
+            const link: Link = {
+              source: showRefId,
+              target: topicNodeId,
+            };
+
+            links.push(link);
+          });
+
+          const topicNode: Node = {
+            id: topicNodeId,
+            name: topic,
+            weight: 0,
+            label: topic,
+            type: "topic",
+            node_type: "topic",
+            text: topic,
+            scale: scale,
+            colors: ["#000"],
           };
 
-          links.push(link);
+          nodes.push(topicNode);
         });
-
-        const topicNode: Node = {
-          id: topicNodeId,
-          name: topic,
-          weight: 0,
-          label: topic,
-          type: "topic",
-          node_type: "topic",
-          text: topic,
-          scale: scale,
-          colors: ["#000"],
-        };
-
-        nodes.push(topicNode);
-      });
+      }
 
       // Adds guest nodes
       Object.entries(guestMap).forEach(([guest, guestChildren], index) => {
@@ -173,6 +181,15 @@ async function getGraphData(searchterm: string) {
     }
 
     nodes.sort((a, b) => (b.weight || 0) - (a.weight || 0));
+
+    const n = nodes.map(n => {
+      return { ...n }
+  })
+    const l = links.map(n => {
+    return { ...n }
+  })
+    console.log('nodes', n)
+    console.log('links', l)
 
     return { nodes, links };
   } catch (e) {

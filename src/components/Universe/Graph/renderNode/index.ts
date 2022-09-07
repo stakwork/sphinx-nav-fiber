@@ -1,10 +1,13 @@
 import * as THREE from "three";
 import SpriteText from "three-spritetext";
+import { getNodeScale } from "~/main/map/ui/utils";
 
 const nodeMaterials: any = {};
 
 const loader = new THREE.TextureLoader();
-const geometry = new THREE.BoxGeometry(15, 15, 15);
+const geometry_xs = new THREE.SphereGeometry(10, 10, 10);
+const geometry_s = new THREE.SphereGeometry(20, 20, 20);
+const geometry_m = new THREE.SphereGeometry(35, 35, 35);
 
 export const renderNode = (node: any) => {
   if (node.fakeData) {
@@ -39,16 +42,14 @@ export const renderNode = (node: any) => {
         case "twitter":
           img = "twitter_logo.svg";
           break;
-        default:
-          img = "noimage.jpeg";
       }
       break;
     case "guest":
       img = "person_placeholder.png";
       break;
-    default:
-      img = "noimage.jpeg";
   }
+
+  if (!img) img = "noimage.jpeg";
 
   loader.requestHeader = {
     "Access-Control-Allow-Origin": window.location.origin,
@@ -65,7 +66,28 @@ export const renderNode = (node: any) => {
     nodeMaterials[img] = material;
   }
 
-  const cube = new THREE.Mesh(geometry.clone(), material);
+  
+  let geo: any = null
+  
+  switch (node.node_type) {
+    case "clip":
+      geo = geometry_xs.clone()
+      break;
+    case "episode":
+      geo = geometry_s.clone()
+      break;
+    case "show":
+      geo = geometry_m.clone()
+      break;
+    case "guest":
+      geo = geometry_s.clone()
+      break;
+    default:
+      geo = geometry_xs.clone()
+  }
+
+
+  const cube = new THREE.Mesh(geo, material);
 
   cube.castShadow = true;
   cube.receiveShadow = true;

@@ -5,7 +5,7 @@ import { useDataStore } from "~/stores/useDataStore";
 export function Tooltip() {
   const node = useDataStore((s) => s.hoveredNode);
 
-  if (!node?.details) return null;
+  if (!node) return null;
 
   const {
     node_type,
@@ -17,7 +17,7 @@ export function Tooltip() {
     guests,
     text,
     timestamp,
-  } = node.details || node || {};
+  }: any = node.details || node || {};
 
   return (
     <TooltipWrap>

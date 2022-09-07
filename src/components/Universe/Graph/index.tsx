@@ -31,10 +31,43 @@ export const Graph = () => {
 
   useEffect(() => {
     graph.clear().graphData(data);
+    const distanceForce = d3.forceLink(data).distance((d: any) => {
+      let distance = 30;
+      const sourceType = d.source.node_type;
+      const targetType = d.target.node_type;
+
+      switch (targetType) {
+        case "show":
+          distance = 200;
+          break;
+        case "topic":
+          distance = 1000;
+          break;
+        case "guest":
+          distance = 300;
+          break;
+        case "clip":
+          distance = 100;
+          break;
+        case "episode":
+          distance = 150;
+          break;
+        default:
+          distance = 100;
+      }
+
+      if (sourceType === "show") distance = 500;
+
+      return distance;
+    }).strength(0.4);
+
+    graph.d3Force("link", distanceForce)
+
   }, [data, graph]);
 
   useEffect(() => {
     scene.add(graph);
+    
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

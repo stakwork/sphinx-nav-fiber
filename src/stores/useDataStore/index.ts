@@ -6,16 +6,20 @@ import { GraphData, Node } from "~/types";
 type DataStore = {
   data: GraphData | null;
   selectedNode: Node | null;
-  hoveredNode: Node | null;
+  hoveredNode: any | null;
+  selectedTimestamp: any | null;
+  setSelectedTimestamp: (selectedTimestamp: any | null) => void;
   fetchData: (search?: string | null) => void;
   setSelectedNode: (selectedNode: Node | null) => void;
-  setHoveredNode: (hoveredNode: Node) => void;
+  setHoveredNode: (hoveredNode: any) => void;
 };
 
 export const useDataStore = create<DataStore>((set) => ({
   data: null,
   hoveredNode: null,
   selectedNode: null,
+  selectedTimestamp: null,
+  setSelectedTimestamp: (selectedTimestamp) => set({ selectedTimestamp }),
   setHoveredNode: (hoveredNode) => set({ hoveredNode }),
   setSelectedNode: (selectedNode) => set({ selectedNode }),
   fetchData: async (search) => {

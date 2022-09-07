@@ -1,8 +1,9 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import ReactAudioPlayer from "react-audio-player";
 import { ClipLoader } from "react-spinners";
 import styled from "styled-components";
 import { useGraphData } from "~/components/DataRetriever";
+import { useDataStore } from "~/stores/useDataStore";
 import Booster from "~/main/map/booster";
 import { useSelectedNode } from "~/stores/useDataStore";
 import { Node } from "~/types";
@@ -147,10 +148,18 @@ function formatTimestamp(ts: string) {
 
 export const Creator = () => {
   const data = useGraphData();
+  const setSelectedTimestamp = useDataStore(d=>d.setSelectedTimestamp);
   const selectedNode = useSelectedNode();
   const [selectedTimestamps, setSelectedTimestamps] = useState<
     Record<string, TTimestamp>
-  >({});
+    >({});
+  
+  const [renderAudioPlayer, setRenderAudioPlayer] = useState(true);
+  
+  function resetAudioPlayer() {
+    setRenderAudioPlayer(false)
+    setTimeout(()=>setRenderAudioPlayer(true),100)
+  }
 
   const startPlayback = useCallback(
     (
@@ -239,14 +248,16 @@ export const Creator = () => {
   const handleTimestampClick = useCallback(
     (timestamp: Node, podcastName: string) => {
       // setSelectedEpisode({
-      //   ...timestamp
+      //   ...timestamp,
       //   loaded: false,
       // });
-      // // setSelectedContent(t);
-      // // setFocusedNode(t);
+      // setSelectedContent(t);
+      // setFocusedNode(t);
     },
     [selectedNode]
   );
+
+  
 
   return (
     <div style={{ height: "100%", width: "100%", overflow: "auto" }}>
@@ -286,7 +297,7 @@ export const Creator = () => {
 
                     <Actions />
 
-                    <ReactAudioPlayer
+                    {renderAudioPlayer && <ReactAudioPlayer
                       id={audioUrl}
                       className={"audio-player"}
                       autoPlay
@@ -315,17 +326,12 @@ export const Creator = () => {
                             link: audioUrl,
                             loaded: true,
                             error: false,
-                          },
+                          }
                         }));
-
-                        // startPlayback(
-                        //   title,
-                        //   se[podcastName].timestamp,
-                        //   se[podcastName].link
-                        // );
+                        startPlayback(podcastName,selectedTimestamp.timestamp,audioUrl)
                       }}
                       controls
-                    />
+                    />}
                   </Col>
                 </Row>
               </Col>
@@ -413,7 +419,15 @@ export const Creator = () => {
                                   }}
                                   onClick={(e) => {
                                     e.stopPropagation();
-                                    // clickTimestamp(t, podcastName);
+                                    setSelectedTimestamps((selectedTimestamps) => ({
+                                      ...selectedTimestamps,
+                                      [podcastName]: {
+                                        ...t,
+                                        loaded: false,
+                                        error: false,
+                                      },
+                                    }));
+                                    resetAudioPlayer()
                                   }}
                                 >
                                   <div style={{ minWidth: 20 }} />

@@ -404,7 +404,7 @@ export default function ContentBrowser({
                       <ReactAudioPlayer
                         id={audioUrl}
                         className={"audio-player"}
-                        autoPlay
+                        // autoPlay
                         style={{
                           width: "100%",
                         }}
