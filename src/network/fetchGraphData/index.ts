@@ -22,7 +22,8 @@ export const fetchGraphData = async (search: string) => {
 };
 
 async function getGraphData(searchterm: string) {
-  try {
+  
+  try {  
     let data: Moment[] = [];
 
     const origin = window.location.origin;
@@ -190,7 +191,6 @@ async function getGraphData(searchterm: string) {
   })
     console.log('nodes', n)
     console.log('links', l)
-
     return { nodes, links };
   } catch (e) {
     console.error(e);

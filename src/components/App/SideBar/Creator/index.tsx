@@ -148,7 +148,6 @@ function formatTimestamp(ts: string) {
 
 export const Creator = () => {
   const data = useGraphData();
-  const setSelectedTimestamp = useDataStore(d=>d.setSelectedTimestamp);
   const selectedNode = useSelectedNode();
   const [selectedTimestamps, setSelectedTimestamps] = useState<
     Record<string, TTimestamp>

@@ -5,6 +5,7 @@ import { SearchBar } from "~/components/SearchBar";
 import { useAppStore } from "~/stores/useAppStore";
 import { useDataStore } from "~/stores/useDataStore";
 import { View } from "./View";
+import Loading from '../../common/Loading'
 
 type Props = {
   dataFilter?: any;
@@ -71,6 +72,7 @@ const CloseButton = styled.div`
 const Content = ({ loading, onClose }: Props) => {
   const clearSearch = useAppStore((s) => s.clearSearch);
   const setSelectedNode = useDataStore((s) => s.setSelectedNode);
+  const loadingData = useDataStore((s) => s.loadingData);
   const transcriptIsOpen = useAppStore((s) => s.transcriptIsOpen);
 
   const [selectedContent, setSelectedContent] =
@@ -81,7 +83,7 @@ const Content = ({ loading, onClose }: Props) => {
       <SearchWrapper>
         <SearchBar />
 
-        {!loading && (
+        {!loadingData && (
           <CloseButton
             onClick={() => {
               setSelectedNode(null);
@@ -95,17 +97,8 @@ const Content = ({ loading, onClose }: Props) => {
         )}
       </SearchWrapper>
 
-      {loading ? (
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            height: "100%",
-          }}
-        >
-          <ClipLoader color={"#000"} loading={true} size={14} />
-        </div>
+      {loadingData ? (
+        <Loading/>
       ) : (
         <View />
       )}
