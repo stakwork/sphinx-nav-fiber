@@ -42,8 +42,8 @@ export const AppBar = () => {
   }
 
   return (
-    <Header>
-      <Title style={{ fontWeight: 300, width: 260 }}>
+    <Header style={{display: 'flex', flexFlow: 'row', justifyContent: 'center'}} >
+      <Title style={{ position: 'absolute', top: 25, left: 25, fontWeight: 300, width: 260 }}>
         <b>Second</b>Brain
       </Title>
 
@@ -51,15 +51,6 @@ export const AppBar = () => {
         <SearchBar />
       </div>
 
-      <div style={{ display: "flex", width: 330 }}>
-        <Button href="https://sphinx.chat/" target="_blank" rel="noreferrer">
-          Info
-        </Button>
-
-        <Button href="https://sphinx.chat/" target="_blank" rel="noreferrer">
-          Contribute
-        </Button>
-      </div>
     </Header>
   );
 };
