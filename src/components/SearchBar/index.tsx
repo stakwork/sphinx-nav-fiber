@@ -51,11 +51,6 @@ export const SearchBar = ({ loading }: Props) => {
       clearTimeout(timeoutRef.current);
     }
 
-    timeoutRef.current = setTimeout(() => {
-      if (tempSearch !== null) {
-        setSearch(tempSearch);
-      }
-    }, 500);
   }, [setSearch, tempSearch]);
 
   return (
@@ -69,6 +64,11 @@ export const SearchBar = ({ loading }: Props) => {
         const value = e.target.value;
 
         setTempSearch(value);
+      }}
+      onKeyPress={(event: any) => {
+        if (event.key === "Enter" && !!tempSearch) {
+         setSearch(tempSearch) 
+        }
       }}
     />
   );
