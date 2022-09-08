@@ -1,7 +1,5 @@
 import * as THREE from "three";
 import SpriteText from "three-spritetext";
-import { getNodeScale } from "~/main/map/ui/utils";
-import { AWS_IMAGE_BUCKET_URL, CLOUDFRONT_IMAGE_BUCKET_URL } from "~/constants";
 
 const nodeMaterials: any = {};
 
