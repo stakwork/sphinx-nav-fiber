@@ -213,10 +213,6 @@ export default function ContentBrowser({
                   boost,
                 } = details || {};
 
-                if (image_url) {
-                  image_url = image_url.replace(".jpg", "_s.jpg");
-                }
-
                 return (
                   <EpisodePanel
                     onClick={() => {
@@ -463,17 +459,6 @@ export default function ContentBrowser({
                       const myKey = episodeName + "_" + i + "_" + ii;
                       const defaultTimestamp = thisPodcastTimestamps[0];
                       let episodeImg = defaultTimestamp.image_url;
-
-                      if (
-                        episodeImg &&
-                        !(
-                          episodeImg.includes("_s.jpg") ||
-                          episodeImg.includes("_m.jpg") ||
-                          episodeImg.includes("_l.jpg")
-                        )
-                      ) {
-                        episodeImg = episodeImg.replace(".jpg", "_s.jpg");
-                      }
 
                       return (
                         <div key={myKey}>

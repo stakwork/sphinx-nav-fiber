@@ -87,10 +87,6 @@ export const Relevance = ({ isSuggestions }: { isSuggestions?: boolean }) => {
             let { image_url, episode_title, description, date, boost } =
               n.details || {};
 
-            if (image_url) {
-              image_url = image_url.replace(".jpg", "_s.jpg");
-            }
-
             return (
               <EpisodePanel
                 onClick={() => setSelectedNode(n)}
