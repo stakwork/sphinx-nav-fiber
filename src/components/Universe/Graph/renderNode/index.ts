@@ -1,6 +1,5 @@
 import * as THREE from "three";
 import SpriteText from "three-spritetext";
-import { getNodeScale } from "~/main/map/ui/utils";
 
 const nodeMaterials: any = {};
 
