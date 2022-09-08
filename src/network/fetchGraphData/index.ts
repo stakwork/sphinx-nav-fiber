@@ -31,8 +31,6 @@ async function getGraphData(searchterm: string) {
     if (isDevelopment) {
       console.log("is dev", origin);
       let devUrl = `${API_URL}/mock_data`;
-
-      devUrl = `https://knowledge-graph.sphinx.chat/searching?word=${searchterm}&free=true`
       const res = await fetch(devUrl);
       data = await res.json();
     } else {
