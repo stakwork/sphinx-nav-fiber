@@ -1,5 +1,5 @@
 import * as sphinx from "sphinx-bridge-kevkevinpal";
-import { API_URL, isDevelopment } from "~/constants";
+import { API_URL, isDevelopment, AWS_IMAGE_BUCKET_URL, CLOUDFRONT_IMAGE_BUCKET_URL } from "~/constants";
 import { GraphData, Link, Moment, Node } from "~/types";
 import { getLSat } from "~/utils/getLSat";
 
@@ -30,7 +30,7 @@ async function getGraphData(searchterm: string) {
 
     if (isDevelopment) {
       console.log("is dev", origin);
-      let devUrl = `${API_URL}/mock_data`;
+      let devUrl = process.env.REACT_DEV_API_URL || `${API_URL}/mock_data`;
       const res = await fetch(devUrl);
       data = await res.json();
     } else {
@@ -87,7 +87,9 @@ async function getGraphData(searchterm: string) {
           });
         }
 
-        const smallImage = moment.image_url?.replace(".jpg", "_s.jpg");
+        // replace aws bucket url with cloudfront, and add size indicator to end
+        const smallImage = moment.image_url?.replace(AWS_IMAGE_BUCKET_URL, CLOUDFRONT_IMAGE_BUCKET_URL)
+        .replace(".jpg", "_s.jpg");
 
         nodes.push({
           weight: moment.weight,
