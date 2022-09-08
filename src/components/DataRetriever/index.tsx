@@ -8,10 +8,8 @@ type Props = PropsWithChildren<{
 
 export const DataRetriever = ({ children, loader }: Props) => {
   const [data, fetchData] = useDataStore((s) => [s.data, s.fetchData]);
-  const setLoadingData = useDataStore((s) => s.setLoadingData);
 
   useEffect(() => {
-    
     fetchData();
   }, [fetchData]);
 
