@@ -1,5 +1,6 @@
 import { ClipLoader } from "react-spinners";
 import styled from "styled-components";
+import { GRAPH_BACKGROUND_COLOR } from '../../../constants'
 
 const Shield = styled.div`
   display: flex;
@@ -13,13 +14,12 @@ const Shield = styled.div`
   left: 0px;
   height: 100%;
   width: 100%;
-  background: #f1f1f1;
   color: #000;
   transition: opacity 0.5s;
 `;
 
 export const Loader = ({ message }: { message?: string }) => (
-  <Shield>
+  <Shield style={{background:GRAPH_BACKGROUND_COLOR}}>
     <ClipLoader color={"#000"} loading={true} size={14} />
     {message && <div style={{ marginLeft: 10 }}>{message}</div>}
   </Shield>

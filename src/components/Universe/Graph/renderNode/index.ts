@@ -4,9 +4,9 @@ import SpriteText from "three-spritetext";
 const nodeMaterials: any = {};
 
 const loader = new THREE.TextureLoader();
-const geometry_xs = new THREE.SphereGeometry(10, 10, 10);
-const geometry_s = new THREE.SphereGeometry(20, 20, 20);
-const geometry_m = new THREE.SphereGeometry(35, 35, 35);
+const geometry_xs = new THREE.BoxGeometry(10, 10, 10);
+const geometry_s = new THREE.BoxGeometry(20, 20, 20);
+const geometry_m = new THREE.BoxGeometry(35, 35, 35);
 
 export const renderNode = (node: any) => {
   if (node.fakeData) {
@@ -61,7 +61,9 @@ export const renderNode = (node: any) => {
   } else {
     const map = loader.load(img);
 
-    material = new THREE.MeshBasicMaterial({ map });
+    material = new THREE.MeshBasicMaterial({
+      map
+    });
     nodeMaterials[img] = material;
   }
 

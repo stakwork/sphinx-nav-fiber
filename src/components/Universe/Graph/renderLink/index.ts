@@ -1,9 +1,10 @@
 import * as THREE from "three";
+import { GRAPH_LINK_COLOR } from '../../../../constants'
 
 const lineMaterial = new THREE.LineBasicMaterial({
-  opacity: 0.6,
+  opacity: 0.5,
   transparent: true,
-  color: "#000",
+  color: GRAPH_LINK_COLOR,
   linewidth: 1,
 });
 
