@@ -59,7 +59,7 @@ export const SearchBar = ({ loading }: Props) => {
       disabled={loading}
       type="text"
       value={tempSearch || ""}
-      placeholder="Search..."
+      placeholder="Search (10 sats)"
       onChange={(e) => {
         const value = e.target.value;
 
