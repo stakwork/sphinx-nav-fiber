@@ -20,7 +20,7 @@ export const useGraphMouseEvents = (
   const hoverNode = useRef<Node | null>(null);
 
   const previousHoverNode = useRef<Node | null>(null);
-  const setHoveredNode = useDataStore((s) => s.setHoveredNode);
+  const [setHoveredNode, cameraAnimation, setCameraAnimation] = useDataStore((s) => [s.setHoveredNode,s.cameraAnimation,s.setCameraAnimation]);
 
   useGesture(
     {
@@ -29,6 +29,12 @@ export const useGraphMouseEvents = (
           onClicked?.(hoverNode.current);
         }
       },
+      onMouseDown: () => {
+        if (cameraAnimation) {
+          cameraAnimation.kill()
+          setCameraAnimation(null)
+        }
+      }
     },
     {
       target: document.getElementById("universe-canvas") || undefined,
