@@ -4,6 +4,7 @@ import { DataRetriever } from "~/components/DataRetriever";
 import { Universe } from "~/components/Universe";
 import { useDataStore } from "~/stores/useDataStore";
 import ContentBrowser from "./map/contentBrowser";
+import { GRAPH_BACKGROUND_COLOR } from '../constants'
 
 // Hook
 function useWindowSize() {
@@ -142,10 +143,9 @@ const Content = () => {
   //   () => <SearchBar showList={!!currentSearchTerm} onChange={handleSearch} />,
   //   [handleSearch, currentSearchTerm]
   // );
-  let xOffset = currentSearchTerm ? 411 : 0;
 
   return (
-    <Wrapper>
+    <Wrapper style={{background:GRAPH_BACKGROUND_COLOR}}>
       {!currentSearchTerm && (
         <Header style={{ opacity: openingAnimation ? 0 : 1 }}>
           <Title style={{ fontWeight: 300, width: 260 }}>
@@ -178,7 +178,6 @@ const Content = () => {
 
       <Universe />
 
-      {openingAnimation && <Cover />}
     </Wrapper>
   );
 };

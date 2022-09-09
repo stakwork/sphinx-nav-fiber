@@ -1,7 +1,9 @@
+import { GRAPH_FOG_COLOR, GRAPH_SKY_COLOR, GRAPH_GROUND_COLOR, GRAPH_LIGHT_INTENSITY } from '../../../constants'
+
 export const Lights = () => (
   <>
-    <hemisphereLight args={["#fff", "#333", 1]} />
+    <hemisphereLight args={[GRAPH_SKY_COLOR, GRAPH_GROUND_COLOR, GRAPH_LIGHT_INTENSITY]} />
 
-    <fog attach="fog" args={["#f1f1f1", 1500, 3000]} />
+    <fog attach="fog" args={[GRAPH_FOG_COLOR, 1500, 4000]} />
   </>
 );

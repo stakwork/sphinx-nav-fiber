@@ -7,12 +7,12 @@ import { DataRetriever } from "~/components/DataRetriever";
 import { Universe } from "~/components/Universe";
 import { useAppStore } from "~/stores/useAppStore";
 import { useDataStore } from "~/stores/useDataStore";
+import { GRAPH_BACKGROUND_COLOR } from '../../constants'
 
 const Wrapper = styled.div`
   display: flex;
   height: 100%;
   width: 100%;
-  background: #f1f1f1;
   overflow: hidden;
 `;
 
@@ -35,10 +35,9 @@ export const App = () => {
   }, [fetchData, searchTerm]);
 
   return (
-    <Wrapper>
+    <Wrapper style={{background:GRAPH_BACKGROUND_COLOR}}>
       <DataRetriever loader={<Loader />}>
         <SideBar />
-
         <Universe />
       </DataRetriever>
 

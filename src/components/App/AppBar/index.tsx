@@ -44,7 +44,7 @@ export const AppBar = () => {
 
   return (
     <Header
-      style={{ display: "flex", flexFlow: "row", justifyContent: "center" }}
+      style={{ display: "flex", flexFlow: "row", justifyContent: "center", color:'#fff' }}
     >
       <Title
         style={{

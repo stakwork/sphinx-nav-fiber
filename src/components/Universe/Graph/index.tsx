@@ -2,12 +2,14 @@ import { useFrame, useThree } from "@react-three/fiber";
 import * as d3 from "d3-force-3d";
 import { useCallback, useEffect, useMemo } from "react";
 import ThreeForceGraph from "three-forcegraph";
+import { Color } from "three";
 import { useGraphData } from "~/components/DataRetriever";
 import { useDataStore } from "~/stores/useDataStore";
 import { Node } from "~/types";
 import { renderLink } from "./renderLink";
 import { renderNode } from "./renderNode";
 import { useGraphMouseEvents } from "./useGraphMouseEvents";
+import { GRAPH_BACKGROUND_COLOR } from "~/constants";
 
 const SCALE = 1;
 const HOVER_SCALE = 1.5;
@@ -67,7 +69,7 @@ export const Graph = () => {
 
   useEffect(() => {
     scene.add(graph);
-    
+    scene.background = new Color(GRAPH_BACKGROUND_COLOR)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
