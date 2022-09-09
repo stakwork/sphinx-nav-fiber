@@ -8,6 +8,8 @@ type DataStore = {
   selectedNode: Node | null;
   hoveredNode: any | null;
   loadingData: boolean;
+  cameraAnimation: any | null,
+  setCameraAnimation: (cameraAnimation:any) => void,
   setLoadingData: (bool: boolean) => void;
   fetchData: (search?: string | null) => void;
   setSelectedNode: (selectedNode: Node | null) => void;
@@ -19,6 +21,8 @@ export const useDataStore = create<DataStore>((set) => ({
   hoveredNode: null,
   selectedNode: null,
   loadingData: false,
+  cameraAnimation: null,
+  setCameraAnimation: (cameraAnimation) => set({ cameraAnimation }),
   setLoadingData: (loadingData) => set({ loadingData }),
   setHoveredNode: (hoveredNode) => set({ hoveredNode }),
   setSelectedNode: (selectedNode) => set({ selectedNode }),
