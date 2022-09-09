@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { SearchBar } from "~/components/SearchBar";
+import Stats from "~/components/common/Stats";
 import { useAppStore } from "~/stores/useAppStore";
 
 const Header = styled.div`
@@ -56,6 +57,17 @@ export const AppBar = () => {
       >
         <b>Second</b>Brain
       </Title>
+      <div
+        style={{
+          position: "absolute",
+          top: 75,
+          left: 25,
+          fontWeight: 300,
+          width: 260,
+        }}
+      >
+        <Stats />
+      </div>
 
       <div style={{ width: "40%" }}>
         <SearchBar />
