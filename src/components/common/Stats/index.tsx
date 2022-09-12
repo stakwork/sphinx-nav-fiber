@@ -1,8 +1,7 @@
-import styled from "styled-components";
-import ClipLoader from "react-spinners/ClipLoader";
 import { useEffect, useState } from "react";
+import { Text } from "~/components/common/Text";
 
-export default function Stats() {
+export const Stats = () => {
   const [stats, setStats] = useState({
     num_nodes: 0,
     num_episodes: 0,
@@ -24,18 +23,30 @@ export default function Stats() {
 
   return (
     <div>
-      Nodes: {stats.num_nodes}
-      <br />
-      Episodes: {stats.num_episodes}
-      <br />
-      Audio Clips: {stats.num_audio}
-      <br />
-      Video Clips: {stats.num_video}
-      <br />
-      Contributers: {stats.num_contributors}
-      <br />
-      Nodes Added Daily: {stats.num_daily}
+      <Text as="div" color="white" kind="regularBold">
+        Nodes: {stats.num_nodes}
+      </Text>
+
+      <Text as="div" color="white" kind="regularBold">
+        {" "}
+        Episodes: {stats.num_episodes}
+      </Text>
+
+      <Text as="div" color="white" kind="regularBold">
+        Audio Clips: {stats.num_audio}
+      </Text>
+
+      <Text as="div" color="white" kind="regularBold">
+        Video Clips: {stats.num_video}
+      </Text>
+
+      <Text as="div" color="white" kind="regularBold">
+        Contributers: {stats.num_contributors}
+      </Text>
+
+      <Text as="div" color="white" kind="regularBold">
+        Nodes Added Daily: {stats.num_daily}
+      </Text>
     </div>
   );
-}
-
+};
