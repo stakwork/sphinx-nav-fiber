@@ -3,8 +3,8 @@ import styled from "styled-components";
 import { DataRetriever } from "~/components/DataRetriever";
 import { Universe } from "~/components/Universe";
 import { useDataStore } from "~/stores/useDataStore";
+import { colors } from "~/utils/colors";
 import ContentBrowser from "./map/contentBrowser";
-import { GRAPH_BACKGROUND_COLOR } from '../constants'
 
 // Hook
 function useWindowSize() {
@@ -145,7 +145,7 @@ const Content = () => {
   // );
 
   return (
-    <Wrapper style={{background:GRAPH_BACKGROUND_COLOR}}>
+    <Wrapper>
       {!currentSearchTerm && (
         <Header style={{ opacity: openingAnimation ? 0 : 1 }}>
           <Title style={{ fontWeight: 300, width: 260 }}>
@@ -177,7 +177,6 @@ const Content = () => {
       )}
 
       <Universe />
-
     </Wrapper>
   );
 };
@@ -247,4 +246,5 @@ const Wrapper = styled.div`
   width: 100%;
   background: #f1f1f1;
   overflow: hidden;
+  background-color: ${colors.gray500};
 `;

@@ -1,4 +1,5 @@
 import { Canvas } from "@react-three/fiber";
+import { colors } from "~/utils/colors";
 import { Controls } from "./Controls";
 import { Graph } from "./Graph";
 import { Lights } from "./Lights";
@@ -6,6 +7,8 @@ import { Tooltip } from "./Tooltip";
 
 const Content = () => (
   <>
+    <color attach="background" args={[colors.gray500]} />
+
     <Graph />
 
     <Lights />

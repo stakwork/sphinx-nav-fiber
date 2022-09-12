@@ -2,14 +2,12 @@ import { useFrame, useThree } from "@react-three/fiber";
 import * as d3 from "d3-force-3d";
 import { useCallback, useEffect, useMemo } from "react";
 import ThreeForceGraph from "three-forcegraph";
-import { Color } from "three";
 import { useGraphData } from "~/components/DataRetriever";
 import { useDataStore } from "~/stores/useDataStore";
 import { Node } from "~/types";
 import { renderLink } from "./renderLink";
 import { renderNode } from "./renderNode";
 import { useGraphMouseEvents } from "./useGraphMouseEvents";
-import { GRAPH_BACKGROUND_COLOR } from "~/constants";
 
 const SCALE = 1;
 const HOVER_SCALE = 1.5;
@@ -33,43 +31,39 @@ export const Graph = () => {
 
   useEffect(() => {
     graph.clear().graphData(data);
-    const distanceForce = d3.forceLink(data).distance((d: any) => {
-      let distance = 30;
-      const sourceType = d.source.node_type;
-      const targetType = d.target.node_type;
 
-      switch (targetType) {
-        case "show":
-          distance = 200;
-          break;
-        case "topic":
-          distance = 1000;
-          break;
-        case "guest":
-          distance = 300;
-          break;
-        case "clip":
-          distance = 100;
-          break;
-        case "episode":
-          distance = 150;
-          break;
-        default:
-          distance = 100;
-      }
+    const distanceForce = d3
+      .forceLink(data)
+      .distance((d: { source: Node; target: Node }) => {
+        const sourceType = d.source.node_type;
+        const targetType = d.target.node_type;
 
-      if (sourceType === "show") distance = 500;
+        if (sourceType === "show") {
+          return 500;
+        }
 
-      return distance;
-    }).strength(0.4);
+        switch (targetType) {
+          case "show":
+            return 200;
+          case "topic":
+            return 1000;
+          case "guest":
+            return 300;
+          case "clip":
+            return 100;
+          case "episode":
+            return 150;
+          default:
+            return 100;
+        }
+      })
+      .strength(0.4);
 
-    graph.d3Force("link", distanceForce)
-
+    graph.d3Force("link", distanceForce);
   }, [data, graph]);
 
   useEffect(() => {
     scene.add(graph);
-    scene.background = new Color(GRAPH_BACKGROUND_COLOR)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

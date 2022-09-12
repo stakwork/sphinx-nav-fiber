@@ -9,7 +9,7 @@ import { Node, NodeMesh } from "~/types";
 const raycaster = new THREE.Raycaster();
 
 export const useGraphMouseEvents = (
-  onHover?: (_: any) => void,
+  onHover?: (_: Node) => void,
   onNotHover?: (_: Node) => void,
   onClicked?: (_: Node) => void
 ) => {
@@ -74,8 +74,11 @@ export const useGraphMouseEvents = (
     if (hoveredObject?.id !== hoverNode.current?.id) {
       previousHoverNode.current = hoverNode.current;
 
-      setHoveredNode(hoveredObject);
-      onHover?.(hoveredObject);
+      if (hoveredObject) {
+        setHoveredNode(hoveredObject);
+        onHover?.(hoveredObject);
+      }
+
       onNotHover?.(previousHoverNode.current!);
 
       hoverNode.current = hoveredObject;
