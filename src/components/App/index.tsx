@@ -6,20 +6,20 @@ import { Loader } from "~/components/common/Loader";
 import { DataRetriever } from "~/components/DataRetriever";
 import { Universe } from "~/components/Universe";
 import { useAppStore } from "~/stores/useAppStore";
-import { useDataStore } from "~/stores/useDataStore";
-import { GRAPH_BACKGROUND_COLOR } from '../../constants'
+import { useDataStore, useSelectedNode } from "~/stores/useDataStore";
+import { colors } from "~/utils/colors";
 
 const Wrapper = styled.div`
   display: flex;
   height: 100%;
   width: 100%;
   overflow: hidden;
+  background-color: ${colors.gray500};
 `;
 
 export const App = () => {
+  const selectedNode = useSelectedNode();
   const setSidebarOpen = useAppStore((s) => s.setSidebarOpen);
-  const selectedNode = useDataStore((s) => s.selectedNode);
-
   const searchTerm = useAppStore((s) => s.currentSearch);
 
   const fetchData = useDataStore((s) => s.fetchData);
@@ -35,7 +35,7 @@ export const App = () => {
   }, [fetchData, searchTerm]);
 
   return (
-    <Wrapper style={{background:GRAPH_BACKGROUND_COLOR}}>
+    <Wrapper>
       <DataRetriever loader={<Loader />}>
         <SideBar />
         <Universe />

@@ -1,26 +1,41 @@
-import { ClipLoader } from "react-spinners";
-import styled from "styled-components";
-import { GRAPH_BACKGROUND_COLOR } from '../../../constants'
+import { useEffect, useState } from "react";
+import ClipLoader from "react-spinners/ClipLoader";
+import { Flex } from "~/components/common/Flex";
 
-const Shield = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  position: absolute;
-  pointer-events: none;
-  user-select: none;
-  top: 0px;
-  left: 0px;
-  height: 100%;
-  width: 100%;
-  color: #000;
-  transition: opacity 0.5s;
-`;
+const messages = [
+  "Searching Podcast Index",
+  "Searching YouTube",
+  "Searching Twitter Spaces",
+  "Finding Transcripts",
+  "Loading Audio Clips",
+  "Loading Video Clips",
+  "Preparing Results",
+];
 
-export const Loader = ({ message }: { message?: string }) => (
-  <Shield style={{background:GRAPH_BACKGROUND_COLOR}}>
-    <ClipLoader color={"#000"} loading={true} size={14} />
-    {message && <div style={{ marginLeft: 10 }}>{message}</div>}
-  </Shield>
-);
+export const Loader = () => {
+  const [msgIndex, setMsgIndex] = useState(0);
+
+  useEffect(() => {
+    const messageTimeout = setTimeout(doIndex, 5000);
+
+    return function cleanup() {
+      clearTimeout(messageTimeout);
+    };
+  }, [msgIndex]);
+
+  function doIndex() {
+    if (msgIndex < messages.length - 1) setMsgIndex(msgIndex + 1);
+  }
+
+  return (
+    <Flex align="center" justify="center">
+      <Flex align="center" py={8}>
+        {messages[msgIndex]}...
+      </Flex>
+
+      <Flex pt={20}>
+        <ClipLoader color={"#000"} loading={true} size={26} />
+      </Flex>
+    </Flex>
+  );
+};

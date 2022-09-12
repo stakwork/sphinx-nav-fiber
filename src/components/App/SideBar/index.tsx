@@ -1,11 +1,10 @@
 import { useState } from "react";
-import { ClipLoader } from "react-spinners";
 import styled from "styled-components";
+import { Loader } from "~/components/common/Loader";
 import { SearchBar } from "~/components/SearchBar";
 import { useAppStore } from "~/stores/useAppStore";
 import { useDataStore } from "~/stores/useDataStore";
 import { View } from "./View";
-import Loading from '../../common/Loading'
 
 type Props = {
   dataFilter?: any;
@@ -97,11 +96,7 @@ const Content = ({ loading, onClose }: Props) => {
         )}
       </SearchWrapper>
 
-      {loadingData ? (
-        <Loading/>
-      ) : (
-        <View />
-      )}
+      {loadingData ? <Loader /> : <View />}
 
       {transcriptIsOpen && (
         <TranscriptEnv style={{ left: MENU_WIDTH }}>
