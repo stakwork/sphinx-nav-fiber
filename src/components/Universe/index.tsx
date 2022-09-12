@@ -7,6 +7,7 @@ import { Tooltip } from "./Tooltip";
 
 const Content = () => (
   <>
+    {/* eslint-disable-next-line react/no-unknown-property */}
     <color args={[colors.gray500]} attach="background" />
 
     <Graph />
