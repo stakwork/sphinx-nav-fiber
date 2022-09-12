@@ -85,7 +85,7 @@ export default function Booster(props: BoostProps) {
             if (isSuccess || submitting) return;
             await doBoost();
             // @ts-ignore
-            await sphinx.saveGraphData("boost", selectedNode);
+            await sphinx.saveGraphData({boost: "boost", metaData: selectedNode});
           }}
           disabled={isSuccess || submitting}
         >
