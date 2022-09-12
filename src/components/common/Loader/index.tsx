@@ -3,6 +3,7 @@ import ClipLoader from "react-spinners/ClipLoader";
 import { Flex } from "~/components/common/Flex";
 import { Text } from "~/components/common/Text";
 import { colors } from "~/utils/colors";
+
 const messages = [
   "Searching Podcast Index",
   "Searching YouTube",
