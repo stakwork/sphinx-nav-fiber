@@ -53,7 +53,6 @@ export const Stats = () => {
       </Text>
 
       <Text as="div" color="white" kind="regularBold">
-        {" "}
         Episodes: {stats.numEpisodes}
       </Text>
 

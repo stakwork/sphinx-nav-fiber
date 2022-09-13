@@ -16,8 +16,13 @@ export const api = {
     endpoint: string,
     body: TBody,
     headers?: RequestInit["headers"]
-  ) => request<Res>(`${API_URL}${endpoint}`, { body, headers: {
-    ...headers,
-    "Content-Type": "application/json",
-  }, method: "POST",  }),
+  ) =>
+    request<Res>(`${API_URL}${endpoint}`, {
+      body,
+      headers: {
+        ...headers,
+        "Content-Type": "application/json",
+      },
+      method: "POST",
+    }),
 };
