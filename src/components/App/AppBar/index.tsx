@@ -1,8 +1,8 @@
 import styled from "styled-components";
 import { Flex } from "~/components/common/Flex";
-import { Stats } from "~/components/common/Stats";
 import { Text } from "~/components/common/Text";
 import { SearchBar } from "~/components/SearchBar";
+import { Stats } from "~/components/Stats";
 import { useAppStore } from "~/stores/useAppStore";
 
 const Header = styled(Flex).attrs({
