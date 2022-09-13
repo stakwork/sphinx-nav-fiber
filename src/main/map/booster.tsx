@@ -81,11 +81,11 @@ export default function Booster(props: BoostProps) {
       ) : (
         <Pill
           style={{ width: 50 }}
-          onClick={async () => {
+          onClick={() => {
             if (isSuccess || submitting) return;
-            await doBoost();
+            doBoost();
             // @ts-ignore
-            await sphinx.saveGraphData({boost: "boost", metaData: selectedNode});
+            sphinx.saveGraphData({type: "boost", metaData: selectedNode});
           }}
           disabled={isSuccess || submitting}
         >
