@@ -6,7 +6,9 @@ export const isDevelopment =
     ? true
     : false;
 
-export const API_URL = "https://knowledge-graph.sphinx.chat";
+export const API_URL =
+  process.env.REACT_DEV_API_URL || "https://knowledge-graph.sphinx.chat";
+
 export const AWS_IMAGE_BUCKET_URL =
   "https://stakwork-uploads.s3.amazonaws.com/";
 export const CLOUDFRONT_IMAGE_BUCKET_URL =
