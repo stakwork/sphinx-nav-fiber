@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import ClipLoader from "react-spinners/ClipLoader";
 import { Flex } from "~/components/common/Flex";
+import { Text } from "~/components/common/Text";
+import { colors } from "~/utils/colors";
 
 const messages = [
   "Searching Podcast Index",
@@ -28,13 +30,15 @@ export const Loader = () => {
   }
 
   return (
-    <Flex align="center" justify="center">
+    <Flex grow={1} align="center" justify="center">
       <Flex align="center" py={8}>
-        {messages[msgIndex]}...
+        <Text color="white" kind="mediumBold">
+          {messages[msgIndex]}...
+        </Text>
       </Flex>
 
       <Flex pt={20}>
-        <ClipLoader color={"#000"} loading={true} size={26} />
+        <ClipLoader color={colors.white} loading={true} size={26} />
       </Flex>
     </Flex>
   );
