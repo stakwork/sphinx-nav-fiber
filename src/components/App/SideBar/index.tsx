@@ -26,9 +26,9 @@ const SearchWrapper = styled(Flex).attrs({
 `;
 
 const CloseButton = styled(Flex).attrs({
-  p: 10,
   align: "center",
   justify: "center",
+  p: 10,
 })`
   color: #000;
   cursor: pointer;

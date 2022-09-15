@@ -1,8 +1,8 @@
 import { ClipLoader } from "react-spinners";
 import styled, { css } from "styled-components";
+import { Booster } from "~/components/Booster";
 import { Flex } from "~/components/common/Flex";
 import { Text } from "~/components/common/Text";
-import Booster from "~/main/map/booster";
 import { useDataStore } from "~/stores/useDataStore";
 import { NodeExtended } from "~/types";
 import { ColorName, colors } from "~/utils/colors";
@@ -58,10 +58,10 @@ export const Timestamp = ({ onClick, timestamp }: Props) => {
   //     : {};
 
   return (
-    <Wrapper px={20} py={12} isSelected={isSelected} onClick={onClick}>
-      <Flex px={20} direction="row">
+    <Wrapper isSelected={isSelected} onClick={onClick} px={20} py={12}>
+      <Flex direction="row" px={20}>
         {isSelected && !isTimestampLoaded ? (
-          <ClipLoader color={colors[color]} loading={true} size={14} />
+          <ClipLoader color={colors[color]} loading size={14} />
         ) : (
           <span
             className="material-icons"
@@ -78,19 +78,19 @@ export const Timestamp = ({ onClick, timestamp }: Props) => {
 
       <div>
         {timestamp.timestamp && (
-          <Text kind={isSelected ? "mediumBold" : "medium"} color={color}>
+          <Text color={color} kind={isSelected ? "mediumBold" : "medium"}>
             {formatTimestamp(timestamp.timestamp)}
           </Text>
         )}
 
         {!!timestamp.boost && (
           <Flex pl={10}>
-            <Booster boostCount={timestamp.boost} readOnly />
+            <Booster count={timestamp.boost} readOnly />
           </Flex>
         )}
 
         <Flex pt={4}>
-          <Text kind={isSelected ? "regularBold" : "regular"} color={color}>
+          <Text color={color} kind={isSelected ? "regularBold" : "regular"}>
             {timestamp.description}
           </Text>
         </Flex>

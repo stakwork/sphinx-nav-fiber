@@ -1,9 +1,9 @@
 import moment from "moment";
 import styled from "styled-components";
+import { Booster } from "~/components/Booster";
 import { Avatar } from "~/components/common/Avatar";
 import { Flex } from "~/components/common/Flex";
 import { Text } from "~/components/common/Text";
-import Booster from "~/main/map/booster";
 
 const EpisodeWrapper = styled(Flex).attrs({
   direction: "row",
@@ -34,30 +34,28 @@ export const Episode = ({
   imageUrl,
   title,
   onClick,
-}: Props) => {
-  return (
-    <EpisodeWrapper onClick={onClick}>
-      <Flex pr={20}>
-        <Avatar src={imageUrl} />
+}: Props) => (
+  <EpisodeWrapper onClick={onClick}>
+    <Flex pr={20}>
+      <Avatar src={imageUrl} />
+    </Flex>
+
+    <div>
+      <Flex align="center" direction="row" pb={4}>
+        <Text color="gray500" kind="tiny">
+          {moment.unix(date || 0).format("ll")}
+        </Text>
+
+        <Booster count={boostCount} readOnly />
       </Flex>
 
-      <div>
-        <Flex align="center" direction="row" pb={4}>
-          <Text kind="tiny" color="gray500">
-            {moment.unix(date || 0).format("ll")}
-          </Text>
+      <Flex pb={4}>
+        <Text>{title}</Text>
+      </Flex>
 
-          <Booster readOnly boostCount={boostCount} />
-        </Flex>
-
-        <Flex pb={4}>
-          <Text>{title}</Text>
-        </Flex>
-
-        <Text kind="tiny" color="gray500">
-          {description}
-        </Text>
-      </div>
-    </EpisodeWrapper>
-  );
-};
+      <Text color="gray500" kind="tiny">
+        {description}
+      </Text>
+    </div>
+  </EpisodeWrapper>
+);

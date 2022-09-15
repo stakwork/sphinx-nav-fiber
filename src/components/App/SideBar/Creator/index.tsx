@@ -37,8 +37,9 @@ export const Creator = () => {
       <Flex pb={20}>
         {selectedNodeTimestamps?.map((timestamp, index) => (
           <Timestamp
-            onClick={() => setSelectedTimestamp(timestamp)}
+            // eslint-disable-next-line react/no-array-index-key
             key={`${timestamp.episode_title}_${index}`}
+            onClick={() => setSelectedTimestamp(timestamp)}
             timestamp={timestamp}
           />
         ))}

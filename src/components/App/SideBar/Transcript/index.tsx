@@ -38,7 +38,7 @@ export const Transcript = () => {
 
   return (
     <Wrapper style={{ left: MENU_WIDTH }}>
-      <Box py={40}>"{selectedNode?.text || "No transcript"}"</Box>
+      <Box py={40}>&quot;{selectedNode?.text || "No transcript"}&quot;</Box>
     </Wrapper>
   );
 };

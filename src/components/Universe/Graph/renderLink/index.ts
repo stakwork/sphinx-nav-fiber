@@ -3,19 +3,19 @@ import { useDataStore } from "~/stores/useDataStore";
 import { GRAPH_LINK_COLOR } from "../../../../constants";
 
 const lineMaterial = new THREE.LineBasicMaterial({
+  color: GRAPH_LINK_COLOR,
+  depthWrite: false,
+  linewidth: 1,
   opacity: 0.5,
   transparent: true,
-  color: GRAPH_LINK_COLOR,
-  linewidth: 1,
-  depthWrite: false,
 });
 
 const selectedLineMaterial = new THREE.LineBasicMaterial({
+  color: "yellow",
+  depthWrite: false,
+  linewidth: 5,
   opacity: 1,
   transparent: true,
-  color: "yellow",
-  linewidth: 5,
-  depthWrite: false,
 });
 
 const geometry = new THREE.BufferGeometry();

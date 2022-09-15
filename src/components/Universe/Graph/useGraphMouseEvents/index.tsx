@@ -29,11 +29,6 @@ export const useGraphMouseEvents = (
 
   useGesture(
     {
-      onMouseUp: () => {
-        if (clickTarget) {
-          onClicked?.(clickTarget);
-        }
-      },
       onMouseDown: () => {
         if (hoverNode.current) {
           setClickTarget(hoverNode.current);
@@ -42,6 +37,11 @@ export const useGraphMouseEvents = (
         if (cameraAnimation) {
           cameraAnimation.kill();
           setCameraAnimation(null);
+        }
+      },
+      onMouseUp: () => {
+        if (clickTarget) {
+          onClicked?.(clickTarget);
         }
       },
     },
@@ -64,6 +64,7 @@ export const useGraphMouseEvents = (
         return false;
       }
 
+      // eslint-disable-next-line no-underscore-dangle
       return f.object.__data?.node_type !== "topic";
     });
 
@@ -72,11 +73,14 @@ export const useGraphMouseEvents = (
         return false;
       }
 
+      // eslint-disable-next-line no-underscore-dangle
       return f.object.__data?.node_type === "topic";
     });
 
     const hoveredObject =
+      // eslint-disable-next-line no-underscore-dangle
       (node?.object as NodeMesh)?.__data ||
+      // eslint-disable-next-line no-underscore-dangle
       (label?.object as NodeMesh)?.__data ||
       null;
 

@@ -1,14 +1,13 @@
+// eslint-disable-file
 import moment from "moment";
 import { useEffect, useState } from "react";
 import ReactAudioPlayer from "react-audio-player";
 import ClipLoader from "react-spinners/ClipLoader";
 import styled from "styled-components";
+import { Booster } from "~/components/Booster";
 import { useGraphData } from "~/components/DataRetriever";
 import { NodeExtended } from "~/types";
 import { videoTimetoSeconds } from "~/utils/videoTimetoSeconds";
-import Booster from "./booster";
-import { sleep } from "./helpers";
-
 interface ListContent {
   dataFilter: any;
   setDataFilter: Function;
@@ -45,7 +44,7 @@ export default function ContentBrowser({
     // start async
     (async () => {
       // wait while the render appears
-      await sleep(100);
+      // await sleep(100);
       let podcastName = focusedNode?.details?.show_title;
 
       if (focusedNode && focusedNode.details) {
@@ -246,7 +245,7 @@ export default function ContentBrowser({
                       >
                         <div>{moment.unix(date).format("ll")}</div>
                         <div style={{ width: 8 }} />
-                        <Booster readOnly={true} boostCount={boost} />
+                        <Booster readOnly={true} count={boost} />
                       </div>
                       <EpisodeTitle style={{ marginBottom: 5 }}>
                         {episode_title}
@@ -548,10 +547,7 @@ export default function ContentBrowser({
                                     <Time style={{ color }}>
                                       {"" + formatTimestamp(t.timestamp)}
                                       <div style={{ marginLeft: 10 }}>
-                                        <Booster
-                                          readOnly={true}
-                                          boostCount={t.boost}
-                                        />
+                                        <Booster count={t.boost} readOnly />
                                       </div>
                                     </Time>
                                     <Transcript

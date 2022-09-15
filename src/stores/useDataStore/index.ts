@@ -19,7 +19,7 @@ type DataStore = {
   setHoveredNode: (hoveredNode: NodeExtended) => void;
 };
 
-export const useDataStore = create<DataStore>((set, get) => ({
+const defaultData = {
   cameraAnimation: null,
   data: null,
   hoveredNode: null,
@@ -27,11 +27,10 @@ export const useDataStore = create<DataStore>((set, get) => ({
   isTimestampLoaded: false,
   selectedNode: null,
   selectedTimestamp: null,
-  setCameraAnimation: (cameraAnimation) => set({ cameraAnimation }),
-  setHoveredNode: (hoveredNode) => set({ hoveredNode }),
-  setSelectedNode: (selectedNode) =>
-    set({ selectedNode, isTimestampLoaded: false }),
-  setSelectedTimestamp: (selectedTimestamp) => set({ selectedTimestamp }),
+};
+
+export const useDataStore = create<DataStore>((set, get) => ({
+  ...defaultData,
   fetchData: async (search) => {
     if (get().isFetching) {
       return;
@@ -53,6 +52,11 @@ export const useDataStore = create<DataStore>((set, get) => ({
 
     set({ isFetching: false });
   },
+  setCameraAnimation: (cameraAnimation) => set({ cameraAnimation }),
+  setHoveredNode: (hoveredNode) => set({ hoveredNode }),
+  setSelectedNode: (selectedNode) =>
+    set({ isTimestampLoaded: false, selectedNode }),
+  setSelectedTimestamp: (selectedTimestamp) => set({ selectedTimestamp }),
 }));
 
 export const useSelectedNode = () => useDataStore((s) => s.selectedNode);

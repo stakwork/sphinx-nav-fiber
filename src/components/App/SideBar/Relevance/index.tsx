@@ -1,10 +1,12 @@
-import { ReactNode, useMemo, useRef, useState } from "react";
+import { ReactNode, useCallback, useMemo, useRef, useState } from "react";
 import { Flex } from "~/components/common/Flex";
 import { Pill } from "~/components/common/Pill";
 import { Text } from "~/components/common/Text";
 import { useGraphData } from "~/components/DataRetriever";
 import { ScrollView } from "~/components/ScrollView";
 import { useDataStore } from "~/stores/useDataStore";
+import { NodeExtended } from "~/types";
+import { saveConsumedContent } from "~/utils/relayHelper";
 import { Episode } from "./Episode";
 
 const pageSize = 80;
@@ -36,33 +38,44 @@ export const Relevance = ({ header = null }: Props) => {
     [data.nodes, endSlice, startSlice]
   );
 
-  const episodeOnclickHandler = async (node: Node) => {
-    setSelectedNode(node);
-    await saveConsumedContent(node);
-  };
+  const handleNodeClick = useCallback(
+    (node: NodeExtended) => {
+      saveConsumedContent(node);
+
+      setSelectedNode(node);
+    },
+    [setSelectedNode]
+  );
 
   return (
-    <ScrollView shrink={1} ref={scrollViewRef}>
+    <ScrollView ref={scrollViewRef} shrink={1}>
       {header}
 
-      <Flex px={20} pb={10}>
+      <Flex pb={10} px={20}>
         <Text color="gray300">
           Page {currentPage + 1} of {Math.ceil(data.nodes.length / pageSize)}
         </Text>
       </Flex>
 
       {currentNodes.map((n, index) => {
-        const { image_url, episode_title, description, date, boost } = n || {};
+        const {
+          image_url: imageUrl,
+          episode_title: episodeTitle,
+          description,
+          date,
+          boost,
+        } = n || {};
 
         return (
           <Episode
+            // eslint-disable-next-line react/no-array-index-key
             key={index.toString()}
             boostCount={boost || 0}
             date={date || 0}
             description={description || ""}
-            imageUrl={image_url || "audio_default.svg"}
-            onClick={() => setSelectedNode(n)}
-            title={episode_title || ""}
+            imageUrl={imageUrl || "audio_default.svg"}
+            onClick={() => handleNodeClick(n)}
+            title={episodeTitle || ""}
           />
         );
       })}

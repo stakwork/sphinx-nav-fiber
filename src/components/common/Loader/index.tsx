@@ -27,11 +27,12 @@ export const Loader = () => {
       1000
     );
 
+    // eslint-disable-next-line consistent-return
     return () => clearTimeout(messageTimeout);
   }, [msgIndex]);
 
   return (
-    <Flex grow={1} align="center" justify="center">
+    <Flex align="center" grow={1} justify="center">
       <Flex align="center" py={8}>
         <Text color="white" kind="mediumBold">
           {messages[msgIndex]}...
@@ -39,7 +40,7 @@ export const Loader = () => {
       </Flex>
 
       <Flex pt={20}>
-        <ClipLoader color={colors.white} loading={true} size={26} />
+        <ClipLoader color={colors.white} loading size={26} />
       </Flex>
     </Flex>
   );

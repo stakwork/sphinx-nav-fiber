@@ -8,6 +8,7 @@ export const getLSat = async () => {
 
     const lsat = Lsat.fromHeader(data.headers);
 
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     const LSATRes = await sphinx.saveLsat(
       lsat.invoice,
@@ -16,6 +17,7 @@ export const getLSat = async () => {
     );
 
     if (LSATRes.success === false) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       await sphinx.topup();
     }
@@ -27,6 +29,7 @@ export const getLSat = async () => {
     return token;
   } catch (e) {
     console.log(e);
+
     return null;
   }
 };
