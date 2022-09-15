@@ -4,9 +4,6 @@ import SpriteText from "three-spritetext";
 const nodeMaterials: any = {};
 
 const loader = new THREE.TextureLoader();
-const geometry_xs = new THREE.BoxGeometry(10, 10, 10);
-const geometry_s = new THREE.BoxGeometry(20, 20, 20);
-const geometry_m = new THREE.BoxGeometry(35, 35, 35);
 
 export const renderNode = (node: any) => {
   if (node.fakeData) {
@@ -21,9 +18,10 @@ export const renderNode = (node: any) => {
 
   if (node.type === "topic") {
     const sprite = new SpriteText(node.name);
+
     sprite.color = color;
-    let textSize = 15 + node.scale;
-    if (textSize > 100) textSize = 100;
+
+    const textSize = node.scale > 85 ? 100 : 15 + node.scale;
 
     sprite.textHeight = textSize;
 
@@ -48,11 +46,9 @@ export const renderNode = (node: any) => {
       break;
   }
 
-  if (!img) img = "noimage.jpeg";
-
-  loader.requestHeader = {
-    "Access-Control-Allow-Origin": window.location.origin,
-  };
+  if (!img) {
+    img = "noimage.jpeg";
+  }
 
   let material = null;
 
@@ -61,37 +57,52 @@ export const renderNode = (node: any) => {
   } else {
     const map = loader.load(img);
 
-    material = new THREE.MeshBasicMaterial({
-      map
+    // const { selectedNode } = useDataStore.getState();
+
+    // if (selectedNode && node.id === selectedNode.id) {
+    //   material = new THREE.SpriteMaterial({
+    //     map,
+    //     color: "yellow",
+    //     fog: true,
+    //   });
+    // } else {
+    material = new THREE.SpriteMaterial({
+      map,
     });
+
     nodeMaterials[img] = material;
   }
 
-  
-  let geo: any = null
-  
+  // let geo: THREE.BufferGeometry;
+
+  // switch (node.node_type) {
+  //   case "guest":
+  //   case "episode":
+  //     geo = geometry_s.clone();
+  //     break;
+  //   case "show":
+  //     geo = geometry_m.clone();
+  //     break;
+  //   default:
+  //     geo = geometry_xs.clone();
+  // }
+
+  const sprite = new THREE.Sprite(material); // new THREE.Mesh(geo.clone(), material);
+
+  sprite.castShadow = true;
+  sprite.receiveShadow = true;
+
   switch (node.node_type) {
-    case "clip":
-      geo = geometry_xs.clone()
-      break;
+    case "guest":
     case "episode":
-      geo = geometry_s.clone()
+      sprite.scale.set(20, 20, 1);
       break;
     case "show":
-      geo = geometry_m.clone()
-      break;
-    case "guest":
-      geo = geometry_s.clone()
+      sprite.scale.set(35, 35, 1);
       break;
     default:
-      geo = geometry_xs.clone()
+      sprite.scale.set(10, 10, 1);
   }
 
-
-  const cube = new THREE.Mesh(geo, material);
-
-  cube.castShadow = true;
-  cube.receiveShadow = true;
-
-  return cube;
+  return sprite;
 };
