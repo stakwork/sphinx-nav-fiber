@@ -37,7 +37,7 @@ export const YouTube = () => {
   const selectedNode = useSelectedNode();
 
   const { description, show_title, episode_title, link, timestamp } =
-    selectedNode?.details || {};
+    selectedNode || {};
 
   const secs = videoTimetoSeconds(timestamp || "");
 

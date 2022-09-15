@@ -1,26 +1,23 @@
 import styled from "styled-components";
+import { Flex } from "~/components/common/Flex";
+import { Text } from "~/components/common/Text";
 import { Relevance } from "../Relevance";
 
 const Divider = styled.div`
   height: 1px;
   background: #ccc;
-  width: 95%;
+  width: 100%;
+  margin-bottom: 20px;
 `;
 
 export const Suggestions = () => (
   <div>
-    <Divider style={{ width: "100%", marginBottom: 20 }} />
-    <div
-      style={{
-        marginLeft: 20,
-        marginBottom: 10,
-        color: "#292C33",
-      }}
-    >
-      More like this...
-    </div>
-    <div>
-      <Relevance />
-    </div>
+    <Divider />
+
+    <Flex px={20} pb={10}>
+      <Text kind="medium">More like this...</Text>
+    </Flex>
+
+    <Relevance />
   </div>
 );
