@@ -12,7 +12,7 @@ export const Person = () => {
         padding: 20,
       }}
     >
-      {selectedNode?.label}
+      {selectedNode?.show_title}
     </div>
   );
 };

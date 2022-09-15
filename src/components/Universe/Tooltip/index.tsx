@@ -31,11 +31,12 @@ const Description = styled(Text)`
 export function Tooltip() {
   const node = useDataStore((s) => s.hoveredNode);
 
-  if (!node?.details) return null;
+  if (!node) {
+    return null;
+  }
 
   const {
     node_type,
-    label,
     image_url,
     show_title,
     episode_title,
@@ -43,10 +44,10 @@ export function Tooltip() {
     guests,
     text,
     timestamp,
-  } = node.details || node || {};
+  } = node || {};
 
   return (
-    <Wrapper p={12}>
+    <Wrapper px={24} py={16} borderRadius={8}>
       <Flex align="center" pb={12}>
         <Text>{node_type?.toUpperCase()}</Text>
       </Flex>
@@ -58,7 +59,7 @@ export function Tooltip() {
 
         <div>
           <Text color="gray400" kind="tiny">
-            {show_title || label}
+            {show_title}
           </Text>
 
           <Flex pt={4}>

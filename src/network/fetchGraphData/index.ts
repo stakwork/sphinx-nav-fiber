@@ -5,7 +5,7 @@ import {
   isDevelopment,
 } from "~/constants";
 import { api } from "~/network/api";
-import { GraphData, Link, Moment, Node } from "~/types";
+import { GraphData, Link, Node, NodeExtended } from "~/types";
 import { getLSat } from "~/utils/getLSat";
 
 const defautData: GraphData = {
@@ -30,7 +30,7 @@ const fetchNodes = async (search: string) => {
   if (isDevelopment) {
     console.log("is dev", origin);
 
-    return api.get<Moment[]>("/mock_data");
+    return api.get<Node[]>("/mock_data");
   }
 
   console.log("getting prod data");
@@ -41,7 +41,7 @@ const fetchNodes = async (search: string) => {
     throw new Error("An error occured calling getLSat");
   }
 
-  return api.get<Moment[]>(`/search?word=${search}`, {
+  return api.get<Node[]>(`/search?word=${search}`, {
     Authorization: lsatToken,
   });
 };
@@ -50,68 +50,66 @@ const getGraphData = async (searchterm: string) => {
   try {
     const data = await fetchNodes(searchterm);
 
-    const nodes: Node[] = [];
+    const nodes: NodeExtended[] = [];
     const links: Link[] = [];
 
-    if (data.length) {
-      const topicMap: Record<string, string[]> = {};
-      const guestMap: Record<string, string[]> = {};
+    let topicMap: Record<string, string[]> = {};
+    let guestMap: Record<string, string[]> = {};
 
+    if (data.length) {
       // Populating nodes array with podcasts and constructing a topic map
-      data.forEach((moment) => {
+      data.forEach((node) => {
         const {
           children,
           topics,
           guests,
-          boost,
           show_title: showTitle,
           node_type: nodeType,
-        } = moment;
+        } = node;
 
         if (!shouldIncludeTopics && nodeType === "topic") {
           return;
         }
 
-        if (children) {
-          children.forEach((childRefId: string) => {
-            const link: Link = {
-              source: moment.ref_id,
-              target: childRefId,
-            };
+        children?.forEach((childRefId: string) => {
+          const link: Link = {
+            source: node.ref_id,
+            target: childRefId,
+          };
 
-            links.push(link);
-          });
-        }
+          links.push(link);
+        });
 
         if (topics) {
-          topics.forEach((topic: string) => {
-            topicMap[topic] = [...(topicMap[topic] || []), showTitle];
-          });
+          topicMap = topics.reduce((acc, topic) => {
+            if (showTitle) {
+              acc[topic] = [...(topicMap[topic] || []), showTitle];
+            }
+
+            return acc;
+          }, {} as Record<string, string[]>);
         }
 
-        if (moment.node_type === "episode") {
-          guests.forEach((guest) => {
-            guestMap[guest] = [...(guestMap[guest] || []), moment.ref_id];
-          });
+        if (node.node_type === "episode") {
+          guestMap =
+            guests?.reduce((acc, guest) => {
+              if (guest) {
+                acc[guest] = [...(guestMap[guest] || []), node.ref_id];
+              }
+              return acc;
+            }, {} as Record<string, string[]>) || {};
         }
 
         // replace aws bucket url with cloudfront, and add size indicator to end
-        const smallImage = moment.image_url
+        const smallImageUrl = node.image_url
           ?.replace(AWS_IMAGE_BUCKET_URL, CLOUDFRONT_IMAGE_BUCKET_URL)
           .replace(".jpg", "_s.jpg");
 
         nodes.push({
-          boost,
-          colors: [],
-          details: { ...moment, image_url: smallImage },
-          id: moment.ref_id,
-          image_url: smallImage,
-          label: moment.show_title,
-          name: `${moment.show_title}:${moment.episode_title}:${moment.timestamp}`,
-          node_type: moment.node_type,
-          text: moment.text,
-          type: moment.type,
-          weight: moment.weight,
+          ...node,
+          id: node.ref_id,
+          // label: moment.show_title,
+          image_url: smallImageUrl,
         });
       });
 
@@ -143,15 +141,16 @@ const getGraphData = async (searchterm: string) => {
             links.push(link);
           });
 
-          const topicNode: Node = {
+          const topicNode: NodeExtended = {
             id: topicNodeId,
+            ref_id: topicNodeId,
             name: topic,
-            weight: 0,
             label: topic,
-            type: "topic",
+            weight: 0,
+            show_title: topic,
             node_type: "topic",
             text: topic,
-            scale: scale,
+            scale,
             colors: ["#000"],
           };
 
@@ -173,10 +172,12 @@ const getGraphData = async (searchterm: string) => {
           links.push(link);
         });
 
-        const guestNode: Node = {
+        const guestNode: NodeExtended = {
           id: guestNodeId,
+          ref_id: guestNodeId,
           name: guest,
           weight: 0,
+          show_title: guest,
           label: guest,
           type: "guest",
           node_type: "guest",
