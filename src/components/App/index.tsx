@@ -38,6 +38,7 @@ export const App = () => {
     <Wrapper>
       <DataRetriever loader={<Loader />}>
         <SideBar />
+
         <Universe />
       </DataRetriever>
 
