@@ -7,12 +7,6 @@ import { useDataStore } from "~/stores/useDataStore";
 import { Transcript } from "./Transcript";
 import { View } from "./View";
 
-type Props = {
-  dataFilter?: any;
-  loading?: boolean;
-  onClose?: () => void;
-};
-
 export const MENU_WIDTH = 433;
 
 const Wrapper = styled(Flex).attrs({
