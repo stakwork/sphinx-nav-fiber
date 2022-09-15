@@ -11,6 +11,7 @@
     "gsap": "^3.10.4",
     "invariant": "^2.2.4",
     "leva": "^0.9.30",
+    "lodash": "^4.17.21",
     "lsat-js": "^2.0.5",
     "material-icons": "^1.11.6",
     "moment": "^2.29.4",
@@ -26,6 +27,7 @@
     "three-forcegraph": "^1.39.4",
     "three-spritetext": "^1.6.5",
     "three.interactive": "^1.4.0",
+    "three.meshline": "^1.4.0",
     "web-vitals": "^2.1.0",
     "zustand": "^4.1.1"
   },
@@ -35,7 +37,7 @@
     "test": "craco test",
     "eject": "craco eject",
     "format": "prettier --write .",
-    "lint": "tsc --noEmit"
+    "typecheck": "tsc --noEmit"
   },
   "eslintConfig": {
     "extends": [

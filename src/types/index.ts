@@ -26,6 +26,9 @@ export type Node = {
 };
 
 export type NodeExtended = Node & {
+  x?: number;
+  y?: number;
+  z?: number;
   __threeObj?: Object3D;
 };
 
