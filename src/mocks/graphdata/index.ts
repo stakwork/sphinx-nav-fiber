@@ -1,7 +1,0 @@
-import { mockLinks } from "./links";
-import { mockNodes } from "./nodes";
-
-export const mockGraphData = {
-  nodes: mockNodes,
-  links: mockLinks,
-};
