@@ -6,8 +6,8 @@ import { Text } from "~/components/common/Text";
 import { useDataStore } from "~/stores/useDataStore";
 import { NodeExtended } from "~/types";
 import { ColorName, colors } from "~/utils/colors";
-import { formatTimestamp } from "~/utils/formatTimestamp";
 import { formatDescription } from "~/utils/formatDescription";
+import { formatTimestamp } from "~/utils/formatTimestamp";
 
 const Wrapper = styled(Flex).attrs<{ isSelected?: boolean }>(
   ({ isSelected }) => ({
@@ -64,7 +64,10 @@ export const Timestamp = ({ onClick, timestamp }: Props) => {
       <div>
         <Flex align="center" direction="row">
           {timestamp.timestamp && (
-            <Text color="primaryText1" kind={isSelected ? "mediumBold" : "medium"}>
+            <Text
+              color="primaryText1"
+              kind={isSelected ? "mediumBold" : "medium"}
+            >
               {formatTimestamp(timestamp.timestamp)}
             </Text>
           )}
@@ -77,7 +80,10 @@ export const Timestamp = ({ onClick, timestamp }: Props) => {
         </Flex>
 
         <Flex pt={4}>
-          <Text color={isSelected ? "blueTextAccent" : "mainBottomIcons"} kind={isSelected ? "regularBold" : "regular"}>
+          <Text
+            color={isSelected ? "blueTextAccent" : "mainBottomIcons"}
+            kind={isSelected ? "regularBold" : "regular"}
+          >
             {formatDescription(timestamp.description)}
           </Text>
         </Flex>
