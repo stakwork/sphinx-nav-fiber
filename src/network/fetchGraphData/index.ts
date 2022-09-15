@@ -90,6 +90,7 @@ const getGraphData = async (searchterm: string) => {
               if (guest) {
                 acc[guest] = [...(guestMap[guest] || []), node.ref_id];
               }
+
               return acc;
             }, {} as Record<string, string[]>) || {};
         }
