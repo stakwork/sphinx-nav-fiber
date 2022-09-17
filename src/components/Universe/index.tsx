@@ -1,7 +1,8 @@
+import { AdaptiveDpr } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
+import { NewGraph } from "~/components/Universe/NewGraph";
 import { colors } from "~/utils/colors";
 import { Controls } from "./Controls";
-import { Graph } from "./Graph";
 import { Lights } from "./Lights";
 import { Tooltip } from "./Tooltip";
 
@@ -10,7 +11,9 @@ const Content = () => (
     {/* eslint-disable-next-line react/no-unknown-property */}
     <color args={[colors.gray500]} attach="background" />
 
-    <Graph />
+    {/* <Graph /> */}
+
+    <NewGraph />
 
     <Lights />
 
@@ -27,6 +30,8 @@ export const Universe = () => (
       id="universe-canvas"
       shadows
     >
+      <AdaptiveDpr />
+
       <Content />
     </Canvas>
   </>
