@@ -13,7 +13,6 @@ type DataStore = {
   selectedNode: NodeExtended | null;
   selectedTimestamp: NodeExtended | null;
   setCameraAnimation: (cameraAnimation: gsap.core.Tween | null) => void;
-  setLoadingData: (bool: boolean) => void;
   fetchData: (search?: string | null) => void;
   setSelectedNode: (selectedNode: NodeExtended | null) => void;
   setSelectedTimestamp: (selectedTimestamp: NodeExtended | null) => void;
@@ -29,7 +28,6 @@ export const useDataStore = create<DataStore>((set, get) => ({
   selectedNode: null,
   selectedTimestamp: null,
   setCameraAnimation: (cameraAnimation) => set({ cameraAnimation }),
-  setLoadingData: (isFetching) => set({ isFetching }),
   setHoveredNode: (hoveredNode) => set({ hoveredNode }),
   setSelectedNode: (selectedNode) =>
     set({ selectedNode, isTimestampLoaded: false }),

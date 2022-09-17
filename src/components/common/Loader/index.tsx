@@ -3,7 +3,6 @@ import ClipLoader from "react-spinners/ClipLoader";
 import { Flex } from "~/components/common/Flex";
 import { Text } from "~/components/common/Text";
 import { colors } from "~/utils/colors";
-
 const messages = [
   "Searching Podcast Index",
   "Searching YouTube",
@@ -18,16 +17,17 @@ export const Loader = () => {
   const [msgIndex, setMsgIndex] = useState(0);
 
   useEffect(() => {
-    const messageTimeout = setTimeout(doIndex, 5000);
+    if (msgIndex === messages.length - 1) {
+      return;
+    }
 
-    return function cleanup() {
-      clearTimeout(messageTimeout);
-    };
+    const messageTimeout = setTimeout(
+      () => setMsgIndex((index) => (index + 1) % messages.length),
+      1000
+    );
+
+    return () => clearTimeout(messageTimeout);
   }, [msgIndex]);
-
-  function doIndex() {
-    if (msgIndex < messages.length - 1) setMsgIndex(msgIndex + 1);
-  }
 
   return (
     <Flex grow={1} align="center" justify="center">
