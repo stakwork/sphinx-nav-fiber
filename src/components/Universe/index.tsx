@@ -7,30 +7,23 @@ import {
 } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 import { Suspense } from "react";
-import { useGraphData } from "~/components/DataRetriever";
-import { NewGraph } from "~/components/Universe/NewGraph";
 import { colors } from "~/utils/colors";
 import { Controls } from "./Controls";
+import { Graph } from "./Graph";
 import { Lights } from "./Lights";
 import { Tooltip } from "./Tooltip";
 
-const Content = () => {
-  const data = useGraphData();
+const Content = () => (
+  <>
+    <color args={[colors.gray500]} attach="background" />
 
-  return (
-    <>
-      <color args={[colors.gray500]} attach="background" />
+    <Graph />
 
-      {/* <Graph /> */}
+    <Lights />
 
-      <NewGraph data={data} />
-
-      <Lights />
-
-      <Controls />
-    </>
-  );
-};
+    <Controls />
+  </>
+);
 
 export const Universe = () => (
   <>

@@ -1,15 +1,12 @@
 import { Segment as DreiSegment, SegmentObject } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { useRef } from "react";
-import { Color } from "three";
 import { useDataStore } from "~/stores/useDataStore";
 import { Link, NodeExtended } from "~/types";
 
 type Props = {
   link: Link<NodeExtended>;
 };
-
-const color = new Color();
 
 export const Segment = ({ link }: Props) => {
   const ref = useRef<SegmentObject | null>(null);
@@ -35,9 +32,9 @@ export const Segment = ({ link }: Props) => {
         (selectedNode?.id === link.target.id ||
           selectedNode?.id === link.source.id)
       ) {
-        ref.current.color = color.setColorName("red");
+        ref.current.color.setHex(0xff0000);
       } else {
-        ref.current.color = color.setColorName("white");
+        ref.current.color.setHex(0xffffff);
       }
     }
   });

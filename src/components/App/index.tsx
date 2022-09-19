@@ -19,6 +19,7 @@ const Wrapper = styled(Flex)`
 
 export const App = () => {
   const selectedNode = useSelectedNode();
+
   const setSidebarOpen = useAppStore((s) => s.setSidebarOpen);
   const searchTerm = useAppStore((s) => s.currentSearch);
   const fetchData = useDataStore((s) => s.fetchData);
