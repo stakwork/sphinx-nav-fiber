@@ -33,13 +33,14 @@ export type NodeExtended = Node & {
 };
 
 export type Link<T = string> = {
+  index?: T extends string ? never : number;
   source: T;
   target: T;
 };
 
-export type GraphData = {
+export type GraphData<T = string> = {
+  links: Link<T>[];
   nodes: NodeExtended[];
-  links: Link[];
 };
 
 export class NodeMesh extends Mesh {
