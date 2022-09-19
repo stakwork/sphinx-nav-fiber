@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { boostContent } from "./helpers";
 import * as sphinx from "sphinx-bridge-kevkevinpal";
 import { useDataStore } from "~/stores/useDataStore";
+import { getSecondBrainObj } from "~/utils/relayHelper/index";
 // import Modal from '../sphinxUI/modal'
 import ClipLoader from "react-spinners/ClipLoader";
 
@@ -81,11 +82,14 @@ export default function Booster(props: BoostProps) {
       ) : (
         <Pill
           style={{ width: 50 }}
-          onClick={() => {
+          onClick={async () => {
             if (isSuccess || submitting) return;
-            doBoost();
+            await doBoost();
             // @ts-ignore
-            sphinx.saveGraphData({type: "boost", metaData: selectedNode});
+            await sphinx.saveGraphData({
+              type: "boost",
+              metaData: getSecondBrainObj(selectedNode, defaultBoostAmount),
+            });
           }}
           disabled={isSuccess || submitting}
         >
