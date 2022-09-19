@@ -1,6 +1,7 @@
-import { useRef, useState } from "react";
+import { ReactNode, useMemo, useRef, useState } from "react";
 import { Flex } from "~/components/common/Flex";
 import { Pill } from "~/components/common/Pill";
+import { Text } from "~/components/common/Text";
 import { useGraphData } from "~/components/DataRetriever";
 import { ScrollView } from "~/components/ScrollView";
 import { useDataStore } from "~/stores/useDataStore";
@@ -8,67 +9,83 @@ import { Episode } from "./Episode";
 
 const pageSize = 80;
 
-export const Relevance = ({ isSuggestions }: { isSuggestions?: boolean }) => {
+type Props = {
+  header?: ReactNode;
+};
+
+export const Relevance = ({ header = null }: Props) => {
   const data = useGraphData();
 
   const scrollViewRef = useRef<HTMLDivElement | null>(null);
 
   const setSelectedNode = useDataStore((s) => s.setSelectedNode);
 
-  const [renderPage, setRenderPage] = useState(0);
+  const [currentPage, setCurrentPage] = useState(0);
 
-  const startSlice = renderPage * pageSize;
+  const startSlice = currentPage * pageSize;
   const endSlice = startSlice + pageSize;
 
-  const isMore = data.nodes.length - 1 > endSlice;
-  const isLess = startSlice > 0;
+  const hasNext = data.nodes.length - 1 > endSlice;
+  const hasPrevious = startSlice > 0;
+
+  const currentNodes = useMemo(
+    () =>
+      data.nodes
+        .slice(startSlice, endSlice)
+        .filter((f) => f.node_type === "clip"),
+    [data.nodes, endSlice, startSlice]
+  );
 
   return (
-    <ScrollView ref={scrollViewRef} id="top-ranked-scroll-view">
-      {data.nodes
-        .slice(startSlice, endSlice)
-        .filter((f) => f.node_type === "clip")
-        .map((n, index) => {
-          const { image_url, episode_title, description, date, boost } =
-            n || {};
+    <ScrollView shrink={1} ref={scrollViewRef}>
+      {header}
 
-          return (
-            <Episode
-              key={index.toString()}
-              boostCount={boost || 0}
-              date={date || 0}
-              description={description || ""}
-              imageUrl={image_url || "audio_default.svg"}
-              onClick={() => setSelectedNode(n)}
-              title={episode_title || ""}
-            />
-          );
-        })}
+      <Flex px={20} pb={10}>
+        <Text color="gray300">
+          Page {currentPage + 1} of {Math.ceil(data.nodes.length / pageSize)}
+        </Text>
+      </Flex>
 
-      {!isSuggestions && (
-        <Flex direction="row" justify="space-between" p={20}>
-          <Pill
-            onClick={() => {
-              if (isLess) {
-                setRenderPage(renderPage - 1);
-                scrollViewRef.current?.scrollTo(0, 0);
-              }
-            }}
-          >
-            Previous
-          </Pill>
-          <Pill
-            onClick={() => {
-              if (isMore) {
-                setRenderPage(renderPage + 1);
-                scrollViewRef.current?.scrollTo(0, 0);
-              }
-            }}
-          >
-            Next
-          </Pill>
-        </Flex>
-      )}
+      {currentNodes.map((n, index) => {
+        const { image_url, episode_title, description, date, boost } = n || {};
+
+        return (
+          <Episode
+            key={index.toString()}
+            boostCount={boost || 0}
+            date={date || 0}
+            description={description || ""}
+            imageUrl={image_url || "audio_default.svg"}
+            onClick={() => setSelectedNode(n)}
+            title={episode_title || ""}
+          />
+        );
+      })}
+
+      <Flex direction="row" justify="space-between" p={20}>
+        <Pill
+          disabled={!hasPrevious}
+          onClick={() => {
+            if (hasPrevious) {
+              setCurrentPage(currentPage - 1);
+              scrollViewRef.current?.scrollTo(0, 0);
+            }
+          }}
+        >
+          Previous
+        </Pill>
+        <Pill
+          disabled={!hasNext}
+          onClick={() => {
+            if (hasNext) {
+              setCurrentPage(currentPage + 1);
+              scrollViewRef.current?.scrollTo(0, 0);
+            }
+          }}
+        >
+          Next
+        </Pill>
+      </Flex>
     </ScrollView>
   );
 };

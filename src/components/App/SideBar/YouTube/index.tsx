@@ -1,9 +1,11 @@
 import { useMemo } from "react";
 import styled from "styled-components";
+import { Relevance } from "~/components/App/SideBar/Relevance";
+import { Flex } from "~/components/common/Flex";
+import { Text } from "~/components/common/Text";
 import { useSelectedNode } from "~/stores/useDataStore";
 import { videoTimetoSeconds } from "~/utils/videoTimetoSeconds";
 import { Actions } from "../Actions";
-import { Suggestions } from "../Suggestions";
 
 const PodcastName = styled.div`
   font-weight: 400;
@@ -74,7 +76,13 @@ export const YouTube = () => {
 
       <Desc>{description}</Desc>
 
-      <Suggestions />
+      <Relevance
+        header={
+          <Flex px={20} pb={10}>
+            <Text kind="medium">More like this...</Text>
+          </Flex>
+        }
+      />
     </div>
   );
 };

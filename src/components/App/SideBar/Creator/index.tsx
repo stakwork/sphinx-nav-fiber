@@ -1,23 +1,13 @@
 import { useEffect, useMemo } from "react";
-import styled from "styled-components";
+import { Divider } from "~/components/common/Divider";
 import { Flex } from "~/components/common/Flex";
+import { Text } from "~/components/common/Text";
 import { useGraphData } from "~/components/DataRetriever";
-import { ScrollView } from "~/components/ScrollView";
 import { useDataStore, useSelectedNode } from "~/stores/useDataStore";
 import { getSelectedNodeTimestamps } from "~/utils/getSelectedNodeTimestamps";
-import { Suggestions } from "../Suggestions";
+import { Relevance } from "../Relevance";
 import { Heading } from "./Heading";
 import { Timestamp } from "./Timestamp";
-
-const NodePanel = styled(Flex)`
-  width: 100%;
-  height: 100%;
-  // overflow: hidden;
-
-  &:hover {
-    opacity: 1;
-  }
-`;
 
 export const Creator = () => {
   const data = useGraphData();
@@ -41,44 +31,28 @@ export const Creator = () => {
   }
 
   return (
-    <div style={{ height: "100%", width: "100%", overflow: "auto" }}>
-      <NodePanel align="center">
-        <Heading />
+    <>
+      <Heading />
 
-        <Flex
-        // style={{ height: `calc(100% - ${CREATOR_HEADING_HEIGHT}px)` }}
-        >
-          <ScrollView id="focused_scroller">
-            <Flex pb={20}>
-              {selectedNodeTimestamps?.map((timestamp, index) => {
-                // let episodeImg = defaultTimestamp.image_url;
+      <Flex pb={20}>
+        {selectedNodeTimestamps?.map((timestamp, index) => (
+          <Timestamp
+            onClick={() => setSelectedTimestamp(timestamp)}
+            key={`${timestamp.episode_title}_${index}`}
+            timestamp={timestamp}
+          />
+        ))}
+      </Flex>
 
-                // const isSelected =
-                //   selectedTimestamps[podcastName]?.link === t.link &&
-                //   selectedTimestamps[podcastName]?.timestamp ===
-                //     t.timestamp;
+      <Divider />
 
-                // const isError =
-                //   selectedTimestamps[podcastName]?.link === t.link &&
-                //   selectedTimestamps[podcastName]?.timestamp ===
-                //     t.timestamp &&
-                //   selectedTimestamps[podcastName]?.error;
-
-                return (
-                  <Timestamp
-                    onClick={() => setSelectedTimestamp(timestamp)}
-                    key={`${timestamp.episode_title}_${index}`}
-                    timestamp={timestamp}
-                  />
-                );
-              })}
-            </Flex>
-            <Flex pt={10}>
-              <Suggestions />
-            </Flex>
-          </ScrollView>
-        </Flex>
-      </NodePanel>
-    </div>
+      <Relevance
+        header={
+          <Flex px={20} py={16}>
+            <Text kind="medium">More like this...</Text>
+          </Flex>
+        }
+      />
+    </>
   );
 };

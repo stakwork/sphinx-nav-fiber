@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { Flex } from "~/components/common/Flex";
 import { Loader } from "~/components/common/Loader";
 import { SearchBar } from "~/components/SearchBar";
 import { useAppStore } from "~/stores/useAppStore";
@@ -8,32 +9,29 @@ import { View } from "./View";
 
 export const MENU_WIDTH = 433;
 
-const Wrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  background: #ffffff;
-  min-width: ${MENU_WIDTH}px;
+const Wrapper = styled(Flex).attrs({
+  background: "white",
+})`
+  height: 100vh;
   width: ${MENU_WIDTH}px;
   z-index: 30;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
 `;
 
-const SearchWrapper = styled.div`
-  display: flex;
-  padding: 20px;
-  position: relative;
+const SearchWrapper = styled(Flex).attrs({
+  direction: "row",
+  p: 20,
+})`
   box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.2);
 `;
 
-const CloseButton = styled.div`
-  align-items: center;
+const CloseButton = styled(Flex).attrs({
+  p: 10,
+  align: "center",
+  justify: "center",
+})`
   color: #000;
   cursor: pointer;
-  display: flex;
-  justify-content: center;
-  padding: 10px;
-  width: fit-content;
 `;
 
 const Content = () => {
@@ -42,7 +40,7 @@ const Content = () => {
   const isLoading = useDataStore((s) => s.isFetching);
 
   return (
-    <Wrapper>
+    <Wrapper id="sidebar-wrapper">
       <SearchWrapper>
         <SearchBar />
 
