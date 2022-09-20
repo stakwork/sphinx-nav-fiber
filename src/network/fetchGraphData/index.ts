@@ -1,5 +1,10 @@
 import * as sphinx from "sphinx-bridge-kevkevinpal";
-import { API_URL, isDevelopment, AWS_IMAGE_BUCKET_URL, CLOUDFRONT_IMAGE_BUCKET_URL } from "~/constants";
+import {
+  API_URL,
+  isDevelopment,
+  AWS_IMAGE_BUCKET_URL,
+  CLOUDFRONT_IMAGE_BUCKET_URL,
+} from "~/constants";
 import { GraphData, Link, Moment, Node } from "~/types";
 import { getLSat } from "~/utils/getLSat";
 
@@ -8,7 +13,7 @@ const defautData: GraphData = {
   links: [],
 };
 
-const includeTopics = false
+const includeTopics = false;
 
 export const fetchGraphData = async (search: string) => {
   // @ts-ignore
@@ -22,8 +27,7 @@ export const fetchGraphData = async (search: string) => {
 };
 
 async function getGraphData(searchterm: string) {
-  
-  try {  
+  try {
     let data: Moment[] = [];
 
     const origin = window.location.origin;
@@ -58,9 +62,10 @@ async function getGraphData(searchterm: string) {
 
       // Populating nodes array with podcasts and constructing a topic map
       data.forEach(async (moment) => {
-        const { children, topics, guests, boost, show_title, node_type } = moment;
+        const { children, topics, guests, boost, show_title, node_type } =
+          moment;
 
-        if (!includeTopics && node_type === 'topic') return
+        if (!includeTopics && node_type === "topic") return;
 
         if (children) {
           children.forEach((childRefId: string) => {
@@ -88,8 +93,9 @@ async function getGraphData(searchterm: string) {
         }
 
         // replace aws bucket url with cloudfront, and add size indicator to end
-        const smallImage = moment.image_url?.replace(AWS_IMAGE_BUCKET_URL, CLOUDFRONT_IMAGE_BUCKET_URL)
-        .replace(".jpg", "_s.jpg");
+        const smallImage = moment.image_url
+          ?.replace(AWS_IMAGE_BUCKET_URL, CLOUDFRONT_IMAGE_BUCKET_URL)
+          .replace(".jpg", "_s.jpg");
 
         nodes.push({
           weight: moment.weight,
@@ -183,14 +189,14 @@ async function getGraphData(searchterm: string) {
 
     nodes.sort((a, b) => (b.weight || 0) - (a.weight || 0));
 
-    const n = nodes.map(n => {
-      return { ...n }
-  })
-    const l = links.map(n => {
-    return { ...n }
-  })
-    console.log('nodes', n)
-    console.log('links', l)
+    const n = nodes.map((n) => {
+      return { ...n };
+    });
+    const l = links.map((n) => {
+      return { ...n };
+    });
+    console.log("nodes", n);
+    console.log("links", l);
     return { nodes, links };
   } catch (e) {
     console.error(e);

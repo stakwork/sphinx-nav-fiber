@@ -5,6 +5,8 @@ import { Pill } from "~/components/common/Pill";
 import { useGraphData } from "~/components/DataRetriever";
 import Booster from "~/main/map/booster";
 import { useDataStore } from "~/stores/useDataStore";
+import { Node } from "~/types/index";
+import { saveConsumedContent } from "~/utils/relayHelper/index";
 
 const pageSize = 80;
 
@@ -77,6 +79,11 @@ export const Relevance = ({ isSuggestions }: { isSuggestions?: boolean }) => {
   const isMore = data.nodes.length - 1 > endSlice;
   const isLess = startSlice > 0;
 
+  const episodeOnclickHandler = async (node: Node) => {
+    setSelectedNode(node);
+    await saveConsumedContent(node);
+  };
+
   return (
     <Col style={{ height: "calc(100% - 90px)" }}>
       <Scroller id={"top_ranked_scroller"}>
@@ -89,7 +96,7 @@ export const Relevance = ({ isSuggestions }: { isSuggestions?: boolean }) => {
 
             return (
               <EpisodePanel
-                onClick={() => setSelectedNode(n)}
+                onClick={() => episodeOnclickHandler(n)}
                 style={{ cursor: "pointer" }}
                 key={"node" + i}
               >

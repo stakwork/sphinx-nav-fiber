@@ -2,14 +2,15 @@ import create from "zustand";
 import { mockGraphData } from "~/mocks/graphdata";
 import { fetchGraphData } from "~/network/fetchGraphData";
 import { GraphData, Node } from "~/types";
+import { saveSearchTerm } from "~/utils/relayHelper/index";
 
 type DataStore = {
   data: GraphData | null;
   selectedNode: Node | null;
   hoveredNode: any | null;
   loadingData: boolean;
-  cameraAnimation: any | null,
-  setCameraAnimation: (cameraAnimation:any) => void,
+  cameraAnimation: any | null;
+  setCameraAnimation: (cameraAnimation: any) => void;
   setLoadingData: (bool: boolean) => void;
   fetchData: (search?: string | null) => void;
   setSelectedNode: (selectedNode: Node | null) => void;
@@ -27,14 +28,15 @@ export const useDataStore = create<DataStore>((set) => ({
   setHoveredNode: (hoveredNode) => set({ hoveredNode }),
   setSelectedNode: (selectedNode) => set({ selectedNode }),
   fetchData: async (search) => {
-    set({ loadingData:true });
+    set({ loadingData: true });
     if (search?.length) {
       const data = await fetchGraphData(search);
       set({ data });
+      await saveSearchTerm(search);
     } else {
       setTimeout(() => set({ data: mockGraphData }), 1000);
     }
-    set({ loadingData:false });
+    set({ loadingData: false });
   },
 }));
 
