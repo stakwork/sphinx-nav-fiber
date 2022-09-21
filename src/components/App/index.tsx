@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import styled from "styled-components";
 import { AppBar } from "~/components/App/AppBar";
 import { SideBar } from "~/components/App/SideBar";
+import { Flex } from "~/components/common/Flex";
 import { Loader } from "~/components/common/Loader";
 import { DataRetriever } from "~/components/DataRetriever";
 import { Universe } from "~/components/Universe";
@@ -9,11 +10,9 @@ import { useAppStore } from "~/stores/useAppStore";
 import { useDataStore, useSelectedNode } from "~/stores/useDataStore";
 import { colors } from "~/utils/colors";
 
-const Wrapper = styled.div`
-  display: flex;
+const Wrapper = styled(Flex)`
   height: 100%;
   width: 100%;
-  overflow: hidden;
   background-color: ${colors.gray500};
 `;
 
@@ -35,7 +34,7 @@ export const App = () => {
   }, [fetchData, searchTerm]);
 
   return (
-    <Wrapper>
+    <Wrapper direction="row">
       <DataRetriever loader={<Loader />}>
         <SideBar />
 

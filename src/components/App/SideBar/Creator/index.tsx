@@ -34,18 +34,22 @@ export const Creator = () => {
     <>
       <Heading />
 
-      <Flex pb={20}>
-        {selectedNodeTimestamps?.map((timestamp, index) => (
-          <Timestamp
-            // eslint-disable-next-line react/no-array-index-key
-            key={`${timestamp.episode_title}_${index}`}
-            onClick={() => setSelectedTimestamp(timestamp)}
-            timestamp={timestamp}
-          />
-        ))}
-      </Flex>
+      {!!selectedNodeTimestamps?.length && (
+        <>
+          <Flex pb={20}>
+            {selectedNodeTimestamps?.map((timestamp, index) => (
+              <Timestamp
+                // eslint-disable-next-line react/no-array-index-key
+                key={`${timestamp.episode_title}_${index}`}
+                onClick={() => setSelectedTimestamp(timestamp)}
+                timestamp={timestamp}
+              />
+            ))}
+          </Flex>
 
-      <Divider />
+          <Divider />
+        </>
+      )}
 
       <Relevance
         header={

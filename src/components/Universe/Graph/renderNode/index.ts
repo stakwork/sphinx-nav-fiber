@@ -1,7 +1,11 @@
 import * as THREE from "three";
 import SpriteText from "three-spritetext";
 
-const nodeMaterials: any = {};
+const cachedMaterials: Record<string, THREE.MeshStandardMaterial> = {};
+
+const geometryS = new THREE.BoxGeometry(10, 10, 10);
+const geometryM = new THREE.BoxGeometry(20, 20, 20);
+const geometryL = new THREE.BoxGeometry(35, 35, 35);
 
 const loader = new THREE.TextureLoader();
 
@@ -59,57 +63,36 @@ export const renderNode = (node: any) => {
 
   let material = null;
 
-  if (nodeMaterials[img]) {
-    material = nodeMaterials[img];
+  if (cachedMaterials[img]) {
+    material = cachedMaterials[img];
   } else {
     const map = loader.load(img);
 
-    // const { selectedNode } = useDataStore.getState();
-
-    // if (selectedNode && node.id === selectedNode.id) {
-    //   material = new THREE.SpriteMaterial({
-    //     map,
-    //     color: "yellow",
-    //     fog: true,
-    //   });
-    // } else {
-    material = new THREE.SpriteMaterial({
+    material = new THREE.MeshStandardMaterial({
       map,
     });
 
-    nodeMaterials[img] = material;
+    cachedMaterials[img] = material;
   }
 
-  // let geo: THREE.BufferGeometry;
-
-  // switch (node.node_type) {
-  //   case "guest":
-  //   case "episode":
-  //     geo = geometry_s.clone();
-  //     break;
-  //   case "show":
-  //     geo = geometry_m.clone();
-  //     break;
-  //   default:
-  //     geo = geometry_xs.clone();
-  // }
-
-  const sprite = new THREE.Sprite(material); // new THREE.Mesh(geo.clone(), material);
-
-  sprite.castShadow = true;
-  sprite.receiveShadow = true;
+  let geo: THREE.BufferGeometry;
 
   switch (node.node_type) {
     case "guest":
     case "episode":
-      sprite.scale.set(20, 20, 1);
+      geo = geometryM.clone();
       break;
     case "show":
-      sprite.scale.set(35, 35, 1);
+      geo = geometryL.clone();
       break;
     default:
-      sprite.scale.set(10, 10, 1);
+      geo = geometryS.clone();
   }
 
-  return sprite;
+  const cube = new THREE.Mesh(geo, material); // new THREE.Mesh(geo.clone(), material);
+
+  cube.castShadow = true;
+  cube.receiveShadow = true;
+
+  return cube;
 };

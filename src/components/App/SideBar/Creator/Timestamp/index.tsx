@@ -77,17 +77,19 @@ export const Timestamp = ({ onClick, timestamp }: Props) => {
       </Flex>
 
       <div>
-        {timestamp.timestamp && (
-          <Text color={color} kind={isSelected ? "mediumBold" : "medium"}>
-            {formatTimestamp(timestamp.timestamp)}
-          </Text>
-        )}
+        <Flex align="center" direction="row">
+          {timestamp.timestamp && (
+            <Text color={color} kind={isSelected ? "mediumBold" : "medium"}>
+              {formatTimestamp(timestamp.timestamp)}
+            </Text>
+          )}
 
-        {!!timestamp.boost && (
-          <Flex pl={10}>
-            <Booster count={timestamp.boost} readOnly />
-          </Flex>
-        )}
+          {!!timestamp.boost && (
+            <Flex pl={10}>
+              <Booster count={timestamp.boost} readOnly />
+            </Flex>
+          )}
+        </Flex>
 
         <Flex pt={4}>
           <Text color={color} kind={isSelected ? "regularBold" : "regular"}>

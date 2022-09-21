@@ -84,7 +84,7 @@ export const Graph = () => {
     const scale = node?.__threeObj?.scale || new Vector3(0, 0, 0);
 
     // eslint-disable-next-line no-underscore-dangle
-    node?.__threeObj?.scale.set(scale.x * 1.5, scale.y * 1.5, 1);
+    node?.__threeObj?.scale.set(scale.x * 1.5, scale.y * 1.5, scale.z * 1.5);
   }, []);
 
   const onNotHover = useCallback((previousHoverNode: NodeExtended) => {
@@ -92,7 +92,11 @@ export const Graph = () => {
     const scale = previousHoverNode?.__threeObj?.scale || new Vector3(0, 0, 0);
 
     // eslint-disable-next-line no-underscore-dangle
-    previousHoverNode?.__threeObj?.scale.set(scale.x / 1.5, scale.y / 1.5, 1);
+    previousHoverNode?.__threeObj?.scale.set(
+      scale.x / 1.5,
+      scale.y / 1.5,
+      scale.z / 1.5
+    );
   }, []);
 
   const { hoverNode } = useGraphMouseEvents(onHover, onNotHover, onClick);
