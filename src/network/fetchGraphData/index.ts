@@ -1,135 +1,138 @@
 import * as sphinx from "sphinx-bridge-kevkevinpal";
 import {
-  API_URL,
-  isDevelopment,
   AWS_IMAGE_BUCKET_URL,
   CLOUDFRONT_IMAGE_BUCKET_URL,
+  isDevelopment,
 } from "~/constants";
-import { GraphData, Link, Moment, Node } from "~/types";
+import { api } from "~/network/api";
+import { GraphData, Link, Node, NodeExtended } from "~/types";
 import { getLSat } from "~/utils/getLSat";
 
 const defautData: GraphData = {
-  nodes: [],
   links: [],
+  nodes: [],
 };
 
-const includeTopics = false;
+const shouldIncludeTopics = false;
 
 export const fetchGraphData = async (search: string) => {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   await sphinx.enable();
 
   try {
     return getGraphData(search);
   } catch (e) {
-    return Promise.resolve(defautData);
+    return defautData;
   }
 };
 
-async function getGraphData(searchterm: string) {
+const fetchNodes = async (search: string) => {
+  if (isDevelopment) {
+    console.log("is dev", origin);
+
+    return api.get<Node[]>("/mock_data");
+  }
+
+  console.log("getting prod data");
+
+  const lsatToken = await getLSat();
+
+  if (!lsatToken) {
+    throw new Error("An error occured calling getLSat");
+  }
+
+  return api.get<Node[]>(`/search?word=${search}`, {
+    Authorization: lsatToken,
+  });
+};
+
+const getGraphData = async (searchterm: string) => {
   try {
-    let data: Moment[] = [];
+    const data = await fetchNodes(searchterm);
 
-    const origin = window.location.origin;
-
-    if (isDevelopment) {
-      console.log("is dev", origin);
-      let devUrl = process.env.REACT_DEV_API_URL || `${API_URL}/mock_data`;
-      const res = await fetch(devUrl);
-      data = await res.json();
-    } else {
-      const lsatToken = await getLSat();
-
-      if (!lsatToken) {
-        throw new Error("An error occured calling getLSat");
-      }
-
-      let apiRes = await fetch(`${API_URL}/search?word=${searchterm}`, {
-        headers: {
-          Authorization: lsatToken,
-        },
-      });
-
-      data = await apiRes.json();
-    }
-
-    const nodes: Node[] = [];
+    const nodes: NodeExtended[] = [];
     const links: Link[] = [];
 
+    let topicMap: Record<string, string[]> = {};
+    let guestMap: Record<string, string[]> = {};
+
     if (data.length) {
-      const topicMap: Record<string, string[]> = {};
-      const guestMap: Record<string, string[]> = {};
-
       // Populating nodes array with podcasts and constructing a topic map
-      data.forEach(async (moment) => {
-        const { children, topics, guests, boost, show_title, node_type } =
-          moment;
+      data.forEach((node) => {
+        const {
+          children,
+          topics,
+          guests,
+          show_title: showTitle,
+          node_type: nodeType,
+        } = node;
 
-        if (!includeTopics && node_type === "topic") return;
-
-        if (children) {
-          children.forEach((childRefId: string) => {
-            const link: Link = {
-              source: childRefId,
-              target: moment.ref_id,
-            };
-
-            links.push(link);
-          });
+        if (!shouldIncludeTopics && nodeType === "topic") {
+          return;
         }
 
-        let nodeColors: string[] = [];
+        children?.forEach((childRefId: string) => {
+          const link: Link = {
+            source: node.ref_id,
+            target: childRefId,
+          };
+
+          links.push(link);
+        });
 
         if (topics) {
-          topics.forEach((topic: string) => {
-            topicMap[topic] = [...(topicMap[topic] || []), show_title];
-          });
+          topicMap = topics.reduce((acc, topic) => {
+            if (showTitle) {
+              acc[topic] = [...(topicMap[topic] || []), showTitle];
+            }
+
+            return acc;
+          }, {} as Record<string, string[]>);
         }
 
-        if (moment.node_type === "episode") {
-          guests.forEach((guest) => {
-            guestMap[guest] = [...(guestMap[guest] || []), moment.ref_id];
-          });
+        if (node.node_type === "episode") {
+          guestMap =
+            guests?.reduce((acc, guest) => {
+              if (guest) {
+                acc[guest] = [...(guestMap[guest] || []), node.ref_id];
+              }
+
+              return acc;
+            }, {} as Record<string, string[]>) || {};
         }
 
         // replace aws bucket url with cloudfront, and add size indicator to end
-        const smallImage = moment.image_url
+        const smallImageUrl = node.image_url
           ?.replace(AWS_IMAGE_BUCKET_URL, CLOUDFRONT_IMAGE_BUCKET_URL)
           .replace(".jpg", "_s.jpg");
 
         nodes.push({
-          weight: moment.weight,
-          id: moment.ref_id,
-          name:
-            moment.show_title +
-            ":" +
-            moment.episode_title +
-            ":" +
-            moment.timestamp,
-          label: moment.show_title,
-          type: moment.type,
-          node_type: moment.node_type,
-          text: moment.text,
-          details: { ...moment, image_url: smallImage },
-          image_url: smallImage,
-          colors: nodeColors,
-          boost: boost,
+          ...node,
+          id: node.ref_id,
+          // label: moment.show_title,
+          image_url: smallImageUrl,
         });
       });
 
-      if (includeTopics) {
+      if (shouldIncludeTopics) {
         Object.entries(topicMap).forEach(([topic, topicTitles], index) => {
-          // dont create topic node for search term (otherwise everything will be linked to it)
-          if (topic === searchterm) return;
+          /** we dont create topic node for search term,
+           *  otherwise everything will be linked to it
+           */
+          if (topic === searchterm) {
+            return;
+          }
 
           const scale = topicTitles.length * 2;
-          const topicNodeId = "topicnode_" + index;
+          const topicNodeId = `topic_node_${index}`;
 
           // make links to children
           topicTitles.forEach((showTitle) => {
             const show = data.find(
               (f) => f.show_title === showTitle && f.node_type === "episode"
             );
+
             const showRefId = show?.ref_id || "";
 
             const link: Link = {
@@ -140,16 +143,17 @@ async function getGraphData(searchterm: string) {
             links.push(link);
           });
 
-          const topicNode: Node = {
-            id: topicNodeId,
-            name: topic,
-            weight: 0,
-            label: topic,
-            type: "topic",
-            node_type: "topic",
-            text: topic,
-            scale: scale,
+          const topicNode: NodeExtended = {
             colors: ["#000"],
+            id: topicNodeId,
+            label: topic,
+            name: topic,
+            node_type: "topic",
+            ref_id: topicNodeId,
+            scale,
+            show_title: topic,
+            text: topic,
+            weight: 0,
           };
 
           nodes.push(topicNode);
@@ -159,7 +163,7 @@ async function getGraphData(searchterm: string) {
       // Adds guest nodes
       Object.entries(guestMap).forEach(([guest, guestChildren], index) => {
         const scale = guestChildren.length * 2;
-        const guestNodeId = "guestnode_" + index;
+        const guestNodeId = `guestnode_${index}`;
 
         // make links to children
         guestChildren.forEach((childRefId: string) => {
@@ -171,16 +175,18 @@ async function getGraphData(searchterm: string) {
           links.push(link);
         });
 
-        const guestNode: Node = {
-          id: guestNodeId,
-          name: guest,
-          weight: 0,
-          label: guest,
-          type: "guest",
-          node_type: "guest",
-          text: guest,
-          scale: scale,
+        const guestNode: NodeExtended = {
           colors: ["#000"],
+          id: guestNodeId,
+          label: guest,
+          name: guest,
+          node_type: "guest",
+          ref_id: guestNodeId,
+          scale,
+          show_title: guest,
+          text: guest,
+          type: "guest",
+          weight: 0,
         };
 
         nodes.push(guestNode);
@@ -189,17 +195,10 @@ async function getGraphData(searchterm: string) {
 
     nodes.sort((a, b) => (b.weight || 0) - (a.weight || 0));
 
-    const n = nodes.map((n) => {
-      return { ...n };
-    });
-    const l = links.map((n) => {
-      return { ...n };
-    });
-    console.log("nodes", n);
-    console.log("links", l);
-    return { nodes, links };
+    return { links, nodes };
   } catch (e) {
     console.error(e);
+
     return defautData;
   }
-}
+};

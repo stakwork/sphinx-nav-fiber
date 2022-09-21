@@ -1,27 +1,29 @@
+import { Booster } from "~/components/Booster";
+import { Flex } from "~/components/common/Flex";
 import { Pill } from "~/components/common/Pill";
-import Booster from "~/main/map/booster";
-import { useDataStore } from "~/stores/useDataStore";
 import { useAppStore } from "~/stores/useAppStore";
+import { useDataStore } from "~/stores/useDataStore";
 
 export const Actions = () => {
   const [transcriptIsOpen, setTranscriptOpen] = useAppStore((s) => [
     s.transcriptIsOpen,
     s.setTranscriptOpen,
   ]);
+
   const selectedNode = useDataStore((s) => s.selectedNode);
 
   return (
-    <div style={{ display: "flex", alignItems: "center", margin: "10px 0" }}>
+    <Flex align="center" direction="row">
       <Pill
-        selected={transcriptIsOpen}
         onClick={() => setTranscriptOpen(!transcriptIsOpen)}
+        selected={transcriptIsOpen}
       >
         Transcript
       </Pill>
-      <Booster
-       refId={selectedNode?.id}
-       content={selectedNode}
-      />
-    </div>
+
+      <Flex pl={10}>
+        <Booster content={selectedNode} refId={selectedNode?.id} />
+      </Flex>
+    </Flex>
   );
 };

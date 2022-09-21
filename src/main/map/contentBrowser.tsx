@@ -1,14 +1,13 @@
+// eslint-disable-file
 import moment from "moment";
 import { useEffect, useState } from "react";
 import ReactAudioPlayer from "react-audio-player";
 import ClipLoader from "react-spinners/ClipLoader";
 import styled from "styled-components";
+import { Booster } from "~/components/Booster";
 import { useGraphData } from "~/components/DataRetriever";
+import { NodeExtended } from "~/types";
 import { videoTimetoSeconds } from "~/utils/videoTimetoSeconds";
-import { Node } from "../../types";
-import Booster from "./booster";
-import { sleep } from "./helpers";
-
 interface ListContent {
   dataFilter: any;
   setDataFilter: Function;
@@ -45,7 +44,7 @@ export default function ContentBrowser({
     // start async
     (async () => {
       // wait while the render appears
-      await sleep(100);
+      // await sleep(100);
       let podcastName = focusedNode?.details?.show_title;
 
       if (focusedNode && focusedNode.details) {
@@ -246,7 +245,7 @@ export default function ContentBrowser({
                       >
                         <div>{moment.unix(date).format("ll")}</div>
                         <div style={{ width: 8 }} />
-                        <Booster readOnly={true} boostCount={boost} />
+                        <Booster readOnly={true} count={boost} />
                       </div>
                       <EpisodeTitle style={{ marginBottom: 5 }}>
                         {episode_title}
@@ -311,27 +310,25 @@ export default function ContentBrowser({
   function renderPodcastByCreator() {
     const groupedPodcasts: any = {};
     data?.nodes
-      ?.filter((d: Node) => {
-        // ignore unrelated data
-        return focusedNode?.details?.show_title === d.details?.show_title;
+      ?.filter((node: NodeExtended) => {
+        return focusedNode?.show_title === node.show_title;
       })
-      .forEach((d: Node, i: number) => {
-        if (!d.details?.show_title) return;
+      .forEach((node: NodeExtended, i: number) => {
+        if (!node.show_title) return;
 
-        const { show_title, episode_title } = d.details;
+        const { show_title, episode_title } = node;
 
         if (episode_title) {
           if (show_title && !groupedPodcasts[show_title]) {
             groupedPodcasts[show_title] = {
-              ...d.details,
+              ...node,
               title: show_title,
-              image_url: d.image_url,
               timestamps: {
                 [episode_title]: [
                   {
-                    ...d.details,
+                    ...node,
                     title: episode_title,
-                    link: d.details?.link,
+                    link: node.link,
                   },
                 ],
               },
@@ -339,18 +336,16 @@ export default function ContentBrowser({
           } else if (!groupedPodcasts[show_title].timestamps[episode_title]) {
             groupedPodcasts[show_title].timestamps[episode_title] = [
               {
-                ...d.details,
-                image_url: d.image_url,
+                ...node,
                 title: episode_title,
-                link: d.details?.link,
+                link: node.link,
               },
             ];
           } else {
             groupedPodcasts[show_title].timestamps[episode_title].push({
-              ...d.details,
-              image_url: d.image_url,
+              ...node,
               title: episode_title,
-              link: d.details?.link,
+              link: node.link,
             });
           }
         }
@@ -400,7 +395,7 @@ export default function ContentBrowser({
                       <ReactAudioPlayer
                         id={audioUrl}
                         className={"audio-player"}
-                        // autoPlay
+                        autoPlay
                         style={{
                           width: "100%",
                         }}
@@ -458,7 +453,7 @@ export default function ContentBrowser({
                         });
                       const myKey = episodeName + "_" + i + "_" + ii;
                       const defaultTimestamp = thisPodcastTimestamps[0];
-                      let episodeImg = defaultTimestamp.image_url;
+                      // let episodeImg = defaultTimestamp.image_url;
 
                       return (
                         <div key={myKey}>
@@ -552,10 +547,7 @@ export default function ContentBrowser({
                                     <Time style={{ color }}>
                                       {"" + formatTimestamp(t.timestamp)}
                                       <div style={{ marginLeft: 10 }}>
-                                        <Booster
-                                          readOnly={true}
-                                          boostCount={t.boost}
-                                        />
+                                        <Booster count={t.boost} readOnly />
                                       </div>
                                     </Time>
                                     <Transcript

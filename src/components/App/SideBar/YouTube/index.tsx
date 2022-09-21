@@ -1,9 +1,11 @@
 import { useMemo } from "react";
 import styled from "styled-components";
+import { Relevance } from "~/components/App/SideBar/Relevance";
+import { Flex } from "~/components/common/Flex";
+import { Text } from "~/components/common/Text";
 import { useSelectedNode } from "~/stores/useDataStore";
 import { videoTimetoSeconds } from "~/utils/videoTimetoSeconds";
 import { Actions } from "../Actions";
-import { Suggestions } from "../Suggestions";
 
 const PodcastName = styled.div`
   font-weight: 400;
@@ -36,15 +38,21 @@ const Desc = styled.div`
 export const YouTube = () => {
   const selectedNode = useSelectedNode();
 
-  const { description, show_title, episode_title, link, timestamp } =
-    selectedNode?.details || {};
+  const {
+    description,
+    show_title: showTitle,
+    episode_title: episodeTitle,
+    link,
+    timestamp,
+  } = selectedNode || {};
 
   const secs = videoTimetoSeconds(timestamp || "");
 
   const embeddedUrl = useMemo(
     () =>
-      link?.replace("watch?v=", "embed/").split("?")[0] +
-      `?start=${secs}&autoplay=1`,
+      `${
+        link?.replace("watch?v=", "embed/").split("?")[0]
+      }?start=${secs}&autoplay=1`,
     [link, secs]
   );
 
@@ -53,11 +61,11 @@ export const YouTube = () => {
   }
 
   return (
-    <div style={{ height: "100%", width: "100%", overflow: "auto" }}>
+    <div style={{ height: "100%", overflow: "auto", width: "100%" }}>
       <div style={{ padding: 20 }}>
-        <PodcastName style={{ marginBottom: 5 }}>{show_title}</PodcastName>
+        <PodcastName style={{ marginBottom: 5 }}>{showTitle}</PodcastName>
 
-        <Title>{episode_title}</Title>
+        <Title>{episodeTitle}</Title>
 
         <Actions />
 
@@ -74,7 +82,13 @@ export const YouTube = () => {
 
       <Desc>{description}</Desc>
 
-      <Suggestions />
+      <Relevance
+        header={
+          <Flex pb={10} px={20}>
+            <Text kind="medium">More like this...</Text>
+          </Flex>
+        }
+      />
     </div>
   );
 };

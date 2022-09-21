@@ -1,40 +1,49 @@
 import { useThree } from "@react-three/fiber";
 import { useGesture } from "@use-gesture/react";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { useMousePosition } from "~/hooks/useMousePosition";
 import { useDataStore } from "~/stores/useDataStore";
-import { Node, NodeMesh } from "~/types";
+import { NodeExtended, NodeMesh } from "~/types";
 
 const raycaster = new THREE.Raycaster();
 
 export const useGraphMouseEvents = (
-  onHover?: (_: any) => void,
-  onNotHover?: (_: Node) => void,
-  onClicked?: (_: Node) => void
+  onHover?: (_: NodeExtended) => void,
+  onNotHover?: (_: NodeExtended) => void,
+  onClicked?: (_: NodeExtended) => void
 ) => {
   const { camera, scene } = useThree();
 
   const pointer = useMousePosition();
 
-  const hoverNode = useRef<Node | null>(null);
+  const hoverNode = useRef<NodeExtended | null>(null);
 
-  const previousHoverNode = useRef<Node | null>(null);
-  const [setHoveredNode, cameraAnimation, setCameraAnimation] = useDataStore((s) => [s.setHoveredNode,s.cameraAnimation,s.setCameraAnimation]);
+  const previousHoverNode = useRef<NodeExtended | null>(null);
+
+  const [clickTarget, setClickTarget] = useState<NodeExtended>();
+
+  const [setHoveredNode, cameraAnimation, setCameraAnimation] = useDataStore(
+    (s) => [s.setHoveredNode, s.cameraAnimation, s.setCameraAnimation]
+  );
 
   useGesture(
     {
-      onMouseUp: () => {
+      onMouseDown: () => {
         if (hoverNode.current) {
-          onClicked?.(hoverNode.current);
+          setClickTarget(hoverNode.current);
+        }
+
+        if (cameraAnimation) {
+          cameraAnimation.kill();
+          setCameraAnimation(null);
         }
       },
-      onMouseDown: () => {
-        if (cameraAnimation) {
-          cameraAnimation.kill()
-          setCameraAnimation(null)
+      onMouseUp: () => {
+        if (clickTarget) {
+          onClicked?.(clickTarget);
         }
-      }
+      },
     },
     {
       target: document.getElementById("universe-canvas") || undefined,
@@ -55,7 +64,8 @@ export const useGraphMouseEvents = (
         return false;
       }
 
-      return f.object.__data?.type !== "topic";
+      // eslint-disable-next-line no-underscore-dangle
+      return f.object.__data?.node_type !== "topic";
     });
 
     const label = intersects.find((f) => {
@@ -63,19 +73,25 @@ export const useGraphMouseEvents = (
         return false;
       }
 
-      return f.object.__data?.type === "topic";
+      // eslint-disable-next-line no-underscore-dangle
+      return f.object.__data?.node_type === "topic";
     });
 
     const hoveredObject =
+      // eslint-disable-next-line no-underscore-dangle
       (node?.object as NodeMesh)?.__data ||
+      // eslint-disable-next-line no-underscore-dangle
       (label?.object as NodeMesh)?.__data ||
       null;
 
     if (hoveredObject?.id !== hoverNode.current?.id) {
       previousHoverNode.current = hoverNode.current;
 
-      setHoveredNode(hoveredObject);
-      onHover?.(hoveredObject);
+      if (hoveredObject) {
+        setHoveredNode(hoveredObject);
+        onHover?.(hoveredObject);
+      }
+
       onNotHover?.(previousHoverNode.current!);
 
       hoverNode.current = hoveredObject;

@@ -1,52 +1,51 @@
 import { Mesh, Object3D } from "three";
 
-export type Moment = {
-  label?: string;
-  boost: number;
-  children?: string[];
-  date: number;
-  description?: string;
-  episode_title: string;
-  guests: string[];
-  image_url?: string;
-  keyword?: boolean;
-  link: string;
-  node_type: string;
-  ref_id: string;
-  show_title: string;
-  text: string;
-  timestamp: string;
-  topics: string[];
-  type: string;
-  weight: number;
-};
-
 export type Node = {
-  boost?: number;
-  colors?: string[];
-  details?: Partial<Moment>;
+  boost?: number | null;
+  children?: string[];
+  colors: string[];
+  date?: number;
+  description?: string;
+  episode_title?: string;
+  guests?: (null | string)[];
   id: string;
   image_url?: string;
-  label?: string;
+  keyword?: boolean;
+  label: string;
+  link?: string;
   name: string;
-  node_type: string;
+  node_type: NodeType;
+  ref_id: string;
   scale?: number;
+  show_title?: string;
   text?: string;
-  type?: string;
+  timestamp?: string;
+  topics?: string[];
+  type?: Type;
   weight?: number;
+};
+
+export type NodeExtended = Node & {
+  x?: number;
+  y?: number;
+  z?: number;
   __threeObj?: Object3D;
 };
 
-export type Link = {
-  source: string;
-  target: string;
+export type Link<T = string> = {
+  source: T;
+  target: T;
 };
 
 export type GraphData = {
-  nodes: Node[];
+  nodes: NodeExtended[];
   links: Link[];
 };
 
 export class NodeMesh extends Mesh {
-  __data?: Node;
+  __data?: NodeExtended;
 }
+
+export type NodeType = "clip" | "episode" | "guest" | "show" | "topic";
+
+export type Type = "twitter" | "youtube" | "guest" | "podcast";

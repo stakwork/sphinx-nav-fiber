@@ -1,10 +1,10 @@
 import { extend, useFrame, useThree } from "@react-three/fiber";
 import { createUseGesture, wheelAction } from "@use-gesture/react";
 import CameraControls from "camera-controls";
-import { useCallback, useEffect, useRef, useState } from "react";
+import gsap from "gsap";
+import { useCallback, useEffect, useRef } from "react";
 import * as THREE from "three";
 import { useDataStore } from "~/stores/useDataStore";
-import gsap from 'gsap'
 
 CameraControls.install({ THREE });
 
@@ -13,7 +13,12 @@ extend({ CameraControls });
 const useGesture = createUseGesture([wheelAction]);
 
 export const Controls = () => {
-  const [selectedNode, data, cameraAnimation, setCameraAnimation]  = useDataStore((s) => [s.selectedNode,s.data,s.cameraAnimation,s.setCameraAnimation]);
+  const [cameraAnimation, setCameraAnimation] = useDataStore((s) => [
+    s.cameraAnimation,
+    s.setCameraAnimation,
+  ]);
+
+  const [selectedNode, data] = useDataStore((s) => [s.selectedNode, s.data]);
 
   const cameraControlsRef = useRef<CameraControls | null>(null);
   const camera = useThree((state) => state.camera);
@@ -30,14 +35,102 @@ export const Controls = () => {
 
     const distance = cameraControlsRef.current?.distance;
 
-    let dollyStep = distance < 3000 ? 80 : 140;
+    let dollyStep = distance < 3000 ? 40 : 140;
 
     if (event.deltaY > 0) {
-      dollyStep = dollyStep * -1;
+      dollyStep *= -1;
     }
 
     cameraControlsRef.current?.dolly(dollyStep, true);
   }, []);
+
+  const rotateWorld = useCallback(() => {
+    cameraAnimation?.kill();
+
+    const rotateCycle = gsap.to(camera, {
+      azimuthAngle:
+        (cameraControlsRef?.current?.azimuthAngle || 0) +
+        360 * THREE.MathUtils.DEG2RAD,
+      duration: 280,
+      // https://greensock.com/ease-visualizer/
+      ease: "power",
+      overwrite: true,
+      paused: true,
+    });
+
+    // rotateCycle.eventCallback("onComplete", (e: any) => {});
+    rotateCycle.play(0);
+
+    setCameraAnimation(rotateCycle);
+  }, [cameraAnimation, camera, setCameraAnimation]);
+
+  const doIntroAnimation = useCallback(() => {
+    cameraAnimation?.kill();
+
+    const cameraControls = cameraControlsRef?.current;
+
+    // The start position
+    const { x, y, z } = cameraControls?.camera?.position || {
+      x: 0,
+      y: 0,
+      z: 0,
+    };
+
+    // for intro fly
+    const curve = new THREE.CatmullRomCurve3([
+      new THREE.Vector3(x, y, z),
+      // new THREE.Vector3(x - 1500, y - 5800, z - 900),
+      new THREE.Vector3(-1900, -3200, -2800),
+    ]);
+
+    // const points = curve.getPoints(50);
+    const tempVector = new THREE.Vector3();
+    const animationProgress = { value: 0 };
+
+    const moveCycle = gsap.fromTo(
+      animationProgress,
+      {
+        value: 0,
+      },
+      {
+        duration: 4,
+        onComplete: () => {
+          setCameraAnimation(null);
+          rotateWorld();
+        },
+        onInterrupt() {
+          moveCycle.kill();
+        },
+        onUpdate: ({ value }) => {
+          curve.getPoint(value, tempVector);
+
+          const cameraX = tempVector.x;
+          const cameraY = tempVector.y;
+          const cameraZ = tempVector.z;
+          const lookAtX = 0;
+          const lookAtY = 0;
+          const lookAtZ = 0;
+
+          cameraControls?.setLookAt(
+            cameraX,
+            cameraY,
+            cameraZ,
+            lookAtX,
+            lookAtY,
+            lookAtZ,
+            true
+          );
+        },
+        onUpdateParams: [animationProgress],
+        overwrite: true,
+        paused: true,
+        value: 1,
+      }
+    );
+
+    moveCycle.play();
+    setCameraAnimation(moveCycle);
+  }, [cameraAnimation, rotateWorld, setCameraAnimation]);
 
   useEffect(() => {
     if (cameraControlsRef.current) {
@@ -46,15 +139,16 @@ export const Controls = () => {
       cameraControlsRef.current.maxDistance = Infinity;
       cameraControlsRef.current.minPolarAngle = -Infinity;
       cameraControlsRef.current.maxPolarAngle = Infinity;
-      //cameraControlsRef.current.enableTransition = true;
+      // cameraControlsRef.current.enableTransition = true;
       cameraControlsRef.current.dollySpeed = 0.2;
       cameraControlsRef.current.dampingFactor = 0.1;
       cameraControlsRef.current.infinityDolly = true;
-      //cameraControlsRef.current.enableDamping = true;
+      // cameraControlsRef.current.enableDamping = true;
       cameraControlsRef.current.dollyToCursor = true;
     }
 
-    doIntroAnimation()
+    doIntroAnimation();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useGesture(
@@ -70,111 +164,26 @@ export const Controls = () => {
     if (selectedNode && cameraControlsRef.current) {
       cameraControlsRef.current.dampingFactor = 0.05;
 
-      // @ts-ignore
-      const { x, y, z } = selectedNode;
+      const { x = 0, y = 0, z = 0 } = selectedNode;
 
       cameraControlsRef.current?.setTarget(x, y, z, true);
+      // cameraControlsRef.current?.zoomTo(10, true);
     }
   }, [selectedNode]);
 
   useEffect(() => {
-    if (!cameraAnimation) rotateWorld()
-  },[data])
+    if (!cameraAnimation) {
+      rotateWorld();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data]);
 
-  useFrame((state, delta) => {
+  useFrame((_, delta) => {
     cameraControlsRef.current?.update(delta);
   });
 
-  function rotateWorld() {
-    if (cameraAnimation) {
-      cameraAnimation.kill()
-      setCameraAnimation(null)
-    }
-
-    let rotateCycle = gsap.to(cameraControlsRef.current, {
-      // @ts-ignore
-      azimuthAngle: cameraControlsRef?.current?.azimuthAngle + 360 * THREE.MathUtils.DEG2RAD,
-      duration: 280,
-      // https://greensock.com/ease-visualizer/
-      ease: "power",
-      overwrite: true,
-      paused: true,
-    });
-
-    rotateCycle.eventCallback("onComplete", (e: any) => {
-    });
-    rotateCycle.play(0);
-
-    setCameraAnimation(rotateCycle)
-  }
-
-  function doIntroAnimation() {
-    if (cameraAnimation) {
-      cameraAnimation.kill()
-      setCameraAnimation(null)
-    }
-
-    const cameraControls = cameraControlsRef?.current
-    // start position
-    // @ts-ignore
-    const { x, y, z } = cameraControls?._camera?.position;
-    
-    // for intro fly
-    const curve = new THREE.CatmullRomCurve3([
-      new THREE.Vector3(x, y, z),
-      // new THREE.Vector3(x - 1500, y - 5800, z - 900),
-      new THREE.Vector3(-1900, -3200, -2800),
-    ]);
-    const points = curve.getPoints(50);
-    const _tmp = new THREE.Vector3();
-    const animationProgress = { value: 0 };
-
-    const moveCycle = gsap.fromTo(
-      animationProgress,
-      {
-        value: 0,
-      },
-      {
-        value: 1,
-        duration: 4,
-        paused: true,
-        onInterrupt() {
-          moveCycle.kill();
-        },
-        overwrite:true,
-        onUpdateParams: [animationProgress],
-        onUpdate({ value }) {
-          curve.getPoint(value, _tmp);
-          const cameraX = _tmp.x;
-          const cameraY = _tmp.y;
-          const cameraZ = _tmp.z;
-          const lookAtX = 0;
-          const lookAtY = 0;
-          const lookAtZ = 0;
-
-          // @ts-ignore
-          cameraControls.setLookAt(
-            cameraX,
-            cameraY,
-            cameraZ,
-            lookAtX,
-            lookAtY,
-            lookAtZ,
-            true
-          );
-        },
-        onComplete() {
-          setCameraAnimation(null)
-          rotateWorld();
-        },
-      }
-    );
-
-    moveCycle.play()
-    setCameraAnimation(moveCycle)
-  }
-
   return (
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     <cameraControls ref={cameraControlsRef} args={[camera, gl.domElement]} />
   );

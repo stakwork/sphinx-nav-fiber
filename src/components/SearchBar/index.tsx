@@ -3,7 +3,6 @@ import styled, { css } from "styled-components";
 import { useAppStore } from "~/stores/useAppStore";
 
 type Props = {
-  showList?: boolean;
   loading?: boolean;
 };
 
@@ -51,25 +50,25 @@ export const SearchBar = ({ loading }: Props) => {
       clearTimeout(timeoutRef.current);
     }
 
+    timeoutRef.current = setTimeout(() => {
+      if (tempSearch) {
+        setSearch(tempSearch);
+      }
+    }, 500);
   }, [setSearch, tempSearch]);
 
   return (
     <Input
-      loading={loading}
       disabled={loading}
-      type="text"
-      value={tempSearch || ""}
-      placeholder="Search (10 sats)"
+      loading={loading}
       onChange={(e) => {
-        const value = e.target.value;
+        const { value } = e.target;
 
         setTempSearch(value);
       }}
-      onKeyPress={(event: any) => {
-        if (event.key === "Enter" && !!tempSearch) {
-         setSearch(tempSearch) 
-        }
-      }}
+      placeholder="Search (10 sats)"
+      type="text"
+      value={tempSearch || ""}
     />
   );
 };
