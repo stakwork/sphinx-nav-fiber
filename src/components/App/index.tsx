@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import * as sphinx from "sphinx-bridge-kevkevinpal";
 import styled from "styled-components";
 import { AppBar } from "~/components/App/AppBar";
-import { SideBar } from "~/components/App/SideBar";
 import { Flex } from "~/components/common/Flex";
 import { Loader } from "~/components/common/Loader";
 import { DataRetriever } from "~/components/DataRetriever";
@@ -50,7 +49,7 @@ export const App = () => {
   return (
     <Wrapper direction="row">
       <DataRetriever loader={<Loader />}>
-        <SideBar />
+        {/* <SideBar /> */}
 
         <Universe />
       </DataRetriever>

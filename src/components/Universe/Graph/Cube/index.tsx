@@ -1,10 +1,10 @@
 import { Edges } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
-import { useMemo, useRef } from "react";
+import { useCallback, useMemo, useRef } from "react";
 import * as THREE from "three";
-import { MeshBasicMaterial, TextureLoader } from "three";
 import { useSelectedNode } from "~/stores/useDataStore";
 import { NodeExtended } from "~/types";
+import { useMaterial } from "./useMaterial";
 
 const geometryXs = new THREE.BoxGeometry(10, 10, 10);
 const geometryS = new THREE.BoxGeometry(20, 20, 20);
@@ -24,15 +24,10 @@ const getGeometry = (node: NodeExtended) => {
   }
 };
 
-const loader = new TextureLoader();
-
 export const Cube = ({ node }: { node: NodeExtended }) => {
   const ref = useRef<THREE.Mesh | null>(null);
 
-  const map = useMemo(
-    () => loader.load(node.image_url || "/noimage.jpeg"),
-    [node]
-  );
+  const material = useMaterial(node.image_url || "noimage.jpeg");
 
   const selectedNode = useSelectedNode();
 
@@ -41,21 +36,35 @@ export const Cube = ({ node }: { node: NodeExtended }) => {
   const geometry = useMemo(() => getGeometry(node), [node]);
 
   useFrame(() => {
-    if (ref.current) {
-      ref.current.position.set(node.x || 0, node.y || 0, node.z || 0);
-
-      const material = ref.current.material as MeshBasicMaterial;
-
-      if (!Array.isArray(material) && !material.map) {
-        material.map = map;
-      }
-    }
+    ref.current?.position.set(node.x || 0, node.y || 0, node.z || 0);
   });
 
-  return (
-    <mesh ref={ref} geometry={geometry} name={node.id} userData={node}>
-      <meshBasicMaterial />
+  const onPointerIn = useCallback(() => {
+    ref.current?.scale.set(
+      ref.current.scale.x * 1.5,
+      ref.current.scale.x * 1.5,
+      ref.current.scale.x * 1.5
+    );
+  }, []);
 
+  const onPointerOut = useCallback(() => {
+    ref.current?.scale.set(
+      ref.current.scale.x / 1.5,
+      ref.current.scale.x / 1.5,
+      ref.current.scale.x / 1.5
+    );
+  }, []);
+
+  return (
+    <mesh
+      ref={ref}
+      geometry={geometry}
+      material={material}
+      name={node.id}
+      onPointerOut={onPointerOut}
+      onPointerOver={onPointerIn}
+      userData={node}
+    >
       <Edges renderOrder={1000} visible={isSelected}>
         <meshBasicMaterial color="white" depthTest={false} transparent />
       </Edges>

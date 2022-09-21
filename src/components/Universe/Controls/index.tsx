@@ -130,6 +130,7 @@ export const Controls = () => {
   useEffect(() => {
     if (cameraControlsRef.current) {
       cameraControlsRef.current.mouseButtons.wheel = 0;
+
       cameraControlsRef.current.minDistance = 200;
       cameraControlsRef.current.maxDistance = Infinity;
       cameraControlsRef.current.minPolarAngle = -Infinity;
@@ -176,32 +177,33 @@ export const Controls = () => {
 
         cameraControlsRef.current.dampingFactor = 0.01;
 
-        // eslint-disable-next-line no-underscore-dangle
-        const mesh = selectedNode?.__threeObj;
+        const mesh = new THREE.Vector3(
+          selectedNode.x,
+          selectedNode.y,
+          selectedNode.z
+        );
 
-        if (mesh) {
-          p.copy(mesh.position);
+        p.copy(mesh);
 
-          p.add(
-            new THREE.Vector3(
-              THREE.MathUtils.randInt(60, 80),
-              THREE.MathUtils.randInt(60, 80),
-              THREE.MathUtils.randInt(60, 80)
-            )
-          );
+        p.add(
+          new THREE.Vector3(
+            THREE.MathUtils.randInt(60, 80),
+            THREE.MathUtils.randInt(60, 80),
+            THREE.MathUtils.randInt(60, 80)
+          )
+        );
 
-          await cameraControlsRef.current.setLookAt(
-            p.x,
-            p.y,
-            p.z,
-            mesh.position.x,
-            mesh.position.y,
-            mesh.position.z,
-            true
-          );
+        await cameraControlsRef.current.setLookAt(
+          p.x,
+          p.y,
+          p.z,
+          mesh.x,
+          mesh.y,
+          mesh.z,
+          true
+        );
 
-          cameraControlsRef.current.dampingFactor = 0.1;
-        }
+        cameraControlsRef.current.dampingFactor = 0.1;
       }
     };
 

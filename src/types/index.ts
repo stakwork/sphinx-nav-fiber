@@ -1,4 +1,5 @@
-import { Mesh, Object3D } from "three";
+/* eslint-disable camelcase */
+import { Mesh } from "three";
 
 export type Node = {
   boost?: number | null;
@@ -29,7 +30,6 @@ export type NodeExtended = Node & {
   x?: number;
   y?: number;
   z?: number;
-  __threeObj?: Object3D;
 };
 
 export type Link<T = string> = {
