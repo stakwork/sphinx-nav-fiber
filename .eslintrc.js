@@ -114,6 +114,7 @@ module.exports = {
     "react/jsx-props-no-spreading": "off",
     "react/jsx-sort-props": "error",
     "react/jsx-uses-react": "off",
+    "react/no-unknown-property": "off",
     "react/no-unstable-nested-components": ["error", { allowAsProps: true }],
     "react/no-unused-prop-types": "error",
     "react/react-in-jsx-scope": "off",

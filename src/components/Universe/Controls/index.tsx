@@ -132,11 +132,9 @@ export const Controls = () => {
       cameraControlsRef.current.maxDistance = Infinity;
       cameraControlsRef.current.minPolarAngle = -Infinity;
       cameraControlsRef.current.maxPolarAngle = Infinity;
-      // cameraControlsRef.current.enableTransition = true;
       cameraControlsRef.current.dollySpeed = 0.2;
       cameraControlsRef.current.dampingFactor = 0.1;
       cameraControlsRef.current.infinityDolly = true;
-      // cameraControlsRef.current.enableDamping = true;
       cameraControlsRef.current.dollyToCursor = true;
     }
 
@@ -154,34 +152,40 @@ export const Controls = () => {
   );
 
   useEffect(() => {
-    if (selectedNode && cameraControlsRef.current) {
-      cameraControlsRef.current.dampingFactor = 0.05;
+    const run = async () => {
+      if (selectedNode && cameraControlsRef.current) {
+        cameraControlsRef.current.dampingFactor = 0.01;
 
-      // eslint-disable-next-line no-underscore-dangle
-      const mesh = selectedNode?.__threeObj;
+        // eslint-disable-next-line no-underscore-dangle
+        const mesh = selectedNode?.__threeObj;
 
-      if (mesh) {
-        p.copy(mesh.position);
+        if (mesh) {
+          p.copy(mesh.position);
 
-        p.add(
-          new THREE.Vector3(
-            THREE.MathUtils.randInt(60, 80),
-            THREE.MathUtils.randInt(60, 80),
-            THREE.MathUtils.randInt(60, 80)
-          )
-        );
+          p.add(
+            new THREE.Vector3(
+              THREE.MathUtils.randInt(60, 80),
+              THREE.MathUtils.randInt(60, 80),
+              THREE.MathUtils.randInt(60, 80)
+            )
+          );
 
-        cameraControlsRef.current.setLookAt(
-          p.x,
-          p.y,
-          p.z,
-          mesh.position.x,
-          mesh.position.y,
-          mesh.position.z,
-          true
-        );
+          await cameraControlsRef.current.setLookAt(
+            p.x,
+            p.y,
+            p.z,
+            mesh.position.x,
+            mesh.position.y,
+            mesh.position.z,
+            true
+          );
+
+          cameraControlsRef.current.dampingFactor = 0.1;
+        }
       }
-    }
+    };
+
+    run();
   }, [selectedNode]);
 
   useEffect(() => {
