@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ClipLoader } from "react-spinners";
 import styled from "styled-components";
 import { SearchBar } from "~/components/SearchBar";
 import { useAppStore } from "~/stores/useAppStore";
 import { useDataStore } from "~/stores/useDataStore";
 import { View } from "./View";
-import Loading from '../../common/Loading'
+import Loading from "../../common/Loading";
 
 type Props = {
   dataFilter?: any;
@@ -72,11 +72,15 @@ const CloseButton = styled.div`
 const Content = ({ loading, onClose }: Props) => {
   const clearSearch = useAppStore((s) => s.clearSearch);
   const setSelectedNode = useDataStore((s) => s.setSelectedNode);
+  const selectedNode = useDataStore((s) => s.selectedNode);
   const loadingData = useDataStore((s) => s.loadingData);
   const transcriptIsOpen = useAppStore((s) => s.transcriptIsOpen);
 
-  const [selectedContent, setSelectedContent] =
-    useState<string>("No transcript");
+  const [selectedContent, setSelectedContent] = useState<string>("");
+
+  useEffect(() => {
+    setSelectedContent(selectedNode?.text || "No transcript");
+  }, [selectedNode]);
 
   return (
     <Wrapper>
@@ -97,11 +101,7 @@ const Content = ({ loading, onClose }: Props) => {
         )}
       </SearchWrapper>
 
-      {loadingData ? (
-        <Loading/>
-      ) : (
-        <View />
-      )}
+      {loadingData ? <Loading /> : <View />}
 
       {transcriptIsOpen && (
         <TranscriptEnv style={{ left: MENU_WIDTH }}>
