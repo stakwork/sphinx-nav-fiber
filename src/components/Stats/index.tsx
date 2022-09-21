@@ -4,29 +4,43 @@ import { api } from "~/network/api";
 
 type StatResponse = {
   data: {
+    // eslint-disable-next-line camelcase
     num_nodes: number;
+    // eslint-disable-next-line camelcase
     num_episodes: number;
+    // eslint-disable-next-line camelcase
     num_audio: number;
+    // eslint-disable-next-line camelcase
     num_video: number;
+    // eslint-disable-next-line camelcase
     num_contributors: number;
+    // eslint-disable-next-line camelcase
     num_daily: number;
   };
 };
+
 export const Stats = () => {
   const [stats, setStats] = useState({
-    num_nodes: 0,
-    num_episodes: 0,
-    num_audio: 0,
-    num_video: 0,
-    num_contributors: 0,
-    num_daily: 0,
+    numAudio: 0,
+    numContributors: 0,
+    numDaily: 0,
+    numEpisodes: 0,
+    numNodes: 0,
+    numVideo: 0,
   });
 
   useEffect(() => {
     const run = async () => {
       const { data } = await api.get<StatResponse>("/stats");
 
-      setStats(data);
+      setStats({
+        numAudio: data.num_audio,
+        numContributors: data.num_contributors,
+        numDaily: data.num_daily,
+        numEpisodes: data.num_episodes,
+        numNodes: data.num_nodes,
+        numVideo: data.num_video,
+      });
     };
 
     run();
@@ -35,28 +49,28 @@ export const Stats = () => {
   return (
     <div>
       <Text as="div" color="white" kind="regularBold">
-        Nodes: {stats.num_nodes}
+        Nodes: {stats.numNodes}
       </Text>
 
       <Text as="div" color="white" kind="regularBold">
         {" "}
-        Episodes: {stats.num_episodes}
+        Episodes: {stats.numEpisodes}
       </Text>
 
       <Text as="div" color="white" kind="regularBold">
-        Audio Clips: {stats.num_audio}
+        Audio Clips: {stats.numAudio}
       </Text>
 
       <Text as="div" color="white" kind="regularBold">
-        Video Clips: {stats.num_video}
+        Video Clips: {stats.numVideo}
       </Text>
 
       <Text as="div" color="white" kind="regularBold">
-        Contributers: {stats.num_contributors}
+        Contributers: {stats.numContributors}
       </Text>
 
       <Text as="div" color="white" kind="regularBold">
-        Nodes Added Daily: {stats.num_daily}
+        Nodes Added Daily: {stats.numDaily}
       </Text>
     </div>
   );

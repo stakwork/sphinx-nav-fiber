@@ -19,10 +19,10 @@ const fontWeights: Record<TextKind, number> = {
   bigHeadingBold: 700,
   heading: 400,
   headingBold: 700,
-  regular: 500,
-  regularBold: 600,
   medium: 500,
   mediumBold: 600,
+  regular: 500,
+  regularBold: 600,
   tiny: 300,
   tinyBold: 500,
 };

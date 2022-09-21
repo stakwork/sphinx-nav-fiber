@@ -38,7 +38,7 @@ export const Controls = () => {
     let dollyStep = distance < 3000 ? 40 : 140;
 
     if (event.deltaY > 0) {
-      dollyStep = dollyStep * -1;
+      dollyStep *= -1;
     }
 
     cameraControlsRef.current?.dolly(dollyStep, true);
@@ -84,7 +84,7 @@ export const Controls = () => {
     ]);
 
     // const points = curve.getPoints(50);
-    const _tmp = new THREE.Vector3();
+    const tempVector = new THREE.Vector3();
     const animationProgress = { value: 0 };
 
     const moveCycle = gsap.fromTo(
@@ -93,19 +93,20 @@ export const Controls = () => {
         value: 0,
       },
       {
-        value: 1,
         duration: 4,
-        paused: true,
+        onComplete: () => {
+          setCameraAnimation(null);
+          rotateWorld();
+        },
         onInterrupt() {
           moveCycle.kill();
         },
-        overwrite: true,
-        onUpdateParams: [animationProgress],
-        onUpdate({ value }) {
-          curve.getPoint(value, _tmp);
-          const cameraX = _tmp.x;
-          const cameraY = _tmp.y;
-          const cameraZ = _tmp.z;
+        onUpdate: ({ value }) => {
+          curve.getPoint(value, tempVector);
+
+          const cameraX = tempVector.x;
+          const cameraY = tempVector.y;
+          const cameraZ = tempVector.z;
           const lookAtX = 0;
           const lookAtY = 0;
           const lookAtZ = 0;
@@ -120,10 +121,10 @@ export const Controls = () => {
             true
           );
         },
-        onComplete() {
-          setCameraAnimation(null);
-          rotateWorld();
-        },
+        onUpdateParams: [animationProgress],
+        overwrite: true,
+        paused: true,
+        value: 1,
       }
     );
 
@@ -138,15 +139,16 @@ export const Controls = () => {
       cameraControlsRef.current.maxDistance = Infinity;
       cameraControlsRef.current.minPolarAngle = -Infinity;
       cameraControlsRef.current.maxPolarAngle = Infinity;
-      //cameraControlsRef.current.enableTransition = true;
+      // cameraControlsRef.current.enableTransition = true;
       cameraControlsRef.current.dollySpeed = 0.2;
       cameraControlsRef.current.dampingFactor = 0.1;
       cameraControlsRef.current.infinityDolly = true;
-      //cameraControlsRef.current.enableDamping = true;
+      // cameraControlsRef.current.enableDamping = true;
       cameraControlsRef.current.dollyToCursor = true;
     }
 
     doIntroAnimation();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useGesture(
@@ -173,6 +175,7 @@ export const Controls = () => {
     if (!cameraAnimation) {
       rotateWorld();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
   useFrame((_, delta) => {
@@ -180,6 +183,7 @@ export const Controls = () => {
   });
 
   return (
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     <cameraControls ref={cameraControlsRef} args={[camera, gl.domElement]} />
   );

@@ -17,6 +17,7 @@ export const useMousePosition = () => {
 
         const x =
           ((clientX - (sidebarIsOpen ? MENU_WIDTH : 0)) / canvasWidth) * 2 - 1;
+
         const y = -(clientY / window.innerHeight) * 2 + 1;
 
         setPointer([x, y]);

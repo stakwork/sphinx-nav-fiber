@@ -14,20 +14,23 @@ export const Graph = () => {
   const { scene } = useThree();
 
   const data = useGraphData();
+
   const [selectedNode, setSelectedNode] = useDataStore((s) => [
     s.selectedNode,
     s.setSelectedNode,
   ]);
 
-  const graph = useMemo(() => {
-    return new ThreeForceGraph()
-      .nodeThreeObject(renderNode)
-      .nodeResolution(20)
-      .linkThreeObject(renderLink)
-      .d3VelocityDecay(0.2)
-      .d3Force("link", d3.forceLink().strength(0.1))
-      .d3Force("center", d3.forceCenter().strength(0.1));
-  }, []);
+  const graph = useMemo(
+    () =>
+      new ThreeForceGraph()
+        .nodeThreeObject(renderNode)
+        .nodeResolution(20)
+        .linkThreeObject(renderLink)
+        .d3VelocityDecay(0.2)
+        .d3Force("link", d3.forceLink().strength(0.1))
+        .d3Force("center", d3.forceCenter().strength(0.1)),
+    []
+  );
 
   useEffect(() => {
     graph.refresh();
@@ -77,14 +80,18 @@ export const Graph = () => {
   );
 
   const onHover = useCallback((node: NodeExtended) => {
+    // eslint-disable-next-line no-underscore-dangle
     const scale = node?.__threeObj?.scale || new Vector3(0, 0, 0);
 
+    // eslint-disable-next-line no-underscore-dangle
     node?.__threeObj?.scale.set(scale.x * 1.5, scale.y * 1.5, 1);
   }, []);
 
   const onNotHover = useCallback((previousHoverNode: NodeExtended) => {
+    // eslint-disable-next-line no-underscore-dangle
     const scale = previousHoverNode?.__threeObj?.scale || new Vector3(0, 0, 0);
 
+    // eslint-disable-next-line no-underscore-dangle
     previousHoverNode?.__threeObj?.scale.set(scale.x / 1.5, scale.y / 1.5, 1);
   }, []);
 

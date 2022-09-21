@@ -10,10 +10,14 @@ type AppStore = {
   setTranscriptOpen: (_: boolean) => void;
 };
 
-export const useAppStore = create<AppStore>((set, get) => ({
+const defaultData = {
   currentSearch: null,
   sidebarIsOpen: false,
   transcriptIsOpen: false,
+};
+
+export const useAppStore = create<AppStore>((set, get) => ({
+  ...defaultData,
   clearSearch: () => set({ currentSearch: null }),
   setCurrentSearch: (currentSearch) => set({ currentSearch }),
   setSidebarOpen: (sidebarIsOpen) =>

@@ -28,7 +28,7 @@ const Description = styled(Text)`
   -webkit-box-orient: vertical;
 `;
 
-export function Tooltip() {
+export const Tooltip = () => {
   const node = useDataStore((s) => s.hoveredNode);
 
   if (!node) {
@@ -36,10 +36,10 @@ export function Tooltip() {
   }
 
   const {
-    node_type,
-    image_url,
-    show_title,
-    episode_title,
+    node_type: nodeType,
+    image_url: imageUrl,
+    show_title: showTitle,
+    episode_title: episodeTitle,
     description,
     guests,
     text,
@@ -47,24 +47,24 @@ export function Tooltip() {
   } = node || {};
 
   return (
-    <Wrapper px={24} py={16} borderRadius={8}>
+    <Wrapper borderRadius={8} px={24} py={16}>
       <Flex align="center" pb={12}>
-        <Text>{node_type?.toUpperCase()}</Text>
+        <Text>{nodeType?.toUpperCase()}</Text>
       </Flex>
 
       <Flex direction="row">
         <Flex pr={12}>
-          <Avatar src={image_url || ""} />
+          <Avatar src={imageUrl || ""} />
         </Flex>
 
         <div>
           <Text color="gray400" kind="tiny">
-            {show_title}
+            {showTitle}
           </Text>
 
           <Flex pt={4}>
             <Text as="div" kind="regularBold">
-              {episode_title}
+              {episodeTitle}
             </Text>
           </Flex>
 
@@ -95,4 +95,4 @@ export function Tooltip() {
       </Flex>
     </Wrapper>
   );
-}
+};

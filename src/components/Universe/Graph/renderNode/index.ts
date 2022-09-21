@@ -8,13 +8,14 @@ const loader = new THREE.TextureLoader();
 export const renderNode = (node: any) => {
   if (node.fakeData) {
     const sprite = new SpriteText(node.label);
+
     sprite.color = "#000000";
     sprite.textHeight = 10 + node.scale;
 
     return sprite;
   }
 
-  let color = node.colors && node.colors[0] ? node.colors[0] : "tomato";
+  const color = node.colors?.[0] || "tomato";
 
   if (node.type === "topic") {
     const sprite = new SpriteText(node.name);
@@ -28,7 +29,7 @@ export const renderNode = (node: any) => {
     return sprite;
   }
 
-  let img: string = node.image_url;
+  let img: string;
 
   switch (node.node_type) {
     case "clip":
@@ -39,11 +40,17 @@ export const renderNode = (node: any) => {
         case "twitter":
           img = "twitter_logo.svg";
           break;
+        default:
+          img = node.image_url;
+          break;
       }
+
       break;
     case "guest":
       img = "person_placeholder.png";
       break;
+    default:
+      img = node.image_url;
   }
 
   if (!img) {

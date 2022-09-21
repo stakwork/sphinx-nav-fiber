@@ -19,7 +19,7 @@ const Audio = styled(
     typeof ReactAudioPlayer.defaultProps
   >
 )`
-  width: 280px;
+  width: 100%;
 `;
 
 export const Heading = () => {
@@ -31,7 +31,7 @@ export const Heading = () => {
       return;
     }
 
-    const timestamp = selectedTimestamp.timestamp;
+    const { timestamp } = selectedTimestamp;
 
     const audioElement = document.getElementById(
       "audio-player"
@@ -47,32 +47,36 @@ export const Heading = () => {
   }
 
   return (
-    <Flex pb={40}>
-      <Flex direction="row">
-        <Flex py={20} px={15}>
+    <Flex pb={32}>
+      <Flex direction="row" px={24} py={16}>
+        <Flex pr={24}>
           <Avatar
             size={100}
             src={selectedTimestamp.image_url || "audio_default.svg"}
           />
         </Flex>
 
-        <Flex shrink={1} grow={0}>
-          <Flex pt={20} pb={10}>
+        <Flex grow={1} shrink={1}>
+          <Flex pb={10}>
             <Text color="gray300">{selectedTimestamp.episode_title}</Text>
           </Flex>
 
           <Text kind="heading">{selectedNode?.show_title || "Unknown"}</Text>
 
-          <Actions />
+          <Flex py={16}>
+            <Actions />
+          </Flex>
 
-          <Audio
-            controls
-            id="audio-player"
-            onError={() => setIsTimestampLoaded(true)}
-            onLoadedMetadata={() => setIsTimestampLoaded(true)}
-            src={selectedTimestamp.link}
-            volume={1}
-          />
+          <Flex>
+            <Audio
+              controls
+              id="audio-player"
+              onError={() => setIsTimestampLoaded(true)}
+              onLoadedMetadata={() => setIsTimestampLoaded(true)}
+              src={selectedTimestamp.link}
+              volume={1}
+            />
+          </Flex>
         </Flex>
       </Flex>
     </Flex>

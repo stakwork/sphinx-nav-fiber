@@ -7,7 +7,7 @@ import { Tooltip } from "./Tooltip";
 
 const Content = () => (
   <>
-    <color attach="background" args={[colors.gray500]} />
+    <color args={[colors.gray500]} attach="background" />
 
     <Graph />
 
@@ -22,7 +22,7 @@ export const Universe = () => (
     <Tooltip />
 
     <Canvas
-      camera={{ position: [1000, 0, 5], near: 0.01, far: 100000, fov: 60 }}
+      camera={{ far: 100000, fov: 60, near: 0.01, position: [1000, 0, 5] }}
       id="universe-canvas"
       shadows
     >

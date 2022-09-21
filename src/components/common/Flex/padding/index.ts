@@ -1,4 +1,5 @@
-import { css } from 'styled-components';
+import { css } from "styled-components";
+import { assertNever } from "~/utils/assertNever";
 
 export type Padding = {
   p: number;
@@ -14,32 +15,34 @@ export type PaddingProps = Partial<Padding>;
 
 const switchProp = (prop: keyof Padding, value: Padding[keyof Padding]) => {
   switch (prop) {
-    case 'p':
+    case "p":
       return `padding: ${value}px;`;
-    case 'pb':
+    case "pb":
       return `padding-bottom: ${value}px;`;
-    case 'pl':
+    case "pl":
       return `padding-left: ${value}px;`;
-    case 'pr':
+    case "pr":
       return `padding-right: ${value}px;`;
-    case 'pt':
+    case "pt":
       return `padding-top: ${value}px;`;
-    case 'px':
+    case "px":
       return `
         padding-left: ${value}px;
         padding-right: ${value}px;
       `;
-    case 'py':
+    case "py":
       return `
         padding-bottom: ${value}px;
         padding-top: ${value}px;
       `;
+    default:
+      return assertNever(prop);
   }
 };
 
 const getPropStyle = <P extends keyof Padding>(prop: P, value?: Padding[P]) => {
   if (value === undefined) {
-    return '';
+    return "";
   }
 
   // NOTE: The reason why we call a separate function instead of directly having the switch
@@ -51,12 +54,12 @@ type Props = PaddingProps;
 
 export const padding = css<Props>`
   ${({ p, pb, pl, pr, pt, px, py }) => `
-    ${getPropStyle('p', p)}
-    ${getPropStyle('px', px)}
-    ${getPropStyle('py', py)}
-    ${getPropStyle('pb', pb)}
-    ${getPropStyle('pl', pl)}
-    ${getPropStyle('pr', pr)}
-    ${getPropStyle('pt', pt)}
+    ${getPropStyle("p", p)}
+    ${getPropStyle("px", px)}
+    ${getPropStyle("py", py)}
+    ${getPropStyle("pb", pb)}
+    ${getPropStyle("pl", pl)}
+    ${getPropStyle("pr", pr)}
+    ${getPropStyle("pt", pt)}
   `}
 `;

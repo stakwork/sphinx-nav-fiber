@@ -9,13 +9,14 @@ import { GraphData, Link, Node, NodeExtended } from "~/types";
 import { getLSat } from "~/utils/getLSat";
 
 const defautData: GraphData = {
-  nodes: [],
   links: [],
+  nodes: [],
 };
 
 const shouldIncludeTopics = false;
 
 export const fetchGraphData = async (search: string) => {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   await sphinx.enable();
 
@@ -96,6 +97,7 @@ const getGraphData = async (searchterm: string) => {
               if (guest) {
                 acc[guest] = [...(guestMap[guest] || []), node.ref_id];
               }
+
               return acc;
             }, {} as Record<string, string[]>) || {};
         }
@@ -142,25 +144,26 @@ const getGraphData = async (searchterm: string) => {
           });
 
           const topicNode: NodeExtended = {
-            id: topicNodeId,
-            ref_id: topicNodeId,
-            name: topic,
-            label: topic,
-            weight: 0,
-            show_title: topic,
-            node_type: "topic",
-            text: topic,
-            scale,
             colors: ["#000"],
+            id: topicNodeId,
+            label: topic,
+            name: topic,
+            node_type: "topic",
+            ref_id: topicNodeId,
+            scale,
+            show_title: topic,
+            text: topic,
+            weight: 0,
           };
 
           nodes.push(topicNode);
         });
       }
+
       // Adds guest nodes
       Object.entries(guestMap).forEach(([guest, guestChildren], index) => {
         const scale = guestChildren.length * 2;
-        const guestNodeId = "guestnode_" + index;
+        const guestNodeId = `guestnode_${index}`;
 
         // make links to children
         guestChildren.forEach((childRefId: string) => {
@@ -173,17 +176,17 @@ const getGraphData = async (searchterm: string) => {
         });
 
         const guestNode: NodeExtended = {
-          id: guestNodeId,
-          ref_id: guestNodeId,
-          name: guest,
-          weight: 0,
-          show_title: guest,
-          label: guest,
-          type: "guest",
-          node_type: "guest",
-          text: guest,
-          scale: scale,
           colors: ["#000"],
+          id: guestNodeId,
+          label: guest,
+          name: guest,
+          node_type: "guest",
+          ref_id: guestNodeId,
+          scale,
+          show_title: guest,
+          text: guest,
+          type: "guest",
+          weight: 0,
         };
 
         nodes.push(guestNode);
@@ -192,7 +195,7 @@ const getGraphData = async (searchterm: string) => {
 
     nodes.sort((a, b) => (b.weight || 0) - (a.weight || 0));
 
-    return { nodes, links };
+    return { links, nodes };
   } catch (e) {
     console.error(e);
 

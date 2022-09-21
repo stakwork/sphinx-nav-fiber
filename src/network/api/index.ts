@@ -15,5 +15,5 @@ export const api = {
   post: <TBody extends RequestInit["body"], Res>(
     endpoint: string,
     body: TBody
-  ) => request<Res>(`${API_URL}${endpoint}`, { method: "POST", body }),
+  ) => request<Res>(`${API_URL}${endpoint}`, { body, method: "POST",  }),
 };

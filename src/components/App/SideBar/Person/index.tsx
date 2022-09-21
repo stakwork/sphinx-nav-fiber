@@ -1,18 +1,12 @@
+import { Flex } from "~/components/common/Flex";
 import { useSelectedNode } from "~/stores/useDataStore";
 
 export const Person = () => {
   const selectedNode = useSelectedNode();
 
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        padding: 20,
-      }}
-    >
+    <Flex align="center" direction="row" justify="center" p={20}>
       {selectedNode?.label}
-    </div>
+    </Flex>
   );
 };

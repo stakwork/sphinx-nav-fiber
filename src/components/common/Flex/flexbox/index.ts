@@ -1,23 +1,24 @@
-import { css } from 'styled-components';
+import { css } from "styled-components";
+import { assertNever } from "~/utils/assertNever";
 
-type Align = 'center' | 'flex-end' | 'flex-start' | 'baseline' | 'stretch';
+type Align = "center" | "flex-end" | "flex-start" | "baseline" | "stretch";
 
 type Basis = string;
 
-type Direction = 'column' | 'column-reverse' | 'row' | 'row-reverse';
+type Direction = "column" | "column-reverse" | "row" | "row-reverse";
 
 type Grow = number;
 
 type Shrink = number;
 
 type Justify =
-  | 'center'
-  | 'flex-end'
-  | 'flex-start'
-  | 'space-around'
-  | 'space-between';
+  | "center"
+  | "flex-end"
+  | "flex-start"
+  | "space-around"
+  | "space-between";
 
-type Wrap = 'nowrap' | 'wrap';
+type Wrap = "nowrap" | "wrap";
 
 export type Flexbox = {
   align: Align;
@@ -33,22 +34,24 @@ export type FlexboxProps = Partial<Flexbox>;
 
 const switchProp = (prop: keyof Flexbox, value: Flexbox[keyof Flexbox]) => {
   switch (prop) {
-    case 'align':
+    case "align":
       return `align-items: ${value};`;
-    case 'justify':
+    case "justify":
       return `justify-content: ${value};`;
-    case 'basis':
-    case 'direction':
-    case 'grow':
-    case 'shrink':
-    case 'wrap':
+    case "basis":
+    case "direction":
+    case "grow":
+    case "shrink":
+    case "wrap":
       return `flex-${prop}: ${value};`;
+    default:
+      return assertNever(prop);
   }
 };
 
 const getPropStyle = <P extends keyof Flexbox>(prop: P, value?: Flexbox[P]) => {
   if (value === undefined) {
-    return '';
+    return "";
   }
 
   // NOTE: The reason why we call a separate function instead of directly having the switch
@@ -71,12 +74,12 @@ export const flexbox = css<Props>`
 
   ${({ align, basis, direction, grow, justify, shrink, wrap }) =>
     `
-      ${getPropStyle('align', align)}
-      ${getPropStyle('basis', basis)}
-      ${getPropStyle('direction', direction)}
-      ${getPropStyle('grow', grow)}
-      ${getPropStyle('justify', justify)}
-      ${getPropStyle('shrink', shrink)}
-      ${getPropStyle('wrap', wrap)}
+      ${getPropStyle("align", align)}
+      ${getPropStyle("basis", basis)}
+      ${getPropStyle("direction", direction)}
+      ${getPropStyle("grow", grow)}
+      ${getPropStyle("justify", justify)}
+      ${getPropStyle("shrink", shrink)}
+      ${getPropStyle("wrap", wrap)}
     `}
 `;
