@@ -76,7 +76,7 @@ export const Graph = () => {
   }, []);
 
   const onClick = useCallback(
-    (node: NodeExtended) => setSelectedNode(node),
+    (node: NodeExtended | null) => setSelectedNode(node),
     [setSelectedNode]
   );
 

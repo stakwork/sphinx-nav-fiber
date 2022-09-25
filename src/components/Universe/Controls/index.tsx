@@ -9,6 +9,8 @@ const useGesture = createUseGesture([wheelAction]);
 
 const p = new THREE.Vector3();
 
+const introAnimationTargetPoisiton = new THREE.Vector3(-1900, -3200, -2800);
+
 export const Controls = () => {
   const [cameraAnimation, setCameraAnimation] = useDataStore((s) => [
     s.cameraAnimation,
@@ -74,7 +76,7 @@ export const Controls = () => {
 
     const curve = new THREE.CatmullRomCurve3([
       new THREE.Vector3(x, y, z),
-      new THREE.Vector3(-1900, -3200, -2800),
+      introAnimationTargetPoisiton,
     ]);
 
     const tempVector = new THREE.Vector3();
@@ -153,7 +155,25 @@ export const Controls = () => {
 
   useEffect(() => {
     const run = async () => {
-      if (selectedNode && cameraControlsRef.current) {
+      if (cameraControlsRef.current) {
+        cameraControlsRef.current.dampingFactor = 0.01;
+
+        if (!selectedNode) {
+          await cameraControlsRef.current.setLookAt(
+            introAnimationTargetPoisiton.x,
+            introAnimationTargetPoisiton.y,
+            introAnimationTargetPoisiton.z,
+            0,
+            0,
+            0,
+            true
+          );
+
+          cameraControlsRef.current.dampingFactor = 0.1;
+
+          return;
+        }
+
         cameraControlsRef.current.dampingFactor = 0.01;
 
         // eslint-disable-next-line no-underscore-dangle
