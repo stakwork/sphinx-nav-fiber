@@ -33,14 +33,16 @@ export const Stats = () => {
     const run = async () => {
       const { data } = await api.get<StatResponse>("/stats");
 
-      setStats({
-        numAudio: data.num_audio,
-        numContributors: data.num_contributors,
-        numDaily: data.num_daily,
-        numEpisodes: data.num_episodes,
-        numNodes: data.num_nodes,
-        numVideo: data.num_video,
-      });
+      if (data) {
+        setStats({
+          numAudio: data.num_audio,
+          numContributors: data.num_contributors,
+          numDaily: data.num_daily,
+          numEpisodes: data.num_episodes,
+          numNodes: data.num_nodes,
+          numVideo: data.num_video,
+        });
+      }
     };
 
     run();
