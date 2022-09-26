@@ -30,7 +30,7 @@ const Content = () => (
     <Selection>
       <Graph />
 
-      <EffectComposer autoClear={false}>
+      <EffectComposer autoClear={false} multisampling={0}>
         <SSAO
           color="black"
           intensity={150}
@@ -38,7 +38,7 @@ const Content = () => (
           radius={0.05}
         />
 
-        <Outline blur edgeStrength={20} visibleEdgeColor={0xfbff00} />
+        <Outline blur edgeStrength={100} visibleEdgeColor={0xfbff00} />
       </EffectComposer>
     </Selection>
   </>
@@ -50,7 +50,12 @@ export const Universe = () => (
 
     <Suspense fallback={null}>
       <Canvas
-        camera={{ far: 100000, fov: 60, near: 0.01, position: [2000, 0, 5] }}
+        camera={{
+          aspect: 1920 / 1080,
+          far: 8000,
+          near: 1,
+          position: [2000, 0, 5],
+        }}
         id="universe-canvas"
         shadows
       >

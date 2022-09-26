@@ -1,4 +1,4 @@
-import { Segments, Select } from "@react-three/drei";
+import { Segments } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import {
   forceCenter,
@@ -6,12 +6,10 @@ import {
   forceManyBody,
   forceSimulation,
 } from "d3-force-3d";
-import { useCallback, useEffect, useRef } from "react";
-import { Object3D } from "three";
+import { useEffect, useRef } from "react";
 import { useGraphData } from "~/components/DataRetriever";
-import { useDataStore } from "~/stores/useDataStore";
 import { GraphData, NodeExtended } from "~/types";
-import { Cube } from "./Cube";
+import { Cubes } from "./Cubes";
 import { Segment } from "./Segment";
 
 const layout = forceSimulation()
@@ -31,12 +29,6 @@ const alphaMin = 0;
 export const Graph = () => {
   const data = useGraphData();
   const pauseRef = useRef<boolean>(false);
-
-  const handleSelect = useCallback((nodes: Object3D[]) => {
-    useDataStore
-      .getState()
-      .setSelectedNode((nodes?.[0]?.userData as NodeExtended) || null);
-  }, []);
 
   useEffect(() => {
     pauseRef.current = true;
@@ -74,12 +66,7 @@ export const Graph = () => {
 
   return (
     <>
-      <Select onChange={handleSelect}>
-        {data.nodes.map((node, index) => (
-          // eslint-disable-next-line react/no-array-index-key
-          <Cube key={`${node.id}-${index}`} node={node} />
-        ))}
-      </Select>
+      <Cubes />
 
       <Segments
         /** NOTE: using the key in this way the segments re-mounts

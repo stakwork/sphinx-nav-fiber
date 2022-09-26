@@ -32,7 +32,7 @@ export const Cube = ({ node }: { node: NodeExtended }) => {
 
   const selectedNode = useSelectedNode();
 
-  const isSelected = !!selectedNode && selectedNode.id === node.id;
+  // const isSelected = !!selectedNode && selectedNode.id === node.id;
 
   const geometry = useMemo(() => getGeometry(node), [node]);
 
