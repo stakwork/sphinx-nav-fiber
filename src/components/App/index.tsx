@@ -20,11 +20,10 @@ export const App = () => {
   const selectedNode = useSelectedNode();
   const setSidebarOpen = useAppStore((s) => s.setSidebarOpen);
   const searchTerm = useAppStore((s) => s.currentSearch);
-  const isLoading = useDataStore((s) => s.isFetching);
 
   const fetchData = useDataStore((s) => s.fetchData);
 
-  const showSideBar = !!(selectedNode || isLoading);
+  const showSideBar = !!(selectedNode || searchTerm);
 
   useEffect(() => {
     setSidebarOpen(showSideBar);
