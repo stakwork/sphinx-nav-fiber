@@ -6,6 +6,12 @@ import {
   Preload,
 } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
+import {
+  EffectComposer,
+  Outline,
+  Selection,
+  SSAO,
+} from "@react-three/postprocessing";
 import { Suspense } from "react";
 import { colors } from "~/utils/colors";
 import { Controls } from "./Controls";
@@ -17,11 +23,24 @@ const Content = () => (
   <>
     <color args={[colors.gray500]} attach="background" />
 
-    <Graph />
-
     <Lights />
 
     <Controls />
+
+    <Selection>
+      <Graph />
+
+      <EffectComposer autoClear={false}>
+        <SSAO
+          color="black"
+          intensity={150}
+          luminanceInfluence={0.5}
+          radius={0.05}
+        />
+
+        <Outline blur edgeStrength={20} visibleEdgeColor={0xfbff00} />
+      </EffectComposer>
+    </Selection>
   </>
 );
 

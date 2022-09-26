@@ -1,7 +1,8 @@
-import { Edges } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
+import { Select } from "@react-three/postprocessing";
 import { useCallback, useMemo, useRef } from "react";
 import * as THREE from "three";
+
 import { useSelectedNode } from "~/stores/useDataStore";
 import { NodeExtended } from "~/types";
 import { useMaterial } from "./useMaterial";
@@ -36,6 +37,10 @@ export const Cube = ({ node }: { node: NodeExtended }) => {
   const geometry = useMemo(() => getGeometry(node), [node]);
 
   useFrame(() => {
+    if (selectedNode) {
+      material.toneMapped = false;
+    }
+
     ref.current?.position.set(node.x || 0, node.y || 0, node.z || 0);
   });
 
@@ -56,18 +61,20 @@ export const Cube = ({ node }: { node: NodeExtended }) => {
   }, []);
 
   return (
-    <mesh
-      ref={ref}
-      geometry={geometry}
-      material={material}
-      name={node.id}
-      onPointerOut={onPointerOut}
-      onPointerOver={onPointerIn}
-      userData={node}
-    >
-      <Edges renderOrder={1000} visible={isSelected}>
-        <meshBasicMaterial color="white" depthTest={false} transparent />
-      </Edges>
-    </mesh>
+    <Select enabled={!!selectedNode && node.id === selectedNode?.id}>
+      <mesh
+        ref={ref}
+        geometry={geometry}
+        material={material}
+        name={node.id}
+        onPointerOut={onPointerOut}
+        onPointerOver={onPointerIn}
+        userData={node}
+      >
+        {/* <Edges renderOrder={1000} visible={isSelected}>
+          <meshBasicMaterial color="white" depthTest={false} transparent />
+        </Edges> */}
+      </mesh>
+    </Select>
   );
 };

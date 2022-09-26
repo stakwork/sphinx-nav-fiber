@@ -32,7 +32,7 @@ export const Segment = ({ link }: Props) => {
         (selectedNode?.id === link.target.id ||
           selectedNode?.id === link.source.id)
       ) {
-        ref.current.color.setHex(0xff0000);
+        ref.current.color.setHex(0xfbff00);
       } else {
         ref.current.color.setHex(0xffffff);
       }
