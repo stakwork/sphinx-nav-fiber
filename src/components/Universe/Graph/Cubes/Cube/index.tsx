@@ -1,9 +1,8 @@
 import { useFrame } from "@react-three/fiber";
 import { Select } from "@react-three/postprocessing";
-import { useCallback, useMemo, useRef } from "react";
+import { memo, useCallback, useMemo, useRef } from "react";
 import * as THREE from "three";
-
-import { useSelectedNode } from "~/stores/useDataStore";
+import { useDataStore, useSelectedNode } from "~/stores/useDataStore";
 import { NodeExtended } from "~/types";
 import { useMaterial } from "./useMaterial";
 
@@ -25,12 +24,13 @@ const getGeometry = (node: NodeExtended) => {
   }
 };
 
-export const Cube = ({ node }: { node: NodeExtended }) => {
+export const Cube = memo(({ node }: { node: NodeExtended }) => {
   const ref = useRef<THREE.Mesh | null>(null);
 
   const material = useMaterial(node.image_url || "noimage.jpeg");
 
   const selectedNode = useSelectedNode();
+  const setHoveredNode = useDataStore((s) => s.setHoveredNode);
 
   // const isSelected = !!selectedNode && selectedNode.id === node.id;
 
@@ -45,20 +45,28 @@ export const Cube = ({ node }: { node: NodeExtended }) => {
   });
 
   const onPointerIn = useCallback(() => {
-    ref.current?.scale.set(
-      ref.current.scale.x * 1.5,
-      ref.current.scale.x * 1.5,
-      ref.current.scale.x * 1.5
-    );
-  }, []);
+    if (ref.current) {
+      setHoveredNode(ref.current.userData as NodeExtended);
+
+      ref.current.scale.set(
+        ref.current.scale.x * 1.5,
+        ref.current.scale.x * 1.5,
+        ref.current.scale.x * 1.5
+      );
+    }
+  }, [setHoveredNode]);
 
   const onPointerOut = useCallback(() => {
-    ref.current?.scale.set(
-      ref.current.scale.x / 1.5,
-      ref.current.scale.x / 1.5,
-      ref.current.scale.x / 1.5
-    );
-  }, []);
+    if (ref.current) {
+      setHoveredNode(null);
+
+      ref.current.scale.set(
+        ref.current.scale.x / 1.5,
+        ref.current.scale.x / 1.5,
+        ref.current.scale.x / 1.5
+      );
+    }
+  }, [setHoveredNode]);
 
   return (
     <Select enabled={!!selectedNode && node.id === selectedNode?.id}>
@@ -77,4 +85,6 @@ export const Cube = ({ node }: { node: NodeExtended }) => {
       </mesh>
     </Select>
   );
-};
+});
+
+Cube.displayName = "Cube";

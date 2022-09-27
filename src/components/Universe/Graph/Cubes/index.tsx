@@ -1,12 +1,12 @@
 import { Select } from "@react-three/drei";
-import { useCallback } from "react";
+import { memo, useCallback } from "react";
 import { Object3D } from "three";
 import { useGraphData } from "~/components/DataRetriever";
 import { useDataStore } from "~/stores/useDataStore";
 import { NodeExtended } from "~/types";
 import { Cube } from "./Cube";
 
-export const Cubes = () => {
+export const Cubes = memo(() => {
   const data = useGraphData();
 
   const handleSelect = useCallback((nodes: Object3D[]) => {
@@ -25,4 +25,6 @@ export const Cubes = () => {
       ))}
     </Select>
   );
-};
+});
+
+Cubes.displayName = "Cubes";

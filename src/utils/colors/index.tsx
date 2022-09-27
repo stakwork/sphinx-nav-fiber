@@ -1,5 +1,3 @@
-import { camelCase } from "lodash";
-
 export const colors = {
   black: "rgb(0, 0, 0)",
   bluePressState: "rgba(57, 97, 220, 1)",
@@ -37,7 +35,7 @@ export const colors = {
   primaryGreen: "rgba(73, 201, 152, 1)",
   primaryRed: "rgba(237, 116, 116, 1)",
   primaryText1: "rgba(255, 255, 255, 1)",
-  receivedIcon: 'rgba(130, 180, 255, 1)',
+  receivedIcon: "rgba(130, 180, 255, 1)",
   receivedMsgBg: "rgba(34, 46, 58, 1)",
   secondaryRed: "rgba(255, 143, 128, 1)",
   secondaryText4: "rgba(107, 122, 141, 1)",
@@ -47,7 +45,7 @@ export const colors = {
   textMessages: "rgba(255, 255, 255, 1)",
   transactionBg: "rgba(30, 41, 52, 1)",
   transactionBgBorder: "rgba(21, 30, 39, 1)",
-  transactionBlueText: 'rgba(130, 180, 255, 1)',
+  transactionBlueText: "rgba(130, 180, 255, 1)",
   unreadMsgText: "rgba(186, 193, 198, 1)",
   washedOutGreen: "rgba(47, 116, 96, 1)",
   washedOutReceivedText: "rgba(85, 97, 113, 1)",

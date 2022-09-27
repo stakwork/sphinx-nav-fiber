@@ -1,14 +1,16 @@
 import { useEffect, useState } from "react";
 import * as sphinx from "sphinx-bridge-kevkevinpal";
 import styled from "styled-components";
-import { AppBar } from "~/components/App/AppBar";
 import { Flex } from "~/components/common/Flex";
 import { Loader } from "~/components/common/Loader";
 import { DataRetriever } from "~/components/DataRetriever";
+import { GlobalStyle } from "~/components/GlobalStyle";
 import { Universe } from "~/components/Universe";
 import { useAppStore } from "~/stores/useAppStore";
 import { useDataStore, useSelectedNode } from "~/stores/useDataStore";
 import { colors } from "~/utils/colors";
+import { AppBar } from "./AppBar";
+import { SideBar } from "./SideBar";
 
 const Wrapper = styled(Flex)`
   height: 100%;
@@ -47,14 +49,17 @@ export const App = () => {
   }, [fetchData, searchTerm, setSidebarOpen]);
 
   return (
-    <Wrapper direction="row">
-      <DataRetriever loader={<Loader />}>
-        {/* <SideBar /> */}
+    <>
+      <GlobalStyle />
+      <Wrapper direction="row">
+        <DataRetriever loader={<Loader />}>
+          <SideBar />
 
-        <Universe />
-      </DataRetriever>
+          <Universe />
+        </DataRetriever>
 
-      <AppBar />
-    </Wrapper>
+        <AppBar />
+      </Wrapper>
+    </>
   );
 };
