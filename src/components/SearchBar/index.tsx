@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import styled, { css } from "styled-components";
 import { useAppStore } from "~/stores/useAppStore";
 
@@ -43,20 +43,6 @@ export const SearchBar = ({ loading }: Props) => {
 
   const [tempSearch, setTempSearch] = useState(() => search);
 
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
-
-  useEffect(() => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-    }
-
-    timeoutRef.current = setTimeout(() => {
-      if (tempSearch) {
-        setSearch(tempSearch);
-      }
-    }, 500);
-  }, [setSearch, tempSearch]);
-
   return (
     <Input
       disabled={loading}
@@ -65,6 +51,11 @@ export const SearchBar = ({ loading }: Props) => {
         const { value } = e.target;
 
         setTempSearch(value);
+      }}
+      onKeyPress={(event) => {
+        if (event.key === "Enter" && !!tempSearch) {
+          setSearch(tempSearch);
+        }
       }}
       placeholder="Search (10 sats)"
       type="text"
