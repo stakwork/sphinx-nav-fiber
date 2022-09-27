@@ -49,8 +49,28 @@ async function getGraphData(searchterm: string) {
           Authorization: lsatToken,
         },
       });
+      if (apiRes.status >= 200 && apiRes.status <= 299) {
+        data = await apiRes.json();
+      } else if (apiRes.status === 402) {
+        // For it to get to this block means the previous lsat has expired
 
-      data = await apiRes.json();
+        const lsat = localStorage.getItem("lsat");
+
+        // @ts-ignore
+        await sphinx.enable(true);
+
+        // Update lsat on relay as expired
+        // @ts-ignore
+        await sphinx.updateLsat(lsat.identifier, "expired");
+        // clearing local value of lsat being stored
+        localStorage.removeItem("lsat");
+
+        // Calling the get getGraphData method again but this time without lsat in the local storage
+        getGraphData(searchterm);
+      } else {
+        // giving an empty data array
+        data = [];
+      }
     }
 
     const nodes: Node[] = [];
@@ -200,6 +220,7 @@ async function getGraphData(searchterm: string) {
     return { nodes, links };
   } catch (e) {
     console.error(e);
+    console.log(e);
     return defautData;
   }
 }
