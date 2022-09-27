@@ -44,7 +44,7 @@ export const Tooltip = () => {
     guests,
     text,
     timestamp,
-  } = node || {};
+  } = node;
 
   return (
     <Wrapper borderRadius={8} px={24} py={16}>

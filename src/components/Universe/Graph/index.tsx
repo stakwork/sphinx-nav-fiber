@@ -15,9 +15,10 @@ export const Graph = () => {
 
   const data = useGraphData();
 
-  const [selectedNode, setSelectedNode] = useDataStore((s) => [
+  const [selectedNode, setSelectedNode, setHoveredNode] = useDataStore((s) => [
     s.selectedNode,
     s.setSelectedNode,
+    s.setHoveredNode,
   ]);
 
   const graph = useMemo(
@@ -75,29 +76,40 @@ export const Graph = () => {
   }, []);
 
   const onClick = useCallback(
-    (node: NodeExtended) => setSelectedNode(node),
+    (node: NodeExtended | null) => setSelectedNode(node),
     [setSelectedNode]
   );
 
-  const onHover = useCallback((node: NodeExtended) => {
-    // eslint-disable-next-line no-underscore-dangle
-    const scale = node?.__threeObj?.scale || new Vector3(0, 0, 0);
+  const onHover = useCallback(
+    (node: NodeExtended) => {
+      setHoveredNode(node);
 
-    // eslint-disable-next-line no-underscore-dangle
-    node?.__threeObj?.scale.set(scale.x * 1.5, scale.y * 1.5, scale.z * 1.5);
-  }, []);
+      // eslint-disable-next-line no-underscore-dangle
+      const scale = node?.__threeObj?.scale || new Vector3(0, 0, 0);
 
-  const onNotHover = useCallback((previousHoverNode: NodeExtended) => {
-    // eslint-disable-next-line no-underscore-dangle
-    const scale = previousHoverNode?.__threeObj?.scale || new Vector3(0, 0, 0);
+      // eslint-disable-next-line no-underscore-dangle
+      node?.__threeObj?.scale.set(scale.x * 1.5, scale.y * 1.5, scale.z * 1.5);
+    },
+    [setHoveredNode]
+  );
 
-    // eslint-disable-next-line no-underscore-dangle
-    previousHoverNode?.__threeObj?.scale.set(
-      scale.x / 1.5,
-      scale.y / 1.5,
-      scale.z / 1.5
-    );
-  }, []);
+  const onNotHover = useCallback(
+    (currentNode: NodeExtended | null, previousHoverNode: NodeExtended) => {
+      setHoveredNode(currentNode);
+
+      const scale =
+        // eslint-disable-next-line no-underscore-dangle
+        previousHoverNode?.__threeObj?.scale || new Vector3(0, 0, 0);
+
+      // eslint-disable-next-line no-underscore-dangle
+      previousHoverNode?.__threeObj?.scale.set(
+        scale.x / 1.5,
+        scale.y / 1.5,
+        scale.z / 1.5
+      );
+    },
+    [setHoveredNode]
+  );
 
   const { hoverNode } = useGraphMouseEvents(onHover, onNotHover, onClick);
 

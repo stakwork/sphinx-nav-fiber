@@ -16,7 +16,7 @@ type DataStore = {
   fetchData: (search?: string | null) => void;
   setSelectedNode: (selectedNode: NodeExtended | null) => void;
   setSelectedTimestamp: (selectedTimestamp: NodeExtended | null) => void;
-  setHoveredNode: (hoveredNode: NodeExtended) => void;
+  setHoveredNode: (hoveredNode: NodeExtended | null) => void;
 };
 
 const defaultData = {

@@ -10,8 +10,8 @@ const raycaster = new THREE.Raycaster();
 
 export const useGraphMouseEvents = (
   onHover?: (_: NodeExtended) => void,
-  onNotHover?: (_: NodeExtended) => void,
-  onClicked?: (_: NodeExtended) => void
+  onNotHover?: (c: NodeExtended | null, p: NodeExtended) => void,
+  onClicked?: (_: NodeExtended | null) => void
 ) => {
   const { camera, scene } = useThree();
 
@@ -20,16 +20,20 @@ export const useGraphMouseEvents = (
   const hoverNode = useRef<NodeExtended | null>(null);
 
   const previousHoverNode = useRef<NodeExtended | null>(null);
+  const isMovingRef = useRef(false);
 
-  const [clickTarget, setClickTarget] = useState<NodeExtended>();
+  const [clickTarget, setClickTarget] = useState<NodeExtended | null>(null);
 
-  const [setHoveredNode, cameraAnimation, setCameraAnimation] = useDataStore(
-    (s) => [s.setHoveredNode, s.cameraAnimation, s.setCameraAnimation]
-  );
+  const [cameraAnimation, setCameraAnimation] = useDataStore((s) => [
+    s.cameraAnimation,
+    s.setCameraAnimation,
+  ]);
 
   useGesture(
     {
       onMouseDown: () => {
+        isMovingRef.current = false;
+
         if (hoverNode.current) {
           setClickTarget(hoverNode.current);
         }
@@ -39,9 +43,13 @@ export const useGraphMouseEvents = (
           setCameraAnimation(null);
         }
       },
+      onMouseMove: () => {
+        isMovingRef.current = true;
+      },
       onMouseUp: () => {
-        if (clickTarget) {
+        if (!isMovingRef.current) {
           onClicked?.(clickTarget);
+          setClickTarget(null);
         }
       },
     },
@@ -88,11 +96,10 @@ export const useGraphMouseEvents = (
       previousHoverNode.current = hoverNode.current;
 
       if (hoveredObject) {
-        setHoveredNode(hoveredObject);
         onHover?.(hoveredObject);
       }
 
-      onNotHover?.(previousHoverNode.current!);
+      onNotHover?.(hoveredObject, previousHoverNode.current!);
 
       hoverNode.current = hoveredObject;
     }
