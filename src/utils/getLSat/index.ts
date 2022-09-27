@@ -30,3 +30,17 @@ export const getLSat = async () => {
     return null;
   }
 };
+
+export const getActiveLsat = async () => {
+  try {
+    // @ts-ignore
+    await sphinx.enable(true);
+    // @ts-ignore
+    const lsat = await sphinx.getLsat();
+    console.log("Getting right value");
+    // Save Lsat to local Storage
+    console.log(lsat);
+  } catch (e) {
+    console.log(e);
+  }
+};

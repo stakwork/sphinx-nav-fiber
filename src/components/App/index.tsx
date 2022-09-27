@@ -7,7 +7,8 @@ import { DataRetriever } from "~/components/DataRetriever";
 import { Universe } from "~/components/Universe";
 import { useAppStore } from "~/stores/useAppStore";
 import { useDataStore } from "~/stores/useDataStore";
-import { GRAPH_BACKGROUND_COLOR } from '../../constants'
+import { GRAPH_BACKGROUND_COLOR } from "../../constants";
+import { getActiveLsat } from "~/utils/getLSat";
 
 const Wrapper = styled.div`
   display: flex;
@@ -34,8 +35,15 @@ export const App = () => {
     fetchData(searchTerm);
   }, [fetchData, searchTerm]);
 
+  useEffect(() => {
+    const lsat = localStorage.getItem("lsat");
+    if (!lsat) {
+      getActiveLsat();
+    }
+  }, []);
+
   return (
-    <Wrapper style={{background:GRAPH_BACKGROUND_COLOR}}>
+    <Wrapper style={{ background: GRAPH_BACKGROUND_COLOR }}>
       <DataRetriever loader={<Loader />}>
         <SideBar />
         <Universe />
