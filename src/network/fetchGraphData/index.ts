@@ -38,11 +38,31 @@ const fetchNodes = async (search: string) => {
   return api.get<Node[]>(`/search?word=${search}`, {
     Authorization: lsatToken,
   });
-};
+      if (apiRes.status >= 200 && apiRes.status <= 299) {};
 
-const getGraphData = async (searchterm: string) => {
+  const getGraphData = async (searchterm: string) => {
   try {
     const data = await fetchNodes(searchterm);
+      } else if (apiRes.status === 402) {
+        // For it to get to this block means the previous lsat has expired
+
+        const lsat = localStorage.getItem("lsat");
+
+        // @ts-ignore
+        await sphinx.enable(true);
+
+        // Update lsat on relay as expired
+        // @ts-ignore
+        await sphinx.updateLsat(lsat.identifier, "expired");
+        // clearing local value of lsat being stored
+        localStorage.removeItem("lsat");
+
+        // Calling the get getGraphData method again but this time without lsat in the local storage
+        getGraphData(searchterm);
+      } else {
+        // giving an empty data array
+        data = [];
+      }
 
     const nodes: NodeExtended[] = [];
     const links: Link[] = [];
