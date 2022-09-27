@@ -11,6 +11,8 @@ import { useDataStore, useSelectedNode } from "~/stores/useDataStore";
 import { colors } from "~/utils/colors";
 import { AppBar } from "./AppBar";
 import { SideBar } from "./SideBar";
+import { getActiveLsat } from "~/utils/getLSat";
+
 
 const Wrapper = styled(Flex)`
   height: 100%;
@@ -47,6 +49,14 @@ export const App = () => {
 
     run();
   }, [fetchData, searchTerm, setSidebarOpen]);
+
+  useEffect(() => {
+    const lsat = localStorage.getItem("lsat");
+    
+    if (!lsat) {
+      getActiveLsat();
+    }
+  }, []);
 
   return (
     <>
