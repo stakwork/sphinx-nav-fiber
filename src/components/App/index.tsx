@@ -20,10 +20,11 @@ export const App = () => {
   const selectedNode = useSelectedNode();
   const setSidebarOpen = useAppStore((s) => s.setSidebarOpen);
   const searchTerm = useAppStore((s) => s.currentSearch);
+  const enabledSphinx = useDataStore((s) => s.enabledSphinx);
 
   const fetchData = useDataStore((s) => s.fetchData);
 
-  const showSideBar = !!(selectedNode || searchTerm);
+  const showSideBar = !!(selectedNode || enabledSphinx);
 
   useEffect(() => {
     setSidebarOpen(showSideBar);
