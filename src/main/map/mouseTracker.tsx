@@ -38,7 +38,7 @@ export default function MouseTracker(props: any) {
   if (type && !tooltipImg) {
     switch (type) {
       case "guest":
-        tooltipImg = "person_placeholder.png";
+        tooltipImg = "person_placeholder2.png";
         break;
       case "youtube":
         tooltipImg = "youtube_default.jpeg";
