@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import ClipLoader from "react-spinners/ClipLoader";
 import { Flex } from "~/components/common/Flex";
 import { Text } from "~/components/common/Text";
-import { colors } from "~/utils/colors";
+import { ColorName, colors } from "~/utils/colors";
 
 const messages = [
   "Searching Podcast Index",
@@ -14,7 +14,11 @@ const messages = [
   "Preparing Results",
 ];
 
-export const Loader = () => {
+type Props = {
+  color?: ColorName;
+};
+
+export const Loader = ({ color = "white" }: Props) => {
   const [msgIndex, setMsgIndex] = useState(0);
 
   useEffect(() => {
@@ -34,13 +38,13 @@ export const Loader = () => {
   return (
     <Flex align="center" grow={1} justify="center">
       <Flex align="center" py={8}>
-        <Text color="white" kind="mediumBold">
+        <Text color={color} kind="mediumBold">
           {messages[msgIndex]}...
         </Text>
       </Flex>
 
       <Flex pt={20}>
-        <ClipLoader color={colors.white} loading size={26} />
+        <ClipLoader color={colors[color]} loading size={26} />
       </Flex>
     </Flex>
   );
