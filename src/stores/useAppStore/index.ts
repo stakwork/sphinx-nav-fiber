@@ -4,14 +4,17 @@ type AppStore = {
   currentSearch: string | null;
   sidebarIsOpen: boolean;
   transcriptIsOpen: boolean;
+  flagErrorIsOpen: boolean;
   clearSearch: () => void;
   setCurrentSearch: (_: string) => void;
   setSidebarOpen: (_: boolean) => void;
   setTranscriptOpen: (_: boolean) => void;
+  setFlagErrorOpen: (_: boolean) => void;
 };
 
 const defaultData = {
   currentSearch: null,
+  flagErrorIsOpen: false,
   sidebarIsOpen: false,
   transcriptIsOpen: false,
 };
@@ -20,6 +23,7 @@ export const useAppStore = create<AppStore>((set, get) => ({
   ...defaultData,
   clearSearch: () => set({ currentSearch: null }),
   setCurrentSearch: (currentSearch) => set({ currentSearch }),
+  setFlagErrorOpen: (flagErrorIsOpen) => set({ flagErrorIsOpen }),
   setSidebarOpen: (sidebarIsOpen) =>
     set({
       sidebarIsOpen,
