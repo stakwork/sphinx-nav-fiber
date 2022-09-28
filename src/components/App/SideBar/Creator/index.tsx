@@ -5,6 +5,7 @@ import { Text } from "~/components/common/Text";
 import { useGraphData } from "~/components/DataRetriever";
 import { useDataStore, useSelectedNode } from "~/stores/useDataStore";
 import { getSelectedNodeTimestamps } from "~/utils/getSelectedNodeTimestamps";
+import { useAppStore } from "~/stores/useAppStore";
 import { Relevance } from "../Relevance";
 import { Heading } from "./Heading";
 import { Timestamp } from "./Timestamp";
@@ -19,6 +20,8 @@ export const Creator = () => {
   );
 
   const setSelectedTimestamp = useDataStore((s) => s.setSelectedTimestamp);
+
+  const flagErrorIsOpen = useAppStore((s) => s.flagErrorIsOpen);
 
   useEffect(() => {
     if (selectedNodeTimestamps?.length) {
