@@ -37,14 +37,30 @@ export const Tooltip = () => {
 
   const {
     node_type: nodeType,
-    image_url: imageUrl,
     show_title: showTitle,
     episode_title: episodeTitle,
     description,
     guests,
     text,
     timestamp,
+    type,
   } = node;
+
+  let imageUrl = node.image_url;
+
+  if (type === "twitter_space") {
+    imageUrl = "twitter_spaces_img.png";
+  }
+
+  if (imageUrl == null) {
+    switch (nodeType) {
+      case "guest":
+        imageUrl = "person_placeholder2.png";
+        break;
+      default:
+        imageUrl = "noimage.jpeg";
+    }
+  }
 
   return (
     <Wrapper borderRadius={8} px={24} py={16}>
@@ -54,7 +70,7 @@ export const Tooltip = () => {
 
       <Flex direction="row">
         <Flex pr={12}>
-          <Avatar src={imageUrl || ""} />
+          <Avatar src={imageUrl} />
         </Flex>
 
         <div>
