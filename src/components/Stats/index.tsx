@@ -4,18 +4,14 @@ import { api } from "~/network/api";
 
 type StatResponse = {
   data: {
-    // eslint-disable-next-line camelcase
+    /* eslint-disable camelcase */
     num_nodes: number;
-    // eslint-disable-next-line camelcase
     num_episodes: number;
-    // eslint-disable-next-line camelcase
     num_audio: number;
-    // eslint-disable-next-line camelcase
     num_video: number;
-    // eslint-disable-next-line camelcase
     num_contributors: number;
-    // eslint-disable-next-line camelcase
     num_daily: number;
+    num_twitter_space: number;
   };
 };
 
@@ -26,6 +22,7 @@ export const Stats = () => {
     numDaily: 0,
     numEpisodes: 0,
     numNodes: 0,
+    numTwitterSpace: 0,
     numVideo: 0,
   });
 
@@ -40,6 +37,7 @@ export const Stats = () => {
           numDaily: data.num_daily,
           numEpisodes: data.num_episodes,
           numNodes: data.num_nodes,
+          numTwitterSpace: data.num_twitter_space,
           numVideo: data.num_video,
         });
       }
@@ -65,6 +63,10 @@ export const Stats = () => {
 
       <Text as="div" color="white" kind="regularBold">
         Video Clips: {stats.numVideo}
+      </Text>
+
+      <Text as="div" color="white" kind="regularBold">
+        Twitter Spaces: {stats.numTwitterSpace}
       </Text>
 
       <Text as="div" color="white" kind="regularBold">
