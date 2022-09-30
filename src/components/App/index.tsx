@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { AppBar } from "~/components/App/AppBar";
 import { SideBar } from "~/components/App/SideBar";
@@ -34,13 +34,6 @@ export const App = () => {
   useEffect(() => {
     fetchData(searchTerm);
   }, [fetchData, searchTerm]);
-
-  useEffect(() => {
-    const lsat = localStorage.getItem("lsat");
-    if (!lsat) {
-      getActiveLsat();
-    }
-  }, []);
 
   return (
     <Wrapper style={{ background: GRAPH_BACKGROUND_COLOR }}>

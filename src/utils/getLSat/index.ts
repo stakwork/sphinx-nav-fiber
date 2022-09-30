@@ -4,36 +4,47 @@ import * as sphinx from "sphinx-bridge-kevkevinpal";
 export const getLSat = async () => {
   const lsat = localStorage.getItem("lsat");
   if (!lsat) {
-    try {
-      const resp = await fetch("https://knowledge-graph.sphinx.chat/searching");
-      const data = await resp.json();
+    const newLsat = await getActiveLsat();
+    if (!newLsat) {
+      try {
+        const resp = await fetch(
+          "https://knowledge-graph.sphinx.chat/searching"
+        );
+        const data = await resp.json();
 
-      const lsat = Lsat.fromHeader(data.headers);
+        const lsat = Lsat.fromHeader(data.headers);
 
-      // @ts-ignore
-      const LSATRes = await sphinx.saveLsat(
-        lsat.invoice,
-        lsat.baseMacaroon,
-        "knowledge-graph.sphinx.chat"
-      );
-
-      if (LSATRes.success === false) {
         // @ts-ignore
-        await sphinx.topup();
+        const LSATRes = await sphinx.saveLsat(
+          lsat.invoice,
+          lsat.baseMacaroon,
+          "knowledge-graph.sphinx.chat"
+        );
+
+        if (LSATRes.success === false) {
+          // @ts-ignore
+          await sphinx.topup();
+        }
+        lsat.setPreimage(LSATRes.lsat.split(":")[1]);
+        JSON.stringify({
+          macaroon: lsat.baseMacaroon,
+          identifier: lsat.id,
+          preimage: LSATRes.lsat.split(":")[1],
+        });
+        const token = lsat.toToken();
+        // Need to store Token in Local storage
+        return token;
+      } catch (e) {
+        console.log(e);
+        return null;
       }
-
-      lsat.setPreimage(LSATRes.lsat.split(":")[1]);
-
-      const token = lsat.toToken();
-      // Need to store Token in Local storage
-      return token;
-    } catch (e) {
-      console.log(e);
-      return null;
+    } else {
+      return newLsat;
     }
   } else {
     // Need to get token from lsat
-    return lsat;
+    const newlsat = JSON.parse(lsat);
+    return `LSAT ${newlsat.macaroon}:${newlsat.preimage}`;
   }
 };
 
@@ -43,10 +54,16 @@ export const getActiveLsat = async () => {
     await sphinx.enable(true);
     // @ts-ignore
     const lsat = await sphinx.getLsat();
-    console.log("Getting right value");
+
     // Save Lsat to local Storage
-    console.log(lsat);
+    if (lsat.macaroon && lsat.preimage) {
+      localStorage.setItem("lsat", JSON.stringify(lsat));
+      return `LSAT ${lsat.macaroon}:${lsat.preimage}`;
+    } else {
+      return null;
+    }
   } catch (e) {
     console.log(e);
+    return null;
   }
 };
