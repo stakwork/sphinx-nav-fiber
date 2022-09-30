@@ -57,6 +57,10 @@ export const renderNode = (node: any) => {
       img = node.image_url;
   }
 
+  if (node.type === "twitter_space") {
+    img = "twitter_spaces_img.png";
+  }
+
   if (!img) {
     img = "noimage.jpeg";
   }

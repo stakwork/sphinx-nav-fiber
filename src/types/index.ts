@@ -48,4 +48,4 @@ export class NodeMesh extends Mesh {
 
 export type NodeType = "clip" | "episode" | "guest" | "show" | "topic";
 
-export type Type = "twitter" | "youtube" | "guest" | "podcast";
+export type Type = "twitter" | "youtube" | "guest" | "podcast" | "twitter_space";
