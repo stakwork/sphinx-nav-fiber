@@ -22,15 +22,20 @@ export const App = () => {
   const searchTerm = useAppStore((s) => s.currentSearch);
   const fetchData = useDataStore((s) => s.fetchData);
 
-  const showSideBar = !!(selectedNode);
+  const showSideBar = !!selectedNode;
 
   useEffect(() => {
     setSidebarOpen(showSideBar);
   }, [setSidebarOpen, showSideBar]);
 
   useEffect(() => {
+    setSidebarOpen(false);
     fetchData(searchTerm);
-  }, [fetchData, searchTerm]);
+
+    if (searchTerm) {
+      setSidebarOpen(true);
+    }
+  }, [fetchData, searchTerm, setSidebarOpen]);
 
   return (
     <Wrapper direction="row">
