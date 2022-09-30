@@ -55,15 +55,22 @@ async function getGraphData(searchterm: string) {
         // For it to get to this block means the previous lsat has expired
 
         const lsat = localStorage.getItem("lsat");
+        if (lsat) {
+          const expiredLsat = JSON.parse(lsat);
+          // @ts-ignore
+          await sphinx.enable(true);
+          // Update lsat on relay as expired
+          // @ts-ignore
+          const checker = await sphinx.updateLsat(
+            expiredLsat.identifier,
+            "expired"
+          );
 
-        // @ts-ignore
-        await sphinx.enable(true);
-
-        // Update lsat on relay as expired
-        // @ts-ignore
-        await sphinx.updateLsat(lsat.identifier, "expired");
-        // clearing local value of lsat being stored
-        localStorage.removeItem("lsat");
+          if (checker.success) {
+            // clearing local value of lsat being stored
+            localStorage.removeItem("lsat");
+          }
+        }
 
         // Calling the get getGraphData method again but this time without lsat in the local storage
         getGraphData(searchterm);

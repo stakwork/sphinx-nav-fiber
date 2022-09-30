@@ -30,6 +30,7 @@ export const getLSat = async () => {
           macaroon: lsat.baseMacaroon,
           identifier: lsat.id,
           preimage: LSATRes.lsat.split(":")[1],
+          paymentRequest: lsat.paymentHash,
         });
         const token = lsat.toToken();
         // Need to store Token in Local storage
