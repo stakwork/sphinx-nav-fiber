@@ -14,9 +14,9 @@ export const Pill = styled(Flex).attrs({
   justify: "center",
   shrink: 0,
 })<PillProps>`
-  background: ${({ selected }) => (selected ? colors.gray200 : colors.gray100)};
   border-radius: 20px;
-  color: ${colors.gray400};
+  color: ${colors.textPrimary};
+  border: 1px solid ${colors.white};
   cursor: pointer;
   font-size: 12px;
   font-weight: 500;
@@ -33,11 +33,12 @@ ${({ disabled }) =>
     cursor: none;
     opacity: 0.5;
   `}
-    
+
   }
 
   &:hover {
     background: ${({ selected }) =>
       selected ? colors.gray300 : colors.gray200};
   }
+}
 `;

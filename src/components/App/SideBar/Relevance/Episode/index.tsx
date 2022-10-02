@@ -11,6 +11,7 @@ const EpisodeWrapper = styled(Flex).attrs({
   padding: 10px 20px;
   opacity: 0.8;
   cursor: pointer;
+  border-bottom: 1px solid #101317;
 
   &:hover {
     opacity: 1;
@@ -35,14 +36,14 @@ export const Episode = ({
   title,
   onClick,
 }: Props) => (
-  <EpisodeWrapper onClick={onClick}>
+  <EpisodeWrapper background="background" onClick={onClick}>
     <Flex pr={20}>
       <Avatar src={imageUrl} />
     </Flex>
 
     <div>
       <Flex align="center" direction="row" pb={4}>
-        <Text color="gray500" kind="tiny">
+        <Text color="textPrimary" kind="tiny">
           {moment.unix(date || 0).format("ll")}
         </Text>
 
@@ -50,10 +51,10 @@ export const Episode = ({
       </Flex>
 
       <Flex pb={4}>
-        <Text>{title}</Text>
+        <Text color="textPrimary">{title}</Text>
       </Flex>
 
-      <Text color="gray500" kind="tiny">
+      <Text color="textSecondary" kind="tiny">
         {description}
       </Text>
     </div>

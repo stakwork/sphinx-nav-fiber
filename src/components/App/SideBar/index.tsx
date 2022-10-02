@@ -6,23 +6,22 @@ import { useAppStore } from "~/stores/useAppStore";
 import { useDataStore } from "~/stores/useDataStore";
 import { Transcript } from "./Transcript";
 import { View } from "./View";
+import { colors } from "~/utils/colors";
 
 export const MENU_WIDTH = 433;
 
-const Wrapper = styled(Flex).attrs({
-  background: "white",
-})`
-  height: 100vh;
-  width: ${MENU_WIDTH}px;
-  z-index: 30;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+const Wrapper = styled(Flex)`
+    background: ${colors.background};
+    height: 100vh;
+    width: ${MENU_WIDTH}px;
+    z-index: 30;
 `;
 
 const SearchWrapper = styled(Flex).attrs({
   direction: "row",
   p: 20,
 })`
-  box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.2);
+  background: ${colors.backgroundHeader};
 `;
 
 const CloseButton = styled(Flex).attrs({
@@ -30,7 +29,7 @@ const CloseButton = styled(Flex).attrs({
   justify: "center",
   p: 10,
 })`
-  color: #000;
+  color: ${colors.textSecondary};
   cursor: pointer;
 `;
 

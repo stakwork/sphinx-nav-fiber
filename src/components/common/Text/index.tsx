@@ -48,5 +48,5 @@ const style = css<Props>`
 export const Text = styled.span<Props>`
   ${style}
 
-  ${({ color = "black" }) => `color: ${colors[color]};`}
+  ${({ color = "textPrimary" }) => `color: ${colors[color]};`}
 `;

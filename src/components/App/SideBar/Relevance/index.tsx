@@ -52,7 +52,7 @@ export const Relevance = ({ header = null }: Props) => {
       {header}
 
       <Flex pb={10} px={20}>
-        <Text color="gray300">
+        <Text color="textSecondary">
           Page {currentPage + 1} of {Math.ceil(data.nodes.length / pageSize)}
         </Text>
       </Flex>

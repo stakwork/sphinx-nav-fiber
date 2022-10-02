@@ -1,5 +1,8 @@
 export const colors = {
+  background: "rgba(21, 30, 39, 1)",
+  backgroundHeader: "rgba(26, 36, 46, 1)",
   black: "rgb(0, 0, 0)",
+  divider: "rgba(16, 19, 23, 1)",
   gray100: "rgba(51, 51, 51, 0.2)",
   gray200: "rgba(51, 51, 51, 0.4)",
   gray300: "rgba(51, 51, 51, 0.6)",
@@ -15,6 +18,10 @@ export const colors = {
   lightBlue300: "rgba(93, 143, 221, 0.6)",
   lightBlue400: "rgba(93, 143, 221, 0.8)",
   lightBlue500: "rgba(93, 143, 221, 1)",
+  textAccentBlue: "rgba(130, 180, 255, 1)",
+  textPlaceholder: "rgba(85, 97, 113, 1)",
+  textPrimary: "rgba(255, 255, 255, 1)",
+  textSecondary: "rgba(144, 155, 170, 1)",
   white: "rgb(255, 255, 255)",
 } as const;
 
