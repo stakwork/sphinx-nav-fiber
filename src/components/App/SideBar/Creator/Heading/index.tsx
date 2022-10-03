@@ -11,8 +11,17 @@ import {
   useSelectedNode,
 } from "~/stores/useDataStore";
 import { videoTimetoSeconds } from "~/utils/videoTimetoSeconds";
+import { colors } from "~/utils/colors";
+import { Divider } from "~/components/common/Divider";
 
 export const CREATOR_HEADING_HEIGHT = 240;
+
+const HeadingWrappper = styled(Flex)`
+  background: ${colors.backgroundHeader};
+  border-bottom: 1px solid #101317;
+  box-shadow: 0px 5px 6px rgba(0, 0, 0, 0.5);
+  z-index: 0;
+`;
 
 const Audio = styled(
   ReactAudioPlayer as unknown as ComponentType<
@@ -47,7 +56,8 @@ export const Heading = () => {
   }
 
   return (
-    <Flex pb={32}>
+    <HeadingWrappper pb={32}>
+      <Divider />
       <Flex direction="row" px={24} py={16}>
         <Flex pr={24}>
           <Avatar
@@ -58,7 +68,7 @@ export const Heading = () => {
 
         <Flex grow={1} shrink={1}>
           <Flex pb={10}>
-            <Text color="gray300">{selectedTimestamp.episode_title}</Text>
+            <Text color="textSecondary">{selectedTimestamp.episode_title}</Text>
           </Flex>
 
           <Text kind="heading">{selectedNode?.show_title || "Unknown"}</Text>
@@ -79,6 +89,6 @@ export const Heading = () => {
           </Flex>
         </Flex>
       </Flex>
-    </Flex>
+    </HeadingWrappper>
   );
 };

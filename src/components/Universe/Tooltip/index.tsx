@@ -3,13 +3,14 @@ import { Avatar } from "~/components/common/Avatar";
 import { Flex } from "~/components/common/Flex";
 import { Text } from "~/components/common/Text";
 import { useDataStore } from "~/stores/useDataStore";
+import { colors } from "~/utils/colors";
 
 const Wrapper = styled(Flex)`
   position: absolute;
   pointer-events: none;
-  background: #ffffff;
+  background: ${colors.backgroundHeader};
   box-shadow: 0px 1px 6px rgba(0, 0, 0, 0.1);
-  color: #000;
+  color: ${colors.textPrimary};
   z-index: 100;
   transition: opacity 0.6s;
 
@@ -74,7 +75,7 @@ export const Tooltip = () => {
         </Flex>
 
         <div>
-          <Text color="gray400" kind="tiny">
+          <Text color="textPrimary" kind="tiny">
             {showTitle}
           </Text>
 
@@ -84,15 +85,15 @@ export const Tooltip = () => {
             </Text>
           </Flex>
 
-          <Text color="gray400" kind="tiny">
+          <Text color="textPrimary" kind="tiny">
             {timestamp}
           </Text>
 
           {guests?.length && (
             <Flex pt={12}>
-              <Text color="gray300">Guests</Text>
+              <Text color="textPrimary">Guests</Text>
               <Flex pt={4}>
-                <Text color="gray400" kind="tiny">
+                <Text color="textPrimary" kind="tiny">
                   {guests.join(", ")}
                 </Text>
               </Flex>
@@ -100,9 +101,9 @@ export const Tooltip = () => {
           )}
 
           <Flex pt={12}>
-            <Text color="gray300">{description}</Text>
+            <Text color="textSecondary">{description}</Text>
             <Flex pt={4}>
-              <Description color="gray300" kind="tiny">
+              <Description color="textSecondary" kind="tiny">
                 {text}
               </Description>
             </Flex>

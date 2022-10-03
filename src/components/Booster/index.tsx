@@ -1,14 +1,8 @@
 import { useEffect, useState } from "react";
 import ClipLoader from "react-spinners/ClipLoader";
-import styled from "styled-components";
 import { Flex } from "~/components/common/Flex";
 import { Pill } from "~/components/common/Pill";
 import { boost } from "~/utils/boost";
-
-const GreenPill = styled(Pill)`
-  background: #49c998;
-  color: #fff;
-`;
 
 type Props = {
   count?: number;
@@ -59,14 +53,14 @@ export const Booster = ({ count, content, readOnly, refId }: Props) => {
     }
 
     return (
-      <GreenPill style={{ padding: "1px 8px 1px 3px", width: "fit-content" }}>
+      <Pill style={{ padding: "1px 8px 1px 3px", width: "fit-content" }}>
         <Flex align="center" direction="row" justify="center">
           <span className="material-icons" style={{ fontSize: 12 }}>
             bolt
           </span>
           <div style={{ fontSize: 10 }}>{count || 0}</div>
         </Flex>
-      </GreenPill>
+      </Pill>
     );
   }
 
@@ -82,7 +76,7 @@ export const Booster = ({ count, content, readOnly, refId }: Props) => {
           </span>
         </Flex>
       ) : (
-        <GreenPill
+        <Pill
           disabled={isSuccess || submitting}
           onClick={() => {
             if (isSuccess || submitting) {
@@ -103,7 +97,7 @@ export const Booster = ({ count, content, readOnly, refId }: Props) => {
               <div style={{ marginRight: 8 }}>Boost</div>
             </Flex>
           )}
-        </GreenPill>
+        </Pill>
       )}
     </div>
   );

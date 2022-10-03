@@ -10,17 +10,18 @@ import { formatTimestamp } from "~/utils/formatTimestamp";
 
 const Wrapper = styled(Flex).attrs<{ isSelected?: boolean }>(
   ({ isSelected }) => ({
-    background: isSelected ? "lightBlue100" : "white",
+    background: isSelected ? "lightBlue100" : "background",
     direction: "row",
   })
 )<{ isSelected?: boolean }>`
   cursor: pointer;
+  color: ${colors.textPrimary};
 
   ${({ isSelected }) =>
     !isSelected &&
     css`
       &:hover {
-        background: #f1f1f1;
+        background: ${colors.backgroundHeader};
       }
     `}
 `;
@@ -38,24 +39,7 @@ export const Timestamp = ({ onClick, timestamp }: Props) => {
     selectedTimestamp && selectedTimestamp.timestamp === timestamp.timestamp
   );
 
-  const color: ColorName = isSelected ? "lightBlue500" : "gray500";
-
-  //   const selectedStyle = isSelected
-  //     ? {
-  //         fontWeight: 500,
-  //         background: "#cde0ff4d",
-  //         color: "#5D8FDD !important",
-  //       }
-  //     : {
-  //         fontWeight: 300,
-  //         background: "#fff",
-  //       };
-
-  //   const errorStyle = isError
-  //     ? {
-  //         color: "red",
-  //       }
-  //     : {};
+  const color: ColorName = isSelected ? "textAccentBlue" : "textPlaceholder";
 
   return (
     <Wrapper isSelected={isSelected} onClick={onClick} px={20} py={12}>
@@ -79,7 +63,7 @@ export const Timestamp = ({ onClick, timestamp }: Props) => {
       <div>
         <Flex align="center" direction="row">
           {timestamp.timestamp && (
-            <Text color={color} kind={isSelected ? "mediumBold" : "medium"}>
+            <Text color="textPrimary" kind={isSelected ? "mediumBold" : "medium"}>
               {formatTimestamp(timestamp.timestamp)}
             </Text>
           )}
@@ -92,7 +76,7 @@ export const Timestamp = ({ onClick, timestamp }: Props) => {
         </Flex>
 
         <Flex pt={4}>
-          <Text color={color} kind={isSelected ? "regularBold" : "regular"}>
+          <Text color={isSelected ? "textAccentBlue" : "textSecondary"} kind={isSelected ? "regularBold" : "regular"}>
             {timestamp.description}
           </Text>
         </Flex>
