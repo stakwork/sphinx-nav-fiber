@@ -57,7 +57,7 @@ const Content = () => {
         )}
       </SearchWrapper>
 
-      {isLoading ? <Loader color="black" /> : <View />}
+      {isLoading ? <Loader color="textPrimary" /> : <View />}
 
       <Transcript />
     </Wrapper>
