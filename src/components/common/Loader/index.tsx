@@ -38,7 +38,7 @@ export const Loader = ({ color = "white" }: Props) => {
   return (
     <Flex align="center" grow={1} justify="center">
       <Flex align="center" py={8}>
-        <Text color={color} kind="mediumBold">
+        <Text color="textPrimary" kind="mediumBold">
           {messages[msgIndex]}...
         </Text>
       </Flex>
