@@ -247,10 +247,32 @@ export const Creator = () => {
   }, [data, selectedNode]);
 
   const onPlayHandler = async (e: any) => {
-    setDuration(e.target.duration);
     let currentTime = parseFloat((e.target.currentTime / 60).toFixed(2));
     let timestamp = `${currentTime} - ${currentTime + 1}`;
-    await payStream(10, timestamp, selectedNode);
+    if (e.target.currentTime + 60 < e.target.duration) {
+      setDuration(e.target.duration);
+      await payStream(10, timestamp, selectedNode);
+    } else {
+      await payStream(
+        10,
+        `${currentTime} - ${parseFloat((e.target.duration / 60).toFixed(2))}`,
+        selectedNode
+      );
+    }
+  };
+
+  const onListenHandler = async (e: any) => {
+    let currentTime = parseFloat((e / 60).toFixed(2));
+    let timestamp = `${currentTime} - ${currentTime + 1}`;
+    if (e + 60 < duration) {
+      await payStream(10, timestamp, selectedNode);
+    } else {
+      await payStream(
+        10,
+        `${currentTime} - ${parseFloat((duration / 60).toFixed(2))}`,
+        selectedNode
+      );
+    }
   };
 
   const handleTimestampClick = useCallback(
@@ -343,6 +365,8 @@ export const Creator = () => {
                         }}
                         controls
                         onPlay={(e) => onPlayHandler(e)}
+                        listenInterval={60000}
+                        onListen={(e) => onListenHandler(e)}
                       />
                     )}
                   </Col>

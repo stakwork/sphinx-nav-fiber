@@ -9,11 +9,7 @@ export const payStream = async (
   selectedNode: Node | null
 ) => {
   try {
-    const stream = await boostAgainstBudget(
-      amount,
-      selectedNode?.details?.pub_key
-    );
-    console.log(stream);
+    await boostAgainstBudget(amount, selectedNode?.details?.pub_key);
     // @ts-ignore
     await sphinx.saveGraphData({
       type: "stream-content",

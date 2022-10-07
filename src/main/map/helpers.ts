@@ -18,7 +18,6 @@ async function boostAgainstBudget(amount: number, pubkey?: string) {
   }
   // @ts-ignore
   res = await sphinx.keysend(pubkey, amount);
-  console.log(res);
 
   if (!res) {
     // rejected, ask for topup
