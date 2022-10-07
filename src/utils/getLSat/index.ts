@@ -26,12 +26,15 @@ export const getLSat = async () => {
           await sphinx.topup();
         }
         lsat.setPreimage(LSATRes.lsat.split(":")[1]);
-        JSON.stringify({
-          macaroon: lsat.baseMacaroon,
-          identifier: lsat.id,
-          preimage: LSATRes.lsat.split(":")[1],
-          paymentRequest: lsat.paymentHash,
-        });
+        localStorage.setItem(
+          "lsat",
+          JSON.stringify({
+            macaroon: lsat.baseMacaroon,
+            identifier: lsat.id,
+            preimage: LSATRes.lsat.split(":")[1],
+            paymentRequest: lsat.paymentHash,
+          })
+        );
         const token = lsat.toToken();
         // Need to store Token in Local storage
         return token;
