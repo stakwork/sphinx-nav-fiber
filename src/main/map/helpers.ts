@@ -29,7 +29,7 @@ async function boostAgainstBudget(amount: number, pubkey?: string) {
     } else {
       // retry keysend
       // @ts-ignore
-      res = await sphinx.keysend(sphinxPubkey, amount);
+      res = await sphinx.keysend(pubkey, amount);
       if (!res) err = new Error("Keysend failed after topup");
     }
   }
