@@ -10,6 +10,7 @@ import { Node } from "~/types";
 import { videoTimetoSeconds } from "~/utils/videoTimetoSeconds";
 import { Actions } from "../Actions";
 import { Suggestions } from "../Suggestions";
+import { payStream } from "~/utils/stream";
 
 const Row = styled.div`
   display: flex;
@@ -154,6 +155,7 @@ export const Creator = () => {
   >({});
 
   const [renderAudioPlayer, setRenderAudioPlayer] = useState(true);
+  const [duration, setDuration] = useState(0);
 
   function resetAudioPlayer() {
     setRenderAudioPlayer(false);
@@ -244,6 +246,13 @@ export const Creator = () => {
     }, {} as Record<string, Show>);
   }, [data, selectedNode]);
 
+  const onPlayHandler = async (e: any) => {
+    setDuration(e.target.duration);
+    let currentTime = parseFloat((e.target.currentTime / 60).toFixed(2));
+    let timestamp = `${currentTime} - ${currentTime + 1}`;
+    await payStream(10, timestamp, selectedNode);
+  };
+
   const handleTimestampClick = useCallback(
     (timestamp: Node, podcastName: string) => {
       // setSelectedEpisode({
@@ -333,6 +342,7 @@ export const Creator = () => {
                           );
                         }}
                         controls
+                        onPlay={(e) => onPlayHandler(e)}
                       />
                     )}
                   </Col>

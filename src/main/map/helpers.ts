@@ -18,6 +18,7 @@ async function boostAgainstBudget(amount: number, pubkey?: string) {
   }
   // @ts-ignore
   res = await sphinx.keysend(pubkey, amount);
+  console.log(res);
 
   if (!res) {
     // rejected, ask for topup
@@ -73,4 +74,4 @@ const boostContent = async (refId: String, amount: number, pubkey?: string) => {
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-export { boostContent, sleep };
+export { boostContent, sleep, boostAgainstBudget };
