@@ -3,7 +3,7 @@ import * as sphinx from "sphinx-bridge-kevkevinpal";
 const sphinxPubkey =
   "023d8eb306f0027b902fbdc81d33b49b6558b3434d374626f8c324979c92d47c21";
 
-async function boostAgainstBudget(amount: number) {
+async function boostAgainstBudget(amount: number, pubkey?: string) {
   let err: any = null;
   // @ts-ignore
   let res: any = await sphinx.enable(true);
@@ -13,8 +13,11 @@ async function boostAgainstBudget(amount: number) {
       "Sphinx enable failed, means no pubkey and no budget (including budget of 0)"
     );
   }
+  if (!pubkey) {
+    pubkey = sphinxPubkey;
+  }
   // @ts-ignore
-  res = await sphinx.keysend(sphinxPubkey, amount);
+  res = await sphinx.keysend(pubkey, amount);
 
   if (!res) {
     // rejected, ask for topup
@@ -34,12 +37,12 @@ async function boostAgainstBudget(amount: number) {
   return err;
 }
 
-const boostContent = async (refId: String, amount: number) => {
+const boostContent = async (refId: String, amount: number, pubkey?: string) => {
   try {
     // take away sats
     // @ts-ignore
 
-    const err = await boostAgainstBudget(amount);
+    const err = await boostAgainstBudget(amount, pubkey);
 
     if (err) {
       throw new Error(err);

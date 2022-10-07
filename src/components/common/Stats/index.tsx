@@ -12,15 +12,15 @@ export default function Stats() {
     num_daily: 0,
   });
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const r = await fetch("https://knowledge-graph.sphinx.chat/stats");
-      const data = await r.json();
-      setStats(data.data);
-    };
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     const r = await fetch("https://knowledge-graph.sphinx.chat/stats");
+  //     const data = await r.json();
+  //     setStats(data.data);
+  //   };
 
-    fetchData();
-  }, []);
+  //   fetchData();
+  // }, []);
 
   return (
     <div>
@@ -38,4 +38,3 @@ export default function Stats() {
     </div>
   );
 }
-

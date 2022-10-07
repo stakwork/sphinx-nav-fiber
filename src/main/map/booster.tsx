@@ -39,7 +39,11 @@ export default function Booster(props: BoostProps) {
     if (submitting || !refId) return;
     setSubmitting(true);
     try {
-      const [res, err] = await boostContent(refId, defaultBoostAmount);
+      const [res, err] = await boostContent(
+        refId,
+        defaultBoostAmount,
+        selectedNode?.details?.pub_key
+      );
 
       if (err) {
         throw new Error(err + "");

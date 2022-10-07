@@ -19,7 +19,7 @@ export type Moment = {
   topics: string[];
   type: string;
   weight: number;
-  pubkey?: string;
+  pub_key?: string;
 };
 
 export type Node = {
