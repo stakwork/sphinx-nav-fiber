@@ -1,4 +1,5 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import * as sphinx from "sphinx-bridge-kevkevinpal";
 import styled from "styled-components";
 import { AppBar } from "~/components/App/AppBar";
 import { SideBar } from "~/components/App/SideBar";
@@ -21,20 +22,28 @@ export const App = () => {
   const setSidebarOpen = useAppStore((s) => s.setSidebarOpen);
   const searchTerm = useAppStore((s) => s.currentSearch);
   const fetchData = useDataStore((s) => s.fetchData);
+  const [isAuthorized, setAuthorized] = useState(false);
 
-  const showSideBar = !!selectedNode;
+  const showSideBar = !!selectedNode || (!!searchTerm && isAuthorized);
 
   useEffect(() => {
     setSidebarOpen(showSideBar);
-  }, [setSidebarOpen, showSideBar]);
+  }, [isAuthorized, selectedNode, setSidebarOpen, showSideBar]);
 
   useEffect(() => {
-    setSidebarOpen(false);
-    fetchData(searchTerm);
+    const run = async () => {
+      if (searchTerm) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        await sphinx.enable();
 
-    if (searchTerm) {
-      setSidebarOpen(true);
-    }
+        setAuthorized(true);
+      }
+
+      fetchData(searchTerm);
+    };
+
+    run();
   }, [fetchData, searchTerm, setSidebarOpen]);
 
   return (
