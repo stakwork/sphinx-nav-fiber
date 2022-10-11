@@ -42,10 +42,10 @@ export const getLSat = async () => {
         localStorage.setItem(
           "lsat",
           JSON.stringify({
-            macaroon: lsat.baseMacaroon,
             identifier: lsat.id,
-            preimage: LSATRes.lsat.split(":")[1],
+            macaroon: lsat.baseMacaroon,
             paymentRequest: lsat.paymentHash,
+            preimage: LSATRes.lsat.split(":")[1],
           })
         );
 
