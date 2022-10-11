@@ -51,7 +51,7 @@ async function getGraphData(searchterm: string) {
       });
       if (apiRes.status >= 200 && apiRes.status <= 299) {
         data = await apiRes.json();
-      } else if (apiRes.status === 402) {
+      } else if (apiRes.status === 402 || apiRes.status === 401) {
         // For it to get to this block means the previous lsat has expired
 
         const lsat = localStorage.getItem("lsat");
@@ -73,7 +73,7 @@ async function getGraphData(searchterm: string) {
         }
 
         // Calling the get getGraphData method again but this time without lsat in the local storage
-        getGraphData(searchterm);
+        return { nodes: [], links: [], expired: true };
       } else {
         // giving an empty data array
         data = [];

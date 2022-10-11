@@ -30,8 +30,11 @@ export const useDataStore = create<DataStore>((set) => ({
   fetchData: async (search) => {
     set({ loadingData: true });
     if (search?.length) {
-      const data = await fetchGraphData(search);
-      set({ data });
+      let data = await fetchGraphData(search);
+      if (data.expired) {
+        data = await fetchGraphData(search);
+      }
+      set({ data: { nodes: data.nodes, links: data.links } });
       await saveSearchTerm(search);
     } else {
       setTimeout(() => set({ data: mockGraphData }), 1000);

@@ -58,7 +58,7 @@ export const saveSearchTerm = async (searchTerm: string) => {
   }
   try {
     // @ts-ignore
-    await sphinx.saveGraphData({
+    sphinx.saveGraphData({
       type: "search",
       metaData: { frequency: 1, searched_term: searchTerm },
     });
