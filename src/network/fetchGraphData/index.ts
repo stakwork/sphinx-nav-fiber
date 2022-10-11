@@ -53,30 +53,23 @@ async function getGraphData(searchterm: string) {
         if (lsat) {
           const expiredLsat = JSON.parse(lsat);
 
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          await sphinx.enable(true);
-          // Update lsat on relay as expired
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
 
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          const checker = await sphinx.updateLsat(
-            expiredLsat.identifier,
-            "expired"
-          );
+        await sphinx.enable(true);
 
-          if (checker.success) {
-            // clearing local value of lsat being stored
-            localStorage.removeItem("lsat");
-          }
-        }
+        // Update lsat on relay as expired
+        // @ts-ignore
+        await sphinx.updateLsat(expiredLsat.identifier, "expired");
 
-        // Calling the get getGraphData method again but this time without lsat in the local storage
-        return { nodes: [], links: [], expired: true };
-      } else {
-        // giving an empty data array
-        data = [];
+        // if (checker.success) {
+        // clearing local value of lsat being stored
+        localStorage.removeItem("lsat");
+        // }
       }
+
+      // Calling the get getGraphData method again but this time without lsat in the local storage
+      return { expired: true, links: [], nodes: [] };
     }
 
     const nodes: NodeExtended[] = [];
