@@ -19,7 +19,7 @@ export const getLSat = async () => {
         const lsat = Lsat.fromHeader(data.headers);
 
         // @ts-ignore
-        const LSATRes = await sphinx.saveLsat(
+        let LSATRes = await sphinx.saveLsat(
           lsat.invoice,
           lsat.baseMacaroon,
           "knowledge-graph.sphinx.chat"
@@ -28,6 +28,13 @@ export const getLSat = async () => {
         if (LSATRes.success === false) {
           // @ts-ignore
           await sphinx.topup();
+          // @ts-ignore
+
+          LSATRes = await sphinx.saveLsat(
+            lsat.invoice,
+            lsat.baseMacaroon,
+            "knowledge-graph.sphinx.chat"
+          );
         }
 
         lsat.setPreimage(LSATRes.lsat.split(":")[1]);
