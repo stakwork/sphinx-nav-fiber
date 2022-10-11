@@ -1,15 +1,17 @@
+import * as sphinx from "sphinx-bridge-kevkevinpal";
 import {
+  API_URL,
+  isDevelopment,
   AWS_IMAGE_BUCKET_URL,
   CLOUDFRONT_IMAGE_BUCKET_URL,
-  isDevelopment,
 } from "~/constants";
 import { api } from "~/network/api";
 import { GraphData, Link, Node, NodeExtended } from "~/types";
 import { getLSat } from "~/utils/getLSat";
 
 const defautData: GraphData = {
-  links: [],
   nodes: [],
+  links: [],
 };
 
 const shouldIncludeTopics = false;
@@ -22,36 +24,41 @@ export const fetchGraphData = async (search: string) => {
   }
 };
 
-const fetchNodes = async (search: string) => {
-  if (isDevelopment) {
-    return api.get<Node[]>("/mock_data");
-  }
-
-  console.log("getting prod data");
-
-  const lsatToken = await getLSat();
-
-  if (!lsatToken) {
-    throw new Error("An error occured calling getLSat");
-  }
-
-  return api.get<Node[]>(`/search?word=${search}`, {
-    Authorization: lsatToken,
-  });
-      if (apiRes.status >= 200 && apiRes.status <= 299) {};
-
-  const getGraphData = async (searchterm: string) => {
+async function getGraphData(searchterm: string) {
   try {
-    const data = await fetchNodes(searchterm);
-      } else if (apiRes.status === 402) {
+    let data: NodeExtended[] = [];
+
+    if (isDevelopment) {
+      data = await api.get<Node[]>("/mock_data");
+    } else {
+      const lsatToken = await getLSat();
+
+      if (!lsatToken) {
+        throw new Error("An error occured calling getLSat");
+      }
+
+      const apiRes = await fetch(`${API_URL}/search?word=${searchterm}`, {
+        headers: {
+          Authorization: lsatToken,
+        },
+      });
+
+      if (apiRes.status >= 200 && apiRes.status <= 299) {
+        data = await apiRes.json();
+      } else if (apiRes.status === 402 || apiRes.status === 401) {
         // For it to get to this block means the previous lsat has expired
 
         const lsat = localStorage.getItem("lsat");
+
         if (lsat) {
           const expiredLsat = JSON.parse(lsat);
+
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
           await sphinx.enable(true);
           // Update lsat on relay as expired
+
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
           const checker = await sphinx.updateLsat(
             expiredLsat.identifier,
@@ -65,11 +72,12 @@ const fetchNodes = async (search: string) => {
         }
 
         // Calling the get getGraphData method again but this time without lsat in the local storage
-        getGraphData(searchterm);
+        return { nodes: [], links: [], expired: true };
       } else {
         // giving an empty data array
         data = [];
       }
+    }
 
     const nodes: NodeExtended[] = [];
     const links: Link[] = [];
@@ -220,4 +228,4 @@ const fetchNodes = async (search: string) => {
 
     return defautData;
   }
-};
+}

@@ -38,9 +38,10 @@ export type Link<T = string> = {
   target: T;
 };
 
-export type GraphData<T = string> = {
-  links: Link<T>[];
-  nodes: NodeExtended[];
+export type GraphData = {
+  nodes: Node[];
+  links: Link[];
+  expired?: boolean; // A quick to help notify when an Lsat has expired
 };
 
 export class NodeMesh extends Mesh {
