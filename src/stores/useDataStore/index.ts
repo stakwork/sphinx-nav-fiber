@@ -1,46 +1,68 @@
 import create from "zustand";
-import { mockGraphData } from "~/mocks/graphdata";
+import { getMockGraphData } from "~/mocks/getMockGraphData";
 import { fetchGraphData } from "~/network/fetchGraphData";
-import { GraphData, Node } from "~/types";
+import { GraphData, NodeExtended } from "~/types";
 import { saveSearchTerm } from "~/utils/relayHelper/index";
 
 type DataStore = {
+  cameraAnimation: gsap.core.Tween | null;
   data: GraphData | null;
-  selectedNode: Node | null;
-  hoveredNode: any | null;
-  loadingData: boolean;
-  cameraAnimation: any | null;
-  setCameraAnimation: (cameraAnimation: any) => void;
-  setLoadingData: (bool: boolean) => void;
+  hoveredNode: NodeExtended | null;
+  isFetching: boolean;
+  isTimestampLoaded: boolean;
+  selectedNode: NodeExtended | null;
+  selectedTimestamp: NodeExtended | null;
+  setCameraAnimation: (cameraAnimation: gsap.core.Tween | null) => void;
   fetchData: (search?: string | null) => void;
-  setSelectedNode: (selectedNode: Node | null) => void;
-  setHoveredNode: (hoveredNode: any) => void;
+  setSelectedNode: (selectedNode: NodeExtended | null) => void;
+  setSelectedTimestamp: (selectedTimestamp: NodeExtended | null) => void;
+  setHoveredNode: (hoveredNode: NodeExtended | null) => void;
 };
 
-export const useDataStore = create<DataStore>((set) => ({
+const defaultData = {
+  cameraAnimation: null,
   data: null,
   hoveredNode: null,
+  isFetching: false,
+  isTimestampLoaded: false,
   selectedNode: null,
-  loadingData: false,
-  cameraAnimation: null,
-  setCameraAnimation: (cameraAnimation) => set({ cameraAnimation }),
-  setLoadingData: (loadingData) => set({ loadingData }),
-  setHoveredNode: (hoveredNode) => set({ hoveredNode }),
-  setSelectedNode: (selectedNode) => set({ selectedNode }),
+  selectedTimestamp: null,
+};
+
+export const useDataStore = create<DataStore>((set, get) => ({
+  ...defaultData,
   fetchData: async (search) => {
-    set({ loadingData: true });
+    if (get().isFetching) {
+      return;
+    }
+
+    set({ isFetching: true });
+
     if (search?.length) {
       let data = await fetchGraphData(search);
+
       if (data.expired) {
         data = await fetchGraphData(search);
       }
-      set({ data: { nodes: data.nodes, links: data.links } });
+
+      set({ data: { links: data.links, nodes: data.nodes } });
       await saveSearchTerm(search);
+
+      set({ data, isFetching: false });
     } else {
-      setTimeout(() => set({ data: mockGraphData }), 1000);
+      const mockGraphData = await getMockGraphData();
+
+      set({ data: mockGraphData, isFetching: false });
     }
-    set({ loadingData: false });
   },
+  setCameraAnimation: (cameraAnimation) => set({ cameraAnimation }),
+  setHoveredNode: (hoveredNode) => set({ hoveredNode }),
+  setSelectedNode: (selectedNode) =>
+    set({ isTimestampLoaded: false, selectedNode }),
+  setSelectedTimestamp: (selectedTimestamp) => set({ selectedTimestamp }),
 }));
 
 export const useSelectedNode = () => useDataStore((s) => s.selectedNode);
+
+export const setIsTimestampLoaded = (isTimestampLoaded: boolean) =>
+  useDataStore.setState({ isTimestampLoaded });

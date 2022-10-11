@@ -536,7 +536,7 @@ const UniverseBrowser = (props: any) => {
         }
         break;
       case "guest":
-        img = "person_placeholder.png";
+        img = "person_placeholder2.png";
         break;
       default:
         img = "noimage.jpeg";

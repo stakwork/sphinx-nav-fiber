@@ -1,36 +1,39 @@
 import * as THREE from "three";
 import SpriteText from "three-spritetext";
 
-const nodeMaterials: any = {};
+const cachedMaterials: Record<string, THREE.MeshStandardMaterial> = {};
+
+const geometryS = new THREE.BoxGeometry(10, 10, 10);
+const geometryM = new THREE.BoxGeometry(20, 20, 20);
+const geometryL = new THREE.BoxGeometry(35, 35, 35);
 
 const loader = new THREE.TextureLoader();
-const geometry_xs = new THREE.BoxGeometry(10, 10, 10);
-const geometry_s = new THREE.BoxGeometry(20, 20, 20);
-const geometry_m = new THREE.BoxGeometry(35, 35, 35);
 
 export const renderNode = (node: any) => {
   if (node.fakeData) {
     const sprite = new SpriteText(node.label);
+
     sprite.color = "#000000";
     sprite.textHeight = 10 + node.scale;
 
     return sprite;
   }
 
-  let color = node.colors && node.colors[0] ? node.colors[0] : "tomato";
+  const color = node.colors?.[0] || "tomato";
 
   if (node.type === "topic") {
     const sprite = new SpriteText(node.name);
+
     sprite.color = color;
-    let textSize = 15 + node.scale;
-    if (textSize > 100) textSize = 100;
+
+    const textSize = node.scale > 85 ? 100 : 15 + node.scale;
 
     sprite.textHeight = textSize;
 
     return sprite;
   }
 
-  let img: string = node.image_url;
+  let img: string;
 
   switch (node.node_type) {
     case "clip":
@@ -41,54 +44,56 @@ export const renderNode = (node: any) => {
         case "twitter":
           img = "twitter_logo.svg";
           break;
+        default:
+          img = node.image_url;
+          break;
       }
+
       break;
     case "guest":
-      img = "person_placeholder.png";
+      img = "person_placeholder2.png";
       break;
+    default:
+      img = node.image_url;
   }
 
-  if (!img) img = "noimage.jpeg";
+  if (node.type === "twitter_space") {
+    img = "twitter_spaces_img.png";
+  }
 
-  loader.requestHeader = {
-    "Access-Control-Allow-Origin": window.location.origin,
-  };
+  if (!img) {
+    img = "noimage.jpeg";
+  }
 
   let material = null;
 
-  if (nodeMaterials[img]) {
-    material = nodeMaterials[img];
+  if (cachedMaterials[img]) {
+    material = cachedMaterials[img];
   } else {
     const map = loader.load(img);
 
-    material = new THREE.MeshBasicMaterial({
-      map
+    material = new THREE.MeshStandardMaterial({
+      map,
     });
-    nodeMaterials[img] = material;
+
+    cachedMaterials[img] = material;
   }
 
-  
-  let geo: any = null
-  
+  let geo: THREE.BufferGeometry;
+
   switch (node.node_type) {
-    case "clip":
-      geo = geometry_xs.clone()
-      break;
+    case "guest":
     case "episode":
-      geo = geometry_s.clone()
+      geo = geometryM.clone();
       break;
     case "show":
-      geo = geometry_m.clone()
-      break;
-    case "guest":
-      geo = geometry_s.clone()
+      geo = geometryL.clone();
       break;
     default:
-      geo = geometry_xs.clone()
+      geo = geometryS.clone();
   }
 
-
-  const cube = new THREE.Mesh(geo, material);
+  const cube = new THREE.Mesh(geo, material); // new THREE.Mesh(geo.clone(), material);
 
   cube.castShadow = true;
   cube.receiveShadow = true;

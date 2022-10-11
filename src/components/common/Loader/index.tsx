@@ -1,26 +1,51 @@
-import { ClipLoader } from "react-spinners";
-import styled from "styled-components";
-import { GRAPH_BACKGROUND_COLOR } from '../../../constants'
+import { useEffect, useState } from "react";
+import ClipLoader from "react-spinners/ClipLoader";
+import { Flex } from "~/components/common/Flex";
+import { Text } from "~/components/common/Text";
+import { ColorName, colors } from "~/utils/colors";
 
-const Shield = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  position: absolute;
-  pointer-events: none;
-  user-select: none;
-  top: 0px;
-  left: 0px;
-  height: 100%;
-  width: 100%;
-  color: #000;
-  transition: opacity 0.5s;
-`;
+const messages = [
+  "Searching Podcast Index",
+  "Searching YouTube",
+  "Searching Twitter Spaces",
+  "Finding Transcripts",
+  "Loading Audio Clips",
+  "Loading Video Clips",
+  "Preparing Results",
+];
 
-export const Loader = ({ message }: { message?: string }) => (
-  <Shield style={{background:GRAPH_BACKGROUND_COLOR}}>
-    <ClipLoader color={"#000"} loading={true} size={14} />
-    {message && <div style={{ marginLeft: 10 }}>{message}</div>}
-  </Shield>
-);
+type Props = {
+  color?: ColorName;
+};
+
+export const Loader = ({ color = "white" }: Props) => {
+  const [msgIndex, setMsgIndex] = useState(0);
+
+  useEffect(() => {
+    if (msgIndex === messages.length - 1) {
+      return;
+    }
+
+    const messageTimeout = setTimeout(
+      () => setMsgIndex((index) => (index + 1) % messages.length),
+      1000
+    );
+
+    // eslint-disable-next-line consistent-return
+    return () => clearTimeout(messageTimeout);
+  }, [msgIndex]);
+
+  return (
+    <Flex align="center" grow={1} justify="center">
+      <Flex align="center" py={8}>
+        <Text color="textPrimary" kind="mediumBold">
+          {messages[msgIndex]}...
+        </Text>
+      </Flex>
+
+      <Flex pt={20}>
+        <ClipLoader color={colors[color]} loading size={26} />
+      </Flex>
+    </Flex>
+  );
+};

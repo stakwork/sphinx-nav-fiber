@@ -1,89 +1,49 @@
-import { useState } from "react";
-import { ClipLoader } from "react-spinners";
 import styled from "styled-components";
+import { Flex } from "~/components/common/Flex";
+import { Loader } from "~/components/common/Loader";
 import { SearchBar } from "~/components/SearchBar";
 import { useAppStore } from "~/stores/useAppStore";
 import { useDataStore } from "~/stores/useDataStore";
+import { Transcript } from "./Transcript";
 import { View } from "./View";
-import Loading from '../../common/Loading'
-
-type Props = {
-  dataFilter?: any;
-  loading?: boolean;
-  onClose?: () => void;
-};
+import { colors } from "~/utils/colors";
 
 export const MENU_WIDTH = 433;
 
-const Wrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  background: #ffffff;
-  min-width: ${MENU_WIDTH}px;
-  width: ${MENU_WIDTH}px;
-  z-index: 30;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+const Wrapper = styled(Flex)`
+    background: ${colors.background};
+    height: 100vh;
+    width: ${MENU_WIDTH}px;
+    z-index: 30;
 `;
 
-const SearchWrapper = styled.div`
-  display: flex;
-  padding: 20px;
-  position: relative;
-  box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.2);
+const SearchWrapper = styled(Flex).attrs({
+  direction: "row",
+  p: 20,
+})`
+  background: ${colors.backgroundHeader};
 `;
 
-const TranscriptEnv = styled.div`
-  display: flex;
-  flex-direction: column;
-  padding: 0 40px;
-  overflow: auto;
-  position: absolute;
-  top: 0px;
-  left: 200px;
-  height: 100%;
-  width: 250px;
-  transition: opacity 0.2s;
-  background: #f0f6ff;
-  box-shadow: 4px 8px 8px rgba(0, 0, 0, 0.2);
-`;
-
-const Transcript = styled.div`
-  margin-top: 10px;
-  font-weight: 400;
-  font-size: 13px;
-  line-height: 18px;
-  font-style: italic;
-
-  /* Main bottom icons */
-  color: #5d8fdd;
-`;
-
-const CloseButton = styled.div`
-  align-items: center;
-  color: #000;
+const CloseButton = styled(Flex).attrs({
+  align: "center",
+  justify: "center",
+  p: 10,
+})`
+  color: ${colors.textSecondary};
   cursor: pointer;
-  display: flex;
-  justify-content: center;
-  padding: 10px;
-  width: fit-content;
 `;
 
-const Content = ({ loading, onClose }: Props) => {
+const Content = () => {
   const clearSearch = useAppStore((s) => s.clearSearch);
   const setSelectedNode = useDataStore((s) => s.setSelectedNode);
-  const loadingData = useDataStore((s) => s.loadingData);
-  const transcriptIsOpen = useAppStore((s) => s.transcriptIsOpen);
-
-  const [selectedContent, setSelectedContent] =
-    useState<string>("No transcript");
+  const isLoading = useDataStore((s) => s.isFetching);
 
   return (
-    <Wrapper>
+    <Wrapper id="sidebar-wrapper">
       <SearchWrapper>
         <SearchBar />
 
-        {!loadingData && (
+        {!isLoading && (
           <CloseButton
             onClick={() => {
               setSelectedNode(null);
@@ -97,29 +57,19 @@ const Content = ({ loading, onClose }: Props) => {
         )}
       </SearchWrapper>
 
-      {loadingData ? (
-        <Loading/>
-      ) : (
-        <View />
-      )}
+      {isLoading ? <Loader color="textPrimary" /> : <View />}
 
-      {transcriptIsOpen && (
-        <TranscriptEnv style={{ left: MENU_WIDTH }}>
-          <div style={{ minHeight: 40 }} />
-          <Transcript>"{selectedContent}"</Transcript>
-          <div style={{ minHeight: 40 }} />
-        </TranscriptEnv>
-      )}
+      <Transcript />
     </Wrapper>
   );
 };
 
-export const SideBar = (props: Props) => {
+export const SideBar = () => {
   const sidebarIsOpen = useAppStore((s) => s.sidebarIsOpen);
 
   if (!sidebarIsOpen) {
     return null;
   }
 
-  return <Content {...props} />;
+  return <Content />;
 };

@@ -6,11 +6,12 @@
     "@react-three/drei": "^9.24.4",
     "@react-three/fiber": "^8.6.0",
     "@use-gesture/react": "^10.2.19",
-    "camera-controls": "^1.36.1",
+    "camera-controls": "^1.37.2",
     "d3-force-3d": "^3.0.3",
     "gsap": "^3.10.4",
     "invariant": "^2.2.4",
     "leva": "^0.9.30",
+    "lodash": "^4.17.21",
     "lsat-js": "^2.0.5",
     "material-icons": "^1.11.6",
     "moment": "^2.29.4",
@@ -26,6 +27,7 @@
     "three-forcegraph": "^1.39.4",
     "three-spritetext": "^1.6.5",
     "three.interactive": "^1.4.0",
+    "three.meshline": "^1.4.0",
     "web-vitals": "^2.1.0",
     "zustand": "^4.1.1"
   },
@@ -35,7 +37,8 @@
     "test": "craco test",
     "eject": "craco eject",
     "format": "prettier --write .",
-    "lint": "tsc --noEmit"
+    "postinstall": "husky install",
+    "typecheck": "tsc --noEmit"
   },
   "eslintConfig": {
     "extends": [
@@ -56,6 +59,8 @@
     ]
   },
   "devDependencies": {
+    "@commitlint/cli": "^17.1.2",
+    "@commitlint/config-conventional": "^17.1.0",
     "@craco/craco": "^6.4.5",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^13.0.0",
@@ -69,7 +74,18 @@
     "@types/react-dom": "^18.0.0",
     "@types/styled-components": "^5.1.25",
     "@types/three": "^0.141.0",
+    "@typescript-eslint/eslint-plugin": "^5.27.1",
+    "@typescript-eslint/parser": "^5.27.1",
     "craco-alias": "^3.0.1",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-formatter-codeframe": "^7.32.1",
+    "eslint-import-resolver-typescript": "^2.7.1",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-jsx-a11y": "^6.5.1",
+    "eslint-plugin-react": "^7.30.0",
+    "eslint-plugin-react-hooks": "^4.5.0",
+    "husky": "^8.0.1",
     "prettier": "^2.7.1",
     "typescript": "^4.4.2"
   }

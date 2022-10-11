@@ -1,22 +1,44 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
+import { Flex } from "~/components/common/Flex";
+import { colors } from "~/utils/colors";
 
 type PillProps = {
+  disabled?: boolean;
   selected?: boolean;
 };
 
-export const Pill = styled.div<PillProps>`
-  align-items: center;
-  background: ${({ selected }) => (selected ? "#CDE0FF" : "#F2F3F5")};
+export const Pill = styled(Flex).attrs({
+  align: "center",
+  direction: "row",
+  grow: 0,
+  justify: "center",
+  shrink: 0,
+})<PillProps>`
   border-radius: 20px;
-  color: ${({ selected }) => (selected ? "#5D8FDD" : "#8E969C")};
+  color: ${colors.textPrimary};
+  border: 1px solid ${colors.white};
   cursor: pointer;
-  display: flex;
-  flex-grow: 0;
-  flex-shrink: 0;
   font-size: 12px;
   font-weight: 500;
-  justify-content: center;
   line-height: 14px;
   margin-right: 10px;
+
+  opacity: ${({ disabled }) => (disabled ? "0.7" : "1")};
+
   padding: 10px 20px;
+
+${({ disabled }) =>
+  disabled &&
+  css`
+    cursor: none;
+    opacity: 0.5;
+  `}
+
+  }
+
+  &:hover {
+    background: ${({ selected }) =>
+      selected ? colors.gray300 : colors.gray200};
+  }
+}
 `;

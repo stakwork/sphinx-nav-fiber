@@ -1,31 +1,10 @@
-import { Node } from "~/types/index";
 import * as sphinx from "sphinx-bridge-kevkevinpal";
-export const getSecondBrainObj = (
-  selectedNode: Node | null,
-  boost?: number
-) => {
-  return {
-    boost: boost || selectedNode?.details?.boost,
-    description: selectedNode?.details?.description,
-    episode_title: selectedNode?.details?.episode_title,
-    guests: selectedNode?.details?.guests,
-    image_url: selectedNode?.details?.image_url,
-    keyword: selectedNode?.details?.keyword,
-    link: selectedNode?.details?.link,
-    node_type: selectedNode?.details?.node_type,
-    ref_id: selectedNode?.details?.ref_id,
-    show_title: selectedNode?.details?.show_title,
-    text: selectedNode?.details?.text,
-    timestamp: selectedNode?.details?.timestamp,
-    topics: selectedNode?.details?.topics,
-    type: selectedNode?.details?.type,
-    weight: selectedNode?.details?.weight,
-  };
-};
+import { Node } from "~/types/index";
 
 export const saveConsumedContent = async (selectedNode: Node | null) => {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
-  let res: any = await sphinx.enable(true);
+  const res = await sphinx.enable(true);
 
   if (!res) {
     console.log(
@@ -34,13 +13,14 @@ export const saveConsumedContent = async (selectedNode: Node | null) => {
   }
 
   try {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     await sphinx.saveGraphData({
-      type: "second_brain_consumed_content",
       metaData: {
         date: Math.floor(new Date().getTime() / 1000),
-        ...getSecondBrainObj(selectedNode),
+        ...selectedNode,
       },
+      type: "second_brain_consumed_content",
     });
   } catch (error) {
     console.log(error);
@@ -48,19 +28,22 @@ export const saveConsumedContent = async (selectedNode: Node | null) => {
 };
 
 export const saveSearchTerm = async (searchTerm: string) => {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
-  let res: any = await sphinx.enable(true);
+  const res = await sphinx.enable(true);
 
   if (!res) {
     console.log(
       "Sphinx enable failed, means no pubkey and no budget (including budget of 0)"
     );
   }
+
   try {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    sphinx.saveGraphData({
-      type: "search",
+    await sphinx.saveGraphData({
       metaData: { frequency: 1, searched_term: searchTerm },
+      type: "search",
     });
   } catch (error) {
     console.log(error);

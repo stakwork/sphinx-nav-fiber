@@ -1,4 +1,5 @@
 import { Canvas } from "@react-three/fiber";
+import { colors } from "~/utils/colors";
 import { Controls } from "./Controls";
 import { Graph } from "./Graph";
 import { Lights } from "./Lights";
@@ -6,6 +7,8 @@ import { Tooltip } from "./Tooltip";
 
 const Content = () => (
   <>
+    <color args={[colors.gray500]} attach="background" />
+
     <Graph />
 
     <Lights />
@@ -19,7 +22,7 @@ export const Universe = () => (
     <Tooltip />
 
     <Canvas
-      camera={{ position: [1000, 0, 5], near: 0.01, far: 100000, fov: 60 }}
+      camera={{ far: 100000, fov: 60, near: 0.01, position: [1000, 0, 5] }}
       id="universe-canvas"
       shadows
     >

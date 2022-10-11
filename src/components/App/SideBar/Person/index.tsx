@@ -1,18 +1,17 @@
+import { Flex } from "~/components/common/Flex";
+import { Avatar } from "~/components/common/Avatar";
 import { useSelectedNode } from "~/stores/useDataStore";
+import { Text } from "~/components/common/Text";
 
 export const Person = () => {
   const selectedNode = useSelectedNode();
 
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        padding: 20,
-      }}
-    >
-      {selectedNode?.label}
-    </div>
+    <Flex direction="row" px={24} py={16}>
+      <Avatar size={45} src="person_placeholder2.png" />
+      <Flex align="center" direction="row" justify="center" p={10}>
+        <Text color="textPrimary">{selectedNode?.label}</Text>
+      </Flex>
+    </Flex>
   );
 };
