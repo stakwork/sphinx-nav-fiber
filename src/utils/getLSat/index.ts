@@ -55,6 +55,13 @@ export const getLSat = async () => {
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
           await sphinx.topup();
+          // @ts-ignore
+
+          LSATRes = await sphinx.saveLsat(
+            lsat.invoice,
+            lsat.baseMacaroon,
+            "knowledge-graph.sphinx.chat"
+          );
         }
 
         lsat.setPreimage(LSATRes.lsat.split(":")[1]);
