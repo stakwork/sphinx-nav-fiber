@@ -4,24 +4,25 @@ import { Node } from "~/types/index";
 export const saveConsumedContent = async (selectedNode: Node | null) => {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
-  const res = await sphinx.enable(true);
+  // const res = await sphinx.enable(true);
 
-  if (!res) {
-    console.log(
-      "Sphinx enable failed, means no pubkey and no budget (including budget of 0)"
-    );
-  }
+  // if (!res) {
+  //   console.log(
+  //     "Sphinx enable failed, means no pubkey and no budget (including budget of 0)"
+  //   );
+  // }
 
   try {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    await sphinx.saveGraphData({
-      metaData: {
-        date: Math.floor(new Date().getTime() / 1000),
-        ...selectedNode,
-      },
-      type: "second_brain_consumed_content",
-    });
+    // await sphinx.saveGraphData({
+    //   metaData: {
+    //     date: Math.floor(new Date().getTime() / 1000),
+    //     ...selectedNode,
+    //   },
+    //   type: "second_brain_consumed_content",
+    // });
+    return true;
   } catch (error) {
     console.log(error);
   }
@@ -30,21 +31,22 @@ export const saveConsumedContent = async (selectedNode: Node | null) => {
 export const saveSearchTerm = async (searchTerm: string) => {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
-  const res = await sphinx.enable(true);
+  // const res = await sphinx.enable(true);
 
-  if (!res) {
-    console.log(
-      "Sphinx enable failed, means no pubkey and no budget (including budget of 0)"
-    );
-  }
+  // if (!res) {
+  //   console.log(
+  //     "Sphinx enable failed, means no pubkey and no budget (including budget of 0)"
+  //   );
+  // }
 
   try {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    await sphinx.saveGraphData({
-      metaData: { frequency: 1, searched_term: searchTerm },
-      type: "search",
-    });
+    // await sphinx.saveGraphData({
+    //   metaData: { frequency: 1, searched_term: searchTerm },
+    //   type: "search",
+    // });
+    return true;
   } catch (error) {
     console.log(error);
   }

@@ -20,6 +20,9 @@ export const getLSat = async () => {
         const lsat = Lsat.fromHeader(data.headers);
 
         // @ts-ignore
+        await sphinx.enable(true);
+
+        // @ts-ignore
         let LSATRes = await sphinx.saveLsat(
           lsat.invoice,
           lsat.baseMacaroon,
