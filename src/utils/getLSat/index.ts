@@ -6,7 +6,8 @@ export const getLSat = async () => {
   const localLsat = localStorage.getItem("lsat");
 
   if (!localLsat) {
-    const newLsat = await getActiveLsat();
+    // const newLsat = await getActiveLsat();
+    const newLsat = null;
 
     if (!newLsat) {
       try {
