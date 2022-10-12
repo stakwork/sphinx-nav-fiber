@@ -14,49 +14,50 @@ export const getActiveLsat = async () => {
     // Save Lsat to local Storage
     if (lsat.macaroon && lsat.preimage) {
       localStorage.setItem("lsat", JSON.stringify(lsat));
-      
-      return `LSAT ${lsat.macaroon}:${lsat.preimage}`;
-    } 
 
-      return null;
-    
+      return `LSAT ${lsat.macaroon}:${lsat.preimage}`;
+    }
+
+    return null;
   } catch (e) {
     console.log(e);
-    
+
     return null;
   }
 };
 
 export const getLSat = async () => {
-  let lsat = localStorage.getItem("lsat");
-  
-  if (!lsat) {
-    const newLsat = await getActiveLsat();
+  const localLsat = localStorage.getItem("lsat");
+
+  if (!localLsat) {
+    // const newLsat = await getActiveLsat();
+    const newLsat = null;
 
     if (!newLsat) {
       try {
         const resp = await fetch(
           "https://knowledge-graph.sphinx.chat/searching"
         );
-        
+
         const data = await resp.json();
 
-      lsat = Lsat.fromHeader(data.headers);
+        const lsat = Lsat.fromHeader(data.headers);
 
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      const LSATRes = await sphinx.saveLsat(
-        lsat.invoice,
-        lsat.baseMacaroon,
-        "knowledge-graph.sphinx.chat"
-      );
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        const LSATRes = await sphinx.saveLsat(
+          lsat.invoice,
+          lsat.baseMacaroon,
+          "knowledge-graph.sphinx.chat"
+        );
 
         if (LSATRes.success === false) {
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
           await sphinx.topup();
-          // @ts-ignore
 
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
           LSATRes = await sphinx.saveLsat(
             lsat.invoice,
             lsat.baseMacaroon,
