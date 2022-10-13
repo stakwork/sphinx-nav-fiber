@@ -12,11 +12,10 @@ export const View = () => {
   const selectedNode = useDataStore((s) => s.selectedNode);
   const relevanceIsSelected = useAppStore((s) => s.relevanceIsSelected);
 
-  if (!selectedNode && data?.nodes?.length) {
-    return <Relevance />;
-  }
+  const isBaseSearchView = !selectedNode && data?.nodes?.length;
+  const isRelevanceView = relevanceIsSelected;
 
-  if (relevanceIsSelected) {
+  if (isBaseSearchView || isRelevanceView) {
     return <Relevance />;
   }
 
