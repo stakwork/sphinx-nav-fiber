@@ -11,10 +11,10 @@ import { colors } from "~/utils/colors";
 export const MENU_WIDTH = 433;
 
 const Wrapper = styled(Flex)`
-    background: ${colors.background};
-    height: 100vh;
-    width: ${MENU_WIDTH}px;
-    z-index: 30;
+  background: ${colors.background};
+  height: 100vh;
+  width: ${MENU_WIDTH}px;
+  z-index: 30;
 `;
 
 const SearchWrapper = styled(Flex).attrs({
