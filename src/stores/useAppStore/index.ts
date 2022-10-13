@@ -5,8 +5,10 @@ type AppStore = {
   sidebarIsOpen: boolean;
   transcriptIsOpen: boolean;
   flagErrorIsOpen: boolean;
+  relevanceIsSelected: boolean;
   clearSearch: () => void;
   setCurrentSearch: (_: string) => void;
+  setRelevanceSelected: (_: boolean) => void;
   setSidebarOpen: (_: boolean) => void;
   setTranscriptOpen: (_: boolean) => void;
   setFlagErrorOpen: (_: boolean) => void;
@@ -15,6 +17,7 @@ type AppStore = {
 const defaultData = {
   currentSearch: null,
   flagErrorIsOpen: false,
+  relevanceIsSelected: false,
   sidebarIsOpen: false,
   transcriptIsOpen: false,
 };
@@ -24,6 +27,7 @@ export const useAppStore = create<AppStore>((set, get) => ({
   clearSearch: () => set({ currentSearch: null }),
   setCurrentSearch: (currentSearch) => set({ currentSearch }),
   setFlagErrorOpen: (flagErrorIsOpen) => set({ flagErrorIsOpen }),
+  setRelevanceSelected: (relevanceIsSelected) => set({ relevanceIsSelected }),
   setSidebarOpen: (sidebarIsOpen) =>
     set({
       sidebarIsOpen,
