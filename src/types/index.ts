@@ -24,6 +24,7 @@ export type Node = {
   topics?: string[];
   type?: Type;
   weight?: number;
+  pub_key?: string;
 };
 
 export type NodeExtended = Node & {
@@ -50,4 +51,9 @@ export class NodeMesh extends Mesh {
 
 export type NodeType = "clip" | "episode" | "guest" | "show" | "topic";
 
-export type Type = "twitter" | "youtube" | "guest" | "podcast" | "twitter_space";
+export type Type =
+  | "twitter"
+  | "youtube"
+  | "guest"
+  | "podcast"
+  | "twitter_space";
