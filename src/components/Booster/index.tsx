@@ -48,7 +48,7 @@ export const Booster = ({ count, content, readOnly, refId }: Props) => {
 
     // eslint-disable-next-line no-useless-catch
     try {
-      await boost(refId, defaultBoostAmount);
+      await boost(refId, defaultBoostAmount, content?.pub_key);
 
       setIsSuccess(true);
       notify(BOOST_SUCCESS);

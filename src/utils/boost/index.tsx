@@ -4,7 +4,7 @@ import { api } from "~/network/api";
 const sphinxPubkey =
   "023d8eb306f0027b902fbdc81d33b49b6558b3434d374626f8c324979c92d47c21";
 
-const boostAgainstBudget = async (amount: number) => {
+const boostAgainstBudget = async (amount: number, pubkey: string) => {
   let err: any = null;
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -19,7 +19,7 @@ const boostAgainstBudget = async (amount: number) => {
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
-  res = await sphinx.keysend(sphinxPubkey, amount);
+  res = await sphinx.keysend(pubkey || sphinxPubkey, amount);
 
   if (!res || !res.success) {
     // rejected, ask for topup
@@ -45,10 +45,10 @@ const boostAgainstBudget = async (amount: number) => {
   return err;
 };
 
-export const boost = async (refId: string, amount: number) => {
+export const boost = async (refId: string, amount: number, pubkey: string) => {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
-  const err = await boostAgainstBudget(amount);
+  const err = await boostAgainstBudget(amount, pubkey);
 
   if (err) {
     throw new Error(err);
