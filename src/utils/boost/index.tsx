@@ -34,7 +34,7 @@ const boostAgainstBudget = async (amount: number, pubkey: string) => {
       // retry keysend
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
-      res = await sphinx.keysend(sphinxPubkey, amount);
+      res = await sphinx.keysend(pubkey || sphinxPubkey, amount);
 
       if (!res) {
         err = new Error("Keysend failed after topup");
