@@ -3,7 +3,7 @@ import * as sphinx from "sphinx-bridge-kevkevinpal";
 const sphinxPubkey =
   "023d8eb306f0027b902fbdc81d33b49b6558b3434d374626f8c324979c92d47c21";
 
-export const keysendPayment = async (amount: number, pubkey: string) => {
+export const keysendPayment = async (amount: number, pubkey?: string) => {
   let err: any = null;
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment

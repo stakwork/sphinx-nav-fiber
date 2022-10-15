@@ -1,4 +1,4 @@
-import { ComponentType, useEffect } from "react";
+import { ComponentType, useEffect, useState } from "react";
 import ReactAudioPlayer from "react-audio-player";
 import styled from "styled-components";
 import { Actions } from "~/components/App/SideBar/Actions";
@@ -12,6 +12,8 @@ import {
 } from "~/stores/useDataStore";
 import { colors } from "~/utils/colors";
 import { videoTimetoSeconds } from "~/utils/videoTimetoSeconds";
+import { keysendPayment } from "~/utils/keysend";
+
 
 export const CREATOR_HEADING_HEIGHT = 240;
 
@@ -33,6 +35,8 @@ const Audio = styled(
 export const Heading = () => {
   const selectedNode = useSelectedNode();
   const selectedTimestamp = useDataStore((s) => s.selectedTimestamp);
+  const [listenedTime, setListenTime] = useState<number>(0);
+  const [played, setPlayed] = useState<boolean>(false);
 
   useEffect(() => {
     if (!selectedTimestamp) {
@@ -53,6 +57,22 @@ export const Heading = () => {
   if (!selectedTimestamp) {
     return null;
   }
+
+  const onPlayHandler = async () => {
+    if (!played) {
+      await keysendPayment(10, selectedNode?.pub_key);
+      setPlayed(true);
+    }
+  };
+
+  const OnListenHadler = async () => {
+    if (listenedTime === 50) {
+      await keysendPayment(10, selectedNode?.pub_key);
+      setListenTime(0);
+    } else {
+      setListenTime((prev) => prev + 10);
+    }
+  };
 
   return (
     <HeadingWrappper pb={32}>
@@ -81,8 +101,11 @@ export const Heading = () => {
             <Audio
               controls
               id="audio-player"
+              listenInterval={10000}
               onError={() => setIsTimestampLoaded(true)}
+              onListen={OnListenHadler}
               onLoadedMetadata={() => setIsTimestampLoaded(true)}
+              onPlay={onPlayHandler}
               src={selectedTimestamp.link}
               volume={1}
             />
