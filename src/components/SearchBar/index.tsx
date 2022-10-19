@@ -44,9 +44,10 @@ const Input = styled.input<{ loading?: boolean }>`
 `;
 
 export const SearchBar = ({ loading }: Props) => {
-  const [search, setSearch] = useAppStore((s) => [
+  const [search, setSearch, setRelevanceSelected] = useAppStore((s) => [
     s.currentSearch,
     s.setCurrentSearch,
+    s.setRelevanceSelected,
   ]);
 
   const setSelectedNode = useDataStore((s) => s.setSelectedNode);
@@ -65,6 +66,7 @@ export const SearchBar = ({ loading }: Props) => {
       onKeyPress={(event) => {
         if (event.key === "Enter" && !!tempSearch) {
           setSelectedNode(null);
+          setRelevanceSelected(false);
           setSearch(tempSearch);
         }
       }}
