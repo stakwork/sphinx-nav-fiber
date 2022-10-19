@@ -10,6 +10,7 @@ import { useDataStore } from "~/stores/useDataStore";
 import { NodeExtended } from "~/types";
 import { saveConsumedContent } from "~/utils/relayHelper";
 import { Episode } from "./Episode";
+import { ErrorSection } from "../Creator/ErrorSection";
 
 const pageSize = 80;
 
@@ -24,7 +25,8 @@ export const Relevance = ({ header = null }: Props) => {
 
   const setSelectedNode = useDataStore((s) => s.setSelectedNode);
   const setSelectedTimestamp = useDataStore((s) => s.setSelectedTimestamp);
-
+  const flagErrorIsOpen = useAppStore((s) => s.flagErrorIsOpen);
+  
   const [relevanceIsSelected, setRelevanceSelected] = useAppStore((s) => [
     s.relevanceIsSelected,
     s.setRelevanceSelected,
@@ -59,6 +61,8 @@ export const Relevance = ({ header = null }: Props) => {
   return (
     <>
       {relevanceIsSelected && <Heading />}
+      {flagErrorIsOpen && <ErrorSection />}
+
       <ScrollView ref={scrollViewRef} shrink={1}>
         {header}
 
