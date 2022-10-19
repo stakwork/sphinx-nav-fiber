@@ -35,6 +35,7 @@ const CloseButton = styled(Flex).attrs({
 
 const Content = () => {
   const clearSearch = useAppStore((s) => s.clearSearch);
+  const setFlagErrorOpen = useAppStore((s) => s.setFlagErrorOpen);
   const setSelectedNode = useDataStore((s) => s.setSelectedNode);
   const isLoading = useDataStore((s) => s.isFetching);
 
@@ -45,6 +46,7 @@ const Content = () => {
 
         <CloseButton
           onClick={() => {
+            setFlagErrorOpen(false);
             setSelectedNode(null);
             clearSearch();
           }}
