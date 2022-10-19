@@ -12,6 +12,7 @@ export const saveConsumedContent = async (selectedNode: Node | null) => {
     );
   }
 
+   /*
   try {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
@@ -25,6 +26,7 @@ export const saveConsumedContent = async (selectedNode: Node | null) => {
   } catch (error) {
     console.log(error);
   }
+  */
 };
 
 export const saveSearchTerm = async (searchTerm: string) => {
@@ -38,6 +40,7 @@ export const saveSearchTerm = async (searchTerm: string) => {
     );
   }
 
+  /*
   try {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
@@ -48,4 +51,5 @@ export const saveSearchTerm = async (searchTerm: string) => {
   } catch (error) {
     console.log(error);
   }
+  */
 };
