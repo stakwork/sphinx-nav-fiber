@@ -5,6 +5,7 @@ import { Vector3 } from "three";
 import ThreeForceGraph from "three-forcegraph";
 import { useGraphData } from "~/components/DataRetriever";
 import { useDataStore } from "~/stores/useDataStore";
+import { useAppStore } from "~/stores/useAppStore";
 import { NodeExtended } from "~/types";
 import { renderLink } from "./renderLink";
 import { renderNode } from "./renderNode";
@@ -15,11 +16,15 @@ export const Graph = () => {
 
   const data = useGraphData();
 
-  const [selectedNode, setSelectedNode, setHoveredNode] = useDataStore((s) => [
-    s.selectedNode,
-    s.setSelectedNode,
-    s.setHoveredNode,
-  ]);
+  const [selectedNode, setSelectedNode, setHoveredNode, setSelectedTimestamp] =
+    useDataStore((s) => [
+      s.selectedNode,
+      s.setSelectedNode,
+      s.setHoveredNode,
+      s.setSelectedTimestamp,
+    ]);
+
+  const relevanceIsSelected = useAppStore((s) => s.relevanceIsSelected);
 
   const graph = useMemo(
     () =>
@@ -76,8 +81,14 @@ export const Graph = () => {
   }, []);
 
   const onClick = useCallback(
-    (node: NodeExtended | null) => setSelectedNode(node),
-    [setSelectedNode]
+    (node: NodeExtended | null) => {
+      setSelectedNode(node);
+
+      if (relevanceIsSelected) {
+        setSelectedTimestamp(node);
+      }
+    },
+    [setSelectedNode, setSelectedTimestamp, relevanceIsSelected]
   );
 
   const onHover = useCallback(
