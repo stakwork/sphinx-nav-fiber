@@ -1,6 +1,7 @@
 import { useState } from "react";
 import styled, { css } from "styled-components";
 import { useAppStore } from "~/stores/useAppStore";
+import { useDataStore } from "~/stores/useDataStore";
 import { colors } from "~/utils/colors";
 
 type Props = {
@@ -48,6 +49,8 @@ export const SearchBar = ({ loading }: Props) => {
     s.setCurrentSearch,
   ]);
 
+  const setSelectedNode = useDataStore((s) => s.setSelectedNode);
+
   const [tempSearch, setTempSearch] = useState(() => search);
 
   return (
@@ -61,6 +64,7 @@ export const SearchBar = ({ loading }: Props) => {
       }}
       onKeyPress={(event) => {
         if (event.key === "Enter" && !!tempSearch) {
+          setSelectedNode(null);
           setSearch(tempSearch);
         }
       }}
