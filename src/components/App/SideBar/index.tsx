@@ -43,18 +43,16 @@ const Content = () => {
       <SearchWrapper>
         <SearchBar />
 
-        {!isLoading && (
-          <CloseButton
-            onClick={() => {
-              setSelectedNode(null);
-              clearSearch();
-            }}
-          >
-            <span className="material-icons" style={{ fontSize: 20 }}>
-              close
-            </span>
-          </CloseButton>
-        )}
+        <CloseButton
+          onClick={() => {
+            setSelectedNode(null);
+            clearSearch();
+          }}
+        >
+          <span className="material-icons" style={{ fontSize: 20 }}>
+            close
+          </span>
+        </CloseButton>
       </SearchWrapper>
 
       {isLoading ? <Loader color="textPrimary" /> : <View />}
