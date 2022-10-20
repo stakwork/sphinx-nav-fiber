@@ -81,8 +81,6 @@ export const getActiveLsat = async () => {
 
     const lsat = await sphinx.getLsat();
 
-    console.log(lsat)
-
     // Save Lsat to local Storage
     if (lsat.macaroon && lsat.preimage) {
       localStorage.setItem("lsat", JSON.stringify(lsat));
