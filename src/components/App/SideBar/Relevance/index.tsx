@@ -8,6 +8,7 @@ import { useDataStore } from "~/stores/useDataStore";
 import { NodeExtended } from "~/types";
 import { saveConsumedContent } from "~/utils/relayHelper";
 import { Episode } from "./Episode";
+import { formatDescription } from "~/utils/formatDescription";
 
 const pageSize = 80;
 
@@ -72,7 +73,7 @@ export const Relevance = ({ header = null }: Props) => {
             key={index.toString()}
             boostCount={boost || 0}
             date={date || 0}
-            description={description || ""}
+            description={formatDescription(description || "")}
             imageUrl={imageUrl || "audio_default.svg"}
             onClick={() => handleNodeClick(n)}
             title={episodeTitle || ""}
