@@ -17,10 +17,6 @@ const defautData: GraphData = {
 const shouldIncludeTopics = false;
 
 export const fetchGraphData = async (search: string) => {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  await sphinx.enable();
-
   try {
     return getGraphData(search);
   } catch (e) {

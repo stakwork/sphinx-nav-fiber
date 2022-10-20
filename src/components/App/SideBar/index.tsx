@@ -35,6 +35,7 @@ const CloseButton = styled(Flex).attrs({
 
 const Content = () => {
   const clearSearch = useAppStore((s) => s.clearSearch);
+  const setFlagErrorOpen = useAppStore((s) => s.setFlagErrorOpen);
   const setSelectedNode = useDataStore((s) => s.setSelectedNode);
   const isLoading = useDataStore((s) => s.isFetching);
 
@@ -43,18 +44,17 @@ const Content = () => {
       <SearchWrapper>
         <SearchBar />
 
-        {!isLoading && (
-          <CloseButton
-            onClick={() => {
-              setSelectedNode(null);
-              clearSearch();
-            }}
-          >
-            <span className="material-icons" style={{ fontSize: 20 }}>
-              close
-            </span>
-          </CloseButton>
-        )}
+        <CloseButton
+          onClick={() => {
+            setFlagErrorOpen(false);
+            setSelectedNode(null);
+            clearSearch();
+          }}
+        >
+          <span className="material-icons" style={{ fontSize: 20 }}>
+            close
+          </span>
+        </CloseButton>
       </SearchWrapper>
 
       {isLoading ? <Loader color="textPrimary" /> : <View />}
