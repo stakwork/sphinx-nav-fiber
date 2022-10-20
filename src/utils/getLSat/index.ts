@@ -6,8 +6,8 @@ export const getLSat = async () => {
   const localLsat = localStorage.getItem("lsat");
 
   if (!localLsat) {
-    // const newLsat = await getActiveLsat();
-    const newLsat = null;
+    const newLsat = await getActiveLsat();
+    // const newLsat = null;
 
     if (!newLsat) {
       try {
@@ -80,6 +80,8 @@ export const getActiveLsat = async () => {
     // @ts-ignore
 
     const lsat = await sphinx.getLsat();
+
+    console.log(lsat)
 
     // Save Lsat to local Storage
     if (lsat.macaroon && lsat.preimage) {

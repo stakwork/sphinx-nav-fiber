@@ -67,7 +67,7 @@ const getGraphData = async (searchterm: string) => {
 
         // Update lsat on relay as expired
         // @ts-ignore
-        // await sphinx.updateLsat(expiredLsat.identifier, "expired");
+        await sphinx.updateLsat(expiredLsat.identifier, "expired");
 
         // if (checker.success) {
         // clearing local value of lsat being stored
