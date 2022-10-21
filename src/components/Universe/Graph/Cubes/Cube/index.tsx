@@ -45,6 +45,8 @@ export const Cube = memo(({ node }: { node: NodeExtended }) => {
   });
 
   const onPointerIn = useCallback(() => {
+    document.body.style.cursor = "pointer";
+
     if (ref.current) {
       setHoveredNode(ref.current.userData as NodeExtended);
 
@@ -57,6 +59,8 @@ export const Cube = memo(({ node }: { node: NodeExtended }) => {
   }, [setHoveredNode]);
 
   const onPointerOut = useCallback(() => {
+    document.body.style.cursor = "auto";
+
     if (ref.current) {
       setHoveredNode(null);
 

@@ -1,11 +1,16 @@
-import { createUseGesture, wheelAction } from "@use-gesture/react";
+import {
+  createUseGesture,
+  pinchAction,
+  WebKitGestureEvent,
+  wheelAction,
+} from "@use-gesture/react";
 import gsap from "gsap";
 import { useCallback, useEffect, useRef } from "react";
 import * as THREE from "three";
 import { useDataStore } from "~/stores/useDataStore";
 import { CameraControls } from "./CameraControls";
 
-const useGesture = createUseGesture([wheelAction]);
+const useGesture = createUseGesture([pinchAction, wheelAction]);
 
 const p = new THREE.Vector3();
 
@@ -21,25 +26,28 @@ export const Controls = () => {
 
   const cameraControlsRef = useRef<CameraControls | null>(null);
 
-  const doDollyTransition = useCallback((event: WheelEvent) => {
-    if (!cameraControlsRef.current) {
-      return;
-    }
+  const doDollyTransition = useCallback(
+    (event: WheelEvent | PointerEvent | TouchEvent | WebKitGestureEvent) => {
+      if (!cameraControlsRef.current) {
+        return;
+      }
 
-    if (cameraControlsRef.current.dampingFactor < 0.1) {
-      cameraControlsRef.current.dampingFactor = 0.1;
-    }
+      if (cameraControlsRef.current.dampingFactor < 0.1) {
+        cameraControlsRef.current.dampingFactor = 0.1;
+      }
 
-    const distance = cameraControlsRef.current?.distance;
+      const distance = cameraControlsRef.current?.distance;
 
-    let dollyStep = distance < 3000 ? 40 : 140;
+      let dollyStep = distance < 3000 ? 40 : 140;
 
-    if (event.deltaY > 0) {
-      dollyStep *= -1;
-    }
+      if ("deltaY" in event && event.deltaY > 0) {
+        dollyStep *= -1;
+      }
 
-    cameraControlsRef.current?.dolly(dollyStep, true);
-  }, []);
+      cameraControlsRef.current?.dolly(dollyStep, true);
+    },
+    []
+  );
 
   const rotateWorld = useCallback(() => {
     cameraAnimation?.kill();
@@ -147,6 +155,7 @@ export const Controls = () => {
 
   useGesture(
     {
+      onPinch: ({ event }) => doDollyTransition(event),
       onWheel: ({ event }) => doDollyTransition(event),
     },
     {

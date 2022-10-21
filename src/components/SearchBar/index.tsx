@@ -11,7 +11,6 @@ type Props = {
 const Input = styled.input<{ loading?: boolean }>`
   pointer-events: auto;
   border-radius: 100px;
-  min-width: 300px;
   height: 50px;
   padding: 0 20px;
   z-index: 2;

@@ -23,7 +23,7 @@ const layout = forceSimulation()
   .alphaTarget(0)
   .stop();
 
-const cooldownTime = 10;
+const cooldownTime = 5;
 const alphaMin = 0;
 
 export const Graph = () => {

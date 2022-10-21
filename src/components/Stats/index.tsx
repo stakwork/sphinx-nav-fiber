@@ -1,3 +1,4 @@
+import { noop } from "lodash";
 import { useEffect, useState } from "react";
 import { Text } from "~/components/common/Text";
 import { api } from "~/network/api";
@@ -15,36 +16,46 @@ type StatResponse = {
   };
 };
 
+type TStats = {
+  numAudio: number;
+  numContributors: number;
+  numDaily: number;
+  numEpisodes: number;
+  numNodes: number;
+  numTwitterSpace: number;
+  numVideo: number;
+};
+
 export const Stats = () => {
-  const [stats, setStats] = useState({
-    numAudio: 0,
-    numContributors: 0,
-    numDaily: 0,
-    numEpisodes: 0,
-    numNodes: 0,
-    numTwitterSpace: 0,
-    numVideo: 0,
-  });
+  const [stats, setStats] = useState<TStats | null>(null);
 
   useEffect(() => {
     const run = async () => {
-      const { data } = await api.get<StatResponse>("/stats");
+      try {
+        const { data } = await api.get<StatResponse>("/stats");
 
-      if (data) {
-        setStats({
-          numAudio: data.num_audio,
-          numContributors: data.num_contributors,
-          numDaily: data.num_daily,
-          numEpisodes: data.num_episodes,
-          numNodes: data.num_nodes,
-          numTwitterSpace: data.num_twitter_space,
-          numVideo: data.num_video,
-        });
+        if (data) {
+          setStats({
+            numAudio: data.num_audio,
+            numContributors: data.num_contributors,
+            numDaily: data.num_daily,
+            numEpisodes: data.num_episodes,
+            numNodes: data.num_nodes,
+            numTwitterSpace: data.num_twitter_space,
+            numVideo: data.num_video,
+          });
+        }
+      } catch (e) {
+        noop();
       }
     };
 
     run();
   }, []);
+
+  if (!stats) {
+    return null;
+  }
 
   return (
     <div>

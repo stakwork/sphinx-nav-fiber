@@ -4,6 +4,7 @@ import { Text } from "~/components/common/Text";
 import { SearchBar } from "~/components/SearchBar";
 import { Stats } from "~/components/Stats";
 import { useAppStore } from "~/stores/useAppStore";
+import { media } from "~/utils/media";
 
 const Header = styled(Flex).attrs({
   align: "center",
@@ -16,17 +17,29 @@ const Header = styled(Flex).attrs({
   position: absolute;
   top: 0px;
   left: 0px;
-  width: calc(100% - 40px);
+  width: 100%;
   pointer-events: none;
   transition: opacity 1s;
 `;
 
-const TitleWrapper = styled.div``;
+const TitleWrapper = styled.div`
+  ${media.smallOnly`
+  display: none;
+`}
+`;
 
 const StatsWrapper = styled.div`
   left: 25px;
   position: absolute;
   top: 75px;
+`;
+
+const SearchBarWrapper = styled.div`
+  width: 60%;
+
+  ${media.smallOnly`
+    width: 100%;
+  `}
 `;
 
 export const AppBar = () => {
@@ -51,9 +64,9 @@ export const AppBar = () => {
         <Stats />
       </StatsWrapper>
 
-      <div style={{ width: "40%" }}>
+      <SearchBarWrapper>
         <SearchBar />
-      </div>
+      </SearchBarWrapper>
 
       <div />
     </Header>

@@ -1,14 +1,14 @@
-import styled from "styled-components";
 import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import styled from "styled-components";
 import { Flex } from "~/components/common/Flex";
 import { Loader } from "~/components/common/Loader";
 import { SearchBar } from "~/components/SearchBar";
 import { useAppStore } from "~/stores/useAppStore";
 import { useDataStore } from "~/stores/useDataStore";
+import { colors } from "~/utils/colors";
 import { Transcript } from "./Transcript";
 import { View } from "./View";
-import { colors } from "~/utils/colors";
-import "react-toastify/dist/ReactToastify.css";
 
 export const MENU_WIDTH = 433;
 
@@ -22,6 +22,7 @@ const Content = () => {
   return (
     <Wrapper id="sidebar-wrapper">
       <StyledToast />
+
       <SearchWrapper>
         <SearchBar />
 
