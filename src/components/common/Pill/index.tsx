@@ -15,7 +15,7 @@ export const Pill = styled(Flex).attrs({
   shrink: 0,
 })<PillProps>`
   border-radius: 20px;
-  color: ${colors.textPrimary};
+  color: ${colors.primaryText1};
   border: 1px solid ${colors.white};
   cursor: pointer;
   font-size: 12px;
