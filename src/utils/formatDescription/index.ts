@@ -1,5 +1,5 @@
 export function formatDescription(description: string) {
-  if (description == null) {
+  if (!description) {
     return "Text unavailable";
   }
 
