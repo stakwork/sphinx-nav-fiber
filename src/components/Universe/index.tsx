@@ -7,7 +7,7 @@ import { Tooltip } from "./Tooltip";
 
 const Content = () => (
   <>
-    <color args={[colors.gray500]} attach="body" />
+    <color args={[colors.gray500]} attach="background" />
 
     <Graph />
 
