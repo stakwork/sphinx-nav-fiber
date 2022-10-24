@@ -4,6 +4,7 @@ import { Flex } from "~/components/common/Flex";
 import { Text } from "~/components/common/Text";
 import { useDataStore } from "~/stores/useDataStore";
 import { colors } from "~/utils/colors";
+import { formatDescription } from "~/utils/formatDescription";
 
 const Wrapper = styled(Flex)`
   position: absolute;
@@ -101,7 +102,7 @@ export const Tooltip = () => {
           )}
 
           <Flex pt={12}>
-            <Text color="mainBottomIcons">{description}</Text>
+            <Text color="mainBottomIcons">{formatDescription(description)}</Text>
             <Flex pt={4}>
               <Description color="mainBottomIcons" kind="tiny">
                 {text}

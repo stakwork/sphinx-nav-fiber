@@ -7,6 +7,7 @@ import { useDataStore } from "~/stores/useDataStore";
 import { NodeExtended } from "~/types";
 import { ColorName, colors } from "~/utils/colors";
 import { formatTimestamp } from "~/utils/formatTimestamp";
+import { formatDescription } from "~/utils/formatDescription";
 
 const Wrapper = styled(Flex).attrs<{ isSelected?: boolean }>(
   ({ isSelected }) => ({
@@ -77,7 +78,7 @@ export const Timestamp = ({ onClick, timestamp }: Props) => {
 
         <Flex pt={4}>
           <Text color={isSelected ? "blueTextAccent" : "mainBottomIcons"} kind={isSelected ? "regularBold" : "regular"}>
-            {timestamp.description}
+            {formatDescription(timestamp.description)}
           </Text>
         </Flex>
       </div>
