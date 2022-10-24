@@ -1,4 +1,5 @@
 import { useGraphData } from "~/components/DataRetriever";
+import { useAppStore } from "~/stores/useAppStore";
 import { useDataStore } from "~/stores/useDataStore";
 import { Creator } from "../Creator";
 import { Person } from "../Person";
@@ -9,8 +10,12 @@ import { YouTube } from "../YouTube";
 export const View = () => {
   const data = useGraphData();
   const selectedNode = useDataStore((s) => s.selectedNode);
+  const relevanceIsSelected = useAppStore((s) => s.relevanceIsSelected);
 
-  if (!selectedNode && data?.nodes?.length) {
+  const isBaseSearchView = !selectedNode && data?.nodes?.length;
+  const isRelevanceView = relevanceIsSelected;
+
+  if (isBaseSearchView || isRelevanceView) {
     return <Relevance />;
   }
 
