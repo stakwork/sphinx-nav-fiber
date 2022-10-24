@@ -27,7 +27,7 @@ const Input = styled.input<{ loading?: boolean }>`
   }
 
   &:placeholder {
-    color: ${colors.textPlaceholder};
+    color: ${colors.placeholderText};
   }
 
   ${({ loading }) =>

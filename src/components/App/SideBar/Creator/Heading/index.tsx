@@ -17,7 +17,7 @@ import { Divider } from "~/components/common/Divider";
 export const CREATOR_HEADING_HEIGHT = 240;
 
 const HeadingWrappper = styled(Flex)`
-  background: ${colors.backgroundHeader};
+  background: ${colors.dashboardHeader};
   border-bottom: 1px solid #101317;
   box-shadow: 0px 5px 6px rgba(0, 0, 0, 0.5);
   z-index: 0;
@@ -68,7 +68,7 @@ export const Heading = () => {
 
         <Flex grow={1} shrink={1}>
           <Flex pb={10}>
-            <Text color="textSecondary">{selectedTimestamp.episode_title}</Text>
+            <Text color="mainBottomIcons">{selectedTimestamp.episode_title}</Text>
           </Flex>
 
           <Text kind="heading">{selectedNode?.show_title || "Unknown"}</Text>

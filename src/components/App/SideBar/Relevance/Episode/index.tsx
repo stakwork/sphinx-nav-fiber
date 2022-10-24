@@ -36,14 +36,14 @@ export const Episode = ({
   title,
   onClick,
 }: Props) => (
-  <EpisodeWrapper background="background" onClick={onClick}>
+  <EpisodeWrapper background="body" onClick={onClick}>
     <Flex pr={20}>
       <Avatar src={imageUrl} />
     </Flex>
 
     <div>
       <Flex align="center" direction="row" pb={4}>
-        <Text color="textPrimary" kind="tiny">
+        <Text color="primaryText1" kind="tiny">
           {moment.unix(date || 0).format("ll")}
         </Text>
 
@@ -51,10 +51,10 @@ export const Episode = ({
       </Flex>
 
       <Flex pb={4}>
-        <Text color="textPrimary">{title}</Text>
+        <Text color="primaryText1">{title}</Text>
       </Flex>
 
-      <Text color="textSecondary" kind="tiny">
+      <Text color="mainBottomIcons" kind="tiny">
         {description}
       </Text>
     </div>

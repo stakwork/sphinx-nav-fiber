@@ -11,18 +11,18 @@ import { formatDescription } from "~/utils/formatDescription";
 
 const Wrapper = styled(Flex).attrs<{ isSelected?: boolean }>(
   ({ isSelected }) => ({
-    background: isSelected ? "lightBlue100" : "background",
+    background: isSelected ? "lightBlue100" : "body",
     direction: "row",
   })
 )<{ isSelected?: boolean }>`
   cursor: pointer;
-  color: ${colors.textPrimary};
+  color: ${colors.primaryText1};
 
   ${({ isSelected }) =>
     !isSelected &&
     css`
       &:hover {
-        background: ${colors.backgroundHeader};
+        background: ${colors.dashboardHeader};
       }
     `}
 `;
@@ -40,7 +40,7 @@ export const Timestamp = ({ onClick, timestamp }: Props) => {
     selectedTimestamp && selectedTimestamp.timestamp === timestamp.timestamp
   );
 
-  const color: ColorName = isSelected ? "textAccentBlue" : "textPlaceholder";
+  const color: ColorName = isSelected ? "blueTextAccent" : "placeholderText";
 
   return (
     <Wrapper isSelected={isSelected} onClick={onClick} px={20} py={12}>
@@ -64,10 +64,7 @@ export const Timestamp = ({ onClick, timestamp }: Props) => {
       <div>
         <Flex align="center" direction="row">
           {timestamp.timestamp && (
-            <Text
-              color="textPrimary"
-              kind={isSelected ? "mediumBold" : "medium"}
-            >
+            <Text color="primaryText1" kind={isSelected ? "mediumBold" : "medium"}>
               {formatTimestamp(timestamp.timestamp)}
             </Text>
           )}
@@ -80,10 +77,7 @@ export const Timestamp = ({ onClick, timestamp }: Props) => {
         </Flex>
 
         <Flex pt={4}>
-          <Text
-            color={isSelected ? "textAccentBlue" : "textSecondary"}
-            kind={isSelected ? "regularBold" : "regular"}
-          >
+          <Text color={isSelected ? "blueTextAccent" : "mainBottomIcons"} kind={isSelected ? "regularBold" : "regular"}>
             {formatDescription(timestamp.description)}
           </Text>
         </Flex>

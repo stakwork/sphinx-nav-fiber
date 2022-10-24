@@ -10,7 +10,7 @@ export const Person = () => {
     <Flex direction="row" px={24} py={16}>
       <Avatar size={45} src="person_placeholder2.png" />
       <Flex align="center" direction="row" justify="center" p={10}>
-        <Text color="textPrimary">{selectedNode?.label}</Text>
+        <Text color="primaryText1">{selectedNode?.label}</Text>
       </Flex>
     </Flex>
   );
