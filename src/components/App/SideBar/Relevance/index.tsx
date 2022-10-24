@@ -73,7 +73,7 @@ export const Relevance = ({ header = null }: Props) => {
             key={index.toString()}
             boostCount={boost || 0}
             date={date || 0}
-            description={formatDescription(description || "")}
+            description={formatDescription(description)}
             imageUrl={imageUrl || "audio_default.svg"}
             onClick={() => handleNodeClick(n)}
             title={episodeTitle || ""}

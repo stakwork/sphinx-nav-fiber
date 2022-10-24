@@ -1,4 +1,4 @@
-export function formatDescription(description: string) {
+export function formatDescription(description: string | undefined) {
   if (!description) {
     return "Text unavailable";
   }

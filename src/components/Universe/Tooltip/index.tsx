@@ -103,7 +103,7 @@ export const Tooltip = () => {
 
           <Flex pt={12}>
             <Text color="textSecondary">
-              {formatDescription(description || "")}
+              {formatDescription(description)}
             </Text>
             <Flex pt={4}>
               <Description color="textSecondary" kind="tiny">

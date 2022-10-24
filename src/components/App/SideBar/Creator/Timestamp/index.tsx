@@ -84,7 +84,7 @@ export const Timestamp = ({ onClick, timestamp }: Props) => {
             color={isSelected ? "textAccentBlue" : "textSecondary"}
             kind={isSelected ? "regularBold" : "regular"}
           >
-            {formatDescription(timestamp.description || "")}
+            {formatDescription(timestamp.description)}
           </Text>
         </Flex>
       </div>
