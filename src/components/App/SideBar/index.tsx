@@ -11,7 +11,7 @@ import { colors } from "~/utils/colors";
 export const MENU_WIDTH = 433;
 
 const Wrapper = styled(Flex)`
-    background: ${colors.background};
+    background: ${colors.body};
     height: 100vh;
     width: ${MENU_WIDTH}px;
     z-index: 30;
@@ -21,7 +21,7 @@ const SearchWrapper = styled(Flex).attrs({
   direction: "row",
   p: 20,
 })`
-  background: ${colors.backgroundHeader};
+  background: ${colors.dashboardHeader};
 `;
 
 const CloseButton = styled(Flex).attrs({
@@ -29,7 +29,7 @@ const CloseButton = styled(Flex).attrs({
   justify: "center",
   p: 10,
 })`
-  color: ${colors.textSecondary};
+  color: ${colors.mainBottomIcons};
   cursor: pointer;
 `;
 
@@ -59,7 +59,7 @@ const Content = () => {
         </CloseButton>
       </SearchWrapper>
 
-      {isLoading ? <Loader color="textPrimary" /> : <View />}
+      {isLoading ? <Loader color="primaryText1" /> : <View />}
 
       <Transcript />
     </Wrapper>

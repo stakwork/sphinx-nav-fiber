@@ -11,6 +11,7 @@ import { NodeExtended } from "~/types";
 import { saveConsumedContent } from "~/utils/relayHelper";
 import { Episode } from "./Episode";
 import { ErrorSection } from "../Creator/ErrorSection";
+import { formatDescription } from "~/utils/formatDescription";
 
 const pageSize = 80;
 
@@ -67,7 +68,7 @@ export const Relevance = ({ header = null }: Props) => {
         {header}
 
         <Flex pb={10} px={20}>
-          <Text color="textSecondary">
+          <Text color="mainBottomIcons">
             Page {currentPage + 1} of {Math.ceil(data.nodes.length / pageSize)}
           </Text>
         </Flex>
@@ -87,7 +88,7 @@ export const Relevance = ({ header = null }: Props) => {
               key={index.toString()}
               boostCount={boost || 0}
               date={date || 0}
-              description={description || ""}
+              description={formatDescription(description)}
               imageUrl={imageUrl || "audio_default.svg"}
               onClick={() => handleNodeClick(n)}
               title={episodeTitle || ""}
