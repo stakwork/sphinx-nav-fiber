@@ -35,18 +35,30 @@ export const App = () => {
   useEffect(() => {
     const run = async () => {
       if (searchTerm) {
+        if (isAuthorized) {
+          fetchData(searchTerm);
+
+          return;
+        }
+
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        await sphinx.enable();
+        const res = await sphinx.enable();
 
-        setAuthorized(true);
+        if (res) {
+          setAuthorized(true);
+        } else if (res === null) {
+          console.log("budget not set");
+
+          return;
+        }
       }
 
       fetchData(searchTerm);
     };
 
     run();
-  }, [fetchData, searchTerm, setSidebarOpen]);
+  }, [fetchData, searchTerm, setSidebarOpen, isAuthorized]);
 
   return (
     <>
