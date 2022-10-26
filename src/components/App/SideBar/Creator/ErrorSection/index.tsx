@@ -11,6 +11,7 @@ import { useAppStore } from "~/stores/useAppStore";
 
 const ErrorWrapper = styled(Flex)`
   padding: 10px;
+  border-bottom: 1px solid ${colors.divider2};
 `;
 
 const ErrorMsgWrapper = styled.textarea`
