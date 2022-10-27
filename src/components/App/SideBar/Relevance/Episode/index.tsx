@@ -5,6 +5,16 @@ import { Avatar } from "~/components/common/Avatar";
 import { Flex } from "~/components/common/Flex";
 import { Text } from "~/components/common/Text";
 
+type EpisodeTypeImage = {
+  [key: string]: string;
+};
+
+const EpisodeTypeImages: EpisodeTypeImage = {
+  podcast: 'podcast.png',
+  twitter: 'twitter.png',
+  youtube: 'youtube.png',
+}
+
 const EpisodeWrapper = styled(Flex).attrs({
   direction: "row",
 })`
@@ -16,6 +26,13 @@ const EpisodeWrapper = styled(Flex).attrs({
   &:hover {
     opacity: 1;
   }
+
+  .type-image {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    margin-right: 8px;
+  }
 `;
 
 type Props = {
@@ -24,6 +41,7 @@ type Props = {
   description: string;
   imageUrl: string;
   title: string;
+  type?: string;
 
   onClick: () => void;
 };
@@ -34,6 +52,7 @@ export const Episode = ({
   description,
   imageUrl,
   title,
+  type,
   onClick,
 }: Props) => (
   <EpisodeWrapper background="body" onClick={onClick}>
@@ -43,6 +62,8 @@ export const Episode = ({
 
     <div>
       <Flex align="center" direction="row" pb={4}>
+        {type && EpisodeTypeImages[type] && <img alt={type} className="type-image" src={EpisodeTypeImages[type]} />}
+
         <Text color="primaryText1" kind="tiny">
           {moment.unix(date || 0).format("ll")}
         </Text>
