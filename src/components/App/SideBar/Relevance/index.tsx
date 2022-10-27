@@ -80,6 +80,7 @@ export const Relevance = ({ header = null }: Props) => {
             description,
             date,
             boost,
+            type,
           } = n || {};
 
           return (
@@ -92,6 +93,7 @@ export const Relevance = ({ header = null }: Props) => {
               imageUrl={imageUrl || "audio_default.svg"}
               onClick={() => handleNodeClick(n)}
               title={episodeTitle || ""}
+              type={type}
             />
           );
         })}
