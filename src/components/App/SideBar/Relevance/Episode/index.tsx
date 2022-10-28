@@ -12,6 +12,7 @@ type EpisodeTypeImage = {
 const EpisodeTypeImages: EpisodeTypeImage = {
   podcast: 'podcast.png',
   twitter: 'twitter.png',
+  twitter_space: 'twitter.png',
   youtube: 'youtube.png',
 }
 
