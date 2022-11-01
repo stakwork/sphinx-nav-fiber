@@ -21,7 +21,7 @@ import { Tooltip } from "./Tooltip";
 
 const Content = () => (
   <>
-    <color args={[colors.gray500]} attach="background" />
+    <color args={[colors.black]} attach="background" />
 
     <Lights />
 
@@ -54,7 +54,7 @@ export const Universe = () => (
           aspect: 1920 / 1080,
           far: 8000,
           near: 1,
-          position: [2000, 0, 5],
+          position: [1000, 0, 5],
         }}
         id="universe-canvas"
         shadows

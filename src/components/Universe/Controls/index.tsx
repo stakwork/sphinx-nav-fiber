@@ -14,7 +14,7 @@ const useGesture = createUseGesture([pinchAction, wheelAction]);
 
 const p = new THREE.Vector3();
 
-const introAnimationTargetPoisiton = new THREE.Vector3(-1900, -3200, -2800);
+const introAnimationTargetPoisiton = new THREE.Vector3(-1900, -2200, -2800);
 
 export const Controls = () => {
   const [cameraAnimation, setCameraAnimation] = useDataStore((s) => [

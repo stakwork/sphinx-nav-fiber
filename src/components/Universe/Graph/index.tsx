@@ -16,14 +16,13 @@ const layout = forceSimulation()
   .numDimensions(3)
   .force("link", forceLink().strength(0.1))
   .force("center", forceCenter().strength(0.1))
-  .force("charge", forceManyBody().strength(-40))
+  .force("charge", forceManyBody())
   .force("dagRadial", null)
   .velocityDecay(0.2)
   .alphaDecay(0.0228)
-  .alphaTarget(0)
   .stop();
 
-const cooldownTime = 5;
+const cooldownTime = 7;
 const alphaMin = 0;
 
 export const Graph = () => {
@@ -73,6 +72,9 @@ export const Graph = () => {
          *  everytime the data.links count changes
          * */
         key={data.links.length}
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        fog
         limit={data.links.length}
         lineWidth={0.3}
       >
