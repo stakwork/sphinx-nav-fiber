@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { ToastContainer } from "react-toastify";
 import { Flex } from "~/components/common/Flex";
 import { Loader } from "~/components/common/Loader";
 import { SearchBar } from "~/components/SearchBar";
@@ -7,14 +8,34 @@ import { useDataStore } from "~/stores/useDataStore";
 import { Transcript } from "./Transcript";
 import { View } from "./View";
 import { colors } from "~/utils/colors";
+import "react-toastify/dist/ReactToastify.css";
 
 export const MENU_WIDTH = 433;
 
 const Wrapper = styled(Flex)`
-    background: ${colors.body};
-    height: 100vh;
-    width: ${MENU_WIDTH}px;
-    z-index: 30;
+  background: ${colors.body};
+  height: 100vh;
+  width: ${MENU_WIDTH}px;
+  z-index: 30;
+`;
+
+const StyledToast = styled(ToastContainer)`
+  .Toastify__toast {
+    background-color: ${colors.body};
+  }
+  .Toastify__toast-body {
+    background-color: ${colors.body};
+    color: ${colors.white};
+  }
+  .Toastify__close-button {
+    color: ${colors.white};
+  }
+  .Toastify__progress-bar--error {
+    background-color: ${colors.primaryRed};
+  }
+  .Toastify__progress-bar--success {
+    background-color: ${colors.primaryGreen};
+  }
 `;
 
 const SearchWrapper = styled(Flex).attrs({
@@ -42,6 +63,7 @@ const Content = () => {
 
   return (
     <Wrapper id="sidebar-wrapper">
+      <StyledToast />
       <SearchWrapper>
         <SearchBar />
 
