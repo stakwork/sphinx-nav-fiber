@@ -34,7 +34,12 @@ const EpisodeWrapper = styled(Flex).attrs({
     border-radius: 50%;
     margin-right: 8px;
   }
-`;
+
+  .booster__pill {
+    margin-right: 0;
+    margin-top: 8px;
+  }
+  `;
 
 type Props = {
   boostCount: number;
@@ -57,8 +62,9 @@ export const Episode = ({
   onClick,
 }: Props) => (
   <EpisodeWrapper background="body" onClick={onClick}>
-    <Flex pr={20}>
+    <Flex align="center" pr={20}>
       <Avatar src={imageUrl} />
+      <Booster count={boostCount} readOnly />
     </Flex>
 
     <div>
@@ -69,15 +75,14 @@ export const Episode = ({
           {moment.unix(date || 0).format("ll")}
         </Text>
 
-        <Booster count={boostCount} readOnly />
       </Flex>
 
       <Flex pb={4}>
-        <Text color="primaryText1">{title}</Text>
+        <Text color="primaryText1">{description}</Text>
       </Flex>
 
       <Text color="mainBottomIcons" kind="tiny">
-        {description}
+        {title}
       </Text>
     </div>
   </EpisodeWrapper>

@@ -53,7 +53,7 @@ export const Booster = ({ count, content, readOnly, refId }: Props) => {
     }
 
     return (
-      <Pill style={{ padding: "1px 8px 1px 3px", width: "fit-content" }}>
+      <Pill className="booster__pill" style={{ padding: "1px 8px 1px 3px", width: "fit-content" }}>
         <Flex align="center" direction="row" justify="center">
           <span className="material-icons" style={{ fontSize: 12 }}>
             bolt
