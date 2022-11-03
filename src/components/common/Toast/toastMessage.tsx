@@ -1,25 +1,12 @@
 import * as sphinx from "sphinx-bridge-kevkevinpal";
 import styled from "styled-components";
+import { BOOST_ERROR_BUDGET } from "~/constants";
 import { colors } from "~/utils/colors";
 import { Text } from "~/components/common/Text";
 import { ToastContentProps, toast } from "react-toastify";
 
-const ButtonWrapper = styled.button`
-  background: ${colors.gray200};
-  border: 1px solid ${colors.white};
-  border-radius: 2px;
-  margin: 10px;
-  padding: 5px;
-
-  &:hover {
-    cursor: pointer;
-    background-color: ${colors.gray300};
-  }
-`;
-
 type Props = ToastContentProps & {
   message: string;
-  onClick?: () => void;
   toastProps: any;
 };
 
@@ -35,14 +22,15 @@ const topupFromToast = async () => {
 
     if (res.budget < 5) {
       throw new Error("You set a budget of less than 5 sats");
-    }
-
-    if (res.budget >= 5) {
-      toast(<ToastMessage message={`You set a budget of ${res.budget}`} />, {
-        icon: false,
-        position: toast.POSITION.BOTTOM_CENTER,
-        type: "success",
-      });
+    } else {
+      toast(
+        <ToastMessage message={`You set a budget of ${res.budget} sats`} />,
+        {
+          icon: false,
+          position: toast.POSITION.BOTTOM_CENTER,
+          type: "success",
+        }
+      );
     }
   } catch (err: unknown) {
     if (err instanceof Error) {
@@ -60,7 +48,7 @@ export const ToastMessage = ({ message, toastProps }: Partial<Props>) => {
     return <div>{message}</div>;
   }
 
-  if (message === "Boost failed, insufficient budget") {
+  if (message === BOOST_ERROR_BUDGET) {
     return (
       <div>
         {message}
@@ -75,3 +63,16 @@ export const ToastMessage = ({ message, toastProps }: Partial<Props>) => {
 
   return <div>{message}</div>;
 };
+
+const ButtonWrapper = styled.button`
+  background: ${colors.gray200};
+  border: 1px solid ${colors.white};
+  border-radius: 2px;
+  margin: 10px;
+  padding: 5px;
+
+  &:hover {
+    cursor: pointer;
+    background-color: ${colors.gray300};
+  }
+`;

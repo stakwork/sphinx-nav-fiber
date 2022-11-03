@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import ClipLoader from "react-spinners/ClipLoader";
+import { BOOST_SUCCESS, BOOST_ERROR_BUDGET } from "~/constants";
 import { Flex } from "~/components/common/Flex";
 import { Pill } from "~/components/common/Pill";
 import { boost } from "~/utils/boost";
@@ -17,7 +18,7 @@ const notify = (message: string) => {
   toast(<ToastMessage message={message} />, {
     icon: false,
     position: toast.POSITION.BOTTOM_CENTER,
-    type: message === "Boosted successfully" ? "success" : "error",
+    type: message === BOOST_SUCCESS ? "success" : "error",
   });
 };
 
@@ -50,9 +51,9 @@ export const Booster = ({ count, content, readOnly, refId }: Props) => {
       await boost(refId, defaultBoostAmount);
 
       setIsSuccess(true);
-      notify("Boosted successfully");
+      notify(BOOST_SUCCESS);
     } catch (e) {
-      notify("Boost failed, insufficient budget");
+      notify(BOOST_ERROR_BUDGET);
     }
 
     setSubmitting(false);
