@@ -68,14 +68,6 @@ export const Stats = () => {
       <Text as="div" color="white" kind="regularBold">
         Twitter Spaces: {stats.numTwitterSpace}
       </Text>
-
-      <Text as="div" color="white" kind="regularBold">
-        Contributers: {stats.numContributors}
-      </Text>
-
-      <Text as="div" color="white" kind="regularBold">
-        Nodes Added Daily: {stats.numDaily}
-      </Text>
     </div>
   );
 };
