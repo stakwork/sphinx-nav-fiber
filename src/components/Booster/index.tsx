@@ -1,14 +1,25 @@
 import { useEffect, useState } from "react";
 import ClipLoader from "react-spinners/ClipLoader";
+import { BOOST_SUCCESS, BOOST_ERROR_BUDGET } from "~/constants";
 import { Flex } from "~/components/common/Flex";
 import { Pill } from "~/components/common/Pill";
 import { boost } from "~/utils/boost";
+import { toast } from "react-toastify";
+import { ToastMessage } from "../common/Toast/toastMessage";
 
 type Props = {
   count?: number;
   content?: any;
   refId?: string;
   readOnly?: boolean;
+};
+
+const notify = (message: string) => {
+  toast(<ToastMessage message={message} />, {
+    icon: false,
+    position: toast.POSITION.BOTTOM_CENTER,
+    type: message === BOOST_SUCCESS ? "success" : "error",
+  });
 };
 
 export const Booster = ({ count, content, readOnly, refId }: Props) => {
@@ -40,8 +51,9 @@ export const Booster = ({ count, content, readOnly, refId }: Props) => {
       await boost(refId, defaultBoostAmount);
 
       setIsSuccess(true);
+      notify(BOOST_SUCCESS);
     } catch (e) {
-      throw e;
+      notify(BOOST_ERROR_BUDGET);
     }
 
     setSubmitting(false);
