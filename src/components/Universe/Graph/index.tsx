@@ -1,12 +1,12 @@
 import { Segments } from "@react-three/drei";
-import { useFrame } from "@react-three/fiber";
+import { useFrame, useThree } from "@react-three/fiber";
 import {
   forceCenter,
   forceLink,
   forceManyBody,
   forceSimulation,
 } from "d3-force-3d";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { useGraphData } from "~/components/DataRetriever";
 import { GraphData, NodeExtended } from "~/types";
 import { Cubes } from "./Cubes";
@@ -22,44 +22,45 @@ const layout = forceSimulation()
   .alphaDecay(0.0228)
   .stop();
 
-const cooldownTime = 7;
-const alphaMin = 0;
+let maxTicks: number;
+
+// Time in seconds
+const timeLimit = 5;
 
 export const Graph = () => {
   const data = useGraphData();
-  const pauseRef = useRef<boolean>(false);
+
+  const { clock } = useThree();
 
   useEffect(() => {
-    pauseRef.current = true;
+    clock.stop();
+
+    layout.stop().nodes(data.nodes);
 
     layout
-      .stop()
-      .alpha(1) // re-heat the simulation
-      .nodes(data.nodes);
+      .force("link")
+      .id((d: NodeExtended) => d.id)
+      .links(data.links);
 
-    const linkForce = layout.force("link");
+    // re-heat the simulation
+    layout.alpha(1).restart();
 
-    if (linkForce) {
-      linkForce.id((d: NodeExtended) => d.id).links(data.links);
-    }
-
-    pauseRef.current = false;
-  }, [data]);
+    clock.start();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [clock, data]);
 
   useFrame((state) => {
     const elapsedTime = state.clock.getElapsedTime();
 
-    if (!pauseRef.current) {
-      layout.tick();
+    if (elapsedTime > timeLimit) {
+      maxTicks = 0;
+
+      return;
     }
 
-    if (
-      elapsedTime > cooldownTime ||
-      (alphaMin > 0 && layout.alpha() < alphaMin)
-    ) {
-      pauseRef.current = true;
-    } else {
-      pauseRef.current = false;
+    if (layout.alpha() > 1e-2 && maxTicks < 150) {
+      layout.tick();
+      maxTicks += 1;
     }
   });
 
@@ -71,20 +72,25 @@ export const Graph = () => {
         /** NOTE: using the key in this way the segments re-mounts
          *  everytime the data.links count changes
          * */
-        key={data.links.length}
+        key={`links-${data.links.length}`}
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         fog
         limit={data.links.length}
-        lineWidth={0.3}
+        lineWidth={0.2}
       >
         {(data.links as unknown as GraphData<NodeExtended>["links"]).map(
           (link, index) => (
-            // eslint-disable-next-line react/no-array-index-key
-            <Segment key={index.toString()} link={link} />
+            <Segment
+              // eslint-disable-next-line react/no-array-index-key
+              key={index.toString()}
+              link={link}
+            />
           )
         )}
       </Segments>
     </>
   );
 };
+
+Segments.displayName = "Segments";

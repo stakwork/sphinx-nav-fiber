@@ -30,7 +30,7 @@ const Content = () => (
     <Selection>
       <Graph />
 
-      <EffectComposer autoClear={false} multisampling={0}>
+      <EffectComposer autoClear={false} multisampling={8}>
         <SSAO
           color="black"
           intensity={150}

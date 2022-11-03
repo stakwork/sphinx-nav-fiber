@@ -1,24 +1,19 @@
-import { Node } from "~/types";
-
-const ids: Record<string, number> = {};
+import getLinks from "./links";
+import getNodes from "./nodes";
 
 export const getMockGraphData = async () => {
-  const { default: defaultNodes } = (await import("./nodes.json")) as {
-    default: Node[];
-  };
+  const ids: Record<string, number> = {};
 
-  const { default: links } = await import("./links.json");
+  const nodes = getNodes();
 
-  const nodes = defaultNodes.map((node) => {
+  // eslint-disable-next-line no-restricted-syntax
+  for (const node of nodes) {
     const count = ids[node.id] || 0;
 
     ids[node.id] = count + 1;
 
-    return {
-      ...node,
-      id: `${node.id}${count - 1 > 0 ? `-${count - 1}` : ""}`,
-    };
-  });
+    node.id = `${node.id}${count - 1 > 0 ? `-${count - 1}` : ""}`;
+  }
 
-  return { links, nodes };
+  return { links: getLinks(), nodes };
 };
