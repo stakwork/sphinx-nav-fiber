@@ -14,7 +14,34 @@ import { Segment } from "./Segment";
 
 const layout = forceSimulation()
   .numDimensions(3)
-  .force("link", forceLink().strength(0.1))
+  .force(
+    "link",
+    forceLink()
+      .distance((d: { source: NodeExtended; target: NodeExtended }) => {
+        const sourceType = d.source.node_type;
+        const targetType = d.target.node_type;
+
+        if (sourceType === "show") {
+          return 500;
+        }
+
+        switch (targetType) {
+          case "show":
+            return 200;
+          case "topic":
+            return 1000;
+          case "guest":
+            return 300;
+          case "clip":
+            return 100;
+          case "episode":
+            return 150;
+          default:
+            return 100;
+        }
+      })
+      .strength(0.4)
+  )
   .force("center", forceCenter().strength(0.1))
   .force("charge", forceManyBody())
   .force("dagRadial", null)
@@ -22,7 +49,8 @@ const layout = forceSimulation()
   .alphaDecay(0.0228)
   .stop();
 
-let maxTicks: number;
+const maxTicks = 200;
+let currentTick: number;
 
 // Time in seconds
 const timeLimit = 5;
@@ -53,14 +81,14 @@ export const Graph = () => {
     const elapsedTime = state.clock.getElapsedTime();
 
     if (elapsedTime > timeLimit) {
-      maxTicks = 0;
+      currentTick = 0;
 
       return;
     }
 
-    if (layout.alpha() > 1e-2 && maxTicks < 150) {
+    if (layout.alpha() > 1e-2 && currentTick < maxTicks) {
       layout.tick();
-      maxTicks += 1;
+      currentTick += 1;
     }
   });
 

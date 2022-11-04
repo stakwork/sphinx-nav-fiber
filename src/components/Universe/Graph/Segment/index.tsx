@@ -34,7 +34,7 @@ export const Segment = ({ link }: Props) => {
       ) {
         ref.current.color.setHex(0xfbff00);
       } else {
-        ref.current.color.setHex(0xffffff);
+        ref.current.color.setHex(0xcccccc);
       }
     }
   });
