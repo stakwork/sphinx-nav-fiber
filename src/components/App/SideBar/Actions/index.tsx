@@ -38,6 +38,7 @@ export const Actions = () => {
       <Pill
         onClick={() => setTranscriptOpen(!transcriptIsOpen)}
         selected={transcriptIsOpen}
+        style={{ padding: '4px 8px' }}
       >
         Transcript
       </Pill>
@@ -49,8 +50,8 @@ export const Actions = () => {
         flagErrorIsOpen={flagErrorIsOpen}
         onClick={() => setFlagErrorOpen(!flagErrorIsOpen)}
       >
-        <span className="material-icons" style={{ fontSize: 30 }}>
-          error_outline
+        <span className="material-icons" style={{ fontSize: 20 }}>
+          outlined_flag
         </span>
       </FlagError>
     </Flex>
