@@ -65,7 +65,10 @@ export const Booster = ({ count, content, readOnly, refId }: Props) => {
     }
 
     return (
-      <Pill className="booster__pill" style={{ padding: "1px 8px 1px 3px", width: "fit-content" }}>
+      <Pill
+        className="booster__pill"
+        style={{ padding: "1px 8px 1px 3px", width: "fit-content" }}
+      >
         <Flex align="center" direction="row" justify="center">
           <span className="material-icons" style={{ fontSize: 12 }}>
             bolt
@@ -97,7 +100,7 @@ export const Booster = ({ count, content, readOnly, refId }: Props) => {
 
             doBoost();
           }}
-          style={{ width: 50 }}
+          style={{ width: "fit-content" }}
         >
           {submitting ? (
             <ClipLoader color="#fff" loading size={10} />
