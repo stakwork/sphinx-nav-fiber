@@ -100,7 +100,7 @@ export const Booster = ({ count, content, readOnly, refId }: Props) => {
 
             doBoost();
           }}
-          style={{ width: "fit-content" }}
+          style={{ padding: '4px 8px', width: "fit-content" }}
         >
           {submitting ? (
             <ClipLoader color="#fff" loading size={10} />

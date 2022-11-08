@@ -4,7 +4,6 @@ import { Pill } from "~/components/common/Pill";
 import { Text } from "~/components/common/Text";
 import { useGraphData } from "~/components/DataRetriever";
 import { useAppStore } from "~/stores/useAppStore";
-import { Heading } from "../Creator/Heading";
 import { ScrollView } from "~/components/ScrollView";
 import { useDataStore } from "~/stores/useDataStore";
 import { NodeExtended } from "~/types";
@@ -27,11 +26,8 @@ export const Relevance = ({ header = null }: Props) => {
   const setSelectedNode = useDataStore((s) => s.setSelectedNode);
   const setSelectedTimestamp = useDataStore((s) => s.setSelectedTimestamp);
   const flagErrorIsOpen = useAppStore((s) => s.flagErrorIsOpen);
-  
-  const [relevanceIsSelected, setRelevanceSelected] = useAppStore((s) => [
-    s.relevanceIsSelected,
-    s.setRelevanceSelected,
-  ]);
+
+  const  setRelevanceSelected = useAppStore((s) => s.setRelevanceSelected);
 
   const [currentPage, setCurrentPage] = useState(0);
 
@@ -61,7 +57,6 @@ export const Relevance = ({ header = null }: Props) => {
 
   return (
     <>
-      {relevanceIsSelected && <Heading />}
       {flagErrorIsOpen && <ErrorSection />}
 
       <ScrollView ref={scrollViewRef} shrink={1}>
@@ -81,6 +76,7 @@ export const Relevance = ({ header = null }: Props) => {
             date,
             boost,
             type,
+            id,
           } = n || {};
 
           return (
@@ -90,6 +86,7 @@ export const Relevance = ({ header = null }: Props) => {
               boostCount={boost || 0}
               date={date || 0}
               description={formatDescription(description)}
+              id={id}
               imageUrl={imageUrl || "audio_default.svg"}
               onClick={() => handleNodeClick(n)}
               title={episodeTitle || ""}
