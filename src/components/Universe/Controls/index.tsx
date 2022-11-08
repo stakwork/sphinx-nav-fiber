@@ -1,15 +1,20 @@
-import { createUseGesture, wheelAction } from "@use-gesture/react";
+import {
+  createUseGesture,
+  pinchAction,
+  WebKitGestureEvent,
+  wheelAction,
+} from "@use-gesture/react";
 import gsap from "gsap";
 import { useCallback, useEffect, useRef } from "react";
 import * as THREE from "three";
 import { useDataStore } from "~/stores/useDataStore";
 import { CameraControls } from "./CameraControls";
 
-const useGesture = createUseGesture([wheelAction]);
+const useGesture = createUseGesture([pinchAction, wheelAction]);
 
 const p = new THREE.Vector3();
 
-const introAnimationTargetPoisiton = new THREE.Vector3(-1900, -3200, -2800);
+const introAnimationTargetPoisiton = new THREE.Vector3(-1900, -2200, -2800);
 
 export const Controls = () => {
   const [cameraAnimation, setCameraAnimation] = useDataStore((s) => [
@@ -21,25 +26,28 @@ export const Controls = () => {
 
   const cameraControlsRef = useRef<CameraControls | null>(null);
 
-  const doDollyTransition = useCallback((event: WheelEvent) => {
-    if (!cameraControlsRef.current) {
-      return;
-    }
+  const doDollyTransition = useCallback(
+    (event: WheelEvent | PointerEvent | TouchEvent | WebKitGestureEvent) => {
+      if (!cameraControlsRef.current) {
+        return;
+      }
 
-    if (cameraControlsRef.current.dampingFactor < 0.1) {
-      cameraControlsRef.current.dampingFactor = 0.1;
-    }
+      if (cameraControlsRef.current.dampingFactor < 0.1) {
+        cameraControlsRef.current.dampingFactor = 0.1;
+      }
 
-    const distance = cameraControlsRef.current?.distance;
+      const distance = cameraControlsRef.current?.distance;
 
-    let dollyStep = distance < 3000 ? 40 : 140;
+      let dollyStep = distance < 3000 ? 40 : 140;
 
-    if (event.deltaY > 0) {
-      dollyStep *= -1;
-    }
+      if ("deltaY" in event && event.deltaY > 0) {
+        dollyStep *= -1;
+      }
 
-    cameraControlsRef.current?.dolly(dollyStep, true);
-  }, []);
+      cameraControlsRef.current?.dolly(dollyStep, true);
+    },
+    []
+  );
 
   const rotateWorld = useCallback(() => {
     cameraAnimation?.kill();
@@ -130,6 +138,7 @@ export const Controls = () => {
   useEffect(() => {
     if (cameraControlsRef.current) {
       cameraControlsRef.current.mouseButtons.wheel = 0;
+
       cameraControlsRef.current.minDistance = 200;
       cameraControlsRef.current.maxDistance = Infinity;
       cameraControlsRef.current.minPolarAngle = -Infinity;
@@ -146,6 +155,7 @@ export const Controls = () => {
 
   useGesture(
     {
+      onPinch: ({ event }) => doDollyTransition(event),
       onWheel: ({ event }) => doDollyTransition(event),
     },
     {
@@ -176,32 +186,33 @@ export const Controls = () => {
 
         cameraControlsRef.current.dampingFactor = 0.01;
 
-        // eslint-disable-next-line no-underscore-dangle
-        const mesh = selectedNode?.__threeObj;
+        const mesh = new THREE.Vector3(
+          selectedNode.x,
+          selectedNode.y,
+          selectedNode.z
+        );
 
-        if (mesh) {
-          p.copy(mesh.position);
+        p.copy(mesh);
 
-          p.add(
-            new THREE.Vector3(
-              THREE.MathUtils.randInt(60, 80),
-              THREE.MathUtils.randInt(60, 80),
-              THREE.MathUtils.randInt(60, 80)
-            )
-          );
+        p.add(
+          new THREE.Vector3(
+            THREE.MathUtils.randInt(60, 80),
+            THREE.MathUtils.randInt(60, 80),
+            THREE.MathUtils.randInt(60, 80)
+          )
+        );
 
-          await cameraControlsRef.current.setLookAt(
-            p.x,
-            p.y,
-            p.z,
-            mesh.position.x,
-            mesh.position.y,
-            mesh.position.z,
-            true
-          );
+        await cameraControlsRef.current.setLookAt(
+          p.x,
+          p.y,
+          p.z,
+          mesh.x,
+          mesh.y,
+          mesh.z,
+          true
+        );
 
-          cameraControlsRef.current.dampingFactor = 0.1;
-        }
+        cameraControlsRef.current.dampingFactor = 0.1;
       }
     };
 

@@ -1,10 +1,10 @@
 import styled from "styled-components";
-import { colors } from "~/utils/colors";
 import { Booster } from "~/components/Booster";
 import { Flex } from "~/components/common/Flex";
 import { Pill } from "~/components/common/Pill";
 import { useAppStore } from "~/stores/useAppStore";
 import { useDataStore } from "~/stores/useDataStore";
+import { colors } from "~/utils/colors";
 
 type FlagErrorProps = {
   flagErrorIsOpen?: boolean;

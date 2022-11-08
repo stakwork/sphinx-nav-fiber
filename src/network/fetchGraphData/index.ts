@@ -24,8 +24,6 @@ export const fetchGraphData = async (search: string) => {
 
 const fetchNodes = async (search: string) => {
   if (isDevelopment) {
-    console.log("is dev", origin);
-
     return api.get<Node[]>("/mock_data");
   }
 
@@ -155,7 +153,6 @@ const getGraphData = async (searchterm: string) => {
         });
       }
 
-      // Adds guest nodes
       Object.entries(guestMap).forEach(([guest, guestChildren], index) => {
         const scale = guestChildren.length * 2;
         const guestNodeId = `guestnode_${index}`;
