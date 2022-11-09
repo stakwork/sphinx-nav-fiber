@@ -105,7 +105,7 @@ const CloseButton = styled(Flex).attrs({
   justify: "center",
   p: 5,
 })`
-  background-color: rgba(19, 24, 29, 1);
+  background-color: ${colors.inputBg1};
   border-radius: 0 5px 5px 0;
   color: ${colors.mainBottomIcons};
   cursor: pointer;
@@ -121,7 +121,7 @@ const CollapseButton = styled(Flex).attrs({
   justify: "center",
   p: 5,
 })`
-  background-color: rgba(19, 24, 29, 1);
+  background-color: ${colors.inputBg1};
   border-radius: 5px 0 0 5px;
   color: ${colors.mainBottomIcons};
   cursor: pointer;

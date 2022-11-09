@@ -16,7 +16,7 @@ const Input = styled.input<{ loading?: boolean }>`
   box-shadow: 0px 1px 6px rgba(0, 0, 0, 0.1);
   width: 100%;
   color: #fff;
-  background-color: rgba(19, 24, 29, 1);
+  background-color: ${colors.inputBg1};
   box-shadow: none;
   border: none;
 
