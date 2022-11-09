@@ -1,3 +1,4 @@
+import styled from "styled-components";
 import { noop } from "lodash";
 import { useEffect, useState } from "react";
 import { Text } from "~/components/common/Text";
@@ -59,25 +60,29 @@ export const Stats = () => {
 
   return (
     <div>
-      <Text as="div" color="white" kind="regularBold">
+      <StatsText as="div" color="white" kind="regularBold">
         Nodes: {stats.numNodes}
-      </Text>
+      </StatsText>
 
-      <Text as="div" color="white" kind="regularBold">
+      <StatsText as="div" color="white" kind="regularBold">
         Episodes: {stats.numEpisodes}
-      </Text>
+      </StatsText>
 
-      <Text as="div" color="white" kind="regularBold">
+      <StatsText as="div" color="white" kind="regularBold">
         Audio Clips: {stats.numAudio}
-      </Text>
+      </StatsText>
 
-      <Text as="div" color="white" kind="regularBold">
+      <StatsText as="div" color="white" kind="regularBold">
         Video Clips: {stats.numVideo}
-      </Text>
+      </StatsText>
 
-      <Text as="div" color="white" kind="regularBold">
+      <StatsText as="div" color="white" kind="regularBold">
         Twitter Spaces: {stats.numTwitterSpace}
-      </Text>
+      </StatsText>
     </div>
   );
 };
+
+const StatsText = styled(Text)`
+  padding: 5px;
+`;
