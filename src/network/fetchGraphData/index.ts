@@ -1,17 +1,17 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import * as sphinx from "sphinx-bridge-kevkevinpal";
 import {
-  API_URL,
-  isDevelopment,
   AWS_IMAGE_BUCKET_URL,
   CLOUDFRONT_IMAGE_BUCKET_URL,
+  isDevelopment,
 } from "~/constants";
 import { api } from "~/network/api";
 import { GraphData, Link, Node, NodeExtended } from "~/types";
 import { getLSat } from "~/utils/getLSat";
 
 const defautData: GraphData = {
-  nodes: [],
   links: [],
+  nodes: [],
 };
 
 const shouldIncludeTopics = false;
@@ -24,34 +24,37 @@ export const fetchGraphData = async (search: string) => {
   }
 };
 
-async function getGraphData(searchterm: string) {
+const fetchNodes = async (search: string) => {
+  if (isDevelopment) {
+    console.log("is dev", origin);
+
+    return api.get<Node[]>("/mock_data");
+  }
+
+  console.log("getting prod data");
+
+  const lsatToken = await getLSat();
+
+  if (!lsatToken) {
+    throw new Error("An error occured calling getLSat");
+  }
+
+  return api.get<Node[]>(`/search?word=${search}`, {
+    Authorization: lsatToken,
+  });
+};
+
+const getGraphData = async (searchterm: string) => {
   try {
-    let data: NodeExtended[] = [];
+    const data = await fetchNodes(searchterm);
 
-    if (isDevelopment) {
-      data = await api.get<Node[]>("/mock_data");
-    } else {
-      const lsatToken = await getLSat();
+    if (!Array.isArray(data)) {
+      // For it to get to this block means the previous lsat has expired
 
-      if (!lsatToken) {
-        throw new Error("An error occured calling getLSat");
-      }
+      const lsat = localStorage.getItem("lsat");
 
-      const apiRes = await fetch(`${API_URL}/search?word=${searchterm}`, {
-        headers: {
-          Authorization: lsatToken,
-        },
-      });
-
-      if (apiRes.status >= 200 && apiRes.status <= 299) {
-        data = await apiRes.json();
-      } else if (apiRes.status === 402 || apiRes.status === 401) {
-        // For it to get to this block means the previous lsat has expired
-
-        const lsat = localStorage.getItem("lsat");
-
-        if (lsat) {
-          const expiredLsat = JSON.parse(lsat);
+      if (lsat) {
+        const expiredLsat = JSON.parse(lsat);
 
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
@@ -181,6 +184,7 @@ async function getGraphData(searchterm: string) {
         });
       }
 
+      // Adds guest nodes
       Object.entries(guestMap).forEach(([guest, guestChildren], index) => {
         const scale = guestChildren.length * 2;
         const guestNodeId = `guestnode_${index}`;
@@ -221,4 +225,4 @@ async function getGraphData(searchterm: string) {
 
     return defautData;
   }
-}
+};
