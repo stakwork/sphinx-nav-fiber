@@ -4,13 +4,14 @@ import { Flex } from "~/components/common/Flex";
 import { Text } from "~/components/common/Text";
 import { useDataStore } from "~/stores/useDataStore";
 import { colors } from "~/utils/colors";
+import { formatDescription } from "~/utils/formatDescription";
 
 const Wrapper = styled(Flex)`
   position: absolute;
   pointer-events: none;
-  background: ${colors.backgroundHeader};
+  background: ${colors.dashboardHeader};
   box-shadow: 0px 1px 6px rgba(0, 0, 0, 0.1);
-  color: ${colors.textPrimary};
+  color: ${colors.primaryText1};
   z-index: 100;
   transition: opacity 0.6s;
 
@@ -75,7 +76,7 @@ export const Tooltip = () => {
         </Flex>
 
         <div>
-          <Text color="textPrimary" kind="tiny">
+          <Text color="primaryText1" kind="tiny">
             {showTitle}
           </Text>
 
@@ -85,15 +86,15 @@ export const Tooltip = () => {
             </Text>
           </Flex>
 
-          <Text color="textPrimary" kind="tiny">
+          <Text color="primaryText1" kind="tiny">
             {timestamp}
           </Text>
 
           {guests?.length && (
             <Flex pt={12}>
-              <Text color="textPrimary">Guests</Text>
+              <Text color="primaryText1">Guests</Text>
               <Flex pt={4}>
-                <Text color="textPrimary" kind="tiny">
+                <Text color="primaryText1" kind="tiny">
                   {guests.join(", ")}
                 </Text>
               </Flex>
@@ -101,9 +102,9 @@ export const Tooltip = () => {
           )}
 
           <Flex pt={12}>
-            <Text color="textSecondary">{description}</Text>
+            <Text color="mainBottomIcons">{formatDescription(description)}</Text>
             <Flex pt={4}>
-              <Description color="textSecondary" kind="tiny">
+              <Description color="mainBottomIcons" kind="tiny">
                 {text}
               </Description>
             </Flex>

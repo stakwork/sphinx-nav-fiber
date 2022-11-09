@@ -2005,6 +2005,16 @@
     suspend-react "^0.0.8"
     zustand "^3.7.1"
 
+"@react-three/postprocessing@^2.6.2":
+  version "2.6.2"
+  resolved "https://registry.yarnpkg.com/@react-three/postprocessing/-/postprocessing-2.6.2.tgz#fe1484a51ccc0577f67280307a0fc3a9ecb0e070"
+  integrity sha512-YvU3oH5Vb2UT+ekhhzHwMTvEYo50VoW8EYMQxmh9TzWaTohSB0GGDanJw5peUMDUgYS1gNjj9cpsk0w/z/7Qpg==
+  dependencies:
+    postprocessing "^6.28.5"
+    react-merge-refs "^1.1.0"
+    screen-space-reflections "2.5.0"
+    three-stdlib "^2.8.11"
+
 "@rollup/plugin-node-resolve@^7.1.1":
   version "7.1.3"
   resolved "https://registry.yarnpkg.com/@rollup/plugin-node-resolve/-/plugin-node-resolve-7.1.3.tgz#80de384edfbd7bfc9101164910f86078151a3eca"
@@ -2638,6 +2648,11 @@
   version "2.4.1"
   resolved "https://registry.yarnpkg.com/@types/normalize-package-data/-/normalize-package-data-2.4.1.tgz#d3357479a0fdfdd5907fe67e17e0a85c906e1301"
   integrity sha512-Gj7cI7z+98M282Tqmp2K5EIsoouUEzbBJhQQzDE3jSIRk6r9gsz0oUokqIUR4u1R3dMHo0pDHM7sNOHyhulypw==
+
+"@types/offscreencanvas@^2019.6.4":
+  version "2019.7.0"
+  resolved "https://registry.yarnpkg.com/@types/offscreencanvas/-/offscreencanvas-2019.7.0.tgz#e4a932069db47bb3eabeb0b305502d01586fa90d"
+  integrity sha512-PGcyveRIpL1XIqK8eBsmRBt76eFgtzuPiSTyKHZxnGemp2yzGzWpjYKAfK3wIMiU7eH+851yEpiuP8JZerTmWg==
 
 "@types/parse-json@^4.0.0":
   version "4.0.0"
@@ -4516,6 +4531,11 @@ cliui@^7.0.2:
     string-width "^4.2.0"
     strip-ansi "^6.0.0"
     wrap-ansi "^7.0.0"
+
+clsx@^1.1.1:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/clsx/-/clsx-1.2.1.tgz#0ddc4a20a549b59c93a4116bb26f5294ca17dc12"
+  integrity sha512-EcR6r5a8bj6pu3ycsa/E/cKVGuTgZJZdsyUYHOksG/UHIiKfjxzRxYJpyVBwYaQeOvghal9fcc4PidlgzugAQg==
 
 co@^4.6.0:
   version "4.6.0"
@@ -10664,6 +10684,11 @@ postcss@^8.1.0:
     picocolors "^1.0.0"
     source-map-js "^1.0.2"
 
+postprocessing@^6.28.5:
+  version "6.28.7"
+  resolved "https://registry.yarnpkg.com/postprocessing/-/postprocessing-6.28.7.tgz#ab1104585c3372e576ccf1910a4ea577be379266"
+  integrity sha512-norsBlNIhDoNG2R0nki9C0bNEARIunE/s5W/4qH/Ozlg3m0dOOmBoY8JZhnmPild/+Jvq/UFEeHQRBvTc11WUg==
+
 potpack@^1.0.1:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/potpack/-/potpack-1.0.2.tgz#23b99e64eb74f5741ffe7656b5b5c4ddce8dfc14"
@@ -11125,6 +11150,13 @@ react-spinners@^0.13.3:
   version "0.13.4"
   resolved "https://registry.yarnpkg.com/react-spinners/-/react-spinners-0.13.4.tgz#20f7435e5cb3a2bde23110efa8b7dfbe485373e9"
   integrity sha512-V6IURjYOwomhdngMfuVxBp4utCF6v21sjQ6r4K2JoKl8fwXZp1UeHMBLf+2SU+cts8hAVj9rHOJ8kdT5UqqaJw==
+
+react-toastify@^8.2.0:
+  version "8.2.0"
+  resolved "https://registry.yarnpkg.com/react-toastify/-/react-toastify-8.2.0.tgz#ef7d56bdfdc6272ca6b228368ab564721c3a3244"
+  integrity sha512-Pg2Ju7NngAamarFvLwqrFomJ57u/Ay6i6zfLurt/qPynWkAkOthu6vxfqYpJCyNhHRhR4hu7+bySSeWWJu6PAg==
+  dependencies:
+    clsx "^1.1.1"
 
 react-use-measure@^2.1.1:
   version "2.1.1"
@@ -11650,6 +11682,11 @@ schema-utils@^3.0.0, schema-utils@^3.1.1:
     "@types/json-schema" "^7.0.8"
     ajv "^6.12.5"
     ajv-keywords "^3.5.2"
+
+screen-space-reflections@2.5.0:
+  version "2.5.0"
+  resolved "https://registry.yarnpkg.com/screen-space-reflections/-/screen-space-reflections-2.5.0.tgz#2a6ea982da96f9c35f34a361b2555439f9fbb1f6"
+  integrity sha512-fWSDMhJS0xwD3LTxRRch7Lb9NzxsR66sCmtDmAA7i+OGnghUrBBsrha85ng7StnCBaLq/BKmZ97dLxWd1XgWdQ==
 
 secp256k1@^4.0.2:
   version "4.0.3"
@@ -12572,6 +12609,23 @@ three-stdlib@^2.14.3:
   integrity sha512-FS2HsQFuGIexhzVRrAzhOHtC5YSkIyauWr3MgT6TSVcNZIVy5r+H9i5+Pjed2Oq4mpe97BufmJd+1Xg5Exh0rA==
   dependencies:
     "@babel/runtime" "^7.16.7"
+    "@webgpu/glslang" "^0.0.15"
+    chevrotain "^10.1.2"
+    draco3d "^1.4.1"
+    fflate "^0.6.9"
+    ktx-parse "^0.4.5"
+    mmd-parser "^1.0.4"
+    opentype.js "^1.3.3"
+    potpack "^1.0.1"
+    zstddec "^0.0.2"
+
+three-stdlib@^2.8.11:
+  version "2.16.2"
+  resolved "https://registry.yarnpkg.com/three-stdlib/-/three-stdlib-2.16.2.tgz#7c4adfa9768aa205f111e6a3a6c176748e117b9e"
+  integrity sha512-YTOO76/xjJnjmgM5o7tOj/YCpdWgG6TMo2arNwBb6jO7xpIgr+aw4tDohvgg1EZgo2tmKrOqEOmpjgy+ca9Wog==
+  dependencies:
+    "@babel/runtime" "^7.16.7"
+    "@types/offscreencanvas" "^2019.6.4"
     "@webgpu/glslang" "^0.0.15"
     chevrotain "^10.1.2"
     draco3d "^1.4.1"

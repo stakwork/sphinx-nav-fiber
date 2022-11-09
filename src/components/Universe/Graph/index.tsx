@@ -1,47 +1,22 @@
+import { Segments } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
-import * as d3 from "d3-force-3d";
-import { useCallback, useEffect, useMemo } from "react";
-import { Vector3 } from "three";
-import ThreeForceGraph from "three-forcegraph";
+import {
+  forceCenter,
+  forceLink,
+  forceManyBody,
+  forceSimulation,
+} from "d3-force-3d";
+import { useEffect } from "react";
 import { useGraphData } from "~/components/DataRetriever";
-import { useDataStore } from "~/stores/useDataStore";
-import { NodeExtended } from "~/types";
-import { renderLink } from "./renderLink";
-import { renderNode } from "./renderNode";
-import { useGraphMouseEvents } from "./useGraphMouseEvents";
+import { GraphData, NodeExtended } from "~/types";
+import { Cubes } from "./Cubes";
+import { Segment } from "./Segment";
 
-export const Graph = () => {
-  const { scene } = useThree();
-
-  const data = useGraphData();
-
-  const [selectedNode, setSelectedNode, setHoveredNode] = useDataStore((s) => [
-    s.selectedNode,
-    s.setSelectedNode,
-    s.setHoveredNode,
-  ]);
-
-  const graph = useMemo(
-    () =>
-      new ThreeForceGraph()
-        .nodeThreeObject(renderNode)
-        .nodeResolution(20)
-        .linkThreeObject(renderLink)
-        .d3VelocityDecay(0.2)
-        .d3Force("link", d3.forceLink().strength(0.1))
-        .d3Force("center", d3.forceCenter().strength(0.1)),
-    []
-  );
-
-  useEffect(() => {
-    graph.refresh();
-  }, [selectedNode, graph]);
-
-  useEffect(() => {
-    graph.clear().graphData(data);
-
-    const distanceForce = d3
-      .forceLink(data)
+const layout = forceSimulation()
+  .numDimensions(3)
+  .force(
+    "link",
+    forceLink()
       .distance((d: { source: NodeExtended; target: NodeExtended }) => {
         const sourceType = d.source.node_type;
         const targetType = d.target.node_type;
@@ -65,63 +40,85 @@ export const Graph = () => {
             return 100;
         }
       })
-      .strength(0.4);
+      .strength(0.4)
+  )
+  .force("center", forceCenter().strength(0.1))
+  .force("charge", forceManyBody())
+  .force("dagRadial", null)
+  .velocityDecay(0.2)
+  .alphaDecay(0.0228)
+  .stop();
 
-    graph.d3Force("link", distanceForce);
-  }, [data, graph]);
+const maxTicks = 200;
+let currentTick: number;
+
+// Time in seconds
+const timeLimit = 5;
+
+export const Graph = () => {
+  const data = useGraphData();
+
+  const { clock } = useThree();
 
   useEffect(() => {
-    scene.add(graph);
+    clock.stop();
+
+    layout.stop().nodes(data.nodes);
+
+    layout
+      .force("link")
+      .id((d: NodeExtended) => d.id)
+      .links(data.links);
+
+    // re-heat the simulation
+    layout.alpha(1).restart();
+
+    clock.start();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [clock, data]);
 
-  const onClick = useCallback(
-    (node: NodeExtended | null) => setSelectedNode(node),
-    [setSelectedNode]
-  );
+  useFrame((state) => {
+    const elapsedTime = state.clock.getElapsedTime();
 
-  const onHover = useCallback(
-    (node: NodeExtended) => {
-      setHoveredNode(node);
+    if (elapsedTime > timeLimit) {
+      currentTick = 0;
 
-      // eslint-disable-next-line no-underscore-dangle
-      const scale = node?.__threeObj?.scale || new Vector3(0, 0, 0);
-
-      // eslint-disable-next-line no-underscore-dangle
-      node?.__threeObj?.scale.set(scale.x * 1.5, scale.y * 1.5, scale.z * 1.5);
-    },
-    [setHoveredNode]
-  );
-
-  const onNotHover = useCallback(
-    (currentNode: NodeExtended | null, previousHoverNode: NodeExtended) => {
-      setHoveredNode(currentNode);
-
-      const scale =
-        // eslint-disable-next-line no-underscore-dangle
-        previousHoverNode?.__threeObj?.scale || new Vector3(0, 0, 0);
-
-      // eslint-disable-next-line no-underscore-dangle
-      previousHoverNode?.__threeObj?.scale.set(
-        scale.x / 1.5,
-        scale.y / 1.5,
-        scale.z / 1.5
-      );
-    },
-    [setHoveredNode]
-  );
-
-  const { hoverNode } = useGraphMouseEvents(onHover, onNotHover, onClick);
-
-  useFrame(() => {
-    if (hoverNode) {
-      document.body.style.cursor = "pointer";
-    } else {
-      document.body.style.cursor = "auto";
+      return;
     }
 
-    graph.tickFrame();
+    if (layout.alpha() > 1e-2 && currentTick < maxTicks) {
+      layout.tick();
+      currentTick += 1;
+    }
   });
 
-  return null;
+  return (
+    <>
+      <Cubes />
+
+      <Segments
+        /** NOTE: using the key in this way the segments re-mounts
+         *  everytime the data.links count changes
+         * */
+        key={`links-${data.links.length}`}
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        fog
+        limit={data.links.length}
+        lineWidth={0.15}
+      >
+        {(data.links as unknown as GraphData<NodeExtended>["links"]).map(
+          (link, index) => (
+            <Segment
+              // eslint-disable-next-line react/no-array-index-key
+              key={index.toString()}
+              link={link}
+            />
+          )
+        )}
+      </Segments>
+    </>
+  );
 };
+
+Segments.displayName = "Segments";

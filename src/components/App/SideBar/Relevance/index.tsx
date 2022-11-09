@@ -3,11 +3,14 @@ import { Flex } from "~/components/common/Flex";
 import { Pill } from "~/components/common/Pill";
 import { Text } from "~/components/common/Text";
 import { useGraphData } from "~/components/DataRetriever";
+import { useAppStore } from "~/stores/useAppStore";
 import { ScrollView } from "~/components/ScrollView";
 import { useDataStore } from "~/stores/useDataStore";
 import { NodeExtended } from "~/types";
 import { saveConsumedContent } from "~/utils/relayHelper";
 import { Episode } from "./Episode";
+import { ErrorSection } from "../Creator/ErrorSection";
+import { formatDescription } from "~/utils/formatDescription";
 
 const pageSize = 80;
 
@@ -21,6 +24,10 @@ export const Relevance = ({ header = null }: Props) => {
   const scrollViewRef = useRef<HTMLDivElement | null>(null);
 
   const setSelectedNode = useDataStore((s) => s.setSelectedNode);
+  const setSelectedTimestamp = useDataStore((s) => s.setSelectedTimestamp);
+  const flagErrorIsOpen = useAppStore((s) => s.flagErrorIsOpen);
+
+  const  setRelevanceSelected = useAppStore((s) => s.setRelevanceSelected);
 
   const [currentPage, setCurrentPage] = useState(0);
 
@@ -41,69 +48,78 @@ export const Relevance = ({ header = null }: Props) => {
   const handleNodeClick = useCallback(
     (node: NodeExtended) => {
       saveConsumedContent(node);
-
+      setSelectedTimestamp(node);
+      setRelevanceSelected(true);
       setSelectedNode(node);
     },
-    [setSelectedNode]
+    [setSelectedNode, setRelevanceSelected, setSelectedTimestamp]
   );
 
   return (
-    <ScrollView ref={scrollViewRef} shrink={1}>
-      {header}
+    <>
+      {flagErrorIsOpen && <ErrorSection />}
 
-      <Flex pb={10} px={20}>
-        <Text color="textSecondary">
-          Page {currentPage + 1} of {Math.ceil(data.nodes.length / pageSize)}
-        </Text>
-      </Flex>
+      <ScrollView ref={scrollViewRef} shrink={1}>
+        {header}
 
-      {currentNodes.map((n, index) => {
-        const {
-          image_url: imageUrl,
-          episode_title: episodeTitle,
-          description,
-          date,
-          boost,
-        } = n || {};
+        <Flex pb={10} px={20}>
+          <Text color="mainBottomIcons">
+            Page {currentPage + 1} of {Math.ceil(data.nodes.length / pageSize)}
+          </Text>
+        </Flex>
 
-        return (
-          <Episode
-            // eslint-disable-next-line react/no-array-index-key
-            key={index.toString()}
-            boostCount={boost || 0}
-            date={date || 0}
-            description={description || ""}
-            imageUrl={imageUrl || "audio_default.svg"}
-            onClick={() => handleNodeClick(n)}
-            title={episodeTitle || ""}
-          />
-        );
-      })}
+        {currentNodes.map((n, index) => {
+          const {
+            image_url: imageUrl,
+            episode_title: episodeTitle,
+            description,
+            date,
+            boost,
+            type,
+            id,
+          } = n || {};
 
-      <Flex direction="row" justify="space-between" p={20}>
-        <Pill
-          disabled={!hasPrevious}
-          onClick={() => {
-            if (hasPrevious) {
-              setCurrentPage(currentPage - 1);
-              scrollViewRef.current?.scrollTo(0, 0);
-            }
-          }}
-        >
-          Previous
-        </Pill>
-        <Pill
-          disabled={!hasNext}
-          onClick={() => {
-            if (hasNext) {
-              setCurrentPage(currentPage + 1);
-              scrollViewRef.current?.scrollTo(0, 0);
-            }
-          }}
-        >
-          Next
-        </Pill>
-      </Flex>
-    </ScrollView>
+          return (
+            <Episode
+              // eslint-disable-next-line react/no-array-index-key
+              key={index.toString()}
+              boostCount={boost || 0}
+              date={date || 0}
+              description={formatDescription(description)}
+              id={id}
+              imageUrl={imageUrl || "audio_default.svg"}
+              onClick={() => handleNodeClick(n)}
+              title={episodeTitle || ""}
+              type={type}
+            />
+          );
+        })}
+
+        <Flex direction="row" justify="space-between" p={20}>
+          <Pill
+            disabled={!hasPrevious}
+            onClick={() => {
+              if (hasPrevious) {
+                setCurrentPage(currentPage - 1);
+                scrollViewRef.current?.scrollTo(0, 0);
+              }
+            }}
+          >
+            Previous
+          </Pill>
+          <Pill
+            disabled={!hasNext}
+            onClick={() => {
+              if (hasNext) {
+                setCurrentPage(currentPage + 1);
+                scrollViewRef.current?.scrollTo(0, 0);
+              }
+            }}
+          >
+            Next
+          </Pill>
+        </Flex>
+      </ScrollView>
+    </>
   );
 };

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import styled, { css } from "styled-components";
 import { useAppStore } from "~/stores/useAppStore";
+import { useDataStore } from "~/stores/useDataStore";
 import { colors } from "~/utils/colors";
 
 type Props = {
@@ -10,7 +11,6 @@ type Props = {
 const Input = styled.input<{ loading?: boolean }>`
   pointer-events: auto;
   border-radius: 100px;
-  min-width: 300px;
   height: 50px;
   padding: 0 20px;
   z-index: 2;
@@ -27,7 +27,7 @@ const Input = styled.input<{ loading?: boolean }>`
   }
 
   &:placeholder {
-    color: ${colors.textPlaceholder};
+    color: ${colors.placeholderText};
   }
 
   ${({ loading }) =>
@@ -43,10 +43,13 @@ const Input = styled.input<{ loading?: boolean }>`
 `;
 
 export const SearchBar = ({ loading }: Props) => {
-  const [search, setSearch] = useAppStore((s) => [
+  const [search, setSearch, setRelevanceSelected] = useAppStore((s) => [
     s.currentSearch,
     s.setCurrentSearch,
+    s.setRelevanceSelected,
   ]);
+
+  const setSelectedNode = useDataStore((s) => s.setSelectedNode);
 
   const [tempSearch, setTempSearch] = useState(() => search);
 
@@ -61,6 +64,8 @@ export const SearchBar = ({ loading }: Props) => {
       }}
       onKeyPress={(event) => {
         if (event.key === "Enter" && !!tempSearch) {
+          setSelectedNode(null);
+          setRelevanceSelected(false);
           setSearch(tempSearch);
         }
       }}

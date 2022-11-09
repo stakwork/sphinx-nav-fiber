@@ -21,7 +21,7 @@ const boostAgainstBudget = async (amount: number) => {
   // @ts-ignore
   res = await sphinx.keysend(sphinxPubkey, amount);
 
-  if (!res) {
+  if (!res || !res.success) {
     // rejected, ask for topup
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
