@@ -5,7 +5,6 @@ import { Creator } from "../Creator";
 import { Person } from "../Person";
 import { Relevance } from "../Relevance";
 import { Twitter } from "../Twitter";
-import { YouTube } from "../YouTube";
 
 export const View = () => {
   const data = useGraphData();
@@ -23,8 +22,6 @@ export const View = () => {
   switch (selectedNode?.type) {
     case "twitter":
       return <Twitter />;
-    case "youtube":
-      return <YouTube />;
     case "guest":
       return <Person />;
     default:

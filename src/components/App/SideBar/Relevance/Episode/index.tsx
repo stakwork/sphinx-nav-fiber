@@ -11,6 +11,7 @@ import { Actions } from "../../Actions";
 import ReactAudioPlayer from "react-audio-player";
 import { setIsTimestampLoaded, useDataStore } from "~/stores/useDataStore";
 import { videoTimetoSeconds } from "~/utils/videoTimetoSeconds";
+import { YouTube } from "../YouTube";
 
 type EpisodeTypeImage = {
   [key: string]: string;
@@ -28,7 +29,7 @@ const EpisodeTypeImages: EpisodeTypeImage = {
 }
 
 const EpisodeWrapper = styled(Flex).attrs({
-  direction: "row",
+  direction: "column",
 })<EpisodeWrapperProps>`
 
   padding: 10px 20px;
@@ -116,51 +117,60 @@ export const Episode = ({
 
   return (
   <EpisodeWrapper background="body" isSelected={isSelected} onClick={onClick}>
-    <Flex align="center" pr={20}>
-      <Avatar src={imageUrl} />
-      <Booster count={boostCount} readOnly />
-    </Flex>
+    <Flex direction="row">
 
-    <Flex grow={1} shrink={1}>
-      <Flex align="center" direction="row" justify="space-between" pb={4}>
-        <Flex align="center" direction="row">
-          {type && EpisodeTypeImages[type] && <img alt={type} className="type-image" src={EpisodeTypeImages[type]} />}
+      <Flex align="center" pr={20}>
+        <Avatar src={imageUrl} />
+        <Booster count={boostCount} readOnly />
+      </Flex>
 
-          <Text color="primaryText1" kind="tiny">
-            {moment.unix(date || 0).format("ll")}
-          </Text>
+      <Flex grow={1} shrink={1}>
+        <Flex align="center" direction="row" justify="space-between" pb={4}>
+          <Flex align="center" direction="row">
+            {type && EpisodeTypeImages[type] && <img alt={type} className="type-image" src={EpisodeTypeImages[type]} />}
+
+            <Text color="primaryText1" kind="tiny">
+              {moment.unix(date || 0).format("ll")}
+            </Text>
+          </Flex>
+
+          {isSelected &&(
+            <Flex>
+              <Actions />
+            </Flex>
+          )}
+
         </Flex>
 
-        {isSelected &&(
-          <Flex>
-            <Actions />
-          </Flex>
+        <Flex pb={4}>
+          <Text color="primaryText1">{description}</Text>
+        </Flex>
+
+        {!isSelected && (
+          <Text color="mainBottomIcons" kind="tiny">
+            {title}
+          </Text>
         )}
 
+        {isSelected && type !== 'youtube' && (
+          <Flex style={{ marginTop: '4px' }}>
+            <Audio
+              controls
+              id="audio-player"
+              onError={() => setIsTimestampLoaded(true)}
+              onLoadedMetadata={() => setIsTimestampLoaded(true)}
+              src={selectedTimestamp.link}
+              volume={1}
+            />
+          </Flex>
+        )}
       </Flex>
-
-      <Flex pb={4}>
-        <Text color="primaryText1">{description}</Text>
-      </Flex>
-
-      {!isSelected && (
-        <Text color="mainBottomIcons" kind="tiny">
-          {title}
-        </Text>
-      )}
-
-      {isSelected && (
-        <Flex style={{ marginTop: '4px' }}>
-          <Audio
-            controls
-            id="audio-player"
-            onError={() => setIsTimestampLoaded(true)}
-            onLoadedMetadata={() => setIsTimestampLoaded(true)}
-            src={selectedTimestamp.link}
-            volume={1}
-          />
-        </Flex>
-      )}
     </Flex>
+
+    {isSelected && type === 'youtube' && (
+      <Flex style={{ marginTop: '4px' }}>
+        <YouTube />
+      </Flex>
+    )}
   </EpisodeWrapper>
 )};
