@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Lsat } from "lsat-js";
 import * as sphinx from "sphinx-bridge-kevkevinpal";
 
@@ -18,11 +19,9 @@ export const getLSat = async () => {
 
         const lsat = Lsat.fromHeader(data.headers);
 
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         await sphinx.enable(true);
 
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         let LSATRes = await sphinx.saveLsat(
           lsat.invoice,
@@ -31,12 +30,10 @@ export const getLSat = async () => {
         );
 
         if (LSATRes.success === false) {
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
           await sphinx.topup();
-
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
+
           LSATRes = await sphinx.saveLsat(
             lsat.invoice,
             lsat.baseMacaroon,
@@ -70,7 +67,7 @@ export const getLSat = async () => {
     }
   } else {
     // Need to get token from lsat
-    const newlsat = JSON.parse(lsat);
+    const newlsat = JSON.parse(localLsat);
 
     return `LSAT ${newlsat.macaroon}:${newlsat.preimage}`;
   }
@@ -78,12 +75,10 @@ export const getLSat = async () => {
 
 export const getActiveLsat = async () => {
   try {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     await sphinx.enable(true);
-
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
+
     const lsat = await sphinx.getLsat();
 
     // Save Lsat to local Storage
