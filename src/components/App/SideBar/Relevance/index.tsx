@@ -1,7 +1,4 @@
-import { ReactNode, useCallback, useMemo, useRef, useState } from "react";
-import { Flex } from "~/components/common/Flex";
-import { Pill } from "~/components/common/Pill";
-import { Text } from "~/components/common/Text";
+import { ReactNode, useCallback, useMemo, useRef } from "react";
 import { useGraphData } from "~/components/DataRetriever";
 import { useAppStore } from "~/stores/useAppStore";
 import { ScrollView } from "~/components/ScrollView";
@@ -11,8 +8,6 @@ import { saveConsumedContent } from "~/utils/relayHelper";
 import { Episode } from "./Episode";
 import { ErrorSection } from "../Creator/ErrorSection";
 import { formatDescription } from "~/utils/formatDescription";
-
-const pageSize = 80;
 
 type Props = {
   header?: ReactNode;
@@ -29,20 +24,11 @@ export const Relevance = ({ header = null }: Props) => {
 
   const  setRelevanceSelected = useAppStore((s) => s.setRelevanceSelected);
 
-  const [currentPage, setCurrentPage] = useState(0);
-
-  const startSlice = currentPage * pageSize;
-  const endSlice = startSlice + pageSize;
-
-  const hasNext = data.nodes.length - 1 > endSlice;
-  const hasPrevious = startSlice > 0;
-
   const currentNodes = useMemo(
     () =>
       data.nodes
-        .slice(startSlice, endSlice)
         .filter((f) => f.node_type === "clip"),
-    [data.nodes, endSlice, startSlice]
+    [data.nodes]
   );
 
   const handleNodeClick = useCallback(
@@ -61,12 +47,6 @@ export const Relevance = ({ header = null }: Props) => {
 
       <ScrollView ref={scrollViewRef} shrink={1}>
         {header}
-
-        <Flex pb={10} px={20}>
-          <Text color="mainBottomIcons">
-            Page {currentPage + 1} of {Math.ceil(data.nodes.length / pageSize)}
-          </Text>
-        </Flex>
 
         {currentNodes.map((n, index) => {
           const {
@@ -95,30 +75,6 @@ export const Relevance = ({ header = null }: Props) => {
           );
         })}
 
-        <Flex direction="row" justify="space-between" p={20}>
-          <Pill
-            disabled={!hasPrevious}
-            onClick={() => {
-              if (hasPrevious) {
-                setCurrentPage(currentPage - 1);
-                scrollViewRef.current?.scrollTo(0, 0);
-              }
-            }}
-          >
-            Previous
-          </Pill>
-          <Pill
-            disabled={!hasNext}
-            onClick={() => {
-              if (hasNext) {
-                setCurrentPage(currentPage + 1);
-                scrollViewRef.current?.scrollTo(0, 0);
-              }
-            }}
-          >
-            Next
-          </Pill>
-        </Flex>
       </ScrollView>
     </>
   );
