@@ -107,15 +107,19 @@ export const Graph = () => {
         limit={data.links.length}
         lineWidth={0.15}
       >
-        {(data.links as unknown as GraphData<NodeExtended>["links"]).map(
-          (link, index) => (
-            <Segment
-              // eslint-disable-next-line react/no-array-index-key
-              key={index.toString()}
-              link={link}
-            />
+        {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          (data.links as unknown as GraphData<NodeExtended>["links"]).map(
+            (link: any, index: any) => (
+              <Segment
+                // eslint-disable-next-line react/no-array-index-key
+                key={index.toString()}
+                link={link}
+              />
+            )
           )
-        )}
+        }
       </Segments>
     </>
   );

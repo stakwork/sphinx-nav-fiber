@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+import * as sphinx from "sphinx-bridge-kevkevinpal";
 import {
   AWS_IMAGE_BUCKET_URL,
   CLOUDFRONT_IMAGE_BUCKET_URL,
@@ -24,6 +26,8 @@ export const fetchGraphData = async (search: string) => {
 
 const fetchNodes = async (search: string) => {
   if (isDevelopment) {
+    console.log("is dev", origin);
+
     return api.get<Node[]>("/mock_data");
   }
 
@@ -43,6 +47,33 @@ const fetchNodes = async (search: string) => {
 const getGraphData = async (searchterm: string) => {
   try {
     const data = await fetchNodes(searchterm);
+
+    if (!Array.isArray(data)) {
+      // For it to get to this block means the previous lsat has expired
+
+      const lsat = localStorage.getItem("lsat");
+
+      if (lsat) {
+        const expiredLsat = JSON.parse(lsat);
+
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+
+        await sphinx.enable(true);
+
+        // Update lsat on relay as expired
+        // @ts-ignore
+        // await sphinx.updateLsat(expiredLsat.identifier, "expired");
+
+        // if (checker.success) {
+        // clearing local value of lsat being stored
+        localStorage.removeItem("lsat");
+        // }
+      }
+
+      // Calling the get getGraphData method again but this time without lsat in the local storage
+      return { expired: true, links: [], nodes: [] };
+    }
 
     const nodes: NodeExtended[] = [];
     const links: Link[] = [];
@@ -153,6 +184,7 @@ const getGraphData = async (searchterm: string) => {
         });
       }
 
+      // Adds guest nodes
       Object.entries(guestMap).forEach(([guest, guestChildren], index) => {
         const scale = guestChildren.length * 2;
         const guestNodeId = `guestnode_${index}`;
