@@ -45,16 +45,15 @@ export const useDataStore = create<DataStore>((set, get) => ({
         data = await fetchGraphData(search);
       }
 
+      set({ data: { links: data.links, nodes: data.nodes } });
       await saveSearchTerm(search);
 
       set({ data, isFetching: false });
+    } else {
+      const mockGraphData = await getMockGraphData();
 
-      return;
+      set({ data: mockGraphData, isFetching: false });
     }
-
-    const mockGraphData = await getMockGraphData();
-
-    set({ data: mockGraphData, isFetching: false });
   },
   setCameraAnimation: (cameraAnimation) => set({ cameraAnimation }),
   setHoveredNode: (hoveredNode) => set({ hoveredNode }),
