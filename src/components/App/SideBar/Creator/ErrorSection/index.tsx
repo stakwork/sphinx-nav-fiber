@@ -10,8 +10,8 @@ import { Text } from "~/components/common/Text";
 import { useAppStore } from "~/stores/useAppStore";
 
 const ErrorWrapper = styled(Flex)`
-  height: 30%;
   padding: 10px;
+  border-bottom: 1px solid ${colors.divider2};
 `;
 
 const ErrorMsgWrapper = styled.textarea`
