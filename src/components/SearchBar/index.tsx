@@ -10,15 +10,13 @@ type Props = {
 
 const Input = styled.input<{ loading?: boolean }>`
   pointer-events: auto;
-  border-radius: 100px;
   height: 50px;
   padding: 0 20px;
   z-index: 2;
   box-shadow: 0px 1px 6px rgba(0, 0, 0, 0.1);
-  border-radius: 4px;
   width: 100%;
   color: #fff;
-  background-color: rgba(19, 24, 29, 1);
+  background-color: ${colors.inputBg1};
   box-shadow: none;
   border: none;
 
