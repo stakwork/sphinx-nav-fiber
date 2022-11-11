@@ -19,3 +19,6 @@ export const GRAPH_FOG_COLOR = "blue";
 
 export const GRAPH_GROUND_COLOR = 0xcccccc;
 export const GRAPH_LIGHT_INTENSITY = 1;
+
+export const BOOST_SUCCESS = "Boosted successfully";
+export const BOOST_ERROR_BUDGET = "Boost failed, insufficient budget";

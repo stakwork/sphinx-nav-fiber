@@ -114,6 +114,7 @@ module.exports = {
     "react/jsx-props-no-spreading": "off",
     "react/jsx-sort-props": "error",
     "react/jsx-uses-react": "off",
+    /* This is a temporary fix for react-three-fiber components */
     "react/no-unknown-property": "off",
     "react/no-unstable-nested-components": ["error", { allowAsProps: true }],
     "react/no-unused-prop-types": "error",
