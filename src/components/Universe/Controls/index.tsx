@@ -38,7 +38,7 @@ export const Controls = () => {
 
       const distance = cameraControlsRef.current?.distance;
 
-      let dollyStep = distance < 3000 ? 40 : 140;
+      let dollyStep = distance < 3000 ? 20 : 60;
 
       if ("deltaY" in event && event.deltaY > 0) {
         dollyStep *= -1;
@@ -149,8 +149,8 @@ export const Controls = () => {
     const xPosition = clientX || webKitX;
     const yPosition = clientY || webKitY;
 
-    const moveX = (xPosition - window.innerWidth / 2) / 3200;
-    const moveY = (yPosition - window.innerHeight / 2) / 3200;
+    const moveX = (xPosition - window.innerWidth / 2) / 5000;
+    const moveY = (yPosition - window.innerHeight / 2) / 5000;
 
     cameraControls.rotate(moveX, moveY, true);
   }, []);
