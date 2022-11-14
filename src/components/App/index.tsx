@@ -25,6 +25,7 @@ export const App = () => {
   const searchTerm = useAppStore((s) => s.currentSearch);
   const fetchData = useDataStore((s) => s.fetchData);
   const [isAuthorized, setAuthorized] = useState(false);
+  const [isEnabling, setEnabling] = useState(false);
 
   const showSideBar = !!selectedNode || (!!searchTerm && isAuthorized);
 
@@ -35,9 +36,11 @@ export const App = () => {
   useEffect(() => {
     const run = async () => {
       if (searchTerm) {
+        setEnabling(true);
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         await sphinx.enable();
+        setEnabling(false);
 
         setAuthorized(true);
       }
@@ -58,7 +61,7 @@ export const App = () => {
           <Universe />
         </DataRetriever>
 
-        <AppBar />
+        <AppBar isEnabling={isEnabling} setEnabling={setEnabling} />
       </Wrapper>
     </>
   );

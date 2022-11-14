@@ -57,7 +57,7 @@ export const Relevance = ({ header = null }: Props) => {
 
   return (
     <>
-      {flagErrorIsOpen && <ErrorSection />}
+      {!header && flagErrorIsOpen && <ErrorSection />}
 
       <ScrollView ref={scrollViewRef} shrink={1}>
         {header}
