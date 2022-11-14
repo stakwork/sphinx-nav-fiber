@@ -135,6 +135,26 @@ export const Controls = () => {
     setCameraAnimation(moveCycle);
   }, [cameraAnimation, rotateWorld, setCameraAnimation]);
 
+  const doScrollRotation = useCallback((event: MouseEvent) => {
+    if (!cameraControlsRef.current) {
+      return;
+    }
+
+    const cameraControls = cameraControlsRef.current;
+
+    const { clientX, clientY } = event;
+
+    const { clientX: webKitX, clientY: webKitY } = event as WebKitGestureEvent;
+
+    const xPosition = clientX || webKitX;
+    const yPosition = clientY || webKitY;
+
+    const moveX = (xPosition - window.innerWidth / 2) / 3200;
+    const moveY = (yPosition - window.innerHeight / 2) / 3200;
+
+    cameraControls.rotate(moveX, moveY, true);
+  }, []);
+
   useEffect(() => {
     if (cameraControlsRef.current) {
       cameraControlsRef.current.mouseButtons.wheel = 0;
@@ -156,7 +176,16 @@ export const Controls = () => {
   useGesture(
     {
       onPinch: ({ event }) => doDollyTransition(event),
-      onWheel: ({ event }) => doDollyTransition(event),
+      onWheel: ({ event }) => {
+        if (event.altKey || selectedNode) {
+          doDollyTransition(event);
+
+          return;
+        }
+
+        doScrollRotation(event);
+        doDollyTransition(event);
+      },
     },
     {
       target: document.getElementById("universe-canvas") || undefined,
