@@ -22,7 +22,11 @@ export const Controls = () => {
     s.setCameraAnimation,
   ]);
 
-  const [selectedNode, data] = useDataStore((s) => [s.selectedNode, s.data]);
+  const [selectedNode, data, hoveredNode] = useDataStore((s) => [
+    s.selectedNode,
+    s.data,
+    s.hoveredNode,
+  ]);
 
   const cameraControlsRef = useRef<CameraControls | null>(null);
 
@@ -135,25 +139,40 @@ export const Controls = () => {
     setCameraAnimation(moveCycle);
   }, [cameraAnimation, rotateWorld, setCameraAnimation]);
 
-  const doScrollRotation = useCallback((event: MouseEvent) => {
-    if (!cameraControlsRef.current) {
-      return;
-    }
+  const hoverSet = useCallback(
+    (event: WheelEvent | PointerEvent | TouchEvent | WebKitGestureEvent) => {
+      if (!cameraControlsRef.current) {
+        return;
+      }
 
-    const cameraControls = cameraControlsRef.current;
+      if ("deltaY" in event && event.deltaY > 0) {
+        doDollyTransition(event);
 
-    const { clientX, clientY } = event;
+        return;
+      }
 
-    const { clientX: webKitX, clientY: webKitY } = event as WebKitGestureEvent;
+      if (hoveredNode) {
+        const { x, y, z } = hoveredNode;
 
-    const xPosition = clientX || webKitX;
-    const yPosition = clientY || webKitY;
+        if (!x || !y || !z) {
+          return;
+        }
 
-    const moveX = (xPosition - window.innerWidth / 2) / 5000;
-    const moveY = (yPosition - window.innerHeight / 2) / 5000;
-
-    cameraControls.rotate(moveX, moveY, true);
-  }, []);
+        cameraControlsRef.current?.setLookAt(
+          x - 100,
+          y - 100,
+          z - 100,
+          x,
+          y,
+          z,
+          true
+        );
+      } else {
+        doDollyTransition(event);
+      }
+    },
+    [doDollyTransition, hoveredNode]
+  );
 
   useEffect(() => {
     if (cameraControlsRef.current) {
@@ -176,16 +195,7 @@ export const Controls = () => {
   useGesture(
     {
       onPinch: ({ event }) => doDollyTransition(event),
-      onWheel: ({ event }) => {
-        if (event.altKey || selectedNode) {
-          doDollyTransition(event);
-
-          return;
-        }
-
-        doScrollRotation(event);
-        doDollyTransition(event);
-      },
+      onWheel: ({ event }) => hoverSet(event),
     },
     {
       target: document.getElementById("universe-canvas") || undefined,
