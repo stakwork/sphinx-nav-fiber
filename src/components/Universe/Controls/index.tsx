@@ -195,7 +195,13 @@ export const Controls = () => {
   useGesture(
     {
       onPinch: ({ event }) => doDollyTransition(event),
-      onWheel: ({ event }) => hoverSet(event),
+      onWheel: ({ event }) => {
+        if (selectedNode) {
+          doDollyTransition(event);
+        } else {
+          hoverSet(event);
+        }
+      },
     },
     {
       target: document.getElementById("universe-canvas") || undefined,
