@@ -5,7 +5,7 @@ import {
   wheelAction,
 } from "@use-gesture/react";
 import gsap from "gsap";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { useDataStore } from "~/stores/useDataStore";
 import { CameraControls } from "./CameraControls";
@@ -28,7 +28,29 @@ export const Controls = () => {
     s.hoveredNode,
   ]);
 
+  const [hoveredNodeIsFocused, setHoveredNodeIsFocused] = useState(false);
+
   const cameraControlsRef = useRef<CameraControls | null>(null);
+
+  const doScrollRotation = useCallback((event: MouseEvent) => {
+    if (!cameraControlsRef.current) {
+      return;
+    }
+
+    const cameraControls = cameraControlsRef.current;
+
+    const { clientX, clientY } = event;
+
+    const { clientX: webKitX, clientY: webKitY } = event as WebKitGestureEvent;
+
+    const xPosition = clientX || webKitX;
+    const yPosition = clientY || webKitY;
+
+    const moveX = (xPosition - window.innerWidth / 2) / 5000;
+    const moveY = (yPosition - window.innerHeight / 2) / 5000;
+
+    cameraControls.rotate(moveX, moveY, true);
+  }, []);
 
   const doDollyTransition = useCallback(
     (event: WheelEvent | PointerEvent | TouchEvent | WebKitGestureEvent) => {
@@ -49,8 +71,12 @@ export const Controls = () => {
       }
 
       cameraControlsRef.current?.dolly(dollyStep, true);
+
+      if (hoveredNodeIsFocused && distance > 1500) {
+        setHoveredNodeIsFocused(false);
+      }
     },
-    []
+    [hoveredNodeIsFocused]
   );
 
   const rotateWorld = useCallback(() => {
@@ -167,11 +193,14 @@ export const Controls = () => {
           z,
           true
         );
+
+        setHoveredNodeIsFocused(true);
       } else {
+        doScrollRotation(event as MouseEvent);
         doDollyTransition(event);
       }
     },
-    [doDollyTransition, hoveredNode]
+    [doDollyTransition, doScrollRotation, hoveredNode]
   );
 
   useEffect(() => {
@@ -213,7 +242,7 @@ export const Controls = () => {
       if (cameraControlsRef.current) {
         cameraControlsRef.current.dampingFactor = 0.01;
 
-        if (!selectedNode) {
+        if (!selectedNode || !hoveredNodeIsFocused) {
           await cameraControlsRef.current.setLookAt(
             introAnimationTargetPoisiton.x,
             introAnimationTargetPoisiton.y,
@@ -262,7 +291,7 @@ export const Controls = () => {
     };
 
     run();
-  }, [selectedNode]);
+  }, [selectedNode, hoveredNodeIsFocused]);
 
   useEffect(() => {
     if (!cameraAnimation) {
