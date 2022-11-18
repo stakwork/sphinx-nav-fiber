@@ -25,16 +25,16 @@ const ExpandButton = styled(Flex).attrs({
   align: "center",
   justify: "center",
 })`
-  color: ${colors.black};
+  color: ${colors.white};
   cursor: pointer;
 `;
 
 const Wrapper = styled(Flex)`
-  background-color: ${colors.white};
-  border-right: 1px solid ${colors.black};
+  background-color: ${colors.dashboardHeader};
+  border-right: 1px solid ${colors.dashboardHeader};
   border-radius: 0 5px 5px 0;
   position: absolute;
-  top: 50px;
+  top: 100px;
   transition: all 0.2s;
   z-index: 30;
 
