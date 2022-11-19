@@ -34,7 +34,7 @@ const Wrapper = styled(Flex)`
   border-right: 1px solid ${colors.dashboardHeader};
   border-radius: 0 5px 5px 0;
   position: absolute;
-  top: 100px;
+  top: 80px;
   transition: all 0.2s;
   z-index: 30;
 

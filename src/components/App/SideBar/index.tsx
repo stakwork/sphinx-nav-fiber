@@ -129,13 +129,12 @@ const CollapseButton = styled(Flex).attrs({
 })`
   background-color: ${colors.dashboardHeader};
   border-radius: 0 5px 5px 0;
-  border-left: 1px solid ${colors.gray200};
   color: ${colors.mainBottomIcons};
   cursor: pointer;
   transition-duration: 0.2s;
   position: absolute;
   left: ${MENU_WIDTH}px;
-  z-index: 1;
+  top: 78px;
 
   &:hover {
     background-color: ${colors.gray300};
