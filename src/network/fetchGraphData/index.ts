@@ -4,7 +4,13 @@ import {
   isDevelopment,
 } from "~/constants";
 import { api } from "~/network/api";
-import { GraphData, Link, Node, NodeExtended } from "~/types";
+import {
+  GraphData,
+  Link,
+  Node,
+  NodeExtended,
+  FetchDataResponse,
+} from "~/types";
 import { getLSat } from "~/utils/getLSat";
 
 const defautData: GraphData = {
@@ -24,7 +30,7 @@ export const fetchGraphData = async (search: string) => {
 
 const fetchNodes = async (search: string) => {
   if (isDevelopment) {
-    return api.get<Node[]>("/mock_data");
+    return api.get<FetchDataResponse>(`/mock_data`);
   }
 
   console.log("getting prod data");
@@ -35,14 +41,16 @@ const fetchNodes = async (search: string) => {
     throw new Error("An error occured calling getLSat");
   }
 
-  return api.get<Node[]>(`/search?word=${search}`, {
+  return api.get<FetchDataResponse>(`/search?word=${search}`, {
     Authorization: lsatToken,
   });
 };
 
 const getGraphData = async (searchterm: string) => {
   try {
-    const data = await fetchNodes(searchterm);
+    const fetchGraphDataResponse = await fetchNodes(searchterm);
+
+    const data = fetchGraphDataResponse.exact;
 
     const nodes: NodeExtended[] = [];
     const links: Link[] = [];

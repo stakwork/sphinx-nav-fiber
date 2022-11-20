@@ -1,6 +1,11 @@
 /* eslint-disable camelcase */
 import { Mesh } from "three";
 
+export type FetchDataResponse = {
+  exact: Node[],
+  related: Node[]
+}
+
 export type Node = {
   boost?: number | null;
   children?: string[];
