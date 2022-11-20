@@ -6,6 +6,7 @@ import { SearchBar } from "~/components/SearchBar";
 import { Stats } from "~/components/Stats";
 import { useAppStore } from "~/stores/useAppStore";
 import { media } from "~/utils/media";
+import { useSelectedNode } from "~/stores/useDataStore";
 
 type Props = {
   isEnabling: boolean;
@@ -14,6 +15,8 @@ type Props = {
 
 export const AppBar = ({ isEnabling, setEnabling }: Props) => {
   const sidebarIsOpen = useAppStore((s) => s.sidebarIsOpen);
+  const selectedNode = useSelectedNode();
+  const searchTerm = useAppStore((s) => s.currentSearch);
 
   if (sidebarIsOpen) {
     return null;
@@ -30,9 +33,7 @@ export const AppBar = ({ isEnabling, setEnabling }: Props) => {
         </Text>
       </TitleWrapper>
 
-      <StatsWrapper>
-        <Stats />
-      </StatsWrapper>
+      <StatsWrapper>{!selectedNode && !searchTerm && <Stats />}</StatsWrapper>
 
       {isEnabling && (
         <BudgetExplainer>

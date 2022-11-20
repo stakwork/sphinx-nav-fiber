@@ -5,7 +5,7 @@ import { Flex } from "~/components/common/Flex";
 import { Loader } from "~/components/common/Loader";
 import { SearchBar } from "~/components/SearchBar";
 import { useAppStore } from "~/stores/useAppStore";
-import { useDataStore } from "~/stores/useDataStore";
+import { useDataStore, useSelectedNode } from "~/stores/useDataStore";
 import { colors } from "~/utils/colors";
 import { Tab } from "./Tab";
 import { Transcript } from "./Transcript";
@@ -26,15 +26,6 @@ const Content = () => {
       <StyledToast />
 
       <SearchWrapper>
-        <CollapseButton
-          onClick={() => {
-            setSidebarOpen(false);
-          }}
-        >
-          <span className="material-icons" style={{ fontSize: 20 }}>
-            keyboard_double_arrow_left
-          </span>
-        </CollapseButton>
         <SearchBar />
         <CloseButton
           onClick={() => {
@@ -49,6 +40,15 @@ const Content = () => {
           </span>
         </CloseButton>
       </SearchWrapper>
+      <CollapseButton
+        onClick={() => {
+          setSidebarOpen(false);
+        }}
+      >
+        <span className="material-icons" style={{ fontSize: 20 }}>
+          keyboard_double_arrow_left
+        </span>
+      </CollapseButton>
 
       {isLoading ? <Loader color="primaryText1" /> : <View />}
 
@@ -59,8 +59,14 @@ const Content = () => {
 
 export const SideBar = () => {
   const sidebarIsOpen = useAppStore((s) => s.sidebarIsOpen);
+  const selectedNode = useSelectedNode();
+  const searchTerm = useAppStore((s) => s.currentSearch);
 
   if (!sidebarIsOpen) {
+    if (!selectedNode && !searchTerm) {
+      return null;
+    }
+
     return <Tab />;
   }
 
@@ -95,7 +101,7 @@ const StyledToast = styled(ToastContainer)`
 
 const SearchWrapper = styled(Flex).attrs({
   direction: "row",
-  p: 25,
+  p: 30,
 })`
   background: ${colors.dashboardHeader};
 `;
@@ -121,13 +127,16 @@ const CollapseButton = styled(Flex).attrs({
   justify: "center",
   p: 5,
 })`
-  background-color: ${colors.inputBg1};
-  border-radius: 5px 0 0 5px;
+  background-color: ${colors.dashboardHeader};
+  border-radius: 0 5px 5px 0;
   color: ${colors.mainBottomIcons};
   cursor: pointer;
   transition-duration: 0.2s;
+  position: absolute;
+  left: ${MENU_WIDTH}px;
+  top: 78px;
 
   &:hover {
-    background-color: ${colors.gray200};
+    background-color: ${colors.gray300};
   }
 `;
