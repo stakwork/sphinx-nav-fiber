@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import * as sphinx from "sphinx-bridge-kevkevinpal";
 import styled from "styled-components";
+import { AddNodeModal } from "~/components/AddNodeModal";
 import { Flex } from "~/components/common/Flex";
 import { Loader } from "~/components/common/Loader";
 import { DataRetriever } from "~/components/DataRetriever";
@@ -54,6 +55,7 @@ export const App = () => {
   return (
     <>
       <GlobalStyle />
+
       <Wrapper direction="row">
         <DataRetriever loader={<Loader />}>
           <SideBar />
@@ -62,6 +64,8 @@ export const App = () => {
         </DataRetriever>
 
         <AppBar isEnabling={isEnabling} setEnabling={setEnabling} />
+
+        <AddNodeModal />
       </Wrapper>
     </>
   );

@@ -31,7 +31,7 @@ type TextKindRegular = "bigHeading" | "heading" | "regular" | "medium" | "tiny";
 
 type TextKindBold = `${TextKindRegular}Bold`;
 
-type TextKind = TextKindRegular | TextKindBold;
+export type TextKind = TextKindRegular | TextKindBold;
 
 type Props = {
   color?: ColorName;
@@ -39,10 +39,10 @@ type Props = {
 };
 
 const style = css<Props>`
-  ${({ kind = "regular" }) => `
-      font-size: ${fontSizes[kind]}px;
-      font-weight: ${fontWeights[kind]};
-    `}
+  ${({ kind = "regular" }) => css`
+    font-size: ${fontSizes[kind]}px;
+    font-weight: ${fontWeights[kind]};
+  `}
 `;
 
 export const Text = styled.span<Props>`
