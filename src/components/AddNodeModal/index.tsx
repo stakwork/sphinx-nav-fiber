@@ -1,6 +1,6 @@
-import { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import styled from "styled-components";
+import { TagInput } from "~/components/AddNodeModal/TagInput";
 import { TextArea } from "~/components/AddNodeModal/TextArea";
 import { TextInput } from "~/components/AddNodeModal/TextInput";
 import { Button } from "~/components/Button";
@@ -26,21 +26,12 @@ const requiredRule = {
   },
 };
 
-const CheckboxMessageWrapper = styled(Flex)`
-  -webkit-user-select: none; /* Safari */
-  -ms-user-select: none; /* IE 10 and IE 11 */
-  user-select: none;
-
-  cursor: pointer;
-`;
+const timeRegex = /^\d{2}:\d{2}:\d{2}$/;
 
 export const AddNodeModal = () => {
   const { close } = useModal("addNode");
-  const [includePubkey, setIncludePubkey] = useState(false);
 
   const form = useForm({ mode: "onChange" });
-
-  const handleToggle = () => setIncludePubkey((value) => !value);
 
   const onSubmit = form.handleSubmit((data) => console.log(data));
 
@@ -74,7 +65,7 @@ export const AddNodeModal = () => {
                 rules={{
                   pattern: {
                     message: "The start time should be a time string",
-                    value: /\d{2}:\d{2}:\d{2}/,
+                    value: timeRegex,
                   },
                   ...requiredRule,
                 }}
@@ -89,7 +80,7 @@ export const AddNodeModal = () => {
                 rules={{
                   pattern: {
                     message: "The end time should be a time string",
-                    value: /\d{2}:\d{2}:\d{2}/,
+                    value: timeRegex,
                   },
                   ...requiredRule,
                 }}
@@ -105,28 +96,25 @@ export const AddNodeModal = () => {
             />
           </Flex>
 
-          <Flex align="center" direction="row" pt={16}>
-            <input
-              checked={includePubkey}
-              onChange={() => handleToggle()}
-              type="checkbox"
+          <Flex pt={16}>
+            <TextInput
+              label="Public Key"
+              name="publicKey"
+              placeholder="Your public key address"
+              rules={requiredRule}
             />
 
-            <CheckboxMessageWrapper onClick={handleToggle} pl={4}>
-              <Text>Include your public key?</Text>
-            </CheckboxMessageWrapper>
+            <Flex pt={8} px={4}>
+              <Text color="lightGray" kind="tinyBold">
+                Your pubkey will be submitted with your node, so you can recieve
+                sats that your node earns.
+              </Text>
+            </Flex>
           </Flex>
 
-          {includePubkey && (
-            <Flex pt={16}>
-              <TextInput
-                label="Public Key"
-                name="publicKey"
-                placeholder="Your public key address"
-                rules={requiredRule}
-              />
-            </Flex>
-          )}
+          <Flex pt={16}>
+            <TagInput label="Tags" placeholder="Add a tag and press Enter" />
+          </Flex>
 
           <Flex align="flex-end" pt={32}>
             <Button kind="big" type="submit">
