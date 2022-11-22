@@ -5,7 +5,7 @@ import {
   wheelAction,
 } from "@use-gesture/react";
 import gsap from "gsap";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { useDataStore } from "~/stores/useDataStore";
 import { CameraControls } from "./CameraControls";
@@ -14,9 +14,14 @@ const useGesture = createUseGesture([pinchAction, wheelAction]);
 
 const p = new THREE.Vector3();
 
-const introAnimationTargetPoisiton = new THREE.Vector3(-1900, -2200, -2800);
+const introAnimationTargetPosition = new THREE.Vector3(-1900, -2200, -2800);
+
+const initialLoadTargetPosition = new THREE.Vector3(-144, 173, 0);
 
 export const Controls = () => {
+
+  const initialLoad = useRef(true);
+
   const [cameraAnimation, setCameraAnimation] = useDataStore((s) => [
     s.cameraAnimation,
     s.setCameraAnimation,
@@ -70,66 +75,37 @@ export const Controls = () => {
     }
   }, [cameraAnimation, setCameraAnimation]);
 
-  const doIntroAnimation = useCallback(() => {
+    const doIntroAnimation = useCallback(() => {
     cameraAnimation?.kill();
 
     const cameraControls = cameraControlsRef?.current;
 
-    // The start position
-    const { x, y, z } = cameraControls?.camera?.position || {
-      x: 0,
-      y: 0,
-      z: 0,
-    };
+    const animationProgress = {value: -244};
 
-    const curve = new THREE.CatmullRomCurve3([
-      new THREE.Vector3(x, y, z),
-      introAnimationTargetPoisiton,
-    ]);
 
-    const tempVector = new THREE.Vector3();
-    const animationProgress = { value: 0 };
 
-    const moveCycle = gsap.fromTo(
-      animationProgress,
-      {
-        value: 0,
+
+    const moveCycle = gsap.to(
+      animationProgress, {
+      keyframes: {
+        '0%': {value: 10},
+        '100%': {value: -340, delay: 2 ,ease: 'Power4.easeIn'}
       },
-      {
-        duration: 4,
-        onComplete: () => {
-          setCameraAnimation(null);
-          rotateWorld();
-        },
-        onInterrupt() {
-          moveCycle.kill();
-        },
-        onUpdate: ({ value }) => {
-          curve.getPoint(value, tempVector);
+      duration: 5,
+      onComplete: () => {
+        setCameraAnimation(null);
+        rotateWorld();
+      },
+      onInterrupt() {
+        moveCycle.kill();
+      },
+      onUpdate: () => {
+        const { value } = animationProgress;
 
-          const cameraX = tempVector.x;
-          const cameraY = tempVector.y;
-          const cameraZ = tempVector.z;
-          const lookAtX = 0;
-          const lookAtY = 0;
-          const lookAtZ = 0;
+        cameraControls?.dolly(value, false);
+      },
+    });
 
-          cameraControls?.setLookAt(
-            cameraX,
-            cameraY,
-            cameraZ,
-            lookAtX,
-            lookAtY,
-            lookAtZ,
-            true
-          );
-        },
-        onUpdateParams: [animationProgress],
-        overwrite: true,
-        paused: true,
-        value: 1,
-      }
-    );
 
     moveCycle.play();
     setCameraAnimation(moveCycle);
@@ -137,8 +113,6 @@ export const Controls = () => {
 
   useEffect(() => {
     if (cameraControlsRef.current) {
-      cameraControlsRef.current.mouseButtons.wheel = 0;
-
       cameraControlsRef.current.minDistance = 200;
       cameraControlsRef.current.maxDistance = Infinity;
       cameraControlsRef.current.minPolarAngle = -Infinity;
@@ -156,7 +130,6 @@ export const Controls = () => {
   useGesture(
     {
       onPinch: ({ event }) => doDollyTransition(event),
-      onWheel: ({ event }) => doDollyTransition(event),
     },
     {
       target: document.getElementById("universe-canvas") || undefined,
@@ -168,11 +141,13 @@ export const Controls = () => {
       if (cameraControlsRef.current) {
         cameraControlsRef.current.dampingFactor = 0.01;
 
+        const target = initialLoad ? initialLoadTargetPosition : introAnimationTargetPosition;
+
         if (!selectedNode) {
           await cameraControlsRef.current.setLookAt(
-            introAnimationTargetPoisiton.x,
-            introAnimationTargetPoisiton.y,
-            introAnimationTargetPoisiton.z,
+            target.x,
+            target.y,
+            target.z,
             0,
             0,
             0,
@@ -217,7 +192,12 @@ export const Controls = () => {
     };
 
     run();
-  }, [selectedNode]);
+
+    if (initialLoad.current) {
+      initialLoad.current = false;
+    }
+
+  }, [selectedNode, initialLoad]);
 
   useEffect(() => {
     if (!cameraAnimation) {
