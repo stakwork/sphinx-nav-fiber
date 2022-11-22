@@ -97,26 +97,17 @@ export const AddNodeModal = () => {
           </Flex>
 
           <Flex pt={16}>
-            <TextInput
-              label="Public Key"
-              name="publicKey"
-              placeholder="Your public key address"
-              rules={requiredRule}
-            />
-
-            <Flex pt={8} px={4}>
-              <Text color="lightGray" kind="tinyBold">
-                Your pubkey will be submitted with your node, so you can recieve
-                sats that your node earns.
-              </Text>
-            </Flex>
-          </Flex>
-
-          <Flex pt={16}>
             <TagInput label="Tags" placeholder="Add a tag and press Enter" />
           </Flex>
 
-          <Flex align="flex-end" pt={32}>
+          <Flex pt={32} px={4}>
+            <Text color="lightGray" kind="tinyBold">
+              Your pubkey will be submitted with your node, so you can recieve
+              sats that your node earns.
+            </Text>
+          </Flex>
+
+          <Flex pt={8}>
             <Button kind="big" type="submit">
               Add node
             </Button>
