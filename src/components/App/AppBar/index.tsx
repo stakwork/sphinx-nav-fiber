@@ -63,7 +63,7 @@ export const AppBar = ({ isEnabling, setEnabling }: Props) => {
       </SearchBarWrapper>
 
       <Flex>
-        <Button onClick={open}>Add Node</Button>
+        <Button onClick={open}>Add Node (Coming Soon)</Button>
       </Flex>
     </Header>
   );
@@ -122,3 +122,4 @@ const SearchBarWrapper = styled.div`
     width: 100%;
   `}
 `;
+

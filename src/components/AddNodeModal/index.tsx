@@ -109,7 +109,7 @@ export const AddNodeModal = () => {
 
           <Flex pt={8}>
             <Button kind="big" type="submit">
-              Add node
+              Add node (Coming Soon)
             </Button>
           </Flex>
         </form>
