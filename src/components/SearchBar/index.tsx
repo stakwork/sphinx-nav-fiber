@@ -8,7 +8,9 @@ type Props = {
   loading?: boolean;
 };
 
-const Input = styled.input<{ loading?: boolean }>`
+const Input = styled.input.attrs(() => ({
+  autoCorrect: 'off',
+}))<{ loading?: boolean }>`
   pointer-events: auto;
   height: 50px;
   padding: 0 20px;
