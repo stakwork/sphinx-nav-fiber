@@ -1,12 +1,14 @@
 import styled from "styled-components";
-import { colors } from "~/utils/colors";
+import { Button } from "~/components/Button";
 import { Flex } from "~/components/common/Flex";
 import { Text } from "~/components/common/Text";
 import { SearchBar } from "~/components/SearchBar";
 import { Stats } from "~/components/Stats";
 import { useAppStore } from "~/stores/useAppStore";
-import { media } from "~/utils/media";
 import { useSelectedNode } from "~/stores/useDataStore";
+import { useModal } from "~/stores/useModalStore";
+import { colors } from "~/utils/colors";
+import { media } from "~/utils/media";
 
 type Props = {
   isEnabling: boolean;
@@ -17,6 +19,8 @@ export const AppBar = ({ isEnabling, setEnabling }: Props) => {
   const sidebarIsOpen = useAppStore((s) => s.sidebarIsOpen);
   const selectedNode = useSelectedNode();
   const searchTerm = useAppStore((s) => s.currentSearch);
+
+  const { open } = useModal("addNode");
 
   if (sidebarIsOpen) {
     return null;
@@ -58,7 +62,9 @@ export const AppBar = ({ isEnabling, setEnabling }: Props) => {
         <SearchBar />
       </SearchBarWrapper>
 
-      <div />
+      <Flex>
+        <Button onClick={open}>Add Node (Coming Soon)</Button>
+      </Flex>
     </Header>
   );
 };
@@ -75,14 +81,13 @@ const Header = styled(Flex).attrs({
   top: 0px;
   left: 0px;
   width: 100%;
-  pointer-events: none;
   transition: opacity 1s;
 `;
 
 const TitleWrapper = styled.div`
   ${media.smallOnly`
-  display: none;
-`}
+    display: none;
+  `}
 `;
 
 const StatsWrapper = styled.div`
@@ -117,3 +122,4 @@ const SearchBarWrapper = styled.div`
     width: 100%;
   `}
 `;
+

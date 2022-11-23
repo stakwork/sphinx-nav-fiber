@@ -35,7 +35,6 @@ export const GlobalStyle = createGlobalStyle`
     text-decoration: none;
   }
   body {
-    line-height: 1;
 
     &.no-scroll {
       overflow: hidden;
