@@ -25,6 +25,7 @@ export const App = () => {
   const setSidebarOpen = useAppStore((s) => s.setSidebarOpen);
   const searchTerm = useAppStore((s) => s.currentSearch);
   const fetchData = useDataStore((s) => s.fetchData);
+  const setSphinxModalOpen = useDataStore((s) => s.setSphinxModalOpen);
   const [isAuthorized, setAuthorized] = useState(false);
   const [isEnabling, setEnabling] = useState(false);
 
@@ -38,9 +39,11 @@ export const App = () => {
     const run = async () => {
       if (searchTerm) {
         setEnabling(true);
+        setSphinxModalOpen(true);
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         await sphinx.enable();
+        setSphinxModalOpen(false);
         setEnabling(false);
 
         setAuthorized(true);
@@ -50,7 +53,7 @@ export const App = () => {
     };
 
     run();
-  }, [fetchData, searchTerm, setSidebarOpen]);
+  }, [fetchData, searchTerm, setSidebarOpen, setSphinxModalOpen]);
 
   return (
     <>
