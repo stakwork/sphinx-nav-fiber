@@ -46,7 +46,6 @@ export type Link<T = string> = {
 export type GraphData<T = string> = {
   links: Link<T>[];
   nodes: NodeExtended[];
-  expired?: boolean; // A quick to help notify when an Lsat has expired
 };
 
 export class NodeMesh extends Mesh {
@@ -55,9 +54,4 @@ export class NodeMesh extends Mesh {
 
 export type NodeType = "clip" | "episode" | "guest" | "show" | "topic";
 
-export type Type =
-  | "twitter"
-  | "youtube"
-  | "guest"
-  | "podcast"
-  | "twitter_space";
+export type Type = "twitter" | "youtube" | "guest" | "podcast" | "twitter_space";

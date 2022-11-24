@@ -39,13 +39,8 @@ export const useDataStore = create<DataStore>((set, get) => ({
     set({ isFetching: true });
 
     if (search?.length) {
-      let data = await fetchGraphData(search);
+      const data = await fetchGraphData(search);
 
-      if (data.expired) {
-        data = await fetchGraphData(search);
-      }
-
-      set({ data: { links: data.links, nodes: data.nodes } });
       await saveSearchTerm(search);
 
       set({ data, isFetching: false });
