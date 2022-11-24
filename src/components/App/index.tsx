@@ -8,8 +8,6 @@ import { DataRetriever } from "~/components/DataRetriever";
 import { GlobalStyle } from "~/components/GlobalStyle";
 import { Universe } from "~/components/Universe";
 import { useAppStore } from "~/stores/useAppStore";
-// import { GRAPH_BACKGROUND_COLOR } from "../../constants";
-import { getActiveLsat } from "~/utils/getLSat";
 import { useDataStore, useSelectedNode } from "~/stores/useDataStore";
 import { colors } from "~/utils/colors";
 import { AppBar } from "./AppBar";
