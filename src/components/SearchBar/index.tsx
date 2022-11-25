@@ -56,7 +56,12 @@ export const SearchBar = ({ loading }: Props) => {
       disabled={loading}
       loading={loading}
       onChange={(e) => {
-        const { value } = e.target;
+        const { value, selectionStart, selectionEnd } = e.target as HTMLInputElement;
+
+        if (typeof selectionStart === "number" && selectionStart !== selectionEnd) {
+          (e.target as HTMLInputElement).selectionStart = value.length;
+          (e.target as HTMLInputElement).selectionEnd = value.length;
+        }
 
         setTempSearch(value);
       }}
