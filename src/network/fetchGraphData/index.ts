@@ -50,7 +50,7 @@ const getGraphData = async (searchterm: string) => {
   try {
     const fetchGraphDataResponse = await fetchNodes(searchterm);
 
-    const data = fetchGraphDataResponse.exact;
+     const data = [...fetchGraphDataResponse.exact, ...fetchGraphDataResponse.related];
 
     const nodes: NodeExtended[] = [];
     const links: Link[] = [];
