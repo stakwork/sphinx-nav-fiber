@@ -3,7 +3,7 @@ import * as sphinx from "sphinx-bridge-kevkevinpal";
 import styled from "styled-components";
 import { AddNodeModal } from "~/components/AddNodeModal";
 import { Flex } from "~/components/common/Flex";
-import { Loader } from "~/components/common/Loader";
+import { Preloader } from "../Universe/Preloader";
 import { DataRetriever } from "~/components/DataRetriever";
 import { GlobalStyle } from "~/components/GlobalStyle";
 import { Universe } from "~/components/Universe";
@@ -16,7 +16,7 @@ import { SideBar } from "./SideBar";
 const Wrapper = styled(Flex)`
   height: 100%;
   width: 100%;
-  background-color: ${colors.gray500};
+  background-color: ${colors.black};
 `;
 
 export const App = () => {
@@ -57,13 +57,12 @@ export const App = () => {
       <GlobalStyle />
 
       <Wrapper direction="row">
-        <DataRetriever loader={<Loader />}>
+        <DataRetriever loader={<Preloader />}>
           <SideBar />
 
           <Universe />
+          <AppBar isEnabling={isEnabling} setEnabling={setEnabling} />
         </DataRetriever>
-
-        <AppBar isEnabling={isEnabling} setEnabling={setEnabling} />
 
         <AddNodeModal />
       </Wrapper>
