@@ -13,6 +13,7 @@ import {
   SSAO,
 } from "@react-three/postprocessing";
 import { Suspense } from "react";
+import { useDataStore } from "~/stores/useDataStore";
 import { colors } from "~/utils/colors";
 import { Controls } from "./Controls";
 import { Graph } from "./Graph";
@@ -44,37 +45,41 @@ const Content = () => (
   </>
 );
 
-export const Universe = () => (
-  <>
-    <Tooltip />
+export const Universe = () => {
+  const sphinxModalIsOpen = useDataStore((s) => s.sphinxModalIsOpen);
 
-    <Suspense fallback={null}>
-      <Canvas
-        camera={{
-          aspect: 1920 / 1080,
-          far: 8000,
-          near: 1,
-          position: [1000, 0, 5],
-        }}
-        id="universe-canvas"
-        shadows
-      >
-        <Suspense
-          fallback={
-            <Html>
-              <Loader />
-            </Html>
-          }
+  return (
+    <>
+      {!sphinxModalIsOpen && <Tooltip />}
+
+      <Suspense fallback={null}>
+        <Canvas
+          camera={{
+            aspect: 1920 / 1080,
+            far: 8000,
+            near: 1,
+            position: [1000, 0, 5],
+          }}
+          id="universe-canvas"
+          shadows
         >
-          <Preload all />
+          <Suspense
+            fallback={
+              <Html>
+                <Loader />
+              </Html>
+            }
+          >
+            <Preload all />
 
-          <AdaptiveDpr />
+            <AdaptiveDpr />
 
-          <AdaptiveEvents />
+            <AdaptiveEvents />
 
-          <Content />
-        </Suspense>
-      </Canvas>
-    </Suspense>
-  </>
-);
+            <Content />
+          </Suspense>
+        </Canvas>
+      </Suspense>
+    </>
+  );
+};
