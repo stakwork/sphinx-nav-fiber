@@ -11,7 +11,7 @@ type Props = {
   onClick?: () => void;
   shape?: "rounded" | "squared";
   textColor?: ColorName;
-  type?: "submit";
+  type?: "submit" | "button";
 };
 
 const getButtonKindDimensions = ({
