@@ -36,6 +36,7 @@ const ModalContainer = styled(Flex)<Pick<Props, "kind">>`
   z-index: 2000;
   margin: 0 auto;
   animation: ${scaleAnimation} 0.2s ease-in-out;
+  position: relative;
 
   ${getModalKindStyles}
 
