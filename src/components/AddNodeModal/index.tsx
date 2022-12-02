@@ -1,6 +1,8 @@
-import { FormProvider, useForm } from "react-hook-form";
-import { useState } from "react";
 import styled from "styled-components";
+import * as sphinx from "sphinx-bridge-kevkevinpal";
+import { FormProvider, useForm, FieldValues } from "react-hook-form";
+import { useState } from "react";
+import { api } from "~/network/api";
 import { TagInput } from "~/components/AddNodeModal/TagInput";
 import { TextArea } from "~/components/AddNodeModal/TextArea";
 import { TextInput } from "~/components/AddNodeModal/TextInput";
@@ -24,13 +26,73 @@ const requiredRule = {
 
 const timeRegex = /^\d{2}:\d{2}:\d{2}$/;
 
+type SubmitErrRes = {
+  error?: { message?: string };
+};
+
+type GuestObject = {
+  guestName: string;
+  twitterHandle: string;
+  profilePicture: string;
+};
+
+const handleSubmit = async (data: FieldValues) => {
+  const body: { [index: string]: any } = {
+    job_response: {
+      names: {
+        guest_names: data.guestHandles?.map((handle: GuestObject) => ({
+          name: handle.guestName,
+          profile_picture: handle.profilePicture,
+          twitter_handle: handle.twitterHandle,
+        })),
+        host_names: data.hostNames?.map((name: string) => ({
+          name,
+        })),
+      },
+      tags: [
+        {
+          description: data.description,
+          "end-time": timeToMinutes(data.endTime),
+          "start-time": timeToMinutes(data.startTime),
+          tag: data.tag,
+        },
+      ],
+    },
+    media_url: data.link,
+  };
+
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  const enable = await sphinx.enable();
+
+  body.pubkey = enable?.pubkey;
+
+  try {
+    const res: SubmitErrRes = await api.post("/add_node", JSON.stringify(body));
+
+    if (res.error) {
+      const { message } = res.error;
+
+      throw new Error(message);
+    }
+
+    console.log("node added");
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      console.log(err.message);
+    }
+  }
+};
+
 export const AddNodeModal = () => {
   const [guestPreview, setGuestPreview] = useState(false);
   const { close } = useModal("addNode");
 
   const form = useForm({ mode: "onChange" });
 
-  const onSubmit = form.handleSubmit((data) => console.log(data));
+  const onSubmit = form.handleSubmit((data) => {
+    handleSubmit(data);
+  });
 
   const openPreview = () => {
     setGuestPreview(!guestPreview);
