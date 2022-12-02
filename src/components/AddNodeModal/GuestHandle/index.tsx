@@ -42,8 +42,6 @@ export const GuestHandle = ({ getVals, openPreview }: Props) => {
 
       setValue(name, [...(guestHandles || []), guestObject]);
       setCurrentGuestHandle(guestObject);
-
-      console.log("guest added");
     }
   };
 
