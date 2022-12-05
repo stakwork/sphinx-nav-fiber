@@ -60,7 +60,6 @@ export const App = () => {
     if (searchTerm) {
       if (!hasBudgetExplanationModalBeSeen) {
         open();
-
         return;
       }
     }
