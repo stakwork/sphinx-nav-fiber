@@ -89,7 +89,7 @@ export const Controls = () => {
       animationProgress, {
       keyframes: {
         '0%': {value: 10},
-        '100%': {value: -340, delay: 2 ,ease: 'Power4.easeIn'}
+        '100%': {value: -200, delay: 2 ,ease: 'Power4.easeIn'}
       },
       duration: 5,
       onComplete: () => {
