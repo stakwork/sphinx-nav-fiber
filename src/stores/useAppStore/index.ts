@@ -3,6 +3,7 @@ import create from "zustand";
 type AppStore = {
   currentSearch: string | null;
   sidebarIsOpen: boolean;
+  hasBudgetExplanationModalBeSeen: boolean;
   theme: "dark" | "light";
   transcriptIsOpen: boolean;
   flagErrorIsOpen: boolean;
@@ -18,6 +19,7 @@ type AppStore = {
 const defaultData = {
   currentSearch: null,
   flagErrorIsOpen: false,
+  hasBudgetExplanationModalBeSeen: false,
   relevanceIsSelected: false,
   sidebarIsOpen: false,
   theme: "light" as const,

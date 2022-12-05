@@ -6,6 +6,8 @@ const fontSizes: Record<TextKind, number> = {
   bigHeadingBold: 30,
   heading: 24,
   headingBold: 24,
+  hugeHeading: 40,
+  hugeHeadingBold: 40,
   medium: 16,
   mediumBold: 16,
   regular: 14,
@@ -19,6 +21,8 @@ const fontWeights: Record<TextKind, number> = {
   bigHeadingBold: 700,
   heading: 400,
   headingBold: 700,
+  hugeHeading: 400,
+  hugeHeadingBold: 700,
   medium: 500,
   mediumBold: 600,
   regular: 500,
@@ -27,7 +31,13 @@ const fontWeights: Record<TextKind, number> = {
   tinyBold: 500,
 };
 
-type TextKindRegular = "bigHeading" | "heading" | "regular" | "medium" | "tiny";
+type TextKindRegular =
+  | "hugeHeading"
+  | "bigHeading"
+  | "heading"
+  | "regular"
+  | "medium"
+  | "tiny";
 
 type TextKindBold = `${TextKindRegular}Bold`;
 

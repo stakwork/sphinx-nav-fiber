@@ -27,6 +27,7 @@ const Content = () => {
 
       <SearchWrapper>
         <SearchBar />
+
         <CloseButton
           onClick={() => {
             setFlagErrorOpen(false);

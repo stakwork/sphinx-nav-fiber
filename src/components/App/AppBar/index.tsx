@@ -10,12 +10,7 @@ import { useModal } from "~/stores/useModalStore";
 import { colors } from "~/utils/colors";
 import { media } from "~/utils/media";
 
-type Props = {
-  isEnabling: boolean;
-  setEnabling: (value: boolean) => void;
-};
-
-export const AppBar = ({ isEnabling, setEnabling }: Props) => {
+export const AppBar = () => {
   const sidebarIsOpen = useAppStore((s) => s.sidebarIsOpen);
   const selectedNode = useSelectedNode();
   const searchTerm = useAppStore((s) => s.currentSearch);
@@ -39,31 +34,14 @@ export const AppBar = ({ isEnabling, setEnabling }: Props) => {
 
       <StatsWrapper>{!selectedNode && !searchTerm && <Stats />}</StatsWrapper>
 
-      {isEnabling && (
-        <BudgetExplainer>
-          <Text color="white" kind="regularBold">
-            Each search of the graph costs 10 sats. Please enter a budget to buy
-            an LSAT which will allow you to search up until your budget runs
-            out. You will be able to set a new budget when that happens.
-          </Text>
-          <CloseButton
-            onClick={() => {
-              setEnabling(false);
-            }}
-          >
-            <span className="material-icons" style={{ fontSize: 15 }}>
-              close
-            </span>
-          </CloseButton>
-        </BudgetExplainer>
-      )}
-
       <SearchBarWrapper>
         <SearchBar />
       </SearchBarWrapper>
 
       <Flex>
-        <Button onClick={open}>Add Node (Coming Soon)</Button>
+        <Button kind="small" onClick={open}>
+          Add Node (Coming Soon)
+        </Button>
       </Flex>
     </Header>
   );
@@ -122,4 +100,3 @@ const SearchBarWrapper = styled.div`
     width: 100%;
   `}
 `;
-

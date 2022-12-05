@@ -1,8 +1,8 @@
 import { PropsWithChildren } from "react";
-import styled, { keyframes } from "styled-components";
+import styled, { css, keyframes } from "styled-components";
 import { Flex } from "~/components/common/Flex";
 import { AvailableModals, useModal } from "~/stores/useModalStore";
-import { colors } from "~/utils/colors";
+import { ColorName, colors } from "~/utils/colors";
 import { media } from "~/utils/media";
 
 const scaleAnimation = keyframes`
@@ -15,13 +15,29 @@ const scaleAnimation = keyframes`
   }
 `;
 
-const ModalContainer = styled(Flex)`
-  background-color: ${colors.modalBg};
+const getModalKindStyles = ({ kind = "regular" }: Pick<Props, "kind">) => {
+  switch (kind) {
+    case "small":
+      return css`
+        width: 320px;
+      `;
+    case "large":
+      return css`
+        width: 720px;
+      `;
+    default:
+      return css`
+        width: 520px;
+      `;
+  }
+};
+
+const ModalContainer = styled(Flex)<Pick<Props, "kind">>`
   z-index: 2000;
-  width: 520px;
   margin: 0 auto;
-  // pointer-events: none;
   animation: ${scaleAnimation} 0.2s ease-in-out;
+
+  ${getModalKindStyles}
 
   ${media.smallOnly`
     width: 100%;
@@ -40,20 +56,39 @@ const fadeAnimation = keyframes`
   }
 `;
 
-const Bg = styled(Flex)`
+const Bg = styled(Flex)<{ hideBg?: boolean }>`
   position: fixed;
   width: 100%;
   height: 100vh;
-  background-color: ${colors.gray300};
   transition: all;
   z-index: 1500;
   animation: ${fadeAnimation} 0.2s ease-in-out;
+
+  ${({ hideBg }) =>
+    !hideBg &&
+    css`
+      background-color: ${colors.gray300};
+    `}
 `;
 
+type ModalKind = "small" | "regular" | "large";
+
+type Props = PropsWithChildren<{
+  id: AvailableModals;
+  background?: ColorName;
+  onClose?: () => void;
+  hideBg?: boolean;
+  kind?: ModalKind;
+}>;
+
 export const BaseModal = ({
+  background = "modalBg",
   children,
   id,
-}: PropsWithChildren<{ id: AvailableModals }>) => {
+  hideBg,
+  kind,
+  onClose,
+}: Props) => {
   const { visible, close } = useModal(id);
 
   if (!visible) {
@@ -64,18 +99,24 @@ export const BaseModal = ({
     <>
       <Bg
         align="center"
+        hideBg={hideBg}
         justify="center"
         onClick={(e) => {
           e.stopPropagation();
+          onClose?.();
+
           close();
         }}
       >
         <ModalContainer
-          borderRadius={24}
+          background={background}
+          borderRadius={16}
+          kind={kind}
           onClick={(e) => {
             e.stopPropagation();
           }}
-          p={32}
+          px={24}
+          py={32}
         >
           {children}
         </ModalContainer>

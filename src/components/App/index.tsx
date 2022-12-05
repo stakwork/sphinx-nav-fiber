@@ -1,15 +1,17 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import * as sphinx from "sphinx-bridge-kevkevinpal";
 import styled from "styled-components";
 import { AddNodeModal } from "~/components/AddNodeModal";
+import { BudgetExplanationModal } from "~/components/BudgetExplanationModal";
 import { Flex } from "~/components/common/Flex";
-import { Preloader } from "../Universe/Preloader";
 import { DataRetriever } from "~/components/DataRetriever";
 import { GlobalStyle } from "~/components/GlobalStyle";
 import { Universe } from "~/components/Universe";
 import { useAppStore } from "~/stores/useAppStore";
 import { useDataStore, useSelectedNode } from "~/stores/useDataStore";
+import { useModal } from "~/stores/useModalStore";
 import { colors } from "~/utils/colors";
+import { Preloader } from "../Universe/Preloader";
 import { AppBar } from "./AppBar";
 import { SideBar } from "./SideBar";
 
@@ -22,11 +24,16 @@ const Wrapper = styled(Flex)`
 export const App = () => {
   const selectedNode = useSelectedNode();
 
+  const { open } = useModal("budgetExplanation");
   const setSidebarOpen = useAppStore((s) => s.setSidebarOpen);
   const searchTerm = useAppStore((s) => s.currentSearch);
+
+  const hasBudgetExplanationModalBeSeen = useAppStore(
+    (s) => s.hasBudgetExplanationModalBeSeen
+  );
+
   const fetchData = useDataStore((s) => s.fetchData);
   const [isAuthorized, setAuthorized] = useState(false);
-  const [isEnabling, setEnabling] = useState(false);
 
   const showSideBar = !!selectedNode || (!!searchTerm && isAuthorized);
 
@@ -34,23 +41,30 @@ export const App = () => {
     setSidebarOpen(showSideBar);
   }, [isAuthorized, selectedNode, setSidebarOpen, showSideBar]);
 
+  const runSearch = useCallback(async () => {
+    if (searchTerm) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      await sphinx.enable();
+
+      setAuthorized(true);
+    }
+
+    fetchData(searchTerm);
+  }, [fetchData, searchTerm]);
+
   useEffect(() => {
-    const run = async () => {
-      if (searchTerm) {
-        setEnabling(true);
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        await sphinx.enable();
-        setEnabling(false);
+    if (searchTerm) {
+      if (!hasBudgetExplanationModalBeSeen) {
+        open();
 
-        setAuthorized(true);
+        return;
       }
+    }
 
-      fetchData(searchTerm);
-    };
-
-    run();
-  }, [fetchData, searchTerm, setSidebarOpen]);
+    runSearch();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchTerm, runSearch, hasBudgetExplanationModalBeSeen]);
 
   return (
     <>
@@ -61,10 +75,17 @@ export const App = () => {
           <SideBar />
 
           <Universe />
-          <AppBar isEnabling={isEnabling} setEnabling={setEnabling} />
+
+          <AppBar />
         </DataRetriever>
 
         <AddNodeModal />
+
+        <BudgetExplanationModal
+          onClose={() => {
+            runSearch();
+          }}
+        />
       </Wrapper>
     </>
   );
