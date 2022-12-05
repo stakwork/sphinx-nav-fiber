@@ -44,15 +44,17 @@ export const App = () => {
 
   const runSearch = useCallback(async () => {
     if (searchTerm) {
+      setSphinxModalOpen(true);
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       await sphinx.enable();
+      setSphinxModalOpen(false);
 
       setAuthorized(true);
     }
 
     fetchData(searchTerm);
-  }, [fetchData, searchTerm]);
+  }, [fetchData, searchTerm, setSphinxModalOpen]);
 
   useEffect(() => {
     if (searchTerm) {
