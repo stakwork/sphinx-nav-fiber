@@ -4,6 +4,7 @@ export const colors = {
   blueTextAccent: "rgb(130, 180, 255)",
   body: "rgb(21, 30, 39)",
   boostBg1: "rgb(32, 63, 62)",
+  budgetExplanationModalBg: "rgb(21, 28, 35)",
   dashboardHeader: "rgb(26, 36, 46)",
   dashboardSearch: "rgb(21, 30, 39)",
   dashboardWashedoutText: "rgb(107, 122, 141)",

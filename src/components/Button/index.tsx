@@ -9,26 +9,33 @@ type Props = {
   disabled?: boolean;
   kind?: ButtonKind;
   onClick?: () => void;
+  shape?: "rounded" | "squared";
   textColor?: ColorName;
   type?: "submit";
 };
 
-const getButtonKindDimensions = ({ kind }: Pick<Props, "kind">) => {
+const getButtonKindDimensions = ({
+  kind,
+  shape,
+}: Pick<Props, "kind" | "shape">) => {
   switch (kind) {
     case "small":
       return css`
         padding: 4px 8px;
-        border-radius: 8px;
+        border-radius: ${shape === "rounded" ? "16px" : "8px"};
+        height: 32px;
       `;
     case "big":
       return css`
         padding: 16px 24px;
-        border-radius: 8px;
+        border-radius: ${shape === "rounded" ? "24px" : "8px"};
+        height: 48px;
       `;
     default:
       return css`
         padding: 8px 16px;
-        border-radius: 8px;
+        border-radius: ${shape === "rounded" ? "32px" : "8px"};
+        height: 64px;
       `;
   }
 };
@@ -36,7 +43,7 @@ const getButtonKindDimensions = ({ kind }: Pick<Props, "kind">) => {
 const getTextKind = ({ kind }: Pick<Props, "kind">): TextKind => {
   switch (kind) {
     case "small":
-      return "tinyBold";
+      return "regularBold";
     case "big":
       return "mediumBold";
     default:
@@ -44,7 +51,10 @@ const getTextKind = ({ kind }: Pick<Props, "kind">): TextKind => {
   }
 };
 
-const Wrapper = styled(Flex)<Pick<Props, "kind" | "disabled">>`
+const Wrapper = styled(Flex).attrs({
+  align: "center",
+  justify: "center",
+})<Pick<Props, "kind" | "disabled" | "shape">>`
   border: none;
   cursor: pointer;
 
@@ -70,6 +80,7 @@ export const Button = ({
   disabled,
   kind = "regular",
   onClick,
+  shape = "squared",
   textColor = "white",
   type,
 }: Props) => (
@@ -79,6 +90,7 @@ export const Button = ({
     disabled={disabled}
     kind={kind}
     onClick={onClick}
+    shape={shape}
     type={type}
   >
     <Text color={textColor} kind={getTextKind({ kind })}>
