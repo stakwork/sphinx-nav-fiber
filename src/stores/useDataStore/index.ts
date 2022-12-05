@@ -12,11 +12,13 @@ type DataStore = {
   isTimestampLoaded: boolean;
   selectedNode: NodeExtended | null;
   selectedTimestamp: NodeExtended | null;
+  sphinxModalIsOpen: boolean;
   setCameraAnimation: (cameraAnimation: gsap.core.Tween | null) => void;
   fetchData: (search?: string | null) => void;
   setSelectedNode: (selectedNode: NodeExtended | null) => void;
   setSelectedTimestamp: (selectedTimestamp: NodeExtended | null) => void;
   setHoveredNode: (hoveredNode: NodeExtended | null) => void;
+  setSphinxModalOpen: (_: boolean) => void;
 };
 
 const defaultData = {
@@ -27,6 +29,7 @@ const defaultData = {
   isTimestampLoaded: false,
   selectedNode: null,
   selectedTimestamp: null,
+  sphinxModalIsOpen: false,
 };
 
 export const useDataStore = create<DataStore>((set, get) => ({
@@ -39,11 +42,13 @@ export const useDataStore = create<DataStore>((set, get) => ({
     set({ isFetching: true });
 
     if (search?.length) {
+      set({ sphinxModalIsOpen: true });
+
       const data = await fetchGraphData(search);
 
       await saveSearchTerm(search);
 
-      set({ data, isFetching: false });
+      set({ data, isFetching: false, sphinxModalIsOpen: false });
 
       return;
     }
@@ -57,6 +62,7 @@ export const useDataStore = create<DataStore>((set, get) => ({
   setSelectedNode: (selectedNode) =>
     set({ isTimestampLoaded: false, selectedNode }),
   setSelectedTimestamp: (selectedTimestamp) => set({ selectedTimestamp }),
+  setSphinxModalOpen: (sphinxModalIsOpen) => set({ sphinxModalIsOpen }),
 }));
 
 export const useSelectedNode = () => useDataStore((s) => s.selectedNode);

@@ -5,7 +5,7 @@ import { Text } from "~/components/common/Text";
 import { SearchBar } from "~/components/SearchBar";
 import { Stats } from "~/components/Stats";
 import { useAppStore } from "~/stores/useAppStore";
-import { useSelectedNode } from "~/stores/useDataStore";
+import { useSelectedNode, useDataStore } from "~/stores/useDataStore";
 import { useModal } from "~/stores/useModalStore";
 import { colors } from "~/utils/colors";
 import { media } from "~/utils/media";
@@ -13,7 +13,13 @@ import { media } from "~/utils/media";
 export const AppBar = () => {
   const sidebarIsOpen = useAppStore((s) => s.sidebarIsOpen);
   const selectedNode = useSelectedNode();
-  const searchTerm = useAppStore((s) => s.currentSearch);
+
+  const [searchTerm, clearSearch] = useAppStore((s) => [
+    s.currentSearch,
+    s.clearSearch,
+  ]);
+
+  const setSphinxModalOpen = useDataStore((s) => s.setSphinxModalOpen);
 
   const { open } = useModal("addNode");
 

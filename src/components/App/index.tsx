@@ -33,6 +33,7 @@ export const App = () => {
   );
 
   const fetchData = useDataStore((s) => s.fetchData);
+  const setSphinxModalOpen = useDataStore((s) => s.setSphinxModalOpen);
   const [isAuthorized, setAuthorized] = useState(false);
 
   const showSideBar = !!selectedNode || (!!searchTerm && isAuthorized);
@@ -57,7 +58,6 @@ export const App = () => {
     if (searchTerm) {
       if (!hasBudgetExplanationModalBeSeen) {
         open();
-
         return;
       }
     }
