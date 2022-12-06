@@ -4,8 +4,12 @@ import * as sphinx from "sphinx-bridge-kevkevinpal";
 type Action = "searching" | "adding_node";
 
 export const getLSat = async (action: Action) => {
+  const method = action === "adding_node" ? "POST" : "GET";
+
   try {
-    const resp = await fetch(`https://knowledge-graph.sphinx.chat/${action}`);
+    const resp = await fetch(`https://knowledge-graph.sphinx.chat/${action}`, {
+      method,
+    });
 
     const data = await resp.json();
 
