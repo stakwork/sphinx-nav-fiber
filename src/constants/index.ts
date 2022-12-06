@@ -22,3 +22,5 @@ export const GRAPH_LIGHT_INTENSITY = 1;
 
 export const BOOST_SUCCESS = "Boosted successfully";
 export const BOOST_ERROR_BUDGET = "Boost failed, insufficient budget";
+
+export const NODE_ADD_SUCCESS = "Node added successfully";
