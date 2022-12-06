@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
 import * as sphinx from "sphinx-bridge-kevkevinpal";
 import styled from "styled-components";
+import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer } from "react-toastify";
 import { AddNodeModal } from "~/components/AddNodeModal";
 import { BudgetExplanationModal } from "~/components/BudgetExplanationModal";
 import { Flex } from "~/components/common/Flex";
@@ -14,12 +16,6 @@ import { colors } from "~/utils/colors";
 import { Preloader } from "../Universe/Preloader";
 import { AppBar } from "./AppBar";
 import { SideBar } from "./SideBar";
-
-const Wrapper = styled(Flex)`
-  height: 100%;
-  width: 100%;
-  background-color: ${colors.black};
-`;
 
 export const App = () => {
   const selectedNode = useSelectedNode();
@@ -84,6 +80,8 @@ export const App = () => {
 
         <AddNodeModal />
 
+        <StyledToast />
+
         <BudgetExplanationModal
           onClose={() => {
             runSearch();
@@ -93,3 +91,28 @@ export const App = () => {
     </>
   );
 };
+
+const Wrapper = styled(Flex)`
+  height: 100%;
+  width: 100%;
+  background-color: ${colors.black};
+`;
+
+const StyledToast = styled(ToastContainer)`
+  .Toastify__toast {
+    background-color: ${colors.body};
+  }
+  .Toastify__toast-body {
+    background-color: ${colors.body};
+    color: ${colors.white};
+  }
+  .Toastify__close-button {
+    color: ${colors.white};
+  }
+  .Toastify__progress-bar--error {
+    background-color: ${colors.primaryRed};
+  }
+  .Toastify__progress-bar--success {
+    background-color: ${colors.primaryGreen};
+  }
+`;
