@@ -17,6 +17,9 @@ import { colors } from "~/utils/colors";
 import { GuestPreview } from "./GuestPreview";
 import { timeToMinutes } from "~/utils/timeToMinutes";
 import { getLSat } from "~/utils/getLSat";
+import { toast } from "react-toastify";
+import { ToastMessage } from "../common/Toast/toastMessage";
+import { NODE_ADD_SUCCESS } from "~/constants";
 
 const requiredRule = {
   required: {
@@ -37,7 +40,19 @@ type GuestObject = {
   profilePicture: string;
 };
 
-const handleSubmit = async (data: FieldValues) => {
+const notify = (message: string) => {
+  toast(<ToastMessage message={message} />, {
+    icon: false,
+    position: toast.POSITION.BOTTOM_CENTER,
+    type: message === NODE_ADD_SUCCESS ? "success" : "error",
+  });
+};
+
+const handleSubmit = async (
+  data: FieldValues,
+  close: () => void,
+  reset: () => void
+) => {
   const body: { [index: string]: any } = {
     job_response: {
       names: {
@@ -87,10 +102,13 @@ const handleSubmit = async (data: FieldValues) => {
       throw new Error(message);
     }
 
-    console.log("node added");
+    notify(NODE_ADD_SUCCESS);
+    close();
+    reset();
   } catch (err: unknown) {
     if (err instanceof Error) {
-      console.log(err.message);
+      notify(err.message);
+      close();
     }
   }
 };
@@ -101,8 +119,12 @@ export const AddNodeModal = () => {
 
   const form = useForm({ mode: "onChange" });
 
+  const { reset } = form;
+
+  const { isSubmitting } = form.formState;
+
   const onSubmit = form.handleSubmit((data) => {
-    handleSubmit(data);
+    handleSubmit(data, close, reset);
   });
 
   const openPreview = () => {
@@ -233,7 +255,7 @@ export const AddNodeModal = () => {
           </Flex>
 
           <Flex pt={8}>
-            <Button kind="big" type="submit">
+            <Button disabled={isSubmitting} kind="big" type="submit">
               Add node (Coming Soon)
             </Button>
           </Flex>
