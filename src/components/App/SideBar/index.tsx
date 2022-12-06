@@ -1,5 +1,3 @@
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import styled from "styled-components";
 import { Flex } from "~/components/common/Flex";
 import { Loader } from "~/components/common/Loader";
@@ -23,8 +21,6 @@ const Content = () => {
 
   return (
     <Wrapper id="sidebar-wrapper">
-      <StyledToast />
-
       <SearchWrapper>
         <SearchBar />
 
@@ -79,25 +75,6 @@ const Wrapper = styled(Flex)`
   height: 100vh;
   width: ${MENU_WIDTH}px;
   z-index: 30;
-`;
-
-const StyledToast = styled(ToastContainer)`
-  .Toastify__toast {
-    background-color: ${colors.body};
-  }
-  .Toastify__toast-body {
-    background-color: ${colors.body};
-    color: ${colors.white};
-  }
-  .Toastify__close-button {
-    color: ${colors.white};
-  }
-  .Toastify__progress-bar--error {
-    background-color: ${colors.primaryRed};
-  }
-  .Toastify__progress-bar--success {
-    background-color: ${colors.primaryGreen};
-  }
 `;
 
 const SearchWrapper = styled(Flex).attrs({
