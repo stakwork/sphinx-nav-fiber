@@ -15,19 +15,9 @@ const Wrapper = styled(Flex)`
   z-index: 100;
   transition: opacity 0.6s;
 
-  top: 20px;
+  bottom: 20px;
   right: 20px;
   width: 300px;
-`;
-
-const Description = styled(Text)`
-  font-style: italic;
-
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-line-clamp: 5;
-  -webkit-box-orient: vertical;
 `;
 
 export const Tooltip = () => {
@@ -43,7 +33,6 @@ export const Tooltip = () => {
     episode_title: episodeTitle,
     description,
     guests,
-    text,
     timestamp,
     type,
   } = node;
@@ -66,7 +55,7 @@ export const Tooltip = () => {
 
   return (
     <Wrapper borderRadius={8} px={24} py={16}>
-      <Flex align="center" pb={12}>
+      <Flex align="flex-start" pb={12}>
         <Text>{nodeType?.toUpperCase()}</Text>
       </Flex>
 
@@ -82,7 +71,9 @@ export const Tooltip = () => {
 
           <Flex pt={4}>
             <Text as="div" kind="regularBold">
-              {episodeTitle}
+              {nodeType === "clip"
+                ? formatDescription(description)
+                : episodeTitle}
             </Text>
           </Flex>
 
@@ -102,12 +93,11 @@ export const Tooltip = () => {
           )}
 
           <Flex pt={12}>
-            <Text color="mainBottomIcons">{formatDescription(description)}</Text>
-            <Flex pt={4}>
-              <Description color="mainBottomIcons" kind="tiny">
-                {text}
-              </Description>
-            </Flex>
+            <Text color="mainBottomIcons" kind="regular">
+              {nodeType === "clip"
+                ? episodeTitle
+                : formatDescription(description)}
+            </Text>
           </Flex>
         </div>
       </Flex>
