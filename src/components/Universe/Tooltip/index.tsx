@@ -20,6 +20,10 @@ const Wrapper = styled(Flex)`
   width: 300px;
 `;
 
+const Divider = styled(Flex)`
+  width: 22.5%;
+`;
+
 export const Tooltip = () => {
   const node = useDataStore((s) => s.hoveredNode);
 
@@ -32,10 +36,20 @@ export const Tooltip = () => {
     show_title: showTitle,
     episode_title: episodeTitle,
     description,
-    guests,
+    label,
     timestamp,
     type,
   } = node;
+
+  const guestArray = node.guests;
+
+  let guests = false;
+
+  if (guestArray) {
+    if (guestArray.length && guestArray[0] !== null) {
+      guests = true;
+    }
+  }
 
   let imageUrl = node.image_url;
 
@@ -55,8 +69,11 @@ export const Tooltip = () => {
 
   return (
     <Wrapper borderRadius={8} px={24} py={16}>
-      <Flex align="flex-start" pb={12}>
-        <Text>{nodeType?.toUpperCase()}</Text>
+      <Flex direction="row">
+        <Divider />
+        <Flex align="flex-start" pb={12}>
+          <Text>{nodeType?.toUpperCase()}</Text>
+        </Flex>
       </Flex>
 
       <Flex direction="row">
@@ -65,40 +82,52 @@ export const Tooltip = () => {
         </Flex>
 
         <div>
+          {type === "guest" && <Text>{label}</Text>}
           <Text color="primaryText1" kind="tiny">
             {showTitle}
           </Text>
 
           <Flex pt={4}>
-            <Text as="div" kind="regularBold">
-              {nodeType === "clip"
-                ? formatDescription(description)
-                : episodeTitle}
-            </Text>
+            {nodeType === "clip" ||
+              (nodeType === "episode" && (
+                <Text color="primaryText1">Episode</Text>
+              ))}
+
+            {nodeType === "clip" ? (
+              <Text as="div" kind="regularBold">
+                {formatDescription(description)}
+              </Text>
+            ) : (
+              <Text color="primaryText1" kind="tiny">
+                {episodeTitle}
+              </Text>
+            )}
           </Flex>
 
           <Text color="primaryText1" kind="tiny">
             {timestamp}
           </Text>
 
-          {guests?.length && (
-            <Flex pt={12}>
-              <Text color="primaryText1">Guests</Text>
-              <Flex pt={4}>
-                <Text color="primaryText1" kind="tiny">
-                  {guests.join(", ")}
-                </Text>
-              </Flex>
-            </Flex>
-          )}
-
           <Flex pt={12}>
-            <Text color="mainBottomIcons" kind="regular">
+            {nodeType === "clip" && <Text color="primaryText1">Episode</Text>}
+
+            <Text color="primaryText1" kind="tiny">
               {nodeType === "clip"
                 ? episodeTitle
                 : formatDescription(description)}
             </Text>
           </Flex>
+
+          {guests && (
+            <Flex pt={12}>
+              <Text color="primaryText1">People</Text>
+              <Flex pt={4}>
+                <Text color="primaryText1" kind="tiny">
+                  {guestArray?.join(", ")}
+                </Text>
+              </Flex>
+            </Flex>
+          )}
         </div>
       </Flex>
     </Wrapper>
