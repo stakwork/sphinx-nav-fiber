@@ -16,6 +16,7 @@ import { useModal } from "~/stores/useModalStore";
 import { colors } from "~/utils/colors";
 import { GuestPreview } from "./GuestPreview";
 import { timeToMinutes } from "~/utils/timeToMinutes";
+import { getLSat } from "~/utils/getLSat";
 
 const requiredRule = {
   required: {
@@ -67,8 +68,18 @@ const handleSubmit = async (data: FieldValues) => {
 
   body.pubkey = enable?.pubkey;
 
+  const lsatToken = await getLSat("adding_node");
+
+  if (!lsatToken) {
+    throw new Error("An error occured calling getLSat");
+  }
+
   try {
-    const res: SubmitErrRes = await api.post("/add_node", JSON.stringify(body));
+    const res: SubmitErrRes = await api.post(
+      "/add_node",
+      JSON.stringify(body),
+      { Authorization: lsatToken }
+    );
 
     if (res.error) {
       const { message } = res.error;
