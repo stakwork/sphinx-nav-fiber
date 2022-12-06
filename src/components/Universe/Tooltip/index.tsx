@@ -93,7 +93,7 @@ export const Tooltip = () => {
           )}
 
           <Flex pt={12}>
-            <Text color="mainBottomIcons">
+            <Text color="mainBottomIcons" kind="regular">
               {nodeType === "clip"
                 ? episodeTitle
                 : formatDescription(description)}
