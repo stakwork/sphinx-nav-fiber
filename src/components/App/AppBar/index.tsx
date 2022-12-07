@@ -46,7 +46,7 @@ export const AppBar = () => {
 
       <Flex>
         <Button kind="small" onClick={open}>
-          Add Node (Coming Soon)
+          Add Node
         </Button>
       </Flex>
     </Header>
