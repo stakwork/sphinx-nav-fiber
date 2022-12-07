@@ -4,6 +4,7 @@ import { FormProvider, useForm, FieldValues } from "react-hook-form";
 import { api } from "~/network/api";
 import { TextArea } from "~/components/AddNodeModal/TextArea";
 import { TextInput } from "~/components/AddNodeModal/TextInput";
+import { TagInput } from "./TagInput";
 import { Button } from "~/components/Button";
 import { Flex } from "~/components/common/Flex";
 import { Text } from "~/components/common/Text";
@@ -49,7 +50,7 @@ const handleSubmit = async (
           description: data.description,
           "end-time": timeToMinutes(data.endTime),
           "start-time": timeToMinutes(data.startTime),
-          tag: data.tag,
+          tag: data.tags?.join(", "),
         },
       ],
     },
@@ -167,16 +168,7 @@ export const AddNodeModal = () => {
           </Flex>
 
           <Flex pt={12}>
-            {/* Implementation for multi-tagging. Returns array. */}
-            {/* <TagInput label="Tags" placeholder="Add a tag and press Enter" /> */}
-            <TagInput>
-              <TextInput
-                label="Tag"
-                name="tag"
-                placeholder="taro"
-                rules={requiredRule}
-              />
-            </TagInput>
+            <TagInput label="Tags" placeholder="Add a tag and press Enter" />
           </Flex>
 
           <Flex pt={16} px={4}>
@@ -204,10 +196,4 @@ const CloseButton = styled(Flex)`
     font-size: 24px;
     color: ${colors.white};
   }
-`;
-
-const TagInput = styled(Flex).attrs({
-  pr: 16,
-})`
-  width: 50%;
 `;
