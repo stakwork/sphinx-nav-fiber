@@ -1,9 +1,16 @@
 import { Lsat } from "lsat-js";
 import * as sphinx from "sphinx-bridge-kevkevinpal";
 
-export const getLSat = async () => {
+type Action = "searching" | "adding_node";
+
+export const getLSat = async (action: Action) => {
+  const method = action === "adding_node" ? "POST" : "GET";
+
   try {
-    const resp = await fetch("https://knowledge-graph.sphinx.chat/searching");
+    const resp = await fetch(`https://knowledge-graph.sphinx.chat/${action}`, {
+      method,
+    });
+
     const data = await resp.json();
 
     const lsat = Lsat.fromHeader(data.headers);

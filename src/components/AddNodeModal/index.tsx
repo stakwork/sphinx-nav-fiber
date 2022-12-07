@@ -1,23 +1,21 @@
-import { FormProvider, useForm } from "react-hook-form";
 import styled from "styled-components";
-import { TagInput } from "~/components/AddNodeModal/TagInput";
+import * as sphinx from "sphinx-bridge-kevkevinpal";
+import { FormProvider, useForm, FieldValues } from "react-hook-form";
+import { api } from "~/network/api";
 import { TextArea } from "~/components/AddNodeModal/TextArea";
 import { TextInput } from "~/components/AddNodeModal/TextInput";
+import { TagInput } from "./TagInput";
 import { Button } from "~/components/Button";
 import { Flex } from "~/components/common/Flex";
 import { Text } from "~/components/common/Text";
 import { BaseModal } from "~/components/Modal";
 import { useModal } from "~/stores/useModalStore";
 import { colors } from "~/utils/colors";
-
-const CloseButton = styled(Flex)`
-  cursor: pointer;
-
-  span {
-    font-size: 24px;
-    color: ${colors.white};
-  }
-`;
+import { timeToMinutes } from "~/utils/timeToMinutes";
+import { getLSat } from "~/utils/getLSat";
+import { toast } from "react-toastify";
+import { ToastMessage } from "../common/Toast/toastMessage";
+import { NODE_ADD_SUCCESS } from "~/constants";
 
 const requiredRule = {
   required: {
@@ -28,12 +26,85 @@ const requiredRule = {
 
 const timeRegex = /^\d{2}:\d{2}:\d{2}$/;
 
+type SubmitErrRes = {
+  error?: { message?: string };
+};
+
+const notify = (message: string) => {
+  toast(<ToastMessage message={message} />, {
+    icon: false,
+    position: toast.POSITION.BOTTOM_CENTER,
+    type: message === NODE_ADD_SUCCESS ? "success" : "error",
+  });
+};
+
+const handleSubmit = async (
+  data: FieldValues,
+  close: () => void,
+  reset: () => void
+) => {
+  const body: { [index: string]: any } = {
+    job_response: {
+      tags: [
+        {
+          description: data.description,
+          "end-time": timeToMinutes(data.endTime),
+          "start-time": timeToMinutes(data.startTime),
+          tag: data.tags?.join(", "),
+        },
+      ],
+    },
+    media_url: data.link,
+  };
+
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  const enable = await sphinx.enable();
+
+  body.pubkey = enable?.pubkey;
+
+  const lsatToken = await getLSat("adding_node");
+
+  if (!lsatToken) {
+    throw new Error("An error occured calling getLSat");
+  }
+
+  try {
+    const res: SubmitErrRes = await api.post(
+      "/add_node",
+      JSON.stringify(body),
+      { Authorization: lsatToken }
+    );
+
+    if (res.error) {
+      const { message } = res.error;
+
+      throw new Error(message);
+    }
+
+    notify(NODE_ADD_SUCCESS);
+    close();
+    reset();
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      notify(err.message);
+      close();
+    }
+  }
+};
+
 export const AddNodeModal = () => {
   const { close } = useModal("addNode");
 
   const form = useForm({ mode: "onChange" });
 
-  const onSubmit = form.handleSubmit((data) => console.log(data));
+  const { reset } = form;
+
+  const { isSubmitting } = form.formState;
+
+  const onSubmit = form.handleSubmit((data) => {
+    handleSubmit(data, close, reset);
+  });
 
   return (
     <BaseModal id="addNode">
@@ -56,7 +127,7 @@ export const AddNodeModal = () => {
             />
           </Flex>
 
-          <Flex direction="row" pt={16}>
+          <Flex direction="row" pt={12}>
             <Flex basis="50%" pr={16}>
               <TextInput
                 label="Start Time"
@@ -88,7 +159,7 @@ export const AddNodeModal = () => {
             </Flex>
           </Flex>
 
-          <Flex pt={16}>
+          <Flex pt={12}>
             <TextArea
               label="Clip Description"
               name="description"
@@ -96,11 +167,11 @@ export const AddNodeModal = () => {
             />
           </Flex>
 
-          <Flex pt={16}>
+          <Flex pt={12}>
             <TagInput label="Tags" placeholder="Add a tag and press Enter" />
           </Flex>
 
-          <Flex pt={32} px={4}>
+          <Flex pt={16} px={4}>
             <Text color="lightGray" kind="tinyBold">
               Your pubkey will be submitted with your node, so you can recieve
               sats that your node earns.
@@ -108,8 +179,8 @@ export const AddNodeModal = () => {
           </Flex>
 
           <Flex pt={8}>
-            <Button kind="big" type="submit">
-              Add node (Coming Soon)
+            <Button disabled={isSubmitting} kind="big" type="submit">
+              Add node
             </Button>
           </Flex>
         </form>
@@ -117,3 +188,12 @@ export const AddNodeModal = () => {
     </BaseModal>
   );
 };
+
+const CloseButton = styled(Flex)`
+  cursor: pointer;
+
+  span {
+    font-size: 24px;
+    color: ${colors.white};
+  }
+`;

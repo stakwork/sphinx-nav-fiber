@@ -43,11 +43,7 @@ const topupFromToast = async () => {
   }
 };
 
-export const ToastMessage = ({ message, toastProps }: Partial<Props>) => {
-  if (toastProps.type === "success") {
-    return <div>{message}</div>;
-  }
-
+export const ToastMessage = ({ message }: Partial<Props>) => {
   if (message === BOOST_ERROR_BUDGET) {
     return (
       <div>

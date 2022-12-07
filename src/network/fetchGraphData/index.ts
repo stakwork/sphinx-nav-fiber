@@ -35,7 +35,7 @@ const fetchNodes = async (search: string) => {
 
   console.log("getting prod data");
 
-  const lsatToken = await getLSat();
+  const lsatToken = await getLSat("searching");
 
   if (!lsatToken) {
     throw new Error("An error occured calling getLSat");
