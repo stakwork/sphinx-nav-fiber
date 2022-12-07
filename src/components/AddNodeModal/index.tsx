@@ -1,20 +1,15 @@
 import styled from "styled-components";
 import * as sphinx from "sphinx-bridge-kevkevinpal";
 import { FormProvider, useForm, FieldValues } from "react-hook-form";
-import { useState } from "react";
 import { api } from "~/network/api";
-import { TagInput } from "~/components/AddNodeModal/TagInput";
 import { TextArea } from "~/components/AddNodeModal/TextArea";
 import { TextInput } from "~/components/AddNodeModal/TextInput";
-import { GuestHandle } from "./GuestHandle";
-import { NameInput } from "./NameInput";
 import { Button } from "~/components/Button";
 import { Flex } from "~/components/common/Flex";
 import { Text } from "~/components/common/Text";
 import { BaseModal } from "~/components/Modal";
 import { useModal } from "~/stores/useModalStore";
 import { colors } from "~/utils/colors";
-import { GuestPreview } from "./GuestPreview";
 import { timeToMinutes } from "~/utils/timeToMinutes";
 import { getLSat } from "~/utils/getLSat";
 import { toast } from "react-toastify";
@@ -34,12 +29,6 @@ type SubmitErrRes = {
   error?: { message?: string };
 };
 
-type GuestObject = {
-  guestName: string;
-  twitterHandle: string;
-  profilePicture: string;
-};
-
 const notify = (message: string) => {
   toast(<ToastMessage message={message} />, {
     icon: false,
@@ -55,16 +44,6 @@ const handleSubmit = async (
 ) => {
   const body: { [index: string]: any } = {
     job_response: {
-      names: {
-        guest_names: data.guestHandles?.map((handle: GuestObject) => ({
-          name: handle.guestName,
-          profile_picture: handle.profilePicture,
-          twitter_handle: handle.twitterHandle,
-        })),
-        host_names: data.hostNames?.map((name: string) => ({
-          name,
-        })),
-      },
       tags: [
         {
           description: data.description,
@@ -114,7 +93,6 @@ const handleSubmit = async (
 };
 
 export const AddNodeModal = () => {
-  const [guestPreview, setGuestPreview] = useState(false);
   const { close } = useModal("addNode");
 
   const form = useForm({ mode: "onChange" });
@@ -127,14 +105,9 @@ export const AddNodeModal = () => {
     handleSubmit(data, close, reset);
   });
 
-  const openPreview = () => {
-    setGuestPreview(!guestPreview);
-  };
-
   return (
     <BaseModal id="addNode">
       <FormProvider {...form}>
-        {guestPreview && <GuestPreview openPreview={openPreview} />}
         <form onSubmit={onSubmit}>
           <Flex align="center" direction="row" justify="space-between" pb={32}>
             <Text kind="bigHeadingBold">Add Node</Text>
@@ -144,24 +117,13 @@ export const AddNodeModal = () => {
             </CloseButton>
           </Flex>
 
-          <Flex direction="row">
-            <Flex basis="50%" pr={16}>
-              <TextInput
-                label="Link"
-                name="link"
-                placeholder="Paste your link here..."
-                rules={requiredRule}
-              />
-            </Flex>
-
-            <Flex basis="50%" pl={16}>
-              <TextInput
-                label="Tag"
-                name="tag"
-                placeholder="taro..."
-                rules={requiredRule}
-              />
-            </Flex>
+          <Flex>
+            <TextInput
+              label="Link"
+              name="link"
+              placeholder="Paste your link here..."
+              rules={requiredRule}
+            />
           </Flex>
 
           <Flex direction="row" pt={12}>
@@ -205,46 +167,16 @@ export const AddNodeModal = () => {
           </Flex>
 
           <Flex pt={12}>
+            {/* Implementation for multi-tagging. Returns array. */}
             {/* <TagInput label="Tags" placeholder="Add a tag and press Enter" /> */}
-            <NameInput
-              label="Host Names"
-              placeholder="Add a name and press Enter"
-            />
-          </Flex>
-
-          <Flex pt={8}>
-            <Text color="white" kind="regularBold">
-              Guests
-            </Text>
-          </Flex>
-
-          <Flex direction="row" pt={8}>
-            <Flex basis="50%" pr={16}>
+            <TagInput>
               <TextInput
-                label="Name"
-                name="guestName"
-                placeholder="Lowell Randel"
+                label="Tag"
+                name="tag"
+                placeholder="taro"
+                rules={requiredRule}
               />
-            </Flex>
-
-            <Flex basis="50%" pl={16}>
-              <TextInput
-                label="Twitter Handle"
-                name="twitterHandle"
-                placeholder="gccaorg"
-              />
-            </Flex>
-          </Flex>
-
-          <Flex direction="row" pt={8}>
-            <Flex basis="50%" pr={16}>
-              <TextInput
-                label="Profile Picture"
-                name="profilePicture"
-                placeholder="https://.com/profile_images.jpg"
-              />
-            </Flex>
-            <GuestHandle getVals={form.getValues} openPreview={openPreview} />
+            </TagInput>
           </Flex>
 
           <Flex pt={16} px={4}>
@@ -256,7 +188,7 @@ export const AddNodeModal = () => {
 
           <Flex pt={8}>
             <Button disabled={isSubmitting} kind="big" type="submit">
-              Add node (Coming Soon)
+              Add node
             </Button>
           </Flex>
         </form>
@@ -272,4 +204,10 @@ const CloseButton = styled(Flex)`
     font-size: 24px;
     color: ${colors.white};
   }
+`;
+
+const TagInput = styled(Flex).attrs({
+  pr: 16,
+})`
+  width: 50%;
 `;
