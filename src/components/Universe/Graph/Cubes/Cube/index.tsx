@@ -33,9 +33,8 @@ export const Cube = memo(({ node }: { node: NodeExtended }) => {
   let highlight = false;
 
   if(node.node_type === 'guest' && searchTerm) {
-    highlight =
-      searchTerm.split(" ")
-        .some((i) => node.label.toLowerCase().match(new RegExp(`\\b${i.toLowerCase()}\\b`)) !== null);
+    highlight = searchTerm.split(" ")
+      .some((i) => node.label.toLowerCase().match(new RegExp(`\\b${i.toLowerCase()}\\b`)) !== null);
   }
 
 ;

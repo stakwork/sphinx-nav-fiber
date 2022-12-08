@@ -10,6 +10,12 @@ export const useMaterial = (url: string, highlight: boolean) => {
 
 
   const material = useMemo(() => {
+    const cashPath = `${url}${String(highlight)}`;
+
+    if (cachedMaterials[cashPath]) {
+      return cachedMaterials[cashPath];
+    }
+
     const map = loader.load(url);
 
     const materialProp = highlight  ?
@@ -24,7 +30,7 @@ export const useMaterial = (url: string, highlight: boolean) => {
 
     const m = new MeshStandardMaterial(materialProp);
 
-    cachedMaterials[url] = m;
+    cachedMaterials[cashPath] = m;
 
     return m;
   }, [url, highlight]);
