@@ -11,11 +11,11 @@ import { Text } from "~/components/common/Text";
 import { BaseModal } from "~/components/Modal";
 import { useModal } from "~/stores/useModalStore";
 import { colors } from "~/utils/colors";
-import { timeToMinutes } from "~/utils/timeToMinutes";
+import { timeToSeconds } from "~/utils/timeToSeconds";
 import { getLSat } from "~/utils/getLSat";
 import { toast } from "react-toastify";
 import { ToastMessage } from "../common/Toast/toastMessage";
-import { NODE_ADD_SUCCESS } from "~/constants";
+import { NODE_ADD_SUCCESS, NODE_ADD_ERROR } from "~/constants";
 
 const requiredRule = {
   required: {
@@ -48,8 +48,8 @@ const handleSubmit = async (
       tags: [
         {
           description: data.description,
-          "end-time": timeToMinutes(data.endTime),
-          "start-time": timeToMinutes(data.startTime),
+          "end-time": timeToSeconds(data.endTime),
+          "start-time": timeToSeconds(data.startTime),
           tag: data.tags?.join(", "),
         },
       ],
@@ -87,7 +87,7 @@ const handleSubmit = async (
     reset();
   } catch (err: unknown) {
     if (err instanceof Error) {
-      notify(err.message);
+      notify(NODE_ADD_ERROR);
       close();
     }
   }
