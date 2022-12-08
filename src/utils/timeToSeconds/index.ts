@@ -1,4 +1,4 @@
-export function timeToMilliseconds(time: string) {
+export function timeToSeconds(time: string) {
   const [hours, minutes, seconds] = time.split(":").map(Number);
 
   return Number(
