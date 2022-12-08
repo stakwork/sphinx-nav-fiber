@@ -1,5 +1,10 @@
 import { KeyboardEvent, useCallback, useState } from "react";
-import { useFormContext } from "react-hook-form";
+import {
+  useFormContext,
+  RegisterOptions,
+  get,
+  Controller,
+} from "react-hook-form";
 import styled from "styled-components";
 import { BaseTextInput, BaseTextInputProps } from "~/components/BaseTextInput";
 import { Flex } from "~/components/common/Flex";
@@ -16,14 +21,22 @@ const Wrapper = styled(Flex).attrs({
 
 type Props = Omit<BaseTextInputProps, "name"> & {
   label: string;
+  rules?: RegisterOptions;
 };
 
 type Fields = { tags: string[] | undefined };
 
 const name = "tags";
 
-export const TagInput = ({ label, ...props }: Props) => {
-  const { setValue, getValues } = useFormContext<Fields>();
+export const TagInput = ({ label, rules, ...props }: Props) => {
+  const {
+    setValue,
+    getValues,
+    clearErrors,
+    formState: { errors },
+  } = useFormContext<Fields>();
+
+  const error = get(errors, name);
 
   const [currentTag, setCurrentTag] = useState("");
   const tags = getValues(name);
@@ -46,8 +59,9 @@ export const TagInput = ({ label, ...props }: Props) => {
       setValue(name, [...tagsSet]);
 
       setCurrentTag("");
+      clearErrors(name);
     },
-    [currentTag, setValue, tags]
+    [currentTag, setValue, tags, clearErrors]
   );
 
   const handleTagRemove = useCallback(
@@ -82,14 +96,20 @@ export const TagInput = ({ label, ...props }: Props) => {
         </Text>
       </Flex>
       <Wrapper>
-        <BaseTextInput
-          {...props}
-          colorName="white"
+        <Controller
           name={name}
-          onChange={handleOnChange}
-          onKeyDown={handleKeyDown}
-          placeholderTextColor="inputPlaceholder"
-          value={currentTag || ""}
+          render={() => (
+            <BaseTextInput
+              {...props}
+              colorName="white"
+              name={name}
+              onChange={handleOnChange}
+              onKeyDown={handleKeyDown}
+              placeholderTextColor="inputPlaceholder"
+              value={currentTag || ""}
+            />
+          )}
+          rules={rules}
         />
       </Wrapper>
 
@@ -115,6 +135,25 @@ export const TagInput = ({ label, ...props }: Props) => {
           </Flex>
         ))}
       </Flex>
+
+      {error && (
+        <Flex pl={4} pt={8} shrink={1}>
+          <Text color="primaryRed" kind="regularBold">
+            <Flex align="center" direction="row" shrink={1}>
+              <span
+                className="material-icons md-18"
+                style={{ fontSize: "18px" }}
+              >
+                error
+              </span>
+
+              <Flex pl={4} shrink={1}>
+                {error.message}
+              </Flex>
+            </Flex>
+          </Text>
+        </Flex>
+      )}
     </Flex>
   );
 };
