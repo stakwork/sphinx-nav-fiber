@@ -11,7 +11,7 @@ import { Text } from "~/components/common/Text";
 import { BaseModal } from "~/components/Modal";
 import { useModal } from "~/stores/useModalStore";
 import { colors } from "~/utils/colors";
-import { timeToMilliseconds } from "~/utils/timeToMilliseconds";
+import { timeToSeconds } from "~/utils/timeToSeconds";
 import { getLSat } from "~/utils/getLSat";
 import { toast } from "react-toastify";
 import { ToastMessage } from "../common/Toast/toastMessage";
@@ -48,8 +48,8 @@ const handleSubmit = async (
       tags: [
         {
           description: data.description,
-          "end-time": timeToMilliseconds(data.endTime),
-          "start-time": timeToMilliseconds(data.startTime),
+          "end-time": timeToSeconds(data.endTime),
+          "start-time": timeToSeconds(data.startTime),
           tag: data.tags?.join(", "),
         },
       ],
