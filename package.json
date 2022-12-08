@@ -5,7 +5,7 @@
   "dependencies": {
     "@react-three/drei": "^9.24.4",
     "@react-three/fiber": "^8.6.0",
-    "@react-three/postprocessing": "^2.6.2",
+    "@react-three/postprocessing": "^2.7.0",
     "@use-gesture/react": "^10.2.19",
     "camera-controls": "^1.37.4",
     "d3-force-3d": "^3.0.3",
