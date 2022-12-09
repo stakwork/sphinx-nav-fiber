@@ -7,6 +7,7 @@ import {
 } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 import {
+  Bloom,
   EffectComposer,
   Outline,
   Selection,
@@ -39,6 +40,7 @@ const Content = () => (
           radius={0.05}
         />
 
+        <Bloom luminanceThreshold={1} mipmapBlur />
         <Outline blur edgeStrength={100} visibleEdgeColor={0xfbff00} />
       </EffectComposer>
     </Selection>
