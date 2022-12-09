@@ -7,7 +7,6 @@ import { api } from "~/network/api";
 import {
   GraphData,
   Link,
-  Node,
   NodeExtended,
   FetchDataResponse,
 } from "~/types";
@@ -56,7 +55,7 @@ const getGraphData = async (searchterm: string) => {
     const links: Link[] = [];
 
     let topicMap: Record<string, string[]> = {};
-    let guestMap: Record<string, string[]> = {};
+    const guestMap: Record<string, string[]> = {};
 
     if (data.length) {
       // Populating nodes array with podcasts and constructing a topic map
@@ -93,14 +92,11 @@ const getGraphData = async (searchterm: string) => {
         }
 
         if (node.node_type === "episode") {
-          guestMap =
-            guests?.reduce((acc, guest) => {
-              if (guest) {
-                acc[guest] = [...(guestMap[guest] || []), node.ref_id];
+           (guests || []).forEach((guest) => {
+              if(guest) {
+                 guestMap[guest] = [...(guestMap[guest] || []), node.ref_id];
               }
-
-              return acc;
-            }, {} as Record<string, string[]>) || {};
+            })
         }
 
         // replace aws bucket url with cloudfront, and add size indicator to end
