@@ -168,7 +168,11 @@ export const AddNodeModal = () => {
           </Flex>
 
           <Flex pt={12}>
-            <TagInput label="Tags" placeholder="Add a tag and press Enter" />
+            <TagInput
+              label="Tags"
+              placeholder="Add a tag and press Enter"
+              rules={requiredRule}
+            />
           </Flex>
 
           <Flex pt={16} px={4}>
