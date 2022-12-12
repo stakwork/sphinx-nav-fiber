@@ -43,13 +43,15 @@ export const TagInput = ({ label, rules, ...props }: Props) => {
   const [currentTag, setCurrentTag] = useState("");
   const tags = getValues(name);
 
-  const handleKeyDown = useCallback(
-    (e: KeyboardEvent<HTMLInputElement>) => {
-      if (e.key !== "Enter") {
-        return;
-      }
+  const handleEvent = useCallback(
+    (e: KeyboardEvent<HTMLInputElement> | React.MouseEvent<HTMLDivElement>) => {
+      if (e.type === "keydown") {
+        if ((e as KeyboardEvent).key !== "Enter") {
+          return;
+        }
 
-      e.preventDefault();
+        e.preventDefault();
+      }
 
       if (!currentTag.trim()) {
         return;
@@ -107,7 +109,7 @@ export const TagInput = ({ label, rules, ...props }: Props) => {
                 colorName="white"
                 name={name}
                 onChange={handleOnChange}
-                onKeyDown={handleKeyDown}
+                onKeyDown={handleEvent}
                 placeholderTextColor="inputPlaceholder"
                 value={currentTag || ""}
               />
@@ -115,7 +117,7 @@ export const TagInput = ({ label, rules, ...props }: Props) => {
             rules={rules}
           />
         </Wrapper>
-        <AddTagButton>
+        <AddTagButton onClick={handleEvent}>
           <Text color="lightGray" kind="regular">
             Add Tag
           </Text>
