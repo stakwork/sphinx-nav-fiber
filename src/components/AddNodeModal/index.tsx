@@ -183,10 +183,7 @@ export const AddNodeModal = () => {
           </Flex>
 
           <Flex pt={12}>
-            <TagInput
-              label="Tags"
-              rules={tagRule}
-            />
+            <TagInput label="Tags" rules={tagRule} />
           </Flex>
 
           <Flex pt={16} px={4}>
