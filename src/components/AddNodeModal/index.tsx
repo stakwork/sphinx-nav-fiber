@@ -16,10 +16,18 @@ import { getLSat } from "~/utils/getLSat";
 import { toast } from "react-toastify";
 import { ToastMessage } from "../common/Toast/toastMessage";
 import { NODE_ADD_SUCCESS, NODE_ADD_ERROR } from "~/constants";
+import { ClipLoader } from "react-spinners";
 
 const requiredRule = {
   required: {
     message: "The field is required",
+    value: true,
+  },
+};
+
+const tagRule = {
+  required: {
+    message: "You need to enter at least 1 topic tag to submit a node.",
     value: true,
   },
 };
@@ -96,15 +104,17 @@ const handleSubmit = async (
 export const AddNodeModal = () => {
   const { close } = useModal("addNode");
 
-  const form = useForm({ mode: "onChange" });
+  const form = useForm({ mode: "onBlur" });
 
-  const { reset } = form;
+  const { reset, watch } = form;
 
   const { isSubmitting } = form.formState;
 
-  const onSubmit = form.handleSubmit((data) => {
-    handleSubmit(data, close, reset);
+  const onSubmit = form.handleSubmit(async (data) => {
+    await handleSubmit(data, close, reset);
   });
+
+  const [startTime, endTime] = watch(["startTime", "endTime"]);
 
   return (
     <BaseModal id="addNode">
@@ -153,6 +163,11 @@ export const AddNodeModal = () => {
                     message: "The end time should be a time string",
                     value: timeRegex,
                   },
+                  validate: {
+                    endTime: (value) =>
+                      value > (startTime || "00:00:00") ||
+                      "End time should be greater than start time",
+                  },
                   ...requiredRule,
                 }}
               />
@@ -170,22 +185,27 @@ export const AddNodeModal = () => {
           <Flex pt={12}>
             <TagInput
               label="Tags"
-              placeholder="Add a tag and press Enter"
-              rules={requiredRule}
+              rules={tagRule}
             />
           </Flex>
 
           <Flex pt={16} px={4}>
             <Text color="lightGray" kind="tinyBold">
-              Your pubkey will be submitted with your node, so you can recieve
+              Your pubkey will be submitted with your node, so you can receive
               sats that your node earns.
             </Text>
           </Flex>
 
           <Flex pt={8}>
-            <Button disabled={isSubmitting} kind="big" type="submit">
-              Add node
-            </Button>
+            {isSubmitting ? (
+              <SubmitLoader>
+                <ClipLoader color={colors.white} size={20} />
+              </SubmitLoader>
+            ) : (
+              <Button disabled={isSubmitting} kind="big" type="submit">
+                Add node
+              </Button>
+            )}
           </Flex>
         </form>
       </FormProvider>
@@ -200,4 +220,14 @@ const CloseButton = styled(Flex)`
     font-size: 24px;
     color: ${colors.white};
   }
+`;
+
+const SubmitLoader = styled(Flex).attrs({
+  align: "center",
+  background: "primaryButton",
+  borderRadius: 8,
+  justify: "center",
+})`
+  padding: 16px 24px;
+  opacity: 0.5;
 `;
