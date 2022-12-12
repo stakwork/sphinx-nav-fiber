@@ -2,7 +2,6 @@ import { useFrame } from "@react-three/fiber";
 import { Select } from "@react-three/postprocessing";
 import { memo, useCallback, useMemo, useRef } from "react";
 import * as THREE from "three";
-import { useAppStore } from "~/stores/useAppStore";
 import { useDataStore, useSelectedNode } from "~/stores/useDataStore";
 import { NodeExtended } from "~/types";
 import { useMaterial } from "./useMaterial";
@@ -25,19 +24,8 @@ const getGeometry = (node: NodeExtended) => {
   }
 };
 
-export const Cube = memo(({ node }: { node: NodeExtended }) => {
+export const Cube = memo(({ node, highlight }: { node: NodeExtended; highlight: boolean }) => {
   const ref = useRef<THREE.Mesh | null>(null);
-
-  const searchTerm = useAppStore((s) => s.currentSearch);
-
-  let highlight = false;
-
-  if(node.node_type === 'guest' && searchTerm) {
-    highlight = searchTerm.split(" ")
-      .some((i) => node.label.toLowerCase().match(new RegExp(`\\b${i.toLowerCase()}\\b`)) !== null);
-  }
-
-;
 
   const material = useMaterial(node.image_url || "noimage.jpeg", highlight);
 
