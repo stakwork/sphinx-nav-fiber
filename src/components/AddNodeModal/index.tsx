@@ -114,7 +114,7 @@ export const AddNodeModal = () => {
     await handleSubmit(data, close, reset);
   });
 
-  const [startTime, endTime] = watch(["startTime", "endTime"]);
+  const startTime = watch("startTime");
 
   return (
     <BaseModal id="addNode">
