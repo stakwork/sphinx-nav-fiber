@@ -13,10 +13,12 @@ import { colors } from "~/utils/colors";
 
 const Wrapper = styled(Flex).attrs({
   background: "inputBg2",
+  basis: "25%",
   px: 8,
   py: 12,
 })`
   border-radius: 8px;
+  margin-right: 8px;
 `;
 
 type Props = Omit<BaseTextInputProps, "name"> & {
@@ -41,13 +43,15 @@ export const TagInput = ({ label, rules, ...props }: Props) => {
   const [currentTag, setCurrentTag] = useState("");
   const tags = getValues(name);
 
-  const handleKeyDown = useCallback(
-    (e: KeyboardEvent<HTMLInputElement>) => {
-      if (e.key !== "Enter") {
-        return;
-      }
+  const handleEvent = useCallback(
+    (e: KeyboardEvent<HTMLInputElement> | React.MouseEvent<HTMLDivElement>) => {
+      if (e.type === "keydown") {
+        if ((e as KeyboardEvent).key !== "Enter") {
+          return;
+        }
 
-      e.preventDefault();
+        e.preventDefault();
+      }
 
       if (!currentTag.trim()) {
         return;
@@ -95,23 +99,33 @@ export const TagInput = ({ label, rules, ...props }: Props) => {
           {label}
         </Text>
       </Flex>
-      <Wrapper>
-        <Controller
-          name={name}
-          render={() => (
-            <BaseTextInput
-              {...props}
-              colorName="white"
-              name={name}
-              onChange={handleOnChange}
-              onKeyDown={handleKeyDown}
-              placeholderTextColor="inputPlaceholder"
-              value={currentTag || ""}
-            />
-          )}
-          rules={rules}
-        />
-      </Wrapper>
+      <Flex direction="row">
+        <Wrapper>
+          <Controller
+            name={name}
+            render={() => (
+              <BaseTextInput
+                {...props}
+                colorName="white"
+                name={name}
+                onChange={handleOnChange}
+                onKeyDown={handleEvent}
+                placeholderTextColor="inputPlaceholder"
+                value={currentTag || ""}
+              />
+            )}
+            rules={rules}
+          />
+        </Wrapper>
+        <AddTagButton onClick={handleEvent}>
+          <Text color="lightGray" kind="regular">
+            Add Tag
+          </Text>
+          <span className="material-icons" style={{ fontSize: 16 }}>
+            add
+          </span>
+        </AddTagButton>
+      </Flex>
 
       <Flex direction="row" grow={0} pt={8} shrink={1} wrap="wrap">
         {tags?.map((tag) => (
@@ -165,4 +179,17 @@ const CloseButton = styled(Flex)`
     font-size: 12px;
     color: ${colors.black};
   }
+`;
+
+const AddTagButton = styled(Flex).attrs({
+  align: "center",
+  borderRadius: 8,
+  borderSize: 1,
+  direction: "row",
+  px: 8,
+  py: 12,
+})`
+  border-color: ${colors.gray500};
+  cursor: pointer;
+  color: ${colors.lightGray};
 `;
