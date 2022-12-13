@@ -82,10 +82,13 @@ export const Tooltip = () => {
         </Flex>
 
         <div>
-          {type === "guest" && <Text>{label}</Text>}
-          <Text color="primaryText1" kind="tiny">
-            {showTitle}
-          </Text>
+          {type === "guest" ? (
+            <Text>{label}</Text>
+          ) : (
+            <Text color="primaryText1" kind="tiny">
+              {showTitle}
+            </Text>
+          )}
 
           <Flex pt={4}>
             {nodeType === "clip" ||
