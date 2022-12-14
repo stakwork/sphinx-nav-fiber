@@ -6,6 +6,7 @@ import {
 } from "react-hook-form";
 import styled from "styled-components";
 import { BaseTextArea, BaseTextAreaProps } from "~/components/BaseTextArea";
+import { colors } from "~/utils/colors";
 import { Flex } from "~/components/common/Flex";
 import { Text } from "~/components/common/Text";
 
@@ -19,10 +20,11 @@ const Wrapper = styled(Flex).attrs({
 
 type Props = BaseTextAreaProps & {
   label: string;
+  message?: string;
   rules?: RegisterOptions;
 };
 
-export const TextArea = ({ label, name, rules, ...props }: Props) => {
+export const TextArea = ({ label, message, name, rules, ...props }: Props) => {
   const {
     control,
     formState: { errors },
@@ -32,10 +34,14 @@ export const TextArea = ({ label, name, rules, ...props }: Props) => {
 
   return (
     <>
-      <Flex pb={4} pl={4}>
+      <Flex align="center" direction="row" pb={4} pl={4}>
         <Text color="lightGray" kind="regularBold">
           {label}
         </Text>
+        <QuestionIcon>
+          <span className="material-icons">question_mark</span>
+          <div className="tooltip">{message}</div>
+        </QuestionIcon>
       </Flex>
 
       <Wrapper>
@@ -78,3 +84,31 @@ export const TextArea = ({ label, name, rules, ...props }: Props) => {
     </>
   );
 };
+
+const QuestionIcon = styled(Flex).attrs({})`
+  cursor: default;
+  margin-left: 4px;
+  position: relative;
+
+  span {
+    color: ${colors.secondaryText4};
+    font-size: 12px;
+  }
+
+  .tooltip {
+    position: absolute;
+    background-color: ${colors.dashboardHeader};
+    border: 1px solid ${colors.secondaryText4};
+    border-radius: 4px;
+    color: ${colors.white};
+    top: 22px;
+    padding: 4px 8px;
+    font-size: 13px;
+    visibility: hidden;
+    width: 175px;
+  }
+
+  &:hover .tooltip {
+    visibility: visible;
+  }
+`;
