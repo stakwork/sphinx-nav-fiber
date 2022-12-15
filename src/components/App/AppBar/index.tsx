@@ -14,43 +14,42 @@ export const AppBar = () => {
   const sidebarIsOpen = useAppStore((s) => s.sidebarIsOpen);
   const selectedNode = useSelectedNode();
 
-  const [searchTerm, clearSearch] = useAppStore((s) => [
-    s.currentSearch,
-    s.clearSearch,
-  ]);
+  const [searchTerm, clearSearch] = useAppStore((s) => [s.currentSearch, s.clearSearch]);
 
   const setSphinxModalOpen = useDataStore((s) => s.setSphinxModalOpen);
 
   const { open } = useModal("addNode");
 
-  if (sidebarIsOpen) {
-    return null;
-  }
+  return !sidebarIsOpen ? (
+        <Header>
+          <TitleWrapper>
+            <Text color="white" kind="bigHeadingBold">
+              Second
+            </Text>
+            <Text color="white" kind="bigHeading">
+              Brain
+            </Text>
+          </TitleWrapper>
 
-  return (
-    <Header>
-      <TitleWrapper>
-        <Text color="white" kind="bigHeadingBold">
-          Second
-        </Text>
-        <Text color="white" kind="bigHeading">
-          Brain
-        </Text>
-      </TitleWrapper>
+          <StatsWrapper>{!selectedNode && !searchTerm && <Stats />}</StatsWrapper>
 
-      <StatsWrapper>{!selectedNode && !searchTerm && <Stats />}</StatsWrapper>
+          <SearchBarWrapper>
+            <SearchBar />
+          </SearchBarWrapper>
 
-      <SearchBarWrapper>
-        <SearchBar />
-      </SearchBarWrapper>
-
-      <Flex>
-        <Button kind="small" onClick={open}>
-          Add Node
-        </Button>
-      </Flex>
-    </Header>
-  );
+          <Flex>
+            <AddButton kind="small" onClick={open}>
+              Add Node +
+            </AddButton>
+          </Flex>
+        </Header>
+      ) : (
+      <AddNodeWrapper>
+        <AddButton kind="small" onClick={open}>
+          Add Node +
+        </AddButton>
+      </AddNodeWrapper>
+      )
 };
 
 const Header = styled(Flex).attrs({
@@ -78,6 +77,20 @@ const StatsWrapper = styled.div`
   left: 25px;
   position: absolute;
   top: 75px;
+`;
+
+const AddButton = styled(Button)`
+  background: ${colors.primaryBlueBorder};
+  &:hover {
+    opacity: 1;
+    box-shadow: 0 0 10px 2px ${colors.primaryBlueBorder};
+  }
+`;
+
+const AddNodeWrapper = styled(Flex)`
+  position: absolute;
+  top: 14px;
+  right: 20px;
 `;
 
 const BudgetExplainer = styled(Flex).attrs({

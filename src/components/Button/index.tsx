@@ -7,6 +7,7 @@ type Props = {
   background?: ColorName;
   children: string;
   disabled?: boolean;
+  className?: string;
   kind?: ButtonKind;
   onClick?: () => void;
   shape?: "rounded" | "squared";
@@ -77,6 +78,7 @@ type ButtonKind = "small" | "regular" | "big";
 export const Button = ({
   background = "primaryButton",
   children,
+  className = "button",
   disabled,
   kind = "regular",
   onClick,
@@ -87,6 +89,7 @@ export const Button = ({
   <Wrapper
     as="button"
     background={background}
+    className={className}
     disabled={disabled}
     kind={kind}
     onClick={onClick}
