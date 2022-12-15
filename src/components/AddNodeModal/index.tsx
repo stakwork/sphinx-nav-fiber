@@ -151,6 +151,7 @@ export const AddNodeModal = () => {
             <Flex basis="50%" pr={16}>
               <TextInput
                 label="Start Time"
+                maxLength={8}
                 message="Enter start and end timestamps which will encompass the segment of video or audio you want to submit."
                 name="startTime"
                 placeholder="00:00:00"
@@ -167,6 +168,7 @@ export const AddNodeModal = () => {
             <Flex basis="50%" pl={16}>
               <TextInput
                 label="End Time"
+                maxLength={8}
                 message="Enter start and end timestamps which will encompass the segment of video or audio you want to submit."
                 name="endTime"
                 placeholder="00:00:00"
@@ -189,7 +191,8 @@ export const AddNodeModal = () => {
           <Flex pt={12}>
             <TextArea
               label="Clip Description"
-              message="Enter a short description of your audio/video segment. Think of this as the title of your node."
+              maxLength={100}
+              message="Enter a short description of your audio/video segment. Think of this as the title of your node. [max 100 characters]"
               name="description"
               rules={requiredRule}
             />
@@ -198,7 +201,8 @@ export const AddNodeModal = () => {
           <Flex pt={12}>
             <TagInput
               label="Tags"
-              message="Enter some topic tags that capture the main ideas of your segment. Be specific! Generic tags aren't useful for anyone. Think, 'What term(s) would someone search to find my node?"
+              maxLength={50}
+              message="Enter some topic tags that capture the main ideas of your segment. Be specific! Generic tags aren't useful for anyone. Think, 'What term(s) would someone search to find my node? [max: 15, max characters per tag: 50]"
               rules={tagRule}
             />
           </Flex>
