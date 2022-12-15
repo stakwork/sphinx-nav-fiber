@@ -6,6 +6,7 @@ import {
   Controller,
 } from "react-hook-form";
 import styled from "styled-components";
+import { FaRegQuestionCircle } from "react-icons/fa";
 import { BaseTextInput, BaseTextInputProps } from "~/components/BaseTextInput";
 import { Flex } from "~/components/common/Flex";
 import { Text } from "~/components/common/Text";
@@ -100,7 +101,7 @@ export const TagInput = ({ label, message, rules, ...props }: Props) => {
           {label}
         </Text>
         <QuestionIcon>
-          <span className="material-icons">question_mark</span>
+          <FaRegQuestionCircle color={colors.secondaryText4} />
           <div className="tooltip">{message}</div>
         </QuestionIcon>
       </Flex>
@@ -199,15 +200,10 @@ const AddTagButton = styled(Flex).attrs({
   color: ${colors.lightGray};
 `;
 
-const QuestionIcon = styled(Flex).attrs({})`
+const QuestionIcon = styled(Flex)`
   cursor: default;
-  margin-left: 4px;
+  margin-left: 6px;
   position: relative;
-
-  span {
-    color: ${colors.secondaryText4};
-    font-size: 12px;
-  }
 
   .tooltip {
     position: absolute;
