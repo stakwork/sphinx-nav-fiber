@@ -5,6 +5,7 @@ import {
   useFormContext,
 } from "react-hook-form";
 import styled from "styled-components";
+import { FaRegQuestionCircle } from "react-icons/fa";
 import { BaseTextInput, BaseTextInputProps } from "~/components/BaseTextInput";
 import { colors } from "~/utils/colors";
 import { Flex } from "~/components/common/Flex";
@@ -17,6 +18,10 @@ const Wrapper = styled(Flex).attrs({
 })`
   border-radius: 8px;
 `;
+
+type QuestionIconProps = {
+  name: string;
+};
 
 type Props = BaseTextInputProps & {
   label: string;
@@ -38,8 +43,8 @@ export const TextInput = ({ label, message, name, rules, ...props }: Props) => {
         <Text color="lightGray" kind="regularBold">
           {label}
         </Text>
-        <QuestionIcon>
-          <span className="material-icons">question_mark</span>
+        <QuestionIcon name={name}>
+          <FaRegQuestionCircle color={colors.secondaryText4} />
           <div className="tooltip">{message}</div>
         </QuestionIcon>
       </Flex>
@@ -84,15 +89,10 @@ export const TextInput = ({ label, message, name, rules, ...props }: Props) => {
   );
 };
 
-const QuestionIcon = styled(Flex).attrs({})`
+const QuestionIcon = styled(Flex)<QuestionIconProps>`
   cursor: default;
-  margin-left: 4px;
+  margin-left: 6px;
   position: relative;
-
-  span {
-    color: ${colors.secondaryText4};
-    font-size: 12px;
-  }
 
   .tooltip {
     position: absolute;
@@ -107,6 +107,14 @@ const QuestionIcon = styled(Flex).attrs({})`
     width: 175px;
     z-index: 1;
   }
+
+  ${(props) =>
+    props.name === "endTime" &&
+    `
+    .tooltip {
+      left: -68px;
+    }
+  `}
 
   &:hover .tooltip {
     visibility: visible;
