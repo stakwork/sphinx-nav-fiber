@@ -38,6 +38,7 @@ export const saveSearchTerm = async (searchTerm: string) => {
     );
   }
 
+  /*
   try {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
@@ -48,4 +49,5 @@ export const saveSearchTerm = async (searchTerm: string) => {
   } catch (error) {
     console.log(error);
   }
+  */
 };
