@@ -31,11 +31,19 @@ export const BaseTextInput = forwardRef(
   ) => {
     const handleChange = useCallback(
       (event: ChangeEvent<HTMLInputElement>) => {
+        if (name === "startTime" || name === "endTime") {
+          const timeStampRegex = /^[0-9:]*$/;
+
+          if (!timeStampRegex.test(event.target.value)) {
+            return;
+          }
+        }
+
         if (onChange) {
           onChange(event.target.value);
         }
       },
-      [onChange]
+      [onChange, name]
     );
 
     return (
