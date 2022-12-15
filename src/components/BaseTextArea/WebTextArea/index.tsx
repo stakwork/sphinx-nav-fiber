@@ -21,6 +21,7 @@ export const WebTextArea = styled.textarea<Props>`
   outline: 0;
   padding: 0;
   text-align: ${({ textAlign }) => textAlign};
+  resize: none;
 
   &:focus {
     border: none;
@@ -33,8 +34,6 @@ export const WebTextArea = styled.textarea<Props>`
       colors[placeholderTextColor]};
     color: ${({ placeholderTextColor }) => colors[placeholderTextColor]};
   }
-
-  min-height: 100px;
 `;
 
 WebTextArea.displayName = "WebTextInput";
