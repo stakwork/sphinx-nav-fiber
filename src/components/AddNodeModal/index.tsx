@@ -34,6 +34,9 @@ const tagRule = {
 
 const timeRegex = /^\d{2}:\d{2}:\d{2}$/;
 
+const youtubeRegex =
+  /^(?:https?:\/\/)?(?:m\.|www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
+
 type SubmitErrRes = {
   error?: { message?: string };
 };
@@ -117,7 +120,7 @@ export const AddNodeModal = () => {
   const startTime = watch("startTime");
 
   return (
-    <BaseModal id="addNode">
+    <BaseModal id="addNode" preventOutsideClose>
       <FormProvider {...form}>
         <form onSubmit={onSubmit}>
           <Flex align="center" direction="row" justify="space-between" pb={32}>
@@ -133,7 +136,13 @@ export const AddNodeModal = () => {
               label="Link"
               name="link"
               placeholder="Paste your link here..."
-              rules={requiredRule}
+              rules={{
+                ...requiredRule,
+                pattern: {
+                  message: "You must enter a valid YouTube or Twitter Space link.",
+                  value: youtubeRegex,
+                },
+              }}
             />
           </Flex>
 
@@ -165,8 +174,7 @@ export const AddNodeModal = () => {
                   },
                   validate: {
                     endTime: (value) =>
-                      value > (startTime || "00:00:00") ||
-                      "End time should be greater than start time",
+                      value > (startTime || "00:00:00") || "End time should be greater than start time",
                   },
                   ...requiredRule,
                 }}
@@ -175,11 +183,7 @@ export const AddNodeModal = () => {
           </Flex>
 
           <Flex pt={12}>
-            <TextArea
-              label="Clip Description"
-              name="description"
-              rules={requiredRule}
-            />
+            <TextArea label="Clip Description" name="description" rules={requiredRule} />
           </Flex>
 
           <Flex pt={12}>
@@ -188,8 +192,7 @@ export const AddNodeModal = () => {
 
           <Flex pt={16} px={4}>
             <Text color="lightGray" kind="tinyBold">
-              Your pubkey will be submitted with your node, so you can receive
-              sats that your node earns.
+              Your pubkey will be submitted with your node, so you can receive sats that your node earns.
             </Text>
           </Flex>
 
