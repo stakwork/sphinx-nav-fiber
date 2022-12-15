@@ -5,7 +5,9 @@ import {
   useFormContext,
 } from "react-hook-form";
 import styled from "styled-components";
+import { FaRegQuestionCircle } from "react-icons/fa";
 import { BaseTextInput, BaseTextInputProps } from "~/components/BaseTextInput";
+import { colors } from "~/utils/colors";
 import { Flex } from "~/components/common/Flex";
 import { Text } from "~/components/common/Text";
 
@@ -17,12 +19,17 @@ const Wrapper = styled(Flex).attrs({
   border-radius: 8px;
 `;
 
+type QuestionIconProps = {
+  name: string;
+};
+
 type Props = BaseTextInputProps & {
   label: string;
+  message?: string;
   rules?: RegisterOptions;
 };
 
-export const TextInput = ({ label, name, rules, ...props }: Props) => {
+export const TextInput = ({ label, message, name, rules, ...props }: Props) => {
   const {
     control,
     formState: { errors },
@@ -32,10 +39,14 @@ export const TextInput = ({ label, name, rules, ...props }: Props) => {
 
   return (
     <Flex shrink={1}>
-      <Flex pb={4} pl={4}>
+      <Flex align="center" direction="row" pb={4} pl={4}>
         <Text color="lightGray" kind="regularBold">
           {label}
         </Text>
+        <QuestionIcon name={name}>
+          <FaRegQuestionCircle color={colors.secondaryText4} />
+          <div className="tooltip">{message}</div>
+        </QuestionIcon>
       </Flex>
       <Wrapper>
         <Controller
@@ -77,3 +88,35 @@ export const TextInput = ({ label, name, rules, ...props }: Props) => {
     </Flex>
   );
 };
+
+const QuestionIcon = styled(Flex)<QuestionIconProps>`
+  cursor: default;
+  margin-left: 6px;
+  position: relative;
+
+  .tooltip {
+    position: absolute;
+    background-color: ${colors.dashboardHeader};
+    border: 1px solid ${colors.secondaryText4};
+    border-radius: 4px;
+    color: ${colors.white};
+    top: 22px;
+    padding: 4px 8px;
+    font-size: 13px;
+    visibility: hidden;
+    width: 175px;
+    z-index: 1;
+  }
+
+  ${(props) =>
+    props.name === "endTime" &&
+    `
+    .tooltip {
+      left: -68px;
+    }
+  `}
+
+  &:hover .tooltip {
+    visibility: visible;
+  }
+`;

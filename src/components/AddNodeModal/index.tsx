@@ -37,6 +37,9 @@ const timeRegex = /^\d{2}:\d{2}:\d{2}$/;
 const youtubeRegex =
   /^(?:https?:\/\/)?(?:m\.|www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
 
+const mainInfoMessage =
+  'Come across an interesting or useful part of a video or audio you\'d like to share? You can add it to the knowledge graph here!\n\nEnter a valid link to the YouTube video or Twitter Space you were watching, choose a start and end timestamp to encompass the segment you found interesting or useful, provide a brief description of what the segment is about, and add topic tags that are relevant to the segment. Hit "Add node", and your clip will be added to the graph shortly.\n\nYour pubkey will be submitted with your clip, and any boosts your clip receives will go to you!';
+
 type SubmitErrRes = {
   error?: { message?: string };
 };
@@ -124,7 +127,13 @@ export const AddNodeModal = () => {
       <FormProvider {...form}>
         <form onSubmit={onSubmit}>
           <Flex align="center" direction="row" justify="space-between" pb={32}>
-            <Text kind="bigHeadingBold">Add Node</Text>
+            <Flex align="center" direction="row">
+              <Text kind="bigHeadingBold">Add Node</Text>
+              <InfoIcon>
+                <span className="material-icons-outlined">info</span>
+                <div className="tooltip">{mainInfoMessage}</div>
+              </InfoIcon>
+            </Flex>
 
             <CloseButton onClick={close}>
               <span className="material-icons">close</span>
@@ -134,6 +143,7 @@ export const AddNodeModal = () => {
           <Flex>
             <TextInput
               label="Link"
+              message="Paste a valid YouTube or Twitter Space link here."
               name="link"
               placeholder="Paste your link here..."
               rules={{
@@ -150,11 +160,12 @@ export const AddNodeModal = () => {
             <Flex basis="50%" pr={16}>
               <TextInput
                 label="Start Time"
+                message="Enter start and end timestamps which will encompass the segment of video or audio you want to submit."
                 name="startTime"
                 placeholder="00:00:00"
                 rules={{
                   pattern: {
-                    message: "The start time should be a time string",
+                    message: "Timestamp must be in the format hh:mm:ss",
                     value: timeRegex,
                   },
                   ...requiredRule,
@@ -165,11 +176,12 @@ export const AddNodeModal = () => {
             <Flex basis="50%" pl={16}>
               <TextInput
                 label="End Time"
+                message="Enter start and end timestamps which will encompass the segment of video or audio you want to submit."
                 name="endTime"
                 placeholder="00:00:00"
                 rules={{
                   pattern: {
-                    message: "The end time should be a time string",
+                    message: "Timestamp must be in the format hh:mm:ss",
                     value: timeRegex,
                   },
                   validate: {
@@ -183,11 +195,20 @@ export const AddNodeModal = () => {
           </Flex>
 
           <Flex pt={12}>
-            <TextArea label="Clip Description" name="description" rules={requiredRule} />
+            <TextArea
+              label="Clip Description"
+              message="Enter a short description of your audio/video segment. Think of this as the title of your node."
+              name="description"
+              rules={requiredRule}
+            />
           </Flex>
 
           <Flex pt={12}>
-            <TagInput label="Tags" rules={tagRule} />
+            <TagInput
+              label="Tags"
+              message="Enter some topic tags that capture the main ideas of your segment. Be specific! Generic tags aren't useful for anyone. Think, 'What term(s) would someone search to find my node?"
+              rules={tagRule}
+            />
           </Flex>
 
           <Flex pt={16} px={4}>
@@ -219,6 +240,37 @@ const CloseButton = styled(Flex)`
   span {
     font-size: 24px;
     color: ${colors.white};
+  }
+`;
+
+const InfoIcon = styled(Flex)`
+  cursor: default;
+  padding: 8px;
+  position: relative;
+
+  span {
+    font-size: 22px;
+    color: ${colors.secondaryText4};
+  }
+
+  .tooltip {
+    position: absolute;
+    background-color: ${colors.dashboardHeader};
+    border: 1px solid ${colors.secondaryText4};
+    border-radius: 4px;
+    color: ${colors.white};
+    top: 40px;
+    left: -142px;
+    padding: 4px 8px;
+    font-size: 13px;
+    visibility: hidden;
+    width: 470px;
+    white-space: pre-wrap;
+    z-index: 1;
+  }
+
+  span:hover + .tooltip {
+    visibility: visible;
   }
 `;
 

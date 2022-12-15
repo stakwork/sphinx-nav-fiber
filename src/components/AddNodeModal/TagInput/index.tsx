@@ -6,6 +6,7 @@ import {
   Controller,
 } from "react-hook-form";
 import styled from "styled-components";
+import { FaRegQuestionCircle } from "react-icons/fa";
 import { BaseTextInput, BaseTextInputProps } from "~/components/BaseTextInput";
 import { Flex } from "~/components/common/Flex";
 import { Text } from "~/components/common/Text";
@@ -23,6 +24,7 @@ const Wrapper = styled(Flex).attrs({
 
 type Props = Omit<BaseTextInputProps, "name"> & {
   label: string;
+  message?: string;
   rules?: RegisterOptions;
 };
 
@@ -30,7 +32,7 @@ type Fields = { tags: string[] | undefined };
 
 const name = "tags";
 
-export const TagInput = ({ label, rules, ...props }: Props) => {
+export const TagInput = ({ label, message, rules, ...props }: Props) => {
   const {
     setValue,
     getValues,
@@ -94,10 +96,14 @@ export const TagInput = ({ label, rules, ...props }: Props) => {
 
   return (
     <Flex shrink={1}>
-      <Flex pb={4} pl={4}>
+      <Flex align="center" direction="row" pb={4} pl={4}>
         <Text color="lightGray" kind="regularBold">
           {label}
         </Text>
+        <QuestionIcon>
+          <FaRegQuestionCircle color={colors.secondaryText4} />
+          <div className="tooltip">{message}</div>
+        </QuestionIcon>
       </Flex>
       <Flex direction="row">
         <Wrapper>
@@ -187,9 +193,32 @@ const AddTagButton = styled(Flex).attrs({
   borderSize: 1,
   direction: "row",
   px: 8,
-  py: 12,
+  py: 8,
 })`
   border-color: ${colors.gray500};
   cursor: pointer;
   color: ${colors.lightGray};
+`;
+
+const QuestionIcon = styled(Flex)`
+  cursor: default;
+  margin-left: 6px;
+  position: relative;
+
+  .tooltip {
+    position: absolute;
+    background-color: ${colors.dashboardHeader};
+    border: 1px solid ${colors.secondaryText4};
+    border-radius: 4px;
+    color: ${colors.white};
+    top: 22px;
+    padding: 4px 8px;
+    font-size: 13px;
+    visibility: hidden;
+    width: 250px;
+  }
+
+  &:hover .tooltip {
+    visibility: visible;
+  }
 `;
