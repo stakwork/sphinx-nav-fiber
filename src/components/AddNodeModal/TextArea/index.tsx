@@ -5,6 +5,7 @@ import {
   useFormContext,
 } from "react-hook-form";
 import styled from "styled-components";
+import { FaRegQuestionCircle } from "react-icons/fa";
 import { BaseTextArea, BaseTextAreaProps } from "~/components/BaseTextArea";
 import { colors } from "~/utils/colors";
 import { Flex } from "~/components/common/Flex";
@@ -39,7 +40,7 @@ export const TextArea = ({ label, message, name, rules, ...props }: Props) => {
           {label}
         </Text>
         <QuestionIcon>
-          <span className="material-icons">question_mark</span>
+          <FaRegQuestionCircle color={colors.secondaryText4} />
           <div className="tooltip">{message}</div>
         </QuestionIcon>
       </Flex>
@@ -85,15 +86,10 @@ export const TextArea = ({ label, message, name, rules, ...props }: Props) => {
   );
 };
 
-const QuestionIcon = styled(Flex).attrs({})`
+const QuestionIcon = styled(Flex)`
   cursor: default;
-  margin-left: 4px;
+  margin-left: 6px;
   position: relative;
-
-  span {
-    color: ${colors.secondaryText4};
-    font-size: 12px;
-  }
 
   .tooltip {
     position: absolute;
