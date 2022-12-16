@@ -80,6 +80,7 @@ type Props = PropsWithChildren<{
   onClose?: () => void;
   hideBg?: boolean;
   kind?: ModalKind;
+  preventOutsideClose?: boolean;
 }>;
 
 export const BaseModal = ({
@@ -88,6 +89,7 @@ export const BaseModal = ({
   id,
   hideBg,
   kind,
+  preventOutsideClose,
   onClose,
 }: Props) => {
   const { visible, close } = useModal(id);
@@ -103,10 +105,12 @@ export const BaseModal = ({
         hideBg={hideBg}
         justify="center"
         onClick={(e) => {
-          e.stopPropagation();
-          onClose?.();
+          if(!preventOutsideClose) {
+            e.stopPropagation();
+            onClose?.();
 
-          close();
+            close();
+          }
         }}
       >
         <ModalContainer
