@@ -59,6 +59,10 @@ export const TagInput = ({ label, message, rules, ...props }: Props) => {
         return;
       }
 
+      if (tags && tags.length === 15) {
+        return;
+      }
+
       // Removes duplicates
       const tagsSet = new Set([...(tags || []), currentTag]);
 
