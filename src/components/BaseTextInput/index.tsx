@@ -31,6 +31,8 @@ export const BaseTextInput = forwardRef(
   ) => {
     const handleChange = useCallback(
       (event: ChangeEvent<HTMLInputElement>) => {
+        event.target.setSelectionRange(0, 0);
+
         if (onChange) {
           onChange(event.target.value);
         }

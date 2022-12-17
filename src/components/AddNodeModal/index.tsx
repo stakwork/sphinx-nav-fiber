@@ -34,7 +34,8 @@ const tagRule = {
 
 const timeRegex = /^\d{2}:\d{2}:\d{2}$/;
 
-const twitterOrYoutubeRegex = /^(https:\/\/twitter.com\/[a-zA-Z0-9_]\/spaces\/.*)|(?:https?:\/\/)?(?:m\.|www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
+const twitterOrYoutubeRegex =
+  /^(https:\/\/twitter.com\/[a-zA-Z0-9_]\/spaces\/.*)|(?:https?:\/\/)?(?:m\.|www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
 
 const mainInfoMessage =
   'Come across an interesting or useful part of a video or audio you\'d like to share? You can add it to the knowledge graph here!\n\nEnter a valid link to the YouTube video or Twitter Space you were watching, choose a start and end timestamp to encompass the segment you found interesting or useful, provide a brief description of what the segment is about, and add topic tags that are relevant to the segment. Hit "Add node", and your clip will be added to the graph shortly.\n\nYour pubkey will be submitted with your clip, and any boosts your clip receives will go to you!';
@@ -51,11 +52,7 @@ const notify = (message: string) => {
   });
 };
 
-const handleSubmit = async (
-  data: FieldValues,
-  close: () => void,
-  reset: () => void
-) => {
+const handleSubmit = async (data: FieldValues, close: () => void, reset: () => void) => {
   const body: { [index: string]: any } = {
     job_response: {
       tags: [
@@ -83,11 +80,7 @@ const handleSubmit = async (
   }
 
   try {
-    const res: SubmitErrRes = await api.post(
-      "/add_node",
-      JSON.stringify(body),
-      { Authorization: lsatToken }
-    );
+    const res: SubmitErrRes = await api.post("/add_node", JSON.stringify(body), { Authorization: lsatToken });
 
     if (res.error) {
       const { message } = res.error;

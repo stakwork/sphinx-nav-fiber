@@ -29,6 +29,8 @@ export const WebTextInput = styled.input<Props>`
   outline: 0;
   padding: 0;
   text-align: ${({ textAlign }) => textAlign};
+  unicode-bidi:bidi-override;
+  direction: RTL;
 
   ${whiteAutofill}
 
