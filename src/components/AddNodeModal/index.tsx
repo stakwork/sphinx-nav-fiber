@@ -109,7 +109,7 @@ const handleSubmit = async (
 export const AddNodeModal = () => {
   const { close } = useModal("addNode");
 
-  const form = useForm({ mode: "onBlur" });
+  const form = useForm({ mode: "onSubmit" });
 
   const { reset, watch } = form;
 
