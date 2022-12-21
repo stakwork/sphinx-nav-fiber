@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
+import { FormProvider, useForm } from "react-hook-form";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import * as sphinx from "sphinx-bridge-kevkevinpal";
 import styled from "styled-components";
-import "react-toastify/dist/ReactToastify.css";
-import { ToastContainer } from "react-toastify";
 import { AddNodeModal } from "~/components/AddNodeModal";
 import { BudgetExplanationModal } from "~/components/BudgetExplanationModal";
 import { Flex } from "~/components/common/Flex";
@@ -18,11 +19,16 @@ import { AppBar } from "./AppBar";
 import { SideBar } from "./SideBar";
 
 export const App = () => {
-  const selectedNode = useSelectedNode();
+  const [isAuthorized, setAuthorized] = useState(false);
 
   const { open } = useModal("budgetExplanation");
+
+  const selectedNode = useSelectedNode();
   const setSidebarOpen = useAppStore((s) => s.setSidebarOpen);
-  const searchTerm = useAppStore((s) => s.currentSearch);
+
+  const [searchTerm, setCurrentSearch, setRelevanceSelected] = useAppStore(
+    (s) => [s.currentSearch, s.setCurrentSearch, s.setRelevanceSelected]
+  );
 
   const hasBudgetExplanationModalBeSeen = useAppStore(
     (s) => s.hasBudgetExplanationModalBeSeen
@@ -30,9 +36,17 @@ export const App = () => {
 
   const fetchData = useDataStore((s) => s.fetchData);
   const setSphinxModalOpen = useDataStore((s) => s.setSphinxModalOpen);
-  const [isAuthorized, setAuthorized] = useState(false);
+  const setSelectedNode = useDataStore((s) => s.setSelectedNode);
 
-  const showSideBar = !!selectedNode || (!!searchTerm && isAuthorized);
+  const form = useForm<{ search: string }>({ mode: "onChange" });
+
+  const handleSubmit = form.handleSubmit(({ search }) => {
+    setSelectedNode(null);
+    setRelevanceSelected(false);
+    setCurrentSearch(search);
+  });
+
+  const showSideBar = !!selectedNode || isAuthorized;
 
   useEffect(() => {
     setSidebarOpen(showSideBar);
@@ -71,11 +85,13 @@ export const App = () => {
 
       <Wrapper direction="row">
         <DataRetriever loader={<Preloader />}>
-          <SideBar />
+          <FormProvider {...form}>
+            <SideBar onSubmit={handleSubmit} />
 
-          <Universe />
+            <Universe />
 
-          <AppBar />
+            <AppBar onSubmit={handleSubmit} />
+          </FormProvider>
         </DataRetriever>
 
         <AddNodeModal />

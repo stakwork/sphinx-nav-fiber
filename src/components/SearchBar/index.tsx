@@ -1,15 +1,14 @@
-import { useState } from "react";
+import { useFormContext } from "react-hook-form";
 import styled, { css } from "styled-components";
-import { useAppStore } from "~/stores/useAppStore";
-import { useDataStore } from "~/stores/useDataStore";
 import { colors } from "~/utils/colors";
 
 type Props = {
   loading?: boolean;
+  onSubmit?: () => void;
 };
 
 const Input = styled.input.attrs(() => ({
-  autoCorrect: 'off',
+  autoCorrect: "off",
 }))<{ loading?: boolean }>`
   pointer-events: auto;
   height: 50px;
@@ -42,36 +41,22 @@ const Input = styled.input.attrs(() => ({
       : ""}
 `;
 
-export const SearchBar = ({ loading }: Props) => {
-  const [search, setSearch, setRelevanceSelected] = useAppStore((s) => [
-    s.currentSearch,
-    s.setCurrentSearch,
-    s.setRelevanceSelected,
-  ]);
-
-  const setSelectedNode = useDataStore((s) => s.setSelectedNode);
-
-  const [tempSearch, setTempSearch] = useState(() => search);
+export const SearchBar = ({ loading, onSubmit }: Props) => {
+  const { register } = useFormContext();
 
   return (
     <Input
+      {...register("search")}
       disabled={loading}
       loading={loading}
-      onChange={(e) => {
-        const { value } = e.target;
-
-        setTempSearch(value);
-      }}
       onKeyPress={(event) => {
-        if (event.key === "Enter" && !!tempSearch) {
-          setSelectedNode(null);
-          setRelevanceSelected(false);
-          setSearch(tempSearch);
+        if (event.key === "Enter") {
+          onSubmit?.();
         }
       }}
       placeholder="Search (10 sats)"
       type="text"
-      value={tempSearch || ""}
+      // value={tempSearch || ""}
     />
   );
 };

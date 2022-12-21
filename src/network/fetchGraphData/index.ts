@@ -5,10 +5,11 @@ import {
 } from "~/constants";
 import { api } from "~/network/api";
 import {
+  FetchDataResponse,
   GraphData,
   Link,
+  Node,
   NodeExtended,
-  FetchDataResponse,
 } from "~/types";
 import { getLSat } from "~/utils/getLSat";
 
@@ -29,7 +30,10 @@ export const fetchGraphData = async (search: string) => {
 
 const fetchNodes = async (search: string) => {
   if (isDevelopment) {
-    return api.get<FetchDataResponse>(`/mock_data`);
+    return {
+      exact: await api.get<Node[]>(`/mock_data`),
+      related: [],
+    };
   }
 
   console.log("getting prod data");
@@ -49,7 +53,10 @@ const getGraphData = async (searchterm: string) => {
   try {
     const fetchGraphDataResponse = await fetchNodes(searchterm);
 
-     const data = [...fetchGraphDataResponse.exact, ...fetchGraphDataResponse.related];
+    const data = [
+      ...fetchGraphDataResponse.exact,
+      ...fetchGraphDataResponse.related,
+    ];
 
     const nodes: NodeExtended[] = [];
     const links: Link[] = [];
@@ -92,11 +99,11 @@ const getGraphData = async (searchterm: string) => {
         }
 
         if (node.node_type === "episode") {
-           (guests || []).forEach((guest) => {
-              if(guest) {
-                 guestMap[guest] = [...(guestMap[guest] || []), node.ref_id];
-              }
-            })
+          (guests || []).forEach((guest) => {
+            if (guest) {
+              guestMap[guest] = [...(guestMap[guest] || []), node.ref_id];
+            }
+          });
         }
 
         // replace aws bucket url with cloudfront, and add size indicator to end
