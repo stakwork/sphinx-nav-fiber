@@ -1,3 +1,4 @@
+import { useFormContext } from "react-hook-form";
 import styled from "styled-components";
 import { Flex } from "~/components/common/Flex";
 import { Loader } from "~/components/common/Loader";
@@ -11,7 +12,9 @@ import { View } from "./View";
 
 export const MENU_WIDTH = 433;
 
-const Content = () => {
+type Props = { onSubmit?: () => void };
+
+const Content = ({ onSubmit }: Props) => {
   const clearSearch = useAppStore((s) => s.clearSearch);
   const setFlagErrorOpen = useAppStore((s) => s.setFlagErrorOpen);
   const setRelevanceSelected = useAppStore((s) => s.setRelevanceSelected);
@@ -19,17 +22,20 @@ const Content = () => {
   const isLoading = useDataStore((s) => s.isFetching);
   const setSidebarOpen = useAppStore((s) => s.setSidebarOpen);
 
+  const { setValue } = useFormContext();
+
   return (
     <Wrapper id="sidebar-wrapper">
       <SearchWrapper>
-        <SearchBar />
+        <SearchBar onSubmit={onSubmit} />
 
         <CloseButton
           onClick={() => {
             setFlagErrorOpen(false);
             setSelectedNode(null);
-            clearSearch();
             setRelevanceSelected(false);
+            setValue("search", null);
+            onSubmit?.();
           }}
         >
           <span className="material-icons" style={{ fontSize: 20 }}>
@@ -54,7 +60,7 @@ const Content = () => {
   );
 };
 
-export const SideBar = () => {
+export const SideBar = ({ onSubmit }: Props) => {
   const sidebarIsOpen = useAppStore((s) => s.sidebarIsOpen);
   const selectedNode = useSelectedNode();
   const searchTerm = useAppStore((s) => s.currentSearch);
@@ -67,7 +73,7 @@ export const SideBar = () => {
     return <Tab />;
   }
 
-  return <Content />;
+  return <Content onSubmit={onSubmit} />;
 };
 
 const Wrapper = styled(Flex)`

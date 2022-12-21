@@ -5,51 +5,53 @@ import { Text } from "~/components/common/Text";
 import { SearchBar } from "~/components/SearchBar";
 import { Stats } from "~/components/Stats";
 import { useAppStore } from "~/stores/useAppStore";
-import { useSelectedNode, useDataStore } from "~/stores/useDataStore";
+import { useSelectedNode } from "~/stores/useDataStore";
 import { useModal } from "~/stores/useModalStore";
 import { colors } from "~/utils/colors";
 import { media } from "~/utils/media";
 
-export const AppBar = () => {
+type Props = {
+  onSubmit?: () => void;
+};
+
+export const AppBar = ({ onSubmit }: Props) => {
   const sidebarIsOpen = useAppStore((s) => s.sidebarIsOpen);
   const selectedNode = useSelectedNode();
 
-  const [searchTerm, clearSearch] = useAppStore((s) => [s.currentSearch, s.clearSearch]);
-
-  const setSphinxModalOpen = useDataStore((s) => s.setSphinxModalOpen);
+  const searchTerm = useAppStore((s) => s.currentSearch);
 
   const { open } = useModal("addNode");
 
   return !sidebarIsOpen ? (
-        <Header>
-          <TitleWrapper>
-            <Text color="white" kind="bigHeadingBold">
-              Second
-            </Text>
-            <Text color="white" kind="bigHeading">
-              Brain
-            </Text>
-          </TitleWrapper>
+    <Header>
+      <TitleWrapper>
+        <Text color="white" kind="bigHeadingBold">
+          Second
+        </Text>
+        <Text color="white" kind="bigHeading">
+          Brain
+        </Text>
+      </TitleWrapper>
 
-          <StatsWrapper>{!selectedNode && !searchTerm && <Stats />}</StatsWrapper>
+      <StatsWrapper>{!selectedNode && !searchTerm && <Stats />}</StatsWrapper>
 
-          <SearchBarWrapper>
-            <SearchBar />
-          </SearchBarWrapper>
+      <SearchBarWrapper>
+        <SearchBar onSubmit={onSubmit} />
+      </SearchBarWrapper>
 
-          <Flex>
-            <AddButton kind="small" onClick={open}>
-              Add Node +
-            </AddButton>
-          </Flex>
-        </Header>
-      ) : (
-      <AddNodeWrapper>
+      <Flex>
         <AddButton kind="small" onClick={open}>
           Add Node +
         </AddButton>
-      </AddNodeWrapper>
-      )
+      </Flex>
+    </Header>
+  ) : (
+    <AddNodeWrapper>
+      <AddButton kind="small" onClick={open}>
+        Add Node +
+      </AddButton>
+    </AddNodeWrapper>
+  );
 };
 
 const Header = styled(Flex).attrs({
