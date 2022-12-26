@@ -13,7 +13,7 @@ export type Node = {
   date?: number;
   description?: string;
   episode_title?: string;
-  guests?: (null | string)[];
+  guests?: (null | string | Guests)[];
   id: string;
   image_url?: string;
   keyword?: boolean;
@@ -50,6 +50,12 @@ export type GraphData<T = string> = {
 
 export class NodeMesh extends Mesh {
   __data?: NodeExtended;
+}
+
+export type Guests = {
+  name: string;
+  profile_picture: string;
+  twitter_handle: string;
 }
 
 export type NodeType = "clip" | "episode" | "guest" | "show" | "topic";

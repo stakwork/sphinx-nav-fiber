@@ -7,11 +7,17 @@ import { api } from "~/network/api";
 import {
   FetchDataResponse,
   GraphData,
+  Guests,
   Link,
   Node,
   NodeExtended,
 } from "~/types";
 import { getLSat } from "~/utils/getLSat";
+
+type guestMapChild = {
+  children: string[],
+  imageUrl: string
+}
 
 const defautData: GraphData = {
   links: [],
@@ -62,7 +68,7 @@ const getGraphData = async (searchterm: string) => {
     const links: Link[] = [];
 
     let topicMap: Record<string, string[]> = {};
-    const guestMap: Record<string, string[]> = {};
+    const guestMap: Record<string, guestMapChild> = {};
 
     if (data.length) {
       // Populating nodes array with podcasts and constructing a topic map
@@ -100,8 +106,13 @@ const getGraphData = async (searchterm: string) => {
 
         if (node.node_type === "episode") {
           (guests || []).forEach((guest) => {
-            if (guest) {
-              guestMap[guest] = [...(guestMap[guest] || []), node.ref_id];
+            const currentGuest = guest as Guests;
+
+            if (currentGuest.name) {
+              guestMap[currentGuest.name] = {
+                children: [...(guestMap[currentGuest.name]?.children || []), node.ref_id],
+                imageUrl: currentGuest.profile_picture || '',
+              };
             }
           });
         }
@@ -164,7 +175,8 @@ const getGraphData = async (searchterm: string) => {
         });
       }
 
-      Object.entries(guestMap).forEach(([guest, guestChildren], index) => {
+      Object.entries(guestMap).forEach(([guest, guestValue], index) => {
+        const guestChildren = guestValue.children;
         const scale = guestChildren.length * 2;
         const guestNodeId = `guestnode_${index}`;
 
@@ -181,6 +193,7 @@ const getGraphData = async (searchterm: string) => {
         const guestNode: NodeExtended = {
           colors: ["#000"],
           id: guestNodeId,
+          image_url: guestValue.imageUrl,
           label: guest,
           name: guest,
           node_type: "guest",
