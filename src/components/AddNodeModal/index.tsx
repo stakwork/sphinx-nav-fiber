@@ -15,7 +15,7 @@ import { timeToMilliseconds } from "~/utils/timeToMilliseconds";
 import { getLSat } from "~/utils/getLSat";
 import { toast } from "react-toastify";
 import { ToastMessage } from "../common/Toast/toastMessage";
-import { NODE_ADD_SUCCESS, NODE_ADD_ERROR } from "~/constants";
+import { NODE_ADD_SUCCESS, NODE_ADD_ERROR, isDevelopment } from "~/constants";
 import { ClipLoader } from "react-spinners";
 
 const requiredRule = {
@@ -71,23 +71,27 @@ const handleSubmit = async (
     media_url: data.link,
   };
 
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  const enable = await sphinx.enable();
+  let lsatToken;
 
-  body.pubkey = enable?.pubkey;
+  if (!isDevelopment) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    const enable = await sphinx.enable();
 
-  const lsatToken = await getLSat("adding_node");
+    body.pubkey = enable?.pubkey;
 
-  if (!lsatToken) {
-    throw new Error("An error occured calling getLSat");
+    lsatToken = await getLSat("adding_node");
+
+    if (!lsatToken) {
+      throw new Error("An error occured calling getLSat");
+    }
   }
 
   try {
     const res: SubmitErrRes = await api.post(
       "/add_node",
       JSON.stringify(body),
-      { Authorization: lsatToken }
+      { Authorization: lsatToken } as HeadersInit
     );
 
     if (res.error) {
@@ -135,7 +139,7 @@ export const AddNodeModal = () => {
               </InfoIcon>
             </Flex>
 
-            <CloseButton onClick={close}>
+            <CloseButton data-test="add-node-close-button" onClick={close}>
               <span className="material-icons">close</span>
             </CloseButton>
           </Flex>
