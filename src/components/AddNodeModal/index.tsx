@@ -133,13 +133,22 @@ export const AddNodeModal = () => {
           <Flex align="center" direction="row" justify="space-between" pb={32}>
             <Flex align="center" direction="row">
               <Text kind="bigHeadingBold">Add Node</Text>
-              <InfoIcon>
+              <InfoIcon tabIndex={0}>
                 <span className="material-icons-outlined">info</span>
                 <div className="tooltip">{mainInfoMessage}</div>
               </InfoIcon>
             </Flex>
 
-            <CloseButton data-test="add-node-close-button" onClick={close}>
+            <CloseButton
+              data-test="add-node-close-button"
+              onClick={close}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === "Space") {
+                  close();
+                }
+              }}
+              tabIndex={0}
+            >
               <span className="material-icons">close</span>
             </CloseButton>
           </Flex>
@@ -166,7 +175,7 @@ export const AddNodeModal = () => {
               <TextInput
                 label="Start Time"
                 mask="99:99:99"
-                message="Enter start and end timestamps which will encompass the segment of video or audio you want to submit."
+                message="Enter start and end timestamps which will encompass the segment of video or audio you want to submit. [hh:mm:ss]"
                 name="startTime"
                 placeholder="00:00:00"
                 rules={{
@@ -183,7 +192,7 @@ export const AddNodeModal = () => {
               <TextInput
                 label="End Time"
                 mask="99:99:99"
-                message="Enter start and end timestamps which will encompass the segment of video or audio you want to submit."
+                message="Enter start and end timestamps which will encompass the segment of video or audio you want to submit. [hh:mm:ss]"
                 name="endTime"
                 placeholder="00:00:00"
                 rules={{
@@ -221,7 +230,7 @@ export const AddNodeModal = () => {
             />
           </Flex>
 
-          <Flex pt={16} px={4}>
+          <Flex pt={16} px={4} tabIndex={0}>
             <Text color="lightGray" kind="tinyBold">
               Your pubkey will be submitted with your node, so you can receive
               sats that your node earns.
@@ -281,6 +290,10 @@ const InfoIcon = styled(Flex)`
   }
 
   span:hover + .tooltip {
+    visibility: visible;
+  }
+
+  &:focus .tooltip {
     visibility: visible;
   }
 `;
