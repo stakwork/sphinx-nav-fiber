@@ -1,15 +1,13 @@
-import {
-  Controller,
-  get,
-  RegisterOptions,
-  useFormContext,
-} from "react-hook-form";
+import { Controller, get, RegisterOptions, useFormContext } from "react-hook-form";
 import styled from "styled-components";
 import { FaRegQuestionCircle } from "react-icons/fa";
 import { BaseTextInput, BaseTextInputProps } from "~/components/BaseTextInput";
 import { colors } from "~/utils/colors";
 import { Flex } from "~/components/common/Flex";
 import { Text } from "~/components/common/Text";
+import InputMask from "react-input-mask";
+import { WebTextInput } from "~/components/BaseTextInput/WebTextInput";
+import { defaultProps } from "~/components/BaseTextInput/defaultProps";
 
 const Wrapper = styled(Flex).attrs({
   background: "inputBg2",
@@ -27,9 +25,10 @@ type Props = BaseTextInputProps & {
   label: string;
   message?: string;
   rules?: RegisterOptions;
+  mask?: string;
 };
 
-export const TextInput = ({ label, message, name, rules, ...props }: Props) => {
+export const TextInput = ({ label, mask = "", message, name, rules, ...props }: Props) => {
   const {
     control,
     formState: { errors },
@@ -52,17 +51,39 @@ export const TextInput = ({ label, message, name, rules, ...props }: Props) => {
         <Controller
           control={control}
           name={name}
-          render={({ field: { onBlur, onChange, value } }) => (
-            <BaseTextInput
-              {...props}
-              colorName="white"
-              name={name}
-              onBlur={onBlur}
-              onChange={onChange}
-              placeholderTextColor="inputPlaceholder"
-              value={value || ""}
-            />
-          )}
+          render={({ field: { onBlur, onChange, value, ref } }) => {
+            const { disabled = defaultProps.disabled, textAlign = defaultProps.textAlign } = props;
+
+            return mask ? (
+              <InputMask
+                alwaysShowMask
+                disabled={false}
+                inputRef={ref}
+                mask={mask}
+                maskChar="_"
+                onBlur={onBlur}
+                onChange={onChange}
+                value={value}
+              >
+                <WebTextInput
+                  colorName="white"
+                  disabled={disabled}
+                  placeholderTextColor="inputPlaceholder"
+                  textAlign={textAlign}
+                />
+              </InputMask>
+            ) : (
+              <BaseTextInput
+                {...props}
+                colorName="white"
+                name={name}
+                onBlur={onBlur}
+                onChange={onChange}
+                placeholderTextColor="inputPlaceholder"
+                value={value || ""}
+              />
+            );
+          }}
           rules={rules}
         />
       </Wrapper>
@@ -71,10 +92,7 @@ export const TextInput = ({ label, message, name, rules, ...props }: Props) => {
         <Flex pl={4} pt={8} shrink={1}>
           <Text color="primaryRed" kind="regularBold">
             <Flex align="center" direction="row" shrink={1}>
-              <span
-                className="material-icons md-18"
-                style={{ fontSize: "18px" }}
-              >
+              <span className="material-icons md-18" style={{ fontSize: "18px" }}>
                 error
               </span>
 
