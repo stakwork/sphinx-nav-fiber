@@ -135,7 +135,7 @@ export const TagInput = ({ label, message, rules, ...props }: Props) => {
             rules={rules}
           />
         </Wrapper>
-        <AddTagButton onClick={handleEvent} tabIndex={0}>
+        <AddTagButton onClick={handleEvent} role="button" tabIndex={0}>
           <Text color="lightGray" kind="regular">
             Add Tag
           </Text>

@@ -133,7 +133,7 @@ export const AddNodeModal = () => {
           <Flex align="center" direction="row" justify="space-between" pb={32}>
             <Flex align="center" direction="row">
               <Text kind="bigHeadingBold">Add Node</Text>
-              <InfoIcon tabIndex={0}>
+              <InfoIcon role="tooltip" tabIndex={0}>
                 <span className="material-icons-outlined">info</span>
                 <div className="tooltip">{mainInfoMessage}</div>
               </InfoIcon>
@@ -147,6 +147,7 @@ export const AddNodeModal = () => {
                   close();
                 }
               }}
+              role="button"
               tabIndex={0}
             >
               <span className="material-icons">close</span>
