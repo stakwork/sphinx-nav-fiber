@@ -1,4 +1,4 @@
-import { KeyboardEvent, useCallback, useState } from "react";
+import { KeyboardEvent, useCallback, useState, useRef, useEffect } from "react";
 import {
   useFormContext,
   RegisterOptions,
@@ -44,6 +44,8 @@ export const TagInput = ({ label, message, rules, ...props }: Props) => {
 
   const [currentTag, setCurrentTag] = useState("");
   const tags = getValues(name);
+
+  const errorRef = useRef<HTMLDivElement>(null);
 
   const handleEvent = useCallback(
     (e: KeyboardEvent<HTMLInputElement> | React.MouseEvent<HTMLDivElement>) => {
@@ -98,13 +100,19 @@ export const TagInput = ({ label, message, rules, ...props }: Props) => {
     [setCurrentTag]
   );
 
+  useEffect(() => {
+    if (error) {
+      errorRef.current?.focus();
+    }
+  }, [error]);
+
   return (
     <Flex shrink={1}>
       <Flex align="center" direction="row" pb={4} pl={4}>
         <Text color="lightGray" kind="regularBold">
           {label}
         </Text>
-        <QuestionIcon>
+        <QuestionIcon tabIndex={0}>
           <FaRegQuestionCircle color={colors.secondaryText4} />
           <div className="tooltip">{message}</div>
         </QuestionIcon>
@@ -127,7 +135,7 @@ export const TagInput = ({ label, message, rules, ...props }: Props) => {
             rules={rules}
           />
         </Wrapper>
-        <AddTagButton onClick={handleEvent}>
+        <AddTagButton onClick={handleEvent} tabIndex={0}>
           <Text color="lightGray" kind="regular">
             Add Tag
           </Text>
@@ -147,13 +155,14 @@ export const TagInput = ({ label, message, rules, ...props }: Props) => {
               direction="row"
               px={8}
               py={4}
+              tabIndex={0}
             >
               <Flex>
                 <Text color="black">{tag}</Text>
               </Flex>
 
-              <CloseButton onClick={() => handleTagRemove(tag)}>
-                <span className="material-icons">close</span>
+              <CloseButton onClick={() => handleTagRemove(tag)} tabIndex={0}>
+                <span className="material-icons">remove</span>
               </CloseButton>
             </Flex>
           </Flex>
@@ -161,7 +170,7 @@ export const TagInput = ({ label, message, rules, ...props }: Props) => {
       </Flex>
 
       {error && (
-        <Flex pl={4} pt={8} shrink={1}>
+        <Flex ref={errorRef} pl={4} pt={8} shrink={1} tabIndex={0}>
           <Text color="primaryRed" kind="regularBold">
             <Flex align="center" direction="row" shrink={1}>
               <span
@@ -223,6 +232,10 @@ const QuestionIcon = styled(Flex)`
   }
 
   &:hover .tooltip {
+    visibility: visible;
+  }
+
+  &:focus .tooltip {
     visibility: visible;
   }
 `;
