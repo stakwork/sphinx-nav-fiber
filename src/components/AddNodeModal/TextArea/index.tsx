@@ -1,4 +1,3 @@
-import { useRef, useEffect } from "react";
 import {
   Controller,
   get,
@@ -34,21 +33,13 @@ export const TextArea = ({ label, message, name, rules, ...props }: Props) => {
 
   const error = get(errors, name);
 
-  const errorRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (error) {
-      errorRef.current?.focus();
-    }
-  }, [error]);
-
   return (
     <>
       <Flex align="center" direction="row" pb={4} pl={4}>
-        <Text color="lightGray" kind="regularBold">
+        <Text color="lightGray" kind="regularBold" tabIndex={0}>
           {label}
         </Text>
-        <QuestionIcon tabIndex={0}>
+        <QuestionIcon role="tooltip" tabIndex={0}>
           <FaRegQuestionCircle color={colors.secondaryText4} />
           <div className="tooltip">{message}</div>
         </QuestionIcon>
@@ -74,7 +65,7 @@ export const TextArea = ({ label, message, name, rules, ...props }: Props) => {
       </Wrapper>
 
       {error && (
-        <Flex ref={errorRef} pl={4} pt={8} shrink={1} tabIndex={0}>
+        <Flex pl={4} pt={8} shrink={1} tabIndex={0}>
           <Text color="primaryRed" kind="regularBold">
             <Flex align="center" direction="row" shrink={1}>
               <span
