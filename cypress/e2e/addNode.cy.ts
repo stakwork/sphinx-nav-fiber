@@ -10,6 +10,7 @@ import {
   description,
   tags,
   tagError,
+  mainError,
 } from "../support/constants/addNode";
 
 describe("Add Node Form / Home interactions", () => {
@@ -29,6 +30,7 @@ describe("Add Node Form / Home interactions", () => {
   const submitButton = () => cy.get(addNodeSubmitButton);
   const closeButton = () => cy.get(addNodeCloseButton);
   const tagErrorMessage = () => cy.get(tagError);
+  const mainErrorMessage = () => cy.get(mainError);
   const linkInput = () => cy.get(link);
   const startTimeInput = () => cy.get(startTime);
   const endTimeInput = () => cy.get(endTime);
@@ -52,10 +54,12 @@ describe("Add Node Form / Home interactions", () => {
     modal().should("not.exist");
   });
 
-  it("submitting the form with all fields empty yields error messages", () => {
+  it("submitting the form with all fields empty yields 5 error messages", () => {
     openButton("home").click();
 
     submitButton().click();
+
+    mainErrorMessage().should("not.be.visible").and("contain.text", "5 errors");
 
     cy.contains(/the field is required/i).should("be.visible");
 
@@ -78,8 +82,8 @@ describe("Add Node Form / Home interactions", () => {
     openButton("home").click();
 
     linkInput().type("youtube.com/watch?v=Midgx8bBDMk");
-    startTimeInput().type("00:00:00");
-    endTimeInput().type("00:00:30");
+    startTimeInput().type("000000");
+    endTimeInput().type("000030");
     descriptionInput().type("description");
     tagsInput().type("test").type("{enter}");
 
@@ -101,8 +105,8 @@ describe("Add Node Form / Home interactions", () => {
     openButton("home").click();
 
     linkInput().type("youtube.com/watch?v=Midgx8bBDMk");
-    startTimeInput().type("00:00:00");
-    endTimeInput().type("00:00:30");
+    startTimeInput().type("000000");
+    endTimeInput().type("000030");
     descriptionInput().type("description");
     tagsInput().type("test").type("{enter}");
 
