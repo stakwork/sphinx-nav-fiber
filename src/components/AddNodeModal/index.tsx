@@ -161,7 +161,7 @@ export const AddNodeModal = () => {
             <Flex basis="50%" pr={16}>
               <TextInput
                 label="Start Time"
-                maxLength={8}
+                mask="99:99:99"
                 message="Enter start and end timestamps which will encompass the segment of video or audio you want to submit."
                 name="startTime"
                 placeholder="00:00:00"
@@ -178,7 +178,7 @@ export const AddNodeModal = () => {
             <Flex basis="50%" pl={16}>
               <TextInput
                 label="End Time"
-                maxLength={8}
+                mask="99:99:99"
                 message="Enter start and end timestamps which will encompass the segment of video or audio you want to submit."
                 name="endTime"
                 placeholder="00:00:00"

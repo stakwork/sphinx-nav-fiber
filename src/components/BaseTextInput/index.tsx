@@ -29,21 +29,15 @@ export const BaseTextInput = forwardRef(
     }: BaseTextInputProps,
     ref: ForwardedRef<HTMLInputElement>
   ) => {
+
     const handleChange = useCallback(
       (event: ChangeEvent<HTMLInputElement>) => {
-        if (name === "startTime" || name === "endTime") {
-          const timeStampRegex = /^[0-9:]*$/;
-
-          if (!timeStampRegex.test(event.target.value)) {
-            return;
-          }
-        }
 
         if (onChange) {
           onChange(event.target.value);
         }
       },
-      [onChange, name]
+      [onChange]
     );
 
     return (
