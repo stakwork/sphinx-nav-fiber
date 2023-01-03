@@ -11,7 +11,7 @@ import { Text } from "~/components/common/Text";
 import { BaseModal } from "~/components/Modal";
 import { useModal } from "~/stores/useModalStore";
 import { colors } from "~/utils/colors";
-import { timeToSeconds } from "~/utils/timeToSeconds";
+import { timeToMilliseconds } from "~/utils/timeToMilliseconds";
 import { getLSat } from "~/utils/getLSat";
 import { toast } from "react-toastify";
 import { ToastMessage } from "../common/Toast/toastMessage";
@@ -34,7 +34,8 @@ const tagRule = {
 
 const timeRegex = /^\d{2}:\d{2}:\d{2}$/;
 
-const twitterOrYoutubeRegex = /^(https:\/\/twitter.com\/[a-zA-Z0-9_]\/spaces\/.*)|(?:https?:\/\/)?(?:m\.|www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
+const twitterOrYoutubeRegex =
+  /^(https:\/\/twitter.com\/[a-zA-Z0-9_]\/spaces\/.*)|(?:https?:\/\/)?(?:m\.|www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
 
 const mainInfoMessage =
   'Come across an interesting or useful part of a video or audio you\'d like to share? You can add it to the knowledge graph here!\n\nEnter a valid link to the YouTube video or Twitter Space you were watching, choose a start and end timestamp to encompass the segment you found interesting or useful, provide a brief description of what the segment is about, and add topic tags that are relevant to the segment. Hit "Add node", and your clip will be added to the graph shortly.\n\nYour pubkey will be submitted with your clip, and any boosts your clip receives will go to you!';
@@ -61,8 +62,8 @@ const handleSubmit = async (
       tags: [
         {
           description: data.description,
-          "end-time": timeToSeconds(data.endTime),
-          "start-time": timeToSeconds(data.startTime),
+          "end-time": timeToMilliseconds(data.endTime),
+          "start-time": timeToMilliseconds(data.startTime),
           tag: data.tags?.join(", "),
         },
       ],
@@ -148,7 +149,8 @@ export const AddNodeModal = () => {
               rules={{
                 ...requiredRule,
                 pattern: {
-                  message: "You must enter a valid YouTube or Twitter Space link.",
+                  message:
+                    "You must enter a valid YouTube or Twitter Space link.",
                   value: twitterOrYoutubeRegex,
                 },
               }}
@@ -187,7 +189,8 @@ export const AddNodeModal = () => {
                   },
                   validate: {
                     endTime: (value) =>
-                      value > (startTime || "00:00:00") || "End time should be greater than start time",
+                      value > (startTime || "00:00:00") ||
+                      "End time should be greater than start time",
                   },
                   ...requiredRule,
                 }}
@@ -216,7 +219,8 @@ export const AddNodeModal = () => {
 
           <Flex pt={16} px={4}>
             <Text color="lightGray" kind="tinyBold">
-              Your pubkey will be submitted with your node, so you can receive sats that your node earns.
+              Your pubkey will be submitted with your node, so you can receive
+              sats that your node earns.
             </Text>
           </Flex>
 
