@@ -118,7 +118,7 @@ export const AddNodeModal = () => {
 
   const { reset, watch } = form;
 
-  const { isSubmitting } = form.formState;
+  const { isSubmitting, errors } = form.formState;
 
   const onSubmit = form.handleSubmit(async (data) => {
     await handleSubmit(data, close, reset);
@@ -138,6 +138,13 @@ export const AddNodeModal = () => {
                 <div className="tooltip">{mainInfoMessage}</div>
               </InfoIcon>
             </Flex>
+
+            {Object.keys(errors).length !== 0 && (
+              <ErrorAlert data-test="add-node-error-alert" role="alert">
+                {Object.keys(errors).length}
+                {Object.keys(errors).length > 1 ? " errors" : " error"}
+              </ErrorAlert>
+            )}
 
             <CloseButton
               data-test="add-node-close-button"
@@ -307,4 +314,13 @@ const SubmitLoader = styled(Flex).attrs({
 })`
   padding: 16px 24px;
   opacity: 0.5;
+`;
+
+// hidden to the side so it doesn't affect the layout
+const ErrorAlert = styled(Text).attrs({
+  color: "secondaryRed",
+  kind: "tinyBold",
+})`
+  position: relative;
+  left: 50%;
 `;
