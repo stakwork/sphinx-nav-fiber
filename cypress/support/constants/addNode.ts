@@ -15,3 +15,6 @@ export const startTime = ".eKMOQC > .hSMvhC > .sc-gKXOVf > .sc-jSMfEi";
 export const endTime = ".dkSRch > .hSMvhC > .sc-gKXOVf > .sc-jSMfEi";
 export const description = "textarea[name=description]";
 export const tags = "input[name=tags]";
+
+// alerts
+export const toast = ".Toastify__toast-body";
