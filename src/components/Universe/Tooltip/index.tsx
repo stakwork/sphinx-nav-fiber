@@ -37,6 +37,7 @@ export const Tooltip = () => {
     episode_title: episodeTitle,
     description,
     label,
+    text,
     timestamp,
     type,
   } = node;
@@ -83,7 +84,16 @@ export const Tooltip = () => {
 
         <div>
           {type === "guest" ? (
-            <Text>{label}</Text>
+            <Flex direction="column">
+              <Text>{label}</Text>
+              {text && (
+                <Flex pt={4}>
+                  <Text color="primaryText1" kind="tiny">
+                    @{text}
+                  </Text>
+                </Flex>
+              )}
+            </Flex>
           ) : (
             <Text color="primaryText1" kind="tiny">
               {showTitle}
@@ -91,10 +101,7 @@ export const Tooltip = () => {
           )}
 
           <Flex pt={4}>
-            {nodeType === "clip" ||
-              (nodeType === "episode" && (
-                <Text color="primaryText1">Episode</Text>
-              ))}
+            {nodeType === "clip" || (nodeType === "episode" && <Text color="primaryText1">Episode</Text>)}
 
             {nodeType === "clip" ? (
               <Text as="div" kind="regularBold">
@@ -115,9 +122,7 @@ export const Tooltip = () => {
             {nodeType === "clip" && <Text color="primaryText1">Episode</Text>}
 
             <Text color="primaryText1" kind="tiny">
-              {nodeType === "clip"
-                ? episodeTitle
-                : formatDescription(description)}
+              {nodeType === "clip" ? episodeTitle : formatDescription(description)}
             </Text>
           </Flex>
 
