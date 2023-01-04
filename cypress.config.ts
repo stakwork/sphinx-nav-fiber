@@ -2,6 +2,7 @@
 import { defineConfig } from "cypress";
 
 export default defineConfig({
+  projectId: '5pz59y',
   e2e: {
     pageLoadTimeout: 90000,
     setupNodeEvents(on, config) {
