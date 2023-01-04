@@ -84,7 +84,10 @@ describe("Add Node Form / Home interactions", () => {
 
     openButton("home").click();
 
-    linkInput().type("youtube.com/watch?v=Midgx8bBDMk");
+    linkInput().type("youtube.com/watch?v=Midgx8bBDMk", {
+      waitForAnimations: false,
+    });
+
     startTimeInput().type("000000");
     endTimeInput().type("000030");
     descriptionInput().type("description");
@@ -112,7 +115,10 @@ describe("Add Node Form / Home interactions", () => {
 
     openButton("home").click();
 
-    linkInput().type("youtube.com/watch?v=Midgx8bBDMk");
+    linkInput().type("youtube.com/watch?v=Midgx8bBDMk", {
+      waitForAnimations: false,
+    });
+
     startTimeInput().type("000000");
     endTimeInput().type("000030");
     descriptionInput().type("description");
