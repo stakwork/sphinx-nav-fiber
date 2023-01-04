@@ -95,6 +95,8 @@ describe("Add Node Form / Home interactions", () => {
 
     modal().should("not.exist");
 
+    cy.wait(1000);
+
     toastBody()
       .should("be.visible")
       .and("contain.text", "Node submitted successfully!");
@@ -117,6 +119,8 @@ describe("Add Node Form / Home interactions", () => {
     submitButton().click();
 
     cy.wait("@add_node");
+
+    cy.wait(1000);
 
     toastBody()
       .should("be.visible")
