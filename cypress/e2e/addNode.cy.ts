@@ -52,7 +52,8 @@ describe("Add Node Form / Home interactions", () => {
   it("clicking the X button closes the Add Node Form modal", () => {
     openButton("home").click();
 
-    closeButton().click();
+    closeButton().click({ waitForAnimations: false });
+
     modal().should("not.exist");
   });
 
@@ -95,6 +96,7 @@ describe("Add Node Form / Home interactions", () => {
 
     modal().should("not.exist");
 
+    // Waiting for Toast opacity keyframe to complete
     cy.wait(1000);
 
     toastBody()
@@ -120,6 +122,7 @@ describe("Add Node Form / Home interactions", () => {
 
     cy.wait("@add_node");
 
+    // Waiting for Toast opacity keyframe to complete
     cy.wait(1000);
 
     toastBody()
