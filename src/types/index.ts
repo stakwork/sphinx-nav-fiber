@@ -54,6 +54,7 @@ export class NodeMesh extends Mesh {
 
 export type Guests = {
   name: string;
+  ref_id: string;
   profile_picture: string;
   twitter_handle: string;
 }

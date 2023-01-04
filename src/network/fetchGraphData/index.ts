@@ -16,7 +16,9 @@ import { getLSat } from "~/utils/getLSat";
 
 type guestMapChild = {
   children: string[],
-  imageUrl: string
+  imageUrl: string,
+  name: string,
+  twitterHandle: string,
 }
 
 const defautData: GraphData = {
@@ -109,9 +111,11 @@ const getGraphData = async (searchterm: string) => {
             const currentGuest = guest as Guests;
 
             if (currentGuest.name) {
-              guestMap[currentGuest.name] = {
-                children: [...(guestMap[currentGuest.name]?.children || []), node.ref_id],
+              guestMap[currentGuest.ref_id] = {
+                children: [...(guestMap[currentGuest.ref_id]?.children || []), node.ref_id],
                 imageUrl: currentGuest.profile_picture || '',
+                name: currentGuest.name,
+                twitterHandle: currentGuest.twitter_handle,
               };
             }
           });
@@ -194,13 +198,13 @@ const getGraphData = async (searchterm: string) => {
           colors: ["#000"],
           id: guestNodeId,
           image_url: guestValue.imageUrl,
-          label: guest,
-          name: guest,
+          label: guestValue.name,
+          name: guestValue.name,
           node_type: "guest",
           ref_id: guestNodeId,
           scale,
-          show_title: guest,
-          text: guest,
+          show_title: guestValue.name,
+          text: guestValue.twitterHandle,
           type: "guest",
           weight: 0,
         };
