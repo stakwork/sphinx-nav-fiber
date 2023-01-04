@@ -1,4 +1,9 @@
-import { Controller, get, RegisterOptions, useFormContext } from "react-hook-form";
+import {
+  Controller,
+  get,
+  RegisterOptions,
+  useFormContext,
+} from "react-hook-form";
 import styled from "styled-components";
 import { FaRegQuestionCircle } from "react-icons/fa";
 import { BaseTextInput, BaseTextInputProps } from "~/components/BaseTextInput";
@@ -28,7 +33,14 @@ type Props = BaseTextInputProps & {
   mask?: string;
 };
 
-export const TextInput = ({ label, mask = "", message, name, rules, ...props }: Props) => {
+export const TextInput = ({
+  label,
+  mask = "",
+  message,
+  name,
+  rules,
+  ...props
+}: Props) => {
   const {
     control,
     formState: { errors },
@@ -39,10 +51,10 @@ export const TextInput = ({ label, mask = "", message, name, rules, ...props }: 
   return (
     <Flex shrink={1}>
       <Flex align="center" direction="row" pb={4} pl={4}>
-        <Text color="lightGray" kind="regularBold">
+        <Text color="lightGray" kind="regularBold" tabIndex={0}>
           {label}
         </Text>
-        <QuestionIcon name={name}>
+        <QuestionIcon name={name} role="tooltip" tabIndex={0}>
           <FaRegQuestionCircle color={colors.secondaryText4} />
           <div className="tooltip">{message}</div>
         </QuestionIcon>
@@ -52,7 +64,10 @@ export const TextInput = ({ label, mask = "", message, name, rules, ...props }: 
           control={control}
           name={name}
           render={({ field: { onBlur, onChange, value, ref } }) => {
-            const { disabled = defaultProps.disabled, textAlign = defaultProps.textAlign } = props;
+            const {
+              disabled = defaultProps.disabled,
+              textAlign = defaultProps.textAlign,
+            } = props;
 
             return mask ? (
               <InputMask
@@ -89,10 +104,13 @@ export const TextInput = ({ label, mask = "", message, name, rules, ...props }: 
       </Wrapper>
 
       {error && (
-        <Flex pl={4} pt={8} shrink={1}>
+        <Flex pl={4} pt={8} shrink={1} tabIndex={0}>
           <Text color="primaryRed" kind="regularBold">
             <Flex align="center" direction="row" shrink={1}>
-              <span className="material-icons md-18" style={{ fontSize: "18px" }}>
+              <span
+                className="material-icons md-18"
+                style={{ fontSize: "18px" }}
+              >
                 error
               </span>
 
@@ -135,6 +153,10 @@ const QuestionIcon = styled(Flex)<QuestionIconProps>`
   `}
 
   &:hover .tooltip {
+    visibility: visible;
+  }
+
+  &:focus .tooltip {
     visibility: visible;
   }
 `;

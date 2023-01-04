@@ -15,7 +15,7 @@ import { timeToMilliseconds } from "~/utils/timeToMilliseconds";
 import { getLSat } from "~/utils/getLSat";
 import { toast } from "react-toastify";
 import { ToastMessage } from "../common/Toast/toastMessage";
-import { NODE_ADD_SUCCESS, NODE_ADD_ERROR } from "~/constants";
+import { NODE_ADD_SUCCESS, NODE_ADD_ERROR, isDevelopment } from "~/constants";
 import { ClipLoader } from "react-spinners";
 
 const requiredRule = {
@@ -71,23 +71,27 @@ const handleSubmit = async (
     media_url: data.link,
   };
 
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  const enable = await sphinx.enable();
+  let lsatToken;
 
-  body.pubkey = enable?.pubkey;
+  if (!isDevelopment) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    const enable = await sphinx.enable();
 
-  const lsatToken = await getLSat("adding_node");
+    body.pubkey = enable?.pubkey;
 
-  if (!lsatToken) {
-    throw new Error("An error occured calling getLSat");
+    lsatToken = await getLSat("adding_node");
+
+    if (!lsatToken) {
+      throw new Error("An error occured calling getLSat");
+    }
   }
 
   try {
     const res: SubmitErrRes = await api.post(
       "/add_node",
       JSON.stringify(body),
-      { Authorization: lsatToken }
+      { Authorization: lsatToken } as HeadersInit
     );
 
     if (res.error) {
@@ -114,7 +118,7 @@ export const AddNodeModal = () => {
 
   const { reset, watch } = form;
 
-  const { isSubmitting } = form.formState;
+  const { isSubmitting, errors } = form.formState;
 
   const onSubmit = form.handleSubmit(async (data) => {
     await handleSubmit(data, close, reset);
@@ -129,13 +133,30 @@ export const AddNodeModal = () => {
           <Flex align="center" direction="row" justify="space-between" pb={32}>
             <Flex align="center" direction="row">
               <Text kind="bigHeadingBold">Add Node</Text>
-              <InfoIcon>
+              <InfoIcon role="tooltip" tabIndex={0}>
                 <span className="material-icons-outlined">info</span>
                 <div className="tooltip">{mainInfoMessage}</div>
               </InfoIcon>
             </Flex>
 
-            <CloseButton onClick={close}>
+            {Object.keys(errors).length !== 0 && (
+              <ErrorAlert data-test="add-node-error-alert" role="alert">
+                {Object.keys(errors).length}
+                {Object.keys(errors).length > 1 ? " errors" : " error"}
+              </ErrorAlert>
+            )}
+
+            <CloseButton
+              data-test="add-node-close-button"
+              onClick={close}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === "Space") {
+                  close();
+                }
+              }}
+              role="button"
+              tabIndex={0}
+            >
               <span className="material-icons">close</span>
             </CloseButton>
           </Flex>
@@ -162,7 +183,7 @@ export const AddNodeModal = () => {
               <TextInput
                 label="Start Time"
                 mask="99:99:99"
-                message="Enter start and end timestamps which will encompass the segment of video or audio you want to submit."
+                message="Enter start and end timestamps which will encompass the segment of video or audio you want to submit. [hh:mm:ss]"
                 name="startTime"
                 placeholder="00:00:00"
                 rules={{
@@ -179,7 +200,7 @@ export const AddNodeModal = () => {
               <TextInput
                 label="End Time"
                 mask="99:99:99"
-                message="Enter start and end timestamps which will encompass the segment of video or audio you want to submit."
+                message="Enter start and end timestamps which will encompass the segment of video or audio you want to submit. [hh:mm:ss]"
                 name="endTime"
                 placeholder="00:00:00"
                 rules={{
@@ -217,7 +238,7 @@ export const AddNodeModal = () => {
             />
           </Flex>
 
-          <Flex pt={16} px={4}>
+          <Flex pt={16} px={4} tabIndex={0}>
             <Text color="lightGray" kind="tinyBold">
               Your pubkey will be submitted with your node, so you can receive
               sats that your node earns.
@@ -279,6 +300,10 @@ const InfoIcon = styled(Flex)`
   span:hover + .tooltip {
     visibility: visible;
   }
+
+  &:focus .tooltip {
+    visibility: visible;
+  }
 `;
 
 const SubmitLoader = styled(Flex).attrs({
@@ -289,4 +314,13 @@ const SubmitLoader = styled(Flex).attrs({
 })`
   padding: 16px 24px;
   opacity: 0.5;
+`;
+
+// hidden to the side so it doesn't affect the layout
+const ErrorAlert = styled(Text).attrs({
+  color: "secondaryRed",
+  kind: "tinyBold",
+})`
+  position: relative;
+  left: 50%;
 `;

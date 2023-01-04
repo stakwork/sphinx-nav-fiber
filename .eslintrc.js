@@ -24,7 +24,13 @@ module.exports = {
       jsx: true,
     },
     ecmaVersion: "latest",
-    project: "./tsconfig.eslint.json",
+    project: {
+      include: [
+        "./tsconfig.eslint.json",
+        "cypress/**/*.ts",
+        "cypress/**/*.tsx",
+      ],
+    },
     sourceType: "module",
   },
   plugins: ["@typescript-eslint", "import", "react", "react-hooks", "jsx-a11y"],

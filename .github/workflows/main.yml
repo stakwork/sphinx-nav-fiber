@@ -1,0 +1,24 @@
+name: Cypress E2E tests
+on:
+  pull_request:
+    branches:
+      - master
+jobs:
+  cypress-run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3.2.0
+      - name: Cypress run
+        # Uses the official Cypress GitHub action https://github.com/cypress-io/github-action
+        uses: cypress-io/github-action@v5.0.2
+        with:
+          browser: chrome
+          start: yarn start
+          wait-on: "http://localhost:3000" # Waits for above
+          # Records to Cypress Dashboard
+          record: true
+        env:
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          # created by the GH Action automatically
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
