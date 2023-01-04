@@ -11,11 +11,12 @@ import {
   tags,
   tagError,
   mainError,
+  toast,
 } from "../support/constants/addNode";
 
 describe("Add Node Form / Home interactions", () => {
   beforeEach(() => {
-    cy.visit("http://localhost:3000");
+    cy.visit("/");
   });
 
   const openButton = (setting: "home" | "sidebar") => {
@@ -36,6 +37,7 @@ describe("Add Node Form / Home interactions", () => {
   const endTimeInput = () => cy.get(endTime);
   const descriptionInput = () => cy.get(description);
   const tagsInput = () => cy.get(tags);
+  const toastBody = () => cy.get(toast);
 
   it("clicking the Add Node + button opens the Add Node Form modal", () => {
     openButton("home")
@@ -93,7 +95,9 @@ describe("Add Node Form / Home interactions", () => {
 
     modal().should("not.exist");
 
-    cy.contains(/Node submitted successfully!/).should("be.visible");
+    toastBody()
+      .should("be.visible")
+      .and("contain.text", "Node submitted successfully!");
   });
 
   it("submitting the form but receiving an error response from the server, displays custom error message", () => {
@@ -114,8 +118,8 @@ describe("Add Node Form / Home interactions", () => {
 
     cy.wait("@add_node");
 
-    cy.contains(/Node submission failed, please try again\./).should(
-      "be.visible"
-    );
+    toastBody()
+      .should("be.visible")
+      .and("contain.text", "Node submission failed, please try again.");
   });
 });
