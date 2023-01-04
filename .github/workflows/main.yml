@@ -13,6 +13,7 @@ jobs:
         # Uses the official Cypress GitHub action https://github.com/cypress-io/github-action
         uses: cypress-io/github-action@v5.0.2
         with:
+          browser: chrome
           start: yarn start
           wait-on: "http://localhost:3000" # Waits for above
           # Records to Cypress Dashboard
