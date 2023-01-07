@@ -23,6 +23,7 @@ const Wrapper = styled(Flex).attrs({
 `;
 
 type Props = Omit<BaseTextInputProps, "name"> & {
+  id: string;
   label: string;
   message?: string;
   rules?: RegisterOptions;
@@ -32,7 +33,7 @@ type Fields = { tags: string[] | undefined };
 
 const name = "tags";
 
-export const TagInput = ({ label, message, rules, ...props }: Props) => {
+export const TagInput = ({ id, label, message, rules, ...props }: Props) => {
   const {
     setValue,
     getValues,
@@ -101,10 +102,8 @@ export const TagInput = ({ label, message, rules, ...props }: Props) => {
   return (
     <Flex shrink={1}>
       <Flex align="center" direction="row" pb={4} pl={4}>
-        <Text color="lightGray" kind="regularBold" tabIndex={0}>
-          {label}
-        </Text>
-        <QuestionIcon role="tooltip" tabIndex={0}>
+        <Label htmlFor={id}>{label}</Label>
+        <QuestionIcon role="tooltip">
           <FaRegQuestionCircle color={colors.secondaryText4} />
           <div className="tooltip">{message}</div>
         </QuestionIcon>
@@ -117,6 +116,7 @@ export const TagInput = ({ label, message, rules, ...props }: Props) => {
               <BaseTextInput
                 {...props}
                 colorName="white"
+                id={id}
                 name={name}
                 onChange={handleOnChange}
                 onKeyDown={handleEvent}
@@ -234,4 +234,10 @@ const QuestionIcon = styled(Flex)`
   &:focus .tooltip {
     visibility: visible;
   }
+`;
+
+const Label = styled.label`
+  color: ${colors.lightGray};
+  font-size: 14px;
+  font-weight: 600;
 `;

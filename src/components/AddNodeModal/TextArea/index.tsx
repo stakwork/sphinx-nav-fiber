@@ -20,12 +20,20 @@ const Wrapper = styled(Flex).attrs({
 `;
 
 type Props = BaseTextAreaProps & {
+  id: string;
   label: string;
   message?: string;
   rules?: RegisterOptions;
 };
 
-export const TextArea = ({ label, message, name, rules, ...props }: Props) => {
+export const TextArea = ({
+  id,
+  label,
+  message,
+  name,
+  rules,
+  ...props
+}: Props) => {
   const {
     control,
     formState: { errors },
@@ -36,10 +44,8 @@ export const TextArea = ({ label, message, name, rules, ...props }: Props) => {
   return (
     <>
       <Flex align="center" direction="row" pb={4} pl={4}>
-        <Text color="lightGray" kind="regularBold" tabIndex={0}>
-          {label}
-        </Text>
-        <QuestionIcon role="tooltip" tabIndex={0}>
+        <Label htmlFor={id}>{label}</Label>
+        <QuestionIcon role="tooltip">
           <FaRegQuestionCircle color={colors.secondaryText4} />
           <div className="tooltip">{message}</div>
         </QuestionIcon>
@@ -53,6 +59,7 @@ export const TextArea = ({ label, message, name, rules, ...props }: Props) => {
             <BaseTextArea
               {...props}
               colorName="white"
+              id={id}
               name={name}
               onBlur={onBlur}
               onChange={onChange}
@@ -111,4 +118,10 @@ const QuestionIcon = styled(Flex)`
   &:focus .tooltip {
     visibility: visible;
   }
+`;
+
+const Label = styled.label`
+  color: ${colors.lightGray};
+  font-size: 14px;
+  font-weight: 600;
 `;
