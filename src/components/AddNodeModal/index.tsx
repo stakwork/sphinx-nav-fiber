@@ -163,6 +163,7 @@ export const AddNodeModal = () => {
 
           <Flex>
             <TextInput
+              id="link"
               label="Link"
               message="Paste a valid YouTube or Twitter Space link here."
               name="link"
@@ -181,6 +182,7 @@ export const AddNodeModal = () => {
           <Flex direction="row" pt={12}>
             <Flex basis="50%" pr={16}>
               <TextInput
+                id="startTime"
                 label="Start Time"
                 mask="99:99:99"
                 message="Enter start and end timestamps which will encompass the segment of video or audio you want to submit. [hh:mm:ss]"
@@ -198,6 +200,7 @@ export const AddNodeModal = () => {
 
             <Flex basis="50%" pl={16}>
               <TextInput
+                id="endTime"
                 label="End Time"
                 mask="99:99:99"
                 message="Enter start and end timestamps which will encompass the segment of video or audio you want to submit. [hh:mm:ss]"
@@ -221,6 +224,7 @@ export const AddNodeModal = () => {
 
           <Flex pt={12}>
             <TextArea
+              id="description"
               label="Clip Description"
               maxLength={100}
               message="Enter a short description of your audio/video segment. Think of this as the title of your node. [max 100 characters]"
@@ -231,6 +235,7 @@ export const AddNodeModal = () => {
 
           <Flex pt={12}>
             <TagInput
+              id="tags"
               label="Tags"
               maxLength={50}
               message="Enter some topic tags that capture the main ideas of your segment. Be specific! Generic tags aren't useful for anyone. Think, 'What term(s) would someone search to find my node? [max: 15, max characters per tag: 50]"
