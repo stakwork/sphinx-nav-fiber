@@ -57,7 +57,7 @@ describe("Add Node Form / Home interactions", () => {
   it("submitting the form with all fields empty yields 5 error messages", () => {
     openButton("home").click();
 
-    submitButton().click();
+    submitButton().click({ waitForAnimations: false });
 
     mainErrorMessage().should("not.be.visible").and("contain.text", "5 errors");
 
@@ -97,7 +97,7 @@ describe("Add Node Form / Home interactions", () => {
     modal().should("not.exist");
 
     // Waiting for Toast opacity keyframe to complete
-    cy.wait(1000);
+    cy.wait(2000);
 
     toastBody()
       .should("be.visible")
@@ -126,7 +126,7 @@ describe("Add Node Form / Home interactions", () => {
     cy.wait("@add_node");
 
     // Waiting for Toast opacity keyframe to complete
-    cy.wait(1000);
+    cy.wait(2000);
 
     toastBody()
       .should("be.visible")
