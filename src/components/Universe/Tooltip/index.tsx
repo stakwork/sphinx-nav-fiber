@@ -5,6 +5,7 @@ import { Text } from "~/components/common/Text";
 import { useDataStore } from "~/stores/useDataStore";
 import { colors } from "~/utils/colors";
 import { formatDescription } from "~/utils/formatDescription";
+import { Guests } from "~/types";
 
 const Wrapper = styled(Flex)`
   position: absolute;
@@ -45,10 +46,15 @@ export const Tooltip = () => {
   const guestArray = node.guests;
 
   let guests = false;
+  let isGuestArrObj = false;
 
   if (guestArray) {
     if (guestArray.length && guestArray[0] !== null) {
       guests = true;
+    }
+
+    if (typeof guestArray[0] === "object") {
+      isGuestArrObj = true;
     }
   }
 
@@ -101,7 +107,10 @@ export const Tooltip = () => {
           )}
 
           <Flex pt={4}>
-            {nodeType === "clip" || (nodeType === "episode" && <Text color="primaryText1">Episode</Text>)}
+            {nodeType === "clip" ||
+              (nodeType === "episode" && (
+                <Text color="primaryText1">Episode</Text>
+              ))}
 
             {nodeType === "clip" ? (
               <Text as="div" kind="regularBold">
@@ -122,7 +131,9 @@ export const Tooltip = () => {
             {nodeType === "clip" && <Text color="primaryText1">Episode</Text>}
 
             <Text color="primaryText1" kind="tiny">
-              {nodeType === "clip" ? episodeTitle : formatDescription(description)}
+              {nodeType === "clip"
+                ? episodeTitle
+                : formatDescription(description)}
             </Text>
           </Flex>
 
@@ -131,7 +142,17 @@ export const Tooltip = () => {
               <Text color="primaryText1">People</Text>
               <Flex pt={4}>
                 <Text color="primaryText1" kind="tiny">
-                  {guestArray?.join(", ")}
+                  {isGuestArrObj
+                    ? (guestArray as Guests[])
+                        .map((guest) => {
+                          if (guest.name) {
+                            return guest.name;
+                          }
+
+                          return `@${guest.twitter_handle}`;
+                        })
+                        .join(", ")
+                    : guestArray?.join(", ")}
                 </Text>
               </Flex>
             </Flex>
