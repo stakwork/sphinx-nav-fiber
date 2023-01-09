@@ -16,6 +16,7 @@ jobs:
           browser: chrome
           start: yarn start
           wait-on: "http://localhost:3000" # Waits for above
+          wait-on-timeout: 120 # Waits for 2 minutes
           # Records to Cypress Dashboard
           record: true
         env:

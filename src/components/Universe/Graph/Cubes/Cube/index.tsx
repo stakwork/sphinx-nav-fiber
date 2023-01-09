@@ -1,4 +1,4 @@
-import { useFrame } from "@react-three/fiber";
+import { ThreeEvent, useFrame } from "@react-three/fiber";
 import { Select } from "@react-three/postprocessing";
 import { memo, useCallback, useMemo, useRef } from "react";
 import * as THREE from "three";
@@ -44,7 +44,9 @@ export const Cube = memo(({ node, highlight }: { node: NodeExtended; highlight: 
     ref.current?.position.set(node.x || 0, node.y || 0, node.z || 0);
   });
 
-  const onPointerIn = useCallback(() => {
+  const onPointerIn = useCallback((e: ThreeEvent<PointerEvent>) => {
+    e.stopPropagation();
+
     document.body.style.cursor = "pointer";
 
     if (ref.current) {

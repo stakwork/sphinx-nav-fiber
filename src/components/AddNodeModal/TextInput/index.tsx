@@ -27,6 +27,7 @@ type QuestionIconProps = {
 };
 
 type Props = BaseTextInputProps & {
+  id: string;
   label: string;
   message?: string;
   rules?: RegisterOptions;
@@ -34,6 +35,7 @@ type Props = BaseTextInputProps & {
 };
 
 export const TextInput = ({
+  id,
   label,
   mask = "",
   message,
@@ -51,10 +53,8 @@ export const TextInput = ({
   return (
     <Flex shrink={1}>
       <Flex align="center" direction="row" pb={4} pl={4}>
-        <Text color="lightGray" kind="regularBold" tabIndex={0}>
-          {label}
-        </Text>
-        <QuestionIcon name={name} role="tooltip" tabIndex={0}>
+        <Label htmlFor={id}>{label}</Label>
+        <QuestionIcon name={name} role="tooltip">
           <FaRegQuestionCircle color={colors.secondaryText4} />
           <div className="tooltip">{message}</div>
         </QuestionIcon>
@@ -83,6 +83,7 @@ export const TextInput = ({
                 <WebTextInput
                   colorName="white"
                   disabled={disabled}
+                  id={id}
                   placeholderTextColor="inputPlaceholder"
                   textAlign={textAlign}
                 />
@@ -91,6 +92,7 @@ export const TextInput = ({
               <BaseTextInput
                 {...props}
                 colorName="white"
+                id={id}
                 name={name}
                 onBlur={onBlur}
                 onChange={onChange}
@@ -159,4 +161,10 @@ const QuestionIcon = styled(Flex)<QuestionIconProps>`
   &:focus .tooltip {
     visibility: visible;
   }
+`;
+
+const Label = styled.label`
+  color: ${colors.lightGray};
+  font-size: 14px;
+  font-weight: 600;
 `;

@@ -19,6 +19,7 @@ describe("Add Node Form / Home interactions", () => {
     cy.visit("/");
   });
 
+  // different Add Node + buttons depending on whether the sidebar is open or not
   const openButton = (setting: "home" | "sidebar") => {
     if (setting === "home") {
       return cy.get(addNodeButtonHome);
@@ -39,7 +40,7 @@ describe("Add Node Form / Home interactions", () => {
   const tagsInput = () => cy.get(tags);
   const toastBody = () => cy.get(toast);
 
-  it("clicking the Add Node + button opens the Add Node Form modal", () => {
+  it("clicking the Add Node + button opens the Add Node Form modal, X button closes it", () => {
     openButton("home")
       .should("be.visible")
       .and("be.enabled")
@@ -47,10 +48,6 @@ describe("Add Node Form / Home interactions", () => {
       .click();
 
     modal().should("be.visible").and("contain.text", "Add Node");
-  });
-
-  it("clicking the X button closes the Add Node Form modal", () => {
-    openButton("home").click();
 
     closeButton().click({ waitForAnimations: false });
 
