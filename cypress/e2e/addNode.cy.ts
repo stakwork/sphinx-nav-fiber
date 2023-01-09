@@ -57,7 +57,7 @@ describe("Add Node Form / Home interactions", () => {
   it("submitting the form with all fields empty yields 5 error messages", () => {
     openButton("home").click();
 
-    submitButton().click();
+    submitButton().click({ waitForAnimations: false });
 
     mainErrorMessage().should("not.be.visible").and("contain.text", "5 errors");
 
