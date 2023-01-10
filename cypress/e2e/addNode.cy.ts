@@ -45,7 +45,9 @@ describe("Add Node Form / Home interactions", () => {
       .should("be.visible")
       .and("be.enabled")
       .and("contain.text", "Add Node +")
-      .click();
+      .as("open_button");
+
+    cy.get("@open_button").click({ waitForAnimations: false });
 
     modal().should("be.visible").and("contain.text", "Add Node");
 
