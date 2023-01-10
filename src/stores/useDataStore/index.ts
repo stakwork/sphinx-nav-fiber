@@ -8,6 +8,7 @@ type DataStore = {
   cameraAnimation: gsap.core.Tween | null;
   categoryFilter: NodeType | null;
   data: GraphData | null;
+  graphRadius: number | null;
   hoveredNode: NodeExtended | null;
   isFetching: boolean;
   isTimestampLoaded: boolean;
@@ -16,6 +17,7 @@ type DataStore = {
   sphinxModalIsOpen: boolean;
   setCameraAnimation: (cameraAnimation: gsap.core.Tween | null) => void;
   fetchData: (search?: string | null) => void;
+  setGraphRadius: (graphRadius?: number | null) => void;
   setSelectedNode: (selectedNode: NodeExtended | null) => void;
   setSelectedTimestamp: (selectedTimestamp: NodeExtended | null) => void;
   setHoveredNode: (hoveredNode: NodeExtended | null) => void;
@@ -24,16 +26,18 @@ type DataStore = {
 
 const defaultData: Omit<
   DataStore,
-  | "setCameraAnimation"
   | "fetchData"
+  | "setCameraAnimation"
+  | "setHoveredNode"
   | "setSelectedNode"
   | "setSelectedTimestamp"
-  | "setHoveredNode"
   | "setSphinxModalOpen"
+  | "setGraphRadius"
 > = {
   cameraAnimation: null,
   categoryFilter: null,
   data: null,
+  graphRadius: null,
   hoveredNode: null,
   isFetching: false,
   isTimestampLoaded: false,
@@ -68,6 +72,7 @@ export const useDataStore = create<DataStore>((set, get) => ({
     set({ data: mockGraphData, isFetching: false });
   },
   setCameraAnimation: (cameraAnimation) => set({ cameraAnimation }),
+  setGraphRadius: (graphRadius) => set({ graphRadius }),
   setHoveredNode: (hoveredNode) => set({ hoveredNode }),
   setSelectedNode: (selectedNode) =>
     set({ isTimestampLoaded: false, selectedNode }),
