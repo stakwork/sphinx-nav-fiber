@@ -6,6 +6,7 @@ import { saveSearchTerm } from "~/utils/relayHelper/index";
 
 type DataStore = {
   cameraAnimation: gsap.core.Tween | null;
+  graphRadius: number | null;
   data: GraphData | null;
   hoveredNode: NodeExtended | null;
   isFetching: boolean;
@@ -15,6 +16,7 @@ type DataStore = {
   sphinxModalIsOpen: boolean;
   setCameraAnimation: (cameraAnimation: gsap.core.Tween | null) => void;
   fetchData: (search?: string | null) => void;
+  setGraphRadius: (graphRadius?: number | null) => void;
   setSelectedNode: (selectedNode: NodeExtended | null) => void;
   setSelectedTimestamp: (selectedTimestamp: NodeExtended | null) => void;
   setHoveredNode: (hoveredNode: NodeExtended | null) => void;
@@ -24,6 +26,7 @@ type DataStore = {
 const defaultData = {
   cameraAnimation: null,
   data: null,
+  graphRadius: null,
   hoveredNode: null,
   isFetching: false,
   isTimestampLoaded: false,
@@ -58,6 +61,7 @@ export const useDataStore = create<DataStore>((set, get) => ({
     set({ data: mockGraphData, isFetching: false });
   },
   setCameraAnimation: (cameraAnimation) => set({ cameraAnimation }),
+  setGraphRadius: (graphRadius) => set({ graphRadius }),
   setHoveredNode: (hoveredNode) => set({ hoveredNode }),
   setSelectedNode: (selectedNode) =>
     set({ isTimestampLoaded: false, selectedNode }),

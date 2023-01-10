@@ -21,8 +21,11 @@ const initialLoadTargetPosition = new THREE.Vector3(-144, 173, 0);
 export const Controls = () => {
 
   const initialLoad = useRef(true);
+  const canvasElement = useRef<HTMLElement | null>(null);
 
-  const [cameraAnimation, setCameraAnimation] = useDataStore((s) => [
+
+  const [graphRadius, cameraAnimation, setCameraAnimation] = useDataStore((s) => [
+    s.graphRadius,
     s.cameraAnimation,
     s.setCameraAnimation,
   ]);
@@ -31,8 +34,35 @@ export const Controls = () => {
 
   const cameraControlsRef = useRef<CameraControls | null>(null);
 
+  const [dimensions, setDimensions] = useState({ height: 0, width: 0 });
+
+  useEffect(() => {
+    canvasElement.current = document.getElementById("universe-canvas");
+
+    const getDimensions = () => ({
+      height: canvasElement.current?.offsetHeight || 0,
+      width: canvasElement.current?.offsetWidth || 0,
+    });
+
+    const handleResize = () => {
+      setDimensions(getDimensions());
+    };
+
+    if (canvasElement.current) {
+      setDimensions(getDimensions());
+    }
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [canvasElement]);
+
   const doDollyTransition = useCallback(
     (event: WheelEvent | PointerEvent | TouchEvent | WebKitGestureEvent) => {
+      const {width, height} = dimensions;
+
       if (!cameraControlsRef.current) {
         return;
       }
@@ -43,39 +73,47 @@ export const Controls = () => {
 
       const distance = cameraControlsRef.current?.distance;
 
-      let dollyStep = distance < 3000 ? 40 : 140;
 
-      if ("deltaY" in event && event.deltaY > 0) {
-        dollyStep *= -1;
+      if (graphRadius && distance > graphRadius) {
+        const direction = (event as any).deltaY < 0 ? 1 : -1;
+        const deltaX = (event as any).layerX - width / 2;
+        const deltaY = (event as any).layerY - height / 2;
+
+        const coeffX = (direction * deltaX * distance) / graphRadius / graphRadius * 2;
+        const coeffY = (direction * deltaY * distance) / graphRadius / graphRadius * 2;
+
+        cameraControlsRef.current.rotate(coeffX * THREE.MathUtils.DEG2RAD, coeffY * THREE.MathUtils.DEG2RAD, true);
+
+        cameraControlsRef.current?.setTarget(0, 0, 0);
+
+        cameraControlsRef.current.dollyToCursor = false;
+      } else {
+        cameraControlsRef.current.dollyToCursor = true;
       }
-
-      cameraControlsRef.current?.dolly(dollyStep, true);
     },
-    []
+    [dimensions, graphRadius]
   );
 
-  const rotateWorld = useCallback(() => {
-    cameraAnimation?.kill();
+   const rotateWorld = useCallback(() => {
+     cameraAnimation?.kill();
 
-    if (cameraControlsRef.current) {
-      const rotateCycle = gsap.to(cameraControlsRef.current?.camera, {
-        azimuthAngle:
-          (cameraControlsRef?.current?.azimuthAngle || 0) +
-          360 * THREE.MathUtils.DEG2RAD,
-        duration: 280,
-        // https://greensock.com/ease-visualizer/
-        ease: "power",
-        overwrite: true,
-        paused: true,
-      });
+     if (cameraControlsRef.current) {
+       const rotateCycle = gsap.to(cameraControlsRef.current?.camera, {
+         azimuthAngle: (cameraControlsRef?.current?.azimuthAngle || 0) + 360 * THREE.MathUtils.DEG2RAD,
+         duration: 280,
+         // https://greensock.com/ease-visualizer/
+         ease: "power",
+         overwrite: true,
+         paused: true,
+       });
 
-      rotateCycle.play(0);
+       rotateCycle.play(0);
 
-      setCameraAnimation(rotateCycle);
-    }
-  }, [cameraAnimation, setCameraAnimation]);
+       setCameraAnimation(rotateCycle);
+     }
+   }, [cameraAnimation, setCameraAnimation]);
 
-    const doIntroAnimation = useCallback(() => {
+   const doIntroAnimation = useCallback(() => {
     cameraAnimation?.kill();
 
     const cameraControls = cameraControlsRef?.current;
@@ -112,24 +150,26 @@ export const Controls = () => {
   }, [cameraAnimation, rotateWorld, setCameraAnimation]);
 
   useEffect(() => {
-    if (cameraControlsRef.current) {
-      cameraControlsRef.current.minDistance = 200;
-      cameraControlsRef.current.maxDistance = Infinity;
-      cameraControlsRef.current.minPolarAngle = -Infinity;
-      cameraControlsRef.current.maxPolarAngle = Infinity;
+    if (cameraControlsRef.current && graphRadius) {
+      cameraControlsRef.current.minDistance = 1;
+      cameraControlsRef.current.maxDistance = cameraControlsRef.current.getDistanceToFitSphere(graphRadius + 100);
+      cameraControlsRef.current.minPolarAngle = -Math.PI;
+      cameraControlsRef.current.maxPolarAngle = Math.PI;
       cameraControlsRef.current.dollySpeed = 0.2;
       cameraControlsRef.current.dampingFactor = 0.1;
-      cameraControlsRef.current.infinityDolly = true;
+      cameraControlsRef.current.infinityDolly = false;
       cameraControlsRef.current.dollyToCursor = true;
+      cameraControlsRef.current.boundaryEnclosesCamera = true;
     }
 
     doIntroAnimation();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [graphRadius]);
 
   useGesture(
     {
       onPinch: ({ event }) => doDollyTransition(event),
+      onWheel: ({ event }) => doDollyTransition(event),
     },
     {
       target: document.getElementById("universe-canvas") || undefined,

@@ -1,13 +1,9 @@
 import { Segments } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
-import {
-  forceCenter,
-  forceLink,
-  forceManyBody,
-  forceSimulation,
-} from "d3-force-3d";
-import { useEffect } from "react";
+import { forceCenter, forceLink, forceManyBody, forceSimulation } from "d3-force-3d";
+import { useEffect, useRef } from "react";
 import { useGraphData } from "~/components/DataRetriever";
+import { useDataStore } from "~/stores/useDataStore";
 import { GraphData, NodeExtended } from "~/types";
 import { Cubes } from "./Cubes";
 import { Segment } from "./Segment";
@@ -57,6 +53,7 @@ const timeLimit = 5;
 
 export const Graph = () => {
   const data = useGraphData();
+  const [graphRadius, setGraphRadius] = useDataStore((s) => [s.graphRadius, s.setGraphRadius]);
 
   const { clock } = useThree();
 
@@ -73,22 +70,42 @@ export const Graph = () => {
     // re-heat the simulation
     layout.alpha(1).restart();
 
+    if (graphRadius) {
+      setGraphRadius(null);
+    }
+
+    layout.tick([200]);
+
     clock.start();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [clock, data]);
 
-  useFrame((state) => {
-    const elapsedTime = state.clock.getElapsedTime();
+  useFrame(() => {
+    if (layout.alpha() < 1e-2) {
 
-    if (elapsedTime > timeLimit) {
-      currentTick = 0;
+      if (!graphRadius) {
+        const nodes = layout.nodes();
 
-      return;
-    }
+        let radius = Math.max(...[Math.abs(nodes[0].x), Math.max(nodes[0].y), Math.max(nodes[0].z)]);
 
-    if (layout.alpha() > 1e-2 && currentTick < maxTicks) {
-      layout.tick();
-      currentTick += 1;
+        for (let i = 1; i < nodes.length; i += 1) {
+          const { x, y, z } = nodes[i];
+
+          if (Math.abs(x) > radius) {
+            radius = Math.abs(x);
+          }
+
+          if (Math.abs(y) > radius) {
+            radius = Math.abs(y);
+          }
+
+          if (Math.abs(z) > radius) {
+            radius = Math.abs(z);
+          }
+        }
+
+        setGraphRadius(radius);
+      }
     }
   });
 
@@ -107,15 +124,14 @@ export const Graph = () => {
         limit={data.links.length}
         lineWidth={0.15}
       >
-        {(data.links as unknown as GraphData<NodeExtended>["links"]).map(
-          (link, index) => (
-            <Segment
-              // eslint-disable-next-line react/no-array-index-key
-              key={index.toString()}
-              link={link}
-            />
-          )
-        )}
+        {(data.links as unknown as GraphData<NodeExtended>["links"])
+          .map((link, index) => (
+          <Segment
+            // eslint-disable-next-line react/no-array-index-key
+            key={index.toString()}
+            link={link}
+          />
+        ))}
       </Segments>
     </>
   );
