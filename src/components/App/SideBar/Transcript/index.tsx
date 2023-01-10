@@ -1,9 +1,33 @@
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
+import { Button } from "~/components/Button";
 import { colors } from "~/utils/colors";
 import { MENU_WIDTH } from "~/components/App/SideBar";
 import { Flex } from "~/components/common/Flex";
 import { useAppStore } from "~/stores/useAppStore";
 import { useSelectedNode } from "~/stores/useDataStore";
+
+const copiedAnimation = keyframes`
+  0% { opacity: 0; }
+  100% { opacity: 1; } 
+`;
+
+const copyNodeText = (text: string | undefined) => {
+  if (text === undefined) {
+    return;
+  }
+
+  navigator.clipboard.writeText(text);
+
+  const copyButton = document.querySelector(".copy-button");
+
+  if (copyButton) {
+    copyButton.classList.add("copied");
+
+    setTimeout(() => {
+      copyButton.classList.remove("copied");
+    }, 1000);
+  }
+};
 
 export const Transcript = () => {
   const [transcriptIsOpen, setTranscriptOpen] = useAppStore((s) => [
@@ -29,6 +53,17 @@ export const Transcript = () => {
           close
         </span>
       </CloseButton>
+      {selectedNode?.text && (
+        <CopyButton
+          className="copy-button"
+          kind="small"
+          onPointerDown={() => copyNodeText(selectedNode?.text)}
+          type="button"
+        >
+          Copy text
+        </CopyButton>
+      )}
+
       <Box py={40}>&quot;{selectedNode?.text || "No transcript"}&quot;</Box>
     </Wrapper>
   );
@@ -56,6 +91,23 @@ const CloseButton = styled(Flex).attrs({
 
   &:hover {
     color: ${colors.lightBlue500};
+  }
+`;
+
+const CopyButton = styled(Button)`
+  position: fixed;
+  top: 10px;
+
+  &.copied::after {
+    content: "Copied!";
+    position: absolute;
+    top: 9px;
+    right: -55px;
+    background: ${colors.lightGray};
+    border-radius: 4px;
+    padding: 2px 3px;
+    color: ${colors.white};
+    animation: ${copiedAnimation} 0.2s ease-in-out;
   }
 `;
 
