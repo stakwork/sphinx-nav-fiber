@@ -10,6 +10,7 @@ type Props = {
   className?: string;
   kind?: ButtonKind;
   onClick?: () => void;
+  onPointerDown?: () => void;
   shape?: "rounded" | "squared";
   textColor?: ColorName;
   type?: "submit" | "button";
@@ -82,6 +83,7 @@ export const Button = ({
   disabled,
   kind = "regular",
   onClick,
+  onPointerDown,
   shape = "squared",
   textColor = "white",
   type,
@@ -93,6 +95,7 @@ export const Button = ({
     disabled={disabled}
     kind={kind}
     onClick={onClick}
+    onPointerDown={onPointerDown}
     shape={shape}
     type={type}
   >
