@@ -19,7 +19,7 @@ const CloseButton = styled(Flex)`
 
 const Shield = styled(Flex)`
   span {
-    font-size: 50px;
+    font-size: 54px;
     color: ${colors.modalShield};
   }
 `;
@@ -54,10 +54,8 @@ export const BudgetExplanationModal = ({ onClose }: Props) => {
           <span className="material-icons">verified_user</span>
         </Shield>
 
-        <Flex pb={10} pt={16}>
-          <Text color="modalAuth" kind="bigHeading">
-            Authorize
-          </Text>
+        <Flex pb={10} pt={12}>
+          <AuthorizeHeader>Authorize</AuthorizeHeader>
         </Flex>
       </Flex>
 
@@ -69,22 +67,23 @@ export const BudgetExplanationModal = ({ onClose }: Props) => {
         </Text>
       </Flex>
 
-      <Flex pt={94}>
-        <BudgetButton
-          background="modalButton"
-          kind="big"
-          onClick={handlePress}
-          shape="rounded"
-          textColor="modalAuthText"
-        >
-          SET BUDGET
-        </BudgetButton>
-      </Flex>
+      <ButtonWrap>
+        <Button kind="small" onClick={handlePress}>
+          Next
+        </Button>
+      </ButtonWrap>
+      <Flex pt={94} />
     </BaseModal>
   );
 };
 
-const BudgetButton = styled(Button)`
-  width: 92%;
+const ButtonWrap = styled(Flex)`
   margin: 0 auto;
+`;
+
+const AuthorizeHeader = styled(Text).attrs({
+  color: "modalAuth",
+  kind: "bigHeading",
+})`
+  font-size: 32px;
 `;
