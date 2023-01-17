@@ -39,6 +39,7 @@ export const colors = {
   modalBg: "rgb(25, 33, 40)",
   modalButton: "#4a6abf",
   modalShield: "#618aff",
+  modalWhiteOverlayBg: "rgba(255, 255, 255, 0.2)",
   placeholderText: "rgb(85, 97, 113)",
   primaryBlueBorder: "rgb(80, 120, 242)",
   primaryButton: "rgb(130, 180, 255)",

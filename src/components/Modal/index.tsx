@@ -63,7 +63,7 @@ const Bg = styled(Flex)<{ hideBg?: boolean }>`
   ${({ hideBg }) =>
     !hideBg &&
     css`
-      background-color: rgba(255, 255, 255, 0.2);
+      background-color: ${colors.modalWhiteOverlayBg};
     `}
 `;
 
