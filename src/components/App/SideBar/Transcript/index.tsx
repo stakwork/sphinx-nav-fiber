@@ -80,6 +80,7 @@ const Wrapper = styled(Flex)`
   transition: opacity 0.2s;
   background: #f0f6ff;
   box-shadow: 4px 8px 8px rgba(0, 0, 0, 0.2);
+  z-index: 100;
 `;
 
 const CloseButton = styled(Flex).attrs({
