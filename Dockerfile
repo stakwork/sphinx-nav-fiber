@@ -1,13 +1,13 @@
-FROM node:16
+FROM node:16 as build
+
 
 # Create app directory
 WORKDIR /usr/src/app
 
-COPY package*.json ./
+COPY . .
 
 RUN yarn install
+RUN yarn run build
 
-
-EXPOSE 3000
-
-CMD [ "yarn", "start" ]
+FROM nginx:alpine
+COPY --from=build /usr/src/app/build /usr/share/nginx/html
