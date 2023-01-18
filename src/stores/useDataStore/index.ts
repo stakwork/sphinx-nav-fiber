@@ -1,11 +1,12 @@
 import create from "zustand";
 import { getMockGraphData } from "~/mocks/getMockGraphData";
 import { fetchGraphData } from "~/network/fetchGraphData";
-import { GraphData, NodeExtended } from "~/types";
+import { GraphData, NodeExtended, NodeType } from "~/types";
 import { saveSearchTerm } from "~/utils/relayHelper/index";
 
 type DataStore = {
   cameraAnimation: gsap.core.Tween | null;
+  categoryFilter: NodeType | null;
   data: GraphData | null;
   hoveredNode: NodeExtended | null;
   isFetching: boolean;
@@ -21,8 +22,17 @@ type DataStore = {
   setSphinxModalOpen: (_: boolean) => void;
 };
 
-const defaultData = {
+const defaultData: Omit<
+  DataStore,
+  | "setCameraAnimation"
+  | "fetchData"
+  | "setSelectedNode"
+  | "setSelectedTimestamp"
+  | "setHoveredNode"
+  | "setSphinxModalOpen"
+> = {
   cameraAnimation: null,
+  categoryFilter: null,
   data: null,
   hoveredNode: null,
   isFetching: false,

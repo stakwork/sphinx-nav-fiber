@@ -55,7 +55,10 @@ const style = css<Props>`
   `}
 `;
 
-export const Text = styled.span<Props>`
+export const Text = styled.span.withConfig({
+  shouldForwardProp: (prop, defaultShouldForwardProp) =>
+    !["kind"].includes(prop) && defaultShouldForwardProp(prop),
+})<Props>`
   ${style}
 
   ${({ color = "primaryText1" }) => `color: ${colors[color]};`}
