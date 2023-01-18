@@ -12,20 +12,20 @@ const CloseButton = styled(Flex)`
   cursor: pointer;
 
   span {
-    font-size: 24px;
+    font-size: 18px;
     color: ${colors.primaryRed};
   }
 `;
 
 const Shield = styled(Flex)`
   span {
-    font-size: 80px;
-    color: ${colors.primaryBlueBorder};
+    font-size: 54px;
+    color: ${colors.modalShield};
   }
 `;
 
 type Props = {
-  onClose: () => void;
+  onClose?: () => void;
 };
 
 export const BudgetExplanationModal = ({ onClose }: Props) => {
@@ -35,9 +35,7 @@ export const BudgetExplanationModal = ({ onClose }: Props) => {
     useAppStore.setState({ hasBudgetExplanationModalBeSeen: true });
 
     close();
-
-    onClose();
-  }, [close, onClose]);
+  }, [close]);
 
   return (
     <BaseModal
@@ -45,7 +43,7 @@ export const BudgetExplanationModal = ({ onClose }: Props) => {
       id="budgetExplanation"
       kind="small"
     >
-      <Flex align="flex-end" pb={16}>
+      <Flex align="flex-end" pb={14}>
         <CloseButton onClick={close}>
           <span className="material-icons">close</span>
         </CloseButton>
@@ -56,8 +54,8 @@ export const BudgetExplanationModal = ({ onClose }: Props) => {
           <span className="material-icons">verified_user</span>
         </Shield>
 
-        <Flex pt={16}>
-          <Text kind="hugeHeading">Authorize</Text>
+        <Flex pb={10} pt={12}>
+          <AuthorizeHeader>Authorize</AuthorizeHeader>
         </Flex>
       </Flex>
 
@@ -69,11 +67,23 @@ export const BudgetExplanationModal = ({ onClose }: Props) => {
         </Text>
       </Flex>
 
-      <Flex pt={8}>
-        <Button kind="big" onClick={handlePress}>
-          Set Budget
+      <ButtonWrap>
+        <Button kind="small" onClick={handlePress}>
+          Next
         </Button>
-      </Flex>
+      </ButtonWrap>
+      <Flex pt={94} />
     </BaseModal>
   );
 };
+
+const ButtonWrap = styled(Flex)`
+  margin: 0 auto;
+`;
+
+const AuthorizeHeader = styled(Text).attrs({
+  color: "modalAuth",
+  kind: "bigHeading",
+})`
+  font-size: 32px;
+`;

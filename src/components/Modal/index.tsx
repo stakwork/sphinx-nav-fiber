@@ -19,7 +19,8 @@ const getModalKindStyles = ({ kind = "regular" }: Pick<Props, "kind">) => {
   switch (kind) {
     case "small":
       return css`
-        width: 320px;
+        width: 300px;
+        height: 502px;
       `;
     case "large":
       return css`
@@ -39,12 +40,6 @@ const ModalContainer = styled(Flex)<Pick<Props, "kind">>`
   position: relative;
 
   ${getModalKindStyles}
-
-  ${media.smallOnly`
-    width: 100%;
-    height: 100%;
-    border-radius: 0;
-  `}
 `;
 
 const fadeAnimation = keyframes`
@@ -68,7 +63,7 @@ const Bg = styled(Flex)<{ hideBg?: boolean }>`
   ${({ hideBg }) =>
     !hideBg &&
     css`
-      background-color: ${colors.gray300};
+      background-color: ${colors.modalWhiteOverlayBg};
     `}
 `;
 
@@ -105,9 +100,8 @@ export const BaseModal = ({
         hideBg={hideBg}
         justify="center"
         onClick={(e) => {
-          if(!preventOutsideClose) {
+          if (!preventOutsideClose) {
             e.stopPropagation();
-            onClose?.();
 
             close();
           }
@@ -115,13 +109,13 @@ export const BaseModal = ({
       >
         <ModalContainer
           background={background}
-          borderRadius={16}
+          borderRadius={9}
           kind={kind}
           onClick={(e) => {
             e.stopPropagation();
           }}
-          px={24}
-          py={32}
+          px={20}
+          py={20}
         >
           {children}
         </ModalContainer>

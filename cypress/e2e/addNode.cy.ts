@@ -99,7 +99,7 @@ describe("Add Node Form / Home interactions", () => {
     modal().should("not.exist");
 
     // Waiting for Toast opacity keyframe to complete
-    cy.wait(2000);
+    cy.wait(3000);
 
     toastBody()
       .should("be.visible")
@@ -128,7 +128,7 @@ describe("Add Node Form / Home interactions", () => {
     cy.wait("@add_node");
 
     // Waiting for Toast opacity keyframe to complete
-    cy.wait(2000);
+    cy.wait(3000);
 
     toastBody()
       .should("be.visible")

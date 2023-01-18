@@ -98,11 +98,7 @@ export const App = () => {
 
         <StyledToast />
 
-        <BudgetExplanationModal
-          onClose={() => {
-            runSearch();
-          }}
-        />
+        <BudgetExplanationModal />
       </Wrapper>
     </>
   );
