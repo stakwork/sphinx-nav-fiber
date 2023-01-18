@@ -1,13 +1,9 @@
 import { Segments } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
-import {
-  forceCenter,
-  forceLink,
-  forceManyBody,
-  forceSimulation,
-} from "d3-force-3d";
-import { useEffect } from "react";
+import { forceCenter, forceLink, forceManyBody, forceSimulation } from "d3-force-3d";
+import { useEffect, useRef } from "react";
 import { useGraphData } from "~/components/DataRetriever";
+import { useAppStore } from "~/stores/useAppStore";
 import { GraphData, NodeExtended } from "~/types";
 import { Cubes } from "./Cubes";
 import { Segment } from "./Segment";
@@ -46,7 +42,6 @@ const layout = forceSimulation()
   .force("charge", forceManyBody())
   .force("dagRadial", null)
   .velocityDecay(0.2)
-  .alphaDecay(0.0228)
   .stop();
 
 const maxTicks = 200;
@@ -57,6 +52,7 @@ const timeLimit = 5;
 
 export const Graph = () => {
   const data = useGraphData();
+  const searchTerm = useAppStore((s) => s.currentSearch);
 
   const { clock } = useThree();
 
@@ -70,10 +66,16 @@ export const Graph = () => {
       .id((d: NodeExtended) => d.id)
       .links(data.links);
 
-    // re-heat the simulation
-    layout.alpha(1).restart();
+    if(searchTerm) {
+      // re-heat the simulation
+      layout.alpha(1).restart();
+
+    } else {
+      layout.alpha(0).restart();
+    }
 
     clock.start();
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [clock, data]);
 
@@ -107,15 +109,13 @@ export const Graph = () => {
         limit={data.links.length}
         lineWidth={0.15}
       >
-        {(data.links as unknown as GraphData<NodeExtended>["links"]).map(
-          (link, index) => (
-            <Segment
-              // eslint-disable-next-line react/no-array-index-key
-              key={index.toString()}
-              link={link}
-            />
-          )
-        )}
+        {(data.links as unknown as GraphData<NodeExtended>["links"]).map((link, index) => (
+          <Segment
+            // eslint-disable-next-line react/no-array-index-key
+            key={index.toString()}
+            link={link}
+          />
+        ))}
       </Segments>
     </>
   );
