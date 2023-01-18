@@ -70,10 +70,11 @@ export const Graph = () => {
       // re-heat the simulation
       layout.alpha(1).restart();
 
-      clock.start();
     } else {
-      layout.alpha(0);
+      layout.alpha(0).restart();
     }
+
+    clock.start();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [clock, data]);

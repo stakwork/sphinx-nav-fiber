@@ -7,8 +7,9 @@ import { saveSearchTerm } from "~/utils/relayHelper/index";
 type DataStore = {
   cameraAnimation: gsap.core.Tween | null;
   categoryFilter: NodeType | null;
-  data: GraphData | null;
+  disableCameraRotation: boolean;
   graphRadius: number | null;
+  data: GraphData | null;
   hoveredNode: NodeExtended | null;
   isFetching: boolean;
   isTimestampLoaded: boolean;
@@ -16,6 +17,7 @@ type DataStore = {
   selectedTimestamp: NodeExtended | null;
   sphinxModalIsOpen: boolean;
   setCameraAnimation: (cameraAnimation: gsap.core.Tween | null) => void;
+  setDisableCameraRotation: (rotation: boolean) => void;
   fetchData: (search?: string | null) => void;
   setGraphRadius: (graphRadius?: number | null) => void;
   setSelectedNode: (selectedNode: NodeExtended | null) => void;
@@ -28,6 +30,7 @@ const defaultData: Omit<
   DataStore,
   | "fetchData"
   | "setCameraAnimation"
+  | "setDisableCameraRotation"
   | "setHoveredNode"
   | "setSelectedNode"
   | "setSelectedTimestamp"
@@ -37,6 +40,7 @@ const defaultData: Omit<
   cameraAnimation: null,
   categoryFilter: null,
   data: null,
+  disableCameraRotation: false,
   graphRadius: 3056, // calculated from initial load
   hoveredNode: null,
   isFetching: false,
@@ -72,6 +76,8 @@ export const useDataStore = create<DataStore>((set, get) => ({
     set({ data: mockGraphData, isFetching: false });
   },
   setCameraAnimation: (cameraAnimation) => set({ cameraAnimation }),
+  setDisableCameraRotation: (rotation) =>
+    set({ disableCameraRotation: rotation }),
   setGraphRadius: (graphRadius) => set({ graphRadius }),
   setHoveredNode: (hoveredNode) => set({ hoveredNode }),
   setSelectedNode: (selectedNode) =>

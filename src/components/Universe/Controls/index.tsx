@@ -23,11 +23,12 @@ export const Controls = () => {
   const initialLoad = useRef(true);
   const canvasElement = useRef<HTMLElement | null>(null);
 
-
-  const [graphRadius, cameraAnimation, setCameraAnimation] = useDataStore((s) => [
+  const [graphRadius, cameraAnimation, setCameraAnimation, disableCameraRotation, setDisableCameraRotation] = useDataStore((s) => [
     s.graphRadius,
     s.cameraAnimation,
     s.setCameraAnimation,
+    s.disableCameraRotation,
+    s.setDisableCameraRotation,
   ]);
 
   const [selectedNode, data] = useDataStore((s) => [s.selectedNode, s.data]);
@@ -61,6 +62,10 @@ export const Controls = () => {
 
   const doDollyTransition = useCallback(
     (event: WheelEvent | PointerEvent | TouchEvent | WebKitGestureEvent) => {
+      if(!disableCameraRotation) {
+        setDisableCameraRotation(true);
+      }
+
       const {width, height} = dimensions;
 
       if (!cameraControlsRef.current) {
@@ -91,7 +96,7 @@ export const Controls = () => {
         cameraControlsRef.current.dollyToCursor = true;
       }
     },
-    [dimensions, graphRadius]
+    [dimensions, graphRadius, disableCameraRotation, setDisableCameraRotation]
   );
 
    const rotateWorld = useCallback(() => {
@@ -119,9 +124,6 @@ export const Controls = () => {
     const cameraControls = cameraControlsRef?.current;
 
     const animationProgress = {value: -244};
-
-
-
 
     const moveCycle = gsap.to(
       animationProgress, {
@@ -161,9 +163,9 @@ export const Controls = () => {
       cameraControlsRef.current.infinityDolly = false;
       cameraControlsRef.current.dollyToCursor = true;
       cameraControlsRef.current.boundaryEnclosesCamera = true;
-      doIntroAnimation();
     }
 
+    doIntroAnimation();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [graphRadius]);
 
@@ -243,6 +245,10 @@ export const Controls = () => {
   useEffect(() => {
     if (!cameraAnimation) {
       rotateWorld();
+    }
+
+    if (disableCameraRotation) {
+      setDisableCameraRotation(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
