@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import {
   AdaptiveDpr,
   AdaptiveEvents,
@@ -21,6 +22,8 @@ import { Graph } from "./Graph";
 import { Lights } from "./Lights";
 import { Tooltip } from "./Tooltip";
 
+const NODE_SELECTED_COLOR = 0xfbff00;
+
 const Content = () => (
   <>
     <color args={[colors.black]} attach="background" />
@@ -41,7 +44,12 @@ const Content = () => (
         />
 
         <Bloom luminanceThreshold={1} mipmapBlur />
-        <Outline blur edgeStrength={100} visibleEdgeColor={0xfbff00} />
+
+        <Outline
+          blur
+          edgeStrength={100}
+          visibleEdgeColor={NODE_SELECTED_COLOR}
+        />
       </EffectComposer>
     </Selection>
   </>

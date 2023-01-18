@@ -24,73 +24,81 @@ const getGeometry = (node: NodeExtended) => {
   }
 };
 
-export const Cube = memo(({ node, highlight }: { node: NodeExtended; highlight: boolean }) => {
-  const ref = useRef<THREE.Mesh | null>(null);
+export const Cube = memo(
+  ({ node, highlight }: { node: NodeExtended; highlight: boolean }) => {
+    const ref = useRef<THREE.Mesh | null>(null);
 
-  const material = useMaterial(node.image_url || "noimage.jpeg", highlight);
+    const material = useMaterial(node.image_url || "noimage.jpeg", highlight);
 
-  const selectedNode = useSelectedNode();
-  const setHoveredNode = useDataStore((s) => s.setHoveredNode);
+    const selectedNode = useSelectedNode();
+    const setHoveredNode = useDataStore((s) => s.setHoveredNode);
+    const categoryFilter = useDataStore((s) => s.categoryFilter);
 
-  // const isSelected = !!selectedNode && selectedNode.id === node.id;
+    const isSelected = !!selectedNode && selectedNode?.id === node.id;
 
-  const geometry = useMemo(() => getGeometry(node), [node]);
+    const isSelectedCategory = node.node_type === categoryFilter;
 
-  useFrame(() => {
-    if (selectedNode) {
-      material.toneMapped = false;
-    }
+    const geometry = useMemo(() => getGeometry(node), [node]);
 
-    ref.current?.position.set(node.x || 0, node.y || 0, node.z || 0);
-  });
+    useFrame(() => {
+      if (selectedNode) {
+        material.toneMapped = false;
+      }
 
-  const onPointerIn = useCallback((e: ThreeEvent<PointerEvent>) => {
-    e.stopPropagation();
+      ref.current?.position.set(node.x || 0, node.y || 0, node.z || 0);
+    });
 
-    document.body.style.cursor = "pointer";
+    const onPointerIn = useCallback(
+      (e: ThreeEvent<PointerEvent>) => {
+        e.stopPropagation();
 
-    if (ref.current) {
-      setHoveredNode(ref.current.userData as NodeExtended);
+        document.body.style.cursor = "pointer";
 
-      ref.current.scale.set(
-        ref.current.scale.x * 1.5,
-        ref.current.scale.x * 1.5,
-        ref.current.scale.x * 1.5
-      );
-    }
-  }, [setHoveredNode]);
+        if (ref.current) {
+          setHoveredNode(ref.current.userData as NodeExtended);
 
-  const onPointerOut = useCallback(() => {
-    document.body.style.cursor = "auto";
+          ref.current.scale.set(
+            ref.current.scale.x * 1.5,
+            ref.current.scale.x * 1.5,
+            ref.current.scale.x * 1.5
+          );
+        }
+      },
+      [setHoveredNode]
+    );
 
-    if (ref.current) {
-      setHoveredNode(null);
+    const onPointerOut = useCallback(() => {
+      document.body.style.cursor = "auto";
 
-      ref.current.scale.set(
-        ref.current.scale.x / 1.5,
-        ref.current.scale.x / 1.5,
-        ref.current.scale.x / 1.5
-      );
-    }
-  }, [setHoveredNode]);
+      if (ref.current) {
+        setHoveredNode(null);
 
-  return (
-    <Select enabled={!!selectedNode && node.id === selectedNode?.id}>
-      <mesh
-        ref={ref}
-        geometry={geometry}
-        material={material}
-        name={node.id}
-        onPointerOut={onPointerOut}
-        onPointerOver={onPointerIn}
-        userData={node}
-      >
-        {/* <Edges renderOrder={1000} visible={isSelected}>
+        ref.current.scale.set(
+          ref.current.scale.x / 1.5,
+          ref.current.scale.x / 1.5,
+          ref.current.scale.x / 1.5
+        );
+      }
+    }, [setHoveredNode]);
+
+    return (
+      <Select enabled={selectedNode ? isSelected : isSelectedCategory}>
+        <mesh
+          ref={ref}
+          geometry={geometry}
+          material={material}
+          name={node.id}
+          onPointerOut={onPointerOut}
+          onPointerOver={onPointerIn}
+          userData={node}
+        >
+          {/* <Edges renderOrder={1000} visible={isSelected}>
           <meshBasicMaterial color="white" depthTest={false} transparent />
         </Edges> */}
-      </mesh>
-    </Select>
-  );
-});
+        </mesh>
+      </Select>
+    );
+  }
+);
 
 Cube.displayName = "Cube";

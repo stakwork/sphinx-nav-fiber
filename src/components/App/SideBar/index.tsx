@@ -1,5 +1,6 @@
 import { useFormContext } from "react-hook-form";
 import styled from "styled-components";
+import { CategorySelect } from "~/components/App/SideBar/CategorySelect";
 import { Flex } from "~/components/common/Flex";
 import { Loader } from "~/components/common/Loader";
 import { SearchBar } from "~/components/SearchBar";
@@ -15,7 +16,6 @@ export const MENU_WIDTH = 433;
 type Props = { onSubmit?: () => void };
 
 const Content = ({ onSubmit }: Props) => {
-  const clearSearch = useAppStore((s) => s.clearSearch);
   const setFlagErrorOpen = useAppStore((s) => s.setFlagErrorOpen);
   const setRelevanceSelected = useAppStore((s) => s.setRelevanceSelected);
   const setSelectedNode = useDataStore((s) => s.setSelectedNode);
@@ -43,6 +43,7 @@ const Content = ({ onSubmit }: Props) => {
           </span>
         </CloseButton>
       </SearchWrapper>
+
       <CollapseButton
         onClick={() => {
           setSidebarOpen(false);
@@ -56,6 +57,10 @@ const Content = ({ onSubmit }: Props) => {
       {isLoading ? <Loader color="primaryText1" /> : <View />}
 
       <Transcript />
+
+      <CategoryWrapper>
+        <CategorySelect />
+      </CategoryWrapper>
     </Wrapper>
   );
 };
@@ -123,4 +128,14 @@ const CollapseButton = styled(Flex).attrs({
   &:hover {
     background-color: ${colors.gray300};
   }
+`;
+
+const CategoryWrapper = styled(Flex).attrs({
+  align: "center",
+  justify: "center",
+  p: 5,
+})`
+  position: absolute;
+  left: ${MENU_WIDTH + 10}px;
+  top: 10px;
 `;

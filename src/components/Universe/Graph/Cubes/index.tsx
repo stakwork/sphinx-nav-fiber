@@ -15,12 +15,18 @@ export const Cubes = memo(() => {
   const handleSelect = useCallback((nodes: Object3D[]) => {
     const node = nodes?.[0];
 
-    useDataStore.getState().setSelectedNode((node?.userData as NodeExtended) || null);
+    useDataStore
+      .getState()
+      .setSelectedNode((node?.userData as NodeExtended) || null);
   }, []);
 
   const shouldHighlightPartial =
-    searchTerm && !data.nodes
-      .some((i) => i.node_type === "guest" && searchTerm.toLowerCase() === i.label.toLowerCase());
+    searchTerm &&
+    !data.nodes.some(
+      (i) =>
+        i.node_type === "guest" &&
+        searchTerm.toLowerCase() === i.label.toLowerCase()
+    );
 
   return (
     <Select onChange={handleSelect}>
@@ -31,8 +37,12 @@ export const Cubes = memo(() => {
           if (shouldHighlightPartial) {
             highlight = searchTerm
               .split(" ")
-                .some((i) => node.label.toLowerCase()
-                  .match(new RegExp(`\\b${i.toLowerCase()}\\b`)) !== null);
+              .some(
+                (i) =>
+                  node.label
+                    .toLowerCase()
+                    .match(new RegExp(`\\b${i.toLowerCase()}\\b`)) !== null
+              );
           } else {
             highlight = node.label.toLowerCase() === searchTerm.toLowerCase();
           }

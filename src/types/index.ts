@@ -2,9 +2,9 @@
 import { Mesh } from "three";
 
 export type FetchDataResponse = {
-  exact: Node[],
-  related: Node[]
-}
+  exact: Node[];
+  related: Node[];
+};
 
 export type Node = {
   boost?: number | null;
@@ -57,8 +57,15 @@ export type Guests = {
   ref_id: string;
   profile_picture: string;
   twitter_handle: string;
-}
+};
 
-export type NodeType = "clip" | "episode" | "guest" | "show" | "topic";
+export const nodeTypes = ["clip", "episode", "guest", "show", "topic"] as const;
 
-export type Type = "twitter" | "youtube" | "guest" | "podcast" | "twitter_space";
+export type NodeType = typeof nodeTypes[number];
+
+export type Type =
+  | "twitter"
+  | "youtube"
+  | "guest"
+  | "podcast"
+  | "twitter_space";
