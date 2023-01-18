@@ -37,7 +37,7 @@ const defaultData: Omit<
   cameraAnimation: null,
   categoryFilter: null,
   data: null,
-  graphRadius: null,
+  graphRadius: 3056, // calculated from initial load
   hoveredNode: null,
   isFetching: false,
   isTimestampLoaded: false,

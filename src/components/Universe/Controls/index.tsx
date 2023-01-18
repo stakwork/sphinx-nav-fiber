@@ -79,8 +79,8 @@ export const Controls = () => {
         const deltaX = (event as any).layerX - width / 2;
         const deltaY = (event as any).layerY - height / 2;
 
-        const coeffX = (direction * deltaX * distance) / graphRadius / graphRadius * 2;
-        const coeffY = (direction * deltaY * distance) / graphRadius / graphRadius * 2;
+        const coeffX = (direction * deltaX * distance) / graphRadius / graphRadius * 4;
+        const coeffY = (direction * deltaY * distance) / graphRadius / graphRadius * 4;
 
         cameraControlsRef.current.rotate(coeffX * THREE.MathUtils.DEG2RAD, coeffY * THREE.MathUtils.DEG2RAD, true);
 
@@ -150,9 +150,10 @@ export const Controls = () => {
   }, [cameraAnimation, rotateWorld, setCameraAnimation]);
 
   useEffect(() => {
+    // graphRadius is calculated from initial graph render
     if (cameraControlsRef.current && graphRadius) {
       cameraControlsRef.current.minDistance = 1;
-      cameraControlsRef.current.maxDistance = cameraControlsRef.current.getDistanceToFitSphere(graphRadius + 100);
+      cameraControlsRef.current.maxDistance = cameraControlsRef.current.getDistanceToFitSphere(graphRadius + 200);
       cameraControlsRef.current.minPolarAngle = -Math.PI;
       cameraControlsRef.current.maxPolarAngle = Math.PI;
       cameraControlsRef.current.dollySpeed = 0.2;
@@ -160,9 +161,9 @@ export const Controls = () => {
       cameraControlsRef.current.infinityDolly = false;
       cameraControlsRef.current.dollyToCursor = true;
       cameraControlsRef.current.boundaryEnclosesCamera = true;
+      doIntroAnimation();
     }
 
-    doIntroAnimation();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [graphRadius]);
 
