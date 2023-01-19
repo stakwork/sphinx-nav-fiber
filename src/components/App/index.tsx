@@ -26,9 +26,17 @@ export const App = () => {
   const selectedNode = useSelectedNode();
   const setSidebarOpen = useAppStore((s) => s.setSidebarOpen);
 
-  const [searchTerm, setCurrentSearch, setRelevanceSelected] = useAppStore(
-    (s) => [s.currentSearch, s.setCurrentSearch, s.setRelevanceSelected]
-  );
+  const [
+    searchTerm,
+    setCurrentSearch,
+    setRelevanceSelected,
+    setTranscriptOpen,
+  ] = useAppStore((s) => [
+    s.currentSearch,
+    s.setCurrentSearch,
+    s.setRelevanceSelected,
+    s.setTranscriptOpen,
+  ]);
 
   const hasBudgetExplanationModalBeSeen = useAppStore(
     (s) => s.hasBudgetExplanationModalBeSeen
@@ -41,6 +49,7 @@ export const App = () => {
   const form = useForm<{ search: string }>({ mode: "onChange" });
 
   const handleSubmit = form.handleSubmit(({ search }) => {
+    setTranscriptOpen(false);
     setSelectedNode(null);
     setRelevanceSelected(false);
     setCurrentSearch(search);
