@@ -16,7 +16,7 @@ const p = new THREE.Vector3();
 
 const introAnimationTargetPosition = new THREE.Vector3(-1900, -2200, -2800);
 
-const initialLoadTargetPosition = new THREE.Vector3(-144, 173, 0);
+const initialLoadTargetPosition = new THREE.Vector3(0, 0, 0);
 
 export const Controls = () => {
 

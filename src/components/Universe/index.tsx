@@ -22,7 +22,7 @@ import { Graph } from "./Graph";
 import { Lights } from "./Lights";
 import { Tooltip } from "./Tooltip";
 
-const NODE_SELECTED_COLOR = 0xfbff00;
+const NODE_SELECTED_COLOR = 0x00ff00;
 
 const Content = () => (
   <>
@@ -47,7 +47,7 @@ const Content = () => (
 
         <Outline
           blur
-          edgeStrength={100}
+          edgeStrength={5}
           visibleEdgeColor={NODE_SELECTED_COLOR}
         />
       </EffectComposer>
