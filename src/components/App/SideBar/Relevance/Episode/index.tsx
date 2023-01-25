@@ -129,9 +129,11 @@ export const Episode = ({
           <Flex align="center" direction="row">
             {type && EpisodeTypeImages[type] && <img alt={type} className="type-image" src={EpisodeTypeImages[type]} />}
 
-            <Text color="primaryText1" kind="tiny">
-              {moment.unix(date || 0).format("ll")}
-            </Text>
+            {Boolean(date) && (
+              <Text color="primaryText1" kind="tiny">
+              {moment.unix(date).format("ll")}
+              </Text>
+            )}
           </Flex>
 
           {isSelected &&(
