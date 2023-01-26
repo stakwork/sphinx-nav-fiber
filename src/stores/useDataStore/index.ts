@@ -17,6 +17,7 @@ type DataStore = {
   selectedTimestamp: NodeExtended | null;
   sphinxModalIsOpen: boolean;
   setCameraAnimation: (cameraAnimation: gsap.core.Tween | null) => void;
+  setCategoryFilter: (categoryFilter: NodeType | null) => void;
   setDisableCameraRotation: (rotation: boolean) => void;
   fetchData: (search?: string | null) => void;
   setGraphRadius: (graphRadius?: number | null) => void;
@@ -30,6 +31,7 @@ const defaultData: Omit<
   DataStore,
   | "fetchData"
   | "setCameraAnimation"
+  | "setCategoryFilter"
   | "setDisableCameraRotation"
   | "setHoveredNode"
   | "setSelectedNode"
@@ -76,6 +78,7 @@ export const useDataStore = create<DataStore>((set, get) => ({
     set({ data: mockGraphData, isFetching: false });
   },
   setCameraAnimation: (cameraAnimation) => set({ cameraAnimation }),
+  setCategoryFilter: (categoryFilter) => set({ categoryFilter }),
   setDisableCameraRotation: (rotation) =>
     set({ disableCameraRotation: rotation }),
   setGraphRadius: (graphRadius) => set({ graphRadius }),

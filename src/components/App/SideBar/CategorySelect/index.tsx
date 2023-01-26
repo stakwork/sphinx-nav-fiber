@@ -1,50 +1,91 @@
 import { capitalize } from "lodash";
+import Select from "react-dropdown-select";
 import styled from "styled-components";
-import { Flex } from "~/components/common/Flex";
 import { useDataStore } from "~/stores/useDataStore";
-import { NodeType, nodeTypes } from "~/types";
+import { nodeTypes } from "~/types";
 
-const Select = styled.select`
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  outline: none;
-  border: none;
-  text-align: center;
+import { colors } from "~/utils/colors";
+
+type Option = {
+  label: string;
+  value: number;
+};
+
+const StyledSelect = styled(Select)`
+  &.react-dropdown-select {
+    background: ${colors.primaryBlueBorder};
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: ${colors.white};
+    border: none;
+    &:hover {
+      opacity: 1;
+      box-shadow: 0 0 10px 2px ${colors.primaryBlueBorder};
+    }
+
+    .react-dropdown-select-input::placeholder {
+      font-size: 14px;
+      font-weight: 600;
+      opacity: 0.7;
+      color: ${colors.white};
+    }
+  }
+
+  .react-dropdown-select-clear {
+    &:hover {
+      color: ${colors.white};
+      opacity: 0.7;
+    }
+  }
+
+  .react-dropdown-select-input {
+    width: calc(18ch + 5px);
+  }
+
+  .react-dropdown-select-dropdown {
+    background: ${colors.primaryBlueBorder};
+    border: none;
+    border-radius: 12px;
+    .react-dropdown-select-item {
+      border: none;
+      & + & {
+        border-bottom: 1px solid #fff !important;
+      }
+    }
+
+    .react-dropdown-select-item-selected {
+      background: ${colors.white};
+      color: ${colors.primaryBlueBorder};
+      border: none;
+    }
+  }
 `;
 
+const options = nodeTypes.map((i, index) =>
+  ({ label: capitalize(i === "guest" ? "person" : i), value: index }));
+
 export const CategorySelect = () => {
-  const categoryFilter = useDataStore((s) => s.categoryFilter);
+  const [categoryFilter, setCategoryFilter] = useDataStore((s) => [s.categoryFilter, s.setCategoryFilter]);
+
+  const selectedValue = categoryFilter ?
+    [{
+      label: categoryFilter === 'guest' ? 'Person' : capitalize(categoryFilter || ''),
+      value: nodeTypes.findIndex((i) => i === categoryFilter),
+    }] : [];
 
   return (
-    <Flex
-      align="center"
-      background="white"
-      borderRadius={8}
-      direction="row"
-      px={12}
-      py={8}
-    >
-      <Select
-        onChange={(e) => {
-          const type = e.target.value as NodeType | "none";
-
-          useDataStore.setState({
-            categoryFilter: type === "none" ? null : type,
-          });
-        }}
-        value={categoryFilter || "none"}
-      >
-        <option value="none">Node type</option>
-
-        {nodeTypes.map((type) => (
-          <option key={type} value={type}>
-            {capitalize(type)}
-          </option>
-        ))}
-      </Select>
-
-      <span className="material-icons-outlined">expand_more</span>
-    </Flex>
-  );
-};
+    <StyledSelect
+      clearable
+      onChange={(values) => {
+        setCategoryFilter(
+          values.length ? nodeTypes[(values[0] as Option).value] : null,
+        );
+      }}
+      options={options}
+      placeholder="Select node type"
+      searchable={false}
+      values={selectedValue}
+    />
+  );};

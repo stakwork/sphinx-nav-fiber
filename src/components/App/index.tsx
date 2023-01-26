@@ -45,6 +45,7 @@ export const App = () => {
   const fetchData = useDataStore((s) => s.fetchData);
   const setSphinxModalOpen = useDataStore((s) => s.setSphinxModalOpen);
   const setSelectedNode = useDataStore((s) => s.setSelectedNode);
+  const setCategoryFilter = useDataStore((s) => s.setCategoryFilter);
 
   const form = useForm<{ search: string }>({ mode: "onChange" });
 
@@ -53,6 +54,7 @@ export const App = () => {
     setSelectedNode(null);
     setRelevanceSelected(false);
     setCurrentSearch(search);
+    setCategoryFilter(null);
   });
 
   const showSideBar = !!selectedNode || isAuthorized;
