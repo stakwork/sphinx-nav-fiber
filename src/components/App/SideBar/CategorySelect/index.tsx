@@ -20,6 +20,18 @@ const StyledSelect = styled(Select)`
     font-weight: 600;
     color: ${colors.white};
     border: none;
+    width: 148px;
+
+    .react-dropdown-select-clear {
+      display: none;
+    }
+
+    &.hasSelected {
+      .react-dropdown-select-clear {
+        display: block;
+      }
+    }
+
     &:hover {
       opacity: 1;
       box-shadow: 0 0 10px 2px ${colors.primaryBlueBorder};
@@ -28,7 +40,6 @@ const StyledSelect = styled(Select)`
     .react-dropdown-select-input::placeholder {
       font-size: 14px;
       font-weight: 600;
-      opacity: 0.7;
       color: ${colors.white};
     }
   }
@@ -41,13 +52,20 @@ const StyledSelect = styled(Select)`
   }
 
   .react-dropdown-select-input {
-    width: calc(18ch + 5px);
+    width: 100%;
+  }
+
+  &.hasSelected {
+    .react-dropdown-select-input {
+      display: none;
+    }
   }
 
   .react-dropdown-select-dropdown {
     background: ${colors.primaryBlueBorder};
     border: none;
     border-radius: 12px;
+    width: 100%;
     .react-dropdown-select-item {
       border: none;
       & + & {
@@ -77,6 +95,7 @@ export const CategorySelect = () => {
 
   return (
     <StyledSelect
+      className={selectedValue.length ? 'hasSelected' : ''}
       clearable
       onChange={(values) => {
         setCategoryFilter(
