@@ -17,6 +17,8 @@ import { toast } from "react-toastify";
 import { ToastMessage } from "../common/Toast/toastMessage";
 import { NODE_ADD_SUCCESS, NODE_ADD_ERROR, isDevelopment } from "~/constants";
 import { ClipLoader } from "react-spinners";
+import { FaCheck } from "react-icons/fa";
+import { useState } from "react";
 
 const requiredRule = {
   required: {
@@ -35,7 +37,7 @@ const tagRule = {
 const timeRegex = /^\d{2}:\d{2}:\d{2}$/;
 
 const twitterOrYoutubeRegex =
-  /^(https:\/\/twitter.com\/[a-zA-Z0-9_]\/spaces\/.*)|(?:https?:\/\/)?(?:m\.|www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
+  /^(https:\/\/twitter.com\/[a-zA-Z0-9_]\/spaces\/.*)|(?:https?:\/\/)?(?:m\.|www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)|(https?|ftp|file):\/\/(www.)?(.*?)\.(mp3)?$/;
 
 const mainInfoMessage =
   'Come across an interesting or useful part of a video or audio you\'d like to share? You can add it to the knowledge graph here!\n\nEnter a valid link to the YouTube video or Twitter Space you were watching, choose a start and end timestamp to encompass the segment you found interesting or useful, provide a brief description of what the segment is about, and add topic tags that are relevant to the segment. Hit "Add node", and your clip will be added to the graph shortly.\n\nYour pubkey will be submitted with your clip, and any boosts your clip receives will go to you!';
@@ -52,13 +54,10 @@ const notify = (message: string) => {
   });
 };
 
-const handleSubmit = async (
-  data: FieldValues,
-  close: () => void,
-  reset: () => void
-) => {
+const handleSubmit = async (data: FieldValues, close: () => void, reset: () => void, withTimeStamps: boolean) => {
   const body: { [index: string]: any } = {
-    job_response: {
+    media_url: data.link,
+    ...(withTimeStamps ? {job_response: {
       tags: [
         {
           description: data.description,
@@ -67,8 +66,7 @@ const handleSubmit = async (
           tag: data.tags?.join(", "),
         },
       ],
-    },
-    media_url: data.link,
+    }} : {}),
   };
 
   let lsatToken;
@@ -88,11 +86,9 @@ const handleSubmit = async (
   }
 
   try {
-    const res: SubmitErrRes = await api.post(
-      "/add_node",
-      JSON.stringify(body),
-      { Authorization: lsatToken } as HeadersInit
-    );
+    const res: SubmitErrRes = await api.post("/add_node", JSON.stringify(body), {
+      Authorization: lsatToken,
+    } as HeadersInit);
 
     if (res.error) {
       const { message } = res.error;
@@ -113,6 +109,7 @@ const handleSubmit = async (
 
 export const AddNodeModal = () => {
   const { close } = useModal("addNode");
+  const [enableTimestamps, setEnableTimestamps] = useState(false);
 
   const form = useForm({ mode: "onSubmit" });
 
@@ -121,7 +118,7 @@ export const AddNodeModal = () => {
   const { isSubmitting, errors } = form.formState;
 
   const onSubmit = form.handleSubmit(async (data) => {
-    await handleSubmit(data, close, reset);
+    await handleSubmit(data, close, reset, enableTimestamps);
   });
 
   const startTime = watch("startTime");
@@ -132,7 +129,7 @@ export const AddNodeModal = () => {
         <form onSubmit={onSubmit}>
           <Flex align="center" direction="row" justify="space-between" pb={32}>
             <Flex align="center" direction="row">
-              <Text kind="bigHeadingBold">Add Node</Text>
+              <Text kind="bigHeadingBold">Add Content</Text>
               <InfoIcon role="tooltip" tabIndex={0}>
                 <span className="material-icons-outlined">info</span>
                 <div className="tooltip">{mainInfoMessage}</div>
@@ -171,8 +168,7 @@ export const AddNodeModal = () => {
               rules={{
                 ...requiredRule,
                 pattern: {
-                  message:
-                    "You must enter a valid YouTube or Twitter Space link.",
+                  message: "You must enter a valid YouTube, Twitter Space or mp3 link.",
                   value: twitterOrYoutubeRegex,
                 },
               }}
@@ -180,73 +176,84 @@ export const AddNodeModal = () => {
           </Flex>
 
           <Flex direction="row" pt={12}>
-            <Flex basis="50%" pr={16}>
-              <TextInput
-                id="startTime"
-                label="Start Time"
-                mask="99:99:99"
-                message="Enter start and end timestamps which will encompass the segment of video or audio you want to submit. [hh:mm:ss]"
-                name="startTime"
-                placeholder="00:00:00"
-                rules={{
-                  pattern: {
-                    message: "Timestamp must be in the format hh:mm:ss",
-                    value: timeRegex,
-                  },
-                  ...requiredRule,
-                }}
-              />
-            </Flex>
-
-            <Flex basis="50%" pl={16}>
-              <TextInput
-                id="endTime"
-                label="End Time"
-                mask="99:99:99"
-                message="Enter start and end timestamps which will encompass the segment of video or audio you want to submit. [hh:mm:ss]"
-                name="endTime"
-                placeholder="00:00:00"
-                rules={{
-                  pattern: {
-                    message: "Timestamp must be in the format hh:mm:ss",
-                    value: timeRegex,
-                  },
-                  validate: {
-                    endTime: (value) =>
-                      value > (startTime || "00:00:00") ||
-                      "End time should be greater than start time",
-                  },
-                  ...requiredRule,
-                }}
-              />
-            </Flex>
+            <CheckBoxWrapper>
+              Add timestamps
+              <button className="checkbox" onClick={() => setEnableTimestamps(!enableTimestamps)} type="button">
+                {enableTimestamps && <FaCheck color={colors.lightBlue500} />}
+              </button>
+            </CheckBoxWrapper>
           </Flex>
 
-          <Flex pt={12}>
-            <TextArea
-              id="description"
-              label="Clip Description"
-              maxLength={100}
-              message="Enter a short description of your audio/video segment. Think of this as the title of your node. [max 100 characters]"
-              name="description"
-              rules={requiredRule}
-            />
-          </Flex>
+          {enableTimestamps && (
+            <>
+              <Flex direction="row" pt={12}>
+                <Flex basis="50%" pr={16}>
+                  <TextInput
+                    id="startTime"
+                    label="Start Time"
+                    mask="99:99:99"
+                    message="Enter start and end timestamps which will encompass the segment of video or audio you want to submit. [hh:mm:ss]"
+                    name="startTime"
+                    placeholder="00:00:00"
+                    rules={{
+                      pattern: {
+                        message: "Timestamp must be in the format hh:mm:ss",
+                        value: timeRegex,
+                      },
+                      ...{...requiredRule, required: enableTimestamps},
+                    }}
+                  />
+                </Flex>
 
-          <Flex pt={12}>
-            <TagInput
-              id="tags"
-              label="Tags"
-              maxLength={50}
-              message="Enter some topic tags that capture the main ideas of your segment. Be specific! Generic tags aren't useful for anyone. Think, 'What term(s) would someone search to find my node? [max: 15, max characters per tag: 50]"
-              rules={tagRule}
-            />
-          </Flex>
+                <Flex basis="50%" pl={16}>
+                  <TextInput
+                    id="endTime"
+                    label="End Time"
+                    mask="99:99:99"
+                    message="Enter start and end timestamps which will encompass the segment of video or audio you want to submit. [hh:mm:ss]"
+                    name="endTime"
+                    placeholder="00:00:00"
+                    rules={{
+                      pattern: {
+                        message: "Timestamp must be in the format hh:mm:ss",
+                        value: timeRegex,
+                      },
+                      validate: {
+                        endTime: (value) =>
+                          value > (startTime || "00:00:00") || "End time should be greater than start time",
+                      },
+                      ...{...requiredRule, required: enableTimestamps},
+                    }}
+                  />
+                </Flex>
+              </Flex>
+
+              <Flex pt={12}>
+                <TextArea
+                  id="description"
+                  label="Clip Description"
+                  maxLength={100}
+                  message="Enter a short description of your audio/video segment. Think of this as the title of your node. [max 100 characters]"
+                  name="description"
+                  rules={{...requiredRule, required: enableTimestamps}}
+                />
+              </Flex>
+
+              <Flex pt={12}>
+                <TagInput
+                  id="tags"
+                  label="Tags"
+                  maxLength={50}
+                  message="Enter some topic tags that capture the main ideas of your segment. Be specific! Generic tags aren't useful for anyone. Think, 'What term(s) would someone search to find my node? [max: 15, max characters per tag: 50]"
+                  rules={tagRule}
+                />
+              </Flex>
+            </>
+          )}
 
           <Flex pt={16} px={4} tabIndex={0}>
             <Text color="lightGray" kind="tinyBold">
-              Your pubkey will be submitted with your node, so you can receive
-              sats that your node earns.
+              Your pubkey will be submitted with your node, so you can receive sats that your node earns.
             </Text>
           </Flex>
 
@@ -257,7 +264,7 @@ export const AddNodeModal = () => {
               </SubmitLoader>
             ) : (
               <Button disabled={isSubmitting} kind="big" type="submit">
-                Add node
+                Add content
               </Button>
             )}
           </Flex>
@@ -319,6 +326,28 @@ const SubmitLoader = styled(Flex).attrs({
 })`
   padding: 16px 24px;
   opacity: 0.5;
+`;
+
+const CheckBoxWrapper = styled.div`
+  color: ${colors.lightGray};
+  font-size: 14px;
+  font-weight: 600;
+  display: flex;
+
+  .checkbox {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    border: 2px solid ${colors.lightBlue400};
+    margin-left: 16px;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    background: transparent;
+    padding: 0;
+  }
 `;
 
 // hidden to the side so it doesn't affect the layout
