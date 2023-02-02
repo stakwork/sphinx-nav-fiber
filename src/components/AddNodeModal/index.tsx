@@ -209,7 +209,7 @@ export const AddNodeModal = () => {
               <Flex direction="row" pt={12}>
                 <Flex basis="50%" pr={16}>
                   <TextInput
-                    id="add-node-start-time"
+                    id="startTime"
                     label="Start Time"
                     mask="99:99:99"
                     message="Enter start and end timestamps which will encompass the segment of video or audio you want to submit. [hh:mm:ss]"
@@ -227,7 +227,7 @@ export const AddNodeModal = () => {
 
                 <Flex basis="50%" pl={16}>
                   <TextInput
-                    id="add-node-end-time"
+                    id="endTime"
                     label="End Time"
                     mask="99:99:99"
                     message="Enter start and end timestamps which will encompass the segment of video or audio you want to submit. [hh:mm:ss]"
@@ -251,7 +251,7 @@ export const AddNodeModal = () => {
 
               <Flex pt={12}>
                 <TextArea
-                  id="add-node-description"
+                  id="description"
                   label="Clip Description"
                   maxLength={100}
                   message="Enter a short description of your audio/video segment. Think of this as the title of your node. [max 100 characters]"
@@ -262,7 +262,7 @@ export const AddNodeModal = () => {
 
               <Flex pt={12}>
                 <TagInput
-                  id="add-node-tags"
+                  id="tags"
                   label="Tags"
                   maxLength={50}
                   message="Enter some topic tags that capture the main ideas of your segment. Be specific! Generic tags aren't useful for anyone. Think, 'What term(s) would someone search to find my node? [max: 15, max characters per tag: 50]"
@@ -285,12 +285,7 @@ export const AddNodeModal = () => {
                 <ClipLoader color={colors.white} size={20} />
               </SubmitLoader>
             ) : (
-              <Button
-                disabled={isSubmitting}
-                id="add-node-submit-cta"
-                kind="big"
-                type="submit"
-              >
+              <Button disabled={isSubmitting} kind="big" type="submit">
                 Add content
               </Button>
             )}
