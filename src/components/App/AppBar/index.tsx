@@ -41,14 +41,14 @@ export const AppBar = ({ onSubmit }: Props) => {
 
       <Flex>
         <AddButton kind="small" onClick={open}>
-          Add Node +
+          Add Content +
         </AddButton>
       </Flex>
     </Header>
   ) : (
     <AddNodeWrapper>
       <AddButton kind="small" onClick={open}>
-        Add Node +
+        Add Content +
       </AddButton>
     </AddNodeWrapper>
   );
