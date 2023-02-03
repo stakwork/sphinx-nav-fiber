@@ -40,14 +40,14 @@ export const AppBar = ({ onSubmit }: Props) => {
       </SearchBarWrapper>
 
       <Flex>
-        <AddButton id="add-node-cta" kind="small" onClick={open}>
+        <AddButton kind="small" onClick={open}>
           Add Content +
         </AddButton>
       </Flex>
     </Header>
   ) : (
     <AddNodeWrapper>
-      <AddButton id="add-node-cta" kind="small" onClick={open}>
+      <AddButton kind="small" onClick={open}>
         Add Content +
       </AddButton>
     </AddNodeWrapper>
