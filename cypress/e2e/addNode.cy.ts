@@ -12,6 +12,7 @@ import {
   tagError,
   mainError,
   toast,
+  checkbox,
 } from "../support/constants/addNode";
 
 describe("Add Node Form / Home interactions", () => {
@@ -39,6 +40,7 @@ describe("Add Node Form / Home interactions", () => {
   const descriptionInput = () => cy.get(description);
   const tagsInput = () => cy.get(tags);
   const toastBody = () => cy.get(toast);
+  const checkboxButton = () => cy.get(checkbox);
 
   it("clicking the Add Content + button opens the Add Content Form modal, X button closes it", () => {
     openButton("home")
@@ -56,82 +58,86 @@ describe("Add Node Form / Home interactions", () => {
     modal().should("not.exist");
   });
 
-  // it("submitting the form with all fields empty yields 5 error messages", () => {
-  //   openButton("home").click();
+  it("submitting the form with all fields empty yields 5 error messages", () => {
+    openButton("home").click();
 
-  //   submitButton().click({ waitForAnimations: false });
+    submitButton().click({ waitForAnimations: false });
 
-  //   mainErrorMessage().should("not.be.visible").and("contain.text", "5 errors");
+    mainErrorMessage().should("not.be.visible").and("contain.text", "5 errors");
 
-  //   cy.contains(/the field is required/i).should("be.visible");
+    cy.contains(/the field is required/i).should("be.visible");
 
-  //   tagErrorMessage()
-  //     .should("be.visible")
-  //     .and(
-  //       "contain.text",
-  //       "You need to enter at least 1 topic tag to submit a node."
-  //     );
-  // });
+    tagErrorMessage()
+      .should("be.visible")
+      .and(
+        "contain.text",
+        "You need to enter at least 1 topic tag to submit a node."
+      );
+  });
 
-  // it("all fields filled out correctly submits the form, closes the modal and displays custom success message", () => {
-  //   cy.intercept("POST", "https://knowledge-graph.sphinx.chat/add_node", {
-  //     body: {
-  //       success: true,
-  //     },
-  //     statusCode: 200,
-  //   }).as("add_node");
+  it("all fields filled out correctly submits the form and checkbox checked, closes the modal and displays custom success message", () => {
+    cy.intercept("POST", "https://knowledge-graph.sphinx.chat/add_node", {
+      body: {
+        success: true,
+      },
+      statusCode: 200,
+    }).as("add_node");
 
-  //   openButton("home").click();
+    openButton("home").click();
 
-  //   linkInput().type("youtube.com/watch?v=Midgx8bBDMk", {
-  //     waitForAnimations: false,
-  //   });
+    checkboxButton().click();
 
-  //   startTimeInput().type("000000");
-  //   endTimeInput().type("000030");
-  //   descriptionInput().type("description");
-  //   tagsInput().type("test").type("{enter}");
+    linkInput().type("youtube.com/watch?v=Midgx8bBDMk", {
+      waitForAnimations: false,
+    });
 
-  //   submitButton().click();
+    startTimeInput().type("000000");
+    endTimeInput().type("000030");
+    descriptionInput().type("description");
+    tagsInput().type("test").type("{enter}");
 
-  //   cy.wait("@add_node");
+    submitButton().click();
 
-  //   modal().should("not.exist");
+    cy.wait("@add_node");
 
-  //   // Waiting for Toast opacity keyframe to complete
-  //   cy.wait(3000);
+    modal().should("not.exist");
 
-  //   toastBody()
-  //     .should("be.visible")
-  //     .and("contain.text", "Node submitted successfully!");
-  // });
+    // Waiting for Toast opacity keyframe to complete
+    cy.wait(3000);
 
-  // it("submitting the form but receiving an error response from the server, displays custom error message", () => {
-  //   cy.intercept("POST", "https://knowledge-graph.sphinx.chat/add_node", {
-  //     body: { error: { message: "Payment required" } },
-  //     statusCode: 402,
-  //   }).as("add_node");
+    toastBody()
+      .should("be.visible")
+      .and("contain.text", "Node submitted successfully!");
+  });
 
-  //   openButton("home").click();
+  it("checkbox checked, submitting the form but receiving an error response from the server, displays custom error message", () => {
+    cy.intercept("POST", "https://knowledge-graph.sphinx.chat/add_node", {
+      body: { error: { message: "Payment required" } },
+      statusCode: 402,
+    }).as("add_node");
 
-  //   linkInput().type("youtube.com/watch?v=Midgx8bBDMk", {
-  //     waitForAnimations: false,
-  //   });
+    openButton("home").click();
 
-  //   startTimeInput().type("000000");
-  //   endTimeInput().type("000030");
-  //   descriptionInput().type("description");
-  //   tagsInput().type("test").type("{enter}");
+    checkboxButton().click();
 
-  //   submitButton().click();
+    linkInput().type("youtube.com/watch?v=Midgx8bBDMk", {
+      waitForAnimations: false,
+    });
 
-  //   cy.wait("@add_node");
+    startTimeInput().type("000000");
+    endTimeInput().type("000030");
+    descriptionInput().type("description");
+    tagsInput().type("test").type("{enter}");
 
-  //   // Waiting for Toast opacity keyframe to complete
-  //   cy.wait(3000);
+    submitButton().click();
 
-  //   toastBody()
-  //     .should("be.visible")
-  //     .and("contain.text", "Node submission failed, please try again.");
-  // });
+    cy.wait("@add_node");
+
+    // Waiting for Toast opacity keyframe to complete
+    cy.wait(3000);
+
+    toastBody()
+      .should("be.visible")
+      .and("contain.text", "Node submission failed, please try again.");
+  });
 });
