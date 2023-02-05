@@ -1,18 +1,18 @@
 import {
   addNodeButtonHome,
   addNodeButtonSidebarOpen,
+  addNodeCloseButton,
   addNodeModal,
   addNodeSubmitButton,
-  addNodeCloseButton,
-  link,
-  startTime,
-  endTime,
-  description,
-  tags,
-  tagError,
-  mainError,
-  toast,
   checkbox,
+  description,
+  endTime,
+  link,
+  mainError,
+  startTime,
+  tagError,
+  tags,
+  toast,
 } from "../support/constants/addNode";
 
 describe("Add Node Form / Home interactions", () => {
@@ -61,6 +61,8 @@ describe("Add Node Form / Home interactions", () => {
   it("submitting the form with all fields empty yields 5 error messages", () => {
     openButton("home").click();
 
+    checkboxButton().click({ waitForAnimations: false });
+
     submitButton().click({ waitForAnimations: false });
 
     mainErrorMessage().should("not.be.visible").and("contain.text", "5 errors");
@@ -85,7 +87,7 @@ describe("Add Node Form / Home interactions", () => {
 
     openButton("home").click();
 
-    checkboxButton().click();
+    checkboxButton().click({ waitForAnimations: false });
 
     linkInput().type("youtube.com/watch?v=Midgx8bBDMk", {
       waitForAnimations: false,
@@ -118,7 +120,7 @@ describe("Add Node Form / Home interactions", () => {
 
     openButton("home").click();
 
-    checkboxButton().click();
+    checkboxButton().click({ waitForAnimations: false });
 
     linkInput().type("youtube.com/watch?v=Midgx8bBDMk", {
       waitForAnimations: false,
