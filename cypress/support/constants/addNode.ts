@@ -7,7 +7,7 @@ export const addNodeCloseButton = "[data-test=add-node-close-button]";
 // modal & error messages
 export const 
 addNodeModal = ".sc-ksZaOG";
-export const tagError = ":nth-child(5) > .hSMvhC > .jsuUoS";
+export const tagError = ":nth-child(6) > .hSMvhC > .jsuUoS";
 export const mainError = "[data-test=add-node-error-alert]";
 
 // inputs
