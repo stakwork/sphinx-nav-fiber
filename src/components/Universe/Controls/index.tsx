@@ -19,11 +19,16 @@ const introAnimationTargetPosition = new THREE.Vector3(-1900, -2200, -2800);
 const initialLoadTargetPosition = new THREE.Vector3(0, 0, 0);
 
 export const Controls = () => {
-
   const initialLoad = useRef(true);
   const canvasElement = useRef<HTMLElement | null>(null);
 
-  const [graphRadius, cameraAnimation, setCameraAnimation, disableCameraRotation, setDisableCameraRotation] = useDataStore((s) => [
+  const [
+    graphRadius,
+    cameraAnimation,
+    setCameraAnimation,
+    disableCameraRotation,
+    setDisableCameraRotation,
+  ] = useDataStore((s) => [
     s.graphRadius,
     s.cameraAnimation,
     s.setCameraAnimation,
@@ -62,11 +67,11 @@ export const Controls = () => {
 
   const doDollyTransition = useCallback(
     (event: WheelEvent | PointerEvent | TouchEvent | WebKitGestureEvent) => {
-      if(!disableCameraRotation) {
+      if (!disableCameraRotation) {
         setDisableCameraRotation(true);
       }
 
-      const {width, height} = dimensions;
+      const { width, height } = dimensions;
 
       if (!cameraControlsRef.current) {
         return;
@@ -78,16 +83,22 @@ export const Controls = () => {
 
       const distance = cameraControlsRef.current?.distance;
 
-
       if (graphRadius && distance > graphRadius) {
         const direction = (event as any).deltaY < 0 ? 1 : -1;
         const deltaX = (event as any).layerX - width / 2;
         const deltaY = (event as any).layerY - height / 2;
 
-        const coeffX = (direction * deltaX * distance) / graphRadius / graphRadius * 4;
-        const coeffY = (direction * deltaY * distance) / graphRadius / graphRadius * 4;
+        const coeffX =
+          ((direction * deltaX * distance) / graphRadius / graphRadius) * 4;
 
-        cameraControlsRef.current.rotate(coeffX * THREE.MathUtils.DEG2RAD, coeffY * THREE.MathUtils.DEG2RAD, true);
+        const coeffY =
+          ((direction * deltaY * distance) / graphRadius / graphRadius) * 4;
+
+        cameraControlsRef.current.rotate(
+          coeffX * THREE.MathUtils.DEG2RAD,
+          coeffY * THREE.MathUtils.DEG2RAD,
+          true
+        );
 
         cameraControlsRef.current?.setTarget(0, 0, 0);
 
@@ -99,37 +110,38 @@ export const Controls = () => {
     [dimensions, graphRadius, disableCameraRotation, setDisableCameraRotation]
   );
 
-   const rotateWorld = useCallback(() => {
-     cameraAnimation?.kill();
+  const rotateWorld = useCallback(() => {
+    cameraAnimation?.kill();
 
-     if (cameraControlsRef.current) {
-       const rotateCycle = gsap.to(cameraControlsRef.current?.camera, {
-         azimuthAngle: (cameraControlsRef?.current?.azimuthAngle || 0) + 360 * THREE.MathUtils.DEG2RAD,
-         duration: 280,
-         // https://greensock.com/ease-visualizer/
-         ease: "power",
-         overwrite: true,
-         paused: true,
-       });
+    if (cameraControlsRef.current) {
+      const rotateCycle = gsap.to(cameraControlsRef.current?.camera, {
+        azimuthAngle:
+          (cameraControlsRef?.current?.azimuthAngle || 0) +
+          360 * THREE.MathUtils.DEG2RAD,
+        duration: 280,
+        // https://greensock.com/ease-visualizer/
+        ease: "power",
+        overwrite: true,
+        paused: true,
+      });
 
-       rotateCycle.play(0);
+      rotateCycle.play(0);
 
-       setCameraAnimation(rotateCycle);
-     }
-   }, [cameraAnimation, setCameraAnimation]);
+      setCameraAnimation(rotateCycle);
+    }
+  }, [cameraAnimation, setCameraAnimation]);
 
-   const doIntroAnimation = useCallback(() => {
+  const doIntroAnimation = useCallback(() => {
     cameraAnimation?.kill();
 
     const cameraControls = cameraControlsRef?.current;
 
-    const animationProgress = {value: -244};
+    const animationProgress = { value: -244 };
 
-    const moveCycle = gsap.to(
-      animationProgress, {
+    const moveCycle = gsap.to(animationProgress, {
       keyframes: {
-        '0%': {value: 10},
-        '100%': {value: -200, delay: 2 ,ease: 'Power4.easeIn'}
+        "0%": { value: 10 },
+        "100%": { value: -200, delay: 2, ease: "Power4.easeIn" },
       },
       duration: 5,
       onComplete: () => {
@@ -146,7 +158,6 @@ export const Controls = () => {
       },
     });
 
-
     moveCycle.play();
     setCameraAnimation(moveCycle);
   }, [cameraAnimation, rotateWorld, setCameraAnimation]);
@@ -154,8 +165,10 @@ export const Controls = () => {
   useEffect(() => {
     // graphRadius is calculated from initial graph render
     if (cameraControlsRef.current && graphRadius) {
+      cameraControlsRef.current.maxDistance =
+        cameraControlsRef.current.getDistanceToFitSphere(graphRadius + 200);
+
       cameraControlsRef.current.minDistance = 1;
-      cameraControlsRef.current.maxDistance = cameraControlsRef.current.getDistanceToFitSphere(graphRadius + 200);
       cameraControlsRef.current.minPolarAngle = -Math.PI;
       cameraControlsRef.current.maxPolarAngle = Math.PI;
       cameraControlsRef.current.dollySpeed = 0.2;
@@ -184,7 +197,9 @@ export const Controls = () => {
       if (cameraControlsRef.current) {
         cameraControlsRef.current.dampingFactor = 0.01;
 
-        const target = initialLoad ? initialLoadTargetPosition : introAnimationTargetPosition;
+        const target = initialLoad
+          ? initialLoadTargetPosition
+          : introAnimationTargetPosition;
 
         if (!selectedNode) {
           await cameraControlsRef.current.setLookAt(
@@ -239,7 +254,6 @@ export const Controls = () => {
     if (initialLoad.current) {
       initialLoad.current = false;
     }
-
   }, [selectedNode, initialLoad]);
 
   useEffect(() => {
@@ -253,5 +267,10 @@ export const Controls = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
-  return <CameraControls ref={cameraControlsRef} autoRotate={!selectedNode} />;
+  return (
+    <CameraControls
+      ref={cameraControlsRef}
+      autoRotate={!disableCameraRotation && !selectedNode}
+    />
+  );
 };

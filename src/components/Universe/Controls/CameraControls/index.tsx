@@ -27,7 +27,6 @@ import {
   Vector4,
 } from "three";
 import { useControlsEvents } from "~/components/Universe/Controls/useControlsEvents";
-import { useDataStore } from "~/stores/useDataStore";
 
 declare global {
   namespace JSX {
@@ -69,8 +68,6 @@ export const CameraControls = forwardRef<CameraControlsDefault, Props>(
   ({ autoRotate, autoRotateSpeed = 1.5 }, ref) => {
     const cameraControls = useRef<CameraControlsDefault | null>(null);
 
-    const disableCameraRotation = useDataStore((s) => s.disableCameraRotation);
-
     const camera = useThree((state) => state.camera);
 
     const renderer = useThree((state) => state.gl);
@@ -79,7 +76,7 @@ export const CameraControls = forwardRef<CameraControlsDefault, Props>(
 
     useFrame((_, delta) => {
       if (cameraControls.current) {
-        if (!disableCameraRotation && !disableAutoRotate && autoRotate) {
+        if (!disableAutoRotate && autoRotate) {
           cameraControls.current.azimuthAngle +=
             autoRotateSpeed * delta * MathUtils.DEG2RAD;
         }

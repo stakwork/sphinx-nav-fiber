@@ -2,15 +2,15 @@ import { ReactNode, useCallback, useMemo, useRef, useState } from "react";
 import { Flex } from "~/components/common/Flex";
 import { Pill } from "~/components/common/Pill";
 import { Text } from "~/components/common/Text";
-import { useGraphData } from "~/components/DataRetriever";
-import { useAppStore } from "~/stores/useAppStore";
+import { useGraphData, usePathway } from "~/components/DataRetriever";
 import { ScrollView } from "~/components/ScrollView";
+import { useAppStore } from "~/stores/useAppStore";
 import { useDataStore } from "~/stores/useDataStore";
 import { NodeExtended } from "~/types";
-import { saveConsumedContent } from "~/utils/relayHelper";
-import { Episode } from "./Episode";
-import { ErrorSection } from "../Creator/ErrorSection";
 import { formatDescription } from "~/utils/formatDescription";
+import { saveConsumedContent } from "~/utils/relayHelper";
+import { ErrorSection } from "../Creator/ErrorSection";
+import { Episode } from "./Episode";
 
 const pageSize = 80;
 
@@ -27,7 +27,7 @@ export const Relevance = ({ header = null }: Props) => {
   const setSelectedTimestamp = useDataStore((s) => s.setSelectedTimestamp);
   const flagErrorIsOpen = useAppStore((s) => s.flagErrorIsOpen);
 
-  const  setRelevanceSelected = useAppStore((s) => s.setRelevanceSelected);
+  const setRelevanceSelected = useAppStore((s) => s.setRelevanceSelected);
 
   const [currentPage, setCurrentPage] = useState(0);
 
@@ -45,6 +45,8 @@ export const Relevance = ({ header = null }: Props) => {
     [data.nodes, endSlice, startSlice]
   );
 
+  const { pathway, currentNodeIndex } = usePathway();
+
   const handleNodeClick = useCallback(
     (node: NodeExtended) => {
       saveConsumedContent(node);
@@ -54,6 +56,26 @@ export const Relevance = ({ header = null }: Props) => {
     },
     [setSelectedNode, setRelevanceSelected, setSelectedTimestamp]
   );
+
+  const handleOnAudioEnds = useCallback(() => {
+    if (currentNodeIndex === -1) {
+      return;
+    }
+
+    const nextNode = pathway[currentNodeIndex + 1];
+
+    if (nextNode) {
+      handleNodeClick(nextNode);
+
+      setTimeout(() => {
+        const audioElement = document.getElementById(
+          "audio-player"
+        ) as HTMLAudioElement;
+
+        audioElement?.play();
+      }, 500);
+    }
+  }, [currentNodeIndex, handleNodeClick, pathway]);
 
   return (
     <>
@@ -88,6 +110,7 @@ export const Relevance = ({ header = null }: Props) => {
               description={formatDescription(description)}
               id={id}
               imageUrl={imageUrl || "audio_default.svg"}
+              onAudioEnds={handleOnAudioEnds}
               onClick={() => handleNodeClick(n)}
               title={episodeTitle || ""}
               type={type}
