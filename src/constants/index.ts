@@ -6,8 +6,20 @@ export const isDevelopment = !!(
   origin === "https://sphinx-jarvis-david.sphinx1.repl.co"
 );
 
-export const API_URL =
+export let API_URL =
   process.env.REACT_DEV_API_URL || "https://knowledge-graph.sphinx.chat";
+
+// for swarm deployments, always point to "boltwall"
+// for now, only if the URL contains "swarm"
+const host = window.location.host
+if (host.includes('swarm')) {
+  if(host.startsWith('nav')) {
+    let host_array = host.split('.')
+    host_array[0] = 'boltwall'
+    let finalHost = host_array.join('.')
+    API_URL = `https://${finalHost}`
+  }
+}
 
 export const AWS_IMAGE_BUCKET_URL =
   "https://stakwork-uploads.s3.amazonaws.com/";
