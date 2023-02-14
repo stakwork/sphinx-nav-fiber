@@ -1,4 +1,4 @@
-const { origin } = window.location;
+const { origin, host } = window.location;
 
 export const isDevelopment = !!(
   origin === "http://localhost:3000" ||
@@ -8,23 +8,30 @@ export const isDevelopment = !!(
 
 export const API_URL =
   process.env.REACT_DEV_API_URL ||
-  api_url_from_swarm_host() ||
+  apiUrlFromSwarmHost() ||
   "https://knowledge-graph.sphinx.chat";
 
-function api_url_from_swarm_host(): string | undefined {
+function apiUrlFromSwarmHost(): string | undefined {
   // for swarm deployments, always point to "boltwall"
   // for now, only if the URL contains "swarm"
-  const host = window.location.host;
   if (host.includes("swarm")) {
     if (host.startsWith("nav")) {
       const hostArray = host.split(".");
+
       hostArray[0] = "boltwall";
+
       const finalHost = hostArray.join(".");
       const apiUrl = `https://${finalHost}`;
+
+      /* eslint-disable no-console */
       console.log("API URL:", apiUrl);
+      /* eslint-enable no-console */
+
       return apiUrl;
     }
   }
+
+  return undefined;
 }
 
 export const AWS_IMAGE_BUCKET_URL =
