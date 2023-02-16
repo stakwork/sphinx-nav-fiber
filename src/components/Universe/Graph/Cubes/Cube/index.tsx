@@ -1,9 +1,11 @@
 import { ThreeEvent, useFrame } from "@react-three/fiber";
 import { Select } from "@react-three/postprocessing";
-import { memo, useCallback, useMemo, useRef } from "react";
+import { memo, useCallback, useRef } from "react";
 import * as THREE from "three";
+import { usePathway } from "~/components/DataRetriever";
 import { useDataStore, useSelectedNode } from "~/stores/useDataStore";
 import { NodeExtended } from "~/types";
+import { PathwayBadge } from "./PathwayBadge";
 import { useMaterial } from "./useMaterial";
 
 const geometryXs = new THREE.BoxGeometry(10, 10, 10);
@@ -15,10 +17,8 @@ const getGeometry = (node: NodeExtended) => {
     case "guest":
     case "episode":
       return geometryS;
-
     case "show":
       return geometryM;
-
     default:
       return geometryXs;
   }
@@ -37,8 +37,6 @@ export const Cube = memo(
     const isSelected = !!selectedNode && selectedNode?.id === node.id;
 
     const isSelectedCategory = node.node_type === categoryFilter;
-
-    const geometry = useMemo(() => getGeometry(node), [node]);
 
     useFrame(() => {
       if (selectedNode) {
@@ -81,20 +79,23 @@ export const Cube = memo(
       }
     }, [setHoveredNode]);
 
+    const { currentNodeIndex } = usePathway();
+
     return (
       <Select enabled={selectedNode ? isSelected : isSelectedCategory}>
         <mesh
           ref={ref}
-          geometry={geometry}
+          geometry={getGeometry(node)}
           material={material}
           name={node.id}
           onPointerOut={onPointerOut}
           onPointerOver={onPointerIn}
           userData={node}
         >
-          {/* <Edges renderOrder={1000} visible={isSelected}>
-          <meshBasicMaterial color="white" depthTest={false} transparent />
-        </Edges> */}
+          <PathwayBadge
+            show={currentNodeIndex >= 0}
+            value={currentNodeIndex + 1}
+          />
         </mesh>
       </Select>
     );

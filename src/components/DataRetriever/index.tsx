@@ -1,6 +1,12 @@
 import invariant from "invariant";
-import { PropsWithChildren, ReactNode, useEffect, useState } from "react";
-import { useDataStore } from "~/stores/useDataStore";
+import {
+  PropsWithChildren,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
+import { useDataStore, useSelectedNode } from "~/stores/useDataStore";
 
 type Props = PropsWithChildren<{
   loader?: ReactNode;
@@ -42,4 +48,28 @@ export const useGraphData = () => {
   );
 
   return data;
+};
+
+const PATHWAY_NODES = 10;
+
+export const usePathway = () => {
+  const selectedNode = useSelectedNode();
+
+  return useDataStore(
+    useCallback(
+      (s) => {
+        const pathway = s.data!.nodes.slice(0, PATHWAY_NODES);
+
+        const currentNodeIndex = pathway.findIndex(
+          (node) => node.id === selectedNode?.id
+        );
+
+        return {
+          currentNodeIndex,
+          pathway,
+        };
+      },
+      [selectedNode?.id]
+    )
+  );
 };

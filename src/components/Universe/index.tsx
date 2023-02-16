@@ -45,11 +45,7 @@ const Content = () => (
 
         <Bloom luminanceThreshold={1} mipmapBlur />
 
-        <Outline
-          blur
-          edgeStrength={5}
-          visibleEdgeColor={NODE_SELECTED_COLOR}
-        />
+        <Outline blur edgeStrength={5} visibleEdgeColor={NODE_SELECTED_COLOR} />
       </EffectComposer>
     </Selection>
   </>
@@ -71,7 +67,6 @@ export const Universe = () => {
             position: [1000, 0, 5],
           }}
           id="universe-canvas"
-          shadows
         >
           <Suspense
             fallback={
@@ -80,7 +75,7 @@ export const Universe = () => {
               </Html>
             }
           >
-            <Preload all />
+            <Preload />
 
             <AdaptiveDpr />
 
