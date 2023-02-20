@@ -37,7 +37,7 @@ const tagRule = {
 
 const timeRegex = /^\d{2}:\d{2}:\d{2}$/;
 
-const twitterOrYoutubeRegex =
+const twitterOrYoutubeRegexOrMp3 =
   /^(?:(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)[\w-]{11}|(?:https?:\/\/)?(?:www\.)?twitter\.com\/i\/spaces\/\d+(?:\?|$)|.+\.mp3)$/i;
 
 const mainInfoMessage =
@@ -185,7 +185,7 @@ export const AddNodeModal = () => {
                 pattern: {
                   message:
                     "You must enter a valid YouTube, Twitter Space or mp3 link.",
-                  value: twitterOrYoutubeRegex,
+                  value: twitterOrYoutubeRegexOrMp3,
                 },
               }}
             />
