@@ -1,10 +1,11 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { useSelectedNode } from "~/stores/useDataStore";
 import { videoTimetoSeconds } from "~/utils/videoTimetoSeconds";
 import ReactPlayer from "react-player";
 
 export const YouTube = () => {
   const selectedNode = useSelectedNode();
+  const playerRef = useRef(null);
 
   const {
     link,
@@ -13,13 +14,11 @@ export const YouTube = () => {
 
   const secs = videoTimetoSeconds(timestamp || "");
 
-  const embeddedUrl = useMemo(
-    () =>
-      `${
-        link?.replace("watch?v=", "embed/").split("?")[0]
-      }?start=${secs}&autoplay=1`,
-    [link, secs]
-  );
+  useEffect(() => {
+    if(playerRef.current) {
+      (playerRef.current as any)?.seekTo(secs);
+    }
+  }, [playerRef, secs]);
 
   if (!selectedNode) {
     return null;
@@ -28,7 +27,14 @@ export const YouTube = () => {
   return (
     <div style={{ height: "100%", overflow: "auto", width: "100%" }}>
       <div>
-        <ReactPlayer height="200px" muted url={embeddedUrl} width="100%" />
+        <ReactPlayer
+          ref={playerRef}
+          controls
+          height="200px"
+          playing
+          url={link}
+          width="100%"
+        />
       </div>
     </div>
   );
