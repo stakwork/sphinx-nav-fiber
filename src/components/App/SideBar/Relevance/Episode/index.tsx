@@ -112,13 +112,13 @@ export const Episode = ({
     const { timestamp } = selectedTimestamp;
 
     const audioElement = document.getElementById(
-      `audio-player-${id}`
+      `audio-player`
     ) as HTMLAudioElement;
 
     if (audioElement) {
       audioElement.currentTime = timestamp ? videoTimetoSeconds(timestamp) : 0;
     }
-  }, [selectedTimestamp, id]);
+  }, [selectedTimestamp]);
 
   return (
     <EpisodeWrapper background="body" isSelected={isSelected} onClick={onClick}>

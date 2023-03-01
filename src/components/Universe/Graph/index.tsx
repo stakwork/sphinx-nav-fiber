@@ -1,11 +1,6 @@
 import { Line, Segments } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
-import {
-  forceCenter,
-  forceLink,
-  forceManyBody,
-  forceSimulation,
-} from "d3-force-3d";
+import { forceCenter, forceLink, forceManyBody, forceSimulation } from "d3-force-3d";
 import { useEffect, useRef } from "react";
 import { Line2 } from "three/examples/jsm/lines/Line2";
 import { useGraphData, usePathway } from "~/components/DataRetriever";
@@ -66,11 +61,11 @@ const PathwayLine = () => {
       return;
     }
 
-    const points = pathway.map(
-      (node) => [node.x || 0, node.y || 0, node.z || 0] as const
-    );
+    const points = pathway.map((node) => [node.x || 0, node.y || 0, node.z || 0] as const);
 
-    ref.current.geometry.setPositions(points.flat());
+    if (points.length) {
+      ref.current.geometry.setPositions(points.flat());
+    }
   });
 
   return (
@@ -149,15 +144,13 @@ export const Graph = () => {
         limit={data.links.length}
         lineWidth={0.15}
       >
-        {(data.links as unknown as GraphData<NodeExtended>["links"]).map(
-          (link, index) => (
-            <Segment
-              // eslint-disable-next-line react/no-array-index-key
-              key={index.toString()}
-              link={link}
-            />
-          )
-        )}
+        {(data.links as unknown as GraphData<NodeExtended>["links"]).map((link, index) => (
+          <Segment
+            // eslint-disable-next-line react/no-array-index-key
+            key={index.toString()}
+            link={link}
+          />
+        ))}
       </Segments>
     </>
   );

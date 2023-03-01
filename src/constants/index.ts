@@ -9,7 +9,7 @@ export const isDevelopment = !!(
 export const API_URL =
   process.env.REACT_DEV_API_URL ||
   apiUrlFromSwarmHost() ||
-  "https://knowledge-graph.sphinx.chat";
+   "https://knowledge-graph.sphinx.chat";
 
 function apiUrlFromSwarmHost(): string | undefined {
   // for swarm deployments, always point to "boltwall"

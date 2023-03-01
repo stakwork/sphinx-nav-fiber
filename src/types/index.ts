@@ -9,7 +9,7 @@ export type FetchDataResponse = {
 export type Node = {
   boost?: number | null;
   children?: string[];
-  colors: string[];
+  colors?: string[];
   date?: number;
   description?: string;
   episode_title?: string;
@@ -20,14 +20,14 @@ export type Node = {
   label: string;
   link?: string;
   name: string;
-  node_type: NodeType;
+  node_type: string;
   ref_id: string;
   scale?: number;
   show_title?: string;
   text?: string;
   timestamp?: string;
   topics?: string[];
-  type?: Type;
+  type?: string;
   weight?: number;
 };
 

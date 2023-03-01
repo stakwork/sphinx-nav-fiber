@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { useSelectedNode } from "~/stores/useDataStore";
 import { videoTimetoSeconds } from "~/utils/videoTimetoSeconds";
-
+import ReactPlayer from "react-player";
 
 export const YouTube = () => {
   const selectedNode = useSelectedNode();
@@ -28,15 +28,7 @@ export const YouTube = () => {
   return (
     <div style={{ height: "100%", overflow: "auto", width: "100%" }}>
       <div>
-        <iframe
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
-          className="youtube-embedded"
-          frameBorder="0"
-          height="200px"
-          src={embeddedUrl}
-          title="ViewVideo"
-          width="100%"
-        />
+        <ReactPlayer height="200px" muted url={embeddedUrl} width="100%" />
       </div>
     </div>
   );
