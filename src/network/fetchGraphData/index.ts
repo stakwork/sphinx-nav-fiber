@@ -1,25 +1,14 @@
-import {
-  AWS_IMAGE_BUCKET_URL,
-  CLOUDFRONT_IMAGE_BUCKET_URL,
-  isDevelopment,
-} from "~/constants";
+import { AWS_IMAGE_BUCKET_URL, CLOUDFRONT_IMAGE_BUCKET_URL, isDevelopment } from "~/constants";
 import { api } from "~/network/api";
-import {
-  FetchDataResponse,
-  GraphData,
-  Guests,
-  Link,
-  Node,
-  NodeExtended,
-} from "~/types";
+import { FetchDataResponse, GraphData, Guests, Link, Node, NodeExtended } from "~/types";
 import { getLSat } from "~/utils/getLSat";
 
 type guestMapChild = {
-  children: string[],
-  imageUrl: string,
-  name: string,
-  twitterHandle: string,
-}
+  children: string[];
+  imageUrl: string;
+  name: string;
+  twitterHandle: string;
+};
 
 const defautData: GraphData = {
   links: [],
@@ -38,10 +27,9 @@ export const fetchGraphData = async (search: string) => {
 
 const fetchNodes = async (search: string) => {
   if (isDevelopment) {
-    return {
-      exact: await api.get<Node[]>(`/mock_data`),
-      related: [],
-    };
+    const response = await api.get<Node[]>(`/searching?word=${search}&free=true`);
+
+    return response;
   }
 
   console.log("getting prod data");
@@ -59,11 +47,27 @@ const fetchNodes = async (search: string) => {
 
 const getGraphData = async (searchterm: string) => {
   try {
-    const fetchGraphDataResponse = await fetchNodes(searchterm);
+    const dataInit: any = await fetchNodes(searchterm);
 
     const data = [
-      ...fetchGraphDataResponse.exact,
-      ...fetchGraphDataResponse.related,
+      ...dataInit.exact,
+      ...dataInit.related,
+      ...(dataInit.data_series
+        ? [
+            {
+              ...dataInit.data_series,
+              boost: null,
+              id: "string",
+              label: dataInit.data_series.title,
+              name: "Name",
+              node_type: "data_series",
+              ref_id: "",
+              type: "data_series",
+              weight: 2,
+              image_url: "node_data.webp",
+            },
+          ]
+        : []),
     ];
 
     const nodes: NodeExtended[] = [];
@@ -75,13 +79,7 @@ const getGraphData = async (searchterm: string) => {
     if (data.length) {
       // Populating nodes array with podcasts and constructing a topic map
       data.forEach((node) => {
-        const {
-          children,
-          topics,
-          guests,
-          show_title: showTitle,
-          node_type: nodeType,
-        } = node;
+        const { children, topics, guests, show_title: showTitle, node_type: nodeType } = node;
 
         if (!shouldIncludeTopics && nodeType === "topic") {
           return;
@@ -97,7 +95,7 @@ const getGraphData = async (searchterm: string) => {
         });
 
         if (topics) {
-          topicMap = topics.reduce((acc, topic) => {
+          topicMap = topics.reduce((acc: any, topic: any) => {
             if (showTitle) {
               acc[topic] = [...(topicMap[topic] || []), showTitle];
             }
@@ -107,13 +105,13 @@ const getGraphData = async (searchterm: string) => {
         }
 
         if (node.node_type === "episode") {
-          (guests || []).forEach((guest) => {
+          (guests || []).forEach((guest: any) => {
             const currentGuest = guest as Guests;
 
             if (currentGuest.name) {
               guestMap[currentGuest.ref_id] = {
                 children: [...(guestMap[currentGuest.ref_id]?.children || []), node.ref_id],
-                imageUrl: currentGuest.profile_picture || '',
+                imageUrl: currentGuest.profile_picture || "",
                 name: currentGuest.name,
                 twitterHandle: currentGuest.twitter_handle,
               };
@@ -148,9 +146,7 @@ const getGraphData = async (searchterm: string) => {
 
           // make links to children
           topicTitles.forEach((showTitle) => {
-            const show = data.find(
-              (f) => f.show_title === showTitle && f.node_type === "episode"
-            );
+            const show = data.find((f) => f.show_title === showTitle && f.node_type === "episode");
 
             const showRefId = show?.ref_id || "";
 

@@ -6,9 +6,9 @@ const loader = new THREE.TextureLoader();
 
 const cachedMaterials: Record<string, THREE.MeshStandardMaterial> = {};
 
-export const useMaterial = (url: string, highlight: boolean) => {
+export const useMaterial = (url: string, highlight: boolean, highlightColor = 'green') => {
   const material = useMemo(() => {
-    const cashPath = `${url}${String(highlight)}`;
+    const cashPath = `${url}${String(highlight)}${highlightColor}`;
 
     if (cachedMaterials[cashPath]) {
       return cachedMaterials[cashPath];
@@ -18,7 +18,7 @@ export const useMaterial = (url: string, highlight: boolean) => {
 
     const materialProp = highlight
       ? {
-          emissive: "green",
+          emissive: highlightColor,
           emissiveIntensity: 20,
           map,
           opacity: 0.5,
@@ -32,7 +32,7 @@ export const useMaterial = (url: string, highlight: boolean) => {
     cachedMaterials[cashPath] = m;
 
     return m;
-  }, [url, highlight]);
+  }, [url, highlight, highlightColor]);
 
   return material;
 };

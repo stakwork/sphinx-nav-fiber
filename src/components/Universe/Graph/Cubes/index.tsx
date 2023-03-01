@@ -49,8 +49,13 @@ export const Cubes = memo(() => {
         }
 
         return (
+          <Cube
           // eslint-disable-next-line react/no-array-index-key
-          <Cube key={`${node.id}-${index}`} highlight={highlight} node={node} />
+            key={`${node.id}-${index}`}
+            highlight={highlight || node.node_type === "data_series"}
+            highlightColor={node.node_type === "data_series" ? 'red' : 'green'}
+            node={node}
+          />
         );
       })}
     </Select>

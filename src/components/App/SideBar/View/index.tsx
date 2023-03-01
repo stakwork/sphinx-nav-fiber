@@ -2,6 +2,7 @@ import { useGraphData } from "~/components/DataRetriever";
 import { useAppStore } from "~/stores/useAppStore";
 import { useSelectedNode } from "~/stores/useDataStore";
 import { Creator } from "../Creator";
+import { Data } from "../Data";
 import { Person } from "../Person";
 import { Relevance } from "../Relevance";
 import { Twitter } from "../Twitter";
@@ -24,6 +25,8 @@ export const View = () => {
       return <Twitter />;
     case "guest":
       return <Person />;
+    case "data_series":
+      return <Data />;
     default:
       return <Creator />;
   }

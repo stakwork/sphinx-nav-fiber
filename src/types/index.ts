@@ -2,6 +2,7 @@
 import { Mesh } from "three";
 
 export type FetchDataResponse = {
+  data_series?: any,
   exact: Node[];
   related: Node[];
 };
@@ -14,6 +15,24 @@ export type Node = {
   description?: string;
   episode_title?: string;
   guests?: (null | string | Guests)[];
+  id: string;
+  image_url?: string;
+  keyword?: boolean;
+  label: string;
+  link?: string;
+  name: string;
+  node_type: string;
+  ref_id: string;
+  scale?: number;
+  show_title?: string;
+  text?: string;
+  timestamp?: string;
+  topics?: string[];
+  type?: string;
+  weight?: number;
+};
+
+export type DataSeriesNode = {
   id: string;
   image_url?: string;
   keyword?: boolean;
