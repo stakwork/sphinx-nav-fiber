@@ -24,82 +24,69 @@ const getGeometry = (node: NodeExtended) => {
   }
 };
 
-export const Cube = memo(
-  ({ node, highlight }: { node: NodeExtended; highlight: boolean }) => {
-    const ref = useRef<THREE.Mesh | null>(null);
+export const Cube = memo(({ node, highlight, highlightColor }: { node: NodeExtended; highlight: boolean; highlightColor: string }) => {
+  const ref = useRef<THREE.Mesh | null>(null);
 
-    const material = useMaterial(node.image_url || "noimage.jpeg", highlight);
+  const material = useMaterial(node.image_url || "noimage.jpeg", highlight, highlightColor);
 
-    const selectedNode = useSelectedNode();
-    const setHoveredNode = useDataStore((s) => s.setHoveredNode);
-    const categoryFilter = useDataStore((s) => s.categoryFilter);
+  const selectedNode = useSelectedNode();
+  const setHoveredNode = useDataStore((s) => s.setHoveredNode);
+  const categoryFilter = useDataStore((s) => s.categoryFilter);
 
-    const isSelected = !!selectedNode && selectedNode?.id === node.id;
+  const isSelected = !!selectedNode && selectedNode?.id === node.id;
 
-    const isSelectedCategory = node.node_type === categoryFilter;
+  const isSelectedCategory = node.node_type === categoryFilter;
 
-    useFrame(() => {
-      if (selectedNode) {
-        material.toneMapped = false;
-      }
+  useFrame(() => {
+    if (selectedNode) {
+      material.toneMapped = false;
+    }
 
-      ref.current?.position.set(node.x || 0, node.y || 0, node.z || 0);
-    });
+    ref.current?.position.set(node.x || 0, node.y || 0, node.z || 0);
+  });
 
-    const onPointerIn = useCallback(
-      (e: ThreeEvent<PointerEvent>) => {
-        e.stopPropagation();
+  const onPointerIn = useCallback(
+    (e: ThreeEvent<PointerEvent>) => {
+      e.stopPropagation();
 
-        document.body.style.cursor = "pointer";
-
-        if (ref.current) {
-          setHoveredNode(ref.current.userData as NodeExtended);
-
-          ref.current.scale.set(
-            ref.current.scale.x * 1.5,
-            ref.current.scale.x * 1.5,
-            ref.current.scale.x * 1.5
-          );
-        }
-      },
-      [setHoveredNode]
-    );
-
-    const onPointerOut = useCallback(() => {
-      document.body.style.cursor = "auto";
+      document.body.style.cursor = "pointer";
 
       if (ref.current) {
-        setHoveredNode(null);
+        setHoveredNode(ref.current.userData as NodeExtended);
 
-        ref.current.scale.set(
-          ref.current.scale.x / 1.5,
-          ref.current.scale.x / 1.5,
-          ref.current.scale.x / 1.5
-        );
+        ref.current.scale.set(ref.current.scale.x * 1.5, ref.current.scale.x * 1.5, ref.current.scale.x * 1.5);
       }
-    }, [setHoveredNode]);
+    },
+    [setHoveredNode]
+  );
 
-    const { currentNodeIndex } = usePathway();
+  const onPointerOut = useCallback(() => {
+    document.body.style.cursor = "auto";
 
-    return (
-      <Select enabled={selectedNode ? isSelected : isSelectedCategory}>
-        <mesh
-          ref={ref}
-          geometry={getGeometry(node)}
-          material={material}
-          name={node.id}
-          onPointerOut={onPointerOut}
-          onPointerOver={onPointerIn}
-          userData={node}
-        >
-          <PathwayBadge
-            show={currentNodeIndex >= 0}
-            value={currentNodeIndex + 1}
-          />
-        </mesh>
-      </Select>
-    );
-  }
-);
+    if (ref.current) {
+      setHoveredNode(null);
+
+      ref.current.scale.set(ref.current.scale.x / 1.5, ref.current.scale.x / 1.5, ref.current.scale.x / 1.5);
+    }
+  }, [setHoveredNode]);
+
+  const { currentNodeIndex } = usePathway();
+
+  return (
+    <Select enabled={selectedNode ? isSelected : isSelectedCategory}>
+      <mesh
+        ref={ref}
+        geometry={getGeometry(node)}
+        material={material}
+        name={node.id}
+        onPointerOut={onPointerOut}
+        onPointerOver={onPointerIn}
+        userData={node}
+      >
+        <PathwayBadge show={currentNodeIndex >= 0} value={currentNodeIndex + 1} />
+      </mesh>
+    </Select>
+  );
+});
 
 Cube.displayName = "Cube";
