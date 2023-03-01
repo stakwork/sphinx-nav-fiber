@@ -78,13 +78,13 @@ export const App = () => {
   }, [fetchData, searchTerm, setSphinxModalOpen]);
 
   useEffect(() => {
-    // if (searchTerm) {
-    //   if (!hasBudgetExplanationModalBeSeen) {
-    //     open();
+    if (searchTerm) {
+      if (!hasBudgetExplanationModalBeSeen) {
+        open();
 
-    //     return;
-    //   }
-    // }
+        return;
+      }
+    }
 
     runSearch();
     // eslint-disable-next-line react-hooks/exhaustive-deps
