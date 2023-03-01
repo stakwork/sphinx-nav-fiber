@@ -1,4 +1,5 @@
 import create from "zustand";
+import { API_URL } from "~/constants";
 import { getMockGraphData } from "~/mocks/getMockGraphData";
 import { fetchGraphData } from "~/network/fetchGraphData";
 import { GraphData, NodeExtended, NodeType } from "~/types";
@@ -43,7 +44,7 @@ const defaultData: Omit<
   categoryFilter: null,
   data: null,
   disableCameraRotation: false,
-  graphRadius: 3056, // calculated from initial load
+  graphRadius: API_URL.includes('boltwall') ? 1600 : 3056, // calculated from initial load
   hoveredNode: null,
   isFetching: false,
   isTimestampLoaded: false,
