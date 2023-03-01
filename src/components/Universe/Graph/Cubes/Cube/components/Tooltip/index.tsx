@@ -2,10 +2,9 @@ import styled from "styled-components";
 import { Avatar } from "~/components/common/Avatar";
 import { Flex } from "~/components/common/Flex";
 import { Text } from "~/components/common/Text";
-import { useDataStore } from "~/stores/useDataStore";
+import { Guests, Node } from "~/types";
 import { colors } from "~/utils/colors";
 import { formatDescription } from "~/utils/formatDescription";
-import { Guests } from "~/types";
 
 const Wrapper = styled(Flex)`
   position: absolute;
@@ -25,9 +24,11 @@ const Divider = styled(Flex)`
   width: 22.5%;
 `;
 
-export const Tooltip = () => {
-  const node = useDataStore((s) => s.hoveredNode);
+type Props = {
+  node: Node | null;
+};
 
+export const Tooltip = ({ node }: Props) => {
   if (!node) {
     return null;
   }
