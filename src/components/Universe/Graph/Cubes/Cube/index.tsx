@@ -26,73 +26,83 @@ const getGeometry = (node: NodeExtended) => {
   }
 };
 
-export const Cube = memo(
-  ({ node, highlight }: { node: NodeExtended; highlight: boolean }) => {
-    const ref = useRef<THREE.Mesh | null>(null);
-    const [hovered, setHovered] = useState(false);
+type Props = {
+  node: NodeExtended;
+  highlight: boolean;
+  highlightColor: string;
+};
 
-    const selectedNode = useSelectedNode();
-    const categoryFilter = useDataStore((s) => s.categoryFilter);
-    const material = useMaterial(node.image_url || "noimage.jpeg", highlight);
+export const Cube = memo(({ node, highlight, highlightColor }: Props) => {
+  const ref = useRef<THREE.Mesh | null>(null);
+  const [hovered, setHovered] = useState(false);
 
-    const isSelected = selectedNode?.id === node.id;
-    const isSelectedCategory = node.node_type === categoryFilter;
+  const selectedNode = useSelectedNode();
+  const categoryFilter = useDataStore((s) => s.categoryFilter);
 
-    useFrame(() => {
-      if (selectedNode) {
-        material.toneMapped = false;
-      }
+  const material = useMaterial(
+    node.image_url || "noimage.jpeg",
+    highlight,
+    highlightColor
+  );
 
-      ref.current?.position.set(node.x || 0, node.y || 0, node.z || 0);
-    });
+  const isSelected = selectedNode?.id === node.id;
+  const isSelectedCategory = node.node_type === categoryFilter;
 
-    useEffect(() => {
-      document.body.style.cursor = hovered ? "pointer" : "auto";
-    }, [hovered]);
+  useFrame(() => {
+    if (selectedNode) {
+      material.toneMapped = false;
+    }
 
-    const onPointerIn = useCallback(() => setHovered(true), []);
+    ref.current?.position.set(node.x || 0, node.y || 0, node.z || 0);
+  });
 
-    const onPointerOut = useCallback(() => {
-      if (selectedNode) {
-        setHovered(false);
+  useEffect(() => {
+    document.body.style.cursor = hovered ? "pointer" : "auto";
+  }, [hovered]);
 
-        return;
-      }
+  const onPointerIn = useCallback(() => setHovered(true), []);
 
-      setTimeout(() => {
-        setHovered(false);
-      }, 500);
-    }, [selectedNode]);
+  const onPointerOut = useCallback(() => {
+    if (selectedNode) {
+      setHovered(false);
 
-    const { currentNodeIndex } = usePathway();
+      return;
+    }
 
-    return (
-      <>
-        <Select enabled={selectedNode ? isSelected : isSelectedCategory}>
-          <mesh
-            ref={ref}
-            geometry={getGeometry(node)}
-            material={material}
-            name={node.id}
-            onPointerOut={onPointerOut}
-            onPointerOver={onPointerIn}
-            userData={node}
-          >
-            <PathwayBadge
-              show={currentNodeIndex >= 0}
-              value={currentNodeIndex + 1}
-            />
+    setTimeout(() => {
+      setHovered(false);
+    }, 500);
+  }, [selectedNode]);
 
-            {hovered && (
-              <Portal>
-                <Tooltip node={node} />
-              </Portal>
-            )}
-          </mesh>
-        </Select>
-      </>
-    );
-  }
-);
+  const { currentNodeIndex } = usePathway();
+
+  return (
+    <>
+      <Select enabled={selectedNode ? isSelected : isSelectedCategory}>
+        <mesh
+          ref={ref}
+          geometry={getGeometry(node)}
+          material={material}
+          name={node.id}
+          onPointerOut={onPointerOut}
+          onPointerOver={onPointerIn}
+          scale={hovered ? 1.5 : 1}
+          userData={node}
+        >
+          <PathwayBadge
+            show={currentNodeIndex >= 0}
+            value={currentNodeIndex + 1}
+          />
+
+          {hovered && (
+            <Portal>
+              <Tooltip node={node} />
+            </Portal>
+          )}
+        </mesh>
+      </Select>
+    </>
+  );
+});
 
 Cube.displayName = "Cube";

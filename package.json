@@ -48,7 +48,8 @@
     "eject": "craco eject",
     "format": "prettier --write .",
     "postinstall": "husky install",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src"
   },
   "eslintConfig": {
     "extends": [

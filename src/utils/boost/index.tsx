@@ -5,8 +5,6 @@ const sphinxPubkey =
   "023d8eb306f0027b902fbdc81d33b49b6558b3434d374626f8c324979c92d47c21";
 
 const boostAgainstBudget = async (amount: number) => {
-  let err: any = null;
-
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   let res = await sphinx.enable(true);
@@ -29,30 +27,22 @@ const boostAgainstBudget = async (amount: number) => {
 
     if (!res || !res.budget || res?.budget < amount) {
       // topup failed
-      err = new Error("Topup failed");
-    } else {
-      // retry keysend
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      res = await sphinx.keysend(sphinxPubkey, amount);
+      throw new Error("Topup failed");
+    }
 
-      if (!res) {
-        err = new Error("Keysend failed after topup");
-      }
+    // retry keysend
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    res = await sphinx.keysend(sphinxPubkey, amount);
+
+    if (!res) {
+      throw new Error("Keysend failed after topup");
     }
   }
-
-  return err;
 };
 
 export const boost = async (refId: string, amount: number) => {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  const err = await boostAgainstBudget(amount);
-
-  if (err) {
-    throw new Error(err);
-  }
+  await boostAgainstBudget(amount);
 
   const body = {
     amount,

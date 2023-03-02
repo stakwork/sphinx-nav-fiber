@@ -1,9 +1,9 @@
 import { PropsWithChildren, useLayoutEffect, useRef, useState } from "react";
-import { createRoot } from "react-dom/client";
+import { createRoot, Root } from "react-dom/client";
 
 export const Portal = ({ children }: PropsWithChildren<unknown>) => {
   const [el] = useState(() => document.createElement("div"));
-  const rootRef = useRef(createRoot(el));
+  const rootRef = useRef<Root | null>();
 
   useLayoutEffect(() => {
     const mount = document.getElementById("tooltip-portal");
@@ -19,7 +19,7 @@ export const Portal = ({ children }: PropsWithChildren<unknown>) => {
   }, [children, el]);
 
   useLayoutEffect(() => {
-    rootRef.current.render(<div>{children}</div>);
+    rootRef.current?.render(<div>{children}</div>);
   });
 
   return null;
