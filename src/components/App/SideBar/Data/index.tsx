@@ -1,13 +1,19 @@
 import { Flex } from "~/components/common/Flex";
 import { useSelectedNode } from "~/stores/useDataStore";
 import { Text } from "~/components/common/Text";
-import { ScatterChart, Scatter, Line, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts";
+import { ScatterChart, Scatter, Line, XAxis, YAxis, CartesianGrid, Tooltip, DotProps, Dot } from "recharts";
 import { colors } from "~/utils/colors";
+import { FC } from "react";
+
+const RenderDot: FC<DotProps> = ({ cx, cy }) => <Dot cx={cx} cy={cy} fill={colors.blueTextAccent} r={2} />;
 
 export const Data = () => {
   const selectedNode = useSelectedNode();
 
   const data = [...((selectedNode as any)?.data || [])].sort((a, b) => (a.year || 0) - (b.year || 0));
+
+  const years = data.map((i) => i.year);
+  const rates = data.map((i) => i.rate);
 
   return (
     <Flex direction="column" px={24} py={16}>
@@ -18,7 +24,7 @@ export const Data = () => {
         <CartesianGrid stroke="#f5f5f5" />
         <XAxis
           dataKey="year"
-          domain={[1970, 2023]}
+          domain={[Math.min(...years), Math.max(...years)]}
           label={{ value: (selectedNode as any).x_axis_name, position: "insideBottom", offset: -10, fill: "#fff" }}
           name="X"
           tick={{ fill: colors.lightBlue300 }}
@@ -27,19 +33,20 @@ export const Data = () => {
         <YAxis
           color="#000"
           dataKey="rate"
+          domain={[Math.min(...rates), Math.max(...rates)]}
           label={{
-            value: (selectedNode as any).y_axis_name,
             angle: -90,
-            position: "insideLeft",
-            offset: 0,
             fill: "#fff",
+            offset: 0,
+            position: "insideLeft",
+            value: (selectedNode as any).y_axis_name,
           }}
           name="Y"
           tick={{ fill: colors.lightBlue300 }}
           type="number"
         />
         <Tooltip cursor={{ strokeDasharray: "3 3" }} />
-        <Scatter data={data} fill={colors.blueTextAccent} line name="A scatter" />
+        <Scatter data={data} fill={colors.blueTextAccent} line name="A scatter" shape={<RenderDot />} />
       </ScatterChart>
     </Flex>
   );
