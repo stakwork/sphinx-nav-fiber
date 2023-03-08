@@ -1,6 +1,17 @@
-import { AWS_IMAGE_BUCKET_URL, CLOUDFRONT_IMAGE_BUCKET_URL, isDevelopment } from "~/constants";
+import {
+  AWS_IMAGE_BUCKET_URL,
+  CLOUDFRONT_IMAGE_BUCKET_URL,
+  isDevelopment,
+} from "~/constants";
 import { api } from "~/network/api";
-import { FetchDataResponse, GraphData, Guests, Link, Node, NodeExtended } from "~/types";
+import {
+  FetchDataResponse,
+  GraphData,
+  Guests,
+  Link,
+  Node,
+  NodeExtended,
+} from "~/types";
 import { getLSat } from "~/utils/getLSat";
 
 type guestMapChild = {
@@ -27,12 +38,12 @@ export const fetchGraphData = async (search: string) => {
 
 const fetchNodes = async (search: string) => {
   if (isDevelopment) {
-    const response = await api.get<Node[]>(`/searching?word=${search}&free=true`);
+    const response = await api.get<Node[]>(
+      `/searching?word=${search}&free=true`
+    );
 
-    return response;
+    return { exact: response, related: [] };
   }
-
-  console.log("getting prod data");
 
   const lsatToken = await getLSat("searching");
 
@@ -47,28 +58,26 @@ const fetchNodes = async (search: string) => {
 
 const getGraphData = async (searchterm: string) => {
   try {
-    const dataInit: any = await fetchNodes(searchterm);
+    const dataInit = await fetchNodes(searchterm);
 
-    const data = [
-      ...dataInit.exact,
-      ...dataInit.related,
-      ...(dataInit.data_series
-        ? [
-            {
-              ...dataInit.data_series,
-              boost: null,
-              id: "string",
-              label: dataInit.data_series.title,
-              name: "Name",
-              node_type: "data_series",
-              ref_id: "",
-              type: "data_series",
-              weight: 2,
-              image_url: "node_data.webp",
-            },
-          ]
-        : []),
-    ];
+    const dataSeries = dataInit.data_series
+      ? [
+          {
+            ...dataInit.data_series,
+            boost: null,
+            id: "string",
+            image_url: "node_data.webp",
+            label: dataInit.data_series.title,
+            name: "Name",
+            node_type: "data_series",
+            ref_id: "",
+            type: "data_series",
+            weight: 2,
+          } as Node,
+        ]
+      : [];
+
+    const data = [...dataInit.exact, ...dataInit.related, ...dataSeries];
 
     const nodes: NodeExtended[] = [];
     const links: Link[] = [];
@@ -79,7 +88,13 @@ const getGraphData = async (searchterm: string) => {
     if (data.length) {
       // Populating nodes array with podcasts and constructing a topic map
       data.forEach((node) => {
-        const { children, topics, guests, show_title: showTitle, node_type: nodeType } = node;
+        const {
+          children,
+          topics,
+          guests,
+          show_title: showTitle,
+          node_type: nodeType,
+        } = node;
 
         if (!shouldIncludeTopics && nodeType === "topic") {
           return;
@@ -95,7 +110,7 @@ const getGraphData = async (searchterm: string) => {
         });
 
         if (topics) {
-          topicMap = topics.reduce((acc: any, topic: any) => {
+          topicMap = topics.reduce((acc, topic) => {
             if (showTitle) {
               acc[topic] = [...(topicMap[topic] || []), showTitle];
             }
@@ -105,12 +120,15 @@ const getGraphData = async (searchterm: string) => {
         }
 
         if (node.node_type === "episode") {
-          (guests || []).forEach((guest: any) => {
+          (guests || []).forEach((guest) => {
             const currentGuest = guest as Guests;
 
             if (currentGuest.name) {
               guestMap[currentGuest.ref_id] = {
-                children: [...(guestMap[currentGuest.ref_id]?.children || []), node.ref_id],
+                children: [
+                  ...(guestMap[currentGuest.ref_id]?.children || []),
+                  node.ref_id,
+                ],
                 imageUrl: currentGuest.profile_picture || "",
                 name: currentGuest.name,
                 twitterHandle: currentGuest.twitter_handle,
@@ -146,7 +164,9 @@ const getGraphData = async (searchterm: string) => {
 
           // make links to children
           topicTitles.forEach((showTitle) => {
-            const show = data.find((f) => f.show_title === showTitle && f.node_type === "episode");
+            const show = data.find(
+              (f) => f.show_title === showTitle && f.node_type === "episode"
+            );
 
             const showRefId = show?.ref_id || "";
 

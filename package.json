@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@react-three/drei": "^9.24.4",
-    "@react-three/fiber": "^8.6.0",
+    "@react-three/drei": "^9.57.0",
+    "@react-three/fiber": "^8.11.5",
     "@react-three/postprocessing": "^2.7.0",
     "@use-gesture/react": "^10.2.24",
     "camera-controls": "^1.37.4",
@@ -48,7 +48,8 @@
     "eject": "craco eject",
     "format": "prettier --write .",
     "postinstall": "husky install",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src"
   },
   "eslintConfig": {
     "extends": [
@@ -82,10 +83,10 @@
     "@types/invariant": "^2.2.35",
     "@types/jest": "^27.0.1",
     "@types/lodash": "^4.14.182",
-    "@types/react-input-mask": "2.0.4",
     "@types/node": "^16.7.13",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
+    "@types/react-input-mask": "2.0.4",
     "@types/styled-components": "^5.1.25",
     "@types/three": "^0.141.0",
     "@typescript-eslint/eslint-plugin": "^5.27.1",

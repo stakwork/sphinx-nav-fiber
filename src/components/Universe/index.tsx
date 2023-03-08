@@ -15,12 +15,10 @@ import {
   SSAO,
 } from "@react-three/postprocessing";
 import { Suspense } from "react";
-import { useDataStore } from "~/stores/useDataStore";
 import { colors } from "~/utils/colors";
 import { Controls } from "./Controls";
 import { Graph } from "./Graph";
 import { Lights } from "./Lights";
-import { Tooltip } from "./Tooltip";
 
 const NODE_SELECTED_COLOR = 0x00ff00;
 
@@ -51,40 +49,36 @@ const Content = () => (
   </>
 );
 
-export const Universe = () => {
-  const sphinxModalIsOpen = useDataStore((s) => s.sphinxModalIsOpen);
+export const Universe = () => (
+  <>
+    <div id="tooltip-portal" />
 
-  return (
-    <>
-      {!sphinxModalIsOpen && <Tooltip />}
-
-      <Suspense fallback={null}>
-        <Canvas
-          camera={{
-            aspect: 1920 / 1080,
-            far: 8000,
-            near: 1,
-            position: [1000, 0, 5],
-          }}
-          id="universe-canvas"
+    <Suspense fallback={null}>
+      <Canvas
+        camera={{
+          aspect: 1920 / 1080,
+          far: 8000,
+          near: 1,
+          position: [1000, 0, 5],
+        }}
+        id="universe-canvas"
+      >
+        <Suspense
+          fallback={
+            <Html>
+              <Loader />
+            </Html>
+          }
         >
-          <Suspense
-            fallback={
-              <Html>
-                <Loader />
-              </Html>
-            }
-          >
-            <Preload />
+          <Preload />
 
-            <AdaptiveDpr />
+          <AdaptiveDpr />
 
-            <AdaptiveEvents />
+          <AdaptiveEvents />
 
-            <Content />
-          </Suspense>
-        </Canvas>
-      </Suspense>
-    </>
-  );
-};
+          <Content />
+        </Suspense>
+      </Canvas>
+    </Suspense>
+  </>
+);

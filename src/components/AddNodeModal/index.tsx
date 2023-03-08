@@ -1,24 +1,24 @@
-import styled from "styled-components";
+import { useState } from "react";
+import { FieldValues, FormProvider, useForm } from "react-hook-form";
+import { FaCheck } from "react-icons/fa";
+import { ClipLoader } from "react-spinners";
+import { toast } from "react-toastify";
 import * as sphinx from "sphinx-bridge-kevkevinpal";
-import { FormProvider, useForm, FieldValues } from "react-hook-form";
-import { api } from "~/network/api";
+import styled from "styled-components";
 import { TextArea } from "~/components/AddNodeModal/TextArea";
 import { TextInput } from "~/components/AddNodeModal/TextInput";
-import { TagInput } from "./TagInput";
 import { Button } from "~/components/Button";
 import { Flex } from "~/components/common/Flex";
 import { Text } from "~/components/common/Text";
 import { BaseModal } from "~/components/Modal";
+import { isDevelopment, NODE_ADD_ERROR, NODE_ADD_SUCCESS } from "~/constants";
+import { api } from "~/network/api";
 import { useModal } from "~/stores/useModalStore";
 import { colors } from "~/utils/colors";
-import { timeToMilliseconds } from "~/utils/timeToMilliseconds";
 import { getLSat } from "~/utils/getLSat";
-import { toast } from "react-toastify";
+import { timeToMilliseconds } from "~/utils/timeToMilliseconds";
 import { ToastMessage } from "../common/Toast/toastMessage";
-import { NODE_ADD_SUCCESS, NODE_ADD_ERROR, isDevelopment } from "~/constants";
-import { ClipLoader } from "react-spinners";
-import { FaCheck } from "react-icons/fa";
-import { useState } from "react";
+import { TagInput } from "./TagInput";
 
 const requiredRule = {
   required: {
@@ -54,19 +54,28 @@ const notify = (message: string) => {
   });
 };
 
-const handleSubmit = async (data: FieldValues, close: () => void, reset: () => void, withTimeStamps: boolean) => {
-  const body: { [index: string]: any } = {
+const handleSubmit = async (
+  data: FieldValues,
+  close: () => void,
+  reset: () => void,
+  withTimeStamps: boolean
+) => {
+  const body: { [index: string]: unknown } = {
     media_url: data.link,
-    ...(withTimeStamps ? {job_response: {
-      tags: [
-        {
-          description: data.description,
-          "end-time": timeToMilliseconds(data.endTime),
-          "start-time": timeToMilliseconds(data.startTime),
-          tag: data.tags?.join(", "),
-        },
-      ],
-    }} : {}),
+    ...(withTimeStamps
+      ? {
+          job_response: {
+            tags: [
+              {
+                description: data.description,
+                "end-time": timeToMilliseconds(data.endTime),
+                "start-time": timeToMilliseconds(data.startTime),
+                tag: data.tags?.join(", "),
+              },
+            ],
+          },
+        }
+      : {}),
   };
 
   let lsatToken;
@@ -86,9 +95,13 @@ const handleSubmit = async (data: FieldValues, close: () => void, reset: () => v
   }
 
   try {
-    const res: SubmitErrRes = await api.post("/add_node", JSON.stringify(body), {
-      Authorization: lsatToken,
-    } as HeadersInit);
+    const res: SubmitErrRes = await api.post(
+      "/add_node",
+      JSON.stringify(body),
+      {
+        Authorization: lsatToken,
+      } as HeadersInit
+    );
 
     if (res.error) {
       const { message } = res.error;
@@ -168,7 +181,8 @@ export const AddNodeModal = () => {
               rules={{
                 ...requiredRule,
                 pattern: {
-                  message: "You must enter a valid YouTube, Twitter Space or mp3 link.",
+                  message:
+                    "You must enter a valid YouTube, Twitter Space or mp3 link.",
                   value: twitterOrYoutubeRegex,
                 },
               }}
@@ -178,7 +192,11 @@ export const AddNodeModal = () => {
           <Flex direction="row" pt={12}>
             <CheckBoxWrapper>
               Add timestamps
-              <button className="checkbox" onClick={() => setEnableTimestamps(!enableTimestamps)} type="button">
+              <button
+                className="checkbox"
+                onClick={() => setEnableTimestamps(!enableTimestamps)}
+                type="button"
+              >
                 {enableTimestamps && <FaCheck color={colors.lightBlue500} />}
               </button>
             </CheckBoxWrapper>
@@ -200,7 +218,7 @@ export const AddNodeModal = () => {
                         message: "Timestamp must be in the format hh:mm:ss",
                         value: timeRegex,
                       },
-                      ...{...requiredRule, required: enableTimestamps},
+                      ...{ ...requiredRule, required: enableTimestamps },
                     }}
                   />
                 </Flex>
@@ -220,9 +238,10 @@ export const AddNodeModal = () => {
                       },
                       validate: {
                         endTime: (value) =>
-                          value > (startTime || "00:00:00") || "End time should be greater than start time",
+                          value > (startTime || "00:00:00") ||
+                          "End time should be greater than start time",
                       },
-                      ...{...requiredRule, required: enableTimestamps},
+                      ...{ ...requiredRule, required: enableTimestamps },
                     }}
                   />
                 </Flex>
@@ -235,7 +254,7 @@ export const AddNodeModal = () => {
                   maxLength={100}
                   message="Enter a short description of your audio/video segment. Think of this as the title of your node. [max 100 characters]"
                   name="description"
-                  rules={{...requiredRule, required: enableTimestamps}}
+                  rules={{ ...requiredRule, required: enableTimestamps }}
                 />
               </Flex>
 
@@ -253,7 +272,8 @@ export const AddNodeModal = () => {
 
           <Flex pt={16} px={4} tabIndex={0}>
             <Text color="lightGray" kind="tinyBold">
-              Your pubkey will be submitted with your node, so you can receive sats that your node earns.
+              Your pubkey will be submitted with your node, so you can receive
+              sats that your node earns.
             </Text>
           </Flex>
 

@@ -1,13 +1,12 @@
+import { toast, ToastContentProps } from "react-toastify";
 import * as sphinx from "sphinx-bridge-kevkevinpal";
 import styled from "styled-components";
+import { Text } from "~/components/common/Text";
 import { BOOST_ERROR_BUDGET } from "~/constants";
 import { colors } from "~/utils/colors";
-import { Text } from "~/components/common/Text";
-import { ToastContentProps, toast } from "react-toastify";
 
 type Props = ToastContentProps & {
   message: string;
-  toastProps: any;
 };
 
 const topupFromToast = async () => {

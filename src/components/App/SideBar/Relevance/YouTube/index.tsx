@@ -1,22 +1,19 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useRef } from "react";
+import ReactPlayer from "react-player";
 import { useSelectedNode } from "~/stores/useDataStore";
 import { videoTimetoSeconds } from "~/utils/videoTimetoSeconds";
-import ReactPlayer from "react-player";
 
 export const YouTube = () => {
   const selectedNode = useSelectedNode();
-  const playerRef = useRef(null);
+  const playerRef = useRef<ReactPlayer | null>(null);
 
-  const {
-    link,
-    timestamp,
-  } = selectedNode || {};
+  const { link, timestamp } = selectedNode || {};
 
   const secs = videoTimetoSeconds(timestamp || "");
 
   useEffect(() => {
-    if(playerRef.current) {
-      (playerRef.current as any)?.seekTo(secs);
+    if (playerRef.current) {
+      playerRef.current?.seekTo(secs);
     }
   }, [playerRef, secs]);
 

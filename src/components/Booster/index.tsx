@@ -1,15 +1,16 @@
 import { useEffect, useState } from "react";
 import ClipLoader from "react-spinners/ClipLoader";
-import { BOOST_SUCCESS, BOOST_ERROR_BUDGET } from "~/constants";
+import { toast } from "react-toastify";
 import { Flex } from "~/components/common/Flex";
 import { Pill } from "~/components/common/Pill";
+import { BOOST_ERROR_BUDGET, BOOST_SUCCESS } from "~/constants";
+import { Node } from "~/types";
 import { boost } from "~/utils/boost";
-import { toast } from "react-toastify";
 import { ToastMessage } from "../common/Toast/toastMessage";
 
 type Props = {
   count?: number;
-  content?: any;
+  content?: Node | null;
   refId?: string;
   readOnly?: boolean;
 };
@@ -100,7 +101,7 @@ export const Booster = ({ count, content, readOnly, refId }: Props) => {
 
             doBoost();
           }}
-          style={{ padding: '4px 8px', width: "fit-content" }}
+          style={{ padding: "4px 8px", width: "fit-content" }}
         >
           {submitting ? (
             <ClipLoader color="#fff" loading size={10} />

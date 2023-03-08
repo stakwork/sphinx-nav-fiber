@@ -2,7 +2,7 @@
 import { Mesh } from "three";
 
 export type FetchDataResponse = {
-  data_series?: any,
+  data_series?: { title: string };
   exact: Node[];
   related: Node[];
 };
