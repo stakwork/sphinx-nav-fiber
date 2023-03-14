@@ -1,10 +1,9 @@
+import { useFormContext } from "react-hook-form";
 import styled from "styled-components";
-import { colors } from "~/utils/colors";
-import { useState } from "react";
 import { Button } from "~/components/Button";
 import { Flex } from "~/components/common/Flex";
 import { Text } from "~/components/common/Text";
-import { useFormContext } from "react-hook-form";
+import { colors } from "~/utils/colors";
 
 type GuestObject = {
   guestName: string;
@@ -12,6 +11,7 @@ type GuestObject = {
   profilePicture: string;
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type FieldValues = Record<string, any>;
 
 type Props = {
@@ -25,15 +25,13 @@ const name = "guestHandles";
 
 export const GuestHandle = ({ getVals, openPreview }: Props) => {
   const { setValue, getValues } = useFormContext<Fields>();
-  const [currentGuestHandle, setCurrentGuestHandle] = useState({});
+
   const guestHandles = getValues(name);
 
   const handleGuestAdd = () => {
     const { guestName, twitterHandle, profilePicture } = getVals();
 
-    if (!guestName) {
-      console.log("no guest name");
-    } else {
+    if (guestName) {
       const guestObject = {
         guestName,
         profilePicture: profilePicture || "",
@@ -41,7 +39,6 @@ export const GuestHandle = ({ getVals, openPreview }: Props) => {
       };
 
       setValue(name, [...(guestHandles || []), guestObject]);
-      setCurrentGuestHandle(guestObject);
     }
   };
 
