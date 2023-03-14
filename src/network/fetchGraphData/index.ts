@@ -4,14 +4,7 @@ import {
   isDevelopment,
 } from "~/constants";
 import { api } from "~/network/api";
-import {
-  FetchDataResponse,
-  GraphData,
-  Guests,
-  Link,
-  Node,
-  NodeExtended,
-} from "~/types";
+import { FetchDataResponse, FetchSentimentResponse, GraphData, Guests, Link, Node, NodeExtended } from "~/types";
 import { getLSat } from "~/utils/getLSat";
 
 type guestMapChild = {
@@ -54,6 +47,12 @@ const fetchNodes = async (search: string) => {
   return api.get<FetchDataResponse>(`/search?word=${search}`, {
     Authorization: lsatToken,
   });
+};
+
+export const getSentimentData = async () => {
+  const response = await api.get<FetchSentimentResponse>(`/sentiments`);
+
+  return response;
 };
 
 const getGraphData = async (searchterm: string) => {

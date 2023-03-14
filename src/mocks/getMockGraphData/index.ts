@@ -3,22 +3,22 @@ import getNodes from "./nodes";
 
 import getNodesChile from "./nodesChile";
 import getLinksChile from "./linksChile";
-import { API_URL } from "~/constants";
+import { isChileGraph } from "~/constants";
 
 const initialGraphData = {
   chile: {
-    nodes: getNodesChile,
-    links: getLinksChile
+    links: getLinksChile,
+    nodes: getNodesChile
   },
   main: {
-    nodes: getNodes,
-    links: getLinks
+    links: getLinks,
+    nodes: getNodes
   }
 };
 
 export const getMockGraphData = () => {
 
-  const graphFor = API_URL.includes('boltwall') ? 'chile' : 'main';
+  const graphFor = isChileGraph ? "chile" : "main";
 
   const ids: Record<string, number> = {};
 

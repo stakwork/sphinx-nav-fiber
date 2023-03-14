@@ -7,6 +7,10 @@ export type FetchDataResponse = {
   related: Node[];
 };
 
+export type FetchSentimentResponse = {
+  data: Sentiment[];
+};
+
 export type Node = {
   boost?: number | null;
   children?: string[];
@@ -88,3 +92,8 @@ export type Type =
   | "guest"
   | "podcast"
   | "twitter_space";
+
+export type Sentiment = {
+  date_added_to_graph: string;
+  sentiment_score: number;
+};
