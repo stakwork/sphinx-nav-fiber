@@ -2,6 +2,7 @@ import create from "zustand";
 
 type AppStore = {
   currentSearch: string | null;
+  secondarySidebarIsOpen: boolean;
   sidebarIsOpen: boolean;
   hasBudgetExplanationModalBeSeen: boolean;
   theme: "dark" | "light";
@@ -11,6 +12,7 @@ type AppStore = {
   clearSearch: () => void;
   setCurrentSearch: (_: string) => void;
   setRelevanceSelected: (_: boolean) => void;
+  setSecondarySidebarIsOpen: (_: boolean) => void;
   setSidebarOpen: (_: boolean) => void;
   setTranscriptOpen: (_: boolean) => void;
   setFlagErrorOpen: (_: boolean) => void;
@@ -21,6 +23,7 @@ const defaultData = {
   flagErrorIsOpen: false,
   hasBudgetExplanationModalBeSeen: false,
   relevanceIsSelected: false,
+  secondarySidebarIsOpen: false,
   sidebarIsOpen: false,
   theme: "light" as const,
   transcriptIsOpen: false,
@@ -32,6 +35,10 @@ export const useAppStore = create<AppStore>((set, get) => ({
   setCurrentSearch: (currentSearch) => set({ currentSearch }),
   setFlagErrorOpen: (flagErrorIsOpen) => set({ flagErrorIsOpen }),
   setRelevanceSelected: (relevanceIsSelected) => set({ relevanceIsSelected }),
+  setSecondarySidebarIsOpen: (secondarySidebarIsOpen) =>
+    set({
+      secondarySidebarIsOpen,
+    }),
   setSidebarOpen: (sidebarIsOpen) =>
     set({
       sidebarIsOpen,

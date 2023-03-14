@@ -11,6 +11,8 @@ export const API_URL =
   apiUrlFromSwarmHost() ||
    "https://knowledge-graph.sphinx.chat";
 
+export const isChileGraph = API_URL.includes("boltwall");
+
 function apiUrlFromSwarmHost(): string | undefined {
   // for swarm deployments, always point to "boltwall"
   // for now, only if the URL contains "swarm"

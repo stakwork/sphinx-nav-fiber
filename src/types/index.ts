@@ -2,9 +2,13 @@
 import { Mesh } from "three";
 
 export type FetchDataResponse = {
-  data_series?: any,
+  data_series?: any;
   exact: Node[];
   related: Node[];
+};
+
+export type FetchSentimentResponse = {
+  data: Sentiment[];
 };
 
 export type Node = {
@@ -88,3 +92,8 @@ export type Type =
   | "guest"
   | "podcast"
   | "twitter_space";
+
+export type Sentiment = {
+  date_added_to_graph: string;
+  sentiment_score: number;
+};
