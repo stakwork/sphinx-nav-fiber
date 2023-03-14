@@ -7,6 +7,13 @@ import { useDataStore } from "~/stores/useDataStore";
 import { NodeExtended } from "~/types";
 import { Cube } from "./Cube";
 
+type NodeTypeColors = Record<string, string>;
+
+const NODE_TYPE_COLORS: NodeTypeColors = {
+  data_series: "red",
+  tweet_data: "aqua",
+};
+
 export const Cubes = memo(() => {
   const data = useGraphData();
 
@@ -52,8 +59,8 @@ export const Cubes = memo(() => {
           <Cube
           // eslint-disable-next-line react/no-array-index-key
             key={`${node.id}-${index}`}
-            highlight={highlight || node.node_type === "data_series"}
-            highlightColor={node.node_type === "data_series" ? 'red' : 'green'}
+            highlight={highlight || !!NODE_TYPE_COLORS[node.node_type]}
+            highlightColor={NODE_TYPE_COLORS[node.node_type] || 'green'}
             node={node}
           />
         );

@@ -28,6 +28,8 @@
     "react-scripts": "4.0.3",
     "react-spinners": "^0.13.3",
     "react-toastify": "^8.2.0",
+    "react-twitter-embed": "^4.0.4",
+    "react-twitter-widgets": "^1.11.0",
     "recharts": "^2.4.3",
     "sphinx-bridge-kevkevinpal": "0.2.48",
     "styled-components": "^5.3.5",

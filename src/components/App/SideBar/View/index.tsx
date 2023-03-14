@@ -5,6 +5,7 @@ import { Creator } from "../Creator";
 import { Data } from "../Data";
 import { Person } from "../Person";
 import { Relevance } from "../Relevance";
+import { TwitData } from "../TwitData";
 import { Twitter } from "../Twitter";
 
 export const View = () => {
@@ -27,6 +28,8 @@ export const View = () => {
       return <Person />;
     case "data_series":
       return <Data />;
+    case "tweet_data":
+      return <TwitData />;
     default:
       return <Creator />;
   }
