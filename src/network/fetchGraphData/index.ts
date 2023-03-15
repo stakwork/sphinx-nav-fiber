@@ -31,11 +31,9 @@ export const fetchGraphData = async (search: string) => {
 
 const fetchNodes = async (search: string) => {
   if (isDevelopment) {
-    const response = await api.get<Node[]>(
-      `/searching?word=${search}&free=true`
-    );
+    const response = await api.get<FetchDataResponse>(`/searching?word=${search}&free=true`);
 
-    return { exact: response, related: [] };
+    return response;
   }
 
   const lsatToken = await getLSat("searching");
@@ -76,7 +74,22 @@ const getGraphData = async (searchterm: string) => {
         ]
       : [];
 
-    const data = [...dataInit.exact, ...dataInit.related, ...dataSeries];
+    const tweetData = (dataInit.tweet_data || []).map(
+      (i) =>
+        ({
+          ...i,
+          date: Number(i.date),
+          id: i.tweet_id,
+          image_url: "twitter_spaces_img.png",
+          label: i.name,
+          node_type: "tweet_data",
+          ref_id: "",
+          type: "tweet_data",
+          weight: 2,
+        } as Node)
+    );
+
+    const data = [...dataInit.exact, ...dataInit.related, ...dataSeries, ...tweetData];
 
     const nodes: NodeExtended[] = [];
     const links: Link[] = [];
