@@ -1,4 +1,4 @@
-import { Line, Segments } from "@react-three/drei";
+import { Segments } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
 import {
   forceCenter,
@@ -6,13 +6,13 @@ import {
   forceManyBody,
   forceSimulation,
 } from "d3-force-3d";
-import { useEffect, useRef } from "react";
-import { Line2 } from "three/examples/jsm/lines/Line2";
-import { useGraphData, usePathway } from "~/components/DataRetriever";
+import { useEffect } from "react";
+import { useGraphData } from "~/components/DataRetriever";
 import { useAppStore } from "~/stores/useAppStore";
 import { useDataStore } from "~/stores/useDataStore";
 import { GraphData, NodeExtended } from "~/types";
 import { Cubes } from "./Cubes";
+import { PathwayLine } from "./PathwayLine";
 import { Segment } from "./Segment";
 
 const layout = forceSimulation()
@@ -56,41 +56,6 @@ let currentTick: number;
 
 // Time in seconds
 const timeLimit = 3;
-
-const PathwayLine = () => {
-  const { pathway } = usePathway();
-  const ref = useRef<Line2>(null);
-
-  useFrame(() => {
-    if (!ref.current) {
-      return;
-    }
-
-    const points = pathway.map(
-      (node) => [node.x || 0, node.y || 0, node.z || 0] as const
-    );
-
-    if (points.length) {
-      ref.current.geometry.setPositions(points.flat());
-    }
-  });
-
-  return (
-    <>
-      <Line
-        ref={ref}
-        color="green"
-        dashed={false}
-        forceSinglePass={false}
-        getObjectsByProperty={false}
-        getVertexPosition={false}
-        lineWidth={1}
-        matrixWorldAutoUpdate={false}
-        points={[[0, 0, 0]]}
-      />
-    </>
-  );
-};
 
 export const Graph = () => {
   const data = useGraphData();

@@ -1,4 +1,5 @@
 import { useCallback } from "react";
+import { MdClose, MdVerifiedUser } from "react-icons/md";
 import styled from "styled-components";
 import { Button } from "~/components/Button";
 import { Flex } from "~/components/common/Flex";
@@ -10,25 +11,20 @@ import { colors } from "~/utils/colors";
 
 const CloseButton = styled(Flex)`
   cursor: pointer;
-
-  span {
-    font-size: 18px;
-    color: ${colors.primaryRed};
-  }
 `;
 
-const Shield = styled(Flex)`
-  span {
-    font-size: 54px;
-    color: ${colors.modalShield};
-  }
+const ButtonWrap = styled(Flex)`
+  margin: 0 auto;
 `;
 
-type Props = {
-  onClose?: () => void;
-};
+const AuthorizeHeader = styled(Text).attrs({
+  color: "modalAuth",
+  kind: "bigHeading",
+})`
+  font-size: 32px;
+`;
 
-export const BudgetExplanationModal = ({ onClose }: Props) => {
+export const BudgetExplanationModal = () => {
   const { close } = useModal("budgetExplanation");
 
   const handlePress = useCallback(() => {
@@ -45,14 +41,14 @@ export const BudgetExplanationModal = ({ onClose }: Props) => {
     >
       <Flex align="flex-end" pb={14}>
         <CloseButton onClick={close}>
-          <span className="material-icons">close</span>
+          <MdClose color={colors.primaryRed} fontSize={18} />
         </CloseButton>
       </Flex>
 
       <Flex align="center">
-        <Shield>
-          <span className="material-icons">verified_user</span>
-        </Shield>
+        <Flex>
+          <MdVerifiedUser color={colors.modalShield} fontSize={18} />
+        </Flex>
 
         <Flex pb={10} pt={12}>
           <AuthorizeHeader>Authorize</AuthorizeHeader>
@@ -76,14 +72,3 @@ export const BudgetExplanationModal = ({ onClose }: Props) => {
     </BaseModal>
   );
 };
-
-const ButtonWrap = styled(Flex)`
-  margin: 0 auto;
-`;
-
-const AuthorizeHeader = styled(Text).attrs({
-  color: "modalAuth",
-  kind: "bigHeading",
-})`
-  font-size: 32px;
-`;

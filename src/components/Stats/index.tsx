@@ -1,6 +1,6 @@
-import styled from "styled-components";
 import { noop } from "lodash";
 import { useEffect, useState } from "react";
+import styled from "styled-components";
 import { Text } from "~/components/common/Text";
 import { api } from "~/network/api";
 
