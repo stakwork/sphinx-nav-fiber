@@ -9,7 +9,7 @@ export const isDevelopment = !!(
 export const API_URL =
   process.env.REACT_DEV_API_URL ||
   apiUrlFromSwarmHost() ||
-  "https://boltwall-jwd.second-brain-sphinx-devs.sphinx.chat";
+  "https://knowledge-graph.sphinx.chat";
 
 export const isChileGraph = API_URL.includes("boltwall");
 
