@@ -20,7 +20,7 @@ const StyledSelect = styled(Select)`
     font-weight: 600;
     color: ${colors.white};
     border: none;
-    width: 148px;
+    width: 152px;
 
     .react-dropdown-select-clear {
       display: none;
