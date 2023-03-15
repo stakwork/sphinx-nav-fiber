@@ -94,7 +94,7 @@ type TweetData = {
   verified: boolean;
 };
 
-export const nodeTypes = ["clip", "episode", "guest", "show", "topic"] as const;
+export const nodeTypes = ["clip", "episode", "guest", "show", "topic", "data_series", "tweet_data"] as const;
 
 export type NodeType = typeof nodeTypes[number];
 
@@ -103,6 +103,8 @@ export type Type =
   | "youtube"
   | "guest"
   | "podcast"
+  | "tweet_data"
+  | "data_series"
   | "twitter_space";
 
 export type Sentiment = {
