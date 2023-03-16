@@ -20,7 +20,7 @@ const StyledSelect = styled(Select)`
     font-weight: 600;
     color: ${colors.white};
     border: none;
-    width: 148px;
+    width: 152px;
 
     .react-dropdown-select-clear {
       display: none;
@@ -81,15 +81,24 @@ const StyledSelect = styled(Select)`
   }
 `;
 
-const options = nodeTypes.map((i, index) =>
-  ({ label: capitalize(i === "guest" ? "person" : i), value: index }));
+const NODE_TYPES_MAPPER = {
+  clip: 'Clip',
+  data_series: 'Data series',
+  episode: 'Episode',
+  guest: 'Person',
+  show: 'Show',
+  topic: 'Topic',
+  tweet_data: 'Twit data',
+};
+
+const options = nodeTypes.map((i, index) => ({ label: NODE_TYPES_MAPPER[i], value: index }));
 
 export const CategorySelect = () => {
   const [categoryFilter, setCategoryFilter] = useDataStore((s) => [s.categoryFilter, s.setCategoryFilter]);
 
   const selectedValue = categoryFilter ?
     [{
-      label: categoryFilter === 'guest' ? 'Person' : capitalize(categoryFilter || ''),
+      label: NODE_TYPES_MAPPER[categoryFilter],
       value: nodeTypes.findIndex((i) => i === categoryFilter),
     }] : [];
 
