@@ -32,13 +32,11 @@ export const Controls = ({ disableAnimations }: Props) => {
       if (cameraControlsRef.current) {
         cameraControlsRef.current.smoothTime = 0.7;
 
-        const target = introAnimationTargetPosition;
-
         if (!selectedNode) {
           await cameraControlsRef.current.setLookAt(
-            target.x,
-            target.y,
-            target.z,
+            introAnimationTargetPosition.x,
+            introAnimationTargetPosition.y,
+            introAnimationTargetPosition.z,
             0,
             0,
             0,

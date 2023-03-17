@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { FieldValues, FormProvider, useForm } from "react-hook-form";
 import { FaCheck } from "react-icons/fa";
+import { MdClose, MdInfo } from "react-icons/md";
 import { ClipLoader } from "react-spinners";
 import { toast } from "react-toastify";
 import * as sphinx from "sphinx-bridge-kevkevinpal";
@@ -144,7 +145,8 @@ export const AddNodeModal = () => {
             <Flex align="center" direction="row">
               <Text kind="bigHeadingBold">Add Content</Text>
               <InfoIcon role="tooltip" tabIndex={0}>
-                <span className="material-icons-outlined">info</span>
+                <MdInfo />
+
                 <div className="tooltip">{mainInfoMessage}</div>
               </InfoIcon>
             </Flex>
@@ -167,13 +169,13 @@ export const AddNodeModal = () => {
               role="button"
               tabIndex={0}
             >
-              <span className="material-icons">close</span>
+              <MdClose color="white" />
             </CloseButton>
           </Flex>
 
           <Flex>
             <TextInput
-              id="link"
+              id="add-node-link"
               label="Link"
               message="Paste a valid YouTube or Twitter Space link here."
               name="link"
@@ -207,7 +209,7 @@ export const AddNodeModal = () => {
               <Flex direction="row" pt={12}>
                 <Flex basis="50%" pr={16}>
                   <TextInput
-                    id="startTime"
+                    id="add-node-start-time"
                     label="Start Time"
                     mask="99:99:99"
                     message="Enter start and end timestamps which will encompass the segment of video or audio you want to submit. [hh:mm:ss]"
@@ -225,7 +227,7 @@ export const AddNodeModal = () => {
 
                 <Flex basis="50%" pl={16}>
                   <TextInput
-                    id="endTime"
+                    id="add-node-end-time"
                     label="End Time"
                     mask="99:99:99"
                     message="Enter start and end timestamps which will encompass the segment of video or audio you want to submit. [hh:mm:ss]"
@@ -249,7 +251,7 @@ export const AddNodeModal = () => {
 
               <Flex pt={12}>
                 <TextArea
-                  id="description"
+                  id="add-node-description"
                   label="Clip Description"
                   maxLength={100}
                   message="Enter a short description of your audio/video segment. Think of this as the title of your node. [max 100 characters]"
@@ -260,7 +262,7 @@ export const AddNodeModal = () => {
 
               <Flex pt={12}>
                 <TagInput
-                  id="tags"
+                  id="add-node-tags"
                   label="Tags"
                   maxLength={50}
                   message="Enter some topic tags that capture the main ideas of your segment. Be specific! Generic tags aren't useful for anyone. Think, 'What term(s) would someone search to find my node? [max: 15, max characters per tag: 50]"
@@ -283,7 +285,12 @@ export const AddNodeModal = () => {
                 <ClipLoader color={colors.white} size={20} />
               </SubmitLoader>
             ) : (
-              <Button disabled={isSubmitting} kind="big" type="submit">
+              <Button
+                disabled={isSubmitting}
+                id="add-node-submit-cta"
+                kind="big"
+                type="submit"
+              >
                 Add content
               </Button>
             )}
@@ -297,7 +304,7 @@ export const AddNodeModal = () => {
 const CloseButton = styled(Flex)`
   cursor: pointer;
 
-  span {
+  svg {
     font-size: 24px;
     color: ${colors.white};
   }
@@ -308,7 +315,7 @@ const InfoIcon = styled(Flex)`
   padding: 8px;
   position: relative;
 
-  span {
+  svg {
     font-size: 22px;
     color: ${colors.secondaryText4};
   }

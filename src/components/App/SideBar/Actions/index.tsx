@@ -1,3 +1,4 @@
+import { MdOutlinedFlag } from "react-icons/md";
 import styled from "styled-components";
 import { Booster } from "~/components/Booster";
 import { Flex } from "~/components/common/Flex";
@@ -38,7 +39,7 @@ export const Actions = () => {
       <Pill
         onClick={() => setTranscriptOpen(!transcriptIsOpen)}
         selected={transcriptIsOpen}
-        style={{ padding: '4px 8px' }}
+        style={{ padding: "4px 8px" }}
       >
         Transcript
       </Pill>
@@ -46,13 +47,12 @@ export const Actions = () => {
       <Flex pl={10}>
         <Booster content={selectedNode} refId={selectedNode?.id} />
       </Flex>
+
       <FlagError
         flagErrorIsOpen={flagErrorIsOpen}
         onClick={() => setFlagErrorOpen(!flagErrorIsOpen)}
       >
-        <span className="material-icons" style={{ fontSize: 20 }}>
-          outlined_flag
-        </span>
+        <MdOutlinedFlag fontSize={20} />
       </FlagError>
     </Flex>
   );

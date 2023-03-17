@@ -25,3 +25,9 @@ yarn-error.log*
 
 .idea/
 package-lock.json
+
+# yarn 3
+.yarn/*
+!.yarn/releases
+!.yarn/plugins
+.pnp.*

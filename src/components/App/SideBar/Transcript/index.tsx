@@ -1,10 +1,11 @@
+import { MdClose } from "react-icons/md";
 import styled, { keyframes } from "styled-components";
-import { Button } from "~/components/Button";
-import { colors } from "~/utils/colors";
 import { MENU_WIDTH } from "~/components/App/SideBar";
+import { Button } from "~/components/Button";
 import { Flex } from "~/components/common/Flex";
 import { useAppStore } from "~/stores/useAppStore";
 import { useSelectedNode } from "~/stores/useDataStore";
+import { colors } from "~/utils/colors";
 
 const copiedAnimation = keyframes`
   0% { opacity: 0; }
@@ -49,9 +50,7 @@ export const Transcript = () => {
         }}
         style={{ left: MENU_WIDTH + 250 - 45 }}
       >
-        <span className="material-icons" style={{ fontSize: 15 }}>
-          close
-        </span>
+        <MdClose fontSize={15} />
       </CloseButton>
       {selectedNode?.text && (
         <CopyButton

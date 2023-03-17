@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import * as sphinx from "sphinx-bridge-kevkevinpal";
 import styled from "styled-components";
@@ -20,6 +19,13 @@ import { AppBar } from "./AppBar";
 import { FooterMenu } from "./FooterMenu";
 import { SecondarySideBar } from "./SecondarySidebar";
 import { SideBar } from "./SideBar";
+import { Toasts } from "./Toasts";
+
+const Wrapper = styled(Flex)`
+  height: 100%;
+  width: 100%;
+  background-color: ${colors.black};
+`;
 
 export const App = () => {
   const [isAuthorized, setAuthorized] = useState(false);
@@ -103,35 +109,10 @@ export const App = () => {
 
         <AddNodeModal />
 
-        <StyledToast />
+        <Toasts />
 
         <BudgetExplanationModal />
       </Wrapper>
     </>
   );
 };
-
-const Wrapper = styled(Flex)`
-  height: 100%;
-  width: 100%;
-  background-color: ${colors.black};
-`;
-
-const StyledToast = styled(ToastContainer)`
-  .Toastify__toast {
-    background-color: ${colors.body};
-  }
-  .Toastify__toast-body {
-    background-color: ${colors.body};
-    color: ${colors.white};
-  }
-  .Toastify__close-button {
-    color: ${colors.white};
-  }
-  .Toastify__progress-bar--error {
-    background-color: ${colors.primaryRed};
-  }
-  .Toastify__progress-bar--success {
-    background-color: ${colors.primaryGreen};
-  }
-`;

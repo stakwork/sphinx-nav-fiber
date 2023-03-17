@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { MdBolt } from "react-icons/md";
 import ClipLoader from "react-spinners/ClipLoader";
 import { toast } from "react-toastify";
 import { Flex } from "~/components/common/Flex";
@@ -71,9 +72,7 @@ export const Booster = ({ count, content, readOnly, refId }: Props) => {
         style={{ padding: "1px 8px 1px 3px", width: "fit-content" }}
       >
         <Flex align="center" direction="row" justify="center">
-          <span className="material-icons" style={{ fontSize: 12 }}>
-            bolt
-          </span>
+          <MdBolt fontSize={12} />
           <div style={{ fontSize: 10 }}>{count || 0}</div>
         </Flex>
       </Pill>
@@ -84,12 +83,7 @@ export const Booster = ({ count, content, readOnly, refId }: Props) => {
     <div>
       {isSuccess ? (
         <Flex align="center" direction="row" justify="center">
-          <span
-            className="material-icons"
-            style={{ color: "#49c998", fontSize: 20 }}
-          >
-            bolt
-          </span>
+          <MdBolt color="#49c998" fontSize={20} />
         </Flex>
       ) : (
         <Pill
@@ -107,9 +101,8 @@ export const Booster = ({ count, content, readOnly, refId }: Props) => {
             <ClipLoader color="#fff" loading size={10} />
           ) : (
             <Flex align="center" direction="row" justify="center">
-              <span className="material-icons" style={{ fontSize: 14 }}>
-                bolt
-              </span>
+              <MdBolt fontSize={14} />
+
               <div style={{ marginRight: 8 }}>Boost</div>
             </Flex>
           )}
