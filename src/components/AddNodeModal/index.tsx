@@ -58,9 +58,9 @@ const notify = (message: string) => {
   });
 };
 
-const handleSubmit = async (data: FieldValues, close: () => void, withTimeStamps: boolean) => {
+const handleSubmit = async (data: FieldValues, close: () => void, isTweet: boolean, withTimeStamps: boolean) => {
   const body: { [index: string]: unknown } = {
-    media_url: data.link,
+    ...(isTweet ? { tweet_id: data.link } : { media_url: data.link }),
     ...(withTimeStamps
       ? {
           job_response: {
@@ -132,7 +132,7 @@ export const AddNodeModal = () => {
   }
 
   const onSubmit = form.handleSubmit(async (data) => {
-    await handleSubmit(data, handleClose, enableTimestamps);
+    await handleSubmit(data, handleClose, contentType === CONTENT_TYPE_TWIT, enableTimestamps);
   });
 
 
@@ -183,7 +183,7 @@ export const AddNodeModal = () => {
                   Clip
                 </Button>
                 <Button kind="big" onClick={() => setContentType(CONTENT_TYPE_TWIT)} type="button">
-                  Twit
+                  Tweet
                 </Button>
               </Flex>
             </Flex>
