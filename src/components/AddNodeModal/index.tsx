@@ -36,6 +36,10 @@ const tagRule = {
 
 const timeRegex = /^\d{2}:\d{2}:\d{2}$/;
 
+const CONTENT_TYPE_CLIP = "clip";
+
+const CONTENT_TYPE_TWIT = "twit";
+
 const twitterOrYoutubeRegex =
   /^(https:\/\/twitter.com\/[a-zA-Z0-9_]\/spaces\/.*)|(?:https?:\/\/)?(?:m\.|www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)|(https?|ftp|file):\/\/(www.)?(.*?)\.(mp3)?$/;
 
@@ -54,12 +58,7 @@ const notify = (message: string) => {
   });
 };
 
-const handleSubmit = async (
-  data: FieldValues,
-  close: () => void,
-  reset: () => void,
-  withTimeStamps: boolean
-) => {
+const handleSubmit = async (data: FieldValues, close: () => void, withTimeStamps: boolean) => {
   const body: { [index: string]: unknown } = {
     media_url: data.link,
     ...(withTimeStamps
@@ -95,13 +94,9 @@ const handleSubmit = async (
   }
 
   try {
-    const res: SubmitErrRes = await api.post(
-      "/add_node",
-      JSON.stringify(body),
-      {
-        Authorization: lsatToken,
-      } as HeadersInit
-    );
+    const res: SubmitErrRes = await api.post("/add_node", JSON.stringify(body), {
+      Authorization: lsatToken,
+    } as HeadersInit);
 
     if (res.error) {
       const { message } = res.error;
@@ -111,7 +106,6 @@ const handleSubmit = async (
 
     notify(NODE_ADD_SUCCESS);
     close();
-    reset();
   } catch (err: unknown) {
     if (err instanceof Error) {
       notify(NODE_ADD_ERROR);
@@ -123,6 +117,7 @@ const handleSubmit = async (
 export const AddNodeModal = () => {
   const { close } = useModal("addNode");
   const [enableTimestamps, setEnableTimestamps] = useState(false);
+  const [contentType, setContentType] = useState("");
 
   const form = useForm({ mode: "onSubmit" });
 
@@ -130,9 +125,16 @@ export const AddNodeModal = () => {
 
   const { isSubmitting, errors } = form.formState;
 
+  const handleClose = () => {
+    setContentType('');
+    reset();
+    close();
+  }
+
   const onSubmit = form.handleSubmit(async (data) => {
-    await handleSubmit(data, close, reset, enableTimestamps);
+    await handleSubmit(data, handleClose, enableTimestamps);
   });
+
 
   const startTime = watch("startTime");
 
@@ -158,10 +160,10 @@ export const AddNodeModal = () => {
 
             <CloseButton
               data-test="add-node-close-button"
-              onClick={close}
+              onClick={handleClose}
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === "Space") {
-                  close();
+                  handleClose();
                 }
               }}
               role="button"
@@ -171,123 +173,149 @@ export const AddNodeModal = () => {
             </CloseButton>
           </Flex>
 
-          <Flex>
-            <TextInput
-              id="link"
-              label="Link"
-              message="Paste a valid YouTube or Twitter Space link here."
-              name="link"
-              placeholder="Paste your link here..."
-              rules={{
-                ...requiredRule,
-                pattern: {
-                  message:
-                    "You must enter a valid YouTube, Twitter Space or mp3 link.",
-                  value: twitterOrYoutubeRegex,
-                },
-              }}
-            />
-          </Flex>
-
-          <Flex direction="row" pt={12}>
-            <CheckBoxWrapper>
-              Add timestamps
-              <button
-                className="checkbox"
-                onClick={() => setEnableTimestamps(!enableTimestamps)}
-                type="button"
-              >
-                {enableTimestamps && <FaCheck color={colors.lightBlue500} />}
-              </button>
-            </CheckBoxWrapper>
-          </Flex>
-
-          {enableTimestamps && (
+          {!contentType ? (
+            <Flex align="stretch">
+              <Flex align="center" p={16}>
+                <Text kind="mediumBold">What do you want to add?</Text>
+              </Flex>
+              <Flex direction="row" justify="space-around">
+                <Button kind="big" onClick={() => setContentType(CONTENT_TYPE_CLIP)} type="button">
+                  Clip
+                </Button>
+                <Button kind="big" onClick={() => setContentType(CONTENT_TYPE_TWIT)} type="button">
+                  Twit
+                </Button>
+              </Flex>
+            </Flex>
+          ) : (
             <>
-              <Flex direction="row" pt={12}>
-                <Flex basis="50%" pr={16}>
+              <Flex>
+                {contentType === CONTENT_TYPE_CLIP ? (
                   <TextInput
-                    id="startTime"
-                    label="Start Time"
-                    mask="99:99:99"
-                    message="Enter start and end timestamps which will encompass the segment of video or audio you want to submit. [hh:mm:ss]"
-                    name="startTime"
-                    placeholder="00:00:00"
+                    id="link"
+                    label="Link"
+                    message="Paste a valid YouTube or Twitter Space link here."
+                    name="link"
+                    placeholder="Paste your link here..."
                     rules={{
+                      ...requiredRule,
                       pattern: {
-                        message: "Timestamp must be in the format hh:mm:ss",
-                        value: timeRegex,
+                        message: "You must enter a valid YouTube, Twitter Space or mp3 link.",
+                        value: twitterOrYoutubeRegex,
                       },
-                      ...{ ...requiredRule, required: enableTimestamps },
                     }}
                   />
-                </Flex>
-
-                <Flex basis="50%" pl={16}>
+                ) : (
                   <TextInput
-                    id="endTime"
-                    label="End Time"
-                    mask="99:99:99"
-                    message="Enter start and end timestamps which will encompass the segment of video or audio you want to submit. [hh:mm:ss]"
-                    name="endTime"
-                    placeholder="00:00:00"
+                    id="link"
+                    label="Twit ID"
+                    message="Paste a valid twit ID."
+                    name="link"
+                    placeholder="Paste your id here..."
                     rules={{
-                      pattern: {
-                        message: "Timestamp must be in the format hh:mm:ss",
-                        value: timeRegex,
-                      },
-                      validate: {
-                        endTime: (value) =>
-                          value > (startTime || "00:00:00") ||
-                          "End time should be greater than start time",
-                      },
-                      ...{ ...requiredRule, required: enableTimestamps },
+                      ...requiredRule,
                     }}
                   />
+                )}
+              </Flex>
+
+              {contentType === CONTENT_TYPE_CLIP && (
+                <Flex direction="row" pt={12}>
+                  <CheckBoxWrapper>
+                    Add timestamps
+                    <button className="checkbox" onClick={() => setEnableTimestamps(!enableTimestamps)} type="button">
+                      {enableTimestamps && <FaCheck color={colors.lightBlue500} />}
+                    </button>
+                  </CheckBoxWrapper>
                 </Flex>
+              )}
+
+              {enableTimestamps && (
+                <>
+                  <Flex direction="row" pt={12}>
+                    <Flex basis="50%" pr={16}>
+                      <TextInput
+                        id="startTime"
+                        label="Start Time"
+                        mask="99:99:99"
+                        message="Enter start and end timestamps which will encompass the segment of video or audio you want to submit. [hh:mm:ss]"
+                        name="startTime"
+                        placeholder="00:00:00"
+                        rules={{
+                          pattern: {
+                            message: "Timestamp must be in the format hh:mm:ss",
+                            value: timeRegex,
+                          },
+                          ...{ ...requiredRule, required: enableTimestamps },
+                        }}
+                      />
+                    </Flex>
+
+                    <Flex basis="50%" pl={16}>
+                      <TextInput
+                        id="endTime"
+                        label="End Time"
+                        mask="99:99:99"
+                        message="Enter start and end timestamps which will encompass the segment of video or audio you want to submit. [hh:mm:ss]"
+                        name="endTime"
+                        placeholder="00:00:00"
+                        rules={{
+                          pattern: {
+                            message: "Timestamp must be in the format hh:mm:ss",
+                            value: timeRegex,
+                          },
+                          validate: {
+                            endTime: (value) =>
+                              value > (startTime || "00:00:00") || "End time should be greater than start time",
+                          },
+                          ...{ ...requiredRule, required: enableTimestamps },
+                        }}
+                      />
+                    </Flex>
+                  </Flex>
+
+                  <Flex pt={12}>
+                    <TextArea
+                      id="description"
+                      label="Clip Description"
+                      maxLength={100}
+                      message="Enter a short description of your audio/video segment. Think of this as the title of your node. [max 100 characters]"
+                      name="description"
+                      rules={{ ...requiredRule, required: enableTimestamps }}
+                    />
+                  </Flex>
+
+                  <Flex pt={12}>
+                    <TagInput
+                      id="tags"
+                      label="Tags"
+                      maxLength={50}
+                      message="Enter some topic tags that capture the main ideas of your segment. Be specific! Generic tags aren't useful for anyone. Think, 'What term(s) would someone search to find my node? [max: 15, max characters per tag: 50]"
+                      rules={tagRule}
+                    />
+                  </Flex>
+                </>
+              )}
+
+              <Flex pt={16} px={4} tabIndex={0}>
+                <Text color="lightGray" kind="tinyBold">
+                  Your pubkey will be submitted with your node, so you can receive sats that your node earns.
+                </Text>
               </Flex>
 
-              <Flex pt={12}>
-                <TextArea
-                  id="description"
-                  label="Clip Description"
-                  maxLength={100}
-                  message="Enter a short description of your audio/video segment. Think of this as the title of your node. [max 100 characters]"
-                  name="description"
-                  rules={{ ...requiredRule, required: enableTimestamps }}
-                />
-              </Flex>
-
-              <Flex pt={12}>
-                <TagInput
-                  id="tags"
-                  label="Tags"
-                  maxLength={50}
-                  message="Enter some topic tags that capture the main ideas of your segment. Be specific! Generic tags aren't useful for anyone. Think, 'What term(s) would someone search to find my node? [max: 15, max characters per tag: 50]"
-                  rules={tagRule}
-                />
+              <Flex pt={8}>
+                {isSubmitting ? (
+                  <SubmitLoader>
+                    <ClipLoader color={colors.white} size={20} />
+                  </SubmitLoader>
+                ) : (
+                  <Button disabled={isSubmitting} kind="big" type="submit">
+                    Add content
+                  </Button>
+                )}
               </Flex>
             </>
           )}
-
-          <Flex pt={16} px={4} tabIndex={0}>
-            <Text color="lightGray" kind="tinyBold">
-              Your pubkey will be submitted with your node, so you can receive
-              sats that your node earns.
-            </Text>
-          </Flex>
-
-          <Flex pt={8}>
-            {isSubmitting ? (
-              <SubmitLoader>
-                <ClipLoader color={colors.white} size={20} />
-              </SubmitLoader>
-            ) : (
-              <Button disabled={isSubmitting} kind="big" type="submit">
-                Add content
-              </Button>
-            )}
-          </Flex>
         </form>
       </FormProvider>
     </BaseModal>
