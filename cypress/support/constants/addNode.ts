@@ -1,22 +1,21 @@
 // buttons
-export const addNodeButtonHome = ".kGagkX > .sc-gsnTZi";
+export const addNodeButtonHome = "#add-node-cta";
 export const addNodeButtonSidebarOpen = ".sc-iIPllB > .sc-gsnTZi > .sc-dkzDqf";
-export const addNodeSubmitButton = ".jkcwwh > .sc-gsnTZi";
-export const addNodeCloseButton = "[data-test=add-node-close-button]";
+export const addNodeSubmitButton = "#add-node-submit-cta";
+export const addNodeCloseButton = "#add-node-close-button";
 
 // modal & error messages
-export const 
-addNodeModal = ".sc-ksZaOG";
-export const tagError = ":nth-child(6) > .hSMvhC > .jsuUoS";
-export const mainError = "[data-test=add-node-error-alert]";
+export const addNodeModal = "#add-node-form";
+export const tagError = "#tag-input-errors";
+export const mainError = "#add-node-error-alert";
 
 // inputs
-export const link = "#link";
-export const startTime = "#startTime";
-export const endTime = "#endTime";
-export const description = "#description";
-export const tags = "#tags";
-export const checkbox = "#add-node-modal__checkbox";
+export const link = "#add-node-link";
+export const startTime = "#add-node-start-time";
+export const endTime = "#add-node-end-time";
+export const description = "#add-node-description";
+export const tags = "#add-node-tags";
+export const checkbox = "#add-node-timestamps-checkbox";
 
 // alerts
 export const toast = ".Toastify__toast-body";

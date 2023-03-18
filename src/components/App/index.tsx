@@ -35,14 +35,21 @@ export const App = () => {
   const selectedNode = useSelectedNode();
   const setSidebarOpen = useAppStore((s) => s.setSidebarOpen);
 
-  const [searchTerm, setCurrentSearch, setRelevanceSelected, setTranscriptOpen] = useAppStore((s) => [
+  const [
+    searchTerm,
+    setCurrentSearch,
+    setRelevanceSelected,
+    setTranscriptOpen,
+  ] = useAppStore((s) => [
     s.currentSearch,
     s.setCurrentSearch,
     s.setRelevanceSelected,
     s.setTranscriptOpen,
   ]);
 
-  const hasBudgetExplanationModalBeSeen = useAppStore((s) => s.hasBudgetExplanationModalBeSeen);
+  const hasBudgetExplanationModalBeSeen = useAppStore(
+    (s) => s.hasBudgetExplanationModalBeSeen
+  );
 
   const fetchData = useDataStore((s) => s.fetchData);
   const setSphinxModalOpen = useDataStore((s) => s.setSphinxModalOpen);
@@ -100,9 +107,13 @@ export const App = () => {
         <DataRetriever loader={<Preloader />}>
           <FormProvider {...form}>
             <SideBar onSubmit={handleSubmit} />
+
             <Universe />
+
             {isChileGraph && <SecondarySideBar />}
+
             <AppBar onSubmit={handleSubmit} />
+
             {isChileGraph && <FooterMenu />}
           </FormProvider>
         </DataRetriever>

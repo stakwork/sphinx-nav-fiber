@@ -14,6 +14,12 @@ type Props = {
   onSubmit?: () => void;
 };
 
+const AddNodeButton = ({ onClick }: { onClick: () => void }) => (
+  <AddButton id="add-node-cta" kind="small" onClick={onClick}>
+    Add Content +
+  </AddButton>
+);
+
 export const AppBar = ({ onSubmit }: Props) => {
   const sidebarIsOpen = useAppStore((s) => s.sidebarIsOpen);
   const selectedNode = useSelectedNode();
@@ -40,16 +46,12 @@ export const AppBar = ({ onSubmit }: Props) => {
       </SearchBarWrapper>
 
       <Flex>
-        <AddButton kind="small" onClick={open}>
-          Add Content +
-        </AddButton>
+        <AddNodeButton onClick={open} />
       </Flex>
     </Header>
   ) : (
     <AddNodeWrapper>
-      <AddButton kind="small" onClick={open}>
-        Add Content +
-      </AddButton>
+      <AddNodeButton onClick={open} />
     </AddNodeWrapper>
   );
 };

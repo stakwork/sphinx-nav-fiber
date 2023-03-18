@@ -140,7 +140,7 @@ export const AddNodeModal = () => {
   return (
     <BaseModal id="addNode" preventOutsideClose>
       <FormProvider {...form}>
-        <form onSubmit={onSubmit}>
+        <form id="add-node-form" onSubmit={onSubmit}>
           <Flex align="center" direction="row" justify="space-between" pb={32}>
             <Flex align="center" direction="row">
               <Text kind="bigHeadingBold">Add Content</Text>
@@ -151,15 +151,15 @@ export const AddNodeModal = () => {
               </InfoIcon>
             </Flex>
 
-            {Object.keys(errors).length !== 0 && (
-              <ErrorAlert data-test="add-node-error-alert" role="alert">
+            {Object.keys(errors).length > 0 && (
+              <ErrorAlert id="add-node-error-alert" role="alert">
                 {Object.keys(errors).length}
                 {Object.keys(errors).length > 1 ? " errors" : " error"}
               </ErrorAlert>
             )}
 
             <CloseButton
-              data-test="add-node-close-button"
+              id="add-node-close-button"
               onClick={close}
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === "Space") {
@@ -196,6 +196,7 @@ export const AddNodeModal = () => {
               Add timestamps
               <button
                 className="checkbox"
+                id="add-node-timestamps-checkbox"
                 onClick={() => setEnableTimestamps(!enableTimestamps)}
                 type="button"
               >
@@ -209,7 +210,7 @@ export const AddNodeModal = () => {
               <Flex direction="row" pt={12}>
                 <Flex basis="50%" pr={16}>
                   <TextInput
-                    id="startTime"
+                    id="add-node-start-time"
                     label="Start Time"
                     mask="99:99:99"
                     message="Enter start and end timestamps which will encompass the segment of video or audio you want to submit. [hh:mm:ss]"
@@ -227,7 +228,7 @@ export const AddNodeModal = () => {
 
                 <Flex basis="50%" pl={16}>
                   <TextInput
-                    id="endTime"
+                    id="add-node-end-time"
                     label="End Time"
                     mask="99:99:99"
                     message="Enter start and end timestamps which will encompass the segment of video or audio you want to submit. [hh:mm:ss]"
@@ -251,7 +252,7 @@ export const AddNodeModal = () => {
 
               <Flex pt={12}>
                 <TextArea
-                  id="description"
+                  id="add-node-description"
                   label="Clip Description"
                   maxLength={100}
                   message="Enter a short description of your audio/video segment. Think of this as the title of your node. [max 100 characters]"
@@ -262,7 +263,7 @@ export const AddNodeModal = () => {
 
               <Flex pt={12}>
                 <TagInput
-                  id="tags"
+                  id="add-node-tags"
                   label="Tags"
                   maxLength={50}
                   message="Enter some topic tags that capture the main ideas of your segment. Be specific! Generic tags aren't useful for anyone. Think, 'What term(s) would someone search to find my node? [max: 15, max characters per tag: 50]"
@@ -285,7 +286,12 @@ export const AddNodeModal = () => {
                 <ClipLoader color={colors.white} size={20} />
               </SubmitLoader>
             ) : (
-              <Button disabled={isSubmitting} kind="big" type="submit">
+              <Button
+                disabled={isSubmitting}
+                id="add-node-submit-cta"
+                kind="big"
+                type="submit"
+              >
                 Add content
               </Button>
             )}
