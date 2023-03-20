@@ -1,4 +1,3 @@
-import { capitalize } from "lodash";
 import Select from "react-dropdown-select";
 import styled from "styled-components";
 import { useDataStore } from "~/stores/useDataStore";
@@ -88,7 +87,7 @@ const NODE_TYPES_MAPPER = {
   guest: 'Person',
   show: 'Show',
   topic: 'Topic',
-  tweet_data: 'Twit data',
+  tweet_data: 'Tweet data',
 };
 
 const options = nodeTypes.map((i, index) => ({ label: NODE_TYPES_MAPPER[i], value: index }));

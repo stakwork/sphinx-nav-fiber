@@ -13,6 +13,7 @@ import {
   tagError,
   tags,
   toast,
+  typeClipButton,
 } from "../support/constants/addNode";
 
 describe("Add Node Form / Home interactions", () => {
@@ -31,6 +32,7 @@ describe("Add Node Form / Home interactions", () => {
 
   const modal = () => cy.get(addNodeModal);
   const submitButton = () => cy.get(addNodeSubmitButton);
+  const selectClipButton = () => cy.get(typeClipButton)
   const closeButton = () => cy.get(addNodeCloseButton);
   const tagErrorMessage = () => cy.get(tagError);
   const mainErrorMessage = () => cy.get(mainError);
@@ -61,6 +63,9 @@ describe("Add Node Form / Home interactions", () => {
   it("submitting the form with all fields empty yields 5 error messages", () => {
     openButton("home").click();
 
+
+    selectClipButton().click({ waitForAnimations: false });
+
     checkboxButton().click({ waitForAnimations: false });
 
     submitButton().click({ waitForAnimations: false });
@@ -86,6 +91,8 @@ describe("Add Node Form / Home interactions", () => {
     }).as("add_node");
 
     openButton("home").click();
+
+     selectClipButton().click({ waitForAnimations: false })
 
     checkboxButton().click({ waitForAnimations: false });
 
@@ -119,6 +126,8 @@ describe("Add Node Form / Home interactions", () => {
     }).as("add_node");
 
     openButton("home").click();
+
+     selectClipButton().click({ waitForAnimations: false });
 
     checkboxButton().click({ waitForAnimations: false });
 
