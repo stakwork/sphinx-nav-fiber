@@ -3,6 +3,7 @@ export const addNodeButtonHome = "#add-node-cta";
 export const addNodeButtonSidebarOpen = ".sc-iIPllB > .sc-gsnTZi > .sc-dkzDqf";
 export const addNodeSubmitButton = "#add-node-submit-cta";
 export const addNodeCloseButton = "#add-node-close-button";
+export const typeClipButton = '#cy-type-clip'
 
 // modal & error messages
 export const addNodeModal = "#add-node-form";
