@@ -4,15 +4,16 @@ import {
   RegisterOptions,
   useFormContext,
 } from "react-hook-form";
-import styled from "styled-components";
 import { FaRegQuestionCircle } from "react-icons/fa";
+import { MdError } from "react-icons/md";
+import InputMask from "react-input-mask";
+import styled from "styled-components";
 import { BaseTextInput, BaseTextInputProps } from "~/components/BaseTextInput";
-import { colors } from "~/utils/colors";
+import { defaultProps } from "~/components/BaseTextInput/defaultProps";
+import { WebTextInput } from "~/components/BaseTextInput/WebTextInput";
 import { Flex } from "~/components/common/Flex";
 import { Text } from "~/components/common/Text";
-import InputMask from "react-input-mask";
-import { WebTextInput } from "~/components/BaseTextInput/WebTextInput";
-import { defaultProps } from "~/components/BaseTextInput/defaultProps";
+import { colors } from "~/utils/colors";
 
 const Wrapper = styled(Flex).attrs({
   background: "inputBg2",
@@ -109,12 +110,7 @@ export const TextInput = ({
         <Flex pl={4} pt={8} shrink={1} tabIndex={0}>
           <Text color="primaryRed" kind="regularBold">
             <Flex align="center" direction="row" shrink={1}>
-              <span
-                className="material-icons md-18"
-                style={{ fontSize: "18px" }}
-              >
-                error
-              </span>
+              <MdError fontSize={18} />
 
               <Flex pl={4} shrink={1}>
                 {error.message}

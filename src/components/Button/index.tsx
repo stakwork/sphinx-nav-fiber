@@ -8,6 +8,7 @@ type Props = {
   children: string;
   disabled?: boolean;
   className?: string;
+  id?: string;
   kind?: ButtonKind;
   onClick?: () => void;
   onPointerDown?: () => void;
@@ -81,6 +82,7 @@ export const Button = ({
   children,
   className = "button",
   disabled,
+  id,
   kind = "regular",
   onClick,
   onPointerDown,
@@ -93,6 +95,7 @@ export const Button = ({
     background={background}
     className={className}
     disabled={disabled}
+    id={id}
     kind={kind}
     onClick={onClick}
     onPointerDown={onPointerDown}

@@ -1,4 +1,5 @@
 import { useFormContext } from "react-hook-form";
+import { MdClose, MdKeyboardDoubleArrowLeft } from "react-icons/md";
 import styled from "styled-components";
 import { CategorySelect } from "~/components/App/SideBar/CategorySelect";
 import { Flex } from "~/components/common/Flex";
@@ -7,6 +8,7 @@ import { SearchBar } from "~/components/SearchBar";
 import { useAppStore } from "~/stores/useAppStore";
 import { useDataStore, useSelectedNode } from "~/stores/useDataStore";
 import { colors } from "~/utils/colors";
+import { media } from "~/utils/media";
 import { Tab } from "./Tab";
 import { Transcript } from "./Transcript";
 import { View } from "./View";
@@ -38,9 +40,7 @@ const Content = ({ onSubmit }: Props) => {
             onSubmit?.();
           }}
         >
-          <span className="material-icons" style={{ fontSize: 20 }}>
-            close
-          </span>
+          <MdClose fontSize={20} />
         </CloseButton>
       </SearchWrapper>
 
@@ -49,9 +49,7 @@ const Content = ({ onSubmit }: Props) => {
           setSidebarOpen(false);
         }}
       >
-        <span className="material-icons" style={{ fontSize: 20 }}>
-          keyboard_double_arrow_left
-        </span>
+        <MdKeyboardDoubleArrowLeft fontSize={20} />
       </CollapseButton>
 
       {isLoading ? <Loader color="primaryText1" /> : <View />}
@@ -84,8 +82,11 @@ export const SideBar = ({ onSubmit }: Props) => {
 const Wrapper = styled(Flex)`
   background: ${colors.body};
   height: 100vh;
-  width: ${MENU_WIDTH}px;
+  width: 100%;
   z-index: 30;
+  ${media.large`
+    width: ${MENU_WIDTH}px;
+  `}
 `;
 
 const SearchWrapper = styled(Flex).attrs({

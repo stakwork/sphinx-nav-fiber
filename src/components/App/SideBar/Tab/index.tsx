@@ -1,7 +1,8 @@
+import { MdKeyboardDoubleArrowRight } from "react-icons/md";
 import styled from "styled-components";
-import { colors } from "~/utils/colors";
 import { Flex } from "~/components/common/Flex";
 import { useAppStore } from "~/stores/useAppStore";
+import { colors } from "~/utils/colors";
 
 export const Tab = () => {
   const setSidebarOpen = useAppStore((s) => s.setSidebarOpen);
@@ -13,9 +14,7 @@ export const Tab = () => {
           setSidebarOpen(true);
         }}
       >
-        <span className="material-icons" style={{ fontSize: 25 }}>
-          keyboard_double_arrow_right
-        </span>
+        <MdKeyboardDoubleArrowRight fontSize={25} />
       </ExpandButton>
     </Wrapper>
   );

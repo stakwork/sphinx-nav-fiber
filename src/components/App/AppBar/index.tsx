@@ -14,6 +14,12 @@ type Props = {
   onSubmit?: () => void;
 };
 
+const AddNodeButton = ({ onClick }: { onClick: () => void }) => (
+  <AddButton id="add-node-cta" kind="small" onClick={onClick}>
+    Add Content +
+  </AddButton>
+);
+
 export const AppBar = ({ onSubmit }: Props) => {
   const sidebarIsOpen = useAppStore((s) => s.sidebarIsOpen);
   const selectedNode = useSelectedNode();
@@ -40,16 +46,12 @@ export const AppBar = ({ onSubmit }: Props) => {
       </SearchBarWrapper>
 
       <Flex>
-        <AddButton kind="small" onClick={open}>
-          Add Content +
-        </AddButton>
+        <AddNodeButton onClick={open} />
       </Flex>
     </Header>
   ) : (
     <AddNodeWrapper>
-      <AddButton kind="small" onClick={open}>
-        Add Content +
-      </AddButton>
+      <AddNodeButton onClick={open} />
     </AddNodeWrapper>
   );
 };
@@ -93,25 +95,6 @@ const AddNodeWrapper = styled(Flex)`
   position: absolute;
   top: 14px;
   right: 20px;
-`;
-
-const BudgetExplainer = styled(Flex).attrs({
-  direction: "row",
-})`
-  width: 25%;
-  position: absolute;
-  top: 220px;
-  left: 25px;
-  border: 1px solid ${colors.primaryBlueBorder};
-  border-radius: 4px;
-  padding: 1%;
-  pointer-events: auto;
-  z-index: 30;
-`;
-
-const CloseButton = styled(Flex)`
-  color: ${colors.mainBottomIcons};
-  cursor: pointer;
 `;
 
 const SearchBarWrapper = styled.div`

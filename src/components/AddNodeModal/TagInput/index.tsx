@@ -1,12 +1,13 @@
 import { KeyboardEvent, useCallback, useState } from "react";
 import {
-  useFormContext,
-  RegisterOptions,
-  get,
   Controller,
+  get,
+  RegisterOptions,
+  useFormContext,
 } from "react-hook-form";
-import styled from "styled-components";
 import { FaRegQuestionCircle } from "react-icons/fa";
+import { MdAdd, MdError, MdRemove } from "react-icons/md";
+import styled from "styled-components";
 import { BaseTextInput, BaseTextInputProps } from "~/components/BaseTextInput";
 import { Flex } from "~/components/common/Flex";
 import { Text } from "~/components/common/Text";
@@ -131,9 +132,8 @@ export const TagInput = ({ id, label, message, rules, ...props }: Props) => {
           <Text color="lightGray" kind="regular">
             Add Tag
           </Text>
-          <span className="material-icons" style={{ fontSize: 16 }}>
-            add
-          </span>
+
+          <MdAdd fontSize={16} />
         </AddTagButton>
       </Flex>
 
@@ -158,7 +158,7 @@ export const TagInput = ({ id, label, message, rules, ...props }: Props) => {
                 role="button"
                 tabIndex={0}
               >
-                <span className="material-icons">remove</span>
+                <MdRemove fontSize={12} />
               </CloseButton>
             </Flex>
           </Flex>
@@ -166,15 +166,10 @@ export const TagInput = ({ id, label, message, rules, ...props }: Props) => {
       </Flex>
 
       {error && (
-        <Flex pl={4} pt={8} shrink={1} tabIndex={0}>
+        <Flex id="tag-input-errors" pl={4} pt={8} shrink={1} tabIndex={0}>
           <Text color="primaryRed" kind="regularBold">
             <Flex align="center" direction="row" shrink={1}>
-              <span
-                className="material-icons md-18"
-                style={{ fontSize: "18px" }}
-              >
-                error
-              </span>
+              <MdError fontSize={18} />
 
               <Flex pl={4} shrink={1}>
                 {error.message}
@@ -189,11 +184,6 @@ export const TagInput = ({ id, label, message, rules, ...props }: Props) => {
 
 const CloseButton = styled(Flex)`
   cursor: pointer;
-
-  span {
-    font-size: 12px;
-    color: ${colors.black};
-  }
 `;
 
 const AddTagButton = styled(Flex).attrs({

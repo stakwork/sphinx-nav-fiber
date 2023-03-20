@@ -1,3 +1,4 @@
+import { MdAccessTime, MdPlayArrow } from "react-icons/md";
 import { ClipLoader } from "react-spinners";
 import styled, { css } from "styled-components";
 import { Booster } from "~/components/Booster";
@@ -42,22 +43,19 @@ export const Timestamp = ({ onClick, timestamp }: Props) => {
 
   const color: ColorName = isSelected ? "blueTextAccent" : "placeholderText";
 
+  const icon = isSelected ? (
+    <MdPlayArrow color={colors[color]} fontSize={18} />
+  ) : (
+    <MdAccessTime color={colors[color]} fontSize={18} />
+  );
+
   return (
     <Wrapper isSelected={isSelected} onClick={onClick} px={20} py={12}>
       <Flex direction="row" px={20}>
         {isSelected && !isTimestampLoaded ? (
           <ClipLoader color={colors[color]} loading size={14} />
         ) : (
-          <span
-            className="material-icons"
-            style={{
-              color: colors[color],
-              fontSize: 18,
-            }}
-          >
-            {isSelected ? "play_arrow" : "access_time"}
-            {/* {isError ? "error" : isSelected ? "play_arrow" : "access_time"} */}
-          </span>
+          icon
         )}
       </Flex>
 
