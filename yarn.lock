@@ -17356,6 +17356,7 @@ __metadata:
     craco-alias: ^3.0.1
     cypress: ^12.2.0
     d3-force-3d: ^3.0.3
+    eslint: ^7.11.0
     eslint-config-airbnb: ^19.0.4
     eslint-config-prettier: ^8.5.0
     eslint-formatter-codeframe: ^7.32.1
