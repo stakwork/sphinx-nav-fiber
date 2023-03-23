@@ -8,7 +8,6 @@ import {
   description,
   endTime,
   link,
-  mainError,
   startTime,
   tagError,
   tags,
@@ -35,7 +34,6 @@ describe('Add Node Form / Home interactions', () => {
   const selectClipButton = () => cy.get(typeClipButton)
   const closeButton = () => cy.get(addNodeCloseButton)
   const tagErrorMessage = () => cy.get(tagError)
-  const mainErrorMessage = () => cy.get(mainError)
   const linkInput = () => cy.get(link)
   const startTimeInput = () => cy.get(startTime)
   const endTimeInput = () => cy.get(endTime)
@@ -66,8 +64,6 @@ describe('Add Node Form / Home interactions', () => {
     checkboxButton().click({ waitForAnimations: false })
 
     submitButton().click({ waitForAnimations: false })
-
-    mainErrorMessage().should('not.be.visible').and('contain.text', '5 errors')
 
     cy.contains(/the field is required/i).should('be.visible')
 

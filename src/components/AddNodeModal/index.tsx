@@ -1,13 +1,10 @@
 import { ReactElement, useState } from "react";
 import { FieldValues, FormProvider, useForm } from "react-hook-form";
-import { FaCheck } from "react-icons/fa";
 import { MdClose, MdInfo } from "react-icons/md";
 import { ClipLoader } from "react-spinners";
 import { toast } from "react-toastify";
 import * as sphinx from "sphinx-bridge-kevkevinpal";
 import styled from "styled-components";
-import { TextArea } from "~/components/AddNodeModal/TextArea";
-import { TextInput } from "~/components/AddNodeModal/TextInput";
 import { Button } from "~/components/Button";
 import { Flex } from "~/components/common/Flex";
 import { Text } from "~/components/common/Text";
@@ -21,7 +18,6 @@ import { timeToMilliseconds } from "~/utils/timeToMilliseconds";
 import { ToastMessage } from "../common/Toast/toastMessage";
 import StyledSelect from "../Select";
 import { SourceUrl } from "./SourceUrl";
-import { TagInput } from "./TagInput";
 import TwitId from "./TweetId";
 import TwitterHandle from "./TwitterHandle";
 
@@ -201,13 +197,6 @@ export const AddNodeModal = () => {
               </InfoIcon>
             </Flex>
 
-            {Object.keys(errors).length > 0 && (
-              <ErrorAlert id="add-node-error-alert" role="alert">
-                {Object.keys(errors).length}
-                {Object.keys(errors).length > 1 ? ' errors' : ' error'}
-              </ErrorAlert>
-            )}
-
             <CloseButton
               id="add-node-close-button"
               onClick={handleClose}
@@ -325,15 +314,4 @@ const SubmitLoader = styled(Flex).attrs({
 })`
   padding: 16px 24px;
   opacity: 0.5;
-`
-
-
-
-// hidden to the side so it doesn't affect the layout
-const ErrorAlert = styled(Text).attrs({
-  color: 'secondaryRed',
-  kind: 'tinyBold',
-})`
-  position: relative;
-  left: 50%;
 `

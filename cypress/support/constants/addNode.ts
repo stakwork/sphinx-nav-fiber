@@ -8,7 +8,6 @@ export const typeClipButton = '#cy-type-clip'
 // modal & error messages
 export const addNodeModal = "#add-node-form";
 export const tagError = "#tag-input-errors";
-export const mainError = "#add-node-error-alert";
 
 // inputs
 export const link = "#add-node-link";
