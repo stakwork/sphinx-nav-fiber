@@ -74,11 +74,11 @@ export const SourceUrl: FC<Props> = ({ setValue, startTime }) => {
                   name="startTime"
                   placeholder="00:00:00"
                   rules={{
+                    ...requiredRule,
                     pattern: {
                       message: 'Timestamp must be in the format hh:mm:ss',
                       value: timeRegex,
                     },
-                    ...{ ...requiredRule, required: enableTimestamps },
                   }}
                   showMask
                 />
@@ -93,6 +93,7 @@ export const SourceUrl: FC<Props> = ({ setValue, startTime }) => {
                   name="endTime"
                   placeholder="00:00:00"
                   rules={{
+                    ...requiredRule,
                     pattern: {
                       message: 'Timestamp must be in the format hh:mm:ss',
                       value: timeRegex,
@@ -101,7 +102,6 @@ export const SourceUrl: FC<Props> = ({ setValue, startTime }) => {
                       endTime: (value) =>
                         value > (startTime || '00:00:00') || 'End time should be greater than start time',
                     },
-                    ...{ ...requiredRule, required: enableTimestamps },
                   }}
                   showMask
                 />
@@ -115,7 +115,7 @@ export const SourceUrl: FC<Props> = ({ setValue, startTime }) => {
                 maxLength={100}
                 message="Enter a short description of your audio/video segment. Think of this as the title of your node. [max 100 characters]"
                 name="description"
-                rules={{ ...requiredRule, required: enableTimestamps }}
+                rules={requiredRule}
               />
             </Flex>
 
