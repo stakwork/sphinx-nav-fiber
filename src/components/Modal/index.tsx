@@ -36,6 +36,7 @@ const getModalKindStyles = ({ kind = "regular" }: Pick<Props, "kind">) => {
 const ModalContainer = styled(Flex)<Pick<Props, "kind">>`
   z-index: 2000;
   margin: 0 auto;
+  overflow: visible;
   animation: ${scaleAnimation} 0.2s ease-in-out;
   position: relative;
 
@@ -72,7 +73,6 @@ type ModalKind = "small" | "regular" | "large";
 type Props = PropsWithChildren<{
   id: AvailableModals;
   background?: ColorName;
-  onClose?: () => void;
   hideBg?: boolean;
   kind?: ModalKind;
   preventOutsideClose?: boolean;
@@ -85,7 +85,6 @@ export const BaseModal = ({
   hideBg,
   kind,
   preventOutsideClose,
-  onClose,
 }: Props) => {
   const { visible, close } = useModal(id);
 

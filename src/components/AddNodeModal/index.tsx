@@ -1,49 +1,41 @@
-import { useState } from 'react'
-import { FieldValues, FormProvider, useForm } from 'react-hook-form'
-import { FaCheck } from 'react-icons/fa'
-import { MdClose, MdInfo } from 'react-icons/md'
-import { ClipLoader } from 'react-spinners'
-import { toast } from 'react-toastify'
-import * as sphinx from 'sphinx-bridge-kevkevinpal'
-import styled from 'styled-components'
-import { TextArea } from '~/components/AddNodeModal/TextArea'
-import { TextInput } from '~/components/AddNodeModal/TextInput'
-import { Button } from '~/components/Button'
-import { Flex } from '~/components/common/Flex'
-import { Text } from '~/components/common/Text'
-import { BaseModal } from '~/components/Modal'
-import { isDevelopment, NODE_ADD_ERROR, NODE_ADD_SUCCESS } from '~/constants'
-import { api } from '~/network/api'
-import { useModal } from '~/stores/useModalStore'
-import { colors } from '~/utils/colors'
-import { getLSat } from '~/utils/getLSat'
-import { timeToMilliseconds } from '~/utils/timeToMilliseconds'
-import { ToastMessage } from '../common/Toast/toastMessage'
-import { TagInput } from './TagInput'
+import { ReactElement, useState } from "react";
+import { FieldValues, FormProvider, useForm } from "react-hook-form";
+import { FaCheck } from "react-icons/fa";
+import { MdClose, MdInfo } from "react-icons/md";
+import { ClipLoader } from "react-spinners";
+import { toast } from "react-toastify";
+import * as sphinx from "sphinx-bridge-kevkevinpal";
+import styled from "styled-components";
+import { TextArea } from "~/components/AddNodeModal/TextArea";
+import { TextInput } from "~/components/AddNodeModal/TextInput";
+import { Button } from "~/components/Button";
+import { Flex } from "~/components/common/Flex";
+import { Text } from "~/components/common/Text";
+import { BaseModal } from "~/components/Modal";
+import { isDevelopment, NODE_ADD_ERROR, NODE_ADD_SUCCESS } from "~/constants";
+import { api } from "~/network/api";
+import { useModal } from "~/stores/useModalStore";
+import { colors } from "~/utils/colors";
+import { getLSat } from "~/utils/getLSat";
+import { timeToMilliseconds } from "~/utils/timeToMilliseconds";
+import { ToastMessage } from "../common/Toast/toastMessage";
+import StyledSelect from "../Select";
+import { SourceUrl } from "./SourceUrl";
+import { TagInput } from "./TagInput";
+import TwitId from "./TweetId";
+import TwitterHandle from "./TwitterHandle";
 
-const requiredRule = {
+type Option = {
+  label: string;
+  value: string;
+};
+
+export const requiredRule = {
   required: {
     message: 'The field is required',
     value: true,
   },
 }
-
-const tagRule = {
-  required: {
-    message: 'You need to enter at least 1 topic tag to submit a node.',
-    value: true,
-  },
-}
-
-const timeRegex = /^\d{2}:\d{2}:\d{2}$/
-
-const CONTENT_TYPE_CLIP = 'clip'
-
-const CONTENT_TYPE_TWIT = 'twit'
-
-const twitterOrYoutubeRegexOrMp3 =
-  /^(?:(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)[\w-]{11}(?:\S*)?|(?:https?:\/\/)?(?:www\.)?twitter\.com\/i\/spaces\/\d+(?:\?|$)|.+\.mp3)$/i;
-
 
 const mainInfoMessage =
   'Come across an interesting or useful part of a video or audio you\'d like to share? You can add it to the knowledge graph here!\n\nEnter a valid link to the YouTube video or Twitter Space you were watching, choose a start and end timestamp to encompass the segment you found interesting or useful, provide a brief description of what the segment is about, and add topic tags that are relevant to the segment. Hit "Add node", and your clip will be added to the graph shortly.\n\nYour pubkey will be submitted with your clip, and any boosts your clip receives will go to you!'
@@ -60,24 +52,31 @@ const notify = (message: string) => {
   })
 }
 
-const handleSubmit = async (data: FieldValues, close: () => void, isTweet: boolean, withTimeStamps: boolean) => {
-  const body: { [index: string]: unknown } = {
-    ...(isTweet ? { tweet_id: data.link } : { media_url: data.link }),
-    ...(withTimeStamps
+const handleSubmit = async (data: FieldValues, close: () => void, sourceType: string) => {
+
+  const body: { [index: string]: unknown } =
+    sourceType === LINK
       ? {
-          job_response: {
-            tags: [
-              {
-                description: data.description,
-                'end-time': timeToMilliseconds(data.endTime),
-                'start-time': timeToMilliseconds(data.startTime),
-                tag: data.tags?.join(', '),
-              },
-            ],
-          },
+          media_url: data.link,
+          ...(data.withTimeStamps
+            ? {
+                job_response: {
+                  tags: [
+                    {
+                      description: data.description,
+                      'end-time': timeToMilliseconds(data.endTime),
+                      'start-time': timeToMilliseconds(data.startTime),
+                      tag: data.tags?.join(', '),
+                    },
+                  ],
+                },
+              }
+            : {}),
         }
-      : {}),
-  }
+      : {
+          source: sourceType === TWITTER_HANDLE ? (data.source || '').replace(/[@_]/g, '') : data.source,
+          source_type: sourceType,
+        }
 
   let lsatToken
 
@@ -95,8 +94,10 @@ const handleSubmit = async (data: FieldValues, close: () => void, isTweet: boole
     }
   }
 
+  const endPoint = sourceType === LINK ? 'add_node' : 'radar';
+
   try {
-    const res: SubmitErrRes = await api.post('/add_node', JSON.stringify(body), {
+    const res: SubmitErrRes = await api.post(`/${endPoint}`, JSON.stringify(body), {
       Authorization: lsatToken,
     } as HeadersInit)
 
@@ -116,29 +117,75 @@ const handleSubmit = async (data: FieldValues, close: () => void, isTweet: boole
   }
 }
 
+const LINK = "link";
+const TWITTER_HANDLE = "twitter_handle";
+const TWITTER_SOURCE = "tweet";
+
+type TOption = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  component: (props: any) => ReactElement<any, any> | null,
+  label: string,
+}
+
+interface IOptionMap {
+  [key: string]: TOption,
+}
+
+
+
+const CONTENT_TYPE_OPTIONS: IOptionMap = {
+  [LINK]: {
+    component: SourceUrl,
+    label: 'Youtube / Twitter space / Mp3',
+  },
+  [TWITTER_HANDLE]: {
+    component: TwitterHandle,
+    label: 'Twitter handle',
+  },
+  [TWITTER_SOURCE]: {
+    component: TwitId,
+    label: 'Tweet',
+  },
+}
+
 export const AddNodeModal = () => {
-  const { close } = useModal('addNode')
-  const [enableTimestamps, setEnableTimestamps] = useState(false)
-  const [contentType, setContentType] = useState('')
+  const { close } = useModal("addNode");
+  const [activeType, setActiveType] = useState("");
 
   const form = useForm({ mode: 'onSubmit' })
 
-  const { reset, watch } = form
+  const { reset, watch, setValue } = form
 
   const { isSubmitting, errors } = form.formState
 
   const handleClose = () => {
-    setContentType('');
-    setEnableTimestamps(false);
+    setActiveType('');
     reset();
     close();
-  }
+  };
 
   const onSubmit = form.handleSubmit(async (data) => {
-    await handleSubmit(data, handleClose, contentType === CONTENT_TYPE_TWIT, enableTimestamps)
-  })
+    await handleSubmit(data, handleClose, activeType)
+  });
 
-  const startTime = watch('startTime')
+  const options = Object.keys(CONTENT_TYPE_OPTIONS).map((i: string) => ({
+    label: CONTENT_TYPE_OPTIONS[i].label,
+    value: i,
+  }));
+
+  const selectedValue = activeType
+    ? [
+        {
+          label: activeType,
+          value: activeType,
+        },
+      ]
+    : [];
+
+  const startTime = watch("startTime");
+
+  const FormValues = activeType ? CONTENT_TYPE_OPTIONS[activeType].component : () => null
+  const formProps = { setValue, startTime }
 
   return (
     <BaseModal id="addNode" preventOutsideClose>
@@ -176,136 +223,30 @@ export const AddNodeModal = () => {
             </CloseButton>
           </Flex>
 
-          {!contentType ? (
-            <Flex align="stretch">
-              <Flex align="center" p={16}>
+          {!activeType ? (
+            <Flex align="center" direction="row" justify="space-between">
+              <Flex>
                 <Text kind="mediumBold">What do you want to add?</Text>
               </Flex>
-              <Flex direction="row" justify="space-around">
-                <Button id="cy-type-clip" kind="big" onClick={() => setContentType(CONTENT_TYPE_CLIP)} type="button">
-                  Clip
-                </Button>
-                <Button kind="big" onClick={() => setContentType(CONTENT_TYPE_TWIT)} type="button">
-                  Tweet
-                </Button>
+              <Flex basis="250px">
+                <StyledSelect
+                  className={selectedValue.length ? 'hasSelected' : ''}
+                  clearable
+                  onChange={(values) => {
+                    setActiveType(values.length ? (values[0] as Option).value : '')
+                  }}
+                  options={options}
+                  placeholder="Select content type"
+                  searchable={false}
+                  values={selectedValue}
+                />
               </Flex>
             </Flex>
           ) : (
             <>
               <Flex>
-                {contentType === CONTENT_TYPE_CLIP ? (
-                  <TextInput
-                    id="add-node-link"
-                    label="Link"
-                    message="Paste a valid YouTube or Twitter Space link here."
-                    name="link"
-                    placeholder="Paste your link here..."
-                    rules={{
-                      ...requiredRule,
-                      pattern: {
-                        message: 'You must enter a valid YouTube, Twitter Space or mp3 link.',
-                        value: twitterOrYoutubeRegexOrMp3,
-                      },
-                    }}
-                  />
-                ) : (
-                  <TextInput
-                    id="link"
-                    label="Tweet ID"
-                    message="Paste a valid tweet ID."
-                    name="link"
-                    placeholder="Paste your id here..."
-                    rules={{
-                      ...requiredRule,
-                    }}
-                  />
-                )}
+                <FormValues {...formProps} />
               </Flex>
-
-              {contentType === CONTENT_TYPE_CLIP && (
-                <>
-                  <Flex direction="row" pt={12}>
-                    <CheckBoxWrapper>
-                      Add timestamps
-                      <button
-                        className="checkbox"
-                        id="add-node-timestamps-checkbox"
-                        onClick={() => setEnableTimestamps(!enableTimestamps)}
-                        type="button"
-                      >
-                        {enableTimestamps && <FaCheck color={colors.lightBlue500} />}
-                      </button>
-                    </CheckBoxWrapper>
-                  </Flex>
-
-                  {enableTimestamps && (
-                    <>
-                      <Flex direction="row" pt={12}>
-                        <Flex basis="50%" pr={16}>
-                          <TextInput
-                            id="add-node-start-time"
-                            label="Start Time"
-                            mask="99:99:99"
-                            message="Enter start and end timestamps which will encompass the segment of video or audio you want to submit. [hh:mm:ss]"
-                            name="startTime"
-                            placeholder="00:00:00"
-                            rules={{
-                              pattern: {
-                                message: 'Timestamp must be in the format hh:mm:ss',
-                                value: timeRegex,
-                              },
-                              ...{ ...requiredRule, required: enableTimestamps },
-                            }}
-                          />
-                        </Flex>
-
-                        <Flex basis="50%" pl={16}>
-                          <TextInput
-                            id="add-node-end-time"
-                            label="End Time"
-                            mask="99:99:99"
-                            message="Enter start and end timestamps which will encompass the segment of video or audio you want to submit. [hh:mm:ss]"
-                            name="endTime"
-                            placeholder="00:00:00"
-                            rules={{
-                              pattern: {
-                                message: 'Timestamp must be in the format hh:mm:ss',
-                                value: timeRegex,
-                              },
-                              validate: {
-                                endTime: (value) =>
-                                  value > (startTime || '00:00:00') || 'End time should be greater than start time',
-                              },
-                              ...{ ...requiredRule, required: enableTimestamps },
-                            }}
-                          />
-                        </Flex>
-                      </Flex>
-
-                      <Flex pt={12}>
-                        <TextArea
-                          id="add-node-description"
-                          label="Clip Description"
-                          maxLength={100}
-                          message="Enter a short description of your audio/video segment. Think of this as the title of your node. [max 100 characters]"
-                          name="description"
-                          rules={{ ...requiredRule, required: enableTimestamps }}
-                        />
-                      </Flex>
-
-                      <Flex pt={12}>
-                        <TagInput
-                          id="add-node-tags"
-                          label="Tags"
-                          maxLength={50}
-                          message="Enter some topic tags that capture the main ideas of your segment. Be specific! Generic tags aren't useful for anyone. Think, 'What term(s) would someone search to find my node? [max: 15, max characters per tag: 50]"
-                          rules={tagRule}
-                        />
-                      </Flex>
-                    </>
-                  )}
-                </>
-              )}
 
               <Flex pt={16} px={4} tabIndex={0}>
                 <Text color="lightGray" kind="tinyBold">
@@ -386,27 +327,7 @@ const SubmitLoader = styled(Flex).attrs({
   opacity: 0.5;
 `
 
-const CheckBoxWrapper = styled.div`
-  color: ${colors.lightGray};
-  font-size: 14px;
-  font-weight: 600;
-  display: flex;
 
-  .checkbox {
-    width: 20px;
-    height: 20px;
-    border-radius: 4px;
-    border: 2px solid ${colors.lightBlue400};
-    margin-left: 16px;
-    font-size: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    background: transparent;
-    padding: 0;
-  }
-`
 
 // hidden to the side so it doesn't affect the layout
 const ErrorAlert = styled(Text).attrs({

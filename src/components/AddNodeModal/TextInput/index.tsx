@@ -33,6 +33,7 @@ type Props = BaseTextInputProps & {
   message?: string;
   rules?: RegisterOptions;
   mask?: string;
+  showMask?: boolean;
 };
 
 export const TextInput = ({
@@ -42,6 +43,7 @@ export const TextInput = ({
   message,
   name,
   rules,
+  showMask = false,
   ...props
 }: Props) => {
   const {
@@ -72,11 +74,11 @@ export const TextInput = ({
 
             return mask ? (
               <InputMask
-                alwaysShowMask
+                alwaysShowMask={showMask}
                 disabled={false}
                 inputRef={ref}
                 mask={mask}
-                maskChar="_"
+                maskChar={null}
                 onBlur={onBlur}
                 onChange={onChange}
                 value={value}
@@ -98,9 +100,9 @@ export const TextInput = ({
                 onBlur={onBlur}
                 onChange={onChange}
                 placeholderTextColor="inputPlaceholder"
-                value={value || ""}
+                value={value || ''}
               />
-            );
+            )
           }}
           rules={rules}
         />
