@@ -3,7 +3,6 @@ import styled, { css, keyframes } from "styled-components";
 import { Flex } from "~/components/common/Flex";
 import { AvailableModals, useModal } from "~/stores/useModalStore";
 import { ColorName, colors } from "~/utils/colors";
-import { media } from "~/utils/media";
 
 const scaleAnimation = keyframes`
   0% {

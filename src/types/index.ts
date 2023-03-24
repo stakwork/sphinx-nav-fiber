@@ -108,6 +108,7 @@ export type Type =
   | "twitter_space";
 
 export type Sentiment = {
-  date_added_to_graph: string;
+  date: number;
+  date_added_to_graph: number;
   sentiment_score: number;
 };

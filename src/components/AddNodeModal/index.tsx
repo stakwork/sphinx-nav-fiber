@@ -1,30 +1,31 @@
-import { ReactElement, useState } from "react";
-import { FieldValues, FormProvider, useForm } from "react-hook-form";
-import { MdClose, MdInfo } from "react-icons/md";
-import { ClipLoader } from "react-spinners";
-import { toast } from "react-toastify";
-import * as sphinx from "sphinx-bridge-kevkevinpal";
-import styled from "styled-components";
-import { Button } from "~/components/Button";
-import { Flex } from "~/components/common/Flex";
-import { Text } from "~/components/common/Text";
-import { BaseModal } from "~/components/Modal";
-import { isDevelopment, NODE_ADD_ERROR, NODE_ADD_SUCCESS } from "~/constants";
-import { api } from "~/network/api";
-import { useModal } from "~/stores/useModalStore";
-import { colors } from "~/utils/colors";
-import { getLSat } from "~/utils/getLSat";
-import { timeToMilliseconds } from "~/utils/timeToMilliseconds";
-import { ToastMessage } from "../common/Toast/toastMessage";
-import StyledSelect from "../Select";
-import { SourceUrl } from "./SourceUrl";
-import TwitId from "./TweetId";
-import TwitterHandle from "./TwitterHandle";
+import { ReactElement, useState } from 'react'
+import { FieldValues, FormProvider, useForm } from 'react-hook-form'
+import { MdArrowBack, MdClose, MdInfo, MdKeyboardBackspace } from 'react-icons/md'
+import { ClipLoader } from 'react-spinners'
+import { toast } from 'react-toastify'
+import * as sphinx from 'sphinx-bridge-kevkevinpal'
+import styled from 'styled-components'
+import { Button } from '~/components/Button'
+import { Flex } from '~/components/common/Flex'
+import { Text } from '~/components/common/Text'
+import { BaseModal } from '~/components/Modal'
+import { isDevelopment, NODE_ADD_ERROR, NODE_ADD_SUCCESS } from '~/constants'
+import { api } from '~/network/api'
+import { useModal } from '~/stores/useModalStore'
+import { colors } from '~/utils/colors'
+import { getLSat } from '~/utils/getLSat'
+import { timeToMilliseconds } from '~/utils/timeToMilliseconds'
+import { ToastMessage } from '../common/Toast/toastMessage'
+import StyledSelect from '../Select'
+import { SourceUrl } from './SourceUrl'
+import Topic from './Topic'
+import TwitId from './TweetId'
+import TwitterHandle from './TwitterHandle'
 
 type Option = {
-  label: string;
-  value: string;
-};
+  label: string
+  value: string
+}
 
 export const requiredRule = {
   required: {
@@ -49,30 +50,34 @@ const notify = (message: string) => {
 }
 
 const handleSubmit = async (data: FieldValues, close: () => void, sourceType: string) => {
+  const body: { [index: string]: unknown } = {}
 
-  const body: { [index: string]: unknown } =
-    sourceType === LINK
-      ? {
-          media_url: data.link,
-          ...(data.withTimeStamps
-            ? {
-                job_response: {
-                  tags: [
-                    {
-                      description: data.description,
-                      'end-time': timeToMilliseconds(data.endTime),
-                      'start-time': timeToMilliseconds(data.startTime),
-                      tag: data.tags?.join(', '),
-                    },
-                  ],
-                },
-              }
-            : {}),
-        }
-      : {
-          source: sourceType === TWITTER_HANDLE ? (data.source || '').replace(/[@_]/g, '') : data.source,
-          source_type: sourceType,
-        }
+  if (sourceType === LINK) {
+    body.media_url = data.link
+
+    if (data.withTimeStamps) {
+      body.job_response = {
+        tags: [
+          {
+            description: data.description,
+            'end-time': timeToMilliseconds(data.endTime),
+            'start-time': timeToMilliseconds(data.startTime),
+            tag: data.tags?.join(', '),
+          },
+        ],
+      }
+    }
+  } else if (sourceType === TWITTER_SOURCE) {
+    body.media_url = data.tweet.split('/').at(-1);
+  } else {
+    body.source_type = sourceType
+
+    if (sourceType === TWITTER_HANDLE) {
+      body.source = (data.source || '').replace(/[@]/g, '')
+    } else {
+      body.source = data.source
+    }
+  }
 
   let lsatToken
 
@@ -90,7 +95,7 @@ const handleSubmit = async (data: FieldValues, close: () => void, sourceType: st
     }
   }
 
-  const endPoint = sourceType === LINK ? 'add_node' : 'radar';
+  const endPoint = [LINK, TWITTER_SOURCE].includes(sourceType) ? 'add_node' : 'radar'
 
   try {
     const res: SubmitErrRes = await api.post(`/${endPoint}`, JSON.stringify(body), {
@@ -113,26 +118,29 @@ const handleSubmit = async (data: FieldValues, close: () => void, sourceType: st
   }
 }
 
-const LINK = "link";
-const TWITTER_HANDLE = "twitter_handle";
-const TWITTER_SOURCE = "tweet";
+const LINK = 'link'
+const TWITTER_HANDLE = 'twitter_handle'
+const TWITTER_SOURCE = 'tweet'
+const TOPIC = 'topic'
 
 type TOption = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  component: (props: any) => ReactElement<any, any> | null,
-  label: string,
+  component: (props: any) => ReactElement<any, any> | null
+  label: string
 }
 
 interface IOptionMap {
-  [key: string]: TOption,
+  [key: string]: TOption
 }
-
-
 
 const CONTENT_TYPE_OPTIONS: IOptionMap = {
   [LINK]: {
     component: SourceUrl,
     label: 'Youtube / Twitter space / Mp3',
+  },
+  [TOPIC]: {
+    component: Topic,
+    label: 'Topic',
   },
   [TWITTER_HANDLE]: {
     component: TwitterHandle,
@@ -145,29 +153,29 @@ const CONTENT_TYPE_OPTIONS: IOptionMap = {
 }
 
 export const AddNodeModal = () => {
-  const { close } = useModal("addNode");
-  const [activeType, setActiveType] = useState("");
+  const { close } = useModal('addNode')
+  const [activeType, setActiveType] = useState('')
 
   const form = useForm({ mode: 'onSubmit' })
 
   const { reset, watch, setValue } = form
 
-  const { isSubmitting, errors } = form.formState
+  const { isSubmitting } = form.formState
 
   const handleClose = () => {
-    setActiveType('');
-    reset();
-    close();
-  };
+    setActiveType('')
+    reset()
+    close()
+  }
 
   const onSubmit = form.handleSubmit(async (data) => {
     await handleSubmit(data, handleClose, activeType)
-  });
+  })
 
   const options = Object.keys(CONTENT_TYPE_OPTIONS).map((i: string) => ({
     label: CONTENT_TYPE_OPTIONS[i].label,
     value: i,
-  }));
+  }))
 
   const selectedValue = activeType
     ? [
@@ -176,9 +184,9 @@ export const AddNodeModal = () => {
           value: activeType,
         },
       ]
-    : [];
+    : []
 
-  const startTime = watch("startTime");
+  const startTime = watch('startTime')
 
   const FormValues = activeType ? CONTENT_TYPE_OPTIONS[activeType].component : () => null
   const formProps = { setValue, startTime }
@@ -189,10 +197,16 @@ export const AddNodeModal = () => {
         <form id="add-node-form" onSubmit={onSubmit}>
           <Flex align="center" direction="row" justify="space-between" pb={32}>
             <Flex align="center" direction="row">
-              <Text kind="bigHeadingBold">Add Content</Text>
+              <Flex align="center" direction="row">
+                {activeType && (
+                  <BackButton onClick={() => setActiveType('')}>
+                    <MdKeyboardBackspace color={colors.white} size={24} />
+                  </BackButton>
+                )}
+                <Text kind="bigHeadingBold">Add Content</Text>
+              </Flex>
               <InfoIcon role="tooltip" tabIndex={0}>
                 <MdInfo />
-
                 <div className="tooltip">{mainInfoMessage}</div>
               </InfoIcon>
             </Flex>
@@ -239,7 +253,7 @@ export const AddNodeModal = () => {
 
               <Flex pt={16} px={4} tabIndex={0}>
                 <Text color="lightGray" kind="tinyBold">
-                  Your pubkey will be submitted with your node, so you can receive sats that your node earns.
+                  Your pubkey will be submitted with your input, so you can receive sats that your content earns.
                 </Text>
               </Flex>
 
@@ -269,6 +283,11 @@ const CloseButton = styled(Flex)`
     font-size: 24px;
     color: ${colors.white};
   }
+`
+
+const BackButton = styled(Flex)`
+  cursor: pointer;
+  margin-right: 8px;
 `
 
 const InfoIcon = styled(Flex)`

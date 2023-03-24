@@ -1,3 +1,4 @@
+import { MdOutlineShowChart } from 'react-icons/md'
 import styled from "styled-components";
 import { Flex } from "~/components/common/Flex";
 import { useAppStore } from "~/stores/useAppStore";
@@ -10,11 +11,11 @@ export const FooterMenu = () => {
     <FooterAction>
       <Flex>
         <ChartButton onClick={() => setSecondarySidebarIsOpen(true)}>
-          <span className="material-icons">insights</span>
+          <MdOutlineShowChart size={24} />
         </ChartButton>
       </Flex>
     </FooterAction>
-  );
+  )
 };
 
 const FooterAction = styled(Flex).attrs({
