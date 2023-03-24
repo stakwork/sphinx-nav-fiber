@@ -1,5 +1,6 @@
 import moment from "moment";
 import { FC, useEffect, useState } from "react";
+import { MdClose } from "react-icons/md";
 import {
   CartesianGrid,
   Dot,
@@ -41,7 +42,7 @@ export const SecondarySideBar = () => {
 
         setSentimentData(
           data?.data.map((i) => ({
-              date: moment.unix(Number(i.date_added_to_graph.split(".")[0])).format("MM/DD/YY"),
+              date: moment.unix(Number(String(i.date).split(".")[0])).format("MM/DD/YY"),
               score: i.sentiment_score,
             }))
         );
@@ -58,7 +59,7 @@ export const SecondarySideBar = () => {
   return secondarySidebarIsOpen ? (
     <Wrapper id="sidebar-wrapper">
       <CloseButton onClick={() => setSecondarySidebarIsOpen(false)}>
-        <span className="material-icons">close</span>
+        <MdClose />
       </CloseButton>
       <ChartWrapper align="flex-start" direction="column" justify="flex-end">
         <Text className="title">Sentiment chart</Text>

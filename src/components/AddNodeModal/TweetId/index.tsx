@@ -7,9 +7,9 @@ const TwitId = () => (
     <TextInput
       id="tweet-id"
       label="Tweet id"
-      message="Paste a valid tweet id."
-      name="source"
-      placeholder="Paste your id here..."
+      message="Paste a valid tweet url or tweet id."
+      name="tweet"
+      placeholder="Paste your link or id here..."
       rules={{
         ...requiredRule,
       }}
