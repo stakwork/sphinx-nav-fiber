@@ -3576,12 +3576,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-input-mask@npm:2.0.4":
-  version: 2.0.4
-  resolution: "@types/react-input-mask@npm:2.0.4"
+"@types/react-input-mask@npm:3.0.2":
+  version: 3.0.2
+  resolution: "@types/react-input-mask@npm:3.0.2"
   dependencies:
     "@types/react": "*"
-  checksum: 87070c5d871ea8818fb49caef45f8fd750cdef00f41751d533473f9bc90529a6d9a247612c0d5a2f310683680b5567dac34be52d02e38ca9c8cb60b741672cfe
+  checksum: 1fadbba04b72a2898b2b85b9b62a8cbf8043ff98f503e23293f27d4e56843bbe2dd3da51f48de4bc3916aff31eb93083c6090090ce8b0837f1f174c447e81ad4
   languageName: node
   linkType: hard
 
@@ -17346,7 +17346,7 @@ __metadata:
     "@types/node": ^16.7.13
     "@types/react": ^18.0.0
     "@types/react-dom": ^18.0.0
-    "@types/react-input-mask": 2.0.4
+    "@types/react-input-mask": 3.0.2
     "@types/styled-components": ^5.1.25
     "@types/three": ^0.141.0
     "@typescript-eslint/eslint-plugin": ^5.27.1
