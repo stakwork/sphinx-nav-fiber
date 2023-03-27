@@ -1,16 +1,11 @@
-FROM node:16 as build
-
-
-# Create app directory
-WORKDIR /usr/src/app
-
-COPY package*.json ./
-COPY yarn.lock ./
-RUN yarn install
-
+FROM node:16 as builder
+WORKDIR /app
+COPY package.json yarn.lock .yarnrc.yml ./
+COPY .yarn ./.yarn
+RUN yarn --immutable
 COPY . .
+RUN yarn build
 
-RUN yarn run build
-
+# step2
 FROM nginx:alpine
-COPY --from=build /usr/src/app/build /usr/share/nginx/html
+COPY --from=builder /app/build /usr/share/nginx/html
