@@ -5,11 +5,16 @@ import { Text } from '~/components/common/Text'
 import { getRadarData } from '~/network/fetchGraphData'
 import { FetchRadarResponse, Sources as SourcesType } from '~/types'
 import { colors } from '~/utils/colors'
+import { Pill } from '~/components/common/Pill'
 
 const TWITTER_LINK = 'https://twitter.com'
 
 interface ISourceMap {
-  [key: string]: string,
+  [key: string]: string
+}
+
+type TPill = {
+  selected: boolean;
 }
 
 const sourcesMapper: ISourceMap = {
@@ -19,6 +24,7 @@ const sourcesMapper: ISourceMap = {
 
 export const Sources = () => {
   const [sourcesData, setSourcesData] = useState<SourcesType[] | undefined>(undefined)
+  const [typeFilter, setTypeFilter] = useState('');
 
   useEffect(() => {
     const init = async () => {
@@ -26,7 +32,6 @@ export const Sources = () => {
         const data: FetchRadarResponse = await getRadarData()
 
         setSourcesData(data.data)
-
       } catch (error) {
         console.log(error)
       }
@@ -35,9 +40,29 @@ export const Sources = () => {
     init()
   }, [])
 
+  const onFilterChange = (val: string) => {
+    if(typeFilter === val || !val) {
+      setTypeFilter('');
+    } else {
+      setTypeFilter(val);
+    }
+  }
+
+  const tableValues = sourcesData?.filter((val) => !typeFilter || val.source_type === typeFilter);
+
   return (
     <ChartWrapper align="flex-start" direction="column" justify="flex-end">
       <Text className="title">Sources for this Graph</Text>
+      <Flex direction="row" pb={16}>
+        <StyledPill onClick={() => onFilterChange('')} selected={!typeFilter}>
+          All
+        </StyledPill>
+        {Object.keys(sourcesMapper).map((key: string) => (
+          <StyledPill key={key} onClick={() => onFilterChange(key)} selected={key === typeFilter}>
+            {sourcesMapper[key]}
+          </StyledPill>
+        ))}
+      </Flex>
       <Table>
         <thead>
           <tr>
@@ -45,9 +70,9 @@ export const Sources = () => {
             <Th>Source</Th>
           </tr>
         </thead>
-        {sourcesData?.length && (
+        {tableValues?.length && (
           <tbody>
-            {sourcesData?.map((i: SourcesType) => (
+            {tableValues?.map((i: SourcesType) => (
               <tr key={i.source}>
                 <Td>{sourcesMapper[i.source_type]}</Td>
                 <Td>
@@ -101,5 +126,16 @@ const StyledLink = styled.a`
   text-decoration: underline;
   &:visited {
     color: ${colors.white};
+  }
+`
+
+const StyledPill = styled(Pill)<TPill>`
+  cursor: pointer;
+  background: ${(props) => (props.selected ? colors.white : 'transparent')};
+  color: ${(props) => (props.selected ? colors.headerBackground : colors.white)};
+  &:hover {
+    color: ${(props) => (props.selected ? colors.headerBackground : colors.white)};
+    background: ${(props) => (props.selected ? colors.white : 'transparent')};
+    opacity: 0.8;
   }
 `
