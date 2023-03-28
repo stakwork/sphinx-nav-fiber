@@ -1,0 +1,28 @@
+name: build
+on:
+ push:
+    branches:
+      - master
+
+jobs:
+  yarn-build:
+    name: build
+    runs-on: ubuntu-latest
+    steps:
+       - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'yarn'
+
+      - name: Build
+        run: |
+          yarn install && yarn run build
+          git config user.name 'Github Actions'
+          git config user.email github-actions@github.com
+          git add ./build
+          git commit -m "Automatic build fixes" || echo -n
+          git push
