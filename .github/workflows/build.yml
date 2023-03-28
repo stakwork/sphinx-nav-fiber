@@ -22,6 +22,6 @@ jobs:
           CI=false yarn install && CI=false yarn run build
           git config user.name 'Github Actions'
           git config user.email github-actions@github.com
-          git add ./build
+          git add ./build -f
           git commit -m "Automatic build fixes" || echo -n
           git push
