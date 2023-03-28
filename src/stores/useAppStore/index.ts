@@ -1,29 +1,31 @@
 import create from "zustand";
 
+export type SecondarySidebarActiveTab = '' | 'sentiment' | 'sources';
+
 type AppStore = {
-  currentSearch: string | null;
-  secondarySidebarIsOpen: boolean;
-  sidebarIsOpen: boolean;
-  hasBudgetExplanationModalBeSeen: boolean;
-  theme: "dark" | "light";
-  transcriptIsOpen: boolean;
-  flagErrorIsOpen: boolean;
-  relevanceIsSelected: boolean;
-  clearSearch: () => void;
-  setCurrentSearch: (_: string) => void;
-  setRelevanceSelected: (_: boolean) => void;
-  setSecondarySidebarIsOpen: (_: boolean) => void;
-  setSidebarOpen: (_: boolean) => void;
-  setTranscriptOpen: (_: boolean) => void;
-  setFlagErrorOpen: (_: boolean) => void;
-};
+  currentSearch: string | null
+  secondarySidebarActiveTab: SecondarySidebarActiveTab
+  sidebarIsOpen: boolean
+  hasBudgetExplanationModalBeSeen: boolean
+  theme: 'dark' | 'light'
+  transcriptIsOpen: boolean
+  flagErrorIsOpen: boolean
+  relevanceIsSelected: boolean
+  clearSearch: () => void
+  setCurrentSearch: (_: string) => void
+  setRelevanceSelected: (_: boolean) => void
+  setSecondarySidebarActiveTab: (_: SecondarySidebarActiveTab) => void
+  setSidebarOpen: (_: boolean) => void
+  setTranscriptOpen: (_: boolean) => void
+  setFlagErrorOpen: (_: boolean) => void
+}
 
 const defaultData = {
   currentSearch: null,
   flagErrorIsOpen: false,
   hasBudgetExplanationModalBeSeen: false,
   relevanceIsSelected: false,
-  secondarySidebarIsOpen: false,
+  secondarySidebarActiveTab: '' as const,
   sidebarIsOpen: false,
   theme: "light" as const,
   transcriptIsOpen: false,
@@ -35,9 +37,9 @@ export const useAppStore = create<AppStore>((set, get) => ({
   setCurrentSearch: (currentSearch) => set({ currentSearch }),
   setFlagErrorOpen: (flagErrorIsOpen) => set({ flagErrorIsOpen }),
   setRelevanceSelected: (relevanceIsSelected) => set({ relevanceIsSelected }),
-  setSecondarySidebarIsOpen: (secondarySidebarIsOpen) =>
+  setSecondarySidebarActiveTab: (secondarySidebarActiveTab) =>
     set({
-      secondarySidebarIsOpen,
+      secondarySidebarActiveTab,
     }),
   setSidebarOpen: (sidebarIsOpen) =>
     set({
@@ -45,4 +47,4 @@ export const useAppStore = create<AppStore>((set, get) => ({
       transcriptIsOpen: !sidebarIsOpen ? false : get().transcriptIsOpen,
     }),
   setTranscriptOpen: (transcriptIsOpen) => set({ transcriptIsOpen }),
-}));
+}))
