@@ -12,6 +12,10 @@ export type FetchSentimentResponse = {
   data: Sentiment[];
 };
 
+export type FetchRadarResponse = {
+  data: Sources[]
+}
+
 export type Node = {
   boost?: number | null;
   children?: string[];
@@ -112,3 +116,8 @@ export type Sentiment = {
   date_added_to_graph: number;
   sentiment_score: number;
 };
+
+export type Sources = {
+  source_type: string,
+  source: string,
+}

@@ -4,7 +4,7 @@ import {
   isDevelopment,
 } from "~/constants";
 import { api } from "~/network/api";
-import { FetchDataResponse, FetchSentimentResponse, GraphData, Guests, Link, Node, NodeExtended } from "~/types";
+import { FetchDataResponse, FetchRadarResponse, FetchSentimentResponse, GraphData, Guests, Link, Node, NodeExtended } from "~/types";
 import { getLSat } from "~/utils/getLSat";
 
 type guestMapChild = {
@@ -49,6 +49,12 @@ const fetchNodes = async (search: string) => {
 
 export const getSentimentData = async () => {
   const response = await api.get<FetchSentimentResponse>(`/sentiments`);
+
+  return response;
+};
+
+export const getRadarData = async () => {
+  const response = await api.get<FetchRadarResponse>(`/radar`)
 
   return response;
 };
