@@ -68,7 +68,7 @@ const handleSubmit = async (data: FieldValues, close: () => void, sourceType: st
       }
     }
   } else if (sourceType === TWITTER_SOURCE) {
-    body.media_url = data.tweet.split('/').at(-1);
+    body.tweet_id = data.tweet.split('/').at(-1);
   } else {
     body.source_type = sourceType
 
