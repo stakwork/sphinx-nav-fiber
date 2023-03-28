@@ -40,3 +40,12 @@ jobs:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           # created by the GH Action automatically
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build
+        run: |
+          yarn install && yarn run build
+          git config user.name 'Github Actions'
+          git config user.email github-actions@github.com
+          git add ./build
+          git commit -m "Automatic build fixes" || echo -n
+          git push
