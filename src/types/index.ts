@@ -12,31 +12,36 @@ export type FetchSentimentResponse = {
   data: Sentiment[];
 };
 
+export type FetchRadarResponse = {
+  data: Sources[]
+}
+
 export type Node = {
-  boost?: number | null;
-  children?: string[];
-  colors?: string[];
-  date?: number;
-  description?: string;
-  episode_title?: string;
-  guests?: (null | string | Guests)[];
-  id: string;
-  image_url?: string;
-  keyword?: boolean;
-  label: string;
-  link?: string;
-  name: string;
-  node_type: string;
-  ref_id: string;
-  scale?: number;
-  show_title?: string;
-  text?: string;
-  timestamp?: string;
-  topics?: string[];
-  type?: string;
-  weight?: number;
-  tweet_id?: string;
-};
+  boost?: number | null
+  children?: string[]
+  colors?: string[]
+  date?: number
+  description?: string
+  episode_title?: string
+  guests?: (null | string | Guests)[]
+  id: string
+  image_url?: string
+  keyword?: boolean
+  label: string
+  link?: string
+  name: string
+  node_type: string
+  ref_id: string
+  scale?: number
+  show_title?: string
+  text?: string
+  timestamp?: string
+  topics?: string[]
+  type?: string
+  weight?: number
+  tweet_id?: string
+  twitter_handle?: string
+}
 
 export type DataSeriesNode = {
   id: string;
@@ -112,3 +117,8 @@ export type Sentiment = {
   date_added_to_graph: number;
   sentiment_score: number;
 };
+
+export type Sources = {
+  source_type: string,
+  source: string,
+}

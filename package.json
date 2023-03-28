@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@react-three/drei": "^9.57.0",
+    "@react-three/drei": "9.57.0",
     "@react-three/fiber": "^8.11.5",
     "@react-three/postprocessing": "^2.7.0",
     "@use-gesture/react": "^10.2.24",

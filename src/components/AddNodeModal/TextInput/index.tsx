@@ -34,6 +34,7 @@ type Props = BaseTextInputProps & {
   rules?: RegisterOptions;
   mask?: string;
   showMask?: boolean;
+  maskPlaceholder?: string | null;
 };
 
 export const TextInput = ({
@@ -44,6 +45,7 @@ export const TextInput = ({
   name,
   rules,
   showMask = false,
+  maskPlaceholder = null,
   ...props
 }: Props) => {
   const {
@@ -78,7 +80,9 @@ export const TextInput = ({
                 disabled={false}
                 inputRef={ref}
                 mask={mask}
-                maskPlaceholder={null}
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore: maskPlaceholder prop exist, but is not added to types
+                maskPlaceholder={maskPlaceholder}
                 onBlur={onBlur}
                 onChange={onChange}
                 value={value}

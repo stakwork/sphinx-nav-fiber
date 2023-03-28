@@ -2614,15 +2614,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-three/drei@npm:^9.57.0":
-  version: 9.57.3
-  resolution: "@react-three/drei@npm:9.57.3"
+"@react-three/drei@npm:9.57.0":
+  version: 9.57.0
+  resolution: "@react-three/drei@npm:9.57.0"
   dependencies:
     "@babel/runtime": ^7.11.2
     "@react-spring/three": ~9.6.1
     "@use-gesture/react": ^10.2.24
-    camera-controls: ^2.3.1
-    detect-gpu: ^5.0.14
+    camera-controls: ^2.1.0
+    detect-gpu: ^5.0.10
     glsl-noise: ^0.0.0
     lodash.clamp: ^4.0.3
     lodash.omit: ^4.5.0
@@ -2646,7 +2646,7 @@ __metadata:
   peerDependenciesMeta:
     react-dom:
       optional: true
-  checksum: 56af949849838ef4eb03fff9b7f5eb4e24f471a2b57d335b2c83a953a7482a1e7c24a29050f0afd82694d06e91d4d6259ebc514431d8e295233167a0edda4ca2
+  checksum: 3b4765cfca96f5ce54f8d40e947f8b3c12591b83d70cf9548c1d31561a6bea797b794ac172d38457769f6b2aff9e1c43881dbf982fc2aea510b04f5e107a71a7
   languageName: node
   linkType: hard
 
@@ -5976,7 +5976,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"camera-controls@npm:^2.3.1":
+"camera-controls@npm:^2.1.0":
   version: 2.3.3
   resolution: "camera-controls@npm:2.3.3"
   peerDependencies:
@@ -7690,12 +7690,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"detect-gpu@npm:^5.0.14":
-  version: 5.0.15
-  resolution: "detect-gpu@npm:5.0.15"
+"detect-gpu@npm:^5.0.10":
+  version: 5.0.17
+  resolution: "detect-gpu@npm:5.0.17"
   dependencies:
     webgl-constants: ^1.1.1
-  checksum: 57ea1f50e03bef0254a0970594a815194a6748aa8fb4dd4ebbc044997f1f71bd68381a0ec2c94a7104cd3d6768a9e33de7ad020e6ae7894b22b968a733183e74
+  checksum: 3d9ccdf65d15221b44dc26382458512ca8460dfa61f86e491b10796e8582f3eff5696faf001aba7b6406f48b6be43db3e1fade9b17b9c91c5719fb27a60d4f15
   languageName: node
   linkType: hard
 
@@ -17333,7 +17333,7 @@ __metadata:
     "@commitlint/cli": ^17.1.2
     "@commitlint/config-conventional": ^17.1.0
     "@craco/craco": ^6.4.5
-    "@react-three/drei": ^9.57.0
+    "@react-three/drei": 9.57.0
     "@react-three/fiber": ^8.11.5
     "@react-three/postprocessing": ^2.7.0
     "@testing-library/jest-dom": ^5.14.1
