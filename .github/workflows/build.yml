@@ -23,5 +23,5 @@ jobs:
           git config user.name 'Github Actions'
           git config user.email github-actions@github.com
           git add ./build -f
-          git commit -m "ci: Automatic build fixes" || echo -n
+          git commit -m "ci: automatic build fixes" || echo -n
           git push
