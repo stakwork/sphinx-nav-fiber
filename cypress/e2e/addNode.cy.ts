@@ -55,11 +55,11 @@ describe('Add Node Form / Home interactions', () => {
   })
 
   it('submitting the form with all fields empty yields 5 error messages', () => {
-    openButton('home').click()
+    openButton('home').click({ waitForAnimations: false })
 
-    cy.get('div.react-dropdown-select').click()
+    cy.get('div.react-dropdown-select').click({ waitForAnimations: false })
 
-    cy.get('span.react-dropdown-select-item').eq(0).click()
+    cy.get('span.react-dropdown-select-item').eq(0).click({ waitForAnimations: false })
 
     checkboxButton().click({ waitForAnimations: false })
 
@@ -80,11 +80,11 @@ describe('Add Node Form / Home interactions', () => {
       statusCode: 200,
     }).as('add_node')
 
-    openButton('home').click()
+    openButton('home').click({ waitForAnimations: false })
 
-    cy.get('div.react-dropdown-select').click()
+    cy.get('div.react-dropdown-select').click({ waitForAnimations: false })
 
-    cy.get('span.react-dropdown-select-item').eq(0).click()
+    cy.get('span.react-dropdown-select-item').eq(0).click({ waitForAnimations: false })
 
     checkboxButton().click({ waitForAnimations: false })
 
@@ -97,7 +97,7 @@ describe('Add Node Form / Home interactions', () => {
     descriptionInput().type('description')
     tagsInput().type('test').type('{enter}')
 
-    submitButton().click()
+    submitButton().click({ waitForAnimations: false })
 
     cy.wait('@add_node')
 
@@ -115,11 +115,11 @@ describe('Add Node Form / Home interactions', () => {
       statusCode: 402,
     }).as('add_node')
 
-    openButton('home').click()
+    openButton('home').click({ waitForAnimations: false })
 
-    cy.get('div.react-dropdown-select').click()
+    cy.get('div.react-dropdown-select').click({ waitForAnimations: false })
 
-    cy.get('span.react-dropdown-select-item').eq(0).click()
+    cy.get('span.react-dropdown-select-item').eq(0).click({ waitForAnimations: false })
 
     checkboxButton().click({ waitForAnimations: false })
 
@@ -132,7 +132,7 @@ describe('Add Node Form / Home interactions', () => {
     descriptionInput().type('description')
     tagsInput().type('test').type('{enter}')
 
-    submitButton().click()
+    submitButton().click({ waitForAnimations: false })
 
     cy.wait('@add_node')
 
