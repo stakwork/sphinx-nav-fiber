@@ -9,7 +9,6 @@ import { Flex } from "~/components/common/Flex";
 import { DataRetriever } from "~/components/DataRetriever";
 import { GlobalStyle } from "~/components/GlobalStyle";
 import { Universe } from "~/components/Universe";
-import { isChileGraph } from "~/constants";
 import { useAppStore } from "~/stores/useAppStore";
 import { useDataStore, useSelectedNode } from "~/stores/useDataStore";
 import { useModal } from "~/stores/useModalStore";
@@ -110,11 +109,11 @@ export const App = () => {
 
             <Universe />
 
-            {isChileGraph && <SecondarySideBar />}
+            <SecondarySideBar />
 
             <AppBar onSubmit={handleSubmit} />
 
-            {isChileGraph && <FooterMenu />}
+            <FooterMenu />
           </FormProvider>
         </DataRetriever>
 
