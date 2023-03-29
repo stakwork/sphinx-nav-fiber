@@ -1,6 +1,6 @@
 import { ReactElement, useState } from 'react'
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
-import { MdArrowBack, MdClose, MdInfo, MdKeyboardBackspace } from 'react-icons/md'
+import { MdClose, MdInfo, MdKeyboardBackspace } from 'react-icons/md'
 import { ClipLoader } from 'react-spinners'
 import { toast } from 'react-toastify'
 import * as sphinx from 'sphinx-bridge-kevkevinpal'
@@ -133,28 +133,34 @@ interface IOptionMap {
   [key: string]: TOption
 }
 
-const CONTENT_TYPE_OPTIONS: IOptionMap = {
-  [LINK]: {
-    component: SourceUrl,
-    label: 'Youtube / Twitter space / Mp3',
+const CONTENT_TYPE_OPTIONS: Record<'source' | 'content', IOptionMap> = {
+  content: {
+    [TOPIC]: {
+      component: Topic,
+      label: 'Topic',
+    },
+    [TWITTER_HANDLE]: {
+      component: TwitterHandle,
+      label: 'Twitter handle',
+    },
   },
-  [TOPIC]: {
-    component: Topic,
-    label: 'Topic',
-  },
-  [TWITTER_HANDLE]: {
-    component: TwitterHandle,
-    label: 'Twitter handle',
-  },
-  [TWITTER_SOURCE]: {
-    component: TwitId,
-    label: 'Tweet',
+  source: {
+    [LINK]: {
+      component: SourceUrl,
+      label: 'Youtube / Twitter space / Mp3',
+    },
+    [TWITTER_SOURCE]: {
+      component: TwitId,
+      label: 'Tweet',
+    },
   },
 }
 
 export const AddNodeModal = () => {
-  const { close } = useModal('addNode')
+  const { close, addNodeModalData } = useModal('addNode')
   const [activeType, setActiveType] = useState('')
+
+  const resolvedContentOptions = addNodeModalData ? CONTENT_TYPE_OPTIONS[addNodeModalData] : null
 
   const form = useForm({ mode: 'onSubmit' })
 
@@ -172,10 +178,10 @@ export const AddNodeModal = () => {
     await handleSubmit(data, handleClose, activeType)
   })
 
-  const options = Object.keys(CONTENT_TYPE_OPTIONS).map((i: string) => ({
-    label: CONTENT_TYPE_OPTIONS[i].label,
+  const options = resolvedContentOptions ? Object.keys(resolvedContentOptions).map((i: string) => ({
+    label: resolvedContentOptions[i].label,
     value: i,
-  }))
+  })) : [];
 
   const selectedValue = activeType
     ? [
@@ -188,91 +194,93 @@ export const AddNodeModal = () => {
 
   const startTime = watch('startTime')
 
-  const FormValues = activeType ? CONTENT_TYPE_OPTIONS[activeType].component : () => null
+  const FormValues = activeType && resolvedContentOptions ? resolvedContentOptions[activeType].component : () => null
   const formProps = { setValue, startTime }
 
   return (
-    <BaseModal id="addNode" preventOutsideClose>
-      <FormProvider {...form}>
-        <form id="add-node-form" onSubmit={onSubmit}>
-          <Flex align="center" direction="row" justify="space-between" pb={32}>
-            <Flex align="center" direction="row">
+    resolvedContentOptions && (
+      <BaseModal id="addNode" preventOutsideClose>
+        <FormProvider {...form}>
+          <form id="add-node-form" onSubmit={onSubmit}>
+            <Flex align="center" direction="row" justify="space-between" pb={32}>
               <Flex align="center" direction="row">
-                {activeType && (
-                  <BackButton onClick={() => setActiveType('')}>
-                    <MdKeyboardBackspace color={colors.white} size={24} />
-                  </BackButton>
-                )}
-                <Text kind="bigHeadingBold">Add Content</Text>
+                <Flex align="center" direction="row">
+                  {activeType && (
+                    <BackButton onClick={() => setActiveType('')}>
+                      <MdKeyboardBackspace color={colors.white} size={24} />
+                    </BackButton>
+                  )}
+                  <Text kind="bigHeadingBold">Add {addNodeModalData}</Text>
+                </Flex>
+                <InfoIcon role="tooltip" tabIndex={0}>
+                  <MdInfo />
+                  <div className="tooltip">{mainInfoMessage}</div>
+                </InfoIcon>
               </Flex>
-              <InfoIcon role="tooltip" tabIndex={0}>
-                <MdInfo />
-                <div className="tooltip">{mainInfoMessage}</div>
-              </InfoIcon>
+
+              <CloseButton
+                id="add-node-close-button"
+                onClick={handleClose}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === 'Space') {
+                    handleClose()
+                  }
+                }}
+                role="button"
+                tabIndex={0}
+              >
+                <MdClose color="white" />
+              </CloseButton>
             </Flex>
 
-            <CloseButton
-              id="add-node-close-button"
-              onClick={handleClose}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === 'Space') {
-                  handleClose()
-                }
-              }}
-              role="button"
-              tabIndex={0}
-            >
-              <MdClose color="white" />
-            </CloseButton>
-          </Flex>
+            {!activeType ? (
+              <Flex align="center" direction="row" justify="space-between">
+                <Flex>
+                  <Text kind="mediumBold">What do you want to add?</Text>
+                </Flex>
+                <Flex basis="250px">
+                  <StyledSelect
+                    className={selectedValue.length ? 'hasSelected' : ''}
+                    clearable
+                    onChange={(values) => {
+                      setActiveType(values.length ? (values[0] as Option).value : '')
+                    }}
+                    options={options}
+                    placeholder={`Select ${addNodeModalData} type`}
+                    searchable={false}
+                    values={selectedValue}
+                  />
+                </Flex>
+              </Flex>
+            ) : (
+              <>
+                <Flex>
+                  <FormValues {...formProps} />
+                </Flex>
 
-          {!activeType ? (
-            <Flex align="center" direction="row" justify="space-between">
-              <Flex>
-                <Text kind="mediumBold">What do you want to add?</Text>
-              </Flex>
-              <Flex basis="250px">
-                <StyledSelect
-                  className={selectedValue.length ? 'hasSelected' : ''}
-                  clearable
-                  onChange={(values) => {
-                    setActiveType(values.length ? (values[0] as Option).value : '')
-                  }}
-                  options={options}
-                  placeholder="Select content type"
-                  searchable={false}
-                  values={selectedValue}
-                />
-              </Flex>
-            </Flex>
-          ) : (
-            <>
-              <Flex>
-                <FormValues {...formProps} />
-              </Flex>
+                <Flex pt={16} px={4} tabIndex={0}>
+                  <Text color="lightGray" kind="tinyBold">
+                    Your pubkey will be submitted with your input, so you can receive sats that your content earns.
+                  </Text>
+                </Flex>
 
-              <Flex pt={16} px={4} tabIndex={0}>
-                <Text color="lightGray" kind="tinyBold">
-                  Your pubkey will be submitted with your input, so you can receive sats that your content earns.
-                </Text>
-              </Flex>
-
-              <Flex pt={8}>
-                {isSubmitting ? (
-                  <SubmitLoader>
-                    <ClipLoader color={colors.white} size={20} />
-                  </SubmitLoader>
-                ) : (
-                  <Button disabled={isSubmitting} id="add-node-submit-cta" kind="big" type="submit">
-                    Add content
-                  </Button>
-                )}
-              </Flex>
-            </>
-          )}
-        </form>
-      </FormProvider>
-    </BaseModal>
+                <Flex pt={8}>
+                  {isSubmitting ? (
+                    <SubmitLoader>
+                      <ClipLoader color={colors.white} size={20} />
+                    </SubmitLoader>
+                  ) : (
+                    <Button disabled={isSubmitting} id="add-node-submit-cta" kind="big" type="submit">
+                      {`Add ${addNodeModalData}`}
+                    </Button>
+                  )}
+                </Flex>
+              </>
+            )}
+          </form>
+        </FormProvider>
+      </BaseModal>
+    )
   )
 }
 
