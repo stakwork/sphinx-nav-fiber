@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { MdAddLink, MdOutlineMenu, MdOutlineShowChart, MdOutlineTableView, MdPostAdd } from 'react-icons/md'
+import { useEffect, useRef, useState } from 'react'
+import { MdAddLink, MdClose, MdOutlineMenu, MdOutlineShowChart, MdOutlineTableView, MdPostAdd } from 'react-icons/md'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
@@ -9,8 +9,9 @@ import { colors } from '~/utils/colors'
 
 export const FooterMenu = () => {
   const [setSecondarySidebarActiveTab] = useAppStore((s) => [s.setSecondarySidebarActiveTab])
+  const wrapperRef = useRef<HTMLDivElement>(null)
 
-  const [isHovered, setIsHovered] = useState(false)
+  const [isOpened, setIsOpened] = useState(false)
 
   const { open, setAddNodeModalData } = useModal('addNode')
 
@@ -23,13 +24,28 @@ export const FooterMenu = () => {
     setAddNodeModalData(data);
   }
 
+
+  const handleClickOutside = (event: MouseEvent) => {
+    if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
+      setIsOpened(false)
+    }
+  }
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside)
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  })
+
   return (
-    <FooterAction>
+    <FooterAction ref={wrapperRef}>
       <Flex>
-        <ButtonsWrapper onMouseLeave={() => setIsHovered(false)} onMouseOver={() => setIsHovered(true)}>
-          {isHovered && (
+        <ButtonsWrapper>
+          {isOpened && (
             <>
-              <ActionButton onClick={() => handleOpenModal('content')}>
+              <ActionButton id="cy-add-content-menu" onClick={() => handleOpenModal('content')}>
                 <Text>Add Content</Text>
                 <IconWrapper>
                   <MdAddLink size={24} />
@@ -55,10 +71,8 @@ export const FooterMenu = () => {
               </ActionButton>
             </>
           )}
-          <ActionButton className="root">
-            <IconWrapper>
-              <MdOutlineMenu size={24} />
-            </IconWrapper>
+          <ActionButton className="root" id="cy-actions-menu-toggle" onClick={() => setIsOpened(!isOpened)}>
+            <IconWrapper>{isOpened ? <MdClose size={24} /> : <MdOutlineMenu size={24} />}</IconWrapper>
           </ActionButton>
         </ButtonsWrapper>
       </Flex>

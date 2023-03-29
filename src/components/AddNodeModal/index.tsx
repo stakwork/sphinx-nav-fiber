@@ -135,16 +135,6 @@ interface IOptionMap {
 
 const CONTENT_TYPE_OPTIONS: Record<'source' | 'content', IOptionMap> = {
   content: {
-    [TOPIC]: {
-      component: Topic,
-      label: 'Topic',
-    },
-    [TWITTER_HANDLE]: {
-      component: TwitterHandle,
-      label: 'Twitter handle',
-    },
-  },
-  source: {
     [LINK]: {
       component: SourceUrl,
       label: 'Youtube / Twitter space / Mp3',
@@ -152,6 +142,16 @@ const CONTENT_TYPE_OPTIONS: Record<'source' | 'content', IOptionMap> = {
     [TWITTER_SOURCE]: {
       component: TwitId,
       label: 'Tweet',
+    },
+  },
+  source: {
+    [TOPIC]: {
+      component: Topic,
+      label: 'Topic',
+    },
+    [TWITTER_HANDLE]: {
+      component: TwitterHandle,
+      label: 'Twitter handle',
     },
   },
 }
