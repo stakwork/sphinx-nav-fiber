@@ -61,112 +61,91 @@ export const getRadarData = async () => {
 
 const getGraphData = async (searchterm: string) => {
   try {
-    const dataInit = await fetchNodes(searchterm);
+    const dataInit = await fetchNodes(searchterm)
 
     const dataSeries = dataInit.data_series
       ? [
           {
             ...dataInit.data_series,
             boost: null,
-            id: "string",
-            image_url: "node_data.webp",
+            image_url: 'node_data.webp',
             label: dataInit.data_series.title,
-            name: "Name",
-            node_type: "data_series",
-            ref_id: "",
-            type: "data_series",
+            name: 'Name',
+            node_type: 'data_series',
+            ref_id: '',
+            type: 'data_series',
             weight: 2,
           } as Node,
         ]
-      : [];
+      : []
 
-    const tweetData = (dataInit.tweet_data || []).map(
-      (i) =>
-        ({
-          ...i,
-          date: Number(i.date),
-          id: i.tweet_id,
-          image_url: "twitter_spaces_img.png",
-          label: i.name,
-          node_type: "tweet_data",
-          ref_id: "",
-          type: "tweet_data",
-          weight: 2,
-        } as Node)
-    );
+    const data: Node[] = [...dataInit.exact, ...dataInit.related, ...dataSeries]
 
-    const data = [...dataInit.exact, ...dataInit.related, ...dataSeries, ...tweetData];
+    const nodes: NodeExtended[] = []
+    const links: Link[] = []
 
-    const nodes: NodeExtended[] = [];
-    const links: Link[] = [];
-
-    let topicMap: Record<string, string[]> = {};
-    const guestMap: Record<string, guestMapChild> = {};
+    let topicMap: Record<string, string[]> = {}
+    const guestMap: Record<string, guestMapChild> = {}
 
     if (data.length) {
       // Populating nodes array with podcasts and constructing a topic map
       data.forEach((node) => {
-        const {
-          children,
-          topics,
-          guests,
-          show_title: showTitle,
-          node_type: nodeType,
-        } = node;
+        const { children, topics, guests, show_title: showTitle, node_type: nodeType } = node
 
-        if (!shouldIncludeTopics && nodeType === "topic") {
-          return;
+        if (!shouldIncludeTopics && nodeType === 'topic') {
+          return
         }
 
         children?.forEach((childRefId: string) => {
-          const link: Link = {
-            source: node.ref_id,
-            target: childRefId,
-          };
+          if(node.ref_id) {
+            const link: Link = {
+              source: node.ref_id,
+              target: childRefId,
+            }
 
-          links.push(link);
-        });
+            links.push(link)
+          }
+        })
 
         if (topics) {
           topicMap = topics.reduce((acc, topic) => {
             if (showTitle) {
-              acc[topic] = [...(topicMap[topic] || []), showTitle];
+              acc[topic] = [...(topicMap[topic] || []), showTitle]
             }
 
-            return acc;
-          }, {} as Record<string, string[]>);
+            return acc
+          }, {} as Record<string, string[]>)
         }
 
-        if (node.node_type === "episode") {
+        if (node.node_type === 'episode' && node.ref_id) {
           (guests || []).forEach((guest) => {
-            const currentGuest = guest as Guests;
+            const currentGuest = guest as Guests
 
-            if (currentGuest.name) {
+            if (currentGuest.name && currentGuest.ref_id && node.ref_id) {
               guestMap[currentGuest.ref_id] = {
-                children: [
-                  ...(guestMap[currentGuest.ref_id]?.children || []),
-                  node.ref_id,
-                ],
-                imageUrl: currentGuest.profile_picture || "",
+                children: [...(guestMap[currentGuest.ref_id]?.children || []), node.ref_id],
+                imageUrl: currentGuest.profile_picture || '',
                 name: currentGuest.name,
                 twitterHandle: currentGuest.twitter_handle,
-              };
+              }
             }
-          });
+          })
         }
 
         // replace aws bucket url with cloudfront, and add size indicator to end
         const smallImageUrl = node.image_url
           ?.replace(AWS_IMAGE_BUCKET_URL, CLOUDFRONT_IMAGE_BUCKET_URL)
-          .replace(".jpg", "_s.jpg");
+          .replace('.jpg', '_s.jpg')
 
-        nodes.push({
-          ...node,
-          id: node.ref_id,
-          // label: moment.show_title,
-          image_url: smallImageUrl,
-        });
-      });
+          if(node.ref_id) {
+            nodes.push({
+              ...node,
+              id: node.ref_id,
+              // label: moment.show_title,
+              image_url: smallImageUrl,
+            })
+          }
+      })
 
       if (shouldIncludeTopics) {
         Object.entries(topicMap).forEach(([topic, topicTitles], index) => {
@@ -174,82 +153,80 @@ const getGraphData = async (searchterm: string) => {
            *  otherwise everything will be linked to it
            */
           if (topic === searchterm) {
-            return;
+            return
           }
 
-          const scale = topicTitles.length * 2;
-          const topicNodeId = `topic_node_${index}`;
+          const scale = topicTitles.length * 2
+          const topicNodeId = `topic_node_${index}`
 
           // make links to children
           topicTitles.forEach((showTitle) => {
-            const show = data.find(
-              (f) => f.show_title === showTitle && f.node_type === "episode"
-            );
+            const show = data.find((f) => f.show_title === showTitle && f.node_type === 'episode')
 
-            const showRefId = show?.ref_id || "";
+            const showRefId = show?.ref_id || ''
 
             const link: Link = {
               source: showRefId,
               target: topicNodeId,
-            };
+            }
 
-            links.push(link);
-          });
+            links.push(link)
+          })
 
           const topicNode: NodeExtended = {
-            colors: ["#000"],
+            colors: ['#000'],
             id: topicNodeId,
             label: topic,
             name: topic,
-            node_type: "topic",
+            node_type: 'topic',
             ref_id: topicNodeId,
             scale,
             show_title: topic,
             text: topic,
             weight: 0,
-          };
+          }
 
-          nodes.push(topicNode);
-        });
+          nodes.push(topicNode)
+        })
       }
 
       Object.entries(guestMap).forEach(([guest, guestValue], index) => {
-        const guestChildren = guestValue.children;
-        const scale = guestChildren.length * 2;
-        const guestNodeId = `guestnode_${index}`;
+        const guestChildren = guestValue.children
+        const scale = guestChildren.length * 2
+        const guestNodeId = `guestnode_${index}`
 
         // make links to children
         guestChildren.forEach((childRefId: string) => {
           const link: Link = {
             source: childRefId,
             target: guestNodeId,
-          };
+          }
 
-          links.push(link);
-        });
+          links.push(link)
+        })
 
         const guestNode: NodeExtended = {
-          colors: ["#000"],
+          colors: ['#000'],
           id: guestNodeId,
           image_url: guestValue.imageUrl,
           label: guestValue.name,
           name: guestValue.name,
-          node_type: "guest",
+          node_type: 'guest',
           ref_id: guestNodeId,
           scale,
           show_title: guestValue.name,
           text: guestValue.twitterHandle,
-          type: "guest",
+          type: 'guest',
           weight: 0,
-        };
+        }
 
-        nodes.push(guestNode);
-      });
+        nodes.push(guestNode)
+      })
     }
 
-    nodes.sort((a, b) => (b.weight || 0) - (a.weight || 0));
+    nodes.sort((a, b) => (b.weight || 0) - (a.weight || 0))
 
-    return { links, nodes };
+    return { links, nodes }
   } catch (e) {
     console.error(e);
 

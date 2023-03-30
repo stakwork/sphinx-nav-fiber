@@ -80,7 +80,7 @@ export const Tooltip = ({ node }: Props) => {
 
   return (
     <Wrapper borderRadius={8} px={24} py={16}>
-      {nodeType === 'tweet_data' ? <TwitData tweetId={tweetId} twitterHandle={twitterHandle} /> : (
+      {nodeType === 'tweet' ? <TwitData tweetId={tweetId} twitterHandle={twitterHandle} /> : (
         <>
           <Flex direction="row">
             <Divider />

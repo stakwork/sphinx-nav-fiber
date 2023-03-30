@@ -28,7 +28,7 @@ export const View = () => {
       return <Person />;
     case "data_series":
       return <Data />;
-    case "tweet_data":
+    case "tweet":
       return <TwitData />;
     default:
       return <Creator />;

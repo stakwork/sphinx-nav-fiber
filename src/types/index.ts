@@ -5,7 +5,6 @@ export type FetchDataResponse = {
   data_series?: { title: string };
   exact: Node[];
   related: Node[];
-  tweet_data?: TweetData[];
 };
 
 export type FetchSentimentResponse = {
@@ -24,14 +23,14 @@ export type Node = {
   description?: string
   episode_title?: string
   guests?: (null | string | Guests)[]
-  id: string
+  id?: string
   image_url?: string
   keyword?: boolean
   label: string
   link?: string
   name: string
   node_type: string
-  ref_id: string
+  ref_id?: string
   scale?: number
   show_title?: string
   text?: string
@@ -89,17 +88,7 @@ export type Guests = {
   twitter_handle: string;
 };
 
-type TweetData = {
-  date: string;
-  name: string;
-  profile_picture: string;
-  text: string;
-  tweet_id: string;
-  twitter_handle: string;
-  verified: boolean;
-};
-
-export const nodeTypes = ["clip", "episode", "guest", "show", "topic", "data_series", "tweet_data"] as const;
+export const nodeTypes = ["clip", "episode", "guest", "show", "topic", "data_series", "tweet"] as const;
 
 export type NodeType = typeof nodeTypes[number];
 
@@ -108,7 +97,7 @@ export type Type =
   | "youtube"
   | "guest"
   | "podcast"
-  | "tweet_data"
+  | "tweet"
   | "data_series"
   | "twitter_space";
 
