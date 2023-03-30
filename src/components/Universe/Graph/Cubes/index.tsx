@@ -11,7 +11,7 @@ type NodeTypeColors = Record<string, string>;
 
 const NODE_TYPE_COLORS: NodeTypeColors = {
   data_series: "red",
-  tweet_data: "aqua",
+  tweet: "aqua",
 };
 
 export const Cubes = memo(() => {
@@ -32,7 +32,7 @@ export const Cubes = memo(() => {
     !data.nodes.some(
       (i) =>
         i.node_type === "guest" &&
-        searchTerm.toLowerCase() === i.label.toLowerCase()
+        searchTerm.toLowerCase() === i?.label?.toLowerCase()
     );
 
   return (
@@ -46,12 +46,12 @@ export const Cubes = memo(() => {
               .split(" ")
               .some(
                 (i) =>
-                  node.label
+                  node?.label
                     .toLowerCase()
                     .match(new RegExp(`\\b${i.toLowerCase()}\\b`)) !== null
               );
           } else {
-            highlight = node.label.toLowerCase() === searchTerm.toLowerCase();
+            highlight = node?.label.toLowerCase() === searchTerm.toLowerCase();
           }
         }
 
