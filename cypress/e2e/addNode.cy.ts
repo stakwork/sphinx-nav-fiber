@@ -20,19 +20,8 @@ describe('Add Node Form / Home interactions', () => {
     cy.visit('/')
   })
 
-  // different Add Node + buttons depending on whether the sidebar is open or not
-  const openButton = (setting: 'home' | 'sidebar') => {
-    if (setting === 'home') {
-      return cy.get(addNodeButtonHome)
-    }
-
-    return cy.get(addNodeButtonSidebarOpen)
-  }
-
   const modal = () => cy.get(addNodeModal)
   const submitButton = () => cy.get(addNodeSubmitButton)
-  const selectClipButton = () => cy.get(typeClipButton)
-  const closeButton = () => cy.get(addNodeCloseButton)
   const tagErrorMessage = () => cy.get(tagError)
   const linkInput = () => cy.get(link)
   const startTimeInput = () => cy.get(startTime)
@@ -42,20 +31,9 @@ describe('Add Node Form / Home interactions', () => {
   const toastBody = () => cy.get(toast)
   const checkboxButton = () => cy.get(checkbox)
 
-  it('clicking the Add Content + button opens the Add Content Form modal, X button closes it', () => {
-    openButton('home').should('be.visible').and('be.enabled').and('contain.text', 'Add Content +').as('open_button')
-
-    cy.get('@open_button').click({ waitForAnimations: false })
-
-    modal().should('be.visible').and('contain.text', 'Add Content')
-
-    closeButton().click({ waitForAnimations: false })
-
-    modal().should('not.exist')
-  })
-
   it('submitting the form with all fields empty yields 5 error messages', () => {
-    openButton('home').click({ waitForAnimations: false })
+    cy.get('#cy-actions-menu-toggle').click({ waitForAnimations: false })
+    cy.get('#cy-add-content-menu').click({ waitForAnimations: false })
 
     cy.get('div.react-dropdown-select').click({ waitForAnimations: false })
 
@@ -80,7 +58,8 @@ describe('Add Node Form / Home interactions', () => {
       statusCode: 200,
     }).as('add_node')
 
-    openButton('home').click({ waitForAnimations: false })
+    cy.get('#cy-actions-menu-toggle').click({ waitForAnimations: false })
+    cy.get('#cy-add-content-menu').click({ waitForAnimations: false })
 
     cy.get('div.react-dropdown-select').click({ waitForAnimations: false })
 
@@ -115,7 +94,8 @@ describe('Add Node Form / Home interactions', () => {
       statusCode: 402,
     }).as('add_node')
 
-    openButton('home').click({ waitForAnimations: false })
+    cy.get('#cy-actions-menu-toggle').click({ waitForAnimations: false })
+    cy.get('#cy-add-content-menu').click({ waitForAnimations: false })
 
     cy.get('div.react-dropdown-select').click({ waitForAnimations: false })
 

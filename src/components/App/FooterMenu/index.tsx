@@ -1,37 +1,79 @@
-import { useState } from 'react'
-import { MdOutlineMenu, MdOutlineShowChart, MdOutlineTableView } from 'react-icons/md'
+import { useEffect, useRef, useState } from 'react'
+import { MdAddLink, MdClose, MdOutlineMenu, MdOutlineShowChart, MdOutlineTableView, MdPostAdd } from 'react-icons/md'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
+import { Text } from '~/components/common/Text'
 import { SecondarySidebarActiveTab, useAppStore } from '~/stores/useAppStore'
+import { AddNodeModalData, useModal } from '~/stores/useModalStore'
 import { colors } from '~/utils/colors'
 
 export const FooterMenu = () => {
   const [setSecondarySidebarActiveTab] = useAppStore((s) => [s.setSecondarySidebarActiveTab])
+  const wrapperRef = useRef<HTMLDivElement>(null)
 
-  const [isHovered, setIsHovered] = useState(false)
+  const [isOpened, setIsOpened] = useState(false)
 
-  const handleOpen = (tab: SecondarySidebarActiveTab) => {
+  const { open, setAddNodeModalData } = useModal('addNode')
+
+  const handleOpenSidebar = (tab: SecondarySidebarActiveTab) => {
     setSecondarySidebarActiveTab(tab)
   }
 
+  const handleOpenModal = (data: AddNodeModalData) => {
+    open()
+    setAddNodeModalData(data);
+  }
+
+
+  const handleClickOutside = (event: MouseEvent) => {
+    if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
+      setIsOpened(false)
+    }
+  }
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside)
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  })
+
   return (
-    <FooterAction>
+    <FooterAction ref={wrapperRef}>
       <Flex>
-        <ButtonsWrapper onMouseLeave={() => setIsHovered(false)} onMouseOver={() => setIsHovered(true)}>
-          {!isHovered ? (
-            <ActionButton>
-              <MdOutlineMenu size={24} />
-            </ActionButton>
-          ) : (
+        <ButtonsWrapper>
+          {isOpened && (
             <>
-              <ActionButton onClick={() => handleOpen('sentiment')}>
-                <MdOutlineShowChart size={24} />
+              <ActionButton id="cy-add-content-menu" onClick={() => handleOpenModal('content')}>
+                <Text>Add Content</Text>
+                <IconWrapper>
+                  <MdAddLink size={24} />
+                </IconWrapper>
               </ActionButton>
-              <ActionButton onClick={() => handleOpen('sources')}>
-                <MdOutlineTableView size={24} />
+              <ActionButton onClick={() => handleOpenModal('source')}>
+                <Text>Add Source</Text>
+                <IconWrapper>
+                  <MdPostAdd size={24} />
+                </IconWrapper>
+              </ActionButton>
+              <ActionButton onClick={() => handleOpenSidebar('sources')}>
+                <Text>Source Table</Text>
+                <IconWrapper>
+                  <MdOutlineTableView size={24} />
+                </IconWrapper>
+              </ActionButton>
+              <ActionButton onClick={() => handleOpenSidebar('sentiment')}>
+                <Text>Sentiment Data</Text>
+                <IconWrapper>
+                  <MdOutlineShowChart size={24} />
+                </IconWrapper>
               </ActionButton>
             </>
           )}
+          <ActionButton className="root" id="cy-actions-menu-toggle" onClick={() => setIsOpened(!isOpened)}>
+            <IconWrapper>{isOpened ? <MdClose size={24} /> : <MdOutlineMenu size={24} />}</IconWrapper>
+          </ActionButton>
         </ButtonsWrapper>
       </Flex>
     </FooterAction>
@@ -54,33 +96,61 @@ const FooterAction = styled(Flex).attrs({
 
 const ActionButton = styled(Flex).attrs({
   align: 'center',
-  justify: 'center',
-  p: 5,
+  justify: 'flex-end',
+  p: 0,
 })`
-  background: ${colors.bluePressState};
-  border-radius: 50%;
+  ${Text} {
+    margin-right: 8px;
+    display: none;
+  }
   color: ${colors.white};
   cursor: pointer;
+  border-radius: 24px;
+  padding: 4px 8px;
   transition-duration: 0.2s;
-  height: 30px;
   width: 30px;
+  flex-direction: row;
   & + & {
     margin-top: 8px;
   }
 
   &:hover {
+    width: auto;
     opacity: 1;
     box-shadow: 0 0 10px 2px ${colors.primaryBlueBorder};
+    ${Text} {
+      display: block;
+    }
+  }
+
+  &.root {
+    border-radius: 50%;
+    &:hover {
+      width: 30px;
+    }
+    padding: 0;
+    margin-right: 8px;
+    align-items: center;
+    justify-content: center;
+    border: none;
   }
 `
 
+const IconWrapper = styled(Flex)`
+  width: 30px;
+  height: 30px;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  background: ${colors.bluePressState};
+`
+
 const ButtonsWrapper = styled(Flex).attrs({
-  align: 'center',
-  justify: 'center',
+  align: 'flex-end',
   p: 5,
 })`
-  background: ${colors.primaryBlueBorder};
   border-radius: 50%;
+  justify-content: flex-end;
 
   color: ${colors.white};
   cursor: pointer;
@@ -90,6 +160,5 @@ const ButtonsWrapper = styled(Flex).attrs({
     transition: none;
     border-radius: 24px;
     opacity: 1;
-    box-shadow: 0 0 10px 2px ${colors.primaryBlueBorder};
   }
 `
