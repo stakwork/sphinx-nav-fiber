@@ -137,14 +137,13 @@ const getGraphData = async (searchterm: string) => {
           ?.replace(AWS_IMAGE_BUCKET_URL, CLOUDFRONT_IMAGE_BUCKET_URL)
           .replace('.jpg', '_s.jpg')
 
-          if(node.ref_id) {
-            nodes.push({
-              ...node,
-              id: node.ref_id,
-              // label: moment.show_title,
-              image_url: smallImageUrl,
-            })
-          }
+          nodes.push({
+            ...node,
+            id: node.ref_id || node.tweet_id,
+            // label: moment.show_title,
+            image_url: smallImageUrl,
+            type: node.type || node.node_type,
+          })
       })
 
       if (shouldIncludeTopics) {
