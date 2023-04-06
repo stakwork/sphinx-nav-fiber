@@ -1,0 +1,16 @@
+name: Update version
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  update-version:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Update version
+        run: |
+          npm version patch -m "Bump version to %s [skip ci]"
+          git push origin HEAD:master
