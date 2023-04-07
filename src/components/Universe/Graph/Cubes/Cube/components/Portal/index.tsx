@@ -19,7 +19,7 @@ export const Portal = ({ children }: PropsWithChildren<unknown>) => {
   }, [children, el]);
 
   useLayoutEffect(() => {
-    rootRef.current?.render(<div>{children}</div>);
+    rootRef.current?.render(<div style={{zIndex:2000000}}>{children}</div>);
   });
 
   return null;

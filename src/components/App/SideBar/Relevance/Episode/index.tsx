@@ -147,24 +147,26 @@ export const Episode = ({
               )}
             </Flex>
 
-            {isSelected && (
+            {/* we dont want these here */}
+            {/* {isSelected && (
               <Flex>
                 <Actions />
               </Flex>
-            )}
+            )} */}
           </Flex>
 
           <Flex pb={4}>
             <Text color="primaryText1">{description}</Text>
           </Flex>
 
-          {!isSelected && (
+          {/* {!isSelected && (
             <Text color="mainBottomIcons" kind="tiny">
               {title}
             </Text>
-          )}
+          )} */}
 
-          {isSelected && !hasYouTubeType && (
+          {/* we dont want this here */}
+          {/* {isSelected && !hasYouTubeType && (
             <Flex style={{ marginTop: "4px" }}>
               <Audio
                 controls
@@ -176,15 +178,15 @@ export const Episode = ({
                 volume={1}
               />
             </Flex>
-          )}
+          )} */}
         </Flex>
       </Flex>
 
-      {isSelected && hasYouTubeType && (
+      {/* {isSelected && hasYouTubeType && (
         <Flex style={{ marginTop: "4px" }}>
           <YouTube />
         </Flex>
-      )}
+      )} */}
     </EpisodeWrapper>
   );
 };

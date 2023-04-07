@@ -5,6 +5,8 @@ import { RefObject, useCallback, useEffect, useState } from "react";
 import * as THREE from "three";
 import { useDataStore } from "~/stores/useDataStore";
 
+// to do: if user interacts, kill animation
+
 export const useCameraAnimations = (
   cameraControlsRef: RefObject<CameraControls | null>,
   { enabled }: { enabled: boolean }

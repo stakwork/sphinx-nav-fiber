@@ -10,7 +10,6 @@ import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { colors } from '~/utils/colors'
 import { media } from '~/utils/media'
 import { Tab } from './Tab'
-import { Transcript } from './Transcript'
 import { View } from './View'
 
 export const MENU_WIDTH = 433
@@ -33,11 +32,12 @@ const Content = ({ onSubmit }: Props) => {
 
         <CloseButton
           onClick={() => {
-            setFlagErrorOpen(false)
-            setSelectedNode(null)
-            setRelevanceSelected(false)
-            setValue('search', null)
-            onSubmit?.()
+            setSidebarOpen(false)
+            // setFlagErrorOpen(false)
+            // setSelectedNode(null)
+            // setRelevanceSelected(false)
+            // setValue('search', null)
+            // onSubmit?.()
           }}
         >
           <MdClose fontSize={20} />
@@ -54,7 +54,7 @@ const Content = ({ onSubmit }: Props) => {
 
       {isLoading ? <Loader color="primaryText1" /> : <View />}
 
-      <Transcript />
+      
 
       <CategoryWrapper direction="row">
         <Flex basis="154px">

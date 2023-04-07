@@ -6,6 +6,7 @@ import { GraphData, NodeExtended, NodeType, Sources } from "~/types";
 import { saveSearchTerm } from "~/utils/relayHelper/index";
 
 type DataStore = {
+  scrollEventsDisabled: boolean;
   categoryFilter: NodeType | null;
   disableCameraRotation: boolean;
   graphRadius: number | null;
@@ -17,6 +18,7 @@ type DataStore = {
   sources: Sources[] | null;
   sphinxModalIsOpen: boolean;
   setCategoryFilter: (categoryFilter: NodeType | null) => void;
+  setScrollEventsDisabled: (scrollEventsDisabled: boolean) => void;
   setDisableCameraRotation: (rotation: boolean) => void;
   fetchData: (search?: string | null) => void;
   setGraphRadius: (graphRadius?: number | null) => void;
@@ -30,6 +32,7 @@ const defaultData: Omit<
   DataStore,
   | 'fetchData'
   | 'setCameraAnimation'
+  | 'setScrollEventsDisabled'
   | 'setCategoryFilter'
   | 'setDisableCameraRotation'
   | 'setSelectedNode'
@@ -40,6 +43,7 @@ const defaultData: Omit<
 > = {
   categoryFilter: null,
   data: null,
+  scrollEventsDisabled: false,
   disableCameraRotation: false,
   graphRadius: isChileGraph ? 1600 : 3056, // calculated from initial load
   isFetching: false,
@@ -75,6 +79,7 @@ export const useDataStore = create<DataStore>((set, get) => ({
 
     set({ data: mockGraphData, isFetching: false });
   },
+  setScrollEventsDisabled: (scrollEventsDisabled) => set({ scrollEventsDisabled }),
   setCategoryFilter: (categoryFilter) => set({ categoryFilter }),
   setDisableCameraRotation: (rotation) =>
     set({ disableCameraRotation: rotation }),

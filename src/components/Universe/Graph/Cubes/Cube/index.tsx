@@ -4,11 +4,15 @@ import { memo, useCallback, useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { usePathway } from "~/components/DataRetriever";
 import { useDataStore, useSelectedNode } from "~/stores/useDataStore";
+import { useAppStore } from "~/stores/useAppStore";
 import { NodeExtended } from "~/types";
 import { PathwayBadge } from "./components/PathwayBadge";
 import { Portal } from "./components/Portal";
 import { Tooltip } from "./components/Tooltip";
 import { useMaterial } from "./hooks/useMaterial";
+import { View } from '../../../../App/SideBar/View/index'
+import { Transcript } from "~/components/App/SideBar/Transcript";
+import { HtmlPanel } from "./components/HtmlPanel"
 
 const geometryXs = new THREE.BoxGeometry(10, 10, 10);
 const geometryS = new THREE.BoxGeometry(20, 20, 20);
@@ -36,8 +40,12 @@ export const Cube = memo(({ node, highlight, highlightColor }: Props) => {
   const ref = useRef<THREE.Mesh | null>(null);
   const [hovered, setHovered] = useState(false);
 
-  const selectedNode = useSelectedNode();
   const categoryFilter = useDataStore((s) => s.categoryFilter);
+
+  const transcriptIsOpen = useAppStore((s) => s.transcriptIsOpen)
+
+  const selectedNode = useSelectedNode();
+  
 
   const material = useMaterial(
     node.image_url || "noimage.jpeg",
@@ -60,19 +68,15 @@ export const Cube = memo(({ node, highlight, highlightColor }: Props) => {
     document.body.style.cursor = hovered ? "pointer" : "auto";
   }, [hovered]);
 
-  const onPointerIn = useCallback(() => setHovered(true), []);
+  const onPointerIn = useCallback((e:any) => {
+    e.stopPropagation();
+    setHovered(true)
+  }, []);
 
-  const onPointerOut = useCallback(() => {
-    if (selectedNode) {
-      setHovered(false);
-
-      return;
-    }
-
-    setTimeout(() => {
-      setHovered(false);
-    }, 500);
-  }, [selectedNode]);
+  const onPointerOut = useCallback((e:any) => {
+    e.stopPropagation();
+    setHovered(false);
+  }, []);
 
   const { currentNodeIndex } = usePathway();
 
@@ -86,9 +90,27 @@ export const Cube = memo(({ node, highlight, highlightColor }: Props) => {
           name={node.id}
           onPointerOut={onPointerOut}
           onPointerOver={onPointerIn}
-          scale={hovered ? 1.5 : 1}
+          scale={(hovered && !isSelected) ? 1.5 : 1}
           userData={node}
         >
+
+          {isSelected &&
+            <HtmlPanel>
+            <View isSelectedView/>
+            </HtmlPanel>
+          }
+     
+          
+          {isSelected && transcriptIsOpen &&
+            <HtmlPanel
+            speed={4}
+            intensity={8}
+            style={{ top: 260, left: -40,  width: 600, height: 300}}
+            >
+              <Transcript />
+            </HtmlPanel>
+            }
+            
           <PathwayBadge
             show={currentNodeIndex >= 0}
             value={currentNodeIndex + 1}
