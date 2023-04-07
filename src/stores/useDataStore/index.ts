@@ -2,7 +2,7 @@ import create from "zustand";
 import { isChileGraph } from "~/constants";
 import { getMockGraphData } from "~/mocks/getMockGraphData";
 import { fetchGraphData } from "~/network/fetchGraphData";
-import { GraphData, NodeExtended, NodeType } from "~/types";
+import { GraphData, NodeExtended, NodeType, Sources } from "~/types";
 import { saveSearchTerm } from "~/utils/relayHelper/index";
 
 type DataStore = {
@@ -14,6 +14,7 @@ type DataStore = {
   isTimestampLoaded: boolean;
   selectedNode: NodeExtended | null;
   selectedTimestamp: NodeExtended | null;
+  sources: Sources[] | null;
   sphinxModalIsOpen: boolean;
   setCategoryFilter: (categoryFilter: NodeType | null) => void;
   setDisableCameraRotation: (rotation: boolean) => void;
@@ -21,19 +22,21 @@ type DataStore = {
   setGraphRadius: (graphRadius?: number | null) => void;
   setSelectedNode: (selectedNode: NodeExtended | null) => void;
   setSelectedTimestamp: (selectedTimestamp: NodeExtended | null) => void;
+  setSources: (sources: Sources[] | null) => void;
   setSphinxModalOpen: (_: boolean) => void;
 };
 
 const defaultData: Omit<
   DataStore,
-  | "fetchData"
-  | "setCameraAnimation"
-  | "setCategoryFilter"
-  | "setDisableCameraRotation"
-  | "setSelectedNode"
-  | "setSelectedTimestamp"
-  | "setSphinxModalOpen"
-  | "setGraphRadius"
+  | 'fetchData'
+  | 'setCameraAnimation'
+  | 'setCategoryFilter'
+  | 'setDisableCameraRotation'
+  | 'setSelectedNode'
+  | 'setSelectedTimestamp'
+  | 'setSphinxModalOpen'
+  | 'setSources'
+  | 'setGraphRadius'
 > = {
   categoryFilter: null,
   data: null,
@@ -43,8 +46,9 @@ const defaultData: Omit<
   isTimestampLoaded: false,
   selectedNode: null,
   selectedTimestamp: null,
+  sources: null,
   sphinxModalIsOpen: false,
-};
+}
 
 export const useDataStore = create<DataStore>((set, get) => ({
   ...defaultData,
@@ -78,6 +82,7 @@ export const useDataStore = create<DataStore>((set, get) => ({
   setSelectedNode: (selectedNode) =>
     set({ isTimestampLoaded: false, selectedNode }),
   setSelectedTimestamp: (selectedTimestamp) => set({ selectedTimestamp }),
+  setSources: (sources) => set({ sources }),
   setSphinxModalOpen: (sphinxModalIsOpen) => set({ sphinxModalIsOpen }),
 }));
 

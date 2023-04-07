@@ -4,7 +4,7 @@ import {
   isDevelopment,
 } from "~/constants";
 import { api } from "~/network/api";
-import { FetchDataResponse, FetchRadarResponse, FetchSentimentResponse, GraphData, Guests, Link, Node, NodeExtended } from "~/types";
+import { FetchDataResponse, FetchRadarResponse, FetchSentimentResponse, GraphData, Guests, Link, Node, NodeExtended, RadarRequest } from "~/types";
 import { getLSat } from "~/utils/getLSat";
 
 type guestMapChild = {
@@ -55,6 +55,25 @@ export const getSentimentData = async () => {
 
 export const getRadarData = async () => {
   const response = await api.get<FetchRadarResponse>(`/radar`)
+
+  return response;
+};
+
+export const putRadarData = async (id: string, data: RadarRequest) => {
+  const response = await api.put(`/radar/${id}`, JSON.stringify(data))
+
+  return response;
+};
+
+// @todo will be changed
+export const getAdminId = async () => {
+  const response = await fetch('tribes.sphinx.chat/tribes/UUID');
+
+  console.log(response);
+}
+
+export const deleteRadarData = async (id: string) => {
+  const response = await api.delete(`/radar/${id}`)
 
   return response;
 };

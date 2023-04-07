@@ -6,15 +6,15 @@ import { getRadarData } from '~/network/fetchGraphData'
 import { FetchRadarResponse, Sources as SourcesType } from '~/types'
 import { colors } from '~/utils/colors'
 import { Pill } from '~/components/common/Pill'
-
-const TWITTER_LINK = 'https://twitter.com'
+import Table from './Table'
+import { useDataStore } from '~/stores/useDataStore'
 
 interface ISourceMap {
   [key: string]: string
 }
 
 type TPill = {
-  selected: boolean;
+  selected: boolean
 }
 
 const sourcesMapper: ISourceMap = {
@@ -23,35 +23,35 @@ const sourcesMapper: ISourceMap = {
 }
 
 export const Sources = () => {
-  const [sourcesData, setSourcesData] = useState<SourcesType[] | undefined>(undefined)
-  const [typeFilter, setTypeFilter] = useState('');
+  const [typeFilter, setTypeFilter] = useState('')
+  const [sources, setSources] = useDataStore((s) => [s.sources, s.setSources])
 
   useEffect(() => {
     const init = async () => {
       try {
         const data: FetchRadarResponse = await getRadarData()
 
-        setSourcesData(data.data)
+        setSources(data.data)
       } catch (error) {
         console.log(error)
       }
     }
 
     init()
-  }, [])
+  }, [setSources])
 
   const onFilterChange = (val: string) => {
-    if(typeFilter === val || !val) {
-      setTypeFilter('');
+    if (typeFilter === val || !val) {
+      setTypeFilter('')
     } else {
-      setTypeFilter(val);
+      setTypeFilter(val)
     }
   }
 
-  const tableValues = sourcesData?.filter((val) => !typeFilter || val.source_type === typeFilter);
+  const tableValues = sources?.filter((val) => !typeFilter || val.source_type === typeFilter)
 
   return (
-    <ChartWrapper align="flex-start" direction="column" justify="flex-end">
+    <Wrapper align="flex-start" direction="column" justify="flex-end">
       <Text className="title">Sources for this Graph</Text>
       <Flex direction="row" pb={16}>
         <StyledPill onClick={() => onFilterChange('')} selected={!typeFilter}>
@@ -63,41 +63,19 @@ export const Sources = () => {
           </StyledPill>
         ))}
       </Flex>
-      <Table>
-        <thead>
-          <tr>
-            <Th>Type</Th>
-            <Th>Source</Th>
-          </tr>
-        </thead>
-        {tableValues?.length && (
-          <tbody>
-            {tableValues?.map((i: SourcesType) => (
-              <tr key={i.source}>
-                <Td>{sourcesMapper[i.source_type]}</Td>
-                <Td>
-                  {i.source_type === 'twitter_handle' ? (
-                    <StyledLink href={`${TWITTER_LINK}/${i.source}`} target="_blank">
-                      @{i.source}
-                    </StyledLink>
-                  ) : (
-                    i.source
-                  )}
-                </Td>
-              </tr>
-            ))}
-          </tbody>
-        )}
-      </Table>
-    </ChartWrapper>
+      <TableWrapper>
+        <Table data={tableValues} />
+      </TableWrapper>
+    </Wrapper>
   )
 }
 
-const ChartWrapper = styled(Flex)`
+const Wrapper = styled(Flex)`
   border-radius: 8px;
   background: ${colors.dashboardHeader};
   box-shadow: 0px 5px 6px rgb(0 0 0 / 50%);
   padding: 16px;
+  flex: 1;
 
   .title {
     margin-bottom: 16px;
@@ -105,28 +83,11 @@ const ChartWrapper = styled(Flex)`
   }
 `
 
-const Table = styled.table`
-  border-collapse: collapse;
+const TableWrapper = styled(Flex)`
+  min-height: 0;
+  overflow: auto;
+  flex: 1;
   width: 100%;
-  color: ${colors.white};
-`
-
-const Th = styled.th`
-  border: 1px solid ${colors.white};
-  padding: 8px;
-`
-
-const Td = styled.td`
-  border: 1px solid ${colors.white};
-  padding: 8px;
-`
-
-const StyledLink = styled.a`
-  color: ${colors.white};
-  text-decoration: underline;
-  &:visited {
-    color: ${colors.white};
-  }
 `
 
 const StyledPill = styled(Pill)<TPill>`
