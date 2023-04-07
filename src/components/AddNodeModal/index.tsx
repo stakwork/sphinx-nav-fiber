@@ -21,6 +21,9 @@ import { SourceUrl } from './SourceUrl'
 import Topic from './Topic'
 import TwitId from './TweetId'
 import TwitterHandle from './TwitterHandle'
+import { useDataStore } from '../../stores/useDataStore/index';
+import { FetchRadarResponse } from '~/types'
+import { getRadarData } from '~/network/fetchGraphData'
 
 type Option = {
   label: string
@@ -49,7 +52,7 @@ const notify = (message: string) => {
   })
 }
 
-const handleSubmit = async (data: FieldValues, close: () => void, sourceType: string) => {
+const handleSubmit = async (data: FieldValues, close: () => void, sourceType: string, successCallback: () => void ) => {
   const body: { [index: string]: unknown } = {}
 
   if (sourceType === LINK) {
@@ -108,6 +111,10 @@ const handleSubmit = async (data: FieldValues, close: () => void, sourceType: st
       throw new Error(message)
     }
 
+    if(endPoint === 'radar') {
+      await successCallback();
+    }
+
     notify(NODE_ADD_SUCCESS)
     close()
   } catch (err: unknown) {
@@ -159,6 +166,7 @@ const CONTENT_TYPE_OPTIONS: Record<'source' | 'content', IOptionMap> = {
 export const AddNodeModal = () => {
   const { close, addNodeModalData } = useModal('addNode')
   const [activeType, setActiveType] = useState('')
+  const setSources = useDataStore(s => s.setSources);
 
   const resolvedContentOptions = addNodeModalData ? CONTENT_TYPE_OPTIONS[addNodeModalData] : null
 
@@ -174,8 +182,20 @@ export const AddNodeModal = () => {
     close()
   }
 
+  const onSuccessCallback = async () => {
+    if([TWITTER_HANDLE, TOPIC].includes(activeType)) {
+      try {
+         const data: FetchRadarResponse = await getRadarData()
+
+         setSources(data.data)
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  }
+
   const onSubmit = form.handleSubmit(async (data) => {
-    await handleSubmit(data, handleClose, activeType)
+    await handleSubmit(data, handleClose, activeType, onSuccessCallback)
   })
 
   const options = resolvedContentOptions ? Object.keys(resolvedContentOptions).map((i: string) => ({

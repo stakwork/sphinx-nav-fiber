@@ -15,6 +15,11 @@ export type FetchRadarResponse = {
   data: Sources[]
 }
 
+export type RadarRequest = {
+  source: string,
+  source_type: string,
+}
+
 export type Node = {
   boost?: number | null
   children?: string[]
@@ -110,4 +115,5 @@ export type Sentiment = {
 export type Sources = {
   source_type: string,
   source: string,
+  id: string,
 }
