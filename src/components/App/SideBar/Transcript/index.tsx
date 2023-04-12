@@ -44,7 +44,7 @@ export const Transcript = () => {
 
   return (
     <Wrapper style={{ left: MENU_WIDTH }}>
-      <Flex justify="space-between" direction="row">
+      <Flex direction="row" justify="space-between">
         {selectedNode?.text ? (
           <CopyButton
             className="copy-button"

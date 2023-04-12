@@ -1,36 +1,35 @@
 import { Html, Float } from "@react-three/drei";
 
-
 type Props = {
-    children:any;
+    children: Element;
     speed?: number;
     intensity?: number;
-    style?: any;
+    style?: Record<string, unknown>;
 };
 
-export const HtmlPanel = ({ speed = 2, intensity = 8, style, children }: Props) => {
-
-    // @ts-ignore
-    return <Float
-    speed={speed} // Animation speed, defaults to 1
-    floatIntensity={intensity} // Up/down float intensity, works like a multiplier with floatingRange,defaults to 1
+export const HtmlPanel = ({ speed = 2, intensity = 8, style, children }: Props) => (
+    <Float
     floatingRange={[1, 2]}
+    floatIntensity={intensity} // Up/down float intensity, works like a multiplier with floatingRange,defaults to 1
+    speed={speed} // Animation speed, defaults to 1
     ><Html
-    onClick={e=>e.stopPropagation()}
-    onPointerUp={e=>e.stopPropagation()}
+    center
+    onClick={e => e.stopPropagation()}
+    onKeyDown={e=>e.stopPropagation()}
+    onPointerDown={e => e.stopPropagation()}
     onPointerOut={e=>e.stopPropagation()}
     onPointerOver={e=>e.stopPropagation()}
-    onPointerDown={e => e.stopPropagation()}
-    onKeyDown={e=>e.stopPropagation()}
-    center
+    onPointerUp={e=>e.stopPropagation()}
+    
+    scale={6}
     sprite
     transform
-    scale={6}>
+    >
             <div
-            onPointerUp={e=>e.stopPropagation()}
+            onPointerDown={e=>e.stopPropagation()}
             onPointerOut={e=>e.stopPropagation()}
             onPointerOver={e=>e.stopPropagation()}
-            onPointerDown={e=>e.stopPropagation()}
+            onPointerUp={e=>e.stopPropagation()}
             style={{
                 position: 'absolute',
                 top: -200,
@@ -48,6 +47,6 @@ export const HtmlPanel = ({ speed = 2, intensity = 8, style, children }: Props) 
             </div>
       </Html>
     </Float>
-}
+)
     
     

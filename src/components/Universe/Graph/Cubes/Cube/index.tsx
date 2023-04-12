@@ -103,8 +103,8 @@ export const Cube = memo(({ node, highlight, highlightColor }: Props) => {
           
           {isSelected && transcriptIsOpen &&
             <HtmlPanel
-            speed={4}
             intensity={8}
+            speed={4}
             style={{ top: 260, left: -40,  width: 600, height: 300}}
             >
               <Transcript />
