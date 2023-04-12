@@ -1,82 +1,92 @@
+import { AWS_IMAGE_BUCKET_URL, CLOUDFRONT_IMAGE_BUCKET_URL, isDevelopment } from '~/constants'
+import { api } from '~/network/api'
 import {
-  AWS_IMAGE_BUCKET_URL,
-  CLOUDFRONT_IMAGE_BUCKET_URL,
-  isDevelopment,
-} from "~/constants";
-import { api } from "~/network/api";
-import { FetchDataResponse, FetchRadarResponse, FetchSentimentResponse, GraphData, Guests, Link, Node, NodeExtended, RadarRequest } from "~/types";
-import { getLSat } from "~/utils/getLSat";
+  FetchDataResponse,
+  FetchRadarResponse,
+  FetchSentimentResponse,
+  GraphData,
+  Guests,
+  Link,
+  Node,
+  NodeExtended,
+  RadarRequest,
+  SubmitErrRes,
+} from '~/types'
+import { getLSat } from '~/utils/getLSat'
 
 type guestMapChild = {
-  children: string[];
-  imageUrl: string;
-  name: string;
-  twitterHandle: string;
-};
+  children: string[]
+  imageUrl: string
+  name: string
+  twitterHandle: string
+}
 
-const defautData: GraphData = {
+const defaultData: GraphData = {
   links: [],
   nodes: [],
-};
+}
 
-const shouldIncludeTopics = false;
+const shouldIncludeTopics = false
 
 export const fetchGraphData = async (search: string) => {
   try {
-    return getGraphData(search);
+    return getGraphData(search)
   } catch (e) {
-    return defautData;
+    return defaultData
   }
-};
+}
 
 const fetchNodes = async (search: string) => {
   if (isDevelopment) {
-    const response = await api.get<FetchDataResponse>(`/searching?word=${search}&free=true`);
+    const response = await api.get<FetchDataResponse>(`/searching?word=${search}&free=true`)
 
-    return response;
+    return response
   }
 
-  const lsatToken = await getLSat("searching");
+  const lsatToken = await getLSat('searching')
 
   if (!lsatToken) {
-    throw new Error("An error occured calling getLSat");
+    throw new Error('An error occured calling getLSat')
   }
 
   return api.get<FetchDataResponse>(`/search?word=${search}`, {
     Authorization: lsatToken,
-  });
-};
+  })
+}
 
 export const getSentimentData = async () => {
-  const response = await api.get<FetchSentimentResponse>(`/sentiments`);
+  const response = await api.get<FetchSentimentResponse>(`/sentiments`)
 
-  return response;
-};
+  return response
+}
 
 export const getRadarData = async () => {
   const response = await api.get<FetchRadarResponse>(`/radar`)
 
-  return response;
-};
+  return response
+}
 
 export const putRadarData = async (id: string, data: RadarRequest) => {
   const response = await api.put(`/radar/${id}`, JSON.stringify(data))
 
-  return response;
-};
+  return response
+}
 
-// @todo will be changed
-export const getAdminId = async () => {
-  const response = await fetch('tribes.sphinx.chat/tribes/UUID');
+export const getAdminId = async (tribeId: string) => {
+  const response = await fetch(`https://tribes.sphinx.chat/tribes/${tribeId}`)
 
-  console.log(response);
+  const jsonData = await response.json()
+
+  return jsonData
 }
 
 export const deleteRadarData = async (id: string) => {
   const response = await api.delete(`/radar/${id}`)
 
-  return response;
-};
+  return response
+}
+
+export const triggerRadarJob = async () => api.get<SubmitErrRes>(`/radar/trigger-job`)
 
 const getGraphData = async (searchterm: string) => {
   try {
@@ -116,7 +126,7 @@ const getGraphData = async (searchterm: string) => {
         }
 
         children?.forEach((childRefId: string) => {
-          if(node.ref_id) {
+          if (node.ref_id) {
             const link: Link = {
               source: node.ref_id,
               target: childRefId,
@@ -137,7 +147,9 @@ const getGraphData = async (searchterm: string) => {
         }
 
         if (node.node_type === 'episode' && node.ref_id) {
-          (guests || []).forEach((guest) => {
+          ;
+
+(guests || []).forEach((guest) => {
             const currentGuest = guest as Guests
 
             if (currentGuest.name && currentGuest.ref_id && node.ref_id) {
@@ -156,13 +168,13 @@ const getGraphData = async (searchterm: string) => {
           ?.replace(AWS_IMAGE_BUCKET_URL, CLOUDFRONT_IMAGE_BUCKET_URL)
           .replace('.jpg', '_s.jpg')
 
-          nodes.push({
-            ...node,
-            id: node.ref_id || node.tweet_id,
-            // label: moment.show_title,
-            image_url: smallImageUrl,
-            type: node.type || node.node_type,
-          })
+        nodes.push({
+          ...node,
+          id: node.ref_id || node.tweet_id,
+          // label: moment.show_title,
+          image_url: smallImageUrl,
+          type: node.type || node.node_type,
+        })
       })
 
       if (shouldIncludeTopics) {
@@ -246,8 +258,8 @@ const getGraphData = async (searchterm: string) => {
 
     return { links, nodes }
   } catch (e) {
-    console.error(e);
+    console.error(e)
 
-    return defautData;
+    return defaultData
   }
-};
+}

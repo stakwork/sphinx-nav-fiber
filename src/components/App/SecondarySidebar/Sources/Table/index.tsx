@@ -1,21 +1,21 @@
 import React, { useEffect, useState } from 'react'
 import { MdCheck, MdClose, MdDeleteForever, MdOutlineModeEdit } from 'react-icons/md'
+import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
-import { Button } from '~/components/Button'
 import { BaseTextInput } from '~/components/BaseTextInput'
+import ConfirmPopover from '~/components/common/ConfirmPopover'
 import { Flex } from '~/components/common/Flex'
+import { Text } from '~/components/common/Text'
+import { deleteRadarData, getAdminId, putRadarData } from '~/network/fetchGraphData'
+import { useDataStore } from '~/stores/useDataStore'
 import { RadarRequest, Sources } from '~/types'
 import { colors } from '~/utils/colors'
-import { putRadarData, deleteRadarData, getAdminId } from '~/network/fetchGraphData'
-import { ClipLoader } from 'react-spinners'
-import { useModal } from '~/stores/useModalStore'
-import { useDataStore } from '~/stores/useDataStore'
-import ConfirmPopover from '~/components/common/ConfirmPopover'
 
 const TWITTER_LINK = 'https://twitter.com'
 
 type Props = {
   data: Sources[] | undefined
+  canEdit: boolean
 }
 
 type TdProps = {
@@ -31,27 +31,18 @@ const sourcesMapper: ISourceMap = {
   twitter_handle: 'Twitter Handle',
 }
 
-const Table: React.FC<Props> = ({ data }) => {
-  const { open, setAddNodeModalData } = useModal('addNode')
+const Table: React.FC<Props> = ({ data, canEdit = false }) => {
   const setSources = useDataStore((s) => s.setSources)
 
   const [loadingId, setLoadingId] = useState('')
 
   useEffect(() => {
     const init = async () => {
-      await getAdminId();
-
+      await getAdminId()
     }
 
-    init();
-
-  }, []);
-
-
-  const handleOpenModal = () => {
-    open()
-    setAddNodeModalData('source')
-  }
+    init()
+  }, [])
 
   const handleSave = async (id: string, newData: RadarRequest) => {
     if (data?.length) {
@@ -87,58 +78,75 @@ const Table: React.FC<Props> = ({ data }) => {
     }
   }
 
-  return (
-    <>
-      <StyledTable>
-        <thead>
-          <tr>
-            <Th>Type</Th>
-            <Th>Source</Th>
-            <Th>
-              <AddButton disabled={!!loadingId} onClick={handleOpenModal}>
-                Add +
-              </AddButton>
-            </Th>
-          </tr>
-        </thead>
-        {data?.length && (
-          <tbody>
-            {data?.map((i: Sources) => (
-              <tr key={i.source}>
-                <Td>{sourcesMapper[i.source_type]}</Td>
-                <Td width="268px">
-                  <EditableCell
-                    id={i.id}
-                    onSave={(source) => handleSave(i.id, { source, source_type: i.source_type })}
-                    value={i.source}
-                  >
-                    {i.source_type === 'twitter_handle' ? (
-                      <StyledLink href={`${TWITTER_LINK}/${i.source}`} target="_blank">
-                        @{i.source}
-                      </StyledLink>
-                    ) : (
-                      i.source
-                    )}
-                  </EditableCell>
-                </Td>
-                <Td className="cell-center">
-                  {loadingId === i.id ? (
-                    <ClipLoader color={colors.white} />
-                  ) : (
-                    <ConfirmPopover message="we" onConfirm={() => handleRemove(i.id)}>
-                      <IconWrapper className="centered">
-                        <MdDeleteForever />
-                      </IconWrapper>
-                    </ConfirmPopover>
+  return !data?.length ? (
+    <Text>There is not any results for selected filters</Text>
+  ) : (
+    <StyledTable>
+      <thead>
+        <tr>
+          <Th>Type</Th>
+          <Th>Source</Th>
+          {canEdit && <Th />}
+        </tr>
+      </thead>
+      {data?.length && (
+        <tbody>
+          {data?.map((i: Sources) => (
+            <Tr key={i.source}>
+              <Td>{sourcesMapper[i.source_type]}</Td>
+              <Td width="268px">
+                <ConditionalWrapper
+                  condition={canEdit}
+                  wrapper={(children) => (
+                    <EditableCell
+                      id={i.id}
+                      onSave={(source) => handleSave(i.id, { source, source_type: i.source_type })}
+                      value={i.source}
+                    >
+                      {children}
+                    </EditableCell>
                   )}
+                >
+                  {i.source_type === 'twitter_handle' ? (
+                    <StyledLink href={`${TWITTER_LINK}/${i.source}`} target="_blank">
+                      @{i.source}
+                    </StyledLink>
+                  ) : (
+                    <div>{i.source}</div>
+                  )}
+                </ConditionalWrapper>
+              </Td>
+              {canEdit && (
+                <Td className="cell-center">
+                  <div className="delete-wrapper">
+                    {loadingId === i.id ? (
+                      <ClipLoader color={colors.white} />
+                    ) : (
+                      <ConfirmPopover message="Are you sure ?" onConfirm={() => handleRemove(i.id)}>
+                        <IconWrapper className="centered">
+                          <MdDeleteForever />
+                        </IconWrapper>
+                      </ConfirmPopover>
+                    )}
+                  </div>
                 </Td>
-              </tr>
-            ))}
-          </tbody>
-        )}
-      </StyledTable>
-    </>
+              )}
+            </Tr>
+          ))}
+        </tbody>
+      )}
+    </StyledTable>
   )
+}
+
+type ConditionalWrapperProps = {
+  condition: boolean
+  wrapper: (children: JSX.Element) => JSX.Element
+  children: JSX.Element
+}
+
+function ConditionalWrapper({ condition, wrapper, children }: ConditionalWrapperProps): JSX.Element {
+  return condition ? wrapper(children) : children
 }
 
 type EditableCellProps = {
@@ -208,6 +216,10 @@ const StyledTable = styled.table`
 const Th = styled.th`
   border: 1px solid ${colors.white};
   padding: 8px;
+  `
+
+const Tr = styled.tr`
+  height: 40px;
 `
 
 const Td = styled.td<TdProps>`
@@ -215,7 +227,6 @@ const Td = styled.td<TdProps>`
   width: ${(props) => props.width || 'auto'};
   line-height: 28px;
   padding: 8px;
-  height: 40px;
   &.cell-center {
     text-align: center;
     vertical-align: middle;
@@ -276,9 +287,4 @@ const StyledLink = styled.a`
   &:visited {
     color: ${colors.white};
   }
-`
-
-const AddButton = styled(Button)`
-  height: 28px;
-  margin: 0 auto;
 `
