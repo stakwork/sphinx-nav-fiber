@@ -44,7 +44,7 @@ export const Transcript = () => {
 
   return (
     <Wrapper style={{ left: MENU_WIDTH }}>
-      <div style={{display:'flex',justifyContent:'space-between'}}>
+      <Flex justify="space-between" direction="row">
         {selectedNode?.text ? (
           <CopyButton
             className="copy-button"
@@ -56,15 +56,14 @@ export const Transcript = () => {
           </CopyButton>
           ) : <div />}
           
-        <CloseButton
-          onClick={() => {
-            setTranscriptOpen(false);
-          }}
-        >
-          <MdClose fontSize={35} />
-        </CloseButton>
-      
-        </div>
+          <CloseButton
+            onClick={() => {
+              setTranscriptOpen(false);
+            }}
+          >
+            <MdClose fontSize={35} />
+          </CloseButton>
+        </Flex>
 
       <Box>&quot;{selectedNode?.text || "No transcript"}&quot;</Box>
     </Wrapper>

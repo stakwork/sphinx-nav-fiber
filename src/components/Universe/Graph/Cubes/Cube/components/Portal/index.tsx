@@ -1,5 +1,6 @@
 import { PropsWithChildren, useLayoutEffect, useRef, useState } from "react";
 import { createRoot, Root } from "react-dom/client";
+import styled from 'styled-components'
 
 export const Portal = ({ children }: PropsWithChildren<unknown>) => {
   const [el] = useState(() => document.createElement("div"));
@@ -19,8 +20,12 @@ export const Portal = ({ children }: PropsWithChildren<unknown>) => {
   }, [children, el]);
 
   useLayoutEffect(() => {
-    rootRef.current?.render(<div style={{zIndex:2000000}}>{children}</div>);
+    rootRef.current?.render(<Wrap>{children}</Wrap>);
   });
 
   return null;
 };
+
+const Wrap = styled.div`
+  z-index:2000000;
+`

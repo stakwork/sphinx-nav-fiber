@@ -1,7 +1,8 @@
 import { CameraControls } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
-import { useEffect, useRef, useLayoutEffect } from "react";
+import { useEffect, useRef } from "react";
 import * as THREE from "three";
+import { MathUtils } from "three";
 import { useControlStore } from "~/stores/useControlStore";
 import { useDataStore, useSelectedNode } from "~/stores/useDataStore";
 import { useCameraAnimations } from "./CameraAnimations";
@@ -81,8 +82,8 @@ export const Controls = ({ disableAnimations }: Props) => {
   useFrame((_, delta) => {
     if (cameraControlsRef.current) {
       if (!disableCameraRotation && !isUserDragging) {
-        // cameraControlsRef.current.azimuthAngle +=
-        //   autoRotateSpeed * delta * MathUtils.DEG2RAD;
+        cameraControlsRef.current.azimuthAngle +=
+          autoRotateSpeed * delta * MathUtils.DEG2RAD;
       }
 
       cameraControlsRef.current.update(delta);

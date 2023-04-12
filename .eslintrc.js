@@ -36,7 +36,6 @@ module.exports = {
   plugins: ["@typescript-eslint", "import", "react", "react-hooks", "jsx-a11y"],
   root: true,
   rules: {
-    "@typescript-eslint/ban-ts-comment": "off",
     "@typescript-eslint/explicit-function-return-type": "off",
     "@typescript-eslint/explicit-member-accessibility": [
       "error",
@@ -46,7 +45,7 @@ module.exports = {
     ],
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "@typescript-eslint/interface-name-prefix": "off",
-    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/no-explicit-any": "error",
     "@typescript-eslint/no-invalid-this": "error",
     "@typescript-eslint/no-non-null-assertion": "off",
     "@typescript-eslint/no-shadow": "error",
@@ -54,7 +53,7 @@ module.exports = {
     "@typescript-eslint/no-var-requires": "off",
     "@typescript-eslint/prefer-interface": "off",
     "@typescript-eslint/prefer-optional-chain": "error",
-    "arrow-body-style": ["off", "as-needed"],
+    "arrow-body-style": ["error", "as-needed"],
     curly: ["error", "all"],
     "default-param-last": "off",
     "global-require": "off",
@@ -85,7 +84,7 @@ module.exports = {
     "no-use-before-define": "off",
     "no-useless-constructor": "off",
     "padding-line-between-statements": [
-      "off",
+      "error",
       { blankLine: "always", next: "return", prev: "*" },
       { blankLine: "always", next: "*", prev: ["const", "let"] },
       { blankLine: "always", next: ["const", "let"], prev: "*" },
@@ -119,11 +118,10 @@ module.exports = {
     "react/jsx-no-leaked-render": "off",
     "react/jsx-no-useless-fragment": "off",
     "react/jsx-props-no-spreading": "off",
-    "react/jsx-sort-props": "off",
+    "react/jsx-sort-props": "error",
     "react/jsx-uses-react": "off",
     /* This is a temporary fix for react-three-fiber components */
     "react/no-unknown-property": "off",
-    
     "react/no-unstable-nested-components": ["error", { allowAsProps: true }],
     "react/no-unused-prop-types": "error",
     "react/react-in-jsx-scope": "off",

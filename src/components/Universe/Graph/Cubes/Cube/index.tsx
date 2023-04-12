@@ -68,12 +68,12 @@ export const Cube = memo(({ node, highlight, highlightColor }: Props) => {
     document.body.style.cursor = hovered ? "pointer" : "auto";
   }, [hovered]);
 
-  const onPointerIn = useCallback((e:any) => {
+  const onPointerIn = useCallback((e: PointerEvent) => {
     e.stopPropagation();
     setHovered(true)
   }, []);
 
-  const onPointerOut = useCallback((e:any) => {
+  const onPointerOut = useCallback((e: PointerEvent) => {
     e.stopPropagation();
     setHovered(false);
   }, []);
