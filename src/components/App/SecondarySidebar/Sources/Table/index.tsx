@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { MdCheck, MdClose, MdDeleteForever, MdOutlineModeEdit } from 'react-icons/md'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
@@ -6,7 +6,7 @@ import { BaseTextInput } from '~/components/BaseTextInput'
 import ConfirmPopover from '~/components/common/ConfirmPopover'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
-import { deleteRadarData, getAdminId, putRadarData } from '~/network/fetchGraphData'
+import { deleteRadarData, putRadarData } from '~/network/fetchGraphData'
 import { useDataStore } from '~/stores/useDataStore'
 import { RadarRequest, Sources } from '~/types'
 import { colors } from '~/utils/colors'
@@ -35,14 +35,6 @@ const Table: React.FC<Props> = ({ data, canEdit = false }) => {
   const setSources = useDataStore((s) => s.setSources)
 
   const [loadingId, setLoadingId] = useState('')
-
-  useEffect(() => {
-    const init = async () => {
-      await getAdminId()
-    }
-
-    init()
-  }, [])
 
   const handleSave = async (id: string, newData: RadarRequest) => {
     if (data?.length) {

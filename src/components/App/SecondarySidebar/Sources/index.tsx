@@ -7,7 +7,6 @@ import { FetchRadarResponse, SubmitErrRes } from '~/types'
 import * as sphinx from 'sphinx-bridge-kevkevinpal'
 import { colors } from '~/utils/colors'
 import { Pill } from '~/components/common/Pill'
-import Table from './Table'
 import { useDataStore } from '~/stores/useDataStore'
 import { MdRestartAlt } from 'react-icons/md'
 import { Button } from '~/components/Button'
@@ -17,6 +16,7 @@ import { useUserStore } from '~/stores/useUserStore'
 import { ToastMessage } from '~/components/common/Toast/toastMessage'
 import { toast } from 'react-toastify'
 import { ClipLoader } from 'react-spinners'
+import Table from './Table'
 
 interface ISourceMap {
   [key: string]: string
@@ -89,11 +89,9 @@ export const Sources = () => {
 
         if (tribeId) {
           id = getAdminId(tribeId)
-        } else {
-          id = getAdminId()
+          setIsAdmin(id && id === pubKeyRes)
         }
 
-        setIsAdmin(id && id === pubKeyRes)
       } catch (error) {
         console.log(error)
       }
