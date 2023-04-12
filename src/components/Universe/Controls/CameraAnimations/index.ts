@@ -18,6 +18,7 @@ export const useCameraAnimations = (
   useEffect(() => {
     if (!enabled) {
       cameraAnimation?.kill();
+      cameraAnimation = null;
     } 
   }, [enabled])
 
