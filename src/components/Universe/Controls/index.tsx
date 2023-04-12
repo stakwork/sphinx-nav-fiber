@@ -2,7 +2,6 @@ import { CameraControls } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { useEffect, useRef, useLayoutEffect } from "react";
 import * as THREE from "three";
-import { MathUtils } from "three";
 import { useControlStore } from "~/stores/useControlStore";
 import { useDataStore, useSelectedNode } from "~/stores/useDataStore";
 import { useCameraAnimations } from "./CameraAnimations";
@@ -17,7 +16,6 @@ type Props = {
   disableAnimations?: boolean;
 };
 
-let listenerInitialized = false
 export const Controls = ({ disableAnimations }: Props) => {
   const selectedNode = useSelectedNode();
 
@@ -27,18 +25,6 @@ export const Controls = ({ disableAnimations }: Props) => {
   const disableCameraRotation = useDataStore((s) => s.disableCameraRotation);
 
   useCameraAnimations(cameraControlsRef, { enabled: !disableAnimations });
-
-  // camera events
-  useEffect(() => {
-    if (!listenerInitialized) {
-      cameraControlsRef?.current?.addEventListener('rest', () => {
-        if (isUserDragging) {
-          useControlStore.setState({ isUserDragging: false })
-        }
-      })
-      listenerInitialized = true
-    }
-  },[cameraControlsRef,isUserDragging])
 
   useEffect(() => {
     const run = async () => {
@@ -108,6 +94,7 @@ export const Controls = ({ disableAnimations }: Props) => {
       ref={cameraControlsRef}
       dollyToCursor
       infinityDolly
+      onEnd={() => useControlStore.setState({ isUserDragging: false })}
       onStart={() => useControlStore.setState({ isUserDragging: true })}
     />
   );
