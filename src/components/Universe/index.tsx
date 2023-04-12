@@ -20,6 +20,8 @@ import { Controls } from "./Controls";
 import { Graph } from "./Graph";
 import { Lights } from "./Lights";
 
+import { useControlStore } from "~/stores/useControlStore";
+
 const NODE_SELECTED_COLOR = 0x00ff00;
 
 const Content = () => (
@@ -49,12 +51,13 @@ const Content = () => (
   </>
 );
 
-export const Universe = () => (
-  <>
-    <div id="tooltip-portal" />
+let wheelEventTimeout: ReturnType<typeof setTimeout> | null = null
 
-    <Suspense fallback={null}>
-      <Canvas
+export const Universe = () => (
+    <>
+      <div id="tooltip-portal" />
+      <Suspense fallback={null}>
+        <Canvas
         camera={{
           aspect: 1920 / 1080,
           far: 8000,
@@ -62,23 +65,34 @@ export const Universe = () => (
           position: [1000, 0, 5],
         }}
         id="universe-canvas"
-      >
-        <Suspense
-          fallback={
-            <Html>
-              <Loader />
-            </Html>
+        onWheel={() => {
+          if (wheelEventTimeout) {
+            clearTimeout(wheelEventTimeout);
           }
+
+          useControlStore.setState({ isUserScrolling: true })
+
+          wheelEventTimeout = setTimeout(() => {
+            useControlStore.setState({ isUserScrolling: false })
+          }, 200)
+        }}
         >
-          <Preload />
+          <Suspense
+            fallback={
+              <Html>
+                <Loader />
+              </Html>
+            }
+          >
+            <Preload />
 
-          <AdaptiveDpr />
+            <AdaptiveDpr />
 
-          <AdaptiveEvents />
+            <AdaptiveEvents />
 
-          <Content />
-        </Suspense>
-      </Canvas>
-    </Suspense>
-  </>
-);
+            <Content />
+          </Suspense>
+        </Canvas>
+      </Suspense>
+    </>
+  )
