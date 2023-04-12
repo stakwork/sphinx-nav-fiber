@@ -1,13 +1,15 @@
 import { Html, Float } from "@react-three/drei";
 
 type Props = {
-    children: Element;
+    children: React.ReactNode;
     speed?: number;
     intensity?: number;
     style?: Record<string, unknown>;
 };
 
 export const HtmlPanel = ({ speed = 2, intensity = 8, style, children }: Props) => (
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     <Float
     floatingRange={[1, 2]}
     floatIntensity={intensity} // Up/down float intensity, works like a multiplier with floatingRange,defaults to 1

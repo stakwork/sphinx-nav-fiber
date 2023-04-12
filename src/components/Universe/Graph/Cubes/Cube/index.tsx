@@ -1,4 +1,5 @@
 import { useFrame } from "@react-three/fiber";
+import { IntersectionEvent } from "@react-three/fiber/dist/declarations/src/core/events";
 import { Select } from "@react-three/postprocessing";
 import { memo, useCallback, useEffect, useRef, useState } from "react";
 import * as THREE from "three";
@@ -13,6 +14,7 @@ import { useMaterial } from "./hooks/useMaterial";
 import { View } from '../../../../App/SideBar/View/index'
 import { Transcript } from "~/components/App/SideBar/Transcript";
 import { HtmlPanel } from "./components/HtmlPanel"
+
 
 const geometryXs = new THREE.BoxGeometry(10, 10, 10);
 const geometryS = new THREE.BoxGeometry(20, 20, 20);
@@ -68,12 +70,12 @@ export const Cube = memo(({ node, highlight, highlightColor }: Props) => {
     document.body.style.cursor = hovered ? "pointer" : "auto";
   }, [hovered]);
 
-  const onPointerIn = useCallback((e: PointerEvent) => {
+  const onPointerIn = useCallback((e: IntersectionEvent<PointerEvent>) => {
     e.stopPropagation();
     setHovered(true)
   }, []);
 
-  const onPointerOut = useCallback((e: PointerEvent) => {
+  const onPointerOut = useCallback((e: IntersectionEvent<PointerEvent>) => {
     e.stopPropagation();
     setHovered(false);
   }, []);
