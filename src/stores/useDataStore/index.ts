@@ -73,8 +73,6 @@ export const useDataStore = create<DataStore>((set, get) => ({
 
     const mockGraphData = await getMockGraphData();
 
-    console.log('mockGraphData',mockGraphData)
-
     set({ data: mockGraphData, isFetching: false });
   },
   setCategoryFilter: (categoryFilter) => set({ categoryFilter }),
