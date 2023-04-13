@@ -10,6 +10,8 @@ export const saveConsumedContent = async (selectedNode: Node | null) => {
     console.log(
       "Sphinx enable failed, means no pubkey and no budget (including budget of 0)"
     );
+
+    return;
   }
 
   try {

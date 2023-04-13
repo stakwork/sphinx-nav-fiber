@@ -1,21 +1,24 @@
+import { ReactNode } from "react";
 import styled, { css } from "styled-components";
 import { Flex } from "~/components/common/Flex";
 import { Text, TextKind } from "~/components/common/Text";
 import { ColorName } from "~/utils/colors";
 
 type Props = {
-  background?: ColorName;
-  children: string;
-  disabled?: boolean;
-  className?: string;
-  id?: string;
-  kind?: ButtonKind;
-  onClick?: () => void;
-  onPointerDown?: () => void;
-  shape?: "rounded" | "squared";
-  textColor?: ColorName;
-  type?: "submit" | "button";
-};
+  background?: ColorName
+  children: string
+  endIcon?: ReactNode
+  startIcon?: ReactNode
+  disabled?: boolean
+  className?: string
+  id?: string
+  kind?: ButtonKind
+  onClick?: () => void
+  onPointerDown?: () => void
+  shape?: 'rounded' | 'squared'
+  textColor?: ColorName
+  type?: 'submit' | 'button'
+}
 
 const getButtonKindDimensions = ({
   kind,
@@ -56,6 +59,7 @@ const getTextKind = ({ kind }: Pick<Props, "kind">): TextKind => {
 
 const Wrapper = styled(Flex).attrs({
   align: "center",
+  direction: "row",
   justify: "center",
 })<Pick<Props, "kind" | "disabled" | "shape">>`
   border: none;
@@ -81,6 +85,8 @@ export const Button = ({
   background = "primaryButton",
   children,
   className = "button",
+  startIcon,
+  endIcon,
   disabled,
   id,
   kind = "regular",
@@ -102,8 +108,10 @@ export const Button = ({
     shape={shape}
     type={type}
   >
+    {startIcon && startIcon}
     <Text color={textColor} kind={getTextKind({ kind })}>
       {children}
     </Text>
+    {endIcon && endIcon}
   </Wrapper>
 );

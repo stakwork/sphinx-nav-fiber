@@ -21,8 +21,10 @@ import { SourceUrl } from './SourceUrl'
 import Topic from './Topic'
 import TwitId from './TweetId'
 import TwitterHandle from './TwitterHandle'
+import YoutubeChannel from './YoutubeChannel'
+import GithubRepository from './GithubRepository'
 import { useDataStore } from '../../stores/useDataStore/index';
-import { FetchRadarResponse } from '~/types'
+import { FetchRadarResponse, SubmitErrRes } from '~/types'
 import { getRadarData } from '~/network/fetchGraphData'
 
 type Option = {
@@ -37,12 +39,11 @@ export const requiredRule = {
   },
 }
 
-const mainInfoMessage =
+const infoMessageContent =
   'Come across an interesting or useful part of a video or audio you\'d like to share? You can add it to the knowledge graph here!\n\nEnter a valid link to the YouTube video or Twitter Space you were watching, choose a start and end timestamp to encompass the segment you found interesting or useful, provide a brief description of what the segment is about, and add topic tags that are relevant to the segment. Hit "Add node", and your clip will be added to the graph shortly.\n\nYour pubkey will be submitted with your clip, and any boosts your clip receives will go to you!'
 
-type SubmitErrRes = {
-  error?: { message?: string }
-}
+const infoMessageSource =
+  'If you come across a source that produces ongoing content (e.g. a twitter account, youtube channel, etc). You can add it to the source table for your graph. Once the source is added to the table we will gather new content produced by that source, process it, and add it to your graph.';
 
 const notify = (message: string) => {
   toast(<ToastMessage message={message} />, {
@@ -98,7 +99,7 @@ const handleSubmit = async (data: FieldValues, close: () => void, sourceType: st
     }
   }
 
-  const endPoint = [LINK, TWITTER_SOURCE].includes(sourceType) ? 'add_node' : 'radar'
+  const endPoint = CONTENT_TYPES.includes(sourceType) ? 'add_node' : 'radar'
 
   try {
     const res: SubmitErrRes = await api.post(`/${endPoint}`, JSON.stringify(body), {
@@ -127,6 +128,8 @@ const handleSubmit = async (data: FieldValues, close: () => void, sourceType: st
 
 const LINK = 'link'
 const TWITTER_HANDLE = 'twitter_handle'
+const GITHUB_REPOSITORY = 'Github repository'
+const YOUTUBE_CHANNEL = 'Youtube channel'
 const TWITTER_SOURCE = 'tweet'
 const TOPIC = 'topic'
 
@@ -152,6 +155,10 @@ const CONTENT_TYPE_OPTIONS: Record<'source' | 'content', IOptionMap> = {
     },
   },
   source: {
+    [GITHUB_REPOSITORY]: {
+      component: GithubRepository,
+      label: 'Github repository',
+    },
     [TOPIC]: {
       component: Topic,
       label: 'Topic',
@@ -160,8 +167,14 @@ const CONTENT_TYPE_OPTIONS: Record<'source' | 'content', IOptionMap> = {
       component: TwitterHandle,
       label: 'Twitter handle',
     },
+    [YOUTUBE_CHANNEL]: {
+      component: YoutubeChannel,
+      label: 'Youtube channel',
+    },
   },
 }
+
+const CONTENT_TYPES = Object.keys(CONTENT_TYPE_OPTIONS.content);
 
 export const AddNodeModal = () => {
   const { close, addNodeModalData } = useModal('addNode')
@@ -169,6 +182,8 @@ export const AddNodeModal = () => {
   const setSources = useDataStore(s => s.setSources);
 
   const resolvedContentOptions = addNodeModalData ? CONTENT_TYPE_OPTIONS[addNodeModalData] : null
+
+  const resolveInfoMessage = addNodeModalData === 'source' ? infoMessageSource : infoMessageContent;
 
   const form = useForm({ mode: 'onSubmit' })
 
@@ -234,7 +249,7 @@ export const AddNodeModal = () => {
                 </Flex>
                 <InfoIcon role="tooltip" tabIndex={0}>
                   <MdInfo />
-                  <div className="tooltip">{mainInfoMessage}</div>
+                  <div className="tooltip">{resolveInfoMessage}</div>
                 </InfoIcon>
               </Flex>
 
