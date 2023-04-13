@@ -28,25 +28,35 @@ export const HtmlPanel = ({ speed = 2, intensity = 8, style, children }: Props) 
     transform
     >
             <HtmlWrap
-            onPointerDown={e=>e.stopPropagation()}
-            onPointerOut={e=>e.stopPropagation()}
-            onPointerOver={e=>e.stopPropagation()}
-            onPointerUp={e=>e.stopPropagation()}
-            style={style}>
+                height={style?.height||500}
+                left={style?.left||-680}
+                onPointerDown={e => e.stopPropagation()}
+                onPointerOut={e => e.stopPropagation()}
+                onPointerOver={e => e.stopPropagation()}
+                onPointerUp={e => e.stopPropagation()}
+                top={style?.top||-200}
+                width={style?.width||500}>
                     {children}
             </HtmlWrap>
       </Html>
     </Float>
 )
+
+type HtmlWrapProps = {
+    top: number;
+    left: number;
+    width: number;
+    height: number;
+}
     
-const HtmlWrap = styled.div`
+const HtmlWrap = styled.div<HtmlWrapProps>`
 position: absolute;
-top: -200;
-left: -680;
+top: ${p =>`${p.top}px`};
+left: ${p =>`${p.left}px`};
 border-radius: 20px;
 box-shadow:-46px -26px #5078f2;
-width: 500px; 
-height: 500px;
+width: ${p => `${p.width}px`};
+height: ${p => `${p.height}px`};
 font-size: 80px; 
 color: #fff;
 padding: 20px; 
