@@ -126,6 +126,7 @@ export const useCameraAnimations = (
 
     if (!selectedNode && cameraControlsRef.current) {
       cameraControlsRef.current.smoothTime = 0.7;
+      
       cameraControlsRef.current.setLookAt(
         introAnimationTargetPosition.x,
         introAnimationTargetPosition.y,

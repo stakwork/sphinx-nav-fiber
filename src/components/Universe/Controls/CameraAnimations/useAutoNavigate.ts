@@ -38,6 +38,7 @@ export const useAutoNavigate = (
         if (!distanceReached) {
           moveCameraToNode(selectedNode, state.camera)
         }
+
         if (!lookAtReached) {
           turnCameraToNode(selectedNode, state.camera)
         }
@@ -48,6 +49,7 @@ export const useAutoNavigate = (
   useEffect(() => {    
     if (selectedNode) {
       clearTimeout(lookAtAnimationTimer)
+
       lookAtAnimationTimer = setTimeout(() => {
         setLookAtReached(true)
         clearTimeout(lookAtAnimationTimer)
@@ -87,6 +89,7 @@ export const useAutoNavigate = (
       node.y,
       node.z
     );
+    
     cameraControlsRef?.current?.setLookAt(camera.position.x, camera.position.y, camera.position.z, mesh.x, mesh.y, mesh.z, true) 
   }
 

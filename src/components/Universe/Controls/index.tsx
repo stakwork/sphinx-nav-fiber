@@ -11,9 +11,9 @@ export const Controls = ({ disableAnimations }: Props) => {
 
   const cameraControlsRef = useRef<CameraControls | null>(null);
 
-
   const [smoothTime] = useState(1)
 
+  const { isUserDragging, isUserScrolling } = useControlStore();
 
   useCameraAnimations(cameraControlsRef, { enabled: (!disableAnimations && !isUserScrolling && !isUserDragging) });
 
