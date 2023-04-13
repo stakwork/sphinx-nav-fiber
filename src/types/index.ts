@@ -117,3 +117,7 @@ export type Sources = {
   source: string,
   id: string,
 }
+
+export type SubmitErrRes = {
+  error?: { message?: string }
+}

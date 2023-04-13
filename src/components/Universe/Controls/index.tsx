@@ -11,9 +11,11 @@ export const Controls = ({ disableAnimations }: Props) => {
 
   const cameraControlsRef = useRef<CameraControls | null>(null);
 
+
   const [smoothTime] = useState(1)
 
-  useCameraAnimations(cameraControlsRef, { enabled: !disableAnimations });
+
+  useCameraAnimations(cameraControlsRef, { enabled: (!disableAnimations && !isUserScrolling && !isUserDragging) });
 
   return (
     <CameraControls
