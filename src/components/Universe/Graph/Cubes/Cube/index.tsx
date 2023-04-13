@@ -1,5 +1,4 @@
-import { useFrame } from "@react-three/fiber";
-import { IntersectionEvent } from "@react-three/fiber/dist/declarations/src/core/events";
+import { useFrame, ThreeEvent} from "@react-three/fiber";
 import { Select } from "@react-three/postprocessing";
 import { memo, useCallback, useEffect, useRef, useState } from "react";
 import * as THREE from "three";
@@ -70,12 +69,12 @@ export const Cube = memo(({ node, highlight, highlightColor }: Props) => {
     document.body.style.cursor = hovered ? "pointer" : "auto";
   }, [hovered]);
 
-  const onPointerIn = useCallback((e: IntersectionEvent<PointerEvent>) => {
+  const onPointerIn = useCallback((e: ThreeEvent<PointerEvent>) => {
     e.stopPropagation();
     setHovered(true)
   }, []);
 
-  const onPointerOut = useCallback((e: IntersectionEvent<PointerEvent>) => {
+  const onPointerOut = useCallback((e: ThreeEvent<PointerEvent>) => {
     e.stopPropagation();
     setHovered(false);
   }, []);

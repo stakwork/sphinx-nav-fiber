@@ -51,7 +51,7 @@ const Content = () => (
 
 export const Universe = () => (
   <>
-    <div id="tooltip-portal" style={{ zIndex: 999999999 }} />
+    <div id="tooltip-portal" />
 
     <Suspense fallback={null}>
       <Canvas

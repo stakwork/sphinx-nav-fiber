@@ -1,4 +1,5 @@
 import { Html, Float } from "@react-three/drei";
+import styled from "styled-components";
 
 type Props = {
     children: React.ReactNode;
@@ -22,33 +23,34 @@ export const HtmlPanel = ({ speed = 2, intensity = 8, style, children }: Props) 
     onPointerOut={e=>e.stopPropagation()}
     onPointerOver={e=>e.stopPropagation()}
     onPointerUp={e=>e.stopPropagation()}
-    
     scale={6}
     sprite
     transform
     >
-            <div
+            <HtmlWrap
             onPointerDown={e=>e.stopPropagation()}
             onPointerOut={e=>e.stopPropagation()}
             onPointerOver={e=>e.stopPropagation()}
             onPointerUp={e=>e.stopPropagation()}
-            style={{
-                position: 'absolute',
-                top: -200,
-                left: -680,
-                borderRadius: 20,
-                boxShadow:`-46px -26px #5078f2`,
-                width: 500, height: 500,
-                fontSize: 80, color: '#fff',
-                padding: 20, border: 'solid 8px #5078f2',
-                background: '#00000099',
-                overflowY: 'auto',
-                ...style
-                    }}>
+            style={style}>
                     {children}
-            </div>
+            </HtmlWrap>
       </Html>
     </Float>
 )
     
-    
+const HtmlWrap = styled.div`
+position: absolute;
+top: -200;
+left: -680;
+border-radius: 20px;
+box-shadow:-46px -26px #5078f2;
+width: 500px; 
+height: 500px;
+font-size: 80px; 
+color: #fff;
+padding: 20px; 
+border: solid 8px #5078f2;
+background: #00000099;
+overflow-y: auto;
+`
