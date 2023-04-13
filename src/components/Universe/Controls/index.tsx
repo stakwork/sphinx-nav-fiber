@@ -22,10 +22,11 @@ export const Controls = ({ disableAnimations }: Props) => {
 
   const cameraControlsRef = useRef<CameraControls | null>(null);
 
-  const { isUserDragging } = useControlStore();
+  const { isUserDragging, isUserScrolling } = useControlStore();
+
   const disableCameraRotation = useDataStore((s) => s.disableCameraRotation);
 
-  useCameraAnimations(cameraControlsRef, { enabled: !disableAnimations });
+  useCameraAnimations(cameraControlsRef, { enabled: (!disableAnimations && !isUserScrolling && !isUserDragging) });
 
   useEffect(() => {
     const run = async () => {

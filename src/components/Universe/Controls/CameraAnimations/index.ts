@@ -1,19 +1,26 @@
 /* eslint-disable no-param-reassign */
 import type { CameraControls } from "@react-three/drei";
 import gsap from "gsap";
-import { RefObject, useCallback, useEffect, useState } from "react";
+import { RefObject, useCallback, useEffect } from "react";
 import * as THREE from "three";
 import { useDataStore } from "~/stores/useDataStore";
+
+let cameraAnimation: gsap.core.Tween | null = null
 
 export const useCameraAnimations = (
   cameraControlsRef: RefObject<CameraControls | null>,
   { enabled }: { enabled: boolean }
 ) => {
-  const [cameraAnimation, setCameraAnimation] =
-    useState<gsap.core.Tween | null>(null);
 
   const data = useDataStore((s) => s.data);
   const graphRadius = useDataStore((s) => s.graphRadius);
+
+  useEffect(() => {
+    if (!enabled) {
+      cameraAnimation?.kill();
+      cameraAnimation = null;
+    } 
+  }, [enabled])
 
   const rotateWorld = useCallback(() => {
     cameraAnimation?.kill();
@@ -33,10 +40,10 @@ export const useCameraAnimations = (
 
       rotateCycle.play(0);
 
-      setCameraAnimation(rotateCycle);
+      cameraAnimation = rotateCycle
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cameraAnimation]);
+  }, []);
 
   const doIntroAnimation = useCallback(() => {
     cameraAnimation?.kill();
@@ -50,7 +57,7 @@ export const useCameraAnimations = (
         "100%": { delay: 2, ease: "Power4.easeIn", value: -200 },
       },
       onComplete: () => {
-        setCameraAnimation(null);
+        cameraAnimation = null
         rotateWorld();
       },
       onInterrupt() {
@@ -64,10 +71,9 @@ export const useCameraAnimations = (
     });
 
     moveCycle.play();
-
-    setCameraAnimation(moveCycle);
+    cameraAnimation = moveCycle
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cameraAnimation, rotateWorld]);
+  }, [rotateWorld]);
 
   useEffect(() => {
     // graphRadius is calculated from initial graph render
