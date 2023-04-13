@@ -1,5 +1,5 @@
 import { Html, Float } from "@react-three/drei";
-import styled from "styled-components";
+import styled, { CSSProperties } from "styled-components";
 
 type Props = {
     children: React.ReactNode;
@@ -28,14 +28,12 @@ export const HtmlPanel = ({ speed = 2, intensity = 8, style, children }: Props) 
     transform
     >
             <HtmlWrap
-                height={style?.height||500}
-                left={style?.left||-680}
                 onPointerDown={e => e.stopPropagation()}
                 onPointerOut={e => e.stopPropagation()}
                 onPointerOver={e => e.stopPropagation()}
                 onPointerUp={e => e.stopPropagation()}
-                top={style?.top||-200}
-                width={style?.width||500}>
+                style={style}
+                >
                     {children}
             </HtmlWrap>
       </Html>
@@ -43,20 +41,17 @@ export const HtmlPanel = ({ speed = 2, intensity = 8, style, children }: Props) 
 )
 
 type HtmlWrapProps = {
-    top: number;
-    left: number;
-    width: number;
-    height: number;
+    style: (CSSProperties & Record<string, unknown>) | undefined;
 }
     
 const HtmlWrap = styled.div<HtmlWrapProps>`
 position: absolute;
-top: ${p =>`${p.top}px`};
-left: ${p =>`${p.left}px`};
+top: ${p =>`${p.style?.top||-200}px`};
+left: ${p =>`${p.style?.left||-680}px`};
 border-radius: 20px;
 box-shadow:-46px -26px #5078f2;
-width: ${p => `${p.width}px`};
-height: ${p => `${p.height}px`};
+width: ${p => `${p.style?.width||500}px`};
+height: ${p => `${p.style?.height||500}px`};
 font-size: 80px; 
 color: #fff;
 padding: 20px; 
