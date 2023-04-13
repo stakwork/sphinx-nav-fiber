@@ -5,13 +5,11 @@ import gsap from "gsap";
 import { useFrame } from "@react-three/fiber";
 import { RefObject, useCallback, useEffect, useState } from "react";
 import * as THREE from "three";
-import { useDataStore } from "~/stores/useDataStore";
+import { useDataStore, useSelectedNode } from "~/stores/useDataStore";
 import { useControlStore } from "~/stores/useControlStore";
 import { useAutoNavigate } from "./useAutoNavigate";
 
 const autoRotateSpeed = 1;
-
-const p = new THREE.Vector3();
 
 const introAnimationTargetPosition = new THREE.Vector3(-1900, -2200, -2800);
 
@@ -19,6 +17,8 @@ export const useCameraAnimations = (
   cameraControlsRef: RefObject<CameraControls | null>,
   { enabled }: { enabled: boolean }
 ) => {
+
+  const selectedNode = useSelectedNode();
 
   useAutoNavigate(cameraControlsRef)
 
@@ -114,6 +114,23 @@ export const useCameraAnimations = (
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
+
+  useEffect(() => {
+
+    if (!selectedNode && cameraControlsRef.current) {
+      cameraControlsRef.current.smoothTime = 0.7;
+      cameraControlsRef.current.setLookAt(
+        introAnimationTargetPosition.x,
+        introAnimationTargetPosition.y,
+        introAnimationTargetPosition.z,
+        0,
+        0,
+        0,
+        true
+      );
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedNode]);
 
   useFrame((_, delta) => {
     if (cameraControlsRef.current) {

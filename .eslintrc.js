@@ -84,7 +84,7 @@ module.exports = {
     "no-use-before-define": "off",
     "no-useless-constructor": "off",
     "padding-line-between-statements": [
-      "off",
+      "error",
       { blankLine: "always", next: "return", prev: "*" },
       { blankLine: "always", next: "*", prev: ["const", "let"] },
       { blankLine: "always", next: ["const", "let"], prev: "*" },

@@ -1,6 +1,5 @@
 import { CameraControls } from "@react-three/drei";
 import { useRef, useState } from "react";
-
 import { useControlStore } from "~/stores/useControlStore";
 import { useCameraAnimations } from "./CameraAnimations";
 
