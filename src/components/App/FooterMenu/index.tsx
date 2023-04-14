@@ -1,5 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
-import { MdAddLink, MdClose, MdOutlineMenu, MdOutlineShowChart, MdOutlineTableView, MdPostAdd } from 'react-icons/md'
+import {
+  MdAddLink,
+  MdClose,
+  MdOutlineMenu,
+  MdOutlineShowChart,
+  MdOutlineTableView,
+  MdPostAdd,
+  MdHomeFilled,
+} from 'react-icons/md'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
@@ -45,6 +53,12 @@ export const FooterMenu = () => {
         <ButtonsWrapper>
           {isOpened && (
             <>
+              <ActionButton onClick={() => handleOpenSidebar('about')}>
+                <Text>About</Text>
+                <IconWrapper>
+                  <MdHomeFilled size={24} />
+                </IconWrapper>
+              </ActionButton>
               <ActionButton id="cy-add-content-menu" onClick={() => handleOpenModal('content')}>
                 <Text>Add Content</Text>
                 <IconWrapper>
