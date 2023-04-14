@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
-import { getAdminId, getRadarData, triggerRadarJob } from '~/network/fetchGraphData'
+import { getAdminId } from '~/network/fetchGraphData'
+import { getRadarData, triggerRadarJob } from '~/network/fetchSourcesData'
 import { FetchRadarResponse, SubmitErrRes } from '~/types'
 import * as sphinx from 'sphinx-bridge-kevkevinpal'
 import { colors } from '~/utils/colors'
@@ -27,10 +28,10 @@ type TPill = {
 }
 
 const sourcesMapper: ISourceMap = {
-  github_repository: 'Github Repository',
+  'Github repository': 'Github repository',
+  'Youtube channel': 'Youtube channel',
   topic: 'Topic',
   twitter_handle: 'Twitter Handle',
-  youtube_channel: 'Youtube Channel',
 }
 
 export const Sources = () => {

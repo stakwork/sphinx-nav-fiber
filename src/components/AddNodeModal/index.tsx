@@ -25,7 +25,7 @@ import YoutubeChannel from './YoutubeChannel'
 import GithubRepository from './GithubRepository'
 import { useDataStore } from '../../stores/useDataStore/index';
 import { FetchRadarResponse, SubmitErrRes } from '~/types'
-import { getRadarData } from '~/network/fetchGraphData'
+import { getRadarData } from '~/network/fetchSourcesData'
 
 type Option = {
   label: string

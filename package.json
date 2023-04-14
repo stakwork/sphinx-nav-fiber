@@ -43,6 +43,7 @@
   },
   "scripts": {
     "start": "craco start",
+    "dev-tribe": "PORT=3004 craco start",
     "build": "craco build",
     "test": "craco test",
     "cy-open": "cypress open",

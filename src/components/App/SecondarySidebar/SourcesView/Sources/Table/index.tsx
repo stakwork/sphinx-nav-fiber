@@ -6,7 +6,7 @@ import { BaseTextInput } from '~/components/BaseTextInput'
 import ConfirmPopover from '~/components/common/ConfirmPopover'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
-import { deleteRadarData, putRadarData } from '~/network/fetchGraphData'
+import { deleteRadarData, putRadarData } from '~/network/fetchSourcesData'
 import { useDataStore } from '~/stores/useDataStore'
 import { RadarRequest, Sources } from '~/types'
 import { colors } from '~/utils/colors'
@@ -27,6 +27,8 @@ interface ISourceMap {
 }
 
 const sourcesMapper: ISourceMap = {
+  'Github repository': 'Github repository',
+  'Youtube channel': 'Youtube channel',
   topic: 'Topic',
   twitter_handle: 'Twitter Handle',
 }
