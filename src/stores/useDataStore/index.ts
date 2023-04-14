@@ -83,7 +83,7 @@ export const useDataStore = create<DataStore>((set, get) => ({
   setDisableCameraRotation: (rotation) =>
     set({ disableCameraRotation: rotation }),
   setGraphRadius: (graphRadius) => set({ graphRadius }),
-  setQueuedSources: (sources) => set({ sources }),
+  setQueuedSources: (queuedSources) => set({ queuedSources }),
   setSelectedNode: (selectedNode) =>
     set({ isTimestampLoaded: false, selectedNode }),
   setSelectedTimestamp: (selectedTimestamp) => set({ selectedTimestamp }),
