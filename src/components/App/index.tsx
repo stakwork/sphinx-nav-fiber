@@ -117,7 +117,9 @@ export const App = () => {
             <AppBar onSubmit={handleSubmit} />
 
             <FooterMenu />
-            <Version>v{version}</Version>
+            <Version>
+              v{version}|{window.location.search}
+            </Version>
           </FormProvider>
         </DataRetriever>
 
