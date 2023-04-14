@@ -52,3 +52,10 @@ export const BOOST_ERROR_BUDGET = "Boost failed, insufficient budget";
 
 export const NODE_ADD_SUCCESS = "Node submitted successfully!";
 export const NODE_ADD_ERROR = "Node submission failed, please try again.";
+
+export const LINK = 'link'
+export const TWITTER_HANDLE = 'twitter_handle'
+export const GITHUB_REPOSITORY = 'github_repository'
+export const YOUTUBE_CHANNEL = 'youtube_channel'
+export const TWITTER_SOURCE = 'tweet'
+export const TOPIC = 'topic'

@@ -9,7 +9,7 @@ import { Button } from '~/components/Button'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { BaseModal } from '~/components/Modal'
-import { isDevelopment, NODE_ADD_ERROR, NODE_ADD_SUCCESS } from '~/constants'
+import { GITHUB_REPOSITORY, isDevelopment, LINK, NODE_ADD_ERROR, NODE_ADD_SUCCESS, TOPIC, TWITTER_HANDLE, TWITTER_SOURCE, YOUTUBE_CHANNEL } from '~/constants'
 import { api } from '~/network/api'
 import { useModal } from '~/stores/useModalStore'
 import { colors } from '~/utils/colors'
@@ -25,7 +25,7 @@ import YoutubeChannel from './YoutubeChannel'
 import GithubRepository from './GithubRepository'
 import { useDataStore } from '../../stores/useDataStore/index';
 import { FetchRadarResponse, SubmitErrRes } from '~/types'
-import { getRadarData } from '~/network/fetchGraphData'
+import { getRadarData } from '~/network/fetchSourcesData'
 
 type Option = {
   label: string
@@ -125,13 +125,6 @@ const handleSubmit = async (data: FieldValues, close: () => void, sourceType: st
     }
   }
 }
-
-const LINK = 'link'
-const TWITTER_HANDLE = 'twitter_handle'
-const GITHUB_REPOSITORY = 'Github repository'
-const YOUTUBE_CHANNEL = 'Youtube channel'
-const TWITTER_SOURCE = 'tweet'
-const TOPIC = 'topic'
 
 type TOption = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

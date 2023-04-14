@@ -5,14 +5,14 @@ import { useAppStore } from "~/stores/useAppStore";
 import { colors } from "~/utils/colors";
 import { About } from "./About";
 import { Sentiment } from "./Sentiment";
-import { Sources } from "./Sources";
+import { SourcesView } from "./SourcesView";
 
 export const MENU_WIDTH = 600;
 
 const ComponentsMapper = {
   about: <About />,
   sentiment: <Sentiment />,
-  sources: <Sources />,
+  sources: <SourcesView />,
 }
 
 export const SecondarySideBar = () => {
