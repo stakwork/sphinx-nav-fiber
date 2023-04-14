@@ -18,6 +18,7 @@ type DataStore = {
   sources: Sources[] | null
   queuedSources: Sources[] | null
   sphinxModalIsOpen: boolean
+  setScrollEventsDisabled: (scrollEventsDisabled: boolean) => void
   setCategoryFilter: (categoryFilter: NodeType | null) => void
   setDisableCameraRotation: (rotation: boolean) => void
   fetchData: (search?: string | null) => void
