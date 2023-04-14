@@ -18,21 +18,8 @@ import { ToastMessage } from '~/components/common/Toast/toastMessage'
 import { toast } from 'react-toastify'
 import { ClipLoader } from 'react-spinners'
 import Table from './Table'
-
-interface ISourceMap {
-  [key: string]: string
-}
-
-type TPill = {
-  selected: boolean
-}
-
-const sourcesMapper: ISourceMap = {
-  'Github repository': 'Github repository',
-  'Youtube channel': 'Youtube channel',
-  topic: 'Topic',
-  twitter_handle: 'Twitter Handle',
-}
+import { sourcesMapper } from '../constants'
+import { TPill } from '../types'
 
 export const Sources = () => {
   const [loading, setLoading] = useState(true)

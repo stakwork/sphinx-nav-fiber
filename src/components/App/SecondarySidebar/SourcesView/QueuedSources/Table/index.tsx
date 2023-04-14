@@ -5,34 +5,15 @@ import styled from 'styled-components'
 import ConfirmPopover from '~/components/common/ConfirmPopover'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
-import { approveRadarData, deleteRadarData, putRadarData } from '~/network/fetchSourcesData'
+import { approveRadarData, deleteRadarData } from '~/network/fetchSourcesData'
 import { useDataStore } from '~/stores/useDataStore'
-import { RadarRequest, Sources } from '~/types'
+import { Sources } from '~/types'
 import { colors } from '~/utils/colors'
-
-const TWITTER_LINK = 'https://twitter.com'
-
-type Props = {
-  data: Sources[] | undefined
-}
-
-type TdProps = {
-  width?: string
-}
-
-interface ISourceMap {
-  [key: string]: string
-}
-
-const sourcesMapper: ISourceMap = {
-  'Github repository': 'Github repository',
-  'Youtube channel': 'Youtube channel',
-  topic: 'Topic',
-  twitter_handle: 'Twitter Handle',
-}
+import { sourcesMapper, TWITTER_LINK } from '../../constants'
+import { Props, TdProps } from '../../types'
 
 const Table: React.FC<Props> = ({ data }) => {
-  const setSources = useDataStore((s) => s.setSources)
+  const setSources = useDataStore((s) => s.setQueuedSources)
 
   const [loadingId, setLoadingId] = useState('')
 

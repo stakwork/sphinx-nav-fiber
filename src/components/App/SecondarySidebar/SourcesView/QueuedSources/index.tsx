@@ -6,33 +6,16 @@ import { Pill } from '~/components/common/Pill'
 import { Text } from '~/components/common/Text'
 import { getRadarData } from '~/network/fetchSourcesData'
 import { useDataStore } from '~/stores/useDataStore'
-import { useModal } from '~/stores/useModalStore'
-import { useUserStore } from '~/stores/useUserStore'
 import { FetchRadarResponse } from '~/types'
 import { colors } from '~/utils/colors'
+import { sourcesMapper } from '../constants'
+import { TPill } from '../types'
 import Table from './Table'
-
-interface ISourceMap {
-  [key: string]: string
-}
-
-type TPill = {
-  selected: boolean
-}
-
-const sourcesMapper: ISourceMap = {
-  'Github repository': 'Github repository',
-  'Youtube channel': 'Youtube channel',
-  topic: 'Topic',
-  twitter_handle: 'Twitter Handle',
-}
 
 export const QueuedSources = () => {
   const [loading, setLoading] = useState(true)
   const [typeFilter, setTypeFilter] = useState('')
-  const { open, setAddNodeModalData } = useModal('addNode')
   const [sources, setSources] = useDataStore((s) => [s.sources, s.setSources])
-  const [setIsAdmin, isAdmin, setPubKey, pubKey] = useUserStore((s) => [s.setIsAdmin, s.isAdmin, s.setPubKey, s.pubKey])
 
   useEffect(() => {
     const init = async () => {

@@ -10,28 +10,14 @@ import { deleteRadarData, putRadarData } from '~/network/fetchSourcesData'
 import { useDataStore } from '~/stores/useDataStore'
 import { RadarRequest, Sources } from '~/types'
 import { colors } from '~/utils/colors'
-
-const TWITTER_LINK = 'https://twitter.com'
+import { sourcesMapper, TWITTER_LINK } from '../../constants'
+import { TdProps } from '../../types'
 
 type Props = {
   data: Sources[] | undefined
   canEdit: boolean
 }
 
-type TdProps = {
-  width?: string
-}
-
-interface ISourceMap {
-  [key: string]: string
-}
-
-const sourcesMapper: ISourceMap = {
-  'Github repository': 'Github repository',
-  'Youtube channel': 'Youtube channel',
-  topic: 'Topic',
-  twitter_handle: 'Twitter Handle',
-}
 
 const Table: React.FC<Props> = ({ data, canEdit = false }) => {
   const setSources = useDataStore((s) => s.setSources)
