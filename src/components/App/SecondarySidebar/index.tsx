@@ -4,7 +4,8 @@ import { Flex } from "~/components/common/Flex";
 import { useAppStore } from "~/stores/useAppStore";
 import { colors } from "~/utils/colors";
 import { Sentiment } from "./Sentiment";
-import { Sources } from "./Sources";
+import { Sources } from "./SourcesView/Sources";
+import { SourcesView } from "./SourcesView";
 
 export const MENU_WIDTH = 600;
 
@@ -20,7 +21,7 @@ export const SecondarySideBar = () => {
       <CloseButton onClick={() => setSecondarySidebarActiveTab('')}>
         <MdClose />
       </CloseButton>
-      {secondarySidebarActiveTab === 'sentiment' ? <Sentiment /> : <Sources />}
+      {secondarySidebarActiveTab === 'sentiment' ? <Sentiment /> : <SourcesView />}
     </Wrapper>
   ) : null
 };
