@@ -15,7 +15,7 @@ import Table from './Table'
 export const QueuedSources = () => {
   const [loading, setLoading] = useState(true)
   const [typeFilter, setTypeFilter] = useState('')
-  const [sources, setSources] = useDataStore((s) => [s.sources, s.setSources])
+  const [sources, setSources] = useDataStore((s) => [s.queuedSources, s.setQueuedSources])
 
   useEffect(() => {
     const init = async () => {
