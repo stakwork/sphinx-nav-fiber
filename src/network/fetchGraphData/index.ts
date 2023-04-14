@@ -151,7 +151,9 @@ const getGraphData = async (searchterm: string) => {
           ;
 
 (guests || []).forEach((guest) => {
-            const currentGuest = guest as Guests
+  const currentGuest = guest as Guests
+  
+  console.log('currentGuest',currentGuest)
 
             if (currentGuest.name && currentGuest.ref_id && node.ref_id) {
               guestMap[currentGuest.ref_id] = {
@@ -236,6 +238,8 @@ const getGraphData = async (searchterm: string) => {
           links.push(link)
         })
 
+        console.log('guest',guest)
+
         const guestNode: NodeExtended = {
           colors: ['#000'],
           id: guestNodeId,
@@ -243,7 +247,7 @@ const getGraphData = async (searchterm: string) => {
           label: guestValue.name,
           name: guestValue.name,
           node_type: 'guest',
-          ref_id: guestNodeId,
+          ref_id: guest,
           scale,
           show_title: guestValue.name,
           text: guestValue.twitterHandle,

@@ -116,7 +116,7 @@ export const Graph = () => {
         // @ts-ignore
         fog
         limit={data.links.length}
-        lineWidth={0.15}
+        lineWidth={0.25}
       >
         {(data.links as unknown as GraphData<NodeExtended>["links"]).map(
           (link, index) => (

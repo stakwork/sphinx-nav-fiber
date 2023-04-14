@@ -2,8 +2,8 @@ import { Select } from "@react-three/drei";
 import { memo, useCallback } from "react";
 import { Object3D } from "three";
 import { useGraphData } from "~/components/DataRetriever";
-import { useAppStore } from "~/stores/useAppStore";
-import { useDataStore } from "~/stores/useDataStore";
+import { useAppStore } from "~/stores/useAppStore"
+import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { NodeExtended } from "~/types";
 import { Cube } from "./Cube";
 
@@ -14,8 +14,15 @@ const NODE_TYPE_COLORS: NodeTypeColors = {
   tweet: "aqua",
 };
 
+// const NODE_TYPE_HIGHLIGHT_COLORS: NodeTypeColors = {
+//   children: "0x3dff85",
+//   tweet: "aqua",
+// };
+
 export const Cubes = memo(() => {
   const data = useGraphData();
+
+  const selectedNode = useSelectedNode()
 
   const searchTerm = useAppStore((s) => s.currentSearch);
 
@@ -34,6 +41,8 @@ export const Cubes = memo(() => {
         i.node_type === "guest" &&
         searchTerm.toLowerCase() === i?.label?.toLowerCase()
     );
+  
+    console.log('selectedNode',selectedNode)
 
   return (
     <Select onChange={handleSelect}>
@@ -55,12 +64,31 @@ export const Cubes = memo(() => {
           }
         }
 
+        let relationHighlightColor: string | undefined 
+
+        // highlight node exists in children of selected
+        if (node?.ref_id && selectedNode?.children?.length && selectedNode.children.includes(node.ref_id)) {
+          highlight = true
+          relationHighlightColor = 'green'
+        } else if (selectedNode?.guests?.length && node.type === 'guest' && selectedNode?.guests.find(f => {
+  
+          if (typeof f !== 'string') {
+            return f?.ref_id && f.ref_id === node.ref_id
+          }
+
+          return false
+
+        })) {
+          highlight = true
+          relationHighlightColor = 'purple'
+        }
+
         return (
           <Cube
           // eslint-disable-next-line react/no-array-index-key
             key={`${node.id}-${index}`}
             highlight={highlight || !!NODE_TYPE_COLORS[node.node_type]}
-            highlightColor={NODE_TYPE_COLORS[node.node_type] || 'green'}
+            highlightColor={relationHighlightColor || NODE_TYPE_COLORS[node.node_type] || 'green'}
             node={node}
           />
         );
