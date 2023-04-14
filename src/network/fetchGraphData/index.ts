@@ -60,21 +60,6 @@ export const getSentimentData = async () => {
   return response
 }
 
-export const getRadarData = async () => {
-  const response = await api.get<FetchRadarResponse>(`/radar`)
-
-  return response
-}
-
-export const triggerRadarJob = async () => api.get<SubmitErrRes>(`/radar/trigger-job`)
-
-export const putRadarData = async (id: string, data: RadarRequest) => {
-  const response = await api.put(`/radar/${id}`, JSON.stringify(data))
-
-  return response;
-};
-
-// @todo will be changed
 export const getAdminId = async (tribeId: string) => {
   const response = await fetch(`https://tribes.sphinx.chat/tribes/${tribeId}`)
 
@@ -82,12 +67,6 @@ export const getAdminId = async (tribeId: string) => {
 
   return jsonData
 }
-
-export const deleteRadarData = async (id: string) => {
-  const response = await api.delete(`/radar/${id}`)
-
-  return response;
-};
 
 const getGraphData = async (searchterm: string) => {
   try {
