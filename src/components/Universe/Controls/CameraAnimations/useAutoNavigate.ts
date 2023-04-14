@@ -53,7 +53,6 @@ export const useAutoNavigate = (
       lookAtAnimationTimer = setTimeout(() => {
         setLookAtReached(true)
         clearTimeout(lookAtAnimationTimer)
-        console.log('done')
       }, 2000)
       
       setDistanceReached(false)
