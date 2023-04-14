@@ -21,6 +21,11 @@ import Table from './Table'
 import { sourcesMapper } from '../constants'
 import { TPill } from '../types'
 
+const admins = [
+  '02c431e64078b10925584d64824c9d1d12eca05e2c56660ffa5ac84aa6946adfe5',
+  '03a9a8d953fe747d0dd94dd3c567ddc58451101e987e2d2bf7a4d1e10a2c89ff38',
+]
+
 export const Sources = () => {
   const [loading, setLoading] = useState(true)
   const [typeFilter, setTypeFilter] = useState('')
@@ -75,9 +80,9 @@ export const Sources = () => {
         const tribeId = urlParams.get('tribe')
         let id
 
-        if (tribeId) {
-          id = getAdminId(tribeId)
-          setIsAdmin(id && id === pubKeyRes)
+        if (pubKeyRes) {
+          // id = getAdminId(tribeId)
+          setIsAdmin(pubKeyRes && admins.includes(pubKeyRes))
         }
 
       } catch (error) {
