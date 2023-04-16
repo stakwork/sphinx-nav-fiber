@@ -10,7 +10,8 @@ import { useDataStore } from '~/stores/useDataStore'
 import { Sources } from '~/types'
 import { colors } from '~/utils/colors'
 import { sourcesMapper, TWITTER_LINK } from '../../constants'
-import { Props, TdProps } from '../../types'
+import { Props } from '../../types'
+import { TableCell, TableHead, TableRow, Table as MaterialTable } from '@mui/material'
 
 const Table: React.FC<Props> = ({ data }) => {
   const setSources = useDataStore((s) => s.setQueuedSources)
@@ -22,7 +23,7 @@ const Table: React.FC<Props> = ({ data }) => {
       try {
         await approveRadarData(id)
 
-        setSources(data.filter((i) => i.id !== id));
+        setSources(data.filter((i) => i.id !== id))
       } catch (error) {
         console.log(error)
       }
@@ -49,20 +50,20 @@ const Table: React.FC<Props> = ({ data }) => {
   return !data?.length ? (
     <Text>There is not any results for selected filters</Text>
   ) : (
-    <StyledTable>
-      <thead>
-        <tr>
-          <Th>Type</Th>
-          <Th>Source</Th>
-          <Th />
-        </tr>
-      </thead>
+    <MaterialTable>
+      <TableHead>
+        <TableRow>
+          <StyledTableCell>Type</StyledTableCell>
+          <StyledTableCell>Source</StyledTableCell>
+          <StyledTableCell />
+        </TableRow>
+      </TableHead>
       {data?.length && (
         <tbody>
           {data?.map((i: Sources) => (
-            <Tr key={i.source}>
-              <Td>{sourcesMapper[i.source_type]}</Td>
-              <Td width="268px">
+            <TableRow key={i.source}>
+              <StyledTableCell>{sourcesMapper[i.source_type]}</StyledTableCell>
+              <StyledTableCell width="268px">
                 {i.source_type === 'twitter_handle' ? (
                   <StyledLink href={`${TWITTER_LINK}/${i.source}`} target="_blank">
                     @{i.source}
@@ -70,10 +71,10 @@ const Table: React.FC<Props> = ({ data }) => {
                 ) : (
                   <div>{i.source}</div>
                 )}
-              </Td>
+              </StyledTableCell>
 
-              <Td className="cell-center">
-                <Flex direction="row">
+              <StyledTableCell className="cell-center">
+                <Flex direction="row" justify="space-between">
                   <div className="approve-wrapper">
                     <IconWrapper className="centered" onClick={() => handleApprove(i.id)}>
                       <MdCheckCircle color={colors.primaryGreen} />
@@ -81,7 +82,7 @@ const Table: React.FC<Props> = ({ data }) => {
                   </div>
                   <div className="delete-wrapper">
                     {loadingId === i.id ? (
-                      <ClipLoader color={colors.white} />
+                      <ClipLoader color={colors.white} size={16} />
                     ) : (
                       <ConfirmPopover message="Are you sure ?" onConfirm={() => handleRemove(i.id)}>
                         <IconWrapper className="centered">
@@ -91,44 +92,21 @@ const Table: React.FC<Props> = ({ data }) => {
                     )}
                   </div>
                 </Flex>
-              </Td>
-            </Tr>
+              </StyledTableCell>
+            </TableRow>
           ))}
         </tbody>
       )}
-    </StyledTable>
+    </MaterialTable>
   )
 }
 
 export default Table
 
-const StyledTable = styled.table`
-  border-collapse: collapse;
-  width: 100%;
-  color: ${colors.white};
-`
-
-const Th = styled.th`
-  border: 1px solid ${colors.white};
-  padding: 8px;
-`
-
-const Tr = styled.tr`
-  height: 40px;
-`
-
-const Td = styled.td<TdProps>`
-  border: 1px solid ${colors.white};
-  width: ${(props) => props.width || 'auto'};
-  line-height: 28px;
-  padding: 8px;
-  &.cell-center {
-    text-align: center;
-    vertical-align: middle;
-  }
-
-  .delete-wrapper, .approve-wrapper {
-    flex: 1;
+const StyledTableCell = styled(TableCell)`
+  && {
+    color: ${colors.white};
+    border: 1px solid ${colors.white};
   }
 `
 

@@ -11,7 +11,7 @@ import { useDataStore } from '~/stores/useDataStore'
 import { RadarRequest, Sources } from '~/types'
 import { colors } from '~/utils/colors'
 import { sourcesMapper, TWITTER_LINK } from '../../constants'
-import { TdProps } from '../../types'
+import { TableBody, TableCell, TableHead, TableRow, Table as MaterialTable } from '@mui/material'
 
 type Props = {
   data: Sources[] | undefined
@@ -61,22 +61,21 @@ const Table: React.FC<Props> = ({ data, canEdit = false }) => {
   return !data?.length ? (
     <Text>There is not any results for selected filters</Text>
   ) : (
-    <StyledTable>
-      <thead>
-        <tr>
-          <Th>Type</Th>
-          <Th>Source</Th>
-          {canEdit && <Th />}
-        </tr>
-      </thead>
-      {data?.length && (
-        <tbody>
-          {data?.map((i: Sources) => (
-            <Tr key={i.source}>
-              <Td>{sourcesMapper[i.source_type]}</Td>
-              <Td width="268px">
+      <MaterialTable aria-label="a dense table" size="small">
+        <TableHead>
+          <TableRow>
+            <StyledTableCell>Type</StyledTableCell>
+            <StyledTableCell align="left">Source</StyledTableCell>
+            {canEdit && <StyledTableCell align="left" />}
+          </TableRow>
+        </TableHead>
+        <TableBody>
+           {data?.map((i: Sources) => (
+            <TableRow key={i.source}>
+              <StyledTableCell align="left">{sourcesMapper[i.source_type]}</StyledTableCell>
+              <StyledTableCell align="left">
                 <ConditionalWrapper
-                  condition={canEdit}
+                  condition
                   wrapper={(children) => (
                     <EditableCell
                       id={i.id}
@@ -95,9 +94,9 @@ const Table: React.FC<Props> = ({ data, canEdit = false }) => {
                     <div>{i.source}</div>
                   )}
                 </ConditionalWrapper>
-              </Td>
+              </StyledTableCell>
               {canEdit && (
-                <Td className="cell-center">
+                <StyledTableCell align="left">
                   <div className="delete-wrapper">
                     {loadingId === i.id ? (
                       <ClipLoader color={colors.white} />
@@ -109,13 +108,11 @@ const Table: React.FC<Props> = ({ data, canEdit = false }) => {
                       </ConfirmPopover>
                     )}
                   </div>
-                </Td>
+                </StyledTableCell>
               )}
-            </Tr>
-          ))}
-        </tbody>
-      )}
-    </StyledTable>
+            </TableRow>))}
+        </TableBody>
+      </MaterialTable>
   )
 }
 
@@ -177,7 +174,7 @@ const EditableCell: React.FC<EditableCellProps> = ({ value, onSave, id, children
         <EditableCellWrapper direction="row">
           {children}
           <IconWrapper onClick={() => setEditing(true)}>
-            <MdOutlineModeEdit />
+            <MdOutlineModeEdit size={20} />
           </IconWrapper>
         </EditableCellWrapper>
       )}
@@ -187,29 +184,11 @@ const EditableCell: React.FC<EditableCellProps> = ({ value, onSave, id, children
 
 export default Table
 
-const StyledTable = styled.table`
-  border-collapse: collapse;
-  width: 100%;
-  color: ${colors.white};
-`
-
-const Th = styled.th`
-  border: 1px solid ${colors.white};
-  padding: 8px;
-  `
-
-const Tr = styled.tr`
-  height: 40px;
-`
-
-const Td = styled.td<TdProps>`
-  border: 1px solid ${colors.white};
-  width: ${(props) => props.width || 'auto'};
-  line-height: 28px;
-  padding: 8px;
-  &.cell-center {
-    text-align: center;
-    vertical-align: middle;
+const StyledTableCell = styled(TableCell)`
+  &.css-dsuxgy-MuiTableCell-root,
+  &.css-1howxi1-MuiTableCell-root {
+    color: ${colors.white};
+    border: 1px solid ${colors.white};
   }
 `
 
@@ -249,14 +228,15 @@ const IconWrapper = styled(Flex)`
 const EditableCellWrapper = styled(Flex)`
   display: flex;
   padding: 4px;
+  position: relative;
 
   ${IconWrapper} {
-    display: none;
+    visibility: hidden;
   }
 
   &:hover {
     ${IconWrapper} {
-      display: block;
+      visibility: visible;
     }
   }
 `
