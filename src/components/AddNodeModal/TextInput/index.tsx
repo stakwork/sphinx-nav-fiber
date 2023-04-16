@@ -59,10 +59,10 @@ export const TextInput = ({
     <Flex shrink={1}>
       <Flex align="center" direction="row" pb={4} pl={4}>
         <Label htmlFor={id}>{label}</Label>
-        <QuestionIcon name={name} role="tooltip">
+        {message && <QuestionIcon name={name} role="tooltip">
           <FaRegQuestionCircle color={colors.secondaryText4} />
           <div className="tooltip">{message}</div>
-        </QuestionIcon>
+        </QuestionIcon>}
       </Flex>
       <Wrapper>
         <Controller
