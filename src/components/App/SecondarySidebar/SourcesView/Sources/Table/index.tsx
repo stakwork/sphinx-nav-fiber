@@ -185,8 +185,7 @@ const EditableCell: React.FC<EditableCellProps> = ({ value, onSave, id, children
 export default Table
 
 const StyledTableCell = styled(TableCell)`
-  &.css-dsuxgy-MuiTableCell-root,
-  &.css-1howxi1-MuiTableCell-root {
+  && {
     color: ${colors.white};
     border: 1px solid ${colors.white};
   }
