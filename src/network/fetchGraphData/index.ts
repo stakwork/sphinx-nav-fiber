@@ -152,8 +152,6 @@ const getGraphData = async (searchterm: string) => {
 
 (guests || []).forEach((guest) => {
   const currentGuest = guest as Guests
-  
-  console.log('currentGuest',currentGuest)
 
             if (currentGuest.name && currentGuest.ref_id && node.ref_id) {
               guestMap[currentGuest.ref_id] = {
