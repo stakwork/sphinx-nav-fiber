@@ -238,8 +238,6 @@ const getGraphData = async (searchterm: string) => {
           links.push(link)
         })
 
-        console.log('guest',guest)
-
         const guestNode: NodeExtended = {
           colors: ['#000'],
           id: guestNodeId,

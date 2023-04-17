@@ -14,10 +14,25 @@ const NODE_TYPE_COLORS: NodeTypeColors = {
   tweet: "aqua",
 };
 
-// const NODE_TYPE_HIGHLIGHT_COLORS: NodeTypeColors = {
-//   children: "0x3dff85",
-//   tweet: "aqua",
-// };
+type NodeRelativeHighlightColors = {
+  nodeColor: string;
+  segmentColor: number;
+}
+
+export const NODE_RELATIVE_HIGHLIGHT_COLORS: Record<string, NodeRelativeHighlightColors> = {
+  children: {
+    nodeColor: 'green',
+    segmentColor: 0x3dff85
+  },
+  guests: {
+    nodeColor: 'purple',
+    segmentColor: 0xdd50ff
+  },
+  source: {
+    nodeColor: 'purple',
+    segmentColor: 0xdd50ff
+  },
+};
 
 export const Cubes = memo(() => {
   const data = useGraphData();
@@ -42,8 +57,6 @@ export const Cubes = memo(() => {
         searchTerm.toLowerCase() === i?.label?.toLowerCase()
     );
   
-    console.log('selectedNode',selectedNode)
-
   return (
     <Select onChange={handleSelect}>
       {data.nodes.map((node, index) => {
@@ -66,22 +79,29 @@ export const Cubes = memo(() => {
 
         let relationHighlightColor: string | undefined 
 
-        // highlight node exists in children of selected
+        // highlight node if exists in children of selected
         if (node?.ref_id && selectedNode?.children?.length && selectedNode.children.includes(node.ref_id)) {
           highlight = true
-          relationHighlightColor = 'green'
-        } else if (selectedNode?.guests?.length && node.type === 'guest' && selectedNode?.guests.find(f => {
-  
-          if (typeof f !== 'string') {
-            return f?.ref_id && f.ref_id === node.ref_id
-          }
+          relationHighlightColor = NODE_RELATIVE_HIGHLIGHT_COLORS.children.nodeColor
+        } else if (selectedNode?.guests?.length && node.type === 'guest') {
+          
+            const nodeIsGuest = !!selectedNode?.guests.find(f => {
 
-          return false
+              if (typeof f !== 'string') {
+                return f?.ref_id && f.ref_id === node.ref_id
+              }
 
-        })) {
-          highlight = true
-          relationHighlightColor = 'purple'
+              return false
+            })
+              
+            if (nodeIsGuest) {
+              // highlight node if exists in guests of selected
+              highlight = true
+              relationHighlightColor = NODE_RELATIVE_HIGHLIGHT_COLORS.guests.nodeColor
+            }
         }
+
+        
 
         return (
           <Cube

@@ -48,6 +48,8 @@ export const Cube = memo(({ node, highlight, highlightColor }: Props) => {
   const isSelected = selectedNode?.id === node.id;
   const isSelectedCategory = node.node_type === categoryFilter;
 
+  
+
   useFrame(() => {
     if (selectedNode) {
       material.toneMapped = false;
