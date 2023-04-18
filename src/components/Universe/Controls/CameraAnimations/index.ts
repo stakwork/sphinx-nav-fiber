@@ -1,9 +1,19 @@
 /* eslint-disable no-param-reassign */
 import type { CameraControls } from "@react-three/drei";
+import { MathUtils } from "three";
 import gsap from "gsap";
-import { RefObject, useCallback, useEffect } from "react";
+
+import { useFrame } from "@react-three/fiber";
+import { RefObject, useCallback, useEffect, useState } from "react";
+
 import * as THREE from "three";
-import { useDataStore } from "~/stores/useDataStore";
+import { useDataStore, useSelectedNode } from "~/stores/useDataStore";
+import { useControlStore } from "~/stores/useControlStore";
+import { useAutoNavigate } from "./useAutoNavigate";
+
+const autoRotateSpeed = 1;
+
+const introAnimationTargetPosition = new THREE.Vector3(-1900, -2200, -2800);
 
 let cameraAnimation: gsap.core.Tween | null = null
 
@@ -11,6 +21,13 @@ export const useCameraAnimations = (
   cameraControlsRef: RefObject<CameraControls | null>,
   { enabled }: { enabled: boolean }
 ) => {
+
+  const selectedNode = useSelectedNode();
+
+  useAutoNavigate(cameraControlsRef)
+
+  const { isUserDragging } = useControlStore();
+  const disableCameraRotation = useDataStore((s) => s.disableCameraRotation);
 
   const data = useDataStore((s) => s.data);
   const graphRadius = useDataStore((s) => s.graphRadius);
@@ -104,6 +121,36 @@ export const useCameraAnimations = (
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
+
+  useEffect(() => {
+
+    if (!selectedNode && cameraControlsRef.current) {
+      cameraControlsRef.current.smoothTime = 0.7;
+      
+      cameraControlsRef.current.setLookAt(
+        introAnimationTargetPosition.x,
+        introAnimationTargetPosition.y,
+        introAnimationTargetPosition.z,
+        0,
+        0,
+        0,
+        true
+      );
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedNode]);
+
+  useFrame((_, delta) => {
+    if (cameraControlsRef.current) {
+      //  do camera rotation
+      if (!disableCameraRotation && !isUserDragging) {
+        cameraControlsRef.current.azimuthAngle +=
+          autoRotateSpeed * delta * MathUtils.DEG2RAD;
+      }
+
+      cameraControlsRef.current.update(delta);
+    }
+  });
 
   return null;
 };
