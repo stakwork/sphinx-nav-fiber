@@ -9,10 +9,11 @@ import { PathwayBadge } from "./components/PathwayBadge";
 import { Portal } from "./components/Portal";
 import { Tooltip } from "./components/Tooltip";
 import { useMaterial } from "./hooks/useMaterial";
+import { useNavigation } from './hooks/useNavigation'
 
 const geometryXs = new THREE.BoxGeometry(10, 10, 10);
 const geometryS = new THREE.BoxGeometry(20, 20, 20);
-const geometryM = new THREE.SphereGeometry(185, 185, 185);
+const geometryM = new THREE.BoxGeometry(35, 35, 35);
 
 const getGeometry = (node: NodeExtended) => {
   switch (node.node_type) {
@@ -39,6 +40,8 @@ export const Cube = memo(({ node, highlight, highlightColor }: Props) => {
   const selectedNode = useSelectedNode();
   const categoryFilter = useDataStore((s) => s.categoryFilter);
 
+  useNavigation(ref)
+
   const material = useMaterial(
     node.image_url || "noimage.jpeg",
     highlight,
@@ -47,22 +50,8 @@ export const Cube = memo(({ node, highlight, highlightColor }: Props) => {
 
   const geometry = getGeometry(node)
 
-
-  // if (node.type === 'show') {
-  //   material.transparent = true
-  //   material.opacity = 0.06  
-  // }
-  
   const isSelected = selectedNode?.id === node.id;
   const isSelectedCategory = node.node_type === categoryFilter;
-
-  useFrame(() => {
-    if (selectedNode) {
-      material.toneMapped = false;
-    }
-
-    // ref.current?.position.set(node.x || 0, node.y || 0, node.z || 0);
-  });
 
   useEffect(() => {
     document.body.style.cursor = hovered ? "pointer" : "auto";
@@ -83,8 +72,6 @@ export const Cube = memo(({ node, highlight, highlightColor }: Props) => {
   }, [selectedNode]);
 
   const { currentNodeIndex } = usePathway();
-
-  
 
   return (
     <>

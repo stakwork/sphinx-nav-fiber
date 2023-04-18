@@ -4,13 +4,19 @@ import {
   GRAPH_LIGHT_INTENSITY,
 } from "~/constants";
 import { colors } from "~/utils/colors";
+import { useControls } from "leva";
 
-export const Lights = () => (
-  <>
-    <hemisphereLight
-      args={[colors.white, GRAPH_GROUND_COLOR, GRAPH_LIGHT_INTENSITY]}
-    />
+export const Lights = () => {
+  const {fogColor} = useControls('universe', {
+    fogColor: GRAPH_FOG_COLOR,
+  })
+  return (
+    <>
+      <hemisphereLight
+        args={[colors.white, GRAPH_GROUND_COLOR, GRAPH_LIGHT_INTENSITY]}
+      />
 
-    <fog args={[GRAPH_FOG_COLOR, 5, 8000]} attach="fog" />
-  </>
-);
+      <fog args={[fogColor, 5, 8000]} attach="fog" />
+    </>
+  )
+};

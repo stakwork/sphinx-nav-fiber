@@ -24,9 +24,12 @@ export const Cubes = memo(() => {
   const handleSelect = useCallback((nodes: Object3D[]) => {
     const node = nodes?.[0];
 
-    useDataStore
+    if (node?.userData) {
+      useDataStore
       .getState()
       .setSelectedNode((node?.userData as NodeExtended) || null);
+    }
+
   }, []);
 
   const shouldHighlightPartial =

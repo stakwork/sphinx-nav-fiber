@@ -11,7 +11,7 @@ import { useDataStore, useSelectedNode } from "~/stores/useDataStore";
 import { useControlStore } from "~/stores/useControlStore";
 import { useAutoNavigate } from "./useAutoNavigate";
 
-const autoRotateSpeed = 1;
+const autoRotateSpeed = 0;
 
 const introAnimationTargetPosition = new THREE.Vector3(-1900, -2200, -2800);
 

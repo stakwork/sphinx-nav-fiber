@@ -21,35 +21,43 @@ import { Graph } from "./Graph";
 import { Lights } from "./Lights";
 
 import { useControlStore } from "~/stores/useControlStore";
+import { useControls } from "leva";
 
 const NODE_SELECTED_COLOR = 0x00ff00;
 
-const Content = () => (
-  <>
-    <color args={[colors.black]} attach="background" />
+const Content = () => {
+  const {universeColor, ssaoColor} = useControls('universe', {
+    universeColor: colors.black,
+    ssaoColor: "black",
+  })
 
-    <Lights />
+  return (
+    <>
+      <color args={[universeColor]} attach="background" />
 
-    <Controls />
+      <Lights />
 
-    <Selection>
-      <Graph />
+      <Controls />
 
-      <EffectComposer autoClear={false} multisampling={8}>
-        <SSAO
-          color="black"
-          intensity={150}
-          luminanceInfluence={0.5}
-          radius={0.05}
-        />
+      <Selection>
+        <Graph />
 
-        <Bloom luminanceThreshold={1} mipmapBlur />
+        <EffectComposer autoClear={false} multisampling={8}>
+          <SSAO
+            color={ssaoColor}
+            intensity={150}
+            luminanceInfluence={0.5}
+            radius={0.05}
+          />
 
-        <Outline blur edgeStrength={5} visibleEdgeColor={NODE_SELECTED_COLOR} />
-      </EffectComposer>
-    </Selection>
-  </>
-);
+          <Bloom luminanceThreshold={1} mipmapBlur />
+
+          <Outline blur edgeStrength={5} visibleEdgeColor={NODE_SELECTED_COLOR} />
+        </EffectComposer>
+      </Selection>
+    </>
+  )
+};
 
 let wheelEventTimeout: ReturnType<typeof setTimeout> | null = null
 

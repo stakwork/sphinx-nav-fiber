@@ -16,7 +16,7 @@ export const Graph = () => {
     <>
       <Cubes />
 
-      {searchTerm && !isLoading && <PathwayLine />}
+      {/* {searchTerm && !isLoading && <PathwayLine />} */}
 
       <Segments
         /** NOTE: using the key in this way the segments re-mounts
@@ -27,7 +27,7 @@ export const Graph = () => {
         // @ts-ignore
         fog
         limit={data.links.length}
-        lineWidth={0.15}
+        lineWidth={0.55}
       >
         {(data.links as unknown as GraphData<NodeExtended>["links"]).map(
           (link, index) => (
