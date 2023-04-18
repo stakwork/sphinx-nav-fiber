@@ -45,12 +45,14 @@ export const Cube = memo(({ node, highlight, highlightColor }: Props) => {
     highlightColor
   );
 
-  if (node.type === 'show') {
-    material.transparent = true
-    material.opacity = 0.06  
-  }
-  
+  const geometry = getGeometry(node)
 
+
+  // if (node.type === 'show') {
+  //   material.transparent = true
+  //   material.opacity = 0.06  
+  // }
+  
   const isSelected = selectedNode?.id === node.id;
   const isSelectedCategory = node.node_type === categoryFilter;
 
@@ -82,12 +84,14 @@ export const Cube = memo(({ node, highlight, highlightColor }: Props) => {
 
   const { currentNodeIndex } = usePathway();
 
+  
+
   return (
     <>
       <Select enabled={selectedNode ? isSelected : isSelectedCategory}>
         <mesh
           ref={ref}
-          geometry={getGeometry(node)}
+          geometry={geometry}
           material={material}
           name={node.id}
           onPointerOut={onPointerOut}

@@ -11,6 +11,6 @@ export const Lights = () => (
       args={[colors.white, GRAPH_GROUND_COLOR, GRAPH_LIGHT_INTENSITY]}
     />
 
-    <fog args={[GRAPH_FOG_COLOR, 5, 4000]} attach="fog" />
+    <fog args={[GRAPH_FOG_COLOR, 5, 8000]} attach="fog" />
   </>
 );

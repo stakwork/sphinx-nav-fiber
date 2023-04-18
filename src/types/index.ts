@@ -79,8 +79,8 @@ export type Link<T = string> = {
   index?: T extends string ? never : number;
   source: T;
   target: T;
-  sourcePosition: Vector3;
-  targetPosition: Vector3;
+  sourcePosition?: Vector3;
+  targetPosition?: Vector3;
 };
 
 export type GraphData<T = string> = {
