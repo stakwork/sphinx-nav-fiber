@@ -81,25 +81,31 @@ export const About = () => {
     <Wrapper align="stretch" direction="column" justify="flex-end">
       <Heading align="center" direction="row" justify="space-between">
         <Text className="title">About</Text>
-        {resolveAdminActions()}
+        {/* {resolveAdminActions()} */}
       </Heading>
       <ContentWrapper align="stretch" justify="flex-start">
         <Flex pt={12}>
           <Text kind="regular">Graph Title</Text>
           <Flex pt={12}>
-            <Text kind="medium">title</Text>
+            <Text className="value" kind="medium">
+              Chile Inflation
+            </Text>
           </Flex>
         </Flex>
         <Flex pt={12}>
           <Text kind="regular">Graph Description</Text>
           <Flex pt={12}>
-            <Text kind="medium">description</Text>
+            <Text className="value" kind="medium">
+              A graph containing info about all things inflation in Chile.
+            </Text>
           </Flex>
         </Flex>
         <Flex pt={12}>
           <Text kind="regular">Mission Statement</Text>
           <Flex pt={12}>
-            <Text kind="medium">mission</Text>
+            <Text className="value" kind="medium">
+              Learn about changes in Chile&apos;s inflation rates.
+            </Text>
           </Flex>
         </Flex>
       </ContentWrapper>
@@ -117,6 +123,10 @@ const Wrapper = styled(Flex)`
   .title {
     margin-bottom: 16px;
     font-size: 20px;
+  }
+
+  .value {
+    color: ${colors.lightBlue400};
   }
 `
 
