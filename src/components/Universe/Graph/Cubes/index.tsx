@@ -14,6 +14,8 @@ const NODE_TYPE_COLORS: NodeTypeColors = {
   tweet: "aqua",
 };
 
+
+
 export const Cubes = memo(() => {
   const data = useGraphData();
 
@@ -37,7 +39,7 @@ export const Cubes = memo(() => {
 
   return (
     <Select onChange={handleSelect}>
-      {data.nodes.map((node, index) => {
+      {data.nodes.filter(f=>!f.hidden).map((node, index) => {
         let highlight = false;
 
         if (searchTerm && node.node_type === "guest") {

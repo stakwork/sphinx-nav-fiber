@@ -12,7 +12,7 @@ import { useMaterial } from "./hooks/useMaterial";
 
 const geometryXs = new THREE.BoxGeometry(10, 10, 10);
 const geometryS = new THREE.BoxGeometry(20, 20, 20);
-const geometryM = new THREE.BoxGeometry(35, 35, 35);
+const geometryM = new THREE.SphereGeometry(185, 185, 185);
 
 const getGeometry = (node: NodeExtended) => {
   switch (node.node_type) {
@@ -45,6 +45,12 @@ export const Cube = memo(({ node, highlight, highlightColor }: Props) => {
     highlightColor
   );
 
+  if (node.type === 'show') {
+    material.transparent = true
+    material.opacity = 0.06  
+  }
+  
+
   const isSelected = selectedNode?.id === node.id;
   const isSelectedCategory = node.node_type === categoryFilter;
 
@@ -53,7 +59,7 @@ export const Cube = memo(({ node, highlight, highlightColor }: Props) => {
       material.toneMapped = false;
     }
 
-    ref.current?.position.set(node.x || 0, node.y || 0, node.z || 0);
+    // ref.current?.position.set(node.x || 0, node.y || 0, node.z || 0);
   });
 
   useEffect(() => {
@@ -88,6 +94,7 @@ export const Cube = memo(({ node, highlight, highlightColor }: Props) => {
           onPointerOver={onPointerIn}
           scale={hovered ? 1.5 : 1}
           userData={node}
+          position={[node.x,node.y,node.z]}
         >
           <PathwayBadge
             show={currentNodeIndex >= 0}

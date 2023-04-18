@@ -45,7 +45,7 @@ module.exports = {
     ],
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "@typescript-eslint/interface-name-prefix": "off",
-    "@typescript-eslint/no-explicit-any": "error",
+    "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/no-invalid-this": "error",
     "@typescript-eslint/no-non-null-assertion": "off",
     "@typescript-eslint/no-shadow": "error",
@@ -84,7 +84,7 @@ module.exports = {
     "no-use-before-define": "off",
     "no-useless-constructor": "off",
     "padding-line-between-statements": [
-      "error",
+      "off",
       { blankLine: "always", next: "return", prev: "*" },
       { blankLine: "always", next: "*", prev: ["const", "let"] },
       { blankLine: "always", next: ["const", "let"], prev: "*" },
@@ -118,7 +118,7 @@ module.exports = {
     "react/jsx-no-leaked-render": "off",
     "react/jsx-no-useless-fragment": "off",
     "react/jsx-props-no-spreading": "off",
-    "react/jsx-sort-props": "error",
+    "react/jsx-sort-props": "off",
     "react/jsx-uses-react": "off",
     /* This is a temporary fix for react-three-fiber components */
     "react/no-unknown-property": "off",

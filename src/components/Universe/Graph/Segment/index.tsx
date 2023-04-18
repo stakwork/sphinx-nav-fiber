@@ -14,15 +14,15 @@ export const Segment = ({ link }: Props) => {
   useFrame(() => {
     if (ref.current) {
       ref.current.start.set(
-        link.source.x || 0,
-        link.source.y || 0,
-        link.source.z || 0
+        link.sourcePosition?.x || 0,
+        link.sourcePosition?.y || 0,
+        link.sourcePosition?.z || 0
       );
 
       ref.current.end.set(
-        link.target.x || 0,
-        link.target.y || 0,
-        link.target.z || 0
+        link.targetPosition?.x || 0,
+        link.targetPosition?.y || 0,
+        link.targetPosition?.z || 0
       );
 
       const { selectedNode } = useDataStore.getState();
