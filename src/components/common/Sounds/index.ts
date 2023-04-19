@@ -4,11 +4,14 @@ function addOrganicVariant() {
     return ((Math.random() - 0.5) * 4)
 }
 
-const player = new Tone.Player(`sounds/camera_depart.wav`).toDestination();
-player.playbackRate = 0.8
+const highPassFilter = new Tone.Filter(1200, "highpass");
+const lowPassFilter = new Tone.Filter(2000, "lowpass");
+
+const player = new Tone.Player(`sounds/camera_depart.wav`);
+player.playbackRate = 0.7
 player.volume.value = -20
 
-const filter = new Tone.Filter(1200, "highpass");
+player.chain(lowPassFilter, Tone.Destination)
 
 const synth = new Tone.MonoSynth({
     envelope: {
@@ -21,8 +24,7 @@ const synth = new Tone.MonoSynth({
 
 synth.oscillator.type = 'triangle2'
 // synth.volume.value = -6
-synth.chain(filter, Tone.Destination)
-    
+synth.chain(highPassFilter, Tone.Destination)
 
 export const playInspectSound = (nodeType: string) => {
     let pitch = 550
@@ -67,8 +69,8 @@ export const playArriveSound = () => {
 };
 
 export const playDepartSound = () => {
-    let rate = 0.8
-    rate += addOrganicVariant() / 10
+    let rate = 0.55
+    rate += addOrganicVariant() / 9
     if (rate > 0) {
         player.playbackRate = rate    
     }
