@@ -75,7 +75,7 @@ const Table: React.FC<Props> = ({ data, canEdit = false }) => {
               <StyledTableCell align="left">{sourcesMapper[i.source_type]}</StyledTableCell>
               <StyledTableCell align="left">
                 <ConditionalWrapper
-                  condition
+                  condition={canEdit}
                   wrapper={(children) => (
                     <EditableCell
                       id={i.id}
