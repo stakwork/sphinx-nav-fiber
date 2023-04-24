@@ -72,7 +72,7 @@ module.exports = {
     "max-len": "off",
     "no-invalid-this": "off",
     "no-shadow": "off",
-    "no-tabs": "off",
+    "no-tabs": "error",
     "no-underscore-dangle": [
       "error",
       {
@@ -84,7 +84,7 @@ module.exports = {
     "no-use-before-define": "off",
     "no-useless-constructor": "off",
     "padding-line-between-statements": [
-      "off",
+      "error",
       { blankLine: "always", next: "return", prev: "*" },
       { blankLine: "always", next: "*", prev: ["const", "let"] },
       { blankLine: "always", next: ["const", "let"], prev: "*" },
@@ -131,7 +131,7 @@ module.exports = {
     "react-hooks/rules-of-hooks": "error",
     "sort-keys": ["warn", "asc", { natural: true }],
     "spaced-comment": [
-      "off",
+      "error",
       "always",
       {
         markers: ["/"],
