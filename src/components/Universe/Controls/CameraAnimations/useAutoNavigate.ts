@@ -6,7 +6,7 @@ import * as THREE from "three";
 import { useSelectedNode } from "~/stores/useDataStore";
 import { useControlStore } from "~/stores/useControlStore";
 import { NodeExtended } from "~/types";
-import { playArriveSound, playDepartSound, playInspectSound } from "~/components/common/Sounds";
+import { playInspectSound } from "~/components/common/Sounds";
 
 let lookAtAnimationTimer: ReturnType<typeof setTimeout>
 
@@ -22,25 +22,15 @@ export const useAutoNavigate = (
 
   const [distanceReached, setDistanceReached] = useState(false)
   const [lookAtReached, setLookAtReached] = useState(false)
-  const [pathDistance, setPathDistance] = useState(0)
 
   // camera movement to selection params
   const [minDistance] = useState(180)
-  const [minSoundDistance] = useState(800)
   
   const arrive = () => {
-    console.log('arrive')
-
-    if (pathDistance > minSoundDistance) {
-      playArriveSound()  
-    } 
-
     setDistanceReached(true)
   }
 
   const depart = () => {
-    console.log('depart')
-
     if (selectedNode) {
       const mesh = new THREE.Vector3(
         selectedNode.x,
@@ -49,13 +39,7 @@ export const useAutoNavigate = (
       );
 
       const distance = camera.position.distanceTo(mesh)
-
-      setPathDistance(distance)
-
-      if (distance > minSoundDistance) {
-        playDepartSound()  
-        playInspectSound(selectedNode.node_type)
-      }
+      playInspectSound(distance)
     }
 
     setDistanceReached(false)
