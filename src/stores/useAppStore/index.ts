@@ -1,6 +1,6 @@
 import create from "zustand";
 
-export type SecondarySidebarActiveTab = '' | 'sentiment' | 'sources';
+export type SecondarySidebarActiveTab = '' | 'sentiment' | 'sources' | 'about';
 
 type AppStore = {
   currentSearch: string | null
