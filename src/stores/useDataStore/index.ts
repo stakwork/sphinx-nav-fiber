@@ -63,12 +63,14 @@ export const useDataStore = create<DataStore>((set, get) => ({
 
     set({ isFetching: true });
 
-    if (search?.length) {
+    if (true
+      // search?.length
+    ) {
       set({ sphinxModalIsOpen: true });
 
-      const data = await fetchGraphData(search);
+      const data = await fetchGraphData(search||'');
 
-      await saveSearchTerm(search);
+      await saveSearchTerm(search||'');
 
       set({ data, isFetching: false, sphinxModalIsOpen: false });
 

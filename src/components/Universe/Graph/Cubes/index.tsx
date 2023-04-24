@@ -10,10 +10,10 @@ import { Cube } from "./Cube";
 type NodeTypeColors = Record<string, string>;
 
 const NODE_TYPE_COLORS: NodeTypeColors = {
+  topic: "yellow",
   data_series: "red",
   tweet: "aqua",
 };
-
 
 
 export const Cubes = memo(() => {

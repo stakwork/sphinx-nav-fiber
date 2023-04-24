@@ -13,6 +13,7 @@ import {
 import { getLSat } from '~/utils/getLSat'
 import { Vector3 } from "three";
 import * as Noise from '~/utils/noise';
+import { mock } from '~/mocks/getMockGraphData/mockResponse.js';
 
 type guestMapChild = {
   children: string[]
@@ -36,10 +37,14 @@ export const fetchGraphData = async (search: string) => {
   }
 }
 
-const fetchNodes = async (search: string) => {
+const fetchNodes = async (search: string, returnFake: boolean) => {
   if (isDevelopment) {
-    const response = await api.get<FetchDataResponse>(`/searching?word=${search}&free=true`)
 
+    if (returnFake) {
+      return mock as FetchDataResponse
+    }
+
+    const response = await api.get<FetchDataResponse>(`/searching?word=${search}&free=true`)
     return response
   }
 
@@ -68,7 +73,7 @@ export const getAdminId = async (tribeId: string) => {
   return jsonData
 }
 
-const universeScale = 2600
+const universeScale = 5600
 const parentScale = 20
 
 
@@ -173,25 +178,21 @@ function generateTopicNodesFromMap(topicMap: Record<string, string[]>,
                             mappedNodes: Node[],
                             doLinkCallback: (link: Link) => void,
                             doNodeCallback: (node: NodeExtended) => void) {
-  Object.entries(topicMap).forEach(([topic, topicTitles], index) => {
+  Object.entries(topicMap).forEach(([topic, children], index) => {
     /** we dont create topic node for search term,
       *  otherwise everything will be linked to it
       */
-    if (topic === searchterm) {
+    if (children.length < 3) {
       return
     }
 
-    const scale = topicTitles.length * 2
+    const scale = children.length * 2
     const topicNodeId = `topic_node_${index}`
 
     // make links to children
-    topicTitles.forEach((showTitle) => {
-      const show = allData.find((f) => f.show_title === showTitle && f.node_type === 'episode')
-
-      const showRefId = show?.ref_id || ''
-
+    children.forEach((childRefId) => {
       const link: Link = {
-        source: showRefId,
+        source: childRefId,
         target: topicNodeId,
       }
 
@@ -202,6 +203,7 @@ function generateTopicNodesFromMap(topicMap: Record<string, string[]>,
 
     const topicNode: NodeExtended = {
       ...nodePosition,
+      children,
       colors: ['#000'],
       id: topicNodeId,
       label: topic,
@@ -253,8 +255,11 @@ function generateGuestNodesFromMap(guestMap: Record<string, guestMapChild>,
 const getGraphData = async (searchterm: string) => {
   // recharacterize noise
   Noise.seed(Math.random());
+
+  const returnFakeData = true
+
   try {
-    const dataInit = await fetchNodes(searchterm)
+    const dataInit = await fetchNodes(searchterm, returnFakeData)
 
     const nodePosition =  generateNodePosition('','data_series',[],[])
 
@@ -280,10 +285,8 @@ const getGraphData = async (searchterm: string) => {
     const nodes: NodeExtended[] = []
     const links: Link[] = []
 
-    let topicMap: Record<string, string[]> = {}
+    const topicMap: Record<string, string[]> = {}
     const guestMap: Record<string, guestMapChild> = {}
-
-    const datatypess: Record<string,any> = {}
 
 
     if (data.length) {
@@ -331,12 +334,20 @@ const getGraphData = async (searchterm: string) => {
         },
       ]
 
-      data.forEach((d) => {
-        if (!datatypess[d.node_type]) {
-          datatypess[d.node_type] = [d]
-        }
-        else {
-          datatypess[d.node_type].push(d)
+      // first extract topics, these are the neighborhoods
+      data.forEach((node) => {
+        const { topics, ref_id: refId, show_title: showTitle } = node
+        if (topics) {
+          topics.forEach((topic) => {
+            if (showTitle) {
+              if (topicMap[topic]) {
+                topicMap[topic].push(refId||showTitle)
+              }
+              else {
+                topicMap[topic] = [refId||showTitle]
+              }  
+            }
+          })
         }
       })
 
@@ -348,17 +359,7 @@ const getGraphData = async (searchterm: string) => {
         const thisData = data.filter(f => f.node_type === template.type)
         
         thisData.forEach((node) => {
-          const { topics, ref_id: refId, show_title: showTitle } = node
-
-          if (topics) {
-            topicMap = topics.reduce((acc, topic) => {
-              if (showTitle) {
-                acc[topic] = [...(topicMap[topic] || []), showTitle]
-              }
-  
-              return acc
-            }, {} as Record<string, string[]>)
-          }
+          const { ref_id: refId } = node
 
           // replace aws bucket url with cloudfront, and add size indicator to end
           const smallImageUrl = node.image_url
@@ -384,20 +385,18 @@ const getGraphData = async (searchterm: string) => {
       })
 
       // redesign topics
-      // if (shouldIncludeTopics) {
-      //   generateTopicNodesFromMap(topicMap,
-      //     searchterm,
-      //     data,
-      //     nodes,
-      //     (l: Link) => {
-      //       links.push(l)
-      //     },
-      //     (n: NodeExtended) => {
-      //       nodes.push(n)
-      //     }
-      //   )
-      // }
-
+      generateTopicNodesFromMap(topicMap,
+        searchterm,
+        data,
+        nodes,
+        (l: Link) => {
+          links.push(l)
+        },
+        (n: NodeExtended) => {
+          nodes.push(n)
+        }
+      )
+      
       generateGuestNodesFromMap(
         guestMap,
         data,

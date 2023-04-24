@@ -14,6 +14,11 @@ import { useNavigation } from './hooks/useNavigation'
 const geometryXs = new THREE.BoxGeometry(10, 10, 10);
 const geometryS = new THREE.BoxGeometry(20, 20, 20);
 const geometryM = new THREE.BoxGeometry(35, 35, 35);
+const sphereGeometry = new THREE.SphereGeometry(10, 10, 10);
+const sphereMaterial = new THREE.MeshStandardMaterial({
+  transparent: true,
+  opacity:0
+});
 
 const getGeometry = (node: NodeExtended) => {
   switch (node.node_type) {
@@ -40,7 +45,7 @@ export const Cube = memo(({ node, highlight, highlightColor }: Props) => {
   const selectedNode = useSelectedNode();
   const categoryFilter = useDataStore((s) => s.categoryFilter);
 
-  useNavigation(ref)
+  // useNavigation(ref)
 
   const material = useMaterial(
     node.image_url || "noimage.jpeg",
@@ -98,7 +103,21 @@ export const Cube = memo(({ node, highlight, highlightColor }: Props) => {
             </Portal>
           )}
         </mesh>
+
+       
       </Select>
+
+      {node.node_type === 'topic' && <Select enabled>
+        <mesh
+          geometry={sphereGeometry}
+          material={sphereMaterial}
+          position={[node.x, node.y, node.z]}
+          scale={20}
+          userData={node}
+          onPointerOut={onPointerOut}
+          onPointerOver={onPointerIn}
+        />
+        </Select>}
     </>
   );
 });
