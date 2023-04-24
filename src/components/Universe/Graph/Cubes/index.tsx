@@ -6,32 +6,13 @@ import { useAppStore } from "~/stores/useAppStore"
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { NodeExtended } from "~/types";
 import { Cube } from "./Cube";
+import { NODE_RELATIVE_HIGHLIGHT_COLORS } from "~/constants";
 
 type NodeTypeColors = Record<string, string>;
 
 const NODE_TYPE_COLORS: NodeTypeColors = {
   data_series: "red",
   tweet: "aqua",
-};
-
-type NodeRelativeHighlightColors = {
-  nodeColor: string;
-  segmentColor: number;
-}
-
-export const NODE_RELATIVE_HIGHLIGHT_COLORS: Record<string, NodeRelativeHighlightColors> = {
-  children: {
-    nodeColor: 'green',
-    segmentColor: 0x3dff85
-  },
-  guests: {
-    nodeColor: 'purple',
-    segmentColor: 0xdd50ff
-  },
-  source: {
-    nodeColor: 'purple',
-    segmentColor: 0xdd50ff
-  },
 };
 
 export const Cubes = memo(() => {

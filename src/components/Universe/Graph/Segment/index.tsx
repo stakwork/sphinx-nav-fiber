@@ -3,7 +3,7 @@ import { useFrame } from "@react-three/fiber";
 import { useRef } from "react";
 import { useDataStore } from "~/stores/useDataStore";
 import { Link, NodeExtended } from "~/types";
-import { NODE_RELATIVE_HIGHLIGHT_COLORS } from '../Cubes/index'
+import { NODE_RELATIVE_HIGHLIGHT_COLORS } from "~/constants";
 
 type Props = {
   link: Link<NodeExtended>;

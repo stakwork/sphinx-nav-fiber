@@ -52,3 +52,23 @@ export const BOOST_ERROR_BUDGET = "Boost failed, insufficient budget";
 
 export const NODE_ADD_SUCCESS = "Node submitted successfully!";
 export const NODE_ADD_ERROR = "Node submission failed, please try again.";
+
+type NodeRelativeHighlightColors = {
+  nodeColor: string;
+  segmentColor: number;
+}
+
+export const NODE_RELATIVE_HIGHLIGHT_COLORS: Record<string, NodeRelativeHighlightColors> = {
+  children: {
+    nodeColor: 'green',
+    segmentColor: 0x3dff85
+  },
+  guests: {
+    nodeColor: 'purple',
+    segmentColor: 0xdd50ff
+  },
+  source: {
+    nodeColor: 'purple',
+    segmentColor: 0xdd50ff
+  },
+};
