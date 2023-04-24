@@ -39,6 +39,7 @@ export const useAutoNavigate = (
       );
 
       const distance = camera.position.distanceTo(mesh)
+      
       playInspectSound(distance)
     }
 

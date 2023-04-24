@@ -3,6 +3,7 @@ import * as Tone from 'tone'
 const highPassFilter = new Tone.Filter(900, "highpass");
 
 const effectsBus = new Tone.Volume(-12)
+
 effectsBus.chain(highPassFilter, Tone.Destination)
 
 const reverb = new Tone.Reverb(3).connect(effectsBus);
@@ -43,7 +44,9 @@ export const playInspectSound = (distance = 0) => {
     }
     else {
         let pitch = 710
+        
         pitch += addOrganicVariant()
+
         monoSynth.triggerAttackRelease(pitch, 0.001)
     }
 };
