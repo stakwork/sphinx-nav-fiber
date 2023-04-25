@@ -21,6 +21,7 @@ import { Graph } from "./Graph";
 import { Lights } from "./Lights";
 
 import { useControlStore } from "~/stores/useControlStore";
+import { Overlay } from "./Overlay";
 
 const NODE_SELECTED_COLOR = 0x00ff00;
 
@@ -55,44 +56,47 @@ let wheelEventTimeout: ReturnType<typeof setTimeout> | null = null
 
 export const Universe = () => (
     <>
-      <div id="tooltip-portal" />
-      <Suspense fallback={null}>
-        <Canvas
-        camera={{
-          aspect: 1920 / 1080,
-          far: 8000,
-          near: 1,
-          position: [1000, 0, 5],
-        }}
-        id="universe-canvas"
-        onWheel={() => {
-          if (wheelEventTimeout) {
-            clearTimeout(wheelEventTimeout);
+
+    <Overlay />
+    
+    <Suspense fallback={null}>
+      <Canvas
+      
+      camera={{
+        aspect: 1920 / 1080,
+        far: 8000,
+        near: 1,
+        position: [1000, 0, 5],
+      }}
+      id="universe-canvas"
+      onWheel={() => {
+        if (wheelEventTimeout) {
+          clearTimeout(wheelEventTimeout);
+        }
+
+        useControlStore.setState({ isUserScrolling: true })
+
+        wheelEventTimeout = setTimeout(() => {
+          useControlStore.setState({ isUserScrolling: false })
+        }, 200)
+      }}
+      >
+        <Suspense
+          fallback={
+            <Html>
+              <Loader />
+            </Html>
           }
-
-          useControlStore.setState({ isUserScrolling: true })
-
-          wheelEventTimeout = setTimeout(() => {
-            useControlStore.setState({ isUserScrolling: false })
-          }, 200)
-        }}
         >
-          <Suspense
-            fallback={
-              <Html>
-                <Loader />
-              </Html>
-            }
-          >
-            <Preload />
+          <Preload />
 
-            <AdaptiveDpr />
+          <AdaptiveDpr />
 
-            <AdaptiveEvents />
+          <AdaptiveEvents />
 
-            <Content />
-          </Suspense>
-        </Canvas>
-      </Suspense>
+          <Content />
+        </Suspense>
+      </Canvas>
+    </Suspense>
     </>
   )

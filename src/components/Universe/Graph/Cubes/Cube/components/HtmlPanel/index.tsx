@@ -8,7 +8,7 @@ type Props = {
     style?: Record<string, unknown>;
 };
 
-export const HtmlPanel = ({ speed = 2, intensity = 8, style, children }: Props) => (
+export const HtmlPanel = ({ speed = 2, intensity = 4, style, children }: Props) => (
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     <Float
@@ -49,7 +49,7 @@ position: absolute;
 top: ${p =>`${p.style?.top||-200}px`};
 left: ${p =>`${p.style?.left||-680}px`};
 border-radius: 20px;
-box-shadow:-46px -26px #5078f2;
+// box-shadow:-8px -6px #5078f2;
 width: ${p => `${p.style?.width||500}px`};
 height: ${p => `${p.style?.height||500}px`};
 font-size: 80px; 
