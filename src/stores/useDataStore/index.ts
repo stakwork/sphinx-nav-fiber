@@ -18,6 +18,7 @@ type DataStore = {
   sources: Sources[] | null
   queuedSources: Sources[] | null
   sphinxModalIsOpen: boolean
+  cameraFocusTrigger: boolean
   setScrollEventsDisabled: (scrollEventsDisabled: boolean) => void
   setCategoryFilter: (categoryFilter: NodeType | null) => void
   setDisableCameraRotation: (rotation: boolean) => void
@@ -28,6 +29,7 @@ type DataStore = {
   setSources: (sources: Sources[] | null) => void
   setQueuedSources: (sources: Sources[] | null) => void
   setSphinxModalOpen: (_: boolean) => void
+  setCameraFocusTrigger: (_: boolean) => void
 };
 
 const defaultData: Omit<
@@ -40,6 +42,7 @@ const defaultData: Omit<
   | 'setSelectedNode'
   | 'setSelectedTimestamp'
   | 'setSphinxModalOpen'
+  | 'setCameraFocusTrigger'
   | 'setSources'
   | 'setQueuedSources'
   | 'setGraphRadius'
@@ -56,6 +59,7 @@ const defaultData: Omit<
   selectedTimestamp: null,
   sources: null,
   sphinxModalIsOpen: false,
+  cameraFocusTrigger: false,
 }
 
 export const useDataStore = create<DataStore>((set, get) => ({
@@ -94,6 +98,7 @@ export const useDataStore = create<DataStore>((set, get) => ({
   setSelectedTimestamp: (selectedTimestamp) => set({ selectedTimestamp }),
   setSources: (sources) => set({ sources }),
   setSphinxModalOpen: (sphinxModalIsOpen) => set({ sphinxModalIsOpen }),
+  setCameraFocusTrigger: (cameraFocusTrigger) => set({ cameraFocusTrigger }),
 }));
 
 export const useSelectedNode = () => useDataStore((s) => s.selectedNode);

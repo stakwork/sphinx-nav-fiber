@@ -3,7 +3,7 @@ import type { CameraControls } from "@react-three/drei";
 import { useFrame, Camera } from "@react-three/fiber";
 import { RefObject, useEffect, useState } from "react";
 import * as THREE from "three";
-import { useSelectedNode } from "~/stores/useDataStore";
+import { useDataStore, useSelectedNode } from "~/stores/useDataStore";
 import { useControlStore } from "~/stores/useControlStore";
 import { NodeExtended } from "~/types";
 
@@ -14,6 +14,7 @@ export const useAutoNavigate = (
 ) => {
 
   const selectedNode = useSelectedNode();
+  const cameraFocusTrigger = useDataStore(s=>s.cameraFocusTrigger)
 
   const { isUserDragging } = useControlStore();
 
@@ -22,6 +23,12 @@ export const useAutoNavigate = (
 
   // camera movement to selection params
   const [minDistance] = useState(180)
+
+  useEffect(() => {
+    setDistanceReached(false)
+    setLookAtReached(false)
+    useControlStore.setState({ userMovedCamera: false })
+  },[cameraFocusTrigger])
 
   useEffect(() => {
     // stop navigation when user interacts
@@ -57,6 +64,7 @@ export const useAutoNavigate = (
       
       setDistanceReached(false)
       setLookAtReached(false)      
+      useControlStore.setState({ userMovedCamera: false })
     }
 
     return ()=> clearTimeout(lookAtAnimationTimer)

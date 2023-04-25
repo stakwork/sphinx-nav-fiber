@@ -63,3 +63,12 @@ export const colors = {
 } as const;
 
 export type ColorName = keyof typeof colors;
+
+const ColorNames: Record<keyof typeof colors, keyof typeof colors> = {}
+  
+Object.keys(colors).forEach(key => {
+  ColorNames[key] = key
+})
+
+export { ColorNames }
+

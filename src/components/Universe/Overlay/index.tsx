@@ -1,21 +1,28 @@
 import styled from 'styled-components'
 import { Button } from '~/components/Button'
-import { useSelectedNode } from '~/stores/useDataStore'
+import { useControlStore } from '~/stores/useControlStore'
+import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
+import { ColorNames } from '~/utils/colors'
 
 export const Overlay = () => {
 
+    const [ cameraFocusTrigger, setCameraFocusTrigger] = useDataStore(s=>[s.cameraFocusTrigger, s.setCameraFocusTrigger])
     const selectedNode = useSelectedNode()
-
-    console.log('selectedNode',selectedNode)
-
+    const userMovedCamera = useControlStore(s => s.userMovedCamera)
+    
     return (
         <OverlayWrap>
         
-        <div id="tooltip-portal" />
+            <div id="tooltip-portal" />
 
-        <Button kind="small" >
-            Re-center map
-        </Button>
+            {!!selectedNode && userMovedCamera &&
+                <Button
+                    background={ColorNames.primaryRed}
+                    kind='small'
+                    onClick={() => setCameraFocusTrigger(!cameraFocusTrigger)}>
+                    Re-center map
+                </Button>
+            }
         
     </OverlayWrap>
     )

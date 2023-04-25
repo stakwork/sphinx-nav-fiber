@@ -75,6 +75,7 @@ export const Universe = () => (
         }
 
         useControlStore.setState({ isUserScrolling: true })
+        useControlStore.setState({ userMovedCamera: true })
 
         wheelEventTimeout = setTimeout(() => {
           useControlStore.setState({ isUserScrolling: false })

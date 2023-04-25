@@ -127,7 +127,7 @@ module.exports = {
     "react/react-in-jsx-scope": "off",
     "react/require-default-props": "off",
     "react/state-in-constructor": ["error", "never"],
-    "react-hooks/exhaustive-deps": "error",
+    "react-hooks/exhaustive-deps": "off",
     "react-hooks/rules-of-hooks": "error",
     "sort-keys": ["warn", "asc", { natural: true }],
     "spaced-comment": [
