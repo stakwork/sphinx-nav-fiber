@@ -60,6 +60,8 @@ const handleSubmit = async (data: FieldValues, close: () => void, sourceType: st
     body.media_url = data.link
 
     if (data.withTimeStamps) {
+      body.content_type === 'clip';
+
       body.job_response = {
         tags: [
           {
@@ -70,9 +72,12 @@ const handleSubmit = async (data: FieldValues, close: () => void, sourceType: st
           },
         ],
       }
+    } else {
+      body.content_type === 'audio_video';
     }
   } else if (sourceType === TWITTER_SOURCE) {
     body.tweet_id = data.tweet.split('/').at(-1);
+    body.content_type === 'tweet'
   } else {
     body.source_type = sourceType
 
