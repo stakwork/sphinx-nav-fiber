@@ -12,12 +12,12 @@ import { RadarRequest, Sources } from '~/types'
 import { colors } from '~/utils/colors'
 import { sourcesMapper, TWITTER_LINK } from '../../constants'
 import { TableBody, TableCell, TableHead, TableRow, Table as MaterialTable } from '@mui/material'
+import { RSS, TWITTER_HANDLE } from '~/constants'
 
 type Props = {
   data: Sources[] | undefined
   canEdit: boolean
 }
-
 
 const Table: React.FC<Props> = ({ data, canEdit = false }) => {
   const setSources = useDataStore((s) => s.setSources)
@@ -61,58 +61,68 @@ const Table: React.FC<Props> = ({ data, canEdit = false }) => {
   return !data?.length ? (
     <Text>There is not any results for selected filters</Text>
   ) : (
-      <MaterialTable aria-label="a dense table" size="small">
-        <TableHead>
-          <TableRow>
-            <StyledTableCell>Type</StyledTableCell>
-            <StyledTableCell align="left">Source</StyledTableCell>
-            {canEdit && <StyledTableCell align="left" />}
-          </TableRow>
-        </TableHead>
-        <TableBody>
-           {data?.map((i: Sources) => (
-            <TableRow key={i.source}>
-              <StyledTableCell align="left">{sourcesMapper[i.source_type]}</StyledTableCell>
-              <StyledTableCell align="left">
-                <ConditionalWrapper
-                  condition={canEdit}
-                  wrapper={(children) => (
-                    <EditableCell
-                      id={i.id}
-                      onSave={(source) => handleSave(i.id, { source, source_type: i.source_type })}
-                      value={i.source}
-                    >
-                      {children}
-                    </EditableCell>
-                  )}
-                >
-                  {i.source_type === 'twitter_handle' ? (
-                    <StyledLink href={`${TWITTER_LINK}/${i.source}`} target="_blank">
-                      @{i.source}
-                    </StyledLink>
-                  ) : (
-                    <div>{i.source}</div>
-                  )}
-                </ConditionalWrapper>
-              </StyledTableCell>
-              {canEdit && (
-                <StyledTableCell align="left">
-                  <div className="delete-wrapper">
-                    {loadingId === i.id ? (
-                      <ClipLoader color={colors.white} />
-                    ) : (
-                      <ConfirmPopover message="Are you sure ?" onConfirm={() => handleRemove(i.id)}>
-                        <IconWrapper className="centered">
-                          <MdDeleteForever />
-                        </IconWrapper>
-                      </ConfirmPopover>
+    <MaterialTable aria-label="a dense table" size="small">
+      <TableHead>
+        <TableRow>
+          <StyledTableCell>Type</StyledTableCell>
+          <StyledTableCell align="left">Source</StyledTableCell>
+          {canEdit && <StyledTableCell align="left" />}
+        </TableRow>
+      </TableHead>
+      <TableBody>
+        {data?.map((i: Sources) => (
+          <TableRow key={i.source}>
+            <StyledTableCell align="left">{sourcesMapper[i.source_type]}</StyledTableCell>
+            <StyledTableCell align="left">
+              <ConditionalWrapper
+                condition={canEdit}
+                wrapper={(children) => (
+                  <EditableCell
+                    id={i.id}
+                    onSave={(source) => handleSave(i.id, { source, source_type: i.source_type })}
+                    value={i.source}
+                  >
+                    {children}
+                  </EditableCell>
+                )}
+              >
+                {i.source_type === TWITTER_HANDLE || i.source_type === RSS ? (
+                  <>
+                    {i.source_type === TWITTER_HANDLE && (
+                      <StyledLink href={`${TWITTER_LINK}/${i.source}`} target="_blank">
+                        @{i.source}
+                      </StyledLink>
                     )}
-                  </div>
-                </StyledTableCell>
-              )}
-            </TableRow>))}
-        </TableBody>
-      </MaterialTable>
+                    {i.source_type === RSS && (
+                      <StyledLink href={i.source} target="_blank">
+                        {i.source}
+                      </StyledLink>
+                    )}
+                  </>
+                ) : (
+                  <div>{i.source}</div>
+                )}
+              </ConditionalWrapper>
+            </StyledTableCell>
+            {canEdit && (
+              <StyledTableCell align="left">
+                <div className="delete-wrapper">
+                  {loadingId === i.id ? (
+                    <ClipLoader color={colors.white} />
+                  ) : (
+                    <ConfirmPopover message="Are you sure ?" onConfirm={() => handleRemove(i.id)}>
+                      <IconWrapper className="centered">
+                        <MdDeleteForever />
+                      </IconWrapper>
+                    </ConfirmPopover>
+                  )}
+                </div>
+              </StyledTableCell>
+            )}
+          </TableRow>
+        ))}
+      </TableBody>
+    </MaterialTable>
   )
 }
 
