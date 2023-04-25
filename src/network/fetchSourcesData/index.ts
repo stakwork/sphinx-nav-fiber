@@ -21,6 +21,12 @@ export const getRadarData = async (queryParams: TradarParams = defaultParams) =>
   return response
 }
 
+export const getAboutData = async () => {
+  const response = await api.get('/about');
+
+  console.log(response);
+}
+
 export const triggerRadarJob = async () => api.get<SubmitErrRes>(`/radar/trigger-job`)
 
 export const putRadarData = async (id: string, data: RadarRequest) => {

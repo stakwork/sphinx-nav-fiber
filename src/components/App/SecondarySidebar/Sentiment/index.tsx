@@ -24,7 +24,7 @@ export const Sentiment = () => {
         const data: FetchSentimentResponse = await getSentimentData()
 
         setSentimentData(
-          data?.data.map((i) => ({
+          data?.data.filter((i) => i.date).map((i) => ({
             date: moment.unix(Number(String(i.date).split('.')[0])).format('MM/DD/YY'),
             score: i.sentiment_score,
           })),

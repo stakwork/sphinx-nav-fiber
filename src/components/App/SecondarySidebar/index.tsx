@@ -3,11 +3,17 @@ import styled from "styled-components";
 import { Flex } from "~/components/common/Flex";
 import { useAppStore } from "~/stores/useAppStore";
 import { colors } from "~/utils/colors";
+import { About } from "./About";
 import { Sentiment } from "./Sentiment";
-import { Sources } from "./SourcesView/Sources";
 import { SourcesView } from "./SourcesView";
 
 export const MENU_WIDTH = 600;
+
+const ComponentsMapper = {
+  about: <About />,
+  sentiment: <Sentiment />,
+  sources: <SourcesView />,
+}
 
 export const SecondarySideBar = () => {
 
@@ -21,7 +27,7 @@ export const SecondarySideBar = () => {
       <CloseButton onClick={() => setSecondarySidebarActiveTab('')}>
         <MdClose />
       </CloseButton>
-      {secondarySidebarActiveTab === 'sentiment' ? <Sentiment /> : <SourcesView />}
+      {ComponentsMapper[secondarySidebarActiveTab]}
     </Wrapper>
   ) : null
 };
