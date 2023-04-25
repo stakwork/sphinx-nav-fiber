@@ -2,7 +2,6 @@ import styled from 'styled-components'
 import { Button } from '~/components/Button'
 import { useControlStore } from '~/stores/useControlStore'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
-import { ColorNames } from '~/utils/colors'
 
 export const Overlay = () => {
 
@@ -17,7 +16,7 @@ export const Overlay = () => {
 
             {!!selectedNode && userMovedCamera &&
                 <Button
-                    background={ColorNames.primaryRed}
+                    background="bluePressState"
                     kind='small'
                     onClick={() => setCameraFocusTrigger(!cameraFocusTrigger)}>
                     Re-center map
