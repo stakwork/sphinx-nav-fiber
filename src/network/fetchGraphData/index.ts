@@ -27,6 +27,13 @@ const defaultData: GraphData = {
   nodes: [],
 }
 
+type TopicMapItem = {
+  children: string[];
+  position: Vector3
+}
+
+type TopicMap = Record<string, TopicMapItem>
+
 const shouldIncludeTopics = false
 
 export const fetchGraphData = async (search: string) => {
@@ -98,54 +105,84 @@ function generateGuestNodePosition() {
   )
 }
 
-function generateNodePosition(refId: string|undefined, nodeType: string, allData: NodeExtended[], mappedNodes?: NodeExtended[]) {
+function generateTopicPosition(topicMap: TopicMap) {
 
-  let scale = universeScale  
+  // do collision check
+  console.log('topicMap', topicMap)
+  
+  return new Vector3(
+    (Math.random() * universeScale) - (universeScale * 0.5),
+    (Math.random() * universeScale) - (universeScale * 0.5),
+    (Math.random() * universeScale) - (universeScale * 0.5)
+  )
+}
+
+function generateNearbyPosition(position: Vector3) {
+  const biasX = ((Math.random() - 0.5) < 0 ? -1 : 1)
+  const biasY = ((Math.random() - 0.5) < 0 ? -1 : 1)
+  const biasZ = ((Math.random() - 0.5) < 0 ? -1 : 1)
+
+  const xOffset = 100 * biasX
+  const yOffset = 100 * biasY
+  const zOffset = 100 * biasZ
+
+  const center = new Vector3()
+
+  center.x = position.x + xOffset
+  center.y = position.y + yOffset
+  center.z = position.z + zOffset
+
+  return center
+}
+
+function generateNodePosition(node: NodeExtended, allData: NodeExtended[], topicMap: TopicMap, mappedNodes?: NodeExtended[]) {
+  const { ref_id: refId, children} = node
 
   const center = {
-    x:(Math.random() * scale) - (scale * 0.5),
-    y:(Math.random() * scale) - (scale * 0.5),
-    z:(Math.random() * scale) - (scale * 0.5)
+    x:(Math.random() * universeScale) - (universeScale * 0.5),
+    y:(Math.random() * universeScale) - (universeScale * 0.5),
+    z:(Math.random() * universeScale) - (universeScale * 0.5)
   }
 
+  // do my children have topics?
+  const childTopics: TopicMapItem[] = []
+  const childNodes = getMyChildren(children || [], allData)
+  childNodes?.forEach((childNode) => {
+    const topicNodes = getMyTopicNodes(childNode.ref_id || '', topicMap)
+    childTopics.push(...topicNodes)
+  })
+
+  // do i have topics?
+  const myTopicNodes = getMyTopicNodes(refId, topicMap)
+
+   // do i have parents?
   const parents = getMyParents(refId, mappedNodes)
 
-  if (parents?.length) {
+  let relativePosition: Vector3 | null = null
+
+  if (childTopics.length) {
+    console.log("my child has topics", childTopics)
+    const {position} = childTopics[0]
+    relativePosition = generateNearbyPosition(new Vector3(position.x, position.y, position.z))
+  } 
+  else if (myTopicNodes.length){
+    console.log("i have topics", myTopicNodes)  
+    const {position} = myTopicNodes[0]
+    relativePosition = generateNearbyPosition(new Vector3(position.x, position.y, position.z))
+  } 
+  else if (parents?.length){
     const parent = parents[0]
-    const childrenNodes = getMyChildren(parent.children||[], allData)
-    const myChildIndex = childrenNodes.findIndex(f => f.ref_id === refId) || 0
-    
-    let xOffset = 0
-    let yOffset = 0
-    let zOffset = 0
-
-    const biasX = ((Math.random() - 0.5) < 0 ? -1 : 1)
-    const biasY = ((Math.random() - 0.5) < 0 ? -1 : 1)
-    const biasZ = ((Math.random() - 0.5) < 0 ? -1 : 1)
-
-    switch (nodeType) {
-      case 'episode':
-        xOffset = 100 * biasX
-        yOffset = 100 * biasY
-        zOffset = 100 * biasZ
-        break
-      case 'clip':
-        xOffset = 60 * biasX * (myChildIndex + 1)
-        break
-      case 'guest':
-        xOffset = 0
-        break
-      default:
-    }
-    
-    center.x = parent.x + xOffset
-    center.y = parent.y + yOffset
-    center.z = parent.z + zOffset
-    
-    scale = parentScale
+    relativePosition = generateNearbyPosition(new Vector3(parent.x, parent.y, parent.z))
   }
+
+  if (relativePosition) {
+    center.x = relativePosition.x
+    center.y = relativePosition.y
+    center.z = relativePosition.z
+  }
+  
   // apply perlin noise
-  const perlinNoise = Noise.perlin3(center.x,center.y,center.z)
+  const perlinNoise = 1 // Noise.perlin3(center.x,center.y,center.z)
   
   const amp = 100
   
@@ -154,6 +191,23 @@ function generateNodePosition(refId: string|undefined, nodeType: string, allData
     center.y + (perlinNoise * amp),
     center.z + (perlinNoise * amp)
   )
+}
+
+
+function getMyTopicNodes(nodeRefId: string | undefined, topicMap: TopicMap) {
+  if (!nodeRefId) {
+    return []
+  }
+
+  const myTopicNodes: TopicMapItem[] = []
+
+  Object.values(topicMap).forEach((content) => {
+    if (content.children.includes(nodeRefId)) {
+      myTopicNodes.push(content)
+    }
+  })
+  
+  return myTopicNodes
 }
 
 function getMyParents(nodeRefId: string | undefined, nodes: NodeExtended[] | undefined) {
@@ -172,13 +226,15 @@ function getMyChildren(childrenRefIds:string[], nodes: NodeExtended[]) {
   return children
 }
 
-function generateTopicNodesFromMap(topicMap: Record<string, string[]>,
-                            searchterm: string,
+function generateTopicNodesFromMap(topicMap: TopicMap,
                             allData: Node[],
                             mappedNodes: Node[],
                             doLinkCallback: (link: Link) => void,
                             doNodeCallback: (node: NodeExtended) => void) {
-  Object.entries(topicMap).forEach(([topic, children], index) => {
+  Object.entries(topicMap).forEach(([topic, content], index) => {
+
+    const { children, position } = content
+    const { x, y, z } = position
     /** we dont create topic node for search term,
       *  otherwise everything will be linked to it
       */
@@ -189,20 +245,10 @@ function generateTopicNodesFromMap(topicMap: Record<string, string[]>,
     const scale = children.length * 2
     const topicNodeId = `topic_node_${index}`
 
-    // make links to children
-    children.forEach((childRefId) => {
-      const link: Link = {
-        source: childRefId,
-        target: topicNodeId,
-      }
-
-      doLinkCallback(link)
-    })
-
-    const nodePosition = generateNodePosition(topicNodeId, 'topic', allData, mappedNodes)
-
     const topicNode: NodeExtended = {
-      ...nodePosition,
+      x,
+      y,
+      z,
       children,
       colors: ['#000'],
       id: topicNodeId,
@@ -258,10 +304,16 @@ const getGraphData = async (searchterm: string) => {
 
   const returnFakeData = true
 
+  const nodes: NodeExtended[] = []
+  const links: Link[] = []
+
+  const topicMap: TopicMap = {}
+  const guestMap: Record<string, guestMapChild> = {}
+
   try {
     const dataInit = await fetchNodes(searchterm, returnFakeData)
 
-    const nodePosition =  generateNodePosition('','data_series',[],[])
+    const nodePosition = generateNodePosition({} as NodeExtended,[],topicMap,[])
 
     const dataSeries = dataInit.data_series
       ? [
@@ -281,13 +333,6 @@ const getGraphData = async (searchterm: string) => {
       : []
 
     const data: Node[] = [...dataInit.exact, ...dataInit.related, ...dataSeries]
-
-    const nodes: NodeExtended[] = []
-    const links: Link[] = []
-
-    const topicMap: Record<string, string[]> = {}
-    const guestMap: Record<string, guestMapChild> = {}
-
 
     if (data.length) {
       // do all node processing from top down
@@ -340,16 +385,38 @@ const getGraphData = async (searchterm: string) => {
         if (topics) {
           topics.forEach((topic) => {
             if (showTitle) {
-              if (topicMap[topic]) {
-                topicMap[topic].push(refId||showTitle)
+              if (topicMap[topic] && !topicMap[topic].children.includes(refId || showTitle)) {
+                  topicMap[topic].children.push(refId||showTitle)  
               }
               else {
-                topicMap[topic] = [refId||showTitle]
+                topicMap[topic] = {
+                  position: generateTopicPosition(topicMap),
+                  children: [refId || showTitle]
+                }
               }  
             }
           })
         }
       })
+
+      // remove topics with less than 3 children
+      Object.keys(topicMap).forEach((key) => {
+        if (topicMap[key].children.length < 3) {
+          delete topicMap[key]
+        }
+      })
+
+      // generate nodes
+      generateTopicNodesFromMap(topicMap,
+        data,
+        nodes,
+        (l: Link) => {
+          links.push(l)
+        },
+        (n: NodeExtended) => {
+          nodes.push(n)
+        }
+      )
 
       dataProcessingTemplate.forEach(template => {
         if (template.hide) {
@@ -366,7 +433,7 @@ const getGraphData = async (searchterm: string) => {
             ?.replace(AWS_IMAGE_BUCKET_URL, CLOUDFRONT_IMAGE_BUCKET_URL)
             .replace('.jpg', '_s.jpg')
           
-          const nodePosition1 = generateNodePosition(refId, node.type || node.node_type, data, nodes)
+          const nodePosition1 = generateNodePosition(node, data, topicMap, nodes)
 
           nodes.push({
             ...node,
@@ -383,19 +450,6 @@ const getGraphData = async (searchterm: string) => {
           }
         })
       })
-
-      // redesign topics
-      generateTopicNodesFromMap(topicMap,
-        searchterm,
-        data,
-        nodes,
-        (l: Link) => {
-          links.push(l)
-        },
-        (n: NodeExtended) => {
-          nodes.push(n)
-        }
-      )
       
       generateGuestNodesFromMap(
         guestMap,
@@ -408,7 +462,7 @@ const getGraphData = async (searchterm: string) => {
     }
 
     // do links
-    nodes.filter(f=>f.node_type!=='guest').forEach((node) => {
+    nodes.filter(f=>f.node_type!=='guest'&&f.node_type!=='topic').forEach((node) => {
       const { children } = node
       children?.forEach((childRefId: string) => {
         if (node.ref_id) {

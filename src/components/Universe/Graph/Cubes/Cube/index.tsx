@@ -1,4 +1,4 @@
-import { useFrame } from "@react-three/fiber";
+import { Text } from "@react-three/drei";
 import { Select } from "@react-three/postprocessing";
 import { memo, useCallback, useEffect, useRef, useState } from "react";
 import * as THREE from "three";
@@ -107,7 +107,8 @@ export const Cube = memo(({ node, highlight, highlightColor }: Props) => {
        
       </Select>
 
-      {node.node_type === 'topic' && <Select enabled>
+      {(!isSelected && node.node_type === 'topic') && <>
+        <Select enabled>
         <mesh
           geometry={sphereGeometry}
           material={sphereMaterial}
@@ -117,7 +118,10 @@ export const Cube = memo(({ node, highlight, highlightColor }: Props) => {
           onPointerOut={onPointerOut}
           onPointerOver={onPointerIn}
         />
-        </Select>}
+        </Select>
+
+      
+      </>}
     </>
   );
 });
