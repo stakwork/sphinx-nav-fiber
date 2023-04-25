@@ -1,6 +1,6 @@
 import { ReactElement, useState } from 'react'
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
-import { MdClose, MdInfo, MdKeyboardBackspace } from 'react-icons/md'
+import { MdCheckCircle, MdClose, MdInfo, MdKeyboardBackspace, MdWarning } from 'react-icons/md'
 import { ClipLoader } from 'react-spinners'
 import { toast } from 'react-toastify'
 import * as sphinx from 'sphinx-bridge-kevkevinpal'
@@ -47,7 +47,7 @@ const infoMessageSource =
 
 const notify = (message: string) => {
   toast(<ToastMessage message={message} />, {
-    icon: false,
+    icon: message === NODE_ADD_SUCCESS ? <MdCheckCircle color={colors.primaryGreen} /> : <MdWarning color={colors.primaryRed} />,
     position: toast.POSITION.BOTTOM_CENTER,
     type: message === NODE_ADD_SUCCESS ? 'success' : 'error',
   })
@@ -85,36 +85,36 @@ const handleSubmit = async (data: FieldValues, close: () => void, sourceType: st
 
   let lsatToken
 
-  if (!isDevelopment) {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    const enable = await sphinx.enable()
+  // if (!isDevelopment) {
+  //   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  //   // @ts-ignore
+  //   const enable = await sphinx.enable()
 
-    body.pubkey = enable?.pubkey
+  //   body.pubkey = enable?.pubkey
 
-    lsatToken = await getLSat('adding_node')
+  //   lsatToken = await getLSat('adding_node')
 
-    if (!lsatToken) {
-      throw new Error('An error occured calling getLSat')
-    }
-  }
+  //   if (!lsatToken) {
+  //     throw new Error('An error occured calling getLSat')
+  //   }
+  // }
 
-  const endPoint = CONTENT_TYPES.includes(sourceType) ? 'add_node' : 'radar'
+  // const endPoint = CONTENT_TYPES.includes(sourceType) ? 'add_node' : 'radar'
 
   try {
-    const res: SubmitErrRes = await api.post(`/${endPoint}`, JSON.stringify(body), {
-      Authorization: lsatToken,
-    } as HeadersInit)
+    // const res: SubmitErrRes = await api.post(`/${endPoint}`, JSON.stringify(body), {
+    //   Authorization: lsatToken,
+    // } as HeadersInit)
 
-    if (res.error) {
-      const { message } = res.error
+    // if (res.error) {
+    //   const { message } = res.error
 
-      throw new Error(message)
-    }
+    //   throw new Error(message)
+    // }
 
-    if(endPoint === 'radar') {
-      await successCallback();
-    }
+    // if(endPoint === 'radar') {
+    //   await successCallback();
+    // }
 
     notify(NODE_ADD_SUCCESS)
     close()
