@@ -29,9 +29,8 @@ export const FooterMenu = () => {
 
   const handleOpenModal = (data: AddNodeModalData) => {
     open()
-    setAddNodeModalData(data);
+    setAddNodeModalData(data)
   }
-
 
   const handleClickOutside = (event: MouseEvent) => {
     if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
@@ -71,7 +70,7 @@ export const FooterMenu = () => {
                   <MdPostAdd size={24} />
                 </IconWrapper>
               </ActionButton>
-              <ActionButton onClick={() => handleOpenSidebar('sources')}>
+              <ActionButton id="cy-open-soure-table" onClick={() => handleOpenSidebar('sources')}>
                 <Text>Source Table</Text>
                 <IconWrapper>
                   <MdOutlineTableView size={24} />
@@ -104,7 +103,7 @@ const FooterAction = styled(Flex).attrs({
   position: absolute;
   bottom: 0;
   right: 0;
-  width: auto%;
+  width: auto;
   transition: opacity 1s;
 `
 

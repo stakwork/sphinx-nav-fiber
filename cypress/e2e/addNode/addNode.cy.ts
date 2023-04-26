@@ -1,19 +1,5 @@
-import {
-  addNodeButtonHome,
-  addNodeButtonSidebarOpen,
-  addNodeCloseButton,
-  addNodeModal,
-  addNodeSubmitButton,
-  checkbox,
-  description,
-  endTime,
-  link,
-  startTime,
-  tagError,
-  tags,
-  toast,
-  typeClipButton,
-} from '../support/constants/addNode'
+import { actionMenu, addNodeModal, host, addNodeSubmitButton, toast } from '../../support'
+import { checkbox, description, endTime, link, startTime, tagError, tags } from './const'
 
 describe('Add Node Form / Home interactions', () => {
   beforeEach(() => {
@@ -32,7 +18,7 @@ describe('Add Node Form / Home interactions', () => {
   const checkboxButton = () => cy.get(checkbox)
 
   it('submitting the form with all fields empty yields 5 error messages', () => {
-    cy.get('#cy-actions-menu-toggle').click({ waitForAnimations: false })
+    cy.get(actionMenu).click({ waitForAnimations: false })
     cy.get('#cy-add-content-menu').click({ waitForAnimations: false })
 
     cy.get('div.react-dropdown-select').click({ waitForAnimations: false })
@@ -51,14 +37,14 @@ describe('Add Node Form / Home interactions', () => {
   })
 
   it('all fields filled out correctly submits the form and checkbox checked, closes the modal and displays custom success message', () => {
-    cy.intercept('POST', 'https://knowledge-graph.sphinx.chat/add_node', {
+    cy.intercept('POST', `${host}/add_node`, {
       body: {
         success: true,
       },
       statusCode: 200,
     }).as('add_node')
 
-    cy.get('#cy-actions-menu-toggle').click({ waitForAnimations: false })
+    cy.get(actionMenu).click({ waitForAnimations: false })
     cy.get('#cy-add-content-menu').click({ waitForAnimations: false })
 
     cy.get('div.react-dropdown-select').click({ waitForAnimations: false })
@@ -89,12 +75,12 @@ describe('Add Node Form / Home interactions', () => {
   })
 
   it('checkbox checked, submitting the form but receiving an error response from the server, displays custom error message', () => {
-    cy.intercept('POST', 'https://knowledge-graph.sphinx.chat/add_node', {
+    cy.intercept('POST', `${host}/add_node`, {
       body: { error: { message: 'Payment required' } },
       statusCode: 402,
     }).as('add_node')
 
-    cy.get('#cy-actions-menu-toggle').click({ waitForAnimations: false })
+    cy.get(actionMenu).click({ waitForAnimations: false })
     cy.get('#cy-add-content-menu').click({ waitForAnimations: false })
 
     cy.get('div.react-dropdown-select').click({ waitForAnimations: false })

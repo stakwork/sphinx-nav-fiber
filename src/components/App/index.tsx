@@ -20,6 +20,7 @@ import { FooterMenu } from './FooterMenu'
 import { SecondarySideBar } from './SecondarySidebar'
 import { SideBar } from './SideBar'
 import { Toasts } from './Toasts'
+import { E2ETests } from '~/utils/tests'
 
 const Wrapper = styled(Flex)`
   height: 100%;
@@ -34,7 +35,7 @@ const Version = styled(Flex)`
   color: ${colors.white};
   font-size: 12px;
   opacity: 0.5;
-`;
+`
 
 export const App = () => {
   const [isAuthorized, setAuthorized] = useState(false)
@@ -91,9 +92,9 @@ export const App = () => {
   useEffect(() => {
     if (searchTerm) {
       if (!hasBudgetExplanationModalBeSeen) {
-        open();
+        open()
 
-        return;
+        return
       }
     }
 
@@ -127,6 +128,7 @@ export const App = () => {
 
         <BudgetExplanationModal />
       </Wrapper>
+      <E2ETests />
     </>
   )
 }

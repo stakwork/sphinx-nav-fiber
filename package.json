@@ -43,6 +43,7 @@
   },
   "scripts": {
     "start": "craco start",
+    "start-e2e": "REACT_APP_IS_E2E=true craco start",
     "dev-tribe": "PORT=3004 craco start",
     "build": "craco build",
     "test": "craco test",
