@@ -22,6 +22,7 @@ export const HtmlPanel = memo(({ speed = 2, intensity = 4, children, withTransac
   >
     <Html
       center
+      className="html-panel"
       onClick={(e) => e.stopPropagation()}
       onKeyDown={(e) => e.stopPropagation()}
       onPointerDown={(e) => e.stopPropagation()}
@@ -33,6 +34,7 @@ export const HtmlPanel = memo(({ speed = 2, intensity = 4, children, withTransac
       transform
     >
       <HtmlWrap
+        className="html-panel"
         dimensions={withTransacript ? withTranscriptDimensions : defaultDimensions}
         onPointerDown={(e) => e.stopPropagation()}
         onPointerOut={(e) => e.stopPropagation()}

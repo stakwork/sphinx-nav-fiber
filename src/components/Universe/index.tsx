@@ -69,18 +69,29 @@ export const Universe = () => (
         position: [1000, 0, 5],
       }}
       id="universe-canvas"
-      onWheel={() => {
-        if (wheelEventTimeout) {
-          clearTimeout(wheelEventTimeout);
-        }
+        onWheel={(e) => {
+          const { target } = e
+          const { offsetParent } = target
 
-        useControlStore.setState({ isUserScrolling: true })
-        useControlStore.setState({ userMovedCamera: true })
+          if (wheelEventTimeout) {
+            clearTimeout(wheelEventTimeout);
+          }
 
-        wheelEventTimeout = setTimeout(() => {
-          useControlStore.setState({ isUserScrolling: false })
-        }, 200)
-      }}
+          if (offsetParent?.classList?.contains('html-panel')) {
+            // if overflowing on y, disable camera controls to scroll on div
+            if (offsetParent.clientHeight < offsetParent.scrollHeight) {
+              useControlStore.setState({ isUserScrollingOnHtmlPanel: true })  
+            }
+          }
+          
+          useControlStore.setState({ isUserScrolling: true })
+          useControlStore.setState({ userMovedCamera: true })
+
+          wheelEventTimeout = setTimeout(() => {
+            useControlStore.setState({ isUserScrolling: false })
+            useControlStore.setState({ isUserScrollingOnHtmlPanel: false })
+          }, 200)
+        }}
       >
         <Suspense
           fallback={
