@@ -85,36 +85,36 @@ const handleSubmit = async (data: FieldValues, close: () => void, sourceType: st
 
   let lsatToken
 
-  // if (!isDevelopment) {
-  //   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  //   // @ts-ignore
-  //   const enable = await sphinx.enable()
+  if (!isDevelopment) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    const enable = await sphinx.enable()
 
-  //   body.pubkey = enable?.pubkey
+    body.pubkey = enable?.pubkey
 
-  //   lsatToken = await getLSat('adding_node')
+    lsatToken = await getLSat('adding_node')
 
-  //   if (!lsatToken) {
-  //     throw new Error('An error occured calling getLSat')
-  //   }
-  // }
+    if (!lsatToken) {
+      throw new Error('An error occured calling getLSat')
+    }
+  }
 
-  // const endPoint = CONTENT_TYPES.includes(sourceType) ? 'add_node' : 'radar'
+  const endPoint = CONTENT_TYPES.includes(sourceType) ? 'add_node' : 'radar'
 
   try {
-    // const res: SubmitErrRes = await api.post(`/${endPoint}`, JSON.stringify(body), {
-    //   Authorization: lsatToken,
-    // } as HeadersInit)
+    const res: SubmitErrRes = await api.post(`/${endPoint}`, JSON.stringify(body), {
+      Authorization: lsatToken,
+    } as HeadersInit)
 
-    // if (res.error) {
-    //   const { message } = res.error
+    if (res.error) {
+      const { message } = res.error
 
-    //   throw new Error(message)
-    // }
+      throw new Error(message)
+    }
 
-    // if(endPoint === 'radar') {
-    //   await successCallback();
-    // }
+    if(endPoint === 'radar') {
+      await successCallback();
+    }
 
     notify(NODE_ADD_SUCCESS)
     close()
