@@ -1,15 +1,16 @@
 import { useEffect, useState } from 'react'
+import { ClipLoader } from 'react-spinners'
 import * as sphinx from 'sphinx-bridge-kevkevinpal'
 import styled from 'styled-components'
-import { TextInput } from '~/components/AddNodeModal/TextInput'
 import { Button } from '~/components/Button'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { isDevelopment } from '~/constants'
-import { getAdminId } from '~/network/fetchGraphData'
-import { getAboutData } from '~/network/fetchSourcesData'
+import { TAboutParams, getAboutData } from '~/network/fetchSourcesData'
 import { useUserStore } from '~/stores/useUserStore'
 import { colors } from '~/utils/colors'
+import { AboutAdminView } from './AdminView'
+import { CommonView } from './CommonView'
 
 export const requiredRule = {
   required: {
@@ -23,13 +24,32 @@ const admins = [
   '03a9a8d953fe747d0dd94dd3c567ddc58451101e987e2d2bf7a4d1e10a2c89ff38',
 ]
 
+const defaultData = {
+  description: '',
+  mission_statement: '',
+  search_term: '',
+  title: '',
+}
+
 export const About = () => {
   const [setIsAdmin, isAdmin, setPubKey, pubKey] = useUserStore((s) => [s.setIsAdmin, s.isAdmin, s.setPubKey, s.pubKey])
   const [admId, setAdmId] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [initialValues, setInitialValues] = useState<TAboutParams>(defaultData)
 
   useEffect(() => {
     const init = async () => {
-      await getAboutData()
+      setLoading(true)
+
+      try {
+        const response = await getAboutData()
+
+        setInitialValues(response)
+      } catch (error) {
+        console.log(error)
+      } finally {
+        setLoading(false)
+      }
     }
 
     init()
@@ -81,34 +101,17 @@ export const About = () => {
     <Wrapper align="stretch" direction="column" justify="flex-end">
       <Heading align="center" direction="row" justify="space-between">
         <Text className="title">About</Text>
-        {/* {resolveAdminActions()} */}
+        {resolveAdminActions()}
       </Heading>
-      <ContentWrapper align="stretch" justify="flex-start">
-        <Flex pt={12}>
-          <Text kind="regular">Graph Title</Text>
-          <Flex pt={12}>
-            <Text className="value" kind="medium">
-              Chile Inflation
-            </Text>
-          </Flex>
-        </Flex>
-        <Flex pt={12}>
-          <Text kind="regular">Graph Description</Text>
-          <Flex pt={12}>
-            <Text className="value" kind="medium">
-              A graph containing info about all things inflation in Chile.
-            </Text>
-          </Flex>
-        </Flex>
-        <Flex pt={12}>
-          <Text kind="regular">Mission Statement</Text>
-          <Flex pt={12}>
-            <Text className="value" kind="medium">
-              Learn about changes in Chile&apos;s inflation rates.
-            </Text>
-          </Flex>
-        </Flex>
-      </ContentWrapper>
+      {loading ? (
+        <ContentWrapper align="center" justify="center">
+          <ClipLoader />
+        </ContentWrapper>
+      ) : (
+        <ContentWrapper align="stretch" justify="flex-start">
+          {!isAdmin ? <CommonView initialValues={initialValues} /> : <AboutAdminView initialValues={initialValues} />}
+        </ContentWrapper>
+      )}
     </Wrapper>
   )
 }
