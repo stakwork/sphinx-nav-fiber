@@ -1,3 +1,4 @@
+import { Table as MaterialTable, TableBody, TableCell, TableHead, TableRow } from '@mui/material'
 import React, { useState } from 'react'
 import { MdCheck, MdClose, MdDeleteForever, MdOutlineModeEdit } from 'react-icons/md'
 import { ClipLoader } from 'react-spinners'
@@ -6,13 +7,12 @@ import { BaseTextInput } from '~/components/BaseTextInput'
 import ConfirmPopover from '~/components/common/ConfirmPopover'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
+import { RSS, TWITTER_HANDLE } from '~/constants'
 import { deleteRadarData, putRadarData } from '~/network/fetchSourcesData'
 import { useDataStore } from '~/stores/useDataStore'
 import { RadarRequest, Sources } from '~/types'
 import { colors } from '~/utils/colors'
-import { sourcesMapper, TWITTER_LINK } from '../../constants'
-import { TableBody, TableCell, TableHead, TableRow, Table as MaterialTable } from '@mui/material'
-import { RSS, TWITTER_HANDLE } from '~/constants'
+import { TWITTER_LINK, sourcesMapper } from '../../constants'
 
 type Props = {
   data: Sources[] | undefined

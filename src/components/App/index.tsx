@@ -5,14 +5,15 @@ import * as sphinx from 'sphinx-bridge-kevkevinpal'
 import styled from 'styled-components'
 import { AddNodeModal } from '~/components/AddNodeModal'
 import { BudgetExplanationModal } from '~/components/BudgetExplanationModal'
-import { Flex } from '~/components/common/Flex'
 import { DataRetriever } from '~/components/DataRetriever'
 import { GlobalStyle } from '~/components/GlobalStyle'
 import { Universe } from '~/components/Universe'
+import { Flex } from '~/components/common/Flex'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { useModal } from '~/stores/useModalStore'
 import { colors } from '~/utils/colors'
+import { E2ETests } from '~/utils/tests'
 import version from '~/utils/versionHelper'
 import { Preloader } from '../Universe/Preloader'
 import { AppBar } from './AppBar'
@@ -20,8 +21,6 @@ import { FooterMenu } from './FooterMenu'
 import { SecondarySideBar } from './SecondarySidebar'
 import { SideBar } from './SideBar'
 import { Toasts } from './Toasts'
-import { E2ETests } from '~/utils/tests'
-
 
 const Wrapper = styled(Flex)`
   height: 100%;
@@ -128,7 +127,6 @@ export const App = () => {
         <Toasts />
 
         <BudgetExplanationModal />
-        
       </Wrapper>
       <E2ETests />
     </>

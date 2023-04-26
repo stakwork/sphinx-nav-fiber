@@ -77,5 +77,8 @@ export const RSS = 'rss'
 export const TWITTER_SOURCE = 'tweet'
 export const TOPIC = 'topic'
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> test: add e2e tests for the sources table
 export const isE2E = !!process.env.REACT_APP_IS_E2E
