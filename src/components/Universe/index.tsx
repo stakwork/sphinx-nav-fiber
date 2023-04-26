@@ -61,17 +61,16 @@ export const Universe = () => (
     
     <Suspense fallback={null}>
       <Canvas
-      
-      camera={{
-        aspect: 1920 / 1080,
-        far: 8000,
-        near: 1,
-        position: [1000, 0, 5],
-      }}
-      id="universe-canvas"
-        onWheel={(e) => {
+        camera={{
+          aspect: 1920 / 1080,
+          far: 8000,
+          near: 1,
+          position: [1000, 0, 5],
+        }}
+        id="universe-canvas"
+        onWheel={(e: React.WheelEvent) => {
           const { target } = e
-          const { offsetParent } = target
+          const { offsetParent } = target as HTMLDivElement
 
           if (wheelEventTimeout) {
             clearTimeout(wheelEventTimeout);
