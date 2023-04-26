@@ -4,11 +4,13 @@ FROM node:16 as build
 # Create app directory
 WORKDIR /usr/src/app
 
-COPY package*.json .
-COPY yarn.lock .
-RUN yarn cache clean && yarn install --production=true --ignore-scripts
+COPY package*.json /usr/src/app
+COPY yarn.lock /usr/src/app
+VOLUME node_modules /usr/src/app/node_modules
+RUN yarn cache clean && yarn install 
 
-COPY . .
+
+COPY . /usr/src/app
 
 RUN yarn run build
 
