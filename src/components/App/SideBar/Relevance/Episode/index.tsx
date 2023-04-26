@@ -146,45 +146,14 @@ export const Episode = ({
                 </Text>
               )}
             </Flex>
-
-            {isSelected && (
-              <Flex>
-                <Actions />
-              </Flex>
-            )}
           </Flex>
 
           <Flex pb={4}>
             <Text color="primaryText1">{description}</Text>
           </Flex>
-
-          {!isSelected && (
-            <Text color="mainBottomIcons" kind="tiny">
-              {title}
-            </Text>
-          )}
-
-          {isSelected && !hasYouTubeType && (
-            <Flex style={{ marginTop: "4px" }}>
-              <Audio
-                controls
-                id="audio-player"
-                onEnded={onAudioEnds}
-                onError={() => setIsTimestampLoaded(true)}
-                onLoadedMetadata={() => setIsTimestampLoaded(true)}
-                src={selectedTimestamp.link}
-                volume={1}
-              />
-            </Flex>
-          )}
         </Flex>
       </Flex>
 
-      {isSelected && hasYouTubeType && (
-        <Flex style={{ marginTop: "4px" }}>
-          <YouTube />
-        </Flex>
-      )}
     </EpisodeWrapper>
   );
 };
