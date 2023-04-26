@@ -1,16 +1,19 @@
 import { Float, Html } from '@react-three/drei'
+import { memo } from 'react'
 import styled, { css } from 'styled-components'
 
 type Props = {
   children: React.ReactNode
-  dimensions?: [number, number, number, number]
   speed?: number
   intensity?: number
+  withTransacript?: boolean
 }
 
-export const HtmlPanel = ({ dimensions, speed = 2, intensity = 4, children }: Props) => (
+const defaultDimensions = [-200, -680, 500, 500] as [number, number, number, number]
+const withTranscriptDimensions = [260, -40, 600, 300] as [number, number, number, number]
+
+export const HtmlPanel = memo(({ speed = 2, intensity = 4, children, withTransacript }: Props) => (
   <Float
-    attach="geometry"
     floatingRange={[1, 2]}
     /* Up/down float intensity, works like a multiplier with floatingRange,defaults to 1 */
     floatIntensity={intensity}
@@ -30,7 +33,7 @@ export const HtmlPanel = ({ dimensions, speed = 2, intensity = 4, children }: Pr
       transform
     >
       <HtmlWrap
-        dimensions={dimensions}
+        dimensions={withTransacript ? withTranscriptDimensions : defaultDimensions}
         onPointerDown={(e) => e.stopPropagation()}
         onPointerOut={(e) => e.stopPropagation()}
         onPointerOver={(e) => e.stopPropagation()}
@@ -40,11 +43,11 @@ export const HtmlPanel = ({ dimensions, speed = 2, intensity = 4, children }: Pr
       </HtmlWrap>
     </Html>
   </Float>
-)
+))
 
-const defaultDimensions = [-200, -680, 500, 500] as const
+HtmlPanel.displayName = 'HtmlPanel'
 
-const HtmlWrap = styled.div<Pick<Props, 'dimensions'>>`
+const HtmlWrap = styled.div<{ dimensions: [number, number, number, number] }>`
   ${({ dimensions: [top, left, width, height] = defaultDimensions }) =>
     css`
       top: ${top}px;
@@ -52,10 +55,8 @@ const HtmlWrap = styled.div<Pick<Props, 'dimensions'>>`
       width: ${width}px;
       height: ${height}px;
     `}
-
   position: absolute;
   border-radius: 20px;
-
   font-size: 80px;
   color: #fff;
   padding: 20px;
