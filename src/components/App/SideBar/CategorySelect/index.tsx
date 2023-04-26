@@ -14,7 +14,7 @@ const NODE_TYPES_MAPPER = {
   guest: 'Person',
   show: 'Show',
   topic: 'Topic',
-  tweet: 'Tweet data',
+  tweet: 'Tweet',
 };
 
 const options = nodeTypes.map((i, index) => ({ label: NODE_TYPES_MAPPER[i], value: index }));

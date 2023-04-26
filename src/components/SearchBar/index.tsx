@@ -56,7 +56,6 @@ export const SearchBar = ({ loading, onSubmit }: Props) => {
       }}
       placeholder="Search (10 sats)"
       type="text"
-      // value={tempSearch || ""}
     />
   );
 };

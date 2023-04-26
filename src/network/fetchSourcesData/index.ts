@@ -7,6 +7,13 @@ type TradarParams = {
   approved?: string
 }
 
+export type TAboutParams = {
+  title?: string
+  description?: string
+  'mission_statement'?: string;
+  'search_term'?: string;
+}
+
 const defaultParams = {
     skip: '0',
     limit: '500',
@@ -22,9 +29,15 @@ export const getRadarData = async (queryParams: TradarParams = defaultParams) =>
 }
 
 export const getAboutData = async () => {
-  const response = await api.get('/about');
+  const response = await api.get<TAboutParams>('/about');
 
-  console.log(response);
+  return response;
+}
+
+export const postAboutData = async (data: TAboutParams) => {
+  const response = await api.post('/about', JSON.stringify(data));
+
+  return response;
 }
 
 export const triggerRadarJob = async () => api.get<SubmitErrRes>(`/radar/trigger-job`)
