@@ -13,8 +13,10 @@ export const useNavigation = (
   const [sleep, setSleep] = useState(true)
   const [distanceReached, setDistanceReached] = useState(false)
 
-  // camera movement to selection params
-    const [minDistanceToTarget] = useState(80)
+  const [offsets, setOffsets] = useState(new THREE.Vector3(0,0,0))
+
+  // cube movement to selection params
+  const [minDistanceToTarget] = useState(80)
     const [minDistanceToHome] = useState(10)
 
     const childIsSelected = useMemo(() => {
@@ -24,7 +26,7 @@ export const useNavigation = (
     }, [selectedNode, thisNodeRef])
   
   useFrame((state, delta) => {
-    if (thisNodeRef?.current) {
+    if (thisNodeRef?.current && thisNodeRef?.current?.userData?.node_type === 'guest') {
       // do movement animation
         if (selectedNode && childIsSelected && !distanceReached) {
             moveToNode(thisNodeRef.current, selectedNode)
@@ -36,7 +38,17 @@ export const useNavigation = (
 
   useEffect(() => {    
     if (childIsSelected) {
-        setDistanceReached(false)     
+      setDistanceReached(false)     
+      if (selectedNode) {
+        const biasX = ((Math.random() - 0.5) < 0 ? -1 : 1)
+        const biasY = ((Math.random() - 0.5) < 0 ? -1 : 1)
+        const biasZ = ((Math.random() - 0.5) < 0 ? -1 : 1)
+        const xOffset = 100 * biasX
+        const yOffset = 100 * biasY
+        const zOffset = 100 * biasZ
+        const newOffsets = new THREE.Vector3(xOffset, yOffset, zOffset)
+        setOffsets(newOffsets)
+      }
     } else if (!childIsSelected) {
         setSleep(false)    
     }
@@ -44,10 +56,11 @@ export const useNavigation = (
   }, [selectedNode]);
   
   const moveToNode = (thisNode: THREE.Mesh, toNode: NodeExtended) => {
+
     const mesh = new THREE.Vector3(
-        toNode.x,
-        toNode.y,
-        toNode.z
+        toNode.x + offsets.x,
+        toNode.y + offsets.y,
+        toNode.z + offsets.z
     );
 
     const distance = thisNode.position.distanceTo(mesh)

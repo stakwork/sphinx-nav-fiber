@@ -82,16 +82,28 @@ export const getAdminId = async (tribeId: string) => {
 
 const universeScale = 5600
 const parentScale = 20
+const guestScale = 800
+const guestCube = {
+  scale: 600,
+  position: {
+    x: universeScale/2,
+    y: 1300,
+    z: 0
+    
+  }
+}
 
 
 function generateGuestNodePosition() {
 
-  const scale = universeScale  
+  const { scale, position } = guestCube  
+
+  const spread = scale*2
 
   const center = {
-    x:(Math.random() * scale) - (scale * 0.5),
-    y:(Math.random() * scale) - (scale * 0.5),
-    z:(Math.random() * scale) - (scale * 0.5)
+    x: position.x + (Math.random() * spread) - (spread * 0.5),
+    y: position.y + (Math.random() * scale) - (scale * 0.5),
+    z: position.z + (Math.random() * spread) - (spread * 0.5)
   }
   // apply perlin noise
   const perlinNoise = Noise.perlin3(center.x,center.y,center.z)
@@ -108,7 +120,6 @@ function generateGuestNodePosition() {
 function generateTopicPosition(topicMap: TopicMap) {
 
   // do collision check
-  console.log('topicMap', topicMap)
   
   return new Vector3(
     (Math.random() * universeScale) - (universeScale * 0.5),
@@ -117,62 +128,54 @@ function generateTopicPosition(topicMap: TopicMap) {
   )
 }
 
-function generateNearbyPosition(position: Vector3) {
+function generateNearbyPosition(basePosition: Vector3, nodeType?: string, childIndex = 1) {
   const biasX = ((Math.random() - 0.5) < 0 ? -1 : 1)
-  const biasY = ((Math.random() - 0.5) < 0 ? -1 : 1)
+  const biasY = 1 // ((Math.random() - 0.5) < 0 ? -1 : 1)
   const biasZ = ((Math.random() - 0.5) < 0 ? -1 : 1)
 
-  const xOffset = 100 * biasX
-  const yOffset = 100 * biasY
-  const zOffset = 100 * biasZ
+  let xOffset = 0 // 100 * biasX
+  let yOffset = 100 * biasY
+  const zOffset = 0 // 100 * biasZ
+
+  switch (nodeType) {
+    case 'episode':
+      yOffset += 50 * (childIndex || 0)
+      break;
+    case 'clip':
+      yOffset = 0
+      xOffset += 50 * (childIndex || 0)
+      break;
+    default:
+  }
 
   const center = new Vector3()
 
-  center.x = position.x + xOffset
-  center.y = position.y + yOffset
-  center.z = position.z + zOffset
+  center.x = basePosition.x + xOffset
+  center.y = basePosition.y + yOffset
+  center.z = basePosition.z + zOffset
 
   return center
 }
 
 function generateNodePosition(node: NodeExtended, allData: NodeExtended[], topicMap: TopicMap, mappedNodes?: NodeExtended[]) {
-  const { ref_id: refId, children} = node
+  const { ref_id: refId} = node
 
   const center = {
     x:(Math.random() * universeScale) - (universeScale * 0.5),
-    y:(Math.random() * universeScale) - (universeScale * 0.5),
+    y: 0, // (Math.random() * universeScale) - (universeScale * 0.5),
     z:(Math.random() * universeScale) - (universeScale * 0.5)
   }
-
-  // do my children have topics?
-  const childTopics: TopicMapItem[] = []
-  const childNodes = getMyChildren(children || [], allData)
-  childNodes?.forEach((childNode) => {
-    const topicNodes = getMyTopicNodes(childNode.ref_id || '', topicMap)
-    childTopics.push(...topicNodes)
-  })
-
-  // do i have topics?
-  const myTopicNodes = getMyTopicNodes(refId, topicMap)
 
    // do i have parents?
   const parents = getMyParents(refId, mappedNodes)
 
   let relativePosition: Vector3 | null = null
 
-  if (childTopics.length) {
-    console.log("my child has topics", childTopics)
-    const {position} = childTopics[0]
-    relativePosition = generateNearbyPosition(new Vector3(position.x, position.y, position.z))
-  } 
-  else if (myTopicNodes.length){
-    console.log("i have topics", myTopicNodes)  
-    const {position} = myTopicNodes[0]
-    relativePosition = generateNearbyPosition(new Vector3(position.x, position.y, position.z))
-  } 
-  else if (parents?.length){
+  if (parents?.length){
     const parent = parents[0]
-    relativePosition = generateNearbyPosition(new Vector3(parent.x, parent.y, parent.z))
+    const parentChildren = getMyChildren(parent.children || [], allData)
+    const myChildIndex = parentChildren.findIndex(f=>f.ref_id=== refId)
+    relativePosition = generateNearbyPosition(new Vector3(parent.x, parent.y, parent.z), node.node_type, myChildIndex + 1)
   }
 
   if (relativePosition) {
@@ -184,7 +187,7 @@ function generateNodePosition(node: NodeExtended, allData: NodeExtended[], topic
   // apply perlin noise
   const perlinNoise = 1 // Noise.perlin3(center.x,center.y,center.z)
   
-  const amp = 100
+  const amp = 1
   
   return new Vector3(
     center.x + (perlinNoise * amp),
@@ -400,23 +403,23 @@ const getGraphData = async (searchterm: string) => {
       })
 
       // remove topics with less than 3 children
-      Object.keys(topicMap).forEach((key) => {
-        if (topicMap[key].children.length < 3) {
-          delete topicMap[key]
-        }
-      })
+      // Object.keys(topicMap).forEach((key) => {
+      //   if (topicMap[key].children.length < 3) {
+      //     delete topicMap[key]
+      //   }
+      // })
 
       // generate nodes
-      generateTopicNodesFromMap(topicMap,
-        data,
-        nodes,
-        (l: Link) => {
-          links.push(l)
-        },
-        (n: NodeExtended) => {
-          nodes.push(n)
-        }
-      )
+      // generateTopicNodesFromMap(topicMap,
+      //   data,
+      //   nodes,
+      //   (l: Link) => {
+      //     links.push(l)
+      //   },
+      //   (n: NodeExtended) => {
+      //     nodes.push(n)
+      //   }
+      // )
 
       dataProcessingTemplate.forEach(template => {
         if (template.hide) {
