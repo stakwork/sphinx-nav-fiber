@@ -22,6 +22,7 @@ import { SideBar } from './SideBar'
 import { Toasts } from './Toasts'
 import { E2ETests } from '~/utils/tests'
 
+
 const Wrapper = styled(Flex)`
   height: 100%;
   width: 100%;
@@ -127,6 +128,7 @@ export const App = () => {
         <Toasts />
 
         <BudgetExplanationModal />
+        
       </Wrapper>
       <E2ETests />
     </>

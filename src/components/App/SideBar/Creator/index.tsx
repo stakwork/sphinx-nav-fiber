@@ -56,13 +56,6 @@ export const Creator = () => {
         </>
       )}
 
-      <Relevance
-        header={
-          <Flex px={20} py={16}>
-            <Text kind="medium">More like this...</Text>
-          </Flex>
-        }
-      />
     </>
   );
 };

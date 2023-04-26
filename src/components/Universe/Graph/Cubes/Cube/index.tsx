@@ -1,80 +1,79 @@
-import { useFrame } from "@react-three/fiber";
-import { Select } from "@react-three/postprocessing";
-import { memo, useCallback, useEffect, useRef, useState } from "react";
-import * as THREE from "three";
-import { usePathway } from "~/components/DataRetriever";
-import { useDataStore, useSelectedNode } from "~/stores/useDataStore";
-import { NodeExtended } from "~/types";
-import { PathwayBadge } from "./components/PathwayBadge";
-import { Portal } from "./components/Portal";
-import { Tooltip } from "./components/Tooltip";
-import { useMaterial } from "./hooks/useMaterial";
+import { ThreeEvent, useFrame } from '@react-three/fiber'
+import { Select } from '@react-three/postprocessing'
+import { memo, useCallback, useEffect, useRef, useState } from 'react'
+import * as THREE from 'three'
+import { Transcript } from '~/components/App/SideBar/Transcript'
+import { View } from '~/components/App/SideBar/View'
+import { usePathway } from '~/components/DataRetriever'
+import { useAppStore } from '~/stores/useAppStore'
+import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
+import { NodeExtended } from '~/types'
+import { HtmlPanel } from './components/HtmlPanel'
+import { PathwayBadge } from './components/PathwayBadge'
+import { Portal } from './components/Portal'
+import { Tooltip } from './components/Tooltip'
+import { useMaterial } from './hooks/useMaterial'
 
-const geometryXs = new THREE.BoxGeometry(10, 10, 10);
-const geometryS = new THREE.BoxGeometry(20, 20, 20);
-const geometryM = new THREE.BoxGeometry(35, 35, 35);
+const geometryXs = new THREE.BoxGeometry(10, 10, 10)
+const geometryS = new THREE.BoxGeometry(20, 20, 20)
+const geometryM = new THREE.BoxGeometry(35, 35, 35)
 
 const getGeometry = (node: NodeExtended) => {
   switch (node.node_type) {
-    case "guest":
-    case "episode":
-      return geometryS;
-    case "show":
-      return geometryM;
+    case 'guest':
+    case 'episode':
+      return geometryS
+    case 'show':
+      return geometryM
     default:
-      return geometryXs;
+      return geometryXs
   }
-};
+}
 
 type Props = {
-  node: NodeExtended;
-  highlight: boolean;
-  highlightColor: string;
-};
+  node: NodeExtended
+  highlight: boolean
+  highlightColor: string
+}
 
 export const Cube = memo(({ node, highlight, highlightColor }: Props) => {
-  const ref = useRef<THREE.Mesh | null>(null);
-  const [hovered, setHovered] = useState(false);
+  const ref = useRef<THREE.Mesh | null>(null)
+  const [hovered, setHovered] = useState(false)
 
-  const selectedNode = useSelectedNode();
-  const categoryFilter = useDataStore((s) => s.categoryFilter);
+  const categoryFilter = useDataStore((s) => s.categoryFilter)
 
-  const material = useMaterial(
-    node.image_url || "noimage.jpeg",
-    highlight,
-    highlightColor
-  );
+  const transcriptIsOpen = useAppStore((s) => s.transcriptIsOpen)
 
-  const isSelected = selectedNode?.id === node.id;
-  const isSelectedCategory = node.node_type === categoryFilter;
+  const selectedNode = useSelectedNode()
+
+  const material = useMaterial(node.image_url || 'noimage.jpeg', highlight, highlightColor)
+
+  const isSelected = selectedNode?.id === node.id
+  const isSelectedCategory = node.node_type === categoryFilter
 
   useFrame(() => {
     if (selectedNode) {
-      material.toneMapped = false;
+      material.toneMapped = false
     }
 
-    ref.current?.position.set(node.x || 0, node.y || 0, node.z || 0);
-  });
+    ref.current?.position.set(node.x || 0, node.y || 0, node.z || 0)
+  })
 
   useEffect(() => {
-    document.body.style.cursor = hovered ? "pointer" : "auto";
-  }, [hovered]);
+    document.body.style.cursor = hovered ? 'pointer' : 'auto'
+  }, [hovered])
 
-  const onPointerIn = useCallback(() => setHovered(true), []);
+  const onPointerIn = useCallback((e: ThreeEvent<PointerEvent>) => {
+    e.stopPropagation()
+    setHovered(true)
+  }, [])
 
-  const onPointerOut = useCallback(() => {
-    if (selectedNode) {
-      setHovered(false);
+  const onPointerOut = useCallback((e: ThreeEvent<PointerEvent>) => {
+    e.stopPropagation()
+    setHovered(false)
+  }, [])
 
-      return;
-    }
-
-    setTimeout(() => {
-      setHovered(false);
-    }, 500);
-  }, [selectedNode]);
-
-  const { currentNodeIndex } = usePathway();
+  const { currentNodeIndex } = usePathway()
 
   return (
     <>
@@ -86,13 +85,22 @@ export const Cube = memo(({ node, highlight, highlightColor }: Props) => {
           name={node.id}
           onPointerOut={onPointerOut}
           onPointerOver={onPointerIn}
-          scale={hovered ? 1.5 : 1}
+          scale={hovered && !isSelected ? 1.5 : 1}
           userData={node}
         >
-          <PathwayBadge
-            show={currentNodeIndex >= 0}
-            value={currentNodeIndex + 1}
-          />
+          {isSelected && (
+            <HtmlPanel>
+              <View isSelectedView />
+            </HtmlPanel>
+          )}
+
+          {isSelected && transcriptIsOpen && (
+            <HtmlPanel intensity={2} speed={4} withTransacript>
+              <Transcript />
+            </HtmlPanel>
+          )}
+
+          <PathwayBadge show={currentNodeIndex >= 0} value={currentNodeIndex + 1} />
 
           {hovered && (
             <Portal>
@@ -102,7 +110,7 @@ export const Cube = memo(({ node, highlight, highlightColor }: Props) => {
         </mesh>
       </Select>
     </>
-  );
-});
+  )
+})
 
-Cube.displayName = "Cube";
+Cube.displayName = 'Cube'

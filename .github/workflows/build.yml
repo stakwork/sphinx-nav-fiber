@@ -1,4 +1,4 @@
-name: build
+name: Generate Build Files
 on:
  push:
     branches:

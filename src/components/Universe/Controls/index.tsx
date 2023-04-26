@@ -13,18 +13,19 @@ export const Controls = ({ disableAnimations }: Props) => {
 
   const [smoothTime] = useState(1)
 
-  const { isUserDragging, isUserScrolling } = useControlStore();
+  const { isUserDragging, isUserScrolling, isUserScrollingOnHtmlPanel } = useControlStore();
 
   useCameraAnimations(cameraControlsRef, { enabled: (!disableAnimations && !isUserScrolling && !isUserDragging) });
 
   return (
-    <CameraControls
-      ref={cameraControlsRef}
-      dollyToCursor
-      infinityDolly
-      onEnd={() => useControlStore.setState({ isUserDragging: false })}
-      onStart={() => useControlStore.setState({ isUserDragging: true })}
-      smoothTime={smoothTime}
-    />
+        <CameraControls
+        ref={cameraControlsRef}
+        dollyToCursor
+        enabled={!isUserScrollingOnHtmlPanel}
+        infinityDolly
+        onEnd={() => useControlStore.setState({ isUserDragging: false })}
+        onStart={() => useControlStore.setState({ isUserDragging: true })}
+        smoothTime={smoothTime}
+        />
   );
 };
