@@ -7,6 +7,7 @@ import {
   MdOutlineTableView,
   MdPostAdd,
   MdHomeFilled,
+  MdRefresh
 } from 'react-icons/md'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
@@ -30,6 +31,10 @@ export const FooterMenu = () => {
   const handleOpenModal = (data: AddNodeModalData) => {
     open()
     setAddNodeModalData(data);
+  }
+
+  const changeGraphType = () => {
+    console.log('change')
   }
 
 
@@ -83,6 +88,12 @@ export const FooterMenu = () => {
                   <MdOutlineShowChart size={24} />
                 </IconWrapper>
               </ActionButton>
+              <ActionButton onClick={() => changeGraphType()}>
+                <Text>Change Display</Text>
+                <IconWrapper>
+                  <MdRefresh size={24} />
+                </IconWrapper>
+              </ActionButton>
             </>
           )}
           <ActionButton className="root" id="cy-actions-menu-toggle" onClick={() => setIsOpened(!isOpened)}>
@@ -95,7 +106,7 @@ export const FooterMenu = () => {
 }
 
 const FooterAction = styled(Flex).attrs({
-  align: 'center',
+  align: 'flex-end',
   direction: 'row',
   grow: 1,
   justify: 'space-between',

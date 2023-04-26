@@ -4,14 +4,14 @@ import { MathUtils } from "three";
 import gsap from "gsap";
 
 import { useFrame } from "@react-three/fiber";
-import { RefObject, useCallback, useEffect, useState } from "react";
+import { RefObject, useCallback, useEffect } from "react";
 
 import * as THREE from "three";
 import { useDataStore, useSelectedNode } from "~/stores/useDataStore";
 import { useControlStore } from "~/stores/useControlStore";
 import { useAutoNavigate } from "./useAutoNavigate";
 
-const autoRotateSpeed = 0;
+const autoRotateSpeed = 1;
 
 const introAnimationTargetPosition = new THREE.Vector3(-1900, -2200, -2800);
 

@@ -1,43 +1,49 @@
 import { Segment as DreiSegment, SegmentObject } from "@react-three/drei";
-import { useFrame } from "@react-three/fiber";
-import { useRef } from "react";
-import { useDataStore } from "~/stores/useDataStore";
+import { useRef, useEffect, useState } from "react";
+import { Vector3 } from "three";
+import { useDataStore, useSelectedNode } from "~/stores/useDataStore";
 import { Link, NodeExtended } from "~/types";
 
 type Props = {
-  link: Link<NodeExtended>;
+  link: Link;
 };
 
 export const Segment = ({ link }: Props) => {
   const ref = useRef<SegmentObject | null>(null);
+  const selectedNode = useSelectedNode()
+  const [start, setStart] = useState(new Vector3(0,0,0))
+  const [end, setEnd] = useState(new Vector3(0, 0, 0))
+  const [color, setColor] = useState(0xcccccc)
 
-  useFrame(() => {
-    if (ref.current) {
-      ref.current.start.set(
-        link.sourcePosition?.x || 0,
-        link.sourcePosition?.y || 0,
-        link.sourcePosition?.z || 0
-      );
-
-      ref.current.end.set(
-        link.targetPosition?.x || 0,
-        link.targetPosition?.y || 0,
-        link.targetPosition?.z || 0
-      );
-
-      const { selectedNode } = useDataStore.getState();
-
-      if (
-        selectedNode &&
-        (selectedNode?.id === link.target.id ||
-          selectedNode?.id === link.source.id)
-      ) {
-        ref.current.color.setHex(0xfbff00);
+  useEffect(() => {
+    const refId = selectedNode?.ref_id || ''
+    const linkIsSelected = (selectedNode && ((refId === link.target) || (refId === link.source)))
+    
+    if (!link.onlyVisibleOnSelect || linkIsSelected) {
+        setStart(new Vector3(
+          link.sourcePosition.x,
+          link.sourcePosition.y,
+          link.sourcePosition.z)
+        )
+        setEnd(new Vector3(
+          link.targetPosition.x,
+          link.targetPosition.y,
+          link.targetPosition.z)
+        )
       } else {
-        ref.current.color.setHex(0xcccccc);
+        setStart(new Vector3(0, 0, 0))
+        setEnd(new Vector3(0,0,0))
       }
-    }
-  });
+      
+      if (linkIsSelected) {
+        setColor(0xfbff00)
+      } else {
+        setColor(0xcccccc)
+      }
+      
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedNode, link]);
 
-  return <DreiSegment ref={ref} end={[0, 0, 0]} start={[0, 0, 0]} />;
+  
+  return <DreiSegment ref={ref} start={start} end={end} color={color} />;
 };

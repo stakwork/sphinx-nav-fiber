@@ -80,16 +80,15 @@ export const getAdminId = async (tribeId: string) => {
   return jsonData
 }
 
-const universeScale = 5600
+const universeScale = 4000
 const parentScale = 20
 const guestScale = 800
 const guestCube = {
-  scale: 600,
+  scale: 1000,
   position: {
-    x: universeScale/2,
-    y: 1300,
-    z: 0
-    
+    x: 0,
+    y: 0,
+    z: universeScale
   }
 }
 
@@ -101,8 +100,8 @@ function generateGuestNodePosition() {
   const spread = scale*2
 
   const center = {
-    x: position.x + (Math.random() * spread) - (spread * 0.5),
-    y: position.y + (Math.random() * scale) - (scale * 0.5),
+    x: position.x + (Math.random() * scale) - (scale * 0.5),
+    y: position.y + (Math.random() * spread) - (spread * 0.5),
     z: position.z + (Math.random() * spread) - (spread * 0.5)
   }
   // apply perlin noise
@@ -117,14 +116,35 @@ function generateGuestNodePosition() {
   )
 }
 
-function generateTopicPosition(topicMap: TopicMap) {
+const topicCube = {
+  scale: 1000,
+  position: {
+    x: 0,
+    y: 0,
+    z: - universeScale
+  }
+}
 
-  // do collision check
+function generateTopicPosition() {
+
+  const { scale, position } = topicCube  
+
+  const spread = scale*2
+
+  const center = {
+    x: position.x + (Math.random() * scale) - (scale * 0.5),
+    y: position.y + (Math.random() * spread) - (spread * 0.5),
+    z: position.z + (Math.random() * spread) - (spread * 0.5)
+  }
+  // apply perlin noise
+  const perlinNoise = Noise.perlin3(center.x,center.y,center.z)
+  
+  const amp = 10
   
   return new Vector3(
-    (Math.random() * universeScale) - (universeScale * 0.5),
-    (Math.random() * universeScale) - (universeScale * 0.5),
-    (Math.random() * universeScale) - (universeScale * 0.5)
+    center.x + (perlinNoise * amp),
+    center.y + (perlinNoise * amp),
+    center.z + (perlinNoise * amp)
   )
 }
 
@@ -134,7 +154,7 @@ function generateNearbyPosition(basePosition: Vector3, nodeType?: string, childI
   const biasZ = ((Math.random() - 0.5) < 0 ? -1 : 1)
 
   let xOffset = 0 // 100 * biasX
-  let yOffset = 100 * biasY
+  let yOffset = 10 * biasY
   const zOffset = 0 // 100 * biasZ
 
   switch (nodeType) {
@@ -162,7 +182,7 @@ function generateNodePosition(node: NodeExtended, allData: NodeExtended[], topic
 
   const center = {
     x:(Math.random() * universeScale) - (universeScale * 0.5),
-    y: 0, // (Math.random() * universeScale) - (universeScale * 0.5),
+    y: (Math.random() * universeScale) - (universeScale * 0.5),
     z:(Math.random() * universeScale) - (universeScale * 0.5)
   }
 
@@ -228,6 +248,8 @@ function getMyChildren(childrenRefIds:string[], nodes: NodeExtended[]) {
   
   return children
 }
+
+
 
 function generateTopicNodesFromMap(topicMap: TopicMap,
                             allData: Node[],
@@ -382,45 +404,6 @@ const getGraphData = async (searchterm: string) => {
         },
       ]
 
-      // first extract topics, these are the neighborhoods
-      data.forEach((node) => {
-        const { topics, ref_id: refId, show_title: showTitle } = node
-        if (topics) {
-          topics.forEach((topic) => {
-            if (showTitle) {
-              if (topicMap[topic] && !topicMap[topic].children.includes(refId || showTitle)) {
-                  topicMap[topic].children.push(refId||showTitle)  
-              }
-              else {
-                topicMap[topic] = {
-                  position: generateTopicPosition(topicMap),
-                  children: [refId || showTitle]
-                }
-              }  
-            }
-          })
-        }
-      })
-
-      // remove topics with less than 3 children
-      // Object.keys(topicMap).forEach((key) => {
-      //   if (topicMap[key].children.length < 3) {
-      //     delete topicMap[key]
-      //   }
-      // })
-
-      // generate nodes
-      // generateTopicNodesFromMap(topicMap,
-      //   data,
-      //   nodes,
-      //   (l: Link) => {
-      //     links.push(l)
-      //   },
-      //   (n: NodeExtended) => {
-      //     nodes.push(n)
-      //   }
-      // )
-
       dataProcessingTemplate.forEach(template => {
         if (template.hide) {
           return
@@ -429,7 +412,6 @@ const getGraphData = async (searchterm: string) => {
         const thisData = data.filter(f => f.node_type === template.type)
         
         thisData.forEach((node) => {
-          const { ref_id: refId } = node
 
           // replace aws bucket url with cloudfront, and add size indicator to end
           const smallImageUrl = node.image_url
@@ -464,14 +446,54 @@ const getGraphData = async (searchterm: string) => {
       )
     }
 
+         // extract topics
+         data.forEach((node) => {
+          const { topics, ref_id: refId, show_title: showTitle } = node
+          if (topics) {
+            topics.forEach((topic) => {
+              if (showTitle) {
+                if (topicMap[topic] && !topicMap[topic].children.includes(refId || showTitle)) {
+                    topicMap[topic].children.push(refId||showTitle)  
+                }
+                else {
+                  topicMap[topic] = {
+                    position: generateTopicPosition(),
+                    children: [refId || showTitle]
+                  }
+                }  
+              }
+            })
+          }
+        })
+  
+        // generate nodes
+        generateTopicNodesFromMap(topicMap,
+          data,
+          nodes,
+          (l: Link) => {
+            links.push(l)
+          },
+          (n: NodeExtended) => {
+            nodes.push(n)
+          }
+        )
+
     // do links
-    nodes.filter(f=>f.node_type!=='guest'&&f.node_type!=='topic').forEach((node) => {
+    nodes.forEach((node) => {
       const { children } = node
       children?.forEach((childRefId: string) => {
         if (node.ref_id) {
           const child = nodes.find(f => f.ref_id === childRefId)
+          let onlyVisibleOnSelect = false
+          if (
+            (child?.node_type === 'guest' || child?.node_type === 'topic')
+            || (node?.node_type === 'guest' || node?.node_type === 'topic')
+          ) {
+            onlyVisibleOnSelect = true
+          }
           if (child){
             const link: Link = {
+              onlyVisibleOnSelect,
               source: node.ref_id,
               sourcePosition: new Vector3(node.x,node.y,node.z),
               target: childRefId,

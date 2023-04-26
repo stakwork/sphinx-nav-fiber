@@ -16,7 +16,7 @@ export const Graph = () => {
     <>
       <Cubes />
 
-      {/* {searchTerm && !isLoading && <PathwayLine />} */}
+      {searchTerm && !isLoading && <PathwayLine />}
 
       <Segments
         /** NOTE: using the key in this way the segments re-mounts

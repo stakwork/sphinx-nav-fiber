@@ -22,6 +22,7 @@ import { Lights } from "./Lights";
 
 import { useControlStore } from "~/stores/useControlStore";
 import { useControls } from "leva";
+import { Overlay } from "./Overlay";
 
 const NODE_SELECTED_COLOR = 0x00ff00;
 
@@ -63,44 +64,58 @@ let wheelEventTimeout: ReturnType<typeof setTimeout> | null = null
 
 export const Universe = () => (
     <>
-      <div id="tooltip-portal" />
-      <Suspense fallback={null}>
-        <Canvas
+
+    <Overlay />
+    
+    <Suspense fallback={null}>
+      <Canvas
         camera={{
           aspect: 1920 / 1080,
-          far: 8000,
+          far: 10000,
           near: 1,
           position: [1000, 0, 5],
         }}
         id="universe-canvas"
-        onWheel={() => {
+        onWheel={(e: React.WheelEvent) => {
+          const { target } = e
+          const { offsetParent } = target as HTMLDivElement
+
           if (wheelEventTimeout) {
             clearTimeout(wheelEventTimeout);
           }
 
+          if (offsetParent?.classList?.contains('html-panel')) {
+            // if overflowing on y, disable camera controls to scroll on div
+            if (offsetParent.clientHeight < offsetParent.scrollHeight) {
+              useControlStore.setState({ isUserScrollingOnHtmlPanel: true })  
+            }
+          }
+          
           useControlStore.setState({ isUserScrolling: true })
+          useControlStore.setState({ userMovedCamera: true })
 
           wheelEventTimeout = setTimeout(() => {
             useControlStore.setState({ isUserScrolling: false })
+            useControlStore.setState({ isUserScrollingOnHtmlPanel: false })
           }, 200)
         }}
+      >
+        <Suspense
+          fallback={
+            <Html>
+              <Loader />
+            </Html>
+          }
         >
-          <Suspense
-            fallback={
-              <Html>
-                <Loader />
-              </Html>
-            }
-          >
-            <Preload />
+          <Preload />
 
-            <AdaptiveDpr />
+          <AdaptiveDpr />
 
-            <AdaptiveEvents />
+          <AdaptiveEvents />
 
-            <Content />
-          </Suspense>
-        </Canvas>
-      </Suspense>
+          <Content />
+        </Suspense>
+      </Canvas>
+    </Suspense>
     </>
   )

@@ -19,18 +19,23 @@ const NODE_TYPE_COLORS: NodeTypeColors = {
 export const Cubes = memo(() => {
   const data = useGraphData();
 
-  const searchTerm = useAppStore((s) => s.currentSearch);
+  const [searchTerm, setTranscriptOpen] = useAppStore((s) => [s.currentSearch,s.setTranscriptOpen,])
 
   const handleSelect = useCallback((nodes: Object3D[]) => {
     const node = nodes?.[0];
+    if (node) {
+      // always close transcript when switching nodes
+      setTranscriptOpen(false)
+  
+      if (node.userData) {
+        useDataStore
+        .getState()
+        .setSelectedNode((node?.userData as NodeExtended) || null);
+      }
 
-    if (node?.userData) {
-      useDataStore
-      .getState()
-      .setSelectedNode((node?.userData as NodeExtended) || null);
     }
-
-  }, []);
+    
+  }, [setTranscriptOpen]);
 
   const shouldHighlightPartial =
     searchTerm &&
