@@ -1,4 +1,4 @@
-name: Update version
+name: Update Version
 
 on:
   push:
@@ -9,8 +9,9 @@ jobs:
   update-version:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Update version
-        run: |
-          npm version patch -m "Bump version to %s [skip ci]"
-          git push origin HEAD:master
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Update package version
+      run: |
+        npm version patch -m "Bump version to %s [skip ci]"
+        git push --follow-tags

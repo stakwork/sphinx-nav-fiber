@@ -1,4 +1,3 @@
-import { useFormContext } from 'react-hook-form'
 import { MdClose, MdKeyboardDoubleArrowLeft } from 'react-icons/md'
 import styled from 'styled-components'
 import { CategorySelect } from '~/components/App/SideBar/CategorySelect'
@@ -10,7 +9,6 @@ import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { colors } from '~/utils/colors'
 import { media } from '~/utils/media'
 import { Tab } from './Tab'
-import { Transcript } from './Transcript'
 import { View } from './View'
 
 export const MENU_WIDTH = 433
@@ -18,13 +16,8 @@ export const MENU_WIDTH = 433
 type Props = { onSubmit?: () => void }
 
 const Content = ({ onSubmit }: Props) => {
-  const setFlagErrorOpen = useAppStore((s) => s.setFlagErrorOpen)
-  const setRelevanceSelected = useAppStore((s) => s.setRelevanceSelected)
-  const setSelectedNode = useDataStore((s) => s.setSelectedNode)
   const isLoading = useDataStore((s) => s.isFetching)
   const setSidebarOpen = useAppStore((s) => s.setSidebarOpen)
-
-  const { setValue } = useFormContext()
 
   return (
     <Wrapper id="sidebar-wrapper">
@@ -33,11 +26,7 @@ const Content = ({ onSubmit }: Props) => {
 
         <CloseButton
           onClick={() => {
-            setFlagErrorOpen(false)
-            setSelectedNode(null)
-            setRelevanceSelected(false)
-            setValue('search', null)
-            onSubmit?.()
+            setSidebarOpen(false)
           }}
         >
           <MdClose fontSize={20} />
@@ -54,13 +43,12 @@ const Content = ({ onSubmit }: Props) => {
 
       {isLoading ? <Loader color="primaryText1" /> : <View />}
 
-      <Transcript />
-
       <CategoryWrapper direction="row">
         <Flex basis="154px">
           <CategorySelect />
         </Flex>
       </CategoryWrapper>
+
     </Wrapper>
   )
 }

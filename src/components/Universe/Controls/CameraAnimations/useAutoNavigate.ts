@@ -3,7 +3,7 @@ import type { CameraControls } from "@react-three/drei";
 import { useFrame, Camera, useThree } from "@react-three/fiber";
 import { RefObject, useEffect, useState } from "react";
 import * as THREE from "three";
-import { useSelectedNode } from "~/stores/useDataStore";
+import { useDataStore, useSelectedNode } from "~/stores/useDataStore";
 import { useControlStore } from "~/stores/useControlStore";
 import { NodeExtended } from "~/types";
 import { playInspectSound } from "~/components/common/Sounds";
@@ -15,6 +15,7 @@ export const useAutoNavigate = (
 ) => {
 
   const selectedNode = useSelectedNode();
+  const cameraFocusTrigger = useDataStore(s=>s.cameraFocusTrigger)
 
   const { isUserDragging } = useControlStore();
 
@@ -43,9 +44,16 @@ export const useAutoNavigate = (
       playInspectSound(distance)
     }
 
+    useControlStore.setState({ userMovedCamera: false })
     setDistanceReached(false)
     setLookAtReached(false)        
   }
+
+  useEffect(() => {
+    setDistanceReached(false)
+    setLookAtReached(false)
+    useControlStore.setState({ userMovedCamera: false })
+  },[cameraFocusTrigger])
 
   useEffect(() => {
     // stop navigation when user interacts
@@ -53,9 +61,10 @@ export const useAutoNavigate = (
       arrive()
       setLookAtReached(true)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isUserDragging])
   
-  useFrame((state, delta) => {
+  useFrame((state) => {
     if (cameraControlsRef.current) {
       // do movement animation
       if (selectedNode) {

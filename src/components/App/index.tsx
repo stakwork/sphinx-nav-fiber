@@ -21,6 +21,7 @@ import { SecondarySideBar } from './SecondarySidebar'
 import { SideBar } from './SideBar'
 import { Toasts } from './Toasts'
 
+
 const Wrapper = styled(Flex)`
   height: 100%;
   width: 100%;
@@ -126,6 +127,7 @@ export const App = () => {
         <Toasts />
 
         <BudgetExplanationModal />
+        
       </Wrapper>
     </>
   )

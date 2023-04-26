@@ -1,10 +1,12 @@
-import { ClipLoader } from "react-spinners";
-import styled from "styled-components";
-import { Button } from "~/components/Button";
-import { Flex } from "~/components/common/Flex";
-import { FormProvider, useForm } from 'react-hook-form';
-import { colors } from "~/utils/colors";
-import { TextInput } from "~/components/AddNodeModal/TextInput";
+import { ClipLoader } from 'react-spinners'
+import styled from 'styled-components'
+import { Button } from '~/components/Button'
+import { Flex } from '~/components/common/Flex'
+import { FormProvider, useForm } from 'react-hook-form'
+import { colors } from '~/utils/colors'
+import { TextInput } from '~/components/AddNodeModal/TextInput'
+import { TAboutParams, postAboutData } from '~/network/fetchSourcesData'
+import { FC } from 'react'
 
 export const requiredRule = {
   required: {
@@ -13,14 +15,23 @@ export const requiredRule = {
   },
 }
 
-export const AboutAdminView = () => {
+type Props = {
+  initialValues: TAboutParams
+}
 
-    const form = useForm({ mode: 'onSubmit' });
-    const { isSubmitting } = form.formState;
-      const { reset, watch, setValue } = form
+export const AboutAdminView: FC<Props> = ({ initialValues }) => {
+  const form = useForm<TAboutParams>({ defaultValues: initialValues, mode: 'onSubmit' })
+  const { isSubmitting } = form.formState
+
 
   const onSubmit = form.handleSubmit(async (data) => {
-    console.log(data);
+    try {
+      const res = await postAboutData(data)
+
+      console.log(res);
+    } catch (error) {
+      console.log(error);
+    }
   })
 
   return (
@@ -30,11 +41,10 @@ export const AboutAdminView = () => {
           <Flex>
             <Flex pt={12}>
               <TextInput
-                disabled
-                id="cy-youtube-channel-id"
+                id="cy-about-title-id"
                 label="Graph Title"
                 maxLength={50}
-                name="source"
+                name="title"
                 placeholder="Type graph title here..."
                 rules={{
                   ...requiredRule,
@@ -43,12 +53,11 @@ export const AboutAdminView = () => {
             </Flex>
             <Flex pt={12}>
               <TextInput
-                disabled
-                id="cy-youtube-channel-id"
+                id="cy-about-id"
                 label="Graph Description"
                 maxLength={50}
-                name="source"
-                placeholder="Type graph title here..."
+                name="description"
+                placeholder="Type graph description here..."
                 rules={{
                   ...requiredRule,
                 }}
@@ -56,12 +65,23 @@ export const AboutAdminView = () => {
             </Flex>
             <Flex pt={12}>
               <TextInput
-                disabled
-                id="cy-youtube-channel-id"
-                label="Graph Description"
+                id="cy-about-mission_statement-id"
+                label="Mission Statement"
                 maxLength={50}
-                name="source"
-                placeholder="Type graph title here..."
+                name="mission_statement"
+                placeholder="Type mission statement here..."
+                rules={{
+                  ...requiredRule,
+                }}
+              />
+            </Flex>
+            <Flex pt={12}>
+              <TextInput
+                id="cy-about-search_term-id"
+                label="Search Term"
+                maxLength={50}
+                name="search_term"
+                placeholder="Type search term here..."
                 rules={{
                   ...requiredRule,
                 }}

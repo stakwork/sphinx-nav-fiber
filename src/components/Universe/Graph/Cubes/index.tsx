@@ -17,15 +17,21 @@ const NODE_TYPE_COLORS: NodeTypeColors = {
 export const Cubes = memo(() => {
   const data = useGraphData();
 
-  const searchTerm = useAppStore((s) => s.currentSearch);
+  const [searchTerm, setTranscriptOpen] = useAppStore((s) => [s.currentSearch,s.setTranscriptOpen,])
 
   const handleSelect = useCallback((nodes: Object3D[]) => {
     const node = nodes?.[0];
 
-    useDataStore
+    if (node) {
+      // always close transcript when switching nodes
+      setTranscriptOpen(false)
+
+      useDataStore
       .getState()
-      .setSelectedNode((node?.userData as NodeExtended) || null);
-  }, []);
+      .setSelectedNode((node?.userData as NodeExtended) || null);  
+    }
+    
+  }, [setTranscriptOpen]);
 
   const shouldHighlightPartial =
     searchTerm &&
