@@ -38,7 +38,7 @@ export const Cube = memo(({ node, highlight, highlightColor }: Props) => {
   const selectedNode = useSelectedNode();
   const categoryFilter = useDataStore((s) => s.categoryFilter);
 
-  useNavigation(ref)
+  // useNavigation(ref)
 
   const material = useMaterial(
     node.image_url || "noimage.jpeg",
