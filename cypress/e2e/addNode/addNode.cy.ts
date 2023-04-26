@@ -71,7 +71,7 @@ describe('Add Node Form / Home interactions', () => {
     // Waiting for Toast opacity keyframe to complete
     cy.wait(3000)
 
-    toastBody().should('be.visible').and('contain.text', 'Node submitted successfully!')
+    toastBody().should('be.visible').and('contain.text', 'Submitted!')
   })
 
   it('checkbox checked, submitting the form but receiving an error response from the server, displays custom error message', () => {
@@ -105,6 +105,6 @@ describe('Add Node Form / Home interactions', () => {
     // Waiting for Toast opacity keyframe to complete
     cy.wait(3000)
 
-    toastBody().should('be.visible').and('contain.text', 'Node submission failed, please try again.')
+    toastBody().should('be.visible').and('contain.text', 'Submission failed, please try again.')
   })
 })
