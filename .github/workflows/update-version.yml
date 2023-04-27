@@ -3,12 +3,16 @@ name: Update Version
 on:
   push:
     branches:
-      - master
+      - bugfix/#249_1
 
 jobs:
   update-version:
     runs-on: ubuntu-latest
     steps:
+    - name: Set up git
+      run: |
+        git config user.name 'Github Actions'
+        git config user.email github-actions@github.com
     - name: Checkout code
       uses: actions/checkout@v2
     - name: Update package version
