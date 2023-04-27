@@ -47,6 +47,7 @@ const infoMessageSource =
 
 const notify = (message: string) => {
   toast(<ToastMessage message={message} />, {
+    hideProgressBar: true,
     icon: message === NODE_ADD_SUCCESS ? <MdCheckCircle color={colors.primaryGreen} /> : <MdWarning color={colors.primaryRed} />,
     position: toast.POSITION.BOTTOM_CENTER,
     type: message === NODE_ADD_SUCCESS ? 'success' : 'error',

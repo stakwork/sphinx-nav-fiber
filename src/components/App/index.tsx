@@ -127,7 +127,7 @@ export const App = () => {
         <Toasts />
 
         <BudgetExplanationModal />
-        
+
       </Wrapper>
     </>
   )
