@@ -37,12 +37,19 @@ describe('Add Node Form / Home interactions', () => {
   })
 
   it('all fields filled out correctly submits the form and checkbox checked, closes the modal and displays custom success message', () => {
-    cy.intercept('POST', `${host}/add_node`, {
-      body: {
-        success: true,
+    cy.intercept(
+      {
+        hostname: host,
+        method: 'POST',
+        url: '/add_node',
       },
-      statusCode: 200,
-    }).as('add_node')
+      {
+        body: {
+          success: true,
+        },
+        statusCode: 200,
+      },
+    ).as('add_node')
 
     cy.get(actionMenu).click({ waitForAnimations: false })
     cy.get('#cy-add-content-menu').click({ waitForAnimations: false })
@@ -75,10 +82,17 @@ describe('Add Node Form / Home interactions', () => {
   })
 
   it('checkbox checked, submitting the form but receiving an error response from the server, displays custom error message', () => {
-    cy.intercept('POST', `${host}/add_node`, {
-      body: { error: { message: 'Payment required' } },
-      statusCode: 402,
-    }).as('add_node')
+    cy.intercept(
+      {
+        hostname: host,
+        method: 'POST',
+        url: '/add_node',
+      },
+      {
+        body: { error: { message: 'Payment required' } },
+        statusCode: 402,
+      },
+    ).as('add_node')
 
     cy.get(actionMenu).click({ waitForAnimations: false })
     cy.get('#cy-add-content-menu').click({ waitForAnimations: false })

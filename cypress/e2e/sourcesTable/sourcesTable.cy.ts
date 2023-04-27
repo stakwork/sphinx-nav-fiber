@@ -49,6 +49,10 @@ describe('Sources Table / Home interactions', () => {
       modal().find('input[name="source"]').type(testTitle)
       modal().get(addNodeSubmitButton).click()
       cy.wait('@post')
+      cy.wait('@radar')
+
+      // Waiting for Toast opacity keyframe to complete
+      cy.wait(3000)
       toastBody().should('be.visible')
       cy.get(table).find('tbody tr:last-child').contains(testTitle)
     })
