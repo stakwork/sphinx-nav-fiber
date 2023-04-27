@@ -6,6 +6,7 @@ import { GraphData, NodeExtended, NodeType, Sources } from "~/types";
 import { saveSearchTerm } from "~/utils/relayHelper/index";
 
 type DataStore = {
+  scrollEventsDisabled: boolean;
   categoryFilter: NodeType | null
   disableCameraRotation: boolean
   graphRadius: number | null
@@ -17,6 +18,8 @@ type DataStore = {
   sources: Sources[] | null
   queuedSources: Sources[] | null
   sphinxModalIsOpen: boolean
+  cameraFocusTrigger: boolean
+  setScrollEventsDisabled: (scrollEventsDisabled: boolean) => void
   setCategoryFilter: (categoryFilter: NodeType | null) => void
   setDisableCameraRotation: (rotation: boolean) => void
   fetchData: (search?: string | null) => void
@@ -26,23 +29,27 @@ type DataStore = {
   setSources: (sources: Sources[] | null) => void
   setQueuedSources: (sources: Sources[] | null) => void
   setSphinxModalOpen: (_: boolean) => void
-}
+  setCameraFocusTrigger: (_: boolean) => void
+};
 
 const defaultData: Omit<
   DataStore,
   | 'fetchData'
   | 'setCameraAnimation'
+  | 'setScrollEventsDisabled'
   | 'setCategoryFilter'
   | 'setDisableCameraRotation'
   | 'setSelectedNode'
   | 'setSelectedTimestamp'
   | 'setSphinxModalOpen'
+  | 'setCameraFocusTrigger'
   | 'setSources'
   | 'setQueuedSources'
   | 'setGraphRadius'
 > = {
   categoryFilter: null,
   data: null,
+  scrollEventsDisabled: false,
   disableCameraRotation: false,
   graphRadius: isChileGraph ? 1600 : 3056, // calculated from initial load
   isFetching: false,
@@ -52,6 +59,7 @@ const defaultData: Omit<
   selectedTimestamp: null,
   sources: null,
   sphinxModalIsOpen: false,
+  cameraFocusTrigger: false,
 }
 
 export const useDataStore = create<DataStore>((set, get) => ({
@@ -79,6 +87,7 @@ export const useDataStore = create<DataStore>((set, get) => ({
 
     set({ data: mockGraphData, isFetching: false });
   },
+  setScrollEventsDisabled: (scrollEventsDisabled) => set({ scrollEventsDisabled }),
   setCategoryFilter: (categoryFilter) => set({ categoryFilter }),
   setDisableCameraRotation: (rotation) =>
     set({ disableCameraRotation: rotation }),
@@ -89,6 +98,7 @@ export const useDataStore = create<DataStore>((set, get) => ({
   setSelectedTimestamp: (selectedTimestamp) => set({ selectedTimestamp }),
   setSources: (sources) => set({ sources }),
   setSphinxModalOpen: (sphinxModalIsOpen) => set({ sphinxModalIsOpen }),
+  setCameraFocusTrigger: (cameraFocusTrigger) => set({ cameraFocusTrigger }),
 }));
 
 export const useSelectedNode = () => useDataStore((s) => s.selectedNode);

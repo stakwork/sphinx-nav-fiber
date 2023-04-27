@@ -7,7 +7,7 @@ export const isDevelopment = !!(
 );
 
 export const API_URL =
-  process.env.REACT_DEV_API_URL ||
+  process.env.REACT_APP_API_URL ||
   apiUrlFromSwarmHost() ||
   "https://knowledge-graph.sphinx.chat";
 
@@ -50,8 +50,8 @@ export const GRAPH_LIGHT_INTENSITY = 1;
 export const BOOST_SUCCESS = "Boosted successfully";
 export const BOOST_ERROR_BUDGET = "Boost failed, insufficient budget";
 
-export const NODE_ADD_SUCCESS = "Node submitted successfully!";
-export const NODE_ADD_ERROR = "Node submission failed, please try again.";
+export const NODE_ADD_SUCCESS = 'Submitted!'
+export const NODE_ADD_ERROR = 'Submission failed, please try again.'
 
 export const LINK = 'link'
 export const TWITTER_HANDLE = 'twitter_handle'

@@ -84,12 +84,6 @@ export const Relevance = ({ header = null }: Props) => {
       <ScrollView ref={scrollViewRef} shrink={1}>
         {header}
 
-        <Flex pb={10} px={20}>
-          <Text color="mainBottomIcons">
-            Page {currentPage + 1} of {Math.ceil(data.nodes.length / pageSize)}
-          </Text>
-        </Flex>
-
         {currentNodes.map((n, index) => {
           const {
             image_url: imageUrl,
