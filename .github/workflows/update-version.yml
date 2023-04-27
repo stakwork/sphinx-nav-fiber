@@ -9,12 +9,12 @@ jobs:
   update-version:
     runs-on: ubuntu-latest
     steps:
-    - name: Set up git
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Set up Git
       run: |
         git config user.name 'Github Actions'
         git config user.email github-actions@github.com
-    - name: Checkout code
-      uses: actions/checkout@v2
     - name: Update package version
       run: |
         npm version patch -m "Bump version to %s [skip ci]"
