@@ -93,11 +93,10 @@ describe('Sources Table / Home interactions', () => {
       cell().find(' > div').find('svg').click({ force: true })
       cell().find('input').click().type('1')
       cell().find('input + div').click()
-      cy.get(table).find('tbody tr:last-child').contains(`${testTitle}1`)
       cy.wait('@update')
+      cy.get(table).find('tbody tr:last-child').contains(`${testTitle}1`)
 
       // Delete an item
-      cy.get(table).should('exist').and('contain.text', `${testTitle}1`)
       cy.get('tbody > tr:last-child .delete-wrapper').should('exist').click()
 
       cy.get('[role="presentation"]').find('button:first-child').should('exist').contains(/yes/i).click()
