@@ -7,7 +7,7 @@ WORKDIR /usr/src/app
 COPY package*.json /usr/src/app
 COPY yarn.lock /usr/src/app
 VOLUME node_modules /usr/src/app/node_modules
-RUN yarn cache clean && yarn install 
+RUN yarn cache clean && yarn install --ignore-scripts
 
 
 COPY . /usr/src/app
