@@ -3,7 +3,7 @@ name: Update Version
 on:
   push:
     branches:
-      - bugfix/#249_1
+      - master
 
 jobs:
   update-version:
