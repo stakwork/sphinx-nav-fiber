@@ -14,6 +14,8 @@ import { getLSat } from '~/utils/getLSat'
 import { Vector3 } from "three";
 import * as Noise from '~/utils/noise';
 import { mock } from '~/mocks/getMockGraphData/mockResponse.js';
+import { generateForceGraphPositions } from '../../transformers/forceGraph'
+import { generateTypeGraphPositions } from '../../transformers/typeGraph'
 
 type guestMapChild = {
   children: string[]
@@ -34,7 +36,7 @@ type TopicMapItem = {
 
 type TopicMap = Record<string, TopicMapItem>
 
-const shouldIncludeTopics = false
+const shouldIncludeTopics = true
 
 export const fetchGraphData = async (search: string) => {
   try {
@@ -80,182 +82,8 @@ export const getAdminId = async (tribeId: string) => {
   return jsonData
 }
 
-const universeScale = 4000
-const parentScale = 20
-const guestScale = 800
-const guestCube = {
-  scale: 1000,
-  position: {
-    x: 0,
-    y: 0,
-    z: universeScale
-  }
-}
+function generateTopicNodesFromMap(topicMap: TopicMap, doNodeCallback: (node: NodeExtended) => void) {
 
-
-function generateGuestNodePosition() {
-
-  const { scale, position } = guestCube  
-
-  const spread = scale*2
-
-  const center = {
-    x: position.x + (Math.random() * scale) - (scale * 0.5),
-    y: position.y + (Math.random() * spread) - (spread * 0.5),
-    z: position.z + (Math.random() * spread) - (spread * 0.5)
-  }
-  // apply perlin noise
-  const perlinNoise = Noise.perlin3(center.x,center.y,center.z)
-  
-  const amp = 10
-  
-  return new Vector3(
-    center.x + (perlinNoise * amp),
-    center.y + (perlinNoise * amp),
-    center.z + (perlinNoise * amp)
-  )
-}
-
-const topicCube = {
-  scale: 1000,
-  position: {
-    x: 0,
-    y: 0,
-    z: - universeScale
-  }
-}
-
-function generateTopicPosition() {
-
-  const { scale, position } = topicCube  
-
-  const spread = scale*2
-
-  const center = {
-    x: position.x + (Math.random() * scale) - (scale * 0.5),
-    y: position.y + (Math.random() * spread) - (spread * 0.5),
-    z: position.z + (Math.random() * spread) - (spread * 0.5)
-  }
-  // apply perlin noise
-  const perlinNoise = Noise.perlin3(center.x,center.y,center.z)
-  
-  const amp = 10
-  
-  return new Vector3(
-    center.x + (perlinNoise * amp),
-    center.y + (perlinNoise * amp),
-    center.z + (perlinNoise * amp)
-  )
-}
-
-function generateNearbyPosition(basePosition: Vector3, nodeType?: string, childIndex = 1) {
-  const biasX = ((Math.random() - 0.5) < 0 ? -1 : 1)
-  const biasY = 1 // ((Math.random() - 0.5) < 0 ? -1 : 1)
-  const biasZ = ((Math.random() - 0.5) < 0 ? -1 : 1)
-
-  let xOffset = 0 // 100 * biasX
-  let yOffset = 10 * biasY
-  const zOffset = 0 // 100 * biasZ
-
-  switch (nodeType) {
-    case 'episode':
-      yOffset += 50 * (childIndex || 0)
-      break;
-    case 'clip':
-      yOffset = 0
-      xOffset += 50 * (childIndex || 0)
-      break;
-    default:
-  }
-
-  const center = new Vector3()
-
-  center.x = basePosition.x + xOffset
-  center.y = basePosition.y + yOffset
-  center.z = basePosition.z + zOffset
-
-  return center
-}
-
-function generateNodePosition(node: NodeExtended, allData: NodeExtended[], topicMap: TopicMap, mappedNodes?: NodeExtended[]) {
-  const { ref_id: refId} = node
-
-  const center = {
-    x:(Math.random() * universeScale) - (universeScale * 0.5),
-    y: (Math.random() * universeScale) - (universeScale * 0.5),
-    z:(Math.random() * universeScale) - (universeScale * 0.5)
-  }
-
-   // do i have parents?
-  const parents = getMyParents(refId, mappedNodes)
-
-  let relativePosition: Vector3 | null = null
-
-  if (parents?.length){
-    const parent = parents[0]
-    const parentChildren = getMyChildren(parent.children || [], allData)
-    const myChildIndex = parentChildren.findIndex(f=>f.ref_id=== refId)
-    relativePosition = generateNearbyPosition(new Vector3(parent.x, parent.y, parent.z), node.node_type, myChildIndex + 1)
-  }
-
-  if (relativePosition) {
-    center.x = relativePosition.x
-    center.y = relativePosition.y
-    center.z = relativePosition.z
-  }
-  
-  // apply perlin noise
-  const perlinNoise = 1 // Noise.perlin3(center.x,center.y,center.z)
-  
-  const amp = 1
-  
-  return new Vector3(
-    center.x + (perlinNoise * amp),
-    center.y + (perlinNoise * amp),
-    center.z + (perlinNoise * amp)
-  )
-}
-
-
-function getMyTopicNodes(nodeRefId: string | undefined, topicMap: TopicMap) {
-  if (!nodeRefId) {
-    return []
-  }
-
-  const myTopicNodes: TopicMapItem[] = []
-
-  Object.values(topicMap).forEach((content) => {
-    if (content.children.includes(nodeRefId)) {
-      myTopicNodes.push(content)
-    }
-  })
-  
-  return myTopicNodes
-}
-
-function getMyParents(nodeRefId: string | undefined, nodes: NodeExtended[] | undefined) {
-  if (!nodeRefId || !nodes) {
-    return []
-  }
-
-  const parent = nodes.filter(f => f.children?.includes(nodeRefId))
-  
-  return parent
-}
-
-function getMyChildren(childrenRefIds:string[], nodes: NodeExtended[]) {
-  const children = nodes.filter(f => f.ref_id && childrenRefIds.includes(f.ref_id))
-  
-  return children
-}
-
-
-
-function generateTopicNodesFromMap(topicMap: TopicMap,
-                            allData: Node[],
-                            mappedNodes: Node[],
-                            doLinkCallback: (link: Link) => void,
-                            doNodeCallback: (node: NodeExtended) => void) {
   Object.entries(topicMap).forEach(([topic, content], index) => {
 
     const { children, position } = content
@@ -263,9 +91,6 @@ function generateTopicNodesFromMap(topicMap: TopicMap,
     /** we dont create topic node for search term,
       *  otherwise everything will be linked to it
       */
-    if (children.length < 3) {
-      return
-    }
 
     const scale = children.length * 2
     const topicNodeId = `topic_node_${index}`
@@ -299,12 +124,12 @@ function generateGuestNodesFromMap(guestMap: Record<string, guestMapChild>,
     const guestChildren = guestValue.children
     const scale = guestChildren.length * 2
     const guestNodeId = guest || `guestnode_${index}`
-
-    const nodePosition = generateGuestNodePosition()
     
     const guestNode: NodeExtended = {
       ...guestValue,
-      ...nodePosition,
+      x: 0,
+      y: 0,
+      z: 0,
       colors: ['#000'],
       id: guestNodeId,
       image_url: guestValue.imageUrl,
@@ -329,8 +154,8 @@ const getGraphData = async (searchterm: string) => {
 
   const returnFakeData = true
 
-  const nodes: NodeExtended[] = []
-  const links: Link[] = []
+  let nodes: NodeExtended[] = []
+  let links: Link[] = []
 
   const topicMap: TopicMap = {}
   const guestMap: Record<string, guestMapChild> = {}
@@ -338,13 +163,13 @@ const getGraphData = async (searchterm: string) => {
   try {
     const dataInit = await fetchNodes(searchterm, returnFakeData)
 
-    const nodePosition = generateNodePosition({} as NodeExtended,[],topicMap,[])
-
     const dataSeries = dataInit.data_series
       ? [
           {
             ...dataInit.data_series,
-            ...nodePosition,
+            x: 0,
+            y: 0,
+            z:0,
             boost: null,
             image_url: 'node_data.webp',
             label: dataInit.data_series.title,
@@ -363,11 +188,8 @@ const getGraphData = async (searchterm: string) => {
       // do all node processing from top down
       const dataProcessingTemplate = [
         {
-          type: 'topic',
-          hide: !shouldIncludeTopics,
-        },
-        {
           type: 'show',
+          hide: false
         },
         {
           type: 'episode',
@@ -418,13 +240,11 @@ const getGraphData = async (searchterm: string) => {
             ?.replace(AWS_IMAGE_BUCKET_URL, CLOUDFRONT_IMAGE_BUCKET_URL)
             .replace('.jpg', '_s.jpg')
           
-          const nodePosition1 = generateNodePosition(node, data, topicMap, nodes)
+          // const nodePosition1 = generateNodePosition(node, data, topicMap, nodes)
 
           nodes.push({
             ...node,
-            ...nodePosition1,
             id: node.ref_id || node.tweet_id,
-            // label: moment.show_title,
             image_url: smallImageUrl,
             type: node.type || node.node_type,
           })
@@ -446,65 +266,62 @@ const getGraphData = async (searchterm: string) => {
       )
     }
 
-         // extract topics
-         data.forEach((node) => {
-          const { topics, ref_id: refId, show_title: showTitle } = node
-          if (topics) {
-            topics.forEach((topic) => {
-              if (showTitle) {
-                if (topicMap[topic] && !topicMap[topic].children.includes(refId || showTitle)) {
-                    topicMap[topic].children.push(refId||showTitle)  
-                }
-                else {
-                  topicMap[topic] = {
-                    position: generateTopicPosition(),
-                    children: [refId || showTitle]
-                  }
-                }  
+    // extract topics to topic map
+    data.forEach((node) => {
+      const { topics, ref_id: refId, show_title: showTitle } = node
+      if (topics) {
+        topics.forEach((topic) => {
+          if (showTitle) {
+            if (topicMap[topic] && !topicMap[topic].children.includes(refId || showTitle)) {
+                topicMap[topic].children.push(refId||showTitle)  
+            }
+            else {
+              topicMap[topic] = {
+                position: new Vector3(0,0,0),
+                children: [refId || showTitle]
               }
-            })
+            }  
           }
         })
+      }
+    })
   
-        // generate nodes
-        generateTopicNodesFromMap(topicMap,
-          data,
-          nodes,
-          (l: Link) => {
-            links.push(l)
-          },
-          (n: NodeExtended) => {
-            nodes.push(n)
-          }
-        )
-
+    // generate nodes
+    if (shouldIncludeTopics){
+      generateTopicNodesFromMap(
+        topicMap,
+        (n: NodeExtended) => {
+          nodes.push(n)
+        }
+      )
+    }
+    
     // do links
     nodes.forEach((node) => {
       const { children } = node
       children?.forEach((childRefId: string) => {
         if (node.ref_id) {
-          const child = nodes.find(f => f.ref_id === childRefId)
-          let onlyVisibleOnSelect = false
-          if (
-            (child?.node_type === 'guest' || child?.node_type === 'topic')
-            || (node?.node_type === 'guest' || node?.node_type === 'topic')
-          ) {
-            onlyVisibleOnSelect = true
-          }
-          if (child){
-            const link: Link = {
-              onlyVisibleOnSelect,
+            links.push({
+              onlyVisibleOnSelect: false,
               source: node.ref_id,
-              sourcePosition: new Vector3(node.x,node.y,node.z),
+              sourcePosition: new Vector3(0,0,0),
               target: childRefId,
-              targetPosition: new Vector3(child.x,child.y,child.z)
-            }
-    
-            links.push(link)  
-          }
+              targetPosition: new Vector3(0,0,0)
+            })  
         }
       })
     })
+
+    // give nodes and links positions
+    if (true) {
+      const dataWithPositions = generateForceGraphPositions({ links, nodes })
+      links = dataWithPositions.links
+      nodes = dataWithPositions.nodes
+    } else if (false) {
+      const dataWithPositions = generateTypeGraphPositions({ links, nodes })
+      links = dataWithPositions.links
+      nodes = dataWithPositions.nodes
+    }
 
     nodes.sort((a, b) => (b.weight || 0) - (a.weight || 0))
 

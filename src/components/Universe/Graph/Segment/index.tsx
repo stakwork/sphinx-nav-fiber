@@ -1,7 +1,7 @@
 import { Segment as DreiSegment, SegmentObject } from "@react-three/drei";
 import { useRef, useEffect, useState } from "react";
 import { Vector3 } from "three";
-import { useDataStore, useSelectedNode } from "~/stores/useDataStore";
+import { useSelectedNode } from "~/stores/useDataStore";
 import { Link, NodeExtended } from "~/types";
 
 type Props = {
@@ -18,17 +18,17 @@ export const Segment = ({ link }: Props) => {
   useEffect(() => {
     const refId = selectedNode?.ref_id || ''
     const linkIsSelected = (selectedNode && ((refId === link.target) || (refId === link.source)))
-    
+
     if (!link.onlyVisibleOnSelect || linkIsSelected) {
         setStart(new Vector3(
-          link.sourcePosition.x,
-          link.sourcePosition.y,
-          link.sourcePosition.z)
+          link.sourcePosition?.x||0,
+          link.sourcePosition?.y||0,
+          link.sourcePosition?.z||0)
         )
         setEnd(new Vector3(
-          link.targetPosition.x,
-          link.targetPosition.y,
-          link.targetPosition.z)
+          link.targetPosition?.x||0,
+          link.targetPosition?.y||0,
+          link.targetPosition?.z||0)
         )
       } else {
         setStart(new Vector3(0, 0, 0))
@@ -43,7 +43,6 @@ export const Segment = ({ link }: Props) => {
       
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedNode, link]);
-
   
   return <DreiSegment ref={ref} start={start} end={end} color={color} />;
 };
