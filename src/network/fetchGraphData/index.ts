@@ -130,7 +130,7 @@ const getGraphData = async (searchterm: string) => {
           ;
 
 (guests || []).forEach((guest) => {
-            const currentGuest = guest as Guests
+  const currentGuest = guest as Guests
 
             if (currentGuest.name && currentGuest.ref_id && node.ref_id) {
               guestMap[currentGuest.ref_id] = {
@@ -222,7 +222,7 @@ const getGraphData = async (searchterm: string) => {
           label: guestValue.name,
           name: guestValue.name,
           node_type: 'guest',
-          ref_id: guestNodeId,
+          ref_id: guest,
           scale,
           show_title: guestValue.name,
           text: guestValue.twitterHandle,
