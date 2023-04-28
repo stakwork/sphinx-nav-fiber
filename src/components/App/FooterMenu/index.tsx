@@ -1,14 +1,15 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useState } from 'react'
 import {
   MdAddLink,
   MdClose,
+  MdHomeFilled,
   MdOutlineMenu,
   MdOutlineShowChart,
   MdOutlineTableView,
   MdPostAdd,
-  MdHomeFilled,
 } from 'react-icons/md'
 import styled from 'styled-components'
+import { ClickoutWatcher } from '~/components/ClickoutWatcher'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { SecondarySidebarActiveTab, useAppStore } from '~/stores/useAppStore'
@@ -17,7 +18,6 @@ import { colors } from '~/utils/colors'
 
 export const FooterMenu = () => {
   const [setSecondarySidebarActiveTab] = useAppStore((s) => [s.setSecondarySidebarActiveTab])
-  const wrapperRef = useRef<HTMLDivElement>(null)
 
   const [isOpened, setIsOpened] = useState(false)
 
@@ -32,64 +32,64 @@ export const FooterMenu = () => {
     setAddNodeModalData(data)
   }
 
-  const handleClickOutside = (event: MouseEvent) => {
-    if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
-      setIsOpened(false)
-    }
-  }
-
-  useEffect(() => {
-    document.addEventListener('mousedown', handleClickOutside)
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-  })
+  const handleClickOutside = useCallback(() => setIsOpened(false), [])
 
   return (
-    <FooterAction ref={wrapperRef}>
-      <Flex>
-        <ButtonsWrapper>
-          {isOpened && (
-            <>
-              <ActionButton onClick={() => handleOpenSidebar('about')}>
-                <Text>About</Text>
-                <IconWrapper>
-                  <MdHomeFilled size={24} />
-                </IconWrapper>
-              </ActionButton>
-              <ActionButton id="cy-add-content-menu" onClick={() => handleOpenModal('content')}>
-                <Text>Add Content</Text>
-                <IconWrapper>
-                  <MdAddLink size={24} />
-                </IconWrapper>
-              </ActionButton>
-              <ActionButton onClick={() => handleOpenModal('source')}>
-                <Text>Add Source</Text>
-                <IconWrapper>
-                  <MdPostAdd size={24} />
-                </IconWrapper>
-              </ActionButton>
-              <ActionButton id="cy-open-soure-table" onClick={() => handleOpenSidebar('sources')}>
-                <Text>Source Table</Text>
-                <IconWrapper>
-                  <MdOutlineTableView size={24} />
-                </IconWrapper>
-              </ActionButton>
-              <ActionButton onClick={() => handleOpenSidebar('sentiment')}>
-                <Text>Sentiment Data</Text>
-                <IconWrapper>
-                  <MdOutlineShowChart size={24} />
-                </IconWrapper>
-              </ActionButton>
-            </>
-          )}
-          <ActionButton className="root" id="cy-actions-menu-toggle" onClick={() => setIsOpened(!isOpened)}>
-            <IconWrapper>{isOpened ? <MdClose size={24} /> : <MdOutlineMenu size={24} />}</IconWrapper>
-          </ActionButton>
-        </ButtonsWrapper>
-      </Flex>
-    </FooterAction>
+    <ClickoutWatcher onClickOut={handleClickOutside}>
+      <FooterAction>
+        <Flex>
+          <ButtonsWrapper>
+            {isOpened && (
+              <>
+                <ActionButton onClick={() => handleOpenSidebar('about')}>
+                  <Text>About</Text>
+
+                  <IconWrapper>
+                    <MdHomeFilled size={24} />
+                  </IconWrapper>
+                </ActionButton>
+
+                <ActionButton id="cy-add-content-menu" onClick={() => handleOpenModal('content')}>
+                  <Text>Add Content</Text>
+
+                  <IconWrapper>
+                    <MdAddLink size={24} />
+                  </IconWrapper>
+                </ActionButton>
+
+                <ActionButton onClick={() => handleOpenModal('source')}>
+                  <Text>Add Source</Text>
+
+                  <IconWrapper>
+                    <MdPostAdd size={24} />
+                  </IconWrapper>
+                </ActionButton>
+
+                <ActionButton id="cy-open-soure-table" onClick={() => handleOpenSidebar('sources')}>
+                  <Text>Source Table</Text>
+
+                  <IconWrapper>
+                    <MdOutlineTableView size={24} />
+                  </IconWrapper>
+                </ActionButton>
+
+                <ActionButton onClick={() => handleOpenSidebar('sentiment')}>
+                  <Text>Sentiment Data</Text>
+
+                  <IconWrapper>
+                    <MdOutlineShowChart size={24} />
+                  </IconWrapper>
+                </ActionButton>
+              </>
+            )}
+
+            <ActionButton className="root" id="cy-actions-menu-toggle" onClick={() => setIsOpened(!isOpened)}>
+              <IconWrapper>{isOpened ? <MdClose size={24} /> : <MdOutlineMenu size={24} />}</IconWrapper>
+            </ActionButton>
+          </ButtonsWrapper>
+        </Flex>
+      </FooterAction>
+    </ClickoutWatcher>
   )
 }
 

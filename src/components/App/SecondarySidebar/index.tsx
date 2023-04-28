@@ -1,13 +1,15 @@
-import { MdClose } from "react-icons/md";
-import styled from "styled-components";
-import { Flex } from "~/components/common/Flex";
-import { useAppStore } from "~/stores/useAppStore";
-import { colors } from "~/utils/colors";
-import { About } from "./About";
-import { Sentiment } from "./Sentiment";
-import { SourcesView } from "./SourcesView";
+import { useCallback } from 'react'
+import { MdClose } from 'react-icons/md'
+import styled from 'styled-components'
+import { ClickoutWatcher } from '~/components/ClickoutWatcher'
+import { Flex } from '~/components/common/Flex'
+import { useAppStore } from '~/stores/useAppStore'
+import { colors } from '~/utils/colors'
+import { About } from './About'
+import { Sentiment } from './Sentiment'
+import { SourcesView } from './SourcesView'
 
-export const MENU_WIDTH = 600;
+export const MENU_WIDTH = 600
 
 const ComponentsMapper = {
   about: <About />,
@@ -16,21 +18,29 @@ const ComponentsMapper = {
 }
 
 export const SecondarySideBar = () => {
-
   const [secondarySidebarActiveTab, setSecondarySidebarActiveTab] = useAppStore((s) => [
     s.secondarySidebarActiveTab,
     s.setSecondarySidebarActiveTab,
   ])
 
-  return secondarySidebarActiveTab ? (
-    <Wrapper id="sidebar-wrapper">
-      <CloseButton onClick={() => setSecondarySidebarActiveTab('')}>
-        <MdClose />
-      </CloseButton>
-      {ComponentsMapper[secondarySidebarActiveTab]}
-    </Wrapper>
-  ) : null
-};
+  const handleClickOutside = useCallback(() => {
+    setSecondarySidebarActiveTab(null)
+  }, [setSecondarySidebarActiveTab])
+
+  return (
+    secondarySidebarActiveTab && (
+      <ClickoutWatcher onClickOut={handleClickOutside}>
+        <Wrapper id="sidebar-wrapper">
+          <CloseButton onClick={() => setSecondarySidebarActiveTab(null)}>
+            <MdClose />
+          </CloseButton>
+
+          {ComponentsMapper[secondarySidebarActiveTab]}
+        </Wrapper>
+      </ClickoutWatcher>
+    )
+  )
+}
 
 const Wrapper = styled(Flex)`
   background: ${colors.body};
@@ -45,11 +55,11 @@ const Wrapper = styled(Flex)`
     flex-direction: column;
     align
   }
-`;
+`
 
 const CloseButton = styled(Flex).attrs({
-  align: "center",
-  justify: "center",
+  align: 'center',
+  justify: 'center',
   p: 5,
 })`
   background-color: ${colors.inputBg1};
@@ -63,4 +73,4 @@ const CloseButton = styled(Flex).attrs({
   &:hover {
     background-color: ${colors.gray200};
   }
-`;
+`

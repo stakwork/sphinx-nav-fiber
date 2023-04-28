@@ -1,6 +1,6 @@
-import create from "zustand";
+import create from 'zustand'
 
-export type SecondarySidebarActiveTab = '' | 'sentiment' | 'sources' | 'about';
+export type SecondarySidebarActiveTab = 'sentiment' | 'sources' | 'about' | null
 
 type AppStore = {
   currentSearch: string | null
@@ -25,11 +25,11 @@ const defaultData = {
   flagErrorIsOpen: false,
   hasBudgetExplanationModalBeSeen: false,
   relevanceIsSelected: false,
-  secondarySidebarActiveTab: '' as const,
+  secondarySidebarActiveTab: null,
   sidebarIsOpen: false,
-  theme: "light" as const,
+  theme: 'light' as const,
   transcriptIsOpen: false,
-};
+}
 
 export const useAppStore = create<AppStore>((set, get) => ({
   ...defaultData,
