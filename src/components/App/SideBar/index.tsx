@@ -1,9 +1,10 @@
+import { useFormContext } from 'react-hook-form'
 import { MdClose, MdKeyboardDoubleArrowLeft } from 'react-icons/md'
 import styled from 'styled-components'
 import { CategorySelect } from '~/components/App/SideBar/CategorySelect'
+import { SearchBar } from '~/components/SearchBar'
 import { Flex } from '~/components/common/Flex'
 import { Loader } from '~/components/common/Loader'
-import { SearchBar } from '~/components/SearchBar'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { colors } from '~/utils/colors'
@@ -18,6 +19,7 @@ type Props = { onSubmit?: () => void }
 const Content = ({ onSubmit }: Props) => {
   const isLoading = useDataStore((s) => s.isFetching)
   const setSidebarOpen = useAppStore((s) => s.setSidebarOpen)
+  const { setValue } = useFormContext()
 
   return (
     <Wrapper id="sidebar-wrapper">
@@ -26,7 +28,8 @@ const Content = ({ onSubmit }: Props) => {
 
         <CloseButton
           onClick={() => {
-            setSidebarOpen(false)
+            setValue('search', '')
+            onSubmit?.()
           }}
         >
           <MdClose fontSize={20} />
@@ -48,7 +51,6 @@ const Content = ({ onSubmit }: Props) => {
           <CategorySelect />
         </Flex>
       </CategoryWrapper>
-
     </Wrapper>
   )
 }
