@@ -7,7 +7,7 @@ export const isDevelopment = !!(
 );
 
 export const API_URL =
-  process.env.REACT_DEV_API_URL ||
+  process.env.REACT_APP_API_URL ||
   apiUrlFromSwarmHost() ||
   "https://knowledge-graph.sphinx.chat";
 
