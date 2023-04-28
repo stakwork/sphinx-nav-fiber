@@ -1,6 +1,6 @@
 import { ReactElement, useState } from 'react'
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
-import { MdClose, MdInfo, MdKeyboardBackspace } from 'react-icons/md'
+import { MdCheckCircle, MdClose, MdInfo, MdKeyboardBackspace, MdWarning } from 'react-icons/md'
 import { ClipLoader } from 'react-spinners'
 import { toast } from 'react-toastify'
 import * as sphinx from 'sphinx-bridge-kevkevinpal'
@@ -59,7 +59,7 @@ const infoMessageSource =
 
 const notify = (message: string) => {
   toast(<ToastMessage message={message} />, {
-    icon: false,
+    icon: message === NODE_ADD_SUCCESS ? <MdCheckCircle color={colors.primaryGreen} /> : <MdWarning color={colors.primaryRed} />,
     position: toast.POSITION.BOTTOM_CENTER,
     type: message === NODE_ADD_SUCCESS ? 'success' : 'error',
   })

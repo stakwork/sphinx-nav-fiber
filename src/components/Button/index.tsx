@@ -64,6 +64,7 @@ const Wrapper = styled(Flex).attrs({
 })<Pick<Props, "kind" | "disabled" | "shape">>`
   border: none;
   cursor: pointer;
+  pointer-events: auto;
 
   ${getButtonKindDimensions}
 

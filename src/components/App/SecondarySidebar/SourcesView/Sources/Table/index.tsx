@@ -61,7 +61,7 @@ const Table: React.FC<Props> = ({ data, canEdit = false }) => {
   return !data?.length ? (
     <Text>There is not any results for selected filters</Text>
   ) : (
-    <MaterialTable aria-label="a dense table" size="small">
+    <MaterialTable aria-label="a dense table" id="sources-table" size="small">
       <TableHead>
         <TableRow>
           <StyledTableCell>Type</StyledTableCell>
