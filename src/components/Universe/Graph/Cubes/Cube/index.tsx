@@ -4,10 +4,12 @@ import { memo, useMemo, useCallback, useEffect, useRef, useState } from 'react'
 import * as THREE from 'three'
 import { Transcript } from '~/components/App/SideBar/Transcript'
 import { View } from '~/components/App/SideBar/View'
+import { usePathway } from '~/components/DataRetriever'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { NodeExtended } from '~/types'
 import { HtmlPanel } from './components/HtmlPanel'
+import { PathwayBadge } from './components/PathwayBadge'
 import { Portal } from './components/Portal'
 import { Tooltip } from './components/Tooltip'
 import { useMaterial } from './hooks/useMaterial'
@@ -40,7 +42,7 @@ export const Cube = memo(({ node, highlight, highlightColor }: Props) => {
   const ref = useRef<THREE.Mesh | null>(null)
   const [hovered, setHovered] = useState(false)
 
-  const categoryFilter = useDataStore((s) => s.categoryFilter)
+  const [categoryFilter, graphStyle] = useDataStore((s) => [s.categoryFilter, s.graphStyle])
 
   const transcriptIsOpen = useAppStore((s) => s.transcriptIsOpen)
 
@@ -75,6 +77,16 @@ export const Cube = memo(({ node, highlight, highlightColor }: Props) => {
     setHovered(false)
   }, [])
 
+  const { currentNodeIndex } = usePathway()
+
+  const scale = useMemo(() => {
+    if (graphStyle === 'split' && node.scale) {
+      return node.scale
+    }
+    return hovered ? 1.1 : 1
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[graphStyle, hovered])
+
   return (
     <>
       <Select enabled={selectedNode ? isSelected : isSelectedCategory}>
@@ -85,7 +97,7 @@ export const Cube = memo(({ node, highlight, highlightColor }: Props) => {
           name={node.id}
           onPointerOut={onPointerOut}
           onPointerOver={onPointerIn}
-          scale={hovered ? 1.1 : 1}
+          scale={scale}
           userData={node}
           position={[node.x,node.y,node.z]}
         >
@@ -100,6 +112,8 @@ export const Cube = memo(({ node, highlight, highlightColor }: Props) => {
               <Transcript />
             </HtmlPanel>
           )}
+
+          <PathwayBadge show={currentNodeIndex >= 0} value={currentNodeIndex + 1} />
 
           {hovered && (
             <Portal>

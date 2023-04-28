@@ -5,7 +5,7 @@ import { fetchGraphData } from "~/network/fetchGraphData";
 import { GraphData, NodeExtended, NodeType, Sources } from "~/types";
 import { saveSearchTerm } from "~/utils/relayHelper/index";
 
-type GraphStyle = 'type' | 'force'
+type GraphStyle = 'split' | 'force'
 
 type DataStore = {
   scrollEventsDisabled: boolean;

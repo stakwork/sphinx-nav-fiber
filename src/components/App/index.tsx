@@ -107,7 +107,7 @@ export const App = () => {
 
   useEffect(() => {
     if (data) {
-      if (graphStyle === 'type') {
+      if (graphStyle === 'split') {
         const updatedData = generateTypeGraphPositions(data, true)
         setData(updatedData)
       } else {

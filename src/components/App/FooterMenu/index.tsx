@@ -36,8 +36,8 @@ export const FooterMenu = () => {
   }
 
   const changeGraphType = () => {
-    if (graphStyle !== 'type') {
-      setGraphStyle('type')
+    if (graphStyle !== 'split') {
+      setGraphStyle('split')
     } else {
       setGraphStyle('force')
     }

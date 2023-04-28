@@ -312,9 +312,7 @@ const getGraphData = async (searchterm: string) => {
     // give nodes and links positions based on graphStyle
     const graphStyle = await localStorage.getItem('graphStyle')
 
-    console.log('got graphStyle',graphStyle)
-
-    if (graphStyle === 'type') {
+    if (graphStyle === 'split') {
       const dataWithPositions = generateTypeGraphPositions({ links, nodes }, false)
       links = dataWithPositions.links
       nodes = dataWithPositions.nodes

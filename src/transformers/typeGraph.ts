@@ -2,23 +2,33 @@ import { Vector3 } from "three";
 // import * as Noise from '~/utils/noise';
 import { GraphData, NodeExtended, Link } from "~/types";
 
-const universeScale = 4000
+const universeScale = 5000
+const padding = 300
 
 const guestCube = {
-    scale: 2600,
+    scale: universeScale/2,
     position: {
       x: 0,
       y: 0,
-      z: universeScale
+      z: (universeScale/2 + padding)
     }
 }
   
 const topicCube = {
-  scale: 2600,
+  scale: universeScale/2,
   position: {
     x: 0,
     y: 0,
-    z: - universeScale
+    z: - (universeScale/2 + padding)
+  }
+}
+
+const dataCube = {
+  scale: universeScale/2,
+  position: {
+    x: 0,
+    y: 0,
+    z: 0
   }
 }
   
@@ -137,12 +147,14 @@ function getMyChildren(childrenRefIds:string[], nodes: NodeExtended[]) {
 }
 
 function generateNodePosition(node: NodeExtended, allNodes: NodeExtended[], mappedNodes: NodeExtended[]) {
-  const { ref_id: refId} = node
+
+  const { ref_id: refId } = node
+  const { scale, position } = dataCube  
 
   const center = {
-    x:(Math.random() * universeScale) - (universeScale * 0.5),
-    y: (Math.random() * universeScale) - (universeScale * 0.5),
-    z:(Math.random() * universeScale) - (universeScale * 0.5)
+    x: position.x + (Math.random() * scale) - (scale * 0.5),
+    y: position.y + (Math.random() * scale) - (scale * 0.5),
+    z: position.z + (Math.random() * scale) - (scale * 0.5)
   }
 
    // do i have parents?
@@ -213,9 +225,42 @@ const sortNodes = (nodes:NodeExtended[]) => {
   return sortedNodes
 }
 
+const getBoundaryNodes = () => {
+  const pad = 10
+  const guestPerimeterNode = {
+    ...guestCube.position,
+    scale: guestCube.scale/10 + pad,
+    label: 'People',
+    node_type: 'boundary',
+    type:'boundary',
+  } as NodeExtended
+
+  const topicPerimeterNode = {
+    ...topicCube.position,
+    scale: guestCube.scale/10 + pad,
+    label: 'Topics',
+    node_type: 'boundary',
+    type:'boundary',
+  } as NodeExtended
+
+  const dataPerimeterNode = {
+    ...dataCube.position,
+    scale: dataCube.scale/10 + pad,
+    label: 'Media',
+    node_type: 'boundary',
+    type:'boundary',
+  } as NodeExtended
+  
+
+  return [
+    guestPerimeterNode,
+    topicPerimeterNode,
+    dataPerimeterNode
+  ]
+  
+}
 
 export const generateTypeGraphPositions = (data: GraphData, usingCurrentData: boolean) => {
-
   console.log('generateTypeGraphPositions', usingCurrentData)
   // recharacterize noise
   // Noise.seed(Math.random());
@@ -227,7 +272,7 @@ export const generateTypeGraphPositions = (data: GraphData, usingCurrentData: bo
 
   const mappedNodes:NodeExtended[] = []
   
-  const updatedNodes = cleanNodes.map((node:NodeExtended) => {
+  const updatedNodes:NodeExtended[] = cleanNodes.map((node:NodeExtended) => {
     let position = new Vector3(0,0,0)
     switch (node.node_type) {
       case 'guest':
@@ -277,6 +322,9 @@ export const generateTypeGraphPositions = (data: GraphData, usingCurrentData: bo
       targetPosition
     }
   })
+
+  // const boundaryNodes = getBoundaryNodes()
+  // boundaryNodes.forEach(b=>updatedNodes.push(b))
 
   return { nodes: updatedNodes, links: updatedLinks }
 }
