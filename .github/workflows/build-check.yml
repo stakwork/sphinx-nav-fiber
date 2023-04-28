@@ -1,10 +1,10 @@
-name: Eslint Check
+name: Craco Build Check
 on:
   pull_request:
     branches:
       - master
 jobs:
-  eslint-run:
+  craco-build-run:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
