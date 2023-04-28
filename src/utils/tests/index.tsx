@@ -8,7 +8,6 @@ export const executeIfTetsRunning = (fn: () => void) => {
   }
 }
 
-
 const E2E = () => {
   const userStore = useUserStore()
 
@@ -28,5 +27,6 @@ const E2E = () => {
   return <div id="e2e-check" />
 }
 
-// eslint-disable-next-line react/display-name
 export const E2ETests = memo(() => (isE2E ? <E2E /> : null))
+
+E2ETests.displayName = 'E2ETests'

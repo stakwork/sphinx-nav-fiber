@@ -12,6 +12,7 @@ import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { useModal } from '~/stores/useModalStore'
 import { colors } from '~/utils/colors'
+import { E2ETests } from '~/utils/tests'
 import { version } from '~/utils/version'
 import { Preloader } from '../Universe/Preloader'
 import { AppBar } from './AppBar'
@@ -19,7 +20,6 @@ import { FooterMenu } from './FooterMenu'
 import { SecondarySideBar } from './SecondarySidebar'
 import { SideBar } from './SideBar'
 import { Toasts } from './Toasts'
-import { E2ETests } from '~/utils/tests'
 
 const Wrapper = styled(Flex)`
   height: 100%;
@@ -106,8 +106,8 @@ export const App = () => {
       <GlobalStyle />
 
       <Wrapper direction="row">
-        <DataRetriever loader={<Preloader />}>
-          <FormProvider {...form}>
+        <FormProvider {...form}>
+          <DataRetriever loader={<Preloader />}>
             <SideBar onSubmit={handleSubmit} />
 
             <Universe />
@@ -119,15 +119,16 @@ export const App = () => {
             <FooterMenu />
 
             <Version>v{version}</Version>
-          </FormProvider>
-        </DataRetriever>
+          </DataRetriever>
 
-        <AddNodeModal />
+          <AddNodeModal />
 
-        <Toasts />
+          <Toasts />
 
-        <BudgetExplanationModal />
+          <BudgetExplanationModal />
+        </FormProvider>
       </Wrapper>
+
       <E2ETests />
     </>
   )
