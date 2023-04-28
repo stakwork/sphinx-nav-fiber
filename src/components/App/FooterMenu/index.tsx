@@ -2,12 +2,12 @@ import { useEffect, useRef, useState } from 'react'
 import {
   MdAddLink,
   MdClose,
+  MdHomeFilled,
   MdOutlineMenu,
   MdOutlineShowChart,
   MdOutlineTableView,
   MdPostAdd,
-  MdHomeFilled,
-  MdRefresh
+  MdRefresh,
 } from 'react-icons/md'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
@@ -19,7 +19,7 @@ import { colors } from '~/utils/colors'
 
 export const FooterMenu = () => {
   const [setSecondarySidebarActiveTab] = useAppStore((s) => [s.setSecondarySidebarActiveTab])
-  const [graphStyle, setGraphStyle] = useDataStore(s=>[s.graphStyle, s.setGraphStyle])
+  const [graphStyle, setGraphStyle] = useDataStore((s) => [s.graphStyle, s.setGraphStyle])
   const wrapperRef = useRef<HTMLDivElement>(null)
 
   const [isOpened, setIsOpened] = useState(false)
@@ -32,7 +32,7 @@ export const FooterMenu = () => {
 
   const handleOpenModal = (data: AddNodeModalData) => {
     open()
-    setAddNodeModalData(data);
+    setAddNodeModalData(data)
   }
 
   const changeGraphType = () => {
@@ -81,7 +81,7 @@ export const FooterMenu = () => {
                   <MdPostAdd size={24} />
                 </IconWrapper>
               </ActionButton>
-              <ActionButton onClick={() => handleOpenSidebar('sources')}>
+              <ActionButton id="cy-open-soure-table" onClick={() => handleOpenSidebar('sources')}>
                 <Text>Source Table</Text>
                 <IconWrapper>
                   <MdOutlineTableView size={24} />
@@ -120,7 +120,7 @@ const FooterAction = styled(Flex).attrs({
   position: absolute;
   bottom: 0;
   right: 0;
-  width: auto%;
+  width: auto;
   transition: opacity 1s;
 `
 

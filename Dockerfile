@@ -12,6 +12,10 @@ RUN yarn cache clean && yarn install --ignore-scripts
 
 COPY . /usr/src/app
 
+ARG REACT_APP_API_URL
+
+ENV REACT_APP_API_URL $REACT_APP_API_URL
+
 RUN yarn run build
 
 FROM nginx:alpine

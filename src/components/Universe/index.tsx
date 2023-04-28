@@ -1,35 +1,23 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import {
-  AdaptiveDpr,
-  AdaptiveEvents,
-  Html,
-  Loader,
-  Preload,
-} from "@react-three/drei";
-import { Canvas } from "@react-three/fiber";
-import {
-  Bloom,
-  EffectComposer,
-  Outline,
-  Selection,
-  SSAO,
-} from "@react-three/postprocessing";
-import { Suspense } from "react";
-import { colors } from "~/utils/colors";
-import { Controls } from "./Controls";
-import { Graph } from "./Graph";
-import { Lights } from "./Lights";
+import { AdaptiveDpr, AdaptiveEvents, Html, Loader, Preload } from '@react-three/drei'
+import { Canvas } from '@react-three/fiber'
+import { Bloom, EffectComposer, Outline, SSAO, Selection } from '@react-three/postprocessing'
+import { Suspense } from 'react'
+import { colors } from '~/utils/colors'
+import { Controls } from './Controls'
+import { Graph } from './Graph'
+import { Lights } from './Lights'
 
-import { useControlStore } from "~/stores/useControlStore";
-import { useControls } from "leva";
-import { Overlay } from "./Overlay";
+import { useControls } from 'leva'
+import { useControlStore } from '~/stores/useControlStore'
+import { Overlay } from './Overlay'
 
-const NODE_SELECTED_COLOR = 0x00ff00;
+const NODE_SELECTED_COLOR = 0x00ff00
 
 const Content = () => {
-  const {universeColor, ssaoColor} = useControls('universe', {
+  const { universeColor, ssaoColor } = useControls('universe', {
     universeColor: colors.black,
-    ssaoColor: "black",
+    ssaoColor: 'black',
   })
 
   return (
@@ -44,12 +32,7 @@ const Content = () => {
         <Graph />
 
         <EffectComposer autoClear={false} multisampling={8}>
-          <SSAO
-            color={ssaoColor}
-            intensity={150}
-            luminanceInfluence={0.5}
-            radius={0.05}
-          />
+          <SSAO color={ssaoColor} intensity={150} luminanceInfluence={0.5} radius={0.05} />
 
           <Bloom luminanceThreshold={1} mipmapBlur />
 
@@ -58,15 +41,14 @@ const Content = () => {
       </Selection>
     </>
   )
-};
+}
 
 let wheelEventTimeout: ReturnType<typeof setTimeout> | null = null
 
 export const Universe = () => (
-    <>
-
+  <>
     <Overlay />
-    
+
     <Suspense fallback={null}>
       <Canvas
         camera={{
@@ -81,16 +63,16 @@ export const Universe = () => (
           const { offsetParent } = target as HTMLDivElement
 
           if (wheelEventTimeout) {
-            clearTimeout(wheelEventTimeout);
+            clearTimeout(wheelEventTimeout)
           }
 
           if (offsetParent?.classList?.contains('html-panel')) {
             // if overflowing on y, disable camera controls to scroll on div
             if (offsetParent.clientHeight < offsetParent.scrollHeight) {
-              useControlStore.setState({ isUserScrollingOnHtmlPanel: true })  
+              useControlStore.setState({ isUserScrollingOnHtmlPanel: true })
             }
           }
-          
+
           useControlStore.setState({ isUserScrolling: true })
           useControlStore.setState({ userMovedCamera: true })
 
@@ -117,5 +99,5 @@ export const Universe = () => (
         </Suspense>
       </Canvas>
     </Suspense>
-    </>
-  )
+  </>
+)

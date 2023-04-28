@@ -1,20 +1,12 @@
+import { Vector3 } from 'three'
 import { AWS_IMAGE_BUCKET_URL, CLOUDFRONT_IMAGE_BUCKET_URL, isDevelopment } from '~/constants'
+import { mock } from '~/mocks/getMockGraphData/mockResponse.js'
 import { api } from '~/network/api'
-import {
-  FetchDataResponse,
-  FetchSentimentResponse,
-  GraphData,
-  Guests,
-  Link,
-  Node,
-  NodeExtended
-} from '~/types'
+import { useDataStore } from '~/stores/useDataStore'
+import { FetchDataResponse, FetchSentimentResponse, GraphData, Guests, Link, Node, NodeExtended } from '~/types'
 import { getLSat } from '~/utils/getLSat'
-import { Vector3 } from "three";
-import { mock } from '~/mocks/getMockGraphData/mockResponse.js';
 import { generateForceGraphPositions } from '../../transformers/forceGraph'
 import { generateSplitGraphPositions } from '../../transformers/splitGraph'
-import { useDataStore } from '~/stores/useDataStore';
 
 type guestMapChild = {
   children: string[]
@@ -29,7 +21,7 @@ const defaultData: GraphData = {
 }
 
 type TopicMapItem = {
-  children: string[];
+  children: string[]
   position: Vector3
 }
 
@@ -47,11 +39,10 @@ export const fetchGraphData = async (search: string) => {
 }
 
 const fetchNodes = async (search: string) => {
-
   if (!search) {
     return mock as FetchDataResponse
   }
-    
+
   if (isDevelopment) {
     const response = await api.get<FetchDataResponse>(`/searching?word=${search}&free=true`)
     return response
@@ -83,16 +74,14 @@ export const getAdminId = async (tribeId: string) => {
 }
 
 function generateTopicNodesFromMap(topicMap: TopicMap, doNodeCallback: (node: NodeExtended) => void) {
-
   Object.entries(topicMap).forEach(([topic, content], index) => {
-
     const { children, position } = content
     const { x, y, z } = position
     /** we dont create topic node for search term,
-      *  otherwise everything will be linked to it
-      */
+     *  otherwise everything will be linked to it
+     */
 
-    const scale = children.length * 2 >  maxScale ? maxScale : children.length * 2
+    const scale = children.length * 2 > maxScale ? maxScale : children.length * 2
     const topicNodeId = `topic_node_${index}`
 
     const topicNode: NodeExtended = {
@@ -100,7 +89,7 @@ function generateTopicNodesFromMap(topicMap: TopicMap, doNodeCallback: (node: No
       y,
       z,
       children,
-      image_url:'topic_icon.jpg',
+      image_url: 'topic_icon.jpg',
       colors: ['#000'],
       id: topicNodeId,
       label: topic,
@@ -117,13 +106,15 @@ function generateTopicNodesFromMap(topicMap: TopicMap, doNodeCallback: (node: No
   })
 }
 
-function generateGuestNodesFromMap(guestMap: Record<string, guestMapChild>, doNodeCallback: (node: NodeExtended) => void) {
-  
+function generateGuestNodesFromMap(
+  guestMap: Record<string, guestMapChild>,
+  doNodeCallback: (node: NodeExtended) => void,
+) {
   Object.entries(guestMap).forEach(([guest, guestValue], index) => {
     const guestChildren = guestValue.children
-    const scale = guestChildren.length * 2 >  maxScale ? maxScale : guestChildren.length * 2
+    const scale = guestChildren.length * 2 > maxScale ? maxScale : guestChildren.length * 2
     const guestNodeId = guest || `guestnode_${index}`
-    
+
     const guestNode: NodeExtended = {
       ...guestValue,
       x: 0,
@@ -148,7 +139,6 @@ function generateGuestNodesFromMap(guestMap: Record<string, guestMapChild>, doNo
 }
 
 const getGraphData = async (searchterm: string) => {
-
   const { graphStyle } = useDataStore.getState()
 
   let nodes: NodeExtended[] = []
@@ -166,7 +156,7 @@ const getGraphData = async (searchterm: string) => {
             ...dataInit.data_series,
             x: 0,
             y: 0,
-            z:0,
+            z: 0,
             boost: null,
             image_url: 'node_data.webp',
             label: dataInit.data_series.title,
@@ -182,19 +172,18 @@ const getGraphData = async (searchterm: string) => {
     const data: Node[] = [...dataInit.exact, ...dataInit.related, ...dataSeries]
 
     if (data.length) {
-
       // do all node processing from top down
       const dataProcessors = [
         {
           type: 'show',
-          hide: false
+          hide: false,
         },
         {
           type: 'episode',
           postProcessing: (node: NodeExtended) => {
             const { guests } = node
             if (node.ref_id) {
-              (guests || []).forEach((guest) => {
+              ;(guests || []).forEach((guest) => {
                 const currentGuest = guest as Guests
 
                 if (currentGuest.name && currentGuest.ref_id && node.ref_id) {
@@ -207,7 +196,7 @@ const getGraphData = async (searchterm: string) => {
                 }
               })
             }
-          }
+          },
         },
         {
           type: 'clip',
@@ -220,20 +209,19 @@ const getGraphData = async (searchterm: string) => {
         },
         {
           type: 'data_series',
-          data: []
+          data: [],
         },
       ]
 
       // create nodes in order by type (parents then children)
-      dataProcessors.forEach(dataProcessor => {
+      dataProcessors.forEach((dataProcessor) => {
         if (dataProcessor.hide) {
           return
         }
 
-        const thisData = data.filter(f => f.node_type === dataProcessor.type)
-        
-        thisData.forEach((node) => {
+        const thisData = data.filter((f) => f.node_type === dataProcessor.type)
 
+        thisData.forEach((node) => {
           // replace aws bucket url with cloudfront, and add size indicator to end
           const smallImageUrl = node.image_url
             ?.replace(AWS_IMAGE_BUCKET_URL, CLOUDFRONT_IMAGE_BUCKET_URL)
@@ -252,13 +240,10 @@ const getGraphData = async (searchterm: string) => {
           }
         })
       })
-      
-      generateGuestNodesFromMap(
-        guestMap,
-        (n: NodeExtended) => {
-          nodes.push(n)
-        }
-      )
+
+      generateGuestNodesFromMap(guestMap, (n: NodeExtended) => {
+        nodes.push(n)
+      })
     }
 
     // extract topics to topic map
@@ -273,43 +258,39 @@ const getGraphData = async (searchterm: string) => {
 
           if (showTitle) {
             if (topicMap[topic] && !topicMap[topic].children.includes(refId || showTitle)) {
-                topicMap[topic].children.push(refId||showTitle)  
-            }
-            else {
+              topicMap[topic].children.push(refId || showTitle)
+            } else {
               topicMap[topic] = {
-                position: new Vector3(0,0,0),
-                children: [refId || showTitle]
+                position: new Vector3(0, 0, 0),
+                children: [refId || showTitle],
               }
-            }  
+            }
           }
         })
       }
     })
-  
+
     // generate topic nodes
-    if (shouldIncludeTopics){
-      generateTopicNodesFromMap(
-        topicMap,
-        (n: NodeExtended) => {
-          nodes.push(n)
-        }
-      )
+    if (shouldIncludeTopics) {
+      generateTopicNodesFromMap(topicMap, (n: NodeExtended) => {
+        nodes.push(n)
+      })
     }
-    
+
     // do links
     nodes.forEach((node) => {
       const { children } = node
       children?.forEach((childRefId: string) => {
         if (node.ref_id) {
-            links.push({
-              onlyVisibleOnSelect: false,
-              source: node.ref_id,
-              sourceRef: node.ref_id,
-              sourcePosition: new Vector3(0,0,0),
-              target: childRefId,
-              targetRef: childRefId,
-              targetPosition: new Vector3(0,0,0)
-            })  
+          links.push({
+            onlyVisibleOnSelect: false,
+            source: node.ref_id,
+            sourceRef: node.ref_id,
+            sourcePosition: new Vector3(0, 0, 0),
+            target: childRefId,
+            targetRef: childRefId,
+            targetPosition: new Vector3(0, 0, 0),
+          })
         }
       })
     })

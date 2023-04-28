@@ -9,7 +9,18 @@ import { Button } from '~/components/Button'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { BaseModal } from '~/components/Modal'
-import { GITHUB_REPOSITORY, isDevelopment, LINK, NODE_ADD_ERROR, NODE_ADD_SUCCESS, TOPIC, TWITTER_HANDLE, TWITTER_SOURCE, YOUTUBE_CHANNEL } from '~/constants'
+import {
+  GITHUB_REPOSITORY,
+  isDevelopment,
+  LINK,
+  NODE_ADD_ERROR,
+  NODE_ADD_SUCCESS,
+  RSS,
+  TOPIC,
+  TWITTER_HANDLE,
+  TWITTER_SOURCE,
+  YOUTUBE_CHANNEL,
+} from '~/constants'
 import { api } from '~/network/api'
 import { useModal } from '~/stores/useModalStore'
 import { colors } from '~/utils/colors'
@@ -23,9 +34,10 @@ import TwitId from './TweetId'
 import TwitterHandle from './TwitterHandle'
 import YoutubeChannel from './YoutubeChannel'
 import GithubRepository from './GithubRepository'
-import { useDataStore } from '../../stores/useDataStore/index';
+import { useDataStore } from '../../stores/useDataStore/index'
 import { FetchRadarResponse, SubmitErrRes } from '~/types'
 import { getRadarData } from '~/network/fetchSourcesData'
+import RSSFeed from './RSSFeed'
 
 type Option = {
   label: string
@@ -43,7 +55,7 @@ const infoMessageContent =
   'Come across an interesting or useful part of a video or audio you\'d like to share? You can add it to the knowledge graph here!\n\nEnter a valid link to the YouTube video or Twitter Space you were watching, choose a start and end timestamp to encompass the segment you found interesting or useful, provide a brief description of what the segment is about, and add topic tags that are relevant to the segment. Hit "Add node", and your clip will be added to the graph shortly.\n\nYour pubkey will be submitted with your clip, and any boosts your clip receives will go to you!'
 
 const infoMessageSource =
-  'If you come across a source that produces ongoing content (e.g. a twitter account, youtube channel, etc). You can add it to the source table for your graph. Once the source is added to the table we will gather new content produced by that source, process it, and add it to your graph.';
+  'If you come across a source that produces ongoing content (e.g. a twitter account, youtube channel, etc). You can add it to the source table for your graph. Once the source is added to the table we will gather new content produced by that source, process it, and add it to your graph.'
 
 const notify = (message: string) => {
   toast(<ToastMessage message={message} />, {
@@ -53,7 +65,7 @@ const notify = (message: string) => {
   })
 }
 
-const handleSubmit = async (data: FieldValues, close: () => void, sourceType: string, successCallback: () => void ) => {
+const handleSubmit = async (data: FieldValues, close: () => void, sourceType: string, successCallback: () => void) => {
   const body: { [index: string]: unknown } = {}
 
   if (sourceType === LINK) {
@@ -72,7 +84,7 @@ const handleSubmit = async (data: FieldValues, close: () => void, sourceType: st
       }
     }
   } else if (sourceType === TWITTER_SOURCE) {
-    body.tweet_id = data.tweet.split('/').at(-1);
+    body.tweet_id = data.tweet.split('/').at(-1)
   } else {
     body.source_type = sourceType
 
@@ -112,8 +124,8 @@ const handleSubmit = async (data: FieldValues, close: () => void, sourceType: st
       throw new Error(message)
     }
 
-    if(endPoint === 'radar') {
-      await successCallback();
+    if (endPoint === 'radar') {
+      await successCallback()
     }
 
     notify(NODE_ADD_SUCCESS)
@@ -152,6 +164,10 @@ const CONTENT_TYPE_OPTIONS: Record<'source' | 'content', IOptionMap> = {
       component: GithubRepository,
       label: 'Github repository',
     },
+    [RSS]: {
+      component: RSSFeed,
+      label: 'RSS feed',
+    },
     [TOPIC]: {
       component: Topic,
       label: 'Topic',
@@ -167,16 +183,16 @@ const CONTENT_TYPE_OPTIONS: Record<'source' | 'content', IOptionMap> = {
   },
 }
 
-const CONTENT_TYPES = Object.keys(CONTENT_TYPE_OPTIONS.content);
+const CONTENT_TYPES = Object.keys(CONTENT_TYPE_OPTIONS.content)
 
 export const AddNodeModal = () => {
   const { close, addNodeModalData } = useModal('addNode')
   const [activeType, setActiveType] = useState('')
-  const setSources = useDataStore(s => s.setSources);
+  const setSources = useDataStore((s) => s.setSources)
 
   const resolvedContentOptions = addNodeModalData ? CONTENT_TYPE_OPTIONS[addNodeModalData] : null
 
-  const resolveInfoMessage = addNodeModalData === 'source' ? infoMessageSource : infoMessageContent;
+  const resolveInfoMessage = addNodeModalData === 'source' ? infoMessageSource : infoMessageContent
 
   const form = useForm({ mode: 'onSubmit' })
 
@@ -191,13 +207,13 @@ export const AddNodeModal = () => {
   }
 
   const onSuccessCallback = async () => {
-    if([TWITTER_HANDLE, TOPIC].includes(activeType)) {
+    if ([TWITTER_HANDLE, TOPIC].includes(activeType)) {
       try {
-         const data: FetchRadarResponse = await getRadarData()
+        const data: FetchRadarResponse = await getRadarData()
 
-         setSources(data.data)
+        setSources(data.data)
       } catch (error) {
-        console.log(error);
+        console.log(error)
       }
     }
   }
@@ -206,10 +222,12 @@ export const AddNodeModal = () => {
     await handleSubmit(data, handleClose, activeType, onSuccessCallback)
   })
 
-  const options = resolvedContentOptions ? Object.keys(resolvedContentOptions).map((i: string) => ({
-    label: resolvedContentOptions[i].label,
-    value: i,
-  })) : [];
+  const options = resolvedContentOptions
+    ? Object.keys(resolvedContentOptions).map((i: string) => ({
+        label: resolvedContentOptions[i].label,
+        value: i,
+      }))
+    : []
 
   const selectedValue = activeType
     ? [
