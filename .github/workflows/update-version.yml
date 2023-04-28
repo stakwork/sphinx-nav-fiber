@@ -14,4 +14,6 @@ jobs:
     - name: Update package version
       run: |
         npm version patch -m "Bump version to %s [skip ci]"
+        git config user.name 'Github Actions'
+        git config user.email github-actions@github.com
         git push --follow-tags
