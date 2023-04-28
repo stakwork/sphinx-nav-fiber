@@ -1,11 +1,11 @@
-name: Generate Build Files
+name: Generate Build Files and Update version #
 on:
  push:
     branches:
       - master
 
 jobs:
-  yarn-build:
+  yarn-build-and-update-version:
     name: build
     runs-on: 
       - ubuntu-latest
@@ -24,4 +24,8 @@ jobs:
           git config user.email github-actions@github.com
           git add ./build -f
           git commit -m "ci: automatic build fixes" || echo -n
-          git push
+      - name: Update package version
+        run: |
+          npm version patch -m "Bump version to %s"
+      - name: Push to Github 
+          git push --follow-tags
