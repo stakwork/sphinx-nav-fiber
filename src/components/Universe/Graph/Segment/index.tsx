@@ -47,5 +47,5 @@ export const Segment = ({ link }: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedNode, link])
 
-  return <DreiSegment ref={ref} start={start} end={end} color={color} />
+  return <DreiSegment ref={ref} color={color} end={end} start={start} />
 }

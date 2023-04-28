@@ -45,6 +45,7 @@ const fetchNodes = async (search: string) => {
 
   if (isDevelopment) {
     const response = await api.get<FetchDataResponse>(`/searching?word=${search}&free=true`)
+
     return response
   }
 
@@ -102,6 +103,7 @@ function generateTopicNodesFromMap(topicMap: TopicMap, doNodeCallback: (node: No
       text: topic,
       weight: 0,
     }
+
     doNodeCallback(topicNode)
   })
 }
@@ -182,8 +184,12 @@ const getGraphData = async (searchterm: string) => {
           type: 'episode',
           postProcessing: (node: NodeExtended) => {
             const { guests } = node
+
             if (node.ref_id) {
-              ;(guests || []).forEach((guest) => {
+              // update guest map
+              const guestList = guests || []
+
+              guestList.forEach((guest) => {
                 const currentGuest = guest as Guests
 
                 if (currentGuest.name && currentGuest.ref_id && node.ref_id) {
@@ -249,6 +255,7 @@ const getGraphData = async (searchterm: string) => {
     // extract topics to topic map
     data.forEach((node) => {
       const { topics, ref_id: refId, show_title: showTitle } = node
+
       if (topics) {
         topics.forEach((topic) => {
           // don't map the search term, all will be tied to it
@@ -280,6 +287,7 @@ const getGraphData = async (searchterm: string) => {
     // do links
     nodes.forEach((node) => {
       const { children } = node
+
       children?.forEach((childRefId: string) => {
         if (node.ref_id) {
           links.push({
@@ -298,10 +306,12 @@ const getGraphData = async (searchterm: string) => {
     // give nodes and links positions based on graphStyle
     if (graphStyle === 'split') {
       const dataWithPositions = generateSplitGraphPositions({ links, nodes }, false)
+
       links = dataWithPositions.links
       nodes = dataWithPositions.nodes
     } else {
       const dataWithPositions = generateForceGraphPositions({ links, nodes }, false)
+
       links = dataWithPositions.links
       nodes = dataWithPositions.nodes
     }

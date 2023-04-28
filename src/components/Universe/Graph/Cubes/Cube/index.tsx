@@ -1,6 +1,6 @@
-import { ThreeEvent, useFrame, extend } from '@react-three/fiber'
+import { ThreeEvent, useFrame } from '@react-three/fiber'
 import { Select } from '@react-three/postprocessing'
-import { memo, useMemo, useCallback, useEffect, useRef, useState } from 'react'
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import * as THREE from 'three'
 import { Transcript } from '~/components/App/SideBar/Transcript'
 import { View } from '~/components/App/SideBar/View'
@@ -54,8 +54,6 @@ export const Cube = memo(({ node, highlight, highlightColor }: Props) => {
   const isSelected = selectedNode?.id === node.id
   const isSelectedCategory = node.node_type === categoryFilter
 
-  
-
   useFrame(() => {
     if (selectedNode) {
       material.toneMapped = false
@@ -66,7 +64,6 @@ export const Cube = memo(({ node, highlight, highlightColor }: Props) => {
 
   useEffect(() => {
     document.body.style.cursor = hovered ? 'pointer' : 'auto'
-    
   }, [hovered])
 
   const onPointerIn = useCallback((e: ThreeEvent<PointerEvent>) => {
@@ -85,9 +82,10 @@ export const Cube = memo(({ node, highlight, highlightColor }: Props) => {
     if (graphStyle === 'split' && node.scale) {
       return node.scale
     }
+
     return hovered ? 1.1 : 1
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[graphStyle, hovered])
+  }, [graphStyle, hovered])
 
   return (
     <>
@@ -99,9 +97,9 @@ export const Cube = memo(({ node, highlight, highlightColor }: Props) => {
           name={node.id}
           onPointerOut={onPointerOut}
           onPointerOver={onPointerIn}
+          position={[node.x, node.y, node.z]}
           scale={scale}
           userData={node}
-          position={[node.x,node.y,node.z]}
         >
           {isSelected && (
             <HtmlPanel>
@@ -124,7 +122,6 @@ export const Cube = memo(({ node, highlight, highlightColor }: Props) => {
           )}
         </mesh>
       </Select>
-
     </>
   )
 })

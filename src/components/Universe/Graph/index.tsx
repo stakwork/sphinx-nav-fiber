@@ -1,20 +1,20 @@
-import { Segments } from "@react-three/drei";
-import { useGraphData } from "~/components/DataRetriever";
-import { useAppStore } from "~/stores/useAppStore";
-import { useDataStore } from "~/stores/useDataStore";
-import { GraphData } from "~/types";
-import { Cubes } from "./Cubes";
-import { PathwayLine } from "./PathwayLine";
-import { Segment } from "./Segment";
+import { Segments } from '@react-three/drei'
+import { useGraphData } from '~/components/DataRetriever'
+import { useAppStore } from '~/stores/useAppStore'
+import { useDataStore } from '~/stores/useDataStore'
+import { GraphData } from '~/types'
+import { Cubes } from './Cubes'
 import { GraphLoadingIcon } from './Icons'
+import { PathwayLine } from './PathwayLine'
+import { Segment } from './Segment'
 
 export const Graph = () => {
-  const data = useGraphData();
-  const searchTerm = useAppStore((s) => s.currentSearch);
-  const isLoading = useDataStore((s) => s.isFetching);
+  const data = useGraphData()
+  const searchTerm = useAppStore((s) => s.currentSearch)
+  const isLoading = useDataStore((s) => s.isFetching)
 
   if (isLoading) {
-    return <GraphLoadingIcon/>
+    return <GraphLoadingIcon />
   }
 
   return (
@@ -34,18 +34,16 @@ export const Graph = () => {
         limit={data.links.length}
         lineWidth={0.15}
       >
-        {(data.links as unknown as GraphData["links"]).map(
-          (link, index) => (
-            <Segment
-              // eslint-disable-next-line react/no-array-index-key
-              key={index.toString()}
-              link={link}
-            />
-          )
-        )}
+        {(data.links as unknown as GraphData['links']).map((link, index) => (
+          <Segment
+            // eslint-disable-next-line react/no-array-index-key
+            key={index.toString()}
+            link={link}
+          />
+        ))}
       </Segments>
     </>
-  );
-};
+  )
+}
 
-Segments.displayName = "Segments";
+Segments.displayName = 'Segments'
