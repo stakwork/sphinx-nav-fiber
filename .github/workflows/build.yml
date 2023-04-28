@@ -17,15 +17,12 @@ jobs:
         with:
           node-version-file: '.nvmrc'
           cache: 'yarn'
-      - name: Build
+      - name: Build and Version
         run: |
           CI=false yarn install && CI=false yarn run build
           git config user.name 'Github Actions'
           git config user.email github-actions@github.com
           git add ./build -f
           git commit -m "ci: automatic build fixes" || echo -n
-      - name: Update package version
-        run: |
           npm version patch -m "Bump version to %s"
-      - name: Push to Github 
           git push --follow-tags
