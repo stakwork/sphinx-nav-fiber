@@ -29,7 +29,6 @@ const Content = ({ onSubmit }: Props) => {
         <CloseButton
           onClick={() => {
             setValue('search', '')
-            onSubmit?.()
           }}
         >
           <MdClose fontSize={20} />
