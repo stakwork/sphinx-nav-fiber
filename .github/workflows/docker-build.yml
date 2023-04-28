@@ -1,4 +1,4 @@
-name: Docker build on push
+name: Docker Build and Push to DockerHub
 env:
   DOCKER_CLI_EXPERIMENTAL: enabled
 
