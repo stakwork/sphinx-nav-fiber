@@ -73,6 +73,7 @@ export const LINK = 'link'
 export const TWITTER_HANDLE = 'twitter_handle'
 export const GITHUB_REPOSITORY = 'github_repository'
 export const YOUTUBE_CHANNEL = 'youtube_channel'
+export const RSS = 'rss'
 export const TWITTER_SOURCE = 'tweet'
 export const TOPIC = 'topic'
 
