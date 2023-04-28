@@ -1,4 +1,4 @@
-import { ThreeEvent, useFrame } from '@react-three/fiber'
+import { ThreeEvent, useFrame, extend } from '@react-three/fiber'
 import { Select } from '@react-three/postprocessing'
 import { memo, useMemo, useCallback, useEffect, useRef, useState } from 'react'
 import * as THREE from 'three'
@@ -15,7 +15,6 @@ import { useMaterial } from './hooks/useMaterial'
 const geometryXs = new THREE.BoxGeometry(10, 10, 10)
 const geometryS = new THREE.BoxGeometry(20, 20, 20)
 const geometryM = new THREE.BoxGeometry(35, 35, 35)
-const geometryXL = new THREE.BoxGeometry(50, 50, 50)
 
 const getGeometry = (node: NodeExtended) => {
   switch (node.node_type) {
@@ -25,7 +24,7 @@ const getGeometry = (node: NodeExtended) => {
     case 'show':
       return geometryM
     case 'topic':
-      return geometryXL
+      return geometryXs
     default:
       return geometryXs
   }

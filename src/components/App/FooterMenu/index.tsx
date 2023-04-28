@@ -13,11 +13,13 @@ import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { SecondarySidebarActiveTab, useAppStore } from '~/stores/useAppStore'
+import { useDataStore } from '~/stores/useDataStore'
 import { AddNodeModalData, useModal } from '~/stores/useModalStore'
 import { colors } from '~/utils/colors'
 
 export const FooterMenu = () => {
   const [setSecondarySidebarActiveTab] = useAppStore((s) => [s.setSecondarySidebarActiveTab])
+  const [graphStyle, setGraphStyle] = useDataStore(s=>[s.graphStyle, s.setGraphStyle])
   const wrapperRef = useRef<HTMLDivElement>(null)
 
   const [isOpened, setIsOpened] = useState(false)
@@ -34,9 +36,12 @@ export const FooterMenu = () => {
   }
 
   const changeGraphType = () => {
-    console.log('change')
+    if (graphStyle !== 'type') {
+      setGraphStyle('type')
+    } else {
+      setGraphStyle('force')
+    }
   }
-
 
   const handleClickOutside = (event: MouseEvent) => {
     if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {

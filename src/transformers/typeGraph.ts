@@ -1,5 +1,5 @@
 import { Vector3 } from "three";
-import * as Noise from '~/utils/noise';
+// import * as Noise from '~/utils/noise';
 import { GraphData, NodeExtended, Link } from "~/types";
 
 const universeScale = 4000
@@ -39,7 +39,7 @@ function generateGuestNodePosition() {
     z: position.z + (Math.random() * scale) - (scale * 0.5)
   }
   // apply perlin noise
-  const perlinNoise = Noise.perlin3(center.x,center.y,center.z)
+  const perlinNoise = 1 // Noise.perlin3(center.x,center.y,center.z)
   
   const amp = 10
   
@@ -60,7 +60,7 @@ function generateTopicNodePosition() {
     z: position.z + (Math.random() * scale) - (scale * 0.5)
   }
   // apply perlin noise
-  const perlinNoise = Noise.perlin3(center.x,center.y,center.z)
+  const perlinNoise = 1 // Noise.perlin3(center.x,center.y,center.z)
   
   const amp = 10
   
@@ -175,11 +175,59 @@ function generateNodePosition(node: NodeExtended, allNodes: NodeExtended[], mapp
   )
 }
 
+const sortAB = (aType:string, bType:string, type:string) => {
+  let direction = -2
+  if (aType === type && bType === type) {
+    direction = 0
+  } else if (aType === type && bType !== type) {
+    direction = -1  
+  } else if (aType !== type && bType === type){
+    direction = 1  
+  }
+  return direction
+}
 
-export const generateTypeGraphPositions = (data: GraphData) => {
+const sortNodes = (nodes:NodeExtended[]) => {
+  const sortedNodes = nodes.map((n) => n).sort((a, b) => {
+    let direction = 0
+
+    if (a.node_type === 'show' || b.node_type === 'show') {
+      direction = sortAB(a.node_type, b.node_type, 'show')
+    }
+    else if (a.node_type === 'episode' || b.node_type === 'episode') {
+      direction = sortAB(a.node_type, b.node_type, 'episode')
+    }
+    else if (a.node_type === 'clip' || b.node_type === 'clip') {
+      direction = sortAB(a.node_type, b.node_type, 'clip')
+    }
+    else if (a.node_type !== 'guest' && b.node_type === 'guest') {
+      direction = sortAB(a.node_type, b.node_type, 'guest') 
+    } 
+    else {
+      direction = 0
+    }
+
+    return direction
+  })
+
+  return sortedNodes
+}
+
+
+export const generateTypeGraphPositions = (data: GraphData, usingCurrentData: boolean) => {
+
+  console.log('generateTypeGraphPositions', usingCurrentData)
+  // recharacterize noise
+  // Noise.seed(Math.random());
+
+  // sort parent then children
+  const cleanNodes = sortNodes(data.nodes)
+
+  const cleanLinks = data.links.map((l) => l)
+
   const mappedNodes:NodeExtended[] = []
   
-  const updatedNodes = data.nodes.map((node) => {
+  const updatedNodes = cleanNodes.map((node:NodeExtended) => {
     let position = new Vector3(0,0,0)
     switch (node.node_type) {
       case 'guest':
@@ -189,10 +237,10 @@ export const generateTypeGraphPositions = (data: GraphData) => {
         position = generateTopicNodePosition()
         break;
       case 'data_series':
-        position = generateNodePosition({} as NodeExtended, data.nodes, mappedNodes)
+        position = generateNodePosition({} as NodeExtended, cleanNodes, mappedNodes)
         break;
       default:
-        position = generateNodePosition(node, data.nodes, mappedNodes)
+        position = generateNodePosition(node, cleanNodes, mappedNodes)
         break;
     }
 
@@ -206,11 +254,10 @@ export const generateTypeGraphPositions = (data: GraphData) => {
     return updated
   })
 
-
   // do links
-  const updatedLinks = data.links.map((l) => {
-    const sourceNode = updatedNodes.find(f => f.ref_id === l.source)
-    const targetNode = updatedNodes.find(f=> f.ref_id === l.target)
+  const updatedLinks = cleanLinks.map((l: Link) => {
+    const sourceNode = updatedNodes.find(f => f.ref_id === l.sourceRef)
+    const targetNode = updatedNodes.find(f=> f.ref_id === l.targetRef)
     let onlyVisibleOnSelect = false
 
     if (

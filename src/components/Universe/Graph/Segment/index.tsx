@@ -2,7 +2,7 @@ import { Segment as DreiSegment, SegmentObject } from "@react-three/drei";
 import { useRef, useEffect, useState } from "react";
 import { Vector3 } from "three";
 import { useSelectedNode } from "~/stores/useDataStore";
-import { Link, NodeExtended } from "~/types";
+import { Link } from "~/types";
 
 type Props = {
   link: Link;
@@ -17,7 +17,7 @@ export const Segment = ({ link }: Props) => {
 
   useEffect(() => {
     const refId = selectedNode?.ref_id || ''
-    const linkIsSelected = (selectedNode && ((refId === link.target) || (refId === link.source)))
+    const linkIsSelected = (selectedNode && ((refId === link.targetRef) || (refId === link.sourceRef)))
 
     if (!link.onlyVisibleOnSelect || linkIsSelected) {
         setStart(new Vector3(

@@ -37,9 +37,9 @@ left:0px;
 user-select:none;
 pointer-events:none;
 display:flex;
-flex-direction:column;
+
 justify-content:flex-end;
-align-items:flex-end;
+align-items:flex-start;
 height:100%;
 width:100%;
 padding:16px;

@@ -71,7 +71,7 @@ export const Universe = () => (
       <Canvas
         camera={{
           aspect: 1920 / 1080,
-          far: 10000,
+          far: 30000,
           near: 1,
           position: [1000, 0, 5],
         }}

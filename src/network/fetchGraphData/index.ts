@@ -7,12 +7,10 @@ import {
   Guests,
   Link,
   Node,
-  NodeExtended,
-  nodeTypes
+  NodeExtended
 } from '~/types'
 import { getLSat } from '~/utils/getLSat'
 import { Vector3 } from "three";
-import * as Noise from '~/utils/noise';
 import { mock } from '~/mocks/getMockGraphData/mockResponse.js';
 import { generateForceGraphPositions } from '../../transformers/forceGraph'
 import { generateTypeGraphPositions } from '../../transformers/typeGraph'
@@ -46,13 +44,13 @@ export const fetchGraphData = async (search: string) => {
   }
 }
 
-const fetchNodes = async (search: string, returnFake: boolean) => {
+const fetchNodes = async (search: string) => {
+
+  if (!search) {
+    return mock as FetchDataResponse
+  }
+    
   if (isDevelopment) {
-
-    if (returnFake) {
-      return mock as FetchDataResponse
-    }
-
     const response = await api.get<FetchDataResponse>(`/searching?word=${search}&free=true`)
     return response
   }
@@ -100,10 +98,12 @@ function generateTopicNodesFromMap(topicMap: TopicMap, doNodeCallback: (node: No
       y,
       z,
       children,
+      image_url:'topic_icon.jpg',
       colors: ['#000'],
       id: topicNodeId,
       label: topic,
       name: topic,
+      type: 'topic',
       node_type: 'topic',
       ref_id: topicNodeId,
       scale,
@@ -115,10 +115,7 @@ function generateTopicNodesFromMap(topicMap: TopicMap, doNodeCallback: (node: No
   })
 }
 
-function generateGuestNodesFromMap(guestMap: Record<string, guestMapChild>,
-                            allData: NodeExtended[],
-                            mappedNodes: NodeExtended[],
-                            doNodeCallback: (node: NodeExtended) => void) {
+function generateGuestNodesFromMap(guestMap: Record<string, guestMapChild>, doNodeCallback: (node: NodeExtended) => void) {
   
   Object.entries(guestMap).forEach(([guest, guestValue], index) => {
     const guestChildren = guestValue.children
@@ -149,11 +146,6 @@ function generateGuestNodesFromMap(guestMap: Record<string, guestMapChild>,
 }
 
 const getGraphData = async (searchterm: string) => {
-  // recharacterize noise
-  Noise.seed(Math.random());
-
-  const returnFakeData = true
-
   let nodes: NodeExtended[] = []
   let links: Link[] = []
 
@@ -161,7 +153,7 @@ const getGraphData = async (searchterm: string) => {
   const guestMap: Record<string, guestMapChild> = {}
 
   try {
-    const dataInit = await fetchNodes(searchterm, returnFakeData)
+    const dataInit = await fetchNodes(searchterm)
 
     const dataSeries = dataInit.data_series
       ? [
@@ -185,8 +177,9 @@ const getGraphData = async (searchterm: string) => {
     const data: Node[] = [...dataInit.exact, ...dataInit.related, ...dataSeries]
 
     if (data.length) {
+
       // do all node processing from top down
-      const dataProcessingTemplate = [
+      const dataProcessors = [
         {
           type: 'show',
           hide: false
@@ -226,12 +219,13 @@ const getGraphData = async (searchterm: string) => {
         },
       ]
 
-      dataProcessingTemplate.forEach(template => {
-        if (template.hide) {
+      // create nodes in order by type (parents then children)
+      dataProcessors.forEach(dataProcessor => {
+        if (dataProcessor.hide) {
           return
         }
 
-        const thisData = data.filter(f => f.node_type === template.type)
+        const thisData = data.filter(f => f.node_type === dataProcessor.type)
         
         thisData.forEach((node) => {
 
@@ -239,8 +233,6 @@ const getGraphData = async (searchterm: string) => {
           const smallImageUrl = node.image_url
             ?.replace(AWS_IMAGE_BUCKET_URL, CLOUDFRONT_IMAGE_BUCKET_URL)
             .replace('.jpg', '_s.jpg')
-          
-          // const nodePosition1 = generateNodePosition(node, data, topicMap, nodes)
 
           nodes.push({
             ...node,
@@ -250,16 +242,14 @@ const getGraphData = async (searchterm: string) => {
           })
 
           // do post processing for type
-          if (template.postProcessing) {
-            template.postProcessing(node)
+          if (dataProcessor.postProcessing) {
+            dataProcessor.postProcessing(node)
           }
         })
       })
       
       generateGuestNodesFromMap(
         guestMap,
-        data,
-        nodes,
         (n: NodeExtended) => {
           nodes.push(n)
         }
@@ -271,6 +261,11 @@ const getGraphData = async (searchterm: string) => {
       const { topics, ref_id: refId, show_title: showTitle } = node
       if (topics) {
         topics.forEach((topic) => {
+          // don't map the search term, all will be tied to it
+          if (topic === searchterm) {
+            return
+          }
+
           if (showTitle) {
             if (topicMap[topic] && !topicMap[topic].children.includes(refId || showTitle)) {
                 topicMap[topic].children.push(refId||showTitle)  
@@ -286,7 +281,7 @@ const getGraphData = async (searchterm: string) => {
       }
     })
   
-    // generate nodes
+    // generate topic nodes
     if (shouldIncludeTopics){
       generateTopicNodesFromMap(
         topicMap,
@@ -304,21 +299,27 @@ const getGraphData = async (searchterm: string) => {
             links.push({
               onlyVisibleOnSelect: false,
               source: node.ref_id,
+              sourceRef: node.ref_id,
               sourcePosition: new Vector3(0,0,0),
               target: childRefId,
+              targetRef: childRefId,
               targetPosition: new Vector3(0,0,0)
             })  
         }
       })
     })
 
-    // give nodes and links positions
-    if (true) {
-      const dataWithPositions = generateForceGraphPositions({ links, nodes })
+    // give nodes and links positions based on graphStyle
+    const graphStyle = await localStorage.getItem('graphStyle')
+
+    console.log('got graphStyle',graphStyle)
+
+    if (graphStyle === 'type') {
+      const dataWithPositions = generateTypeGraphPositions({ links, nodes }, false)
       links = dataWithPositions.links
       nodes = dataWithPositions.nodes
-    } else if (false) {
-      const dataWithPositions = generateTypeGraphPositions({ links, nodes })
+    } else {
+      const dataWithPositions = generateForceGraphPositions({ links, nodes }, false)
       links = dataWithPositions.links
       nodes = dataWithPositions.nodes
     }

@@ -5,6 +5,7 @@ import { Person } from "../Person";
 import { Relevance } from "../Relevance";
 import { TwitData } from "../TwitData";
 import { Twitter } from "../Twitter";
+import { Topic } from "../Topic";
 
 type Props = {
   isSelectedView?: boolean
@@ -23,6 +24,8 @@ export const View = ({isSelectedView}: Props) => {
         return <Data />;
       case "tweet":
         return <TwitData />;
+      case "topic":
+        return <Topic />;
       default:
         return <Creator />;
     }

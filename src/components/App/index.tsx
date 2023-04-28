@@ -21,6 +21,8 @@ import { SecondarySideBar } from './SecondarySidebar'
 import { SideBar } from './SideBar'
 import { Toasts } from './Toasts'
 
+import { generateForceGraphPositions } from '../../transformers/forceGraph'
+import { generateTypeGraphPositions } from '../../transformers/typeGraph'
 
 const Wrapper = styled(Flex)`
   height: 100%;
@@ -54,7 +56,7 @@ export const App = () => {
 
   const hasBudgetExplanationModalBeSeen = useAppStore((s) => s.hasBudgetExplanationModalBeSeen)
 
-  const fetchData = useDataStore((s) => s.fetchData)
+  const [data, setData, fetchData, graphStyle] = useDataStore((s) => [s.data, s.setData, s.fetchData, s.graphStyle])
   const setSphinxModalOpen = useDataStore((s) => s.setSphinxModalOpen)
   const setSelectedNode = useDataStore((s) => s.setSelectedNode)
   const setCategoryFilter = useDataStore((s) => s.setCategoryFilter)
@@ -89,6 +91,7 @@ export const App = () => {
     fetchData(searchTerm)
   }, [fetchData, searchTerm, setSphinxModalOpen])
 
+
   useEffect(() => {
     if (searchTerm) {
       if (!hasBudgetExplanationModalBeSeen) {
@@ -101,6 +104,20 @@ export const App = () => {
     runSearch()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchTerm, runSearch, hasBudgetExplanationModalBeSeen])
+
+  useEffect(() => {
+    if (data) {
+      if (graphStyle === 'type') {
+        const updatedData = generateTypeGraphPositions(data, true)
+        setData(updatedData)
+      } else {
+        const updatedData = generateForceGraphPositions(data, true)
+        setData(updatedData)
+      }  
+    }
+    
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [graphStyle])
 
   return (
     <>

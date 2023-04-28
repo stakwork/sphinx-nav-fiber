@@ -5,12 +5,15 @@ import { fetchGraphData } from "~/network/fetchGraphData";
 import { GraphData, NodeExtended, NodeType, Sources } from "~/types";
 import { saveSearchTerm } from "~/utils/relayHelper/index";
 
+type GraphStyle = 'type' | 'force'
+
 type DataStore = {
   scrollEventsDisabled: boolean;
   categoryFilter: NodeType | null
   disableCameraRotation: boolean
   graphRadius: number | null
   data: GraphData | null
+  graphStyle: GraphStyle
   isFetching: boolean
   isTimestampLoaded: boolean
   selectedNode: NodeExtended | null
@@ -23,6 +26,8 @@ type DataStore = {
   setCategoryFilter: (categoryFilter: NodeType | null) => void
   setDisableCameraRotation: (rotation: boolean) => void
   fetchData: (search?: string | null) => void
+  setData: (data: GraphData) => void
+  setGraphStyle: (graphStyle: GraphStyle) => void
   setGraphRadius: (graphRadius?: number | null) => void
   setSelectedNode: (selectedNode: NodeExtended | null) => void
   setSelectedTimestamp: (selectedTimestamp: NodeExtended | null) => void
@@ -35,6 +40,7 @@ type DataStore = {
 const defaultData: Omit<
   DataStore,
   | 'fetchData'
+  | 'setData'
   | 'setCameraAnimation'
   | 'setScrollEventsDisabled'
   | 'setCategoryFilter'
@@ -46,12 +52,14 @@ const defaultData: Omit<
   | 'setSources'
   | 'setQueuedSources'
   | 'setGraphRadius'
+  | 'setGraphStyle'
 > = {
   categoryFilter: null,
   data: null,
   scrollEventsDisabled: false,
   disableCameraRotation: false,
   graphRadius: isChileGraph ? 1600 : 3056, // calculated from initial load
+  graphStyle: 'force', 
   isFetching: false,
   isTimestampLoaded: false,
   queuedSources: null,
@@ -71,29 +79,30 @@ export const useDataStore = create<DataStore>((set, get) => ({
 
     set({ isFetching: true });
 
-    if (true
-      // search?.length
-    ) {
-      set({ sphinxModalIsOpen: true });
+    // if (search?.length) {
+    set({ sphinxModalIsOpen: true });
 
-      const data = await fetchGraphData(search||'');
+    const data = await fetchGraphData(search||'');
 
-      await saveSearchTerm(search||'');
+    await saveSearchTerm(search||'');
 
-      set({ data, isFetching: false, sphinxModalIsOpen: false });
+    set({ data, isFetching: false, sphinxModalIsOpen: false });
+    // }
 
-      return;
-    }
+    // const mockGraphData = await getMockGraphData();
 
-    const mockGraphData = await getMockGraphData();
-
-    set({ data: mockGraphData, isFetching: false });
+    // set({ data: mockGraphData, isFetching: false });
   },
+  setData: (data) => set({data}),
   setScrollEventsDisabled: (scrollEventsDisabled) => set({ scrollEventsDisabled }),
   setCategoryFilter: (categoryFilter) => set({ categoryFilter }),
   setDisableCameraRotation: (rotation) =>
     set({ disableCameraRotation: rotation }),
   setGraphRadius: (graphRadius) => set({ graphRadius }),
+  setGraphStyle: (graphStyle) => {
+    set({ graphStyle })
+    localStorage.setItem('graphStyle', graphStyle)
+  },
   setQueuedSources: (queuedSources) => set({ queuedSources }),
   setSelectedNode: (selectedNode) =>
     set({ isTimestampLoaded: false, selectedNode }),
