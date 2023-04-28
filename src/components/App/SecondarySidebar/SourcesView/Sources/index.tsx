@@ -78,13 +78,11 @@ export const Sources = () => {
         const urlParams = new URLSearchParams(queryString)
 
         const tribeId = urlParams.get('tribe')
-        let id
 
         if (pubKeyRes) {
           // id = getAdminId(tribeId)
           setIsAdmin(pubKeyRes && admins.includes(pubKeyRes))
         }
-
       } catch (error) {
         console.log(error)
       }
@@ -157,8 +155,10 @@ export const Sources = () => {
           </StyledPill>
         ))}
       </Flex>
-      <TableWrapper align="center" justify="flex-start">{loading ? <ClipLoader /> : <Table canEdit={isAdmin} data={tableValues} />}</TableWrapper>
-      <AddButton kind="small" onClick={handleOpenModal}>
+      <TableWrapper align="center" justify="flex-start">
+        {loading ? <ClipLoader /> : <Table canEdit={isAdmin} data={tableValues} />}
+      </TableWrapper>
+      <AddButton id="add-sources" kind="small" onClick={handleOpenModal}>
         Add +
       </AddButton>
     </Wrapper>

@@ -1,16 +1,20 @@
-FROM node:16 as build
+FROM node:16.15.0 as build
 
 
 # Create app directory
 WORKDIR /usr/src/app
 
-COPY package*.json ./
-COPY yarn.lock ./
-VOLUME ./node_modules /app/node_modules
-RUN yarn clean & yarn cache clean
-RUN yarn install 
+COPY package*.json /usr/src/app
+COPY yarn.lock /usr/src/app
+VOLUME node_modules /usr/src/app/node_modules
+RUN yarn cache clean && yarn install --ignore-scripts
 
-COPY . .
+
+COPY . /usr/src/app
+
+ARG REACT_APP_API_URL
+
+ENV REACT_APP_API_URL $REACT_APP_API_URL
 
 RUN yarn run build
 
