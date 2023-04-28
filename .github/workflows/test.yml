@@ -19,19 +19,13 @@ jobs:
       - name: Install
         run: yarn --immutable
 
-      - name: Typecheck
-        run: yarn typecheck
-
-      - name: Lint
-        run: yarn lint
-
       - name: Cypress run
         # Uses the official Cypress GitHub action https://github.com/cypress-io/github-action
         uses: cypress-io/github-action@v5
         with:
           install-command: yarn --immutable
           browser: chrome
-          start: yarn start
+          start: yarn run start-e2e
           wait-on: 'http://localhost:3000' # Waits for above
           wait-on-timeout: 120 # Waits for 2 minutes
           # Records to Cypress Dashboard

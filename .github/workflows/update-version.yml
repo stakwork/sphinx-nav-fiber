@@ -9,13 +9,13 @@ jobs:
   update-version:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-    - name: Set up Git
-      run: |
-        git config user.name 'Github Actions'
-        git config user.email github-actions@github.com
-    - name: Update package version
-      run: |
-        npm version patch -m "Bump version to %s [skip ci]"
-        git push --follow-tags
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Set up Git
+        run: |
+          git config user.name 'Github Actions'
+          git config user.email github-actions@github.com
+      - name: Update package version
+        run: |
+          npm version patch -m "Bump version to %s [skip ci]"
+          git push --follow-tags
