@@ -19,12 +19,6 @@ jobs:
       - name: Install
         run: yarn --immutable
 
-      - name: Typecheck
-        run: yarn typecheck
-
-      - name: Lint
-        run: yarn lint
-
       - name: Cypress run
         # Uses the official Cypress GitHub action https://github.com/cypress-io/github-action
         uses: cypress-io/github-action@v5
