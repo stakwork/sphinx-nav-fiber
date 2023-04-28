@@ -6,17 +6,22 @@ import { GraphData } from "~/types";
 import { Cubes } from "./Cubes";
 import { PathwayLine } from "./PathwayLine";
 import { Segment } from "./Segment";
+import { GraphLoadingIcon } from './Icons'
 
 export const Graph = () => {
   const data = useGraphData();
   const searchTerm = useAppStore((s) => s.currentSearch);
   const isLoading = useDataStore((s) => s.isFetching);
 
+  if (isLoading) {
+    return <GraphLoadingIcon/>
+  }
+
   return (
     <>
       <Cubes />
 
-      {searchTerm && !isLoading && <PathwayLine />}
+      {searchTerm && <PathwayLine />}
 
       <Segments
         /** NOTE: using the key in this way the segments re-mounts

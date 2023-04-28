@@ -1,6 +1,5 @@
 import create from "zustand";
 import { isChileGraph } from "~/constants";
-import { getMockGraphData } from "~/mocks/getMockGraphData";
 import { fetchGraphData } from "~/network/fetchGraphData";
 import { GraphData, NodeExtended, NodeType, Sources } from "~/types";
 import { saveSearchTerm } from "~/utils/relayHelper/index";
@@ -35,11 +34,13 @@ type DataStore = {
   setQueuedSources: (sources: Sources[] | null) => void
   setSphinxModalOpen: (_: boolean) => void
   setCameraFocusTrigger: (_: boolean) => void
+  setIsFetching: (_: boolean) => void
 };
 
 const defaultData: Omit<
   DataStore,
   | 'fetchData'
+  | 'setIsFetching'
   | 'setData'
   | 'setCameraAnimation'
   | 'setScrollEventsDisabled'
@@ -93,6 +94,7 @@ export const useDataStore = create<DataStore>((set, get) => ({
 
     // set({ data: mockGraphData, isFetching: false });
   },
+  setIsFetching: (isFetching) => set({isFetching}),
   setData: (data) => set({data}),
   setScrollEventsDisabled: (scrollEventsDisabled) => set({ scrollEventsDisabled }),
   setCategoryFilter: (categoryFilter) => set({ categoryFilter }),
@@ -109,7 +111,7 @@ export const useDataStore = create<DataStore>((set, get) => ({
   setSelectedTimestamp: (selectedTimestamp) => set({ selectedTimestamp }),
   setSources: (sources) => set({ sources }),
   setSphinxModalOpen: (sphinxModalIsOpen) => set({ sphinxModalIsOpen }),
-  setCameraFocusTrigger: (cameraFocusTrigger) => set({ cameraFocusTrigger }),
+  setCameraFocusTrigger: (cameraFocusTrigger) => set({ cameraFocusTrigger })
 }));
 
 export const useSelectedNode = () => useDataStore((s) => s.selectedNode);

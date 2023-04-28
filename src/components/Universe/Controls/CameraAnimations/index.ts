@@ -10,10 +10,11 @@ import * as THREE from "three";
 import { useDataStore, useSelectedNode } from "~/stores/useDataStore";
 import { useControlStore } from "~/stores/useControlStore";
 import { useAutoNavigate } from "./useAutoNavigate";
+import { introAnimationTargetPosition } from "./constants";
 
 const autoRotateSpeed = 1;
 
-const introAnimationTargetPosition = new THREE.Vector3(-1900, -2200, -2800);
+
 
 let cameraAnimation: gsap.core.Tween | null = null
 

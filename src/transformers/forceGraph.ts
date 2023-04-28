@@ -46,7 +46,6 @@ const layout = forceSimulation()
 const maxTicks = 200;
   
 export const generateForceGraphPositions = (data: GraphData, usingCurrentData: boolean) => {
-    console.log('generateForceGraphPositions', usingCurrentData)
     const updatedNodes = data.nodes.map((node: NodeExtended) => node)
 
     layout.alpha(1).restart();

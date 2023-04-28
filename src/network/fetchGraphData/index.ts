@@ -13,7 +13,8 @@ import { getLSat } from '~/utils/getLSat'
 import { Vector3 } from "three";
 import { mock } from '~/mocks/getMockGraphData/mockResponse.js';
 import { generateForceGraphPositions } from '../../transformers/forceGraph'
-import { generateTypeGraphPositions } from '../../transformers/typeGraph'
+import { generateSplitGraphPositions } from '../../transformers/splitGraph'
+import { useDataStore } from '~/stores/useDataStore';
 
 type guestMapChild = {
   children: string[]
@@ -35,6 +36,7 @@ type TopicMapItem = {
 type TopicMap = Record<string, TopicMapItem>
 
 const shouldIncludeTopics = true
+const maxScale = 50
 
 export const fetchGraphData = async (search: string) => {
   try {
@@ -90,7 +92,7 @@ function generateTopicNodesFromMap(topicMap: TopicMap, doNodeCallback: (node: No
       *  otherwise everything will be linked to it
       */
 
-    const scale = children.length * 2
+    const scale = children.length * 2 >  maxScale ? maxScale : children.length * 2
     const topicNodeId = `topic_node_${index}`
 
     const topicNode: NodeExtended = {
@@ -119,7 +121,7 @@ function generateGuestNodesFromMap(guestMap: Record<string, guestMapChild>, doNo
   
   Object.entries(guestMap).forEach(([guest, guestValue], index) => {
     const guestChildren = guestValue.children
-    const scale = guestChildren.length * 2
+    const scale = guestChildren.length * 2 >  maxScale ? maxScale : guestChildren.length * 2
     const guestNodeId = guest || `guestnode_${index}`
     
     const guestNode: NodeExtended = {
@@ -146,6 +148,9 @@ function generateGuestNodesFromMap(guestMap: Record<string, guestMapChild>, doNo
 }
 
 const getGraphData = async (searchterm: string) => {
+
+  const { graphStyle } = useDataStore.getState()
+
   let nodes: NodeExtended[] = []
   let links: Link[] = []
 
@@ -310,10 +315,8 @@ const getGraphData = async (searchterm: string) => {
     })
 
     // give nodes and links positions based on graphStyle
-    const graphStyle = await localStorage.getItem('graphStyle')
-
     if (graphStyle === 'split') {
-      const dataWithPositions = generateTypeGraphPositions({ links, nodes }, false)
+      const dataWithPositions = generateSplitGraphPositions({ links, nodes }, false)
       links = dataWithPositions.links
       nodes = dataWithPositions.nodes
     } else {

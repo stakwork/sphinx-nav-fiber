@@ -22,7 +22,7 @@ import { SideBar } from './SideBar'
 import { Toasts } from './Toasts'
 
 import { generateForceGraphPositions } from '../../transformers/forceGraph'
-import { generateTypeGraphPositions } from '../../transformers/typeGraph'
+import { generateSplitGraphPositions } from '../../transformers/splitGraph'
 
 const Wrapper = styled(Flex)`
   height: 100%;
@@ -45,21 +45,26 @@ export const App = () => {
   const { open } = useModal('budgetExplanation')
 
   const selectedNode = useSelectedNode()
-  const setSidebarOpen = useAppStore((s) => s.setSidebarOpen)
 
-  const [searchTerm, setCurrentSearch, setRelevanceSelected, setTranscriptOpen] = useAppStore((s) => [
-    s.currentSearch,
-    s.setCurrentSearch,
-    s.setRelevanceSelected,
-    s.setTranscriptOpen,
-  ])
+  const [
+    setSidebarOpen,
+    searchTerm,
+    setCurrentSearch,
+    setRelevanceSelected,
+    setTranscriptOpen,
+    hasBudgetExplanationModalBeSeen
+  ] = useAppStore((s) => [s.setSidebarOpen, s.currentSearch,s.setCurrentSearch,s.setRelevanceSelected,s.setTranscriptOpen,s.hasBudgetExplanationModalBeSeen])
 
-  const hasBudgetExplanationModalBeSeen = useAppStore((s) => s.hasBudgetExplanationModalBeSeen)
-
-  const [data, setData, fetchData, graphStyle] = useDataStore((s) => [s.data, s.setData, s.fetchData, s.graphStyle])
-  const setSphinxModalOpen = useDataStore((s) => s.setSphinxModalOpen)
-  const setSelectedNode = useDataStore((s) => s.setSelectedNode)
-  const setCategoryFilter = useDataStore((s) => s.setCategoryFilter)
+  const [
+    data,
+    setData,
+    fetchData,
+    setIsFetching,
+    graphStyle,
+    setSphinxModalOpen,
+    setSelectedNode,
+    setCategoryFilter
+  ] = useDataStore((s) => [s.data, s.setData, s.fetchData, s.setIsFetching, s.graphStyle, s.setSphinxModalOpen, s.setSelectedNode, s.setCategoryFilter])
 
   const form = useForm<{ search: string }>({ mode: 'onChange' })
 
@@ -105,10 +110,11 @@ export const App = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchTerm, runSearch, hasBudgetExplanationModalBeSeen])
 
+  // switch graph style
   useEffect(() => {
     if (data) {
       if (graphStyle === 'split') {
-        const updatedData = generateTypeGraphPositions(data, true)
+        const updatedData = generateSplitGraphPositions(data, true)
         setData(updatedData)
       } else {
         const updatedData = generateForceGraphPositions(data, true)

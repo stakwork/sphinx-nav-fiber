@@ -260,8 +260,7 @@ const getBoundaryNodes = () => {
   
 }
 
-export const generateTypeGraphPositions = (data: GraphData, usingCurrentData: boolean) => {
-  console.log('generateTypeGraphPositions', usingCurrentData)
+export const generateSplitGraphPositions = (data: GraphData, usingCurrentData: boolean) => {
   // recharacterize noise
   // Noise.seed(Math.random());
 
@@ -322,6 +321,9 @@ export const generateTypeGraphPositions = (data: GraphData, usingCurrentData: bo
       targetPosition
     }
   })
+
+  // sort back to weighted sort
+  updatedNodes.sort((a, b) => (b.weight || 0) - (a.weight || 0))
 
   // const boundaryNodes = getBoundaryNodes()
   // boundaryNodes.forEach(b=>updatedNodes.push(b))
