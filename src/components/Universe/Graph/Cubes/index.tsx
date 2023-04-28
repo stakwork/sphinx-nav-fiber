@@ -2,10 +2,11 @@ import { Select } from "@react-three/drei";
 import { memo, useCallback } from "react";
 import { Object3D } from "three";
 import { useGraphData } from "~/components/DataRetriever";
-import { useAppStore } from "~/stores/useAppStore";
-import { useDataStore } from "~/stores/useDataStore";
+import { useAppStore } from "~/stores/useAppStore"
+import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { NodeExtended } from "~/types";
 import { Cube } from "./Cube";
+import { NODE_RELATIVE_HIGHLIGHT_COLORS } from "~/constants";
 
 type NodeTypeColors = Record<string, string>;
 
@@ -17,7 +18,9 @@ const NODE_TYPE_COLORS: NodeTypeColors = {
 export const Cubes = memo(() => {
   const data = useGraphData();
 
-  const [searchTerm, setTranscriptOpen] = useAppStore((s) => [s.currentSearch,s.setTranscriptOpen,])
+  const selectedNode = useSelectedNode()
+
+  const [searchTerm, setTranscriptOpen] = useAppStore((s) => [s.currentSearch, s.setTranscriptOpen])
 
   const handleSelect = useCallback((nodes: Object3D[]) => {
     const node = nodes?.[0];
@@ -40,7 +43,7 @@ export const Cubes = memo(() => {
         i.node_type === "guest" &&
         searchTerm.toLowerCase() === i?.label?.toLowerCase()
     );
-
+  
   return (
     <Select onChange={handleSelect}>
       {data.nodes.map((node, index) => {
@@ -61,12 +64,38 @@ export const Cubes = memo(() => {
           }
         }
 
+        let relationHighlightColor: string | undefined 
+
+        // highlight node if exists in children of selected
+        if (node?.ref_id && selectedNode?.children?.length && selectedNode.children.includes(node.ref_id)) {
+          highlight = true
+          relationHighlightColor = NODE_RELATIVE_HIGHLIGHT_COLORS.children.nodeColor
+        } else if (selectedNode?.guests?.length && node.type === 'guest') {
+          
+            const nodeIsGuest = !!selectedNode?.guests.find(f => {
+
+              if (typeof f !== 'string') {
+                return f?.ref_id && f.ref_id === node.ref_id
+              }
+
+              return false
+            })
+              
+            if (nodeIsGuest) {
+              // highlight node if exists in guests of selected
+              highlight = true
+              relationHighlightColor = NODE_RELATIVE_HIGHLIGHT_COLORS.guests.nodeColor
+            }
+        }
+
+        
+
         return (
           <Cube
           // eslint-disable-next-line react/no-array-index-key
             key={`${node.id}-${index}`}
             highlight={highlight || !!NODE_TYPE_COLORS[node.node_type]}
-            highlightColor={NODE_TYPE_COLORS[node.node_type] || 'green'}
+            highlightColor={relationHighlightColor || NODE_TYPE_COLORS[node.node_type] || 'green'}
             node={node}
           />
         );
