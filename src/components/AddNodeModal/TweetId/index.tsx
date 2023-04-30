@@ -1,8 +1,8 @@
 import { Flex } from '~/components/common/Flex'
-import { requiredRule } from '../index'
 import { TextInput } from '../TextInput'
+import { requiredRule } from '../index'
 
-const TwitId = () => (
+export const TwitId = () => (
   <Flex>
     <TextInput
       id="tweet-id"
@@ -16,5 +16,3 @@ const TwitId = () => (
     />
   </Flex>
 )
-
-export default TwitId

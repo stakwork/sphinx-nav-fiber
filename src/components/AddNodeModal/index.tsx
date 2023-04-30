@@ -6,12 +6,11 @@ import { toast } from 'react-toastify'
 import * as sphinx from 'sphinx-bridge-kevkevinpal'
 import styled from 'styled-components'
 import { Button } from '~/components/Button'
+import { BaseModal } from '~/components/Modal'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
-import { BaseModal } from '~/components/Modal'
 import {
   GITHUB_REPOSITORY,
-  isDevelopment,
   LINK,
   NODE_ADD_ERROR,
   NODE_ADD_SUCCESS,
@@ -20,24 +19,25 @@ import {
   TWITTER_SOURCE,
   WEB_PAGE,
   YOUTUBE_CHANNEL,
+  isDevelopment,
 } from '~/constants'
 import { api } from '~/network/api'
+import { getRadarData } from '~/network/fetchSourcesData'
 import { useModal } from '~/stores/useModalStore'
+import { FetchRadarResponse, SubmitErrRes } from '~/types'
 import { colors } from '~/utils/colors'
 import { getLSat } from '~/utils/getLSat'
 import { timeToMilliseconds } from '~/utils/timeToMilliseconds'
-import { ToastMessage } from '../common/Toast/toastMessage'
-import StyledSelect from '../Select'
-import { SourceUrl } from './SourceUrl'
-import Topic from './Topic'
-import TwitId from './TweetId'
-import TwitterHandle from './TwitterHandle'
-import YoutubeChannel from './YoutubeChannel'
-import GithubRepository from './GithubRepository'
 import { useDataStore } from '../../stores/useDataStore/index'
-import { FetchRadarResponse, SubmitErrRes } from '~/types'
-import { getRadarData } from '~/network/fetchSourcesData'
-import WebPage from './WebPage'
+import StyledSelect from '../Select'
+import { ToastMessage } from '../common/Toast/toastMessage'
+import { GithubRepository } from './GithubRepository'
+import { SourceUrl } from './SourceUrl'
+import { Topic } from './Topic'
+import { TwitId } from './TweetId'
+import { TwitterHandle } from './TwitterHandle'
+import { WebPage } from './WebPage'
+import { YoutubeChannel } from './YoutubeChannel'
 
 type Option = {
   label: string
@@ -94,7 +94,7 @@ const handleSubmit = async (data: FieldValues, close: () => void, sourceType: st
     }
   } else if (sourceType === TWITTER_SOURCE) {
     const regex = /(?:https?:\/\/)?(?:www\.)?twitter\.com\/\w+\/status\/\d+/
-     const tweetIdRegex = /^[0-9]{16,}$/
+    const tweetIdRegex = /^[0-9]{16,}$/
 
     if (regex.test(data.tweet)) {
       const idRegex = /\/status\/(\d+)/
@@ -104,14 +104,14 @@ const handleSubmit = async (data: FieldValues, close: () => void, sourceType: st
       if (match?.[1]) {
         const [, id] = match
 
-        body.tweet_id = id;
+        body.tweet_id = id
       }
     } else {
-      body.tweet_id = data.tweet;
+      body.tweet_id = data.tweet
     }
 
     if (!tweetIdRegex.test(body.tweet_id as string)) {
-      return;
+      return
     }
 
     body.content_type = 'tweet'
@@ -157,8 +157,8 @@ const handleSubmit = async (data: FieldValues, close: () => void, sourceType: st
       throw new Error(message)
     }
 
-    if(endPoint === 'radar') {
-      await successCallback();
+    if (endPoint === 'radar') {
+      await successCallback()
     }
 
     notify(NODE_ADD_SUCCESS)

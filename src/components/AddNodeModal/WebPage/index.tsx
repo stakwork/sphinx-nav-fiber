@@ -1,13 +1,12 @@
 import { Flex } from '~/components/common/Flex'
-import { requiredRule } from '../index'
 import { TextInput } from '../TextInput'
+import { requiredRule } from '../index'
 
-const message = `Submit a valid webpage url. If you find a webpage with great text content you’d like to add to the graph, use this option (e.g. A news article, a wiki page, etc). This is NOT for audio or video content.`;
+const message = `Submit a valid webpage url. If you find a webpage with great text content you’d like to add to the graph, use this option (e.g. A news article, a wiki page, etc). This is NOT for audio or video content.`
 
-const urlRegex =
-  /^(?:(?:https?|ftp):\/\/)?(?:www\.)?[a-zA-Z0-9_-]+(?:\.[a-zA-Z0-9_-]+)*\.[a-zA-Z]{2,10}(?:\/[^\s]*)?$/
+const urlRegex = /^(?:(?:https?|ftp):\/\/)?(?:www\.)?[a-zA-Z0-9_-]+(?:\.[a-zA-Z0-9_-]+)*\.[a-zA-Z]{2,10}(?:\/[^\s]*)?$/
 
-const WebPage = () => (
+export const WebPage = () => (
   <Flex>
     <TextInput
       id="tweet-id"
@@ -25,5 +24,3 @@ const WebPage = () => (
     />
   </Flex>
 )
-
-export default WebPage

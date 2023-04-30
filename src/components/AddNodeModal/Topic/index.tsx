@@ -1,11 +1,11 @@
 import { Flex } from '~/components/common/Flex'
-import { requiredRule } from '../index'
 import { TextInput } from '../TextInput'
+import { requiredRule } from '../index'
 
 const message =
-  'Submit a topic that you would like to monitor (for example, “inflation”, “bitcoin”, etc). We will continuously fetch the latest content associated with your topic and add them to your graph.';
+  'Submit a topic that you would like to monitor (for example, “inflation”, “bitcoin”, etc). We will continuously fetch the latest content associated with your topic and add them to your graph.'
 
-const Topic = () => (
+export const Topic = () => (
   <Flex>
     <TextInput
       id="cy-topic-id"
@@ -20,5 +20,3 @@ const Topic = () => (
     />
   </Flex>
 )
-
-export default Topic
