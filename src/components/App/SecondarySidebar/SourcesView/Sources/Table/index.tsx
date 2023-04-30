@@ -12,6 +12,7 @@ import { RadarRequest, Sources } from '~/types'
 import { colors } from '~/utils/colors'
 import { sourcesMapper, TWITTER_LINK } from '../../constants'
 import { TableBody, TableCell, TableHead, TableRow, Table as MaterialTable } from '@mui/material'
+import { RSS, TWITTER_HANDLE } from '~/constants'
 
 type Props = {
   data: Sources[] | undefined
@@ -85,10 +86,19 @@ const Table: React.FC<Props> = ({ data, canEdit = false }) => {
                   </EditableCell>
                 )}
               >
-                {i.source_type === 'twitter_handle' ? (
-                  <StyledLink href={`${TWITTER_LINK}/${i.source}`} target="_blank">
-                    @{i.source}
-                  </StyledLink>
+                {i.source_type === TWITTER_HANDLE || i.source_type === RSS ? (
+                  <>
+                    {i.source_type === TWITTER_HANDLE && (
+                      <StyledLink href={`${TWITTER_LINK}/${i.source}`} target="_blank">
+                        @{i.source}
+                      </StyledLink>
+                    )}
+                    {i.source_type === RSS && (
+                      <StyledLink href={i.source} target="_blank">
+                        {i.source}
+                      </StyledLink>
+                    )}
+                  </>
                 ) : (
                   <div>{i.source}</div>
                 )}

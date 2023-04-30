@@ -14,6 +14,7 @@ import {
   LINK,
   NODE_ADD_ERROR,
   NODE_ADD_SUCCESS,
+  RSS,
   TOPIC,
   TWITTER_HANDLE,
   TWITTER_SOURCE,
@@ -32,6 +33,7 @@ import { useDataStore } from '../../stores/useDataStore/index'
 import StyledSelect from '../Select'
 import { ToastMessage } from '../common/Toast/toastMessage'
 import { GithubRepository } from './GithubRepository'
+import { RSSFeed } from './RSSFeed'
 import { SourceUrl } from './SourceUrl'
 import { Topic } from './Topic'
 import { TwitId } from './TweetId'
@@ -200,6 +202,10 @@ const CONTENT_TYPE_OPTIONS: Record<'source' | 'content', IOptionMap> = {
     [GITHUB_REPOSITORY]: {
       component: GithubRepository,
       label: 'Github repository',
+    },
+    [RSS]: {
+      component: RSSFeed,
+      label: 'RSS feed',
     },
     [TOPIC]: {
       component: Topic,
