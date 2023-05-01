@@ -12,7 +12,7 @@ type Props = {
 export const Controls = ({ disableAnimations }: Props) => {
   const cameraControlsRef = useRef<CameraControls | null>(null)
   const graphStyle = useDataStore((s) => s.graphStyle)
-  const [smoothTime] = useState(1)
+  const [smoothTime] = useState(0.8)
 
   const { isUserDragging, isUserScrolling, isUserScrollingOnHtmlPanel } = useControlStore()
 
@@ -37,14 +37,16 @@ export const Controls = ({ disableAnimations }: Props) => {
   return (
     <CameraControls
       ref={cameraControlsRef}
+      boundaryEnclosesCamera
+      dampingFactor={0.1}
+      dollySpeed={0.2}
       dollyToCursor
       enabled={!isUserScrollingOnHtmlPanel}
       infinityDolly
+      maxDistance={12000}
+      minDistance={1}
       onEnd={() => useControlStore.setState({ isUserDragging: false })}
       onStart={() => useControlStore.setState({ isUserDragging: true })}
-      onUpdate={(e) => {
-        console.log('e', e)
-      }}
       smoothTime={smoothTime}
     />
   )
