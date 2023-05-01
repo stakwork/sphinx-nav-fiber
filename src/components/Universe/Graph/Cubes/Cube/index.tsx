@@ -1,3 +1,4 @@
+import { Text } from '@react-three/drei'
 import { ThreeEvent, useFrame } from '@react-three/fiber'
 import { Select } from '@react-three/postprocessing'
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
@@ -38,8 +39,17 @@ type Props = {
   highlightColor: string
 }
 
+const fontProps = {
+  font: '/Inter-Bold.woff',
+  fontSize: 2.5,
+  letterSpacing: -0.05,
+  lineHeight: 1,
+  'material-toneMapped': false,
+}
+
 export const Cube = memo(({ node, highlight, highlightColor }: Props) => {
   const ref = useRef<THREE.Mesh | null>(null)
+
   const [hovered, setHovered] = useState(false)
 
   const [categoryFilter, graphStyle] = useDataStore((s) => [s.categoryFilter, s.graphStyle])
@@ -54,12 +64,11 @@ export const Cube = memo(({ node, highlight, highlightColor }: Props) => {
   const isSelected = selectedNode?.id === node.id
   const isSelectedCategory = node.node_type === categoryFilter
 
-  useFrame(() => {
-    if (selectedNode) {
-      material.toneMapped = false
+  useFrame(({ camera }) => {
+    if (ref?.current && node.node_type === 'topic') {
+      // Make text face the camera
+      ref.current.quaternion.copy(camera.quaternion)
     }
-
-    ref.current?.position.set(node.x || 0, node.y || 0, node.z || 0)
   })
 
   useEffect(() => {
@@ -85,6 +94,25 @@ export const Cube = memo(({ node, highlight, highlightColor }: Props) => {
 
     return hovered ? 1.1 : 1
   }, [graphStyle, hovered, node.scale])
+
+  if (node.node_type === 'topic') {
+    return (
+      <Text
+        ref={ref}
+        anchorX="center"
+        anchorY="middle"
+        color={isSelected ? 'white' : 'lightgray'}
+        onPointerOut={onPointerOut}
+        onPointerOver={onPointerIn}
+        position={[node.x, node.y, node.z]}
+        scale={scale * 4}
+        userData={node}
+        {...fontProps}
+      >
+        {node.label}
+      </Text>
+    )
+  }
 
   return (
     <>
