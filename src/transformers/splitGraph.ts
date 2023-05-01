@@ -74,13 +74,12 @@ function generateTopicNodePosition() {
 }
 
 function generateNearbyPosition(basePosition: Vector3, nodeType?: string, childIndex = 1) {
-  // const biasX = ((Math.random() - 0.5) < 0 ? -1 : 1)
-  const biasY = 1 // ((Math.random() - 0.5) < 0 ? -1 : 1)
-  // const biasZ = ((Math.random() - 0.5) < 0 ? -1 : 1)
+  // use this formula for positional bias: ((Math.random() - 0.5) < 0 ? -1 : 1)
+  const biasY = 1
 
-  let xOffset = 0 // 10 * biasX
+  let xOffset = 0
   let yOffset = 10 * biasY
-  const zOffset = 0 // 10 * biasZ
+  const zOffset = 0
 
   switch (nodeType) {
     case 'episode':

@@ -56,9 +56,9 @@ export const generateForceGraphPositions = (data: GraphData, usingCurrentData: b
   }
 
   // update link positions
-  const updatedLinks = data.links.map((l) => {
-    const source = l.source as unknown as NodeExtended
-    const target = l.target as unknown as NodeExtended
+  const updatedLinks = data.links.map((link) => {
+    const source = link.source as unknown as NodeExtended
+    const target = link.target as unknown as NodeExtended
 
     const sourcePosition = new Vector3(source?.x || 0, source?.y || 0, source?.z || 0)
     const targetPosition = new Vector3(target?.x || 0, target?.y || 0, target?.z || 0)
@@ -86,7 +86,7 @@ export const generateForceGraphPositions = (data: GraphData, usingCurrentData: b
     }
 
     return {
-      ...l,
+      ...link,
       onlyVisibleOnSelect: false,
       sourcePosition,
       targetPosition,

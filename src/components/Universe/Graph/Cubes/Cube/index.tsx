@@ -84,8 +84,7 @@ export const Cube = memo(({ node, highlight, highlightColor }: Props) => {
     }
 
     return hovered ? 1.1 : 1
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [graphStyle, hovered])
+  }, [graphStyle, hovered, node.scale])
 
   return (
     <>

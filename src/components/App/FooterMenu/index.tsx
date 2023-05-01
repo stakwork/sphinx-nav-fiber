@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import {
   MdAddLink,
   MdClose,
@@ -35,13 +35,13 @@ export const FooterMenu = () => {
     setAddNodeModalData(data)
   }
 
-  const changeGraphType = () => {
+  const changeGraphType = useCallback(() => {
     if (graphStyle !== 'split') {
       setGraphStyle('split')
     } else {
       setGraphStyle('force')
     }
-  }
+  }, [graphStyle, setGraphStyle])
 
   const handleClickOutside = (event: MouseEvent) => {
     if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {

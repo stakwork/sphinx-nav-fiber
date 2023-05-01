@@ -174,83 +174,42 @@ const getGraphData = async (searchterm: string) => {
     const data: Node[] = [...dataInit.exact, ...dataInit.related, ...dataSeries]
 
     if (data.length) {
-      // do all node processing from top down
-      const dataProcessors = [
-        {
-          type: 'show',
-          hide: false,
-        },
-        {
-          type: 'episode',
-          postProcessing: (node: NodeExtended) => {
-            const { guests } = node
+      data.forEach((node) => {
+        // replace aws bucket url with cloudfront, and add size indicator to end
+        const smallImageUrl = node.image_url
+          ?.replace(AWS_IMAGE_BUCKET_URL, CLOUDFRONT_IMAGE_BUCKET_URL)
+          .replace('.jpg', '_s.jpg')
 
-            if (node.ref_id) {
-              // update guest map
-              const guestList = guests || []
-
-              guestList.forEach((guest) => {
-                const currentGuest = guest as Guests
-
-                if (currentGuest.name && currentGuest.ref_id && node.ref_id) {
-                  guestMap[currentGuest.ref_id] = {
-                    children: [...(guestMap[currentGuest.ref_id]?.children || []), node.ref_id],
-                    imageUrl: currentGuest.profile_picture || '',
-                    name: currentGuest.name,
-                    twitterHandle: currentGuest.twitter_handle,
-                  }
-                }
-              })
-            }
-          },
-        },
-        {
-          type: 'clip',
-        },
-        {
-          type: 'guest',
-        },
-        {
-          type: 'tweet',
-        },
-        {
-          type: 'data_series',
-          data: [],
-        },
-      ]
-
-      // create nodes in order by type (parents then children)
-      dataProcessors.forEach((dataProcessor) => {
-        if (dataProcessor.hide) {
-          return
-        }
-
-        const thisData = data.filter((f) => f.node_type === dataProcessor.type)
-
-        thisData.forEach((node) => {
-          // replace aws bucket url with cloudfront, and add size indicator to end
-          const smallImageUrl = node.image_url
-            ?.replace(AWS_IMAGE_BUCKET_URL, CLOUDFRONT_IMAGE_BUCKET_URL)
-            .replace('.jpg', '_s.jpg')
-
-          nodes.push({
-            ...node,
-            id: node.ref_id || node.tweet_id,
-            image_url: smallImageUrl,
-            type: node.type || node.node_type,
-          })
-
-          // do post processing for type
-          if (dataProcessor.postProcessing) {
-            dataProcessor.postProcessing(node)
-          }
+        nodes.push({
+          ...node,
+          id: node.ref_id || node.tweet_id,
+          image_url: smallImageUrl,
+          type: node.type || node.node_type,
         })
-      })
 
-      generateGuestNodesFromMap(guestMap, (n: NodeExtended) => {
-        nodes.push(n)
+        if (node.node_type === 'episode' && node.ref_id) {
+          // update guest map
+          const guestList = node.guests || []
+
+          guestList.forEach((guest) => {
+            const currentGuest = guest as Guests
+
+            if (currentGuest.name && currentGuest.ref_id && node.ref_id) {
+              guestMap[currentGuest.ref_id] = {
+                children: [...(guestMap[currentGuest.ref_id]?.children || []), node.ref_id],
+                imageUrl: currentGuest.profile_picture || '',
+                name: currentGuest.name,
+                twitterHandle: currentGuest.twitter_handle,
+              }
+            }
+          })
+        }
       })
     }
+
+    generateGuestNodesFromMap(guestMap, (n: NodeExtended) => {
+      nodes.push(n)
+    })
 
     // extract topics to topic map
     data.forEach((node) => {

@@ -1,13 +1,15 @@
-import { Flex } from "~/components/common/Flex";
-import { useSelectedNode } from "~/stores/useDataStore";
-import { Text } from "~/components/common/Text";
+import { Flex } from '~/components/common/Flex'
+import { Text } from '~/components/common/Text'
+import { useSelectedNode } from '~/stores/useDataStore'
 
 export const Topic = () => {
-  const selectedNode = useSelectedNode();
+  const selectedNode = useSelectedNode()
 
   return (
-      <Flex align="center" justify="center" >
-        <Text color="primaryText1" style={{fontSize:40}}>{selectedNode?.label}</Text>
-      </Flex>
-  );
-};
+    <Flex align="center" justify="center">
+      <Text color="primaryText1" kind="hugeHeading">
+        {selectedNode?.label}
+      </Text>
+    </Flex>
+  )
+}

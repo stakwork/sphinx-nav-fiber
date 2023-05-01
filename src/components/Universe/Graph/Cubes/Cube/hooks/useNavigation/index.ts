@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 import { useFrame } from '@react-three/fiber'
-import { RefObject, useEffect, useMemo, useState } from 'react'
+import { RefObject, useCallback, useEffect, useMemo, useState } from 'react'
 import * as THREE from 'three'
 import { useSelectedNode } from '~/stores/useDataStore'
 import { NodeExtended } from '~/types'
@@ -55,31 +55,37 @@ export const useNavigation = (thisNodeRef: RefObject<THREE.Mesh | null>) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedNode])
 
-  const moveToNode = (thisNode: THREE.Mesh, toNode: NodeExtended) => {
-    const mesh = new THREE.Vector3(toNode.x + offsets.x, toNode.y + offsets.y, toNode.z + offsets.z)
+  const moveToNode = useCallback(
+    (thisNode: THREE.Mesh, toNode: NodeExtended) => {
+      const mesh = new THREE.Vector3(toNode.x + offsets.x, toNode.y + offsets.y, toNode.z + offsets.z)
 
-    const distance = thisNode.position.distanceTo(mesh)
+      const distance = thisNode.position.distanceTo(mesh)
 
-    // stop 200 before colliding with cube
-    if (distance < minDistanceToTarget) {
-      setDistanceReached(true)
-    } else {
-      thisNode.position.lerp(mesh, 0.04)
-    }
-  }
+      // stop 200 before colliding with cube
+      if (distance < minDistanceToTarget) {
+        setDistanceReached(true)
+      } else {
+        thisNode.position.lerp(mesh, 0.04)
+      }
+    },
+    [minDistanceToTarget, setDistanceReached],
+  )
 
-  const moveHome = (thisNode: THREE.Mesh) => {
-    const mesh = new THREE.Vector3(thisNode.userData.x, thisNode.userData.y, thisNode.userData.z)
+  const moveHome = useCallback(
+    (thisNode: THREE.Mesh) => {
+      const mesh = new THREE.Vector3(thisNode.userData.x, thisNode.userData.y, thisNode.userData.z)
 
-    const distance = thisNode.position.distanceTo(mesh)
+      const distance = thisNode.position.distanceTo(mesh)
 
-    // stop 200 before colliding with cube
-    if (distance < minDistanceToHome) {
-      setSleep(true)
-    } else {
-      thisNode.position.lerp(mesh, 0.04)
-    }
-  }
+      // stop 200 before colliding with cube
+      if (distance < minDistanceToHome) {
+        setSleep(true)
+      } else {
+        thisNode.position.lerp(mesh, 0.04)
+      }
+    },
+    [minDistanceToHome, setSleep],
+  )
 
   return null
 }
