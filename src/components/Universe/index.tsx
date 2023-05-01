@@ -25,7 +25,14 @@ const Content = () => (
       <Graph />
 
       <EffectComposer autoClear={false} multisampling={8}>
-        <SSAO color="black" intensity={150} luminanceInfluence={0.5} radius={0.05} />
+        <SSAO
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          color="black"
+          intensity={150}
+          luminanceInfluence={0.5}
+          radius={0.05}
+        />
 
         <Bloom
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
