@@ -68,7 +68,7 @@ export const useNavigation = (thisNodeRef: RefObject<THREE.Mesh | null>) => {
         thisNode.position.lerp(mesh, 0.04)
       }
     },
-    [minDistanceToTarget, setDistanceReached],
+    [minDistanceToTarget, setDistanceReached, offsets],
   )
 
   const moveHome = useCallback(
