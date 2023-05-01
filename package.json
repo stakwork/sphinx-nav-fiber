@@ -1,6 +1,6 @@
 {
   "name": "sphinx-nav",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "private": true,
   "dependencies": {
     "@mui/material": "^5.11.16",
