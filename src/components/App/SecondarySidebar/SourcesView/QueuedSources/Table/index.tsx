@@ -1,6 +1,8 @@
+import { Table as MaterialTable, TableCell, TableHead, TableRow } from '@mui/material'
 import React, { useState } from 'react'
 import { MdCancel, MdCheckCircle } from 'react-icons/md'
 import { ClipLoader } from 'react-spinners'
+import * as sphinx from 'sphinx-bridge-kevkevinpal'
 import styled from 'styled-components'
 import ConfirmPopover from '~/components/common/ConfirmPopover'
 import { Flex } from '~/components/common/Flex'
@@ -9,9 +11,8 @@ import { approveRadarData, deleteRadarData } from '~/network/fetchSourcesData'
 import { useDataStore } from '~/stores/useDataStore'
 import { Sources } from '~/types'
 import { colors } from '~/utils/colors'
-import { sourcesMapper, TWITTER_LINK } from '../../constants'
+import { TWITTER_LINK, sourcesMapper } from '../../constants'
 import { Props } from '../../types'
-import { TableCell, TableHead, TableRow, Table as MaterialTable } from '@mui/material'
 
 const Table: React.FC<Props> = ({ data }) => {
   const setSources = useDataStore((s) => s.setQueuedSources)
@@ -21,7 +22,11 @@ const Table: React.FC<Props> = ({ data }) => {
   const handleApprove = async (id: string) => {
     if (data?.length) {
       try {
-        await approveRadarData(id)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        const enable = await sphinx.enable()
+
+        await approveRadarData(id, enable.pubkey)
 
         setSources(data.filter((i) => i.id !== id))
       } catch (error) {
