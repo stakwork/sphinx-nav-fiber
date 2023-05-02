@@ -1,50 +1,54 @@
-import { MdClose } from "react-icons/md";
-import styled, { keyframes } from "styled-components";
-import { MENU_WIDTH } from "~/components/App/SideBar";
-import { Button } from "~/components/Button";
-import { Flex } from "~/components/common/Flex";
-import { useAppStore } from "~/stores/useAppStore";
-import { useSelectedNode } from "~/stores/useDataStore";
-import { colors } from "~/utils/colors";
+import { MdClose } from 'react-icons/md'
+import styled, { keyframes } from 'styled-components'
+import { MENU_WIDTH } from '~/components/App/SideBar'
+import { Button } from '~/components/Button'
+import { Flex } from '~/components/common/Flex'
+import { Text } from '~/components/common/Text'
+import { useAppStore } from '~/stores/useAppStore'
+import { useSelectedNode } from '~/stores/useDataStore'
+import { colors } from '~/utils/colors'
 
 const copiedAnimation = keyframes`
   0% { opacity: 0; }
-  100% { opacity: 1; } 
-`;
+  100% { opacity: 1; }
+`
 
 const copyNodeText = (text: string | undefined) => {
   if (text === undefined) {
-    return;
+    return
   }
 
-  navigator.clipboard.writeText(text);
+  navigator.clipboard.writeText(text)
 
-  const copyButton = document.querySelector(".copy-button");
+  const copyButton = document.querySelector('.copy-button')
 
   if (copyButton) {
-    copyButton.classList.add("copied");
+    copyButton.classList.add('copied')
 
     setTimeout(() => {
-      copyButton.classList.remove("copied");
-    }, 1000);
+      copyButton.classList.remove('copied')
+    }, 1000)
   }
-};
+}
 
-export const Transcript = () => {
-  const [transcriptIsOpen, setTranscriptOpen] = useAppStore((s) => [
-    s.transcriptIsOpen,
-    s.setTranscriptOpen,
-  ]);
+type TranscriptProps = {
+  stateless?: boolean
+}
 
-  const selectedNode = useSelectedNode();
+export const Transcript = ({ stateless }: TranscriptProps) => {
+  const [transcriptIsOpen, setTranscriptOpen] = useAppStore((s) => [s.transcriptIsOpen, s.setTranscriptOpen])
 
-  if (!transcriptIsOpen) {
-    return null;
+  const selectedNode = useSelectedNode()
+
+  if (!stateless && !transcriptIsOpen) {
+    return null
   }
 
   return (
     <Wrapper style={{ left: MENU_WIDTH }}>
-      <Flex direction="row" justify="space-between">
+      <Flex align="center" direction="row" justify="space-between">
+        {stateless && <Text kind="heading">Transcript</Text>}
+
         {selectedNode?.text ? (
           <CopyButton
             className="copy-button"
@@ -52,42 +56,43 @@ export const Transcript = () => {
             onPointerDown={() => copyNodeText(selectedNode?.text)}
             type="button"
           >
-            Copy text
+            Copy Transcript
           </CopyButton>
-          ) : <div />}
-          
+        ) : (
+          <div />
+        )}
+
+        {!stateless && (
           <CloseButton
             onClick={() => {
-              setTranscriptOpen(false);
+              setTranscriptOpen(false)
             }}
           >
             <MdClose fontSize={35} />
           </CloseButton>
-        </Flex>
+        )}
+      </Flex>
 
-      <Box>&quot;{selectedNode?.text || "No transcript"}&quot;</Box>
+      <Box>{selectedNode?.text ? `"${selectedNode?.text}"` : '...'}</Box>
     </Wrapper>
-  );
-};
+  )
+}
 
 const Wrapper = styled(Flex)`
   display: flex;
-`;
+`
 
-const CloseButton = styled(Flex).attrs({
-  
-})`
+const CloseButton = styled(Flex).attrs({})`
   color: ${colors.mainBottomIcons};
   cursor: pointer;
   &:hover {
     color: ${colors.lightBlue500};
   }
-`;
+`
 
 const CopyButton = styled(Button)`
-
   &.copied::after {
-    content: "Copied!";
+    content: 'Copied!';
     position: absolute;
     top: 10px;
     left: 10px;
@@ -97,13 +102,13 @@ const CopyButton = styled(Button)`
     color: ${colors.white};
     animation: ${copiedAnimation} 0.2s ease-in-out;
   }
-`;
+`
 
 const Box = styled(Flex)`
   color: ${colors.white};
-  margin-top: 10px;
+  margin-top: 20px;
   font-weight: 400;
   font-size: 20px;
   line-height: 24px;
   font-style: italic;
-`;
+`
