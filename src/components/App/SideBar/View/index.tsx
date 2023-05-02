@@ -2,6 +2,7 @@ import { useSelectedNode } from '~/stores/useDataStore'
 import { AudioClip } from '../AudioClip'
 import { Creator } from '../Creator'
 import { Data } from '../Data'
+import { Messages } from '../Messages'
 import { Person } from '../Person'
 import { Relevance } from '../Relevance'
 import { Show } from '../Show'
@@ -23,6 +24,8 @@ export const View = ({ isSelectedView }: Props) => {
         return <Person />
       case 'data_series':
         return <Data />
+      case 'tribe_message':
+        return <Messages />
       case 'tweet':
         return <TwitData />
       case 'show':
