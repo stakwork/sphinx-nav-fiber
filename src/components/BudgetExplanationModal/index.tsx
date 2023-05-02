@@ -38,6 +38,7 @@ export const BudgetExplanationModal = () => {
       background="budgetExplanationModalBg"
       id="budgetExplanation"
       kind="small"
+
     >
       <Flex align="flex-end" pb={14}>
         <CloseButton onClick={close}>

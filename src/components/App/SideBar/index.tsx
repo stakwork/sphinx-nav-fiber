@@ -1,9 +1,9 @@
 import { MdClose, MdKeyboardDoubleArrowLeft } from 'react-icons/md'
 import styled from 'styled-components'
 import { CategorySelect } from '~/components/App/SideBar/CategorySelect'
+import { SearchBar } from '~/components/SearchBar'
 import { Flex } from '~/components/common/Flex'
 import { Loader } from '~/components/common/Loader'
-import { SearchBar } from '~/components/SearchBar'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { colors } from '~/utils/colors'
@@ -48,7 +48,6 @@ const Content = ({ onSubmit }: Props) => {
           <CategorySelect />
         </Flex>
       </CategoryWrapper>
-
     </Wrapper>
   )
 }

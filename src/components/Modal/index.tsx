@@ -1,8 +1,8 @@
-import { PropsWithChildren } from "react";
-import styled, { css, keyframes } from "styled-components";
-import { Flex } from "~/components/common/Flex";
-import { AvailableModals, useModal } from "~/stores/useModalStore";
-import { ColorName, colors } from "~/utils/colors";
+import { PropsWithChildren } from 'react'
+import styled, { css, keyframes } from 'styled-components'
+import { Flex } from '~/components/common/Flex'
+import { AvailableModals, useModal } from '~/stores/useModalStore'
+import { ColorName, colors } from '~/utils/colors'
 
 const scaleAnimation = keyframes`
   0% {
@@ -12,27 +12,27 @@ const scaleAnimation = keyframes`
   100% {
     transform: scale(1);
   }
-`;
+`
 
-const getModalKindStyles = ({ kind = "regular" }: Pick<Props, "kind">) => {
+const getModalKindStyles = ({ kind = 'regular' }: Pick<Props, 'kind'>) => {
   switch (kind) {
-    case "small":
+    case 'small':
       return css`
         width: 300px;
         height: 502px;
-      `;
-    case "large":
+      `
+    case 'large':
       return css`
         width: 720px;
-      `;
+      `
     default:
       return css`
         width: 520px;
-      `;
+      `
   }
-};
+}
 
-const ModalContainer = styled(Flex)<Pick<Props, "kind">>`
+const ModalContainer = styled(Flex)<Pick<Props, 'kind'>>`
   z-index: 2000;
   margin: 0 auto;
   overflow: visible;
@@ -40,7 +40,7 @@ const ModalContainer = styled(Flex)<Pick<Props, "kind">>`
   position: relative;
 
   ${getModalKindStyles}
-`;
+`
 
 const fadeAnimation = keyframes`
   0% {
@@ -50,7 +50,7 @@ const fadeAnimation = keyframes`
   100% {
     opacity: 1;
   }
-`;
+`
 
 const Bg = styled(Flex)<{ hideBg?: boolean }>`
   position: fixed;
@@ -65,30 +65,23 @@ const Bg = styled(Flex)<{ hideBg?: boolean }>`
     css`
       background-color: ${colors.modalWhiteOverlayBg};
     `}
-`;
+`
 
-type ModalKind = "small" | "regular" | "large";
+type ModalKind = 'small' | 'regular' | 'large'
 
 type Props = PropsWithChildren<{
-  id: AvailableModals;
-  background?: ColorName;
-  hideBg?: boolean;
-  kind?: ModalKind;
-  preventOutsideClose?: boolean;
-}>;
+  id: AvailableModals
+  background?: ColorName
+  hideBg?: boolean
+  kind?: ModalKind
+  preventOutsideClose?: boolean
+}>
 
-export const BaseModal = ({
-  background = "modalBg",
-  children,
-  id,
-  hideBg,
-  kind,
-  preventOutsideClose,
-}: Props) => {
-  const { visible, close } = useModal(id);
+export const BaseModal = ({ background = 'modalBg', children, id, hideBg, kind, preventOutsideClose }: Props) => {
+  const { visible, close } = useModal(id)
 
   if (!visible) {
-    return null;
+    return null
   }
 
   return (
@@ -99,18 +92,19 @@ export const BaseModal = ({
         justify="center"
         onClick={(e) => {
           if (!preventOutsideClose) {
-            e.stopPropagation();
+            e.stopPropagation()
 
-            close();
+            close()
           }
         }}
       >
         <ModalContainer
           background={background}
           borderRadius={9}
+          id={id}
           kind={kind}
           onClick={(e) => {
-            e.stopPropagation();
+            e.stopPropagation()
           }}
           px={20}
           py={20}
@@ -119,5 +113,5 @@ export const BaseModal = ({
         </ModalContainer>
       </Bg>
     </>
-  );
-};
+  )
+}

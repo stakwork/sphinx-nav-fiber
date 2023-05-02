@@ -1,35 +1,33 @@
-import moment from "moment";
-import { ComponentType, useEffect } from "react";
-import ReactAudioPlayer from "react-audio-player";
-import styled from "styled-components";
-import { YouTube } from "~/components/App/SideBar/Relevance/YouTube";
-import { Booster } from "~/components/Booster";
-import { Avatar } from "~/components/common/Avatar";
-import { Flex } from "~/components/common/Flex";
-import { FlexboxProps } from "~/components/common/Flex/flexbox";
-import { Text } from "~/components/common/Text";
-import { setIsTimestampLoaded, useDataStore } from "~/stores/useDataStore";
-import { colors } from "~/utils/colors";
-import { videoTimetoSeconds } from "~/utils/videoTimetoSeconds";
-import { Actions } from "../../Actions";
+import moment from 'moment'
+import { ComponentType, useEffect } from 'react'
+import ReactAudioPlayer from 'react-audio-player'
+import styled from 'styled-components'
+import { Booster } from '~/components/Booster'
+import { Avatar } from '~/components/common/Avatar'
+import { Flex } from '~/components/common/Flex'
+import { FlexboxProps } from '~/components/common/Flex/flexbox'
+import { Text } from '~/components/common/Text'
+import { useDataStore } from '~/stores/useDataStore'
+import { colors } from '~/utils/colors'
+import { videoTimetoSeconds } from '~/utils/videoTimetoSeconds'
 
 type EpisodeTypeImage = {
-  [key: string]: string;
-};
+  [key: string]: string
+}
 
 type EpisodeWrapperProps = FlexboxProps & {
-  isSelected?: boolean;
-};
+  isSelected?: boolean
+}
 
 const EpisodeTypeImages: EpisodeTypeImage = {
-  podcast: "podcast.png",
-  twitter: "twitter.png",
-  twitter_space: "twitter.png",
-  youtube: "youtube.png",
-};
+  podcast: 'podcast.png',
+  twitter: 'twitter.png',
+  twitter_space: 'twitter.png',
+  youtube: 'youtube.png',
+}
 
 const EpisodeWrapper = styled(Flex).attrs({
-  direction: "column",
+  direction: 'column',
 })<EpisodeWrapperProps>`
   padding: 10px 20px;
   opacity: 0.8;
@@ -64,61 +62,45 @@ const EpisodeWrapper = styled(Flex).attrs({
     margin-right: 0;
     margin-top: 8px;
   }
-`;
+`
 
 type Props = {
-  boostCount: number;
-  date: number;
-  description: string;
-  id?: string;
-  imageUrl: string;
-  title: string;
-  type?: string;
+  boostCount: number
+  date: number
+  description: string
+  id?: string
+  imageUrl: string
+  title: string
+  type?: string
 
-  onAudioEnds: () => void;
-  onClick: () => void;
-};
+  onAudioEnds: () => void
+  onClick: () => void
+}
 
-const Audio = styled(
-  ReactAudioPlayer as unknown as ComponentType<
-    typeof ReactAudioPlayer.defaultProps
-  >
-)`
+const Audio = styled(ReactAudioPlayer as unknown as ComponentType<typeof ReactAudioPlayer.defaultProps>)`
   width: 100%;
   height: 20px;
-`;
+`
 
-export const Episode = ({
-  boostCount,
-  date,
-  description,
-  id,
-  imageUrl,
-  title,
-  type,
-  onAudioEnds,
-  onClick,
-}: Props) => {
-  const selectedTimestamp = useDataStore((s) => s.selectedTimestamp);
-  const isSelected = !!(selectedTimestamp && selectedTimestamp.id === id);
+export const Episode = ({ boostCount, date, description, id, imageUrl, title, type, onAudioEnds, onClick }: Props) => {
+  const selectedTimestamp = useDataStore((s) => s.selectedTimestamp)
+  const isSelected = !!(selectedTimestamp && selectedTimestamp.id === id)
 
-  const hasYouTubeType = type === "youtube";
+  const hasYouTubeType = type === 'youtube'
 
   useEffect(() => {
     if (!selectedTimestamp) {
-      return;
+      return
     }
 
-    const { timestamp } = selectedTimestamp;
+    const { timestamp } = selectedTimestamp
 
-    const audioElement = document.getElementById(
-      `audio-player`
-    ) as HTMLAudioElement;
+    const audioElement = document.getElementById(`audio-player`) as HTMLAudioElement
 
     if (audioElement) {
-      audioElement.currentTime = timestamp ? videoTimetoSeconds(timestamp) : 0;
+      audioElement.currentTime = timestamp ? videoTimetoSeconds(timestamp) : 0
     }
-  }, [selectedTimestamp]);
+  }, [selectedTimestamp])
 
   return (
     <EpisodeWrapper background="body" isSelected={isSelected} onClick={onClick}>
@@ -133,27 +115,24 @@ export const Episode = ({
           <Flex align="center" direction="row" justify="space-between" pb={4}>
             <Flex align="center" direction="row">
               {type && EpisodeTypeImages[type] && (
-                <img
-                  alt={type}
-                  className="type-image"
-                  src={EpisodeTypeImages[type]}
-                />
+                <img alt={type} className="type-image" src={EpisodeTypeImages[type]} />
               )}
 
               {Boolean(date) && (
                 <Text color="primaryText1" kind="tiny">
-                  {moment.unix(date).format("ll")}
+                  {moment.unix(date).format('ll')}
                 </Text>
               )}
             </Flex>
           </Flex>
 
           <Flex pb={4}>
-            <Text color="primaryText1">{description}</Text>
+            <Text color="primaryText1" data-testid="episode-description">
+              {description}
+            </Text>
           </Flex>
         </Flex>
       </Flex>
-
     </EpisodeWrapper>
-  );
-};
+  )
+}

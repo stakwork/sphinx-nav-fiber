@@ -36,6 +36,7 @@ export const HtmlPanel = memo(({ speed = 2, intensity = 4, children, withTransac
       <HtmlWrap
         className="html-panel"
         dimensions={withTransacript ? withTranscriptDimensions : defaultDimensions}
+        id="html-panel"
         onPointerDown={(e) => e.stopPropagation()}
         onPointerOut={(e) => e.stopPropagation()}
         onPointerOver={(e) => e.stopPropagation()}

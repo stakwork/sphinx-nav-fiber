@@ -1,25 +1,24 @@
 import { useEffect, useState } from 'react'
-import styled from 'styled-components'
-import { Flex } from '~/components/common/Flex'
-import { Text } from '~/components/common/Text'
-import { getAdminId } from '~/network/fetchGraphData'
-import { getRadarData, triggerRadarJob } from '~/network/fetchSourcesData'
-import { FetchRadarResponse, SubmitErrRes } from '~/types'
-import * as sphinx from 'sphinx-bridge-kevkevinpal'
-import { colors } from '~/utils/colors'
-import { Pill } from '~/components/common/Pill'
-import { useDataStore } from '~/stores/useDataStore'
 import { MdRestartAlt } from 'react-icons/md'
-import { Button } from '~/components/Button'
-import { useModal } from '~/stores/useModalStore'
-import { isDevelopment } from '~/constants'
-import { useUserStore } from '~/stores/useUserStore'
-import { ToastMessage } from '~/components/common/Toast/toastMessage'
-import { toast } from 'react-toastify'
 import { ClipLoader } from 'react-spinners'
-import Table from './Table'
+import { toast } from 'react-toastify'
+import * as sphinx from 'sphinx-bridge-kevkevinpal'
+import styled from 'styled-components'
+import { Button } from '~/components/Button'
+import { Flex } from '~/components/common/Flex'
+import { Pill } from '~/components/common/Pill'
+import { Text } from '~/components/common/Text'
+import { ToastMessage } from '~/components/common/Toast/toastMessage'
+import { getRadarData, triggerRadarJob } from '~/network/fetchSourcesData'
+import { useDataStore } from '~/stores/useDataStore'
+import { useModal } from '~/stores/useModalStore'
+import { useUserStore } from '~/stores/useUserStore'
+import { FetchRadarResponse, SubmitErrRes } from '~/types'
+import { colors } from '~/utils/colors'
+import { executeIfProd } from '~/utils/tests'
 import { sourcesMapper } from '../constants'
 import { TPill } from '../types'
+import Table from './Table'
 
 const admins = [
   '02c431e64078b10925584d64824c9d1d12eca05e2c56660ffa5ac84aa6946adfe5',
@@ -65,7 +64,7 @@ export const Sources = () => {
   }
 
   const authorize = async () => {
-    if (!isDevelopment) {
+    await executeIfProd(async () => {
       try {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
@@ -86,7 +85,7 @@ export const Sources = () => {
       } catch (error) {
         console.log(error)
       }
-    }
+    })
   }
 
   const handleRunJob = async () => {
