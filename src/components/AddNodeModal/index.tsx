@@ -6,12 +6,11 @@ import { toast } from 'react-toastify'
 import * as sphinx from 'sphinx-bridge-kevkevinpal'
 import styled from 'styled-components'
 import { Button } from '~/components/Button'
+import { BaseModal } from '~/components/Modal'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
-import { BaseModal } from '~/components/Modal'
 import {
   GITHUB_REPOSITORY,
-  isDevelopment,
   LINK,
   NODE_ADD_ERROR,
   NODE_ADD_SUCCESS,
@@ -22,22 +21,23 @@ import {
   YOUTUBE_CHANNEL,
 } from '~/constants'
 import { api } from '~/network/api'
+import { getRadarData } from '~/network/fetchSourcesData'
 import { useModal } from '~/stores/useModalStore'
+import { FetchRadarResponse, SubmitErrRes } from '~/types'
 import { colors } from '~/utils/colors'
 import { getLSat } from '~/utils/getLSat'
+import { executeIfProd } from '~/utils/tests'
 import { timeToMilliseconds } from '~/utils/timeToMilliseconds'
-import { ToastMessage } from '../common/Toast/toastMessage'
+import { useDataStore } from '../../stores/useDataStore/index'
 import StyledSelect from '../Select'
+import { ToastMessage } from '../common/Toast/toastMessage'
+import GithubRepository from './GithubRepository'
+import RSSFeed from './RSSFeed'
 import { SourceUrl } from './SourceUrl'
 import Topic from './Topic'
 import TwitId from './TweetId'
 import TwitterHandle from './TwitterHandle'
 import YoutubeChannel from './YoutubeChannel'
-import GithubRepository from './GithubRepository'
-import { useDataStore } from '../../stores/useDataStore/index'
-import { FetchRadarResponse, SubmitErrRes } from '~/types'
-import { getRadarData } from '~/network/fetchSourcesData'
-import RSSFeed from './RSSFeed'
 
 type Option = {
   label: string
@@ -59,7 +59,12 @@ const infoMessageSource =
 
 const notify = (message: string) => {
   toast(<ToastMessage message={message} />, {
-    icon: message === NODE_ADD_SUCCESS ? <MdCheckCircle color={colors.primaryGreen} /> : <MdWarning color={colors.primaryRed} />,
+    icon:
+      message === NODE_ADD_SUCCESS ? (
+        <MdCheckCircle color={colors.primaryGreen} />
+      ) : (
+        <MdWarning color={colors.primaryRed} />
+      ),
     position: toast.POSITION.BOTTOM_CENTER,
     type: message === NODE_ADD_SUCCESS ? 'success' : 'error',
   })
@@ -95,9 +100,23 @@ const handleSubmit = async (data: FieldValues, close: () => void, sourceType: st
     }
   }
 
-  let lsatToken
+  let lsatToken: string | null = null
 
-  if (!isDevelopment) {
+  // if (!isDevelopment) {
+  //   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  //   // @ts-ignore
+  //   const enable = await sphinx.enable()
+
+  //   body.pubkey = enable?.pubkey
+
+  //   lsatToken = await getLSat('adding_node')
+
+  //   if (!lsatToken) {
+  //     throw new Error('An error occured calling getLSat')
+  //   }
+  // }
+
+  await executeIfProd(async () => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     const enable = await sphinx.enable()
@@ -109,14 +128,20 @@ const handleSubmit = async (data: FieldValues, close: () => void, sourceType: st
     if (!lsatToken) {
       throw new Error('An error occured calling getLSat')
     }
-  }
+  })
 
   const endPoint = CONTENT_TYPES.includes(sourceType) ? 'add_node' : 'radar'
 
   try {
-    const res: SubmitErrRes = await api.post(`/${endPoint}`, JSON.stringify(body), {
-      Authorization: lsatToken,
-    } as HeadersInit)
+    const res: SubmitErrRes = await api.post(
+      `/${endPoint}`,
+      JSON.stringify(body),
+      (lsatToken
+        ? {
+            Authorization: lsatToken,
+          }
+        : {}) as HeadersInit,
+    )
 
     if (res.error) {
       const { message } = res.error

@@ -9,6 +9,7 @@ import { DataRetriever } from '~/components/DataRetriever'
 import { GlobalStyle } from '~/components/GlobalStyle'
 import { Universe } from '~/components/Universe'
 import { Flex } from '~/components/common/Flex'
+import { isE2E } from '~/constants'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { useModal } from '~/stores/useModalStore'
@@ -78,9 +79,13 @@ export const App = () => {
   const runSearch = useCallback(async () => {
     if (searchTerm) {
       setSphinxModalOpen(true)
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      await sphinx.enable()
+
+      if (!isE2E) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        await sphinx.enable()
+      }
+
       setSphinxModalOpen(false)
 
       setAuthorized(true)
