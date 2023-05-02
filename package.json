@@ -1,6 +1,6 @@
 {
   "name": "sphinx-nav",
-  "version": "0.1.0",
+  "version": "0.1.5",
   "private": true,
   "dependencies": {
     "@mui/material": "^5.11.16",
@@ -38,6 +38,7 @@
     "three-spritetext": "^1.6.5",
     "three.interactive": "^1.4.0",
     "three.meshline": "^1.4.0",
+    "tone": "^14.7.77",
     "web-vitals": "^2.1.0",
     "zustand": "^4.1.1"
   },

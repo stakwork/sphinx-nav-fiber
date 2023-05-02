@@ -26,9 +26,21 @@ const Content = () => (
       <Graph />
 
       <EffectComposer autoClear={false} multisampling={8}>
-        <SSAO color="black" intensity={150} luminanceInfluence={0.5} radius={0.05} />
+        <SSAO
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          color="black"
+          intensity={150}
+          luminanceInfluence={0.5}
+          radius={0.05}
+        />
 
-        <Bloom luminanceThreshold={1} mipmapBlur />
+        <Bloom
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          luminanceThreshold={1}
+          mipmapBlur
+        />
 
         <Outline blur edgeStrength={5} visibleEdgeColor={NODE_SELECTED_COLOR} />
       </EffectComposer>

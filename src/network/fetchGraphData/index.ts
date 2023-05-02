@@ -210,7 +210,7 @@ const getGraphData = async (searchterm: string) => {
           label: guestValue.name,
           name: guestValue.name,
           node_type: 'guest',
-          ref_id: guestNodeId,
+          ref_id: guest,
           scale,
           show_title: guestValue.name,
           text: guestValue.twitterHandle,
