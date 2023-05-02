@@ -1,29 +1,18 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import {
-  AdaptiveDpr,
-  AdaptiveEvents,
-  Html,
-  Loader,
-  Preload,
-} from "@react-three/drei";
-import { Canvas } from "@react-three/fiber";
-import {
-  Bloom,
-  EffectComposer,
-  Outline,
-  Selection,
-  SSAO,
-} from "@react-three/postprocessing";
-import { Suspense } from "react";
-import { colors } from "~/utils/colors";
-import { Controls } from "./Controls";
-import { Graph } from "./Graph";
-import { Lights } from "./Lights";
+import { AdaptiveDpr, AdaptiveEvents, Html, Loader, Preload } from '@react-three/drei'
+import { Canvas } from '@react-three/fiber'
+import { Bloom, EffectComposer, Outline, SSAO, Selection } from '@react-three/postprocessing'
+import { Suspense } from 'react'
+import { colors } from '~/utils/colors'
+import { Controls } from './Controls'
+import { Graph } from './Graph'
+import { Lights } from './Lights'
 
-import { useControlStore } from "~/stores/useControlStore";
-import { Overlay } from "./Overlay";
+import { useControlStore } from '~/stores/useControlStore'
+import { addToGlobalForE2e } from '~/utils/tests'
+import { Overlay } from './Overlay'
 
-const NODE_SELECTED_COLOR = 0x00ff00;
+const NODE_SELECTED_COLOR = 0x00ff00
 
 const Content = () => (
   <>
@@ -37,12 +26,7 @@ const Content = () => (
       <Graph />
 
       <EffectComposer autoClear={false} multisampling={8}>
-        <SSAO
-          color="black"
-          intensity={150}
-          luminanceInfluence={0.5}
-          radius={0.05}
-        />
+        <SSAO color="black" intensity={150} luminanceInfluence={0.5} radius={0.05} />
 
         <Bloom luminanceThreshold={1} mipmapBlur />
 
@@ -50,15 +34,14 @@ const Content = () => (
       </EffectComposer>
     </Selection>
   </>
-);
+)
 
 let wheelEventTimeout: ReturnType<typeof setTimeout> | null = null
 
 export const Universe = () => (
-    <>
-
+  <>
     <Overlay />
-    
+
     <Suspense fallback={null}>
       <Canvas
         camera={{
@@ -68,21 +51,22 @@ export const Universe = () => (
           position: [1000, 0, 5],
         }}
         id="universe-canvas"
+        onCreated={(s) => addToGlobalForE2e(s, 'threeState')}
         onWheel={(e: React.WheelEvent) => {
           const { target } = e
           const { offsetParent } = target as HTMLDivElement
 
           if (wheelEventTimeout) {
-            clearTimeout(wheelEventTimeout);
+            clearTimeout(wheelEventTimeout)
           }
 
           if (offsetParent?.classList?.contains('html-panel')) {
             // if overflowing on y, disable camera controls to scroll on div
             if (offsetParent.clientHeight < offsetParent.scrollHeight) {
-              useControlStore.setState({ isUserScrollingOnHtmlPanel: true })  
+              useControlStore.setState({ isUserScrollingOnHtmlPanel: true })
             }
           }
-          
+
           useControlStore.setState({ isUserScrolling: true })
           useControlStore.setState({ userMovedCamera: true })
 
@@ -109,5 +93,5 @@ export const Universe = () => (
         </Suspense>
       </Canvas>
     </Suspense>
-    </>
-  )
+  </>
+)

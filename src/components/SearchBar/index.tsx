@@ -1,14 +1,14 @@
-import { useFormContext } from "react-hook-form";
-import styled, { css } from "styled-components";
-import { colors } from "~/utils/colors";
+import { useFormContext } from 'react-hook-form'
+import styled, { css } from 'styled-components'
+import { colors } from '~/utils/colors'
 
 type Props = {
-  loading?: boolean;
-  onSubmit?: () => void;
-};
+  loading?: boolean
+  onSubmit?: () => void
+}
 
 const Input = styled.input.attrs(() => ({
-  autoCorrect: "off",
+  autoCorrect: 'off',
 }))<{ loading?: boolean }>`
   pointer-events: auto;
   height: 50px;
@@ -32,30 +32,31 @@ const Input = styled.input.attrs(() => ({
   ${({ loading }) =>
     loading
       ? css`
-          background-image: url("https://i.gifer.com/ZZ5H.gif");
+          background-image: url('https://i.gifer.com/ZZ5H.gif');
           background-size: 25px 25px;
           background-position: right center;
           background-position-x: 95%;
           background-repeat: no-repeat;
         `
-      : ""}
-`;
+      : ''}
+`
 
 export const SearchBar = ({ loading, onSubmit }: Props) => {
-  const { register } = useFormContext();
+  const { register } = useFormContext()
 
   return (
     <Input
-      {...register("search")}
+      {...register('search')}
       disabled={loading}
+      id="main-search"
       loading={loading}
       onKeyPress={(event) => {
-        if (event.key === "Enter") {
-          onSubmit?.();
+        if (event.key === 'Enter') {
+          onSubmit?.()
         }
       }}
       placeholder="Search (10 sats)"
       type="text"
     />
-  );
-};
+  )
+}

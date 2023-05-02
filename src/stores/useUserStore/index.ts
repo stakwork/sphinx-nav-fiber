@@ -1,6 +1,6 @@
 import create from 'zustand'
 
-type UserStore = {
+export type UserStore = {
   isAdmin: boolean
   pubKey: string
   setIsAdmin: (val: boolean) => void
