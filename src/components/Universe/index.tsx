@@ -1,14 +1,15 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { AdaptiveDpr, AdaptiveEvents, Html, Loader, Preload } from '@react-three/drei'
 import { Canvas } from '@react-three/fiber'
-import { Bloom, EffectComposer, Outline, Selection, SSAO } from '@react-three/postprocessing'
+import { Bloom, EffectComposer, Outline, SSAO, Selection } from '@react-three/postprocessing'
+import { Perf } from 'r3f-perf'
 import { Suspense } from 'react'
+import { isDevelopment } from '~/constants'
+import { useControlStore } from '~/stores/useControlStore'
 import { colors } from '~/utils/colors'
 import { Controls } from './Controls'
 import { Graph } from './Graph'
 import { Lights } from './Lights'
-
-import { useControlStore } from '~/stores/useControlStore'
 import { Overlay } from './Overlay'
 
 const NODE_SELECTED_COLOR = 0x00ff00
@@ -86,6 +87,8 @@ export const Universe = () => (
           }, 200)
         }}
       >
+        {isDevelopment && <Perf />}
+
         <Suspense
           fallback={
             <Html>
