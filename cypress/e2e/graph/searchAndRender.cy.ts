@@ -11,7 +11,7 @@ describe('Search and render / Home interactions', () => {
       url: '/stats',
     }).as('stats')
 
-    cy.wait('@stats', { timeout: 20000 })
+    cy.wait('@stats')
   })
 
   it('Search and render the Graph', () => {
@@ -24,7 +24,7 @@ describe('Search and render / Home interactions', () => {
     cy.get(search).should('exist').type('bitcoin {enter}')
     cy.get(budgetModal).should('exist').find('button').click()
     cy.get(loader).should('exist')
-    cy.wait('@search', { responseTimeout: 40000 })
+    cy.wait('@search')
 
     getScenenChildrens().should('exist')
 

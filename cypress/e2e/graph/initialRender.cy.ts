@@ -10,7 +10,7 @@ describe('Initial graph render / Home interactions', () => {
       url: '/stats',
     }).as('stats')
 
-    cy.wait('@stats', { responseTimeout: 10000 })
+    cy.wait('@stats')
   })
 
   it('The graph is rendered', () => {
