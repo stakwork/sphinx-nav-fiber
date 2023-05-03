@@ -1,7 +1,7 @@
 import { ThreeEvent, useFrame } from '@react-three/fiber'
 import { Select } from '@react-three/postprocessing'
 import { memo, useCallback, useEffect, useRef, useState } from 'react'
-import * as THREE from 'three'
+import { Mesh } from 'three'
 import { Transcript } from '~/components/App/SideBar/Transcript'
 import { View } from '~/components/App/SideBar/View'
 import { usePathway } from '~/components/DataRetriever'
@@ -13,21 +13,18 @@ import { HtmlPanel } from './components/HtmlPanel'
 import { PathwayBadge } from './components/PathwayBadge'
 import { Portal } from './components/Portal'
 import { Tooltip } from './components/Tooltip'
+import { boxGeometry } from './constants'
 import { useMaterial } from './hooks/useMaterial'
 
-const geometryXs = new THREE.BoxGeometry(10, 10, 10)
-const geometryS = new THREE.BoxGeometry(20, 20, 20)
-const geometryM = new THREE.BoxGeometry(35, 35, 35)
-
-const getGeometry = (node: NodeExtended) => {
+const getScale = (node: NodeExtended) => {
   switch (node.node_type) {
     case 'guest':
     case 'episode':
-      return geometryS
+      return 2
     case 'show':
-      return geometryM
+      return 3
     default:
-      return geometryXs
+      return 1
   }
 }
 
@@ -38,8 +35,9 @@ type Props = {
 }
 
 export const Cube = memo(({ node, highlight, highlightColor }: Props) => {
-  const ref = useRef<THREE.Mesh | null>(null)
+  const ref = useRef<Mesh | null>(null)
   const [hovered, setHovered] = useState(false)
+  const [scale] = useState(node.scale ? node.scale : getScale(node))
 
   const isSomeModalOpened = useSomeModalIsOpen()
 
@@ -53,8 +51,6 @@ export const Cube = memo(({ node, highlight, highlightColor }: Props) => {
 
   const isSelected = selectedNode?.id === node.id
   const isSelectedCategory = node.node_type === categoryFilter
-
-  
 
   useFrame(() => {
     if (selectedNode) {
@@ -94,12 +90,12 @@ export const Cube = memo(({ node, highlight, highlightColor }: Props) => {
       <Select enabled={selectedNode ? isSelected : isSelectedCategory}>
         <mesh
           ref={ref}
-          geometry={getGeometry(node)}
+          geometry={boxGeometry}
           material={material}
           name={node.id}
           onPointerOut={onPointerOut}
           onPointerOver={onPointerIn}
-          scale={hovered && !isSelected ? 1.5 : 1}
+          scale={scale}
           userData={node}
         >
           {isSelected && (
