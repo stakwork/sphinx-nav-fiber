@@ -51,10 +51,8 @@ export const Cube = memo(({ node, highlight, highlightColor }: Props) => {
 
   const material = useMaterial(node.image_url || 'noimage.jpeg', highlight, highlightColor)
 
-  const isSelected = selectedNode?.id === node.id
+  const isSelected = !!selectedNode && selectedNode?.id === node.id
   const isSelectedCategory = node.node_type === categoryFilter
-
-  
 
   useFrame(() => {
     if (selectedNode) {
