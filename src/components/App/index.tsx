@@ -9,12 +9,11 @@ import { DataRetriever } from '~/components/DataRetriever'
 import { GlobalStyle } from '~/components/GlobalStyle'
 import { Universe } from '~/components/Universe'
 import { Flex } from '~/components/common/Flex'
-import { isE2E } from '~/constants'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { useModal } from '~/stores/useModalStore'
 import { colors } from '~/utils/colors'
-import { E2ETests } from '~/utils/tests'
+import { E2ETests, executeIfProd } from '~/utils/tests'
 import version from '~/utils/versionHelper'
 import { Preloader } from '../Universe/Preloader'
 import { AppBar } from './AppBar'
@@ -80,11 +79,11 @@ export const App = () => {
     if (searchTerm) {
       setSphinxModalOpen(true)
 
-      if (!isE2E) {
+      await executeIfProd(async () => {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         await sphinx.enable()
-      }
+      })
 
       setSphinxModalOpen(false)
 

@@ -2,10 +2,12 @@ import { memo, useEffect } from 'react'
 import { isDevelopment, isE2E } from '~/constants'
 import { useUserStore } from '~/stores/useUserStore'
 
-export const executeIfTetsRunning = (fn: () => void) => {
+export function executeIfTetsRunning<T>(fn: () => T): T {
   if (isE2E) {
-    fn()
+    return fn()
   }
+
+  return null as unknown as T
 }
 
 export function executeIfProd<T>(fn: () => T): T {

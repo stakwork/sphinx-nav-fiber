@@ -48,26 +48,25 @@ export const BOOST_ERROR_BUDGET = 'Boost failed, insufficient budget'
 export const NODE_ADD_SUCCESS = 'Submitted!'
 export const NODE_ADD_ERROR = 'Submission failed, please try again.'
 
-
 type NodeRelativeHighlightColors = {
-  nodeColor: string;
-  segmentColor: number;
+  nodeColor: string
+  segmentColor: number
 }
 
 export const NODE_RELATIVE_HIGHLIGHT_COLORS: Record<string, NodeRelativeHighlightColors> = {
   children: {
     nodeColor: 'green',
-    segmentColor: 0x3dff85
+    segmentColor: 0x3dff85,
   },
   guests: {
     nodeColor: 'purple',
-    segmentColor: 0xdd50ff
+    segmentColor: 0xdd50ff,
   },
   source: {
     nodeColor: 'purple',
-    segmentColor: 0xdd50ff
+    segmentColor: 0xdd50ff,
   },
-};
+}
 
 export const LINK = 'link'
 export const TWITTER_HANDLE = 'twitter_handle'
@@ -77,8 +76,4 @@ export const RSS = 'rss'
 export const TWITTER_SOURCE = 'tweet'
 export const TOPIC = 'topic'
 
-<<<<<<< HEAD
-
-=======
->>>>>>> test: add e2e tests for the sources table
 export const isE2E = !!process.env.REACT_APP_IS_E2E

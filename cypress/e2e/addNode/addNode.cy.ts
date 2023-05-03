@@ -1,4 +1,4 @@
-import { actionMenu, addNodeModal, host, addNodeSubmitButton, toast } from '../../support'
+import { actionMenu, addNodeModal, addNodeSubmitButton, host, toast } from '../../support'
 import { checkbox, description, endTime, link, startTime, tagError, tags } from './const'
 
 describe('Add Node Form / Home interactions', () => {
@@ -71,7 +71,7 @@ describe('Add Node Form / Home interactions', () => {
 
     submitButton().click({ waitForAnimations: false })
 
-    cy.wait('@add_node')
+    cy.wait('@add_node', { timeout: 10000 })
 
     modal().should('not.exist')
 
@@ -114,7 +114,7 @@ describe('Add Node Form / Home interactions', () => {
 
     submitButton().click({ waitForAnimations: false })
 
-    cy.wait('@add_node')
+    cy.wait('@add_node', { timeout: 10000 })
 
     // Waiting for Toast opacity keyframe to complete
     cy.wait(3000)

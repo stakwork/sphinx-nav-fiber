@@ -18,7 +18,7 @@ describe('Sources Table / Home interactions', () => {
     cy.get(actionMenu).click({ waitForAnimations: false })
     cy.get(openSourceBtn).click({ waitForAnimations: false })
 
-    cy.wait('@radar')
+    cy.wait('@radar', { timeout: 10000 })
     resetUserStore()
   })
 
@@ -42,8 +42,8 @@ describe('Sources Table / Home interactions', () => {
       modal().find('[aria-label="Topic"]').click()
       modal().find('input[name="source"]').type(testTitle)
       modal().get(addNodeSubmitButton).click()
-      cy.wait('@post')
-      cy.wait('@radar')
+      cy.wait('@post', { timeout: 10000 })
+      cy.wait('@radar', { timeout: 10000 })
 
       // Waiting for Toast opacity keyframe to complete
       cy.wait(3000)
@@ -87,14 +87,14 @@ describe('Sources Table / Home interactions', () => {
       cell().find(' > div').find('svg').click({ force: true })
       cell().find('input').click().type('1')
       cell().find('input + div').click()
-      cy.wait('@update')
+      cy.wait('@update', { timeout: 10000 })
       cy.get(table).find('tbody tr:last-child').contains(`${testTitle}1`)
 
       // Delete an item
       cy.get('tbody > tr:last-child .delete-wrapper').should('exist').click()
 
       cy.get('[role="presentation"]').find('button:first-child').should('exist').contains(/yes/i).click()
-      cy.wait('@delete')
+      cy.wait('@delete', { timeout: 10000 })
       cy.get(table).should('exist').and('not.contain.text', `${testTitle}1`)
     })
 
