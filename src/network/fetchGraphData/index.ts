@@ -182,7 +182,7 @@ const getGraphData = async (searchterm: string) => {
 
         nodes.push({
           ...node,
-          id: node.ref_id || node.tweet_id,
+          id: node.ref_id || node.tweet_id || node.id,
           image_url: smallImageUrl,
           type: node.type || node.node_type,
         })

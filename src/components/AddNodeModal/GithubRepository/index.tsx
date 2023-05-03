@@ -1,10 +1,10 @@
 import { Flex } from '~/components/common/Flex'
-import { requiredRule } from '../index'
 import { TextInput } from '../TextInput'
+import { requiredRule } from '../index'
 
 const message = 'Submit github repository'
 
-const GithubRepository = () => (
+export const GithubRepository = () => (
   <Flex>
     <TextInput
       id="cy-github-repository-id"
@@ -18,5 +18,3 @@ const GithubRepository = () => (
     />
   </Flex>
 )
-
-export default GithubRepository
