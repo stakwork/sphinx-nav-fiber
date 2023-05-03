@@ -4,6 +4,7 @@ import { Node } from '~/types/index'
 import { executeIfProd } from '../tests'
 
 export const saveConsumedContent = async (selectedNode: Node | null) => {
+  // skipping this for end to end test because it requires a sphinx-relay to be connected
   await executeIfProd(async () => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
@@ -31,7 +32,8 @@ export const saveConsumedContent = async (selectedNode: Node | null) => {
   })
 }
 
-export const saveSearchTerm = async (searchTerm: string) => {
+export const saveSearchTerm = async () => {
+  // skipping this for end to end test because it requires a sphinx-relay to be connected
   await executeIfProd(async () => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
@@ -41,16 +43,4 @@ export const saveSearchTerm = async (searchTerm: string) => {
       console.log('Sphinx enable failed, means no pubkey and no budget (including budget of 0)')
     }
   })
-  /*
-  try {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    await sphinx.saveGraphData({
-      metaData: { frequency: 1, searched_term: searchTerm },
-      type: "search",
-    });
-  } catch (error) {
-    console.log(error);
-  }
-  */
 }

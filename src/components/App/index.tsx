@@ -80,6 +80,7 @@ export const App = () => {
     if (searchTerm) {
       setSphinxModalOpen(true)
 
+      // skipping this for end to end test because it requires a sphinx-relay to be connected
       if (!isE2E) {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore

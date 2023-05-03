@@ -56,6 +56,7 @@ export const About = () => {
   }, [])
 
   const authorize = async () => {
+    // skipping this for end to end test because it requires a sphinx-relay to be connected
     await executeIfProd(async () => {
       try {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment

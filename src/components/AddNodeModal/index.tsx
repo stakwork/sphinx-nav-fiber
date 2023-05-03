@@ -102,20 +102,7 @@ const handleSubmit = async (data: FieldValues, close: () => void, sourceType: st
 
   let lsatToken: string | null = null
 
-  // if (!isDevelopment) {
-  //   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  //   // @ts-ignore
-  //   const enable = await sphinx.enable()
-
-  //   body.pubkey = enable?.pubkey
-
-  //   lsatToken = await getLSat('adding_node')
-
-  //   if (!lsatToken) {
-  //     throw new Error('An error occured calling getLSat')
-  //   }
-  // }
-
+  // skipping this for end to end test because it requires a sphinx-relay to be connected
   await executeIfProd(async () => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
