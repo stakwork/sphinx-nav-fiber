@@ -6,12 +6,11 @@ import { toast } from 'react-toastify'
 import * as sphinx from 'sphinx-bridge-kevkevinpal'
 import styled from 'styled-components'
 import { Button } from '~/components/Button'
+import { BaseModal } from '~/components/Modal'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
-import { BaseModal } from '~/components/Modal'
 import {
   GITHUB_REPOSITORY,
-  isDevelopment,
   LINK,
   NODE_ADD_ERROR,
   NODE_ADD_SUCCESS,
@@ -19,25 +18,28 @@ import {
   TOPIC,
   TWITTER_HANDLE,
   TWITTER_SOURCE,
+  WEB_PAGE,
   YOUTUBE_CHANNEL,
+  isDevelopment,
 } from '~/constants'
 import { api } from '~/network/api'
+import { getRadarData } from '~/network/fetchSourcesData'
 import { useModal } from '~/stores/useModalStore'
+import { FetchRadarResponse, SubmitErrRes } from '~/types'
 import { colors } from '~/utils/colors'
 import { getLSat } from '~/utils/getLSat'
 import { timeToMilliseconds } from '~/utils/timeToMilliseconds'
-import { ToastMessage } from '../common/Toast/toastMessage'
-import StyledSelect from '../Select'
-import { SourceUrl } from './SourceUrl'
-import Topic from './Topic'
-import TwitId from './TweetId'
-import TwitterHandle from './TwitterHandle'
-import YoutubeChannel from './YoutubeChannel'
-import GithubRepository from './GithubRepository'
 import { useDataStore } from '../../stores/useDataStore/index'
-import { FetchRadarResponse, SubmitErrRes } from '~/types'
-import { getRadarData } from '~/network/fetchSourcesData'
-import RSSFeed from './RSSFeed'
+import StyledSelect from '../Select'
+import { ToastMessage } from '../common/Toast/toastMessage'
+import { GithubRepository } from './GithubRepository'
+import { RSSFeed } from './RSSFeed'
+import { SourceUrl } from './SourceUrl'
+import { Topic } from './Topic'
+import { TwitId } from './TweetId'
+import { TwitterHandle } from './TwitterHandle'
+import { WebPage } from './WebPage'
+import { YoutubeChannel } from './YoutubeChannel'
 
 type Option = {
   label: string
@@ -59,7 +61,12 @@ const infoMessageSource =
 
 const notify = (message: string) => {
   toast(<ToastMessage message={message} />, {
-    icon: message === NODE_ADD_SUCCESS ? <MdCheckCircle color={colors.primaryGreen} /> : <MdWarning color={colors.primaryRed} />,
+    icon:
+      message === NODE_ADD_SUCCESS ? (
+        <MdCheckCircle color={colors.primaryGreen} />
+      ) : (
+        <MdWarning color={colors.primaryRed} />
+      ),
     position: toast.POSITION.BOTTOM_CENTER,
     type: message === NODE_ADD_SUCCESS ? 'success' : 'error',
   })
@@ -72,6 +79,8 @@ const handleSubmit = async (data: FieldValues, close: () => void, sourceType: st
     body.media_url = data.link
 
     if (data.withTimeStamps) {
+      body.content_type = 'clip'
+
       body.job_response = {
         tags: [
           {
@@ -82,9 +91,35 @@ const handleSubmit = async (data: FieldValues, close: () => void, sourceType: st
           },
         ],
       }
+    } else {
+      body.content_type === 'audio_video'
     }
   } else if (sourceType === TWITTER_SOURCE) {
-    body.tweet_id = data.tweet.split('/').at(-1)
+    const regex = /(?:https?:\/\/)?(?:www\.)?twitter\.com\/\w+\/status\/\d+/
+    const tweetIdRegex = /^[0-9]{16,}$/
+
+    if (regex.test(data.tweet)) {
+      const idRegex = /\/status\/(\d+)/
+
+      const match = data.tweet.match(idRegex)
+
+      if (match?.[1]) {
+        const [, id] = match
+
+        body.tweet_id = id
+      }
+    } else {
+      body.tweet_id = data.tweet
+    }
+
+    if (!tweetIdRegex.test(body.tweet_id as string)) {
+      return
+    }
+
+    body.content_type = 'tweet'
+  } else if (sourceType === WEB_PAGE) {
+    body.content_type = 'webpage'
+    body.web_page = data.web_page
   } else {
     body.source_type = sourceType
 
@@ -157,6 +192,10 @@ const CONTENT_TYPE_OPTIONS: Record<'source' | 'content', IOptionMap> = {
     [TWITTER_SOURCE]: {
       component: TwitId,
       label: 'Tweet',
+    },
+    [WEB_PAGE]: {
+      component: WebPage,
+      label: 'Webpage (Text)',
     },
   },
   source: {

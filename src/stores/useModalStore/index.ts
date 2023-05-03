@@ -1,8 +1,8 @@
-import create from "zustand";
+import { create } from 'zustand'
 
-export type AvailableModals = "addNode" | "budgetExplanation";
+export type AvailableModals = 'addNode' | 'budgetExplanation'
 
-export type AddNodeModalData = "content" | "source" | null;
+export type AddNodeModalData = 'content' | 'source' | null
 
 type ModalStore = {
   currentModals: Record<AvailableModals, boolean>
@@ -43,8 +43,14 @@ export const useModalStore = create<ModalStore>((set) => ({
   },
 }))
 
+export const useSomeModalIsOpen = () => {
+  const { currentModals } = useModalStore()
+
+  return Object.values(currentModals).some((v) => v)
+}
+
 export const useModal = (id: AvailableModals) => {
-  const { open, close, setAddNodeModalData, currentModals, addNodeModalData } = useModalStore();
+  const { open, close, setAddNodeModalData, currentModals, addNodeModalData } = useModalStore()
 
   return {
     addNodeModalData,
@@ -53,4 +59,4 @@ export const useModal = (id: AvailableModals) => {
     setAddNodeModalData: (data: AddNodeModalData) => setAddNodeModalData(data),
     visible: currentModals[id],
   }
-};
+}

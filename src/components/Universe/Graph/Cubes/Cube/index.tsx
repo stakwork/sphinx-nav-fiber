@@ -7,6 +7,7 @@ import { View } from '~/components/App/SideBar/View'
 import { usePathway } from '~/components/DataRetriever'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
+import { useSomeModalIsOpen } from '~/stores/useModalStore'
 import { NodeExtended } from '~/types'
 import { HtmlPanel } from './components/HtmlPanel'
 import { PathwayBadge } from './components/PathwayBadge'
@@ -42,6 +43,8 @@ export const Cube = memo(({ node, highlight, highlightColor }: Props) => {
 
   const [categoryFilter, selectedTimestamp] = useDataStore((s) => [s.categoryFilter, s.selectedTimestamp])
 
+  const isSomeModalOpened = useSomeModalIsOpen()
+
   const transcriptIsOpen = useAppStore((s) => s.transcriptIsOpen)
 
   const selectedNode = useSelectedNode()
@@ -63,13 +66,22 @@ export const Cube = memo(({ node, highlight, highlightColor }: Props) => {
     document.body.style.cursor = hovered ? 'pointer' : 'auto'
   }, [hovered])
 
-  const onPointerIn = useCallback((e: ThreeEvent<PointerEvent>) => {
-    e.stopPropagation()
-    setHovered(true)
-  }, [])
+  const onPointerIn = useCallback(
+    (e: ThreeEvent<PointerEvent>) => {
+      e.stopPropagation()
+
+      if (isSomeModalOpened) {
+        return
+      }
+
+      setHovered(true)
+    },
+    [isSomeModalOpened],
+  )
 
   const onPointerOut = useCallback((e: ThreeEvent<PointerEvent>) => {
     e.stopPropagation()
+
     setHovered(false)
   }, [])
 
