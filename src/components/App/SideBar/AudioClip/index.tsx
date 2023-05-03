@@ -1,13 +1,11 @@
-import { ComponentType, useEffect, useState } from 'react'
-import ReactAudioPlayer from 'react-audio-player'
 import styled from 'styled-components'
 import { Actions } from '~/components/App/SideBar/Actions'
+import { AudioPlayer } from '~/components/AudioPlayer'
 import { Avatar } from '~/components/common/Avatar'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { setIsTimestampLoaded, useSelectedNode } from '~/stores/useDataStore'
 import { colors } from '~/utils/colors'
-import { videoTimetoSeconds } from '~/utils/videoTimetoSeconds'
 import { Transcript } from '../Transcript'
 
 const Wrapper = styled(Flex)`
@@ -20,22 +18,8 @@ const Wrapper = styled(Flex)`
   z-index: 0;
 `
 
-const Audio = styled(ReactAudioPlayer as unknown as ComponentType<typeof ReactAudioPlayer.defaultProps>)`
-  width: 100%;
-`
-
 export const AudioClip = () => {
   const selectedNode = useSelectedNode()
-  const [loadError, setLoadError] = useState(false)
-  const timestamp = selectedNode?.timestamp
-
-  useEffect(() => {
-    const audioElement = document.getElementById('audio-player') as HTMLAudioElement
-
-    if (audioElement) {
-      audioElement.currentTime = timestamp ? videoTimetoSeconds(timestamp) : 0
-    }
-  }, [timestamp])
 
   return (
     <Wrapper p={20}>
@@ -62,29 +46,20 @@ export const AudioClip = () => {
       </Flex>
 
       <Flex pt={10}>
-        {loadError ? (
-          <Text color="primaryRed" kind="medium">
-            Audio failed to load
-          </Text>
-        ) : (
-          <Audio
-            controls
-            id="audio-player"
-            onError={() => {
-              setIsTimestampLoaded(true)
-              setLoadError(true)
-            }}
-            onLoadedMetadata={() => {
-              setIsTimestampLoaded(true)
-            }}
-            src={selectedNode?.link}
-            volume={1}
-          />
-        )}
+        <AudioPlayer
+          mediaUrl={selectedNode?.link || ''}
+          onError={() => {
+            setIsTimestampLoaded(true)
+          }}
+          onLoaded={() => {
+            setIsTimestampLoaded(true)
+          }}
+          timestamp={selectedNode?.timestamp || ''}
+        />
       </Flex>
 
       <Flex pt={50}>
-        <Transcript stateless />
+        <Transcript node={selectedNode} stateless />
       </Flex>
     </Wrapper>
   )

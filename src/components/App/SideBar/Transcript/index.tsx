@@ -5,7 +5,7 @@ import { Button } from '~/components/Button'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { useAppStore } from '~/stores/useAppStore'
-import { useSelectedNode } from '~/stores/useDataStore'
+import { NodeExtended } from '~/types'
 import { colors } from '~/utils/colors'
 
 const copiedAnimation = keyframes`
@@ -33,12 +33,11 @@ const copyNodeText = (text: string | undefined) => {
 
 type TranscriptProps = {
   stateless?: boolean
+  node: NodeExtended | null
 }
 
-export const Transcript = ({ stateless }: TranscriptProps) => {
+export const Transcript = ({ stateless, node }: TranscriptProps) => {
   const [transcriptIsOpen, setTranscriptOpen] = useAppStore((s) => [s.transcriptIsOpen, s.setTranscriptOpen])
-
-  const selectedNode = useSelectedNode()
 
   if (!stateless && !transcriptIsOpen) {
     return null
@@ -49,13 +48,8 @@ export const Transcript = ({ stateless }: TranscriptProps) => {
       <Flex align="center" direction="row" justify="space-between">
         {stateless && <Text kind="heading">Transcript</Text>}
 
-        {selectedNode?.text ? (
-          <CopyButton
-            className="copy-button"
-            kind="small"
-            onPointerDown={() => copyNodeText(selectedNode?.text)}
-            type="button"
-          >
+        {node?.text ? (
+          <CopyButton className="copy-button" kind="small" onPointerDown={() => copyNodeText(node?.text)} type="button">
             Copy Transcript
           </CopyButton>
         ) : (
@@ -73,7 +67,7 @@ export const Transcript = ({ stateless }: TranscriptProps) => {
         )}
       </Flex>
 
-      <Box>{selectedNode?.text ? `"${selectedNode?.text}"` : '...'}</Box>
+      <Box>{node?.text ? `"${node?.text}"` : '...'}</Box>
     </Wrapper>
   )
 }
