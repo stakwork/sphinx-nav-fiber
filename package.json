@@ -54,9 +54,10 @@
     "cy-run": "cypress run",
     "eject": "craco eject",
     "format": "prettier --write .",
+    "prettier": "npx prettier --config prettier.config.js --check ./src",
     "postinstall": "husky install",
     "typecheck": "tsc --noEmit",
-    "lint": "eslint src"
+    "lint": "eslint src --max-warnings 42"
   },
   "eslintConfig": {
     "extends": [
