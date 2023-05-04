@@ -30,15 +30,14 @@ const Input = styled.input.attrs(() => ({
   }
 
   ${({ loading }) =>
-    loading
-      ? css`
-          background-image: url('https://i.gifer.com/ZZ5H.gif');
-          background-size: 25px 25px;
-          background-position: right center;
-          background-position-x: 95%;
-          background-repeat: no-repeat;
-        `
-      : ''}
+    loading &&
+    css`
+      background-image: url('https://i.gifer.com/ZZ5H.gif');
+      background-size: 25px 25px;
+      background-position: right center;
+      background-position-x: 95%;
+      background-repeat: no-repeat;
+    `}
 `
 
 export const SearchBar = ({ loading, onSubmit }: Props) => {

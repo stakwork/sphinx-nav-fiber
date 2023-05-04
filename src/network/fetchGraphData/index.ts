@@ -116,8 +116,8 @@ const getGraphData = async (searchterm: string) => {
           }, {} as Record<string, string[]>)
         }
 
-        if (node.node_type === 'episode' && node.ref_id) {
-          ;(guests || []).forEach((guest) => {
+        if (node.node_type === 'episode' && node.ref_id && guests) {
+          guests.forEach((guest) => {
             const currentGuest = guest as Guests
 
             if (currentGuest.name && currentGuest.ref_id && node.ref_id) {
@@ -138,7 +138,7 @@ const getGraphData = async (searchterm: string) => {
 
         nodes.push({
           ...node,
-          id: node.ref_id || node.tweet_id,
+          id: node.ref_id || node.tweet_id || node.id,
           // label: moment.show_title,
           image_url: smallImageUrl,
           type: node.type || node.node_type,

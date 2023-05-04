@@ -18,6 +18,7 @@ import {
   TOPIC,
   TWITTER_HANDLE,
   TWITTER_SOURCE,
+  WEB_PAGE,
   YOUTUBE_CHANNEL,
 } from '~/constants'
 import { api } from '~/network/api'
@@ -31,13 +32,14 @@ import { timeToMilliseconds } from '~/utils/timeToMilliseconds'
 import { useDataStore } from '../../stores/useDataStore/index'
 import StyledSelect from '../Select'
 import { ToastMessage } from '../common/Toast/toastMessage'
-import GithubRepository from './GithubRepository'
-import RSSFeed from './RSSFeed'
+import { GithubRepository } from './GithubRepository'
+import { RSSFeed } from './RSSFeed'
 import { SourceUrl } from './SourceUrl'
-import Topic from './Topic'
-import TwitId from './TweetId'
-import TwitterHandle from './TwitterHandle'
-import YoutubeChannel from './YoutubeChannel'
+import { Topic } from './Topic'
+import { TwitId } from './TweetId'
+import { TwitterHandle } from './TwitterHandle'
+import { WebPage } from './WebPage'
+import { YoutubeChannel } from './YoutubeChannel'
 
 type Option = {
   label: string
@@ -77,6 +79,8 @@ const handleSubmit = async (data: FieldValues, close: () => void, sourceType: st
     body.media_url = data.link
 
     if (data.withTimeStamps) {
+      body.content_type = 'clip'
+
       body.job_response = {
         tags: [
           {
@@ -87,9 +91,35 @@ const handleSubmit = async (data: FieldValues, close: () => void, sourceType: st
           },
         ],
       }
+    } else {
+      body.content_type === 'audio_video'
     }
   } else if (sourceType === TWITTER_SOURCE) {
-    body.tweet_id = data.tweet.split('/').at(-1)
+    const regex = /(?:https?:\/\/)?(?:www\.)?twitter\.com\/\w+\/status\/\d+/
+    const tweetIdRegex = /^[0-9]{16,}$/
+
+    if (regex.test(data.tweet)) {
+      const idRegex = /\/status\/(\d+)/
+
+      const match = data.tweet.match(idRegex)
+
+      if (match?.[1]) {
+        const [, id] = match
+
+        body.tweet_id = id
+      }
+    } else {
+      body.tweet_id = data.tweet
+    }
+
+    if (!tweetIdRegex.test(body.tweet_id as string)) {
+      return
+    }
+
+    body.content_type = 'tweet'
+  } else if (sourceType === WEB_PAGE) {
+    body.content_type = 'webpage'
+    body.web_page = data.web_page
   } else {
     body.source_type = sourceType
 
@@ -169,6 +199,10 @@ const CONTENT_TYPE_OPTIONS: Record<'source' | 'content', IOptionMap> = {
     [TWITTER_SOURCE]: {
       component: TwitId,
       label: 'Tweet',
+    },
+    [WEB_PAGE]: {
+      component: WebPage,
+      label: 'Webpage (Text)',
     },
   },
   source: {

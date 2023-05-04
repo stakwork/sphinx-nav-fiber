@@ -1,8 +1,10 @@
 {
   "name": "sphinx-nav",
-  "version": "0.1.5",
+  "version": "0.1.7",
   "private": true,
   "dependencies": {
+    "@emotion/react": "^11.10.8",
+    "@emotion/styled": "^11.10.8",
     "@mui/material": "^5.11.16",
     "@mui/styled-engine-sc": "^5.11.11",
     "@react-three/drei": "9.57.0",
