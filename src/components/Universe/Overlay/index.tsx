@@ -8,6 +8,7 @@ export const Overlay = () => {
     s.cameraFocusTrigger,
     s.setCameraFocusTrigger,
   ])
+
   const selectedNode = useSelectedNode()
   const userMovedCamera = useControlStore((s) => s.userMovedCamera)
 
