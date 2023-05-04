@@ -1,7 +1,7 @@
-import { Instances } from '@react-three/drei'
-import { memo, useCallback, useEffect, useMemo, useRef } from 'react'
+import { Instances, Select } from '@react-three/drei'
+import { memo, useCallback, useMemo } from 'react'
 import * as THREE from 'three'
-import { InstancedMesh, Object3D } from 'three'
+import { Object3D } from 'three'
 import { useGraphData } from '~/components/DataRetriever'
 import { NODE_RELATIVE_HIGHLIGHT_COLORS } from '~/constants'
 import { useAppStore } from '~/stores/useAppStore'
@@ -36,13 +36,8 @@ export const Cubes = memo(() => {
   const data = useGraphData()
 
   const selectedNode = useSelectedNode()
-  const instancedRef = useRef<InstancedMesh>(null)
 
   const [searchTerm, setTranscriptOpen] = useAppStore((s) => [s.currentSearch, s.setTranscriptOpen])
-
-  useEffect(() => {
-    console.log('instancedRef', instancedRef)
-  }, [])
 
   const handleSelect = useCallback(
     (nodes: Object3D[]) => {
@@ -72,7 +67,12 @@ export const Cubes = memo(() => {
         if (instances[node.image_url]) {
           instances[node.image_url].nodes.push(node)
         } else {
-          const texture = textureLoader.load(node.image_url)
+          const texture = textureLoader.load(node.image_url, undefined, undefined, () => {
+            // if loading fails, assign texture noimage.jpeg
+            if (node.image_url && instances[node.image_url]) {
+              instances[node.image_url].texture = textureLoader.load('noimage.jpeg')
+            }
+          })
 
           instances[node.image_url] = {
             nodes: [node],
@@ -85,8 +85,11 @@ export const Cubes = memo(() => {
       else if (instances['no-texture']) {
         instances['no-texture'].nodes.push(node)
       } else {
+        const texture = textureLoader.load('noimage.jpeg')
+
         instances['no-texture'] = {
           nodes: [node],
+          texture,
           geometry: boxGeometry,
         }
       }
@@ -96,7 +99,7 @@ export const Cubes = memo(() => {
   }, [data.nodes])
 
   return (
-    <>
+    <Select onChange={handleSelect}>
       {Object.keys(nodeInstances).map((instanceKey) => {
         const instance = nodeInstances[instanceKey]
         const { nodes, texture, geometry } = instance
@@ -116,7 +119,6 @@ export const Cubes = memo(() => {
                 <NodeInstance
                   // eslint-disable-next-line react/no-array-index-key
                   key={`${node.id}-${index}`}
-                  handleSelect={handleSelect}
                   highlight={highlight}
                   highlightColor={highlightColor}
                   node={node}
@@ -126,7 +128,7 @@ export const Cubes = memo(() => {
           </Instances>
         )
       })}
-    </>
+    </Select>
   )
 })
 

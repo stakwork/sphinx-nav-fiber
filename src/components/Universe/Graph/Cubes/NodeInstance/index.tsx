@@ -1,6 +1,6 @@
-import { Instance, Select } from '@react-three/drei'
+import { Instance } from '@react-three/drei'
 import { ThreeEvent } from '@react-three/fiber'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { memo, useCallback, useEffect, useRef, useState } from 'react'
 import * as THREE from 'three'
 import { useSelectedNode } from '~/stores/useDataStore'
 import { useSomeModalIsOpen } from '~/stores/useModalStore'
@@ -10,10 +10,9 @@ type Props = {
   node: NodeExtended
   highlight: boolean
   highlightColor: string
-  handleSelect: (nodes: THREE.Object3D[]) => void
 }
 
-export const NodeInstance = ({ node, highlight, highlightColor, handleSelect }: Props) => {
+export const NodeInstance = memo(({ node, highlight, highlightColor }: Props) => {
   const ref = useRef<THREE.Mesh | null>(null)
   const [hovered, setHovered] = useState(false)
 
@@ -47,19 +46,17 @@ export const NodeInstance = ({ node, highlight, highlightColor, handleSelect }: 
   }, [hovered])
 
   return (
-    <Select onChange={handleSelect}>
-      <Instance
-        ref={ref}
-        color={highlight ? highlightColor : ''}
-        name={node.id}
-        onPointerOut={onPointerOut}
-        onPointerOver={onPointerIn}
-        position={[node.x || 0, node.y || 0, node.z || 0]}
-        scale={node.scale || 2}
-        userData={node}
-      />
-    </Select>
+    <Instance
+      ref={ref}
+      color={highlight ? highlightColor : 'white'}
+      name={node.id}
+      onPointerOut={onPointerOut}
+      onPointerOver={onPointerIn}
+      position={[node.x || 0, node.y || 0, node.z || 0]}
+      scale={node.scale || 2}
+      userData={node}
+    />
   )
-}
+})
 
 NodeInstance.displayName = 'CubeInstance'
