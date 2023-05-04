@@ -1,46 +1,34 @@
-import {
-  Controller,
-  get,
-  RegisterOptions,
-  useFormContext,
-} from "react-hook-form";
-import { FaRegQuestionCircle } from "react-icons/fa";
-import { MdError } from "react-icons/md";
-import styled from "styled-components";
-import { BaseTextArea, BaseTextAreaProps } from "~/components/BaseTextArea";
-import { Flex } from "~/components/common/Flex";
-import { Text } from "~/components/common/Text";
-import { colors } from "~/utils/colors";
+import { Controller, get, RegisterOptions, useFormContext } from 'react-hook-form'
+import { FaRegQuestionCircle } from 'react-icons/fa'
+import { MdError } from 'react-icons/md'
+import styled from 'styled-components'
+import { BaseTextArea, BaseTextAreaProps } from '~/components/BaseTextArea'
+import { Flex } from '~/components/common/Flex'
+import { Text } from '~/components/common/Text'
+import { colors } from '~/utils/colors'
 
 const Wrapper = styled(Flex).attrs({
-  background: "inputBg2",
+  background: 'inputBg2',
   px: 8,
   py: 12,
 })`
   border-radius: 8px;
-`;
+`
 
 type Props = BaseTextAreaProps & {
-  id: string;
-  label: string;
-  message?: string;
-  rules?: RegisterOptions;
-};
+  id: string
+  label: string
+  message?: string
+  rules?: RegisterOptions
+}
 
-export const TextArea = ({
-  id,
-  label,
-  message,
-  name,
-  rules,
-  ...props
-}: Props) => {
+export const TextArea = ({ id, label, message, name, rules, ...props }: Props) => {
   const {
     control,
     formState: { errors },
-  } = useFormContext();
+  } = useFormContext()
 
-  const error = get(errors, name);
+  const error = get(errors, name)
 
   return (
     <>
@@ -65,7 +53,7 @@ export const TextArea = ({
               onBlur={onBlur}
               onChange={onChange}
               placeholderTextColor="inputPlaceholder"
-              value={value || ""}
+              value={value || ''}
             />
           )}
           rules={rules}
@@ -86,8 +74,8 @@ export const TextArea = ({
         </Flex>
       )}
     </>
-  );
-};
+  )
+}
 
 const QuestionIcon = styled(Flex)`
   cursor: default;
@@ -114,10 +102,10 @@ const QuestionIcon = styled(Flex)`
   &:focus .tooltip {
     visibility: visible;
   }
-`;
+`
 
 const Label = styled.label`
   color: ${colors.lightGray};
   font-size: 14px;
   font-weight: 600;
-`;
+`
