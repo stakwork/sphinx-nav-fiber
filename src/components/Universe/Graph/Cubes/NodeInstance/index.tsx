@@ -19,7 +19,9 @@ export const NodeInstance = memo(({ node, highlight, highlightColor }: Props) =>
 
   const selectedNode = useSelectedNode()
   const setHoveredNode = useDataStore((s) => s.setHoveredNode)
-
+  const setSelectedNode = useDataStore((s) => s.setSelectedNode)
+  const categoryFilter = useDataStore((s) => s.categoryFilter)
+  const isSelectedCategory = node.node_type === categoryFilter
   const isSelected = selectedNode?.id === node.id
 
   const onPointerIn = useCallback(
@@ -43,18 +45,52 @@ export const NodeInstance = memo(({ node, highlight, highlightColor }: Props) =>
     [setHoveredNode],
   )
 
+  const scale = node.scale || 2
+
   return (
-    <Instance
-      ref={ref}
-      color={highlight ? highlightColor : 'white'}
-      name={node.id}
-      onPointerOut={onPointerOut}
-      onPointerOver={onPointerIn}
-      position={[node.x || 0, node.y || 0, node.z || 0]}
-      scale={node.scale || 2}
-      userData={node}
-    />
+    <>
+      <Instance
+        ref={ref}
+        name={node.id}
+        onPointerOut={onPointerOut}
+        onPointerOver={onPointerIn}
+        position={[node.x || 0, node.y || 0, node.z || 0]}
+        scale={scale}
+        userData={node}
+      />
+
+      <Glow
+        highlight={highlight}
+        position={new THREE.Vector3(node?.x || 0, node?.y || 0, node?.z || 0)}
+        scale={(node?.scale || 5) * 2}
+        color={highlightColor}
+        onClick={() => setSelectedNode(node)}
+      />
+    </>
   )
 })
 
-NodeInstance.displayName = 'CubeInstance'
+type GlowProps = {
+  highlight: boolean
+  color: string
+  scale: number
+  position: THREE.Vector3
+  onClick: () => void
+}
+
+const padding = 0.4
+
+const Glow = ({ position, highlight, color = 'green', scale = 0.5, onClick }: GlowProps) => {
+  if (!highlight) {
+    return null
+  }
+
+  return (
+    <mesh position={position} onClick={onClick}>
+      <boxGeometry args={[2 * scale + padding, 2 * scale + padding, 2 * scale + padding]} />
+      <meshStandardMaterial emissive={color} emissiveIntensity={30} opacity={0.1} toneMapped={false} transparent />
+    </mesh>
+  )
+}
+
+NodeInstance.displayName = 'NodeInstance'

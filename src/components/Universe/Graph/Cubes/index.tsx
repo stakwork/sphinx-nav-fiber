@@ -100,38 +100,36 @@ export const Cubes = memo(() => {
   }, [data.nodes])
 
   return (
-    <>
-      <Select onChange={handleSelect}>
-        {Object.keys(nodeInstances).map((instanceKey) => {
-          const instance = nodeInstances[instanceKey]
-          const { nodes, texture, geometry } = instance
+    <Select onChange={handleSelect} filter={(selected) => selected.filter((f) => !!f.userData?.id)}>
+      {Object.keys(nodeInstances).map((instanceKey) => {
+        const instance = nodeInstances[instanceKey]
+        const { nodes, texture, geometry } = instance
 
-          return (
-            <Instances key={instanceKey} geometry={geometry}>
-              <meshStandardMaterial map={texture} />
-              {nodes.map((node, index) => {
-                const { highlight, highlightColor } = getHighlighter({
-                  node,
-                  selectedNode,
-                  searchTerm,
-                  shouldHighlightPartial,
-                })
+        return (
+          <Instances key={instanceKey} geometry={geometry}>
+            <meshStandardMaterial map={texture} />
+            {nodes.map((node, index) => {
+              const { highlight, highlightColor } = getHighlighter({
+                node,
+                selectedNode,
+                searchTerm,
+                shouldHighlightPartial,
+              })
 
-                return (
-                  <NodeInstance
-                    // eslint-disable-next-line react/no-array-index-key
-                    key={`${node.id}-${index}`}
-                    highlight={highlight}
-                    highlightColor={highlightColor}
-                    node={node}
-                  />
-                )
-              })}
-            </Instances>
-          )
-        })}
-      </Select>
-    </>
+              return (
+                <NodeInstance
+                  // eslint-disable-next-line react/no-array-index-key
+                  key={`${node.id}-${index}`}
+                  highlight={highlight}
+                  highlightColor={highlightColor}
+                  node={node}
+                />
+              )
+            })}
+          </Instances>
+        )
+      })}
+    </Select>
   )
 })
 

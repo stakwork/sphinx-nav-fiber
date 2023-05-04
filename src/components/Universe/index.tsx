@@ -1,7 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { AdaptiveDpr, AdaptiveEvents, Html, Loader, Preload } from '@react-three/drei'
 import { Canvas } from '@react-three/fiber'
-import { Bloom, EffectComposer, Outline, Selection, SSAO } from '@react-three/postprocessing'
+import { Bloom, EffectComposer, Outline, SSAO, Selection } from '@react-three/postprocessing'
 import { Suspense } from 'react'
 import { colors } from '~/utils/colors'
 import { Controls } from './Controls'
@@ -25,6 +25,7 @@ const Content = () => (
       <Graph />
 
       <EffectComposer autoClear={false} multisampling={8}>
+        {/* <DepthOfField bokehScale={2} focusDistance={0} focusRange={2} height={480} /> */}
         <SSAO
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
@@ -37,7 +38,7 @@ const Content = () => (
         <Bloom
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
-          luminanceThreshold={1}
+          luminanceThreshold={7}
           mipmapBlur
         />
 
