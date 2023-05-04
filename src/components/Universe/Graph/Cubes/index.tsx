@@ -1,13 +1,13 @@
-import { Instances, Select } from '@react-three/drei'
-import { memo, useCallback, useEffect, useRef } from 'react'
+import { Instances } from '@react-three/drei'
+import { memo, useCallback, useEffect, useMemo, useRef } from 'react'
+import * as THREE from 'three'
 import { InstancedMesh, Object3D } from 'three'
 import { useGraphData } from '~/components/DataRetriever'
 import { NODE_RELATIVE_HIGHLIGHT_COLORS } from '~/constants'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { NodeExtended } from '~/types'
-import { Cube } from './Cube'
-import { CubeInstance } from './CubeInstance'
+import { NodeInstance } from './NodeInstance'
 
 type NodeTypeColors = Record<string, string>
 
@@ -22,6 +22,113 @@ type HighlighterProps = {
   searchTerm: string | null
   shouldHighlightPartial: string | boolean | null
 }
+
+type InstanceRecords = {
+  nodes: NodeExtended[]
+  texture?: THREE.Texture
+  geometry?: THREE.BufferGeometry
+}
+
+const textureLoader = new THREE.TextureLoader()
+const boxGeometry = new THREE.BoxGeometry(10, 10, 10)
+
+export const Cubes = memo(() => {
+  const data = useGraphData()
+
+  const selectedNode = useSelectedNode()
+  const instancedRef = useRef<InstancedMesh>(null)
+
+  const [searchTerm, setTranscriptOpen] = useAppStore((s) => [s.currentSearch, s.setTranscriptOpen])
+
+  useEffect(() => {
+    console.log('instancedRef', instancedRef)
+  }, [])
+
+  const handleSelect = useCallback(
+    (nodes: Object3D[]) => {
+      const node = nodes?.[0]
+
+      if (node) {
+        // always close transcript when switching nodes
+        setTranscriptOpen(false)
+
+        useDataStore.getState().setSelectedNode((node?.userData as NodeExtended) || null)
+      }
+    },
+    [setTranscriptOpen],
+  )
+
+  const shouldHighlightPartial =
+    searchTerm &&
+    !data.nodes.some((i) => i.node_type === 'guest' && searchTerm.toLowerCase() === i?.label?.toLowerCase())
+
+  // group nodes by texture
+  const nodeInstances: Record<string, InstanceRecords> = useMemo(() => {
+    const instances: Record<string, InstanceRecords> = {}
+
+    data.nodes.forEach((node) => {
+      // nodes with textures
+      if (node.image_url) {
+        if (instances[node.image_url]) {
+          instances[node.image_url].nodes.push(node)
+        } else {
+          const texture = textureLoader.load(node.image_url)
+
+          instances[node.image_url] = {
+            nodes: [node],
+            texture,
+            geometry: boxGeometry,
+          }
+        }
+      }
+      // nodes without textures
+      else if (instances['no-texture']) {
+        instances['no-texture'].nodes.push(node)
+      } else {
+        instances['no-texture'] = {
+          nodes: [node],
+          geometry: boxGeometry,
+        }
+      }
+    })
+
+    return instances
+  }, [data.nodes])
+
+  return (
+    <>
+      {Object.keys(nodeInstances).map((instanceKey) => {
+        const instance = nodeInstances[instanceKey]
+        const { nodes, texture, geometry } = instance
+
+        return (
+          <Instances key={instanceKey} geometry={geometry}>
+            <meshStandardMaterial map={texture} />
+            {nodes.map((node, index) => {
+              const { highlight, highlightColor } = getHighlighter({
+                node,
+                selectedNode,
+                searchTerm,
+                shouldHighlightPartial,
+              })
+
+              return (
+                <NodeInstance
+                  // eslint-disable-next-line react/no-array-index-key
+                  key={`${node.id}-${index}`}
+                  handleSelect={handleSelect}
+                  highlight={highlight}
+                  highlightColor={highlightColor}
+                  node={node}
+                />
+              )
+            })}
+          </Instances>
+        )
+      })}
+    </>
+  )
+})
 
 const getHighlighter = ({ node, selectedNode, searchTerm, shouldHighlightPartial }: HighlighterProps) => {
   let highlight = false
@@ -64,89 +171,5 @@ const getHighlighter = ({ node, selectedNode, searchTerm, shouldHighlightPartial
 
   return { highlight, highlightColor }
 }
-
-export const Cubes = memo(() => {
-  const data = useGraphData()
-
-  const selectedNode = useSelectedNode()
-  const instancedRef = useRef<InstancedMesh>(null)
-
-  const [searchTerm, setTranscriptOpen] = useAppStore((s) => [s.currentSearch, s.setTranscriptOpen])
-
-  useEffect(() => {
-    console.log('instancedRef', instancedRef)
-  }, [])
-
-  const handleSelect = useCallback(
-    (nodes: Object3D[]) => {
-      const node = nodes?.[0]
-
-      if (node) {
-        // always close transcript when switching nodes
-        setTranscriptOpen(false)
-
-        useDataStore.getState().setSelectedNode((node?.userData as NodeExtended) || null)
-      }
-    },
-    [setTranscriptOpen],
-  )
-
-  const shouldHighlightPartial =
-    searchTerm &&
-    !data.nodes.some((i) => i.node_type === 'guest' && searchTerm.toLowerCase() === i?.label?.toLowerCase())
-
-  return (
-    <>
-      {/* clips */}
-      <Instances>
-        <boxGeometry />
-        <meshStandardMaterial />
-        {data.nodes
-          .filter((f) => f.node_type === 'clip')
-          .map((node, index) => {
-            const { highlight, highlightColor } = getHighlighter({
-              node,
-              selectedNode,
-              searchTerm,
-              shouldHighlightPartial,
-            })
-
-            return (
-              <CubeInstance
-                // eslint-disable-next-line react/no-array-index-key
-                key={`${node.id}-${index}`}
-                highlight={highlight}
-                highlightColor={highlightColor}
-                node={node}
-              />
-            )
-          })}
-      </Instances>
-
-      <Select onChange={handleSelect}>
-        {data.nodes
-          .filter((f) => f.node_type !== 'clip')
-          .map((node, index) => {
-            const { highlight, highlightColor } = getHighlighter({
-              node,
-              selectedNode,
-              searchTerm,
-              shouldHighlightPartial,
-            })
-
-            return (
-              <Cube
-                // eslint-disable-next-line react/no-array-index-key
-                key={`${node.id}-${index}`}
-                highlight={highlight}
-                highlightColor={highlightColor}
-                node={node}
-              />
-            )
-          })}
-      </Select>
-    </>
-  )
-})
 
 Cubes.displayName = 'Cubes'
