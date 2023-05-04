@@ -14,7 +14,6 @@ import { introAnimationTargetPosition } from './constants'
 
 const autoRotateSpeed = 1
 
-
 let cameraAnimation: gsap.core.Tween | null = null
 
 export const useCameraAnimations = (

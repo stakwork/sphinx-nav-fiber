@@ -38,7 +38,6 @@ function addOrganicVariant() {
   return Math.floor((Math.random() - 0.5) * 20)
 }
 
-
 export const playInspectSound = (distance = 0) => {
   if (distance > 800) {
     monoSynth2.triggerAttackRelease(100, 0.4)

@@ -1,5 +1,4 @@
 import { Segment as DreiSegment, SegmentObject } from '@react-three/drei'
-<<<<<<< HEAD
 import { useEffect, useRef, useState } from 'react'
 import { Vector3 } from 'three'
 import { NODE_RELATIVE_HIGHLIGHT_COLORS } from '~/constants'
