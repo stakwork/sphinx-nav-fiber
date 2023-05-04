@@ -1,6 +1,6 @@
-import styled from "styled-components";
-import { colors } from "~/utils/colors";
-import { BaseTextInputProps } from "../types";
+import styled from 'styled-components'
+import { colors } from '~/utils/colors'
+import { BaseTextInputProps } from '../types'
 
 const whiteAutofill = `
   &:-webkit-autofill:active,
@@ -8,14 +8,9 @@ const whiteAutofill = `
   &:-webkit-autofill:hover {
     box-shadow: inset 0 0 0 1000px ${colors.white};
   }
-`;
+`
 
-type Props = Required<
-  Pick<
-    BaseTextInputProps,
-    "colorName" | "disabled" | "placeholderTextColor" | "textAlign"
-  >
->;
+type Props = Required<Pick<BaseTextInputProps, 'colorName' | 'disabled' | 'placeholderTextColor' | 'textAlign'>>
 
 export const WebTextInput = styled.input<Props>`
   -webkit-appearance: none;
@@ -23,7 +18,7 @@ export const WebTextInput = styled.input<Props>`
   background: transparent;
   border: none;
   color: ${({ colorName }) => colors[colorName]};
-  cursor: ${({ disabled }) => (disabled ? "default" : "text")};
+  cursor: ${({ disabled }) => (disabled ? 'default' : 'text')};
   margin: 0;
   opacity: 1;
   outline: 0;
@@ -38,7 +33,7 @@ export const WebTextInput = styled.input<Props>`
     outline: none;
   }
 
-  &[type="number"] {
+  &[type='number'] {
     appearance: textfield;
     -webkit-appearance: textfield;
 
@@ -50,10 +45,9 @@ export const WebTextInput = styled.input<Props>`
   }
 
   &::placeholder {
-    -webkit-text-fill-color: ${({ placeholderTextColor }) =>
-      colors[placeholderTextColor]};
+    -webkit-text-fill-color: ${({ placeholderTextColor }) => colors[placeholderTextColor]};
     color: ${({ placeholderTextColor }) => colors[placeholderTextColor]};
   }
-`;
+`
 
-WebTextInput.displayName = "WebTextInput";
+WebTextInput.displayName = 'WebTextInput'

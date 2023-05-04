@@ -11,7 +11,7 @@ export const Lights = () => {
     <>
       <hemisphereLight args={[colors.white, GRAPH_GROUND_COLOR, GRAPH_LIGHT_INTENSITY]} />
 
-      <fog args={[fogColor, 5, 18000]} attach="fog" />
+      <fog args={[fogColor, 5, 4000]} attach="fog" />
     </>
   )
 }

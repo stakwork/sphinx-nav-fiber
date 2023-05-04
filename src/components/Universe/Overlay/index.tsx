@@ -34,7 +34,6 @@ const OverlayWrap = styled.div`
   user-select: none;
   pointer-events: none;
   display: flex;
-
   justify-content: flex-end;
   align-items: flex-start;
   height: 100%;

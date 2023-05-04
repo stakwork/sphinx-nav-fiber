@@ -73,6 +73,12 @@ export const Cube = memo(({ node, highlight, highlightColor }: Props) => {
     }
   })
 
+  useFrame(() => {
+    if (selectedNode) {
+      material.toneMapped = false
+    }
+  })
+
   useEffect(() => {
     document.body.style.cursor = hovered ? 'pointer' : 'auto'
   }, [hovered])

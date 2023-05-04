@@ -1,13 +1,8 @@
-import styled from "styled-components";
-import { colors } from "~/utils/colors";
-import { BaseTextAreaProps } from "../types";
+import styled from 'styled-components'
+import { colors } from '~/utils/colors'
+import { BaseTextAreaProps } from '../types'
 
-type Props = Required<
-  Pick<
-    BaseTextAreaProps,
-    "colorName" | "disabled" | "placeholderTextColor" | "textAlign"
-  >
->;
+type Props = Required<Pick<BaseTextAreaProps, 'colorName' | 'disabled' | 'placeholderTextColor' | 'textAlign'>>
 
 export const WebTextArea = styled.textarea<Props>`
   -webkit-appearance: none;
@@ -15,7 +10,7 @@ export const WebTextArea = styled.textarea<Props>`
   background: transparent;
   border: none;
   color: ${({ colorName }) => colors[colorName]};
-  cursor: ${({ disabled }) => (disabled ? "default" : "text")};
+  cursor: ${({ disabled }) => (disabled ? 'default' : 'text')};
   margin: 0;
   opacity: 1;
   outline: 0;
@@ -30,10 +25,9 @@ export const WebTextArea = styled.textarea<Props>`
   }
 
   &::placeholder {
-    -webkit-text-fill-color: ${({ placeholderTextColor }) =>
-      colors[placeholderTextColor]};
+    -webkit-text-fill-color: ${({ placeholderTextColor }) => colors[placeholderTextColor]};
     color: ${({ placeholderTextColor }) => colors[placeholderTextColor]};
   }
-`;
+`
 
-WebTextArea.displayName = "WebTextInput";
+WebTextArea.displayName = 'WebTextInput'

@@ -1,12 +1,12 @@
 /* eslint-disable no-param-reassign */
 import type { CameraControls } from '@react-three/drei'
-import { Camera, useFrame, useThree } from '@react-three/fiber'
+import { useFrame, Camera, useThree } from '@react-three/fiber'
 import { RefObject, useEffect, useState } from 'react'
 import * as THREE from 'three'
-import { playInspectSound } from '~/components/common/Sounds'
-import { useControlStore } from '~/stores/useControlStore'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
+import { useControlStore } from '~/stores/useControlStore'
 import { NodeExtended } from '~/types'
+import { playInspectSound } from '~/components/common/Sounds'
 
 let lookAtAnimationTimer: ReturnType<typeof setTimeout>
 

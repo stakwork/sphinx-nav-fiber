@@ -1,17 +1,17 @@
-import styled, { css } from "styled-components";
-import { Flex } from "~/components/common/Flex";
-import { colors } from "~/utils/colors";
+import styled, { css } from 'styled-components'
+import { Flex } from '~/components/common/Flex'
+import { colors } from '~/utils/colors'
 
 type PillProps = {
-  disabled?: boolean;
-  selected?: boolean;
-};
+  disabled?: boolean
+  selected?: boolean
+}
 
 export const Pill = styled(Flex).attrs({
-  align: "center",
-  direction: "row",
+  align: 'center',
+  direction: 'row',
   grow: 0,
-  justify: "center",
+  justify: 'center',
   shrink: 0,
 })<PillProps>`
   border-radius: 20px;
@@ -23,7 +23,7 @@ export const Pill = styled(Flex).attrs({
   line-height: 14px;
   margin-right: 10px;
 
-  opacity: ${({ disabled }) => (disabled ? "0.7" : "1")};
+  opacity: ${({ disabled }) => (disabled ? '0.7' : '1')};
 
   padding: 10px 20px;
 
@@ -37,8 +37,7 @@ ${({ disabled }) =>
   }
 
   &:hover {
-    background: ${({ selected }) =>
-      selected ? colors.gray300 : colors.gray200};
+    background: ${({ selected }) => (selected ? colors.gray300 : colors.gray200)};
   }
 }
-`;
+`

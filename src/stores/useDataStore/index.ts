@@ -1,10 +1,10 @@
 import create from 'zustand'
 import { isChileGraph } from '~/constants'
+type GraphStyle = 'split' | 'force'
+import { getMockGraphData } from '~/mocks/getMockGraphData'
 import { fetchGraphData } from '~/network/fetchGraphData'
 import { GraphData, NodeExtended, NodeType, Sources } from '~/types'
 import { saveSearchTerm } from '~/utils/relayHelper/index'
-
-type GraphStyle = 'split' | 'force'
 
 type DataStore = {
   scrollEventsDisabled: boolean
@@ -78,13 +78,23 @@ export const useDataStore = create<DataStore>((set, get) => ({
       return
     }
 
-    set({ isFetching: true, sphinxModalIsOpen: true })
+    set({ isFetching: true })
 
-    const data = await fetchGraphData(search || '')
+    if (search?.length) {
+      set({ isFetching: true, sphinxModalIsOpen: true })
 
-    await saveSearchTerm(search || '')
+      const data = await fetchGraphData(search || '')
 
-    set({ data, isFetching: false, sphinxModalIsOpen: false })
+      await saveSearchTerm(search || '')
+
+      set({ data, isFetching: false, sphinxModalIsOpen: false })
+
+      return
+    }
+
+    const mockGraphData = await getMockGraphData()
+
+    set({ data: mockGraphData, isFetching: false })
   },
   setIsFetching: (isFetching) => set({ isFetching }),
   setData: (data) => set({ data }),
