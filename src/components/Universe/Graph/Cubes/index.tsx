@@ -1,4 +1,4 @@
-import { Instances, Select } from '@react-three/drei'
+import { Instance, Instances, Select } from '@react-three/drei'
 import { memo, useCallback, useMemo } from 'react'
 import * as THREE from 'three'
 import { Object3D } from 'three'
@@ -99,36 +99,94 @@ export const Cubes = memo(() => {
     return instances
   }, [data.nodes])
 
-  return (
-    <Select onChange={handleSelect} filter={(selected) => selected.filter((f) => !!f.userData?.id)}>
-      {Object.keys(nodeInstances).map((instanceKey) => {
+  // group nodes by texture
+  const highlightInstances: Record<string, InstanceRecords> = useMemo(() => {
+    const instances: Record<string, InstanceRecords> = {}
+
+    data.nodes.forEach((node) => {
+      // nodes with textures
+      if (node.image_url) {
+        if (instances[node.image_url]) {
+          instances[node.image_url].nodes.push(node)
+        } else {
+          const texture = textureLoader.load(node.image_url, undefined, undefined, () => {
+            // if loading fails, assign texture noimage.jpeg
+            if (node.image_url && instances[node.image_url]) {
+              instances[node.image_url].texture = textureLoader.load('noimage.jpeg')
+            }
+          })
+
+          instances[node.image_url] = {
+            nodes: [node],
+            texture,
+            geometry: boxGeometry,
+          }
+        }
+      }
+      // nodes without textures
+      else if (instances['no-texture']) {
+        instances['no-texture'].nodes.push(node)
+      } else {
+        const texture = textureLoader.load('noimage.jpeg')
+
+        instances['no-texture'] = {
+          nodes: [node],
+          texture,
+          geometry: boxGeometry,
+        }
+      }
+    })
+
+    return instances
+  }, [data.nodes])
+
+  const renderInstances = () =>
+    Object.keys(nodeInstances).map((instanceKey) => {
+      const instance = nodeInstances[instanceKey]
+      const { nodes, texture, geometry } = instance
+
+      return (
+        <Instances key={instanceKey} geometry={geometry}>
+          <meshStandardMaterial map={texture} />
+          {nodes.map((node, index) => {
+            const { highlight, highlightColor } = getHighlighter({
+              node,
+              selectedNode,
+              searchTerm,
+              shouldHighlightPartial,
+            })
+
+            return (
+              <NodeInstance
+                // eslint-disable-next-line react/no-array-index-key
+                key={`${node.id}-${index}`}
+                highlight={highlight}
+                highlightColor={highlightColor}
+                node={node}
+              />
+            )
+          })}
+        </Instances>
+      )
+    })
+
+  const renderHighlights = () => (
+    <Instances>
+      <boxGeometry />
+      <meshStandardMaterial emissiveIntensity={30} opacity={0.1} toneMapped={false} transparent />
+      {Object.keys(highlightInstances).map((instanceKey) => {
         const instance = nodeInstances[instanceKey]
         const { nodes, texture, geometry } = instance
 
-        return (
-          <Instances key={instanceKey} geometry={geometry}>
-            <meshStandardMaterial map={texture} />
-            {nodes.map((node, index) => {
-              const { highlight, highlightColor } = getHighlighter({
-                node,
-                selectedNode,
-                searchTerm,
-                shouldHighlightPartial,
-              })
-
-              return (
-                <NodeInstance
-                  // eslint-disable-next-line react/no-array-index-key
-                  key={`${node.id}-${index}`}
-                  highlight={highlight}
-                  highlightColor={highlightColor}
-                  node={node}
-                />
-              )
-            })}
-          </Instances>
-        )
+        return <Instance key={instanceKey} />
       })}
+    </Instances>
+  )
+
+  return (
+    <Select onChange={handleSelect} filter={(selected) => selected.filter((f) => !!f.userData?.id)}>
+      {renderInstances()}
+      {renderHighlights()}
     </Select>
   )
 })
