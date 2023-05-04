@@ -1,7 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { AdaptiveDpr, AdaptiveEvents, Html, Loader, Preload } from '@react-three/drei'
 import { Canvas } from '@react-three/fiber'
-import { Bloom, EffectComposer, Outline, Selection, SSAO } from '@react-three/postprocessing'
+import { Bloom, EffectComposer, Outline, SSAO, Selection } from '@react-three/postprocessing'
 import { Suspense } from 'react'
 import { colors } from '~/utils/colors'
 import { Controls } from './Controls'
@@ -9,6 +9,7 @@ import { Graph } from './Graph'
 import { Lights } from './Lights'
 
 import { useControlStore } from '~/stores/useControlStore'
+import { addToGlobalForE2e } from '~/utils/tests'
 import { Overlay } from './Overlay'
 
 const NODE_SELECTED_COLOR = 0x00ff00
@@ -62,6 +63,7 @@ export const Universe = () => (
           position: [1000, 0, 5],
         }}
         id="universe-canvas"
+        onCreated={(s) => addToGlobalForE2e(s, 'threeState')}
         onWheel={(e: React.WheelEvent) => {
           const { target } = e
           const { offsetParent } = target as HTMLDivElement

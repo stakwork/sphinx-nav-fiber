@@ -1,12 +1,12 @@
-import create from "zustand";
-import { isChileGraph } from "~/constants";
-import { getMockGraphData } from "~/mocks/getMockGraphData";
-import { fetchGraphData } from "~/network/fetchGraphData";
-import { GraphData, NodeExtended, NodeType, Sources } from "~/types";
-import { saveSearchTerm } from "~/utils/relayHelper/index";
+import create from 'zustand'
+import { isChileGraph } from '~/constants'
+import { getMockGraphData } from '~/mocks/getMockGraphData'
+import { fetchGraphData } from '~/network/fetchGraphData'
+import { GraphData, NodeExtended, NodeType, Sources } from '~/types'
+import { saveSearchTerm } from '~/utils/relayHelper/index'
 
 type DataStore = {
-  scrollEventsDisabled: boolean;
+  scrollEventsDisabled: boolean
   categoryFilter: NodeType | null
   disableCameraRotation: boolean
   graphRadius: number | null
@@ -30,7 +30,7 @@ type DataStore = {
   setQueuedSources: (sources: Sources[] | null) => void
   setSphinxModalOpen: (_: boolean) => void
   setCameraFocusTrigger: (_: boolean) => void
-};
+}
 
 const defaultData: Omit<
   DataStore,
@@ -66,42 +66,39 @@ export const useDataStore = create<DataStore>((set, get) => ({
   ...defaultData,
   fetchData: async (search) => {
     if (get().isFetching) {
-      return;
+      return
     }
 
-    set({ isFetching: true });
+    set({ isFetching: true })
 
     if (search?.length) {
-      set({ sphinxModalIsOpen: true });
+      set({ sphinxModalIsOpen: true })
 
-      const data = await fetchGraphData(search);
+      const data = await fetchGraphData(search)
 
-      await saveSearchTerm(search);
+      await saveSearchTerm()
 
-      set({ data, isFetching: false, sphinxModalIsOpen: false });
+      set({ data, isFetching: false, sphinxModalIsOpen: false })
 
-      return;
+      return
     }
 
-    const mockGraphData = await getMockGraphData();
+    const mockGraphData = await getMockGraphData()
 
-    set({ data: mockGraphData, isFetching: false });
+    set({ data: mockGraphData, isFetching: false })
   },
   setScrollEventsDisabled: (scrollEventsDisabled) => set({ scrollEventsDisabled }),
   setCategoryFilter: (categoryFilter) => set({ categoryFilter }),
-  setDisableCameraRotation: (rotation) =>
-    set({ disableCameraRotation: rotation }),
+  setDisableCameraRotation: (rotation) => set({ disableCameraRotation: rotation }),
   setGraphRadius: (graphRadius) => set({ graphRadius }),
   setQueuedSources: (queuedSources) => set({ queuedSources }),
-  setSelectedNode: (selectedNode) =>
-    set({ isTimestampLoaded: false, selectedNode }),
+  setSelectedNode: (selectedNode) => set({ isTimestampLoaded: false, selectedNode }),
   setSelectedTimestamp: (selectedTimestamp) => set({ selectedTimestamp }),
   setSources: (sources) => set({ sources }),
   setSphinxModalOpen: (sphinxModalIsOpen) => set({ sphinxModalIsOpen }),
   setCameraFocusTrigger: (cameraFocusTrigger) => set({ cameraFocusTrigger }),
-}));
+}))
 
-export const useSelectedNode = () => useDataStore((s) => s.selectedNode);
+export const useSelectedNode = () => useDataStore((s) => s.selectedNode)
 
-export const setIsTimestampLoaded = (isTimestampLoaded: boolean) =>
-  useDataStore.setState({ isTimestampLoaded });
+export const setIsTimestampLoaded = (isTimestampLoaded: boolean) => useDataStore.setState({ isTimestampLoaded })

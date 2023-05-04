@@ -47,6 +47,7 @@ export const SearchBar = ({ loading, onSubmit }: Props) => {
     <Input
       {...register('search')}
       disabled={loading}
+      id="main-search"
       loading={loading}
       onKeyPress={(event) => {
         if (event.key === 'Enter') {
