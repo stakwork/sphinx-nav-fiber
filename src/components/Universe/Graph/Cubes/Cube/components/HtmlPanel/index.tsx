@@ -1,10 +1,12 @@
 import { Float, Html } from '@react-three/drei'
 import { memo } from 'react'
 import styled, { css } from 'styled-components'
+import { Vector3 } from 'three'
 
 type Props = {
   children: React.ReactNode
   speed?: number
+  position: Vector3
   intensity?: number
   withTransacript?: boolean
 }
@@ -12,12 +14,13 @@ type Props = {
 const defaultDimensions = [-200, -680, 500, 500] as [number, number, number, number]
 const withTranscriptDimensions = [260, -40, 600, 300] as [number, number, number, number]
 
-export const HtmlPanel = memo(({ speed = 2, intensity = 4, children, withTransacript }: Props) => (
+export const HtmlPanel = memo(({ speed = 2, intensity = 4, children, withTransacript, position }: Props) => (
   <Float
     floatingRange={[1, 2]}
     /* Up/down float intensity, works like a multiplier with floatingRange,defaults to 1 */
     floatIntensity={intensity}
     /* Animation speed, defaults to 1 */
+    position={position}
     speed={speed}
   >
     <Html

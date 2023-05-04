@@ -2,17 +2,12 @@ import { ThreeEvent, useFrame } from '@react-three/fiber'
 import { Select } from '@react-three/postprocessing'
 import { memo, useCallback, useEffect, useRef, useState } from 'react'
 import * as THREE from 'three'
-import { Transcript } from '~/components/App/SideBar/Transcript'
-import { View } from '~/components/App/SideBar/View'
 import { usePathway } from '~/components/DataRetriever'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { useSomeModalIsOpen } from '~/stores/useModalStore'
 import { NodeExtended } from '~/types'
-import { HtmlPanel } from './components/HtmlPanel'
 import { PathwayBadge } from './components/PathwayBadge'
-import { Portal } from './components/Portal'
-import { Tooltip } from './components/Tooltip'
 import { useMaterial } from './hooks/useMaterial'
 
 const geometryXs = new THREE.BoxGeometry(10, 10, 10)
@@ -100,25 +95,7 @@ export const Cube = memo(({ node, highlight, highlightColor }: Props) => {
           scale={hovered && !isSelected ? 1.5 : 1}
           userData={node}
         >
-          {isSelected && (
-            <HtmlPanel>
-              <View isSelectedView />
-            </HtmlPanel>
-          )}
-
-          {isSelected && transcriptIsOpen && (
-            <HtmlPanel intensity={2} speed={4} withTransacript>
-              <Transcript />
-            </HtmlPanel>
-          )}
-
           <PathwayBadge show={currentNodeIndex >= 0} value={currentNodeIndex + 1} />
-
-          {hovered && (
-            <Portal>
-              <Tooltip node={node} />
-            </Portal>
-          )}
         </mesh>
       </Select>
     </>

@@ -1,8 +1,8 @@
 import { Instance } from '@react-three/drei'
 import { ThreeEvent } from '@react-three/fiber'
-import { memo, useCallback, useEffect, useRef, useState } from 'react'
+import { memo, useCallback, useRef } from 'react'
 import * as THREE from 'three'
-import { useSelectedNode } from '~/stores/useDataStore'
+import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { useSomeModalIsOpen } from '~/stores/useModalStore'
 import { NodeExtended } from '~/types'
 
@@ -14,11 +14,11 @@ type Props = {
 
 export const NodeInstance = memo(({ node, highlight, highlightColor }: Props) => {
   const ref = useRef<THREE.Mesh | null>(null)
-  const [hovered, setHovered] = useState(false)
 
   const isSomeModalOpened = useSomeModalIsOpen()
 
   const selectedNode = useSelectedNode()
+  const setHoveredNode = useDataStore((s) => s.setHoveredNode)
 
   const isSelected = selectedNode?.id === node.id
 
@@ -30,20 +30,18 @@ export const NodeInstance = memo(({ node, highlight, highlightColor }: Props) =>
         return
       }
 
-      setHovered(true)
+      setHoveredNode(node)
     },
-    [isSomeModalOpened],
+    [isSomeModalOpened, node, setHoveredNode],
   )
 
-  const onPointerOut = useCallback((e: ThreeEvent<PointerEvent>) => {
-    e.stopPropagation()
-
-    setHovered(false)
-  }, [])
-
-  useEffect(() => {
-    document.body.style.cursor = hovered ? 'pointer' : 'auto'
-  }, [hovered])
+  const onPointerOut = useCallback(
+    (e: ThreeEvent<PointerEvent>) => {
+      e.stopPropagation()
+      setHoveredNode(null)
+    },
+    [setHoveredNode],
+  )
 
   return (
     <Instance
