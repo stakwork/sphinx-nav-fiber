@@ -1,6 +1,6 @@
-import { ToastContainer } from "react-toastify";
-import styled from "styled-components";
-import { colors } from "~/utils/colors";
+import { ToastContainer } from 'react-toastify'
+import styled from 'styled-components'
+import { colors } from '~/utils/colors'
 
 export const Toasts = styled(ToastContainer)`
   .Toastify__toast {
@@ -19,4 +19,4 @@ export const Toasts = styled(ToastContainer)`
   .Toastify__progress-bar--success {
     background-color: ${colors.primaryGreen};
   }
-`;
+`
