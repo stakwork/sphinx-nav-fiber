@@ -1,10 +1,10 @@
 import { Flex } from '~/components/common/Flex'
-import { requiredRule } from '../index'
 import { TextInput } from '../TextInput'
+import { requiredRule } from '../index'
 
 const message = 'Submit youtube channel'
 
-const YoutubeChannel = () => (
+export const YoutubeChannel = () => (
   <Flex>
     <TextInput
       id="cy-youtube-channel-id"
@@ -19,5 +19,3 @@ const YoutubeChannel = () => (
     />
   </Flex>
 )
-
-export default YoutubeChannel;

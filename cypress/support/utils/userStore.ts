@@ -1,9 +1,9 @@
 export const setIsAdmin = (value: boolean) => {
-  cy.window().its('userStore').invoke('setIsAdmin', value)
+  cy.window().its('e2e.userStore').invoke('setIsAdmin', value)
 }
 
 export const setPubKey = (value: string) => {
-  cy.window().its('userStore').invoke('setPubKey', value)
+  cy.window().its('e2e.userStore').invoke('setPubKey', value)
 }
 
 export const resetUserStore = () => {

@@ -1,8 +1,10 @@
 {
   "name": "sphinx-nav",
-  "version": "0.1.5",
+  "version": "0.1.9",
   "private": true,
   "dependencies": {
+    "@emotion/react": "^11.10.8",
+    "@emotion/styled": "^11.10.8",
     "@mui/material": "^5.11.16",
     "@mui/styled-engine-sc": "^5.11.11",
     "@react-three/drei": "9.57.0",
@@ -51,10 +53,11 @@
     "cy-open": "cypress open",
     "cy-run": "cypress run",
     "eject": "craco eject",
-    "format": "prettier --write .",
+    "format": "prettier --write --config prettier.config.js ./src",
+    "prettier": "npx prettier --config prettier.config.js --check ./src",
     "postinstall": "husky install",
     "typecheck": "tsc --noEmit",
-    "lint": "eslint src"
+    "lint": "eslint src --max-warnings 42"
   },
   "eslintConfig": {
     "extends": [

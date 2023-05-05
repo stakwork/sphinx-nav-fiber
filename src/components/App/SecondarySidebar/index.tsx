@@ -1,13 +1,13 @@
-import { MdClose } from "react-icons/md";
-import styled from "styled-components";
-import { Flex } from "~/components/common/Flex";
-import { useAppStore } from "~/stores/useAppStore";
-import { colors } from "~/utils/colors";
-import { About } from "./About";
-import { Sentiment } from "./Sentiment";
-import { SourcesView } from "./SourcesView";
+import { MdClose } from 'react-icons/md'
+import styled from 'styled-components'
+import { Flex } from '~/components/common/Flex'
+import { useAppStore } from '~/stores/useAppStore'
+import { colors } from '~/utils/colors'
+import { About } from './About'
+import { Sentiment } from './Sentiment'
+import { SourcesView } from './SourcesView'
 
-export const MENU_WIDTH = 600;
+export const MENU_WIDTH = 600
 
 const ComponentsMapper = {
   about: <About />,
@@ -16,7 +16,6 @@ const ComponentsMapper = {
 }
 
 export const SecondarySideBar = () => {
-
   const [secondarySidebarActiveTab, setSecondarySidebarActiveTab] = useAppStore((s) => [
     s.secondarySidebarActiveTab,
     s.setSecondarySidebarActiveTab,
@@ -30,7 +29,7 @@ export const SecondarySideBar = () => {
       {ComponentsMapper[secondarySidebarActiveTab]}
     </Wrapper>
   ) : null
-};
+}
 
 const Wrapper = styled(Flex)`
   background: ${colors.body};
@@ -45,11 +44,11 @@ const Wrapper = styled(Flex)`
     flex-direction: column;
     align
   }
-`;
+`
 
 const CloseButton = styled(Flex).attrs({
-  align: "center",
-  justify: "center",
+  align: 'center',
+  justify: 'center',
   p: 5,
 })`
   background-color: ${colors.inputBg1};
@@ -63,4 +62,4 @@ const CloseButton = styled(Flex).attrs({
   &:hover {
     background-color: ${colors.gray200};
   }
-`;
+`

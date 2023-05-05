@@ -1,39 +1,39 @@
-import { noop } from "lodash";
-import { useEffect, useState } from "react";
-import styled from "styled-components";
-import { Text } from "~/components/common/Text";
-import { api } from "~/network/api";
+import { noop } from 'lodash'
+import { useEffect, useState } from 'react'
+import styled from 'styled-components'
+import { Text } from '~/components/common/Text'
+import { api } from '~/network/api'
 
 type StatResponse = {
   data: {
     /* eslint-disable camelcase */
-    num_nodes: number;
-    num_episodes: number;
-    num_audio: number;
-    num_video: number;
-    num_contributors: number;
-    num_daily: number;
-    num_twitter_space: number;
-  };
-};
+    num_nodes: number
+    num_episodes: number
+    num_audio: number
+    num_video: number
+    num_contributors: number
+    num_daily: number
+    num_twitter_space: number
+  }
+}
 
 type TStats = {
-  numAudio: number;
-  numContributors: number;
-  numDaily: number;
-  numEpisodes: number;
-  numNodes: number;
-  numTwitterSpace: number;
-  numVideo: number;
-};
+  numAudio: number
+  numContributors: number
+  numDaily: number
+  numEpisodes: number
+  numNodes: number
+  numTwitterSpace: number
+  numVideo: number
+}
 
 export const Stats = () => {
-  const [stats, setStats] = useState<TStats | null>(null);
+  const [stats, setStats] = useState<TStats | null>(null)
 
   useEffect(() => {
     const run = async () => {
       try {
-        const { data } = await api.get<StatResponse>("/stats");
+        const { data } = await api.get<StatResponse>('/stats')
 
         if (data) {
           setStats({
@@ -44,18 +44,18 @@ export const Stats = () => {
             numNodes: data.num_nodes,
             numTwitterSpace: data.num_twitter_space,
             numVideo: data.num_video,
-          });
+          })
         }
       } catch (e) {
-        noop();
+        noop()
       }
-    };
+    }
 
-    run();
-  }, []);
+    run()
+  }, [])
 
   if (!stats) {
-    return null;
+    return null
   }
 
   return (
@@ -80,9 +80,9 @@ export const Stats = () => {
         Twitter Spaces: {stats.numTwitterSpace}
       </StatsText>
     </div>
-  );
-};
+  )
+}
 
 const StatsText = styled(Text)`
   padding: 5px;
-`;
+`

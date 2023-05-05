@@ -1,132 +1,128 @@
 /* eslint-disable no-param-reassign */
-import type { CameraControls } from "@react-three/drei";
-import { MathUtils } from "three";
-import gsap from "gsap";
+import type { CameraControls } from '@react-three/drei'
+import { MathUtils } from 'three'
+import gsap from 'gsap'
 
-import { useFrame } from "@react-three/fiber";
-import { RefObject, useCallback, useEffect, useState } from "react";
+import { useFrame } from '@react-three/fiber'
+import { RefObject, useCallback, useEffect, useState } from 'react'
 
-import * as THREE from "three";
-import { useDataStore, useSelectedNode } from "~/stores/useDataStore";
-import { useControlStore } from "~/stores/useControlStore";
-import { useAutoNavigate } from "./useAutoNavigate";
+import * as THREE from 'three'
+import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
+import { useControlStore } from '~/stores/useControlStore'
+import { useAutoNavigate } from './useAutoNavigate'
 
-const autoRotateSpeed = 1;
+const autoRotateSpeed = 1
 
-const introAnimationTargetPosition = new THREE.Vector3(-1900, -2200, -2800);
+const introAnimationTargetPosition = new THREE.Vector3(-1900, -2200, -2800)
 
 let cameraAnimation: gsap.core.Tween | null = null
 
 export const useCameraAnimations = (
   cameraControlsRef: RefObject<CameraControls | null>,
-  { enabled }: { enabled: boolean }
+  { enabled }: { enabled: boolean },
 ) => {
-
-  const selectedNode = useSelectedNode();
+  const selectedNode = useSelectedNode()
 
   useAutoNavigate(cameraControlsRef)
 
-  const { isUserDragging } = useControlStore();
-  const disableCameraRotation = useDataStore((s) => s.disableCameraRotation);
+  const { isUserDragging } = useControlStore()
+  const disableCameraRotation = useDataStore((s) => s.disableCameraRotation)
 
-  const data = useDataStore((s) => s.data);
-  const graphRadius = useDataStore((s) => s.graphRadius);
+  const data = useDataStore((s) => s.data)
+  const graphRadius = useDataStore((s) => s.graphRadius)
 
   useEffect(() => {
     if (!enabled) {
-      cameraAnimation?.kill();
-      cameraAnimation = null;
-    } 
+      cameraAnimation?.kill()
+      cameraAnimation = null
+    }
   }, [enabled])
 
   const rotateWorld = useCallback(() => {
-    cameraAnimation?.kill();
+    cameraAnimation?.kill()
 
-    const cameraControls = cameraControlsRef.current;
+    const cameraControls = cameraControlsRef.current
 
     if (cameraControls) {
       const rotateCycle = gsap.to(cameraControls.camera, {
-        azimuthAngle:
-          (cameraControls.azimuthAngle || 0) + 360 * THREE.MathUtils.DEG2RAD,
+        azimuthAngle: (cameraControls.azimuthAngle || 0) + 360 * THREE.MathUtils.DEG2RAD,
         duration: 280,
         // https://greensock.com/ease-visualizer/
-        ease: "power",
+        ease: 'power',
         overwrite: true,
         paused: true,
-      });
+      })
 
-      rotateCycle.play(0);
+      rotateCycle.play(0)
 
       cameraAnimation = rotateCycle
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [])
 
   const doIntroAnimation = useCallback(() => {
-    cameraAnimation?.kill();
+    cameraAnimation?.kill()
 
-    const animationProgress = { value: -244 };
+    const animationProgress = { value: -244 }
 
     const moveCycle = gsap.to(animationProgress, {
       duration: 5,
       keyframes: {
-        "0%": { value: 10 },
-        "100%": { delay: 2, ease: "Power4.easeIn", value: -200 },
+        '0%': { value: 10 },
+        '100%': { delay: 2, ease: 'Power4.easeIn', value: -200 },
       },
       onComplete: () => {
         cameraAnimation = null
-        rotateWorld();
+        rotateWorld()
       },
       onInterrupt() {
-        moveCycle.kill();
+        moveCycle.kill()
       },
       onUpdate: () => {
-        const { value } = animationProgress;
+        const { value } = animationProgress
 
-        cameraControlsRef.current?.dolly(value, false);
+        cameraControlsRef.current?.dolly(value, false)
       },
-    });
+    })
 
-    moveCycle.play();
+    moveCycle.play()
     cameraAnimation = moveCycle
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rotateWorld]);
+  }, [rotateWorld])
 
   useEffect(() => {
     // graphRadius is calculated from initial graph render
     if (cameraControlsRef.current && graphRadius) {
-      cameraControlsRef.current.maxDistance =
-        cameraControlsRef.current.getDistanceToFitSphere(graphRadius + 200);
+      cameraControlsRef.current.maxDistance = cameraControlsRef.current.getDistanceToFitSphere(graphRadius + 200)
 
-      cameraControlsRef.current.minDistance = 1;
-      cameraControlsRef.current.minPolarAngle = -Math.PI;
-      cameraControlsRef.current.maxPolarAngle = Math.PI;
-      cameraControlsRef.current.dollySpeed = 0.2;
-      cameraControlsRef.current.dampingFactor = 0.1;
-      cameraControlsRef.current.infinityDolly = false;
-      cameraControlsRef.current.dollyToCursor = true;
-      cameraControlsRef.current.boundaryEnclosesCamera = true;
+      cameraControlsRef.current.minDistance = 1
+      cameraControlsRef.current.minPolarAngle = -Math.PI
+      cameraControlsRef.current.maxPolarAngle = Math.PI
+      cameraControlsRef.current.dollySpeed = 0.2
+      cameraControlsRef.current.dampingFactor = 0.1
+      cameraControlsRef.current.infinityDolly = false
+      cameraControlsRef.current.dollyToCursor = true
+      cameraControlsRef.current.boundaryEnclosesCamera = true
     }
 
     if (enabled) {
-      doIntroAnimation();
+      doIntroAnimation()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [graphRadius]);
+  }, [graphRadius])
 
   useEffect(() => {
     if (enabled && !cameraAnimation) {
-      rotateWorld();
+      rotateWorld()
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data]);
+  }, [data])
 
   useEffect(() => {
-
     if (!selectedNode && cameraControlsRef.current) {
-      cameraControlsRef.current.smoothTime = 0.7;
-      
+      cameraControlsRef.current.smoothTime = 0.7
+
       cameraControlsRef.current.setLookAt(
         introAnimationTargetPosition.x,
         introAnimationTargetPosition.y,
@@ -134,23 +130,22 @@ export const useCameraAnimations = (
         0,
         0,
         0,
-        true
-      );
+        true,
+      )
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedNode]);
+  }, [selectedNode])
 
   useFrame((_, delta) => {
     if (cameraControlsRef.current) {
       //  do camera rotation
       if (!disableCameraRotation && !isUserDragging) {
-        cameraControlsRef.current.azimuthAngle +=
-          autoRotateSpeed * delta * MathUtils.DEG2RAD;
+        cameraControlsRef.current.azimuthAngle += autoRotateSpeed * delta * MathUtils.DEG2RAD
       }
 
-      cameraControlsRef.current.update(delta);
+      cameraControlsRef.current.update(delta)
     }
-  });
+  })
 
-  return null;
-};
+  return null
+}

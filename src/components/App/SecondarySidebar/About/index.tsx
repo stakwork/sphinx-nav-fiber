@@ -5,10 +5,10 @@ import styled from 'styled-components'
 import { Button } from '~/components/Button'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
-import { isDevelopment } from '~/constants'
 import { TAboutParams, getAboutData } from '~/network/fetchSourcesData'
 import { useUserStore } from '~/stores/useUserStore'
 import { colors } from '~/utils/colors'
+import { executeIfProd } from '~/utils/tests'
 import { AboutAdminView } from './AdminView'
 import { CommonView } from './CommonView'
 
@@ -56,7 +56,8 @@ export const About = () => {
   }, [])
 
   const authorize = async () => {
-    if (!isDevelopment) {
+    // skipping this for end to end test because it requires a sphinx-relay to be connected
+    await executeIfProd(async () => {
       try {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
@@ -78,7 +79,7 @@ export const About = () => {
       } catch (error) {
         console.log(error)
       }
-    }
+    })
   }
 
   const resolveAdminActions = () => {

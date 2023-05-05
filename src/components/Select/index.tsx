@@ -1,6 +1,6 @@
-import styled from "styled-components";
-import { colors } from "~/utils/colors";
-import Select from "react-dropdown-select";
+import styled from 'styled-components'
+import { colors } from '~/utils/colors'
+import Select from 'react-dropdown-select'
 
 const StyledSelect = styled(Select)`
   &.react-dropdown-select {
@@ -70,6 +70,6 @@ const StyledSelect = styled(Select)`
       border: none;
     }
   }
-`;
+`
 
-export default StyledSelect;
+export default StyledSelect

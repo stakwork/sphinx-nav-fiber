@@ -1,17 +1,7 @@
-import { AWS_IMAGE_BUCKET_URL, CLOUDFRONT_IMAGE_BUCKET_URL, isDevelopment } from '~/constants'
+/* eslint-disable padding-line-between-statements */
+import { AWS_IMAGE_BUCKET_URL, CLOUDFRONT_IMAGE_BUCKET_URL, isDevelopment, isE2E } from '~/constants'
 import { api } from '~/network/api'
-import {
-  FetchDataResponse,
-  FetchRadarResponse,
-  FetchSentimentResponse,
-  GraphData,
-  Guests,
-  Link,
-  Node,
-  NodeExtended,
-  RadarRequest,
-  SubmitErrRes,
-} from '~/types'
+import { FetchDataResponse, FetchSentimentResponse, GraphData, Guests, Link, Node, NodeExtended } from '~/types'
 import { getLSat } from '~/utils/getLSat'
 
 type guestMapChild = {
@@ -37,7 +27,7 @@ export const fetchGraphData = async (search: string) => {
 }
 
 const fetchNodes = async (search: string) => {
-  if (isDevelopment) {
+  if (isDevelopment || isE2E) {
     const response = await api.get<FetchDataResponse>(`/searching?word=${search}&free=true`)
 
     return response
@@ -126,11 +116,9 @@ const getGraphData = async (searchterm: string) => {
           }, {} as Record<string, string[]>)
         }
 
-        if (node.node_type === 'episode' && node.ref_id) {
-          ;
-
-(guests || []).forEach((guest) => {
-  const currentGuest = guest as Guests
+        if (node.node_type === 'episode' && node.ref_id && guests) {
+          guests.forEach((guest) => {
+            const currentGuest = guest as Guests
 
             if (currentGuest.name && currentGuest.ref_id && node.ref_id) {
               guestMap[currentGuest.ref_id] = {
@@ -150,7 +138,7 @@ const getGraphData = async (searchterm: string) => {
 
         nodes.push({
           ...node,
-          id: node.ref_id || node.tweet_id,
+          id: node.ref_id || node.tweet_id || node.id,
           // label: moment.show_title,
           image_url: smallImageUrl,
           type: node.type || node.node_type,

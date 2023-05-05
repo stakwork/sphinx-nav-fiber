@@ -1,10 +1,10 @@
 import { Flex } from '~/components/common/Flex'
-import { requiredRule } from '../index'
 import { TextInput } from '../TextInput'
+import { requiredRule } from '../index'
 
 const message = 'Submit RSS feed'
 
-const RSSFeed = () => (
+export const RSSFeed = () => (
   <Flex>
     <TextInput
       id="cy-rss-feed-id"
@@ -19,5 +19,3 @@ const RSSFeed = () => (
     />
   </Flex>
 )
-
-export default RSSFeed;
