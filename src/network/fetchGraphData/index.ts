@@ -90,7 +90,6 @@ function generateTopicNodesFromMap(topicMap: TopicMap, doNodeCallback: (node: No
       y,
       z,
       children,
-      image_url: 'topic_icon.jpg',
       colors: ['#000'],
       id: topicNodeId,
       label: topic,
