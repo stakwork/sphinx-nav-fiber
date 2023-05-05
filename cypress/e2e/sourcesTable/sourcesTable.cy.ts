@@ -17,13 +17,10 @@ describe('Sources Table / Home interactions', () => {
 
     cy.get(actionMenu).click({ waitForAnimations: false })
     cy.get(openSourceBtn).click({ waitForAnimations: false })
-
     cy.wait('@radar')
-    resetUserStore()
-  })
 
-  it('The table is rendered', () => {
-    cy.get(table).should('exist')
+    cy.get(table, { timeout: 10000 }).should('exist')
+    resetUserStore()
   })
 
   describe('User is not admin', () => {
