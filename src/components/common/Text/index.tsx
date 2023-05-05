@@ -1,5 +1,5 @@
-import styled, { css } from "styled-components";
-import { ColorName, colors } from "~/utils/colors";
+import styled, { css } from 'styled-components'
+import { ColorName, colors } from '~/utils/colors'
 
 const fontSizes: Record<TextKind, number> = {
   bigHeading: 30,
@@ -14,7 +14,7 @@ const fontSizes: Record<TextKind, number> = {
   regularBold: 14,
   tiny: 12,
   tinyBold: 12,
-};
+}
 
 const fontWeights: Record<TextKind, number> = {
   bigHeading: 400,
@@ -29,37 +29,30 @@ const fontWeights: Record<TextKind, number> = {
   regularBold: 600,
   tiny: 300,
   tinyBold: 500,
-};
+}
 
-type TextKindRegular =
-  | "hugeHeading"
-  | "bigHeading"
-  | "heading"
-  | "regular"
-  | "medium"
-  | "tiny";
+type TextKindRegular = 'hugeHeading' | 'bigHeading' | 'heading' | 'regular' | 'medium' | 'tiny'
 
-type TextKindBold = `${TextKindRegular}Bold`;
+type TextKindBold = `${TextKindRegular}Bold`
 
-export type TextKind = TextKindRegular | TextKindBold;
+export type TextKind = TextKindRegular | TextKindBold
 
 type Props = {
-  color?: ColorName;
-  kind?: TextKind;
-};
+  color?: ColorName
+  kind?: TextKind
+}
 
 const style = css<Props>`
-  ${({ kind = "regular" }) => css`
+  ${({ kind = 'regular' }) => css`
     font-size: ${fontSizes[kind]}px;
     font-weight: ${fontWeights[kind]};
   `}
-`;
+`
 
 export const Text = styled.span.withConfig({
-  shouldForwardProp: (prop, defaultShouldForwardProp) =>
-    !["kind"].includes(prop) && defaultShouldForwardProp(prop),
+  shouldForwardProp: (prop, defaultShouldForwardProp) => !['kind'].includes(prop) && defaultShouldForwardProp(prop),
 })<Props>`
   ${style}
 
-  ${({ color = "primaryText1" }) => `color: ${colors[color]};`}
-`;
+  ${({ color = 'primaryText1' }) => `color: ${colors[color]};`}
+`

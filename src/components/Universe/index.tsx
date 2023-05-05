@@ -10,6 +10,7 @@ import { Lights } from './Lights'
 
 import { useControls } from 'leva'
 import { useControlStore } from '~/stores/useControlStore'
+import { addToGlobalForE2e } from '~/utils/tests'
 import { Overlay } from './Overlay'
 
 const NODE_SELECTED_COLOR = 0x00ff00
@@ -63,6 +64,7 @@ export const Universe = () => (
           position: [1000, 0, 5],
         }}
         id="universe-canvas"
+        onCreated={(s) => addToGlobalForE2e(s, 'threeState')}
         onWheel={(e: React.WheelEvent) => {
           const { target } = e
           const { offsetParent } = target as HTMLDivElement

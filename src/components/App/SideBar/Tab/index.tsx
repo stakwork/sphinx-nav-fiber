@@ -1,32 +1,32 @@
-import { MdKeyboardDoubleArrowRight } from "react-icons/md";
-import styled from "styled-components";
-import { Flex } from "~/components/common/Flex";
-import { useAppStore } from "~/stores/useAppStore";
-import { colors } from "~/utils/colors";
+import { MdKeyboardDoubleArrowRight } from 'react-icons/md'
+import styled from 'styled-components'
+import { Flex } from '~/components/common/Flex'
+import { useAppStore } from '~/stores/useAppStore'
+import { colors } from '~/utils/colors'
 
 export const Tab = () => {
-  const setSidebarOpen = useAppStore((s) => s.setSidebarOpen);
+  const setSidebarOpen = useAppStore((s) => s.setSidebarOpen)
 
   return (
     <Wrapper>
       <ExpandButton
         onClick={() => {
-          setSidebarOpen(true);
+          setSidebarOpen(true)
         }}
       >
         <MdKeyboardDoubleArrowRight fontSize={25} />
       </ExpandButton>
     </Wrapper>
-  );
-};
+  )
+}
 
 const ExpandButton = styled(Flex).attrs({
-  align: "center",
-  justify: "center",
+  align: 'center',
+  justify: 'center',
 })`
   color: ${colors.white};
   cursor: pointer;
-`;
+`
 
 const Wrapper = styled(Flex)`
   background-color: ${colors.dashboardHeader};
@@ -40,4 +40,4 @@ const Wrapper = styled(Flex)`
   &:hover {
     opacity: 0.8;
   }
-`;
+`

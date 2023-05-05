@@ -1,5 +1,5 @@
 import { Vector3 } from 'three'
-import { AWS_IMAGE_BUCKET_URL, CLOUDFRONT_IMAGE_BUCKET_URL, isDevelopment } from '~/constants'
+import { AWS_IMAGE_BUCKET_URL, CLOUDFRONT_IMAGE_BUCKET_URL, isDevelopment, isE2E } from '~/constants'
 import { mock } from '~/mocks/getMockGraphData/mockResponse.js'
 import { api } from '~/network/api'
 import { useDataStore } from '~/stores/useDataStore'
@@ -43,7 +43,7 @@ const fetchNodes = async (search: string) => {
     return mock as FetchDataResponse
   }
 
-  if (isDevelopment) {
+  if (isDevelopment || isE2E) {
     const response = await api.get<FetchDataResponse>(`/searching?word=${search}&free=true`)
 
     return response

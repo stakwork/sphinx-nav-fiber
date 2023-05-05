@@ -23,14 +23,13 @@ export const AboutAdminView: FC<Props> = ({ initialValues }) => {
   const form = useForm<TAboutParams>({ defaultValues: initialValues, mode: 'onSubmit' })
   const { isSubmitting } = form.formState
 
-
   const onSubmit = form.handleSubmit(async (data) => {
     try {
       const res = await postAboutData(data)
 
-      console.log(res);
+      console.log(res)
     } catch (error) {
-      console.log(error);
+      console.log(error)
     }
   })
 

@@ -1,1 +1,1 @@
-export const Twitter = () => <div>Twitter</div>;
+export const Twitter = () => <div>Twitter</div>

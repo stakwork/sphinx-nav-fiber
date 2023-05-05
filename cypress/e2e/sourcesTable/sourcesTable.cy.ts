@@ -2,12 +2,6 @@
 import { actionMenu, addNodeModal, addNodeSubmitButton, host, resetUserStore, setIsAdmin, toast } from '../../support'
 import { addSourcesBtn, openSourceBtn, table, testTitle } from './const'
 
-declare global {
-  interface Window {
-    userStore: any
-  }
-}
-
 const modal = () => cy.get(addNodeModal)
 const toastBody = () => cy.get(toast)
 

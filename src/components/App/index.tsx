@@ -10,7 +10,7 @@ import { DataRetriever } from '~/components/DataRetriever'
 import { GlobalStyle } from '~/components/GlobalStyle'
 import { Universe } from '~/components/Universe'
 import { Flex } from '~/components/common/Flex'
-import { isDevelopment } from '~/constants'
+import { isDevelopment, isE2E } from '~/constants'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { useModal } from '~/stores/useModalStore'
@@ -87,9 +87,14 @@ export const App = () => {
   const runSearch = useCallback(async () => {
     if (searchTerm) {
       setSphinxModalOpen(true)
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      await sphinx.enable()
+
+      // skipping this for end to end test because it requires a sphinx-relay to be connected
+      if (!isE2E) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        await sphinx.enable()
+      }
+
       setSphinxModalOpen(false)
 
       setAuthorized(true)

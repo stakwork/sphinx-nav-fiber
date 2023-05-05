@@ -1,45 +1,42 @@
-import { MdClose } from "react-icons/md";
-import styled, { keyframes } from "styled-components";
-import { MENU_WIDTH } from "~/components/App/SideBar";
-import { Button } from "~/components/Button";
-import { Flex } from "~/components/common/Flex";
-import { useAppStore } from "~/stores/useAppStore";
-import { useSelectedNode } from "~/stores/useDataStore";
-import { colors } from "~/utils/colors";
+import { MdClose } from 'react-icons/md'
+import styled, { keyframes } from 'styled-components'
+import { MENU_WIDTH } from '~/components/App/SideBar'
+import { Button } from '~/components/Button'
+import { Flex } from '~/components/common/Flex'
+import { useAppStore } from '~/stores/useAppStore'
+import { useSelectedNode } from '~/stores/useDataStore'
+import { colors } from '~/utils/colors'
 
 const copiedAnimation = keyframes`
   0% { opacity: 0; }
   100% { opacity: 1; } 
-`;
+`
 
 const copyNodeText = (text: string | undefined) => {
   if (text === undefined) {
-    return;
+    return
   }
 
-  navigator.clipboard.writeText(text);
+  navigator.clipboard.writeText(text)
 
-  const copyButton = document.querySelector(".copy-button");
+  const copyButton = document.querySelector('.copy-button')
 
   if (copyButton) {
-    copyButton.classList.add("copied");
+    copyButton.classList.add('copied')
 
     setTimeout(() => {
-      copyButton.classList.remove("copied");
-    }, 1000);
+      copyButton.classList.remove('copied')
+    }, 1000)
   }
-};
+}
 
 export const Transcript = () => {
-  const [transcriptIsOpen, setTranscriptOpen] = useAppStore((s) => [
-    s.transcriptIsOpen,
-    s.setTranscriptOpen,
-  ]);
+  const [transcriptIsOpen, setTranscriptOpen] = useAppStore((s) => [s.transcriptIsOpen, s.setTranscriptOpen])
 
-  const selectedNode = useSelectedNode();
+  const selectedNode = useSelectedNode()
 
   if (!transcriptIsOpen) {
-    return null;
+    return null
   }
 
   return (
@@ -54,40 +51,39 @@ export const Transcript = () => {
           >
             Copy text
           </CopyButton>
-          ) : <div />}
-          
-          <CloseButton
-            onClick={() => {
-              setTranscriptOpen(false);
-            }}
-          >
-            <MdClose fontSize={35} />
-          </CloseButton>
-        </Flex>
+        ) : (
+          <div />
+        )}
 
-      <Box>&quot;{selectedNode?.text || "No transcript"}&quot;</Box>
+        <CloseButton
+          onClick={() => {
+            setTranscriptOpen(false)
+          }}
+        >
+          <MdClose fontSize={35} />
+        </CloseButton>
+      </Flex>
+
+      <Box>&quot;{selectedNode?.text || 'No transcript'}&quot;</Box>
     </Wrapper>
-  );
-};
+  )
+}
 
 const Wrapper = styled(Flex)`
   display: flex;
-`;
+`
 
-const CloseButton = styled(Flex).attrs({
-  
-})`
+const CloseButton = styled(Flex).attrs({})`
   color: ${colors.mainBottomIcons};
   cursor: pointer;
   &:hover {
     color: ${colors.lightBlue500};
   }
-`;
+`
 
 const CopyButton = styled(Button)`
-
   &.copied::after {
-    content: "Copied!";
+    content: 'Copied!';
     position: absolute;
     top: 10px;
     left: 10px;
@@ -97,7 +93,7 @@ const CopyButton = styled(Button)`
     color: ${colors.white};
     animation: ${copiedAnimation} 0.2s ease-in-out;
   }
-`;
+`
 
 const Box = styled(Flex)`
   color: ${colors.white};
@@ -106,4 +102,4 @@ const Box = styled(Flex)`
   font-size: 20px;
   line-height: 24px;
   font-style: italic;
-`;
+`
