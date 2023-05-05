@@ -120,7 +120,7 @@ export const App = () => {
   useEffect(() => {
     if (data) {
       if (graphStyle === 'split') {
-        const updatedData = generateSplitGraphPositions(data, true)
+        const updatedData = generateSplitGraphPositions(data)
 
         setData(updatedData)
       } else {

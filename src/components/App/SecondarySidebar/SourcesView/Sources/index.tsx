@@ -41,7 +41,7 @@ export const Sources = () => {
 
         setSources(data.data)
       } catch (error) {
-        console.log(error)
+        console.warn(error)
       } finally {
         setLoading(false)
       }
@@ -78,7 +78,7 @@ export const Sources = () => {
           setIsAdmin(pubKeyRes && admins.includes(pubKeyRes))
         }
       } catch (error) {
-        console.log(error)
+        console.warn(error)
       }
     })
   }

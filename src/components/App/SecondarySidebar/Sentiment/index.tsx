@@ -32,7 +32,7 @@ export const Sentiment = () => {
             })),
         )
       } catch (error) {
-        console.log(error)
+        console.warn(error)
       }
     }
 

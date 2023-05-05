@@ -27,7 +27,7 @@ export const saveConsumedContent = async (selectedNode: Node | null) => {
         type: 'second_brain_consumed_content',
       })
     } catch (error) {
-      console.log(error)
+      console.warn(error)
     }
   })
 }

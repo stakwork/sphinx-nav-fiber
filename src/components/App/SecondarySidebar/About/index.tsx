@@ -45,7 +45,7 @@ export const About = () => {
 
         setInitialValues(response)
       } catch (error) {
-        console.log(error)
+        console.warn(error)
       } finally {
         setLoading(false)
       }
@@ -69,7 +69,7 @@ export const About = () => {
           setIsAdmin(pubKeyRes && admins.includes(pubKeyRes))
         }
       } catch (error) {
-        console.log(error)
+        console.warn(error)
       }
     })
   }
