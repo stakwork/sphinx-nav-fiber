@@ -53,7 +53,12 @@ export const Cube = memo(({ node, highlight, highlightColor }: Props) => {
 
   const [hovered, setHovered] = useState(false)
 
-  const [categoryFilter, graphStyle] = useDataStore((s) => [s.categoryFilter, s.graphStyle])
+  const [categoryFilter, selectedTimestamp, graphStyle] = useDataStore((s) => [
+    s.categoryFilter,
+    s.selectedTimestamp,
+    s.graphStyle,
+  ])
+
   const isSomeModalOpened = useSomeModalIsOpen()
 
   const transcriptIsOpen = useAppStore((s) => s.transcriptIsOpen)
@@ -147,7 +152,7 @@ export const Cube = memo(({ node, highlight, highlightColor }: Props) => {
 
           {isSelected && transcriptIsOpen && (
             <HtmlPanel intensity={2} speed={4} withTransacript>
-              <Transcript />
+              <Transcript node={selectedTimestamp} />
             </HtmlPanel>
           )}
 

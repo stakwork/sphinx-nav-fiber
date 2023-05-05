@@ -1,18 +1,16 @@
-import { useEffect } from 'react'
 import styled from 'styled-components'
 import { Actions } from '~/components/App/SideBar/Actions'
 import { AudioPlayer } from '~/components/AudioPlayer'
 import { Avatar } from '~/components/common/Avatar'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
-import { setIsTimestampLoaded, useDataStore, useSelectedNode } from '~/stores/useDataStore'
+import { setIsTimestampLoaded, useSelectedNode } from '~/stores/useDataStore'
 import { colors } from '~/utils/colors'
-import { videoTimetoSeconds } from '~/utils/videoTimetoSeconds'
-
-export const CREATOR_HEADING_HEIGHT = 240
+import { Transcript } from '../Transcript'
 
 const Wrapper = styled(Flex)`
   flex: 1;
+  min-height: 100%;
   flex-direction: column;
   background: ${colors.dashboardHeader};
   border-bottom: 1px solid #101317;
@@ -20,23 +18,8 @@ const Wrapper = styled(Flex)`
   z-index: 0;
 `
 
-export const Heading = () => {
+export const AudioClip = () => {
   const selectedNode = useSelectedNode()
-  const selectedTimestamp = useDataStore((s) => s.selectedTimestamp)
-
-  useEffect(() => {
-    if (!selectedTimestamp) {
-      return
-    }
-
-    const { timestamp } = selectedTimestamp
-
-    const audioElement = document.getElementById('audio-player') as HTMLAudioElement
-
-    if (audioElement) {
-      audioElement.currentTime = timestamp ? videoTimetoSeconds(timestamp) : 0
-    }
-  }, [selectedTimestamp])
 
   return (
     <Wrapper p={20}>
@@ -52,24 +35,31 @@ export const Heading = () => {
               {selectedNode?.episode_title}
             </Text>
           </Flex>
+          <Flex pt={10}>
+            <Text kind="regular">{selectedNode?.timestamp}</Text>
+          </Flex>
         </Flex>
       </Flex>
 
       <Flex pb={10} pt={30}>
-        <Actions transcript />
+        <Actions />
       </Flex>
 
       <Flex pt={10}>
         <AudioPlayer
-          mediaUrl={selectedTimestamp?.link || ''}
+          mediaUrl={selectedNode?.link || ''}
           onError={() => {
             setIsTimestampLoaded(true)
           }}
           onLoaded={() => {
             setIsTimestampLoaded(true)
           }}
-          timestamp={selectedTimestamp?.timestamp || ''}
+          timestamp={selectedNode?.timestamp || ''}
         />
+      </Flex>
+
+      <Flex pt={50}>
+        <Transcript node={selectedNode} stateless />
       </Flex>
     </Wrapper>
   )
