@@ -41,9 +41,9 @@ export const Cube = memo(({ node, highlight, highlightColor }: Props) => {
   const ref = useRef<THREE.Mesh | null>(null)
   const [hovered, setHovered] = useState(false)
 
-  const isSomeModalOpened = useSomeModalIsOpen()
+  const [categoryFilter, selectedTimestamp] = useDataStore((s) => [s.categoryFilter, s.selectedTimestamp])
 
-  const categoryFilter = useDataStore((s) => s.categoryFilter)
+  const isSomeModalOpened = useSomeModalIsOpen()
 
   const transcriptIsOpen = useAppStore((s) => s.transcriptIsOpen)
 
@@ -108,7 +108,7 @@ export const Cube = memo(({ node, highlight, highlightColor }: Props) => {
 
           {isSelected && transcriptIsOpen && (
             <HtmlPanel intensity={2} speed={4} withTransacript>
-              <Transcript />
+              <Transcript node={selectedTimestamp} />
             </HtmlPanel>
           )}
 
