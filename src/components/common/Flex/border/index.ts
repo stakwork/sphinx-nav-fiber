@@ -1,59 +1,55 @@
-import { css } from 'styled-components';
+import { css } from 'styled-components'
 
 type Border = {
-  borderColor: string;
-  borderRadius: number;
-  borderRadiusBottomLeft: number;
-  borderRadiusBottomRight: number;
-  borderRadiusTopLeft: number;
-  borderRadiusTopRight: number;
-  borderSize: number;
-};
+  borderColor: string
+  borderRadius: number
+  borderRadiusBottomLeft: number
+  borderRadiusBottomRight: number
+  borderRadiusTopLeft: number
+  borderRadiusTopRight: number
+  borderSize: number
+}
 
-export type BorderProps = Partial<Border>;
+export type BorderProps = Partial<Border>
 
 const switchProp = (prop: keyof Border, value: Border[keyof Border]) => {
   switch (prop) {
     case 'borderColor':
-      return `border-color: ${value};`;
+      return `border-color: ${value};`
     case 'borderRadius':
-      return `border-radius: ${value}px;`;
+      return `border-radius: ${value}px;`
     case 'borderRadiusBottomLeft':
-      return `border-bottom-left-radius: ${value}px;`;
+      return `border-bottom-left-radius: ${value}px;`
     case 'borderRadiusBottomRight':
-      return `border-bottom-right-radius: ${value}px;`;
+      return `border-bottom-right-radius: ${value}px;`
     case 'borderRadiusTopLeft':
-      return `border-top-left-radius: ${value}px;`;
+      return `border-top-left-radius: ${value}px;`
     case 'borderRadiusTopRight':
-      return `border-top-right-radius: ${value}px;`;
+      return `border-top-right-radius: ${value}px;`
     case 'borderSize':
       return `
         border-style: solid;
         border-width: ${value}px;
-      `;
+      `
     default:
-      return '';
+      return ''
   }
-};
+}
 
 const getPropStyle = <P extends keyof Border>(prop: P, value?: Border[P]) => {
   if (value === undefined) {
-    return '';
+    return ''
   }
 
   // NOTE: The reason why we call a separate function instead of directly having the switch
   // statement is that the type of `prop` is not narrowed when using `P extends Keys`.
-  return switchProp(prop, value);
-};
+  return switchProp(prop, value)
+}
 
 type OverflowHiddenProps = Pick<
   BorderProps,
-  | 'borderRadius'
-  | 'borderRadiusBottomLeft'
-  | 'borderRadiusBottomRight'
-  | 'borderRadiusTopLeft'
-  | 'borderRadiusTopRight'
->;
+  'borderRadius' | 'borderRadiusBottomLeft' | 'borderRadiusBottomRight' | 'borderRadiusTopLeft' | 'borderRadiusTopRight'
+>
 
 const getOverflowHidden = ({
   borderRadius,
@@ -63,21 +59,17 @@ const getOverflowHidden = ({
   borderRadiusTopRight,
 }: OverflowHiddenProps) => {
   if (
-    [
-      borderRadius,
-      borderRadiusBottomLeft,
-      borderRadiusBottomRight,
-      borderRadiusTopLeft,
-      borderRadiusTopRight,
-    ].every(value => value === undefined)
+    [borderRadius, borderRadiusBottomLeft, borderRadiusBottomRight, borderRadiusTopLeft, borderRadiusTopRight].every(
+      (value) => value === undefined,
+    )
   ) {
-    return '';
+    return ''
   }
 
-  return 'overflow: hidden;';
-};
+  return 'overflow: hidden;'
+}
 
-type Props = BorderProps;
+type Props = BorderProps
 
 export const border = css<Props>`
   ${({
@@ -104,4 +96,4 @@ export const border = css<Props>`
     ${getPropStyle('borderRadiusTopRight', borderRadiusTopRight)}
     ${getPropStyle('borderSize', borderSize)}
   `}
-`;
+`

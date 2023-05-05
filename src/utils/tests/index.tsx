@@ -1,5 +1,5 @@
 import { memo, useEffect } from 'react'
-import { isE2E } from '~/constants'
+import { isDevelopment, isE2E } from '~/constants'
 import { useUserStore } from '~/stores/useUserStore'
 
 export const executeIfTetsRunning = (fn: () => void) => {
@@ -8,6 +8,23 @@ export const executeIfTetsRunning = (fn: () => void) => {
   }
 }
 
+export function executeIfProd<T>(fn: () => T): T {
+  if (!(isDevelopment || isE2E)) {
+    return fn()
+  }
+
+  return null as unknown as T
+}
+
+export function addToGlobalForE2e<T extends typeof window.e2e, K extends keyof typeof window.e2e>(t: T[K], key: K) {
+  executeIfTetsRunning(() => {
+    if (!window.e2e) {
+      window.e2e = {}
+    }
+
+    window.e2e[key] = t
+  })
+}
 
 const E2E = () => {
   const userStore = useUserStore()
@@ -20,9 +37,7 @@ const E2E = () => {
     // eslint-disable-next-line no-console
     console.log({ isE2E })
 
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    window.userStore = userStore
+    addToGlobalForE2e(userStore, 'userStore')
   }, [userStore])
 
   return <div id="e2e-check" />

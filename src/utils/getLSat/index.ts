@@ -2,10 +2,10 @@ import { Lsat } from 'lsat-js'
 import * as sphinx from 'sphinx-bridge-kevkevinpal'
 import { API_URL } from '~/constants'
 
-type Action = 'searching' | 'adding_node' | 'teach-me'
+type Action = 'searching' | 'adding_node' | 'teachme'
 
 export const getLSat = async (action: Action) => {
-  const method = action === 'adding_node' || action === 'teach-me' ? 'POST' : 'GET'
+  const method = action === 'adding_node' || action === 'teachme' ? 'POST' : 'GET'
 
   try {
     const resp = await fetch(`${API_URL}/${action}`, {
@@ -15,9 +15,7 @@ export const getLSat = async (action: Action) => {
     const data = await resp.json()
 
     const lsat =
-      action === 'teach-me'
-        ? Lsat.fromHeader(resp.headers.get('www-authenticate') || '')
-        : Lsat.fromHeader(data.headers)
+      action === 'teachme' ? Lsat.fromHeader(resp.headers.get('www-authenticate') || '') : Lsat.fromHeader(data.headers)
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore

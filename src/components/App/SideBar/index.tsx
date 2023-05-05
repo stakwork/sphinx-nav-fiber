@@ -86,7 +86,7 @@ const Content = ({ onSubmit }: Props) => {
 
       {!isTutorialLoading ? (
         <Flex p={12}>
-          <Button kind="big" onClick={() => handleTutorialStart()}>
+          <Button disabled={isLoading} kind="big" onClick={() => handleTutorialStart()}>
             Teach me
           </Button>
         </Flex>
