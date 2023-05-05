@@ -6,8 +6,8 @@ import { useState, FC } from 'react'
 import { colors } from '~/utils/colors'
 
 type Props = {
-  twitterHandle?: string;
-  tweetId?: string;
+  twitterHandle?: string
+  tweetId?: string
 }
 
 export const TwitData: FC<Props> = ({ twitterHandle, tweetId }) => {

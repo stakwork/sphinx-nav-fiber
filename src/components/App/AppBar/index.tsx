@@ -1,18 +1,18 @@
-import styled from "styled-components";
-import { Flex } from "~/components/common/Flex";
-import { Text } from "~/components/common/Text";
-import { SearchBar } from "~/components/SearchBar";
-import { Stats } from "~/components/Stats";
-import { useAppStore } from "~/stores/useAppStore";
-import { useSelectedNode } from "~/stores/useDataStore";
-import { media } from "~/utils/media";
+import styled from 'styled-components'
+import { Flex } from '~/components/common/Flex'
+import { Text } from '~/components/common/Text'
+import { SearchBar } from '~/components/SearchBar'
+import { Stats } from '~/components/Stats'
+import { useAppStore } from '~/stores/useAppStore'
+import { useSelectedNode } from '~/stores/useDataStore'
+import { media } from '~/utils/media'
 
 type Props = {
-  onSubmit?: () => void;
-};
+  onSubmit?: () => void
+}
 
 export const AppBar = ({ onSubmit }: Props) => {
-  const selectedNode = useSelectedNode();
+  const selectedNode = useSelectedNode()
 
   const [searchTerm, sidebarIsOpen] = useAppStore((s) => [s.currentSearch, s.sidebarIsOpen])
 
@@ -33,14 +33,14 @@ export const AppBar = ({ onSubmit }: Props) => {
         <SearchBar onSubmit={onSubmit} />
       </SearchBarWrapper>
     </Header>
-  ) : null;
-};
+  ) : null
+}
 
 const Header = styled(Flex).attrs({
-  align: "center",
-  direction: "row",
+  align: 'center',
+  direction: 'row',
   grow: 1,
-  justify: "flex-start",
+  justify: 'flex-start',
   p: 20,
 })`
   height: 60px;
@@ -49,19 +49,19 @@ const Header = styled(Flex).attrs({
   left: 0px;
   width: 100%;
   transition: opacity 1s;
-`;
+`
 
 const TitleWrapper = styled.div`
   ${media.smallOnly`
     display: none;
   `}
-`;
+`
 
 const StatsWrapper = styled.div`
   left: 25px;
   position: absolute;
   top: 75px;
-`;
+`
 
 const SearchBarWrapper = styled.div`
   width: 60%;
@@ -70,4 +70,4 @@ const SearchBarWrapper = styled.div`
   ${media.smallOnly`
     width: 100%;
   `}
-`;
+`

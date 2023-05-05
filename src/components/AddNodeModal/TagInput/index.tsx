@@ -1,38 +1,33 @@
-import { KeyboardEvent, useCallback, useState } from "react";
-import {
-  Controller,
-  get,
-  RegisterOptions,
-  useFormContext,
-} from "react-hook-form";
-import { FaRegQuestionCircle } from "react-icons/fa";
-import { MdAdd, MdError, MdRemove } from "react-icons/md";
-import styled from "styled-components";
-import { BaseTextInput, BaseTextInputProps } from "~/components/BaseTextInput";
-import { Flex } from "~/components/common/Flex";
-import { Text } from "~/components/common/Text";
-import { colors } from "~/utils/colors";
+import { KeyboardEvent, useCallback, useState } from 'react'
+import { Controller, get, RegisterOptions, useFormContext } from 'react-hook-form'
+import { FaRegQuestionCircle } from 'react-icons/fa'
+import { MdAdd, MdError, MdRemove } from 'react-icons/md'
+import styled from 'styled-components'
+import { BaseTextInput, BaseTextInputProps } from '~/components/BaseTextInput'
+import { Flex } from '~/components/common/Flex'
+import { Text } from '~/components/common/Text'
+import { colors } from '~/utils/colors'
 
 const Wrapper = styled(Flex).attrs({
-  background: "inputBg2",
-  basis: "25%",
+  background: 'inputBg2',
+  basis: '25%',
   px: 8,
   py: 12,
 })`
   border-radius: 8px;
   margin-right: 8px;
-`;
+`
 
-type Props = Omit<BaseTextInputProps, "name"> & {
-  id: string;
-  label: string;
-  message?: string;
-  rules?: RegisterOptions;
-};
+type Props = Omit<BaseTextInputProps, 'name'> & {
+  id: string
+  label: string
+  message?: string
+  rules?: RegisterOptions
+}
 
-type Fields = { tags: string[] | undefined };
+type Fields = { tags: string[] | undefined }
 
-const name = "tags";
+const name = 'tags'
 
 export const TagInput = ({ id, label, message, rules, ...props }: Props) => {
   const {
@@ -40,65 +35,65 @@ export const TagInput = ({ id, label, message, rules, ...props }: Props) => {
     getValues,
     clearErrors,
     formState: { errors },
-  } = useFormContext<Fields>();
+  } = useFormContext<Fields>()
 
-  const error = get(errors, name);
+  const error = get(errors, name)
 
-  const [currentTag, setCurrentTag] = useState("");
-  const tags = getValues(name);
+  const [currentTag, setCurrentTag] = useState('')
+  const tags = getValues(name)
 
   const handleEvent = useCallback(
     (e: KeyboardEvent<HTMLInputElement> | React.MouseEvent<HTMLDivElement>) => {
-      if (e.type === "keydown") {
-        if ((e as KeyboardEvent).key !== "Enter") {
-          return;
+      if (e.type === 'keydown') {
+        if ((e as KeyboardEvent).key !== 'Enter') {
+          return
         }
 
-        e.preventDefault();
+        e.preventDefault()
       }
 
       if (!currentTag.trim()) {
-        return;
+        return
       }
 
       if (tags && tags.length === 15) {
-        return;
+        return
       }
 
       // Removes duplicates
-      const tagsSet = new Set([...(tags || []), currentTag]);
+      const tagsSet = new Set([...(tags || []), currentTag])
 
-      setValue(name, [...tagsSet]);
+      setValue(name, [...tagsSet])
 
-      setCurrentTag("");
-      clearErrors(name);
+      setCurrentTag('')
+      clearErrors(name)
     },
-    [currentTag, setValue, tags, clearErrors]
-  );
+    [currentTag, setValue, tags, clearErrors],
+  )
 
   const handleTagRemove = useCallback(
     (tag: string) => {
       if (!tags) {
-        return;
+        return
       }
 
-      const targetIndex = tags.findIndex((t) => t === tag);
+      const targetIndex = tags.findIndex((t) => t === tag)
 
-      tags.splice(targetIndex, 1);
+      tags.splice(targetIndex, 1)
 
       setValue(name, [...tags], {
         shouldValidate: true,
-      });
+      })
     },
-    [setValue, tags]
-  );
+    [setValue, tags],
+  )
 
   const handleOnChange = useCallback(
     (v: string) => {
-      setCurrentTag(v);
+      setCurrentTag(v)
     },
-    [setCurrentTag]
-  );
+    [setCurrentTag],
+  )
 
   return (
     <Flex shrink={1}>
@@ -122,7 +117,7 @@ export const TagInput = ({ id, label, message, rules, ...props }: Props) => {
                 onChange={handleOnChange}
                 onKeyDown={handleEvent}
                 placeholderTextColor="inputPlaceholder"
-                value={currentTag || ""}
+                value={currentTag || ''}
               />
             )}
             rules={rules}
@@ -140,24 +135,12 @@ export const TagInput = ({ id, label, message, rules, ...props }: Props) => {
       <Flex direction="row" grow={0} pt={8} shrink={1} wrap="wrap">
         {tags?.map((tag) => (
           <Flex key={tag} pr={4} pt={4}>
-            <Flex
-              align="center"
-              background="white"
-              borderRadius={12}
-              direction="row"
-              px={8}
-              py={4}
-              tabIndex={0}
-            >
+            <Flex align="center" background="white" borderRadius={12} direction="row" px={8} py={4} tabIndex={0}>
               <Flex>
                 <Text color="black">{tag}</Text>
               </Flex>
 
-              <CloseButton
-                onClick={() => handleTagRemove(tag)}
-                role="button"
-                tabIndex={0}
-              >
+              <CloseButton onClick={() => handleTagRemove(tag)} role="button" tabIndex={0}>
                 <MdRemove fontSize={12} />
               </CloseButton>
             </Flex>
@@ -179,25 +162,25 @@ export const TagInput = ({ id, label, message, rules, ...props }: Props) => {
         </Flex>
       )}
     </Flex>
-  );
-};
+  )
+}
 
 const CloseButton = styled(Flex)`
   cursor: pointer;
-`;
+`
 
 const AddTagButton = styled(Flex).attrs({
-  align: "center",
+  align: 'center',
   borderRadius: 8,
   borderSize: 1,
-  direction: "row",
+  direction: 'row',
   px: 8,
   py: 8,
 })`
   border-color: ${colors.gray500};
   cursor: pointer;
   color: ${colors.lightGray};
-`;
+`
 
 const QuestionIcon = styled(Flex)`
   cursor: default;
@@ -224,10 +207,10 @@ const QuestionIcon = styled(Flex)`
   &:focus .tooltip {
     visibility: visible;
   }
-`;
+`
 
 const Label = styled.label`
   color: ${colors.lightGray};
   font-size: 14px;
   font-weight: 600;
-`;
+`

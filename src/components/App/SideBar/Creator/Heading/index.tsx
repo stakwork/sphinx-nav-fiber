@@ -1,5 +1,4 @@
-import { ComponentType, useEffect } from 'react'
-import ReactAudioPlayer from 'react-audio-player'
+import { useEffect } from 'react'
 import styled from 'styled-components'
 import { Actions } from '~/components/App/SideBar/Actions'
 import { AudioPlayer } from '~/components/AudioPlayer'
@@ -19,10 +18,6 @@ const Wrapper = styled(Flex)`
   border-bottom: 1px solid #101317;
   box-shadow: 0px 5px 6px rgba(0, 0, 0, 0.5);
   z-index: 0;
-`
-
-const Audio = styled(ReactAudioPlayer as unknown as ComponentType<typeof ReactAudioPlayer.defaultProps>)`
-  width: 100%;
 `
 
 export const Heading = () => {

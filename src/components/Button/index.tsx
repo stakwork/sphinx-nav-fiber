@@ -1,8 +1,8 @@
-import { ReactNode } from "react";
-import styled, { css } from "styled-components";
-import { Flex } from "~/components/common/Flex";
-import { Text, TextKind } from "~/components/common/Text";
-import { ColorName } from "~/utils/colors";
+import { ReactNode } from 'react'
+import styled, { css } from 'styled-components'
+import { Flex } from '~/components/common/Flex'
+import { Text, TextKind } from '~/components/common/Text'
+import { ColorName } from '~/utils/colors'
 
 type Props = {
   background?: ColorName
@@ -20,48 +20,45 @@ type Props = {
   type?: 'submit' | 'button'
 }
 
-const getButtonKindDimensions = ({
-  kind,
-  shape,
-}: Pick<Props, "kind" | "shape">) => {
+const getButtonKindDimensions = ({ kind, shape }: Pick<Props, 'kind' | 'shape'>) => {
   switch (kind) {
-    case "small":
+    case 'small':
       return css`
         padding: 4px 8px;
-        border-radius: ${shape === "rounded" ? "16px" : "8px"};
+        border-radius: ${shape === 'rounded' ? '16px' : '8px'};
         height: 32px;
-      `;
-    case "big":
+      `
+    case 'big':
       return css`
         padding: 16px 24px;
-        border-radius: ${shape === "rounded" ? "24px" : "8px"};
+        border-radius: ${shape === 'rounded' ? '24px' : '8px'};
         height: 48px;
-      `;
+      `
     default:
       return css`
         padding: 8px 16px;
-        border-radius: ${shape === "rounded" ? "32px" : "8px"};
+        border-radius: ${shape === 'rounded' ? '32px' : '8px'};
         height: 64px;
-      `;
+      `
   }
-};
+}
 
-const getTextKind = ({ kind }: Pick<Props, "kind">): TextKind => {
+const getTextKind = ({ kind }: Pick<Props, 'kind'>): TextKind => {
   switch (kind) {
-    case "small":
-      return "regularBold";
-    case "big":
-      return "mediumBold";
+    case 'small':
+      return 'regularBold'
+    case 'big':
+      return 'mediumBold'
     default:
-      return "regularBold";
+      return 'regularBold'
   }
-};
+}
 
 const Wrapper = styled(Flex).attrs({
-  align: "center",
-  direction: "row",
-  justify: "center",
-})<Pick<Props, "kind" | "disabled" | "shape">>`
+  align: 'center',
+  direction: 'row',
+  justify: 'center',
+})<Pick<Props, 'kind' | 'disabled' | 'shape'>>`
   border: none;
   cursor: pointer;
   pointer-events: auto;
@@ -78,23 +75,23 @@ const Wrapper = styled(Flex).attrs({
       opacity: 0.5;
       pointer-events: none;
     `}
-`;
+`
 
-type ButtonKind = "small" | "regular" | "big";
+type ButtonKind = 'small' | 'regular' | 'big'
 
 export const Button = ({
-  background = "primaryButton",
+  background = 'primaryButton',
   children,
-  className = "button",
+  className = 'button',
   startIcon,
   endIcon,
   disabled,
   id,
-  kind = "regular",
+  kind = 'regular',
   onClick,
   onPointerDown,
-  shape = "squared",
-  textColor = "white",
+  shape = 'squared',
+  textColor = 'white',
   type,
 }: Props) => (
   <Wrapper
@@ -115,4 +112,4 @@ export const Button = ({
     </Text>
     {endIcon && endIcon}
   </Wrapper>
-);
+)
