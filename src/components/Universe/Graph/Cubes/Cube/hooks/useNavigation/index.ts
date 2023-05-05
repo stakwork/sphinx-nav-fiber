@@ -23,7 +23,7 @@ export const useNavigation = (thisNodeRef: RefObject<THREE.Mesh | null>) => {
     return isFloater && selectedIsChild
   }, [selectedNode, thisNodeRef])
 
-  useFrame((state, delta) => {
+  useFrame(() => {
     if (thisNodeRef?.current && thisNodeRef?.current?.userData?.node_type === 'guest') {
       // do movement animation
       if (selectedNode && childIsSelected && !distanceReached) {
