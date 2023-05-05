@@ -1,5 +1,4 @@
 import { Vector3 } from 'three'
-// import * as Noise from '~/utils/noise';
 import { GraphData, Link, NodeExtended } from '~/types'
 
 const universeScale = 5000
@@ -32,13 +31,6 @@ const dataCube = {
   },
 }
 
-type TopicMapItem = {
-  children: string[]
-  position: Vector3
-}
-
-type TopicMap = Record<string, TopicMapItem>
-
 function generateGuestNodePosition() {
   const { scale, position } = guestCube
 
@@ -49,7 +41,7 @@ function generateGuestNodePosition() {
   }
   // apply perlin noise
 
-  const perlinNoise = 1 // Noise.perlin3(center.x,center.y,center.z)
+  const perlinNoise = 1
 
   const amp = 10
 
@@ -66,7 +58,7 @@ function generateTopicNodePosition() {
   }
   // apply perlin noise
 
-  const perlinNoise = 1 // Noise.perlin3(center.x,center.y,center.z)
+  const perlinNoise = 1
 
   const amp = 10
 
@@ -99,22 +91,6 @@ function generateNearbyPosition(basePosition: Vector3, nodeType?: string, childI
   center.z = basePosition.z + zOffset
 
   return center
-}
-
-function getMyTopicNodes(nodeRefId: string | undefined, topicMap: TopicMap) {
-  if (!nodeRefId) {
-    return []
-  }
-
-  const myTopicNodes: TopicMapItem[] = []
-
-  Object.values(topicMap).forEach((content) => {
-    if (content.children.includes(nodeRefId)) {
-      myTopicNodes.push(content)
-    }
-  })
-
-  return myTopicNodes
 }
 
 function getMyParents(node: NodeExtended, nodes: NodeExtended[] | undefined) {
@@ -214,40 +190,7 @@ const sortNodes = (nodes: NodeExtended[]) => {
   return sortedNodes
 }
 
-const getBoundaryNodes = () => {
-  const pad = 10
-
-  const guestPerimeterNode = {
-    ...guestCube.position,
-    scale: guestCube.scale / 10 + pad,
-    label: 'People',
-    node_type: 'boundary',
-    type: 'boundary',
-  } as NodeExtended
-
-  const topicPerimeterNode = {
-    ...topicCube.position,
-    scale: guestCube.scale / 10 + pad,
-    label: 'Topics',
-    node_type: 'boundary',
-    type: 'boundary',
-  } as NodeExtended
-
-  const dataPerimeterNode = {
-    ...dataCube.position,
-    scale: dataCube.scale / 10 + pad,
-    label: 'Media',
-    node_type: 'boundary',
-    type: 'boundary',
-  } as NodeExtended
-
-  return [guestPerimeterNode, topicPerimeterNode, dataPerimeterNode]
-}
-
-export const generateSplitGraphPositions = (data: GraphData, usingCurrentData: boolean) => {
-  // recharacterize noise
-  // Noise.seed(Math.random());
-
+export const generateSplitGraphPositions = (data: GraphData) => {
   // sort parent then children
   const cleanNodes = sortNodes(data.nodes)
 

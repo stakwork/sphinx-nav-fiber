@@ -32,7 +32,7 @@ export const saveConsumedContent = async (selectedNode: Node | null) => {
   })
 }
 
-export const saveSearchTerm = async (searchTerm: string) => {
+export const saveSearchTerm = async () => {
   // skipping this for end to end test because it requires a sphinx-relay to be connected
   await executeIfProd(async () => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment

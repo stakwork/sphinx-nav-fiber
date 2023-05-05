@@ -13,7 +13,7 @@ const spin = 0.16
 export const GraphLoadingIcon = () => {
   const ref = useRef<THREE.Mesh | null>(null)
 
-  useFrame((_, delta) => {
+  useFrame(() => {
     if (ref.current) {
       ref.current.rotation.z += spin
     }

@@ -74,13 +74,7 @@ export const Sources = () => {
 
         setPubKey(pubKeyRes)
 
-        const queryString = window.location.search
-        const urlParams = new URLSearchParams(queryString)
-
-        const tribeId = urlParams.get('tribe')
-
         if (pubKeyRes) {
-          // id = getAdminId(tribeId)
           setIsAdmin(pubKeyRes && admins.includes(pubKeyRes))
         }
       } catch (error) {

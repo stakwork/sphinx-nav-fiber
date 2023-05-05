@@ -47,6 +47,7 @@ module.exports = {
     '@typescript-eslint/no-shadow': 'error',
     '@typescript-eslint/no-useless-constructor': 'error',
     '@typescript-eslint/no-var-requires': 'off',
+    '@typescript-eslint/no-unused-vars': 'error',
     '@typescript-eslint/prefer-interface': 'off',
     '@typescript-eslint/prefer-optional-chain': 'error',
     'arrow-body-style': ['error', 'as-needed'],

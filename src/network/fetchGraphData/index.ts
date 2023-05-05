@@ -263,7 +263,7 @@ const getGraphData = async (searchterm: string) => {
 
     // give nodes and links positions based on graphStyle
     if (graphStyle === 'split') {
-      const dataWithPositions = generateSplitGraphPositions({ links, nodes }, false)
+      const dataWithPositions = generateSplitGraphPositions({ links, nodes })
 
       links = dataWithPositions.links
       nodes = dataWithPositions.nodes
