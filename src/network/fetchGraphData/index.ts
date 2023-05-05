@@ -10,6 +10,11 @@ type guestMapChild = {
   twitterHandle: string
 }
 
+type TeachData = {
+  term: string
+  transcripts: string
+}
+
 const defaultData: GraphData = {
   links: [],
   nodes: [],
@@ -47,6 +52,16 @@ export const getSentimentData = async () => {
   const response = await api.get<FetchSentimentResponse>(`/sentiments`)
 
   return response
+}
+
+export const postTeachMe = async (data: TeachData) => {
+  const lsatToken = await getLSat('teach-me')
+
+  if (!lsatToken) {
+    throw new Error('An error occured calling getLSat')
+  }
+
+  return api.post(`/teachme`, JSON.stringify(data), { Authorization: lsatToken })
 }
 
 export const getAdminId = async (tribeId: string) => {
