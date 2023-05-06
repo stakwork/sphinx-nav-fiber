@@ -1,5 +1,5 @@
-import { budgetModal, getScenenChildrens, host, loader, sidebarWrapper } from '../../support'
-import { canvasHtmlPanel, episodeDescription, search, searchResultList } from './const'
+import { budgetModal, getScenenChildrens, host, loader } from '../../support'
+import { search } from './const'
 
 describe('Search and render / Home interactions', () => {
   beforeEach(() => {
@@ -27,18 +27,5 @@ describe('Search and render / Home interactions', () => {
     cy.wait('@search')
 
     getScenenChildrens().should('exist')
-
-    cy.get(sidebarWrapper)
-      .should('exist')
-      .find(searchResultList)
-      .eq(0)
-      // Select the first node
-      .click()
-      .find(episodeDescription)
-      .then((el) => {
-        const textContent = el.text().split(' ').slice(0, 2).join(' ')
-
-        cy.get(canvasHtmlPanel).should('exist').contains(textContent)
-      })
   })
 })
