@@ -20,7 +20,11 @@ const FlagError = styled(Flex)<FlagErrorProps>`
   }
 `
 
-export const Actions = () => {
+type ActionsProps = {
+  transcript?: boolean
+}
+
+export const Actions = ({ transcript }: ActionsProps) => {
   const [transcriptIsOpen, setTranscriptOpen] = useAppStore((s) => [s.transcriptIsOpen, s.setTranscriptOpen])
 
   const [flagErrorIsOpen, setFlagErrorOpen] = useAppStore((s) => [s.flagErrorIsOpen, s.setFlagErrorOpen])
@@ -28,17 +32,21 @@ export const Actions = () => {
   const selectedNode = useDataStore((s) => s.selectedNode)
 
   return (
-    <Flex align="center" direction="row">
-      <Pill
-        onClick={() => setTranscriptOpen(!transcriptIsOpen)}
-        selected={transcriptIsOpen}
-        style={{ padding: '4px 8px' }}
-      >
-        Transcript
-      </Pill>
+    <Flex align="center" direction="row" justify="space-between">
+      <Flex align="center" direction="row">
+        {transcript && (
+          <Pill
+            onClick={() => setTranscriptOpen(!transcriptIsOpen)}
+            selected={transcriptIsOpen}
+            style={{ padding: '4px 8px' }}
+          >
+            Transcript
+          </Pill>
+        )}
 
-      <Flex pl={10}>
-        <Booster content={selectedNode} refId={selectedNode?.id} />
+        <Flex pl={10}>
+          <Booster content={selectedNode} refId={selectedNode?.id} />
+        </Flex>
       </Flex>
 
       <FlagError flagErrorIsOpen={flagErrorIsOpen} onClick={() => setFlagErrorOpen(!flagErrorIsOpen)}>

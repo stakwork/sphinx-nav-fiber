@@ -1,9 +1,12 @@
 import { useSelectedNode } from '~/stores/useDataStore'
+import { AudioClip } from '../AudioClip'
 import { Creator } from '../Creator'
 import { Data } from '../Data'
 import { Messages } from '../Messages'
 import { Person } from '../Person'
 import { Relevance } from '../Relevance'
+import { Show } from '../Show'
+import { Topic } from '../Topic'
 import { TwitData } from '../TwitData'
 import { Twitter } from '../Twitter'
 
@@ -15,7 +18,7 @@ export const View = ({ isSelectedView }: Props) => {
   const selectedNode = useSelectedNode()
 
   if (isSelectedView) {
-    switch (selectedNode?.type) {
+    switch (selectedNode?.node_type) {
       case 'twitter':
         return <Twitter />
       case 'guest':
@@ -26,6 +29,12 @@ export const View = ({ isSelectedView }: Props) => {
         return <Messages />
       case 'tweet':
         return <TwitData />
+      case 'topic':
+        return <Topic />
+      case 'show':
+        return <Show />
+      case 'clip':
+        return <AudioClip />
       default:
         return <Creator />
     }

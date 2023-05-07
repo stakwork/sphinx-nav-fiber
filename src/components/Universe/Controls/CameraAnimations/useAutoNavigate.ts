@@ -1,12 +1,12 @@
 /* eslint-disable no-param-reassign */
 import type { CameraControls } from '@react-three/drei'
-import { useFrame, Camera, useThree } from '@react-three/fiber'
+import { Camera, useFrame, useThree } from '@react-three/fiber'
 import { RefObject, useEffect, useState } from 'react'
 import * as THREE from 'three'
-import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
-import { useControlStore } from '~/stores/useControlStore'
-import { NodeExtended } from '~/types'
 import { playInspectSound } from '~/components/common/Sounds'
+import { useControlStore } from '~/stores/useControlStore'
+import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
+import { NodeExtended } from '~/types'
 
 let lookAtAnimationTimer: ReturnType<typeof setTimeout>
 
@@ -22,7 +22,15 @@ export const useAutoNavigate = (cameraControlsRef: RefObject<CameraControls | nu
   const [lookAtReached, setLookAtReached] = useState(false)
 
   // camera movement to selection params
-  const [minDistance] = useState(180)
+  const [minDistance, setMinDistance] = useState(180)
+
+  useEffect(() => {
+    if (selectedNode?.node_type === 'topic') {
+      setMinDistance(600)
+    } else {
+      setMinDistance(180)
+    }
+  }, [selectedNode, setMinDistance])
 
   const arrive = () => {
     setDistanceReached(true)

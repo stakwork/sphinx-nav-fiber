@@ -2,7 +2,7 @@ import * as Tone from 'tone'
 
 const highPassFilter = new Tone.Filter(900, 'highpass')
 
-const effectsBus = new Tone.Volume(-12)
+const effectsBus = new Tone.Volume(-6)
 
 effectsBus.chain(highPassFilter, Tone.Destination)
 
@@ -18,7 +18,7 @@ const monoSynth = new Tone.MonoSynth({
 })
 
 monoSynth.oscillator.type = 'triangle2'
-monoSynth.volume.value = -16
+monoSynth.volume.value = -6
 monoSynth.chain(highPassFilter, Tone.Destination)
 
 const monoSynth2 = new Tone.MonoSynth({
@@ -31,18 +31,18 @@ const monoSynth2 = new Tone.MonoSynth({
 }).connect(reverb)
 
 monoSynth2.oscillator.type = 'triangle'
-monoSynth2.volume.value = -10
+monoSynth2.volume.value = -6
 monoSynth2.chain(highPassFilter, Tone.Destination)
 
 function addOrganicVariant() {
-  return Math.floor((Math.random() - 0.5) * 14)
+  return Math.floor((Math.random() - 0.5) * 20)
 }
 
 export const playInspectSound = (distance = 0) => {
-  if (distance > 800) {
-    monoSynth2.triggerAttackRelease(100, 0.4)
-  } else {
-    let pitch = 710
+  if (distance > 2000) {
+    monoSynth2.triggerAttackRelease(60, 0.3)
+  } else if (distance > 1000) {
+    let pitch = 310
 
     pitch += addOrganicVariant()
 

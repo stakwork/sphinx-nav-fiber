@@ -1,6 +1,5 @@
 import moment from 'moment'
-import { ComponentType, useEffect } from 'react'
-import ReactAudioPlayer from 'react-audio-player'
+import { useEffect } from 'react'
 import styled from 'styled-components'
 import { Booster } from '~/components/Booster'
 import { Avatar } from '~/components/common/Avatar'
@@ -70,23 +69,13 @@ type Props = {
   description: string
   id?: string
   imageUrl: string
-  title: string
   type?: string
-
-  onAudioEnds: () => void
   onClick: () => void
 }
 
-const Audio = styled(ReactAudioPlayer as unknown as ComponentType<typeof ReactAudioPlayer.defaultProps>)`
-  width: 100%;
-  height: 20px;
-`
-
-export const Episode = ({ boostCount, date, description, id, imageUrl, title, type, onAudioEnds, onClick }: Props) => {
+export const Episode = ({ boostCount, date, description, id, imageUrl, type, onClick }: Props) => {
   const selectedTimestamp = useDataStore((s) => s.selectedTimestamp)
   const isSelected = !!(selectedTimestamp && selectedTimestamp.id === id)
-
-  const hasYouTubeType = type === 'youtube'
 
   useEffect(() => {
     if (!selectedTimestamp) {

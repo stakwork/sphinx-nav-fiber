@@ -33,7 +33,6 @@ const defaultData = {
 
 export const About = () => {
   const [setIsAdmin, isAdmin, setPubKey, pubKey] = useUserStore((s) => [s.setIsAdmin, s.isAdmin, s.setPubKey, s.pubKey])
-  const [admId, setAdmId] = useState('')
   const [loading, setLoading] = useState(false)
   const [initialValues, setInitialValues] = useState<TAboutParams>(defaultData)
 
@@ -46,7 +45,7 @@ export const About = () => {
 
         setInitialValues(response)
       } catch (error) {
-        console.log(error)
+        console.warn(error)
       } finally {
         setLoading(false)
       }
@@ -66,18 +65,11 @@ export const About = () => {
 
         setPubKey(pubKeyRes)
 
-        const queryString = window.location.search
-        const urlParams = new URLSearchParams(queryString)
-
-        const tribeId = urlParams.get('tribe')
-        let id
-
         if (pubKeyRes) {
-          // id = getAdminId(tribeId)
           setIsAdmin(pubKeyRes && admins.includes(pubKeyRes))
         }
       } catch (error) {
-        console.log(error)
+        console.warn(error)
       }
     })
   }

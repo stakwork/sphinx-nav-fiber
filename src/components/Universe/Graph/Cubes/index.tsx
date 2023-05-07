@@ -2,11 +2,11 @@ import { Select } from '@react-three/drei'
 import { memo, useCallback } from 'react'
 import { Object3D } from 'three'
 import { useGraphData } from '~/components/DataRetriever'
+import { NODE_RELATIVE_HIGHLIGHT_COLORS } from '~/constants'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { NodeExtended } from '~/types'
 import { Cube } from './Cube'
-import { NODE_RELATIVE_HIGHLIGHT_COLORS } from '~/constants'
 
 type NodeTypeColors = Record<string, string>
 
@@ -30,7 +30,9 @@ export const Cubes = memo(() => {
         // always close transcript when switching nodes
         setTranscriptOpen(false)
 
-        useDataStore.getState().setSelectedNode((node?.userData as NodeExtended) || null)
+        if (node.userData) {
+          useDataStore.getState().setSelectedNode((node?.userData as NodeExtended) || null)
+        }
       }
     },
     [setTranscriptOpen],
@@ -42,51 +44,53 @@ export const Cubes = memo(() => {
 
   return (
     <Select onChange={handleSelect}>
-      {data.nodes.map((node, index) => {
-        let highlight = false
+      {data.nodes
+        .filter((f) => !f.hidden)
+        .map((node, index) => {
+          let highlight = false
 
-        if (searchTerm && node.node_type === 'guest') {
-          if (shouldHighlightPartial) {
-            highlight = searchTerm
-              .split(' ')
-              .some((i) => node?.label.toLowerCase().match(new RegExp(`\\b${i.toLowerCase()}\\b`)) !== null)
-          } else {
-            highlight = node?.label.toLowerCase() === searchTerm.toLowerCase()
-          }
-        }
-
-        let relationHighlightColor: string | undefined
-
-        // highlight node if exists in children of selected
-        if (node?.ref_id && selectedNode?.children?.length && selectedNode.children.includes(node.ref_id)) {
-          highlight = true
-          relationHighlightColor = NODE_RELATIVE_HIGHLIGHT_COLORS.children.nodeColor
-        } else if (selectedNode?.guests?.length && node.type === 'guest') {
-          const nodeIsGuest = !!selectedNode?.guests.find((f) => {
-            if (typeof f !== 'string') {
-              return f?.ref_id && f.ref_id === node.ref_id
+          if (searchTerm && node.node_type === 'guest') {
+            if (shouldHighlightPartial) {
+              highlight = searchTerm
+                .split(' ')
+                .some((i) => node?.label.toLowerCase().match(new RegExp(`\\b${i.toLowerCase()}\\b`)) !== null)
+            } else {
+              highlight = node?.label.toLowerCase() === searchTerm.toLowerCase()
             }
-
-            return false
-          })
-
-          if (nodeIsGuest) {
-            // highlight node if exists in guests of selected
-            highlight = true
-            relationHighlightColor = NODE_RELATIVE_HIGHLIGHT_COLORS.guests.nodeColor
           }
-        }
 
-        return (
-          <Cube
-            // eslint-disable-next-line react/no-array-index-key
-            key={`${node.id}-${index}`}
-            highlight={highlight || !!NODE_TYPE_COLORS[node.node_type]}
-            highlightColor={relationHighlightColor || NODE_TYPE_COLORS[node.node_type] || 'green'}
-            node={node}
-          />
-        )
-      })}
+          let relationHighlightColor: string | undefined
+
+          // highlight node if exists in children of selected
+          if (node?.ref_id && selectedNode?.children?.length && selectedNode.children.includes(node.ref_id)) {
+            highlight = true
+            relationHighlightColor = NODE_RELATIVE_HIGHLIGHT_COLORS.children.nodeColor
+          } else if (selectedNode?.guests?.length && node.type === 'guest') {
+            const nodeIsGuest = !!selectedNode?.guests.find((f) => {
+              if (typeof f !== 'string') {
+                return f?.ref_id && f.ref_id === node.ref_id
+              }
+
+              return false
+            })
+
+            if (nodeIsGuest) {
+              // highlight node if exists in guests of selected
+              highlight = true
+              relationHighlightColor = NODE_RELATIVE_HIGHLIGHT_COLORS.guests.nodeColor
+            }
+          }
+
+          return (
+            <Cube
+              // eslint-disable-next-line react/no-array-index-key
+              key={`${node.id}-${index}`}
+              highlight={highlight || !!NODE_TYPE_COLORS[node.node_type]}
+              highlightColor={relationHighlightColor || NODE_TYPE_COLORS[node.node_type] || 'green'}
+              node={node}
+            />
+          )
+        })}
     </Select>
   )
 })
