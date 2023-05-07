@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */
-import { Mesh } from 'three'
+import { Mesh, Vector3 } from 'three'
 
 export type FetchDataResponse = {
   data_series?: { title: string }
@@ -23,6 +23,10 @@ export type RadarRequest = {
 export type Node = {
   boost?: number | null
   children?: string[]
+  x: number
+  y: number
+  z: number
+  hidden?: boolean
   colors?: string[]
   date?: number
   description?: string
@@ -78,6 +82,11 @@ export type Link<T = string> = {
   index?: T extends string ? never : number
   source: T
   target: T
+  sourceRef?: T
+  targetRef?: T
+  sourcePosition?: Vector3
+  targetPosition?: Vector3
+  onlyVisibleOnSelect?: boolean
 }
 
 export type GraphData<T = string> = {

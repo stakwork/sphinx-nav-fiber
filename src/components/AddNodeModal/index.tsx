@@ -259,7 +259,7 @@ export const AddNodeModal = () => {
 
         setSources(data.data)
       } catch (error) {
-        console.log(error)
+        console.warn(error)
       }
     }
   }

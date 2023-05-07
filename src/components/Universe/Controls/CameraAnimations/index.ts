@@ -1,19 +1,18 @@
 /* eslint-disable no-param-reassign */
 import type { CameraControls } from '@react-three/drei'
-import { MathUtils } from 'three'
 import gsap from 'gsap'
+import { MathUtils } from 'three'
 
 import { useFrame } from '@react-three/fiber'
-import { RefObject, useCallback, useEffect, useState } from 'react'
+import { RefObject, useCallback, useEffect } from 'react'
 
 import * as THREE from 'three'
-import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { useControlStore } from '~/stores/useControlStore'
+import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
+import { introAnimationTargetPosition } from './constants'
 import { useAutoNavigate } from './useAutoNavigate'
 
 const autoRotateSpeed = 1
-
-const introAnimationTargetPosition = new THREE.Vector3(-1900, -2200, -2800)
 
 let cameraAnimation: gsap.core.Tween | null = null
 
@@ -94,15 +93,6 @@ export const useCameraAnimations = (
     // graphRadius is calculated from initial graph render
     if (cameraControlsRef.current && graphRadius) {
       cameraControlsRef.current.maxDistance = cameraControlsRef.current.getDistanceToFitSphere(graphRadius + 200)
-
-      cameraControlsRef.current.minDistance = 1
-      cameraControlsRef.current.minPolarAngle = -Math.PI
-      cameraControlsRef.current.maxPolarAngle = Math.PI
-      cameraControlsRef.current.dollySpeed = 0.2
-      cameraControlsRef.current.dampingFactor = 0.1
-      cameraControlsRef.current.infinityDolly = false
-      cameraControlsRef.current.dollyToCursor = true
-      cameraControlsRef.current.boundaryEnclosesCamera = true
     }
 
     if (enabled) {
@@ -121,8 +111,6 @@ export const useCameraAnimations = (
 
   useEffect(() => {
     if (!selectedNode && cameraControlsRef.current) {
-      cameraControlsRef.current.smoothTime = 0.7
-
       cameraControlsRef.current.setLookAt(
         introAnimationTargetPosition.x,
         introAnimationTargetPosition.y,
