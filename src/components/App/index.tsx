@@ -1,3 +1,4 @@
+import { Leva } from 'leva'
 import { useCallback, useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import 'react-toastify/dist/ReactToastify.css'
@@ -9,13 +10,15 @@ import { DataRetriever } from '~/components/DataRetriever'
 import { GlobalStyle } from '~/components/GlobalStyle'
 import { Universe } from '~/components/Universe'
 import { Flex } from '~/components/common/Flex'
-import { isE2E } from '~/constants'
+import { isDevelopment, isE2E } from '~/constants'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { useModal } from '~/stores/useModalStore'
 import { colors } from '~/utils/colors'
 import { E2ETests } from '~/utils/tests'
 import version from '~/utils/versionHelper'
+import { generateForceGraphPositions } from '../../transformers/forceGraph'
+import { generateSplitGraphPositions } from '../../transformers/splitGraph'
 import { Preloader } from '../Universe/Preloader'
 import { AppBar } from './AppBar'
 import { FooterMenu } from './FooterMenu'
@@ -44,21 +47,26 @@ export const App = () => {
   const { open } = useModal('budgetExplanation')
 
   const selectedNode = useSelectedNode()
-  const setSidebarOpen = useAppStore((s) => s.setSidebarOpen)
 
-  const [searchTerm, setCurrentSearch, setRelevanceSelected, setTranscriptOpen] = useAppStore((s) => [
+  const [
+    setSidebarOpen,
+    searchTerm,
+    setCurrentSearch,
+    setRelevanceSelected,
+    setTranscriptOpen,
+    hasBudgetExplanationModalBeSeen,
+  ] = useAppStore((s) => [
+    s.setSidebarOpen,
     s.currentSearch,
     s.setCurrentSearch,
     s.setRelevanceSelected,
     s.setTranscriptOpen,
+    s.hasBudgetExplanationModalBeSeen,
   ])
 
-  const hasBudgetExplanationModalBeSeen = useAppStore((s) => s.hasBudgetExplanationModalBeSeen)
-
-  const fetchData = useDataStore((s) => s.fetchData)
-  const setSphinxModalOpen = useDataStore((s) => s.setSphinxModalOpen)
-  const setSelectedNode = useDataStore((s) => s.setSelectedNode)
-  const setCategoryFilter = useDataStore((s) => s.setCategoryFilter)
+  const [data, setData, fetchData, graphStyle, setSphinxModalOpen, setSelectedNode, setCategoryFilter] = useDataStore(
+    (s) => [s.data, s.setData, s.fetchData, s.graphStyle, s.setSphinxModalOpen, s.setSelectedNode, s.setCategoryFilter],
+  )
 
   const form = useForm<{ search: string }>({ mode: 'onChange' })
 
@@ -108,9 +116,28 @@ export const App = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchTerm, runSearch, hasBudgetExplanationModalBeSeen])
 
+  // switch graph style
+  useEffect(() => {
+    if (data) {
+      if (graphStyle === 'split') {
+        const updatedData = generateSplitGraphPositions(data)
+
+        setData(updatedData)
+      } else {
+        const updatedData = generateForceGraphPositions(data, true)
+
+        setData(updatedData)
+      }
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [graphStyle])
+
   return (
     <>
       <GlobalStyle />
+
+      <Leva hidden={!isDevelopment} />
 
       <Wrapper direction="row">
         <DataRetriever loader={<Preloader />}>

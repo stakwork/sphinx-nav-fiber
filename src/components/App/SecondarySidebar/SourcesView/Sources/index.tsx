@@ -41,7 +41,7 @@ export const Sources = () => {
 
         setSources(data.data)
       } catch (error) {
-        console.log(error)
+        console.warn(error)
       } finally {
         setLoading(false)
       }
@@ -74,17 +74,11 @@ export const Sources = () => {
 
         setPubKey(pubKeyRes)
 
-        const queryString = window.location.search
-        const urlParams = new URLSearchParams(queryString)
-
-        const tribeId = urlParams.get('tribe')
-
         if (pubKeyRes) {
-          // id = getAdminId(tribeId)
           setIsAdmin(pubKeyRes && admins.includes(pubKeyRes))
         }
       } catch (error) {
-        console.log(error)
+        console.warn(error)
       }
     })
   }
