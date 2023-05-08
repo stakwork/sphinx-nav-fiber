@@ -1,13 +1,13 @@
+import { useEffect, useState } from 'react'
 import * as sphinx from 'sphinx-bridge-kevkevinpal'
 import styled from 'styled-components'
-import { useState, useEffect } from 'react'
-import { useSelectedNode } from '~/stores/useDataStore'
-import { api } from '~/network/api'
-import { colors } from '~/utils/colors'
 import { Flex } from '~/components/common/Flex'
 import { Pill } from '~/components/common/Pill'
 import { Text } from '~/components/common/Text'
+import { api } from '~/network/api'
 import { useAppStore } from '~/stores/useAppStore'
+import { useSelectedNode } from '~/stores/useDataStore'
+import { colors } from '~/utils/colors'
 
 const ErrorWrapper = styled(Flex)`
   padding: 10px;
@@ -40,7 +40,7 @@ export const ErrorSection = () => {
     const trySphinx = await sphinx.enable(true)
 
     if (!trySphinx) {
-      console.log('Sphinx enable failed')
+      console.warn('Sphinx enable failed')
     }
 
     try {

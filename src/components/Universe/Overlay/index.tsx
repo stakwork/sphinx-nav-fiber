@@ -10,6 +10,7 @@ export const Overlay = () => {
   ])
 
   const selectedNode = useSelectedNode()
+
   const userMovedCamera = useControlStore((s) => s.userMovedCamera)
 
   return (
@@ -33,7 +34,9 @@ const OverlayWrap = styled.div`
   user-select: none;
   pointer-events: none;
   display: flex;
+
   justify-content: flex-end;
+  align-items: flex-start;
   height: 100%;
   width: 100%;
   padding: 16px;

@@ -30,7 +30,7 @@ const Table: React.FC<Props> = ({ data }) => {
 
         setSources(data.filter((i) => i.id !== id))
       } catch (error) {
-        console.log(error)
+        console.warn(error)
       }
     }
   }
@@ -46,7 +46,7 @@ const Table: React.FC<Props> = ({ data }) => {
       await deleteRadarData(id)
       setSources(data?.filter((i) => i.id !== id))
     } catch (error) {
-      console.log(error)
+      console.warn(error)
     } finally {
       setLoadingId('')
     }
