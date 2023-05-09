@@ -1,23 +1,20 @@
 /* eslint-disable no-param-reassign */
-import type { CameraControls } from "@react-three/drei";
-import { useFrame, Camera, useThree } from "@react-three/fiber";
-import { RefObject, useEffect, useState } from "react";
-import * as THREE from "three";
-import { useDataStore, useSelectedNode } from "~/stores/useDataStore";
-import { useControlStore } from "~/stores/useControlStore";
-import { NodeExtended } from "~/types";
-import { playInspectSound } from "~/components/common/Sounds";
+import type { CameraControls } from '@react-three/drei'
+import { Camera, useFrame, useThree } from '@react-three/fiber'
+import { RefObject, useEffect, useState } from 'react'
+import * as THREE from 'three'
+import { playInspectSound } from '~/components/common/Sounds'
+import { useControlStore } from '~/stores/useControlStore'
+import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
+import { NodeExtended } from '~/types'
 
 let lookAtAnimationTimer: ReturnType<typeof setTimeout>
 
-export const useAutoNavigate = (
-  cameraControlsRef: RefObject<CameraControls | null>
-) => {
+export const useAutoNavigate = (cameraControlsRef: RefObject<CameraControls | null>) => {
+  const selectedNode = useSelectedNode()
+  const cameraFocusTrigger = useDataStore((s) => s.cameraFocusTrigger)
 
-  const selectedNode = useSelectedNode();
-  const cameraFocusTrigger = useDataStore(s=>s.cameraFocusTrigger)
-
-  const { isUserDragging } = useControlStore();
+  const { isUserDragging } = useControlStore()
 
   const { camera } = useThree()
 
@@ -25,35 +22,39 @@ export const useAutoNavigate = (
   const [lookAtReached, setLookAtReached] = useState(false)
 
   // camera movement to selection params
-  const [minDistance] = useState(180)
-  
+  const [minDistance, setMinDistance] = useState(180)
+
+  useEffect(() => {
+    if (selectedNode?.node_type === 'topic') {
+      setMinDistance(600)
+    } else {
+      setMinDistance(180)
+    }
+  }, [selectedNode, setMinDistance])
+
   const arrive = () => {
     setDistanceReached(true)
   }
 
   const depart = () => {
     if (selectedNode) {
-      const mesh = new THREE.Vector3(
-        selectedNode.x,
-        selectedNode.y,
-        selectedNode.z
-      );
+      const mesh = new THREE.Vector3(selectedNode.x, selectedNode.y, selectedNode.z)
 
       const distance = camera.position.distanceTo(mesh)
-      
+
       playInspectSound(distance)
     }
 
     useControlStore.setState({ userMovedCamera: false })
     setDistanceReached(false)
-    setLookAtReached(false)        
+    setLookAtReached(false)
   }
 
   useEffect(() => {
     setDistanceReached(false)
     setLookAtReached(false)
     useControlStore.setState({ userMovedCamera: false })
-  },[cameraFocusTrigger])
+  }, [cameraFocusTrigger])
 
   useEffect(() => {
     // stop navigation when user interacts
@@ -63,7 +64,7 @@ export const useAutoNavigate = (
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isUserDragging])
-  
+
   useFrame((state) => {
     if (cameraControlsRef.current) {
       // do movement animation
@@ -77,9 +78,9 @@ export const useAutoNavigate = (
         }
       }
     }
-  });
+  })
 
-  useEffect(() => {    
+  useEffect(() => {
     if (selectedNode) {
       clearTimeout(lookAtAnimationTimer)
 
@@ -87,21 +88,16 @@ export const useAutoNavigate = (
         setLookAtReached(true)
         clearTimeout(lookAtAnimationTimer)
       }, 2000)
-      
-      depart() 
+
+      depart()
     }
 
-    return ()=> clearTimeout(lookAtAnimationTimer)
+    return () => clearTimeout(lookAtAnimationTimer)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedNode]);
+  }, [selectedNode])
 
-  
   const moveCameraToNode = (node: NodeExtended, cam: Camera) => {
-    const mesh = new THREE.Vector3(
-      node.x,
-      node.y,
-      node.z
-    );
+    const mesh = new THREE.Vector3(node.x, node.y, node.z)
 
     const distance = cam.position.distanceTo(mesh)
 
@@ -115,14 +111,10 @@ export const useAutoNavigate = (
   }
 
   const turnCameraToNode = (node: NodeExtended, cam: Camera) => {
-    const mesh = new THREE.Vector3(
-      node.x,
-      node.y,
-      node.z
-    );
-    
-    cameraControlsRef?.current?.setLookAt(cam.position.x, cam.position.y, cam.position.z, mesh.x, mesh.y, mesh.z, true) 
+    const mesh = new THREE.Vector3(node.x, node.y, node.z)
+
+    cameraControlsRef?.current?.setLookAt(cam.position.x, cam.position.y, cam.position.z, mesh.x, mesh.y, mesh.z, true)
   }
 
-  return null;
-};
+  return null
+}

@@ -1,8 +1,8 @@
-import { ChangeEvent, forwardRef, useCallback } from "react";
-import { defaultProps } from "./defaultProps";
-import { autoCompleteValuesWeb } from "./tokens/autoComplete";
-import { BaseTextInputProps, ForwardedRef } from "./types";
-import { WebTextInput } from "./WebTextInput";
+import { ChangeEvent, forwardRef, useCallback } from 'react'
+import { defaultProps } from './defaultProps'
+import { autoCompleteValuesWeb } from './tokens/autoComplete'
+import { BaseTextInputProps, ForwardedRef } from './types'
+import { WebTextInput } from './WebTextInput'
 
 export const BaseTextInput = forwardRef(
   (
@@ -27,18 +27,16 @@ export const BaseTextInput = forwardRef(
       type = defaultProps.type,
       value,
     }: BaseTextInputProps,
-    ref: ForwardedRef<HTMLInputElement>
+    ref: ForwardedRef<HTMLInputElement>,
   ) => {
-
     const handleChange = useCallback(
       (event: ChangeEvent<HTMLInputElement>) => {
-
         if (onChange) {
-          onChange(event.target.value);
+          onChange(event.target.value)
         }
       },
-      [onChange]
-    );
+      [onChange],
+    )
 
     return (
       <WebTextInput
@@ -63,10 +61,10 @@ export const BaseTextInput = forwardRef(
         type={type}
         value={value}
       />
-    );
-  }
-);
+    )
+  },
+)
 
-BaseTextInput.displayName = "BaseTextInput";
+BaseTextInput.displayName = 'BaseTextInput'
 
-export type { BaseTextInputProps };
+export type { BaseTextInputProps }
