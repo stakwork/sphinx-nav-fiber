@@ -6,11 +6,11 @@ import { requiredRule } from '../index'
 import { TagInput } from '../TagInput'
 import { TextArea } from '../TextArea'
 import { TextInput } from '../TextInput'
-import { FaCheck } from 'react-icons/fa';
+import { FaCheck } from 'react-icons/fa'
 
 type Props = {
   startTime?: string
-  setValue?: (field: string, value: boolean) => void,
+  setValue?: (field: string, value: boolean) => void
 }
 
 const tagRule = {
@@ -26,14 +26,14 @@ const twitterOrYoutubeRegexOrMp3 =
   /^(?:(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)[\w-]{11}(?:\S*)?|(?:https?:\/\/)?(?:www\.)?twitter\.com\/i\/spaces\/\d+(?:\?|$)|.+\.mp3)$/i
 
 export const SourceUrl: FC<Props> = ({ setValue, startTime }) => {
-  const [enableTimestamps, setEnableTimestamps] = useState(false);
+  const [enableTimestamps, setEnableTimestamps] = useState(false)
 
   const handleTimestamps = () => {
-    if(setValue) {
-        setValue('withTimeStamps', !enableTimestamps);
+    if (setValue) {
+      setValue('withTimeStamps', !enableTimestamps)
     }
 
-    setEnableTimestamps(!enableTimestamps);
+    setEnableTimestamps(!enableTimestamps)
   }
 
   return (

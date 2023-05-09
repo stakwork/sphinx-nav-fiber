@@ -20,7 +20,6 @@ import {
   TWITTER_SOURCE,
   WEB_PAGE,
   YOUTUBE_CHANNEL,
-  isDevelopment,
 } from '~/constants'
 import { api } from '~/network/api'
 import { getRadarData } from '~/network/fetchSourcesData'
@@ -28,6 +27,7 @@ import { useModal } from '~/stores/useModalStore'
 import { FetchRadarResponse, SubmitErrRes } from '~/types'
 import { colors } from '~/utils/colors'
 import { getLSat } from '~/utils/getLSat'
+import { executeIfProd } from '~/utils/tests'
 import { timeToMilliseconds } from '~/utils/timeToMilliseconds'
 import { useDataStore } from '../../stores/useDataStore/index'
 import StyledSelect from '../Select'
@@ -130,9 +130,10 @@ const handleSubmit = async (data: FieldValues, close: () => void, sourceType: st
     }
   }
 
-  let lsatToken
+  let lsatToken: string | null = null
 
-  if (!isDevelopment) {
+  // skipping this for end to end test because it requires a sphinx-relay to be connected
+  await executeIfProd(async () => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     const enable = await sphinx.enable()
@@ -144,14 +145,20 @@ const handleSubmit = async (data: FieldValues, close: () => void, sourceType: st
     if (!lsatToken) {
       throw new Error('An error occured calling getLSat')
     }
-  }
+  })
 
   const endPoint = CONTENT_TYPES.includes(sourceType) ? 'add_node' : 'radar'
 
   try {
-    const res: SubmitErrRes = await api.post(`/${endPoint}`, JSON.stringify(body), {
-      Authorization: lsatToken,
-    } as HeadersInit)
+    const res: SubmitErrRes = await api.post(
+      `/${endPoint}`,
+      JSON.stringify(body),
+      (lsatToken
+        ? {
+            Authorization: lsatToken,
+          }
+        : {}) as HeadersInit,
+    )
 
     if (res.error) {
       const { message } = res.error
@@ -252,7 +259,7 @@ export const AddNodeModal = () => {
 
         setSources(data.data)
       } catch (error) {
-        console.log(error)
+        console.warn(error)
       }
     }
   }

@@ -2,17 +2,17 @@ import { Instance } from '@react-three/drei'
 import { ThreeEvent } from '@react-three/fiber'
 import { memo, useCallback, useRef } from 'react'
 import * as THREE from 'three'
+import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { useSomeModalIsOpen } from '~/stores/useModalStore'
 import { NodeExtended } from '~/types'
+import { getHighlighter } from '../constants'
 
 type Props = {
   node: NodeExtended
-  highlight: boolean
-  highlightColor: string
 }
 
-export const NodeInstance = memo(({ node, highlight, highlightColor }: Props) => {
+export const NodeInstance = memo(({ node }: Props) => {
   const ref = useRef<THREE.Mesh | null>(null)
 
   const isSomeModalOpened = useSomeModalIsOpen()
@@ -21,6 +21,7 @@ export const NodeInstance = memo(({ node, highlight, highlightColor }: Props) =>
   const setHoveredNode = useDataStore((s) => s.setHoveredNode)
   const setSelectedNode = useDataStore((s) => s.setSelectedNode)
   const categoryFilter = useDataStore((s) => s.categoryFilter)
+  const searchTerm = useAppStore((s) => s.currentSearch)
   const isSelectedCategory = node.node_type === categoryFilter
   const isSelected = selectedNode?.id === node.id
 
@@ -46,6 +47,12 @@ export const NodeInstance = memo(({ node, highlight, highlightColor }: Props) =>
   )
 
   const scale = node.scale || 2
+
+  const { highlight, highlightColor } = getHighlighter({
+    node,
+    selectedNode,
+    searchTerm,
+  })
 
   return (
     <>

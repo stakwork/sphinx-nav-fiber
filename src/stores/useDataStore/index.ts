@@ -1,9 +1,10 @@
 import create from 'zustand'
 import { isChileGraph } from '~/constants'
-import { getMockGraphData } from '~/mocks/getMockGraphData'
 import { fetchGraphData } from '~/network/fetchGraphData'
 import { GraphData, NodeExtended, NodeType, Sources } from '~/types'
 import { saveSearchTerm } from '~/utils/relayHelper/index'
+
+type GraphStyle = 'split' | 'force'
 
 type DataStore = {
   scrollEventsDisabled: boolean
@@ -11,6 +12,7 @@ type DataStore = {
   disableCameraRotation: boolean
   graphRadius: number | null
   data: GraphData | null
+  graphStyle: GraphStyle
   isFetching: boolean
   isTimestampLoaded: boolean
   hoveredNode: NodeExtended | null
@@ -24,6 +26,8 @@ type DataStore = {
   setCategoryFilter: (categoryFilter: NodeType | null) => void
   setDisableCameraRotation: (rotation: boolean) => void
   fetchData: (search?: string | null) => void
+  setData: (data: GraphData) => void
+  setGraphStyle: (graphStyle: GraphStyle) => void
   setGraphRadius: (graphRadius?: number | null) => void
   setHoveredNode: (hoveredNode: NodeExtended | null) => void
   setSelectedNode: (selectedNode: NodeExtended | null) => void
@@ -32,11 +36,14 @@ type DataStore = {
   setQueuedSources: (sources: Sources[] | null) => void
   setSphinxModalOpen: (_: boolean) => void
   setCameraFocusTrigger: (_: boolean) => void
+  setIsFetching: (_: boolean) => void
 }
 
 const defaultData: Omit<
   DataStore,
   | 'fetchData'
+  | 'setIsFetching'
+  | 'setData'
   | 'setCameraAnimation'
   | 'setScrollEventsDisabled'
   | 'setCategoryFilter'
@@ -49,12 +56,14 @@ const defaultData: Omit<
   | 'setSources'
   | 'setQueuedSources'
   | 'setGraphRadius'
+  | 'setGraphStyle'
 > = {
   categoryFilter: null,
   data: null,
   scrollEventsDisabled: false,
   disableCameraRotation: false,
   graphRadius: isChileGraph ? 1600 : 3056, // calculated from initial load
+  graphStyle: 'force',
   isFetching: false,
   isTimestampLoaded: false,
   queuedSources: null,
@@ -73,28 +82,23 @@ export const useDataStore = create<DataStore>((set, get) => ({
       return
     }
 
-    set({ isFetching: true })
+    set({ isFetching: true, sphinxModalIsOpen: true })
 
-    if (search?.length) {
-      set({ sphinxModalIsOpen: true })
+    const data = await fetchGraphData(search || '')
 
-      const data = await fetchGraphData(search)
-
-      await saveSearchTerm(search)
-
-      set({ data, isFetching: false, sphinxModalIsOpen: false })
-
-      return
+    if (search) {
+      await saveSearchTerm()
     }
 
-    const mockGraphData = await getMockGraphData()
-
-    set({ data: mockGraphData, isFetching: false })
+    set({ data, isFetching: false, sphinxModalIsOpen: false })
   },
+  setIsFetching: (isFetching) => set({ isFetching }),
+  setData: (data) => set({ data }),
   setScrollEventsDisabled: (scrollEventsDisabled) => set({ scrollEventsDisabled }),
   setCategoryFilter: (categoryFilter) => set({ categoryFilter }),
   setDisableCameraRotation: (rotation) => set({ disableCameraRotation: rotation }),
   setGraphRadius: (graphRadius) => set({ graphRadius }),
+  setGraphStyle: (graphStyle) => set({ graphStyle }),
   setQueuedSources: (queuedSources) => set({ queuedSources }),
   setHoveredNode: (hoveredNode) => set({ hoveredNode }),
   setSelectedNode: (selectedNode) => set({ isTimestampLoaded: false, selectedNode }),

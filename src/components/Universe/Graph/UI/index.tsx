@@ -24,7 +24,7 @@ export const NodeDetailsPanel = memo(() => {
 
       {transcriptIsOpen && (
         <HtmlPanel intensity={2} position={position} speed={4} withTransacript>
-          <Transcript />
+          <Transcript node={selectedNode} />
         </HtmlPanel>
       )}
     </>

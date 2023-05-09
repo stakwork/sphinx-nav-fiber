@@ -1,7 +1,7 @@
-import { FC } from "react";
-import { Flex } from "~/components/common/Flex";
-import { Text } from "~/components/common/Text";
-import { TAboutParams } from "~/network/fetchSourcesData";
+import { FC } from 'react'
+import { Flex } from '~/components/common/Flex'
+import { Text } from '~/components/common/Text'
+import { TAboutParams } from '~/network/fetchSourcesData'
 
 type Props = {
   initialValues: TAboutParams
@@ -30,14 +30,14 @@ export const CommonView: FC<Props> = ({ initialValues }) => (
       </Flex>
     )}
     {initialValues.mission_statement && (
-    <Flex pt={12}>
-      <Text kind="regular">Mission Statement</Text>
       <Flex pt={12}>
-        <Text className="value" kind="medium">
-          {initialValues.mission_statement}
-        </Text>
+        <Text kind="regular">Mission Statement</Text>
+        <Flex pt={12}>
+          <Text className="value" kind="medium">
+            {initialValues.mission_statement}
+          </Text>
+        </Flex>
       </Flex>
-    </Flex>
     )}
   </>
-);
+)

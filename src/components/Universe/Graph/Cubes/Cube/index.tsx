@@ -1,6 +1,7 @@
+import { Text } from '@react-three/drei'
 import { ThreeEvent, useFrame } from '@react-three/fiber'
 import { Select } from '@react-three/postprocessing'
-import { memo, useCallback, useEffect, useRef, useState } from 'react'
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import * as THREE from 'three'
 import { usePathway } from '~/components/DataRetriever'
 import { useAppStore } from '~/stores/useAppStore'
@@ -21,6 +22,8 @@ const getGeometry = (node: NodeExtended) => {
       return geometryS
     case 'show':
       return geometryM
+    case 'topic':
+      return geometryXs
     default:
       return geometryXs
   }
@@ -32,29 +35,42 @@ type Props = {
   highlightColor: string
 }
 
+const fontProps = {
+  font: '/Inter-Bold.woff',
+  fontSize: 2.5,
+  letterSpacing: -0.05,
+  lineHeight: 1,
+  'material-toneMapped': false,
+}
+
 export const Cube = memo(({ node, highlight, highlightColor }: Props) => {
   const ref = useRef<THREE.Mesh | null>(null)
+
   const [hovered, setHovered] = useState(false)
 
-  const isSomeModalOpened = useSomeModalIsOpen()
+  const [categoryFilter, selectedTimestamp, graphStyle] = useDataStore((s) => [
+    s.categoryFilter,
+    s.selectedTimestamp,
+    s.graphStyle,
+  ])
 
-  const categoryFilter = useDataStore((s) => s.categoryFilter)
+  const isSomeModalOpened = useSomeModalIsOpen()
 
   const transcriptIsOpen = useAppStore((s) => s.transcriptIsOpen)
 
   const selectedNode = useSelectedNode()
 
   const material = useMaterial(node.image_url || 'noimage.jpeg', highlight, highlightColor)
+  const geometry = useMemo(() => getGeometry(node), [node])
 
   const isSelected = selectedNode?.id === node.id
   const isSelectedCategory = node.node_type === categoryFilter
 
-  useFrame(() => {
-    if (selectedNode) {
-      material.toneMapped = false
+  useFrame(({ camera }) => {
+    if (ref?.current && node.node_type === 'topic') {
+      // Make text face the camera
+      ref.current.quaternion.copy(camera.quaternion)
     }
-
-    ref.current?.position.set(node.x || 0, node.y || 0, node.z || 0)
   })
 
   useEffect(() => {
@@ -82,17 +98,45 @@ export const Cube = memo(({ node, highlight, highlightColor }: Props) => {
 
   const { currentNodeIndex } = usePathway()
 
+  const scale = useMemo(() => {
+    if (graphStyle === 'split' && node.scale) {
+      return node.scale
+    }
+
+    return hovered ? 1.1 : 1
+  }, [graphStyle, hovered, node.scale])
+
+  if (node.node_type === 'topic') {
+    return (
+      <Text
+        ref={ref}
+        anchorX="center"
+        anchorY="middle"
+        color={isSelected ? 'white' : 'lightgray'}
+        onPointerOut={onPointerOut}
+        onPointerOver={onPointerIn}
+        position={[node.x, node.y, node.z]}
+        scale={scale * 4}
+        userData={node}
+        {...fontProps}
+      >
+        {node.label}
+      </Text>
+    )
+  }
+
   return (
     <>
       <Select enabled={selectedNode ? isSelected : isSelectedCategory}>
         <mesh
           ref={ref}
-          geometry={getGeometry(node)}
+          geometry={geometry}
           material={material}
           name={node.id}
           onPointerOut={onPointerOut}
           onPointerOver={onPointerIn}
-          scale={hovered && !isSelected ? 1.5 : 1}
+          position={[node.x, node.y, node.z]}
+          scale={scale}
           userData={node}
         >
           <PathwayBadge show={currentNodeIndex >= 0} value={currentNodeIndex + 1} />

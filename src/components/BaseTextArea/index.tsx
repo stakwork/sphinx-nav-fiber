@@ -1,7 +1,7 @@
-import { ChangeEvent, forwardRef, useCallback } from "react";
-import { defaultProps } from "./defaultProps";
-import { BaseTextAreaProps, ForwardedRef } from "./types";
-import { WebTextArea } from "./WebTextArea";
+import { ChangeEvent, forwardRef, useCallback } from 'react'
+import { defaultProps } from './defaultProps'
+import { BaseTextAreaProps, ForwardedRef } from './types'
+import { WebTextArea } from './WebTextArea'
 
 export const BaseTextArea = forwardRef(
   (
@@ -23,16 +23,16 @@ export const BaseTextArea = forwardRef(
       textAlign = defaultProps.textAlign,
       value,
     }: BaseTextAreaProps,
-    ref: ForwardedRef<HTMLTextAreaElement>
+    ref: ForwardedRef<HTMLTextAreaElement>,
   ) => {
     const handleChange = useCallback(
       (event: ChangeEvent<HTMLTextAreaElement>) => {
         if (onChange) {
-          onChange(event.target.value);
+          onChange(event.target.value)
         }
       },
-      [onChange]
-    );
+      [onChange],
+    )
 
     return (
       <WebTextArea
@@ -54,10 +54,10 @@ export const BaseTextArea = forwardRef(
         textAlign={textAlign}
         value={value}
       />
-    );
-  }
-);
+    )
+  },
+)
 
-BaseTextArea.displayName = "BaseTextArea";
+BaseTextArea.displayName = 'BaseTextArea'
 
-export type { BaseTextAreaProps };
+export type { BaseTextAreaProps }

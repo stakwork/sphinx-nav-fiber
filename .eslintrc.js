@@ -33,6 +33,7 @@ module.exports = {
   root: true,
   rules: {
     '@typescript-eslint/explicit-function-return-type': 'off',
+    'no-console': ['error', { allow: ['warn', 'error'] }],
     '@typescript-eslint/explicit-member-accessibility': [
       'error',
       {
@@ -47,6 +48,7 @@ module.exports = {
     '@typescript-eslint/no-shadow': 'error',
     '@typescript-eslint/no-useless-constructor': 'error',
     '@typescript-eslint/no-var-requires': 'off',
+    '@typescript-eslint/no-unused-vars': 'error',
     '@typescript-eslint/prefer-interface': 'off',
     '@typescript-eslint/prefer-optional-chain': 'error',
     'arrow-body-style': ['error', 'as-needed'],
@@ -114,7 +116,7 @@ module.exports = {
     'react/jsx-no-leaked-render': 'off',
     'react/jsx-no-useless-fragment': 'off',
     'react/jsx-props-no-spreading': 'off',
-    'react/jsx-sort-props': 'off',
+    'react/jsx-sort-props': 'error',
     'react/jsx-uses-react': 'off',
     /* This is a temporary fix for react-three-fiber components */
     'react/no-unknown-property': 'off',
