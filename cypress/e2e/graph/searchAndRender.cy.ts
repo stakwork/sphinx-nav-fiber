@@ -12,6 +12,7 @@ describe('Search and render / Home interactions', () => {
     }).as('stats')
 
     cy.wait('@stats')
+    cy.wait(5000)
   })
 
   it('Search and render the Graph', () => {
