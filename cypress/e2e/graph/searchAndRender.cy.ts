@@ -1,5 +1,5 @@
 import { budgetModal, getScenenChildrens, host, loader } from '../../support'
-import { search } from './const'
+import { search, searchResultList } from './const'
 
 describe('Search and render / Home interactions', () => {
   beforeEach(() => {
@@ -28,5 +28,6 @@ describe('Search and render / Home interactions', () => {
     cy.wait('@search')
 
     getScenenChildrens().should('exist')
+    cy.get(searchResultList).should('exist')
   })
 })

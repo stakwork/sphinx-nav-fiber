@@ -4,6 +4,7 @@ import { addSourcesBtn, openSourceBtn, table, testTitle } from './const'
 
 const modal = () => cy.get(addNodeModal)
 const toastBody = () => cy.get(toast)
+const getDeleteWrapperId = (s: string) => `#delete-${s}`
 
 describe('Sources Table / Home interactions', () => {
   beforeEach(() => {
@@ -43,7 +44,7 @@ describe('Sources Table / Home interactions', () => {
       cy.wait('@radar')
 
       toastBody().should('be.visible')
-      cy.get(table).find('tbody tr:last-child').contains(testTitle)
+      cy.get(table).find('tbody').contains(testTitle)
     })
 
     it("Can't edit the table", () => {
@@ -51,7 +52,7 @@ describe('Sources Table / Home interactions', () => {
 
       // Try to delete an item
       cy.get(table).should('exist').and('contain.text', testTitle)
-      cy.get('tbody > tr:first-child .delete-wrapper').should('not.exist')
+      cy.get(table).contains(testTitle).parents().eq(0).get('.delete-wrapper').should('not.exist')
 
       // Try to update an Item
       const cell = () => cy.get('tbody > tr:first-child > td + td')
@@ -77,16 +78,21 @@ describe('Sources Table / Home interactions', () => {
       }).as('delete')
 
       // Update an Item
-      const cell = () => cy.get('tbody > tr:last-child > td + td:not(:last-child) > div')
+      const cell = (title) => cy.get(table).get('tbody').contains(title).parents().eq(0)
 
-      cell().find(' > div').find('svg').click({ force: true })
-      cell().find('input').click().type('1')
-      cell().find('input + div').click()
+      cell(testTitle).find(' > div').find('svg').click({ force: true })
+
+      cy.get(table).get('tbody').find('input').click().type('1')
+      cy.get(table).get('tbody').find('input + div').click()
+
       cy.wait('@update')
-      cy.get(table).find('tbody tr:last-child').contains(`${testTitle}1`)
+      cy.get(table).find('tbody').contains(`${testTitle}1`)
 
       // Delete an item
-      cy.get('tbody > tr:last-child .delete-wrapper').should('exist').click()
+      cy.get(table)
+        .get('tbody')
+        .find(getDeleteWrapperId(`${testTitle}1`))
+        .click()
 
       cy.get('[role="presentation"]').find('button:first-child').should('exist').contains(/yes/i).click()
       cy.wait('@delete')
