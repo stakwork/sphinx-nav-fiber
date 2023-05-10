@@ -26,7 +26,7 @@ export const QueuedSources = () => {
 
         setSources(data.data)
       } catch (error) {
-        console.log(error)
+        console.warn(error)
       } finally {
         setLoading(false)
       }

@@ -1,22 +1,25 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import {
   MdAddLink,
   MdClose,
+  MdHomeFilled,
   MdOutlineMenu,
   MdOutlineShowChart,
   MdOutlineTableView,
   MdPostAdd,
-  MdHomeFilled,
+  MdRefresh,
 } from 'react-icons/md'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { SecondarySidebarActiveTab, useAppStore } from '~/stores/useAppStore'
+import { useDataStore } from '~/stores/useDataStore'
 import { AddNodeModalData, useModal } from '~/stores/useModalStore'
 import { colors } from '~/utils/colors'
 
 export const FooterMenu = () => {
   const [setSecondarySidebarActiveTab] = useAppStore((s) => [s.setSecondarySidebarActiveTab])
+  const [graphStyle, setGraphStyle] = useDataStore((s) => [s.graphStyle, s.setGraphStyle])
   const wrapperRef = useRef<HTMLDivElement>(null)
 
   const [isOpened, setIsOpened] = useState(false)
@@ -31,6 +34,14 @@ export const FooterMenu = () => {
     open()
     setAddNodeModalData(data)
   }
+
+  const changeGraphType = useCallback(() => {
+    if (graphStyle !== 'split') {
+      setGraphStyle('split')
+    } else {
+      setGraphStyle('force')
+    }
+  }, [graphStyle, setGraphStyle])
 
   const handleClickOutside = (event: MouseEvent) => {
     if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
@@ -82,6 +93,12 @@ export const FooterMenu = () => {
                   <MdOutlineShowChart size={24} />
                 </IconWrapper>
               </ActionButton>
+              <ActionButton onClick={() => changeGraphType()}>
+                <Text>Change Display</Text>
+                <IconWrapper>
+                  <MdRefresh size={24} />
+                </IconWrapper>
+              </ActionButton>
             </>
           )}
           <ActionButton className="root" id="cy-actions-menu-toggle" onClick={() => setIsOpened(!isOpened)}>
@@ -94,7 +111,7 @@ export const FooterMenu = () => {
 }
 
 const FooterAction = styled(Flex).attrs({
-  align: 'center',
+  align: 'flex-end',
   direction: 'row',
   grow: 1,
   justify: 'space-between',

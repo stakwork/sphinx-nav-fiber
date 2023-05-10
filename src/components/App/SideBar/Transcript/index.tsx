@@ -3,13 +3,14 @@ import styled, { keyframes } from 'styled-components'
 import { MENU_WIDTH } from '~/components/App/SideBar'
 import { Button } from '~/components/Button'
 import { Flex } from '~/components/common/Flex'
+import { Text } from '~/components/common/Text'
 import { useAppStore } from '~/stores/useAppStore'
-import { useSelectedNode } from '~/stores/useDataStore'
+import { NodeExtended } from '~/types'
 import { colors } from '~/utils/colors'
 
 const copiedAnimation = keyframes`
   0% { opacity: 0; }
-  100% { opacity: 1; } 
+  100% { opacity: 1; }
 `
 
 const copyNodeText = (text: string | undefined) => {
@@ -30,41 +31,43 @@ const copyNodeText = (text: string | undefined) => {
   }
 }
 
-export const Transcript = () => {
+type TranscriptProps = {
+  stateless?: boolean
+  node: NodeExtended | null
+}
+
+export const Transcript = ({ stateless, node }: TranscriptProps) => {
   const [transcriptIsOpen, setTranscriptOpen] = useAppStore((s) => [s.transcriptIsOpen, s.setTranscriptOpen])
 
-  const selectedNode = useSelectedNode()
-
-  if (!transcriptIsOpen) {
+  if (!stateless && !transcriptIsOpen) {
     return null
   }
 
   return (
     <Wrapper style={{ left: MENU_WIDTH }}>
-      <Flex direction="row" justify="space-between">
-        {selectedNode?.text ? (
-          <CopyButton
-            className="copy-button"
-            kind="small"
-            onPointerDown={() => copyNodeText(selectedNode?.text)}
-            type="button"
-          >
-            Copy text
+      <Flex align="center" direction="row" justify="space-between">
+        {stateless && <Text kind="heading">Transcript</Text>}
+
+        {node?.text ? (
+          <CopyButton className="copy-button" kind="small" onPointerDown={() => copyNodeText(node?.text)} type="button">
+            Copy Transcript
           </CopyButton>
         ) : (
           <div />
         )}
 
-        <CloseButton
-          onClick={() => {
-            setTranscriptOpen(false)
-          }}
-        >
-          <MdClose fontSize={35} />
-        </CloseButton>
+        {!stateless && (
+          <CloseButton
+            onClick={() => {
+              setTranscriptOpen(false)
+            }}
+          >
+            <MdClose fontSize={35} />
+          </CloseButton>
+        )}
       </Flex>
 
-      <Box>&quot;{selectedNode?.text || 'No transcript'}&quot;</Box>
+      <Box>{node?.text ? `"${node?.text}"` : '...'}</Box>
     </Wrapper>
   )
 }
@@ -97,7 +100,7 @@ const CopyButton = styled(Button)`
 
 const Box = styled(Flex)`
   color: ${colors.white};
-  margin-top: 10px;
+  margin-top: 20px;
   font-weight: 400;
   font-size: 20px;
   line-height: 24px;

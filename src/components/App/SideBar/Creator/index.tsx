@@ -1,15 +1,13 @@
 import { useEffect, useMemo } from 'react'
+import { useGraphData } from '~/components/DataRetriever'
 import { Divider } from '~/components/common/Divider'
 import { Flex } from '~/components/common/Flex'
-import { Text } from '~/components/common/Text'
-import { useGraphData } from '~/components/DataRetriever'
+import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { getSelectedNodeTimestamps } from '~/utils/getSelectedNodeTimestamps'
-import { useAppStore } from '~/stores/useAppStore'
-import { Relevance } from '../Relevance'
+import { ErrorSection } from './ErrorSection'
 import { Heading } from './Heading'
 import { Timestamp } from './Timestamp'
-import { ErrorSection } from './ErrorSection'
 
 export const Creator = () => {
   const data = useGraphData()
