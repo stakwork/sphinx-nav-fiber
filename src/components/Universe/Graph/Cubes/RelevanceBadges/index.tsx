@@ -41,20 +41,21 @@ const PathwayBadge = ({ position, value, userData }: Props) => {
   const setSelectedNode = useDataStore((s) => s.setSelectedNode)
   const selectedNode = useSelectedNode()
   const selected = userData?.ref_id === selectedNode?.ref_id
+
   return (
     <mesh position={position} userData={userData}>
       <boxGeometry />
       <meshStandardMaterial />
-      <Html center sprite={true}>
+      <Html center sprite>
         <Tag
           justify="center"
-          selected={selected}
-          visible={value ? true : false}
           onClick={() => {
             if (userData) {
               setSelectedNode(userData)
             }
           }}
+          selected={selected}
+          visible={!!value}
         >
           {value}
         </Tag>
@@ -69,17 +70,17 @@ export const RelevanceBadges = () => {
   // explicitly never rerender these between clicks, teardown takes too long
   return (
     <>
-      <PathwayBadge userData={badges[0]?.userData} value={badges[0]?.value} position={badges[0]?.position} />
-      <PathwayBadge userData={badges[1]?.userData} value={badges[1]?.value} position={badges[1]?.position} />
-      <PathwayBadge userData={badges[2]?.userData} value={badges[2]?.value} position={badges[2]?.position} />
-      <PathwayBadge userData={badges[3]?.userData} value={badges[3]?.value} position={badges[3]?.position} />
-      <PathwayBadge userData={badges[4]?.userData} value={badges[4]?.value} position={badges[4]?.position} />
-      <PathwayBadge userData={badges[5]?.userData} value={badges[5]?.value} position={badges[5]?.position} />
-      <PathwayBadge userData={badges[6]?.userData} value={badges[6]?.value} position={badges[6]?.position} />
-      <PathwayBadge userData={badges[7]?.userData} value={badges[7]?.value} position={badges[7]?.position} />
-      <PathwayBadge userData={badges[8]?.userData} value={badges[8]?.value} position={badges[8]?.position} />
-      <PathwayBadge userData={badges[9]?.userData} value={badges[9]?.value} position={badges[9]?.position} />
-      <PathwayBadge userData={badges[10]?.userData} value={badges[9]?.value} position={badges[9]?.position} />
+      <PathwayBadge position={badges[0]?.position} userData={badges[0]?.userData} value={badges[0]?.value} />
+      <PathwayBadge position={badges[1]?.position} userData={badges[1]?.userData} value={badges[1]?.value} />
+      <PathwayBadge position={badges[2]?.position} userData={badges[2]?.userData} value={badges[2]?.value} />
+      <PathwayBadge position={badges[3]?.position} userData={badges[3]?.userData} value={badges[3]?.value} />
+      <PathwayBadge position={badges[4]?.position} userData={badges[4]?.userData} value={badges[4]?.value} />
+      <PathwayBadge position={badges[5]?.position} userData={badges[5]?.userData} value={badges[5]?.value} />
+      <PathwayBadge position={badges[6]?.position} userData={badges[6]?.userData} value={badges[6]?.value} />
+      <PathwayBadge position={badges[7]?.position} userData={badges[7]?.userData} value={badges[7]?.value} />
+      <PathwayBadge position={badges[8]?.position} userData={badges[8]?.userData} value={badges[8]?.value} />
+      <PathwayBadge position={badges[9]?.position} userData={badges[9]?.userData} value={badges[9]?.value} />
+      <PathwayBadge position={badges[9]?.position} userData={badges[10]?.userData} value={badges[9]?.value} />
     </>
   )
 }

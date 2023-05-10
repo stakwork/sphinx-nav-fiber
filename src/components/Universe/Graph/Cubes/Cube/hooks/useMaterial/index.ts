@@ -15,9 +15,10 @@ export const useMaterial = (url: string, highlight: boolean, highlightColor = 'g
     }
 
     const map = loader.load(url, undefined, undefined, () => {
-      //load error
+      // load error
       try {
         cachedMaterials[cashPath].map = loader.load('noimage.jpeg')
+        // eslint-disable-next-line no-empty
       } catch (e) {}
     })
 

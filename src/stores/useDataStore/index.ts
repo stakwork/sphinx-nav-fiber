@@ -103,6 +103,7 @@ export const useDataStore = create<DataStore>((set, get) => ({
   setHoveredNode: (hoveredNode) => set({ hoveredNode }),
   setSelectedNode: (selectedNode) => {
     const stateSelectedNode = get().selectedNode
+
     if (stateSelectedNode?.ref_id !== selectedNode?.ref_id) {
       set({ isTimestampLoaded: false, selectedNode })
     }

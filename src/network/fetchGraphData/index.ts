@@ -176,6 +176,7 @@ const getGraphData = async (searchterm: string) => {
       data.forEach((node) => {
         // reject duplicate nodes
         const notUnique = nodes.find((f) => f.ref_id === node.ref_id)
+
         if (notUnique) {
           return
         }

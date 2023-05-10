@@ -12,6 +12,7 @@ export const PathwayLine = () => {
     if (ref.current) {
       const p = pathway.map((node) => {
         const coords = new Vector3(node.x || 0, node.y || 0, node.z || 0)
+
         return coords
       })
 
@@ -19,6 +20,7 @@ export const PathwayLine = () => {
         return p
       }
     }
+
     return [new Vector3(0, 0, 0)]
   }, [pathway])
 

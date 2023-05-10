@@ -36,7 +36,6 @@ export const HtmlPanel = memo(({ speed = 2, intensity = 4, children, withTranscr
       sprite
     >
       <HtmlWrap
-        visible={visible}
         className="html-panel"
         dimensions={withTranscript ? withTranscriptDimensions : defaultDimensions}
         id="html-panel"
@@ -44,6 +43,7 @@ export const HtmlPanel = memo(({ speed = 2, intensity = 4, children, withTranscr
         onPointerOut={(e) => e.stopPropagation()}
         onPointerOver={(e) => e.stopPropagation()}
         onPointerUp={(e) => e.stopPropagation()}
+        visible={visible}
       >
         {children}
       </HtmlWrap>

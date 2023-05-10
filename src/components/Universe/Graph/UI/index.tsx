@@ -19,15 +19,15 @@ export const NodeDetailsPanel = memo(() => {
 
   return (
     <>
-      <HtmlPanel visible={selectedNode ? true : false} position={position}>
+      <HtmlPanel position={position} visible={!!selectedNode}>
         <View isSelectedView />
       </HtmlPanel>
 
       <HtmlPanel
-        visible={transcriptIsOpen && selectedNode ? true : false}
         intensity={2}
         position={position}
         speed={4}
+        visible={transcriptIsOpen && !!selectedNode}
         withTranscript
       >
         <Flex p={20}>
