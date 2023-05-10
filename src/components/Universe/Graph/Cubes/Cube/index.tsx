@@ -3,7 +3,6 @@ import { ThreeEvent, useFrame } from '@react-three/fiber'
 import { Select } from '@react-three/postprocessing'
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import * as THREE from 'three'
-import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { useSomeModalIsOpen } from '~/stores/useModalStore'
 import { NodeExtended } from '~/types'
@@ -29,8 +28,8 @@ const getGeometry = (node: NodeExtended) => {
 
 type Props = {
   node: NodeExtended
-  highlight?: boolean
-  highlightColor?: string
+  highlight: boolean
+  highlightColor: string
 }
 
 const fontProps = {
@@ -46,15 +45,10 @@ export const Cube = memo(({ node, highlight, highlightColor }: Props) => {
 
   const [hovered, setHovered] = useState(false)
 
-  const [categoryFilter, selectedTimestamp, graphStyle] = useDataStore((s) => [
-    s.categoryFilter,
-    s.selectedTimestamp,
-    s.graphStyle,
-  ])
+  const categoryFilter = useDataStore((s) => s.categoryFilter)
+  const graphStyle = useDataStore((s) => s.graphStyle)
 
   const isSomeModalOpened = useSomeModalIsOpen()
-
-  const transcriptIsOpen = useAppStore((s) => s.transcriptIsOpen)
 
   const selectedNode = useSelectedNode()
 

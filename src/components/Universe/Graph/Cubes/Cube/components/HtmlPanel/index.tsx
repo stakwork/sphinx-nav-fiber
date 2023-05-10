@@ -74,6 +74,6 @@ const HtmlWrap = styled.div<{ dimensions: [number, number, number, number]; visi
   color: #fff;
   border: solid 3px #5078f2;
   background: #00000099;
-  transition: opacity 0.5s;
+  transition: opacity 0.2s;
   overflow-y: auto;
 `

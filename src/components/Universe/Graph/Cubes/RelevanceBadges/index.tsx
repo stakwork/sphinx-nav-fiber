@@ -7,7 +7,7 @@ import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { NodeExtended } from '~/types'
 
 type TagProps = {
-  show: boolean
+  visible: boolean
   selected: boolean
 }
 
@@ -22,7 +22,7 @@ const Tag = styled(Flex)<TagProps>`
   font-size: 20px;
   cursor: pointer;
   transition: opacity 0.4s;
-  ${(p: TagProps) => !p.show && 'opacity:0;'}
+  ${(p: TagProps) => !p.visible && 'opacity:0;'}
   ${(p: TagProps) =>
     p.selected &&
     `
@@ -49,7 +49,7 @@ const PathwayBadge = ({ position, value, userData }: Props) => {
         <Tag
           justify="center"
           selected={selected}
-          show={value ? true : false}
+          visible={value ? true : false}
           onClick={() => {
             if (userData) {
               setSelectedNode(userData)
@@ -79,6 +79,7 @@ export const RelevanceBadges = () => {
       <PathwayBadge userData={badges[7]?.userData} value={badges[7]?.value} position={badges[7]?.position} />
       <PathwayBadge userData={badges[8]?.userData} value={badges[8]?.value} position={badges[8]?.position} />
       <PathwayBadge userData={badges[9]?.userData} value={badges[9]?.value} position={badges[9]?.position} />
+      <PathwayBadge userData={badges[10]?.userData} value={badges[9]?.value} position={badges[9]?.position} />
     </>
   )
 }

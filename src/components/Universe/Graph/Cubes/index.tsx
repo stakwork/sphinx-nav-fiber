@@ -4,16 +4,18 @@ import { memo, useCallback } from 'react'
 import { Object3D } from 'three'
 import { useGraphData } from '~/components/DataRetriever'
 import { useAppStore } from '~/stores/useAppStore'
-import { useDataStore } from '~/stores/useDataStore'
+import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { NodeExtended } from '~/types'
 import { RelevanceBadges } from './RelevanceBadges'
+import { getHighlighter } from './constants'
 
 import { Cube } from './Cube'
 
 export const Cubes = memo(() => {
   const data = useGraphData()
-
+  const selectedNode = useSelectedNode()
   const setTranscriptOpen = useAppStore((s) => s.setTranscriptOpen)
+  const searchTerm = useAppStore((s) => s.currentSearch)
 
   const handleSelect = useCallback(
     (nodes: Object3D[]) => {
@@ -34,12 +36,11 @@ export const Cubes = memo(() => {
 
   return (
     <Select onChange={handleSelect} filter={(selected) => selected.filter((f) => !!f.userData?.id)}>
-      {data.nodes.map((node) => (
-        <Cube key={node.ref_id} node={node} />
-      ))}
+      {data.nodes.map((node) => {
+        const { highlight, highlightColor } = getHighlighter({ node, selectedNode, searchTerm })
+        return <Cube key={node.ref_id} node={node} highlight={highlight} highlightColor={highlightColor} />
+      })}
       <RelevanceBadges />
     </Select>
   )
 })
-
-Cubes.displayName = 'Cubes'
