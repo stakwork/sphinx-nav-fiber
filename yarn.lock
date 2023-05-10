@@ -4164,16 +4164,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/readable-stream@npm:^2.3.14":
-  version: 2.3.15
-  resolution: "@types/readable-stream@npm:2.3.15"
-  dependencies:
-    "@types/node": "*"
-    safe-buffer: ~5.1.1
-  checksum: ec36f525cad09b6c65a1dafcb5ad99b9e2ed824ec49b7aa23180ac427e5d35b8a0706193ecd79ab4253a283ad485ba03d5917a98daaaa144f0ea34f4823e9d82
-  languageName: node
-  linkType: hard
-
 "@types/resolve@npm:0.0.8":
   version: 0.0.8
   resolution: "@types/resolve@npm:0.0.8"
@@ -18037,13 +18027,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sphinx-bridge-kevkevinpal@npm:0.2.48":
-  version: 0.2.48
-  resolution: "sphinx-bridge-kevkevinpal@npm:0.2.48"
+"sphinx-bridge-kevkevinpal@npm:0.2.58":
+  version: 0.2.58
+  resolution: "sphinx-bridge-kevkevinpal@npm:0.2.58"
   dependencies:
-    "@types/readable-stream": ^2.3.14
     invoices: ^2.1.0
-  checksum: 4783e5ee87a98d5930baf426e5316e3c97c8c579c86e0735bc6122be9af5c8d8e95f18e97bf145080dc8ff18d94689f876f7c8660f0dc00a91811b6198b7624e
+  checksum: 6c8f95abeca7a9e70eb93de37d21d1a0bf96480d8668c1af66ac8c9bf94c22884acf6b7f222977573d2c88a2c431e6a95fc769f3baa08aab63f0ae00c028aa05
   languageName: node
   linkType: hard
 
@@ -18113,7 +18102,7 @@ __metadata:
     react-twitter-embed: ^4.0.4
     react-twitter-widgets: ^1.11.0
     recharts: ^2.4.3
-    sphinx-bridge-kevkevinpal: 0.2.48
+    sphinx-bridge-kevkevinpal: 0.2.58
     styled-components: ^5.3.9
     three: ^0.143.0
     three-forcegraph: ^1.39.4

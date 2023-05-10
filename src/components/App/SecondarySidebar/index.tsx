@@ -23,7 +23,7 @@ export const SecondarySideBar = () => {
 
   return secondarySidebarActiveTab ? (
     <Wrapper id="sidebar-wrapper">
-      <CloseButton onClick={() => setSecondarySidebarActiveTab('')}>
+      <CloseButton id="cy-close-secondary-sidebar" onClick={() => setSecondarySidebarActiveTab('')}>
         <MdClose />
       </CloseButton>
       {ComponentsMapper[secondarySidebarActiveTab]}
