@@ -10,7 +10,6 @@ declare global {
   interface Window {
     e2e: {
       threeState?: RootState
-      mockDataNodesLength?: number
       userStore?: UserStore
     }
   }
