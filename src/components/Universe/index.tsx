@@ -3,6 +3,7 @@ import { AdaptiveDpr, AdaptiveEvents, Html, Loader, Preload } from '@react-three
 import { Canvas } from '@react-three/fiber'
 import { Bloom, EffectComposer, Outline, SSAO, Selection } from '@react-three/postprocessing'
 import { useControls } from 'leva'
+import { Perf } from 'r3f-perf'
 import { Suspense } from 'react'
 import { isDevelopment } from '~/constants'
 import { useControlStore } from '~/stores/useControlStore'

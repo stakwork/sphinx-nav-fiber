@@ -87,7 +87,7 @@ export const FooterMenu = () => {
                   <MdOutlineTableView size={24} />
                 </IconWrapper>
               </ActionButton>
-              <ActionButton onClick={() => handleOpenSidebar('sentiment')}>
+              <ActionButton id="cy-open-sentiment-data" onClick={() => handleOpenSidebar('sentiment')}>
                 <Text>Sentiment Data</Text>
                 <IconWrapper>
                   <MdOutlineShowChart size={24} />
