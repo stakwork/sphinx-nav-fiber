@@ -40,7 +40,7 @@ export const Sentiment = () => {
   }, [])
 
   return (
-    <ChartWrapper align="flex-start" direction="column" justify="flex-end">
+    <ChartWrapper align="flex-start" direction="column" id="cy-sentiment-chart" justify="flex-end">
       <Text className="title">Sentiment chart</Text>
       {sentimentData?.length && (
         <LineChart
