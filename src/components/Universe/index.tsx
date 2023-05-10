@@ -4,6 +4,7 @@ import { Canvas } from '@react-three/fiber'
 import { Bloom, EffectComposer, Outline, SSAO, Selection } from '@react-three/postprocessing'
 import { useControls } from 'leva'
 import { Suspense } from 'react'
+import { isDevelopment } from '~/constants'
 import { useControlStore } from '~/stores/useControlStore'
 import { colors } from '~/utils/colors'
 import { addToGlobalForE2e } from '~/utils/tests'
@@ -95,7 +96,7 @@ export const Universe = () => (
           }, 200)
         }}
       >
-        {/* {isDevelopment && <Perf />} */}
+        {isDevelopment && <Perf />}
         <Suspense
           fallback={
             <Html>
