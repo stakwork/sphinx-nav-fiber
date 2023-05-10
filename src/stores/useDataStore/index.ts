@@ -91,6 +91,11 @@ export const useDataStore = create<DataStore>((set, get) => ({
     }
 
     set({ data, isFetching: false, sphinxModalIsOpen: false })
+
+    if (search) {
+      const mostRelevantNode = data.nodes[0] || null
+      set({ selectedNode: mostRelevantNode })
+    }
   },
   setIsFetching: (isFetching) => set({ isFetching }),
   setData: (data) => set({ data }),

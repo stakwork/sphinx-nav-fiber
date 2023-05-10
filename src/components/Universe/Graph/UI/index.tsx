@@ -2,13 +2,14 @@ import { memo, useMemo } from 'react'
 import { Vector3 } from 'three'
 import { Transcript } from '~/components/App/SideBar/Transcript'
 import { View } from '~/components/App/SideBar/View'
+import { Flex } from '~/components/common/Flex'
 import { useAppStore } from '~/stores/useAppStore'
-import { useSelectedNode } from '~/stores/useDataStore'
+import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { HtmlPanel } from '../Cubes/Cube/components/HtmlPanel'
 
 export const NodeDetailsPanel = memo(() => {
   const selectedNode = useSelectedNode()
-
+  const selectedTimestamp = useDataStore((s) => s.selectedTimestamp)
   const transcriptIsOpen = useAppStore((s) => s.transcriptIsOpen)
 
   const position = useMemo(
@@ -18,15 +19,21 @@ export const NodeDetailsPanel = memo(() => {
 
   return (
     <>
-      <HtmlPanel position={position}>
+      <HtmlPanel visible={selectedNode ? true : false} position={position}>
         <View isSelectedView />
       </HtmlPanel>
 
-      {transcriptIsOpen && (
-        <HtmlPanel intensity={2} position={position} speed={4} withTransacript>
-          <Transcript node={selectedNode} />
-        </HtmlPanel>
-      )}
+      <HtmlPanel
+        visible={transcriptIsOpen && selectedNode ? true : false}
+        intensity={2}
+        position={position}
+        speed={4}
+        withTranscript
+      >
+        <Flex p={20}>
+          <Transcript node={selectedTimestamp || selectedNode} />
+        </Flex>
+      </HtmlPanel>
     </>
   )
 })

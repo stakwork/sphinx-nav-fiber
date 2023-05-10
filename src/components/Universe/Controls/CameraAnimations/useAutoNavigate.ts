@@ -24,13 +24,13 @@ export const useAutoNavigate = (cameraControlsRef: RefObject<CameraControls | nu
   const [lookAtReached, setLookAtReached] = useState(false)
 
   // camera movement to selection params
-  const [minDistance, setMinDistance] = useState(180)
+  const [minDistance, setMinDistance] = useState(130)
 
   useEffect(() => {
     if (selectedNode?.node_type === 'topic') {
       setMinDistance(600)
     } else {
-      setMinDistance(180)
+      setMinDistance(130)
     }
   }, [selectedNode, setMinDistance])
 

@@ -39,13 +39,17 @@ function addOrganicVariant() {
 }
 
 export const playInspectSound = (distance = 0) => {
-  if (distance > 2000) {
-    monoSynth2.triggerAttackRelease(60, 0.3)
-  } else if (distance > 1000) {
-    let pitch = 310
+  try {
+    if (distance > 2000) {
+      monoSynth2.triggerAttackRelease(60, 0.3)
+    } else if (distance > 1000) {
+      let pitch = 310
 
-    pitch += addOrganicVariant()
+      pitch += addOrganicVariant()
 
-    monoSynth.triggerAttackRelease(pitch, 0.001)
+      monoSynth.triggerAttackRelease(pitch, 0.001)
+    }
+  } catch (e) {
+    console.warn(e)
   }
 }

@@ -71,7 +71,7 @@ export const usePathway = () => {
           pathway.forEach((n) => {
             const nodeIndex = s.data!.nodes.findIndex((f) => f.ref_id === n.ref_id)
             const badge = {
-              value: nodeIndex,
+              value: nodeIndex + 1,
               position: new Vector3(n.x || 0, n.y || 0, n.z || 0),
               userData: n,
             }
