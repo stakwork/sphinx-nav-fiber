@@ -101,7 +101,12 @@ export const useDataStore = create<DataStore>((set, get) => ({
   setGraphStyle: (graphStyle) => set({ graphStyle }),
   setQueuedSources: (queuedSources) => set({ queuedSources }),
   setHoveredNode: (hoveredNode) => set({ hoveredNode }),
-  setSelectedNode: (selectedNode) => set({ isTimestampLoaded: false, selectedNode }),
+  setSelectedNode: (selectedNode) => {
+    const stateSelectedNode = get().selectedNode
+    if (stateSelectedNode?.ref_id !== selectedNode?.ref_id) {
+      set({ isTimestampLoaded: false, selectedNode })
+    }
+  },
   setSelectedTimestamp: (selectedTimestamp) => set({ selectedTimestamp }),
   setSources: (sources) => set({ sources }),
   setSphinxModalOpen: (sphinxModalIsOpen) => set({ sphinxModalIsOpen }),

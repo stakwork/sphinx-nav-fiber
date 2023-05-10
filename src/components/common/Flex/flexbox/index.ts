@@ -23,6 +23,7 @@ export type Flexbox = {
   justify: Justify
   shrink: Shrink
   wrap: Wrap
+  opacity: number
 }
 
 export type FlexboxProps = Partial<Flexbox>

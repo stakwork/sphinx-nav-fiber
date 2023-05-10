@@ -14,7 +14,10 @@ export const useMaterial = (url: string, highlight: boolean, highlightColor = 'g
       return cachedMaterials[cashPath]
     }
 
-    const map = loader.load(url)
+    const map = loader.load(url, undefined, undefined, () => {
+      //load error
+      cachedMaterials[cashPath].map = loader.load('noimage.jpeg')
+    })
 
     const materialProp = highlight
       ? {

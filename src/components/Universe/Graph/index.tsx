@@ -23,7 +23,7 @@ export const Graph = () => {
       <Cubes />
       <NodeDetailsPanel />
 
-      {searchTerm && <PathwayLine />}
+      <PathwayLine />
 
       <Segments
         /** NOTE: using the key in this way the segments re-mounts

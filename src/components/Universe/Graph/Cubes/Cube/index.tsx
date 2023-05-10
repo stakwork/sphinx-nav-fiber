@@ -3,12 +3,10 @@ import { ThreeEvent, useFrame } from '@react-three/fiber'
 import { Select } from '@react-three/postprocessing'
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import * as THREE from 'three'
-import { usePathway } from '~/components/DataRetriever'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { useSomeModalIsOpen } from '~/stores/useModalStore'
 import { NodeExtended } from '~/types'
-import { PathwayBadge } from './components/PathwayBadge'
 import { useMaterial } from './hooks/useMaterial'
 
 const geometryXs = new THREE.BoxGeometry(10, 10, 10)
@@ -31,8 +29,8 @@ const getGeometry = (node: NodeExtended) => {
 
 type Props = {
   node: NodeExtended
-  highlight: boolean
-  highlightColor: string
+  highlight?: boolean
+  highlightColor?: string
 }
 
 const fontProps = {
@@ -60,7 +58,7 @@ export const Cube = memo(({ node, highlight, highlightColor }: Props) => {
 
   const selectedNode = useSelectedNode()
 
-  const material = useMaterial(node.image_url || 'noimage.jpeg', highlight, highlightColor)
+  const material = useMaterial(node.image_url || 'noimage.jpeg', !!highlight, highlightColor)
   const geometry = useMemo(() => getGeometry(node), [node])
 
   const isSelected = selectedNode?.id === node.id
@@ -95,8 +93,6 @@ export const Cube = memo(({ node, highlight, highlightColor }: Props) => {
 
     setHovered(false)
   }, [])
-
-  const { currentNodeIndex } = usePathway()
 
   const scale = useMemo(() => {
     if (graphStyle === 'split' && node.scale) {
@@ -138,9 +134,7 @@ export const Cube = memo(({ node, highlight, highlightColor }: Props) => {
           position={[node.x, node.y, node.z]}
           scale={scale}
           userData={node}
-        >
-          <PathwayBadge show={currentNodeIndex >= 0} value={currentNodeIndex + 1} />
-        </mesh>
+        />
       </Select>
     </>
   )
