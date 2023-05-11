@@ -65,6 +65,16 @@ export const postTeachMe = async (data: TeachData) => {
   return api.post(`/teachme`, JSON.stringify(data), { Authorization: lsatToken })
 }
 
+export const postAskQuestion = async (data: TeachData) => {
+  const lsatToken = await getLSat('ask_question')
+
+  if (!lsatToken) {
+    throw new Error('An error occured calling getLSat')
+  }
+
+  return api.post(`/teachme`, JSON.stringify(data), { Authorization: lsatToken })
+}
+
 export const getAdminId = async (tribeId: string) => {
   const response = await fetch(`https://tribes.sphinx.chat/tribes/${tribeId}`)
 

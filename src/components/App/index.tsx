@@ -10,6 +10,7 @@ import { GlobalStyle } from '~/components/GlobalStyle'
 import { Universe } from '~/components/Universe'
 import { Flex } from '~/components/common/Flex'
 import { isE2E } from '~/constants'
+import { connectSocket, disconnectSocket } from '~/network/sockets'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { useModal } from '~/stores/useModalStore'
@@ -75,6 +76,16 @@ export const App = () => {
   useEffect(() => {
     setSidebarOpen(showSideBar)
   }, [isAuthorized, selectedNode, setSidebarOpen, showSideBar])
+
+  useEffect(() => {
+    const socket = connectSocket()
+
+    // Additional event listeners and emit logic if needed
+
+    return () => {
+      disconnectSocket()
+    }
+  }, [])
 
   const runSearch = useCallback(async () => {
     if (searchTerm) {
