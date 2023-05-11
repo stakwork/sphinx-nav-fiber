@@ -3,6 +3,7 @@ import { PropsWithChildren, ReactNode, useCallback, useEffect, useState } from '
 import { Vector3 } from 'three'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { NodeExtended } from '~/types'
+import { PATHWAY_RANGE } from './constants'
 
 type Props = PropsWithChildren<{
   loader?: ReactNode
@@ -43,8 +44,6 @@ export const useGraphData = () => {
   return data
 }
 
-const PATHWAY_NODES = 5
-
 type BadgeProps = {
   value: number
   position: Vector3
@@ -60,10 +59,10 @@ export const usePathway = () => {
         const nodes = s.data!.nodes || []
         const selectedNodeIndex = selectedNode ? nodes.findIndex((f) => f.ref_id === selectedNode?.ref_id) : 0
 
-        const fromIndex = selectedNodeIndex - PATHWAY_NODES > 0 ? selectedNodeIndex - PATHWAY_NODES : 0
+        const fromIndex = selectedNodeIndex - PATHWAY_RANGE > 0 ? selectedNodeIndex - PATHWAY_RANGE : 0
 
         const toIndex =
-          selectedNodeIndex + PATHWAY_NODES > nodes.length - 1 ? nodes.length - 1 : selectedNodeIndex + PATHWAY_NODES
+          selectedNodeIndex + PATHWAY_RANGE > nodes.length - 1 ? nodes.length - 1 : selectedNodeIndex + PATHWAY_RANGE
 
         const pathway = nodes.slice(fromIndex, toIndex)
 

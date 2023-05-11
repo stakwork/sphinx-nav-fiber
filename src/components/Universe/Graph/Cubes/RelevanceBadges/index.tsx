@@ -6,31 +6,6 @@ import { Flex } from '~/components/common/Flex'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { NodeExtended } from '~/types'
 
-type TagProps = {
-  visible: boolean
-  selected: boolean
-}
-
-const Tag = styled(Flex)<TagProps>`
-  text-align: center;
-  width: 66px;
-  height: 66px;
-  background: #000000bb;
-  border: 3px solid #ffffff88;
-  color: #ffffff;
-  border-radius: 100%;
-  font-size: 20px;
-  cursor: pointer;
-  transition: opacity 0.4s;
-  ${(p: TagProps) => !p.visible && 'opacity:0;'}
-  ${(p: TagProps) =>
-    p.selected &&
-    `
-  background: #5078f2;
-
-  `}
-`
-
 type Props = {
   value?: number | string
   position?: Vector3
@@ -54,7 +29,7 @@ const PathwayBadge = ({ position, value, userData }: Props) => {
               setSelectedNode(userData)
             }
           }}
-          selected={selected}
+          selected={!!value && selected}
           visible={!!value}
         >
           {value}
@@ -80,7 +55,31 @@ export const RelevanceBadges = () => {
       <PathwayBadge position={badges[7]?.position} userData={badges[7]?.userData} value={badges[7]?.value} />
       <PathwayBadge position={badges[8]?.position} userData={badges[8]?.userData} value={badges[8]?.value} />
       <PathwayBadge position={badges[9]?.position} userData={badges[9]?.userData} value={badges[9]?.value} />
-      <PathwayBadge position={badges[9]?.position} userData={badges[10]?.userData} value={badges[9]?.value} />
     </>
   )
 }
+
+type TagProps = {
+  visible: boolean
+  selected: boolean
+}
+
+const Tag = styled(Flex)<TagProps>`
+  text-align: center;
+  width: 66px;
+  height: 66px;
+  background: #000000bb;
+  border: 3px solid #ffffff88;
+  color: #ffffff;
+  border-radius: 100%;
+  font-size: 20px;
+  cursor: pointer;
+  transition: opacity 0.4s;
+  ${(p: TagProps) => !p.visible && 'opacity:0;'}
+  ${(p: TagProps) =>
+    p.selected &&
+    `
+    opacity: 0.8;
+    background: #5078f2;
+  `}
+`

@@ -2,15 +2,13 @@
 import type { CameraControls } from '@react-three/drei'
 import { Camera, useFrame, useThree } from '@react-three/fiber'
 import { RefObject, useEffect, useState } from 'react'
-import * as THREE from 'three'
 import { playInspectSound } from '~/components/common/Sounds'
 import { useControlStore } from '~/stores/useControlStore'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { NodeExtended } from '~/types'
+import { variableVector3 } from '../../constants'
 
 let lookAtAnimationTimer: ReturnType<typeof setTimeout>
-
-const variableVector3 = new THREE.Vector3(0, 0, 0)
 
 export const useAutoNavigate = (cameraControlsRef: RefObject<CameraControls | null>) => {
   const selectedNode = useSelectedNode()

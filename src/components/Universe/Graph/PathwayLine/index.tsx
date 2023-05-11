@@ -25,16 +25,14 @@ export const PathwayLine = () => {
   }, [pathway])
 
   return (
-    <>
-      <Line
-        ref={ref}
-        color="teal"
-        dashed={false}
-        forceSinglePass={false}
-        lineWidth={2}
-        matrixWorldAutoUpdate={false}
-        points={points}
-      />
-    </>
+    <Line
+      ref={ref}
+      color="teal"
+      dashed={false}
+      forceSinglePass={false}
+      lineWidth={2}
+      matrixWorldAutoUpdate={false}
+      points={points}
+    />
   )
 }

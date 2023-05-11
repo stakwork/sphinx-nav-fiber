@@ -2,10 +2,9 @@
 import { useFrame } from '@react-three/fiber'
 import { RefObject, useCallback, useEffect, useMemo, useState } from 'react'
 import * as THREE from 'three'
+import { variableVector3 } from '~/components/Universe/constants'
 import { useSelectedNode } from '~/stores/useDataStore'
 import { NodeExtended } from '~/types'
-
-const variableVector3 = new THREE.Vector3(0, 0, 0)
 
 export const useNavigation = (thisNodeRef: RefObject<THREE.Mesh | null>) => {
   const selectedNode = useSelectedNode()

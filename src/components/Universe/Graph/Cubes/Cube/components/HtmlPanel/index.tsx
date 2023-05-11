@@ -2,6 +2,7 @@ import { Float, Html } from '@react-three/drei'
 import { memo } from 'react'
 import styled, { css } from 'styled-components'
 import { Vector3 } from 'three'
+import { defaultDimensions, withTranscriptDimensions } from './constants'
 
 type Props = {
   children: React.ReactNode
@@ -11,9 +12,6 @@ type Props = {
   withTranscript?: boolean
   visible: boolean
 }
-
-const defaultDimensions = [-200, -550, 500, 500] as [number, number, number, number]
-const withTranscriptDimensions = [-200, 150, 600, 500] as [number, number, number, number]
 
 export const HtmlPanel = memo(({ speed = 2, intensity = 4, children, withTranscript, position, visible }: Props) => (
   <Float
