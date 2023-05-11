@@ -2,7 +2,6 @@ import getLinks from './links'
 import getNodes from './nodes'
 
 import { isChileGraph } from '~/constants'
-import { addToGlobalForE2e } from '~/utils/tests'
 import getLinksChile from './linksChile'
 import getNodesChile from './nodesChile'
 
@@ -24,8 +23,6 @@ export const getMockGraphData = () => {
 
   const nodes = initialGraphData[graphFor].nodes()
   const links = initialGraphData[graphFor].links()
-
-  addToGlobalForE2e(nodes.length, 'mockDataNodesLength')
 
   // eslint-disable-next-line no-restricted-syntax
   for (const node of nodes) {

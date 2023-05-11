@@ -2,15 +2,16 @@
 import { AdaptiveDpr, AdaptiveEvents, Html, Loader, Preload } from '@react-three/drei'
 import { Canvas } from '@react-three/fiber'
 import { Bloom, EffectComposer, Outline, SSAO, Selection } from '@react-three/postprocessing'
+import { useControls } from 'leva'
+import { Perf } from 'r3f-perf'
 import { Suspense } from 'react'
+import { isDevelopment } from '~/constants'
+import { useControlStore } from '~/stores/useControlStore'
 import { colors } from '~/utils/colors'
+import { addToGlobalForE2e } from '~/utils/tests'
 import { Controls } from './Controls'
 import { Graph } from './Graph'
 import { Lights } from './Lights'
-
-import { useControls } from 'leva'
-import { useControlStore } from '~/stores/useControlStore'
-import { addToGlobalForE2e } from '~/utils/tests'
 import { Overlay } from './Overlay'
 
 const NODE_SELECTED_COLOR = 0x00ff00
@@ -96,6 +97,8 @@ export const Universe = () => (
           }, 200)
         }}
       >
+        {isDevelopment && <Perf />}
+
         <Suspense
           fallback={
             <Html>

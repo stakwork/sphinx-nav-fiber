@@ -2834,6 +2834,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@radix-ui/react-icons@npm:^1.0.3":
+  version: 1.3.0
+  resolution: "@radix-ui/react-icons@npm:1.3.0"
+  peerDependencies:
+    react: ^16.x || ^17.x || ^18.x
+  checksum: 982f3ee2271eaaa12b944506ef7701d20fad847082592d99b393b66a2ebbd4cc89e3a0ba48146ed8801418a7bfd76cd55901dc5cb7c6ef404001e7e4c73d05f6
+  languageName: node
+  linkType: hard
+
 "@radix-ui/react-id@npm:0.1.4":
   version: 0.1.4
   resolution: "@radix-ui/react-id@npm:0.1.4"
@@ -3296,7 +3305,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@stitches/react@npm:1.2.8":
+"@stitches/react@npm:1.2.8, @stitches/react@npm:^1.2.8":
   version: 1.2.8
   resolution: "@stitches/react@npm:1.2.8"
   peerDependencies:
@@ -4161,16 +4170,6 @@ __metadata:
     "@types/scheduler": "*"
     csstype: ^3.0.2
   checksum: db3d92b423150222a666329f7aa3023e3e942044700557b8a7d161530847e621aec9f56c9e7f71761b06dd164c8a7b17ad52355863efe80963dffa5537e8e5fd
-  languageName: node
-  linkType: hard
-
-"@types/readable-stream@npm:^2.3.14":
-  version: 2.3.15
-  resolution: "@types/readable-stream@npm:2.3.15"
-  dependencies:
-    "@types/node": "*"
-    safe-buffer: ~5.1.1
-  checksum: ec36f525cad09b6c65a1dafcb5ad99b9e2ed824ec49b7aa23180ac427e5d35b8a0706193ecd79ab4253a283ad485ba03d5917a98daaaa144f0ea34f4823e9d82
   languageName: node
   linkType: hard
 
@@ -16179,6 +16178,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"r3f-perf@npm:6.7.0":
+  version: 6.7.0
+  resolution: "r3f-perf@npm:6.7.0"
+  dependencies:
+    "@radix-ui/react-icons": ^1.0.3
+    "@stitches/react": ^1.2.8
+    zustand: ^4.1.5
+  peerDependencies:
+    "@react-three/drei": "*"
+    "@react-three/fiber": "*"
+    react: ">=18.0"
+    react-dom: ">=18.0"
+    three: "*"
+    three-stdlib: "*"
+  checksum: 4bffe88d50137452bcf418c63a9cc8008da4a27aceb416fa9545b44663b382071bcd8a52e357cec2abc4cfc3d92ac1720a6149083aee89ef23bb5cacd4fb6636
+  languageName: node
+  linkType: hard
+
 "raf@npm:^3.4.1":
   version: 3.4.1
   resolution: "raf@npm:3.4.1"
@@ -18037,13 +18054,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sphinx-bridge-kevkevinpal@npm:0.2.48":
-  version: 0.2.48
-  resolution: "sphinx-bridge-kevkevinpal@npm:0.2.48"
+"sphinx-bridge-kevkevinpal@npm:0.2.58":
+  version: 0.2.58
+  resolution: "sphinx-bridge-kevkevinpal@npm:0.2.58"
   dependencies:
-    "@types/readable-stream": ^2.3.14
     invoices: ^2.1.0
-  checksum: 4783e5ee87a98d5930baf426e5316e3c97c8c579c86e0735bc6122be9af5c8d8e95f18e97bf145080dc8ff18d94689f876f7c8660f0dc00a91811b6198b7624e
+  checksum: 6c8f95abeca7a9e70eb93de37d21d1a0bf96480d8668c1af66ac8c9bf94c22884acf6b7f222977573d2c88a2c431e6a95fc769f3baa08aab63f0ae00c028aa05
   languageName: node
   linkType: hard
 
@@ -18098,6 +18114,7 @@ __metadata:
     lsat-js: ^2.0.5
     moment: ^2.29.4
     prettier: ^2.7.1
+    r3f-perf: 6.7.0
     react: ^18.2.0
     react-audio-player: ^0.17.0
     react-dom: ^18.2.0
@@ -18113,7 +18130,7 @@ __metadata:
     react-twitter-embed: ^4.0.4
     react-twitter-widgets: ^1.11.0
     recharts: ^2.4.3
-    sphinx-bridge-kevkevinpal: 0.2.48
+    sphinx-bridge-kevkevinpal: 0.2.58
     styled-components: ^5.3.9
     three: ^0.143.0
     three-forcegraph: ^1.39.4
@@ -20770,7 +20787,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zustand@npm:^4.1.1":
+"zustand@npm:^4.1.1, zustand@npm:^4.1.5":
   version: 4.3.7
   resolution: "zustand@npm:4.3.7"
   dependencies:
