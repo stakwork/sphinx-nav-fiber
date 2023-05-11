@@ -174,6 +174,13 @@ const getGraphData = async (searchterm: string) => {
 
     if (data.length) {
       data.forEach((node) => {
+        // reject duplicate nodes
+        const notUnique = nodes.find((f) => f.ref_id === node.ref_id)
+
+        if (notUnique) {
+          return
+        }
+
         // replace aws bucket url with cloudfront, and add size indicator to end
         const smallImageUrl = node.image_url
           ?.replace(AWS_IMAGE_BUCKET_URL, CLOUDFRONT_IMAGE_BUCKET_URL)

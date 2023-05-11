@@ -15,6 +15,7 @@ type DataStore = {
   graphStyle: GraphStyle
   isFetching: boolean
   isTimestampLoaded: boolean
+  hoveredNode: NodeExtended | null
   selectedNode: NodeExtended | null
   selectedTimestamp: NodeExtended | null
   sources: Sources[] | null
@@ -28,6 +29,7 @@ type DataStore = {
   setData: (data: GraphData) => void
   setGraphStyle: (graphStyle: GraphStyle) => void
   setGraphRadius: (graphRadius?: number | null) => void
+  setHoveredNode: (hoveredNode: NodeExtended | null) => void
   setSelectedNode: (selectedNode: NodeExtended | null) => void
   setSelectedTimestamp: (selectedTimestamp: NodeExtended | null) => void
   setSources: (sources: Sources[] | null) => void
@@ -46,6 +48,7 @@ const defaultData: Omit<
   | 'setScrollEventsDisabled'
   | 'setCategoryFilter'
   | 'setDisableCameraRotation'
+  | 'setHoveredNode'
   | 'setSelectedNode'
   | 'setSelectedTimestamp'
   | 'setSphinxModalOpen'
@@ -64,6 +67,7 @@ const defaultData: Omit<
   isFetching: false,
   isTimestampLoaded: false,
   queuedSources: null,
+  hoveredNode: null,
   selectedNode: null,
   selectedTimestamp: null,
   sources: null,
@@ -96,7 +100,14 @@ export const useDataStore = create<DataStore>((set, get) => ({
   setGraphRadius: (graphRadius) => set({ graphRadius }),
   setGraphStyle: (graphStyle) => set({ graphStyle }),
   setQueuedSources: (queuedSources) => set({ queuedSources }),
-  setSelectedNode: (selectedNode) => set({ isTimestampLoaded: false, selectedNode }),
+  setHoveredNode: (hoveredNode) => set({ hoveredNode }),
+  setSelectedNode: (selectedNode) => {
+    const stateSelectedNode = get().selectedNode
+
+    if (stateSelectedNode?.ref_id !== selectedNode?.ref_id) {
+      set({ isTimestampLoaded: false, selectedNode })
+    }
+  },
   setSelectedTimestamp: (selectedTimestamp) => set({ selectedTimestamp }),
   setSources: (sources) => set({ sources }),
   setSphinxModalOpen: (sphinxModalIsOpen) => set({ sphinxModalIsOpen }),

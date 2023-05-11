@@ -38,14 +38,26 @@ function addOrganicVariant() {
   return Math.floor((Math.random() - 0.5) * 20)
 }
 
-export const playInspectSound = (distance = 0) => {
-  if (distance > 2000) {
-    monoSynth2.triggerAttackRelease(60, 0.3)
-  } else if (distance > 1000) {
-    let pitch = 310
+let toneStarted = false
 
-    pitch += addOrganicVariant()
+export const playInspectSound = async (distance = 0) => {
+  // start if not started
+  if (!toneStarted) {
+    await Tone.start()
+    toneStarted = true
+  }
 
-    monoSynth.triggerAttackRelease(pitch, 0.001)
+  try {
+    if (distance > 2000) {
+      monoSynth2.triggerAttackRelease(60, 0.3)
+    } else if (distance > 1000) {
+      let pitch = 310
+
+      pitch += addOrganicVariant()
+
+      monoSynth.triggerAttackRelease(pitch, 0.001)
+    }
+  } catch (e) {
+    console.warn(e)
   }
 }

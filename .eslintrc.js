@@ -127,7 +127,7 @@ module.exports = {
     'react/state-in-constructor': ['error', 'never'],
     'react-hooks/exhaustive-deps': 'error',
     'react-hooks/rules-of-hooks': 'error',
-    'sort-keys': ['warn', 'asc', { natural: true }],
+    'sort-keys': ['off', 'asc', { natural: true }],
     'spaced-comment': [
       'error',
       'always',

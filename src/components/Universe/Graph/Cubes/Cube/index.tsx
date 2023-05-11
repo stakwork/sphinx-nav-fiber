@@ -3,17 +3,9 @@ import { ThreeEvent, useFrame } from '@react-three/fiber'
 import { Select } from '@react-three/postprocessing'
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import * as THREE from 'three'
-import { Transcript } from '~/components/App/SideBar/Transcript'
-import { View } from '~/components/App/SideBar/View'
-import { usePathway } from '~/components/DataRetriever'
-import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { useSomeModalIsOpen } from '~/stores/useModalStore'
 import { NodeExtended } from '~/types'
-import { HtmlPanel } from './components/HtmlPanel'
-import { PathwayBadge } from './components/PathwayBadge'
-import { Portal } from './components/Portal'
-import { Tooltip } from './components/Tooltip'
 import { useMaterial } from './hooks/useMaterial'
 
 const geometryXs = new THREE.BoxGeometry(10, 10, 10)
@@ -53,19 +45,14 @@ export const Cube = memo(({ node, highlight, highlightColor }: Props) => {
 
   const [hovered, setHovered] = useState(false)
 
-  const [categoryFilter, selectedTimestamp, graphStyle] = useDataStore((s) => [
-    s.categoryFilter,
-    s.selectedTimestamp,
-    s.graphStyle,
-  ])
+  const categoryFilter = useDataStore((s) => s.categoryFilter)
+  const graphStyle = useDataStore((s) => s.graphStyle)
 
   const isSomeModalOpened = useSomeModalIsOpen()
 
-  const transcriptIsOpen = useAppStore((s) => s.transcriptIsOpen)
-
   const selectedNode = useSelectedNode()
 
-  const material = useMaterial(node.image_url || 'noimage.jpeg', highlight, highlightColor)
+  const material = useMaterial(node.image_url || 'noimage.jpeg', !!highlight, highlightColor)
   const geometry = useMemo(() => getGeometry(node), [node])
 
   const isSelected = selectedNode?.id === node.id
@@ -100,8 +87,6 @@ export const Cube = memo(({ node, highlight, highlightColor }: Props) => {
 
     setHovered(false)
   }, [])
-
-  const { currentNodeIndex } = usePathway()
 
   const scale = useMemo(() => {
     if (graphStyle === 'split' && node.scale) {
@@ -143,27 +128,7 @@ export const Cube = memo(({ node, highlight, highlightColor }: Props) => {
           position={[node.x, node.y, node.z]}
           scale={scale}
           userData={node}
-        >
-          {isSelected && (
-            <HtmlPanel>
-              <View isSelectedView />
-            </HtmlPanel>
-          )}
-
-          {isSelected && transcriptIsOpen && (
-            <HtmlPanel intensity={2} speed={4} withTransacript>
-              <Transcript node={selectedTimestamp} />
-            </HtmlPanel>
-          )}
-
-          <PathwayBadge show={currentNodeIndex >= 0} value={currentNodeIndex + 1} />
-
-          {hovered && (
-            <Portal>
-              <Tooltip node={node} />
-            </Portal>
-          )}
-        </mesh>
+        />
       </Select>
     </>
   )

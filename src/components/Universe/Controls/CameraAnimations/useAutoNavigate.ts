@@ -2,11 +2,11 @@
 import type { CameraControls } from '@react-three/drei'
 import { Camera, useFrame, useThree } from '@react-three/fiber'
 import { RefObject, useEffect, useState } from 'react'
-import * as THREE from 'three'
 import { playInspectSound } from '~/components/common/Sounds'
 import { useControlStore } from '~/stores/useControlStore'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { NodeExtended } from '~/types'
+import { variableVector3 } from '../../constants'
 
 let lookAtAnimationTimer: ReturnType<typeof setTimeout>
 
@@ -22,13 +22,13 @@ export const useAutoNavigate = (cameraControlsRef: RefObject<CameraControls | nu
   const [lookAtReached, setLookAtReached] = useState(false)
 
   // camera movement to selection params
-  const [minDistance, setMinDistance] = useState(180)
+  const [minDistance, setMinDistance] = useState(130)
 
   useEffect(() => {
     if (selectedNode?.node_type === 'topic') {
       setMinDistance(600)
     } else {
-      setMinDistance(180)
+      setMinDistance(130)
     }
   }, [selectedNode, setMinDistance])
 
@@ -38,9 +38,7 @@ export const useAutoNavigate = (cameraControlsRef: RefObject<CameraControls | nu
 
   const depart = () => {
     if (selectedNode) {
-      const mesh = new THREE.Vector3(selectedNode.x, selectedNode.y, selectedNode.z)
-
-      const distance = camera.position.distanceTo(mesh)
+      const distance = camera.position.distanceTo(variableVector3.set(selectedNode.x, selectedNode.y, selectedNode.z))
 
       playInspectSound(distance)
     }
@@ -97,7 +95,7 @@ export const useAutoNavigate = (cameraControlsRef: RefObject<CameraControls | nu
   }, [selectedNode])
 
   const moveCameraToNode = (node: NodeExtended, cam: Camera) => {
-    const mesh = new THREE.Vector3(node.x, node.y, node.z)
+    const mesh = variableVector3.set(node.x, node.y, node.z)
 
     const distance = cam.position.distanceTo(mesh)
 
@@ -111,7 +109,7 @@ export const useAutoNavigate = (cameraControlsRef: RefObject<CameraControls | nu
   }
 
   const turnCameraToNode = (node: NodeExtended, cam: Camera) => {
-    const mesh = new THREE.Vector3(node.x, node.y, node.z)
+    const mesh = variableVector3.set(node.x, node.y, node.z)
 
     cameraControlsRef?.current?.setLookAt(cam.position.x, cam.position.y, cam.position.z, mesh.x, mesh.y, mesh.z, true)
   }
