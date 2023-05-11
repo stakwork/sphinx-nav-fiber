@@ -74,6 +74,7 @@ describe('Add Node Form / Home interactions', () => {
     cy.wait('@add_node')
 
     modal().should('not.exist')
+    cy.wait(3000)
     toastBody().should('be.visible').and('contain.text', 'Submitted!')
   })
 
@@ -111,7 +112,7 @@ describe('Add Node Form / Home interactions', () => {
     submitButton().click({ waitForAnimations: false })
 
     cy.wait('@add_node')
-
+    cy.wait(3000)
     toastBody().should('be.visible').and('contain.text', 'Submission failed, please try again.')
   })
 })

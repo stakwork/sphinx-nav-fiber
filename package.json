@@ -1,6 +1,6 @@
 {
   "name": "sphinx-nav",
-  "version": "0.1.17",
+  "version": "0.1.18",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.10.8",
@@ -19,6 +19,7 @@
     "lodash": "^4.17.21",
     "lsat-js": "^2.0.5",
     "moment": "^2.29.4",
+    "r3f-perf": "6.7.0",
     "react": "^18.2.0",
     "react-audio-player": "^0.17.0",
     "react-dom": "^18.2.0",

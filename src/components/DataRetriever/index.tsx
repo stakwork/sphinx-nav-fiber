@@ -1,6 +1,9 @@
 import invariant from 'invariant'
 import { PropsWithChildren, ReactNode, useCallback, useEffect, useState } from 'react'
+import { Vector3 } from 'three'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
+import { NodeExtended } from '~/types'
+import { PATHWAY_RANGE } from './constants'
 
 type Props = PropsWithChildren<{
   loader?: ReactNode
@@ -41,7 +44,11 @@ export const useGraphData = () => {
   return data
 }
 
-const PATHWAY_NODES = 10
+type BadgeProps = {
+  value: number
+  position: Vector3
+  userData: NodeExtended
+}
 
 export const usePathway = () => {
   const selectedNode = useSelectedNode()
@@ -49,16 +56,50 @@ export const usePathway = () => {
   return useDataStore(
     useCallback(
       (s) => {
-        const pathway = s.data!.nodes.slice(0, PATHWAY_NODES)
+        const nodes = s.data!.nodes || []
+        const selectedNodeIndex = selectedNode ? nodes.findIndex((f) => f.ref_id === selectedNode?.ref_id) : 0
 
-        const currentNodeIndex = pathway.findIndex((node) => node.id === selectedNode?.id)
+        const fromIndex = selectedNodeIndex - PATHWAY_RANGE > 0 ? selectedNodeIndex - PATHWAY_RANGE : 0
+
+        const toIndex =
+          selectedNodeIndex + PATHWAY_RANGE > nodes.length - 1 ? nodes.length - 1 : selectedNodeIndex + PATHWAY_RANGE
+
+        const pathway = nodes.slice(fromIndex, toIndex)
+
+        const badges: BadgeProps[] = []
+
+        pathway.forEach((n) => {
+          const nodeIndex = nodes.findIndex((f) => f.ref_id === n.ref_id)
+
+          const badge = {
+            value: nodeIndex + 1,
+            position: new Vector3(n.x || 0, n.y || 0, n.z || 0),
+            userData: n,
+          }
+
+          badges.push(badge)
+        })
+
+        // always include the first result
+        const includesFirstResult = badges.find((f) => f.value === 1)
+
+        if (nodes.length && !includesFirstResult) {
+          const firstNode = nodes[0]
+
+          badges.unshift({
+            value: 1,
+            position: new Vector3(firstNode.x || 0, firstNode.y || 0, firstNode.z || 0),
+            userData: firstNode,
+          })
+        }
 
         return {
-          currentNodeIndex,
+          badges,
           pathway,
         }
       },
-      [selectedNode?.id],
+
+      [selectedNode],
     ),
   )
 }

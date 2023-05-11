@@ -3,17 +3,9 @@ import { ThreeEvent, useFrame } from '@react-three/fiber'
 import { Select } from '@react-three/postprocessing'
 import { memo, useCallback, useEffect, useRef, useState } from 'react'
 import { Mesh } from 'three'
-import { Transcript } from '~/components/App/SideBar/Transcript'
-import { View } from '~/components/App/SideBar/View'
-import { usePathway } from '~/components/DataRetriever'
-import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { useSomeModalIsOpen } from '~/stores/useModalStore'
 import { NodeExtended } from '~/types'
-import { HtmlPanel } from './components/HtmlPanel'
-import { PathwayBadge } from './components/PathwayBadge'
-import { Portal } from './components/Portal'
-import { Tooltip } from './components/Tooltip'
 import { boxGeometry } from './constants'
 import { useMaterial } from './hooks/useMaterial'
 
@@ -48,11 +40,9 @@ export const Cube = memo(({ node, highlight, highlightColor }: Props) => {
   const [hovered, setHovered] = useState(false)
   const [scale] = useState(node.scale ? node.scale : getScale(node))
 
-  const [categoryFilter, selectedTimestamp] = useDataStore((s) => [s.categoryFilter, s.selectedTimestamp])
+  const categoryFilter = useDataStore((s) => s.categoryFilter)
 
   const isSomeModalOpened = useSomeModalIsOpen()
-
-  const transcriptIsOpen = useAppStore((s) => s.transcriptIsOpen)
 
   const selectedNode = useSelectedNode()
 
@@ -91,8 +81,6 @@ export const Cube = memo(({ node, highlight, highlightColor }: Props) => {
     setHovered(false)
   }, [])
 
-  const { currentNodeIndex } = usePathway()
-
   if (node.node_type === 'topic') {
     return (
       <Text
@@ -125,27 +113,7 @@ export const Cube = memo(({ node, highlight, highlightColor }: Props) => {
           position={[node.x, node.y, node.z]}
           scale={scale}
           userData={node}
-        >
-          {isSelected && (
-            <HtmlPanel>
-              <View isSelectedView />
-            </HtmlPanel>
-          )}
-
-          {isSelected && transcriptIsOpen && (
-            <HtmlPanel intensity={2} speed={4} withTransacript>
-              <Transcript node={selectedTimestamp} />
-            </HtmlPanel>
-          )}
-
-          <PathwayBadge show={currentNodeIndex >= 0} value={currentNodeIndex + 1} />
-
-          {hovered && (
-            <Portal>
-              <Tooltip node={node} />
-            </Portal>
-          )}
-        </mesh>
+        />
       </Select>
     </>
   )

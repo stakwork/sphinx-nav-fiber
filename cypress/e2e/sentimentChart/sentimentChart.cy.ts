@@ -5,11 +5,16 @@ describe('Sentiment chart  / Home interactions', () => {
   beforeEach(() => {
     cy.visit('/')
 
-    cy.intercept({
-      hostname: host,
-      method: 'GET',
-      url: '/stats',
-    }).as('stats')
+    cy.intercept(
+      {
+        hostname: host,
+        method: 'GET',
+        url: '/stats',
+      },
+      {
+        fixture: 'stats.json',
+      },
+    ).as('stats')
 
     cy.wait('@stats')
   })

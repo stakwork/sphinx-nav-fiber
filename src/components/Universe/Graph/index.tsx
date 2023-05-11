@@ -1,16 +1,15 @@
 import { Segments } from '@react-three/drei'
 import { useGraphData } from '~/components/DataRetriever'
-import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
 import { GraphData } from '~/types'
 import { Cubes } from './Cubes'
 import { GraphLoadingIcon } from './Icons'
 import { PathwayLine } from './PathwayLine'
 import { Segment } from './Segment'
+import { NodeDetailsPanel } from './UI'
 
 export const Graph = () => {
   const data = useGraphData()
-  const searchTerm = useAppStore((s) => s.currentSearch)
   const isLoading = useDataStore((s) => s.isFetching)
 
   if (isLoading) {
@@ -20,8 +19,9 @@ export const Graph = () => {
   return (
     <>
       <Cubes />
+      <NodeDetailsPanel />
 
-      {searchTerm && <PathwayLine />}
+      <PathwayLine />
 
       <Segments
         /** NOTE: using the key in this way the segments re-mounts

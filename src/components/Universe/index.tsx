@@ -98,7 +98,6 @@ export const Universe = () => (
         }}
       >
         {isDevelopment && <Perf />}
-
         <Suspense
           fallback={
             <Html>

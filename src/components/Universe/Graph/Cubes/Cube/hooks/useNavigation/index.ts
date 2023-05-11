@@ -2,6 +2,7 @@
 import { useFrame } from '@react-three/fiber'
 import { RefObject, useCallback, useEffect, useMemo, useState } from 'react'
 import * as THREE from 'three'
+import { variableVector3 } from '~/components/Universe/constants'
 import { useSelectedNode } from '~/stores/useDataStore'
 import { NodeExtended } from '~/types'
 
@@ -10,7 +11,7 @@ export const useNavigation = (thisNodeRef: RefObject<THREE.Mesh | null>) => {
   const [sleep, setSleep] = useState(true)
   const [distanceReached, setDistanceReached] = useState(false)
 
-  const [offsets, setOffsets] = useState(new THREE.Vector3(0, 0, 0))
+  const [offsets, setOffsets] = useState(variableVector3.set(0, 0, 0))
 
   // cube movement to selection params
   const [minDistanceToTarget] = useState(80)
@@ -45,7 +46,7 @@ export const useNavigation = (thisNodeRef: RefObject<THREE.Mesh | null>) => {
         const xOffset = 100 * biasX
         const yOffset = 100 * biasY
         const zOffset = 100 * biasZ
-        const newOffsets = new THREE.Vector3(xOffset, yOffset, zOffset)
+        const newOffsets = variableVector3.set(xOffset, yOffset, zOffset)
 
         setOffsets(newOffsets)
       }
@@ -57,7 +58,7 @@ export const useNavigation = (thisNodeRef: RefObject<THREE.Mesh | null>) => {
 
   const moveToNode = useCallback(
     (thisNode: THREE.Mesh, toNode: NodeExtended) => {
-      const mesh = new THREE.Vector3(toNode.x + offsets.x, toNode.y + offsets.y, toNode.z + offsets.z)
+      const mesh = variableVector3.set(toNode.x + offsets.x, toNode.y + offsets.y, toNode.z + offsets.z)
 
       const distance = thisNode.position.distanceTo(mesh)
 
@@ -73,7 +74,7 @@ export const useNavigation = (thisNodeRef: RefObject<THREE.Mesh | null>) => {
 
   const moveHome = useCallback(
     (thisNode: THREE.Mesh) => {
-      const mesh = new THREE.Vector3(thisNode.userData.x, thisNode.userData.y, thisNode.userData.z)
+      const mesh = variableVector3.set(thisNode.userData.x, thisNode.userData.y, thisNode.userData.z)
 
       const distance = thisNode.position.distanceTo(mesh)
 
