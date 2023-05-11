@@ -1,4 +1,5 @@
 import { Html } from '@react-three/drei'
+import { memo, useMemo } from 'react'
 import styled from 'styled-components'
 import { Vector3 } from 'three'
 import { usePathway } from '~/components/DataRetriever'
@@ -39,25 +40,31 @@ const PathwayBadge = ({ position, value, userData }: Props) => {
   )
 }
 
-export const RelevanceBadges = () => {
+export const RelevanceBadges = memo(() => {
   const { badges } = usePathway()
 
-  // explicitly never rerender these between clicks, teardown takes too long
-  return (
-    <>
-      <PathwayBadge position={badges[0]?.position} userData={badges[0]?.userData} value={badges[0]?.value} />
-      <PathwayBadge position={badges[1]?.position} userData={badges[1]?.userData} value={badges[1]?.value} />
-      <PathwayBadge position={badges[2]?.position} userData={badges[2]?.userData} value={badges[2]?.value} />
-      <PathwayBadge position={badges[3]?.position} userData={badges[3]?.userData} value={badges[3]?.value} />
-      <PathwayBadge position={badges[4]?.position} userData={badges[4]?.userData} value={badges[4]?.value} />
-      <PathwayBadge position={badges[5]?.position} userData={badges[5]?.userData} value={badges[5]?.value} />
-      <PathwayBadge position={badges[6]?.position} userData={badges[6]?.userData} value={badges[6]?.value} />
-      <PathwayBadge position={badges[7]?.position} userData={badges[7]?.userData} value={badges[7]?.value} />
-      <PathwayBadge position={badges[8]?.position} userData={badges[8]?.userData} value={badges[8]?.value} />
-      <PathwayBadge position={badges[9]?.position} userData={badges[9]?.userData} value={badges[9]?.value} />
-    </>
-  )
-}
+  const renderedBadges = useMemo(() => {
+    const renders = []
+
+    for (let i = 0; i < 10; i += 1) {
+      renders.push(
+        <PathwayBadge
+          key={`relevance-badge-${i}`}
+          position={badges[i]?.position}
+          userData={badges[i]?.userData}
+          value={badges[i]?.value}
+        />,
+      )
+    }
+
+    return renders
+  }, [badges])
+
+  // prevent badge dismount between clicks, teardown takes too long
+  return <>{renderedBadges}</>
+})
+
+RelevanceBadges.displayName = 'RelevanceBadges'
 
 type TagProps = {
   visible: boolean

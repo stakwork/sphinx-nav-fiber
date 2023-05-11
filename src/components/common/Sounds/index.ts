@@ -38,7 +38,16 @@ function addOrganicVariant() {
   return Math.floor((Math.random() - 0.5) * 20)
 }
 
-export const playInspectSound = (distance = 0) => {
+let toneStarted = false
+
+export const playInspectSound = async (distance = 0) => {
+  // start if not started
+  if (!toneStarted) {
+    await Tone.start()
+    toneStarted = true
+    console.warn('tone started')
+  }
+
   try {
     if (distance > 2000) {
       monoSynth2.triggerAttackRelease(60, 0.3)
