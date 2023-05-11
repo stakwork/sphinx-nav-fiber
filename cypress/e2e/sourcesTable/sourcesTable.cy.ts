@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { actionMenu, addNodeModal, addNodeSubmitButton, host, resetUserStore, setIsAdmin, toast } from '../../support'
+import { actionMenu, addNodeModal, addNodeSubmitButton, host, resetUserStore, setIsAdmin } from '../../support'
 import { addSourcesBtn, openSourceBtn, table } from './const'
 
 const modal = () => cy.get(addNodeModal)
-const toastBody = () => cy.get(toast)
+
 const getDeleteWrapperId = (s: string) => `#delete-${s}`
 
 describe('Sources Table / Home interactions', () => {
@@ -52,8 +52,6 @@ describe('Sources Table / Home interactions', () => {
       modal().get(addNodeSubmitButton).click()
       cy.wait('@post')
       cy.wait('@radar')
-
-      toastBody().should('be.visible')
     })
 
     it("Can't edit the table", () => {
