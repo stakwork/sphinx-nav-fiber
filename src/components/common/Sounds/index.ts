@@ -45,7 +45,6 @@ export const playInspectSound = async (distance = 0) => {
   if (!toneStarted) {
     await Tone.start()
     toneStarted = true
-    console.warn('tone started')
   }
 
   try {
