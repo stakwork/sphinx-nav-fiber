@@ -1,4 +1,4 @@
-import { actionMenu, addNodeModal, addNodeSubmitButton, host } from '../../support'
+import { actionMenu, addNodeModal, addNodeSubmitButton, host, toast } from '../../support'
 import { checkbox, description, endTime, link, startTime, tagError, tags } from './const'
 
 describe('Add Node Form / Home interactions', () => {
@@ -14,6 +14,7 @@ describe('Add Node Form / Home interactions', () => {
   const endTimeInput = () => cy.get(endTime)
   const descriptionInput = () => cy.get(description)
   const tagsInput = () => cy.get(tags)
+  const toastBody = () => cy.get(toast)
   const checkboxButton = () => cy.get(checkbox)
 
   it('submitting the form with all fields empty yields 5 error messages', () => {
@@ -73,6 +74,8 @@ describe('Add Node Form / Home interactions', () => {
     cy.wait('@add_node')
 
     modal().should('not.exist')
+    cy.wait(3000)
+    toastBody().should('be.visible').and('contain.text', 'Submitted!')
   })
 
   it('checkbox checked, submitting the form but receiving an error response from the server, displays custom error message', () => {
@@ -109,5 +112,7 @@ describe('Add Node Form / Home interactions', () => {
     submitButton().click({ waitForAnimations: false })
 
     cy.wait('@add_node')
+    cy.wait(3000)
+    toastBody().should('be.visible').and('contain.text', 'Submission failed, please try again.')
   })
 })
