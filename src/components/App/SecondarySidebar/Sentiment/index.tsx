@@ -16,7 +16,7 @@ type SentimentData = {
 const RenderDot: FC<DotProps> = ({ cx, cy }) => <Dot cx={cx} cy={cy} fill={colors.blueTextAccent} r={2} />
 
 export const Sentiment = () => {
-    const [sentimentData, setSentimentData] = useState<SentimentData[] | undefined>(undefined)
+  const [sentimentData, setSentimentData] = useState<SentimentData[] | undefined>(undefined)
 
   useEffect(() => {
     const init = async () => {
@@ -24,21 +24,23 @@ export const Sentiment = () => {
         const data: FetchSentimentResponse = await getSentimentData()
 
         setSentimentData(
-          data?.data.filter((i) => i.date).map((i) => ({
-            date: moment.unix(Number(String(i.date).split('.')[0])).format('MM/DD/YY'),
-            score: i.sentiment_score,
-          })),
+          data?.data
+            .filter((i) => i.date)
+            .map((i) => ({
+              date: moment.unix(Number(String(i.date).split('.')[0])).format('MM/DD/YY'),
+              score: i.sentiment_score,
+            })),
         )
       } catch (error) {
-        console.log(error)
+        console.warn(error)
       }
     }
 
-    init();
-  }, []);
+    init()
+  }, [])
 
   return (
-    <ChartWrapper align="flex-start" direction="column" justify="flex-end">
+    <ChartWrapper align="flex-start" direction="column" id="cy-sentiment-chart" justify="flex-end">
       <Text className="title">Sentiment chart</Text>
       {sentimentData?.length && (
         <LineChart

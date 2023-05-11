@@ -16,19 +16,17 @@ interface TabPanelProps {
 const TabPanel = (props: TabPanelProps) => {
   const { children, value, index, ...other } = props
 
-  return (
-    value === index ? (
-      <TabPanelWrapper
-        aria-labelledby={`simple-tab-${index}`}
-        hidden={value !== index}
-        id={`simple-tabpanel-${index}`}
-        role="tabpanel"
-        {...other}
-      >
-        {children}
-      </TabPanelWrapper>
-    ) : null
-  )
+  return value === index ? (
+    <TabPanelWrapper
+      aria-labelledby={`simple-tab-${index}`}
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      role="tabpanel"
+      {...other}
+    >
+      {children}
+    </TabPanelWrapper>
+  ) : null
 }
 
 function a11yProps(index: number) {

@@ -1,12 +1,12 @@
+import { FC } from 'react'
+import { FormProvider, useForm } from 'react-hook-form'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
+import { TextInput } from '~/components/AddNodeModal/TextInput'
 import { Button } from '~/components/Button'
 import { Flex } from '~/components/common/Flex'
-import { FormProvider, useForm } from 'react-hook-form'
-import { colors } from '~/utils/colors'
-import { TextInput } from '~/components/AddNodeModal/TextInput'
 import { TAboutParams, postAboutData } from '~/network/fetchSourcesData'
-import { FC } from 'react'
+import { colors } from '~/utils/colors'
 
 export const requiredRule = {
   required: {
@@ -23,14 +23,11 @@ export const AboutAdminView: FC<Props> = ({ initialValues }) => {
   const form = useForm<TAboutParams>({ defaultValues: initialValues, mode: 'onSubmit' })
   const { isSubmitting } = form.formState
 
-
   const onSubmit = form.handleSubmit(async (data) => {
     try {
-      const res = await postAboutData(data)
-
-      console.log(res);
+      await postAboutData(data)
     } catch (error) {
-      console.log(error);
+      console.warn(error)
     }
   })
 

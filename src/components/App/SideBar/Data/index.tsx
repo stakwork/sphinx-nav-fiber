@@ -26,9 +26,6 @@ export const Data = () => {
   const years = data.map((i) => i.year).filter((i) => i)
   const rates = data.map((i) => i.rate).filter((i) => i)
 
-  console.log(years)
-  console.log(rates)
-
   return (
     <StyledFlex direction="column" px={24} py={16}>
       {/* <Flex align="center" direction="row" justify="flex-start" p={10}>

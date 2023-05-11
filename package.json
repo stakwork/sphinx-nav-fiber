@@ -1,6 +1,6 @@
 {
   "name": "sphinx-nav",
-  "version": "0.1.7",
+  "version": "0.1.18",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.10.8",
@@ -15,9 +15,11 @@
     "d3-force-3d": "^3.0.3",
     "gsap": "^3.10.4",
     "invariant": "^2.2.4",
+    "leva": "^0.9.34",
     "lodash": "^4.17.21",
     "lsat-js": "^2.0.5",
     "moment": "^2.29.4",
+    "r3f-perf": "6.7.0",
     "react": "^18.2.0",
     "react-audio-player": "^0.17.0",
     "react-dom": "^18.2.0",
@@ -33,7 +35,7 @@
     "react-twitter-embed": "^4.0.4",
     "react-twitter-widgets": "^1.11.0",
     "recharts": "^2.4.3",
-    "sphinx-bridge-kevkevinpal": "0.2.48",
+    "sphinx-bridge-kevkevinpal": "0.2.58",
     "styled-components": "^5.3.9",
     "three": "^0.143.0",
     "three-forcegraph": "^1.39.4",
@@ -53,10 +55,11 @@
     "cy-open": "cypress open",
     "cy-run": "cypress run",
     "eject": "craco eject",
-    "format": "prettier --write .",
+    "format": "prettier --write --config prettier.config.js ./src",
+    "prettier": "npx prettier --config prettier.config.js --check ./src",
     "postinstall": "husky install",
     "typecheck": "tsc --noEmit",
-    "lint": "eslint src"
+    "lint": "eslint src --max-warnings 30"
   },
   "eslintConfig": {
     "extends": [
@@ -111,6 +114,7 @@
     "eslint-plugin-react-hooks": "^4.5.0",
     "husky": "^8.0.1",
     "prettier": "^2.7.1",
+    "r3f-perf": "6.7.0",
     "typescript": "^4.4.2"
   },
   "packageManager": "yarn@3.5.0"

@@ -1,74 +1,71 @@
-import * as sphinx from "sphinx-bridge-kevkevinpal";
-import styled from "styled-components";
-import { useState, useEffect } from "react";
-import { useSelectedNode } from "~/stores/useDataStore";
-import { api } from "~/network/api";
-import { colors } from "~/utils/colors";
-import { Flex } from "~/components/common/Flex";
-import { Pill } from "~/components/common/Pill";
-import { Text } from "~/components/common/Text";
-import { useAppStore } from "~/stores/useAppStore";
+import { useEffect, useState } from 'react'
+import * as sphinx from 'sphinx-bridge-kevkevinpal'
+import styled from 'styled-components'
+import { Flex } from '~/components/common/Flex'
+import { Pill } from '~/components/common/Pill'
+import { Text } from '~/components/common/Text'
+import { api } from '~/network/api'
+import { useAppStore } from '~/stores/useAppStore'
+import { useSelectedNode } from '~/stores/useDataStore'
+import { colors } from '~/utils/colors'
 
 const ErrorWrapper = styled(Flex)`
   padding: 10px;
   border-bottom: 1px solid ${colors.divider2};
-`;
+`
 
 const ErrorMsgWrapper = styled.textarea`
   resize: none;
   margin-bottom: 5px;
-`;
+`
 
 type UserErrResponse = {
-  error?: { message?: string };
-};
+  error?: { message?: string }
+}
 
 export const ErrorSection = () => {
-  const selectedNode = useSelectedNode();
-  const [userErrorMsg, setUserErrorMsg] = useState("");
-  const [userNotification, setUserNotification] = useState("");
-  const setFlagErrorOpen = useAppStore((s) => s.setFlagErrorOpen);
+  const selectedNode = useSelectedNode()
+  const [userErrorMsg, setUserErrorMsg] = useState('')
+  const [userNotification, setUserNotification] = useState('')
+  const setFlagErrorOpen = useAppStore((s) => s.setFlagErrorOpen)
 
   const submitUserError = async () => {
     const body = {
       content_node_ref_id: selectedNode?.ref_id,
       message: userErrorMsg,
-    };
+    }
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    const trySphinx = await sphinx.enable(true);
+    const trySphinx = await sphinx.enable(true)
 
     if (!trySphinx) {
-      console.log("Sphinx enable failed");
+      console.warn('Sphinx enable failed')
     }
 
     try {
-      const res: UserErrResponse = await api.post(
-        "/prediction/feedback",
-        JSON.stringify(body)
-      );
+      const res: UserErrResponse = await api.post('/prediction/feedback', JSON.stringify(body))
 
       if (res.error) {
-        const { message } = res.error;
+        const { message } = res.error
 
-        throw new Error(message);
+        throw new Error(message)
       }
 
-      setUserErrorMsg("");
-      setUserNotification("Sent successfully");
+      setUserErrorMsg('')
+      setUserNotification('Sent successfully')
     } catch (err: unknown) {
       if (err instanceof Error) {
-        setUserNotification(err.message || "Failed to send");
+        setUserNotification(err.message || 'Failed to send')
       }
     }
-  };
+  }
 
   useEffect(() => {
     if (!userErrorMsg) {
-      setUserNotification("");
+      setUserNotification('')
     }
-  }, [userErrorMsg]);
+  }, [userErrorMsg])
 
   return (
     <ErrorWrapper>
@@ -80,9 +77,9 @@ export const ErrorSection = () => {
       <ErrorMsgWrapper
         cols={1}
         onChange={(e) => {
-          const { value } = e.target;
+          const { value } = e.target
 
-          setUserErrorMsg(value);
+          setUserErrorMsg(value)
         }}
         placeholder="flag incorrect information (misspelled words, etc)"
         rows={10}
@@ -94,11 +91,8 @@ export const ErrorSection = () => {
             justify="center"
             pb={3}
             style={{
-              color:
-                userNotification === "Sent successfully"
-                  ? colors.green400
-                  : "#FF8F80",
-              marginRight: "20px",
+              color: userNotification === 'Sent successfully' ? colors.green400 : '#FF8F80',
+              marginRight: '20px',
             }}
           >
             {userNotification}
@@ -110,13 +104,13 @@ export const ErrorSection = () => {
         </Pill>
         <Pill
           onClick={() => {
-            setFlagErrorOpen(false);
-            setUserErrorMsg("");
+            setFlagErrorOpen(false)
+            setUserErrorMsg('')
           }}
         >
           Cancel
         </Pill>
       </Flex>
     </ErrorWrapper>
-  );
-};
+  )
+}

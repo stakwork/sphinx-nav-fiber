@@ -9,7 +9,7 @@ const boostAgainstBudget = async (amount: number) => {
   let res = await sphinx.enable(true)
 
   if (!res) {
-    console.log('Sphinx enable failed, means no pubkey and no budget (including budget of 0)')
+    console.warn('Sphinx enable failed, means no pubkey and no budget (including budget of 0)')
   }
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment

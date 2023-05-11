@@ -1,20 +1,26 @@
-import { useMemo } from "react";
-import * as THREE from "three";
-import { MeshStandardMaterial } from "three";
+import { useMemo } from 'react'
+import * as THREE from 'three'
+import { MeshStandardMaterial } from 'three'
 
-const loader = new THREE.TextureLoader();
+const loader = new THREE.TextureLoader()
 
-const cachedMaterials: Record<string, THREE.MeshStandardMaterial> = {};
+const cachedMaterials: Record<string, THREE.MeshStandardMaterial> = {}
 
 export const useMaterial = (url: string, highlight: boolean, highlightColor = 'green') => {
   const material = useMemo(() => {
-    const cashPath = `${url}${String(highlight)}${highlightColor}`;
+    const cashPath = `${url}${String(highlight)}${highlightColor}`
 
     if (cachedMaterials[cashPath]) {
-      return cachedMaterials[cashPath];
+      return cachedMaterials[cashPath]
     }
 
-    const map = loader.load(url);
+    const map = loader.load(url, undefined, undefined, () => {
+      // load error
+      try {
+        cachedMaterials[cashPath].map = loader.load('noimage.jpeg')
+        // eslint-disable-next-line no-empty
+      } catch (e) {}
+    })
 
     const materialProp = highlight
       ? {
@@ -25,14 +31,14 @@ export const useMaterial = (url: string, highlight: boolean, highlightColor = 'g
           toneMapped: false,
           transparent: true,
         }
-      : { map };
+      : { map }
 
-    const m = new MeshStandardMaterial(materialProp);
+    const m = new MeshStandardMaterial(materialProp)
 
-    cachedMaterials[cashPath] = m;
+    cachedMaterials[cashPath] = m
 
-    return m;
-  }, [url, highlight, highlightColor]);
+    return m
+  }, [url, highlight, highlightColor])
 
-  return material;
-};
+  return material
+}

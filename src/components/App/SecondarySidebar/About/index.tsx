@@ -5,10 +5,10 @@ import styled from 'styled-components'
 import { Button } from '~/components/Button'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
-import { isDevelopment } from '~/constants'
 import { TAboutParams, getAboutData } from '~/network/fetchSourcesData'
 import { useUserStore } from '~/stores/useUserStore'
 import { colors } from '~/utils/colors'
+import { executeIfProd } from '~/utils/tests'
 import { AboutAdminView } from './AdminView'
 import { CommonView } from './CommonView'
 
@@ -33,7 +33,6 @@ const defaultData = {
 
 export const About = () => {
   const [setIsAdmin, isAdmin, setPubKey, pubKey] = useUserStore((s) => [s.setIsAdmin, s.isAdmin, s.setPubKey, s.pubKey])
-  const [admId, setAdmId] = useState('')
   const [loading, setLoading] = useState(false)
   const [initialValues, setInitialValues] = useState<TAboutParams>(defaultData)
 
@@ -46,7 +45,7 @@ export const About = () => {
 
         setInitialValues(response)
       } catch (error) {
-        console.log(error)
+        console.warn(error)
       } finally {
         setLoading(false)
       }
@@ -56,7 +55,8 @@ export const About = () => {
   }, [])
 
   const authorize = async () => {
-    if (!isDevelopment) {
+    // skipping this for end to end test because it requires a sphinx-relay to be connected
+    await executeIfProd(async () => {
       try {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
@@ -65,20 +65,13 @@ export const About = () => {
 
         setPubKey(pubKeyRes)
 
-        const queryString = window.location.search
-        const urlParams = new URLSearchParams(queryString)
-
-        const tribeId = urlParams.get('tribe')
-        let id
-
         if (pubKeyRes) {
-          // id = getAdminId(tribeId)
           setIsAdmin(pubKeyRes && admins.includes(pubKeyRes))
         }
       } catch (error) {
-        console.log(error)
+        console.warn(error)
       }
-    }
+    })
   }
 
   const resolveAdminActions = () => {

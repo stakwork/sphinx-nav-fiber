@@ -1,46 +1,41 @@
-import {
-  Controller,
-  get,
-  RegisterOptions,
-  useFormContext,
-} from "react-hook-form";
-import { FaRegQuestionCircle } from "react-icons/fa";
-import { MdError } from "react-icons/md";
-import InputMask from "react-input-mask";
-import styled from "styled-components";
-import { BaseTextInput, BaseTextInputProps } from "~/components/BaseTextInput";
-import { defaultProps } from "~/components/BaseTextInput/defaultProps";
-import { WebTextInput } from "~/components/BaseTextInput/WebTextInput";
-import { Flex } from "~/components/common/Flex";
-import { Text } from "~/components/common/Text";
-import { colors } from "~/utils/colors";
+import { Controller, get, RegisterOptions, useFormContext } from 'react-hook-form'
+import { FaRegQuestionCircle } from 'react-icons/fa'
+import { MdError } from 'react-icons/md'
+import InputMask from 'react-input-mask'
+import styled from 'styled-components'
+import { BaseTextInput, BaseTextInputProps } from '~/components/BaseTextInput'
+import { defaultProps } from '~/components/BaseTextInput/defaultProps'
+import { WebTextInput } from '~/components/BaseTextInput/WebTextInput'
+import { Flex } from '~/components/common/Flex'
+import { Text } from '~/components/common/Text'
+import { colors } from '~/utils/colors'
 
 const Wrapper = styled(Flex).attrs({
-  background: "inputBg2",
+  background: 'inputBg2',
   px: 8,
   py: 12,
 })`
   border-radius: 8px;
-`;
+`
 
 type QuestionIconProps = {
-  name: string;
-};
+  name: string
+}
 
 type Props = BaseTextInputProps & {
-  id: string;
-  label: string;
-  message?: string;
-  rules?: RegisterOptions;
-  mask?: string;
-  showMask?: boolean;
-  maskPlaceholder?: string | null;
-};
+  id: string
+  label: string
+  message?: string
+  rules?: RegisterOptions
+  mask?: string
+  showMask?: boolean
+  maskPlaceholder?: string | null
+}
 
 export const TextInput = ({
   id,
   label,
-  mask = "",
+  mask = '',
   message,
   name,
   rules,
@@ -51,28 +46,27 @@ export const TextInput = ({
   const {
     control,
     formState: { errors },
-  } = useFormContext();
+  } = useFormContext()
 
-  const error = get(errors, name);
+  const error = get(errors, name)
 
   return (
     <Flex shrink={1}>
       <Flex align="center" direction="row" pb={4} pl={4}>
         <Label htmlFor={id}>{label}</Label>
-        {message && <QuestionIcon name={name} role="tooltip">
-          <FaRegQuestionCircle color={colors.secondaryText4} />
-          <div className="tooltip">{message}</div>
-        </QuestionIcon>}
+        {message && (
+          <QuestionIcon name={name} role="tooltip">
+            <FaRegQuestionCircle color={colors.secondaryText4} />
+            <div className="tooltip">{message}</div>
+          </QuestionIcon>
+        )}
       </Flex>
       <Wrapper>
         <Controller
           control={control}
           name={name}
           render={({ field: { onBlur, onChange, value, ref } }) => {
-            const {
-              disabled = defaultProps.disabled,
-              textAlign = defaultProps.textAlign,
-            } = props;
+            const { disabled = defaultProps.disabled, textAlign = defaultProps.textAlign } = props
 
             return mask ? (
               <InputMask
@@ -126,8 +120,8 @@ export const TextInput = ({
         </Flex>
       )}
     </Flex>
-  );
-};
+  )
+}
 
 const QuestionIcon = styled(Flex)<QuestionIconProps>`
   cursor: default;
@@ -149,7 +143,7 @@ const QuestionIcon = styled(Flex)<QuestionIconProps>`
   }
 
   ${(props) =>
-    props.name === "endTime" &&
+    props.name === 'endTime' &&
     `
     .tooltip {
       left: -68px;
@@ -163,10 +157,10 @@ const QuestionIcon = styled(Flex)<QuestionIconProps>`
   &:focus .tooltip {
     visibility: visible;
   }
-`;
+`
 
 const Label = styled.label`
   color: ${colors.lightGray};
   font-size: 14px;
   font-weight: 600;
-`;
+`

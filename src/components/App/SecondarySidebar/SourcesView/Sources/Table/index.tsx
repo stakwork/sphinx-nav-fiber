@@ -1,3 +1,4 @@
+import { Table as MaterialTable, TableBody, TableCell, TableHead, TableRow } from '@mui/material'
 import React, { useState } from 'react'
 import { MdCheck, MdClose, MdDeleteForever, MdOutlineModeEdit } from 'react-icons/md'
 import { ClipLoader } from 'react-spinners'
@@ -6,13 +7,12 @@ import { BaseTextInput } from '~/components/BaseTextInput'
 import ConfirmPopover from '~/components/common/ConfirmPopover'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
+import { RSS, TWITTER_HANDLE } from '~/constants'
 import { deleteRadarData, putRadarData } from '~/network/fetchSourcesData'
 import { useDataStore } from '~/stores/useDataStore'
 import { RadarRequest, Sources } from '~/types'
 import { colors } from '~/utils/colors'
-import { sourcesMapper, TWITTER_LINK } from '../../constants'
-import { TableBody, TableCell, TableHead, TableRow, Table as MaterialTable } from '@mui/material'
-import { RSS, TWITTER_HANDLE } from '~/constants'
+import { TWITTER_LINK, sourcesMapper } from '../../constants'
 
 type Props = {
   data: Sources[] | undefined
@@ -36,7 +36,7 @@ const Table: React.FC<Props> = ({ data, canEdit = false }) => {
 
         setSources(updatedSources)
       } catch (error) {
-        console.log(error)
+        console.warn(error)
       }
     }
   }
@@ -52,7 +52,7 @@ const Table: React.FC<Props> = ({ data, canEdit = false }) => {
       await deleteRadarData(id)
       setSources(data?.filter((i) => i.id !== id))
     } catch (error) {
-      console.log(error)
+      console.warn(error)
     } finally {
       setLoadingId('')
     }
@@ -106,7 +106,7 @@ const Table: React.FC<Props> = ({ data, canEdit = false }) => {
             </StyledTableCell>
             {canEdit && (
               <StyledTableCell align="left">
-                <div className="delete-wrapper">
+                <div className="delete-wrapper" id={`delete-${i.source}`}>
                   {loadingId === i.id ? (
                     <ClipLoader color={colors.white} />
                   ) : (
@@ -156,7 +156,7 @@ const EditableCell: React.FC<EditableCellProps> = ({ value, onSave, id, children
         await onSave(name)
         setEditing(false)
       } catch (error) {
-        console.log(error)
+        console.warn(error)
       } finally {
         setLoading(false)
       }
