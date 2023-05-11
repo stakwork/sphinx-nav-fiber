@@ -101,21 +101,19 @@ export const Cube = memo(({ node, highlight, highlightColor }: Props) => {
   }
 
   return (
-    <>
-      <Select enabled={selectedNode ? isSelected : isSelectedCategory}>
-        <mesh
-          ref={ref}
-          geometry={boxGeometry}
-          material={material}
-          name={node.id}
-          onPointerOut={onPointerOut}
-          onPointerOver={onPointerIn}
-          position={[node.x, node.y, node.z]}
-          scale={scale}
-          userData={node}
-        />
-      </Select>
-    </>
+    <Select enabled={selectedNode ? isSelected : isSelectedCategory}>
+      <mesh
+        ref={ref}
+        geometry={boxGeometry}
+        material={material}
+        name={node.id}
+        onPointerOut={onPointerOut}
+        onPointerOver={onPointerIn}
+        position={[node.x, node.y, node.z]}
+        scale={scale}
+        userData={node}
+      />
+    </Select>
   )
 })
 
