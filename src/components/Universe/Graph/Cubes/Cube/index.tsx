@@ -1,28 +1,23 @@
 import { Text } from '@react-three/drei'
 import { ThreeEvent, useFrame } from '@react-three/fiber'
 import { Select } from '@react-three/postprocessing'
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import * as THREE from 'three'
+import { memo, useCallback, useEffect, useRef, useState } from 'react'
+import { Mesh } from 'three'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { useSomeModalIsOpen } from '~/stores/useModalStore'
 import { NodeExtended } from '~/types'
+import { boxGeometry } from './constants'
 import { useMaterial } from './hooks/useMaterial'
 
-const geometryXs = new THREE.BoxGeometry(10, 10, 10)
-const geometryS = new THREE.BoxGeometry(20, 20, 20)
-const geometryM = new THREE.BoxGeometry(35, 35, 35)
-
-const getGeometry = (node: NodeExtended) => {
+const getScale = (node: NodeExtended) => {
   switch (node.node_type) {
     case 'guest':
     case 'episode':
-      return geometryS
+      return 2
     case 'show':
-      return geometryM
-    case 'topic':
-      return geometryXs
+      return 3
     default:
-      return geometryXs
+      return 1.5
   }
 }
 
@@ -41,19 +36,17 @@ const fontProps = {
 }
 
 export const Cube = memo(({ node, highlight, highlightColor }: Props) => {
-  const ref = useRef<THREE.Mesh | null>(null)
-
+  const ref = useRef<Mesh | null>(null)
   const [hovered, setHovered] = useState(false)
+  const [scale] = useState(node.scale ? node.scale : getScale(node))
 
   const categoryFilter = useDataStore((s) => s.categoryFilter)
-  const graphStyle = useDataStore((s) => s.graphStyle)
 
   const isSomeModalOpened = useSomeModalIsOpen()
 
   const selectedNode = useSelectedNode()
 
-  const material = useMaterial(node.image_url || 'noimage.jpeg', !!highlight, highlightColor)
-  const geometry = useMemo(() => getGeometry(node), [node])
+  const material = useMaterial(node.image_url || 'noimage.jpeg', highlight, highlightColor)
 
   const isSelected = !!selectedNode && selectedNode?.id === node.id
   const isSelectedCategory = node.node_type === categoryFilter
@@ -88,14 +81,6 @@ export const Cube = memo(({ node, highlight, highlightColor }: Props) => {
     setHovered(false)
   }, [])
 
-  const scale = useMemo(() => {
-    if (graphStyle === 'split' && node.scale) {
-      return node.scale
-    }
-
-    return hovered ? 1.1 : 1
-  }, [graphStyle, hovered, node.scale])
-
   if (node.node_type === 'topic') {
     return (
       <Text
@@ -116,21 +101,19 @@ export const Cube = memo(({ node, highlight, highlightColor }: Props) => {
   }
 
   return (
-    <>
-      <Select enabled={selectedNode ? isSelected : isSelectedCategory}>
-        <mesh
-          ref={ref}
-          geometry={geometry}
-          material={material}
-          name={node.id}
-          onPointerOut={onPointerOut}
-          onPointerOver={onPointerIn}
-          position={[node.x, node.y, node.z]}
-          scale={scale}
-          userData={node}
-        />
-      </Select>
-    </>
+    <Select enabled={selectedNode ? isSelected : isSelectedCategory}>
+      <mesh
+        ref={ref}
+        geometry={boxGeometry}
+        material={material}
+        name={node.id}
+        onPointerOut={onPointerOut}
+        onPointerOver={onPointerIn}
+        position={[node.x, node.y, node.z]}
+        scale={scale}
+        userData={node}
+      />
+    </Select>
   )
 })
 

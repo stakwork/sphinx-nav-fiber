@@ -28,7 +28,7 @@ type TopicMapItem = {
 type TopicMap = Record<string, TopicMapItem>
 
 const shouldIncludeTopics = true
-const maxScale = 50
+const maxScale = 26
 
 export const fetchGraphData = async (search: string) => {
   try {
