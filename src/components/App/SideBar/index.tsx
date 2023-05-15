@@ -1,10 +1,18 @@
+import { useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { MdClose, MdKeyboardDoubleArrowLeft } from 'react-icons/md'
+import { ClipLoader } from 'react-spinners'
+import { toast } from 'react-toastify'
+import * as sphinx from 'sphinx-bridge-kevkevinpal'
 import styled from 'styled-components'
 import { CategorySelect } from '~/components/App/SideBar/CategorySelect'
+import { Button } from '~/components/Button'
 import { SearchBar } from '~/components/SearchBar'
 import { Flex } from '~/components/common/Flex'
 import { Loader } from '~/components/common/Loader'
+import { Text } from '~/components/common/Text'
+import { ToastMessage } from '~/components/common/Toast/toastMessage'
+import { postTeachMe } from '~/network/fetchGraphData'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { colors } from '~/utils/colors'
@@ -17,9 +25,42 @@ export const MENU_WIDTH = 433
 type Props = { onSubmit?: () => void }
 
 const Content = ({ onSubmit }: Props) => {
-  const isLoading = useDataStore((s) => s.isFetching)
-  const setSidebarOpen = useAppStore((s) => s.setSidebarOpen)
+  const [isTutorialLoading, setIsTutorialLoading] = useState(false)
+  const [isLoading, data] = useDataStore((s) => [s.isFetching, s.data])
+  const [setSidebarOpen, searchTerm] = useAppStore((s) => [s.setSidebarOpen, s.currentSearch])
   const { setValue } = useFormContext()
+
+  const handleTutorialStart = async () => {
+    setIsTutorialLoading(true)
+
+    try {
+      const nodesWithtranscript = data?.nodes.filter((i) => i.text)
+      const firstFiveItems = nodesWithtranscript?.slice(0, 5)
+
+      if (searchTerm) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        await sphinx.enable()
+
+        await postTeachMe({
+          term: searchTerm,
+          transcripts: firstFiveItems?.length ? firstFiveItems.map((i) => i.text).join(' ') : '',
+        })
+
+        setIsTutorialLoading(false)
+
+        toast(<ToastMessage message="We started preparing tutorial for you" />, {
+          type: 'success',
+        })
+      }
+    } catch (error) {
+      setIsTutorialLoading(false)
+
+      toast(<ToastMessage message="An error happened" />, {
+        type: 'error',
+      })
+    }
+  }
 
   return (
     <Wrapper id="sidebar-wrapper">
@@ -42,6 +83,21 @@ const Content = ({ onSubmit }: Props) => {
       >
         <MdKeyboardDoubleArrowLeft fontSize={20} />
       </CollapseButton>
+
+      {!isTutorialLoading ? (
+        <Flex p={12}>
+          <Button disabled={isLoading} kind="big" onClick={() => handleTutorialStart()}>
+            Teach me
+          </Button>
+        </Flex>
+      ) : (
+        <Flex align="center" direction="row" justify="center" py={12}>
+          <Flex px={12}>
+            <Text>Generating Tutorial</Text>
+          </Flex>
+          <ClipLoader color={colors.white} />
+        </Flex>
+      )}
 
       {isLoading ? <Loader color="primaryText1" /> : <View />}
 
