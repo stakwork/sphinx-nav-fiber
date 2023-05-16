@@ -90,7 +90,7 @@ export const useDataStore = create<DataStore>((set, get) => ({
       await saveSearchTerm()
     }
 
-    set({ data, isFetching: false, sphinxModalIsOpen: false })
+    set({ data, isFetching: false, sphinxModalIsOpen: false, disableCameraRotation: false })
   },
   setIsFetching: (isFetching) => set({ isFetching }),
   setData: (data) => set({ data }),
@@ -105,7 +105,7 @@ export const useDataStore = create<DataStore>((set, get) => ({
     const stateSelectedNode = get().selectedNode
 
     if (stateSelectedNode?.ref_id !== selectedNode?.ref_id) {
-      set({ isTimestampLoaded: false, selectedNode })
+      set({ isTimestampLoaded: false, selectedNode, disableCameraRotation: true })
     }
   },
   setSelectedTimestamp: (selectedTimestamp) => set({ selectedTimestamp }),
