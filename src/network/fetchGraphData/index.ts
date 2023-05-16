@@ -66,6 +66,17 @@ export const getSentimentData = async () => {
   return response
 }
 
+export const getSentimentAnalysis = async (topic: string, date: number) => {
+  const search = new URLSearchParams({
+    cutoff_date: String(date),
+    topic,
+  })
+
+  const response = await api.get<FetchSentimentResponse>(`/sentiments?${search.toString()}`)
+
+  return response
+}
+
 export const getAdminId = async (tribeId: string) => {
   const response = await fetch(`https://tribes.sphinx.chat/tribes/${tribeId}`)
 
