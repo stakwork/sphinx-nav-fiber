@@ -10,10 +10,10 @@ import { GlobalStyle } from '~/components/GlobalStyle'
 import { Universe } from '~/components/Universe'
 import { Flex } from '~/components/common/Flex'
 import { isE2E } from '~/constants'
-import { connectSocket, disconnectSocket } from '~/network/sockets'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { useModal } from '~/stores/useModalStore'
+import { useTeachStore } from '~/stores/useTeachStore'
 import { colors } from '~/utils/colors'
 import { E2ETests } from '~/utils/tests'
 import version from '~/utils/versionHelper'
@@ -54,6 +54,8 @@ export const App = () => {
     s.setTranscriptOpen,
   ])
 
+  const setTeachMeAnswer = useTeachStore((s) => s.setTeachMeAnswer)
+
   const hasBudgetExplanationModalBeSeen = useAppStore((s) => s.hasBudgetExplanationModalBeSeen)
 
   const fetchData = useDataStore((s) => s.fetchData)
@@ -68,6 +70,8 @@ export const App = () => {
     setSelectedNode(null)
     setRelevanceSelected(false)
     setCurrentSearch(search)
+    setTeachMeAnswer('')
+
     setCategoryFilter(null)
   })
 
@@ -76,16 +80,6 @@ export const App = () => {
   useEffect(() => {
     setSidebarOpen(showSideBar)
   }, [isAuthorized, selectedNode, setSidebarOpen, showSideBar])
-
-  useEffect(() => {
-    const socket = connectSocket()
-
-    // Additional event listeners and emit logic if needed
-
-    return () => {
-      disconnectSocket()
-    }
-  }, [])
 
   const runSearch = useCallback(async () => {
     if (searchTerm) {

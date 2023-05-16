@@ -1,4 +1,5 @@
 /* eslint-disable padding-line-between-statements */
+import { toast } from 'react-toastify'
 import { AWS_IMAGE_BUCKET_URL, CLOUDFRONT_IMAGE_BUCKET_URL, isDevelopment, isE2E } from '~/constants'
 import { api } from '~/network/api'
 import { FetchDataResponse, FetchSentimentResponse, GraphData, Guests, Link, Node, NodeExtended } from '~/types'
@@ -14,6 +15,14 @@ type guestMapChild = {
 type TeachData = {
   term: string
   transcripts: string
+}
+
+/* eslint-disable camelcase */
+type QuestionData = {
+  search_term: string
+  transcripts: string
+  expertise_level: string
+  question_text: string
 }
 
 const defaultData: GraphData = {
@@ -41,6 +50,9 @@ const fetchNodes = async (search: string) => {
   const lsatToken = await getLSat('searching')
 
   if (!lsatToken) {
+    toast('message', {
+      type: 'success',
+    })
     throw new Error('An error occured calling getLSat')
   }
 
@@ -59,20 +71,26 @@ export const postTeachMe = async (data: TeachData) => {
   const lsatToken = await getLSat('teachme')
 
   if (!lsatToken) {
+    toast('An error occured calling getLSat', {
+      type: 'error',
+    })
     throw new Error('An error occured calling getLSat')
   }
 
   return api.post(`/teachme`, JSON.stringify(data), { Authorization: lsatToken })
 }
 
-export const postAskQuestion = async (data: TeachData) => {
+export const postAskQuestion = async (data: QuestionData) => {
   const lsatToken = await getLSat('ask_question')
 
   if (!lsatToken) {
+    toast('An error occured calling getLSat', {
+      type: 'error',
+    })
     throw new Error('An error occured calling getLSat')
   }
 
-  return api.post(`/teachme`, JSON.stringify(data), { Authorization: lsatToken })
+  return api.post(`/ask_question`, JSON.stringify(data), { Authorization: lsatToken })
 }
 
 export const getAdminId = async (tribeId: string) => {
