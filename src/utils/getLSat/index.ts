@@ -2,19 +2,27 @@ import { Lsat } from 'lsat-js'
 import * as sphinx from 'sphinx-bridge-kevkevinpal'
 import { API_URL } from '~/constants'
 
-type Action = 'searching' | 'adding_node'
+type Action = 'searching' | 'adding_node' | 'teachme' | 'ask_question'
+
+const ActionsMapper = {
+  searching: 'GET',
+  adding_node: 'POST',
+  teachme: 'POST',
+  ask_question: 'POST',
+}
 
 export const getLSat = async (action: Action) => {
-  const method = action === 'adding_node' ? 'POST' : 'GET'
-
   try {
     const resp = await fetch(`${API_URL}/${action}`, {
-      method,
+      method: ActionsMapper[action],
     })
 
     const data = await resp.json()
 
-    const lsat = Lsat.fromHeader(data.headers)
+    const lsat =
+      action === 'teachme' || action === 'ask_question'
+        ? Lsat.fromHeader(resp.headers.get('www-authenticate') || '')
+        : Lsat.fromHeader(data.headers)
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore

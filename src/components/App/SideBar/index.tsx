@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { MdClose, MdKeyboardDoubleArrowLeft } from 'react-icons/md'
 import styled from 'styled-components'
@@ -9,17 +10,31 @@ import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { colors } from '~/utils/colors'
 import { media } from '~/utils/media'
+import { ActionsMenu } from './ActionsMenu'
+import { AskQuestion } from './AskQuestion'
 import { Tab } from './Tab'
+import { TeachMe } from './TeachMe'
 import { View } from './View'
 
 export const MENU_WIDTH = 433
 
 type Props = { onSubmit?: () => void }
 
+type ComponentsMapperType = {
+  [key: string]: JSX.Element
+}
+
+const ComponentsMapper: ComponentsMapperType = {
+  askQuestion: <AskQuestion />,
+  searchResults: <View />,
+  teachMe: <TeachMe />,
+}
+
 const Content = ({ onSubmit }: Props) => {
-  const isLoading = useDataStore((s) => s.isFetching)
-  const setSidebarOpen = useAppStore((s) => s.setSidebarOpen)
+  const [isLoading] = useDataStore((s) => [s.isFetching])
+  const [setSidebarOpen] = useAppStore((s) => [s.setSidebarOpen])
   const { setValue } = useFormContext()
+  const [selectedView, setSelectedView] = useState('searchResults')
 
   return (
     <Wrapper id="sidebar-wrapper">
@@ -35,6 +50,8 @@ const Content = ({ onSubmit }: Props) => {
         </CloseButton>
       </SearchWrapper>
 
+      <ActionsMenu active={selectedView} onChange={setSelectedView} />
+
       <CollapseButton
         onClick={() => {
           setSidebarOpen(false)
@@ -43,7 +60,7 @@ const Content = ({ onSubmit }: Props) => {
         <MdKeyboardDoubleArrowLeft fontSize={20} />
       </CollapseButton>
 
-      {isLoading ? <Loader color="primaryText1" /> : <View />}
+      {isLoading ? <Loader color="primaryText1" /> : ComponentsMapper[selectedView]}
 
       <CategoryWrapper direction="row">
         <Flex basis="154px">
@@ -82,6 +99,7 @@ const Wrapper = styled(Flex)`
 
 const SearchWrapper = styled(Flex).attrs({
   direction: 'row',
+  justify: 'center',
   p: 30,
 })`
   background: ${colors.dashboardHeader};

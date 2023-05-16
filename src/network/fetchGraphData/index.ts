@@ -15,6 +15,19 @@ type guestMapChild = {
   twitterHandle: string
 }
 
+type TeachData = {
+  term: string
+  transcripts: string
+}
+
+/* eslint-disable camelcase */
+type QuestionData = {
+  search_term: string
+  transcripts: string
+  expertise_level: string
+  question_text: string
+}
+
 const defaultData: GraphData = {
   links: [],
   nodes: [],
@@ -75,6 +88,26 @@ export const getSentimentAnalysis = async (topic: string, date: number) => {
   const response = await api.get<FetchSentimentResponse>(`/sentiments?${search.toString()}`)
 
   return response
+}
+
+export const postTeachMe = async (data: TeachData) => {
+  const lsatToken = await getLSat('teachme')
+
+  if (!lsatToken) {
+    throw new Error('An error occured calling getLSat')
+  }
+
+  return api.post(`/teachme`, JSON.stringify(data), { Authorization: lsatToken })
+}
+
+export const postAskQuestion = async (data: QuestionData) => {
+  const lsatToken = await getLSat('ask_question')
+
+  if (!lsatToken) {
+    throw new Error('An error occured calling getLSat')
+  }
+
+  return api.post(`/ask_question`, JSON.stringify(data), { Authorization: lsatToken })
 }
 
 export const getAdminId = async (tribeId: string) => {
