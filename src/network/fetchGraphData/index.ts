@@ -20,6 +20,14 @@ type TeachData = {
   transcripts: string
 }
 
+/* eslint-disable camelcase */
+type QuestionData = {
+  search_term: string
+  transcripts: string
+  expertise_level: string
+  question_text: string
+}
+
 const defaultData: GraphData = {
   links: [],
   nodes: [],
@@ -79,6 +87,16 @@ export const postTeachMe = async (data: TeachData) => {
   }
 
   return api.post(`/teachme`, JSON.stringify(data), { Authorization: lsatToken })
+}
+
+export const postAskQuestion = async (data: QuestionData) => {
+  const lsatToken = await getLSat('ask_question')
+
+  if (!lsatToken) {
+    throw new Error('An error occured calling getLSat')
+  }
+
+  return api.post(`/ask_question`, JSON.stringify(data), { Authorization: lsatToken })
 }
 
 export const getAdminId = async (tribeId: string) => {

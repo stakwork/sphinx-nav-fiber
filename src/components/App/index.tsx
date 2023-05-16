@@ -14,6 +14,7 @@ import { isDevelopment, isE2E } from '~/constants'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { useModal } from '~/stores/useModalStore'
+import { useTeachStore } from '~/stores/useTeachStore'
 import { colors } from '~/utils/colors'
 import { E2ETests } from '~/utils/tests'
 import version from '~/utils/versionHelper'
@@ -64,6 +65,8 @@ export const App = () => {
     s.hasBudgetExplanationModalBeSeen,
   ])
 
+  const setTeachMeAnswer = useTeachStore((s) => s.setTeachMeAnswer)
+
   const [data, setData, fetchData, graphStyle, setSphinxModalOpen, setSelectedNode, setCategoryFilter] = useDataStore(
     (s) => [s.data, s.setData, s.fetchData, s.graphStyle, s.setSphinxModalOpen, s.setSelectedNode, s.setCategoryFilter],
   )
@@ -75,6 +78,8 @@ export const App = () => {
     setSelectedNode(null)
     setRelevanceSelected(false)
     setCurrentSearch(search)
+    setTeachMeAnswer('')
+
     setCategoryFilter(null)
   })
 

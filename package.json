@@ -5,6 +5,7 @@
   "dependencies": {
     "@emotion/react": "^11.10.8",
     "@emotion/styled": "^11.10.8",
+    "@mui/base": "^5.0.0-beta.0",
     "@mui/material": "^5.11.16",
     "@mui/styled-engine-sc": "^5.11.11",
     "@react-three/drei": "9.57.0",
@@ -35,6 +36,7 @@
     "react-twitter-embed": "^4.0.4",
     "react-twitter-widgets": "^1.11.0",
     "recharts": "^2.4.3",
+    "socket.io-client": "^4.6.1",
     "sphinx-bridge-kevkevinpal": "0.2.58",
     "styled-components": "^5.3.9",
     "three": "^0.143.0",
