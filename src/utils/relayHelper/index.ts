@@ -11,7 +11,7 @@ export const saveConsumedContent = async (selectedNode: Node | null) => {
     const res = await sphinx.enable(true)
 
     if (!res) {
-      console.log('Sphinx enable failed, means no pubkey and no budget (including budget of 0)')
+      console.error('Sphinx enable failed, means no pubkey and no budget (including budget of 0)')
 
       return
     }
@@ -27,7 +27,7 @@ export const saveConsumedContent = async (selectedNode: Node | null) => {
         type: 'second_brain_consumed_content',
       })
     } catch (error) {
-      console.log(error)
+      console.warn(error)
     }
   })
 }

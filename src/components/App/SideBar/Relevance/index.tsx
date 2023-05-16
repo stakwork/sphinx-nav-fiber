@@ -1,5 +1,5 @@
 import { ReactNode, useCallback, useMemo, useRef, useState } from 'react'
-import { useGraphData, usePathway } from '~/components/DataRetriever'
+import { useGraphData } from '~/components/DataRetriever'
 import { ScrollView } from '~/components/ScrollView'
 import { Flex } from '~/components/common/Flex'
 import { Pill } from '~/components/common/Pill'
@@ -41,8 +41,6 @@ export const Relevance = ({ header = null }: Props) => {
     [data.nodes, endSlice, startSlice],
   )
 
-  const { pathway, currentNodeIndex } = usePathway()
-
   const handleNodeClick = useCallback(
     (node: NodeExtended) => {
       saveConsumedContent(node)
@@ -53,24 +51,6 @@ export const Relevance = ({ header = null }: Props) => {
     [setSelectedNode, setRelevanceSelected, setSelectedTimestamp],
   )
 
-  const handleOnAudioEnds = useCallback(() => {
-    if (currentNodeIndex === -1) {
-      return
-    }
-
-    const nextNode = pathway[currentNodeIndex + 1]
-
-    if (nextNode) {
-      handleNodeClick(nextNode)
-
-      setTimeout(() => {
-        const audioElement = document.getElementById('audio-player') as HTMLAudioElement
-
-        audioElement?.play()
-      }, 500)
-    }
-  }, [currentNodeIndex, handleNodeClick, pathway])
-
   return (
     <>
       {!header && flagErrorIsOpen && <ErrorSection />}
@@ -79,7 +59,7 @@ export const Relevance = ({ header = null }: Props) => {
         {header}
 
         {currentNodes.map((n, index) => {
-          const { image_url: imageUrl, episode_title: episodeTitle, description, date, boost, type, id } = n || {}
+          const { image_url: imageUrl, description, date, boost, type, id } = n || {}
 
           return (
             <Episode
@@ -90,9 +70,7 @@ export const Relevance = ({ header = null }: Props) => {
               description={formatDescription(description)}
               id={id}
               imageUrl={imageUrl || 'audio_default.svg'}
-              onAudioEnds={handleOnAudioEnds}
               onClick={() => handleNodeClick(n)}
-              title={episodeTitle || ''}
               type={type}
             />
           )

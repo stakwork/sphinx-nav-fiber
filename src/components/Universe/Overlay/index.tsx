@@ -1,25 +1,36 @@
+import { useEffect } from 'react'
 import styled from 'styled-components'
 import { Button } from '~/components/Button'
 import { useControlStore } from '~/stores/useControlStore'
-import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
+import { useDataStore } from '~/stores/useDataStore'
+import { Tooltip } from '../Graph/Cubes/Cube/components/Tooltip'
 
 export const Overlay = () => {
-  const [cameraFocusTrigger, setCameraFocusTrigger] = useDataStore((s) => [
+  const [selectedNode, hoveredNode, cameraFocusTrigger, setCameraFocusTrigger] = useDataStore((s) => [
+    s.selectedNode,
+    s.hoveredNode,
     s.cameraFocusTrigger,
     s.setCameraFocusTrigger,
   ])
 
-  const selectedNode = useSelectedNode()
   const userMovedCamera = useControlStore((s) => s.userMovedCamera)
+
+  useEffect(() => {
+    document.body.style.cursor = hoveredNode ? 'pointer' : 'auto'
+  }, [hoveredNode])
 
   return (
     <OverlayWrap>
-      <div id="tooltip-portal" />
-
       {!!selectedNode && userMovedCamera && (
         <Button background="bluePressState" kind="small" onClick={() => setCameraFocusTrigger(!cameraFocusTrigger)}>
           Re-center map
         </Button>
+      )}
+
+      {hoveredNode && (
+        <div id="tooltip-portal">
+          <Tooltip node={hoveredNode} />
+        </div>
       )}
     </OverlayWrap>
   )
@@ -33,7 +44,9 @@ const OverlayWrap = styled.div`
   user-select: none;
   pointer-events: none;
   display: flex;
+
   justify-content: flex-end;
+  align-items: flex-start;
   height: 100%;
   width: 100%;
   padding: 16px;

@@ -23,6 +23,7 @@ export type Flexbox = {
   justify: Justify
   shrink: Shrink
   wrap: Wrap
+  opacity: number
 }
 
 export type FlexboxProps = Partial<Flexbox>
@@ -39,6 +40,8 @@ const switchProp = (prop: keyof Flexbox, value: Flexbox[keyof Flexbox]) => {
     case 'shrink':
     case 'wrap':
       return `flex-${prop}: ${value};`
+    case 'opacity':
+      return `opacity: ${value}`
     default:
       return assertNever(prop)
   }

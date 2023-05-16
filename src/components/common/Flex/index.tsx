@@ -13,6 +13,7 @@ const defaultProps: Flexbox = {
   direction: 'column',
   grow: 0,
   justify: 'flex-start',
+  opacity: 1,
   shrink: 0,
   wrap: 'nowrap',
 }

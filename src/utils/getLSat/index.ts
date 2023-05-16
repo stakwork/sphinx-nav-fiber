@@ -40,7 +40,7 @@ export const getLSat = async (action: Action) => {
 
     return token
   } catch (e) {
-    console.log(e)
+    console.warn(e)
 
     return null
   }
