@@ -9,18 +9,6 @@ import { NodeExtended } from '~/types'
 import { boxGeometry } from './constants'
 import { useTexture } from './hooks/useMaterial'
 
-const getScale = (node: NodeExtended) => {
-  switch (node.node_type) {
-    case 'guest':
-    case 'episode':
-      return 2
-    case 'show':
-      return 3
-    default:
-      return 1.5
-  }
-}
-
 type Props = {
   node: NodeExtended
 }
@@ -36,7 +24,6 @@ const fontProps = {
 export const Cube = memo(({ node }: Props) => {
   const ref = useRef<Mesh | null>(null)
   const [hovered, setHovered] = useState(false)
-  const [scale] = useState(node.scale ? node.scale : getScale(node))
 
   const categoryFilter = useDataStore((s) => s.categoryFilter)
 
@@ -89,7 +76,7 @@ export const Cube = memo(({ node }: Props) => {
         onPointerOut={onPointerOut}
         onPointerOver={onPointerIn}
         position={[node.x, node.y, node.z]}
-        scale={scale * 4}
+        scale={node.scale * 4}
         userData={node}
         {...fontProps}
       >
@@ -107,7 +94,7 @@ export const Cube = memo(({ node }: Props) => {
         onPointerOut={onPointerOut}
         onPointerOver={onPointerIn}
         position={[node.x, node.y, node.z]}
-        scale={scale}
+        scale={node.scale}
         userData={node}
       >
         <meshStandardMaterial map={texture} />

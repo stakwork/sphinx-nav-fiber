@@ -13,18 +13,11 @@ const noImageTexture = loader.load('noimage.jpeg')
 
 export const useTexture = (url: string) => {
   const [texture, setTexture] = useState(noImageTexture)
-  const [showTexture, setShowTexture] = useState(false)
-  // const { camera } = useThree()
-
-  // useEffect(() => {
-  //   console.log('camera', camera.position)
-  // }, [camera.position.x, camera.position.y, camera.position.z])
 
   useEffect(() => {
     const cashPath = `${url}`
 
     if (cachedMaterials[cashPath]) {
-      cachedMaterials[cashPath].texture.dispose()
       setTexture(cachedMaterials[cashPath].texture)
       return
     }
@@ -32,19 +25,24 @@ export const useTexture = (url: string) => {
     const map = loader.load(url, undefined, undefined, () => {
       // load error
       try {
+        cachedMaterials[cashPath].texture = noImageTexture
         setTexture(noImageTexture)
         // eslint-disable-next-line no-empty
       } catch (e) {}
     })
 
-    cachedMaterials[cashPath] = {
-      texture: map,
-    }
+    if (map) {
+      cachedMaterials[cashPath] = {
+        texture: map,
+      }
 
-    setTexture(map)
+      setTexture(map)
+    } else {
+      cachedMaterials[cashPath] = {
+        texture: noImageTexture,
+      }
 
-    return function cleanup() {
-      texture.dispose()
+      setTexture(noImageTexture)
     }
   }, [url])
 

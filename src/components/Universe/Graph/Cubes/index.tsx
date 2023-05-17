@@ -6,6 +6,7 @@ import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
 import { NodeExtended } from '~/types'
 import { Cube } from './Cube'
+import { Highlights } from './Highlights'
 import { RelevanceBadges } from './RelevanceBadges'
 
 export const Cubes = memo(() => {
@@ -33,7 +34,7 @@ export const Cubes = memo(() => {
       {data.nodes.map((node) => {
         return <Cube key={node.ref_id} node={node} />
       })}
-      {/* <Highlights /> */}
+      <Highlights />
       <RelevanceBadges />
     </Select>
   )

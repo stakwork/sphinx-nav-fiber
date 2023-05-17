@@ -48,7 +48,7 @@ export const Highlights = () => {
           key={`highlight-${i}`}
           position={highlights[i]?.position}
           userData={highlights[i]?.userData}
-          scale={highlights[i]?.scale * 1.5}
+          scale={highlights[i]?.scale * 1.1}
         />,
       )
     }
