@@ -44,7 +44,6 @@ export const Highlights = () => {
       renders.push(
         <Instance
           visible={!!highlights[i]?.position}
-          color={highlights[i]?.color}
           key={`highlight-${i}`}
           position={highlights[i]?.position}
           userData={highlights[i]?.userData}
