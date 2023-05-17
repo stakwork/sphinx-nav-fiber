@@ -29,7 +29,7 @@ export type HighlightParentProps = {
 export const highlightMaterial = new MeshStandardMaterial({
   emissive: 'green',
   color: 'white',
-  emissiveIntensity: 80,
+  emissiveIntensity: 20,
   opacity: 0.5,
   toneMapped: false,
   transparent: true,
