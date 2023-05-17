@@ -60,7 +60,7 @@ export const RelevanceBadges = memo(() => {
     return renders
   }, [badges])
 
-  // prevent badge dismount between clicks, teardown takes too long
+  // prevent badge dismount between clicks, teardown takes too long, hide instead
   return <>{renderedBadges}</>
 })
 

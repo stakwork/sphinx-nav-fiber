@@ -7,7 +7,7 @@ import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { useSomeModalIsOpen } from '~/stores/useModalStore'
 import { NodeExtended } from '~/types'
 import { boxGeometry } from './constants'
-import { useMaterial } from './hooks/useMaterial'
+import { useTexture } from './hooks/useMaterial'
 
 const getScale = (node: NodeExtended) => {
   switch (node.node_type) {
@@ -23,8 +23,6 @@ const getScale = (node: NodeExtended) => {
 
 type Props = {
   node: NodeExtended
-  highlight: boolean
-  highlightColor: string
 }
 
 const fontProps = {
@@ -35,7 +33,7 @@ const fontProps = {
   'material-toneMapped': false,
 }
 
-export const Cube = memo(({ node, highlight, highlightColor }: Props) => {
+export const Cube = memo(({ node }: Props) => {
   const ref = useRef<Mesh | null>(null)
   const [hovered, setHovered] = useState(false)
   const [scale] = useState(node.scale ? node.scale : getScale(node))
@@ -46,7 +44,7 @@ export const Cube = memo(({ node, highlight, highlightColor }: Props) => {
 
   const selectedNode = useSelectedNode()
 
-  const material = useMaterial(node.image_url || 'noimage.jpeg', highlight, highlightColor)
+  const texture = useTexture(node.image_url || 'noimage.jpeg')
 
   const isSelected = !!selectedNode && selectedNode?.id === node.id
   const isSelectedCategory = node.node_type === categoryFilter
@@ -105,14 +103,15 @@ export const Cube = memo(({ node, highlight, highlightColor }: Props) => {
       <mesh
         ref={ref}
         geometry={boxGeometry}
-        material={material}
         name={node.id}
         onPointerOut={onPointerOut}
         onPointerOver={onPointerIn}
         position={[node.x, node.y, node.z]}
         scale={scale}
         userData={node}
-      />
+      >
+        <meshStandardMaterial map={texture} />
+      </mesh>
     </Select>
   )
 })

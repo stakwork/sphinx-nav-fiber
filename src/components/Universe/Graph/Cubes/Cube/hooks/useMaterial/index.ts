@@ -1,44 +1,58 @@
-import { useMemo } from 'react'
-import * as THREE from 'three'
-import { MeshStandardMaterial } from 'three'
+import { useEffect, useState } from 'react'
+import { TextureLoader } from 'three'
 
-const loader = new THREE.TextureLoader()
+const loader = new TextureLoader()
 
-const cachedMaterials: Record<string, THREE.MeshStandardMaterial> = {}
+type materialRecord = {
+  texture: THREE.Texture
+}
 
-export const useMaterial = (url: string, highlight: boolean, highlightColor = 'green') => {
-  const material = useMemo(() => {
-    const cashPath = `${url}${String(highlight)}${highlightColor}`
+const cachedMaterials: Record<string, materialRecord> = {}
+
+const noImageTexture = loader.load('noimage.jpeg')
+
+export const useTexture = (url: string) => {
+  const [texture, setTexture] = useState(noImageTexture)
+  const [showTexture, setShowTexture] = useState(false)
+  // const { camera } = useThree()
+
+  // useEffect(() => {
+  //   console.log('camera', camera.position)
+  // }, [camera.position.x, camera.position.y, camera.position.z])
+
+  useEffect(() => {
+    const cashPath = `${url}`
 
     if (cachedMaterials[cashPath]) {
-      return cachedMaterials[cashPath]
+      cachedMaterials[cashPath].texture.dispose()
+      setTexture(cachedMaterials[cashPath].texture)
+      return
     }
 
     const map = loader.load(url, undefined, undefined, () => {
       // load error
       try {
-        cachedMaterials[cashPath].map = loader.load('noimage.jpeg')
+        setTexture(noImageTexture)
         // eslint-disable-next-line no-empty
       } catch (e) {}
     })
 
-    const materialProp = highlight
-      ? {
-          emissive: highlightColor,
-          emissiveIntensity: 20,
-          map,
-          opacity: 0.5,
-          toneMapped: false,
-          transparent: true,
-        }
-      : { map }
+    cachedMaterials[cashPath] = {
+      texture: map,
+    }
 
-    const m = new MeshStandardMaterial(materialProp)
+    setTexture(map)
 
-    cachedMaterials[cashPath] = m
+    return function cleanup() {
+      texture.dispose()
+    }
+  }, [url])
 
-    return m
-  }, [url, highlight, highlightColor])
+  useEffect(() => {
+    return function cleanup() {
+      texture.dispose()
+    }
+  }, [texture])
 
-  return material
+  return texture
 }

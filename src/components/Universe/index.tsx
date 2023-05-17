@@ -1,7 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { AdaptiveDpr, AdaptiveEvents, Html, Loader, Preload } from '@react-three/drei'
 import { Canvas } from '@react-three/fiber'
-import { Bloom, EffectComposer, Outline, SSAO, Selection } from '@react-three/postprocessing'
+import { Selection } from '@react-three/postprocessing'
 import { useControls } from 'leva'
 import { Perf } from 'r3f-perf'
 import { Suspense } from 'react'
@@ -13,8 +13,6 @@ import { Controls } from './Controls'
 import { Graph } from './Graph'
 import { Lights } from './Lights'
 import { Overlay } from './Overlay'
-
-const NODE_SELECTED_COLOR = 0x00ff00
 
 const Content = () => {
   const { universeColor, ssaoColor } = useControls('universe', {
@@ -32,26 +30,6 @@ const Content = () => {
 
       <Selection>
         <Graph />
-
-        <EffectComposer autoClear={false} multisampling={8}>
-          <SSAO
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            color={ssaoColor}
-            intensity={80}
-            luminanceInfluence={0.5}
-            radius={0.05}
-          />
-
-          <Bloom
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            luminanceThreshold={1}
-            mipmapBlur
-          />
-
-          <Outline blur edgeStrength={5} visibleEdgeColor={NODE_SELECTED_COLOR} />
-        </EffectComposer>
       </Selection>
     </>
   )
