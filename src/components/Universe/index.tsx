@@ -1,7 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { AdaptiveDpr, AdaptiveEvents, Html, Loader, Preload } from '@react-three/drei'
 import { Canvas } from '@react-three/fiber'
-import { Selection } from '@react-three/postprocessing'
+import { Bloom, EffectComposer, Selection } from '@react-three/postprocessing'
 import { useControls } from 'leva'
 import { Perf } from 'r3f-perf'
 import { Suspense } from 'react'
@@ -29,6 +29,15 @@ const Content = () => {
       <Controls />
 
       <Selection>
+        <EffectComposer autoClear={false} multisampling={8}>
+          <Bloom
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            luminanceThreshold={1}
+            mipmapBlur
+          />
+        </EffectComposer>
+
         <Graph />
       </Selection>
     </>

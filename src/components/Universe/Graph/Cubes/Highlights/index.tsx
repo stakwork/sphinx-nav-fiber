@@ -1,4 +1,3 @@
-import { Instance, Instances } from '@react-three/drei'
 import { useMemo } from 'react'
 import { Vector3 } from 'three'
 import { useGraphData } from '~/components/DataRetriever'
@@ -42,12 +41,14 @@ export const Highlights = () => {
 
     for (let i = 0; i < count; i += 1) {
       renders.push(
-        <Instance
+        <mesh
+          geometry={boxGeometry}
+          material={highlightMaterial}
           visible={!!highlights[i]?.position}
           key={`highlight-${i}`}
           position={highlights[i]?.position}
           userData={highlights[i]?.userData}
-          scale={highlights[i]?.scale * 1.2}
+          scale={highlights[i]?.scale * 1.5}
         />,
       )
     }
@@ -56,11 +57,5 @@ export const Highlights = () => {
   }, [highlights])
 
   // prevent highlight dismount between clicks, teardown takes too long, hide instead
-  return (
-    <>
-      <Instances geometry={boxGeometry} material={highlightMaterial}>
-        {renderedInstances}
-      </Instances>
-    </>
-  )
+  return <>{renderedInstances}</>
 }
