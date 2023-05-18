@@ -1,25 +1,10 @@
-import { ThreeEvent } from '@react-three/fiber'
 import { BoxGeometry } from 'three'
-import { useDataStore } from '~/stores/useDataStore'
 import { NodeExtended } from '~/types'
 
 export const boxGeometry = new BoxGeometry(10, 10, 10)
 
-export const onPointerOut = (e: ThreeEvent<PointerEvent>) => {
-  e.stopPropagation()
-  const { setHoveredNode } = useDataStore.getState()
-  setHoveredNode(null)
-}
+export const isMainTopic = (node: NodeExtended) => node.node_type === 'topic' && (node.scale || 1) > 5
 
-export const onPointerIn = (e: ThreeEvent<PointerEvent>) => {
-  e.stopPropagation()
+export const meshRenderLimit = 300
 
-  const intersection = e.intersections[0]
-
-  if (intersection?.object?.userData?.ref_id) {
-    const { setHoveredNode } = useDataStore.getState()
-
-    const node = intersection?.object?.userData as NodeExtended
-    setHoveredNode(node)
-  }
-}
+export const meshRenderRadius = 1500

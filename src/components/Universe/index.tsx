@@ -15,9 +15,8 @@ import { Lights } from './Lights'
 import { Overlay } from './Overlay'
 
 const Content = () => {
-  const { universeColor, ssaoColor } = useControls('universe', {
+  const { universeColor } = useControls('universe', {
     universeColor: colors.black,
-    ssaoColor: 'black',
   })
 
   return (
@@ -84,7 +83,7 @@ export const Universe = () => (
           }, 200)
         }}
       >
-        {isDevelopment && <Perf />}
+        {isDevelopment && <Perf position="bottom-left" />}
         <Suspense
           fallback={
             <Html>

@@ -116,7 +116,13 @@ export const useDataStore = create<DataStore>((set, get) => ({
   setSources: (sources) => set({ sources }),
   setSphinxModalOpen: (sphinxModalIsOpen) => set({ sphinxModalIsOpen }),
   setCameraFocusTrigger: (cameraFocusTrigger) => set({ cameraFocusTrigger }),
-  setNearbyNodeIds: (nearbyNodeIds) => set({ nearbyNodeIds }),
+  setNearbyNodeIds: (nearbyNodeIds) => {
+    const stateNearbyNodeIds = get().nearbyNodeIds
+
+    if (nearbyNodeIds.length !== stateNearbyNodeIds.length || nearbyNodeIds[0] !== stateNearbyNodeIds[0]) {
+      set({ nearbyNodeIds })
+    }
+  },
 }))
 
 export const useSelectedNode = () => useDataStore((s) => s.selectedNode)

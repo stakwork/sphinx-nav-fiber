@@ -15,13 +15,12 @@ type Props = {
 
 const PathwayBadge = ({ position, value, userData }: Props) => {
   const setSelectedNode = useDataStore((s) => s.setSelectedNode)
+  const setHoveredNode = useDataStore((s) => s.setHoveredNode)
   const selectedNode = useSelectedNode()
   const selected = userData?.ref_id === selectedNode?.ref_id
 
-  const visible = value ? true : false
-
   return (
-    <mesh position={position} userData={userData}>
+    <mesh position={position}>
       <boxGeometry />
       <meshStandardMaterial />
       <Html center sprite>
@@ -32,8 +31,16 @@ const PathwayBadge = ({ position, value, userData }: Props) => {
               setSelectedNode(userData)
             }
           }}
-          selected={visible && selected}
-          visible={visible}
+          onPointerOut={(e) => {
+            e.stopPropagation()
+            setHoveredNode(null)
+          }}
+          onPointerOver={(e) => {
+            e.stopPropagation()
+            setHoveredNode(userData || null)
+          }}
+          selected={!!value && selected}
+          visible={!!value}
         >
           {value}
         </Tag>
@@ -45,22 +52,18 @@ const PathwayBadge = ({ position, value, userData }: Props) => {
 export const RelevanceBadges = memo(() => {
   const { badges } = usePathway()
 
-  const renderedBadges = useMemo(() => {
-    const renders = []
-
-    for (let i = 0; i < 10; i += 1) {
-      renders.push(
+  const renderedBadges = useMemo(
+    () =>
+      badges.map((b) => (
         <PathwayBadge
-          key={`relevance-badge-${i}`}
-          position={badges[i]?.position}
-          userData={badges[i]?.userData}
-          value={badges[i]?.value}
-        />,
-      )
-    }
-
-    return renders
-  }, [badges])
+          key={`relevance-badge-${b.userData.ref_id}`}
+          position={b.position}
+          userData={b.userData}
+          value={b.value}
+        />
+      )),
+    [badges],
+  )
 
   // prevent badge dismount between clicks, teardown takes too long, hide instead
   return <>{renderedBadges}</>

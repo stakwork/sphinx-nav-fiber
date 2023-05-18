@@ -1,4 +1,5 @@
 import { Select } from '@react-three/drei'
+import { ThreeEvent } from '@react-three/fiber'
 import { memo, useCallback } from 'react'
 import { Object3D } from 'three'
 import { useGraphData } from '~/components/DataRetriever'
@@ -10,11 +11,12 @@ import { Cube } from './Cube'
 import { Highlights } from './Highlights'
 import { RelevanceBadges } from './RelevanceBadges'
 import { TextNode } from './Text'
-import { onPointerIn, onPointerOut } from './constants'
+import { isMainTopic } from './constants'
 
 export const Cubes = memo(() => {
   const data = useGraphData()
   const nearbyNodeIds = useDataStore((s) => s.nearbyNodeIds)
+  const setHoveredNode = useDataStore((s) => s.setHoveredNode)
   const setTranscriptOpen = useAppStore((s) => s.setTranscriptOpen)
 
   const handleSelect = useCallback(
@@ -33,30 +35,60 @@ export const Cubes = memo(() => {
     [setTranscriptOpen],
   )
 
-  // const bigTopics = useMemo(()=>{
+  const onPointerOut = useCallback(
+    (e: ThreeEvent<PointerEvent>) => {
+      e.stopPropagation()
+      setHoveredNode(null)
+    },
+    [setHoveredNode],
+  )
 
-  // },[data])
+  const onPointerIn = useCallback(
+    (e: ThreeEvent<PointerEvent>) => {
+      e.stopPropagation()
+
+      const objects = e.intersections.map((i) => i.object)
+      const object = objects[0]
+
+      if (object?.userData?.ref_id) {
+        const node = object.userData as NodeExtended
+
+        setHoveredNode(node)
+      }
+    },
+    [setHoveredNode],
+  )
 
   return (
     <Select
       filter={(selected) => selected.filter((f) => !!f.userData?.id)}
-      onPointerOver={onPointerIn}
-      onPointerOut={onPointerOut}
       onChange={handleSelect}
+      onPointerOut={onPointerOut}
+      onPointerOver={onPointerIn}
     >
       <BlurryInstances />
-      {data.nodes
-        .filter((f) => nearbyNodeIds.includes(f.ref_id || ''))
-        .map((node) => {
-          if (node.node_type === 'topic') {
-            return <TextNode key={node.ref_id || node.id} node={node} />
-          } else {
-            return <Cube key={node.ref_id || node.id} node={node} />
-          }
-        })}
+      {data.nodes.map((node) => {
+        if (node.node_type === 'topic') {
+          return (
+            <TextNode
+              key={node.ref_id || node.id}
+              node={node}
+              visible={nearbyNodeIds.includes(node.ref_id || '') || isMainTopic(node)}
+            />
+          )
+        }
+
+        if (nearbyNodeIds.includes(node.ref_id || '')) {
+          return <Cube key={node.ref_id || node.id} node={node} visible />
+        }
+
+        return null
+      })}
 
       <Highlights />
       <RelevanceBadges />
     </Select>
   )
 })
+
+Cubes.displayName = 'Cubes'

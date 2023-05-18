@@ -22,6 +22,7 @@ export const Highlights = () => {
       if (highlight) {
         if (!materials[highlightColor]) {
           const hMaterial = highlightMaterial.clone()
+
           hMaterial.emissive = new Color(highlightColor)
           setMaterials({ ...materials, [highlightColor]: hMaterial })
         }
@@ -36,20 +37,19 @@ export const Highlights = () => {
     })
 
     return h
-  }, [selectedNode, searchTerm, data.nodes])
+  }, [selectedNode, searchTerm, data.nodes, materials])
 
-  // prevent highlight dismount between clicks, teardown takes too long, hide instead
   return (
     <>
-      {highlights.map((h, i) => (
+      {highlights.map((h) => (
         <mesh
+          key={`highlight-${h.userData.ref_id}`}
           geometry={boxGeometry}
           material={materials[h.color]}
-          visible={!!h.position}
-          key={`highlight-${i}`}
           position={h.position}
-          userData={h.userData}
           scale={(h.scale || 1) * 1.2}
+          userData={h.userData}
+          visible={!!h.position}
         />
       ))}
     </>

@@ -13,8 +13,6 @@ let lookAtAnimationTimer: ReturnType<typeof setTimeout>
 export const useAutoNavigate = (cameraControlsRef: RefObject<CameraControls | null>) => {
   const selectedNode = useSelectedNode()
   const cameraFocusTrigger = useDataStore((s) => s.cameraFocusTrigger)
-  const data = useDataStore((s) => s.data)
-  const setNearbyNodeIds = useDataStore((s) => s.setNearbyNodeIds)
 
   const { isUserDragging } = useControlStore()
 
@@ -25,18 +23,6 @@ export const useAutoNavigate = (cameraControlsRef: RefObject<CameraControls | nu
 
   // camera movement to selection params
   const [minDistance, setMinDistance] = useState(130)
-
-  useEffect(() => {
-    const nearbyNodesIds: string[] = []
-
-    data?.nodes.forEach((n) => {
-      if (camera.position.distanceTo(variableVector3.set(n.x, n.y, n.z)) < 1200) {
-        nearbyNodesIds.push(n.ref_id || '')
-      }
-    })
-
-    setNearbyNodeIds(nearbyNodesIds)
-  }, [camera.position.x, camera.position.y, camera.position.z, data?.nodes])
 
   useEffect(() => {
     if (selectedNode?.node_type === 'topic') {
