@@ -13,7 +13,8 @@ const theme = createTheme({
   },
 })
 
-export const AppProviders:FC<PropsWithChildren> = ({children}) => (
-    <ThemeProvider theme={theme}>
-    <LocalizationProvider dateAdapter={AdapterMoment}>{children}</LocalizationProvider></ThemeProvider>
-  )
+export const AppProviders: FC<PropsWithChildren> = ({ children }) => (
+  <ThemeProvider theme={theme}>
+    <LocalizationProvider dateAdapter={AdapterMoment}>{children}</LocalizationProvider>
+  </ThemeProvider>
+)
