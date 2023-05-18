@@ -45,61 +45,70 @@ const Content = () => {
 
 let wheelEventTimeout: ReturnType<typeof setTimeout> | null = null
 
-export const Universe = () => (
-  <>
-    <Overlay />
+export const Universe = () => {
+  const [setIsUserScrollingOnHtmlPanel, setIsUserScrolling, setUserMovedCamera] = [
+    useControlStore((s) => s.setIsUserScrollingOnHtmlPanel),
+    useControlStore((s) => s.setIsUserScrolling),
+    useControlStore((s) => s.setUserMovedCamera),
+  ]
 
-    <Suspense fallback={null}>
-      <Canvas
-        camera={{
-          aspect: 1920 / 1080,
-          far: 30000,
-          near: 1,
-          position: [1000, 0, 5],
-        }}
-        id="universe-canvas"
-        onCreated={(s) => addToGlobalForE2e(s, 'threeState')}
-        onWheel={(e: React.WheelEvent) => {
-          const { target } = e
-          const { offsetParent } = target as HTMLDivElement
+  return (
+    <>
+      <Overlay />
 
-          if (wheelEventTimeout) {
-            clearTimeout(wheelEventTimeout)
-          }
+      <Suspense fallback={null}>
+        <Canvas
+          camera={{
+            aspect: 1920 / 1080,
+            far: 30000,
+            near: 1,
+            position: [1000, 0, 5],
+          }}
+          id="universe-canvas"
+          onCreated={(s) => addToGlobalForE2e(s, 'threeState')}
+          onWheel={(e: React.WheelEvent) => {
+            const { target } = e
+            const { offsetParent } = target as HTMLDivElement
 
-          if (offsetParent?.classList?.contains('html-panel')) {
-            // if overflowing on y, disable camera controls to scroll on div
-            if (offsetParent.clientHeight < offsetParent.scrollHeight) {
-              useControlStore.setState({ isUserScrollingOnHtmlPanel: true })
+            if (wheelEventTimeout) {
+              clearTimeout(wheelEventTimeout)
             }
-          }
 
-          useControlStore.setState({ isUserScrolling: true })
-          useControlStore.setState({ userMovedCamera: true })
+            if (offsetParent?.classList?.contains('html-panel')) {
+              // if overflowing on y, disable camera controls to scroll on div
+              if (offsetParent.clientHeight < offsetParent.scrollHeight) {
+                setIsUserScrollingOnHtmlPanel(true)
+              }
+            }
 
-          wheelEventTimeout = setTimeout(() => {
-            useControlStore.setState({ isUserScrolling: false })
-            useControlStore.setState({ isUserScrollingOnHtmlPanel: false })
-          }, 200)
-        }}
-      >
-        {isDevelopment && <Perf position="bottom-left" />}
-        <Suspense
-          fallback={
-            <Html>
-              <Loader />
-            </Html>
-          }
+            setIsUserScrolling(true)
+            setUserMovedCamera(true)
+
+            wheelEventTimeout = setTimeout(() => {
+              setIsUserScrolling(false)
+              setIsUserScrollingOnHtmlPanel(false)
+            }, 200)
+          }}
         >
-          <Preload />
+          {isDevelopment && <Perf position="bottom-left" />}
 
-          <AdaptiveDpr />
+          <Suspense
+            fallback={
+              <Html>
+                <Loader />
+              </Html>
+            }
+          >
+            <Preload />
 
-          <AdaptiveEvents />
+            <AdaptiveDpr />
 
-          <Content />
-        </Suspense>
-      </Canvas>
-    </Suspense>
-  </>
-)
+            <AdaptiveEvents />
+
+            <Content />
+          </Suspense>
+        </Canvas>
+      </Suspense>
+    </>
+  )
+}

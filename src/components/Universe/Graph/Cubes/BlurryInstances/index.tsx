@@ -22,6 +22,7 @@ export const BlurryInstances = () => {
             scale={visible ? (node.scale || 1) * 0.9 : 0}
             userData={node}
             visible={visible}
+            color={node.node_type === 'guest' ? 'orange' : 'lightgray'}
           />
         )
       }),

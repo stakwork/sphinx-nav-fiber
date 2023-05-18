@@ -10,7 +10,7 @@ type Props = PropsWithChildren<{
 }>
 
 export const DataRetriever = ({ children, loader }: Props) => {
-  const [data, fetchData] = useDataStore((s) => [s.data, s.fetchData])
+  const [data, fetchData] = [useDataStore((s) => s.data), useDataStore((s) => s.fetchData)]
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {

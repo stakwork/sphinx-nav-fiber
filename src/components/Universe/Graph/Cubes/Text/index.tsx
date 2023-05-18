@@ -36,7 +36,7 @@ export const TextNode = memo(({ node }: Props) => {
       ref={ref}
       anchorX="center"
       anchorY="middle"
-      color={isSelected ? 'white' : 'lightgray'}
+      color={isSelected ? 'white' : 'gray'}
       position={[node.x, node.y, node.z]}
       scale={(node.scale || 1) * 4}
       userData={node}

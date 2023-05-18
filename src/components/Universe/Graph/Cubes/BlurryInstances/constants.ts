@@ -1,3 +1,5 @@
 import { MeshStandardMaterial } from 'three'
 
-export const blurryMaterial = new MeshStandardMaterial({ color: 'orange' })
+const materialOptions = { color: 'lightgray', transparent: true, opacity: 0.9 }
+
+export const blurryMaterial = new MeshStandardMaterial(materialOptions)

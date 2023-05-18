@@ -66,25 +66,18 @@ export const Cubes = memo(() => {
       onPointerOut={onPointerOut}
       onPointerOver={onPointerIn}
     >
-      <BlurryInstances />
-      {data.nodes.map((node) => {
-        const visible = nearbyNodeIds.includes(node.ref_id || '') || isMainTopic(node)
-
-        if (visible) {
+      {data.nodes
+        .filter((f) => nearbyNodeIds.includes(f.ref_id || '') || isMainTopic(f))
+        .map((node) => {
           if (node.node_type === 'topic') {
             return <TextNode key={node.ref_id || node.id} node={node} />
           }
 
           return <Cube key={node.ref_id || node.id} node={node} />
-        }
-
-        return null
-      })}
-
+        })}
       <Highlights />
       <RelevanceBadges />
+      <BlurryInstances />
     </Select>
   )
 })
-
-Cubes.displayName = 'Cubes'

@@ -7,6 +7,7 @@ import { useControlStore } from '~/stores/useControlStore'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { NodeExtended } from '~/types'
 import { variableVector3 } from '../../constants'
+import { getNearbyNodeIds } from '../constants'
 
 let lookAtAnimationTimer: ReturnType<typeof setTimeout>
 
@@ -14,7 +15,11 @@ export const useAutoNavigate = (cameraControlsRef: RefObject<CameraControls | nu
   const selectedNode = useSelectedNode()
   const cameraFocusTrigger = useDataStore((s) => s.cameraFocusTrigger)
 
-  const { isUserDragging } = useControlStore()
+  const isUserDragging = useControlStore((s) => s.isUserDragging)
+  const setUserMovedCamera = useControlStore((s) => s.setUserMovedCamera)
+
+  const setNearbyNodeIds = useDataStore((s) => s.setNearbyNodeIds)
+  const data = useDataStore((s) => s.data)
 
   const { camera } = useThree()
 
@@ -43,7 +48,7 @@ export const useAutoNavigate = (cameraControlsRef: RefObject<CameraControls | nu
       playInspectSound(distance)
     }
 
-    useControlStore.setState({ userMovedCamera: false })
+    setUserMovedCamera(false)
     setDistanceReached(false)
     setLookAtReached(false)
   }
@@ -51,7 +56,7 @@ export const useAutoNavigate = (cameraControlsRef: RefObject<CameraControls | nu
   useEffect(() => {
     setDistanceReached(false)
     setLookAtReached(false)
-    useControlStore.setState({ userMovedCamera: false })
+    setUserMovedCamera(false)
   }, [cameraFocusTrigger])
 
   useEffect(() => {
@@ -105,6 +110,12 @@ export const useAutoNavigate = (cameraControlsRef: RefObject<CameraControls | nu
     } else {
       cam.position.lerp(mesh, 0.5)
       cam.updateProjectionMatrix()
+
+      const nearbyNodesIds = getNearbyNodeIds(data?.nodes || [], camera)
+
+      if (nearbyNodesIds) {
+        setNearbyNodeIds(nearbyNodesIds)
+      }
     }
   }
 

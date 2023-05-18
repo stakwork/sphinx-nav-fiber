@@ -3,21 +3,13 @@ import { useThree } from '@react-three/fiber'
 import { useEffect, useRef, useState } from 'react'
 import { useControlStore } from '~/stores/useControlStore'
 import { useDataStore } from '~/stores/useDataStore'
-import { meshRenderLimit, meshRenderRadius } from '../Graph/Cubes/constants'
-import { variableVector3 } from '../constants'
 import { useCameraAnimations } from './CameraAnimations'
 import { introAnimationTargetPosition } from './CameraAnimations/constants'
+import { getNearbyNodeIds } from './constants'
 
 type Props = {
   disableAnimations?: boolean
 }
-
-type NearbyRenderProps = {
-  id: string
-  distance: number
-}
-
-let nearbyNodeTimeout: ReturnType<typeof setTimeout> | null = null
 
 export const Controls = ({ disableAnimations }: Props) => {
   const cameraControlsRef = useRef<CameraControls | null>(null)
@@ -27,7 +19,12 @@ export const Controls = ({ disableAnimations }: Props) => {
   const [smoothTime] = useState(0.8)
   const { camera } = useThree()
 
-  const { isUserDragging, isUserScrolling, isUserScrollingOnHtmlPanel } = useControlStore()
+  const [isUserDragging, setIsUserDragging, isUserScrolling, isUserScrollingOnHtmlPanel] = useControlStore((s) => [
+    s.isUserDragging,
+    s.setIsUserDragging,
+    s.isUserScrolling,
+    s.isUserScrollingOnHtmlPanel,
+  ])
 
   useCameraAnimations(cameraControlsRef, { enabled: !disableAnimations && !isUserScrolling && !isUserDragging })
 
@@ -48,43 +45,10 @@ export const Controls = ({ disableAnimations }: Props) => {
   }, [graphStyle])
 
   useEffect(() => {
-    if (!nearbyNodeTimeout) {
-      // throttle event to prevent excessive rerendering
-      nearbyNodeTimeout = setTimeout(() => {
-        if (nearbyNodeTimeout) {
-          clearTimeout(nearbyNodeTimeout)
-          nearbyNodeTimeout = null
-        }
-      }, 80)
+    const nearbyNodesIds = getNearbyNodeIds(data?.nodes || [], camera)
 
-      const nearbyNodesIdsAndDistance: NearbyRenderProps[] = []
-
-      data?.nodes.forEach((n) => {
-        const distance = camera.position.distanceTo(variableVector3.set(n.x, n.y, n.z))
-
-        // get nodes within distance
-        if (distance < meshRenderRadius) {
-          nearbyNodesIdsAndDistance.push({
-            id: n.ref_id || '',
-            distance,
-          })
-        }
-      })
-
-      // sort by distance and limit mesh count
-      const nearbyNodesIds: string[] = nearbyNodesIdsAndDistance
-        .sort((a, b) => a.distance - b.distance)
-        .slice(0, meshRenderLimit)
-        .map((n) => n.id)
-
+    if (nearbyNodesIds) {
       setNearbyNodeIds(nearbyNodesIds)
-    }
-
-    return () => {
-      if (nearbyNodeTimeout) {
-        clearTimeout(nearbyNodeTimeout)
-        nearbyNodeTimeout = null
-      }
     }
   }, [camera.position, camera.position.x, camera.position.y, camera.position.z, data?.nodes, setNearbyNodeIds])
 
@@ -99,8 +63,8 @@ export const Controls = ({ disableAnimations }: Props) => {
       infinityDolly
       maxDistance={12000}
       minDistance={1}
-      onEnd={() => useControlStore.setState({ isUserDragging: false })}
-      onStart={() => useControlStore.setState({ isUserDragging: true })}
+      onEnd={() => setIsUserDragging(false)}
+      onStart={() => setIsUserDragging(true)}
       smoothTime={smoothTime}
     />
   )

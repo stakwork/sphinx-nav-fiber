@@ -52,20 +52,26 @@ export const App = () => {
     setRelevanceSelected,
     setTranscriptOpen,
     hasBudgetExplanationModalBeSeen,
-  ] = useAppStore((s) => [
-    s.setSidebarOpen,
-    s.currentSearch,
-    s.setCurrentSearch,
-    s.setRelevanceSelected,
-    s.setTranscriptOpen,
-    s.hasBudgetExplanationModalBeSeen,
-  ])
+  ] = [
+    useAppStore((s) => s.setSidebarOpen),
+    useAppStore((s) => s.currentSearch),
+    useAppStore((s) => s.setCurrentSearch),
+    useAppStore((s) => s.setRelevanceSelected),
+    useAppStore((s) => s.setTranscriptOpen),
+    useAppStore((s) => s.hasBudgetExplanationModalBeSeen),
+  ]
 
   const setTeachMeAnswer = useTeachStore((s) => s.setTeachMeAnswer)
 
-  const [data, setData, fetchData, graphStyle, setSphinxModalOpen, setSelectedNode, setCategoryFilter] = useDataStore(
-    (s) => [s.data, s.setData, s.fetchData, s.graphStyle, s.setSphinxModalOpen, s.setSelectedNode, s.setCategoryFilter],
-  )
+  const [data, setData, fetchData, graphStyle, setSphinxModalOpen, setSelectedNode, setCategoryFilter] = [
+    useDataStore((s) => s.data),
+    useDataStore((s) => s.setData),
+    useDataStore((s) => s.fetchData),
+    useDataStore((s) => s.graphStyle),
+    useDataStore((s) => s.setSphinxModalOpen),
+    useDataStore((s) => s.setSelectedNode),
+    useDataStore((s) => s.setCategoryFilter),
+  ]
 
   const form = useForm<{ search: string }>({ mode: 'onChange' })
 
