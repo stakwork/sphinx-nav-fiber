@@ -23,6 +23,7 @@ import { generateSplitGraphPositions } from '../../transformers/splitGraph'
 import { Preloader } from '../Universe/Preloader'
 import { AppBar } from './AppBar'
 import { FooterMenu } from './FooterMenu'
+import { AppProviders } from './Providers'
 import { SecondarySideBar } from './SecondarySidebar'
 import { SideBar } from './SideBar'
 import { Toasts } from './Toasts'
@@ -139,7 +140,7 @@ export const App = () => {
   }, [graphStyle])
 
   return (
-    <>
+    <AppProviders>
       <GlobalStyle />
 
       <Leva hidden={!isDevelopment} />
@@ -167,6 +168,6 @@ export const App = () => {
         <BudgetExplanationModal />
       </Wrapper>
       <E2ETests />
-    </>
+    </AppProviders>
   )
 }

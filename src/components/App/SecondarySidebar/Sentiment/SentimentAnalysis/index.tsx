@@ -1,15 +1,17 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import { Stack } from '@mui/material'
 import Slider from '@mui/material/Slider'
+import { DatePicker } from '@mui/x-date-pickers'
 import moment from 'moment'
-import { memo, useState } from 'react'
+import { memo, useCallback, useEffect, useRef, useState } from 'react'
+import { PropagateLoader } from 'react-spinners'
 import * as sphinx from 'sphinx-bridge-kevkevinpal'
+import styled from 'styled-components'
 import { Button } from '~/components/Button'
-import { Loader } from '~/components/common/Loader'
-import { getSentimentAnalysis } from '~/network/fetchGraphData'
+import { Text } from '~/components/common/Text'
+import { getSentimentData } from '~/network/fetchGraphData'
 import { useAppStore } from '~/stores/useAppStore'
-import { useDataStore } from '~/stores/useDataStore'
+import { colors } from '~/utils/colors'
+import { executeIfProd } from '~/utils/tests'
 import { SentimentChart } from '../SentimentChart'
 
 type SentimentData = {
@@ -21,25 +23,15 @@ type SentimentData = {
 export const SentimentAnalysis = memo(() => {
   const search = useAppStore((s) => s.currentSearch)
   const [sentimentData, setSentimentData] = useState<SentimentData[] | undefined>(undefined)
-  const now = moment()
-  const min = moment().subtract(3, 'year')
-  const step = 3600 * 24 * 30 // month
+  const now = moment().startOf('day')
+  const min = moment().subtract(1, 'year')
+  const step = 3600 * 24 // day
 
-  const [value, setValue] = useState(
-    moment()
-      .subtract(10 * step, 'milliseconds')
-      .unix(),
-  )
+  const [value, setValue] = useState(moment().startOf('day').subtract(20, 'day'))
+
+  const chartCost = (Math.round((now.unix() - value.unix()) / step) + 1) * 50
 
   const [isLoading, setIsLoading] = useState(false)
-
-  const [setSphinxModalOpen] = useDataStore((s) => [s.setSphinxModalOpen])
-
-  const chartCost = (Math.round((now.unix() - value) / step) + 1) * 10
-
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  window.s = sphinx
 
   const fetchData = async () => {
     if (!search) {
@@ -47,47 +39,103 @@ export const SentimentAnalysis = memo(() => {
     }
 
     setIsLoading(true)
-    setSphinxModalOpen(true)
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    await sphinx.enable()
-    setSphinxModalOpen(false)
 
-    getSentimentAnalysis(search, value).then((r) => {
-      // eslint-disable-next-line no-console
-      console.log(r.data)
+    // Wrap for tests
+    await executeIfProd(() =>
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      sphinx.enable(),
+    )
 
-      setSentimentData(
-        r?.data
-          .filter((i) => i.date)
-          .map((i) => ({
-            date: moment.unix(Number(String(i.date).split('.')[0])).format('MM/DD/YY'),
-            score: i.sentiment_score,
-          })),
-      )
-    })
+    getSentimentData({ topic: search, cutoff_date: String(value.unix()) })
+      .then((r) => {
+        // eslint-disable-next-line no-console
+        console.log(r?.data)
 
-    setIsLoading(false)
+        setSentimentData(
+          r?.data
+            .filter((i) => i.date)
+            .map((i) => ({
+              date: moment.unix(Number(String(i.date).split('.')[0])).format('MM/DD/YY'),
+              score: i.sentiment_score,
+            })),
+        )
+      })
+      .catch(console.error)
+      .finally(() => {
+        setIsLoading(false)
+      })
   }
 
+  const ref = useRef<HTMLDivElement>(null)
+
+  const [demensions, setDementions] = useState({ width: 400, height: 250 })
+
+  const updateDemensions = useCallback(() => {
+    if (ref.current) {
+      const { width, height } = ref.current.getBoundingClientRect()
+
+      setDementions({ width, height })
+    }
+  }, [])
+
+  useEffect(() => {
+    // for update chart width & heght on resize
+    updateDemensions()
+    window.addEventListener('resize', updateDemensions)
+
+    return () => window.removeEventListener('resize', updateDemensions)
+  }, [updateDemensions])
+
   return (
-    <Stack flexGrow={1} spacing={1} width="100%">
+    <Stack flexGrow={1} p={2} spacing={2} width="100%">
+      <DatePicker
+        format="L"
+        label="From"
+        maxDate={now}
+        minDate={min}
+        onChange={(v) => setValue(v ?? moment())}
+        sx={{
+          background: colors.inputBg1,
+        }}
+        value={value}
+      />
       <Slider
         getAriaValueText={(v) => moment(v).format('L')}
+        id="cy-sentiment-analysis-slider"
         marks
         max={now.unix()}
         min={min.unix()}
-        onChange={(_e, v) => setValue(v as number)}
+        onChange={(_e, v) => {
+          setValue(moment.unix(v as number))
+        }}
         step={step}
-        value={value}
+        value={value.unix()}
         valueLabelDisplay="auto"
         valueLabelFormat={(number) => moment.unix(number).format('L')}
       />
-      <SentimentChart data={sentimentData} />
-      <Button onClick={fetchData}>
-        Create chart from {moment.unix(value).format('L')} {chartCost.toFixed()} SATS
-      </Button>
-      {isLoading && <Loader />}
+      <StyledButton className="button" id="cy-get-sentiment-analysis-btn" onClick={fetchData}>
+        Create a chart for {chartCost.toFixed()} SATS
+      </StyledButton>
+      {isLoading && (
+        <Stack alignItems="center" flexGrow={1} p={4} spacing={2} width="100%">
+          <PropagateLoader color={colors.white} />
+        </Stack>
+      )}
+      <ChartWrapper ref={ref}>
+        <SentimentChart data={sentimentData} {...demensions} />
+        {Array.isArray(sentimentData) && !isLoading && !sentimentData.length && <Text>No data for this period</Text>}
+      </ChartWrapper>
     </Stack>
   )
 })
+
+const ChartWrapper = styled.div`
+  flex: 1 1 auto;
+  max-height: 50%;
+  width: 100%;
+`
+
+const StyledButton = styled(Button)`
+  height: 48px;
+`

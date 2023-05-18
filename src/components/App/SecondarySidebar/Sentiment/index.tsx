@@ -1,12 +1,16 @@
 import moment from 'moment'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
+import * as sphinx from 'sphinx-bridge-kevkevinpal'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { getSentimentData } from '~/network/fetchGraphData'
-import { FetchSentimentResponse } from '~/types'
+
+import { Stack } from '@mui/material'
+import { PropagateLoader } from 'react-spinners'
+import { Button } from '~/components/Button'
 import { colors } from '~/utils/colors'
-import { SentimentAnalysis } from './SentimentAnalysis'
+import { executeIfProd } from '~/utils/tests'
 import { SentimentChart } from './SentimentChart'
 
 type SentimentData = {
@@ -17,32 +21,49 @@ type SentimentData = {
 export const Sentiment = () => {
   const [sentimentData, setSentimentData] = useState<SentimentData[] | undefined>(undefined)
 
-  useEffect(() => {
-    const init = async () => {
-      try {
-        const data: FetchSentimentResponse = await getSentimentData()
+  const [isLoading, setIsLoading] = useState(false)
 
+  const fetchData = async () => {
+    setIsLoading(true)
+
+    // Wrap for tests
+    await executeIfProd(() =>
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      sphinx.enable(),
+    )
+
+    getSentimentData()
+      .then((r) => {
         setSentimentData(
-          data?.data
+          r?.data
             .filter((i) => i.date)
             .map((i) => ({
               date: moment.unix(Number(String(i.date).split('.')[0])).format('MM/DD/YY'),
               score: i.sentiment_score,
             })),
         )
-      } catch (error) {
-        console.warn(error)
-      }
-    }
-
-    init()
-  }, [])
+      })
+      .catch(console.error)
+      .finally(() => {
+        setIsLoading(false)
+      })
+  }
 
   return (
-    <ChartWrapper align="flex-start" direction="column" id="cy-sentiment-chart" justify="flex-end">
+    <ChartWrapper align="flex-start" direction="column" id="cy-sentiment-chart-wrapper" justify="flex-end">
       <Text className="title">Sentiment chart</Text>
+      {isLoading && (
+        <Stack alignItems="center" flexGrow={1} p={4} spacing={2} width="100%">
+          <PropagateLoader color={colors.white} />
+        </Stack>
+      )}
+      {!sentimentData?.length && (
+        <StyledButton className="button" id="cy-get-sentiments-btn" onClick={fetchData}>
+          Get top 100 sentiments
+        </StyledButton>
+      )}
       <SentimentChart data={sentimentData} />
-      <SentimentAnalysis />
     </ChartWrapper>
   )
 }
@@ -57,4 +78,8 @@ const ChartWrapper = styled(Flex)`
     margin-bottom: 16px;
     font-size: 20px;
   }
+`
+
+const StyledButton = styled(Button)`
+  height: 48px;
 `

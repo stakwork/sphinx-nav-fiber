@@ -11,21 +11,24 @@ const RenderDot: FC<DotProps> = ({ cx, cy }) => <Dot cx={cx} cy={cy} fill={color
 
 type Props = {
   data?: SentimentData[]
+  width?: number
+  height?: number
 }
 
-export const SentimentChart = ({ data }: Props) => (
+export const SentimentChart = ({ data, width = 500, height = 300 }: Props) => (
   <>
     {data?.length && (
       <LineChart
         data={data}
-        height={300}
+        height={height}
+        id="cy-sentiment-chart"
         margin={{
           bottom: 5,
           left: -20,
           right: 30,
           top: 5,
         }}
-        width={500}
+        width={width}
       >
         <CartesianGrid stroke={colors.lightBlue300} strokeDasharray="5 5" />
         <XAxis dataKey="date" interval={Math.floor(data.length / 3)} stroke={colors.blueTextAccent} />

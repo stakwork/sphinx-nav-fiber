@@ -1,6 +1,6 @@
 import { Vector3 } from 'three'
 import { AWS_IMAGE_BUCKET_URL, CLOUDFRONT_IMAGE_BUCKET_URL, isDevelopment, isE2E } from '~/constants'
-import { mock } from '~/mocks/getMockGraphData/mockResponse.js'
+import { mock } from '~/mocks/getMockGraphData/mockResponse'
 import { api } from '~/network/api'
 import { useDataStore } from '~/stores/useDataStore'
 import { FetchDataResponse, FetchSentimentResponse, GraphData, Guests, Link, Node, NodeExtended } from '~/types'
@@ -73,19 +73,34 @@ const fetchNodes = async (search: string) => {
   })
 }
 
-export const getSentimentData = async () => {
-  const response = await api.get<FetchSentimentResponse>(`/sentiments`)
+/**
+ *
+ * {
+ *  cutoff_date: string // String(moment.unix()),
+ *  topic: string // search topic
+ *  }
+ */
+export const getSentimentData = async (args?: { topic: string; cutoff_date: string }) => {
+  const search = args && new URLSearchParams(args)
 
-  return response
-}
+  const endpoint = search ? `/sentiments?${search.toString()}` : '/sentiments'
 
-export const getSentimentAnalysis = async (topic: string, date: number) => {
-  const search = new URLSearchParams({
-    cutoff_date: String(date),
-    topic,
+  // disable payment for tests (data is mocked)
+  if (isE2E) {
+    const response = await api.get<FetchSentimentResponse>(endpoint)
+
+    return response
+  }
+
+  const lsatToken = await getLSat('sentiments', search?.toString())
+
+  if (!lsatToken) {
+    throw new Error('An error occured calling getLSat')
+  }
+
+  const response = await api.get<FetchSentimentResponse>(endpoint, {
+    Authorization: lsatToken,
   })
-
-  const response = await api.get<FetchSentimentResponse>(`/sentiments?${search.toString()}`)
 
   return response
 }
