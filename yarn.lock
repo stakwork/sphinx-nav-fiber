@@ -4087,9 +4087,9 @@ __metadata:
   linkType: hard
 
 "@types/node@npm:*":
-  version: 20.1.7
-  resolution: "@types/node@npm:20.1.7"
-  checksum: b722794290d22db1741e739c256876ca774b76ea2d647d9ec9d52c49b1b01049cc6f6332499a01ac81d641e8d078b33e4c5c59e409db80390ac6b8d7ef0c08a7
+  version: 20.2.1
+  resolution: "@types/node@npm:20.2.1"
+  checksum: ed774afa6e9b4ad7868ed0182a8ca40ad0dd54815a70d3051b23fa850f3bca6bea4d0cb55e1fc769666786ac2cc4c1b37aeade313cb4c4634133f18ebcded496
   languageName: node
   linkType: hard
 
@@ -8657,9 +8657,9 @@ __metadata:
   linkType: hard
 
 "electron-to-chromium@npm:^1.3.564, electron-to-chromium@npm:^1.4.284":
-  version: 1.4.397
-  resolution: "electron-to-chromium@npm:1.4.397"
-  checksum: d3551c0624d4eb29a514ef5e2161beb62c06c359c5340e765d349ea114e0eaf6a13eb4adc655d7eec880b0edcb493118888ce07b37e92476baf05ec5a96e99a3
+  version: 1.4.400
+  resolution: "electron-to-chromium@npm:1.4.400"
+  checksum: d0f5ee3c08ef12daf67328852fed8654020dd003e08060acd09500981998c5da46da60ad10aaa8483475d740a4871e1f9c4052648d993619cd621c734f81d1db
   languageName: node
   linkType: hard
 
@@ -9742,10 +9742,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fast-equals@npm:^4.0.3":
-  version: 4.0.3
-  resolution: "fast-equals@npm:4.0.3"
-  checksum: 3d5935b757f9f2993e59b5164a7a9eeda0de149760495375cde14a4ed725186a7e6c1c0d58f7d42d2f91deb97f3fce1e0aad5591916ef0984278199a85c87c87
+"fast-equals@npm:^5.0.0":
+  version: 5.0.1
+  resolution: "fast-equals@npm:5.0.1"
+  checksum: fbb3b6a74f3a0fa930afac151ff7d01639159b4fddd2678b5d50708e0ba38e9ec14602222d10dadb8398187342692c04fbef5a62b1cfcc7942fe03e754e064bc
   languageName: node
   linkType: hard
 
@@ -12887,11 +12887,11 @@ __metadata:
   linkType: hard
 
 "kapsule@npm:1":
-  version: 1.14.3
-  resolution: "kapsule@npm:1.14.3"
+  version: 1.14.4
+  resolution: "kapsule@npm:1.14.4"
   dependencies:
     lodash-es: 4
-  checksum: 39060c846b9302fd0351b86a231dbf560bb30f30318d7d70ffd95633bbcad4f004f3749575224fca2cdb54c49e0ab70cd1ffd863e992563d8629e7dc54792f93
+  checksum: 3d6ec682c5178f0e57fc0eff6627f0095b8ce721fe48c7b151154db59ececc2a9d62aa97d19db4ce5d61166d4ea51ad24d8c47134c94dc10d50c815de42e0eb3
   languageName: node
   linkType: hard
 
@@ -16438,9 +16438,9 @@ __metadata:
   linkType: hard
 
 "react-fast-compare@npm:^3.0.1":
-  version: 3.2.1
-  resolution: "react-fast-compare@npm:3.2.1"
-  checksum: 209b4dc3a9cc79c074a26ec020459efd8be279accaca612db2edb8ada2a28849ea51cf3d246fc0fafb344949b93a63a43798b6c1787559b0a128571883fe6859
+  version: 3.2.2
+  resolution: "react-fast-compare@npm:3.2.2"
+  checksum: 2071415b4f76a3e6b55c84611c4d24dcb12ffc85811a2840b5a3f1ff2d1a99be1020d9437ee7c6e024c9f4cbb84ceb35e48cf84f28fcb00265ad2dfdd3947704
   languageName: node
   linkType: hard
 
@@ -16636,16 +16636,16 @@ __metadata:
   linkType: hard
 
 "react-smooth@npm:^2.0.2":
-  version: 2.0.2
-  resolution: "react-smooth@npm:2.0.2"
+  version: 2.0.3
+  resolution: "react-smooth@npm:2.0.3"
   dependencies:
-    fast-equals: ^4.0.3
+    fast-equals: ^5.0.0
     react-transition-group: 2.9.0
   peerDependencies:
     prop-types: ^15.6.0
     react: ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0
     react-dom: ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0
-  checksum: 6b0a40a17314657ac6a187a3ad01fcdaa61d498979b6a07c424e20832110c99b4394c33209a0b39b897c13d113d8cb044e7a691b4965386a11b15bbfbacfba25
+  checksum: dccdd5c3c937c5990fff119cbf1324ff7f8b7e1cb74a8f215291cdd71122e6aa82c350642612a52056543520446b1f7ddd4176ffdb52fd0f0c657f36bc7ae802
   languageName: node
   linkType: hard
 
@@ -19347,9 +19347,9 @@ __metadata:
   linkType: hard
 
 "tslib@npm:^2.0.3, tslib@npm:^2.1.0, tslib@npm:^2.3.1, tslib@npm:^2.5.0":
-  version: 2.5.0
-  resolution: "tslib@npm:2.5.0"
-  checksum: ae3ed5f9ce29932d049908ebfdf21b3a003a85653a9a140d614da6b767a93ef94f460e52c3d787f0e4f383546981713f165037dc2274df212ea9f8a4541004e1
+  version: 2.5.1
+  resolution: "tslib@npm:2.5.1"
+  checksum: 535e41e956b32d21aeff007a2c74989d1a6bf3fecb2b0141d80e5b9920bf90e23b4f0cd3772704bc03637c762dbdc1a314d75a407dd7189afbe3e83d80df9392
   languageName: node
   linkType: hard
 
