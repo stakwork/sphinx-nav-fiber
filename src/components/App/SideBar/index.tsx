@@ -1,4 +1,4 @@
-import { memo, useState } from 'react'
+import { useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { MdClose, MdKeyboardDoubleArrowLeft } from 'react-icons/md'
 import styled from 'styled-components'
@@ -71,7 +71,7 @@ const Content = ({ onSubmit }: Props) => {
   )
 }
 
-export const SideBar = memo(({ onSubmit }: Props) => {
+export const SideBar = ({ onSubmit }: Props) => {
   const sidebarIsOpen = useAppStore((s) => s.sidebarIsOpen)
 
   if (!sidebarIsOpen) {
@@ -79,7 +79,7 @@ export const SideBar = memo(({ onSubmit }: Props) => {
   }
 
   return <Content onSubmit={onSubmit} />
-})
+}
 
 const Wrapper = styled(Flex)`
   background: ${colors.body};
