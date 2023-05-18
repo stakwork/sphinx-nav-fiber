@@ -15,10 +15,9 @@ const fontProps = {
 
 type Props = {
   node: NodeExtended
-  visible: boolean
 }
 
-export const TextNode = memo(({ node, visible }: Props) => {
+export const TextNode = memo(({ node }: Props) => {
   const ref = useRef<Mesh | null>(null)
 
   const selectedNode = useSelectedNode()
@@ -26,15 +25,11 @@ export const TextNode = memo(({ node, visible }: Props) => {
   const isSelected = !!selectedNode && selectedNode?.id === node.id
 
   useFrame(({ camera }) => {
-    if (visible && ref?.current) {
+    if (ref?.current) {
       // Make text face the camera
       ref.current.quaternion.copy(camera.quaternion)
     }
   })
-
-  if (!visible) {
-    return null
-  }
 
   return (
     <Text

@@ -68,18 +68,14 @@ export const Cubes = memo(() => {
     >
       <BlurryInstances />
       {data.nodes.map((node) => {
-        if (node.node_type === 'topic') {
-          return (
-            <TextNode
-              key={node.ref_id || node.id}
-              node={node}
-              visible={nearbyNodeIds.includes(node.ref_id || '') || isMainTopic(node)}
-            />
-          )
-        }
+        const visible = nearbyNodeIds.includes(node.ref_id || '') || isMainTopic(node)
 
-        if (nearbyNodeIds.includes(node.ref_id || '')) {
-          return <Cube key={node.ref_id || node.id} node={node} visible />
+        if (visible) {
+          if (node.node_type === 'topic') {
+            return <TextNode key={node.ref_id || node.id} node={node} />
+          }
+
+          return <Cube key={node.ref_id || node.id} node={node} />
         }
 
         return null

@@ -6,16 +6,11 @@ import { useMaterial } from './hooks/useMaterial'
 
 type Props = {
   node: NodeExtended
-  visible: boolean
 }
-export const Cube = memo(({ node, visible }: Props) => {
+export const Cube = memo(({ node }: Props) => {
   const ref = useRef<Mesh | null>(null)
 
   const material = useMaterial(node.image_url || 'noimage.jpeg')
-
-  if (!visible) {
-    return null
-  }
 
   return (
     <mesh
