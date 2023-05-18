@@ -18,6 +18,8 @@ const PathwayBadge = ({ position, value, userData }: Props) => {
   const selectedNode = useSelectedNode()
   const selected = userData?.ref_id === selectedNode?.ref_id
 
+  const visible = value ? true : false
+
   return (
     <mesh position={position} userData={userData}>
       <boxGeometry />
@@ -30,8 +32,8 @@ const PathwayBadge = ({ position, value, userData }: Props) => {
               setSelectedNode(userData)
             }
           }}
-          selected={!!value && selected}
-          visible={!!value}
+          selected={visible && selected}
+          visible={visible}
         >
           {value}
         </Tag>

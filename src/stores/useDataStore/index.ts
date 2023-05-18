@@ -22,6 +22,7 @@ type DataStore = {
   queuedSources: Sources[] | null
   sphinxModalIsOpen: boolean
   cameraFocusTrigger: boolean
+  nearbyNodeIds: string[]
   setScrollEventsDisabled: (scrollEventsDisabled: boolean) => void
   setCategoryFilter: (categoryFilter: NodeType | null) => void
   setDisableCameraRotation: (rotation: boolean) => void
@@ -37,6 +38,7 @@ type DataStore = {
   setSphinxModalOpen: (_: boolean) => void
   setCameraFocusTrigger: (_: boolean) => void
   setIsFetching: (_: boolean) => void
+  setNearbyNodeIds: (_: string[]) => void
 }
 
 const defaultData: Omit<
@@ -57,6 +59,7 @@ const defaultData: Omit<
   | 'setQueuedSources'
   | 'setGraphRadius'
   | 'setGraphStyle'
+  | 'setNearbyNodeIds'
 > = {
   categoryFilter: null,
   data: null,
@@ -73,6 +76,7 @@ const defaultData: Omit<
   sources: null,
   sphinxModalIsOpen: false,
   cameraFocusTrigger: false,
+  nearbyNodeIds: [],
 }
 
 export const useDataStore = create<DataStore>((set, get) => ({
@@ -112,6 +116,7 @@ export const useDataStore = create<DataStore>((set, get) => ({
   setSources: (sources) => set({ sources }),
   setSphinxModalOpen: (sphinxModalIsOpen) => set({ sphinxModalIsOpen }),
   setCameraFocusTrigger: (cameraFocusTrigger) => set({ cameraFocusTrigger }),
+  setNearbyNodeIds: (nearbyNodeIds) => set({ nearbyNodeIds }),
 }))
 
 export const useSelectedNode = () => useDataStore((s) => s.selectedNode)

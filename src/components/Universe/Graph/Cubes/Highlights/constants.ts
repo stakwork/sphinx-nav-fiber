@@ -17,10 +17,7 @@ export type HighlightProps = {
   color: string
 }
 
-export type HighlightInstanceProps = {
-  color: string
-  highlights: HighlightProps[]
-}
+export type HighlightRecords = Record<string, HighlightProps[]>
 
 export type HighlightParentProps = {
   highlights: HighlightProps[]
@@ -28,7 +25,7 @@ export type HighlightParentProps = {
 
 export const highlightMaterial = new MeshStandardMaterial({
   emissive: 'green',
-  emissiveIntensity: 25,
+  emissiveIntensity: 18,
   opacity: 0.1,
   toneMapped: false,
   transparent: true,

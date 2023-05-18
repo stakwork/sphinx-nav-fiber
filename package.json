@@ -11,6 +11,7 @@
     "@react-three/drei": "9.57.0",
     "@react-three/fiber": "^8.11.5",
     "@react-three/postprocessing": "^2.7.0",
+    "@types/underscore": "^1.11.4",
     "@use-gesture/react": "^10.2.24",
     "camera-controls": "^1.37.4",
     "d3-force-3d": "^3.0.3",
@@ -45,6 +46,7 @@
     "three.interactive": "^1.4.0",
     "three.meshline": "^1.4.0",
     "tone": "^14.7.77",
+    "underscore": "^1.13.6",
     "web-vitals": "^2.1.0",
     "zustand": "^4.1.1"
   },

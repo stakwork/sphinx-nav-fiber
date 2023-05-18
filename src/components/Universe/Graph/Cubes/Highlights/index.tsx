@@ -1,16 +1,15 @@
-import { useMemo } from 'react'
-import { Vector3 } from 'three'
+import { useMemo, useState } from 'react'
+import { Color, Material, Vector3 } from 'three'
 import { useGraphData } from '~/components/DataRetriever'
 import { useAppStore } from '~/stores/useAppStore'
 import { useSelectedNode } from '~/stores/useDataStore'
 import { NodeExtended } from '~/types'
-import { boxGeometry } from '../Cube/constants'
+import { boxGeometry } from '../constants'
 import { HighlightProps, getHighlighter, highlightMaterial } from './constants'
-
-const highlightDefaultCount = 20
 
 export const Highlights = () => {
   const data = useGraphData()
+  const [materials, setMaterials]: [Record<string, Material>, (m: Record<string, Material>) => void] = useState({})
   const selectedNode = useSelectedNode()
   const searchTerm = useAppStore((s) => s.currentSearch)
 
@@ -21,6 +20,12 @@ export const Highlights = () => {
       const { highlight, highlightColor } = getHighlighter({ node, selectedNode, searchTerm })
 
       if (highlight) {
+        if (!materials[highlightColor]) {
+          const hMaterial = highlightMaterial.clone()
+          hMaterial.emissive = new Color(highlightColor)
+          setMaterials({ ...materials, [highlightColor]: hMaterial })
+        }
+
         h.push({
           color: highlightColor,
           userData: node,
@@ -33,29 +38,20 @@ export const Highlights = () => {
     return h
   }, [selectedNode, searchTerm, data.nodes])
 
-  const renderedInstances = useMemo(() => {
-    const renders = []
-
-    // render more highlight nodes if needed, but always keep 10 alive
-    const count = highlights.length < highlightDefaultCount ? highlightDefaultCount : highlights.length
-
-    for (let i = 0; i < count; i += 1) {
-      renders.push(
+  // prevent highlight dismount between clicks, teardown takes too long, hide instead
+  return (
+    <>
+      {highlights.map((h, i) => (
         <mesh
           geometry={boxGeometry}
-          material={highlightMaterial}
-          visible={!!highlights[i]?.position}
+          material={materials[h.color]}
+          visible={!!h.position}
           key={`highlight-${i}`}
-          position={highlights[i]?.position}
-          userData={highlights[i]?.userData}
-          scale={highlights[i]?.scale * 1.1}
-        />,
-      )
-    }
-
-    return renders
-  }, [highlights])
-
-  // prevent highlight dismount between clicks, teardown takes too long, hide instead
-  return <>{renderedInstances}</>
+          position={h.position}
+          userData={h.userData}
+          scale={(h.scale || 1) * 1.2}
+        />
+      ))}
+    </>
+  )
 }
