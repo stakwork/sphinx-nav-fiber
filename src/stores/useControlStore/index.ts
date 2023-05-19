@@ -21,7 +21,7 @@ const defaultData: Omit<
   isUserScrollingOnHtmlPanel: false,
 }
 
-export const useControlStore = create<ControlStore>((set, get) => ({
+export const useControlStore = create<ControlStore>((set) => ({
   ...defaultData,
   setIsUserDragging: (isUserDragging) => set({ isUserDragging }),
   setIsUserScrolling: (isUserScrolling) => set({ isUserScrolling }),

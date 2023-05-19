@@ -17,12 +17,12 @@ export const BlurryInstances = () => {
         return (
           <Instance
             key={node.id}
+            color={node.node_type === 'guest' ? 'orange' : 'lightgray'}
             name={node.id}
             position={[node.x, node.y, node.z]}
             scale={visible ? (node.scale || 1) * 0.9 : 0}
             userData={node}
             visible={visible}
-            color={node.node_type === 'guest' ? 'orange' : 'lightgray'}
           />
         )
       }),

@@ -50,7 +50,7 @@ export const Controls = ({ disableAnimations }: Props) => {
     if (nearbyNodesIds) {
       setNearbyNodeIds(nearbyNodesIds)
     }
-  }, [camera.position, camera.position.x, camera.position.y, camera.position.z, data?.nodes, setNearbyNodeIds])
+  }, [camera, camera.position, camera.position.x, camera.position.y, camera.position.z, data?.nodes, setNearbyNodeIds])
 
   return (
     <CameraControls

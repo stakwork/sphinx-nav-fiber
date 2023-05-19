@@ -57,7 +57,7 @@ export const useAutoNavigate = (cameraControlsRef: RefObject<CameraControls | nu
     setDistanceReached(false)
     setLookAtReached(false)
     setUserMovedCamera(false)
-  }, [cameraFocusTrigger])
+  }, [cameraFocusTrigger, setUserMovedCamera, setLookAtReached, setDistanceReached])
 
   useEffect(() => {
     // stop navigation when user interacts

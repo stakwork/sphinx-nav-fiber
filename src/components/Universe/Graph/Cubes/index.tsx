@@ -81,3 +81,5 @@ export const Cubes = memo(() => {
     </Select>
   )
 })
+
+Cubes.displayName = 'Cubes'
