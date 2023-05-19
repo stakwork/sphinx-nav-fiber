@@ -94,7 +94,7 @@ export const useDataStore = create<DataStore>((set, get) => ({
       await saveSearchTerm()
     }
 
-    set({ data, isFetching: false, sphinxModalIsOpen: false })
+    set({ data, isFetching: false, sphinxModalIsOpen: false, nearbyNodeIds: [] })
   },
   setIsFetching: (isFetching) => set({ isFetching }),
   setData: (data) => set({ data }),

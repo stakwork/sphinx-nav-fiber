@@ -45,12 +45,23 @@ export const Controls = ({ disableAnimations }: Props) => {
   }, [graphStyle])
 
   useEffect(() => {
-    const nearbyNodesIds = getNearbyNodeIds(data?.nodes || [], camera)
+    if (!isUserDragging) {
+      const nearbyNodesIds = getNearbyNodeIds(data?.nodes || [], camera)
 
-    if (nearbyNodesIds) {
-      setNearbyNodeIds(nearbyNodesIds)
+      if (nearbyNodesIds) {
+        setNearbyNodeIds(nearbyNodesIds)
+      }
     }
-  }, [camera, camera.position, camera.position.x, camera.position.y, camera.position.z, data?.nodes, setNearbyNodeIds])
+  }, [
+    camera,
+    camera.position,
+    camera.position.x,
+    camera.position.y,
+    camera.position.z,
+    data?.nodes,
+    setNearbyNodeIds,
+    isUserDragging,
+  ])
 
   return (
     <CameraControls

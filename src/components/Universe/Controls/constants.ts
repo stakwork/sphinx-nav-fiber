@@ -10,11 +10,9 @@ type NearbyRenderProps = {
 
 let nearbyNodeTimeout: ReturnType<typeof setTimeout> | null = null
 
-const nearbyNodeTimeoutCycle = 100
+const nearbyNodeTimeoutCycle = 500
 
 export const getNearbyNodeIds = (nodes: NodeExtended[], camera: Camera) => {
-  const nearbyNodesIdsAndDistance: NearbyRenderProps[] = []
-
   if (nearbyNodeTimeout) {
     return null
   }
@@ -25,6 +23,8 @@ export const getNearbyNodeIds = (nodes: NodeExtended[], camera: Camera) => {
       nearbyNodeTimeout = null
     }
   }, nearbyNodeTimeoutCycle)
+
+  const nearbyNodesIdsAndDistance: NearbyRenderProps[] = []
 
   nodes.forEach((n) => {
     const distance = camera.position.distanceTo(variableVector3.set(n.x, n.y, n.z))
