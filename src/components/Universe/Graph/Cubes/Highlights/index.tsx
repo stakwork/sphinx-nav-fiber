@@ -47,7 +47,7 @@ export const Highlights = () => {
           geometry={boxGeometry}
           material={materials[h.color]}
           position={h.position}
-          scale={(h.scale || 1) * 1.2}
+          scale={(h.scale || 1) * 1.02}
           userData={h.userData}
           visible={!!h.position}
         />

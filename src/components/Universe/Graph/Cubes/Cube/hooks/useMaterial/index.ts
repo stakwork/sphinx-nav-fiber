@@ -27,25 +27,27 @@ export const useMaterial = (url: string) => {
       return
     }
 
-    const map = loader.load(url, undefined, undefined, () => {
-      // on error, set blank meterial
-      cachedMaterials[cashPath].texture = noImageTexture
-      cachedMaterials[cashPath].material = noImageMaterial
-      setTexture(noImageTexture)
-      setMaterial(noImageMaterial)
-    })
+    const map = loader.load(
+      url,
+      (txt) => {
+        // on load
+        const newMaterial = new MeshStandardMaterial({ map: txt })
 
-    if (map) {
-      const newMaterial = new MeshStandardMaterial({ map })
+        cachedMaterials[cashPath] = {
+          texture: map,
+          material: newMaterial,
+        }
 
-      cachedMaterials[cashPath] = {
-        texture: map,
-        material: newMaterial,
-      }
-
-      setTexture(map)
-      setMaterial(newMaterial)
-    }
+        setTexture(map)
+        setMaterial(newMaterial)
+      },
+      undefined,
+      () => {
+        // on error, set blank meterial
+        setTexture(noImageTexture)
+        setMaterial(noImageMaterial)
+      },
+    )
   }, [url])
 
   useEffect(
