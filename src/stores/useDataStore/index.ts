@@ -94,8 +94,7 @@ export const useDataStore = create<DataStore>((set, get) => ({
       await saveSearchTerm()
     }
 
-    set({ data, isFetching: false, sphinxModalIsOpen: false, nearbyNodeIds: [] , disableCameraRotation: false })
-
+    set({ data, isFetching: false, sphinxModalIsOpen: false, nearbyNodeIds: [], disableCameraRotation: false })
   },
   setIsFetching: (isFetching) => set({ isFetching }),
   setData: (data) => set({ data }),
