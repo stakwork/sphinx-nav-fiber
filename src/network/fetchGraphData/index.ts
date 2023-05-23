@@ -1,6 +1,12 @@
 import { Vector3 } from 'three'
-import { AWS_IMAGE_BUCKET_URL, CLOUDFRONT_IMAGE_BUCKET_URL, isDevelopment, isE2E } from '~/constants'
-import { mock } from '~/mocks/getMockGraphData/mockResponse.js'
+import {
+  AWS_IMAGE_BUCKET_URL,
+  CLOUDFRONT_IMAGE_BUCKET_URL,
+  NODE_RELATIVE_HIGHLIGHT_COLORS,
+  isDevelopment,
+  isE2E,
+} from '~/constants'
+import { mock } from '~/mocks/getMockGraphData/mockResponse'
 import { api } from '~/network/api'
 import { useDataStore } from '~/stores/useDataStore'
 import { FetchDataResponse, FetchSentimentResponse, GraphData, Guests, Link, Node, NodeExtended } from '~/types'
@@ -73,8 +79,34 @@ const fetchNodes = async (search: string) => {
   })
 }
 
-export const getSentimentData = async () => {
-  const response = await api.get<FetchSentimentResponse>(`/sentiments`)
+/**
+ *
+ * {
+ *  cutoff_date: string // String(moment.unix()),
+ *  topic: string // search topic
+ *  }
+ */
+export const getSentimentData = async (args?: { topic: string; cutoff_date: string }) => {
+  const search = args && new URLSearchParams(args)
+
+  const endpoint = search ? `/sentiments?${search.toString()}` : '/sentiments'
+
+  // disable payment for tests (data is mocked)
+  if (isE2E) {
+    const response = await api.get<FetchSentimentResponse>(endpoint)
+
+    return response
+  }
+
+  const lsatToken = await getLSat('sentiments', search?.toString())
+
+  if (!lsatToken) {
+    throw new Error('An error occured calling getLSat')
+  }
+
+  const response = await api.get<FetchSentimentResponse>(endpoint, {
+    Authorization: lsatToken,
+  })
 
   return response
 }
@@ -105,6 +137,18 @@ export const getAdminId = async (tribeId: string) => {
   const jsonData = await response.json()
 
   return jsonData
+}
+
+const getNodeScale = (node: NodeExtended) => {
+  switch (node.node_type) {
+    case 'guest':
+    case 'episode':
+      return 2
+    case 'show':
+      return 3
+    default:
+      return 1.5
+  }
 }
 
 function generateTopicNodesFromMap(topicMap: TopicMap, doNodeCallback: (node: NodeExtended) => void) {
@@ -221,6 +265,7 @@ const getGraphData = async (searchterm: string) => {
 
         nodes.push({
           ...node,
+          scale: getNodeScale(node),
           id: node.ref_id || node.tweet_id || node.id,
           image_url: smallImageUrl,
           type: node.type || node.node_type,
@@ -284,17 +329,35 @@ const getGraphData = async (searchterm: string) => {
 
     // do links
     nodes.forEach((node) => {
-      const { children } = node
+      const { children, guests } = node
 
       children?.forEach((childRefId: string) => {
         if (node.ref_id) {
+          const childNode = nodes.find((f) => f.ref_id === childRefId) || null
+
           links.push({
             onlyVisibleOnSelect: false,
+            color: getSegmentColor(node.node_type, childNode?.node_type || ''),
             source: node.ref_id,
             sourceRef: node.ref_id,
             sourcePosition: new Vector3(0, 0, 0),
             target: childRefId,
             targetRef: childRefId,
+            targetPosition: new Vector3(0, 0, 0),
+          })
+        }
+      })
+
+      guests?.forEach((guest: string | Guests | null) => {
+        if (guest && typeof guest !== 'string' && node.ref_id) {
+          links.push({
+            onlyVisibleOnSelect: true,
+            color: getSegmentColor(node.node_type, 'guest'),
+            source: node.ref_id,
+            sourceRef: node.ref_id,
+            sourcePosition: new Vector3(0, 0, 0),
+            target: guest?.ref_id,
+            targetRef: guest?.ref_id,
             targetPosition: new Vector3(0, 0, 0),
           })
         }
@@ -322,4 +385,16 @@ const getGraphData = async (searchterm: string) => {
 
     return defaultData
   }
+}
+
+const getSegmentColor = (aType: string, bType: string) => {
+  if (aType === 'topic' || bType === 'topic') {
+    return NODE_RELATIVE_HIGHLIGHT_COLORS.topics.segmentColor
+  }
+
+  if (aType === 'guest' || bType === 'guest') {
+    return NODE_RELATIVE_HIGHLIGHT_COLORS.guests.segmentColor
+  }
+
+  return NODE_RELATIVE_HIGHLIGHT_COLORS.children.segmentColor
 }

@@ -1,5 +1,5 @@
 import { Leva } from 'leva'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import 'react-toastify/dist/ReactToastify.css'
 import * as sphinx from 'sphinx-bridge-kevkevinpal'
@@ -12,7 +12,7 @@ import { Universe } from '~/components/Universe'
 import { Flex } from '~/components/common/Flex'
 import { isDevelopment, isE2E } from '~/constants'
 import { useAppStore } from '~/stores/useAppStore'
-import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
+import { useDataStore } from '~/stores/useDataStore'
 import { useModal } from '~/stores/useModalStore'
 import { useTeachStore } from '~/stores/useTeachStore'
 import { colors } from '~/utils/colors'
@@ -23,6 +23,7 @@ import { generateSplitGraphPositions } from '../../transformers/splitGraph'
 import { Preloader } from '../Universe/Preloader'
 import { AppBar } from './AppBar'
 import { FooterMenu } from './FooterMenu'
+import { AppProviders } from './Providers'
 import { SecondarySideBar } from './SecondarySidebar'
 import { SideBar } from './SideBar'
 import { Toasts } from './Toasts'
@@ -43,11 +44,7 @@ const Version = styled(Flex)`
 `
 
 export const App = () => {
-  const [isAuthorized, setAuthorized] = useState(false)
-
   const { open } = useModal('budgetExplanation')
-
-  const selectedNode = useSelectedNode()
 
   const [
     setSidebarOpen,
@@ -56,20 +53,26 @@ export const App = () => {
     setRelevanceSelected,
     setTranscriptOpen,
     hasBudgetExplanationModalBeSeen,
-  ] = useAppStore((s) => [
-    s.setSidebarOpen,
-    s.currentSearch,
-    s.setCurrentSearch,
-    s.setRelevanceSelected,
-    s.setTranscriptOpen,
-    s.hasBudgetExplanationModalBeSeen,
-  ])
+  ] = [
+    useAppStore((s) => s.setSidebarOpen),
+    useAppStore((s) => s.currentSearch),
+    useAppStore((s) => s.setCurrentSearch),
+    useAppStore((s) => s.setRelevanceSelected),
+    useAppStore((s) => s.setTranscriptOpen),
+    useAppStore((s) => s.hasBudgetExplanationModalBeSeen),
+  ]
 
   const setTeachMeAnswer = useTeachStore((s) => s.setTeachMeAnswer)
 
-  const [data, setData, fetchData, graphStyle, setSphinxModalOpen, setSelectedNode, setCategoryFilter] = useDataStore(
-    (s) => [s.data, s.setData, s.fetchData, s.graphStyle, s.setSphinxModalOpen, s.setSelectedNode, s.setCategoryFilter],
-  )
+  const [data, setData, fetchData, graphStyle, setSphinxModalOpen, setSelectedNode, setCategoryFilter] = [
+    useDataStore((s) => s.data),
+    useDataStore((s) => s.setData),
+    useDataStore((s) => s.fetchData),
+    useDataStore((s) => s.graphStyle),
+    useDataStore((s) => s.setSphinxModalOpen),
+    useDataStore((s) => s.setSelectedNode),
+    useDataStore((s) => s.setCategoryFilter),
+  ]
 
   const form = useForm<{ search: string }>({ mode: 'onChange' })
 
@@ -79,15 +82,8 @@ export const App = () => {
     setRelevanceSelected(false)
     setCurrentSearch(search)
     setTeachMeAnswer('')
-
     setCategoryFilter(null)
   })
-
-  const showSideBar = !!selectedNode || isAuthorized
-
-  useEffect(() => {
-    setSidebarOpen(showSideBar)
-  }, [isAuthorized, selectedNode, setSidebarOpen, showSideBar])
 
   const runSearch = useCallback(async () => {
     if (searchTerm) {
@@ -101,12 +97,11 @@ export const App = () => {
       }
 
       setSphinxModalOpen(false)
-
-      setAuthorized(true)
     }
 
     fetchData(searchTerm)
-  }, [fetchData, searchTerm, setSphinxModalOpen])
+    setSidebarOpen(true)
+  }, [fetchData, searchTerm, setSphinxModalOpen, setSidebarOpen])
 
   useEffect(() => {
     if (searchTerm) {
@@ -139,7 +134,7 @@ export const App = () => {
   }, [graphStyle])
 
   return (
-    <>
+    <AppProviders>
       <GlobalStyle />
 
       <Leva hidden={!isDevelopment} />
@@ -167,6 +162,6 @@ export const App = () => {
         <BudgetExplanationModal />
       </Wrapper>
       <E2ETests />
-    </>
+    </AppProviders>
   )
 }

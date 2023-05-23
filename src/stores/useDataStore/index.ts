@@ -1,4 +1,5 @@
 import create from 'zustand'
+import { nodesAreRelatives } from '~/components/Universe/constants'
 import { isChileGraph } from '~/constants'
 import { fetchGraphData } from '~/network/fetchGraphData'
 import { GraphData, NodeExtended, NodeType, Sources } from '~/types'
@@ -23,6 +24,7 @@ type DataStore = {
   sphinxModalIsOpen: boolean
   cameraFocusTrigger: boolean
   selectedNodeRelatives: NodeExtended[]
+  nearbyNodeIds: string[]
   setScrollEventsDisabled: (scrollEventsDisabled: boolean) => void
   setCategoryFilter: (categoryFilter: NodeType | null) => void
   setDisableCameraRotation: (rotation: boolean) => void
@@ -38,6 +40,7 @@ type DataStore = {
   setSphinxModalOpen: (_: boolean) => void
   setCameraFocusTrigger: (_: boolean) => void
   setIsFetching: (_: boolean) => void
+  setNearbyNodeIds: (_: string[]) => void
 }
 
 const defaultData: Omit<
@@ -58,6 +61,7 @@ const defaultData: Omit<
   | 'setQueuedSources'
   | 'setGraphRadius'
   | 'setGraphStyle'
+  | 'setNearbyNodeIds'
 > = {
   categoryFilter: null,
   data: null,
@@ -75,6 +79,7 @@ const defaultData: Omit<
   sphinxModalIsOpen: false,
   cameraFocusTrigger: false,
   selectedNodeRelatives: [],
+  nearbyNodeIds: [],
 }
 
 export const useDataStore = create<DataStore>((set, get) => ({
@@ -92,7 +97,14 @@ export const useDataStore = create<DataStore>((set, get) => ({
       await saveSearchTerm()
     }
 
-    set({ data, isFetching: false, sphinxModalIsOpen: false, disableCameraRotation: false, selectedNodeRelatives: [] })
+    set({
+      data,
+      isFetching: false,
+      sphinxModalIsOpen: false,
+      disableCameraRotation: false,
+      nearbyNodeIds: [],
+      selectedNodeRelatives: [],
+    })
   },
   setIsFetching: (isFetching) => set({ isFetching }),
   setData: (data) => set({ data }),
@@ -107,20 +119,9 @@ export const useDataStore = create<DataStore>((set, get) => ({
     const stateSelectedNode = get().selectedNode
 
     if (stateSelectedNode?.ref_id !== selectedNode?.ref_id) {
-      const data = get().data
+      const { data } = get()
 
-      const relatives =
-        data?.nodes.filter((f) => {
-          if (
-            f.children?.includes(selectedNode?.ref_id || '') ||
-            selectedNode?.children?.includes(f?.ref_id || '') ||
-            f.guests?.includes(selectedNode?.ref_id || '') ||
-            selectedNode?.guests?.includes(f?.ref_id || '')
-          ) {
-            return true
-          }
-          return false
-        }) || []
+      const relatives = data?.nodes.filter((f) => nodesAreRelatives(f, selectedNode)) || []
 
       set({ isTimestampLoaded: false, selectedNode, disableCameraRotation: true, selectedNodeRelatives: relatives })
     }
@@ -129,6 +130,13 @@ export const useDataStore = create<DataStore>((set, get) => ({
   setSources: (sources) => set({ sources }),
   setSphinxModalOpen: (sphinxModalIsOpen) => set({ sphinxModalIsOpen }),
   setCameraFocusTrigger: (cameraFocusTrigger) => set({ cameraFocusTrigger }),
+  setNearbyNodeIds: (nearbyNodeIds) => {
+    const stateNearbyNodeIds = get().nearbyNodeIds
+
+    if (nearbyNodeIds.length !== stateNearbyNodeIds.length || nearbyNodeIds[0] !== stateNearbyNodeIds[0]) {
+      set({ nearbyNodeIds })
+    }
+  },
 }))
 
 export const useSelectedNode = () => useDataStore((s) => s.selectedNode)

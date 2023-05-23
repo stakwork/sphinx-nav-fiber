@@ -7,31 +7,65 @@ import { Flex } from '~/components/common/Flex'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { NodeExtended } from '~/types'
 
-type Props = {
-  value?: number | string
-  position?: Vector3
-  userData?: NodeExtended
+type BadgeProps = {
+  color: string
+  position: Vector3
+  userData: NodeExtended
+  // eslint-disable-next-line react/no-unused-prop-types
+  value?: number | string | null
 }
 
-const PathwayBadge = ({ position, value, userData }: Props) => {
+const getBadgeColor = (nodeType: string) => {
+  let color = 'lime'
+
+  switch (nodeType) {
+    case 'clip':
+    case 'show':
+    case 'episode':
+      color = 'lime'
+      break
+    case 'guest':
+      color = '#ff94ff'
+      break
+    case 'topic':
+      color = '#5078f2'
+      break
+    default:
+  }
+
+  return color
+}
+
+const PathwayBadge = ({ color, position, value, userData }: BadgeProps) => {
   const setSelectedNode = useDataStore((s) => s.setSelectedNode)
+  const setHoveredNode = useDataStore((s) => s.setHoveredNode)
   const selectedNode = useSelectedNode()
   const selected = userData?.ref_id === selectedNode?.ref_id
 
   return (
-    <mesh position={position} userData={userData}>
+    <mesh position={position}>
       <boxGeometry />
       <meshStandardMaterial />
       <Html center sprite>
         <Tag
+          color={color}
+          fontSize={18}
           justify="center"
-          onClick={() => {
+          onClick={(e) => {
+            e.stopPropagation()
+
             if (userData) {
               setSelectedNode(userData)
             }
           }}
-          selected={!!value && selected}
-          visible={!!value}
+          onPointerOut={() => {
+            setHoveredNode(null)
+          }}
+          onPointerOver={() => {
+            setHoveredNode(userData || null)
+          }}
+          selected={selected}
+          size={56}
         >
           {value}
         </Tag>
@@ -40,54 +74,29 @@ const PathwayBadge = ({ position, value, userData }: Props) => {
   )
 }
 
-const PersonBadge = ({ userData }: Props) => {
+const NodeBadge = ({ position, userData, color }: BadgeProps) => {
   const setSelectedNode = useDataStore((s) => s.setSelectedNode)
 
-  const position = new Vector3(userData?.x || 0, userData?.y || 0, userData?.z || 0)
+  const isTopic = (userData?.node_type || '') === 'topic'
 
   return (
     <mesh position={position} userData={userData}>
-      <boxGeometry />
-      <meshStandardMaterial />
       <Html center sprite>
         <Tag
+          color={color}
+          fontSize={isTopic ? 14 : 20}
           justify="center"
-          onClick={() => {
+          onClick={(e) => {
+            e.stopPropagation()
+
             if (userData) {
               setSelectedNode(userData)
             }
           }}
           selected={false}
-          visible={true}
+          size={isTopic ? 100 : 66}
         >
-          <Image src={userData?.image_url || 'noimage.jpeg'} />
-        </Tag>
-      </Html>
-    </mesh>
-  )
-}
-
-const ContentBadge = ({ userData }: Props) => {
-  const setSelectedNode = useDataStore((s) => s.setSelectedNode)
-
-  const position = new Vector3(userData?.x || 0, userData?.y || 0, userData?.z || 0)
-
-  return (
-    <mesh position={position} userData={userData}>
-      <boxGeometry />
-      <meshStandardMaterial />
-      <Html center sprite>
-        <Tag
-          justify="center"
-          onClick={() => {
-            if (userData) {
-              setSelectedNode(userData)
-            }
-          }}
-          selected={false}
-          visible={true}
-        >
-          <Image src={userData?.image_url} />
+          {isTopic ? userData?.label : <Image src={userData?.image_url || 'noimage.jpeg'} />}
         </Tag>
       </Html>
     </mesh>
@@ -98,41 +107,35 @@ export const RelevanceBadges = memo(() => {
   const { badges } = usePathway()
   const selectedNodeRelatives = useDataStore((s) => s.selectedNodeRelatives)
 
-  const pathwayBadges = useMemo(() => {
-    const renders = []
-
-    for (let i = 0; i < 10; i += 1) {
-      renders.push(
+  const pathwayBadges = useMemo(
+    () =>
+      badges.map((b) => (
         <PathwayBadge
-          key={`relevance-badge-${i}`}
-          position={badges[i]?.position}
-          userData={badges[i]?.userData}
-          value={badges[i]?.value}
-        />,
-      )
-    }
+          key={`relevance-badge-${b.userData.ref_id}`}
+          color="#ffffff88"
+          position={b.position}
+          userData={b.userData}
+          value={b.value}
+        />
+      )),
+    [badges],
+  )
 
-    return renders
-  }, [badges])
+  const nodeBadges = useMemo(
+    () =>
+      selectedNodeRelatives.map((n) => {
+        const color = getBadgeColor(n.node_type || '')
+        const position = new Vector3(n?.x || 0, n?.y || 0, n?.z || 0)
 
-  const personBadges = useMemo(() => {
-    return selectedNodeRelatives
-      .filter((f) => f.node_type === 'guest' || f.node_type === 'person')
-      .map((n, i) => <PersonBadge key={`person-badge-${i}`} userData={n} />)
-  }, [selectedNodeRelatives])
+        return <NodeBadge key={`node-badge-${n.ref_id}`} color={color} position={position} userData={n} />
+      }),
+    [selectedNodeRelatives],
+  )
 
-  const contentBadges = useMemo(() => {
-    return selectedNodeRelatives
-      .filter((f) => f.node_type === 'clip' || f.node_type === 'show' || f.node_type === 'episode')
-      .map((n, i) => <ContentBadge key={`content-badge-${i}`} userData={n} />)
-  }, [selectedNodeRelatives])
-
-  // prevent badge dismount between clicks, teardown takes too long
   return (
     <>
       {pathwayBadges}
-      {personBadges}
-      {contentBadges}
+      {nodeBadges}
     </>
   )
 })
@@ -140,22 +143,23 @@ export const RelevanceBadges = memo(() => {
 RelevanceBadges.displayName = 'RelevanceBadges'
 
 type TagProps = {
-  visible: boolean
   selected: boolean
+  color: string
+  size: number
+  fontSize: number
 }
 
 const Tag = styled(Flex)<TagProps>`
   text-align: center;
-  width: 66px;
-  height: 66px;
+  width: ${(p: TagProps) => `${p.size}px`};
+  height: ${(p: TagProps) => `${p.size}px`};
   background: #000000bb;
-  border: 3px solid #ffffff88;
+  border: 3px solid ${(p: TagProps) => p.color};
   color: #ffffff;
   border-radius: 100%;
-  font-size: 20px;
+  font-size: ${(p: TagProps) => `${p.fontSize}px`};
   cursor: pointer;
   transition: opacity 0.4s;
-  ${(p: TagProps) => !p.visible && 'opacity:0;'}
   ${(p: TagProps) =>
     p.selected &&
     `
@@ -169,7 +173,7 @@ type ImageProps = {
 }
 
 const Image = styled.img<ImageProps>`
-  background-image: ${({ src }) => (src ? `url(${src})` : 'noimage.jpeg')};
+  background-image: ${({ src }) => `url(${src})`};
   background-size: contain;
   background-repeat: no-repeat;
   width: 60px;

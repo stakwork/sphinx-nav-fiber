@@ -1,5 +1,5 @@
 import { actionMenu, closeSidebar, host } from '../../support'
-import { chartWrapper, openChartBtn } from './const'
+import { chartWrapper, openChartBtn, requestSentimentsBtn } from './const'
 
 describe('Sentiment chart  / Home interactions', () => {
   beforeEach(() => {
@@ -26,15 +26,14 @@ describe('Sentiment chart  / Home interactions', () => {
         method: 'GET',
         url: '/sentiments',
       },
-      (req) => {
-        req.continue((res) => {
-          expect(res.body?.data).to.not.empty
-        })
+      {
+        fixture: 'sentiments.json',
       },
     ).as('sentiments')
 
     cy.get(actionMenu).click({ waitForAnimations: false })
     cy.get(openChartBtn).click({ waitForAnimations: false })
+    cy.get(requestSentimentsBtn).click({ waitForAnimations: false })
 
     cy.wait('@sentiments')
 

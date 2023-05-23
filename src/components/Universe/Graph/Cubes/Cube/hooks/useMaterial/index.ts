@@ -1,44 +1,63 @@
-import { useMemo } from 'react'
-import * as THREE from 'three'
-import { MeshStandardMaterial } from 'three'
+import { useEffect, useState } from 'react'
+import { MeshStandardMaterial, TextureLoader } from 'three'
 
-const loader = new THREE.TextureLoader()
+const loader = new TextureLoader()
 
-const cachedMaterials: Record<string, THREE.MeshStandardMaterial> = {}
+type materialRecord = {
+  texture: THREE.Texture
+  material: THREE.MeshStandardMaterial
+}
 
-export const useMaterial = (url: string, highlight: boolean, highlightColor = 'green') => {
-  const material = useMemo(() => {
-    const cashPath = `${url}${String(highlight)}${highlightColor}`
+const cachedMaterials: Record<string, materialRecord> = {}
+
+const noImageTexture = loader.load('noimage.jpeg')
+const noImageMaterial = new MeshStandardMaterial({ map: noImageTexture })
+
+export const useMaterial = (url: string) => {
+  const [texture, setTexture] = useState(noImageTexture)
+  const [material, setMaterial] = useState(noImageMaterial)
+
+  useEffect(() => {
+    const cashPath = `${url}`
 
     if (cachedMaterials[cashPath]) {
-      return cachedMaterials[cashPath]
+      setTexture(cachedMaterials[cashPath].texture)
+      setMaterial(cachedMaterials[cashPath].material)
+
+      return
     }
 
-    const map = loader.load(url, undefined, undefined, () => {
-      // load error
-      try {
-        cachedMaterials[cashPath].map = loader.load('noimage.jpeg')
-        // eslint-disable-next-line no-empty
-      } catch (e) {}
-    })
+    const map = loader.load(
+      url,
+      (txt) => {
+        // on load
+        const newMaterial = new MeshStandardMaterial({ map: txt })
 
-    const materialProp = highlight
-      ? {
-          emissive: highlightColor,
-          emissiveIntensity: 20,
-          map,
-          opacity: 0.5,
-          toneMapped: false,
-          transparent: true,
+        cachedMaterials[cashPath] = {
+          texture: map,
+          material: newMaterial,
         }
-      : { map }
 
-    const m = new MeshStandardMaterial(materialProp)
+        setTexture(map)
+        setMaterial(newMaterial)
+      },
+      undefined,
+      () => {
+        // on error, set blank meterial
+        setTexture(noImageTexture)
+        setMaterial(noImageMaterial)
+      },
+    )
+  }, [url])
 
-    cachedMaterials[cashPath] = m
-
-    return m
-  }, [url, highlight, highlightColor])
+  useEffect(
+    () =>
+      function cleanup() {
+        texture.dispose()
+        material.dispose()
+      },
+    [texture, material],
+  )
 
   return material
 }

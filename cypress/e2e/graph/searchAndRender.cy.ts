@@ -1,5 +1,5 @@
-import { budgetModal, getScenenChildrens, host, loader } from '../../support'
-import { search, searchResultList } from './const'
+import { budgetModal, getScenenChildrens, host, loader, search } from '../../support'
+import { searchResultList } from './const'
 
 describe('Search and render / Home interactions', () => {
   beforeEach(() => {

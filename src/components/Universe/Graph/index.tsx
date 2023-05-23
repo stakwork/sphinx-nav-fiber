@@ -11,6 +11,7 @@ import { NodeDetailsPanel } from './UI'
 export const Graph = () => {
   const data = useGraphData()
   const isLoading = useDataStore((s) => s.isFetching)
+  const graphStyle = useDataStore((s) => s.graphStyle)
 
   if (isLoading) {
     return <GraphLoadingIcon />
@@ -27,12 +28,12 @@ export const Graph = () => {
         /** NOTE: using the key in this way the segments re-mounts
          *  everytime the data.links count changes
          * */
-        key={`links-${data.links.length}`}
+        key={`links-${data.links.length}-${graphStyle}`}
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         fog
         limit={data.links.length}
-        lineWidth={0.15}
+        lineWidth={graphStyle === 'force' ? 0.15 : 0.6}
       >
         {(data.links as unknown as GraphData['links']).map((link, index) => (
           <Segment

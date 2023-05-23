@@ -26,7 +26,7 @@ const defaultData = {
   hasBudgetExplanationModalBeSeen: false,
   relevanceIsSelected: false,
   secondarySidebarActiveTab: '' as const,
-  sidebarIsOpen: false,
+  sidebarIsOpen: true,
   theme: 'light' as const,
   transcriptIsOpen: false,
 }

@@ -3,6 +3,7 @@ import { useMemo, useRef } from 'react'
 import { Vector3 } from 'three'
 import { Line2 } from 'three/examples/jsm/lines/Line2'
 import { usePathway } from '~/components/DataRetriever'
+import { NODE_RELATIVE_HIGHLIGHT_COLORS } from '~/constants'
 
 export const PathwayLine = () => {
   const { pathway } = usePathway()
@@ -27,12 +28,15 @@ export const PathwayLine = () => {
   return (
     <Line
       ref={ref}
-      color="teal"
-      dashed={false}
+      color={NODE_RELATIVE_HIGHLIGHT_COLORS.pathway.nodeColor}
+      dashed
+      dashSize={10}
       forceSinglePass={false}
       lineWidth={2}
       matrixWorldAutoUpdate={false}
+      opacity={0.1}
       points={points}
+      transparent
     />
   )
 }

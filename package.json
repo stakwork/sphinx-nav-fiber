@@ -1,6 +1,6 @@
 {
   "name": "sphinx-nav",
-  "version": "0.1.23",
+  "version": "0.1.24",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.10.8",
@@ -8,6 +8,7 @@
     "@mui/base": "^5.0.0-beta.0",
     "@mui/material": "^5.11.16",
     "@mui/styled-engine-sc": "^5.11.11",
+    "@mui/x-date-pickers": "^6.4.0",
     "@react-three/drei": "9.57.0",
     "@react-three/fiber": "^8.11.5",
     "@react-three/postprocessing": "^2.7.0",
@@ -52,7 +53,7 @@
     "start": "craco start",
     "start-e2e": "REACT_APP_IS_E2E=true craco start",
     "dev-tribe": "PORT=3004 craco start",
-    "build": "craco build",
+    "build": "GENERATE_SOURCEMAP=false craco --max_old_space_size=4096 build",
     "test": "craco test",
     "cy-open": "cypress open",
     "cy-run": "cypress run",

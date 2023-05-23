@@ -7,14 +7,22 @@ import { useControlStore } from '~/stores/useControlStore'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { NodeExtended } from '~/types'
 import { variableVector3 } from '../../constants'
+import { getNearbyNodeIds } from '../constants'
 
 let lookAtAnimationTimer: ReturnType<typeof setTimeout>
+
+const arriveDistance = 300
+const topicArriveDistance = 600
 
 export const useAutoNavigate = (cameraControlsRef: RefObject<CameraControls | null>) => {
   const selectedNode = useSelectedNode()
   const cameraFocusTrigger = useDataStore((s) => s.cameraFocusTrigger)
 
-  const { isUserDragging } = useControlStore()
+  const isUserDragging = useControlStore((s) => s.isUserDragging)
+  const setUserMovedCamera = useControlStore((s) => s.setUserMovedCamera)
+
+  const setNearbyNodeIds = useDataStore((s) => s.setNearbyNodeIds)
+  const data = useDataStore((s) => s.data)
 
   const { camera } = useThree()
 
@@ -22,13 +30,13 @@ export const useAutoNavigate = (cameraControlsRef: RefObject<CameraControls | nu
   const [lookAtReached, setLookAtReached] = useState(false)
 
   // camera movement to selection params
-  const [minDistance, setMinDistance] = useState(130)
+  const [minDistance, setMinDistance] = useState(arriveDistance)
 
   useEffect(() => {
     if (selectedNode?.node_type === 'topic') {
-      setMinDistance(600)
+      setMinDistance(topicArriveDistance)
     } else {
-      setMinDistance(130)
+      setMinDistance(arriveDistance)
     }
   }, [selectedNode, setMinDistance])
 
@@ -43,7 +51,7 @@ export const useAutoNavigate = (cameraControlsRef: RefObject<CameraControls | nu
       playInspectSound(distance)
     }
 
-    useControlStore.setState({ userMovedCamera: false })
+    setUserMovedCamera(false)
     setDistanceReached(false)
     setLookAtReached(false)
   }
@@ -51,8 +59,8 @@ export const useAutoNavigate = (cameraControlsRef: RefObject<CameraControls | nu
   useEffect(() => {
     setDistanceReached(false)
     setLookAtReached(false)
-    useControlStore.setState({ userMovedCamera: false })
-  }, [cameraFocusTrigger])
+    setUserMovedCamera(false)
+  }, [cameraFocusTrigger, setUserMovedCamera, setLookAtReached, setDistanceReached])
 
   useEffect(() => {
     // stop navigation when user interacts
@@ -105,6 +113,12 @@ export const useAutoNavigate = (cameraControlsRef: RefObject<CameraControls | nu
     } else {
       cam.position.lerp(mesh, 0.5)
       cam.updateProjectionMatrix()
+
+      const nearbyNodesIds = getNearbyNodeIds(data?.nodes || [], camera)
+
+      if (nearbyNodesIds) {
+        setNearbyNodeIds(nearbyNodesIds)
+      }
     }
   }
 
