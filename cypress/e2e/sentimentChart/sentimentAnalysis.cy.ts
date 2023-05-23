@@ -1,5 +1,5 @@
-import { budgetModal, getScenenChildrens, host, loader, search } from '../../support'
-import { searchResultList } from './const'
+import { budgetModal, host, loader, search } from '../../support'
+import { requestAnalysBtn, sentimentChart, sentimentSlider, sentimentTab } from './const'
 
 describe('Search and render / Home interactions', () => {
   beforeEach(() => {
@@ -32,12 +32,27 @@ describe('Search and render / Home interactions', () => {
       },
     ).as('search')
 
+    cy.intercept(
+      {
+        hostname: host,
+        method: 'GET',
+        url: '/sentiments*',
+      },
+      {
+        fixture: 'sentiments.json',
+      },
+    ).as('sentiments')
+
     cy.get(search).should('exist').type('bitcoin {enter}')
     cy.get(budgetModal).should('exist').find('button').click()
     cy.get(loader).should('exist')
     cy.wait('@search')
 
-    getScenenChildrens().should('exist')
-    cy.get(searchResultList).should('exist')
+    cy.get(sentimentTab).click({ force: true })
+    cy.get(sentimentSlider).click(2, 20)
+    cy.get(requestAnalysBtn).click()
+
+    cy.wait('@sentiments')
+    cy.get(sentimentChart).should('exist')
   })
 })
