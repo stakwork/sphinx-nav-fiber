@@ -15,11 +15,12 @@ type Props = {
 
 const PathwayBadge = ({ position, value, userData }: Props) => {
   const setSelectedNode = useDataStore((s) => s.setSelectedNode)
+  const setHoveredNode = useDataStore((s) => s.setHoveredNode)
   const selectedNode = useSelectedNode()
   const selected = userData?.ref_id === selectedNode?.ref_id
 
   return (
-    <mesh position={position} userData={userData}>
+    <mesh position={position}>
       <boxGeometry />
       <meshStandardMaterial />
       <Html center sprite>
@@ -29,6 +30,14 @@ const PathwayBadge = ({ position, value, userData }: Props) => {
             if (userData) {
               setSelectedNode(userData)
             }
+          }}
+          onPointerOut={(e) => {
+            e.stopPropagation()
+            setHoveredNode(null)
+          }}
+          onPointerOver={(e) => {
+            e.stopPropagation()
+            setHoveredNode(userData || null)
           }}
           selected={!!value && selected}
           visible={!!value}
@@ -43,24 +52,19 @@ const PathwayBadge = ({ position, value, userData }: Props) => {
 export const RelevanceBadges = memo(() => {
   const { badges } = usePathway()
 
-  const renderedBadges = useMemo(() => {
-    const renders = []
-
-    for (let i = 0; i < 10; i += 1) {
-      renders.push(
+  const renderedBadges = useMemo(
+    () =>
+      badges.map((b) => (
         <PathwayBadge
-          key={`relevance-badge-${i}`}
-          position={badges[i]?.position}
-          userData={badges[i]?.userData}
-          value={badges[i]?.value}
-        />,
-      )
-    }
+          key={`relevance-badge-${b.userData.ref_id}`}
+          position={b.position}
+          userData={b.userData}
+          value={b.value}
+        />
+      )),
+    [badges],
+  )
 
-    return renders
-  }, [badges])
-
-  // prevent badge dismount between clicks, teardown takes too long
   return <>{renderedBadges}</>
 })
 

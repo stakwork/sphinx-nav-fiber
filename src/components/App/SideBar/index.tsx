@@ -7,7 +7,7 @@ import { SearchBar } from '~/components/SearchBar'
 import { Flex } from '~/components/common/Flex'
 import { Loader } from '~/components/common/Loader'
 import { useAppStore } from '~/stores/useAppStore'
-import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
+import { useDataStore } from '~/stores/useDataStore'
 import { colors } from '~/utils/colors'
 import { media } from '~/utils/media'
 import { SentimentAnalysis } from '../SecondarySidebar/Sentiment/SentimentAnalysis'
@@ -73,14 +73,8 @@ const Content = ({ onSubmit }: Props) => {
 
 export const SideBar = ({ onSubmit }: Props) => {
   const sidebarIsOpen = useAppStore((s) => s.sidebarIsOpen)
-  const selectedNode = useSelectedNode()
-  const searchTerm = useAppStore((s) => s.currentSearch)
 
   if (!sidebarIsOpen) {
-    if (!selectedNode && !searchTerm) {
-      return null
-    }
-
     return <Tab />
   }
 
@@ -149,3 +143,5 @@ const CategoryWrapper = styled(Flex).attrs({
   left: ${MENU_WIDTH + 10}px;
   top: 10px;
 `
+
+SideBar.displayName = 'Sidebar'

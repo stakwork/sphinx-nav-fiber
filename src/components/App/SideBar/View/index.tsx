@@ -1,4 +1,5 @@
 import { useSelectedNode } from '~/stores/useDataStore'
+import { TextType } from '../AskQuestion/Text'
 import { AudioClip } from '../AudioClip'
 import { Creator } from '../Creator'
 import { Data } from '../Data'
@@ -35,6 +36,8 @@ export const View = ({ isSelectedView }: Props) => {
         return <Show />
       case 'clip':
         return <AudioClip />
+      case 'text':
+        return <TextType />
       default:
         return <Creator />
     }

@@ -133,6 +133,18 @@ export const getAdminId = async (tribeId: string) => {
   return jsonData
 }
 
+const getNodeScale = (node: NodeExtended) => {
+  switch (node.node_type) {
+    case 'guest':
+    case 'episode':
+      return 2
+    case 'show':
+      return 3
+    default:
+      return 1.5
+  }
+}
+
 function generateTopicNodesFromMap(topicMap: TopicMap, doNodeCallback: (node: NodeExtended) => void) {
   Object.entries(topicMap).forEach(([topic, content], index) => {
     const { children, position } = content
@@ -247,6 +259,7 @@ const getGraphData = async (searchterm: string) => {
 
         nodes.push({
           ...node,
+          scale: getNodeScale(node),
           id: node.ref_id || node.tweet_id || node.id,
           image_url: smallImageUrl,
           type: node.type || node.node_type,
