@@ -40,10 +40,65 @@ const PathwayBadge = ({ position, value, userData }: Props) => {
   )
 }
 
+const PersonBadge = ({ userData }: Props) => {
+  const setSelectedNode = useDataStore((s) => s.setSelectedNode)
+
+  const position = new Vector3(userData?.x || 0, userData?.y || 0, userData?.z || 0)
+
+  return (
+    <mesh position={position} userData={userData}>
+      <boxGeometry />
+      <meshStandardMaterial />
+      <Html center sprite>
+        <Tag
+          justify="center"
+          onClick={() => {
+            if (userData) {
+              setSelectedNode(userData)
+            }
+          }}
+          selected={false}
+          visible={true}
+        >
+          <Image src={userData?.image_url || 'noimage.jpeg'} />
+        </Tag>
+      </Html>
+    </mesh>
+  )
+}
+
+const ContentBadge = ({ userData }: Props) => {
+  const setSelectedNode = useDataStore((s) => s.setSelectedNode)
+
+  const position = new Vector3(userData?.x || 0, userData?.y || 0, userData?.z || 0)
+
+  return (
+    <mesh position={position} userData={userData}>
+      <boxGeometry />
+      <meshStandardMaterial />
+      <Html center sprite>
+        <Tag
+          justify="center"
+          onClick={() => {
+            if (userData) {
+              setSelectedNode(userData)
+            }
+          }}
+          selected={false}
+          visible={true}
+        >
+          <Image src={userData?.image_url} />
+        </Tag>
+      </Html>
+    </mesh>
+  )
+}
+
 export const RelevanceBadges = memo(() => {
   const { badges } = usePathway()
+  const selectedNodeRelatives = useDataStore((s) => s.selectedNodeRelatives)
 
-  const renderedBadges = useMemo(() => {
+  const pathwayBadges = useMemo(() => {
     const renders = []
 
     for (let i = 0; i < 10; i += 1) {
@@ -60,8 +115,26 @@ export const RelevanceBadges = memo(() => {
     return renders
   }, [badges])
 
+  const personBadges = useMemo(() => {
+    return selectedNodeRelatives
+      .filter((f) => f.node_type === 'guest' || f.node_type === 'person')
+      .map((n, i) => <PersonBadge key={`person-badge-${i}`} userData={n} />)
+  }, [selectedNodeRelatives])
+
+  const contentBadges = useMemo(() => {
+    return selectedNodeRelatives
+      .filter((f) => f.node_type === 'clip' || f.node_type === 'show' || f.node_type === 'episode')
+      .map((n, i) => <ContentBadge key={`content-badge-${i}`} userData={n} />)
+  }, [selectedNodeRelatives])
+
   // prevent badge dismount between clicks, teardown takes too long
-  return <>{renderedBadges}</>
+  return (
+    <>
+      {pathwayBadges}
+      {personBadges}
+      {contentBadges}
+    </>
+  )
 })
 
 RelevanceBadges.displayName = 'RelevanceBadges'
@@ -89,4 +162,17 @@ const Tag = styled(Flex)<TagProps>`
     opacity: 0.8;
     background: #5078f2;
   `}
+`
+
+type ImageProps = {
+  src?: string
+}
+
+const Image = styled.img<ImageProps>`
+  background-image: ${({ src }) => (src ? `url(${src})` : 'noimage.jpeg')};
+  background-size: contain;
+  background-repeat: no-repeat;
+  width: 60px;
+  height: 60px;
+  border-radius: 100%;
 `

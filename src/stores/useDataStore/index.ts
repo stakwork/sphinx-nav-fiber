@@ -22,6 +22,7 @@ type DataStore = {
   queuedSources: Sources[] | null
   sphinxModalIsOpen: boolean
   cameraFocusTrigger: boolean
+  selectedNodeRelatives: NodeExtended[]
   setScrollEventsDisabled: (scrollEventsDisabled: boolean) => void
   setCategoryFilter: (categoryFilter: NodeType | null) => void
   setDisableCameraRotation: (rotation: boolean) => void
@@ -73,6 +74,7 @@ const defaultData: Omit<
   sources: null,
   sphinxModalIsOpen: false,
   cameraFocusTrigger: false,
+  selectedNodeRelatives: [],
 }
 
 export const useDataStore = create<DataStore>((set, get) => ({
@@ -90,7 +92,7 @@ export const useDataStore = create<DataStore>((set, get) => ({
       await saveSearchTerm()
     }
 
-    set({ data, isFetching: false, sphinxModalIsOpen: false, disableCameraRotation: false })
+    set({ data, isFetching: false, sphinxModalIsOpen: false, disableCameraRotation: false, selectedNodeRelatives: [] })
   },
   setIsFetching: (isFetching) => set({ isFetching }),
   setData: (data) => set({ data }),
@@ -105,7 +107,22 @@ export const useDataStore = create<DataStore>((set, get) => ({
     const stateSelectedNode = get().selectedNode
 
     if (stateSelectedNode?.ref_id !== selectedNode?.ref_id) {
-      set({ isTimestampLoaded: false, selectedNode, disableCameraRotation: true })
+      const data = get().data
+
+      const relatives =
+        data?.nodes.filter((f) => {
+          if (
+            f.children?.includes(selectedNode?.ref_id || '') ||
+            selectedNode?.children?.includes(f?.ref_id || '') ||
+            f.guests?.includes(selectedNode?.ref_id || '') ||
+            selectedNode?.guests?.includes(f?.ref_id || '')
+          ) {
+            return true
+          }
+          return false
+        }) || []
+
+      set({ isTimestampLoaded: false, selectedNode, disableCameraRotation: true, selectedNodeRelatives: relatives })
     }
   },
   setSelectedTimestamp: (selectedTimestamp) => set({ selectedTimestamp }),
