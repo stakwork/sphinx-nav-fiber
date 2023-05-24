@@ -82,7 +82,7 @@ export type Link<T = string> = {
   index?: T extends string ? never : number
   source: T
   target: T
-  color: number
+  color?: number
   sourceRef?: T
   targetRef?: T
   sourcePosition?: Vector3
