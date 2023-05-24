@@ -6,6 +6,7 @@ import { Flex } from '~/components/common/Flex'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { HtmlPanel } from '../Cubes/Cube/components/HtmlPanel'
+import { NodeControls } from './NodeControls'
 
 export const NodeDetailsPanel = memo(() => {
   const selectedNode = useSelectedNode()
@@ -20,7 +21,14 @@ export const NodeDetailsPanel = memo(() => {
 
   return (
     <>
-      <HtmlPanel position={position} visible={!!selectedNode} onClose={() => setSelectedNode(null)}>
+      <NodeControls />
+
+      <HtmlPanel
+        position={position}
+        visible={!!selectedNode}
+        onClose={() => setSelectedNode(null)}
+        onViewMode={() => setSelectedNode(null)}
+      >
         <View isSelectedView />
       </HtmlPanel>
 

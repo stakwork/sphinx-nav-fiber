@@ -1,9 +1,10 @@
 import { Float, Html } from '@react-three/drei'
 import { memo } from 'react'
-import { MdClose } from 'react-icons/md'
+
 import styled, { css } from 'styled-components'
 import { Vector3 } from 'three'
 import { defaultDimensions, withTranscriptDimensions } from './constants'
+
 type Props = {
   children: React.ReactNode
   speed?: number
@@ -12,10 +13,11 @@ type Props = {
   withTranscript?: boolean
   visible: boolean
   onClose?: () => void
+  onViewMode?: () => void
 }
 
 export const HtmlPanel = memo(
-  ({ speed = 2, intensity = 4, children, withTranscript, position, visible, onClose }: Props) => (
+  ({ speed = 2, intensity = 4, children, withTranscript, position, visible, onClose, onViewMode }: Props) => (
     <Float
       floatingRange={[1, 2]}
       /* Up/down float intensity, works like a multiplier with floatingRange,defaults to 1 */
@@ -45,19 +47,7 @@ export const HtmlPanel = memo(
           onPointerUp={(e) => e.stopPropagation()}
           visible={visible}
         >
-          <>
-            {onClose && (
-              <Close
-                onClick={(e) => {
-                  e.stopPropagation()
-                  onClose()
-                }}
-              >
-                <MdClose />
-              </Close>
-            )}
-            {children}
-          </>
+          <>{children}</>
         </HtmlWrap>
       </Html>
     </Float>
@@ -89,24 +79,4 @@ const HtmlWrap = styled.div<{ dimensions: [number, number, number, number]; visi
   background: #00000099;
   transition: opacity 0.2s;
   overflow-y: auto;
-`
-
-const Close = styled.div`
-  position: fixed;
-  top: -70px;
-  left: -17px;
-  width: 34px;
-  height: 34px;
-
-  border-radius: 40px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: #000000bb;
-  border: 3px solid #fa8072;
-  color: #ffffff;
-  border-radius: 100%;
-  font-size: 20px;
-  cursor: pointer;
-  transition: opacity 0.4s;
 `
