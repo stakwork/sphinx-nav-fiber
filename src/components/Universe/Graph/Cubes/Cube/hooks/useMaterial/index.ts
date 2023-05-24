@@ -9,16 +9,21 @@ type materialRecord = {
 }
 
 const cachedMaterials: Record<string, materialRecord> = {}
-
+const transparentValue = 0.2
 const noImageTexture = loader.load('noimage.jpeg')
 const noImageMaterial = new MeshStandardMaterial({ map: noImageTexture })
+const noImageTransparentMaterial = new MeshStandardMaterial({
+  map: noImageTexture,
+  transparent: true,
+  opacity: transparentValue,
+})
 
-export const useMaterial = (url: string) => {
+export const useMaterial = (url: string, transparent: boolean) => {
   const [texture, setTexture] = useState(noImageTexture)
   const [material, setMaterial] = useState(noImageMaterial)
 
   useEffect(() => {
-    const cashPath = `${url}`
+    const cashPath = `${url}${transparent && '-transparent'}`
 
     if (cachedMaterials[cashPath]) {
       setTexture(cachedMaterials[cashPath].texture)
@@ -31,7 +36,11 @@ export const useMaterial = (url: string) => {
       url,
       (txt) => {
         // on load
-        const newMaterial = new MeshStandardMaterial({ map: txt })
+        const newMaterial = new MeshStandardMaterial({
+          map: txt,
+          transparent,
+          opacity: transparent ? transparentValue : 1,
+        })
 
         cachedMaterials[cashPath] = {
           texture: map,
@@ -45,10 +54,15 @@ export const useMaterial = (url: string) => {
       () => {
         // on error, set blank meterial
         setTexture(noImageTexture)
-        setMaterial(noImageMaterial)
+
+        if (transparent) {
+          setMaterial(noImageTransparentMaterial)
+        } else {
+          setMaterial(noImageMaterial)
+        }
       },
     )
-  }, [url])
+  }, [url, transparent])
 
   useEffect(
     () =>

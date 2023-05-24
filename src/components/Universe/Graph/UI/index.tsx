@@ -11,6 +11,7 @@ export const NodeDetailsPanel = memo(() => {
   const selectedNode = useSelectedNode()
   const selectedTimestamp = useDataStore((s) => s.selectedTimestamp)
   const transcriptIsOpen = useAppStore((s) => s.transcriptIsOpen)
+  const setSelectedNode = useDataStore((s) => s.setSelectedNode)
 
   const position = useMemo(
     () => new Vector3(selectedNode?.x || 0, selectedNode?.y || 0, selectedNode?.z || 0),
@@ -19,7 +20,7 @@ export const NodeDetailsPanel = memo(() => {
 
   return (
     <>
-      <HtmlPanel position={position} visible={!!selectedNode}>
+      <HtmlPanel position={position} visible={!!selectedNode} onClose={() => setSelectedNode(null)}>
         <View isSelectedView />
       </HtmlPanel>
 

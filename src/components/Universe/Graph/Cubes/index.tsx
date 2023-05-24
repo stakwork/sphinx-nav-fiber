@@ -4,7 +4,7 @@ import { memo, useCallback } from 'react'
 import { Object3D } from 'three'
 import { useGraphData } from '~/components/DataRetriever'
 import { useAppStore } from '~/stores/useAppStore'
-import { useDataStore } from '~/stores/useDataStore'
+import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { NodeExtended } from '~/types'
 import { BlurryInstances } from './BlurryInstances'
 import { Cube } from './Cube'
@@ -15,6 +15,7 @@ import { isMainTopic } from './constants'
 
 export const Cubes = memo(() => {
   const data = useGraphData()
+  const selectedNode = useSelectedNode()
   const nearbyNodeIds = useDataStore((s) => s.nearbyNodeIds)
   const setHoveredNode = useDataStore((s) => s.setHoveredNode)
   const setTranscriptOpen = useAppStore((s) => s.setTranscriptOpen)
@@ -67,7 +68,16 @@ export const Cubes = memo(() => {
       onPointerOver={onPointerIn}
     >
       {data.nodes
-        .filter((f) => nearbyNodeIds.includes(f.ref_id || '') || isMainTopic(f))
+        .filter((f) => {
+          // const isInFocused =
+          //   !selectedNode ||
+          //   selectedNode.ref_id === f.ref_id ||
+          //   selectedNodeRelatives.find((snd) => snd.ref_id === f.ref_id)
+
+          const isNearbyOrPersistent = nearbyNodeIds.includes(f.ref_id || '') || isMainTopic(f)
+
+          return isNearbyOrPersistent // && isInFocused
+        })
         .map((node) => {
           if (node.node_type === 'topic') {
             return <TextNode key={node.ref_id || node.id} node={node} />

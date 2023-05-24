@@ -90,7 +90,7 @@ export const Universe = () => {
             }, 200)
           }}
         >
-          {isDevelopment && <Perf position="bottom-left" />}
+          {isDevelopment && <Perf position="top-left" />}
 
           <Suspense
             fallback={

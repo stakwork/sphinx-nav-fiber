@@ -1,13 +1,14 @@
 import { Instance, Instances } from '@react-three/drei'
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useGraphData } from '~/components/DataRetriever'
-import { useDataStore } from '~/stores/useDataStore'
+import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { boxGeometry, isMainTopic } from '../constants'
 import { blurryMaterial } from './constants'
 
 export const BlurryInstances = () => {
   const data = useGraphData()
   const nearbyNodeIds = useDataStore((s) => s.nearbyNodeIds)
+  const selectedNode = useSelectedNode()
 
   const instances = useMemo(
     () =>
@@ -28,6 +29,14 @@ export const BlurryInstances = () => {
       }),
     [nearbyNodeIds, data.nodes],
   )
+
+  useEffect(() => {
+    if (selectedNode) {
+      blurryMaterial.opacity = 0.4
+    } else {
+      blurryMaterial.opacity = 0.9
+    }
+  }, [selectedNode])
 
   return (
     <Instances geometry={boxGeometry} material={blurryMaterial}>

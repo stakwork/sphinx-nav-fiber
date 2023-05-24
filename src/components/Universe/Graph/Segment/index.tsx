@@ -40,6 +40,8 @@ export const Segment = ({ link }: Props) => {
       else {
         setColor(NODE_RELATIVE_HIGHLIGHT_COLORS.source.segmentColor)
       }
+    } else if (selectedNode) {
+      setColor(0x555555)
     } else {
       setColor(0xcccccc)
     }

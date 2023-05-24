@@ -31,6 +31,7 @@ export const Graph = () => {
         key={`links-${data.links.length}-${graphStyle}`}
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
+
         fog
         limit={data.links.length}
         lineWidth={0.15}

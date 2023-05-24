@@ -1,9 +1,9 @@
 import { Float, Html } from '@react-three/drei'
 import { memo } from 'react'
+import { MdClose } from 'react-icons/md'
 import styled, { css } from 'styled-components'
 import { Vector3 } from 'three'
 import { defaultDimensions, withTranscriptDimensions } from './constants'
-
 type Props = {
   children: React.ReactNode
   speed?: number
@@ -11,43 +11,58 @@ type Props = {
   intensity?: number
   withTranscript?: boolean
   visible: boolean
+  onClose?: () => void
 }
 
-export const HtmlPanel = memo(({ speed = 2, intensity = 4, children, withTranscript, position, visible }: Props) => (
-  <Float
-    floatingRange={[1, 2]}
-    /* Up/down float intensity, works like a multiplier with floatingRange,defaults to 1 */
-    floatIntensity={intensity}
-    /* Animation speed, defaults to 1 */
-    position={position}
-    speed={speed}
-  >
-    <Html
-      center
-      className="html-panel"
-      onClick={(e) => e.stopPropagation()}
-      onKeyDown={(e) => e.stopPropagation()}
-      onPointerDown={(e) => e.stopPropagation()}
-      onPointerOut={(e) => e.stopPropagation()}
-      onPointerOver={(e) => e.stopPropagation()}
-      onPointerUp={(e) => e.stopPropagation()}
-      sprite
+export const HtmlPanel = memo(
+  ({ speed = 2, intensity = 4, children, withTranscript, position, visible, onClose }: Props) => (
+    <Float
+      floatingRange={[1, 2]}
+      /* Up/down float intensity, works like a multiplier with floatingRange,defaults to 1 */
+      floatIntensity={intensity}
+      /* Animation speed, defaults to 1 */
+      position={position}
+      speed={speed}
     >
-      <HtmlWrap
+      <Html
+        center
         className="html-panel"
-        dimensions={withTranscript ? withTranscriptDimensions : defaultDimensions}
-        id="html-panel"
+        onClick={(e) => e.stopPropagation()}
+        onKeyDown={(e) => e.stopPropagation()}
         onPointerDown={(e) => e.stopPropagation()}
         onPointerOut={(e) => e.stopPropagation()}
         onPointerOver={(e) => e.stopPropagation()}
         onPointerUp={(e) => e.stopPropagation()}
-        visible={visible}
+        sprite
       >
-        {children}
-      </HtmlWrap>
-    </Html>
-  </Float>
-))
+        <HtmlWrap
+          className="html-panel"
+          dimensions={withTranscript ? withTranscriptDimensions : defaultDimensions}
+          id="html-panel"
+          onPointerDown={(e) => e.stopPropagation()}
+          onPointerOut={(e) => e.stopPropagation()}
+          onPointerOver={(e) => e.stopPropagation()}
+          onPointerUp={(e) => e.stopPropagation()}
+          visible={visible}
+        >
+          <>
+            {onClose && (
+              <Close
+                onClick={(e) => {
+                  e.stopPropagation()
+                  onClose()
+                }}
+              >
+                <MdClose />
+              </Close>
+            )}
+            {children}
+          </>
+        </HtmlWrap>
+      </Html>
+    </Float>
+  ),
+)
 
 HtmlPanel.displayName = 'HtmlPanel'
 
@@ -74,4 +89,24 @@ const HtmlWrap = styled.div<{ dimensions: [number, number, number, number]; visi
   background: #00000099;
   transition: opacity 0.2s;
   overflow-y: auto;
+`
+
+const Close = styled.div`
+  position: fixed;
+  top: -70px;
+  left: -17px;
+  width: 34px;
+  height: 34px;
+
+  border-radius: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #000000bb;
+  border: 3px solid #fa8072;
+  color: #ffffff;
+  border-radius: 100%;
+  font-size: 20px;
+  cursor: pointer;
+  transition: opacity 0.4s;
 `
