@@ -1,4 +1,5 @@
 import create from 'zustand'
+import { nodesAreRelatives } from '~/components/Universe/constants'
 import { isChileGraph } from '~/constants'
 import { fetchGraphData } from '~/network/fetchGraphData'
 import { GraphData, NodeExtended, NodeType, Sources } from '~/types'
@@ -22,7 +23,9 @@ type DataStore = {
   queuedSources: Sources[] | null
   sphinxModalIsOpen: boolean
   cameraFocusTrigger: boolean
+  selectedNodeRelativeIds: string[]
   nearbyNodeIds: string[]
+  showCompactGraph: boolean
   setScrollEventsDisabled: (scrollEventsDisabled: boolean) => void
   setCategoryFilter: (categoryFilter: NodeType | null) => void
   setDisableCameraRotation: (rotation: boolean) => void
@@ -39,6 +42,7 @@ type DataStore = {
   setCameraFocusTrigger: (_: boolean) => void
   setIsFetching: (_: boolean) => void
   setNearbyNodeIds: (_: string[]) => void
+  setShowCompactGraph: (_: boolean) => void
 }
 
 const defaultData: Omit<
@@ -60,6 +64,7 @@ const defaultData: Omit<
   | 'setGraphRadius'
   | 'setGraphStyle'
   | 'setNearbyNodeIds'
+  | 'setShowCompactGraph'
 > = {
   categoryFilter: null,
   data: null,
@@ -76,7 +81,9 @@ const defaultData: Omit<
   sources: null,
   sphinxModalIsOpen: false,
   cameraFocusTrigger: false,
+  selectedNodeRelativeIds: [],
   nearbyNodeIds: [],
+  showCompactGraph: false,
 }
 
 export const useDataStore = create<DataStore>((set, get) => ({
@@ -94,7 +101,14 @@ export const useDataStore = create<DataStore>((set, get) => ({
       await saveSearchTerm()
     }
 
-    set({ data, isFetching: false, sphinxModalIsOpen: false, nearbyNodeIds: [], disableCameraRotation: false })
+    set({
+      data,
+      isFetching: false,
+      sphinxModalIsOpen: false,
+      disableCameraRotation: false,
+      nearbyNodeIds: [],
+      selectedNodeRelativeIds: [],
+    })
   },
   setIsFetching: (isFetching) => set({ isFetching }),
   setData: (data) => set({ data }),
@@ -109,7 +123,12 @@ export const useDataStore = create<DataStore>((set, get) => ({
     const stateSelectedNode = get().selectedNode
 
     if (stateSelectedNode?.ref_id !== selectedNode?.ref_id) {
-      set({ isTimestampLoaded: false, selectedNode, disableCameraRotation: true })
+      const { data } = get()
+
+      const relativeIds =
+        data?.nodes.filter((f) => f.ref_id && nodesAreRelatives(f, selectedNode)).map((n) => n?.ref_id || '') || []
+
+      set({ isTimestampLoaded: false, selectedNode, disableCameraRotation: true, selectedNodeRelativeIds: relativeIds })
     }
   },
   setSelectedTimestamp: (selectedTimestamp) => set({ selectedTimestamp }),
@@ -123,6 +142,7 @@ export const useDataStore = create<DataStore>((set, get) => ({
       set({ nearbyNodeIds })
     }
   },
+  setShowCompactGraph: (showCompactGraph) => set({ showCompactGraph }),
 }))
 
 export const useSelectedNode = () => useDataStore((s) => s.selectedNode)

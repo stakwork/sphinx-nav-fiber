@@ -62,9 +62,13 @@ export const NODE_RELATIVE_HIGHLIGHT_COLORS: Record<string, NodeRelativeHighligh
     nodeColor: 'purple',
     segmentColor: 0xdd50ff,
   },
-  source: {
+  topics: {
     nodeColor: 'purple',
-    segmentColor: 0xdd50ff,
+    segmentColor: 0x5078f2,
+  },
+  pathway: {
+    nodeColor: '#ffffff',
+    segmentColor: 0xffffff,
   },
 }
 

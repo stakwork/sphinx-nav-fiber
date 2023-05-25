@@ -8,5 +8,3 @@ export const isMainTopic = (node: NodeExtended) => node.node_type === 'topic' &&
 export const meshRenderLimit = 500
 
 export const meshRenderRadius = 600
-
-export const selectedNodeRelatives: NodeExtended[] = []

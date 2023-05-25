@@ -1,5 +1,11 @@
 import { Vector3 } from 'three'
-import { AWS_IMAGE_BUCKET_URL, CLOUDFRONT_IMAGE_BUCKET_URL, isDevelopment, isE2E } from '~/constants'
+import {
+  AWS_IMAGE_BUCKET_URL,
+  CLOUDFRONT_IMAGE_BUCKET_URL,
+  NODE_RELATIVE_HIGHLIGHT_COLORS,
+  isDevelopment,
+  isE2E,
+} from '~/constants'
 import { mock } from '~/mocks/getMockGraphData/mockResponse'
 import { api } from '~/network/api'
 import { useDataStore } from '~/stores/useDataStore'
@@ -214,7 +220,6 @@ const getGraphData = async (searchterm: string) => {
   const { graphStyle } = useDataStore.getState()
 
   let nodes: NodeExtended[] = []
-  let links: Link[] = []
 
   const topicMap: TopicMap = {}
   const guestMap: Record<string, guestMapChild> = {}
@@ -321,24 +326,7 @@ const getGraphData = async (searchterm: string) => {
       })
     }
 
-    // do links
-    nodes.forEach((node) => {
-      const { children } = node
-
-      children?.forEach((childRefId: string) => {
-        if (node.ref_id) {
-          links.push({
-            onlyVisibleOnSelect: false,
-            source: node.ref_id,
-            sourceRef: node.ref_id,
-            sourcePosition: new Vector3(0, 0, 0),
-            target: childRefId,
-            targetRef: childRefId,
-            targetPosition: new Vector3(0, 0, 0),
-          })
-        }
-      })
-    })
+    let links = generateLinksFromNodeData(nodes)
 
     // give nodes and links positions based on graphStyle
     if (graphStyle === 'split') {
@@ -361,4 +349,69 @@ const getGraphData = async (searchterm: string) => {
 
     return defaultData
   }
+}
+
+const getSegmentColor = (aType: string, bType: string) => {
+  if (aType === 'topic' || bType === 'topic') {
+    return NODE_RELATIVE_HIGHLIGHT_COLORS.topics.segmentColor
+  }
+
+  if (aType === 'guest' || bType === 'guest') {
+    return NODE_RELATIVE_HIGHLIGHT_COLORS.guests.segmentColor
+  }
+
+  return NODE_RELATIVE_HIGHLIGHT_COLORS.children.segmentColor
+}
+
+export const generateLinksFromNodeData = (nodes: NodeExtended[]) => {
+  const links: Link[] = []
+
+  // do links
+  nodes.forEach((node) => {
+    const { children, guests } = node
+
+    children?.forEach((childRefId: string) => {
+      if (node.ref_id) {
+        const childNode = nodes.find((f) => f.ref_id === childRefId) || null
+
+        if (!childNode) {
+          return
+        }
+
+        links.push({
+          onlyVisibleOnSelect: false,
+          color: getSegmentColor(node.node_type, childNode?.node_type || ''),
+          source: node.ref_id,
+          sourceRef: node.ref_id,
+          sourcePosition: new Vector3(0, 0, 0),
+          target: childRefId,
+          targetRef: childRefId,
+          targetPosition: new Vector3(0, 0, 0),
+        })
+      }
+    })
+
+    guests?.forEach((guest: string | Guests | null) => {
+      if (guest && typeof guest !== 'string' && node.ref_id) {
+        const guestNode = nodes.find((f) => f.ref_id === guest?.ref_id) || null
+
+        if (!guestNode) {
+          return
+        }
+
+        links.push({
+          onlyVisibleOnSelect: true,
+          color: getSegmentColor(node.node_type, 'guest'),
+          source: node.ref_id,
+          sourceRef: node.ref_id,
+          sourcePosition: new Vector3(0, 0, 0),
+          target: guest?.ref_id,
+          targetRef: guest?.ref_id,
+          targetPosition: new Vector3(0, 0, 0),
+        })
+      }
+    })
+  })
+
+  return links
 }

@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { Button } from '~/components/Button'
 import { useControlStore } from '~/stores/useControlStore'
 import { useDataStore } from '~/stores/useDataStore'
-import { Tooltip } from '../Graph/Cubes/Cube/components/Tooltip'
+import { Tooltip } from '../Graph/Nodes/Cube/components/Tooltip'
 
 export const Overlay = () => {
   const [selectedNode, hoveredNode, cameraFocusTrigger, setCameraFocusTrigger] = useDataStore((s) => [

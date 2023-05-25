@@ -6,14 +6,16 @@ import { Vector3 } from 'three'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 
 export const NodeControls = memo(() => {
+  const data = useDataStore((s) => s.data)
   const selectedNode = useSelectedNode()
-
   const setSelectedNode = useDataStore((s) => s.setSelectedNode)
+  const setShowCompactGraph = useDataStore((s) => s.setShowCompactGraph)
+  const showCompactGraph = useDataStore((s) => s.showCompactGraph)
 
-  const position = useMemo(
-    () => new Vector3(selectedNode?.x || 0, selectedNode?.y || 0, selectedNode?.z || 0),
-    [selectedNode],
-  )
+  const position = useMemo(() => {
+    const selected = data?.nodes.find((f) => f.ref_id === selectedNode?.ref_id)
+    return new Vector3(selected?.x || 0, selected?.y || 0, selected?.z || 0)
+  }, [selectedNode, data])
 
   if (!selectedNode) {
     return null
@@ -44,7 +46,7 @@ export const NodeControls = memo(() => {
           color="#222"
           onClick={(e) => {
             e.stopPropagation()
-            // onViewMode()
+            setShowCompactGraph(!showCompactGraph)
           }}
         >
           <MdViewInAr />
@@ -56,6 +58,7 @@ export const NodeControls = memo(() => {
           onClick={(e) => {
             e.stopPropagation()
             setSelectedNode(null)
+            setShowCompactGraph(false)
           }}
         >
           <MdClose />

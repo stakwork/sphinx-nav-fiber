@@ -29,17 +29,7 @@ export const Segment = ({ link }: Props) => {
     }
 
     if (linkIsSelected) {
-      if (
-        selectedNode.children?.length &&
-        ((link?.targetRef && selectedNode.children.includes(link.targetRef)) ||
-          (link?.sourceRef && selectedNode.children.includes(link.sourceRef)))
-      ) {
-        setColor(NODE_RELATIVE_HIGHLIGHT_COLORS.children.segmentColor)
-      }
-      // color other linked segments
-      else {
-        setColor(NODE_RELATIVE_HIGHLIGHT_COLORS.source.segmentColor)
-      }
+      setColor(link.color || NODE_RELATIVE_HIGHLIGHT_COLORS.children.segmentColor)
     } else if (selectedNode) {
       setColor(0x555555)
     } else {

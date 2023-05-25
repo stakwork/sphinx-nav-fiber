@@ -7,17 +7,19 @@ import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { NodeExtended } from '~/types'
 import { BlurryInstances } from './BlurryInstances'
+import { CompactView } from './CompactView'
 import { Cube } from './Cube'
 import { Highlights } from './Highlights'
 import { RelevanceBadges } from './RelevanceBadges'
 import { TextNode } from './Text'
 import { isMainTopic } from './constants'
 
-export const Cubes = memo(() => {
+export const Nodes = memo(() => {
   const data = useGraphData()
   const selectedNode = useSelectedNode()
   const nearbyNodeIds = useDataStore((s) => s.nearbyNodeIds)
   const setHoveredNode = useDataStore((s) => s.setHoveredNode)
+  const showCompactGraph = useDataStore((s) => s.showCompactGraph)
   const setTranscriptOpen = useAppStore((s) => s.setTranscriptOpen)
 
   const handleSelect = useCallback(
@@ -60,36 +62,51 @@ export const Cubes = memo(() => {
     [setHoveredNode],
   )
 
+  if (selectedNode && showCompactGraph) {
+    return <CompactView />
+  }
+
+  const compact = !!selectedNode && showCompactGraph
+
   return (
-    <Select
-      filter={(selected) => selected.filter((f) => !!f.userData?.id)}
-      onChange={handleSelect}
-      onPointerOut={onPointerOut}
-      onPointerOver={onPointerIn}
-    >
-      {data.nodes
-        .filter((f) => {
-          // const isInFocused =
-          //   !selectedNode ||
-          //   selectedNode.ref_id === f.ref_id ||
-          //   selectedNodeRelatives.find((snd) => snd.ref_id === f.ref_id)
+    <>
+      <Select
+        filter={(selected) => selected.filter((f) => !!f.userData?.id)}
+        onChange={handleSelect}
+        onPointerOut={onPointerOut}
+        onPointerOver={onPointerIn}
+      >
+        <BlurryInstances hide={compact} />
+        {data.nodes
+          .filter((f) => {
+            const isNearbyOrPersistent = nearbyNodeIds.includes(f.ref_id || '') || isMainTopic(f)
 
-          const isNearbyOrPersistent = nearbyNodeIds.includes(f.ref_id || '') || isMainTopic(f)
+            return isNearbyOrPersistent
+          })
+          .map((node) => {
+            if (node.node_type === 'topic') {
+              return <TextNode hide={compact} key={node.ref_id || node.id} node={node} />
+            }
 
-          return isNearbyOrPersistent // && isInFocused
-        })
-        .map((node) => {
-          if (node.node_type === 'topic') {
-            return <TextNode key={node.ref_id || node.id} node={node} />
-          }
+            return <Cube hide={compact} key={node.ref_id || node.id} node={node} />
+          })}
 
-          return <Cube key={node.ref_id || node.id} node={node} />
-        })}
-      <Highlights />
-      <RelevanceBadges />
-      <BlurryInstances />
-    </Select>
+        <Highlights />
+        <RelevanceBadges />
+      </Select>
+
+      {compact && (
+        <Select
+          filter={(selected) => selected.filter((f) => !!f.userData?.id)}
+          onChange={handleSelect}
+          onPointerOut={onPointerOut}
+          onPointerOver={onPointerIn}
+        >
+          <CompactView />
+        </Select>
+      )}
+    </>
   )
 })
 
-Cubes.displayName = 'Cubes'
+Nodes.displayName = 'Nodes'
