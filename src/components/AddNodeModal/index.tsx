@@ -124,7 +124,7 @@ const handleSubmit = async (data: FieldValues, close: () => void, sourceType: st
     body.web_page = data.web_page
   } else if (sourceType === DOCUMENT) {
     body.content_type = 'document'
-    body.web_page = data.document
+    body.text = data.document
   } else {
     body.source_type = sourceType
 
