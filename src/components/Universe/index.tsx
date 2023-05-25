@@ -28,7 +28,7 @@ const Content = () => {
       <Controls />
 
       <Selection>
-        <EffectComposer autoClear={false} multisampling={8}>
+        <EffectComposer multisampling={8}>
           <Bloom
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
@@ -36,9 +36,9 @@ const Content = () => {
             mipmapBlur
           />
         </EffectComposer>
-
-        <Graph />
       </Selection>
+
+      <Graph />
     </>
   )
 }
@@ -90,7 +90,7 @@ export const Universe = () => {
             }, 200)
           }}
         >
-          {isDevelopment && <Perf position="bottom-left" />}
+          {isDevelopment && <Perf position="top-left" />}
 
           <Suspense
             fallback={

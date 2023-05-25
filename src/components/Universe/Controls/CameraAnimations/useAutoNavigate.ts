@@ -11,6 +11,9 @@ import { getNearbyNodeIds } from '../constants'
 
 let lookAtAnimationTimer: ReturnType<typeof setTimeout>
 
+const arriveDistance = 300
+const topicArriveDistance = 600
+
 export const useAutoNavigate = (cameraControlsRef: RefObject<CameraControls | null>) => {
   const selectedNode = useSelectedNode()
   const cameraFocusTrigger = useDataStore((s) => s.cameraFocusTrigger)
@@ -27,13 +30,13 @@ export const useAutoNavigate = (cameraControlsRef: RefObject<CameraControls | nu
   const [lookAtReached, setLookAtReached] = useState(false)
 
   // camera movement to selection params
-  const [minDistance, setMinDistance] = useState(130)
+  const [minDistance, setMinDistance] = useState(arriveDistance)
 
   useEffect(() => {
     if (selectedNode?.node_type === 'topic') {
-      setMinDistance(600)
+      setMinDistance(topicArriveDistance)
     } else {
-      setMinDistance(130)
+      setMinDistance(arriveDistance)
     }
   }, [selectedNode, setMinDistance])
 

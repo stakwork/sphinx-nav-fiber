@@ -49,7 +49,7 @@ export const generateForceGraphPositions = (data: GraphData, usingCurrentData: b
   layout
     .force('link')
     .id((d: NodeExtended) => d.id)
-    .links(data.links)
+    .links(data.links.filter((f) => !f.onlyVisibleOnSelect))
 
   for (let i = 0; i < maxTicks; i += 1) {
     layout.tick()
