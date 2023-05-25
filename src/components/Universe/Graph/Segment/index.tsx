@@ -1,4 +1,5 @@
 import { Segment as DreiSegment, SegmentObject } from '@react-three/drei'
+import { useFrame } from '@react-three/fiber'
 import { useEffect, useRef, useState } from 'react'
 import { Vector3 } from 'three'
 import { NODE_RELATIVE_HIGHLIGHT_COLORS } from '~/constants'
@@ -7,9 +8,10 @@ import { Link } from '~/types'
 
 type Props = {
   link: Link
+  animated?: boolean
 }
 
-export const Segment = ({ link }: Props) => {
+export const Segment = ({ link, animated }: Props) => {
   const ref = useRef<SegmentObject | null>(null)
   const selectedNode = useSelectedNode()
   const [start, setStart] = useState(new Vector3(0, 0, 0))
@@ -38,6 +40,13 @@ export const Segment = ({ link }: Props) => {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedNode, link])
+
+  useFrame(() => {
+    if (animated && ref.current) {
+      ref.current.start.set(link.sourcePosition?.x || 0, link.sourcePosition?.y || 0, link.sourcePosition?.z || 0)
+      ref.current.end.set(link.targetPosition?.x || 0, link.targetPosition?.y || 0, link.targetPosition?.z || 0)
+    }
+  })
 
   return <DreiSegment ref={ref} color={color} end={end} start={start} />
 }

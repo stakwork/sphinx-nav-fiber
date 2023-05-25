@@ -9,8 +9,8 @@ export const NodeControls = memo(() => {
   const data = useDataStore((s) => s.data)
   const selectedNode = useSelectedNode()
   const setSelectedNode = useDataStore((s) => s.setSelectedNode)
-  const setShowCompactGraph = useDataStore((s) => s.setShowCompactGraph)
-  const showCompactGraph = useDataStore((s) => s.showCompactGraph)
+  const setShowSelectionGraph = useDataStore((s) => s.setShowSelectionGraph)
+  const showSelectionGraph = useDataStore((s) => s.showSelectionGraph)
 
   const position = useMemo(() => {
     const selected = data?.nodes.find((f) => f.ref_id === selectedNode?.ref_id)
@@ -46,7 +46,7 @@ export const NodeControls = memo(() => {
           color="#222"
           onClick={(e) => {
             e.stopPropagation()
-            setShowCompactGraph(!showCompactGraph)
+            setShowSelectionGraph(!showSelectionGraph)
           }}
         >
           <MdViewInAr />
@@ -58,7 +58,7 @@ export const NodeControls = memo(() => {
           onClick={(e) => {
             e.stopPropagation()
             setSelectedNode(null)
-            setShowCompactGraph(false)
+            setShowSelectionGraph(false)
           }}
         >
           <MdClose />

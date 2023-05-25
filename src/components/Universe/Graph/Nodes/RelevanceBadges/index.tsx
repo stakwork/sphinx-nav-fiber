@@ -106,6 +106,8 @@ const NodeBadge = ({ position, userData, color }: BadgeProps) => {
 export const RelevanceBadges = memo(() => {
   const { badges } = usePathway()
   const data = useDataStore((s) => s.data)
+  const showSelectionGraph = useDataStore((s) => s.showSelectionGraph)
+  const selectionGraphData = useDataStore((s) => s.selectionGraphData)
   const selectedNodeRelativeIds = useDataStore((s) => s.selectedNodeRelativeIds)
 
   const pathwayBadges = useMemo(
@@ -122,18 +124,20 @@ export const RelevanceBadges = memo(() => {
     [badges],
   )
 
-  const nodeBadges = useMemo(
-    () =>
-      data?.nodes
-        .filter((f) => selectedNodeRelativeIds.includes(f?.ref_id || ''))
-        .map((n) => {
-          const color = getBadgeColor(n.node_type || '')
-          const position = new Vector3(n?.x || 0, n?.y || 0, n?.z || 0)
+  const nodeBadges = useMemo(() => {
+    const nodes = showSelectionGraph ? selectionGraphData.nodes : data?.nodes || []
 
-          return <NodeBadge key={`node-badge-${n.ref_id}`} color={color} position={position} userData={n} />
-        }),
-    [selectedNodeRelativeIds, data],
-  )
+    const badges = nodes
+      .filter((f) => selectedNodeRelativeIds.includes(f?.ref_id || ''))
+      .map((n) => {
+        const color = getBadgeColor(n.node_type || '')
+        const position = new Vector3(n?.x || 0, n?.y || 0, n?.z || 0)
+
+        return <NodeBadge key={`node-badge-${n.ref_id}`} color={color} position={position} userData={n} />
+      })
+
+    return badges
+  }, [selectedNodeRelativeIds, data, showSelectionGraph, selectionGraphData])
 
   return (
     <>

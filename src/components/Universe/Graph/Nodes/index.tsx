@@ -7,10 +7,10 @@ import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { NodeExtended } from '~/types'
 import { BlurryInstances } from './BlurryInstances'
-import { CompactView } from './CompactView'
 import { Cube } from './Cube'
 import { Highlights } from './Highlights'
 import { RelevanceBadges } from './RelevanceBadges'
+import { SelectionDataGraph } from './SelectionDataGraph'
 import { TextNode } from './Text'
 import { isMainTopic } from './constants'
 
@@ -19,7 +19,7 @@ export const Nodes = memo(() => {
   const selectedNode = useSelectedNode()
   const nearbyNodeIds = useDataStore((s) => s.nearbyNodeIds)
   const setHoveredNode = useDataStore((s) => s.setHoveredNode)
-  const showCompactGraph = useDataStore((s) => s.showCompactGraph)
+  const showSelectionGraph = useDataStore((s) => s.showSelectionGraph)
   const setTranscriptOpen = useAppStore((s) => s.setTranscriptOpen)
 
   const handleSelect = useCallback(
@@ -62,11 +62,7 @@ export const Nodes = memo(() => {
     [setHoveredNode],
   )
 
-  if (selectedNode && showCompactGraph) {
-    return <CompactView />
-  }
-
-  const compact = !!selectedNode && showCompactGraph
+  const compact = !!selectedNode && showSelectionGraph
 
   return (
     <>
@@ -77,6 +73,7 @@ export const Nodes = memo(() => {
         onPointerOver={onPointerIn}
       >
         <BlurryInstances hide={compact} />
+
         {data.nodes
           .filter((f) => {
             const isNearbyOrPersistent = nearbyNodeIds.includes(f.ref_id || '') || isMainTopic(f)
@@ -91,7 +88,8 @@ export const Nodes = memo(() => {
             return <Cube hide={compact} key={node.ref_id || node.id} node={node} />
           })}
 
-        <Highlights />
+        {!compact && <Highlights />}
+
         <RelevanceBadges />
       </Select>
 
@@ -102,7 +100,7 @@ export const Nodes = memo(() => {
           onPointerOut={onPointerOut}
           onPointerOver={onPointerIn}
         >
-          <CompactView />
+          <SelectionDataGraph />
         </Select>
       )}
     </>

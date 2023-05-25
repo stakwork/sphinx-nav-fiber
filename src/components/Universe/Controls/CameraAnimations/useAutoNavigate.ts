@@ -12,6 +12,7 @@ let lookAtAnimationTimer: ReturnType<typeof setTimeout>
 
 const arriveDistance = 300
 const topicArriveDistance = 600
+const selectionGraphDistance = 800
 
 export const useAutoNavigate = (cameraControlsRef: RefObject<CameraControls | null>) => {
   const selectedNode = useSelectedNode()
@@ -21,7 +22,7 @@ export const useAutoNavigate = (cameraControlsRef: RefObject<CameraControls | nu
   const setUserMovedCamera = useControlStore((s) => s.setUserMovedCamera)
 
   const setNearbyNodeIds = useDataStore((s) => s.setNearbyNodeIds)
-  const showCompactGraph = useDataStore((s) => s.showCompactGraph)
+  const showSelectionGraph = useDataStore((s) => s.showSelectionGraph)
   const data = useDataStore((s) => s.data)
 
   const { camera } = useThree()
@@ -33,21 +34,26 @@ export const useAutoNavigate = (cameraControlsRef: RefObject<CameraControls | nu
   const [minDistance, setMinDistance] = useState(arriveDistance)
 
   const destination = useMemo(
-    () => new Vector3(selectedNode?.x || 0, selectedNode?.y || 0, selectedNode?.z || 0),
-    [showCompactGraph, selectedNode],
+    () =>
+      showSelectionGraph
+        ? new Vector3(0, 0, 0)
+        : new Vector3(selectedNode?.x || 0, selectedNode?.y || 0, selectedNode?.z || 0),
+    [showSelectionGraph, selectedNode],
   )
 
   useEffect(() => {
     depart()
-  }, [showCompactGraph])
+  }, [showSelectionGraph])
 
   useEffect(() => {
-    if (selectedNode?.node_type === 'topic') {
+    if (showSelectionGraph) {
+      setMinDistance(selectionGraphDistance)
+    } else if (selectedNode?.node_type === 'topic') {
       setMinDistance(topicArriveDistance)
     } else {
       setMinDistance(arriveDistance)
     }
-  }, [selectedNode, setMinDistance])
+  }, [selectedNode, setMinDistance, showSelectionGraph])
 
   const arrive = () => {
     setDistanceReached(true)

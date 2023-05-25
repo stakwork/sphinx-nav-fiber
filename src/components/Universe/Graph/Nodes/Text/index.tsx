@@ -16,9 +16,10 @@ const fontProps = {
 type Props = {
   node: NodeExtended
   hide?: boolean
+  animated?: boolean
 }
 
-export const TextNode = memo(({ node, hide }: Props) => {
+export const TextNode = memo(({ node, hide, animated }: Props) => {
   const ref = useRef<Mesh | null>(null)
 
   const selectedNode = useSelectedNode()
@@ -30,6 +31,10 @@ export const TextNode = memo(({ node, hide }: Props) => {
     if (ref?.current) {
       // Make text face the camera
       ref.current.quaternion.copy(camera.quaternion)
+
+      if (animated) {
+        ref.current.position.set(node.x, node.y, node.z)
+      }
     }
   })
 

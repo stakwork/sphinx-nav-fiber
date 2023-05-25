@@ -12,7 +12,7 @@ export const Graph = () => {
   const data = useGraphData()
   const isLoading = useDataStore((s) => s.isFetching)
   const graphStyle = useDataStore((s) => s.graphStyle)
-  const showCompactGraph = useDataStore((s) => s.showCompactGraph)
+  const showSelectionGraph = useDataStore((s) => s.showSelectionGraph)
 
   if (isLoading) {
     return <GraphLoadingIcon />
@@ -24,7 +24,7 @@ export const Graph = () => {
 
       <NodeDetailsPanel />
 
-      {!showCompactGraph && <PathwayLine />}
+      {!showSelectionGraph && <PathwayLine />}
       <Segments
         /** NOTE: using the key in this way the segments re-mounts
          *  everytime the data.links count changes
@@ -34,7 +34,7 @@ export const Graph = () => {
         // @ts-ignore
         fog
         limit={data.links.length}
-        lineWidth={showCompactGraph ? 0 : graphStyle === 'force' ? 0.15 : 0.6}
+        lineWidth={showSelectionGraph ? 0 : graphStyle === 'force' ? 0.15 : 0.6}
       >
         {(data.links as unknown as GraphData['links']).map((link, index) => (
           <Segment
