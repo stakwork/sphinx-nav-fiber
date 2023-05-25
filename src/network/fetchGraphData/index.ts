@@ -248,6 +248,7 @@ const getGraphData = async (searchterm: string) => {
       data.forEach((node, index) => {
         // reject duplicate nodes
 
+        // TODO: simplify this to ref_id
         if (['data_series', 'document', 'tweet'].includes(node.node_type)) {
           const imageUrlsMapper: { [key: string]: string } = {
             data_series: 'node_data.webp',

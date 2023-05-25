@@ -2,7 +2,7 @@ import { Flex } from '~/components/common/Flex'
 import { TextArea } from '../TextArea'
 import { requiredRule } from '../index'
 
-const message = 'Submit peace of text'
+const message = 'Submit Text'
 
 export const Document = () => (
   <Flex>
