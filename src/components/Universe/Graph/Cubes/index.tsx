@@ -1,19 +1,23 @@
 import { Select } from '@react-three/drei'
+import { ThreeEvent } from '@react-three/fiber'
 import { memo, useCallback } from 'react'
 import { Object3D } from 'three'
 import { useGraphData } from '~/components/DataRetriever'
 import { useAppStore } from '~/stores/useAppStore'
-import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
+import { useDataStore } from '~/stores/useDataStore'
 import { NodeExtended } from '~/types'
+import { BlurryInstances } from './BlurryInstances'
 import { Cube } from './Cube'
+import { Highlights } from './Highlights'
 import { RelevanceBadges } from './RelevanceBadges'
-import { getHighlighter } from './constants'
+import { TextNode } from './Text'
+import { isMainTopic } from './constants'
 
 export const Cubes = memo(() => {
   const data = useGraphData()
-  const selectedNode = useSelectedNode()
+  const nearbyNodeIds = useDataStore((s) => s.nearbyNodeIds)
+  const setHoveredNode = useDataStore((s) => s.setHoveredNode)
   const setTranscriptOpen = useAppStore((s) => s.setTranscriptOpen)
-  const searchTerm = useAppStore((s) => s.currentSearch)
 
   const handleSelect = useCallback(
     (nodes: Object3D[]) => {
@@ -31,14 +35,49 @@ export const Cubes = memo(() => {
     [setTranscriptOpen],
   )
 
-  return (
-    <Select filter={(selected) => selected.filter((f) => !!f.userData?.id)} onChange={handleSelect}>
-      {data.nodes.map((node) => {
-        const { highlight, highlightColor } = getHighlighter({ node, selectedNode, searchTerm })
+  const onPointerOut = useCallback(
+    (e: ThreeEvent<PointerEvent>) => {
+      e.stopPropagation()
+      setHoveredNode(null)
+    },
+    [setHoveredNode],
+  )
 
-        return <Cube key={node.ref_id} highlight={highlight} highlightColor={highlightColor} node={node} />
-      })}
+  const onPointerIn = useCallback(
+    (e: ThreeEvent<PointerEvent>) => {
+      e.stopPropagation()
+
+      const objects = e.intersections.map((i) => i.object)
+      const object = objects[0]
+
+      if (object?.userData?.ref_id) {
+        const node = object.userData as NodeExtended
+
+        setHoveredNode(node)
+      }
+    },
+    [setHoveredNode],
+  )
+
+  return (
+    <Select
+      filter={(selected) => selected.filter((f) => !!f.userData?.id)}
+      onChange={handleSelect}
+      onPointerOut={onPointerOut}
+      onPointerOver={onPointerIn}
+    >
+      {data.nodes
+        .filter((f) => nearbyNodeIds.includes(f.ref_id || '') || isMainTopic(f))
+        .map((node) => {
+          if (node.node_type === 'topic') {
+            return <TextNode key={node.ref_id || node.id} node={node} />
+          }
+
+          return <Cube key={node.ref_id || node.id} node={node} />
+        })}
+      <Highlights />
       <RelevanceBadges />
+      <BlurryInstances />
     </Select>
   )
 })

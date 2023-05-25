@@ -9,6 +9,7 @@ import { RefObject, useCallback, useEffect } from 'react'
 import * as THREE from 'three'
 import { useControlStore } from '~/stores/useControlStore'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
+import { getNearbyNodeIds } from '../constants'
 import { introAnimationTargetPosition } from './constants'
 import { useAutoNavigate } from './useAutoNavigate'
 
@@ -24,11 +25,12 @@ export const useCameraAnimations = (
 
   useAutoNavigate(cameraControlsRef)
 
-  const { isUserDragging } = useControlStore()
+  const isUserDragging = useControlStore((s) => s.isUserDragging)
   const disableCameraRotation = useDataStore((s) => s.disableCameraRotation)
 
   const data = useDataStore((s) => s.data)
   const graphRadius = useDataStore((s) => s.graphRadius)
+  const setNearbyNodeIds = useDataStore((s) => s.setNearbyNodeIds)
 
   useEffect(() => {
     if (!enabled) {
@@ -80,7 +82,15 @@ export const useCameraAnimations = (
       onUpdate: () => {
         const { value } = animationProgress
 
-        cameraControlsRef.current?.dolly(value, false)
+        if (cameraControlsRef.current) {
+          const nearbyNodesIds = getNearbyNodeIds(data?.nodes || [], cameraControlsRef.current.camera)
+
+          if (nearbyNodesIds) {
+            setNearbyNodeIds(nearbyNodesIds)
+          }
+
+          cameraControlsRef.current?.dolly(value, false)
+        }
       },
     })
 

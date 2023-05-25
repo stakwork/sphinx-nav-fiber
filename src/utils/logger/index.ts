@@ -1,0 +1,1 @@
+export { overrideConsole } from './logger'

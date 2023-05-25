@@ -3,8 +3,6 @@ import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { colors } from '~/utils/colors'
 
-type Props = { onChange: (value: string) => void; active: string }
-
 const TABS = [
   {
     label: 'Search Results',
@@ -18,7 +16,15 @@ const TABS = [
     label: 'Ask question',
     value: 'askQuestion',
   },
-]
+  {
+    label: 'Sentiment Analysis',
+    value: 'sentiment',
+  },
+] as const
+
+export type TabsVariants = (typeof TABS)[number]['value']
+
+type Props = { onChange: (value: TabsVariants) => void; active: TabsVariants }
 
 export const ActionsMenu = ({ onChange, active }: Props) => {
   const handleSelect = (event: React.ChangeEvent<unknown>, newValue: number) => {
@@ -27,7 +33,7 @@ export const ActionsMenu = ({ onChange, active }: Props) => {
 
   return (
     <Flex>
-      <Tabs
+      <StyledTabs
         aria-label="scrollable auto tabs example"
         onChange={handleSelect}
         scrollButtons="auto"
@@ -35,14 +41,20 @@ export const ActionsMenu = ({ onChange, active }: Props) => {
         variant="scrollable"
       >
         {TABS.map((i) => (
-          <StyledTab key={i.value} label={i.label} />
+          <StyledTab key={i.value} id={i.value} label={i.label} />
         ))}
-      </Tabs>
+      </StyledTabs>
     </Flex>
   )
 }
 
 const StyledTab = styled(Tab)`
+  && {
+    color: ${colors.white};
+  }
+`
+
+const StyledTabs = styled(Tabs)`
   && {
     color: ${colors.white};
   }
