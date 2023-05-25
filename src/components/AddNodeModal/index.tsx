@@ -10,6 +10,7 @@ import { BaseModal } from '~/components/Modal'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import {
+  DOCUMENT,
   GITHUB_REPOSITORY,
   LINK,
   NODE_ADD_ERROR,
@@ -32,6 +33,7 @@ import { timeToMilliseconds } from '~/utils/timeToMilliseconds'
 import { useDataStore } from '../../stores/useDataStore/index'
 import StyledSelect from '../Select'
 import { ToastMessage } from '../common/Toast/toastMessage'
+import { Document } from './Document'
 import { GithubRepository } from './GithubRepository'
 import { RSSFeed } from './RSSFeed'
 import { SourceUrl } from './SourceUrl'
@@ -217,6 +219,10 @@ const CONTENT_TYPE_OPTIONS: Record<'source' | 'content', IOptionMap> = {
     [TOPIC]: {
       component: Topic,
       label: 'Topic',
+    },
+    [DOCUMENT]: {
+      component: Document,
+      label: 'Document',
     },
     [TWITTER_HANDLE]: {
       component: TwitterHandle,
