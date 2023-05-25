@@ -122,6 +122,9 @@ const handleSubmit = async (data: FieldValues, close: () => void, sourceType: st
   } else if (sourceType === WEB_PAGE) {
     body.content_type = 'webpage'
     body.web_page = data.web_page
+  } else if (sourceType === DOCUMENT) {
+    body.content_type = 'document'
+    body.web_page = data.document
   } else {
     body.source_type = sourceType
 
@@ -206,6 +209,10 @@ const CONTENT_TYPE_OPTIONS: Record<'source' | 'content', IOptionMap> = {
       component: WebPage,
       label: 'Webpage (Text)',
     },
+    [DOCUMENT]: {
+      component: Document,
+      label: 'Document',
+    },
   },
   source: {
     [GITHUB_REPOSITORY]: {
@@ -219,10 +226,6 @@ const CONTENT_TYPE_OPTIONS: Record<'source' | 'content', IOptionMap> = {
     [TOPIC]: {
       component: Topic,
       label: 'Topic',
-    },
-    [DOCUMENT]: {
-      component: Document,
-      label: 'Document',
     },
     [TWITTER_HANDLE]: {
       component: TwitterHandle,

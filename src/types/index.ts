@@ -52,6 +52,7 @@ export type Node = {
   weight?: number
   tweet_id?: string
   twitter_handle?: string
+  unique_id?: string
 }
 
 export type DataSeriesNode = {
