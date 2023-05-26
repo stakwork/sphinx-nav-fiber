@@ -1,5 +1,5 @@
 import { actionMenu, addNodeModal, addNodeSubmitButton, host, toast } from '../../support'
-import { checkbox, description, endTime, link, startTime, tagError, tags } from './const'
+import { addContentMenu, checkbox, description, endTime, link, select, startTime, tagError, tags } from './const'
 
 describe('Add Node Form / Home interactions', () => {
   beforeEach(() => {
@@ -19,9 +19,9 @@ describe('Add Node Form / Home interactions', () => {
 
   it('submitting the form with all fields empty yields 5 error messages', () => {
     cy.get(actionMenu).click({ waitForAnimations: false })
-    cy.get('#cy-add-content-menu').click({ waitForAnimations: false })
+    cy.get(addContentMenu).click({ waitForAnimations: false })
 
-    cy.get('div.react-dropdown-select').click({ waitForAnimations: false })
+    cy.get(select).click({ waitForAnimations: false })
 
     cy.get('span.react-dropdown-select-item').eq(0).click({ waitForAnimations: false })
 
@@ -52,9 +52,9 @@ describe('Add Node Form / Home interactions', () => {
     ).as('add_node')
 
     cy.get(actionMenu).click({ waitForAnimations: false })
-    cy.get('#cy-add-content-menu').click({ waitForAnimations: false })
+    cy.get(addContentMenu).click({ waitForAnimations: false })
 
-    cy.get('div.react-dropdown-select').click({ waitForAnimations: false })
+    cy.get(select).click({ waitForAnimations: false })
 
     cy.get('span.react-dropdown-select-item').eq(0).click({ waitForAnimations: false })
 
@@ -92,9 +92,9 @@ describe('Add Node Form / Home interactions', () => {
     ).as('add_node')
 
     cy.get(actionMenu).click({ waitForAnimations: false })
-    cy.get('#cy-add-content-menu').click({ waitForAnimations: false })
+    cy.get(addContentMenu).click({ waitForAnimations: false })
 
-    cy.get('div.react-dropdown-select').click({ waitForAnimations: false })
+    cy.get(select).click({ waitForAnimations: false })
 
     cy.get('span.react-dropdown-select-item').eq(0).click({ waitForAnimations: false })
 

@@ -1,3 +1,4 @@
+import { clsx } from 'clsx'
 import { ReactElement, useState } from 'react'
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { MdCheckCircle, MdClose, MdInfo, MdKeyboardBackspace, MdWarning } from 'react-icons/md'
@@ -341,7 +342,7 @@ export const AddNodeModal = () => {
                 </Flex>
                 <Flex basis="250px">
                   <StyledSelect
-                    className={selectedValue.length ? 'hasSelected' : ''}
+                    className={clsx(selectedValue.length && 'hasSelected', 'cy-select-content-type')}
                     clearable
                     onChange={(values) => {
                       setActiveType(values.length ? (values[0] as Option).value : '')

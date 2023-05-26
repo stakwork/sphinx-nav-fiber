@@ -14,4 +14,5 @@ export const endTime = '#add-node-end-time'
 export const description = '#add-node-description'
 export const tags = '#add-node-tags'
 export const checkbox = '#add-node-timestamps-checkbox'
-
+export const select = '.cy-select-content-type'
+export const addContentMenu = '#cy-add-content-menu'
