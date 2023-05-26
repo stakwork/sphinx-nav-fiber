@@ -20,8 +20,6 @@ export type QuestionData = {
   question_text: string
 }
 
-
-
 export type TopicMapItem = {
   children: string[]
   position: Vector3

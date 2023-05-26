@@ -8,6 +8,7 @@ type NodeTypeColors = Record<string, string>
 const NODE_TYPE_COLORS: NodeTypeColors = {
   data_series: 'red',
   tweet: 'aqua',
+  document: 'blue',
 }
 
 export type HighlightProps = {
