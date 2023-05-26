@@ -65,45 +65,32 @@ export const Nodes = memo(() => {
   const compact = !!selectedNode && showSelectionGraph
 
   return (
-    <>
-      <Select
-        filter={(selected) => selected.filter((f) => !!f.userData?.id)}
-        onChange={handleSelect}
-        onPointerOut={onPointerOut}
-        onPointerOver={onPointerIn}
-      >
-        <BlurryInstances hide={compact} />
+    <Select
+      filter={(selected) => selected.filter((f) => !!f.userData?.id)}
+      onChange={handleSelect}
+      onPointerOut={onPointerOut}
+      onPointerOver={onPointerIn}
+    >
+      <BlurryInstances hide={compact} />
 
-        {data.nodes
-          .filter((f) => {
-            const isNearbyOrPersistent = nearbyNodeIds.includes(f.ref_id || '') || isMainTopic(f)
+      {data.nodes
+        .filter((f) => {
+          const isNearbyOrPersistent = nearbyNodeIds.includes(f.ref_id || '') || isMainTopic(f)
 
-            return isNearbyOrPersistent
-          })
-          .map((node) => {
-            if (node.node_type === 'topic') {
-              return <TextNode hide={compact} key={node.ref_id || node.id} node={node} />
-            }
+          return isNearbyOrPersistent
+        })
+        .map((node) => {
+          if (node.node_type === 'topic') {
+            return <TextNode hide={compact} key={node.ref_id || node.id} node={node} />
+          }
 
-            return <Cube hide={compact} key={node.ref_id || node.id} node={node} />
-          })}
+          return <Cube hide={compact} key={node.ref_id || node.id} node={node} />
+        })}
 
-        {!compact && <Highlights />}
+      {!compact ? <Highlights /> : <SelectionDataGraph />}
 
-        <RelevanceBadges />
-      </Select>
-
-      {compact && (
-        <Select
-          filter={(selected) => selected.filter((f) => !!f.userData?.id)}
-          onChange={handleSelect}
-          onPointerOut={onPointerOut}
-          onPointerOver={onPointerIn}
-        >
-          <SelectionDataGraph />
-        </Select>
-      )}
-    </>
+      <RelevanceBadges />
+    </Select>
   )
 })
 

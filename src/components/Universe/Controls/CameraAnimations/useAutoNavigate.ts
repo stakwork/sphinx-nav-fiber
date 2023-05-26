@@ -12,7 +12,7 @@ let lookAtAnimationTimer: ReturnType<typeof setTimeout>
 
 const arriveDistance = 300
 const topicArriveDistance = 600
-const selectionGraphDistance = 800
+const selectionGraphDistance = 2000
 
 export const useAutoNavigate = (cameraControlsRef: RefObject<CameraControls | null>) => {
   const selectedNode = useSelectedNode()

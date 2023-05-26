@@ -32,6 +32,12 @@ const layout = forceSimulation()
       })
       .strength(0.4),
   )
+  // .force(
+  //   'collide',
+  //   forceCollide()
+  //     .radius((n: NodeExtended) => (n.scale || 1) * 6)
+  //     .iterations(2),
+  // )
   .force('center', forceCenter().strength(0.1))
   .force('charge', forceManyBody())
   .force('dagRadial', null)

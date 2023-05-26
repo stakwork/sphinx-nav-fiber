@@ -1,6 +1,6 @@
 import { useFrame } from '@react-three/fiber'
-import { useRef } from 'react'
-import { Color, Material, Mesh } from 'three'
+import { useEffect, useRef, useState } from 'react'
+import { Color, Material, Mesh, Vector3 } from 'three'
 import { useGraphData } from '~/components/DataRetriever'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
@@ -19,65 +19,53 @@ export const AnimatedHighlights = () => {
 
   const nodeData = showSelectionGraph ? selectionGraphData.nodes : data.nodes
 
-  const highlights = () => {
-    return nodeData.map((node: NodeExtended) => {
-      const { highlight, highlightColor } = getHighlighter({ node, selectedNode, searchTerm })
+  return (
+    <>
+      {nodeData.map((node: NodeExtended) => {
+        const { highlight, highlightColor } = getHighlighter({ node, selectedNode, searchTerm })
 
-      if (!highlight) {
-        return null
-      }
+        if (!highlight) {
+          return null
+        }
 
-      if (!materials[highlightColor]) {
-        const hMaterial = highlightMaterial.clone()
+        if (!materials[highlightColor]) {
+          const hMaterial = highlightMaterial.clone()
 
-        hMaterial.emissive = new Color(highlightColor)
-        materials[highlightColor] = hMaterial
-      }
+          hMaterial.emissive = new Color(highlightColor)
+          materials[highlightColor] = hMaterial
+        }
 
-      return (
-        <HighlightMesh
-          color={highlightColor}
-          userData={node}
-          scale={node.scale || 1}
-          key={`highlight-${node.ref_id}`}
-          position={[node?.x || 0, node?.y || 0, node?.z || 0]}
-        />
-      )
-    })
-  }
-
-  return <>{highlights}</>
+        return (
+          <HighlightMesh color={highlightColor} node={node} scale={node.scale || 1} key={`highlight-${node.ref_id}`} />
+        )
+      })}
+    </>
+  )
 }
 
 type HMesh = {
   color: string
-  position: number[]
   scale: number
-  userData: NodeExtended
+  node: NodeExtended
 }
 
-const HighlightMesh = ({ color, position, scale, userData }: HMesh) => {
+const reuseableVector3 = new Vector3()
+
+const HighlightMesh = ({ color, scale, node }: HMesh) => {
   const ref = useRef<Mesh | null>(null)
+  const [geometry] = useState(boxGeometry)
   useFrame(() => {
     if (ref.current) {
-      ref.current.position.set(position[0], position[1], position[2])
+      const newPosition = reuseableVector3.set(node?.x || 0, node?.y || 0, node?.z || 0)
+      ref.current.position.copy(newPosition)
     }
   })
 
-  return <mesh ref={ref} userData={userData} material={materials[color]} geometry={boxGeometry} scale={scale} />
-}
+  useEffect(() => {
+    return function () {
+      geometry.dispose()
+    }
+  }, [])
 
-type HProps = {
-  scale: number
-  userData: NodeExtended
-  color: string
-  animated?: boolean
-}
-
-type HighlightProps = {
-  position: number[]
-  scale: number
-  userData: NodeExtended
-  color: string
-  animated?: boolean
+  return <mesh ref={ref} userData={node} material={materials[color]} geometry={geometry} scale={scale} />
 }

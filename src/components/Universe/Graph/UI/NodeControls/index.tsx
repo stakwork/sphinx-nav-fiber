@@ -1,21 +1,33 @@
 import { Float, Html } from '@react-three/drei'
-import { memo, useMemo } from 'react'
+import { useFrame } from '@react-three/fiber'
+import { memo, useMemo, useRef } from 'react'
 import { MdClose, MdViewInAr } from 'react-icons/md'
 import styled from 'styled-components'
-import { Vector3 } from 'three'
+import { Group, Vector3 } from 'three'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 
+const reuseableVector3 = new Vector3()
+
 export const NodeControls = memo(() => {
-  const data = useDataStore((s) => s.data)
+  const ref = useRef<Group | null>(null)
+  const showSelectionGraph = useDataStore((s) => s.showSelectionGraph)
+  const data = showSelectionGraph ? useDataStore((s) => s.selectionGraphData) : useDataStore((s) => s.data)
   const selectedNode = useSelectedNode()
   const setSelectedNode = useDataStore((s) => s.setSelectedNode)
   const setShowSelectionGraph = useDataStore((s) => s.setShowSelectionGraph)
-  const showSelectionGraph = useDataStore((s) => s.showSelectionGraph)
 
   const position = useMemo(() => {
     const selected = data?.nodes.find((f) => f.ref_id === selectedNode?.ref_id)
     return new Vector3(selected?.x || 0, selected?.y || 0, selected?.z || 0)
   }, [selectedNode, data])
+
+  useFrame(() => {
+    if (showSelectionGraph && ref.current) {
+      const selected = data?.nodes.find((f) => f.ref_id === selectedNode?.ref_id)
+      const newPosition = reuseableVector3.set(selected?.x || 0, selected?.y || 0, selected?.z || 0)
+      ref.current.position.copy(newPosition)
+    }
+  })
 
   if (!selectedNode) {
     return null
@@ -23,6 +35,7 @@ export const NodeControls = memo(() => {
 
   return (
     <Float
+      ref={ref}
       floatingRange={[1, 2]}
       /* Up/down float intensity, works like a multiplier with floatingRange,defaults to 1 */
       floatIntensity={1}

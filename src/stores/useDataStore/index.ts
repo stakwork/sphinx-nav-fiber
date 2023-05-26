@@ -112,6 +112,7 @@ export const useDataStore = create<DataStore>((set, get) => ({
       disableCameraRotation: false,
       nearbyNodeIds: [],
       selectedNodeRelativeIds: [],
+      showSelectionGraph: false,
     })
   },
   setIsFetching: (isFetching) => set({ isFetching }),

@@ -13,7 +13,6 @@ export const NodeDetailsPanel = memo(() => {
   const data = useDataStore((s) => s.data)
   const selectedTimestamp = useDataStore((s) => s.selectedTimestamp)
   const transcriptIsOpen = useAppStore((s) => s.transcriptIsOpen)
-  const setSelectedNode = useDataStore((s) => s.setSelectedNode)
 
   const position = useMemo(() => {
     const selected = data?.nodes.find((f) => f.ref_id === selectedNode?.ref_id)
@@ -24,12 +23,7 @@ export const NodeDetailsPanel = memo(() => {
     <>
       <NodeControls />
 
-      <HtmlPanel
-        position={position}
-        visible={!!selectedNode}
-        onClose={() => setSelectedNode(null)}
-        onViewMode={() => setSelectedNode(null)}
-      >
+      <HtmlPanel position={position} visible={!!selectedNode}>
         <View isSelectedView />
       </HtmlPanel>
 

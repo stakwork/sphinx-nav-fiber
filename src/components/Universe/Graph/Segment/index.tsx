@@ -3,7 +3,7 @@ import { useFrame } from '@react-three/fiber'
 import { useEffect, useRef, useState } from 'react'
 import { Vector3 } from 'three'
 import { NODE_RELATIVE_HIGHLIGHT_COLORS } from '~/constants'
-import { useSelectedNode } from '~/stores/useDataStore'
+import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { Link } from '~/types'
 
 type Props = {
@@ -11,12 +11,15 @@ type Props = {
   animated?: boolean
 }
 
+// const reuseableVector3 = new Vector3()
+
 export const Segment = ({ link, animated }: Props) => {
   const ref = useRef<SegmentObject | null>(null)
   const selectedNode = useSelectedNode()
   const [start, setStart] = useState(new Vector3(0, 0, 0))
   const [end, setEnd] = useState(new Vector3(0, 0, 0))
   const [color, setColor] = useState(0xcccccc)
+  const selectionGraphData = useDataStore((s) => s.selectionGraphData)
 
   useEffect(() => {
     const refId = selectedNode?.ref_id || ''
@@ -43,8 +46,10 @@ export const Segment = ({ link, animated }: Props) => {
 
   useFrame(() => {
     if (animated && ref.current) {
-      ref.current.start.set(link.sourcePosition?.x || 0, link.sourcePosition?.y || 0, link.sourcePosition?.z || 0)
-      ref.current.end.set(link.targetPosition?.x || 0, link.targetPosition?.y || 0, link.targetPosition?.z || 0)
+      const source = selectionGraphData.nodes.find((f) => f.ref_id === link.sourceRef)
+      const target = selectionGraphData.nodes.find((f) => f.ref_id === link.targetRef)
+      ref.current.start.set(source?.x || 0, source?.y || 0, source?.z || 0)
+      ref.current.end.set(target?.x || 0, target?.y || 0, target?.z || 0)
     }
   })
 

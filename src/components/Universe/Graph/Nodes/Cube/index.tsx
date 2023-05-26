@@ -1,5 +1,6 @@
 import { useFrame } from '@react-three/fiber'
-import { memo, useRef } from 'react'
+import { Select } from '@react-three/postprocessing'
+import { memo, useEffect, useRef, useState } from 'react'
 import { Mesh } from 'three'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { NodeExtended } from '~/types'
@@ -11,10 +12,13 @@ type Props = {
   hide?: boolean
   animated?: boolean
 }
+
 export const Cube = memo(({ node, hide, animated }: Props) => {
   const ref = useRef<Mesh | null>(null)
+  const [geometry] = useState(boxGeometry)
   const selectedNode = useSelectedNode()
   const selectedNodeRelativeIds = useDataStore((s) => s.selectedNodeRelativeIds)
+  const showSelectionGraph = useDataStore((s) => s.showSelectionGraph)
   const isSelected = selectedNode && node.ref_id === selectedNode.ref_id
   const transparent = !selectedNode
     ? false
@@ -24,20 +28,31 @@ export const Cube = memo(({ node, hide, animated }: Props) => {
   useFrame(() => {
     if (animated && ref.current) {
       ref.current.position.set(node.x, node.y, node.z)
+      if (isSelected) {
+        ref.current.rotation.y += 0.01
+      }
     }
   })
 
+  useEffect(() => {
+    return function () {
+      geometry.dispose()
+    }
+  }, [geometry])
+
   return (
-    <mesh
-      visible={!hide}
-      ref={ref}
-      geometry={boxGeometry}
-      material={material}
-      name={node.id}
-      position={[node.x, node.y, node.z]}
-      scale={node.scale}
-      userData={node}
-    />
+    <Select enabled={!!isSelected}>
+      <mesh
+        visible={!hide}
+        ref={ref}
+        geometry={boxGeometry}
+        material={material}
+        name={node.id}
+        position={[node.x, node.y, node.z]}
+        scale={showSelectionGraph && isSelected ? 30 : node.scale}
+        userData={node}
+      />
+    </Select>
   )
 })
 

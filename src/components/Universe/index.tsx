@@ -1,7 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { AdaptiveDpr, AdaptiveEvents, Html, Loader, Preload } from '@react-three/drei'
 import { Canvas } from '@react-three/fiber'
-import { Bloom, EffectComposer, Selection } from '@react-three/postprocessing'
+import { Bloom, EffectComposer, Outline, Selection } from '@react-three/postprocessing'
 import { useControls } from 'leva'
 import { Perf } from 'r3f-perf'
 import { Suspense } from 'react'
@@ -13,6 +13,8 @@ import { Controls } from './Controls'
 import { Graph } from './Graph'
 import { Lights } from './Lights'
 import { Overlay } from './Overlay'
+
+import { BlendFunction } from 'postprocessing'
 
 const Content = () => {
   const { universeColor } = useControls('universe', {
@@ -27,18 +29,28 @@ const Content = () => {
 
       <Controls />
 
-      <Selection>
-        <EffectComposer multisampling={8}>
+      <Selection enabled>
+        <EffectComposer autoClear={false} multisampling={8}>
           <Bloom
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
             luminanceThreshold={1}
             mipmapBlur
           />
+          <Outline
+            edgeStrength={100}
+            selectionLayer={10} // selection layer
+            blendFunction={BlendFunction.SCREEN} // set this to BlendFunction.ALPHA for dark outlines
+            pulseSpeed={0.0} // a pulse speed. A value of zero disables the pulse effect
+            visibleEdgeColor={0xffffff} // the color of visible edges
+            hiddenEdgeColor={0x22090a} // the color of hidden edges
+            blur={false} // whether the outline should be blurred
+            xRay={true} // indicates whether X-Ray outlines are enabled/>
+          />
         </EffectComposer>
-      </Selection>
 
-      <Graph />
+        <Graph />
+      </Selection>
     </>
   )
 }

@@ -15898,7 +15898,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postprocessing@npm:^6.30.2":
+"postprocessing@npm:^6.30.2, postprocessing@npm:^6.31.0":
   version: 6.31.0
   resolution: "postprocessing@npm:6.31.0"
   peerDependencies:
@@ -18206,6 +18206,7 @@ __metadata:
     lodash: ^4.17.21
     lsat-js: ^2.0.5
     moment: ^2.29.4
+    postprocessing: ^6.31.0
     prettier: ^2.7.1
     r3f-perf: 6.7.0
     react: ^18.2.0

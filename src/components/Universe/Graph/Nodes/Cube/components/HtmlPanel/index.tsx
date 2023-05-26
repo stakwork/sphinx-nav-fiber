@@ -1,8 +1,8 @@
 import { Float, Html } from '@react-three/drei'
-import { memo } from 'react'
 
 import styled, { css } from 'styled-components'
 import { Vector3 } from 'three'
+import { NodeExtended } from '~/types'
 import { defaultDimensions, withTranscriptDimensions } from './constants'
 
 type Props = {
@@ -12,12 +12,11 @@ type Props = {
   intensity?: number
   withTranscript?: boolean
   visible: boolean
-  onClose?: () => void
-  onViewMode?: () => void
+  node?: NodeExtended
 }
 
-export const HtmlPanel = memo(
-  ({ speed = 2, intensity = 4, children, withTranscript, position, visible, onClose, onViewMode }: Props) => (
+export const HtmlPanel = ({ speed = 2, intensity = 4, children, withTranscript, position, visible }: Props) => {
+  return (
     <Float
       floatingRange={[1, 2]}
       /* Up/down float intensity, works like a multiplier with floatingRange,defaults to 1 */
@@ -51,8 +50,8 @@ export const HtmlPanel = memo(
         </HtmlWrap>
       </Html>
     </Float>
-  ),
-)
+  )
+}
 
 HtmlPanel.displayName = 'HtmlPanel'
 

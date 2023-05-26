@@ -1,7 +1,8 @@
 import { Html } from '@react-three/drei'
-import { memo, useMemo } from 'react'
+import { useFrame } from '@react-three/fiber'
+import { memo, useEffect, useMemo, useRef } from 'react'
 import styled from 'styled-components'
-import { Vector3 } from 'three'
+import { Group, Vector3 } from 'three'
 import { usePathway } from '~/components/DataRetriever'
 import { Flex } from '~/components/common/Flex'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
@@ -41,11 +42,18 @@ const PathwayBadge = ({ color, position, value, userData }: BadgeProps) => {
   const setHoveredNode = useDataStore((s) => s.setHoveredNode)
   const selectedNode = useSelectedNode()
   const selected = userData?.ref_id === selectedNode?.ref_id
+  const ref = useRef<Group | null>(null)
+
+  useEffect(() => {
+    return function () {
+      if (ref.current) {
+        ref.current.clear()
+      }
+    }
+  }, [ref])
 
   return (
-    <mesh position={position}>
-      <boxGeometry />
-      <meshStandardMaterial />
+    <group ref={ref} position={position}>
       <Html center sprite>
         <Tag
           color={color}
@@ -70,17 +78,36 @@ const PathwayBadge = ({ color, position, value, userData }: BadgeProps) => {
           {value}
         </Tag>
       </Html>
-    </mesh>
+    </group>
   )
 }
 
+const variableVector3 = new Vector3()
+
 const NodeBadge = ({ position, userData, color }: BadgeProps) => {
+  const ref = useRef<Group | null>(null)
   const setSelectedNode = useDataStore((s) => s.setSelectedNode)
+  const showSelectionGraph = useDataStore((s) => s.showSelectionGraph)
 
   const isTopic = (userData?.node_type || '') === 'topic'
 
+  useFrame(() => {
+    if (showSelectionGraph && ref.current) {
+      const newPosition = variableVector3.set(userData?.x || 0, userData?.y || 0, userData?.z || 0)
+      ref.current.position.copy(newPosition)
+    }
+  })
+
+  useEffect(() => {
+    return function () {
+      if (ref.current) {
+        ref.current.clear()
+      }
+    }
+  }, [ref])
+
   return (
-    <mesh position={position} userData={userData}>
+    <group ref={ref} position={position}>
       <Html center sprite>
         <Tag
           color={color}
@@ -99,7 +126,7 @@ const NodeBadge = ({ position, userData, color }: BadgeProps) => {
           {isTopic ? userData?.label : <Image src={userData?.image_url || 'noimage.jpeg'} />}
         </Tag>
       </Html>
-    </mesh>
+    </group>
   )
 }
 
