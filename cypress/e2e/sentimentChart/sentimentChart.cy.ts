@@ -4,19 +4,6 @@ import { chartWrapper, openChartBtn, requestSentimentsBtn } from './const'
 describe('Sentiment chart  / Home interactions', () => {
   beforeEach(() => {
     cy.visit('/')
-
-    cy.intercept(
-      {
-        hostname: host,
-        method: 'GET',
-        url: '/stats',
-      },
-      {
-        fixture: 'stats.json',
-      },
-    ).as('stats')
-
-    cy.wait('@stats')
   })
 
   it('Chart is rendered', () => {
