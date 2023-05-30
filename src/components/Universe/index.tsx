@@ -3,6 +3,7 @@ import { AdaptiveDpr, AdaptiveEvents, Html, Loader, Preload } from '@react-three
 import { Canvas } from '@react-three/fiber'
 import { Bloom, EffectComposer, Outline, Selection } from '@react-three/postprocessing'
 import { useControls } from 'leva'
+import { BlendFunction, KernelSize, Resolution } from 'postprocessing'
 import { Perf } from 'r3f-perf'
 import { Suspense } from 'react'
 import { isDevelopment } from '~/constants'
@@ -13,8 +14,6 @@ import { Controls } from './Controls'
 import { Graph } from './Graph'
 import { Lights } from './Lights'
 import { Overlay } from './Overlay'
-
-import { BlendFunction } from 'postprocessing'
 
 const Content = () => {
   const { universeColor } = useControls('universe', {
@@ -29,23 +28,26 @@ const Content = () => {
 
       <Controls />
 
-      <Selection enabled>
+      <Selection>
         <EffectComposer autoClear={false} multisampling={8}>
           <Bloom
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
-            luminanceThreshold={1}
             mipmapBlur
+            luminanceThreshold={1} // luminance threshold. Raise this value to mask out darker elements in the scene.
+            resolutionX={Resolution.AUTO_SIZE} // The horizontal resolution.
+            resolutionY={Resolution.AUTO_SIZE} // The vertical resolution.
           />
           <Outline
-            edgeStrength={100}
-            selectionLayer={10} // selection layer
+            edgeStrength={2}
+            kernelSize={KernelSize.HUGE}
             blendFunction={BlendFunction.SCREEN} // set this to BlendFunction.ALPHA for dark outlines
-            pulseSpeed={0.0} // a pulse speed. A value of zero disables the pulse effect
             visibleEdgeColor={0xffffff} // the color of visible edges
-            hiddenEdgeColor={0x22090a} // the color of hidden edges
-            blur={false} // whether the outline should be blurred
-            xRay={true} // indicates whether X-Ray outlines are enabled/>
+            hiddenEdgeColor={0xffffff}
+            pulseSpeed={0.1}
+            blur={true} // whether the outline should be blurred
+            resolutionX={Resolution.AUTO_SIZE} // The horizontal resolution.
+            resolutionY={Resolution.AUTO_SIZE} // The vertical resolution.
           />
         </EffectComposer>
 

@@ -6,8 +6,8 @@ export const TextType = () => {
   const selectedNode = useSelectedNode()
 
   return (
-    <Flex align="center" justify="center">
-      <Text color="primaryText1" kind="hugeHeading">
+    <Flex align="center" justify="center" p={12}>
+      <Text color="primaryText1" kind="regular">
         {selectedNode?.text}
       </Text>
     </Flex>

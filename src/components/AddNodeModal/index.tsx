@@ -1,3 +1,4 @@
+import { clsx } from 'clsx'
 import { ReactElement, useState } from 'react'
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { MdCheckCircle, MdClose, MdInfo, MdKeyboardBackspace, MdWarning } from 'react-icons/md'
@@ -10,6 +11,7 @@ import { BaseModal } from '~/components/Modal'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import {
+  DOCUMENT,
   GITHUB_REPOSITORY,
   LINK,
   NODE_ADD_ERROR,
@@ -32,6 +34,7 @@ import { timeToMilliseconds } from '~/utils/timeToMilliseconds'
 import { useDataStore } from '../../stores/useDataStore/index'
 import StyledSelect from '../Select'
 import { ToastMessage } from '../common/Toast/toastMessage'
+import { Document } from './Document'
 import { GithubRepository } from './GithubRepository'
 import { RSSFeed } from './RSSFeed'
 import { SourceUrl } from './SourceUrl'
@@ -120,6 +123,9 @@ const handleSubmit = async (data: FieldValues, close: () => void, sourceType: st
   } else if (sourceType === WEB_PAGE) {
     body.content_type = 'webpage'
     body.web_page = data.web_page
+  } else if (sourceType === DOCUMENT) {
+    body.content_type = 'document'
+    body.text = data.document
   } else {
     body.source_type = sourceType
 
@@ -203,6 +209,10 @@ const CONTENT_TYPE_OPTIONS: Record<'source' | 'content', IOptionMap> = {
     [WEB_PAGE]: {
       component: WebPage,
       label: 'Webpage (Text)',
+    },
+    [DOCUMENT]: {
+      component: Document,
+      label: 'Document',
     },
   },
   source: {
@@ -332,7 +342,7 @@ export const AddNodeModal = () => {
                 </Flex>
                 <Flex basis="250px">
                   <StyledSelect
-                    className={selectedValue.length ? 'hasSelected' : ''}
+                    className={clsx(selectedValue.length && 'hasSelected', 'cy-select-content-type')}
                     clearable
                     onChange={(values) => {
                       setActiveType(values.length ? (values[0] as Option).value : '')

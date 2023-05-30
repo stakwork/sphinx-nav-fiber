@@ -1,21 +1,8 @@
-import { getScenenChildrens, host } from '../../support'
+import { getScenenChildrens } from '../../support'
 
 describe('Initial graph render / Home interactions', () => {
   beforeEach(() => {
     cy.visit('/')
-
-    cy.intercept(
-      {
-        hostname: host,
-        method: 'GET',
-        url: '/stats',
-      },
-      {
-        fixture: 'stats.json',
-      },
-    ).as('stats')
-
-    cy.wait('@stats')
   })
 
   it('The graph is rendered', () => {

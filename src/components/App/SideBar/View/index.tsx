@@ -37,7 +37,7 @@ export const View = ({ isSelectedView }: Props) => {
         return <Show />
       case 'clip':
         return <AudioClip />
-      case 'text':
+      case 'document':
         return <TextType />
       default:
         return <Creator />

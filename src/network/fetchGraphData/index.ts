@@ -143,6 +143,7 @@ const getNodeScale = (node: NodeExtended) => {
   switch (node.node_type) {
     case 'guest':
     case 'episode':
+    case 'document':
       return 2
     case 'show':
       return 3
@@ -249,8 +250,29 @@ const getGraphData = async (searchterm: string) => {
     const data: Node[] = [...dataInit.exact, ...dataInit.related, ...dataSeries]
 
     if (data.length) {
-      data.forEach((node) => {
+      data.forEach((node, index) => {
         // reject duplicate nodes
+
+        // TODO: simplify this to ref_id
+        if (['data_series', 'document', 'tweet'].includes(node.node_type)) {
+          const imageUrlsMapper: { [key: string]: string } = {
+            data_series: 'node_data.webp',
+            document: 'document.jpeg',
+            tweet: 'twitter_spaces_img.png',
+          }
+
+          nodes.push({
+            ...node,
+            scale: getNodeScale(node),
+            id: node.tweet_id || `${node.unique_id}_${index}`,
+            ref_id: node.tweet_id || `${node.unique_id}_${index}`,
+            image_url: imageUrlsMapper[node.node_type],
+            type: node.type || node.node_type,
+          })
+
+          return
+        }
+
         const notUnique = nodes.find((f) => f.ref_id === node.ref_id)
 
         if (notUnique) {

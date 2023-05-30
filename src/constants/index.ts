@@ -80,5 +80,6 @@ export const WEB_PAGE = 'web_page'
 export const RSS = 'rss'
 export const TWITTER_SOURCE = 'tweet'
 export const TOPIC = 'topic'
+export const DOCUMENT = 'document'
 
 export const isE2E = !!process.env.REACT_APP_IS_E2E

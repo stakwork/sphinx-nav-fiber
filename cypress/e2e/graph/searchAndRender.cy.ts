@@ -5,18 +5,6 @@ describe('Search and render / Home interactions', () => {
   beforeEach(() => {
     cy.visit('/')
 
-    cy.intercept(
-      {
-        hostname: host,
-        method: 'GET',
-        url: '/stats',
-      },
-      {
-        fixture: 'stats.json',
-      },
-    ).as('stats')
-
-    cy.wait('@stats')
     cy.wait(5000)
   })
 

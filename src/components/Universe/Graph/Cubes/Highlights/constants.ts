@@ -1,4 +1,4 @@
-import { MeshStandardMaterial, Vector3 } from 'three'
+import { Color, MeshStandardMaterial, Vector3 } from 'three'
 
 import { NODE_RELATIVE_HIGHLIGHT_COLORS } from '~/constants'
 import { NodeExtended } from '~/types'
@@ -8,6 +8,7 @@ type NodeTypeColors = Record<string, string>
 const NODE_TYPE_COLORS: NodeTypeColors = {
   data_series: 'red',
   tweet: 'aqua',
+  document: 'blue',
 }
 
 export type HighlightProps = {
@@ -24,7 +25,7 @@ export type HighlightParentProps = {
 }
 
 export const highlightMaterial = new MeshStandardMaterial({
-  emissive: 'green',
+  emissive: new Color('green'),
   emissiveIntensity: 20,
   opacity: 0.3,
   toneMapped: false,
