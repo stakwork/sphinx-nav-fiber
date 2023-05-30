@@ -5,7 +5,7 @@ import { View } from '~/components/App/SideBar/View'
 import { Flex } from '~/components/common/Flex'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
-import { HtmlPanel } from '../Nodes/Cube/components/HtmlPanel'
+import { HtmlPanel } from '../Cubes/Cube/components/HtmlPanel'
 import { NodeControls } from './NodeControls'
 
 export const NodeDetailsPanel = memo(() => {
