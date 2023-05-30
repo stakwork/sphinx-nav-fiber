@@ -1,6 +1,6 @@
 import { Segments } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
-import { forceCenter, forceCollide, forceLink, forceManyBody, forceSimulation } from 'd3-force-3d'
+import { forceCenter, forceCollide, forceLink, forceSimulation } from 'd3-force-3d'
 import { memo, useEffect } from 'react'
 import { useGraphData } from '~/components/DataRetriever'
 import { createLinks } from '~/network/fetchGraphData/getGraphData'
@@ -24,7 +24,7 @@ const simulation = forceSimulation()
 
         switch (sourceType) {
           case 'topic':
-            distance = 20
+            distance = 30
             break
           case 'guest':
             distance = 30
@@ -38,23 +38,21 @@ const simulation = forceSimulation()
           default:
         }
 
-        return distance * 20
+        return distance * 21
       })
-      .strength(0.01),
+      .strength(0.04),
   )
-  .force('center', forceCenter().strength(0.05))
-  .force('charge', forceManyBody().strength(0.001))
+  .force('center', forceCenter().strength(0.85))
   .force(
     'collide',
     forceCollide()
       .radius((n: NodeExtended) => (n.scale || 1) * 6 + 180)
       .iterations(1),
   )
-  .force('dagRadial', null)
-  .velocityDecay(0.1)
+  .velocityDecay(0.9)
   .stop()
 
-export const SelectionDataGraph = memo(() => {
+export const SelectionDataNodes = memo(() => {
   const data = useGraphData()
   const selectedNode = useSelectedNode()
 
@@ -66,14 +64,17 @@ export const SelectionDataGraph = memo(() => {
   useEffect(() => {
     const nodes = data.nodes
       .filter((f) => f.ref_id === selectedNode?.ref_id || selectedNodeRelativeIds.includes(f?.ref_id || ''))
-      .map((n) => ({ ...n, x: 0, y: 0, z: 0 }))
+      .map((n) => {
+        const fixedPosition =
+          n.ref_id === selectedNode?.ref_id && n.node_type !== 'topic' ? { fx: 0, fy: 0, fz: 0 } : {}
+        return { ...n, x: 0, y: 0, z: 0, ...fixedPosition }
+      })
     const links = createLinks(nodes)
 
     setSelectionData({ nodes, links })
   }, [data, selectedNode, selectedNodeRelativeIds])
 
   useEffect(() => {
-    console.log('run simulation')
     simulation.alpha(1).stop()
     simulation.stop().nodes(selectionGraphData?.nodes || [])
 

@@ -43,7 +43,7 @@ export const BlurryInstances = ({ hide }: InstanceProps) => {
   }, [selectedNode])
 
   return (
-    <Instances visible={!hide} geometry={boxGeometry} material={blurryMaterial}>
+    <Instances geometry={boxGeometry} material={blurryMaterial} visible={!hide}>
       {instances}
     </Instances>
   )

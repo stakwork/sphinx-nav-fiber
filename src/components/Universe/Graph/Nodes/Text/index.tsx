@@ -16,23 +16,23 @@ const fontProps = {
 type Props = {
   node: NodeExtended
   hide?: boolean
-  animated?: boolean
 }
 
-export const TextNode = memo(({ node, hide, animated }: Props) => {
+export const TextNode = memo(({ node, hide }: Props) => {
   const ref = useRef<Mesh | null>(null)
 
   const selectedNode = useSelectedNode()
   const selectedNodeRelativeIds = useDataStore((s) => s.selectedNodeRelativeIds)
   const isRelative = selectedNodeRelativeIds.includes(node?.ref_id || '')
   const isSelected = !!selectedNode && selectedNode?.id === node.id
+  const showSelectionGraph = useDataStore((s) => s.showSelectionGraph)
 
   useFrame(({ camera }) => {
     if (ref?.current) {
       // Make text face the camera
       ref.current.quaternion.copy(camera.quaternion)
 
-      if (animated) {
+      if (showSelectionGraph) {
         ref.current.position.set(node.x, node.y, node.z)
       }
     }
@@ -43,6 +43,16 @@ export const TextNode = memo(({ node, hide, animated }: Props) => {
     [selectedNode, selectedNodeRelativeIds, node.ref_id],
   )
 
+  const textScale = useMemo(() => {
+    let scale = (node.scale || 1) * 4
+    if (showSelectionGraph && isSelected) {
+      scale = 40
+    } else if (!isSelected && isRelative) {
+      scale = 0
+    }
+    return scale
+  }, [node.scale, isSelected, isRelative, showSelectionGraph])
+
   return (
     <Text
       visible={!hide}
@@ -50,9 +60,9 @@ export const TextNode = memo(({ node, hide, animated }: Props) => {
       anchorX="center"
       anchorY="middle"
       color={isSelected ? 'white' : 'lightgray'}
-      fillOpacity={transparent ? 0.1 : 0.5}
+      fillOpacity={isSelected ? 1 : transparent ? 0.1 : 0.5}
       position={[node.x, node.y, node.z]}
-      scale={isRelative ? 0 : (node.scale || 1) * 4}
+      scale={textScale}
       userData={node}
       {...fontProps}
     >
@@ -60,5 +70,3 @@ export const TextNode = memo(({ node, hide, animated }: Props) => {
     </Text>
   )
 })
-
-TextNode.displayName = 'Text'

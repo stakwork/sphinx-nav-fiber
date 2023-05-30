@@ -2,7 +2,6 @@ import { Float, Html } from '@react-three/drei'
 
 import styled, { css } from 'styled-components'
 import { Vector3 } from 'three'
-import { NodeExtended } from '~/types'
 import { defaultDimensions, withTranscriptDimensions } from './constants'
 
 type Props = {
@@ -12,46 +11,43 @@ type Props = {
   intensity?: number
   withTranscript?: boolean
   visible: boolean
-  node?: NodeExtended
 }
 
-export const HtmlPanel = ({ speed = 2, intensity = 4, children, withTranscript, position, visible }: Props) => {
-  return (
-    <Float
-      floatingRange={[1, 2]}
-      /* Up/down float intensity, works like a multiplier with floatingRange,defaults to 1 */
-      floatIntensity={intensity}
-      /* Animation speed, defaults to 1 */
-      position={position}
-      speed={speed}
+export const HtmlPanel = ({ speed = 2, intensity = 4, children, withTranscript, position, visible }: Props) => (
+  <Float
+    floatingRange={[1, 2]}
+    /* Up/down float intensity, works like a multiplier with floatingRange,defaults to 1 */
+    floatIntensity={intensity}
+    /* Animation speed, defaults to 1 */
+    position={position}
+    speed={speed}
+  >
+    <Html
+      center
+      className="html-panel"
+      onClick={(e) => e.stopPropagation()}
+      onKeyDown={(e) => e.stopPropagation()}
+      onPointerDown={(e) => e.stopPropagation()}
+      onPointerOut={(e) => e.stopPropagation()}
+      onPointerOver={(e) => e.stopPropagation()}
+      onPointerUp={(e) => e.stopPropagation()}
+      sprite
     >
-      <Html
-        center
+      <HtmlWrap
         className="html-panel"
-        onClick={(e) => e.stopPropagation()}
-        onKeyDown={(e) => e.stopPropagation()}
+        dimensions={withTranscript ? withTranscriptDimensions : defaultDimensions}
+        id="html-panel"
         onPointerDown={(e) => e.stopPropagation()}
         onPointerOut={(e) => e.stopPropagation()}
         onPointerOver={(e) => e.stopPropagation()}
         onPointerUp={(e) => e.stopPropagation()}
-        sprite
+        visible={visible}
       >
-        <HtmlWrap
-          className="html-panel"
-          dimensions={withTranscript ? withTranscriptDimensions : defaultDimensions}
-          id="html-panel"
-          onPointerDown={(e) => e.stopPropagation()}
-          onPointerOut={(e) => e.stopPropagation()}
-          onPointerOver={(e) => e.stopPropagation()}
-          onPointerUp={(e) => e.stopPropagation()}
-          visible={visible}
-        >
-          <>{children}</>
-        </HtmlWrap>
-      </Html>
-    </Float>
-  )
-}
+        <>{children}</>
+      </HtmlWrap>
+    </Html>
+  </Float>
+)
 
 HtmlPanel.displayName = 'HtmlPanel'
 

@@ -13,6 +13,7 @@ export const NodeDetailsPanel = memo(() => {
   const data = useDataStore((s) => s.data)
   const selectedTimestamp = useDataStore((s) => s.selectedTimestamp)
   const transcriptIsOpen = useAppStore((s) => s.transcriptIsOpen)
+  const showSelectionGraph = useDataStore((s) => s.showSelectionGraph)
 
   const position = useMemo(() => {
     const selected = data?.nodes.find((f) => f.ref_id === selectedNode?.ref_id)
@@ -23,21 +24,25 @@ export const NodeDetailsPanel = memo(() => {
     <>
       <NodeControls />
 
-      <HtmlPanel position={position} visible={!!selectedNode}>
-        <View isSelectedView />
-      </HtmlPanel>
+      {!showSelectionGraph && (
+        <>
+          <HtmlPanel position={position} visible={!!selectedNode}>
+            <View isSelectedView />
+          </HtmlPanel>
 
-      <HtmlPanel
-        intensity={2}
-        position={position}
-        speed={4}
-        visible={transcriptIsOpen && !!selectedNode}
-        withTranscript
-      >
-        <Flex p={20}>
-          <Transcript node={selectedTimestamp || selectedNode} />
-        </Flex>
-      </HtmlPanel>
+          <HtmlPanel
+            intensity={2}
+            position={position}
+            speed={4}
+            visible={transcriptIsOpen && !!selectedNode}
+            withTranscript
+          >
+            <Flex p={20}>
+              <Transcript node={selectedTimestamp || selectedNode} />
+            </Flex>
+          </HtmlPanel>
+        </>
+      )}
     </>
   )
 })

@@ -10,7 +10,7 @@ import { BlurryInstances } from './BlurryInstances'
 import { Cube } from './Cube'
 import { Highlights } from './Highlights'
 import { RelevanceBadges } from './RelevanceBadges'
-import { SelectionDataGraph } from './SelectionDataGraph'
+import { SelectionDataNodes } from './SelectionDataNodes'
 import { TextNode } from './Text'
 import { isMainTopic } from './constants'
 
@@ -20,6 +20,7 @@ export const Nodes = memo(() => {
   const nearbyNodeIds = useDataStore((s) => s.nearbyNodeIds)
   const setHoveredNode = useDataStore((s) => s.setHoveredNode)
   const showSelectionGraph = useDataStore((s) => s.showSelectionGraph)
+  const selectionGraphData = useDataStore((s) => s.selectionGraphData)
   const setTranscriptOpen = useAppStore((s) => s.setTranscriptOpen)
 
   const handleSelect = useCallback(
@@ -31,11 +32,13 @@ export const Nodes = memo(() => {
         setTranscriptOpen(false)
 
         if (node.userData) {
-          useDataStore.getState().setSelectedNode((node?.userData as NodeExtended) || null)
+          if (!ignoreNodeEvent(node.userData as NodeExtended)) {
+            useDataStore.getState().setSelectedNode((node?.userData as NodeExtended) || null)
+          }
         }
       }
     },
-    [setTranscriptOpen],
+    [setTranscriptOpen, showSelectionGraph, selectionGraphData],
   )
 
   const onPointerOut = useCallback(
@@ -48,21 +51,32 @@ export const Nodes = memo(() => {
 
   const onPointerIn = useCallback(
     (e: ThreeEvent<PointerEvent>) => {
-      e.stopPropagation()
-
       const objects = e.intersections.map((i) => i.object)
       const object = objects[0]
 
       if (object?.userData?.ref_id) {
         const node = object.userData as NodeExtended
 
-        setHoveredNode(node)
+        if (!ignoreNodeEvent(node)) {
+          e.stopPropagation()
+          setHoveredNode(node)
+        }
       }
     },
     [setHoveredNode],
   )
 
-  const compact = !!selectedNode && showSelectionGraph
+  const ignoreNodeEvent = useCallback(
+    (node: NodeExtended) => {
+      if (showSelectionGraph && !selectionGraphData.nodes.find((n) => n.ref_id === node.ref_id)) {
+        return true
+      }
+      return false
+    },
+    [showSelectionGraph, selectionGraphData],
+  )
+
+  const hideUniverse = showSelectionGraph && !!selectedNode
 
   return (
     <Select
@@ -71,7 +85,7 @@ export const Nodes = memo(() => {
       onPointerOut={onPointerOut}
       onPointerOver={onPointerIn}
     >
-      <BlurryInstances hide={compact} />
+      <BlurryInstances hide={hideUniverse} />
 
       {data.nodes
         .filter((f) => {
@@ -81,17 +95,15 @@ export const Nodes = memo(() => {
         })
         .map((node) => {
           if (node.node_type === 'topic') {
-            return <TextNode hide={compact} key={node.ref_id || node.id} node={node} />
+            return <TextNode hide={hideUniverse} key={node.ref_id || node.id} node={node} />
           }
 
-          return <Cube hide={compact} key={node.ref_id || node.id} node={node} />
+          return <Cube hide={hideUniverse} key={node.ref_id || node.id} node={node} />
         })}
 
-      {!compact ? <Highlights /> : <SelectionDataGraph />}
+      {hideUniverse ? <SelectionDataNodes /> : <Highlights />}
 
       <RelevanceBadges />
     </Select>
   )
 })
-
-Nodes.displayName = 'Nodes'

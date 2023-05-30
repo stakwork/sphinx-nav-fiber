@@ -1,4 +1,4 @@
-import { forceCenter, forceLink, forceManyBody, forceSimulation } from 'd3-force-3d'
+import { forceCenter, forceCollide, forceLink, forceManyBody, forceSimulation } from 'd3-force-3d'
 import { Vector3 } from 'three'
 import { GraphData, NodeExtended } from '~/types'
 
@@ -32,19 +32,19 @@ const layout = forceSimulation()
       })
       .strength(0.4),
   )
-  // .force(
-  //   'collide',
-  //   forceCollide()
-  //     .radius((n: NodeExtended) => (n.scale || 1) * 6)
-  //     .iterations(2),
-  // )
+  .force(
+    'collide',
+    forceCollide()
+      .radius((n: NodeExtended) => (n.scale || 1) * 20)
+      .iterations(2),
+  )
   .force('center', forceCenter().strength(0.1))
   .force('charge', forceManyBody())
   .force('dagRadial', null)
   .velocityDecay(0.2)
   .stop()
 
-const maxTicks = 200
+const maxTicks = 100
 
 export const generateForceGraphPositions = (data: GraphData, usingCurrentData: boolean) => {
   const updatedNodes = data.nodes.map((node: NodeExtended) => node)

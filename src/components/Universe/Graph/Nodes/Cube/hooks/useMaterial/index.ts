@@ -12,6 +12,7 @@ const cachedMaterials: Record<string, materialRecord> = {}
 const transparentValue = 0.2
 const noImageTexture = loader.load('noimage.jpeg')
 const noImageMaterial = new MeshStandardMaterial({ map: noImageTexture })
+
 const noImageTransparentMaterial = new MeshStandardMaterial({
   map: noImageTexture,
   transparent: true,
@@ -32,22 +33,22 @@ export const useMaterial = (url: string, transparent: boolean) => {
       return
     }
 
-    const map = loader.load(
+    loader.load(
       url,
-      (txt) => {
+      (loadedTexture) => {
         // on load
         const newMaterial = new MeshStandardMaterial({
-          map: txt,
+          map: loadedTexture,
           transparent,
           opacity: transparent ? transparentValue : 1,
         })
 
         cachedMaterials[cashPath] = {
-          texture: map,
+          texture: loadedTexture,
           material: newMaterial,
         }
 
-        setTexture(map)
+        setTexture(loadedTexture)
         setMaterial(newMaterial)
       },
       undefined,

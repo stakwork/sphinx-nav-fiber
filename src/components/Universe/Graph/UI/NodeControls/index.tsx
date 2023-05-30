@@ -1,6 +1,6 @@
 import { Float, Html } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
-import { memo, useMemo, useRef } from 'react'
+import { memo, useCallback, useRef } from 'react'
 import { MdClose, MdViewInAr } from 'react-icons/md'
 import styled from 'styled-components'
 import { Group, Vector3 } from 'three'
@@ -11,23 +11,31 @@ const reuseableVector3 = new Vector3()
 export const NodeControls = memo(() => {
   const ref = useRef<Group | null>(null)
   const showSelectionGraph = useDataStore((s) => s.showSelectionGraph)
-  const data = showSelectionGraph ? useDataStore((s) => s.selectionGraphData) : useDataStore((s) => s.data)
+  const selectionGraphData = useDataStore((s) => s.selectionGraphData)
+  const allGraphData = useDataStore((s) => s.data)
   const selectedNode = useSelectedNode()
   const setSelectedNode = useDataStore((s) => s.setSelectedNode)
   const setShowSelectionGraph = useDataStore((s) => s.setShowSelectionGraph)
 
-  const position = useMemo(() => {
-    const selected = data?.nodes.find((f) => f.ref_id === selectedNode?.ref_id)
-    return new Vector3(selected?.x || 0, selected?.y || 0, selected?.z || 0)
-  }, [selectedNode, data])
+  // useEffect(() => {
+  //   setPosition()
+  // }, [showSelectionGraph, selectedNode])
 
   useFrame(() => {
-    if (showSelectionGraph && ref.current) {
-      const selected = data?.nodes.find((f) => f.ref_id === selectedNode?.ref_id)
-      const newPosition = reuseableVector3.set(selected?.x || 0, selected?.y || 0, selected?.z || 0)
-      ref.current.position.copy(newPosition)
-    }
+    setPosition()
   })
+
+  const setPosition = useCallback(() => {
+    const data = showSelectionGraph ? selectionGraphData : allGraphData
+
+    if (ref.current) {
+      const selected = data?.nodes.find((f) => f.ref_id === selectedNode?.ref_id)
+      if (selected) {
+        const newPosition = reuseableVector3.set(selected?.x, selected?.y, selected?.z)
+        ref.current.position.copy(newPosition)
+      }
+    }
+  }, [ref.current, selectedNode, showSelectionGraph, selectionGraphData, allGraphData])
 
   if (!selectedNode) {
     return null
@@ -40,7 +48,6 @@ export const NodeControls = memo(() => {
       /* Up/down float intensity, works like a multiplier with floatingRange,defaults to 1 */
       floatIntensity={1}
       /* Animation speed, defaults to 1 */
-      position={position}
       speed={1}
     >
       <Html
@@ -56,7 +63,9 @@ export const NodeControls = memo(() => {
       >
         <IconButton
           left={0}
-          color="#222"
+          borderColor={showSelectionGraph ? '#FFDB58bb' : '#fff'}
+          backgroundColor={showSelectionGraph ? '#FFDB58bb' : '#fff'}
+          fontColor={showSelectionGraph ? '#fff' : '#000'}
           onClick={(e) => {
             e.stopPropagation()
             setShowSelectionGraph(!showSelectionGraph)
@@ -67,7 +76,9 @@ export const NodeControls = memo(() => {
 
         <IconButton
           left={40}
-          color="#222"
+          borderColor="#fff"
+          backgroundColor="#00000066"
+          fontColor="#fff"
           onClick={(e) => {
             e.stopPropagation()
             setSelectedNode(null)
@@ -81,11 +92,11 @@ export const NodeControls = memo(() => {
   )
 })
 
-NodeControls.displayName = 'NodeControls'
-
 type ButtonProps = {
   left: number
-  color: string
+  backgroundColor?: string
+  borderColor?: string
+  fontColor?: string
 }
 
 const IconButton = styled.div<ButtonProps>`
@@ -99,9 +110,9 @@ const IconButton = styled.div<ButtonProps>`
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #000000bb;
-  border: 3px solid ${(p: ButtonProps) => p.color};
-  color: #ffffff;
+  background: ${(p: ButtonProps) => (p.backgroundColor ? p.backgroundColor : '#000000bb')};
+  border: 3px solid ${(p: ButtonProps) => (p.borderColor ? p.borderColor : '#222')};
+  color: ${(p: ButtonProps) => (p.fontColor ? p.fontColor : '#ffffff')};
   border-radius: 100%;
   font-size: 20px;
   cursor: pointer;

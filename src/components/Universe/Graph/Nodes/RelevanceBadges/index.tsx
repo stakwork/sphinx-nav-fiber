@@ -41,6 +41,7 @@ const PathwayBadge = ({ color, position, value, userData }: BadgeProps) => {
   const setSelectedNode = useDataStore((s) => s.setSelectedNode)
   const setHoveredNode = useDataStore((s) => s.setHoveredNode)
   const selectedNode = useSelectedNode()
+  const hoveredNode = useDataStore((s) => s.hoveredNode)
   const selected = userData?.ref_id === selectedNode?.ref_id
   const ref = useRef<Group | null>(null)
 
@@ -51,6 +52,8 @@ const PathwayBadge = ({ color, position, value, userData }: BadgeProps) => {
       }
     }
   }, [ref])
+
+  const isHovered = useMemo(() => hoveredNode?.ref_id === userData?.ref_id, [hoveredNode])
 
   return (
     <group ref={ref} position={position}>
@@ -66,12 +69,15 @@ const PathwayBadge = ({ color, position, value, userData }: BadgeProps) => {
               setSelectedNode(userData)
             }
           }}
-          onPointerOut={() => {
+          onPointerOut={(e) => {
+            e.stopPropagation()
             setHoveredNode(null)
           }}
-          onPointerOver={() => {
+          onPointerOver={(e) => {
+            e.stopPropagation()
             setHoveredNode(userData || null)
           }}
+          scale={isHovered ? 1.05 : 1}
           selected={selected}
           size={56}
         >
@@ -87,6 +93,8 @@ const variableVector3 = new Vector3()
 const NodeBadge = ({ position, userData, color }: BadgeProps) => {
   const ref = useRef<Group | null>(null)
   const setSelectedNode = useDataStore((s) => s.setSelectedNode)
+  const setHoveredNode = useDataStore((s) => s.setHoveredNode)
+  const hoveredNode = useDataStore((s) => s.hoveredNode)
   const showSelectionGraph = useDataStore((s) => s.showSelectionGraph)
 
   const isTopic = (userData?.node_type || '') === 'topic'
@@ -106,6 +114,8 @@ const NodeBadge = ({ position, userData, color }: BadgeProps) => {
     }
   }, [ref])
 
+  const isHovered = useMemo(() => hoveredNode?.ref_id === userData?.ref_id, [hoveredNode])
+
   return (
     <group ref={ref} position={position}>
       <Html center sprite>
@@ -120,7 +130,16 @@ const NodeBadge = ({ position, userData, color }: BadgeProps) => {
               setSelectedNode(userData)
             }
           }}
+          onPointerOut={(e) => {
+            e.stopPropagation()
+            setHoveredNode(null)
+          }}
+          onPointerOver={(e) => {
+            e.stopPropagation()
+            setHoveredNode(userData || null)
+          }}
           selected={false}
+          scale={isHovered ? 1.05 : 1}
           size={isTopic ? 100 : 66}
         >
           {isTopic ? userData?.label : <Image src={userData?.image_url || 'noimage.jpeg'} />}
@@ -181,6 +200,7 @@ type TagProps = {
   color: string
   size: number
   fontSize: number
+  scale: number
 }
 
 const Tag = styled(Flex)<TagProps>`
@@ -194,6 +214,8 @@ const Tag = styled(Flex)<TagProps>`
   font-size: ${(p: TagProps) => `${p.fontSize}px`};
   cursor: pointer;
   transition: opacity 0.4s;
+  transform: scale(${(p: TagProps) => p.scale});
+
   ${(p: TagProps) =>
     p.selected &&
     `
