@@ -31,23 +31,23 @@ const Content = () => {
       <Selection>
         <EffectComposer autoClear={false} multisampling={8}>
           <Bloom
+            luminanceThreshold={1} // luminance threshold. Raise this value to mask out darker elements in the scene.
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
             mipmapBlur
-            luminanceThreshold={1} // luminance threshold. Raise this value to mask out darker elements in the scene.
             resolutionX={Resolution.AUTO_SIZE} // The horizontal resolution.
             resolutionY={Resolution.AUTO_SIZE} // The vertical resolution.
           />
           <Outline
-            edgeStrength={2}
-            kernelSize={KernelSize.HUGE}
             blendFunction={BlendFunction.SCREEN} // set this to BlendFunction.ALPHA for dark outlines
-            visibleEdgeColor={0xffffff} // the color of visible edges
+            blur // whether the outline should be blurred
+            edgeStrength={1}
             hiddenEdgeColor={0xffffff}
+            kernelSize={KernelSize.HUGE}
             pulseSpeed={0.1}
-            blur={true} // whether the outline should be blurred
             resolutionX={Resolution.AUTO_SIZE} // The horizontal resolution.
             resolutionY={Resolution.AUTO_SIZE} // The vertical resolution.
+            visibleEdgeColor={0xffffff} // the color of visible edges
           />
         </EffectComposer>
 

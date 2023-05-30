@@ -1,4 +1,4 @@
-import { Float, Html } from '@react-three/drei'
+import { Html } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import { memo, useCallback, useRef } from 'react'
 import { MdClose, MdViewInAr } from 'react-icons/md'
@@ -17,10 +17,6 @@ export const NodeControls = memo(() => {
   const setSelectedNode = useDataStore((s) => s.setSelectedNode)
   const setShowSelectionGraph = useDataStore((s) => s.setShowSelectionGraph)
 
-  // useEffect(() => {
-  //   setPosition()
-  // }, [showSelectionGraph, selectedNode])
-
   useFrame(() => {
     setPosition()
   })
@@ -30,26 +26,21 @@ export const NodeControls = memo(() => {
 
     if (ref.current) {
       const selected = data?.nodes.find((f) => f.ref_id === selectedNode?.ref_id)
+
       if (selected) {
         const newPosition = reuseableVector3.set(selected?.x, selected?.y, selected?.z)
+
         ref.current.position.copy(newPosition)
       }
     }
-  }, [ref.current, selectedNode, showSelectionGraph, selectionGraphData, allGraphData])
+  }, [selectedNode, showSelectionGraph, selectionGraphData, allGraphData])
 
   if (!selectedNode) {
     return null
   }
 
   return (
-    <Float
-      ref={ref}
-      floatingRange={[1, 2]}
-      /* Up/down float intensity, works like a multiplier with floatingRange,defaults to 1 */
-      floatIntensity={1}
-      /* Animation speed, defaults to 1 */
-      speed={1}
-    >
+    <group ref={ref}>
       <Html
         center
         className="control-panel"
@@ -62,10 +53,10 @@ export const NodeControls = memo(() => {
         sprite
       >
         <IconButton
-          left={0}
-          borderColor={showSelectionGraph ? '#FFDB58bb' : '#fff'}
           backgroundColor={showSelectionGraph ? '#FFDB58bb' : '#fff'}
+          borderColor={showSelectionGraph ? '#FFDB58bb' : '#fff'}
           fontColor={showSelectionGraph ? '#fff' : '#000'}
+          left={0}
           onClick={(e) => {
             e.stopPropagation()
             setShowSelectionGraph(!showSelectionGraph)
@@ -75,10 +66,10 @@ export const NodeControls = memo(() => {
         </IconButton>
 
         <IconButton
-          left={40}
-          borderColor="#fff"
           backgroundColor="#00000066"
+          borderColor="#fff"
           fontColor="#fff"
+          left={40}
           onClick={(e) => {
             e.stopPropagation()
             setSelectedNode(null)
@@ -88,9 +79,11 @@ export const NodeControls = memo(() => {
           <MdClose />
         </IconButton>
       </Html>
-    </Float>
+    </group>
   )
 })
+
+NodeControls.displayName = 'NodeControls'
 
 type ButtonProps = {
   left: number

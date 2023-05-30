@@ -67,12 +67,14 @@ export const SelectionDataNodes = memo(() => {
       .map((n) => {
         const fixedPosition =
           n.ref_id === selectedNode?.ref_id && n.node_type !== 'topic' ? { fx: 0, fy: 0, fz: 0 } : {}
+
         return { ...n, x: 0, y: 0, z: 0, ...fixedPosition }
       })
+
     const links = createLinks(nodes)
 
     setSelectionData({ nodes, links })
-  }, [data, selectedNode, selectedNodeRelativeIds])
+  }, [data, selectedNode, selectedNodeRelativeIds, setSelectionData])
 
   useEffect(() => {
     simulation.alpha(1).stop()
@@ -95,24 +97,24 @@ export const SelectionDataNodes = memo(() => {
     <>
       {selectionGraphData?.nodes.map((node) => {
         if (node.node_type === 'topic') {
-          return <TextNode key={node.ref_id || node.id + '-compact'} node={node} />
+          return <TextNode key={`${node.ref_id || node.id}-compact`} node={node} />
         }
 
-        return <Cube animated key={node.ref_id || node.id + '-compact'} node={node} />
+        return <Cube key={`${node.ref_id || node.id}-compact`} animated node={node} />
       })}
 
       <Segments
+        key={`selection-links-${selectionGraphData?.links.length}`}
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         fog
-        key={`selection-links-${selectionGraphData?.links.length}`}
         lineWidth={0.9}
       >
         {(selectionGraphData?.links as unknown as GraphData['links']).map((link, index) => (
           <Segment
-            animated
             // eslint-disable-next-line react/no-array-index-key
             key={index.toString()}
+            animated
             link={link}
           />
         ))}
@@ -122,3 +124,5 @@ export const SelectionDataNodes = memo(() => {
     </>
   )
 })
+
+SelectionDataNodes.displayName = 'SelectionDataNodes'

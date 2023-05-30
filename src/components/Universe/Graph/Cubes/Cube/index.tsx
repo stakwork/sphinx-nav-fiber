@@ -20,14 +20,17 @@ export const Cube = memo(({ node, hide, animated }: Props) => {
   const selectedNodeRelativeIds = useDataStore((s) => s.selectedNodeRelativeIds)
   const showSelectionGraph = useDataStore((s) => s.showSelectionGraph)
   const isSelected = !!selectedNode && node.ref_id === selectedNode.ref_id
+
   const transparent = !selectedNode
     ? false
     : !isSelected && !selectedNodeRelativeIds.includes(selectedNode?.ref_id || '')
+
   const material = useMaterial(node.image_url || 'noimage.jpeg', transparent)
 
   useFrame((_, delta) => {
     if (animated && ref.current) {
       ref.current.position.set(node.x, node.y, node.z)
+
       if (isSelected) {
         ref.current.rotation.y += delta * 1
         ref.current.rotation.x -= delta * 0.6
@@ -35,16 +38,17 @@ export const Cube = memo(({ node, hide, animated }: Props) => {
     }
   })
 
-  useEffect(() => {
-    return function () {
-      geometry.dispose()
-    }
-  }, [geometry])
+  useEffect(
+    () =>
+      function () {
+        geometry.dispose()
+      },
+    [geometry],
+  )
 
   return (
     <Select enabled={!!isSelected}>
       <mesh
-        visible={!hide}
         ref={ref}
         geometry={boxGeometry}
         material={material}
@@ -52,6 +56,7 @@ export const Cube = memo(({ node, hide, animated }: Props) => {
         position={[node.x, node.y, node.z]}
         scale={showSelectionGraph && isSelected ? 20 : node.scale}
         userData={node}
+        visible={!hide}
       />
     </Select>
   )

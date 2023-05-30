@@ -1,8 +1,9 @@
 import { Segments } from '@react-three/drei'
+import { useMemo } from 'react'
 import { useGraphData } from '~/components/DataRetriever'
 import { useDataStore } from '~/stores/useDataStore'
 import { GraphData } from '~/types'
-import { Nodes } from './Cubes'
+import { Cubes } from './Cubes'
 import { GraphLoadingIcon } from './Icons'
 import { PathwayLine } from './PathwayLine'
 import { Segment } from './Segment'
@@ -14,13 +15,25 @@ export const Graph = () => {
   const graphStyle = useDataStore((s) => s.graphStyle)
   const showSelectionGraph = useDataStore((s) => s.showSelectionGraph)
 
+  const lineWidth = useMemo(() => {
+    if (showSelectionGraph) {
+      return 0
+    }
+
+    if (graphStyle === 'force') {
+      return 0.15
+    }
+
+    return 0.6
+  }, [showSelectionGraph, graphStyle])
+
   if (isLoading) {
     return <GraphLoadingIcon />
   }
 
   return (
     <>
-      <Nodes />
+      <Cubes />
 
       <NodeDetailsPanel />
 
@@ -34,7 +47,7 @@ export const Graph = () => {
         // @ts-ignore
         fog
         limit={data.links.length}
-        lineWidth={showSelectionGraph ? 0 : graphStyle === 'force' ? 0.15 : 0.6}
+        lineWidth={lineWidth}
       >
         {(data.links as unknown as GraphData['links']).map((link, index) => (
           <Segment
@@ -47,5 +60,3 @@ export const Graph = () => {
     </>
   )
 }
-
-Segments.displayName = 'Segments'

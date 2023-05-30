@@ -48,6 +48,7 @@ export const Segment = ({ link, animated }: Props) => {
     if (animated && ref.current) {
       const source = selectionGraphData.nodes.find((f) => f.ref_id === link.sourceRef)
       const target = selectionGraphData.nodes.find((f) => f.ref_id === link.targetRef)
+
       ref.current.start.set(source?.x || 0, source?.y || 0, source?.z || 0)
       ref.current.end.set(target?.x || 0, target?.y || 0, target?.z || 0)
     }

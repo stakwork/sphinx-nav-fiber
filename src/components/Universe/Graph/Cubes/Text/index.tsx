@@ -40,33 +40,49 @@ export const TextNode = memo(({ node, hide }: Props) => {
 
   const transparent = useMemo(
     () => selectedNode && !isSelected && !selectedNodeRelativeIds.includes(node?.ref_id || ''),
-    [selectedNode, selectedNodeRelativeIds, node.ref_id],
+    [selectedNode, isSelected, selectedNodeRelativeIds, node.ref_id],
   )
 
   const textScale = useMemo(() => {
     let scale = (node.scale || 1) * 4
+
     if (showSelectionGraph && isSelected) {
       scale = 40
     } else if (!isSelected && isRelative) {
       scale = 0
     }
+
     return scale
   }, [node.scale, isSelected, isRelative, showSelectionGraph])
 
+  const fillOpacity = useMemo(() => {
+    let opacity = 1
+
+    if (transparent) {
+      opacity = 0.1
+    } else if (!isSelected) {
+      opacity = 0.5
+    }
+
+    return opacity
+  }, [isSelected, transparent])
+
   return (
     <Text
-      visible={!hide}
       ref={ref}
       anchorX="center"
       anchorY="middle"
       color={isSelected ? 'white' : 'lightgray'}
-      fillOpacity={isSelected ? 1 : transparent ? 0.1 : 0.5}
+      fillOpacity={fillOpacity}
       position={[node.x, node.y, node.z]}
       scale={textScale}
       userData={node}
+      visible={!hide}
       {...fontProps}
     >
       {node.label}
     </Text>
   )
 })
+
+TextNode.displayName = 'TextNode'

@@ -36,7 +36,7 @@ export const AnimatedHighlights = () => {
         }
 
         return (
-          <HighlightMesh color={highlightColor} node={node} scale={node.scale || 1} key={`highlight-${node.ref_id}`} />
+          <HighlightMesh key={`highlight-${node.ref_id}`} color={highlightColor} node={node} scale={node.scale || 1} />
         )
       })}
     </>
@@ -54,18 +54,22 @@ const reuseableVector3 = new Vector3()
 const HighlightMesh = ({ color, scale, node }: HMesh) => {
   const ref = useRef<Mesh | null>(null)
   const [geometry] = useState(boxGeometry)
+
   useFrame(() => {
     if (ref.current) {
       const newPosition = reuseableVector3.set(node?.x || 0, node?.y || 0, node?.z || 0)
+
       ref.current.position.copy(newPosition)
     }
   })
 
-  useEffect(() => {
-    return function () {
-      geometry.dispose()
-    }
-  }, [])
+  useEffect(
+    () =>
+      function () {
+        geometry.dispose()
+      },
+    [geometry],
+  )
 
-  return <mesh ref={ref} userData={node} material={materials[color]} geometry={geometry} scale={scale} />
+  return <mesh ref={ref} geometry={geometry} material={materials[color]} scale={scale} userData={node} />
 }

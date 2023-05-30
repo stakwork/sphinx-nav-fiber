@@ -14,7 +14,7 @@ import { SelectionDataNodes } from './SelectionDataNodes'
 import { TextNode } from './Text'
 import { isMainTopic } from './constants'
 
-export const Nodes = memo(() => {
+export const Cubes = memo(() => {
   const data = useGraphData()
   const selectedNode = useSelectedNode()
   const nearbyNodeIds = useDataStore((s) => s.nearbyNodeIds)
@@ -22,6 +22,17 @@ export const Nodes = memo(() => {
   const showSelectionGraph = useDataStore((s) => s.showSelectionGraph)
   const selectionGraphData = useDataStore((s) => s.selectionGraphData)
   const setTranscriptOpen = useAppStore((s) => s.setTranscriptOpen)
+
+  const ignoreNodeEvent = useCallback(
+    (node: NodeExtended) => {
+      if (showSelectionGraph && !selectionGraphData.nodes.find((n) => n.ref_id === node.ref_id)) {
+        return true
+      }
+
+      return false
+    },
+    [showSelectionGraph, selectionGraphData],
+  )
 
   const handleSelect = useCallback(
     (nodes: Object3D[]) => {
@@ -38,7 +49,7 @@ export const Nodes = memo(() => {
         }
       }
     },
-    [setTranscriptOpen, showSelectionGraph, selectionGraphData],
+    [setTranscriptOpen, ignoreNodeEvent],
   )
 
   const onPointerOut = useCallback(
@@ -63,17 +74,7 @@ export const Nodes = memo(() => {
         }
       }
     },
-    [setHoveredNode],
-  )
-
-  const ignoreNodeEvent = useCallback(
-    (node: NodeExtended) => {
-      if (showSelectionGraph && !selectionGraphData.nodes.find((n) => n.ref_id === node.ref_id)) {
-        return true
-      }
-      return false
-    },
-    [showSelectionGraph, selectionGraphData],
+    [setHoveredNode, ignoreNodeEvent],
   )
 
   const hideUniverse = showSelectionGraph && !!selectedNode
@@ -95,10 +96,10 @@ export const Nodes = memo(() => {
         })
         .map((node) => {
           if (node.node_type === 'topic') {
-            return <TextNode hide={hideUniverse} key={node.ref_id || node.id} node={node} />
+            return <TextNode key={node.ref_id || node.id} hide={hideUniverse} node={node} />
           }
 
-          return <Cube hide={hideUniverse} key={node.ref_id || node.id} node={node} />
+          return <Cube key={node.ref_id || node.id} hide={hideUniverse} node={node} />
         })}
 
       {hideUniverse ? <SelectionDataNodes /> : <Highlights />}
@@ -107,3 +108,5 @@ export const Nodes = memo(() => {
     </Select>
   )
 })
+
+Cubes.displayName = 'Cubes'

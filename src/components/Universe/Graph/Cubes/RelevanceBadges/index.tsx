@@ -45,15 +45,17 @@ const PathwayBadge = ({ color, position, value, userData }: BadgeProps) => {
   const selected = userData?.ref_id === selectedNode?.ref_id
   const ref = useRef<Group | null>(null)
 
-  useEffect(() => {
-    return function () {
-      if (ref.current) {
-        ref.current.clear()
-      }
-    }
-  }, [ref])
+  useEffect(
+    () =>
+      function () {
+        if (ref.current) {
+          ref.current.clear()
+        }
+      },
+    [ref],
+  )
 
-  const isHovered = useMemo(() => hoveredNode?.ref_id === userData?.ref_id, [hoveredNode])
+  const isHovered = useMemo(() => hoveredNode?.ref_id === userData?.ref_id, [hoveredNode?.ref_id, userData?.ref_id])
 
   return (
     <group ref={ref} position={position}>
@@ -102,19 +104,22 @@ const NodeBadge = ({ position, userData, color }: BadgeProps) => {
   useFrame(() => {
     if (showSelectionGraph && ref.current) {
       const newPosition = variableVector3.set(userData?.x || 0, userData?.y || 0, userData?.z || 0)
+
       ref.current.position.copy(newPosition)
     }
   })
 
-  useEffect(() => {
-    return function () {
-      if (ref.current) {
-        ref.current.clear()
-      }
-    }
-  }, [ref])
+  useEffect(
+    () =>
+      function () {
+        if (ref.current) {
+          ref.current.clear()
+        }
+      },
+    [ref],
+  )
 
-  const isHovered = useMemo(() => hoveredNode?.ref_id === userData?.ref_id, [hoveredNode])
+  const isHovered = useMemo(() => hoveredNode?.ref_id === userData?.ref_id, [hoveredNode?.ref_id, userData?.ref_id])
 
   return (
     <group ref={ref} position={position}>
@@ -138,8 +143,8 @@ const NodeBadge = ({ position, userData, color }: BadgeProps) => {
             e.stopPropagation()
             setHoveredNode(userData || null)
           }}
-          selected={false}
           scale={isHovered ? 1.05 : 1}
+          selected={false}
           size={isTopic ? 100 : 66}
         >
           {isTopic ? userData?.label : <Image src={userData?.image_url || 'noimage.jpeg'} />}
@@ -173,7 +178,7 @@ export const RelevanceBadges = memo(() => {
   const nodeBadges = useMemo(() => {
     const nodes = showSelectionGraph ? selectionGraphData.nodes : data?.nodes || []
 
-    const badges = nodes
+    const badgesToRender = nodes
       .filter((f) => selectedNodeRelativeIds.includes(f?.ref_id || ''))
       .map((n) => {
         const color = getBadgeColor(n.node_type || '')
@@ -182,7 +187,7 @@ export const RelevanceBadges = memo(() => {
         return <NodeBadge key={`node-badge-${n.ref_id}`} color={color} position={position} userData={n} />
       })
 
-    return badges
+    return badgesToRender
   }, [selectedNodeRelativeIds, data, showSelectionGraph, selectionGraphData])
 
   return (

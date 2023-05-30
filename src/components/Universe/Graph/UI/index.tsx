@@ -17,6 +17,7 @@ export const NodeDetailsPanel = memo(() => {
 
   const position = useMemo(() => {
     const selected = data?.nodes.find((f) => f.ref_id === selectedNode?.ref_id)
+
     return new Vector3(selected?.x || 0, selected?.y || 0, selected?.z || 0)
   }, [selectedNode, data])
 
