@@ -33,14 +33,14 @@
   },
   "[typescript]": {
     "editor.codeActionsOnSave": {
-      "source.fixAll": true,
+      "source.fixAll.eslint": true,
       "source.organizeImports": true
     },
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "[typescriptreact]": {
     "editor.codeActionsOnSave": {
-      "source.fixAll": true,
+      "source.fixAll.eslint": true,
       "source.organizeImports": true
     },
     "editor.defaultFormatter": "esbenp.prettier-vscode"
@@ -51,6 +51,7 @@
     },
     "editor.defaultFormatter": "redhat.vscode-yaml"
   },
+  "eslint.codeActionsOnSave.mode": "problems",
   "editor.formatOnSave": true,
   "eslint.probe": ["javascript", "javascriptreact", "typescript", "typescriptreact"],
   "files.associations": {
