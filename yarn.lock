@@ -10561,8 +10561,8 @@ __metadata:
   linkType: hard
 
 "three-stdlib@npm:^2.21.8, three-stdlib@npm:^2.23.4":
-  version: 2.23.4
-  resolution: "three-stdlib@npm:2.23.4"
+  version: 2.23.5
+  resolution: "three-stdlib@npm:2.23.5"
   dependencies:
     "@types/draco3d": ^1.4.0
     "@types/offscreencanvas": ^2019.6.4
@@ -10577,7 +10577,7 @@ __metadata:
     zstddec: ^0.0.2
   peerDependencies:
     three: ">=0.128.0"
-  checksum: da676dca345841c11c9129d3d8cdf15e7d84dc958fd80833e48b9f3faf1ce166989dc17bf3aad3d70856785efdde890f4194f78b740c9f2a043a8ca1b295a407
+  checksum: 0ee52231bb8814a5aaec4be9eef2b17a9376c4cdca841df7d3ea9515ce542ec46f86a0b3a203373e4fecb71604a3760ff8b6122785c93e4ca39bde83c56948aa
   languageName: node
   linkType: hard
 
