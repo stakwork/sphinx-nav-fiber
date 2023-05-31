@@ -56,11 +56,13 @@
     "zustand": "^4.1.1"
   },
   "scripts": {
-    "start": "yarn run vite --port 3000",
-    "start-e2e": "REACT_APP_IS_E2E=true yarn run vite --port 3000",
-    "dev-tribe": "yarn run vite --port 3004",
+    "start": "vite --port 3000",
+    "start-e2e": "REACT_APP_IS_E2E=true vite --port 3000",
+    "dev-tribe": "vite --port 3004",
     "build": "tsc && vite build",
     "preview": "vite preview --port 3004",
+    "build-preview": "yarn run build && yarn run preview",
+    "build-preview-e2e": "REACT_APP_IS_E2E=true yarn run build && vite preview --port 3000",
     "cy-open": "cypress open",
     "cy-run": "cypress run",
     "format": "prettier --write --config prettier.config.js ./src",
@@ -93,7 +95,6 @@
   "devDependencies": {
     "@commitlint/cli": "^17.1.2",
     "@commitlint/config-conventional": "^17.1.0",
-    "@craco/craco": "^6.4.5",
     "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^13.0.0",
@@ -111,7 +112,6 @@
     "@typescript-eslint/eslint-plugin": "^5.27.1",
     "@typescript-eslint/parser": "^5.27.1",
     "@vitejs/plugin-react": "^4.0.0",
-    "craco-alias": "^3.0.1",
     "cypress": "^12.2.0",
     "eslint": "^8.41.0",
     "eslint-config-airbnb": "^19.0.4",

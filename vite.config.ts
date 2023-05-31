@@ -10,54 +10,47 @@ import eslint from 'vite-plugin-eslint'
 import svgrPlugin from 'vite-plugin-svgr'
 import viteTsconfigPaths from 'vite-tsconfig-paths'
 
-const commonConfigOptions = (): UserConfigExport => ({
-  resolve: {
-    alias: {
-      stream: 'stream-browserify',
-      crypto: 'crypto-browserify',
-    },
-  },
-  plugins: [react(), viteTsconfigPaths(), svgrPlugin(), eslint(), builtins({ crypto: false })],
-  define: {
-    'process.env': process.env,
-  },
+const commonConfigOptions = ({ mode }: { mode: Mode }): UserConfigExport => {
+  process.env = { ...process.env, ...loadEnv(mode, process.cwd()) }
 
-  optimizeDeps: {
-    include: ['base64-arraybuffer', 'diffie-hellman'],
-    esbuildOptions: {
-      // Node.js global to browser globalThis
-      define: {
-        global: 'globalThis',
+  return {
+    resolve: {
+      alias: {
+        stream: 'stream-browserify',
+        crypto: 'crypto-browserify',
       },
-      plugins: [
-        NodeGlobalsPolyfillPlugin({
-          buffer: true,
-          process: true,
-        }),
-      ],
-
-      // Enable esbuild polyfill plugins
     },
-  },
-})
+    plugins: [react(), viteTsconfigPaths(), svgrPlugin(), eslint(), builtins({ crypto: false })],
+    define: {
+      'process.env': process.env,
+      APP_VERSION: JSON.stringify(process.env.npm_package_version),
+      REACT_APP_IS_E2E: process.env.REACT_APP_IS_E2E,
+      REACT_APP_API_URL: process.env.REACT_APP_API_URL,
+    },
+
+    optimizeDeps: {
+      include: ['base64-arraybuffer', 'diffie-hellman'],
+      esbuildOptions: {
+        define: {
+          global: 'globalThis',
+        },
+        plugins: [
+          NodeGlobalsPolyfillPlugin({
+            buffer: true,
+            process: true,
+          }),
+        ],
+      },
+    },
+  }
+}
 
 const devConfigOptions: UserConfigExport = {
   ...mergeWith(
-    commonConfigOptions(),
+    commonConfigOptions({ mode: 'development' }),
     {
       server: {
         open: true,
-      },
-      optimizeDeps: {
-        esbuildOptions: {
-          // Enable esbuild polyfill plugins
-          // plugins: [
-          //   NodeGlobalsPolyfillPlugin({
-          //     buffer: true,
-          //     process: true,
-          //   }),
-          // ],
-        },
       },
     },
     customizer,
@@ -66,25 +59,11 @@ const devConfigOptions: UserConfigExport = {
 
 const prodConfigOptions: UserConfigExport = {
   ...mergeWith(
-    commonConfigOptions(),
+    commonConfigOptions({ mode: 'production' }),
     {
       resolve: {},
       build: {
-        rollupOptions: {
-          // plugins: [inject({ Buffer: ['Buffer', 'Buffer'] })],
-        },
         outDir: 'build',
-      },
-      optimizeDeps: {
-        esbuildOptions: {
-          // Enable esbuild polyfill plugins
-          plugins: [
-            // NodeGlobalsPolyfillPlugin({
-            //   buffer: true,
-            //   process: true,
-            // }),
-          ],
-        },
       },
     },
     customizer,
@@ -100,11 +79,7 @@ const configDispatch: Record<Mode, UserConfigExport> = {
 
 // https://vitejs.dev/config/
 export default ({ mode }: { mode: Mode }) => {
-  process.env = { ...process.env, ...loadEnv(mode, process.cwd()) }
-
   const config = configDispatch[mode]
-
-  // console.log('🚀 ~ file: vite.config.ts:90 ~ config:', config, mode)
 
   return defineConfig(config)
 }

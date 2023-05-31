@@ -544,24 +544,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@craco/craco@npm:^6.4.5":
-  version: 6.4.5
-  resolution: "@craco/craco@npm:6.4.5"
-  dependencies:
-    cosmiconfig: ^7.0.1
-    cosmiconfig-typescript-loader: ^1.0.0
-    cross-spawn: ^7.0.0
-    lodash: ^4.17.15
-    semver: ^7.3.2
-    webpack-merge: ^4.2.2
-  peerDependencies:
-    react-scripts: ^4.0.0
-  bin:
-    craco: bin/craco.js
-  checksum: 7a8865fee9ab670a8fc6771971e6ab53ab6fb536feec414d9a69a09008e2e2437f2133aa70f2f7ffd3748af448d43f42007dc325b1c7ab0648ef5fc9d6a9f61c
-  languageName: node
-  linkType: hard
-
 "@cspotcode/source-map-support@npm:^0.8.0":
   version: 0.8.1
   resolution: "@cspotcode/source-map-support@npm:0.8.1"
@@ -2540,12 +2522,12 @@ __metadata:
   linkType: hard
 
 "@types/jest@npm:*":
-  version: 29.5.1
-  resolution: "@types/jest@npm:29.5.1"
+  version: 29.5.2
+  resolution: "@types/jest@npm:29.5.2"
   dependencies:
     expect: ^29.0.0
     pretty-format: ^29.0.0
-  checksum: 0a22491dec86333c0e92b897be2c809c922a7b2b0aa5604ac369810d6b2360908b4a3f2c6892e8a237a54fa1f10ecefe0e823ec5fcb7915195af4dfe88d2197e
+  checksum: 7d205599ea3cccc262bad5cc173d3242d6bf8138c99458509230e4ecef07a52d6ddcde5a1dbd49ace655c0af51d2dbadef3748697292ea4d86da19d9e03e19c0
   languageName: node
   linkType: hard
 
@@ -4335,20 +4317,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cosmiconfig-typescript-loader@npm:^1.0.0":
-  version: 1.0.9
-  resolution: "cosmiconfig-typescript-loader@npm:1.0.9"
-  dependencies:
-    cosmiconfig: ^7
-    ts-node: ^10.7.0
-  peerDependencies:
-    "@types/node": "*"
-    cosmiconfig: ">=7"
-    typescript: ">=3"
-  checksum: 26a0198e03e81a9e7e1a6ce880d7309fdd056c7a3a23b587253e6d1d1224154d3f9edf727d9c0310628e89752353211b75de151b705298b4d0741fa1740c661e
-  languageName: node
-  linkType: hard
-
 "cosmiconfig-typescript-loader@npm:^4.0.0":
   version: 4.3.0
   resolution: "cosmiconfig-typescript-loader@npm:4.3.0"
@@ -4361,7 +4329,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cosmiconfig@npm:^7, cosmiconfig@npm:^7.0.0, cosmiconfig@npm:^7.0.1":
+"cosmiconfig@npm:^7.0.0":
   version: 7.1.0
   resolution: "cosmiconfig@npm:7.1.0"
   dependencies:
@@ -4383,13 +4351,6 @@ __metadata:
     parse-json: ^5.0.0
     path-type: ^4.0.0
   checksum: b3d277bc3a8a9e649bf4c3fc9740f4c52bf07387481302aa79839f595045368903bf26ea24a8f7f7b8b180bf46037b027c5cb63b1391ab099f3f78814a147b2b
-  languageName: node
-  linkType: hard
-
-"craco-alias@npm:^3.0.1":
-  version: 3.0.1
-  resolution: "craco-alias@npm:3.0.1"
-  checksum: 8d9a2bf38fa0834f365415509b57c33fda3a0fec18382242d9c92e766029bd72cca3f8aa548ff23c8d1272dd5621c97f9ceaa7e10517f0056a64bc89bff58d1e
   languageName: node
   linkType: hard
 
@@ -10117,7 +10078,6 @@ __metadata:
   dependencies:
     "@commitlint/cli": ^17.1.2
     "@commitlint/config-conventional": ^17.1.0
-    "@craco/craco": ^6.4.5
     "@emotion/react": ^11.10.8
     "@emotion/styled": ^11.10.8
     "@esbuild-plugins/node-globals-polyfill": ^0.2.3
@@ -10151,7 +10111,6 @@ __metadata:
     buffer-browserify: ^0.2.5
     camera-controls: ^1.37.4
     clsx: ^1.2.1
-    craco-alias: ^3.0.1
     crypto-browserify: ^3.12.0
     cypress: ^12.2.0
     d3-force-3d: ^3.0.3
@@ -10782,7 +10741,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ts-node@npm:^10.7.0, ts-node@npm:^10.8.1":
+"ts-node@npm:^10.8.1":
   version: 10.9.1
   resolution: "ts-node@npm:10.9.1"
   dependencies:
@@ -11365,15 +11324,6 @@ __metadata:
   version: 1.1.1
   resolution: "webgl-sdf-generator@npm:1.1.1"
   checksum: babf69e99ca22e8ff387bbe50a10519969ea8030d302d5ddf509ff15355e2981edf72edfcc1b29fed78fa73a79a2458c391b1ba7c9ada63ac5be665880ec5de0
-  languageName: node
-  linkType: hard
-
-"webpack-merge@npm:^4.2.2":
-  version: 4.2.2
-  resolution: "webpack-merge@npm:4.2.2"
-  dependencies:
-    lodash: ^4.17.15
-  checksum: ce58bc8ab53a3dd5d9a0df65684571349eef53372bf8f224521072110485391335b26ab097c5f07829b88d0c146056944149566e5a953f05997b0fe2cbaf8dd6
   languageName: node
   linkType: hard
 

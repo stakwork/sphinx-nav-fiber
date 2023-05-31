@@ -6,7 +6,7 @@ export const isDevelopment = !!(
   origin === 'https://sphinx-jarvis-david.sphinx1.repl.co'
 )
 
-export const API_URL = process.env.REACT_APP_API_URL || apiUrlFromSwarmHost() || 'https://knowledge-graph.sphinx.chat'
+export const API_URL = REACT_APP_API_URL || apiUrlFromSwarmHost() || 'https://knowledge-graph.sphinx.chat'
 
 export const isChileGraph = API_URL.includes('boltwall')
 
@@ -82,4 +82,4 @@ export const TWITTER_SOURCE = 'tweet'
 export const TOPIC = 'topic'
 export const DOCUMENT = 'document'
 
-export const isE2E = !!process.env.REACT_APP_IS_E2E
+export const isE2E = !!REACT_APP_IS_E2E
