@@ -92,9 +92,7 @@ export const Show = () => {
 
       <Flex direction="column" pt={40}>
         <Flex pb={20}>
-          <Text color="textMessages" kind="mediumBold">
-            Related Episodes
-          </Text>
+          <Text kind="mediumBold">Related Episodes</Text>
         </Flex>
         {episodes.map((node) => (
           <EpisodePanel key={node.ref_id} node={node} onClick={() => setSelectedNode(node)} />
