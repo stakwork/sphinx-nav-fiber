@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 
 type Props = {
-  size?: 45 | 100 | 130
+  size?: 45 | 80 | 130
   src: string
 }
 

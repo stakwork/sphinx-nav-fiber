@@ -66,7 +66,6 @@ const HtmlWrap = styled.div<{ dimensions: [number, number, number, number]; visi
       user-select: ${visible ? 'auto' : 'none'};
     `}
   position: absolute;
-  width: 420px;
   border-radius: 20px;
   font-size: 80px;
   color: #fff;

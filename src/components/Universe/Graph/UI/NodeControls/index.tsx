@@ -1,20 +1,24 @@
 import { Html } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import { memo, useCallback, useRef } from 'react'
-import { MdClose, MdViewInAr } from 'react-icons/md'
+import { MdClose, MdMenu, MdViewInAr } from 'react-icons/md'
 import styled from 'styled-components'
 import { Group, Vector3 } from 'three'
+import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 
 const reuseableVector3 = new Vector3()
 
 export const NodeControls = memo(() => {
   const ref = useRef<Group | null>(null)
+  const setSidebarOpen = useAppStore((s) => s.setSidebarOpen)
   const showSelectionGraph = useDataStore((s) => s.showSelectionGraph)
   const selectionGraphData = useDataStore((s) => s.selectionGraphData)
   const allGraphData = useDataStore((s) => s.data)
   const selectedNode = useSelectedNode()
   const setSelectedNode = useDataStore((s) => s.setSelectedNode)
+  const setHideNodeDetails = useDataStore((s) => s.setHideNodeDetails)
+  const hideNodeDetails = useDataStore((s) => s.hideNodeDetails)
   const setShowSelectionGraph = useDataStore((s) => s.setShowSelectionGraph)
 
   useFrame(() => {
@@ -52,6 +56,21 @@ export const NodeControls = memo(() => {
         onPointerUp={(e) => e.stopPropagation()}
         sprite
       >
+        {!showSelectionGraph && (
+          <IconButton
+            backgroundColor="#00000066"
+            borderColor={hideNodeDetails ? '#ffffff66' : '#5078f2'}
+            fontColor={hideNodeDetails ? '#ffffff66' : '#fff'}
+            left={-40}
+            onClick={(e) => {
+              e.stopPropagation()
+              setHideNodeDetails(!hideNodeDetails)
+            }}
+          >
+            <MdMenu />
+          </IconButton>
+        )}
+
         <IconButton
           backgroundColor={showSelectionGraph ? '#FFDB58bb' : '#fff'}
           borderColor={showSelectionGraph ? '#FFDB58bb' : '#fff'}
@@ -59,7 +78,14 @@ export const NodeControls = memo(() => {
           left={0}
           onClick={(e) => {
             e.stopPropagation()
-            setShowSelectionGraph(!showSelectionGraph)
+
+            const nextState = !showSelectionGraph
+
+            setShowSelectionGraph(nextState)
+
+            if (nextState) {
+              setSidebarOpen(true)
+            }
           }}
         >
           <MdViewInAr />
