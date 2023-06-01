@@ -60,7 +60,11 @@ const Content = ({ onSubmit }: Props) => {
         <MdKeyboardDoubleArrowLeft fontSize={20} />
       </CollapseButton>
 
-      {isLoading ? <Loader color="primaryText1" /> : ComponentsMapper[selectedView]}
+      <ScrollWrapper>
+        <Spacer />
+        {isLoading ? <Loader color="primaryText1" /> : ComponentsMapper[selectedView]}
+        <Spacer />
+      </ScrollWrapper>
 
       <CategoryWrapper direction="row">
         <Flex basis="154px">
@@ -142,6 +146,16 @@ const CategoryWrapper = styled(Flex).attrs({
   position: absolute;
   left: ${MENU_WIDTH + 10}px;
   top: 10px;
+`
+
+const ScrollWrapper = styled(Flex)`
+  overflow: auto;
+  height: calc(100% - 158px);
+  width: 100%;
+`
+
+const Spacer = styled.div`
+  height: 10px;
 `
 
 SideBar.displayName = 'Sidebar'

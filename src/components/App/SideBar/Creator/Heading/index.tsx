@@ -12,7 +12,6 @@ import { videoTimetoSeconds } from '~/utils/videoTimetoSeconds'
 export const CREATOR_HEADING_HEIGHT = 240
 
 const Wrapper = styled(Flex)`
-  flex: 1;
   flex-direction: column;
   background: ${colors.dashboardHeader};
   border-bottom: 1px solid #101317;

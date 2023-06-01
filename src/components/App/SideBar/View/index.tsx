@@ -1,4 +1,4 @@
-import { useSelectedNode } from '~/stores/useDataStore'
+import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { TextType } from '../AskQuestion/Text'
 import { AudioClip } from '../AudioClip'
 import { Creator } from '../Creator'
@@ -17,8 +17,9 @@ type Props = {
 
 export const View = ({ isSelectedView }: Props) => {
   const selectedNode = useSelectedNode()
+  const showSelectionGraph = useDataStore((s) => s.showSelectionGraph)
 
-  if (isSelectedView) {
+  if (isSelectedView || showSelectionGraph) {
     switch (selectedNode?.node_type) {
       case 'twitter':
         return <Twitter />

@@ -16,7 +16,7 @@ const Wrapper = styled(Flex)`
   z-index: 100;
   transition: opacity 0.6s;
 
-  bottom: 20px;
+  top: 20px;
   right: 20px;
   width: 300px;
 `

@@ -1,4 +1,5 @@
 import { Segments } from '@react-three/drei'
+import { useMemo } from 'react'
 import { useGraphData } from '~/components/DataRetriever'
 import { useDataStore } from '~/stores/useDataStore'
 import { GraphData } from '~/types'
@@ -12,6 +13,19 @@ export const Graph = () => {
   const data = useGraphData()
   const isLoading = useDataStore((s) => s.isFetching)
   const graphStyle = useDataStore((s) => s.graphStyle)
+  const showSelectionGraph = useDataStore((s) => s.showSelectionGraph)
+
+  const lineWidth = useMemo(() => {
+    if (showSelectionGraph) {
+      return 0
+    }
+
+    if (graphStyle === 'force') {
+      return 0.15
+    }
+
+    return 0.6
+  }, [showSelectionGraph, graphStyle])
 
   if (isLoading) {
     return <GraphLoadingIcon />
@@ -20,10 +34,10 @@ export const Graph = () => {
   return (
     <>
       <Cubes />
+
       <NodeDetailsPanel />
 
-      <PathwayLine />
-
+      {!showSelectionGraph && <PathwayLine />}
       <Segments
         /** NOTE: using the key in this way the segments re-mounts
          *  everytime the data.links count changes
@@ -33,7 +47,7 @@ export const Graph = () => {
         // @ts-ignore
         fog
         limit={data.links.length}
-        lineWidth={graphStyle === 'force' ? 0.15 : 0.6}
+        lineWidth={lineWidth}
       >
         {(data.links as unknown as GraphData['links']).map((link, index) => (
           <Segment
@@ -46,5 +60,3 @@ export const Graph = () => {
     </>
   )
 }
-
-Segments.displayName = 'Segments'

@@ -1,8 +1,9 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { AdaptiveDpr, AdaptiveEvents, Html, Loader, Preload } from '@react-three/drei'
 import { Canvas } from '@react-three/fiber'
-import { Bloom, EffectComposer, Selection } from '@react-three/postprocessing'
+import { Bloom, EffectComposer, Outline, Selection } from '@react-three/postprocessing'
 import { useControls } from 'leva'
+import { BlendFunction, KernelSize, Resolution } from 'postprocessing'
 import { Perf } from 'r3f-perf'
 import { Suspense } from 'react'
 import { isDevelopment } from '~/constants'
@@ -13,10 +14,13 @@ import { Controls } from './Controls'
 import { Graph } from './Graph'
 import { Lights } from './Lights'
 import { Overlay } from './Overlay'
+import { outlineEffectColor } from './constants'
 
 const Content = () => {
-  const { universeColor } = useControls('universe', {
+  const { universeColor, outlineColor, outlinePulseSpeed } = useControls('universe', {
     universeColor: colors.black,
+    outlineColor: outlineEffectColor,
+    outlinePulseSpeed: 0.1,
   })
 
   return (
@@ -28,17 +32,30 @@ const Content = () => {
       <Controls />
 
       <Selection>
-        <EffectComposer multisampling={8}>
+        <EffectComposer autoClear={false} multisampling={8}>
           <Bloom
+            luminanceThreshold={1} // luminance threshold. Raise this value to mask out darker elements in the scene.
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
-            luminanceThreshold={1}
             mipmapBlur
+            resolutionX={Resolution.AUTO_SIZE} // The horizontal resolution.
+            resolutionY={Resolution.AUTO_SIZE} // The vertical resolution.
+          />
+          <Outline
+            blendFunction={BlendFunction.SCREEN} // set this to BlendFunction.ALPHA for dark outlines
+            blur // whether the outline should be blurred
+            edgeStrength={1}
+            hiddenEdgeColor={outlineColor}
+            kernelSize={KernelSize.HUGE}
+            pulseSpeed={outlinePulseSpeed}
+            resolutionX={Resolution.AUTO_SIZE} // The horizontal resolution.
+            resolutionY={Resolution.AUTO_SIZE} // The vertical resolution.
+            visibleEdgeColor={outlineColor} // the color of visible edges
           />
         </EffectComposer>
-      </Selection>
 
-      <Graph />
+        <Graph />
+      </Selection>
     </>
   )
 }
