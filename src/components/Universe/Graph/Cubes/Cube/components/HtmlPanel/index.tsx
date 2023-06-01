@@ -43,7 +43,7 @@ export const HtmlPanel = ({ speed = 2, intensity = 4, children, withTranscript, 
         onPointerUp={(e) => e.stopPropagation()}
         visible={visible}
       >
-        <>{children}</>
+        {children}
       </HtmlWrap>
     </Html>
   </Float>

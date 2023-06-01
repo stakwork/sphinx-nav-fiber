@@ -11,8 +11,6 @@ type Props = {
   animated?: boolean
 }
 
-// const reuseableVector3 = new Vector3()
-
 export const Segment = ({ link, animated }: Props) => {
   const ref = useRef<SegmentObject | null>(null)
   const selectedNode = useSelectedNode()

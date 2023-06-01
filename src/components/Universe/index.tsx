@@ -14,10 +14,13 @@ import { Controls } from './Controls'
 import { Graph } from './Graph'
 import { Lights } from './Lights'
 import { Overlay } from './Overlay'
+import { outlineEffectColor } from './constants'
 
 const Content = () => {
-  const { universeColor } = useControls('universe', {
+  const { universeColor, outlineColor, outlinePulseSpeed } = useControls('universe', {
     universeColor: colors.black,
+    outlineColor: outlineEffectColor,
+    outlinePulseSpeed: 0.1,
   })
 
   return (
@@ -42,12 +45,12 @@ const Content = () => {
             blendFunction={BlendFunction.SCREEN} // set this to BlendFunction.ALPHA for dark outlines
             blur // whether the outline should be blurred
             edgeStrength={1}
-            hiddenEdgeColor={0xffffff}
+            hiddenEdgeColor={outlineColor}
             kernelSize={KernelSize.HUGE}
-            pulseSpeed={0.1}
+            pulseSpeed={outlinePulseSpeed}
             resolutionX={Resolution.AUTO_SIZE} // The horizontal resolution.
             resolutionY={Resolution.AUTO_SIZE} // The vertical resolution.
-            visibleEdgeColor={0xffffff} // the color of visible edges
+            visibleEdgeColor={outlineColor} // the color of visible edges
           />
         </EffectComposer>
 

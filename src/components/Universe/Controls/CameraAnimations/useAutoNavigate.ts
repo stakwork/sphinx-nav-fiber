@@ -7,18 +7,9 @@ import { playInspectSound } from '~/components/common/Sounds'
 import { useControlStore } from '~/stores/useControlStore'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { getNearbyNodeIds } from '../constants'
+import { arriveDistance, selectionGraphCameraPosition, selectionGraphDistance, topicArriveDistance } from './constants'
 
 let lookAtAnimationTimer: ReturnType<typeof setTimeout>
-
-const arriveDistance = 300
-const topicArriveDistance = 600
-const selectionGraphDistance = 2000
-
-const selectionGraphCameraPosition = {
-  x: 172.7392402058252,
-  y: -239.04675366094037,
-  z: -2000,
-}
 
 export const useAutoNavigate = (cameraControlsRef: RefObject<CameraControls | null>) => {
   const selectedNode = useSelectedNode()
@@ -160,8 +151,6 @@ export const useAutoNavigate = (cameraControlsRef: RefObject<CameraControls | nu
   const turnCameraToNode = (dest: Vector3, cam: Camera) => {
     cameraControlsRef?.current?.setLookAt(cam.position.x, cam.position.y, cam.position.z, dest.x, dest.y, dest.z, true)
   }
-
-  // console.log('cameraControlsRef', cameraControlsRef.current?.camera.position)
 
   return null
 }

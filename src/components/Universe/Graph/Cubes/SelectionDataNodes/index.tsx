@@ -18,7 +18,6 @@ const simulation = forceSimulation()
     forceLink()
       .distance((d: { source: NodeExtended; target: NodeExtended }) => {
         const sourceType = d.source.node_type
-        // const targetType = d.target.node_type
 
         let distance = 50
 
