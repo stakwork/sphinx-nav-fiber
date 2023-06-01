@@ -75,7 +75,7 @@ const defaultData: Omit<
   scrollEventsDisabled: false,
   disableCameraRotation: false,
   graphRadius: isChileGraph ? 1600 : 3056, // calculated from initial load
-  graphStyle: 'force',
+  graphStyle: 'split',
   isFetching: false,
   isTimestampLoaded: false,
   queuedSources: null,
