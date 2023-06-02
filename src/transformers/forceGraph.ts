@@ -31,27 +31,40 @@ const fSimulation = forceSimulation()
             return 100
         }
       })
-      .strength(0.2),
+      .strength(0.3),
   )
-  .force(
+
+  .force('center', forceCenter().strength(0.4))
+  .force('charge', forceManyBody().strength(20))
+  // .force('dagRadial', null)
+  .velocityDecay(0.5)
+  .stop()
+
+const simulationTicks = 80
+const collisionTicks = 20
+
+const runSimlation = async () => {
+  for (let i = 0; i < simulationTicks; i += 1) {
+    console.log('tick', i)
+    await fSimulation.tick()
+  }
+  console.log('sim finished')
+}
+
+const runCollision = async () => {
+  fSimulation.force(
     'collide',
     forceCollide()
       .radius((n: NodeExtended) => (n.scale || 1) * 20)
       .iterations(1),
   )
-  .force('center', forceCenter().strength(0.1))
-  .force('charge', forceManyBody())
-  .velocityDecay(0.2)
-  .stop()
-
-const maxTicks = 100
-
-const runSimlation = async () => {
-  for (let i = 0; i < maxTicks; i += 1) {
+  for (let i = 0; i < collisionTicks; i += 1) {
     console.log('tick', i)
     await fSimulation.tick()
   }
-  console.log('sim finished')
+
+  fSimulation.force('collide', null)
+  console.log('collide finished')
 }
 
 export const generateForceGraphPositions = async (nodes: NodeExtended[], usingCurrentData: boolean) => {
@@ -70,6 +83,8 @@ export const generateForceGraphPositions = async (nodes: NodeExtended[], usingCu
   fSimulation.alpha(1).restart()
 
   await runSimlation()
+  await runCollision()
+
   fSimulation.stop()
 
   console.log('move on')
