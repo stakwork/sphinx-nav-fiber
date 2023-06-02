@@ -67,7 +67,7 @@ export const useCameraAnimations = (
     const animationProgress = { value: -244 }
 
     const moveCycle = gsap.to(animationProgress, {
-      duration: 3,
+      duration: 5,
       keyframes: {
         '0%': { value: 10 },
         '100%': { delay: 2, ease: 'Power4.easeIn', value: -200 },

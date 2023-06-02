@@ -7,13 +7,13 @@ import { ForceSimulation, runForceSimulation } from './forceSimulation'
 const simulationTicks = 60
 const collisionTicks = 20
 
-const runSimulationPhase = async (simulation: ForceSimulation) => {
+const runSimulationPhase = (simulation: ForceSimulation) => {
   for (let i = 0; i < simulationTicks; i += 1) {
-    await simulation.tick()
+    simulation.tick()
   }
 }
 
-const runCollisionPhase = async (simulation: ForceSimulation) => {
+const runCollisionPhase = (simulation: ForceSimulation) => {
   simulation.force(
     'collide',
     forceCollide()
@@ -22,25 +22,25 @@ const runCollisionPhase = async (simulation: ForceSimulation) => {
   )
 
   for (let i = 0; i < collisionTicks; i += 1) {
-    await simulation.tick()
+    simulation.tick()
   }
 }
 
 export const generateForceGraphPositions = async (nodes: NodeExtended[], usingCurrentData: boolean) => {
   const updatedNodes = nodes.map((node: NodeExtended) => ({ ...node, x: 0, y: 0, z: 0 }))
 
-  let links = generateLinksFromNodeData(updatedNodes, true)
+  const links = generateLinksFromNodeData(updatedNodes, true)
 
   const forceSimulation = runForceSimulation(updatedNodes, links, {
     numDimensions: 3,
-    forceLinkStrength: 0.4,
-    forceChargeStrength: -20,
-    forceCenterStrength: 0.1,
+    forceLinkStrength: 0.5,
+    forceChargeStrength: -40,
+    forceCenterStrength: 0.3,
     velocityDecay: 0.5,
   })
 
-  await runSimulationPhase(forceSimulation)
-  await runCollisionPhase(forceSimulation)
+  runSimulationPhase(forceSimulation)
+  runCollisionPhase(forceSimulation)
 
   forceSimulation.stop()
 

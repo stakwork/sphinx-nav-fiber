@@ -26,7 +26,7 @@ const defaults: Required<SimulationProps> = {
   velocityDecay: 0.9,
   forceChargeStrength: -20,
   forceChargeMinDistance: 10,
-  forceChargeMaxDistance: 4000,
+  forceChargeMaxDistance: 8000,
   forceLinkStrength: 0.04,
   forceCenterStrength: 0.85,
   disableCollide: false,
