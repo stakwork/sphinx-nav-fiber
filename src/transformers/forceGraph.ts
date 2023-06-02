@@ -1,93 +1,48 @@
-import { forceCenter, forceCollide, forceLink, forceManyBody, forceSimulation } from 'd3-force-3d'
+import { forceCollide } from 'd3-force-3d'
 import { Vector3 } from 'three'
 import { generateLinksFromNodeData } from '~/network/fetchGraphData'
 import { NodeExtended } from '~/types'
+import { ForceSimulation, runForceSimulation } from './forceSimulation'
 
-const fSimulation = forceSimulation()
-  .numDimensions(3)
-  .force(
-    'link',
-    forceLink()
-      .distance((d: { source: NodeExtended; target: NodeExtended }) => {
-        const sourceType = d.source.node_type
-        const targetType = d.target.node_type
-
-        if (sourceType === 'show') {
-          return 500
-        }
-
-        switch (targetType) {
-          case 'show':
-            return 200
-          case 'topic':
-            return 1000
-          case 'guest':
-            return 300
-          case 'clip':
-            return 100
-          case 'episode':
-            return 150
-          default:
-            return 100
-        }
-      })
-      .strength(0.3),
-  )
-
-  .force('center', forceCenter().strength(0.4))
-  .force('charge', forceManyBody().strength(20))
-  // .force('dagRadial', null)
-  .velocityDecay(0.5)
-  .stop()
-
-const simulationTicks = 80
+const simulationTicks = 60
 const collisionTicks = 20
 
-const runSimlation = async () => {
+const runSimulationPhase = async (simulation: ForceSimulation) => {
   for (let i = 0; i < simulationTicks; i += 1) {
-    console.log('tick', i)
-    await fSimulation.tick()
+    await simulation.tick()
   }
-  console.log('sim finished')
 }
 
-const runCollision = async () => {
-  fSimulation.force(
+const runCollisionPhase = async (simulation: ForceSimulation) => {
+  simulation.force(
     'collide',
     forceCollide()
       .radius((n: NodeExtended) => (n.scale || 1) * 20)
       .iterations(1),
   )
-  for (let i = 0; i < collisionTicks; i += 1) {
-    console.log('tick', i)
-    await fSimulation.tick()
-  }
 
-  fSimulation.force('collide', null)
-  console.log('collide finished')
+  for (let i = 0; i < collisionTicks; i += 1) {
+    await simulation.tick()
+  }
 }
 
 export const generateForceGraphPositions = async (nodes: NodeExtended[], usingCurrentData: boolean) => {
   const updatedNodes = nodes.map((node: NodeExtended) => ({ ...node, x: 0, y: 0, z: 0 }))
 
-  fSimulation.alpha(1).stop()
-  fSimulation.stop().nodes(updatedNodes)
+  let links = generateLinksFromNodeData(updatedNodes, true)
 
-  let links = generateLinksFromNodeData(updatedNodes, false)
+  const forceSimulation = runForceSimulation(updatedNodes, links, {
+    numDimensions: 3,
+    forceLinkStrength: 0.4,
+    forceChargeStrength: -20,
+    forceCenterStrength: 0.1,
+    velocityDecay: 0.5,
+  })
 
-  fSimulation
-    .force('link')
-    .id((d: NodeExtended) => d.id)
-    .links(links.filter((f) => !f.onlyVisibleOnSelect))
+  await runSimulationPhase(forceSimulation)
+  await runCollisionPhase(forceSimulation)
 
-  fSimulation.alpha(1).restart()
-
-  await runSimlation()
-  await runCollision()
-
-  fSimulation.stop()
-
-  console.log('move on')
+  forceSimulation.stop()
 
   // update link positions
   const updatedLinks = links.map((link) => {

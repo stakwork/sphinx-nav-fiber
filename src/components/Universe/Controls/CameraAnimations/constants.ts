@@ -1,6 +1,6 @@
 import { Vector3 } from 'three'
 
-export const introAnimationTargetPosition = new Vector3(-1900, -2200, -2800)
+export const introAnimationTargetPosition = new Vector3(3000, 1000, 200)
 
 export const arriveDistance = 300
 
