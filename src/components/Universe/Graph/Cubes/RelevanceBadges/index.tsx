@@ -47,7 +47,7 @@ const PathwayBadge = ({ color, position, value, userData }: BadgeProps) => {
 
   useEffect(
     () =>
-      function () {
+      function cleanup() {
         if (ref.current) {
           ref.current.clear()
         }
@@ -111,7 +111,7 @@ const NodeBadge = ({ position, userData, color }: BadgeProps) => {
 
   useEffect(
     () =>
-      function () {
+      function cleanup() {
         if (ref.current) {
           ref.current.clear()
         }

@@ -38,7 +38,7 @@ const EpisodePanel = ({ node, onClick }: EpisodeProps) => (
   <EpisodeWrapper onClick={onClick} py={12}>
     <div>
       <Flex align="center" direction="row">
-        <Text color="primaryText1" kind="medium">
+        <Text color="primaryText1" kind="regular">
           {node.episode_title}
         </Text>
       </Flex>
@@ -78,7 +78,7 @@ export const Show = () => {
     <Wrapper p={20}>
       <Flex direction="row">
         <Flex pr={24}>
-          <Avatar size={100} src={selectedNode?.image_url || 'audio_default.svg'} />
+          <Avatar size={80} src={selectedNode?.image_url || 'audio_default.svg'} />
         </Flex>
 
         <Flex grow={1} shrink={1}>
@@ -92,7 +92,7 @@ export const Show = () => {
 
       <Flex direction="column" pt={40}>
         <Flex pb={20}>
-          <Text kind="heading">Related Episodes</Text>
+          <Text kind="mediumBold">Related Episodes</Text>
         </Flex>
         {episodes.map((node) => (
           <EpisodePanel key={node.ref_id} node={node} onClick={() => setSelectedNode(node)} />

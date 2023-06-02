@@ -25,7 +25,7 @@ export const AudioClip = () => {
     <Wrapper p={20}>
       <Flex direction="row">
         <Flex pr={24}>
-          <Avatar size={130} src={selectedNode?.image_url || 'audio_default.svg'} />
+          <Avatar size={80} src={selectedNode?.image_url || 'audio_default.svg'} />
         </Flex>
 
         <Flex grow={1} shrink={1}>
@@ -41,7 +41,7 @@ export const AudioClip = () => {
         </Flex>
       </Flex>
 
-      <Flex pb={10} pt={30}>
+      <Flex pb={10} pt={10}>
         <Actions />
       </Flex>
 
@@ -58,7 +58,7 @@ export const AudioClip = () => {
         />
       </Flex>
 
-      <Flex pt={50}>
+      <Flex pt={22}>
         <Transcript node={selectedNode} stateless />
       </Flex>
     </Wrapper>

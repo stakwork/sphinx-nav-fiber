@@ -40,7 +40,7 @@ export const Cube = memo(({ node, hide, animated }: Props) => {
 
   useEffect(
     () =>
-      function () {
+      function cleanup() {
         geometry.dispose()
       },
     [geometry],

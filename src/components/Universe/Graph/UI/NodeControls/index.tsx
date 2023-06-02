@@ -1,20 +1,25 @@
 import { Html } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
-import { memo, useCallback, useRef } from 'react'
-import { MdClose, MdViewInAr } from 'react-icons/md'
+import { memo, useCallback, useMemo, useRef } from 'react'
+import { MdClose, MdMenu, MdViewInAr } from 'react-icons/md'
 import styled from 'styled-components'
 import { Group, Vector3 } from 'three'
+import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
+import { buttonColors } from './constants'
 
 const reuseableVector3 = new Vector3()
 
 export const NodeControls = memo(() => {
   const ref = useRef<Group | null>(null)
+  const setSidebarOpen = useAppStore((s) => s.setSidebarOpen)
   const showSelectionGraph = useDataStore((s) => s.showSelectionGraph)
   const selectionGraphData = useDataStore((s) => s.selectionGraphData)
   const allGraphData = useDataStore((s) => s.data)
   const selectedNode = useSelectedNode()
   const setSelectedNode = useDataStore((s) => s.setSelectedNode)
+  const setHideNodeDetails = useDataStore((s) => s.setHideNodeDetails)
+  const hideNodeDetails = useDataStore((s) => s.hideNodeDetails)
   const setShowSelectionGraph = useDataStore((s) => s.setShowSelectionGraph)
 
   useFrame(() => {
@@ -35,6 +40,47 @@ export const NodeControls = memo(() => {
     }
   }, [selectedNode, showSelectionGraph, selectionGraphData, allGraphData])
 
+  const buttons = useMemo(
+    () => [
+      {
+        key: 'control-key-0',
+        colors: buttonColors(hideNodeDetails).menu,
+        icon: <MdMenu />,
+        left: -40,
+        onClick: () => {
+          setHideNodeDetails(!hideNodeDetails)
+        },
+        hide: showSelectionGraph,
+      },
+      {
+        key: 'control-key-1',
+        colors: buttonColors(showSelectionGraph).focus,
+        icon: <MdViewInAr />,
+        left: 0,
+        onClick: () => {
+          const nextState = !showSelectionGraph
+
+          setShowSelectionGraph(nextState)
+
+          if (nextState) {
+            setSidebarOpen(true)
+          }
+        },
+      },
+      {
+        key: 'control-key-2',
+        colors: buttonColors(true).close,
+        icon: <MdClose />,
+        left: 40,
+        onClick: () => {
+          setSelectedNode(null)
+          setShowSelectionGraph(false)
+        },
+      },
+    ],
+    [setShowSelectionGraph, setSelectedNode, setSidebarOpen, setHideNodeDetails, hideNodeDetails, showSelectionGraph],
+  )
+
   if (!selectedNode) {
     return null
   }
@@ -52,32 +98,27 @@ export const NodeControls = memo(() => {
         onPointerUp={(e) => e.stopPropagation()}
         sprite
       >
-        <IconButton
-          backgroundColor={showSelectionGraph ? '#FFDB58bb' : '#fff'}
-          borderColor={showSelectionGraph ? '#FFDB58bb' : '#fff'}
-          fontColor={showSelectionGraph ? '#fff' : '#000'}
-          left={0}
-          onClick={(e) => {
-            e.stopPropagation()
-            setShowSelectionGraph(!showSelectionGraph)
-          }}
-        >
-          <MdViewInAr />
-        </IconButton>
+        {buttons.map((b) => {
+          if (b.hide) {
+            return null
+          }
 
-        <IconButton
-          backgroundColor="#00000066"
-          borderColor="#fff"
-          fontColor="#fff"
-          left={40}
-          onClick={(e) => {
-            e.stopPropagation()
-            setSelectedNode(null)
-            setShowSelectionGraph(false)
-          }}
-        >
-          <MdClose />
-        </IconButton>
+          return (
+            <IconButton
+              key={b.key}
+              backgroundColor={b.colors.backgroundColor}
+              borderColor={b.colors.borderColor}
+              fontColor={b.colors.fontColor}
+              left={b.left}
+              onClick={(e) => {
+                e.stopPropagation()
+                b.onClick()
+              }}
+            >
+              {b.icon}
+            </IconButton>
+          )
+        })}
       </Html>
     </group>
   )
