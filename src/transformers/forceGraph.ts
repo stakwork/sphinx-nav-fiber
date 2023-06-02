@@ -1,8 +1,9 @@
 import { forceCenter, forceCollide, forceLink, forceManyBody, forceSimulation } from 'd3-force-3d'
 import { Vector3 } from 'three'
-import { GraphData, NodeExtended } from '~/types'
+import { generateLinksFromNodeData } from '~/network/fetchGraphData'
+import { NodeExtended } from '~/types'
 
-const layout = forceSimulation()
+const fSimulation = forceSimulation()
   .numDimensions(3)
   .force(
     'link',
@@ -30,39 +31,51 @@ const layout = forceSimulation()
             return 100
         }
       })
-      .strength(0.4),
+      .strength(0.2),
   )
   .force(
     'collide',
     forceCollide()
       .radius((n: NodeExtended) => (n.scale || 1) * 20)
-      .iterations(2),
+      .iterations(1),
   )
   .force('center', forceCenter().strength(0.1))
   .force('charge', forceManyBody())
-  .force('dagRadial', null)
   .velocityDecay(0.2)
   .stop()
 
 const maxTicks = 100
 
-export const generateForceGraphPositions = (data: GraphData, usingCurrentData: boolean) => {
-  const updatedNodes = data.nodes.map((node: NodeExtended) => node)
+const runSimlation = async () => {
+  for (let i = 0; i < maxTicks; i += 1) {
+    console.log('tick', i)
+    await fSimulation.tick()
+  }
+  console.log('sim finished')
+}
 
-  layout.alpha(1).restart()
-  layout.stop().nodes(updatedNodes)
+export const generateForceGraphPositions = async (nodes: NodeExtended[], usingCurrentData: boolean) => {
+  const updatedNodes = nodes.map((node: NodeExtended) => ({ ...node, x: 0, y: 0, z: 0 }))
 
-  layout
+  fSimulation.alpha(1).stop()
+  fSimulation.stop().nodes(updatedNodes)
+
+  let links = generateLinksFromNodeData(updatedNodes, false)
+
+  fSimulation
     .force('link')
     .id((d: NodeExtended) => d.id)
-    .links(data.links.filter((f) => !f.onlyVisibleOnSelect))
+    .links(links.filter((f) => !f.onlyVisibleOnSelect))
 
-  for (let i = 0; i < maxTicks; i += 1) {
-    layout.tick()
-  }
+  fSimulation.alpha(1).restart()
+
+  await runSimlation()
+  fSimulation.stop()
+
+  console.log('move on')
 
   // update link positions
-  const updatedLinks = data.links.map((link) => {
+  const updatedLinks = links.map((link) => {
     const source = link.source as unknown as NodeExtended
     const target = link.target as unknown as NodeExtended
 

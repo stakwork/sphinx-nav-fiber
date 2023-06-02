@@ -3,7 +3,7 @@ import { useFrame } from '@react-three/fiber'
 import { forceCenter, forceCollide, forceLink, forceSimulation } from 'd3-force-3d'
 import { memo, useEffect } from 'react'
 import { useGraphData } from '~/components/DataRetriever'
-import { createLinks } from '~/network/fetchGraphData/getGraphData'
+import { generateLinksFromNodeData } from '~/network/fetchGraphData'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { GraphData, NodeExtended } from '~/types'
 import { Segment } from '../../Segment'
@@ -70,7 +70,7 @@ export const SelectionDataNodes = memo(() => {
         return { ...n, x: 0, y: 0, z: 0, ...fixedPosition }
       })
 
-    const links = createLinks(nodes)
+    const links = generateLinksFromNodeData(nodes, false)
 
     setSelectionData({ nodes, links })
   }, [data, selectedNode, selectedNodeRelativeIds, setSelectionData])

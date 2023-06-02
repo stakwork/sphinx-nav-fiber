@@ -116,20 +116,23 @@ export const App = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchTerm, runSearch, hasBudgetExplanationModalBeSeen])
 
-  // switch graph style
-  useEffect(() => {
+  const repositionGraphDataAfterStyleChange = async () => {
     if (data) {
       if (graphStyle === 'split') {
-        const updatedData = generateSplitGraphPositions(data)
+        const updatedData = generateSplitGraphPositions(data.nodes)
 
         setData(updatedData)
       } else {
-        const updatedData = generateForceGraphPositions(data, true)
+        const updatedData = await generateForceGraphPositions(data.nodes, true)
 
         setData(updatedData)
       }
     }
+  }
 
+  // switch graph style
+  useEffect(() => {
+    repositionGraphDataAfterStyleChange()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [graphStyle])
 
