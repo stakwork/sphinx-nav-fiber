@@ -102,7 +102,7 @@ const Box = styled(Flex)`
   color: ${colors.white};
   margin-top: 20px;
   font-weight: 400;
-  font-size: 20px;
-  line-height: 24px;
+  font-size: 16px;
+  line-height: 22px;
   font-style: italic;
 `

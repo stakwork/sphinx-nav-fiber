@@ -1,2 +1,2 @@
-export const defaultDimensions = [-200, -550, 500, 500] as [number, number, number, number]
-export const withTranscriptDimensions = [-200, 150, 600, 500] as [number, number, number, number]
+export const defaultDimensions = [-200, -430, 360, 400] as [number, number, number, number]
+export const withTranscriptDimensions = [-200, 40, 340, 400] as [number, number, number, number]

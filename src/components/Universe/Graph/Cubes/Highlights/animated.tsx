@@ -65,7 +65,7 @@ const HighlightMesh = ({ color, scale, node }: HMesh) => {
 
   useEffect(
     () =>
-      function () {
+      function cleanup() {
         geometry.dispose()
       },
     [geometry],

@@ -27,6 +27,7 @@ type DataStore = {
   selectedNodeRelativeIds: string[]
   nearbyNodeIds: string[]
   showSelectionGraph: boolean
+  hideNodeDetails: boolean
   setScrollEventsDisabled: (scrollEventsDisabled: boolean) => void
   setCategoryFilter: (categoryFilter: NodeType | null) => void
   setDisableCameraRotation: (rotation: boolean) => void
@@ -45,6 +46,7 @@ type DataStore = {
   setNearbyNodeIds: (_: string[]) => void
   setShowSelectionGraph: (_: boolean) => void
   setSelectionData: (data: GraphData) => void
+  setHideNodeDetails: (_: boolean) => void
 }
 
 const defaultData: Omit<
@@ -68,6 +70,7 @@ const defaultData: Omit<
   | 'setNearbyNodeIds'
   | 'setShowSelectionGraph'
   | 'setSelectionData'
+  | 'setHideNodeDetails'
 > = {
   categoryFilter: null,
   data: null,
@@ -88,6 +91,7 @@ const defaultData: Omit<
   selectedNodeRelativeIds: [],
   nearbyNodeIds: [],
   showSelectionGraph: false,
+  hideNodeDetails: false,
 }
 
 export const useDataStore = create<DataStore>((set, get) => ({
@@ -134,7 +138,13 @@ export const useDataStore = create<DataStore>((set, get) => ({
       const relativeIds =
         data?.nodes.filter((f) => f.ref_id && nodesAreRelatives(f, selectedNode)).map((n) => n?.ref_id || '') || []
 
-      set({ isTimestampLoaded: false, selectedNode, disableCameraRotation: true, selectedNodeRelativeIds: relativeIds })
+      set({
+        hoveredNode: null,
+        isTimestampLoaded: false,
+        selectedNode,
+        disableCameraRotation: true,
+        selectedNodeRelativeIds: relativeIds,
+      })
     }
   },
   setSelectedTimestamp: (selectedTimestamp) => set({ selectedTimestamp }),
@@ -149,6 +159,7 @@ export const useDataStore = create<DataStore>((set, get) => ({
     }
   },
   setShowSelectionGraph: (showSelectionGraph) => set({ showSelectionGraph }),
+  setHideNodeDetails: (hideNodeDetails) => set({ hideNodeDetails }),
 }))
 
 export const useSelectedNode = () => useDataStore((s) => s.selectedNode)
