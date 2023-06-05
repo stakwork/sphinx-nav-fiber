@@ -44,8 +44,6 @@ export const SelectionDataNodes = memo(() => {
       forceCenterStrength: 0.85,
       forceChargeStrength: -20,
       velocityDecay: 0.9,
-      // disableCharge: true,
-      // disableCenter: true,
     })
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
