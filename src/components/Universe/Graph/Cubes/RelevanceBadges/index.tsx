@@ -1,7 +1,8 @@
 import { Html } from '@react-three/drei'
-import { memo, useMemo } from 'react'
+import { useFrame } from '@react-three/fiber'
+import { memo, useEffect, useMemo, useRef } from 'react'
 import styled from 'styled-components'
-import { Vector3 } from 'three'
+import { Group, Vector3 } from 'three'
 import { usePathway } from '~/components/DataRetriever'
 import { Flex } from '~/components/common/Flex'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
@@ -40,12 +41,24 @@ const PathwayBadge = ({ color, position, value, userData }: BadgeProps) => {
   const setSelectedNode = useDataStore((s) => s.setSelectedNode)
   const setHoveredNode = useDataStore((s) => s.setHoveredNode)
   const selectedNode = useSelectedNode()
+  const hoveredNode = useDataStore((s) => s.hoveredNode)
   const selected = userData?.ref_id === selectedNode?.ref_id
+  const ref = useRef<Group | null>(null)
+
+  useEffect(
+    () =>
+      function cleanup() {
+        if (ref.current) {
+          ref.current.clear()
+        }
+      },
+    [ref],
+  )
+
+  const isHovered = useMemo(() => hoveredNode?.ref_id === userData?.ref_id, [hoveredNode?.ref_id, userData?.ref_id])
 
   return (
-    <mesh position={position}>
-      <boxGeometry />
-      <meshStandardMaterial />
+    <group ref={ref} position={position}>
       <Html center sprite>
         <Tag
           color={color}
@@ -58,29 +71,58 @@ const PathwayBadge = ({ color, position, value, userData }: BadgeProps) => {
               setSelectedNode(userData)
             }
           }}
-          onPointerOut={() => {
+          onPointerOut={(e) => {
+            e.stopPropagation()
             setHoveredNode(null)
           }}
-          onPointerOver={() => {
+          onPointerOver={(e) => {
+            e.stopPropagation()
             setHoveredNode(userData || null)
           }}
+          scale={isHovered ? 1.05 : 1}
           selected={selected}
           size={56}
         >
           {value}
         </Tag>
       </Html>
-    </mesh>
+    </group>
   )
 }
 
+const variableVector3 = new Vector3()
+
 const NodeBadge = ({ position, userData, color }: BadgeProps) => {
+  const ref = useRef<Group | null>(null)
   const setSelectedNode = useDataStore((s) => s.setSelectedNode)
+  const setHoveredNode = useDataStore((s) => s.setHoveredNode)
+  const hoveredNode = useDataStore((s) => s.hoveredNode)
+  const showSelectionGraph = useDataStore((s) => s.showSelectionGraph)
 
   const isTopic = (userData?.node_type || '') === 'topic'
 
+  useFrame(() => {
+    if (showSelectionGraph && ref.current) {
+      const newPosition = variableVector3.set(userData?.x || 0, userData?.y || 0, userData?.z || 0)
+
+      ref.current.position.copy(newPosition)
+    }
+  })
+
+  useEffect(
+    () =>
+      function cleanup() {
+        if (ref.current) {
+          ref.current.clear()
+        }
+      },
+    [ref],
+  )
+
+  const isHovered = useMemo(() => hoveredNode?.ref_id === userData?.ref_id, [hoveredNode?.ref_id, userData?.ref_id])
+
   return (
-    <mesh position={position} userData={userData}>
+    <group ref={ref} position={position}>
       <Html center sprite>
         <Tag
           color={color}
@@ -93,19 +135,31 @@ const NodeBadge = ({ position, userData, color }: BadgeProps) => {
               setSelectedNode(userData)
             }
           }}
+          onPointerOut={(e) => {
+            e.stopPropagation()
+            setHoveredNode(null)
+          }}
+          onPointerOver={(e) => {
+            e.stopPropagation()
+            setHoveredNode(userData || null)
+          }}
+          scale={isHovered ? 1.05 : 1}
           selected={false}
           size={isTopic ? 100 : 66}
         >
           {isTopic ? userData?.label : <Image src={userData?.image_url || 'noimage.jpeg'} />}
         </Tag>
       </Html>
-    </mesh>
+    </group>
   )
 }
 
 export const RelevanceBadges = memo(() => {
   const { badges } = usePathway()
-  const selectedNodeRelatives = useDataStore((s) => s.selectedNodeRelatives)
+  const data = useDataStore((s) => s.data)
+  const showSelectionGraph = useDataStore((s) => s.showSelectionGraph)
+  const selectionGraphData = useDataStore((s) => s.selectionGraphData)
+  const selectedNodeRelativeIds = useDataStore((s) => s.selectedNodeRelativeIds)
 
   const pathwayBadges = useMemo(
     () =>
@@ -121,16 +175,20 @@ export const RelevanceBadges = memo(() => {
     [badges],
   )
 
-  const nodeBadges = useMemo(
-    () =>
-      selectedNodeRelatives.map((n) => {
+  const nodeBadges = useMemo(() => {
+    const nodes = showSelectionGraph ? selectionGraphData.nodes : data?.nodes || []
+
+    const badgesToRender = nodes
+      .filter((f) => selectedNodeRelativeIds.includes(f?.ref_id || ''))
+      .map((n) => {
         const color = getBadgeColor(n.node_type || '')
         const position = new Vector3(n?.x || 0, n?.y || 0, n?.z || 0)
 
         return <NodeBadge key={`node-badge-${n.ref_id}`} color={color} position={position} userData={n} />
-      }),
-    [selectedNodeRelatives],
-  )
+      })
+
+    return badgesToRender
+  }, [selectedNodeRelativeIds, data, showSelectionGraph, selectionGraphData])
 
   return (
     <>
@@ -147,6 +205,7 @@ type TagProps = {
   color: string
   size: number
   fontSize: number
+  scale: number
 }
 
 const Tag = styled(Flex)<TagProps>`
@@ -160,6 +219,8 @@ const Tag = styled(Flex)<TagProps>`
   font-size: ${(p: TagProps) => `${p.fontSize}px`};
   cursor: pointer;
   transition: opacity 0.4s;
+  transform: scale(${(p: TagProps) => p.scale});
+
   ${(p: TagProps) =>
     p.selected &&
     `

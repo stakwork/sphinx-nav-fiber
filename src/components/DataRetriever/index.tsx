@@ -56,7 +56,7 @@ export const usePathway = () => {
   return useDataStore(
     useCallback(
       (s) => {
-        const nodes = s.data!.nodes || []
+        const nodes = s.showSelectionGraph ? [] : s.data!.nodes || []
         const selectedNodeIndex = selectedNode ? nodes.findIndex((f) => f.ref_id === selectedNode?.ref_id) : 0
 
         const fromIndex = selectedNodeIndex - PATHWAY_RANGE > 0 ? selectedNodeIndex - PATHWAY_RANGE : 0

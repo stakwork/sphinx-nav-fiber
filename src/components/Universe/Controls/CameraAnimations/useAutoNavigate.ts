@@ -1,18 +1,15 @@
 /* eslint-disable no-param-reassign */
 import type { CameraControls } from '@react-three/drei'
 import { Camera, useFrame, useThree } from '@react-three/fiber'
-import { RefObject, useEffect, useState } from 'react'
+import { RefObject, useEffect, useMemo, useState } from 'react'
+import { Vector3 } from 'three'
 import { playInspectSound } from '~/components/common/Sounds'
 import { useControlStore } from '~/stores/useControlStore'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
-import { NodeExtended } from '~/types'
-import { variableVector3 } from '../../constants'
 import { getNearbyNodeIds } from '../constants'
+import { arriveDistance, selectionGraphCameraPosition, selectionGraphDistance, topicArriveDistance } from './constants'
 
 let lookAtAnimationTimer: ReturnType<typeof setTimeout>
-
-const arriveDistance = 300
-const topicArriveDistance = 600
 
 export const useAutoNavigate = (cameraControlsRef: RefObject<CameraControls | null>) => {
   const selectedNode = useSelectedNode()
@@ -22,7 +19,8 @@ export const useAutoNavigate = (cameraControlsRef: RefObject<CameraControls | nu
   const setUserMovedCamera = useControlStore((s) => s.setUserMovedCamera)
 
   const setNearbyNodeIds = useDataStore((s) => s.setNearbyNodeIds)
-  const data = useDataStore((s) => s.data)
+  const showSelectionGraph = useDataStore((s) => s.showSelectionGraph)
+  const graphData = useDataStore((s) => s.data)
 
   const { camera } = useThree()
 
@@ -32,13 +30,43 @@ export const useAutoNavigate = (cameraControlsRef: RefObject<CameraControls | nu
   // camera movement to selection params
   const [minDistance, setMinDistance] = useState(arriveDistance)
 
+  const destination = useMemo(() => {
+    if (showSelectionGraph) {
+      return new Vector3(0, 0, 0)
+    }
+
+    const selected = graphData?.nodes.find((f) => f.ref_id === selectedNode?.ref_id)
+
+    return new Vector3(selected?.x || 0, selected?.y || 0, selected?.z || 0)
+  }, [showSelectionGraph, selectedNode, graphData])
+
   useEffect(() => {
-    if (selectedNode?.node_type === 'topic') {
+    if (showSelectionGraph) {
+      // explicitly set camera position
+      cameraControlsRef.current?.setLookAt(
+        selectionGraphCameraPosition.x,
+        selectionGraphCameraPosition.y,
+        selectionGraphCameraPosition.z,
+        0,
+        0,
+        0,
+        false,
+      )
+    }
+
+    depart()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showSelectionGraph])
+
+  useEffect(() => {
+    if (showSelectionGraph) {
+      setMinDistance(selectionGraphDistance)
+    } else if (selectedNode?.node_type === 'topic') {
       setMinDistance(topicArriveDistance)
     } else {
       setMinDistance(arriveDistance)
     }
-  }, [selectedNode, setMinDistance])
+  }, [selectedNode, setMinDistance, showSelectionGraph])
 
   const arrive = () => {
     setDistanceReached(true)
@@ -46,7 +74,7 @@ export const useAutoNavigate = (cameraControlsRef: RefObject<CameraControls | nu
 
   const depart = () => {
     if (selectedNode) {
-      const distance = camera.position.distanceTo(variableVector3.set(selectedNode.x, selectedNode.y, selectedNode.z))
+      const distance = camera.position.distanceTo(destination)
 
       playInspectSound(distance)
     }
@@ -76,11 +104,11 @@ export const useAutoNavigate = (cameraControlsRef: RefObject<CameraControls | nu
       // do movement animation
       if (selectedNode) {
         if (!distanceReached) {
-          moveCameraToNode(selectedNode, state.camera)
+          moveCameraToNode(destination, state.camera)
         }
 
         if (!lookAtReached) {
-          turnCameraToNode(selectedNode, state.camera)
+          turnCameraToNode(destination, state.camera)
         }
       }
     }
@@ -102,19 +130,17 @@ export const useAutoNavigate = (cameraControlsRef: RefObject<CameraControls | nu
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedNode])
 
-  const moveCameraToNode = (node: NodeExtended, cam: Camera) => {
-    const mesh = variableVector3.set(node.x, node.y, node.z)
-
-    const distance = cam.position.distanceTo(mesh)
+  const moveCameraToNode = (dest: Vector3, cam: Camera) => {
+    const distance = cam.position.distanceTo(dest)
 
     // stop before colliding with cube
     if (distance < minDistance) {
       arrive()
     } else {
-      cam.position.lerp(mesh, 0.5)
+      cam.position.lerp(dest, 0.5)
       cam.updateProjectionMatrix()
 
-      const nearbyNodesIds = getNearbyNodeIds(data?.nodes || [], camera)
+      const nearbyNodesIds = getNearbyNodeIds(graphData?.nodes || [], camera)
 
       if (nearbyNodesIds) {
         setNearbyNodeIds(nearbyNodesIds)
@@ -122,10 +148,8 @@ export const useAutoNavigate = (cameraControlsRef: RefObject<CameraControls | nu
     }
   }
 
-  const turnCameraToNode = (node: NodeExtended, cam: Camera) => {
-    const mesh = variableVector3.set(node.x, node.y, node.z)
-
-    cameraControlsRef?.current?.setLookAt(cam.position.x, cam.position.y, cam.position.z, mesh.x, mesh.y, mesh.z, true)
+  const turnCameraToNode = (dest: Vector3, cam: Camera) => {
+    cameraControlsRef?.current?.setLookAt(cam.position.x, cam.position.y, cam.position.z, dest.x, dest.y, dest.z, true)
   }
 
   return null

@@ -12,7 +12,6 @@ import { videoTimetoSeconds } from '~/utils/videoTimetoSeconds'
 export const CREATOR_HEADING_HEIGHT = 240
 
 const Wrapper = styled(Flex)`
-  flex: 1;
   flex-direction: column;
   background: ${colors.dashboardHeader};
   border-bottom: 1px solid #101317;
@@ -42,13 +41,13 @@ export const Heading = () => {
     <Wrapper p={20}>
       <Flex direction="row">
         <Flex pr={24}>
-          <Avatar size={130} src={selectedNode?.image_url || 'audio_default.svg'} />
+          <Avatar size={80} src={selectedNode?.image_url || 'audio_default.svg'} />
         </Flex>
 
         <Flex grow={1} shrink={1}>
-          <Text kind="bigHeading">{selectedNode?.show_title || 'Unknown'}</Text>
+          <Text kind="heading">{selectedNode?.show_title || 'Unknown'}</Text>
           <Flex pt={10}>
-            <Text color="mainBottomIcons" kind="medium">
+            <Text color="mainBottomIcons" kind="regular">
               {selectedNode?.episode_title}
             </Text>
           </Flex>

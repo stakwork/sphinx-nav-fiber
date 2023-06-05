@@ -1,20 +1,23 @@
 import { Segment as DreiSegment, SegmentObject } from '@react-three/drei'
+import { useFrame } from '@react-three/fiber'
 import { useEffect, useRef, useState } from 'react'
 import { Vector3 } from 'three'
 import { NODE_RELATIVE_HIGHLIGHT_COLORS } from '~/constants'
-import { useSelectedNode } from '~/stores/useDataStore'
+import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { Link } from '~/types'
 
 type Props = {
   link: Link
+  animated?: boolean
 }
 
-export const Segment = ({ link }: Props) => {
+export const Segment = ({ link, animated }: Props) => {
   const ref = useRef<SegmentObject | null>(null)
   const selectedNode = useSelectedNode()
   const [start, setStart] = useState(new Vector3(0, 0, 0))
   const [end, setEnd] = useState(new Vector3(0, 0, 0))
   const [color, setColor] = useState(0xcccccc)
+  const selectionGraphData = useDataStore((s) => s.selectionGraphData)
 
   useEffect(() => {
     const refId = selectedNode?.ref_id || ''
@@ -30,12 +33,24 @@ export const Segment = ({ link }: Props) => {
 
     if (linkIsSelected) {
       setColor(link.color || NODE_RELATIVE_HIGHLIGHT_COLORS.children.segmentColor)
+    } else if (selectedNode) {
+      setColor(0x555555)
     } else {
       setColor(0xcccccc)
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedNode, link])
+
+  useFrame(() => {
+    if (animated && ref.current) {
+      const source = selectionGraphData.nodes.find((f) => f.ref_id === link.sourceRef)
+      const target = selectionGraphData.nodes.find((f) => f.ref_id === link.targetRef)
+
+      ref.current.start.set(source?.x || 0, source?.y || 0, source?.z || 0)
+      ref.current.end.set(target?.x || 0, target?.y || 0, target?.z || 0)
+    }
+  })
 
   return <DreiSegment ref={ref} color={color} end={end} start={start} />
 }

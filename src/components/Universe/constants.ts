@@ -3,6 +3,8 @@ import { Guests, NodeExtended } from '~/types'
 
 export const variableVector3 = new Vector3(0, 0, 0)
 
+export const outlineEffectColor = 0xffffff
+
 export const nodesAreRelatives = (a: NodeExtended | null, b: NodeExtended | null) => {
   if (!a || !b) {
     return false

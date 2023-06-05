@@ -1,5 +1,5 @@
 import { Float, Html } from '@react-three/drei'
-import { memo } from 'react'
+
 import styled, { css } from 'styled-components'
 import { Vector3 } from 'three'
 import { defaultDimensions, withTranscriptDimensions } from './constants'
@@ -13,7 +13,7 @@ type Props = {
   visible: boolean
 }
 
-export const HtmlPanel = memo(({ speed = 2, intensity = 4, children, withTranscript, position, visible }: Props) => (
+export const HtmlPanel = ({ speed = 2, intensity = 4, children, withTranscript, position, visible }: Props) => (
   <Float
     floatingRange={[1, 2]}
     /* Up/down float intensity, works like a multiplier with floatingRange,defaults to 1 */
@@ -47,7 +47,7 @@ export const HtmlPanel = memo(({ speed = 2, intensity = 4, children, withTranscr
       </HtmlWrap>
     </Html>
   </Float>
-))
+)
 
 HtmlPanel.displayName = 'HtmlPanel'
 
@@ -66,7 +66,6 @@ const HtmlWrap = styled.div<{ dimensions: [number, number, number, number]; visi
       user-select: ${visible ? 'auto' : 'none'};
     `}
   position: absolute;
-  width: 420px;
   border-radius: 20px;
   font-size: 80px;
   color: #fff;

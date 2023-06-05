@@ -8,7 +8,7 @@ export const Person = () => {
 
   return (
     <Flex direction="row" px={24} py={16}>
-      <Avatar size={130} src={selectedNode?.image_url || 'person_placeholder2.png'} />
+      <Avatar size={80} src={selectedNode?.image_url || 'person_placeholder2.png'} />
       <Flex p={20}>
         <Text color="primaryText1" kind="bigHeading">
           {selectedNode?.label}

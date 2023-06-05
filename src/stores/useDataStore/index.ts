@@ -13,6 +13,7 @@ type DataStore = {
   disableCameraRotation: boolean
   graphRadius: number | null
   data: GraphData | null
+  selectionGraphData: GraphData
   graphStyle: GraphStyle
   isFetching: boolean
   isTimestampLoaded: boolean
@@ -23,8 +24,10 @@ type DataStore = {
   queuedSources: Sources[] | null
   sphinxModalIsOpen: boolean
   cameraFocusTrigger: boolean
-  selectedNodeRelatives: NodeExtended[]
+  selectedNodeRelativeIds: string[]
   nearbyNodeIds: string[]
+  showSelectionGraph: boolean
+  hideNodeDetails: boolean
   setScrollEventsDisabled: (scrollEventsDisabled: boolean) => void
   setCategoryFilter: (categoryFilter: NodeType | null) => void
   setDisableCameraRotation: (rotation: boolean) => void
@@ -41,6 +44,9 @@ type DataStore = {
   setCameraFocusTrigger: (_: boolean) => void
   setIsFetching: (_: boolean) => void
   setNearbyNodeIds: (_: string[]) => void
+  setShowSelectionGraph: (_: boolean) => void
+  setSelectionData: (data: GraphData) => void
+  setHideNodeDetails: (_: boolean) => void
 }
 
 const defaultData: Omit<
@@ -62,9 +68,13 @@ const defaultData: Omit<
   | 'setGraphRadius'
   | 'setGraphStyle'
   | 'setNearbyNodeIds'
+  | 'setShowSelectionGraph'
+  | 'setSelectionData'
+  | 'setHideNodeDetails'
 > = {
   categoryFilter: null,
   data: null,
+  selectionGraphData: { nodes: [], links: [] },
   scrollEventsDisabled: false,
   disableCameraRotation: false,
   graphRadius: isChileGraph ? 1600 : 3056, // calculated from initial load
@@ -78,8 +88,10 @@ const defaultData: Omit<
   sources: null,
   sphinxModalIsOpen: false,
   cameraFocusTrigger: false,
-  selectedNodeRelatives: [],
+  selectedNodeRelativeIds: [],
   nearbyNodeIds: [],
+  showSelectionGraph: false,
+  hideNodeDetails: false,
 }
 
 export const useDataStore = create<DataStore>((set, get) => ({
@@ -103,11 +115,13 @@ export const useDataStore = create<DataStore>((set, get) => ({
       sphinxModalIsOpen: false,
       disableCameraRotation: false,
       nearbyNodeIds: [],
-      selectedNodeRelatives: [],
+      selectedNodeRelativeIds: [],
+      showSelectionGraph: false,
     })
   },
   setIsFetching: (isFetching) => set({ isFetching }),
   setData: (data) => set({ data }),
+  setSelectionData: (selectionGraphData) => set({ selectionGraphData }),
   setScrollEventsDisabled: (scrollEventsDisabled) => set({ scrollEventsDisabled }),
   setCategoryFilter: (categoryFilter) => set({ categoryFilter }),
   setDisableCameraRotation: (rotation) => set({ disableCameraRotation: rotation }),
@@ -121,9 +135,16 @@ export const useDataStore = create<DataStore>((set, get) => ({
     if (stateSelectedNode?.ref_id !== selectedNode?.ref_id) {
       const { data } = get()
 
-      const relatives = data?.nodes.filter((f) => nodesAreRelatives(f, selectedNode)) || []
+      const relativeIds =
+        data?.nodes.filter((f) => f.ref_id && nodesAreRelatives(f, selectedNode)).map((n) => n?.ref_id || '') || []
 
-      set({ isTimestampLoaded: false, selectedNode, disableCameraRotation: true, selectedNodeRelatives: relatives })
+      set({
+        hoveredNode: null,
+        isTimestampLoaded: false,
+        selectedNode,
+        disableCameraRotation: true,
+        selectedNodeRelativeIds: relativeIds,
+      })
     }
   },
   setSelectedTimestamp: (selectedTimestamp) => set({ selectedTimestamp }),
@@ -137,6 +158,8 @@ export const useDataStore = create<DataStore>((set, get) => ({
       set({ nearbyNodeIds })
     }
   },
+  setShowSelectionGraph: (showSelectionGraph) => set({ showSelectionGraph }),
+  setHideNodeDetails: (hideNodeDetails) => set({ hideNodeDetails }),
 }))
 
 export const useSelectedNode = () => useDataStore((s) => s.selectedNode)

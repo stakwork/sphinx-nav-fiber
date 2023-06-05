@@ -112,7 +112,7 @@ const dataSeriesAdapter = (data: FetchDataResponse['data_series']) => {
   return dataSeries
 }
 
-const createLinks = (nodes: NodeExtended[]): Link[] => {
+export const createLinks = (nodes: NodeExtended[]): Link[] => {
   const links: Link[] = []
 
   nodes.forEach((node) => {
@@ -120,14 +120,23 @@ const createLinks = (nodes: NodeExtended[]): Link[] => {
 
     children?.forEach((childRefId: string) => {
       if (node.ref_id) {
+        const child = nodes.find((f) => f.ref_id === childRefId)
+
+        if (!child) {
+          return
+        }
+
+        const sourcePosition = new Vector3(node.x || 0, node.y || 0, node.z || 0)
+        const targetPosition = new Vector3(child?.x || 0, child?.y || 0, child?.z || 0)
+
         links.push({
           onlyVisibleOnSelect: false,
           source: node.ref_id,
           sourceRef: node.ref_id,
-          sourcePosition: new Vector3(0, 0, 0),
+          sourcePosition,
           target: childRefId,
           targetRef: childRefId,
-          targetPosition: new Vector3(0, 0, 0),
+          targetPosition,
         })
       }
     })

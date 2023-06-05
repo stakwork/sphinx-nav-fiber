@@ -1,13 +1,18 @@
 import { Instance, Instances } from '@react-three/drei'
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useGraphData } from '~/components/DataRetriever'
-import { useDataStore } from '~/stores/useDataStore'
+import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { boxGeometry, isMainTopic } from '../constants'
 import { blurryMaterial } from './constants'
 
-export const BlurryInstances = () => {
+type InstanceProps = {
+  hide?: boolean
+}
+
+export const BlurryInstances = ({ hide }: InstanceProps) => {
   const data = useGraphData()
   const nearbyNodeIds = useDataStore((s) => s.nearbyNodeIds)
+  const selectedNode = useSelectedNode()
 
   const instances = useMemo(
     () =>
@@ -16,7 +21,7 @@ export const BlurryInstances = () => {
 
         return (
           <Instance
-            key={node.id}
+            key={node.ref_id || node.id}
             color={node.node_type === 'guest' ? 'orange' : 'lightgray'}
             name={node.id}
             position={[node.x, node.y, node.z]}
@@ -29,8 +34,16 @@ export const BlurryInstances = () => {
     [nearbyNodeIds, data.nodes],
   )
 
+  useEffect(() => {
+    if (selectedNode) {
+      blurryMaterial.opacity = 0.4
+    } else {
+      blurryMaterial.opacity = 0.9
+    }
+  }, [selectedNode])
+
   return (
-    <Instances geometry={boxGeometry} material={blurryMaterial}>
+    <Instances geometry={boxGeometry} material={blurryMaterial} visible={!hide}>
       {instances}
     </Instances>
   )
