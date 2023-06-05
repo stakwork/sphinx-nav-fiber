@@ -22,11 +22,11 @@ export const GraphLoadingIcon = () => {
   return (
     <>
       <Float speed={2}>
-        <Text ref={textRef} color={0xffffff} position={[0, 540, 0]} scale={110} strokeColor="#fff">
+        <Text ref={textRef} color={0xffffff} position={[0, 1000, 0]} scale={180} strokeColor="#fff">
           {FetchLoaderText()}
         </Text>
       </Float>
-      <mesh ref={ref} rotation-y={Math.PI * 0.5} rotation-z={Math.PI * 0.5} scale={40}>
+      <mesh ref={ref} position={[0, -100, 0]} rotation-y={Math.PI * 0.5} rotation-z={Math.PI * 0.5} scale={90}>
         <boxGeometry args={[10, 10, 10]} />
         <meshStandardMaterial color={0xffffff} metalness={1.4} wireframe />
       </mesh>
