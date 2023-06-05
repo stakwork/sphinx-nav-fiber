@@ -1,6 +1,4 @@
-/* eslint-disable no-console */
 import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill'
-
 import react from '@vitejs/plugin-react'
 import { isArray, mergeWith } from 'lodash'
 
@@ -13,7 +11,7 @@ import viteTsconfigPaths from 'vite-tsconfig-paths'
 const commonConfigOptions = ({ mode }: { mode: Mode }): UserConfigExport => {
   process.env = { ...process.env, ...loadEnv(mode, process.cwd()) }
 
-  return {
+  const config: UserConfigExport = {
     resolve: {
       alias: {
         stream: 'stream-browserify',
@@ -22,11 +20,10 @@ const commonConfigOptions = ({ mode }: { mode: Mode }): UserConfigExport => {
     },
     plugins: [react(), viteTsconfigPaths(), svgrPlugin(), eslint(), builtins({ crypto: false })],
     define: {
-      'process.env': process.env,
       APP_VERSION: JSON.stringify(process.env.npm_package_version),
-      REACT_APP_IS_E2E: process.env.REACT_APP_IS_E2E,
-      REACT_APP_API_URL: process.env.REACT_APP_API_URL,
     },
+
+    base: mode === 'production' ? process.env.REACT_APP_API_URL : undefined,
 
     optimizeDeps: {
       include: ['base64-arraybuffer', 'diffie-hellman'],
@@ -43,6 +40,8 @@ const commonConfigOptions = ({ mode }: { mode: Mode }): UserConfigExport => {
       },
     },
   }
+
+  return config
 }
 
 const devConfigOptions: UserConfigExport = {
@@ -64,6 +63,7 @@ const prodConfigOptions: UserConfigExport = {
       resolve: {},
       build: {
         outDir: 'build',
+        // rollupOptions: { external: ['prop-types'] },
       },
     },
     customizer,
