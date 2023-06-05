@@ -28,6 +28,7 @@ type DataStore = {
   nearbyNodeIds: string[]
   showSelectionGraph: boolean
   hideNodeDetails: boolean
+
   setScrollEventsDisabled: (scrollEventsDisabled: boolean) => void
   setCategoryFilter: (categoryFilter: NodeType | null) => void
   setDisableCameraRotation: (rotation: boolean) => void

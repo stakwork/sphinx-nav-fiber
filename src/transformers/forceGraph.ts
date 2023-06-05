@@ -40,6 +40,7 @@ export const generateForceGraphPositions = async (nodes: NodeExtended[], usingCu
   })
 
   runSimulationPhase(forceSimulation)
+
   runCollisionPhase(forceSimulation)
 
   forceSimulation.stop()
