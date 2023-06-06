@@ -6,7 +6,6 @@ import { MathUtils } from 'three'
 import { useFrame } from '@react-three/fiber'
 import { RefObject, useCallback, useEffect } from 'react'
 
-import * as THREE from 'three'
 import { useControlStore } from '~/stores/useControlStore'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { getNearbyNodeIds } from '../constants'
@@ -39,28 +38,6 @@ export const useCameraAnimations = (
     }
   }, [enabled])
 
-  const rotateWorld = useCallback(() => {
-    cameraAnimation?.kill()
-
-    const cameraControls = cameraControlsRef.current
-
-    if (cameraControls) {
-      const rotateCycle = gsap.to(cameraControls.camera, {
-        azimuthAngle: (cameraControls.azimuthAngle || 0) + 360 * THREE.MathUtils.DEG2RAD,
-        duration: 280,
-        // https://greensock.com/ease-visualizer/
-        ease: 'power',
-        overwrite: true,
-        paused: true,
-      })
-
-      rotateCycle.play(0)
-
-      cameraAnimation = rotateCycle
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
   const doIntroAnimation = useCallback(() => {
     cameraAnimation?.kill()
 
@@ -74,7 +51,6 @@ export const useCameraAnimations = (
       },
       onComplete: () => {
         cameraAnimation = null
-        rotateWorld()
       },
       onInterrupt() {
         moveCycle.kill()
@@ -97,7 +73,7 @@ export const useCameraAnimations = (
     moveCycle.play()
     cameraAnimation = moveCycle
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rotateWorld])
+  }, [])
 
   useEffect(() => {
     // graphRadius is calculated from initial graph render
@@ -110,14 +86,6 @@ export const useCameraAnimations = (
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [graphRadius])
-
-  useEffect(() => {
-    if (enabled && !cameraAnimation) {
-      rotateWorld()
-    }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data])
 
   useEffect(() => {
     if (!selectedNode && cameraControlsRef.current) {
