@@ -1,5 +1,6 @@
 import { Vector3 } from 'three'
-import { GraphData, Link, NodeExtended } from '~/types'
+import { generateLinksFromNodeData } from '~/network/fetchGraphData'
+import { Link, NodeExtended } from '~/types'
 
 const universeScale = 5000
 const padding = 300
@@ -190,15 +191,13 @@ const sortNodes = (nodes: NodeExtended[]) => {
   return sortedNodes
 }
 
-export const generateSplitGraphPositions = (data: GraphData) => {
+export const generateSplitGraphPositions = (nodes: NodeExtended[]) => {
   // sort parent then children
-  const cleanNodes = sortNodes(data.nodes)
-
-  const cleanLinks = data.links.map((l) => l)
+  const sortedNodes = sortNodes(nodes)
 
   const mappedNodes: NodeExtended[] = []
 
-  const updatedNodes: NodeExtended[] = cleanNodes.map((node: NodeExtended) => {
+  const updatedNodes: NodeExtended[] = sortedNodes.map((node: NodeExtended) => {
     let position = new Vector3(0, 0, 0)
 
     switch (node.node_type) {
@@ -209,10 +208,10 @@ export const generateSplitGraphPositions = (data: GraphData) => {
         position = generateTopicNodePosition()
         break
       case 'data_series':
-        position = generateNodePosition({} as NodeExtended, cleanNodes, mappedNodes)
+        position = generateNodePosition({} as NodeExtended, sortedNodes, mappedNodes)
         break
       default:
-        position = generateNodePosition(node, cleanNodes, mappedNodes)
+        position = generateNodePosition(node, sortedNodes, mappedNodes)
         break
     }
 
@@ -226,8 +225,10 @@ export const generateSplitGraphPositions = (data: GraphData) => {
     return updated
   })
 
+  const links = generateLinksFromNodeData(updatedNodes, true)
+
   // do links
-  const updatedLinks = cleanLinks.map((l: Link) => {
+  const updatedLinks = links.map((l: Link) => {
     const sourceNode = updatedNodes.find((f) => f.ref_id === l.sourceRef)
     const targetNode = updatedNodes.find((f) => f.ref_id === l.targetRef)
     let onlyVisibleOnSelect = false

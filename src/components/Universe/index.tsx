@@ -11,6 +11,7 @@ import { useControlStore } from '~/stores/useControlStore'
 import { colors } from '~/utils/colors'
 import { addToGlobalForE2e } from '~/utils/tests'
 import { Controls } from './Controls'
+import { initialCameraPosition } from './Controls/CameraAnimations/constants'
 import { Graph } from './Graph'
 import { Lights } from './Lights'
 import { Overlay } from './Overlay'
@@ -79,7 +80,7 @@ export const Universe = () => {
             aspect: 1920 / 1080,
             far: 30000,
             near: 1,
-            position: [1000, 0, 5],
+            position: [initialCameraPosition.x, initialCameraPosition.y, initialCameraPosition.z],
           }}
           id="universe-canvas"
           onCreated={(s) => addToGlobalForE2e(s, 'threeState')}

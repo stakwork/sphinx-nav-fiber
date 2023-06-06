@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useControlStore } from '~/stores/useControlStore'
 import { useDataStore } from '~/stores/useDataStore'
 import { useCameraAnimations } from './CameraAnimations'
-import { introAnimationTargetPosition } from './CameraAnimations/constants'
+import { initialCameraPosition } from './CameraAnimations/constants'
 import { getNearbyNodeIds } from './constants'
 
 type Props = {
@@ -32,9 +32,9 @@ export const Controls = ({ disableAnimations }: Props) => {
     // reset camera on graph style change
     if (cameraControlsRef.current) {
       cameraControlsRef.current.setLookAt(
-        introAnimationTargetPosition.x,
-        introAnimationTargetPosition.y,
-        introAnimationTargetPosition.z,
+        initialCameraPosition.x,
+        initialCameraPosition.y,
+        initialCameraPosition.z,
         0,
         0,
         0,
