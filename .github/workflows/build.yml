@@ -1,0 +1,28 @@
+name: Generate Build Files and Update version #
+on:
+ push:
+    branches:
+      - master
+
+jobs:
+  yarn-build-and-update-version:
+    name: build
+    runs-on: 
+      - ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'yarn'
+      - name: Build and Version
+        run: |
+          CI=false yarn install && CI=false yarn run build
+          git config user.name 'Github Actions'
+          git config user.email github-actions@github.com
+          git add ./build -f
+          git commit -m "ci: automatic build fixes" || echo -n
+          npm version patch -m "ci: bump version to %s"
+          git push --follow-tags
