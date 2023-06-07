@@ -62,6 +62,7 @@ module.exports = {
       {
         packageDir: ['.'],
         peerDependencies: true,
+        devDependencies: true,
       },
     ],
     'import/no-unresolved': 'off',
