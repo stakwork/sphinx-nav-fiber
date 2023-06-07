@@ -254,16 +254,16 @@ export const getGraphData = async (dataInit: FetchDataResponse, searchterm: stri
     }
 
     // do links
-    let links = createLinks(nodes)
+    let links = []
 
     // give nodes and links positions based on graphStyle
     if (graphStyle === 'split') {
-      const dataWithPositions = generateSplitGraphPositions({ links, nodes })
+      const dataWithPositions = generateSplitGraphPositions(nodes)
 
       links = dataWithPositions.links
       nodes = dataWithPositions.nodes
     } else {
-      const dataWithPositions = generateForceGraphPositions({ links, nodes }, false)
+      const dataWithPositions = await generateForceGraphPositions(nodes, false)
 
       links = dataWithPositions.links
       nodes = dataWithPositions.nodes

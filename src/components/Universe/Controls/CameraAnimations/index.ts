@@ -10,7 +10,7 @@ import * as THREE from 'three'
 import { useControlStore } from '~/stores/useControlStore'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { getNearbyNodeIds } from '../constants'
-import { introAnimationTargetPosition } from './constants'
+import { initialCameraPosition } from './constants'
 import { useAutoNavigate } from './useAutoNavigate'
 
 const autoRotateSpeed = 1
@@ -122,9 +122,9 @@ export const useCameraAnimations = (
   useEffect(() => {
     if (!selectedNode && cameraControlsRef.current) {
       cameraControlsRef.current.setLookAt(
-        introAnimationTargetPosition.x,
-        introAnimationTargetPosition.y,
-        introAnimationTargetPosition.z,
+        initialCameraPosition.x,
+        initialCameraPosition.y,
+        initialCameraPosition.z,
         0,
         0,
         0,

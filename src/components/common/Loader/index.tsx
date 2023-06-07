@@ -46,3 +46,20 @@ export const Loader = ({ color = 'white' }: Props) => {
     </Flex>
   )
 }
+
+export const FetchLoaderText = () => {
+  const [msgIndex, setMsgIndex] = useState(0)
+
+  useEffect(() => {
+    if (msgIndex === messages.length - 1) {
+      return
+    }
+
+    const messageTimeout = setTimeout(() => setMsgIndex((index) => (index + 1) % messages.length), 1000)
+
+    // eslint-disable-next-line consistent-return
+    return () => clearTimeout(messageTimeout)
+  }, [msgIndex])
+
+  return `${messages[msgIndex]}...`
+}
