@@ -10,7 +10,7 @@ import { DataRetriever } from '~/components/DataRetriever'
 import { GlobalStyle } from '~/components/GlobalStyle'
 import { Universe } from '~/components/Universe'
 import { Flex } from '~/components/common/Flex'
-import { isDevelopment, isE2E } from '~/constants'
+import { getUrlFormEnv, isDevelopment, isE2E } from '~/constants'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
 import { useModal } from '~/stores/useModalStore'
@@ -84,6 +84,12 @@ export const App = () => {
     setTeachMeAnswer('')
     setCategoryFilter(null)
   })
+
+  useEffect(() => {
+    console.warn(123)
+
+    console.warn(getUrlFormEnv())
+  }, [])
 
   const runSearch = useCallback(async () => {
     if (searchTerm) {

@@ -63,10 +63,14 @@ const fetchNodes = async (search: string) => {
   }
 
   if (isDevelopment || isE2E) {
+    console.warn('getting dev search request', search)
+
     const response = await api.get<FetchDataResponse>(`/searching?word=${search}&free=true`)
 
     return response
   }
+
+  console.warn('getting search request', search)
 
   const lsatToken = await getLSat('searching')
 
@@ -227,6 +231,8 @@ const getGraphData = async (searchterm: string) => {
 
   try {
     const dataInit = await fetchNodes(searchterm)
+
+    console.warn('got resp')
 
     const dataSeries = dataInit.data_series
       ? [

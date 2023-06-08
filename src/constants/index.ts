@@ -6,9 +6,13 @@ export const isDevelopment = !!(
   origin === 'https://sphinx-jarvis-david.sphinx1.repl.co'
 )
 
-const getUrlFormEnv = () => (import.meta.env.BASE_URL !== '/' ? import.meta.env.BASE_URL : null)
+console.warn(isDevelopment)
+
+export const getUrlFormEnv = () => (import.meta.env.BASE_URL !== '/' ? import.meta.env.BASE_URL : null)
 
 export const API_URL = getUrlFormEnv() || apiUrlFromSwarmHost() || 'https://knowledge-graph.sphinx.chat'
+
+console.warn(API_URL)
 
 export const isChileGraph = API_URL.includes('boltwall')
 
