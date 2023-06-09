@@ -1,6 +1,7 @@
 import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill'
 import react from '@vitejs/plugin-react'
 import { isArray, mergeWith } from 'lodash'
+import rollupNodePolyFill from 'rollup-plugin-node-polyfills'
 
 import builtins from 'rollup-plugin-node-builtins'
 import { UserConfigExport, defineConfig, loadEnv } from 'vite'
@@ -22,8 +23,6 @@ const commonConfigOptions = ({ mode }: { mode: Mode }): UserConfigExport => {
     define: {
       APP_VERSION: JSON.stringify(process.env.npm_package_version),
     },
-
-    base: mode === 'production' ? process.env.REACT_APP_API_URL : undefined,
 
     optimizeDeps: {
       include: ['base64-arraybuffer', 'diffie-hellman'],
@@ -63,7 +62,13 @@ const prodConfigOptions: UserConfigExport = {
       resolve: {},
       build: {
         outDir: 'build',
-        // rollupOptions: { external: ['prop-types'] },
+      },
+      rollupOptions: {
+        plugins: [
+          // Enable rollup polyfills plugin
+          // used during production bundling
+          rollupNodePolyFill(),
+        ],
       },
     },
     customizer,
