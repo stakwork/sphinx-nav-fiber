@@ -41,9 +41,10 @@ export const Highlights = () => {
 
   return (
     <>
-      {highlights.map((h) => (
+      {highlights.map((h, i) => (
         <mesh
-          key={`highlight-${h.userData.ref_id}`}
+          // eslint-disable-next-line react/no-array-index-key
+          key={`highlight-${h.userData.ref_id}-${i}`}
           geometry={boxGeometry}
           material={materials[h.color]}
           position={h.position}

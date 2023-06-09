@@ -16,12 +16,13 @@ export const BlurryInstances = ({ hide }: InstanceProps) => {
 
   const instances = useMemo(
     () =>
-      data.nodes.map((node) => {
+      data.nodes.map((node, i) => {
         const visible = !nearbyNodeIds.includes(node.ref_id || '') && !isMainTopic(node)
 
         return (
           <Instance
-            key={node.ref_id || node.id}
+            // eslint-disable-next-line react/no-array-index-key
+            key={`${node.ref_id || node.id}-instanced-node-${i}`}
             color={node.node_type === 'guest' ? 'orange' : 'lightgray'}
             name={node.id}
             position={[node.x, node.y, node.z]}
