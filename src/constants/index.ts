@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const { origin, host } = window.location
 
 export const isDevelopment = !!(
@@ -6,9 +7,11 @@ export const isDevelopment = !!(
   origin === 'https://sphinx-jarvis-david.sphinx1.repl.co'
 )
 
-const getUrlFormEnv = () => (import.meta.env.BASE_URL !== '/' ? import.meta.env.BASE_URL : null)
+const getUrlFormEnv = () => import.meta.env.VITE_APP_API_URL
 
 export const API_URL = getUrlFormEnv() || apiUrlFromSwarmHost() || 'https://knowledge-graph.sphinx.chat'
+console.log('🚀 ~ file: index.ts:12 ~ API_URL:', API_URL)
+console.log('🚀 ~ file: index.ts:12 ~ getUrlFormEnv:', getUrlFormEnv())
 
 export const isChileGraph = API_URL.includes('boltwall')
 

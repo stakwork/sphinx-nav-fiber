@@ -6,6 +6,9 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: sphinx_nav_fiber
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
     restart: unless-stopped
     ports:
-      - "3000:3000"
+      - '3000:3000'
