@@ -158,7 +158,6 @@ export const useAutoNavigate = (cameraControlsRef: RefObject<CameraControls | nu
       setDistanceReached(true)
     } else {
       cam.position.lerp(dest, 0.5)
-      cam.updateProjectionMatrix()
 
       const nearbyNodesIds = getNearbyNodeIds(graphData?.nodes || [], camera)
 
