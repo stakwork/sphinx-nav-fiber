@@ -17,7 +17,7 @@ export const BlurryInstances = ({ hide }: InstanceProps) => {
   const instances = useMemo(
     () =>
       data.nodes.map((node, i) => {
-        const isSelectedNode = node?.ref_id == selectedNode?.ref_id
+        const isSelectedNode = node?.ref_id === selectedNode?.ref_id
         const visible = !nearbyNodeIds.includes(node.ref_id || '') && !isMainTopic(node) && !isSelectedNode
 
         return (

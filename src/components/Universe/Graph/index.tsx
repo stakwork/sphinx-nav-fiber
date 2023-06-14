@@ -21,7 +21,7 @@ export const Graph = () => {
     }
 
     return 0.4
-  }, [showSelectionGraph, graphStyle])
+  }, [showSelectionGraph])
 
   if (isLoading) {
     return <GraphLoadingIcon />

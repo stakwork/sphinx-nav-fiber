@@ -49,9 +49,12 @@ export const Cube = memo(({ node, hide, animated }: Props) => {
   const scale = useMemo(() => {
     if (showSelectionGraph && isSelected) {
       return 20
-    } else if (isSelected) {
+    }
+
+    if (isSelected) {
       return (node.scale || 1) * 1.2
     }
+
     return node.scale
   }, [node, isSelected, showSelectionGraph])
 

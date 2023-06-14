@@ -121,6 +121,7 @@ export const App = () => {
   const repositionGraphDataAfterStyleChange = () => {
     if (data) {
       let updatedData: GraphData | null = null
+
       if (graphStyle === 'split') {
         updatedData = generateSplitGraphPositions(data.nodes)
       } else if (graphStyle === 'sphere') {

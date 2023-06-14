@@ -50,39 +50,6 @@ function generateNodePosition(node: NodeExtended, allNodes: NodeExtended[], mapp
   return new Vector3(center.x * amp, center.y * amp, center.z * amp)
 }
 
-const generateShowNodePosition = () => {
-  const { scale, position } = universeCube
-
-  const center = {
-    x: position.x + Math.random() * scale - scale * 0.5,
-    y: position.y + Math.random() * scale - scale * 0.5,
-    z: position.z + Math.random() * scale - scale * 0.5,
-  }
-  // apply perlin noise
-  const amp = 10
-
-  return new Vector3(center.x * amp, center.y * amp, center.z * amp)
-}
-
-const generateRandomFixedPosition = () => {
-  const { scale, position } = universeCube
-
-  const amp = 10
-
-  const x = (position.x + Math.random() * scale - scale * 0.5) * amp
-  const y = (position.y + Math.random() * scale - scale * 0.5) * amp
-  const z = (position.z + Math.random() * scale - scale * 0.5) * amp
-
-  return {
-    x,
-    fx: x,
-    y,
-    fy: y,
-    z,
-    fz: z,
-  }
-}
-
 const runSimulationPhase = (simulation: ForceSimulation) => {
   for (let i = 0; i < simulationTicks; i += 1) {
     simulation.tick()
@@ -106,7 +73,7 @@ export const generateSphereGraphPositions = (nodes: NodeExtended[]) => {
   const mappedNodes: NodeExtended[] = []
 
   const updatedNodes = nodes.map((node: NodeExtended) => {
-    let position = generateNodePosition(node, nodes, mappedNodes)
+    const position = generateNodePosition(node, nodes, mappedNodes)
 
     const updatedNode = { ...node, ...position }
 

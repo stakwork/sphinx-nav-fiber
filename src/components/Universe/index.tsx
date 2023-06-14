@@ -26,9 +26,10 @@ const Content = () => {
 
   const selectedNode = useSelectedNode()
 
-  const outlineColor: number = useMemo(() => {
-    return selectedNode?.node_type ? (getNodeColorByType(selectedNode.node_type) as number) : outlineEffectColor
-  }, [selectedNode])
+  const outlineColor: number = useMemo(
+    () => (selectedNode?.node_type ? (getNodeColorByType(selectedNode.node_type) as number) : outlineEffectColor),
+    [selectedNode],
+  )
 
   return (
     <>
@@ -40,7 +41,7 @@ const Content = () => {
 
       <Selection>
         <EffectComposer autoClear={false} multisampling={8}>
-          <Vignette eskil={false} offset={0.05} darkness={0.5} />
+          <Vignette darkness={0.7} eskil={false} offset={0.05} />
 
           <Bloom
             luminanceThreshold={1} // luminance threshold. Raise this value to mask out darker elements in the scene.

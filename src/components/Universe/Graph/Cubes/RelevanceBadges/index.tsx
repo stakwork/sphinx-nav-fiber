@@ -156,7 +156,7 @@ export const RelevanceBadges = memo(() => {
             />
           ),
       ),
-    [badges],
+    [badges, selectedNode],
   )
 
   const nodeBadges = useMemo(() => {
@@ -167,8 +167,6 @@ export const RelevanceBadges = memo(() => {
       .map((n) => {
         const color = getNodeColorByType(n.node_type || '', true) as string
         const position = new Vector3(n?.x || 0, n?.y || 0, n?.z || 0)
-
-        console.log('color', color)
 
         return <NodeBadge key={`node-badge-${n.ref_id}`} color={color} position={position} userData={n} />
       })

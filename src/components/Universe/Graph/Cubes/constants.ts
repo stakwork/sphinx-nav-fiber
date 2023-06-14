@@ -10,7 +10,7 @@ export const meshRenderLimit = 500
 export const meshRenderRadius = 600
 
 export const getNodeColorByType = (nodeType: string, returnString?: boolean) => {
-  let color: string = '0x32cd32'
+  let color = '0x32cd32'
 
   switch (nodeType) {
     case 'clip':

@@ -7,7 +7,7 @@ import { saveSearchTerm } from '~/utils/relayHelper/index'
 
 type GraphStyle = 'split' | 'force' | 'sphere'
 
-export const graphStyles: GraphStyle[] = ['split', 'sphere', 'force']
+export const graphStyles: GraphStyle[] = ['split', 'force', 'sphere']
 
 type DataStore = {
   scrollEventsDisabled: boolean
