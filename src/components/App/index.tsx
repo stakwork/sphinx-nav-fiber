@@ -15,11 +15,13 @@ import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
 import { useModal } from '~/stores/useModalStore'
 import { useTeachStore } from '~/stores/useTeachStore'
+import { generateForceGraphPositions } from '~/transformers/forceGraph'
+import { generateSphereGraphPositions } from '~/transformers/sphereGraph'
+import { generateSplitGraphPositions } from '~/transformers/splitGraph'
+import { GraphData } from '~/types'
 import { colors } from '~/utils/colors'
 import { E2ETests } from '~/utils/tests'
 import version from '~/utils/versionHelper'
-import { generateForceGraphPositions } from '../../transformers/forceGraph'
-import { generateSplitGraphPositions } from '../../transformers/splitGraph'
 import { Preloader } from '../Universe/Preloader'
 import { AppBar } from './AppBar'
 import { FooterMenu } from './FooterMenu'
@@ -116,15 +118,18 @@ export const App = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchTerm, runSearch, hasBudgetExplanationModalBeSeen])
 
-  const repositionGraphDataAfterStyleChange = async () => {
+  const repositionGraphDataAfterStyleChange = () => {
     if (data) {
+      let updatedData: GraphData | null = null
       if (graphStyle === 'split') {
-        const updatedData = generateSplitGraphPositions(data.nodes)
-
-        setData(updatedData)
+        updatedData = generateSplitGraphPositions(data.nodes)
+      } else if (graphStyle === 'sphere') {
+        updatedData = generateSphereGraphPositions(data.nodes)
       } else {
-        const updatedData = await generateForceGraphPositions(data.nodes, true)
+        updatedData = generateForceGraphPositions(data.nodes)
+      }
 
+      if (updatedData) {
         setData(updatedData)
       }
     }

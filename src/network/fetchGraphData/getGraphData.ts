@@ -2,8 +2,9 @@
 import { Vector3 } from 'three'
 import { AWS_IMAGE_BUCKET_URL, CLOUDFRONT_IMAGE_BUCKET_URL } from '~/constants'
 import { useDataStore } from '~/stores/useDataStore'
+import { generateForceGraphPositions } from '~/transformers/forceGraph'
+import { generateSphereGraphPositions } from '~/transformers/sphereGraph'
 import { FetchDataResponse, Guests, Link, Node, NodeExtended } from '~/types'
-import { generateForceGraphPositions } from '../../transformers/forceGraph'
 import { generateSplitGraphPositions } from '../../transformers/splitGraph'
 import { defaultData, maxScale, shouldIncludeTopics } from './const'
 import { GuestMap, TopicMap } from './types'
@@ -262,8 +263,13 @@ export const getGraphData = async (dataInit: FetchDataResponse, searchterm: stri
 
       links = dataWithPositions.links
       nodes = dataWithPositions.nodes
+    } else if (graphStyle === 'sphere') {
+      const dataWithPositions = generateSphereGraphPositions(nodes)
+
+      links = dataWithPositions.links
+      nodes = dataWithPositions.nodes
     } else {
-      const dataWithPositions = await generateForceGraphPositions(nodes, false)
+      const dataWithPositions = generateForceGraphPositions(nodes)
 
       links = dataWithPositions.links
       nodes = dataWithPositions.nodes

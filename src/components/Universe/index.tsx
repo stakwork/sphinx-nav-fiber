@@ -1,28 +1,34 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { AdaptiveDpr, AdaptiveEvents, Html, Loader, Preload } from '@react-three/drei'
 import { Canvas } from '@react-three/fiber'
-import { Bloom, EffectComposer, Outline, Selection } from '@react-three/postprocessing'
+import { Bloom, EffectComposer, Outline, Selection, Vignette } from '@react-three/postprocessing'
 import { useControls } from 'leva'
-import { BlendFunction, KernelSize, Resolution } from 'postprocessing'
+import { BlendFunction, Resolution } from 'postprocessing'
 import { Perf } from 'r3f-perf'
-import { Suspense } from 'react'
+import { Suspense, useMemo } from 'react'
 import { isDevelopment } from '~/constants'
 import { useControlStore } from '~/stores/useControlStore'
+import { useSelectedNode } from '~/stores/useDataStore'
 import { colors } from '~/utils/colors'
 import { addToGlobalForE2e } from '~/utils/tests'
 import { Controls } from './Controls'
 import { initialCameraPosition } from './Controls/CameraAnimations/constants'
 import { Graph } from './Graph'
+import { getNodeColorByType } from './Graph/Cubes/constants'
 import { Lights } from './Lights'
 import { Overlay } from './Overlay'
 import { outlineEffectColor } from './constants'
 
 const Content = () => {
-  const { universeColor, outlineColor, outlinePulseSpeed } = useControls('universe', {
+  const { universeColor } = useControls('universe', {
     universeColor: colors.black,
-    outlineColor: outlineEffectColor,
-    outlinePulseSpeed: 0.1,
   })
+
+  const selectedNode = useSelectedNode()
+
+  const outlineColor: number = useMemo(() => {
+    return selectedNode?.node_type ? (getNodeColorByType(selectedNode.node_type) as number) : outlineEffectColor
+  }, [selectedNode])
 
   return (
     <>
@@ -34,6 +40,8 @@ const Content = () => {
 
       <Selection>
         <EffectComposer autoClear={false} multisampling={8}>
+          <Vignette eskil={false} offset={0.05} darkness={0.5} />
+
           <Bloom
             luminanceThreshold={1} // luminance threshold. Raise this value to mask out darker elements in the scene.
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -44,13 +52,9 @@ const Content = () => {
           />
           <Outline
             blendFunction={BlendFunction.SCREEN} // set this to BlendFunction.ALPHA for dark outlines
-            blur // whether the outline should be blurred
-            edgeStrength={1}
+            blur
+            edgeStrength={8}
             hiddenEdgeColor={outlineColor}
-            kernelSize={KernelSize.HUGE}
-            pulseSpeed={outlinePulseSpeed}
-            resolutionX={Resolution.AUTO_SIZE} // The horizontal resolution.
-            resolutionY={Resolution.AUTO_SIZE} // The vertical resolution.
             visibleEdgeColor={outlineColor} // the color of visible edges
           />
         </EffectComposer>

@@ -7,6 +7,7 @@ import { usePathway } from '~/components/DataRetriever'
 import { Flex } from '~/components/common/Flex'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { NodeExtended } from '~/types'
+import { getNodeColorByType } from '../constants'
 
 type BadgeProps = {
   color: string
@@ -14,27 +15,6 @@ type BadgeProps = {
   userData: NodeExtended
   // eslint-disable-next-line react/no-unused-prop-types
   value?: number | string | null
-}
-
-const getBadgeColor = (nodeType: string) => {
-  let color = 'lime'
-
-  switch (nodeType) {
-    case 'clip':
-    case 'show':
-    case 'episode':
-      color = 'lime'
-      break
-    case 'guest':
-      color = '#ff94ff'
-      break
-    case 'topic':
-      color = '#5078f2'
-      break
-    default:
-  }
-
-  return color
 }
 
 const PathwayBadge = ({ color, position, value, userData }: BadgeProps) => {
@@ -157,21 +137,25 @@ const NodeBadge = ({ position, userData, color }: BadgeProps) => {
 export const RelevanceBadges = memo(() => {
   const { badges } = usePathway()
   const data = useDataStore((s) => s.data)
+  const selectedNode = useSelectedNode()
   const showSelectionGraph = useDataStore((s) => s.showSelectionGraph)
   const selectionGraphData = useDataStore((s) => s.selectionGraphData)
   const selectedNodeRelativeIds = useDataStore((s) => s.selectedNodeRelativeIds)
 
   const pathwayBadges = useMemo(
     () =>
-      badges.map((b) => (
-        <PathwayBadge
-          key={`relevance-badge-${b.userData.ref_id}`}
-          color="#ffffff88"
-          position={b.position}
-          userData={b.userData}
-          value={b.value}
-        />
-      )),
+      badges.map(
+        (b) =>
+          b.userData?.ref_id !== selectedNode?.ref_id && (
+            <PathwayBadge
+              key={`relevance-badge-${b.userData.ref_id}`}
+              color="#ffffff88"
+              position={b.position}
+              userData={b.userData}
+              value={b.value}
+            />
+          ),
+      ),
     [badges],
   )
 
@@ -181,8 +165,10 @@ export const RelevanceBadges = memo(() => {
     const badgesToRender = nodes
       .filter((f) => selectedNodeRelativeIds.includes(f?.ref_id || ''))
       .map((n) => {
-        const color = getBadgeColor(n.node_type || '')
+        const color = getNodeColorByType(n.node_type || '', true) as string
         const position = new Vector3(n?.x || 0, n?.y || 0, n?.z || 0)
+
+        console.log('color', color)
 
         return <NodeBadge key={`node-badge-${n.ref_id}`} color={color} position={position} userData={n} />
       })

@@ -5,7 +5,9 @@ import { fetchGraphData } from '~/network/fetchGraphData'
 import { GraphData, NodeExtended, NodeType, Sources } from '~/types'
 import { saveSearchTerm } from '~/utils/relayHelper/index'
 
-type GraphStyle = 'split' | 'force'
+type GraphStyle = 'split' | 'force' | 'sphere'
+
+export const graphStyles: GraphStyle[] = ['split', 'sphere', 'force']
 
 type DataStore = {
   scrollEventsDisabled: boolean

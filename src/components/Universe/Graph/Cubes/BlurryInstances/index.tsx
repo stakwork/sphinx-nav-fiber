@@ -17,7 +17,8 @@ export const BlurryInstances = ({ hide }: InstanceProps) => {
   const instances = useMemo(
     () =>
       data.nodes.map((node, i) => {
-        const visible = !nearbyNodeIds.includes(node.ref_id || '') && !isMainTopic(node)
+        const isSelectedNode = node?.ref_id == selectedNode?.ref_id
+        const visible = !nearbyNodeIds.includes(node.ref_id || '') && !isMainTopic(node) && !isSelectedNode
 
         return (
           <Instance
@@ -32,7 +33,7 @@ export const BlurryInstances = ({ hide }: InstanceProps) => {
           />
         )
       }),
-    [nearbyNodeIds, data.nodes],
+    [nearbyNodeIds, data.nodes, selectedNode],
   )
 
   useEffect(() => {

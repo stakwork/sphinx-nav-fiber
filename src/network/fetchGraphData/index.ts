@@ -9,9 +9,9 @@ import {
 import { mock } from '~/mocks/getMockGraphData/mockResponse'
 import { api } from '~/network/api'
 import { useDataStore } from '~/stores/useDataStore'
+import { generateSphereGraphPositions } from '~/transformers/sphereGraph'
 import { FetchDataResponse, FetchSentimentResponse, GraphData, Guests, Link, Node, NodeExtended } from '~/types'
 import { getLSat } from '~/utils/getLSat'
-import { generateForceGraphPositions } from '../../transformers/forceGraph'
 import { generateSplitGraphPositions } from '../../transformers/splitGraph'
 
 type guestMapChild = {
@@ -356,8 +356,13 @@ const getGraphData = async (searchterm: string) => {
 
       links = dataWithPositions.links
       nodes = dataWithPositions.nodes
+    } else if (graphStyle === 'sphere') {
+      const dataWithPositions = generateSphereGraphPositions(nodes)
+
+      links = dataWithPositions.links
+      nodes = dataWithPositions.nodes
     } else {
-      const dataWithPositions = await generateForceGraphPositions(nodes, false)
+      const dataWithPositions = generateSphereGraphPositions(nodes)
 
       links = dataWithPositions.links
       nodes = dataWithPositions.nodes

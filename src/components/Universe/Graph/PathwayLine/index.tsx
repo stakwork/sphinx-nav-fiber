@@ -34,7 +34,7 @@ export const PathwayLine = () => {
       forceSinglePass={false}
       lineWidth={2}
       matrixWorldAutoUpdate={false}
-      opacity={0.1}
+      opacity={0.05}
       points={points}
       transparent
     />

@@ -16,7 +16,7 @@ export const Segment = ({ link, animated }: Props) => {
   const selectedNode = useSelectedNode()
   const [start, setStart] = useState(new Vector3(0, 0, 0))
   const [end, setEnd] = useState(new Vector3(0, 0, 0))
-  const [color, setColor] = useState(0xcccccc)
+  const [color, setColor] = useState(0x555555)
   const selectionGraphData = useDataStore((s) => s.selectionGraphData)
 
   useEffect(() => {
@@ -36,7 +36,7 @@ export const Segment = ({ link, animated }: Props) => {
     } else if (selectedNode) {
       setColor(0x555555)
     } else {
-      setColor(0xcccccc)
+      setColor(0x555555)
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps

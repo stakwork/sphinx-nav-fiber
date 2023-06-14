@@ -20,11 +20,7 @@ export const Graph = () => {
       return 0
     }
 
-    if (graphStyle === 'force') {
-      return 0.15
-    }
-
-    return 0.6
+    return 0.4
   }, [showSelectionGraph, graphStyle])
 
   if (isLoading) {

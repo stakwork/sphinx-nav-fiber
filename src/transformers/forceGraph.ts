@@ -26,7 +26,7 @@ const runCollisionPhase = (simulation: ForceSimulation) => {
   }
 }
 
-export const generateForceGraphPositions = async (nodes: NodeExtended[], usingCurrentData: boolean) => {
+export const generateForceGraphPositions = (nodes: NodeExtended[]) => {
   const updatedNodes = nodes.map((node: NodeExtended) => ({ ...node, x: 0, y: 0, z: 0 }))
 
   const links = generateLinksFromNodeData(updatedNodes, true)
@@ -47,37 +47,26 @@ export const generateForceGraphPositions = async (nodes: NodeExtended[], usingCu
 
   // update link positions
   const updatedLinks = links.map((link) => {
-    const source = link.source as unknown as NodeExtended
-    const target = link.target as unknown as NodeExtended
+    const sourceNode = updatedNodes.find((f) => f.ref_id === link.sourceRef)
+    const targetNode = updatedNodes.find((f) => f.ref_id === link.targetRef)
 
-    const sourcePosition = new Vector3(source?.x || 0, source?.y || 0, source?.z || 0)
-    const targetPosition = new Vector3(target?.x || 0, target?.y || 0, target?.z || 0)
+    let onlyVisibleOnSelect = false
 
-    // give positions to nodes explicitly from links
-    if (usingCurrentData) {
-      const sourceNode = updatedNodes.find((f) => f.ref_id === source.ref_id)
-      const targetNode = updatedNodes.find((f) => f.ref_id === target.ref_id)
-
-      if (sourceNode) {
-        const { x, y, z } = sourcePosition
-
-        sourceNode.x = x
-        sourceNode.y = y
-        sourceNode.z = z
-      }
-
-      if (targetNode) {
-        const { x, y, z } = targetPosition
-
-        targetNode.x = x
-        targetNode.y = y
-        targetNode.z = z
-      }
+    if (
+      sourceNode?.node_type === 'guest' ||
+      sourceNode?.node_type === 'topic' ||
+      targetNode?.node_type === 'guest' ||
+      targetNode?.node_type === 'topic'
+    ) {
+      onlyVisibleOnSelect = true
     }
+
+    const sourcePosition = new Vector3(sourceNode?.x || 0, sourceNode?.y || 0, sourceNode?.z || 0)
+    const targetPosition = new Vector3(targetNode?.x || 0, targetNode?.y || 0, targetNode?.z || 0)
 
     return {
       ...link,
-      onlyVisibleOnSelect: false,
+      onlyVisibleOnSelect,
       sourcePosition,
       targetPosition,
     }
