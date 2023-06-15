@@ -54,7 +54,7 @@ const Content = () => {
           <Outline
             blendFunction={BlendFunction.SCREEN} // set this to BlendFunction.ALPHA for dark outlines
             blur
-            edgeStrength={8}
+            edgeStrength={4}
             hiddenEdgeColor={outlineColor}
             visibleEdgeColor={outlineColor} // the color of visible edges
           />
