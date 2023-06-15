@@ -253,7 +253,8 @@ export const getGraphData = async (dataInit: FetchDataResponse, searchterm: stri
 
     // give nodes and links positions based on graphStyle
     const dataWithPositions = getGraphDataPositions(graphStyle, nodes)
-    const links = dataWithPositions.links
+    const { links } = dataWithPositions
+
     nodes = dataWithPositions.nodes
 
     nodes.sort((a, b) => (b.weight || 0) - (a.weight || 0))
