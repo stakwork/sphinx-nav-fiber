@@ -16,7 +16,7 @@ export const Segment = ({ link, animated }: Props) => {
   const selectedNode = useSelectedNode()
   const [start, setStart] = useState(new Vector3(0, 0, 0))
   const [end, setEnd] = useState(new Vector3(0, 0, 0))
-  const [color, setColor] = useState(0x555555)
+  const [color, setColor] = useState(0x888888)
   const selectionGraphData = useDataStore((s) => s.selectionGraphData)
 
   useEffect(() => {

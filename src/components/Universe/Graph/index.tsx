@@ -20,8 +20,12 @@ export const Graph = () => {
       return 0
     }
 
+    if (graphStyle === 'force') {
+      return 0.2
+    }
+
     return 0.4
-  }, [showSelectionGraph])
+  }, [showSelectionGraph, graphStyle])
 
   if (isLoading) {
     return <GraphLoadingIcon />
