@@ -11,13 +11,11 @@ import { GlobalStyle } from '~/components/GlobalStyle'
 import { Universe } from '~/components/Universe'
 import { Flex } from '~/components/common/Flex'
 import { isDevelopment, isE2E } from '~/constants'
+import { getGraphDataPositions } from '~/network/fetchGraphData/const'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
 import { useModal } from '~/stores/useModalStore'
 import { useTeachStore } from '~/stores/useTeachStore'
-import { generateForceGraphPositions } from '~/transformers/forceGraph'
-import { generateSphereGraphPositions } from '~/transformers/sphereGraph'
-import { generateSplitGraphPositions } from '~/transformers/splitGraph'
 import { GraphData } from '~/types'
 import { colors } from '~/utils/colors'
 import { E2ETests } from '~/utils/tests'
@@ -120,19 +118,9 @@ export const App = () => {
 
   const repositionGraphDataAfterStyleChange = () => {
     if (data) {
-      let updatedData: GraphData | null = null
+      const updatedData: GraphData = getGraphDataPositions(graphStyle, data.nodes)
 
-      if (graphStyle === 'split') {
-        updatedData = generateSplitGraphPositions(data.nodes)
-      } else if (graphStyle === 'sphere') {
-        updatedData = generateSphereGraphPositions(data.nodes)
-      } else {
-        updatedData = generateForceGraphPositions(data.nodes)
-      }
-
-      if (updatedData) {
-        setData(updatedData)
-      }
+      setData(updatedData)
     }
   }
 

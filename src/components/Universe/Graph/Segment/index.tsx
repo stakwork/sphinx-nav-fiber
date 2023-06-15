@@ -36,7 +36,7 @@ export const Segment = ({ link, animated }: Props) => {
     } else if (selectedNode) {
       setColor(0x555555)
     } else {
-      setColor(0x555555)
+      setColor(0x888888)
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps

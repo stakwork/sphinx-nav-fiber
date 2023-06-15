@@ -9,10 +9,9 @@ import {
 import { mock } from '~/mocks/getMockGraphData/mockResponse'
 import { api } from '~/network/api'
 import { useDataStore } from '~/stores/useDataStore'
-import { generateSphereGraphPositions } from '~/transformers/sphereGraph'
 import { FetchDataResponse, FetchSentimentResponse, GraphData, Guests, Link, Node, NodeExtended } from '~/types'
 import { getLSat } from '~/utils/getLSat'
-import { generateSplitGraphPositions } from '../../transformers/splitGraph'
+import { getGraphDataPositions } from './const'
 
 type guestMapChild = {
   children: string[]
@@ -348,25 +347,11 @@ const getGraphData = async (searchterm: string) => {
       })
     }
 
-    let links = []
-
     // give nodes and links positions based on graphStyle
-    if (graphStyle === 'split') {
-      const dataWithPositions = generateSplitGraphPositions(nodes)
+    const dataWithPositions = getGraphDataPositions(graphStyle, nodes)
+    const { links } = dataWithPositions
 
-      links = dataWithPositions.links
-      nodes = dataWithPositions.nodes
-    } else if (graphStyle === 'sphere') {
-      const dataWithPositions = generateSphereGraphPositions(nodes)
-
-      links = dataWithPositions.links
-      nodes = dataWithPositions.nodes
-    } else {
-      const dataWithPositions = generateSphereGraphPositions(nodes)
-
-      links = dataWithPositions.links
-      nodes = dataWithPositions.nodes
-    }
+    nodes = dataWithPositions.nodes
 
     nodes.sort((a, b) => (b.weight || 0) - (a.weight || 0))
 

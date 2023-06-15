@@ -2,11 +2,8 @@
 import { Vector3 } from 'three'
 import { AWS_IMAGE_BUCKET_URL, CLOUDFRONT_IMAGE_BUCKET_URL } from '~/constants'
 import { useDataStore } from '~/stores/useDataStore'
-import { generateForceGraphPositions } from '~/transformers/forceGraph'
-import { generateSphereGraphPositions } from '~/transformers/sphereGraph'
 import { FetchDataResponse, Guests, Link, Node, NodeExtended } from '~/types'
-import { generateSplitGraphPositions } from '../../transformers/splitGraph'
-import { defaultData, maxScale, shouldIncludeTopics } from './const'
+import { defaultData, getGraphDataPositions, maxScale, shouldIncludeTopics } from './const'
 import { GuestMap, TopicMap } from './types'
 
 const getNodeScale = (node: NodeExtended) => {
@@ -254,26 +251,10 @@ export const getGraphData = async (dataInit: FetchDataResponse, searchterm: stri
       })
     }
 
-    // do links
-    let links = []
-
     // give nodes and links positions based on graphStyle
-    if (graphStyle === 'split') {
-      const dataWithPositions = generateSplitGraphPositions(nodes)
-
-      links = dataWithPositions.links
-      nodes = dataWithPositions.nodes
-    } else if (graphStyle === 'sphere') {
-      const dataWithPositions = generateSphereGraphPositions(nodes)
-
-      links = dataWithPositions.links
-      nodes = dataWithPositions.nodes
-    } else {
-      const dataWithPositions = generateForceGraphPositions(nodes)
-
-      links = dataWithPositions.links
-      nodes = dataWithPositions.nodes
-    }
+    const dataWithPositions = getGraphDataPositions(graphStyle, nodes)
+    const links = dataWithPositions.links
+    nodes = dataWithPositions.nodes
 
     nodes.sort((a, b) => (b.weight || 0) - (a.weight || 0))
 

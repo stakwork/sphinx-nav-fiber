@@ -19,7 +19,7 @@ const universeCube = {
   },
 }
 
-function generateNodePosition(node: NodeExtended, allNodes: NodeExtended[], mappedNodes: NodeExtended[]) {
+function generateNodePosition(node: NodeExtended, mappedNodes: NodeExtended[]) {
   const { scale, position } = universeCube
 
   const center = {
@@ -45,9 +45,7 @@ function generateNodePosition(node: NodeExtended, allNodes: NodeExtended[], mapp
     center.z = relativePosition.z
   }
 
-  const amp = 1
-
-  return new Vector3(center.x * amp, center.y * amp, center.z * amp)
+  return new Vector3(center.x, center.y, center.z)
 }
 
 const runSimulationPhase = (simulation: ForceSimulation) => {
@@ -73,7 +71,7 @@ export const generateSphereGraphPositions = (nodes: NodeExtended[]) => {
   const mappedNodes: NodeExtended[] = []
 
   const updatedNodes = nodes.map((node: NodeExtended) => {
-    const position = generateNodePosition(node, nodes, mappedNodes)
+    const position = generateNodePosition(node, mappedNodes)
 
     const updatedNode = { ...node, ...position }
 

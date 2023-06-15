@@ -5,7 +5,7 @@ import { fetchGraphData } from '~/network/fetchGraphData'
 import { GraphData, NodeExtended, NodeType, Sources } from '~/types'
 import { saveSearchTerm } from '~/utils/relayHelper/index'
 
-type GraphStyle = 'split' | 'force' | 'sphere'
+export type GraphStyle = 'split' | 'force' | 'sphere'
 
 export const graphStyles: GraphStyle[] = ['split', 'force', 'sphere']
 
