@@ -249,9 +249,14 @@ const getGraphData = async (searchterm: string) => {
 
     const data: Node[] = [...dataInit.exact, ...dataInit.related, ...dataSeries]
 
+    let topWeightValue = 0
+
     if (data.length) {
       data.forEach((node, index) => {
-        // reject duplicate nodes
+        // record highest weight to normalize to range 0~1
+        if (node.weight && topWeightValue < node.weight) {
+          topWeightValue = node.weight
+        }
 
         // TODO: simplify this to ref_id
         if (['data_series', 'document', 'tweet'].includes(node.node_type)) {
@@ -273,6 +278,7 @@ const getGraphData = async (searchterm: string) => {
           return
         }
 
+        // reject duplicate nodes
         const notUnique = nodes.find((f) => f.ref_id === node.ref_id)
 
         if (notUnique) {
@@ -348,6 +354,13 @@ const getGraphData = async (searchterm: string) => {
       })
     }
 
+    // re-assign weight based on highest weight value
+    // convert to range 0-1
+    nodes = nodes.map((n) => ({
+      ...n,
+      weight: (n.weight || 0) / topWeightValue,
+    }))
+
     let links = []
 
     // give nodes and links positions based on graphStyle
@@ -364,6 +377,8 @@ const getGraphData = async (searchterm: string) => {
     }
 
     nodes.sort((a, b) => (b.weight || 0) - (a.weight || 0))
+
+    console.error('nodes', nodes)
 
     return { links, nodes }
   } catch (e) {
