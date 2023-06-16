@@ -60,6 +60,8 @@ export const colors = {
   washedOutReceivedText: 'rgb(85, 97, 113)',
   washedOutSentText: 'rgb(130, 156, 185)',
   white: 'rgb(255, 255, 255)',
+  transparentWhite: '#ffffff88',
+  transparentBlack: '#000000bb',
 } as const
 
 export type ColorName = keyof typeof colors

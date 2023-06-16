@@ -8,6 +8,7 @@ import { nodesAreRelatives } from '~/components/Universe/constants'
 import { Flex } from '~/components/common/Flex'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { NodeExtended } from '~/types'
+import { colors } from '~/utils/colors'
 import { getNodeColorByType } from '../constants'
 
 type BadgeProps = {
@@ -45,7 +46,7 @@ const PathwayBadge = ({ color, position, value, userData }: BadgeProps) => {
       <Html center sprite>
         <Tag
           color={color}
-          fontColor="#ffffff"
+          fontColor={colors.white}
           fontSize={18}
           justify="center"
           onClick={(e) => {
@@ -110,7 +111,7 @@ const NodeBadge = ({ position, userData, color, relativeIds }: BadgeProps) => {
       <Html center sprite>
         <Tag
           color={color}
-          fontColor="#fff"
+          fontColor={colors.white}
           fontSize={isTopic ? 14 : 20}
           justify="center"
           onClick={(e) => {
@@ -156,7 +157,7 @@ export const RelevanceBadges = memo(() => {
           b.userData?.ref_id !== selectedNode?.ref_id && (
             <PathwayBadge
               key={`relevance-badge-${b.userData.ref_id}`}
-              color="#ffffff88"
+              color={colors.transparentWhite}
               position={b.position}
               relativeIds={[]}
               userData={b.userData}
@@ -216,7 +217,7 @@ const Tag = styled(Flex)<TagProps>`
   text-align: center;
   width: ${(p: TagProps) => `${p.size}px`};
   height: ${(p: TagProps) => `${p.size}px`};
-  background: #000000bb;
+  background: ${colors.transparentBlack};
   border: 3px solid ${(p: TagProps) => p.color};
   color: ${(p: TagProps) => p.fontColor};
   border-radius: 100%;
@@ -250,7 +251,7 @@ const Counter = styled.div<CounterProps>`
   left: -5px;
   justify-content: center;
   align-items: center;
-  background: #000000bb;
+  background: ${colors.transparentBlack};
   border: 2px solid ${(p) => p.color};
   color: #fff;
   width: 30px;
