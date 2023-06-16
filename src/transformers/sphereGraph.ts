@@ -3,9 +3,46 @@ import { Vector3 } from 'three'
 import { generateLinksFromNodeData } from '~/network/fetchGraphData'
 import { NodeExtended } from '~/types'
 import { ForceSimulation, runForceSimulation } from './forceSimulation'
+import { getMyParents } from './helpers'
 
 const simulationTicks = 60
 const collisionTicks = 20
+
+const universeScale = 5000
+
+const universeCube = {
+  scale: universeScale / 2,
+  position: {
+    x: 0,
+    y: 0,
+    z: 0,
+  },
+}
+
+function generateNodePosition(node: NodeExtended, mappedNodes: NodeExtended[]) {
+  const { scale, position } = universeCube
+
+  const center = {
+    x: position.x + Math.random() * scale - scale * 0.5,
+    y: position.y + Math.random() * scale - scale * 0.5,
+    z: position.z + Math.random() * scale - scale * 0.5,
+  }
+
+  // do i have parents?
+  const parents = getMyParents(node, mappedNodes)
+
+  const relativePosition: Vector3 | null = parents?.length
+    ? new Vector3(parents[0].x, parents[0].y, parents[0].z)
+    : null
+
+  if (relativePosition) {
+    center.x = relativePosition.x
+    center.y = relativePosition.y
+    center.z = relativePosition.z
+  }
+
+  return new Vector3(center.x, center.y, center.z)
+}
 
 const runSimulationPhase = (simulation: ForceSimulation) => {
   for (let i = 0; i < simulationTicks; i += 1) {
@@ -26,17 +63,28 @@ const runCollisionPhase = (simulation: ForceSimulation) => {
   }
 }
 
-export const generateForceGraphPositions = (nodes: NodeExtended[]) => {
-  const updatedNodes = nodes.map((node: NodeExtended) => ({ ...node, x: 0, y: 0, z: 0 }))
+export const generateSphereGraphPositions = (nodes: NodeExtended[]) => {
+  const mappedNodes: NodeExtended[] = []
+
+  const updatedNodes = nodes.map((node: NodeExtended) => {
+    const position = generateNodePosition(node, mappedNodes)
+
+    const updatedNode = { ...node, ...position }
+
+    mappedNodes.push(updatedNode)
+
+    return updatedNode
+  })
 
   const links = generateLinksFromNodeData(updatedNodes, true)
 
   const forceSimulation = runForceSimulation(updatedNodes, links, {
     numDimensions: 3,
-    forceLinkStrength: 0.5,
-    forceChargeStrength: -40,
-    forceCenterStrength: 0.3,
+    forceLinkStrength: 0.01,
+    forceChargeStrength: -80,
     velocityDecay: 0.5,
+    disableCenter: true,
+    disableCharge: true,
   })
 
   runSimulationPhase(forceSimulation)
@@ -49,13 +97,9 @@ export const generateForceGraphPositions = (nodes: NodeExtended[]) => {
   const updatedLinks = links.map((link) => {
     const sourceNode = updatedNodes.find((f) => f.ref_id === link.sourceRef)
     const targetNode = updatedNodes.find((f) => f.ref_id === link.targetRef)
-
-    const onlyVisibleOnSelect = ['guest', 'topic'].some(
-      (i) => i === sourceNode?.node_type || i === targetNode?.node_type,
-    )
-
     const sourcePosition = new Vector3(sourceNode?.x || 0, sourceNode?.y || 0, sourceNode?.z || 0)
     const targetPosition = new Vector3(targetNode?.x || 0, targetNode?.y || 0, targetNode?.z || 0)
+    const onlyVisibleOnSelect = true
 
     return {
       ...link,

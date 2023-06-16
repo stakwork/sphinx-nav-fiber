@@ -90,9 +90,10 @@ export const Cubes = memo(() => {
 
       {data.nodes
         .filter((f) => {
+          const isSelected = f?.ref_id === selectedNode?.ref_id
           const isNearbyOrPersistent = nearbyNodeIds.includes(f.ref_id || '') || isMainTopic(f)
 
-          return isNearbyOrPersistent
+          return isNearbyOrPersistent || isSelected
         })
         .map((node) => {
           if (node.node_type === 'topic') {

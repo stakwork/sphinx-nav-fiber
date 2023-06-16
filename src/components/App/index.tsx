@@ -11,15 +11,15 @@ import { GlobalStyle } from '~/components/GlobalStyle'
 import { Universe } from '~/components/Universe'
 import { Flex } from '~/components/common/Flex'
 import { isDevelopment, isE2E } from '~/constants'
+import { getGraphDataPositions } from '~/network/fetchGraphData/const'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
 import { useModal } from '~/stores/useModalStore'
 import { useTeachStore } from '~/stores/useTeachStore'
+import { GraphData } from '~/types'
 import { colors } from '~/utils/colors'
 import { E2ETests } from '~/utils/tests'
 import version from '~/utils/versionHelper'
-import { generateForceGraphPositions } from '../../transformers/forceGraph'
-import { generateSplitGraphPositions } from '../../transformers/splitGraph'
 import { Preloader } from '../Universe/Preloader'
 import { AppBar } from './AppBar'
 import { FooterMenu } from './FooterMenu'
@@ -116,17 +116,11 @@ export const App = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchTerm, runSearch, hasBudgetExplanationModalBeSeen])
 
-  const repositionGraphDataAfterStyleChange = async () => {
+  const repositionGraphDataAfterStyleChange = () => {
     if (data) {
-      if (graphStyle === 'split') {
-        const updatedData = generateSplitGraphPositions(data.nodes)
+      const updatedData: GraphData = getGraphDataPositions(graphStyle, data.nodes)
 
-        setData(updatedData)
-      } else {
-        const updatedData = await generateForceGraphPositions(data.nodes, true)
-
-        setData(updatedData)
-      }
+      setData(updatedData)
     }
   }
 

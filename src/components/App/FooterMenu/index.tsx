@@ -13,7 +13,7 @@ import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { SecondarySidebarActiveTab, useAppStore } from '~/stores/useAppStore'
-import { useDataStore } from '~/stores/useDataStore'
+import { graphStyles, useDataStore } from '~/stores/useDataStore'
 import { AddNodeModalData, useModal } from '~/stores/useModalStore'
 import { colors } from '~/utils/colors'
 
@@ -36,10 +36,12 @@ export const FooterMenu = () => {
   }
 
   const changeGraphType = useCallback(() => {
-    if (graphStyle !== 'split') {
-      setGraphStyle('split')
+    const nextStyleIndex: number = graphStyles.findIndex((f) => f === graphStyle) + 1
+
+    if (graphStyles[nextStyleIndex]) {
+      setGraphStyle(graphStyles[nextStyleIndex])
     } else {
-      setGraphStyle('force')
+      setGraphStyle(graphStyles[0])
     }
   }, [graphStyle, setGraphStyle])
 

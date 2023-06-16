@@ -1,6 +1,6 @@
 import { useFrame } from '@react-three/fiber'
 import { Select } from '@react-three/postprocessing'
-import { memo, useEffect, useRef, useState } from 'react'
+import { memo, useEffect, useMemo, useRef, useState } from 'react'
 import { Mesh } from 'three'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { NodeExtended } from '~/types'
@@ -46,6 +46,18 @@ export const Cube = memo(({ node, hide, animated }: Props) => {
     [geometry],
   )
 
+  const scale = useMemo(() => {
+    if (showSelectionGraph && isSelected) {
+      return 20
+    }
+
+    if (isSelected) {
+      return (node.scale || 1) * 1.2
+    }
+
+    return node.scale
+  }, [node, isSelected, showSelectionGraph])
+
   return (
     <Select enabled={!!isSelected}>
       <mesh
@@ -54,7 +66,7 @@ export const Cube = memo(({ node, hide, animated }: Props) => {
         material={material}
         name={node.id}
         position={[node.x, node.y, node.z]}
-        scale={showSelectionGraph && isSelected ? 20 : node.scale}
+        scale={scale}
         userData={node}
         visible={!hide}
       />

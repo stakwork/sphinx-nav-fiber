@@ -3,9 +3,7 @@ import { Vector3 } from 'three'
 import { AWS_IMAGE_BUCKET_URL, CLOUDFRONT_IMAGE_BUCKET_URL } from '~/constants'
 import { useDataStore } from '~/stores/useDataStore'
 import { FetchDataResponse, Guests, Link, Node, NodeExtended } from '~/types'
-import { generateForceGraphPositions } from '../../transformers/forceGraph'
-import { generateSplitGraphPositions } from '../../transformers/splitGraph'
-import { defaultData, maxScale, shouldIncludeTopics } from './const'
+import { defaultData, getGraphDataPositions, maxScale, shouldIncludeTopics } from './const'
 import { GuestMap, TopicMap } from './types'
 
 const getNodeScale = (node: NodeExtended) => {
@@ -253,21 +251,11 @@ export const getGraphData = async (dataInit: FetchDataResponse, searchterm: stri
       })
     }
 
-    // do links
-    let links = []
-
     // give nodes and links positions based on graphStyle
-    if (graphStyle === 'split') {
-      const dataWithPositions = generateSplitGraphPositions(nodes)
+    const dataWithPositions = getGraphDataPositions(graphStyle, nodes)
+    const { links } = dataWithPositions
 
-      links = dataWithPositions.links
-      nodes = dataWithPositions.nodes
-    } else {
-      const dataWithPositions = await generateForceGraphPositions(nodes, false)
-
-      links = dataWithPositions.links
-      nodes = dataWithPositions.nodes
-    }
+    nodes = dataWithPositions.nodes
 
     nodes.sort((a, b) => (b.weight || 0) - (a.weight || 0))
 
