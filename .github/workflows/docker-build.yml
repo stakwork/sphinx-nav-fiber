@@ -3,9 +3,8 @@ env:
   DOCKER_CLI_EXPERIMENTAL: enabled
 
 on:
-  push:
-    tags:
-      - '*'
+  release:
+    types: [published]
 
 jobs:
   build:

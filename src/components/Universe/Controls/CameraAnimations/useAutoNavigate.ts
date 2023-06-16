@@ -10,6 +10,9 @@ import { getNearbyNodeIds } from '../constants'
 import { arriveDistance, selectionGraphCameraPosition, selectionGraphDistance, topicArriveDistance } from './constants'
 
 let lookAtAnimationTimer: ReturnType<typeof setTimeout>
+let departAnimationTimer: ReturnType<typeof setTimeout>
+const departAnimationTimerLength = 4000
+const lookAtAnimationTimerLength = 2000
 
 export const useAutoNavigate = (cameraControlsRef: RefObject<CameraControls | null>) => {
   const selectedNode = useSelectedNode()
@@ -68,36 +71,44 @@ export const useAutoNavigate = (cameraControlsRef: RefObject<CameraControls | nu
     }
   }, [selectedNode, setMinDistance, showSelectionGraph])
 
-  const arrive = () => {
-    setDistanceReached(true)
-  }
-
-  const depart = () => {
-    if (selectedNode) {
-      const distance = camera.position.distanceTo(destination)
-
-      playInspectSound(distance)
-    }
-
-    setUserMovedCamera(false)
-    setDistanceReached(false)
-    setLookAtReached(false)
-  }
-
   useEffect(() => {
-    setDistanceReached(false)
-    setLookAtReached(false)
-    setUserMovedCamera(false)
-  }, [cameraFocusTrigger, setUserMovedCamera, setLookAtReached, setDistanceReached])
+    startAnimation()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cameraFocusTrigger])
 
   useEffect(() => {
     // stop navigation when user interacts
-    if (isUserDragging && !distanceReached) {
-      arrive()
+    if (isUserDragging) {
+      setDistanceReached(true)
       setLookAtReached(true)
     }
+  }, [isUserDragging, setDistanceReached, setLookAtReached])
+
+  useEffect(() => {
+    if (selectedNode) {
+      if (lookAtAnimationTimer) {
+        clearTimeout(lookAtAnimationTimer)
+      }
+
+      lookAtAnimationTimer = setTimeout(() => {
+        setLookAtReached(true)
+        clearTimeout(lookAtAnimationTimer)
+      }, lookAtAnimationTimerLength)
+
+      depart()
+    }
+
+    return () => {
+      if (lookAtAnimationTimer) {
+        clearTimeout(lookAtAnimationTimer)
+      }
+
+      if (departAnimationTimer) {
+        clearTimeout(departAnimationTimer)
+      }
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isUserDragging])
+  }, [selectedNode])
 
   useFrame((state) => {
     if (cameraControlsRef.current) {
@@ -114,31 +125,39 @@ export const useAutoNavigate = (cameraControlsRef: RefObject<CameraControls | nu
     }
   })
 
-  useEffect(() => {
+  const depart = () => {
     if (selectedNode) {
-      clearTimeout(lookAtAnimationTimer)
+      const distance = camera.position.distanceTo(destination)
 
-      lookAtAnimationTimer = setTimeout(() => {
-        setLookAtReached(true)
-        clearTimeout(lookAtAnimationTimer)
-      }, 2000)
-
-      depart()
+      playInspectSound(distance)
     }
 
-    return () => clearTimeout(lookAtAnimationTimer)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedNode])
+    startAnimation()
+  }
+
+  const startAnimation = () => {
+    setDistanceReached(false)
+    setLookAtReached(false)
+    setUserMovedCamera(false)
+
+    if (departAnimationTimer) {
+      clearTimeout(departAnimationTimer)
+    }
+
+    departAnimationTimer = setTimeout(() => {
+      setDistanceReached(true)
+      setLookAtReached(true)
+    }, departAnimationTimerLength)
+  }
 
   const moveCameraToNode = (dest: Vector3, cam: Camera) => {
     const distance = cam.position.distanceTo(dest)
 
     // stop before colliding with cube
     if (distance < minDistance) {
-      arrive()
+      setDistanceReached(true)
     } else {
       cam.position.lerp(dest, 0.5)
-      cam.updateProjectionMatrix()
 
       const nearbyNodesIds = getNearbyNodeIds(graphData?.nodes || [], camera)
 

@@ -21,7 +21,7 @@ export const AnimatedHighlights = () => {
 
   return (
     <>
-      {nodeData.map((node: NodeExtended) => {
+      {nodeData.map((node: NodeExtended, i) => {
         const { highlight, highlightColor } = getHighlighter({ node, selectedNode, searchTerm })
 
         if (!highlight) {
@@ -36,7 +36,13 @@ export const AnimatedHighlights = () => {
         }
 
         return (
-          <HighlightMesh key={`highlight-${node.ref_id}`} color={highlightColor} node={node} scale={node.scale || 1} />
+          <HighlightMesh
+            // eslint-disable-next-line react/no-array-index-key
+            key={`animated-highlight-${node.ref_id}-${i}`}
+            color={highlightColor}
+            node={node}
+            scale={node.scale || 1}
+          />
         )
       })}
     </>
