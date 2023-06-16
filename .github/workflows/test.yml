@@ -19,6 +19,9 @@ jobs:
       - name: Install
         run: yarn --immutable
 
+      - name: Unit tests
+        run: yarn test
+
       - name: Cypress run
         # Uses the official Cypress GitHub action https://github.com/cypress-io/github-action
         uses: cypress-io/github-action@v5
@@ -34,24 +37,3 @@ jobs:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           # created by the GH Action automatically
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  unit-tests:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version-file: '.nvmrc'
-          cache: 'yarn'
-
-      - name: Install
-        run: yarn --immutable
-
-      - name: run jest
-
-        with:
-          install-command: yarn --immutable
-          start: yarn run test
-
