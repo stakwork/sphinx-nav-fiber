@@ -11,8 +11,7 @@ import { api } from '~/network/api'
 import { useDataStore } from '~/stores/useDataStore'
 import { FetchDataResponse, FetchSentimentResponse, GraphData, Guests, Link, Node, NodeExtended } from '~/types'
 import { getLSat } from '~/utils/getLSat'
-import { generateForceGraphPositions } from '../../transformers/forceGraph'
-import { generateSplitGraphPositions } from '../../transformers/splitGraph'
+import { getGraphDataPositions } from './const'
 
 type guestMapChild = {
   children: string[]
@@ -361,20 +360,11 @@ const getGraphData = async (searchterm: string) => {
       weight: (n.weight || 0) / topWeightValue,
     }))
 
-    let links = []
-
     // give nodes and links positions based on graphStyle
-    if (graphStyle === 'split') {
-      const dataWithPositions = generateSplitGraphPositions(nodes)
+    const dataWithPositions = getGraphDataPositions(graphStyle, nodes)
+    const { links } = dataWithPositions
 
-      links = dataWithPositions.links
-      nodes = dataWithPositions.nodes
-    } else {
-      const dataWithPositions = await generateForceGraphPositions(nodes, false)
-
-      links = dataWithPositions.links
-      nodes = dataWithPositions.nodes
-    }
+    nodes = dataWithPositions.nodes
 
     nodes.sort((a, b) => (b.weight || 0) - (a.weight || 0))
 

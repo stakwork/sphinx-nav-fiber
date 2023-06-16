@@ -4,40 +4,23 @@ import { memo, useEffect, useMemo, useRef } from 'react'
 import styled from 'styled-components'
 import { Group, Vector3 } from 'three'
 import { usePathway } from '~/components/DataRetriever'
+import { nodesAreRelatives } from '~/components/Universe/constants'
 import { Flex } from '~/components/common/Flex'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { NodeExtended } from '~/types'
+import { getNodeColorByType } from '../constants'
 
 type BadgeProps = {
   color: string
   position: Vector3
   userData: NodeExtended
   // eslint-disable-next-line react/no-unused-prop-types
+  relativeIds: string[]
+  // eslint-disable-next-line react/no-unused-prop-types
   value?: number | string | null
 }
 
-const getBadgeColor = (nodeType: string) => {
-  let color = 'lime'
-
-  switch (nodeType) {
-    case 'clip':
-    case 'show':
-    case 'episode':
-      color = 'lime'
-      break
-    case 'guest':
-      color = '#ff94ff'
-      break
-    case 'topic':
-      color = '#5078f2'
-      break
-    default:
-  }
-
-  return color
-}
-
-const PathwayBadge = ({ color, position, value, userData }: BadgeProps) => {
+const PathwayBadge = ({ color, position, value, relativeIds, userData }: BadgeProps) => {
   const setSelectedNode = useDataStore((s) => s.setSelectedNode)
   const setHoveredNode = useDataStore((s) => s.setHoveredNode)
   const selectedNode = useSelectedNode()
@@ -57,12 +40,15 @@ const PathwayBadge = ({ color, position, value, userData }: BadgeProps) => {
 
   const isHovered = useMemo(() => hoveredNode?.ref_id === userData?.ref_id, [hoveredNode?.ref_id, userData?.ref_id])
 
+  const score = (userData.weight || 0) * 100
+
   return (
     <group ref={ref} position={position}>
       <Html center sprite>
         <Tag
           color={color}
-          fontSize={18}
+          fontColor="#ffffff"
+          fontSize={15}
           justify="center"
           onClick={(e) => {
             e.stopPropagation()
@@ -83,7 +69,8 @@ const PathwayBadge = ({ color, position, value, userData }: BadgeProps) => {
           selected={selected}
           size={56}
         >
-          {value}
+          {score > 0 ? `${score.toFixed()}%` : value}
+          <Counter color={color}>{relativeIds.length}</Counter>
         </Tag>
       </Html>
     </group>
@@ -92,7 +79,7 @@ const PathwayBadge = ({ color, position, value, userData }: BadgeProps) => {
 
 const variableVector3 = new Vector3()
 
-const NodeBadge = ({ position, userData, color }: BadgeProps) => {
+const NodeBadge = ({ position, userData, color, relativeIds }: BadgeProps) => {
   const ref = useRef<Group | null>(null)
   const setSelectedNode = useDataStore((s) => s.setSelectedNode)
   const setHoveredNode = useDataStore((s) => s.setHoveredNode)
@@ -126,6 +113,7 @@ const NodeBadge = ({ position, userData, color }: BadgeProps) => {
       <Html center sprite>
         <Tag
           color={color}
+          fontColor="#fff"
           fontSize={isTopic ? 14 : 20}
           justify="center"
           onClick={(e) => {
@@ -148,6 +136,10 @@ const NodeBadge = ({ position, userData, color }: BadgeProps) => {
           size={isTopic ? 100 : 66}
         >
           {isTopic ? userData?.label : <Image src={userData?.image_url || 'noimage.jpeg'} />}
+
+          <Counter color={color}>{relativeIds.length}</Counter>
+
+          <Percentage color={color}>{((userData.weight || 0) * 100).toFixed()}%</Percentage>
         </Tag>
       </Html>
     </group>
@@ -157,38 +149,60 @@ const NodeBadge = ({ position, userData, color }: BadgeProps) => {
 export const RelevanceBadges = memo(() => {
   const { badges } = usePathway()
   const data = useDataStore((s) => s.data)
+  const selectedNode = useSelectedNode()
   const showSelectionGraph = useDataStore((s) => s.showSelectionGraph)
   const selectionGraphData = useDataStore((s) => s.selectionGraphData)
   const selectedNodeRelativeIds = useDataStore((s) => s.selectedNodeRelativeIds)
 
   const pathwayBadges = useMemo(
     () =>
-      badges.map((b) => (
-        <PathwayBadge
-          key={`relevance-badge-${b.userData.ref_id}`}
-          color="#ffffff88"
-          position={b.position}
-          userData={b.userData}
-          value={b.value}
-        />
-      )),
-    [badges],
+      badges.map((b) => {
+        if (b.userData?.ref_id !== selectedNode?.ref_id) {
+          const relativeIds =
+            (data?.nodes || [])
+              .filter((f) => f.ref_id && nodesAreRelatives(f, b.userData))
+              .map((nd) => nd?.ref_id || '') || []
+
+          return (
+            <PathwayBadge
+              key={`relevance-badge-${b.userData.ref_id}`}
+              color="#ffffff88"
+              position={b.position}
+              relativeIds={relativeIds}
+              userData={b.userData}
+              value={b.value}
+            />
+          )
+        }
+      }),
+    [badges, selectedNode],
   )
 
   const nodeBadges = useMemo(() => {
     const nodes = showSelectionGraph ? selectionGraphData.nodes : data?.nodes || []
 
     const badgesToRender = nodes
-      .filter((f) => selectedNodeRelativeIds.includes(f?.ref_id || ''))
+      .filter((f) => selectedNodeRelativeIds.includes(f?.ref_id || '') || selectedNode?.ref_id === f?.ref_id)
       .map((n) => {
-        const color = getBadgeColor(n.node_type || '')
+        const color = getNodeColorByType(n.node_type || '', true) as string
         const position = new Vector3(n?.x || 0, n?.y || 0, n?.z || 0)
 
-        return <NodeBadge key={`node-badge-${n.ref_id}`} color={color} position={position} userData={n} />
+        const relativeIds =
+          (data?.nodes || []).filter((f) => f.ref_id && nodesAreRelatives(f, n)).map((nd) => nd?.ref_id || '') || []
+
+        return (
+          <NodeBadge
+            key={`node-badge-${n.ref_id}`}
+            color={color}
+            position={position}
+            relativeIds={relativeIds}
+            userData={n}
+          />
+        )
       })
 
     return badgesToRender
-  }, [selectedNodeRelativeIds, data, showSelectionGraph, selectionGraphData])
+  }, [selectedNodeRelativeIds, data, showSelectionGraph, selectionGraphData, selectedNode])
 
   return (
     <>
@@ -203,6 +217,7 @@ RelevanceBadges.displayName = 'RelevanceBadges'
 type TagProps = {
   selected: boolean
   color: string
+  fontColor: string
   size: number
   fontSize: number
   scale: number
@@ -214,19 +229,12 @@ const Tag = styled(Flex)<TagProps>`
   height: ${(p: TagProps) => `${p.size}px`};
   background: #000000bb;
   border: 3px solid ${(p: TagProps) => p.color};
-  color: #ffffff;
+  color: ${(p: TagProps) => p.fontColor};
   border-radius: 100%;
   font-size: ${(p: TagProps) => `${p.fontSize}px`};
   cursor: pointer;
   transition: opacity 0.4s;
   transform: scale(${(p: TagProps) => p.scale});
-
-  ${(p: TagProps) =>
-    p.selected &&
-    `
-    opacity: 0.8;
-    background: #5078f2;
-  `}
 `
 
 type ImageProps = {
@@ -240,4 +248,48 @@ const Image = styled.img<ImageProps>`
   width: 60px;
   height: 60px;
   border-radius: 100%;
+`
+
+type CounterProps = {
+  color: string
+  top?: number
+  bottom?: number
+  left?: number
+  right?: number
+}
+
+const Counter = styled.div<CounterProps>`
+  display: flex;
+  position: absolute;
+  bottom: -12px;
+  left: -5px;
+  justify-content: center;
+  align-items: center;
+  background: #000000bb;
+  border: 2px solid ${(p) => p.color};
+  color: #fff;
+  min-width: 30px;
+  height: 30px;
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: 100%;
+`
+
+const Percentage = styled.div<CounterProps>`
+  display: flex;
+  position: absolute;
+  right: -10px;
+  bottom: -12px;
+  justify-content: center;
+  align-items: center;
+  horizontal-anchor: left;
+  border: 2px solid ${(p) => p.color};
+  background: ${(p) => p.color}bb;
+  padding: 0 4px;
+  color: #fff;
+  min-width: 30px;
+  height: 30px;
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: 6px;
 `
