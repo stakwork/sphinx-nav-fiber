@@ -382,8 +382,6 @@ const getGraphData = async (searchterm: string) => {
       }
     })
 
-    console.error('nodes', nodes)
-
     return { links, nodes }
   } catch (e) {
     console.error(e)
@@ -481,7 +479,6 @@ const typesWeighedByChildren = ['show', 'episode']
 
 const getMySuperficialWeight = (links: Link[], n: NodeExtended) => {
   let count = 0
-  // include children in count
 
   if (typesWeighedByChildren.includes(n.node_type)) {
     count = n?.children?.length || 0
