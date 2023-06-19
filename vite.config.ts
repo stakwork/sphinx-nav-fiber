@@ -25,6 +25,7 @@ const commonConfigOptions = ({ mode }: { mode: Mode }): UserConfigExport => {
     },
 
     optimizeDeps: {
+      exclude: ['js-big-decimal'],
       include: ['base64-arraybuffer', 'diffie-hellman'],
       esbuildOptions: {
         define: {

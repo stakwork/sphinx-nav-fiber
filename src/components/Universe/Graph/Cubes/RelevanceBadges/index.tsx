@@ -287,7 +287,7 @@ const Counter = styled.div<CounterProps>`
   color: #fff;
   padding: 0 4px;
   min-width: 30px;
-  height: 25px;
+  height: 26px;
   font-size: 12px;
   font-weight: 500;
   border-radius: 6px;
@@ -303,7 +303,7 @@ const Percentage = styled.div<CounterProps>`
   padding: 0 4px;
   color: ${(p) => p.color};
   min-width: 30px;
-  height: 25px;
+  height: 26px;
   font-size: 12px;
   font-weight: 500;
   border-radius: 6px;
