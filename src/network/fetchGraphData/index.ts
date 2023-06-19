@@ -353,13 +353,6 @@ const getGraphData = async (searchterm: string) => {
       })
     }
 
-    // re-assign weight based on highest weight value
-    // convert to range 0-1
-    nodes = nodes.map((n) => ({
-      ...n,
-      weight: (n.weight || 0) / topWeightValue,
-    }))
-
     // give nodes and links positions based on graphStyle
     const dataWithPositions = getGraphDataPositions(graphStyle, nodes)
     const { links } = dataWithPositions
@@ -367,6 +360,27 @@ const getGraphData = async (searchterm: string) => {
     nodes = dataWithPositions.nodes
 
     nodes.sort((a, b) => (b.weight || 0) - (a.weight || 0))
+
+    // re-assign weight based on highest weight value
+    // convert to range 0-1
+
+    // for topics and guests, calculate weight based on links
+    const maxSuperficialWeight = getMaxSuperficialWeightPerNodeType(links, nodes)
+
+    nodes = nodes.map((n) => {
+      let weight = (n.weight || 0) / topWeightValue
+
+      if (!n.weight && maxSuperficialWeight[n.node_type]) {
+        const myWeight = getMySuperficialWeight(links, n)
+
+        weight = myWeight / maxSuperficialWeight[n.node_type]
+      }
+
+      return {
+        ...n,
+        weight,
+      }
+    })
 
     console.error('nodes', nodes)
 
@@ -447,4 +461,35 @@ export const generateLinksFromNodeData = (nodes: NodeExtended[], hideMinorLinksU
   })
 
   return links
+}
+
+const getMaxSuperficialWeightPerNodeType = (links: Link[], nodes: NodeExtended[]) => {
+  const maxCountsByType: Record<string, number> = {}
+
+  nodes.forEach((n) => {
+    const count = getMySuperficialWeight(links, n)
+
+    if (!maxCountsByType[n.node_type] || maxCountsByType[n.node_type] < count) {
+      maxCountsByType[n.node_type] = count
+    }
+  })
+
+  return maxCountsByType
+}
+
+const typesWeighedByChildren = ['show', 'episode']
+
+const getMySuperficialWeight = (links: Link[], n: NodeExtended) => {
+  let count = 0
+  // include children in count
+
+  if (typesWeighedByChildren.includes(n.node_type)) {
+    count = n?.children?.length || 0
+  } else {
+    const myLinks = links.filter((f) => f.sourceRef === n.ref_id || f.targetRef === n.ref_id)
+
+    count = myLinks.length
+  }
+
+  return count
 }

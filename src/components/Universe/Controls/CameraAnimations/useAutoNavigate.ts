@@ -17,8 +17,10 @@ const lookAtAnimationTimerLength = 2000
 export const useAutoNavigate = (cameraControlsRef: RefObject<CameraControls | null>) => {
   const selectedNode = useSelectedNode()
   const cameraFocusTrigger = useDataStore((s) => s.cameraFocusTrigger)
+  const graphStyle = useDataStore((s) => s.graphStyle)
 
   const isUserDragging = useControlStore((s) => s.isUserDragging)
+  const isUserScrolling = useControlStore((s) => s.isUserScrolling)
   const setUserMovedCamera = useControlStore((s) => s.setUserMovedCamera)
 
   const setNearbyNodeIds = useDataStore((s) => s.setNearbyNodeIds)
@@ -74,15 +76,15 @@ export const useAutoNavigate = (cameraControlsRef: RefObject<CameraControls | nu
   useEffect(() => {
     startAnimation()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cameraFocusTrigger])
+  }, [cameraFocusTrigger, graphStyle])
 
   useEffect(() => {
     // stop navigation when user interacts
-    if (isUserDragging) {
+    if (isUserDragging || isUserScrolling) {
       setDistanceReached(true)
       setLookAtReached(true)
     }
-  }, [isUserDragging, setDistanceReached, setLookAtReached])
+  }, [isUserDragging, isUserScrolling, setDistanceReached, setLookAtReached])
 
   useEffect(() => {
     if (selectedNode) {

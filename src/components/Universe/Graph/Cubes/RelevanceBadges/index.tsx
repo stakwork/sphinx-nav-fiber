@@ -18,11 +18,9 @@ type BadgeProps = {
   userData: NodeExtended
   // eslint-disable-next-line react/no-unused-prop-types
   relativeIds: string[]
-  // eslint-disable-next-line react/no-unused-prop-types
-  value?: number | string | null
 }
 
-const PathwayBadge = ({ color, position, value, relativeIds, userData }: BadgeProps) => {
+const PathwayBadge = ({ color, position, relativeIds, userData }: BadgeProps) => {
   const setSelectedNode = useDataStore((s) => s.setSelectedNode)
   const setHoveredNode = useDataStore((s) => s.setHoveredNode)
   const selectedNode = useSelectedNode()
@@ -145,11 +143,11 @@ const NodeBadge = ({ position, userData, color, relativeIds }: BadgeProps) => {
           {isTopic ? userData?.label : <Image src={userData?.image_url || 'noimage.jpeg'} />}
 
           <BadgeIconWrapper>
-            <Percentage color={color}>{((userData.weight || 0) * 100).toFixed()}%</Percentage>
             <Counter color={color}>
               <MdHub style={{ marginRight: 4 }} />
               {relativeIds.length}
             </Counter>
+            <Percentage color={color}>{((userData.weight || 0) * 100).toFixed()}%</Percentage>
           </BadgeIconWrapper>
         </Tag>
       </Html>
@@ -181,12 +179,13 @@ export const RelevanceBadges = memo(() => {
               position={b.position}
               relativeIds={relativeIds}
               userData={b.userData}
-              value={b.value}
             />
           )
         }
+
+        return null
       }),
-    [badges, selectedNode],
+    [badges, selectedNode, data?.nodes],
   )
 
   const nodeBadges = useMemo(() => {
@@ -213,7 +212,7 @@ export const RelevanceBadges = memo(() => {
       })
 
     return badgesToRender
-  }, [selectedNodeRelativeIds, data, showSelectionGraph, selectionGraphData, selectedNode])
+  }, [selectedNodeRelativeIds, data?.nodes, showSelectionGraph, selectionGraphData, selectedNode])
 
   return (
     <>
@@ -299,10 +298,10 @@ const Percentage = styled.div<CounterProps>`
   display: flex;
   justify-content: center;
   align-items: center;
-  border: 2px solid ${(p) => p.color};
-  background: ${(p) => p.color}bb;
+  border: 2px solid ${(p) => p.color}44;
+  background: ${colors.transparentBlack};
   padding: 0 4px;
-  color: #fff;
+  color: ${(p) => p.color};
   min-width: 30px;
   height: 25px;
   font-size: 12px;
