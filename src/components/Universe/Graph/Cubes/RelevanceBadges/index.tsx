@@ -1,6 +1,7 @@
 import { Html } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import { memo, useEffect, useMemo, useRef } from 'react'
+import { MdHub } from 'react-icons/md'
 import styled from 'styled-components'
 import { Group, Vector3 } from 'three'
 import { usePathway } from '~/components/DataRetriever'
@@ -8,6 +9,7 @@ import { nodesAreRelatives } from '~/components/Universe/constants'
 import { Flex } from '~/components/common/Flex'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { NodeExtended } from '~/types'
+import { colors } from '~/utils/colors'
 import { getNodeColorByType } from '../constants'
 
 type BadgeProps = {
@@ -47,8 +49,8 @@ const PathwayBadge = ({ color, position, value, relativeIds, userData }: BadgePr
       <Html center sprite>
         <Tag
           color={color}
-          fontColor="#ffffff"
-          fontSize={15}
+          fontColor={colors.white}
+          fontSize={18}
           justify="center"
           onClick={(e) => {
             e.stopPropagation()
@@ -69,8 +71,13 @@ const PathwayBadge = ({ color, position, value, relativeIds, userData }: BadgePr
           selected={selected}
           size={56}
         >
-          {score > 0 ? `${score.toFixed()}%` : value}
-          <Counter color={color}>{relativeIds.length}</Counter>
+          {`${score.toFixed()}%`}
+          <BadgeIconWrapper>
+            <Counter color={color}>
+              <MdHub style={{ marginRight: 4 }} />
+              {relativeIds.length}
+            </Counter>
+          </BadgeIconWrapper>
         </Tag>
       </Html>
     </group>
@@ -113,7 +120,7 @@ const NodeBadge = ({ position, userData, color, relativeIds }: BadgeProps) => {
       <Html center sprite>
         <Tag
           color={color}
-          fontColor="#fff"
+          fontColor={colors.white}
           fontSize={isTopic ? 14 : 20}
           justify="center"
           onClick={(e) => {
@@ -137,9 +144,13 @@ const NodeBadge = ({ position, userData, color, relativeIds }: BadgeProps) => {
         >
           {isTopic ? userData?.label : <Image src={userData?.image_url || 'noimage.jpeg'} />}
 
-          <Counter color={color}>{relativeIds.length}</Counter>
-
-          <Percentage color={color}>{((userData.weight || 0) * 100).toFixed()}%</Percentage>
+          <BadgeIconWrapper>
+            <Percentage color={color}>{((userData.weight || 0) * 100).toFixed()}%</Percentage>
+            <Counter color={color}>
+              <MdHub style={{ marginRight: 4 }} />
+              {relativeIds.length}
+            </Counter>
+          </BadgeIconWrapper>
         </Tag>
       </Html>
     </group>
@@ -166,7 +177,7 @@ export const RelevanceBadges = memo(() => {
           return (
             <PathwayBadge
               key={`relevance-badge-${b.userData.ref_id}`}
-              color="#ffffff88"
+              color={colors.transparentWhite}
               position={b.position}
               relativeIds={relativeIds}
               userData={b.userData}
@@ -227,7 +238,7 @@ const Tag = styled(Flex)<TagProps>`
   text-align: center;
   width: ${(p: TagProps) => `${p.size}px`};
   height: ${(p: TagProps) => `${p.size}px`};
-  background: #000000bb;
+  background: ${colors.transparentBlack};
   border: 3px solid ${(p: TagProps) => p.color};
   color: ${(p: TagProps) => p.fontColor};
   border-radius: 100%;
@@ -258,38 +269,44 @@ type CounterProps = {
   right?: number
 }
 
-const Counter = styled.div<CounterProps>`
+const BadgeIconWrapper = styled.div`
   display: flex;
   position: absolute;
-  bottom: -12px;
+  bottom: -14px;
   left: -5px;
+  width: auto;
   justify-content: center;
   align-items: center;
-  background: #000000bb;
+`
+
+const Counter = styled.div<CounterProps>`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: ${colors.transparentBlack};
   border: 2px solid ${(p) => p.color};
   color: #fff;
+  padding: 0 4px;
   min-width: 30px;
-  height: 30px;
+  height: 25px;
   font-size: 12px;
   font-weight: 500;
-  border-radius: 100%;
+  border-radius: 6px;
+  margin-right: 5px;
 `
 
 const Percentage = styled.div<CounterProps>`
   display: flex;
-  position: absolute;
-  right: -10px;
-  bottom: -12px;
   justify-content: center;
   align-items: center;
-  horizontal-anchor: left;
   border: 2px solid ${(p) => p.color};
   background: ${(p) => p.color}bb;
   padding: 0 4px;
   color: #fff;
   min-width: 30px;
-  height: 30px;
+  height: 25px;
   font-size: 12px;
   font-weight: 500;
   border-radius: 6px;
+  margin-right: 5px;
 `

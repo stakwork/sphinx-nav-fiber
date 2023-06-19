@@ -31,13 +31,9 @@ function generateNodePosition(node: NodeExtended, mappedNodes: NodeExtended[]) {
   // do i have parents?
   const parents = getMyParents(node, mappedNodes)
 
-  let relativePosition: Vector3 | null = null
-
-  if (parents?.length) {
-    const parent = parents[0]
-
-    relativePosition = new Vector3(parent.x, parent.y, parent.z)
-  }
+  const relativePosition: Vector3 | null = parents?.length
+    ? new Vector3(parents[0].x, parents[0].y, parents[0].z)
+    : null
 
   if (relativePosition) {
     center.x = relativePosition.x

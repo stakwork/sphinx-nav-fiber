@@ -50,16 +50,9 @@ export const generateForceGraphPositions = (nodes: NodeExtended[]) => {
     const sourceNode = updatedNodes.find((f) => f.ref_id === link.sourceRef)
     const targetNode = updatedNodes.find((f) => f.ref_id === link.targetRef)
 
-    let onlyVisibleOnSelect = false
-
-    if (
-      sourceNode?.node_type === 'guest' ||
-      sourceNode?.node_type === 'topic' ||
-      targetNode?.node_type === 'guest' ||
-      targetNode?.node_type === 'topic'
-    ) {
-      onlyVisibleOnSelect = true
-    }
+    const onlyVisibleOnSelect = ['guest', 'topic'].some(
+      (i) => i === sourceNode?.node_type || i === targetNode?.node_type,
+    )
 
     const sourcePosition = new Vector3(sourceNode?.x || 0, sourceNode?.y || 0, sourceNode?.z || 0)
     const targetPosition = new Vector3(targetNode?.x || 0, targetNode?.y || 0, targetNode?.z || 0)
