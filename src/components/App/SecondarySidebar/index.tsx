@@ -1,7 +1,8 @@
+import { Slide } from '@mui/material'
 import { MdClose } from 'react-icons/md'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
-import { useAppStore } from '~/stores/useAppStore'
+import { SecondarySidebarActiveTab, useAppStore } from '~/stores/useAppStore'
 import { colors } from '~/utils/colors'
 import { About } from './About'
 import { Sentiment } from './Sentiment'
@@ -9,10 +10,11 @@ import { SourcesView } from './SourcesView'
 
 export const MENU_WIDTH = 600
 
-const ComponentsMapper = {
+const ComponentsMapper: Record<SecondarySidebarActiveTab, React.ReactNode> = {
   about: <About />,
   sentiment: <Sentiment />,
   sources: <SourcesView />,
+  '': null,
 }
 
 export const SecondarySideBar = () => {
@@ -21,30 +23,29 @@ export const SecondarySideBar = () => {
     s.setSecondarySidebarActiveTab,
   ])
 
-  return secondarySidebarActiveTab ? (
-    <Wrapper id="sidebar-wrapper">
-      <CloseButton id="cy-close-secondary-sidebar" onClick={() => setSecondarySidebarActiveTab('')}>
-        <MdClose />
-      </CloseButton>
-      {ComponentsMapper[secondarySidebarActiveTab]}
-    </Wrapper>
-  ) : null
+  return (
+    <Slide direction="left" in={!!secondarySidebarActiveTab} mountOnEnter unmountOnExit>
+      <Wrapper id="secondary-sidebar-wrapper">
+        <CloseButton id="cy-close-secondary-sidebar" onClick={() => setSecondarySidebarActiveTab('')}>
+          <MdClose />
+        </CloseButton>
+        {ComponentsMapper[secondarySidebarActiveTab]}
+      </Wrapper>
+    </Slide>
+  )
 }
 
-const Wrapper = styled(Flex)`
-  background: ${colors.body};
-  height: 100vh;
-  padding: 16px 20px;
-  width: ${MENU_WIDTH}px;
-  z-index: 30;
-  display: flex;
-
-  .content {
-    display: flex;
-    flex-direction: column;
-    align
-  }
-`
+const Wrapper = styled(Flex)(({ theme }) => ({
+  background: colors.body,
+  height: '100vh',
+  padding: '16px 20px',
+  width: '100%',
+  zIndex: 30,
+  display: 'flex',
+  [theme.breakpoints.up('sm')]: {
+    width: MENU_WIDTH,
+  },
+}))
 
 const CloseButton = styled(Flex).attrs({
   align: 'center',

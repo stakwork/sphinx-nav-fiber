@@ -1,6 +1,6 @@
 {
   "name": "sphinx-nav",
-  "version": "0.1.38",
+  "version": "0.1.40",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.10.8",
@@ -72,7 +72,7 @@
     "preview": "vite preview --port 3004",
     "build-preview": "yarn run build && yarn run preview",
     "build-preview-e2e": "VITE_APP_IS_E2E=true yarn run build && vite preview --port 3000",
-    "test": "yarn jest",
+    "test": "NODE_ENV=test yarn jest",
     "test-start": "yarn jest --watch",
     "cy-open": "cypress open",
     "cy-run": "cypress run",
@@ -87,6 +87,28 @@
       "react-app",
       "react-app/jest"
     ]
+  },
+  "jest": {
+    "collectCoverage": true,
+    "collectCoverageFrom": [
+      "./src/utils/**"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "lines": 12
+      }
+    },
+    "moduleNameMapper": {
+      "~/(.*)": "<rootDir>/src/$1"
+    },
+    "globals": {
+      "window": {
+        "location": {
+          "origin": "localhost",
+          "host": "localhost"
+        }
+      }
+    }
   },
   "browserslist": {
     "production": [
@@ -126,6 +148,7 @@
     "@typescript-eslint/eslint-plugin": "^5.27.1",
     "@typescript-eslint/parser": "^5.27.1",
     "@vitejs/plugin-react": "^4.0.0",
+    "babel-plugin-transform-vite-meta-env": "^1.0.3",
     "cypress": "^12.2.0",
     "eslint": "^8.41.0",
     "eslint-config-airbnb": "^19.0.4",
@@ -139,6 +162,7 @@
     "husky": "^8.0.1",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^29.5.0",
+    "jest-environment-jsdom": "^29.5.0",
     "prettier": "^2.7.1",
     "prop-types": "^15.8.1",
     "r3f-perf": "6.7.0",

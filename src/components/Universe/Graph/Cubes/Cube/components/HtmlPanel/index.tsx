@@ -13,9 +13,13 @@ type Props = {
   visible: boolean
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const stopPropagationHandler = (e: any) => e.stopPropagation()
+const floatingRange = [1, 2] as [(number | undefined)?, (number | undefined)?] | undefined
+
 export const HtmlPanel = ({ speed = 2, intensity = 4, children, withTranscript, position, visible }: Props) => (
   <Float
-    floatingRange={[1, 2]}
+    floatingRange={floatingRange}
     /* Up/down float intensity, works like a multiplier with floatingRange,defaults to 1 */
     floatIntensity={intensity}
     /* Animation speed, defaults to 1 */
@@ -25,22 +29,22 @@ export const HtmlPanel = ({ speed = 2, intensity = 4, children, withTranscript, 
     <Html
       center
       className="html-panel"
-      onClick={(e) => e.stopPropagation()}
-      onKeyDown={(e) => e.stopPropagation()}
-      onPointerDown={(e) => e.stopPropagation()}
-      onPointerOut={(e) => e.stopPropagation()}
-      onPointerOver={(e) => e.stopPropagation()}
-      onPointerUp={(e) => e.stopPropagation()}
+      onClick={stopPropagationHandler}
+      onKeyDown={stopPropagationHandler}
+      onPointerDown={stopPropagationHandler}
+      onPointerOut={stopPropagationHandler}
+      onPointerOver={stopPropagationHandler}
+      onPointerUp={stopPropagationHandler}
       sprite
     >
       <HtmlWrap
         className="html-panel"
         dimensions={withTranscript ? withTranscriptDimensions : defaultDimensions}
         id="html-panel"
-        onPointerDown={(e) => e.stopPropagation()}
-        onPointerOut={(e) => e.stopPropagation()}
-        onPointerOver={(e) => e.stopPropagation()}
-        onPointerUp={(e) => e.stopPropagation()}
+        onPointerDown={stopPropagationHandler}
+        onPointerOut={stopPropagationHandler}
+        onPointerOver={stopPropagationHandler}
+        onPointerUp={stopPropagationHandler}
         visible={visible}
       >
         {children}

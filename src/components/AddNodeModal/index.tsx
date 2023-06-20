@@ -1,3 +1,4 @@
+import { Stack } from '@mui/material'
 import { clsx } from 'clsx'
 import { ReactElement, useState } from 'react'
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
@@ -336,11 +337,16 @@ export const AddNodeModal = () => {
             </Flex>
 
             {!activeType ? (
-              <Flex align="center" direction="row" justify="space-between">
+              <Stack
+                alignItems={{ xs: 'stretch', sm: 'center' }}
+                direction={{ xs: 'column', sm: 'row' }}
+                justifyContent="space-between"
+                spacing={2}
+              >
                 <Flex>
                   <Text kind="mediumBold">What do you want to add?</Text>
                 </Flex>
-                <Flex basis="250px">
+                <Flex grow={1}>
                   <StyledSelect
                     className={clsx(selectedValue.length && 'hasSelected', 'cy-select-content-type')}
                     clearable
@@ -353,7 +359,7 @@ export const AddNodeModal = () => {
                     values={selectedValue}
                   />
                 </Flex>
-              </Flex>
+              </Stack>
             ) : (
               <>
                 <Flex>

@@ -67,13 +67,9 @@ export const Controls = ({ disableAnimations }: Props) => {
     <CameraControls
       ref={cameraControlsRef}
       boundaryEnclosesCamera
-      dampingFactor={0.1}
-      dollySpeed={0.2}
-      dollyToCursor
       enabled={!isUserScrollingOnHtmlPanel}
-      infinityDolly
       maxDistance={12000}
-      minDistance={1}
+      minDistance={100}
       onEnd={() => setIsUserDragging(false)}
       onStart={() => setIsUserDragging(true)}
       smoothTime={smoothTime}
