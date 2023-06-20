@@ -1,6 +1,5 @@
 export const host = 'knowledge-graph.sphinx.chat'
 
-// export const sidebarWrapper = '#sidebar-wrapper'
 export const loader = '#loader'
 export const search = '#main-search'
 
