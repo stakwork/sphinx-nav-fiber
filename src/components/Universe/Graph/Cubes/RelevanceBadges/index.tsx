@@ -20,6 +20,8 @@ type BadgeProps = {
   relativeIds: string[]
 }
 
+const getPercentageFromWeight = (weight: number | undefined) => ((weight || 0) * 100).toFixed()
+
 const PathwayBadge = ({ color, position, relativeIds, userData }: BadgeProps) => {
   const setSelectedNode = useDataStore((s) => s.setSelectedNode)
   const setHoveredNode = useDataStore((s) => s.setHoveredNode)
@@ -40,7 +42,7 @@ const PathwayBadge = ({ color, position, relativeIds, userData }: BadgeProps) =>
 
   const isHovered = useMemo(() => hoveredNode?.ref_id === userData?.ref_id, [hoveredNode?.ref_id, userData?.ref_id])
 
-  const score = (userData.weight || 0) * 100
+  const score = getPercentageFromWeight(userData.weight)
 
   return (
     <group ref={ref} position={position}>
@@ -69,7 +71,7 @@ const PathwayBadge = ({ color, position, relativeIds, userData }: BadgeProps) =>
           selected={selected}
           size={56}
         >
-          {`${score.toFixed()}%`}
+          {`${score}%`}
           <BadgeIconWrapper>
             <Counter color={color}>
               <MdHub style={{ marginRight: 4 }} />
@@ -113,6 +115,8 @@ const NodeBadge = ({ position, userData, color, relativeIds }: BadgeProps) => {
 
   const isHovered = useMemo(() => hoveredNode?.ref_id === userData?.ref_id, [hoveredNode?.ref_id, userData?.ref_id])
 
+  const score = getPercentageFromWeight(userData.weight)
+
   return (
     <group ref={ref} position={position}>
       <Html center sprite>
@@ -147,7 +151,7 @@ const NodeBadge = ({ position, userData, color, relativeIds }: BadgeProps) => {
               <MdHub style={{ marginRight: 4 }} />
               {relativeIds.length}
             </Counter>
-            <Percentage color={color}>{((userData.weight || 0) * 100).toFixed()}%</Percentage>
+            <Percentage color={color}>{score}%</Percentage>
           </BadgeIconWrapper>
         </Tag>
       </Html>
