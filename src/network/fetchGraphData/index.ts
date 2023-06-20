@@ -478,15 +478,11 @@ const getMaxSuperficialWeightPerNodeType = (links: Link[], nodes: NodeExtended[]
 const typesWeighedByChildren = ['show', 'episode']
 
 const getMySuperficialWeight = (links: Link[], n: NodeExtended) => {
-  let count = 0
-
   if (typesWeighedByChildren.includes(n.node_type)) {
-    count = n?.children?.length || 0
-  } else {
-    const myLinks = links.filter((f) => f.sourceRef === n.ref_id || f.targetRef === n.ref_id)
-
-    count = myLinks.length
+    return n?.children?.length || 0
   }
 
-  return count
+  const myLinks = links.filter((f) => f.sourceRef === n.ref_id || f.targetRef === n.ref_id)
+
+  return myLinks.length
 }
