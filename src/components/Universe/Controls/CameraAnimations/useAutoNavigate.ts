@@ -17,7 +17,6 @@ const lookAtAnimationTimerLength = 2000
 export const useAutoNavigate = (cameraControlsRef: RefObject<CameraControls | null>) => {
   const selectedNode = useSelectedNode()
   const cameraFocusTrigger = useDataStore((s) => s.cameraFocusTrigger)
-  const graphStyle = useDataStore((s) => s.graphStyle)
 
   const isUserDragging = useControlStore((s) => s.isUserDragging)
   const isUserScrolling = useControlStore((s) => s.isUserScrolling)
@@ -76,7 +75,7 @@ export const useAutoNavigate = (cameraControlsRef: RefObject<CameraControls | nu
   useEffect(() => {
     startAnimation()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cameraFocusTrigger, graphStyle])
+  }, [cameraFocusTrigger])
 
   useEffect(() => {
     // stop navigation when user interacts
