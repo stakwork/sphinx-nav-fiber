@@ -11,6 +11,7 @@ import { api } from '~/network/api'
 import { useDataStore } from '~/stores/useDataStore'
 import { FetchDataResponse, FetchSentimentResponse, GraphData, Guests, Link, Node, NodeExtended } from '~/types'
 import { getLSat } from '~/utils/getLSat'
+import { getMaxSuperficialWeightPerNodeType, getSuperficialNodeWeight } from '~/utils/getSuperficialNodeWeight'
 import { getGraphDataPositions } from './const'
 
 type guestMapChild = {
@@ -448,32 +449,6 @@ export const generateLinksFromNodeData = (nodes: NodeExtended[], hideMinorLinksU
   return links
 }
 
-export const getMaxSuperficialWeightPerNodeType = (nodes: NodeExtended[], links: Link[]) => {
-  const maxCountsByType: Record<string, number> = {}
-
-  nodes.forEach((n) => {
-    const count = getMySuperficialWeight(links, n)
-
-    if (!maxCountsByType[n.node_type] || maxCountsByType[n.node_type] < count) {
-      maxCountsByType[n.node_type] = count
-    }
-  })
-
-  return maxCountsByType
-}
-
-const typesWeighedByChildren = ['show', 'episode']
-
-export const getMySuperficialWeight = (links: Link[], n: NodeExtended) => {
-  if (typesWeighedByChildren.includes(n.node_type)) {
-    return n?.children?.length || 0
-  }
-
-  const myLinks = links.filter((f) => f.sourceRef === n.ref_id || f.targetRef === n.ref_id)
-
-  return myLinks.length
-}
-
 export const addWeightNormalizationToNodes = (
   topWeightValue: number,
   maxSuperficialWeight: Record<string, number>,
@@ -484,7 +459,7 @@ export const addWeightNormalizationToNodes = (
     let weight = (n.weight || 0) / topWeightValue
 
     if (!n.weight && maxSuperficialWeight[n.node_type]) {
-      const myWeight = getMySuperficialWeight(links, n)
+      const myWeight = getSuperficialNodeWeight(n, links)
 
       weight = myWeight / maxSuperficialWeight[n.node_type]
     }
