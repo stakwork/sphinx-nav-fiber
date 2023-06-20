@@ -57,17 +57,21 @@ const TitleWrapper = styled.div`
   `}
 `
 
-const StatsWrapper = styled.div`
-  left: 25px;
-  position: absolute;
-  top: 75px;
-`
+const StatsWrapper = styled('div')(({ theme }) => ({
+  position: 'absolute',
+  left: '25px',
+  top: '75px',
+  [theme.breakpoints.down('sm')]: {
+    top: '130px',
+  },
+}))
 
 const SearchBarWrapper = styled.div`
-  width: 60%;
-  margin: 0 auto;
+  width: 100%;
+  margin-left: 30px;
+  margin-right: 150px;
 
   ${media.smallOnly`
-    width: 100%;
+    margin: 0 auto;
   `}
 `
