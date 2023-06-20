@@ -365,22 +365,9 @@ const getGraphData = async (searchterm: string) => {
     // convert to range 0-1
 
     // for topics and guests, calculate weight based on links
-    const maxSuperficialWeight = getMaxSuperficialWeightPerNodeType(links, nodes)
+    const maxSuperficialWeight = getMaxSuperficialWeightPerNodeType(nodes, links)
 
-    nodes = nodes.map((n) => {
-      let weight = (n.weight || 0) / topWeightValue
-
-      if (!n.weight && maxSuperficialWeight[n.node_type]) {
-        const myWeight = getMySuperficialWeight(links, n)
-
-        weight = myWeight / maxSuperficialWeight[n.node_type]
-      }
-
-      return {
-        ...n,
-        weight,
-      }
-    })
+    nodes = addWeightNormalizationToNodes(topWeightValue, maxSuperficialWeight, nodes, links)
 
     return { links, nodes }
   } catch (e) {
@@ -461,7 +448,7 @@ export const generateLinksFromNodeData = (nodes: NodeExtended[], hideMinorLinksU
   return links
 }
 
-const getMaxSuperficialWeightPerNodeType = (links: Link[], nodes: NodeExtended[]) => {
+const getMaxSuperficialWeightPerNodeType = (nodes: NodeExtended[], links: Link[]) => {
   const maxCountsByType: Record<string, number> = {}
 
   nodes.forEach((n) => {
@@ -486,3 +473,24 @@ const getMySuperficialWeight = (links: Link[], n: NodeExtended) => {
 
   return myLinks.length
 }
+
+const addWeightNormalizationToNodes = (
+  topWeightValue: number,
+  maxSuperficialWeight: Record<string, number>,
+  nodes: NodeExtended[],
+  links: Link[],
+) =>
+  nodes.map((n) => {
+    let weight = (n.weight || 0) / topWeightValue
+
+    if (!n.weight && maxSuperficialWeight[n.node_type]) {
+      const myWeight = getMySuperficialWeight(links, n)
+
+      weight = myWeight / maxSuperficialWeight[n.node_type]
+    }
+
+    return {
+      ...n,
+      weight,
+    }
+  })
