@@ -1,11 +1,12 @@
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable import/no-extraneous-dependencies */
 import { AdaptiveDpr, AdaptiveEvents, Html, Loader, Preload } from '@react-three/drei'
-import { Canvas } from '@react-three/fiber'
+import { Canvas, RootState } from '@react-three/fiber'
 import { Bloom, EffectComposer, Outline, Selection, Vignette } from '@react-three/postprocessing'
 import { useControls } from 'leva'
 import { BlendFunction, Resolution } from 'postprocessing'
 import { Perf } from 'r3f-perf'
-import { Suspense, useMemo } from 'react'
+import { Suspense, memo, useCallback, useMemo } from 'react'
 import { isDevelopment } from '~/constants'
 import { useControlStore } from '~/stores/useControlStore'
 import { useSelectedNode } from '~/stores/useDataStore'
@@ -18,6 +19,12 @@ import { getNodeColorByType } from './Graph/Cubes/constants'
 import { Lights } from './Lights'
 import { Overlay } from './Overlay'
 import { outlineEffectColor } from './constants'
+
+const Fallback = () => (
+  <Html>
+    <Loader />
+  </Html>
+)
 
 const Content = () => {
   const { universeColor } = useControls('universe', {
@@ -68,60 +75,58 @@ const Content = () => {
 
 let wheelEventTimeout: ReturnType<typeof setTimeout> | null = null
 
-export const Universe = () => {
+const cameraProps = {
+  aspect: window.innerWidth / window.innerHeight,
+  far: 30000,
+  near: 1,
+  position: [initialCameraPosition.x, initialCameraPosition.y, initialCameraPosition.z],
+} as const
+
+const _Universe = () => {
   const [setIsUserScrollingOnHtmlPanel, setIsUserScrolling, setUserMovedCamera] = [
     useControlStore((s) => s.setIsUserScrollingOnHtmlPanel),
     useControlStore((s) => s.setIsUserScrolling),
     useControlStore((s) => s.setUserMovedCamera),
   ]
 
+  const onWheelHandler = useCallback(
+    (e: React.WheelEvent) => {
+      const { target } = e
+      const { offsetParent } = target as HTMLDivElement
+
+      if (wheelEventTimeout) {
+        clearTimeout(wheelEventTimeout)
+      }
+
+      if (offsetParent?.classList?.contains('html-panel')) {
+        // if overflowing on y, disable camera controls to scroll on div
+        if (offsetParent.clientHeight < offsetParent.scrollHeight) {
+          setIsUserScrollingOnHtmlPanel(true)
+        }
+      }
+
+      setIsUserScrolling(true)
+      setUserMovedCamera(true)
+
+      wheelEventTimeout = setTimeout(() => {
+        setIsUserScrolling(false)
+        setIsUserScrollingOnHtmlPanel(false)
+      }, 200)
+    },
+    [setIsUserScrolling, setIsUserScrollingOnHtmlPanel, setUserMovedCamera],
+  )
+
+  const onCreatedHandler = useCallback((s: RootState) => addToGlobalForE2e(s, 'threeState'), [])
+
   return (
     <>
       <Overlay />
 
       <Suspense fallback={null}>
-        <Canvas
-          camera={{
-            aspect: 1920 / 1080,
-            far: 30000,
-            near: 1,
-            position: [initialCameraPosition.x, initialCameraPosition.y, initialCameraPosition.z],
-          }}
-          id="universe-canvas"
-          onCreated={(s) => addToGlobalForE2e(s, 'threeState')}
-          onWheel={(e: React.WheelEvent) => {
-            const { target } = e
-            const { offsetParent } = target as HTMLDivElement
-
-            if (wheelEventTimeout) {
-              clearTimeout(wheelEventTimeout)
-            }
-
-            if (offsetParent?.classList?.contains('html-panel')) {
-              // if overflowing on y, disable camera controls to scroll on div
-              if (offsetParent.clientHeight < offsetParent.scrollHeight) {
-                setIsUserScrollingOnHtmlPanel(true)
-              }
-            }
-
-            setIsUserScrolling(true)
-            setUserMovedCamera(true)
-
-            wheelEventTimeout = setTimeout(() => {
-              setIsUserScrolling(false)
-              setIsUserScrollingOnHtmlPanel(false)
-            }, 200)
-          }}
-        >
+        <Canvas camera={cameraProps} id="universe-canvas" onCreated={onCreatedHandler} onWheel={onWheelHandler}>
           {isDevelopment && <Perf position="top-left" />}
 
-          <Suspense
-            fallback={
-              <Html>
-                <Loader />
-              </Html>
-            }
-          >
+          <Suspense fallback={<Fallback />}>
             <Preload />
 
             <AdaptiveDpr />
@@ -135,3 +140,5 @@ export const Universe = () => {
     </>
   )
 }
+
+export const Universe = memo(_Universe)

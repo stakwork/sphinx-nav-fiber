@@ -36,18 +36,21 @@ export const Overlay = () => {
   )
 }
 
-const OverlayWrap = styled.div`
-  position: absolute;
-  z-index: 1;
-  top: 0px;
-  left: 0px;
-  user-select: none;
-  pointer-events: none;
-  display: flex;
+const OverlayWrap = styled('div')(({ theme }) => ({
+  position: 'absolute',
+  zIndex: 1,
+  top: 0,
+  left: 0,
+  userSelect: 'none',
+  pointerEvents: 'none',
+  display: 'flex',
 
-  justify-content: flex-end;
-  align-items: flex-start;
-  height: 100%;
-  width: 100%;
-  padding: 16px;
-`
+  justifyContent: 'flex-end',
+  alignItems: 'flex-start',
+  height: '100%',
+  width: '100%',
+  padding: '16px',
+  [theme.breakpoints.down('sm')]: {
+    top: 50,
+  },
+}))

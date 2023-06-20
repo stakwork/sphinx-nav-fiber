@@ -8,6 +8,7 @@ import { useDataStore } from '~/stores/useDataStore'
 import { NodeExtended } from '~/types'
 import { formatDescription } from '~/utils/formatDescription'
 import { saveConsumedContent } from '~/utils/relayHelper'
+import { useIsMatchBreakpoint } from '~/utils/useIsMatchBreakpoint'
 import { ErrorSection } from '../Creator/ErrorSection'
 import { Episode } from './Episode'
 
@@ -26,6 +27,7 @@ export const Relevance = ({ header = null }: Props) => {
   const setSelectedTimestamp = useDataStore((s) => s.setSelectedTimestamp)
   const flagErrorIsOpen = useAppStore((s) => s.flagErrorIsOpen)
 
+  const [setSidebarOpen] = useAppStore((s) => [s.setSidebarOpen])
   const setRelevanceSelected = useAppStore((s) => s.setRelevanceSelected)
 
   const [currentPage, setCurrentPage] = useState(0)
@@ -35,6 +37,8 @@ export const Relevance = ({ header = null }: Props) => {
 
   const hasNext = data.nodes.length - 1 > endSlice
   const hasPrevious = startSlice > 0
+
+  const isMobile = useIsMatchBreakpoint('sm', 'down')
 
   const currentNodes = useMemo(
     () => data.nodes.slice(startSlice, endSlice).filter((f) => f.node_type === 'clip'),
@@ -47,8 +51,9 @@ export const Relevance = ({ header = null }: Props) => {
       setSelectedTimestamp(node)
       setRelevanceSelected(true)
       setSelectedNode(node)
+      isMobile && setSidebarOpen(false)
     },
-    [setSelectedNode, setRelevanceSelected, setSelectedTimestamp],
+    [setSelectedNode, setRelevanceSelected, setSelectedTimestamp, setSidebarOpen, isMobile],
   )
 
   return (

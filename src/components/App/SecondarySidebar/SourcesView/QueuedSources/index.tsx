@@ -56,7 +56,7 @@ export const QueuedSources = () => {
           graph, you should deny it.
         </Text>
       </Heading>
-      <Flex direction="row" pb={16}>
+      <Flex className="filters" direction="row" pb={16}>
         <StyledPill onClick={() => onFilterChange('')} selected={!typeFilter}>
           All
         </StyledPill>
@@ -83,6 +83,10 @@ const Wrapper = styled(Flex)`
   .title {
     margin-bottom: 16px;
     font-size: 20px;
+  }
+
+  & .filters {
+    overflow-x: auto;
   }
 `
 

@@ -139,7 +139,7 @@ export const Sources = () => {
         <Text className="title">Sources for this Graph</Text>
         {resolveAdminActions()}
       </Heading>
-      <Flex direction="row" pb={16}>
+      <Flex className="filters" direction="row" pb={16}>
         <StyledPill onClick={() => onFilterChange('')} selected={!typeFilter}>
           All
         </StyledPill>
@@ -169,6 +169,10 @@ const Wrapper = styled(Flex)`
   .title {
     margin-bottom: 16px;
     font-size: 20px;
+  }
+
+  & .filters {
+    overflow-x: auto;
   }
 `
 

@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { Slide } from '@mui/material'
+import { forwardRef, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { MdClose, MdKeyboardDoubleArrowLeft } from 'react-icons/md'
 import styled from 'styled-components'
@@ -9,7 +10,6 @@ import { Loader } from '~/components/common/Loader'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
 import { colors } from '~/utils/colors'
-import { media } from '~/utils/media'
 import { SentimentAnalysis } from '../SecondarySidebar/Sentiment/SentimentAnalysis'
 import { ActionsMenu, TabsVariants } from './ActionsMenu'
 import { AskQuestion } from './AskQuestion'
@@ -30,14 +30,15 @@ const ComponentsMapper: ComponentsMapperType = {
   sentiment: <SentimentAnalysis />,
 }
 
-const Content = ({ onSubmit }: Props) => {
+// eslint-disable-next-line react/display-name
+const Content = forwardRef<HTMLDivElement, Props>(({ onSubmit }, ref) => {
   const [isLoading] = useDataStore((s) => [s.isFetching])
   const [setSidebarOpen] = useAppStore((s) => [s.setSidebarOpen])
   const { setValue } = useFormContext()
   const [selectedView, setSelectedView] = useState<TabsVariants>('searchResults')
 
   return (
-    <Wrapper id="sidebar-wrapper">
+    <Wrapper ref={ref} id="sidebar-wrapper">
       <SearchWrapper>
         <SearchBar onSubmit={onSubmit} />
 
@@ -48,10 +49,12 @@ const Content = ({ onSubmit }: Props) => {
         >
           <MdClose fontSize={20} />
         </CloseButton>
+        <CategoryWrapper direction="row">
+          <Flex basis="154px">
+            <CategorySelect />
+          </Flex>
+        </CategoryWrapper>
       </SearchWrapper>
-
-      <ActionsMenu active={selectedView} onChange={setSelectedView} />
-
       <CollapseButton
         onClick={() => {
           setSidebarOpen(false)
@@ -60,40 +63,40 @@ const Content = ({ onSubmit }: Props) => {
         <MdKeyboardDoubleArrowLeft fontSize={20} />
       </CollapseButton>
 
+      <ActionsMenu active={selectedView} onChange={setSelectedView} />
+
       <ScrollWrapper>
         <Spacer />
         {isLoading ? <Loader color="primaryText1" /> : ComponentsMapper[selectedView]}
         <Spacer />
       </ScrollWrapper>
-
-      <CategoryWrapper direction="row">
-        <Flex basis="154px">
-          <CategorySelect />
-        </Flex>
-      </CategoryWrapper>
     </Wrapper>
   )
-}
+})
 
 export const SideBar = ({ onSubmit }: Props) => {
   const sidebarIsOpen = useAppStore((s) => s.sidebarIsOpen)
 
-  if (!sidebarIsOpen) {
-    return <Tab />
-  }
-
-  return <Content onSubmit={onSubmit} />
+  return (
+    <>
+      <Slide direction="right" in={sidebarIsOpen} mountOnEnter unmountOnExit>
+        <Content onSubmit={onSubmit} />
+      </Slide>
+      {!sidebarIsOpen && <Tab />}
+    </>
+  )
 }
 
-const Wrapper = styled(Flex)`
-  background: ${colors.body};
-  height: 100vh;
-  width: 100%;
-  z-index: 30;
-  ${media.large`
-    width: ${MENU_WIDTH}px;
-  `}
-`
+const Wrapper = styled(Flex)(({ theme }) => ({
+  position: 'relative',
+  background: colors.body,
+  height: '100vh',
+  width: '100%',
+  zIndex: 30,
+  [theme.breakpoints.up('sm')]: {
+    width: MENU_WIDTH,
+  },
+}))
 
 const SearchWrapper = styled(Flex).attrs({
   direction: 'row',
@@ -122,31 +125,38 @@ const CloseButton = styled(Flex).attrs({
 const CollapseButton = styled(Flex).attrs({
   align: 'center',
   justify: 'center',
-  p: 5,
-})`
-  background-color: ${colors.dashboardHeader};
-  border-radius: 0 5px 5px 0;
-  color: ${colors.mainBottomIcons};
-  cursor: pointer;
-  transition-duration: 0.2s;
-  position: absolute;
-  left: ${MENU_WIDTH}px;
-  top: 78px;
+  p: 8,
+})(({ theme }) => ({
+  backgroundColor: colors.dashboardHeader,
+  borderRadius: '0 5px 5px 0',
+  color: colors.mainBottomIcons,
+  cursor: 'pointer',
+  transitionDuration: '0.2s',
+  position: 'absolute',
+  right: '0px',
+  top: '73px',
+  zIndex: 1,
 
-  &:hover {
-    background-color: ${colors.gray300};
-  }
-`
+  [theme.breakpoints.up('sm')]: {
+    right: '-36px',
+  },
+  '&:hover': {
+    backgroundColor: colors.gray300,
+  },
+}))
 
 const CategoryWrapper = styled(Flex).attrs({
   align: 'center',
   justify: 'stretch',
   p: 5,
-})`
-  position: absolute;
-  left: ${MENU_WIDTH + 10}px;
-  top: 10px;
-`
+})(({ theme }) => ({
+  position: 'relative',
+  [theme.breakpoints.up('sm')]: {
+    position: 'absolute',
+    top: '10px',
+    left: MENU_WIDTH,
+  },
+}))
 
 const ScrollWrapper = styled(Flex)`
   overflow: auto;

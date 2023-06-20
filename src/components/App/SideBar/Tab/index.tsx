@@ -23,10 +23,13 @@ export const Tab = () => {
 const ExpandButton = styled(Flex).attrs({
   align: 'center',
   justify: 'center',
-})`
-  color: ${colors.white};
-  cursor: pointer;
-`
+})(({ theme }) => ({
+  color: colors.white,
+  cursor: 'pointer',
+  [theme.breakpoints.down('sm')]: {
+    padding: '9px',
+  },
+}))
 
 const Wrapper = styled(Flex)`
   background-color: ${colors.dashboardHeader};
