@@ -1,8 +1,15 @@
 import { getMaxSuperficialWeightPerNodeType } from '..'
 
+type FakeNode = {
+  ref_id: string
+  node_type: string
+  weight?: number
+  children?: string[]
+}
+
 describe('test getMaxSuperficialWeightPerNodeType', () => {
   it('should return correct weights per node type', () => {
-    const nodes = [
+    const nodes: FakeNode[] = [
       {
         ref_id: '1',
         node_type: 'clip',
@@ -43,9 +50,9 @@ describe('test getMaxSuperficialWeightPerNodeType', () => {
 
     const maxSuperficialWeights = getMaxSuperficialWeightPerNodeType(nodes, links)
 
-    expect(maxSuperficialWeights['clip']).toEqual(100)
-    expect(maxSuperficialWeights['episode']).toEqual(3)
-    expect(maxSuperficialWeights['guest']).toEqual(1)
-    expect(maxSuperficialWeights['show']).toEqual(1)
+    expect(maxSuperficialWeights.clip).toEqual(100)
+    expect(maxSuperficialWeights.episode).toEqual(3)
+    expect(maxSuperficialWeights.guest).toEqual(1)
+    expect(maxSuperficialWeights.show).toEqual(1)
   })
 })
