@@ -448,7 +448,7 @@ export const generateLinksFromNodeData = (nodes: NodeExtended[], hideMinorLinksU
   return links
 }
 
-const getMaxSuperficialWeightPerNodeType = (nodes: NodeExtended[], links: Link[]) => {
+export const getMaxSuperficialWeightPerNodeType = (nodes: NodeExtended[], links: Link[]) => {
   const maxCountsByType: Record<string, number> = {}
 
   nodes.forEach((n) => {
@@ -464,7 +464,7 @@ const getMaxSuperficialWeightPerNodeType = (nodes: NodeExtended[], links: Link[]
 
 const typesWeighedByChildren = ['show', 'episode']
 
-const getMySuperficialWeight = (links: Link[], n: NodeExtended) => {
+export const getMySuperficialWeight = (links: Link[], n: NodeExtended) => {
   if (typesWeighedByChildren.includes(n.node_type)) {
     return n?.children?.length || 0
   }
@@ -474,7 +474,7 @@ const getMySuperficialWeight = (links: Link[], n: NodeExtended) => {
   return myLinks.length
 }
 
-const addWeightNormalizationToNodes = (
+export const addWeightNormalizationToNodes = (
   topWeightValue: number,
   maxSuperficialWeight: Record<string, number>,
   nodes: NodeExtended[],
