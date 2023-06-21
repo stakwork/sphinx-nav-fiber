@@ -19,6 +19,7 @@ export const useAutoNavigate = (cameraControlsRef: RefObject<CameraControls | nu
   const cameraFocusTrigger = useDataStore((s) => s.cameraFocusTrigger)
 
   const isUserDragging = useControlStore((s) => s.isUserDragging)
+  const isUserScrolling = useControlStore((s) => s.isUserScrolling)
   const setUserMovedCamera = useControlStore((s) => s.setUserMovedCamera)
 
   const setNearbyNodeIds = useDataStore((s) => s.setNearbyNodeIds)
@@ -78,11 +79,11 @@ export const useAutoNavigate = (cameraControlsRef: RefObject<CameraControls | nu
 
   useEffect(() => {
     // stop navigation when user interacts
-    if (isUserDragging) {
+    if (isUserDragging || isUserScrolling) {
       setDistanceReached(true)
       setLookAtReached(true)
     }
-  }, [isUserDragging, setDistanceReached, setLookAtReached])
+  }, [isUserDragging, isUserScrolling, setDistanceReached, setLookAtReached])
 
   useEffect(() => {
     if (selectedNode) {

@@ -1,6 +1,7 @@
 import { Html } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import { memo, useEffect, useMemo, useRef } from 'react'
+import { MdHub } from 'react-icons/md'
 import styled from 'styled-components'
 import { Group, Vector3 } from 'three'
 import { usePathway } from '~/components/DataRetriever'
@@ -17,11 +18,11 @@ type BadgeProps = {
   userData: NodeExtended
   // eslint-disable-next-line react/no-unused-prop-types
   relativeIds: string[]
-  // eslint-disable-next-line react/no-unused-prop-types
-  value?: number | string | null
 }
 
-const PathwayBadge = ({ color, position, value, userData }: BadgeProps) => {
+const getPercentageFromWeight = (weight: number | undefined) => ((weight || 0) * 100).toFixed()
+
+const PathwayBadge = ({ color, position, relativeIds, userData }: BadgeProps) => {
   const setSelectedNode = useDataStore((s) => s.setSelectedNode)
   const setHoveredNode = useDataStore((s) => s.setHoveredNode)
   const selectedNode = useSelectedNode()
@@ -40,6 +41,8 @@ const PathwayBadge = ({ color, position, value, userData }: BadgeProps) => {
   )
 
   const isHovered = useMemo(() => hoveredNode?.ref_id === userData?.ref_id, [hoveredNode?.ref_id, userData?.ref_id])
+
+  const score = getPercentageFromWeight(userData.weight)
 
   return (
     <group ref={ref} position={position}>
@@ -68,7 +71,13 @@ const PathwayBadge = ({ color, position, value, userData }: BadgeProps) => {
           selected={selected}
           size={56}
         >
-          {value}
+          {`${score}%`}
+          <BadgeIconWrapper>
+            <Counter color={color}>
+              <MdHub style={{ marginRight: 4 }} />
+              {relativeIds.length}
+            </Counter>
+          </BadgeIconWrapper>
         </Tag>
       </Html>
     </group>
@@ -106,6 +115,8 @@ const NodeBadge = ({ position, userData, color, relativeIds }: BadgeProps) => {
 
   const isHovered = useMemo(() => hoveredNode?.ref_id === userData?.ref_id, [hoveredNode?.ref_id, userData?.ref_id])
 
+  const score = getPercentageFromWeight(userData.weight)
+
   return (
     <group ref={ref} position={position}>
       <Html center sprite>
@@ -135,7 +146,13 @@ const NodeBadge = ({ position, userData, color, relativeIds }: BadgeProps) => {
         >
           {isTopic ? userData?.label : <Image src={userData?.image_url || 'noimage.jpeg'} />}
 
-          <Counter color={color}>{relativeIds.length}</Counter>
+          <BadgeIconWrapper>
+            <Counter color={color}>
+              <MdHub style={{ marginRight: 4 }} />
+              {relativeIds.length}
+            </Counter>
+            <Percentage color={color}>{score}%</Percentage>
+          </BadgeIconWrapper>
         </Tag>
       </Html>
     </group>
@@ -152,20 +169,27 @@ export const RelevanceBadges = memo(() => {
 
   const pathwayBadges = useMemo(
     () =>
-      badges.map(
-        (b) =>
-          b.userData?.ref_id !== selectedNode?.ref_id && (
+      badges.map((b) => {
+        if (b.userData?.ref_id !== selectedNode?.ref_id) {
+          const relativeIds =
+            (data?.nodes || [])
+              .filter((f) => f.ref_id && nodesAreRelatives(f, b.userData))
+              .map((nd) => nd?.ref_id || '') || []
+
+          return (
             <PathwayBadge
               key={`relevance-badge-${b.userData.ref_id}`}
               color={colors.transparentWhite}
               position={b.position}
-              relativeIds={[]}
+              relativeIds={relativeIds}
               userData={b.userData}
-              value={b.value}
             />
-          ),
-      ),
-    [badges, selectedNode],
+          )
+        }
+
+        return null
+      }),
+    [badges, selectedNode, data?.nodes],
   )
 
   const nodeBadges = useMemo(() => {
@@ -192,7 +216,7 @@ export const RelevanceBadges = memo(() => {
       })
 
     return badgesToRender
-  }, [selectedNodeRelativeIds, data, showSelectionGraph, selectionGraphData, selectedNode])
+  }, [selectedNodeRelativeIds, data?.nodes, showSelectionGraph, selectionGraphData, selectedNode])
 
   return (
     <>
@@ -242,21 +266,50 @@ const Image = styled.img<ImageProps>`
 
 type CounterProps = {
   color: string
+  top?: number
+  bottom?: number
+  left?: number
+  right?: number
 }
+
+const BadgeIconWrapper = styled.div`
+  display: flex;
+  position: absolute;
+  bottom: -14px;
+  left: -5px;
+  width: auto;
+  justify-content: center;
+  align-items: center;
+`
 
 const Counter = styled.div<CounterProps>`
   display: flex;
-  position: absolute;
-  bottom: -12px;
-  left: -5px;
   justify-content: center;
   align-items: center;
   background: ${colors.transparentBlack};
   border: 2px solid ${(p) => p.color};
   color: #fff;
-  width: 30px;
-  height: 30px;
+  padding: 0 4px;
+  min-width: 30px;
+  height: 26px;
   font-size: 12px;
   font-weight: 500;
-  border-radius: 100%;
+  border-radius: 6px;
+  margin-right: 5px;
+`
+
+const Percentage = styled.div<CounterProps>`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 2px solid ${(p) => p.color}44;
+  background: ${colors.transparentBlack};
+  padding: 0 4px;
+  color: ${(p) => p.color};
+  min-width: 30px;
+  height: 26px;
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: 6px;
+  margin-right: 5px;
 `
