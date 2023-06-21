@@ -76,7 +76,7 @@ export const generateSphereGraphPositions = (nodes: NodeExtended[]) => {
     return updatedNode
   })
 
-  const links = generateLinksFromNodeData(updatedNodes, true)
+  const links = generateLinksFromNodeData(updatedNodes, true, true)
 
   const forceSimulation = runForceSimulation(updatedNodes, links, {
     numDimensions: 3,

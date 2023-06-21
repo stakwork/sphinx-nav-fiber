@@ -1,4 +1,5 @@
 import { GraphStyle } from '~/stores/useDataStore'
+import { generateEarthGraphPositions } from '~/transformers/earthGraph'
 import { generateForceGraphPositions } from '~/transformers/forceGraph'
 import { generateSphereGraphPositions } from '~/transformers/sphereGraph'
 import { generateSplitGraphPositions } from '~/transformers/splitGraph'
@@ -20,6 +21,10 @@ export const getGraphDataPositions = (graphStyle: GraphStyle, nodes: NodeExtende
 
   if (graphStyle === 'sphere') {
     return generateSphereGraphPositions(nodes)
+  }
+
+  if (graphStyle === 'earth') {
+    return generateEarthGraphPositions(nodes)
   }
 
   return generateForceGraphPositions(nodes)

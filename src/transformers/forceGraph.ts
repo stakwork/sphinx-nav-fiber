@@ -29,7 +29,7 @@ const runCollisionPhase = (simulation: ForceSimulation) => {
 export const generateForceGraphPositions = (nodes: NodeExtended[]) => {
   const updatedNodes = nodes.map((node: NodeExtended) => ({ ...node, x: 0, y: 0, z: 0 }))
 
-  const links = generateLinksFromNodeData(updatedNodes, true)
+  const links = generateLinksFromNodeData(updatedNodes, false, false)
 
   const forceSimulation = runForceSimulation(updatedNodes, links, {
     numDimensions: 3,

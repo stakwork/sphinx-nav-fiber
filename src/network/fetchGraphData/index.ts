@@ -390,7 +390,11 @@ const getSegmentColor = (aType: string, bType: string) => {
   return NODE_RELATIVE_HIGHLIGHT_COLORS.children.segmentColor
 }
 
-export const generateLinksFromNodeData = (nodes: NodeExtended[], hideMinorLinksUntilSelected: boolean) => {
+export const generateLinksFromNodeData = (
+  nodes: NodeExtended[],
+  childLinksOnlyVisibleOnSelect: boolean,
+  guestLinksOnlyVisibleOnSelect: boolean,
+) => {
   const links: Link[] = []
 
   // do links
@@ -409,7 +413,7 @@ export const generateLinksFromNodeData = (nodes: NodeExtended[], hideMinorLinksU
         const targetPosition = new Vector3(childNode?.x || 0, childNode?.y || 0, childNode?.z || 0)
 
         links.push({
-          onlyVisibleOnSelect: false,
+          onlyVisibleOnSelect: childLinksOnlyVisibleOnSelect,
           color: getSegmentColor(node.node_type, childNode?.node_type || ''),
           source: node.ref_id,
           sourceRef: node.ref_id,
@@ -433,7 +437,7 @@ export const generateLinksFromNodeData = (nodes: NodeExtended[], hideMinorLinksU
         const targetPosition = new Vector3(guestNode?.x || 0, guestNode?.y || 0, guestNode?.z || 0)
 
         links.push({
-          onlyVisibleOnSelect: hideMinorLinksUntilSelected,
+          onlyVisibleOnSelect: guestLinksOnlyVisibleOnSelect,
           color: getSegmentColor(node.node_type, 'guest'),
           source: node.ref_id,
           sourceRef: node.ref_id,

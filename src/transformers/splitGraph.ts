@@ -170,7 +170,7 @@ export const generateSplitGraphPositions = (nodes: NodeExtended[]) => {
     return updated
   })
 
-  const links = generateLinksFromNodeData(updatedNodes, true)
+  const links = generateLinksFromNodeData(updatedNodes, true, true)
 
   // do links
   const updatedLinks = links.map((l: Link) => {

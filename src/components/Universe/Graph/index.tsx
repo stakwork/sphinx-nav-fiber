@@ -4,6 +4,7 @@ import { useGraphData } from '~/components/DataRetriever'
 import { useDataStore } from '~/stores/useDataStore'
 import { GraphData } from '~/types'
 import { Cubes } from './Cubes'
+import { Earth } from './Earth'
 import { GraphLoadingIcon } from './Icons'
 import { PathwayLine } from './PathwayLine'
 import { Segment } from './Segment'
@@ -34,6 +35,7 @@ export const Graph = () => {
   return (
     <>
       <Cubes />
+      <Earth />
 
       <NodeDetailsPanel />
 
