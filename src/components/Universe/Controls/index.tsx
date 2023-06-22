@@ -16,6 +16,8 @@ export const Controls = ({ disableAnimations }: Props) => {
   const graphStyle = useDataStore((s) => s.graphStyle)
   const data = useDataStore((s) => s.data)
   const setNearbyNodeIds = useDataStore((s) => s.setNearbyNodeIds)
+  const setDisableCameraRotation = useDataStore((s) => s.setDisableCameraRotation)
+
   const [smoothTime] = useState(0.8)
   const { camera } = useThree()
 
@@ -63,13 +65,22 @@ export const Controls = ({ disableAnimations }: Props) => {
     isUserDragging,
   ])
 
+  useEffect(() => {
+    if (isUserDragging) {
+      setDisableCameraRotation(true)
+    }
+  }, [isUserDragging])
+
   return (
     <CameraControls
+      makeDefault
       ref={cameraControlsRef}
       boundaryEnclosesCamera
       enabled={!isUserScrollingOnHtmlPanel}
       maxDistance={12000}
       minDistance={100}
+      draggingDampingFactor={0}
+      dampingFactor={0}
       onEnd={() => setIsUserDragging(false)}
       onStart={() => setIsUserDragging(true)}
       smoothTime={smoothTime}

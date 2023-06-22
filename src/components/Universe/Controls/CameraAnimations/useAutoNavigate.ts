@@ -26,6 +26,8 @@ export const useAutoNavigate = (cameraControlsRef: RefObject<CameraControls | nu
   const showSelectionGraph = useDataStore((s) => s.showSelectionGraph)
   const graphData = useDataStore((s) => s.data)
 
+  const graphStyle = useDataStore((s) => s.graphStyle)
+
   const { camera } = useThree()
 
   const [distanceReached, setDistanceReached] = useState(false)
@@ -86,6 +88,10 @@ export const useAutoNavigate = (cameraControlsRef: RefObject<CameraControls | nu
   }, [isUserDragging, isUserScrolling, setDistanceReached, setLookAtReached])
 
   useEffect(() => {
+    if (graphStyle === 'earth') {
+      return
+    }
+
     if (selectedNode) {
       if (lookAtAnimationTimer) {
         clearTimeout(lookAtAnimationTimer)
