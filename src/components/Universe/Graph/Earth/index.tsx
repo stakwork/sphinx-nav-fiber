@@ -10,7 +10,9 @@ export const Earth = () => {
   const lightRef = useRef<THREE.DirectionalLight | null>(null)
 
   const graphStyle = useDataStore((s) => s.graphStyle)
+
   const showSelectionGraph = useDataStore((s) => s.showSelectionGraph)
+
   const data = useDataStore((s) => s.data)
 
   const map = useTexture('textures/earth/earth.jpeg')
@@ -32,6 +34,12 @@ export const Earth = () => {
     return null
   }
 
+  const getInfo = async (lat: number, lng: number) => {
+    const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=geojson&lat=${lat}&lon=${lng}`)
+    const jsonData = await res.json()
+    console.log(jsonData?.features[0]?.properties?.address?.state)
+  }
+
   return (
     <>
       <mesh ref={ref} position={[0, 0, 0]}>
@@ -45,10 +53,9 @@ export const Earth = () => {
           displacementMap={map}
           metalness={0.5}
           roughnessMap={water}
-          // transparent
-          // opacity={0.9}
         />
       </mesh>
+
       <directionalLight ref={lightRef} position={camera.position} intensity={2} />
 
       {data?.links.map((link, i) => {
