@@ -1,3 +1,4 @@
+import { Mesh } from 'three'
 import create from 'zustand'
 import { nodesAreRelatives } from '~/components/Universe/constants'
 import { isChileGraph } from '~/constants'
@@ -30,6 +31,7 @@ type DataStore = {
   nearbyNodeIds: string[]
   showSelectionGraph: boolean
   hideNodeDetails: boolean
+  earthMesh: React.MutableRefObject<Mesh> | null
 
   setScrollEventsDisabled: (scrollEventsDisabled: boolean) => void
   setCategoryFilter: (categoryFilter: NodeType | null) => void
@@ -50,6 +52,7 @@ type DataStore = {
   setShowSelectionGraph: (_: boolean) => void
   setSelectionData: (data: GraphData) => void
   setHideNodeDetails: (_: boolean) => void
+  setEarthMesh: (earthMesh: React.MutableRefObject<Mesh> | null) => void
 }
 
 const defaultData: Omit<
@@ -74,6 +77,7 @@ const defaultData: Omit<
   | 'setShowSelectionGraph'
   | 'setSelectionData'
   | 'setHideNodeDetails'
+  | 'setEarthMesh'
 > = {
   categoryFilter: null,
   data: null,
@@ -95,6 +99,7 @@ const defaultData: Omit<
   nearbyNodeIds: [],
   showSelectionGraph: false,
   hideNodeDetails: false,
+  earthMesh: null,
 }
 
 export const useDataStore = create<DataStore>((set, get) => ({
@@ -163,6 +168,7 @@ export const useDataStore = create<DataStore>((set, get) => ({
   },
   setShowSelectionGraph: (showSelectionGraph) => set({ showSelectionGraph }),
   setHideNodeDetails: (hideNodeDetails) => set({ hideNodeDetails }),
+  setEarthMesh: (earthMesh) => set({ earthMesh }),
 }))
 
 export const useSelectedNode = () => useDataStore((s) => s.selectedNode)

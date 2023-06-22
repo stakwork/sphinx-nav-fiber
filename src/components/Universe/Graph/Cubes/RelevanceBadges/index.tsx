@@ -8,6 +8,7 @@ import { usePathway } from '~/components/DataRetriever'
 import { nodesAreRelatives } from '~/components/Universe/constants'
 import { Flex } from '~/components/common/Flex'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
+import { useRefStore } from '~/stores/useRefStore'
 import { NodeExtended } from '~/types'
 import { colors } from '~/utils/colors'
 import { getNodeColorByType } from '../constants'
@@ -27,6 +28,7 @@ const PathwayBadge = ({ color, position, relativeIds, userData }: BadgeProps) =>
   const setHoveredNode = useDataStore((s) => s.setHoveredNode)
   const selectedNode = useSelectedNode()
   const hoveredNode = useDataStore((s) => s.hoveredNode)
+  const earthMesh = useRefStore((s) => s.earthMesh)
   const selected = userData?.ref_id === selectedNode?.ref_id
   const ref = useRef<Group | null>(null)
 
@@ -46,7 +48,11 @@ const PathwayBadge = ({ color, position, relativeIds, userData }: BadgeProps) =>
 
   return (
     <group ref={ref} position={position}>
-      <Html center sprite>
+      <Html
+        // occlude={[earthMesh]}
+        center
+        sprite
+      >
         <Tag
           color={color}
           fontColor={colors.white}
@@ -92,6 +98,7 @@ const NodeBadge = ({ position, userData, color, relativeIds }: BadgeProps) => {
   const setHoveredNode = useDataStore((s) => s.setHoveredNode)
   const hoveredNode = useDataStore((s) => s.hoveredNode)
   const showSelectionGraph = useDataStore((s) => s.showSelectionGraph)
+  const earthMesh = useRefStore((s) => s.earthMesh)
 
   const isTopic = (userData?.node_type || '') === 'topic'
 
@@ -119,7 +126,11 @@ const NodeBadge = ({ position, userData, color, relativeIds }: BadgeProps) => {
 
   return (
     <group ref={ref} position={position}>
-      <Html center sprite>
+      <Html
+        // occlude={[earthMesh]}
+        center
+        sprite
+      >
         <Tag
           color={color}
           fontColor={colors.white}
