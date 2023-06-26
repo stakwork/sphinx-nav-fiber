@@ -11,6 +11,7 @@ import { api } from '~/network/api'
 import { useDataStore } from '~/stores/useDataStore'
 import { FetchDataResponse, FetchSentimentResponse, GraphData, Guests, Link, Node, NodeExtended } from '~/types'
 import { getLSat } from '~/utils/getLSat'
+import { getMaxSuperficialWeightPerNodeType, getSuperficialNodeWeight } from '~/utils/getSuperficialNodeWeight'
 import { getGraphDataPositions } from './const'
 
 type guestMapChild = {
@@ -248,9 +249,14 @@ const getGraphData = async (searchterm: string) => {
 
     const data: Node[] = [...dataInit.exact, ...dataInit.related, ...dataSeries]
 
+    let topWeightValue = 0
+
     if (data.length) {
       data.forEach((node, index) => {
-        // reject duplicate nodes
+        // record highest weight to normalize to range 0~1
+        if (node.weight && topWeightValue < node.weight) {
+          topWeightValue = node.weight
+        }
 
         // TODO: simplify this to ref_id
         if (['data_series', 'document', 'tweet'].includes(node.node_type)) {
@@ -272,6 +278,7 @@ const getGraphData = async (searchterm: string) => {
           return
         }
 
+        // reject duplicate nodes
         const notUnique = nodes.find((f) => f.ref_id === node.ref_id)
 
         if (notUnique) {
@@ -355,6 +362,14 @@ const getGraphData = async (searchterm: string) => {
 
     nodes.sort((a, b) => (b.weight || 0) - (a.weight || 0))
 
+    // re-assign weight based on highest weight value
+    // convert to range 0-1
+
+    // for topics and guests, calculate weight based on links
+    const maxSuperficialWeight = getMaxSuperficialWeightPerNodeType(nodes, links)
+
+    nodes = addWeightNormalizationToNodes(topWeightValue, maxSuperficialWeight, nodes, links)
+
     return { links, nodes }
   } catch (e) {
     console.error(e)
@@ -433,3 +448,24 @@ export const generateLinksFromNodeData = (nodes: NodeExtended[], hideMinorLinksU
 
   return links
 }
+
+export const addWeightNormalizationToNodes = (
+  topWeightValue: number,
+  maxSuperficialWeight: Record<string, number>,
+  nodes: NodeExtended[],
+  links: Link[],
+) =>
+  nodes.map((n) => {
+    let weight = (n.weight || 0) / topWeightValue
+
+    if (!n.weight && maxSuperficialWeight[n.node_type]) {
+      const myWeight = getSuperficialNodeWeight(n, links)
+
+      weight = myWeight / maxSuperficialWeight[n.node_type]
+    }
+
+    return {
+      ...n,
+      weight,
+    }
+  })
