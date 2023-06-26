@@ -1,8 +1,15 @@
 import { Float, Html } from '@react-three/drei'
 
+import { useMemo } from 'react'
 import styled, { css } from 'styled-components'
 import { Vector3 } from 'three'
-import { defaultDimensions, withTranscriptDimensions } from './constants'
+import { useIsMatchBreakpoint } from '~/utils/useIsMatchBreakpoint'
+import {
+  defaultDimensions,
+  defaultDimensionsMobile,
+  withTranscriptDimensions,
+  withTranscriptDimensionsMobile,
+} from './constants'
 
 type Props = {
   children: React.ReactNode
@@ -17,41 +24,53 @@ type Props = {
 const stopPropagationHandler = (e: any) => e.stopPropagation()
 const floatingRange = [1, 2] as [(number | undefined)?, (number | undefined)?] | undefined
 
-export const HtmlPanel = ({ speed = 2, intensity = 4, children, withTranscript, position, visible }: Props) => (
-  <Float
-    floatingRange={floatingRange}
-    /* Up/down float intensity, works like a multiplier with floatingRange,defaults to 1 */
-    floatIntensity={intensity}
-    /* Animation speed, defaults to 1 */
-    position={position}
-    speed={speed}
-  >
-    <Html
-      center
-      className="html-panel"
-      onClick={stopPropagationHandler}
-      onKeyDown={stopPropagationHandler}
-      onPointerDown={stopPropagationHandler}
-      onPointerOut={stopPropagationHandler}
-      onPointerOver={stopPropagationHandler}
-      onPointerUp={stopPropagationHandler}
-      sprite
+export const HtmlPanel = ({ speed = 2, intensity = 4, children, withTranscript, position, visible }: Props) => {
+  const isMobile = useIsMatchBreakpoint('sm', 'down')
+
+  const demensions = useMemo(() => {
+    if (isMobile) {
+      return withTranscript ? withTranscriptDimensionsMobile : defaultDimensionsMobile
+    }
+
+    return withTranscript ? withTranscriptDimensions : defaultDimensions
+  }, [isMobile, withTranscript])
+
+  return (
+    <Float
+      floatingRange={floatingRange}
+      /* Up/down float intensity, works like a multiplier with floatingRange,defaults to 1 */
+      floatIntensity={intensity}
+      /* Animation speed, defaults to 1 */
+      position={position}
+      speed={speed}
     >
-      <HtmlWrap
+      <Html
+        center
         className="html-panel"
-        dimensions={withTranscript ? withTranscriptDimensions : defaultDimensions}
-        id="html-panel"
+        onClick={stopPropagationHandler}
+        onKeyDown={stopPropagationHandler}
         onPointerDown={stopPropagationHandler}
         onPointerOut={stopPropagationHandler}
         onPointerOver={stopPropagationHandler}
         onPointerUp={stopPropagationHandler}
-        visible={visible}
+        sprite
       >
-        {children}
-      </HtmlWrap>
-    </Html>
-  </Float>
-)
+        <HtmlWrap
+          className="html-panel"
+          dimensions={demensions}
+          id="html-panel"
+          onPointerDown={stopPropagationHandler}
+          onPointerOut={stopPropagationHandler}
+          onPointerOver={stopPropagationHandler}
+          onPointerUp={stopPropagationHandler}
+          visible={visible}
+        >
+          {children}
+        </HtmlWrap>
+      </Html>
+    </Float>
+  )
+}
 
 HtmlPanel.displayName = 'HtmlPanel'
 

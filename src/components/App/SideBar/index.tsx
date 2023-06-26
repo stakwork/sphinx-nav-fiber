@@ -50,9 +50,7 @@ const Content = forwardRef<HTMLDivElement, Props>(({ onSubmit }, ref) => {
           <MdClose fontSize={20} />
         </CloseButton>
         <CategoryWrapper direction="row">
-          <Flex basis="154px">
-            <CategorySelect />
-          </Flex>
+          <CategorySelect />
         </CategoryWrapper>
       </SearchWrapper>
       <CollapseButton
@@ -101,10 +99,13 @@ const Wrapper = styled(Flex)(({ theme }) => ({
 const SearchWrapper = styled(Flex).attrs({
   direction: 'row',
   justify: 'center',
-  p: 30,
-})`
-  background: ${colors.dashboardHeader};
-`
+})(({ theme }) => ({
+  background: colors.dashboardHeader,
+  padding: theme.spacing(3.75, 2),
+  [theme.breakpoints.up('sm')]: {
+    padding: theme.spacing(3.75),
+  },
+}))
 
 const CloseButton = styled(Flex).attrs({
   align: 'center',
@@ -151,18 +152,28 @@ const CategoryWrapper = styled(Flex).attrs({
   p: 5,
 })(({ theme }) => ({
   position: 'relative',
+  flex: '1 1 158px',
+  maxWidth: '100%',
+  minWidth: '158px',
+  zIndex: 2,
+  padding: '5px 0 5px 10px',
   [theme.breakpoints.up('sm')]: {
+    padding: '5px',
     position: 'absolute',
     top: '10px',
     left: MENU_WIDTH,
   },
+  '& > div': {
+    display: 'flex',
+    width: '100%',
+  },
 }))
 
-const ScrollWrapper = styled(Flex)`
-  overflow: auto;
-  height: calc(100% - 158px);
-  width: 100%;
-`
+const ScrollWrapper = styled(Flex)(() => ({
+  overflow: 'auto',
+  height: 'calc(100% - 158px)',
+  width: '100%',
+}))
 
 const Spacer = styled.div`
   height: 10px;
