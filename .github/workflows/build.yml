@@ -19,10 +19,10 @@ jobs:
           cache: 'yarn'
       - name: Build and Version
         run: |
+          git config user.name 'Github Actions'
+          git config user.email github-actions@github.com
           npm version patch -m "ci: bump version to %s"
           git push --follow-tags
           CI=false yarn install && CI=false yarn run build
-          git config user.name 'Github Actions'
-          git config user.email github-actions@github.com
           git add ./build -f
           git commit -m "ci: automatic build fixes" || echo -n
