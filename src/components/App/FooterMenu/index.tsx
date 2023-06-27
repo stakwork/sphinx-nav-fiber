@@ -150,6 +150,7 @@ const ActionButton = styled(Flex).attrs({
     width: auto;
     opacity: 1;
     box-shadow: 0 0 10px 2px ${colors.primaryBlueBorder};
+    background-color: rgba(0, 0, 0, 80%);
     ${Text} {
       display: block;
     }

@@ -6,6 +6,7 @@ import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { setIsTimestampLoaded, useSelectedNode } from '~/stores/useDataStore'
 import { colors } from '~/utils/colors'
+import { useIsMatchBreakpoint } from '~/utils/useIsMatchBreakpoint'
 import { Transcript } from '../Transcript'
 
 const Wrapper = styled(Flex)`
@@ -20,12 +21,13 @@ const Wrapper = styled(Flex)`
 
 export const AudioClip = () => {
   const selectedNode = useSelectedNode()
+  const isMobile = useIsMatchBreakpoint('sm', 'down')
 
   return (
     <Wrapper p={20}>
       <Flex direction="row">
         <Flex pr={24}>
-          <Avatar size={80} src={selectedNode?.image_url || 'audio_default.svg'} />
+          <Avatar size={isMobile ? 45 : 80} src={selectedNode?.image_url || 'audio_default.svg'} />
         </Flex>
 
         <Flex grow={1} shrink={1}>
