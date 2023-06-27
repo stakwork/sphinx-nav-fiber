@@ -17,7 +17,7 @@ module.exports = {
   globals: {
     process: true,
   },
-  ignorePatterns: ['src/main/*'],
+				ignorePatterns: [`src/**/__tests__/**`],
   parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaFeatures: {

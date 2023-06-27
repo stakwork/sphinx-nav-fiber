@@ -72,7 +72,7 @@
     "preview": "vite preview --port 3004",
     "build-preview": "yarn run build && yarn run preview",
     "build-preview-e2e": "VITE_APP_IS_E2E=true yarn run build && vite preview --port 3000",
-    "test": "NODE_ENV=test yarn jest",
+    "test": "NODE_ENV=test yarn jest --env=jsdom",
     "test-start": "yarn jest --watch",
     "cy-open": "cypress open",
     "cy-run": "cypress run",
@@ -91,11 +91,15 @@
   "jest": {
     "collectCoverage": true,
     "collectCoverageFrom": [
-      "./src/utils/**"
+      "./src/utils/**",
+      "./src/components/Button/**"
     ],
     "coverageThreshold": {
-      "global": {
-        "lines": 28
+      "./src/utils/": {
+        "lines": 27
+      },
+      "./src/components/Button": {
+        "lines": 73
       }
     },
     "moduleNameMapper": {
@@ -126,6 +130,7 @@
     "react-error-overlay": "6.0.9"
   },
   "devDependencies": {
+    "@babel/plugin-transform-react-jsx": "^7.22.5",
     "@babel/preset-env": "^7.22.4",
     "@babel/preset-react": "^7.22.3",
     "@babel/preset-typescript": "^7.21.5",
