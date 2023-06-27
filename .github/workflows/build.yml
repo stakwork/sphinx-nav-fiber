@@ -26,3 +26,4 @@ jobs:
           CI=false yarn install && CI=false yarn run build
           git add ./build -f
           git commit -m "ci: automatic build fixes" || echo -n
+          git push --set-upstream origin master
