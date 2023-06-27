@@ -1,6 +1,6 @@
 {
   "name": "sphinx-nav",
-  "version": "0.1.41",
+  "version": "0.1.42",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.10.8",
@@ -95,7 +95,7 @@
     ],
     "coverageThreshold": {
       "global": {
-        "lines": 28 
+        "lines": 28
       }
     },
     "moduleNameMapper": {
