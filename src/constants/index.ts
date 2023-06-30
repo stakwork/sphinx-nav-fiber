@@ -9,7 +9,7 @@ export const isDevelopment = !!(
 
 const getUrlFormEnv = () => import.meta.env.VITE_APP_API_URL
 
-export const API_URL = getUrlFormEnv() || apiUrlFromSwarmHost() || 'https://knowledge-graph.sphinx.chat'
+export const API_URL = process.env.REACT_APP_API_URL || getUrlFormEnv() || apiUrlFromSwarmHost() || 'https://knowledge-graph.sphinx.chat'
 console.log('🚀 ~ file: index.ts:12 ~ API_URL:', API_URL)
 console.log('🚀 ~ file: index.ts:12 ~ getUrlFormEnv:', getUrlFormEnv())
 
