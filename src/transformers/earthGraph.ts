@@ -2,7 +2,7 @@ import { Vector3 } from 'three'
 import { generateLinksFromNodeData } from '~/network/fetchGraphData'
 import { NodeExtended } from '~/types'
 
-export const EARTH_RADIUS = 2000
+export const EARTH_RADIUS = 1800
 export const EARTH_DATA_PADDING = 50
 
 const dataRadius = EARTH_RADIUS + EARTH_DATA_PADDING

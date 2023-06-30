@@ -1,5 +1,5 @@
 import { Html } from '@react-three/drei'
-import { useFrame } from '@react-three/fiber'
+import { useFrame, useThree } from '@react-three/fiber'
 import { memo, useEffect, useMemo, useRef } from 'react'
 import { MdHub } from 'react-icons/md'
 import styled from 'styled-components'
@@ -8,7 +8,6 @@ import { usePathway } from '~/components/DataRetriever'
 import { nodesAreRelatives } from '~/components/Universe/constants'
 import { Flex } from '~/components/common/Flex'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
-import { useRefStore } from '~/stores/useRefStore'
 import { NodeExtended } from '~/types'
 import { colors } from '~/utils/colors'
 import { getNodeColorByType } from '../constants'
@@ -28,7 +27,6 @@ const PathwayBadge = ({ color, position, relativeIds, userData }: BadgeProps) =>
   const setHoveredNode = useDataStore((s) => s.setHoveredNode)
   const selectedNode = useSelectedNode()
   const hoveredNode = useDataStore((s) => s.hoveredNode)
-  const earthMesh = useRefStore((s) => s.earthMesh)
   const selected = userData?.ref_id === selectedNode?.ref_id
   const ref = useRef<Group | null>(null)
 
@@ -46,46 +44,46 @@ const PathwayBadge = ({ color, position, relativeIds, userData }: BadgeProps) =>
 
   const score = getPercentageFromWeight(userData.weight)
 
+  const isVisible = true
+
   return (
     <group ref={ref} position={position}>
-      <Html
-        // occlude={[earthMesh]}
-        center
-        sprite
-      >
-        <Tag
-          color={color}
-          fontColor={colors.white}
-          fontSize={18}
-          justify="center"
-          onClick={(e) => {
-            e.stopPropagation()
+      {isVisible && (
+        <Html center sprite>
+          <Tag
+            color={color}
+            fontColor={colors.white}
+            fontSize={18}
+            justify="center"
+            onClick={(e) => {
+              e.stopPropagation()
 
-            if (userData) {
-              setSelectedNode(userData)
-            }
-          }}
-          onPointerOut={(e) => {
-            e.stopPropagation()
-            setHoveredNode(null)
-          }}
-          onPointerOver={(e) => {
-            e.stopPropagation()
-            setHoveredNode(userData || null)
-          }}
-          scale={isHovered ? 1.05 : 1}
-          selected={selected}
-          size={56}
-        >
-          {`${score}%`}
-          <BadgeIconWrapper>
-            <Counter color={color}>
-              <MdHub style={{ marginRight: 4 }} />
-              {relativeIds.length}
-            </Counter>
-          </BadgeIconWrapper>
-        </Tag>
-      </Html>
+              if (userData) {
+                setSelectedNode(userData)
+              }
+            }}
+            onPointerOut={(e) => {
+              e.stopPropagation()
+              setHoveredNode(null)
+            }}
+            onPointerOver={(e) => {
+              e.stopPropagation()
+              setHoveredNode(userData || null)
+            }}
+            scale={isHovered ? 1.05 : 1}
+            selected={selected}
+            size={56}
+          >
+            {`${score}%`}
+            <BadgeIconWrapper>
+              <Counter color={color}>
+                <MdHub style={{ marginRight: 4 }} />
+                {relativeIds.length}
+              </Counter>
+            </BadgeIconWrapper>
+          </Tag>
+        </Html>
+      )}
     </group>
   )
 }
@@ -98,9 +96,10 @@ const NodeBadge = ({ position, userData, color, relativeIds }: BadgeProps) => {
   const setHoveredNode = useDataStore((s) => s.setHoveredNode)
   const hoveredNode = useDataStore((s) => s.hoveredNode)
   const showSelectionGraph = useDataStore((s) => s.showSelectionGraph)
-  const earthMesh = useRefStore((s) => s.earthMesh)
 
   const isTopic = (userData?.node_type || '') === 'topic'
+
+  const { scene, camera } = useThree()
 
   useFrame(() => {
     if (showSelectionGraph && ref.current) {
@@ -126,11 +125,7 @@ const NodeBadge = ({ position, userData, color, relativeIds }: BadgeProps) => {
 
   return (
     <group ref={ref} position={position}>
-      <Html
-        // occlude={[earthMesh]}
-        center
-        sprite
-      >
+      <Html center sprite>
         <Tag
           color={color}
           fontColor={colors.white}

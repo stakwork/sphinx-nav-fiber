@@ -1,11 +1,13 @@
 import { useTexture } from '@react-three/drei'
-import { useFrame, useThree } from '@react-three/fiber'
-import { useLayoutEffect, useRef } from 'react'
-import { Mesh } from 'three'
+import { useFrame } from '@react-three/fiber'
+import { useLayoutEffect, useMemo, useRef } from 'react'
+import { DoubleSide, Mesh, MeshStandardMaterial, Vector3 } from 'three'
 import { useDataStore } from '~/stores/useDataStore'
 import { useRefStore } from '~/stores/useRefStore'
 import { EARTH_RADIUS } from '~/transformers/earthGraph'
 import { CurvedLine } from '../CurvedLine'
+
+const center = new Vector3(0, 0, 0)
 
 export const Earth = () => {
   const ref = useRef<Mesh | null>(null)
@@ -17,26 +19,22 @@ export const Earth = () => {
 
   const data = useDataStore((s) => s.data)
 
-  const setEarthMesh = useRefStore((s) => s.setEarthMesh)
+  const setEarthRef = useRefStore((s) => s.setEarthRef)
 
-  const map = useTexture('textures/earth/earth.jpeg')
-  const bump = useTexture('textures/earth/bump.jpeg')
-  const water = useTexture('textures/earth/water.png')
-  const clouds = useTexture('textures/earth/clouds.png')
+  const galaxyMapTexture = useTexture('textures/earth/galaxy.png')
+  const cloudsMapTexture = useTexture('textures/earth/clouds2.png')
 
-  const { camera } = useThree()
-
-  useLayoutEffect(() => {
-    setEarthMesh(ref)
-  }, [])
-
-  useFrame(() => {
+  useFrame(({ camera }) => {
     if (lightRef.current) {
-      const { x, y, z } = camera.position
-      lightRef.current.position.set(x, y, z)
-      lightRef.current.matrixWorldNeedsUpdate = true
+      lightRef.current.position.copy(camera.getWorldPosition(center))
     }
   })
+
+  useLayoutEffect(() => {
+    if (ref.current) {
+      setEarthRef(ref)
+    }
+  }, [])
 
   if (graphStyle !== 'earth' || showSelectionGraph) {
     return null
@@ -50,25 +48,52 @@ export const Earth = () => {
 
   return (
     <>
-      <mesh ref={ref} position={[0, 0, 0]}>
+      <mesh ref={ref} userData={{ type: 'earth' }}>
         <sphereGeometry args={[EARTH_RADIUS, 200, 200]} />
-        <meshStandardMaterial
-          map={map}
-          normalMap={bump}
-          bumpMap={bump}
-          bumpScale={10}
-          emissiveMap={water}
-          displacementMap={map}
-          metalness={0.5}
-          roughnessMap={water}
-        />
+        <EarthMaterial />
       </mesh>
 
-      <directionalLight ref={lightRef} position={camera.position} intensity={2} />
+      <mesh>
+        <sphereGeometry args={[EARTH_RADIUS + 2, 200, 200]} />
+        <meshStandardMaterial alphaMap={cloudsMapTexture} map={cloudsMapTexture} transparent />
+      </mesh>
+
+      <mesh>
+        <sphereGeometry args={[EARTH_RADIUS * 4, 200, 200]} />
+        <meshStandardMaterial side={DoubleSide} map={galaxyMapTexture} transparent opacity={0.2} />
+      </mesh>
+
+      <directionalLight ref={lightRef} position={[0, 0, EARTH_RADIUS * 3]} intensity={0.9} />
 
       {data?.links.map((link, i) => {
         return <CurvedLine key={`curved-${link.index}-${i}`} link={link} />
       })}
     </>
   )
+}
+
+const EarthMaterial = () => {
+  // Load the textures
+  const earthMapTexture = useTexture('textures/earth/earth.jpeg')
+  const bumpMapTexture = useTexture('textures/earth/bump.jpeg')
+  const waterMapTexture = useTexture('textures/earth/water.png')
+  const cloudsMapTexture = useTexture('textures/earth/clouds.png')
+
+  // Create the material
+  const material = useMemo(() => {
+    const material = new MeshStandardMaterial({
+      map: earthMapTexture, // Earth color map
+      bumpMap: bumpMapTexture, // Bump map for surface details
+      aoMap: bumpMapTexture, // Ambient occlusion map for shading
+      roughnessMap: bumpMapTexture, // Specular map for shininess
+      metalnessMap: waterMapTexture,
+      toneMapped: true,
+      roughness: 35, // Adjust roughness as needed
+      metalness: 0.1, // Adjust metalness as needed
+    })
+
+    return material
+  }, [earthMapTexture, bumpMapTexture, cloudsMapTexture, waterMapTexture])
+
+  return <meshStandardMaterial {...material} />
 }

@@ -2,15 +2,15 @@ import { Mesh } from 'three'
 import create from 'zustand'
 
 type DataStore = {
-  earthMesh: React.MutableRefObject<Mesh> | null
-  setEarthMesh: (earthMesh: React.MutableRefObject<Mesh> | null) => void
+  earthRef: React.MutableRefObject<Mesh | null> | null
+  setEarthRef: (earthMesh: React.MutableRefObject<Mesh | null> | null) => void
 }
 
-const defaultData: Omit<DataStore, 'setEarthMesh'> = {
-  earthMesh: null,
+const defaultData: Omit<DataStore, 'setEarthRef'> = {
+  earthRef: null,
 }
 
 export const useRefStore = create<DataStore>((set, get) => ({
   ...defaultData,
-  setEarthMesh: (earthMesh) => set({ earthMesh }),
+  setEarthRef: (earthRef) => set({ earthRef }),
 }))
