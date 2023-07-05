@@ -1,5 +1,4 @@
-import { MutableRefObject } from 'react'
-import { Event, Group, Mesh, Object3D, Raycaster, Vector3 } from 'three'
+import { Vector3 } from 'three'
 import { Guests, NodeExtended } from '~/types'
 
 export const variableVector3 = new Vector3(0, 0, 0)
@@ -25,26 +24,4 @@ export const nodesAreRelatives = (a: NodeExtended | null, b: NodeExtended | null
   }
 
   return isRelative
-}
-
-const reuseableVector3 = new Vector3()
-
-type VisibleOrNotProps = {
-  objectRef: MutableRefObject<Group | Mesh | null> | null
-  cameraPosition: Vector3
-  sceneChildren: Object3D<Event>[]
-}
-
-export const calculateVisibility = ({ objectRef, cameraPosition, sceneChildren }: VisibleOrNotProps) => {
-  if (!objectRef?.current) {
-    return false
-  }
-
-  const position = objectRef.current.getWorldPosition(reuseableVector3)
-  const direction = position.sub(cameraPosition).normalize()
-  const raycaster = new Raycaster(cameraPosition, direction)
-
-  const intersections = raycaster.intersectObjects(sceneChildren, true)
-
-  return intersections.length === 0 || intersections[0].object === objectRef.current
 }
