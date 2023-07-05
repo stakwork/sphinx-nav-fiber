@@ -10,8 +10,6 @@ type Props = {
   link: Link
 }
 
-const earthPadding = 90
-
 export const CurvedLine = ({ link }: Props) => {
   const selectedNode = useSelectedNode()
   const [color, setColor] = useState(0x888888)
@@ -51,11 +49,10 @@ export const CurvedLine = ({ link }: Props) => {
 
   return (
     <Line
-      points={points} // Array of points, Array<Vector3 | Vector2 | [number, number, number] | [number, number] | number>
       color={color} // Default
-      lineWidth={3} // In pixels (default)
-      //   segments // If true, renders a THREE.LineSegments2. Otherwise, renders a THREE.Line2
       dashed={false} // Default
+      lineWidth={3} // In pixels (default)
+      points={points} // Array of points, Array<Vector3 | Vector2 | [number, number, number] | [number, number] | number>
     />
   )
 }

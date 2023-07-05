@@ -69,18 +69,16 @@ export const Controls = ({ disableAnimations }: Props) => {
     if (isUserDragging) {
       setDisableCameraRotation(true)
     }
-  }, [isUserDragging])
+  }, [isUserDragging, setDisableCameraRotation])
 
   return (
     <CameraControls
-      makeDefault
       ref={cameraControlsRef}
       boundaryEnclosesCamera
       enabled={!isUserScrollingOnHtmlPanel}
+      makeDefault
       maxDistance={12000}
       minDistance={100}
-      draggingDampingFactor={0}
-      dampingFactor={0}
       onEnd={() => setIsUserDragging(false)}
       onStart={() => setIsUserDragging(true)}
       smoothTime={smoothTime}

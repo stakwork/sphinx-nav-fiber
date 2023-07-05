@@ -1,5 +1,5 @@
 import { Html } from '@react-three/drei'
-import { useFrame, useThree } from '@react-three/fiber'
+import { useFrame } from '@react-three/fiber'
 import { memo, useEffect, useMemo, useRef } from 'react'
 import { MdHub } from 'react-icons/md'
 import styled from 'styled-components'
@@ -98,8 +98,6 @@ const NodeBadge = ({ position, userData, color, relativeIds }: BadgeProps) => {
   const showSelectionGraph = useDataStore((s) => s.showSelectionGraph)
 
   const isTopic = (userData?.node_type || '') === 'topic'
-
-  const { scene, camera } = useThree()
 
   useFrame(() => {
     if (showSelectionGraph && ref.current) {

@@ -1,5 +1,6 @@
 import { useControls } from 'leva'
 import { GRAPH_FOG_COLOR, GRAPH_GROUND_COLOR, GRAPH_LIGHT_INTENSITY } from '~/constants'
+import { useDataStore } from '~/stores/useDataStore'
 import { colors } from '~/utils/colors'
 
 export const Lights = () => {
@@ -7,11 +8,12 @@ export const Lights = () => {
     fogColor: GRAPH_FOG_COLOR,
   })
 
+  const graphStyle = useDataStore((s) => s.graphStyle)
+
   return (
     <>
       <hemisphereLight args={[colors.white, GRAPH_GROUND_COLOR, GRAPH_LIGHT_INTENSITY]} />
-
-      {/* <fog args={[fogColor, 5, 18000]} attach="fog" /> */}
+      {graphStyle !== 'earth' && <fog args={[fogColor, 5, 18000]} attach="fog" />}
     </>
   )
 }

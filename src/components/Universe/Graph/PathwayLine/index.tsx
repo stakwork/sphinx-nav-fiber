@@ -26,6 +26,7 @@ export const PathwayLine = () => {
         if (graphStyle === 'earth') {
           let curvedPoints: Vector3[] = []
           const pointPairs: Vector3[][] = []
+
           p.forEach((_, i) => {
             if (p[i + 1]) {
               pointPairs.push([p[i], p[i + 1]])
@@ -35,7 +36,9 @@ export const PathwayLine = () => {
           pointPairs.forEach((pp) => {
             const start = pp[0]
             const end = pp[1]
+
             const curved = getCurvedLineFromStartAndEnd(start, end)
+
             curvedPoints = [...curvedPoints, ...curved]
           })
 
@@ -47,25 +50,25 @@ export const PathwayLine = () => {
     }
 
     return [new Vector3(0, 0, 0)]
-  }, [pathway])
+  }, [pathway, graphStyle])
 
   const lineOptions = useMemo(() => {
     if (graphStyle === 'earth') {
       return {
-        opacity: 0.8,
         color: 0x000000,
         dashSize: 40,
         gapSize: 40,
         lineWidth: 3,
+        opacity: 0.8,
       }
     }
 
     return {
-      opacity: 0.3,
       color: NODE_RELATIVE_HIGHLIGHT_COLORS.pathway.nodeColor,
       dashSize: 40,
       gapSize: 40,
       lineWidth: 2,
+      opacity: 0.3,
     }
   }, [graphStyle])
 
@@ -75,8 +78,9 @@ export const PathwayLine = () => {
       dashed
       forceSinglePass={false}
       matrixWorldAutoUpdate={false}
-      transparent
       points={points}
+      transparent
+      // eslint-disable-next-line react/jsx-sort-props
       {...lineOptions}
     />
   )

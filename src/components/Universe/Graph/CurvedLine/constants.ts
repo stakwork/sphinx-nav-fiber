@@ -20,12 +20,16 @@ export const getCurvedLineFromStartAndEnd = (start: Vector3, end: Vector3) => {
 
   // Calculate the points along the curved line using slerp
   const curvePoints = []
-  for (let i = 0; i <= divisions; i++) {
+
+  for (let i = 0; i <= divisions; i += 1) {
     const t = i / divisions
+
     quaternion.slerpQuaternions(quaternionA, quaternionB, t)
+
     const pointOnCurve = new Vector3(0, 1, 0)
       .applyQuaternion(quaternion)
       .multiplyScalar(EARTH_RADIUS + EARTH_DATA_PADDING)
+
     curvePoints.push(pointOnCurve)
   }
 

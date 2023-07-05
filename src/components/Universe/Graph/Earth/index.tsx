@@ -34,16 +34,10 @@ export const Earth = () => {
     if (ref.current) {
       setEarthRef(ref)
     }
-  }, [])
+  }, [setEarthRef])
 
   if (graphStyle !== 'earth' || showSelectionGraph) {
     return null
-  }
-
-  const getInfo = async (lat: number, lng: number) => {
-    const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=geojson&lat=${lat}&lon=${lng}`)
-    const jsonData = await res.json()
-    console.log(jsonData?.features[0]?.properties?.address?.state)
   }
 
   return (
@@ -60,14 +54,15 @@ export const Earth = () => {
 
       <mesh>
         <sphereGeometry args={[EARTH_RADIUS * 4, 200, 200]} />
-        <meshStandardMaterial side={DoubleSide} map={galaxyMapTexture} transparent opacity={0.2} />
+        <meshStandardMaterial map={galaxyMapTexture} opacity={0.4} side={DoubleSide} transparent />
       </mesh>
 
-      <directionalLight ref={lightRef} position={[0, 0, EARTH_RADIUS * 3]} intensity={0.9} />
+      <directionalLight ref={lightRef} intensity={0.9} position={[0, 0, EARTH_RADIUS * 3]} />
 
-      {data?.links.map((link, i) => {
-        return <CurvedLine key={`curved-${link.index}-${i}`} link={link} />
-      })}
+      {data?.links.map((link, i) => (
+        // eslint-disable-next-line react/no-array-index-key
+        <CurvedLine key={`curved-${i}`} link={link} />
+      ))}
     </>
   )
 }
@@ -77,23 +72,22 @@ const EarthMaterial = () => {
   const earthMapTexture = useTexture('textures/earth/earth.jpeg')
   const bumpMapTexture = useTexture('textures/earth/bump.jpeg')
   const waterMapTexture = useTexture('textures/earth/water.png')
-  const cloudsMapTexture = useTexture('textures/earth/clouds.png')
 
   // Create the material
-  const material = useMemo(() => {
-    const material = new MeshStandardMaterial({
-      map: earthMapTexture, // Earth color map
-      bumpMap: bumpMapTexture, // Bump map for surface details
-      aoMap: bumpMapTexture, // Ambient occlusion map for shading
-      roughnessMap: bumpMapTexture, // Specular map for shininess
-      metalnessMap: waterMapTexture,
-      toneMapped: true,
-      roughness: 35, // Adjust roughness as needed
-      metalness: 0.1, // Adjust metalness as needed
-    })
-
-    return material
-  }, [earthMapTexture, bumpMapTexture, cloudsMapTexture, waterMapTexture])
+  const material = useMemo(
+    () =>
+      new MeshStandardMaterial({
+        map: earthMapTexture, // Earth color map
+        bumpMap: bumpMapTexture, // Bump map for surface details
+        aoMap: bumpMapTexture, // Ambient occlusion map for shading
+        roughnessMap: bumpMapTexture, // Specular map for shininess
+        metalnessMap: waterMapTexture,
+        toneMapped: true,
+        roughness: 35, // Adjust roughness as needed
+        metalness: 0, // Adjust metalness as needed
+      }),
+    [earthMapTexture, bumpMapTexture, waterMapTexture],
+  )
 
   return <meshStandardMaterial {...material} />
 }

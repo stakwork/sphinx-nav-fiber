@@ -10,7 +10,7 @@ const defaultData: Omit<DataStore, 'setEarthRef'> = {
   earthRef: null,
 }
 
-export const useRefStore = create<DataStore>((set, get) => ({
+export const useRefStore = create<DataStore>((set) => ({
   ...defaultData,
   setEarthRef: (earthRef) => set({ earthRef }),
 }))

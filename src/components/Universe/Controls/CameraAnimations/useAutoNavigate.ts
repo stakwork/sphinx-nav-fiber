@@ -95,19 +95,18 @@ export const useAutoNavigate = (cameraControlsRef: RefObject<CameraControls | nu
         const newPosition = getPointAbove(destination, -distanceFromCenter / 2)
 
         cameraControlsRef.current.setLookAt(newPosition.x, newPosition.y, newPosition.z, 0, 0, 0, true)
-        return
+      } else {
+        if (lookAtAnimationTimer) {
+          clearTimeout(lookAtAnimationTimer)
+        }
+
+        lookAtAnimationTimer = setTimeout(() => {
+          setLookAtReached(true)
+          clearTimeout(lookAtAnimationTimer)
+        }, lookAtAnimationTimerLength)
+
+        depart()
       }
-
-      if (lookAtAnimationTimer) {
-        clearTimeout(lookAtAnimationTimer)
-      }
-
-      lookAtAnimationTimer = setTimeout(() => {
-        setLookAtReached(true)
-        clearTimeout(lookAtAnimationTimer)
-      }, lookAtAnimationTimerLength)
-
-      depart()
     }
 
     return () => {

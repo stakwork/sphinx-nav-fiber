@@ -10,6 +10,7 @@ const dataRadius = EARTH_RADIUS + EARTH_DATA_PADDING
 function getRandomLngLat() {
   const from = -180
   const to = 180
+
   return parseFloat((Math.random() * (to - from) + from).toFixed(4))
 }
 
@@ -17,6 +18,7 @@ export const getPointAbove = (point: Vector3, radius: number) => {
   const normalizedPoint = point.clone().normalize()
   const vectorToOrigin = normalizedPoint.clone().negate()
   const normalizedVectorToOrigin = vectorToOrigin.normalize()
+
   return normalizedVectorToOrigin.multiplyScalar(radius).add(point)
 }
 
@@ -30,19 +32,6 @@ export const getPositionFromLngLat = (lng: number, lat: number, radius: number) 
   const z = radius * Math.cos(latRad) * Math.sin(lonRad)
 
   return new Vector3(x, y, z)
-}
-
-export const getLngLatFromPosition = (position: Vector3) => {
-  let { x, y, z } = position
-
-  // Calculate longitude
-  const lng = (Math.atan2(z, x) * 180) / Math.PI
-
-  // Calculate latitude
-  const hyp = Math.sqrt(x * x + z * z)
-  const lat = (Math.atan2(y, hyp) * 180) / Math.PI
-
-  return { lat, lng }
 }
 
 export const generateEarthGraphPositions = (nodes: NodeExtended[]) => {
