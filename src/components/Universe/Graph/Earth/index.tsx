@@ -22,7 +22,8 @@ export const Earth = () => {
   const setEarthRef = useRefStore((s) => s.setEarthRef)
 
   const galaxyMapTexture = useTexture('textures/earth/galaxy.png')
-  const cloudsMapTexture = useTexture('textures/earth/clouds2.png')
+
+  const cloudsMapTexture = useTexture('textures/earth/clouds.png')
 
   useFrame(({ camera }) => {
     if (lightRef.current) {
