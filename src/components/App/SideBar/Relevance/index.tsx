@@ -53,7 +53,7 @@ export const Relevance = ({ header = null }: Props) => {
       setSelectedNode(node)
       isMobile && setSidebarOpen(false)
     },
-    [setSelectedNode, setRelevanceSelected, setSelectedTimestamp, setSidebarOpen, isMobile],
+    [setSelectedNode, setRelevanceSelected, setSidebarOpen, setSelectedTimestamp, isMobile],
   )
 
   return (
