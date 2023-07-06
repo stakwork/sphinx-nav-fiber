@@ -1,4 +1,6 @@
 import { memo, useMemo } from 'react'
+import { MdClose } from 'react-icons/md'
+import styled from 'styled-components'
 import { Vector3 } from 'three'
 import { Transcript } from '~/components/App/SideBar/Transcript'
 import { View } from '~/components/App/SideBar/View'
@@ -11,6 +13,7 @@ import { NodeControls } from './NodeControls'
 export const NodeDetailsPanel = memo(() => {
   const selectedNode = useSelectedNode()
   const data = useDataStore((s) => s.data)
+  const setSelectedNode = useDataStore((s) => s.setSelectedNode)
   const selectedTimestamp = useDataStore((s) => s.selectedTimestamp)
   const transcriptIsOpen = useAppStore((s) => s.transcriptIsOpen)
   const showSelectionGraph = useDataStore((s) => s.showSelectionGraph)
@@ -29,6 +32,9 @@ export const NodeDetailsPanel = memo(() => {
       {!showSelectionGraph && !hideNodeDetails && (
         <>
           <HtmlPanel position={position} visible={!!selectedNode}>
+            <Closer>
+              <MdClose onPointerDown={() => setSelectedNode(null)} size={25} />
+            </Closer>
             <View isSelectedView />
           </HtmlPanel>
 
@@ -50,3 +56,19 @@ export const NodeDetailsPanel = memo(() => {
 })
 
 NodeDetailsPanel.displayName = 'NodeDetailsPanel'
+
+const Closer = styled.div`
+  position: fixed;
+  margin: 6px;
+  width: 34px;
+  height: 34px;
+  border-radius: 34px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #000000bb;
+  color: #ffffff;
+  border-radius: 100%;
+  font-size: 20px;
+  cursor: pointer;
+`
