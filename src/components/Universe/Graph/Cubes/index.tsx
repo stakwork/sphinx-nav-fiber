@@ -102,8 +102,7 @@ export const Cubes = memo(() => {
           return <Cube key={node.ref_id || node.id} hide={hideUniverse} node={node} />
         })}
 
-      {hideUniverse ? <SelectionDataNodes /> : null
-      }
+      {hideUniverse && <SelectionDataNodes />}
 
       <RelevanceBadges />
     </Select>

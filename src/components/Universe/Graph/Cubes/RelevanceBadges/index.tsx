@@ -5,12 +5,12 @@ import { MdHub } from 'react-icons/md'
 import styled from 'styled-components'
 import { Group, Vector3 } from 'three'
 import { usePathway } from '~/components/DataRetriever'
+import { getNodeColorByType } from '~/components/Universe/Graph/constant'
 import { nodesAreRelatives } from '~/components/Universe/constants'
 import { Flex } from '~/components/common/Flex'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { NodeExtended } from '~/types'
 import { colors } from '~/utils/colors'
-import { getNodeColorByType } from '../constants'
 
 type BadgeProps = {
   color: string
@@ -142,9 +142,9 @@ const NodeBadge = ({ position, userData, color, relativeIds }: BadgeProps) => {
           }}
           scale={isHovered ? 1.05 : 1}
           selected={false}
-          size={isTopic ? 100 : 66}
+          size={isTopic ? 100 : 52}
         >
-          {isTopic ? userData?.label : <Image src={userData?.image_url || 'noimage.jpeg'} />}
+          {isTopic ? userData?.label : <Image size={46} src={userData?.image_url || 'noimage.jpeg'} />}
 
           <BadgeIconWrapper>
             <Counter color={color}>
@@ -253,14 +253,15 @@ const Tag = styled(Flex)<TagProps>`
 
 type ImageProps = {
   src?: string
+  size: number
 }
 
 const Image = styled.img<ImageProps>`
   background-image: ${({ src }) => `url(${src})`};
   background-size: contain;
   background-repeat: no-repeat;
-  width: 60px;
-  height: 60px;
+  width: ${p=>p.size}px;
+  height: ${p=>p.size}px;
   border-radius: 100%;
 `
 

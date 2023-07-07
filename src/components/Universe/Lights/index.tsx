@@ -11,22 +11,23 @@ export const Lights = () => {
     fogColor: GRAPH_FOG_COLOR,
   })
 
-  const pLightRefAmbient = useRef<PointLight|null>(null)
-  const pLightRef = useRef<PointLight|null>(null)
-  const dLightRef = useRef<DirectionalLight|null>(null)
+  const pLightRefAmbient = useRef<PointLight | null>(null)
+  const cameraLightRef = useRef<PointLight | null>(null)
+  const dLightRef = useRef<DirectionalLight | null>(null)
 
-  useFrame(({camera, clock})=>{
+  useFrame(({ camera, clock }) => {
     const elapsedTime = clock.getElapsedTime()
 
-    if (pLightRefAmbient.current){
-      const sinValue = Math.sin(elapsedTime/8)
+    if (pLightRefAmbient.current) {
+      const sinValue = Math.sin(elapsedTime / 8)
 
       const z = sinValue * 1000
+
       pLightRefAmbient.current.position.setZ(z)
     }
 
-    if (pLightRef.current) {
-      pLightRef.current.position.lerp(camera.position,0.5)
+    if (cameraLightRef.current) {
+      cameraLightRef.current.position.lerp(camera.position, 0.5)
     }
 
     if (dLightRef.current) {
@@ -38,17 +39,16 @@ export const Lights = () => {
     }
   })
 
-
   return (
     <>
+      {/* static lights */}
       <hemisphereLight args={[colors.white, GRAPH_GROUND_COLOR, GRAPH_LIGHT_INTENSITY]} />
+      <ambientLight color={colors.white} intensity={1} />
 
-      <ambientLight intensity={1} color={'white'}/>
-
-      <directionalLight ref={dLightRef} position={[UNIVERSE_SCALE, 0,0]} intensity={8} color={'white'}/>
-
-      <pointLight ref={pLightRef} position={[0,0,0]} intensity={10} color={'white'} distance={4000}/>
-      <pointLight ref={pLightRefAmbient} position={[0,0,0]} intensity={8} color={'white'} distance={4000}/>
+      {/* moving lights */}
+      <pointLight ref={cameraLightRef} color={colors.white} distance={4000} intensity={5} position={[0, 0, 0]} />
+      <directionalLight ref={dLightRef} color={colors.white} intensity={8} position={[UNIVERSE_SCALE, 0, 0]} />
+      <pointLight ref={pLightRefAmbient} color={colors.white} distance={4000} intensity={8} position={[0, 0, 0]} />
 
       <fog args={[fogColor, 5, 18000]} attach="fog" />
     </>

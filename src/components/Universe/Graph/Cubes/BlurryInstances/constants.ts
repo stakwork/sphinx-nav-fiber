@@ -1,5 +1,5 @@
 import { MeshStandardMaterial } from 'three'
-import { smoothness } from '../Cube/hooks/useMaterial'
+import { smoothness } from '../Cube/constants'
 
 const materialOptions = { ...smoothness}
 

@@ -8,7 +8,6 @@ import { ForceSimulation, runForceSimulation } from '~/transformers/forceSimulat
 import { GraphData } from '~/types'
 import { Segment } from '../../Segment'
 import { Cube } from '../Cube'
-import { AnimatedHighlights } from '../Highlights/animated'
 import { TextNode } from '../Text'
 
 let simulation2d: ForceSimulation | null = null
@@ -82,7 +81,6 @@ export const SelectionDataNodes = memo(() => {
         ))}
       </Segments>
 
-      <AnimatedHighlights />
     </>
   )
 })

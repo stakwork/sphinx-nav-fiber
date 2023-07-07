@@ -1,12 +1,7 @@
 import { Vector3 } from 'three'
-import { getNodeColorByType } from '~/components/Universe/Graph/Cubes/constants'
-import {
-  AWS_IMAGE_BUCKET_URL,
-  CLOUDFRONT_IMAGE_BUCKET_URL,
-  NODE_RELATIVE_HIGHLIGHT_COLORS,
-  isDevelopment,
-  isE2E,
-} from '~/constants'
+
+import { getNodeColorByType } from '~/components/Universe/Graph/constant'
+import { AWS_IMAGE_BUCKET_URL, CLOUDFRONT_IMAGE_BUCKET_URL, isDevelopment, isE2E } from '~/constants'
 import { mock } from '~/mocks/getMockGraphData/mockResponse'
 import { api } from '~/network/api'
 import { useDataStore } from '~/stores/useDataStore'
@@ -379,18 +374,6 @@ const getGraphData = async (searchterm: string) => {
   }
 }
 
-const getSegmentColor = (aType: string, bType: string) => {
-  if (aType === 'topic' || bType === 'topic') {
-    return NODE_RELATIVE_HIGHLIGHT_COLORS.topics.segmentColor
-  }
-
-  if (aType === 'guest' || bType === 'guest') {
-    return NODE_RELATIVE_HIGHLIGHT_COLORS.guests.segmentColor
-  }
-
-  return NODE_RELATIVE_HIGHLIGHT_COLORS.children.segmentColor
-}
-
 export const generateLinksFromNodeData = (nodes: NodeExtended[], hideMinorLinksUntilSelected: boolean) => {
   const links: Link[] = []
 
@@ -411,7 +394,7 @@ export const generateLinksFromNodeData = (nodes: NodeExtended[], hideMinorLinksU
 
         links.push({
           onlyVisibleOnSelect: false,
-          color: getNodeColorByType(childNode?.node_type||node.node_type, false) as number,
+          color: getNodeColorByType(childNode?.node_type || node.node_type, false) as number,
           source: node.ref_id,
           sourceRef: node.ref_id,
           sourcePosition,

@@ -4,10 +4,12 @@ import { memo, useMemo, useRef } from 'react'
 import { Mesh } from 'three'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { NodeExtended } from '~/types'
+import { colors } from '~/utils/colors'
 
 const fontProps = {
-  font: '/Inter-Bold.woff',
-  fontSize: 2.5,
+  font: '/fonts/Inter-Bold.woff',
+  characters: 'abcdefghijklmnopqrstuvwxyz0123456789!',
+  fontSize: 2,
   letterSpacing: -0.05,
   lineHeight: 1,
   'material-toneMapped': false,
@@ -56,14 +58,14 @@ export const TextNode = memo(({ node, hide }: Props) => {
     }
 
     return 1
-  }, [isSelected,selectedNode])
+  }, [isSelected, selectedNode])
 
   return (
     <Text
       ref={ref}
       anchorX="center"
       anchorY="middle"
-      color={'white'}
+      color={colors.white}
       fillOpacity={fillOpacity}
       position={[node.x, node.y, node.z]}
       scale={textScale}

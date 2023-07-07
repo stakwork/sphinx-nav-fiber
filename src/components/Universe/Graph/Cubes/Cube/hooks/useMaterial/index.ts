@@ -1,18 +1,12 @@
 import { useEffect, useState } from 'react'
 import { MeshStandardMaterial, TextureLoader } from 'three'
+import { smoothness } from '../../constants'
 
 const loader = new TextureLoader()
 
 type materialRecord = {
   texture: THREE.Texture
   material: THREE.MeshStandardMaterial
-}
-
-export const smoothness = {
-  metalness:0.9,
-  roughness:0,
-  specular: 0xffffff, // Color of the specular highlights
-  shininess: 100, // Intensity of the specular highlights
 }
 
 const cachedMaterials: Record<string, materialRecord> = {}
