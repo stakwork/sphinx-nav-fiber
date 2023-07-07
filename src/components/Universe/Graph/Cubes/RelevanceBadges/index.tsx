@@ -218,11 +218,7 @@ export const RelevanceBadges = memo(() => {
     return badgesToRender
   }, [selectedNodeRelativeIds, data?.nodes, showSelectionGraph, selectionGraphData, selectedNode])
 
-  return (
-    <>
-      {nodeBadges.length ? nodeBadges : pathwayBadges}
-    </>
-  )
+  return <>{nodeBadges.length ? nodeBadges : pathwayBadges}</>
 })
 
 RelevanceBadges.displayName = 'RelevanceBadges'
@@ -260,8 +256,8 @@ const Image = styled.img<ImageProps>`
   background-image: ${({ src }) => `url(${src})`};
   background-size: contain;
   background-repeat: no-repeat;
-  width: ${p=>p.size}px;
-  height: ${p=>p.size}px;
+  width: ${(p) => p.size}px;
+  height: ${(p) => p.size}px;
   border-radius: 100%;
 `
 

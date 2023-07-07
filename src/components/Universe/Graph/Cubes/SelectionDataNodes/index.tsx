@@ -80,7 +80,6 @@ export const SelectionDataNodes = memo(() => {
           />
         ))}
       </Segments>
-
     </>
   )
 })

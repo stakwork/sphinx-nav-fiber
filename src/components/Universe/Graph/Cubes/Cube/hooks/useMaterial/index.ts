@@ -18,7 +18,7 @@ const noImageTransparentMaterial = new MeshStandardMaterial({
   map: noImageTexture,
   transparent: true,
   opacity: transparentValue,
-  ...smoothness
+  ...smoothness,
 })
 
 export const useMaterial = (url: string, transparent: boolean) => {
@@ -43,7 +43,7 @@ export const useMaterial = (url: string, transparent: boolean) => {
           map: loadedTexture,
           transparent,
           opacity: transparent ? transparentValue : 1,
-          ...smoothness
+          ...smoothness,
         })
 
         cachedMaterials[cashPath] = {
