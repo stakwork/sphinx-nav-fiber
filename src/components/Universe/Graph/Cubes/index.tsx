@@ -8,7 +8,6 @@ import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { NodeExtended } from '~/types'
 import { BlurryInstances } from './BlurryInstances'
 import { Cube } from './Cube'
-import { Highlights } from './Highlights'
 import { RelevanceBadges } from './RelevanceBadges'
 import { SelectionDataNodes } from './SelectionDataNodes'
 import { TextNode } from './Text'
@@ -103,7 +102,8 @@ export const Cubes = memo(() => {
           return <Cube key={node.ref_id || node.id} hide={hideUniverse} node={node} />
         })}
 
-      {hideUniverse ? <SelectionDataNodes /> : <Highlights />}
+      {hideUniverse ? <SelectionDataNodes /> : null
+      }
 
       <RelevanceBadges />
     </Select>

@@ -8,8 +8,15 @@ type materialRecord = {
   material: THREE.MeshStandardMaterial
 }
 
+export const smoothness = {
+  metalness:0.9,
+  roughness:0,
+  specular: 0xffffff, // Color of the specular highlights
+  shininess: 100, // Intensity of the specular highlights
+}
+
 const cachedMaterials: Record<string, materialRecord> = {}
-const transparentValue = 0.2
+const transparentValue = 0.4
 const noImageTexture = loader.load('noimage.jpeg')
 const noImageMaterial = new MeshStandardMaterial({ map: noImageTexture })
 
@@ -17,6 +24,7 @@ const noImageTransparentMaterial = new MeshStandardMaterial({
   map: noImageTexture,
   transparent: true,
   opacity: transparentValue,
+  ...smoothness
 })
 
 export const useMaterial = (url: string, transparent: boolean) => {
@@ -41,6 +49,7 @@ export const useMaterial = (url: string, transparent: boolean) => {
           map: loadedTexture,
           transparent,
           opacity: transparent ? transparentValue : 1,
+          ...smoothness
         })
 
         cachedMaterials[cashPath] = {

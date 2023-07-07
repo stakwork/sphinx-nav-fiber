@@ -1,4 +1,5 @@
 import { Vector3 } from 'three'
+import { getNodeColorByType } from '~/components/Universe/Graph/Cubes/constants'
 import {
   AWS_IMAGE_BUCKET_URL,
   CLOUDFRONT_IMAGE_BUCKET_URL,
@@ -410,7 +411,7 @@ export const generateLinksFromNodeData = (nodes: NodeExtended[], hideMinorLinksU
 
         links.push({
           onlyVisibleOnSelect: false,
-          color: getSegmentColor(node.node_type, childNode?.node_type || ''),
+          color: getNodeColorByType(childNode?.node_type||node.node_type, false) as number,
           source: node.ref_id,
           sourceRef: node.ref_id,
           sourcePosition,
@@ -434,7 +435,7 @@ export const generateLinksFromNodeData = (nodes: NodeExtended[], hideMinorLinksU
 
         links.push({
           onlyVisibleOnSelect: hideMinorLinksUntilSelected,
-          color: getSegmentColor(node.node_type, 'guest'),
+          color: getNodeColorByType(guestNode.node_type, false) as number,
           source: node.ref_id,
           sourceRef: node.ref_id,
           sourcePosition,

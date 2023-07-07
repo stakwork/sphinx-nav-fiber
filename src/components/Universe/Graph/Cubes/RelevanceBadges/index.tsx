@@ -220,8 +220,7 @@ export const RelevanceBadges = memo(() => {
 
   return (
     <>
-      {pathwayBadges}
-      {nodeBadges}
+      {nodeBadges.length ? nodeBadges : pathwayBadges}
     </>
   )
 })
@@ -238,6 +237,7 @@ type TagProps = {
 }
 
 const Tag = styled(Flex)<TagProps>`
+  opacity: 0.9;
   text-align: center;
   width: ${(p: TagProps) => `${p.size}px`};
   height: ${(p: TagProps) => `${p.size}px`};

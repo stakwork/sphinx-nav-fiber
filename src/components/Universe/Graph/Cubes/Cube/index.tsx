@@ -17,13 +17,10 @@ export const Cube = memo(({ node, hide, animated }: Props) => {
   const ref = useRef<Mesh | null>(null)
   const [geometry] = useState(boxGeometry)
   const selectedNode = useSelectedNode()
-  const selectedNodeRelativeIds = useDataStore((s) => s.selectedNodeRelativeIds)
   const showSelectionGraph = useDataStore((s) => s.showSelectionGraph)
   const isSelected = !!selectedNode && node.ref_id === selectedNode.ref_id
 
-  const transparent = !selectedNode
-    ? false
-    : !isSelected && !selectedNodeRelativeIds.includes(selectedNode?.ref_id || '')
+  const transparent = false
 
   const material = useMaterial(node.image_url || 'noimage.jpeg', transparent)
 
