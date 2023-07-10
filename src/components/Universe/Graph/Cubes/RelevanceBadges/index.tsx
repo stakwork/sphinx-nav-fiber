@@ -1,6 +1,6 @@
 import { Html } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
-import { memo, useEffect, useMemo, useRef } from 'react'
+import { Fragment, memo, useEffect, useMemo, useRef } from 'react'
 import { MdHub } from 'react-icons/md'
 import styled from 'styled-components'
 import { Group, Vector3 } from 'three'
@@ -218,7 +218,7 @@ export const RelevanceBadges = memo(() => {
     return badgesToRender
   }, [selectedNodeRelativeIds, data?.nodes, showSelectionGraph, selectionGraphData, selectedNode])
 
-  return nodeBadges.length ? nodeBadges : pathwayBadges
+  return <Fragment key="node-badges">{nodeBadges.length ? nodeBadges : pathwayBadges}</Fragment>
 })
 
 RelevanceBadges.displayName = 'RelevanceBadges'
