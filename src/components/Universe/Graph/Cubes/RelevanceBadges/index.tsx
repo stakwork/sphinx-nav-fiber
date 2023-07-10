@@ -218,7 +218,7 @@ export const RelevanceBadges = memo(() => {
     return badgesToRender
   }, [selectedNodeRelativeIds, data?.nodes, showSelectionGraph, selectionGraphData, selectedNode])
 
-  return <>{nodeBadges.length ? nodeBadges : pathwayBadges}</>
+  return nodeBadges.length ? nodeBadges : pathwayBadges
 })
 
 RelevanceBadges.displayName = 'RelevanceBadges'

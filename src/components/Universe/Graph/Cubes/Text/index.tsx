@@ -5,15 +5,7 @@ import { Mesh } from 'three'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { NodeExtended } from '~/types'
 import { colors } from '~/utils/colors'
-
-const fontProps = {
-  font: '/fonts/Inter-Bold.woff',
-  characters: 'abcdefghijklmnopqrstuvwxyz0123456789!',
-  fontSize: 2,
-  letterSpacing: -0.05,
-  lineHeight: 1,
-  'material-toneMapped': false,
-}
+import { fontProps } from './constants'
 
 type Props = {
   node: NodeExtended
@@ -22,7 +14,6 @@ type Props = {
 
 export const TextNode = memo(({ node, hide }: Props) => {
   const ref = useRef<Mesh | null>(null)
-
   const selectedNode = useSelectedNode()
   const selectedNodeRelativeIds = useDataStore((s) => s.selectedNodeRelativeIds)
   const isRelative = selectedNodeRelativeIds.includes(node?.ref_id || '')

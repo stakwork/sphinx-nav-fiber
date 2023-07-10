@@ -19,10 +19,7 @@ export const Cube = memo(({ node, hide, animated }: Props) => {
   const selectedNode = useSelectedNode()
   const showSelectionGraph = useDataStore((s) => s.showSelectionGraph)
   const isSelected = !!selectedNode && node.ref_id === selectedNode.ref_id
-
-  const transparent = false
-
-  const material = useMaterial(node.image_url || 'noimage.jpeg', transparent)
+  const material = useMaterial(node.image_url || 'noimage.jpeg', false)
 
   useFrame((_, delta) => {
     if (animated && ref.current) {

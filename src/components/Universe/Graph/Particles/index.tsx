@@ -1,11 +1,7 @@
 import { useFrame } from '@react-three/fiber'
 import React, { useEffect, useMemo, useRef } from 'react'
 import * as THREE from 'three'
-import { DATA_COLOR_PALETTE, UNIVERSE_SCALE } from '../constant'
-
-const particleCount = 2000
-const radiusLimit = UNIVERSE_SCALE * 4
-const colorsArray = Object.values(DATA_COLOR_PALETTE).map((color) => color)
+import { colorsArray, particleCount, radiusLimit } from './constants'
 
 export const Particles: React.FC = () => {
   const ref = useRef<THREE.Points>(null)
@@ -42,7 +38,7 @@ export const Particles: React.FC = () => {
         }
       }
 
-      ;(ref.current?.geometry.getAttribute('position') as THREE.BufferAttribute).needsUpdate = true
+      (ref.current?.geometry.getAttribute('position') as THREE.BufferAttribute).needsUpdate = true
     }
   })
 
