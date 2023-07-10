@@ -4,14 +4,8 @@ import { memo, useMemo, useRef } from 'react'
 import { Mesh } from 'three'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { NodeExtended } from '~/types'
-
-const fontProps = {
-  font: '/Inter-Bold.woff',
-  fontSize: 2.5,
-  letterSpacing: -0.05,
-  lineHeight: 1,
-  'material-toneMapped': false,
-}
+import { colors } from '~/utils/colors'
+import { fontProps } from './constants'
 
 type Props = {
   node: NodeExtended
@@ -20,7 +14,6 @@ type Props = {
 
 export const TextNode = memo(({ node, hide }: Props) => {
   const ref = useRef<Mesh | null>(null)
-
   const selectedNode = useSelectedNode()
   const selectedNodeRelativeIds = useDataStore((s) => s.selectedNodeRelativeIds)
   const isRelative = selectedNodeRelativeIds.includes(node?.ref_id || '')
@@ -38,11 +31,6 @@ export const TextNode = memo(({ node, hide }: Props) => {
     }
   })
 
-  const transparent = useMemo(
-    () => selectedNode && !isSelected && !selectedNodeRelativeIds.includes(node?.ref_id || ''),
-    [selectedNode, isSelected, selectedNodeRelativeIds, node.ref_id],
-  )
-
   const textScale = useMemo(() => {
     let scale = (node.scale || 1) * 4
 
@@ -56,23 +44,19 @@ export const TextNode = memo(({ node, hide }: Props) => {
   }, [node.scale, isSelected, isRelative, showSelectionGraph])
 
   const fillOpacity = useMemo(() => {
-    let opacity = 1
-
-    if (transparent) {
-      opacity = 0.1
-    } else if (!isSelected) {
-      opacity = 0.5
+    if (selectedNode && selectedNode.node_type === 'topic' && !isSelected) {
+      return 0.2
     }
 
-    return opacity
-  }, [isSelected, transparent])
+    return 1
+  }, [isSelected, selectedNode])
 
   return (
     <Text
       ref={ref}
       anchorX="center"
       anchorY="middle"
-      color={isSelected ? 'white' : 'lightgray'}
+      color={colors.white}
       fillOpacity={fillOpacity}
       position={[node.x, node.y, node.z]}
       scale={textScale}

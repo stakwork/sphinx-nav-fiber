@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
-import { MeshStandardMaterial, TextureLoader } from 'three'
-
-const loader = new TextureLoader()
+import { MeshStandardMaterial } from 'three'
+import { smoothness } from '../../constants'
+import { loader, noImageMaterial, noImageTexture, noImageTransparentMaterial, transparentValue } from './constants'
 
 type materialRecord = {
   texture: THREE.Texture
@@ -9,15 +9,6 @@ type materialRecord = {
 }
 
 const cachedMaterials: Record<string, materialRecord> = {}
-const transparentValue = 0.2
-const noImageTexture = loader.load('noimage.jpeg')
-const noImageMaterial = new MeshStandardMaterial({ map: noImageTexture })
-
-const noImageTransparentMaterial = new MeshStandardMaterial({
-  map: noImageTexture,
-  transparent: true,
-  opacity: transparentValue,
-})
 
 export const useMaterial = (url: string, transparent: boolean) => {
   const [texture, setTexture] = useState(noImageTexture)
@@ -41,6 +32,7 @@ export const useMaterial = (url: string, transparent: boolean) => {
           map: loadedTexture,
           transparent,
           opacity: transparent ? transparentValue : 1,
+          ...smoothness,
         })
 
         cachedMaterials[cashPath] = {

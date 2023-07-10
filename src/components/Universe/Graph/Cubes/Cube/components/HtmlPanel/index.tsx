@@ -27,7 +27,7 @@ const floatingRange = [1, 2] as [(number | undefined)?, (number | undefined)?] |
 export const HtmlPanel = ({ speed = 2, intensity = 4, children, withTranscript, position, visible }: Props) => {
   const isMobile = useIsMatchBreakpoint('sm', 'down')
 
-  const demensions = useMemo(() => {
+  const dimensions = useMemo(() => {
     if (isMobile) {
       return withTranscript ? withTranscriptDimensionsMobile : defaultDimensionsMobile
     }
@@ -57,7 +57,7 @@ export const HtmlPanel = ({ speed = 2, intensity = 4, children, withTranscript, 
       >
         <HtmlWrap
           className="html-panel"
-          dimensions={demensions}
+          dimensions={dimensions}
           id="html-panel"
           onPointerDown={stopPropagationHandler}
           onPointerOut={stopPropagationHandler}
