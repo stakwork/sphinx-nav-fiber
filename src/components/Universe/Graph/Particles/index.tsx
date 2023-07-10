@@ -38,7 +38,7 @@ export const Particles: React.FC = () => {
         }
       }
 
-      (ref.current?.geometry.getAttribute('position') as THREE.BufferAttribute).needsUpdate = true
+      ;(ref.current?.geometry.getAttribute('position') as THREE.BufferAttribute).needsUpdate = true
     }
   })
 
