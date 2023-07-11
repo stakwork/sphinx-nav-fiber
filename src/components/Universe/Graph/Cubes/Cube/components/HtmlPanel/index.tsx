@@ -53,7 +53,7 @@ export const HtmlPanel = ({ speed = 2, intensity = 4, children, withTranscript, 
         onPointerOut={stopPropagationHandler}
         onPointerOver={stopPropagationHandler}
         onPointerUp={stopPropagationHandler}
-        sprite
+        // sprite
       >
         <HtmlWrap
           className="html-panel"

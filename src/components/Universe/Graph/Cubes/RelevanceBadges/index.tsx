@@ -45,7 +45,7 @@ const PathwayBadge = ({ color, position, relativeIds, userData }: BadgeProps) =>
   const score = getPercentageFromWeight(userData.weight)
 
   return (
-    <group ref={ref} position={position}>
+    <group ref={ref} position={position} renderOrder={10}>
       <Html center sprite>
         <Tag
           color={color}
@@ -119,7 +119,7 @@ const NodeBadge = ({ position, userData, color, relativeIds }: BadgeProps) => {
 
   return (
     <group ref={ref} position={position}>
-      <Html center sprite>
+      <Html center>
         <Tag
           color={color}
           fontColor={colors.white}

@@ -15,7 +15,6 @@ import { getGraphDataPositions } from '~/network/fetchGraphData/const'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
 import { useModal } from '~/stores/useModalStore'
-import { useTeachStore } from '~/stores/useTeachStore'
 import { GraphData } from '~/types'
 import { colors } from '~/utils/colors'
 import { E2ETests } from '~/utils/tests'
@@ -46,43 +45,25 @@ const Version = styled(Flex)`
 export const App = () => {
   const { open } = useModal('budgetExplanation')
 
-  const [
-    setSidebarOpen,
-    searchTerm,
-    setCurrentSearch,
-    setRelevanceSelected,
-    setTranscriptOpen,
-    hasBudgetExplanationModalBeSeen,
-  ] = [
+  const [setSidebarOpen, searchTerm, setCurrentSearch, hasBudgetExplanationModalBeSeen] = [
     useAppStore((s) => s.setSidebarOpen),
     useAppStore((s) => s.currentSearch),
     useAppStore((s) => s.setCurrentSearch),
-    useAppStore((s) => s.setRelevanceSelected),
-    useAppStore((s) => s.setTranscriptOpen),
     useAppStore((s) => s.hasBudgetExplanationModalBeSeen),
   ]
 
-  const setTeachMeAnswer = useTeachStore((s) => s.setTeachMeAnswer)
-
-  const [data, setData, fetchData, graphStyle, setSphinxModalOpen, setSelectedNode, setCategoryFilter] = [
+  const [data, setData, fetchData, graphStyle, setSphinxModalOpen] = [
     useDataStore((s) => s.data),
     useDataStore((s) => s.setData),
     useDataStore((s) => s.fetchData),
     useDataStore((s) => s.graphStyle),
     useDataStore((s) => s.setSphinxModalOpen),
-    useDataStore((s) => s.setSelectedNode),
-    useDataStore((s) => s.setCategoryFilter),
   ]
 
   const form = useForm<{ search: string }>({ mode: 'onChange' })
 
   const handleSubmit = form.handleSubmit(({ search }) => {
-    setTranscriptOpen(false)
-    setSelectedNode(null)
-    setRelevanceSelected(false)
     setCurrentSearch(search)
-    setTeachMeAnswer('')
-    setCategoryFilter(null)
   })
 
   const runSearch = useCallback(async () => {

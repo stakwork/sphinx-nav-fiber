@@ -1,4 +1,6 @@
 import create from 'zustand'
+import { useDataStore } from '../useDataStore'
+import { useTeachStore } from '../useTeachStore'
 
 export type SecondarySidebarActiveTab = '' | 'sentiment' | 'sources' | 'about'
 
@@ -34,7 +36,21 @@ const defaultData = {
 export const useAppStore = create<AppStore>((set, get) => ({
   ...defaultData,
   clearSearch: () => set({ currentSearch: null }),
-  setCurrentSearch: (currentSearch) => set({ currentSearch }),
+  setCurrentSearch: (currentSearch) => {
+    const { setTeachMeAnswer } = useTeachStore.getState()
+    const { setSelectedNode, setCategoryFilter } = useDataStore.getState()
+
+    const resetAppStore = {
+      transcriptIsOpen: false,
+      relevanceIsSelected: false,
+    }
+
+    setSelectedNode(null)
+    setCategoryFilter(null)
+    setTeachMeAnswer('')
+
+    set({ ...resetAppStore, currentSearch })
+  },
   setFlagErrorOpen: (flagErrorIsOpen) => set({ flagErrorIsOpen }),
   setRelevanceSelected: (relevanceIsSelected) => set({ relevanceIsSelected }),
   setSecondarySidebarActiveTab: (secondarySidebarActiveTab) =>
