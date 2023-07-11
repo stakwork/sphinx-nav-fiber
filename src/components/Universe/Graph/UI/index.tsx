@@ -9,15 +9,17 @@ import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { HtmlPanel } from '../Cubes/Cube/components/HtmlPanel'
 import { NodeControls } from './NodeControls'
+import { Panel } from './Panel'
 
 export const NodeDetailsPanel = memo(() => {
   const selectedNode = useSelectedNode()
   const data = useDataStore((s) => s.data)
-  const setSelectedNode = useDataStore((s) => s.setSelectedNode)
+
   const selectedTimestamp = useDataStore((s) => s.selectedTimestamp)
   const transcriptIsOpen = useAppStore((s) => s.transcriptIsOpen)
   const showSelectionGraph = useDataStore((s) => s.showSelectionGraph)
   const hideNodeDetails = useDataStore((s) => s.hideNodeDetails)
+  const setHideNodeDetails = useDataStore((s) => s.setHideNodeDetails)
 
   const position = useMemo(() => {
     const selected = data?.nodes.find((f) => f.ref_id === selectedNode?.ref_id)
@@ -28,12 +30,13 @@ export const NodeDetailsPanel = memo(() => {
   return (
     <>
       <NodeControls />
+      <Panel />
 
       {!showSelectionGraph && !hideNodeDetails && (
         <>
           <HtmlPanel position={position} visible={!!selectedNode}>
-            <Closer>
-              <MdClose onPointerDown={() => setSelectedNode(null)} size={25} />
+            <Closer onPointerDown={() => setHideNodeDetails(true)}>
+              <MdClose size={25} />
             </Closer>
             <View isSelectedView />
           </HtmlPanel>

@@ -10,6 +10,20 @@ import { buttonColors } from './constants'
 
 const reuseableVector3 = new Vector3()
 
+const labelKeysByNodeType: Record<string, string> = {
+  episode: 'episode_title',
+  show: 'show_title',
+  clip: 'title',
+  guest: 'label',
+}
+
+const getNodeLabelKey = (node_type: string | null) => {
+  if (node_type && labelKeysByNodeType[node_type]) {
+    return labelKeysByNodeType[node_type]
+  }
+  return 'label'
+}
+
 export const NodeControls = memo(() => {
   const ref = useRef<Group | null>(null)
   const setSidebarOpen = useAppStore((s) => s.setSidebarOpen)
@@ -21,6 +35,14 @@ export const NodeControls = memo(() => {
   const setHideNodeDetails = useDataStore((s) => s.setHideNodeDetails)
   const hideNodeDetails = useDataStore((s) => s.hideNodeDetails)
   const setShowSelectionGraph = useDataStore((s) => s.setShowSelectionGraph)
+  const searchButtonRef = useRef<Group | null>(null)
+
+  useFrame(({ camera }) => {
+    if (searchButtonRef?.current) {
+      // Make text face the camera
+      searchButtonRef.current.quaternion.copy(camera.quaternion)
+    }
+  })
 
   useFrame(() => {
     setPosition()
@@ -85,8 +107,21 @@ export const NodeControls = memo(() => {
     return null
   }
 
+  // const nodeLabel = useMemo(() => {
+  //   const key = getNodeLabelKey(selectedNode?.node_type)
+  //   const index = Object.keys(selectedNode).indexOf(key)
+
+  //   return (selectedNode && (selectedNode[index] as string)) || ''
+  // }, [selectedNode])
+
   return (
     <group ref={ref}>
+      {/* <Float ref={searchButtonRef} position-y={80}>
+        <Text anchorX="center" anchorY="middle" color={colors.white} {...fontProps} fontSize={20}>
+          Search!
+        </Text>
+      </Float> */}
+
       <Html
         center
         className="control-panel"

@@ -213,6 +213,21 @@ function generateGuestNodesFromMap(
   })
 }
 
+const getNodeLabel = (node: NodeExtended) => {
+  switch (node.node_type) {
+    case 'show':
+      return node.show_title
+    case 'episode':
+      return node.episode_title
+    case 'clip':
+      return node.episode_title
+    case 'guest':
+      return node.name
+    default:
+      return ''
+  }
+}
+
 const getGraphData = async (searchterm: string) => {
   const { graphStyle } = useDataStore.getState()
 
@@ -281,6 +296,8 @@ const getGraphData = async (searchterm: string) => {
           return
         }
 
+        const label = getNodeLabel(node)
+
         // replace aws bucket url with cloudfront, and add size indicator to end
         const smallImageUrl = node.image_url
           ?.replace(AWS_IMAGE_BUCKET_URL, CLOUDFRONT_IMAGE_BUCKET_URL)
@@ -292,6 +309,7 @@ const getGraphData = async (searchterm: string) => {
           id: node.ref_id || node.tweet_id || node.id,
           image_url: smallImageUrl,
           type: node.type || node.node_type,
+          label,
         })
 
         if (node.node_type === 'episode' && node.ref_id) {
