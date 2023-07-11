@@ -14,3 +14,5 @@ export const getNodeSearchableName = (node: NodeExtended) => {
       return node.name
   }
 }
+
+export const noBoostNodeTypes = ['topic']

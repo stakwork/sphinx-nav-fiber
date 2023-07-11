@@ -68,6 +68,11 @@ export const boxGeometry = new THREE.BoxGeometry(10, 10, 10)
 
 export const isMainTopic = (node: NodeExtended) => node.node_type === 'topic' && (node.scale || 1) > 5
 
+export const showAllTopics = (nodes: NodeExtended[]) => {
+  const topicNodes = nodes.filter((f) => f.node_type === 'topic')
+  return topicNodes.length < 20 || !topicNodes.filter((f) => f.scale && f.scale > 3).length
+}
+
 export const meshRenderLimit = 500
 
 export const meshRenderRadius = 800

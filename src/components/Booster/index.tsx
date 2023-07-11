@@ -16,13 +16,15 @@ type Props = {
   readOnly?: boolean
 }
 
-const notify = (message: string) => {
+export const notify = (message: string) => {
   toast(<ToastMessage message={message} />, {
     icon: false,
     position: toast.POSITION.BOTTOM_CENTER,
     type: message === BOOST_SUCCESS ? 'success' : 'error',
   })
 }
+
+export const defaultBoostAmount = 5
 
 export const Booster = ({ count, content, readOnly, refId }: Props) => {
   const [submitting, setSubmitting] = useState(false)
@@ -38,8 +40,6 @@ export const Booster = ({ count, content, readOnly, refId }: Props) => {
   if (imageUrl) {
     imageUrl = imageUrl.replace('.jpg', '_l.jpg')
   }
-
-  const defaultBoostAmount = 5
 
   async function doBoost() {
     if (submitting || !refId) {

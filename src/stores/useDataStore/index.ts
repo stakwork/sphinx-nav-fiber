@@ -147,7 +147,14 @@ export const useDataStore = create<DataStore>((set, get) => ({
       const relativeIds =
         data?.nodes.filter((f) => f.ref_id && nodesAreRelatives(f, selectedNode)).map((n) => n?.ref_id || '') || []
 
+      const conditionalStateChanges: Record<string, string | boolean | null> = {}
+
+      if (!selectedNode) {
+        conditionalStateChanges.showSelectionGraph = false
+      }
+
       set({
+        ...conditionalStateChanges,
         hoveredNode: null,
         isTimestampLoaded: false,
         selectedNode,

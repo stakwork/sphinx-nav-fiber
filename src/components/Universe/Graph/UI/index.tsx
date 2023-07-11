@@ -30,7 +30,6 @@ export const NodeDetailsPanel = memo(() => {
   return (
     <>
       <NodeControls />
-      <Panel />
 
       {!showSelectionGraph && !hideNodeDetails && (
         <>
@@ -54,6 +53,8 @@ export const NodeDetailsPanel = memo(() => {
           </HtmlPanel>
         </>
       )}
+
+      <Panel />
     </>
   )
 })

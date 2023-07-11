@@ -1,6 +1,6 @@
 import { Select } from '@react-three/drei'
 import { ThreeEvent } from '@react-three/fiber'
-import { memo, useCallback } from 'react'
+import { memo, useCallback, useMemo } from 'react'
 import { Object3D } from 'three'
 import { useGraphData } from '~/components/DataRetriever'
 import { useAppStore } from '~/stores/useAppStore'
@@ -11,7 +11,7 @@ import { Cube } from './Cube'
 import { RelevanceBadges } from './RelevanceBadges'
 import { SelectionDataNodes } from './SelectionDataNodes'
 import { TextNode } from './Text'
-import { isMainTopic } from './constants'
+import { isMainTopic, showAllTopics } from './constants'
 
 export const Cubes = memo(() => {
   const data = useGraphData()
@@ -78,6 +78,8 @@ export const Cubes = memo(() => {
 
   const hideUniverse = showSelectionGraph && !!selectedNode
 
+  const showAllTopicsBool = useMemo(() => showAllTopics(data.nodes), [data.nodes])
+
   return (
     <Select
       filter={(selected) => selected.filter((f) => !!f.userData?.id)}
@@ -90,9 +92,9 @@ export const Cubes = memo(() => {
       {data.nodes
         .filter((f) => {
           const isSelected = f?.ref_id === selectedNode?.ref_id
-          const isNearbyOrPersistent = nearbyNodeIds.includes(f.ref_id || '') || isMainTopic(f)
+          const isNearbyOrPersistent = nearbyNodeIds.includes(f.ref_id || '')
 
-          return isNearbyOrPersistent || isSelected
+          return isNearbyOrPersistent || isSelected || isMainTopic(f) || showAllTopicsBool
         })
         .map((node) => {
           if (node.node_type === 'topic') {

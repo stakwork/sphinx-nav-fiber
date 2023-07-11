@@ -34,9 +34,7 @@ export const TextNode = memo(({ node, hide }: Props) => {
   const textScale = useMemo(() => {
     let scale = (node.scale || 1) * 4
 
-    if (showSelectionGraph && isSelected) {
-      scale = 40
-    } else if (!isSelected && isRelative) {
+    if (isSelected || isRelative) {
       scale = 0
     }
 

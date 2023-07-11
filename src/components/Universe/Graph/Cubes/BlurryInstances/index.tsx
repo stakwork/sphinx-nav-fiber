@@ -3,7 +3,7 @@ import { useMemo } from 'react'
 import { useGraphData } from '~/components/DataRetriever'
 import { getNodeColorByType } from '~/components/Universe/Graph/constant'
 import { useDataStore } from '~/stores/useDataStore'
-import { boxGeometry, isMainTopic } from '../constants'
+import { boxGeometry } from '../constants'
 import { blurryMaterial } from './constants'
 
 type InstanceProps = {
@@ -12,13 +12,12 @@ type InstanceProps = {
 
 export const BlurryInstances = ({ hide }: InstanceProps) => {
   const data = useGraphData()
-
   const graphStyle = useDataStore((s) => s.graphStyle)
 
   const instances = useMemo(
     () =>
       data.nodes.map((node, i) => {
-        const visible = !isMainTopic(node)
+        const visible = node.node_type !== 'topic'
         const color = getNodeColorByType(node.node_type || '', true) as string
 
         return (

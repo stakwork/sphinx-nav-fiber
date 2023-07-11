@@ -1,7 +1,7 @@
 import { Html } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import { memo, useCallback, useMemo, useRef } from 'react'
-import { MdClose, MdMenu, MdViewInAr } from 'react-icons/md'
+import { MdMenu, MdViewInAr } from 'react-icons/md'
 import styled from 'styled-components'
 import { Group, Vector3 } from 'three'
 import { useAppStore } from '~/stores/useAppStore'
@@ -87,16 +87,6 @@ export const NodeControls = memo(() => {
           if (nextState) {
             setSidebarOpen(true)
           }
-        },
-      },
-      {
-        key: 'control-key-2',
-        colors: buttonColors(true).close,
-        icon: <MdClose />,
-        left: 40,
-        onClick: () => {
-          setSelectedNode(null)
-          setShowSelectionGraph(false)
         },
       },
     ],
