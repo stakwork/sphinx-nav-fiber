@@ -37,6 +37,8 @@ export const Heading = () => {
     }
   }, [selectedTimestamp])
 
+  return null
+
   return (
     <Wrapper p={20}>
       <Flex direction="row">

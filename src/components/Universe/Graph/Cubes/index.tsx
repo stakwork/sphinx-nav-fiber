@@ -87,6 +87,8 @@ export const Cubes = memo(() => {
       onPointerOut={onPointerOut}
       onPointerOver={onPointerIn}
     >
+      <RelevanceBadges />
+
       <BlurryInstances hide={hideUniverse} />
 
       {data.nodes
@@ -105,8 +107,6 @@ export const Cubes = memo(() => {
         })}
 
       {hideUniverse && <SelectionDataNodes />}
-
-      <RelevanceBadges />
     </Select>
   )
 })

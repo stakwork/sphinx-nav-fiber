@@ -13,15 +13,15 @@ import { TwitData } from '../TwitData'
 import { Twitter } from '../Twitter'
 
 type Props = {
-  isSelectedView?: boolean
+  isGraphView?: boolean
 }
 
 // eslint-disable-next-line no-underscore-dangle
-const _View = ({ isSelectedView }: Props) => {
+export const _View = ({ isGraphView }: Props) => {
   const selectedNode = useSelectedNode()
   const showSelectionGraph = useDataStore((s) => s.showSelectionGraph)
 
-  if (isSelectedView || showSelectionGraph) {
+  if (isGraphView || showSelectionGraph) {
     switch (selectedNode?.node_type) {
       case 'twitter':
         return <Twitter />

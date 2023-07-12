@@ -14,17 +14,16 @@ import {
 type Props = {
   children: React.ReactNode
   speed?: number
-  position: Vector3
   intensity?: number
   withTranscript?: boolean
-  visible: boolean
+  position: Vector3
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const stopPropagationHandler = (e: any) => e.stopPropagation()
 const floatingRange = [1, 2] as [(number | undefined)?, (number | undefined)?] | undefined
 
-export const HtmlPanel = ({ speed = 2, intensity = 4, children, withTranscript, position, visible }: Props) => {
+export const HtmlPanel = ({ speed = 2, intensity = 4, children, withTranscript, position }: Props) => {
   const isMobile = useIsMatchBreakpoint('sm', 'down')
 
   const dimensions = useMemo(() => {
@@ -63,7 +62,6 @@ export const HtmlPanel = ({ speed = 2, intensity = 4, children, withTranscript, 
           onPointerOut={stopPropagationHandler}
           onPointerOver={stopPropagationHandler}
           onPointerUp={stopPropagationHandler}
-          visible={visible}
         >
           {children}
         </HtmlWrap>
@@ -74,7 +72,7 @@ export const HtmlPanel = ({ speed = 2, intensity = 4, children, withTranscript, 
 
 HtmlPanel.displayName = 'HtmlPanel'
 
-const HtmlWrap = styled.div<{ dimensions: [number, number, number, number]; visible: boolean }>`
+const HtmlWrap = styled.div<{ dimensions: [number, number, number, number] }>`
   ${({ dimensions: [top, left, width, height] = defaultDimensions }) =>
     css`
       top: ${top}px;
@@ -82,12 +80,7 @@ const HtmlWrap = styled.div<{ dimensions: [number, number, number, number]; visi
       width: ${width}px;
       height: ${height}px;
     `}
-  ${({ visible }) =>
-    css`
-      opacity: ${visible ? 1 : 0};
-      pointer-events: ${visible ? 'auto' : 'none'};
-      user-select: ${visible ? 'auto' : 'none'};
-    `}
+
   position: absolute;
   border-radius: 20px;
   font-size: 80px;

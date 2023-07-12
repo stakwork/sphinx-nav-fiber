@@ -6,6 +6,7 @@ import styled from 'styled-components'
 import { Group, Vector3 } from 'three'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
+import { panelIsHidden } from '../constants'
 import { buttonColors } from './constants'
 
 const reuseableVector3 = new Vector3()
@@ -72,7 +73,7 @@ export const NodeControls = memo(() => {
         onClick: () => {
           setHideNodeDetails(!hideNodeDetails)
         },
-        hide: showSelectionGraph,
+        hide: showSelectionGraph || panelIsHidden(selectedNode?.node_type),
       },
       {
         key: 'control-key-1',
@@ -90,28 +91,23 @@ export const NodeControls = memo(() => {
         },
       },
     ],
-    [setShowSelectionGraph, setSelectedNode, setSidebarOpen, setHideNodeDetails, hideNodeDetails, showSelectionGraph],
+    [
+      setShowSelectionGraph,
+      setSelectedNode,
+      setSidebarOpen,
+      setHideNodeDetails,
+      hideNodeDetails,
+      showSelectionGraph,
+      selectedNode,
+    ],
   )
 
   if (!selectedNode) {
     return null
   }
 
-  // const nodeLabel = useMemo(() => {
-  //   const key = getNodeLabelKey(selectedNode?.node_type)
-  //   const index = Object.keys(selectedNode).indexOf(key)
-
-  //   return (selectedNode && (selectedNode[index] as string)) || ''
-  // }, [selectedNode])
-
   return (
     <group ref={ref}>
-      {/* <Float ref={searchButtonRef} position-y={80}>
-        <Text anchorX="center" anchorY="middle" color={colors.white} {...fontProps} fontSize={20}>
-          Search!
-        </Text>
-      </Float> */}
-
       <Html
         center
         className="control-panel"

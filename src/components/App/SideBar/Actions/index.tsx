@@ -6,6 +6,7 @@ import { Pill } from '~/components/common/Pill'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
 import { colors } from '~/utils/colors'
+import { useIsMatchBreakpoint } from '~/utils/useIsMatchBreakpoint'
 
 type FlagErrorProps = {
   flagErrorIsOpen?: boolean
@@ -30,6 +31,12 @@ export const Actions = ({ transcript }: ActionsProps) => {
   const [flagErrorIsOpen, setFlagErrorOpen] = useAppStore((s) => [s.flagErrorIsOpen, s.setFlagErrorOpen])
 
   const selectedNode = useDataStore((s) => s.selectedNode)
+
+  const isMobile = useIsMatchBreakpoint('sm', 'down')
+
+  if (!isMobile) {
+    return null
+  }
 
   return (
     <Flex align="center" direction="row" justify="space-between">

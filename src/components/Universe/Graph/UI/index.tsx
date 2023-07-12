@@ -2,14 +2,12 @@ import { memo, useMemo } from 'react'
 import { MdClose } from 'react-icons/md'
 import styled from 'styled-components'
 import { Vector3 } from 'three'
-import { Transcript } from '~/components/App/SideBar/Transcript'
-import { View } from '~/components/App/SideBar/View'
-import { Flex } from '~/components/common/Flex'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
-import { HtmlPanel } from '../Cubes/Cube/components/HtmlPanel'
+import { HtmlPanel } from './Content/HtmlPanel'
 import { NodeControls } from './NodeControls'
 import { Panel } from './Panel'
+import { panelIsHidden } from './constants'
 
 export const NodeDetailsPanel = memo(() => {
   const selectedNode = useSelectedNode()
@@ -27,31 +25,23 @@ export const NodeDetailsPanel = memo(() => {
     return new Vector3(selected?.x || 0, selected?.y || 0, selected?.z || 0)
   }, [data?.nodes, selectedNode?.ref_id])
 
+  const panelIsVisible = useMemo(() => {
+    return selectedNode && !showSelectionGraph && !hideNodeDetails && !panelIsHidden(selectedNode?.node_type)
+  }, [selectedNode, showSelectionGraph, hideNodeDetails])
+
   return (
     <>
       <NodeControls />
 
-      {!showSelectionGraph && !hideNodeDetails && (
-        <>
-          <HtmlPanel position={position} visible={!!selectedNode}>
-            <Closer onPointerDown={() => setHideNodeDetails(true)}>
-              <MdClose size={25} />
-            </Closer>
-            <View isSelectedView />
-          </HtmlPanel>
+      {/* <Content />  */}
 
-          <HtmlPanel
-            intensity={2}
-            position={position}
-            speed={4}
-            visible={transcriptIsOpen && !!selectedNode}
-            withTranscript
-          >
-            <Flex p={20}>
-              <Transcript node={selectedTimestamp || selectedNode} />
-            </Flex>
-          </HtmlPanel>
-        </>
+      {panelIsVisible && (
+        <HtmlPanel position={position}>
+          <Closer onPointerDown={() => setHideNodeDetails(true)}>
+            <MdClose size={25} />
+          </Closer>
+          {/* <View isGraphView /> */}
+        </HtmlPanel>
       )}
 
       <Panel />

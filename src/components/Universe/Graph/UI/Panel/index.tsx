@@ -8,19 +8,20 @@ import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { boost } from '~/utils/boost'
 import { fontProps } from '../../Cubes/Text/constants'
+import { stopBubbling } from '../constants'
+import { AudioPlayer } from './AudioPlayer'
+import { VideoPlayer } from './VideoPlayer'
 import { getNodeSearchableName, noBoostNodeTypes } from './constants'
 
 // The Panel component, will always stay at the top of the screen
 
-const width = 40
-const height = 10
+const panelWidth = 40
+const panelHeight = 10
 
-// Define custom layer IDs as constants
-const TOP_LAYER = 1 << 10 // Custom layer ID for the top layer
-
-const renderOrder = Infinity
+const renderOrder = 99999999
 
 const panelColor = new Color('blue')
+const boostedColor = new Color('yellow')
 const white = new Color('white')
 
 export const Panel = () => {
@@ -32,6 +33,7 @@ export const Panel = () => {
   const panelBoardRef = useRef<Mesh>(null)
   const [hovered, setHovered] = useState('')
   const [boosting, setBoosting] = useState(false)
+  const [boosted, setBoosted] = useState(false)
   const [boostColor] = useState(new Color('#49c998'))
 
   const setSelectedNode = useDataStore((s) => s.setSelectedNode)
@@ -40,7 +42,7 @@ export const Panel = () => {
   const setGuiRef = useDataStore((s) => s.setGuiRef)
 
   const offset = useMemo(() => {
-    return new Vector3(0, 30, -100)
+    return new Vector3(0, 28, -100)
   }, []) // Offset from the camera's position
 
   const selectedNode = useSelectedNode()
@@ -87,8 +89,6 @@ export const Panel = () => {
       text = 'boost node'
     } else if (hovered === 'search') {
       text = 'search'
-    } else if (hovered === 'close') {
-      text = 'close'
     }
 
     return text.toUpperCase()
@@ -97,8 +97,6 @@ export const Panel = () => {
   const boostEnabled = useMemo(() => !noBoostNodeTypes.includes(selectedNode?.node_type || ''), [selectedNode])
 
   const doBoost = async () => {
-    console.log('selectedNode?.ref_id', selectedNode?.ref_id)
-
     if (boosting || !selectedNode?.ref_id) {
       return
     }
@@ -108,7 +106,7 @@ export const Panel = () => {
     // eslint-disable-next-line no-useless-catch
     try {
       await boost(selectedNode?.ref_id, defaultBoostAmount)
-
+      setBoosted(true)
       notify(BOOST_SUCCESS)
     } catch (e) {
       notify(BOOST_ERROR_BUDGET)
@@ -117,8 +115,33 @@ export const Panel = () => {
     setBoosting(true)
   }
 
+  const boostIconColor = useMemo(() => {
+    if (boosted) {
+      return boostedColor
+    }
+    if (hovered === 'boost') {
+      return white
+    }
+    return boostColor
+  }, [hovered, boosted])
+
+  const {} = selectedNode || {}
+
   return (
-    <group ref={panelRef} visible={!!selectedNode}>
+    <group
+      ref={panelRef}
+      visible={!!selectedNode}
+      onClick={stopBubbling}
+      onPointerDown={stopBubbling}
+      onPointerUp={stopBubbling}
+    >
+      <Float floatIntensity={0.1} speed={1}>
+        <group position-y={-50}>
+          <VideoPlayer />
+          <AudioPlayer />
+        </group>
+      </Float>
+
       <Float floatIntensity={10} speed={6}>
         <mesh
           renderOrder={renderOrder}
@@ -135,7 +158,7 @@ export const Panel = () => {
             setCurrentSearch(searchableName || '')
           }}
         >
-          <planeGeometry args={[width, height]} />
+          <planeGeometry args={[panelWidth, panelHeight]} />
           <meshStandardMaterial color={panelColor} transparent opacity={hovered === 'search' ? 0.9 : 0.4} />
         </mesh>
 
@@ -151,7 +174,7 @@ export const Panel = () => {
               {panelText}
             </Text>
 
-            <group position-x={width / 2 - 4} scale={2}>
+            <group position-x={panelWidth / 2 - 4} scale={2}>
               <mesh
                 onPointerEnter={() => {
                   setHovered('close')
@@ -171,9 +194,9 @@ export const Panel = () => {
             </group>
 
             {boostEnabled && (
-              <group position-x={-(width / 2) + 4} scale={2}>
+              <group position-x={-(panelWidth / 2) + 4} scale={2}>
                 <mesh
-                  visible={hovered === 'boost'}
+                  visible={!boosted && hovered === 'boost'}
                   onPointerEnter={() => {
                     setHovered('boost')
                   }}
@@ -193,12 +216,7 @@ export const Panel = () => {
 
                 <mesh renderOrder={renderOrder} ref={boostIconRef}>
                   <circleGeometry args={[1.5, 40]} />
-                  <meshBasicMaterial
-                    color={hovered === 'boost' ? white : boostColor}
-                    map={boltTexture}
-                    alphaMap={boltTexture}
-                    transparent
-                  />
+                  <meshBasicMaterial color={boostIconColor} map={boltTexture} alphaMap={boltTexture} transparent />
                 </mesh>
               </group>
             )}

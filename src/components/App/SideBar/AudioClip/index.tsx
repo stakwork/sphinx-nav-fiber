@@ -1,10 +1,6 @@
 import { memo, useCallback, useEffect } from 'react'
 import styled from 'styled-components'
-import { Actions } from '~/components/App/SideBar/Actions'
-import { AudioPlayer } from '~/components/AudioPlayer'
-import { Avatar } from '~/components/common/Avatar'
 import { Flex } from '~/components/common/Flex'
-import { Text } from '~/components/common/Text'
 import { setIsTimestampLoaded, useSelectedNode } from '~/stores/useDataStore'
 import { usePlayerStore } from '~/stores/usePlayerStore'
 import { colors } from '~/utils/colors'
@@ -49,7 +45,7 @@ const _AudioClip = () => {
 
   return (
     <Wrapper p={20}>
-      <Flex direction="row">
+      {/* <Flex direction="row">
         <Flex pr={24}>
           <Avatar size={isMobile ? 45 : 80} src={selectedNode?.image_url || 'audio_default.svg'} />
         </Flex>
@@ -81,7 +77,7 @@ const _AudioClip = () => {
           play={isPlay}
           timestamp={selectedNode?.timestamp || ''}
         />
-      </Flex>
+      </Flex> */}
 
       <Flex pt={22}>
         <Transcript node={selectedNode} stateless />
