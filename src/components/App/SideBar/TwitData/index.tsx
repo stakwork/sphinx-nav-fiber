@@ -1,9 +1,8 @@
-import { Flex } from '~/components/common/Flex'
-import { Text } from '~/components/common/Text'
-import { useSelectedNode } from '~/stores/useDataStore'
-import { Tweet } from 'react-twitter-widgets'
-import { ClipLoader } from 'react-spinners'
 import { useState } from 'react'
+import { ClipLoader } from 'react-spinners'
+import { Tweet } from 'react-twitter-widgets'
+import { Flex } from '~/components/common/Flex'
+import { useSelectedNode } from '~/stores/useDataStore'
 import { colors } from '~/utils/colors'
 
 export const TwitData = () => {
@@ -13,10 +12,7 @@ export const TwitData = () => {
   const twitId: string = selectedNode?.tweet_id || ''
 
   return (
-    <Flex direction="column" px={24} py={16}>
-      <Flex align="center" direction="row" justify="flex-start" p={10}>
-        <Text color="primaryText1">{selectedNode?.label}</Text>
-      </Flex>
+    <Flex direction="column">
       {loading && (
         <Flex align="center" direction="row" justify="center" p={10}>
           <ClipLoader color={colors.white} />

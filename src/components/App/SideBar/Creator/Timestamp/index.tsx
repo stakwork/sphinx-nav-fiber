@@ -1,5 +1,4 @@
 import { MdAccessTime, MdPlayArrow } from 'react-icons/md'
-import { ClipLoader } from 'react-spinners'
 import styled, { css } from 'styled-components'
 import { Booster } from '~/components/Booster'
 import { Flex } from '~/components/common/Flex'
@@ -10,10 +9,11 @@ import { ColorName, colors } from '~/utils/colors'
 import { formatDescription } from '~/utils/formatDescription'
 import { formatTimestamp } from '~/utils/formatTimestamp'
 
-const Wrapper = styled(Flex).attrs<{ isSelected?: boolean }>(({ isSelected }) => ({
-  background: isSelected ? 'lightBlue100' : 'body',
+const Wrapper = styled.div.attrs<{ isSelected?: boolean; transparent?: boolean }>(({ isSelected, transparent }) => ({
+  wrap: 'wrap',
+  background: transparent ? 'none' : 'body',
   direction: 'row',
-}))<{ isSelected?: boolean }>`
+}))<{ isSelected?: boolean; transparent?: boolean }>`
   cursor: pointer;
   color: ${colors.primaryText1};
 
@@ -46,19 +46,9 @@ export const Timestamp = ({ onClick, timestamp }: Props) => {
   )
 
   return (
-    <Wrapper isSelected={isSelected} onClick={onClick} px={20} py={12}>
-      <Flex direction="row" px={20}>
-        {isSelected && !isTimestampLoaded ? <ClipLoader color={colors[color]} loading size={14} /> : icon}
-      </Flex>
-
-      <div>
+    <Wrapper transparent={true} isSelected={isSelected} onClick={onClick}>
+      <Flex direction="column" pb={10}>
         <Flex align="center" direction="row">
-          {timestamp.timestamp && (
-            <Text color="primaryText1" kind={isSelected ? 'mediumBold' : 'medium'}>
-              {formatTimestamp(timestamp.timestamp)}
-            </Text>
-          )}
-
           {!!timestamp.boost && (
             <Flex pl={10}>
               <Booster count={timestamp.boost} readOnly />
@@ -66,12 +56,20 @@ export const Timestamp = ({ onClick, timestamp }: Props) => {
           )}
         </Flex>
 
-        <Flex pt={4}>
-          <Text color={isSelected ? 'blueTextAccent' : 'mainBottomIcons'} kind={isSelected ? 'regularBold' : 'regular'}>
+        <Flex pt={4} style={{ flexWrap: 'wrap' }}>
+          <Text color={'mainBottomIcons'} kind={isSelected ? 'mediumBold' : 'medium'}>
             {formatDescription(timestamp.description)}
           </Text>
+
+          {timestamp.timestamp && (
+            <Flex pt={5}>
+              <Text color="primaryText1" kind={'regular'}>
+                {formatTimestamp(timestamp.timestamp)}
+              </Text>
+            </Flex>
+          )}
         </Flex>
-      </div>
+      </Flex>
     </Wrapper>
   )
 }

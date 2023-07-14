@@ -8,7 +8,7 @@ import { GraphLoadingIcon } from './Icons'
 import { Particles } from './Particles'
 import { PathwayLine } from './PathwayLine'
 import { Segment } from './Segment'
-import { NodeDetailsPanel } from './UI'
+import { NodeGUI } from './UI'
 
 export const Graph = () => {
   const data = useGraphData()
@@ -38,7 +38,7 @@ export const Graph = () => {
 
       <Particles />
 
-      <NodeDetailsPanel />
+      <NodeGUI />
 
       {!showSelectionGraph && <PathwayLine />}
 

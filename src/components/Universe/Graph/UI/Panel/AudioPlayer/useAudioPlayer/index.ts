@@ -21,11 +21,19 @@ export const useAudioPlayer = ({ mediaUrl, timestamp }: UseAudioPlayerProps) => 
 
     audioRef.current.addEventListener('loadedmetadata', () => {
       setLoading(false)
-      setDuration(audioRef.current!.duration)
+      if (audioRef.current) {
+        setDuration(audioRef.current.duration)
+      }
+
+      setPlaying((prevPlaying) => {
+        if (prevPlaying) {
+          audioRef.current!.play()
+        }
+        return prevPlaying
+      })
     })
 
     audioRef.current.addEventListener('error', () => {
-      console.log('errrrorr!!')
       setLoadError(true)
     })
 
@@ -47,15 +55,17 @@ export const useAudioPlayer = ({ mediaUrl, timestamp }: UseAudioPlayerProps) => 
   }, [])
 
   useEffect(() => {
-    if (!mediaUrl) {
-      return
-    }
-
     if (!audioRef.current) {
       audioRef.current = audioPlayer
     }
 
-    audioRef.current.pause()
+    if (!mediaUrl) {
+      resetPlayer()
+      audioRef.current!.pause()
+
+      return
+    }
+
     audioRef.current.src = mediaUrl
 
     resetPlayer()
@@ -63,7 +73,6 @@ export const useAudioPlayer = ({ mediaUrl, timestamp }: UseAudioPlayerProps) => 
 
   const resetPlayer = () => {
     setLoading(true)
-    setPlaying(false)
     setLoadError(false)
   }
 

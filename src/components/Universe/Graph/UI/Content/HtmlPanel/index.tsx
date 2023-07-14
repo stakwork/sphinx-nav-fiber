@@ -1,9 +1,11 @@
-import { Float, Html } from '@react-three/drei'
+import { Float, Html, useTexture } from '@react-three/drei'
 
 import { useMemo } from 'react'
 import styled, { css } from 'styled-components'
 import { Vector3 } from 'three'
+import { useDataStore } from '~/stores/useDataStore'
 import { useIsMatchBreakpoint } from '~/utils/useIsMatchBreakpoint'
+import { setPointerHoverStyle, white } from '../../constants'
 import {
   defaultDimensions,
   defaultDimensionsMobile,
@@ -26,6 +28,9 @@ const floatingRange = [1, 2] as [(number | undefined)?, (number | undefined)?] |
 export const HtmlPanel = ({ speed = 2, intensity = 4, children, withTranscript, position }: Props) => {
   const isMobile = useIsMatchBreakpoint('sm', 'down')
 
+  const setHideNodeDetails = useDataStore((s) => s.setHideNodeDetails)
+  const hideNodeDetails = useDataStore((s) => s.hideNodeDetails)
+
   const dimensions = useMemo(() => {
     if (isMobile) {
       return withTranscript ? withTranscriptDimensionsMobile : defaultDimensionsMobile
@@ -33,6 +38,8 @@ export const HtmlPanel = ({ speed = 2, intensity = 4, children, withTranscript, 
 
     return withTranscript ? withTranscriptDimensions : defaultDimensions
   }, [isMobile, withTranscript])
+
+  const closeTexture = useTexture('icons/close_white.svg')
 
   return (
     <Float
@@ -66,6 +73,25 @@ export const HtmlPanel = ({ speed = 2, intensity = 4, children, withTranscript, 
           {children}
         </HtmlWrap>
       </Html>
+
+      <group position={position} scale={2}>
+        <mesh
+          onPointerEnter={() => {
+            setPointerHoverStyle(true)
+          }}
+          onPointerLeave={() => {
+            setPointerHoverStyle(false)
+          }}
+          onPointerDown={() => {
+            setHideNodeDetails(!hideNodeDetails)
+          }}
+          onPointerUp={(e) => e.stopPropagation()}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <circleGeometry args={[1.5, 40]} />
+          <meshBasicMaterial alphaMap={closeTexture} color={white} map={closeTexture} transparent />
+        </mesh>
+      </group>
     </Float>
   )
 }

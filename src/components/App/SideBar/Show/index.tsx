@@ -1,13 +1,12 @@
 import { useMemo } from 'react'
 import styled from 'styled-components'
-import { Actions } from '~/components/App/SideBar/Actions'
 import { useGraphData } from '~/components/DataRetriever'
-import { Avatar } from '~/components/common/Avatar'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { useDataStore } from '~/stores/useDataStore'
 import { NodeExtended } from '~/types'
 import { colors } from '~/utils/colors'
+import { DateComponent } from '../Creator/DateComponent'
 
 export const CREATOR_HEADING_HEIGHT = 240
 
@@ -36,6 +35,7 @@ const EpisodeWrapper = styled(Flex).attrs(() => ({
 const EpisodePanel = ({ node, onClick }: EpisodeProps) => (
   <EpisodeWrapper onClick={onClick} py={12}>
     <div>
+      <DateComponent date={node?.date} />
       <Flex align="center" direction="row">
         <Text color="primaryText1" kind="regular">
           {node.episode_title}
@@ -75,7 +75,7 @@ export const Show = () => {
 
   return (
     <Wrapper p={20}>
-      <Flex direction="row">
+      {/* <Flex direction="row">
         <Flex pr={24}>
           <Avatar size={80} src={selectedNode?.image_url || 'audio_default.svg'} />
         </Flex>
@@ -87,9 +87,9 @@ export const Show = () => {
             <Actions />
           </Flex>
         </Flex>
-      </Flex>
+      </Flex> */}
 
-      <Flex direction="column" pt={40}>
+      <Flex direction="column">
         <Flex pb={20}>
           <Text kind="mediumBold">Related Episodes</Text>
         </Flex>

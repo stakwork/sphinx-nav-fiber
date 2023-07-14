@@ -1,5 +1,5 @@
 import { Slide } from '@mui/material'
-import { forwardRef, useState } from 'react'
+import { forwardRef, useMemo, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { MdClose, MdKeyboardDoubleArrowLeft } from 'react-icons/md'
 import styled from 'styled-components'
@@ -23,15 +23,18 @@ type Props = { onSubmit?: () => void }
 
 type ComponentsMapperType = Record<TabsVariants, JSX.Element>
 
-const ComponentsMapper: ComponentsMapperType = {
-  askQuestion: <AskQuestion />,
-  searchResults: <View />,
-  teachMe: <TeachMe />,
-  sentiment: <SentimentAnalysis />,
-}
-
 // eslint-disable-next-line react/display-name
 const Content = forwardRef<HTMLDivElement, Props>(({ onSubmit }, ref) => {
+  const ComponentsMapper: ComponentsMapperType = useMemo(
+    () => ({
+      askQuestion: <AskQuestion />,
+      searchResults: <View />,
+      teachMe: <TeachMe />,
+      sentiment: <SentimentAnalysis />,
+    }),
+    [],
+  )
+
   const [isLoading] = useDataStore((s) => [s.isFetching])
   const [setSidebarOpen] = useAppStore((s) => [s.setSidebarOpen])
   const { setValue } = useFormContext()

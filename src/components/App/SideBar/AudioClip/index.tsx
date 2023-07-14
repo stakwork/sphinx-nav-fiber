@@ -79,7 +79,7 @@ const _AudioClip = () => {
         />
       </Flex> */}
 
-      <Flex pt={22}>
+      <Flex>
         <Transcript node={selectedNode} stateless />
       </Flex>
     </Wrapper>

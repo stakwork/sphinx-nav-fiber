@@ -1,12 +1,13 @@
 import { MdClose } from 'react-icons/md'
 import styled, { keyframes } from 'styled-components'
-import { MENU_WIDTH } from '~/components/App/SideBar'
 import { Button } from '~/components/Button'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { useAppStore } from '~/stores/useAppStore'
 import { NodeExtended } from '~/types'
 import { colors } from '~/utils/colors'
+import { formatDescription } from '~/utils/formatDescription'
+import { DateComponent } from '../Creator/DateComponent'
 
 const copiedAnimation = keyframes`
   0% { opacity: 0; }
@@ -44,10 +45,16 @@ export const Transcript = ({ stateless, node }: TranscriptProps) => {
   }
 
   return (
-    <Wrapper style={{ left: MENU_WIDTH }}>
-      <Flex align="center" direction="row" justify="space-between">
-        {stateless && <Text kind="heading">Transcript</Text>}
+    <Wrapper>
+      <DateComponent date={node?.date} />
 
+      <Flex pt={5} pb={20}>
+        <Text color={'blueTextAccent'} kind={'regularBold'}>
+          {formatDescription(node?.description)}
+        </Text>
+      </Flex>
+
+      <Flex align="center" direction="row" justify="space-between">
         {node?.text ? (
           <CopyButton className="copy-button" kind="small" onPointerDown={() => copyNodeText(node?.text)} type="button">
             Copy Transcript

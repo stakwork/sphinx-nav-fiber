@@ -34,4 +34,6 @@ export const VideoPlayer = () => {
   )
 }
 
-const Frame = styled.div``
+const Frame = styled.div`
+  opacity: 0.8;
+`

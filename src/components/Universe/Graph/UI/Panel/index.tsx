@@ -8,7 +8,7 @@ import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { boost } from '~/utils/boost'
 import { fontProps } from '../../Cubes/Text/constants'
-import { stopBubbling } from '../constants'
+import { setPointerHoverStyle, stopBubbling, white } from '../constants'
 import { AudioPlayer } from './AudioPlayer'
 import { VideoPlayer } from './VideoPlayer'
 import { getNodeSearchableName, noBoostNodeTypes } from './constants'
@@ -22,7 +22,6 @@ const renderOrder = 99999999
 
 const panelColor = new Color('blue')
 const boostedColor = new Color('yellow')
-const white = new Color('white')
 
 export const Panel = () => {
   const panelRef = useRef<Group>(null)
@@ -42,7 +41,7 @@ export const Panel = () => {
   const setGuiRef = useDataStore((s) => s.setGuiRef)
 
   const offset = useMemo(() => {
-    return new Vector3(0, 28, -100)
+    return new Vector3(0, 44, -100)
   }, []) // Offset from the camera's position
 
   const selectedNode = useSelectedNode()
@@ -55,7 +54,7 @@ export const Panel = () => {
   }, [])
 
   useEffect(() => {
-    document.body.style.cursor = hovered ? 'pointer' : 'auto'
+    setPointerHoverStyle(!!hovered)
   }, [hovered])
 
   useFrame(({ camera }) => {
@@ -135,14 +134,15 @@ export const Panel = () => {
       onPointerDown={stopBubbling}
       onPointerUp={stopBubbling}
     >
-      <Float floatIntensity={0.1} speed={1}>
-        <group position-y={-50}>
-          <VideoPlayer />
+      <group position-y={-80}>
+        <VideoPlayer />
+      </group>
+
+      <Float floatIntensity={2} speed={6}>
+        <group position-y={-12}>
           <AudioPlayer />
         </group>
-      </Float>
 
-      <Float floatIntensity={10} speed={6}>
         <mesh
           renderOrder={renderOrder}
           ref={panelBoardRef}
@@ -159,7 +159,7 @@ export const Panel = () => {
           }}
         >
           <planeGeometry args={[panelWidth, panelHeight]} />
-          <meshStandardMaterial color={panelColor} transparent opacity={hovered === 'search' ? 0.9 : 0.4} />
+          <meshStandardMaterial color={panelColor} transparent opacity={hovered === 'search' ? 0.9 : 0.7} />
         </mesh>
 
         <group position-z={2}>

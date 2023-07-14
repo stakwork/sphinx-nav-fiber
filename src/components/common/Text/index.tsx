@@ -59,6 +59,7 @@ type Props = {
 }
 
 const style = css<Props>`
+  word-wrap: wrap;
   ${({ kind = 'regular' }) => css`
     font-size: ${fontSizes[kind]}px;
     font-weight: ${fontWeights[kind]};
