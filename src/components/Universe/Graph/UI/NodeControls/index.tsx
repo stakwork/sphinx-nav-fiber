@@ -73,7 +73,7 @@ export const NodeControls = memo(() => {
         onClick: () => {
           setHideNodeDetails(!hideNodeDetails)
         },
-        hide: showSelectionGraph || panelIsHidden(selectedNode?.node_type),
+        hide: panelIsHidden(selectedNode?.node_type),
       },
       {
         key: 'control-key-1',
@@ -81,13 +81,7 @@ export const NodeControls = memo(() => {
         icon: <MdViewInAr />,
         left: 0,
         onClick: () => {
-          const nextState = !showSelectionGraph
-
-          setShowSelectionGraph(nextState)
-
-          if (nextState) {
-            setSidebarOpen(true)
-          }
+          setShowSelectionGraph(!showSelectionGraph)
         },
       },
     ],

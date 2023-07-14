@@ -48,24 +48,22 @@ export const Timestamp = ({ onClick, timestamp }: Props) => {
   return (
     <Wrapper transparent={true} isSelected={isSelected} onClick={onClick}>
       <Flex direction="column" pb={10}>
-        <Flex align="center" direction="row">
-          {!!timestamp.boost && (
-            <Flex pl={10}>
-              <Booster count={timestamp.boost} readOnly />
-            </Flex>
-          )}
-        </Flex>
-
         <Flex pt={4} style={{ flexWrap: 'wrap' }}>
-          <Text color={'mainBottomIcons'} kind={isSelected ? 'mediumBold' : 'medium'}>
+          <Text color="primaryText1" kind={isSelected ? 'mediumBold' : 'medium'}>
             {formatDescription(timestamp.description)}
           </Text>
 
           {timestamp.timestamp && (
-            <Flex pt={5}>
-              <Text color="primaryText1" kind={'regular'}>
+            <Flex pt={5} justify="space-between" direction="row">
+              <Text color="mainBottomIcons" kind={'regular'}>
                 {formatTimestamp(timestamp.timestamp)}
               </Text>
+
+              {!!timestamp.boost && (
+                <Flex>
+                  <Booster count={timestamp.boost} readOnly />
+                </Flex>
+              )}
             </Flex>
           )}
         </Flex>

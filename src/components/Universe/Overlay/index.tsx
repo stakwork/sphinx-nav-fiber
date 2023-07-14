@@ -3,7 +3,6 @@ import styled from 'styled-components'
 import { Button } from '~/components/Button'
 import { useControlStore } from '~/stores/useControlStore'
 import { useDataStore } from '~/stores/useDataStore'
-import { Tooltip } from '../Graph/Cubes/Cube/components/Tooltip'
 
 export const Overlay = () => {
   const [selectedNode, hoveredNode, cameraFocusTrigger, setCameraFocusTrigger] = useDataStore((s) => [
@@ -25,12 +24,6 @@ export const Overlay = () => {
         <Button background="bluePressState" kind="small" onClick={() => setCameraFocusTrigger(!cameraFocusTrigger)}>
           Re-center map
         </Button>
-      )}
-
-      {hoveredNode && (
-        <div id="tooltip-portal">
-          <Tooltip node={hoveredNode} />
-        </div>
       )}
     </OverlayWrap>
   )

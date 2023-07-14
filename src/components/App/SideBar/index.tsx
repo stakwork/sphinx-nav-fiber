@@ -1,6 +1,5 @@
 import { Slide } from '@mui/material'
 import { forwardRef, useMemo, useState } from 'react'
-import { useFormContext } from 'react-hook-form'
 import { MdClose, MdKeyboardDoubleArrowLeft } from 'react-icons/md'
 import styled from 'styled-components'
 import { CategorySelect } from '~/components/App/SideBar/CategorySelect'
@@ -19,12 +18,10 @@ import { View } from './View'
 
 export const MENU_WIDTH = 433
 
-type Props = { onSubmit?: () => void }
-
 type ComponentsMapperType = Record<TabsVariants, JSX.Element>
 
 // eslint-disable-next-line react/display-name
-const Content = forwardRef<HTMLDivElement, Props>(({ onSubmit }, ref) => {
+const Content = forwardRef<HTMLDivElement>(({}, ref) => {
   const ComponentsMapper: ComponentsMapperType = useMemo(
     () => ({
       askQuestion: <AskQuestion />,
@@ -35,19 +32,20 @@ const Content = forwardRef<HTMLDivElement, Props>(({ onSubmit }, ref) => {
     [],
   )
 
-  const [isLoading] = useDataStore((s) => [s.isFetching])
-  const [setSidebarOpen] = useAppStore((s) => [s.setSidebarOpen])
-  const { setValue } = useFormContext()
+  const isLoading = useDataStore((s) => s.isFetching)
+  const setCurrentSearch = useAppStore((s) => s.setCurrentSearch)
+  const setSidebarOpen = useAppStore((s) => s.setSidebarOpen)
+
   const [selectedView, setSelectedView] = useState<TabsVariants>('searchResults')
 
   return (
     <Wrapper ref={ref} id="sidebar-wrapper">
       <SearchWrapper>
-        <SearchBar onSubmit={onSubmit} />
+        <SearchBar />
 
         <CloseButton
           onClick={() => {
-            setValue('search', '')
+            setCurrentSearch('')
           }}
         >
           <MdClose fontSize={20} />
@@ -75,13 +73,13 @@ const Content = forwardRef<HTMLDivElement, Props>(({ onSubmit }, ref) => {
   )
 })
 
-export const SideBar = ({ onSubmit }: Props) => {
+export const SideBar = () => {
   const sidebarIsOpen = useAppStore((s) => s.sidebarIsOpen)
 
   return (
     <>
       <Slide direction="right" in={sidebarIsOpen} mountOnEnter unmountOnExit>
-        <Content onSubmit={onSubmit} />
+        <Content />
       </Slide>
       {!sidebarIsOpen && <Tab />}
     </>

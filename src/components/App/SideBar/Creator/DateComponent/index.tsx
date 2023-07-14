@@ -14,7 +14,7 @@ const formatDate = (unixTime: number) => {
 export const DateComponent = ({ date }: { date: number | undefined }) => {
   if (date) {
     return (
-      <Flex pt={5}>
+      <Flex>
         <Text color="secondaryText4" kind={'regular'}>
           {formatDate(date)}
         </Text>

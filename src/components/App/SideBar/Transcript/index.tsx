@@ -49,7 +49,7 @@ export const Transcript = ({ stateless, node }: TranscriptProps) => {
       <DateComponent date={node?.date} />
 
       <Flex pt={5} pb={20}>
-        <Text color={'blueTextAccent'} kind={'regularBold'}>
+        <Text color={'blueTextAccent'} kind={'mediumBold'}>
           {formatDescription(node?.description)}
         </Text>
       </Flex>

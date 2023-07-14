@@ -145,7 +145,7 @@ export const AudioPlayer = () => {
         </group>
 
         <group
-          position-x={5}
+          position-x={5.4}
           visible={!(loading || loadError)}
           onPointerEnter={() => setPointerHoverStyle(true)}
           onPointerLeave={() => setPointerHoverStyle(false)}
@@ -166,8 +166,8 @@ export const AudioPlayer = () => {
           {/* button */}
 
           <mesh ref={trackButtonRef} position-z={1.2}>
-            <circleGeometry args={[2, 20, 20]} />
-            <meshStandardMaterial color={'white'} />
+            <circleGeometry args={[1.8, 20, 20]} />
+            <meshStandardMaterial color={'white'} transparent opacity={0.8} />
           </mesh>
         </group>
       </group>

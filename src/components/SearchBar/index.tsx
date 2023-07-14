@@ -1,12 +1,10 @@
 import { useEffect, useState } from 'react'
-import { useFormContext } from 'react-hook-form'
 import styled, { css } from 'styled-components'
 import { useAppStore } from '~/stores/useAppStore'
 import { colors } from '~/utils/colors'
 
 type Props = {
   loading?: boolean
-  onSubmit?: () => void
 }
 
 const Input = styled.input.attrs(() => ({
@@ -42,11 +40,11 @@ const Input = styled.input.attrs(() => ({
     `}
 `
 
-export const SearchBar = ({ loading, onSubmit }: Props) => {
-  const { register } = useFormContext()
+export const SearchBar = ({ loading }: Props) => {
   const [value, setValue] = useState('')
 
   const currentSearch = useAppStore((s) => s.currentSearch)
+  const setCurrentSearch = useAppStore((s) => s.setCurrentSearch)
 
   useEffect(() => {
     setValue(currentSearch || '')
@@ -54,13 +52,12 @@ export const SearchBar = ({ loading, onSubmit }: Props) => {
 
   return (
     <Input
-      {...register('search')}
       disabled={loading}
       id="main-search"
       loading={loading}
       onKeyPress={(event) => {
         if (event.key === 'Enter') {
-          onSubmit?.()
+          setCurrentSearch(value)
         }
       }}
       onChange={(e) => setValue(e.target.value)}

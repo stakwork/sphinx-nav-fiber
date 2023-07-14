@@ -20,7 +20,7 @@ const panelHeight = 10
 
 const renderOrder = 99999999
 
-const panelColor = new Color('blue')
+const panelColor = new Color('black')
 const boostedColor = new Color('yellow')
 
 export const Panel = () => {
@@ -29,7 +29,6 @@ export const Panel = () => {
   const panelTextRef = useRef<Mesh>(null)
   const boostIconRef = useRef<Mesh>(null)
 
-  const panelBoardRef = useRef<Mesh>(null)
   const [hovered, setHovered] = useState('')
   const [boosting, setBoosting] = useState(false)
   const [boosted, setBoosted] = useState(false)
@@ -41,7 +40,8 @@ export const Panel = () => {
   const setGuiRef = useDataStore((s) => s.setGuiRef)
 
   const offset = useMemo(() => {
-    return new Vector3(0, 44, -100)
+    const y = 30
+    return new Vector3(0, y, -100)
   }, []) // Offset from the camera's position
 
   const selectedNode = useSelectedNode()
@@ -124,105 +124,97 @@ export const Panel = () => {
     return boostColor
   }, [hovered, boosted])
 
-  const {} = selectedNode || {}
-
   return (
-    <group
-      ref={panelRef}
-      visible={!!selectedNode}
-      onClick={stopBubbling}
-      onPointerDown={stopBubbling}
-      onPointerUp={stopBubbling}
-    >
-      <group position-y={-80}>
-        <VideoPlayer />
-      </group>
-
-      <Float floatIntensity={2} speed={6}>
-        <group position-y={-12}>
-          <AudioPlayer />
+    <group ref={panelRef} onClick={stopBubbling} onPointerDown={stopBubbling} onPointerUp={stopBubbling}>
+      <group scale={!!selectedNode ? 1 : 0}>
+        <group position-y={-80}>
+          <VideoPlayer />
         </group>
 
-        <mesh
-          renderOrder={renderOrder}
-          ref={panelBoardRef}
-          receiveShadow
-          onPointerEnter={() => {
-            setHovered('search')
-          }}
-          onPointerLeave={() => {
-            setHovered('')
-          }}
-          onPointerDown={(e) => {
-            e.stopPropagation()
-            setCurrentSearch(searchableName || '')
-          }}
-        >
-          <planeGeometry args={[panelWidth, panelHeight]} />
-          <meshStandardMaterial color={panelColor} transparent opacity={hovered === 'search' ? 0.9 : 0.7} />
-        </mesh>
-
-        <group position-z={2}>
-          <group position-y={-0.1}>
-            <Text renderOrder={renderOrder} {...fontProps} lineHeight={0.5} fontSize={4}>
-              {searchableName}
-            </Text>
+        <Float floatIntensity={2} speed={6}>
+          <group position-y={-12}>
+            <AudioPlayer />
           </group>
 
-          <group position-y={9}>
-            <Text position-y={-0.2} ref={panelTextRef} renderOrder={renderOrder} {...fontProps} fontSize={2.5}>
-              {panelText}
-            </Text>
-
-            <group position-x={panelWidth / 2 - 4} scale={2}>
-              <mesh
+          <group position-z={2}>
+            <group position-y={-0.1}>
+              <Text
+                renderOrder={renderOrder}
+                {...fontProps}
+                outlineWidth={0.1}
+                lineHeight={0.5}
+                fontSize={4}
+                scale={hovered === 'search' ? 1.04 : 1}
+                textAlign="center"
                 onPointerEnter={() => {
-                  setHovered('close')
+                  setHovered('search')
                 }}
                 onPointerLeave={() => {
                   setHovered('')
                 }}
-                onPointerDown={() => {
-                  setSelectedNode(null)
+                onPointerDown={(e) => {
+                  setCurrentSearch(searchableName || '')
                 }}
-                onPointerUp={(e) => e.stopPropagation()}
-                onClick={(e) => e.stopPropagation()}
               >
-                <circleGeometry args={[1.5, 40]} />
-                <meshBasicMaterial alphaMap={closeTexture} color={white} map={closeTexture} transparent />
-              </mesh>
+                {searchableName}
+              </Text>
             </group>
 
-            {boostEnabled && (
-              <group position-x={-(panelWidth / 2) + 4} scale={2}>
+            <group position-y={9}>
+              <Text position-y={-0.2} ref={panelTextRef} renderOrder={renderOrder} {...fontProps} fontSize={2.5}>
+                {panelText}
+              </Text>
+
+              <group position-x={panelWidth / 2 - 4} scale={2}>
                 <mesh
-                  visible={!boosted && hovered === 'boost'}
                   onPointerEnter={() => {
-                    setHovered('boost')
+                    setHovered('close')
                   }}
                   onPointerLeave={() => {
                     setHovered('')
                   }}
-                  onPointerDown={(e) => {
-                    e.stopPropagation()
-                    doBoost()
+                  onPointerDown={() => {
+                    setSelectedNode(null)
                   }}
                   onPointerUp={(e) => e.stopPropagation()}
                   onClick={(e) => e.stopPropagation()}
                 >
-                  <circleGeometry args={[1.8, 30]} />
-                  <meshBasicMaterial color={boostColor} />
-                </mesh>
-
-                <mesh renderOrder={renderOrder} ref={boostIconRef}>
                   <circleGeometry args={[1.5, 40]} />
-                  <meshBasicMaterial color={boostIconColor} map={boltTexture} alphaMap={boltTexture} transparent />
+                  <meshBasicMaterial alphaMap={closeTexture} color={white} map={closeTexture} transparent />
                 </mesh>
               </group>
-            )}
+
+              {boostEnabled && (
+                <group position-x={-(panelWidth / 2) + 4} scale={2}>
+                  <mesh
+                    visible={!boosted && hovered === 'boost'}
+                    onPointerEnter={() => {
+                      setHovered('boost')
+                    }}
+                    onPointerLeave={() => {
+                      setHovered('')
+                    }}
+                    onPointerDown={(e) => {
+                      e.stopPropagation()
+                      doBoost()
+                    }}
+                    onPointerUp={(e) => e.stopPropagation()}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <circleGeometry args={[1.8, 30]} />
+                    <meshBasicMaterial color={boostColor} />
+                  </mesh>
+
+                  <mesh renderOrder={renderOrder} ref={boostIconRef}>
+                    <circleGeometry args={[1.5, 40]} />
+                    <meshBasicMaterial color={boostIconColor} map={boltTexture} alphaMap={boltTexture} transparent />
+                  </mesh>
+                </group>
+              )}
+            </group>
           </group>
-        </group>
-      </Float>
+        </Float>
+      </group>
     </group>
   )
 }

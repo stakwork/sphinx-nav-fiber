@@ -7,11 +7,7 @@ import { useAppStore } from '~/stores/useAppStore'
 import { useSelectedNode } from '~/stores/useDataStore'
 import { media } from '~/utils/media'
 
-type Props = {
-  onSubmit?: () => void
-}
-
-export const AppBar = ({ onSubmit }: Props) => {
+export const AppBar = () => {
   const selectedNode = useSelectedNode()
 
   const [searchTerm, sidebarIsOpen] = useAppStore((s) => [s.currentSearch, s.sidebarIsOpen])
@@ -30,7 +26,7 @@ export const AppBar = ({ onSubmit }: Props) => {
       <StatsWrapper>{!selectedNode && !searchTerm && <Stats />}</StatsWrapper>
 
       <SearchBarWrapper>
-        <SearchBar onSubmit={onSubmit} />
+        <SearchBar />
       </SearchBarWrapper>
     </Header>
   ) : null

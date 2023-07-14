@@ -75,23 +75,11 @@ export const Show = () => {
 
   return (
     <Wrapper p={20}>
-      {/* <Flex direction="row">
-        <Flex pr={24}>
-          <Avatar size={80} src={selectedNode?.image_url || 'audio_default.svg'} />
-        </Flex>
-
-        <Flex grow={1} shrink={1}>
-          <Text kind="bigHeading">{selectedNode?.show_title || 'Unknown'}</Text>
-
-          <Flex py={16}>
-            <Actions />
-          </Flex>
-        </Flex>
-      </Flex> */}
-
       <Flex direction="column">
-        <Flex pb={20}>
-          <Text kind="mediumBold">Related Episodes</Text>
+        <Flex pb={5}>
+          <Text kind="mediumBold" color="secondaryText4">
+            Related Episodes
+          </Text>
         </Flex>
         {episodes.map((node) => (
           <EpisodePanel key={node.ref_id} node={node} onClick={() => setSelectedNode(node)} />

@@ -1,10 +1,10 @@
-import { memo, useCallback, useEffect } from 'react'
+import { memo, useMemo } from 'react'
+import { MdArrowBackIosNew } from 'react-icons/md'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
-import { setIsTimestampLoaded, useSelectedNode } from '~/stores/useDataStore'
-import { usePlayerStore } from '~/stores/usePlayerStore'
+import { Text } from '~/components/common/Text'
+import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { colors } from '~/utils/colors'
-import { useIsMatchBreakpoint } from '~/utils/useIsMatchBreakpoint'
 import { Transcript } from '../Transcript'
 
 const Wrapper = styled(Flex)`
@@ -20,65 +20,37 @@ const Wrapper = styled(Flex)`
 // eslint-disable-next-line no-underscore-dangle
 const _AudioClip = () => {
   const selectedNode = useSelectedNode()
-  const isMobile = useIsMatchBreakpoint('sm', 'down')
-  const isPlay = usePlayerStore((s) => s.isPlaying)
-  const setIsPlaying = usePlayerStore((s) => s.setIsPlaying)
 
-  useEffect(
-    () => () => {
-      setIsPlaying(false)
-    },
-    [setIsPlaying],
+  const data = useDataStore((s) => s.data)
+  const setSelectedNode = useDataStore((s) => s.setSelectedNode)
+
+  const episodeNode = useMemo(
+    () =>
+      data?.nodes.find((f) => {
+        if (f.children && f.children.includes(selectedNode?.ref_id || '')) {
+          return true
+        }
+        return false
+      }),
+    [selectedNode, data?.nodes],
   )
-
-  const errorHandler = useCallback(() => {
-    setIsTimestampLoaded(true)
-  }, [])
-
-  const loadedHandler = useCallback(() => {
-    setIsTimestampLoaded(true)
-  }, [])
-
-  const pauseHandler = useCallback(() => setIsPlaying(false), [setIsPlaying])
-
-  const playHandler = useCallback(() => setIsPlaying(true), [setIsPlaying])
 
   return (
     <Wrapper p={20}>
-      {/* <Flex direction="row">
-        <Flex pr={24}>
-          <Avatar size={isMobile ? 45 : 80} src={selectedNode?.image_url || 'audio_default.svg'} />
+      {episodeNode && (
+        <Flex
+          direction="row"
+          align="center"
+          pb={20}
+          style={{ cursor: 'pointer' }}
+          onClick={() => {
+            setSelectedNode(episodeNode)
+          }}
+        >
+          <MdArrowBackIosNew size={15} color={colors.white} />
+          <Text>&nbsp;See episode</Text>
         </Flex>
-
-        <Flex grow={1} shrink={1}>
-          <Text kind="bigHeading">{selectedNode?.show_title || 'Unknown'}</Text>
-          <Flex pt={10}>
-            <Text color="mainBottomIcons" kind="medium">
-              {selectedNode?.episode_title}
-            </Text>
-          </Flex>
-          <Flex pt={10}>
-            <Text kind="regular">{selectedNode?.timestamp}</Text>
-          </Flex>
-        </Flex>
-      </Flex>
-
-      <Flex pb={10} pt={10}>
-        <Actions />
-      </Flex>
-
-      <Flex pt={10}>
-        <AudioPlayer
-          mediaUrl={selectedNode?.link || ''}
-          onError={errorHandler}
-          onLoaded={loadedHandler}
-          onPause={pauseHandler}
-          onPlay={playHandler}
-          play={isPlay}
-          timestamp={selectedNode?.timestamp || ''}
-        />
-      </Flex> */}
-
+      )}
       <Flex>
         <Transcript node={selectedNode} stateless />
       </Flex>

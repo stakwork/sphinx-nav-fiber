@@ -2,6 +2,7 @@ import { useEffect, useMemo } from 'react'
 import { useGraphData } from '~/components/DataRetriever'
 import { Divider } from '~/components/common/Divider'
 import { Flex } from '~/components/common/Flex'
+import { Text } from '~/components/common/Text'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { getSelectedNodeTimestamps } from '~/utils/getSelectedNodeTimestamps'
@@ -41,10 +42,12 @@ export const Creator = () => {
       {!!selectedNodeTimestamps?.length && (
         <>
           <Flex p={20}>
-            <Flex pb={20}>
+            <Flex pb={10} justify="space-between" direction="row" align="flex-start">
+              <Text kind="mediumBold" color="secondaryText4">
+                Related Clips
+              </Text>
               <DateComponent date={selectedNodeTimestamps[0]?.date} />
             </Flex>
-
             {selectedNodeTimestamps?.map((timestamp, index) => (
               <Timestamp
                 // eslint-disable-next-line react/no-array-index-key

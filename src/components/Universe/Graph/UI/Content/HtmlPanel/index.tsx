@@ -1,11 +1,11 @@
 import { Float, Html, useTexture } from '@react-three/drei'
 
-import { useMemo } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import styled, { css } from 'styled-components'
 import { Vector3 } from 'three'
-import { useDataStore } from '~/stores/useDataStore'
+import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { useIsMatchBreakpoint } from '~/utils/useIsMatchBreakpoint'
-import { setPointerHoverStyle, white } from '../../constants'
+import { panelIsHidden, setPointerHoverStyle, white } from '../../constants'
 import {
   defaultDimensions,
   defaultDimensionsMobile,
@@ -28,8 +28,13 @@ const floatingRange = [1, 2] as [(number | undefined)?, (number | undefined)?] |
 export const HtmlPanel = ({ speed = 2, intensity = 4, children, withTranscript, position }: Props) => {
   const isMobile = useIsMatchBreakpoint('sm', 'down')
 
+  const htmlRef = useRef<HTMLDivElement>(null)
+
   const setHideNodeDetails = useDataStore((s) => s.setHideNodeDetails)
   const hideNodeDetails = useDataStore((s) => s.hideNodeDetails)
+
+  const selectedNode = useSelectedNode()
+  const showSelectionGraph = useDataStore((s) => s.showSelectionGraph)
 
   const dimensions = useMemo(() => {
     if (isMobile) {
@@ -40,6 +45,21 @@ export const HtmlPanel = ({ speed = 2, intensity = 4, children, withTranscript, 
   }, [isMobile, withTranscript])
 
   const closeTexture = useTexture('icons/close_white.svg')
+
+  const panelIsVisible = useMemo(
+    () => selectedNode && !hideNodeDetails && !panelIsHidden(selectedNode?.node_type),
+    [selectedNode, showSelectionGraph, hideNodeDetails],
+  )
+
+  useEffect(() => {
+    if (htmlRef.current) {
+      htmlRef.current.scrollTo(0, 0)
+    }
+  }, [selectedNode])
+
+  if (!panelIsVisible) {
+    return null
+  }
 
   return (
     <Float
@@ -65,6 +85,7 @@ export const HtmlPanel = ({ speed = 2, intensity = 4, children, withTranscript, 
           className="html-panel"
           dimensions={dimensions}
           id="html-panel"
+          ref={htmlRef}
           onPointerDown={stopPropagationHandler}
           onPointerOut={stopPropagationHandler}
           onPointerOver={stopPropagationHandler}

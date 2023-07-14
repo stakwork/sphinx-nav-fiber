@@ -1,6 +1,5 @@
 import { Leva } from 'leva'
 import { useCallback, useEffect } from 'react'
-import { FormProvider, useForm } from 'react-hook-form'
 import 'react-toastify/dist/ReactToastify.css'
 import * as sphinx from 'sphinx-bridge-kevkevinpal'
 import styled from 'styled-components'
@@ -60,12 +59,6 @@ export const App = () => {
     useDataStore((s) => s.setSphinxModalOpen),
   ]
 
-  const form = useForm<{ search: string }>({ mode: 'onChange' })
-
-  const handleSubmit = form.handleSubmit(({ search }) => {
-    setCurrentSearch(search)
-  })
-
   const runSearch = useCallback(async () => {
     if (searchTerm) {
       setSphinxModalOpen(true)
@@ -119,18 +112,16 @@ export const App = () => {
 
       <Wrapper direction="row">
         <DataRetriever loader={<Preloader />}>
-          <FormProvider {...form}>
-            <SideBar onSubmit={handleSubmit} />
+          <SideBar />
 
-            <Universe />
+          <Universe />
 
-            <SecondarySideBar />
+          <SecondarySideBar />
 
-            <AppBar onSubmit={handleSubmit} />
+          <AppBar />
 
-            <FooterMenu />
-            <Version>v{version}</Version>
-          </FormProvider>
+          <FooterMenu />
+          <Version>v{version}</Version>
         </DataRetriever>
 
         <AddNodeModal />
