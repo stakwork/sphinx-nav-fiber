@@ -2,7 +2,7 @@ import { Stack } from '@mui/material'
 import Slider from '@mui/material/Slider'
 import { DatePicker } from '@mui/x-date-pickers'
 import moment from 'moment'
-import { memo, useCallback, useEffect, useRef, useState } from 'react'
+import { memo, useRef, useState } from 'react'
 import { PropagateLoader } from 'react-spinners'
 import * as sphinx from 'sphinx-bridge-kevkevinpal'
 import styled from 'styled-components'
@@ -12,7 +12,7 @@ import { getSentimentData } from '~/network/fetchGraphData'
 import { useAppStore } from '~/stores/useAppStore'
 import { colors } from '~/utils/colors'
 import { executeIfProd } from '~/utils/tests'
-import { SentimentChart } from '../SentimentChart'
+import { SentimentChart } from '../../SecondarySidebar/Sentiment/SentimentChart'
 
 type SentimentData = {
   date: string
@@ -69,26 +69,37 @@ export const SentimentAnalysis = memo(() => {
 
   const ref = useRef<HTMLDivElement>(null)
 
-  const [demensions, setDementions] = useState({ width: 400, height: 250 })
+  // const [demensions, setDementions] = useState({ width: 400, height: 250 })
 
-  const updateDemensions = useCallback(() => {
-    if (ref.current) {
-      const { width, height } = ref.current.getBoundingClientRect()
+  // const updateDemensions = useCallback(() => {
+  //   if (ref.current) {
+  //     const { width, height } = ref.current.getBoundingClientRect()
 
-      setDementions({ width, height })
-    }
-  }, [])
+  //     setDementions({ width, height })
+  //   }
+  // }, [])
 
-  useEffect(() => {
-    // for update chart width & heght on resize
-    updateDemensions()
-    window.addEventListener('resize', updateDemensions)
+  // useEffect(() => {
+  //   // for update chart width & heght on resize
+  //   updateDemensions()
+  //   window.addEventListener('resize', updateDemensions)
 
-    return () => window.removeEventListener('resize', updateDemensions)
-  }, [updateDemensions])
+  //   return () => window.removeEventListener('resize', updateDemensions)
+  // }, [updateDemensions])
 
   return (
-    <Stack flexGrow={1} p={2} spacing={2} width="100%">
+    <Stack flexGrow={1} p={1} spacing={2} width="100%">
+      {isLoading && (
+        <Stack alignItems="center" flexGrow={1} p={4} spacing={2} width="100%">
+          <PropagateLoader color={colors.white} />
+        </Stack>
+      )}
+      {!isLoading && (
+        <ChartWrapper ref={ref}>
+          <SentimentChart data={sentimentData} height={322} width={352} />
+          {Array.isArray(sentimentData) && !isLoading && !sentimentData.length && <Text>No data for this period</Text>}
+        </ChartWrapper>
+      )}
       <DatePicker
         format="L"
         label="From"
@@ -97,6 +108,7 @@ export const SentimentAnalysis = memo(() => {
         onChange={(v) => setValue(v ?? moment())}
         sx={{
           background: colors.inputBg1,
+          color: 'text.primary',
         }}
         value={value}
       />
@@ -117,22 +129,12 @@ export const SentimentAnalysis = memo(() => {
       <StyledButton className="button" id="cy-get-sentiment-analysis-btn" onClick={fetchData}>
         Create a chart for {chartCost.toFixed()} SATS
       </StyledButton>
-      {isLoading && (
-        <Stack alignItems="center" flexGrow={1} p={4} spacing={2} width="100%">
-          <PropagateLoader color={colors.white} />
-        </Stack>
-      )}
-      <ChartWrapper ref={ref}>
-        <SentimentChart data={sentimentData} {...demensions} />
-        {Array.isArray(sentimentData) && !isLoading && !sentimentData.length && <Text>No data for this period</Text>}
-      </ChartWrapper>
     </Stack>
   )
 })
 
 const ChartWrapper = styled.div`
   flex: 1 1 auto;
-  max-height: 50%;
   width: 100%;
 `
 

@@ -1,3 +1,4 @@
+import { Box } from '@mui/material'
 import { useCallback, useEffect, useRef } from 'react'
 import { PropagateLoader } from 'react-spinners'
 import { toast } from 'react-toastify'
@@ -90,18 +91,18 @@ export const TeachMe = () => {
   }
 
   return (
-    <>
+    <Box mt="auto">
       {!hasTeachingInProgress ? (
         <>
           {!teachMeAnswer ? (
-            <Flex p={12}>
+            <Flex py={8}>
               <Button kind="big" onClick={() => handleTutorialStart()}>
                 Teach me
               </Button>
             </Flex>
           ) : (
             <>
-              <Flex p={12}>
+              <Flex>
                 <Text>{teachMeAnswer}</Text>
               </Flex>
               <AskQuestion />
@@ -118,6 +119,6 @@ export const TeachMe = () => {
           </Flex>
         </Flex>
       )}
-    </>
+    </Box>
   )
 }

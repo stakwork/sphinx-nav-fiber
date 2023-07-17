@@ -1,5 +1,5 @@
 import { Slide } from '@mui/material'
-import { forwardRef, useState } from 'react'
+import { forwardRef } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { MdClose, MdKeyboardDoubleArrowLeft } from 'react-icons/md'
 import styled from 'styled-components'
@@ -10,32 +10,19 @@ import { Loader } from '~/components/common/Loader'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
 import { colors } from '~/utils/colors'
-import { SentimentAnalysis } from '../SecondarySidebar/Sentiment/SentimentAnalysis'
-import { ActionsMenu, TabsVariants } from './ActionsMenu'
-import { AskQuestion } from './AskQuestion'
+
 import { Tab } from './Tab'
-import { TeachMe } from './TeachMe'
 import { View } from './View'
 
 export const MENU_WIDTH = 433
 
 type Props = { onSubmit?: () => void }
 
-type ComponentsMapperType = Record<TabsVariants, JSX.Element>
-
-const ComponentsMapper: ComponentsMapperType = {
-  askQuestion: <AskQuestion />,
-  searchResults: <View />,
-  teachMe: <TeachMe />,
-  sentiment: <SentimentAnalysis />,
-}
-
 // eslint-disable-next-line react/display-name
 const Content = forwardRef<HTMLDivElement, Props>(({ onSubmit }, ref) => {
   const [isLoading] = useDataStore((s) => [s.isFetching])
   const [setSidebarOpen] = useAppStore((s) => [s.setSidebarOpen])
   const { setValue } = useFormContext()
-  const [selectedView, setSelectedView] = useState<TabsVariants>('searchResults')
 
   return (
     <Wrapper ref={ref} id="sidebar-wrapper">
@@ -61,11 +48,9 @@ const Content = forwardRef<HTMLDivElement, Props>(({ onSubmit }, ref) => {
         <MdKeyboardDoubleArrowLeft fontSize={20} />
       </CollapseButton>
 
-      <ActionsMenu active={selectedView} onChange={setSelectedView} />
-
       <ScrollWrapper>
         <Spacer />
-        {isLoading ? <Loader color="primaryText1" /> : ComponentsMapper[selectedView]}
+        {isLoading ? <Loader color="primaryText1" /> : <View />}
         <Spacer />
       </ScrollWrapper>
     </Wrapper>
