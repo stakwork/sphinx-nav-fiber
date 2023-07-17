@@ -1,4 +1,4 @@
-import { Box } from '@mui/material'
+import { styled } from '@mui/material'
 import { useCallback, useEffect, useRef } from 'react'
 import { PropagateLoader } from 'react-spinners'
 import { toast } from 'react-toastify'
@@ -91,7 +91,7 @@ export const TeachMe = () => {
   }
 
   return (
-    <Box mt="auto">
+    <Container>
       {!hasTeachingInProgress ? (
         <>
           {!teachMeAnswer ? (
@@ -119,6 +119,10 @@ export const TeachMe = () => {
           </Flex>
         </Flex>
       )}
-    </Box>
+    </Container>
   )
 }
+
+const Container = styled('div')(() => ({
+  marginTop: 'auto',
+}))

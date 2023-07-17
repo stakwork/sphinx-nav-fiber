@@ -69,24 +69,6 @@ export const SentimentAnalysis = memo(() => {
 
   const ref = useRef<HTMLDivElement>(null)
 
-  // const [demensions, setDementions] = useState({ width: 400, height: 250 })
-
-  // const updateDemensions = useCallback(() => {
-  //   if (ref.current) {
-  //     const { width, height } = ref.current.getBoundingClientRect()
-
-  //     setDementions({ width, height })
-  //   }
-  // }, [])
-
-  // useEffect(() => {
-  //   // for update chart width & heght on resize
-  //   updateDemensions()
-  //   window.addEventListener('resize', updateDemensions)
-
-  //   return () => window.removeEventListener('resize', updateDemensions)
-  // }, [updateDemensions])
-
   return (
     <Stack flexGrow={1} p={1} spacing={2} width="100%">
       {isLoading && (
