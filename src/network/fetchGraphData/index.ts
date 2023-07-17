@@ -6,6 +6,7 @@ import {
   isDevelopment,
   isE2E,
 } from '~/constants'
+import { mock } from '~/mocks/getMockGraphData/mockResponse'
 import { api } from '~/network/api'
 import { useDataStore } from '~/stores/useDataStore'
 import { FetchDataResponse, FetchSentimentResponse, GraphData, Guests, Link, Node, NodeExtended } from '~/types'
@@ -58,9 +59,15 @@ export const fetchGraphData = async (search: string) => {
 
 const fetchNodes = async (search: string) => {
   if (!search) {
-    const response = await api.get<FetchDataResponse>(`/prediction/content/latest`)
+    try {
+      const response = await api.get<FetchDataResponse>(`/prediction/content/latest`)
 
-    return response
+      return response
+    } catch (e) {
+      console.error(e)
+
+      return mock as FetchDataResponse
+    }
   }
 
   if (isDevelopment || isE2E) {
