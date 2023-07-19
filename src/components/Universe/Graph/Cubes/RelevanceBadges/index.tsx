@@ -119,7 +119,7 @@ const NodeBadge = ({ position, userData, color, relativeIds }: BadgeProps) => {
 
   return (
     <group ref={ref} position={position}>
-      <Html center>
+      <Html center sprite>
         <Tag
           color={color}
           fontColor={colors.white}

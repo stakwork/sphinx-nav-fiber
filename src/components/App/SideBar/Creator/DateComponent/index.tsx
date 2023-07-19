@@ -15,7 +15,7 @@ export const DateComponent = ({ date }: { date: number | undefined }) => {
   if (date) {
     return (
       <Flex>
-        <Text color="secondaryText4" kind={'regular'}>
+        <Text color="secondaryText4" kind="regular">
           {formatDate(date)}
         </Text>
       </Flex>

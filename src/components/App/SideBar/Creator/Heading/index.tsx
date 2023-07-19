@@ -33,7 +33,7 @@ export const Heading = () => {
     const audioElement = document.getElementById('audio-player') as HTMLAudioElement
 
     if (audioElement) {
-      audioElement.currentTime = timestamp ? videoTimetoSeconds(timestamp) : 0
+      audioElement.currentTime = timestamp ? videoTimetoSeconds(timestamp).start : 0
     }
   }, [selectedTimestamp])
 

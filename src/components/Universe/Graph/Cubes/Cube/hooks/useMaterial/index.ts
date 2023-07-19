@@ -1,21 +1,36 @@
 import { useEffect, useState } from 'react'
-import { MeshStandardMaterial } from 'three'
+import { MeshBasicMaterial, MeshStandardMaterial, Texture } from 'three'
 import { smoothness } from '../../constants'
-import { loader, noImageMaterial, noImageTexture, noImageTransparentMaterial, transparentValue } from './constants'
+import {
+  loader,
+  noImageMaterial,
+  noImageMaterialBasic,
+  noImageTexture,
+  noImageTransparentMaterial,
+  transparentValue,
+} from './constants'
 
 type materialRecord = {
-  texture: THREE.Texture
-  material: THREE.MeshStandardMaterial
+  texture: Texture
+  material: MeshStandardMaterial | MeshBasicMaterial
 }
 
 const cachedMaterials: Record<string, materialRecord> = {}
 
-export const useMaterial = (url: string, transparent: boolean) => {
+type Options = {
+  transparent?: boolean
+  material?: string
+}
+
+export const useMaterial = (url: string, key: string, options: Options) => {
+  const { transparent, material: materialOption } = options
+
   const [texture, setTexture] = useState(noImageTexture)
-  const [material, setMaterial] = useState(noImageMaterial)
+
+  const [material, setMaterial] = useState(materialOption === 'basic' ? noImageMaterialBasic : noImageMaterial)
 
   useEffect(() => {
-    const cashPath = `${url}${transparent && '-transparent'}`
+    const cashPath = `${url}-${key}${transparent && '-transparent'}`
 
     if (cachedMaterials[cashPath]) {
       setTexture(cachedMaterials[cashPath].texture)
@@ -27,12 +42,16 @@ export const useMaterial = (url: string, transparent: boolean) => {
     loader.load(
       url,
       (loadedTexture) => {
+        const M = materialOption === 'basic' ? MeshBasicMaterial : MeshStandardMaterial
         // on load
-        const newMaterial = new MeshStandardMaterial({
+
+        const added = materialOption === 'basic' ? { metalness: 0, roughness: 1 } : smoothness
+
+        const newMaterial = new M({
           map: loadedTexture,
           transparent,
           opacity: transparent ? transparentValue : 1,
-          ...smoothness,
+          ...added,
         })
 
         cachedMaterials[cashPath] = {
@@ -55,7 +74,7 @@ export const useMaterial = (url: string, transparent: boolean) => {
         }
       },
     )
-  }, [url, transparent])
+  }, [url, transparent, materialOption, key])
 
   useEffect(
     () =>

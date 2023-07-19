@@ -19,6 +19,7 @@ export const Creator = () => {
     () => getSelectedNodeTimestamps(data?.nodes || [], selectedNode),
     [data?.nodes, selectedNode],
   )
+
   const setSelectedNode = useDataStore((s) => s.setSelectedNode)
   const setSelectedTimestamp = useDataStore((s) => s.setSelectedTimestamp)
   const flagErrorIsOpen = useAppStore((s) => s.flagErrorIsOpen)
@@ -42,8 +43,8 @@ export const Creator = () => {
       {!!selectedNodeTimestamps?.length && (
         <>
           <Flex p={20}>
-            <Flex pb={10} justify="space-between" direction="row" align="flex-start">
-              <Text kind="mediumBold" color="secondaryText4">
+            <Flex align="flex-start" direction="row" justify="space-between" pb={10}>
+              <Text color="secondaryText4" kind="mediumBold">
                 Related Clips
               </Text>
               <DateComponent date={selectedNodeTimestamps[0]?.date} />
@@ -54,7 +55,9 @@ export const Creator = () => {
                 key={`${timestamp.episode_title}_${index}`}
                 onClick={() => {
                   setSelectedTimestamp(timestamp)
+
                   const thisNode = data.nodes.find((f) => f.ref_id === timestamp?.ref_id)
+
                   if (thisNode) {
                     setSelectedNode(thisNode)
                   }

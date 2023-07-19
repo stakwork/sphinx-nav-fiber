@@ -29,10 +29,8 @@ export const getSelectedNodeTimestamps = (nodes: NodeExtended[], selectedNode: N
   }, [])
 
   timestamps.sort((a, b) => {
-    const [aSplit] = a.timestamp?.split('-') || ['']
-    const [bSplit] = b.timestamp?.split('-') || ['']
-    const aTime = videoTimetoSeconds(aSplit)
-    const bTime = videoTimetoSeconds(bSplit)
+    const aTime = videoTimetoSeconds(a.timestamp).start
+    const bTime = videoTimetoSeconds(b.timestamp).start
 
     return aTime - bTime
   })

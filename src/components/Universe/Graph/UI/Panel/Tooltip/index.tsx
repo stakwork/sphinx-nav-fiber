@@ -18,26 +18,23 @@ export const Tooltip = () => {
   const panelRef = useRef<Group>(null)
   const { mouse } = useThree()
 
-  const position = useMemo(() => {
-    return new Vector3(mouse.x * shift, mouse.y * shift, 0)
-  }, [hoveredNode, mouse.x, mouse.y])
+  const position = useMemo(() => new Vector3(mouse.x * shift, mouse.y * shift, 0), [mouse.x, mouse.y])
 
-  const offset = useMemo(() => {
-    const { x, y } = mouse
-
-    return new Vector3(x * -10, y * -20, -130)
-  }, [mouse.x, mouse.y]) // Offset from the camera's position
+  const offset = useMemo(() => new Vector3(mouse.x * -10, mouse.y * -20, -114), [mouse.x, mouse.y]) // Offset from the camera's position
 
   const [text, heading] = useMemo(() => {
     let t = ''
     let h = ''
+
     if (hoveredNode) {
       Object.keys(hoveredNode).forEach((key) => {
         if (!t && labelKeys.includes(key)) {
           let value = hoveredNode[key as keyof typeof hoveredNode] as string
+
           if (key === 'description') {
             value = formatDescription(value)
           }
+
           t = value
         }
       })
@@ -48,6 +45,7 @@ export const Tooltip = () => {
         h = hoveredNode.show_title
       }
     }
+
     return [t, h]
   }, [hoveredNode, selectedNode])
 
@@ -73,7 +71,11 @@ export const Tooltip = () => {
   return (
     <group ref={panelRef}>
       <Float position={position} scale={visible ? 1 : 0}>
-        <Text ref={textRef} {...fontProps} fontSize={3} outlineWidth={0.1} maxWidth={40} textAlign="center">
+        <mesh>
+          <planeGeometry args={[46, 16]} />
+          <meshBasicMaterial color="#000" opacity={0.8} transparent />
+        </mesh>
+        <Text ref={textRef} {...fontProps} fontSize={3} maxWidth={40} outlineWidth={0.1} textAlign="center">
           {heading && `${heading}\n\n`}
           {text}
         </Text>

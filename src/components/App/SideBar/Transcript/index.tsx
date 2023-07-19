@@ -48,10 +48,13 @@ export const Transcript = ({ stateless, node }: TranscriptProps) => {
     <Wrapper>
       <DateComponent date={node?.date} />
 
-      <Flex pt={5} pb={20}>
-        <Text color={'blueTextAccent'} kind={'mediumBold'}>
+      <Flex pb={20} pt={5}>
+        <Text color="blueTextAccent" kind="mediumBold">
           {formatDescription(node?.description)}
         </Text>
+        <Flex pt={5}>
+          <Text kind="regular">{node?.timestamp}</Text>
+        </Flex>
       </Flex>
 
       <Flex align="center" direction="row" justify="space-between">

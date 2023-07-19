@@ -25,13 +25,7 @@ const _AudioClip = () => {
   const setSelectedNode = useDataStore((s) => s.setSelectedNode)
 
   const episodeNode = useMemo(
-    () =>
-      data?.nodes.find((f) => {
-        if (f.children && f.children.includes(selectedNode?.ref_id || '')) {
-          return true
-        }
-        return false
-      }),
+    () => data?.nodes.find((f) => f?.children?.includes(selectedNode?.ref_id || '')),
     [selectedNode, data?.nodes],
   )
 
@@ -39,15 +33,15 @@ const _AudioClip = () => {
     <Wrapper p={20}>
       {episodeNode && (
         <Flex
-          direction="row"
           align="center"
-          pb={20}
-          style={{ cursor: 'pointer' }}
+          direction="row"
           onClick={() => {
             setSelectedNode(episodeNode)
           }}
+          pb={20}
+          style={{ cursor: 'pointer' }}
         >
-          <MdArrowBackIosNew size={15} color={colors.white} />
+          <MdArrowBackIosNew color={colors.white} size={15} />
           <Text>&nbsp;See episode</Text>
         </Flex>
       )}

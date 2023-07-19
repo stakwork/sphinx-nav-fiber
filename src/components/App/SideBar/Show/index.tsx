@@ -77,7 +77,7 @@ export const Show = () => {
     <Wrapper p={20}>
       <Flex direction="column">
         <Flex pb={5}>
-          <Text kind="mediumBold" color="secondaryText4">
+          <Text color="secondaryText4" kind="mediumBold">
             Related Episodes
           </Text>
         </Flex>

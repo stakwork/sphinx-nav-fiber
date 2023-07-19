@@ -9,7 +9,7 @@ export const YouTube = () => {
 
   const { link, timestamp } = selectedNode || {}
 
-  const secs = videoTimetoSeconds(timestamp || '')
+  const secs = videoTimetoSeconds(timestamp || '').start
 
   useEffect(() => {
     if (playerRef.current) {

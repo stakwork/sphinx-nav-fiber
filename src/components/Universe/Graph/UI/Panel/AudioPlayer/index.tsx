@@ -1,8 +1,10 @@
 import { Text, useTexture } from '@react-three/drei'
-import { ThreeEvent, useFrame, useThree } from '@react-three/fiber'
-import { useMemo, useRef, useState } from 'react'
+import { useFrame, useThree } from '@react-three/fiber'
+import { useMemo, useRef } from 'react'
 import { Mesh, Raycaster } from 'three'
 import { useSelectedNode } from '~/stores/useDataStore'
+import { colors } from '~/utils/colors'
+import { videoTimetoSeconds } from '~/utils/videoTimetoSeconds'
 import { fontProps } from '../../../Cubes/Text/constants'
 import { setPointerHoverStyle } from '../../constants'
 import { useAudioPlayer } from './useAudioPlayer'
@@ -10,17 +12,7 @@ import { useAudioPlayer } from './useAudioPlayer'
 const trackWidth = 29
 const iconSize = 10
 
-const secondToMinutes = (seconds: number) => {
-  return new Date(seconds * 1000).toISOString().substring(11, 19)
-}
-
-// seekSlider.addEventListener('input', (e) => {
-//   const rangeInput = e.target
-//   audio.currentTime = rangeInput.value
-//   currentTimeContainer.textContent = calculateTime(rangeInput.value);
-//   audioPlayerContainer.style.setProperty('--seek-before-width', `${rangeInput.value / rangeInput.max * 100}%`);
-//   refreshRender()
-// });
+const secondToMinutes = (seconds: number) => new Date(seconds * 1000).toISOString().substring(11, 19)
 
 export const AudioPlayer = () => {
   const selectedNode = useSelectedNode()
@@ -29,39 +21,21 @@ export const AudioPlayer = () => {
   const playPauseIconRef = useRef<Mesh>(null)
   const trackSliderRef = useRef<Mesh>(null)
   const trackButtonRef = useRef<Mesh>(null)
-  const [trackSliderBox, setTrackSliderBox] = useState<DOMRect | null>(null)
 
-  const { playing, loading, loadError, playPauseToggle, setCurrentTime, currentTime, duration, audioRef } =
-    useAudioPlayer({
-      mediaUrl,
-      timestamp,
-    })
+  const { playing, loading, loadError, playPauseToggle, setCurrentTime, currentTime, duration } = useAudioPlayer({
+    mediaUrl,
+    timestamp,
+  })
 
-  const handleTrackDrag = (event: ThreeEvent<PointerEvent>) => {
-    if (audioRef.current && trackSliderBox) {
-      const { clientX } = event
-      const { left, width } = trackSliderBox
-      const clickPosition = clientX - left
-      const newPosition = (clickPosition / width) * duration
+  const timestampPositions = useMemo(() => {
+    const { start, end } = videoTimetoSeconds(timestamp || '')
 
-      setCurrentTime(newPosition)
-    }
-  }
+    const trackStart = -trackWidth / 2
+    const pos1 = trackWidth * (start / duration) + trackStart
+    const pos2 = trackWidth * (end / duration) + trackStart
 
-  // useFrame(() => {
-  //   // Update the track slider position in the scene based on the current track position
-  //   if (trackSliderRef.current) {
-  //     const box = trackSliderRef.current.geometry.boundingBox
-  //     if (box) {
-  //       const { min, max } = box
-  //       const left = (min.x + max.x) / 2
-  //       const width = max.x - min.x
-  //       setTrackSliderBox((prevBox) => ({ ...prevBox, left, width } as DOMRect))
-  //       const newPosition = (currentTime / duration) * width
-  //       trackSliderRef.current.position.x = left + newPosition - width / 2
-  //     }
-  //   }
-  // })
+    return { start: pos1, end: pos2 }
+  }, [timestamp, duration])
 
   const playTexture = useTexture('icons/play_circle_white.svg')
   const errorTexture = useTexture('icons/error_white.svg')
@@ -72,15 +46,17 @@ export const AudioPlayer = () => {
     if (loadError) {
       return errorTexture
     }
+
     if (loading) {
       return loadingTexture
     }
+
     if (playing) {
       return pauseTexture
     }
 
     return playTexture
-  }, [playing, loading, loadError])
+  }, [playing, loading, loadError, playTexture, errorTexture, pauseTexture, loadingTexture])
 
   useFrame(() => {
     if (trackButtonRef.current) {
@@ -94,24 +70,22 @@ export const AudioPlayer = () => {
 
   const visible = !!mediaUrl && selectedNode?.type !== 'youtube'
 
-  const { camera, size, mouse } = useThree()
+  const { camera, mouse } = useThree()
 
-  const handleClick = (event: ThreeEvent<PointerEvent>) => {
+  const handleClick = () => {
     const raycaster = new Raycaster()
+
     raycaster.setFromCamera(mouse, camera)
 
     const intersects = raycaster.intersectObject(trackSliderRef.current as THREE.Object3D)
 
     if (intersects.length > 0) {
-      const intersectionPoint = intersects[0].point
+      const { uv } = intersects[0]
 
-      const meshPosition = trackSliderRef.current?.position
+      if (uv?.x) {
+        const newPosition = uv.x * duration
 
-      console.log('meshPosition', meshPosition?.x)
-
-      if (meshPosition) {
-        const relativePosition = intersectionPoint.sub(meshPosition)
-        console.log('Relative Position from Left:', relativePosition.x)
+        setCurrentTime(newPosition)
       }
     }
   }
@@ -129,9 +103,9 @@ export const AudioPlayer = () => {
             {/* Render play/pause icon mesh */}
             <planeGeometry args={[iconSize, iconSize]} />
             <meshStandardMaterial
+              alphaMap={transportTexture}
               color={loadError ? 'yellow' : 'white'}
               map={transportTexture}
-              alphaMap={transportTexture}
               transparent
             />
           </mesh>
@@ -139,35 +113,50 @@ export const AudioPlayer = () => {
 
         {/* text */}
         <group position-x={11} position-y={4.5}>
-          <Text {...fontProps} color={'#ffffff'} lineHeight={0.5} fontSize={2}>
+          <Text {...fontProps} color={colors.white} fontSize={2} lineHeight={0.5}>
             {secondToMinutes(currentTime)} - {secondToMinutes(duration)}
           </Text>
         </group>
 
         <group
-          position-x={5.4}
-          visible={!(loading || loadError)}
           onPointerEnter={() => setPointerHoverStyle(true)}
           onPointerLeave={() => setPointerHoverStyle(false)}
+          position-x={5.4}
+          visible={!(loading || loadError)}
         >
           {/* track */}
-          <mesh onPointerDown={handleTrackDrag}>
+          <mesh>
             <planeGeometry args={[trackWidth, 2]} />
-            <meshStandardMaterial color={'white'} />
+            <meshBasicMaterial color={colors.white} />
           </mesh>
 
-          {/* track */}
+          <group position-z={1}>
+            {/* track */}
+            <mesh ref={trackSliderRef} onPointerDown={handleClick}>
+              <planeGeometry args={[trackWidth, 2]} />
+              <meshBasicMaterial color={colors.green100} />
+            </mesh>
 
-          <mesh ref={trackSliderRef} onPointerDown={handleClick} position-z={1}>
-            <planeGeometry args={[trackWidth, 2]} />
-            <meshStandardMaterial color={'blue'} />
-          </mesh>
+            <group position-y={-2.6}>
+              <mesh position-x={timestampPositions.start}>
+                <planeGeometry args={[0.5, 1.4]} />
+                <meshBasicMaterial color="lime" />
+              </mesh>
+
+              <mesh position-x={timestampPositions.end}>
+                <planeGeometry args={[0.5, 1.4]} />
+                <meshBasicMaterial color="red" />
+              </mesh>
+            </group>
+          </group>
+
+          {/* start and end markers */}
 
           {/* button */}
 
           <mesh ref={trackButtonRef} position-z={1.2}>
-            <circleGeometry args={[1.8, 20, 20]} />
-            <meshStandardMaterial color={'white'} transparent opacity={0.8} />
+            <circleGeometry args={[1.5, 20, 20]} />
+            <meshBasicMaterial color={colors.white} transparent />
           </mesh>
         </group>
       </group>

@@ -21,6 +21,7 @@ export const useAudioPlayer = ({ mediaUrl, timestamp }: UseAudioPlayerProps) => 
 
     audioRef.current.addEventListener('loadedmetadata', () => {
       setLoading(false)
+
       if (audioRef.current) {
         setDuration(audioRef.current.duration)
       }
@@ -29,6 +30,7 @@ export const useAudioPlayer = ({ mediaUrl, timestamp }: UseAudioPlayerProps) => 
         if (prevPlaying) {
           audioRef.current!.play()
         }
+
         return prevPlaying
       })
     })
@@ -49,6 +51,7 @@ export const useAudioPlayer = ({ mediaUrl, timestamp }: UseAudioPlayerProps) => 
       audioRef.current!.removeEventListener('loadedmetadata', () => {
         setDuration(0)
       })
+
       audioRef.current!.removeEventListener('timeupdate', handleTimeUpdate)
       audioRef.current = null
     }
@@ -77,12 +80,14 @@ export const useAudioPlayer = ({ mediaUrl, timestamp }: UseAudioPlayerProps) => 
   }
 
   useEffect(() => {
-    const formattedTimestamp = timestamp ? videoTimetoSeconds(timestamp) : 0
+    const formattedTimestamp = timestamp ? videoTimetoSeconds(timestamp).start : 0
+
     setAudioCurrentTime(formattedTimestamp)
   }, [timestamp])
 
   const setAudioCurrentTime = (newTime: number) => {
     setCurrentTime(newTime)
+
     if (audioRef.current) {
       audioRef.current.currentTime = newTime
     }

@@ -55,15 +55,15 @@ export const SearchBar = ({ loading }: Props) => {
       disabled={loading}
       id="main-search"
       loading={loading}
+      onChange={(e) => setValue(e.target.value)}
       onKeyPress={(event) => {
         if (event.key === 'Enter') {
           setCurrentSearch(value)
         }
       }}
-      onChange={(e) => setValue(e.target.value)}
-      value={value}
       placeholder="Search (10 sats)"
       type="text"
+      value={value}
     />
   )
 }

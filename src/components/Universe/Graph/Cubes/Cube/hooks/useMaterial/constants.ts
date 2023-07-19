@@ -1,4 +1,4 @@
-import { MeshStandardMaterial, TextureLoader } from 'three'
+import { MeshBasicMaterial, MeshStandardMaterial, TextureLoader } from 'three'
 import { smoothness } from '../../constants'
 
 export const loader = new TextureLoader()
@@ -7,6 +7,10 @@ export const noImageTexture = loader.load('noimage.jpeg')
 
 export const noImageMaterial = new MeshStandardMaterial({
   ...smoothness,
+  map: noImageTexture,
+})
+
+export const noImageMaterialBasic = new MeshBasicMaterial({
   map: noImageTexture,
 })
 

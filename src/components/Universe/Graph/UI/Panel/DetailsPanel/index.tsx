@@ -1,12 +1,11 @@
 import { Text } from '@react-three/drei'
 import { useFrame, useThree } from '@react-three/fiber'
-import { useEffect, useRef, useState } from 'react'
+import { useRef } from 'react'
 import { Group, Vector3 } from 'three'
-import { useSelectedNode } from '~/stores/useDataStore'
+import { colors } from '~/utils/colors'
 import { fontProps } from '../../../Cubes/Text/constants'
-import { setPointerHoverStyle, stopBubbling } from '../../constants'
+import { stopBubbling } from '../../constants'
 
-const padding = 0.1
 const bottomLeftCorner = {
   x: 1000,
   y: 1000,
@@ -18,15 +17,7 @@ const variableVector3 = new Vector3()
 export const DetailsPanel = () => {
   const panelRef = useRef<Group>(null)
 
-  const [hovered, setHovered] = useState('')
-
   const { viewport } = useThree()
-
-  const selectedNode = useSelectedNode()
-
-  useEffect(() => {
-    setPointerHoverStyle(!!hovered)
-  }, [hovered])
 
   useFrame(({ camera }) => {
     if (panelRef.current) {
@@ -49,7 +40,7 @@ export const DetailsPanel = () => {
 
   return (
     <group ref={panelRef} onClick={stopBubbling} onPointerDown={stopBubbling} onPointerUp={stopBubbling}>
-      <Text {...fontProps} color={'#ffffff'} lineHeight={0.5} fontSize={9}>
+      <Text {...fontProps} color={colors.white} fontSize={9} lineHeight={0.5}>
         Hello
       </Text>
     </group>

@@ -80,7 +80,7 @@ const _AudioPlayer = ({
 
   useEffect(() => {
     if (player) {
-      player.currentTime = timestamp ? videoTimetoSeconds(timestamp) : 0
+      player.currentTime = timestamp ? videoTimetoSeconds(timestamp).start : 0
     }
   }, [timestamp, player])
 

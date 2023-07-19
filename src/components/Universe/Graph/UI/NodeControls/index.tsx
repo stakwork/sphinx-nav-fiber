@@ -4,35 +4,20 @@ import { memo, useCallback, useMemo, useRef } from 'react'
 import { MdMenu, MdViewInAr } from 'react-icons/md'
 import styled from 'styled-components'
 import { Group, Vector3 } from 'three'
-import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { panelIsHidden } from '../constants'
 import { buttonColors } from './constants'
 
 const reuseableVector3 = new Vector3()
 
-const labelKeysByNodeType: Record<string, string> = {
-  episode: 'episode_title',
-  show: 'show_title',
-  clip: 'title',
-  guest: 'label',
-}
-
-const getNodeLabelKey = (node_type: string | null) => {
-  if (node_type && labelKeysByNodeType[node_type]) {
-    return labelKeysByNodeType[node_type]
-  }
-  return 'label'
-}
-
 export const NodeControls = memo(() => {
   const ref = useRef<Group | null>(null)
-  const setSidebarOpen = useAppStore((s) => s.setSidebarOpen)
+
   const showSelectionGraph = useDataStore((s) => s.showSelectionGraph)
   const selectionGraphData = useDataStore((s) => s.selectionGraphData)
   const allGraphData = useDataStore((s) => s.data)
   const selectedNode = useSelectedNode()
-  const setSelectedNode = useDataStore((s) => s.setSelectedNode)
+
   const setHideNodeDetails = useDataStore((s) => s.setHideNodeDetails)
   const hideNodeDetails = useDataStore((s) => s.hideNodeDetails)
   const setShowSelectionGraph = useDataStore((s) => s.setShowSelectionGraph)
@@ -85,15 +70,7 @@ export const NodeControls = memo(() => {
         },
       },
     ],
-    [
-      setShowSelectionGraph,
-      setSelectedNode,
-      setSidebarOpen,
-      setHideNodeDetails,
-      hideNodeDetails,
-      showSelectionGraph,
-      selectedNode,
-    ],
+    [setShowSelectionGraph, setHideNodeDetails, hideNodeDetails, showSelectionGraph, selectedNode],
   )
 
   if (!selectedNode) {

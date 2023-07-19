@@ -21,15 +21,15 @@ export const MENU_WIDTH = 433
 type ComponentsMapperType = Record<TabsVariants, JSX.Element>
 
 // eslint-disable-next-line react/display-name
-const Content = forwardRef<HTMLDivElement>(({}, ref) => {
+const Content = forwardRef<HTMLDivElement>((props, ref) => {
   const ComponentsMapper: ComponentsMapperType = useMemo(
     () => ({
-      askQuestion: <AskQuestion />,
-      searchResults: <View />,
-      teachMe: <TeachMe />,
-      sentiment: <SentimentAnalysis />,
+      askQuestion: <AskQuestion {...props} />,
+      searchResults: <View {...props} />,
+      teachMe: <TeachMe {...props} />,
+      sentiment: <SentimentAnalysis {...props} />,
     }),
-    [],
+    [props],
   )
 
   const isLoading = useDataStore((s) => s.isFetching)

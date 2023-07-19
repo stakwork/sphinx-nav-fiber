@@ -44,10 +44,9 @@ const Version = styled(Flex)`
 export const App = () => {
   const { open } = useModal('budgetExplanation')
 
-  const [setSidebarOpen, searchTerm, setCurrentSearch, hasBudgetExplanationModalBeSeen] = [
+  const [setSidebarOpen, searchTerm, hasBudgetExplanationModalBeSeen] = [
     useAppStore((s) => s.setSidebarOpen),
     useAppStore((s) => s.currentSearch),
-    useAppStore((s) => s.setCurrentSearch),
     useAppStore((s) => s.hasBudgetExplanationModalBeSeen),
   ]
 

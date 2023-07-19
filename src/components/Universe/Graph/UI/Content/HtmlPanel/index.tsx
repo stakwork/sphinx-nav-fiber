@@ -34,7 +34,6 @@ export const HtmlPanel = ({ speed = 2, intensity = 4, children, withTranscript, 
   const hideNodeDetails = useDataStore((s) => s.hideNodeDetails)
 
   const selectedNode = useSelectedNode()
-  const showSelectionGraph = useDataStore((s) => s.showSelectionGraph)
 
   const dimensions = useMemo(() => {
     if (isMobile) {
@@ -48,7 +47,7 @@ export const HtmlPanel = ({ speed = 2, intensity = 4, children, withTranscript, 
 
   const panelIsVisible = useMemo(
     () => selectedNode && !hideNodeDetails && !panelIsHidden(selectedNode?.node_type),
-    [selectedNode, showSelectionGraph, hideNodeDetails],
+    [selectedNode, hideNodeDetails],
   )
 
   useEffect(() => {
@@ -82,10 +81,10 @@ export const HtmlPanel = ({ speed = 2, intensity = 4, children, withTranscript, 
         // sprite
       >
         <HtmlWrap
+          ref={htmlRef}
           className="html-panel"
           dimensions={dimensions}
           id="html-panel"
-          ref={htmlRef}
           onPointerDown={stopPropagationHandler}
           onPointerOut={stopPropagationHandler}
           onPointerOver={stopPropagationHandler}
@@ -97,17 +96,17 @@ export const HtmlPanel = ({ speed = 2, intensity = 4, children, withTranscript, 
 
       <group position={position} scale={2}>
         <mesh
+          onClick={(e) => e.stopPropagation()}
+          onPointerDown={() => {
+            setHideNodeDetails(!hideNodeDetails)
+          }}
           onPointerEnter={() => {
             setPointerHoverStyle(true)
           }}
           onPointerLeave={() => {
             setPointerHoverStyle(false)
           }}
-          onPointerDown={() => {
-            setHideNodeDetails(!hideNodeDetails)
-          }}
           onPointerUp={(e) => e.stopPropagation()}
-          onClick={(e) => e.stopPropagation()}
         >
           <circleGeometry args={[1.5, 40]} />
           <meshBasicMaterial alphaMap={closeTexture} color={white} map={closeTexture} transparent />

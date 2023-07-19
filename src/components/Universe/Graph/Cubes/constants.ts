@@ -70,6 +70,7 @@ export const isMainTopic = (node: NodeExtended) => node.node_type === 'topic' &&
 
 export const showAllTopics = (nodes: NodeExtended[]) => {
   const topicNodes = nodes.filter((f) => f.node_type === 'topic')
+
   return topicNodes.length < 20 || !topicNodes.filter((f) => f.scale && f.scale > 3).length
 }
 

@@ -10,12 +10,17 @@ export const Content = () => {
   const data = useDataStore((s) => s.data)
 
   const selectedNode = useSelectedNode()
+  const showSelectionGraph = useDataStore((s) => s.showSelectionGraph)
 
   const position = useMemo(() => {
+    if (showSelectionGraph) {
+      return new Vector3(0, 0, 0)
+    }
+
     const selected = data?.nodes.find((f) => f.ref_id === selectedNode?.ref_id)
 
     return new Vector3(selected?.x || 0, selected?.y || 0, selected?.z || 0)
-  }, [data?.nodes, selectedNode?.ref_id])
+  }, [data?.nodes, selectedNode?.ref_id, showSelectionGraph])
 
   return (
     <>

@@ -39,7 +39,7 @@ export const TextNode = memo(({ node, hide }: Props) => {
     }
 
     return scale
-  }, [node.scale, isSelected, isRelative, showSelectionGraph])
+  }, [node.scale, isSelected, isRelative])
 
   const fillOpacity = useMemo(() => {
     if (selectedNode && selectedNode.node_type === 'topic' && !isSelected) {
@@ -56,8 +56,10 @@ export const TextNode = memo(({ node, hide }: Props) => {
       anchorY="middle"
       color={colors.white}
       fillOpacity={fillOpacity}
+      maxWidth={40}
       position={[node.x, node.y, node.z]}
       scale={textScale}
+      textAlign="center"
       userData={node}
       visible={!hide}
       {...fontProps}
