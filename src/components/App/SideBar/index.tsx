@@ -1,5 +1,5 @@
 import { Slide } from '@mui/material'
-import { forwardRef, useMemo, useState } from 'react'
+import { forwardRef } from 'react'
 import { MdClose, MdKeyboardDoubleArrowLeft } from 'react-icons/md'
 import styled from 'styled-components'
 import { CategorySelect } from '~/components/App/SideBar/CategorySelect'
@@ -9,34 +9,17 @@ import { Loader } from '~/components/common/Loader'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
 import { colors } from '~/utils/colors'
-import { SentimentAnalysis } from '../SecondarySidebar/Sentiment/SentimentAnalysis'
-import { ActionsMenu, TabsVariants } from './ActionsMenu'
-import { AskQuestion } from './AskQuestion'
+
 import { Tab } from './Tab'
-import { TeachMe } from './TeachMe'
 import { View } from './View'
 
 export const MENU_WIDTH = 433
 
-type ComponentsMapperType = Record<TabsVariants, JSX.Element>
-
 // eslint-disable-next-line react/display-name
-const Content = forwardRef<HTMLDivElement>((props, ref) => {
-  const ComponentsMapper: ComponentsMapperType = useMemo(
-    () => ({
-      askQuestion: <AskQuestion {...props} />,
-      searchResults: <View {...props} />,
-      teachMe: <TeachMe {...props} />,
-      sentiment: <SentimentAnalysis {...props} />,
-    }),
-    [props],
-  )
-
+const Content = forwardRef<HTMLDivElement>((_, ref) => {
   const isLoading = useDataStore((s) => s.isFetching)
-  const setCurrentSearch = useAppStore((s) => s.setCurrentSearch)
   const setSidebarOpen = useAppStore((s) => s.setSidebarOpen)
-
-  const [selectedView, setSelectedView] = useState<TabsVariants>('searchResults')
+  const setCurrentSearch = useAppStore((s) => s.setCurrentSearch)
 
   return (
     <Wrapper ref={ref} id="sidebar-wrapper">
@@ -62,11 +45,9 @@ const Content = forwardRef<HTMLDivElement>((props, ref) => {
         <MdKeyboardDoubleArrowLeft fontSize={20} />
       </CollapseButton>
 
-      <ActionsMenu active={selectedView} onChange={setSelectedView} />
-
       <ScrollWrapper>
         <Spacer />
-        {isLoading ? <Loader color="primaryText1" /> : ComponentsMapper[selectedView]}
+        {isLoading ? <Loader color="primaryText1" /> : <View />}
         <Spacer />
       </ScrollWrapper>
     </Wrapper>

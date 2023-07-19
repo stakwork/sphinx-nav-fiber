@@ -25,6 +25,7 @@ import { AppProviders } from './Providers'
 import { SecondarySideBar } from './SecondarySidebar'
 import { SideBar } from './SideBar'
 import { Toasts } from './Toasts'
+import { Helper } from './Helper'
 
 const Wrapper = styled(Flex)`
   height: 100%;
@@ -128,6 +129,7 @@ export const App = () => {
         <Toasts />
 
         <BudgetExplanationModal />
+        <Helper />
       </Wrapper>
       <E2ETests />
     </AppProviders>
