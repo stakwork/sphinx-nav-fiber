@@ -55,7 +55,15 @@ export const fetchGraphData = async (search: string) => {
 
 const fetchNodes = async (search: string) => {
   if (!search) {
-    return mock as FetchDataResponse
+    try {
+      const response = await api.get<FetchDataResponse>(`/prediction/content/latest`)
+
+      return response
+    } catch (e) {
+      console.error(e)
+
+      return mock as FetchDataResponse
+    }
   }
 
   if (isDevelopment || isE2E) {
