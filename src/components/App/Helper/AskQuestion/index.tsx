@@ -134,70 +134,69 @@ export const AskQuestion = () => {
 
   return (
     <>
-      <>
-        <Flex p={12}>
-          <Flex>
-            <FormControl>
-              <StyledInput id="select-label" size="small">
-                Expertise level
-              </StyledInput>
-              <StyledSelect
-                id="demo-multiple-name"
-                input={<OutlinedInput label="Expertise level" />}
-                labelId="select-label"
-                MenuProps={MenuProps}
-                onChange={handleChange}
-                size="small"
-                value={selectedValue}
-              >
-                {names.map((name) => (
-                  <MenuItem key={name} value={name}>
-                    {name}
-                  </MenuItem>
-                ))}
-              </StyledSelect>
-            </FormControl>
-          </Flex>
+      <Flex>
+        <Flex>
+          <FormControl>
+            <StyledInput id="select-label" size="small">
+              Expertise level
+            </StyledInput>
+            <StyledSelect
+              id="demo-multiple-name"
+              input={<OutlinedInput label="Expertise level" />}
+              labelId="select-label"
+              MenuProps={MenuProps}
+              onChange={handleChange}
+              size="small"
+              value={selectedValue}
+            >
+              {names.map((name) => (
+                <MenuItem key={name} value={name}>
+                  {name}
+                </MenuItem>
+              ))}
+            </StyledSelect>
+          </FormControl>
         </Flex>
-        <ResponsesWrapper>
-          {askedQuestions?.map((item, index) => (
-            <Flex key={`${item}`} className="response" p={12}>
-              <Text kind="medium">{item}</Text>
-              <Flex py={12}>
-                {askedQuestionsAnswers?.[index] !== undefined ? (
-                  <Text color="unreadMsgText">{askedQuestionsAnswers[index]}</Text>
-                ) : (
-                  <Flex align="center" p={12}>
-                    <Flex align="center" py={12}>
-                      <PropagateLoader color={colors.white} />
-                    </Flex>
-                    <Flex align="center" py={12}>
-                      <Text>Generating response</Text>
-                    </Flex>
+      </Flex>
+      <ResponsesWrapper>
+        {askedQuestions?.map((item, index) => (
+          <Flex key={`${item}`} className="response" py={12}>
+            <Text kind="medium">{item}</Text>
+            <Flex py={12}>
+              {askedQuestionsAnswers?.[index] !== undefined ? (
+                <Text color="unreadMsgText">{askedQuestionsAnswers[index]}</Text>
+              ) : (
+                <Flex align="center" py={12}>
+                  <Flex align="center" py={12}>
+                    <PropagateLoader color={colors.white} />
                   </Flex>
-                )}
-              </Flex>
+                  <Flex align="center" py={12}>
+                    <Text>Generating response</Text>
+                  </Flex>
+                </Flex>
+              )}
             </Flex>
-          ))}
-        </ResponsesWrapper>
-        <TextAreaWrapper onKeyDown={onEnterPress} p={12} tabIndex={-1}>
-          <StyledTextarea
-            disabled={hasQuestionInProgress}
-            onChange={(e) => setQuestion(e.target.value)}
-            placeholder="Enter your question"
-            value={question}
-          />
-          <IconWrapper>
-            <MdSend color={canSubmit ? colors.white : colors.gray300} size="18" />
-          </IconWrapper>
-        </TextAreaWrapper>
-      </>
+          </Flex>
+        ))}
+      </ResponsesWrapper>
+      <TextAreaWrapper onKeyDown={onEnterPress} py={12} tabIndex={-1}>
+        <StyledTextarea
+          disabled={hasQuestionInProgress}
+          onChange={(e) => setQuestion(e.target.value)}
+          placeholder="Enter your question"
+          value={question}
+        />
+        <IconWrapper>
+          <MdSend color={canSubmit ? colors.white : colors.gray300} size="18" />
+        </IconWrapper>
+      </TextAreaWrapper>
     </>
   )
 }
 
 const StyledTextarea = styled(TextareaAutosize)`
   background: ${colors.inputBg1};
+  max-width: 100%;
   color: ${colors.secondaryText4};
   padding: 16px 8px;
   border: none;

@@ -1,6 +1,6 @@
 import { memo } from 'react'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
-import { TextType } from '../AskQuestion/Text'
+import { TextType } from '../../Helper/AskQuestion/Text'
 import { AudioClip } from '../AudioClip'
 import { Creator } from '../Creator'
 import { Data } from '../Data'
