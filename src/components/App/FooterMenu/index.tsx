@@ -66,7 +66,7 @@ export const FooterMenu = () => {
         <ButtonsWrapper>
           <SlideWrapper>
             <Slide direction="up" in={isOpened} mountOnEnter unmountOnExit>
-              <Stack alignItems="flex-end" spacing={2}>
+              <Stack alignItems="flex-end" component="div" spacing={2}>
                 <ActionButton onClick={() => handleOpenSidebar('about')}>
                   <Text>About</Text>
                   <IconWrapper>

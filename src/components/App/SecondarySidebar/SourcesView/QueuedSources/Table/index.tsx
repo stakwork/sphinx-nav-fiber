@@ -11,7 +11,7 @@ import { approveRadarData, deleteRadarData } from '~/network/fetchSourcesData'
 import { useDataStore } from '~/stores/useDataStore'
 import { Sources } from '~/types'
 import { colors } from '~/utils/colors'
-import { TWITTER_LINK, sourcesMapper } from '../../constants'
+import { sourcesMapper, TWITTER_LINK } from '../../constants'
 import { Props } from '../../types'
 
 const Table: React.FC<Props> = ({ data }) => {
@@ -55,9 +55,9 @@ const Table: React.FC<Props> = ({ data }) => {
   return !data?.length ? (
     <Text>There is not any results for selected filters</Text>
   ) : (
-    <MaterialTable>
-      <TableHead>
-        <TableRow>
+    <MaterialTable component="table">
+      <TableHead component="thead">
+        <TableRow component="tr">
           <StyledTableCell>Type</StyledTableCell>
           <StyledTableCell>Source</StyledTableCell>
           <StyledTableCell />
@@ -66,7 +66,7 @@ const Table: React.FC<Props> = ({ data }) => {
       {data?.length && (
         <tbody>
           {data?.map((i: Sources) => (
-            <TableRow key={i.source}>
+            <TableRow key={i.source} component="tr">
               <StyledTableCell>{sourcesMapper[i.source_type]}</StyledTableCell>
               <StyledTableCell width="268px">
                 {i.source_type === 'twitter_handle' ? (
