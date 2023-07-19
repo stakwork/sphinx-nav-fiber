@@ -78,7 +78,7 @@ export const SentimentAnalysis = memo(() => {
       )}
       {!isLoading && (
         <ChartWrapper ref={ref}>
-          <SentimentChart data={sentimentData} height={322} width={352} />
+          <SentimentChart data={sentimentData} height={280} width={352} />
           {Array.isArray(sentimentData) && !isLoading && !sentimentData.length && <Text>No data for this period</Text>}
         </ChartWrapper>
       )}

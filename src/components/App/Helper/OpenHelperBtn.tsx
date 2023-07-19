@@ -25,7 +25,7 @@ export const OpenHelperBtn = () => {
 
   return (
     <FabContainer sidebarIsOpen={sidebarIsOpen}>
-      <SiriLikeButton onClick={() => setIsShow((s) => !s)} />
+      <SiriLikeButton id="cy-siri-btn" onClick={() => setIsShow((s) => !s)} />
     </FabContainer>
   )
 }

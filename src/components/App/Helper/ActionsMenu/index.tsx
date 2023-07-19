@@ -11,7 +11,7 @@ export const ActionsMenu = ({ onChange, active }: Props) => {
 
   if (!active) {
     return (
-      <Stack flexGrow={1} justifyContent="flex-end" mb={1} spacing={1}>
+      <Stack flexGrow={1} id="cy-helper-menu" justifyContent="flex-end" mb={1} spacing={1}>
         {TABS.map((tab, index) => (
           <Chip key={tab.value} id={tab.value} label={tab.label} onClick={(e) => handleSelect(e, index)} />
         ))}
@@ -20,7 +20,7 @@ export const ActionsMenu = ({ onChange, active }: Props) => {
   }
 
   return (
-    <MenuWrapper direction="row" maxWidth="100%" mb={3} overflow="auto" spacing={1}>
+    <MenuWrapper direction="row" id="cy-helper-menu" maxWidth="100%" mb={3} overflow="auto" spacing={1}>
       {TABS.map((tab, index) => (
         <Chip
           key={tab.value}
