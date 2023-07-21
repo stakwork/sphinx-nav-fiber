@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { usePlayerStore } from '~/stores/usePlayerStore'
 import { videoTimetoSeconds } from '~/utils/videoTimetoSeconds'
 
 interface UseAudioPlayerProps {
@@ -15,6 +16,24 @@ export const useAudioPlayer = ({ mediaUrl, timestamp }: UseAudioPlayerProps) => 
   const [loading, setLoading] = useState(false)
   const [duration, setDuration] = useState(0)
   const [currentTime, setCurrentTime] = useState(0)
+
+  const [isPlaying, setIsPlaying] = usePlayerStore((s) => [s.isPlaying, s.setIsPlaying])
+
+  useEffect(() => {
+    setPlaying(isPlaying)
+  }, [isPlaying])
+
+  useEffect(() => {
+    if (audioRef.current) {
+      if (playing) {
+        audioRef.current.play()
+      } else {
+        audioRef.current.pause()
+      }
+
+      setIsPlaying(playing)
+    }
+  }, [playing, setIsPlaying])
 
   useEffect(() => {
     audioRef.current = audioPlayer
