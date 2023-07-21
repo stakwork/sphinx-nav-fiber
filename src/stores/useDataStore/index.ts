@@ -1,5 +1,3 @@
-import { RefObject } from 'react'
-import { Object3D } from 'three'
 import create from 'zustand'
 import { nodesAreRelatives } from '~/components/Universe/constants'
 import { isChileGraph } from '~/constants'
@@ -32,7 +30,6 @@ type DataStore = {
   nearbyNodeIds: string[]
   showSelectionGraph: boolean
   hideNodeDetails: boolean
-  guiRef: RefObject<Object3D> | null
 
   setScrollEventsDisabled: (scrollEventsDisabled: boolean) => void
   setCategoryFilter: (categoryFilter: NodeType | null) => void
@@ -98,7 +95,6 @@ const defaultData: Omit<
   nearbyNodeIds: [],
   showSelectionGraph: false,
   hideNodeDetails: false,
-  guiRef: null,
 }
 
 export const useDataStore = create<DataStore>((set, get) => ({
