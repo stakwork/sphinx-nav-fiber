@@ -3,7 +3,6 @@ import { Content } from './Content'
 import { NodeControls } from './NodeControls'
 import { Panel } from './Panel'
 import { DetailsPanel } from './Panel/DetailsPanel'
-import { Tooltip } from './Panel/Tooltip'
 
 export const NodeGUI = memo(() => (
   <>
@@ -11,7 +10,6 @@ export const NodeGUI = memo(() => (
     <Content />
     <Panel />
     <DetailsPanel />
-    <Tooltip />
   </>
 ))
 

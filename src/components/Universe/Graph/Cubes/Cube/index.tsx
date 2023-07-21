@@ -18,8 +18,11 @@ export const Cube = memo(({ node, hide, animated }: Props) => {
   const [geometry] = useState(boxGeometry)
   const selectedNode = useSelectedNode()
   const showSelectionGraph = useDataStore((s) => s.showSelectionGraph)
+  const hoveredNode = useDataStore((s) => s.hoveredNode)
   const isSelected = !!selectedNode && node.ref_id === selectedNode.ref_id
   const material = useMaterial(node.image_url || 'noimage.jpeg', 'cube', {})
+
+  const isHovered = useMemo(() => hoveredNode && hoveredNode?.ref_id === node?.ref_id, [hoveredNode, node])
 
   useFrame((_, delta) => {
     if (animated && ref.current) {
@@ -53,7 +56,7 @@ export const Cube = memo(({ node, hide, animated }: Props) => {
   }, [node, isSelected, showSelectionGraph])
 
   return (
-    <Select enabled={!!isSelected}>
+    <Select enabled={!!isSelected || !!isHovered}>
       <mesh
         ref={ref}
         geometry={boxGeometry}
