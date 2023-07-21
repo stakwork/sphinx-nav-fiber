@@ -21,6 +21,7 @@ describe('Sources Table / Home interactions', () => {
       },
     ).as('radar')
 
+    cy.wait(5000)
     cy.get(actionMenu).click({ waitForAnimations: false })
     cy.get(openSourceBtn).click({ waitForAnimations: false })
     cy.wait('@radar')
