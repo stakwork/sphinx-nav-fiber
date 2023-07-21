@@ -26,7 +26,8 @@ export const Boost = (props: Props) => {
   useEffect(() => {
     // eslint-disable-next-line react/destructuring-assignment
     props.setHovered(hovered)
-  }, [props, hovered])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hovered])
 
   const doBoost = async () => {
     if (boosting || !selectedNode?.ref_id) {
@@ -35,7 +36,6 @@ export const Boost = (props: Props) => {
 
     setBoosting(true)
 
-    // eslint-disable-next-line no-useless-catch
     try {
       await boost(selectedNode?.ref_id, defaultBoostAmount)
       setBoosted(true)

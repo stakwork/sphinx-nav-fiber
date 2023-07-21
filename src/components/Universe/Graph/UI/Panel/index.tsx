@@ -32,6 +32,7 @@ export const Panel = () => {
   const closeTexture = useTexture('icons/close_white.svg')
 
   useEffect(() => {
+    console.error('hovered', hovered)
     setPointerHoverStyle(!!hovered)
   }, [hovered])
 
