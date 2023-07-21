@@ -131,6 +131,7 @@
     "@babel/preset-typescript": "^7.21.5",
     "@commitlint/cli": "^17.1.2",
     "@commitlint/config-conventional": "^17.1.0",
+    "@cypress/code-coverage": "^3.11.0",
     "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^14.0.0",
@@ -149,7 +150,7 @@
     "@typescript-eslint/parser": "^5.27.1",
     "@vitejs/plugin-react": "^4.0.0",
     "babel-plugin-transform-vite-meta-env": "^1.0.3",
-    "cypress": "^12.2.0",
+    "cypress": "12.16.0",
     "eslint": "^8.41.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-prettier": "^8.5.0",
@@ -173,6 +174,7 @@
     "vite": "^4.3.9",
     "vite-compatible-readable-stream": "^3.6.1",
     "vite-plugin-eslint": "^1.8.1",
+    "vite-plugin-istanbul": "^4.1.0",
     "vite-plugin-node-polyfills": "^0.8.2",
     "vite-plugin-svgr": "^3.2.0",
     "vite-tsconfig-paths": "^4.2.0"
@@ -180,5 +182,13 @@
   "packageManager": "yarn@3.5.0",
   "engines": {
     "node": ">=16.0.0"
+  },
+  "nyc": {
+    "reporter": [
+      "html"
+    ]
+  },
+  "coverage": {
+    "min": 65
   }
 }

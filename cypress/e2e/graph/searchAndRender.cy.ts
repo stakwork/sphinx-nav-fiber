@@ -17,6 +17,7 @@ describe('Search and render / Home interactions', () => {
       },
       {
         fixture: 'search.json',
+        delay: 1000,
       },
     ).as('search')
 

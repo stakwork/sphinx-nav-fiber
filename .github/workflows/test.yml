@@ -37,3 +37,6 @@ jobs:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           # created by the GH Action automatically
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check the coverage value
+        run: node ../../cypress/coverageTest.js
