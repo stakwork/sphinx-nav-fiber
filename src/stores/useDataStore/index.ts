@@ -53,7 +53,6 @@ type DataStore = {
   setShowSelectionGraph: (_: boolean) => void
   setSelectionData: (data: GraphData) => void
   setHideNodeDetails: (_: boolean) => void
-  setGuiRef: (ref: RefObject<Object3D>) => void
 }
 
 const defaultData: Omit<
@@ -78,7 +77,6 @@ const defaultData: Omit<
   | 'setShowSelectionGraph'
   | 'setSelectionData'
   | 'setHideNodeDetails'
-  | 'setGuiRef'
 > = {
   categoryFilter: null,
   data: null,
@@ -176,7 +174,6 @@ export const useDataStore = create<DataStore>((set, get) => ({
   },
   setShowSelectionGraph: (showSelectionGraph) => set({ showSelectionGraph }),
   setHideNodeDetails: (hideNodeDetails) => set({ hideNodeDetails }),
-  setGuiRef: (guiRef) => set({ guiRef }),
 }))
 
 export const useSelectedNode = () => useDataStore((s) => s.selectedNode)

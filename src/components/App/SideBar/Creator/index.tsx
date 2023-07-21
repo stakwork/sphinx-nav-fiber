@@ -33,7 +33,7 @@ export const Creator = () => {
   }, [selectedNodeTimestamps, setSelectedTimestamp])
 
   const showNode = useMemo(
-    () => data?.nodes.find((f) => f?.children?.includes(selectedNode?.ref_id || '')),
+    () => data?.nodes.find((f) => f?.children?.includes(selectedNode?.ref_id || '') && f.node_type === 'show'),
     [selectedNode, data?.nodes],
   )
 

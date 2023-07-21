@@ -85,6 +85,7 @@ export const HtmlPanel = ({ speed = 2, intensity = 4, children, withTranscript, 
           className="html-panel"
           dimensions={dimensions}
           id="html-panel"
+          onClick={stopPropagationHandler}
           onPointerDown={stopPropagationHandler}
           onPointerOut={stopPropagationHandler}
           onPointerOver={stopPropagationHandler}

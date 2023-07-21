@@ -16,3 +16,6 @@ export const getNodeSearchableName = (node: NodeExtended) => {
 }
 
 export const noBoostNodeTypes = ['topic']
+
+export const panelWidth = 40
+export const panelHeight = 10

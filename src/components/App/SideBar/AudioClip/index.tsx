@@ -25,7 +25,7 @@ const _AudioClip = () => {
   const setSelectedNode = useDataStore((s) => s.setSelectedNode)
 
   const episodeNode = useMemo(
-    () => data?.nodes.find((f) => f?.children?.includes(selectedNode?.ref_id || '')),
+    () => data?.nodes.find((f) => f?.children?.includes(selectedNode?.ref_id || '') && f.node_type === 'episode'),
     [selectedNode, data?.nodes],
   )
 

@@ -123,7 +123,7 @@ const _Universe = () => {
       <Overlay />
 
       <Suspense fallback={null}>
-        <Canvas camera={cameraProps} id="universe-canvas" onCreated={onCreatedHandler} onWheel={onWheelHandler} shadows>
+        <Canvas camera={cameraProps} id="universe-canvas" onCreated={onCreatedHandler} onWheel={onWheelHandler}>
           {isDevelopment && <Perf position="top-right" />}
 
           <Suspense fallback={<Fallback />}>

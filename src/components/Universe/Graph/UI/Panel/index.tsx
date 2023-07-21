@@ -1,54 +1,35 @@
 import { Float, Text, useTexture } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
-import { BufferGeometry, Color, Group, Mesh, Shape, Vector3 } from 'three'
-import { defaultBoostAmount, notify } from '~/components/Booster'
-import { BOOST_ERROR_BUDGET, BOOST_SUCCESS } from '~/constants'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { BufferGeometry, Group, Mesh, Shape, Vector3 } from 'three'
+
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
-import { boost } from '~/utils/boost'
+
 import { colors } from '~/utils/colors'
 import { fontProps } from '../../Cubes/Text/constants'
-import { setPointerHoverStyle, stopBubbling, white } from '../constants'
+import { setPointerHoverStyle, stopBubbling } from '../constants'
 import { AudioPlayer } from './AudioPlayer'
+import { Boost } from './Boost'
 import { VideoPlayer } from './VideoPlayer'
-import { getNodeSearchableName, noBoostNodeTypes } from './constants'
-
-// The Panel component, will always stay at the top of the screen
-
-const panelWidth = 40
-const panelHeight = 10
-
-const renderOrder = 99999999
-
-const boostedColor = new Color('yellow')
+import { getNodeSearchableName, panelHeight, panelWidth } from './constants'
 
 export const Panel = () => {
   const panelRef = useRef<Group>(null)
 
   const panelTextRef = useRef<Mesh>(null)
-  const boostIconRef = useRef<Mesh>(null)
 
   const [hovered, setHovered] = useState('')
-  const [boosting, setBoosting] = useState(false)
-  const [boosted, setBoosted] = useState(false)
-  const [boostColor] = useState(new Color('#49c998'))
 
   const setSelectedNode = useDataStore((s) => s.setSelectedNode)
 
   const setCurrentSearch = useAppStore((s) => s.setCurrentSearch)
-  const setGuiRef = useDataStore((s) => s.setGuiRef)
 
   const offset = useMemo(() => new Vector3(0, 40, -100), []) // Offset from the camera's position
 
   const selectedNode = useSelectedNode()
 
-  const boltTexture = useTexture('icons/bolt_white.svg')
   const closeTexture = useTexture('icons/close_white.svg')
-
-  useLayoutEffect(() => {
-    setGuiRef(panelRef)
-  }, [setGuiRef])
 
   useEffect(() => {
     setPointerHoverStyle(!!hovered)
@@ -90,39 +71,6 @@ export const Panel = () => {
 
     return text.toUpperCase()
   }, [selectedNode, hovered])
-
-  const boostEnabled = useMemo(() => !noBoostNodeTypes.includes(selectedNode?.node_type || ''), [selectedNode])
-
-  const doBoost = async () => {
-    if (boosting || !selectedNode?.ref_id) {
-      return
-    }
-
-    setBoosting(true)
-
-    // eslint-disable-next-line no-useless-catch
-    try {
-      await boost(selectedNode?.ref_id, defaultBoostAmount)
-      setBoosted(true)
-      notify(BOOST_SUCCESS)
-    } catch (e) {
-      notify(BOOST_ERROR_BUDGET)
-    }
-
-    setBoosting(true)
-  }
-
-  const boostIconColor = useMemo(() => {
-    if (boosted) {
-      return boostedColor
-    }
-
-    if (hovered === 'boost') {
-      return white
-    }
-
-    return boostColor
-  }, [hovered, boosted, boostColor])
 
   const cornerRadius = 0.2
 
@@ -198,7 +146,6 @@ export const Panel = () => {
               lineHeight={0.9}
               maxWidth={60}
               outlineWidth={0.1}
-              renderOrder={renderOrder}
               scale={hovered === 'search' ? 1.04 : 1}
               textAlign="center"
             >
@@ -207,7 +154,7 @@ export const Panel = () => {
           </group>
 
           <group position-y={9}>
-            <Text ref={panelTextRef} {...fontProps} fontSize={2.5} position-y={-0.2} renderOrder={renderOrder}>
+            <Text ref={panelTextRef} {...fontProps} fontSize={2.5} position-y={-0.2}>
               {panelText}
             </Text>
 
@@ -226,37 +173,10 @@ export const Panel = () => {
                 onPointerUp={(e) => e.stopPropagation()}
               >
                 <circleGeometry args={[1.5, 40]} />
-                <meshBasicMaterial alphaMap={closeTexture} color={white} map={closeTexture} transparent />
+                <meshBasicMaterial alphaMap={closeTexture} color={colors.white} map={closeTexture} transparent />
               </mesh>
             </group>
-
-            {boostEnabled && (
-              <group position-x={-(panelWidth / 2) + 4} scale={2}>
-                <mesh
-                  onClick={(e) => e.stopPropagation()}
-                  onPointerDown={(e) => {
-                    e.stopPropagation()
-                    doBoost()
-                  }}
-                  onPointerEnter={() => {
-                    setHovered('boost')
-                  }}
-                  onPointerLeave={() => {
-                    setHovered('')
-                  }}
-                  onPointerUp={(e) => e.stopPropagation()}
-                  visible={!boosted && hovered === 'boost'}
-                >
-                  <circleGeometry args={[1.8, 30]} />
-                  <meshBasicMaterial color={boostColor} />
-                </mesh>
-
-                <mesh ref={boostIconRef} renderOrder={renderOrder}>
-                  <circleGeometry args={[1.5, 40]} />
-                  <meshBasicMaterial alphaMap={boltTexture} color={boostIconColor} map={boltTexture} transparent />
-                </mesh>
-              </group>
-            )}
+            <Boost setHovered={(h) => (h ? setHovered('boost') : setHovered(''))} />
           </group>
         </group>
       </Float>
