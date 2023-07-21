@@ -80,7 +80,7 @@ type Props = {
 export const Episode = ({ boostCount, date, description, id, imageUrl, type, onClick }: Props) => {
   const selectedTimestamp = useDataStore((s) => s.selectedTimestamp)
   const isSelected = !!(selectedTimestamp && selectedTimestamp.id === id)
-  const setIsPlaying = usePlayerStore((s) => s.setIsPlaying)
+  const [isPlaying, setIsPlaying] = usePlayerStore((s) => [s.isPlaying, s.setIsPlaying])
 
   return (
     <EpisodeWrapper background="body" isSelected={isSelected} onClick={onClick}>
@@ -114,12 +114,15 @@ export const Episode = ({ boostCount, date, description, id, imageUrl, type, onC
         </Flex>
         {isSelected && (
           <Flex align="center" className="player-controls" direction="row" onClick={(e) => e.stopPropagation()}>
-            <IconButton onClick={() => setIsPlaying(true)} size="medium">
-              <FaPlay size={14} />
-            </IconButton>
-            <IconButton onClick={() => setIsPlaying(false)} size="medium">
-              <FaPause size={14} />
-            </IconButton>
+            {isPlaying ? (
+              <IconButton onClick={() => setIsPlaying(true)} size="medium">
+                <FaPlay size={14} />
+              </IconButton>
+            ) : (
+              <IconButton onClick={() => setIsPlaying(false)} size="medium">
+                <FaPause size={14} />
+              </IconButton>
+            )}
           </Flex>
         )}
       </Flex>

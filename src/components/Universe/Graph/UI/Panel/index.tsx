@@ -1,7 +1,7 @@
 import { Float, Text, useTexture } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { BufferGeometry, Group, Mesh, Shape, Vector3 } from 'three'
+import { BufferGeometry, Group, Mesh, Shape } from 'three'
 
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
@@ -12,7 +12,7 @@ import { setPointerHoverStyle, stopBubbling } from '../constants'
 import { AudioPlayer } from './AudioPlayer'
 import { Boost } from './Boost'
 import { VideoPlayer } from './VideoPlayer'
-import { getNodeSearchableName, panelHeight, panelWidth } from './constants'
+import { getNodeSearchableName, offset, panelHeight, panelWidth } from './constants'
 
 export const Panel = () => {
   const panelRef = useRef<Group>(null)
@@ -24,8 +24,6 @@ export const Panel = () => {
   const setSelectedNode = useDataStore((s) => s.setSelectedNode)
 
   const setCurrentSearch = useAppStore((s) => s.setCurrentSearch)
-
-  const offset = useMemo(() => new Vector3(0, 40, -100), []) // Offset from the camera's position
 
   const selectedNode = useSelectedNode()
 
