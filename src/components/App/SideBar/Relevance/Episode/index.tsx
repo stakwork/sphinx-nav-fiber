@@ -37,7 +37,7 @@ const EpisodeWrapper = styled(Flex).attrs({
   ${(props) =>
     props.isSelected &&
     `
-    background: ${colors.dashboardHeader};
+    background: ${colors.dashboardSearch};
     border-bottom: 1px solid #101317;
     box-shadow: 0px 5px 6px rgba(0, 0, 0, 0.5);
     z-index: 1;

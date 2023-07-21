@@ -77,7 +77,7 @@ export const Transcript = ({ stateless, node }: TranscriptProps) => {
         )}
       </Flex>
 
-      <Box>{node?.text ? `"${node?.text}"` : '...'}</Box>
+      <Box>{node?.text ? `"${node?.text}"` : 'No Transcript'}</Box>
     </Wrapper>
   )
 }

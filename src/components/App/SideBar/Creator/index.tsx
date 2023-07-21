@@ -1,10 +1,12 @@
 import { useEffect, useMemo } from 'react'
+import { MdArrowBackIosNew } from 'react-icons/md'
 import { useGraphData } from '~/components/DataRetriever'
 import { Divider } from '~/components/common/Divider'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
+import { colors } from '~/utils/colors'
 import { getSelectedNodeTimestamps } from '~/utils/getSelectedNodeTimestamps'
 import { DateComponent } from './DateComponent'
 import { ErrorSection } from './ErrorSection'
@@ -30,6 +32,11 @@ export const Creator = () => {
     }
   }, [selectedNodeTimestamps, setSelectedTimestamp])
 
+  const showNode = useMemo(
+    () => data?.nodes.find((f) => f?.children?.includes(selectedNode?.ref_id || '')),
+    [selectedNode, data?.nodes],
+  )
+
   if (!selectedNode) {
     return null
   }
@@ -43,6 +50,20 @@ export const Creator = () => {
       {!!selectedNodeTimestamps?.length && (
         <>
           <Flex p={20}>
+            {showNode && (
+              <Flex
+                align="center"
+                direction="row"
+                onClick={() => {
+                  setSelectedNode(showNode)
+                }}
+                pb={20}
+                style={{ cursor: 'pointer' }}
+              >
+                <MdArrowBackIosNew color={colors.white} size={15} />
+                <Text>&nbsp;See show</Text>
+              </Flex>
+            )}
             <Flex align="flex-start" direction="row" justify="space-between" pb={10}>
               <Text color="secondaryText4" kind="mediumBold">
                 Related Clips
