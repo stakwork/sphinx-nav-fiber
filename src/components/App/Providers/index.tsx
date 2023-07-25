@@ -1,5 +1,7 @@
-import { ThemeProvider, createTheme } from '@mui/material'
+import { createTheme, ThemeProvider } from '@mui/material'
+import createPalette from '@mui/material/styles/createPalette'
 
+import { StyledEngineProvider } from '@mui/material/styles'
 import { LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment'
 import { FC, PropsWithChildren } from 'react'
@@ -7,13 +9,15 @@ import { ThemeProvider as StyleThemeProvider } from 'styled-components'
 import { colors } from '~/utils/colors'
 import { breakpoints } from '~/utils/media'
 
-export const appTheme = createTheme({
-  palette: {
-    primary: {
-      main: colors.primaryButton,
-    },
-    mode: 'dark',
+const palette = createPalette({
+  mode: 'dark',
+  primary: {
+    main: colors.primaryButton,
   },
+})
+
+export const appTheme = createTheme({
+  palette,
   breakpoints: {
     values: {
       xs: breakpoints.small,
@@ -27,6 +31,7 @@ export const appTheme = createTheme({
 
 export const AppProviders: FC<PropsWithChildren> = ({ children }) => (
   <ThemeProvider theme={appTheme}>
+    <StyledEngineProvider injectFirst />
     <StyleThemeProvider theme={appTheme}>
       <LocalizationProvider dateAdapter={AdapterMoment}>{children}</LocalizationProvider>
     </StyleThemeProvider>

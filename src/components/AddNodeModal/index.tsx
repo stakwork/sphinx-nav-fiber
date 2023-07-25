@@ -8,9 +8,9 @@ import { toast } from 'react-toastify'
 import * as sphinx from 'sphinx-bridge-kevkevinpal'
 import styled from 'styled-components'
 import { Button } from '~/components/Button'
-import { BaseModal } from '~/components/Modal'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
+import { BaseModal } from '~/components/Modal'
 import {
   DOCUMENT,
   GITHUB_REPOSITORY,
@@ -33,8 +33,8 @@ import { getLSat } from '~/utils/getLSat'
 import { executeIfProd } from '~/utils/tests'
 import { timeToMilliseconds } from '~/utils/timeToMilliseconds'
 import { useDataStore } from '../../stores/useDataStore/index'
-import StyledSelect from '../Select'
 import { ToastMessage } from '../common/Toast/toastMessage'
+import StyledSelect from '../Select'
 import { Document } from './Document'
 import { GithubRepository } from './GithubRepository'
 import { RSSFeed } from './RSSFeed'
@@ -339,6 +339,7 @@ export const AddNodeModal = () => {
             {!activeType ? (
               <Stack
                 alignItems={{ xs: 'stretch', sm: 'center' }}
+                component="div"
                 direction={{ xs: 'column', sm: 'row' }}
                 justifyContent="space-between"
                 spacing={2}

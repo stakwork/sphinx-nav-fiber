@@ -70,9 +70,9 @@ export const SentimentAnalysis = memo(() => {
   const ref = useRef<HTMLDivElement>(null)
 
   return (
-    <Stack flexGrow={1} p={1} spacing={2} width="100%">
+    <Stack component="div" flexGrow={1} p={1} spacing={2} width="100%">
       {isLoading && (
-        <Stack alignItems="center" flexGrow={1} p={4} spacing={2} width="100%">
+        <Stack alignItems="center" component="div" flexGrow={1} p={4} spacing={2} width="100%">
           <PropagateLoader color={colors.white} />
         </Stack>
       )}
@@ -95,6 +95,7 @@ export const SentimentAnalysis = memo(() => {
         value={value}
       />
       <Slider
+        component="div"
         getAriaValueText={(v) => moment(v).format('L')}
         id="cy-sentiment-analysis-slider"
         marks
