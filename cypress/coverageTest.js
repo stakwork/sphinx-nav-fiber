@@ -6,8 +6,6 @@ const { readFileSync } = require('fs')
 const path = require('path')
 
 const getPackageJSON = () => {
-  console.log('🚀 ~ file: coverageTest.js:10 ~ getPackageJSON ~ __dirname:', __dirname)
-
   const packageJSONPath = path.join(__dirname, '../package.json')
   const packageJsonFile = readFileSync(packageJSONPath)
   const data = JSON.parse(packageJsonFile)
@@ -17,17 +15,7 @@ const getPackageJSON = () => {
 
 const getCoverageReportValue = () =>
   new Promise((res, rej) => {
-    console.log('🚀 ~ file: coverageTest.js:20 ~ getCoverageReportValue ~ __dirname:', __dirname)
-
-    exec('pwd', (err, stdout, stderr) => {
-      console.log('🚀 ~ file: coverageTest.js:24 ~ exec ~ stdout:', stdout)
-    })
-
-    exec('ls -la', (err, stdout, stderr) => {
-      console.log('🚀 ~ file: coverageTest.js:26 ~ exec ~ stdout:', stdout)
-    })
-
-    exec('cd ../ && npx nyc report --reporter=text-summary', (err, stdout, stderr) => {
+    exec('npx nyc report --reporter=text-summary', (err, stdout, stderr) => {
       if (err) {
         rej(stderr || err)
       }

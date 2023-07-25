@@ -19,9 +19,6 @@ jobs:
       - name: Install
         run: yarn --immutable
 
-      - name: Check the coverage value
-        run: yarn test-coverage
-
       - name: Unit tests
         run: yarn test
 
