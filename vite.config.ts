@@ -54,13 +54,17 @@ const devConfigOptions: UserConfigExport = {
         open: true,
       },
       plugins: [
-        istanbul({
-          include: 'src/*',
-          exclude: ['node_modules', 'test/'],
-          extension: ['.js', '.ts', '.jsx', '.tsx'],
-          requireEnv: false,
-          cypress: true,
-        }),
+        ...(process.env.VITE_APP_IS_E2E
+          ? [
+              istanbul({
+                include: 'src/*',
+                exclude: ['node_modules', 'test/'],
+                extension: ['.js', '.ts', '.jsx', '.tsx'],
+                requireEnv: false,
+                cypress: true,
+              }),
+            ]
+          : []),
       ],
     },
     customizer,
