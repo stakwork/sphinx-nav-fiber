@@ -20,6 +20,8 @@ const commonConfigOptions = ({ mode }: { mode: Mode }): UserConfigExport => {
         crypto: 'crypto-browserify',
       },
     },
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     plugins: [react(), viteTsconfigPaths(), svgrPlugin(), eslint(), builtins({ crypto: false })],
     define: {
       APP_VERSION: JSON.stringify(process.env.npm_package_version),
