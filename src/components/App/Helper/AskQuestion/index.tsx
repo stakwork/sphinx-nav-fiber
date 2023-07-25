@@ -160,7 +160,7 @@ export const AskQuestion = () => {
       </Flex>
       <ResponsesWrapper>
         {askedQuestions?.map((item, index) => (
-          <Flex key={`${item}`} className="response" py={12}>
+          <Flex key={item} className="response" py={12}>
             <Text kind="medium">{item}</Text>
             <Flex py={12}>
               {askedQuestionsAnswers?.[index] !== undefined ? (
