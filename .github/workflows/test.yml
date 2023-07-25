@@ -38,5 +38,10 @@ jobs:
           # created by the GH Action automatically
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - uses: tintef/nyc-reporter-action
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPORTER: 'text' # defaults to 'text-summary'
+
       - name: Check the coverage value
-        run: node ../../cypress/coverageTest.js
+        run:  yarn test-coverage

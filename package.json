@@ -74,6 +74,7 @@
     "build-preview-e2e": "VITE_APP_IS_E2E=true yarn run build && vite preview --port 3000",
     "test": "NODE_ENV=test yarn jest",
     "test-start": "yarn jest --watch",
+    "test-coverage": "node ./cypress/coverageTest.js",
     "cy-open": "cypress open",
     "cy-run": "cypress run",
     "format": "prettier --write --config prettier.config.js ./src",
