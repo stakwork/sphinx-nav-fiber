@@ -39,10 +39,10 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: push the report
-      - uses: tintef/nyc-reporter-action
+      - uses: tintef/nyc-reporter-action@0.2.5
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          REPORTER: 'text' # defaults to 'text-summary'
+          REPORTER: 'json' # defaults to 'text-summary'
 
       - name: Check the coverage value
         run:  yarn test-coverage
