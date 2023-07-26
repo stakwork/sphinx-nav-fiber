@@ -1,11 +1,11 @@
-import * as React from 'react'
-import Tabs from '@mui/material/Tabs'
 import Tab from '@mui/material/Tab'
-import { Sources } from './Sources'
-import { colors } from '~/utils/colors'
-import { QueuedSources } from './QueuedSources'
+import Tabs from '@mui/material/Tabs'
+import * as React from 'react'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
+import { colors } from '~/utils/colors'
+import { QueuedSources } from './QueuedSources'
+import { Sources } from './Sources'
 
 interface TabPanelProps {
   children?: React.ReactNode
@@ -45,7 +45,7 @@ export const SourcesView = () => {
 
   return (
     <Wrapper direction="column">
-      <Tabs aria-label="basic tabs example" onChange={handleChange} value={value}>
+      <Tabs aria-label="basic tabs example" component="div" onChange={handleChange} value={value}>
         <StyledTab label="Sources table" {...a11yProps(0)} />
         <StyledTab color={colors.white} label="Queued sources" {...a11yProps(1)} />
       </Tabs>

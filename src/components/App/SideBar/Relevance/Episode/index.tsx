@@ -114,10 +114,10 @@ export const Episode = ({ boostCount, date, description, id, imageUrl, type, onC
         </Flex>
         {isSelected && (
           <Flex align="center" className="player-controls" direction="row" onClick={(e) => e.stopPropagation()}>
-            <IconButton onClick={() => setIsPlaying(true)} size="medium">
+            <IconButton component="button" onClick={() => setIsPlaying(true)} size="medium">
               <FaPlay size={14} />
             </IconButton>
-            <IconButton onClick={() => setIsPlaying(false)} size="medium">
+            <IconButton component="button" onClick={() => setIsPlaying(false)} size="medium">
               <FaPause size={14} />
             </IconButton>
           </Flex>

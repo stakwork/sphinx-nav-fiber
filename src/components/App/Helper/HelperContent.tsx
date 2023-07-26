@@ -71,7 +71,7 @@ const ContentWrapper = styled('div')(() => ({
 }))
 
 const CloseButton = styled((props: IconButtonProps) => (
-  <IconButton size="small" {...props}>
+  <IconButton component="button" size="small" {...props}>
     <MdClose />
   </IconButton>
 ))(() => ({

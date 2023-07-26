@@ -136,7 +136,7 @@ export const AskQuestion = () => {
     <>
       <Flex>
         <Flex>
-          <FormControl>
+          <FormControl component="div">
             <StyledInput id="select-label" size="small">
               Expertise level
             </StyledInput>
@@ -150,7 +150,7 @@ export const AskQuestion = () => {
               value={selectedValue}
             >
               {names.map((name) => (
-                <MenuItem key={name} value={name}>
+                <MenuItem key={name} component="li" value={name}>
                   {name}
                 </MenuItem>
               ))}

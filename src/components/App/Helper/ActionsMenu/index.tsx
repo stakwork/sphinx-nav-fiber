@@ -1,5 +1,5 @@
-import { Chip, styled } from '@mui/material'
-import { Stack } from '@mui/system'
+import { Chip, Stack, styled } from '@mui/material'
+
 import { TABS, TabsVariants } from '../const'
 
 type Props = { onChange: (value: TabsVariants) => void; active: TabsVariants | null }
@@ -11,9 +11,15 @@ export const ActionsMenu = ({ onChange, active }: Props) => {
 
   if (!active) {
     return (
-      <Stack flexGrow={1} id="cy-helper-menu" justifyContent="flex-end" mb={1} spacing={1}>
+      <Stack component="div" flexGrow={1} id="cy-helper-menu" justifyContent="flex-end" mb={1} spacing={1}>
         {TABS.map((tab, index) => (
-          <Chip key={tab.value} id={tab.value} label={tab.label} onClick={(e) => handleSelect(e, index)} />
+          <Chip
+            key={tab.value}
+            component="div"
+            id={tab.value}
+            label={tab.label}
+            onClick={(e) => handleSelect(e, index)}
+          />
         ))}
       </Stack>
     )
@@ -25,6 +31,7 @@ export const ActionsMenu = ({ onChange, active }: Props) => {
         <Chip
           key={tab.value}
           color={tab.value === active ? 'primary' : 'default'}
+          component="div"
           id={tab.value}
           label={tab.label}
           onClick={(e) => handleSelect(e, index)}
