@@ -5,6 +5,7 @@ import { useDataStore } from '~/stores/useDataStore'
 import { GraphData } from '~/types'
 import { Cubes } from './Cubes'
 import { GraphLoadingIcon } from './Icons'
+import { Particles } from './Particles'
 import { PathwayLine } from './PathwayLine'
 import { Segment } from './Segment'
 import { NodeDetailsPanel } from './UI'
@@ -35,9 +36,12 @@ export const Graph = () => {
     <>
       <Cubes />
 
+      <Particles />
+
       <NodeDetailsPanel />
 
       {!showSelectionGraph && <PathwayLine />}
+
       <Segments
         /** NOTE: using the key in this way the segments re-mounts
          *  everytime the data.links count changes

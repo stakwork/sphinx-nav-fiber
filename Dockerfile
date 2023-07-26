@@ -1,4 +1,4 @@
-FROM node:18-alpine3.17 as build
+FROM node:18.15.0 as build
 
 # Create app directory
 WORKDIR /usr/src/app
@@ -18,9 +18,9 @@ RUN yarn install --immutable
 
 COPY . /usr/src/app
 
-ARG REACT_APP_API_URL
+ARG VITE_APP_API_URL
 
-ENV REACT_APP_API_URL=$REACT_APP_API_URL
+ENV VITE_APP_API_URL=$VITE_APP_API_URL
 
 ENV NODE_OPTIONS=--max_old_space_size=4096
 

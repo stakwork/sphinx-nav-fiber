@@ -1,11 +1,7 @@
 import { Vector3 } from 'three'
-import {
-  AWS_IMAGE_BUCKET_URL,
-  CLOUDFRONT_IMAGE_BUCKET_URL,
-  NODE_RELATIVE_HIGHLIGHT_COLORS,
-  isDevelopment,
-  isE2E,
-} from '~/constants'
+
+import { getNodeColorByType } from '~/components/Universe/Graph/constant'
+import { AWS_IMAGE_BUCKET_URL, CLOUDFRONT_IMAGE_BUCKET_URL, isDevelopment, isE2E } from '~/constants'
 import { mock } from '~/mocks/getMockGraphData/mockResponse'
 import { api } from '~/network/api'
 import { useDataStore } from '~/stores/useDataStore'
@@ -59,7 +55,15 @@ export const fetchGraphData = async (search: string) => {
 
 const fetchNodes = async (search: string) => {
   if (!search) {
-    return mock as FetchDataResponse
+    try {
+      const response = await api.get<FetchDataResponse>(`/prediction/content/latest`)
+
+      return response
+    } catch (e) {
+      console.error(e)
+
+      return mock as FetchDataResponse
+    }
   }
 
   if (isDevelopment || isE2E) {
@@ -378,18 +382,6 @@ const getGraphData = async (searchterm: string) => {
   }
 }
 
-const getSegmentColor = (aType: string, bType: string) => {
-  if (aType === 'topic' || bType === 'topic') {
-    return NODE_RELATIVE_HIGHLIGHT_COLORS.topics.segmentColor
-  }
-
-  if (aType === 'guest' || bType === 'guest') {
-    return NODE_RELATIVE_HIGHLIGHT_COLORS.guests.segmentColor
-  }
-
-  return NODE_RELATIVE_HIGHLIGHT_COLORS.children.segmentColor
-}
-
 export const generateLinksFromNodeData = (nodes: NodeExtended[], hideMinorLinksUntilSelected: boolean) => {
   const links: Link[] = []
 
@@ -410,7 +402,7 @@ export const generateLinksFromNodeData = (nodes: NodeExtended[], hideMinorLinksU
 
         links.push({
           onlyVisibleOnSelect: false,
-          color: getSegmentColor(node.node_type, childNode?.node_type || ''),
+          color: getNodeColorByType(childNode?.node_type || node.node_type, false) as number,
           source: node.ref_id,
           sourceRef: node.ref_id,
           sourcePosition,
@@ -434,7 +426,7 @@ export const generateLinksFromNodeData = (nodes: NodeExtended[], hideMinorLinksU
 
         links.push({
           onlyVisibleOnSelect: hideMinorLinksUntilSelected,
-          color: getSegmentColor(node.node_type, 'guest'),
+          color: getNodeColorByType(guestNode.node_type, false) as number,
           source: node.ref_id,
           sourceRef: node.ref_id,
           sourcePosition,

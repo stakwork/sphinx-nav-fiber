@@ -1,3 +1,4 @@
+import { memo, useCallback, useEffect } from 'react'
 import styled from 'styled-components'
 import { Actions } from '~/components/App/SideBar/Actions'
 import { AudioPlayer } from '~/components/AudioPlayer'
@@ -5,6 +6,7 @@ import { Avatar } from '~/components/common/Avatar'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { setIsTimestampLoaded, useSelectedNode } from '~/stores/useDataStore'
+import { usePlayerStore } from '~/stores/usePlayerStore'
 import { colors } from '~/utils/colors'
 import { useIsMatchBreakpoint } from '~/utils/useIsMatchBreakpoint'
 import { Transcript } from '../Transcript'
@@ -19,9 +21,31 @@ const Wrapper = styled(Flex)`
   z-index: 0;
 `
 
-export const AudioClip = () => {
+// eslint-disable-next-line no-underscore-dangle
+const _AudioClip = () => {
   const selectedNode = useSelectedNode()
   const isMobile = useIsMatchBreakpoint('sm', 'down')
+  const isPlay = usePlayerStore((s) => s.isPlaying)
+  const setIsPlaying = usePlayerStore((s) => s.setIsPlaying)
+
+  useEffect(
+    () => () => {
+      setIsPlaying(false)
+    },
+    [setIsPlaying],
+  )
+
+  const errorHandler = useCallback(() => {
+    setIsTimestampLoaded(true)
+  }, [])
+
+  const loadedHandler = useCallback(() => {
+    setIsTimestampLoaded(true)
+  }, [])
+
+  const pauseHandler = useCallback(() => setIsPlaying(false), [setIsPlaying])
+
+  const playHandler = useCallback(() => setIsPlaying(true), [setIsPlaying])
 
   return (
     <Wrapper p={20}>
@@ -50,12 +74,11 @@ export const AudioClip = () => {
       <Flex pt={10}>
         <AudioPlayer
           mediaUrl={selectedNode?.link || ''}
-          onError={() => {
-            setIsTimestampLoaded(true)
-          }}
-          onLoaded={() => {
-            setIsTimestampLoaded(true)
-          }}
+          onError={errorHandler}
+          onLoaded={loadedHandler}
+          onPause={pauseHandler}
+          onPlay={playHandler}
+          play={isPlay}
           timestamp={selectedNode?.timestamp || ''}
         />
       </Flex>
@@ -66,3 +89,5 @@ export const AudioClip = () => {
     </Wrapper>
   )
 }
+
+export const AudioClip = memo(_AudioClip)

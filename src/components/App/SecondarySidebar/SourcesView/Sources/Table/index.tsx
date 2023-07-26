@@ -12,7 +12,7 @@ import { deleteRadarData, putRadarData } from '~/network/fetchSourcesData'
 import { useDataStore } from '~/stores/useDataStore'
 import { RadarRequest, Sources } from '~/types'
 import { colors } from '~/utils/colors'
-import { TWITTER_LINK, sourcesMapper } from '../../constants'
+import { sourcesMapper, TWITTER_LINK } from '../../constants'
 
 type Props = {
   data: Sources[] | undefined
@@ -61,17 +61,17 @@ const Table: React.FC<Props> = ({ data, canEdit = false }) => {
   return !data?.length ? (
     <Text>There is not any results for selected filters</Text>
   ) : (
-    <MaterialTable aria-label="a dense table" id="sources-table" size="small">
-      <TableHead>
-        <TableRow>
+    <MaterialTable aria-label="a dense table" component="table" id="sources-table" size="small">
+      <TableHead component="thead">
+        <TableRow component="tr">
           <StyledTableCell>Type</StyledTableCell>
           <StyledTableCell align="left">Source</StyledTableCell>
           {canEdit && <StyledTableCell align="left" />}
         </TableRow>
       </TableHead>
-      <TableBody>
+      <TableBody component="tbody">
         {data?.map((i: Sources) => (
-          <TableRow key={i.source}>
+          <TableRow key={i.source} component="tr">
             <StyledTableCell align="left">{sourcesMapper[i.source_type]}</StyledTableCell>
             <StyledTableCell align="left">
               <ConditionalWrapper

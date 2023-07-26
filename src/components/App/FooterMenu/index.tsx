@@ -1,3 +1,4 @@
+import { Slide, Stack } from '@mui/material'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import {
   MdAddLink,
@@ -63,46 +64,48 @@ export const FooterMenu = () => {
     <FooterAction ref={wrapperRef}>
       <Flex>
         <ButtonsWrapper>
-          {isOpened && (
-            <>
-              <ActionButton onClick={() => handleOpenSidebar('about')}>
-                <Text>About</Text>
-                <IconWrapper>
-                  <MdHomeFilled size={24} />
-                </IconWrapper>
-              </ActionButton>
-              <ActionButton id="cy-add-content-menu" onClick={() => handleOpenModal('content')}>
-                <Text>Add Content</Text>
-                <IconWrapper>
-                  <MdAddLink size={24} />
-                </IconWrapper>
-              </ActionButton>
-              <ActionButton onClick={() => handleOpenModal('source')}>
-                <Text>Add Source</Text>
-                <IconWrapper>
-                  <MdPostAdd size={24} />
-                </IconWrapper>
-              </ActionButton>
-              <ActionButton id="cy-open-soure-table" onClick={() => handleOpenSidebar('sources')}>
-                <Text>Source Table</Text>
-                <IconWrapper>
-                  <MdOutlineTableView size={24} />
-                </IconWrapper>
-              </ActionButton>
-              <ActionButton id="cy-open-sentiment-data" onClick={() => handleOpenSidebar('sentiment')}>
-                <Text>Sentiment Data</Text>
-                <IconWrapper>
-                  <MdOutlineShowChart size={24} />
-                </IconWrapper>
-              </ActionButton>
-              <ActionButton onClick={() => changeGraphType()}>
-                <Text>Change Display</Text>
-                <IconWrapper>
-                  <MdRefresh size={24} />
-                </IconWrapper>
-              </ActionButton>
-            </>
-          )}
+          <SlideWrapper>
+            <Slide direction="up" in={isOpened} mountOnEnter unmountOnExit>
+              <Stack alignItems="flex-end" component="div" spacing={2}>
+                <ActionButton onClick={() => handleOpenSidebar('about')}>
+                  <Text>About</Text>
+                  <IconWrapper>
+                    <MdHomeFilled size={24} />
+                  </IconWrapper>
+                </ActionButton>
+                <ActionButton id="cy-add-content-menu" onClick={() => handleOpenModal('content')}>
+                  <Text>Add Content</Text>
+                  <IconWrapper>
+                    <MdAddLink size={24} />
+                  </IconWrapper>
+                </ActionButton>
+                <ActionButton onClick={() => handleOpenModal('source')}>
+                  <Text>Add Source</Text>
+                  <IconWrapper>
+                    <MdPostAdd size={24} />
+                  </IconWrapper>
+                </ActionButton>
+                <ActionButton id="cy-open-soure-table" onClick={() => handleOpenSidebar('sources')}>
+                  <Text>Source Table</Text>
+                  <IconWrapper>
+                    <MdOutlineTableView size={24} />
+                  </IconWrapper>
+                </ActionButton>
+                <ActionButton id="cy-open-sentiment-data" onClick={() => handleOpenSidebar('sentiment')}>
+                  <Text>Sentiment Data</Text>
+                  <IconWrapper>
+                    <MdOutlineShowChart size={24} />
+                  </IconWrapper>
+                </ActionButton>
+                <ActionButton onClick={() => changeGraphType()}>
+                  <Text>Change Display</Text>
+                  <IconWrapper>
+                    <MdRefresh size={24} />
+                  </IconWrapper>
+                </ActionButton>
+              </Stack>
+            </Slide>
+          </SlideWrapper>
           <ActionButton className="root" id="cy-actions-menu-toggle" onClick={() => setIsOpened(!isOpened)}>
             <IconWrapper>{isOpened ? <MdClose size={24} /> : <MdOutlineMenu size={24} />}</IconWrapper>
           </ActionButton>
@@ -117,11 +120,10 @@ const FooterAction = styled(Flex).attrs({
   direction: 'row',
   grow: 1,
   justify: 'space-between',
-  p: 20,
 })`
   position: absolute;
-  bottom: 0;
-  right: 0;
+  bottom: 2rem;
+  right: 1rem;
   width: auto;
   transition: opacity 1s;
 `
@@ -131,38 +133,38 @@ const ActionButton = styled(Flex).attrs({
   justify: 'flex-end',
   p: 0,
 })`
-  ${Text} {
-    margin-right: 8px;
-    display: none;
-  }
+  width: min-content;
+  padding: 0;
+  flex-direction: row;
+  border-radius: 2rem;
   color: ${colors.white};
   cursor: pointer;
-  border-radius: 24px;
-  padding: 4px 8px;
-  transition-duration: 0.2s;
-  width: 30px;
-  flex-direction: row;
-  & + & {
-    margin-top: 8px;
+  transition: ${({ theme }) => theme.transitions.create(['opacity', 'box-shadow', 'background-color'])};
+
+  ${Text} {
+    opacity: 0;
+    width: 0;
+    white-space: nowrap;
+    visibility: hidden;
+    transition: ${({ theme }) => theme.transitions.create(['opacity', 'visually'])};
   }
 
   &:hover {
-    width: auto;
     opacity: 1;
     box-shadow: 0 0 10px 2px ${colors.primaryBlueBorder};
     background-color: rgba(0, 0, 0, 80%);
+
     ${Text} {
-      display: block;
+      margin: 0 1rem;
+      width: min-content;
+      opacity: 1;
+      visibility: visible;
     }
   }
 
   &.root {
     border-radius: 50%;
-    &:hover {
-      width: 30px;
-    }
     padding: 0;
-    margin-right: 8px;
     align-items: center;
     justify-content: center;
     border: none;
@@ -170,8 +172,8 @@ const ActionButton = styled(Flex).attrs({
 `
 
 const IconWrapper = styled(Flex)`
-  width: 30px;
-  height: 30px;
+  width: 48px;
+  height: 48px;
   justify-content: center;
   align-items: center;
   border-radius: 50%;
@@ -180,18 +182,15 @@ const IconWrapper = styled(Flex)`
 
 const ButtonsWrapper = styled(Flex).attrs({
   align: 'flex-end',
-  p: 5,
 })`
-  border-radius: 50%;
   justify-content: flex-end;
-
   color: ${colors.white};
   cursor: pointer;
   transition-duration: 0.2s;
+`
 
-  &:hover {
-    transition: none;
-    border-radius: 24px;
-    opacity: 1;
-  }
+const SlideWrapper = styled('div')`
+  overflow: hidden;
+  padding: 1rem 1rem 0.5rem 1rem;
+  margin: -1rem -1rem 0.5rem -1rem;
 `
