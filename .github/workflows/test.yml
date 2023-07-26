@@ -28,7 +28,7 @@ jobs:
         with:
           install-command: yarn --immutable
           browser: chrome
-          start: yarn run build-preview-e2e
+          start: yarn run start-e2e
           wait-on: 'http://localhost:3000' # Waits for above
           wait-on-timeout: 120 # Waits for 2 minutes
           # Records to Cypress Dashboard
@@ -37,3 +37,6 @@ jobs:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           # created by the GH Action automatically
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check the coverage value
+        run: yarn test-coverage
