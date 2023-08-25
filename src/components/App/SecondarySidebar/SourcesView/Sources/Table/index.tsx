@@ -12,7 +12,7 @@ import { deleteRadarData, putRadarData } from '~/network/fetchSourcesData'
 import { useDataStore } from '~/stores/useDataStore'
 import { RadarRequest, Sources } from '~/types'
 import { colors } from '~/utils/colors'
-import { sourcesMapper, TWITTER_LINK } from '../../constants'
+import { TWITTER_LINK, sourcesMapper } from '../../constants'
 
 type Props = {
   data: Sources[] | undefined
@@ -29,7 +29,7 @@ const Table: React.FC<Props> = ({ data, canEdit = false }) => {
       try {
         await putRadarData(id, newData)
 
-        const indexToUpdate = data?.findIndex((i) => i.id === id)
+        const indexToUpdate = data?.findIndex((i) => i.ref_id === id)
         const updatedSources = [...data]
 
         updatedSources[indexToUpdate] = { ...updatedSources[indexToUpdate], source: newData.source }
@@ -50,7 +50,7 @@ const Table: React.FC<Props> = ({ data, canEdit = false }) => {
 
     try {
       await deleteRadarData(id)
-      setSources(data?.filter((i) => i.id !== id))
+      setSources(data?.filter((i) => i.ref_id !== id))
     } catch (error) {
       console.warn(error)
     } finally {
@@ -78,8 +78,8 @@ const Table: React.FC<Props> = ({ data, canEdit = false }) => {
                 condition={canEdit}
                 wrapper={(children) => (
                   <EditableCell
-                    id={i.id}
-                    onSave={(source) => handleSave(i.id, { source, source_type: i.source_type })}
+                    id={i.ref_id}
+                    onSave={(source) => handleSave(i.ref_id, { source, source_type: i.source_type })}
                     value={i.source}
                   >
                     {children}
@@ -107,10 +107,10 @@ const Table: React.FC<Props> = ({ data, canEdit = false }) => {
             {canEdit && (
               <StyledTableCell align="left">
                 <div className="delete-wrapper" id={`delete-${i.source}`}>
-                  {loadingId === i.id ? (
+                  {loadingId === i.ref_id ? (
                     <ClipLoader color={colors.white} />
                   ) : (
-                    <ConfirmPopover message="Are you sure ?" onConfirm={() => handleRemove(i.id)}>
+                    <ConfirmPopover message="Are you sure ?" onConfirm={() => handleRemove(i.ref_id)}>
                       <IconWrapper className="centered">
                         <MdDeleteForever />
                       </IconWrapper>

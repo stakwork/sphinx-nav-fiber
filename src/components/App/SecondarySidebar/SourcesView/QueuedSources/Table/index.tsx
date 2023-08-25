@@ -11,7 +11,7 @@ import { approveRadarData, deleteRadarData } from '~/network/fetchSourcesData'
 import { useDataStore } from '~/stores/useDataStore'
 import { Sources } from '~/types'
 import { colors } from '~/utils/colors'
-import { sourcesMapper, TWITTER_LINK } from '../../constants'
+import { TWITTER_LINK, sourcesMapper } from '../../constants'
 import { Props } from '../../types'
 
 const Table: React.FC<Props> = ({ data }) => {
@@ -28,7 +28,7 @@ const Table: React.FC<Props> = ({ data }) => {
 
         await approveRadarData(id, enable.pubkey)
 
-        setSources(data.filter((i) => i.id !== id))
+        setSources(data.filter((i) => i.ref_id !== id))
       } catch (error) {
         console.warn(error)
       }
@@ -44,7 +44,7 @@ const Table: React.FC<Props> = ({ data }) => {
 
     try {
       await deleteRadarData(id)
-      setSources(data?.filter((i) => i.id !== id))
+      setSources(data?.filter((i) => i.ref_id !== id))
     } catch (error) {
       console.warn(error)
     } finally {
@@ -81,15 +81,15 @@ const Table: React.FC<Props> = ({ data }) => {
               <StyledTableCell className="cell-center">
                 <Flex direction="row" justify="space-between">
                   <div className="approve-wrapper">
-                    <IconWrapper className="centered" onClick={() => handleApprove(i.id)}>
+                    <IconWrapper className="centered" onClick={() => handleApprove(i.ref_id)}>
                       <MdCheckCircle color={colors.primaryGreen} />
                     </IconWrapper>
                   </div>
                   <div className="delete-wrapper">
-                    {loadingId === i.id ? (
+                    {loadingId === i.ref_id ? (
                       <ClipLoader color={colors.white} size={16} />
                     ) : (
-                      <ConfirmPopover message="Are you sure ?" onConfirm={() => handleRemove(i.id)}>
+                      <ConfirmPopover message="Are you sure ?" onConfirm={() => handleRemove(i.ref_id)}>
                         <IconWrapper className="centered">
                           <MdCancel color={colors.primaryRed} />
                         </IconWrapper>
