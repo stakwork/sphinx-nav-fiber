@@ -54,7 +54,7 @@ export const Sentiment = () => {
     <ChartWrapper align="flex-start" direction="column" id="cy-sentiment-chart-wrapper" justify="flex-end">
       <Text className="title">Sentiment chart</Text>
       {isLoading && (
-        <Stack alignItems="center" flexGrow={1} p={4} spacing={2} width="100%">
+        <Stack alignItems="center" component="div" flexGrow={1} p={4} spacing={2} width="100%">
           <PropagateLoader color={colors.white} />
         </Stack>
       )}

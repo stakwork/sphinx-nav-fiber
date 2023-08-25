@@ -1,5 +1,6 @@
+import { IconButton } from '@mui/material'
 import moment from 'moment'
-import { useEffect } from 'react'
+import { FaPause, FaPlay } from 'react-icons/fa'
 import styled from 'styled-components'
 import { Booster } from '~/components/Booster'
 import { Avatar } from '~/components/common/Avatar'
@@ -7,8 +8,8 @@ import { Flex } from '~/components/common/Flex'
 import { FlexboxProps } from '~/components/common/Flex/flexbox'
 import { Text } from '~/components/common/Text'
 import { useDataStore } from '~/stores/useDataStore'
+import { usePlayerStore } from '~/stores/usePlayerStore'
 import { colors } from '~/utils/colors'
-import { videoTimetoSeconds } from '~/utils/videoTimetoSeconds'
 
 type EpisodeTypeImage = {
   [key: string]: string
@@ -61,6 +62,9 @@ const EpisodeWrapper = styled(Flex).attrs({
     margin-right: 0;
     margin-top: 8px;
   }
+  .player-controls {
+    margin-left: 4px;
+  }
 `
 
 type Props = {
@@ -76,20 +80,7 @@ type Props = {
 export const Episode = ({ boostCount, date, description, id, imageUrl, type, onClick }: Props) => {
   const selectedTimestamp = useDataStore((s) => s.selectedTimestamp)
   const isSelected = !!(selectedTimestamp && selectedTimestamp.id === id)
-
-  useEffect(() => {
-    if (!selectedTimestamp) {
-      return
-    }
-
-    const { timestamp } = selectedTimestamp
-
-    const audioElement = document.getElementById(`audio-player`) as HTMLAudioElement
-
-    if (audioElement) {
-      audioElement.currentTime = timestamp ? videoTimetoSeconds(timestamp) : 0
-    }
-  }, [selectedTimestamp])
+  const setIsPlaying = usePlayerStore((s) => s.setIsPlaying)
 
   return (
     <EpisodeWrapper background="body" isSelected={isSelected} onClick={onClick}>
@@ -121,6 +112,16 @@ export const Episode = ({ boostCount, date, description, id, imageUrl, type, onC
             </Text>
           </Flex>
         </Flex>
+        {isSelected && (
+          <Flex align="center" className="player-controls" direction="row" onClick={(e) => e.stopPropagation()}>
+            <IconButton component="button" onClick={() => setIsPlaying(true)} size="medium">
+              <FaPlay size={14} />
+            </IconButton>
+            <IconButton component="button" onClick={() => setIsPlaying(false)} size="medium">
+              <FaPause size={14} />
+            </IconButton>
+          </Flex>
+        )}
       </Flex>
     </EpisodeWrapper>
   )

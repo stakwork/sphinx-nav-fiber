@@ -1,5 +1,5 @@
-import { budgetModal, host, search } from '../../support'
-import { requestAnalysBtn, sentimentChart, sentimentSlider, sentimentTab } from './const'
+import { budgetModal, helperActionsMenu, host, search, siriBtn } from '../../support'
+import { requestAnalysBtn, sentimentChart } from './const'
 
 describe('Search and render / Home interactions', () => {
   beforeEach(() => {
@@ -34,8 +34,12 @@ describe('Search and render / Home interactions', () => {
     cy.get(budgetModal).should('exist').find('button').click()
     cy.wait('@search')
 
-    cy.get(sentimentTab).click({ force: true })
-    cy.get(sentimentSlider).click(2, 20)
+    cy.get(siriBtn).click({ force: true })
+
+    cy.get(helperActionsMenu)
+      .contains(/sentimen/gi)
+      .click()
+
     cy.get(requestAnalysBtn).click()
 
     cy.wait('@sentiments')

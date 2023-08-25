@@ -1,11 +1,7 @@
 import { Vector3 } from 'three'
-import {
-  AWS_IMAGE_BUCKET_URL,
-  CLOUDFRONT_IMAGE_BUCKET_URL,
-  NODE_RELATIVE_HIGHLIGHT_COLORS,
-  isDevelopment,
-  isE2E,
-} from '~/constants'
+
+import { getNodeColorByType } from '~/components/Universe/Graph/constant'
+import { AWS_IMAGE_BUCKET_URL, CLOUDFRONT_IMAGE_BUCKET_URL, isDevelopment, isE2E } from '~/constants'
 import { mock } from '~/mocks/getMockGraphData/mockResponse'
 import { api } from '~/network/api'
 import { useDataStore } from '~/stores/useDataStore'
@@ -59,7 +55,15 @@ export const fetchGraphData = async (search: string) => {
 
 const fetchNodes = async (search: string) => {
   if (!search) {
-    return mock as FetchDataResponse
+    try {
+      const response = await api.get<FetchDataResponse>(`/prediction/content/latest`)
+
+      return response
+    } catch (e) {
+      console.error(e)
+
+      return mock as FetchDataResponse
+    }
   }
 
   if (isDevelopment || isE2E) {

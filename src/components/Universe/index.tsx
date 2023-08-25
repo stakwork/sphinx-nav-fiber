@@ -7,6 +7,7 @@ import { useControls } from 'leva'
 import { BlendFunction, Resolution } from 'postprocessing'
 import { Perf } from 'r3f-perf'
 import { Suspense, memo, useCallback, useMemo } from 'react'
+import { getNodeColorByType } from '~/components/Universe/Graph/constant'
 import { isDevelopment } from '~/constants'
 import { useControlStore } from '~/stores/useControlStore'
 import { useSelectedNode } from '~/stores/useDataStore'
@@ -15,7 +16,6 @@ import { addToGlobalForE2e } from '~/utils/tests'
 import { Controls } from './Controls'
 import { initialCameraPosition } from './Controls/CameraAnimations/constants'
 import { Graph } from './Graph'
-import { getNodeColorByType } from './Graph/Cubes/constants'
 import { Lights } from './Lights'
 import { Overlay } from './Overlay'
 import { outlineEffectColor } from './constants'
@@ -124,7 +124,7 @@ const _Universe = () => {
 
       <Suspense fallback={null}>
         <Canvas camera={cameraProps} id="universe-canvas" onCreated={onCreatedHandler} onWheel={onWheelHandler}>
-          {isDevelopment && <Perf position="top-left" />}
+          {isDevelopment && <Perf position="top-right" />}
 
           <Suspense fallback={<Fallback />}>
             <Preload />

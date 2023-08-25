@@ -1,5 +1,6 @@
 import styled, { css } from 'styled-components'
 import { ColorName, colors } from '~/utils/colors'
+import { media } from '~/utils/media'
 
 const fontSizes: Record<TextKind, number> = {
   bigHeading: 30,
@@ -8,6 +9,21 @@ const fontSizes: Record<TextKind, number> = {
   headingBold: 24,
   hugeHeading: 40,
   hugeHeadingBold: 40,
+  medium: 16,
+  mediumBold: 16,
+  regular: 14,
+  regularBold: 14,
+  tiny: 12,
+  tinyBold: 12,
+}
+
+const fontSizesMobile: Record<TextKind, number> = {
+  bigHeading: 24,
+  bigHeadingBold: 24,
+  heading: 18,
+  headingBold: 18,
+  hugeHeading: 32,
+  hugeHeadingBold: 32,
   medium: 16,
   mediumBold: 16,
   regular: 14,
@@ -46,6 +62,9 @@ const style = css<Props>`
   ${({ kind = 'regular' }) => css`
     font-size: ${fontSizes[kind]}px;
     font-weight: ${fontWeights[kind]};
+    ${media.smallOnly`
+      font-size: ${fontSizesMobile[kind]}px;
+    `}
   `}
 `
 

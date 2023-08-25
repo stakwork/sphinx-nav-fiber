@@ -1,5 +1,6 @@
+import { memo } from 'react'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
-import { TextType } from '../AskQuestion/Text'
+import { TextType } from '../../Helper/AskQuestion/Text'
 import { AudioClip } from '../AudioClip'
 import { Creator } from '../Creator'
 import { Data } from '../Data'
@@ -15,7 +16,8 @@ type Props = {
   isSelectedView?: boolean
 }
 
-export const View = ({ isSelectedView }: Props) => {
+// eslint-disable-next-line no-underscore-dangle
+const _View = ({ isSelectedView }: Props) => {
   const selectedNode = useSelectedNode()
   const showSelectionGraph = useDataStore((s) => s.showSelectionGraph)
 
@@ -46,3 +48,5 @@ export const View = ({ isSelectedView }: Props) => {
     return <Relevance />
   }
 }
+
+export const View = memo(_View)

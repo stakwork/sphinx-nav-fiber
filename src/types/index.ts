@@ -128,7 +128,7 @@ export type Sentiment = {
 export type Sources = {
   source_type: string
   source: string
-  id: string
+  ref_id: string
 }
 
 export type SubmitErrRes = {

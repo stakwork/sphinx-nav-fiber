@@ -27,7 +27,6 @@ type EpisodeProps = {
 }
 
 const EpisodeWrapper = styled(Flex).attrs(() => ({
-  background: 'body',
   direction: 'row',
 }))`
   cursor: pointer;

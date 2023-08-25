@@ -28,7 +28,7 @@ const Table: React.FC<Props> = ({ data }) => {
 
         await approveRadarData(id, enable.pubkey)
 
-        setSources(data.filter((i) => i.id !== id))
+        setSources(data.filter((i) => i.ref_id !== id))
       } catch (error) {
         console.warn(error)
       }
@@ -44,7 +44,7 @@ const Table: React.FC<Props> = ({ data }) => {
 
     try {
       await deleteRadarData(id)
-      setSources(data?.filter((i) => i.id !== id))
+      setSources(data?.filter((i) => i.ref_id !== id))
     } catch (error) {
       console.warn(error)
     } finally {
@@ -55,9 +55,9 @@ const Table: React.FC<Props> = ({ data }) => {
   return !data?.length ? (
     <Text>There is not any results for selected filters</Text>
   ) : (
-    <MaterialTable>
-      <TableHead>
-        <TableRow>
+    <MaterialTable component="table">
+      <TableHead component="thead">
+        <TableRow component="tr">
           <StyledTableCell>Type</StyledTableCell>
           <StyledTableCell>Source</StyledTableCell>
           <StyledTableCell />
@@ -66,7 +66,7 @@ const Table: React.FC<Props> = ({ data }) => {
       {data?.length && (
         <tbody>
           {data?.map((i: Sources) => (
-            <TableRow key={i.source}>
+            <TableRow key={i.source} component="tr">
               <StyledTableCell>{sourcesMapper[i.source_type]}</StyledTableCell>
               <StyledTableCell width="268px">
                 {i.source_type === 'twitter_handle' ? (
@@ -81,15 +81,15 @@ const Table: React.FC<Props> = ({ data }) => {
               <StyledTableCell className="cell-center">
                 <Flex direction="row" justify="space-between">
                   <div className="approve-wrapper">
-                    <IconWrapper className="centered" onClick={() => handleApprove(i.id)}>
+                    <IconWrapper className="centered" onClick={() => handleApprove(i.ref_id)}>
                       <MdCheckCircle color={colors.primaryGreen} />
                     </IconWrapper>
                   </div>
                   <div className="delete-wrapper">
-                    {loadingId === i.id ? (
+                    {loadingId === i.ref_id ? (
                       <ClipLoader color={colors.white} size={16} />
                     ) : (
-                      <ConfirmPopover message="Are you sure ?" onConfirm={() => handleRemove(i.id)}>
+                      <ConfirmPopover message="Are you sure ?" onConfirm={() => handleRemove(i.ref_id)}>
                         <IconWrapper className="centered">
                           <MdCancel color={colors.primaryRed} />
                         </IconWrapper>

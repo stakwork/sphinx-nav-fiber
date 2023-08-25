@@ -7,19 +7,22 @@ import { colors } from '~/utils/colors'
 import { formatDescription } from '~/utils/formatDescription'
 import { TwitData } from './Tweet'
 
-const Wrapper = styled(Flex)`
-  position: absolute;
-  pointer-events: none;
-  background: ${colors.dashboardHeader};
-  box-shadow: 0px 1px 6px rgba(0, 0, 0, 0.1);
-  color: ${colors.primaryText1};
-  z-index: 100;
-  transition: opacity 0.6s;
-
-  top: 20px;
-  right: 20px;
-  width: 300px;
-`
+const Wrapper = styled(Flex)(({ theme }) => ({
+  position: 'absolute',
+  top: '20px',
+  right: '20px',
+  width: '300px',
+  pointerEvents: 'none',
+  background: colors.dashboardHeader,
+  boxShadow: '0px 1px 6px rgba(0, 0, 0, 0.1)',
+  color: colors.primaryText1,
+  zIndex: 100,
+  transition: 'opacity 0.6s',
+  padding: theme.spacing(2, 3),
+  [theme.breakpoints.down('sm')]: {
+    padding: theme.spacing(1, 1.5),
+  },
+}))
 
 const Divider = styled(Flex)`
   width: 22.5%;

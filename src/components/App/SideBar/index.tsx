@@ -1,5 +1,5 @@
 import { Slide } from '@mui/material'
-import { forwardRef, useState } from 'react'
+import { forwardRef } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { MdClose, MdKeyboardDoubleArrowLeft } from 'react-icons/md'
 import styled from 'styled-components'
@@ -10,32 +10,19 @@ import { Loader } from '~/components/common/Loader'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
 import { colors } from '~/utils/colors'
-import { SentimentAnalysis } from '../SecondarySidebar/Sentiment/SentimentAnalysis'
-import { ActionsMenu, TabsVariants } from './ActionsMenu'
-import { AskQuestion } from './AskQuestion'
+
 import { Tab } from './Tab'
-import { TeachMe } from './TeachMe'
 import { View } from './View'
 
 export const MENU_WIDTH = 433
 
 type Props = { onSubmit?: () => void }
 
-type ComponentsMapperType = Record<TabsVariants, JSX.Element>
-
-const ComponentsMapper: ComponentsMapperType = {
-  askQuestion: <AskQuestion />,
-  searchResults: <View />,
-  teachMe: <TeachMe />,
-  sentiment: <SentimentAnalysis />,
-}
-
 // eslint-disable-next-line react/display-name
 const Content = forwardRef<HTMLDivElement, Props>(({ onSubmit }, ref) => {
   const [isLoading] = useDataStore((s) => [s.isFetching])
   const [setSidebarOpen] = useAppStore((s) => [s.setSidebarOpen])
   const { setValue } = useFormContext()
-  const [selectedView, setSelectedView] = useState<TabsVariants>('searchResults')
 
   return (
     <Wrapper ref={ref} id="sidebar-wrapper">
@@ -50,9 +37,7 @@ const Content = forwardRef<HTMLDivElement, Props>(({ onSubmit }, ref) => {
           <MdClose fontSize={20} />
         </CloseButton>
         <CategoryWrapper direction="row">
-          <Flex basis="154px">
-            <CategorySelect />
-          </Flex>
+          <CategorySelect />
         </CategoryWrapper>
       </SearchWrapper>
       <CollapseButton
@@ -63,11 +48,9 @@ const Content = forwardRef<HTMLDivElement, Props>(({ onSubmit }, ref) => {
         <MdKeyboardDoubleArrowLeft fontSize={20} />
       </CollapseButton>
 
-      <ActionsMenu active={selectedView} onChange={setSelectedView} />
-
       <ScrollWrapper>
         <Spacer />
-        {isLoading ? <Loader color="primaryText1" /> : ComponentsMapper[selectedView]}
+        {isLoading ? <Loader color="primaryText1" /> : <View />}
         <Spacer />
       </ScrollWrapper>
     </Wrapper>
@@ -101,10 +84,13 @@ const Wrapper = styled(Flex)(({ theme }) => ({
 const SearchWrapper = styled(Flex).attrs({
   direction: 'row',
   justify: 'center',
-  p: 30,
-})`
-  background: ${colors.dashboardHeader};
-`
+})(({ theme }) => ({
+  background: colors.dashboardHeader,
+  padding: theme.spacing(3.75, 2),
+  [theme.breakpoints.up('sm')]: {
+    padding: theme.spacing(3.75),
+  },
+}))
 
 const CloseButton = styled(Flex).attrs({
   align: 'center',
@@ -151,18 +137,28 @@ const CategoryWrapper = styled(Flex).attrs({
   p: 5,
 })(({ theme }) => ({
   position: 'relative',
+  flex: '1 1 158px',
+  maxWidth: '100%',
+  minWidth: '158px',
+  zIndex: 2,
+  padding: '5px 0 5px 10px',
   [theme.breakpoints.up('sm')]: {
+    padding: '5px',
     position: 'absolute',
     top: '10px',
     left: MENU_WIDTH,
   },
+  '& > div': {
+    display: 'flex',
+    width: '100%',
+  },
 }))
 
-const ScrollWrapper = styled(Flex)`
-  overflow: auto;
-  height: calc(100% - 158px);
-  width: 100%;
-`
+const ScrollWrapper = styled(Flex)(() => ({
+  overflow: 'auto',
+  height: 'calc(100% - 158px)',
+  width: '100%',
+}))
 
 const Spacer = styled.div`
   height: 10px;
