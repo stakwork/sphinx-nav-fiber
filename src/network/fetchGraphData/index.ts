@@ -1,7 +1,13 @@
 import { Vector3 } from 'three'
 
-import { getNodeColorByType } from '~/components/Universe/Graph/constant'
-import { AWS_IMAGE_BUCKET_URL, CLOUDFRONT_IMAGE_BUCKET_URL, isDevelopment, isE2E } from '~/constants'
+// import { getNodeColorByType } from '~/components/Universe/Graph/constant'
+import {
+  NODE_RELATIVE_HIGHLIGHT_COLORS,
+  AWS_IMAGE_BUCKET_URL,
+  CLOUDFRONT_IMAGE_BUCKET_URL,
+  isDevelopment,
+  isE2E,
+} from '~/constants'
 import { mock } from '~/mocks/getMockGraphData/mockResponse'
 import { api } from '~/network/api'
 import { useDataStore } from '~/stores/useDataStore'
