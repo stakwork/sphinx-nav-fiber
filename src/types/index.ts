@@ -73,10 +73,16 @@ export type DataSeriesNode = {
   weight?: number
 }
 
+type Coordinates = {
+  lng: number
+  lat: number
+}
+
 export type NodeExtended = Node & {
   x?: number
   y?: number
   z?: number
+  coordinates?: Coordinates
 }
 
 export type Link<T = string> = {

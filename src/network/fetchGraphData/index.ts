@@ -1,7 +1,13 @@
 import { Vector3 } from 'three'
 
-import { getNodeColorByType } from '~/components/Universe/Graph/constant'
-import { AWS_IMAGE_BUCKET_URL, CLOUDFRONT_IMAGE_BUCKET_URL, isDevelopment, isE2E } from '~/constants'
+// import { getNodeColorByType } from '~/components/Universe/Graph/constant'
+import {
+  NODE_RELATIVE_HIGHLIGHT_COLORS,
+  AWS_IMAGE_BUCKET_URL,
+  CLOUDFRONT_IMAGE_BUCKET_URL,
+  isDevelopment,
+  isE2E,
+} from '~/constants'
 import { mock } from '~/mocks/getMockGraphData/mockResponse'
 import { api } from '~/network/api'
 import { useDataStore } from '~/stores/useDataStore'
@@ -382,7 +388,23 @@ const getGraphData = async (searchterm: string) => {
   }
 }
 
-export const generateLinksFromNodeData = (nodes: NodeExtended[], hideMinorLinksUntilSelected: boolean) => {
+const getSegmentColor = (aType: string, bType: string) => {
+  if (aType === 'topic' || bType === 'topic') {
+    return NODE_RELATIVE_HIGHLIGHT_COLORS.topics.segmentColor
+  }
+
+  if (aType === 'guest' || bType === 'guest') {
+    return NODE_RELATIVE_HIGHLIGHT_COLORS.guests.segmentColor
+  }
+
+  return NODE_RELATIVE_HIGHLIGHT_COLORS.children.segmentColor
+}
+
+export const generateLinksFromNodeData = (
+  nodes: NodeExtended[],
+  childLinksOnlyVisibleOnSelect: boolean,
+  guestLinksOnlyVisibleOnSelect: boolean,
+) => {
   const links: Link[] = []
 
   // do links
@@ -401,8 +423,8 @@ export const generateLinksFromNodeData = (nodes: NodeExtended[], hideMinorLinksU
         const targetPosition = new Vector3(childNode?.x || 0, childNode?.y || 0, childNode?.z || 0)
 
         links.push({
-          onlyVisibleOnSelect: false,
-          color: getNodeColorByType(childNode?.node_type || node.node_type, false) as number,
+          onlyVisibleOnSelect: childLinksOnlyVisibleOnSelect,
+          color: getSegmentColor(node.node_type, childNode?.node_type || ''),
           source: node.ref_id,
           sourceRef: node.ref_id,
           sourcePosition,
@@ -425,8 +447,8 @@ export const generateLinksFromNodeData = (nodes: NodeExtended[], hideMinorLinksU
         const targetPosition = new Vector3(guestNode?.x || 0, guestNode?.y || 0, guestNode?.z || 0)
 
         links.push({
-          onlyVisibleOnSelect: hideMinorLinksUntilSelected,
-          color: getNodeColorByType(guestNode.node_type, false) as number,
+          onlyVisibleOnSelect: guestLinksOnlyVisibleOnSelect,
+          color: getSegmentColor(node.node_type, 'guest'),
           source: node.ref_id,
           sourceRef: node.ref_id,
           sourcePosition,

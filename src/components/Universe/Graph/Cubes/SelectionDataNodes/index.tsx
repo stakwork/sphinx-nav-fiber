@@ -31,7 +31,7 @@ export const SelectionDataNodes = memo(() => {
         return { ...n, x: 0, y: 0, z: 0, ...fixedPosition }
       })
 
-    const links = generateLinksFromNodeData(nodes, false)
+    const links = generateLinksFromNodeData(nodes, false, false)
 
     setSelectionData({ nodes, links })
   }, [data, selectedNode, selectedNodeRelativeIds, setSelectionData])

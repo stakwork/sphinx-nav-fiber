@@ -44,42 +44,46 @@ const PathwayBadge = ({ color, position, relativeIds, userData }: BadgeProps) =>
 
   const score = getPercentageFromWeight(userData.weight)
 
+  const isVisible = true
+
   return (
     <group ref={ref} position={position}>
-      <Html center sprite>
-        <Tag
-          color={color}
-          fontColor={colors.white}
-          fontSize={18}
-          justify="center"
-          onClick={(e) => {
-            e.stopPropagation()
+      {isVisible && (
+        <Html center sprite>
+          <Tag
+            color={color}
+            fontColor={colors.white}
+            fontSize={18}
+            justify="center"
+            onClick={(e) => {
+              e.stopPropagation()
 
-            if (userData) {
-              setSelectedNode(userData)
-            }
-          }}
-          onPointerOut={(e) => {
-            e.stopPropagation()
-            setHoveredNode(null)
-          }}
-          onPointerOver={(e) => {
-            e.stopPropagation()
-            setHoveredNode(userData || null)
-          }}
-          scale={isHovered ? 1.05 : 1}
-          selected={selected}
-          size={56}
-        >
-          {`${score}%`}
-          <BadgeIconWrapper>
-            <Counter color={color}>
-              <MdHub style={{ marginRight: 4 }} />
-              {relativeIds.length}
-            </Counter>
-          </BadgeIconWrapper>
-        </Tag>
-      </Html>
+              if (userData) {
+                setSelectedNode(userData)
+              }
+            }}
+            onPointerOut={(e) => {
+              e.stopPropagation()
+              setHoveredNode(null)
+            }}
+            onPointerOver={(e) => {
+              e.stopPropagation()
+              setHoveredNode(userData || null)
+            }}
+            scale={isHovered ? 1.05 : 1}
+            selected={selected}
+            size={56}
+          >
+            {`${score}%`}
+            <BadgeIconWrapper>
+              <Counter color={color}>
+                <MdHub style={{ marginRight: 4 }} />
+                {relativeIds.length}
+              </Counter>
+            </BadgeIconWrapper>
+          </Tag>
+        </Html>
+      )}
     </group>
   )
 }

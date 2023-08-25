@@ -3,6 +3,7 @@ import { useControls } from 'leva'
 import { useRef } from 'react'
 import { DirectionalLight, PointLight } from 'three'
 import { GRAPH_FOG_COLOR, GRAPH_GROUND_COLOR, GRAPH_LIGHT_INTENSITY } from '~/constants'
+import { useDataStore } from '~/stores/useDataStore'
 import { colors } from '~/utils/colors'
 import { UNIVERSE_SCALE } from '../Graph/constant'
 
@@ -10,6 +11,8 @@ export const Lights = () => {
   const { fogColor } = useControls('universe', {
     fogColor: GRAPH_FOG_COLOR,
   })
+
+  const graphStyle = useDataStore((s) => s.graphStyle)
 
   const pLightRefAmbient = useRef<PointLight | null>(null)
   const cameraLightRef = useRef<PointLight | null>(null)
@@ -43,14 +46,13 @@ export const Lights = () => {
     <>
       {/* static lights */}
       <hemisphereLight args={[colors.white, GRAPH_GROUND_COLOR, GRAPH_LIGHT_INTENSITY]} />
+      {graphStyle !== 'earth' && <fog args={[fogColor, 5, 18000]} attach="fog" />}
       <ambientLight color={colors.white} intensity={1} />
 
       {/* moving lights */}
       <pointLight ref={cameraLightRef} color={colors.white} distance={4000} intensity={5} position={[0, 0, 0]} />
       <directionalLight ref={dLightRef} color={colors.white} intensity={8} position={[UNIVERSE_SCALE, 0, 0]} />
       <pointLight ref={pLightRefAmbient} color={colors.white} distance={4000} intensity={8} position={[0, 0, 0]} />
-
-      <fog args={[fogColor, 5, 18000]} attach="fog" />
     </>
   )
 }

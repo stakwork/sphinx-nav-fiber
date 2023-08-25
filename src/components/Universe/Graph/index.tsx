@@ -4,6 +4,7 @@ import { useGraphData } from '~/components/DataRetriever'
 import { useDataStore } from '~/stores/useDataStore'
 import { GraphData } from '~/types'
 import { Cubes } from './Cubes'
+import { Earth } from './Earth'
 import { GraphLoadingIcon } from './Icons'
 import { Particles } from './Particles'
 import { PathwayLine } from './PathwayLine'
@@ -35,6 +36,7 @@ export const Graph = () => {
   return (
     <>
       <Cubes />
+      <Earth />
 
       <Particles />
 
@@ -42,25 +44,27 @@ export const Graph = () => {
 
       {!showSelectionGraph && <PathwayLine />}
 
-      <Segments
-        /** NOTE: using the key in this way the segments re-mounts
-         *  everytime the data.links count changes
-         * */
-        key={`links-${data.links.length}-${graphStyle}`}
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        fog
-        limit={data.links.length}
-        lineWidth={lineWidth}
-      >
-        {(data.links as unknown as GraphData['links']).map((link, index) => (
-          <Segment
-            // eslint-disable-next-line react/no-array-index-key
-            key={index.toString()}
-            link={link}
-          />
-        ))}
-      </Segments>
+      {graphStyle !== 'earth' && (
+        <Segments
+          /** NOTE: using the key in this way the segments re-mounts
+           *  everytime the data.links count changes
+           * */
+          key={`links-${data.links.length}-${graphStyle}`}
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          fog
+          limit={data.links.length}
+          lineWidth={lineWidth}
+        >
+          {(data.links as unknown as GraphData['links']).map((link, index) => (
+            <Segment
+              // eslint-disable-next-line react/no-array-index-key
+              key={index.toString()}
+              link={link}
+            />
+          ))}
+        </Segments>
+      )}
     </>
   )
 }

@@ -6,6 +6,7 @@ import { Vector3 } from 'three'
 import { playInspectSound } from '~/components/common/Sounds'
 import { useControlStore } from '~/stores/useControlStore'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
+import { getPointAbove } from '~/transformers/earthGraph'
 import { getNearbyNodeIds } from '../constants'
 import { arriveDistance, selectionGraphCameraPosition, selectionGraphDistance, topicArriveDistance } from './constants'
 
@@ -25,6 +26,8 @@ export const useAutoNavigate = (cameraControlsRef: RefObject<CameraControls | nu
   const setNearbyNodeIds = useDataStore((s) => s.setNearbyNodeIds)
   const showSelectionGraph = useDataStore((s) => s.showSelectionGraph)
   const graphData = useDataStore((s) => s.data)
+
+  const graphStyle = useDataStore((s) => s.graphStyle)
 
   const { camera } = useThree()
 
@@ -87,16 +90,23 @@ export const useAutoNavigate = (cameraControlsRef: RefObject<CameraControls | nu
 
   useEffect(() => {
     if (selectedNode) {
-      if (lookAtAnimationTimer) {
-        clearTimeout(lookAtAnimationTimer)
+      if (!showSelectionGraph && graphStyle === 'earth' && cameraControlsRef?.current) {
+        const distanceFromCenter = cameraControlsRef.current.camera.position.distanceTo(new Vector3())
+        const newPosition = getPointAbove(destination, -distanceFromCenter / 2)
+
+        cameraControlsRef.current.setLookAt(newPosition.x, newPosition.y, newPosition.z, 0, 0, 0, true)
+      } else {
+        if (lookAtAnimationTimer) {
+          clearTimeout(lookAtAnimationTimer)
+        }
+
+        lookAtAnimationTimer = setTimeout(() => {
+          setLookAtReached(true)
+          clearTimeout(lookAtAnimationTimer)
+        }, lookAtAnimationTimerLength)
+
+        depart()
       }
-
-      lookAtAnimationTimer = setTimeout(() => {
-        setLookAtReached(true)
-        clearTimeout(lookAtAnimationTimer)
-      }, lookAtAnimationTimerLength)
-
-      depart()
     }
 
     return () => {
