@@ -66,7 +66,6 @@ const CloseButton = styled(Flex)`
 `
 
 const ScrollWrapper = styled(Flex)(() => ({
-  overflow: 'auto',
   height: '100%',
   width: '100%',
 }))

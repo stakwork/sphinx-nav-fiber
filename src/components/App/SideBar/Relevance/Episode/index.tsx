@@ -18,7 +18,7 @@ const EpisodeWrapper = styled(Flex).attrs({
 })<EpisodeWrapperProps>`
   padding: 24px;
   cursor: pointer;
-  border-bottom: 1px solid #101317;
+  border-top: 1px solid #101317;
 
   /*
   ${(props) =>
