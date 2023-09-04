@@ -36,7 +36,7 @@ export const SecondarySideBar = () => {
 }
 
 const Wrapper = styled(Flex)(({ theme }) => ({
-  background: colors.body,
+  background: colors.BG1,
   height: '100vh',
   padding: '16px 20px',
   width: '100%',

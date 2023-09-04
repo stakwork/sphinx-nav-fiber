@@ -1,5 +1,5 @@
-import { MdKeyboardDoubleArrowRight } from 'react-icons/md'
 import styled from 'styled-components'
+import ChevronRightIcon from '~/components/Icons/ChevronRightIcon'
 import { Flex } from '~/components/common/Flex'
 import { useAppStore } from '~/stores/useAppStore'
 import { colors } from '~/utils/colors'
@@ -8,39 +8,42 @@ export const Tab = () => {
   const setSidebarOpen = useAppStore((s) => s.setSidebarOpen)
 
   return (
-    <Wrapper>
-      <ExpandButton
-        onClick={() => {
-          setSidebarOpen(true)
-        }}
-      >
-        <MdKeyboardDoubleArrowRight fontSize={25} />
-      </ExpandButton>
-    </Wrapper>
+    <ExpandButton
+      onClick={() => {
+        setSidebarOpen(true)
+      }}
+    >
+      <ChevronRightIcon />
+    </ExpandButton>
   )
 }
 
 const ExpandButton = styled(Flex).attrs({
   align: 'center',
   justify: 'center',
+  p: 8,
 })(({ theme }) => ({
-  color: colors.white,
+  backgroundColor: colors.BG1_NORMAL,
   cursor: 'pointer',
-  [theme.breakpoints.down('sm')]: {
-    padding: '9px',
+  transitionDuration: '0.2s',
+  position: 'absolute',
+  top: '50%',
+  zIndex: 1,
+  width: '24px',
+  height: '48px',
+  transform: 'translateY(-50%)',
+  borderRadius: '0px 6px 6px 0px',
+  boxShadow: '2px 0px 6px 0px rgba(0, 0, 0, 0.25) inset',
+  color: colors.white,
+
+  [theme.breakpoints.up('sm')]: {
+    left: '64px',
+  },
+  '&:hover': {
+    backgroundColor: colors.BG1_HOVER,
+  },
+  '&:active': {
+    backgroundColor: colors.BG1_PRESS,
+    color: colors.GRAY6,
   },
 }))
-
-const Wrapper = styled(Flex)`
-  background-color: ${colors.dashboardHeader};
-  border-right: 1px solid ${colors.dashboardHeader};
-  border-radius: 0 5px 5px 0;
-  position: absolute;
-  top: 80px;
-  transition: all 0.2s;
-  z-index: 30;
-
-  &:hover {
-    opacity: 0.8;
-  }
-`

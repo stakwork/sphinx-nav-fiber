@@ -11,5 +11,5 @@ export const Avatar = styled.div<Props>`
   background-repeat: no-repeat;
   width: ${({ size = 45 }) => size}px;
   height: ${({ size = 45 }) => size}px;
-  border-radius: 4px;
+  border-radius: 2px;
 `

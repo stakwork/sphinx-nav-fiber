@@ -9,24 +9,30 @@ type Props = {
 
 const Input = styled.input.attrs(() => ({
   autoCorrect: 'off',
+  autoComplete: 'off',
 }))<{ loading?: boolean }>`
   pointer-events: auto;
-  height: 50px;
+  height: 48px;
   padding: 0 20px;
   z-index: 2;
   box-shadow: 0px 1px 6px rgba(0, 0, 0, 0.1);
   width: 100%;
   color: #fff;
-  background-color: ${colors.inputBg1};
   box-shadow: none;
   border: none;
+  border-radius: 200px;
+  background: ${colors.BG2};
 
   &:focus {
-    outline: 1px solid ${colors.lightBlue100};
+    outline: 1px solid ${colors.primaryBlue};
   }
 
-  &:placeholder {
-    color: ${colors.placeholderText};
+  &:hover {
+    background: ${colors.black};
+  }
+
+  &::placeholder {
+    color: ${colors.GRAY7};
   }
 
   ${({ loading }) =>

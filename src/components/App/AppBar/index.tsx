@@ -1,77 +1,58 @@
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
-import { SearchBar } from '~/components/SearchBar'
-import { Stats } from '~/components/Stats'
-import { useAppStore } from '~/stores/useAppStore'
-import { useSelectedNode } from '~/stores/useDataStore'
+import { colors } from '~/utils/colors'
 import { media } from '~/utils/media'
 
-type Props = {
-  onSubmit?: () => void
-}
-
-export const AppBar = ({ onSubmit }: Props) => {
-  const selectedNode = useSelectedNode()
-
-  const [searchTerm, sidebarIsOpen] = useAppStore((s) => [s.currentSearch, s.sidebarIsOpen])
-
-  return !sidebarIsOpen ? (
-    <Header>
-      <TitleWrapper>
-        <Text color="white" kind="bigHeadingBold">
-          Second
-        </Text>
-        <Text color="white" kind="bigHeading">
-          Brain
-        </Text>
-      </TitleWrapper>
-
-      <StatsWrapper>{!selectedNode && !searchTerm && <Stats />}</StatsWrapper>
-
-      <SearchBarWrapper>
-        <SearchBar onSubmit={onSubmit} />
-      </SearchBarWrapper>
-    </Header>
-  ) : null
-}
+export const AppBar = () => (
+  <Header>
+    <TitleWrapper>
+      <Text className="title" color="white">
+        Bitcoin
+      </Text>
+      <Text className="subtitle"> Second Brain</Text>
+    </TitleWrapper>
+  </Header>
+)
 
 const Header = styled(Flex).attrs({
   align: 'center',
   direction: 'row',
   grow: 1,
   justify: 'flex-start',
-  p: 20,
 })`
-  height: 60px;
+  height: 64px;
   position: absolute;
   top: 0px;
-  left: 0px;
+  left: 64px;
   width: 100%;
   transition: opacity 1s;
+  z-index: 99;
+  padding: 20px 23px;
 `
 
 const TitleWrapper = styled.div`
   ${media.smallOnly`
     display: none;
   `}
-`
 
-const StatsWrapper = styled('div')(({ theme }) => ({
-  position: 'absolute',
-  left: '25px',
-  top: '75px',
-  [theme.breakpoints.down('sm')]: {
-    top: '130px',
-  },
-}))
+  .title {
+    color: var(--Primary-Text, #fff);
+    font-family: Barlow;
+    font-size: 22px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 16px; /* 72.727% */
+    letter-spacing: 0.22px;
+  }
 
-const SearchBarWrapper = styled.div`
-  width: 100%;
-  margin-left: 30px;
-  margin-right: 150px;
-
-  ${media.smallOnly`
-    margin: 0 auto;
-  `}
+  .subtitle {
+    color: ${colors.GRAY6};
+    font-family: Barlow;
+    font-size: 22px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 16px;
+    letter-spacing: 0.22px;
+  }
 `
