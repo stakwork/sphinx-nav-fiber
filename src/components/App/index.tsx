@@ -22,12 +22,12 @@ import { E2ETests } from '~/utils/tests'
 import version from '~/utils/versionHelper'
 import { Preloader } from '../Universe/Preloader'
 import { AppBar } from './AppBar'
-import { FooterMenu } from './FooterMenu'
+import { Helper } from './Helper'
+import { MainToolbar } from './MainToolbar'
 import { AppProviders } from './Providers'
 import { SecondarySideBar } from './SecondarySidebar'
 import { SideBar } from './SideBar'
 import { Toasts } from './Toasts'
-import { Helper } from './Helper'
 
 const Wrapper = styled(Flex)`
   height: 100%;
@@ -140,15 +140,15 @@ export const App = () => {
       <Wrapper direction="row">
         <DataRetriever loader={<Preloader />}>
           <FormProvider {...form}>
+            <MainToolbar />
             <SideBar onSubmit={handleSubmit} />
 
             <Universe />
 
             <SecondarySideBar />
 
-            <AppBar onSubmit={handleSubmit} />
+            <AppBar />
 
-            <FooterMenu />
             <Version>v{version}</Version>
           </FormProvider>
         </DataRetriever>

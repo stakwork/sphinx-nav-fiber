@@ -1,17 +1,11 @@
 import { MdClose } from 'react-icons/md'
-import styled, { keyframes } from 'styled-components'
+import styled from 'styled-components'
 import { MENU_WIDTH } from '~/components/App/SideBar'
-import { Button } from '~/components/Button'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { useAppStore } from '~/stores/useAppStore'
 import { NodeExtended } from '~/types'
 import { colors } from '~/utils/colors'
-
-const copiedAnimation = keyframes`
-  0% { opacity: 0; }
-  100% { opacity: 1; }
-`
 
 const copyNodeText = (text: string | undefined) => {
   if (text === undefined) {
@@ -49,8 +43,8 @@ export const Transcript = ({ stateless, node }: TranscriptProps) => {
         {stateless && <Text kind="heading">Transcript</Text>}
 
         {node?.text ? (
-          <CopyButton className="copy-button" kind="small" onPointerDown={() => copyNodeText(node?.text)} type="button">
-            Copy Transcript
+          <CopyButton className="copy-button" onPointerDown={() => copyNodeText(node?.text)}>
+            Copy
           </CopyButton>
         ) : (
           <div />
@@ -74,6 +68,7 @@ export const Transcript = ({ stateless, node }: TranscriptProps) => {
 
 const Wrapper = styled(Flex)`
   display: flex;
+  overflow: scroll;
 `
 
 const CloseButton = styled(Flex).attrs({})`
@@ -84,17 +79,35 @@ const CloseButton = styled(Flex).attrs({})`
   }
 `
 
-const CopyButton = styled(Button)`
-  &.copied::after {
-    content: 'Copied!';
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    background: ${colors.lightGray};
-    border-radius: 4px;
-    padding: 2px 3px;
-    color: ${colors.white};
-    animation: ${copiedAnimation} 0.2s ease-in-out;
+const CopyButton = styled(Flex)`
+  display: inline-flex;
+  padding: 12px 20px;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  border-radius: 200px;
+  background: ${colors.BUTTON1};
+  color: var(--Primary-Text, #fff);
+  text-align: center;
+  font-family: Barlow;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  cursor: pointer;
+
+  & + & {
+    margin-left: 8px;
+  }
+
+  &:hover {
+    background: ${colors.BUTTON1_HOVER};
+    color: ${colors.GRAY3};
+  }
+
+  &:active {
+    background: ${colors.BUTTON1_PRESS};
+    color: ${colors.GRAY6};
   }
 `
 

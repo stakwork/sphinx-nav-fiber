@@ -6,14 +6,12 @@ import { Avatar } from '~/components/common/Avatar'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { setIsTimestampLoaded, useDataStore, useSelectedNode } from '~/stores/useDataStore'
-import { colors } from '~/utils/colors'
 import { videoTimetoSeconds } from '~/utils/videoTimetoSeconds'
 
 export const CREATOR_HEADING_HEIGHT = 240
 
 const Wrapper = styled(Flex)`
   flex-direction: column;
-  background: ${colors.dashboardHeader};
   border-bottom: 1px solid #101317;
   box-shadow: 0px 5px 6px rgba(0, 0, 0, 0.5);
   z-index: 0;

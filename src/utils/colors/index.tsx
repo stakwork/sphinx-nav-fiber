@@ -40,6 +40,7 @@ export const colors = {
   modalWhiteOverlayBg: 'rgba(255, 255, 255, 0.2)',
   placeholderText: 'rgb(85, 97, 113)',
   primaryBlueBorder: 'rgb(80, 120, 242)',
+  primaryBlue: 'rgba(97, 138, 255, 1)',
   primaryButton: 'rgb(130, 180, 255)',
   primaryGreen: 'rgb(73, 201, 152)',
   primaryRed: 'rgb(237, 116, 116)',
@@ -62,6 +63,19 @@ export const colors = {
   white: 'rgb(255, 255, 255)',
   transparentWhite: '#ffffff88',
   transparentBlack: '#000000bb',
+  BG1: 'rgba(35, 37, 47, 1)',
+  BG1_NORMAL: 'rgba(28, 30, 38, 1)',
+  BG1_HOVER: 'rgba(21, 22, 28, 1)',
+  BG1_PRESS: '#0E0F13',
+  BG2: 'rgba(22, 23, 29, 1)',
+  GRAY3: 'rgba(186, 193, 198, 1)',
+  GRAY6: '#909BAA',
+  GRAY7: 'rgba(107, 122, 141, 1)',
+  SECONDARY_BLUE: 'rgba(130, 180, 255, 1)',
+  PRIMARY_BLUE: 'rgba(97, 138, 255, 1)',
+  BUTTON1: 'rgba(48, 51, 66, 1)',
+  BUTTON1_HOVER: 'rgba(44, 47, 60, 1)',
+  BUTTON1_PRESS: 'rgba(41, 44, 56, 1)',
 } as const
 
 export type ColorName = keyof typeof colors

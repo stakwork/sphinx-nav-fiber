@@ -70,7 +70,6 @@ export const Sentiment = () => {
 
 const ChartWrapper = styled(Flex)`
   border-radius: 8px;
-  background: ${colors.dashboardHeader};
   box-shadow: 0px 5px 6px rgb(0 0 0 / 50%);
   padding: 16px;
 
