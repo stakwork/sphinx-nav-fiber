@@ -19,20 +19,7 @@ const EpisodeWrapper = styled(Flex).attrs({
   padding: 24px;
   cursor: pointer;
   border-top: 1px solid #101317;
-
-  /*
-  ${(props) =>
-    props.isSelected &&
-    `
-    background: ${colors.dashboardHeader};
-    border-bottom: 1px solid #101317;
-    box-shadow: 0px 5px 6px rgba(0, 0, 0, 0.5);
-    z-index: 1;
-    opacity: 0.9;
-    position: sticky;
-    top: 0;
-    bottom: 0;
-  `} */
+  background: ${colors.BG1};
 
   .type-image {
     width: 20px;
@@ -54,24 +41,38 @@ type Props = {
   boostCount: number
   date: number
   description: string
+  isSelectedView?: boolean
   id?: string
   imageUrl: string
   type?: string
+  className?: string
   onClick: () => void
 }
 
-export const Episode = ({ boostCount, date, description, id, imageUrl, type, onClick }: Props) => {
+export const Episode = ({
+  boostCount,
+  date,
+  description,
+  id,
+  isSelectedView = false,
+  imageUrl,
+  type,
+  className = 'episode-wrapper',
+  onClick,
+}: Props) => {
   const selectedTimestamp = useDataStore((s) => s.selectedTimestamp)
   const isSelected = !!(selectedTimestamp && selectedTimestamp.id === id)
 
   return (
-    <EpisodeWrapper background="BG1" isSelected={isSelected} onClick={onClick}>
+    <EpisodeWrapper className={className} isSelected={isSelected} onClick={onClick}>
       <Flex direction="row">
-        <Flex align="center" pr={16}>
-          <Avatar src={imageUrl} />
+        {!isSelectedView && (
+          <Flex align="center" pr={16}>
+            <Avatar src={imageUrl} type="video" />
 
-          <Booster count={boostCount} readOnly />
-        </Flex>
+            {false && <Booster count={boostCount} readOnly />}
+          </Flex>
+        )}
 
         <Flex grow={1} shrink={1}>
           <Flex align="center" direction="row" justify="space-between">

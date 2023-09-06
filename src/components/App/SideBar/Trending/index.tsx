@@ -1,25 +1,41 @@
+import { useFormContext } from 'react-hook-form'
 import styled from 'styled-components'
 import SentimentDataIcon from '~/components/Icons/SentimentDataIcon'
 import { Flex } from '~/components/common/Flex'
 import { colors } from '~/utils/colors'
 
-export const Trending = () => (
-  <Wrapper>
-    <div className="heading">
-      <span className="heading__title">Trending Topics</span>
-      <span className="heading__icon">
-        <SentimentDataIcon />
-      </span>
-    </div>
-    <ul className="list">
-      <li className="list-item">#Drivechain</li>
-      <li className="list-item">#Drivechain</li>
-      <li className="list-item">#Drivechain</li>
-      <li className="list-item">#Drivechain</li>
-      <li className="list-item">#Drivechain</li>
-    </ul>
-  </Wrapper>
-)
+const TRENDING_TOPICS = ['Drivechain', 'Ordinals', 'L402', 'Nostr', 'AI']
+
+type Props = {
+  onSubmit?: () => void
+}
+
+export const Trending = ({ onSubmit }: Props) => {
+  const { setValue } = useFormContext()
+
+  const selectTrending = (val: string) => {
+    setValue('search', val)
+    onSubmit?.()
+  }
+
+  return (
+    <Wrapper>
+      <div className="heading">
+        <span className="heading__title">Trending Topics</span>
+        <span className="heading__icon">
+          <SentimentDataIcon />
+        </span>
+      </div>
+      <ul className="list">
+        {TRENDING_TOPICS.map((i) => (
+          <Flex key={i} className="list-item" onClick={() => selectTrending(i)}>
+            #{i}
+          </Flex>
+        ))}
+      </ul>
+    </Wrapper>
+  )
+}
 
 const Wrapper = styled(Flex)`
   .heading {

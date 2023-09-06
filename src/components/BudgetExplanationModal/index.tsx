@@ -53,7 +53,7 @@ export const BudgetExplanationModal = () => {
 
       <Flex px={4} py={32}>
         <Text color="white" kind="regularBold">
-          Each search of the graph costs 10 sats. Please enter a budget to buy an LSAT which will allow you to search up
+          Each search of the graph costs 10 sats. Please enter a budget to buy an L402 which will allow you to search up
           until your budget runs out. You will be able to set a new budget when that happens.
         </Text>
       </Flex>

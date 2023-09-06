@@ -12,10 +12,11 @@ type EpisodeTypeImage = {
 }
 
 const EpisodeTypeImages: EpisodeTypeImage = {
-  podcast: { img: 'podcast.png', label: 'clip' },
-  twitter: { img: 'twitter.png', label: 'twit' },
-  twitter_space: { img: 'twitter.png', label: 'twitter_space' },
-  youtube: { img: 'clip.png', label: 'episode' },
+  podcast: { img: 'badge-audio.svg', label: 'clip' },
+  twitter: { img: 'badge-tweet.svg', label: 'twit' },
+  twitter_space: { img: 'badge-tweet.svg', label: 'twitter_space' },
+  youtube: { img: 'badge-video.svg', label: 'episode' },
+  text: { img: 'badge-text.svg', label: 'episode' },
 }
 
 type Props = {

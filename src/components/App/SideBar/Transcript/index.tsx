@@ -1,8 +1,9 @@
+import { Button } from '@mui/material'
 import { MdClose } from 'react-icons/md'
 import styled from 'styled-components'
-import { MENU_WIDTH } from '~/components/App/SideBar'
+import CopyIcon from '~/components/Icons/CopyIcon'
+import NotesIcon from '~/components/Icons/NotesIcon'
 import { Flex } from '~/components/common/Flex'
-import { Text } from '~/components/common/Text'
 import { useAppStore } from '~/stores/useAppStore'
 import { NodeExtended } from '~/types'
 import { colors } from '~/utils/colors'
@@ -38,14 +39,21 @@ export const Transcript = ({ stateless, node }: TranscriptProps) => {
   }
 
   return (
-    <Wrapper style={{ left: MENU_WIDTH }}>
-      <Flex align="center" direction="row" justify="space-between">
-        {stateless && <Text kind="heading">Transcript</Text>}
+    <Flex grow={1} shrink={1}>
+      <Header>
+        {stateless && (
+          <Heading>
+            <div className="icon">
+              <NotesIcon />
+            </div>
+            <div className="title">Transcript</div>
+          </Heading>
+        )}
 
         {node?.text ? (
-          <CopyButton className="copy-button" onPointerDown={() => copyNodeText(node?.text)}>
+          <Button endIcon={<CopyIcon />} onPointerDown={() => copyNodeText(node?.text)} size="small" variant="outlined">
             Copy
-          </CopyButton>
+          </Button>
         ) : (
           <div />
         )}
@@ -59,16 +67,48 @@ export const Transcript = ({ stateless, node }: TranscriptProps) => {
             <MdClose fontSize={35} />
           </CloseButton>
         )}
-      </Flex>
-
-      <Box>{node?.text ? `"${node?.text}"` : '...'}</Box>
-    </Wrapper>
+      </Header>
+      <ScrollWrapper>
+        <Box>{node?.text ? `"${node?.text}"` : '...'}</Box>
+      </ScrollWrapper>
+    </Flex>
   )
 }
 
-const Wrapper = styled(Flex)`
-  display: flex;
-  overflow: scroll;
+const ScrollWrapper = styled(Flex)(() => ({
+  overflow: 'auto',
+  flex: 1,
+  width: '100%',
+}))
+
+const Heading = styled(Flex).attrs({
+  direction: 'row',
+  align: 'center',
+})`
+  .icon {
+    font-size: 16px;
+    color: ${colors.GRAY3};
+    margin-right: 7px;
+  }
+
+  .title {
+    color: ${colors.white};
+    font-family: Barlow;
+    font-size: 10px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+`
+
+const Header = styled(Flex).attrs({
+  direction: 'row',
+  align: 'center',
+  justify: 'space-between',
+})`
+  margin-bottom: 18px;
 `
 
 const CloseButton = styled(Flex).attrs({})`
@@ -79,43 +119,13 @@ const CloseButton = styled(Flex).attrs({})`
   }
 `
 
-const CopyButton = styled(Flex)`
-  display: inline-flex;
-  padding: 12px 20px;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-  border-radius: 200px;
-  background: ${colors.BUTTON1};
-  color: var(--Primary-Text, #fff);
-  text-align: center;
-  font-family: Barlow;
-  font-size: 12px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: normal;
-  cursor: pointer;
-
-  & + & {
-    margin-left: 8px;
-  }
-
-  &:hover {
-    background: ${colors.BUTTON1_HOVER};
-    color: ${colors.GRAY3};
-  }
-
-  &:active {
-    background: ${colors.BUTTON1_PRESS};
-    color: ${colors.GRAY6};
-  }
-`
-
 const Box = styled(Flex)`
   color: ${colors.white};
-  margin-top: 20px;
+  text-overflow: ellipsis;
+  whitespace: nowrap;
+  font-family: Barlow;
+  font-size: 13px;
+  font-style: normal;
   font-weight: 400;
-  font-size: 16px;
-  line-height: 22px;
-  font-style: italic;
+  line-height: 18px;
 `

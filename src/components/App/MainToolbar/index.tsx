@@ -1,20 +1,16 @@
-import { useCallback } from 'react'
 import styled from 'styled-components'
 import AddContentIcon from '~/components/Icons/AddContentIcon'
 import AddSourceIcon from '~/components/Icons/AddSourceIcon'
 import SentimentDataIcon from '~/components/Icons/SentimentDataIcon'
-import SettingsIcon from '~/components/Icons/SettingsIcon'
 import SourcesTableIcon from '~/components/Icons/SourcesTableIcon'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { SecondarySidebarActiveTab, useAppStore } from '~/stores/useAppStore'
-import { graphStyles, useDataStore } from '~/stores/useDataStore'
 import { AddNodeModalData, useModal } from '~/stores/useModalStore'
 import { colors } from '~/utils/colors'
 
 export const MainToolbar = () => {
   const [setSecondarySidebarActiveTab] = useAppStore((s) => [s.setSecondarySidebarActiveTab])
-  const [graphStyle, setGraphStyle] = useDataStore((s) => [s.graphStyle, s.setGraphStyle])
 
   const { open, setAddNodeModalData } = useModal('addNode')
 
@@ -27,18 +23,8 @@ export const MainToolbar = () => {
     setAddNodeModalData(data)
   }
 
-  const changeGraphType = useCallback(() => {
-    const nextStyleIndex: number = graphStyles.findIndex((f) => f === graphStyle) + 1
-
-    if (graphStyles[nextStyleIndex]) {
-      setGraphStyle(graphStyles[nextStyleIndex])
-    } else {
-      setGraphStyle(graphStyles[0])
-    }
-  }, [graphStyle, setGraphStyle])
-
   return (
-    <FooterAction>
+    <Wrapper>
       <LogoButton onClick={() => handleOpenSidebar('about')}>
         <img alt="Second brain" src="logo.svg" />
       </LogoButton>
@@ -66,17 +52,17 @@ export const MainToolbar = () => {
         </IconWrapper>
         <Text>Sentiment Data</Text>
       </ActionButton>
-      <ActionButton onClick={() => changeGraphType()}>
+      {/* <ActionButton onClick={() => changeGraphType()}>
         <IconWrapper>
           <SettingsIcon />
         </IconWrapper>
         <Text>Change Display</Text>
-      </ActionButton>
-    </FooterAction>
+      </ActionButton> */}
+    </Wrapper>
   )
 }
 
-const FooterAction = styled(Flex).attrs({
+const Wrapper = styled(Flex).attrs({
   align: 'flex-start',
   direction: 'column',
   grow: 1,

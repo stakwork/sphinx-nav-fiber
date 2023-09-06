@@ -1,13 +1,13 @@
 import { memo, useCallback, useEffect } from 'react'
 import styled from 'styled-components'
-import { Actions } from '~/components/App/SideBar/Actions'
 import { AudioPlayer } from '~/components/AudioPlayer'
 import { Avatar } from '~/components/common/Avatar'
 import { Flex } from '~/components/common/Flex'
-import { Text } from '~/components/common/Text'
 import { setIsTimestampLoaded, useSelectedNode } from '~/stores/useDataStore'
 import { usePlayerStore } from '~/stores/usePlayerStore'
+import { formatDescription } from '~/utils/formatDescription'
 import { useIsMatchBreakpoint } from '~/utils/useIsMatchBreakpoint'
+import { Episode } from '../Relevance/Episode'
 import { Transcript } from '../Transcript'
 
 const Wrapper = styled(Flex)`
@@ -19,12 +19,29 @@ const Wrapper = styled(Flex)`
   z-index: 0;
 `
 
+const PlayerWrapper = styled(Flex)`
+  padding: 30px 18px 0;
+`
+
+const TranscriptWrapper = styled(Flex)`
+  padding: 0 18px 18px;
+`
+
+const StyledEpisode = styled(Episode)`
+  & {
+    border-top: none;
+    padding-bottom: 18px;
+  }
+`
+
 // eslint-disable-next-line no-underscore-dangle
 const _AudioClip = () => {
   const selectedNode = useSelectedNode()
   const isMobile = useIsMatchBreakpoint('sm', 'down')
   const isPlay = usePlayerStore((s) => s.isPlaying)
   const setIsPlaying = usePlayerStore((s) => s.setIsPlaying)
+
+  const { image_url: imageUrl, description, date, boost, type, id } = selectedNode || {}
 
   useEffect(
     () => () => {
@@ -46,44 +63,40 @@ const _AudioClip = () => {
   const playHandler = useCallback(() => setIsPlaying(true), [setIsPlaying])
 
   return (
-    <Wrapper p={20}>
-      <Flex direction="row">
-        <Flex pr={24}>
-          <Avatar size={isMobile ? 45 : 80} src={selectedNode?.image_url || 'audio_default.svg'} />
-        </Flex>
-
-        <Flex grow={1} shrink={1}>
-          <Text kind="bigHeading">{selectedNode?.show_title || 'Unknown'}</Text>
-          <Flex pt={10}>
-            <Text color="mainBottomIcons" kind="medium">
-              {selectedNode?.episode_title}
-            </Text>
-          </Flex>
-          <Flex pt={10}>
-            <Text kind="regular">{selectedNode?.timestamp}</Text>
+    <Wrapper>
+      <PlayerWrapper>
+        <Flex direction="row">
+          <Flex direction="row" grow={1} justify="center" shrink={1}>
+            <Avatar size={isMobile ? 45 : 188} src={selectedNode?.image_url || 'audio_default.svg'} type="audio" />
           </Flex>
         </Flex>
-      </Flex>
-
-      <Flex pb={10} pt={10}>
-        <Actions />
-      </Flex>
-
-      <Flex pt={10}>
-        <AudioPlayer
-          mediaUrl={selectedNode?.link || ''}
-          onError={errorHandler}
-          onLoaded={loadedHandler}
-          onPause={pauseHandler}
-          onPlay={playHandler}
-          play={isPlay}
-          timestamp={selectedNode?.timestamp || ''}
-        />
-      </Flex>
-
-      <Flex pt={22}>
+        <Flex pt={10}>
+          <AudioPlayer
+            mediaUrl={selectedNode?.link || ''}
+            onError={errorHandler}
+            onLoaded={loadedHandler}
+            onPause={pauseHandler}
+            onPlay={playHandler}
+            play={isPlay}
+            timestamp={selectedNode?.timestamp || ''}
+          />
+        </Flex>
+      </PlayerWrapper>
+      {/* <Flex grow={1} shrink={1}> */}
+      <StyledEpisode
+        boostCount={boost || 0}
+        date={date || 0}
+        description={formatDescription(description)}
+        id={id}
+        imageUrl={imageUrl || 'audio_default.svg'}
+        isSelectedView
+        onClick={() => null}
+        type={type}
+      />
+      {/* </Flex> */}
+      <TranscriptWrapper grow={1} shrink={1}>
         <Transcript node={selectedNode} stateless />
-      </Flex>
+      </TranscriptWrapper>
     </Wrapper>
   )
 }
