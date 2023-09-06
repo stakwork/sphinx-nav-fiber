@@ -81,7 +81,6 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
             </div>
             <div className="right">
               <ActionButton>Teach me</ActionButton>
-              <ActionButton>Ask Question</ActionButton>
             </div>
           </SearchDetails>
         )}

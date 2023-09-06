@@ -51,16 +51,9 @@ export const Transcript = ({ stateless, node }: TranscriptProps) => {
         )}
 
         {node?.text ? (
-          <>
-            <Button
-              endIcon={<CopyIcon />}
-              onPointerDown={() => copyNodeText(node?.text)}
-              size="small"
-              variant="outlined"
-            >
-              Copy
-            </Button>
-          </>
+          <Button endIcon={<CopyIcon />} onPointerDown={() => copyNodeText(node?.text)} size="small" variant="outlined">
+            Copy
+          </Button>
         ) : (
           <div />
         )}
