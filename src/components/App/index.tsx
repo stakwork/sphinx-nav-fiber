@@ -21,6 +21,7 @@ import { colors } from '~/utils/colors'
 import { E2ETests } from '~/utils/tests'
 import version from '~/utils/versionHelper'
 import { Preloader } from '../Universe/Preloader'
+import { ActionsToolbar } from './ActionsToolbar'
 import { AppBar } from './AppBar'
 import { Helper } from './Helper'
 import { MainToolbar } from './MainToolbar'
@@ -142,14 +143,11 @@ export const App = () => {
           <FormProvider {...form}>
             <MainToolbar />
             <SideBar onSubmit={handleSubmit} />
-
             <Universe />
-
             <SecondarySideBar />
-
             <AppBar />
-
             <Version>v{version}</Version>
+            <ActionsToolbar />
           </FormProvider>
         </DataRetriever>
 

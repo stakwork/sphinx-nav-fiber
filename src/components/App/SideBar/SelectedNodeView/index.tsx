@@ -32,6 +32,8 @@ const _View = () => {
       return <Show />
     case 'clip':
       return <AudioClip />
+    // case 'clip':
+    //   return <YouTube />
     case 'document':
       return <TextType />
     default:

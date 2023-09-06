@@ -32,7 +32,13 @@ type ContentProp = {
 // eslint-disable-next-line react/display-name
 const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen }, ref) => {
   const [isLoading] = useDataStore((s) => [s.isFetching])
-  const [setSidebarOpen, searchTerm] = useAppStore((s) => [s.setSidebarOpen, s.currentSearch])
+
+  const [setSidebarOpen, searchTerm, clearSearch] = useAppStore((s) => [
+    s.setSidebarOpen,
+    s.currentSearch,
+    s.clearSearch,
+  ])
+
   const { setValue } = useFormContext()
   const componentRef = useRef<HTMLDivElement | null>(null)
   const [isScrolled, setIsScrolled] = useState(false)
@@ -61,6 +67,7 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
           <InputButton
             onClick={() => {
               setValue('search', '')
+              clearSearch()
             }}
           >
             {searchTerm ? <ClearIcon /> : <SearchIcon />}
@@ -91,7 +98,7 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
       <ScrollWrapper ref={componentRef}>
         {!searchTerm && (
           <TrendingWrapper>
-            <Trending />
+            <Trending onSubmit={onSubmit} />
           </TrendingWrapper>
         )}
         <Flex>{isLoading ? <Loader color="primaryText1" /> : <LatestView isSearchResult={!!searchTerm} />}</Flex>
