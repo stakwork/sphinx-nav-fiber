@@ -71,6 +71,8 @@ export const Episode = ({
         {!isSelectedView && (
           <Flex align="center" pr={16}>
             <Avatar src={imageUrl} type="video" />
+
+            {false && <Booster count={boostCount} readOnly />}
           </Flex>
         )}
 
