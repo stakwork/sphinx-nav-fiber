@@ -1,20 +1,24 @@
 import { noop } from 'lodash'
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
-import { Text } from '~/components/common/Text'
+import AudioIcon from '~/components/Icons/AudioIcon'
+import NodesIcon from '~/components/Icons/NodesIcon'
+import TwitterIcon from '~/components/Icons/TwitterIcon'
+import VideoIcon from '~/components/Icons/VideoIcon'
 import { api } from '~/network/api'
+import { colors } from '~/utils/colors'
+import EpisodeIcon from '../Icons/EpisodeIcon'
+import { Flex } from '../common/Flex'
 
 type StatResponse = {
-  data: {
-    /* eslint-disable camelcase */
-    num_nodes: number
-    num_episodes: number
-    num_audio: number
-    num_video: number
-    num_contributors: number
-    num_daily: number
-    num_twitter_space: number
-  }
+  /* eslint-disable camelcase */
+  num_nodes: number
+  num_episodes: number
+  num_audio: number
+  num_video: number
+  num_contributors: number
+  num_daily: number
+  num_twitter_space: number
 }
 
 type TStats = {
@@ -33,7 +37,7 @@ export const Stats = () => {
   useEffect(() => {
     const run = async () => {
       try {
-        const { data } = await api.get<StatResponse>('/stats')
+        const data = await api.get<StatResponse>('/stats')
 
         if (data) {
           setStats({
@@ -59,30 +63,78 @@ export const Stats = () => {
   }
 
   return (
-    <div>
-      <StatsText as="div" color="white" kind="regularBold">
-        Nodes: {stats.numNodes}
-      </StatsText>
-
-      <StatsText as="div" color="white" kind="regularBold">
-        Episodes: {stats.numEpisodes}
-      </StatsText>
-
-      <StatsText as="div" color="white" kind="regularBold">
-        Audio Clips: {stats.numAudio}
-      </StatsText>
-
-      <StatsText as="div" color="white" kind="regularBold">
-        Video Clips: {stats.numVideo}
-      </StatsText>
-
-      <StatsText as="div" color="white" kind="regularBold">
-        Twitter Spaces: {stats.numTwitterSpace}
-      </StatsText>
-    </div>
+    <StatisticsWrapper>
+      <Stat>
+        <div className="icon">
+          <NodesIcon />
+        </div>
+        <div className="text">{stats.numNodes}</div>
+      </Stat>
+      <Stat>
+        <div className="icon">
+          <EpisodeIcon />
+        </div>
+        <div className="text">{stats.numEpisodes}</div>
+      </Stat>
+      <Stat>
+        <div className="icon">
+          <AudioIcon />
+        </div>
+        <div className="text">{stats.numAudio}</div>
+      </Stat>
+      <Stat>
+        <div className="icon">
+          <VideoIcon />
+        </div>
+        <div className="text">{stats.numVideo}</div>
+      </Stat>
+      <Stat>
+        <div className="icon">
+          <TwitterIcon />
+        </div>
+        <div className="text">{stats.numTwitterSpace}</div>
+      </Stat>
+    </StatisticsWrapper>
   )
 }
 
-const StatsText = styled(Text)`
-  padding: 5px;
+const StatisticsWrapper = styled(Flex).attrs({
+  align: 'center',
+  direction: 'row',
+  grow: 1,
+  justify: 'flex-start',
+})``
+
+const Stat = styled(Flex).attrs({
+  align: 'center',
+  direction: 'row',
+  justify: 'flex-start',
+})`
+  color: ${colors.white};
+  background: ${colors.BG1};
+  padding: 6px 10px 6px 8px;
+  font-family: Barlow;
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 15px;
+  letter-spacing: 0.78px;
+  margin: 0 8px;
+  border-radius: 200px;
+
+  &:hover {
+    background: ${colors.BUTTON1_PRESS};
+  }
+
+  &:active {
+    background: ${colors.BUTTON1};
+  }
+
+  .icon {
+    margin-right: 8px;
+    font-size: 16px;
+  }
+
+  .text {
+  }
 `

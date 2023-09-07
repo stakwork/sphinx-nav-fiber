@@ -44,6 +44,7 @@ type Props = {
   isSelectedView?: boolean
   id?: string
   imageUrl: string
+  title?: string
   type?: string
   className?: string
   onClick: () => void
@@ -56,6 +57,7 @@ export const Episode = ({
   id,
   isSelectedView = false,
   imageUrl,
+  title,
   type,
   className = 'episode-wrapper',
   onClick,
@@ -82,7 +84,11 @@ export const Episode = ({
           </Flex>
 
           <Description data-testid="episode-description">{description}</Description>
-          <Flex>{Boolean(date) && <AdditionalInfo>{moment.unix(date).format('ll')}</AdditionalInfo>}</Flex>
+          <Flex direction="row" justify="flex-start">
+            {Boolean(date) && <Date>{moment.unix(date).format('ll')}</Date>}
+            {Boolean(title) && <Title>{title}</Title>}
+            {false && <Booster count={boostCount} />}
+          </Flex>
         </Flex>
       </Flex>
     </EpisodeWrapper>
@@ -104,7 +110,7 @@ const Description = styled(Flex)`
   white-space: normal;
 `
 
-const AdditionalInfo = styled(Text)`
+const Date = styled(Text)`
   overflow: hidden;
   color: ${colors.GRAY6};
   text-overflow: ellipsis;
@@ -113,4 +119,26 @@ const AdditionalInfo = styled(Text)`
   font-style: normal;
   font-weight: 400;
   line-height: 18px;
+  margin-right: 8px;
+  flex-shrink: 0;
+`
+
+const Title = styled(Date)`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex-shrink: 1;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  &:before {
+    content: '';
+    display: block;
+    border-radius: 2px;
+    margin-right: 8px;
+    width: 4px;
+    flex-shrink: 0;
+    height: 4px;
+    background: ${colors.GRAY6};
+  }
 `

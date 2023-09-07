@@ -11,5 +11,5 @@ export const ActionsToolbar = () => (
 const Wrapper = styled(Flex)`
   position: absolute;
   right: 20px;
-  bottom: 20px;
+  bottom: 50px;
 `

@@ -10,6 +10,7 @@ import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { colors } from '~/utils/colors'
 
 import clsx from 'clsx'
+import { useGraphData } from '~/components/DataRetriever'
 import ChevronLeftIcon from '~/components/Icons/ChevronLeftIcon'
 import ClearIcon from '~/components/Icons/ClearIcon'
 import SearchIcon from '~/components/Icons/SearchIcon'
@@ -32,6 +33,7 @@ type ContentProp = {
 // eslint-disable-next-line react/display-name
 const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen }, ref) => {
   const [isLoading] = useDataStore((s) => [s.isFetching])
+  const data = useGraphData()
 
   const [setSidebarOpen, searchTerm, clearSearch] = useAppStore((s) => [
     s.setSidebarOpen,
@@ -76,7 +78,7 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
         {searchTerm && (
           <SearchDetails>
             <div className="left">
-              <span className="count">36</span>
+              <span className="count">{data.nodes.length}</span>
               <span className="label"> results</span>
             </div>
             <div className="right">
