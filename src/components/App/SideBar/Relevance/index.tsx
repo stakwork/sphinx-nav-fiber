@@ -64,7 +64,7 @@ export const Relevance = ({ header = null }: Props) => {
         {header}
 
         {currentNodes.map((n, index) => {
-          const { image_url: imageUrl, description, date, boost, type, id } = n || {}
+          const { image_url: imageUrl, description, date, boost, type, id, episode_title: episodeTitle } = n || {}
 
           return (
             <Episode
@@ -76,6 +76,7 @@ export const Relevance = ({ header = null }: Props) => {
               id={id}
               imageUrl={imageUrl || 'audio_default.svg'}
               onClick={() => handleNodeClick(n)}
+              title={episodeTitle}
               type={type}
             />
           )
