@@ -2,9 +2,9 @@ import { Vector3 } from 'three'
 
 // import { getNodeColorByType } from '~/components/Universe/Graph/constant'
 import {
-  NODE_RELATIVE_HIGHLIGHT_COLORS,
   AWS_IMAGE_BUCKET_URL,
   CLOUDFRONT_IMAGE_BUCKET_URL,
+  NODE_RELATIVE_HIGHLIGHT_COLORS,
   isDevelopment,
   isE2E,
 } from '~/constants'
@@ -73,7 +73,7 @@ const fetchNodes = async (search: string) => {
   }
 
   if (isDevelopment || isE2E) {
-    const response = await api.get<FetchDataResponse>(`/searching?word=${search}&free=true`)
+    const response = await api.get<FetchDataResponse>(`/v2/searching?word=${search}&free=true`)
 
     return response
   }
@@ -84,7 +84,7 @@ const fetchNodes = async (search: string) => {
     throw new Error('An error occured calling getLSat')
   }
 
-  return api.get<FetchDataResponse>(`/search?word=${search}`, {
+  return api.get<FetchDataResponse>(`/v2/search?word=${search}`, {
     Authorization: lsatToken,
   })
 }
@@ -273,7 +273,7 @@ const getGraphData = async (searchterm: string) => {
           const imageUrlsMapper: { [key: string]: string } = {
             data_series: 'node_data.webp',
             document: 'document.jpeg',
-            tweet: 'twitter_spaces_img.png',
+            tweet: 'twitter_placeholder.png',
           }
 
           nodes.push({

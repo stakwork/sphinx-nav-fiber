@@ -76,6 +76,8 @@ export const colors = {
   BUTTON1: 'rgba(48, 51, 66, 1)',
   BUTTON1_HOVER: 'rgba(44, 47, 60, 1)',
   BUTTON1_PRESS: 'rgba(41, 44, 56, 1)',
+  PRIMARY_BLUE_BORDER: 'rgba(80, 120, 242, 1)',
+  BLUE_PRESS_STATE: 'rgba(57, 97, 220, 1)',
 } as const
 
 export type ColorName = keyof typeof colors

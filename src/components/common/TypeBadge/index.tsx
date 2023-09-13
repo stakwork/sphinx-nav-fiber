@@ -12,11 +12,12 @@ type EpisodeTypeImage = {
 }
 
 const EpisodeTypeImages: EpisodeTypeImage = {
-  podcast: { img: 'badge-audio.svg', label: 'clip' },
-  twitter: { img: 'badge-tweet.svg', label: 'twit' },
-  twitter_space: { img: 'badge-tweet.svg', label: 'twitter_space' },
-  youtube: { img: 'badge-video.svg', label: 'episode' },
-  text: { img: 'badge-text.svg', label: 'episode' },
+  podcast: { img: 'audio_badge.svg', label: 'clip' },
+  clip: { img: 'audio_badge', label: 'clip' },
+  tweet: { img: 'twitter_badge.svg', label: 'tweet' },
+  twitter_space: { img: 'audio_badge.svg', label: 'twitter_space' },
+  youtube: { img: 'video_badge.svg', label: 'episode' },
+  document: { img: 'notes_badge.svg', label: 'text' },
 }
 
 type Props = {
@@ -25,8 +26,8 @@ type Props = {
 
 export const TypeBadge = ({ type }: Props) => (
   <EpisodeWrapper>
-    <img alt={EpisodeTypeImages[type].label} src={EpisodeTypeImages[type].img} />
-    <div className="label">{EpisodeTypeImages[type].label}</div>
+    <img alt={EpisodeTypeImages[type]?.label || type} src={EpisodeTypeImages[type]?.img || ''} />
+    <div className="label">{EpisodeTypeImages[type]?.label || type}</div>
   </EpisodeWrapper>
 )
 

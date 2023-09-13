@@ -40,10 +40,7 @@ export const Relevance = ({ header = null }: Props) => {
 
   const isMobile = useIsMatchBreakpoint('sm', 'down')
 
-  const currentNodes = useMemo(
-    () => data.nodes.slice(startSlice, endSlice).filter((f) => f.node_type === 'clip'),
-    [data.nodes, endSlice, startSlice],
-  )
+  const currentNodes = useMemo(() => data.nodes.slice(startSlice, endSlice), [data.nodes, endSlice, startSlice])
 
   const handleNodeClick = useCallback(
     (node: NodeExtended) => {
@@ -64,7 +61,16 @@ export const Relevance = ({ header = null }: Props) => {
         {header}
 
         {currentNodes.map((n, index) => {
-          const { image_url: imageUrl, description, date, boost, type, id, episode_title: episodeTitle } = n || {}
+          const {
+            image_url: imageUrl,
+            description,
+            date,
+            boost,
+            type,
+            id,
+            episode_title: episodeTitle,
+            node_type: nodeType,
+          } = n || {}
 
           return (
             <Episode
@@ -77,7 +83,7 @@ export const Relevance = ({ header = null }: Props) => {
               imageUrl={imageUrl || 'audio_default.svg'}
               onClick={() => handleNodeClick(n)}
               title={episodeTitle}
-              type={type}
+              type={type || nodeType}
             />
           )
         })}

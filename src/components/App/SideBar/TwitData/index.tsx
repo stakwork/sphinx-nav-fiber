@@ -1,9 +1,9 @@
+import { useState } from 'react'
+import { ClipLoader } from 'react-spinners'
+import { Tweet } from 'react-twitter-widgets'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { useSelectedNode } from '~/stores/useDataStore'
-import { Tweet } from 'react-twitter-widgets'
-import { ClipLoader } from 'react-spinners'
-import { useState } from 'react'
 import { colors } from '~/utils/colors'
 
 export const TwitData = () => {
@@ -22,7 +22,14 @@ export const TwitData = () => {
           <ClipLoader color={colors.white} />
         </Flex>
       )}
-      {twitId && <Tweet onLoad={() => setLoading(false)} renderError={() => <Error />} tweetId={twitId} />}
+      {twitId && (
+        <Tweet
+          onLoad={() => setLoading(false)}
+          options={{ theme: 'dark' }}
+          renderError={() => <Error />}
+          tweetId={twitId}
+        />
+      )}
     </Flex>
   )
 }
