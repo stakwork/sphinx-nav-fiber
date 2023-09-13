@@ -76,7 +76,7 @@ export const Show = () => {
     <Wrapper p={20}>
       <Flex direction="row">
         <Flex pr={24}>
-          <Avatar size={80} src={selectedNode?.image_url || 'audio_default.svg'} />
+          <Avatar size={80} src={selectedNode?.image_url || 'audio_default.svg'} type="audio" />
         </Flex>
 
         <Flex grow={1} shrink={1}>

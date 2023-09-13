@@ -68,7 +68,7 @@ export const Tooltip = ({ node }: Props) => {
   let imageUrl = node.image_url
 
   if (type === 'twitter_space') {
-    imageUrl = 'twitter_spaces_img.png'
+    imageUrl = 'twitter_placeholder.png'
   }
 
   if (imageUrl == null) {
@@ -96,7 +96,7 @@ export const Tooltip = ({ node }: Props) => {
 
           <Flex direction="row">
             <Flex pr={12}>
-              <Avatar src={imageUrl} />
+              <Avatar src={imageUrl} type="person" />
             </Flex>
 
             <div>
