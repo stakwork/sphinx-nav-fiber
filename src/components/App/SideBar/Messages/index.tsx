@@ -14,7 +14,7 @@ export const Messages = () => {
 
   return (
     <Flex direction="row">
-      <Avatar src={senderPic} type="message" />
+      <Avatar src={senderPic} />
       <MessageWrapper>
         <Flex align="flex-end" className="info" direction="row">
           {senderAlias && <span className="info__name">{senderAlias}</span>}
