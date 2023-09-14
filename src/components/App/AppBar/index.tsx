@@ -35,11 +35,11 @@ export const AppBar = () => {
     <Header>
       <TitleWrapper>
         <>
-          {initialValues.title ? (
+          {initialValues.title && (
             <Text className="title" color="white">
               {initialValues.title}
             </Text>
-          ) : null}
+          )}
         </>
         <Text className="subtitle"> Second Brain</Text>
       </TitleWrapper>
