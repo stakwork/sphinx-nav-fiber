@@ -31,6 +31,7 @@ const StyledEpisode = styled(Episode)`
   & {
     border-top: none;
     padding-bottom: 18px;
+    font-size: 16px;
   }
 `
 

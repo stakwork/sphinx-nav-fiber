@@ -1,22 +1,52 @@
+import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { Stats } from '~/components/Stats'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
+import { TAboutParams, getAboutData } from '~/network/fetchSourcesData'
 import { colors } from '~/utils/colors'
 import { media } from '~/utils/media'
 
-export const AppBar = () => (
-  <Header>
-    <TitleWrapper>
-      <Text className="title" color="white">
-        Bitcoin
-      </Text>
-      <Text className="subtitle"> Second Brain</Text>
-    </TitleWrapper>
+const defaultData = {
+  description: '',
+  mission_statement: '',
+  search_term: '',
+  title: '',
+}
 
-    <Stats />
-  </Header>
-)
+export const AppBar = () => {
+  const [initialValues, setInitialValues] = useState<TAboutParams>(defaultData)
+
+  useEffect(() => {
+    const init = async () => {
+      try {
+        const response = await getAboutData()
+
+        setInitialValues(response)
+      } catch (error) {
+        console.warn(error)
+      }
+    }
+
+    init()
+  }, [])
+
+  return (
+    <Header>
+      <TitleWrapper>
+        <>
+          {initialValues.title && (
+            <Text className="title" color="white">
+              {initialValues.title}
+            </Text>
+          )}
+        </>
+        <Text className="subtitle"> Second Brain</Text>
+      </TitleWrapper>
+      <Stats />
+    </Header>
+  )
+}
 
 const Header = styled(Flex).attrs({
   align: 'center',

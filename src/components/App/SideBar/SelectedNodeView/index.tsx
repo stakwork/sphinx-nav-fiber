@@ -6,6 +6,7 @@ import { Creator } from '../Creator'
 import { Data } from '../Data'
 import { Messages } from '../Messages'
 import { Person } from '../Person'
+import { YouTube } from '../Relevance/YouTube'
 import { Show } from '../Show'
 import { Topic } from '../Topic'
 import { TwitData } from '../TwitData'
@@ -31,9 +32,11 @@ const _View = () => {
     case 'show':
       return <Show />
     case 'clip':
+      if (selectedNode?.type === 'youtube') {
+        return <YouTube />
+      }
+
       return <AudioClip />
-    // case 'clip':
-    //   return <YouTube />
     case 'document':
       return <TextType />
     default:
