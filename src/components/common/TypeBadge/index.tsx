@@ -13,7 +13,7 @@ type EpisodeTypeImage = {
 
 const EpisodeTypeImages: EpisodeTypeImage = {
   podcast: { img: 'audio_badge.svg', label: 'clip' },
-  clip: { img: 'audio_badge', label: 'clip' },
+  clip: { img: 'audio_badge.svg', label: 'clip' },
   tweet: { img: 'twitter_badge.svg', label: 'tweet' },
   twitter_space: { img: 'audio_badge.svg', label: 'twitter_space' },
   youtube: { img: 'video_badge.svg', label: 'episode' },
