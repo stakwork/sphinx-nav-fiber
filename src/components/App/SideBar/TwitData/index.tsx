@@ -9,28 +9,30 @@ export const TwitData = () => {
 
   const twitId: string = selectedNode?.tweet_id || ''
 
-  return selectedNode ? (
-    <Flex direction="column" px={24} py={16}>
-      <Flex align="center" direction="row" justify="flex-start" p={10}>
-        <Text color="primaryText1">{selectedNode?.label}</Text>
-      </Flex>
-      {twitId && (
-        <TweetContainer>
-          <Flex direction="row">
-            <ProfilePicture>
-              <img alt="Profile" src={selectedNode.image_url || 'twitter_placeholder.png'} />
-            </ProfilePicture>
+  return (
+    selectedNode && (
+      <Flex direction="column" px={24} py={16}>
+        <Flex align="center" direction="row" justify="flex-start" p={10}>
+          <Text color="primaryText1">{selectedNode?.label}</Text>
+        </Flex>
+        {twitId && (
+          <TweetContainer>
+            <Flex direction="row">
+              <ProfilePicture>
+                <img alt="Profile" src={selectedNode.image_url || 'twitter_placeholder.png'} />
+              </ProfilePicture>
 
-            <AuthorInfo>
-              <AuthorName>{selectedNode.name}</AuthorName>
-              <TwitterHandle>{selectedNode.twitter_handle || '@unknown_handle'}</TwitterHandle>
-            </AuthorInfo>
-          </Flex>
-          <TweetText>{selectedNode.text}</TweetText>
-        </TweetContainer>
-      )}
-    </Flex>
-  ) : null
+              <AuthorInfo>
+                <AuthorName>{selectedNode.name}</AuthorName>
+                <TwitterHandle>{selectedNode.twitter_handle || '@unknown_handle'}</TwitterHandle>
+              </AuthorInfo>
+            </Flex>
+            <TweetText>{selectedNode.text}</TweetText>
+          </TweetContainer>
+        )}
+      </Flex>
+    )
+  )
 }
 
 const TweetContainer = styled.div`
