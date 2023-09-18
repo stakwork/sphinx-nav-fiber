@@ -5,8 +5,8 @@ import { Flex } from '~/components/common/Flex'
 import { useSelectedNode } from '~/stores/useDataStore'
 import { formatDescription } from '~/utils/formatDescription'
 import { videoTimetoSeconds } from '~/utils/videoTimetoSeconds'
-import { Transcript } from '../../Transcript'
-import { Episode } from '../Episode'
+import { Episode } from '../Relevance/Episode'
+import { Transcript } from '../Transcript'
 
 export const YouTube = () => {
   const selectedNode = useSelectedNode()

@@ -1,12 +1,12 @@
-import React, { useState, FC } from 'react'
+import { FC, useState } from 'react'
+import { FaCheck } from 'react-icons/fa'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { colors } from '~/utils/colors'
-import { requiredRule } from '../index'
 import { TagInput } from '../TagInput'
 import { TextArea } from '../TextArea'
 import { TextInput } from '../TextInput'
-import { FaCheck } from 'react-icons/fa'
+import { requiredRule } from '../index'
 
 type Props = {
   startTime?: string

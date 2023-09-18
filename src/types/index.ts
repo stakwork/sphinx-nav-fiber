@@ -52,6 +52,7 @@ export type Node = {
   weight?: number
   tweet_id?: string
   twitter_handle?: string
+  profile_picture?: string
   verified?: boolean
   unique_id?: string
 }

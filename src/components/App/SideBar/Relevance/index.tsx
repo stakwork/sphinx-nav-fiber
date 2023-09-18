@@ -1,8 +1,9 @@
+import { Button } from '@mui/material'
 import { ReactNode, useCallback, useMemo, useRef, useState } from 'react'
+import styled from 'styled-components'
 import { useGraphData } from '~/components/DataRetriever'
 import { ScrollView } from '~/components/ScrollView'
 import { Flex } from '~/components/common/Flex'
-import { Pill } from '~/components/common/Pill'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
 import { NodeExtended } from '~/types'
@@ -36,11 +37,10 @@ export const Relevance = ({ header = null }: Props) => {
   const endSlice = startSlice + pageSize
 
   const hasNext = data.nodes.length - 1 > endSlice
-  const hasPrevious = startSlice > 0
 
   const isMobile = useIsMatchBreakpoint('sm', 'down')
 
-  const currentNodes = useMemo(() => data.nodes.slice(startSlice, endSlice), [data.nodes, endSlice, startSlice])
+  const currentNodes = useMemo(() => data.nodes.slice(0, endSlice), [data.nodes, endSlice])
 
   const handleNodeClick = useCallback(
     (node: NodeExtended) => {
@@ -70,6 +70,11 @@ export const Relevance = ({ header = null }: Props) => {
             id,
             episode_title: episodeTitle,
             node_type: nodeType,
+            text,
+            name,
+            profile_picture: profilePicture,
+            verified = false,
+            twitter_handle: twitterHandle,
           } = n || {}
 
           return (
@@ -81,26 +86,20 @@ export const Relevance = ({ header = null }: Props) => {
               description={formatDescription(description)}
               id={id}
               imageUrl={imageUrl || 'audio_default.svg'}
+              name={name || ''}
               onClick={() => handleNodeClick(n)}
+              profilePicture={profilePicture}
+              text={text || ''}
               title={episodeTitle}
+              twitterHandle={twitterHandle}
               type={type || nodeType}
+              verified={verified}
             />
           )
         })}
 
-        <Flex direction="row" justify="space-between" p={20}>
-          <Pill
-            disabled={!hasPrevious}
-            onClick={() => {
-              if (hasPrevious) {
-                setCurrentPage(currentPage - 1)
-                scrollViewRef.current?.scrollTo(0, 0)
-              }
-            }}
-          >
-            Previous
-          </Pill>
-          <Pill
+        <LoadMoreWrapper align="center" background="BG1" direction="row" justify="center">
+          <Button
             disabled={!hasNext}
             onClick={() => {
               if (hasNext) {
@@ -108,11 +107,16 @@ export const Relevance = ({ header = null }: Props) => {
                 scrollViewRef.current?.scrollTo(0, 0)
               }
             }}
+            size="medium"
           >
-            Next
-          </Pill>
-        </Flex>
+            Load More
+          </Button>
+        </LoadMoreWrapper>
       </ScrollView>
     </>
   )
 }
+
+const LoadMoreWrapper = styled(Flex)`
+  flex: 0 0 86px;
+`

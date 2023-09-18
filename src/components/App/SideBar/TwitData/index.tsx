@@ -19,7 +19,7 @@ export const TwitData = () => {
           <TweetContainer>
             <Flex direction="row">
               <ProfilePicture>
-                <img alt="Profile" src={selectedNode.image_url || 'twitter_placeholder.png'} />
+                <img alt="Profile" src={selectedNode.profile_picture || 'twitter_placeholder.png'} />
               </ProfilePicture>
 
               <AuthorInfo>
