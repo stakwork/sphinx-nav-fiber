@@ -1,9 +1,10 @@
 import styled from 'styled-components'
 
 type Props = {
-  size?: 45 | 80 | 130 | 188
+  size?: 45 | 80 | 130 | 188 | 64 | 27
   src: string
   type: string
+  rounded?: boolean
 }
 
 type TTypeMapper = {
@@ -13,7 +14,10 @@ type TTypeMapper = {
 const TypesMapper: TTypeMapper = {
   youtube: 'video',
   podcast: 'audio',
+  clip: 'audio',
   tweet: 'tweet',
+  person: 'person',
+  twitter_space: 'audio',
 }
 
 export const Avatar = styled.div<Props>`
@@ -22,5 +26,5 @@ export const Avatar = styled.div<Props>`
   background-repeat: no-repeat;
   width: ${({ size = 45 }) => size}px;
   height: ${({ size = 45 }) => size}px;
-  border-radius: 2px;
+  border-radius: ${({ rounded }) => (rounded ? '50%' : '2px')};
 `

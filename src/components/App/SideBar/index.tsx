@@ -1,20 +1,21 @@
-import { Slide } from '@mui/material'
+import { Button, Slide } from '@mui/material'
 import { forwardRef, useEffect, useRef, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import styled from 'styled-components'
 import { SearchBar } from '~/components/SearchBar'
 import { Flex } from '~/components/common/Flex'
-import { Loader } from '~/components/common/Loader'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { colors } from '~/utils/colors'
 
 import clsx from 'clsx'
+import { ClipLoader } from 'react-spinners'
 import { useGraphData } from '~/components/DataRetriever'
 import ChevronLeftIcon from '~/components/Icons/ChevronLeftIcon'
 import ClearIcon from '~/components/Icons/ClearIcon'
 import SearchIcon from '~/components/Icons/SearchIcon'
 import { LatestView } from './Latest'
+import { EpisodeSkeleton } from './Relevance/EpisodeSkeleton'
 import { SideBarSubView } from './SidebarSubView'
 import { Tab } from './Tab'
 import { Trending } from './Trending'
@@ -65,14 +66,17 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
       <SearchWrapper className={clsx({ 'has-shadow': isScrolled })}>
         <Search>
           <SearchBar onSubmit={onSubmit} />
-
           <InputButton
             onClick={() => {
               setValue('search', '')
               clearSearch()
             }}
           >
-            {searchTerm ? <ClearIcon /> : <SearchIcon />}
+            {!isLoading ? (
+              <>{searchTerm ? <ClearIcon /> : <SearchIcon />}</>
+            ) : (
+              <ClipLoader color={colors.SECONDARY_BLUE} size="20" />
+            )}
           </InputButton>
         </Search>
         {searchTerm && (
@@ -82,7 +86,7 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
               <span className="label"> results</span>
             </div>
             <div className="right">
-              <ActionButton>Teach me</ActionButton>
+              <Button>Teach Me</Button>
             </div>
           </SearchDetails>
         )}
@@ -102,7 +106,7 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
             <Trending onSubmit={onSubmit} />
           </TrendingWrapper>
         )}
-        <Flex>{isLoading ? <Loader color="primaryText1" /> : <LatestView isSearchResult={!!searchTerm} />}</Flex>
+        <Flex>{isLoading ? <EpisodeSkeleton /> : <LatestView isSearchResult={!!searchTerm} />}</Flex>
       </ScrollWrapper>
     </Wrapper>
   )
@@ -182,38 +186,6 @@ const SearchDetails = styled(Flex).attrs({
   }
 `
 
-const ActionButton = styled(Flex)`
-  display: inline-flex;
-  padding: 12px 20px;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-  border-radius: 200px;
-  background: ${colors.BUTTON1};
-  color: var(--Primary-Text, #fff);
-  text-align: center;
-  font-family: Barlow;
-  font-size: 12px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: normal;
-  cursor: pointer;
-
-  & + & {
-    margin-left: 8px;
-  }
-
-  &:hover {
-    background: ${colors.BUTTON1_HOVER};
-    color: ${colors.GRAY3};
-  }
-
-  &:active {
-    background: ${colors.BUTTON1_PRESS};
-    color: ${colors.GRAY6};
-  }
-`
-
 const InputButton = styled(Flex).attrs({
   align: 'center',
   justify: 'center',
@@ -268,7 +240,7 @@ const CollapseButton = styled(Flex).attrs({
 
 const ScrollWrapper = styled(Flex)(() => ({
   overflow: 'auto',
-  height: 'calc(100% - 158px)',
+  flex: 1,
   width: '100%',
 }))
 

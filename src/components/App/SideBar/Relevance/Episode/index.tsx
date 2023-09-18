@@ -8,6 +8,8 @@ import { Text } from '~/components/common/Text'
 import { TypeBadge } from '~/components/common/TypeBadge'
 import { useDataStore } from '~/stores/useDataStore'
 import { colors } from '~/utils/colors'
+import { TypePerson } from './TypePerson'
+import { TypeTweet } from './TypeTweet'
 
 type EpisodeWrapperProps = FlexboxProps & {
   isSelected?: boolean
@@ -45,7 +47,12 @@ type Props = {
   id?: string
   imageUrl: string
   title?: string
+  text?: string
   type?: string
+  name?: string
+  verified?: boolean
+  twitterHandle?: string
+  profilePicture?: string
   className?: string
   onClick: () => void
 }
@@ -59,6 +66,11 @@ export const Episode = ({
   imageUrl,
   title,
   type,
+  text,
+  name,
+  profilePicture,
+  verified = false,
+  twitterHandle,
   className = 'episode-wrapper',
   onClick,
 }: Props) => {
@@ -67,35 +79,50 @@ export const Episode = ({
 
   return (
     <EpisodeWrapper className={className} isSelected={isSelected} onClick={onClick}>
-      <Flex direction="row">
-        {!isSelectedView && (
-          <Flex align="center" pr={16}>
-            <Avatar src={imageUrl} type={type || ''} />
+      {type !== 'tweet' && type !== 'person' && type !== 'guest' && (
+        <Flex direction="row">
+          {!isSelectedView && (
+            <Flex align="center" pr={16}>
+              <Avatar src={imageUrl} type={type || ''} />
 
-            {false && <Booster count={boostCount} readOnly />}
-          </Flex>
-        )}
+              {false && <Booster count={boostCount} readOnly />}
+            </Flex>
+          )}
 
-        <Flex grow={1} shrink={1}>
-          <Flex align="center" direction="row" justify="space-between">
-            <Flex align="center" direction="row">
-              {type && <TypeBadge type={type} />}
+          <Flex grow={1} shrink={1}>
+            <Flex align="center" direction="row" justify="space-between">
+              <Flex align="center" direction="row">
+                {type && <TypeBadge type={type} />}
+              </Flex>
+            </Flex>
+
+            <Description data-testid="episode-description">{description}</Description>
+            <Flex direction="row" justify="flex-start">
+              {Boolean(date) && <Date>{moment.unix(date).format('ll')}</Date>}
+              {Boolean(title) && <Title>{title}</Title>}
+              {false && <Booster count={boostCount} />}
             </Flex>
           </Flex>
-
-          <Description data-testid="episode-description">{description}</Description>
-          <Flex direction="row" justify="flex-start">
-            {Boolean(date) && <Date>{moment.unix(date).format('ll')}</Date>}
-            {Boolean(title) && <Title>{title}</Title>}
-            {false && <Booster count={boostCount} />}
-          </Flex>
         </Flex>
-      </Flex>
+      )}
+      {['person', 'guest'].includes(type as string) && (
+        <TypePerson imageUrl={imageUrl} name={name || ''} title={title || ''} />
+      )}
+      {type === 'tweet' && (
+        <TypeTweet
+          date={date}
+          imageUrl={profilePicture}
+          name={name || ''}
+          text={text || ''}
+          twitterHandle={twitterHandle}
+          verified={verified}
+        />
+      )}
     </EpisodeWrapper>
   )
 }
 
-const Description = styled(Flex)`
+export const Description = styled(Flex)`
   font-family: Barlow;
   font-size: 13px;
   font-style: normal;
@@ -110,7 +137,7 @@ const Description = styled(Flex)`
   white-space: normal;
 `
 
-const Date = styled(Text)`
+export const Date = styled(Text)`
   overflow: hidden;
   color: ${colors.GRAY6};
   text-overflow: ellipsis;
@@ -123,7 +150,7 @@ const Date = styled(Text)`
   flex-shrink: 0;
 `
 
-const Title = styled(Date)`
+export const Title = styled(Date)`
   display: flex;
   flex-direction: row;
   align-items: center;

@@ -6,11 +6,11 @@ import { Creator } from '../Creator'
 import { Data } from '../Data'
 import { Messages } from '../Messages'
 import { Person } from '../Person'
-import { YouTube } from '../Relevance/YouTube'
 import { Show } from '../Show'
 import { Topic } from '../Topic'
 import { TwitData } from '../TwitData'
 import { Twitter } from '../Twitter'
+import { YouTube } from '../YouTube'
 
 // eslint-disable-next-line no-underscore-dangle
 const _View = () => {

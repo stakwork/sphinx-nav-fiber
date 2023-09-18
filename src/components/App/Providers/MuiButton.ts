@@ -19,7 +19,7 @@ export const MuiButton = {
       fontSize: '12px',
       fontStyle: 'normal',
       fontWeight: '400',
-      lineHeight: 'normal',
+      lineHeight: '8px',
       cursor: 'pointer',
       columnGap: '6px',
       '&:hover': {
