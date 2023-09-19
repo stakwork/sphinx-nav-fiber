@@ -1,23 +1,10 @@
 /* eslint-disable */
-import React from 'react';
+import React from 'react'
 
 const CommunitiesIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
-  <svg
-    width="1em"
-    height="1em"
-    viewBox="0 0 20 20"
-    fill="currentColor"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width="1em" height="1em" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
     <g id="communities">
-      <mask
-        id="mask0_1551_39"
-        maskUnits="userSpaceOnUse"
-        x="0"
-        y="0"
-        width="20"
-        height="20"
-      >
+      <mask id="mask0_1551_39" maskUnits="userSpaceOnUse" x="0" y="0" width="20" height="20">
         <rect id="Bounding box" width="1em" height="1em" fill="currentColor" />
       </mask>
       <g mask="url(#mask0_1551_39)">
@@ -29,6 +16,6 @@ const CommunitiesIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
       </g>
     </g>
   </svg>
-);
+)
 
-export default CommunitiesIcon;
+export default CommunitiesIcon
