@@ -25,6 +25,7 @@ export const appTheme = createTheme({
   typography: {
     button: {
       textTransform: 'none',
+      whiteSpace: 'nowrap',
     },
   },
   breakpoints: {

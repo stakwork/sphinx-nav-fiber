@@ -61,7 +61,7 @@ const Table: React.FC<Props> = ({ data }) => {
     </Flex>
   ) : (
     <MaterialTable component="table">
-      <StyledTableHead component="thead">
+      <StyledTableHead>
         <TableRow component="tr">
           <StyledTableCell className="empty" />
           <StyledTableCell>Type</StyledTableCell>
@@ -73,7 +73,7 @@ const Table: React.FC<Props> = ({ data }) => {
       {data?.length && (
         <tbody>
           {data?.map((i: Sources) => (
-            <StyledTableRow key={i.source} component="tr">
+            <StyledTableRow key={i.source}>
               <StyledTableCell className="empty" />
               <StyledTableCell>{sourcesMapper[i.source_type]}</StyledTableCell>
               <StyledTableCell width="268px">

@@ -14,7 +14,7 @@ type ModalStore = {
 
 const defaultData = {
   addNodeModalData: null,
-  currentModals: { addNode: false, budgetExplanation: false },
+  currentModals: { addNode: false, budgetExplanation: false, sourcesTable: false },
 }
 
 export const useModalStore = create<ModalStore>((set) => ({

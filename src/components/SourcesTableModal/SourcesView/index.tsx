@@ -45,13 +45,7 @@ export const SourcesView = () => {
 
   return (
     <Wrapper direction="column">
-      <StyledTabs
-        aria-label="basic tabs example"
-        component="div"
-        onChange={handleChange}
-        TabScrollButton={false}
-        value={value}
-      >
+      <StyledTabs aria-label="basic tabs example" onChange={handleChange} value={value}>
         <StyledTab disableRipple label="Sources table" {...a11yProps(0)} />
         <StyledTab color={colors.white} disableRipple label="Queued sources" {...a11yProps(1)} />
       </StyledTabs>

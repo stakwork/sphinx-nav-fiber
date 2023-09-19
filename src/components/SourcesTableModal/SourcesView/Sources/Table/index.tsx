@@ -78,7 +78,7 @@ const Table: React.FC<Props> = ({ data, canEdit = false }) => {
       </StyledTableHead>
       <TableBody component="tbody">
         {data?.map((i: Sources) => (
-          <StyledTableRow key={i.source} component="tr">
+          <StyledTableRow key={i.source}>
             <StyledTableCell className="empty" />
             <StyledTableCell align="left">{sourcesMapper[i.source_type]}</StyledTableCell>
             <StyledTableCell align="left">
