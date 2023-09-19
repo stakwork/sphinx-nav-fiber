@@ -9,6 +9,8 @@ jobs:
     name: build
     runs-on: 
       - ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -27,3 +29,8 @@ jobs:
           git add ./build -f
           git commit -m "ci: automatic build fixes" || echo -n
           git push --set-upstream origin master
+      - name: Create New Release
+        uses: rymndhng/release-on-push-action@master
+        with:
+          bump_version_scheme: minor
+          use_github_release_notes: true
