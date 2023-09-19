@@ -21,6 +21,7 @@ jobs:
           cache: 'yarn'
       - name: Prettier, Build and Version
         run: |
+          yarn install
           yarn run format
           git add ./src
           git commit -m "ci: prettier format"
