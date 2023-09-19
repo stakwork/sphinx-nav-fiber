@@ -1,6 +1,6 @@
 {
   "name": "sphinx-nav",
-  "version": "0.1.61",
+  "version": "0.1.62",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.11.1",
