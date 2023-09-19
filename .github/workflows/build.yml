@@ -9,6 +9,8 @@ jobs:
     name: build
     runs-on: 
       - ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }} 
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -17,8 +19,12 @@ jobs:
         with:
           node-version-file: '.nvmrc'
           cache: 'yarn'
-      - name: Build and Version
+      - name: Prettier, Build and Version
         run: |
+          yarn run format
+          git add ./src
+          git commit -m "ci: prettier format"
+          git push --set-upstream origin master
           git config user.name 'Github Actions'
           git config user.email github-actions@github.com
           npm version patch -m "ci: bump version to %s"
@@ -27,3 +33,8 @@ jobs:
           git add ./build -f
           git commit -m "ci: automatic build fixes" || echo -n
           git push --set-upstream origin master
+      - name: Create New Release
+        uses: rymndhng/release-on-push-action@master
+        with:
+          bump_version_scheme: minor
+          use_github_release_notes: true
