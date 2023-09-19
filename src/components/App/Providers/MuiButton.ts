@@ -43,6 +43,7 @@ export const MuiButton = {
       '&.MuiButton-sizeSmall': {
         padding: '7px 16px',
         fontSize: '11px',
+        lineHeight: '14px',
         fontWeight: 500,
       },
       '&.MuiButton-sizeLarge': {

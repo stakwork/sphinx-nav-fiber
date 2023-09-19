@@ -4,9 +4,9 @@ import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { SecondarySidebarActiveTab, useAppStore } from '~/stores/useAppStore'
 import { colors } from '~/utils/colors'
+import { SourcesView } from '../../SourcesTableModal/SourcesView'
 import { About } from './About'
 import { Sentiment } from './Sentiment'
-import { SourcesView } from './SourcesView'
 
 export const MENU_WIDTH = 600
 

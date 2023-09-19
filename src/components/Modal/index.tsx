@@ -3,6 +3,7 @@ import styled, { css, keyframes } from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { AvailableModals, useModal } from '~/stores/useModalStore'
 import { ColorName, colors } from '~/utils/colors'
+import ClearIcon from '../Icons/ClearIcon'
 
 const scaleAnimation = keyframes`
   0% {
@@ -23,7 +24,7 @@ const getModalKindStyles = ({ kind = 'regular' }: Pick<Props, 'kind'>) => {
       `
     case 'large':
       return css`
-        width: 720px;
+        width: 709px;
       `
     default:
       return css`
@@ -39,6 +40,7 @@ const ModalContainer = styled(Flex)<Pick<Props, 'kind'>>`
   animation: ${scaleAnimation} 0.2s ease-in-out;
   position: relative;
   max-width: 100%;
+  overflow: hidden;
   ${getModalKindStyles}
 `
 
@@ -68,6 +70,16 @@ const Bg = styled(Flex)<{ hideBg?: boolean }>`
     `}
 `
 
+const CloseButton = styled(Flex)`
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  font-size: 20px;
+  color: ${colors.GRAY6};
+  cursor: pointer;
+  z-index: 1;
+`
+
 type ModalKind = 'small' | 'regular' | 'large'
 
 type Props = PropsWithChildren<{
@@ -76,9 +88,20 @@ type Props = PropsWithChildren<{
   hideBg?: boolean
   kind?: ModalKind
   preventOutsideClose?: boolean
+  noWrap?: boolean
+  onClose?: () => void
 }>
 
-export const BaseModal = ({ background = 'modalBg', children, id, hideBg, kind, preventOutsideClose }: Props) => {
+export const BaseModal = ({
+  background = 'modalBg',
+  children,
+  id,
+  hideBg,
+  kind,
+  preventOutsideClose,
+  noWrap = false,
+  onClose,
+}: Props) => {
   const { visible, close } = useModal(id)
 
   if (!visible) {
@@ -107,9 +130,14 @@ export const BaseModal = ({ background = 'modalBg', children, id, hideBg, kind, 
           onClick={(e) => {
             e.stopPropagation()
           }}
-          px={20}
-          py={20}
+          px={noWrap ? 0 : 20}
+          py={noWrap ? 0 : 20}
         >
+          {onClose && (
+            <CloseButton onClick={onClose}>
+              <ClearIcon />
+            </CloseButton>
+          )}
           {children}
         </ModalContainer>
       </Bg>
