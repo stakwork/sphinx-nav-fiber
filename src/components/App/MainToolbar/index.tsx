@@ -13,12 +13,13 @@ export const MainToolbar = () => {
   const [setSecondarySidebarActiveTab] = useAppStore((s) => [s.setSecondarySidebarActiveTab])
 
   const { open, setAddNodeModalData } = useModal('addNode')
+  const { open: openSourcesModal } = useModal('sourcesTable')
 
   const handleOpenSidebar = (tab: SecondarySidebarActiveTab) => {
     setSecondarySidebarActiveTab(tab)
   }
 
-  const handleOpenModal = (data: AddNodeModalData) => {
+  const handleOpenAddingModal = (data: AddNodeModalData) => {
     open()
     setAddNodeModalData(data)
   }
@@ -28,19 +29,19 @@ export const MainToolbar = () => {
       <LogoButton onClick={() => handleOpenSidebar('about')}>
         <img alt="Second brain" src="logo.svg" />
       </LogoButton>
-      <ActionButton onClick={() => handleOpenModal('content')}>
+      <ActionButton onClick={() => handleOpenAddingModal('content')}>
         <IconWrapper>
           <AddContentIcon />
         </IconWrapper>
         <Text>Add Content</Text>
       </ActionButton>
-      <ActionButton onClick={() => handleOpenModal('source')}>
+      <ActionButton onClick={() => handleOpenAddingModal('source')}>
         <IconWrapper>
           <AddSourceIcon />
         </IconWrapper>
         <Text>Add Source</Text>
       </ActionButton>
-      <ActionButton id="cy-open-soure-table" onClick={() => handleOpenSidebar('sources')}>
+      <ActionButton id="cy-open-soure-table" onClick={openSourcesModal}>
         <IconWrapper>
           <SourcesTableIcon />
         </IconWrapper>
@@ -52,7 +53,7 @@ export const MainToolbar = () => {
         </IconWrapper>
         <Text>Sentiment Data</Text>
       </ActionButton>
-      {/* <ActionButton onClick={() => changeGraphType()}>
+      {/* <ActionButton onClick={() => openSourcesModal()}>
         <IconWrapper>
           <SettingsIcon />
         </IconWrapper>

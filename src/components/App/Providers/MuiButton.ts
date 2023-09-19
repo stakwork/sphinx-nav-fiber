@@ -22,6 +22,7 @@ export const MuiButton = {
       lineHeight: '8px',
       cursor: 'pointer',
       columnGap: '6px',
+      whiteSpace: 'nowrap',
       '&:hover': {
         background: colors.BUTTON1_HOVER,
         color: colors.GRAY3,
@@ -43,6 +44,7 @@ export const MuiButton = {
       '&.MuiButton-sizeSmall': {
         padding: '7px 16px',
         fontSize: '11px',
+        lineHeight: '14px',
         fontWeight: 500,
       },
       '&.MuiButton-sizeLarge': {

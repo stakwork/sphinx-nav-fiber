@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 
-export type AvailableModals = 'addNode' | 'budgetExplanation'
+export type AvailableModals = 'addNode' | 'budgetExplanation' | 'sourcesTable'
 
 export type AddNodeModalData = 'content' | 'source' | null
 

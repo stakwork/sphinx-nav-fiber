@@ -45,10 +45,16 @@ export const SourcesView = () => {
 
   return (
     <Wrapper direction="column">
-      <Tabs aria-label="basic tabs example" component="div" onChange={handleChange} value={value}>
-        <StyledTab label="Sources table" {...a11yProps(0)} />
-        <StyledTab color={colors.white} label="Queued sources" {...a11yProps(1)} />
-      </Tabs>
+      <StyledTabs
+        aria-label="basic tabs example"
+        component="div"
+        onChange={handleChange}
+        TabScrollButton={false}
+        value={value}
+      >
+        <StyledTab disableRipple label="Sources table" {...a11yProps(0)} />
+        <StyledTab color={colors.white} disableRipple label="Queued sources" {...a11yProps(1)} />
+      </StyledTabs>
       <TabPanel index={0} value={value}>
         <Sources />
       </TabPanel>
@@ -59,16 +65,38 @@ export const SourcesView = () => {
   )
 }
 
+const StyledTabs = styled(Tabs)`
+  && {
+    background: rgba(0, 0, 0, 0.2);
+
+    .MuiTabs-indicator {
+      background: ${colors.primaryBlue};
+    }
+  }
+`
+
 const StyledTab = styled(Tab)`
   && {
-    color: ${colors.white};
+    padding: 30px 0 24px;
+    color: ${colors.GRAY6};
+    margin-left: 34px;
+    font-family: Barlow;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 500;
+
+    &.Mui-selected {
+      color: ${colors.white};
+    }
   }
 `
 
 const TabPanelWrapper = styled(Flex)`
   display: flex;
   flex: 1;
-  min-height: 0;
+  min-height: 572px;
+  padding: 20px 0;
+  max-height: 572px;
 `
 
 const Wrapper = styled(Flex)`

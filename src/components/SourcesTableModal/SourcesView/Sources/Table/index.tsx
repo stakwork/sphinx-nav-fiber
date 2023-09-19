@@ -1,9 +1,10 @@
-import { Table as MaterialTable, TableBody, TableCell, TableHead, TableRow } from '@mui/material'
+import { Table as MaterialTable, TableBody, TableRow } from '@mui/material'
 import React, { useState } from 'react'
 import { MdCheck, MdClose, MdDeleteForever, MdOutlineModeEdit } from 'react-icons/md'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
 import { BaseTextInput } from '~/components/BaseTextInput'
+import FilterOffIcon from '~/components/Icons/FilterOffIcon'
 import ConfirmPopover from '~/components/common/ConfirmPopover'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
@@ -12,6 +13,7 @@ import { deleteRadarData, putRadarData } from '~/network/fetchSourcesData'
 import { useDataStore } from '~/stores/useDataStore'
 import { RadarRequest, Sources } from '~/types'
 import { colors } from '~/utils/colors'
+import { StyledTableCell, StyledTableHead, StyledTableRow } from '../../common'
 import { TWITTER_LINK, sourcesMapper } from '../../constants'
 
 type Props = {
@@ -59,19 +61,25 @@ const Table: React.FC<Props> = ({ data, canEdit = false }) => {
   }
 
   return !data?.length ? (
-    <Text>There is not any results for selected filters</Text>
+    <Flex>
+      <Text>There is not any results for selected filters</Text>
+      <FilterOffIcon />
+    </Flex>
   ) : (
     <MaterialTable aria-label="a dense table" component="table" id="sources-table" size="small">
-      <TableHead component="thead">
+      <StyledTableHead>
         <TableRow component="tr">
+          <StyledTableCell className="empty" />
           <StyledTableCell>Type</StyledTableCell>
           <StyledTableCell align="left">Source</StyledTableCell>
           {canEdit && <StyledTableCell align="left" />}
+          <StyledTableCell className="empty" />
         </TableRow>
-      </TableHead>
+      </StyledTableHead>
       <TableBody component="tbody">
         {data?.map((i: Sources) => (
-          <TableRow key={i.source} component="tr">
+          <StyledTableRow key={i.source} component="tr">
+            <StyledTableCell className="empty" />
             <StyledTableCell align="left">{sourcesMapper[i.source_type]}</StyledTableCell>
             <StyledTableCell align="left">
               <ConditionalWrapper
@@ -119,7 +127,8 @@ const Table: React.FC<Props> = ({ data, canEdit = false }) => {
                 </div>
               </StyledTableCell>
             )}
-          </TableRow>
+            <StyledTableCell className="empty" />
+          </StyledTableRow>
         ))}
       </TableBody>
     </MaterialTable>
@@ -193,13 +202,6 @@ const EditableCell: React.FC<EditableCellProps> = ({ value, onSave, id, children
 }
 
 export default Table
-
-const StyledTableCell = styled(TableCell)`
-  && {
-    color: ${colors.white};
-    border: 1px solid ${colors.white};
-  }
-`
 
 const EditModeCellWrapper = styled(Flex)`
   display: flex;

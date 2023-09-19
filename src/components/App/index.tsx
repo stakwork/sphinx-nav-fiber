@@ -20,6 +20,7 @@ import { GraphData } from '~/types'
 import { colors } from '~/utils/colors'
 import { E2ETests } from '~/utils/tests'
 import version from '~/utils/versionHelper'
+import { SourcesTableModal } from '../SourcesTableModal'
 import { Preloader } from '../Universe/Preloader'
 import { ActionsToolbar } from './ActionsToolbar'
 import { AppBar } from './AppBar'
@@ -156,6 +157,7 @@ export const App = () => {
         <Toasts />
 
         <BudgetExplanationModal />
+        <SourcesTableModal />
         <Helper />
       </Wrapper>
       <E2ETests />

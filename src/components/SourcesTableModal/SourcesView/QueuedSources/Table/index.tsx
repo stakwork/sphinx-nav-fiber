@@ -1,9 +1,10 @@
-import { Table as MaterialTable, TableCell, TableHead, TableRow } from '@mui/material'
+import { Table as MaterialTable, TableRow } from '@mui/material'
 import React, { useState } from 'react'
 import { MdCancel, MdCheckCircle } from 'react-icons/md'
 import { ClipLoader } from 'react-spinners'
 import * as sphinx from 'sphinx-bridge-kevkevinpal'
 import styled from 'styled-components'
+import FilterOffIcon from '~/components/Icons/FilterOffIcon'
 import ConfirmPopover from '~/components/common/ConfirmPopover'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
@@ -11,6 +12,7 @@ import { approveRadarData, deleteRadarData } from '~/network/fetchSourcesData'
 import { useDataStore } from '~/stores/useDataStore'
 import { Sources } from '~/types'
 import { colors } from '~/utils/colors'
+import { StyledTableCell, StyledTableHead, StyledTableRow } from '../../common'
 import { TWITTER_LINK, sourcesMapper } from '../../constants'
 import { Props } from '../../types'
 
@@ -53,20 +55,26 @@ const Table: React.FC<Props> = ({ data }) => {
   }
 
   return !data?.length ? (
-    <Text>There is not any results for selected filters</Text>
+    <Flex>
+      <Text>There is not any results for selected filters</Text>
+      <FilterOffIcon />
+    </Flex>
   ) : (
     <MaterialTable component="table">
-      <TableHead component="thead">
+      <StyledTableHead component="thead">
         <TableRow component="tr">
+          <StyledTableCell className="empty" />
           <StyledTableCell>Type</StyledTableCell>
           <StyledTableCell>Source</StyledTableCell>
           <StyledTableCell />
+          <StyledTableCell className="empty" />
         </TableRow>
-      </TableHead>
+      </StyledTableHead>
       {data?.length && (
         <tbody>
           {data?.map((i: Sources) => (
-            <TableRow key={i.source} component="tr">
+            <StyledTableRow key={i.source} component="tr">
+              <StyledTableCell className="empty" />
               <StyledTableCell>{sourcesMapper[i.source_type]}</StyledTableCell>
               <StyledTableCell width="268px">
                 {i.source_type === 'twitter_handle' ? (
@@ -82,7 +90,7 @@ const Table: React.FC<Props> = ({ data }) => {
                 <Flex direction="row" justify="space-between">
                   <div className="approve-wrapper">
                     <IconWrapper className="centered" onClick={() => handleApprove(i.ref_id)}>
-                      <MdCheckCircle color={colors.primaryGreen} />
+                      <MdCheckCircle color={colors.primaryGreen} fontSize={24} />
                     </IconWrapper>
                   </div>
                   <div className="delete-wrapper">
@@ -91,14 +99,15 @@ const Table: React.FC<Props> = ({ data }) => {
                     ) : (
                       <ConfirmPopover message="Are you sure ?" onConfirm={() => handleRemove(i.ref_id)}>
                         <IconWrapper className="centered">
-                          <MdCancel color={colors.primaryRed} />
+                          <MdCancel color={colors.primaryRed} fontSize={24} />
                         </IconWrapper>
                       </ConfirmPopover>
                     )}
                   </div>
                 </Flex>
               </StyledTableCell>
-            </TableRow>
+              <StyledTableCell className="empty" />
+            </StyledTableRow>
           ))}
         </tbody>
       )}
@@ -107,13 +116,6 @@ const Table: React.FC<Props> = ({ data }) => {
 }
 
 export default Table
-
-const StyledTableCell = styled(TableCell)`
-  && {
-    color: ${colors.white};
-    border: 1px solid ${colors.white};
-  }
-`
 
 const IconWrapper = styled(Flex)`
   width: 20px;

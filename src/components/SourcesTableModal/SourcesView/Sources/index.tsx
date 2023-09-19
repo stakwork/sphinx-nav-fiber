@@ -1,23 +1,23 @@
+import { Button } from '@mui/material'
+import clsx from 'clsx'
 import { useEffect, useState } from 'react'
 import { MdRestartAlt } from 'react-icons/md'
 import { ClipLoader } from 'react-spinners'
 import { toast } from 'react-toastify'
 import * as sphinx from 'sphinx-bridge-kevkevinpal'
 import styled from 'styled-components'
-import { Button } from '~/components/Button'
+import ShieldPersonIcon from '~/components/Icons/ShieldPersonIcon'
 import { Flex } from '~/components/common/Flex'
-import { Pill } from '~/components/common/Pill'
 import { Text } from '~/components/common/Text'
 import { ToastMessage } from '~/components/common/Toast/toastMessage'
 import { getRadarData, triggerRadarJob } from '~/network/fetchSourcesData'
 import { useDataStore } from '~/stores/useDataStore'
-import { useModal } from '~/stores/useModalStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { FetchRadarResponse, SubmitErrRes } from '~/types'
 import { colors } from '~/utils/colors'
 import { executeIfProd } from '~/utils/tests'
+import { Heading, StyledPill } from '../common'
 import { sourcesMapper } from '../constants'
-import { TPill } from '../types'
 import Table from './Table'
 
 const admins = [
@@ -28,7 +28,6 @@ const admins = [
 export const Sources = () => {
   const [loading, setLoading] = useState(true)
   const [typeFilter, setTypeFilter] = useState('')
-  const { open, setAddNodeModalData } = useModal('addNode')
   const [sources, setSources] = useDataStore((s) => [s.sources, s.setSources])
   const [setIsAdmin, isAdmin, setPubKey, pubKey] = useUserStore((s) => [s.setIsAdmin, s.isAdmin, s.setPubKey, s.pubKey])
 
@@ -56,11 +55,6 @@ export const Sources = () => {
     } else {
       setTypeFilter(val)
     }
-  }
-
-  const handleOpenModal = () => {
-    open()
-    setAddNodeModalData('source')
   }
 
   const authorize = async () => {
@@ -114,7 +108,13 @@ export const Sources = () => {
   const resolveAdminActions = () => {
     if (!pubKey) {
       return (
-        <EditButton kind="small" onClick={authorize}>
+        <EditButton
+          color="secondary"
+          onClick={authorize}
+          size="small"
+          startIcon={<ShieldPersonIcon />}
+          variant="contained"
+        >
           Admin
         </EditButton>
       )
@@ -122,7 +122,7 @@ export const Sources = () => {
 
     if (pubKey && isAdmin) {
       return (
-        <RunButton endIcon={<MdRestartAlt color={colors.white} />} kind="small" onClick={handleRunJob}>
+        <RunButton endIcon={<MdRestartAlt color={colors.white} />} onClick={handleRunJob} size="small">
           Run
         </RunButton>
       )
@@ -139,35 +139,39 @@ export const Sources = () => {
         <Text className="title">Sources for this Graph</Text>
         {resolveAdminActions()}
       </Heading>
-      <Flex className="filters" direction="row" pb={16}>
-        <StyledPill onClick={() => onFilterChange('')} selected={!typeFilter}>
+      <Flex className="filters" direction="row" pb={16} px={36}>
+        <StyledPill className={clsx({ selected: !typeFilter })} onClick={() => onFilterChange('')} size="small">
           All
         </StyledPill>
         {Object.keys(sourcesMapper).map((key: string) => (
-          <StyledPill key={key} onClick={() => onFilterChange(key)} selected={key === typeFilter}>
+          <StyledPill
+            key={key}
+            className={clsx({ selected: key === typeFilter })}
+            onClick={() => onFilterChange(key)}
+            size="small"
+          >
             {sourcesMapper[key]}
           </StyledPill>
         ))}
       </Flex>
-      <TableWrapper align="center" justify="flex-start">
-        {loading ? <ClipLoader /> : <Table canEdit={isAdmin} data={tableValues} />}
+      <TableWrapper align="center" justify={loading ? 'center' : 'flex-start'}>
+        {loading ? <ClipLoader color={colors.white} /> : <Table canEdit={isAdmin} data={tableValues} />}
       </TableWrapper>
-      <AddButton id="add-sources" kind="small" onClick={handleOpenModal}>
-        Add +
-      </AddButton>
     </Wrapper>
   )
 }
 
 const Wrapper = styled(Flex)`
-  border-radius: 8px;
-  box-shadow: 0px 5px 6px rgb(0 0 0 / 50%);
-  padding: 16px;
   flex: 1;
-
   .title {
     margin-bottom: 16px;
     font-size: 20px;
+    color: ${colors.white};
+    font-family: Barlow;
+    font-size: 22px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
   }
 
   & .filters {
@@ -182,34 +186,10 @@ const TableWrapper = styled(Flex)`
   width: 100%;
 `
 
-const StyledPill = styled(Pill)<TPill>`
-  cursor: pointer;
-  font-size: 12px;
-  padding: 4px 8px;
-  background: ${(props) => (props.selected ? colors.white : 'transparent')};
-  color: ${(props) => (props.selected ? colors.headerBackground : colors.white)};
-  &:hover {
-    color: ${(props) => (props.selected ? colors.headerBackground : colors.white)};
-    background: ${(props) => (props.selected ? colors.white : 'transparent')};
-    opacity: 0.8;
-  }
-`
-
 const RunButton = styled(Button)`
   margin-left: 8px;
 `
 
 const EditButton = styled(Button)`
   margin-left: auto;
-`
-
-const AddButton = styled(Button)`
-  margin-top: 8px;
-`
-
-const Heading = styled(Flex)`
-  margin-bottom: 16px;
-  ${Text} {
-    margin-bottom: 0;
-  }
 `
