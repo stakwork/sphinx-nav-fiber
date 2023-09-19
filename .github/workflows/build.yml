@@ -29,7 +29,7 @@ jobs:
           git commit -m "ci: prettier format"
           git push --set-upstream origin master
           npm version patch -m "ci: bump version to %s"
-          git push --follow-tags
+          git push
           CI=false yarn install && CI=false yarn run build
           git add ./build -f
           git commit -m "ci: automatic build fixes" || echo -n
@@ -37,5 +37,5 @@ jobs:
       - name: Create New Release
         uses: rymndhng/release-on-push-action@master
         with:
-          bump_version_scheme: minor
+          bump_version_scheme: patch
           use_github_release_notes: true
