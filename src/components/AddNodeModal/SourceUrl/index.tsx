@@ -23,7 +23,7 @@ const tagRule = {
 const timeRegex = /^\d{2}:\d{2}:\d{2}$/
 
 const twitterOrYoutubeRegexOrMp3 =
-  /^(?:(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)[\w-]{11}(?:\S*)?|(?:https?:\/\/)?(?:www\.)?twitter\.com\/i\/spaces\/\d+(?:\?|$)|.+\.mp3)$/i
+  /^(?:(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)[\w-]{11}(?:\S*)?|(?:https?:\/\/)?(?:www\.)?twitter\.com\/i\/spaces\/\d+.*$|.+\.mp3)$/i
 
 export const SourceUrl: FC<Props> = ({ setValue, startTime }) => {
   const [enableTimestamps, setEnableTimestamps] = useState(false)
