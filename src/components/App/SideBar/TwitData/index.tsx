@@ -1,3 +1,4 @@
+import { Button } from '@mui/material'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
@@ -9,6 +10,14 @@ export const TwitData = () => {
 
   const twitId: string = selectedNode?.tweet_id || ''
 
+  const openLinkInNewWindow = () => {
+    // Replace 'linkUrl' with the URL you want to open in a new window
+    const linkUrl = 'https://example.com'
+
+    // Use window.open() to open the link in a new window
+    window.open(linkUrl, '_blank')
+  }
+
   return (
     selectedNode && (
       <Flex direction="column" px={24} py={16}>
@@ -16,19 +25,24 @@ export const TwitData = () => {
           <Text color="primaryText1">{selectedNode?.label}</Text>
         </Flex>
         {twitId && (
-          <TweetContainer>
-            <Flex direction="row">
-              <ProfilePicture>
-                <img alt="Profile" src={selectedNode.profile_picture || 'twitter_placeholder.png'} />
-              </ProfilePicture>
+          <>
+            <TweetContainer>
+              <Flex direction="row">
+                <ProfilePicture>
+                  <img alt="Profile" src={selectedNode.profile_picture || 'twitter_placeholder.png'} />
+                </ProfilePicture>
 
-              <AuthorInfo>
-                <AuthorName>{selectedNode.name}</AuthorName>
-                <TwitterHandle>{selectedNode.twitter_handle || '@unknown_handle'}</TwitterHandle>
-              </AuthorInfo>
+                <AuthorInfo>
+                  <AuthorName>{selectedNode.name}</AuthorName>
+                  <TwitterHandle>{selectedNode.twitter_handle || '@unknown_handle'}</TwitterHandle>
+                </AuthorInfo>
+              </Flex>
+              <TweetText>{selectedNode.text}</TweetText>
+            </TweetContainer>
+            <Flex>
+              <Button onClick={openLinkInNewWindow}>View more</Button>
             </Flex>
-            <TweetText>{selectedNode.text}</TweetText>
-          </TweetContainer>
+          </>
         )}
       </Flex>
     )
