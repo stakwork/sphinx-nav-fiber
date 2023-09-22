@@ -1,8 +1,16 @@
+import { FC } from 'react'
 import { Flex } from '~/components/common/Flex'
+import { Location } from '../Location'
 import { TextInput } from '../TextInput'
 import { requiredRule } from '../index'
 
-export const TwitId = () => (
+type Props = {
+  latitude?: string
+  longitude?: string
+  setValue?: (field: string, value: boolean) => void
+}
+
+export const TwitId: FC<Props> = ({ setValue, latitude, longitude }) => (
   <Flex>
     <TextInput
       id="tweet-id"
@@ -14,5 +22,7 @@ export const TwitId = () => (
         ...requiredRule,
       }}
     />
+
+    <Location latitude={latitude} longitude={longitude} setValue={setValue} />
   </Flex>
 )

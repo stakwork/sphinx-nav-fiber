@@ -3,6 +3,7 @@ import { FaCheck } from 'react-icons/fa'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { colors } from '~/utils/colors'
+import { Location } from '../Location'
 import { TagInput } from '../TagInput'
 import { TextArea } from '../TextArea'
 import { TextInput } from '../TextInput'
@@ -23,14 +24,12 @@ const tagRule = {
 }
 
 const timeRegex = /^\d{2}:\d{2}:\d{2}$/
-const locationRegex = /^-?\d{0,2}(\.\d{0,7})?$/
 
 const twitterOrYoutubeRegexOrMp3 =
   /^(?:(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)[\w-]{11}(?:\S*)?|(?:https?:\/\/)?(?:www\.)?twitter\.com\/i\/spaces\/\d+.*$|.+\.mp3)$/i
 
 export const SourceUrl: FC<Props> = ({ setValue, startTime, latitude, longitude }) => {
   const [enableTimestamps, setEnableTimestamps] = useState(false)
-  const [enableLocation, setEnableLocation] = useState(false)
 
   const handleTimestamps = () => {
     if (setValue) {
@@ -38,14 +37,6 @@ export const SourceUrl: FC<Props> = ({ setValue, startTime, latitude, longitude 
     }
 
     setEnableTimestamps(!enableTimestamps)
-  }
-
-  const showLocation = () => {
-    if (setValue) {
-      setValue('withLocation', !enableTimestamps)
-    }
-
-    setEnableLocation(!enableLocation)
   }
 
   return (
@@ -145,72 +136,13 @@ export const SourceUrl: FC<Props> = ({ setValue, startTime, latitude, longitude 
           </>
         )}
 
-        <Flex direction="row" pt={12}>
-          <CheckBoxWrapper>
-            Add location
-            <button className="checkbox" id="add-node-location-checkbox" onClick={showLocation} type="button">
-              {enableLocation && <FaCheck color={colors.lightBlue500} />}
-            </button>
-          </CheckBoxWrapper>
-        </Flex>
+        <Location latitude={latitude} longitude={longitude} setValue={setValue} />
       </Flex>
-
-      {enableLocation && (
-        <>
-          <Flex direction="row" pt={12}>
-            <Flex basis="50%" pr={16}>
-              <TextInput
-                id="add-node-latitude"
-                label="Latitude"
-                mask="99.999999"
-                maskPlaceholder="_"
-                message="Enter latitude coordinates"
-                name="latitude"
-                placeholder="Enter latitude (e.g., 45.7811111°)"
-                rules={{
-                  ...requiredRule,
-                  pattern: {
-                    message: 'Incorrect latitude format',
-                    value: locationRegex,
-                  },
-                  validate: {
-                    latitude: (value) => (!!longitude && !!value) || 'Both latitude and longitude should be set',
-                  },
-                }}
-                showMask
-              />
-            </Flex>
-
-            <Flex basis="50%" pl={16}>
-              <TextInput
-                id="add-node-location-longitude"
-                label="Longitude"
-                mask="99.9999999"
-                maskPlaceholder="_"
-                message="Enter longitude coordinates"
-                name="longitude"
-                placeholder="Enter longitude (e.g., 108.5038888°)"
-                rules={{
-                  ...requiredRule,
-                  pattern: {
-                    message: 'Incorrect longitude format',
-                    value: locationRegex,
-                  },
-                  validate: {
-                    longitude: (value) => (!!latitude && !!value) || 'Both latitude and longitude should be set',
-                  },
-                }}
-                showMask
-              />
-            </Flex>
-          </Flex>
-        </>
-      )}
     </>
   )
 }
 
-const CheckBoxWrapper = styled.div`
+export const CheckBoxWrapper = styled.div`
   color: ${colors.lightGray};
   font-size: 14px;
   font-weight: 600;

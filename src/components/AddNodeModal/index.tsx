@@ -123,6 +123,11 @@ const handleSubmit = async (data: FieldValues, close: () => void, sourceType: st
       return
     }
 
+    if (data.withLocation) {
+      body.latitude = data.latitude
+      body.longitude = data.longitude
+    }
+
     body.content_type = 'tweet'
   } else if (sourceType === WEB_PAGE) {
     body.content_type = 'webpage'
