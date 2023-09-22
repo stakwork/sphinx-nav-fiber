@@ -8,9 +8,9 @@ import { toast } from 'react-toastify'
 import * as sphinx from 'sphinx-bridge-kevkevinpal'
 import styled from 'styled-components'
 import { Button } from '~/components/Button'
+import { BaseModal } from '~/components/Modal'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
-import { BaseModal } from '~/components/Modal'
 import {
   DOCUMENT,
   GITHUB_REPOSITORY,
@@ -33,8 +33,8 @@ import { getLSat } from '~/utils/getLSat'
 import { executeIfProd } from '~/utils/tests'
 import { timeToMilliseconds } from '~/utils/timeToMilliseconds'
 import { useDataStore } from '../../stores/useDataStore/index'
-import { ToastMessage } from '../common/Toast/toastMessage'
 import StyledSelect from '../Select'
+import { ToastMessage } from '../common/Toast/toastMessage'
 import { Document } from './Document'
 import { GithubRepository } from './GithubRepository'
 import { RSSFeed } from './RSSFeed'
@@ -95,6 +95,9 @@ const handleSubmit = async (data: FieldValues, close: () => void, sourceType: st
           },
         ],
       }
+    } else if (data.withLocation) {
+      body.latitude = data.latitude
+      body.longitude = data.longitude
     } else {
       body.content_type === 'audio_video'
     }
@@ -118,6 +121,11 @@ const handleSubmit = async (data: FieldValues, close: () => void, sourceType: st
 
     if (!tweetIdRegex.test(body.tweet_id as string)) {
       return
+    }
+
+    if (data.withLocation) {
+      body.latitude = data.latitude
+      body.longitude = data.longitude
     }
 
     body.content_type = 'tweet'
@@ -296,9 +304,11 @@ export const AddNodeModal = () => {
     : []
 
   const startTime = watch('startTime')
+  const longitude = watch('longitude')
+  const latitude = watch('latitude')
 
   const FormValues = activeType && resolvedContentOptions ? resolvedContentOptions[activeType].component : () => null
-  const formProps = { setValue, startTime }
+  const formProps = { setValue, startTime, longitude, latitude }
 
   return (
     resolvedContentOptions && (
@@ -338,7 +348,7 @@ export const AddNodeModal = () => {
 
             {!activeType ? (
               <Stack
-                alignItems={{ xs: 'stretch', sm: 'center' }}
+                alignItems={{ xs: 'stretch', sm: 'flex-start', minHeight: '160px' }}
                 component="div"
                 direction={{ xs: 'column', sm: 'row' }}
                 justifyContent="space-between"

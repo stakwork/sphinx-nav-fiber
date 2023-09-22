@@ -3,6 +3,7 @@ import { FaCheck } from 'react-icons/fa'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { colors } from '~/utils/colors'
+import { Location } from '../Location'
 import { TagInput } from '../TagInput'
 import { TextArea } from '../TextArea'
 import { TextInput } from '../TextInput'
@@ -10,6 +11,8 @@ import { requiredRule } from '../index'
 
 type Props = {
   startTime?: string
+  latitude?: string
+  longitude?: string
   setValue?: (field: string, value: boolean) => void
 }
 
@@ -25,7 +28,7 @@ const timeRegex = /^\d{2}:\d{2}:\d{2}$/
 const twitterOrYoutubeRegexOrMp3 =
   /^(?:(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)[\w-]{11}(?:\S*)?|(?:https?:\/\/)?(?:www\.)?twitter\.com\/i\/spaces\/\d+.*$|.+\.mp3)$/i
 
-export const SourceUrl: FC<Props> = ({ setValue, startTime }) => {
+export const SourceUrl: FC<Props> = ({ setValue, startTime, latitude, longitude }) => {
   const [enableTimestamps, setEnableTimestamps] = useState(false)
 
   const handleTimestamps = () => {
@@ -132,12 +135,14 @@ export const SourceUrl: FC<Props> = ({ setValue, startTime }) => {
             </Flex>
           </>
         )}
+
+        <Location latitude={latitude} longitude={longitude} setValue={setValue} />
       </Flex>
     </>
   )
 }
 
-const CheckBoxWrapper = styled.div`
+export const CheckBoxWrapper = styled.div`
   color: ${colors.lightGray};
   font-size: 14px;
   font-weight: 600;
