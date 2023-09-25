@@ -10,16 +10,11 @@ const latitudeReg = /^(-?\d{1,2}(\.\d+)?|90(\.0+)?)$/
 const longitudeReg = /^(-?\d{1,3}(\.\d+)?|180(\.0+)?)$/
 
 type Props = {
-  latitude?: string
-  longitude?: string
   setValue?: (field: string, value: boolean) => void
 }
 
-export const Location: FC<Props> = ({ setValue, latitude, longitude }) => {
+export const Location: FC<Props> = ({ setValue }) => {
   const [enableLocation, setEnableLocation] = useState(false)
-
-  console.log(latitude)
-  console.log(longitude)
 
   const showLocation = () => {
     if (setValue) {

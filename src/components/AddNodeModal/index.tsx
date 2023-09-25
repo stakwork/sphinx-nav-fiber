@@ -304,98 +304,97 @@ export const AddNodeModal = () => {
     : []
 
   const startTime = watch('startTime')
-  const longitude = watch('longitude')
-  const latitude = watch('latitude')
 
   const FormValues = activeType && resolvedContentOptions ? resolvedContentOptions[activeType].component : () => null
-  const formProps = { setValue, startTime, longitude, latitude }
+  const formProps = { setValue, startTime }
 
   return (
     resolvedContentOptions && (
       <BaseModal id="addNode" preventOutsideClose>
         <FormProvider {...form}>
           <form id="add-node-form" onSubmit={onSubmit}>
-            <Flex align="center" direction="row" justify="space-between" pb={32}>
-              <Flex align="center" direction="row">
+            <Wrapper>
+              <Flex align="center" direction="row" justify="space-between" pb={32}>
                 <Flex align="center" direction="row">
-                  {activeType && (
-                    <BackButton onClick={() => setActiveType('')}>
-                      <MdKeyboardBackspace color={colors.white} size={24} />
-                    </BackButton>
-                  )}
-                  <Text kind="bigHeadingBold">Add {addNodeModalData}</Text>
+                  <Flex align="center" direction="row">
+                    {activeType && (
+                      <BackButton onClick={() => setActiveType('')}>
+                        <MdKeyboardBackspace color={colors.white} size={24} />
+                      </BackButton>
+                    )}
+                    <Text kind="bigHeadingBold">Add {addNodeModalData}</Text>
+                  </Flex>
+                  <InfoIcon role="tooltip" tabIndex={0}>
+                    <MdInfo />
+                    <div className="tooltip">{resolveInfoMessage}</div>
+                  </InfoIcon>
                 </Flex>
-                <InfoIcon role="tooltip" tabIndex={0}>
-                  <MdInfo />
-                  <div className="tooltip">{resolveInfoMessage}</div>
-                </InfoIcon>
+
+                <CloseButton
+                  id="add-node-close-button"
+                  onClick={handleClose}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === 'Space') {
+                      handleClose()
+                    }
+                  }}
+                  role="button"
+                  tabIndex={0}
+                >
+                  <MdClose color="white" />
+                </CloseButton>
               </Flex>
+              {!activeType ? (
+                <Stack
+                  alignItems={{ xs: 'stretch', sm: 'flex-start', minHeight: '160px' }}
+                  component="div"
+                  direction={{ xs: 'column', sm: 'row' }}
+                  justifyContent="space-between"
+                  spacing={2}
+                >
+                  <Flex>
+                    <Text kind="mediumBold">What do you want to add?</Text>
+                  </Flex>
+                  <Flex grow={1}>
+                    <StyledSelect
+                      className={clsx(selectedValue.length && 'hasSelected', 'cy-select-content-type')}
+                      clearable
+                      onChange={(values) => {
+                        setActiveType(values.length ? (values[0] as Option).value : '')
+                      }}
+                      options={options}
+                      placeholder={`Select ${addNodeModalData} type`}
+                      searchable={false}
+                      values={selectedValue}
+                    />
+                  </Flex>
+                </Stack>
+              ) : (
+                <>
+                  <Flex>
+                    <FormValues {...formProps} />
+                  </Flex>
 
-              <CloseButton
-                id="add-node-close-button"
-                onClick={handleClose}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === 'Space') {
-                    handleClose()
-                  }
-                }}
-                role="button"
-                tabIndex={0}
-              >
-                <MdClose color="white" />
-              </CloseButton>
-            </Flex>
+                  <Flex pt={16} px={4} tabIndex={0}>
+                    <Text color="lightGray" kind="tinyBold">
+                      Your pubkey will be submitted with your input, so you can receive sats that your content earns.
+                    </Text>
+                  </Flex>
 
-            {!activeType ? (
-              <Stack
-                alignItems={{ xs: 'stretch', sm: 'flex-start', minHeight: '160px' }}
-                component="div"
-                direction={{ xs: 'column', sm: 'row' }}
-                justifyContent="space-between"
-                spacing={2}
-              >
-                <Flex>
-                  <Text kind="mediumBold">What do you want to add?</Text>
-                </Flex>
-                <Flex grow={1}>
-                  <StyledSelect
-                    className={clsx(selectedValue.length && 'hasSelected', 'cy-select-content-type')}
-                    clearable
-                    onChange={(values) => {
-                      setActiveType(values.length ? (values[0] as Option).value : '')
-                    }}
-                    options={options}
-                    placeholder={`Select ${addNodeModalData} type`}
-                    searchable={false}
-                    values={selectedValue}
-                  />
-                </Flex>
-              </Stack>
-            ) : (
-              <>
-                <Flex>
-                  <FormValues {...formProps} />
-                </Flex>
-
-                <Flex pt={16} px={4} tabIndex={0}>
-                  <Text color="lightGray" kind="tinyBold">
-                    Your pubkey will be submitted with your input, so you can receive sats that your content earns.
-                  </Text>
-                </Flex>
-
-                <Flex pt={8}>
-                  {isSubmitting ? (
-                    <SubmitLoader>
-                      <ClipLoader color={colors.white} size={20} />
-                    </SubmitLoader>
-                  ) : (
-                    <Button disabled={isSubmitting} id="add-node-submit-cta" kind="big" type="submit">
-                      {`Add ${addNodeModalData}`}
-                    </Button>
-                  )}
-                </Flex>
-              </>
-            )}
+                  <Flex pt={8}>
+                    {isSubmitting ? (
+                      <SubmitLoader>
+                        <ClipLoader color={colors.white} size={20} />
+                      </SubmitLoader>
+                    ) : (
+                      <Button disabled={isSubmitting} id="add-node-submit-cta" kind="big" type="submit">
+                        {`Add ${addNodeModalData}`}
+                      </Button>
+                    )}
+                  </Flex>
+                </>
+              )}
+            </Wrapper>
           </form>
         </FormProvider>
       </BaseModal>
@@ -460,4 +459,8 @@ const SubmitLoader = styled(Flex).attrs({
 })`
   padding: 16px 24px;
   opacity: 0.5;
+`
+
+const Wrapper = styled(Flex)`
+  min-height: 600px;
 `

@@ -5,12 +5,10 @@ import { TextInput } from '../TextInput'
 import { requiredRule } from '../index'
 
 type Props = {
-  latitude?: string
-  longitude?: string
   setValue?: (field: string, value: boolean) => void
 }
 
-export const TwitId: FC<Props> = ({ setValue, latitude, longitude }) => (
+export const TwitId: FC<Props> = ({ setValue }) => (
   <Flex>
     <TextInput
       id="tweet-id"
@@ -23,6 +21,6 @@ export const TwitId: FC<Props> = ({ setValue, latitude, longitude }) => (
       }}
     />
 
-    <Location latitude={latitude} longitude={longitude} setValue={setValue} />
+    <Location setValue={setValue} />
   </Flex>
 )

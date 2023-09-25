@@ -11,8 +11,6 @@ import { requiredRule } from '../index'
 
 type Props = {
   startTime?: string
-  latitude?: string
-  longitude?: string
   setValue?: (field: string, value: boolean) => void
 }
 
@@ -28,7 +26,7 @@ const timeRegex = /^\d{2}:\d{2}:\d{2}$/
 const twitterOrYoutubeRegexOrMp3 =
   /^(?:(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)[\w-]{11}(?:\S*)?|(?:https?:\/\/)?(?:www\.)?twitter\.com\/i\/spaces\/\d+.*$|.+\.mp3)$/i
 
-export const SourceUrl: FC<Props> = ({ setValue, startTime, latitude, longitude }) => {
+export const SourceUrl: FC<Props> = ({ setValue, startTime }) => {
   const [enableTimestamps, setEnableTimestamps] = useState(false)
 
   const handleTimestamps = () => {
@@ -136,7 +134,7 @@ export const SourceUrl: FC<Props> = ({ setValue, startTime, latitude, longitude 
           </>
         )}
 
-        <Location latitude={latitude} longitude={longitude} setValue={setValue} />
+        <Location setValue={setValue} />
       </Flex>
     </>
   )

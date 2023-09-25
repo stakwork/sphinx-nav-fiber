@@ -11,7 +11,16 @@ import {
 import { mock } from '~/mocks/getMockGraphData/mockResponse'
 import { api } from '~/network/api'
 import { useDataStore } from '~/stores/useDataStore'
-import { FetchDataResponse, FetchSentimentResponse, GraphData, Guests, Link, Node, NodeExtended } from '~/types'
+import {
+  FetchDataResponse,
+  FetchSentimentResponse,
+  FetchTrendingResponse,
+  GraphData,
+  Guests,
+  Link,
+  Node,
+  NodeExtended,
+} from '~/types'
 import { getLSat } from '~/utils/getLSat'
 import { getMaxSuperficialWeightPerNodeType, getSuperficialNodeWeight } from '~/utils/getSuperficialNodeWeight'
 import { getGraphDataPositions } from './const'
@@ -89,6 +98,14 @@ const fetchNodes = async (search: string) => {
   })
 }
 
+export const getTrends = async () => {
+  const endpoint = `/get_trends`
+
+  const response = await api.get<FetchTrendingResponse>(endpoint)
+
+  return response
+}
+
 /**
  *
  * {
@@ -96,6 +113,7 @@ const fetchNodes = async (search: string) => {
  *  topic: string // search topic
  *  }
  */
+
 export const getSentimentData = async (args?: { topic: string; cutoff_date: string }) => {
   const search = args && new URLSearchParams(args)
 
