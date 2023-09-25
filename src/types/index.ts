@@ -7,6 +7,8 @@ export type FetchDataResponse = {
   related: Node[]
 }
 
+export type FetchTrendingResponse = Trending[]
+
 export type FetchSentimentResponse = {
   data: Sentiment[]
 }
@@ -125,6 +127,11 @@ export type Sentiment = {
   date: number
   date_added_to_graph: number
   sentiment_score: number
+}
+
+export type Trending = {
+  count: number
+  topic: string
 }
 
 export type Sources = {

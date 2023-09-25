@@ -1,7 +1,12 @@
+import { Skeleton } from '@mui/material'
+import { useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
+import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
 import SentimentDataIcon from '~/components/Icons/SentimentDataIcon'
 import { Flex } from '~/components/common/Flex'
+import { getTrends } from '~/network/fetchGraphData'
+import { Trending as TrendingType } from '~/types'
 import { colors } from '~/utils/colors'
 
 const TRENDING_TOPICS = ['Drivechain', 'Ordinals', 'L402', 'Nostr', 'AI']
@@ -11,7 +16,30 @@ type Props = {
 }
 
 export const Trending = ({ onSubmit }: Props) => {
+  const [trendingTopics, setTrendingTopics] = useState<Array<string>>([])
+  const [loading, setLoading] = useState(false)
+
   const { setValue } = useFormContext()
+
+  useEffect(() => {
+    const init = async () => {
+      setLoading(true)
+
+      try {
+        const res = await getTrends()
+
+        if (res.length) {
+          setTrendingTopics(res.map((i: TrendingType) => i.topic))
+        }
+      } catch (err) {
+        setTrendingTopics(TRENDING_TOPICS)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    init()
+  }, [])
 
   const selectTrending = (val: string) => {
     setValue('search', val)
@@ -23,15 +51,27 @@ export const Trending = ({ onSubmit }: Props) => {
       <div className="heading">
         <span className="heading__title">Trending Topics</span>
         <span className="heading__icon">
-          <SentimentDataIcon />
+          {loading ? <ClipLoader color={colors.PRIMARY_BLUE} size={16} /> : <SentimentDataIcon />}
         </span>
       </div>
       <ul className="list">
-        {TRENDING_TOPICS.map((i) => (
-          <Flex key={i} className="list-item" onClick={() => selectTrending(i)}>
-            #{i}
-          </Flex>
-        ))}
+        {loading ? (
+          <>
+            <StyledSkeleton animation="wave" height={47} variant="rectangular" width={382} />
+            <StyledSkeleton animation="wave" height={47} variant="rectangular" width={382} />
+            <StyledSkeleton animation="wave" height={47} variant="rectangular" width={382} />
+            <StyledSkeleton animation="wave" height={47} variant="rectangular" width={382} />
+            <StyledSkeleton animation="wave" height={47} variant="rectangular" width={382} />
+          </>
+        ) : (
+          <>
+            {trendingTopics.map((i) => (
+              <Flex key={i} className="list-item" onClick={() => selectTrending(i)}>
+                #{i}
+              </Flex>
+            ))}
+          </>
+        )}
       </ul>
     </Wrapper>
   )
@@ -84,5 +124,11 @@ const Wrapper = styled(Flex)`
         color: ${colors.PRIMARY_BLUE};
       }
     }
+  }
+`
+
+const StyledSkeleton = styled(Skeleton)`
+  && {
+    background: rgba(0, 0, 0, 0.15);
   }
 `
