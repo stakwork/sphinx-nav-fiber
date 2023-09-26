@@ -73,7 +73,7 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
             }}
           >
             {!isLoading ? (
-              <>{searchTerm ? <ClearIcon /> : <SearchIcon />}</>
+              <>{searchTerm ? <ClearIcon /> : <SearchIcon onClick={onSubmit} />}</>
             ) : (
               <ClipLoader color={colors.SECONDARY_BLUE} size="20" />
             )}

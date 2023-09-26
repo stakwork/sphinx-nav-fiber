@@ -2,7 +2,14 @@
 import React from 'react'
 
 const SearchIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
-  <svg width="1em" height="1em" viewBox="0 0 32 32" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  <svg
+    width="1em"
+    height="1em"
+    viewBox="0 0 32 32"
+    fill="currentColor"
+    xmlns="http://www.w3.org/2000/svg"
+    onClick={props.onClick}
+  >
     <g id="Property 1=Normal">
       <path
         id="search"
