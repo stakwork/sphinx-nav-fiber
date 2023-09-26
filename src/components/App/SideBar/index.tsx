@@ -2,8 +2,8 @@ import { Button, Slide } from '@mui/material'
 import { forwardRef, useEffect, useRef, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import styled from 'styled-components'
-import { SearchBar } from '~/components/SearchBar'
 import { Flex } from '~/components/common/Flex'
+import { SearchBar } from '~/components/SearchBar'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { colors } from '~/utils/colors'
@@ -68,8 +68,14 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
           <SearchBar onSubmit={onSubmit} />
           <InputButton
             onClick={() => {
-              setValue('search', '')
-              clearSearch()
+              if (searchTerm) {
+                setValue('search', '')
+                clearSearch()
+
+                return
+              }
+
+              onSubmit?.()
             }}
           >
             {!isLoading ? (
