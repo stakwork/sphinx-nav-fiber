@@ -10,14 +10,6 @@ export const TwitData = () => {
 
   const twitId: string = selectedNode?.tweet_id || ''
 
-  const openLinkInNewWindow = () => {
-    // Replace 'linkUrl' with the URL you want to open in a new window
-    const linkUrl = 'https://example.com'
-
-    // Use window.open() to open the link in a new window
-    window.open(linkUrl, '_blank')
-  }
-
   return (
     selectedNode && (
       <Flex direction="column" px={24} py={16}>
@@ -39,8 +31,10 @@ export const TwitData = () => {
               </Flex>
               <TweetText>{selectedNode.text}</TweetText>
             </TweetContainer>
-            <Flex>
-              <Button onClick={openLinkInNewWindow}>View more</Button>
+            <Flex align="center">
+              <a href={`https://twitter.com/Interior/status/${twitId}?open=system`}>
+                <Button>View comments </Button>
+              </a>
             </Flex>
           </>
         )}
