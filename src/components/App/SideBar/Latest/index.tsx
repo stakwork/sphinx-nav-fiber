@@ -20,7 +20,7 @@ const _View = ({ isSearchResult }: Props) => (
         </span>
       </div>
     )}
-    <Relevance />
+    <Relevance isSearchResult={isSearchResult} />
   </Wrapper>
 )
 

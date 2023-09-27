@@ -45,7 +45,7 @@ const _View = ({ isSelectedView }: Props) => {
         return <Creator />
     }
   } else {
-    return <Relevance />
+    return <Relevance isSearchResult />
   }
 }
 
