@@ -1,5 +1,5 @@
 import { Button } from '@mui/material'
-import { ReactNode, useCallback, useMemo, useRef, useState } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import styled from 'styled-components'
 import { useGraphData } from '~/components/DataRetriever'
 import { ScrollView } from '~/components/ScrollView'
@@ -10,23 +10,21 @@ import { NodeExtended } from '~/types'
 import { formatDescription } from '~/utils/formatDescription'
 import { saveConsumedContent } from '~/utils/relayHelper'
 import { useIsMatchBreakpoint } from '~/utils/useIsMatchBreakpoint'
-import { ErrorSection } from '../Creator/ErrorSection'
 import { Episode } from './Episode'
 
-const pageSize = 80
-
 type Props = {
-  header?: ReactNode
+  isSearchResult: boolean
 }
 
-export const Relevance = ({ header = null }: Props) => {
+export const Relevance = ({ isSearchResult }: Props) => {
   const data = useGraphData()
 
   const scrollViewRef = useRef<HTMLDivElement | null>(null)
 
+  const pageSize = !isSearchResult ? 10 : 80
+
   const setSelectedNode = useDataStore((s) => s.setSelectedNode)
   const setSelectedTimestamp = useDataStore((s) => s.setSelectedTimestamp)
-  const flagErrorIsOpen = useAppStore((s) => s.flagErrorIsOpen)
 
   const [setSidebarOpen] = useAppStore((s) => [s.setSidebarOpen])
   const setRelevanceSelected = useAppStore((s) => s.setRelevanceSelected)
@@ -40,7 +38,10 @@ export const Relevance = ({ header = null }: Props) => {
 
   const isMobile = useIsMatchBreakpoint('sm', 'down')
 
-  const currentNodes = useMemo(() => data.nodes.slice(0, endSlice), [data.nodes, endSlice])
+  const currentNodes = useMemo(
+    () => [...data.nodes].sort((a, b) => (b.date || 0) - (a.date || 0)).slice(0, endSlice),
+    [data.nodes, endSlice],
+  )
 
   const handleNodeClick = useCallback(
     (node: NodeExtended) => {
@@ -55,11 +56,7 @@ export const Relevance = ({ header = null }: Props) => {
 
   return (
     <>
-      {!header && flagErrorIsOpen && <ErrorSection />}
-
       <ScrollView ref={scrollViewRef} id="search-result-list" shrink={1}>
-        {header}
-
         {currentNodes.map((n, index) => {
           const {
             image_url: imageUrl,
