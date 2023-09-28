@@ -36,8 +36,10 @@ export const getPositionFromLngLat = (lng: number, lat: number, radius: number) 
 
 export const generateEarthGraphPositions = (nodes: NodeExtended[]) => {
   const updatedNodes = nodes.map((node: NodeExtended) => {
-    const { lng, lat } = node.coordinates ? node.coordinates : { lng: getRandomLngLat(), lat: getRandomLngLat() }
-    const position = getPositionFromLngLat(lng, lat, dataRadius)
+    const { longitude, latitude } =
+      node.longitude && node.latitude ? node : { longitude: getRandomLngLat(), latitude: getRandomLngLat() }
+
+    const position = getPositionFromLngLat(longitude as number, latitude as number, dataRadius)
 
     const updatedNode = { ...node, ...position }
 
