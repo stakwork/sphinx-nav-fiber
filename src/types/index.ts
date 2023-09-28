@@ -86,6 +86,8 @@ export type NodeExtended = Node & {
   x?: number
   y?: number
   z?: number
+  longitude?: number
+  latitude?: number
   coordinates?: Coordinates
 }
 
