@@ -13,7 +13,7 @@ import { ToastMessage } from '../common/Toast/toastMessage'
 
 type Props = {
   count?: number
-  updateCount?: () => void
+  updateCount?: (newAmount: number) => void
   content?: Node | null
   refId?: string
   readOnly?: boolean
@@ -27,7 +27,7 @@ const notify = (message: string) => {
   })
 }
 
-export const Booster = ({ count, updateCount, content, readOnly, refId }: Props) => {
+export const Booster = ({ count = 0, updateCount, content, readOnly, refId }: Props) => {
   const [submitting, setSubmitting] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
 
@@ -57,7 +57,10 @@ export const Booster = ({ count, updateCount, content, readOnly, refId }: Props)
 
       setIsSuccess(true)
       notify(BOOST_SUCCESS)
-      updateCount(count + 5)
+
+      if (updateCount) {
+        updateCount(count + 5)
+      }
     } catch (e) {
       notify(BOOST_ERROR_BUDGET)
     }
@@ -96,7 +99,13 @@ export const Booster = ({ count, updateCount, content, readOnly, refId }: Props)
 
             await doBoost()
           }}
-          style={{ padding: '4px 8px', borderWidth: 0, backgroundColor: '#303342', height: '25px', width: 'fit-content' }}
+          style={{
+            padding: '4px 8px',
+            borderWidth: 0,
+            backgroundColor: '#303342',
+            height: '25px',
+            width: 'fit-content',
+          }}
         >
           {submitting ? (
             <ClipLoader color="#fff" loading size={10} />

@@ -6,7 +6,7 @@ type Props = {
   amt: number
 }
 export const BoostAmt = ({ amt }: Props) => (
-  <div style={{alignSelf: 'center'}}>
+  <div style={{ alignSelf: 'center' }}>
     <BoostIcon />
 
     <StyledText color="white">{amt}</StyledText>

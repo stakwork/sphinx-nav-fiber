@@ -1,6 +1,6 @@
 import moment from 'moment'
 import styled from 'styled-components'
-import { Booster } from '~/components/Booster'
+import { BoostAmt } from '~/components/App/Helper/BoostAmt'
 import { Avatar } from '~/components/common/Avatar'
 import { Flex } from '~/components/common/Flex'
 import { FlexboxProps } from '~/components/common/Flex/flexbox'
@@ -84,8 +84,6 @@ export const Episode = ({
           {!isSelectedView && (
             <Flex align="center" pr={16}>
               <Avatar src={imageUrl} type={type || ''} />
-
-              {false && <Booster count={boostCount} readOnly />}
             </Flex>
           )}
 
@@ -100,7 +98,11 @@ export const Episode = ({
             <Flex direction="row" justify="flex-start">
               {Boolean(date) && <Date>{moment.unix(date).format('ll')}</Date>}
               {Boolean(title) && <Title>{title}</Title>}
-              {false && <Booster count={boostCount} />}
+              {!isSelectedView && boostCount > 0 && (
+                <Flex style={{ marginLeft: 'auto' }}>
+                  <BoostAmt amt={boostCount} />
+                </Flex>
+              )}
             </Flex>
           </Flex>
         </Flex>
@@ -155,6 +157,7 @@ export const Title = styled(Date)`
   flex-direction: row;
   align-items: center;
   flex-shrink: 1;
+  max-width: 100px;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;

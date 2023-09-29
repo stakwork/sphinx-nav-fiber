@@ -7,7 +7,7 @@ import { formatDescription } from '~/utils/formatDescription'
 import { videoTimetoSeconds } from '~/utils/videoTimetoSeconds'
 import { Episode } from '../Relevance/Episode'
 import { Transcript } from '../Transcript'
-import { BoostAmt } from '../../Helper/BoostAmt.tsx'
+import { BoostAmt } from '../../Helper/BoostAmt'
 import { Booster } from '~/components/Booster'
 import { Divider } from '~/components/common/Divider'
 
@@ -28,7 +28,7 @@ export const YouTube = () => {
     ref_id: refId,
   } = selectedNode || {}
 
-  const [boostAmount, setBoostAmount] = useState<number>(boost)
+  const [boostAmount, setBoostAmount] = useState<number>(boost || 0)
   const secs = videoTimetoSeconds(timestamp || '')
 
   useEffect(() => {
