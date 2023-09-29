@@ -7,7 +7,6 @@ import { Cubes } from './Cubes'
 import { Earth } from './Earth'
 import { GraphLoadingIcon } from './Icons'
 import { Particles } from './Particles'
-import { PathwayLine } from './PathwayLine'
 import { Segment } from './Segment'
 import { NodeDetailsPanel } from './UI'
 
@@ -41,8 +40,6 @@ export const Graph = () => {
       <Particles />
 
       <NodeDetailsPanel />
-
-      {!showSelectionGraph && <PathwayLine />}
 
       {graphStyle !== 'earth' && (
         <Segments
