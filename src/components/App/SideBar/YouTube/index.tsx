@@ -1,15 +1,18 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import ReactPlayer from 'react-player'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
-import { useSelectedNode } from '~/stores/useDataStore'
+import { useDataStore } from '~/stores/useDataStore'
 import { formatDescription } from '~/utils/formatDescription'
 import { videoTimetoSeconds } from '~/utils/videoTimetoSeconds'
 import { Episode } from '../Relevance/Episode'
 import { Transcript } from '../Transcript'
+import { BoostAmt } from '../../Helper/BoostAmt.tsx'
+import { Booster } from '~/components/Booster'
+import { Divider } from '~/components/common/Divider'
 
 export const YouTube = () => {
-  const selectedNode = useSelectedNode()
+  const selectedNode = useDataStore((s) => s.selectedNode)
   const playerRef = useRef<ReactPlayer | null>(null)
 
   const {
@@ -22,8 +25,10 @@ export const YouTube = () => {
     type,
     id,
     episode_title: episodeTitle,
+    ref_id: refId,
   } = selectedNode || {}
 
+  const [boostAmount, setBoostAmount] = useState<number>(boost)
   const secs = videoTimetoSeconds(timestamp || '')
 
   useEffect(() => {
@@ -44,7 +49,7 @@ export const YouTube = () => {
         </Flex>
       </PlayerWrapper>
       <StyledEpisode
-        boostCount={boost || 0}
+        boostCount={boostAmount || 0}
         date={date || 0}
         description={formatDescription(description)}
         id={id}
@@ -54,6 +59,12 @@ export const YouTube = () => {
         title={episodeTitle}
         type={type}
       />
+      <StyledDivider />
+      <BoostWrapper>
+        <BoostAmt amt={boostAmount} />
+        <Booster content={selectedNode} count={boostAmount} refId={refId} updateCount={setBoostAmount} />
+      </BoostWrapper>
+      <StyledDivider />
       <TranscriptWrapper grow={1} shrink={1}>
         <Transcript node={selectedNode} stateless />
       </TranscriptWrapper>
@@ -74,6 +85,12 @@ const PlayerWrapper = styled(Flex)`
   padding: 30px 18px 0;
 `
 
+const BoostWrapper = styled(Flex)`
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 0 18px 18px;
+`
+
 const TranscriptWrapper = styled(Flex)`
   padding: 0 18px 18px;
 `
@@ -84,4 +101,10 @@ const StyledEpisode = styled(Episode)`
     padding-bottom: 18px;
     font-size: 16px;
   }
+`
+
+const StyledDivider = styled(Divider)`
+  margin-bottom: 10px;
+  margin: auto 0px 10px 0px;
+  opacity: 75%;
 `
