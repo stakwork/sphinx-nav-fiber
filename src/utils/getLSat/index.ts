@@ -1,6 +1,7 @@
 import { Lsat } from 'lsat-js'
 import * as sphinx from 'sphinx-bridge-kevkevinpal'
 import { API_URL } from '~/constants'
+import { requestProvider } from 'webln'
 
 type Action = 'searching' | 'adding_node' | 'teachme' | 'ask_question' | 'sentiments'
 
@@ -20,24 +21,30 @@ const ActionsMapper: Record<Action, string> = {
  */
 export const getLSat = async (action: Action, search?: string) => {
   try {
-    const url = new URL(`${API_URL}/${action}`)
-    const searchParams = new URLSearchParams(search)
+    let webln
 
-    if (search) {
-      searchParams.forEach((value, key) => {
-        url.searchParams.append(key, value)
-      })
+    try {
+      webln = await requestProvider()
+
+      // getlsat invoice
+      const unpaidLsat = await getUnpaidLsat(action)
+
+      // pay lsat invoice
+      const preimage = await webln.sendPayment(unpaidLsat.invoice)
+
+      // create lsat
+      unpaidLsat.setPreimage(preimage.preimage)
+
+      const lsatToken = unpaidLsat.toToken()
+
+      return lsatToken
+
+      // Now you can call all of the webln.* methods
+    } catch (err) {
+      // webln not enabled
     }
 
-    const resp = await fetch(url, {
-      method: ActionsMapper[action] ?? 'GET',
-    })
-
-    const data = await resp.json()
-
-    const lsat = ['teachme', 'ask_question', 'sentiments'].includes(action)
-      ? Lsat.fromHeader(resp.headers.get('www-authenticate') || '')
-      : Lsat.fromHeader(data.headers)
+    const lsat = await getUnpaidLsat(action, search)
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
@@ -59,4 +66,27 @@ export const getLSat = async (action: Action, search?: string) => {
 
     return null
   }
+}
+
+export const getUnpaidLsat = async (action: Action, search?: string) => {
+  const url = new URL(`${API_URL}/${action}`)
+  const searchParams = new URLSearchParams(search)
+
+  if (search) {
+    searchParams.forEach((value, key) => {
+      url.searchParams.append(key, value)
+    })
+  }
+
+  const resp = await fetch(url, {
+    method: ActionsMapper[action] ?? 'GET',
+  })
+
+  const data = await resp.json()
+
+  const lsat = ['teachme', 'ask_question', 'sentiments'].includes(action)
+    ? Lsat.fromHeader(resp.headers.get('www-authenticate') || '')
+    : Lsat.fromHeader(data.headers)
+
+  return lsat
 }
