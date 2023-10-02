@@ -43,7 +43,7 @@ export const boost = async (refId: string, amount: number) => {
 
   const body = {
     amount,
-    ref: refId,
+    refid: refId,
   }
 
   return api.post('/boost', JSON.stringify(body))

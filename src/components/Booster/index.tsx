@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { MdBolt } from 'react-icons/md'
+import BoostIcon from '~/components/Icons/BoostIcon'
 import ClipLoader from 'react-spinners/ClipLoader'
 import { toast } from 'react-toastify'
 import { Flex } from '~/components/common/Flex'
@@ -7,10 +8,12 @@ import { Pill } from '~/components/common/Pill'
 import { BOOST_ERROR_BUDGET, BOOST_SUCCESS } from '~/constants'
 import { Node } from '~/types'
 import { boost } from '~/utils/boost'
+import { colors } from '~/utils/colors'
 import { ToastMessage } from '../common/Toast/toastMessage'
 
 type Props = {
   count?: number
+  updateCount?: (newAmount: number) => void
   content?: Node | null
   refId?: string
   readOnly?: boolean
@@ -24,7 +27,7 @@ const notify = (message: string) => {
   })
 }
 
-export const Booster = ({ count, content, readOnly, refId }: Props) => {
+export const Booster = ({ count = 0, updateCount, content, readOnly, refId }: Props) => {
   const [submitting, setSubmitting] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
 
@@ -54,6 +57,10 @@ export const Booster = ({ count, content, readOnly, refId }: Props) => {
 
       setIsSuccess(true)
       notify(BOOST_SUCCESS)
+
+      if (updateCount) {
+        updateCount(count + 5)
+      }
     } catch (e) {
       notify(BOOST_ERROR_BUDGET)
     }
@@ -80,27 +87,33 @@ export const Booster = ({ count, content, readOnly, refId }: Props) => {
     <div>
       {isSuccess ? (
         <Flex align="center" direction="row" justify="center">
-          <MdBolt color="#49c998" fontSize={20} />
+          <BoostIcon color="#49c998" fontSize={20} />
         </Flex>
       ) : (
         <Pill
           disabled={isSuccess || submitting}
-          onClick={() => {
+          onClick={async () => {
             if (isSuccess || submitting) {
               return
             }
 
-            doBoost()
+            await doBoost()
           }}
-          style={{ padding: '4px 8px', width: 'fit-content' }}
+          style={{
+            padding: '4px 8px',
+            borderWidth: 0,
+            backgroundColor: '#303342',
+            height: '25px',
+            width: 'fit-content',
+          }}
         >
           {submitting ? (
             <ClipLoader color="#fff" loading size={10} />
           ) : (
-            <Flex align="center" direction="row" justify="center">
-              <MdBolt fontSize={14} />
+            <Flex align="center" direction="row" justify="space-around">
+              <BoostIcon style={{ color: colors.white }} />
 
-              <div style={{ marginRight: 8 }}>Boost</div>
+              <div style={{ marginLeft: 8, marginRight: 8 }}>Boost</div>
             </Flex>
           )}
         </Pill>
