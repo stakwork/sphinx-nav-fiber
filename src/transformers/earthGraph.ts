@@ -23,13 +23,12 @@ export const getPointAbove = (point: Vector3, radius: number) => {
 }
 
 export const getPositionFromLngLat = (lng: number, lat: number, radius: number) => {
-  const latRad = (lat * Math.PI) / 180
-  const lonRad = (lng * Math.PI) / 180
+  const phi = (lat * Math.PI) / 180
+  const theta = ((lng - 180) * Math.PI) / 180
 
-  // Calculate the Cartesian coordinates
-  const x = radius * Math.cos(latRad) * Math.cos(lonRad)
-  const y = radius * Math.sin(latRad)
-  const z = radius * Math.cos(latRad) * Math.sin(lonRad)
+  const x = -radius * Math.cos(phi) * Math.cos(theta)
+  const y = radius * Math.sin(phi)
+  const z = radius * Math.cos(phi) * Math.sin(theta)
 
   return new Vector3(x, y, z)
 }
