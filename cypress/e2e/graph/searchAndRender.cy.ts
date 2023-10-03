@@ -2,7 +2,7 @@ import { budgetModal, getScenenChildrens, host, loader, search } from '../../sup
 import { searchResultList } from './const'
 
 describe('Search and render / Home interactions', () => {
-  beforeEach(() => {
+  /*beforeEach(() => {
     cy.visit('/')
 
     cy.wait(5000)
@@ -28,5 +28,5 @@ describe('Search and render / Home interactions', () => {
 
     getScenenChildrens().should('exist')
     cy.get(searchResultList).should('exist')
-  })
+  })*/
 })

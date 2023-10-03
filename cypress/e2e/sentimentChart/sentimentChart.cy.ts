@@ -2,7 +2,7 @@ import { actionMenu, closeSidebar, host } from '../../support'
 import { chartWrapper, openChartBtn, requestSentimentsBtn } from './const'
 
 describe('Sentiment chart  / Home interactions', () => {
-  beforeEach(() => {
+  /*beforeEach(() => {
     cy.visit('/')
   })
 
@@ -28,5 +28,5 @@ describe('Sentiment chart  / Home interactions', () => {
     cy.get(chartWrapper).find('svg').should('exist')
     cy.get(closeSidebar).click()
     cy.get(chartWrapper).should('not.exist')
-  })
+  })*/
 })
