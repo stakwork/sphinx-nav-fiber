@@ -9,7 +9,7 @@ export const RSSFeed = () => (
     <TextInput
       id="cy-rss-feed-id"
       label="RSS feed"
-      maxLength={50}
+      maxLength={200}
       message={message}
       name="source"
       placeholder="Type RSS link here..."
