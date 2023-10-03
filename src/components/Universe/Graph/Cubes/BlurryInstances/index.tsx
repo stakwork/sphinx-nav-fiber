@@ -18,6 +18,10 @@ export const BlurryInstances = ({ hide }: InstanceProps) => {
   const instances = useMemo(
     () =>
       data.nodes.map((node, i) => {
+        if (node.node_type === 'topic') {
+          return false
+        }
+
         const visible = !isMainTopic(node)
         const color = getNodeColorByType(node.node_type || '', true) as string
 
