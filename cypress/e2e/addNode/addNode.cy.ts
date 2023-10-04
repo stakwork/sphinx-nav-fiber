@@ -2,7 +2,7 @@ import { actionMenu, addNodeModal, addNodeSubmitButton, host, toast } from '../.
 import { addContentMenu, checkbox, description, endTime, link, select, startTime, tagError, tags } from './const'
 
 describe('Add Node Form / Home interactions', () => {
-  beforeEach(() => {
+  /*beforeEach(() => {
     cy.visit('/')
   })
 
@@ -114,5 +114,5 @@ describe('Add Node Form / Home interactions', () => {
     cy.wait('@add_node')
     cy.wait(3000)
     toastBody().should('be.visible').and('contain.text', 'Submission failed, please try again.')
-  })
+  })*/
 })

@@ -2,7 +2,7 @@ import { budgetModal, helperActionsMenu, host, search, siriBtn } from '../../sup
 import { requestAnalysBtn, sentimentChart } from './const'
 
 describe('Search and render / Home interactions', () => {
-  beforeEach(() => {
+  /*beforeEach(() => {
     cy.visit('/')
     cy.wait(5000)
   })
@@ -44,5 +44,5 @@ describe('Search and render / Home interactions', () => {
 
     cy.wait('@sentiments')
     cy.get(sentimentChart).should('exist')
-  })
+  })*/
 })

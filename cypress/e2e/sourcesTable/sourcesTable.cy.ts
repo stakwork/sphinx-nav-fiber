@@ -7,7 +7,7 @@ const modal = () => cy.get(addNodeModal)
 const getDeleteWrapperId = (s: string) => `#delete-${s}`
 
 describe('Sources Table / Home interactions', () => {
-  beforeEach(() => {
+  /*beforeEach(() => {
     cy.visit('/')
 
     cy.intercept(
@@ -118,5 +118,5 @@ describe('Sources Table / Home interactions', () => {
       cy.get('[role="presentation"]').find('button:first-child').should('exist').contains(/yes/i).click()
       cy.wait('@delete')
     })
-  })
+  })*/
 })

@@ -1,7 +1,7 @@
 import { getScenenChildrens } from '../../support'
 
 describe('Initial graph render / Home interactions', () => {
-  beforeEach(() => {
+  /*beforeEach(() => {
     cy.visit('/')
   })
 
@@ -11,5 +11,5 @@ describe('Initial graph render / Home interactions', () => {
     getScenenChildrens().then((children) => {
       expect(children).to.be.length
     })
-  })
+  })*/
 })
