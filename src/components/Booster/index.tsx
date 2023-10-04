@@ -59,7 +59,7 @@ export const Booster = ({ count = 0, updateCount, content, readOnly, refId }: Pr
       notify(BOOST_SUCCESS)
 
       if (updateCount) {
-        updateCount(count + 5)
+        updateCount(count + defaultBoostAmount)
       }
     } catch (e) {
       notify(BOOST_ERROR_BUDGET)
@@ -85,39 +85,33 @@ export const Booster = ({ count = 0, updateCount, content, readOnly, refId }: Pr
 
   return (
     <div>
-      {isSuccess ? (
-        <Flex align="center" direction="row" justify="center">
-          <BoostIcon color="#49c998" fontSize={20} />
-        </Flex>
-      ) : (
-        <Pill
-          disabled={isSuccess || submitting}
-          onClick={async () => {
-            if (isSuccess || submitting) {
-              return
-            }
+      <Pill
+        disabled={submitting}
+        onClick={async () => {
+          if (isSuccess || submitting) {
+            return
+          }
 
-            await doBoost()
-          }}
-          style={{
-            padding: '4px 8px',
-            borderWidth: 0,
-            backgroundColor: '#303342',
-            height: '25px',
-            width: 'fit-content',
-          }}
-        >
-          {submitting ? (
-            <ClipLoader color="#fff" loading size={10} />
-          ) : (
-            <Flex align="center" direction="row" justify="space-around">
-              <BoostIcon style={{ color: colors.white }} />
+          await doBoost()
+        }}
+        style={{
+          padding: '4px 8px',
+          borderWidth: 0,
+          backgroundColor: '#303342',
+          height: '25px',
+          width: 'fit-content',
+        }}
+      >
+        {submitting ? (
+          <ClipLoader color="#fff" loading size={10} />
+        ) : (
+          <Flex align="center" direction="row" justify="space-around">
+            <BoostIcon style={{ color: colors.white }} />
 
-              <div style={{ marginLeft: 8, marginRight: 8 }}>Boost</div>
-            </Flex>
-          )}
-        </Pill>
-      )}
+            <div style={{ marginLeft: 8, marginRight: 8 }}>Boost</div>
+          </Flex>
+        )}
+      </Pill>
     </div>
   )
 }
