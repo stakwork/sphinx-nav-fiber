@@ -41,7 +41,7 @@ export const getLSat = async () => {
       // @ts-ignore
       const storedLsat = await sphinx.getLsat()
 
-      if (storedLsat) {
+      if (storedLsat.macaroon) {
         const lsat: Lsat = { ...storedLsat, baseMacaroon: storedLsat.macaroon }
 
         return lsat.toToken()
