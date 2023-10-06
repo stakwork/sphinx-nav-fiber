@@ -18,9 +18,9 @@ const ActionsMapper: Record<Action, string> = {
  * @param search @string // without '?'
  * @returns
  */
-export const getLSat = async (action: Action, search?: string) => {
+export const getLSat = async () => {
   try {
-    let webln
+    // let webln
 
     // check if lsat exist in local storage
     const localLsat = localStorage.getItem('lsat')

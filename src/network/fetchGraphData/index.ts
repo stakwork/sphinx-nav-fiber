@@ -87,7 +87,7 @@ const fetchNodes = async (search: string) => {
     return response
   }
 
-  const lsatToken = await getLSat('searching')
+  const lsatToken = await getLSat()
 
   if (!lsatToken) {
     throw new Error('An error occured calling getLSat')
@@ -126,7 +126,7 @@ export const getSentimentData = async (args?: { topic: string; cutoff_date: stri
     return response
   }
 
-  const lsatToken = await getLSat('sentiments', search?.toString())
+  const lsatToken = await getLSat()
 
   if (!lsatToken) {
     throw new Error('An error occured calling getLSat')
@@ -140,7 +140,7 @@ export const getSentimentData = async (args?: { topic: string; cutoff_date: stri
 }
 
 export const postTeachMe = async (data: TeachData) => {
-  const lsatToken = await getLSat('teachme')
+  const lsatToken = await getLSat()
 
   if (!lsatToken) {
     throw new Error('An error occured calling getLSat')
@@ -150,7 +150,7 @@ export const postTeachMe = async (data: TeachData) => {
 }
 
 export const postAskQuestion = async (data: QuestionData) => {
-  const lsatToken = await getLSat('ask_question')
+  const lsatToken = await getLSat()
 
   if (!lsatToken) {
     throw new Error('An error occured calling getLSat')
