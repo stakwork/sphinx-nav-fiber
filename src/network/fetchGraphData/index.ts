@@ -1,5 +1,5 @@
+import { Lsat } from 'lsat-js'
 import { Vector3 } from 'three'
-
 // import { getNodeColorByType } from '~/components/Universe/Graph/constant'
 import {
   AWS_IMAGE_BUCKET_URL,
@@ -23,6 +23,7 @@ import {
 } from '~/types'
 import { getLSat } from '~/utils/getLSat'
 import { getMaxSuperficialWeightPerNodeType, getSuperficialNodeWeight } from '~/utils/getSuperficialNodeWeight'
+import { payLsat } from '~/utils/payLsat'
 import { getGraphDataPositions } from './const'
 
 type guestMapChild = {
@@ -89,13 +90,22 @@ const fetchNodes = async (search: string) => {
 
   const lsatToken = await getLSat()
 
-  if (!lsatToken) {
-    throw new Error('An error occured calling getLSat')
-  }
+  try {
+    const response = await api.get<FetchDataResponse>(`/v2/search?word=${search}`, {
+      Authorization: lsatToken,
+    })
 
-  return api.get<FetchDataResponse>(`/v2/search?word=${search}`, {
-    Authorization: lsatToken,
-  })
+    return response
+    // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    if (error.status === 402) {
+      const lsat = Lsat.fromHeader(error.headers.get('www-authenticate'))
+
+      return payLsat(lsat, fetchNodes, search)
+    }
+
+    throw error
+  }
 }
 
 export const getTrends = async () => {

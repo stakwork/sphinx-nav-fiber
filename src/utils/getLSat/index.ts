@@ -18,17 +18,16 @@ const ActionsMapper: Record<Action, string> = {
  * @param search @string // without '?'
  * @returns
  */
+
 export const getLSat = async () => {
   try {
-    // let webln
-
     // check if lsat exist in local storage
     const localLsat = localStorage.getItem('lsat')
 
     if (localLsat) {
-      const lsat: Lsat = JSON.parse(localLsat)
+      const lsat = JSON.parse(localLsat)
 
-      return lsat.toToken()
+      return lsatToken(lsat.macaroon, lsat.preimage)
     }
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -42,58 +41,26 @@ export const getLSat = async () => {
       const storedLsat = await sphinx.getLsat()
 
       if (storedLsat.macaroon) {
-        const lsat: Lsat = { ...storedLsat, baseMacaroon: storedLsat.macaroon }
+        localStorage.setItem(
+          'lsat',
+          JSON.stringify({
+            macaroon: storedLsat.macaroon,
+            identifier: storedLsat.identifier,
+            preimage: storedLsat.preimage,
+          }),
+        )
 
-        return lsat.toToken()
+        return lsatToken(storedLsat.macaroon, storedLsat.preimage)
       }
 
       return ''
     }
 
     return ''
-
-    // try {
-    //   webln = await requestProvider()
-
-    //   // getlsat invoice
-    //   const unpaidLsat = await getUnpaidLsat(action)
-
-    //   // pay lsat invoice
-    //   const preimage = await webln.sendPayment(unpaidLsat.invoice)
-
-    //   // create lsat
-    //   unpaidLsat.setPreimage(preimage.preimage)
-
-    //   const lsatToken = unpaidLsat.toToken()
-
-    //   return lsatToken
-
-    //   // Now you can call all of the webln.* methods
-    // } catch (err) {
-    //   // webln not enabled
-    // }
-
-    // const lsat = await getUnpaidLsat(action, search)
-
-    // // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // // @ts-ignore
-    // const LSATRes = await sphinx.saveLsat(lsat.invoice, lsat.baseMacaroon, 'knowledge-graph.sphinx.chat')
-
-    // if (LSATRes.success === false) {
-    //   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    //   // @ts-ignore
-    //   await sphinx.topup()
-    // }
-
-    // lsat.setPreimage(LSATRes.lsat.split(':')[1])
-
-    // const token = lsat.toToken()
-
-    // return token
   } catch (e) {
     console.warn(e)
 
-    return null
+    return ''
   }
 }
 
@@ -118,4 +85,8 @@ export const getUnpaidLsat = async (action: Action, search?: string) => {
     : Lsat.fromHeader(data.headers)
 
   return lsat
+}
+
+export function lsatToken(macaroon: string, preimage: string) {
+  return `LSAT ${macaroon}:${preimage}`
 }

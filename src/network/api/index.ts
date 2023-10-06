@@ -3,6 +3,10 @@ import { API_URL } from '~/constants'
 const request = async <Res>(url: string, config?: RequestInit): Promise<Res> => {
   const response = await fetch(url, config)
 
+  if (!response.ok) {
+    throw response
+  }
+
   return response.json()
 }
 
