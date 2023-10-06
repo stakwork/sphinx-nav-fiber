@@ -1,5 +1,5 @@
 import { memo } from 'react'
-import { useSelectedNode } from '~/stores/useDataStore'
+import { useSelectedNode, useDataStore } from '~/stores/useDataStore'
 import { TextType } from '../../Helper/AskQuestion/Text'
 import { AudioClip } from '../AudioClip'
 import { Creator } from '../Creator'
@@ -11,10 +11,18 @@ import { Topic } from '../Topic'
 import { TwitData } from '../TwitData'
 import { Twitter } from '../Twitter'
 import { YouTube } from '../YouTube'
+import { TeachMe } from '../../Helper/TeachMe'
 
 // eslint-disable-next-line no-underscore-dangle
 const _View = () => {
   const selectedNode = useSelectedNode()
+  const [showTeachMe] = useDataStore((s) => [s.showTeachMe])
+
+  console.log('SHOW TEACH ME', showTeachMe)
+
+  if (showTeachMe) {
+    return <TeachMe />
+  }
 
   switch (selectedNode?.node_type) {
     case 'twitter':

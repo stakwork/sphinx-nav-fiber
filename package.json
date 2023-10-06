@@ -46,6 +46,7 @@
     "react-toastify": "^8.2.0",
     "react-twitter-embed": "^4.0.4",
     "react-twitter-widgets": "^1.11.0",
+    "reactflow": "^11.9.2",
     "recharts": "^2.4.3",
     "socket.io-client": "^4.6.1",
     "sphinx-bridge-kevkevinpal": "0.2.58",
@@ -191,6 +192,6 @@
     ]
   },
   "coverage": {
-    "min": 35.1 
+    "min": 35.1
   }
 }

@@ -133,7 +133,7 @@ export const AskQuestion = () => {
   }
 
   return (
-    <>
+    <div style={{marginTop: '20px'}}>
       <Flex>
         <Flex>
           <FormControl component="div">
@@ -190,7 +190,7 @@ export const AskQuestion = () => {
           <MdSend color={canSubmit ? colors.white : colors.gray300} size="18" />
         </IconWrapper>
       </TextAreaWrapper>
-    </>
+    </div>
   )
 }
 

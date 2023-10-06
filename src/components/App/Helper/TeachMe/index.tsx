@@ -15,6 +15,9 @@ import { useDataStore } from '~/stores/useDataStore'
 import { useTeachStore } from '~/stores/useTeachStore'
 import { colors } from '~/utils/colors'
 import { AskQuestion } from '../AskQuestion'
+import ReactFlow from 'reactflow'
+
+import 'reactflow/dist/style.css'
 
 type ResponseType = {
   tutorial: string
@@ -90,6 +93,109 @@ export const TeachMe = () => {
     }
   }
 
+  const initialNodes = [
+    {
+      color: '#FF8C00',
+      data: {
+        label: 'Sphinx Relay',
+      },
+      id: 'sphinx_relay',
+      position: {
+        x: 0,
+        y: 0,
+      },
+      properties: {},
+      type: 'technology',
+    },
+    {
+      color: '#FFD700',
+      data: {
+        label: 'Layer 2 Scaling Solution',
+      },
+      id: 'layer_2_scaling_solution',
+      position: {
+        x: 0,
+        y: 100,
+      },
+      properties: {},
+      type: 'concept',
+    },
+    {
+      color: '#FFD700',
+      data: {
+        label: 'Payment Channels',
+      },
+      id: 'payment_channels',
+      position: {
+        x: -200,
+        y: 200,
+      },
+      properties: {},
+      type: 'concept',
+    },
+    {
+      color: '#FF8C00',
+      data: {
+        label: 'Lightning Network',
+      },
+      id: 'lightning_network',
+      position: {
+        x: -200,
+        y: 300,
+      },
+      properties: {},
+      type: 'technology',
+    },
+    {
+      color: '#FF8C00',
+      data: {
+        label: 'Bitcoin',
+      },
+      id: 'bitcoin',
+      position: {
+        x: -400,
+        y: 400,
+      },
+      properties: {},
+      type: 'technology',
+    },
+  ]
+
+  const initialEdges = [
+    {
+      color: '#008000',
+      direction: 'forward',
+      label: 'is a',
+      properties: {},
+      source: 'sphinx_relay',
+      target: 'layer_2_scaling_solution',
+    },
+    {
+      color: '#008000',
+      direction: 'forward',
+      label: 'uses',
+      properties: {},
+      source: 'layer_2_scaling_solution',
+      target: 'payment_channels',
+    },
+    {
+      color: '#008000',
+      direction: 'forward',
+      label: 'utilizes',
+      properties: {},
+      source: 'payment_channels',
+      target: 'lightning_network',
+    },
+    {
+      color: '#008000',
+      direction: 'forward',
+      label: 'built on',
+      properties: {},
+      source: 'lightning_network',
+      target: 'bitcoin',
+    },
+  ]
+
   return (
     <Container>
       {!hasTeachingInProgress ? (
@@ -102,6 +208,7 @@ export const TeachMe = () => {
             </Flex>
           ) : (
             <>
+              <ReactFlow edges={initialEdges} nodes={initialNodes} />
               <Flex>
                 <Text>{teachMeAnswer}</Text>
               </Flex>
@@ -124,5 +231,5 @@ export const TeachMe = () => {
 }
 
 const Container = styled('div')(() => ({
-  marginTop: 'auto',
+  marginBottom: '0',
 }))
