@@ -3,7 +3,7 @@ import * as sphinx from 'sphinx-bridge-kevkevinpal'
 import { requestProvider } from 'webln'
 
 // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-export async function payLsat(lsat: Lsat, callback: (arg?: any) => any, arg: any): Promise<any> {
+export async function payLsat(lsat: Lsat): Promise<void> {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   const isSphinx = await sphinx.enable()
@@ -42,9 +42,7 @@ export async function payLsat(lsat: Lsat, callback: (arg?: any) => any, arg: any
       }),
     )
 
-    const response = await callback(arg)
-
-    return response
+    return
   }
 
   // remove lsat in local storage
@@ -63,8 +61,4 @@ export async function payLsat(lsat: Lsat, callback: (arg?: any) => any, arg: any
       preimage: preimage.preimage,
     }),
   )
-
-  const response = await callback(arg)
-
-  return response
 }

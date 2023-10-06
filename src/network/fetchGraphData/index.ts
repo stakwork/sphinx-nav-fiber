@@ -69,7 +69,7 @@ export const fetchGraphData = async (search: string) => {
   }
 }
 
-const fetchNodes = async (search: string) => {
+const fetchNodes = async (search: string): Promise<FetchDataResponse> => {
   if (!search) {
     try {
       const response = await api.get<FetchDataResponse>(`/prediction/content/latest`)
@@ -101,7 +101,9 @@ const fetchNodes = async (search: string) => {
     if (error.status === 402) {
       const lsat = Lsat.fromHeader(error.headers.get('www-authenticate'))
 
-      return payLsat(lsat, fetchNodes, search)
+      await payLsat(lsat)
+
+      return fetchNodes(search)
     }
 
     throw error
