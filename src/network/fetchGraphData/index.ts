@@ -4,9 +4,9 @@ import { Vector3 } from 'three'
 import {
   AWS_IMAGE_BUCKET_URL,
   CLOUDFRONT_IMAGE_BUCKET_URL,
-  NODE_RELATIVE_HIGHLIGHT_COLORS,
   isDevelopment,
   isE2E,
+  NODE_RELATIVE_HIGHLIGHT_COLORS,
 } from '~/constants'
 import { mock } from '~/mocks/getMockGraphData/mockResponse'
 import { api } from '~/network/api'

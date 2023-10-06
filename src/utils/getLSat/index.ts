@@ -1,7 +1,6 @@
 import { Lsat } from 'lsat-js'
 import * as sphinx from 'sphinx-bridge-kevkevinpal'
 import { API_URL } from '~/constants'
-import { requestProvider } from 'webln'
 
 type Action = 'searching' | 'adding_node' | 'teachme' | 'ask_question' | 'sentiments'
 
@@ -23,44 +22,74 @@ export const getLSat = async (action: Action, search?: string) => {
   try {
     let webln
 
-    try {
-      webln = await requestProvider()
+    // check if lsat exist in local storage
+    const localLsat = localStorage.getItem('lsat')
 
-      // getlsat invoice
-      const unpaidLsat = await getUnpaidLsat(action)
+    if (localLsat) {
+      const lsat: Lsat = JSON.parse(localLsat)
 
-      // pay lsat invoice
-      const preimage = await webln.sendPayment(unpaidLsat.invoice)
-
-      // create lsat
-      unpaidLsat.setPreimage(preimage.preimage)
-
-      const lsatToken = unpaidLsat.toToken()
-
-      return lsatToken
-
-      // Now you can call all of the webln.* methods
-    } catch (err) {
-      // webln not enabled
+      return lsat.toToken()
     }
-
-    const lsat = await getUnpaidLsat(action, search)
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    const LSATRes = await sphinx.saveLsat(lsat.invoice, lsat.baseMacaroon, 'knowledge-graph.sphinx.chat')
+    const isSphinx = await sphinx.enable()
 
-    if (LSATRes.success === false) {
+    // Check if sphinx app is active
+    if (isSphinx) {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
-      await sphinx.topup()
+      const storedLsat = await sphinx.getLsat()
+
+      if (storedLsat) {
+        const lsat: Lsat = { ...storedLsat, baseMacaroon: storedLsat.macaroon }
+
+        return lsat.toToken()
+      }
+
+      return ''
     }
 
-    lsat.setPreimage(LSATRes.lsat.split(':')[1])
+    return ''
 
-    const token = lsat.toToken()
+    // try {
+    //   webln = await requestProvider()
 
-    return token
+    //   // getlsat invoice
+    //   const unpaidLsat = await getUnpaidLsat(action)
+
+    //   // pay lsat invoice
+    //   const preimage = await webln.sendPayment(unpaidLsat.invoice)
+
+    //   // create lsat
+    //   unpaidLsat.setPreimage(preimage.preimage)
+
+    //   const lsatToken = unpaidLsat.toToken()
+
+    //   return lsatToken
+
+    //   // Now you can call all of the webln.* methods
+    // } catch (err) {
+    //   // webln not enabled
+    // }
+
+    // const lsat = await getUnpaidLsat(action, search)
+
+    // // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // // @ts-ignore
+    // const LSATRes = await sphinx.saveLsat(lsat.invoice, lsat.baseMacaroon, 'knowledge-graph.sphinx.chat')
+
+    // if (LSATRes.success === false) {
+    //   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    //   // @ts-ignore
+    //   await sphinx.topup()
+    // }
+
+    // lsat.setPreimage(LSATRes.lsat.split(':')[1])
+
+    // const token = lsat.toToken()
+
+    // return token
   } catch (e) {
     console.warn(e)
 
