@@ -1,10 +1,9 @@
-import { styled } from '@mui/material'
 import { useCallback, useEffect, useRef } from 'react'
 import { PropagateLoader } from 'react-spinners'
 import { toast } from 'react-toastify'
 import { Socket } from 'socket.io-client'
 import * as sphinx from 'sphinx-bridge-kevkevinpal'
-import { Button } from '~/components/Button'
+import { Button } from '@mui/material'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { ToastMessage } from '~/components/common/Toast/toastMessage'
@@ -24,16 +23,14 @@ type ResponseType = {
 }
 
 export const TeachMe = () => {
-  const data = useDataStore((s) => s.data)
-  const searchTerm = useAppStore((s) => s.currentSearch)
+  const [data, setTeachMe] = useDataStore((s) => [s.data, s.setTeachMe])
+  const [searchTerm, setSideBarOpen] = useAppStore((s) => [s.currentSearch, s.setSidebarOpen])
 
   const isSocketSet: { current: boolean } = useRef<boolean>(false)
   const socket: Socket | null = useSocket()
 
-  const [teachMeAnswer, setTeachMeAnswer, hasTeachingInProgress, setHasTeachingInProgress] = useTeachStore((s) => [
-    s.teachMeAnswer,
+  const [setTeachMeAnswer, setHasTeachingInProgress] = useTeachStore((s) => [
     s.setTeachMeAnswer,
-    s.hasTeachingInProgress,
     s.setHasTeachingInProgress,
   ])
 
@@ -66,6 +63,8 @@ export const TeachMe = () => {
   const handleTutorialStart = async () => {
     if (searchTerm) {
       setHasTeachingInProgress(true)
+      setSideBarOpen(true)
+      setTeachMe(true)
 
       try {
         const nodesWithTranscript = data?.nodes.filter((i) => i.text)
@@ -93,6 +92,14 @@ export const TeachMe = () => {
     }
   }
 
+  return (
+    <Button kind="big" onClick={() => handleTutorialStart()}>
+      Teach me
+    </Button>
+  )
+}
+
+export const TeachMeText = () => {
   const initialNodes = [
     {
       color: '#FF8C00',
@@ -196,25 +203,17 @@ export const TeachMe = () => {
     },
   ]
 
+  const [teachMeAnswer, hasTeachingInProgress] = useTeachStore((s) => [s.teachMeAnswer, s.hasTeachingInProgress])
+
   return (
-    <Container>
+    <>
       {!hasTeachingInProgress ? (
         <>
-          {!teachMeAnswer ? (
-            <Flex py={8}>
-              <Button kind="big" onClick={() => handleTutorialStart()}>
-                Teach me
-              </Button>
-            </Flex>
-          ) : (
-            <>
-              <ReactFlow edges={initialEdges} nodes={initialNodes} />
-              <Flex>
-                <Text>{teachMeAnswer}</Text>
-              </Flex>
-              <AskQuestion />
-            </>
-          )}
+          <ReactFlow edges={initialEdges} nodes={initialNodes} />
+          <Flex>
+            <Text>{teachMeAnswer}</Text>
+          </Flex>
+          <AskQuestion />
         </>
       ) : (
         <Flex align="center" justify="center" py={12}>
@@ -226,10 +225,6 @@ export const TeachMe = () => {
           </Flex>
         </Flex>
       )}
-    </Container>
+    </>
   )
 }
-
-const Container = styled('div')(() => ({
-  marginBottom: '0',
-}))

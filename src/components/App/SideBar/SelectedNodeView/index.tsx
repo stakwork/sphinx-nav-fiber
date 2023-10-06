@@ -11,7 +11,7 @@ import { Topic } from '../Topic'
 import { TwitData } from '../TwitData'
 import { Twitter } from '../Twitter'
 import { YouTube } from '../YouTube'
-import { TeachMe } from '../../Helper/TeachMe'
+import { TeachMeText } from '../../Helper/TeachMe'
 
 // eslint-disable-next-line no-underscore-dangle
 const _View = () => {
@@ -21,7 +21,7 @@ const _View = () => {
   console.log('SHOW TEACH ME', showTeachMe)
 
   if (showTeachMe) {
-    return <TeachMe />
+    return <TeachMeText />
   }
 
   switch (selectedNode?.node_type) {
