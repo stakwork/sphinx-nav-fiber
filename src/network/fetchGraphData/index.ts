@@ -164,14 +164,24 @@ export const getSentimentData = async (args?: {
   }
 }
 
-export const postTeachMe = async (data: TeachData) => {
+export const postTeachMe = async (data: TeachData): Promise<void> => {
   const lsatToken = await getLSat()
 
-  if (!lsatToken) {
-    throw new Error('An error occured calling getLSat')
-  }
+  try {
+    return api.post(`/teachme`, JSON.stringify(data), { Authorization: lsatToken })
 
-  return api.post(`/teachme`, JSON.stringify(data), { Authorization: lsatToken })
+    // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    if (error.status === 402) {
+      const lsat = Lsat.fromHeader(error.headers.get('www-authenticate'))
+
+      await payLsat(lsat)
+
+      return postTeachMe(data)
+    }
+
+    throw error
+  }
 }
 
 export const postAskQuestion = async (data: QuestionData) => {
