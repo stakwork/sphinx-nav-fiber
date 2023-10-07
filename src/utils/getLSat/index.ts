@@ -19,7 +19,7 @@ const ActionsMapper: Record<Action, string> = {
  * @returns
  */
 
-export const getLSat = async () => {
+export const getLSat = async (): Promise<string> => {
   try {
     // check if lsat exist in local storage
     const localLsat = localStorage.getItem('lsat')

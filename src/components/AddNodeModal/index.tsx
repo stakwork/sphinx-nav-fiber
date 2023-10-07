@@ -1,5 +1,6 @@
 import { Stack } from '@mui/material'
 import { clsx } from 'clsx'
+import { Lsat } from 'lsat-js'
 import { ReactElement, useState } from 'react'
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { MdCheckCircle, MdClose, MdInfo, MdKeyboardBackspace, MdWarning } from 'react-icons/md'
@@ -30,6 +31,7 @@ import { useModal } from '~/stores/useModalStore'
 import { FetchRadarResponse, SubmitErrRes } from '~/types'
 import { colors } from '~/utils/colors'
 import { getLSat } from '~/utils/getLSat'
+import { payLsat } from '~/utils/payLsat'
 import { executeIfProd } from '~/utils/tests'
 import { timeToMilliseconds } from '~/utils/timeToMilliseconds'
 import { useDataStore } from '../../stores/useDataStore/index'
@@ -76,7 +78,12 @@ const notify = (message: string) => {
   })
 }
 
-const handleSubmit = async (data: FieldValues, close: () => void, sourceType: string, successCallback: () => void) => {
+const handleSubmit = async (
+  data: FieldValues,
+  close: () => void,
+  sourceType: string,
+  successCallback: () => void,
+): Promise<void> => {
   const body: { [index: string]: unknown } = {}
 
   if (sourceType === LINK) {
@@ -145,7 +152,7 @@ const handleSubmit = async (data: FieldValues, close: () => void, sourceType: st
     }
   }
 
-  let lsatToken: string | null = null
+  let lsatToken = ''
 
   // skipping this for end to end test because it requires a sphinx-relay to be connected
   await executeIfProd(async () => {
@@ -156,24 +163,14 @@ const handleSubmit = async (data: FieldValues, close: () => void, sourceType: st
     body.pubkey = enable?.pubkey
 
     lsatToken = await getLSat()
-
-    if (!lsatToken) {
-      throw new Error('An error occured calling getLSat')
-    }
   })
 
   const endPoint = CONTENT_TYPES.includes(sourceType) ? 'add_node' : 'radar'
 
   try {
-    const res: SubmitErrRes = await api.post(
-      `/${endPoint}`,
-      JSON.stringify(body),
-      (lsatToken
-        ? {
-            Authorization: lsatToken,
-          }
-        : {}) as HeadersInit,
-    )
+    const res: SubmitErrRes = await api.post(`/${endPoint}`, JSON.stringify(body), {
+      Authorization: lsatToken,
+    })
 
     if (res.error) {
       const { message } = res.error
@@ -187,7 +184,17 @@ const handleSubmit = async (data: FieldValues, close: () => void, sourceType: st
 
     notify(NODE_ADD_SUCCESS)
     close()
-  } catch (err: unknown) {
+
+    // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+  } catch (err: any) {
+    if (err.status === 402) {
+      const lsat = Lsat.fromHeader(err.headers.get('www-authenticate'))
+
+      await payLsat(lsat)
+
+      await handleSubmit(data, close, sourceType, successCallback)
+    }
+
     if (err instanceof Error) {
       notify(NODE_ADD_ERROR)
       close()
