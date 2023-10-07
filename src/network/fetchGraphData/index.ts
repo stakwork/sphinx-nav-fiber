@@ -184,14 +184,24 @@ export const postTeachMe = async (data: TeachData): Promise<void> => {
   }
 }
 
-export const postAskQuestion = async (data: QuestionData) => {
+export const postAskQuestion = async (data: QuestionData): Promise<void> => {
   const lsatToken = await getLSat()
 
-  if (!lsatToken) {
-    throw new Error('An error occured calling getLSat')
-  }
+  try {
+    return api.post(`/ask_question`, JSON.stringify(data), { Authorization: lsatToken })
 
-  return api.post(`/ask_question`, JSON.stringify(data), { Authorization: lsatToken })
+    // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    if (error.status === 402) {
+      const lsat = Lsat.fromHeader(error.headers.get('www-authenticate'))
+
+      await payLsat(lsat)
+
+      return postAskQuestion(data)
+    }
+
+    throw error
+  }
 }
 
 export const getAdminId = async (tribeId: string) => {
