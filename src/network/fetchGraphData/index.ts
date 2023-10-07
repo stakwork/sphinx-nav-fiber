@@ -126,7 +126,10 @@ export const getTrends = async () => {
  *  }
  */
 
-export const getSentimentData = async (args?: { topic: string; cutoff_date: string }) => {
+export const getSentimentData = async (args?: {
+  topic: string
+  cutoff_date: string
+}): Promise<FetchSentimentResponse> => {
   const search = args && new URLSearchParams(args)
 
   const endpoint = search ? `/sentiments?${search.toString()}` : '/sentiments'
@@ -140,15 +143,25 @@ export const getSentimentData = async (args?: { topic: string; cutoff_date: stri
 
   const lsatToken = await getLSat()
 
-  if (!lsatToken) {
-    throw new Error('An error occured calling getLSat')
+  try {
+    const response = await api.get<FetchSentimentResponse>(endpoint, {
+      Authorization: lsatToken,
+    })
+
+    return response
+
+    // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    if (error.status === 402) {
+      const lsat = Lsat.fromHeader(error.headers.get('www-authenticate'))
+
+      await payLsat(lsat)
+
+      return getSentimentData(args)
+    }
+
+    throw error
   }
-
-  const response = await api.get<FetchSentimentResponse>(endpoint, {
-    Authorization: lsatToken,
-  })
-
-  return response
 }
 
 export const postTeachMe = async (data: TeachData) => {
