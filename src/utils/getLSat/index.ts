@@ -3,12 +3,13 @@ import * as sphinx from 'sphinx-bridge-kevkevinpal'
 import { API_URL } from '~/constants'
 import { requestProvider } from 'webln'
 
-type Action = 'searching' | 'adding_node' | 'teachme' | 'ask_question' | 'sentiments'
+type Action = 'searching' | 'adding_node' | 'teachme' | 'instagraph' | 'ask_question' | 'sentiments'
 
 const ActionsMapper: Record<Action, string> = {
   searching: 'GET',
   adding_node: 'POST',
   teachme: 'POST',
+  instagraph: 'POST',
   ask_question: 'POST',
   sentiments: 'GET',
 }
@@ -84,7 +85,7 @@ export const getUnpaidLsat = async (action: Action, search?: string) => {
 
   const data = await resp.json()
 
-  const lsat = ['teachme', 'ask_question', 'sentiments'].includes(action)
+  const lsat = ['instagraph', 'teachme', 'ask_question', 'sentiments'].includes(action)
     ? Lsat.fromHeader(resp.headers.get('www-authenticate') || '')
     : Lsat.fromHeader(data.headers)
 

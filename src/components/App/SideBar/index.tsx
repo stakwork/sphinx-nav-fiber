@@ -1,4 +1,4 @@
-import { Button, Slide } from '@mui/material'
+import { Slide } from '@mui/material'
 import { forwardRef, useEffect, useRef, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import styled from 'styled-components'
@@ -96,14 +96,6 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
             </div>
             <div className="right">
               <TeachMe />
-              <Button
-                onClick={() => {
-                  setSidebarOpen(true)
-                  setTeachMe(true)
-                }}
-              >
-                Teach Me
-              </Button>
             </div>
           </SearchDetails>
         )}

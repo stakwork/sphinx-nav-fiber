@@ -149,6 +149,18 @@ export const postTeachMe = async (data: TeachData) => {
   return api.post(`/teachme`, JSON.stringify(data), { Authorization: lsatToken })
 }
 
+export const postInstagraph = async (data: TeachData) => {
+  console.log(data)
+
+  const lsatToken = await getLSat('instagraph')
+
+  if (!lsatToken) {
+    throw new Error('An error occured calling getLSat')
+  }
+
+  return api.post(`/instagraph`, JSON.stringify(data), { Authorization: lsatToken })
+}
+
 export const postAskQuestion = async (data: QuestionData) => {
   const lsatToken = await getLSat('ask_question')
 

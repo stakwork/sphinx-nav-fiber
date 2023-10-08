@@ -10,12 +10,12 @@ import { SelectedNodeView } from '../SelectedNodeView'
 type Props = { open: boolean }
 
 export const SideBarSubView = ({ open }: Props) => {
-  const [setSelectedNode, setTeachMe] = useDataStore((s) => [s.setSelectedNode, s.setTeachMe])
+  const [setSelectedNode, setTeachMe, showTeachMe] = useDataStore((s) => [s.setSelectedNode, s.setTeachMe, s.showTeachMe])
 
   console.log('IS OPEN', open)
 
   return (
-    <Slide direction="right" in={open} mountOnEnter unmountOnExit>
+    <Slide direction="right" in={open} mountOnEnter style={{ width: showTeachMe ? '700px' : '' }} unmountOnExit>
       <Wrapper>
         <ScrollWrapper>
           <SelectedNodeView />

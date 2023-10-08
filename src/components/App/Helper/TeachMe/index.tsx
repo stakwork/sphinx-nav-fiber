@@ -8,7 +8,7 @@ import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { ToastMessage } from '~/components/common/Toast/toastMessage'
 import useSocket from '~/hooks/useSockets'
-import { postTeachMe } from '~/network/fetchGraphData'
+import { postTeachMe, postInstagraph } from '~/network/fetchGraphData'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
 import { useTeachStore } from '~/stores/useTeachStore'
@@ -29,10 +29,9 @@ export const TeachMe = () => {
   const isSocketSet: { current: boolean } = useRef<boolean>(false)
   const socket: Socket | null = useSocket()
 
-  const [setTeachMeAnswer, setHasTeachingInProgress] = useTeachStore((s) => [
-    s.setTeachMeAnswer,
-    s.setHasTeachingInProgress,
-  ])
+  const [setTeachMeAnswer, setHasTeachingInProgress, setInstagraphAnswer, setHasInstagraphInProgress] = useTeachStore(
+    (s) => [s.setTeachMeAnswer, s.setHasTeachingInProgress, s.setInstagraphAnswer, s.setHasInstagraphInProgress],
+  )
 
   const handleTeachMe = useCallback(
     (response: ResponseType) => {
@@ -44,6 +43,21 @@ export const TeachMe = () => {
       })
     },
     [setTeachMeAnswer],
+  )
+
+  const handleInstagraph = useCallback(
+    (response: ResponseType) => {
+      console.info('instgraph response', response.edges)
+      console.info('instgraph response', response.nodes)
+
+      setInstagraphAnswer(response)
+
+      toast(<ToastMessage message="Instagraph is ready" />, {
+        position: toast.POSITION.BOTTOM_CENTER,
+        type: 'success',
+      })
+    },
+    [setInstagraphAnswer],
   )
 
   useEffect(() => {
@@ -58,11 +72,20 @@ export const TeachMe = () => {
         isSocketSet.current = true
       }
     }
-  }, [socket, handleTeachMe])
+
+    if (handleInstagraph) {
+      if (socket) {
+        socket.on('instagraphhook', handleInstagraph)
+
+        isSocketSet.current = true
+      }
+    }
+  }, [socket, handleTeachMe, handleInstagraph])
 
   const handleTutorialStart = async () => {
     if (searchTerm) {
       setHasTeachingInProgress(true)
+      setHasInstagraphInProgress(true)
       setSideBarOpen(true)
       setTeachMe(true)
 
@@ -86,8 +109,18 @@ export const TeachMe = () => {
         toast(<ToastMessage message="We started preparing tutorial for you" />, {
           type: 'success',
         })
+
+        await postInstagraph({
+          term: searchTerm,
+          transcripts,
+        })
+
+        toast(<ToastMessage message="We started preparing an instagraph for you" />, {
+          type: 'success',
+        })
       } catch (error: unknown) {
         setHasTeachingInProgress(false)
+        setHasInstagraphInProgress(false)
       }
     }
   }
@@ -100,117 +133,32 @@ export const TeachMe = () => {
 }
 
 export const TeachMeText = () => {
-  const initialNodes = [
-    {
-      color: '#FF8C00',
-      data: {
-        label: 'Sphinx Relay',
-      },
-      id: 'sphinx_relay',
-      position: {
-        x: 0,
-        y: 0,
-      },
-      properties: {},
-      type: 'technology',
-    },
-    {
-      color: '#FFD700',
-      data: {
-        label: 'Layer 2 Scaling Solution',
-      },
-      id: 'layer_2_scaling_solution',
-      position: {
-        x: 0,
-        y: 100,
-      },
-      properties: {},
-      type: 'concept',
-    },
-    {
-      color: '#FFD700',
-      data: {
-        label: 'Payment Channels',
-      },
-      id: 'payment_channels',
-      position: {
-        x: -200,
-        y: 200,
-      },
-      properties: {},
-      type: 'concept',
-    },
-    {
-      color: '#FF8C00',
-      data: {
-        label: 'Lightning Network',
-      },
-      id: 'lightning_network',
-      position: {
-        x: -200,
-        y: 300,
-      },
-      properties: {},
-      type: 'technology',
-    },
-    {
-      color: '#FF8C00',
-      data: {
-        label: 'Bitcoin',
-      },
-      id: 'bitcoin',
-      position: {
-        x: -400,
-        y: 400,
-      },
-      properties: {},
-      type: 'technology',
-    },
-  ]
+  const [teachMeAnswer, hasTeachingInProgress, instgraphAnswser, hasInstagraphInProgress] = useTeachStore((s) => [
+    s.teachMeAnswer,
+    s.hasTeachingInProgress,
+    s.instgraphAnswser,
+    s.hasInstagraphInProgress,
+  ])
 
-  const initialEdges = [
-    {
-      color: '#008000',
-      direction: 'forward',
-      label: 'is a',
-      properties: {},
-      source: 'sphinx_relay',
-      target: 'layer_2_scaling_solution',
-    },
-    {
-      color: '#008000',
-      direction: 'forward',
-      label: 'uses',
-      properties: {},
-      source: 'layer_2_scaling_solution',
-      target: 'payment_channels',
-    },
-    {
-      color: '#008000',
-      direction: 'forward',
-      label: 'utilizes',
-      properties: {},
-      source: 'payment_channels',
-      target: 'lightning_network',
-    },
-    {
-      color: '#008000',
-      direction: 'forward',
-      label: 'built on',
-      properties: {},
-      source: 'lightning_network',
-      target: 'bitcoin',
-    },
-  ]
-
-  const [teachMeAnswer, hasTeachingInProgress] = useTeachStore((s) => [s.teachMeAnswer, s.hasTeachingInProgress])
+  console.info('instagraph anwser', instgraphAnswser)
 
   return (
     <>
+      {!hasInstagraphInProgress ? (
+        <ReactFlow edges={instgraphAnswser.edges} nodes={instgraphAnswser.nodes} />
+      ) : (
+        <Flex align="center" justify="center" py={12}>
+          <Flex align="center" py={12}>
+            <PropagateLoader color={colors.white} />
+          </Flex>
+          <Flex align="center" py={12}>
+            <Text>Generating instagraph</Text>
+          </Flex>
+        </Flex>
+      )}
       {!hasTeachingInProgress ? (
         <>
-          <ReactFlow edges={initialEdges} nodes={initialNodes} />
-          <Flex>
+          <Flex style={{ paddingLeft: '10px', paddingRight: '10px' }}>
             <Text>{teachMeAnswer}</Text>
           </Flex>
           <AskQuestion />
