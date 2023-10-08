@@ -66,10 +66,9 @@ export const MainToolbar = () => {
 const Wrapper = styled(Flex).attrs({
   align: 'flex-start',
   direction: 'column',
-  grow: 1,
   justify: 'flex-start',
 })`
-  width: 64px;
+  flex: 0 0 64px;
   z-index: 31;
   transition: opacity 1s;
   background: ${colors.BG2};

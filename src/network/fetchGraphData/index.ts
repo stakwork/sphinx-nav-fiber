@@ -256,24 +256,7 @@ const getGraphData = async (searchterm: string) => {
   try {
     const dataInit = await fetchNodes(searchterm)
 
-    const dataSeries = dataInit.data_series
-      ? [
-          {
-            ...dataInit.data_series,
-            x: 0,
-            y: 0,
-            z: 0,
-            boost: null,
-            image_url: 'node_data.webp',
-            label: dataInit.data_series.title,
-            name: 'Name',
-            node_type: 'data_series',
-            ref_id: '',
-            type: 'data_series',
-            weight: 2,
-          } as Node,
-        ]
-      : []
+    const dataSeries = Array.isArray(dataInit.data_series) ? dataInit.data_series : []
 
     const data: Node[] = [...dataInit.exact, ...dataInit.related, ...dataSeries]
 
