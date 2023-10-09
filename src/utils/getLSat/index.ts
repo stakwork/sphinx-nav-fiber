@@ -1,6 +1,4 @@
-import { Lsat } from 'lsat-js'
 import * as sphinx from 'sphinx-bridge-kevkevinpal'
-import { API_URL } from '~/constants'
 
 type Action = 'searching' | 'adding_node' | 'teachme' | 'ask_question' | 'sentiments'
 
@@ -62,29 +60,6 @@ export const getLSat = async (): Promise<string> => {
 
     return ''
   }
-}
-
-export const getUnpaidLsat = async (action: Action, search?: string) => {
-  const url = new URL(`${API_URL}/${action}`)
-  const searchParams = new URLSearchParams(search)
-
-  if (search) {
-    searchParams.forEach((value, key) => {
-      url.searchParams.append(key, value)
-    })
-  }
-
-  const resp = await fetch(url, {
-    method: ActionsMapper[action] ?? 'GET',
-  })
-
-  const data = await resp.json()
-
-  const lsat = ['teachme', 'ask_question', 'sentiments'].includes(action)
-    ? Lsat.fromHeader(resp.headers.get('www-authenticate') || '')
-    : Lsat.fromHeader(data.headers)
-
-  return lsat
 }
 
 export function lsatToken(macaroon: string, preimage: string) {
