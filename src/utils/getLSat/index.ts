@@ -1,15 +1,5 @@
 import * as sphinx from 'sphinx-bridge-kevkevinpal'
 
-type Action = 'searching' | 'adding_node' | 'teachme' | 'ask_question' | 'sentiments'
-
-const ActionsMapper: Record<Action, string> = {
-  searching: 'GET',
-  adding_node: 'POST',
-  teachme: 'POST',
-  ask_question: 'POST',
-  sentiments: 'GET',
-}
-
 /**
  *
  * @param action @Action
