@@ -10,7 +10,11 @@ import { SelectedNodeView } from '../SelectedNodeView'
 type Props = { open: boolean }
 
 export const SideBarSubView = ({ open }: Props) => {
-  const [setSelectedNode, setTeachMe, showTeachMe] = useDataStore((s) => [s.setSelectedNode, s.setTeachMe, s.showTeachMe])
+  const [setSelectedNode, setTeachMe, showTeachMe] = useDataStore((s) => [
+    s.setSelectedNode,
+    s.setTeachMe,
+    s.showTeachMe,
+  ])
 
   console.log('IS OPEN', open)
 

@@ -133,7 +133,7 @@ export const AskQuestion = () => {
   }
 
   return (
-    <div style={{marginTop: '20px'}}>
+    <div style={{ marginTop: '20px' }}>
       <Flex>
         <Flex>
           <FormControl component="div">

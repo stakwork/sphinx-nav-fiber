@@ -123,11 +123,7 @@ export const TeachMe = () => {
     }
   }
 
-  return (
-    <ButtonStyled onClick={() => handleTutorialStart()}>
-      Teach me
-    </ButtonStyled>
-  )
+  return <ButtonStyled onClick={() => handleTutorialStart()}>Teach me</ButtonStyled>
 }
 
 export const TeachMeText = () => {
@@ -173,7 +169,4 @@ export const TeachMeText = () => {
   )
 }
 
-
-const ButtonStyled = styled(Button)`
-`
-
+const ButtonStyled = styled(Button)``
