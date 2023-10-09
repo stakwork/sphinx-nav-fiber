@@ -1,22 +1,34 @@
 import create from 'zustand'
 
-type InstagraphResponse = {
-  edges: Array[{ direction: string; label: string; properties: object; source: string; target: string; color: string }]
-  nodes: Array[{
+export type InstagraphResponse = {
+  instagraph: Instagraph
+} | null
+
+type Instagraph = {
+  edges: Array<{
+    direction: string
+    label: string
+    properties: object
+    source: string
+    target: string
+    color: string
+    id: string
+  }>
+  nodes: Array<{
     color: string
     id: string
     data: { label: string }
     position: { x: number; y: number }
     properties: object
     type: string
-  }]
-}
+  }>
+} | null
 
 type TeachStore = {
   askedQuestions: string[] | null
   askedQuestionsAnswers: string[] | null
   teachMeAnswer: string | null
-  instgraphAnswser: InstagraphResponse
+  instgraphAnswser: Instagraph
   hasQuestionInProgress: boolean
   hasTeachingInProgress: boolean
   hasInstagraphInProgress: boolean
@@ -74,11 +86,11 @@ export const useTeachStore = create<TeachStore>((set) => ({
     }),
   setTeachMeAnswer: (answer: string) => set({ hasTeachingInProgress: false, teachMeAnswer: answer }),
   setInstagraphAnswer: (answer: InstagraphResponse) => {
-    console.info(answer.instagraph)
-
-    set({
-      hasInstagraphInProgress: false,
-      instgraphAnswser: { edges: answer.instagraph.edges, nodes: answer.instagraph.nodes },
-    })
+    if (!!answer?.instagraph?.edges && !!answer?.instagraph?.nodes) {
+      set({
+        hasInstagraphInProgress: false,
+        instgraphAnswser: { edges: answer?.instagraph?.edges, nodes: answer?.instagraph?.nodes },
+      })
+    }
   },
 }))

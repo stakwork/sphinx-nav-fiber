@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef } from 'react'
+import styled from 'styled-components'
 import { PropagateLoader } from 'react-spinners'
 import { toast } from 'react-toastify'
 import { Socket } from 'socket.io-client'
@@ -11,7 +12,7 @@ import useSocket from '~/hooks/useSockets'
 import { postTeachMe, postInstagraph } from '~/network/fetchGraphData'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
-import { useTeachStore } from '~/stores/useTeachStore'
+import { useTeachStore, InstagraphResponse } from '~/stores/useTeachStore'
 import { colors } from '~/utils/colors'
 import { AskQuestion } from '../AskQuestion'
 import ReactFlow from 'reactflow'
@@ -46,10 +47,7 @@ export const TeachMe = () => {
   )
 
   const handleInstagraph = useCallback(
-    (response: ResponseType) => {
-      console.info('instgraph response', response.edges)
-      console.info('instgraph response', response.nodes)
-
+    (response: InstagraphResponse) => {
       setInstagraphAnswer(response)
 
       toast(<ToastMessage message="Instagraph is ready" />, {
@@ -126,9 +124,9 @@ export const TeachMe = () => {
   }
 
   return (
-    <Button kind="big" onClick={() => handleTutorialStart()}>
+    <ButtonStyled onClick={() => handleTutorialStart()}>
       Teach me
-    </Button>
+    </ButtonStyled>
   )
 }
 
@@ -140,12 +138,10 @@ export const TeachMeText = () => {
     s.hasInstagraphInProgress,
   ])
 
-  console.info('instagraph anwser', instgraphAnswser)
-
   return (
     <>
-      {!hasInstagraphInProgress ? (
-        <ReactFlow edges={instgraphAnswser.edges} nodes={instgraphAnswser.nodes} />
+      {!hasInstagraphInProgress && !!instgraphAnswser?.edges && !!instgraphAnswser?.nodes ? (
+        <ReactFlow edges={instgraphAnswser?.edges} nodes={instgraphAnswser?.nodes} />
       ) : (
         <Flex align="center" justify="center" py={12}>
           <Flex align="center" py={12}>
@@ -176,3 +172,8 @@ export const TeachMeText = () => {
     </>
   )
 }
+
+
+const ButtonStyled = styled(Button)`
+`
+
