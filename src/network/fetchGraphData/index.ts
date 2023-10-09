@@ -1,12 +1,12 @@
+import { Lsat } from 'lsat-js'
 import { Vector3 } from 'three'
-
 // import { getNodeColorByType } from '~/components/Universe/Graph/constant'
 import {
   AWS_IMAGE_BUCKET_URL,
   CLOUDFRONT_IMAGE_BUCKET_URL,
-  NODE_RELATIVE_HIGHLIGHT_COLORS,
   isDevelopment,
   isE2E,
+  NODE_RELATIVE_HIGHLIGHT_COLORS,
 } from '~/constants'
 import { mock } from '~/mocks/getMockGraphData/mockResponse'
 import { api } from '~/network/api'
@@ -23,6 +23,7 @@ import {
 } from '~/types'
 import { getLSat } from '~/utils/getLSat'
 import { getMaxSuperficialWeightPerNodeType, getSuperficialNodeWeight } from '~/utils/getSuperficialNodeWeight'
+import { payLsat } from '~/utils/payLsat'
 import { getGraphDataPositions } from './const'
 
 type guestMapChild = {
@@ -68,7 +69,7 @@ export const fetchGraphData = async (search: string) => {
   }
 }
 
-const fetchNodes = async (search: string) => {
+const fetchNodes = async (search: string): Promise<FetchDataResponse> => {
   if (!search) {
     try {
       const response = await api.get<FetchDataResponse>(`/prediction/content/latest`)
@@ -87,15 +88,26 @@ const fetchNodes = async (search: string) => {
     return response
   }
 
-  const lsatToken = await getLSat('searching')
+  const lsatToken = await getLSat()
 
-  if (!lsatToken) {
-    throw new Error('An error occured calling getLSat')
+  try {
+    const response = await api.get<FetchDataResponse>(`/v2/search?word=${search}`, {
+      Authorization: lsatToken,
+    })
+
+    return response
+    // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    if (error.status === 402) {
+      const lsat = Lsat.fromHeader(error.headers.get('www-authenticate'))
+
+      await payLsat(lsat)
+
+      return fetchNodes(search)
+    }
+
+    throw error
   }
-
-  return api.get<FetchDataResponse>(`/v2/search?word=${search}`, {
-    Authorization: lsatToken,
-  })
 }
 
 export const getTrends = async () => {
@@ -114,7 +126,10 @@ export const getTrends = async () => {
  *  }
  */
 
-export const getSentimentData = async (args?: { topic: string; cutoff_date: string }) => {
+export const getSentimentData = async (args?: {
+  topic: string
+  cutoff_date: string
+}): Promise<FetchSentimentResponse> => {
   const search = args && new URLSearchParams(args)
 
   const endpoint = search ? `/sentiments?${search.toString()}` : '/sentiments'
@@ -126,37 +141,67 @@ export const getSentimentData = async (args?: { topic: string; cutoff_date: stri
     return response
   }
 
-  const lsatToken = await getLSat('sentiments', search?.toString())
+  const lsatToken = await getLSat()
 
-  if (!lsatToken) {
-    throw new Error('An error occured calling getLSat')
+  try {
+    const response = await api.get<FetchSentimentResponse>(endpoint, {
+      Authorization: lsatToken,
+    })
+
+    return response
+
+    // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    if (error.status === 402) {
+      const lsat = Lsat.fromHeader(error.headers.get('www-authenticate'))
+
+      await payLsat(lsat)
+
+      return getSentimentData(args)
+    }
+
+    throw error
   }
-
-  const response = await api.get<FetchSentimentResponse>(endpoint, {
-    Authorization: lsatToken,
-  })
-
-  return response
 }
 
-export const postTeachMe = async (data: TeachData) => {
-  const lsatToken = await getLSat('teachme')
+export const postTeachMe = async (data: TeachData): Promise<void> => {
+  const lsatToken = await getLSat()
 
-  if (!lsatToken) {
-    throw new Error('An error occured calling getLSat')
+  try {
+    return api.post(`/teachme`, JSON.stringify(data), { Authorization: lsatToken })
+
+    // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    if (error.status === 402) {
+      const lsat = Lsat.fromHeader(error.headers.get('www-authenticate'))
+
+      await payLsat(lsat)
+
+      return postTeachMe(data)
+    }
+
+    throw error
   }
-
-  return api.post(`/teachme`, JSON.stringify(data), { Authorization: lsatToken })
 }
 
-export const postAskQuestion = async (data: QuestionData) => {
-  const lsatToken = await getLSat('ask_question')
+export const postAskQuestion = async (data: QuestionData): Promise<void> => {
+  const lsatToken = await getLSat()
 
-  if (!lsatToken) {
-    throw new Error('An error occured calling getLSat')
+  try {
+    return api.post(`/ask_question`, JSON.stringify(data), { Authorization: lsatToken })
+
+    // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    if (error.status === 402) {
+      const lsat = Lsat.fromHeader(error.headers.get('www-authenticate'))
+
+      await payLsat(lsat)
+
+      return postAskQuestion(data)
+    }
+
+    throw error
   }
-
-  return api.post(`/ask_question`, JSON.stringify(data), { Authorization: lsatToken })
 }
 
 export const getAdminId = async (tribeId: string) => {
