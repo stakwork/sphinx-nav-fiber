@@ -4,7 +4,6 @@ const { origin, host } = window.location
 export const isDevelopment = !!(
   origin === 'http://localhost:3000' ||
   origin === 'http://localhost:3001' ||
-  origin === 'http://localhost:3004' ||
   origin === 'https://sphinx-jarvis-david.sphinx1.repl.co'
 )
 

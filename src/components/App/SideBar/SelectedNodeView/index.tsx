@@ -18,8 +18,6 @@ const _View = () => {
   const selectedNode = useSelectedNode()
   const [showTeachMe] = useDataStore((s) => [s.showTeachMe])
 
-  console.log('SHOW TEACH ME', showTeachMe)
-
   if (showTeachMe) {
     return <TeachMeText />
   }

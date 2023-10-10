@@ -16,8 +16,6 @@ export const SideBarSubView = ({ open }: Props) => {
     s.showTeachMe,
   ])
 
-  console.log('IS OPEN', open)
-
   return (
     <Slide direction="right" in={open} mountOnEnter style={{ width: showTeachMe ? '700px' : '' }} unmountOnExit>
       <Wrapper>

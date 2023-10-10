@@ -127,9 +127,6 @@ export const SideBar = ({ onSubmit }: Props) => {
   const selectedNode = useSelectedNode()
   const [showTeachMe] = useDataStore((s) => [s.showTeachMe])
 
-  console.log('IS OPEN 2 vals', !!selectedNode, !!showTeachMe)
-  console.log('IS OPEN 2', !!selectedNode || !!showTeachMe)
-
   return (
     <>
       <Slide direction="right" in={sidebarIsOpen} mountOnEnter unmountOnExit>
