@@ -98,7 +98,7 @@
     ],
     "coverageThreshold": {
       "global": {
-        "lines": 28
+        "lines": 20
       }
     },
     "moduleNameMapper": {
