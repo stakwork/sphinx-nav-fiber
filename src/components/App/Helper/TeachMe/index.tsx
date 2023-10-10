@@ -126,6 +126,17 @@ export const TeachMe = () => {
   return <ButtonStyled onClick={() => handleTutorialStart()}>Teach me</ButtonStyled>
 }
 
+const TeachMeLoader = ({ text }: { text: string }) => (
+  <Flex align="center" justify="center" py={12}>
+    <Flex align="center" py={12}>
+      <PropagateLoader color={colors.white} />
+    </Flex>
+    <Flex align="center" py={12}>
+      <Text>{text}</Text>
+    </Flex>
+  </Flex>
+)
+
 export const TeachMeText = () => {
   const [teachMeAnswer, hasTeachingInProgress, instgraphAnswser, hasInstagraphInProgress] = useTeachStore((s) => [
     s.teachMeAnswer,
@@ -134,19 +145,14 @@ export const TeachMeText = () => {
     s.hasInstagraphInProgress,
   ])
 
+  const showInstagraph: boolean = !hasInstagraphInProgress && !!instgraphAnswser?.edges && !!instgraphAnswser?.nodes
+
   return (
     <>
-      {!hasInstagraphInProgress && !!instgraphAnswser?.edges && !!instgraphAnswser?.nodes ? (
+      {showInstagraph ? (
         <ReactFlow edges={instgraphAnswser?.edges} nodes={instgraphAnswser?.nodes} />
       ) : (
-        <Flex align="center" justify="center" py={12}>
-          <Flex align="center" py={12}>
-            <PropagateLoader color={colors.white} />
-          </Flex>
-          <Flex align="center" py={12}>
-            <Text>Generating instagraph</Text>
-          </Flex>
-        </Flex>
+        <TeachMeLoader text="Generating instagraph" />
       )}
       {!hasTeachingInProgress ? (
         <>
@@ -156,14 +162,7 @@ export const TeachMeText = () => {
           <AskQuestion />
         </>
       ) : (
-        <Flex align="center" justify="center" py={12}>
-          <Flex align="center" py={12}>
-            <PropagateLoader color={colors.white} />
-          </Flex>
-          <Flex align="center" py={12}>
-            <Text>Generating tutorial</Text>
-          </Flex>
-        </Flex>
+        <TeachMeLoader text="Generating tutorial" />
       )}
     </>
   )
