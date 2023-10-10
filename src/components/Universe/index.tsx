@@ -7,21 +7,25 @@ import { useControls } from 'leva'
 import { BlendFunction, Resolution } from 'postprocessing'
 import { Perf } from 'r3f-perf'
 import { Suspense, memo, useCallback, useMemo } from 'react'
+import styled from 'styled-components'
 import { getNodeColorByType } from '~/components/Universe/Graph/constant'
 import { isDevelopment } from '~/constants'
 import { useControlStore } from '~/stores/useControlStore'
-import { useSelectedNode } from '~/stores/useDataStore'
+import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { colors } from '~/utils/colors'
 import { addToGlobalForE2e } from '~/utils/tests'
+import { Flex } from '../common/Flex'
 import { Controls } from './Controls'
 import { initialCameraPosition } from './Controls/CameraAnimations/constants'
 import { Graph } from './Graph'
 import { Lights } from './Lights'
 import { Overlay } from './Overlay'
+import { Preloader } from './Preloader'
 import { outlineEffectColor } from './constants'
 
 const Fallback = () => (
   <Html>
+    <MyLoader />
     <Loader />
   </Html>
 )
@@ -89,6 +93,8 @@ const _Universe = () => {
     useControlStore((s) => s.setUserMovedCamera),
   ]
 
+  const isLoading = useDataStore((s) => s.isFetching)
+
   const onWheelHandler = useCallback(
     (e: React.WheelEvent) => {
       const { target } = e
@@ -119,13 +125,11 @@ const _Universe = () => {
   const onCreatedHandler = useCallback((s: RootState) => addToGlobalForE2e(s, 'threeState'), [])
 
   return (
-    <>
+    <Wrapper>
       <Overlay />
-
       <Suspense fallback={null}>
         <Canvas camera={cameraProps} id="universe-canvas" onCreated={onCreatedHandler} onWheel={onWheelHandler}>
           {isDevelopment && <Perf position="top-right" />}
-
           <Suspense fallback={<Fallback />}>
             <Preload />
 
@@ -137,8 +141,32 @@ const _Universe = () => {
           </Suspense>
         </Canvas>
       </Suspense>
-    </>
+      {isLoading && <Preloader fullSize={false} />}
+    </Wrapper>
   )
 }
+
+const Wrapper = styled(Flex)`
+  flex: 1 0 100%;
+  position: relative;
+`
+
+const MyLoader = styled(Flex)`
+  background: ${colors.black};
+  width: 100%;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  align-items: center;
+  justify-content: center;
+
+  &.sidebar-is-open {
+    .span {
+      margin-left: -390px;
+    }
+  }
+`
 
 export const Universe = memo(_Universe)

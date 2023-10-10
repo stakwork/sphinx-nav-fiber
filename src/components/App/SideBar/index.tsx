@@ -9,6 +9,7 @@ import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { colors } from '~/utils/colors'
 import clsx from 'clsx'
 import { ClipLoader } from 'react-spinners'
+import { FetchLoaderText } from '~/components/common/Loader'
 import { useGraphData } from '~/components/DataRetriever'
 import ChevronLeftIcon from '~/components/Icons/ChevronLeftIcon'
 import ClearIcon from '~/components/Icons/ClearIcon'
@@ -88,13 +89,19 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
         </Search>
         {searchTerm && (
           <SearchDetails>
-            <div className="left">
-              <span className="count">{data.nodes.length}</span>
-              <span className="label"> results</span>
-            </div>
-            <div className="right">
-              <TeachMe />
-            </div>
+            {isLoading ? (
+              <FetchLoaderText />
+            ) : (
+              <>
+                <div className="left">
+                  <span className="count">{data.nodes.length}</span>
+                  <span className="label"> results</span>
+                </div>
+                <div className="right">
+                  <TeachMe />
+                </div>
+              </>
+            )}
           </SearchDetails>
         )}
       </SearchWrapper>

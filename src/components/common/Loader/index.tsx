@@ -1,51 +1,19 @@
+import { clsx } from 'clsx'
 import { useEffect, useState } from 'react'
-import ClipLoader from 'react-spinners/ClipLoader'
+import { BeatLoader } from 'react-spinners'
+import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
-import { Text } from '~/components/common/Text'
-import { ColorName, colors } from '~/utils/colors'
+import { colors } from '~/utils/colors'
 
 const messages = [
-  'Searching Podcast Index',
-  'Searching YouTube',
-  'Searching Twitter Spaces',
-  'Finding Transcripts',
-  'Loading Audio Clips',
-  'Loading Video Clips',
-  'Preparing Results',
+  ['Searching', 'Podcast Index'],
+  ['Searching', 'YouTube'],
+  ['Searching', 'Twitter Spaces'],
+  ['Finding', 'Transcripts'],
+  ['Loading', 'Audio Clips'],
+  ['Loading', 'Video Clips'],
+  ['Preparing', 'Results'],
 ]
-
-type Props = {
-  color?: ColorName
-}
-
-export const Loader = ({ color = 'white' }: Props) => {
-  const [msgIndex, setMsgIndex] = useState(0)
-
-  useEffect(() => {
-    if (msgIndex === messages.length - 1) {
-      return
-    }
-
-    const messageTimeout = setTimeout(() => setMsgIndex((index) => (index + 1) % messages.length), 1000)
-
-    // eslint-disable-next-line consistent-return
-    return () => clearTimeout(messageTimeout)
-  }, [msgIndex])
-
-  return (
-    <Flex align="center" grow={1} id="loader" justify="center">
-      <Flex align="center" py={8}>
-        <Text color="primaryText1" kind="mediumBold">
-          {messages[msgIndex]}...
-        </Text>
-      </Flex>
-
-      <Flex pt={20}>
-        <ClipLoader color={colors[color]} loading size={26} />
-      </Flex>
-    </Flex>
-  )
-}
 
 export const FetchLoaderText = () => {
   const [msgIndex, setMsgIndex] = useState(0)
@@ -55,11 +23,47 @@ export const FetchLoaderText = () => {
       return
     }
 
-    const messageTimeout = setTimeout(() => setMsgIndex((index) => (index + 1) % messages.length), 1000)
+    const messageTimeout = setTimeout(() => setMsgIndex((index) => (index + 1) % messages.length), 2000)
 
     // eslint-disable-next-line consistent-return
     return () => clearTimeout(messageTimeout)
   }, [msgIndex])
 
-  return `${messages[msgIndex]}...`
+  return (
+    <Wrapper direction="column">
+      {messages.map((i, index) => (
+        <Flex key={i[1]} className={clsx('raw-wrapper', { show: msgIndex === index })} direction="row">
+          <div className={clsx('action')}>{i[0]}</div>
+          <div className={clsx('entity')}>{i[1]}</div>
+          <div>
+            <BeatLoader color={colors.SECONDARY_BLUE} size={2} />
+          </div>
+        </Flex>
+      ))}
+    </Wrapper>
+  )
 }
+
+const Wrapper = styled(Flex)`
+  overflow: hidden;
+  height: 20px;
+  position: relative;
+  .action {
+    color: ${colors.white};
+    margin-right: 8px;
+  }
+
+  .raw-wrapper {
+    height: 0;
+    overflow: hidden;
+    transition: height 0.7s ease-in-out;
+    align-items: flex-end;
+    &.show {
+      height: 20px;
+    }
+  }
+
+  .entity {
+    color: ${colors.SECONDARY_BLUE};
+  }
+`
