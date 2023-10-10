@@ -52,7 +52,6 @@ export const getLSat = async (): Promise<string> => {
   }
 }
 
-
 export function lsatToken(macaroon: string, preimage: string) {
   return `LSAT ${macaroon}:${preimage}`
 }
