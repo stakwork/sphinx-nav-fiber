@@ -20,8 +20,6 @@ import { Tab } from './Tab'
 import { Trending } from './Trending'
 import { TeachMe } from '../Helper/TeachMe'
 
-import 'reactflow/dist/style.css'
-
 export const MENU_WIDTH = 390
 
 type Props = {
@@ -132,7 +130,7 @@ export const SideBar = ({ onSubmit }: Props) => {
       <Slide direction="right" in={sidebarIsOpen} mountOnEnter unmountOnExit>
         <Content onSubmit={onSubmit} subViewOpen={!!selectedNode} />
       </Slide>
-      <SideBarSubView open={!!selectedNode || !!showTeachMe} />
+      <SideBarSubView open={(!!selectedNode && sidebarIsOpen) || !!showTeachMe} />
       {!sidebarIsOpen && <Tab />}
     </>
   )

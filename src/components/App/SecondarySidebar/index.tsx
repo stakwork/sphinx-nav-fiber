@@ -39,7 +39,7 @@ const Wrapper = styled(Flex)(({ theme }) => ({
   background: colors.BG1,
   height: '100vh',
   padding: '16px 20px',
-  width: '110%',
+  width: '100%',
   zIndex: 30,
   display: 'flex',
   [theme.breakpoints.up('sm')]: {

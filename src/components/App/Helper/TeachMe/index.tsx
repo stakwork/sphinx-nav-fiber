@@ -156,9 +156,9 @@ export const TeachMeText = () => {
       )}
       {!hasTeachingInProgress ? (
         <>
-          <Flex style={{ paddingLeft: '10px', paddingRight: '10px' }}>
+          <TeachMeAnswerFlex>
             <Text>{teachMeAnswer}</Text>
-          </Flex>
+          </TeachMeAnswerFlex>
           <AskQuestion />
         </>
       ) : (
@@ -169,3 +169,8 @@ export const TeachMeText = () => {
 }
 
 const ButtonStyled = styled(Button)``
+
+const TeachMeAnswerFlex = styled(Flex)`
+  padding-left: 10px;
+  padding-right: 10px;
+`
