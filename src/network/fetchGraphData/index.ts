@@ -164,12 +164,10 @@ export const getSentimentData = async (args?: {
   }
 }
 
-export const postInstagraph = async (data: TeachData) => {
-
+export const postInstagraph = async (data: TeachData): Promise<void> => {
   const lsatToken = await getLSat()
 
-
-try {
+  try {
     return api.post(`/instagraph`, JSON.stringify(data), { Authorization: lsatToken })
 
     // eslint-disable-next-line  @typescript-eslint/no-explicit-any
@@ -185,7 +183,6 @@ try {
     throw error
   }
 }
-
 
 export const postTeachMe = async (data: TeachData): Promise<void> => {
   const lsatToken = await getLSat()
