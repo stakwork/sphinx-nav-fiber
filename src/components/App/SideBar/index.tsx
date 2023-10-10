@@ -94,12 +94,12 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
             ) : (
               <>
                 <div className="left">
-              <span className="count">{data.nodes.length}</span>
-              <span className="label"> results</span>
-            </div>
-            <div className="right">
-              <TeachMe />
-            </div>
+                  <span className="count">{data.nodes.length}</span>
+                  <span className="label"> results</span>
+                </div>
+                <div className="right">
+                  <TeachMe />
+                </div>
               </>
             )}
           </SearchDetails>
