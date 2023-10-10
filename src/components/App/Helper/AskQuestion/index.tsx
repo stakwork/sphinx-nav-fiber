@@ -133,7 +133,7 @@ export const AskQuestion = () => {
   }
 
   return (
-    <>
+    <AskQuestionContainer>
       <Flex>
         <Flex>
           <FormControl component="div">
@@ -190,9 +190,13 @@ export const AskQuestion = () => {
           <MdSend color={canSubmit ? colors.white : colors.gray300} size="18" />
         </IconWrapper>
       </TextAreaWrapper>
-    </>
+    </AskQuestionContainer>
   )
 }
+
+const AskQuestionContainer = styled.div`
+  margin-top: 20px;
+`
 
 const StyledTextarea = styled(TextareaAutosize)`
   background: ${colors.inputBg1};

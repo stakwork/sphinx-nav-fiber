@@ -3,7 +3,6 @@ import styled from 'styled-components'
 import ChevronLeftIcon from '~/components/Icons/ChevronLeftIcon'
 import CloseIcon from '~/components/Icons/CloseIcon'
 import { Flex } from '~/components/common/Flex'
-import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
 import { colors } from '~/utils/colors'
 import { SelectedNodeView } from '../SelectedNodeView'
@@ -11,29 +10,36 @@ import { SelectedNodeView } from '../SelectedNodeView'
 type Props = { open: boolean }
 
 export const SideBarSubView = ({ open }: Props) => {
-  const [setSidebarOpen] = useAppStore((s) => [s.setSidebarOpen])
-  const setSelectedNode = useDataStore((s) => s.setSelectedNode)
+  const [setSelectedNode, setTeachMe, showTeachMe] = useDataStore((s) => [
+    s.setSelectedNode,
+    s.setTeachMe,
+    s.showTeachMe,
+  ])
 
   return (
-    <>
-      <Slide direction="right" in={open} mountOnEnter unmountOnExit>
-        <Wrapper>
-          <ScrollWrapper>
-            <SelectedNodeView />
-          </ScrollWrapper>
-          <CloseButton onClick={() => setSelectedNode(null)}>
-            <CloseIcon />
-          </CloseButton>
-          <CollapseButton
-            onClick={() => {
-              setSidebarOpen(false)
-            }}
-          >
-            <ChevronLeftIcon />
-          </CollapseButton>
-        </Wrapper>
-      </Slide>
-    </>
+    <Slide direction="right" in={open} mountOnEnter style={{ width: showTeachMe ? '700px' : '' }} unmountOnExit>
+      <Wrapper>
+        <ScrollWrapper>
+          <SelectedNodeView />
+        </ScrollWrapper>
+        <CloseButton
+          onClick={() => {
+            setSelectedNode(null)
+            setTeachMe(false)
+          }}
+        >
+          <CloseIcon />
+        </CloseButton>
+        <CollapseButton
+          onClick={() => {
+            setSelectedNode(null)
+            setTeachMe(false)
+          }}
+        >
+          <ChevronLeftIcon />
+        </CollapseButton>
+      </Wrapper>
+    </Slide>
   )
 }
 

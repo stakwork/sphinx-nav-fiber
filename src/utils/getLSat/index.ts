@@ -1,17 +1,4 @@
-import { Lsat } from 'lsat-js'
 import * as sphinx from 'sphinx-bridge-kevkevinpal'
-import { API_URL } from '~/constants'
-import { requestProvider } from 'webln'
-
-type Action = 'searching' | 'adding_node' | 'teachme' | 'ask_question' | 'sentiments'
-
-const ActionsMapper: Record<Action, string> = {
-  searching: 'GET',
-  adding_node: 'POST',
-  teachme: 'POST',
-  ask_question: 'POST',
-  sentiments: 'GET',
-}
 
 /**
  *
@@ -19,74 +6,52 @@ const ActionsMapper: Record<Action, string> = {
  * @param search @string // without '?'
  * @returns
  */
-export const getLSat = async (action: Action, search?: string) => {
+
+export const getLSat = async (): Promise<string> => {
   try {
-    let webln
+    // check if lsat exist in local storage
+    const localLsat = localStorage.getItem('lsat')
 
-    try {
-      webln = await requestProvider()
+    if (localLsat) {
+      const lsat = JSON.parse(localLsat)
 
-      // getlsat invoice
-      const unpaidLsat = await getUnpaidLsat(action)
-
-      // pay lsat invoice
-      const preimage = await webln.sendPayment(unpaidLsat.invoice)
-
-      // create lsat
-      unpaidLsat.setPreimage(preimage.preimage)
-
-      const lsatToken = unpaidLsat.toToken()
-
-      return lsatToken
-
-      // Now you can call all of the webln.* methods
-    } catch (err) {
-      // webln not enabled
+      return lsatToken(lsat.macaroon, lsat.preimage)
     }
-
-    const lsat = await getUnpaidLsat(action, search)
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    const LSATRes = await sphinx.saveLsat(lsat.invoice, lsat.baseMacaroon, 'knowledge-graph.sphinx.chat')
+    const isSphinx = await sphinx.enable()
 
-    if (LSATRes.success === false) {
+    // Check if sphinx app is active
+    if (isSphinx) {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
-      await sphinx.topup()
+      const storedLsat = await sphinx.getLsat()
+
+      if (storedLsat.macaroon) {
+        localStorage.setItem(
+          'lsat',
+          JSON.stringify({
+            macaroon: storedLsat.macaroon,
+            identifier: storedLsat.identifier,
+            preimage: storedLsat.preimage,
+          }),
+        )
+
+        return lsatToken(storedLsat.macaroon, storedLsat.preimage)
+      }
+
+      return ''
     }
 
-    lsat.setPreimage(LSATRes.lsat.split(':')[1])
-
-    const token = lsat.toToken()
-
-    return token
+    return ''
   } catch (e) {
     console.warn(e)
 
-    return null
+    return ''
   }
 }
 
-export const getUnpaidLsat = async (action: Action, search?: string) => {
-  const url = new URL(`${API_URL}/${action}`)
-  const searchParams = new URLSearchParams(search)
-
-  if (search) {
-    searchParams.forEach((value, key) => {
-      url.searchParams.append(key, value)
-    })
-  }
-
-  const resp = await fetch(url, {
-    method: ActionsMapper[action] ?? 'GET',
-  })
-
-  const data = await resp.json()
-
-  const lsat = ['teachme', 'ask_question', 'sentiments'].includes(action)
-    ? Lsat.fromHeader(resp.headers.get('www-authenticate') || '')
-    : Lsat.fromHeader(data.headers)
-
-  return lsat
+export function lsatToken(macaroon: string, preimage: string) {
+  return `LSAT ${macaroon}:${preimage}`
 }
