@@ -83,7 +83,7 @@
     "prettier": "npx prettier --config prettier.config.js --check ./src",
     "postinstall": "husky install",
     "typecheck": "tsc --noEmit",
-    "lint": "eslint src --max-warnings 30"
+    "lint": "eslint src --max-warnings 26"
   },
   "eslintConfig": {
     "extends": [
