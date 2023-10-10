@@ -29,6 +29,7 @@ type DataStore = {
   selectedNodeRelativeIds: string[]
   nearbyNodeIds: string[]
   showSelectionGraph: boolean
+  showTeachMe: boolean
   hideNodeDetails: boolean
 
   setScrollEventsDisabled: (scrollEventsDisabled: boolean) => void
@@ -50,6 +51,7 @@ type DataStore = {
   setShowSelectionGraph: (_: boolean) => void
   setSelectionData: (data: GraphData) => void
   setHideNodeDetails: (_: boolean) => void
+  setTeachMe: (_: boolean) => void
 }
 
 const defaultData: Omit<
@@ -74,6 +76,7 @@ const defaultData: Omit<
   | 'setShowSelectionGraph'
   | 'setSelectionData'
   | 'setHideNodeDetails'
+  | 'setTeachMe'
 > = {
   categoryFilter: null,
   data: null,
@@ -94,6 +97,7 @@ const defaultData: Omit<
   selectedNodeRelativeIds: [],
   nearbyNodeIds: [],
   showSelectionGraph: false,
+  showTeachMe: false,
   hideNodeDetails: false,
 }
 
@@ -120,6 +124,7 @@ export const useDataStore = create<DataStore>((set, get) => ({
       nearbyNodeIds: [],
       selectedNodeRelativeIds: [],
       showSelectionGraph: false,
+      showTeachMe: false,
     })
   },
   setIsFetching: (isFetching) => set({ isFetching }),
@@ -163,6 +168,7 @@ export const useDataStore = create<DataStore>((set, get) => ({
   },
   setShowSelectionGraph: (showSelectionGraph) => set({ showSelectionGraph }),
   setHideNodeDetails: (hideNodeDetails) => set({ hideNodeDetails }),
+  setTeachMe: (showTeachMe) => set({ showTeachMe }),
 }))
 
 export const useSelectedNode = () => useDataStore((s) => s.selectedNode)

@@ -1,4 +1,4 @@
-import { Button, Slide } from '@mui/material'
+import { Slide } from '@mui/material'
 import { forwardRef, useEffect, useRef, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import styled from 'styled-components'
@@ -7,7 +7,6 @@ import { SearchBar } from '~/components/SearchBar'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { colors } from '~/utils/colors'
-
 import clsx from 'clsx'
 import { ClipLoader } from 'react-spinners'
 import { useGraphData } from '~/components/DataRetriever'
@@ -19,6 +18,7 @@ import { EpisodeSkeleton } from './Relevance/EpisodeSkeleton'
 import { SideBarSubView } from './SidebarSubView'
 import { Tab } from './Tab'
 import { Trending } from './Trending'
+import { TeachMe } from '../Helper/TeachMe'
 
 export const MENU_WIDTH = 390
 
@@ -33,7 +33,7 @@ type ContentProp = {
 
 // eslint-disable-next-line react/display-name
 const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen }, ref) => {
-  const [isLoading] = useDataStore((s) => [s.isFetching])
+  const [isLoading, setTeachMe] = useDataStore((s) => [s.isFetching, s.setTeachMe])
   const data = useGraphData()
 
   const [setSidebarOpen, searchTerm, clearSearch] = useAppStore((s) => [
@@ -63,6 +63,7 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
   return (
     <Wrapper ref={ref} id="sidebar-wrapper">
       <TitlePlaceholder />
+
       <SearchWrapper className={clsx({ 'has-shadow': isScrolled })}>
         <Search>
           <SearchBar onSubmit={onSubmit} />
@@ -92,7 +93,7 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
               <span className="label"> results</span>
             </div>
             <div className="right">
-              <Button>Teach Me</Button>
+              <TeachMe />
             </div>
           </SearchDetails>
         )}
@@ -101,6 +102,7 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
         <CollapseButton
           onClick={() => {
             setSidebarOpen(false)
+            setTeachMe(false)
           }}
         >
           <ChevronLeftIcon />
@@ -121,13 +123,14 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
 export const SideBar = ({ onSubmit }: Props) => {
   const sidebarIsOpen = useAppStore((s) => s.sidebarIsOpen)
   const selectedNode = useSelectedNode()
+  const [showTeachMe] = useDataStore((s) => [s.showTeachMe])
 
   return (
     <>
       <Slide direction="right" in={sidebarIsOpen} mountOnEnter unmountOnExit>
         <Content onSubmit={onSubmit} subViewOpen={!!selectedNode} />
       </Slide>
-      <SideBarSubView open={!!selectedNode && sidebarIsOpen} />
+      <SideBarSubView open={(!!selectedNode && sidebarIsOpen) || !!showTeachMe} />
       {!sidebarIsOpen && <Tab />}
     </>
   )

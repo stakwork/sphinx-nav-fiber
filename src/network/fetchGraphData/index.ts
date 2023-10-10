@@ -164,6 +164,26 @@ export const getSentimentData = async (args?: {
   }
 }
 
+export const postInstagraph = async (data: TeachData): Promise<void> => {
+  const lsatToken = await getLSat()
+
+  try {
+    return api.post(`/instagraph`, JSON.stringify(data), { Authorization: lsatToken })
+
+    // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    if (error.status === 402) {
+      const lsat = Lsat.fromHeader(error.headers.get('www-authenticate'))
+
+      await payLsat(lsat)
+
+      return postInstagraph(data)
+    }
+
+    throw error
+  }
+}
+
 export const postTeachMe = async (data: TeachData): Promise<void> => {
   const lsatToken = await getLSat()
 
