@@ -136,7 +136,7 @@ export const SideBar = ({ onSubmit }: Props) => {
   return (
     <>
       <Slide direction="right" in={sidebarIsOpen} mountOnEnter unmountOnExit>
-        <Content onSubmit={onSubmit} subViewOpen={!!selectedNode} />
+        <Content onSubmit={onSubmit} subViewOpen={subViewIsOpen} />
       </Slide>
       <SideBarSubView open={subViewIsOpen || !!showTeachMe} />
       {!sidebarIsOpen && <Tab />}
