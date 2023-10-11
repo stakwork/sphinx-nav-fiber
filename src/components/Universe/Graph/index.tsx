@@ -5,7 +5,6 @@ import { useDataStore } from '~/stores/useDataStore'
 import { GraphData } from '~/types'
 import { Cubes } from './Cubes'
 import { Earth } from './Earth'
-import { GraphLoadingIcon } from './Icons'
 import { Particles } from './Particles'
 import { Segment } from './Segment'
 import { NodeDetailsPanel } from './UI'
@@ -29,7 +28,7 @@ export const Graph = () => {
   }, [showSelectionGraph, graphStyle])
 
   if (isLoading) {
-    return <GraphLoadingIcon />
+    return null
   }
 
   return (

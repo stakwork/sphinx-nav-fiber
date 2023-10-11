@@ -7,17 +7,20 @@ import { useControls } from 'leva'
 import { BlendFunction, Resolution } from 'postprocessing'
 import { Perf } from 'r3f-perf'
 import { Suspense, memo, useCallback, useMemo } from 'react'
+import styled from 'styled-components'
 import { getNodeColorByType } from '~/components/Universe/Graph/constant'
 import { isDevelopment } from '~/constants'
 import { useControlStore } from '~/stores/useControlStore'
-import { useSelectedNode } from '~/stores/useDataStore'
+import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { colors } from '~/utils/colors'
 import { addToGlobalForE2e } from '~/utils/tests'
+import { Flex } from '../common/Flex'
 import { Controls } from './Controls'
 import { initialCameraPosition } from './Controls/CameraAnimations/constants'
 import { Graph } from './Graph'
 import { Lights } from './Lights'
 import { Overlay } from './Overlay'
+import { Preloader } from './Preloader'
 import { outlineEffectColor } from './constants'
 
 const Fallback = () => (
@@ -89,6 +92,8 @@ const _Universe = () => {
     useControlStore((s) => s.setUserMovedCamera),
   ]
 
+  const isLoading = useDataStore((s) => s.isFetching)
+
   const onWheelHandler = useCallback(
     (e: React.WheelEvent) => {
       const { target } = e
@@ -119,13 +124,11 @@ const _Universe = () => {
   const onCreatedHandler = useCallback((s: RootState) => addToGlobalForE2e(s, 'threeState'), [])
 
   return (
-    <>
+    <Wrapper>
       <Overlay />
-
       <Suspense fallback={null}>
         <Canvas camera={cameraProps} id="universe-canvas" onCreated={onCreatedHandler} onWheel={onWheelHandler}>
           {isDevelopment && <Perf position="top-right" />}
-
           <Suspense fallback={<Fallback />}>
             <Preload />
 
@@ -137,8 +140,14 @@ const _Universe = () => {
           </Suspense>
         </Canvas>
       </Suspense>
-    </>
+      {isLoading && <Preloader fullSize={false} />}
+    </Wrapper>
   )
 }
+
+const Wrapper = styled(Flex)`
+  flex: 1 1 100%;
+  position: relative;
+`
 
 export const Universe = memo(_Universe)

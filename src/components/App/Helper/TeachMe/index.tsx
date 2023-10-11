@@ -1,38 +1,38 @@
-import { styled } from '@mui/material'
 import { useCallback, useEffect, useRef } from 'react'
+import styled from 'styled-components'
 import { PropagateLoader } from 'react-spinners'
 import { toast } from 'react-toastify'
 import { Socket } from 'socket.io-client'
 import * as sphinx from 'sphinx-bridge-kevkevinpal'
-import { Button } from '~/components/Button'
+import { Button } from '@mui/material'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { ToastMessage } from '~/components/common/Toast/toastMessage'
 import useSocket from '~/hooks/useSockets'
-import { postTeachMe } from '~/network/fetchGraphData'
+import { postTeachMe, postInstagraph } from '~/network/fetchGraphData'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
-import { useTeachStore } from '~/stores/useTeachStore'
+import { useTeachStore, InstagraphResponse } from '~/stores/useTeachStore'
 import { colors } from '~/utils/colors'
 import { AskQuestion } from '../AskQuestion'
+import ReactFlow from 'reactflow'
+
+import 'reactflow/dist/style.css'
 
 type ResponseType = {
   tutorial: string
 }
 
 export const TeachMe = () => {
-  const data = useDataStore((s) => s.data)
-  const searchTerm = useAppStore((s) => s.currentSearch)
+  const [data, setTeachMe] = useDataStore((s) => [s.data, s.setTeachMe])
+  const [searchTerm, setSideBarOpen] = useAppStore((s) => [s.currentSearch, s.setSidebarOpen])
 
   const isSocketSet: { current: boolean } = useRef<boolean>(false)
   const socket: Socket | null = useSocket()
 
-  const [teachMeAnswer, setTeachMeAnswer, hasTeachingInProgress, setHasTeachingInProgress] = useTeachStore((s) => [
-    s.teachMeAnswer,
-    s.setTeachMeAnswer,
-    s.hasTeachingInProgress,
-    s.setHasTeachingInProgress,
-  ])
+  const [setTeachMeAnswer, setHasTeachingInProgress, setInstagraphAnswer, setHasInstagraphInProgress] = useTeachStore(
+    (s) => [s.setTeachMeAnswer, s.setHasTeachingInProgress, s.setInstagraphAnswer, s.setHasInstagraphInProgress],
+  )
 
   const handleTeachMe = useCallback(
     (response: ResponseType) => {
@@ -44,6 +44,18 @@ export const TeachMe = () => {
       })
     },
     [setTeachMeAnswer],
+  )
+
+  const handleInstagraph = useCallback(
+    (response: InstagraphResponse) => {
+      setInstagraphAnswer(response)
+
+      toast(<ToastMessage message="Instagraph is ready" />, {
+        position: toast.POSITION.BOTTOM_CENTER,
+        type: 'success',
+      })
+    },
+    [setInstagraphAnswer],
   )
 
   useEffect(() => {
@@ -58,11 +70,22 @@ export const TeachMe = () => {
         isSocketSet.current = true
       }
     }
-  }, [socket, handleTeachMe])
+
+    if (handleInstagraph) {
+      if (socket) {
+        socket.on('instagraphhook', handleInstagraph)
+
+        isSocketSet.current = true
+      }
+    }
+  }, [socket, handleTeachMe, handleInstagraph])
 
   const handleTutorialStart = async () => {
     if (searchTerm) {
       setHasTeachingInProgress(true)
+      setHasInstagraphInProgress(true)
+      setSideBarOpen(true)
+      setTeachMe(true)
 
       try {
         const nodesWithTranscript = data?.nodes.filter((i) => i.text)
@@ -84,45 +107,70 @@ export const TeachMe = () => {
         toast(<ToastMessage message="We started preparing tutorial for you" />, {
           type: 'success',
         })
+
+        await postInstagraph({
+          term: searchTerm,
+          transcripts,
+        })
+
+        toast(<ToastMessage message="We started preparing an instagraph for you" />, {
+          type: 'success',
+        })
       } catch (error: unknown) {
         setHasTeachingInProgress(false)
+        setHasInstagraphInProgress(false)
       }
     }
   }
 
+  return <ButtonStyled onClick={() => handleTutorialStart()}>Teach me</ButtonStyled>
+}
+
+const TeachMeLoader = ({ text }: { text: string }) => (
+  <Flex align="center" justify="center" py={12}>
+    <Flex align="center" py={12}>
+      <PropagateLoader color={colors.white} />
+    </Flex>
+    <Flex align="center" py={12}>
+      <Text>{text}</Text>
+    </Flex>
+  </Flex>
+)
+
+export const TeachMeText = () => {
+  const [teachMeAnswer, hasTeachingInProgress, instgraphAnswser, hasInstagraphInProgress] = useTeachStore((s) => [
+    s.teachMeAnswer,
+    s.hasTeachingInProgress,
+    s.instgraphAnswser,
+    s.hasInstagraphInProgress,
+  ])
+
+  const showInstagraph: boolean = !hasInstagraphInProgress && !!instgraphAnswser?.edges && !!instgraphAnswser?.nodes
+
   return (
-    <Container>
+    <>
+      {showInstagraph ? (
+        <ReactFlow edges={instgraphAnswser?.edges} nodes={instgraphAnswser?.nodes} />
+      ) : (
+        <TeachMeLoader text="Generating instagraph" />
+      )}
       {!hasTeachingInProgress ? (
         <>
-          {!teachMeAnswer ? (
-            <Flex py={8}>
-              <Button kind="big" onClick={() => handleTutorialStart()}>
-                Teach me
-              </Button>
-            </Flex>
-          ) : (
-            <>
-              <Flex>
-                <Text>{teachMeAnswer}</Text>
-              </Flex>
-              <AskQuestion />
-            </>
-          )}
+          <TeachMeAnswerFlex>
+            <Text>{teachMeAnswer}</Text>
+          </TeachMeAnswerFlex>
+          <AskQuestion />
         </>
       ) : (
-        <Flex align="center" justify="center" py={12}>
-          <Flex align="center" py={12}>
-            <PropagateLoader color={colors.white} />
-          </Flex>
-          <Flex align="center" py={12}>
-            <Text>Generating tutorial</Text>
-          </Flex>
-        </Flex>
+        <TeachMeLoader text="Generating tutorial" />
       )}
-    </Container>
+    </>
   )
 }
 
-const Container = styled('div')(() => ({
-  marginTop: 'auto',
-}))
+const ButtonStyled = styled(Button)``
+
+const TeachMeAnswerFlex = styled(Flex)`
+  padding-left: 10px;
+  padding-right: 10px;
+`

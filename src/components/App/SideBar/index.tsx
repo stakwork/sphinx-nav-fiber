@@ -1,19 +1,20 @@
-import { Button, Slide } from '@mui/material'
+import { Slide } from '@mui/material'
+import clsx from 'clsx'
 import { forwardRef, useEffect, useRef, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
-import styled from 'styled-components'
-import { Flex } from '~/components/common/Flex'
-import { SearchBar } from '~/components/SearchBar'
-import { useAppStore } from '~/stores/useAppStore'
-import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
-import { colors } from '~/utils/colors'
-
-import clsx from 'clsx'
 import { ClipLoader } from 'react-spinners'
+import styled from 'styled-components'
 import { useGraphData } from '~/components/DataRetriever'
 import ChevronLeftIcon from '~/components/Icons/ChevronLeftIcon'
 import ClearIcon from '~/components/Icons/ClearIcon'
 import SearchIcon from '~/components/Icons/SearchIcon'
+import { SearchBar } from '~/components/SearchBar'
+import { Flex } from '~/components/common/Flex'
+import { FetchLoaderText } from '~/components/common/Loader'
+import { useAppStore } from '~/stores/useAppStore'
+import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
+import { colors } from '~/utils/colors'
+import { TeachMe } from '../Helper/TeachMe'
 import { LatestView } from './Latest'
 import { EpisodeSkeleton } from './Relevance/EpisodeSkeleton'
 import { SideBarSubView } from './SidebarSubView'
@@ -33,7 +34,7 @@ type ContentProp = {
 
 // eslint-disable-next-line react/display-name
 const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen }, ref) => {
-  const [isLoading] = useDataStore((s) => [s.isFetching])
+  const [isLoading, setTeachMe] = useDataStore((s) => [s.isFetching, s.setTeachMe])
   const data = useGraphData()
 
   const [setSidebarOpen, searchTerm, clearSearch] = useAppStore((s) => [
@@ -63,6 +64,7 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
   return (
     <Wrapper ref={ref} id="sidebar-wrapper">
       <TitlePlaceholder />
+
       <SearchWrapper className={clsx({ 'has-shadow': isScrolled })}>
         <Search>
           <SearchBar onSubmit={onSubmit} />
@@ -87,13 +89,19 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
         </Search>
         {searchTerm && (
           <SearchDetails>
-            <div className="left">
-              <span className="count">{data.nodes.length}</span>
-              <span className="label"> results</span>
-            </div>
-            <div className="right">
-              <Button>Teach Me</Button>
-            </div>
+            {isLoading ? (
+              <FetchLoaderText />
+            ) : (
+              <>
+                <div className="left">
+                  <span className="count">{data.nodes.length}</span>
+                  <span className="label"> results</span>
+                </div>
+                <div className="right">
+                  <TeachMe />
+                </div>
+              </>
+            )}
           </SearchDetails>
         )}
       </SearchWrapper>
@@ -101,6 +109,7 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
         <CollapseButton
           onClick={() => {
             setSidebarOpen(false)
+            setTeachMe(false)
           }}
         >
           <ChevronLeftIcon />
@@ -122,13 +131,14 @@ export const SideBar = ({ onSubmit }: Props) => {
   const sidebarIsOpen = useAppStore((s) => s.sidebarIsOpen)
   const selectedNode = useSelectedNode()
   const subViewIsOpen = !!selectedNode && selectedNode.node_type !== 'topic' && sidebarIsOpen
+  const [showTeachMe] = useDataStore((s) => [s.showTeachMe])
 
   return (
     <>
       <Slide direction="right" in={sidebarIsOpen} mountOnEnter unmountOnExit>
         <Content onSubmit={onSubmit} subViewOpen={!!selectedNode} />
       </Slide>
-      <SideBarSubView open={subViewIsOpen} />
+      <SideBarSubView open={subViewIsOpen || !!showTeachMe} />
       {!sidebarIsOpen && <Tab />}
     </>
   )
