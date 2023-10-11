@@ -121,13 +121,14 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
 export const SideBar = ({ onSubmit }: Props) => {
   const sidebarIsOpen = useAppStore((s) => s.sidebarIsOpen)
   const selectedNode = useSelectedNode()
+  const subViewIsOpen = !!selectedNode && selectedNode.node_type !== 'topic' && sidebarIsOpen
 
   return (
     <>
       <Slide direction="right" in={sidebarIsOpen} mountOnEnter unmountOnExit>
         <Content onSubmit={onSubmit} subViewOpen={!!selectedNode} />
       </Slide>
-      <SideBarSubView open={!!selectedNode && sidebarIsOpen} />
+      <SideBarSubView open={subViewIsOpen} />
       {!sidebarIsOpen && <Tab />}
     </>
   )

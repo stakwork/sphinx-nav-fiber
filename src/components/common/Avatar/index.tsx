@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 
 type Props = {
-  size?: 45 | 80 | 130 | 188 | 64 | 27
+  size?: number
   src: string
   type: string
   rounded?: boolean
@@ -14,14 +14,16 @@ type TTypeMapper = {
 const TypesMapper: TTypeMapper = {
   youtube: 'video',
   podcast: 'audio',
+  episode: 'audio',
   clip: 'audio',
-  tweet: 'tweet',
+  tweet: 'twitter',
   person: 'person',
+  guest: 'person',
   twitter_space: 'audio',
 }
 
 export const Avatar = styled.div<Props>`
-  background-image: ${({ src, type = 'audio' }) => `url(${src}), url('/${TypesMapper[type]}_placeholder.svg')`};
+  background-image: ${({ src, type = 'audio' }) => `url(${src}), url('/${TypesMapper[type]}_placeholder_img.png')`};
   background-size: contain;
   background-repeat: no-repeat;
   width: ${({ size = 45 }) => size}px;
