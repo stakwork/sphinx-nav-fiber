@@ -27,10 +27,4 @@ const Loader = styled(Flex)`
   top: 0;
   background-color: ${colors.black};
   z-index: 1;
-
-  &.sidebar-is-open {
-    span {
-      margin-left: -390px;
-    }
-  }
 `

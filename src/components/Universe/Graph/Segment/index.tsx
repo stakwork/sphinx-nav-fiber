@@ -52,5 +52,5 @@ export const Segment = ({ link, animated }: Props) => {
     }
   })
 
-  return <DreiSegment ref={ref} color={color} end={end} start={start} />
+  return <DreiSegment ref={ref} color={'0xFFFFFF' || color} end={end} start={start} />
 }

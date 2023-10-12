@@ -9,26 +9,69 @@ type TagProps = {
   size: number
   fontSize: number
   scale: number
+  type?: string
 }
 
 export const Tag = styled(Flex)<TagProps>`
-  opacity: 0.9;
   text-align: center;
-  width: ${(p: TagProps) => `${p.size}px`};
-  height: ${(p: TagProps) => `${p.size}px`};
-  background: ${colors.transparentBlack};
-  border: 3px solid ${(p: TagProps) => p.color};
+  width: ${(p: TagProps) => (p.type === 'topic' ? 'auto' : `${p.size}px`)};
+  height: ${(p: TagProps) => (p.type === 'topic' ? 'auto' : `${p.size}px`)};
+  outline: 1px solid ${(p: TagProps) => colors.white || p.color};
+  outline-offset: 0px;
+  background: rgba(0, 0, 0, 0.75);
   color: ${(p: TagProps) => p.fontColor};
-  border-radius: 100%;
+  border-radius: ${(p: TagProps) => `${p.type === 'guest' ? '100%' : '6px'}`};
   font-size: ${(p: TagProps) => `${p.fontSize}px`};
   cursor: pointer;
-  transition: opacity 0.4s;
+  transition: font-size 0.4s, outline 0.4s;
   transform: scale(${(p: TagProps) => p.scale});
+  align-items: center;
+  justify-content: center;
+  font-family: Barlow;
+  font-size: 26px;
+  font-style: normal;
+  font-weight: 700;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+
+  &:hover {
+    outline-offset: 4px;
+  }
+
+  &.selected {
+    .badge-wrapper {
+      top: 0;
+    }
+
+    font-size: 36px;
+
+    &:hover {
+      outline-offset: 0px;
+    }
+  }
+
+  &.topic {
+    outline: none;
+    background: none;
+    &:hover {
+      font-size: 36px;
+    }
+    white-space: nowrap;
+    .badge-wrapper {
+      display: none;
+    }
+  }
+
+  .badge-wrapper {
+    position: absolute;
+    top: -7px;
+    left: -14px;
+  }
 `
 
 type ImageProps = {
   src?: string
   size: number
+  borderRadius?: string
 }
 
 export const Image = styled.img<ImageProps>`
@@ -37,7 +80,7 @@ export const Image = styled.img<ImageProps>`
   background-repeat: no-repeat;
   width: ${(p) => p.size}px;
   height: ${(p) => p.size}px;
-  border-radius: 100%;
+  border-radius: ${(p) => p.borderRadius};
 `
 
 type CounterProps = {

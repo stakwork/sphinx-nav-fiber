@@ -25,7 +25,6 @@ import { outlineEffectColor } from './constants'
 
 const Fallback = () => (
   <Html>
-    <MyLoader />
     <Loader />
   </Html>
 )
@@ -147,26 +146,8 @@ const _Universe = () => {
 }
 
 const Wrapper = styled(Flex)`
-  flex: 1 0 100%;
+  flex: 1 1 100%;
   position: relative;
-`
-
-const MyLoader = styled(Flex)`
-  background: ${colors.black};
-  width: 100%;
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  align-items: center;
-  justify-content: center;
-
-  &.sidebar-is-open {
-    .span {
-      margin-left: -390px;
-    }
-  }
 `
 
 export const Universe = memo(_Universe)

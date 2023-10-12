@@ -1,26 +1,28 @@
 import { Html } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
+import clsx from 'clsx'
 import { Fragment, memo, useEffect, useMemo, useRef } from 'react'
-import { MdHub } from 'react-icons/md'
 import { Group, Vector3 } from 'three'
-import { nodesAreRelatives } from '~/components/Universe/constants'
 import { getNodeColorByType } from '~/components/Universe/Graph/constant'
+import { nodesAreRelatives } from '~/components/Universe/constants'
+import { Avatar } from '~/components/common/Avatar'
+import { TypeBadge } from '~/components/common/TypeBadge'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { colors } from '~/utils/colors'
-import { getPercentageFromWeight } from './PathwayBadge'
-import { BadgeIconWrapper, Counter, Image, Percentage, Tag } from './styles'
+import { Tag } from './styles'
 import { BadgeProps } from './types'
 
 const variableVector3 = new Vector3()
 
-const NodeBadge = ({ position, userData, color, relativeIds }: BadgeProps) => {
+const NodeBadge = ({ position, userData, color }: BadgeProps) => {
   const ref = useRef<Group | null>(null)
-  const setSelectedNode = useDataStore((s) => s.setSelectedNode)
+  const [selectedNode, setSelectedNode] = useDataStore((s) => [s.selectedNode, s.setSelectedNode])
   const setHoveredNode = useDataStore((s) => s.setHoveredNode)
   const hoveredNode = useDataStore((s) => s.hoveredNode)
   const showSelectionGraph = useDataStore((s) => s.showSelectionGraph)
 
   const isTopic = (userData?.node_type || '') === 'topic'
+  const isPerson = (userData?.node_type || '') === 'guest' || (userData?.node_type || '') === 'person'
 
   useFrame(() => {
     if (showSelectionGraph && ref.current) {
@@ -41,17 +43,16 @@ const NodeBadge = ({ position, userData, color, relativeIds }: BadgeProps) => {
   )
 
   const isHovered = useMemo(() => hoveredNode?.ref_id === userData?.ref_id, [hoveredNode?.ref_id, userData?.ref_id])
+  const isSelected = selectedNode?.ref_id === userData?.ref_id
 
-  const score = getPercentageFromWeight(userData.weight)
-
-  return (
+  return (isSelected && showSelectionGraph) || !isSelected ? (
     <group ref={ref} position={position}>
       <Html center sprite>
         <Tag
+          className={clsx(userData?.node_type, { selected: isSelected })}
           color={color}
           fontColor={colors.white}
           fontSize={isTopic ? 14 : 20}
-          justify="center"
           onClick={(e) => {
             e.stopPropagation()
 
@@ -69,21 +70,28 @@ const NodeBadge = ({ position, userData, color, relativeIds }: BadgeProps) => {
           }}
           scale={isHovered ? 1.05 : 1}
           selected={false}
-          size={isTopic ? 100 : 52}
+          size={isSelected ? 100 : 68}
+          type={userData?.node_type || ''}
         >
-          {isTopic ? userData?.label : <Image size={46} src={userData?.image_url || 'noimage.jpeg'} />}
-
-          <BadgeIconWrapper>
-            <Counter color={color}>
-              <MdHub style={{ marginRight: 4 }} />
-              {relativeIds.length}
-            </Counter>
-            <Percentage color={color}>{score}%</Percentage>
-          </BadgeIconWrapper>
+          {!isPerson && !isTopic ? (
+            <div className="badge-wrapper">
+              <TypeBadge type={userData?.node_type || ''} />
+            </div>
+          ) : null}
+          {isTopic ? (
+            userData?.label
+          ) : (
+            <Avatar
+              rounded={isPerson}
+              size={isSelected ? 60 : 52}
+              src={userData?.image_url || 'audio_default.svg'}
+              type={userData?.node_type}
+            />
+          )}
         </Tag>
       </Html>
     </group>
-  )
+  ) : null
 }
 
 export const RelevanceBadges = memo(() => {

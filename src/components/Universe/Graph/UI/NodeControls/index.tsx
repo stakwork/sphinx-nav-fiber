@@ -1,7 +1,7 @@
 import { Html } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import { memo, useCallback, useMemo, useRef } from 'react'
-import { MdClose, MdMenu, MdViewInAr } from 'react-icons/md'
+import { MdClose, MdViewInAr } from 'react-icons/md'
 import styled from 'styled-components'
 import { Group, Vector3 } from 'three'
 import { useAppStore } from '~/stores/useAppStore'
@@ -18,8 +18,6 @@ export const NodeControls = memo(() => {
   const allGraphData = useDataStore((s) => s.data)
   const selectedNode = useSelectedNode()
   const setSelectedNode = useDataStore((s) => s.setSelectedNode)
-  const setHideNodeDetails = useDataStore((s) => s.setHideNodeDetails)
-  const hideNodeDetails = useDataStore((s) => s.hideNodeDetails)
   const setShowSelectionGraph = useDataStore((s) => s.setShowSelectionGraph)
 
   useFrame(() => {
@@ -43,20 +41,11 @@ export const NodeControls = memo(() => {
   const buttons = useMemo(
     () => [
       {
-        key: 'control-key-0',
-        colors: buttonColors(hideNodeDetails).menu,
-        icon: <MdMenu />,
-        left: -40,
-        onClick: () => {
-          setHideNodeDetails(!hideNodeDetails)
-        },
-        hide: showSelectionGraph,
-      },
-      {
         key: 'control-key-1',
         colors: buttonColors(showSelectionGraph).focus,
         icon: <MdViewInAr />,
-        left: 0,
+        left: 10,
+        className: 'expand',
         onClick: () => {
           const nextState = !showSelectionGraph
 
@@ -72,13 +61,14 @@ export const NodeControls = memo(() => {
         colors: buttonColors(true).close,
         icon: <MdClose />,
         left: 40,
+        className: 'exit',
         onClick: () => {
           setSelectedNode(null)
           setShowSelectionGraph(false)
         },
       },
     ],
-    [setShowSelectionGraph, setSelectedNode, setSidebarOpen, setHideNodeDetails, hideNodeDetails, showSelectionGraph],
+    [setShowSelectionGraph, setSelectedNode, setSidebarOpen, showSelectionGraph],
   )
 
   if (!selectedNode) {
@@ -97,28 +87,24 @@ export const NodeControls = memo(() => {
         onPointerOver={(e) => e.stopPropagation()}
         onPointerUp={(e) => e.stopPropagation()}
         sprite
+        zIndexRange={[16777271, 16777272]}
       >
-        {buttons.map((b) => {
-          if (b.hide) {
-            return null
-          }
-
-          return (
-            <IconButton
-              key={b.key}
-              backgroundColor={b.colors.backgroundColor}
-              borderColor={b.colors.borderColor}
-              fontColor={b.colors.fontColor}
-              left={b.left}
-              onClick={(e) => {
-                e.stopPropagation()
-                b.onClick()
-              }}
-            >
-              {b.icon}
-            </IconButton>
-          )
-        })}
+        {buttons.map((b) => (
+          <IconButton
+            key={b.key}
+            backgroundColor={b.colors.backgroundColor}
+            borderColor={b.colors.borderColor}
+            className={b.className}
+            fontColor={b.colors.fontColor}
+            left={b.left}
+            onClick={(e) => {
+              e.stopPropagation()
+              b.onClick()
+            }}
+          >
+            {b.icon}
+          </IconButton>
+        ))}
       </Html>
     </group>
   )
@@ -135,20 +121,20 @@ type ButtonProps = {
 
 const IconButton = styled.div<ButtonProps>`
   position: fixed;
-  top: -70px;
-  left: ${(p: ButtonProps) => -17 + p.left}px;
-  width: 34px;
-  height: 34px;
+  top: -60px;
+  left: ${(p: ButtonProps) => -7 + p.left}px;
+  width: 24px;
+  height: 24px;
 
   border-radius: 40px;
   display: flex;
   justify-content: center;
   align-items: center;
   background: ${(p: ButtonProps) => (p.backgroundColor ? p.backgroundColor : '#000000bb')};
-  border: 3px solid ${(p: ButtonProps) => (p.borderColor ? p.borderColor : '#222')};
   color: ${(p: ButtonProps) => (p.fontColor ? p.fontColor : '#ffffff')};
   border-radius: 100%;
-  font-size: 20px;
+  font-size: 16px;
   cursor: pointer;
   transition: opacity 0.4s;
+  box-shadow: 0px 2px 12px rgba(0, 0, 0, 0.5);
 `

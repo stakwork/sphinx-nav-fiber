@@ -1,25 +1,25 @@
 import { Slide } from '@mui/material'
+import clsx from 'clsx'
 import { forwardRef, useEffect, useRef, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
-import styled from 'styled-components'
-import { Flex } from '~/components/common/Flex'
-import { SearchBar } from '~/components/SearchBar'
-import { useAppStore } from '~/stores/useAppStore'
-import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
-import { colors } from '~/utils/colors'
-import clsx from 'clsx'
 import { ClipLoader } from 'react-spinners'
-import { FetchLoaderText } from '~/components/common/Loader'
+import styled from 'styled-components'
 import { useGraphData } from '~/components/DataRetriever'
 import ChevronLeftIcon from '~/components/Icons/ChevronLeftIcon'
 import ClearIcon from '~/components/Icons/ClearIcon'
 import SearchIcon from '~/components/Icons/SearchIcon'
+import { SearchBar } from '~/components/SearchBar'
+import { Flex } from '~/components/common/Flex'
+import { FetchLoaderText } from '~/components/common/Loader'
+import { useAppStore } from '~/stores/useAppStore'
+import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
+import { colors } from '~/utils/colors'
+import { TeachMe } from '../Helper/TeachMe'
 import { LatestView } from './Latest'
 import { EpisodeSkeleton } from './Relevance/EpisodeSkeleton'
 import { SideBarSubView } from './SidebarSubView'
 import { Tab } from './Tab'
 import { Trending } from './Trending'
-import { TeachMe } from '../Helper/TeachMe'
 
 export const MENU_WIDTH = 390
 
@@ -130,14 +130,15 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
 export const SideBar = ({ onSubmit }: Props) => {
   const sidebarIsOpen = useAppStore((s) => s.sidebarIsOpen)
   const selectedNode = useSelectedNode()
+  const subViewIsOpen = !!selectedNode && selectedNode.node_type !== 'topic' && sidebarIsOpen
   const [showTeachMe] = useDataStore((s) => [s.showTeachMe])
 
   return (
     <>
       <Slide direction="right" in={sidebarIsOpen} mountOnEnter unmountOnExit>
-        <Content onSubmit={onSubmit} subViewOpen={!!selectedNode} />
+        <Content onSubmit={onSubmit} subViewOpen={subViewIsOpen} />
       </Slide>
-      <SideBarSubView open={(!!selectedNode && sidebarIsOpen) || !!showTeachMe} />
+      <SideBarSubView open={subViewIsOpen || !!showTeachMe} />
       {!sidebarIsOpen && <Tab />}
     </>
   )

@@ -58,10 +58,10 @@ export const SelectionDataNodes = memo(() => {
     <>
       {selectionGraphData?.nodes.map((node) => {
         if (node.node_type === 'topic') {
-          return <TextNode key={`${node.ref_id || node.id}-compact`} node={node} />
+          return <TextNode key={`${node.ref_id || node.id}-compact`} hide node={node} />
         }
 
-        return <Cube key={`${node.ref_id || node.id}-compact`} animated node={node} />
+        return <Cube key={`${node.ref_id || node.id}-compact`} animated hide node={node} />
       })}
 
       <Segments

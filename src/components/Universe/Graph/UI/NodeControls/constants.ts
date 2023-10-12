@@ -1,13 +1,13 @@
 export const buttonColors = (active: boolean) => ({
   close: {
-    backgroundColor: '#00000066',
+    backgroundColor: 'rgba(48, 51, 66, 1)',
     borderColor: '#fff',
-    fontColor: '#fff',
+    fontColor: 'rgba(255, 255, 255, 1)',
   },
   focus: {
-    backgroundColor: active ? '#FFDB58bb' : '#fff',
+    backgroundColor: active ? 'rgba(255, 255, 255, 0.90);' : 'rgba(255, 255, 255, 0.90)',
     borderColor: active ? '#FFDB58bb' : '#fff',
-    fontColor: active ? '#fff' : '#000',
+    fontColor: active ? 'rgba(48, 51, 66, 1)' : 'rgba(48, 51, 66, 1)',
   },
   menu: {
     backgroundColor: '#00000066',

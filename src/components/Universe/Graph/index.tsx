@@ -38,8 +38,6 @@ export const Graph = () => {
 
       <Particles />
 
-      <NodeDetailsPanel />
-
       {graphStyle !== 'earth' && (
         <Segments
           /** NOTE: using the key in this way the segments re-mounts
@@ -61,6 +59,8 @@ export const Graph = () => {
           ))}
         </Segments>
       )}
+
+      <NodeDetailsPanel />
     </>
   )
 }
