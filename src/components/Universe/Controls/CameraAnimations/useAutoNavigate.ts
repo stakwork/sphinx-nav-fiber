@@ -7,6 +7,7 @@ import { playInspectSound } from '~/components/common/Sounds'
 import { useControlStore } from '~/stores/useControlStore'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { getPointAbove } from '~/transformers/earthGraph'
+import { NodeExtended } from '~/types'
 import { getNearbyNodeIds } from '../constants'
 import { arriveDistance, selectionGraphCameraPosition, selectionGraphDistance, topicArriveDistance } from './constants'
 
@@ -38,6 +39,46 @@ export const useAutoNavigate = (cameraControlsRef: RefObject<CameraControls | nu
   const [minDistance, setMinDistance] = useState(arriveDistance)
 
   const destination = useMemo(() => {
+    if (showSelectionGraph) {
+      return new Vector3(0, 0, 0)
+    }
+
+    const selected = graphData?.nodes.find((f) => f.ref_id === selectedNode?.ref_id)
+
+    let pos = new Vector3(0, 0, 0)
+
+    if (selected && graphData) {
+      // find all children ... is there a better way?
+      const children: NodeExtended[] = graphData?.nodes.filter((node) =>
+        selected.children?.find((str) => str === node.id),
+      )
+
+      let ax = 0
+      let ay = 0
+      let az = 0
+
+      children.map((child: NodeExtended) => {
+        ax += child.x
+        ay += child.y
+        az += child.z
+
+        return child
+      })
+
+      const l = 1 / children.length
+
+      pos = new Vector3(2 * selected.x - ax * l, 2 * selected.y - ay * l, 2 * selected.z - az * l)
+    }
+
+    // console.log('selected pos')
+    // console.log(new Vector3(selected?.x, selected?.y, selected?.z))
+    // console.log('calculated pos')
+    // console.log(pos)
+
+    return pos
+  }, [showSelectionGraph, selectedNode, graphData])
+
+  const lookat = useMemo(() => {
     if (showSelectionGraph) {
       return new Vector3(0, 0, 0)
     }
@@ -92,7 +133,7 @@ export const useAutoNavigate = (cameraControlsRef: RefObject<CameraControls | nu
     if (selectedNode) {
       if (!showSelectionGraph && graphStyle === 'earth' && cameraControlsRef?.current) {
         const distanceFromCenter = cameraControlsRef.current.camera.position.distanceTo(new Vector3())
-        const newPosition = getPointAbove(destination, -distanceFromCenter / 2)
+        const newPosition = getPointAbove(lookat, -distanceFromCenter / 2)
 
         cameraControlsRef.current.setLookAt(newPosition.x, newPosition.y, newPosition.z, 0, 0, 0, true)
       } else {
@@ -130,7 +171,7 @@ export const useAutoNavigate = (cameraControlsRef: RefObject<CameraControls | nu
         }
 
         if (!lookAtReached) {
-          turnCameraToNode(destination, state.camera)
+          turnCameraToNode(lookat, state.camera)
         }
       }
     }
