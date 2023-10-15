@@ -38,6 +38,7 @@ export const useAutoNavigate = (cameraControlsRef: RefObject<CameraControls | nu
   // camera movement to selection params
   const [minDistance, setMinDistance] = useState(arriveDistance)
 
+  // find the target position for the camera
   const destination = useMemo(() => {
     if (showSelectionGraph) {
       return new Vector3(0, 0, 0)
@@ -70,14 +71,10 @@ export const useAutoNavigate = (cameraControlsRef: RefObject<CameraControls | nu
       pos = new Vector3(2 * selected.x - ax * l, 2 * selected.y - ay * l, 2 * selected.z - az * l)
     }
 
-    // console.log('selected pos')
-    // console.log(new Vector3(selected?.x, selected?.y, selected?.z))
-    // console.log('calculated pos')
-    // console.log(pos)
-
     return pos
   }, [showSelectionGraph, selectedNode, graphData])
 
+  // find the node that the camera should look at
   const lookat = useMemo(() => {
     if (showSelectionGraph) {
       return new Vector3(0, 0, 0)
