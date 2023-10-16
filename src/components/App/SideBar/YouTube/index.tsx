@@ -1,15 +1,15 @@
 import { useEffect, useRef, useState } from 'react'
 import ReactPlayer from 'react-player'
 import styled from 'styled-components'
+import { Booster } from '~/components/Booster'
+import { Divider } from '~/components/common/Divider'
 import { Flex } from '~/components/common/Flex'
 import { useDataStore } from '~/stores/useDataStore'
 import { formatDescription } from '~/utils/formatDescription'
 import { videoTimetoSeconds } from '~/utils/videoTimetoSeconds'
+import { BoostAmt } from '../../Helper/BoostAmt'
 import { Episode } from '../Relevance/Episode'
 import { Transcript } from '../Transcript'
-import { BoostAmt } from '../../Helper/BoostAmt'
-import { Booster } from '~/components/Booster'
-import { Divider } from '~/components/common/Divider'
 
 export const YouTube = () => {
   const selectedNode = useDataStore((s) => s.selectedNode)
@@ -24,7 +24,7 @@ export const YouTube = () => {
     boost,
     type,
     id,
-    episode_title: episodeTitle,
+    show_title: showTitle,
     ref_id: refId,
   } = selectedNode || {}
 
@@ -56,7 +56,7 @@ export const YouTube = () => {
         imageUrl={imageUrl || 'video_default.svg'}
         isSelectedView
         onClick={() => null}
-        title={episodeTitle}
+        title={showTitle}
         type={type}
       />
       <StyledDivider />
