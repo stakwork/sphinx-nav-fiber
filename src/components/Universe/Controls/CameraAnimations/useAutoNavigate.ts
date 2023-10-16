@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import type { CameraControls } from '@react-three/drei'
+import { type CameraControls } from '@react-three/drei'
 import { Camera, useFrame, useThree } from '@react-three/fiber'
 import { RefObject, useEffect, useMemo, useState } from 'react'
 import { Vector3 } from 'three'
@@ -49,26 +49,27 @@ export const useAutoNavigate = (cameraControlsRef: RefObject<CameraControls | nu
     let pos = new Vector3(0, 0, 0)
 
     if (selected && graphData) {
-      // find all children ... is there a better way?
+      // find all node children ... is there a better way?
       const children: NodeExtended[] = graphData?.nodes.filter((node) =>
         selected.children?.find((str) => str === node.id),
       )
 
-      let ax = 0
-      let ay = 0
-      let az = 0
+      // position of node
+      const spos = new Vector3(selected.x, selected.y, selected.z)
+      // average positioon of children
+      let avgDir = new Vector3(0, 0, 0)
 
       children.map((child: NodeExtended) => {
-        ax += child.x
-        ay += child.y
-        az += child.z
+        avgDir = avgDir.add(new Vector3(child.x, child.y, child.z).normalize())
 
         return child
       })
 
-      const l = 1 / children.length
+      // offset from node based on children
+      const sizeOffset = selected.scale ? 1 - 1 / (selected.scale + 10) : 1
+      const offset = spos.sub(avgDir).multiplyScalar(0.8 * sizeOffset)
 
-      pos = new Vector3(2 * selected.x - ax * l, 2 * selected.y - ay * l, 2 * selected.z - az * l)
+      pos = spos.add(offset)
     }
 
     return pos
