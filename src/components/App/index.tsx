@@ -6,10 +6,10 @@ import * as sphinx from 'sphinx-bridge-kevkevinpal'
 import styled from 'styled-components'
 import { AddNodeModal } from '~/components/AddNodeModal'
 import { BudgetExplanationModal } from '~/components/BudgetExplanationModal'
+import { Flex } from '~/components/common/Flex'
 import { DataRetriever } from '~/components/DataRetriever'
 import { GlobalStyle } from '~/components/GlobalStyle'
 import { Universe } from '~/components/Universe'
-import { Flex } from '~/components/common/Flex'
 import { isDevelopment, isE2E } from '~/constants'
 import { getGraphDataPositions } from '~/network/fetchGraphData/const'
 import { useAppStore } from '~/stores/useAppStore'
@@ -98,6 +98,16 @@ export const App = () => {
         // @ts-ignore
         await sphinx.enable()
       }
+
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      await sphinx.enable()
+
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      const budget = await sphinx.getBudget()
+
+      console.log(budget.budget, 'Testing things out')
 
       setSphinxModalOpen(false)
     }

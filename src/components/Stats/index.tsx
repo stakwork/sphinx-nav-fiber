@@ -7,8 +7,8 @@ import TwitterIcon from '~/components/Icons/TwitterIcon'
 import VideoIcon from '~/components/Icons/VideoIcon'
 import { api } from '~/network/api'
 import { colors } from '~/utils/colors'
-import EpisodeIcon from '../Icons/EpisodeIcon'
 import { Flex } from '../common/Flex'
+import EpisodeIcon from '../Icons/EpisodeIcon'
 
 type StatResponse = {
   /* eslint-disable camelcase */
