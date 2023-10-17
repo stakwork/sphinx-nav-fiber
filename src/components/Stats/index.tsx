@@ -111,7 +111,7 @@ export const Stats = () => {
           <div className="text">{stats.numTwitterSpace}</div>
         </Stat>
       </StatisticsWrapper>
-      <StatisticsWrapper>
+      <StatisticsBudget>
         <Budget>
           <div className="icon">
             <BudgetIcon />
@@ -122,7 +122,7 @@ export const Stats = () => {
             </p>
           </div>
         </Budget>
-      </StatisticsWrapper>
+      </StatisticsBudget>
     </StatisticsContainer>
   )
 }
@@ -134,12 +134,20 @@ const StatisticsWrapper = styled(Flex).attrs({
   justify: 'flex-start',
 })``
 
+const StatisticsBudget = styled(Flex).attrs({
+  align: 'center',
+  direction: 'row',
+  grow: 1,
+  justify: 'flex-end',
+})``
+
 const StatisticsContainer = styled(Flex).attrs({
   align: 'center',
   direction: 'row',
   grow: 1,
-  justify: 'between',
-})``
+})`
+  justify-content: between;
+`
 
 const Stat = styled(Flex).attrs({
   align: 'center',
