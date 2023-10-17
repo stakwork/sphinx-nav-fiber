@@ -28,6 +28,7 @@ import {
 import { api } from '~/network/api'
 import { getRadarData } from '~/network/fetchSourcesData'
 import { useModal } from '~/stores/useModalStore'
+import { useUserStore } from '~/stores/useUserStore'
 import { FetchRadarResponse, SubmitErrRes } from '~/types'
 import { colors } from '~/utils/colors'
 import { getLSat } from '~/utils/getLSat'
@@ -83,6 +84,7 @@ const handleSubmit = async (
   close: () => void,
   sourceType: string,
   successCallback: () => void,
+  setBudget: (value: number) => void,
 ): Promise<void> => {
   const body: { [index: string]: unknown } = {}
 
@@ -192,7 +194,15 @@ const handleSubmit = async (
 
       await payLsat(lsat)
 
-      await handleSubmit(data, close, sourceType, successCallback)
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      const budget = await sphinx.getBudget()
+
+      if (budget.budget) {
+        setBudget(budget.budget)
+      }
+
+      await handleSubmit(data, close, sourceType, successCallback, setBudget)
     }
 
     if (err instanceof Error) {
@@ -261,6 +271,7 @@ export const AddNodeModal = () => {
   const { close, addNodeModalData } = useModal('addNode')
   const [activeType, setActiveType] = useState('')
   const setSources = useDataStore((s) => s.setSources)
+  const [setBudget] = useUserStore((s) => [s.setBudget])
 
   const resolvedContentOptions = addNodeModalData ? CONTENT_TYPE_OPTIONS[addNodeModalData] : null
 
@@ -291,7 +302,7 @@ export const AddNodeModal = () => {
   }
 
   const onSubmit = form.handleSubmit(async (data) => {
-    await handleSubmit(data, handleClose, activeType, onSuccessCallback)
+    await handleSubmit(data, handleClose, activeType, onSuccessCallback, setBudget)
   })
 
   const options = resolvedContentOptions
