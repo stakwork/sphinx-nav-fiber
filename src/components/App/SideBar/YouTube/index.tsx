@@ -116,6 +116,6 @@ const StyledEpisode = styled(Episode)`
 `
 
 const StyledDivider = styled(Divider)`
-  margin: auto 0px 1px 0px;
+  margin: auto 0px 2px 0px;
   opacity: 75%;
 `
