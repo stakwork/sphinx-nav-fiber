@@ -37,7 +37,11 @@ export const Stats = () => {
   const [stats, setStats] = useState<TStats | null>(null)
   const [budget] = useUserStore((s) => [s.budget])
 
-  function formatBudget(value: number) {
+  function formatBudget(value: number | null) {
+    if (value === null) {
+      return '?'
+    }
+
     const stringBudget = value.toLocaleString()
 
     const splittedBudget = stringBudget.split(',')

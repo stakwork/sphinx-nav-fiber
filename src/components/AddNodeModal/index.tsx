@@ -85,7 +85,7 @@ const handleSubmit = async (
   close: () => void,
   sourceType: string,
   successCallback: () => void,
-  setBudget: (value: number) => void,
+  setBudget: (value: number | null) => void,
 ): Promise<void> => {
   const body: { [index: string]: unknown } = {}
 
