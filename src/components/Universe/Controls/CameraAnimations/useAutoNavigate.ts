@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import type { CameraControls } from '@react-three/drei'
+import { type CameraControls } from '@react-three/drei'
 import { Camera, useFrame, useThree } from '@react-three/fiber'
 import { RefObject, useEffect, useMemo, useState } from 'react'
 import { Vector3 } from 'three'
@@ -7,6 +7,7 @@ import { playInspectSound } from '~/components/common/Sounds'
 import { useControlStore } from '~/stores/useControlStore'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { getPointAbove } from '~/transformers/earthGraph'
+import { NodeExtended } from '~/types'
 import { getNearbyNodeIds } from '../constants'
 import { arriveDistance, selectionGraphCameraPosition, selectionGraphDistance, topicArriveDistance } from './constants'
 
@@ -37,7 +38,45 @@ export const useAutoNavigate = (cameraControlsRef: RefObject<CameraControls | nu
   // camera movement to selection params
   const [minDistance, setMinDistance] = useState(arriveDistance)
 
+  // find the target position for the camera
   const destination = useMemo(() => {
+    if (showSelectionGraph) {
+      return new Vector3(0, 0, 0)
+    }
+
+    const selected = graphData?.nodes.find((f) => f.ref_id === selectedNode?.ref_id)
+
+    let pos = new Vector3(0, 0, 0)
+
+    if (selected && graphData) {
+      // find all node children ... is there a better way?
+      const children: NodeExtended[] = graphData?.nodes.filter((node) =>
+        selected.children?.find((str) => str === node.id),
+      )
+
+      // position of node
+      const spos = new Vector3(selected.x, selected.y, selected.z)
+      // average positioon of children
+      let avgDir = new Vector3(0, 0, 0)
+
+      children.map((child: NodeExtended) => {
+        avgDir = avgDir.add(new Vector3(child.x, child.y, child.z).normalize())
+
+        return child
+      })
+
+      // offset from node based on children
+      const sizeOffset = selected.scale ? 1 - 1 / (selected.scale + 10) : 1
+      const offset = spos.sub(avgDir).multiplyScalar(0.8 * sizeOffset)
+
+      pos = spos.add(offset)
+    }
+
+    return pos
+  }, [showSelectionGraph, selectedNode, graphData])
+
+  // find the node that the camera should look at
+  const lookat = useMemo(() => {
     if (showSelectionGraph) {
       return new Vector3(0, 0, 0)
     }
@@ -92,7 +131,7 @@ export const useAutoNavigate = (cameraControlsRef: RefObject<CameraControls | nu
     if (selectedNode) {
       if (!showSelectionGraph && graphStyle === 'earth' && cameraControlsRef?.current) {
         const distanceFromCenter = cameraControlsRef.current.camera.position.distanceTo(new Vector3())
-        const newPosition = getPointAbove(destination, -distanceFromCenter / 2)
+        const newPosition = getPointAbove(lookat, -distanceFromCenter / 2)
 
         cameraControlsRef.current.setLookAt(newPosition.x, newPosition.y, newPosition.z, 0, 0, 0, true)
       } else {
@@ -130,7 +169,7 @@ export const useAutoNavigate = (cameraControlsRef: RefObject<CameraControls | nu
         }
 
         if (!lookAtReached) {
-          turnCameraToNode(destination, state.camera)
+          turnCameraToNode(lookat, state.camera)
         }
       }
     }
