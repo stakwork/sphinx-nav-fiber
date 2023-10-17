@@ -40,8 +40,6 @@ export const YouTube = () => {
 
     if (scrollTargetRef.current) {
       scrollTargetRef.current.scrollTo({ top: 0, behavior: 'auto' })
-
-      console.log('helloyt')
     }
   }, [playerRef, secs])
 
