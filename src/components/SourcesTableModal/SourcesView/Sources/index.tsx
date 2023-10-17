@@ -13,7 +13,7 @@ import { ToastMessage } from '~/components/common/Toast/toastMessage'
 import { getRadarData, triggerRadarJob } from '~/network/fetchSourcesData'
 import { useDataStore } from '~/stores/useDataStore'
 import { useUserStore } from '~/stores/useUserStore'
-import { FetchRadarResponse, SubmitErrRes } from '~/types'
+import { FetchRadarResponse, SubmitErrRes, Sources as TSources } from '~/types'
 import { colors } from '~/utils/colors'
 import { executeIfProd } from '~/utils/tests'
 import { Heading, StyledPill } from '../common'
@@ -134,7 +134,7 @@ export const Sources = () => {
     return <Text>You are not admin</Text>
   }
 
-  const tableValues = sources?.filter((val) => !typeFilter || val.source_type === typeFilter)
+  const tableValues = sources?.filter((val: TSources) => !typeFilter || val.source_type === typeFilter)
 
   return (
     <Wrapper align="stretch" direction="column" justify="flex-end">

@@ -30,7 +30,7 @@ const Table: React.FC<Props> = ({ data }) => {
 
         await approveRadarData(id, enable.pubkey)
 
-        setSources(data.filter((i) => i.ref_id !== id))
+        setSources(data.filter((i: Sources) => i.ref_id !== id))
       } catch (error) {
         console.warn(error)
       }

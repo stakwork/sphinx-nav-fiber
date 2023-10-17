@@ -2,7 +2,7 @@ import create from 'zustand'
 import { nodesAreRelatives } from '~/components/Universe/constants'
 import { isChileGraph } from '~/constants'
 import { fetchGraphData } from '~/network/fetchGraphData'
-import { GraphData, NodeExtended, NodeType, Sources } from '~/types'
+import { GraphData, NodeExtended, NodeType, Sources, Topic } from '~/types'
 import { saveSearchTerm } from '~/utils/relayHelper/index'
 
 export type GraphStyle = 'split' | 'force' | 'sphere' | 'earth'
@@ -24,6 +24,7 @@ type DataStore = {
   selectedTimestamp: NodeExtended | null
   sources: Sources[] | null
   queuedSources: Sources[] | null
+  topics: Topic[] | null
   sphinxModalIsOpen: boolean
   cameraFocusTrigger: boolean
   selectedNodeRelativeIds: string[]
@@ -44,6 +45,7 @@ type DataStore = {
   setSelectedTimestamp: (selectedTimestamp: NodeExtended | null) => void
   setSources: (sources: Sources[] | null) => void
   setQueuedSources: (sources: Sources[] | null) => void
+  setTopics: (topics: Topic[] | null) => void
   setSphinxModalOpen: (_: boolean) => void
   setCameraFocusTrigger: (_: boolean) => void
   setIsFetching: (_: boolean) => void
@@ -70,6 +72,7 @@ const defaultData: Omit<
   | 'setCameraFocusTrigger'
   | 'setSources'
   | 'setQueuedSources'
+  | 'setTopics'
   | 'setGraphRadius'
   | 'setGraphStyle'
   | 'setNearbyNodeIds'
@@ -88,6 +91,7 @@ const defaultData: Omit<
   isFetching: false,
   isTimestampLoaded: false,
   queuedSources: null,
+  topics: null,
   hoveredNode: null,
   selectedNode: null,
   selectedTimestamp: null,
@@ -136,6 +140,7 @@ export const useDataStore = create<DataStore>((set, get) => ({
   setGraphRadius: (graphRadius) => set({ graphRadius }),
   setGraphStyle: (graphStyle) => set({ graphStyle }),
   setQueuedSources: (queuedSources) => set({ queuedSources }),
+  setTopics: (topics) => set({ topics }),
   setHoveredNode: (hoveredNode) => set({ hoveredNode }),
   setSelectedNode: (selectedNode) => {
     const stateSelectedNode = get().selectedNode
