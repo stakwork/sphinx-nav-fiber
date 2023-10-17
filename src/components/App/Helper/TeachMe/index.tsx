@@ -106,6 +106,14 @@ export const TeachMe = () => {
           transcripts,
         })
 
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        let budget = await sphinx.getBudget()
+
+        if (budget.budget) {
+          setBudget(budget.budget)
+        }
+
         toast(<ToastMessage message="We started preparing tutorial for you" />, {
           type: 'success',
         })
@@ -117,7 +125,7 @@ export const TeachMe = () => {
 
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        const budget = await sphinx.getBudget()
+        budget = await sphinx.getBudget()
 
         if (budget.budget) {
           setBudget(budget.budget)
