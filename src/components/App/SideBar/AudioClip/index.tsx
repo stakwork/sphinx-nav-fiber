@@ -1,12 +1,16 @@
-import { memo, useCallback, useEffect } from 'react'
+import { Divider } from '@mui/material'
+import { memo, useCallback, useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 import { AudioPlayer } from '~/components/AudioPlayer'
+import { Booster } from '~/components/Booster'
 import { Avatar } from '~/components/common/Avatar'
 import { Flex } from '~/components/common/Flex'
 import { setIsTimestampLoaded, useSelectedNode } from '~/stores/useDataStore'
 import { usePlayerStore } from '~/stores/usePlayerStore'
 import { formatDescription } from '~/utils/formatDescription'
 import { useIsMatchBreakpoint } from '~/utils/useIsMatchBreakpoint'
+import { BoostAmt } from '../../Helper/BoostAmt'
+import { Description } from '../Description'
 import { Episode } from '../Relevance/Episode'
 import { Transcript } from '../Transcript'
 
@@ -23,8 +27,9 @@ const PlayerWrapper = styled(Flex)`
   padding: 30px 18px 0;
 `
 
-const TranscriptWrapper = styled(Flex)`
-  padding: 0 18px 18px;
+const StyledDivider = styled(Divider)`
+  margin: auto 0px 1px 0px;
+  opacity: 75%;
 `
 
 const StyledEpisode = styled(Episode)`
@@ -41,6 +46,7 @@ const _AudioClip = () => {
   const isMobile = useIsMatchBreakpoint('sm', 'down')
   const isPlay = usePlayerStore((s) => s.isPlaying)
   const setIsPlaying = usePlayerStore((s) => s.setIsPlaying)
+  const scrollTargetRef = useRef<HTMLDivElement | null>(null)
 
   const {
     image_url: imageUrl,
@@ -49,12 +55,19 @@ const _AudioClip = () => {
     boost,
     type,
     id,
+    ref_id: refId,
     episode_title: episodeTitle,
   } = selectedNode || {}
+
+  const [boostAmount, setBoostAmount] = useState<number>(boost || 0)
 
   useEffect(
     () => () => {
       setIsPlaying(false)
+
+      if (scrollTargetRef.current) {
+        scrollTargetRef.current.scrollTo({ top: 0, behavior: 'auto' })
+      }
     },
     [setIsPlaying],
   )
@@ -104,11 +117,33 @@ const _AudioClip = () => {
         type={type}
       />
       {/* </Flex> */}
-      <TranscriptWrapper grow={1} shrink={1}>
-        <Transcript node={selectedNode} stateless />
-      </TranscriptWrapper>
+      <StyledDivider />
+      <div ref={scrollTargetRef} style={{ overflow: 'auto', flex: 1, width: '100%' }}>
+        <BoostWrapper>
+          <BoostAmt amt={boostAmount} />
+          <Booster content={selectedNode} count={boostAmount} refId={refId} updateCount={setBoostAmount} />
+        </BoostWrapper>
+        <StyledDivider />
+        <TextWrapper>
+          <Description node={selectedNode} stateless />
+        </TextWrapper>
+        <StyledDivider />
+        <TextWrapper>
+          <Transcript node={selectedNode} stateless />
+        </TextWrapper>
+      </div>
     </Wrapper>
   )
 }
 
 export const AudioClip = memo(_AudioClip)
+
+const BoostWrapper = styled(Flex)`
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 18px 18px 18px;
+`
+
+const TextWrapper = styled(Flex)`
+  padding: 18px 18px 18px;
+`
