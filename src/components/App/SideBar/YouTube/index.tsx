@@ -17,12 +17,6 @@ export const YouTube = () => {
   const playerRef = useRef<ReactPlayer | null>(null)
   const scrollTargetRef = useRef<HTMLDivElement | null>(null)
 
-  // useEffect(() => {
-  //   if (scrollTargetRef.current) {
-  //     scrollTargetRef.current.scrollTo({ top: 0 })
-  //   }
-  // }, [])
-
   const {
     link,
     timestamp,
