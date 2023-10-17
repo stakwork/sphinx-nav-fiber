@@ -60,12 +60,12 @@ export const Relevance = ({ isSearchResult }: Props) => {
         {currentNodes.map((n, index) => {
           const {
             image_url: imageUrl,
-            description,
             date,
             boost,
             type,
             id,
             episode_title: episodeTitle,
+            show_title: showTitle,
             node_type: nodeType,
             text,
             name,
@@ -80,14 +80,14 @@ export const Relevance = ({ isSearchResult }: Props) => {
               key={index.toString()}
               boostCount={boost || 0}
               date={date || 0}
-              description={formatDescription(description)}
+              episodeTitle={formatDescription(episodeTitle)}
               id={id}
               imageUrl={imageUrl || 'audio_default.svg'}
               name={name || ''}
               onClick={() => handleNodeClick(n)}
               profilePicture={profilePicture}
+              showTitle={formatDescription(showTitle)}
               text={text || ''}
-              title={episodeTitle}
               twitterHandle={twitterHandle}
               type={type || nodeType}
               verified={verified}

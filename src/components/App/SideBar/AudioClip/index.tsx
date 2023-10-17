@@ -42,7 +42,15 @@ const _AudioClip = () => {
   const isPlay = usePlayerStore((s) => s.isPlaying)
   const setIsPlaying = usePlayerStore((s) => s.setIsPlaying)
 
-  const { image_url: imageUrl, description, date, boost, type, id, episode_title: episodeTitle } = selectedNode || {}
+  const {
+    image_url: imageUrl,
+    show_title: showTitle,
+    date,
+    boost,
+    type,
+    id,
+    episode_title: episodeTitle,
+  } = selectedNode || {}
 
   useEffect(
     () => () => {
@@ -87,12 +95,12 @@ const _AudioClip = () => {
       <StyledEpisode
         boostCount={boost || 0}
         date={date || 0}
-        description={formatDescription(description)}
+        episodeTitle={formatDescription(episodeTitle)}
         id={id}
         imageUrl={imageUrl || 'audio_default.svg'}
         isSelectedView
         onClick={() => null}
-        title={episodeTitle}
+        showTitle={formatDescription(showTitle)}
         type={type}
       />
       {/* </Flex> */}
