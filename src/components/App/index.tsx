@@ -113,8 +113,16 @@ export const App = () => {
       setSphinxModalOpen(false)
     }
 
-    fetchData(searchTerm)
+    await fetchData(searchTerm)
     setSidebarOpen(true)
+
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    const budget = await sphinx.getBudget()
+
+    if (budget.budget) {
+      setBudget(budget.budget)
+    }
   }, [fetchData, searchTerm, setSphinxModalOpen, setSidebarOpen, setBudget])
 
   useEffect(() => {
