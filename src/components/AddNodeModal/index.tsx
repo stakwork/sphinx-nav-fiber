@@ -33,6 +33,7 @@ import { FetchRadarResponse, SubmitErrRes } from '~/types'
 import { colors } from '~/utils/colors'
 import { getLSat } from '~/utils/getLSat'
 import { payLsat } from '~/utils/payLsat'
+import { updateBudget } from '~/utils/setBudget'
 import { executeIfProd } from '~/utils/tests'
 import { timeToMilliseconds } from '~/utils/timeToMilliseconds'
 import { useDataStore } from '../../stores/useDataStore/index'
@@ -194,13 +195,7 @@ const handleSubmit = async (
 
       await payLsat(lsat)
 
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      const budget = await sphinx.getBudget()
-
-      if (budget.budget) {
-        setBudget(budget.budget)
-      }
+      await updateBudget(setBudget)
 
       await handleSubmit(data, close, sourceType, successCallback, setBudget)
     }

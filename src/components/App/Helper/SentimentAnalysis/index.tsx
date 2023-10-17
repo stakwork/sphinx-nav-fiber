@@ -12,6 +12,7 @@ import { getSentimentData } from '~/network/fetchGraphData'
 import { useAppStore } from '~/stores/useAppStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { colors } from '~/utils/colors'
+import { updateBudget } from '~/utils/setBudget'
 import { executeIfProd } from '~/utils/tests'
 import { SentimentChart } from '../../SecondarySidebar/Sentiment/SentimentChart'
 
@@ -63,13 +64,7 @@ export const SentimentAnalysis = memo(() => {
             })),
         )
 
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        const budget = await sphinx.getBudget()
-
-        if (budget.budget) {
-          setBudget(budget.budget)
-        }
+        await updateBudget(setBudget)
       })
       .catch(console.error)
       .finally(() => {

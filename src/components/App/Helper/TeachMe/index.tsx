@@ -16,6 +16,7 @@ import { useDataStore } from '~/stores/useDataStore'
 import { InstagraphResponse, useTeachStore } from '~/stores/useTeachStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { colors } from '~/utils/colors'
+import { updateBudget } from '~/utils/setBudget'
 import { AskQuestion } from '../AskQuestion'
 
 import 'reactflow/dist/style.css'
@@ -106,13 +107,7 @@ export const TeachMe = () => {
           transcripts,
         })
 
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        let budget = await sphinx.getBudget()
-
-        if (budget.budget) {
-          setBudget(budget.budget)
-        }
+        await updateBudget(setBudget)
 
         toast(<ToastMessage message="We started preparing tutorial for you" />, {
           type: 'success',
@@ -123,13 +118,7 @@ export const TeachMe = () => {
           transcripts,
         })
 
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        budget = await sphinx.getBudget()
-
-        if (budget.budget) {
-          setBudget(budget.budget)
-        }
+        await updateBudget(setBudget)
 
         toast(<ToastMessage message="We started preparing an instagraph for you" />, {
           type: 'success',

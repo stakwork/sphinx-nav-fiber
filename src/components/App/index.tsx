@@ -19,6 +19,7 @@ import { useTeachStore } from '~/stores/useTeachStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { GraphData } from '~/types'
 import { colors } from '~/utils/colors'
+import { updateBudget } from '~/utils/setBudget'
 import { E2ETests } from '~/utils/tests'
 import version from '~/utils/versionHelper'
 import { SourcesTableModal } from '../SourcesTableModal'
@@ -101,14 +102,14 @@ export const App = () => {
         // @ts-ignore
         await sphinx.enable()
 
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        const budget = await sphinx.getBudget()
-
-        if (budget.budget) {
-          setBudget(budget.budget)
-        }
+        await updateBudget(setBudget)
       }
+
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      await sphinx.enable()
+
+      await updateBudget(setBudget)
 
       setSphinxModalOpen(false)
     }
@@ -116,13 +117,7 @@ export const App = () => {
     await fetchData(searchTerm)
     setSidebarOpen(true)
 
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    const budget = await sphinx.getBudget()
-
-    if (budget.budget) {
-      setBudget(budget.budget)
-    }
+    await updateBudget(setBudget)
   }, [fetchData, searchTerm, setSphinxModalOpen, setSidebarOpen, setBudget])
 
   useEffect(() => {

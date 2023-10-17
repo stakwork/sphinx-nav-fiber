@@ -17,6 +17,7 @@ import { useDataStore } from '~/stores/useDataStore'
 import { useTeachStore } from '~/stores/useTeachStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { colors } from '~/utils/colors'
+import { updateBudget } from '~/utils/setBudget'
 
 type ResponseType = {
   answer: string
@@ -106,13 +107,7 @@ export const AskQuestion = () => {
           transcripts,
         })
 
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        const budget = await sphinx.getBudget()
-
-        if (budget.budget) {
-          setBudget(budget.budget)
-        }
+        await updateBudget(setBudget)
 
         toast(<ToastMessage message="We started preparing response for you" />, {
           type: 'success',

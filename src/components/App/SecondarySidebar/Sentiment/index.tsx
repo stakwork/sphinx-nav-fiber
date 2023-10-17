@@ -11,6 +11,7 @@ import { PropagateLoader } from 'react-spinners'
 import { Button } from '~/components/Button'
 import { useUserStore } from '~/stores/useUserStore'
 import { colors } from '~/utils/colors'
+import { updateBudget } from '~/utils/setBudget'
 import { executeIfProd } from '~/utils/tests'
 import { SentimentChart } from './SentimentChart'
 
@@ -46,17 +47,7 @@ export const Sentiment = () => {
             })),
         )
 
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        await sphinx.enable()
-
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        const budget = await sphinx.getBudget()
-
-        if (budget.budget) {
-          setBudget(budget.budget)
-        }
+        await updateBudget(setBudget)
       })
       .catch(console.error)
       .finally(() => {
