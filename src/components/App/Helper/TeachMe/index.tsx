@@ -26,6 +26,7 @@ type ResponseType = {
 export const TeachMe = () => {
   const [data, setTeachMe] = useDataStore((s) => [s.data, s.setTeachMe])
   const [searchTerm, setSideBarOpen] = useAppStore((s) => [s.currentSearch, s.setSidebarOpen])
+  const [setBudget] = useUserStore((s) => [s.setBudget])
 
   const isSocketSet: { current: boolean } = useRef<boolean>(false)
   const socket: Socket | null = useSocket()
@@ -112,6 +113,14 @@ export const TeachMe = () => {
           term: searchTerm,
           transcripts,
         })
+
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        const budget = await sphinx.getBudget()
+
+        if (budget.budget) {
+          setBudget(budget.budget)
+        }
 
         toast(<ToastMessage message="We started preparing an instagraph for you" />, {
           type: 'success',
