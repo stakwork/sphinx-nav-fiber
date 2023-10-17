@@ -14,6 +14,7 @@ import { postInstagraph, postTeachMe } from '~/network/fetchGraphData'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
 import { InstagraphResponse, useTeachStore } from '~/stores/useTeachStore'
+import { useUserStore } from '~/stores/useUserStore'
 import { colors } from '~/utils/colors'
 import { AskQuestion } from '../AskQuestion'
 
