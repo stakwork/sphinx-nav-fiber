@@ -35,16 +35,22 @@ const boostAgainstBudget = async (amount: number) => {
     if (!res) {
       throw new Error('Keysend failed after topup')
     }
+
+    return res
   }
+
+  return res
 }
 
 export const boost = async (refId: string, amount: number) => {
-  await boostAgainstBudget(amount)
+  const boostResponse = await boostAgainstBudget(amount)
 
   const body = {
     amount,
     refid: refId,
   }
 
-  return api.post('/boost', JSON.stringify(body))
+  await api.post('/boost', JSON.stringify(body))
+
+  return boostResponse
 }

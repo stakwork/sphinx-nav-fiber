@@ -168,7 +168,7 @@ export const postInstagraph = async (data: TeachData): Promise<void> => {
   const lsatToken = await getLSat()
 
   try {
-    return api.post(`/instagraph`, JSON.stringify(data), { Authorization: lsatToken })
+    await api.post(`/instagraph`, JSON.stringify(data), { Authorization: lsatToken })
 
     // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   } catch (error: any) {
@@ -177,7 +177,9 @@ export const postInstagraph = async (data: TeachData): Promise<void> => {
 
       await payLsat(lsat)
 
-      return postInstagraph(data)
+      await postInstagraph(data)
+
+      return
     }
 
     throw error
@@ -188,7 +190,7 @@ export const postTeachMe = async (data: TeachData): Promise<void> => {
   const lsatToken = await getLSat()
 
   try {
-    return api.post(`/teachme`, JSON.stringify(data), { Authorization: lsatToken })
+    await api.post(`/teachme`, JSON.stringify(data), { Authorization: lsatToken })
 
     // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   } catch (error: any) {
@@ -197,7 +199,9 @@ export const postTeachMe = async (data: TeachData): Promise<void> => {
 
       await payLsat(lsat)
 
-      return postTeachMe(data)
+      await postTeachMe(data)
+
+      return
     }
 
     throw error
@@ -208,7 +212,7 @@ export const postAskQuestion = async (data: QuestionData): Promise<void> => {
   const lsatToken = await getLSat()
 
   try {
-    return api.post(`/ask_question`, JSON.stringify(data), { Authorization: lsatToken })
+    await api.post(`/ask_question`, JSON.stringify(data), { Authorization: lsatToken })
 
     // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   } catch (error: any) {
@@ -217,7 +221,9 @@ export const postAskQuestion = async (data: QuestionData): Promise<void> => {
 
       await payLsat(lsat)
 
-      return postAskQuestion(data)
+      await postAskQuestion(data)
+
+      return
     }
 
     throw error

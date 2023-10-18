@@ -10,7 +10,9 @@ import { Button } from '~/components/Button'
 import { Text } from '~/components/common/Text'
 import { getSentimentData } from '~/network/fetchGraphData'
 import { useAppStore } from '~/stores/useAppStore'
+import { useUserStore } from '~/stores/useUserStore'
 import { colors } from '~/utils/colors'
+import { updateBudget } from '~/utils/setBudget'
 import { executeIfProd } from '~/utils/tests'
 import { SentimentChart } from '../../SecondarySidebar/Sentiment/SentimentChart'
 
@@ -26,6 +28,7 @@ export const SentimentAnalysis = memo(() => {
   const now = moment().startOf('day')
   const min = moment().subtract(1, 'year')
   const step = 3600 * 24 // day
+  const [setBudget] = useUserStore((s) => [s.setBudget])
 
   const [value, setValue] = useState(moment().startOf('day').subtract(20, 'day'))
 
@@ -48,7 +51,7 @@ export const SentimentAnalysis = memo(() => {
     )
 
     getSentimentData({ topic: search, cutoff_date: String(value.unix()) })
-      .then((r) => {
+      .then(async (r) => {
         // eslint-disable-next-line no-console
         console.log(r?.data)
 
@@ -60,6 +63,8 @@ export const SentimentAnalysis = memo(() => {
               score: i.sentiment_score,
             })),
         )
+
+        await updateBudget(setBudget)
       })
       .catch(console.error)
       .finally(() => {

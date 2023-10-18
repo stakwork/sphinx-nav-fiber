@@ -1,21 +1,23 @@
+import { Button } from '@mui/material'
 import { useCallback, useEffect, useRef } from 'react'
-import styled from 'styled-components'
 import { PropagateLoader } from 'react-spinners'
 import { toast } from 'react-toastify'
+import ReactFlow from 'reactflow'
 import { Socket } from 'socket.io-client'
 import * as sphinx from 'sphinx-bridge-kevkevinpal'
-import { Button } from '@mui/material'
+import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { ToastMessage } from '~/components/common/Toast/toastMessage'
 import useSocket from '~/hooks/useSockets'
-import { postTeachMe, postInstagraph } from '~/network/fetchGraphData'
+import { postInstagraph, postTeachMe } from '~/network/fetchGraphData'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
-import { useTeachStore, InstagraphResponse } from '~/stores/useTeachStore'
+import { InstagraphResponse, useTeachStore } from '~/stores/useTeachStore'
+import { useUserStore } from '~/stores/useUserStore'
 import { colors } from '~/utils/colors'
+import { updateBudget } from '~/utils/setBudget'
 import { AskQuestion } from '../AskQuestion'
-import ReactFlow from 'reactflow'
 
 import 'reactflow/dist/style.css'
 
@@ -26,6 +28,7 @@ type ResponseType = {
 export const TeachMe = () => {
   const [data, setTeachMe] = useDataStore((s) => [s.data, s.setTeachMe])
   const [searchTerm, setSideBarOpen] = useAppStore((s) => [s.currentSearch, s.setSidebarOpen])
+  const [setBudget] = useUserStore((s) => [s.setBudget])
 
   const isSocketSet: { current: boolean } = useRef<boolean>(false)
   const socket: Socket | null = useSocket()
@@ -104,6 +107,8 @@ export const TeachMe = () => {
           transcripts,
         })
 
+        await updateBudget(setBudget)
+
         toast(<ToastMessage message="We started preparing tutorial for you" />, {
           type: 'success',
         })
@@ -112,6 +117,8 @@ export const TeachMe = () => {
           term: searchTerm,
           transcripts,
         })
+
+        await updateBudget(setBudget)
 
         toast(<ToastMessage message="We started preparing an instagraph for you" />, {
           type: 'success',

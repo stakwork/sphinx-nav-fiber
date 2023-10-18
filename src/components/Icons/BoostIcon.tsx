@@ -2,15 +2,7 @@
 import React from 'react'
 
 const BoostIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
-  <svg
-    width="1em"
-    height="1em"
-    viewBox="0 0 9 9"
-    style={{ color: '#6B7A8D', paddingTop: '5px' }}
-    fill="currentColor"
-    xmlns="http://www.w3.org/2000/svg"
-    {...props}
-  >
+  <svg width="1em" height="1em" viewBox="0 0 9 9" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
     <path
       id="Icon"
       fill-rule="evenodd"

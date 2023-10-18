@@ -6,18 +6,20 @@ import * as sphinx from 'sphinx-bridge-kevkevinpal'
 import styled from 'styled-components'
 import { AddNodeModal } from '~/components/AddNodeModal'
 import { BudgetExplanationModal } from '~/components/BudgetExplanationModal'
+import { Flex } from '~/components/common/Flex'
 import { DataRetriever } from '~/components/DataRetriever'
 import { GlobalStyle } from '~/components/GlobalStyle'
 import { Universe } from '~/components/Universe'
-import { Flex } from '~/components/common/Flex'
 import { isDevelopment, isE2E } from '~/constants'
 import { getGraphDataPositions } from '~/network/fetchGraphData/const'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
 import { useModal } from '~/stores/useModalStore'
 import { useTeachStore } from '~/stores/useTeachStore'
+import { useUserStore } from '~/stores/useUserStore'
 import { GraphData } from '~/types'
 import { colors } from '~/utils/colors'
+import { updateBudget } from '~/utils/setBudget'
 import { E2ETests } from '~/utils/tests'
 import version from '~/utils/versionHelper'
 import { SourcesTableModal } from '../SourcesTableModal'
@@ -48,6 +50,8 @@ const Version = styled(Flex)`
 
 export const App = () => {
   const { open } = useModal('budgetExplanation')
+
+  const [setBudget] = useUserStore((s) => [s.setBudget])
 
   const [
     setSidebarOpen,
@@ -97,14 +101,24 @@ export const App = () => {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         await sphinx.enable()
+
+        await updateBudget(setBudget)
       }
+
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      await sphinx.enable()
+
+      await updateBudget(setBudget)
 
       setSphinxModalOpen(false)
     }
 
-    fetchData(searchTerm)
+    await fetchData(searchTerm)
     setSidebarOpen(true)
-  }, [fetchData, searchTerm, setSphinxModalOpen, setSidebarOpen])
+
+    await updateBudget(setBudget)
+  }, [fetchData, searchTerm, setSphinxModalOpen, setSidebarOpen, setBudget])
 
   useEffect(() => {
     if (searchTerm) {

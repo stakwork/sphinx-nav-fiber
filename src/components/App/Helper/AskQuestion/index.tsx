@@ -15,7 +15,9 @@ import { postAskQuestion } from '~/network/fetchGraphData'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
 import { useTeachStore } from '~/stores/useTeachStore'
+import { useUserStore } from '~/stores/useUserStore'
 import { colors } from '~/utils/colors'
+import { updateBudget } from '~/utils/setBudget'
 
 type ResponseType = {
   answer: string
@@ -42,6 +44,7 @@ export const AskQuestion = () => {
   const searchTerm = useAppStore((s) => s.currentSearch)
   const isSocketSet: { current: boolean } = useRef<boolean>(false)
   const socket: Socket | null = useSocket()
+  const [setBudget] = useUserStore((s) => [s.setBudget])
 
   const [askedQuestions, askedQuestionsAnswers, setAskedQuestion, setAskedQuestionAnswer, hasQuestionInProgress] =
     useTeachStore((s) => [
@@ -103,6 +106,8 @@ export const AskQuestion = () => {
           search_term: searchTerm,
           transcripts,
         })
+
+        await updateBudget(setBudget)
 
         toast(<ToastMessage message="We started preparing response for you" />, {
           type: 'success',
