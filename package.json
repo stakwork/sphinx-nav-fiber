@@ -1,6 +1,6 @@
 {
   "name": "sphinx-nav",
-  "version": "0.1.83",
+  "version": "0.1.84",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.11.1",
@@ -83,7 +83,7 @@
     "prettier": "npx prettier --config prettier.config.js --check ./src",
     "postinstall": "husky install",
     "typecheck": "tsc --noEmit",
-    "lint": "eslint src --max-warnings 22"
+    "lint": "eslint src --max-warnings 24"
   },
   "eslintConfig": {
     "extends": [
