@@ -5,15 +5,19 @@ export type UserStore = {
   pubKey: string
   setIsAdmin: (val: boolean) => void
   setPubKey: (val: string) => void
+  budget: number | null
+  setBudget: (val: number | null) => void
 }
 
-const defaultData: Omit<UserStore, 'setIsAdmin' | 'setPubKey'> = {
+const defaultData: Omit<UserStore, 'setIsAdmin' | 'setPubKey' | 'setBudget'> = {
   isAdmin: false,
   pubKey: '',
+  budget: 0,
 }
 
 export const useUserStore = create<UserStore>((set) => ({
   ...defaultData,
   setIsAdmin: (isAdmin) => set({ isAdmin }),
   setPubKey: (pubKey) => set({ pubKey }),
+  setBudget: (budget) => set({ budget }),
 }))

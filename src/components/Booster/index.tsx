@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react'
 import { MdBolt } from 'react-icons/md'
-import BoostIcon from '~/components/Icons/BoostIcon'
 import ClipLoader from 'react-spinners/ClipLoader'
 import { toast } from 'react-toastify'
 import { Flex } from '~/components/common/Flex'
 import { Pill } from '~/components/common/Pill'
+import BoostIcon from '~/components/Icons/BoostIcon'
 import { BOOST_ERROR_BUDGET, BOOST_SUCCESS } from '~/constants'
+import { useUserStore } from '~/stores/useUserStore'
 import { Node } from '~/types'
 import { boost } from '~/utils/boost'
 import { colors } from '~/utils/colors'
@@ -30,6 +31,7 @@ const notify = (message: string) => {
 export const Booster = ({ count = 0, updateCount, content, readOnly, refId }: Props) => {
   const [submitting, setSubmitting] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
+  const [setBudget] = useUserStore((s) => [s.setBudget])
 
   useEffect(() => {
     setIsSuccess(false)
@@ -53,13 +55,17 @@ export const Booster = ({ count = 0, updateCount, content, readOnly, refId }: Pr
 
     // eslint-disable-next-line no-useless-catch
     try {
-      await boost(refId, defaultBoostAmount)
+      const boostResponse = await boost(refId, defaultBoostAmount)
 
       setIsSuccess(true)
       notify(BOOST_SUCCESS)
 
       if (updateCount) {
         updateCount(count + defaultBoostAmount)
+      }
+
+      if (boostResponse.budget) {
+        setBudget(boostResponse.budget)
       }
     } catch (e) {
       notify(BOOST_ERROR_BUDGET)
