@@ -84,27 +84,13 @@ export const Graph = () => {
           /** NOTE: using the key in this way the segments re-mounts
            *  everytime the data.links count changes
            * */
-          key={`links-${data.links.length}-${graphStyle}`}
+          key={`links-${nodeBadges.length}-${graphStyle}`}
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
           fog
-          limit={data.links.length}
+          limit={nodeBadges.length}
           lineWidth={lineWidth}
         >
-          {/* {(data.links as unknown as GraphData['links']).map((link, index) => {
-            // if (selectedNodeChildIds.length && selectedNodeChildIds[0] === link.target) {
-            //   console.log(link.target)
-            // }
-            console.log(',')
-
-            return (
-              <Segment
-                // eslint-disable-next-line react/no-array-index-key
-                key={index.toString()}
-                link={link}
-              />s
-            )
-          })} */}
           {nodeBadges}
         </Segments>
       )}
