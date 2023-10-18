@@ -13,16 +13,16 @@ type Props = {
 
 // eslint-disable-next-line no-underscore-dangle
 const _View = ({ isSearchResult }: Props) => {
-  const [postCount, setPostCount] = useUserStore((s) => [s.postCount, s.setPostCount])
+  const [nodeCount, setNodeCount] = useUserStore((s) => [s.nodeCount, s.setNodeCount])
   const [fetchData] = [useDataStore((s) => s.fetchData)]
 
   async function getLatest() {
-    if (postCount < 1) {
+    if (nodeCount < 1) {
       return
     }
 
     await fetchData()
-    setPostCount('CLEAR')
+    setNodeCount('CLEAR')
   }
 
   return (
@@ -36,7 +36,7 @@ const _View = ({ isSearchResult }: Props) => {
             </span>
           </div>
           <div className="button_container">
-            <button onClick={getLatest} type="button">{`New Node (${postCount})`}</button>
+            <button onClick={getLatest} type="button">{`New Node (${nodeCount})`}</button>
           </div>
         </div>
       )}

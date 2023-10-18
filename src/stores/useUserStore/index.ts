@@ -9,15 +9,15 @@ export type UserStore = {
   setPubKey: (val: string) => void
   budget: number | null
   setBudget: (val: number | null) => void
-  postCount: number
-  setPostCount: (action: ActionType) => void
+  nodeCount: number
+  setNodeCount: (action: ActionType) => void
 }
 
-const defaultData: Omit<UserStore, 'setIsAdmin' | 'setPubKey' | 'setBudget' | 'setPostCount'> = {
+const defaultData: Omit<UserStore, 'setIsAdmin' | 'setPubKey' | 'setBudget' | 'setNodeCount'> = {
   isAdmin: false,
   pubKey: '',
   budget: 0,
-  postCount: 0,
+  nodeCount: 0,
 }
 
 export const useUserStore = create<UserStore>((set) => ({
@@ -25,12 +25,12 @@ export const useUserStore = create<UserStore>((set) => ({
   setIsAdmin: (isAdmin) => set({ isAdmin }),
   setPubKey: (pubKey) => set({ pubKey }),
   setBudget: (budget) => set({ budget }),
-  setPostCount: (action: ActionType) =>
+  setNodeCount: (action: ActionType) =>
     set((state) => {
       if (action === 'INCREMENT') {
-        return { postCount: state.postCount + 1 }
+        return { nodeCount: state.nodeCount + 1 }
       }
 
-      return { postCount: 0 }
+      return { nodeCount: 0 }
     }),
 }))
