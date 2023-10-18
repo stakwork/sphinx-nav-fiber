@@ -53,7 +53,7 @@ const Version = styled(Flex)`
 export const App = () => {
   const { open } = useModal('budgetExplanation')
 
-  const [setBudget] = useUserStore((s) => [s.setBudget])
+  const [setBudget, setPostCount] = useUserStore((s) => [s.setBudget, s.setPostCount])
 
   const [
     setSidebarOpen,
@@ -153,6 +153,10 @@ export const App = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [graphStyle])
 
+  const handleNewPost = useCallback(() => {
+    setPostCount('INCREMENT')
+  }, [setPostCount])
+
   // setup socket
   useEffect(() => {
     if (isSocketSet.current) {
@@ -164,11 +168,7 @@ export const App = () => {
 
       isSocketSet.current = true
     }
-  }, [socket])
-
-  function handleNewPost() {
-    console.log('Handling post')
-  }
+  }, [socket, handleNewPost])
 
   return (
     <AppProviders>
