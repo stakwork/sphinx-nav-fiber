@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
-import { Stats } from '~/components/Stats'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
-import { TAboutParams, getAboutData } from '~/network/fetchSourcesData'
+import { Stats } from '~/components/Stats'
+import { getAboutData, TAboutParams } from '~/network/fetchSourcesData'
 import { colors } from '~/utils/colors'
 import { media } from '~/utils/media'
 
@@ -58,7 +58,7 @@ const Header = styled(Flex).attrs({
   position: absolute;
   top: 0px;
   left: 64px;
-  right: 64px;
+  right: 32px;
   transition: opacity 1s;
   z-index: 99;
   padding: 20px 23px;

@@ -1,4 +1,4 @@
-import { FetchRadarResponse, RadarRequest, SubmitErrRes } from '~/types'
+import { FetchRadarResponse, FetchTopicResponse, RadarRequest, SubmitErrRes, NodeRequest } from '~/types'
 import { api } from '../api'
 
 type TradarParams = {
@@ -15,15 +15,28 @@ export type TAboutParams = {
   search_term?: string
 }
 
+type TtopicsParams = {
+  muted?: string
+  skip?: string
+  limit?: string
+}
+
 const defaultParams = {
   skip: '0',
   limit: '500',
-  approved: 'True',
 }
 
 export const getRadarData = async (queryParams: TradarParams = defaultParams) => {
   const response = await api.get<FetchRadarResponse>(
     `/radar?${new URLSearchParams({ ...defaultParams, ...queryParams }).toString()}`,
+  )
+
+  return response
+}
+
+export const getTopicsData = async (queryParams: TtopicsParams = defaultParams) => {
+  const response = await api.get<FetchTopicResponse>(
+    `/topics?${new URLSearchParams({ ...defaultParams, ...queryParams }).toString()}`,
   )
 
   return response
@@ -45,6 +58,12 @@ export const triggerRadarJob = async () => api.get<SubmitErrRes>(`/radar/trigger
 
 export const putRadarData = async (id: string, data: RadarRequest) => {
   const response = await api.put(`/radar/${id}`, JSON.stringify(data))
+
+  return response
+}
+
+export const putNodeData = async (data: NodeRequest) => {
+  const response = await api.put(`/node`, JSON.stringify(data))
 
   return response
 }
