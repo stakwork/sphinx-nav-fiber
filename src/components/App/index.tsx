@@ -1,16 +1,18 @@
 import { Leva } from 'leva'
-import { useCallback, useEffect } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import 'react-toastify/dist/ReactToastify.css'
+import { Socket } from 'socket.io-client'
 import * as sphinx from 'sphinx-bridge-kevkevinpal'
 import styled from 'styled-components'
 import { AddNodeModal } from '~/components/AddNodeModal'
 import { BudgetExplanationModal } from '~/components/BudgetExplanationModal'
+import { Flex } from '~/components/common/Flex'
 import { DataRetriever } from '~/components/DataRetriever'
 import { GlobalStyle } from '~/components/GlobalStyle'
 import { Universe } from '~/components/Universe'
-import { Flex } from '~/components/common/Flex'
 import { isDevelopment, isE2E } from '~/constants'
+import useSocket from '~/hooks/useSockets'
 import { getGraphDataPositions } from '~/network/fetchGraphData/const'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
@@ -77,6 +79,10 @@ export const App = () => {
     useDataStore((s) => s.setCategoryFilter),
   ]
 
+  const isSocketSet: { current: boolean } = useRef<boolean>(false)
+
+  const socket: Socket | null = useSocket()
+
   const form = useForm<{ search: string }>({ mode: 'onChange' })
 
   const handleSubmit = form.handleSubmit(({ search }) => {
@@ -132,6 +138,23 @@ export const App = () => {
     repositionGraphDataAfterStyleChange()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [graphStyle])
+
+  // setup socket
+  useEffect(() => {
+    if (isSocketSet.current) {
+      return
+    }
+
+    if (socket) {
+      socket.on('newpost', handleNewPost)
+
+      isSocketSet.current = true
+    }
+  }, [socket])
+
+  function handleNewPost() {
+    console.log('Handling post')
+  }
 
   return (
     <AppProviders>
