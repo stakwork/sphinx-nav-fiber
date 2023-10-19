@@ -6,9 +6,9 @@ import styled from 'styled-components'
 import CheckIcon from '~/components/Icons/CheckIcon'
 import ChevronDownIcon from '~/components/Icons/ChevronDownIcon'
 import ChevronUpIcon from '~/components/Icons/ChevronUpIcon'
+import { Flex } from '~/components/common/Flex'
 import { useDataStore } from '~/stores/useDataStore'
 import { colors } from '~/utils/colors'
-import { Flex } from '../../../common/Flex'
 
 type Option = Record<string, string>
 
