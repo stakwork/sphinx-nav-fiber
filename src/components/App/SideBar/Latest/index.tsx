@@ -36,7 +36,7 @@ const _View = ({ isSearchResult }: Props) => {
             </span>
           </div>
           <div className="button_container">
-            <button onClick={getLatest} type="button">{`See latest (${nodeCount})`}</button>
+            {nodeCount ? <button onClick={getLatest} type="button">{`See latest (${nodeCount})`}</button> : ''}
           </div>
         </div>
       )}
