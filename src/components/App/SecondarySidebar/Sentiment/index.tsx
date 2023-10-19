@@ -9,7 +9,9 @@ import { getSentimentData } from '~/network/fetchGraphData'
 import { Stack } from '@mui/material'
 import { PropagateLoader } from 'react-spinners'
 import { Button } from '~/components/Button'
+import { useUserStore } from '~/stores/useUserStore'
 import { colors } from '~/utils/colors'
+import { updateBudget } from '~/utils/setBudget'
 import { executeIfProd } from '~/utils/tests'
 import { SentimentChart } from './SentimentChart'
 
@@ -20,6 +22,7 @@ type SentimentData = {
 
 export const Sentiment = () => {
   const [sentimentData, setSentimentData] = useState<SentimentData[] | undefined>(undefined)
+  const [setBudget] = useUserStore((s) => [s.setBudget])
 
   const [isLoading, setIsLoading] = useState(false)
 
@@ -34,7 +37,7 @@ export const Sentiment = () => {
     )
 
     getSentimentData()
-      .then((r) => {
+      .then(async (r) => {
         setSentimentData(
           r?.data
             .filter((i) => i.date)
@@ -43,6 +46,8 @@ export const Sentiment = () => {
               score: i.sentiment_score,
             })),
         )
+
+        await updateBudget(setBudget)
       })
       .catch(console.error)
       .finally(() => {

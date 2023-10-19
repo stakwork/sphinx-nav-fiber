@@ -28,10 +28,12 @@ import {
 import { api } from '~/network/api'
 import { getRadarData } from '~/network/fetchSourcesData'
 import { useModal } from '~/stores/useModalStore'
+import { useUserStore } from '~/stores/useUserStore'
 import { FetchRadarResponse, SubmitErrRes } from '~/types'
 import { colors } from '~/utils/colors'
 import { getLSat } from '~/utils/getLSat'
 import { payLsat } from '~/utils/payLsat'
+import { updateBudget } from '~/utils/setBudget'
 import { executeIfProd } from '~/utils/tests'
 import { timeToMilliseconds } from '~/utils/timeToMilliseconds'
 import { useDataStore } from '../../stores/useDataStore/index'
@@ -83,6 +85,7 @@ const handleSubmit = async (
   close: () => void,
   sourceType: string,
   successCallback: () => void,
+  setBudget: (value: number | null) => void,
 ): Promise<void> => {
   const body: { [index: string]: unknown } = {}
 
@@ -192,7 +195,9 @@ const handleSubmit = async (
 
       await payLsat(lsat)
 
-      await handleSubmit(data, close, sourceType, successCallback)
+      await updateBudget(setBudget)
+
+      await handleSubmit(data, close, sourceType, successCallback, setBudget)
     }
 
     if (err instanceof Error) {
@@ -261,6 +266,7 @@ export const AddNodeModal = () => {
   const { close, addNodeModalData } = useModal('addNode')
   const [activeType, setActiveType] = useState('')
   const setSources = useDataStore((s) => s.setSources)
+  const [setBudget] = useUserStore((s) => [s.setBudget])
 
   const resolvedContentOptions = addNodeModalData ? CONTENT_TYPE_OPTIONS[addNodeModalData] : null
 
@@ -291,7 +297,7 @@ export const AddNodeModal = () => {
   }
 
   const onSubmit = form.handleSubmit(async (data) => {
-    await handleSubmit(data, handleClose, activeType, onSuccessCallback)
+    await handleSubmit(data, handleClose, activeType, onSuccessCallback, setBudget)
   })
 
   const options = resolvedContentOptions
