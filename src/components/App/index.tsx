@@ -105,12 +105,6 @@ export const App = () => {
         await updateBudget(setBudget)
       }
 
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      await sphinx.enable()
-
-      await updateBudget(setBudget)
-
       setSphinxModalOpen(false)
     }
 
