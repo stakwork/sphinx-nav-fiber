@@ -16,7 +16,7 @@ const _View = ({ isSearchResult }: Props) => {
   const [nodeCount, setNodeCount] = useUserStore((s) => [s.nodeCount, s.setNodeCount])
   const [fetchData] = [useDataStore((s) => s.fetchData)]
 
-  async function getLatest() {
+  const getLatest = async () => {
     if (nodeCount < 1) {
       return
     }
