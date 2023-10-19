@@ -80,7 +80,7 @@ export const Relevance = ({ isSearchResult }: Props) => {
               date={date || 0}
               description={formatDescription(description)}
               id={id}
-              imageUrl={imageUrl}
+              imageUrl={imageUrl || ''}
               name={name || ''}
               onClick={() => handleNodeClick(n)}
               profilePicture={profilePicture}

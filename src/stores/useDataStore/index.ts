@@ -34,7 +34,6 @@ type DataStore = {
   hideNodeDetails: boolean
   sidebarFilter: string
   trendingTopics: string[]
-  filteredNodes: NodeExtended[]
 
   setTrendingTopics: (trendingTopics: string[]) => void
   setSidebarFilter: (filter: string) => void
@@ -190,6 +189,8 @@ export const useDataStore = create<DataStore>((set, get) => ({
 export const useSelectedNode = () => useDataStore((s) => s.selectedNode)
 
 export const useFilteredNodes = () =>
-  useDataStore((s) => s.data.nodes.filter((i) => (s.sidebarFilter === 'all' ? true : i.node_type === s.sidebarFilter)))
+  useDataStore((s) =>
+    (s.data?.nodes || []).filter((i) => (s.sidebarFilter === 'all' ? true : i.node_type === s.sidebarFilter)),
+  )
 
 export const setIsTimestampLoaded = (isTimestampLoaded: boolean) => useDataStore.setState({ isTimestampLoaded })
