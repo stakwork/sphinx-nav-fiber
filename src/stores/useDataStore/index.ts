@@ -32,7 +32,11 @@ type DataStore = {
   showSelectionGraph: boolean
   showTeachMe: boolean
   hideNodeDetails: boolean
+  sidebarFilter: string
+  trendingTopics: string[]
 
+  setTrendingTopics: (trendingTopics: string[]) => void
+  setSidebarFilter: (filter: string) => void
   setScrollEventsDisabled: (scrollEventsDisabled: boolean) => void
   setCategoryFilter: (categoryFilter: NodeType | null) => void
   setDisableCameraRotation: (rotation: boolean) => void
@@ -58,6 +62,8 @@ type DataStore = {
 
 const defaultData: Omit<
   DataStore,
+  | 'setTrendingTopics'
+  | 'setSidebarFilter'
   | 'fetchData'
   | 'setIsFetching'
   | 'setData'
@@ -103,6 +109,8 @@ const defaultData: Omit<
   showSelectionGraph: false,
   showTeachMe: false,
   hideNodeDetails: false,
+  sidebarFilter: 'all',
+  trendingTopics: [],
 }
 
 export const useDataStore = create<DataStore>((set, get) => ({
@@ -131,6 +139,7 @@ export const useDataStore = create<DataStore>((set, get) => ({
       showTeachMe: false,
     })
   },
+  setTrendingTopics: (trendingTopics) => set({ trendingTopics }),
   setIsFetching: (isFetching) => set({ isFetching }),
   setData: (data) => set({ data }),
   setSelectionData: (selectionGraphData) => set({ selectionGraphData }),
@@ -160,6 +169,7 @@ export const useDataStore = create<DataStore>((set, get) => ({
       })
     }
   },
+  setSidebarFilter: (sidebarFilter: string) => set({ sidebarFilter }),
   setSelectedTimestamp: (selectedTimestamp) => set({ selectedTimestamp }),
   setSources: (sources) => set({ sources }),
   setSphinxModalOpen: (sphinxModalIsOpen) => set({ sphinxModalIsOpen }),
@@ -177,5 +187,10 @@ export const useDataStore = create<DataStore>((set, get) => ({
 }))
 
 export const useSelectedNode = () => useDataStore((s) => s.selectedNode)
+
+export const useFilteredNodes = () =>
+  useDataStore((s) =>
+    (s.data?.nodes || []).filter((i) => (s.sidebarFilter === 'all' ? true : i.node_type === s.sidebarFilter)),
+  )
 
 export const setIsTimestampLoaded = (isTimestampLoaded: boolean) => useDataStore.setState({ isTimestampLoaded })

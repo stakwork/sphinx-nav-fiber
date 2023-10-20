@@ -6,6 +6,7 @@ import styled from 'styled-components'
 import SentimentDataIcon from '~/components/Icons/SentimentDataIcon'
 import { Flex } from '~/components/common/Flex'
 import { getTrends } from '~/network/fetchGraphData'
+import { useDataStore } from '~/stores/useDataStore'
 import { Trending as TrendingType } from '~/types'
 import { colors } from '~/utils/colors'
 
@@ -16,8 +17,9 @@ type Props = {
 }
 
 export const Trending = ({ onSubmit }: Props) => {
-  const [trendingTopics, setTrendingTopics] = useState<Array<string>>([])
   const [loading, setLoading] = useState(false)
+
+  const [trendingTopics, setTrendingTopics] = useDataStore((s) => [s.trendingTopics, s.setTrendingTopics])
 
   const { setValue } = useFormContext()
 
@@ -38,8 +40,10 @@ export const Trending = ({ onSubmit }: Props) => {
       }
     }
 
-    init()
-  }, [])
+    if (!trendingTopics.length) {
+      init()
+    }
+  }, [trendingTopics, setTrendingTopics])
 
   const selectTrending = (val: string) => {
     setValue('search', val)

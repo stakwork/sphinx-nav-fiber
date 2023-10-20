@@ -1,6 +1,7 @@
 import { memo } from 'react'
-import { useSelectedNode, useDataStore } from '~/stores/useDataStore'
+import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { TextType } from '../../Helper/AskQuestion/Text'
+import { TeachMeText } from '../../Helper/TeachMe'
 import { AudioClip } from '../AudioClip'
 import { Creator } from '../Creator'
 import { Data } from '../Data'
@@ -11,7 +12,6 @@ import { Topic } from '../Topic'
 import { TwitData } from '../TwitData'
 import { Twitter } from '../Twitter'
 import { YouTube } from '../YouTube'
-import { TeachMeText } from '../../Helper/TeachMe'
 
 // eslint-disable-next-line no-underscore-dangle
 const _View = () => {
@@ -37,6 +37,8 @@ const _View = () => {
       return <Topic />
     case 'show':
       return <Show />
+    case 'youtube':
+      return <YouTube />
     case 'clip':
       if (selectedNode?.type === 'youtube') {
         return <YouTube />

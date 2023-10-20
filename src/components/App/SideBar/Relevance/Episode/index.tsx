@@ -153,19 +153,21 @@ export const Date = styled(Text)`
 `
 
 export const Title = styled(Date)`
-  display: flex;
-  flex-direction: row;
   align-items: center;
   flex-shrink: 1;
-  max-width: 100px;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+  position: relative;
+  padding-left: 12px;
   &:before {
     content: '';
     display: block;
     border-radius: 2px;
-    margin-right: 8px;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 2px;
     width: 4px;
     flex-shrink: 0;
     height: 4px;
