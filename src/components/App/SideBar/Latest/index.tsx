@@ -1,3 +1,4 @@
+import { Button } from '@mui/material'
 import { memo } from 'react'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
@@ -38,23 +39,19 @@ const _View = ({ isSearchResult }: Props) => {
           </div>
           {nodeCount ? (
             <div className="button_container">
-              <button onClick={getLatest} type="button">
-                <span className="downloadButton">
-                  {' '}
-                  <DownloadIcon />
-                </span>
-                {`See Latest (${nodeCount})`}
-              </button>
+              <ButtonStyled className="button" onClick={getLatest} startIcon={<DownloadIcon />}>
+                <span className="button__text">{`See Latest (${nodeCount})`}</span>
+              </ButtonStyled>
             </div>
-          ) : (
-            ''
-          )}
+          ) : null}
         </div>
       )}
       <Relevance isSearchResult={isSearchResult} />
     </Wrapper>
   )
 }
+
+const ButtonStyled = styled(Button)``
 
 export const LatestView = memo(_View)
 
@@ -66,36 +63,16 @@ const Wrapper = styled(Flex)`
   }
 
   .button_container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    background-color: #303342;
-    padding: 0.75rem 1rem;
-    border-radius: 12.5rem;
     margin-top: 1.2rem;
-    button {
-      background-color: transparent;
-      outline: none;
-      border: none;
+    .button {
       font-family: Barlow;
       font-size: 0.875rem;
-      color: white;
-      cursor: pointer;
+      color: #909baa;
       font-weight: 500;
       width: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      column-gap: 0.5rem;
 
-      .downloadButton {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #909baa;
-        width: 1.25rem;
-        height: 1.25rem;
+      .button__text {
+        color: white;
       }
     }
   }
