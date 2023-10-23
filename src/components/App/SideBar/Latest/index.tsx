@@ -36,7 +36,7 @@ const _View = ({ isSearchResult }: Props) => {
             </span>
           </div>
           <div className="button_container">
-            {nodeCount ? <button onClick={getLatest} type="button">{`See latest (${nodeCount})`}</button> : ''}
+            <button onClick={getLatest} type="button">{`See latest (${nodeCount})`}</button>
           </div>
         </div>
       )}
@@ -50,25 +50,29 @@ export const LatestView = memo(_View)
 const Wrapper = styled(Flex)`
   .heading_container {
     display: flex;
-    align-items center;
-    justify-content: space-between;
+    flex-direction: column;
     padding: 16px 24px 16px 24px;
   }
 
-  .button_container{
+  .button_container {
     display: flex;
     align-items: center;
     justify-content: center;
-
+    width: 100%;
+    background-color: #303342;
+    padding: 0.75rem 1rem;
+    border-radius: 12.5rem;
+    margin-top: 1.5rem;
     button {
       background-color: transparent;
       outline: none;
       border: none;
       font-family: Barlow;
       font-size: 1.1rem;
-      color: ${colors.GRAY6};
+      color: white;
       cursor: pointer;
       font-weight: 500;
+      width: 100%;
     }
   }
 
@@ -83,7 +87,6 @@ const Wrapper = styled(Flex)`
     text-transform: uppercase;
     display: flex;
     align-items: center;
-    justify-content: center;
 
     &__icon {
       margin-left: 14px;
