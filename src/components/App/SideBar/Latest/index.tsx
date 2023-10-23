@@ -36,15 +36,19 @@ const _View = ({ isSearchResult }: Props) => {
               <BrowseGalleryIcon />
             </span>
           </div>
-          <div className="button_container">
-            <button onClick={getLatest} type="button">
-              <span className="downloadButton">
-                {' '}
-                <DownloadIcon />
-              </span>
-              {`See latest (${nodeCount})`}
-            </button>
-          </div>
+          {nodeCount ? (
+            <div className="button_container">
+              <button onClick={getLatest} type="button">
+                <span className="downloadButton">
+                  {' '}
+                  <DownloadIcon />
+                </span>
+                {`See Latest (${nodeCount})`}
+              </button>
+            </div>
+          ) : (
+            ''
+          )}
         </div>
       )}
       <Relevance isSearchResult={isSearchResult} />
@@ -75,7 +79,7 @@ const Wrapper = styled(Flex)`
       outline: none;
       border: none;
       font-family: Barlow;
-      font-size: 1.1rem;
+      font-size: 0.875rem;
       color: white;
       cursor: pointer;
       font-weight: 500;
