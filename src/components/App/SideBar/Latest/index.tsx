@@ -2,6 +2,7 @@ import { memo } from 'react'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import BrowseGalleryIcon from '~/components/Icons/BrowseGalleryIcon'
+import DownloadIcon from '~/components/Icons/DownloadIcon'
 import { useDataStore } from '~/stores/useDataStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { colors } from '~/utils/colors'
@@ -36,7 +37,13 @@ const _View = ({ isSearchResult }: Props) => {
             </span>
           </div>
           <div className="button_container">
-            <button onClick={getLatest} type="button">{`See latest (${nodeCount})`}</button>
+            <button onClick={getLatest} type="button">
+              <span className="downloadButton">
+                {' '}
+                <DownloadIcon />
+              </span>
+              {`See latest (${nodeCount})`}
+            </button>
           </div>
         </div>
       )}
@@ -62,7 +69,7 @@ const Wrapper = styled(Flex)`
     background-color: #303342;
     padding: 0.75rem 1rem;
     border-radius: 12.5rem;
-    margin-top: 1.5rem;
+    margin-top: 1.2rem;
     button {
       background-color: transparent;
       outline: none;
@@ -73,6 +80,19 @@ const Wrapper = styled(Flex)`
       cursor: pointer;
       font-weight: 500;
       width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      column-gap: 0.5rem;
+
+      .downloadButton {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #909baa;
+        width: 1.25rem;
+        height: 1.25rem;
+      }
     }
   }
 
