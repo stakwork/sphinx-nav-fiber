@@ -42,11 +42,11 @@ const EpisodeWrapper = styled(Flex).attrs({
 type Props = {
   boostCount: number
   date: number
-  description: string
+  episodeTitle: string
   isSelectedView?: boolean
   id?: string
   imageUrl: string
-  title?: string
+  showTitle?: string
   text?: string
   type?: string
   name?: string
@@ -60,11 +60,11 @@ type Props = {
 export const Episode = ({
   boostCount,
   date,
-  description,
+  episodeTitle,
   id,
   isSelectedView = false,
   imageUrl,
-  title,
+  showTitle,
   type,
   text,
   name,
@@ -94,10 +94,10 @@ export const Episode = ({
               </Flex>
             </Flex>
 
-            <Description data-testid="episode-description">{description}</Description>
+            <Description data-testid="episode-description">{episodeTitle}</Description>
             <Flex direction="row" justify="flex-start">
               {Boolean(date) && <Date>{moment.unix(date).format('ll')}</Date>}
-              {Boolean(title) && <Title>{title}</Title>}
+              {Boolean(showTitle) && <Title>{showTitle}</Title>}
               {!isSelectedView && boostCount > 0 && (
                 <Flex style={{ marginLeft: 'auto' }}>
                   <BoostAmt amt={boostCount} />
@@ -108,7 +108,7 @@ export const Episode = ({
         </Flex>
       )}
       {['person', 'guest'].includes(type as string) && (
-        <TypePerson imageUrl={imageUrl} name={name || ''} title={title || ''} />
+        <TypePerson imageUrl={imageUrl} name={name || ''} title={showTitle || ''} />
       )}
       {type === 'tweet' && (
         <TypeTweet
@@ -153,19 +153,21 @@ export const Date = styled(Text)`
 `
 
 export const Title = styled(Date)`
-  display: flex;
-  flex-direction: row;
   align-items: center;
   flex-shrink: 1;
-  max-width: 100px;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+  position: relative;
+  padding-left: 12px;
   &:before {
     content: '';
     display: block;
     border-radius: 2px;
-    margin-right: 8px;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 2px;
     width: 4px;
     flex-shrink: 0;
     height: 4px;

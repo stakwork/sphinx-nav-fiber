@@ -4,7 +4,7 @@ import { forwardRef, useEffect, useRef, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
-import { useGraphData } from '~/components/DataRetriever'
+import { SelectWithPopover } from '~/components/App/SideBar/Dropdown'
 import ChevronLeftIcon from '~/components/Icons/ChevronLeftIcon'
 import ClearIcon from '~/components/Icons/ClearIcon'
 import SearchIcon from '~/components/Icons/SearchIcon'
@@ -12,9 +12,8 @@ import { SearchBar } from '~/components/SearchBar'
 import { Flex } from '~/components/common/Flex'
 import { FetchLoaderText } from '~/components/common/Loader'
 import { useAppStore } from '~/stores/useAppStore'
-import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
+import { useDataStore, useFilteredNodes, useSelectedNode } from '~/stores/useDataStore'
 import { colors } from '~/utils/colors'
-import { TeachMe } from '../Helper/TeachMe'
 import { LatestView } from './Latest'
 import { EpisodeSkeleton } from './Relevance/EpisodeSkeleton'
 import { SideBarSubView } from './SidebarSubView'
@@ -34,8 +33,13 @@ type ContentProp = {
 
 // eslint-disable-next-line react/display-name
 const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen }, ref) => {
-  const [isLoading, setTeachMe] = useDataStore((s) => [s.isFetching, s.setTeachMe])
-  const data = useGraphData()
+  const [isLoading, setTeachMe, setSidebarFilter] = useDataStore((s) => [
+    s.isFetching,
+    s.setTeachMe,
+    s.setSidebarFilter,
+  ])
+
+  const filteredNodes = useFilteredNodes()
 
   const [setSidebarOpen, searchTerm, clearSearch] = useAppStore((s) => [
     s.setSidebarOpen,
@@ -73,6 +77,7 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
               if (searchTerm) {
                 setValue('search', '')
                 clearSearch()
+                setSidebarFilter('all')
 
                 return
               }
@@ -94,11 +99,11 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
             ) : (
               <>
                 <div className="left">
-                  <span className="count">{data.nodes.length}</span>
+                  <span className="count">{filteredNodes.length}</span>
                   <span className="label"> results</span>
                 </div>
                 <div className="right">
-                  <TeachMe />
+                  <SelectWithPopover />
                 </div>
               </>
             )}

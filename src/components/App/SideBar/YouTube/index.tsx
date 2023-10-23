@@ -8,23 +8,25 @@ import { useDataStore } from '~/stores/useDataStore'
 import { formatDescription } from '~/utils/formatDescription'
 import { videoTimetoSeconds } from '~/utils/videoTimetoSeconds'
 import { BoostAmt } from '../../Helper/BoostAmt'
+import { Description } from '../Description'
 import { Episode } from '../Relevance/Episode'
 import { Transcript } from '../Transcript'
 
 export const YouTube = () => {
   const selectedNode = useDataStore((s) => s.selectedNode)
   const playerRef = useRef<ReactPlayer | null>(null)
+  const scrollTargetRef = useRef<HTMLDivElement | null>(null)
 
   const {
     link,
     timestamp,
     image_url: imageUrl,
-    description,
     date,
     boost,
     type,
     id,
     show_title: showTitle,
+    episode_title: episodeTitle,
     ref_id: refId,
   } = selectedNode || {}
 
@@ -34,6 +36,10 @@ export const YouTube = () => {
   useEffect(() => {
     if (playerRef.current) {
       playerRef.current?.seekTo(secs)
+    }
+
+    if (scrollTargetRef.current) {
+      scrollTargetRef.current.scrollTo({ top: 0, behavior: 'auto' })
     }
   }, [playerRef, secs])
 
@@ -51,23 +57,29 @@ export const YouTube = () => {
       <StyledEpisode
         boostCount={boostAmount || 0}
         date={date || 0}
-        description={formatDescription(description)}
+        episodeTitle={formatDescription(episodeTitle)}
         id={id}
         imageUrl={imageUrl || 'video_default.svg'}
         isSelectedView
         onClick={() => null}
-        title={showTitle}
+        showTitle={showTitle}
         type={type}
       />
       <StyledDivider />
-      <BoostWrapper>
-        <BoostAmt amt={boostAmount} />
-        <Booster content={selectedNode} count={boostAmount} refId={refId} updateCount={setBoostAmount} />
-      </BoostWrapper>
-      <StyledDivider />
-      <TranscriptWrapper grow={1} shrink={1}>
-        <Transcript node={selectedNode} stateless />
-      </TranscriptWrapper>
+      <div ref={scrollTargetRef} style={{ overflow: 'auto', flex: 1, width: '100%' }}>
+        <BoostWrapper>
+          <BoostAmt amt={boostAmount} />
+          <Booster content={selectedNode} count={boostAmount} refId={refId} updateCount={setBoostAmount} />
+        </BoostWrapper>
+        <StyledDivider />
+        <TextWrapper>
+          <Description node={selectedNode} stateless />
+        </TextWrapper>
+        <StyledDivider />
+        <TextWrapper>
+          <Transcript node={selectedNode} stateless />
+        </TextWrapper>
+      </div>
     </Wrapper>
   )
 }
@@ -88,11 +100,11 @@ const PlayerWrapper = styled(Flex)`
 const BoostWrapper = styled(Flex)`
   flex-direction: row;
   justify-content: space-between;
-  padding: 0 18px 18px;
+  padding: 18px 18px 18px;
 `
 
-const TranscriptWrapper = styled(Flex)`
-  padding: 0 18px 18px;
+const TextWrapper = styled(Flex)`
+  padding: 18px 18px 18px;
 `
 
 const StyledEpisode = styled(Episode)`
@@ -104,7 +116,6 @@ const StyledEpisode = styled(Episode)`
 `
 
 const StyledDivider = styled(Divider)`
-  margin-bottom: 10px;
-  margin: auto 0px 10px 0px;
+  margin: auto 0px 2px 0px;
   opacity: 75%;
 `

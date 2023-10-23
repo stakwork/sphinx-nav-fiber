@@ -4,16 +4,16 @@ import { MdCancel, MdCheckCircle } from 'react-icons/md'
 import { ClipLoader } from 'react-spinners'
 import * as sphinx from 'sphinx-bridge-kevkevinpal'
 import styled from 'styled-components'
-import FilterOffIcon from '~/components/Icons/FilterOffIcon'
 import ConfirmPopover from '~/components/common/ConfirmPopover'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
+import FilterOffIcon from '~/components/Icons/FilterOffIcon'
 import { approveRadarData, deleteRadarData } from '~/network/fetchSourcesData'
 import { useDataStore } from '~/stores/useDataStore'
 import { Sources } from '~/types'
 import { colors } from '~/utils/colors'
 import { StyledTableCell, StyledTableHead, StyledTableRow } from '../../common'
-import { TWITTER_LINK, sourcesMapper } from '../../constants'
+import { sourcesMapper, TWITTER_LINK } from '../../constants'
 import { Props } from '../../types'
 
 const Table: React.FC<Props> = ({ data }) => {
@@ -30,7 +30,7 @@ const Table: React.FC<Props> = ({ data }) => {
 
         await approveRadarData(id, enable.pubkey)
 
-        setSources(data.filter((i) => i.ref_id !== id))
+        setSources(data.filter((i: Sources) => i.ref_id !== id))
       } catch (error) {
         console.warn(error)
       }

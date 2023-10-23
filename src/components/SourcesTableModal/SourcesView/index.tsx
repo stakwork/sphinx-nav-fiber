@@ -6,6 +6,7 @@ import { Flex } from '~/components/common/Flex'
 import { colors } from '~/utils/colors'
 import { QueuedSources } from './QueuedSources'
 import { Sources } from './Sources'
+import { TopicSources } from './Topics'
 
 interface TabPanelProps {
   children?: React.ReactNode
@@ -48,12 +49,16 @@ export const SourcesView = () => {
       <StyledTabs aria-label="basic tabs example" onChange={handleChange} value={value}>
         <StyledTab disableRipple label="Sources table" {...a11yProps(0)} />
         <StyledTab color={colors.white} disableRipple label="Queued sources" {...a11yProps(1)} />
+        <StyledTab color={colors.white} disableRipple label="Topics" {...a11yProps(1)} />
       </StyledTabs>
       <TabPanel index={0} value={value}>
         <Sources />
       </TabPanel>
       <TabPanel index={1} value={value}>
         <QueuedSources />
+      </TabPanel>
+      <TabPanel index={2} value={value}>
+        <TopicSources />
       </TabPanel>
     </Wrapper>
   )

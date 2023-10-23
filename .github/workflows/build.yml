@@ -1,16 +1,16 @@
 name: Generate Build Files and Update version #
 on:
- push:
+  push:
     branches:
       - master
 
 jobs:
   yarn-build-and-update-version:
     name: build
-    runs-on: 
+    runs-on:
       - ubuntu-latest
     env:
-      GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }} 
+      GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3

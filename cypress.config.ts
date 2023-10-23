@@ -5,7 +5,7 @@ import { defineConfig } from 'cypress'
 export default defineConfig({
   env: {
     codeCoverage: {
-        exclude: "cypress/**/*.*",
+      exclude: 'cypress/**/*.*',
     },
   },
   e2e: {

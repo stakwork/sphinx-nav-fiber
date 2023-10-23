@@ -1,11 +1,10 @@
 import { Button } from '@mui/material'
 import { useCallback, useMemo, useRef, useState } from 'react'
 import styled from 'styled-components'
-import { useGraphData } from '~/components/DataRetriever'
 import { ScrollView } from '~/components/ScrollView'
 import { Flex } from '~/components/common/Flex'
 import { useAppStore } from '~/stores/useAppStore'
-import { useDataStore } from '~/stores/useDataStore'
+import { useDataStore, useFilteredNodes } from '~/stores/useDataStore'
 import { NodeExtended } from '~/types'
 import { formatDescription } from '~/utils/formatDescription'
 import { saveConsumedContent } from '~/utils/relayHelper'
@@ -17,30 +16,29 @@ type Props = {
 }
 
 export const Relevance = ({ isSearchResult }: Props) => {
-  const data = useGraphData()
-
   const scrollViewRef = useRef<HTMLDivElement | null>(null)
 
   const pageSize = !isSearchResult ? 10 : 80
 
-  const setSelectedNode = useDataStore((s) => s.setSelectedNode)
-  const setSelectedTimestamp = useDataStore((s) => s.setSelectedTimestamp)
+  const [setSelectedNode, setSelectedTimestamp] = useDataStore((s) => [s.setSelectedNode, s.setSelectedTimestamp])
 
   const [setSidebarOpen] = useAppStore((s) => [s.setSidebarOpen])
   const setRelevanceSelected = useAppStore((s) => s.setRelevanceSelected)
 
   const [currentPage, setCurrentPage] = useState(0)
 
+  const filteredNodes = useFilteredNodes()
+
   const startSlice = currentPage * pageSize
   const endSlice = startSlice + pageSize
 
-  const hasNext = data.nodes.length - 1 > endSlice
+  const hasNext = filteredNodes.length - 1 > endSlice
 
   const isMobile = useIsMatchBreakpoint('sm', 'down')
 
   const currentNodes = useMemo(
-    () => [...data.nodes].sort((a, b) => (b.date || 0) - (a.date || 0)).slice(0, endSlice),
-    [data.nodes, endSlice],
+    () => [...filteredNodes].sort((a, b) => (b.date || 0) - (a.date || 0)).slice(0, endSlice),
+    [filteredNodes, endSlice],
   )
 
   const handleNodeClick = useCallback(
@@ -60,12 +58,12 @@ export const Relevance = ({ isSearchResult }: Props) => {
         {currentNodes.map((n, index) => {
           const {
             image_url: imageUrl,
-            description,
             date,
             boost,
             type,
             id,
             episode_title: episodeTitle,
+            show_title: showTitle,
             node_type: nodeType,
             text,
             name,
@@ -80,14 +78,14 @@ export const Relevance = ({ isSearchResult }: Props) => {
               key={index.toString()}
               boostCount={boost || 0}
               date={date || 0}
-              description={formatDescription(description)}
+              episodeTitle={formatDescription(episodeTitle)}
               id={id}
-              imageUrl={imageUrl || 'audio_default.svg'}
+              imageUrl={imageUrl || ''}
               name={name || ''}
               onClick={() => handleNodeClick(n)}
               profilePicture={profilePicture}
+              showTitle={formatDescription(showTitle)}
               text={text || ''}
-              title={episodeTitle}
               twitterHandle={twitterHandle}
               type={type || nodeType}
               verified={verified}

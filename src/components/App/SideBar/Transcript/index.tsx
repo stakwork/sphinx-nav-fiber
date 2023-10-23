@@ -68,18 +68,10 @@ export const Transcript = ({ stateless, node }: TranscriptProps) => {
           </CloseButton>
         )}
       </Header>
-      <ScrollWrapper>
-        <Box>{node?.text ? `"${node?.text}"` : '...'}</Box>
-      </ScrollWrapper>
+      <Box>{node?.text ? `"${node?.text}"` : '...'}</Box>
     </Flex>
   )
 }
-
-const ScrollWrapper = styled(Flex)(() => ({
-  overflow: 'auto',
-  flex: 1,
-  width: '100%',
-}))
 
 const Heading = styled(Flex).attrs({
   direction: 'row',

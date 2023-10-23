@@ -17,9 +17,19 @@ export type FetchRadarResponse = {
   data: Sources[]
 }
 
+export type FetchTopicResponse = {
+  data: Topic[]
+}
+
 export type RadarRequest = {
   source: string
   source_type: string
+}
+
+export type NodeRequest = {
+  ref_id: string
+  node_name: string
+  node_value: boolean
 }
 
 export type Node = {
@@ -140,6 +150,12 @@ export type Sources = {
   source_type: string
   source: string
   ref_id: string
+}
+
+export type Topic = {
+  topic: string
+  ref_id: string
+  muted_topic: string
 }
 
 export type SubmitErrRes = {
