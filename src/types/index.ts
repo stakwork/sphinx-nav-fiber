@@ -156,6 +156,9 @@ export type Topic = {
   topic: string
   ref_id: string
   muted_topic: string
+  edgeList: Array<string>
+  edgeCount: number
+  date_added_to_graph: null
 }
 
 export type SubmitErrRes = {
