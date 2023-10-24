@@ -40,7 +40,7 @@ const _View = ({ isSearchResult }: Props) => {
           {nodeCount ? (
             <div className="button_container">
               <ButtonStyled className="button" onClick={getLatest} startIcon={<DownloadIcon />}>
-                <span className="button__text">{`See Latest (${nodeCount})`}</span>
+                {`See Latest (${nodeCount})`}
               </ButtonStyled>
             </div>
           ) : null}
@@ -51,7 +51,16 @@ const _View = ({ isSearchResult }: Props) => {
   )
 }
 
-const ButtonStyled = styled(Button)``
+const ButtonStyled = styled(Button)`
+  && {
+    width: 100%;
+    margin-top: 1.2rem;
+    font-weight: 500;
+    .MuiButton-startIcon {
+      color: ${colors.GRAY6};
+    }
+  }
+`
 
 export const LatestView = memo(_View)
 
@@ -60,21 +69,6 @@ const Wrapper = styled(Flex)`
     display: flex;
     flex-direction: column;
     padding: 16px 24px 16px 24px;
-  }
-
-  .button_container {
-    margin-top: 1.2rem;
-    .button {
-      font-family: Barlow;
-      font-size: 0.875rem;
-      color: #909baa;
-      font-weight: 500;
-      width: 100%;
-
-      .button__text {
-        color: white;
-      }
-    }
   }
 
   .heading {
