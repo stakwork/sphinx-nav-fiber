@@ -5,6 +5,8 @@ export const variableVector3 = new Vector3(0, 0, 0)
 
 export const outlineEffectColor = 0xffffff
 
+export const maxChildrenDisplayed = 20
+
 export const nodesAreRelatives = (a: NodeExtended | null, b: NodeExtended | null) => {
   if (!a?.ref_id || !b?.ref_id) {
     return false

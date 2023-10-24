@@ -4,7 +4,7 @@ import clsx from 'clsx'
 import { Fragment, memo, useEffect, useMemo, useRef } from 'react'
 import { Group, Vector3 } from 'three'
 import { getNodeColorByType } from '~/components/Universe/Graph/constant'
-import { nodesAreRelatives } from '~/components/Universe/constants'
+import { maxChildrenDisplayed, nodesAreRelatives } from '~/components/Universe/constants'
 import { Avatar } from '~/components/common/Avatar'
 import { TypeBadge } from '~/components/common/TypeBadge'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
@@ -104,25 +104,27 @@ export const RelevanceBadges = memo(() => {
   const nodeBadges = useMemo(() => {
     const nodes = showSelectionGraph ? selectionGraphData.nodes : data?.nodes || []
 
-    const badgesToRender = nodes
+    const childIds = nodes
       .filter((f) => selectedNodeRelativeIds.includes(f?.ref_id || '') || selectedNode?.ref_id === f?.ref_id)
-      .map((n) => {
-        const color = getNodeColorByType(n.node_type || '', true) as string
-        const position = new Vector3(n?.x || 0, n?.y || 0, n?.z || 0)
+      .slice(0, maxChildrenDisplayed)
 
-        const relativeIds =
-          (data?.nodes || []).filter((f) => f.ref_id && nodesAreRelatives(f, n)).map((nd) => nd?.ref_id || '') || []
+    const badgesToRender = childIds.map((n) => {
+      const color = getNodeColorByType(n.node_type || '', true) as string
+      const position = new Vector3(n?.x || 0, n?.y || 0, n?.z || 0)
 
-        return (
-          <NodeBadge
-            key={`node-badge-${n.ref_id}`}
-            color={color}
-            position={position}
-            relativeIds={relativeIds}
-            userData={n}
-          />
-        )
-      })
+      const relativeIds =
+        (data?.nodes || []).filter((f) => f.ref_id && nodesAreRelatives(f, n)).map((nd) => nd?.ref_id || '') || []
+
+      return (
+        <NodeBadge
+          key={`node-badge-${n.ref_id}`}
+          color={color}
+          position={position}
+          relativeIds={relativeIds}
+          userData={n}
+        />
+      )
+    })
 
     return badgesToRender
   }, [selectedNodeRelativeIds, data?.nodes, showSelectionGraph, selectionGraphData, selectedNode])
