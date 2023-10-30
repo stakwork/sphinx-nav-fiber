@@ -26,7 +26,7 @@ export const getLSat = async (): Promise<string> => {
     if (isSphinx) {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
-      const storedLsat = await sphinx.getLsat()
+      const storedLsat = await sphinx.getLsat(window.location.host)
 
       if (storedLsat.macaroon) {
         localStorage.setItem(
