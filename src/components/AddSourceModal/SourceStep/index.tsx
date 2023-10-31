@@ -4,7 +4,6 @@ import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { TextInput } from '~/components/common/TextInput'
-import { requiredRule } from '~/constants'
 
 type Props = {
   onNextStep: () => void
@@ -25,9 +24,6 @@ export const SourceStep: FC<Props> = ({ onNextStep, value }) => (
         maxLength={50}
         name="source"
         placeholder="Paste your url here..."
-        rules={{
-          ...requiredRule,
-        }}
       />
     </Flex>
     <Flex>

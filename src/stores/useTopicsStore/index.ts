@@ -1,5 +1,5 @@
 import create from 'zustand'
-import { ALPHABETICALLY } from '~/components/SourcesTableModal/SourcesView/constants'
+import { DATE } from '~/components/SourcesTableModal/SourcesView/constants'
 import { TtopicsParams, getTopicsData } from '~/network/fetchSourcesData'
 import { FetchTopicResponse, Topic, TopicFilter } from '~/types'
 
@@ -19,7 +19,7 @@ const defaultData: Omit<TopicsStore, 'setTopics' | 'setFilters' | 'terminate'> =
   total: 0,
   filters: {
     muted: false,
-    sortBy: ALPHABETICALLY,
+    sortBy: DATE,
     page: 0,
     pageSize: 50,
   },

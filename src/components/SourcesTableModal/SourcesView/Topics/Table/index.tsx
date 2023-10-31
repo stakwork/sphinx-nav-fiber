@@ -61,7 +61,7 @@ const Table: React.FC<TopicTableProps> = ({ data, showMuted, setSelectedTopic })
             return (
               <StyledTableRow key={i.topic}>
                 <StyledTableCell className="empty" />
-                <StyledTableCell>{i.topic.replace(/\n/g, '')}</StyledTableCell>
+                <StyledTableCell>{i.topic}</StyledTableCell>
                 <StyledTableCell>{i.edgeCount}</StyledTableCell>
                 <StyledTableCell>
                   {i.edgeList.map((topic) => (
