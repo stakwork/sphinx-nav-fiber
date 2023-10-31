@@ -159,7 +159,7 @@ export type Topic = {
   muted_topic: string
   edgeList: Array<string>
   edgeCount: number
-  date_added_to_graph: null
+  date_added_to_graph: string 
 }
 
 export type TopicFilter = {
