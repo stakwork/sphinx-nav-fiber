@@ -19,12 +19,7 @@ export const SourceStep: FC<Props> = ({ onNextStep, value }) => (
     </Flex>
 
     <Flex mb={12}>
-      <TextInput
-        id="cy-youtube-channel-id"
-        maxLength={50}
-        name="source"
-        placeholder="Paste your url here..."
-      />
+      <TextInput id="cy-youtube-channel-id" maxLength={50} name="source" placeholder="Paste your url here..." />
     </Flex>
     <Flex>
       <Button color="secondary" disabled={!value} onClick={onNextStep} size="large" variant="contained">
