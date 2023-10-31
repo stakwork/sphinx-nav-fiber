@@ -5,12 +5,11 @@ import 'react-toastify/dist/ReactToastify.css'
 import { Socket } from 'socket.io-client'
 import * as sphinx from 'sphinx-bridge-kevkevinpal'
 import styled from 'styled-components'
-import { AddNodeModal } from '~/components/AddNodeModal'
 import { BudgetExplanationModal } from '~/components/BudgetExplanationModal'
-import { Flex } from '~/components/common/Flex'
 import { DataRetriever } from '~/components/DataRetriever'
 import { GlobalStyle } from '~/components/GlobalStyle'
 import { Universe } from '~/components/Universe'
+import { Flex } from '~/components/common/Flex'
 import { isDevelopment, isE2E } from '~/constants'
 import useSocket from '~/hooks/useSockets'
 import { getGraphDataPositions } from '~/network/fetchGraphData/const'
@@ -24,6 +23,8 @@ import { colors } from '~/utils/colors'
 import { updateBudget } from '~/utils/setBudget'
 import { E2ETests } from '~/utils/tests'
 import version from '~/utils/versionHelper'
+import { AddContentModal } from '../AddContentModal'
+import { AddSourceModal } from '../AddSourceModal'
 import { SourcesTableModal } from '../SourcesTableModal'
 import { Preloader } from '../Universe/Preloader'
 import { ActionsToolbar } from './ActionsToolbar'
@@ -183,7 +184,8 @@ export const App = () => {
           </FormProvider>
         </DataRetriever>
 
-        <AddNodeModal />
+        <AddContentModal />
+        <AddSourceModal />
 
         <Toasts />
 

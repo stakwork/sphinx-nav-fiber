@@ -27,6 +27,8 @@ const _View = () => {
       return <Twitter />
     case 'guest':
       return <Person />
+    case 'person':
+      return <Person />
     case 'data_series':
       return <Data />
     case 'tribe_message':

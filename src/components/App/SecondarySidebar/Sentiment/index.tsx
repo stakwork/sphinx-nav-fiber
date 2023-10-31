@@ -49,7 +49,7 @@ export const Sentiment = () => {
 
         await updateBudget(setBudget)
       })
-      .catch(console.error)
+      .catch()
       .finally(() => {
         setIsLoading(false)
       })

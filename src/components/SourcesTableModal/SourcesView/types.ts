@@ -7,6 +7,7 @@ export type Props = {
 export type TopicTableProps = {
   data: Topic[] | null
   showMuted?: boolean
+  setSelectedTopic: (topic: Topic) => void
 }
 
 export type TdProps = {
