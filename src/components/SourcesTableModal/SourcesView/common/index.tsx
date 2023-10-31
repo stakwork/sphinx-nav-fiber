@@ -15,6 +15,9 @@ export const StyledTableCell = styled(TableCell)`
     font-style: normal;
     font-weight: 500;
     line-height: 24px;
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   &.empty {

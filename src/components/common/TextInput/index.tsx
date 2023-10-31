@@ -1,5 +1,4 @@
 import { Controller, get, RegisterOptions, useFormContext } from 'react-hook-form'
-import { FaRegQuestionCircle } from 'react-icons/fa'
 import { MdError } from 'react-icons/md'
 import InputMask from 'react-input-mask'
 import styled from 'styled-components'
@@ -8,6 +7,7 @@ import { defaultProps } from '~/components/BaseTextInput/defaultProps'
 import { WebTextInput } from '~/components/BaseTextInput/WebTextInput'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
+import InfoIcon from '~/components/Icons/InfoIcon'
 import { colors } from '~/utils/colors'
 
 const Wrapper = styled(Flex).attrs({
@@ -24,7 +24,7 @@ type QuestionIconProps = {
 
 type Props = BaseTextInputProps & {
   id: string
-  label: string
+  label?: string
   message?: string
   rules?: RegisterOptions
   mask?: string
@@ -53,10 +53,10 @@ export const TextInput = ({
   return (
     <Flex shrink={1}>
       <Flex align="center" direction="row" pb={4} pl={4}>
-        <Label htmlFor={id}>{label}</Label>
+        {label && <Label htmlFor={id}>{label}</Label>}
         {message && (
           <QuestionIcon name={name} role="tooltip">
-            <FaRegQuestionCircle color={colors.secondaryText4} />
+            <InfoIcon />
             <div className="tooltip">{message}</div>
           </QuestionIcon>
         )}
@@ -127,6 +127,7 @@ const QuestionIcon = styled(Flex)<QuestionIconProps>`
   cursor: default;
   margin-left: 6px;
   position: relative;
+  color: ${colors.placeholderText};
 
   .tooltip {
     position: absolute;
@@ -161,6 +162,6 @@ const QuestionIcon = styled(Flex)<QuestionIconProps>`
 
 const Label = styled.label`
   color: ${colors.lightGray};
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 600;
 `

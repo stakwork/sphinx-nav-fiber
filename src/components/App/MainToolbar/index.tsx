@@ -14,6 +14,7 @@ export const MainToolbar = () => {
 
   const { open, setAddNodeModalData } = useModal('addNode')
   const { open: openSourcesModal } = useModal('sourcesTable')
+  const { open: openContentModal } = useModal('addContent')
 
   const handleOpenSidebar = (tab: SecondarySidebarActiveTab) => {
     setSecondarySidebarActiveTab(tab)
@@ -29,7 +30,7 @@ export const MainToolbar = () => {
       <LogoButton onClick={() => handleOpenSidebar('about')}>
         <img alt="Second brain" src="logo.svg" />
       </LogoButton>
-      <ActionButton onClick={() => handleOpenAddingModal('content')}>
+      <ActionButton onClick={openContentModal}>
         <IconWrapper>
           <AddContentIcon />
         </IconWrapper>
@@ -53,7 +54,7 @@ export const MainToolbar = () => {
         </IconWrapper>
         <Text>Sentiment Data</Text>
       </ActionButton>
-      {/* <ActionButton onClick={() => openSourcesModal()}>
+      {/* <ActionButton onClick={openContentModal}>
         <IconWrapper>
           <SettingsIcon />
         </IconWrapper>

@@ -3,9 +3,10 @@ import styled from 'styled-components'
 import { background, BackgroundProps } from './background'
 import { border, BorderProps } from './border'
 import { flexbox, Flexbox, FlexboxProps } from './flexbox'
+import { margin, MarginProps } from './margin'
 import { padding, PaddingProps } from './padding'
 
-type StyleProps = BackgroundProps & BorderProps & FlexboxProps & PaddingProps
+type StyleProps = BackgroundProps & BorderProps & FlexboxProps & PaddingProps & MarginProps
 
 const defaultProps: Flexbox = {
   align: 'stretch',
@@ -35,4 +36,5 @@ export const Flex = styled.div
   ${border}
   ${flexbox}
   ${padding}
+  ${margin}
 `

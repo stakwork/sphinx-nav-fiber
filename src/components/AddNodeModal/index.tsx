@@ -9,20 +9,16 @@ import { toast } from 'react-toastify'
 import * as sphinx from 'sphinx-bridge-kevkevinpal'
 import styled from 'styled-components'
 import { Button } from '~/components/Button'
+import { BaseModal } from '~/components/Modal'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
-import { BaseModal } from '~/components/Modal'
 import {
-  DOCUMENT,
   GITHUB_REPOSITORY,
-  LINK,
   NODE_ADD_ERROR,
   NODE_ADD_SUCCESS,
   RSS,
   TOPIC,
   TWITTER_HANDLE,
-  TWITTER_SOURCE,
-  WEB_PAGE,
   YOUTUBE_CHANNEL,
 } from '~/constants'
 import { api } from '~/network/api'
@@ -35,18 +31,13 @@ import { getLSat } from '~/utils/getLSat'
 import { payLsat } from '~/utils/payLsat'
 import { updateBudget } from '~/utils/setBudget'
 import { executeIfProd } from '~/utils/tests'
-import { timeToMilliseconds } from '~/utils/timeToMilliseconds'
 import { useDataStore } from '../../stores/useDataStore/index'
-import { ToastMessage } from '../common/Toast/toastMessage'
 import StyledSelect from '../Select'
-import { Document } from './Document'
+import { ToastMessage } from '../common/Toast/toastMessage'
 import { GithubRepository } from './GithubRepository'
 import { RSSFeed } from './RSSFeed'
-import { SourceUrl } from './SourceUrl'
 import { Topic } from './Topic'
-import { TwitId } from './TweetId'
 import { TwitterHandle } from './TwitterHandle'
-import { WebPage } from './WebPage'
 import { YoutubeChannel } from './YoutubeChannel'
 
 type Option = {
@@ -89,70 +80,12 @@ const handleSubmit = async (
 ): Promise<void> => {
   const body: { [index: string]: unknown } = {}
 
-  if (sourceType === LINK) {
-    body.media_url = data.link
+  body.source_type = sourceType
 
-    if (data.withTimeStamps) {
-      body.content_type = 'clip'
-
-      body.job_response = {
-        tags: [
-          {
-            description: data.description,
-            'end-time': timeToMilliseconds(data.endTime),
-            'start-time': timeToMilliseconds(data.startTime),
-            tag: data.tags?.join(', '),
-          },
-        ],
-      }
-    } else if (data.withLocation) {
-      body.latitude = data.latitude
-      body.longitude = data.longitude
-    } else {
-      body.content_type === 'audio_video'
-    }
-  } else if (sourceType === TWITTER_SOURCE) {
-    const regex = /(?:https?:\/\/)?(?:www\.)?twitter\.com\/\w+\/status\/\d+/
-    const tweetIdRegex = /^[0-9]{16,}$/
-
-    if (regex.test(data.tweet)) {
-      const idRegex = /\/status\/(\d+)/
-
-      const match = data.tweet.match(idRegex)
-
-      if (match?.[1]) {
-        const [, id] = match
-
-        body.tweet_id = id
-      }
-    } else {
-      body.tweet_id = data.tweet
-    }
-
-    if (!tweetIdRegex.test(body.tweet_id as string)) {
-      return
-    }
-
-    if (data.withLocation) {
-      body.latitude = data.latitude
-      body.longitude = data.longitude
-    }
-
-    body.content_type = 'tweet'
-  } else if (sourceType === WEB_PAGE) {
-    body.content_type = 'webpage'
-    body.web_page = data.web_page
-  } else if (sourceType === DOCUMENT) {
-    body.content_type = 'document'
-    body.text = data.document
+  if (sourceType === TWITTER_HANDLE) {
+    body.source = (data.source || '').replace(/[@]/g, '')
   } else {
-    body.source_type = sourceType
-
-    if (sourceType === TWITTER_HANDLE) {
-      body.source = (data.source || '').replace(/[@]/g, '')
-    } else {
-      body.source = data.source
-    }
+    body.source = data.source
   }
 
   let lsatToken = ''
@@ -168,7 +101,7 @@ const handleSubmit = async (
     lsatToken = await getLSat()
   })
 
-  const endPoint = CONTENT_TYPES.includes(sourceType) ? 'add_node' : 'radar'
+  const endPoint = 'radar'
 
   try {
     const res: SubmitErrRes = await api.post(`/${endPoint}`, JSON.stringify(body), {
@@ -217,25 +150,7 @@ interface IOptionMap {
   [key: string]: TOption
 }
 
-const CONTENT_TYPE_OPTIONS: Record<'source' | 'content', IOptionMap> = {
-  content: {
-    [LINK]: {
-      component: SourceUrl,
-      label: 'Youtube / Twitter space / Mp3',
-    },
-    [TWITTER_SOURCE]: {
-      component: TwitId,
-      label: 'Tweet',
-    },
-    [WEB_PAGE]: {
-      component: WebPage,
-      label: 'Webpage (Text)',
-    },
-    [DOCUMENT]: {
-      component: Document,
-      label: 'Document',
-    },
-  },
+const CONTENT_TYPE_OPTIONS: Record<'source', IOptionMap> = {
   source: {
     [GITHUB_REPOSITORY]: {
       component: GithubRepository,
@@ -260,15 +175,13 @@ const CONTENT_TYPE_OPTIONS: Record<'source' | 'content', IOptionMap> = {
   },
 }
 
-const CONTENT_TYPES = Object.keys(CONTENT_TYPE_OPTIONS.content)
-
 export const AddNodeModal = () => {
   const { close, addNodeModalData } = useModal('addNode')
   const [activeType, setActiveType] = useState('')
   const setSources = useDataStore((s) => s.setSources)
   const [setBudget] = useUserStore((s) => [s.setBudget])
 
-  const resolvedContentOptions = addNodeModalData ? CONTENT_TYPE_OPTIONS[addNodeModalData] : null
+  const resolvedContentOptions = CONTENT_TYPE_OPTIONS.source
 
   const resolveInfoMessage = addNodeModalData === 'source' ? infoMessageSource : infoMessageContent
 

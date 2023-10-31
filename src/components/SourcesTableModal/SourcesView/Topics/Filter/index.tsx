@@ -7,16 +7,8 @@ import CheckIcon from '~/components/Icons/CheckIcon'
 import ChevronDownIcon from '~/components/Icons/ChevronDownIcon'
 import ChevronUpIcon from '~/components/Icons/ChevronUpIcon'
 import { Flex } from '~/components/common/Flex'
-import { DATE, DEFAULT, EDGES } from '~/constants'
 import { colors } from '~/utils/colors'
-
-type Option = Record<string, string>
-
-const options: Option = {
-  [DEFAULT]: 'Default',
-  [DATE]: 'Date',
-  [EDGES]: 'Edges Count',
-}
+import { SORT_MAPPING } from '../../constants'
 
 type Props = {
   onChangeFilter: (val: string) => void
@@ -43,7 +35,7 @@ export const Filter: FC<Props> = ({ onChangeFilter, currentFilter }) => {
     <div>
       <Action onClick={handleOpenPopover}>
         <div className="text">Sort By</div>
-        <div className="value">{options[currentFilter]}</div>
+        <div className="value">{SORT_MAPPING[currentFilter]}</div>
         <div className="icon">{!anchorEl ? <ChevronDownIcon /> : <ChevronUpIcon />}</div>
       </Action>
       <StyledPopover
@@ -64,14 +56,14 @@ export const Filter: FC<Props> = ({ onChangeFilter, currentFilter }) => {
         }}
       >
         <FormControl>
-          {Object.keys(options).map((option) => (
+          {Object.keys(SORT_MAPPING).map((option) => (
             <MenuItem
               key={option}
               className={clsx({ active: option === currentFilter })}
               onClick={() => handleSelectChange(option)}
             >
               <span className="icon">{option === currentFilter ? <CheckIcon /> : null}</span>
-              <span>{options[option]}</span>
+              <span>{SORT_MAPPING[option]}</span>
             </MenuItem>
           ))}
         </FormControl>

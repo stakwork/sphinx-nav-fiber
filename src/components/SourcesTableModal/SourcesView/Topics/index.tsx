@@ -1,84 +1,119 @@
 import { Button } from '@mui/material'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
-import { DATE, DEFAULT, EDGES } from '~/constants'
-import { getTopicsData } from '~/network/fetchSourcesData'
-import { useDataStore } from '~/stores/useDataStore'
-import { FetchTopicResponse } from '~/types'
+import { useModal } from '~/stores/useModalStore'
+import { useTopicsStore } from '~/stores/useTopicsStore'
+import { Topic } from '~/types'
 import { colors } from '~/utils/colors'
 import { Heading } from '../common'
+import { EditTopicModal } from './EditTopicModal'
 import { Filter } from './Filter'
 import Table from './Table'
 
 export const TopicSources = () => {
   const [loading, setLoading] = useState(true)
-  const [showMuted, setShowMuted] = useState(false)
-  const [topics, setTopics] = useDataStore((s) => [s.topics, s.setTopics])
-  const [currentFilter, setCurrentFilter] = useState(DEFAULT)
+
+  const [data, ids, total, setTopics, filters, setFilters, terminate] = useTopicsStore((s) => [
+    s.data,
+    s.ids,
+    s.total,
+    s.setTopics,
+    s.filters,
+    s.setFilters,
+    s.terminate,
+  ])
+
+  const { open } = useModal('editTopic')
+  const [selectedTopic, setSelectedTopic] = useState<Topic | null>(null)
+
+  const topicsIdRef = useRef<string[]>([])
+
+  useEffect(() => {
+    if (ids.length) {
+      topicsIdRef.current = ids
+    }
+  }, [ids])
 
   useEffect(() => {
     const init = async () => {
-      setLoading(true)
-
       try {
-        const mutedParam = showMuted ? 'True' : 'False'
-        const data: FetchTopicResponse = await getTopicsData({ muted: mutedParam })
-
-        setTopics(data.data)
-      } catch (error) {
-        console.warn(error)
+        setLoading(true)
+        await setTopics()
+      } catch {
+        console.log('err')
       } finally {
         setLoading(false)
       }
     }
 
     init()
-  }, [setTopics, showMuted])
+  }, [setTopics, filters])
 
-  const sortedNodes = useMemo(() => {
-    if (!topics) {
-      return []
-    }
+  const handleLoadMore = () => {
+    setFilters({ page: filters.page + 1 })
+  }
 
-    if (currentFilter === DEFAULT) {
-      return topics
-    }
+  useEffect(
+    () => () => {
+      terminate()
+    },
+    [terminate],
+  )
 
-    if (currentFilter === DATE) {
-      return [...topics].sort((a, b) =>
-        a.date_added_to_graph && b.date_added_to_graph ? a.date_added_to_graph - b.date_added_to_graph : 1,
-      )
-    }
+  const handleFilterChange = (filter: string) => {
+    setFilters({ sortBy: filter })
+  }
 
-    if (currentFilter === EDGES) {
-      return [...topics].sort((a, b) => a.edgeCount - b.edgeCount)
-    }
+  const modalCloseHandler = () => {
+    setSelectedTopic(null)
+  }
 
-    return null
-  }, [currentFilter, topics])
+  const onTopicSelect = (topic: Topic) => {
+    setSelectedTopic(topic)
+    open()
+  }
 
   return (
-    <Wrapper direction="column" justify="flex-end">
-      <Heading align="flex-start" justify="space-between">
-        <Text className="title">Topics</Text>
-      </Heading>
+    <>
+      <Wrapper direction="column" justify="flex-end">
+        <Heading align="flex-start" justify="space-between">
+          <Text className="title">Topics</Text>
+        </Heading>
 
-      <ActionsWrapper>
-        <Button onClick={() => setShowMuted(!showMuted)} size="medium">
-          {showMuted ? 'Show Unmuted' : 'Show Muted'}
-          {loading && <ClipLoader color={colors.BLUE_PRESS_STATE} size={10} />}
-        </Button>
+        <ActionsWrapper>
+          <Button disabled={loading} onClick={() => setFilters({ muted: !filters.muted })} size="medium">
+            {filters.muted ? 'Show Unmuted' : 'Show Muted'}
+            {loading && <ClipLoader color={colors.BLUE_PRESS_STATE} size={10} />}
+          </Button>
 
-        <Filter currentFilter={currentFilter} onChangeFilter={setCurrentFilter} />
-      </ActionsWrapper>
+          <Filter currentFilter={filters.sortBy} onChangeFilter={handleFilterChange} />
+        </ActionsWrapper>
 
-      <TableWrapper align="center" justify={loading ? 'center' : 'flex-start'}>
-        {loading ? <ClipLoader color={colors.white} /> : <Table data={sortedNodes || []} showMuted={showMuted} />}
-      </TableWrapper>
-    </Wrapper>
+        <TableWrapper align="center" justify={loading ? 'center' : 'flex-start'}>
+          {loading && !data ? (
+            <ClipLoader color={colors.white} />
+          ) : (
+            <Table
+              data={data ? ids.map((id) => data[id]) : []}
+              setSelectedTopic={onTopicSelect}
+              showMuted={filters.muted}
+            />
+          )}
+        </TableWrapper>
+
+        {total > ids.length ? (
+          <Button className="load-more" disabled={loading} onClick={handleLoadMore}>
+            Load more
+            {loading && <ClipLoader color={colors.BLUE_PRESS_STATE} size={10} />}
+          </Button>
+        ) : null}
+      </Wrapper>
+
+      {selectedTopic && <EditTopicModal onClose={modalCloseHandler} topic={selectedTopic} />}
+    </>
   )
 }
 
@@ -106,6 +141,11 @@ const Wrapper = styled(Flex)`
 
   & .filters {
     overflow-x: auto;
+  }
+
+  .load-more {
+    margin: 8px auto;
+    align-self: center;
   }
 `
 

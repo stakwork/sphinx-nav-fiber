@@ -1,8 +1,8 @@
 import { create } from 'zustand'
 
-export type AvailableModals = 'addNode' | 'budgetExplanation' | 'sourcesTable'
+export type AvailableModals = 'addNode' | 'budgetExplanation' | 'sourcesTable' | 'addContent' | 'editTopic'
 
-export type AddNodeModalData = 'content' | 'source' | null
+export type AddNodeModalData = 'source' | null
 
 type ModalStore = {
   currentModals: Record<AvailableModals, boolean>
@@ -14,7 +14,7 @@ type ModalStore = {
 
 const defaultData = {
   addNodeModalData: null,
-  currentModals: { addNode: false, budgetExplanation: false, sourcesTable: false },
+  currentModals: { addNode: false, budgetExplanation: false, sourcesTable: false, addContent: false, editTopic: false },
 }
 
 export const useModalStore = create<ModalStore>((set) => ({

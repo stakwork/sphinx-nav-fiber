@@ -92,3 +92,10 @@ export const TOPIC = 'topic'
 export const DOCUMENT = 'document'
 
 export const isE2E = !!import.meta.env.VITE_APP_IS_E2E
+
+export const requiredRule = {
+  required: {
+    message: 'The field is required',
+    value: true,
+  },
+}

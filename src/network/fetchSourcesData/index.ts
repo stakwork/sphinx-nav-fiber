@@ -1,10 +1,11 @@
-import { FetchRadarResponse, FetchTopicResponse, RadarRequest, SubmitErrRes, NodeRequest } from '~/types'
+import { FetchRadarResponse, FetchTopicResponse, NodeRequest, RadarRequest, SubmitErrRes } from '~/types'
 import { api } from '../api'
 
 type TradarParams = {
   skip?: string
   limit?: string
   approved?: string
+  sort_by?: string
 }
 
 export type TAboutParams = {
@@ -15,10 +16,12 @@ export type TAboutParams = {
   search_term?: string
 }
 
-type TtopicsParams = {
+export type TtopicsParams = {
   muted?: string
   skip?: string
   limit?: string
+  sort_by?: string
+  search?: string
 }
 
 const defaultParams = {

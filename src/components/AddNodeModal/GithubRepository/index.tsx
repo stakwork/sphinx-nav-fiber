@@ -1,5 +1,5 @@
 import { Flex } from '~/components/common/Flex'
-import { TextInput } from '../TextInput'
+import { TextInput } from '../../common/TextInput'
 import { requiredRule } from '../index'
 
 const message = 'Submit github repository'
