@@ -44,7 +44,6 @@ export const Tooltip = ({ node }: Props) => {
     description,
     label,
     text,
-    timestamp,
     type,
     tweet_id: tweetId,
     twitter_handle: twitterHandle,
@@ -130,10 +129,6 @@ export const Tooltip = ({ node }: Props) => {
                   </Text>
                 )}
               </Flex>
-
-              <Text color="primaryText1" kind="tiny">
-                {timestamp}
-              </Text>
 
               <Flex pt={12}>
                 {nodeType === 'clip' && <Text color="primaryText1">Episode</Text>}
