@@ -13,7 +13,7 @@ export const TitleEditor: FC<Props> = () => (
   <Flex>
     <Flex align="center" direction="row" justify="space-between" mb={18}>
       <Flex align="center" direction="row">
-        <StyledText>Add Content</StyledText>
+        <StyledText>Edit topic</StyledText>
       </Flex>
     </Flex>
 
