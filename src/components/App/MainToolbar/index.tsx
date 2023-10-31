@@ -2,27 +2,23 @@ import styled from 'styled-components'
 import AddContentIcon from '~/components/Icons/AddContentIcon'
 import AddSourceIcon from '~/components/Icons/AddSourceIcon'
 import SentimentDataIcon from '~/components/Icons/SentimentDataIcon'
+import SettingsIcon from '~/components/Icons/SettingsIcon'
 import SourcesTableIcon from '~/components/Icons/SourcesTableIcon'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { SecondarySidebarActiveTab, useAppStore } from '~/stores/useAppStore'
-import { AddNodeModalData, useModal } from '~/stores/useModalStore'
+import { useModal } from '~/stores/useModalStore'
 import { colors } from '~/utils/colors'
 
 export const MainToolbar = () => {
   const [setSecondarySidebarActiveTab] = useAppStore((s) => [s.setSecondarySidebarActiveTab])
 
-  const { open, setAddNodeModalData } = useModal('addNode')
   const { open: openSourcesModal } = useModal('sourcesTable')
-  const { open: openContentModal } = useModal('addContent')
+  const { open: openContentAddModal } = useModal('addContent')
+  const { open: openSourceAddModal } = useModal('addSource')
 
   const handleOpenSidebar = (tab: SecondarySidebarActiveTab) => {
     setSecondarySidebarActiveTab(tab)
-  }
-
-  const handleOpenAddingModal = (data: AddNodeModalData) => {
-    open()
-    setAddNodeModalData(data)
   }
 
   return (
@@ -30,13 +26,13 @@ export const MainToolbar = () => {
       <LogoButton onClick={() => handleOpenSidebar('about')}>
         <img alt="Second brain" src="logo.svg" />
       </LogoButton>
-      <ActionButton onClick={openContentModal}>
+      <ActionButton onClick={openContentAddModal}>
         <IconWrapper>
           <AddContentIcon />
         </IconWrapper>
         <Text>Add Content</Text>
       </ActionButton>
-      <ActionButton onClick={() => handleOpenAddingModal('source')}>
+      <ActionButton onClick={openSourceAddModal}>
         <IconWrapper>
           <AddSourceIcon />
         </IconWrapper>
@@ -54,12 +50,12 @@ export const MainToolbar = () => {
         </IconWrapper>
         <Text>Sentiment Data</Text>
       </ActionButton>
-      {/* <ActionButton onClick={openContentModal}>
+      <ActionButton onClick={openSourceAddModal}>
         <IconWrapper>
           <SettingsIcon />
         </IconWrapper>
         <Text>Change Display</Text>
-      </ActionButton> */}
+      </ActionButton>
     </Wrapper>
   )
 }

@@ -10,7 +10,7 @@ type Props = {
 }
 
 export const TypePerson = ({ title, imageUrl, name }: Props) => (
-  <Flex>
+  <Flex align="center" direction="row">
     <PictureWrapper>
       <Avatar rounded size={64} src={imageUrl || ''} type="person" />
     </PictureWrapper>
