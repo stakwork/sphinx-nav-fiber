@@ -10,7 +10,8 @@ import { Topic } from '~/types'
 import { colors } from '~/utils/colors'
 import { Heading } from '../common'
 import { EditTopicModal } from './EditTopicModal'
-import { Filter } from './Filter'
+import { Search } from './Search'
+import { Filter } from './Sort'
 import Table from './Table'
 
 export const TopicSources = () => {
@@ -79,15 +80,16 @@ export const TopicSources = () => {
   return (
     <>
       <Wrapper direction="column" justify="flex-end">
-        <Heading align="flex-start" justify="space-between">
+        <Heading align="flex-start" direction="row" justify="space-between">
           <Text className="title">Topics</Text>
-        </Heading>
-
-        <ActionsWrapper>
           <Button disabled={loading} onClick={() => setFilters({ muted: !filters.muted })} size="medium">
             {filters.muted ? 'Show Unmuted' : 'Show Muted'}
             {loading && <ClipLoader color={colors.BLUE_PRESS_STATE} size={10} />}
           </Button>
+        </Heading>
+
+        <ActionsWrapper>
+          <Search />
 
           <Filter currentFilter={filters.sortBy} onChangeFilter={handleFilterChange} />
         </ActionsWrapper>
