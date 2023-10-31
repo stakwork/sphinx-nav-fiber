@@ -26,13 +26,6 @@ const tweetUrlRegex = /https:\/\/twitter\.com\/[^/]+\/status\/(\d+)/
 const mp3Regex = /(https?:\/\/)?([A-Za-z0-9_-]+)\.mp3/
 const genericUrlRegex = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/
 
-export const requiredRule = {
-  required: {
-    message: 'The field is required',
-    value: true,
-  },
-}
-
 export type FormData = {
   input: string
   inputType: string

@@ -4,8 +4,7 @@ import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { TextInput } from '~/components/common/TextInput'
-import { LINK } from '~/constants'
-import { requiredRule } from '..'
+import { LINK, requiredRule } from '~/constants'
 
 type Props = {
   type: string

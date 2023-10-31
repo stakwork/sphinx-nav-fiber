@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { TextInput } from '~/components/common/TextInput'
-import { requiredRule } from '..'
+import { requiredRule } from '~/constants'
 
 type Props = {
   onNextStep: () => void
