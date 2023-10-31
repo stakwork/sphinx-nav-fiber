@@ -10,8 +10,6 @@ export const isDevelopment = !!(
 const getUrlFormEnv = () => import.meta.env.VITE_APP_API_URL
 
 export const API_URL = getUrlFormEnv() || apiUrlFromSwarmHost() || 'https://knowledge-graph.sphinx.chat'
-console.log('🚀 ~ file: index.ts:12 ~ API_URL:', API_URL)
-console.log('🚀 ~ file: index.ts:12 ~ getUrlFormEnv:', getUrlFormEnv())
 
 export const isChileGraph = API_URL.includes('boltwall')
 
@@ -26,10 +24,6 @@ function apiUrlFromSwarmHost(): string | undefined {
 
       const finalHost = hostArray.join('.')
       const apiUrl = `https://${finalHost}`
-
-      /* eslint-disable no-console */
-      console.log('API URL:', apiUrl)
-      /* eslint-enable no-console */
 
       return apiUrl
     }
