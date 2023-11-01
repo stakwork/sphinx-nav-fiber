@@ -61,6 +61,14 @@ export const MuiButton = {
 
       '&.MuiButton-outlined': {},
     },
+    textPrimary: {
+      '& .MuiButton-endIcon': {
+        color: colors.GRAY6,
+      },
+      '& .MuiButton-startIcon': {
+        color: colors.GRAY6,
+      },
+    },
     outlined: {
       // Add your custom styles here for the outlined variant
       borderColor: colors.BUTTON1,
