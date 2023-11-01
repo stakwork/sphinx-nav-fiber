@@ -26,7 +26,7 @@ export const SourceStep: FC<Props> = ({ type, onNextStep, value }) => (
     <Flex mb={12}>
       <TextInput
         id="cy-youtube-channel-id"
-        maxLength={50}
+        maxLength={250}
         name="source"
         placeholder="Paste your url here..."
         rules={{
