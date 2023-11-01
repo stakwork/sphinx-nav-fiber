@@ -56,9 +56,9 @@ export const TwitData = () => {
               {!!date && <Date>{moment.unix(date).format('ll')}</Date>}
             </Flex>
           </Flex>
-          <Flex align="center">
+          <Flex align="stretch" mt={22}>
             <a href={`https://twitter.com/Interior/status/${twitId}?open=system`}>
-              <Button endIcon={<LinkIcon />}>View Tweet </Button>
+              <StyledButton endIcon={<LinkIcon />}>View Tweet </StyledButton>
             </a>
           </Flex>
         </Flex>
@@ -123,4 +123,8 @@ const TwitText = styled(Flex)`
 const StyledDivider = styled(Divider)`
   margin: 0 0 6px 0;
   opacity: 75%;
+`
+
+const StyledButton = styled(Button)`
+  width: 100%;
 `
