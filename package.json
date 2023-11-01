@@ -93,7 +93,10 @@
     "collectCoverageFrom": ["./src/**/*.js", "./src/**/*.ts"],
     "coverageThreshold": {
       "global": {
-        "lines": 0
+        "lines": 0 
+      },
+      "./src/components/**/utils/**.ts": {
+        "lines": 100
       },
       "./src/utils/": {
         "lines": 23,
