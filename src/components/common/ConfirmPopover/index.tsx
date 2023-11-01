@@ -1,10 +1,10 @@
 import Popover, { PopoverOrigin } from '@mui/material/Popover'
 import React, { useState } from 'react'
 import styled from 'styled-components'
-import { Flex } from '../Flex'
+import { Button } from '~/components/Button'
 import { Text } from '~/components/common/Text'
 import { colors } from '~/utils/colors'
-import { Button } from '~/components/Button'
+import { Flex } from '../Flex'
 
 type ConfirmPopoverProps = {
   message: string
@@ -45,7 +45,7 @@ const ConfirmPopover: React.FC<ConfirmPopoverProps> = ({
   return (
     <>
       <div>{React.cloneElement(children, { onClick: handleOpen })}</div>
-      <Popover
+      <StyledPopover
         anchorEl={anchorEl}
         anchorOrigin={anchorOrigin}
         onClose={handleClose}
@@ -63,7 +63,7 @@ const ConfirmPopover: React.FC<ConfirmPopoverProps> = ({
             </Button>
           </Flex>
         </Wrapper>
-      </Popover>
+      </StyledPopover>
     </>
   )
 }
@@ -72,11 +72,18 @@ const Wrapper = styled(Flex)`
   background: ${colors.headerBackground};
   color: ${colors.white};
   padding: 16px 8px;
+  z-index: 100000;
 
   .secondary {
     margin-left: 8px;
     background: transparent;
     border: 1px solid ${colors.primaryButton};
+  }
+`
+
+const StyledPopover = styled(Popover)`
+  && {
+    z-index: 9999;
   }
 `
 
