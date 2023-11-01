@@ -26,5 +26,13 @@ export default defineConfig({
     viewportWidth: 1440,
     watchForFileChanges: false,
   },
+  component: {
+    supportFile: './cypress/support/components.ts',
+    devServer: {
+      framework: 'react',
+      bundler: 'vite',
+    },
+    specPattern: 'src/**/*.spec.{js,jsx,ts,tsx}',
+  },
   projectId: '5pz59y',
 })
