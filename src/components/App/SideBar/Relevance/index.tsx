@@ -66,6 +66,7 @@ export const Relevance = ({ isSearchResult }: Props) => {
             show_title: showTitle,
             node_type: nodeType,
             text,
+            link,
             name,
             profile_picture: profilePicture,
             verified = false,
@@ -81,13 +82,14 @@ export const Relevance = ({ isSearchResult }: Props) => {
               episodeTitle={formatDescription(episodeTitle)}
               id={id}
               imageUrl={imageUrl || ''}
+              link={link}
               name={name || ''}
               onClick={() => handleNodeClick(n)}
               profilePicture={profilePicture}
               showTitle={formatDescription(showTitle)}
               text={text || ''}
               twitterHandle={twitterHandle}
-              type={type || nodeType}
+              type={nodeType || type}
               verified={verified}
             />
           )
