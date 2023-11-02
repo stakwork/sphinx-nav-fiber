@@ -1,5 +1,19 @@
 /* eslint-disable no-console */
+import moment from 'moment'
+
 const { origin, host } = window.location
+
+moment.relativeTimeThreshold('h', 24)
+
+moment.updateLocale('en', {
+  relativeTime: {
+    s: (number) => `${number} ${number > 1 ? 'seconds' : 'second'}`,
+    m: '1 minute',
+    h: (number) => `${number} ${number > 1 ? 'hours' : 'hour'}`,
+    d: '1 day',
+    M: '1 month',
+  },
+})
 
 export const isDevelopment = !!(
   origin === 'http://localhost:3000' ||

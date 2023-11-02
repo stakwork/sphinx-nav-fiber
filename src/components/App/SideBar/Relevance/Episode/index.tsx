@@ -40,7 +40,7 @@ const EpisodeWrapper = styled(Flex).attrs({
   }
 `
 
-type Props = {
+export type Props = {
   boostCount: number
   date: number
   episodeTitle: string
@@ -103,8 +103,8 @@ export const Episode = ({
             </Flex>
 
             <Description data-testid="episode-description">{episodeTitle}</Description>
-            <Flex direction="row" justify="flex-start">
-              {Boolean(date) && <Date>{moment.unix(date).format('ll')}</Date>}
+            <Flex align="center" direction="row" justify="flex-start">
+              {Boolean(date) && <Date>{moment.unix(date).fromNow()}</Date>}
               {Boolean(showTitle) && <Title>{showTitle}</Title>}
               {!isSelectedView && boostCount > 0 && (
                 <Flex style={{ marginLeft: 'auto' }}>
