@@ -13,13 +13,13 @@ export const validateLatitude = (valueString: string) => {
 }
 
 export const validateLongitude = (value: number) => {
-    if (value < -180 || value > 180) {
-      return 'Longitude must be between -180 and 180.'
-    }
-
-    if (!value && value !== 0) {
-      return 'Longitude is required.'
-    }
-
-    return true
+  if (value < -180 || value > 180) {
+    return 'Longitude must be between -180 and 180.'
   }
+
+  if (!value && value !== 0) {
+    return 'Longitude is required.'
+  }
+
+  return true
+}
