@@ -31,5 +31,6 @@ describe('validateLatitude', () => {
     expect(validateLatitude(89)).toBe(true)
     expect(validateLatitude(0)).toBe(true)
     expect(validateLatitude(null)).toBe(true)
+    expect(validateLatitude('abc')).toBe(needValueErrorMsg)
   })
 })
