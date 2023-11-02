@@ -100,7 +100,10 @@
     ],
     "coverageThreshold": {
       "global": {
-        "lines": 0
+        "lines": 0 
+      },
+      "./src/components/**/utils/**.ts": {
+        "lines": 92
       },
       "./src/utils/": {
         "lines": 23,
