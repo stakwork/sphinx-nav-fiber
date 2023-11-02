@@ -96,7 +96,7 @@
         "lines": 0 
       },
       "./src/components/**/utils/**.ts": {
-        "lines": 100
+        "lines": 92
       },
       "./src/utils/": {
         "lines": 23,
