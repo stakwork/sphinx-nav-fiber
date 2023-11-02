@@ -10,7 +10,7 @@ import * as sphinx from 'sphinx-bridge-kevkevinpal'
 export const getLSat = async (): Promise<string> => {
   try {
     // check if lsat exist in local storage
-    const localLsat = localStorage.getItem('lsat')
+    const localLsat = window.localStorage.getItem('lsat')
 
     if (localLsat) {
       const lsat = JSON.parse(localLsat)
@@ -29,7 +29,7 @@ export const getLSat = async (): Promise<string> => {
       const storedLsat = await sphinx.getLsat(window.location.host)
 
       if (storedLsat.macaroon) {
-        localStorage.setItem(
+        window.localStorage.setItem(
           'lsat',
           JSON.stringify({
             macaroon: storedLsat.macaroon,

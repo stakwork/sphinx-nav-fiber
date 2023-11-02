@@ -32,7 +32,7 @@ export default defineConfig({
       framework: 'react',
       bundler: 'vite',
     },
-    specPattern: 'src/**/*.spec.{js,jsx,ts,tsx}',
+    specPattern: 'src/**/*.cy.{js,jsx,ts,tsx}',
   },
   projectId: '5pz59y',
 })
