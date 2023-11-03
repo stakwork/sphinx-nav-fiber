@@ -13,7 +13,7 @@ export const Overlay = () => {
 
   return (
     <OverlayWrap>
-      <TestButton
+      <CameraCenterButton
         background="bluePressState"
         kind="small"
         onClick={() => setCameraFocusTrigger(!cameraFocusTrigger)}
@@ -29,7 +29,7 @@ export const Overlay = () => {
   )
 }
 
-const TestButton = styled(Button)`
+const CameraCenterButton = styled(Button)`
   position: absolute;
   right: 20px;
   bottom: 102px;
