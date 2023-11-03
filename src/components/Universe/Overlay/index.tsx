@@ -1,4 +1,3 @@
-import { useEffect } from 'react'
 import styled from 'styled-components'
 import CenterCamera from '~/components/Icons/CenterCameraIcon'
 import { useDataStore } from '~/stores/useDataStore'
@@ -10,10 +9,6 @@ export const Overlay = () => {
     s.cameraFocusTrigger,
     s.setCameraFocusTrigger,
   ])
-
-  useEffect(() => {
-    document.body.style.cursor = hoveredNode ? 'pointer' : 'auto'
-  }, [hoveredNode])
 
   return (
     <OverlayWrap>
