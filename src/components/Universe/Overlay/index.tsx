@@ -1,19 +1,15 @@
 import { useEffect } from 'react'
 import styled from 'styled-components'
-import { Button } from '~/components/Button'
-import { useControlStore } from '~/stores/useControlStore'
+import CenterCamera from '~/components/Icons/CenterCameraIcon'
 import { useDataStore } from '~/stores/useDataStore'
 import { Tooltip } from '../Graph/Cubes/Cube/components/Tooltip'
 
 export const Overlay = () => {
-  const [selectedNode, hoveredNode, cameraFocusTrigger, setCameraFocusTrigger] = useDataStore((s) => [
-    s.selectedNode,
+  const [hoveredNode, cameraFocusTrigger, setCameraFocusTrigger] = useDataStore((s) => [
     s.hoveredNode,
     s.cameraFocusTrigger,
     s.setCameraFocusTrigger,
   ])
-
-  const userMovedCamera = useControlStore((s) => s.userMovedCamera)
 
   useEffect(() => {
     document.body.style.cursor = hoveredNode ? 'pointer' : 'auto'
@@ -21,11 +17,14 @@ export const Overlay = () => {
 
   return (
     <OverlayWrap>
-      {!!selectedNode && userMovedCamera && (
-        <Button background="bluePressState" kind="small" onClick={() => setCameraFocusTrigger(!cameraFocusTrigger)}>
-          Re-center map
-        </Button>
-      )}
+      <CenterButton>
+        <CenterIcon onClick={() =>
+          {
+            setCameraFocusTrigger(!cameraFocusTrigger);
+            console.log("hello");
+          }}
+        />
+      </CenterButton>
 
       {hoveredNode && (
         <div id="tooltip-portal">
@@ -35,6 +34,38 @@ export const Overlay = () => {
     </OverlayWrap>
   )
 }
+
+const CenterButton = styled.div`
+  position: absolute;
+  right: 20px;
+  bottom: 102px;
+
+  display: flex;
+  padding: 8px 8px 9px 8px;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+
+  border-radius: 200px;
+  background: var(--BG-1, #23252F);
+
+  cursor: pointer;
+
+  &:hover {
+    background: #121319;
+    transition: .2s;
+  }
+`;
+
+// const PosText = styled.p`
+//   position: absolute;
+//   right: 20px;
+//   bottom: 120px;
+//   color: white;
+// `;
+
+const CenterIcon = styled(CenterCamera)`
+`;
 
 const OverlayWrap = styled('div')(({ theme }) => ({
   position: 'absolute',
