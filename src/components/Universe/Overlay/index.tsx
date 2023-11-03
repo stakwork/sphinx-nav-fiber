@@ -16,7 +16,6 @@ export const Overlay = () => {
         <CenterIcon onClick={() =>
           {
             setCameraFocusTrigger(!cameraFocusTrigger);
-            console.log("hello");
           }}
         />
       </CenterButton>
