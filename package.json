@@ -86,11 +86,17 @@
     "lint": "eslint src --max-warnings 24"
   },
   "eslintConfig": {
-    "extends": ["react-app", "react-app/jest"]
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
   },
   "jest": {
     "collectCoverage": true,
-    "collectCoverageFrom": ["./src/**/*.js", "./src/**/*.ts"],
+    "collectCoverageFrom": [
+      "./src/**/*.js",
+      "./src/**/*.ts"
+    ],
     "coverageThreshold": {
       "global": {
         "lines": 0
@@ -114,8 +120,16 @@
     }
   },
   "browserslist": {
-    "production": [">0.2%", "not dead", "not op_mini all"],
-    "development": ["last 1 chrome version", "last 1 firefox version", "last 1 safari version"]
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   },
   "resolutions": {
     "react-error-overlay": "6.0.9"
@@ -179,7 +193,9 @@
     "node": ">=16.0.0"
   },
   "nyc": {
-    "reporter": ["html"]
+    "reporter": [
+      "html"
+    ]
   },
   "coverage": {
     "min": 30
