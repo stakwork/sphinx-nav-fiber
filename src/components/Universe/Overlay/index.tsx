@@ -17,7 +17,7 @@ export const Overlay = () => {
         background="bluePressState"
         kind="small"
         onClick={() => setCameraFocusTrigger(!cameraFocusTrigger)}
-        startIcon={<CenterCamera/>}
+        startIcon={<CenterCamera />}
       />
 
       {hoveredNode && (
@@ -43,13 +43,13 @@ const CameraCenterButton = styled(Button)`
   align-items: center;
   flex-shrink: 0;
 
-  background: var(--BG-1, #23252F);
+  background: var(--BG-1, #23252f);
 
   &:hover {
     background: #121319;
-    transition: .2s;
+    transition: 0.2s;
   }
-`;
+`
 
 const OverlayWrap = styled('div')(({ theme }) => ({
   position: 'absolute',
