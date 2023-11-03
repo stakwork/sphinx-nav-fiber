@@ -5,15 +5,13 @@ import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { TextInput } from '~/components/common/TextInput'
 import { LINK, requiredRule } from '~/constants'
+import { twitterOrYoutubeRegexOrMp3 } from './utils'
 
 type Props = {
   type: string
   onNextStep: () => void
   value?: string
 }
-
-const twitterOrYoutubeRegexOrMp3 =
-  /^(?:(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)[\w-]{11}(?:\S*)?|(?:https?:\/\/)?(?:www\.)?twitter\.com\/i\/spaces\/\d+.*$|.+\.mp3)$/i
 
 export const SourceStep: FC<Props> = ({ type, onNextStep, value }) => (
   <Flex>

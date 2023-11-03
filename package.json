@@ -1,6 +1,6 @@
 {
   "name": "sphinx-nav",
-  "version": "0.1.97",
+  "version": "0.1.98",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.11.1",
@@ -79,6 +79,7 @@
     "test-coverage": "node ./cypress/coverageTest.js",
     "cy-open": "cypress open",
     "cy-run": "cypress run",
+    "cy-comp": "cypress run --component",
     "format": "prettier --write --config prettier.config.js ./src",
     "prettier": "npx prettier --config prettier.config.js --check ./src",
     "postinstall": "husky install",
@@ -99,7 +100,10 @@
     ],
     "coverageThreshold": {
       "global": {
-        "lines": 0
+        "lines": 0 
+      },
+      "./src/components/**/utils/**.ts": {
+        "lines": 92
       },
       "./src/utils/": {
         "lines": 23,
@@ -142,6 +146,7 @@
     "@commitlint/config-conventional": "^17.1.0",
     "@cypress/code-coverage": "^3.11.0",
     "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
+    "@testing-library/cypress": "^10.0.1",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^14.0.0",
     "@testing-library/user-event": "^14.4.3",
@@ -160,6 +165,7 @@
     "@vitejs/plugin-react": "^4.0.0",
     "babel-plugin-transform-vite-meta-env": "^1.0.3",
     "cypress": "12.16.0",
+    "cypress-vite": "^1.4.2",
     "eslint": "^8.41.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-prettier": "^8.5.0",

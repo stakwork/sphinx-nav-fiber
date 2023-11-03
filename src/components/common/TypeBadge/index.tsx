@@ -16,8 +16,8 @@ const EpisodeTypeImages: EpisodeTypeImage = {
   clip: { img: 'audio_badge.svg', label: 'clip' },
   show: { img: 'audio_badge.svg', label: 'show' },
   tweet: { img: 'twitter_badge.svg', label: 'tweet' },
-  twitter_space: { img: 'audio_badge.svg', label: 'twitter_space' },
-  youtube: { img: 'video_badge.svg', label: 'episode' },
+  twitter_space: { img: 'audio_badge.svg', label: 'clip' },
+  youtube: { img: 'video_badge.svg', label: 'clip' },
   episode: { img: 'video_badge.svg', label: 'episode' },
   document: { img: 'notes_badge.svg', label: 'text' },
 }
