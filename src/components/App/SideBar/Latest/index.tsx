@@ -1,7 +1,11 @@
+import { Button } from '@mui/material'
 import { memo } from 'react'
 import styled from 'styled-components'
-import BrowseGalleryIcon from '~/components/Icons/BrowseGalleryIcon'
 import { Flex } from '~/components/common/Flex'
+import BrowseGalleryIcon from '~/components/Icons/BrowseGalleryIcon'
+import DownloadIcon from '~/components/Icons/DownloadIcon'
+import { useDataStore } from '~/stores/useDataStore'
+import { useUserStore } from '~/stores/useUserStore'
 import { colors } from '~/utils/colors'
 import { Relevance } from '../Relevance'
 
@@ -10,26 +14,65 @@ type Props = {
 }
 
 // eslint-disable-next-line no-underscore-dangle
-const _View = ({ isSearchResult }: Props) => (
-  <Wrapper>
-    {!isSearchResult && (
-      <div className="heading">
-        <span className="heading__title">Latest</span>
-        <span className="heading__icon">
-          <BrowseGalleryIcon />
-        </span>
-      </div>
-    )}
-    <Relevance isSearchResult={isSearchResult} />
-  </Wrapper>
-)
+const _View = ({ isSearchResult }: Props) => {
+  const [nodeCount, setNodeCount] = useUserStore((s) => [s.nodeCount, s.setNodeCount])
+  const [fetchData] = [useDataStore((s) => s.fetchData)]
+
+  const getLatest = async () => {
+    if (nodeCount < 1) {
+      return
+    }
+
+    await fetchData()
+    setNodeCount('CLEAR')
+  }
+
+  return (
+    <Wrapper>
+      {!isSearchResult && (
+        <div className="heading_container">
+          <div className="heading">
+            <span className="heading__title">Latest</span>
+            <span className="heading__icon">
+              <BrowseGalleryIcon />
+            </span>
+          </div>
+          {nodeCount ? (
+            <div className="button_container">
+              <ButtonStyled className="button" onClick={getLatest} startIcon={<DownloadIcon />}>
+                {`See Latest (${nodeCount})`}
+              </ButtonStyled>
+            </div>
+          ) : null}
+        </div>
+      )}
+      <Relevance isSearchResult={isSearchResult} />
+    </Wrapper>
+  )
+}
+
+const ButtonStyled = styled(Button)`
+  && {
+    width: 100%;
+    margin-top: 1.2rem;
+    font-weight: 500;
+    .MuiButton-startIcon {
+      color: ${colors.GRAY6};
+    }
+  }
+`
 
 export const LatestView = memo(_View)
 
 const Wrapper = styled(Flex)`
+  .heading_container {
+    display: flex;
+    flex-direction: column;
+    padding: 16px 24px 16px 24px;
+  }
+
   .heading {
     color: ${colors.GRAY6};
-    padding: 0 24px 16px 24px;
     font-family: Barlow;
     font-size: 14px;
     font-style: normal;
@@ -38,7 +81,7 @@ const Wrapper = styled(Flex)`
     letter-spacing: 1.12px;
     text-transform: uppercase;
     display: flex;
-    align-items: flex-end;
+    align-items: center;
 
     &__icon {
       margin-left: 14px;

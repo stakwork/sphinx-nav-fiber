@@ -1,5 +1,19 @@
 /* eslint-disable no-console */
+import moment from 'moment'
+
 const { origin, host } = window.location
+
+moment.relativeTimeThreshold('h', 24)
+
+moment.updateLocale('en', {
+  relativeTime: {
+    s: (number) => `${number} ${number > 1 ? 'seconds' : 'second'}`,
+    m: '1 minute',
+    h: (number) => `${number} ${number > 1 ? 'hours' : 'hour'}`,
+    d: '1 day',
+    M: '1 month',
+  },
+})
 
 export const isDevelopment = !!(
   origin === 'http://localhost:3000' ||
@@ -10,8 +24,6 @@ export const isDevelopment = !!(
 const getUrlFormEnv = () => import.meta.env.VITE_APP_API_URL
 
 export const API_URL = getUrlFormEnv() || apiUrlFromSwarmHost() || 'https://knowledge-graph.sphinx.chat'
-console.log('🚀 ~ file: index.ts:12 ~ API_URL:', API_URL)
-console.log('🚀 ~ file: index.ts:12 ~ getUrlFormEnv:', getUrlFormEnv())
 
 export const isChileGraph = API_URL.includes('boltwall')
 
@@ -26,10 +38,6 @@ function apiUrlFromSwarmHost(): string | undefined {
 
       const finalHost = hostArray.join('.')
       const apiUrl = `https://${finalHost}`
-
-      /* eslint-disable no-console */
-      console.log('API URL:', apiUrl)
-      /* eslint-enable no-console */
 
       return apiUrl
     }
@@ -52,6 +60,10 @@ export const BOOST_ERROR_BUDGET = 'Boost failed, insufficient budget'
 
 export const NODE_ADD_SUCCESS = 'Submitted!'
 export const NODE_ADD_ERROR = 'Submission failed, please try again.'
+
+export const DEFAULT = 'default'
+export const DATE = 'date'
+export const EDGES = 'edges'
 
 type NodeRelativeHighlightColors = {
   nodeColor: string
@@ -88,3 +100,10 @@ export const TOPIC = 'topic'
 export const DOCUMENT = 'document'
 
 export const isE2E = !!import.meta.env.VITE_APP_IS_E2E
+
+export const requiredRule = {
+  required: {
+    message: 'The field is required',
+    value: true,
+  },
+}

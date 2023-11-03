@@ -5,7 +5,7 @@ import { Flex } from '~/components/common/Flex'
 import { colors } from '~/utils/colors'
 import { Date } from '..'
 
-type Props = {
+export type Props = {
   text: string
   imageUrl?: string
   twitterHandle?: string
@@ -35,8 +35,8 @@ export const TypeTweet = ({ text, imageUrl, date, twitterHandle, name, verified 
 
     <Flex grow={1} shrink={1}>
       <TwitText data-testid="episode-description">{text}</TwitText>
-      <Flex direction="row" justify="flex-start">
-        {Boolean(date) && <Date>{moment.unix(date).format('ll')}</Date>}
+      <Flex data-testid="date-text" direction="row" justify="flex-start">
+        {Boolean(date) && <Date>{moment.unix(date).fromNow()}</Date>}
       </Flex>
     </Flex>
   </Flex>

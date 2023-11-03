@@ -23,6 +23,7 @@ export const YouTube = () => {
     image_url: imageUrl,
     date,
     boost,
+    node_type: nodeType,
     type,
     id,
     show_title: showTitle,
@@ -61,9 +62,10 @@ export const YouTube = () => {
         id={id}
         imageUrl={imageUrl || 'video_default.svg'}
         isSelectedView
+        link={link}
         onClick={() => null}
         showTitle={showTitle}
-        type={type}
+        type={nodeType || type}
       />
       <StyledDivider />
       <div ref={scrollTargetRef} style={{ overflow: 'auto', flex: 1, width: '100%' }}>

@@ -52,9 +52,6 @@ export const SentimentAnalysis = memo(() => {
 
     getSentimentData({ topic: search, cutoff_date: String(value.unix()) })
       .then(async (r) => {
-        // eslint-disable-next-line no-console
-        console.log(r?.data)
-
         setSentimentData(
           r?.data
             .filter((i) => i.date)

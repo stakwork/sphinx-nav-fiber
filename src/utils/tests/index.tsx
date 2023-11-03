@@ -34,9 +34,6 @@ const E2E = () => {
       return
     }
 
-    // eslint-disable-next-line no-console
-    console.log({ isE2E })
-
     addToGlobalForE2e(userStore, 'userStore')
   }, [userStore])
 

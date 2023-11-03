@@ -19,8 +19,7 @@ const getModalKindStyles = ({ kind = 'regular' }: Pick<Props, 'kind'>) => {
   switch (kind) {
     case 'small':
       return css`
-        width: 300px;
-        height: 502px;
+        width: 370px;
       `
     case 'large':
       return css`
@@ -41,6 +40,7 @@ const ModalContainer = styled(Flex)<Pick<Props, 'kind'>>`
   position: relative;
   max-width: 100%;
   overflow: hidden;
+  background: ${colors.BG1};
   ${getModalKindStyles}
 `
 
@@ -58,6 +58,10 @@ const Bg = styled(Flex)<{ hideBg?: boolean }>`
   position: fixed;
   width: 100%;
   height: 100vh;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 0;
   transition: all;
   z-index: 1500;
   animation: ${fadeAnimation} 0.2s ease-in-out;

@@ -1,16 +1,17 @@
 import { Leva } from 'leva'
-import { useCallback, useEffect } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import 'react-toastify/dist/ReactToastify.css'
+import { Socket } from 'socket.io-client'
 import * as sphinx from 'sphinx-bridge-kevkevinpal'
 import styled from 'styled-components'
-import { AddNodeModal } from '~/components/AddNodeModal'
 import { BudgetExplanationModal } from '~/components/BudgetExplanationModal'
-import { Flex } from '~/components/common/Flex'
 import { DataRetriever } from '~/components/DataRetriever'
 import { GlobalStyle } from '~/components/GlobalStyle'
 import { Universe } from '~/components/Universe'
+import { Flex } from '~/components/common/Flex'
 import { isDevelopment, isE2E } from '~/constants'
+import useSocket from '~/hooks/useSockets'
 import { getGraphDataPositions } from '~/network/fetchGraphData/const'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
@@ -22,6 +23,8 @@ import { colors } from '~/utils/colors'
 import { updateBudget } from '~/utils/setBudget'
 import { E2ETests } from '~/utils/tests'
 import version from '~/utils/versionHelper'
+import { AddContentModal } from '../AddContentModal'
+import { AddSourceModal } from '../AddSourceModal'
 import { SourcesTableModal } from '../SourcesTableModal'
 import { Preloader } from '../Universe/Preloader'
 import { ActionsToolbar } from './ActionsToolbar'
@@ -51,7 +54,7 @@ const Version = styled(Flex)`
 export const App = () => {
   const { open } = useModal('budgetExplanation')
 
-  const [setBudget] = useUserStore((s) => [s.setBudget])
+  const [setBudget, setNodeCount] = useUserStore((s) => [s.setBudget, s.setNodeCount])
 
   const [
     setSidebarOpen,
@@ -81,6 +84,10 @@ export const App = () => {
     useDataStore((s) => s.setCategoryFilter),
   ]
 
+  const isSocketSet: { current: boolean } = useRef<boolean>(false)
+
+  const socket: Socket | null = useSocket()
+
   const form = useForm<{ search: string }>({ mode: 'onChange' })
 
   const handleSubmit = form.handleSubmit(({ search }) => {
@@ -104,12 +111,6 @@ export const App = () => {
 
         await updateBudget(setBudget)
       }
-
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      await sphinx.enable()
-
-      await updateBudget(setBudget)
 
       setSphinxModalOpen(false)
     }
@@ -147,6 +148,23 @@ export const App = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [graphStyle])
 
+  const handleNewNode = useCallback(() => {
+    setNodeCount('INCREMENT')
+  }, [setNodeCount])
+
+  // setup socket
+  useEffect(() => {
+    if (isSocketSet.current) {
+      return
+    }
+
+    if (socket) {
+      socket.on('newnode', handleNewNode)
+
+      isSocketSet.current = true
+    }
+  }, [socket, handleNewNode])
+
   return (
     <AppProviders>
       <GlobalStyle />
@@ -166,7 +184,8 @@ export const App = () => {
           </FormProvider>
         </DataRetriever>
 
-        <AddNodeModal />
+        <AddContentModal />
+        <AddSourceModal />
 
         <Toasts />
 

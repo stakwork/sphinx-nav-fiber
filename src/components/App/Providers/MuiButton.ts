@@ -41,17 +41,33 @@ export const MuiButton = {
         color: colors.GRAY6,
       },
       '&.MuiButton-sizeSmall': {
-        padding: '7px 16px',
+        // padding: '7px 16px',
         fontSize: '11px',
+        lineHeight: '14px',
+        fontWeight: 500,
+        height: '28px',
+      },
+      '&.MuiButton-sizeMedium': {
+        height: '32px',
+        fontSize: '13px',
         lineHeight: '14px',
         fontWeight: 500,
       },
       '&.MuiButton-sizeLarge': {
-        padding: '12px 24px',
+        // padding: '12px 24px',
         fontSize: '1.2rem',
+        height: '40px',
       },
 
       '&.MuiButton-outlined': {},
+    },
+    textPrimary: {
+      '& .MuiButton-endIcon': {
+        color: colors.GRAY6,
+      },
+      '& .MuiButton-startIcon': {
+        color: colors.GRAY6,
+      },
     },
     outlined: {
       // Add your custom styles here for the outlined variant
@@ -85,6 +101,23 @@ export const MuiButton = {
         backgroundColor: colors.BLUE_PRESS_STATE,
         color: colors.white,
       },
+      '&.MuiButton-sizeSmall': {
+        // padding: '7px 16px',
+        fontSize: '11px',
+        lineHeight: '14px',
+        fontWeight: 500,
+      },
+      '&.MuiButton-sizeLarge': {
+        // padding: '12px 24px',
+        fontSize: '14px',
+        maxHeight: '40px',
+        fontWeight: 600,
+        lineHeight: '16px',
+      },
+      '&.Mui-disabled': {
+        background: 'rgba(48, 51, 66, 0.50)',
+        color: 'rgba(82, 86, 110, 1)',
+      },
     },
     textSecondary: {
       // Your custom styles for the secondary text button here
@@ -95,12 +128,18 @@ export const MuiButton = {
     },
     startIcon: {
       // Define the size of the icon (adjust as needed)
-      fontSize: '1em',
+      fontSize: '20px',
       marginRight: 0,
+      '& > *:nth-of-type(1)': {
+        fontSize: '20px',
+      },
     },
     endIcon: {
       // Define the size of the icon (adjust as needed)
-      fontSize: '1em',
+      fontSize: '20px',
+      '& > *:nth-of-type(1)': {
+        fontSize: '20px',
+      },
     },
   },
 }

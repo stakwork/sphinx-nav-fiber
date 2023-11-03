@@ -1,6 +1,7 @@
 import moment from 'moment'
 import styled from 'styled-components'
 import { BoostAmt } from '~/components/App/Helper/BoostAmt'
+import LinkIcon from '~/components/Icons/LinkIcon'
 import { Avatar } from '~/components/common/Avatar'
 import { Flex } from '~/components/common/Flex'
 import { FlexboxProps } from '~/components/common/Flex/flexbox'
@@ -39,7 +40,7 @@ const EpisodeWrapper = styled(Flex).attrs({
   }
 `
 
-type Props = {
+export type Props = {
   boostCount: number
   date: number
   episodeTitle: string
@@ -48,6 +49,7 @@ type Props = {
   imageUrl: string
   showTitle?: string
   text?: string
+  link?: string
   type?: string
   name?: string
   verified?: boolean
@@ -69,6 +71,7 @@ export const Episode = ({
   text,
   name,
   profilePicture,
+  link,
   verified = false,
   twitterHandle,
   className = 'episode-wrapper',
@@ -83,7 +86,7 @@ export const Episode = ({
         <Flex direction="row">
           {!isSelectedView && (
             <Flex align="center" pr={16}>
-              <Avatar src={imageUrl} type={type || ''} />
+              <Avatar size={64} src={imageUrl} type={type || ''} />
             </Flex>
           )}
 
@@ -92,11 +95,16 @@ export const Episode = ({
               <Flex align="center" direction="row">
                 {type && <TypeBadge type={type} />}
               </Flex>
+              {type === 'youtube' ? (
+                <StyledLink href={`${link}?open=system`} onClick={(e) => e.stopPropagation()}>
+                  <LinkIcon />
+                </StyledLink>
+              ) : null}
             </Flex>
 
             <Description data-testid="episode-description">{episodeTitle}</Description>
-            <Flex direction="row" justify="flex-start">
-              {Boolean(date) && <Date>{moment.unix(date).format('ll')}</Date>}
+            <Flex align="center" direction="row" justify="flex-start">
+              {Boolean(date) && <Date>{moment.unix(date).fromNow()}</Date>}
               {Boolean(showTitle) && <Title>{showTitle}</Title>}
               {!isSelectedView && boostCount > 0 && (
                 <Flex style={{ marginLeft: 'auto' }}>
@@ -173,4 +181,10 @@ export const Title = styled(Date)`
     height: 4px;
     background: ${colors.GRAY6};
   }
+`
+
+const StyledLink = styled.a`
+  color: ${colors.GRAY6};
+  font-size: 16px;
+  height: 16px;
 `

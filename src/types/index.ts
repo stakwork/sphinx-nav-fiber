@@ -19,6 +19,7 @@ export type FetchRadarResponse = {
 
 export type FetchTopicResponse = {
   data: Topic[]
+  topicCount: number
 }
 
 export type RadarRequest = {
@@ -29,7 +30,7 @@ export type RadarRequest = {
 export type NodeRequest = {
   ref_id: string
   node_name: string
-  node_value: boolean
+  node_value: boolean | string
 }
 
 export type Node = {
@@ -156,6 +157,17 @@ export type Topic = {
   topic: string
   ref_id: string
   muted_topic: string
+  edgeList: Array<string>
+  edgeCount: number
+  date_added_to_graph: string
+}
+
+export type TopicFilter = {
+  search?: string
+  muted: boolean
+  sortBy: string
+  page: number
+  pageSize: number
 }
 
 export type SubmitErrRes = {

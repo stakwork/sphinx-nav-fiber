@@ -15,6 +15,9 @@ export const StyledTableCell = styled(TableCell)`
     font-style: normal;
     font-weight: 500;
     line-height: 24px;
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   &.empty {
@@ -63,7 +66,7 @@ export const StyledPill = styled(Button)`
 `
 
 export const Heading = styled(Flex)`
-  margin-bottom: 26px;
+  margin-bottom: 16px;
   padding: 0 36px;
   ${Text} {
     margin-bottom: 0;

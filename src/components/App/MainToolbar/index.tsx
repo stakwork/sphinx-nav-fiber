@@ -6,22 +6,18 @@ import SourcesTableIcon from '~/components/Icons/SourcesTableIcon'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { SecondarySidebarActiveTab, useAppStore } from '~/stores/useAppStore'
-import { AddNodeModalData, useModal } from '~/stores/useModalStore'
+import { useModal } from '~/stores/useModalStore'
 import { colors } from '~/utils/colors'
 
 export const MainToolbar = () => {
   const [setSecondarySidebarActiveTab] = useAppStore((s) => [s.setSecondarySidebarActiveTab])
 
-  const { open, setAddNodeModalData } = useModal('addNode')
   const { open: openSourcesModal } = useModal('sourcesTable')
+  const { open: openContentAddModal } = useModal('addContent')
+  const { open: openSourceAddModal } = useModal('addSource')
 
   const handleOpenSidebar = (tab: SecondarySidebarActiveTab) => {
     setSecondarySidebarActiveTab(tab)
-  }
-
-  const handleOpenAddingModal = (data: AddNodeModalData) => {
-    open()
-    setAddNodeModalData(data)
   }
 
   return (
@@ -29,13 +25,13 @@ export const MainToolbar = () => {
       <LogoButton onClick={() => handleOpenSidebar('about')}>
         <img alt="Second brain" src="logo.svg" />
       </LogoButton>
-      <ActionButton onClick={() => handleOpenAddingModal('content')}>
+      <ActionButton onClick={openContentAddModal}>
         <IconWrapper>
           <AddContentIcon />
         </IconWrapper>
         <Text>Add Content</Text>
       </ActionButton>
-      <ActionButton onClick={() => handleOpenAddingModal('source')}>
+      <ActionButton onClick={openSourceAddModal}>
         <IconWrapper>
           <AddSourceIcon />
         </IconWrapper>
@@ -53,7 +49,7 @@ export const MainToolbar = () => {
         </IconWrapper>
         <Text>Sentiment Data</Text>
       </ActionButton>
-      {/* <ActionButton onClick={() => openSourcesModal()}>
+      {/* <ActionButton onClick={openSourceAddModal}>
         <IconWrapper>
           <SettingsIcon />
         </IconWrapper>

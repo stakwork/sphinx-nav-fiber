@@ -83,7 +83,7 @@ const fetchNodes = async (search: string): Promise<FetchDataResponse> => {
   }
 
   if (isDevelopment || isE2E) {
-    const response = await api.get<FetchDataResponse>(`/v2/searching?word=${search}&free=true`)
+    const response = await api.get<FetchDataResponse>(`/v2/search?word=${search}&free=true`)
 
     return response
   }

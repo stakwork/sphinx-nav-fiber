@@ -9,4 +9,16 @@ export const sourcesMapper: ISourceMap = {
   [YOUTUBE_CHANNEL]: 'Youtube channel',
 }
 
+export const DATE = 'date'
+export const EDGE_COUNT = 'edge_count'
+export const ALPHABETICALLY = 'alphabetically'
+
+type Option = Record<string, string>
+
+export const SORT_MAPPING: Option = {
+  [DATE]: 'Date',
+  [EDGE_COUNT]: 'Edge Count',
+  [ALPHABETICALLY]: 'Alphabetically',
+}
+
 export const TWITTER_LINK = 'https://twitter.com'
