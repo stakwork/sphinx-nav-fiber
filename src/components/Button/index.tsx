@@ -6,7 +6,7 @@ import { ColorName } from '~/utils/colors'
 
 type Props = {
   background?: ColorName
-  children: string | string[]
+  children?: string | string[]
   endIcon?: ReactNode
   startIcon?: ReactNode
   disabled?: boolean

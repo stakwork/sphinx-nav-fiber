@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { Button } from '~/components/Button'
 import CenterCamera from '~/components/Icons/CenterCameraIcon'
 import { useDataStore } from '~/stores/useDataStore'
 import { Tooltip } from '../Graph/Cubes/Cube/components/Tooltip'
@@ -12,13 +13,12 @@ export const Overlay = () => {
 
   return (
     <OverlayWrap>
-      <CenterButton>
-        <CenterIcon onClick={() =>
-          {
-            setCameraFocusTrigger(!cameraFocusTrigger);
-          }}
-        />
-      </CenterButton>
+      <TestButton
+        background="bluePressState"
+        kind="small"
+        onClick={() => setCameraFocusTrigger(!cameraFocusTrigger)}
+        startIcon={<CenterCamera/>}
+      />
 
       {hoveredNode && (
         <div id="tooltip-portal">
@@ -29,36 +29,26 @@ export const Overlay = () => {
   )
 }
 
-const CenterButton = styled.div`
+const TestButton = styled(Button)`
   position: absolute;
   right: 20px;
   bottom: 102px;
 
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
   display: flex;
   padding: 8px 8px 9px 8px;
   justify-content: center;
   align-items: center;
   flex-shrink: 0;
 
-  border-radius: 200px;
   background: var(--BG-1, #23252F);
-
-  cursor: pointer;
 
   &:hover {
     background: #121319;
     transition: .2s;
   }
-`;
-
-// const PosText = styled.p`
-//   position: absolute;
-//   right: 20px;
-//   bottom: 120px;
-//   color: white;
-// `;
-
-const CenterIcon = styled(CenterCamera)`
 `;
 
 const OverlayWrap = styled('div')(({ theme }) => ({
