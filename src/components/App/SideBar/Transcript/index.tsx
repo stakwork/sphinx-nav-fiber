@@ -1,4 +1,5 @@
 import { Button } from '@mui/material'
+import React, { useState } from 'react'
 import { MdClose } from 'react-icons/md'
 import styled from 'styled-components'
 import CopyIcon from '~/components/Icons/CopyIcon'
@@ -7,24 +8,7 @@ import { Flex } from '~/components/common/Flex'
 import { useAppStore } from '~/stores/useAppStore'
 import { NodeExtended } from '~/types'
 import { colors } from '~/utils/colors'
-
-const copyNodeText = (text: string | undefined) => {
-  if (text === undefined) {
-    return
-  }
-
-  navigator.clipboard.writeText(text)
-
-  const copyButton = document.querySelector('.copy-button')
-
-  if (copyButton) {
-    copyButton.classList.add('copied')
-
-    setTimeout(() => {
-      copyButton.classList.remove('copied')
-    }, 1000)
-  }
-}
+import CheckIcon from '../../../Icons/CheckIcon'
 
 type TranscriptProps = {
   stateless?: boolean
@@ -34,8 +18,19 @@ type TranscriptProps = {
 export const Transcript = ({ stateless, node }: TranscriptProps) => {
   const [transcriptIsOpen, setTranscriptOpen] = useAppStore((s) => [s.transcriptIsOpen, s.setTranscriptOpen])
 
+  const [isCopied, setIsCopied] = useState(false)
+
   if (!stateless && !transcriptIsOpen) {
     return null
+  }
+
+  const copyNodeText = (text: string | undefined) => {
+    if (text === undefined) {
+      return
+    }
+
+    navigator.clipboard.writeText(text)
+    setIsCopied(true)
   }
 
   return (
@@ -51,9 +46,25 @@ export const Transcript = ({ stateless, node }: TranscriptProps) => {
         )}
 
         {node?.text ? (
-          <Button endIcon={<CopyIcon />} onPointerDown={() => copyNodeText(node?.text)} size="small" variant="outlined">
-            Copy
-          </Button>
+          <>
+            {!isCopied ? (
+              <Button
+                endIcon={<CopyIcon />}
+                onPointerDown={() => copyNodeText(node?.text)}
+                size="small"
+                variant="outlined"
+              >
+                Copy
+              </Button>
+            ) : (
+              <CopiedButton align="center" direction="row" justify="flex-start">
+                <div className="icon">
+                  <CheckIcon />
+                </div>
+                <div className="text">Copied</div>
+              </CopiedButton>
+            )}
+          </>
         ) : (
           <div />
         )}
@@ -120,4 +131,20 @@ const Box = styled(Flex)`
   font-style: normal;
   font-weight: 400;
   line-height: 18px;
+`
+
+const CopiedButton = styled(Flex)`
+  color: ${colors.SECONDARY_BLUE};
+  font-family: Barlow;
+  font-size: 13px;
+  font-weight: 500;
+  height: 28px;
+  padding: 0 20px;
+  .text {
+    margin-left: 5px;
+  }
+
+  .icon {
+    font-size: 12px;
+  }
 `
