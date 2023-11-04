@@ -2,6 +2,7 @@ import styled from 'styled-components'
 import AddContentIcon from '~/components/Icons/AddContentIcon'
 import AddSourceIcon from '~/components/Icons/AddSourceIcon'
 import SentimentDataIcon from '~/components/Icons/SentimentDataIcon'
+import SettingsIcon from '~/components/Icons/SettingsIcon'
 import SourcesTableIcon from '~/components/Icons/SourcesTableIcon'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
@@ -49,12 +50,12 @@ export const MainToolbar = () => {
         </IconWrapper>
         <Text>Sentiment Data</Text>
       </ActionButton>
-      {/* <ActionButton onClick={openSourceAddModal}>
+      <ActionButton>
         <IconWrapper>
           <SettingsIcon />
         </IconWrapper>
         <Text>Change Display</Text>
-      </ActionButton> */}
+      </ActionButton>
     </Wrapper>
   )
 }
