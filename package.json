@@ -209,5 +209,8 @@
       "html",
       "text-summary"
     ]
+  },
+  "coverage": {
+    "min": 30
   }
 }
