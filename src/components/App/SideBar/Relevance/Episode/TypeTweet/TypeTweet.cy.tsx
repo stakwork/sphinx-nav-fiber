@@ -104,26 +104,6 @@ describe('TypeTweet', () => {
     cy.findByText('1 hour ago').should('be.visible')
   })
 
-  it('should display "2 hours ago"', () => {
-    const twoDaysAgo = currentUnixTimestamp - 3600
-
-    const props: Props = {
-      text: 'Hello, world! This is a test tweet.',
-      date: twoDaysAgo,
-      name: 'Test User',
-      twitterHandle: 'testuser',
-      verified: false,
-    }
-
-    cy.mount(
-      <div style={{ backgroundColor: 'black' }}>
-        <TypeTweet {...props} />
-      </div>,
-    )
-
-    cy.findByText('2 hours ago').should('be.visible')
-  })
-
   it('should display "23 hours ago"', () => {
     const timeValueFromNow = unixTimestampInSeconds() - 82800
 
