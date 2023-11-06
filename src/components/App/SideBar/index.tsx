@@ -14,6 +14,7 @@ import { SearchBar } from '~/components/SearchBar'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore, useFilteredNodes, useSelectedNode } from '~/stores/useDataStore'
 import { colors } from '~/utils/colors'
+import { TeachMe } from '../Helper/TeachMe'
 import { LatestView } from './Latest'
 import { EpisodeSkeleton } from './Relevance/EpisodeSkeleton'
 import { SideBarSubView } from './SidebarSubView'
@@ -102,7 +103,8 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
                   <span className="count">{filteredNodes.length}</span>
                   <span className="label"> results</span>
                 </div>
-                <div className="right">
+                <div className="right" style={{ alignItems: 'center' }}>
+                  <TeachMe />
                   <SelectWithPopover />
                 </div>
               </>
