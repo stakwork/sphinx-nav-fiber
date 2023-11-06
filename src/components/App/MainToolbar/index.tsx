@@ -44,17 +44,17 @@ export const MainToolbar = () => {
         </IconWrapper>
         <Text>Source Table</Text>
       </ActionButton>
-      <ActionButton id="cy-open-sentiment-data" onClick={() => handleOpenSidebar('sentiment')}>
+{/*       <ActionButton id="cy-open-sentiment-data" onClick={() => handleOpenSidebar('sentiment')}>
         <IconWrapper>
           <SentimentDataIcon />
         </IconWrapper>
         <Text>Sentiment Data</Text>
-      </ActionButton>
+      </ActionButton> */}
       <ActionButton>
         <IconWrapper>
           <SettingsIcon />
         </IconWrapper>
-        <Text>Change Display</Text>
+        <Text>Settings</Text>
       </ActionButton>
     </Wrapper>
   )
