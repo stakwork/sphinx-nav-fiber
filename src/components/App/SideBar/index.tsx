@@ -103,7 +103,7 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
                   <span className="count">{filteredNodes.length}</span>
                   <span className="label"> results</span>
                 </div>
-                <div className="right" style={{alignItems: "center"}}>
+                <div className="right" style={{ alignItems: 'center' }}>
                   <TeachMe />
                   <SelectWithPopover />
                 </div>
