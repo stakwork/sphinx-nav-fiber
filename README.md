@@ -14,10 +14,36 @@ Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 The page will reload if you make edits.\
 You will also see any lint errors in the console.
 
-### `yarn test`
+### `run tests`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Run e2e and component tests (cypress non-headless mode) like so
+```bash
+yarn run cy-open
+```
+
+Run e2e test in headless mode like so
+```bash
+yarn run cy-run
+```
+
+Run component test in headless mode like so
+```bash
+yarn run cy-comp
+```
+
+To create a test coverage report
+- while running the application do
+```bash
+yarn run cy-run
+```
+
+- whithout running the application do
+```bash
+yarn run test-coverage
+```
+
+The `coverage` folder contains generated coverage report
+
 
 ### `yarn build`
 
