@@ -19,12 +19,7 @@ import { ToastMessage } from '../common/Toast/toastMessage'
 import { BudgetStep } from './BudgetStep'
 import { LocationStep } from './LocationStep'
 import { SourceStep } from './SourceStep'
-
-const youtubeRegex = /(https?:\/\/)?(www\.)?youtube\.com\/watch\?v=([A-Za-z0-9_-]+)/
-const twitterSpaceRegex = /https:\/\/twitter\.com\/i\/spaces\/([A-Za-z0-9_-]+)/
-const tweetUrlRegex = /https:\/\/twitter\.com\/[^/]+\/status\/(\d+)/
-const mp3Regex = /(https?:\/\/)?([A-Za-z0-9_-]+)\.mp3/
-const genericUrlRegex = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/
+import { getInputType } from './utils'
 
 export type FormData = {
   input: string
@@ -160,21 +155,7 @@ export const AddContentModal = () => {
   const source = watch('source')
 
   useEffect(() => {
-    let inputType = DOCUMENT
-
-    if (youtubeRegex.test(source)) {
-      inputType = LINK
-    } else if (twitterSpaceRegex.test(source)) {
-      inputType = LINK
-    } else if (tweetUrlRegex.test(source)) {
-      inputType = TWITTER_SOURCE
-    } else if (mp3Regex.test(source)) {
-      inputType = LINK
-    } else if (genericUrlRegex.test(source)) {
-      inputType = WEB_PAGE
-    }
-
-    setValue('inputType', inputType)
+    setValue('inputType', getInputType(source))
   }, [source, setValue])
 
   const handleClose = () => {

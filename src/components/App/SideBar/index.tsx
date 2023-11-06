@@ -5,6 +5,7 @@ import { useFormContext } from 'react-hook-form'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
 import { SelectWithPopover } from '~/components/App/SideBar/Dropdown'
+import { TeachMe } from '../Helper/TeachMe'
 import ChevronLeftIcon from '~/components/Icons/ChevronLeftIcon'
 import ClearIcon from '~/components/Icons/ClearIcon'
 import SearchIcon from '~/components/Icons/SearchIcon'
@@ -102,7 +103,8 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
                   <span className="count">{filteredNodes.length}</span>
                   <span className="label"> results</span>
                 </div>
-                <div className="right">
+                <div className="right" style={{ alignItems: 'center' }}>
+                  <TeachMe />
                   <SelectWithPopover />
                 </div>
               </>

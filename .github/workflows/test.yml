@@ -34,6 +34,9 @@ jobs:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           # created by the GH Action automatically
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Component tests
+        run: yarn run cy-comp
+        continue-on-error: false
 
       - name: Check the coverage value
         run: yarn test-coverage

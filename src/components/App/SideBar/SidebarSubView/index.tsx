@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import ChevronLeftIcon from '~/components/Icons/ChevronLeftIcon'
 import CloseIcon from '~/components/Icons/CloseIcon'
 import { Flex } from '~/components/common/Flex'
+import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
 import { colors } from '~/utils/colors'
 import { SelectedNodeView } from '../SelectedNodeView'
@@ -15,6 +16,8 @@ export const SideBarSubView = ({ open }: Props) => {
     s.setTeachMe,
     s.showTeachMe,
   ])
+
+  const [setSidebarOpen] = useAppStore((s) => [s.setSidebarOpen])
 
   return (
     <Slide direction="right" in={open} mountOnEnter style={{ width: showTeachMe ? '700px' : '' }} unmountOnExit>
@@ -32,8 +35,7 @@ export const SideBarSubView = ({ open }: Props) => {
         </CloseButton>
         <CollapseButton
           onClick={() => {
-            setSelectedNode(null)
-            setTeachMe(false)
+            setSidebarOpen(false)
           }}
         >
           <ChevronLeftIcon />
