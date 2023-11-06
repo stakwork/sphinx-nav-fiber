@@ -79,7 +79,7 @@ export const YouTube = () => {
         </TextWrapper>
         <StyledDivider />
         <TextWrapper>
-          <Transcript node={selectedNode} stateless />
+          <Transcript key={id} node={selectedNode} stateless />
         </TextWrapper>
       </div>
     </Wrapper>
