@@ -45,14 +45,14 @@ const NodeBadge = ({ position, userData, color }: BadgeProps) => {
   const isHovered = useMemo(() => hoveredNode?.ref_id === userData?.ref_id, [hoveredNode?.ref_id, userData?.ref_id])
   const isSelected = selectedNode?.ref_id === userData?.ref_id
 
-  return (isSelected && showSelectionGraph) || !isSelected ? (
+  return isTopic || (isSelected && showSelectionGraph) || !isSelected ? (
     <group ref={ref} position={position}>
-      <Html center sprite>
+      <Html center sprite zIndexRange={[0, 0]}>
         <Tag
           className={clsx(userData?.node_type, { selected: isSelected })}
           color={color}
           fontColor={colors.white}
-          fontSize={isTopic ? 14 : 20}
+          fontSize={isTopic ? 64 : 20}
           onClick={(e) => {
             e.stopPropagation()
 
