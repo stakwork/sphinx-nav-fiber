@@ -1,6 +1,6 @@
+import { Button } from '@mui/material'
 import styled from 'styled-components'
-import { Button } from '~/components/Button'
-import CenterCamera from '~/components/Icons/CenterCameraIcon'
+import CameraCenterIcon from '~/components/Icons/CameraCenterIcon'
 import { useDataStore } from '~/stores/useDataStore'
 import { Tooltip } from '../Graph/Cubes/Cube/components/Tooltip'
 
@@ -14,10 +14,10 @@ export const Overlay = () => {
   return (
     <OverlayWrap>
       <CameraCenterButton
-        background="bluePressState"
-        kind="small"
+        href=""
         onClick={() => setCameraFocusTrigger(!cameraFocusTrigger)}
-        startIcon={<CenterCamera />}
+        size="medium"
+        startIcon={<CameraCenterIcon />}
       />
 
       {hoveredNode && (
@@ -30,24 +30,28 @@ export const Overlay = () => {
 }
 
 const CameraCenterButton = styled(Button)`
-  position: absolute;
-  right: 20px;
-  bottom: 102px;
+  && {
+    position: absolute;
+    right: 20px;
+    bottom: 102px;
+    padding: 0;
+    width: 32px;
+    min-width: auto;
+    justify-content: center;
+    align-items: center;
+    pointer-events: all;
 
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  display: flex;
-  padding: 8px 8px 9px 8px;
-  justify-content: center;
-  align-items: center;
-  flex-shrink: 0;
+    .MuiButton-startIcon {
+      margin-left: 0;
+      filter: brightness(.65);
+    }
 
-  background: var(--BG-1, #23252f);
-
-  &:hover {
-    background: #121319;
-    transition: 0.2s;
+    :hover {
+      .MuiButton-startIcon {
+        filter: brightness(.9);
+      }
+      transition: 0.1s;
+    }
   }
 `
 

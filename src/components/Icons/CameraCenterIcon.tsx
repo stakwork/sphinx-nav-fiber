@@ -1,9 +1,9 @@
 /* eslint-disable */
 import React from 'react'
 
-const CenterCamera: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
-  <svg width="18" height="17" viewBox="0 0 18 17" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <g id="Center Icon">
+const CameraCenterIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <svg width="1em" height="1em" viewBox="0 0 18 17" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+    <g id="center">
       <path id="Vector 121" d="M9 4L9 1" stroke="white" stroke-linecap="round" />
       <path id="Vector 123" d="M14 9H17" stroke="white" stroke-linecap="round" />
       <path id="Vector 122" d="M9 16L9 14" stroke="white" stroke-linecap="round" />
@@ -13,4 +13,4 @@ const CenterCamera: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
   </svg>
 )
 
-export default CenterCamera
+export default CameraCenterIcon
