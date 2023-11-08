@@ -1,4 +1,4 @@
-import { validateLatitude, validateLongitude } from '../utils'
+import { validateLatitude, validateLongitude } from '..'
 
 describe('validateLongitude', () => {
   /**
