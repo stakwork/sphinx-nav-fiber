@@ -1,4 +1,4 @@
-import { Skeleton } from '@mui/material'
+import { Button, Skeleton } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { ClipLoader } from 'react-spinners'
@@ -69,11 +69,19 @@ export const Trending = ({ onSubmit }: Props) => {
           </>
         ) : (
           <>
-            {trendingTopics.map((i) => (
-              <Flex key={i} className="list-item" onClick={() => selectTrending(i)}>
-                #{i}
-              </Flex>
-            ))}
+            {trendingTopics.length !== 0 ? (
+              <>
+                {trendingTopics.map((i) => (
+                  <Flex key={i} className="list-item" onClick={() => selectTrending(i)}>
+                    #{i}
+                  </Flex>
+                ))}
+              </>
+            ) : (
+              <TrendingTopicsNoContent align="center" background="BG1" direction="row" justify="center">
+                <Button size="medium">No Trends</Button>
+              </TrendingTopicsNoContent>
+            )}
           </>
         )}
       </ul>
@@ -106,6 +114,7 @@ const Wrapper = styled(Flex)`
     padding: 0;
     margin: 0;
     cursor: pointer;
+    position: relative;
 
     &-item {
       padding: 18px 16px 18px 24px;
@@ -135,4 +144,12 @@ const StyledSkeleton = styled(Skeleton)`
   && {
     background: rgba(0, 0, 0, 0.15);
   }
+`
+
+const TrendingTopicsNoContent = styled(Flex)`
+  flex: 0 0 86px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, 50%);
 `
