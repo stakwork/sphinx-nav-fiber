@@ -1,4 +1,4 @@
-import { getInputType } from '../utils'
+import { getInputType } from '..'
 import { LINK, TWITTER_SOURCE, WEB_PAGE } from '~/constants'
 
 describe('youtubeRegex', () => {

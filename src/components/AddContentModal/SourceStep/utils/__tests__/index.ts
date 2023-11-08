@@ -1,4 +1,4 @@
-import { twitterOrYoutubeRegexOrMp3 } from '../utils'
+import { twitterOrYoutubeRegexOrMp3 } from '..'
 
 describe('twitterOrYoutubeRegexOrMp3', () => {
   const regex = new RegExp(twitterOrYoutubeRegexOrMp3)

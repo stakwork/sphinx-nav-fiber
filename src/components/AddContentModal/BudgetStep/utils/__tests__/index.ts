@@ -1,4 +1,4 @@
-import { formatBudget } from '../utils'
+import { formatBudget } from '..'
 
 describe('formatBudget', () => {
   /**

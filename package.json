@@ -74,7 +74,7 @@
     "preview": "vite preview --port 3004",
     "build-preview": "yarn run build && yarn run preview",
     "build-preview-e2e": "VITE_APP_IS_E2E=true yarn run build && vite preview --port 3000",
-    "test": "NODE_ENV=test yarn jest",
+    "test": "NODE_ENV=test yarn jest --coverage --no-cache",
     "test-start": "yarn jest --watch",
     "test-coverage": "node ./cypress/coverageTest.js",
     "cy-open": "cypress open",
@@ -88,23 +88,17 @@
     "lint": "eslint src --max-warnings 24"
   },
   "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
+    "extends": ["react-app", "react-app/jest"]
   },
   "jest": {
     "collectCoverage": true,
-    "collectCoverageFrom": [
-      "./src/**/*.js",
-      "./src/**/*.ts"
-    ],
+    "collectCoverageFrom": ["./src/**/*.js", "./src/**/*.ts"],
     "coverageThreshold": {
       "global": {
         "lines": 0
       },
       "./src/components/**/utils/**.ts": {
-        "lines": 92
+        "lines": 100
       },
       "./src/utils/": {
         "lines": 23,
@@ -125,16 +119,8 @@
     }
   },
   "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+    "production": [">0.2%", "not dead", "not op_mini all"],
+    "development": ["last 1 chrome version", "last 1 firefox version", "last 1 safari version"]
   },
   "resolutions": {
     "react-error-overlay": "6.0.9"
@@ -205,10 +191,7 @@
     "sourceMap": false,
     "all": true,
     "include": "src/**/*.{js,jsx,ts,tsx}",
-    "reporter": [
-      "html",
-      "text-summary"
-    ]
+    "reporter": ["html", "text-summary"]
   },
   "coverage": {
     "min": 30
