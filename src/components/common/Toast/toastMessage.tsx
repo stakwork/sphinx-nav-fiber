@@ -2,7 +2,8 @@ import { toast, ToastContentProps } from 'react-toastify'
 import * as sphinx from 'sphinx-bridge-kevkevinpal'
 import styled from 'styled-components'
 import { Text } from '~/components/common/Text'
-import { BOOST_ERROR_BUDGET } from '~/constants'
+import { BOOST_ERROR_BUDGET, NODE_ADD_SUCCESS } from '~/constants'
+import { MdCheckCircle, MdWarning } from 'react-icons/md'
 import { colors } from '~/utils/colors'
 
 type Props = ToastContentProps & {
@@ -54,6 +55,19 @@ export const ToastMessage = ({ message }: Partial<Props>) => {
   }
 
   return <div>{message}</div>
+}
+
+export const notify = (message: string) => {
+  toast(<ToastMessage message={message} />, {
+    icon:
+      message === NODE_ADD_SUCCESS ? (
+        <MdCheckCircle color={colors.primaryGreen} />
+      ) : (
+        <MdWarning color={colors.primaryRed} />
+      ),
+    position: toast.POSITION.BOTTOM_CENTER,
+    type: message === NODE_ADD_SUCCESS ? 'success' : 'error',
+  })
 }
 
 const ButtonWrapper = styled.button`
