@@ -1,55 +1,23 @@
 import { Lsat } from 'lsat-js'
 import { useEffect, useState } from 'react'
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
-import { MdCheckCircle, MdWarning } from 'react-icons/md'
-import { toast } from 'react-toastify'
 import * as sphinx from 'sphinx-bridge-kevkevinpal'
 import { BaseModal } from '~/components/Modal'
-import {
-  DOCUMENT,
-  GITHUB_REPOSITORY,
-  NODE_ADD_ERROR,
-  NODE_ADD_SUCCESS,
-  RSS,
-  TOPIC,
-  TWITTER_HANDLE,
-  YOUTUBE_CHANNEL,
-} from '~/constants'
+import { NODE_ADD_ERROR, NODE_ADD_SUCCESS, TWITTER_HANDLE } from '~/constants'
 import { api } from '~/network/api'
 import { useModal } from '~/stores/useModalStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { SubmitErrRes } from '~/types'
-import { colors } from '~/utils/colors'
-import { getLSat } from '~/utils/getLSat'
-import { payLsat } from '~/utils/payLsat'
-import { updateBudget } from '~/utils/setBudget'
-import { executeIfProd } from '~/utils/tests'
-import { ToastMessage } from '../common/Toast/toastMessage'
+import { getLSat, payLsat, updateBudget, executeIfProd } from '~/utils'
+import { notify } from '~/components/common/Toast/toastMessage'
 import { BudgetStep } from './BudgetStep'
 import { SourceStep } from './SourceStep'
-
-const twitterHandlePattern = /@(\w+)/g
-const youtubeChannelPattern = /https?:\/\/(www\.)?youtube\.com\/(@)?([\w-]+)/i
-const githubRepoPattern = /https?:\/\/github\.com\/([\w-]+)\/([\w-]+)/i
-const genericUrlRegex = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/
+import { getInputType } from './utils'
 
 export type FormData = {
   input: string
   inputType: string
   source: string
-}
-
-const notify = (message: string) => {
-  toast(<ToastMessage message={message} />, {
-    icon:
-      message === NODE_ADD_SUCCESS ? (
-        <MdCheckCircle color={colors.primaryGreen} />
-      ) : (
-        <MdWarning color={colors.primaryRed} />
-      ),
-    position: toast.POSITION.BOTTOM_CENTER,
-    type: message === NODE_ADD_SUCCESS ? 'success' : 'error',
-  })
 }
 
 const handleSubmitForm = async (
@@ -135,21 +103,7 @@ export const AddSourceModal = () => {
   const source = watch('source')
 
   useEffect(() => {
-    let inputType = DOCUMENT
-
-    if (youtubeChannelPattern.test(source)) {
-      inputType = YOUTUBE_CHANNEL
-    } else if (twitterHandlePattern.test(source)) {
-      inputType = TWITTER_HANDLE
-    } else if (githubRepoPattern.test(source)) {
-      inputType = GITHUB_REPOSITORY
-    } else if (genericUrlRegex.test(source)) {
-      inputType = RSS
-    } else {
-      inputType = TOPIC
-    }
-
-    setValue('inputType', inputType)
+    setValue('inputType', getInputType(source))
   }, [source, setValue])
 
   const handleClose = () => {

@@ -95,15 +95,15 @@
     "collectCoverageFrom": ["./src/**/*.js", "./src/**/*.ts"],
     "coverageThreshold": {
       "global": {
-        "lines": 0
+        "lines": 2
       },
       "./src/components/**/utils/**.ts": {
         "lines": 100
       },
       "./src/utils/": {
-        "lines": 23,
-        "branches": 29,
-        "functions": 33
+        "lines": 27,
+        "branches": 37,
+        "functions": 36 
       }
     },
     "moduleNameMapper": {
