@@ -1,10 +1,11 @@
 import { Button } from '@mui/material'
 import { useCallback, useMemo, useRef, useState } from 'react'
 import styled from 'styled-components'
-import { Flex } from '~/components/common/Flex'
 import { ScrollView } from '~/components/ScrollView'
+import { Flex } from '~/components/common/Flex'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore, useFilteredNodes } from '~/stores/useDataStore'
+import { useModal } from '~/stores/useModalStore'
 import { NodeExtended } from '~/types'
 import { formatDescription } from '~/utils/formatDescription'
 import { saveConsumedContent } from '~/utils/relayHelper'
@@ -40,6 +41,8 @@ export const Relevance = ({ isSearchResult }: Props) => {
     () => [...filteredNodes].sort((a, b) => (b.date || 0) - (a.date || 0)).slice(0, endSlice),
     [filteredNodes, endSlice],
   )
+
+  const { open: openContentAddModal } = useModal('addContent')
 
   const handleNodeClick = useCallback(
     (node: NodeExtended) => {
@@ -95,25 +98,31 @@ export const Relevance = ({ isSearchResult }: Props) => {
           )
         })}
 
-        <LoadMoreWrapper align="center" background="BG1" direction="row" justify="center">
-          <Button
-            disabled={!hasNext}
-            onClick={() => {
-              if (hasNext) {
-                setCurrentPage(currentPage + 1)
-                scrollViewRef.current?.scrollTo(0, 0)
-              }
-            }}
-            size="medium"
-          >
-            Load More
-          </Button>
-        </LoadMoreWrapper>
+        <ContentControlsWrapper align="center" background="BG1" direction="row" justify="center">
+          {currentNodes.length !== 0 ? (
+            <Button
+              disabled={!hasNext}
+              onClick={() => {
+                if (hasNext) {
+                  setCurrentPage(currentPage + 1)
+                  scrollViewRef.current?.scrollTo(0, 0)
+                }
+              }}
+              size="medium"
+            >
+              Load More
+            </Button>
+          ) : (
+            <Button onClick={openContentAddModal} size="medium">
+              Add Content
+            </Button>
+          )}
+        </ContentControlsWrapper>
       </ScrollView>
     </>
   )
 }
 
-const LoadMoreWrapper = styled(Flex)`
+const ContentControlsWrapper = styled(Flex)`
   flex: 0 0 86px;
 `
