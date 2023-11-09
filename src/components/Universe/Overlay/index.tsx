@@ -45,13 +45,6 @@ const CameraCenterButton = styled(Button)`
       margin-left: 0;
       filter: brightness(.65);
     }
-
-    :hover {
-      .MuiButton-startIcon {
-        filter: brightness(.9);
-      }
-      transition: 0.1s;
-    }
   }
 `
 
