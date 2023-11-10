@@ -1,4 +1,4 @@
-import { TypeTweet, Props } from '.'
+import { Props, TypeTweet } from '.'
 
 function unixTimestampInSeconds() {
   return Math.floor(Date.now() / 1000)

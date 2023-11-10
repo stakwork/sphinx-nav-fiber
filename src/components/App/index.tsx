@@ -5,17 +5,15 @@ import 'react-toastify/dist/ReactToastify.css'
 import { Socket } from 'socket.io-client'
 import * as sphinx from 'sphinx-bridge-kevkevinpal'
 import styled from 'styled-components'
-import { BudgetExplanationModal } from '~/components/BudgetExplanationModal'
+import { Flex } from '~/components/common/Flex'
 import { DataRetriever } from '~/components/DataRetriever'
 import { GlobalStyle } from '~/components/GlobalStyle'
 import { Universe } from '~/components/Universe'
-import { Flex } from '~/components/common/Flex'
 import { isDevelopment, isE2E } from '~/constants'
 import useSocket from '~/hooks/useSockets'
 import { getGraphDataPositions } from '~/network/fetchGraphData/const'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
-import { useModal } from '~/stores/useModalStore'
 import { useTeachStore } from '~/stores/useTeachStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { GraphData } from '~/types'
@@ -52,24 +50,14 @@ const Version = styled(Flex)`
 `
 
 export const App = () => {
-  const { open } = useModal('budgetExplanation')
-
   const [setBudget, setNodeCount] = useUserStore((s) => [s.setBudget, s.setNodeCount])
 
-  const [
-    setSidebarOpen,
-    searchTerm,
-    setCurrentSearch,
-    setRelevanceSelected,
-    setTranscriptOpen,
-    hasBudgetExplanationModalBeSeen,
-  ] = [
+  const [setSidebarOpen, searchTerm, setCurrentSearch, setRelevanceSelected, setTranscriptOpen] = [
     useAppStore((s) => s.setSidebarOpen),
     useAppStore((s) => s.currentSearch),
     useAppStore((s) => s.setCurrentSearch),
     useAppStore((s) => s.setRelevanceSelected),
     useAppStore((s) => s.setTranscriptOpen),
-    useAppStore((s) => s.hasBudgetExplanationModalBeSeen),
   ]
 
   const setTeachMeAnswer = useTeachStore((s) => s.setTeachMeAnswer)
@@ -122,17 +110,9 @@ export const App = () => {
   }, [fetchData, searchTerm, setSphinxModalOpen, setSidebarOpen, setBudget])
 
   useEffect(() => {
-    if (searchTerm) {
-      if (!hasBudgetExplanationModalBeSeen) {
-        open()
-
-        return
-      }
-    }
-
     runSearch()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchTerm, runSearch, hasBudgetExplanationModalBeSeen])
+  }, [searchTerm, runSearch])
 
   const repositionGraphDataAfterStyleChange = () => {
     if (data) {
@@ -189,7 +169,6 @@ export const App = () => {
 
         <Toasts />
 
-        <BudgetExplanationModal />
         <SourcesTableModal />
         <Helper />
       </Wrapper>

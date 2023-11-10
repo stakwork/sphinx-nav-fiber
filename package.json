@@ -1,6 +1,6 @@
 {
   "name": "sphinx-nav",
-  "version": "0.1.98",
+  "version": "0.1.105",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.11.1",
@@ -74,12 +74,13 @@
     "preview": "vite preview --port 3004",
     "build-preview": "yarn run build && yarn run preview",
     "build-preview-e2e": "VITE_APP_IS_E2E=true yarn run build && vite preview --port 3000",
-    "test": "NODE_ENV=test yarn jest",
+    "test": "NODE_ENV=test yarn jest --coverage --no-cache",
     "test-start": "yarn jest --watch",
     "test-coverage": "node ./cypress/coverageTest.js",
     "cy-open": "cypress open",
     "cy-run": "cypress run",
     "cy-comp": "cypress run --component",
+    "test:coverage": "npx nyc report --reporter=html --reporter=text-summary",
     "format": "prettier --write --config prettier.config.js ./src",
     "prettier": "npx prettier --config prettier.config.js --check ./src",
     "postinstall": "husky install",
@@ -87,28 +88,22 @@
     "lint": "eslint src --max-warnings 24"
   },
   "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
+    "extends": ["react-app", "react-app/jest"]
   },
   "jest": {
     "collectCoverage": true,
-    "collectCoverageFrom": [
-      "./src/**/*.js",
-      "./src/**/*.ts"
-    ],
+    "collectCoverageFrom": ["./src/**/*.js", "./src/**/*.ts"],
     "coverageThreshold": {
       "global": {
-        "lines": 0
+        "lines": 2
       },
       "./src/components/**/utils/**.ts": {
-        "lines": 92
+        "lines": 100
       },
       "./src/utils/": {
-        "lines": 23,
-        "branches": 29,
-        "functions": 33
+        "lines": 27,
+        "branches": 37,
+        "functions": 36
       }
     },
     "moduleNameMapper": {
@@ -124,16 +119,8 @@
     }
   },
   "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+    "production": [">0.2%", "not dead", "not op_mini all"],
+    "development": ["last 1 chrome version", "last 1 firefox version", "last 1 safari version"]
   },
   "resolutions": {
     "react-error-overlay": "6.0.9"
@@ -144,7 +131,7 @@
     "@babel/preset-typescript": "^7.21.5",
     "@commitlint/cli": "^17.1.2",
     "@commitlint/config-conventional": "^17.1.0",
-    "@cypress/code-coverage": "^3.11.0",
+    "@cypress/code-coverage": "^3.12.8",
     "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
     "@testing-library/cypress": "^10.0.1",
     "@testing-library/jest-dom": "^5.16.5",
@@ -189,7 +176,7 @@
     "vite": "^4.4.11",
     "vite-compatible-readable-stream": "^3.6.1",
     "vite-plugin-eslint": "^1.8.1",
-    "vite-plugin-istanbul": "^4.1.0",
+    "vite-plugin-istanbul": "^5.0.0",
     "vite-plugin-node-polyfills": "^0.8.2",
     "vite-plugin-svgr": "^3.2.0",
     "vite-tsconfig-paths": "^4.2.0"
@@ -199,9 +186,12 @@
     "node": ">=16.0.0"
   },
   "nyc": {
-    "reporter": [
-      "html"
-    ]
+    "cache": false,
+    "instrument": false,
+    "sourceMap": false,
+    "all": true,
+    "include": "src/**/*.{js,jsx,ts,tsx}",
+    "reporter": ["html", "text-summary"]
   },
   "coverage": {
     "min": 30
