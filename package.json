@@ -82,7 +82,8 @@
     "cy-comp": "cypress run --component",
     "test:coverage": "npx nyc report --reporter=html --reporter=text-summary",
     "format": "prettier --write --config prettier.config.js ./src",
-    "prettier": "npx prettier --config prettier.config.js --check ./src",
+    "prettier": "npx prettier --config prettier.config.js -w ./src",
+    "prettier:check": "npx prettier --config prettier.config.js --check ./src",
     "postinstall": "husky install",
     "typecheck": "tsc --noEmit",
     "lint": "eslint src --max-warnings 24"
