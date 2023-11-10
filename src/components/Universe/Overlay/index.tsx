@@ -43,7 +43,7 @@ const CameraCenterButton = styled(Button)`
 
     .MuiButton-startIcon {
       margin-left: 0;
-      filter: brightness(.65);
+      filter: brightness(0.65);
     }
   }
 `
