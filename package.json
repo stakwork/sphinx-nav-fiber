@@ -1,6 +1,6 @@
 {
   "name": "sphinx-nav",
-  "version": "0.1.105",
+  "version": "0.1.106",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.11.1",
@@ -89,11 +89,17 @@
     "lint": "eslint src --max-warnings 24"
   },
   "eslintConfig": {
-    "extends": ["react-app", "react-app/jest"]
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
   },
   "jest": {
     "collectCoverage": true,
-    "collectCoverageFrom": ["./src/**/*.js", "./src/**/*.ts"],
+    "collectCoverageFrom": [
+      "./src/**/*.js",
+      "./src/**/*.ts"
+    ],
     "coverageThreshold": {
       "global": {
         "lines": 2
@@ -109,7 +115,7 @@
       "./src/network/": {
         "lines": 31,
         "branches": 22,
-        "functions": 27 
+        "functions": 27
       }
     },
     "moduleNameMapper": {
@@ -125,8 +131,16 @@
     }
   },
   "browserslist": {
-    "production": [">0.2%", "not dead", "not op_mini all"],
-    "development": ["last 1 chrome version", "last 1 firefox version", "last 1 safari version"]
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   },
   "resolutions": {
     "react-error-overlay": "6.0.9"
@@ -197,7 +211,10 @@
     "sourceMap": false,
     "all": true,
     "include": "src/**/*.{js,jsx,ts,tsx}",
-    "reporter": ["html", "text-summary"]
+    "reporter": [
+      "html",
+      "text-summary"
+    ]
   },
   "coverage": {
     "min": 30
