@@ -560,4 +560,3 @@ export const addWeightNormalizationToNodes = (
       weight,
     }
   })
-
