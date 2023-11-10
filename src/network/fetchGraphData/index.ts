@@ -283,6 +283,38 @@ function generateTopicNodesFromMap(topicMap: TopicMap, doNodeCallback: (node: No
   })
 }
 
+function generateGuestNodesFromMap(
+  guestMap: Record<string, guestMapChild>,
+  doNodeCallback: (node: NodeExtended) => void,
+) {
+  Object.entries(guestMap).forEach(([guest, guestValue], index) => {
+    const guestChildren = guestValue.children
+    const scale = guestChildren.length * 2 > maxScale ? maxScale : guestChildren.length * 2
+    const guestNodeId = guest || `guestnode_${index}`
+
+    const guestNode: NodeExtended = {
+      ...guestValue,
+      x: 0,
+      y: 0,
+      z: 0,
+      colors: ['#000'],
+      id: guestNodeId,
+      image_url: guestValue.imageUrl,
+      label: guestValue.name,
+      name: guestValue.name,
+      node_type: 'guest',
+      ref_id: guestNodeId,
+      scale,
+      show_title: guestValue.name,
+      text: guestValue.twitterHandle,
+      type: 'guest',
+      weight: 0,
+    }
+
+    doNodeCallback(guestNode)
+  })
+}
+
 export const getGraphData = async (searchterm: string, graphStyle: 'split' | 'force' | 'sphere' | 'earth') => {
   try {
     const dataInit = await fetchNodes(searchterm)
@@ -529,34 +561,3 @@ export const addWeightNormalizationToNodes = (
     }
   })
 
-function generateGuestNodesFromMap(
-  guestMap: Record<string, guestMapChild>,
-  doNodeCallback: (node: NodeExtended) => void,
-) {
-  Object.entries(guestMap).forEach(([guest, guestValue], index) => {
-    const guestChildren = guestValue.children
-    const scale = guestChildren.length * 2 > maxScale ? maxScale : guestChildren.length * 2
-    const guestNodeId = guest || `guestnode_${index}`
-
-    const guestNode: NodeExtended = {
-      ...guestValue,
-      x: 0,
-      y: 0,
-      z: 0,
-      colors: ['#000'],
-      id: guestNodeId,
-      image_url: guestValue.imageUrl,
-      label: guestValue.name,
-      name: guestValue.name,
-      node_type: 'guest',
-      ref_id: guestNodeId,
-      scale,
-      show_title: guestValue.name,
-      text: guestValue.twitterHandle,
-      type: 'guest',
-      weight: 0,
-    }
-
-    doNodeCallback(guestNode)
-  })
-}
