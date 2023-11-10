@@ -32,10 +32,13 @@ export const Search = () => {
       sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: 300 }}
     >
       <InputBase
+        autoComplete="off"
+        autoCorrect="off"
         inputProps={{ 'aria-label': 'search topic' }}
         onChange={(e) => setInputValue(e.target.value)}
         placeholder="Search"
         size="small"
+        spellCheck="false"
         sx={{ ml: 1, flex: 1 }}
         value={inputValue}
       />
