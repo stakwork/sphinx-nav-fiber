@@ -9,7 +9,8 @@ describe('formatFetchNodes', () => {
     name: 'test',
     node_type: 'test',
   }
-  const data_series_node = {
+
+  const dataSeriesNode = {
     x: 1,
     y: 1,
     z: 1,
@@ -24,6 +25,7 @@ describe('formatFetchNodes', () => {
       exact: [node1],
       related: [node1],
     }
+
     const emptyResponse = {
       links: [],
       nodes: [
@@ -49,12 +51,14 @@ describe('formatFetchNodes', () => {
 
     expect(formatFetchNodes(emptyInput)).toStrictEqual(emptyResponse)
   })
+
   it('should give us the expected output for two of the same node', () => {
     const emptyInput = {
       data_series: { title: 'test' },
       exact: [node1, node1],
       related: [node1, node1],
     }
+
     const emptyResponse = {
       links: [],
       nodes: [
@@ -80,14 +84,16 @@ describe('formatFetchNodes', () => {
 
     expect(formatFetchNodes(emptyInput)).toStrictEqual(emptyResponse)
   })
+
   it('should give us the expected output for two different nodes', () => {
     const emptyInput = {
       data_series: { title: 'test' },
-      exact: [node1, data_series_node],
-      related: [node1, data_series_node],
+      exact: [node1, dataSeriesNode],
+      related: [node1, dataSeriesNode],
     }
 
     const formattedResponse = formatFetchNodes(emptyInput)
+
     expect(formattedResponse.links).toStrictEqual([])
     expect(formattedResponse.nodes[0].label).toBe('test')
     expect(formattedResponse.nodes[0].name).toBe('test')
