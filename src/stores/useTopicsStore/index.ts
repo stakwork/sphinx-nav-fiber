@@ -32,6 +32,10 @@ export const useTopicsStore = create<TopicsStore>((set, get) => ({
 
     const payload = prepareTopicFilters(filters)
 
+    if (filters.page < 1) {
+      set({ data: null, ids: [], total: 0 })
+    }
+
     const responseData: FetchTopicResponse = await getTopicsData(payload)
 
     const newData: Record<string, Topic> = filters.page > 0 ? data || {} : {}
@@ -53,5 +57,5 @@ const prepareTopicFilters = (filters: TopicFilter): TtopicsParams => ({
   skip: String(filters.page * filters.pageSize),
   limit: String(filters.pageSize),
   sort_by: filters.sortBy,
-  ...(filters.search ? { search: filters.search || '' } : {}),
+  search: filters.search || '',
 })
