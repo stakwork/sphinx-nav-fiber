@@ -61,9 +61,9 @@ type TopicMap = Record<string, TopicMapItem>
 const shouldIncludeTopics = true
 const maxScale = 26
 
-export const fetchGraphData = async (search: string) => {
+export const fetchGraphData = async (search: string, graphStyle: string) => {
   try {
-    return getGraphData(search)
+    return getGraphData(search, graphStyle)
   } catch (e) {
     return defaultData
   }
@@ -284,175 +284,11 @@ function generateTopicNodesFromMap(topicMap: TopicMap, doNodeCallback: (node: No
   })
 }
 
-function generateGuestNodesFromMap(
-  guestMap: Record<string, guestMapChild>,
-  doNodeCallback: (node: NodeExtended) => void,
-) {
-  Object.entries(guestMap).forEach(([guest, guestValue], index) => {
-    const guestChildren = guestValue.children
-    const scale = guestChildren.length * 2 > maxScale ? maxScale : guestChildren.length * 2
-    const guestNodeId = guest || `guestnode_${index}`
-
-    const guestNode: NodeExtended = {
-      ...guestValue,
-      x: 0,
-      y: 0,
-      z: 0,
-      colors: ['#000'],
-      id: guestNodeId,
-      image_url: guestValue.imageUrl,
-      label: guestValue.name,
-      name: guestValue.name,
-      node_type: 'guest',
-      ref_id: guestNodeId,
-      scale,
-      show_title: guestValue.name,
-      text: guestValue.twitterHandle,
-      type: 'guest',
-      weight: 0,
-    }
-
-    doNodeCallback(guestNode)
-  })
-}
-
-const getGraphData = async (searchterm: string) => {
-  const { graphStyle } = useDataStore.getState()
-
-  let nodes: NodeExtended[] = []
-
-  const topicMap: TopicMap = {}
-  const guestMap: Record<string, guestMapChild> = {}
-
+export const getGraphData = async (searchterm: string, graphStyle: string) => {
   try {
     const dataInit = await fetchNodes(searchterm)
 
-    const dataSeries = Array.isArray(dataInit.data_series) ? dataInit.data_series : []
-
-    const data: Node[] = [...dataInit.exact, ...dataInit.related, ...dataSeries]
-
-    let topWeightValue = 0
-
-    if (data.length) {
-      data.forEach((node, index) => {
-        // record highest weight to normalize to range 0~1
-        if (node.weight && topWeightValue < node.weight) {
-          topWeightValue = node.weight
-        }
-
-        // TODO: simplify this to ref_id
-        if (['data_series', 'document', 'tweet'].includes(node.node_type)) {
-          const imageUrlsMapper: { [key: string]: string } = {
-            data_series: 'node_data.webp',
-            document: 'document.jpeg',
-            tweet: 'twitter_placeholder.png',
-          }
-
-          nodes.push({
-            ...node,
-            scale: getNodeScale(node),
-            id: node.tweet_id || `${node.unique_id}_${index}`,
-            ref_id: node.tweet_id || `${node.unique_id}_${index}`,
-            image_url: imageUrlsMapper[node.node_type],
-            type: node.type || node.node_type,
-          })
-
-          return
-        }
-
-        // reject duplicate nodes
-        const notUnique = nodes.find((f) => f.ref_id === node.ref_id)
-
-        if (notUnique) {
-          return
-        }
-
-        // replace aws bucket url with cloudfront, and add size indicator to end
-        const smallImageUrl = node.image_url
-          ?.replace(AWS_IMAGE_BUCKET_URL, CLOUDFRONT_IMAGE_BUCKET_URL)
-          .replace('.jpg', '_s.jpg')
-
-        nodes.push({
-          ...node,
-          scale: getNodeScale(node),
-          id: node.ref_id || node.tweet_id || node.id,
-          image_url: smallImageUrl,
-          type: node.type || node.node_type,
-        })
-
-        if (node.node_type === 'episode' && node.ref_id) {
-          // update guest map
-          const guestList = node.guests || []
-
-          guestList.forEach((guest) => {
-            const currentGuest = guest as Guests
-
-            if (currentGuest.name && currentGuest.ref_id && node.ref_id) {
-              guestMap[currentGuest.ref_id] = {
-                children: [...(guestMap[currentGuest.ref_id]?.children || []), node.ref_id],
-                imageUrl: currentGuest.profile_picture || '',
-                name: currentGuest.name,
-                twitterHandle: currentGuest.twitter_handle,
-              }
-            }
-          })
-        }
-      })
-    }
-
-    generateGuestNodesFromMap(guestMap, (n: NodeExtended) => {
-      nodes.push(n)
-    })
-
-    // extract topics to topic map
-    data.forEach((node) => {
-      const { topics, ref_id: refId, show_title: showTitle } = node
-
-      if (topics) {
-        topics.forEach((topic) => {
-          // don't map the search term, all will be tied to it
-          if (topic === searchterm) {
-            return
-          }
-
-          if (showTitle) {
-            if (topicMap[topic] && !topicMap[topic].children.includes(refId || showTitle)) {
-              topicMap[topic].children.push(refId || showTitle)
-            } else {
-              topicMap[topic] = {
-                position: new Vector3(0, 0, 0),
-                children: [refId || showTitle],
-              }
-            }
-          }
-        })
-      }
-    })
-
-    // generate topic nodes
-    if (shouldIncludeTopics) {
-      generateTopicNodesFromMap(topicMap, (n: NodeExtended) => {
-        nodes.push(n)
-      })
-    }
-
-    // give nodes and links positions based on graphStyle
-    const dataWithPositions = getGraphDataPositions(graphStyle, nodes)
-    const { links } = dataWithPositions
-
-    nodes = dataWithPositions.nodes
-
-    nodes.sort((a, b) => (b.weight || 0) - (a.weight || 0))
-
-    // re-assign weight based on highest weight value
-    // convert to range 0-1
-
-    // for topics and guests, calculate weight based on links
-    const maxSuperficialWeight = getMaxSuperficialWeightPerNodeType(nodes, links)
-
-    nodes = addWeightNormalizationToNodes(topWeightValue, maxSuperficialWeight, nodes, links)
-
-    return { links, nodes }
+    return formatFetchNodes(dataInit, searchterm, graphStyle)
   } catch (e) {
     console.error(e)
 
@@ -535,6 +371,144 @@ export const generateLinksFromNodeData = (
   return links
 }
 
+export const formatFetchNodes = (
+  dataInit: FetchDataResponse,
+  searchterm: string,
+  graphStyle: 'split' | 'force' | 'sphere' | 'earth',
+) => {
+  let nodes: NodeExtended[] = []
+
+  const topicMap: TopicMap = {}
+  const guestMap: Record<string, guestMapChild> = {}
+
+  const dataSeries = Array.isArray(dataInit.data_series) ? dataInit.data_series : []
+
+  const data: Node[] = [...dataInit.exact, ...dataInit.related, ...dataSeries]
+
+  let topWeightValue = 0
+
+  if (data.length) {
+    data.forEach((node, index) => {
+      // record highest weight to normalize to range 0~1
+      if (node.weight && topWeightValue < node.weight) {
+        topWeightValue = node.weight
+      }
+
+      // TODO: simplify this to ref_id
+      if (['data_series', 'document', 'tweet'].includes(node.node_type)) {
+        const imageUrlsMapper: { [key: string]: string } = {
+          data_series: 'node_data.webp',
+          document: 'document.jpeg',
+          tweet: 'twitter_placeholder.png',
+        }
+
+        nodes.push({
+          ...node,
+          scale: getNodeScale(node),
+          id: node.tweet_id || `${node.unique_id}_${index}`,
+          ref_id: node.tweet_id || `${node.unique_id}_${index}`,
+          image_url: imageUrlsMapper[node.node_type],
+          type: node.type || node.node_type,
+        })
+
+        return
+      }
+
+      // reject duplicate nodes
+      const notUnique = nodes.find((f) => f.ref_id === node.ref_id)
+
+      if (notUnique) {
+        return
+      }
+
+      // replace aws bucket url with cloudfront, and add size indicator to end
+      const smallImageUrl = node.image_url
+        ?.replace(AWS_IMAGE_BUCKET_URL, CLOUDFRONT_IMAGE_BUCKET_URL)
+        .replace('.jpg', '_s.jpg')
+
+      nodes.push({
+        ...node,
+        scale: getNodeScale(node),
+        id: node.ref_id || node.tweet_id || node.id,
+        image_url: smallImageUrl,
+        type: node.type || node.node_type,
+      })
+
+      if (node.node_type === 'episode' && node.ref_id) {
+        // update guest map
+        const guestList = node.guests || []
+
+        guestList.forEach((guest) => {
+          const currentGuest = guest as Guests
+
+          if (currentGuest.name && currentGuest.ref_id && node.ref_id) {
+            guestMap[currentGuest.ref_id] = {
+              children: [...(guestMap[currentGuest.ref_id]?.children || []), node.ref_id],
+              imageUrl: currentGuest.profile_picture || '',
+              name: currentGuest.name,
+              twitterHandle: currentGuest.twitter_handle,
+            }
+          }
+        })
+      }
+    })
+  }
+
+  generateGuestNodesFromMap(guestMap, (n: NodeExtended) => {
+    nodes.push(n)
+  })
+
+  // extract topics to topic map
+  data.forEach((node) => {
+    const { topics, ref_id: refId, show_title: showTitle } = node
+
+    if (topics) {
+      topics.forEach((topic) => {
+        // don't map the search term, all will be tied to it
+        if (topic === searchterm) {
+          return
+        }
+
+        if (showTitle) {
+          if (topicMap[topic] && !topicMap[topic].children.includes(refId || showTitle)) {
+            topicMap[topic].children.push(refId || showTitle)
+          } else {
+            topicMap[topic] = {
+              position: new Vector3(0, 0, 0),
+              children: [refId || showTitle],
+            }
+          }
+        }
+      })
+    }
+  })
+
+  // generate topic nodes
+  if (shouldIncludeTopics) {
+    generateTopicNodesFromMap(topicMap, (n: NodeExtended) => {
+      nodes.push(n)
+    })
+  }
+
+  // give nodes and links positions based on graphStyle
+  const dataWithPositions = getGraphDataPositions(graphStyle, nodes)
+  const { links } = dataWithPositions
+
+  nodes = dataWithPositions.nodes
+
+  nodes.sort((a, b) => (b.weight || 0) - (a.weight || 0))
+
+  // re-assign weight based on highest weight value
+  // convert to range 0-1
+
+  // for topics and guests, calculate weight based on links
+  const maxSuperficialWeight = getMaxSuperficialWeightPerNodeType(nodes, links)
+
+  nodes = addWeightNormalizationToNodes(topWeightValue, maxSuperficialWeight, nodes, links)
+
+  return { links, nodes }
+}
+
 export const addWeightNormalizationToNodes = (
   topWeightValue: number,
   maxSuperficialWeight: Record<string, number>,
@@ -555,3 +529,36 @@ export const addWeightNormalizationToNodes = (
       weight,
     }
   })
+
+function generateGuestNodesFromMap(
+  guestMap: Record<string, guestMapChild>,
+  doNodeCallback: (node: NodeExtended) => void,
+) {
+  Object.entries(guestMap).forEach(([guest, guestValue], index) => {
+    const guestChildren = guestValue.children
+    const scale = guestChildren.length * 2 > maxScale ? maxScale : guestChildren.length * 2
+    const guestNodeId = guest || `guestnode_${index}`
+
+    const guestNode: NodeExtended = {
+      ...guestValue,
+      x: 0,
+      y: 0,
+      z: 0,
+      colors: ['#000'],
+      id: guestNodeId,
+      image_url: guestValue.imageUrl,
+      label: guestValue.name,
+      name: guestValue.name,
+      node_type: 'guest',
+      ref_id: guestNodeId,
+      scale,
+      show_title: guestValue.name,
+      text: guestValue.twitterHandle,
+      type: 'guest',
+      weight: 0,
+    }
+
+    doNodeCallback(guestNode)
+  })
+}
+
