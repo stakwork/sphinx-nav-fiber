@@ -10,7 +10,6 @@ import {
 } from '~/constants'
 import { mock } from '~/mocks/getMockGraphData/mockResponse'
 import { api } from '~/network/api'
-import { useDataStore } from '~/stores/useDataStore'
 import {
   FetchDataResponse,
   FetchSentimentResponse,
@@ -61,7 +60,7 @@ type TopicMap = Record<string, TopicMapItem>
 const shouldIncludeTopics = true
 const maxScale = 26
 
-export const fetchGraphData = async (search: string, graphStyle: string) => {
+export const fetchGraphData = async (search: string, graphStyle: 'split' | 'force' | 'sphere' | 'earth') => {
   try {
     return getGraphData(search, graphStyle)
   } catch (e) {
@@ -284,7 +283,7 @@ function generateTopicNodesFromMap(topicMap: TopicMap, doNodeCallback: (node: No
   })
 }
 
-export const getGraphData = async (searchterm: string, graphStyle: string) => {
+export const getGraphData = async (searchterm: string, graphStyle: 'split' | 'force' | 'sphere' | 'earth') => {
   try {
     const dataInit = await fetchNodes(searchterm)
 
@@ -561,4 +560,3 @@ function generateGuestNodesFromMap(
     doNodeCallback(guestNode)
   })
 }
-
