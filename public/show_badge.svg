@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<svg width="14" height="14" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">
+ <mask height="15" id="mask0_2983_1952" maskUnits="userSpaceOnUse" width="14" x="0" y="0">
+  <rect fill="#D9D9D9" height="14" id="svg_1" width="14" y="0.5"/>
+ </mask>
+
+ <g class="layer">
+  <title>Layer 1</title>
+  <rect fill="#66c72a" fill-opacity="null" height="14" id="svg_9" stroke="#000000" stroke-dasharray="null" stroke-linecap="null" stroke-linejoin="null" stroke-opacity="null" stroke-width="0" width="14" x="0" y="0"/>
+  <g id="svg_2" mask="url(#mask0_2983_1952)">
+   <mask height="11" id="mask1_2983_1952" maskUnits="userSpaceOnUse" width="10" x="2" y="1">
+    <rect fill="#ffffff" height="10" id="svg_3" width="10" x="2" y="1.73"/>
+   </mask>
+   <g id="svg_4" mask="url(#mask1_2983_1952)">
+    <path d="m4.43,10.96l0.67,-2.93l-2.27,-1.97l3,-0.26l1.17,-2.76l1.17,2.76l3,0.26l-2.27,1.97l0.67,2.93l-2.57,-1.56l-2.57,1.56z" fill="#ffffff" id="svg_5"/>
+   </g>
+  </g>
+ </g>
+</svg>
