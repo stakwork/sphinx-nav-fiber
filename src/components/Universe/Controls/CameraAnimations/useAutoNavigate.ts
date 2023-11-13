@@ -46,7 +46,7 @@ export const useAutoNavigate = (cameraControlsRef: RefObject<CameraControls | nu
 
     const selected = graphData?.nodes.find((f) => f.ref_id === selectedNode?.ref_id)
 
-    let pos = new Vector3(0, 0, 0)
+    let pos = new Vector3(2000, 2000, 3000)
 
     if (selected && graphData) {
       // find all node children ... is there a better way?
@@ -163,14 +163,12 @@ export const useAutoNavigate = (cameraControlsRef: RefObject<CameraControls | nu
   useFrame((state) => {
     if (cameraControlsRef.current) {
       // do movement animation
-      if (selectedNode) {
-        if (!distanceReached) {
-          moveCameraToNode(destination, state.camera)
-        }
+      if (!distanceReached) {
+        moveCameraToNode(destination, state.camera)
+      }
 
-        if (!lookAtReached) {
-          turnCameraToNode(lookat, state.camera)
-        }
+      if (!lookAtReached) {
+        turnCameraToNode(lookat, state.camera)
       }
     }
   })

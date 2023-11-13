@@ -1,31 +1,24 @@
-import { useEffect } from 'react'
+import { Button } from '@mui/material'
 import styled from 'styled-components'
-import { Button } from '~/components/Button'
-import { useControlStore } from '~/stores/useControlStore'
+import CameraCenterIcon from '~/components/Icons/CameraCenterIcon'
 import { useDataStore } from '~/stores/useDataStore'
 import { Tooltip } from '../Graph/Cubes/Cube/components/Tooltip'
 
 export const Overlay = () => {
-  const [selectedNode, hoveredNode, cameraFocusTrigger, setCameraFocusTrigger] = useDataStore((s) => [
-    s.selectedNode,
+  const [hoveredNode, cameraFocusTrigger, setCameraFocusTrigger] = useDataStore((s) => [
     s.hoveredNode,
     s.cameraFocusTrigger,
     s.setCameraFocusTrigger,
   ])
 
-  const userMovedCamera = useControlStore((s) => s.userMovedCamera)
-
-  useEffect(() => {
-    document.body.style.cursor = hoveredNode ? 'pointer' : 'auto'
-  }, [hoveredNode])
-
   return (
     <OverlayWrap>
-      {!!selectedNode && userMovedCamera && (
-        <Button background="bluePressState" kind="small" onClick={() => setCameraFocusTrigger(!cameraFocusTrigger)}>
-          Re-center map
-        </Button>
-      )}
+      <CameraCenterButton
+        href=""
+        onClick={() => setCameraFocusTrigger(!cameraFocusTrigger)}
+        size="medium"
+        startIcon={<CameraCenterIcon />}
+      />
 
       {hoveredNode && (
         <div id="tooltip-portal">
@@ -35,6 +28,25 @@ export const Overlay = () => {
     </OverlayWrap>
   )
 }
+
+const CameraCenterButton = styled(Button)`
+  && {
+    position: absolute;
+    right: 20px;
+    bottom: 102px;
+    padding: 0;
+    width: 32px;
+    min-width: auto;
+    justify-content: center;
+    align-items: center;
+    pointer-events: all;
+
+    .MuiButton-startIcon {
+      margin-left: 0;
+      filter: brightness(0.65);
+    }
+  }
+`
 
 const OverlayWrap = styled('div')(({ theme }) => ({
   position: 'absolute',
