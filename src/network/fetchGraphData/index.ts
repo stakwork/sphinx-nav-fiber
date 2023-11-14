@@ -346,8 +346,6 @@ export const generateLinksFromNodeData = (
 ) => {
   const links: Link[] = []
 
-  console.log(nodes)
-
   // do links
   nodes.forEach((node) => {
     const { children, guests } = node

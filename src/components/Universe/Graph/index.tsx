@@ -20,8 +20,6 @@ export const Graph = () => {
   const selectionGraphData = useDataStore((s) => s.selectionGraphData)
   const selectedNode = useDataStore((s) => s.selectedNode)
 
-  console.log(data)
-
   const lineWidth = useMemo(() => {
     if (showSelectionGraph) {
       return 0

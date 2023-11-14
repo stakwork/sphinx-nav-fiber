@@ -54,9 +54,6 @@ const Table: React.FC<TopicTableProps> = ({ data, showMuted, setSelectedTopic })
         <tbody>
           {data?.map((i: Topic) => {
             const date = i.date_added_to_graph.toString()
-            // const date2 = i.date_added_to_graph.toString().split('.')[1]
-
-            console.log(date, i.date_added_to_graph)
 
             return (
               <StyledTableRow key={i.topic}>
