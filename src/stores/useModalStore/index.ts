@@ -1,6 +1,12 @@
 import { create } from 'zustand'
 
-export type AvailableModals = 'budgetExplanation' | 'sourcesTable' | 'addContent' | 'editTopic' | 'addSource'
+export type AvailableModals =
+  | 'budgetExplanation'
+  | 'sourcesTable'
+  | 'addContent'
+  | 'editTopic'
+  | 'addSource'
+  | 'mergeTopic'
 
 type ModalStore = {
   currentModals: Record<AvailableModals, boolean>
@@ -16,6 +22,7 @@ const defaultData = {
     addContent: false,
     editTopic: false,
     addSource: false,
+    mergeTopic: false,
   },
 }
 

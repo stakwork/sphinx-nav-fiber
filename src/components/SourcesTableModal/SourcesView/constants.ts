@@ -22,3 +22,5 @@ export const SORT_MAPPING: Option = {
 }
 
 export const TWITTER_LINK = 'https://twitter.com'
+
+export const IS_ALIAS = 'IS_ALIAS'
