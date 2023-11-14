@@ -145,6 +145,7 @@ export type Sentiment = {
 export type Trending = {
   count: number
   topic: string
+  tldr?: string
 }
 
 export type Sources = {
