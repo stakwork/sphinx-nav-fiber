@@ -2,7 +2,7 @@ import create from 'zustand'
 import { nodesAreRelatives } from '~/components/Universe/constants'
 import { isChileGraph } from '~/constants'
 import { fetchGraphData } from '~/network/fetchGraphData'
-import { GraphData, NodeExtended, NodeType, Sources } from '~/types'
+import { GraphData, NodeExtended, NodeType, Sources, Trending } from '~/types'
 import { saveSearchTerm } from '~/utils/relayHelper/index'
 
 export type GraphStyle = 'split' | 'force' | 'sphere' | 'earth'
@@ -32,9 +32,9 @@ type DataStore = {
   showTeachMe: boolean
   hideNodeDetails: boolean
   sidebarFilter: string
-  trendingTopics: string[]
+  trendingTopics: Trending[]
 
-  setTrendingTopics: (trendingTopics: string[]) => void
+  setTrendingTopics: (trendingTopics: Trending[]) => void
   setSidebarFilter: (filter: string) => void
   setScrollEventsDisabled: (scrollEventsDisabled: boolean) => void
   setCategoryFilter: (categoryFilter: NodeType | null) => void
