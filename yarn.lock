@@ -1699,9 +1699,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cypress/code-coverage@npm:^3.11.0":
-  version: 3.12.7
-  resolution: "@cypress/code-coverage@npm:3.12.7"
+"@cypress/code-coverage@npm:^3.12.8":
+  version: 3.12.8
+  resolution: "@cypress/code-coverage@npm:3.12.8"
   dependencies:
     "@cypress/webpack-preprocessor": ^6.0.0
     chalk: 4.1.2
@@ -1718,7 +1718,7 @@ __metadata:
     babel-loader: ^8.3 || ^9
     cypress: "*"
     webpack: ^4 || ^5
-  checksum: 8deeaeac41f57859a5cbb018a41e5137cf5ed14629285e5ff6f4339dcdf7586eb7859a97eade9224377159d85ee08b8b5eac3fdc78a0f772057a22eb0714088d
+  checksum: 664692fb8b1bb1e8645bf19cf133046af871b765998ce030dd581395cc5677948be91fd6b6e2f4cf86fa9af78a13023bac7d911f3205d628431044722c7e68d2
   languageName: node
   linkType: hard
 
@@ -13488,7 +13488,7 @@ __metadata:
     "@babel/preset-typescript": ^7.21.5
     "@commitlint/cli": ^17.1.2
     "@commitlint/config-conventional": ^17.1.0
-    "@cypress/code-coverage": ^3.11.0
+    "@cypress/code-coverage": ^3.12.8
     "@emotion/react": ^11.11.1
     "@emotion/styled": ^11.11.0
     "@esbuild-plugins/node-globals-polyfill": ^0.2.3
@@ -13590,7 +13590,7 @@ __metadata:
     vite: ^4.4.11
     vite-compatible-readable-stream: ^3.6.1
     vite-plugin-eslint: ^1.8.1
-    vite-plugin-istanbul: ^4.1.0
+    vite-plugin-istanbul: ^5.0.0
     vite-plugin-node-polyfills: ^0.8.2
     vite-plugin-svgr: ^3.2.0
     vite-tsconfig-paths: ^4.2.0
@@ -14837,17 +14837,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite-plugin-istanbul@npm:^4.1.0":
-  version: 4.1.0
-  resolution: "vite-plugin-istanbul@npm:4.1.0"
+"vite-plugin-istanbul@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "vite-plugin-istanbul@npm:5.0.0"
   dependencies:
     "@istanbuljs/load-nyc-config": ^1.1.0
+    espree: ^9.6.1
     istanbul-lib-instrument: ^5.1.0
     picocolors: ^1.0.0
     test-exclude: ^6.0.0
   peerDependencies:
     vite: ">=2.9.1 <= 5"
-  checksum: b7b766638ec8d8f261ea758c61bdfeb66e00b1dbdd456db93e9541dd13dce63a4707faeeb888b516f7150a5cdb10fa8775dfdc314a39e975f8ca15d26c11c50b
+  checksum: 1d5d7a91eecd3356a7ceba60f437ee1b5a3db53e8a928d7476fe2919ff1e101c2e0c0b87c8c9680cef72c0158ced1a75d56e9f5cc6f4f427dfe670c62ecdeec1
   languageName: node
   linkType: hard
 

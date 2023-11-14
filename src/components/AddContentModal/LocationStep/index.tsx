@@ -5,7 +5,7 @@ import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { TextInput } from '~/components/common/TextInput'
-import { colors } from '~/utils/colors'
+import { colors } from '~/utils'
 import { FormData } from '..'
 import { validateLatitude, validateLongitude } from './utils'
 

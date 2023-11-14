@@ -5,8 +5,7 @@ import CheckIcon from '~/components/Icons/CheckIcon'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { useUserStore } from '~/stores/useUserStore'
-import { colors } from '~/utils/colors'
-import { formatBudget } from './utils'
+import { colors, formatBudget } from '~/utils'
 
 type Props = {
   onClick: () => void

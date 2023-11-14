@@ -28,8 +28,8 @@ jobs:
           git add ./src || true
           git commit -m "ci: prettier format" || echo -n
           git push --set-upstream origin master
-          npm version patch -m "ci: bump version to %s"
-          git push
+          # npm version patch -m "ci: bump version to %s"
+          # git push
           CI=false yarn install && CI=false yarn run build
           git add ./build -f
           git commit -m "ci: automatic build fixes" || echo -n

@@ -32,17 +32,21 @@ export const YouTube = () => {
   } = selectedNode || {}
 
   const [boostAmount, setBoostAmount] = useState<number>(boost || 0)
+  const [isReady, setIsReady] = useState<boolean>(false)
   const secs = videoTimetoSeconds(timestamp || '')
 
   useEffect(() => {
-    if (playerRef.current) {
-      playerRef.current?.seekTo(secs)
+    const player = playerRef.current
+
+    if (isReady) {
+      player?.seekTo(secs)
+      player?.getInternalPlayer()?.play()
     }
 
     if (scrollTargetRef.current) {
       scrollTargetRef.current.scrollTo({ top: 0, behavior: 'auto' })
     }
-  }, [playerRef, secs])
+  }, [isReady, playerRef, secs])
 
   if (!selectedNode) {
     return null
@@ -52,7 +56,14 @@ export const YouTube = () => {
     <Wrapper>
       <PlayerWrapper>
         <Flex direction="row">
-          <ReactPlayer ref={playerRef} controls height="200px" playing url={link} width="100%" />
+          <ReactPlayer
+            ref={playerRef}
+            controls
+            height="200px"
+            onReady={() => setIsReady(true)}
+            url={link}
+            width="100%"
+          />
         </Flex>
       </PlayerWrapper>
       <StyledEpisode
@@ -79,7 +90,7 @@ export const YouTube = () => {
         </TextWrapper>
         <StyledDivider />
         <TextWrapper>
-          <Transcript node={selectedNode} stateless />
+          <Transcript key={id} node={selectedNode} stateless />
         </TextWrapper>
       </div>
     </Wrapper>

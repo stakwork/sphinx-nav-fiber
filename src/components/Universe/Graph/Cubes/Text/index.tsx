@@ -61,7 +61,7 @@ export const TextNode = memo(({ node, hide }: Props) => {
       position={[node.x, node.y, node.z]}
       scale={textScale}
       userData={node}
-      visible={!hide}
+      visible={!hide && !isSelected}
       {...fontProps}
     >
       {node.label}

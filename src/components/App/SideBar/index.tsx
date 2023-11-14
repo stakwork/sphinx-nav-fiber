@@ -5,15 +5,16 @@ import { useFormContext } from 'react-hook-form'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
 import { SelectWithPopover } from '~/components/App/SideBar/Dropdown'
+import { Flex } from '~/components/common/Flex'
+import { FetchLoaderText } from '~/components/common/Loader'
 import ChevronLeftIcon from '~/components/Icons/ChevronLeftIcon'
 import ClearIcon from '~/components/Icons/ClearIcon'
 import SearchIcon from '~/components/Icons/SearchIcon'
 import { SearchBar } from '~/components/SearchBar'
-import { Flex } from '~/components/common/Flex'
-import { FetchLoaderText } from '~/components/common/Loader'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore, useFilteredNodes, useSelectedNode } from '~/stores/useDataStore'
 import { colors } from '~/utils/colors'
+import { TeachMe } from '../Helper/TeachMe'
 import { LatestView } from './Latest'
 import { EpisodeSkeleton } from './Relevance/EpisodeSkeleton'
 import { SideBarSubView } from './SidebarSubView'
@@ -102,7 +103,8 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
                   <span className="count">{filteredNodes.length}</span>
                   <span className="label"> results</span>
                 </div>
-                <div className="right">
+                <div className="right" style={{ alignItems: 'center' }}>
+                  <TeachMe />
                   <SelectWithPopover />
                 </div>
               </>
@@ -135,7 +137,10 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
 export const SideBar = ({ onSubmit }: Props) => {
   const sidebarIsOpen = useAppStore((s) => s.sidebarIsOpen)
   const selectedNode = useSelectedNode()
-  const subViewIsOpen = !!selectedNode && selectedNode.node_type !== 'topic' && sidebarIsOpen
+
+  const subViewIsOpen =
+    !!selectedNode && selectedNode.node_type !== 'topic' && sidebarIsOpen && selectedNode.node_type !== 'person'
+
   const [showTeachMe] = useDataStore((s) => [s.showTeachMe])
 
   return (
