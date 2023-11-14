@@ -1,3 +1,4 @@
+import clsx from 'clsx'
 import moment from 'moment'
 import styled from 'styled-components'
 import { BoostAmt } from '~/components/App/Helper/BoostAmt'
@@ -106,15 +107,15 @@ export const Episode = ({
 
             <Flex align="center" direction="row" justify="flex-start">
               {Boolean(date) && <Date>{moment.unix(date).fromNow()}</Date>}
-              {Boolean(showTitle) && type !== 'show' && <Title>{showTitle}</Title>}
-              {Boolean(showTitle) && type === 'show' && <ShowTitle>{showTitle}</ShowTitle>}
+              {Boolean(showTitle) && <Title className={clsx({'is-show': type === 'show'})}>{showTitle}</Title>}
               {!isSelectedView && boostCount > 0 && (
                 <Flex style={{ marginLeft: 'auto' }}>
                   <BoostAmt amt={boostCount} />
                 </Flex>
               )}
             </Flex>
-            {type === 'show' && <Producer>By {showTitle}</Producer>}
+            {/* todo: add the show producer to node */}
+            {/* {type === 'show' && <Producer>By {showTitle}</Producer>} */}
           </Flex>
         </Flex>
       )}
@@ -161,19 +162,6 @@ export const Date = styled(Text)`
   line-height: 18px;
   margin-right: 8px;
   flex-shrink: 0;
-`
-
-export const ShowTitle = styled.p`
-  margin-top: 20px;
-
-  color: var(--Primary-Text, #FFF);
-  leading-trim: both;
-  text-edge: cap;
-  font-family: Barlow;
-  font-size: 13px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 17px; /* 130.769% */
 `;
 
 export const Producer = styled.p`
@@ -209,6 +197,22 @@ export const Title = styled(Date)`
     flex-shrink: 0;
     height: 4px;
     background: ${colors.GRAY6};
+
+    margin-top: 20px;
+
+  }
+
+  &.is-show {
+    margin: 20px 0px;
+    padding: 0px;
+    color: var(--Primary-Text, #FFF);
+    leading-trim: both;
+    text-edge: cap;
+    font-family: Barlow;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 17px; /* 130.769% */
   }
 `
 
