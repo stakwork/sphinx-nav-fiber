@@ -5,10 +5,10 @@ import 'react-toastify/dist/ReactToastify.css'
 import { Socket } from 'socket.io-client'
 import * as sphinx from 'sphinx-bridge-kevkevinpal'
 import styled from 'styled-components'
-import { Flex } from '~/components/common/Flex'
 import { DataRetriever } from '~/components/DataRetriever'
 import { GlobalStyle } from '~/components/GlobalStyle'
 import { Universe } from '~/components/Universe'
+import { Flex } from '~/components/common/Flex'
 import { isDevelopment, isE2E } from '~/constants'
 import useSocket from '~/hooks/useSockets'
 import { getGraphDataPositions } from '~/network/fetchGraphData/const'
@@ -131,6 +131,12 @@ export const App = () => {
   const handleNewNode = useCallback(() => {
     setNodeCount('INCREMENT')
   }, [setNodeCount])
+
+  console.log(123)
+
+  console.log(123)
+
+  console.log(123)
 
   // setup socket
   useEffect(() => {
