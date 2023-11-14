@@ -3,17 +3,27 @@ import { useEffect, useState } from 'react'
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import * as sphinx from 'sphinx-bridge-kevkevinpal'
 import { BaseModal } from '~/components/Modal'
-import { DOCUMENT, LINK, NODE_ADD_ERROR, NODE_ADD_SUCCESS, TWITTER_SOURCE, WEB_PAGE } from '~/constants'
+import { notify } from '~/components/common/Toast/toastMessage'
+import {
+  DOCUMENT,
+  LINK,
+  NODE_ADD_ERROR,
+  NODE_ADD_SUCCESS,
+  TWITTER_HANDLE,
+  TWITTER_SOURCE,
+  WEB_PAGE,
+  YOUTUBE_CHANNEL,
+} from '~/constants'
 import { api } from '~/network/api'
 import { useModal } from '~/stores/useModalStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { SubmitErrRes } from '~/types'
-import { getLSat, payLsat, updateBudget, executeIfProd } from '~/utils'
-import { notify } from '~/components/common/Toast/toastMessage'
+import { executeIfProd, getLSat, payLsat, updateBudget } from '~/utils'
 import { BudgetStep } from './BudgetStep'
 import { LocationStep } from './LocationStep'
 import { SourceStep } from './SourceStep'
-import { getInputType } from './utils'
+import { SourceTypeStep } from './SourceTypeStep'
+import { getInputType, isSource } from './utils'
 
 export type FormData = {
   input: string
@@ -29,6 +39,8 @@ const handleSubmitForm = async (
   sourceType: string,
   setBudget: (value: number | null) => void,
 ): Promise<void> => {
+  const endPoint = isSource(sourceType) ? 'radar' : 'add_node'
+
   const body: { [index: string]: unknown } = {}
 
   if (sourceType === LINK) {
@@ -59,6 +71,12 @@ const handleSubmitForm = async (
   } else if (sourceType === DOCUMENT) {
     body.content_type = 'document'
     body.text = data.source
+  } else if (sourceType === TWITTER_HANDLE) {
+    body.source = (data.source || '').replace(/[@]/g, '')
+    body.source_type = sourceType
+  } else if (sourceType === YOUTUBE_CHANNEL) {
+    body.source = data.source
+    body.source_type = sourceType
   }
 
   if (data.latitude && data.longitude) {
@@ -80,7 +98,7 @@ const handleSubmitForm = async (
   })
 
   try {
-    const res: SubmitErrRes = await api.post(`/add_node`, JSON.stringify(body), {
+    const res: SubmitErrRes = await api.post(`/${endPoint}`, JSON.stringify(body), {
       Authorization: lsatToken,
     })
 
@@ -147,6 +165,10 @@ export const AddContentModal = () => {
     setCurrentStep(currentStep + 1)
   }
 
+  const onPrevStep = () => {
+    setCurrentStep(currentStep - 1)
+  }
+
   const onSubmit = form.handleSubmit(async (data) => {
     await handleSubmitForm(data, handleClose, type, setBudget)
   })
@@ -157,7 +179,13 @@ export const AddContentModal = () => {
         <form id="add-node-form" onSubmit={onSubmit}>
           {currentStep === 0 && <SourceStep onNextStep={onNextStep} type={type} value={sourceValue} />}
           {currentStep === 1 && (
-            <LocationStep form={form} latitude={latitude} longitude={longitude} onNextStep={onNextStep} />
+            <>
+              {!isSource(type) ? (
+                <LocationStep form={form} latitude={latitude} longitude={longitude} onNextStep={onNextStep} />
+              ) : (
+                <SourceTypeStep onNextStep={onNextStep} onPrevStep={onPrevStep} type={type} value={sourceValue} />
+              )}
+            </>
           )}
           {currentStep === 2 && <BudgetStep onClick={() => null} />}
         </form>

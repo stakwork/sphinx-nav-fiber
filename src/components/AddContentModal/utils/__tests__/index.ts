@@ -1,5 +1,5 @@
+import { LINK, TWITTER_HANDLE, TWITTER_SOURCE, WEB_PAGE, YOUTUBE_CHANNEL } from '~/constants'
 import { getInputType } from '..'
-import { LINK, TWITTER_SOURCE, WEB_PAGE } from '~/constants'
 
 describe('youtubeRegex', () => {
   it('should assert we can check for youtube clip regex', async () => {
@@ -20,5 +20,13 @@ describe('youtubeRegex', () => {
 
   it('should assert we can check for generic url regex', async () => {
     expect(getInputType('https://idkwhat.com/routeing/tou')).toBe(WEB_PAGE)
+  })
+
+  it('should assert we can check for youtube clip regex', async () => {
+    expect(getInputType('https://www.youtube.com/@MrBeast')).toBe(YOUTUBE_CHANNEL)
+  })
+
+  it('should assert we can check for twitter handle regex', async () => {
+    expect(getInputType('https://twitter.com/@KevKevPal')).toBe(TWITTER_HANDLE)
   })
 })
