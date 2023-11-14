@@ -1,4 +1,4 @@
-import { Skeleton } from '@mui/material'
+import { Button, Skeleton } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { ClipLoader } from 'react-spinners'
@@ -7,8 +7,10 @@ import SentimentDataIcon from '~/components/Icons/SentimentDataIcon'
 import { Flex } from '~/components/common/Flex'
 import { getTrends } from '~/network/fetchGraphData'
 import { useDataStore } from '~/stores/useDataStore'
+import { useModal } from '~/stores/useModalStore'
 import { Trending as TrendingType } from '~/types'
 import { colors } from '~/utils/colors'
+import { BriefDescription } from './BriefDescriptionModal'
 
 const TRENDING_TOPICS = ['Drivechain', 'Ordinals', 'L402', 'Nostr', 'AI']
 
@@ -18,6 +20,8 @@ type Props = {
 
 export const Trending = ({ onSubmit }: Props) => {
   const [loading, setLoading] = useState(false)
+  const [briefDescription, setBriefDescription] = useState('')
+  const { open } = useModal('briefDescription')
 
   const [trendingTopics, setTrendingTopics] = useDataStore((s) => [s.trendingTopics, s.setTrendingTopics])
 
@@ -31,10 +35,10 @@ export const Trending = ({ onSubmit }: Props) => {
         const res = await getTrends()
 
         if (res.length) {
-          setTrendingTopics(res.map((i: TrendingType) => i.topic))
+          setTrendingTopics(res)
         }
       } catch (err) {
-        setTrendingTopics(TRENDING_TOPICS)
+        setTrendingTopics(TRENDING_TOPICS.map((i) => ({ topic: i, count: 0 })))
       } finally {
         setLoading(false)
       }
@@ -48,6 +52,15 @@ export const Trending = ({ onSubmit }: Props) => {
   const selectTrending = (val: string) => {
     setValue('search', val)
     onSubmit?.()
+  }
+
+  const showModal = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, trending: TrendingType) => {
+    e.stopPropagation()
+
+    if (trending?.tldr) {
+      setBriefDescription(trending.tldr)
+      open()
+    }
   }
 
   return (
@@ -70,13 +83,22 @@ export const Trending = ({ onSubmit }: Props) => {
         ) : (
           <>
             {trendingTopics.map((i) => (
-              <Flex key={i} className="list-item" onClick={() => selectTrending(i)}>
-                #{i}
+              <Flex
+                key={i.topic}
+                align="center"
+                className="list-item"
+                direction="row"
+                justify="space-between"
+                onClick={() => selectTrending(i.topic)}
+              >
+                <span>#{i.topic}</span>
+                {i.tldr && <Button onClick={(e) => showModal(e, i)}>TLDR</Button>}
               </Flex>
             ))}
           </>
         )}
       </ul>
+      <BriefDescription onClose={() => setBriefDescription('')} text={briefDescription} />
     </Wrapper>
   )
 }

@@ -7,6 +7,7 @@ export type AvailableModals =
   | 'editTopic'
   | 'addSource'
   | 'mergeTopic'
+  | 'briefDescription'
 
 type ModalStore = {
   currentModals: Record<AvailableModals, boolean>
@@ -23,6 +24,7 @@ const defaultData = {
     editTopic: false,
     addSource: false,
     mergeTopic: false,
+    briefDescription: false,
   },
 }
 
