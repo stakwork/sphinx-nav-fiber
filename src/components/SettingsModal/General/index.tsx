@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { FC } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { ClipLoader } from 'react-spinners'
@@ -6,15 +5,9 @@ import styled from 'styled-components'
 import { Button } from '~/components/Button'
 import { Flex } from '~/components/common/Flex'
 import { TextInput } from '~/components/common/TextInput'
+import { requiredRule } from '~/constants'
 import { TAboutParams, postAboutData } from '~/network/fetchSourcesData'
 import { colors } from '~/utils/colors'
-
-export const requiredRule = {
-  required: {
-    message: 'The field is required',
-    value: true,
-  },
-}
 
 type Props = {
   initialValues: TAboutParams

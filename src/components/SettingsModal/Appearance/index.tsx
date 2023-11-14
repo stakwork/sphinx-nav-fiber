@@ -1,4 +1,4 @@
-import styled from '@emotion/styled'
+import styled from 'styled-components'
 import { GraphViewControl } from '~/components/App/ActionsToolbar/GraphViewControl'
 import { Button } from '~/components/Button'
 import { Flex } from '~/components/common/Flex'
