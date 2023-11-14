@@ -81,6 +81,7 @@ module.exports = {
     'no-unused-expressions': 'off',
     'no-use-before-define': 'off',
     'no-useless-constructor': 'off',
+    'no-console': ['warn', { allow: ['warn', 'error'] }],
     'padding-line-between-statements': [
       'error',
       { blankLine: 'always', next: 'return', prev: '*' },
