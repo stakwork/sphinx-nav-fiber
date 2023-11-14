@@ -25,6 +25,7 @@ import { E2ETests } from '~/utils/tests'
 import version from '~/utils/versionHelper'
 import { AddContentModal } from '../AddContentModal'
 import { AddSourceModal } from '../AddSourceModal'
+import { SettingsModal } from '../SettingsModal'
 import { SourcesTableModal } from '../SourcesTableModal'
 import { Preloader } from '../Universe/Preloader'
 import { ActionsToolbar } from './ActionsToolbar'
@@ -186,6 +187,7 @@ export const App = () => {
 
         <AddContentModal />
         <AddSourceModal />
+        <SettingsModal />
 
         <Toasts />
 
