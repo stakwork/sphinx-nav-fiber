@@ -1,13 +1,12 @@
-import { Sources, Topic } from '~/types'
+import { Sources } from '~/types'
 
 export type Props = {
   data: Sources[] | undefined
 }
 
 export type TopicTableProps = {
-  data: Topic[] | null
   showMuted?: boolean
-  setSelectedTopic: (topic: Topic) => void
+  onTopicEdit: (id: string, action: string) => void
 }
 
 export type TdProps = {
