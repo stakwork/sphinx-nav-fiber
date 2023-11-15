@@ -80,6 +80,9 @@ export const Episode = ({
   const selectedTimestamp = useDataStore((s) => s.selectedTimestamp)
   const isSelected = !!(selectedTimestamp && selectedTimestamp.id === id)
 
+  const description = type === 'show' ? showTitle : episodeTitle;
+  const subtitle = type === 'show' ? '' : showTitle;
+
   return (
     <EpisodeWrapper className={className} isSelected={isSelected} onClick={onClick}>
       {type !== 'tweet' && type !== 'person' && type !== 'guest' && (
@@ -103,10 +106,10 @@ export const Episode = ({
               ) : null}
             </Flex>
 
-            <Description data-testid="episode-description">{episodeTitle}</Description>
+            <Description data-testid="episode-description">{description}</Description>
             <Flex align="center" direction="row" justify="flex-start">
               {Boolean(date) && <Date>{moment.unix(date).fromNow()}</Date>}
-              {Boolean(showTitle) && <Title>{showTitle}</Title>}
+              {Boolean(subtitle) && <Title>{subtitle}</Title>}
               {!isSelectedView && boostCount > 0 && (
                 <Flex style={{ marginLeft: 'auto' }}>
                   <BoostAmt amt={boostCount} />
