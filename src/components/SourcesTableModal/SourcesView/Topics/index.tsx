@@ -10,9 +10,10 @@ import { Topic } from '~/types'
 import { colors } from '~/utils/colors'
 import { Heading } from '../common'
 import { EditTopicModal } from './EditTopicModal'
+import { MergeTopicModal } from './MergeTopicModal'
 import { Search } from './Search'
 import { Filter } from './Sort'
-import Table from './Table'
+import { Table } from './Table'
 
 export const TopicSources = () => {
   const [loading, setLoading] = useState(true)
@@ -27,8 +28,14 @@ export const TopicSources = () => {
     s.terminate,
   ])
 
-  const { open } = useModal('editTopic')
+  const { open: openEditTopic } = useModal('editTopic')
+  const { open: openMergeTopic } = useModal('mergeTopic')
   const [selectedTopic, setSelectedTopic] = useState<Topic | null>(null)
+
+  const topicActions: Record<string, () => void> = {
+    editTopic: openEditTopic,
+    mergeTopic: openMergeTopic,
+  }
 
   const topicsIdRef = useRef<string[]>([])
 
@@ -72,9 +79,16 @@ export const TopicSources = () => {
     setSelectedTopic(null)
   }
 
-  const onTopicSelect = (topic: Topic) => {
-    setSelectedTopic(topic)
-    open()
+  const onTopicEdit = (topicId: string, action: string) => {
+    if (!data) {
+      return
+    }
+
+    setSelectedTopic(data[topicId])
+
+    if (typeof topicActions[action] === 'function') {
+      topicActions[action]()
+    }
   }
 
   return (
@@ -98,22 +112,20 @@ export const TopicSources = () => {
           {loading && !data ? (
             <ClipLoader color={colors.white} />
           ) : (
-            <Table
-              data={data ? ids.map((id) => data[id]) : []}
-              setSelectedTopic={onTopicSelect}
-              showMuted={filters.muted}
-            />
+            <>
+              <Table onTopicEdit={onTopicEdit} showMuted={filters.muted} />
+              {total > ids.length ? (
+                <Button className="load-more" disabled={loading} onClick={handleLoadMore}>
+                  Load more
+                  {loading && <ClipLoader color={colors.BLUE_PRESS_STATE} size={10} />}
+                </Button>
+              ) : null}
+            </>
           )}
         </TableWrapper>
-
-        {total > ids.length ? (
-          <Button className="load-more" disabled={loading} onClick={handleLoadMore}>
-            Load more
-            {loading && <ClipLoader color={colors.BLUE_PRESS_STATE} size={10} />}
-          </Button>
-        ) : null}
       </Wrapper>
 
+      {selectedTopic && <MergeTopicModal onClose={modalCloseHandler} topic={selectedTopic} />}
       {selectedTopic && <EditTopicModal onClose={modalCloseHandler} topic={selectedTopic} />}
     </>
   )

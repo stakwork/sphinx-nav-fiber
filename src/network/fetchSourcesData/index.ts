@@ -16,6 +16,12 @@ export type TAboutParams = {
   search_term?: string
 }
 
+export type TMergeTopicsParams = {
+  /* eslint-disable camelcase */
+  from: string
+  to: string
+}
+
 export type TtopicsParams = {
   muted?: string
   skip?: string
@@ -53,6 +59,12 @@ export const getAboutData = async () => {
 
 export const postAboutData = async (data: TAboutParams) => {
   const response = await api.post('/about', JSON.stringify(data))
+
+  return response
+}
+
+export const postMergeTopics = async (data: TMergeTopicsParams) => {
+  const response = await api.post('/curation/merge', JSON.stringify(data))
 
   return response
 }
