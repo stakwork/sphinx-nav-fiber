@@ -64,6 +64,7 @@ export type Node = {
   type?: string
   weight?: number
   tweet_id?: string
+  posted_by?: PostedBy
   twitter_handle?: string
   profile_picture?: string
   verified?: boolean
@@ -173,4 +174,10 @@ export type TopicFilter = {
 
 export type SubmitErrRes = {
   error?: { message?: string }
+}
+
+type PostedBy = {
+  name: string
+  ref_id: string
+  twitter_handle: string
 }

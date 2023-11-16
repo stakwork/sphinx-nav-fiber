@@ -436,11 +436,26 @@ export const formatFetchNodes = (
         nodes.push({
           ...node,
           scale: getNodeScale(node),
-          id: node.tweet_id || `${node.unique_id}_${index}`,
-          ref_id: node.tweet_id || `${node.unique_id}_${index}`,
+          id: node.ref_id || `${node.unique_id}_${index}`,
+          ref_id: node.ref_id || `${node.unique_id}_${index}`,
           image_url: imageUrlsMapper[node.node_type],
           type: node.type || node.node_type,
         })
+
+        if (node.node_type === 'tweet') {
+          if (node.posted_by) {
+            const currentGuest = { ...node.posted_by, profile_picture: node.profile_picture } as Guests
+
+            if (currentGuest.name && currentGuest.ref_id && node.ref_id) {
+              guestMap[currentGuest.ref_id] = {
+                children: [...(guestMap[currentGuest.ref_id]?.children || []), node.ref_id],
+                imageUrl: currentGuest.profile_picture || '',
+                name: currentGuest.name,
+                twitterHandle: currentGuest.twitter_handle,
+              }
+            }
+          }
+        }
 
         return
       }
@@ -460,7 +475,7 @@ export const formatFetchNodes = (
       nodes.push({
         ...node,
         scale: getNodeScale(node),
-        id: node.ref_id || node.tweet_id || node.id,
+        id: node.ref_id || node.id,
         image_url: smallImageUrl,
         type: node.type || node.node_type,
       })
@@ -500,13 +515,15 @@ export const formatFetchNodes = (
           return
         }
 
-        if (showTitle) {
-          if (topicMap[topic] && !topicMap[topic].children.includes(refId || showTitle)) {
-            topicMap[topic].children.push(refId || showTitle)
+        const value = refId || showTitle
+
+        if (value) {
+          if (topicMap[topic] && !topicMap[topic].children.includes(value)) {
+            topicMap[topic].children.push(value)
           } else {
             topicMap[topic] = {
               position: new Vector3(0, 0, 0),
-              children: [refId || showTitle],
+              children: [value],
             }
           }
         }
