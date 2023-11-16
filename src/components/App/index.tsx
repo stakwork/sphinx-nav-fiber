@@ -51,7 +51,12 @@ const Version = styled(Flex)`
 `
 
 export const App = () => {
-  const [setBudget, setNodeCount] = useUserStore((s) => [s.setBudget, s.setNodeCount])
+  const [setBudget, setNodeCount, setTribeHost, setTribeUuid] = useUserStore((s) => [
+    s.setBudget,
+    s.setNodeCount,
+    s.setTribeHost,
+    s.setTribeUuid,
+  ])
 
   const [setSidebarOpen, searchTerm, setCurrentSearch, setRelevanceSelected, setTranscriptOpen] = [
     useAppStore((s) => s.setSidebarOpen),
@@ -150,9 +155,9 @@ export const App = () => {
   useEffect(() => {
     const { host, uuid } = extractUuidAndHost(window.location.search)
 
-    console.log(host)
-
-    console.log(uuid)
+    setTribeHost(host)
+    setTribeUuid(uuid)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
