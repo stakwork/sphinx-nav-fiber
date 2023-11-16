@@ -17,6 +17,7 @@ import { useDataStore } from '~/stores/useDataStore'
 import { useTeachStore } from '~/stores/useTeachStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { GraphData } from '~/types'
+import { extractUuidAndHost } from '~/utils/auth'
 import { colors } from '~/utils/colors'
 import { updateBudget } from '~/utils/setBudget'
 import { E2ETests } from '~/utils/tests'
@@ -144,6 +145,15 @@ export const App = () => {
       isSocketSet.current = true
     }
   }, [socket, handleNewNode])
+
+  // auth checker
+  useEffect(() => {
+    const { host, uuid } = extractUuidAndHost(window.location.search)
+
+    console.log(host)
+
+    console.log(uuid)
+  }, [])
 
   return (
     <AppProviders>
