@@ -1,4 +1,4 @@
-import { KeyboardEvent, MutableRefObject } from 'react'
+import { FocusEvent, KeyboardEvent, MutableRefObject } from 'react'
 import { ColorName } from '~/utils/colors'
 import { AutoComplete } from '../tokens/autoComplete'
 
@@ -25,7 +25,7 @@ export type BaseTextInputProps = {
   name: string
   onBlur?: () => void
   onChange?: (value: string) => void
-  onFocus?: () => void
+  onFocus?: (event: FocusEvent<HTMLInputElement>) => void
   onKeyDown?: (event: KeyboardEvent<HTMLInputElement>) => void
   onSubmitEditing?: (value: string) => void
   placeholder?: string
