@@ -80,8 +80,8 @@ export const Episode = ({
   const selectedTimestamp = useDataStore((s) => s.selectedTimestamp)
   const isSelected = !!(selectedTimestamp && selectedTimestamp.id === id)
 
-  const description = type === 'show' ? showTitle : episodeTitle;
-  const subtitle = type === 'show' ? '' : showTitle;
+  const description = type === 'show' ? showTitle : episodeTitle
+  const subtitle = type === 'show' ? '' : showTitle
 
   return (
     <EpisodeWrapper className={className} isSelected={isSelected} onClick={onClick}>
@@ -186,13 +186,12 @@ export const Title = styled(Date)`
     background: ${colors.GRAY6};
 
     margin-top: 20px;
-
   }
 
   &.is-show {
     margin: 20px 0px;
     padding: 0px;
-    color: var(--Primary-Text, #FFF);
+    color: var(--Primary-Text, #fff);
     leading-trim: both;
     text-edge: cap;
     font-family: Barlow;
