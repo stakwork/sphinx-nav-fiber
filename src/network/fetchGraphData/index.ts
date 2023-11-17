@@ -315,6 +315,28 @@ function generateGuestNodesFromMap(
   })
 }
 
+const generateGuestsMap = (
+  currentGuest: Guests,
+  id: string,
+  guestMap: Record<string, guestMapChild> = {},
+): Record<string, guestMapChild> => {
+  let updatedGuestMap = { ...guestMap }
+
+  if (currentGuest.name && currentGuest.ref_id && id) {
+    updatedGuestMap = {
+      ...updatedGuestMap,
+      [currentGuest.ref_id]: {
+        children: [...(updatedGuestMap[currentGuest.ref_id]?.children || []), id],
+        imageUrl: currentGuest.profile_picture || '',
+        name: currentGuest.name,
+        twitterHandle: currentGuest.twitter_handle,
+      },
+    }
+  }
+
+  return updatedGuestMap // Return the new variable
+}
+
 export const getGraphData = async (searchterm: string, graphStyle: 'split' | 'force' | 'sphere' | 'earth') => {
   try {
     const dataInit = await fetchNodes(searchterm)
@@ -410,7 +432,7 @@ export const formatFetchNodes = (
   let nodes: NodeExtended[] = []
 
   const topicMap: TopicMap = {}
-  const guestMap: Record<string, guestMapChild> = {}
+  let guestMap: Record<string, guestMapChild> = {}
 
   const dataSeries = Array.isArray(dataInit.data_series) ? dataInit.data_series : []
 
@@ -443,17 +465,12 @@ export const formatFetchNodes = (
         })
 
         if (node.node_type === 'tweet') {
-          if (node.posted_by) {
+          if (node.posted_by && node.ref_id) {
             const currentGuest = { ...node.posted_by, profile_picture: node.profile_picture } as Guests
 
-            if (currentGuest.name && currentGuest.ref_id && node.ref_id) {
-              guestMap[currentGuest.ref_id] = {
-                children: [...(guestMap[currentGuest.ref_id]?.children || []), node.ref_id],
-                imageUrl: currentGuest.profile_picture || '',
-                name: currentGuest.name,
-                twitterHandle: currentGuest.twitter_handle,
-              }
-            }
+            const updatedGuestMap = generateGuestsMap(currentGuest, node.ref_id, guestMap)
+
+            guestMap = { ...guestMap, ...updatedGuestMap }
           }
         }
 
@@ -487,14 +504,9 @@ export const formatFetchNodes = (
         guestList.forEach((guest) => {
           const currentGuest = guest as Guests
 
-          if (currentGuest.name && currentGuest.ref_id && node.ref_id) {
-            guestMap[currentGuest.ref_id] = {
-              children: [...(guestMap[currentGuest.ref_id]?.children || []), node.ref_id],
-              imageUrl: currentGuest.profile_picture || '',
-              name: currentGuest.name,
-              twitterHandle: currentGuest.twitter_handle,
-            }
-          }
+          const updatedGuestMap = generateGuestsMap(currentGuest, node.ref_id!, guestMap)
+
+          guestMap = { ...guestMap, ...updatedGuestMap }
         })
       }
     })
