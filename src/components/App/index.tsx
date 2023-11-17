@@ -161,7 +161,7 @@ export const App = () => {
         setIsAdmin(true)
       }
     } catch (error) {
-      console.error(error, 'Not admin')
+      /* not an admin */
     }
   }, [setIsAdmin, setTribeHost, setTribeUuid])
 
