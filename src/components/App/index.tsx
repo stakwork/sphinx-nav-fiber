@@ -11,6 +11,7 @@ import { GlobalStyle } from '~/components/GlobalStyle'
 import { Universe } from '~/components/Universe'
 import { isDevelopment, isE2E } from '~/constants'
 import useSocket from '~/hooks/useSockets'
+import { getIsAdmin } from '~/network/auth'
 import { getGraphDataPositions } from '~/network/fetchGraphData/const'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
@@ -19,6 +20,7 @@ import { useUserStore } from '~/stores/useUserStore'
 import { GraphData } from '~/types'
 import { extractUuidAndHost } from '~/utils/auth'
 import { colors } from '~/utils/colors'
+import { getSignedMessageFromRelay } from '~/utils/getSignedMessage'
 import { updateBudget } from '~/utils/setBudget'
 import { E2ETests } from '~/utils/tests'
 import version from '~/utils/versionHelper'
@@ -51,11 +53,12 @@ const Version = styled(Flex)`
 `
 
 export const App = () => {
-  const [setBudget, setNodeCount, setTribeHost, setTribeUuid] = useUserStore((s) => [
+  const [setBudget, setNodeCount, setTribeHost, setTribeUuid, setIsAdmin] = useUserStore((s) => [
     s.setBudget,
     s.setNodeCount,
     s.setTribeHost,
     s.setTribeUuid,
+    s.setIsAdmin,
   ])
 
   const [setSidebarOpen, searchTerm, setCurrentSearch, setRelevanceSelected, setTranscriptOpen] = [
@@ -138,6 +141,30 @@ export const App = () => {
     setNodeCount('INCREMENT')
   }, [setNodeCount])
 
+  const handleAuth = useCallback(async () => {
+    try {
+      const { host, uuid } = extractUuidAndHost(window.location.search)
+
+      setTribeHost(host)
+      setTribeUuid(uuid)
+
+      const sigAndMessage = await getSignedMessageFromRelay()
+
+      const isAdmin = await getIsAdmin({
+        tribeHost: host,
+        tribeUuid: uuid,
+        message: sigAndMessage.message,
+        signature: sigAndMessage.signature,
+      })
+
+      if (isAdmin.isAdmin) {
+        setIsAdmin(true)
+      }
+    } catch (error) {
+      console.error(error, 'Not admin')
+    }
+  }, [setIsAdmin, setTribeHost, setTribeUuid])
+
   // setup socket
   useEffect(() => {
     if (isSocketSet.current) {
@@ -153,10 +180,7 @@ export const App = () => {
 
   // auth checker
   useEffect(() => {
-    const { host, uuid } = extractUuidAndHost(window.location.search)
-
-    setTribeHost(host)
-    setTribeUuid(uuid)
+    handleAuth()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 

@@ -10,7 +10,7 @@ export async function getSignedMessageFromRelay(): Promise<{ message: string; si
   if (isSphinx) {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    const storedLsat = await sphinx.signMessage(window.location.host)
+    const storedLsat = await sphinx.signMessage(message)
 
     return { message, signature: storedLsat.signature }
   }

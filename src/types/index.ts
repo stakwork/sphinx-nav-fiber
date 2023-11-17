@@ -174,3 +174,12 @@ export type TopicFilter = {
 export type SubmitErrRes = {
   error?: { message?: string }
 }
+
+export type AuthRequest = {
+  message: string
+  tribeHost: string
+  tribeUuid: string
+  signature: string
+}
+
+export type IsAdminResponse = { isAdmin: boolean }
