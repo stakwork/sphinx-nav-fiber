@@ -1,6 +1,7 @@
 import styled from 'styled-components'
 import AddContentIcon from '~/components/Icons/AddContentIcon'
 import AddSourceIcon from '~/components/Icons/AddSourceIcon'
+import SentimentDataIcon from '~/components/Icons/SentimentDataIcon'
 import SettingsIcon from '~/components/Icons/SettingsIcon'
 import SourcesTableIcon from '~/components/Icons/SourcesTableIcon'
 import { Flex } from '~/components/common/Flex'
@@ -15,6 +16,7 @@ export const MainToolbar = () => {
   const { open: openSourcesModal } = useModal('sourcesTable')
   const { open: openContentAddModal } = useModal('addContent')
   const { open: openSourceAddModal } = useModal('addSource')
+  const { open: openSettingsModal } = useModal('settings')
 
   const handleOpenSidebar = (tab: SecondarySidebarActiveTab) => {
     setSecondarySidebarActiveTab(tab)
@@ -22,7 +24,7 @@ export const MainToolbar = () => {
 
   return (
     <Wrapper>
-      <LogoButton onClick={() => handleOpenSidebar('about')}>
+      <LogoButton>
         <img alt="Second brain" src="logo.svg" />
       </LogoButton>
       <ActionButton onClick={openContentAddModal}>
@@ -43,11 +45,17 @@ export const MainToolbar = () => {
         </IconWrapper>
         <Text>Source Table</Text>
       </ActionButton>
-      <ActionButton>
+      <ActionButton id="cy-open-sentiment-data" onClick={() => handleOpenSidebar('sentiment')}>
+        <IconWrapper>
+          <SentimentDataIcon />
+        </IconWrapper>
+        <Text>Sentiment Data</Text>
+      </ActionButton>
+      <ActionButton onClick={openSettingsModal}>
         <IconWrapper>
           <SettingsIcon />
         </IconWrapper>
-        <Text>Settings</Text>
+        <Text>Change Display</Text>
       </ActionButton>
     </Wrapper>
   )
@@ -108,7 +116,7 @@ const ActionButton = styled(Flex).attrs({
     border-radius: 4px;
     background: #000;
     box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.25);
-    position absolute;
+    position: absolute;
     left: 90%;
     z-index: 99;
     white-space: nowrap;
@@ -120,7 +128,7 @@ const ActionButton = styled(Flex).attrs({
   }
 
   &:hover {
-     color: ${colors.white};
+    color: ${colors.white};
 
     &:before {
       width: 3px;

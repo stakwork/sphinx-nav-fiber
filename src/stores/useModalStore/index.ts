@@ -6,6 +6,7 @@ export type AvailableModals =
   | 'addContent'
   | 'editTopic'
   | 'addSource'
+  | 'settings'
   | 'mergeTopic'
   | 'briefDescription'
 
@@ -23,6 +24,7 @@ const defaultData = {
     addContent: false,
     editTopic: false,
     addSource: false,
+    settings: false,
     mergeTopic: false,
     briefDescription: false,
   },
