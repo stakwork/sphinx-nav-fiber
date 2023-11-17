@@ -1,19 +1,23 @@
 import * as sphinx from 'sphinx-bridge-kevkevinpal'
 
 export async function getSignedMessageFromRelay(): Promise<{ message: string; signature: string }> {
-  const message = `${window.crypto.randomUUID()}${new Date().getTime()}`
+  try {
+    const message = `${window.crypto.randomUUID()}${new Date().getTime()}`
 
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  const isSphinx = await sphinx.enable()
-
-  if (isSphinx) {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    const storedLsat = await sphinx.signMessage(message)
+    const isSphinx = await sphinx.enable()
 
-    return { message, signature: storedLsat.signature }
+    if (isSphinx) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      const storedLsat = await sphinx.signMessage(message)
+
+      return { message, signature: storedLsat.signature }
+    }
+
+    return { message: '', signature: '' }
+  } catch (error) {
+    return { message: '', signature: '' }
   }
-
-  return { message: '', signature: '' }
 }
