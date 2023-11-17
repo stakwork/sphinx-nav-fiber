@@ -5,6 +5,7 @@ export type AvailableModals =
   | 'sourcesTable'
   | 'addContent'
   | 'editTopic'
+  | 'settings'
   | 'mergeTopic'
   | 'briefDescription'
 
@@ -21,6 +22,7 @@ const defaultData = {
     sourcesTable: false,
     addContent: false,
     editTopic: false,
+    settings: false,
     mergeTopic: false,
     briefDescription: false,
   },

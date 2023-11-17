@@ -80,12 +80,16 @@ export const Episode = ({
   const selectedTimestamp = useDataStore((s) => s.selectedTimestamp)
   const isSelected = !!(selectedTimestamp && selectedTimestamp.id === id)
 
+  const description = type === 'show' ? showTitle : episodeTitle
+  const subtitle = type === 'show' ? '' : showTitle
+
   return (
     <EpisodeWrapper className={className} isSelected={isSelected} onClick={onClick}>
       {type !== 'tweet' && type !== 'person' && type !== 'guest' && (
         <Flex direction="row">
           {!isSelectedView && (
             <Flex align="center" pr={16}>
+              <Avatar size={64} src={imageUrl} type={type || ''} />
               <Avatar size={64} src={imageUrl} type={type || ''} />
             </Flex>
           )}
@@ -102,10 +106,10 @@ export const Episode = ({
               ) : null}
             </Flex>
 
-            <Description data-testid="episode-description">{episodeTitle}</Description>
+            <Description data-testid="episode-description">{description}</Description>
             <Flex align="center" direction="row" justify="flex-start">
               {Boolean(date) && <Date>{moment.unix(date).fromNow()}</Date>}
-              {Boolean(showTitle) && <Title>{showTitle}</Title>}
+              {Boolean(subtitle) && <Title>{subtitle}</Title>}
               {!isSelectedView && boostCount > 0 && (
                 <Flex style={{ marginLeft: 'auto' }}>
                   <BoostAmt amt={boostCount} />
@@ -180,6 +184,21 @@ export const Title = styled(Date)`
     flex-shrink: 0;
     height: 4px;
     background: ${colors.GRAY6};
+
+    margin-top: 20px;
+  }
+
+  &.is-show {
+    margin: 20px 0px;
+    padding: 0px;
+    color: var(--Primary-Text, #fff);
+    leading-trim: both;
+    text-edge: cap;
+    font-family: Barlow;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 17px; /* 130.769% */
   }
 `
 
