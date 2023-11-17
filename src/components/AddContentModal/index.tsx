@@ -23,7 +23,7 @@ import { BudgetStep } from './BudgetStep'
 import { LocationStep } from './LocationStep'
 import { SourceStep } from './SourceStep'
 import { SourceTypeStep } from './SourceTypeStep'
-import { getInputType, isSource } from './utils'
+import { getInputType, isSource, twitterHandlePattern } from './utils'
 
 export type FormData = {
   input: string
@@ -72,8 +72,14 @@ const handleSubmitForm = async (
     body.content_type = 'document'
     body.text = data.source
   } else if (sourceType === TWITTER_HANDLE) {
-    body.source = (data.source || '').replace(/[@]/g, '')
-    body.source_type = sourceType
+    const [, match] = (data.source || '').match(twitterHandlePattern) || []
+
+    if (match) {
+      body.source = match
+      body.source_type = sourceType
+    } else {
+      return
+    }
   } else if (sourceType === YOUTUBE_CHANNEL) {
     body.source = data.source
     body.source_type = sourceType
@@ -136,6 +142,7 @@ export const AddContentModal = () => {
   const [setBudget] = useUserStore((s) => [s.setBudget])
   const form = useForm<FormData>({ mode: 'onChange' })
   const { watch, setValue, reset } = form
+  const [loading, setLoading] = useState(false)
 
   useEffect(
     () => () => {
@@ -170,7 +177,15 @@ export const AddContentModal = () => {
   }
 
   const onSubmit = form.handleSubmit(async (data) => {
-    await handleSubmitForm(data, handleClose, type, setBudget)
+    setLoading(true)
+
+    try {
+      await handleSubmitForm(data, handleClose, type, setBudget)
+    } catch {
+      notify(NODE_ADD_ERROR)
+    } finally {
+      setLoading(false)
+    }
   })
 
   return (
@@ -187,7 +202,7 @@ export const AddContentModal = () => {
               )}
             </>
           )}
-          {currentStep === 2 && <BudgetStep onClick={() => null} />}
+          {currentStep === 2 && <BudgetStep loading={loading} onClick={() => null} />}
         </form>
       </FormProvider>
     </BaseModal>

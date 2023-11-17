@@ -1,10 +1,11 @@
 import { DOCUMENT, LINK, TWITTER_HANDLE, TWITTER_SOURCE, WEB_PAGE, YOUTUBE_CHANNEL } from '~/constants'
 
+export const twitterHandlePattern = /\btwitter\.com\/(?:@)?([\w_]+)(?:$|\?[^/]*$)/
+
 const youtubeRegex = /(https?:\/\/)?(www\.)?youtube\.com\/watch\?v=([A-Za-z0-9_-]+)/
 const twitterSpaceRegex = /https:\/\/twitter\.com\/i\/spaces\/([A-Za-z0-9_-]+)/
 const tweetUrlRegex = /https:\/\/twitter\.com\/[^/]+\/status\/(\d+)/
 const mp3Regex = /(https?:\/\/)?([A-Za-z0-9_-]+)\.mp3/
-const twitterHandlePattern = /@(\w+)/g
 const youtubeChannelPattern = /https?:\/\/(www\.)?youtube\.com\/(@)?([\w-]+)/i
 const genericUrlRegex = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/
 
@@ -26,8 +27,8 @@ export function getInputType(source: string) {
   return inputType
 }
 
-export const extractNameFromLink = (inputString: string): string | null => {
-  const atPattern = /@(\w+)/
+export const extractNameFromLink = (inputString: string, type = ''): string | null => {
+  const atPattern = type === TWITTER_HANDLE ? twitterHandlePattern : /@(\w+)/
 
   const match: RegExpExecArray | null = atPattern.exec(inputString)
 

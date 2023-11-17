@@ -34,7 +34,7 @@ describe('youtubeRegex', () => {
 describe('extractNameFromLink', () => {
   it('should extract the name from a valid link', () => {
     const inputString = 'youtube.com/@username'
-    const result = extractNameFromLink(inputString)
+    const result = extractNameFromLink(inputString, YOUTUBE_CHANNEL)
 
     expect(result).toEqual('username')
   })
@@ -48,7 +48,14 @@ describe('extractNameFromLink', () => {
 
   it('should handle multiple occurrences and return the first match', () => {
     const inputString = 'twitter.com/@support?&val=@help'
-    const result = extractNameFromLink(inputString)
+    const result = extractNameFromLink(inputString, TWITTER_HANDLE)
+
+    expect(result).toEqual('support')
+  })
+
+  it('should handle multiple occurrences and return the first match', () => {
+    const inputString = 'twitter.com/support'
+    const result = extractNameFromLink(inputString, TWITTER_HANDLE)
 
     expect(result).toEqual('support')
   })

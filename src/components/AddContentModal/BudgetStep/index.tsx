@@ -9,9 +9,10 @@ import { colors, formatBudget } from '~/utils'
 
 type Props = {
   onClick: () => void
+  loading: boolean
 }
 
-export const BudgetStep: FC<Props> = ({ onClick }) => {
+export const BudgetStep: FC<Props> = ({ onClick, loading }) => {
   const [budget] = useUserStore((s) => [s.budget])
 
   return (
@@ -35,6 +36,7 @@ export const BudgetStep: FC<Props> = ({ onClick }) => {
       <Flex>
         <Button
           color="secondary"
+          disabled={loading}
           onClick={onClick}
           size="large"
           startIcon={<CheckIcon />}

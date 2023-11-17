@@ -29,7 +29,7 @@ export const SourceTypeStep: FC<Props> = ({ onNextStep, onPrevStep, type, value 
 
     <Flex direction="row" mb={20}>
       <StyledText>
-        {CONTENT_TYPE_MAPPING[type]}: @{extractNameFromLink(value) ?? value}
+        {CONTENT_TYPE_MAPPING[type]}: @{extractNameFromLink(value, type) ?? value}
       </StyledText>
     </Flex>
     <Flex direction="row">
