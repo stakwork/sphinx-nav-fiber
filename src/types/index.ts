@@ -186,3 +186,12 @@ type PostedBy = {
   ref_id: string
   twitter_handle: string
 }
+
+export type AuthRequest = {
+  message: string
+  tribeHost: string
+  tribeUuid: string
+  signature: string
+}
+
+export type IsAdminResponse = { isAdmin: boolean }
