@@ -90,7 +90,6 @@ export const Episode = ({
           {!isSelectedView && (
             <Flex align="center" pr={16}>
               <Avatar size={64} src={imageUrl} type={type || ''} />
-              <Avatar size={64} src={imageUrl} type={type || ''} />
             </Flex>
           )}
 
