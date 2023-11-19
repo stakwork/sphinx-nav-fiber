@@ -1,6 +1,5 @@
 import styled from 'styled-components'
 import AddContentIcon from '~/components/Icons/AddContentIcon'
-import AddSourceIcon from '~/components/Icons/AddSourceIcon'
 import SentimentDataIcon from '~/components/Icons/SentimentDataIcon'
 import SettingsIcon from '~/components/Icons/SettingsIcon'
 import SourcesTableIcon from '~/components/Icons/SourcesTableIcon'
@@ -15,7 +14,6 @@ export const MainToolbar = () => {
 
   const { open: openSourcesModal } = useModal('sourcesTable')
   const { open: openContentAddModal } = useModal('addContent')
-  const { open: openSourceAddModal } = useModal('addSource')
   const { open: openSettingsModal } = useModal('settings')
 
   const handleOpenSidebar = (tab: SecondarySidebarActiveTab) => {
@@ -32,12 +30,6 @@ export const MainToolbar = () => {
           <AddContentIcon />
         </IconWrapper>
         <Text>Add Content</Text>
-      </ActionButton>
-      <ActionButton onClick={openSourceAddModal}>
-        <IconWrapper>
-          <AddSourceIcon />
-        </IconWrapper>
-        <Text>Add Source</Text>
       </ActionButton>
       <ActionButton id="cy-open-soure-table" onClick={openSourcesModal}>
         <IconWrapper>
