@@ -129,18 +129,13 @@ describe('formatFetchNodes', () => {
     expect(formattedResponse.nodes[1].scale).toBe(1.5)
     expect(formattedResponse.nodes[1].type).toBe('data_series')
     expect(formattedResponse.nodes[1].index).toBe(1)
-  })
 
-  it('should give us the expected output for two different nodes', () => {
-    const emptyInput = {
-      data_series: { title: 'test' },
-      exact: [node1, dataSeriesNode],
-      related: [node1, dataSeriesNode],
-    }
-
-    const formattedResponse = formatFetchNodes(emptyInput)
-
-    expect(formattedResponse.links).toStrictEqual([])
+    expect(formattedResponse.nodes[2].label).toBe('test2')
+    expect(formattedResponse.nodes[2].name).toBe('test2')
+    expect(formattedResponse.nodes[2].node_type).toBe('data_series')
+    expect(formattedResponse.nodes[2].scale).toBe(1.5)
+    expect(formattedResponse.nodes[2].type).toBe('data_series')
+    expect(formattedResponse.nodes[2].index).toBe(2)
   })
 
   it('should create topic nodes for each topic from tweet, and guest node for posted_by', () => {
