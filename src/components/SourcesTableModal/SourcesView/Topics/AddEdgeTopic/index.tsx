@@ -27,7 +27,6 @@ export const AddEdgeModal: FC<Props> = ({ topic, onClose }) => {
   const [selectedTopic, setSelectedTopic] = useState<Topic | null>(null)
   const [selectedType, setSelectedType] = useState('')
 
-
   const closeHandler = () => {
     onClose()
     close()
