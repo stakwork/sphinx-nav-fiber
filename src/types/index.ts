@@ -22,6 +22,11 @@ export type FetchTopicResponse = {
   topicCount: number
 }
 
+export type FetchEdgesResponse = {
+  data: { edge_types: string[] }
+  status: string
+}
+
 export type RadarRequest = {
   source: string
   source_type: string

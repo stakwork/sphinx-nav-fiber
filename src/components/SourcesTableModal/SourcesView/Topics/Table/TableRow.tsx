@@ -38,11 +38,7 @@ const TableRowComponent: FC<TTableRaw> = ({ topic, onClick }) => {
       <StyledTableCell className="empty" />
       <StyledTableCell>{topic.topic}</StyledTableCell>
       <StyledTableCell>{topic.edgeCount}</StyledTableCell>
-      <StyledTableCell>
-        {topic.edgeList.map((edge: string) => (
-          <span key={edge}>{edge}</span>
-        ))}
-      </StyledTableCell>
+      <StyledTableCell>{topic.edgeList.join(', ')}</StyledTableCell>
       <StyledTableCell>
         <span>{new Date(Number(date) * 1000).toDateString()}</span>
       </StyledTableCell>

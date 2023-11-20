@@ -1,4 +1,11 @@
-import { FetchRadarResponse, FetchTopicResponse, NodeRequest, RadarRequest, SubmitErrRes } from '~/types'
+import {
+  FetchEdgesResponse,
+  FetchRadarResponse,
+  FetchTopicResponse,
+  NodeRequest,
+  RadarRequest,
+  SubmitErrRes,
+} from '~/types'
 import { api } from '../api'
 
 type TradarParams = {
@@ -17,9 +24,14 @@ export type TAboutParams = {
 }
 
 export type TMergeTopicsParams = {
-  /* eslint-disable camelcase */
   from: string
   to: string
+}
+
+export type TAddEdgeParams = {
+  from: string
+  to: string
+  relationship: string
 }
 
 export type TtopicsParams = {
@@ -53,6 +65,18 @@ export const getTopicsData = async (queryParams: TtopicsParams = defaultParams) 
 
 export const getAboutData = async () => {
   const response = await api.get<TAboutParams>('/about')
+
+  return response
+}
+
+export const getEdgeTypes = async () => {
+  const response = await api.get<FetchEdgesResponse>('/curation/edge/type')
+
+  return response
+}
+
+export const postEdgeType = async (data: TAddEdgeParams) => {
+  const response = await api.post('/curation/edge', JSON.stringify(data))
 
   return response
 }

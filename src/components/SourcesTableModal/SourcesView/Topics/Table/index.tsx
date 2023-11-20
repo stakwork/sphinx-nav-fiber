@@ -75,6 +75,7 @@ export const Table: React.FC<TopicTableProps> = ({ showMuted, onTopicEdit }) => 
           {!data[selectedRefId].edgeList.includes(IS_ALIAS) ? (
             <PopoverOption onClick={() => handlePopoverAction('mergeTopic')}>Merge</PopoverOption>
           ) : null}
+          <PopoverOption onClick={() => handlePopoverAction('addEdge')}>Add edge</PopoverOption>
         </PopoverWrapper>
       ) : null}
     </>
