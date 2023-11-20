@@ -21,6 +21,13 @@ export const appTheme = createTheme({
   palette,
   components: {
     MuiButton,
+    MuiPopover: {
+      styleOverrides: {
+        root: {
+          zIndex: 99999,
+        },
+      },
+    },
   },
   typography: {
     button: {
