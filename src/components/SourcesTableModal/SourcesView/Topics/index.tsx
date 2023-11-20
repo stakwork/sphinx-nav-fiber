@@ -9,6 +9,7 @@ import { useTopicsStore } from '~/stores/useTopicsStore'
 import { Topic } from '~/types'
 import { colors } from '~/utils/colors'
 import { Heading } from '../common'
+import { AddEdgeModal } from './AddEdgeTopic'
 import { EditTopicModal } from './EditTopicModal'
 import { MergeTopicModal } from './MergeTopicModal'
 import { Search } from './Search'
@@ -30,11 +31,13 @@ export const TopicSources = () => {
 
   const { open: openEditTopic } = useModal('editTopic')
   const { open: openMergeTopic } = useModal('mergeTopic')
+  const { open: openAddEdge } = useModal('addEdge')
   const [selectedTopic, setSelectedTopic] = useState<Topic | null>(null)
 
   const topicActions: Record<string, () => void> = {
     editTopic: openEditTopic,
     mergeTopic: openMergeTopic,
+    addEdge: openAddEdge,
   }
 
   const topicsIdRef = useRef<string[]>([])
@@ -127,6 +130,7 @@ export const TopicSources = () => {
 
       {selectedTopic && <MergeTopicModal onClose={modalCloseHandler} topic={selectedTopic} />}
       {selectedTopic && <EditTopicModal onClose={modalCloseHandler} topic={selectedTopic} />}
+      {selectedTopic && <AddEdgeModal onClose={modalCloseHandler} topic={selectedTopic} />}
     </>
   )
 }
