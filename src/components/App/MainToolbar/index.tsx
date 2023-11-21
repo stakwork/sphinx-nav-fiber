@@ -1,6 +1,5 @@
 import styled from 'styled-components'
 import AddContentIcon from '~/components/Icons/AddContentIcon'
-import SentimentDataIcon from '~/components/Icons/SentimentDataIcon'
 import SettingsIcon from '~/components/Icons/SettingsIcon'
 import SourcesTableIcon from '~/components/Icons/SourcesTableIcon'
 import { Flex } from '~/components/common/Flex'
@@ -37,17 +36,11 @@ export const MainToolbar = () => {
         </IconWrapper>
         <Text>Source Table</Text>
       </ActionButton>
-      <ActionButton id="cy-open-sentiment-data" onClick={() => handleOpenSidebar('sentiment')}>
-        <IconWrapper>
-          <SentimentDataIcon />
-        </IconWrapper>
-        <Text>Sentiment Data</Text>
-      </ActionButton>
       <ActionButton onClick={openSettingsModal}>
         <IconWrapper>
           <SettingsIcon />
         </IconWrapper>
-        <Text>Change Display</Text>
+        <Text>Settings</Text>
       </ActionButton>
     </Wrapper>
   )
