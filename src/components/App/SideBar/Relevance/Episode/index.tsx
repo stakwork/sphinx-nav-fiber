@@ -1,6 +1,7 @@
 import moment from 'moment'
 import styled from 'styled-components'
 import { BoostAmt } from '~/components/App/Helper/BoostAmt'
+import HashtagIcon from '~/components/Icons/HashtagIcon'
 import LinkIcon from '~/components/Icons/LinkIcon'
 import { Avatar } from '~/components/common/Avatar'
 import { Flex } from '~/components/common/Flex'
@@ -85,7 +86,7 @@ export const Episode = ({
 
   return (
     <EpisodeWrapper className={className} isSelected={isSelected} onClick={onClick}>
-      {type !== 'tweet' && type !== 'person' && type !== 'guest' && (
+      {type !== 'tweet' && type !== 'person' && type !== 'guest' && type !== 'topic' && (
         <Flex direction="row">
           {!isSelectedView && (
             <Flex align="center" pr={16}>
@@ -117,6 +118,12 @@ export const Episode = ({
             </Flex>
           </Flex>
         </Flex>
+      )}
+      {type === 'topic' && (
+        <TypeTopic>
+          <HashtagIcon />
+          <p>{subtitle}</p>
+        </TypeTopic>
       )}
       {['person', 'guest'].includes(type as string) && (
         <TypePerson imageUrl={imageUrl} name={name || ''} title={showTitle || ''} />
@@ -161,6 +168,33 @@ export const Date = styled(Text)`
   line-height: 18px;
   margin-right: 8px;
   flex-shrink: 0;
+`
+
+export const TypeTopic = styled.div`
+  display: flex;
+  flex-direction: row;
+
+  svg {
+    color: #909baa;
+    margin-right: 10px;
+  }
+
+  p {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+
+    overflow: hidden;
+    color: var(--Primary-Text, #fff);
+    leading-trim: both;
+    text-edge: cap;
+    text-overflow: ellipsis;
+    font-family: Barlow;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 16px; /* 100% */
+  }
 `
 
 export const Title = styled(Date)`
