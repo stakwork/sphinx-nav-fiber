@@ -84,7 +84,7 @@ export const Episode = ({
   const description = type === 'show' ? showTitle : episodeTitle
   const subtitle = type === 'show' ? '' : showTitle
 
-  const defaultViewTypes = ['tweet', 'person', 'guest', 'topic'];
+  const defaultViewTypes = ['tweet', 'person', 'guest', 'topic']
 
   return (
     <EpisodeWrapper className={className} isSelected={isSelected} onClick={onClick}>
