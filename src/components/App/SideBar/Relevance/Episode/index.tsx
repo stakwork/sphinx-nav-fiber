@@ -88,7 +88,7 @@ export const Episode = ({
 
   return (
     <EpisodeWrapper className={className} isSelected={isSelected} onClick={onClick}>
-      {defaultViewTypes.includes(type) && (
+      { type && defaultViewTypes.includes(type) && (
         <Flex direction="row">
           {!isSelectedView && (
             <Flex align="center" pr={16}>
