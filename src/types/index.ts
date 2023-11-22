@@ -49,6 +49,7 @@ export type Node = {
   date?: number
   description?: string
   episode_title?: string
+  hosts?: Guests[]
   guests?: (null | string | Guests)[]
   id?: string
   image_url?: string

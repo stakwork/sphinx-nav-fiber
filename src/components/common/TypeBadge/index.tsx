@@ -38,7 +38,7 @@ const EpisodeWrapper = styled(Flex).attrs({
 })`
   cursor: pointer;
   background: ${colors.white};
-  border-radius: 1px;
+  border-radius: 3px;
   overflow: hidden;
 
   img {
