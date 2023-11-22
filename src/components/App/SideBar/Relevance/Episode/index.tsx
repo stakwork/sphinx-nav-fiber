@@ -98,7 +98,7 @@ export const Episode = ({
               <Flex align="center" direction="row">
                 {type && <TypeBadge type={type} />}
               </Flex>
-              {type === 'youtube' ? (
+              {type === 'youtube' && link ? (
                 <StyledLink href={`${link}?open=system`} onClick={(e) => e.stopPropagation()}>
                   <LinkIcon />
                 </StyledLink>

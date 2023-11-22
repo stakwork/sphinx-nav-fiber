@@ -1,24 +1,16 @@
 import styled from 'styled-components'
 import AddContentIcon from '~/components/Icons/AddContentIcon'
-import SentimentDataIcon from '~/components/Icons/SentimentDataIcon'
 import SettingsIcon from '~/components/Icons/SettingsIcon'
 import SourcesTableIcon from '~/components/Icons/SourcesTableIcon'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
-import { SecondarySidebarActiveTab, useAppStore } from '~/stores/useAppStore'
 import { useModal } from '~/stores/useModalStore'
 import { colors } from '~/utils/colors'
 
 export const MainToolbar = () => {
-  const [setSecondarySidebarActiveTab] = useAppStore((s) => [s.setSecondarySidebarActiveTab])
-
   const { open: openSourcesModal } = useModal('sourcesTable')
   const { open: openContentAddModal } = useModal('addContent')
   const { open: openSettingsModal } = useModal('settings')
-
-  const handleOpenSidebar = (tab: SecondarySidebarActiveTab) => {
-    setSecondarySidebarActiveTab(tab)
-  }
 
   return (
     <Wrapper>
@@ -36,12 +28,6 @@ export const MainToolbar = () => {
           <SourcesTableIcon />
         </IconWrapper>
         <Text>Source Table</Text>
-      </ActionButton>
-      <ActionButton id="cy-open-sentiment-data" onClick={() => handleOpenSidebar('sentiment')}>
-        <IconWrapper>
-          <SentimentDataIcon />
-        </IconWrapper>
-        <Text>Sentiment Data</Text>
       </ActionButton>
       <ActionButton onClick={openSettingsModal}>
         <IconWrapper>
