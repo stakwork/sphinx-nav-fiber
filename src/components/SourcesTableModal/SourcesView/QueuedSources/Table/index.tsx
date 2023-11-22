@@ -78,10 +78,10 @@ const Table: React.FC<Props> = ({ data }) => {
               <StyledTableCell>{sourcesMapper[i.source_type]}</StyledTableCell>
               <StyledTableCell width="268px">
                 {i.source_type === 'twitter_handle' ? (
-                  <StyledLink href={`${TWITTER_LINK}/${i.source}`} target="_blank" rel="noopener noreferrer">
+                  <StyledLink href={`${TWITTER_LINK}/${i.source}`} target="_blank"  onClick={(e) => e.stopPropagation()}>
                     @{i.source}
                     </StyledLink>
-                    ) : (<StyledLink href={i.source} target="_blank" rel="noopener noreferrer">
+                    ) : (<StyledLink href={i.source} target="_blank"  onClick={(e) => e.stopPropagation()}>
                   {i.source}
                   </StyledLink>
                   )}
