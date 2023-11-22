@@ -33,7 +33,7 @@ export const MainToolbar = () => {
         <IconWrapper>
           <SettingsIcon />
         </IconWrapper>
-        <Text>Change Display</Text>
+        <Text>Settings</Text>
       </ActionButton>
     </Wrapper>
   )
