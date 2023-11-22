@@ -84,9 +84,11 @@ export const Episode = ({
   const description = type === 'show' ? showTitle : episodeTitle
   const subtitle = type === 'show' ? '' : showTitle
 
+  const defaultViewTypes = ['tweet', 'person', 'guest', 'topic'];
+
   return (
     <EpisodeWrapper className={className} isSelected={isSelected} onClick={onClick}>
-      {type !== 'tweet' && type !== 'person' && type !== 'guest' && type !== 'topic' && (
+      {defaultViewTypes.includes(type) && (
         <Flex direction="row">
           {!isSelectedView && (
             <Flex align="center" pr={16}>
@@ -175,7 +177,7 @@ export const TypeTopic = styled.div`
   flex-direction: row;
 
   svg {
-    color: #909baa;
+    color: ${colors.mainBottomIcons};
     margin-right: 10px;
   }
 
