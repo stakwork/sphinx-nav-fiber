@@ -143,7 +143,8 @@ export const Sources = () => {
         ?.filter(
           (val: TSources) =>
             (!typeFilter || val.source_type === typeFilter) &&
-            val.source.toLowerCase().startsWith(search.toLowerCase()),
+            (val.source.toLowerCase().startsWith(search.toLowerCase()) ||
+              val.source.toLowerCase().includes(search.toLowerCase())),
         )
         .reverse(),
     [search, typeFilter, sources],
