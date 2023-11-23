@@ -88,7 +88,7 @@ export const Episode = ({
 
   return (
     <EpisodeWrapper className={className} isSelected={isSelected} onClick={onClick}>
-      {type && defaultViewTypes.includes(type) && (
+      {type && !defaultViewTypes.includes(type) ? (
         <Flex direction="row">
           {!isSelectedView && (
             <Flex align="center" pr={16}>
@@ -120,25 +120,28 @@ export const Episode = ({
             </Flex>
           </Flex>
         </Flex>
-      )}
-      {type === 'topic' && (
-        <TypeTopic>
-          <HashtagIcon />
-          <p>{subtitle}</p>
-        </TypeTopic>
-      )}
-      {['person', 'guest'].includes(type as string) && (
-        <TypePerson imageUrl={imageUrl} name={name || ''} title={showTitle || ''} />
-      )}
-      {type === 'tweet' && (
-        <TypeTweet
-          date={date}
-          imageUrl={profilePicture}
-          name={name || ''}
-          text={text || ''}
-          twitterHandle={twitterHandle}
-          verified={verified}
-        />
+      ) : (
+        <>
+          {type === 'topic' && (
+            <TypeTopic>
+              <HashtagIcon />
+              <p>{subtitle}</p>
+            </TypeTopic>
+          )}
+          {['person', 'guest'].includes(type as string) && (
+            <TypePerson imageUrl={imageUrl} name={name || ''} title={showTitle || ''} />
+          )}
+          {type === 'tweet' && (
+            <TypeTweet
+              date={date}
+              imageUrl={profilePicture}
+              name={name || ''}
+              text={text || ''}
+              twitterHandle={twitterHandle}
+              verified={verified}
+            />
+          )}
+        </>
       )}
     </EpisodeWrapper>
   )
