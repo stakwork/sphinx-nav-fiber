@@ -61,6 +61,8 @@ export const BOOST_ERROR_BUDGET = 'Boost failed, insufficient budget'
 export const NODE_ADD_SUCCESS = 'Submitted!'
 export const NODE_ADD_ERROR = 'Submission failed, please try again.'
 
+export const SOURCE_EXISTS = 'Source already exists!'
+
 export const DEFAULT = 'default'
 export const DATE = 'date'
 export const EDGES = 'edges'

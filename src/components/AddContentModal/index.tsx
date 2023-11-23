@@ -9,6 +9,7 @@ import {
   LINK,
   NODE_ADD_ERROR,
   NODE_ADD_SUCCESS,
+  SOURCE_EXISTS,
   TWITTER_HANDLE,
   TWITTER_SOURCE,
   WEB_PAGE,
@@ -127,6 +128,11 @@ const handleSubmitForm = async (
       await updateBudget(setBudget)
 
       await handleSubmitForm(data, close, sourceType, setBudget)
+    }
+
+    if (err.status === 400) {
+      notify(SOURCE_EXISTS)
+      close()
     }
 
     if (err instanceof Error) {
