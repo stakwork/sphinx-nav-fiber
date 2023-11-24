@@ -58,6 +58,7 @@ export type Node = {
   message_content?: string
   keyword?: boolean
   label: string
+  source_link?: string
   link?: string
   name: string
   node_type: string

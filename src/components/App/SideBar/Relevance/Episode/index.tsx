@@ -51,6 +51,7 @@ export type Props = {
   showTitle?: string
   text?: string
   link?: string
+  sourceLink?: string
   type?: string
   name?: string
   verified?: boolean
@@ -73,6 +74,7 @@ export const Episode = ({
   name,
   profilePicture,
   link,
+  sourceLink,
   verified = false,
   twitterHandle,
   className = 'episode-wrapper',
@@ -86,9 +88,9 @@ export const Episode = ({
 
   const defaultViewTypes = ['tweet', 'person', 'guest', 'topic']
 
-  return (
+  return type ? (
     <EpisodeWrapper className={className} isSelected={isSelected} onClick={onClick}>
-      {type && !defaultViewTypes.includes(type) ? (
+      {!defaultViewTypes.includes(type) ? (
         <Flex direction="row">
           {!isSelectedView && (
             <Flex align="center" pr={16}>
@@ -101,7 +103,7 @@ export const Episode = ({
               <Flex align="center" direction="row">
                 {type && <TypeBadge type={type} />}
               </Flex>
-              {type === 'youtube' && link ? (
+              {type === 'youtube' && sourceLink ? (
                 <StyledLink href={`${link}?open=system`} onClick={(e) => e.stopPropagation()}>
                   <LinkIcon />
                 </StyledLink>
@@ -144,7 +146,7 @@ export const Episode = ({
         </>
       )}
     </EpisodeWrapper>
-  )
+  ) : null
 }
 
 export const Description = styled(Flex)`

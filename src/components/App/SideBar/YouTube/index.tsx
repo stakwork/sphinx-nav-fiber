@@ -40,7 +40,7 @@ export const YouTube = () => {
 
     if (isReady) {
       player?.seekTo(secs)
-      player?.getInternalPlayer()?.play()
+      typeof player?.getInternalPlayer()?.playVideo === 'function' && player?.getInternalPlayer().playVideo()
     }
 
     if (scrollTargetRef.current) {

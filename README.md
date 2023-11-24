@@ -1,7 +1,3 @@
-Connection to the ec2 instance with the sphinx-nav code (ask for the pem key)
-
-`ssh -i ./pemFiles/knowlege-graph-api.pem ec2-user@3.80.198.201`
-
 ## Available Scripts
 
 In the project directory, you can run:
