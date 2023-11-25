@@ -1,7 +1,6 @@
-import { Button, Skeleton } from '@mui/material'
+import { Button, Skeleton} from '@mui/material'
 import { useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
 import PlusIcon from '~/components/Icons/PlusIcon'
 import { Flex } from '~/components/common/Flex'
@@ -11,6 +10,7 @@ import { useModal } from '~/stores/useModalStore'
 import { Trending as TrendingType } from '~/types'
 import { colors } from '~/utils/colors'
 import { BriefDescription } from './BriefDescriptionModal'
+import { ClipLoader } from 'react-spinners'
 
 const TRENDING_TOPICS = ['Drivechain', 'Ordinals', 'L402', 'Nostr', 'AI']
 
@@ -66,20 +66,26 @@ export const Trending = ({ onSubmit }: Props) => {
 
   return (
     <Wrapper>
-      {loading ? (
-        <ClipLoader className="loading" color={colors.PRIMARY_BLUE} size={16} />
-      ) : (
-        <div>
-          {trendingTopics.length === 0 ? (
-            <div className="Trendingwrapper">
-              <Text>No new trending topics in the last 24 hours</Text>
-              <ButtonStyled onClick={openContentAddModal} startIcon={<PlusIcon />}>
-                Add Content
-              </ButtonStyled>
-            </div>
-          ) : (
-            <ul className="list">
-              {loading ? (
+      <div>
+        {trendingTopics.length > 0 && !loading ? (
+          <div className="Trendingwrapper">
+            <Text>No new trending topics in the last 24 hours</Text>
+            <ButtonStyled
+              color="secondary"
+              onClick={openContentAddModal}
+              size="medium"
+              startIcon={<PlusIcon />}
+              sx={{ alignSelf: 'flex-end', m: '0 36px 16px 0' }}
+              variant="contained"
+            >
+              Add Content
+            </ButtonStyled>
+          </div>
+        ) : (
+          <ul className="list">
+            {loading ? (
+              <div>
+                <ClipLoader color={colors.PRIMARY_BLUE} size={16} />
                 <>
                   <StyledSkeleton animation="wave" height={47} variant="rectangular" width={382} />
                   <StyledSkeleton animation="wave" height={47} variant="rectangular" width={382} />
@@ -87,27 +93,27 @@ export const Trending = ({ onSubmit }: Props) => {
                   <StyledSkeleton animation="wave" height={47} variant="rectangular" width={382} />
                   <StyledSkeleton animation="wave" height={47} variant="rectangular" width={382} />
                 </>
-              ) : (
-                <>
-                  {trendingTopics.map((i) => (
-                    <Flex
-                      key={i.topic}
-                      align="center"
-                      className="list-item"
-                      direction="row"
-                      justify="space-between"
-                      onClick={() => selectTrending(i.topic)}
-                    >
-                      <span>#{i.topic}</span>
-                      {i.tldr && <Button onClick={(e) => showModal(e, i)}>TLDR</Button>}
-                    </Flex>
-                  ))}
-                </>
-              )}
-            </ul>
-          )}
-        </div>
-      )}
+              </div>
+            ) : (
+              <>
+                {trendingTopics.map((i) => (
+                  <Flex
+                    key={i.topic}
+                    align="center"
+                    className="list-item"
+                    direction="row"
+                    justify="space-between"
+                    onClick={() => selectTrending(i.topic)}
+                  >
+                    <span>#{i.topic}</span>
+                    {i.tldr && <Button onClick={(e) => showModal(e, i)}>TLDR</Button>}
+                  </Flex>
+                ))}
+              </>
+            )}
+          </ul>
+        )}
+      </div>
       <BriefDescription onClose={() => setBriefDescription('')} text={briefDescription} />
     </Wrapper>
   )
@@ -135,9 +141,6 @@ const Wrapper = styled(Flex)`
   .Trendingwrapper {
     margin-left: 23px;
     margin-top: 20px;
-  }
-  .loading {
-    margin-left: 23px;
   }
 
   .list {
@@ -182,14 +185,5 @@ const Text = styled.p`
 `
 
 const ButtonStyled = styled(Button)`
-  && {
-    font-weight: 500;
-    background-color: #618aff;
-    :hover {
-      background-color: #618aff;
-      color: #fff;
-    }
-    cursor: pointer;
-    border-radius: 6px;
-  }
+
 `

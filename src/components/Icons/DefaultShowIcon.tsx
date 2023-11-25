@@ -1,13 +1,33 @@
 /* eslint-disable */
-import React from 'react'
+import React from 'react';
 
 const DefaultShowIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
-  <svg width="1em" height="1em" viewBox="0 0 34 34" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-    <mask id="mask0_2777_4506" maskUnits="userSpaceOnUse" x="0" y="0" width="34" height="34">
+  <svg
+    width="1em"
+    height="1em"
+    viewBox="0 0 34 34"
+    fill="currentColor"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <mask
+      id="mask0_2777_4506"
+      maskUnits="userSpaceOnUse"
+      x="0"
+      y="0"
+      width="34"
+      height="34"
+    >
       <rect width="1em" height="1em" fill="currentColor" />
     </mask>
     <g mask="url(#mask0_2777_4506)">
-      <mask id="mask1_2777_4506" maskUnits="userSpaceOnUse" x="0" y="0" width="34" height="34">
+      <mask
+        id="mask1_2777_4506"
+        maskUnits="userSpaceOnUse"
+        x="0"
+        y="0"
+        width="34"
+        height="34"
+      >
         <rect width="1em" height="1em" fill="currentColor" />
       </mask>
       <g mask="url(#mask1_2777_4506)">
@@ -18,6 +38,6 @@ const DefaultShowIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
       </g>
     </g>
   </svg>
-)
+);
 
-export default DefaultShowIcon
+export default DefaultShowIcon;
