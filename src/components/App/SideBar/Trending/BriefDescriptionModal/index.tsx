@@ -20,12 +20,19 @@ export const BriefDescription: FC<Props> = ({ text, onClose }) => {
 
   return (
     <BaseModal id="briefDescription" kind="regular" onClose={handleClose} preventOutsideClose>
-      <Flex py={16}>
-        <StyledText>{text}</StyledText>
-      </Flex>
+      <ScrollableContent>
+        <Flex py={16}>
+          <StyledText>{text}</StyledText>
+        </Flex>
+      </ScrollableContent>
     </BaseModal>
   )
 }
+
+const ScrollableContent = styled.div`
+  max-height: 300px;
+  overflow-y: auto;
+`
 
 const StyledText = styled(Text)`
   font-size: 18px;
