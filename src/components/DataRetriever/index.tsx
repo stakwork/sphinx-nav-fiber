@@ -1,39 +1,33 @@
 import invariant from 'invariant'
-import { PropsWithChildren, ReactNode, useCallback, useEffect, useState } from 'react'
+import { PropsWithChildren, useCallback, useEffect, useState } from 'react'
 import { Vector3 } from 'three'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { NodeExtended } from '~/types'
+import { Splash } from '../App/Splash'
 import { PATHWAY_RANGE } from './constants'
 
-type Props = PropsWithChildren<{
-  loader?: ReactNode
-}>
+type Props = PropsWithChildren
 
-export const DataRetriever = ({ children, loader }: Props) => {
+export const DataRetriever = ({ children }: Props) => {
   const [data, fetchData] = [useDataStore((s) => s.data), useDataStore((s) => s.fetchData)]
-  const [loading, setLoading] = useState(false)
-
-  useEffect(() => {
-    fetchData()
-  }, [fetchData])
+  const [loading, setLoading]= useState(false)
 
   useEffect(() => {
     setLoading(true)
 
-    setTimeout(() => {
-      setLoading(false)
-    }, 3000)
-  }, [])
+    fetchData()
 
-  if (data === null && loader) {
-    return <>{loader}</>
+  }, [fetchData])
+
+  if (data === null) {
+    return <Splash handleLoading={setLoading} />
   }
 
   if (data === null) {
     return null
   }
 
-  return <>{loading ? loader : children}</>
+  return <>{loading ? <Splash handleLoading={setLoading} /> : children}</>
 }
 
 export const useGraphData = () => {
