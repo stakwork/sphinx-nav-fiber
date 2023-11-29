@@ -9,25 +9,20 @@ import { PATHWAY_RANGE } from './constants'
 type Props = PropsWithChildren
 
 export const DataRetriever = ({ children }: Props) => {
-  const [data, fetchData] = [useDataStore((s) => s.data), useDataStore((s) => s.fetchData)]
-  const [loading, setLoading]= useState(false)
+  const fetchData = useDataStore((s) => s.fetchData)
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     setLoading(true)
 
     fetchData()
-
   }, [fetchData])
 
-  if (data === null) {
+  if (loading) {
     return <Splash handleLoading={setLoading} />
   }
 
-  if (data === null) {
-    return null
-  }
-
-  return <>{loading ? <Splash handleLoading={setLoading} /> : children}</>
+  return children
 }
 
 export const useGraphData = () => {
