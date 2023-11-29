@@ -1,6 +1,7 @@
 import { Button, Skeleton } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
+import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
 import PlusIcon from '~/components/Icons/PlusIcon'
 import { Flex } from '~/components/common/Flex'
@@ -10,7 +11,6 @@ import { useModal } from '~/stores/useModalStore'
 import { Trending as TrendingType } from '~/types'
 import { colors } from '~/utils/colors'
 import { BriefDescription } from './BriefDescriptionModal'
-import { ClipLoader } from 'react-spinners'
 
 const TRENDING_TOPICS = ['Drivechain', 'Ordinals', 'L402', 'Nostr', 'AI']
 
@@ -22,6 +22,8 @@ export const Trending = ({ onSubmit }: Props) => {
   const { open: openContentAddModal } = useModal('addContent')
   const [loading, setLoading] = useState(false)
   const [briefDescription, setBriefDescription] = useState('')
+  const [selectedTopic, setSelectedTopic] = useState('')
+
   const { open } = useModal('briefDescription')
 
   const [trendingTopics, setTrendingTopics] = useDataStore((s) => [s.trendingTopics, s.setTrendingTopics])
@@ -57,11 +59,18 @@ export const Trending = ({ onSubmit }: Props) => {
 
   const showModal = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, trending: TrendingType) => {
     e.stopPropagation()
+    e.currentTarget.blur()
 
     if (trending?.tldr) {
       setBriefDescription(trending.tldr)
+      setSelectedTopic(trending.topic)
       open()
     }
+  }
+
+  const hideModal = () => {
+    setBriefDescription('')
+    setSelectedTopic('')
   }
 
   return (
@@ -114,7 +123,7 @@ export const Trending = ({ onSubmit }: Props) => {
           </ul>
         )}
       </div>
-      <BriefDescription onClose={() => setBriefDescription('')} text={briefDescription} />
+      <BriefDescription onClose={hideModal} text={briefDescription} topic={selectedTopic} />
     </Wrapper>
   )
 }
