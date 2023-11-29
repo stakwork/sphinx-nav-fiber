@@ -160,7 +160,7 @@ export const App = () => {
             <SecondarySideBar />
             <AppBar />
             <Version>v{version}</Version>
-            <ActionsToolbar />
+            {false && <ActionsToolbar />}
           </FormProvider>
         </DataRetriever>
 

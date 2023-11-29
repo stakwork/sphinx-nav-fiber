@@ -84,6 +84,12 @@ const _AudioPlayer = ({
     }
   }, [timestamp, player])
 
+  // const handleProgress = (progress: { playedSeconds: number }) => {
+  //   const currentTime = progress.playedSeconds
+
+  //   setPlayingTime(currentTime)
+  // }
+
   return (
     <Flex>
       {loadError ? (
@@ -98,6 +104,7 @@ const _AudioPlayer = ({
             setLoadError(true)
             onError()
           }}
+          onListen={(e) => console.log(e)}
           onLoadedMetadata={() => {
             setLoadError(false)
             onLoaded()

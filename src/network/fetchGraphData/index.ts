@@ -341,6 +341,8 @@ export const getGraphData = async (searchterm: string, graphStyle: 'split' | 'fo
   try {
     const dataInit = await fetchNodes(searchterm)
 
+    console.log(dataInit)
+
     return formatFetchNodes(dataInit, searchterm, graphStyle)
   } catch (e) {
     console.error(e)

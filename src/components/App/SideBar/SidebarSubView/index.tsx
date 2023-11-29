@@ -7,6 +7,7 @@ import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
 import { colors } from '~/utils/colors'
 import { SelectedNodeView } from '../SelectedNodeView'
+import { Player } from './Player'
 
 type Props = { open: boolean }
 
@@ -20,9 +21,14 @@ export const SideBarSubView = ({ open }: Props) => {
   const [setSidebarOpen] = useAppStore((s) => [s.setSidebarOpen])
 
   return (
-    <Slide direction="right" in={open} mountOnEnter style={{ width: showTeachMe ? '700px' : '' }} unmountOnExit>
+    <Slide
+      direction="right"
+      in={open}
+      style={{ width: showTeachMe ? '700px' : '', position: open ? 'relative' : 'absolute' }}
+    >
       <Wrapper>
         <ScrollWrapper>
+          <Player />
           <SelectedNodeView />
         </ScrollWrapper>
         <CloseButton
@@ -52,7 +58,6 @@ const Wrapper = styled(Flex)(({ theme }) => ({
   margin: '64px auto 20px 10px',
   borderRadius: '16px',
   zIndex: 29,
-  overflow: 'hidden',
   [theme.breakpoints.up('sm')]: {
     width: '390px',
   },
