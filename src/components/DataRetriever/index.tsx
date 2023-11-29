@@ -22,7 +22,7 @@ export const DataRetriever = ({ children }: Props) => {
     return <Splash handleLoading={setLoading} />
   }
 
-  return children
+  return <>{children}</>
 }
 
 export const useGraphData = () => {
