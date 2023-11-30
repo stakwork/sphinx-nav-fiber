@@ -66,6 +66,7 @@ export const Relevance = ({ isSearchResult }: Props) => {
             show_title: showTitle,
             node_type: nodeType,
             text,
+            source_link: sourceLink,
             link,
             name,
             profile_picture: profilePicture,
@@ -87,6 +88,7 @@ export const Relevance = ({ isSearchResult }: Props) => {
               onClick={() => handleNodeClick(n)}
               profilePicture={profilePicture}
               showTitle={formatDescription(showTitle)}
+              sourceLink={sourceLink}
               text={text || ''}
               twitterHandle={twitterHandle}
               type={nodeType || type}

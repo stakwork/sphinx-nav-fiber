@@ -1,7 +1,3 @@
-Connection to the ec2 instance with the sphinx-nav code (ask for the pem key)
-
-`ssh -i ./pemFiles/knowlege-graph-api.pem ec2-user@3.80.198.201`
-
 ## Available Scripts
 
 In the project directory, you can run:
@@ -70,3 +66,11 @@ build docker image
 run the image on localhost
 
 `docker run -p 3004:80 sphinx_nav_fiber`
+
+### Generate icons for latest layout
+
+Add svg icon to public/svg-icons with proper naming
+
+run `node ./svgLibBuilder.js`
+
+it will generate React Icon in src/components/Icons
