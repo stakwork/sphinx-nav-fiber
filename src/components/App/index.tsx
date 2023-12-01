@@ -24,7 +24,6 @@ import version from '~/utils/versionHelper'
 import { AddContentModal } from '../AddContentModal'
 import { SettingsModal } from '../SettingsModal'
 import { SourcesTableModal } from '../SourcesTableModal'
-import { Preloader } from '../Universe/Preloader'
 import { ActionsToolbar } from './ActionsToolbar'
 import { AppBar } from './AppBar'
 import { Helper } from './Helper'
@@ -152,7 +151,7 @@ export const App = () => {
       <Leva hidden={!isDevelopment} />
 
       <Wrapper direction="row">
-        <DataRetriever loader={<Preloader />}>
+        <DataRetriever>
           <FormProvider {...form}>
             <MainToolbar />
             <SideBar onSubmit={handleSubmit} />
