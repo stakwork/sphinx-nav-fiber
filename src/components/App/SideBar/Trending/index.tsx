@@ -21,8 +21,7 @@ type Props = {
 export const Trending = ({ onSubmit }: Props) => {
   const { open: openContentAddModal } = useModal('addContent')
   const [loading, setLoading] = useState(false)
-  const [briefDescription, setBriefDescription] = useState('')
-  const [selectedTopic, setSelectedTopic] = useState('')
+  const [selectedTrend, setSelectedTrend] = useState<TrendingType | null>(null)
 
   const { open } = useModal('briefDescription')
 
@@ -62,15 +61,13 @@ export const Trending = ({ onSubmit }: Props) => {
     e.currentTarget.blur()
 
     if (trending?.tldr) {
-      setBriefDescription(trending.tldr)
-      setSelectedTopic(trending.topic)
+      setSelectedTrend(trending)
       open()
     }
   }
 
   const hideModal = () => {
-    setBriefDescription('')
-    setSelectedTopic('')
+    setSelectedTrend(null)
   }
 
   return (
@@ -123,7 +120,7 @@ export const Trending = ({ onSubmit }: Props) => {
           </ul>
         )}
       </div>
-      <BriefDescription onClose={hideModal} text={briefDescription} topic={selectedTopic} />
+      {selectedTrend && <BriefDescription onClose={hideModal} trend={selectedTrend} />}
     </Wrapper>
   )
 }
