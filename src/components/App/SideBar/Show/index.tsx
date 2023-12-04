@@ -10,7 +10,7 @@ import { useDataStore } from '~/stores/useDataStore'
 import { NodeExtended } from '~/types'
 import { getSelectedNodeTimestamps } from '~/utils'
 import { colors } from '~/utils/colors'
-import { videoTimetoSeconds } from '~/utils/videoTimetoSeconds'
+import { videoTimeToSeconds } from '~/utils/videoTimeToSeconds'
 
 export const CREATOR_HEADING_HEIGHT = 240
 
@@ -86,7 +86,7 @@ const EpisodeHeaderText = styled(Text)`
 `
 
 const EpisodePanel = ({ node, onClick }: EpisodeProps) => {
-  const secs = videoTimetoSeconds(node.timestamp || '')
+  const secs = videoTimeToSeconds(node.timestamp || '')
   const mins = Math.ceil(secs / 60)
 
   return (
@@ -132,7 +132,7 @@ export const Show = () => {
     if (selectedNode?.children?.length) {
       selectedNode.children.forEach((childRefId, index) => {
         const timeStamp = getSelectedNodeTimestamps(data?.nodes || [], selectedNode) || []
-        const childNode = data.nodes.find((f) => f.ref_id === childRefId)
+        const childNode = data?.nodes.find((f) => f.ref_id === childRefId)
 
         if (childNode) {
           childNode.timestamp = timeStamp[0]?.timestamp
@@ -157,7 +157,7 @@ export const Show = () => {
     return Object.values(children)
       .filter((f) => f.node_type === 'episode')
       .sort((a, b) => (b.weight || 0) - (a.weight || 0))
-  }, [data.nodes, selectedNode])
+  }, [data?.nodes, selectedNode])
 
   return (
     <Wrapper>

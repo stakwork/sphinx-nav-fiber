@@ -6,7 +6,7 @@ import { Avatar } from '~/components/common/Avatar'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { setIsTimestampLoaded, useDataStore, useSelectedNode } from '~/stores/useDataStore'
-import { videoTimetoSeconds } from '~/utils/videoTimetoSeconds'
+import { videoTimeToSeconds } from '~/utils/videoTimeToSeconds'
 
 export const CREATOR_HEADING_HEIGHT = 240
 
@@ -31,7 +31,7 @@ export const Heading = () => {
     const audioElement = document.getElementById('audio-player') as HTMLAudioElement
 
     if (audioElement) {
-      audioElement.currentTime = timestamp ? videoTimetoSeconds(timestamp) : 0
+      audioElement.currentTime = timestamp ? videoTimeToSeconds(timestamp) : 0
     }
   }, [selectedTimestamp])
 

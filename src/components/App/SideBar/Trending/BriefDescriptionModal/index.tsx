@@ -13,7 +13,6 @@ import { Trending } from '~/types'
 type Props = {
   trend: Trending
   onClose: () => void
-  topic: string
 }
 
 export const BriefDescription: FC<Props> = ({ trend, onClose }) => {

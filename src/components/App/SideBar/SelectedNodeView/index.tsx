@@ -1,5 +1,6 @@
-import { memo } from 'react'
+import { memo, useEffect } from 'react'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
+import { usePlayerStore } from '~/stores/usePlayerStore'
 import { TextType } from '../../Helper/AskQuestion/Text'
 import { TeachMeText } from '../../Helper/TeachMe'
 import { AudioClip } from '../AudioClip'
@@ -10,21 +11,28 @@ import { Person } from '../Person'
 import { Show } from '../Show'
 import { Topic } from '../Topic'
 import { TwitData } from '../TwitData'
-import { Twitter } from '../Twitter'
 import { YouTube } from '../YouTube'
+
+const MEDIA_TYPES = ['clip', 'twitter_space', 'youtube']
 
 // eslint-disable-next-line no-underscore-dangle
 const _View = () => {
   const selectedNode = useSelectedNode()
   const [showTeachMe] = useDataStore((s) => [s.showTeachMe])
 
+  const [playingNode, setPlayingNode] = usePlayerStore((s) => [s.playingNode, s.setPlayingNode])
+
+  useEffect(() => {
+    if (MEDIA_TYPES.includes(selectedNode?.node_type || '')) {
+      setPlayingNode(selectedNode)
+    }
+  }, [setPlayingNode, selectedNode, playingNode])
+
   if (showTeachMe) {
     return <TeachMeText />
   }
 
   switch (selectedNode?.node_type) {
-    case 'twitter':
-      return <Twitter />
     case 'guest':
       return <Person />
     case 'person':
@@ -49,6 +57,8 @@ const _View = () => {
       return <AudioClip />
     case 'document':
       return <TextType />
+    case 'twitter_space':
+      return <AudioClip />
     default:
       return <Creator />
   }
