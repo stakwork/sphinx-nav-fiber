@@ -83,10 +83,7 @@ const ActionButton = styled(Flex).attrs({
     width: 4px; /* Initial width */
     height: 32px; /* Initial height on hover */
     background-color: transparent;
-    transition:
-      height 0.3s,
-      width 0.3s,
-      background-color 0.3s;
+    transition: height 0.3s, width 0.3s, background-color 0.3s;
   }
 
   ${Text} {
