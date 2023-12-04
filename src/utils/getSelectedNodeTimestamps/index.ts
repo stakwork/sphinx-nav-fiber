@@ -1,6 +1,6 @@
 import { groupBy, values } from 'lodash'
 import { NodeExtended } from '~/types'
-import { videoTimeToSeconds } from '~/utils/videoTimeToSeconds'
+import { videoTimeToSeconds } from '~/utils/videoTimetoSeconds'
 
 export const getSelectedNodeTimestamps = (nodes: NodeExtended[], selectedNode: NodeExtended | null) => {
   if (!selectedNode) {

@@ -6,7 +6,7 @@ import { Avatar } from '~/components/common/Avatar'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { setIsTimestampLoaded, useDataStore, useSelectedNode } from '~/stores/useDataStore'
-import { videoTimeToSeconds } from '~/utils/videoTimeToSeconds'
+import { videoTimeToSeconds } from '~/utils/videoTimetoSeconds'
 
 export const CREATOR_HEADING_HEIGHT = 240
 

@@ -4,7 +4,7 @@ import ReactAudioPlayer from 'react-audio-player'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
-import { videoTimeToSeconds } from '~/utils/videoTimeToSeconds'
+import { videoTimeToSeconds } from '~/utils/videoTimetoSeconds'
 
 const Audio = styled(ReactAudioPlayer as unknown as ComponentType<typeof ReactAudioPlayer.defaultProps>)`
   width: 100%;

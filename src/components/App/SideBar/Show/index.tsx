@@ -10,7 +10,7 @@ import { useDataStore } from '~/stores/useDataStore'
 import { NodeExtended } from '~/types'
 import { getSelectedNodeTimestamps } from '~/utils'
 import { colors } from '~/utils/colors'
-import { videoTimeToSeconds } from '~/utils/videoTimeToSeconds'
+import { videoTimeToSeconds } from '~/utils/videoTimetoSeconds'
 
 export const CREATOR_HEADING_HEIGHT = 240
 

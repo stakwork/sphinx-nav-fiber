@@ -17,7 +17,7 @@ import { E2ETests, addToGlobalForE2e, executeIfProd, executeIfTetsRunning } from
 import { timeToMilliseconds } from './timeToMilliseconds'
 import { useIsMatchBreakpoint } from './useIsMatchBreakpoint'
 // import APP_VERSION from './versionHelper'
-import { videoTimeToSeconds } from './videoTimeToSeconds'
+import { videoTimeToSeconds } from './videoTimetoSeconds'
 
 export {
   E2ETests,
