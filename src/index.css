@@ -1,49 +1,65 @@
 @font-face {
   font-family: 'Barlow';
   font-weight: 200;
-  src: local('Barlow'), url('/fonts/Barlow-ExtraLight.ttf') format('truetype');
+  src:
+    local('Barlow'),
+    url('/fonts/Barlow-ExtraLight.ttf') format('truetype');
 }
 
 @font-face {
   font-family: 'Barlow';
   font-weight: 100;
-  src: local('Barlow'), url('/fonts/Barlow-Thin.ttf') format('truetype');
+  src:
+    local('Barlow'),
+    url('/fonts/Barlow-Thin.ttf') format('truetype');
 }
 
 @font-face {
   font-family: 'Barlow';
   font-weight: 300;
-  src: local('Barlow'), url('/fonts/Barlow-Light.ttf') format('truetype');
+  src:
+    local('Barlow'),
+    url('/fonts/Barlow-Light.ttf') format('truetype');
 }
 
 @font-face {
   font-family: 'Barlow';
   font-weight: 400;
-  src: local('Barlow'), url('/fonts/Barlow-Regular.ttf') format('truetype');
+  src:
+    local('Barlow'),
+    url('/fonts/Barlow-Regular.ttf') format('truetype');
 }
 
 @font-face {
   font-family: 'Barlow';
   font-weight: 500;
-  src: local('Barlow'), url('/fonts/Barlow-Medium.ttf') format('truetype');
+  src:
+    local('Barlow'),
+    url('/fonts/Barlow-Medium.ttf') format('truetype');
 }
 
 @font-face {
   font-family: 'Barlow';
   font-weight: 600;
-  src: local('Barlow'), url('/fonts/Barlow-SemiBold.ttf') format('truetype');
+  src:
+    local('Barlow'),
+    url('/fonts/Barlow-SemiBold.ttf') format('truetype');
 }
 
 @font-face {
   font-family: 'Barlow';
   font-weight: 700;
-  src: local('Barlow'), url('/fonts/Barlow-Bold.ttf') format('truetype');
+  src:
+    local('Barlow'),
+    url('/fonts/Barlow-Bold.ttf') format('truetype');
 }
 
 @font-face {
   font-family: 'Barlow';
   font-weight: 800;
-  src: local('Barlow'), url('/fonts/Barlow-ExtraBold.ttf') format('truetype');
+  src:
+    local('Barlow'),
+    url('/fonts/Barlow-ExtraBold.ttf') format('truetype');
 }
 
 html,

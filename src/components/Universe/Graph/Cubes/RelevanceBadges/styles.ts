@@ -23,7 +23,9 @@ export const Tag = styled(Flex)<TagProps>`
   border-radius: ${(p: TagProps) => `${p.type === 'guest' ? '100%' : '6px'}`};
   font-size: ${(p: TagProps) => `${p.fontSize}px`};
   cursor: pointer;
-  transition: font-size 0.4s, outline 0.4s;
+  transition:
+    font-size 0.4s,
+    outline 0.4s;
   transform: scale(${(p: TagProps) => p.scale});
   align-items: center;
   justify-content: center;

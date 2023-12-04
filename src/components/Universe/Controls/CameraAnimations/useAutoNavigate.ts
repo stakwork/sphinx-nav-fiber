@@ -50,8 +50,8 @@ export const useAutoNavigate = (cameraControlsRef: RefObject<CameraControls | nu
 
     if (selected && graphData) {
       // find all node children ... is there a better way?
-      const children: NodeExtended[] = graphData?.nodes.filter((node) =>
-        selected.children?.find((str) => str === node.id),
+      const children: NodeExtended[] = graphData?.nodes.filter(
+        (node) => selected.children?.find((str) => str === node.id),
       )
 
       // position of node

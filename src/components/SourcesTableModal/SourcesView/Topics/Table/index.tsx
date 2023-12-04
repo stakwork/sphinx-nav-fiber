@@ -54,13 +54,7 @@ export const Table: React.FC<TopicTableProps> = ({ showMuted, onTopicEdit }) => 
             <StyledTableCell />
           </TableRow>
         </StyledTableHead>
-        {data && (
-          <tbody>
-            {ids?.map((i: string) => (
-              <TopicRow key={i} onClick={handleClick} topic={data[i]} />
-            ))}
-          </tbody>
-        )}
+        {data && <tbody>{ids?.map((i: string) => <TopicRow key={i} onClick={handleClick} topic={data[i]} />)}</tbody>}
       </MaterialTable>
       {selectedRefId ? (
         <PopoverWrapper

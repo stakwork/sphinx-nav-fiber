@@ -4,7 +4,6 @@ import { usePlayerStore } from '~/stores/usePlayerStore'
 import { TextType } from '../../Helper/AskQuestion/Text'
 import { TeachMeText } from '../../Helper/TeachMe'
 import { AudioClip } from '../AudioClip'
-import { Creator } from '../Creator'
 import { Data } from '../Data'
 import { Messages } from '../Messages'
 import { Person } from '../Person'
@@ -60,7 +59,7 @@ const _View = () => {
     case 'twitter_space':
       return <AudioClip />
     default:
-      return <Creator />
+      return null
   }
 }
 

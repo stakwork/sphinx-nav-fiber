@@ -67,7 +67,9 @@ const TextWrapper = styled.div`
       left: 50%;
       transform: translate(-50%, 50%);
       opacity: 0;
-      transition: opacity 0.4s ease-in-out, visibility 0.2s ease-in-out;
+      transition:
+        opacity 0.4s ease-in-out,
+        visibility 0.2s ease-in-out;
 
       &.show {
         opacity: 1;
