@@ -4,6 +4,7 @@ import { useFormContext } from 'react-hook-form'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
 import PlusIcon from '~/components/Icons/PlusIcon'
+import TrendingIcon from '~/components/Icons/TrendingIcon'
 import { Flex } from '~/components/common/Flex'
 import { getTrends } from '~/network/fetchGraphData'
 import { useDataStore } from '~/stores/useDataStore'
@@ -76,8 +77,12 @@ export const Trending = ({ onSubmit }: Props) => {
   return (
     <Wrapper>
       <div>
-        {trendingTopics.length === 0 && !loading ? (
+        {trendingTopics.length !== 0 && !loading ? (
           <div className="Trendingwrapper">
+            <div className="trending-header">
+              <div className="heading">Trending Topics</div>
+              <TrendingIcon className="icon" />
+            </div>
             <Text>No new trending topics in the last 24 hours</Text>
             <ButtonStyled
               color="secondary"
@@ -129,27 +134,32 @@ export const Trending = ({ onSubmit }: Props) => {
 }
 
 const Wrapper = styled(Flex)`
-  .heading {
-    color: ${colors.GRAY6};
-    padding: 0 24px 9px 24px;
-    font-family: Barlow;
-    font-size: 14px;
-    font-style: normal;
-    font-weight: 700;
-    line-height: 20px;
-    letter-spacing: 1.12px;
-    text-transform: uppercase;
-    display: flex;
-    align-items: flex-end;
+  .trending-header {
+    display: inline-flex;
+    margin-bottom: 9px;
 
-    &__icon {
+    .heading {
+      color: ${colors.GRAY6};
+      padding-right: 24px;
+      font-family: Barlow;
+      font-size: 14px;
+      font-style: normal;
+      font-weight: 700;
+      line-height: 20px;
+      letter-spacing: 1.12px;
+      text-transform: uppercase;
+    }
+
+    .icon {
       margin-left: 16px;
       font-size: 24px;
     }
   }
+
   .Trendingwrapper {
     margin-left: 23px;
     margin-top: 20px;
+    color: ${colors.GRAY6};
   }
 
   .list {
