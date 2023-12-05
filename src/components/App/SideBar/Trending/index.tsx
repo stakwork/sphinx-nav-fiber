@@ -77,7 +77,11 @@ export const Trending = ({ onSubmit }: Props) => {
   return (
     <Wrapper>
       <div>
-        {trendingTopics.length !== 0 && !loading ? (
+        <div className="trending-header">
+          <div className="heading">Trending Topics</div>
+          <TrendingIcon className="icon" />
+        </div>
+        {trendingTopics.length === 0 && !loading ? (
           <div className="Trendingwrapper">
             <div className="trending-header">
               <div className="heading">Trending Topics</div>
@@ -137,6 +141,7 @@ const Wrapper = styled(Flex)`
   .trending-header {
     display: inline-flex;
     margin-bottom: 9px;
+    padding: 0 16px 0 24px;
 
     .heading {
       color: ${colors.GRAY6};
