@@ -77,7 +77,7 @@ export const Trending = ({ onSubmit }: Props) => {
   return (
     <Wrapper>
       <div>
-        {trendingTopics.length !== 0 && !loading ? (
+        {trendingTopics.length === 0 && !loading ? (
           <div className="Trendingwrapper">
             <div className="trending-header">
               <div className="heading">Trending Topics</div>
