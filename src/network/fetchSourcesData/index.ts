@@ -23,6 +23,18 @@ export type TAboutParams = {
   search_term?: string
 }
 
+export type TStatParams = {
+  num_audio: number
+  num_contributors: number
+  num_daily: number
+  num_episodes: number
+  num_nodes: number
+  num_people: number
+  num_tweet: number
+  num_twitter_space: number
+  num_video: number
+}
+
 export type TMergeTopicsParams = {
   from: string
   to: string
@@ -65,6 +77,12 @@ export const getTopicsData = async (queryParams: TtopicsParams = defaultParams) 
 
 export const getAboutData = async () => {
   const response = await api.get<TAboutParams>('/about')
+
+  return response
+}
+
+export const getStats = async () => {
+  const response = await api.get<TAboutParams>('/stats')
 
   return response
 }
