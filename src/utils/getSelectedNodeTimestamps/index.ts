@@ -1,6 +1,6 @@
 import { groupBy, values } from 'lodash'
 import { NodeExtended } from '~/types'
-import { videoTimetoSeconds } from '~/utils/videoTimetoSeconds'
+import { videoTimeToSeconds } from '~/utils/videoTimetoSeconds'
 
 export const getSelectedNodeTimestamps = (nodes: NodeExtended[], selectedNode: NodeExtended | null) => {
   if (!selectedNode) {
@@ -29,8 +29,8 @@ export const getSelectedNodeTimestamps = (nodes: NodeExtended[], selectedNode: N
   timestamps.sort((a, b) => {
     const [aSplit] = a.timestamp?.split('-') || ['']
     const [bSplit] = b.timestamp?.split('-') || ['']
-    const aTime = videoTimetoSeconds(aSplit)
-    const bTime = videoTimetoSeconds(bSplit)
+    const aTime = videoTimeToSeconds(aSplit)
+    const bTime = videoTimeToSeconds(bSplit)
 
     return aTime - bTime
   })

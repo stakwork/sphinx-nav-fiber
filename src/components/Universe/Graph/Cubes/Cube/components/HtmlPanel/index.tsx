@@ -75,19 +75,17 @@ export const HtmlPanel = ({ speed = 2, intensity = 4, children, withTranscript, 
 HtmlPanel.displayName = 'HtmlPanel'
 
 const HtmlWrap = styled.div<{ dimensions: [number, number, number, number]; visible: boolean }>`
-  ${({ dimensions: [top, left, width, height] = defaultDimensions }) =>
-    css`
-      top: ${top}px;
-      left: ${left}px;
-      width: ${width}px;
-      height: ${height}px;
-    `}
-  ${({ visible }) =>
-    css`
-      opacity: ${visible ? 1 : 0};
-      pointer-events: ${visible ? 'auto' : 'none'};
-      user-select: ${visible ? 'auto' : 'none'};
-    `}
+  ${({ dimensions: [top, left, width, height] = defaultDimensions }) => css`
+    top: ${top}px;
+    left: ${left}px;
+    width: ${width}px;
+    height: ${height}px;
+  `}
+  ${({ visible }) => css`
+    opacity: ${visible ? 1 : 0};
+    pointer-events: ${visible ? 'auto' : 'none'};
+    user-select: ${visible ? 'auto' : 'none'};
+  `}
   position: absolute;
   border-radius: 20px;
   font-size: 80px;
