@@ -16,7 +16,7 @@ export const Table: React.FC<TopicTableProps> = ({ showMuted, onTopicEdit }) => 
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
   const [selectedRefId, setSelectedRefId] = React.useState<string>('')
 
-  const [data, ids] = useTopicsStore((s) => [s.data, s.ids])
+  const [data, ids, filters] = useTopicsStore((s) => [s.data, s.ids, s.filters])
 
   const handleClick = useCallback((event: React.MouseEvent<HTMLButtonElement>, refId: string) => {
     setAnchorEl(event.currentTarget)
@@ -35,9 +35,9 @@ export const Table: React.FC<TopicTableProps> = ({ showMuted, onTopicEdit }) => 
   const open = Boolean(anchorEl)
   const id = open ? 'simple-popover' : undefined
 
-  return !data ? (
+  return Object.keys(data || {}).length === 0 || !filters.search ? (
     <Flex>
-      <Text>There is not any results for selected filters</Text>
+      <Text>{!filters.search ? 'Search for topics' : 'No results found for the searched topic'}</Text>
       <FilterOffIcon />
     </Flex>
   ) : (
@@ -62,7 +62,7 @@ export const Table: React.FC<TopicTableProps> = ({ showMuted, onTopicEdit }) => 
           </tbody>
         )}
       </MaterialTable>
-      {selectedRefId ? (
+      {selectedRefId && data && data[selectedRefId] ? (
         <PopoverWrapper
           anchorEl={anchorEl}
           anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}

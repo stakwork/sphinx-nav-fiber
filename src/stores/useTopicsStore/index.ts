@@ -38,17 +38,31 @@ export const useTopicsStore = create<TopicsStore>((set, get) => ({
 
     const responseData: FetchTopicResponse = await getTopicsData(payload)
 
-    // Instead of replacing the data, append new data to existing data
-    const newData: Record<string, Topic> = { ...(data || {}) }
+    // Apply search filter to new topics if the search term is provided
+    const filteredNewTopics =
+      filters.search ?? ''
+        ? responseData.data.filter((topic) => topic.topic.toLowerCase().includes((filters.search ?? '').toLowerCase()))
+        : []
+
+    // Instead of replacing the data, append new filtered data to existing data
+    let newData: Record<string, Topic> = { ...(data || {}) }
     const newIds: string[] = [...ids]
 
-    responseData.data.forEach((topic) => {
+    if (!filters.search) {
+      newData = {}
+    }
+
+    filteredNewTopics.forEach((topic) => {
       newData[topic.ref_id] = topic
-      newIds.push(topic.ref_id)
+
+      if (!newIds.includes(topic.ref_id)) {
+        newIds.push(topic.ref_id)
+      }
     })
 
     set({ data: newData, ids: newIds, total: responseData.topicCount })
   },
+
   setFilters: (filters: Partial<TopicFilter>) => set({ filters: { ...get().filters, page: 0, ...filters } }),
   terminate: () => set(defaultData),
 }))

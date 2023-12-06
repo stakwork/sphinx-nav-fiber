@@ -20,6 +20,10 @@ const TableRowComponent: FC<TTableRaw> = ({ topic, onClick }) => {
   const [ids, total] = useTopicsStore((s) => [s.ids, s.total])
   const [loading, setLoading] = useState(false)
 
+  if (!topic) {
+    return null
+  }
+
   const date = topic.date_added_to_graph.toString()
 
   const handleMute = async (refId: string, shouldMute: boolean) => {

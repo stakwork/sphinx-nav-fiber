@@ -124,7 +124,7 @@ export const TopicSources = () => {
           ) : (
             <>
               <Table onTopicEdit={onTopicEdit} showMuted={filters.muted} />
-              {total > ids.length ? (
+              {total > ids.length && Object.keys(data || {}).length !== 0 ? (
                 <Button className="load-more" disabled={loading} onClick={handleLoadMore}>
                   Load more
                   {loading && <ClipLoader color={colors.BLUE_PRESS_STATE} size={10} />}
