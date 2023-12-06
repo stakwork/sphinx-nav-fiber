@@ -30,7 +30,7 @@ const _View = ({ isSearchResult }: Props) => {
   return (
     <Wrapper>
       {!isSearchResult && (
-        <div className="heading_container">
+        <div className="heading-container">
           <div className="heading">
             <span className="heading__title">Latest</span>
             <span className="heading__icon">
@@ -65,7 +65,7 @@ const ButtonStyled = styled(Button)`
 export const LatestView = memo(_View)
 
 const Wrapper = styled(Flex)`
-  .heading_container {
+  .heading-container {
     display: flex;
     flex-direction: column;
     padding: 16px 24px 16px 24px;
