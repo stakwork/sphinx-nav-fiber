@@ -1,4 +1,4 @@
-export const videoTimetoSeconds = (value: string) => {
+export const videoTimeToSeconds = (value: string) => {
   const [hh, mm, ss] = value.split(':')
   const h = parseInt(hh, 10)
   const m = parseInt(mm, 10)
