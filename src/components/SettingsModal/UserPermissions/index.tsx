@@ -112,6 +112,7 @@ export const UserPermissions: FC<Props> = ({ initialValues }) => {
   })
 
   const handleRemove = (identifier: string) => {
+    // eslint-disable-next-line no-console
     console.log(`Remove item at index: ${identifier}`)
   }
 
