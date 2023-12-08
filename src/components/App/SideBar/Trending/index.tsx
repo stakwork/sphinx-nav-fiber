@@ -37,7 +37,7 @@ export const Trending = ({ onSubmit }: Props) => {
       try {
         const res = await getTrends()
 
-        if (res.length) {
+        if (res.length && Array.isArray(res)) {
           setTrendingTopics(res)
         }
       } catch (err) {
