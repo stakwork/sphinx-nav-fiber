@@ -23,7 +23,7 @@
   "paths": {
     "~/*": ["src/*"]
   },
-  "files": ["./vite-env.d.ts"],
+  "files": ["./vite-env.d.ts", "./src/components/SettingsModal/UserPermissions/IconLabel.tsx"],
   "include": ["src", "cypress.d.ts"],
   "exclude": ["src/**/*.spec.ts", "src/**/*.test.ts", "**/__tests__/**"]
 }

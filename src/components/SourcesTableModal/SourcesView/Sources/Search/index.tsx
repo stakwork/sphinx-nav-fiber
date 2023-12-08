@@ -50,9 +50,9 @@ export const Search = ({ onSearch }: Props) => {
           <Divider orientation="vertical" sx={{ height: 28, m: 0.5 }} />
         </>
       )}
-      <StyledButton aria-label="search" onClick={handleSearch} type="button">
-        <SearchIcon />
-      </StyledButton>
+        <StyledButton aria-label="search" onClick={handleSearch} type="button">
+          <SearchIcon />
+        </StyledButton>
     </Wrapper>
   )
 }

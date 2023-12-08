@@ -45,7 +45,7 @@ export const TypeTweet = ({ text, imageUrl, date, twitterHandle, name, verified 
 const PictureWrapper = styled(Flex)`
   img {
     width: 64px;
-    height: 64px
+    height: 64px;
     border-radius: 50%;
     object-fit: cover;
   }

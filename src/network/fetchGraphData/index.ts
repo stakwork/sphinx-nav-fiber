@@ -110,6 +110,7 @@ const fetchNodes = async (search: string): Promise<FetchDataResponse> => {
 }
 
 export const getTrends = async () => {
+
   const endpoint = `/get_trends`
 
   const response = await api.get<FetchTrendingResponse>(endpoint)
