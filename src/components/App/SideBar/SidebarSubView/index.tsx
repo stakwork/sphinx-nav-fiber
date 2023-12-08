@@ -31,8 +31,8 @@ export const SideBarSubView = ({ open }: Props) => {
       style={{ width: showTeachMe ? '700px' : '', position: open ? 'relative' : 'absolute' }}
     >
       <Wrapper>
+        <MediaPlayer key={playingNode?.ref_id} hidden={selectedNode?.ref_id !== playingNode?.ref_id} />
         <ScrollWrapper>
-          <MediaPlayer key={playingNode?.ref_id} hidden={selectedNode?.ref_id !== playingNode?.ref_id} />
           <SelectedNodeView />
         </ScrollWrapper>
         <CloseButton
@@ -83,10 +83,9 @@ const CloseButton = styled(Flex)`
   }
 `
 
-const ScrollWrapper = styled(Flex)(() => ({
-  height: '100%',
-  width: '100%',
-}))
+const ScrollWrapper = styled(Flex)`
+  flex: 1 1 100%;
+`
 
 const CollapseButton = styled(Flex).attrs({
   align: 'center',

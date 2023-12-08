@@ -125,7 +125,6 @@ const _Universe = () => {
 
   return (
     <Wrapper>
-      <Overlay />
       <Suspense fallback={null}>
         <Canvas camera={cameraProps} id="universe-canvas" onCreated={onCreatedHandler} onWheel={onWheelHandler}>
           {isDevelopment && <Perf position="top-right" />}
@@ -141,6 +140,7 @@ const _Universe = () => {
         </Canvas>
       </Suspense>
       {isLoading && <Preloader fullSize={false} />}
+      <Overlay />
     </Wrapper>
   )
 }
