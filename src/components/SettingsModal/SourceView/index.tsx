@@ -59,7 +59,7 @@ function a11yProps(index: number) {
 
 export const SourcesView = () => {
   const [value, setValue] = useState(0)
-  const [setIsAdmin, isAdmin, pubKey] = useUserStore((s) => [s.setIsAdmin, s.isAdmin, s.setPubKey, s.pubKey])
+  const [isAdmin, pubKey] = useUserStore((s) => [s.isAdmin, s.setPubKey, s.pubKey])
   const [loading, setLoading] = useState(false)
   const [initialValues, setInitialValues] = useState<TAboutParams>(defaultData)
 
@@ -81,9 +81,6 @@ export const SourcesView = () => {
     init()
   }, [])
 
-  useEffect(() => {
-    setIsAdmin(true) // This line is only for testing
-  }, [setIsAdmin])
 
   const getSettingsLabel = () => (isAdmin ? 'Admin Settings' : 'Settings')
 
@@ -97,26 +94,6 @@ export const SourcesView = () => {
     </StyledHeader>
   )
 
-  // const authorize = async () => {
-  //   // skipping this for end to end test because it requires a sphinx-relay to be connected
-  //   await executeIfProd(async () => {
-  //     try {
-  //       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  //       // @ts-ignore
-  //       const enable = await sphinx.enable()
-  //       const pubKeyRes = enable?.pubkey
-
-  //       setPubKey(pubKeyRes)
-
-  //       if (pubKeyRes) {
-  //         setIsAdmin(pubKeyRes && admins.includes(pubKeyRes))
-  //       }
-  //     } catch (error) {
-  //       console.warn(error)
-  //     }
-  //   })
-  // }
-
   const resolveAdminActions = () => {
     if (!pubKey) {
       return (
@@ -128,7 +105,7 @@ export const SourcesView = () => {
       return null
     }
 
-    return <Text>You are not admin</Text>
+    return <></>
   }
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
