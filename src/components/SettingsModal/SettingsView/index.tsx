@@ -11,8 +11,8 @@ import { TAboutParams, getAboutData } from '~/network/fetchSourcesData'
 import { useUserStore } from '~/stores/useUserStore'
 import { colors } from '~/utils/colors'
 import { executeIfProd } from '~/utils/tests'
-import { Appearance } from '../Appearance'
-import { General } from '../General'
+import { Appearance } from './Appearance'
+import { General } from './General'
 
 interface TabPanelProps {
   children?: React.ReactNode
@@ -58,7 +58,11 @@ function a11yProps(index: number) {
   }
 }
 
-export const SourcesView = () => {
+type Props = {
+  onClose: () => void
+}
+
+export const SettingsView: React.FC<Props> = ({ onClose }) => {
   const [value, setValue] = useState(0)
   const [setIsAdmin, isAdmin, setPubKey, pubKey] = useUserStore((s) => [s.setIsAdmin, s.isAdmin, s.setPubKey, s.pubKey])
   const [loading, setLoading] = useState(false)
@@ -148,7 +152,7 @@ export const SourcesView = () => {
         </TabPanel>
       )}
       <TabPanel index={isAdmin ? 1 : 0} value={value}>
-        <Appearance />
+        <Appearance onClose={onClose} />
       </TabPanel>
     </Wrapper>
   )
