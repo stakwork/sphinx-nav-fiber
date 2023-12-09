@@ -8,13 +8,12 @@ import PersonAdd from '~/components/Icons/PersonAdd'
 import SimpleTable from '~/components/SourcesTableModal/SourcesView/Sources/Table/SimpleTable'
 import { Flex } from '~/components/common/Flex'
 import { TextInput } from '~/components/common/TextInput'
-import { TAboutParams} from '~/network/fetchSourcesData'
+import { TAboutParams } from '~/network/fetchSourcesData'
 import { colors } from '~/utils'
 
 type Props = {
   initialValues: TAboutParams
 }
-
 
 const StyledForm = styled.form`
   padding: 2px;
@@ -93,7 +92,8 @@ export const UserPermissions: FC<Props> = ({ initialValues }) => {
     { name: 'Name Surname', identifier: 'aXA60jczLJl1uew...' },
   ]
 
-  const mockFetchData = (): Promise<void> => new Promise((resolve) => {
+  const mockFetchData = (): Promise<void> =>
+    new Promise((resolve) => {
       setTimeout(() => {
         resolve()
       }, 2000)
@@ -115,7 +115,6 @@ export const UserPermissions: FC<Props> = ({ initialValues }) => {
     // eslint-disable-next-line no-console
     console.log(`Remove item at index: ${identifier}`)
   }
-
 
   let content
 

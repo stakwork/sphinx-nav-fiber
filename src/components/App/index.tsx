@@ -122,8 +122,6 @@ export const App = () => {
     }
   }
 
-
-
   // switch graph style
   useEffect(() => {
     repositionGraphDataAfterStyleChange()

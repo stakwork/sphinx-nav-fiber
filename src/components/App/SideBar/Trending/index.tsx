@@ -1,4 +1,4 @@
-import { Button, Skeleton} from '@mui/material'
+import { Button, Skeleton } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import styled from 'styled-components'
@@ -184,6 +184,4 @@ const Text = styled.p`
   margin-bottom: 20px;
 `
 
-const ButtonStyled = styled(Button)`
-
-`
+const ButtonStyled = styled(Button)``

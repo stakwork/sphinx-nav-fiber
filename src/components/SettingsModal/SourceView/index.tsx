@@ -81,7 +81,6 @@ export const SourcesView = () => {
     init()
   }, [])
 
-
   const getSettingsLabel = () => (isAdmin ? 'Admin Settings' : 'Settings')
 
   const SettingsHeader = ({ children }: { children: React.ReactNode }) => (
@@ -96,9 +95,7 @@ export const SourcesView = () => {
 
   const resolveAdminActions = () => {
     if (!pubKey) {
-      return (
-        null
-      )
+      return null
     }
 
     if (isAdmin) {

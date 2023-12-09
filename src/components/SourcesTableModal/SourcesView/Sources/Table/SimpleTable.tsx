@@ -12,8 +12,6 @@ interface SimpleTableProps {
   onRemove: (identifier: string) => void
 }
 
-
-
 const SimpleTable: React.FC<SimpleTableProps> = ({ data, onRemove }) => (
   <TableContainer component={Paper}>
     <Table aria-label="simple table">
