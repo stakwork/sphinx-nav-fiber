@@ -63,7 +63,20 @@ export const useTopicsStore = create<TopicsStore>((set, get) => ({
     set({ data: newData, ids: newIds, total: responseData.topicCount })
   },
 
-  setFilters: (filters: Partial<TopicFilter>) => set({ filters: { ...get().filters, page: 0, ...filters } }),
+  setFilters: async (filters: Partial<TopicFilter>) => {
+    try {
+      set({ filters: { ...get().filters, page: 0, ...filters } })
+
+      await new Promise<void>((resolve) => {
+        setTimeout(() => {
+          resolve()
+        }, 2000)
+      })
+    } catch (error) {
+      console.error('Error in setFilters:', error)
+    }
+  },
+
   terminate: () => set(defaultData),
 }))
 

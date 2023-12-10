@@ -66,7 +66,7 @@ export const TopicSources = () => {
   const handleLoadMore = async () => {
     try {
       setLoading(true)
-      setFilters({ page: filters.page + 1 })
+      await setFilters({ page: filters.page + 1 })
     } catch (error) {
       console.error('Error loading more data:', error)
     } finally {
