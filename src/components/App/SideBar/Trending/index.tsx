@@ -80,10 +80,6 @@ export const Trending = ({ onSubmit }: Props) => {
         </div>
         {trendingTopics.length === 0 && !loading ? (
           <div className="Trendingwrapper">
-            <div className="trending-header">
-              <div className="heading">Trending Topics</div>
-              <TrendingIcon className="icon" />
-            </div>
             <Text>No new trending topics in the last 24 hours</Text>
             <ButtonStyled
               color="secondary"
