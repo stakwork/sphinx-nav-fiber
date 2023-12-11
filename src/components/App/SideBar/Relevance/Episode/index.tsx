@@ -50,7 +50,6 @@ export type Props = {
   imageUrl: string
   showTitle?: string
   text?: string
-  link?: string
   sourceLink?: string
   type?: string
   name?: string
@@ -73,7 +72,6 @@ export const Episode = ({
   text,
   name,
   profilePicture,
-  link,
   sourceLink,
   verified = false,
   twitterHandle,
@@ -104,7 +102,7 @@ export const Episode = ({
                 {type && <TypeBadge type={type} />}
               </Flex>
               {type === 'youtube' && sourceLink ? (
-                <StyledLink href={`${link}?open=system`} onClick={(e) => e.stopPropagation()}>
+                <StyledLink href={`${sourceLink}?open=system`} onClick={(e) => e.stopPropagation()} target="_blank">
                   <LinkIcon />
                 </StyledLink>
               ) : null}
