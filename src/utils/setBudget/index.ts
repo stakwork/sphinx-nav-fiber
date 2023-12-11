@@ -1,4 +1,4 @@
-import * as sphinx from 'sphinx-bridge-kevkevinpal'
+import * as sphinx from 'sphinx-bridge'
 
 export async function updateBudget(setBudget: (value: number | null) => void) {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment

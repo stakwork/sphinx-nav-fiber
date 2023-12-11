@@ -1,4 +1,4 @@
-import * as sphinx from 'sphinx-bridge-kevkevinpal'
+import * as sphinx from 'sphinx-bridge'
 
 export async function getSignedMessageFromRelay(): Promise<{ message: string; signature: string }> {
   try {

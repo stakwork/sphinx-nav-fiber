@@ -1,5 +1,5 @@
 import { Lsat } from 'lsat-js'
-import * as sphinx from 'sphinx-bridge-kevkevinpal'
+import * as sphinx from 'sphinx-bridge'
 import { requestProvider } from 'webln'
 
 // eslint-disable-next-line  @typescript-eslint/no-explicit-any

@@ -1,9 +1,9 @@
 import { Lsat } from 'lsat-js'
 import { useEffect, useState } from 'react'
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
-import * as sphinx from 'sphinx-bridge-kevkevinpal'
-import { BaseModal } from '~/components/Modal'
+import * as sphinx from 'sphinx-bridge'
 import { notify } from '~/components/common/Toast/toastMessage'
+import { BaseModal } from '~/components/Modal'
 import {
   DOCUMENT,
   LINK,

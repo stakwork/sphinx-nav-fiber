@@ -1,9 +1,9 @@
+import { MdCheckCircle, MdWarning } from 'react-icons/md'
 import { toast, ToastContentProps } from 'react-toastify'
-import * as sphinx from 'sphinx-bridge-kevkevinpal'
+import * as sphinx from 'sphinx-bridge'
 import styled from 'styled-components'
 import { Text } from '~/components/common/Text'
 import { BOOST_ERROR_BUDGET, NODE_ADD_SUCCESS } from '~/constants'
-import { MdCheckCircle, MdWarning } from 'react-icons/md'
 import { colors } from '~/utils/colors'
 
 type Props = ToastContentProps & {

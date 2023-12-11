@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { ClipLoader } from 'react-spinners'
-import * as sphinx from 'sphinx-bridge-kevkevinpal'
+import * as sphinx from 'sphinx-bridge'
 import styled from 'styled-components'
 import { Button } from '~/components/Button'
 import { Flex } from '~/components/common/Flex'
