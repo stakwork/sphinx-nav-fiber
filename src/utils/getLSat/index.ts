@@ -10,7 +10,8 @@ import * as sphinx from 'sphinx-bridge-kevkevinpal'
 export const getLSat = async (): Promise<string> => {
   try {
     // check if lsat exist in local storage
-    const localLsat = window.localStorage.getItem('lsat')
+
+    const localLsat = window.localStorage?.getItem('lsat')
 
     if (localLsat) {
       const lsat = JSON.parse(localLsat)

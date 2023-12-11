@@ -1,12 +1,10 @@
-import { useEffect, useRef, useState } from 'react'
-import ReactPlayer from 'react-player'
+import { useRef, useState } from 'react'
 import styled from 'styled-components'
 import { Booster } from '~/components/Booster'
 import { Divider } from '~/components/common/Divider'
 import { Flex } from '~/components/common/Flex'
 import { useDataStore } from '~/stores/useDataStore'
 import { formatDescription } from '~/utils/formatDescription'
-import { videoTimetoSeconds } from '~/utils/videoTimetoSeconds'
 import { BoostAmt } from '../../Helper/BoostAmt'
 import { Description } from '../Description'
 import { Episode } from '../Relevance/Episode'
@@ -14,12 +12,10 @@ import { Transcript } from '../Transcript'
 
 export const YouTube = () => {
   const selectedNode = useDataStore((s) => s.selectedNode)
-  const playerRef = useRef<ReactPlayer | null>(null)
   const scrollTargetRef = useRef<HTMLDivElement | null>(null)
 
   const {
     link,
-    timestamp,
     image_url: imageUrl,
     date,
     boost,
@@ -32,21 +28,6 @@ export const YouTube = () => {
   } = selectedNode || {}
 
   const [boostAmount, setBoostAmount] = useState<number>(boost || 0)
-  const [isReady, setIsReady] = useState<boolean>(false)
-  const secs = videoTimetoSeconds(timestamp || '')
-
-  useEffect(() => {
-    const player = playerRef.current
-
-    if (isReady) {
-      player?.seekTo(secs)
-      player?.getInternalPlayer()?.play()
-    }
-
-    if (scrollTargetRef.current) {
-      scrollTargetRef.current.scrollTo({ top: 0, behavior: 'auto' })
-    }
-  }, [isReady, playerRef, secs])
 
   if (!selectedNode) {
     return null
@@ -54,18 +35,6 @@ export const YouTube = () => {
 
   return (
     <Wrapper>
-      <PlayerWrapper>
-        <Flex direction="row">
-          <ReactPlayer
-            ref={playerRef}
-            controls
-            height="200px"
-            onReady={() => setIsReady(true)}
-            url={link}
-            width="100%"
-          />
-        </Flex>
-      </PlayerWrapper>
       <StyledEpisode
         boostCount={boostAmount || 0}
         date={date || 0}
@@ -104,10 +73,6 @@ const Wrapper = styled(Flex)`
   border-bottom: 1px solid #101317;
   box-shadow: 0px 5px 6px rgba(0, 0, 0, 0.5);
   z-index: 0;
-`
-
-const PlayerWrapper = styled(Flex)`
-  padding: 30px 18px 0;
 `
 
 const BoostWrapper = styled(Flex)`

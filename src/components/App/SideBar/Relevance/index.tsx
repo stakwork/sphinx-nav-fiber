@@ -1,8 +1,8 @@
 import { Button } from '@mui/material'
 import { useCallback, useMemo, useRef, useState } from 'react'
 import styled from 'styled-components'
-import { Flex } from '~/components/common/Flex'
 import { ScrollView } from '~/components/ScrollView'
+import { Flex } from '~/components/common/Flex'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore, useFilteredNodes } from '~/stores/useDataStore'
 import { NodeExtended } from '~/types'
@@ -66,6 +66,7 @@ export const Relevance = ({ isSearchResult }: Props) => {
             show_title: showTitle,
             node_type: nodeType,
             text,
+            source_link: sourceLink,
             link,
             name,
             profile_picture: profilePicture,
@@ -87,6 +88,7 @@ export const Relevance = ({ isSearchResult }: Props) => {
               onClick={() => handleNodeClick(n)}
               profilePicture={profilePicture}
               showTitle={formatDescription(showTitle)}
+              sourceLink={sourceLink}
               text={text || ''}
               twitterHandle={twitterHandle}
               type={nodeType || type}

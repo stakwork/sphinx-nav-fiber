@@ -4,7 +4,7 @@ import ReactAudioPlayer from 'react-audio-player'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
-import { videoTimetoSeconds } from '~/utils/videoTimetoSeconds'
+import { videoTimeToSeconds } from '~/utils/videoTimetoSeconds'
 
 const Audio = styled(ReactAudioPlayer as unknown as ComponentType<typeof ReactAudioPlayer.defaultProps>)`
   width: 100%;
@@ -80,7 +80,7 @@ const _AudioPlayer = ({
 
   useEffect(() => {
     if (player) {
-      player.currentTime = timestamp ? videoTimetoSeconds(timestamp) : 0
+      player.currentTime = timestamp ? videoTimeToSeconds(timestamp) : 0
     }
   }, [timestamp, player])
 

@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { Controller, get, RegisterOptions, useFormContext } from 'react-hook-form'
 import { MdError } from 'react-icons/md'
 import InputMask from 'react-input-mask'
@@ -49,6 +50,14 @@ export const TextInput = ({
   } = useFormContext()
 
   const error = get(errors, name)
+
+  useEffect(() => {
+    const inputElement = document.getElementById(id)
+
+    if (inputElement) {
+      inputElement.focus()
+    }
+  }, [id])
 
   return (
     <Flex shrink={1}>

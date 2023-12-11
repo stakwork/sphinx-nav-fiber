@@ -1,4 +1,5 @@
 import { useEffect, useMemo } from 'react'
+import styled from 'styled-components'
 import { useGraphData } from '~/components/DataRetriever'
 import { Divider } from '~/components/common/Divider'
 import { Flex } from '~/components/common/Flex'
@@ -8,6 +9,22 @@ import { getSelectedNodeTimestamps } from '~/utils/getSelectedNodeTimestamps'
 import { ErrorSection } from './ErrorSection'
 import { Heading } from './Heading'
 import { Timestamp } from './Timestamp'
+
+const Wrapper = styled(Flex)`
+  height: 70vh;
+  padding-bottom: 45px;
+  overflow: scroll;
+
+  &::-webkit-scrollbar {
+    width: 1px;
+    height: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    width: 1px;
+    height: 4px;
+  }
+`
 
 export const Creator = () => {
   const data = useGraphData()
@@ -38,7 +55,7 @@ export const Creator = () => {
       {flagErrorIsOpen && <ErrorSection />}
 
       {!!selectedNodeTimestamps?.length && (
-        <>
+        <Wrapper>
           <Flex pb={20}>
             {selectedNodeTimestamps?.map((timestamp, index) => (
               <Timestamp
@@ -51,7 +68,7 @@ export const Creator = () => {
           </Flex>
 
           <Divider />
-        </>
+        </Wrapper>
       )}
     </>
   )

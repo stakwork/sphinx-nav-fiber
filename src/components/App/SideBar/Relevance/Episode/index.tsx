@@ -1,6 +1,7 @@
 import moment from 'moment'
 import styled from 'styled-components'
 import { BoostAmt } from '~/components/App/Helper/BoostAmt'
+import HashtagIcon from '~/components/Icons/HashtagIcon'
 import LinkIcon from '~/components/Icons/LinkIcon'
 import { Avatar } from '~/components/common/Avatar'
 import { Flex } from '~/components/common/Flex'
@@ -50,6 +51,7 @@ export type Props = {
   showTitle?: string
   text?: string
   link?: string
+  sourceLink?: string
   type?: string
   name?: string
   verified?: boolean
@@ -72,6 +74,7 @@ export const Episode = ({
   name,
   profilePicture,
   link,
+  sourceLink,
   verified = false,
   twitterHandle,
   className = 'episode-wrapper',
@@ -80,9 +83,14 @@ export const Episode = ({
   const selectedTimestamp = useDataStore((s) => s.selectedTimestamp)
   const isSelected = !!(selectedTimestamp && selectedTimestamp.id === id)
 
-  return (
+  const description = type === 'show' ? showTitle : episodeTitle
+  const subtitle = type === 'show' ? '' : showTitle
+
+  const defaultViewTypes = ['tweet', 'person', 'guest', 'topic']
+
+  return type ? (
     <EpisodeWrapper className={className} isSelected={isSelected} onClick={onClick}>
-      {type !== 'tweet' && type !== 'person' && type !== 'guest' && (
+      {!defaultViewTypes.includes(type) ? (
         <Flex direction="row">
           {!isSelectedView && (
             <Flex align="center" pr={16}>
@@ -95,17 +103,17 @@ export const Episode = ({
               <Flex align="center" direction="row">
                 {type && <TypeBadge type={type} />}
               </Flex>
-              {type === 'youtube' ? (
+              {type === 'youtube' && sourceLink ? (
                 <StyledLink href={`${link}?open=system`} onClick={(e) => e.stopPropagation()}>
                   <LinkIcon />
                 </StyledLink>
               ) : null}
             </Flex>
 
-            <Description data-testid="episode-description">{episodeTitle}</Description>
+            <Description data-testid="episode-description">{description}</Description>
             <Flex align="center" direction="row" justify="flex-start">
               {Boolean(date) && <Date>{moment.unix(date).fromNow()}</Date>}
-              {Boolean(showTitle) && <Title>{showTitle}</Title>}
+              {Boolean(subtitle) && <Title>{subtitle}</Title>}
               {!isSelectedView && boostCount > 0 && (
                 <Flex style={{ marginLeft: 'auto' }}>
                   <BoostAmt amt={boostCount} />
@@ -114,22 +122,31 @@ export const Episode = ({
             </Flex>
           </Flex>
         </Flex>
-      )}
-      {['person', 'guest'].includes(type as string) && (
-        <TypePerson imageUrl={imageUrl} name={name || ''} title={showTitle || ''} />
-      )}
-      {type === 'tweet' && (
-        <TypeTweet
-          date={date}
-          imageUrl={profilePicture}
-          name={name || ''}
-          text={text || ''}
-          twitterHandle={twitterHandle}
-          verified={verified}
-        />
+      ) : (
+        <>
+          {type === 'topic' && (
+            <TypeTopic>
+              <HashtagIcon />
+              <p>{subtitle}</p>
+            </TypeTopic>
+          )}
+          {['person', 'guest'].includes(type as string) && (
+            <TypePerson imageUrl={imageUrl} name={name || ''} title={showTitle || ''} />
+          )}
+          {type === 'tweet' && (
+            <TypeTweet
+              date={date}
+              imageUrl={profilePicture}
+              name={name || ''}
+              text={text || ''}
+              twitterHandle={twitterHandle}
+              verified={verified}
+            />
+          )}
+        </>
       )}
     </EpisodeWrapper>
-  )
+  ) : null
 }
 
 export const Description = styled(Flex)`
@@ -160,6 +177,33 @@ export const Date = styled(Text)`
   flex-shrink: 0;
 `
 
+export const TypeTopic = styled.div`
+  display: flex;
+  flex-direction: row;
+
+  svg {
+    color: ${colors.mainBottomIcons};
+    margin-right: 10px;
+  }
+
+  p {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+
+    overflow: hidden;
+    color: var(--Primary-Text, #fff);
+    leading-trim: both;
+    text-edge: cap;
+    text-overflow: ellipsis;
+    font-family: Barlow;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 16px; /* 100% */
+  }
+`
+
 export const Title = styled(Date)`
   align-items: center;
   flex-shrink: 1;
@@ -180,6 +224,21 @@ export const Title = styled(Date)`
     flex-shrink: 0;
     height: 4px;
     background: ${colors.GRAY6};
+
+    margin-top: 20px;
+  }
+
+  &.is-show {
+    margin: 20px 0px;
+    padding: 0px;
+    color: var(--Primary-Text, #fff);
+    leading-trim: both;
+    text-edge: cap;
+    font-family: Barlow;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 17px; /* 130.769% */
   }
 `
 

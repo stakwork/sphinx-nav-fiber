@@ -19,32 +19,32 @@ import { useIsMatchBreakpoint } from './useIsMatchBreakpoint'
 // import APP_VERSION from './versionHelper'
 import { extractUuidAndHost } from './auth'
 import { getSignedMessageFromRelay } from './getSignedMessage'
-import { videoTimetoSeconds } from './videoTimetoSeconds'
+import { videoTimeToSeconds } from './videoTimetoSeconds'
 
 export {
+  E2ETests,
+  addToGlobalForE2e,
   assertNever,
   boost,
   colors,
+  convertToChatMessage,
+  executeIfProd,
+  executeIfTetsRunning,
   formatBudget,
   formatDescription,
   formatTimestamp,
   getLSat,
   getSelectedNodeTimestamps,
   getSuperficialNodeWeight,
-  overrideConsole,
   media,
+  overrideConsole,
   payLsat,
   saveConsumedContent,
   saveSearchTerm,
-  updateBudget,
-  convertToChatMessage,
-  executeIfTetsRunning,
-  executeIfProd,
-  addToGlobalForE2e,
-  E2ETests,
   timeToMilliseconds,
+  updateBudget,
   useIsMatchBreakpoint,
-  videoTimetoSeconds,
+  videoTimeToSeconds,
   getSignedMessageFromRelay,
   extractUuidAndHost,
 }

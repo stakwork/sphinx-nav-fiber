@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
+import PlusIcon from '~/components/Icons/PlusIcon'
 import SentimentDataIcon from '~/components/Icons/SentimentDataIcon'
 import { Flex } from '~/components/common/Flex'
 import { getTrends } from '~/network/fetchGraphData'
@@ -19,8 +20,10 @@ type Props = {
 }
 
 export const Trending = ({ onSubmit }: Props) => {
+  const { open: openContentAddModal } = useModal('addContent')
   const [loading, setLoading] = useState(false)
-  const [briefDescription, setBriefDescription] = useState('')
+  const [selectedTrend, setSelectedTrend] = useState<TrendingType | null>(null)
+
   const { open } = useModal('briefDescription')
 
   const [trendingTopics, setTrendingTopics] = useDataStore((s) => [s.trendingTopics, s.setTrendingTopics])
@@ -34,7 +37,7 @@ export const Trending = ({ onSubmit }: Props) => {
       try {
         const res = await getTrends()
 
-        if (res.length) {
+        if (res.length && Array.isArray(res)) {
           setTrendingTopics(res)
         }
       } catch (err) {
@@ -56,57 +59,91 @@ export const Trending = ({ onSubmit }: Props) => {
 
   const showModal = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, trending: TrendingType) => {
     e.stopPropagation()
+    e.currentTarget.blur()
 
     if (trending?.tldr) {
-      setBriefDescription(trending.tldr)
+      setSelectedTrend(trending)
       open()
     }
   }
 
+  const hideModal = () => {
+    setSelectedTrend(null)
+  }
+
   return (
     <Wrapper>
-      <div className="heading">
-        <span className="heading__title">Trending Topics</span>
-        <span className="heading__icon">
-          {loading ? <ClipLoader color={colors.PRIMARY_BLUE} size={16} /> : <SentimentDataIcon />}
-        </span>
-      </div>
-      <ul className="list">
-        {loading ? (
-          <>
-            <StyledSkeleton animation="wave" height={47} variant="rectangular" width={382} />
-            <StyledSkeleton animation="wave" height={47} variant="rectangular" width={382} />
-            <StyledSkeleton animation="wave" height={47} variant="rectangular" width={382} />
-            <StyledSkeleton animation="wave" height={47} variant="rectangular" width={382} />
-            <StyledSkeleton animation="wave" height={47} variant="rectangular" width={382} />
-          </>
+      <div>
+        <div className="heading-container">
+          <div className="heading">
+            <span className="heading__title">Trending Topics</span>
+            <span className="heading__icon">
+              {loading ? <ClipLoader color={colors.PRIMARY_BLUE} size={16} /> : <SentimentDataIcon />}
+            </span>
+          </div>
+        </div>
+        {trendingTopics.length === 0 && !loading ? (
+          <div className="Trendingwrapper">
+            <Text>No new trending topics in the last 24 hours</Text>
+            <ButtonStyled
+              color="secondary"
+              onClick={openContentAddModal}
+              size="medium"
+              startIcon={<PlusIcon />}
+              sx={{ alignSelf: 'flex-end', m: '0 36px 16px 0' }}
+              variant="contained"
+            >
+              Add Content
+            </ButtonStyled>
+          </div>
         ) : (
-          <>
-            {trendingTopics.map((i) => (
-              <Flex
-                key={i.topic}
-                align="center"
-                className="list-item"
-                direction="row"
-                justify="space-between"
-                onClick={() => selectTrending(i.topic)}
-              >
-                <span>#{i.topic}</span>
-                {i.tldr && <Button onClick={(e) => showModal(e, i)}>TLDR</Button>}
-              </Flex>
-            ))}
-          </>
+          <ul className="list">
+            {loading ? (
+              <div>
+                <ClipLoader color={colors.PRIMARY_BLUE} size={16} />
+                <>
+                  <StyledSkeleton animation="wave" height={47} variant="rectangular" width={382} />
+                  <StyledSkeleton animation="wave" height={47} variant="rectangular" width={382} />
+                  <StyledSkeleton animation="wave" height={47} variant="rectangular" width={382} />
+                  <StyledSkeleton animation="wave" height={47} variant="rectangular" width={382} />
+                  <StyledSkeleton animation="wave" height={47} variant="rectangular" width={382} />
+                </>
+              </div>
+            ) : (
+              <>
+                {trendingTopics.map((i) => (
+                  <Flex
+                    key={i.topic}
+                    align="center"
+                    className="list-item"
+                    direction="row"
+                    justify="space-between"
+                    onClick={() => selectTrending(i.topic)}
+                  >
+                    <span>#{i.topic}</span>
+                    {i.tldr && <Button onClick={(e) => showModal(e, i)}>TLDR</Button>}
+                  </Flex>
+                ))}
+              </>
+            )}
+          </ul>
         )}
-      </ul>
-      <BriefDescription onClose={() => setBriefDescription('')} text={briefDescription} />
+      </div>
+      {selectedTrend && <BriefDescription onClose={hideModal} trend={selectedTrend} />}
     </Wrapper>
   )
 }
 
 const Wrapper = styled(Flex)`
+  .heading-container {
+    display: flex;
+    flex-direction: column;
+    padding: 16px 24px 16px 24px;
+  }
+
   .heading {
     color: ${colors.GRAY6};
-    padding: 0 24px 9px 24px;
+    padding-right: 24px;
     font-family: Barlow;
     font-size: 14px;
     font-style: normal;
@@ -114,13 +151,17 @@ const Wrapper = styled(Flex)`
     line-height: 20px;
     letter-spacing: 1.12px;
     text-transform: uppercase;
-    display: flex;
-    align-items: flex-end;
 
     &__icon {
       margin-left: 16px;
       font-size: 24px;
     }
+  }
+
+  .Trendingwrapper {
+    margin-left: 23px;
+    margin-top: 20px;
+    color: ${colors.GRAY6};
   }
 
   .list {
@@ -158,3 +199,10 @@ const StyledSkeleton = styled(Skeleton)`
     background: rgba(0, 0, 0, 0.15);
   }
 `
+
+const Text = styled.p`
+  color: ${colors.GRAY6};
+  margin-bottom: 20px;
+`
+
+const ButtonStyled = styled(Button)``

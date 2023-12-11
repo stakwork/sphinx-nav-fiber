@@ -1,6 +1,6 @@
 import { Button } from '@mui/material'
 import clsx from 'clsx'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { MdRestartAlt } from 'react-icons/md'
 import { ClipLoader } from 'react-spinners'
 import { toast } from 'react-toastify'
@@ -18,6 +18,7 @@ import { colors } from '~/utils/colors'
 import { executeIfProd } from '~/utils/tests'
 import { Heading, StyledPill } from '../common'
 import { sourcesMapper } from '../constants'
+import { Search } from './Search'
 import Table from './Table'
 
 const admins = [
@@ -33,6 +34,7 @@ export const Sources = () => {
   const [typeFilter, setTypeFilter] = useState('')
   const [sources, setSources] = useDataStore((s) => [s.sources, s.setSources])
   const [setIsAdmin, isAdmin, setPubKey, pubKey] = useUserStore((s) => [s.setIsAdmin, s.isAdmin, s.setPubKey, s.pubKey])
+  const [search, setSearch] = useState('')
 
   useEffect(() => {
     const init = async () => {
@@ -116,6 +118,7 @@ export const Sources = () => {
           onClick={authorize}
           size="medium"
           startIcon={<ShieldPersonIcon />}
+          sx={{ alignSelf: 'flex-end', m: '0 36px 16px 0' }}
           variant="contained"
         >
           Admin
@@ -134,7 +137,18 @@ export const Sources = () => {
     return <Text>You are not admin</Text>
   }
 
-  const tableValues = sources?.filter((val: TSources) => !typeFilter || val.source_type === typeFilter)
+  const tableValues = useMemo(
+    () =>
+      sources
+        ?.filter(
+          (val: TSources) =>
+            (!typeFilter || val.source_type === typeFilter) &&
+            (val.source.toLowerCase().startsWith(search.toLowerCase()) ||
+              val.source.toLowerCase().includes(search.toLowerCase())),
+        )
+        .reverse(),
+    [search, typeFilter, sources],
+  )
 
   return (
     <Wrapper align="stretch" direction="column" justify="flex-end">
@@ -142,6 +156,7 @@ export const Sources = () => {
         <Text className="title">Sources for this Graph</Text>
         {resolveAdminActions()}
       </Heading>
+      <Search onSearch={setSearch} />
       <Flex className="filters" direction="row" pb={16} px={36}>
         <StyledPill className={clsx({ selected: !typeFilter })} onClick={() => onFilterChange('')} size="small">
           All
@@ -167,7 +182,6 @@ export const Sources = () => {
 const Wrapper = styled(Flex)`
   flex: 1;
   .title {
-    margin-bottom: 16px;
     font-size: 20px;
     color: ${colors.white};
     font-family: Barlow;

@@ -22,6 +22,11 @@ export type FetchTopicResponse = {
   topicCount: number
 }
 
+export type FetchEdgesResponse = {
+  data: { edge_types: string[] }
+  status: string
+}
+
 export type RadarRequest = {
   source: string
   source_type: string
@@ -44,6 +49,7 @@ export type Node = {
   date?: number
   description?: string
   episode_title?: string
+  hosts?: Guests[]
   guests?: (null | string | Guests)[]
   id?: string
   image_url?: string
@@ -52,6 +58,7 @@ export type Node = {
   message_content?: string
   keyword?: boolean
   label: string
+  source_link?: string
   link?: string
   name: string
   node_type: string
@@ -64,6 +71,7 @@ export type Node = {
   type?: string
   weight?: number
   tweet_id?: string
+  posted_by?: PostedBy
   twitter_handle?: string
   profile_picture?: string
   verified?: boolean
@@ -146,6 +154,7 @@ export type Trending = {
   count: number
   topic: string
   tldr?: string
+  audio_EN?: string
 }
 
 export type Sources = {
@@ -183,3 +192,9 @@ export type AuthRequest = {
 }
 
 export type IsAdminResponse = { isAdmin: boolean }
+
+type PostedBy = {
+  name: string
+  ref_id: string
+  twitter_handle: string
+}

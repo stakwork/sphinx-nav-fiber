@@ -4,9 +4,11 @@ import ChevronLeftIcon from '~/components/Icons/ChevronLeftIcon'
 import CloseIcon from '~/components/Icons/CloseIcon'
 import { Flex } from '~/components/common/Flex'
 import { useAppStore } from '~/stores/useAppStore'
-import { useDataStore } from '~/stores/useDataStore'
+import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
+import { usePlayerStore } from '~/stores/usePlayerStore'
 import { colors } from '~/utils/colors'
 import { SelectedNodeView } from '../SelectedNodeView'
+import { MediaPlayer } from './MediaPlayer'
 
 type Props = { open: boolean }
 
@@ -17,11 +19,19 @@ export const SideBarSubView = ({ open }: Props) => {
     s.showTeachMe,
   ])
 
+  const selectedNode = useSelectedNode()
+
   const [setSidebarOpen] = useAppStore((s) => [s.setSidebarOpen])
+  const [playingNode] = usePlayerStore((s) => [s.playingNode])
 
   return (
-    <Slide direction="right" in={open} mountOnEnter style={{ width: showTeachMe ? '700px' : '' }} unmountOnExit>
+    <Slide
+      direction="right"
+      in={open}
+      style={{ width: showTeachMe ? '700px' : '', position: open ? 'relative' : 'absolute' }}
+    >
       <Wrapper>
+        <MediaPlayer key={playingNode?.ref_id} hidden={selectedNode?.ref_id !== playingNode?.ref_id} />
         <ScrollWrapper>
           <SelectedNodeView />
         </ScrollWrapper>
@@ -73,10 +83,9 @@ const CloseButton = styled(Flex)`
   }
 `
 
-const ScrollWrapper = styled(Flex)(() => ({
-  height: '100%',
-  width: '100%',
-}))
+const ScrollWrapper = styled(Flex)`
+  flex: 1 1 100%;
+`
 
 const CollapseButton = styled(Flex).attrs({
   align: 'center',

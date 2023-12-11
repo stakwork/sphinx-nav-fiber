@@ -3,5 +3,7 @@ export function formatDescription(description: string | undefined) {
     return ''
   }
 
-  return description.replace(/[[]{2}/g, '').replace(/[\]]{2}/g, '')
+  return String(description)
+    .replace(/[[]{2}/g, '')
+    .replace(/[\]]{2}/g, '')
 }

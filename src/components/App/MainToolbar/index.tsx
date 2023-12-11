@@ -1,28 +1,20 @@
 import styled from 'styled-components'
 import AddContentIcon from '~/components/Icons/AddContentIcon'
-import AddSourceIcon from '~/components/Icons/AddSourceIcon'
 import SettingsIcon from '~/components/Icons/SettingsIcon'
 import SourcesTableIcon from '~/components/Icons/SourcesTableIcon'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
-import { SecondarySidebarActiveTab, useAppStore } from '~/stores/useAppStore'
 import { useModal } from '~/stores/useModalStore'
 import { colors } from '~/utils/colors'
 
 export const MainToolbar = () => {
-  const [setSecondarySidebarActiveTab] = useAppStore((s) => [s.setSecondarySidebarActiveTab])
-
   const { open: openSourcesModal } = useModal('sourcesTable')
   const { open: openContentAddModal } = useModal('addContent')
-  const { open: openSourceAddModal } = useModal('addSource')
-
-  const handleOpenSidebar = (tab: SecondarySidebarActiveTab) => {
-    setSecondarySidebarActiveTab(tab)
-  }
+  const { open: openSettingsModal } = useModal('settings')
 
   return (
     <Wrapper>
-      <LogoButton onClick={() => handleOpenSidebar('about')}>
+      <LogoButton>
         <img alt="Second brain" src="logo.svg" />
       </LogoButton>
       <ActionButton onClick={openContentAddModal}>
@@ -31,19 +23,13 @@ export const MainToolbar = () => {
         </IconWrapper>
         <Text>Add Content</Text>
       </ActionButton>
-      <ActionButton onClick={openSourceAddModal}>
-        <IconWrapper>
-          <AddSourceIcon />
-        </IconWrapper>
-        <Text>Add Source</Text>
-      </ActionButton>
       <ActionButton id="cy-open-soure-table" onClick={openSourcesModal}>
         <IconWrapper>
           <SourcesTableIcon />
         </IconWrapper>
         <Text>Source Table</Text>
       </ActionButton>
-      <ActionButton>
+      <ActionButton onClick={openSettingsModal}>
         <IconWrapper>
           <SettingsIcon />
         </IconWrapper>
@@ -108,7 +94,7 @@ const ActionButton = styled(Flex).attrs({
     border-radius: 4px;
     background: #000;
     box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.25);
-    position absolute;
+    position: absolute;
     left: 90%;
     z-index: 99;
     white-space: nowrap;
@@ -120,7 +106,7 @@ const ActionButton = styled(Flex).attrs({
   }
 
   &:hover {
-     color: ${colors.white};
+    color: ${colors.white};
 
     &:before {
       width: 3px;

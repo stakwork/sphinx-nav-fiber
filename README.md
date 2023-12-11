@@ -1,7 +1,3 @@
-Connection to the ec2 instance with the sphinx-nav code (ask for the pem key)
-
-`ssh -i ./pemFiles/knowlege-graph-api.pem ec2-user@3.80.198.201`
-
 ## Available Scripts
 
 In the project directory, you can run:
@@ -17,33 +13,38 @@ You will also see any lint errors in the console.
 ### `run tests`
 
 Run e2e and component tests (cypress non-headless mode) like so
+
 ```bash
 yarn run cy-open
 ```
 
 Run e2e test in headless mode like so
+
 ```bash
 yarn run cy-run
 ```
 
 Run component test in headless mode like so
+
 ```bash
 yarn run cy-comp
 ```
 
 To create a test coverage report
+
 - while running the application do
+
 ```bash
 yarn run cy-run
 ```
 
 - whithout running the application do
+
 ```bash
 yarn run test-coverage
 ```
 
 The `coverage` folder contains generated coverage report
-
 
 ### `yarn build`
 
@@ -65,3 +66,11 @@ build docker image
 run the image on localhost
 
 `docker run -p 3004:80 sphinx_nav_fiber`
+
+### Generate icons for latest layout
+
+Add svg icon to public/svg-icons with proper naming
+
+run `node ./svgLibBuilder.js`
+
+it will generate React Icon in src/components/Icons
