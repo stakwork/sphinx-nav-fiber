@@ -1,7 +1,6 @@
 import { Button, Skeleton } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
 import PlusIcon from '~/components/Icons/PlusIcon'
 import SentimentDataIcon from '~/components/Icons/SentimentDataIcon'
@@ -12,6 +11,7 @@ import { useModal } from '~/stores/useModalStore'
 import { Trending as TrendingType } from '~/types'
 import { colors } from '~/utils/colors'
 import { BriefDescription } from './BriefDescriptionModal'
+import { ClipLoader } from 'react-spinners'
 
 const TRENDING_TOPICS = ['Drivechain', 'Ordinals', 'L402', 'Nostr', 'AI']
 
@@ -156,6 +156,10 @@ const Wrapper = styled(Flex)`
       margin-left: 16px;
       font-size: 24px;
     }
+  }
+  .Trendingwrapper {
+    margin-left: 23px;
+    margin-top: 20px;
   }
 
   .Trendingwrapper {
