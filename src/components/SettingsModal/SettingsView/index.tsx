@@ -27,8 +27,6 @@ interface TabPanelProps {
 //   '024efa31d1e4f98bccc415b222c9d971866013ad6f95f7d1ed9e8be8e3355a36ff',
 // ]
 
-
-
 const defaultData = {
   description: '',
   mission_statement: '',
