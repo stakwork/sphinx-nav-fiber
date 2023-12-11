@@ -52,12 +52,13 @@ const Version = styled(Flex)`
 `
 
 export const App = () => {
-  const [setBudget, setNodeCount, setTribeHost, setTribeUuid, setIsAdmin] = useUserStore((s) => [
+  const [setBudget, setNodeCount, setTribeHost, setTribeUuid, setIsAdmin, setPubKey] = useUserStore((s) => [
     s.setBudget,
     s.setNodeCount,
     s.setTribeHost,
     s.setTribeUuid,
     s.setIsAdmin,
+    s.setPubKey,
   ])
 
   const [setSidebarOpen, searchTerm, setCurrentSearch, setRelevanceSelected, setTranscriptOpen] = [
@@ -147,6 +148,12 @@ export const App = () => {
       setTribeHost(host)
       setTribeUuid(uuid)
 
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      const sphinxEnable = await sphinx.enable()
+
+      setPubKey(sphinxEnable?.pubkey)
+
       const sigAndMessage = await getSignedMessageFromRelay()
 
       const isAdmin = await getIsAdmin({
@@ -162,7 +169,7 @@ export const App = () => {
     } catch (error) {
       /* not an admin */
     }
-  }, [setIsAdmin, setTribeHost, setTribeUuid])
+  }, [setIsAdmin, setTribeHost, setTribeUuid, setPubKey])
 
   // setup socket
   useEffect(() => {
