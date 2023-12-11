@@ -50,6 +50,8 @@ export type Props = {
   imageUrl: string
   showTitle?: string
   text?: string
+  // eslint-disable-next-line react/no-unused-prop-types
+  link?: string
   sourceLink?: string
   type?: string
   name?: string
@@ -102,7 +104,7 @@ export const Episode = ({
                 {type && <TypeBadge type={type} />}
               </Flex>
               {type === 'youtube' && sourceLink ? (
-                <StyledLink href={`${sourceLink}?open=system`} onClick={(e) => e.stopPropagation()} target="_blank">
+                <StyledLink href={`${sourceLink}?open=system`} onClick={(e) => e.stopPropagation()}>
                   <LinkIcon />
                 </StyledLink>
               ) : null}
