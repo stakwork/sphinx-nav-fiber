@@ -66,3 +66,11 @@ build docker image
 run the image on localhost
 
 `docker run -p 3004:80 sphinx_nav_fiber`
+
+### Generate icons for latest layout
+
+Add svg icon to public/svg-icons with proper naming
+
+run `node ./svgLibBuilder.js`
+
+it will generate React Icon in src/components/Icons
