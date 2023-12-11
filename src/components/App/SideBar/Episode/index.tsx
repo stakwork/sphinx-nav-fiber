@@ -3,10 +3,8 @@ import styled from 'styled-components'
 import { useGraphData } from '~/components/DataRetriever'
 import { Divider } from '~/components/common/Divider'
 import { Flex } from '~/components/common/Flex'
-import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { getSelectedNodeTimestamps } from '~/utils/getSelectedNodeTimestamps'
-import { ErrorSection } from './ErrorSection'
 import { Heading } from './Heading'
 import { Timestamp } from './Timestamp'
 
@@ -26,9 +24,9 @@ const Wrapper = styled(Flex)`
   }
 `
 
-export const Creator = () => {
-  const data = useGraphData()
+export const Episode = () => {
   const selectedNode = useSelectedNode()
+  const data = useGraphData()
 
   const selectedNodeTimestamps = useMemo(
     () => getSelectedNodeTimestamps(data?.nodes || [], selectedNode),
@@ -36,7 +34,6 @@ export const Creator = () => {
   )
 
   const setSelectedTimestamp = useDataStore((s) => s.setSelectedTimestamp)
-  const flagErrorIsOpen = useAppStore((s) => s.flagErrorIsOpen)
 
   useEffect(() => {
     if (selectedNodeTimestamps?.length) {
@@ -49,10 +46,8 @@ export const Creator = () => {
   }
 
   return (
-    <>
+    <div>
       <Heading />
-
-      {flagErrorIsOpen && <ErrorSection />}
 
       {!!selectedNodeTimestamps?.length && (
         <Wrapper>
@@ -70,6 +65,6 @@ export const Creator = () => {
           <Divider />
         </Wrapper>
       )}
-    </>
+    </div>
   )
 }

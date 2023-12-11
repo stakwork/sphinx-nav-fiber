@@ -5,6 +5,7 @@ import { TextType } from '../../Helper/AskQuestion/Text'
 import { TeachMeText } from '../../Helper/TeachMe'
 import { AudioClip } from '../AudioClip'
 import { Data } from '../Data'
+import { Episode } from '../Episode'
 import { Messages } from '../Messages'
 import { Person } from '../Person'
 import { Show } from '../Show'
@@ -12,7 +13,7 @@ import { Topic } from '../Topic'
 import { TwitData } from '../TwitData'
 import { YouTube } from '../YouTube'
 
-const MEDIA_TYPES = ['clip', 'twitter_space', 'youtube']
+const MEDIA_TYPES = ['clip', 'twitter_space', 'youtube', 'episode']
 
 // eslint-disable-next-line no-underscore-dangle
 const _View = () => {
@@ -58,6 +59,8 @@ const _View = () => {
       return <TextType />
     case 'twitter_space':
       return <AudioClip />
+    case 'episode':
+      return <Episode />
     default:
       return null
   }

@@ -10,8 +10,8 @@ import { TAboutParams, getAboutData } from '~/network/fetchSourcesData'
 import { useUserStore } from '~/stores/useUserStore'
 import { colors } from '~/utils/colors'
 import { UserPermissions } from '../UserPermissions'
-import { General } from './General'
 import { Appearance } from './Appearance'
+import { General } from './General'
 
 interface TabPanelProps {
   children?: React.ReactNode
@@ -26,8 +26,6 @@ interface TabPanelProps {
 //   '03bfe6723c06fb2b7546df1e8ca1a17ae5c504615da32c945425ccbe8d3ca6260d',
 //   '024efa31d1e4f98bccc415b222c9d971866013ad6f95f7d1ed9e8be8e3355a36ff',
 // ]
-
-
 
 const defaultData = {
   description: '',
