@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import styled from 'styled-components'
 import PlusIcon from '~/components/Icons/PlusIcon'
-import TrendingIcon from '~/components/Icons/TrendingIcon'
+import SentimentDataIcon from '~/components/Icons/SentimentDataIcon'
 import { Flex } from '~/components/common/Flex'
 import { getTrends } from '~/network/fetchGraphData'
 import { useDataStore } from '~/stores/useDataStore'
@@ -37,7 +37,7 @@ export const Trending = ({ onSubmit }: Props) => {
       try {
         const res = await getTrends()
 
-        if (res.length) {
+        if (res.length && Array.isArray(res)) {
           setTrendingTopics(res)
         }
       } catch (err) {
@@ -74,9 +74,13 @@ export const Trending = ({ onSubmit }: Props) => {
   return (
     <Wrapper>
       <div>
-        <div className="trending-header">
-          <div className="heading">Trending Topics</div>
-          <TrendingIcon className="icon" />
+        <div className="heading-container">
+          <div className="heading">
+            <span className="heading__title">Trending Topics</span>
+            <span className="heading__icon">
+              {loading ? <ClipLoader color={colors.PRIMARY_BLUE} size={16} /> : <SentimentDataIcon />}
+            </span>
+          </div>
         </div>
         {trendingTopics.length === 0 && !loading ? (
           <div className="Trendingwrapper">
@@ -131,24 +135,24 @@ export const Trending = ({ onSubmit }: Props) => {
 }
 
 const Wrapper = styled(Flex)`
-  .trending-header {
-    display: inline-flex;
-    margin-bottom: 9px;
-    padding: 0 16px 0 24px;
+  .heading-container {
+    display: flex;
+    flex-direction: column;
+    padding: 16px 24px 16px 24px;
+  }
 
-    .heading {
-      color: ${colors.GRAY6};
-      padding-right: 24px;
-      font-family: Barlow;
-      font-size: 14px;
-      font-style: normal;
-      font-weight: 700;
-      line-height: 20px;
-      letter-spacing: 1.12px;
-      text-transform: uppercase;
-    }
+  .heading {
+    color: ${colors.GRAY6};
+    padding-right: 24px;
+    font-family: Barlow;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 20px;
+    letter-spacing: 1.12px;
+    text-transform: uppercase;
 
-    .icon {
+    &__icon {
       margin-left: 16px;
       font-size: 24px;
     }

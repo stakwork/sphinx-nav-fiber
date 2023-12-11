@@ -6,7 +6,7 @@ import PlayIcon from '~/components/Icons/PlayIcon'
 import VolumeIcon from '~/components/Icons/VolumeIcon'
 import { Flex } from '~/components/common/Flex'
 import { colors } from '~/utils'
-import { secondsToHMS } from '~/utils/secondsToMediaTime'
+import { secondsToMediaTime } from '~/utils/secondsToMediaTime'
 
 type Props = {
   isPlaying: boolean
@@ -43,9 +43,9 @@ export const Toolbar: FC<Props> = ({
           {!isPlaying ? <PlayIcon /> : <PauseIcon />}
         </Action>
         <TimeStamp direction="row">
-          <span>{secondsToHMS(playingTime)}</span>
+          <span>{secondsToMediaTime(playingTime)}</span>
           <span className="separator">/</span>
-          <span className="duration">{secondsToHMS(duration)}</span>
+          <span className="duration">{secondsToMediaTime(duration)}</span>
         </TimeStamp>
         <VolumeControl direction="row" px={9}>
           <Slider

@@ -14,7 +14,7 @@ import { Equalizer } from './Equalizer'
 
 export const PlayerControl = () => {
   const containerRef = useRef<HTMLDivElement>(null)
-  const [shouldScroll, setShouldScroll] = useState(0)
+  const [scrollWidth, setScrollWidth] = useState(0)
   const selectedNode = useSelectedNode()
 
   const sidebarIsOpen = useAppStore((s) => s.sidebarIsOpen)
@@ -39,7 +39,7 @@ export const PlayerControl = () => {
     const containerWidth = containerRef.current?.offsetWidth || 0
     const textWidth = containerRef.current?.scrollWidth || 0
 
-    setShouldScroll(textWidth - containerWidth)
+    setScrollWidth(textWidth - containerWidth)
   }, [])
 
   const onClose = () => {
@@ -54,7 +54,7 @@ export const PlayerControl = () => {
         <Avatar src={playingNode.image_url || ''} type={playingNode.node_type} />
         <Info>
           <Container ref={containerRef}>
-            <ScrollText className="title" scrollValue={shouldScroll}>
+            <ScrollText className="title" scrollValue={scrollWidth}>
               {playingNode.episode_title}
             </ScrollText>
             <div className="subtitle">{playingNode.show_title}</div>

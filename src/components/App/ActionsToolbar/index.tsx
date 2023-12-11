@@ -1,17 +1,18 @@
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
-import { useSelectedNode } from '~/stores/useDataStore'
+import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { CameraRecenterControl } from './CameraRecenterControl'
 import { GraphViewControl } from './GraphViewControl'
 import { PlayerControl } from './PlayerControl'
 
 export const ActionsToolbar = () => {
   const selectedNode = useSelectedNode()
+  const isLoading = useDataStore((s) => s.isFetching)
 
   return (
     <Wrapper align="flex-end" id="actions-toolbar">
-      <CameraRecenterControl />
-      <GraphViewControl />
+      {!isLoading && <CameraRecenterControl />}
+      {!isLoading && <GraphViewControl />}
       <PlayerControl key={selectedNode?.ref_id} />
     </Wrapper>
   )
