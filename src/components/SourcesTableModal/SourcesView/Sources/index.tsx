@@ -1,39 +1,24 @@
-import { Button } from '@mui/material'
 import clsx from 'clsx'
 import { useEffect, useMemo, useState } from 'react'
-import { MdRestartAlt } from 'react-icons/md'
 import { ClipLoader } from 'react-spinners'
-import { toast } from 'react-toastify'
-import * as sphinx from 'sphinx-bridge-kevkevinpal'
 import styled from 'styled-components'
-import ShieldPersonIcon from '~/components/Icons/ShieldPersonIcon'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
-import { ToastMessage } from '~/components/common/Toast/toastMessage'
-import { getRadarData, triggerRadarJob } from '~/network/fetchSourcesData'
+import { getRadarData } from '~/network/fetchSourcesData'
 import { useDataStore } from '~/stores/useDataStore'
 import { useUserStore } from '~/stores/useUserStore'
-import { FetchRadarResponse, SubmitErrRes, Sources as TSources } from '~/types'
+import { FetchRadarResponse, Sources as TSources } from '~/types'
 import { colors } from '~/utils/colors'
-import { executeIfProd } from '~/utils/tests'
 import { Heading, StyledPill } from '../common'
 import { sourcesMapper } from '../constants'
 import { Search } from './Search'
 import Table from './Table'
 
-const admins = [
-  '02c431e64078b10925584d64824c9d1d12eca05e2c56660ffa5ac84aa6946adfe5',
-  '03a9a8d953fe747d0dd94dd3c567ddc58451101e987e2d2bf7a4d1e10a2c89ff38',
-  '024efa31d1e4f98bccc415b222c9d971866013ad6f95f7d1ed9e8be8e3355a36ff',
-  '03bfe6723c06fb2b7546df1e8ca1a17ae5c504615da32c945425ccbe8d3ca6260d',
-  '024efa31d1e4f98bccc415b222c9d971866013ad6f95f7d1ed9e8be8e3355a36ff',
-]
-
 export const Sources = () => {
   const [loading, setLoading] = useState(true)
   const [typeFilter, setTypeFilter] = useState('')
   const [sources, setSources] = useDataStore((s) => [s.sources, s.setSources])
-  const [setIsAdmin, isAdmin, setPubKey, pubKey] = useUserStore((s) => [s.setIsAdmin, s.isAdmin, s.setPubKey, s.pubKey])
+  const [isAdmin] = useUserStore((s) => [s.isAdmin])
   const [search, setSearch] = useState('')
 
   useEffect(() => {
@@ -62,81 +47,6 @@ export const Sources = () => {
     }
   }
 
-  const authorize = async () => {
-    // skipping this for end to end test because it requires a sphinx-relay to be connected
-    await executeIfProd(async () => {
-      try {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        const enable = await sphinx.enable()
-        const pubKeyRes = enable?.pubkey
-
-        setPubKey(pubKeyRes)
-
-        if (pubKeyRes) {
-          setIsAdmin(pubKeyRes && admins.includes(pubKeyRes))
-        }
-      } catch (error) {
-        console.warn(error)
-      }
-    })
-  }
-
-  const handleRunJob = async () => {
-    try {
-      const res: SubmitErrRes = await triggerRadarJob()
-
-      if (res?.error) {
-        toast(<ToastMessage message="An error happened" />, {
-          icon: false,
-          position: toast.POSITION.BOTTOM_CENTER,
-          type: 'error',
-        })
-
-        return
-      }
-
-      toast(<ToastMessage message="Job started" />, {
-        icon: false,
-        position: toast.POSITION.BOTTOM_CENTER,
-        type: 'success',
-      })
-    } catch (error) {
-      toast(<ToastMessage message="An error happened" />, {
-        icon: false,
-        position: toast.POSITION.BOTTOM_CENTER,
-        type: 'error',
-      })
-    }
-  }
-
-  const resolveAdminActions = () => {
-    if (!pubKey) {
-      return (
-        <EditButton
-          color="secondary"
-          onClick={authorize}
-          size="medium"
-          startIcon={<ShieldPersonIcon />}
-          sx={{ alignSelf: 'flex-end', m: '0 36px 16px 0' }}
-          variant="contained"
-        >
-          Admin
-        </EditButton>
-      )
-    }
-
-    if (pubKey && isAdmin) {
-      return (
-        <RunButton endIcon={<MdRestartAlt color={colors.white} />} onClick={handleRunJob} size="small">
-          Run
-        </RunButton>
-      )
-    }
-
-    return <Text>You are not admin</Text>
-  }
-
   const tableValues = useMemo(
     () =>
       sources
@@ -154,7 +64,6 @@ export const Sources = () => {
     <Wrapper align="stretch" direction="column" justify="flex-end">
       <Heading align="center" direction="row" justify="space-between">
         <Text className="title">Sources for this Graph</Text>
-        {resolveAdminActions()}
       </Heading>
       <Search onSearch={setSearch} />
       <Flex className="filters" direction="row" pb={16} px={36}>
@@ -201,12 +110,4 @@ const TableWrapper = styled(Flex)`
   overflow: auto;
   flex: 1;
   width: 100%;
-`
-
-const RunButton = styled(Button)`
-  margin-left: 8px;
-`
-
-const EditButton = styled(Button)`
-  margin-left: auto;
 `
