@@ -3,6 +3,7 @@ import Tabs from '@mui/material/Tabs'
 import * as React from 'react'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
+import { useUserStore } from '~/stores/useUserStore'
 import { colors } from '~/utils/colors'
 import { QueuedSources } from './QueuedSources'
 import { Sources } from './Sources'
@@ -39,6 +40,7 @@ function a11yProps(index: number) {
 
 export const SourcesView = () => {
   const [value, setValue] = React.useState(0)
+  const [isAdmin] = useUserStore((s) => [s.isAdmin])
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue)
@@ -48,18 +50,26 @@ export const SourcesView = () => {
     <Wrapper direction="column">
       <StyledTabs aria-label="basic tabs example" onChange={handleChange} value={value}>
         <StyledTab disableRipple label="Sources table" {...a11yProps(0)} />
-        <StyledTab color={colors.white} disableRipple label="Queued sources" {...a11yProps(1)} />
-        <StyledTab color={colors.white} disableRipple label="Topics" {...a11yProps(1)} />
+        {isAdmin && (
+          <>
+            <StyledTab color={colors.white} disableRipple label="Queued sources" {...a11yProps(1)} />
+            <StyledTab color={colors.white} disableRipple label="Topics" {...a11yProps(1)} />
+          </>
+        )}
       </StyledTabs>
       <TabPanel index={0} value={value}>
         <Sources />
       </TabPanel>
-      <TabPanel index={1} value={value}>
-        <QueuedSources />
-      </TabPanel>
-      <TabPanel index={2} value={value}>
-        <TopicSources />
-      </TabPanel>
+      {isAdmin && (
+        <>
+          <TabPanel index={1} value={value}>
+            <QueuedSources />
+          </TabPanel>
+          <TabPanel index={2} value={value}>
+            <TopicSources />
+          </TabPanel>
+        </>
+      )}
     </Wrapper>
   )
 }
