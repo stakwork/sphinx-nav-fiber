@@ -202,7 +202,7 @@ type PostedBy = {
 export type BuyLsatRequest = {
   amount: number
 }
-
-export type BuyLsatResponse = {
-  amount: number
+export type BalanceResponse = {
+  success: boolean
+  balance: number
 }

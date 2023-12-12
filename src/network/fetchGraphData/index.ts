@@ -1,6 +1,12 @@
 import { Vector3 } from 'three'
 // import { getNodeColorByType } from '~/components/Universe/Graph/constant'
-import { AWS_IMAGE_BUCKET_URL, CLOUDFRONT_IMAGE_BUCKET_URL, isE2E, NODE_RELATIVE_HIGHLIGHT_COLORS } from '~/constants'
+import {
+  AWS_IMAGE_BUCKET_URL,
+  CLOUDFRONT_IMAGE_BUCKET_URL,
+  isDevelopment,
+  isE2E,
+  NODE_RELATIVE_HIGHLIGHT_COLORS,
+} from '~/constants'
 import { mock } from '~/mocks/getMockGraphData/mockResponse'
 import { api } from '~/network/api'
 import {
@@ -74,11 +80,11 @@ const fetchNodes = async (search: string): Promise<FetchDataResponse> => {
     }
   }
 
-  // if (isDevelopment || isE2E) {
-  //   const response = await api.get<FetchDataResponse>(`/v2/search?word=${search}&free=true`)
+  if (isDevelopment || isE2E) {
+    const response = await api.get<FetchDataResponse>(`/v2/search?word=${search}&free=true`)
 
-  //   return response
-  // }
+    return response
+  }
 
   const lsatToken = await getLSat()
 
