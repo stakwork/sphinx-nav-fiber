@@ -25,13 +25,17 @@ export async function payLsat(lsat: Lsat): Promise<void> {
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    const LSATRes = await sphinx.saveLsat(lsat.invoice, lsat.baseMacaroon, window.location.host)
+    let LSATRes = await sphinx.saveLsat(lsat.invoice, lsat.baseMacaroon, window.location.host)
 
     if (LSATRes.success === false) {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       await sphinx.topup()
     }
+
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    LSATRes = await sphinx.saveLsat(lsat.invoice, lsat.baseMacaroon, window.location.host)
 
     localStorage.setItem(
       'lsat',
