@@ -198,3 +198,11 @@ type PostedBy = {
   ref_id: string
   twitter_handle: string
 }
+
+export type BuyLsatRequest = {
+  amount: number
+}
+
+export type BuyLsatResponse = {
+  amount: number
+}

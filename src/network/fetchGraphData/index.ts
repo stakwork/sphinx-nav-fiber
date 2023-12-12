@@ -1,13 +1,6 @@
-import { Lsat } from 'lsat-js'
 import { Vector3 } from 'three'
 // import { getNodeColorByType } from '~/components/Universe/Graph/constant'
-import {
-  AWS_IMAGE_BUCKET_URL,
-  CLOUDFRONT_IMAGE_BUCKET_URL,
-  isDevelopment,
-  isE2E,
-  NODE_RELATIVE_HIGHLIGHT_COLORS,
-} from '~/constants'
+import { AWS_IMAGE_BUCKET_URL, CLOUDFRONT_IMAGE_BUCKET_URL, isE2E, NODE_RELATIVE_HIGHLIGHT_COLORS } from '~/constants'
 import { mock } from '~/mocks/getMockGraphData/mockResponse'
 import { api } from '~/network/api'
 import {
@@ -81,11 +74,11 @@ const fetchNodes = async (search: string): Promise<FetchDataResponse> => {
     }
   }
 
-  if (isDevelopment || isE2E) {
-    const response = await api.get<FetchDataResponse>(`/v2/search?word=${search}&free=true`)
+  // if (isDevelopment || isE2E) {
+  //   const response = await api.get<FetchDataResponse>(`/v2/search?word=${search}&free=true`)
 
-    return response
-  }
+  //   return response
+  // }
 
   const lsatToken = await getLSat()
 
@@ -98,9 +91,7 @@ const fetchNodes = async (search: string): Promise<FetchDataResponse> => {
     // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   } catch (error: any) {
     if (error.status === 402) {
-      const lsat = Lsat.fromHeader(error.headers.get('www-authenticate'))
-
-      await payLsat(lsat)
+      await payLsat()
 
       return fetchNodes(search)
     }
@@ -152,9 +143,7 @@ export const getSentimentData = async (args?: {
     // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   } catch (error: any) {
     if (error.status === 402) {
-      const lsat = Lsat.fromHeader(error.headers.get('www-authenticate'))
-
-      await payLsat(lsat)
+      await payLsat()
 
       return getSentimentData(args)
     }
@@ -172,9 +161,7 @@ export const postInstagraph = async (data: TeachData): Promise<void> => {
     // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   } catch (error: any) {
     if (error.status === 402) {
-      const lsat = Lsat.fromHeader(error.headers.get('www-authenticate'))
-
-      await payLsat(lsat)
+      await payLsat()
 
       await postInstagraph(data)
 
@@ -194,9 +181,7 @@ export const postTeachMe = async (data: TeachData): Promise<void> => {
     // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   } catch (error: any) {
     if (error.status === 402) {
-      const lsat = Lsat.fromHeader(error.headers.get('www-authenticate'))
-
-      await payLsat(lsat)
+      await payLsat()
 
       await postTeachMe(data)
 
@@ -216,9 +201,7 @@ export const postAskQuestion = async (data: QuestionData): Promise<void> => {
     // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   } catch (error: any) {
     if (error.status === 402) {
-      const lsat = Lsat.fromHeader(error.headers.get('www-authenticate'))
-
-      await payLsat(lsat)
+      await payLsat()
 
       await postAskQuestion(data)
 
