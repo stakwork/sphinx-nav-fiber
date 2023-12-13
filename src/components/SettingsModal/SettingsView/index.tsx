@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
-import { getAboutData, TAboutParams } from '~/network/fetchSourcesData'
+import { TAboutParams, getAboutData } from '~/network/fetchSourcesData'
 import { useUserStore } from '~/stores/useUserStore'
 import { colors } from '~/utils/colors'
 import { UserPermissions } from '../UserPermissions'
@@ -101,16 +101,14 @@ export const SettingsView: React.FC<Props> = ({ onClose }) => {
           {isAdmin && <StyledTab disableRipple label="User Permissions" {...a11yProps(2)} />}
         </StyledTabs>
       </SettingsHeader>
-      {isAdmin && (
-        <>
-          <TabPanel index={0} value={value}>
-            {!loading ? <General initialValues={initialValues} /> : <></>}
-          </TabPanel>
-          <TabPanel index={2} value={value}>
-            {!loading ? <UserPermissions initialValues={initialValues} /> : <></>}
-          </TabPanel>
-        </>
-      )}
+
+      <TabPanel index={0} value={value}>
+        {!loading ? <General initialValues={initialValues} /> : <></>}
+      </TabPanel>
+      <TabPanel index={2} value={value}>
+        {!loading ? <UserPermissions initialValues={initialValues} /> : <></>}
+      </TabPanel>
+
       <TabPanel index={isAdmin ? 1 : 0} value={value}>
         <Appearance onClose={onClose} />
       </TabPanel>
