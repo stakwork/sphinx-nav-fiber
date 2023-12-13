@@ -1,14 +1,11 @@
 import { useEffect, useState } from 'react'
 import { ClipLoader } from 'react-spinners'
-import * as sphinx from 'sphinx-bridge-kevkevinpal'
 import styled from 'styled-components'
-import { Button } from '~/components/Button'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { getAboutData, TAboutParams } from '~/network/fetchSourcesData'
 import { useUserStore } from '~/stores/useUserStore'
 import { colors } from '~/utils/colors'
-import { executeIfProd } from '~/utils/tests'
 import { AboutAdminView } from './AdminView'
 import { CommonView } from './CommonView'
 
@@ -19,12 +16,6 @@ export const requiredRule = {
   },
 }
 
-const admins = [
-  '02c431e64078b10925584d64824c9d1d12eca05e2c56660ffa5ac84aa6946adfe5',
-  '03a9a8d953fe747d0dd94dd3c567ddc58451101e987e2d2bf7a4d1e10a2c89ff38',
-  '024efa31d1e4f98bccc415b222c9d971866013ad6f95f7d1ed9e8be8e3355a36ff',
-]
-
 const defaultData = {
   description: '',
   mission_statement: '',
@@ -33,7 +24,7 @@ const defaultData = {
 }
 
 export const About = () => {
-  const [setIsAdmin, isAdmin, setPubKey, pubKey] = useUserStore((s) => [s.setIsAdmin, s.isAdmin, s.setPubKey, s.pubKey])
+  const [isAdmin] = useUserStore((s) => [s.isAdmin])
   const [loading, setLoading] = useState(false)
   const [initialValues, setInitialValues] = useState<TAboutParams>(defaultData)
 
@@ -55,47 +46,10 @@ export const About = () => {
     init()
   }, [])
 
-  const authorize = async () => {
-    // skipping this for end to end test because it requires a sphinx-relay to be connected
-    await executeIfProd(async () => {
-      try {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        const enable = await sphinx.enable()
-        const pubKeyRes = enable?.pubkey
-
-        setPubKey(pubKeyRes)
-
-        if (pubKeyRes) {
-          setIsAdmin(pubKeyRes && admins.includes(pubKeyRes))
-        }
-      } catch (error) {
-        console.warn(error)
-      }
-    })
-  }
-
-  const resolveAdminActions = () => {
-    if (!pubKey) {
-      return (
-        <EditButton kind="small" onClick={authorize}>
-          Admin
-        </EditButton>
-      )
-    }
-
-    if (pubKey && isAdmin) {
-      return null
-    }
-
-    return <Text>You are not admin</Text>
-  }
-
   return (
     <Wrapper align="stretch" direction="column" justify="flex-end">
       <Heading align="center" direction="row" justify="space-between">
         <Text className="title">About</Text>
-        {resolveAdminActions()}
       </Heading>
       {loading ? (
         <ContentWrapper align="center" justify="center">
@@ -131,10 +85,6 @@ const ContentWrapper = styled(Flex)`
   overflow: auto;
   flex: 1;
   width: 100%;
-`
-
-const EditButton = styled(Button)`
-  margin-left: auto;
 `
 
 const Heading = styled(Flex)`

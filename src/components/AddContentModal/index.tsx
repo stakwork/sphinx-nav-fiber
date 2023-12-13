@@ -1,9 +1,8 @@
-import { Lsat } from 'lsat-js'
 import { useEffect, useState } from 'react'
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
-import * as sphinx from 'sphinx-bridge-kevkevinpal'
-import { BaseModal } from '~/components/Modal'
+import * as sphinx from 'sphinx-bridge'
 import { notify } from '~/components/common/Toast/toastMessage'
+import { BaseModal } from '~/components/Modal'
 import {
   DOCUMENT,
   LINK,
@@ -120,9 +119,7 @@ const handleSubmitForm = async (
     // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   } catch (err: any) {
     if (err.status === 402) {
-      const lsat = Lsat.fromHeader(err.headers.get('www-authenticate'))
-
-      await payLsat(lsat)
+      await payLsat()
 
       await updateBudget(setBudget)
 

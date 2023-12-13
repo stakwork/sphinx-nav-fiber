@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import * as sphinx from 'sphinx-bridge-kevkevinpal'
+import * as sphinx from 'sphinx-bridge'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { Pill } from '~/components/common/Pill'

@@ -1,13 +1,21 @@
-import * as sphinx from 'sphinx-bridge-kevkevinpal'
+import { getBalance } from '~/network/balance'
+import { getLSat } from '../getLSat'
 
 export async function updateBudget(setBudget: (value: number | null) => void) {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  const budget = await sphinx.getBudget()
+  const lsat = await getLSat()
 
-  if (budget?.msg === 'Invalid Action') {
+  if (!lsat) {
     setBudget(null)
-  } else if (budget?.budget) {
-    setBudget(budget.budget)
+
+    return
+  }
+
+  try {
+    const balance = await getBalance(lsat)
+
+    setBudget(balance.balance)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    setBudget(null)
   }
 }
