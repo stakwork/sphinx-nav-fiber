@@ -33,13 +33,11 @@ export async function payLsat(): Promise<void> {
     let budgetAmount = budget?.budget
 
     if (!budgetAmount) {
-      /**
-       * TODO
-       * 1. try to authorize, meaning this users app version is not updated
-       * 2. get the value of their budget
-       * 3. adn set the beudgetAmount and proceed
-       */
-      budgetAmount = 50
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      const details = await sphinx.authorize()
+
+      budgetAmount = details.budget
     }
 
     try {
@@ -63,10 +61,6 @@ export async function payLsat(): Promise<void> {
           }),
         )
       }
-
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      LSATRes = await sphinx.saveLsat(lsat.invoice, lsat.baseMacaroon, window.location.host)
 
       return
     }
