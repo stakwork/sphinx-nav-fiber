@@ -22,7 +22,7 @@ import { extractUuidAndHost } from '~/utils/auth'
 import { colors } from '~/utils/colors'
 import { getSignedMessageFromRelay } from '~/utils/getSignedMessage'
 import { updateBudget } from '~/utils/setBudget'
-import { E2ETests } from '~/utils/tests'
+import { E2ETests, executeIfProd } from '~/utils/tests'
 import version from '~/utils/versionHelper'
 import { AddContentModal } from '../AddContentModal'
 import { SettingsModal } from '../SettingsModal'
@@ -115,7 +115,7 @@ export const App = () => {
     await fetchData(searchTerm)
     setSidebarOpen(true)
 
-    await updateBudget(setBudget)
+    await executeIfProd(async () => updateBudget(setBudget))
   }, [fetchData, searchTerm, setSphinxModalOpen, setSidebarOpen, setBudget])
 
   useEffect(() => {
@@ -148,24 +148,26 @@ export const App = () => {
       setTribeHost(host)
       setTribeUuid(uuid)
 
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      const sphinxEnable = await sphinx.enable()
+      await executeIfProd(async () => {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        const sphinxEnable = await sphinx.enable()
 
-      setPubKey(sphinxEnable?.pubkey)
+        setPubKey(sphinxEnable?.pubkey)
 
-      const sigAndMessage = await getSignedMessageFromRelay()
+        const sigAndMessage = await getSignedMessageFromRelay()
 
-      const isAdmin = await getIsAdmin({
-        tribeHost: host,
-        tribeUuid: uuid,
-        message: sigAndMessage.message,
-        signature: sigAndMessage.signature,
+        const isAdmin = await getIsAdmin({
+          tribeHost: host,
+          tribeUuid: uuid,
+          message: sigAndMessage.message,
+          signature: sigAndMessage.signature,
+        })
+
+        if (isAdmin.isAdmin) {
+          setIsAdmin(true)
+        }
       })
-
-      if (isAdmin.isAdmin) {
-        setIsAdmin(true)
-      }
     } catch (error) {
       /* not an admin */
     }
