@@ -13,10 +13,12 @@ import { payLsat } from './payLsat'
 import { saveConsumedContent, saveSearchTerm } from './relayHelper'
 import { updateBudget } from './setBudget'
 import { convertToChatMessage } from './stringToChatMessage'
-import { E2ETests, addToGlobalForE2e, executeIfProd, executeIfTetsRunning } from './tests'
+import { addToGlobalForE2e, E2ETests, executeIfProd, executeIfTetsRunning } from './tests'
 import { timeToMilliseconds } from './timeToMilliseconds'
 import { useIsMatchBreakpoint } from './useIsMatchBreakpoint'
 // import APP_VERSION from './versionHelper'
+import { extractUuidAndHost } from './auth'
+import { getSignedMessageFromRelay } from './getSignedMessage'
 import { videoTimeToSeconds } from './videoTimetoSeconds'
 
 export {
@@ -43,4 +45,6 @@ export {
   updateBudget,
   useIsMatchBreakpoint,
   videoTimeToSeconds,
+  getSignedMessageFromRelay,
+  extractUuidAndHost,
 }

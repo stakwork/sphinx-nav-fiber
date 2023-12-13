@@ -1,4 +1,3 @@
-import { Lsat } from 'lsat-js'
 import { Vector3 } from 'three'
 // import { getNodeColorByType } from '~/components/Universe/Graph/constant'
 import {
@@ -98,9 +97,7 @@ const fetchNodes = async (search: string): Promise<FetchDataResponse> => {
     // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   } catch (error: any) {
     if (error.status === 402) {
-      const lsat = Lsat.fromHeader(error.headers.get('www-authenticate'))
-
-      await payLsat(lsat)
+      await payLsat()
 
       return fetchNodes(search)
     }
@@ -152,9 +149,7 @@ export const getSentimentData = async (args?: {
     // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   } catch (error: any) {
     if (error.status === 402) {
-      const lsat = Lsat.fromHeader(error.headers.get('www-authenticate'))
-
-      await payLsat(lsat)
+      await payLsat()
 
       return getSentimentData(args)
     }
@@ -172,9 +167,7 @@ export const postInstagraph = async (data: TeachData): Promise<void> => {
     // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   } catch (error: any) {
     if (error.status === 402) {
-      const lsat = Lsat.fromHeader(error.headers.get('www-authenticate'))
-
-      await payLsat(lsat)
+      await payLsat()
 
       await postInstagraph(data)
 
@@ -194,9 +187,7 @@ export const postTeachMe = async (data: TeachData): Promise<void> => {
     // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   } catch (error: any) {
     if (error.status === 402) {
-      const lsat = Lsat.fromHeader(error.headers.get('www-authenticate'))
-
-      await payLsat(lsat)
+      await payLsat()
 
       await postTeachMe(data)
 
@@ -216,9 +207,7 @@ export const postAskQuestion = async (data: QuestionData): Promise<void> => {
     // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   } catch (error: any) {
     if (error.status === 402) {
-      const lsat = Lsat.fromHeader(error.headers.get('www-authenticate'))
-
-      await payLsat(lsat)
+      await payLsat()
 
       await postAskQuestion(data)
 

@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import * as sphinx from 'sphinx-bridge-kevkevinpal'
+import * as sphinx from 'sphinx-bridge'
 import { Node } from '~/types/index'
 import { executeIfProd } from '../tests'
 

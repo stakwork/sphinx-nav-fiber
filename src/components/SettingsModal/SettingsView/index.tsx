@@ -6,26 +6,18 @@ import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
-import { TAboutParams, getAboutData } from '~/network/fetchSourcesData'
+import { getAboutData, TAboutParams } from '~/network/fetchSourcesData'
 import { useUserStore } from '~/stores/useUserStore'
 import { colors } from '~/utils/colors'
 import { UserPermissions } from '../UserPermissions'
-import { General } from './General'
 import { Appearance } from './Appearance'
+import { General } from './General'
 
 interface TabPanelProps {
   children?: React.ReactNode
   index: number
   value: number
 }
-
-// const admins = [
-//   '02c431e64078b10925584d64824c9d1d12eca05e2c56660ffa5ac84aa6946adfe5',
-//   '03a9a8d953fe747d0dd94dd3c567ddc58451101e987e2d2bf7a4d1e10a2c89ff38',
-//   '024efa31d1e4f98bccc415b222c9d971866013ad6f95f7d1ed9e8be8e3355a36ff',
-//   '03bfe6723c06fb2b7546df1e8ca1a17ae5c504615da32c945425ccbe8d3ca6260d',
-//   '024efa31d1e4f98bccc415b222c9d971866013ad6f95f7d1ed9e8be8e3355a36ff',
-// ]
 
 const defaultData = {
   description: '',
@@ -63,7 +55,7 @@ type Props = {
 
 export const SettingsView: React.FC<Props> = ({ onClose }) => {
   const [value, setValue] = useState(0)
-  const [isAdmin, pubKey] = useUserStore((s) => [s.isAdmin, s.setPubKey, s.pubKey])
+  const [isAdmin] = useUserStore((s) => [s.isAdmin])
   const [loading, setLoading] = useState(false)
   const [initialValues, setInitialValues] = useState<TAboutParams>(defaultData)
 
@@ -91,23 +83,10 @@ export const SettingsView: React.FC<Props> = ({ onClose }) => {
     <StyledHeader>
       <Flex direction="row" pt={3}>
         <StyledText>{getSettingsLabel()}</StyledText>
-        {resolveAdminActions()}
       </Flex>
       {children}
     </StyledHeader>
   )
-
-  const resolveAdminActions = () => {
-    if (!pubKey) {
-      return null
-    }
-
-    if (isAdmin) {
-      return null
-    }
-
-    return <></>
-  }
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue)
