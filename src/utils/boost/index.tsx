@@ -22,6 +22,12 @@ const boostAgainstBudget = async (amount: number) => {
     // @ts-ignore
     res = await sphinx.topup()
 
+    if (!res) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      res = await sphinx.authorize()
+    }
+
     if (!res?.budget || res?.budget < amount) {
       // topup failed
       throw new Error('Topup failed')
