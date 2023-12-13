@@ -17,7 +17,7 @@ import { Filter } from './Sort'
 import { Table } from './Table'
 
 export const TopicSources = () => {
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
 
   const [data, ids, total, setTopics, filters, setFilters, terminate] = useTopicsStore((s) => [
     s.data,
@@ -63,8 +63,15 @@ export const TopicSources = () => {
     init()
   }, [setTopics, filters])
 
-  const handleLoadMore = () => {
-    setFilters({ page: filters.page + 1 })
+  const handleLoadMore = async () => {
+    try {
+      setLoading(true)
+      setFilters({ page: filters.page + 1 })
+    } catch (error) {
+      console.error('Error loading more data:', error)
+    } finally {
+      setLoading(false)
+    }
   }
 
   useEffect(

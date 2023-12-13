@@ -13,34 +13,34 @@ import { payLsat } from './payLsat'
 import { saveConsumedContent, saveSearchTerm } from './relayHelper'
 import { updateBudget } from './setBudget'
 import { convertToChatMessage } from './stringToChatMessage'
-import { executeIfTetsRunning, executeIfProd, addToGlobalForE2e, E2ETests } from './tests'
+import { E2ETests, addToGlobalForE2e, executeIfProd, executeIfTetsRunning } from './tests'
 import { timeToMilliseconds } from './timeToMilliseconds'
 import { useIsMatchBreakpoint } from './useIsMatchBreakpoint'
 // import APP_VERSION from './versionHelper'
-import { videoTimetoSeconds } from './videoTimetoSeconds'
+import { videoTimeToSeconds } from './videoTimetoSeconds'
 
 export {
+  E2ETests,
+  addToGlobalForE2e,
   assertNever,
   boost,
   colors,
+  convertToChatMessage,
+  executeIfProd,
+  executeIfTetsRunning,
   formatBudget,
   formatDescription,
   formatTimestamp,
   getLSat,
   getSelectedNodeTimestamps,
   getSuperficialNodeWeight,
-  overrideConsole,
   media,
+  overrideConsole,
   payLsat,
   saveConsumedContent,
   saveSearchTerm,
-  updateBudget,
-  convertToChatMessage,
-  executeIfTetsRunning,
-  executeIfProd,
-  addToGlobalForE2e,
-  E2ETests,
   timeToMilliseconds,
+  updateBudget,
   useIsMatchBreakpoint,
-  videoTimetoSeconds,
+  videoTimeToSeconds,
 }

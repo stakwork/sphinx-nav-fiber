@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import styled from 'styled-components'
 import PlusIcon from '~/components/Icons/PlusIcon'
+import SentimentDataIcon from '~/components/Icons/SentimentDataIcon'
 import { Flex } from '~/components/common/Flex'
 import { getTrends } from '~/network/fetchGraphData'
 import { useDataStore } from '~/stores/useDataStore'
@@ -21,7 +22,8 @@ type Props = {
 export const Trending = ({ onSubmit }: Props) => {
   const { open: openContentAddModal } = useModal('addContent')
   const [loading, setLoading] = useState(false)
-  const [briefDescription, setBriefDescription] = useState('')
+  const [selectedTrend, setSelectedTrend] = useState<TrendingType | null>(null)
+
   const { open } = useModal('briefDescription')
 
   const [trendingTopics, setTrendingTopics] = useDataStore((s) => [s.trendingTopics, s.setTrendingTopics])
@@ -35,7 +37,7 @@ export const Trending = ({ onSubmit }: Props) => {
       try {
         const res = await getTrends()
 
-        if (res.length) {
+        if (res.length && Array.isArray(res)) {
           setTrendingTopics(res)
         }
       } catch (err) {
@@ -57,16 +59,29 @@ export const Trending = ({ onSubmit }: Props) => {
 
   const showModal = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, trending: TrendingType) => {
     e.stopPropagation()
+    e.currentTarget.blur()
 
     if (trending?.tldr) {
-      setBriefDescription(trending.tldr)
+      setSelectedTrend(trending)
       open()
     }
+  }
+
+  const hideModal = () => {
+    setSelectedTrend(null)
   }
 
   return (
     <Wrapper>
       <div>
+        <div className="heading-container">
+          <div className="heading">
+            <span className="heading__title">Trending Topics</span>
+            <span className="heading__icon">
+              {loading ? <ClipLoader color={colors.PRIMARY_BLUE} size={16} /> : <SentimentDataIcon />}
+            </span>
+          </div>
+        </div>
         {trendingTopics.length === 0 && !loading ? (
           <div className="Trendingwrapper">
             <Text>No new trending topics in the last 24 hours</Text>
@@ -114,15 +129,21 @@ export const Trending = ({ onSubmit }: Props) => {
           </ul>
         )}
       </div>
-      <BriefDescription onClose={() => setBriefDescription('')} text={briefDescription} />
+      {selectedTrend && <BriefDescription onClose={hideModal} trend={selectedTrend} />}
     </Wrapper>
   )
 }
 
 const Wrapper = styled(Flex)`
+  .heading-container {
+    display: flex;
+    flex-direction: column;
+    padding: 16px 24px 16px 24px;
+  }
+
   .heading {
     color: ${colors.GRAY6};
-    padding: 0 24px 9px 24px;
+    padding-right: 24px;
     font-family: Barlow;
     font-size: 14px;
     font-style: normal;
@@ -130,8 +151,6 @@ const Wrapper = styled(Flex)`
     line-height: 20px;
     letter-spacing: 1.12px;
     text-transform: uppercase;
-    display: flex;
-    align-items: flex-end;
 
     &__icon {
       margin-left: 16px;
@@ -141,6 +160,12 @@ const Wrapper = styled(Flex)`
   .Trendingwrapper {
     margin-left: 23px;
     margin-top: 20px;
+  }
+
+  .Trendingwrapper {
+    margin-left: 23px;
+    margin-top: 20px;
+    color: ${colors.GRAY6};
   }
 
   .list {
