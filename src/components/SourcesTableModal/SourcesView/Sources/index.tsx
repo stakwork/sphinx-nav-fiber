@@ -1,17 +1,13 @@
-import { Button } from '@mui/material'
 import clsx from 'clsx'
 import { useEffect, useMemo, useState } from 'react'
-import { MdRestartAlt } from 'react-icons/md'
 import { ClipLoader } from 'react-spinners'
-import { toast } from 'react-toastify'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
-import { ToastMessage } from '~/components/common/Toast/toastMessage'
-import { getRadarData, triggerRadarJob } from '~/network/fetchSourcesData'
+import { getRadarData } from '~/network/fetchSourcesData'
 import { useDataStore } from '~/stores/useDataStore'
 import { useUserStore } from '~/stores/useUserStore'
-import { FetchRadarResponse, Sources as TSources, SubmitErrRes } from '~/types'
+import { FetchRadarResponse, Sources as TSources } from '~/types'
 import { colors } from '~/utils/colors'
 import { Heading, StyledPill } from '../common'
 import { sourcesMapper } from '../constants'
@@ -22,7 +18,7 @@ export const Sources = () => {
   const [loading, setLoading] = useState(true)
   const [typeFilter, setTypeFilter] = useState('')
   const [sources, setSources] = useDataStore((s) => [s.sources, s.setSources])
-  const [isAdmin, pubKey] = useUserStore((s) => [s.isAdmin, s.pubKey])
+  const [isAdmin] = useUserStore((s) => [s.isAdmin])
   const [search, setSearch] = useState('')
 
   useEffect(() => {
@@ -51,46 +47,6 @@ export const Sources = () => {
     }
   }
 
-  const handleRunJob = async () => {
-    try {
-      const res: SubmitErrRes = await triggerRadarJob()
-
-      if (res?.error) {
-        toast(<ToastMessage message="An error happened" />, {
-          icon: false,
-          position: toast.POSITION.BOTTOM_CENTER,
-          type: 'error',
-        })
-
-        return
-      }
-
-      toast(<ToastMessage message="Job started" />, {
-        icon: false,
-        position: toast.POSITION.BOTTOM_CENTER,
-        type: 'success',
-      })
-    } catch (error) {
-      toast(<ToastMessage message="An error happened" />, {
-        icon: false,
-        position: toast.POSITION.BOTTOM_CENTER,
-        type: 'error',
-      })
-    }
-  }
-
-  const resolveAdminActions = () => {
-    if (pubKey && isAdmin) {
-      return (
-        <RunButton endIcon={<MdRestartAlt color={colors.white} />} onClick={handleRunJob} size="small">
-          Run
-        </RunButton>
-      )
-    }
-
-    return null
-  }
-
   const tableValues = useMemo(
     () =>
       sources
@@ -108,7 +64,6 @@ export const Sources = () => {
     <Wrapper align="stretch" direction="column" justify="flex-end">
       <Heading align="center" direction="row" justify="space-between">
         <Text className="title">Sources for this Graph</Text>
-        {resolveAdminActions()}
       </Heading>
       <Search onSearch={setSearch} />
       <Flex className="filters" direction="row" pb={16} px={36}>
@@ -155,8 +110,4 @@ const TableWrapper = styled(Flex)`
   overflow: auto;
   flex: 1;
   width: 100%;
-`
-
-const RunButton = styled(Button)`
-  margin-left: 8px;
 `
