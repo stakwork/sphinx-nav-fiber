@@ -114,8 +114,6 @@ export const App = () => {
 
     await fetchData(searchTerm)
     setSidebarOpen(true)
-
-    await executeIfProd(async () => updateBudget(setBudget))
   }, [fetchData, searchTerm, setSphinxModalOpen, setSidebarOpen, setBudget])
 
   useEffect(() => {
@@ -167,11 +165,13 @@ export const App = () => {
         if (isAdmin.isAdmin) {
           setIsAdmin(true)
         }
+
+        await updateBudget(setBudget)
       })
     } catch (error) {
       /* not an admin */
     }
-  }, [setIsAdmin, setTribeHost, setTribeUuid, setPubKey])
+  }, [setIsAdmin, setTribeHost, setTribeUuid, setPubKey, setBudget])
 
   // setup socket
   useEffect(() => {
