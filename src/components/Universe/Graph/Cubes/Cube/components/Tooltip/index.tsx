@@ -9,8 +9,8 @@ import { TwitData } from './Tweet'
 
 const Wrapper = styled(Flex)(({ theme }) => ({
   position: 'absolute',
-  top: '20px',
-  right: '20px',
+  top: '65px',
+  right: '55px',
   width: '300px',
   pointerEvents: 'none',
   background: colors.dashboardHeader,
