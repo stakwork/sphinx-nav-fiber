@@ -118,7 +118,7 @@ export const TopicSources = () => {
           <Filter currentFilter={filters.sortBy} onChangeFilter={handleFilterChange} />
         </ActionsWrapper>
 
-        <TableWrapper align="center" justify={loading ? 'center' : 'flex-start'}>
+        <TableWrapper align="center" justify={loading && !data ? 'center' : 'flex-start'}>
           {loading && !data ? (
             <ClipLoader color={colors.white} />
           ) : (

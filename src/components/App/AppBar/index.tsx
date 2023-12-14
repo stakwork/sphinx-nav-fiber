@@ -1,43 +1,21 @@
-import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { Stats } from '~/components/Stats'
-import { getAboutData, TAboutParams } from '~/network/fetchSourcesData'
+import { useAppStore } from '~/stores/useAppStore'
 import { colors } from '~/utils/colors'
 import { media } from '~/utils/media'
 
-const defaultData = {
-  description: '',
-  mission_statement: '',
-  search_term: '',
-  title: '',
-}
-
 export const AppBar = () => {
-  const [initialValues, setInitialValues] = useState<TAboutParams>(defaultData)
-
-  useEffect(() => {
-    const init = async () => {
-      try {
-        const response = await getAboutData()
-
-        setInitialValues(response)
-      } catch (error) {
-        console.warn(error)
-      }
-    }
-
-    init()
-  }, [])
+  const appMetaData = useAppStore((s) => s.appMetaData)
 
   return (
     <Header>
       <TitleWrapper>
         <>
-          {initialValues.title && (
+          {appMetaData.title && (
             <Text className="title" color="white">
-              {initialValues.title}
+              {appMetaData.title}
             </Text>
           )}
         </>

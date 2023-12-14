@@ -5,19 +5,20 @@ import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { TAboutParams, getAboutData, getStats } from '~/network/fetchSourcesData'
+import { useAppStore } from '~/stores/useAppStore'
 import { colors } from '~/utils'
 import { SphereAnimation } from './SpiningSphere'
 import { AnimatedTextContent } from './animated'
-import { Message, initialAboutState, initialMessageData } from './constants'
+import { Message, initialMessageData } from './constants'
 
 type Props = {
   handleLoading: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 export const Splash = memo(({ handleLoading }: Props) => {
-  const [about, setAbout] = useState<TAboutParams>(initialAboutState)
   const [message, setMessage] = useState<Message>(initialMessageData)
   const [progress, setProgress] = useState(0)
+  const [appMetaData, setAppMetaData] = [useAppStore((s) => s.appMetaData), useAppStore((s) => s.setAppMetaData)]
 
   useEffect(() => {
     let timeoutId: NodeJS.Timeout
@@ -34,7 +35,7 @@ export const Splash = memo(({ handleLoading }: Props) => {
 
         setProgress((prev) => prev + 15)
 
-        setAbout(aboutResponse)
+        setAppMetaData(aboutResponse)
 
         setMessage(
           initialMessageData.map(({ key, ...rest }) => ({
@@ -75,7 +76,7 @@ export const Splash = memo(({ handleLoading }: Props) => {
       <SphereAnimation />
       <Flex style={{ color: colors.white }}>
         <TitleWrapper>
-          {about.title && <Text className="title">{about.title}</Text>}
+          {appMetaData.title && <Text className="title">{appMetaData.title}</Text>}
           <Text className="subtitle">Second Brain</Text>
         </TitleWrapper>
         <LinearProgress color="inherit" sx={{ my: 1.75, height: '2px' }} value={progress} variant="determinate" />
