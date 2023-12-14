@@ -1,6 +1,4 @@
 import { useMemo, useState } from 'react'
-import { HelperContent } from './HelperContent'
-import { OpenHelperBtn } from './OpenHelperBtn'
 import { HelperContext } from './context'
 
 export const Helper = () => {
@@ -10,8 +8,8 @@ export const Helper = () => {
 
   return (
     <HelperContext.Provider value={contextValue}>
-      <OpenHelperBtn />
-      <HelperContent />
+      {/* <OpenHelperBtn /> */}
+      {/* <HelperContent /> */}
     </HelperContext.Provider>
   )
 }
