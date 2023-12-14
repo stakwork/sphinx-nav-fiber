@@ -1,4 +1,6 @@
 import create from 'zustand'
+import { initialAboutState } from '~/components/App/Splash/constants'
+import { TAboutParams } from '~/network/fetchSourcesData'
 
 export type SecondarySidebarActiveTab = '' | 'sentiment' | 'sources' | 'about'
 
@@ -11,6 +13,7 @@ type AppStore = {
   transcriptIsOpen: boolean
   flagErrorIsOpen: boolean
   relevanceIsSelected: boolean
+  appMetaData: TAboutParams
   clearSearch: () => void
   setCurrentSearch: (_: string) => void
   setRelevanceSelected: (_: boolean) => void
@@ -18,6 +21,7 @@ type AppStore = {
   setSidebarOpen: (_: boolean) => void
   setTranscriptOpen: (_: boolean) => void
   setFlagErrorOpen: (_: boolean) => void
+  setAppMetaData: (val: TAboutParams) => void
 }
 
 const defaultData = {
@@ -29,6 +33,7 @@ const defaultData = {
   sidebarIsOpen: true,
   theme: 'light' as const,
   transcriptIsOpen: false,
+  appMetaData: initialAboutState,
 }
 
 export const useAppStore = create<AppStore>((set, get) => ({
@@ -47,4 +52,5 @@ export const useAppStore = create<AppStore>((set, get) => ({
       transcriptIsOpen: !sidebarIsOpen ? false : get().transcriptIsOpen,
     }),
   setTranscriptOpen: (transcriptIsOpen) => set({ transcriptIsOpen }),
+  setAppMetaData: (appMetaData) => set({ appMetaData }),
 }))
