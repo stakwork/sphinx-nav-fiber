@@ -80,6 +80,10 @@ export const Tooltip = ({ node }: Props) => {
     }
   }
 
+  if (nodeType === 'topic') {
+    return null
+  }
+
   return (
     <Wrapper borderRadius={8} px={24} py={16}>
       {nodeType === 'tweet' ? (
