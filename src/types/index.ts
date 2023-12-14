@@ -184,8 +184,25 @@ export type SubmitErrRes = {
   error?: { message?: string }
 }
 
+export type AuthRequest = {
+  message: string
+  tribeHost: string
+  tribeUuid: string
+  signature: string
+}
+
+export type IsAdminResponse = { isAdmin: boolean }
+
 type PostedBy = {
   name: string
   ref_id: string
   twitter_handle: string
+}
+
+export type BuyLsatRequest = {
+  amount: number
+}
+export type BalanceResponse = {
+  success: boolean
+  balance: number
 }

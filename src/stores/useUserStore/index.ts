@@ -11,13 +11,22 @@ export type UserStore = {
   setBudget: (val: number | null) => void
   nodeCount: number
   setNodeCount: (action: ActionType) => void
+  tribeUuid: string
+  setTribeUuid: (val: string) => void
+  tribeHost: string
+  setTribeHost: (val: string) => void
 }
 
-const defaultData: Omit<UserStore, 'setIsAdmin' | 'setPubKey' | 'setBudget' | 'setNodeCount'> = {
+const defaultData: Omit<
+  UserStore,
+  'setIsAdmin' | 'setPubKey' | 'setBudget' | 'setNodeCount' | 'setTribeUuid' | 'setTribeHost'
+> = {
   isAdmin: false,
   pubKey: '',
   budget: 0,
   nodeCount: 0,
+  tribeHost: '',
+  tribeUuid: '',
 }
 
 export const useUserStore = create<UserStore>((set) => ({
@@ -33,4 +42,6 @@ export const useUserStore = create<UserStore>((set) => ({
 
       return { nodeCount: 0 }
     }),
+  setTribeUuid: (tribeUuid) => set({ tribeUuid }),
+  setTribeHost: (tribeHost) => set({ tribeHost }),
 }))
