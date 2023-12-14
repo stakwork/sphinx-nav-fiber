@@ -2,11 +2,11 @@
 import Tab from '@mui/material/Tab'
 import Tabs from '@mui/material/Tabs'
 import * as React from 'react'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
-import { TAboutParams, getAboutData } from '~/network/fetchSourcesData'
+import { useAppStore } from '~/stores/useAppStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { colors } from '~/utils/colors'
 import { UserPermissions } from '../UserPermissions'
@@ -17,13 +17,6 @@ interface TabPanelProps {
   children?: React.ReactNode
   index: number
   value: number
-}
-
-const defaultData = {
-  description: '',
-  mission_statement: '',
-  search_term: '',
-  title: '',
 }
 
 const TabPanel = (props: TabPanelProps) => {
@@ -55,27 +48,8 @@ type Props = {
 
 export const SettingsView: React.FC<Props> = ({ onClose }) => {
   const [value, setValue] = useState(0)
-  const [isAdmin] = useUserStore((s) => [s.isAdmin])
-  const [loading, setLoading] = useState(false)
-  const [initialValues, setInitialValues] = useState<TAboutParams>(defaultData)
-
-  useEffect(() => {
-    const init = async () => {
-      setLoading(true)
-
-      try {
-        const response = await getAboutData()
-
-        setInitialValues(response)
-      } catch (error) {
-        console.warn(error)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    init()
-  }, [])
+  const [isAdmin, pubKey] = useUserStore((s) => [s.isAdmin, s.setPubKey, s.pubKey])
+  const appMetaData = useAppStore((s) => s.appMetaData)
 
   const getSettingsLabel = () => (isAdmin ? 'Admin Settings' : 'Settings')
 
@@ -83,10 +57,23 @@ export const SettingsView: React.FC<Props> = ({ onClose }) => {
     <StyledHeader>
       <Flex direction="row" pt={3}>
         <StyledText>{getSettingsLabel()}</StyledText>
+        {resolveAdminActions()}
       </Flex>
       {children}
     </StyledHeader>
   )
+
+  const resolveAdminActions = () => {
+    if (!pubKey) {
+      return null
+    }
+
+    if (isAdmin) {
+      return null
+    }
+
+    return <></>
+  }
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue)
@@ -101,14 +88,16 @@ export const SettingsView: React.FC<Props> = ({ onClose }) => {
           {isAdmin && <StyledTab disableRipple label="User Permissions" {...a11yProps(2)} />}
         </StyledTabs>
       </SettingsHeader>
-
-      <TabPanel index={0} value={value}>
-        {!loading ? <General initialValues={initialValues} /> : <></>}
-      </TabPanel>
-      <TabPanel index={2} value={value}>
-        {!loading ? <UserPermissions initialValues={initialValues} /> : <></>}
-      </TabPanel>
-
+      {isAdmin && (
+        <>
+          <TabPanel index={0} value={value}>
+            <General initialValues={appMetaData} />
+          </TabPanel>
+          <TabPanel index={2} value={value}>
+            <UserPermissions initialValues={appMetaData} />
+          </TabPanel>
+        </>
+      )}
       <TabPanel index={isAdmin ? 1 : 0} value={value}>
         <Appearance onClose={onClose} />
       </TabPanel>

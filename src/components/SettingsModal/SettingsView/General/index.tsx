@@ -7,6 +7,7 @@ import { Flex } from '~/components/common/Flex'
 import { TextInput } from '~/components/common/TextInput'
 import { requiredRule } from '~/constants'
 import { TAboutParams, postAboutData } from '~/network/fetchSourcesData'
+import { useAppStore } from '~/stores/useAppStore'
 import { colors } from '~/utils/colors'
 
 type Props = {
@@ -16,10 +17,15 @@ type Props = {
 export const General: FC<Props> = ({ initialValues }) => {
   const form = useForm<TAboutParams>({ defaultValues: initialValues, mode: 'onSubmit' })
   const { isSubmitting } = form.formState
+  const setAppMetaData = useAppStore((s) => s.setAppMetaData)
 
   const onSubmit = form.handleSubmit(async (data) => {
     try {
-      await postAboutData(data)
+      const res = (await postAboutData(data)) as Awaited<{ status: string }>
+
+      if (res.status === 'success') {
+        setAppMetaData(data)
+      }
     } catch (error) {
       console.warn(error)
     }
