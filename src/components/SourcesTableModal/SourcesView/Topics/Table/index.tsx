@@ -42,42 +42,51 @@ export const Table: React.FC<TopicTableProps> = ({ showMuted, onTopicEdit }) => 
     </Flex>
   ) : (
     <>
-      <MaterialTable component="table">
-        <StyledTableHead>
-          <TableRow component="tr">
-            <StyledTableCell className="empty" />
-            <StyledTableCell>Type</StyledTableCell>
-            <StyledTableCell>Edge Count</StyledTableCell>
-            <StyledTableCell>Edge list</StyledTableCell>
-            <StyledTableCell>Date</StyledTableCell>
-            <StyledTableCell>{showMuted ? 'Unmute' : 'Mute'}</StyledTableCell>
-            <StyledTableCell />
-          </TableRow>
-        </StyledTableHead>
-        {data && (
-          <tbody>
-            {ids?.map((i: string) => (
-              <TopicRow key={i} onClick={handleClick} topic={data[i]} />
-            ))}
-          </tbody>
-        )}
-      </MaterialTable>
-      {selectedRefId ? (
-        <PopoverWrapper
-          anchorEl={anchorEl}
-          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-          id={id}
-          onClose={handleClose}
-          open={open}
-          transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-        >
-          <PopoverOption onClick={() => handlePopoverAction('editTopic')}>Rename</PopoverOption>
-          {!data[selectedRefId].edgeList.includes(IS_ALIAS) ? (
-            <PopoverOption onClick={() => handlePopoverAction('mergeTopic')}>Merge</PopoverOption>
+      {!Object.keys(data).length ? (
+        <Flex>
+          <Text>There is not any results for selected filters</Text>
+          <FilterOffIcon />
+        </Flex>
+      ) : (
+        <>
+          <MaterialTable component="table">
+            <StyledTableHead>
+              <TableRow component="tr">
+                <StyledTableCell className="empty" />
+                <StyledTableCell>Type</StyledTableCell>
+                <StyledTableCell>Edge Count</StyledTableCell>
+                <StyledTableCell>Edge list</StyledTableCell>
+                <StyledTableCell>Date</StyledTableCell>
+                <StyledTableCell>{showMuted ? 'Unmute' : 'Mute'}</StyledTableCell>
+                <StyledTableCell />
+              </TableRow>
+            </StyledTableHead>
+            {data && (
+              <tbody>
+                {ids?.map((i: string) => (
+                  <TopicRow key={i} onClick={handleClick} topic={data[i]} />
+                ))}
+              </tbody>
+            )}
+          </MaterialTable>
+          {selectedRefId ? (
+            <PopoverWrapper
+              anchorEl={anchorEl}
+              anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+              id={id}
+              onClose={handleClose}
+              open={open}
+              transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+            >
+              <PopoverOption onClick={() => handlePopoverAction('editTopic')}>Rename</PopoverOption>
+              {!data[selectedRefId].edgeList.includes(IS_ALIAS) ? (
+                <PopoverOption onClick={() => handlePopoverAction('mergeTopic')}>Merge</PopoverOption>
+              ) : null}
+              <PopoverOption onClick={() => handlePopoverAction('addEdge')}>Add edge</PopoverOption>
+            </PopoverWrapper>
           ) : null}
-          <PopoverOption onClick={() => handlePopoverAction('addEdge')}>Add edge</PopoverOption>
-        </PopoverWrapper>
-      ) : null}
+        </>
+      )}
     </>
   )
 }
