@@ -2,16 +2,16 @@
 import Tab from '@mui/material/Tab'
 import Tabs from '@mui/material/Tabs'
 import * as React from 'react'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
-import { TAboutParams, getAboutData } from '~/network/fetchSourcesData'
+import { useAppStore } from '~/stores/useAppStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { colors } from '~/utils/colors'
 import { UserPermissions } from '../UserPermissions'
-import { General } from './General'
 import { Appearance } from './Appearance'
+import { General } from './General'
 
 interface TabPanelProps {
   children?: React.ReactNode
@@ -26,13 +26,6 @@ interface TabPanelProps {
 //   '03bfe6723c06fb2b7546df1e8ca1a17ae5c504615da32c945425ccbe8d3ca6260d',
 //   '024efa31d1e4f98bccc415b222c9d971866013ad6f95f7d1ed9e8be8e3355a36ff',
 // ]
-
-const defaultData = {
-  description: '',
-  mission_statement: '',
-  search_term: '',
-  title: '',
-}
 
 const TabPanel = (props: TabPanelProps) => {
   const { children, value, index, ...other } = props
@@ -64,26 +57,7 @@ type Props = {
 export const SettingsView: React.FC<Props> = ({ onClose }) => {
   const [value, setValue] = useState(0)
   const [isAdmin, pubKey] = useUserStore((s) => [s.isAdmin, s.setPubKey, s.pubKey])
-  const [loading, setLoading] = useState(false)
-  const [initialValues, setInitialValues] = useState<TAboutParams>(defaultData)
-
-  useEffect(() => {
-    const init = async () => {
-      setLoading(true)
-
-      try {
-        const response = await getAboutData()
-
-        setInitialValues(response)
-      } catch (error) {
-        console.warn(error)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    init()
-  }, [])
+  const appMetaData = useAppStore((s) => s.appMetaData)
 
   const getSettingsLabel = () => (isAdmin ? 'Admin Settings' : 'Settings')
 
@@ -125,10 +99,10 @@ export const SettingsView: React.FC<Props> = ({ onClose }) => {
       {isAdmin && (
         <>
           <TabPanel index={0} value={value}>
-            {!loading ? <General initialValues={initialValues} /> : <></>}
+            <General initialValues={appMetaData} />
           </TabPanel>
           <TabPanel index={2} value={value}>
-            {!loading ? <UserPermissions initialValues={initialValues} /> : <></>}
+            <UserPermissions initialValues={appMetaData} />
           </TabPanel>
         </>
       )}

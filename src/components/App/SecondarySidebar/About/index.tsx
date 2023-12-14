@@ -1,9 +1,7 @@
-import { useEffect, useState } from 'react'
-import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
-import { TAboutParams, getAboutData } from '~/network/fetchSourcesData'
+import { useAppStore } from '~/stores/useAppStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { colors } from '~/utils/colors'
 import { AboutAdminView } from './AdminView'
@@ -16,50 +14,18 @@ export const requiredRule = {
   },
 }
 
-const defaultData = {
-  description: '',
-  mission_statement: '',
-  search_term: '',
-  title: '',
-}
-
 export const About = () => {
   const [isAdmin] = useUserStore((s) => [s.isAdmin])
-  const [loading, setLoading] = useState(false)
-  const [initialValues, setInitialValues] = useState<TAboutParams>(defaultData)
-
-  useEffect(() => {
-    const init = async () => {
-      setLoading(true)
-
-      try {
-        const response = await getAboutData()
-
-        setInitialValues(response)
-      } catch (error) {
-        console.warn(error)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    init()
-  }, [])
+  const appMetaData = useAppStore((s) => s.appMetaData)
 
   return (
     <Wrapper align="stretch" direction="column" justify="flex-end">
       <Heading align="center" direction="row" justify="space-between">
         <Text className="title">About</Text>
       </Heading>
-      {loading ? (
-        <ContentWrapper align="center" justify="center">
-          <ClipLoader />
-        </ContentWrapper>
-      ) : (
-        <ContentWrapper align="stretch" justify="flex-start">
-          {!isAdmin ? <CommonView initialValues={initialValues} /> : <AboutAdminView initialValues={initialValues} />}
-        </ContentWrapper>
-      )}
+      <ContentWrapper align="stretch" justify="flex-start">
+        {!isAdmin ? <CommonView initialValues={appMetaData} /> : <AboutAdminView initialValues={appMetaData} />}
+      </ContentWrapper>
     </Wrapper>
   )
 }
