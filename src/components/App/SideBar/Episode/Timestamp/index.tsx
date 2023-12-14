@@ -1,3 +1,4 @@
+import { IconButton } from '@mui/material'
 import { MdAccessTime, MdPlayArrow } from 'react-icons/md'
 import { ClipLoader } from 'react-spinners'
 import styled, { css } from 'styled-components'
@@ -9,6 +10,7 @@ import { NodeExtended } from '~/types'
 import { ColorName, colors } from '~/utils/colors'
 import { formatDescription } from '~/utils/formatDescription'
 import { formatTimestamp } from '~/utils/formatTimestamp'
+import { Equalizer } from './Equalizer'
 
 const Wrapper = styled(Flex).attrs<{ isSelected?: boolean }>(({ isSelected }) => ({
   background: isSelected ? 'lightBlue100' : 'body',
@@ -47,6 +49,9 @@ export const Timestamp = ({ onClick, timestamp }: Props) => {
 
   return (
     <Wrapper isSelected={isSelected} onClick={onClick} px={20} py={12}>
+      <IconButton size="small">
+        <Equalizer />
+      </IconButton>
       <Flex direction="row" px={20}>
         {isSelected && !isTimestampLoaded ? <ClipLoader color={colors[color]} loading size={14} /> : icon}
       </Flex>
