@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import * as sphinx from 'sphinx-bridge'
-import { notify } from '~/components/common/Toast/toastMessage'
 import { BaseModal } from '~/components/Modal'
+import { notify } from '~/components/common/Toast/toastMessage'
 import {
   DOCUMENT,
   LINK,
@@ -126,8 +126,15 @@ const handleSubmitForm = async (
       await handleSubmitForm(data, close, sourceType, setBudget)
     }
 
+    if (err.status === 400) {
+      const error = await err.json()
+
+      notify(error?.status || NODE_ADD_ERROR)
+      close()
+    }
+
     if (err instanceof Error) {
-      notify(NODE_ADD_ERROR)
+      notify(err.message || NODE_ADD_ERROR)
       close()
     }
   }
