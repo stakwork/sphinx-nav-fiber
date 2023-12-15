@@ -18,7 +18,7 @@ import { timeToMilliseconds } from './timeToMilliseconds'
 import { useIsMatchBreakpoint } from './useIsMatchBreakpoint'
 // import APP_VERSION from './versionHelper'
 import { extractUuidAndHost } from './auth'
-import { getSignedMessageFromRelay } from './getSignedMessage'
+import { createSigMsgQuery, getSignedMessageFromRelay } from './getSignedMessage'
 import { videoTimeToSeconds } from './videoTimetoSeconds'
 
 export {
@@ -47,4 +47,5 @@ export {
   videoTimeToSeconds,
   getSignedMessageFromRelay,
   extractUuidAndHost,
+  createSigMsgQuery,
 }
