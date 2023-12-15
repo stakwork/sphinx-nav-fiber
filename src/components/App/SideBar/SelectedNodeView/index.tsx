@@ -13,7 +13,7 @@ import { Topic } from '../Topic'
 import { TwitData } from '../TwitData'
 import { YouTube } from '../YouTube'
 
-const MEDIA_TYPES = ['clip', 'twitter_space', 'youtube', 'episode']
+const MEDIA_TYPES = ['clip', 'twitter_space', 'youtube']
 
 // eslint-disable-next-line no-underscore-dangle
 const _View = () => {

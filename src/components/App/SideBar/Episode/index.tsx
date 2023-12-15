@@ -4,6 +4,7 @@ import { useGraphData } from '~/components/DataRetriever'
 import { Divider } from '~/components/common/Divider'
 import { Flex } from '~/components/common/Flex'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
+import { usePlayerStore } from '~/stores/usePlayerStore'
 import { getSelectedNodeTimestamps } from '~/utils/getSelectedNodeTimestamps'
 import { Heading } from './Heading'
 import { Timestamp } from './Timestamp'
@@ -27,6 +28,7 @@ const Wrapper = styled(Flex)`
 export const Episode = () => {
   const selectedNode = useSelectedNode()
   const data = useGraphData()
+  const [setPlayingNode] = usePlayerStore((s) => [s.setPlayingNode])
 
   const selectedNodeTimestamps = useMemo(
     () => getSelectedNodeTimestamps(data?.nodes || [], selectedNode),
@@ -37,9 +39,10 @@ export const Episode = () => {
 
   useEffect(() => {
     if (selectedNodeTimestamps?.length) {
+      setPlayingNode(selectedNodeTimestamps[0])
       setSelectedTimestamp(selectedNodeTimestamps[0])
     }
-  }, [selectedNodeTimestamps, setSelectedTimestamp])
+  }, [selectedNodeTimestamps, setSelectedTimestamp, setPlayingNode])
 
   if (!selectedNode) {
     return null
