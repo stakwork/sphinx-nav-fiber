@@ -1,5 +1,5 @@
 import { Button, Skeleton } from '@mui/material'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
@@ -71,6 +71,38 @@ export const Trending = ({ onSubmit }: Props) => {
     setSelectedTrend(null)
   }
 
+  const [handleSet, setHandleSet] = useState(true)
+  const audioRef = useRef<HTMLAudioElement | null>(null)
+
+  const [index, setIndex] = useState(0)
+
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.stopPropagation()
+    e.currentTarget.blur()
+    setHandleSet(!handleSet)
+    playAudio()
+  }
+
+  const playAudio = () => {
+    if (handleSet) {
+      audioRef.current?.play()
+    } else {
+      audioRef.current?.pause()
+    }
+  }
+
+  useEffect(() => {
+    const newAudioRef = audioRef.current
+
+    newAudioRef?.addEventListener('ended', () => {
+      setIndex((prevIndex) => prevIndex + 1)
+    })
+
+    return () => {
+      newAudioRef?.removeEventListener('ended', playAudio)
+    }
+  })
+
   return (
     <Wrapper>
       <div>
@@ -80,6 +112,12 @@ export const Trending = ({ onSubmit }: Props) => {
             <span className="heading__icon">
               {loading ? <ClipLoader color={colors.PRIMARY_BLUE} size={16} /> : <SentimentDataIcon />}
             </span>
+          </div>
+          <div>
+            <Button onClick={handleClick}>{handleSet ? 'Play All' : 'Pause All'}</Button>
+            <StyledAudio ref={audioRef} src={trendingTopics[index]?.audio_EN}>
+              <track kind="captions" />
+            </StyledAudio>
           </div>
         </div>
         {trendingTopics.length === 0 && !loading ? (
@@ -137,8 +175,9 @@ export const Trending = ({ onSubmit }: Props) => {
 const Wrapper = styled(Flex)`
   .heading-container {
     display: flex;
-    flex-direction: column;
-    padding: 16px 24px 16px 24px;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 16px 12px 16px 24px;
   }
 
   .heading {
@@ -206,3 +245,8 @@ const Text = styled.p`
 `
 
 const ButtonStyled = styled(Button)``
+
+const StyledAudio = styled.audio`
+  height: 0;
+  width: 0;
+`
