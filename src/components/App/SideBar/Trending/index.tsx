@@ -25,6 +25,9 @@ export const Trending = ({ onSubmit }: Props) => {
   const { open: openContentAddModal } = useModal('addContent')
   const [loading, setLoading] = useState(false)
   const [selectedTrend, setSelectedTrend] = useState<TrendingType | null>(null)
+  const audioRef = useRef<HTMLVideoElement>(null)
+  const [currentFileIndex, setCurrentFileIndex] = useState(0)
+  const [playing, setPlaying] = useState(false)
 
   const { open } = useModal('briefDescription')
 
@@ -79,11 +82,6 @@ export const Trending = ({ onSubmit }: Props) => {
     setPlaying(!playing)
   }
 
-  const audioRef = useRef<HTMLVideoElement>(null)
-
-  const [currentFileIndex, setCurrentFileIndex] = useState(0)
-  const [playing, setPlaying] = useState(false)
-
   useEffect(() => {
     if (playing) {
       audioRef.current?.play()
@@ -94,12 +92,23 @@ export const Trending = ({ onSubmit }: Props) => {
 
   const goToNextSong = () => {
     setCurrentFileIndex((prevIndex) => {
-      const newIndex = (prevIndex + 1) % trendingTopics.length
+      let newIndex = (prevIndex + 1) % trendingTopics.length
+
+      while (newIndex !== prevIndex && !trendingTopics[newIndex]?.audio_EN) {
+        newIndex = (newIndex + 1) % trendingTopics.length
+      }
+
+      if (newIndex === prevIndex) {
+        setPlaying(false)
+
+        return newIndex
+      }
 
       audioRef.current?.load()
 
       if (newIndex === 0) {
         setPlaying(false)
+        setCurrentFileIndex(0)
       }
 
       return newIndex
@@ -119,7 +128,7 @@ export const Trending = ({ onSubmit }: Props) => {
           {trendingTopics.some((topic) => topic.audio_EN) ? (
             <div>
               <Button onClick={(e) => handleClick(e)} startIcon={playing ? <PauseIcon /> : <PlayIcon />}>
-                Play All
+                {playing ? 'Pause' : 'Play All'}
               </Button>
               <StyledAudio ref={audioRef} onEnded={goToNextSong} src={trendingTopics[currentFileIndex]?.audio_EN}>
                 <track kind="captions" />
