@@ -4,9 +4,9 @@ import { useFormContext } from 'react-hook-form'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
 import PauseIcon from '~/components/Icons/PauseIcon'
+import PlayIcon from '~/components/Icons/PlayIcon'
 import PlusIcon from '~/components/Icons/PlusIcon'
 import SentimentDataIcon from '~/components/Icons/SentimentDataIcon'
-import SoundIcon from '~/components/Icons/SoundIcon'
 import { Flex } from '~/components/common/Flex'
 import { getTrends } from '~/network/fetchGraphData'
 import { useDataStore } from '~/stores/useDataStore'
@@ -85,20 +85,18 @@ export const Trending = ({ onSubmit }: Props) => {
   const [playing, setPlaying] = useState(false)
 
   useEffect(() => {
-    audioRef.current?.load()
-
-    if (audioRef.current?.paused) {
-      if (playing) {
-        audioRef.current.play()
-      } else {
-        audioRef.current.pause()
-      }
+    if (playing) {
+      audioRef.current?.play()
+    } else {
+      audioRef.current?.pause()
     }
   }, [currentFileIndex, playing])
 
   const goToNextSong = () => {
     setCurrentFileIndex((prevIndex) => {
       const newIndex = (prevIndex + 1) % trendingTopics.length
+
+      audioRef.current?.load()
 
       if (newIndex === 0) {
         setPlaying(false)
@@ -118,14 +116,16 @@ export const Trending = ({ onSubmit }: Props) => {
               {loading ? <ClipLoader color={colors.PRIMARY_BLUE} size={16} /> : <SentimentDataIcon />}
             </span>
           </div>
-          <div>
-            <Button onClick={(e) => handleClick(e)} startIcon={playing ? <PauseIcon /> : <SoundIcon />}>
-              Play All
-            </Button>
-            <StyledAudio ref={audioRef} onEnded={goToNextSong} src={trendingTopics[currentFileIndex]?.audio_EN}>
-              <track kind="captions" />
-            </StyledAudio>
-          </div>
+          {trendingTopics.some((topic) => topic.audio_EN) ? (
+            <div>
+              <Button onClick={(e) => handleClick(e)} startIcon={playing ? <PauseIcon /> : <PlayIcon />}>
+                Play All
+              </Button>
+              <StyledAudio ref={audioRef} onEnded={goToNextSong} src={trendingTopics[currentFileIndex]?.audio_EN}>
+                <track kind="captions" />
+              </StyledAudio>
+            </div>
+          ) : null}
         </div>
         {trendingTopics.length === 0 && !loading ? (
           <div className="Trendingwrapper">
