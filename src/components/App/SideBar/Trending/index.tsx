@@ -3,8 +3,10 @@ import { useEffect, useRef, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
+import PauseIcon from '~/components/Icons/PauseIcon'
 import PlusIcon from '~/components/Icons/PlusIcon'
 import SentimentDataIcon from '~/components/Icons/SentimentDataIcon'
+import SoundIcon from '~/components/Icons/SoundIcon'
 import { Flex } from '~/components/common/Flex'
 import { getTrends } from '~/network/fetchGraphData'
 import { useDataStore } from '~/stores/useDataStore'
@@ -71,37 +73,40 @@ export const Trending = ({ onSubmit }: Props) => {
     setSelectedTrend(null)
   }
 
-  const [handleSet, setHandleSet] = useState(true)
-  const audioRef = useRef<HTMLAudioElement | null>(null)
-
-  const [index, setIndex] = useState(0)
-
   const handleClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.stopPropagation()
     e.currentTarget.blur()
-    setHandleSet(!handleSet)
-    playAudio()
+    setPlaying(!playing)
   }
 
-  const playAudio = () => {
-    if (handleSet) {
-      audioRef.current?.play()
-    } else {
-      audioRef.current?.pause()
-    }
-  }
+  const audioRef = useRef<HTMLVideoElement>(null)
+
+  const [currentFileIndex, setCurrentFileIndex] = useState(0)
+  const [playing, setPlaying] = useState(false)
 
   useEffect(() => {
-    const newAudioRef = audioRef.current
+    audioRef.current?.load()
 
-    newAudioRef?.addEventListener('ended', () => {
-      setIndex((prevIndex) => prevIndex + 1)
-    })
-
-    return () => {
-      newAudioRef?.removeEventListener('ended', playAudio)
+    if (audioRef.current?.paused) {
+      if (playing) {
+        audioRef.current.play()
+      } else {
+        audioRef.current.pause()
+      }
     }
-  })
+  }, [currentFileIndex, playing])
+
+  const goToNextSong = () => {
+    setCurrentFileIndex((prevIndex) => {
+      const newIndex = (prevIndex + 1) % trendingTopics.length
+
+      if (newIndex === 0) {
+        setPlaying(false)
+      }
+
+      return newIndex
+    })
+  }
 
   return (
     <Wrapper>
@@ -114,8 +119,10 @@ export const Trending = ({ onSubmit }: Props) => {
             </span>
           </div>
           <div>
-            <Button onClick={handleClick}>{handleSet ? 'Play All' : 'Pause All'}</Button>
-            <StyledAudio ref={audioRef} src={trendingTopics[index]?.audio_EN}>
+            <Button onClick={(e) => handleClick(e)} startIcon={playing ? <PauseIcon /> : <SoundIcon />}>
+              Play All
+            </Button>
+            <StyledAudio ref={audioRef} onEnded={goToNextSong} src={trendingTopics[currentFileIndex]?.audio_EN}>
               <track kind="captions" />
             </StyledAudio>
           </div>
