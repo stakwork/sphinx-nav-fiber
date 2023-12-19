@@ -153,6 +153,8 @@ export const App = () => {
 
         setPubKey(sphinxEnable?.pubkey)
 
+        await updateBudget(setBudget)
+
         const sigAndMessage = await getSignedMessageFromRelay()
 
         const isAdmin = await getIsAdmin({
@@ -165,8 +167,6 @@ export const App = () => {
         if (isAdmin.isAdmin) {
           setIsAdmin(true)
         }
-
-        await updateBudget(setBudget)
       })
     } catch (error) {
       /* not an admin */
