@@ -5,7 +5,7 @@ export async function updateBudget(setBudget: (value: number | null) => void) {
   const lsat = await getLSat()
 
   if (!lsat) {
-    setBudget(null)
+    setBudget(0)
 
     return
   }
@@ -16,6 +16,6 @@ export async function updateBudget(setBudget: (value: number | null) => void) {
     setBudget(balance.balance)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    setBudget(null)
+    setBudget(0)
   }
 }
