@@ -17,7 +17,7 @@ import { api } from '~/network/api'
 import { useModal } from '~/stores/useModalStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { SubmitErrRes } from '~/types'
-import { createSigMsgQuery, executeIfProd, getLSat, payLsat, updateBudget } from '~/utils'
+import { executeIfProd, generateAuthQueryParam, getLSat, payLsat, updateBudget } from '~/utils'
 import { BudgetStep } from './BudgetStep'
 import { LocationStep } from './LocationStep'
 import { SourceStep } from './SourceStep'
@@ -106,7 +106,7 @@ const handleSubmitForm = async (
     let query = ''
 
     if (endPoint === 'radar') {
-      const result = await createSigMsgQuery()
+      const result = await generateAuthQueryParam()
 
       query = `?${result}`
     }

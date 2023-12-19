@@ -22,7 +22,7 @@ export async function getSignedMessageFromRelay(): Promise<{ message: string; si
   }
 }
 
-export async function createSigMsgQuery() {
+export async function generateAuthQueryParam() {
   const res = await getSignedMessageFromRelay()
 
   return `sig=${res.signature}&msg=${res.message}`

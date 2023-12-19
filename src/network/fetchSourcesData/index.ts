@@ -6,7 +6,7 @@ import {
   RadarRequest,
   SubmitErrRes,
 } from '~/types'
-import { createSigMsgQuery } from '~/utils'
+import { generateAuthQueryParam } from '~/utils'
 import { api } from '../api'
 
 type TradarParams = {
@@ -69,7 +69,7 @@ export const getRadarData = async (queryParams: TradarParams = defaultParams) =>
 }
 
 export const getTopicsData = async (queryParams: TtopicsParams = defaultParams) => {
-  const query = await createSigMsgQuery()
+  const query = await generateAuthQueryParam()
 
   const response = await api.get<FetchTopicResponse>(
     `/topics?${new URLSearchParams({ ...defaultParams, ...queryParams }).toString()}${query}`,
@@ -91,7 +91,7 @@ export const getStats = async () => {
 }
 
 export const getEdgeTypes = async () => {
-  const query = await createSigMsgQuery()
+  const query = await generateAuthQueryParam()
 
   const response = await api.get<FetchEdgesResponse>(`curation/edge/type?${query}`)
 
@@ -99,7 +99,7 @@ export const getEdgeTypes = async () => {
 }
 
 export const postEdgeType = async (data: TAddEdgeParams) => {
-  const query = await createSigMsgQuery()
+  const query = await generateAuthQueryParam()
 
   const response = await api.post(`/curation/edge?${query}`, JSON.stringify(data))
 
@@ -107,7 +107,7 @@ export const postEdgeType = async (data: TAddEdgeParams) => {
 }
 
 export const postAboutData = async (data: TAboutParams) => {
-  const query = await createSigMsgQuery()
+  const query = await generateAuthQueryParam()
 
   const response = await api.post(`/about?${query}`, JSON.stringify(data))
 
@@ -115,7 +115,7 @@ export const postAboutData = async (data: TAboutParams) => {
 }
 
 export const postMergeTopics = async (data: TMergeTopicsParams) => {
-  const query = await createSigMsgQuery()
+  const query = await generateAuthQueryParam()
 
   const response = await api.post(`/curation/merge?${query}`, JSON.stringify(data))
 
@@ -125,7 +125,7 @@ export const postMergeTopics = async (data: TMergeTopicsParams) => {
 export const triggerRadarJob = async () => api.get<SubmitErrRes>(`/radar/trigger-job`)
 
 export const putRadarData = async (id: string, data: RadarRequest) => {
-  const query = await createSigMsgQuery()
+  const query = await generateAuthQueryParam()
 
   const response = await api.put(`/radar/${id}?${query}`, JSON.stringify(data))
 
@@ -133,7 +133,7 @@ export const putRadarData = async (id: string, data: RadarRequest) => {
 }
 
 export const putNodeData = async (data: NodeRequest) => {
-  const query = await createSigMsgQuery()
+  const query = await generateAuthQueryParam()
 
   const response = await api.put(`/node?${query}`, JSON.stringify(data))
 
@@ -141,7 +141,7 @@ export const putNodeData = async (data: NodeRequest) => {
 }
 
 export const approveRadarData = async (id: string, pubkey: string) => {
-  const query = await createSigMsgQuery()
+  const query = await generateAuthQueryParam()
 
   const response = await api.put(`/radar/${id}/approve?${query}`, JSON.stringify({ approve: 'True', pubkey }))
 
@@ -149,7 +149,7 @@ export const approveRadarData = async (id: string, pubkey: string) => {
 }
 
 export const deleteRadarData = async (id: string) => {
-  const query = await createSigMsgQuery()
+  const query = await generateAuthQueryParam()
 
   const response = await api.delete(`/radar/${id}?${query}`)
 
