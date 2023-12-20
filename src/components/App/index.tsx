@@ -188,7 +188,9 @@ export const App = () => {
 
   // auth checker
   useEffect(() => {
-    handleAuth()
+    setTimeout(() => {
+      handleAuth()
+    }, 5000)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
