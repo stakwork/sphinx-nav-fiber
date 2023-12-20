@@ -2,7 +2,6 @@ import { Lsat } from 'lsat-js'
 import * as sphinx from 'sphinx-bridge'
 import { requestProvider } from 'webln'
 import { buyLsat } from '~/network/buyLsat'
-import { updateBudget } from '../setBudget'
 
 // eslint-disable-next-line  @typescript-eslint/no-explicit-any
 export async function payLsat(setBudget: (value: number | null) => void): Promise<void> {
@@ -53,17 +52,19 @@ export async function payLsat(setBudget: (value: number | null) => void): Promis
         // @ts-ignore
         const LSATRes = await sphinx.saveLsat(lsat.invoice, lsat.baseMacaroon, window.location.host)
 
-        localStorage.setItem(
-          'lsat',
-          JSON.stringify({
-            macaroon: lsat.baseMacaroon,
-            identifier: lsat.id,
-            preimage: LSATRes.lsat.split(':')[1],
-          }),
-        )
-      }
+        if (LSATRes?.lsat) {
+          localStorage.setItem(
+            'lsat',
+            JSON.stringify({
+              macaroon: lsat.baseMacaroon,
+              identifier: lsat.id,
+              preimage: LSATRes.lsat.split(':')[1],
+            }),
+          )
 
-      await updateBudget(setBudget)
+          await setBudget(budgetAmount)
+        }
+      }
 
       return
     }
@@ -74,8 +75,10 @@ export async function payLsat(setBudget: (value: number | null) => void): Promis
 
   const webln = await requestProvider()
 
+  const budgetAmount = 50
+
   try {
-    await buyLsat(50)
+    await buyLsat(budgetAmount)
 
     // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   } catch (error: any) {
@@ -84,15 +87,17 @@ export async function payLsat(setBudget: (value: number | null) => void): Promis
     // pay lsat invoice
     const preimage = await webln.sendPayment(lsat.invoice)
 
-    localStorage.setItem(
-      'lsat',
-      JSON.stringify({
-        macaroon: lsat.baseMacaroon,
-        identifier: lsat.id,
-        preimage: preimage.preimage,
-      }),
-    )
-  }
+    if (preimage?.preimage) {
+      localStorage.setItem(
+        'lsat',
+        JSON.stringify({
+          macaroon: lsat.baseMacaroon,
+          identifier: lsat.id,
+          preimage: preimage.preimage,
+        }),
+      )
+    }
 
-  await updateBudget(setBudget)
+    await setBudget(budgetAmount)
+  }
 }
