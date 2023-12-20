@@ -36,7 +36,7 @@ export const Sentiment = () => {
       sphinx.enable(),
     )
 
-    getSentimentData()
+    getSentimentData(setBudget)
       .then(async (r) => {
         setSentimentData(
           r?.data

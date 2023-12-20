@@ -2,9 +2,10 @@ import { Lsat } from 'lsat-js'
 import * as sphinx from 'sphinx-bridge'
 import { requestProvider } from 'webln'
 import { buyLsat } from '~/network/buyLsat'
+import { updateBudget } from '../setBudget'
 
 // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-export async function payLsat(): Promise<void> {
+export async function payLsat(setBudget: (value: number | null) => void): Promise<void> {
   let lsat: Lsat
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -62,6 +63,8 @@ export async function payLsat(): Promise<void> {
         )
       }
 
+      await updateBudget(setBudget)
+
       return
     }
   }
@@ -90,4 +93,6 @@ export async function payLsat(): Promise<void> {
       }),
     )
   }
+
+  await updateBudget(setBudget)
 }

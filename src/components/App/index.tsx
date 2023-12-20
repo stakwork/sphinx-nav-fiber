@@ -112,7 +112,7 @@ export const App = () => {
       setSphinxModalOpen(false)
     }
 
-    await fetchData(searchTerm)
+    await fetchData(setBudget, searchTerm)
     setSidebarOpen(true)
   }, [fetchData, searchTerm, setSphinxModalOpen, setSidebarOpen, setBudget])
 
