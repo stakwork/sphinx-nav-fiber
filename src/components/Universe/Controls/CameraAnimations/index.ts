@@ -28,6 +28,7 @@ export const useCameraAnimations = (
   const disableCameraRotation = useDataStore((s) => s.disableCameraRotation)
 
   const data = useDataStore((s) => s.data)
+  const graphStyle = useDataStore((s) => s.graphStyle)
   const graphRadius = useDataStore((s) => s.graphRadius)
   const setNearbyNodeIds = useDataStore((s) => s.setNearbyNodeIds)
 
@@ -81,11 +82,18 @@ export const useCameraAnimations = (
       cameraControlsRef.current.maxDistance = cameraControlsRef.current.getDistanceToFitSphere(graphRadius + 200)
     }
 
+    if (graphStyle === 'sphere' && cameraControlsRef.current && graphRadius) {
+      cameraControlsRef.current.maxDistance = cameraControlsRef.current.getDistanceToFitSphere(graphRadius + 200)
+      cameraControlsRef.current.maxDistance = 8000;
+      cameraControlsRef.current.minDistance = 200;
+      cameraControlsRef.current?.setTarget(0, 0, 500, true);
+    }
+
     if (enabled) {
       doIntroAnimation()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [graphRadius])
+  }, [graphRadius, graphStyle, cameraControlsRef])
 
   useEffect(() => {
     if (!selectedNode && cameraControlsRef.current) {
