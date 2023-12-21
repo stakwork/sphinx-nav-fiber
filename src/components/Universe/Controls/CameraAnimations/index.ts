@@ -79,20 +79,18 @@ export const useCameraAnimations = (
   useEffect(() => {
     if (cameraControlsRef.current && graphRadius) {
       if (graphStyle === 'sphere') {
-
-        cameraControlsRef.current.maxDistance = 8000;
-        cameraControlsRef.current.minDistance = 200;
-        cameraControlsRef.current.setTarget(0, 0, 500, true);
+        cameraControlsRef.current.maxDistance = 8000
+        cameraControlsRef.current.minDistance = 200
+        cameraControlsRef.current.setTarget(0, 0, 500, true)
       } else {
-        cameraControlsRef.current.maxDistance = cameraControlsRef.current.getDistanceToFitSphere(graphRadius + 200);
+        cameraControlsRef.current.maxDistance = cameraControlsRef.current.getDistanceToFitSphere(graphRadius + 200)
       }
     }
 
     if (enabled) {
-      doIntroAnimation();
+      doIntroAnimation()
     }
-
-  }, [graphRadius, graphStyle, cameraControlsRef, enabled, doIntroAnimation]);
+  }, [graphRadius, graphStyle, cameraControlsRef, enabled, doIntroAnimation])
 
   useEffect(() => {
     if (!selectedNode && cameraControlsRef.current) {
