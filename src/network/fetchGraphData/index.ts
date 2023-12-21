@@ -59,15 +59,19 @@ type TopicMap = Record<string, TopicMapItem>
 const shouldIncludeTopics = true
 const maxScale = 26
 
-export const fetchGraphData = async (search: string, graphStyle: 'split' | 'force' | 'sphere' | 'earth') => {
+export const fetchGraphData = async (
+  search: string,
+  graphStyle: 'split' | 'force' | 'sphere' | 'earth',
+  setBudget: (value: number | null) => void,
+) => {
   try {
-    return getGraphData(search, graphStyle)
+    return getGraphData(search, graphStyle, setBudget)
   } catch (e) {
     return defaultData
   }
 }
 
-const fetchNodes = async (search: string): Promise<FetchDataResponse> => {
+const fetchNodes = async (search: string, setBudget: (value: number | null) => void): Promise<FetchDataResponse> => {
   if (!search) {
     try {
       const response = await api.get<FetchDataResponse>(`/prediction/content/latest`)
@@ -97,9 +101,9 @@ const fetchNodes = async (search: string): Promise<FetchDataResponse> => {
     // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   } catch (error: any) {
     if (error.status === 402) {
-      await payLsat()
+      await payLsat(setBudget)
 
-      return fetchNodes(search)
+      return fetchNodes(search, setBudget)
     }
 
     throw error
@@ -122,10 +126,13 @@ export const getTrends = async () => {
  *  }
  */
 
-export const getSentimentData = async (args?: {
-  topic: string
-  cutoff_date: string
-}): Promise<FetchSentimentResponse> => {
+export const getSentimentData = async (
+  setBudget: (value: number | null) => void,
+  args?: {
+    topic: string
+    cutoff_date: string
+  },
+): Promise<FetchSentimentResponse> => {
   const search = args && new URLSearchParams(args)
 
   const endpoint = search ? `/sentiments?${search.toString()}` : '/sentiments'
@@ -149,16 +156,16 @@ export const getSentimentData = async (args?: {
     // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   } catch (error: any) {
     if (error.status === 402) {
-      await payLsat()
+      await payLsat(setBudget)
 
-      return getSentimentData(args)
+      return getSentimentData(setBudget, args)
     }
 
     throw error
   }
 }
 
-export const postInstagraph = async (data: TeachData): Promise<void> => {
+export const postInstagraph = async (data: TeachData, setBudget: (value: number | null) => void): Promise<void> => {
   const lsatToken = await getLSat()
 
   try {
@@ -167,9 +174,9 @@ export const postInstagraph = async (data: TeachData): Promise<void> => {
     // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   } catch (error: any) {
     if (error.status === 402) {
-      await payLsat()
+      await payLsat(setBudget)
 
-      await postInstagraph(data)
+      await postInstagraph(data, setBudget)
 
       return
     }
@@ -178,7 +185,7 @@ export const postInstagraph = async (data: TeachData): Promise<void> => {
   }
 }
 
-export const postTeachMe = async (data: TeachData): Promise<void> => {
+export const postTeachMe = async (data: TeachData, setBudget: (value: number | null) => void): Promise<void> => {
   const lsatToken = await getLSat()
 
   try {
@@ -187,9 +194,9 @@ export const postTeachMe = async (data: TeachData): Promise<void> => {
     // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   } catch (error: any) {
     if (error.status === 402) {
-      await payLsat()
+      await payLsat(setBudget)
 
-      await postTeachMe(data)
+      await postTeachMe(data, setBudget)
 
       return
     }
@@ -198,7 +205,7 @@ export const postTeachMe = async (data: TeachData): Promise<void> => {
   }
 }
 
-export const postAskQuestion = async (data: QuestionData): Promise<void> => {
+export const postAskQuestion = async (data: QuestionData, setBudget: (value: number | null) => void): Promise<void> => {
   const lsatToken = await getLSat()
 
   try {
@@ -207,9 +214,9 @@ export const postAskQuestion = async (data: QuestionData): Promise<void> => {
     // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   } catch (error: any) {
     if (error.status === 402) {
-      await payLsat()
+      await payLsat(setBudget)
 
-      await postAskQuestion(data)
+      await postAskQuestion(data, setBudget)
 
       return
     }
@@ -326,9 +333,13 @@ const generateGuestsMap = (
   return updatedGuestMap // Return the new variable
 }
 
-export const getGraphData = async (searchterm: string, graphStyle: 'split' | 'force' | 'sphere' | 'earth') => {
+export const getGraphData = async (
+  searchterm: string,
+  graphStyle: 'split' | 'force' | 'sphere' | 'earth',
+  setBudget: (value: number | null) => void,
+) => {
   try {
-    const dataInit = await fetchNodes(searchterm)
+    const dataInit = await fetchNodes(searchterm, setBudget)
 
     return formatFetchNodes(dataInit, searchterm, graphStyle)
   } catch (e) {
