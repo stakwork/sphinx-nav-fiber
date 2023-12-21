@@ -127,7 +127,7 @@ const handleSubmitForm = async (
     // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   } catch (err: any) {
     if (err.status === 402) {
-      await payLsat()
+      await payLsat(setBudget)
 
       await updateBudget(setBudget)
 

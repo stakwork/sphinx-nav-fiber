@@ -50,7 +50,7 @@ export const SentimentAnalysis = memo(() => {
       sphinx.enable(),
     )
 
-    getSentimentData({ topic: search, cutoff_date: String(value.unix()) })
+    getSentimentData(setBudget, { topic: search, cutoff_date: String(value.unix()) })
       .then(async (r) => {
         setSentimentData(
           r?.data

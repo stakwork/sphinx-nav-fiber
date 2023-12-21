@@ -102,10 +102,13 @@ export const TeachMe = () => {
         // @ts-ignore
         await sphinx.enable()
 
-        await postTeachMe({
-          term: searchTerm,
-          transcripts,
-        })
+        await postTeachMe(
+          {
+            term: searchTerm,
+            transcripts,
+          },
+          setBudget,
+        )
 
         await updateBudget(setBudget)
 
@@ -113,10 +116,13 @@ export const TeachMe = () => {
           type: 'success',
         })
 
-        await postInstagraph({
-          term: searchTerm,
-          transcripts,
-        })
+        await postInstagraph(
+          {
+            term: searchTerm,
+            transcripts,
+          },
+          setBudget,
+        )
 
         await updateBudget(setBudget)
 
