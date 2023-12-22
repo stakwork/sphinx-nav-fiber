@@ -26,14 +26,12 @@ export const Relevance = ({ isSearchResult }: Props) => {
   const setRelevanceSelected = useAppStore((s) => s.setRelevanceSelected)
 
   const [currentPage, setCurrentPage] = useState(0)
-
   const filteredNodes = useFilteredNodes()
 
   const startSlice = currentPage * pageSize
   const endSlice = startSlice + pageSize
 
   const hasNext = filteredNodes.length - 1 > endSlice
-
   const isMobile = useIsMatchBreakpoint('sm', 'down')
 
   const currentNodes = useMemo(
@@ -107,6 +105,7 @@ export const Relevance = ({ isSearchResult }: Props) => {
               }
             }}
             size="medium"
+            style={{ display: `${!hasNext && 'none'}` }}
           >
             Load More
           </Button>

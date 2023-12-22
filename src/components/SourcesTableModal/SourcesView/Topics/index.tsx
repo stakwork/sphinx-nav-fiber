@@ -125,7 +125,11 @@ export const TopicSources = () => {
             <>
               <Table onTopicEdit={onTopicEdit} showMuted={filters.muted} />
               {total > ids.length ? (
-                <Button className="load-more" disabled={loading} onClick={handleLoadMore}>
+                <Button
+                  className={ids.length === 0 ? 'no-load-more' : 'load-more'}
+                  disabled={loading}
+                  onClick={handleLoadMore}
+                >
                   Load more
                   {loading && <ClipLoader color={colors.BLUE_PRESS_STATE} size={10} />}
                 </Button>
@@ -171,6 +175,10 @@ const Wrapper = styled(Flex)`
   .load-more {
     margin: 8px auto;
     align-self: center;
+  }
+
+  .no-load-more {
+    display: none;
   }
 `
 
