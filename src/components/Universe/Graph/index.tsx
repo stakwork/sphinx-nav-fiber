@@ -96,7 +96,7 @@ export const Graph = () => {
           {nodeBadges}
         </Segments>
       )}
-      {isAdmin && <NodeDetailsPanel />}
+      {isAdmin  && <NodeDetailsPanel />}
     </>
   )
 }
