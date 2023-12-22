@@ -190,7 +190,13 @@ export const App = () => {
 
   // auth checker
   useEffect(() => {
-    handleAuth()
+    const timer = setTimeout(() => {
+      handleAuth()
+    }, 5000)
+
+    return () => {
+      clearTimeout(timer)
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
