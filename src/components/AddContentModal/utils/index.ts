@@ -25,7 +25,7 @@ export function getInputType(source: string) {
   } else if (tweetUrlRegex.test(source)) {
     inputType = TWITTER_SOURCE
   } else if (twitterBroadcastRegex.test(source)) {
-    inputType = AUDIO_VIDEO; // Using the new constant for audio_video type
+    inputType = AUDIO_VIDEO
   } else if (genericUrlRegex.test(source)) {
     inputType = WEB_PAGE
   }
