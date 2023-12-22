@@ -47,7 +47,7 @@ export const getLSat = async (): Promise<string> => {
 
     return ''
   } catch (e) {
-    console.warn(e)
+    // console.warn(e)
 
     return ''
   }
