@@ -6,6 +6,7 @@ import {
   RadarRequest,
   SubmitErrRes,
 } from '~/types'
+import { generateAuthQueryParam } from '~/utils'
 import { api } from '../api'
 
 type TradarParams = {
@@ -68,8 +69,10 @@ export const getRadarData = async (queryParams: TradarParams = defaultParams) =>
 }
 
 export const getTopicsData = async (queryParams: TtopicsParams = defaultParams) => {
+  const query = await generateAuthQueryParam()
+
   const response = await api.get<FetchTopicResponse>(
-    `/topics?${new URLSearchParams({ ...defaultParams, ...queryParams }).toString()}`,
+    `/topics?${new URLSearchParams({ ...defaultParams, ...queryParams }).toString()}${query}`,
   )
 
   return response
@@ -88,25 +91,33 @@ export const getStats = async () => {
 }
 
 export const getEdgeTypes = async () => {
-  const response = await api.get<FetchEdgesResponse>('/curation/edge/type')
+  const query = await generateAuthQueryParam()
+
+  const response = await api.get<FetchEdgesResponse>(`curation/edge/type?${query}`)
 
   return response
 }
 
 export const postEdgeType = async (data: TAddEdgeParams) => {
-  const response = await api.post('/curation/edge', JSON.stringify(data))
+  const query = await generateAuthQueryParam()
+
+  const response = await api.post(`/curation/edge?${query}`, JSON.stringify(data))
 
   return response
 }
 
 export const postAboutData = async (data: TAboutParams) => {
-  const response = await api.post('/about', JSON.stringify(data))
+  const query = await generateAuthQueryParam()
+
+  const response = await api.post(`/about?${query}`, JSON.stringify(data))
 
   return response
 }
 
 export const postMergeTopics = async (data: TMergeTopicsParams) => {
-  const response = await api.post('/curation/merge', JSON.stringify(data))
+  const query = await generateAuthQueryParam()
+
+  const response = await api.post(`/curation/merge?${query}`, JSON.stringify(data))
 
   return response
 }
@@ -114,25 +125,33 @@ export const postMergeTopics = async (data: TMergeTopicsParams) => {
 export const triggerRadarJob = async () => api.get<SubmitErrRes>(`/radar/trigger-job`)
 
 export const putRadarData = async (id: string, data: RadarRequest) => {
-  const response = await api.put(`/radar/${id}`, JSON.stringify(data))
+  const query = await generateAuthQueryParam()
+
+  const response = await api.put(`/radar/${id}?${query}`, JSON.stringify(data))
 
   return response
 }
 
 export const putNodeData = async (data: NodeRequest) => {
-  const response = await api.put(`/node`, JSON.stringify(data))
+  const query = await generateAuthQueryParam()
+
+  const response = await api.put(`/node?${query}`, JSON.stringify(data))
 
   return response
 }
 
 export const approveRadarData = async (id: string, pubkey: string) => {
-  const response = await api.put(`/radar/${id}/approve`, JSON.stringify({ approve: 'True', pubkey }))
+  const query = await generateAuthQueryParam()
+
+  const response = await api.put(`/radar/${id}/approve?${query}`, JSON.stringify({ approve: 'True', pubkey }))
 
   return response
 }
 
 export const deleteRadarData = async (id: string) => {
-  const response = await api.delete(`/radar/${id}`)
+  const query = await generateAuthQueryParam()
+
+  const response = await api.delete(`/radar/${id}?${query}`)
 
   return response
 }

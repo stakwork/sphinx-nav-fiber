@@ -105,15 +105,17 @@ export const App = () => {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         await sphinx.enable()
-
-        await updateBudget(setBudget)
       }
 
       setSphinxModalOpen(false)
     }
 
-    await fetchData(searchTerm)
+    await fetchData(setBudget, searchTerm)
     setSidebarOpen(true)
+
+    if (searchTerm) {
+      await updateBudget(setBudget)
+    }
   }, [fetchData, searchTerm, setSphinxModalOpen, setSidebarOpen, setBudget])
 
   useEffect(() => {
@@ -153,6 +155,8 @@ export const App = () => {
 
         setPubKey(sphinxEnable?.pubkey)
 
+        await updateBudget(setBudget)
+
         const sigAndMessage = await getSignedMessageFromRelay()
 
         const isAdmin = await getIsAdmin({
@@ -165,8 +169,6 @@ export const App = () => {
         if (isAdmin.isAdmin) {
           setIsAdmin(true)
         }
-
-        await updateBudget(setBudget)
       })
     } catch (error) {
       /* not an admin */
@@ -188,7 +190,13 @@ export const App = () => {
 
   // auth checker
   useEffect(() => {
-    handleAuth()
+    const timer = setTimeout(() => {
+      handleAuth()
+    }, 5000)
+
+    return () => {
+      clearTimeout(timer)
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 

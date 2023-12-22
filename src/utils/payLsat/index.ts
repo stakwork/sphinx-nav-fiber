@@ -4,7 +4,7 @@ import { requestProvider } from 'webln'
 import { buyLsat } from '~/network/buyLsat'
 
 // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-export async function payLsat(): Promise<void> {
+export async function payLsat(setBudget: (value: number | null) => void): Promise<void> {
   let lsat: Lsat
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -52,14 +52,18 @@ export async function payLsat(): Promise<void> {
         // @ts-ignore
         const LSATRes = await sphinx.saveLsat(lsat.invoice, lsat.baseMacaroon, window.location.host)
 
-        localStorage.setItem(
-          'lsat',
-          JSON.stringify({
-            macaroon: lsat.baseMacaroon,
-            identifier: lsat.id,
-            preimage: LSATRes.lsat.split(':')[1],
-          }),
-        )
+        if (LSATRes?.lsat) {
+          localStorage.setItem(
+            'lsat',
+            JSON.stringify({
+              macaroon: lsat.baseMacaroon,
+              identifier: lsat.id,
+              preimage: LSATRes.lsat.split(':')[1],
+            }),
+          )
+
+          await setBudget(budgetAmount)
+        }
       }
 
       return
@@ -71,8 +75,10 @@ export async function payLsat(): Promise<void> {
 
   const webln = await requestProvider()
 
+  const budgetAmount = 50
+
   try {
-    await buyLsat(50)
+    await buyLsat(budgetAmount)
 
     // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   } catch (error: any) {
@@ -81,13 +87,17 @@ export async function payLsat(): Promise<void> {
     // pay lsat invoice
     const preimage = await webln.sendPayment(lsat.invoice)
 
-    localStorage.setItem(
-      'lsat',
-      JSON.stringify({
-        macaroon: lsat.baseMacaroon,
-        identifier: lsat.id,
-        preimage: preimage.preimage,
-      }),
-    )
+    if (preimage?.preimage) {
+      localStorage.setItem(
+        'lsat',
+        JSON.stringify({
+          macaroon: lsat.baseMacaroon,
+          identifier: lsat.id,
+          preimage: preimage.preimage,
+        }),
+      )
+    }
+
+    await setBudget(budgetAmount)
   }
 }
