@@ -1,4 +1,4 @@
-import { AUDIO_VIDEO,LINK, TWITTER_HANDLE, TWITTER_SOURCE, WEB_PAGE, YOUTUBE_CHANNEL } from '~/constants'
+import { LINK, TWITTER_HANDLE, TWITTER_SOURCE, WEB_PAGE, YOUTUBE_CHANNEL } from '~/constants'
 import { extractNameFromLink, getInputType } from '..'
 
 describe('youtubeRegex', () => {
@@ -23,7 +23,7 @@ describe('youtubeRegex', () => {
   })
 
   it('should assert we can check for Twitter broadcast regex', () => {
-    expect(getInputType('https://twitter.com/i/broadcasts/1YqxoDbOqevKv')).toBe(AUDIO_VIDEO);
+    expect(getInputType('https://twitter.com/i/broadcasts/1YqxoDbOqevKv')).toBe(LINK);
   })
 
   it('should assert we can check for generic url regex', async () => {
