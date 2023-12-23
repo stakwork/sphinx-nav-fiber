@@ -42,9 +42,9 @@ const handleSubmitForm = async (
 
   const body: { [index: string]: unknown } = {}
 
-  if (sourceType === LINK) {
-    body.media_url = data.source
-  } else if (sourceType === TWITTER_SOURCE) {
+  body.media_url = data.source
+
+  if (sourceType === TWITTER_SOURCE) {
     const regex = /(?:https?:\/\/)?(?:www\.)?twitter\.com\/\w+\/status\/\d+/s
 
     if (regex.test(data.source)) {
