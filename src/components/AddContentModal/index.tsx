@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import * as sphinx from 'sphinx-bridge'
-import { notify } from '~/components/common/Toast/toastMessage'
 import { BaseModal } from '~/components/Modal'
+import { notify } from '~/components/common/Toast/toastMessage'
 import {
   DOCUMENT,
   LINK,
@@ -44,12 +44,6 @@ const handleSubmitForm = async (
 
   if (sourceType === LINK) {
     body.media_url = data.source
-
-    const twitterBroadcastRegex = /https:\/\/twitter\.com\/i\/broadcasts\/\w+/
-
-    if (twitterBroadcastRegex.test(data.source)) {
-        body.content_type = 'audio_video'
-    }
   } else if (sourceType === TWITTER_SOURCE) {
     const regex = /(?:https?:\/\/)?(?:www\.)?twitter\.com\/\w+\/status\/\d+/s
 
