@@ -98,7 +98,6 @@ export const RSS = 'rss'
 export const TWITTER_SOURCE = 'tweet'
 export const TOPIC = 'topic'
 export const DOCUMENT = 'document'
-export const AUDIO_VIDEO = 'audio_video'
 export const isE2E = !!import.meta.env.VITE_APP_IS_E2E
 
 export const requiredRule = {

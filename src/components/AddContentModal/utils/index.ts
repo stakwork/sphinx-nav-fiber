@@ -1,4 +1,4 @@
-import { AUDIO_VIDEO, DOCUMENT, LINK, TWITTER_HANDLE, TWITTER_SOURCE, WEB_PAGE, YOUTUBE_CHANNEL } from '~/constants'
+import { DOCUMENT, LINK, TWITTER_HANDLE, TWITTER_SOURCE, WEB_PAGE, YOUTUBE_CHANNEL } from '~/constants'
 
 export const twitterHandlePattern = /\btwitter\.com\/(?:@)?([\w_]+)(?:$|\?[^/]*$)/
 
@@ -25,7 +25,7 @@ export function getInputType(source: string) {
   } else if (tweetUrlRegex.test(source)) {
     inputType = TWITTER_SOURCE
   } else if (twitterBroadcastRegex.test(source)) {
-    inputType = AUDIO_VIDEO
+    inputType = LINK
   } else if (genericUrlRegex.test(source)) {
     inputType = WEB_PAGE
   }
