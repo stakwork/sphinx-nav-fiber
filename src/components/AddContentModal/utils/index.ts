@@ -12,15 +12,9 @@ const genericUrlRegex = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/
 const twitterBroadcastRegex = /https:\/\/twitter\.com\/i\/broadcasts\/([A-Za-z0-9_-]+)/
 
 export function getInputType(source: string) {
-  const linkPatterns = [
-    youtubeLiveRegex,
-    twitterBroadcastRegex,
-    youtubeRegex,
-    twitterSpaceRegex,
-    mp3Regex
-    ];
+  const linkPatterns = [youtubeLiveRegex, twitterBroadcastRegex, youtubeRegex, twitterSpaceRegex, mp3Regex]
 
-  if (linkPatterns.some(pattern => pattern.test(source))) {
+  if (linkPatterns.some((pattern) => pattern.test(source))) {
     return LINK
   }
 
@@ -40,7 +34,7 @@ export function getInputType(source: string) {
     return WEB_PAGE
   }
 
-  return DOCUMENT;
+  return DOCUMENT
 }
 
 export const extractNameFromLink = (inputString: string, type = ''): string | null => {
