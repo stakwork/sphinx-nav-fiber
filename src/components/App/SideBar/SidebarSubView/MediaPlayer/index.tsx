@@ -100,6 +100,7 @@ const MediaPlayerComponent: FC<Props> = ({ hidden }) => {
       <Cover>
         <Avatar size={120} src={playingNode?.image_url || ''} type="clip" />
       </Cover>
+      <div onClick={togglePlay} role="presentation">
       <ReactPlayer
         ref={playerRef}
         controls={false}
@@ -116,6 +117,7 @@ const MediaPlayerComponent: FC<Props> = ({ hidden }) => {
         volume={volume}
         width="100%"
       />
+     </div>
       {isReady ? (
         <Toolbar
           duration={duration}
