@@ -5,10 +5,10 @@ import 'react-toastify/dist/ReactToastify.css'
 import { Socket } from 'socket.io-client'
 import * as sphinx from 'sphinx-bridge'
 import styled from 'styled-components'
-import { Flex } from '~/components/common/Flex'
 import { DataRetriever } from '~/components/DataRetriever'
 import { GlobalStyle } from '~/components/GlobalStyle'
 import { Universe } from '~/components/Universe'
+import { Flex } from '~/components/common/Flex'
 import { isDevelopment, isE2E } from '~/constants'
 import useSocket from '~/hooks/useSockets'
 import { getIsAdmin } from '~/network/auth'
@@ -34,6 +34,7 @@ import { MainToolbar } from './MainToolbar'
 import { AppProviders } from './Providers'
 import { SecondarySideBar } from './SecondarySidebar'
 import { SideBar } from './SideBar'
+import { DeviceCompatibilityNotice } from './DeviceCompatibilityNotification'
 import { Toasts } from './Toasts'
 
 const Wrapper = styled(Flex)`
@@ -195,6 +196,8 @@ export const App = () => {
   return (
     <AppProviders>
       <GlobalStyle />
+
+      <DeviceCompatibilityNotice />
 
       <Leva hidden={!isDevelopment} />
 
