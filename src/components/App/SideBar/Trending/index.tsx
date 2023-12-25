@@ -174,7 +174,8 @@ export const Trending = ({ onSubmit }: Props) => {
                     justify="space-between"
                     onClick={() => selectTrending(i.topic)}
                   >
-                    <span>#{i.topic}</span>
+                    <Paragraph> #{i.topic}</Paragraph>
+
                     {i.tldr && <Button onClick={(e) => showModal(e, i)}>TLDR</Button>}
                   </Flex>
                 ))}
@@ -187,6 +188,16 @@ export const Trending = ({ onSubmit }: Props) => {
     </Wrapper>
   )
 }
+
+const Paragraph = styled.div`
+  width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+`
 
 const Wrapper = styled(Flex)`
   .heading-container {
@@ -215,6 +226,7 @@ const Wrapper = styled(Flex)`
     margin-top: 20px;
     color: ${colors.GRAY6};
   }
+
   .list {
     list-style: none;
     padding: 0;
