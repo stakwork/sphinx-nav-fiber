@@ -97,9 +97,9 @@ const MediaPlayerComponent: FC<Props> = ({ hidden }) => {
 
   const handleVideoClick = () => {
     if (isReady) {
-      togglePlay();
+      togglePlay()
     }
-  };
+  }
 
   return playingNode ? (
     <Wrapper hidden={hidden} onClick={handleVideoClick}>
