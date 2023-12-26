@@ -25,5 +25,5 @@ export const useIsMobile = () => {
     return () => mediaQuery.removeEventListener('change', handleScreenResize)
   }, [query])
 
-  return [isMobile, setIsMobile] as const
+  return isMobile
 }

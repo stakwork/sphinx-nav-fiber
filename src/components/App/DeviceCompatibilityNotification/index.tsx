@@ -1,17 +1,23 @@
 import { Button } from '@mui/material'
+import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { useIsMobile } from '~/hooks/useIsMobile'
 
 export const DeviceCompatibilityNotice = () => {
-  const [isMobile, setIsMobile] = useIsMobile()
+  const [isVisible, setIsVisible] = useState(true)
+  const isMobile = useIsMobile()
+
+  useEffect(() => {
+    setIsVisible(true)
+  }, [isMobile])
 
   const handleClick = () => {
-    setIsMobile(false)
+    setIsVisible(false)
   }
 
-  return isMobile ? (
+  return isMobile && isVisible ? (
     <Wrapper align="center" direction="column" justify="center" onClick={handleClick}>
       <img alt="screen" src="jamboard_kiosk.png" />
       <Flex align="center" direction="column" justify="center">
