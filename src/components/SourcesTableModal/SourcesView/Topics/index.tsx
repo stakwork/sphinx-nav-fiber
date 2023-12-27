@@ -54,7 +54,7 @@ export const TopicSources = () => {
         setLoading(true)
         await setTopics()
       } catch {
-        console.log('err')
+        console.error('err')
       } finally {
         setLoading(false)
       }

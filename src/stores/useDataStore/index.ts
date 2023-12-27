@@ -39,7 +39,7 @@ type DataStore = {
   setScrollEventsDisabled: (scrollEventsDisabled: boolean) => void
   setCategoryFilter: (categoryFilter: NodeType | null) => void
   setDisableCameraRotation: (rotation: boolean) => void
-  fetchData: (search?: string | null) => void
+  fetchData: (setBudget: (value: number | null) => void, search?: string | null) => void
   setData: (data: GraphData) => void
   setGraphStyle: (graphStyle: GraphStyle) => void
   setGraphRadius: (graphRadius?: number | null) => void
@@ -111,14 +111,14 @@ const defaultData: Omit<
 
 export const useDataStore = create<DataStore>((set, get) => ({
   ...defaultData,
-  fetchData: async (search) => {
+  fetchData: async (setBudget, search) => {
     if (get().isFetching) {
       return
     }
 
     set({ isFetching: true, sphinxModalIsOpen: true })
 
-    const data = await fetchGraphData(search || '', get().graphStyle)
+    const data = await fetchGraphData(search || '', get().graphStyle, setBudget)
 
     if (search) {
       await saveSearchTerm()

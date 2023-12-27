@@ -95,8 +95,14 @@ const MediaPlayerComponent: FC<Props> = ({ hidden }) => {
     }
   }
 
+  const handleVideoClick = () => {
+    if (isReady) {
+      togglePlay()
+    }
+  }
+
   return playingNode ? (
-    <Wrapper hidden={hidden}>
+    <Wrapper hidden={hidden} onClick={handleVideoClick}>
       <Cover>
         <Avatar size={120} src={playingNode?.image_url || ''} type="clip" />
       </Cover>
@@ -106,6 +112,7 @@ const MediaPlayerComponent: FC<Props> = ({ hidden }) => {
         height="200px"
         onBuffer={() => setIsBuffering(true)}
         onBufferEnd={() => setIsBuffering(false)}
+        onClick={() => handleVideoClick()}
         onError={handleError}
         onPause={handlePause}
         onPlay={handlePlay}

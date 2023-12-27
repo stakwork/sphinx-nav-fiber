@@ -9,25 +9,32 @@ const tweetUrlRegex = /https:\/\/twitter\.com\/[^/]+\/status\/(\d+)/
 const mp3Regex = /(https?:\/\/)?([A-Za-z0-9_-]+)\.mp3/
 const youtubeChannelPattern = /https?:\/\/(www\.)?youtube\.com\/(@)?([\w-]+)/i
 const genericUrlRegex = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/
+const twitterBroadcastRegex = /https:\/\/twitter\.com\/i\/broadcasts\/([A-Za-z0-9_-]+)/
 
 export function getInputType(source: string) {
-  let inputType = DOCUMENT
+  const linkPatterns = [youtubeLiveRegex, twitterBroadcastRegex, youtubeRegex, twitterSpaceRegex, mp3Regex]
 
-  if (youtubeLiveRegex.test(source)) {
-    inputType = LINK
-  } else if (youtubeRegex.test(source) || twitterSpaceRegex.test(source) || mp3Regex.test(source)) {
-    inputType = LINK
-  } else if (youtubeChannelPattern.test(source)) {
-    inputType = YOUTUBE_CHANNEL
-  } else if (twitterHandlePattern.test(source)) {
-    inputType = TWITTER_HANDLE
-  } else if (tweetUrlRegex.test(source)) {
-    inputType = TWITTER_SOURCE
-  } else if (genericUrlRegex.test(source)) {
-    inputType = WEB_PAGE
+  if (linkPatterns.some((pattern) => pattern.test(source))) {
+    return LINK
   }
 
-  return inputType
+  if (youtubeChannelPattern.test(source)) {
+    return YOUTUBE_CHANNEL
+  }
+
+  if (twitterHandlePattern.test(source)) {
+    return TWITTER_HANDLE
+  }
+
+  if (tweetUrlRegex.test(source)) {
+    return TWITTER_SOURCE
+  }
+
+  if (genericUrlRegex.test(source)) {
+    return WEB_PAGE
+  }
+
+  return DOCUMENT
 }
 
 export const extractNameFromLink = (inputString: string, type = ''): string | null => {

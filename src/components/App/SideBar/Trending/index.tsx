@@ -1,7 +1,10 @@
 import { Button, Skeleton } from '@mui/material'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
+import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
+import PauseIcon from '~/components/Icons/PauseIcon'
+import PlayIcon from '~/components/Icons/PlayIcon'
 import PlusIcon from '~/components/Icons/PlusIcon'
 import SentimentDataIcon from '~/components/Icons/SentimentDataIcon'
 import { Flex } from '~/components/common/Flex'
@@ -11,7 +14,6 @@ import { useModal } from '~/stores/useModalStore'
 import { Trending as TrendingType } from '~/types'
 import { colors } from '~/utils/colors'
 import { BriefDescription } from './BriefDescriptionModal'
-import { ClipLoader } from 'react-spinners'
 
 const TRENDING_TOPICS = ['Drivechain', 'Ordinals', 'L402', 'Nostr', 'AI']
 
@@ -23,6 +25,9 @@ export const Trending = ({ onSubmit }: Props) => {
   const { open: openContentAddModal } = useModal('addContent')
   const [loading, setLoading] = useState(false)
   const [selectedTrend, setSelectedTrend] = useState<TrendingType | null>(null)
+  const audioRef = useRef<HTMLVideoElement>(null)
+  const [currentFileIndex, setCurrentFileIndex] = useState(0)
+  const [playing, setPlaying] = useState(false)
 
   const { open } = useModal('briefDescription')
 
@@ -71,6 +76,45 @@ export const Trending = ({ onSubmit }: Props) => {
     setSelectedTrend(null)
   }
 
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.stopPropagation()
+    e.currentTarget.blur()
+    setPlaying(!playing)
+  }
+
+  useEffect(() => {
+    if (playing) {
+      audioRef.current?.play()
+    } else {
+      audioRef.current?.pause()
+    }
+  }, [currentFileIndex, playing])
+
+  const goToNextSong = () => {
+    setCurrentFileIndex((prevIndex) => {
+      let newIndex = (prevIndex + 1) % trendingTopics.length
+
+      while (newIndex !== prevIndex && !trendingTopics[newIndex]?.audio_EN) {
+        newIndex = (newIndex + 1) % trendingTopics.length
+      }
+
+      if (newIndex === prevIndex) {
+        setPlaying(false)
+
+        return newIndex
+      }
+
+      audioRef.current?.load()
+
+      if (newIndex === 0) {
+        setPlaying(false)
+        setCurrentFileIndex(0)
+      }
+
+      return newIndex
+    })
+  }
+
   return (
     <Wrapper>
       <div>
@@ -81,6 +125,16 @@ export const Trending = ({ onSubmit }: Props) => {
               {loading ? <ClipLoader color={colors.PRIMARY_BLUE} size={16} /> : <SentimentDataIcon />}
             </span>
           </div>
+          {trendingTopics.some((topic) => topic.audio_EN) ? (
+            <div>
+              <Button onClick={(e) => handleClick(e)} startIcon={playing ? <PauseIcon /> : <PlayIcon />}>
+                {playing ? 'Pause' : 'Play All'}
+              </Button>
+              <StyledAudio ref={audioRef} onEnded={goToNextSong} src={trendingTopics[currentFileIndex]?.audio_EN}>
+                <track kind="captions" />
+              </StyledAudio>
+            </div>
+          ) : null}
         </div>
         {trendingTopics.length === 0 && !loading ? (
           <div className="Trendingwrapper">
@@ -120,7 +174,8 @@ export const Trending = ({ onSubmit }: Props) => {
                     justify="space-between"
                     onClick={() => selectTrending(i.topic)}
                   >
-                    <span>#{i.topic}</span>
+                    <Paragraph> #{i.topic}</Paragraph>
+
                     {i.tldr && <Button onClick={(e) => showModal(e, i)}>TLDR</Button>}
                   </Flex>
                 ))}
@@ -134,13 +189,23 @@ export const Trending = ({ onSubmit }: Props) => {
   )
 }
 
+const Paragraph = styled.div`
+  width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+`
+
 const Wrapper = styled(Flex)`
   .heading-container {
     display: flex;
-    flex-direction: column;
-    padding: 16px 24px 16px 24px;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 16px 12px 16px 24px;
   }
-
   .heading {
     color: ${colors.GRAY6};
     padding-right: 24px;
@@ -151,17 +216,11 @@ const Wrapper = styled(Flex)`
     line-height: 20px;
     letter-spacing: 1.12px;
     text-transform: uppercase;
-
     &__icon {
       margin-left: 16px;
       font-size: 24px;
     }
   }
-  .Trendingwrapper {
-    margin-left: 23px;
-    margin-top: 20px;
-  }
-
   .Trendingwrapper {
     margin-left: 23px;
     margin-top: 20px;
@@ -173,7 +232,6 @@ const Wrapper = styled(Flex)`
     padding: 0;
     margin: 0;
     cursor: pointer;
-
     &-item {
       padding: 18px 16px 18px 24px;
       overflow: hidden;
@@ -184,12 +242,10 @@ const Wrapper = styled(Flex)`
       font-style: normal;
       font-weight: 600;
       line-height: 11px;
-
       &:hover {
         background: rgba(0, 0, 0, 0.1);
         color: ${colors.SECONDARY_BLUE};
       }
-
       &:active {
         background: rgba(0, 0, 0, 0.2);
         color: ${colors.PRIMARY_BLUE};
@@ -210,3 +266,8 @@ const Text = styled.p`
 `
 
 const ButtonStyled = styled(Button)``
+
+const StyledAudio = styled.audio`
+  height: 0;
+  width: 0;
+`

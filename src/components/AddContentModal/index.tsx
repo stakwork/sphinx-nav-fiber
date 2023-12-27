@@ -17,7 +17,7 @@ import { api } from '~/network/api'
 import { useModal } from '~/stores/useModalStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { SubmitErrRes } from '~/types'
-import { executeIfProd, getLSat, payLsat, updateBudget } from '~/utils'
+import { executeIfProd, generateAuthQueryParam, getLSat, payLsat, updateBudget } from '~/utils'
 import { BudgetStep } from './BudgetStep'
 import { LocationStep } from './LocationStep'
 import { SourceStep } from './SourceStep'
@@ -44,8 +44,7 @@ const handleSubmitForm = async (
 
   if (sourceType === LINK) {
     body.media_url = data.source
-
-    body.content_type === 'audio_video'
+    body.content_type = 'audio_video'
   } else if (sourceType === TWITTER_SOURCE) {
     const regex = /(?:https?:\/\/)?(?:www\.)?twitter\.com\/\w+\/status\/\d+/s
 
@@ -103,7 +102,15 @@ const handleSubmitForm = async (
   })
 
   try {
-    const res: SubmitErrRes = await api.post(`/${endPoint}`, JSON.stringify(body), {
+    let query = ''
+
+    if (endPoint === 'radar') {
+      const result = await generateAuthQueryParam()
+
+      query = `?${result}`
+    }
+
+    const res: SubmitErrRes = await api.post(`/${endPoint}${query}`, JSON.stringify(body), {
       Authorization: lsatToken,
     })
 
@@ -119,7 +126,7 @@ const handleSubmitForm = async (
     // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   } catch (err: any) {
     if (err.status === 402) {
-      await payLsat()
+      await payLsat(setBudget)
 
       await updateBudget(setBudget)
 
