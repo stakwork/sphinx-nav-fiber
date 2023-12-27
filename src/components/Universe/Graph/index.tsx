@@ -3,6 +3,7 @@ import { useMemo } from 'react'
 import { Vector3 } from 'three'
 import { useGraphData } from '~/components/DataRetriever'
 import { useDataStore } from '~/stores/useDataStore'
+import { useUserStore } from '~/stores/useUserStore'
 import { Link } from '~/types'
 import { maxChildrenDisplayed } from '../constants'
 import { Cubes } from './Cubes'
@@ -19,6 +20,7 @@ export const Graph = () => {
   const selectedNodeRelativeIds = useDataStore((s) => s.selectedNodeRelativeIds)
   const selectionGraphData = useDataStore((s) => s.selectionGraphData)
   const selectedNode = useDataStore((s) => s.selectedNode)
+  const [isAdmin] = useUserStore((s) => [s.isAdmin])
 
   const lineWidth = useMemo(() => {
     if (showSelectionGraph) {
@@ -94,8 +96,7 @@ export const Graph = () => {
           {nodeBadges}
         </Segments>
       )}
-
-      <NodeDetailsPanel />
+      {isAdmin && <NodeDetailsPanel />}
     </>
   )
 }
