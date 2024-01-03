@@ -45,4 +45,4 @@ export const extractNameFromLink = (inputString: string, type = ''): string | nu
   return match ? match[1] : null
 }
 
-export const isSource = (type: string): boolean => !!type && [TWITTER_HANDLE, YOUTUBE_CHANNEL,RSS].includes(type)
+export const isSource = (type: string): boolean => !!type && [TWITTER_HANDLE, YOUTUBE_CHANNEL, RSS].includes(type)
