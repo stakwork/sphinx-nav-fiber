@@ -52,7 +52,7 @@
     "reactflow": "^11.9.2",
     "recharts": "^2.4.3",
     "socket.io-client": "^4.6.1",
-    "sphinx-bridge": "0.2.63",
+    "sphinx-bridge": "0.2.64",
     "stream-browserify": "^3.0.0",
     "string_decoder": "^1.3.0",
     "styled-components": "^5.3.9",
