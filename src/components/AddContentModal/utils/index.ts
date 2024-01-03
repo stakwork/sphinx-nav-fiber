@@ -31,13 +31,13 @@ export function getInputType(source: string) {
     return TWITTER_SOURCE
   }
 
+  if (rssRegex.test(source)) {
+    return RSS
+  }
   if (genericUrlRegex.test(source)) {
     return WEB_PAGE
   }
 
-  if (rssRegex.test(source)) {
-    return RSS
-  }
 
   return DOCUMENT
 }
