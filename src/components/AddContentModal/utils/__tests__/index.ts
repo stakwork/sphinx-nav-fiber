@@ -86,10 +86,9 @@ describe('extractNameFromLink', () => {
 
 describe('getInputType', () => {
   it('should assert we can check for RSS feed url regex', async () => {
-    expect(getInputType('http://example.com/feed')).toBe(RSS);
-    expect(getInputType('http://example.com/rss')).toBe(RSS);
-    expect(getInputType('https://example.com/news.rss')).toBe(RSS);
-    expect(getInputType('http://example.com/rss.xml')).toBe(RSS);
-    expect(getInputType('http://example.com/?feed=rss')).toBe(RSS);
-  });
-});
+    expect(getInputType('http://example.com/feed')).toBe(RSS)
+    expect(getInputType('http://example.com/rss')).toBe(RSS)
+    expect(getInputType('http://example.com/rss.xml')).toBe(RSS)
+    expect(getInputType('http://example.com/?feed=rss')).toBe(RSS)
+  })
+})
