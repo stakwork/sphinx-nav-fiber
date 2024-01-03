@@ -97,12 +97,6 @@ const MediaPlayerComponent: FC<Props> = ({ hidden }) => {
     }
   }
 
-  // const handleVideoClick = () => {
-  //   if (isReady) {
-  //     togglePlay()
-  //   }
-  // }
-
   const toggleFullScreen = () => {
     if (wrapperRef.current) {
       if (!document.fullscreenElement) {
