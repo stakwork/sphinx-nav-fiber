@@ -13,7 +13,7 @@ const twitterBroadcastRegex = /https:\/\/twitter\.com\/i\/broadcasts\/([A-Za-z0-
 const rssRegex = /(https?:\/\/)?(www\.)?.+\/(feed|rss|rss.xml|\?feed=rss)$/;
 
 export function getInputType(source: string) {
-  const linkPatterns = [youtubeLiveRegex, twitterBroadcastRegex, youtubeRegex, twitterSpaceRegex, mp3Regex]
+  const linkPatterns = [youtubeLiveRegex, twitterBroadcastRegex, youtubeRegex, twitterSpaceRegex, mp3Regex,rssRegex]
 
   if (linkPatterns.some((pattern) => pattern.test(source))) {
     return LINK
