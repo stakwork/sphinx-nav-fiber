@@ -1,4 +1,4 @@
-import { DOCUMENT, LINK, RSS, TWITTER_HANDLE, TWITTER_SOURCE, WEB_PAGE, YOUTUBE_CHANNEL } from '~/constants';
+import { DOCUMENT, LINK, TWITTER_HANDLE, TWITTER_SOURCE, WEB_PAGE, YOUTUBE_CHANNEL ,RSS} from '~/constants';
 
 export const twitterHandlePattern = /\btwitter\.com\/(?:@)?([\w_]+)(?:$|\?[^/]*$)/
 
@@ -13,7 +13,7 @@ const twitterBroadcastRegex = /https:\/\/twitter\.com\/i\/broadcasts\/([A-Za-z0-
 const rssRegex = /(https?:\/\/)?(www\.)?.+\/(feed|rss|rss.xml|\?feed=rss)$/;
 
 export function getInputType(source: string) {
-  const linkPatterns = [youtubeLiveRegex, twitterBroadcastRegex, youtubeRegex, twitterSpaceRegex, mp3Regex,rssRegex]
+  const linkPatterns = [youtubeLiveRegex, twitterBroadcastRegex, youtubeRegex, twitterSpaceRegex, mp3Regex]
 
   if (linkPatterns.some((pattern) => pattern.test(source))) {
     return LINK
@@ -31,13 +31,13 @@ export function getInputType(source: string) {
     return TWITTER_SOURCE
   }
 
-  if (rssRegex.test(source)) {
-    return RSS
-  }
   if (genericUrlRegex.test(source)) {
     return WEB_PAGE
   }
 
+  if (rssRegex.test(source)) {
+    return RSS;
+  }
 
   return DOCUMENT
 }

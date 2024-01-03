@@ -1,4 +1,4 @@
-import { DOCUMENT, LINK, TWITTER_HANDLE, TWITTER_SOURCE, WEB_PAGE, YOUTUBE_CHANNEL,RSS } from '~/constants'
+import { DOCUMENT, LINK, RSS, TWITTER_HANDLE, TWITTER_SOURCE, WEB_PAGE, YOUTUBE_CHANNEL } from '~/constants'
 import { extractNameFromLink, getInputType } from '..'
 
 describe('youtubeRegex', () => {
@@ -86,6 +86,7 @@ describe('extractNameFromLink', () => {
 
 describe('getInputType', () => {
   it('should assert we can check for RSS feed url regex', async () => {
+    expect(getInputType('http://example.com/feed')).toBe(RSS);
     expect(getInputType('http://example.com/rss')).toBe(RSS);
     expect(getInputType('https://example.com/news.rss')).toBe(RSS);
     expect(getInputType('http://example.com/rss.xml')).toBe(RSS);
