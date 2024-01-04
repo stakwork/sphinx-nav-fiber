@@ -14,6 +14,7 @@ import { useModal } from '~/stores/useModalStore'
 import { Trending as TrendingType } from '~/types'
 import { colors } from '~/utils/colors'
 import { BriefDescription } from './BriefDescriptionModal'
+import { showPlayButton } from '~/utils'
 
 const TRENDING_TOPICS = ['Drivechain', 'Ordinals', 'L402', 'Nostr', 'AI']
 
@@ -115,6 +116,8 @@ export const Trending = ({ onSubmit }: Props) => {
     })
   }
 
+  const hideButton = showPlayButton(trendingTopics)
+
   return (
     <Wrapper>
       <div>
@@ -125,7 +128,7 @@ export const Trending = ({ onSubmit }: Props) => {
               {loading ? <ClipLoader color={colors.PRIMARY_BLUE} size={16} /> : <SentimentDataIcon />}
             </span>
           </div>
-          {trendingTopics.some((topic) => topic.audio_EN) ? (
+          {hideButton ? (
             <div>
               <Button onClick={(e) => handleClick(e)} startIcon={playing ? <PauseIcon /> : <PlayIcon />}>
                 {playing ? 'Pause' : 'Play All'}
