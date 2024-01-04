@@ -84,13 +84,14 @@ export const useCameraAnimations = (
         cameraControlsRef.current.setTarget(0, 0, 500, true)
       } else {
         cameraControlsRef.current.maxDistance = cameraControlsRef.current.getDistanceToFitSphere(graphRadius + 200)
+        cameraControlsRef.current.minDistance = 100
       }
     }
+  }, [graphRadius, graphStyle, cameraControlsRef])
 
-    if (enabled) {
-      doIntroAnimation()
-    }
-  }, [graphRadius, graphStyle, cameraControlsRef, enabled, doIntroAnimation])
+  useEffect(() => {
+    doIntroAnimation()
+  }, [doIntroAnimation, graphStyle])
 
   useEffect(() => {
     if (!selectedNode && cameraControlsRef.current) {
