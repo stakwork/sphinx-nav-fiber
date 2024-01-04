@@ -12,6 +12,7 @@ import { getTrends } from '~/network/fetchGraphData'
 import { useDataStore } from '~/stores/useDataStore'
 import { useModal } from '~/stores/useModalStore'
 import { Trending as TrendingType } from '~/types'
+import { getTrendingTopic } from '~/utils'
 import { colors } from '~/utils/colors'
 import { BriefDescription } from './BriefDescriptionModal'
 
@@ -174,7 +175,7 @@ export const Trending = ({ onSubmit }: Props) => {
                     justify="space-between"
                     onClick={() => selectTrending(i.topic)}
                   >
-                    <Paragraph> #{i.topic}</Paragraph>
+                    <Paragraph> #{getTrendingTopic(i)}</Paragraph>
 
                     {i.tldr && <Button onClick={(e) => showModal(e, i)}>TLDR</Button>}
                   </Flex>
