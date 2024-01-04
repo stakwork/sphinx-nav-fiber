@@ -7,7 +7,7 @@ const youtubeLiveRegex = /(https?:\/\/)?(www\.)?youtube\.com\/live\/([A-Za-z0-9_
 const twitterSpaceRegex = /https:\/\/twitter\.com\/i\/spaces\/([A-Za-z0-9_-]+)/
 const tweetUrlRegex = /https:\/\/twitter\.com\/[^/]+\/status\/(\d+)/
 const mp3Regex = /(https?:\/\/)?([A-Za-z0-9_-]+)\.mp3/
-const youtubeChannelPattern = /https?:\/\/(www\.)?youtube\.com\/(@)?([\w-]+)/i
+const youtubeChannelPattern = /https?:\/\/(www\.)?youtube\.com\/(user\/)?(@)?([\w-]+)/i;
 const genericUrlRegex = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/
 const twitterBroadcastRegex = /https:\/\/twitter\.com\/i\/broadcasts\/([A-Za-z0-9_-]+)/
 const rssRegex = /(https?:\/\/)?(www\.)?.+\/(feed|rss|rss.xml|\?feed=rss)$/
@@ -30,7 +30,7 @@ export function getInputType(source: string) {
   if (tweetUrlRegex.test(source)) {
     return TWITTER_SOURCE
   }
-  
+
   if (rssRegex.test(source)) {
     return RSS;
   }
