@@ -79,11 +79,8 @@ const handleSubmitForm = async (
     } else {
       return
     }
-  } else if (sourceType === YOUTUBE_CHANNEL) {
+  } else if (sourceType === YOUTUBE_CHANNEL || sourceType === RSS) {
     body.source = data.source
-    body.source_type = sourceType
-  } else if (sourceType === RSS) {
-    body.source = data.source,
     body.source_type = sourceType
   }
 
