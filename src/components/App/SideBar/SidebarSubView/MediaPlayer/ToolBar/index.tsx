@@ -1,6 +1,8 @@
 import { IconButton, Slider } from '@mui/material'
 import { FC } from 'react'
 import styled from 'styled-components'
+import FullScreenIcon from '~/components/Icons/FullScreenIcon'
+import ExitFullScreen from '~/components/Icons/ExitFullScreen'
 import PauseIcon from '~/components/Icons/PauseIcon'
 import PlayIcon from '~/components/Icons/PlayIcon'
 import VolumeIcon from '~/components/Icons/VolumeIcon'
@@ -16,6 +18,8 @@ type Props = {
   playingTime: number
   duration: number
   hasError: boolean
+  onFullScreenClick: () => void
+  showToolbar: boolean
 }
 
 export const Toolbar: FC<Props> = ({
@@ -26,6 +30,8 @@ export const Toolbar: FC<Props> = ({
   handleProgressChange,
   handleVolumeChange,
   hasError,
+  onFullScreenClick,
+  showToolbar,
 }) => (
   <Flex>
     <ProgressSlider
@@ -36,9 +42,11 @@ export const Toolbar: FC<Props> = ({
       value={playingTime}
     />
     {hasError ? (
-      <Wrapper className="error-wrapper">Error happened, please try later</Wrapper>
+      <Wrapper className="error-wrapper" showToolbar={showToolbar}>
+        Error happened, please try later
+      </Wrapper>
     ) : (
-      <Wrapper align="center" direction="row">
+      <Wrapper align="center" direction="row" showToolbar={showToolbar}>
         <Action onClick={setIsPlaying} size="small">
           {!isPlaying ? <PlayIcon /> : <PauseIcon />}
         </Action>
@@ -59,14 +67,26 @@ export const Toolbar: FC<Props> = ({
           />
           <VolumeIcon />
         </VolumeControl>
+        <Fullscreen onClick={() => onFullScreenClick()}>
+          {!showToolbar ? <FullScreenIcon /> : <ExitFullScreen />}
+        </Fullscreen>
       </Wrapper>
     )}
   </Flex>
 )
 
-const Wrapper = styled(Flex)`
+const Wrapper = styled(Flex)<{ showToolbar: boolean }>`
   height: 60px;
   padding: 12px 16px;
+  ${(props) =>
+    props.showToolbar &&
+    `
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 9999;
+  `}
 
   &.error-wrapper {
     color: ${colors.primaryRed};
@@ -118,6 +138,10 @@ const VolumeControl = styled(Flex)`
       display: block;
     }
   }
+`
+
+const Fullscreen = styled(Flex)`
+  cursor: pointer;
 `
 
 const ProgressSlider = styled(Slider)`
