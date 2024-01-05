@@ -5,9 +5,9 @@ import { fetchGraphData } from '~/network/fetchGraphData'
 import { GraphData, NodeExtended, NodeType, Sources, Trending } from '~/types'
 import { saveSearchTerm } from '~/utils/relayHelper/index'
 
-export type GraphStyle = 'split' | 'force' | 'sphere' | 'earth'
+export type GraphStyle = 'sphere' | 'force' | 'split' | 'earth'
 
-export const graphStyles: GraphStyle[] = ['split', 'force', 'sphere', 'earth']
+export const graphStyles: GraphStyle[] = ['sphere', 'force', 'split', 'earth']
 
 type DataStore = {
   scrollEventsDisabled: boolean
@@ -90,7 +90,7 @@ const defaultData: Omit<
   scrollEventsDisabled: false,
   disableCameraRotation: false,
   graphRadius: isChileGraph ? 1600 : 3056, // calculated from initial load
-  graphStyle: (localStorage.getItem('graphStyle') as GraphStyle) || 'split',
+  graphStyle: (localStorage.getItem('graphStyle') as GraphStyle) || 'sphere',
   isFetching: false,
   isTimestampLoaded: false,
   queuedSources: null,
