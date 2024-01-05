@@ -20,7 +20,7 @@ import { useIsMatchBreakpoint } from './useIsMatchBreakpoint'
 import { extractUuidAndHost } from './auth'
 import { generateAuthQueryParam, getSignedMessageFromRelay } from './getSignedMessage'
 import { videoTimeToSeconds } from './videoTimetoSeconds'
-import { showPlayButton } from './trending'
+import { showPlayButton, getTrendingTopic } from './trending'
 
 export {
   E2ETests,
@@ -50,4 +50,5 @@ export {
   extractUuidAndHost,
   generateAuthQueryParam,
   showPlayButton,
+  getTrendingTopic,
 }
