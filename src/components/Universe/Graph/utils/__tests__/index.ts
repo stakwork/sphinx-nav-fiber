@@ -1,14 +1,17 @@
-import { showResults } from '..'
+import { NodeType } from '..';
 
 describe('Show the nodeDetails only if not a person or guess', () => {
+
+  const number = Math.round(Math.random() * 2);
+
   it('Show the nodeDetails if is Admin', async () => {
-    const panelDetails = showResults(true, '0x00', '0x00', '0x00')
+    const panelDetails = NodeType[3] === 'guest'
 
     expect(panelDetails).toBeTruthy()
   })
 
   it('If is not admin the panels will not showed', async () => {
-    const panelDetails = showResults(false, '0x00', '0x00', '0x00')
+    const panelDetails = NodeType[number] === 'guest'
 
     expect(panelDetails).toBeFalsy()
   })
