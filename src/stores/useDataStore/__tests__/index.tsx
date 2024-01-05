@@ -1,27 +1,26 @@
-import { render } from '@testing-library/react';
-import * as React from 'react';
-import { graphStyles, useDataStore } from '..';
+import { render } from '@testing-library/react'
+import * as React from 'react'
+import { graphStyles, useDataStore } from '..'
 
 describe('useDataStore', () => {
   it('defaults graphStyle to "sphere"', () => {
-    let style = '';
+    let style = ''
 
     const ComponentUsingDataStore = () => {
-      const { graphStyle } = useDataStore.getState();
+      const { graphStyle } = useDataStore.getState()
 
-      style = graphStyle;
+      style = graphStyle
 
-      return <></>;
-    };
+      return <></>
+    }
 
     // Render the mock component
-    render(<ComponentUsingDataStore />);
+    render(<ComponentUsingDataStore />)
 
-    expect(style).toEqual('sphere');
-  });
-
-  it('should return views in correct order', () => {
-    expect(graphStyles).toEqual(['sphere', 'force', 'split', 'earth']);
+    expect(style).toEqual('sphere')
   })
 
-});
+  it('should return views in correct order', () => {
+    expect(graphStyles).toEqual(['sphere', 'force', 'split', 'earth'])
+  })
+})
