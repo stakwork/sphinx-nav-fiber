@@ -8,9 +8,6 @@ describe('assertNever', () => {
       while (true) {}
     }
 
-    expect(() => assertNever(obj)).toThrow(`Unexpected object: function () {
-      // eslint-disable-next-line no-empty, no-constant-condition
-      while (true) {}
-    }`)
+    expect(() => assertNever(obj)).toThrowError(`Unexpected object: ${obj}`)
   })
 })
