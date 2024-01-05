@@ -5,6 +5,7 @@ import { useGraphData } from '~/components/DataRetriever'
 import { useDataStore } from '~/stores/useDataStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { Link } from '~/types'
+import { checkStatus } from '~/utils/getUserStatus'
 import { maxChildrenDisplayed } from '../constants'
 import { Cubes } from './Cubes'
 import { Earth } from './Earth'
@@ -20,7 +21,9 @@ export const Graph = () => {
   const selectedNodeRelativeIds = useDataStore((s) => s.selectedNodeRelativeIds)
   const selectionGraphData = useDataStore((s) => s.selectionGraphData)
   const selectedNode = useDataStore((s) => s.selectedNode)
-  const [isAdmin] = useUserStore((s) => [s.isAdmin])
+  const [isAdmin, pubKey, tribeUuid, tribeHost] = useUserStore((s) => [s.isAdmin, s.pubKey, s.tribeHost, s.tribeUuid])
+
+  const userStatus = checkStatus(isAdmin, tribeUuid, pubKey, tribeHost)
 
   const lineWidth = useMemo(() => {
     if (showSelectionGraph) {
@@ -96,7 +99,7 @@ export const Graph = () => {
           {nodeBadges}
         </Segments>
       )}
-      {isAdmin && <NodeDetailsPanel />}
+      {userStatus && <NodeDetailsPanel />}
     </>
   )
 }
