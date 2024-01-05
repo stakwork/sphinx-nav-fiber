@@ -18,8 +18,7 @@ moment.updateLocale('en', {
 export const isDevelopment = !!(
   origin === 'http://localhost:3000' ||
   origin === 'http://localhost:3001' ||
-  origin === 'https://sphinx-jarvis-david.sphinx1.repl.co' ||
-  origin === 'https://3000-manyrios-sphinxnavfiber-w9oqq2lqunb.ws-us107.gitpod.io'
+  origin === 'https://sphinx-jarvis-david.sphinx1.repl.co'
 )
 
 const getUrlFormEnv = () => import.meta.env.VITE_APP_API_URL
