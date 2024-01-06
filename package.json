@@ -171,6 +171,77 @@
     "vite-plugin-svgr": "^3.2.0",
     "vite-tsconfig-paths": "^4.2.0"
   },
+  "jest": {
+    "collectCoverage": true,
+    "collectCoverageFrom": [
+      "./src/**/*.js",
+      "./src/**/*.ts",
+      "./src/**/*.spec.tsx"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "lines": 2
+      },
+      "./src/components/**/utils/**.ts": {
+        "lines": 100
+      },
+      "./src/utils/": {
+        "lines": 27,
+        "branches": 37,
+        "functions": 36
+      },
+      "./src/network/": {
+        "lines": 31,
+        "branches": 22,
+        "functions": 27
+      }
+    },
+    "preset": "ts-jest",
+    "transform": {
+      "^.+\\.(ts|tsx)?$": [
+        "ts-jest",
+        {
+          "diagnostics": {
+            "ignoreCodes": [1343]
+          },
+          "astTransformers": {
+            "before": [
+              {
+                "path": "ts-jest-mock-import-meta",
+                "options": { "metaObjectReplacement": { "env": {} } }
+              }
+            ]
+          },
+          "isolatedModules": true,
+          "useESM": true
+        }
+
+      ],
+      "^.+\\.(js|jsx)$": "babel-jest"
+    },
+    "modulePaths": [
+      "<rootDir>"
+    ],
+    "moduleNameMapper": {
+      "react-markdown": "<rootDir>/node_modules/react-markdown/react-markdown.min.js",
+      "~/(.*)$": "<rootDir>/src/$1"
+    },
+    "moduleDirectories": [
+      "node_modules",
+      "<rootDir>"
+    ],
+    "globals": {
+      "window": {
+        "location": {
+          "host": "localhost"
+        }
+      },
+      "testEnvironment": "jsdom"
+    },
+    "testEnvironment": "jsdom",
+    "automock": false,
+    "resetMocks": false
+  },
   "packageManager": "yarn@3.5.0",
   "engines": {
     "node": ">=16.0.0"

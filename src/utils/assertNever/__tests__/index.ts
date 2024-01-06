@@ -1,4 +1,4 @@
-import { assertNever } from '..'
+import { assertNever } from '..';
 
 describe('assertNever', () => {
   it('should assert a message with the correct message', () => {
@@ -8,6 +8,6 @@ describe('assertNever', () => {
       while (true) {}
     }
 
-    expect(() => assertNever(obj)).toThrowError()
+    expect(() => assertNever(obj)).toThrowError();
   })
 })

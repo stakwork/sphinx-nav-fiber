@@ -8,7 +8,7 @@ describe('formatBudget', () => {
   it('should assert we format the budeget properly', async () => {
     expect(formatBudget(null)).toBe('?')
     expect(formatBudget(25)).toBe('25')
-    expect(formatBudget(7000000)).toBe('70 00 000')
+    expect(formatBudget(7000000)).toBe('7 000 000')
     expect(formatBudget('700000')).toBe('700000')
   })
 })
