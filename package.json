@@ -97,42 +97,6 @@
       "react-app/jest"
     ]
   },
-  "jest": {
-    "collectCoverage": true,
-    "collectCoverageFrom": [
-      "./src/**/*.js",
-      "./src/**/*.ts"
-    ],
-    "coverageThreshold": {
-      "global": {
-        "lines": 2
-      },
-      "./src/components/**/utils/**.ts": {
-        "lines": 100
-      },
-      "./src/utils/": {
-        "lines": 27,
-        "branches": 37,
-        "functions": 36
-      },
-      "./src/network/": {
-        "lines": 31,
-        "branches": 22,
-        "functions": 27
-      }
-    },
-    "moduleNameMapper": {
-      "~/(.*)": "<rootDir>/src/$1"
-    },
-    "globals": {
-      "window": {
-        "location": {
-          "origin": "localhost",
-          "host": "localhost"
-        }
-      }
-    }
-  },
   "browserslist": {
     "production": [
       ">0.2%",
@@ -196,6 +160,8 @@
     "rollup-plugin-node-builtins": "^2.1.2",
     "rollup-plugin-node-polyfills": "^0.2.1",
     "rollup-plugin-polyfill-node": "^0.12.0",
+    "ts-jest": "^29.1.1",
+    "ts-jest-mock-import-meta": "^1.1.0",
     "typescript": "4.9.5",
     "vite": "^4.4.11",
     "vite-compatible-readable-stream": "^3.6.1",
