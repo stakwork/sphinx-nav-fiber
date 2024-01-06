@@ -1,11 +1,9 @@
 {
   "collectCoverage": true,
   "collectCoverageFrom": [
-    "./src/**/*.{ts,jxs,tsx,js}",
-    "!src/**/*.spec.tsx",
-    "!src/**/*.spec.ts",
-    "!src/**/*.Spec.tsx",
-    "!src/**/*.Spec.ts"
+    "./src/**/*.js",
+    "./src/**/*.ts",
+    "./src/**/*.tsx"
   ],
   "coverageThreshold": {
     "global": {
@@ -39,7 +37,7 @@
       "ts-jest",
       {
         "diagnostics": {
-          "ignoreCodes": [1343,2554]
+          "ignoreCodes": [1343]
         },
         "astTransformers": {
           "before": [
