@@ -15,6 +15,8 @@ describe('test extracting uuid and tribe host', () => {
 
     const expectedEndpoint = `/isAdmin?msg=${authRequest.message}&sig=${authRequest.signature}&tribe_host=${authRequest.tribeHost}&uuid=${authRequest.tribeUuid}`
 
+    mockApiGet.mockReturnValue(Promise.resolve({ isAdmin: false }))
+
     getIsAdmin(authRequest)
 
     expect(mockApiGet).toHaveBeenCalledWith(expectedEndpoint)
