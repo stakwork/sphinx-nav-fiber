@@ -131,7 +131,9 @@
           "host": "localhost"
         }
       }
-    }
+    },
+    "testEnvironment": "jsdom",
+    "setupFilesAfterEnv": ["<rootDir>/jest.setup.js"]
   },
   "browserslist": {
     "production": [
