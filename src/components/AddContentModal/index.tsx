@@ -8,6 +8,7 @@ import {
   LINK,
   NODE_ADD_ERROR,
   NODE_ADD_SUCCESS,
+  RSS,
   TWITTER_HANDLE,
   TWITTER_SOURCE,
   WEB_PAGE,
@@ -78,7 +79,7 @@ const handleSubmitForm = async (
     } else {
       return
     }
-  } else if (sourceType === YOUTUBE_CHANNEL) {
+  } else if (sourceType === YOUTUBE_CHANNEL || sourceType === RSS) {
     body.source = data.source
     body.source_type = sourceType
   }

@@ -60,7 +60,7 @@ export const SearchBar = ({ loading, onSubmit }: Props) => {
           onSubmit?.()
         }
       }}
-      placeholder="Search (10 sats)"
+      placeholder="Search"
       type="text"
     />
   )
