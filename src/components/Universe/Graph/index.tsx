@@ -20,8 +20,6 @@ export const Graph = () => {
   const selectionGraphData = useDataStore((s) => s.selectionGraphData)
   const selectedNode = useDataStore((s) => s.selectedNode)
 
-  const isPerson = selectedNode?.node_type === 'guest'
-
   const lineWidth = useMemo(() => {
     if (showSelectionGraph) {
       return 0
@@ -96,7 +94,7 @@ export const Graph = () => {
           {nodeBadges}
         </Segments>
       )}
-       { !isPerson && <NodeDetailsPanel />}
+      <NodeDetailsPanel />
     </>
   )
 }
