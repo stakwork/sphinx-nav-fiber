@@ -154,7 +154,7 @@ export type Trending = {
   count: number
   topic: string
   tldr?: string
-  tldr_topic: string | null
+  tldr_topic?: string | null
   audio_EN?: string
 }
 
