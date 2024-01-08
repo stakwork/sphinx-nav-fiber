@@ -12,7 +12,7 @@ import { getTrends } from '~/network/fetchGraphData'
 import { useDataStore } from '~/stores/useDataStore'
 import { useModal } from '~/stores/useModalStore'
 import { Trending as TrendingType } from '~/types'
-import { getTrendingTopic } from '~/utils'
+import { getTrendingTopic, showPlayButton } from '~/utils'
 import { colors } from '~/utils/colors'
 import { BriefDescription } from './BriefDescriptionModal'
 
@@ -126,7 +126,7 @@ export const Trending = ({ onSubmit }: Props) => {
               {loading ? <ClipLoader color={colors.PRIMARY_BLUE} size={16} /> : <SentimentDataIcon />}
             </span>
           </div>
-          {trendingTopics.some((topic) => topic.audio_EN) ? (
+          {showPlayButton(trendingTopics) ? (
             <div>
               <Button onClick={(e) => handleClick(e)} startIcon={playing ? <PauseIcon /> : <PlayIcon />}>
                 {playing ? 'Pause' : 'Play All'}
