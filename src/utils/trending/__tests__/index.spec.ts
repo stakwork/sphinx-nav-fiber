@@ -1,4 +1,4 @@
-import { showPlayButton, getTrendingTopic } from '../index'
+import { getTrendingTopic, showPlayButton } from '../index'
 
 describe('trending', () => {
   it('should return topic if tldr not present', () => {
@@ -6,7 +6,7 @@ describe('trending', () => {
   })
 
   it('should return tldr if tldr present', () => {
-    expect(getTrendingTopic({ topic: 'topic', tldr: 'tldr', count: 1 })).toEqual('tldr')
+    expect(getTrendingTopic({ topic: 'topic', tldr: 'tldr', tldr_topic: 'tldr_topic', count: 1 })).toEqual('tldr_topic')
   })
 })
 
