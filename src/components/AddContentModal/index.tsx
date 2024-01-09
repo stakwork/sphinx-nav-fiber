@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import * as sphinx from 'sphinx-bridge'
-import { BaseModal } from '~/components/Modal'
 import { notify } from '~/components/common/Toast/toastMessage'
+import { BaseModal } from '~/components/Modal'
 import {
   DOCUMENT,
   LINK,
@@ -18,7 +18,7 @@ import { api } from '~/network/api'
 import { useModal } from '~/stores/useModalStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { SubmitErrRes } from '~/types'
-import { executeIfProd, generateAuthQueryParam, getLSat, payLsat, updateBudget } from '~/utils'
+import { executeIfProd, getLSat, payLsat, updateBudget } from '~/utils'
 import { BudgetStep } from './BudgetStep'
 import { LocationStep } from './LocationStep'
 import { SourceStep } from './SourceStep'
@@ -103,15 +103,7 @@ const handleSubmitForm = async (
   })
 
   try {
-    let query = ''
-
-    if (endPoint === 'radar') {
-      const result = await generateAuthQueryParam()
-
-      query = `?${result}`
-    }
-
-    const res: SubmitErrRes = await api.post(`/${endPoint}${query}`, JSON.stringify(body), {
+    const res: SubmitErrRes = await api.post(`/${endPoint}`, JSON.stringify(body), {
       Authorization: lsatToken,
     })
 
