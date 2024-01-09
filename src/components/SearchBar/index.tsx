@@ -45,7 +45,7 @@ const Input = styled.input.attrs(() => ({
       background-position-x: 95%;
       background-repeat: no-repeat;
     `}
-`
+`;
 
 export const SearchBar = ({ loading, onSubmit }: Props) => {
   const { register } = useFormContext()
@@ -55,7 +55,6 @@ export const SearchBar = ({ loading, onSubmit }: Props) => {
       {...register('search')}
       disabled={loading}
       id="main-search"
-      loading={loading}
       onKeyPress={(event) => {
         if (event.key === 'Enter') {
           onSubmit?.()
@@ -63,6 +62,7 @@ export const SearchBar = ({ loading, onSubmit }: Props) => {
       }}
       placeholder="Search"
       type="text"
+      data-loading={loading ? 'true' : 'false'} //Add for testing purposes
     />
   )
 }
