@@ -146,6 +146,8 @@ const VolumeControl = styled(Flex)`
 const Fullscreen = styled(Flex)`
   cursor: pointer;
   padding: 8px;
+  font-size: 32px;
+  color: #d9d9d9;
 `
 
 const ProgressSlider = styled(Slider)`
