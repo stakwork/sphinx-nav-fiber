@@ -142,6 +142,8 @@ export const App = () => {
   const handleAuth = useCallback(async () => {
     try {
       await executeIfProd(async () => {
+        localStorage.removeItem('admin')
+
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         const sphinxEnable = await sphinx.enable()
@@ -158,6 +160,7 @@ export const App = () => {
         })
 
         if (isAdmin.isAdmin) {
+          localStorage.setItem('admin', JSON.stringify({ isAdmin: true }))
           setIsAdmin(true)
         }
       })
