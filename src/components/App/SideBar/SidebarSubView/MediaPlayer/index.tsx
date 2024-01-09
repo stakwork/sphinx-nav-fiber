@@ -122,7 +122,7 @@ const MediaPlayerComponent: FC<Props> = ({ hidden }) => {
   useEffect(() => {
     const handleMouseMove = (event: MouseEvent) => {
       if (isFullScreen) {
-        const windowHeight = window.innerHeight
+        const windowHeight = window.screen.height
         const mousePositionY = event.clientY
         const distanceFromBottom = windowHeight - mousePositionY
         const threshold = 100 // Adjust this value as needed
@@ -136,7 +136,7 @@ const MediaPlayerComponent: FC<Props> = ({ hidden }) => {
     return () => {
       document.removeEventListener('mousemove', handleMouseMove)
     }
-  }, [isFullScreen])
+  }, [isFullScreen, isMouseNearBottom])
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -163,7 +163,7 @@ const MediaPlayerComponent: FC<Props> = ({ hidden }) => {
       <ReactPlayer
         ref={playerRef}
         controls={false}
-        height={!isFullScreen ? '200px' : 'auto'}
+        height={!isFullScreen ? '200px' : window.screen.height}
         onBuffer={() => setIsBuffering(true)}
         onBufferEnd={() => setIsBuffering(false)}
         onError={handleError}
