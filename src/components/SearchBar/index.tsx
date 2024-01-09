@@ -45,7 +45,7 @@ const Input = styled.input.attrs(() => ({
       background-position-x: 95%;
       background-repeat: no-repeat;
     `}
-`;
+`
 
 export const SearchBar = ({ loading, onSubmit }: Props) => {
   const { register } = useFormContext()
