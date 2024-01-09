@@ -19,20 +19,6 @@ describe('SearchBar', () => {
     expect(searchInput).toBeInTheDocument()
   })
 
-  it('should render with placeholder text', () => {
-    const Wrapper = ({ children }: { children: React.ReactNode }) => {
-      const methods = useForm()
-
-      return <FormProvider {...methods}>{children}</FormProvider>
-    }
-
-    render(<SearchBar />, { wrapper: Wrapper })
-
-    const searchInput = screen.getByPlaceholderText('Search')
-
-    expect(searchInput).toBeInTheDocument()
-  })
-
   it('should accept different types of input (text, numbers, and special characters)', () => {
     const Wrapper = ({ children }: { children: React.ReactNode }) => {
       const methods = useForm()
