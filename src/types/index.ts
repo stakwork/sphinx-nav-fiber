@@ -187,8 +187,6 @@ export type SubmitErrRes = {
 
 export type AuthRequest = {
   message: string
-  tribeHost: string
-  tribeUuid: string
   signature: string
 }
 
