@@ -154,7 +154,7 @@ export type Trending = {
   count: number
   topic: string
   tldr?: string
-  tldr_topic?: string
+  tldr_topic?: string | null
   audio_EN?: string
 }
 
@@ -187,8 +187,6 @@ export type SubmitErrRes = {
 
 export type AuthRequest = {
   message: string
-  tribeHost: string
-  tribeUuid: string
   signature: string
 }
 
