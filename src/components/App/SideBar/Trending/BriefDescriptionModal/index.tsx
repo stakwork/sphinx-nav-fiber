@@ -62,7 +62,7 @@ export const BriefDescription: FC<Props> = ({ trend, onClose }) => {
           </StyledAudio>
         </>
       ) : null}
-      <Title>{trend.topic}</Title>
+      <Title>{trend.tldr_topic ?? trend.topic}</Title>
       <ScrollableContent>
         <Flex>
           <StyledText>
