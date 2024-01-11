@@ -7,6 +7,7 @@ describe('Show the nodeDetails only if not a person or guess', () => {
   it('Show the sideBarSubView if selected node is not person or guest', async () => {
     const selectedNodeType = NodeType[number]
     const sideBarSubView = selectedNodeType !== 'guest'
+
     expect(sideBarSubView).toBeTruthy();
   })
 
