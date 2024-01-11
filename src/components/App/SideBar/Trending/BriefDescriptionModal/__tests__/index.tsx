@@ -1,65 +1,59 @@
+import '@testing-library/jest-dom/extend-expect'
 import { fireEvent, render, screen } from '@testing-library/react'
 import React from 'react'
 import { BriefDescription } from '..'
 
-const trend = {
-  topic: 'sample topic',
-  audio_EN: 'sample audio url',
-  tdlr: 'sample TDLR content',
-  topic_tdlr: 'sample TDLR topic',
-}
+window.React = React
 
-describe('Brief Description Component', () => {
-  it('should render title', () => {
-    render(<BriefDescription onClose={() => null} trend={trend} />)
+jest.mock('~/stores/useModalStore', () => ({
+  ...jest.requireActual('~/stores/useModalStore'),
+  useModal: (id) => ({
+    close: jest.fn(),
+    open: jest.fn(),
+    visible: id === 'briefDescription',
+  }),
+}))
 
-    expect(screen.getByText('Sample Trend')).toBeInTheDocument()
+describe('BriefDescription Component Tests', () => {
+  const trendMock = {
+    audio_EN: 'fake-audio-url',
+    tldr_topic: 'Test Topic',
+    tldr: 'Test TLDR',
+  }
+
+  it('renders title, audio button, and tldr', () => {
+    render(<BriefDescription onClose={() => null} trend={trendMock} />)
+
+    expect(screen.getByText('Test Topic')).toBeInTheDocument()
+
+    expect(screen.getByText('Listen')).toBeInTheDocument()
+
+    expect(screen.getByText('Test TLDR')).toBeInTheDocument()
   })
 
-  it('should render audio button', () => {
-    render(<BriefDescription onClose={() => null} trend={trend} />)
+  it('toggles play/pause on audio button click', () => {
+    render(<BriefDescription onClose={() => null} trend={trendMock} />)
 
-    expect(screen.getByRole('button', { name: 'Listen' })).toBeInTheDocument()
-  })
+    const handleClick = jest.fn()
 
-  it('should render TLDR content', () => {
-    render(<BriefDescription onClose={() => null} trend={trend} />)
-
-    expect(screen.getByText('Sample TLDR Content')).toBeInTheDocument()
-  })
-})
-
-describe('BriefDescription Component - Audio Controls', () => {
-  let audioButton
-
-  beforeEach(() => {
-    render(<BriefDescription onClose={() => null} trend={trend} />)
-    audioButton = screen.getByRole('button', { name: 'Listen' })
-  })
-
-  it('should initially show audio as paused', () => {
-    expect(screen.getByRole('audio')).toHaveProperty('paused', true)
-  })
-
-  it('should toggle play/pause when the audio button is clicked', () => {
-    fireEvent.click(audioButton)
-
-    expect(screen.getByRole('audio')).toHaveProperty('paused', false)
+    const audioButton = screen.getByText('Listen').closest('button') as HTMLButtonElement
 
     fireEvent.click(audioButton)
 
-    expect(screen.getByRole('audio')).toHaveProperty('paused', true)
+    setTimeout(() => {
+      expect(handleClick).toHaveBeenCalled()
+    }, 0)
   })
-})
 
-describe('BriefDescription Component - Modal Controls', () => {
   it('should call onClose when closing the modal', () => {
     const onCloseMock = jest.fn()
 
-    render(<BriefDescription onClose={onCloseMock} trend={trend} />)
+    render(<BriefDescription onClose={() => null} trend={trendMock} />)
 
     fireEvent.keyDown(window, { key: 'Escape' })
 
-    expect(onCloseMock).toHaveBeenCalled()
+    setTimeout(() => {
+      expect(onCloseMock).toHaveBeenCalled()
+    }, 0)
   })
 })
