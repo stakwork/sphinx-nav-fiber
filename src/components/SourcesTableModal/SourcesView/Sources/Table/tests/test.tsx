@@ -45,6 +45,7 @@ describe('Table Component Tests', () => {
     const sourceTypeCell = within(firstRow.cells[1]).getByText(expectedSourceTypeText)
 
     let sourceCellText = mockData[0].source
+
     if (mockData[0].source_type === TWITTER_HANDLE) {
       // Use template literal here
       sourceCellText = `@${sourceCellText}`
