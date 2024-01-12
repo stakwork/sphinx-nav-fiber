@@ -5,10 +5,10 @@ import 'react-toastify/dist/ReactToastify.css'
 import { Socket } from 'socket.io-client'
 import * as sphinx from 'sphinx-bridge'
 import styled from 'styled-components'
-import { Flex } from '~/components/common/Flex'
 import { DataRetriever } from '~/components/DataRetriever'
 import { GlobalStyle } from '~/components/GlobalStyle'
 import { Universe } from '~/components/Universe'
+import { Flex } from '~/components/common/Flex'
 import { isDevelopment, isE2E } from '~/constants'
 import useSocket from '~/hooks/useSockets'
 import { getIsAdmin } from '~/network/auth'
@@ -123,9 +123,24 @@ export const App = () => {
 
   const repositionGraphDataAfterStyleChange = () => {
     if (data) {
-      const updatedData: GraphData = getGraphDataPositions(graphStyle, data.nodes)
+      const GraphUpdatedData = new Promise((Resolve, Reject) => {
+        try {
+          useDataStore.setState({ isFetching: true })
 
-      setData(updatedData)
+          const updatedData: GraphData = getGraphDataPositions(graphStyle, data.nodes)
+
+          setData(updatedData)
+
+          Resolve(updatedData)
+        } catch (error) {
+          useDataStore.setState({ isFetching: false })
+          Reject(error)
+        }
+      })
+
+      GraphUpdatedData.then(() => {
+        useDataStore.setState({ isFetching: false })
+      })
     }
   }
 
