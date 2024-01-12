@@ -14,9 +14,11 @@ type Props = {
 
 const MediaPlayerComponent: FC<Props> = ({ hidden }) => {
   const playerRef = useRef<ReactPlayer | null>(null)
-
+  const wrapperRef = useRef<HTMLDivElement | null>(null)
+  const [isFullScreen, setIsFullScreen] = useState(false)
   const [isBuffering, setIsBuffering] = useState(false)
   const [isReady, setIsReady] = useState(false)
+  const [isMouseNearBottom, setIsMouseNearBottom] = useState(false)
 
   const [
     isPlaying,
@@ -95,24 +97,75 @@ const MediaPlayerComponent: FC<Props> = ({ hidden }) => {
     }
   }
 
-  const handleVideoClick = () => {
-    if (isReady) {
-      togglePlay()
+  const toggleFullScreen = () => {
+    if (wrapperRef.current) {
+      if (!document.fullscreenElement) {
+        wrapperRef.current.requestFullscreen().then(() => {
+          document.addEventListener('fullscreenchange', handleFullScreenChange)
+        })
+      } else {
+        document.exitFullscreen()
+        setIsFullScreen(false)
+      }
     }
   }
 
+  const handleFullScreenChange = () => {
+    setIsFullScreen(!!document.fullscreenElement)
+    document.removeEventListener('fullscreenchange', handleFullScreenChange)
+  }
+
+  useEffect(() => () => {
+    document.removeEventListener('fullscreenchange', handleFullScreenChange)
+  })
+
+  useEffect(() => {
+    const handleMouseMove = (event: MouseEvent) => {
+      if (isFullScreen) {
+        const windowHeight = window.innerHeight
+        const mousePositionY = event.clientY
+        const distanceFromBottom = windowHeight - mousePositionY
+        const threshold = 100 // Adjust this value as needed
+
+        setIsMouseNearBottom(distanceFromBottom <= threshold)
+      }
+    }
+
+    document.addEventListener('mousemove', handleMouseMove)
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove)
+    }
+  }, [isFullScreen])
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (isFullScreen && event.key === 'Escape') {
+        event.preventDefault()
+        event.stopPropagation()
+      }
+    }
+
+    document.addEventListener('fullscreenchange', handleFullScreenChange)
+    document.addEventListener('keydown', handleKeyDown)
+
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullScreenChange)
+      document.removeEventListener('keydown', handleKeyDown)
+    }
+  })
+
   return playingNode ? (
-    <Wrapper hidden={hidden} onClick={handleVideoClick}>
+    <Wrapper ref={wrapperRef} hidden={hidden}>
       <Cover>
         <Avatar size={120} src={playingNode?.image_url || ''} type="clip" />
       </Cover>
       <ReactPlayer
         ref={playerRef}
         controls={false}
-        height="200px"
+        height={!isFullScreen ? '200px' : 'auto'}
         onBuffer={() => setIsBuffering(true)}
         onBufferEnd={() => setIsBuffering(false)}
-        onClick={() => handleVideoClick()}
         onError={handleError}
         onPause={handlePause}
         onPlay={handlePlay}
@@ -130,8 +183,10 @@ const MediaPlayerComponent: FC<Props> = ({ hidden }) => {
           handleVolumeChange={handleVolumeChange}
           hasError={hasError}
           isPlaying={isPlaying}
+          onFullScreenClick={toggleFullScreen}
           playingTime={playingTime}
           setIsPlaying={togglePlay}
+          showToolbar={isMouseNearBottom && isFullScreen} // New prop to conditionally show toolbar
         />
       ) : null}
       {isBuffering || !isReady ? (
