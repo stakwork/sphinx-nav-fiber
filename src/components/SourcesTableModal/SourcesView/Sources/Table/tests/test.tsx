@@ -39,15 +39,15 @@ describe('Table Component Tests', () => {
     render(<Table canEdit={false} data={mockData} />)
 
     const rows = screen.getAllByRole('row')
-    const firstRow = rows[1] as HTMLTableRowElement // Type assertion here
+    const firstRow = rows[1] as HTMLTableRowElement
 
     const expectedSourceTypeText = sourcesMapper[mockData[0].source_type]
     const sourceTypeCell = within(firstRow.cells[1]).getByText(expectedSourceTypeText)
 
     let sourceCellText = mockData[0].source
-
     if (mockData[0].source_type === TWITTER_HANDLE) {
-      sourceCellText = '@' + sourceCellText // Adjust for Twitter handles
+      // Use template literal here
+      sourceCellText = `@${sourceCellText}`
     }
 
     const sourceCell = within(firstRow.cells[2]).getByText(sourceCellText)
