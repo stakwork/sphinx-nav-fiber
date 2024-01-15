@@ -94,7 +94,6 @@ export const Graph = () => {
           {nodeBadges}
         </Segments>
       )}
-
       <NodeDetailsPanel />
     </>
   )

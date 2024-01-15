@@ -138,7 +138,11 @@ export const SideBar = ({ onSubmit }: Props) => {
   const selectedNode = useSelectedNode()
 
   const subViewIsOpen =
-    !!selectedNode && selectedNode.node_type !== 'topic' && sidebarIsOpen && selectedNode.node_type !== 'person'
+    !!selectedNode &&
+    selectedNode.node_type !== 'topic' &&
+    sidebarIsOpen &&
+    selectedNode.node_type !== 'person' &&
+    selectedNode.node_type !== 'guest'
 
   const [showTeachMe] = useDataStore((s) => [s.showTeachMe])
 

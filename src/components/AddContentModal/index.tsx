@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react'
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import * as sphinx from 'sphinx-bridge'
-import { BaseModal } from '~/components/Modal'
 import { notify } from '~/components/common/Toast/toastMessage'
+import { BaseModal } from '~/components/Modal'
 import {
   DOCUMENT,
   LINK,
   NODE_ADD_ERROR,
   NODE_ADD_SUCCESS,
+  RSS,
   TWITTER_HANDLE,
   TWITTER_SOURCE,
   WEB_PAGE,
@@ -17,7 +18,7 @@ import { api } from '~/network/api'
 import { useModal } from '~/stores/useModalStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { SubmitErrRes } from '~/types'
-import { executeIfProd, generateAuthQueryParam, getLSat, payLsat, updateBudget } from '~/utils'
+import { executeIfProd, getLSat, payLsat, updateBudget } from '~/utils'
 import { BudgetStep } from './BudgetStep'
 import { LocationStep } from './LocationStep'
 import { SourceStep } from './SourceStep'
@@ -78,7 +79,7 @@ const handleSubmitForm = async (
     } else {
       return
     }
-  } else if (sourceType === YOUTUBE_CHANNEL) {
+  } else if (sourceType === YOUTUBE_CHANNEL || sourceType === RSS) {
     body.source = data.source
     body.source_type = sourceType
   }
@@ -102,15 +103,7 @@ const handleSubmitForm = async (
   })
 
   try {
-    let query = ''
-
-    if (endPoint === 'radar') {
-      const result = await generateAuthQueryParam()
-
-      query = `?${result}`
-    }
-
-    const res: SubmitErrRes = await api.post(`/${endPoint}${query}`, JSON.stringify(body), {
+    const res: SubmitErrRes = await api.post(`/${endPoint}`, JSON.stringify(body), {
       Authorization: lsatToken,
     })
 
