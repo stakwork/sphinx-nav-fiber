@@ -121,9 +121,9 @@ export const App = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchTerm, runSearch])
 
-  const repositionGraphDataAfterStyleChange = () => {
+ const repositionGraphDataAfterStyleChange = () => {
     if (data) {
-      const GraphUpdatedData = new Promise((Resolve, Reject) => {
+      const GraphUpdatedData = new Promise((resolve, reject) => {
         try {
           useDataStore.setState({ isFetching: true })
 
@@ -131,15 +131,15 @@ export const App = () => {
 
           setData(updatedData)
 
-          Resolve(updatedData)
+          resolve(updatedData)
         } catch (error) {
           useDataStore.setState({ isFetching: false })
-          Reject(error)
+          reject(error)
         }
       })
 
-      GraphUpdatedData.then(() => {
-        useDataStore.setState({ isFetching: false })
+      GraphUpdatedData.then(async () => {
+        await useDataStore.setState({ isFetching: false })
       })
     }
   }
