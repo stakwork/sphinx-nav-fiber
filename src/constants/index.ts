@@ -21,9 +21,9 @@ export const isDevelopment = !!(
   origin === 'https://sphinx-jarvis-david.sphinx1.repl.co'
 )
 
-// const getUrlFormEnv = () => import.meta.env.VITE_APP_API_URL
+const getUrlFormEnv = () => import.meta.env.VITE_APP_API_URL
 
-export const API_URL = apiUrlFromSwarmHost() || 'https://knowledge-graph.sphinx.chat'
+export const API_URL = getUrlFormEnv() || apiUrlFromSwarmHost() || 'https://knowledge-graph.sphinx.chat'
 
 export const isChileGraph = API_URL.includes('boltwall')
 
@@ -32,6 +32,8 @@ function apiUrlFromSwarmHost(): string | undefined {
   // for now, only if the URL contains "swarm"
   const originUrl = window.location.origin
 
+  let url = originUrl
+
   if (host.includes('swarm')) {
     if (host.startsWith('nav')) {
       const hostArray = host.split('.')
@@ -39,15 +41,14 @@ function apiUrlFromSwarmHost(): string | undefined {
       hostArray[0] = 'boltwall'
 
       const finalHost = hostArray.join('.')
-      const apiUrl = `https://${finalHost}`
 
-      return `${apiUrl}/api`
+      url = `https://${finalHost}`
     }
   } else if (originUrl === 'https://second-brain.sphinx.chat') {
-    return 'https://knowledge-graph.sphinx.chat/api'
+    url = 'https://knowledge-graph.sphinx.chat'
   }
 
-  return `${originUrl}/api`
+  return `${url}/api`
 }
 
 export const AWS_IMAGE_BUCKET_URL = 'https://stakwork-uploads.s3.amazonaws.com/'
