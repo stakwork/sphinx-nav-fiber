@@ -32,6 +32,8 @@ function apiUrlFromSwarmHost(): string | undefined {
   // for now, only if the URL contains "swarm"
   const originUrl = window.location.origin
 
+  let url = originUrl
+
   if (host.includes('swarm')) {
     if (host.startsWith('nav')) {
       const hostArray = host.split('.')
@@ -39,15 +41,14 @@ function apiUrlFromSwarmHost(): string | undefined {
       hostArray[0] = 'boltwall'
 
       const finalHost = hostArray.join('.')
-      const apiUrl = `https://${finalHost}`
 
-      return apiUrl
+      url = `https://${finalHost}`
     }
   } else if (originUrl === 'https://second-brain.sphinx.chat') {
-    return 'https://knowledge-graph.sphinx.chat'
+    url = 'https://knowledge-graph.sphinx.chat'
   }
 
-  return originUrl
+  return `${url}/api`
 }
 
 export const AWS_IMAGE_BUCKET_URL = 'https://stakwork-uploads.s3.amazonaws.com/'
