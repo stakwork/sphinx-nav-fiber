@@ -20,7 +20,7 @@ import { useIsMatchBreakpoint } from './useIsMatchBreakpoint'
 import { extractUuidAndHost } from './auth'
 import { generateAuthQueryParam, getSignedMessageFromRelay } from './getSignedMessage'
 import { videoTimeToSeconds } from './videoTimetoSeconds'
-import { getTrendingTopic } from './trending'
+import { showPlayButton, getTrendingTopic } from './trending'
 import { formatNumberWithCommas } from './formatStats'
 
 export {
@@ -50,6 +50,7 @@ export {
   getSignedMessageFromRelay,
   extractUuidAndHost,
   generateAuthQueryParam,
+  showPlayButton,
   getTrendingTopic,
   formatNumberWithCommas,
 }

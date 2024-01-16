@@ -1,8 +1,8 @@
 import { IconButton, Slider } from '@mui/material'
 import { FC } from 'react'
 import styled from 'styled-components'
-import FullScreenIcon from '~/components/Icons/FullScreenIcon'
 import ExitFullScreen from '~/components/Icons/ExitFullScreen'
+import FullScreenIcon from '~/components/Icons/FullScreenIcon'
 import PauseIcon from '~/components/Icons/PauseIcon'
 import PlayIcon from '~/components/Icons/PlayIcon'
 import VolumeIcon from '~/components/Icons/VolumeIcon'
@@ -34,13 +34,15 @@ export const Toolbar: FC<Props> = ({
   showToolbar,
 }) => (
   <Flex>
-    <ProgressSlider
-      aria-label="Small"
-      max={duration}
-      onChange={handleProgressChange}
-      size="small"
-      value={playingTime}
-    />
+    {!showToolbar && (
+      <ProgressSlider
+        aria-label="Small"
+        max={duration}
+        onChange={handleProgressChange}
+        size="small"
+        value={playingTime}
+      />
+    )}
     {hasError ? (
       <Wrapper className="error-wrapper" showToolbar={showToolbar}>
         Error happened, please try later
@@ -85,7 +87,8 @@ const Wrapper = styled(Flex)<{ showToolbar: boolean }>`
     bottom: 0;
     left: 0;
     right: 0;
-    z-index: 9999;
+    z-index:1;
+    background-color: rgba(0, 0, 0, 0.6);
   `}
 
   &.error-wrapper {
@@ -142,10 +145,14 @@ const VolumeControl = styled(Flex)`
 
 const Fullscreen = styled(Flex)`
   cursor: pointer;
+  padding: 8px;
+  font-size: 32px;
+  color: #d9d9d9;
 `
 
 const ProgressSlider = styled(Slider)`
   && {
+    z-index: 20;
     color: ${colors.white};
     height: 3px;
     width: calc(100% - 12px);

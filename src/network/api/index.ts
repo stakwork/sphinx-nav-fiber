@@ -1,7 +1,27 @@
 import { API_URL } from '~/constants'
+import { getSignedMessageFromRelay } from '~/utils'
 
 const request = async <Res>(url: string, config?: RequestInit): Promise<Res> => {
-  const response = await fetch(url, config)
+  const admin = localStorage.getItem('admin')
+
+  let updatedUrl = url
+
+  if (admin) {
+    const newUrl = new URL(url)
+
+    const existingParams = new URLSearchParams(newUrl.search)
+
+    const adminAuth = await getSignedMessageFromRelay()
+
+    existingParams.append('sig', adminAuth.signature)
+    existingParams.append('msg', adminAuth.message)
+
+    newUrl.search = existingParams.toString()
+
+    updatedUrl = newUrl.toString()
+  }
+
+  const response = await fetch(updatedUrl, config)
 
   if (!response.ok) {
     throw response
