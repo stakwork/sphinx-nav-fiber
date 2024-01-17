@@ -3,7 +3,7 @@ import { FC } from 'react'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
-import { TWITTER_HANDLE, YOUTUBE_CHANNEL , RSS} from '~/constants'
+import { TWITTER_HANDLE, YOUTUBE_CHANNEL, RSS } from '~/constants'
 import { colors } from '~/utils'
 import { extractNameFromLink } from '../utils'
 
@@ -17,7 +17,7 @@ type Props = {
 const CONTENT_TYPE_MAPPING: Record<string, string> = {
   [TWITTER_HANDLE]: 'Twitter handle',
   [YOUTUBE_CHANNEL]: 'Youtube channel',
-  [RSS]: 'RSS Feed'
+  [RSS]: 'RSS Feed',
 }
 
 export const SourceTypeStep: FC<Props> = ({ onNextStep, onPrevStep, type, value }) => (
