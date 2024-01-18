@@ -94,19 +94,19 @@ const Table: React.FC<Props> = ({ data, canEdit = false }) => {
                   </EditableCell>
                 )}
               >
-                {i.source_type === TWITTER_HANDLE || i.source_type === RSS || i.source_type === YOUTUBE_CHANNEL ? (
+                {i.source_type === TWITTER_HANDLE || i.source_type === YOUTUBE_CHANNEL || i.source_type === RSS ? (
                   <>
                     {i.source_type === TWITTER_HANDLE && (
                       <StyledLink href={`${TWITTER_LINK}/${i.source}`} target="_blank">
                         @{i.source}
                       </StyledLink>
                     )}
-                    {i.source_type === RSS && (
+                    {i.source_type === YOUTUBE_CHANNEL && (
                       <StyledLink href={i.source} target="_blank">
                         {i.source}
                       </StyledLink>
                     )}
-                    {i.source_type === YOUTUBE_CHANNEL && (
+                    {i.source_type === RSS && (
                       <StyledLink href={i.source} target="_blank">
                         {i.source}
                       </StyledLink>
