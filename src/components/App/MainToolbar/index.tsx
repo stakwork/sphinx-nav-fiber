@@ -17,7 +17,7 @@ export const MainToolbar = () => {
       <LogoButton>
         <img alt="Second brain" src="logo.svg" />
       </LogoButton>
-      <ActionButton onClick={openContentAddModal}>
+      <ActionButton data-testid="add-content-modal" onClick={openContentAddModal}>
         <IconWrapper>
           <AddContentIcon />
         </IconWrapper>
@@ -29,7 +29,7 @@ export const MainToolbar = () => {
         </IconWrapper>
         <Text>Source Table</Text>
       </ActionButton>
-      <ActionButton onClick={openSettingsModal}>
+      <ActionButton data-testid="settings-modal" onClick={openSettingsModal}>
         <IconWrapper>
           <SettingsIcon />
         </IconWrapper>
