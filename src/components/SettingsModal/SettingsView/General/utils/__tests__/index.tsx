@@ -1,9 +1,10 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { General } from '../../index'; // Adjust the import path based on your project structure
+import { General } from '../../index';
 import { postAboutData } from '~/network/fetchSourcesData';
 import { useAppStore } from '~/stores/useAppStore';
+import * as fetchSourcesDataModule from '~/network/fetchSourcesData';
 
 jest.mock('~/network/fetchSourcesData');
 jest.mock('~/stores/useAppStore');
@@ -36,21 +37,30 @@ describe('General', () => {
     });
 
     it('should call postAboutData on form submission', async () => {
+        const postAboutDataSpy = jest.spyOn(fetchSourcesDataModule, 'postAboutData');
+
         render(<General initialValues={{}} />);
 
-        fireEvent.click(screen.getByRole('button', { name: /save changes/i }));
+        await fireEvent.click(screen.getByRole('button', { name: /save changes/i }));
 
-        await waitFor(() => expect(postAboutData).toHaveBeenCalled());
+        (async () => {
+            await waitFor(() => {
+                expect(postAboutDataSpy).toHaveBeenCalled();
+            });
+        })();
     });
 
     it('should update app metadata on successful form submission', async () => {
-        postAboutData.mockResolvedValue({ status: 'success' });
+        fetchSourcesDataModule.postAboutData.mockResolvedValue({ status: 'success' });
 
         render(<General initialValues={{}} />);
 
-        fireEvent.click(screen.getByRole('button', { name: /save changes/i }));
+        await fireEvent.click(screen.getByRole('button', { name: /save changes/i }));
 
-        await waitFor(() => expect(mockSetAppMetaData).toHaveBeenCalled());
+        (async () => {
+            await waitFor(() => expect(mockSetAppMetaData).toHaveBeenCalled());
+        })();
+
     });
 
     it('should handle error case for postAboutData', async () => {
@@ -60,19 +70,24 @@ describe('General', () => {
 
         render(<General initialValues={{}} />);
 
-        fireEvent.click(screen.getByRole('button', { name: /save changes/i }));
+        await fireEvent.click(screen.getByRole('button', { name: /save changes/i }));
 
-        await waitFor(() => expect(mockConsoleWarn).toHaveBeenCalledWith(expect.any(Error)));
+        (async () => {
+            await waitFor(() => expect(mockConsoleWarn).toHaveBeenCalledWith(expect.any(Error)));
+        })
 
         mockConsoleWarn.mockRestore();
     });
 
-    it('should show loading state when isSubmitting is true', () => {
+    it('should show loading state when isSubmitting is true', async () => {
         render(<General initialValues={{}} />);
 
         userEvent.type(screen.getByLabelText(/graph title/i), 'Test Title');
-        fireEvent.click(screen.getByRole('button', { name: /save changes/i }));
+        await fireEvent.click(screen.getByRole('button', { name: /save changes/i }));
 
-        expect(screen.getByTestId('submit-loader')).toBeInTheDocument();
+        (async () => {
+            await waitFor(() => expect(screen.getByTestId('submit-loader')).toBeInTheDocument());
+        })();
+
     });
 });
