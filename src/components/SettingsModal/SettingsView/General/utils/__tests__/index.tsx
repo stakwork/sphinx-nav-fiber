@@ -13,6 +13,7 @@ describe('General', () => {
 
     beforeEach(() => {
         jest.resetAllMocks();
+
         useAppStore.mockReturnValue({
             setAppMetaData: mockSetAppMetaData,
         });
