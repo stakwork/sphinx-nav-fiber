@@ -13,7 +13,7 @@ type Props = {
 }
 
 export const BudgetStep: FC<Props> = ({ onClick, loading }) => {
-  const [budget] = useUserStore((s) => [s.budget])
+  const budget = useUserStore((s) => s.budget)
 
   return (
     <Flex>
@@ -36,6 +36,7 @@ export const BudgetStep: FC<Props> = ({ onClick, loading }) => {
       <Flex>
         <Button
           color="secondary"
+          data-testid="check-icon"
           disabled={loading}
           onClick={onClick}
           size="large"
