@@ -9,14 +9,17 @@ jest.mock('lodash', () => ({
 describe('AudioPlayer Component', () => {
   let mockOnLoaded
   let mockOnError
-  let mockOnPlay
   let mockOnPause
 
   beforeEach(() => {
     mockOnLoaded = jest.fn()
     mockOnError = jest.fn()
-    mockOnPlay = jest.fn()
     mockOnPause = jest.fn()
+
+    Object.defineProperty(global.window.HTMLAudioElement.prototype, 'currentTime', {
+      writable: true,
+      value: 0, // Initial value, you can set this to any default
+    })
   })
 
   test('renders correctly', () => {
@@ -31,12 +34,7 @@ describe('AudioPlayer Component', () => {
 
   test('calls onLoaded when audio metadata is loaded', () => {
     const { container } = render(
-      <AudioPlayer
-        mediaUrl="test.mp3"
-        onLoaded={mockOnLoaded}
-        onPause={mockOnPause}
-        timestamp="00:00:00"
-      />,
+      <AudioPlayer mediaUrl="test.mp3" onLoaded={mockOnLoaded} onPause={mockOnPause} timestamp="00:00:00" />,
     )
 
     const audioElement = container.querySelector('#audio-player')
@@ -47,12 +45,7 @@ describe('AudioPlayer Component', () => {
 
   test('calls onError when audio fails to load', () => {
     const { container } = render(
-      <AudioPlayer
-        mediaUrl="test.mp3"
-        onError={mockOnError}
-        onPause={mockOnPause}
-        timestamp="00:00:00" 
-      />,
+      <AudioPlayer mediaUrl="test.mp3" onError={mockOnError} onPause={mockOnPause} timestamp="00:00:00" />,
     )
 
     const audioElement = container.querySelector('#audio-player')
@@ -70,9 +63,16 @@ describe('AudioPlayer Component', () => {
   })
 
   test('seeks to the correct time based on timestamp', () => {
-    // passed
     const timestamp = '00:01:30'
+    const expectedTime = 90
     const { container } = render(<AudioPlayer mediaUrl="test.mp3" onPause={mockOnPause} timestamp={timestamp} />)
     const audioElement = container.querySelector('#audio-player')
+
+    if (audioElement instanceof HTMLAudioElement) {
+      // Assert that audioElement.currentTime is set correctly
+      expect(audioElement.currentTime).toBe(expectedTime)
+    } else {
+      throw new Error('Audio element not found')
+    }
   })
 })
