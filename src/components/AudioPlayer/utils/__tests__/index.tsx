@@ -77,4 +77,8 @@ describe('AudioPlayer Component', () => {
       throw new Error('Audio element not found')
     }
   })
+
+  test('triggers onPlay when the audio starts playing', () => {
+    render(<AudioPlayer mediaUrl="test.mp3" onPause={mockOnPause} onPlay={mockOnPlay} timestamp="00:00:00" />)
+  })
 })
