@@ -64,7 +64,9 @@ describe('General', () => {
     });
 
     it('should handle error case for postAboutData', async () => {
-        const mockConsoleWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+        const mockConsoleWarn = jest.spyOn(console, 'warn').mockImplementation(message => {
+            console.log(`Mocked console.warn called with message: ${message}`);
+        });
 
         postAboutData.mockRejectedValue(new Error('Test error'));
 
