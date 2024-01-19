@@ -4,6 +4,7 @@ import Markdown from 'react-markdown'
 import styled from 'styled-components'
 import PauseIcon from '~/components/Icons/PauseIcon'
 import SoundIcon from '~/components/Icons/SoundIcon'
+import TrendingIcon from '~/components/Icons/TrendingIcon'
 import { BaseModal } from '~/components/Modal'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
@@ -22,7 +23,7 @@ export const BriefDescription: FC<Props> = ({ trend, onClose, selectTrending }) 
 
   const audioRef = useRef<HTMLVideoElement | null>(null)
 
-  const handleLoadMore = () => {
+  const handleLearnMore = () => {
     selectTrending(trend.topic)
   }
 
@@ -67,8 +68,8 @@ export const BriefDescription: FC<Props> = ({ trend, onClose, selectTrending }) 
               Listen
             </Button>
 
-            <Button onClick={handleLoadMore} size="small">
-              Load More
+            <Button onClick={handleLearnMore} size="small" startIcon={<TrendingIcon />}>
+              Learn More
             </Button>
           </Flex>
 
