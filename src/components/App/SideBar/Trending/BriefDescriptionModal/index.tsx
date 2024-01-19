@@ -13,13 +13,18 @@ import { Trending } from '~/types'
 type Props = {
   trend: Trending
   onClose: () => void
+  selectTrending: (val: string) => void
 }
 
-export const BriefDescription: FC<Props> = ({ trend, onClose }) => {
+export const BriefDescription: FC<Props> = ({ trend, onClose, selectTrending }) => {
   const [isPlaying, setIsPlaying] = useState(false)
   const { close } = useModal('briefDescription')
 
   const audioRef = useRef<HTMLVideoElement | null>(null)
+
+  const handleLoadMore = () => {
+    selectTrending(trend.topic)
+  }
 
   const handleClose = useCallback(() => {
     onClose()
@@ -53,10 +58,20 @@ export const BriefDescription: FC<Props> = ({ trend, onClose }) => {
       {trend.audio_EN ? (
         <>
           <Flex direction="row" justify="flex-start" mb={22}>
-            <Button onClick={togglePlay} size="small" startIcon={isPlaying ? <PauseIcon /> : <SoundIcon />}>
+            <Button
+              onClick={togglePlay}
+              size="small"
+              startIcon={isPlaying ? <PauseIcon /> : <SoundIcon />}
+              style={{ marginRight: '10px' }}
+            >
               Listen
             </Button>
+
+            <Button onClick={handleLoadMore} size="small">
+              Load More
+            </Button>
           </Flex>
+
           <StyledAudio ref={audioRef} src={trend.audio_EN}>
             <track kind="captions" />
           </StyledAudio>

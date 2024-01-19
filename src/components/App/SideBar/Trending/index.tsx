@@ -185,7 +185,7 @@ export const Trending = ({ onSubmit }: Props) => {
           </ul>
         )}
       </div>
-      {selectedTrend && <BriefDescription onClose={hideModal} trend={selectedTrend} />}
+      {selectedTrend && <BriefDescription onClose={hideModal} selectTrending={selectTrending} trend={selectedTrend} />}
     </Wrapper>
   )
 }
