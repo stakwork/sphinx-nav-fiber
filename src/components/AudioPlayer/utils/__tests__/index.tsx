@@ -10,10 +10,12 @@ describe('AudioPlayer Component', () => {
   let mockOnLoaded
   let mockOnError
   let mockOnPause
+  let mockOnPlay
 
   beforeEach(() => {
     mockOnLoaded = jest.fn()
     mockOnError = jest.fn()
+    mockOnPlay = jest.fn()
     mockOnPause = jest.fn()
 
     Object.defineProperty(global.window.HTMLAudioElement.prototype, 'currentTime', {
