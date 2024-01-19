@@ -102,7 +102,7 @@ const Table: React.FC<Props> = ({ data, canEdit = false }) => {
                       </StyledLink>
                     )}
                     {i.source_type === YOUTUBE_CHANNEL && (
-                      <StyledLink href={i.source} target="_blank">
+                      <StyledLink href={`${i.source}${i.source.includes('?') ? '&' : '?'}open=system`} target="_blank">
                         {i.source}
                       </StyledLink>
                     )}

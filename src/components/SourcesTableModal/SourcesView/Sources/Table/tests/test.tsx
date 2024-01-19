@@ -26,7 +26,7 @@ describe('Table Component Tests', () => {
     const youtubeLink = screen.getByText(mockData[1].source).closest('a')
 
     expect(youtubeLink).toBeInTheDocument()
-    expect(youtubeLink).toHaveAttribute('href', mockData[1].source)
+    expect(youtubeLink).toHaveAttribute('href', `${mockData[1].source}?open=system`)
 
     // RSS link
     const rssLink = screen.getByText(mockData[2].source).closest('a')
