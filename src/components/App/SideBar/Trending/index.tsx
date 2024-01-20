@@ -1,12 +1,11 @@
 import { Button, Skeleton } from '@mui/material'
-import { useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
 import PauseIcon from '~/components/Icons/PauseIcon'
 import PlayIcon from '~/components/Icons/PlayIcon'
 import PlusIcon from '~/components/Icons/PlusIcon'
-import SentimentDataIcon from '~/components/Icons/SentimentDataIcon'
 import { Flex } from '~/components/common/Flex'
 import { getTrends } from '~/network/fetchGraphData'
 import { useDataStore } from '~/stores/useDataStore'
@@ -16,7 +15,7 @@ import { getTrendingTopic, showPlayButton } from '~/utils'
 import { colors } from '~/utils/colors'
 import { BriefDescription } from './BriefDescriptionModal'
 
-const TRENDING_TOPICS = ['Drivechain', 'Ordinals', 'L402', 'Nostr', 'AI']
+export const TRENDING_TOPICS = ['Drivechain', 'Ordinals', 'L402', 'Nostr', 'AI']
 
 type Props = {
   onSubmit?: () => void
@@ -29,6 +28,7 @@ export const Trending = ({ onSubmit }: Props) => {
   const audioRef = useRef<HTMLVideoElement>(null)
   const [currentFileIndex, setCurrentFileIndex] = useState(0)
   const [playing, setPlaying] = useState(false)
+  const [refreshIcon, setRefreshIcon] = useState('idle')
 
   const { open } = useModal('briefDescription')
 
@@ -36,28 +36,35 @@ export const Trending = ({ onSubmit }: Props) => {
 
   const { setValue } = useFormContext()
 
-  useEffect(() => {
-    const init = async () => {
-      setLoading(true)
+  const init = useCallback(async () => {
+    setLoading(true)
+    setRefreshIcon('refresh')
 
-      try {
-        const res = await getTrends()
+    try {
+      const res = await getTrends()
 
-        if (res.length && Array.isArray(res)) {
-          setTrendingTopics(res)
-        }
-      } catch (err) {
-        setTrendingTopics(TRENDING_TOPICS.map((i) => ({ topic: i, count: 0 })))
-      } finally {
-        setLoading(false)
+      if (res.length && Array.isArray(res)) {
+        setTrendingTopics(res)
       }
-    }
+    } catch (err) {
+      setTrendingTopics(TRENDING_TOPICS.map((i) => ({ topic: i, count: 0 })))
+    } finally {
+      setRefreshIcon('trend')
+      setLoading(false)
 
+      setTimeout(() => {
+        setRefreshIcon('trend')
+      }, 1200)
+    }
+  }, [setTrendingTopics])
+
+  useEffect(() => {
     if (!trendingTopics.length) {
       init()
     }
-  }, [trendingTopics, setTrendingTopics])
+  })
 
+  //
   const selectTrending = (val: string) => {
     setValue('search', val)
     onSubmit?.()
@@ -122,9 +129,11 @@ export const Trending = ({ onSubmit }: Props) => {
         <div className="heading-container">
           <div className="heading">
             <span className="heading__title">Trending Topics</span>
-            <span className="heading__icon">
-              {loading ? <ClipLoader color={colors.PRIMARY_BLUE} size={16} /> : <SentimentDataIcon />}
-            </span>
+            <Button className="heading__icon" onClick={init}>
+              {refreshIcon === 'refresh' && <img alt="" src="load_state.svg" />}
+              {refreshIcon === 'idle' && <img alt="" src="refresh_button.svg" />}
+              {refreshIcon === 'trend' && <img alt="" src="trends_icon.svg" />}
+            </Button>
           </div>
           {showPlayButton(trendingTopics) ? (
             <div>
