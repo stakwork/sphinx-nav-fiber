@@ -46,11 +46,15 @@ export const appTheme = createTheme({
   },
 })
 
-export const AppProviders: FC<PropsWithChildren> = ({ children }) => (
-  <ThemeProvider theme={appTheme}>
-    <StyledEngineProvider injectFirst />
-    <StyleThemeProvider theme={appTheme}>
-      <LocalizationProvider dateAdapter={AdapterMoment}>{children}</LocalizationProvider>
-    </StyleThemeProvider>
-  </ThemeProvider>
-)
+export const AppProviders: FC<PropsWithChildren> = ({ children }) => {
+  console.log('How many times do you reload???')
+
+  return (
+    <ThemeProvider theme={appTheme}>
+      <StyledEngineProvider injectFirst />
+      <StyleThemeProvider theme={appTheme}>
+        <LocalizationProvider dateAdapter={AdapterMoment}>{children}</LocalizationProvider>
+      </StyleThemeProvider>
+    </ThemeProvider>
+  )
+}
