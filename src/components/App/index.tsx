@@ -10,6 +10,7 @@ import { DataRetriever } from '~/components/DataRetriever'
 import { GlobalStyle } from '~/components/GlobalStyle'
 import { Universe } from '~/components/Universe'
 import { isDevelopment, isE2E } from '~/constants'
+import useSocket from '~/hooks/useSockets'
 import { getIsAdmin } from '~/network/auth'
 import { getGraphDataPositions } from '~/network/fetchGraphData/const'
 import { useAppStore } from '~/stores/useAppStore'
@@ -80,7 +81,7 @@ export const App = () => {
 
   const isSocketSet: { current: boolean } = useRef<boolean>(false)
 
-  const socket: Socket | null = null
+  const socket: Socket | null = useSocket()
 
   const form = useForm<{ search: string }>({ mode: 'onChange' })
 
@@ -175,7 +176,7 @@ export const App = () => {
     }
 
     if (socket) {
-      // socket.on('newnode', handleNewNode)
+      socket.on('newnode', handleNewNode)
 
       isSocketSet.current = true
     }
