@@ -1,4 +1,4 @@
-import { twitterOrYoutubeRegexOrMp3 } from '..'
+import { twitterOrYoutubeRegexOrMp3, validateSourceURL } from '..'
 
 describe('twitterOrYoutubeRegexOrMp3', () => {
   const regex = new RegExp(twitterOrYoutubeRegexOrMp3)
@@ -30,5 +30,17 @@ describe('twitterOrYoutubeRegexOrMp3', () => {
     expect(regex.test('www.idkwhat.mp3')).toBe(true)
     expect(regex.test('idkwhat.org')).toBe(false)
     expect(regex.test('facebook.com')).toBe(false)
+  })
+})
+
+describe('validateSourceURL', () => {
+  it('should assert we can check for a valid source', () => {
+    expect(validateSourceURL('https://twitter.com/i/spaces/1zqKVqwrVzlxB?s=20')).toBe(true)
+    expect(validateSourceURL('https://twitter.com/@Ekep-Obasi')).toBe(false)
+    expect(validateSourceURL('youtube.com/watch?v=D900-udw9Dw&ab_channel=SwanBitcoin')).toBe(true)
+    expect(validateSourceURL('https://youtube.com/live/8djflewrio')).toBe(false)
+    expect(validateSourceURL('https://google.com')).toBe(false)
+    expect(validateSourceURL('frontendmasters.com')).toBe(false)
+    expect(validateSourceURL('www/idkwhat.mp3')).toBe(true)
   })
 })

@@ -10,10 +10,10 @@ import { twitterOrYoutubeRegexOrMp3 } from './utils'
 type Props = {
   type: string
   onNextStep: () => void
-  value?: string
+  allowNextStep?: boolean
 }
 
-export const SourceStep: FC<Props> = ({ type, onNextStep, value }) => (
+export const SourceStep: FC<Props> = ({ type, onNextStep, allowNextStep }) => (
   <Flex>
     <Flex align="center" direction="row" justify="space-between" mb={18}>
       <Flex align="center" direction="row">
@@ -29,7 +29,7 @@ export const SourceStep: FC<Props> = ({ type, onNextStep, value }) => (
         placeholder="Paste your url here..."
         rules={{
           ...requiredRule,
-          ...(type === LINK
+          ...(type !== LINK
             ? {
                 pattern: {
                   message: 'You must enter a valid YouTube, Twitter Space or mp3 link.',
@@ -41,7 +41,7 @@ export const SourceStep: FC<Props> = ({ type, onNextStep, value }) => (
       />
     </Flex>
     <Flex>
-      <Button color="secondary" disabled={!value} onClick={onNextStep} size="large" variant="contained">
+      <Button color="secondary" disabled={!allowNextStep} onClick={onNextStep} size="large" variant="contained">
         Next
       </Button>
     </Flex>
