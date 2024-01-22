@@ -2,9 +2,9 @@ import { Button } from '@mui/material'
 import { FC, useCallback, useEffect, useRef, useState } from 'react'
 import Markdown from 'react-markdown'
 import styled from 'styled-components'
+import BubbleChartIcon from '~/components/Icons/BubbleChartIcon'
 import PauseIcon from '~/components/Icons/PauseIcon'
 import SoundIcon from '~/components/Icons/SoundIcon'
-import TrendingIcon from '~/components/Icons/TrendingIcon'
 import { BaseModal } from '~/components/Modal'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
@@ -68,7 +68,7 @@ export const BriefDescription: FC<Props> = ({ trend, onClose, selectTrending }) 
               Listen
             </Button>
 
-            <Button onClick={handleLearnMore} size="small" startIcon={<TrendingIcon />}>
+            <Button onClick={handleLearnMore} size="small" startIcon={<BubbleChartIcon />}>
               Learn More
             </Button>
           </Flex>
