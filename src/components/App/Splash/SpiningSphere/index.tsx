@@ -1,10 +1,10 @@
-// import Lottie from 'react-lottie'
+import Lottie from 'react-lottie'
 import { Flex } from '~/components/common/Flex'
-// import preloadData from './preloader.json'
+import preloadData from './preloader.json'
 
 export const SphereAnimation = () => (
   <Flex style={{ width: '167px', height: '167px', opacity: 0.5 }}>
-    {/* <Lottie
+    <Lottie
       height={167}
       options={{
         loop: true,
@@ -15,6 +15,6 @@ export const SphereAnimation = () => (
         },
       }}
       width={167}
-    /> */}
+    />
   </Flex>
 )
