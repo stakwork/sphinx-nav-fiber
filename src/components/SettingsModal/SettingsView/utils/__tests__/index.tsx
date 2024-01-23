@@ -15,7 +15,9 @@ describe('SettingsView Component', () => {
 
         useUserStoreModule.useUserStore.mockImplementation(isAdminMock);
 
-        render(<SettingsView onClose={() => {}} />);
+        render(<SettingsView onClose={() => {
+            // intentionally left empty
+        }} />);
 
         (async () => {
             await waitFor(() => {
@@ -32,7 +34,9 @@ describe('SettingsView Component', () => {
 
         useUserStoreModule.useUserStore.mockImplementation(isAdminMock);
 
-        render(<SettingsView onClose={() => {}} />);
+        render(<SettingsView onClose={() => {
+            // intentionally left empty
+        }} />);
 
         expect(screen.getByText('General')).toBeInTheDocument();
         expect(screen.getByText('Appearance')).toBeInTheDocument();
@@ -45,7 +49,9 @@ describe('SettingsView Component', () => {
 
         useUserStoreModule.useUserStore.mockImplementation(isAdminMock);
 
-        render(<SettingsView onClose={() => {}} />);
+        render(<SettingsView onClose={() => {
+            // intentionally left empty
+        }} />);
 
         fireEvent.click(screen.getByText('Appearance'));
 
