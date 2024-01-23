@@ -11,6 +11,7 @@ import { useUserStore } from '~/stores/useUserStore'
 import { colors } from '~/utils/colors'
 import { Flex } from '../common/Flex'
 import EpisodeIcon from '../Icons/EpisodeIcon'
+import { formatNumberWithCommas } from '~/utils'
 
 type StatResponse = {
   /* eslint-disable camelcase */
@@ -24,13 +25,13 @@ type StatResponse = {
 }
 
 type TStats = {
-  numAudio: number
-  numContributors: number
-  numDaily: number
-  numEpisodes: number
-  numNodes: number
-  numTwitterSpace: number
-  numVideo: number
+  numAudio: string
+  numContributors: string
+  numDaily: string
+  numEpisodes: string
+  numNodes: string
+  numTwitterSpace: string
+  numVideo: string
 }
 
 export const Stats = () => {
@@ -56,13 +57,13 @@ export const Stats = () => {
 
         if (data) {
           setStats({
-            numAudio: data.num_audio,
-            numContributors: data.num_contributors,
-            numDaily: data.num_daily,
-            numEpisodes: data.num_episodes,
-            numNodes: data.num_nodes,
-            numTwitterSpace: data.num_twitter_space,
-            numVideo: data.num_video,
+            numAudio: formatNumberWithCommas(data.num_audio),
+            numContributors: formatNumberWithCommas(data.num_contributors),
+            numDaily: formatNumberWithCommas(data.num_daily),
+            numEpisodes: formatNumberWithCommas(data.num_episodes),
+            numNodes: formatNumberWithCommas(data.num_nodes),
+            numTwitterSpace: formatNumberWithCommas(data.num_twitter_space),
+            numVideo: formatNumberWithCommas(data.num_video),
           })
         }
       } catch (e) {

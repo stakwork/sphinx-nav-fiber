@@ -21,6 +21,7 @@ import { extractUuidAndHost } from './auth'
 import { generateAuthQueryParam, getSignedMessageFromRelay } from './getSignedMessage'
 import { videoTimeToSeconds } from './videoTimetoSeconds'
 import { showPlayButton, getTrendingTopic } from './trending'
+import { formatNumberWithCommas } from './formatStats'
 
 export {
   E2ETests,
@@ -51,4 +52,5 @@ export {
   generateAuthQueryParam,
   showPlayButton,
   getTrendingTopic,
+  formatNumberWithCommas,
 }

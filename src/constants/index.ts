@@ -44,7 +44,7 @@ function apiUrlFromSwarmHost(): string | undefined {
 
       url = `https://${finalHost}`
     }
-  } else if (originUrl === 'https://second-brain.sphinx.chat') {
+  } else if (originUrl === 'https://second-brain.sphinx.chat' || origin.includes('localhost')) {
     url = 'https://knowledge-graph.sphinx.chat'
   }
 

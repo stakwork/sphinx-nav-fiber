@@ -16,7 +16,7 @@ type Props = {
 }
 
 export const BudgetStep: FC<Props> = ({ onClick, loading, type }) => {
-  const [budget] = useUserStore((s) => [s.budget])
+  const budget = useUserStore((s) => s.budget)
   const [price, setPrice] = useState<number>(10)
   const endPoint = isSource(type) ? 'radar' : 'add_node'
 
@@ -55,6 +55,7 @@ export const BudgetStep: FC<Props> = ({ onClick, loading, type }) => {
       <Flex>
         <Button
           color="secondary"
+          data-testid="check-icon"
           disabled={loading}
           onClick={onClick}
           size="large"
