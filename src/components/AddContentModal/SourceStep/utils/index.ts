@@ -1,11 +1,11 @@
 // This regex is specifically for youtube videos, twitter spaces and mp3 links
-export const twitterOrYoutubeRegexOrMp3 =
-  /^(?:(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)[\w-]{11}(?:\S*)?|(?:https?:\/\/)?(?:www\.)?twitter\.com\/i\/spaces\/\d+.*$|.+\.mp3)$/i
+export const sourceUrlRegex =
+  /^(https?:\/\/)?(((?:[a-zA-Z\d](?:[a-zA-Z\d-]*[a-zA-Z\d])*)\.)+[a-zA-Z]{2,}|((\d{1,3}\.){3}\d{1,3}))(:\d+)?(\/[-a-zA-Z\d%_.~+]*)*(\?[;&a-zA-Z\d%_.~+=-]*)?(#[-a-zA-Z\d_]*)?(@[a-zA-Z\d-]+)?$/i
 
 export function validateSourceURL(input: string) {
-  if (twitterOrYoutubeRegexOrMp3.test(input)) {
+  if (sourceUrlRegex.test(input)) {
     return true
   }
-  
+
   return false
 }

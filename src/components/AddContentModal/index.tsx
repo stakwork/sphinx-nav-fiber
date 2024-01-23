@@ -165,7 +165,7 @@ export const AddContentModal = () => {
 
   const source = watch('source')
 
-  const isValidSource = type === LINK && validateSourceURL(sourceValue)
+  const isValidSource = validateSourceURL(sourceValue)
 
   useEffect(() => {
     setValue('inputType', getInputType(source))
