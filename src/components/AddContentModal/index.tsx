@@ -24,6 +24,7 @@ import { LocationStep } from './LocationStep'
 import { SourceStep } from './SourceStep'
 import { SourceTypeStep } from './SourceTypeStep'
 import { getInputType, isSource, twitterHandlePattern } from './utils'
+import { validateSourceURL } from './SourceStep/utils'
 
 export type FormData = {
   input: string
@@ -164,6 +165,8 @@ export const AddContentModal = () => {
 
   const source = watch('source')
 
+  const isValidSource = validateSourceURL(sourceValue)
+
   useEffect(() => {
     setValue('inputType', getInputType(source))
   }, [source, setValue])
@@ -196,7 +199,7 @@ export const AddContentModal = () => {
     <BaseModal id="addContent" kind="small" onClose={close} preventOutsideClose>
       <FormProvider {...form}>
         <form id="add-node-form" onSubmit={onSubmit}>
-          {currentStep === 0 && <SourceStep onNextStep={onNextStep} type={type} value={sourceValue} />}
+          {currentStep === 0 && <SourceStep allowNextStep={isValidSource} onNextStep={onNextStep} type={type} />}
           {currentStep === 1 && (
             <>
               {!isSource(type) ? (
