@@ -13,7 +13,7 @@ interface setAuthenticated {
 }
 
 export const Auth = ({ setAuthenticated }: setAuthenticated) => {
-  const [unauthorized, setUnauthorized] = useState(false)
+  const [unAuthorized, setUnauthorized] = useState(false)
   const [setBudget, setIsAdmin, setPubKey] = useUserStore((s) => [s.setBudget, s.setIsAdmin, s.setPubKey])
 
   const handleAuth = useCallback(async () => {
@@ -75,7 +75,7 @@ export const Auth = ({ setAuthenticated }: setAuthenticated) => {
     }
   }, [handleAuth])
 
-  if (unauthorized) {
+  if (unAuthorized) {
     return (
       <StyledFlex>
         <StyledText>Please this is a private Graph, Contact Admin</StyledText>
