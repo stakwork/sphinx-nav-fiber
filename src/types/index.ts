@@ -190,7 +190,15 @@ export type AuthRequest = {
   signature: string
 }
 
-export type IsAdminResponse = { isAdmin: boolean }
+export type IsAdminResponse = {
+  data: {
+    isAdmin: boolean
+    isPublic: boolean
+    isMember: boolean
+  }
+  success: boolean
+  message: string
+}
 
 type PostedBy = {
   name: string
