@@ -38,7 +38,7 @@ export const Splash = memo(({ handleLoading }: Props) => {
 
         setAppMetaData(aboutResponse)
 
-        timeoutId = setTimeout(() => handleLoading(false), 2000)
+        timeoutId = setTimeout(() => handleLoading(false), 6000)
       } catch (error) {
         console.warn(error)
 
