@@ -82,7 +82,7 @@ export const getAboutData = async () => {
 }
 
 export const getStats = async () => {
-  const response = await api.get<TAboutParams>('/stats')
+  const response = await api.get<TStatParams>('/stats')
 
   return response
 }

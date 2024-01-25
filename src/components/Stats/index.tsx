@@ -1,42 +1,22 @@
 import { noop } from 'lodash'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import styled from 'styled-components'
 import AudioIcon from '~/components/Icons/AudioIcon'
 import BudgetIcon from '~/components/Icons/BudgetIcon'
 import NodesIcon from '~/components/Icons/NodesIcon'
 import TwitterIcon from '~/components/Icons/TwitterIcon'
 import VideoIcon from '~/components/Icons/VideoIcon'
-import { api } from '~/network/api'
+import { getStats } from '~/network/fetchSourcesData'
+import { useDataStore } from '~/stores/useDataStore'
 import { useUserStore } from '~/stores/useUserStore'
-import { colors } from '~/utils/colors'
-import { Flex } from '../common/Flex'
-import EpisodeIcon from '../Icons/EpisodeIcon'
 import { formatNumberWithCommas } from '~/utils'
-
-type StatResponse = {
-  /* eslint-disable camelcase */
-  num_nodes: number
-  num_episodes: number
-  num_audio: number
-  num_video: number
-  num_contributors: number
-  num_daily: number
-  num_twitter_space: number
-}
-
-type TStats = {
-  numAudio: string
-  numContributors: string
-  numDaily: string
-  numEpisodes: string
-  numNodes: string
-  numTwitterSpace: string
-  numVideo: string
-}
+import { colors } from '~/utils/colors'
+import EpisodeIcon from '../Icons/EpisodeIcon'
+import { Flex } from '../common/Flex'
 
 export const Stats = () => {
-  const [stats, setStats] = useState<TStats | null>(null)
   const [budget] = useUserStore((s) => [s.budget])
+  const [stats, setStats] = useDataStore((s) => [s.stats, s.setStats])
 
   function formatBudget(value: number | null) {
     if (value === null) {
@@ -53,7 +33,7 @@ export const Stats = () => {
   useEffect(() => {
     const run = async () => {
       try {
-        const data = await api.get<StatResponse>('/stats')
+        const data = await getStats()
 
         if (data) {
           setStats({
@@ -71,8 +51,10 @@ export const Stats = () => {
       }
     }
 
-    run()
-  }, [])
+    if (!stats) {
+      run()
+    }
+  }, [setStats, stats])
 
   if (!stats) {
     return null

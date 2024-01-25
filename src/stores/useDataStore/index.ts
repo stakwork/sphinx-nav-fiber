@@ -2,7 +2,7 @@ import create from 'zustand'
 import { nodesAreRelatives } from '~/components/Universe/constants'
 import { isChileGraph } from '~/constants'
 import { fetchGraphData } from '~/network/fetchGraphData'
-import { GraphData, NodeExtended, NodeType, Sources, Trending } from '~/types'
+import { GraphData, NodeExtended, NodeType, Sources, TStats, Trending } from '~/types'
 import { saveSearchTerm } from '~/utils/relayHelper/index'
 
 export type GraphStyle = 'sphere' | 'force' | 'split' | 'earth'
@@ -33,8 +33,10 @@ type DataStore = {
   hideNodeDetails: boolean
   sidebarFilter: string
   trendingTopics: Trending[]
+  stats: TStats | null
 
   setTrendingTopics: (trendingTopics: Trending[]) => void
+  setStats: (stats: TStats) => void
   setSidebarFilter: (filter: string) => void
   setScrollEventsDisabled: (scrollEventsDisabled: boolean) => void
   setCategoryFilter: (categoryFilter: NodeType | null) => void
@@ -61,6 +63,7 @@ type DataStore = {
 const defaultData: Omit<
   DataStore,
   | 'setTrendingTopics'
+  | 'setStats'
   | 'setSidebarFilter'
   | 'fetchData'
   | 'setIsFetching'
@@ -107,6 +110,7 @@ const defaultData: Omit<
   hideNodeDetails: false,
   sidebarFilter: 'all',
   trendingTopics: [],
+  stats: null,
 }
 
 export const useDataStore = create<DataStore>((set, get) => ({
@@ -136,6 +140,7 @@ export const useDataStore = create<DataStore>((set, get) => ({
     })
   },
   setTrendingTopics: (trendingTopics) => set({ trendingTopics }),
+  setStats: (stats) => set({ stats }),
   setIsFetching: (isFetching) => set({ isFetching }),
   setData: (data) => set({ data }),
   setSelectionData: (selectionGraphData) => set({ selectionGraphData }),
