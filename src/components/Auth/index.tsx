@@ -4,7 +4,7 @@ import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { getIsAdmin } from '~/network/auth'
 import { useUserStore } from '~/stores/useUserStore'
-import { getSignedMessageFromRelay, updateBudget } from '~/utils'
+import { executeIfProd, getSignedMessageFromRelay, updateBudget } from '~/utils'
 
 interface setAuthenticated {
   setAuthenticated: (state: boolean) => void
@@ -15,47 +15,47 @@ export const Auth = ({ setAuthenticated }: setAuthenticated) => {
   const [setBudget, setIsAdmin, setPubKey] = useUserStore((s) => [s.setBudget, s.setIsAdmin, s.setPubKey])
 
   const handleAuth = useCallback(async () => {
-    //   await executeIfProd(async () => {
-    localStorage.removeItem('admin')
+    await executeIfProd(async () => {
+      localStorage.removeItem('admin')
 
-    try {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      const sphinxEnable = await sphinx.enable()
+      try {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        const sphinxEnable = await sphinx.enable()
 
-      setPubKey(sphinxEnable?.pubkey)
-    } catch (error) {
-      setPubKey('')
-    }
-
-    await updateBudget(setBudget)
-
-    try {
-      const sigAndMessage = await getSignedMessageFromRelay()
-
-      const res = await getIsAdmin({
-        message: sigAndMessage.message,
-        signature: sigAndMessage.signature,
-      })
-
-      if (!res.data.isPublic && !res.data.isAdmin && !res.data.isMember) {
-        setUnauthorized(true)
-
-        return
+        setPubKey(sphinxEnable?.pubkey)
+      } catch (error) {
+        setPubKey('')
       }
 
-      if (res.data.isAdmin) {
-        localStorage.setItem('admin', JSON.stringify({ isAdmin: true }))
-        setIsAdmin(true)
+      await updateBudget(setBudget)
+
+      try {
+        const sigAndMessage = await getSignedMessageFromRelay()
+
+        const res = await getIsAdmin({
+          message: sigAndMessage.message,
+          signature: sigAndMessage.signature,
+        })
+
+        if (!res.data.isPublic && !res.data.isAdmin && !res.data.isMember) {
+          setUnauthorized(true)
+
+          return
+        }
+
+        if (res.data.isAdmin) {
+          localStorage.setItem('admin', JSON.stringify({ isAdmin: true }))
+          setIsAdmin(true)
+        }
+
+        setAuthenticated(true)
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (error: any) {
+        /* not an admin */
       }
-
-      setAuthenticated(true)
-
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error: any) {
-      /* not an admin */
-    }
-    //   })
+    })
   }, [setIsAdmin, setPubKey, setBudget, setAuthenticated])
 
   // auth checker
