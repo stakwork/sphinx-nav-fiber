@@ -75,17 +75,11 @@ export const Auth = ({ setAuthenticated }: setAuthenticated) => {
     }
   }, [handleAuth])
 
-  if (unAuthorized) {
-    return (
-      <StyledFlex>
-        <StyledText>Please this is a private Graph, Contact Admin</StyledText>
-      </StyledFlex>
-    )
-  }
+  const message = unAuthorized ? 'Please this is a private Graph, Contact Admin' : 'Authenticating...'
 
   return (
     <StyledFlex>
-      <StyledText>Authenticating...</StyledText>
+      <StyledText>{message}</StyledText>
     </StyledFlex>
   )
 }
