@@ -209,7 +209,7 @@ export const AddContentModal = () => {
               )}
             </>
           )}
-          {currentStep === 2 && <BudgetStep loading={loading} onClick={() => null} />}
+          {currentStep === 2 && <BudgetStep loading={loading} onClick={() => null} type={type} />}
         </form>
       </FormProvider>
     </BaseModal>

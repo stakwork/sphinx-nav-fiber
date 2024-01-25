@@ -1,19 +1,38 @@
 import { Button } from '@mui/material'
-import { FC } from 'react'
+import { FC, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import CheckIcon from '~/components/Icons/CheckIcon'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
+import { getPriceData } from '~/network/fetchSourcesData'
 import { useUserStore } from '~/stores/useUserStore'
 import { colors, formatBudget } from '~/utils'
+import { isSource } from '../utils'
 
 type Props = {
   onClick: () => void
   loading: boolean
+  type: string
 }
 
-export const BudgetStep: FC<Props> = ({ onClick, loading }) => {
+export const BudgetStep: FC<Props> = ({ onClick, loading, type }) => {
   const budget = useUserStore((s) => s.budget)
+  const [price, setPrice] = useState<number>(10)
+  const endPoint = isSource(type) ? 'radar' : 'add_node'
+
+  useEffect(() => {
+    const run = async () => {
+      try {
+        const res = await getPriceData(endPoint)
+
+        setPrice(res.data.price)
+      } catch (err) {
+        console.error('cannot fetch', err)
+      }
+    }
+
+    run()
+  }, [endPoint])
 
   return (
     <Flex>
@@ -26,7 +45,7 @@ export const BudgetStep: FC<Props> = ({ onClick, loading }) => {
       <Flex align="center" direction="row" justify="space-between" mb={20}>
         <Cost>
           <div className="title">COST</div>
-          <div className="value">10 sats</div>
+          <div className="value">{price} sats</div>
         </Cost>
         <Budget>
           <div className="title">BUDGET</div>

@@ -35,6 +35,16 @@ export type TStatParams = {
   num_video: number
 }
 
+export type TPriceParams = {
+  success: string
+  message: string
+  data: {
+    price: number
+    endpoint: string
+    method: string
+  }
+}
+
 export type TMergeTopicsParams = {
   from: string
   to: string
@@ -133,6 +143,12 @@ export const approveRadarData = async (id: string, pubkey: string) => {
 
 export const deleteRadarData = async (id: string) => {
   const response = await api.delete(`/radar/${id}`)
+
+  return response
+}
+
+export const getPriceData = async (endpoint: string) => {
+  const response = await api.get<TPriceParams>(`/getprice?endpoint=${endpoint}&method=post`)
 
   return response
 }
