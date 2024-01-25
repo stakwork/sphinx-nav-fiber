@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
+import { isE2E } from '~/constants'
 import { getIsAdmin } from '~/network/auth'
 import { useUserStore } from '~/stores/useUserStore'
 import { executeIfProd, getSignedMessageFromRelay, updateBudget } from '~/utils'
@@ -56,6 +57,10 @@ export const Auth = ({ setAuthenticated }: setAuthenticated) => {
         /* not an admin */
       }
     })
+
+    if (isE2E) {
+      setAuthenticated(true)
+    }
   }, [setIsAdmin, setPubKey, setBudget, setAuthenticated])
 
   // auth checker
