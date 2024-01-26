@@ -2,16 +2,13 @@ import { Lsat } from 'lsat-js'
 import * as sphinx from 'sphinx-bridge'
 import { requestProvider } from 'webln'
 import { buyLsat } from '~/network/buyLsat'
+import { isSphinx } from '../isSphinx'
 
 // eslint-disable-next-line  @typescript-eslint/no-explicit-any
 export async function payLsat(setBudget: (value: number | null) => void): Promise<void> {
   let lsat: Lsat
 
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  const isSphinx = await sphinx.enable()
-
-  if (isSphinx) {
+  if (isSphinx()) {
     const localLsat = localStorage.getItem('lsat')
 
     if (localLsat) {
