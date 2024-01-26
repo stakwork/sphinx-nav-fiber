@@ -25,6 +25,8 @@ export const Auth = ({ setAuthenticated }: setAuthenticated) => {
         // @ts-ignore
         const sphinxEnable = await sphinx.enable()
 
+        sessionStorage.setItem('isSphinx', sphinxEnable ? 'true' : 'false')
+
         setPubKey(sphinxEnable?.pubkey)
       } catch (error) {
         setPubKey('')
