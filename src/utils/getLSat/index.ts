@@ -1,4 +1,5 @@
 import * as sphinx from 'sphinx-bridge'
+import { isSphinx } from '../isSphinx'
 
 /**
  *
@@ -19,12 +20,8 @@ export const getLSat = async (): Promise<string> => {
       return lsatToken(lsat.macaroon, lsat.preimage)
     }
 
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    const isSphinx = await sphinx.enable()
-
     // Check if sphinx app is active
-    if (isSphinx) {
+    if (isSphinx()) {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       const storedLsat = await sphinx.getLsat(window.location.host)

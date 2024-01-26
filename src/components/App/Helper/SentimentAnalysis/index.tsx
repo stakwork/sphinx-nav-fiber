@@ -4,7 +4,6 @@ import { DatePicker } from '@mui/x-date-pickers'
 import moment from 'moment'
 import { memo, useRef, useState } from 'react'
 import { PropagateLoader } from 'react-spinners'
-import * as sphinx from 'sphinx-bridge'
 import styled from 'styled-components'
 import { Button } from '~/components/Button'
 import { Text } from '~/components/common/Text'
@@ -13,7 +12,6 @@ import { useAppStore } from '~/stores/useAppStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { colors } from '~/utils/colors'
 import { updateBudget } from '~/utils/setBudget'
-import { executeIfProd } from '~/utils/tests'
 import { SentimentChart } from '../../SecondarySidebar/Sentiment/SentimentChart'
 
 type SentimentData = {
@@ -42,13 +40,6 @@ export const SentimentAnalysis = memo(() => {
     }
 
     setIsLoading(true)
-
-    // Wrap for tests
-    await executeIfProd(() =>
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      sphinx.enable(),
-    )
 
     getSentimentData(setBudget, { topic: search, cutoff_date: String(value.unix()) })
       .then(async (r) => {
