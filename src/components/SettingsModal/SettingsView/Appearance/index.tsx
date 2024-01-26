@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import React, { FC } from 'react'
 import styled from 'styled-components'
 import { GraphViewControl } from '~/components/App/ActionsToolbar/GraphViewControl'
 import { Button } from '~/components/Button'
