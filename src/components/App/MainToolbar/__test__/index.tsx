@@ -6,8 +6,7 @@ jest.mock('~/stores/useModalStore')
 
 describe('MainToolbar Component Tests', () => {
   it('renders MainToolbar component with correct elements', () => {
-
-    (useModal as jest.Mock).mockImplementation((id: string) => ({
+    ;(useModal as jest.Mock).mockImplementation((id: string) => ({
       close: jest.fn(),
       open: jest.fn(),
       visible: id === 'sourcesTable',
