@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
+import { PropagateLoader } from 'react-spinners'
 import * as sphinx from 'sphinx-bridge'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
@@ -77,12 +78,10 @@ export const Auth = ({ setAuthenticated }: setAuthenticated) => {
     }
   }, [handleAuth])
 
-  const message = unAuthorized ? 'Please this is a private Graph, Contact Admin' : 'Authenticating...'
+  const message = 'This is a private Graph, Contact Admin'
 
   return (
-    <StyledFlex>
-      <StyledText>{message}</StyledText>
-    </StyledFlex>
+    <StyledFlex>{!unAuthorized ? <PropagateLoader color="#909BAA" /> : <StyledText>{message}</StyledText>}</StyledFlex>
   )
 }
 
