@@ -6,7 +6,13 @@ import { isSphinx } from '../isSphinx'
 let signingPromise: Promise<any> | null = null
 
 export async function getSignedMessageFromRelay(): Promise<{ message: string; signature: string }> {
-  const message = `${window.crypto.randomUUID()}${new Date().getTime()}`
+  let message = ''
+
+  try {
+    message = `${window.crypto.randomUUID()}${new Date().getTime()}`
+  } catch (error) {
+    return { message: '', signature: '' }
+  }
 
   if (isSphinx()) {
     if (!signingPromise) {
