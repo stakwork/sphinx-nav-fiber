@@ -15,7 +15,6 @@ jest.mock('~/stores/useModalStore', () => ({
 }))
 
 describe('BriefDescription Component Tests', () => {
-  li
   const trendMock = {
     audio_EN: 'fake-audio-url',
     tldr_topic: 'Test Topic',
