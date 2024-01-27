@@ -211,7 +211,7 @@
   },
   "packageManager": "yarn@3.5.0",
   "engines": {
-    "node": ">=16.0.0"
+    "node": ">=20.0.0"
   },
   "nyc": {
     "cache": false,
