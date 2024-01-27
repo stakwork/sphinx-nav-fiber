@@ -7,6 +7,12 @@ jobs:
   cypress-run:
     runs-on: ubuntu-latest
     steps:
+      - name: Clear Node.js Cache
+        run: |
+          rm -rf ~/.npm
+          rm -rf ~/.nvm
+        if: success()
+
       - name: Checkout
         uses: actions/checkout@v4
 
