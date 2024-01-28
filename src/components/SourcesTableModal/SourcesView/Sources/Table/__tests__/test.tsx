@@ -1,9 +1,8 @@
-import '@testing-library/jest-dom/extend-expect'
-import React from 'react'
 import { render, screen, within } from '@testing-library/react'
-import Table from '../index' // Adjust path as needed
+import React from 'react'
+import { TWITTER_LINK, sourcesMapper } from '~/components/SourcesTableModal/SourcesView/constants'
 import { RSS, TWITTER_HANDLE, YOUTUBE_CHANNEL } from '~/constants'
-import { sourcesMapper, TWITTER_LINK } from '~/components/SourcesTableModal/SourcesView/constants'
+import Table from '../index' // Adjust path as needed
 
 describe('Table Component Tests', () => {
   // Mock data based on your Sources type
