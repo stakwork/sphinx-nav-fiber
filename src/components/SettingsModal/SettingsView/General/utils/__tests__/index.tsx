@@ -1,10 +1,10 @@
-import React from 'react'
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { General } from '../../index'
+import React from 'react'
+import * as fetchSourcesDataModule from '~/network/fetchSourcesData'
 import { postAboutData } from '~/network/fetchSourcesData'
 import { useAppStore } from '~/stores/useAppStore'
-import * as fetchSourcesDataModule from '~/network/fetchSourcesData'
+import { General } from '../../index'
 
 jest.mock('~/network/fetchSourcesData')
 jest.mock('~/stores/useAppStore')
@@ -42,11 +42,8 @@ describe('General', () => {
     render(<General initialValues={{}} />)
 
     await fireEvent.click(screen.getByRole('button', { name: /save changes/i }))
-    ;(async () => {
-      await waitFor(() => {
-        expect(postAboutDataSpy).toHaveBeenCalled()
-      })
-    })()
+
+    expect(postAboutDataSpy).toHaveBeenCalled()
   })
 
   it('should update app metadata on successful form submission', async () => {
@@ -55,9 +52,8 @@ describe('General', () => {
     render(<General initialValues={{}} />)
 
     await fireEvent.click(screen.getByRole('button', { name: /save changes/i }))
-    ;(async () => {
-      await waitFor(() => expect(mockSetAppMetaData).toHaveBeenCalled())
-    })()
+
+    await waitFor(() => expect(mockSetAppMetaData).toHaveBeenCalled())
   })
 
   it('should handle error case for postAboutData', async () => {
@@ -68,9 +64,7 @@ describe('General', () => {
     render(<General initialValues={{}} />)
 
     await fireEvent.click(screen.getByRole('button', { name: /save changes/i }))
-    ;async () => {
-      await waitFor(() => expect(mockConsoleWarn).toHaveBeenCalledWith(expect.any(Error)))
-    }
+    await waitFor(() => expect(mockConsoleWarn).toHaveBeenCalledWith(expect.any(Error)))
 
     mockConsoleWarn.mockRestore()
   })
@@ -79,9 +73,8 @@ describe('General', () => {
     render(<General initialValues={{}} />)
 
     userEvent.type(screen.getByLabelText(/graph title/i), 'Test Title')
+
     await fireEvent.click(screen.getByRole('button', { name: /save changes/i }))
-    ;(async () => {
-      await waitFor(() => expect(screen.getByTestId('submit-loader')).toBeInTheDocument())
-    })()
+    await waitFor(() => expect(screen.getByTestId('submit-loader')).toBeInTheDocument())
   })
 })
