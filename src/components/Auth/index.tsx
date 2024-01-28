@@ -4,7 +4,7 @@ import * as sphinx from 'sphinx-bridge'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
-import { isE2E } from '~/constants'
+import { isDevelopment, isE2E } from '~/constants'
 import { getIsAdmin } from '~/network/auth'
 import { useUserStore } from '~/stores/useUserStore'
 import { executeIfProd, getSignedMessageFromRelay, updateBudget } from '~/utils'
@@ -62,7 +62,7 @@ export const Auth = ({ setAuthenticated }: setAuthenticated) => {
       }
     })
 
-    if (isE2E) {
+    if (isE2E || isDevelopment) {
       setAuthenticated(true)
     }
   }, [setIsAdmin, setPubKey, setBudget, setAuthenticated])
