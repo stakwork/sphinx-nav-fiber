@@ -1,14 +1,11 @@
-import { Leva } from 'leva'
-import { useCallback, useEffect, useRef } from 'react'
+import { Suspense, lazy, useCallback, useEffect, useRef } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import 'react-toastify/dist/ReactToastify.css'
 import { Socket } from 'socket.io-client'
 import styled from 'styled-components'
 import { DataRetriever } from '~/components/DataRetriever'
 import { GlobalStyle } from '~/components/GlobalStyle'
-import { Universe } from '~/components/Universe'
 import { Flex } from '~/components/common/Flex'
-import { isDevelopment } from '~/constants'
 import useSocket from '~/hooks/useSockets'
 import { getGraphDataPositions } from '~/network/fetchGraphData/const'
 import { useAppStore } from '~/stores/useAppStore'
@@ -20,17 +17,12 @@ import { colors } from '~/utils/colors'
 import { updateBudget } from '~/utils/setBudget'
 import { E2ETests } from '~/utils/tests'
 import version from '~/utils/versionHelper'
-import { AddContentModal } from '../AddContentModal'
-import { SettingsModal } from '../SettingsModal'
-import { SourcesTableModal } from '../SourcesTableModal'
 import { ActionsToolbar } from './ActionsToolbar'
 import { AppBar } from './AppBar'
 import { DeviceCompatibilityNotice } from './DeviceCompatibilityNotification'
 import { Helper } from './Helper'
-import { MainToolbar } from './MainToolbar'
 import { AppProviders } from './Providers'
 import { SecondarySideBar } from './SecondarySidebar'
-import { SideBar } from './SideBar'
 import { Toasts } from './Toasts'
 
 const Wrapper = styled(Flex)`
@@ -47,6 +39,22 @@ const Version = styled(Flex)`
   font-size: 12px;
   opacity: 0.5;
 `
+
+const LazyMainToolbar = lazy(() => import('./MainToolbar').then(({ MainToolbar }) => ({ default: MainToolbar })))
+const LazyUniverse = lazy(() => import('~/components/Universe').then(({ Universe }) => ({ default: Universe })))
+const LazySideBar = lazy(() => import('./SideBar').then(({ SideBar }) => ({ default: SideBar })))
+
+const LazySettingsModal = lazy(() =>
+  import('../SettingsModal').then(({ SettingsModal }) => ({ default: SettingsModal })),
+)
+
+const LazyAddContentModal = lazy(() =>
+  import('../AddContentModal').then(({ AddContentModal }) => ({ default: AddContentModal })),
+)
+
+const LazySourcesTableModal = lazy(() =>
+  import('../SourcesTableModal').then(({ SourcesTableModal }) => ({ default: SourcesTableModal })),
+)
 
 export const App = () => {
   const [setBudget, setNodeCount] = useUserStore((s) => [s.setBudget, s.setNodeCount])
@@ -136,29 +144,31 @@ export const App = () => {
 
       <DeviceCompatibilityNotice />
 
-      <Leva hidden={!isDevelopment} />
+      {/* <Leva hidden={!isDevelopment} /> */}
 
-      <Wrapper direction="row">
-        <DataRetriever>
-          <FormProvider {...form}>
-            <MainToolbar />
-            <SideBar onSubmit={handleSubmit} />
-            <Universe />
-            <SecondarySideBar />
-            <AppBar />
-            <Version>v{version}</Version>
-            <ActionsToolbar />
-          </FormProvider>
-        </DataRetriever>
+      <Suspense fallback={<div>Loading...</div>}>
+        <Wrapper direction="row">
+          <DataRetriever>
+            <FormProvider {...form}>
+              <LazyMainToolbar />
+              <LazySideBar onSubmit={handleSubmit} />
+              <LazyUniverse />
+              <SecondarySideBar />
+              <AppBar />
+              <Version>v{version}</Version>
+              <ActionsToolbar />
+            </FormProvider>
+          </DataRetriever>
 
-        <AddContentModal />
-        <SettingsModal />
+          <LazyAddContentModal />
+          <LazySettingsModal />
 
-        <Toasts />
+          <Toasts />
 
-        <SourcesTableModal />
-        <Helper />
-      </Wrapper>
+          <LazySourcesTableModal />
+          <Helper />
+        </Wrapper>
+      </Suspense>
       <E2ETests />
     </AppProviders>
   )
