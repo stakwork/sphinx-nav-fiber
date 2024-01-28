@@ -169,7 +169,6 @@ export const App = () => {
           <Helper />
         </Wrapper>
       </Suspense>
-      <E2ETests />
     </AppProviders>
   )
 }

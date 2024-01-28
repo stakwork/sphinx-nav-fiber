@@ -7,8 +7,10 @@ export const AppContainer = () => {
   const [authenticated, setAuthenticated] = useState(false)
 
   return (
-    <Suspense fallback={<div>Loading...</div>}>
-      {!authenticated ? <Auth setAuthenticated={setAuthenticated} /> : <LazyApp />}
-    </Suspense>
+    <>
+      <Suspense fallback={<div>Loading...</div>}>
+        {!authenticated ? <Auth setAuthenticated={setAuthenticated} /> : <LazyApp />}
+      </Suspense>
+    </>
   )
 }

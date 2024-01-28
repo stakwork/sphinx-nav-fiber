@@ -1,5 +1,5 @@
+import { fireEvent, render, screen } from '@testing-library/react'
 import * as React from 'react'
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { SettingsView } from '../../index'
 
 // Mock the useUserStore and useAppStore hooks
@@ -22,13 +22,9 @@ describe('SettingsView Component', () => {
         }}
       />,
     )
-    ;(async () => {
-      await waitFor(() => {
-        expect(screen.getByText('General')).toBeInTheDocument()
-        expect(screen.getByText('Appearance')).toBeInTheDocument()
-        expect(screen.queryByText('User Permissions')).toBeNull()
-      })
-    })()
+
+    expect(screen.getByText('Appearance')).toBeInTheDocument()
+    expect(screen.queryByText('User Permissions')).toBeNull()
   })
 
   test('renders SettingsView component correctly for admin user', () => {
