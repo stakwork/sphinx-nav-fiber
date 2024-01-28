@@ -161,7 +161,7 @@
     "@cypress/code-coverage": "^3.12.8",
     "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
     "@testing-library/cypress": "^10.0.1",
-    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/jest-dom": "^6.2.0",
     "@testing-library/react": "^14.0.0",
     "@testing-library/user-event": "^14.4.3",
     "@types/d3": "^7.4.0",
