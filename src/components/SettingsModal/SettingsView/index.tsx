@@ -82,7 +82,7 @@ export const SettingsView: React.FC<Props> = ({ onClose }) => {
   return (
     <Wrapper direction="column">
       <SettingsHeader>
-        <StyledTabs aria-label="basic tabs example" onChange={handleChange} value={value}>
+        <StyledTabs aria-label="settings tabs" onChange={handleChange} value={value}>
           {isAdmin && <StyledTab disableRipple label="General" {...a11yProps(0)} />}
           <StyledTab color={colors.white} disableRipple label="Appearance" {...a11yProps(1)} />
           {isAdmin && <StyledTab disableRipple label="User Permissions" {...a11yProps(2)} />}

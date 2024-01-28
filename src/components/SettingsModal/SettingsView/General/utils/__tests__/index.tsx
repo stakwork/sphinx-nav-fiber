@@ -1,10 +1,11 @@
-import React from 'react'
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+/* eslint-disable padding-line-between-statements */
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { General } from '../../index'
+import React from 'react'
+import * as fetchSourcesDataModule from '~/network/fetchSourcesData'
 import { postAboutData } from '~/network/fetchSourcesData'
 import { useAppStore } from '~/stores/useAppStore'
-import * as fetchSourcesDataModule from '~/network/fetchSourcesData'
+import { General } from '../../index'
 
 jest.mock('~/network/fetchSourcesData')
 jest.mock('~/stores/useAppStore')
@@ -79,6 +80,7 @@ describe('General', () => {
     render(<General initialValues={{}} />)
 
     userEvent.type(screen.getByLabelText(/graph title/i), 'Test Title')
+
     await fireEvent.click(screen.getByRole('button', { name: /save changes/i }))
     ;(async () => {
       await waitFor(() => expect(screen.getByTestId('submit-loader')).toBeInTheDocument())

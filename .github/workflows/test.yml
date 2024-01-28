@@ -13,8 +13,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version-file: ".nvmrc"
-          cache: "yarn"
+          node-version-file: '.nvmrc'
+          cache: 'yarn'
 
       - name: Install
         run: yarn --immutable
@@ -26,7 +26,7 @@ jobs:
           install-command: yarn --immutable
           browser: chrome
           start: yarn run start-e2e
-          wait-on: "http://localhost:3000" # Waits for above
+          wait-on: 'http://localhost:3000' # Waits for above
           wait-on-timeout: 120 # Waits for 2 minutes
           # Records to Cypress Dashboard
           record: true
