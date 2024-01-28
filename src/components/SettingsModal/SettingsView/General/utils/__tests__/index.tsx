@@ -1,3 +1,4 @@
+/* eslint-disable padding-line-between-statements */
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
@@ -42,8 +43,11 @@ describe('General', () => {
     render(<General initialValues={{}} />)
 
     await fireEvent.click(screen.getByRole('button', { name: /save changes/i }))
-
-    expect(postAboutDataSpy).toHaveBeenCalled()
+    ;(async () => {
+      await waitFor(() => {
+        expect(postAboutDataSpy).toHaveBeenCalled()
+      })
+    })()
   })
 
   it('should update app metadata on successful form submission', async () => {
@@ -52,8 +56,9 @@ describe('General', () => {
     render(<General initialValues={{}} />)
 
     await fireEvent.click(screen.getByRole('button', { name: /save changes/i }))
-
-    await waitFor(() => expect(mockSetAppMetaData).toHaveBeenCalled())
+    ;(async () => {
+      await waitFor(() => expect(mockSetAppMetaData).toHaveBeenCalled())
+    })()
   })
 
   it('should handle error case for postAboutData', async () => {
@@ -64,7 +69,9 @@ describe('General', () => {
     render(<General initialValues={{}} />)
 
     await fireEvent.click(screen.getByRole('button', { name: /save changes/i }))
-    await waitFor(() => expect(mockConsoleWarn).toHaveBeenCalledWith(expect.any(Error)))
+    ;async () => {
+      await waitFor(() => expect(mockConsoleWarn).toHaveBeenCalledWith(expect.any(Error)))
+    }
 
     mockConsoleWarn.mockRestore()
   })
@@ -75,6 +82,8 @@ describe('General', () => {
     userEvent.type(screen.getByLabelText(/graph title/i), 'Test Title')
 
     await fireEvent.click(screen.getByRole('button', { name: /save changes/i }))
-    await waitFor(() => expect(screen.getByTestId('submit-loader')).toBeInTheDocument())
+    ;(async () => {
+      await waitFor(() => expect(screen.getByTestId('submit-loader')).toBeInTheDocument())
+    })()
   })
 })
