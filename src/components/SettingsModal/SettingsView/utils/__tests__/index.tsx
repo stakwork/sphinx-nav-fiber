@@ -22,7 +22,6 @@ describe('SettingsView Component', () => {
         }}
       />,
     )
-
     ;(async () => {
       await waitFor(() => {
         expect(screen.getByText('General')).toBeInTheDocument()
