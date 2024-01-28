@@ -1,8 +1,8 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import { App } from '~/components/App'
 import reportWebVitals from './reportWebVitals'
 
+import { AppContainer } from './components/AppContainer'
 import { isE2E } from './constants'
 import './index.css'
 import { overrideConsole } from './utils/logger'
@@ -11,10 +11,10 @@ const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 
 root.render(
   isE2E ? (
-    <App />
+    <AppContainer />
   ) : (
     <React.StrictMode>
-      <App />
+      <AppContainer />
     </React.StrictMode>
   ),
 )

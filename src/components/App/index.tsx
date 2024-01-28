@@ -3,15 +3,13 @@ import { useCallback, useEffect, useRef } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import 'react-toastify/dist/ReactToastify.css'
 import { Socket } from 'socket.io-client'
-import * as sphinx from 'sphinx-bridge'
 import styled from 'styled-components'
-import { Flex } from '~/components/common/Flex'
 import { DataRetriever } from '~/components/DataRetriever'
 import { GlobalStyle } from '~/components/GlobalStyle'
 import { Universe } from '~/components/Universe'
-import { isDevelopment, isE2E } from '~/constants'
+import { Flex } from '~/components/common/Flex'
+import { isDevelopment } from '~/constants'
 import useSocket from '~/hooks/useSockets'
-import { getIsAdmin } from '~/network/auth'
 import { getGraphDataPositions } from '~/network/fetchGraphData/const'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
@@ -19,9 +17,8 @@ import { useTeachStore } from '~/stores/useTeachStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { GraphData } from '~/types'
 import { colors } from '~/utils/colors'
-import { getSignedMessageFromRelay } from '~/utils/getSignedMessage'
 import { updateBudget } from '~/utils/setBudget'
-import { E2ETests, executeIfProd } from '~/utils/tests'
+import { E2ETests } from '~/utils/tests'
 import version from '~/utils/versionHelper'
 import { AddContentModal } from '../AddContentModal'
 import { SettingsModal } from '../SettingsModal'
@@ -52,12 +49,7 @@ const Version = styled(Flex)`
 `
 
 export const App = () => {
-  const [setBudget, setNodeCount, setIsAdmin, setPubKey] = useUserStore((s) => [
-    s.setBudget,
-    s.setNodeCount,
-    s.setIsAdmin,
-    s.setPubKey,
-  ])
+  const [setBudget, setNodeCount] = useUserStore((s) => [s.setBudget, s.setNodeCount])
 
   const [setSidebarOpen, searchTerm, setCurrentSearch, setRelevanceSelected, setTranscriptOpen] = [
     useAppStore((s) => s.setSidebarOpen),
@@ -69,12 +61,11 @@ export const App = () => {
 
   const setTeachMeAnswer = useTeachStore((s) => s.setTeachMeAnswer)
 
-  const [data, setData, fetchData, graphStyle, setSphinxModalOpen, setSelectedNode, setCategoryFilter] = [
+  const [data, setData, fetchData, graphStyle, setSelectedNode, setCategoryFilter] = [
     useDataStore((s) => s.data),
     useDataStore((s) => s.setData),
     useDataStore((s) => s.fetchData),
     useDataStore((s) => s.graphStyle),
-    useDataStore((s) => s.setSphinxModalOpen),
     useDataStore((s) => s.setSelectedNode),
     useDataStore((s) => s.setCategoryFilter),
   ]
@@ -95,26 +86,13 @@ export const App = () => {
   })
 
   const runSearch = useCallback(async () => {
-    if (searchTerm) {
-      setSphinxModalOpen(true)
-
-      // skipping this for end to end test because it requires a sphinx-relay to be connected
-      if (!isE2E) {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        await sphinx.enable()
-      }
-
-      setSphinxModalOpen(false)
-    }
-
     await fetchData(setBudget, searchTerm)
     setSidebarOpen(true)
 
     if (searchTerm) {
       await updateBudget(setBudget)
     }
-  }, [fetchData, searchTerm, setSphinxModalOpen, setSidebarOpen, setBudget])
+  }, [fetchData, searchTerm, setSidebarOpen, setBudget])
 
   useEffect(() => {
     runSearch()
@@ -139,36 +117,6 @@ export const App = () => {
     setNodeCount('INCREMENT')
   }, [setNodeCount])
 
-  const handleAuth = useCallback(async () => {
-    try {
-      await executeIfProd(async () => {
-        localStorage.removeItem('admin')
-
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        const sphinxEnable = await sphinx.enable()
-
-        setPubKey(sphinxEnable?.pubkey)
-
-        await updateBudget(setBudget)
-
-        const sigAndMessage = await getSignedMessageFromRelay()
-
-        const isAdmin = await getIsAdmin({
-          message: sigAndMessage.message,
-          signature: sigAndMessage.signature,
-        })
-
-        if (isAdmin.isAdmin) {
-          localStorage.setItem('admin', JSON.stringify({ isAdmin: true }))
-          setIsAdmin(true)
-        }
-      })
-    } catch (error) {
-      /* not an admin */
-    }
-  }, [setIsAdmin, setPubKey, setBudget])
-
   // setup socket
   useEffect(() => {
     if (isSocketSet.current) {
@@ -181,18 +129,6 @@ export const App = () => {
       isSocketSet.current = true
     }
   }, [socket, handleNewNode])
-
-  // auth checker
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      handleAuth()
-    }, 5000)
-
-    return () => {
-      clearTimeout(timer)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
 
   return (
     <AppProviders>

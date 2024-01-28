@@ -190,7 +190,15 @@ export type AuthRequest = {
   signature: string
 }
 
-export type IsAdminResponse = { isAdmin: boolean }
+export type IsAdminResponse = {
+  data: {
+    isAdmin: boolean
+    isPublic: boolean
+    isMember: boolean
+  }
+  success: boolean
+  message: string
+}
 
 type PostedBy = {
   name: string
@@ -204,4 +212,14 @@ export type BuyLsatRequest = {
 export type BalanceResponse = {
   success: boolean
   balance: number
+}
+
+export type TStats = {
+  numAudio: string
+  numContributors: string
+  numDaily: string
+  numEpisodes: string
+  numNodes: string
+  numTwitterSpace: string
+  numVideo: string
 }

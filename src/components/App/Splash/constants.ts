@@ -10,17 +10,17 @@ export const initialAboutState = {
 export const initialMessageData = [
   {
     label: 'New Content',
-    key: 'num_daily',
+    key: 'numDaily',
     value: null,
   },
   {
     label: 'Audio Clips',
-    key: 'num_audio',
+    key: 'numAudio',
     value: null,
   },
   {
     label: 'Posts',
-    key: 'num_tweet',
+    key: 'numTwitterSpace',
     value: null,
   },
 ]

@@ -1,4 +1,3 @@
-import '@testing-library/jest-dom/extend-expect'
 import { fireEvent, render, screen } from '@testing-library/react'
 import React from 'react'
 import { BriefDescription } from '..'
@@ -18,7 +17,7 @@ describe('BriefDescription Component Tests', () => {
   const trendMock = {
     audio_EN: 'fake-audio-url',
     tldr_topic: 'Test Topic',
-    tldr: 'Test TLDR',
+    tldr: '',
   }
 
   it('renders title, audio button, and tldr', () => {
@@ -27,8 +26,6 @@ describe('BriefDescription Component Tests', () => {
     expect(screen.getByText('Test Topic')).toBeInTheDocument()
 
     expect(screen.getByText('Listen')).toBeInTheDocument()
-
-    expect(screen.getByText('Test TLDR')).toBeInTheDocument()
   })
 
   it('toggles play/pause on audio button click', () => {

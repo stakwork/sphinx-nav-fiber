@@ -1,6 +1,6 @@
 /* eslint-disable func-names */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// import './styles.css'
+// import './styles.css';
 
 const getElementsMemoized = () => {
   const cache = {} as { inner: HTMLElement; body: HTMLElement }

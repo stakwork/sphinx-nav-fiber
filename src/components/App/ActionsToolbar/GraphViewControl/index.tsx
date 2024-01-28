@@ -1,5 +1,5 @@
 import clsx from 'clsx'
-import { ReactElement } from 'react'
+import React, { ReactElement } from 'react'
 import styled from 'styled-components'
 import BubbleChartIcon from '~/components/Icons/BubbleChartIcon'
 import CommunitiesIcon from '~/components/Icons/CommunitiesIcon'

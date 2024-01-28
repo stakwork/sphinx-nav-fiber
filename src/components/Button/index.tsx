@@ -1,4 +1,4 @@
-import { ReactNode } from 'react'
+import React, { ReactNode } from 'react'
 import styled, { css } from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { Text, TextKind } from '~/components/common/Text'

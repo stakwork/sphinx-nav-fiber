@@ -8,7 +8,7 @@ import FilterOffIcon from '~/components/Icons/FilterOffIcon'
 import ConfirmPopover from '~/components/common/ConfirmPopover'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
-import { RSS, TWITTER_HANDLE } from '~/constants'
+import { RSS, TWITTER_HANDLE, YOUTUBE_CHANNEL } from '~/constants'
 import { deleteRadarData, putRadarData } from '~/network/fetchSourcesData'
 import { useDataStore } from '~/stores/useDataStore'
 import { RadarRequest, Sources } from '~/types'
@@ -94,11 +94,16 @@ const Table: React.FC<Props> = ({ data, canEdit = false }) => {
                   </EditableCell>
                 )}
               >
-                {i.source_type === TWITTER_HANDLE || i.source_type === RSS ? (
+                {i.source_type === TWITTER_HANDLE || i.source_type === YOUTUBE_CHANNEL || i.source_type === RSS ? (
                   <>
                     {i.source_type === TWITTER_HANDLE && (
                       <StyledLink href={`${TWITTER_LINK}/${i.source}`} target="_blank">
                         @{i.source}
+                      </StyledLink>
+                    )}
+                    {i.source_type === YOUTUBE_CHANNEL && (
+                      <StyledLink href={`${i.source}${i.source.includes('?') ? '&' : '?'}open=system`} target="_blank">
+                        {i.source}
                       </StyledLink>
                     )}
                     {i.source_type === RSS && (
