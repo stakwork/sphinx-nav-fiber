@@ -63,7 +63,7 @@ export const Sources = () => {
       <Heading align="center" direction="row" justify="space-between">
         <Text className="title">Sources for this Graph</Text>
       </Heading>
-      <Search onSearch={setSearch} />
+      <Search onSearch={setSearch} placeholder="Find Topic" />
       <Flex className="filters" direction="row" pb={16} px={36}>
         <StyledPill className={clsx({ selected: !typeFilter })} onClick={() => onFilterChange('')} size="small">
           All
