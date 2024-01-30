@@ -125,7 +125,7 @@ const MediaPlayerComponent: FC<Props> = ({ hidden }) => {
         const windowHeight = window.screen.height
         const mousePositionY = event.clientY
         const distanceFromBottom = windowHeight - mousePositionY
-        const threshold = 100 // Adjust this value as needed
+        const threshold = 50 // Adjust this value as needed
 
         setIsMouseNearBottom(distanceFromBottom <= threshold)
       }
