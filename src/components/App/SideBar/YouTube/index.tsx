@@ -34,21 +34,22 @@ export const YouTube = () => {
   }
 
   return (
-    <Wrapper>
-      <StyledEpisode
-        boostCount={boostAmount || 0}
-        date={date || 0}
-        episodeTitle={formatDescription(episodeTitle)}
-        id={id}
-        imageUrl={imageUrl || 'video_default.svg'}
-        isSelectedView
-        link={link}
-        onClick={() => null}
-        showTitle={showTitle}
-        type={nodeType || type}
-      />
-      <StyledDivider />
-      <div ref={scrollTargetRef} style={{ overflow: 'auto', flex: 1, width: '100%' }}>
+    <div ref={scrollTargetRef} style={{ overflow: 'auto', flex: 1, width: '100%' }}>
+      <Wrapper>
+        <StyledEpisode
+          boostCount={boostAmount || 0}
+          date={date || 0}
+          episodeTitle={formatDescription(episodeTitle)}
+          id={id}
+          imageUrl={imageUrl || 'video_default.svg'}
+          isSelectedView
+          link={link}
+          onClick={() => null}
+          showTitle={showTitle}
+          type={nodeType || type}
+        />
+        <StyledDivider />
+
         <BoostWrapper>
           <BoostAmt amt={boostAmount} />
           <Booster content={selectedNode} count={boostAmount} refId={refId} updateCount={setBoostAmount} />
@@ -61,8 +62,8 @@ export const YouTube = () => {
         <TextWrapper>
           <Transcript key={id} node={selectedNode} stateless />
         </TextWrapper>
-      </div>
-    </Wrapper>
+      </Wrapper>
+    </div>
   )
 }
 
