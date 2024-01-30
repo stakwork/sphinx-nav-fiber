@@ -9,7 +9,6 @@ import { Text } from '~/components/common/Text'
 import { useAppStore } from '~/stores/useAppStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { colors } from '~/utils/colors'
-import { UserPermissions } from '../UserPermissions'
 import { Appearance } from './Appearance'
 import { General } from './General'
 
@@ -85,16 +84,12 @@ export const SettingsView: React.FC<Props> = ({ onClose }) => {
         <StyledTabs aria-label="settings tabs" onChange={handleChange} value={value}>
           {isAdmin && <StyledTab disableRipple label="General" {...a11yProps(0)} />}
           <StyledTab color={colors.white} disableRipple label="Appearance" {...a11yProps(1)} />
-          {isAdmin && <StyledTab disableRipple label="User Permissions" {...a11yProps(2)} />}
         </StyledTabs>
       </SettingsHeader>
       {isAdmin && (
         <>
           <TabPanel index={0} value={value}>
             <General initialValues={appMetaData} />
-          </TabPanel>
-          <TabPanel index={2} value={value}>
-            <UserPermissions initialValues={appMetaData} />
           </TabPanel>
         </>
       )}
