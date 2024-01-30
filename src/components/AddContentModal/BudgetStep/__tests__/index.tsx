@@ -1,6 +1,11 @@
 import { fireEvent, render } from '@testing-library/react'
 import React from 'react'
 import { BudgetStep } from '..'
+import * as fetchSourcesDataModule from '../../../../network/fetchSourcesData'
+
+jest.mock('../../../../network/fetchSourcesData')
+
+const mockGetPriceData = fetchSourcesDataModule.getPriceData as jest.Mock
 
 window.React = React
 
@@ -38,6 +43,27 @@ describe('Rendering', () => {
     const { getByText } = render(<BudgetStep loading={false} onClick={() => null} />)
 
     expect(getByText('10 sats')).toBeInTheDocument()
+  })
+
+  test('renders 0 sats component with getPrice api response is free', async () => {
+    const mockPrice = {
+      data: {
+        price: 0, // you can change it to any number for test
+      },
+    }
+
+    mockGetPriceData.mockResolvedValue(mockPrice)
+
+    const { findByText, getByText, getByTestId } = render(<BudgetStep loading={false} onClick={() => null} />)
+
+    expect(await findByText('Approve Cost')).toBeVisible()
+
+    expect(getByText('Approve Cost')).toBeInTheDocument()
+    expect(getByText('COST')).toBeInTheDocument()
+    expect(getByText('BUDGET')).toBeInTheDocument()
+    expect(getByText(`${mockPrice.data.price} sats`)).toBeInTheDocument()
+    expect(getByTestId('check-icon')).toBeInTheDocument()
+    expect(getByText('Approve')).toBeInTheDocument()
   })
 })
 
