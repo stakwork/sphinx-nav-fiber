@@ -23,6 +23,7 @@ describe('MainToolbar Component Tests', () => {
   it('renders MainToolbar component with correct elements', () => {
     render(<MainToolbar />)
 
+    expect(screen.getByText('Add Item')).toBeInTheDocument()
     expect(screen.getByText('Add Content')).toBeInTheDocument()
     expect(screen.getByText('Source Table')).toBeInTheDocument()
     expect(screen.getByText('Settings')).toBeInTheDocument()

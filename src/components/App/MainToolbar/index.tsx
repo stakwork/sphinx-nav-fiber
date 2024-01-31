@@ -9,6 +9,7 @@ import { colors } from '~/utils/colors'
 
 export const MainToolbar = () => {
   const { open: openSourcesModal } = useModal('sourcesTable')
+  const { open: openItemAddModal } = useModal('addItem')
   const { open: openContentAddModal } = useModal('addContent')
   const { open: openSettingsModal } = useModal('settings')
 
@@ -17,6 +18,17 @@ export const MainToolbar = () => {
       <LogoButton>
         <img alt="Second brain" src="logo.svg" />
       </LogoButton>
+      <ActionButton
+        data-testid="add-item-modal"
+        onClick={() => {
+          openItemAddModal
+        }}
+      >
+        <IconWrapper>
+          <AddContentIcon />
+        </IconWrapper>
+        <Text>Add Item</Text>
+      </ActionButton>
       <ActionButton data-testid="add-content-modal" onClick={openContentAddModal}>
         <IconWrapper>
           <AddContentIcon />
