@@ -45,7 +45,9 @@ export const BudgetStep: FC<Props> = ({ onClick, loading, type }) => {
       <Flex align="center" direction="row" justify="space-between" mb={20}>
         <Cost>
           <div className="title">COST</div>
-          <div className="value">{price} sats</div>
+          <div className="value" data-testid="check-price">
+            {price} sats
+          </div>
         </Cost>
         <Budget>
           <div className="title">BUDGET</div>
