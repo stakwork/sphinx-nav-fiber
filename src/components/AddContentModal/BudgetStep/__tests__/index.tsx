@@ -58,18 +58,17 @@ describe('Rendering', () => {
       <BudgetStep loading={false} onClick={() => null} />,
     )
 
-    const approveCostElement = getByText('Approve Cost')
-    const checkPriceElement = getByTestId('check-price')
     const mockPriceRes = await mockGetPriceData()
 
     expect(mockPriceRes.data.price).toBe(0)
+
     expect(await findByText('Approve Cost')).toBeVisible()
-    expect(approveCostElement).toBeInTheDocument()
+    expect(getByText('Approve Cost')).toBeInTheDocument()
     expect(getByText(`0 sats`)).toBeInTheDocument()
     expect(queryByText(`10 sats`)).not.toBeInTheDocument()
-    expect(checkPriceElement).toBeInTheDocument()
-    expect(checkPriceElement.textContent).toBe('0 sats')
-    expect(checkPriceElement.textContent).not.toBe('10 sats')
+    expect(getByTestId('check-price')).toBeInTheDocument()
+    expect(getByTestId('check-price').textContent).toBe('0 sats')
+    expect(getByTestId('check-price').textContent).not.toBe('10 sats')
   })
 })
 
