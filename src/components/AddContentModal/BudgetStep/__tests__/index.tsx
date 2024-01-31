@@ -60,9 +60,10 @@ describe('Rendering', () => {
 
     const approveCostElement = getByText('Approve Cost')
     const checkPriceElement = getByTestId('check-price')
+    const mockPriceRes = await mockGetPriceData()
 
+    expect(mockPriceRes.data.price).toBe(0)
     expect(await findByText('Approve Cost')).toBeVisible()
-
     expect(approveCostElement).toBeInTheDocument()
     expect(getByText(`0 sats`)).toBeInTheDocument()
     expect(queryByText(`10 sats`)).not.toBeInTheDocument()
