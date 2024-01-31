@@ -1,10 +1,10 @@
 import { IconButton } from '@mui/material'
 import { MdAccessTime, MdPlayArrow } from 'react-icons/md'
 import { ClipLoader } from 'react-spinners'
-import styled, { css } from 'styled-components'
-import { Booster } from '~/components/Booster'
+import styled from 'styled-components'
+import InfoIcon from '~/components/Icons/InfoIcon'
+import ScheduleIcon from '~/components/Icons/ScheduleIcon'
 import { Flex } from '~/components/common/Flex'
-import { Text } from '~/components/common/Text'
 import { useDataStore } from '~/stores/useDataStore'
 import { NodeExtended } from '~/types'
 import { ColorName, colors } from '~/utils/colors'
@@ -12,20 +12,32 @@ import { formatDescription } from '~/utils/formatDescription'
 import { formatTimestamp } from '~/utils/formatTimestamp'
 import { Equalizer } from './Equalizer'
 
-const Wrapper = styled(Flex).attrs<{ isSelected?: boolean }>(({ isSelected }) => ({
-  background: isSelected ? 'lightBlue100' : 'body',
+const Wrapper = styled(Flex).attrs<{ isSelected?: boolean }>(() => ({
   direction: 'row',
 }))<{ isSelected?: boolean }>`
   cursor: pointer;
   color: ${colors.primaryText1};
+  border-top: 1px solid ${colors.black};
+  background: ${(props) => (props.isSelected ? 'rgba(97, 138, 255, 0.1)' : `${colors.BG1}`)};
 
-  ${({ isSelected }) =>
-    !isSelected &&
-    css`
-      &:hover {
-        background: ${colors.dashboardHeader};
-      }
-    `}
+  .play-pause {
+    font-size: 24px;
+    border-radius: 4px;
+    color: ${colors.GRAY7};
+    cursor: pointer;
+  }
+
+  .info {
+    margin-left: auto;
+    color: ${colors.GRAY7};
+    font-size: 24px;
+  }
+
+  &:hover {
+    .play-pause {
+      color: ${colors.white};
+    }
+  }
 `
 
 type Props = {
@@ -48,35 +60,50 @@ export const Timestamp = ({ onClick, timestamp }: Props) => {
   )
 
   return (
-    <Wrapper isSelected={isSelected} onClick={onClick} px={20} py={12}>
-      <IconButton size="small">
-        <Equalizer />
-      </IconButton>
-      <Flex direction="row" px={20}>
-        {isSelected && !isTimestampLoaded ? <ClipLoader color={colors[color]} loading size={14} /> : icon}
-      </Flex>
-
+    <Wrapper
+      align="center"
+      direction="row"
+      isSelected={isSelected}
+      justify="flex-start"
+      onClick={onClick}
+      px={20}
+      py={20}
+    >
       <div>
-        <Flex align="center" direction="row">
-          {timestamp.timestamp && (
-            <Text color="primaryText1" kind={isSelected ? 'mediumBold' : 'medium'}>
-              {formatTimestamp(timestamp.timestamp)}
-            </Text>
-          )}
+        <IconButton className="play-pause">{!isSelected ? <ScheduleIcon /> : <Equalizer />}</IconButton>
+        {false && (
+          <Flex direction="row" px={20}>
+            {isSelected && !isTimestampLoaded ? <ClipLoader color={colors[color]} loading size={14} /> : icon}
+          </Flex>
+        )}
+      </div>
 
-          {!!timestamp.boost && (
-            <Flex pl={10}>
-              <Booster count={timestamp.boost} readOnly />
-            </Flex>
-          )}
-        </Flex>
-
+      <About align="flex-start" direction="column" justify="center">
+        {timestamp.timestamp && <span className="timestamp">{formatTimestamp(timestamp.timestamp)}</span>}
+        <span className="title">{formatDescription(timestamp.show_title)}</span>
+      </About>
+      <div className="info">
         <Flex pt={4}>
-          <Text color={isSelected ? 'blueTextAccent' : 'mainBottomIcons'} kind={isSelected ? 'regularBold' : 'regular'}>
-            {formatDescription(timestamp.description)}
-          </Text>
+          <InfoIcon />
         </Flex>
       </div>
     </Wrapper>
   )
 }
+
+const About = styled(Flex)`
+  font-size: 13px;
+  color: ${colors.white};
+  font-family: 'Barlow';
+  margin: 0 16px;
+  flex-shrink: 1;
+  .title {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+  .timestamp {
+    color: ${colors.GRAY6};
+  }
+`

@@ -15,7 +15,6 @@ type Props = {
   handleVolumeChange: (_: Event, value: number | number[]) => void
   playingTime: number
   duration: number
-  hasError: boolean
 }
 
 export const Toolbar: FC<Props> = ({
@@ -25,7 +24,6 @@ export const Toolbar: FC<Props> = ({
   duration,
   handleProgressChange,
   handleVolumeChange,
-  hasError,
 }) => (
   <Flex>
     <ProgressSlider
@@ -35,32 +33,28 @@ export const Toolbar: FC<Props> = ({
       size="small"
       value={playingTime}
     />
-    {hasError ? (
-      <Wrapper className="error-wrapper">Error happened, please try later</Wrapper>
-    ) : (
-      <Wrapper align="center" direction="row">
-        <Action onClick={setIsPlaying} size="small">
-          {!isPlaying ? <PlayIcon /> : <PauseIcon />}
-        </Action>
-        <TimeStamp direction="row">
-          <span>{secondsToMediaTime(playingTime)}</span>
-          <span className="separator">/</span>
-          <span className="duration">{secondsToMediaTime(duration)}</span>
-        </TimeStamp>
-        <VolumeControl direction="row" px={9}>
-          <Slider
-            className="volume-slider"
-            defaultValue={0.5}
-            max={1}
-            min={0}
-            onChange={handleVolumeChange}
-            size="small"
-            step={0.1}
-          />
-          <VolumeIcon />
-        </VolumeControl>
-      </Wrapper>
-    )}
+    <Wrapper align="center" direction="row">
+      <Action onClick={setIsPlaying} size="small">
+        {!isPlaying ? <PlayIcon /> : <PauseIcon />}
+      </Action>
+      <TimeStamp direction="row">
+        <span>{secondsToMediaTime(playingTime)}</span>
+        <span className="separator">/</span>
+        <span className="duration">{secondsToMediaTime(duration)}</span>
+      </TimeStamp>
+      <VolumeControl direction="row" px={9}>
+        <Slider
+          className="volume-slider"
+          defaultValue={0.5}
+          max={1}
+          min={0}
+          onChange={handleVolumeChange}
+          size="small"
+          step={0.1}
+        />
+        <VolumeIcon />
+      </VolumeControl>
+    </Wrapper>
   </Flex>
 )
 

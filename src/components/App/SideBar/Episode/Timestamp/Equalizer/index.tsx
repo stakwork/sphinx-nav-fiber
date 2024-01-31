@@ -24,5 +24,5 @@ export const Equalizer = () => {
     }
   }, [])
 
-  return <div id="lottie-timestamp-equalizer" style={{ width: '40px', height: '40px' }} />
+  return <div id="lottie-timestamp-equalizer" style={{ width: '18px', height: '18px' }} />
 }
