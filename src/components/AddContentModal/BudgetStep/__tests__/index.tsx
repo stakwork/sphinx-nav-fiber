@@ -48,22 +48,27 @@ describe('Rendering', () => {
   test('renders 0 sats component with getPrice api response is free', async () => {
     const mockPrice = {
       data: {
-        price: 0, // you can change it to any number for test
+        price: 0,
       },
     }
 
     mockGetPriceData.mockResolvedValue(mockPrice)
 
-    const { findByText, getByText, getByTestId } = render(<BudgetStep loading={false} onClick={() => null} />)
+    const { findByText, getByText, getByTestId, queryByText } = render(
+      <BudgetStep loading={false} onClick={() => null} />,
+    )
+
+    const approveCostElement = getByText('Approve Cost')
+    const checkPriceElement = getByTestId('check-price')
 
     expect(await findByText('Approve Cost')).toBeVisible()
 
-    expect(getByText('Approve Cost')).toBeInTheDocument()
-    expect(getByText('COST')).toBeInTheDocument()
-    expect(getByText('BUDGET')).toBeInTheDocument()
-    expect(getByText(`${mockPrice.data.price} sats`)).toBeInTheDocument()
-    expect(getByTestId('check-icon')).toBeInTheDocument()
-    expect(getByText('Approve')).toBeInTheDocument()
+    expect(approveCostElement).toBeInTheDocument()
+    expect(getByText(`0 sats`)).toBeInTheDocument()
+    expect(queryByText(`10 sats`)).not.toBeInTheDocument()
+    expect(checkPriceElement).toBeInTheDocument()
+    expect(checkPriceElement.textContent).toBe('0 sats')
+    expect(checkPriceElement.textContent).not.toBe('10 sats')
   })
 })
 
