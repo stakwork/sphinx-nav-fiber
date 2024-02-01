@@ -22,8 +22,7 @@ export const Relevance = ({ isSearchResult }: Props) => {
 
   const [setSelectedNode, setSelectedTimestamp] = useDataStore((s) => [s.setSelectedNode, s.setSelectedTimestamp])
 
-  const [setSidebarOpen] = useAppStore((s) => [s.setSidebarOpen])
-  const setRelevanceSelected = useAppStore((s) => s.setRelevanceSelected)
+  const [setSidebarOpen, setRelevanceSelected] = useAppStore((s) => [s.setSidebarOpen, s.setRelevanceSelected])
 
   const [currentPage, setCurrentPage] = useState(0)
 
@@ -32,12 +31,12 @@ export const Relevance = ({ isSearchResult }: Props) => {
   const startSlice = currentPage * pageSize
   const endSlice = startSlice + pageSize
 
-  const hasNext = filteredNodes.length - 1 > endSlice
+  const hasNext = filteredNodes && filteredNodes.length > 0 ? filteredNodes.length - 1 > endSlice : false
 
   const isMobile = useIsMatchBreakpoint('sm', 'down')
 
   const currentNodes = useMemo(
-    () => [...filteredNodes].sort((a, b) => (b.date || 0) - (a.date || 0)).slice(0, endSlice),
+    () => filteredNodes && [...filteredNodes].sort((a, b) => (b.date || 0) - (a.date || 0)).slice(0, endSlice),
     [filteredNodes, endSlice],
   )
 
@@ -55,7 +54,7 @@ export const Relevance = ({ isSearchResult }: Props) => {
   return (
     <>
       <ScrollView ref={scrollViewRef} id="search-result-list" shrink={1}>
-        {currentNodes.map((n, index) => {
+        {(currentNodes ?? []).map((n, index) => {
           const {
             image_url: imageUrl,
             date,

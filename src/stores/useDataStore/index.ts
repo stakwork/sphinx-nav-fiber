@@ -9,7 +9,13 @@ export type GraphStyle = 'sphere' | 'force' | 'split' | 'earth'
 
 export const graphStyles: GraphStyle[] = ['sphere', 'force', 'split', 'earth']
 
-type DataStore = {
+export type FetchNodeParams = {
+  word?: string
+  skip_cache?: string
+  free?: string
+}
+
+export type DataStore = {
   scrollEventsDisabled: boolean
   categoryFilter: NodeType | null
   disableCameraRotation: boolean
@@ -41,7 +47,7 @@ type DataStore = {
   setScrollEventsDisabled: (scrollEventsDisabled: boolean) => void
   setCategoryFilter: (categoryFilter: NodeType | null) => void
   setDisableCameraRotation: (rotation: boolean) => void
-  fetchData: (setBudget: (value: number | null) => void, search?: string | null) => void
+  fetchData: (setBudget: (value: number | null) => void, params?: FetchNodeParams) => void
   setData: (data: GraphData) => void
   setGraphStyle: (graphStyle: GraphStyle) => void
   setGraphRadius: (graphRadius?: number | null) => void
@@ -115,16 +121,16 @@ const defaultData: Omit<
 
 export const useDataStore = create<DataStore>((set, get) => ({
   ...defaultData,
-  fetchData: async (setBudget, search) => {
+  fetchData: async (setBudget, params) => {
     if (get().isFetching) {
       return
     }
 
     set({ isFetching: true, sphinxModalIsOpen: true })
 
-    const data = await fetchGraphData(search || '', get().graphStyle, setBudget)
+    const data = await fetchGraphData(get().graphStyle, setBudget, params ?? {})
 
-    if (search) {
+    if (params?.word) {
       await saveSearchTerm()
     }
 

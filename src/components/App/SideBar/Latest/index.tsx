@@ -1,9 +1,9 @@
 import { Button } from '@mui/material'
 import { memo } from 'react'
 import styled from 'styled-components'
-import { Flex } from '~/components/common/Flex'
 import BrowseGalleryIcon from '~/components/Icons/BrowseGalleryIcon'
 import DownloadIcon from '~/components/Icons/DownloadIcon'
+import { Flex } from '~/components/common/Flex'
 import { useDataStore } from '~/stores/useDataStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { colors } from '~/utils/colors'
@@ -16,14 +16,14 @@ type Props = {
 // eslint-disable-next-line no-underscore-dangle
 const _View = ({ isSearchResult }: Props) => {
   const [nodeCount, setNodeCount, setBudget] = useUserStore((s) => [s.nodeCount, s.setNodeCount, s.setBudget])
-  const [fetchData] = [useDataStore((s) => s.fetchData)]
+  const [fetchData] = useDataStore((s) => [s.fetchData])
 
   const getLatest = async () => {
     if (nodeCount < 1) {
       return
     }
 
-    await fetchData(setBudget)
+    await fetchData(setBudget, { skip_cache: 'true' })
     setNodeCount('CLEAR')
   }
 
