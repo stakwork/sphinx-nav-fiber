@@ -3,6 +3,7 @@ import { create } from 'zustand'
 export type AvailableModals =
   | 'budgetExplanation'
   | 'sourcesTable'
+  | 'addItem'
   | 'addContent'
   | 'editTopic'
   | 'addEdge'
@@ -22,6 +23,7 @@ const defaultData = {
   currentModals: {
     budgetExplanation: false,
     sourcesTable: false,
+    addItem: false,
     addContent: false,
     editTopic: false,
     addEdge: false,
