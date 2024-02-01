@@ -35,6 +35,16 @@ export type TStatParams = {
   num_video: number
 }
 
+export type TPriceParams = {
+  success: string
+  message: string
+  data: {
+    price: number
+    endpoint: string
+    method: string
+  }
+}
+
 export type TMergeTopicsParams = {
   from: string
   to: string
@@ -82,31 +92,31 @@ export const getAboutData = async () => {
 }
 
 export const getStats = async () => {
-  const response = await api.get<TAboutParams>('/stats')
+  const response = await api.get<TStatParams>('/stats')
 
   return response
 }
 
 export const getEdgeTypes = async () => {
-  const response = await api.get<FetchEdgesResponse>('/curation/edge/type')
+  const response = await api.get<FetchEdgesResponse>(`curation/edge/type`)
 
   return response
 }
 
 export const postEdgeType = async (data: TAddEdgeParams) => {
-  const response = await api.post('/curation/edge', JSON.stringify(data))
+  const response = await api.post(`/curation/edge`, JSON.stringify(data))
 
   return response
 }
 
 export const postAboutData = async (data: TAboutParams) => {
-  const response = await api.post('/about', JSON.stringify(data))
+  const response = await api.post(`/about`, JSON.stringify(data))
 
   return response
 }
 
 export const postMergeTopics = async (data: TMergeTopicsParams) => {
-  const response = await api.post('/curation/merge', JSON.stringify(data))
+  const response = await api.post(`/curation/merge`, JSON.stringify(data))
 
   return response
 }
@@ -133,6 +143,12 @@ export const approveRadarData = async (id: string, pubkey: string) => {
 
 export const deleteRadarData = async (id: string) => {
   const response = await api.delete(`/radar/${id}`)
+
+  return response
+}
+
+export const getPriceData = async (endpoint: string) => {
+  const response = await api.get<TPriceParams>(`/getprice?endpoint=${endpoint}&method=post`)
 
   return response
 }

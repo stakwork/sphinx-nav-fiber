@@ -1,6 +1,8 @@
 import { IconButton, Slider } from '@mui/material'
 import { FC } from 'react'
 import styled from 'styled-components'
+import ExitFullScreen from '~/components/Icons/ExitFullScreen'
+import FullScreenIcon from '~/components/Icons/FullScreenIcon'
 import PauseIcon from '~/components/Icons/PauseIcon'
 import PlayIcon from '~/components/Icons/PlayIcon'
 import VolumeIcon from '~/components/Icons/VolumeIcon'
@@ -15,6 +17,8 @@ type Props = {
   handleVolumeChange: (_: Event, value: number | number[]) => void
   playingTime: number
   duration: number
+  onFullScreenClick: () => void
+  showToolbar: boolean
 }
 
 export const Toolbar: FC<Props> = ({
@@ -24,16 +28,21 @@ export const Toolbar: FC<Props> = ({
   duration,
   handleProgressChange,
   handleVolumeChange,
+  onFullScreenClick,
+  showToolbar,
 }) => (
   <Flex>
-    <ProgressSlider
-      aria-label="Small"
-      max={duration}
-      onChange={handleProgressChange}
-      size="small"
-      value={playingTime}
-    />
-    <Wrapper align="center" direction="row">
+    {!showToolbar && (
+      <ProgressSlider
+        aria-label="Small"
+        max={duration}
+        onChange={handleProgressChange}
+        size="small"
+        value={playingTime}
+      />
+    )}
+
+    <Wrapper align="center" direction="row" showToolbar={showToolbar}>
       <Action onClick={setIsPlaying} size="small">
         {!isPlaying ? <PlayIcon /> : <PauseIcon />}
       </Action>
@@ -54,13 +63,26 @@ export const Toolbar: FC<Props> = ({
         />
         <VolumeIcon />
       </VolumeControl>
+      <Fullscreen onClick={() => onFullScreenClick()}>
+        {!showToolbar ? <FullScreenIcon /> : <ExitFullScreen />}
+      </Fullscreen>
     </Wrapper>
   </Flex>
 )
 
-const Wrapper = styled(Flex)`
+const Wrapper = styled(Flex)<{ showToolbar: boolean }>`
   height: 60px;
   padding: 12px 16px;
+  ${(props) =>
+    props.showToolbar &&
+    `
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index:1;
+    background-color: rgba(0, 0, 0, 0.6);
+  `}
 
   &.error-wrapper {
     color: ${colors.primaryRed};
@@ -114,8 +136,16 @@ const VolumeControl = styled(Flex)`
   }
 `
 
+const Fullscreen = styled(Flex)`
+  cursor: pointer;
+  padding: 8px;
+  font-size: 32px;
+  color: #d9d9d9;
+`
+
 const ProgressSlider = styled(Slider)`
   && {
+    z-index: 20;
     color: ${colors.white};
     height: 3px;
     width: calc(100% - 12px);

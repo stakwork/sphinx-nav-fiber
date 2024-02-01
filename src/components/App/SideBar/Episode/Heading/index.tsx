@@ -13,6 +13,7 @@ const Wrapper = styled(Flex)`
   flex-direction: column;
   border-bottom: 1px solid #101317;
   z-index: 0;
+  background-color: rgba(0, 0, 0, 0.2);
 
   .episode-title {
     font-size: 20px;

@@ -1,7 +1,6 @@
 import { Segments } from '@react-three/drei'
 import { useMemo } from 'react'
 import { Vector3 } from 'three'
-import { useGraphData } from '~/components/DataRetriever'
 import { useDataStore } from '~/stores/useDataStore'
 import { Link } from '~/types'
 import { maxChildrenDisplayed } from '../constants'
@@ -12,7 +11,7 @@ import { Segment } from './Segment'
 import { NodeDetailsPanel } from './UI'
 
 export const Graph = () => {
-  const data = useGraphData()
+  const data = useDataStore((s) => s.data)
   const isLoading = useDataStore((s) => s.isFetching)
   const graphStyle = useDataStore((s) => s.graphStyle)
   const showSelectionGraph = useDataStore((s) => s.showSelectionGraph)
@@ -94,7 +93,6 @@ export const Graph = () => {
           {nodeBadges}
         </Segments>
       )}
-
       <NodeDetailsPanel />
     </>
   )

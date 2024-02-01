@@ -1,19 +1,19 @@
-import { useCallback, useEffect, useMemo } from 'react'
+import { Slide } from '@mui/material'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { useGraphData } from '~/components/DataRetriever'
-import { Divider } from '~/components/common/Divider'
+import ChevronDownIcon from '~/components/Icons/ChevronDownIcon'
 import { Flex } from '~/components/common/Flex'
-import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
+import { useSelectedNode } from '~/stores/useDataStore'
 import { usePlayerStore } from '~/stores/usePlayerStore'
 import { NodeExtended } from '~/types'
-import { videoTimeToSeconds } from '~/utils'
+import { colors, videoTimeToSeconds } from '~/utils'
 import { getSelectedNodeTimestamps } from '~/utils/getSelectedNodeTimestamps'
+import { Media } from '../Media'
 import { Heading } from './Heading'
 import { Timestamp } from './Timestamp'
 
-const Wrapper = styled(Flex)`
-  height: 70vh;
-  padding-bottom: 45px;
+const ClipsWrapper = styled(Flex)`
   overflow: scroll;
 
   &::-webkit-scrollbar {
@@ -31,6 +31,10 @@ export const Episode = () => {
   const selectedNode = useSelectedNode()
   const data = useGraphData()
 
+  const [openClip, setOpenClip] = useState<NodeExtended | null>(null)
+
+  const [selectedTimestamp, setSelectedTimestamp] = useState<NodeExtended | null>(null)
+
   const [playingNode, setPlayingNodeLink, setPlayingTime] = usePlayerStore((s) => [
     s.playingNode,
     s.setPlayingNodeLink,
@@ -47,8 +51,6 @@ export const Episode = () => {
     [data?.nodes, selectedNode],
   )
 
-  const [selectedTimestamp, setSelectedTimestamp] = useDataStore((s) => [s.selectedTimestamp, s.setSelectedTimestamp])
-
   const updateActiveTimestamp = useCallback(
     (timestamp: NodeExtended) => {
       if (playingNode && timestamp.link && playingNode?.link !== timestamp.link) {
@@ -59,13 +61,6 @@ export const Episode = () => {
       setSelectedTimestamp(timestamp)
     },
     [playingNode, setPlayingNodeLink, setSelectedTimestamp, setPlayingTime],
-  )
-
-  useEffect(
-    () => () => {
-      setSelectedTimestamp(null)
-    },
-    [setSelectedTimestamp],
   )
 
   useEffect(() => {
@@ -79,25 +74,75 @@ export const Episode = () => {
   }
 
   return (
-    <div>
-      <Heading selectedNodeShow={selectedNodeShow} />
+    <div style={{ overflow: 'auto', flex: 1, width: '100%' }}>
+      <Wrapper>
+        {openClip && (
+          <StyledSlide className="slide-me" direction="up" in={!!openClip}>
+            <InfoWrapper>
+              <Flex className="close-info" onClick={() => setOpenClip(null)}>
+                <ChevronDownIcon />
+              </Flex>
+              {openClip && <Media node={openClip} />}
+            </InfoWrapper>
+          </StyledSlide>
+        )}
+        <Heading selectedNodeShow={selectedNodeShow} />
 
-      {!!selectedNodeTimestamps?.length && (
-        <Wrapper>
-          <Flex pb={20}>
-            {selectedNodeTimestamps?.map((timestamp, index) => (
-              <Timestamp
-                // eslint-disable-next-line react/no-array-index-key
-                key={`${timestamp.episode_title}_${index}`}
-                onClick={() => updateActiveTimestamp(timestamp)}
-                timestamp={timestamp}
-              />
-            ))}
-          </Flex>
-
-          <Divider />
-        </Wrapper>
-      )}
+        {!!selectedNodeTimestamps?.length && (
+          <ClipsWrapper>
+            <Flex pb={20}>
+              {selectedNodeTimestamps?.map((timestamp, index) => (
+                <Timestamp
+                  // eslint-disable-next-line react/no-array-index-key
+                  key={`${timestamp.episode_title}_${index}`}
+                  isSelected={selectedTimestamp?.ref_id === timestamp.ref_id}
+                  onClick={() => updateActiveTimestamp(timestamp)}
+                  setOpenClip={setOpenClip}
+                  timestamp={timestamp}
+                />
+              ))}
+            </Flex>
+          </ClipsWrapper>
+        )}
+      </Wrapper>
     </div>
   )
 }
+
+const InfoWrapper = styled(Flex)`
+  border-radius: 20px;
+  overflow: hidden;
+  height: 100%;
+
+  .close-info {
+    position: absolute;
+    color: ${colors.white};
+    top: 20px;
+    right: 20px;
+    font-size: 20px;
+    cursor: pointer;
+  }
+`
+
+const Wrapper = styled(Flex)`
+  position: relative;
+  flex: 1;
+  min-height: 100%;
+  flex-direction: column;
+  border-bottom: 1px solid #101317;
+  box-shadow: 0px 5px 6px rgba(0, 0, 0, 0.5);
+`
+
+const StyledSlide = styled(Slide)`
+  && {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 0;
+    border-radius: 16px;
+    overflow: hidden;
+    background: ${colors.BG1};
+    z-index: 1;
+  }
+`

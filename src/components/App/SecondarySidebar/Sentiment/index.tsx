@@ -1,6 +1,5 @@
 import moment from 'moment'
 import { useState } from 'react'
-import * as sphinx from 'sphinx-bridge'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
@@ -12,7 +11,6 @@ import { Button } from '~/components/Button'
 import { useUserStore } from '~/stores/useUserStore'
 import { colors } from '~/utils/colors'
 import { updateBudget } from '~/utils/setBudget'
-import { executeIfProd } from '~/utils/tests'
 import { SentimentChart } from './SentimentChart'
 
 type SentimentData = {
@@ -29,14 +27,7 @@ export const Sentiment = () => {
   const fetchData = async () => {
     setIsLoading(true)
 
-    // Wrap for tests
-    await executeIfProd(() =>
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      sphinx.enable(),
-    )
-
-    getSentimentData()
+    getSentimentData(setBudget)
       .then(async (r) => {
         setSentimentData(
           r?.data

@@ -5,21 +5,15 @@ import HashtagIcon from '~/components/Icons/HashtagIcon'
 import LinkIcon from '~/components/Icons/LinkIcon'
 import { Avatar } from '~/components/common/Avatar'
 import { Flex } from '~/components/common/Flex'
-import { FlexboxProps } from '~/components/common/Flex/flexbox'
 import { Text } from '~/components/common/Text'
 import { TypeBadge } from '~/components/common/TypeBadge'
-import { useDataStore } from '~/stores/useDataStore'
 import { colors } from '~/utils/colors'
 import { TypePerson } from './TypePerson'
 import { TypeTweet } from './TypeTweet'
 
-type EpisodeWrapperProps = FlexboxProps & {
-  isSelected?: boolean
-}
-
 const EpisodeWrapper = styled(Flex).attrs({
   direction: 'column',
-})<EpisodeWrapperProps>`
+})`
   padding: 24px;
   cursor: pointer;
   border-top: 1px solid #101317;
@@ -46,8 +40,7 @@ export type Props = {
   date: number
   episodeTitle: string
   isSelectedView?: boolean
-  id?: string
-  imageUrl: string
+  imageUrl?: string
   showTitle?: string
   text?: string
   // eslint-disable-next-line react/no-unused-prop-types
@@ -66,7 +59,6 @@ export const Episode = ({
   boostCount,
   date,
   episodeTitle,
-  id,
   isSelectedView = false,
   imageUrl,
   showTitle,
@@ -80,21 +72,20 @@ export const Episode = ({
   className = 'episode-wrapper',
   onClick,
 }: Props) => {
-  const selectedTimestamp = useDataStore((s) => s.selectedTimestamp)
-  const isSelected = !!(selectedTimestamp && selectedTimestamp.id === id)
-
   const description = type === 'show' ? showTitle : episodeTitle
   const subtitle = type === 'show' ? '' : showTitle
 
   const defaultViewTypes = ['tweet', 'person', 'guest', 'topic']
 
+  const imageType = type === 'youtube' ? 'video' : 'audio'
+
   return type ? (
-    <EpisodeWrapper className={className} isSelected={isSelected} onClick={onClick}>
+    <EpisodeWrapper className={className} onClick={onClick}>
       {!defaultViewTypes.includes(type) ? (
         <Flex direction="row">
           {!isSelectedView && (
             <Flex align="center" pr={16}>
-              <Avatar size={64} src={imageUrl} type={type || ''} />
+              <Avatar size={64} src={imageUrl || `${imageType}_default.svg`} type={type || ''} />
             </Flex>
           )}
 

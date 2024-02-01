@@ -1,39 +1,27 @@
-import { Leva } from 'leva'
-import { useCallback, useEffect, useRef } from 'react'
+import { Suspense, lazy, useCallback, useEffect, useRef } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import 'react-toastify/dist/ReactToastify.css'
 import { Socket } from 'socket.io-client'
-import * as sphinx from 'sphinx-bridge'
 import styled from 'styled-components'
-import { Flex } from '~/components/common/Flex'
 import { DataRetriever } from '~/components/DataRetriever'
 import { GlobalStyle } from '~/components/GlobalStyle'
-import { Universe } from '~/components/Universe'
-import { isDevelopment, isE2E } from '~/constants'
+import { Flex } from '~/components/common/Flex'
 import useSocket from '~/hooks/useSockets'
-import { getIsAdmin } from '~/network/auth'
 import { getGraphDataPositions } from '~/network/fetchGraphData/const'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
 import { useTeachStore } from '~/stores/useTeachStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { GraphData } from '~/types'
-import { extractUuidAndHost } from '~/utils/auth'
 import { colors } from '~/utils/colors'
-import { getSignedMessageFromRelay } from '~/utils/getSignedMessage'
 import { updateBudget } from '~/utils/setBudget'
-import { E2ETests, executeIfProd } from '~/utils/tests'
 import version from '~/utils/versionHelper'
-import { AddContentModal } from '../AddContentModal'
-import { SettingsModal } from '../SettingsModal'
-import { SourcesTableModal } from '../SourcesTableModal'
 import { ActionsToolbar } from './ActionsToolbar'
 import { AppBar } from './AppBar'
+import { DeviceCompatibilityNotice } from './DeviceCompatibilityNotification'
 import { Helper } from './Helper'
-import { MainToolbar } from './MainToolbar'
 import { AppProviders } from './Providers'
 import { SecondarySideBar } from './SecondarySidebar'
-import { SideBar } from './SideBar'
 import { Toasts } from './Toasts'
 
 const Wrapper = styled(Flex)`
@@ -51,15 +39,24 @@ const Version = styled(Flex)`
   opacity: 0.5;
 `
 
+const LazyMainToolbar = lazy(() => import('./MainToolbar').then(({ MainToolbar }) => ({ default: MainToolbar })))
+const LazyUniverse = lazy(() => import('~/components/Universe').then(({ Universe }) => ({ default: Universe })))
+const LazySideBar = lazy(() => import('./SideBar').then(({ SideBar }) => ({ default: SideBar })))
+
+const LazySettingsModal = lazy(() =>
+  import('../SettingsModal').then(({ SettingsModal }) => ({ default: SettingsModal })),
+)
+
+const LazyAddContentModal = lazy(() =>
+  import('../AddContentModal').then(({ AddContentModal }) => ({ default: AddContentModal })),
+)
+
+const LazySourcesTableModal = lazy(() =>
+  import('../SourcesTableModal').then(({ SourcesTableModal }) => ({ default: SourcesTableModal })),
+)
+
 export const App = () => {
-  const [setBudget, setNodeCount, setTribeHost, setTribeUuid, setIsAdmin, setPubKey] = useUserStore((s) => [
-    s.setBudget,
-    s.setNodeCount,
-    s.setTribeHost,
-    s.setTribeUuid,
-    s.setIsAdmin,
-    s.setPubKey,
-  ])
+  const [setBudget, setNodeCount] = useUserStore((s) => [s.setBudget, s.setNodeCount])
 
   const [setSidebarOpen, searchTerm, setCurrentSearch, setRelevanceSelected, setTranscriptOpen] = [
     useAppStore((s) => s.setSidebarOpen),
@@ -71,12 +68,11 @@ export const App = () => {
 
   const setTeachMeAnswer = useTeachStore((s) => s.setTeachMeAnswer)
 
-  const [data, setData, fetchData, graphStyle, setSphinxModalOpen, setSelectedNode, setCategoryFilter] = [
+  const [data, setData, fetchData, graphStyle, setSelectedNode, setCategoryFilter] = [
     useDataStore((s) => s.data),
     useDataStore((s) => s.setData),
     useDataStore((s) => s.fetchData),
     useDataStore((s) => s.graphStyle),
-    useDataStore((s) => s.setSphinxModalOpen),
     useDataStore((s) => s.setSelectedNode),
     useDataStore((s) => s.setCategoryFilter),
   ]
@@ -97,24 +93,13 @@ export const App = () => {
   })
 
   const runSearch = useCallback(async () => {
-    if (searchTerm) {
-      setSphinxModalOpen(true)
-
-      // skipping this for end to end test because it requires a sphinx-relay to be connected
-      if (!isE2E) {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        await sphinx.enable()
-
-        await updateBudget(setBudget)
-      }
-
-      setSphinxModalOpen(false)
-    }
-
-    await fetchData(searchTerm)
+    await fetchData(setBudget, searchTerm)
     setSidebarOpen(true)
-  }, [fetchData, searchTerm, setSphinxModalOpen, setSidebarOpen, setBudget])
+
+    if (searchTerm) {
+      await updateBudget(setBudget)
+    }
+  }, [fetchData, searchTerm, setSidebarOpen, setBudget])
 
   useEffect(() => {
     runSearch()
@@ -139,40 +124,6 @@ export const App = () => {
     setNodeCount('INCREMENT')
   }, [setNodeCount])
 
-  const handleAuth = useCallback(async () => {
-    try {
-      const { host, uuid } = extractUuidAndHost(window.location.search)
-
-      setTribeHost(host)
-      setTribeUuid(uuid)
-
-      await executeIfProd(async () => {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        const sphinxEnable = await sphinx.enable()
-
-        setPubKey(sphinxEnable?.pubkey)
-
-        const sigAndMessage = await getSignedMessageFromRelay()
-
-        const isAdmin = await getIsAdmin({
-          tribeHost: host,
-          tribeUuid: uuid,
-          message: sigAndMessage.message,
-          signature: sigAndMessage.signature,
-        })
-
-        if (isAdmin.isAdmin) {
-          setIsAdmin(true)
-        }
-
-        await updateBudget(setBudget)
-      })
-    } catch (error) {
-      /* not an admin */
-    }
-  }, [setIsAdmin, setTribeHost, setTribeUuid, setPubKey, setBudget])
-
   // setup socket
   useEffect(() => {
     if (isSocketSet.current) {
@@ -186,40 +137,37 @@ export const App = () => {
     }
   }, [socket, handleNewNode])
 
-  // auth checker
-  useEffect(() => {
-    handleAuth()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
   return (
     <AppProviders>
       <GlobalStyle />
 
-      <Leva hidden={!isDevelopment} />
+      <DeviceCompatibilityNotice />
 
-      <Wrapper direction="row">
-        <DataRetriever>
-          <FormProvider {...form}>
-            <MainToolbar />
-            <SideBar onSubmit={handleSubmit} />
-            <Universe />
-            <SecondarySideBar />
-            <AppBar />
-            <Version>v{version}</Version>
-            <ActionsToolbar />
-          </FormProvider>
-        </DataRetriever>
+      {/* <Leva hidden={!isDevelopment} /> */}
 
-        <AddContentModal />
-        <SettingsModal />
+      <Suspense fallback={<div>Loading...</div>}>
+        <Wrapper direction="row">
+          <DataRetriever>
+            <FormProvider {...form}>
+              <LazyMainToolbar />
+              <LazySideBar onSubmit={handleSubmit} />
+              <LazyUniverse />
+              <SecondarySideBar />
+              <AppBar />
+              <Version>v{version}</Version>
+              <ActionsToolbar />
+            </FormProvider>
+          </DataRetriever>
 
-        <Toasts />
+          <LazyAddContentModal />
+          <LazySettingsModal />
 
-        <SourcesTableModal />
-        <Helper />
-      </Wrapper>
-      <E2ETests />
+          <Toasts />
+
+          <LazySourcesTableModal />
+          <Helper />
+        </Wrapper>
+      </Suspense>
     </AppProviders>
   )
 }

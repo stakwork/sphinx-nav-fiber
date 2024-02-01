@@ -100,12 +100,15 @@ export const AskQuestion = () => {
         // @ts-ignore
         await sphinx.enable()
 
-        await postAskQuestion({
-          expertise_level: selectedValue,
-          question_text: question,
-          search_term: searchTerm,
-          transcripts,
-        })
+        await postAskQuestion(
+          {
+            expertise_level: selectedValue,
+            question_text: question,
+            search_term: searchTerm,
+            transcripts,
+          },
+          setBudget,
+        )
 
         await updateBudget(setBudget)
 

@@ -18,8 +18,10 @@ import { timeToMilliseconds } from './timeToMilliseconds'
 import { useIsMatchBreakpoint } from './useIsMatchBreakpoint'
 // import APP_VERSION from './versionHelper'
 import { extractUuidAndHost } from './auth'
-import { getSignedMessageFromRelay } from './getSignedMessage'
+import { generateAuthQueryParam, getSignedMessageFromRelay } from './getSignedMessage'
 import { videoTimeToSeconds } from './videoTimetoSeconds'
+import { showPlayButton, getTrendingTopic } from './trending'
+import { formatNumberWithCommas } from './formatStats'
 
 export {
   E2ETests,
@@ -47,4 +49,8 @@ export {
   videoTimeToSeconds,
   getSignedMessageFromRelay,
   extractUuidAndHost,
+  generateAuthQueryParam,
+  showPlayButton,
+  getTrendingTopic,
+  formatNumberWithCommas,
 }

@@ -14,14 +14,14 @@ type Option = Record<string, string>
 
 const options: Option = {
   all: 'All',
-  show: 'Show',
+  podcast: 'Audio',
   episode: 'Episode',
-  twitter_space: 'Twitter Space',
-  tweet: 'Tweet',
-  youtube: 'Video (Youtube)',
-  person: 'People (Person)',
   document: 'Document',
-  podcast: 'Podcast',
+  person: 'People',
+  show: 'Show',
+  twitter_space: 'TwitterSpace',
+  tweet: 'Tweet',
+  youtube: 'Video',
 }
 
 export const SelectWithPopover = () => {

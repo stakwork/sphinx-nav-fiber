@@ -1,4 +1,4 @@
-import create from 'zustand'
+import { create } from 'zustand'
 import { initialAboutState } from '~/components/App/Splash/constants'
 import { TAboutParams } from '~/network/fetchSourcesData'
 

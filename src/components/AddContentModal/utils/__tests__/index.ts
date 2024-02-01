@@ -1,4 +1,4 @@
-import { LINK, TWITTER_HANDLE, TWITTER_SOURCE, WEB_PAGE, YOUTUBE_CHANNEL } from '~/constants'
+import { DOCUMENT, LINK, RSS, TWITTER_HANDLE, TWITTER_SOURCE, WEB_PAGE, YOUTUBE_CHANNEL } from '~/constants'
 import { extractNameFromLink, getInputType } from '..'
 
 describe('youtubeRegex', () => {
@@ -22,6 +22,10 @@ describe('youtubeRegex', () => {
     expect(getInputType('https://hahaha.com/i/spaces/1zqKVqwrVzlxB?s=20.mp3')).toBe(LINK)
   })
 
+  it('should assert we can check for Twitter broadcast regex', () => {
+    expect(getInputType('https://twitter.com/i/broadcasts/1YqxoDbOqevKv')).toBe(LINK)
+  })
+
   it('should assert we can check for generic url regex', async () => {
     expect(getInputType('https://idkwhat.com/routeing/tou')).toBe(WEB_PAGE)
   })
@@ -36,6 +40,10 @@ describe('youtubeRegex', () => {
 
   it('should assert we can check for youtube live clip regex', async () => {
     expect(getInputType('https://www.youtube.com/@MrBeast')).toBe(YOUTUBE_CHANNEL)
+  })
+
+  it('should assert we can check for document regex', async () => {
+    expect(getInputType('some plain text')).toBe(DOCUMENT)
   })
 })
 
@@ -73,5 +81,14 @@ describe('extractNameFromLink', () => {
     const result = extractNameFromLink(inputString)
 
     expect(result).toBeNull()
+  })
+})
+
+describe('getInputType', () => {
+  it('should assert we can check for RSS feed url regex', async () => {
+    expect(getInputType('http://example.com/feed')).toBe(RSS)
+    expect(getInputType('http://example.com/rss')).toBe(RSS)
+    expect(getInputType('http://example.com/rss.xml')).toBe(RSS)
+    expect(getInputType('http://example.com/?feed=rss')).toBe(RSS)
   })
 })

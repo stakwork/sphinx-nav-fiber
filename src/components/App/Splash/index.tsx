@@ -4,8 +4,10 @@ import React, { memo, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
-import { TAboutParams, getAboutData, getStats } from '~/network/fetchSourcesData'
+import { getAboutData } from '~/network/fetchSourcesData'
 import { useAppStore } from '~/stores/useAppStore'
+import { useDataStore } from '~/stores/useDataStore'
+import { TStats } from '~/types'
 import { colors } from '~/utils'
 import { SphereAnimation } from './SpiningSphere'
 import { AnimatedTextContent } from './animated'
@@ -18,7 +20,8 @@ type Props = {
 export const Splash = memo(({ handleLoading }: Props) => {
   const [message, setMessage] = useState<Message>(initialMessageData)
   const [progress, setProgress] = useState(0)
-  const [appMetaData, setAppMetaData] = [useAppStore((s) => s.appMetaData), useAppStore((s) => s.setAppMetaData)]
+  const [appMetaData, setAppMetaData] = useAppStore((s) => [s.appMetaData, s.setAppMetaData])
+  const [data, stats] = useDataStore((s) => [s.data, s.stats])
 
   useEffect(() => {
     let timeoutId: NodeJS.Timeout
@@ -31,19 +34,9 @@ export const Splash = memo(({ handleLoading }: Props) => {
 
         setProgress(50)
 
-        const statistics = await getStats()
-
         setProgress((prev) => prev + 15)
 
         setAppMetaData(aboutResponse)
-
-        setMessage(
-          initialMessageData.map(({ key, ...rest }) => ({
-            key,
-            ...rest,
-            value: statistics[key as keyof TAboutParams] ?? null,
-          })),
-        )
 
         timeoutId = setTimeout(() => handleLoading(false), 6000)
       } catch (error) {
@@ -59,7 +52,25 @@ export const Splash = memo(({ handleLoading }: Props) => {
 
     return () => clearTimeout(timeoutId)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [stats])
+
+  useEffect(() => {
+    if (stats) {
+      const messageData = initialMessageData.map(({ key, ...rest }) => ({
+        key,
+        ...rest,
+        value: stats[key as keyof TStats] ?? null,
+      }))
+
+      setMessage(messageData)
+    }
+  }, [stats, setMessage])
+
+  useEffect(() => {
+    if (data) {
+      handleLoading(false)
+    }
+  }, [handleLoading, data])
 
   useEffect(() => {
     const intervalId = setInterval(() => {

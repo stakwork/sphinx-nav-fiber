@@ -8,6 +8,7 @@ import {
   LINK,
   NODE_ADD_ERROR,
   NODE_ADD_SUCCESS,
+  RSS,
   TWITTER_HANDLE,
   TWITTER_SOURCE,
   WEB_PAGE,
@@ -23,6 +24,7 @@ import { LocationStep } from './LocationStep'
 import { SourceStep } from './SourceStep'
 import { SourceTypeStep } from './SourceTypeStep'
 import { getInputType, isSource, twitterHandlePattern } from './utils'
+import { validateSourceURL } from './SourceStep/utils'
 
 export type FormData = {
   input: string
@@ -44,8 +46,7 @@ const handleSubmitForm = async (
 
   if (sourceType === LINK) {
     body.media_url = data.source
-
-    body.content_type === 'audio_video'
+    body.content_type = 'audio_video'
   } else if (sourceType === TWITTER_SOURCE) {
     const regex = /(?:https?:\/\/)?(?:www\.)?twitter\.com\/\w+\/status\/\d+/s
 
@@ -79,7 +80,7 @@ const handleSubmitForm = async (
     } else {
       return
     }
-  } else if (sourceType === YOUTUBE_CHANNEL) {
+  } else if (sourceType === YOUTUBE_CHANNEL || sourceType === RSS) {
     body.source = data.source
     body.source_type = sourceType
   }
@@ -119,15 +120,22 @@ const handleSubmitForm = async (
     // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   } catch (err: any) {
     if (err.status === 402) {
-      await payLsat()
+      await payLsat(setBudget)
 
       await updateBudget(setBudget)
 
       await handleSubmitForm(data, close, sourceType, setBudget)
     }
 
+    if (err.status === 400) {
+      const error = await err.json()
+
+      notify(error?.status || NODE_ADD_ERROR)
+      close()
+    }
+
     if (err instanceof Error) {
-      notify(NODE_ADD_ERROR)
+      notify(err.message || NODE_ADD_ERROR)
       close()
     }
   }
@@ -156,6 +164,8 @@ export const AddContentModal = () => {
   const latitude = watch('latitude')
 
   const source = watch('source')
+
+  const isValidSource = validateSourceURL(sourceValue)
 
   useEffect(() => {
     setValue('inputType', getInputType(source))
@@ -189,7 +199,7 @@ export const AddContentModal = () => {
     <BaseModal id="addContent" kind="small" onClose={close} preventOutsideClose>
       <FormProvider {...form}>
         <form id="add-node-form" onSubmit={onSubmit}>
-          {currentStep === 0 && <SourceStep onNextStep={onNextStep} type={type} value={sourceValue} />}
+          {currentStep === 0 && <SourceStep allowNextStep={isValidSource} onNextStep={onNextStep} type={type} />}
           {currentStep === 1 && (
             <>
               {!isSource(type) ? (
@@ -199,7 +209,7 @@ export const AddContentModal = () => {
               )}
             </>
           )}
-          {currentStep === 2 && <BudgetStep loading={loading} onClick={() => null} />}
+          {currentStep === 2 && <BudgetStep loading={loading} onClick={() => null} type={type} />}
         </form>
       </FormProvider>
     </BaseModal>

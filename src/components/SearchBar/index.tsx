@@ -1,3 +1,4 @@
+import React from 'react'
 import { useFormContext } from 'react-hook-form'
 import styled, { css } from 'styled-components'
 import { colors } from '~/utils/colors'
@@ -60,7 +61,7 @@ export const SearchBar = ({ loading, onSubmit }: Props) => {
           onSubmit?.()
         }
       }}
-      placeholder="Search (10 sats)"
+      placeholder="Search"
       type="text"
     />
   )

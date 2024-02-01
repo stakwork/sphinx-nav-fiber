@@ -5,7 +5,6 @@ import styled from 'styled-components'
 import InfoIcon from '~/components/Icons/InfoIcon'
 import ScheduleIcon from '~/components/Icons/ScheduleIcon'
 import { Flex } from '~/components/common/Flex'
-import { useDataStore } from '~/stores/useDataStore'
 import { NodeExtended } from '~/types'
 import { ColorName, colors } from '~/utils/colors'
 import { formatDescription } from '~/utils/formatDescription'
@@ -42,15 +41,12 @@ const Wrapper = styled(Flex).attrs<{ isSelected?: boolean }>(() => ({
 
 type Props = {
   timestamp: NodeExtended
+  isSelected: boolean
   onClick?: () => void
+  setOpenClip: (timestamp: NodeExtended) => void
 }
 
-export const Timestamp = ({ onClick, timestamp }: Props) => {
-  const selectedTimestamp = useDataStore((s) => s.selectedTimestamp)
-  const isTimestampLoaded = useDataStore((s) => s.isTimestampLoaded)
-
-  const isSelected = !!(selectedTimestamp && selectedTimestamp.timestamp === timestamp.timestamp)
-
+export const Timestamp = ({ onClick, timestamp, isSelected, setOpenClip }: Props) => {
   const color: ColorName = isSelected ? 'blueTextAccent' : 'placeholderText'
 
   const icon = isSelected ? (
@@ -73,7 +69,7 @@ export const Timestamp = ({ onClick, timestamp }: Props) => {
         <IconButton className="play-pause">{!isSelected ? <ScheduleIcon /> : <Equalizer />}</IconButton>
         {false && (
           <Flex direction="row" px={20}>
-            {isSelected && !isTimestampLoaded ? <ClipLoader color={colors[color]} loading size={14} /> : icon}
+            {isSelected ? <ClipLoader color={colors[color]} loading size={14} /> : icon}
           </Flex>
         )}
       </div>
@@ -83,7 +79,7 @@ export const Timestamp = ({ onClick, timestamp }: Props) => {
         <span className="title">{formatDescription(timestamp.show_title)}</span>
       </About>
       <div className="info">
-        <Flex pt={4}>
+        <Flex onClick={() => setOpenClip(timestamp)} pt={4}>
           <InfoIcon />
         </Flex>
       </div>

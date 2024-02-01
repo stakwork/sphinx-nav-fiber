@@ -6,7 +6,7 @@ import PlayIcon from '~/components/Icons/PlayIcon'
 import { Avatar } from '~/components/common/Avatar'
 import { Flex } from '~/components/common/Flex'
 import { useAppStore } from '~/stores/useAppStore'
-import { useSelectedNode } from '~/stores/useDataStore'
+import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { usePlayerStore } from '~/stores/usePlayerStore'
 import { videoTimeToSeconds } from '~/utils'
 import { colors } from '~/utils/colors'
@@ -16,8 +16,8 @@ export const PlayerControl = () => {
   const containerRef = useRef<HTMLDivElement>(null)
   const [scrollWidth, setScrollWidth] = useState(0)
   const selectedNode = useSelectedNode()
-
-  const sidebarIsOpen = useAppStore((s) => s.sidebarIsOpen)
+  const setSelectedNode = useDataStore((s) => s.setSelectedNode)
+  const [sidebarIsOpen, setSidebarOpen] = useAppStore((s) => [s.sidebarIsOpen, s.setSidebarOpen])
 
   const [isPlaying, setIsPlaying, playingTime, playingNode, miniPlayerIsVisible, setMiniPlayerIsVisible] =
     usePlayerStore((s) => [
@@ -42,14 +42,20 @@ export const PlayerControl = () => {
     setScrollWidth(textWidth - containerWidth)
   }, [])
 
-  const onClose = () => {
+  const onClose = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     setMiniPlayerIsVisible(false)
+    e.stopPropagation()
+  }
+
+  const openNodeDetails = () => {
+    setSelectedNode(playingNode)
+    setSidebarOpen(true)
   }
 
   const showPlayer = (sidebarIsOpen && selectedNode?.ref_id !== playingNode?.ref_id) || (playingNode && !sidebarIsOpen)
 
   return miniPlayerIsVisible && playingNode && showPlayer ? (
-    <Wrapper>
+    <Wrapper onClick={openNodeDetails}>
       <Controls>
         <Avatar src={playingNode.image_url || ''} type={playingNode.node_type} />
         <Info>
@@ -60,11 +66,17 @@ export const PlayerControl = () => {
             <div className="subtitle">{playingNode.show_title}</div>
           </Container>
 
-          <Action onClick={() => setIsPlaying(!isPlaying)} size="small">
+          <Action
+            onClick={(e) => {
+              setIsPlaying(!isPlaying)
+              e.stopPropagation()
+            }}
+            size="small"
+          >
             {!isPlaying ? <PlayIcon /> : <Equalizer />}
           </Action>
         </Info>
-        <Close onClick={() => onClose()}>
+        <Close onClick={(e) => onClose(e)}>
           <ClearIcon />
         </Close>
       </Controls>
@@ -84,6 +96,8 @@ const Wrapper = styled(Flex).attrs({
   width: 320px;
   height: 72px;
   margin-top: 16px;
+  cursor: pointer;
+  z-index: 0;
 `
 
 const Controls = styled(Flex).attrs({
@@ -116,6 +130,7 @@ const Info = styled(Flex).attrs({
 const Close = styled(IconButton)`
   padding: 8px;
   color: ${colors.GRAY6};
+  z-index: 100000;
 `
 
 const Action = styled(IconButton)`
@@ -124,6 +139,7 @@ const Action = styled(IconButton)`
     padding: 2px;
     margin-left: 8px;
     overflow: hidden;
+    z-index: 100000;
   }
 `
 

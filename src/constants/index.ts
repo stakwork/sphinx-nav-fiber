@@ -30,6 +30,10 @@ export const isChileGraph = API_URL.includes('boltwall')
 function apiUrlFromSwarmHost(): string | undefined {
   // for swarm deployments, always point to "boltwall"
   // for now, only if the URL contains "swarm"
+  const originUrl = window.location.origin
+
+  let url = originUrl
+
   if (host.includes('swarm')) {
     if (host.startsWith('nav')) {
       const hostArray = host.split('.')
@@ -37,13 +41,14 @@ function apiUrlFromSwarmHost(): string | undefined {
       hostArray[0] = 'boltwall'
 
       const finalHost = hostArray.join('.')
-      const apiUrl = `https://${finalHost}`
 
-      return apiUrl
+      url = `https://${finalHost}`
     }
+  } else if (originUrl === 'https://second-brain.sphinx.chat' || origin.includes('localhost')) {
+    url = 'https://knowledge-graph.sphinx.chat'
   }
 
-  return undefined
+  return `${url}/api`
 }
 
 export const AWS_IMAGE_BUCKET_URL = 'https://stakwork-uploads.s3.amazonaws.com/'
@@ -98,7 +103,6 @@ export const RSS = 'rss'
 export const TWITTER_SOURCE = 'tweet'
 export const TOPIC = 'topic'
 export const DOCUMENT = 'document'
-
 export const isE2E = !!import.meta.env.VITE_APP_IS_E2E
 
 export const requiredRule = {
