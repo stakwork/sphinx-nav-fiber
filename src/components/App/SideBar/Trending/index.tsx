@@ -53,8 +53,8 @@ export const Trending = ({ onSubmit }: Props) => {
       setLoading(false)
 
       setTimeout(() => {
-        setRefreshIcon('trend')
-      }, 1200)
+        setRefreshIcon('idle')
+      }, 2000)
     }
   }, [setTrendingTopics])
 
@@ -129,11 +129,11 @@ export const Trending = ({ onSubmit }: Props) => {
         <div className="heading-container">
           <div className="heading">
             <span className="heading__title">Trending Topics</span>
-            <Button className="heading__icon" onClick={init}>
+            <StyledButton onClick={init}>
               {refreshIcon === 'refresh' && <img alt="" src="load_state.svg" />}
               {refreshIcon === 'idle' && <img alt="" src="refresh_button.svg" />}
               {refreshIcon === 'trend' && <img alt="" src="trends_icon.svg" />}
-            </Button>
+            </StyledButton>
           </div>
           {showPlayButton(trendingTopics) ? (
             <div>
@@ -199,6 +199,13 @@ export const Trending = ({ onSubmit }: Props) => {
   )
 }
 
+const StyledButton = styled.button`
+  border: 0;
+  border-radius: 100%;
+  background-color: ${colors.BG1};
+  cursor: pointer;
+`
+
 const Paragraph = styled.div`
   width: 300px;
   overflow: hidden;
@@ -226,6 +233,9 @@ const Wrapper = styled(Flex)`
     line-height: 20px;
     letter-spacing: 1.12px;
     text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 20;
     &__icon {
       margin-left: 16px;
       font-size: 24px;
