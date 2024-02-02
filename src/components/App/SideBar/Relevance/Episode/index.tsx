@@ -153,7 +153,7 @@ export const Description = styled(Flex)`
   font-family: Barlow;
   font-size: 13px;
   font-style: normal;
-  font-weight: 500;
+  font-weight: 400;
   line-height: 17px;
   color: ${colors.white};
   margin: 16px 0;
@@ -162,6 +162,7 @@ export const Description = styled(Flex)`
   -webkit-box-orient: vertical;
   overflow: hidden;
   white-space: normal;
+  letter-spacing: 0.2px;
 `
 
 export const Date = styled(Text)`
