@@ -24,7 +24,8 @@ describe('apiUrlFromSwarmHost', () => {
   })
 
   it('returns the original URL appended with /api for a URL not containing "swarm" and not hardcoded', () => {
-    const nonSwarmUrl = 'https://example.com'
+    const nonSwarmUrl = 'https://knowledge-graph.sphinx.chat'
+
     mockWindowLocation(nonSwarmUrl)
     expect(apiUrlFromSwarmHost()).toBe(`${nonSwarmUrl}/api`)
   })
