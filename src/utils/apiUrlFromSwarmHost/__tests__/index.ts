@@ -1,7 +1,5 @@
-// Import the function to test
 import { apiUrlFromSwarmHost } from '../index.ts'
 
-// Mocking global.window and global.location
 function mockWindowLocation(url) {
   delete global.window.location
   global.window = Object.create(window)
