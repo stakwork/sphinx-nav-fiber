@@ -1,23 +1,10 @@
-// useSocket.ts
-
-import { useEffect, useState } from 'react'
+import { useContext,useEffect, useState } from 'react'
+import SocketContext from '~/components/App/Providers/Socket/SocketContext'
 import { Socket, io } from 'socket.io-client'
 import { API_URL } from '~/utils/apiUrlFromSwarmHost'
 
-const useSocket = (): Socket | null => {
-  const [socket, setSocket] = useState<Socket | null>(null)
+export const useSocket = () => {
+  const context = useContext(SocketContext)
 
-  useEffect(() => {
-    const socketInstance = io(API_URL)
-
-    setSocket(socketInstance)
-
-    return () => {
-      socketInstance.disconnect()
-    }
-  }, [])
-
-  return socket
+  return context?.socket
 }
-
-export default useSocket

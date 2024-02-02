@@ -9,7 +9,6 @@ import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { ToastMessage } from '~/components/common/Toast/toastMessage'
-import useSocket from '~/hooks/useSockets'
 import { postInstagraph, postTeachMe } from '~/network/fetchGraphData'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
@@ -20,6 +19,7 @@ import { updateBudget } from '~/utils/setBudget'
 import { AskQuestion } from '../AskQuestion'
 
 import 'reactflow/dist/style.css'
+import { useSocket } from '~/hooks/useSockets'
 
 type ResponseType = {
   tutorial: string
@@ -31,7 +31,7 @@ export const TeachMe = () => {
   const [setBudget] = useUserStore((s) => [s.setBudget])
 
   const isSocketSet: { current: boolean } = useRef<boolean>(false)
-  const socket: Socket | null = useSocket()
+  const socket: Socket | undefined = useSocket()
 
   const [setTeachMeAnswer, setHasTeachingInProgress, setInstagraphAnswer, setHasInstagraphInProgress] = useTeachStore(
     (s) => [s.setTeachMeAnswer, s.setHasTeachingInProgress, s.setInstagraphAnswer, s.setHasInstagraphInProgress],
@@ -62,24 +62,18 @@ export const TeachMe = () => {
   )
 
   useEffect(() => {
-    if (isSocketSet.current) {
+    if (!socket) {
       return
     }
 
     if (handleTeachMe) {
-      if (socket) {
-        socket.on('teachmehook', handleTeachMe)
-
-        isSocketSet.current = true
-      }
+      socket.on('teachmehook', handleTeachMe)
     }
 
     if (handleInstagraph) {
-      if (socket) {
-        socket.on('instagraphhook', handleInstagraph)
+      socket.on('instagraphhook', handleInstagraph)
 
-        isSocketSet.current = true
-      }
+      isSocketSet.current = true
     }
   }, [socket, handleTeachMe, handleInstagraph])
 
