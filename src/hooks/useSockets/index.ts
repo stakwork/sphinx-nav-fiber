@@ -1,23 +1,8 @@
-// useSocket.ts
+import { useContext } from 'react'
+import SocketContext from '~/components/App/Providers/Socket/SocketContext'
 
-import { useEffect, useState } from 'react'
-import { Socket, io } from 'socket.io-client'
-import { API_URL } from '~/constants'
+export const useSocket = () => {
+  const context = useContext(SocketContext)
 
-const useSocket = (): Socket | null => {
-  const [socket, setSocket] = useState<Socket | null>(null)
-
-  useEffect(() => {
-    const socketInstance = io(API_URL)
-
-    setSocket(socketInstance)
-
-    return () => {
-      socketInstance.disconnect()
-    }
-  }, [])
-
-  return socket
+  return context?.socket
 }
-
-export default useSocket

@@ -9,7 +9,6 @@ import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { ToastMessage } from '~/components/common/Toast/toastMessage'
-import useSocket from '~/hooks/useSockets'
 import { postInstagraph, postTeachMe } from '~/network/fetchGraphData'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
@@ -31,7 +30,7 @@ export const TeachMe = () => {
   const [setBudget] = useUserStore((s) => [s.setBudget])
 
   const isSocketSet: { current: boolean } = useRef<boolean>(false)
-  const socket: Socket | null = useSocket()
+  const socket: Socket | null = null
 
   const [setTeachMeAnswer, setHasTeachingInProgress, setInstagraphAnswer, setHasInstagraphInProgress] = useTeachStore(
     (s) => [s.setTeachMeAnswer, s.setHasTeachingInProgress, s.setInstagraphAnswer, s.setHasInstagraphInProgress],

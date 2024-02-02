@@ -10,7 +10,6 @@ import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { ToastMessage } from '~/components/common/Toast/toastMessage'
-import useSocket from '~/hooks/useSockets'
 import { postAskQuestion } from '~/network/fetchGraphData'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
@@ -43,7 +42,7 @@ export const AskQuestion = () => {
   const [selectedValue, setSelectedValue] = useState<string>('Beginner')
   const searchTerm = useAppStore((s) => s.currentSearch)
   const isSocketSet: { current: boolean } = useRef<boolean>(false)
-  const socket: Socket | null = useSocket()
+  const socket: Socket | null = null
   const [setBudget] = useUserStore((s) => [s.setBudget])
 
   const [askedQuestions, askedQuestionsAnswers, setAskedQuestion, setAskedQuestionAnswer, hasQuestionInProgress] =
