@@ -1,6 +1,6 @@
 import { TextareaAutosize } from '@mui/base'
 import { FormControl, InputLabel, MenuItem, OutlinedInput, Select, SelectChangeEvent } from '@mui/material'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { MdSend } from 'react-icons/md'
 import { PropagateLoader } from 'react-spinners'
 import { toast } from 'react-toastify'
@@ -10,6 +10,7 @@ import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { ToastMessage } from '~/components/common/Toast/toastMessage'
+import { useSocket } from '~/hooks/useSockets'
 import { postAskQuestion } from '~/network/fetchGraphData'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
@@ -41,8 +42,9 @@ export const AskQuestion = () => {
   const [question, setQuestion] = useState('')
   const [selectedValue, setSelectedValue] = useState<string>('Beginner')
   const searchTerm = useAppStore((s) => s.currentSearch)
-  const isSocketSet: { current: boolean } = useRef<boolean>(false)
-  const socket: Socket | null = null
+
+  const socket: Socket | undefined = useSocket()
+
   const [setBudget] = useUserStore((s) => [s.setBudget])
 
   const [askedQuestions, askedQuestionsAnswers, setAskedQuestion, setAskedQuestionAnswer, hasQuestionInProgress] =
@@ -67,16 +69,12 @@ export const AskQuestion = () => {
   )
 
   useEffect(() => {
-    if (isSocketSet.current) {
+    if (!socket) {
       return
     }
 
     if (handleAskQuestion) {
-      if (socket) {
-        socket.on('askquestionhook', handleAskQuestion)
-
-        isSocketSet.current = true
-      }
+      socket.on('askquestionhook', handleAskQuestion)
     }
   }, [handleAskQuestion, socket])
 

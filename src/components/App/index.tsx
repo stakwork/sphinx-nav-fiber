@@ -1,6 +1,7 @@
 import { Suspense, lazy, useCallback, useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import 'react-toastify/dist/ReactToastify.css'
+import { Socket } from 'socket.io-client'
 import styled from 'styled-components'
 import { DataRetriever } from '~/components/DataRetriever'
 import { GlobalStyle } from '~/components/GlobalStyle'
@@ -75,7 +76,7 @@ export const App = () => {
     useDataStore((s) => s.setCategoryFilter),
   ]
 
-  const socket = useSocket()
+  const socket: Socket | undefined = useSocket()
 
   const form = useForm<{ search: string }>({ mode: 'onChange' })
 
