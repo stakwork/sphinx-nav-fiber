@@ -1,7 +1,7 @@
 // SocketProvider.tsx
 import { FC, ReactNode } from 'react'
 import { io } from 'socket.io-client'
-import { API_URL } from '../../../../../src/utils/apiUrlFromSwarmHost/index'
+import { API_URL } from '../../../../utils/apiUrlFromSwarmHost/index'
 import SocketContext from './SocketContext'
 
 interface SocketProviderProps {
