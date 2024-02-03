@@ -80,7 +80,7 @@ const TwitText = styled(Flex)`
   font-family: Barlow;
   font-size: 13px;
   font-style: normal;
-  font-weight: 400;
+  font-weight: 500;
   line-height: 130%;
   letter-spacing: 0.2px;
   margin: 8px 0;

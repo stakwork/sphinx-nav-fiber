@@ -170,12 +170,13 @@ export const Date = styled(Text)`
   color: ${colors.GRAY6};
   text-overflow: ellipsis;
   font-family: Barlow;
-  font-size: 11px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 400;
   line-height: 18px;
   margin-right: 8px;
   flex-shrink: 0;
+  letter-spacing:0.2pt;
 `
 
 export const TypeTopic = styled.div`
