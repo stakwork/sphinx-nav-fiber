@@ -68,7 +68,7 @@ export const Sources = () => {
       <InputWrapper>
         <Search
           activeIcon={<ClearIcon />}
-          inactiveIcon={<SearchIcon />}
+          defaultIcon={<SearchIcon />}
           loadingIcon={<ClipLoader color={colors.PRIMARY_BLUE} size={24} />}
           onSearch={setSearch}
           placeholder="Find Topic"
