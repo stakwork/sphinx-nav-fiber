@@ -18,12 +18,7 @@ export const MainToolbar = () => {
       <LogoButton>
         <img alt="Second brain" src="logo.svg" />
       </LogoButton>
-      <ActionButton
-        data-testid="add-item-modal"
-        onClick={() => {
-          openItemAddModal
-        }}
-      >
+      <ActionButton data-testid="add-item-modal" onClick={openItemAddModal}>
         <IconWrapper>
           <AddContentIcon />
         </IconWrapper>
