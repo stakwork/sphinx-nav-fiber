@@ -1,9 +1,8 @@
-import { RSS, TOPIC, TWITTER_HANDLE, YOUTUBE_CHANNEL } from '~/constants'
+import { RSS, TWITTER_HANDLE, YOUTUBE_CHANNEL } from '~/constants'
 import { ISourceMap } from './types'
 
 export const sourcesMapper: ISourceMap = {
   [RSS]: 'RSS link',
-  [TOPIC]: 'Topic',
   [TWITTER_HANDLE]: 'Twitter Handle',
   [YOUTUBE_CHANNEL]: 'Youtube channel',
 }
