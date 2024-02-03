@@ -4,7 +4,7 @@ import { MdCheck, MdClose, MdDeleteForever, MdOutlineModeEdit } from 'react-icon
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
 import { BaseTextInput } from '~/components/BaseTextInput'
-import FilterOffIcon from '~/components/Icons/FilterOffIcon'
+import NoFilterResultIcon from '~/components/Icons/NoFilterResultIcon'
 import ConfirmPopover from '~/components/common/ConfirmPopover'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
@@ -61,10 +61,10 @@ const Table: React.FC<Props> = ({ data, canEdit = false }) => {
   }
 
   return !data?.length ? (
-    <Flex>
-      <Text>There is not any results for selected filters</Text>
-      <FilterOffIcon />
-    </Flex>
+    <NoResultWrapper>
+      <NoFilterResultIcon />
+      <Text className="text">There is not any results for selected filters</Text>
+    </NoResultWrapper>
   ) : (
     <MaterialTable aria-label="a dense table" component="table" id="sources-table" size="small">
       <StyledTableHead>
@@ -238,6 +238,25 @@ const IconWrapper = styled(Flex)`
 
   & + & {
     margin-left: 4px;
+  }
+`
+
+const NoResultWrapper = styled(Flex)`
+  margin-top: 120px;
+  width: 165px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+
+  .text {
+    text-align: center;
+    font-family: Barlow;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 19px;
+    letter-spacing: 0em;
+    color: ${colors.GRAY6};
   }
 `
 

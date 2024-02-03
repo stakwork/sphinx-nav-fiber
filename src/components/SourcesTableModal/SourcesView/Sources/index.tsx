@@ -2,6 +2,8 @@ import clsx from 'clsx'
 import { useEffect, useMemo, useState } from 'react'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
+import ClearIcon from '~/components/Icons/ClearIcon'
+import SearchIcon from '~/components/Icons/SearchIcon'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { getRadarData } from '~/network/fetchSourcesData'
@@ -11,7 +13,7 @@ import { FetchRadarResponse, Sources as TSources } from '~/types'
 import { colors } from '~/utils/colors'
 import { Heading, StyledPill } from '../common'
 import { sourcesMapper } from '../constants'
-import { Search } from './Search'
+import Search from './Search'
 import Table from './Table'
 
 export const Sources = () => {
@@ -63,7 +65,15 @@ export const Sources = () => {
       <Heading align="center" direction="row" justify="space-between">
         <Text className="title">Sources for this Graph</Text>
       </Heading>
-      <Search onSearch={setSearch} placeholder="Find Topic" />
+      <InputWrapper>
+        <Search
+          activeIcon={<ClearIcon />}
+          inactiveIcon={<SearchIcon />}
+          loadingIcon={<ClipLoader color={colors.PRIMARY_BLUE} size={24} />}
+          onSearch={setSearch}
+          placeholder="Find Topic"
+        />
+      </InputWrapper>
       <Flex className="filters" direction="row" pb={16} px={36}>
         <StyledPill className={clsx({ selected: !typeFilter })} onClick={() => onFilterChange('')} size="small">
           All
@@ -108,4 +118,8 @@ const TableWrapper = styled(Flex)`
   overflow: auto;
   flex: 1;
   width: 100%;
+`
+
+const InputWrapper = styled(Flex)`
+  margin: 0 0 16px 36px;
 `

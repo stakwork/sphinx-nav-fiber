@@ -1,39 +1,86 @@
 import IconButton from '@mui/material/IconButton'
-import InputBase from '@mui/material/InputBase'
+import InputBase, { InputBaseProps } from '@mui/material/InputBase'
 import Paper from '@mui/material/Paper'
-import { ChangeEvent, useState } from 'react'
+import React, { ChangeEvent, KeyboardEvent, useState } from 'react'
 import styled from 'styled-components'
-import ClearIcon from '~/components/Icons/ClearIcon'
-import SearchIcon from '~/components/Icons/SearchIcon'
 import { Flex } from '~/components/common/Flex'
 import { colors } from '~/utils/colors'
 
-type Props = {
-  onSearch: (v: string) => void
+interface SearchProps extends Omit<InputBaseProps, 'onChange'> {
+  onSearch: (query: string) => void
   placeholder?: string
+  activeIcon?: React.ReactNode
+  defaultIcon?: React.ReactNode
+  loadingIcon?: React.ReactNode
 }
 
-export const Search = ({ onSearch, placeholder }: Props) => {
-  const [inputValue, setInputValue] = useState('')
-
-  const handleSearch = (e: { preventDefault: () => void }) => {
-    e.preventDefault()
-    onSearch(inputValue)
-  }
+const Search: React.FC<SearchProps> = ({ onSearch, placeholder, activeIcon, loadingIcon, defaultIcon, ...props }) => {
+  const [searchTerm, setSearchTerm] = useState('')
+  const [loading, setLoading] = useState(false)
 
   const resetSearch = () => {
-    setInputValue('')
+    setSearchTerm('')
     onSearch('')
+    setLoading(false)
   }
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     !e.target.value && resetSearch()
-    setInputValue(e.target.value)
+    setSearchTerm(e.target.value)
+  }
+
+  const handleSearch = (e: KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { value } = e.currentTarget
+
+    setSearchTerm(value)
+
+    if (loading) {
+      return
+    }
+
+    setLoading(true)
+
+    // Simulate a delay before updating the searchTerm
+    setTimeout(() => {
+      onSearch(value)
+
+      if (!value) {
+        resetSearch()
+      }
+
+      setLoading(false)
+    }, 1000)
+
+    if (!value) {
+      resetSearch()
+    }
+  }
+
+  const getSearchIcon = () => {
+    if (loading) {
+      return (
+        <IconWrapper>
+          <StyledButton type="button">{loadingIcon}</StyledButton>
+        </IconWrapper>
+      )
+    }
+
+    return (
+      <IconWrapper>
+        {searchTerm ? (
+          <StyledButton onClick={resetSearch} type="button">
+            {activeIcon}
+          </StyledButton>
+        ) : (
+          <StyledButton type="button">{defaultIcon}</StyledButton>
+        )}
+      </IconWrapper>
+    )
   }
 
   return (
-    <Wrapper onSubmit={handleSearch}>
-      <Input
+    <Wrapper>
+      <StyledInput
         autoComplete="off"
         autoCorrect="off"
         inputProps={{ 'aria-label': 'search sources' }}
@@ -44,29 +91,17 @@ export const Search = ({ onSearch, placeholder }: Props) => {
           }
         }}
         placeholder={placeholder}
-        size="small"
-        spellCheck="false"
-        sx={{ ml: 1, flex: 1, fontSize: 14, alignSelf: 'center' }}
-        value={inputValue}
+        value={searchTerm}
+        {...props}
       />
-      <IconWrapper>
-        {inputValue ? (
-          <StyledButton onClick={resetSearch} type="button">
-            <ClearIcon />
-          </StyledButton>
-        ) : (
-          <StyledButton onClick={handleSearch} type="button">
-            <SearchIcon />
-          </StyledButton>
-        )}
-      </IconWrapper>
+      {getSearchIcon()}
     </Wrapper>
   )
 }
 
 const IconWrapper = styled(Flex)`
   top: -50%;
-  right: -2%;
+  right: -3%;
   z-index: 3;
   position: absolute;
   transform: translate(-50%, 50%);
@@ -84,17 +119,12 @@ const Wrapper = styled(Paper)`
     max-width: 637px;
     position: relative;
     align-items: center;
-    margin: 0 0 16px 36px;
     box-sizing: border-box;
     padding-top: 0px;
   }
-
-  .css-f0ngwu-MuiInputBase-root {
-    margin: 0px !important;
-  }
 `
 
-const Input = styled(InputBase)`
+const StyledInput = styled(InputBase)`
   .MuiInputBase-input {
     z-index: 2;
     width: 100%;
@@ -112,12 +142,12 @@ const Input = styled(InputBase)`
     &:focus,
     &:active {
       color: ${colors.white};
-      background-color: ${colors.BG2_ACTIVE};
+      background-color: ${colors.BG2_ACTIVE_INPUT};
       outline: 1px solid ${colors.primaryBlue};
     }
 
     &:hover {
-      background-color: ${colors.BG2_ACTIVE};
+      background-color: ${colors.BG2_ACTIVE_INPUT};
     }
 
     &::placeholder {
@@ -130,4 +160,7 @@ const Input = styled(InputBase)`
       color: ${colors.GRAY7};
     }
   }
+  width: 100%;
 `
+
+export default Search

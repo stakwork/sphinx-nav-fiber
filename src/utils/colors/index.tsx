@@ -68,7 +68,7 @@ export const colors = {
   BG1_HOVER: 'rgba(21, 22, 28, 1)',
   BG1_PRESS: '#0E0F13',
   BG2: 'rgba(22, 23, 29, 1)',
-  BG2_ACTIVE: 'rgba(16, 17, 22, 1)',
+  BG2_ACTIVE_INPUT: 'rgba(16, 17, 22, 1)',
   BG3: 'rgba(28, 30, 38, 1)',
   GRAY3: 'rgba(186, 193, 198, 1)',
   GRAY6: '#909BAA',
