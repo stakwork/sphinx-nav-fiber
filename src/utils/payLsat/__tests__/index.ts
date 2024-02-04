@@ -2,7 +2,7 @@ import { renderHook } from '@testing-library/react'
 import * as lsatJs from 'lsat-js'
 import * as sphinx from 'sphinx-bridge'
 import { requestProvider } from 'webln'
-import { payLsat } from '..' // Adjust the import path
+import { payLsat } from '..'
 import { buyLsat } from '../../../network/buyLsat'
 import { isSphinx } from '../../isSphinx'
 
@@ -32,67 +32,58 @@ describe('payLsat', () => {
     jest.clearAllMocks()
   })
 
-  it('handles payment through Sphinx when Sphinx is available(setBudget response is not 0)', async () => {
-    isSphinx.mockReturnValue(true)
+  it('handles payment through Sphinx when Sphinx is available and setBudget response is not 0', async () => {
+    isSphinx.mockReturnValueOnce(true)
 
-    localStorage.getItem.mockReturnValue(JSON.stringify(mockLocalLsat))
+    localStorage.getItem.mockReturnValueOnce(JSON.stringify(mockLocalLsat))
 
-    sphinx.setBudget.mockResolvedValue({ budget: 100 })
-    sphinx.saveLsat.mockResolvedValue({ lsat: 'invoice:preimage' })
-    buyLsat.mockResolvedValue()
+    sphinx.setBudget.mockResolvedValueOnce({ budget: 100 })
+    sphinx.saveLsat.mockResolvedValueOnce({ lsat: 'invoice:preimage' })
+    buyLsat.mockResolvedValueOnce()
 
     const { result } = renderHook(() => payLsat(jest.fn()))
 
     await result.current
 
-    // 1.Verify if localStorage.removeItem is called to remove the existing LSAT
     expect(localStorage.removeItem).toHaveBeenCalled()
-    // 2.Mock sphinx.updateLsat to ensure it's called with correct parameters.
     expect(sphinx.updateLsat).toHaveBeenCalledWith(mockLocalLsat.identifier, 'expired')
-    // 3.Test the budget and authorization flow within the if (isSphinx) block
     expect(sphinx.setBudget).toHaveBeenCalledTimes(1)
     expect(sphinx.authorize).not.toHaveBeenCalled()
-    // 4. buyLsat success
     expect(buyLsat).toHaveBeenCalledWith(100)
   })
 
-  it('handles payment through Sphinx when Sphinx is available(setBudget response is 0)', async () => {
-    isSphinx.mockReturnValue(true)
+  it('handles payment through Sphinx when Sphinx is available and setBudget response is 0', async () => {
+    isSphinx.mockReturnValueOnce(true)
 
-    localStorage.getItem.mockReturnValue(JSON.stringify(mockLocalLsat))
-
-    sphinx.setBudget.mockResolvedValue({ budget: 0 })
-    sphinx.authorize.mockResolvedValue({ budget: 50 })
-    sphinx.saveLsat.mockResolvedValue({ lsat: 'invoice:preimage' })
-    buyLsat.mockResolvedValue()
+    localStorage.getItem.mockReturnValueOnce(JSON.stringify(mockLocalLsat))
+    sphinx.setBudget.mockResolvedValueOnce({ budget: 0 })
+    sphinx.authorize.mockResolvedValueOnce({ budget: 50 })
+    sphinx.saveLsat.mockResolvedValueOnce({ lsat: 'invoice:preimage' })
+    buyLsat.mockResolvedValueOnce()
 
     const { result } = renderHook(() => payLsat(jest.fn()))
 
     await result.current
 
-    // 1.Verify if localStorage.removeItem is called to remove the existing LSAT
     expect(localStorage.removeItem).toHaveBeenCalled()
-    // 2.Mock sphinx.updateLsat to ensure it's called with correct parameters.
     expect(sphinx.updateLsat).toHaveBeenCalledWith(mockLocalLsat.identifier, 'expired')
-    // 3.Test the budget and authorization flow within the if (isSphinx) block
     expect(sphinx.setBudget).toHaveBeenCalledTimes(1)
     expect(sphinx.authorize).toHaveBeenCalledTimes(1)
-    // 4. buyLsat success
     expect(buyLsat).toHaveBeenCalledWith(50)
   })
 
-  it('handles payment through Sphinx when Sphinx is available(buyLsat throws a 402 error)', async () => {
-    isSphinx.mockReturnValue(true)
+  it('handles payment through Sphinx when Sphinx is available and buyLsat throws a 402 error', async () => {
+    isSphinx.mockReturnValueOnce(true)
 
-    sphinx.setBudget.mockResolvedValue({ budget: 0 })
-    sphinx.authorize.mockResolvedValue({ budget: 50 })
+    sphinx.setBudget.mockResolvedValueOnce({ budget: 0 })
+    sphinx.authorize.mockResolvedValueOnce({ budget: 50 })
 
     const error = new Error('buyLsat error')
 
     error.status = 402
     error.headers = new Map([['www-authenticate', 'LSAT Header Value']])
     // Mock buyLsat to throw a 402 error
-    buyLsat.mockRejectedValue(error)
+    buyLsat.mockRejectedValueOnce(error)
 
     const mockLsatFromHeader = {
       invoice: 'invoice',
@@ -104,9 +95,9 @@ describe('payLsat', () => {
       lsat: 'invoice:preimage',
     }
 
-    lsatJs.Lsat.fromHeader.mockReturnValue(mockLsatFromHeader)
+    lsatJs.Lsat.fromHeader.mockReturnValueOnce(mockLsatFromHeader)
 
-    sphinx.saveLsat.mockResolvedValue(mockSaveLsatRes)
+    sphinx.saveLsat.mockResolvedValueOnce(mockSaveLsatRes)
 
     const setBudgetMock = jest.fn()
 
@@ -114,7 +105,6 @@ describe('payLsat', () => {
 
     await result.current
 
-    // 5.Test the LSATRes flow within the if (error.status === 402) block
     expect(lsatJs.Lsat.fromHeader).toHaveBeenCalled()
     expect(sphinx.saveLsat).toHaveBeenCalled()
 
@@ -130,49 +120,95 @@ describe('payLsat', () => {
     expect(setBudgetMock).toHaveBeenCalledWith(50)
   })
 
-  it('handles payment through WebLN when Sphinx is not available', async () => {
-    isSphinx.mockReturnValue(false)
+  it('handles payment through Sphinx when Sphinx is available and local storage does not have an LSAT', async () => {
+    isSphinx.mockReturnValueOnce(true)
+    localStorage.getItem.mockReturnValueOnce(null)
 
-    requestProvider.mockResolvedValue({
-      sendPayment: jest.fn().mockResolvedValue({ preimage: 'preimage' }),
+    sphinx.setBudget.mockResolvedValueOnce({ budget: 100 })
+    buyLsat.mockResolvedValueOnce()
+
+    const { result } = renderHook(() => payLsat(jest.fn()))
+
+    await result.current
+
+    /**
+     * localStorage.removeItem will be called only in second case
+     * https://github.com/stakwork/sphinx-nav-fiber/blob/master/src/utils/payLsat/index.ts#L16
+     * https://github.com/stakwork/sphinx-nav-fiber/blob/master/src/utils/payLsat/index.ts#L71
+     */
+    expect(localStorage.removeItem).toHaveBeenCalledTimes(1)
+    expect(sphinx.updateLsat).not.toHaveBeenCalled()
+    expect(sphinx.setBudget).toHaveBeenCalledTimes(1)
+    expect(buyLsat).toHaveBeenCalledWith(100)
+    expect(sphinx.saveLsat).not.toHaveBeenCalled()
+  })
+
+  it('handles payment through WebLN when Sphinx is not available', async () => {
+    isSphinx.mockReturnValueOnce(false)
+
+    requestProvider.mockResolvedValueOnce({
+      sendPayment: jest.fn().mockResolvedValueOnce({ preimage: 'preimage' }),
     })
 
-    buyLsat.mockResolvedValue()
+    buyLsat.mockResolvedValueOnce()
 
     const { result } = renderHook(() => payLsat(jest.fn()))
 
     await result.current
 
     expect(requestProvider).toHaveBeenCalled()
-    // expect(localStorage.setItem).toHaveBeenCalled()
-    expect(buyLsat).toHaveBeenCalledWith(50) // Assuming 50 is the fallback budget amount
+    expect(localStorage.setItem).not.toHaveBeenCalled()
+    expect(buyLsat).toHaveBeenCalledWith(50)
   })
 
-  it('handles LSAT payment challenges from Sphinx', async () => {
-    const testError = new Error('Payment Required')
+  it('handles payment through WebLN when Sphinx is not available and buyLsat throws a 402 error', async () => {
+    isSphinx.mockReturnValueOnce(false)
 
-    testError.status = 402
-    testError.headers = new Headers()
-    testError.headers.set('www-authenticate', 'LSAT macaroon="baseMacaroon", invoice="invoice"')
+    requestProvider.mockResolvedValueOnce({
+      sendPayment: jest.fn().mockResolvedValueOnce({ preimage: 'preimage', invoice: 'invoice' }),
+    })
 
-    isSphinx.mockReturnValue(true)
-    sphinx.setBudget.mockResolvedValue({ budget: 100 })
-    buyLsat.mockRejectedValue(testError)
+    const error = new Error('buyLsat error')
 
-    lsatJs.Lsat.fromHeader.mockReturnValue({
+    error.status = 402
+    error.headers = new Map([['www-authenticate', 'LSAT Header Value']])
+    // Mock buyLsat to throw a 402 error
+    buyLsat.mockRejectedValueOnce(error)
+
+    const mockLsatFromHeader = {
       invoice: 'invoice',
       baseMacaroon: 'baseMacaroon',
       id: 'id',
+    }
+
+    const mockSendPaymentRes = {
+      preimage: 'preimage',
+    }
+
+    requestProvider.mockResolvedValueOnce({
+      sendPayment: jest.fn().mockResolvedValueOnce(mockSendPaymentRes),
     })
 
-    sphinx.saveLsat.mockResolvedValue({ lsat: 'invoice:preimage' })
+    lsatJs.Lsat.fromHeader.mockReturnValueOnce(mockLsatFromHeader)
 
     const setBudgetMock = jest.fn()
 
-    await payLsat(setBudgetMock)
+    const { result } = renderHook(() => payLsat(setBudgetMock))
 
+    await result.current
+
+    expect(localStorage.removeItem).toHaveBeenCalledTimes(1)
     expect(lsatJs.Lsat.fromHeader).toHaveBeenCalled()
-    expect(sphinx.saveLsat).toHaveBeenCalledWith('invoice', 'baseMacaroon', window.location.host)
-    expect(setBudgetMock).toHaveBeenCalledWith(100)
+
+    expect(localStorage.setItem).toHaveBeenCalledWith(
+      'lsat',
+      JSON.stringify({
+        macaroon: mockLsatFromHeader.baseMacaroon,
+        identifier: mockLsatFromHeader.id,
+        preimage: mockSendPaymentRes.preimage,
+      }),
+    )
+
+    expect(setBudgetMock).toHaveBeenCalledWith(50)
   })
 })
