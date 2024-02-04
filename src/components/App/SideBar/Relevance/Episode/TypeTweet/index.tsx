@@ -55,11 +55,11 @@ const PictureWrapper = styled(Flex)`
 const Name = styled(Flex)`
   color: ${colors.white};
   font-family: Barlow;
-  font-size: 11px;
+  font-size: 12px;
   font-style: normal;
-  font-weight: 600;
+  font-weight: 500;
   line-height: normal;
-  letter-spacing: -0.22px;
+  letter-spacing: 0.2px;
   .verification {
     margin-left: 4px;
   }
@@ -68,10 +68,11 @@ const Name = styled(Flex)`
 const TwitterHandle = styled(Flex)`
   color: ${colors.GRAY7};
   font-family: Barlow;
-  font-size: 9px;
+  font-size: 11px;
   font-style: normal;
   font-weight: 400;
   line-height: normal;
+  letter-spacing: 0.2px;
 `
 
 const TwitText = styled(Flex)`
@@ -79,9 +80,9 @@ const TwitText = styled(Flex)`
   font-family: Barlow;
   font-size: 13px;
   font-style: normal;
-  font-weight: 400;
+  font-weight: 500;
   line-height: 130%;
-  letter-spacing: -0.39px;
+  letter-spacing: 0.2px;
   margin: 8px 0;
   display: -webkit-box;
   -webkit-line-clamp: 2; /* Limit to two lines */
