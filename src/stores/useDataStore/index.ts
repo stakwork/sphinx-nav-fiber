@@ -24,7 +24,6 @@ export type DataStore = {
   selectionGraphData: GraphData
   graphStyle: GraphStyle
   isFetching: boolean
-  isTimestampLoaded: boolean
   hoveredNode: NodeExtended | null
   selectedNode: NodeExtended | null
   selectedTimestamp: NodeExtended | null
@@ -101,7 +100,6 @@ const defaultData: Omit<
   graphRadius: isChileGraph ? 1600 : 3056, // calculated from initial load
   graphStyle: (localStorage.getItem('graphStyle') as GraphStyle) || 'sphere',
   isFetching: false,
-  isTimestampLoaded: false,
   queuedSources: null,
   hoveredNode: null,
   selectedNode: null,
@@ -168,7 +166,6 @@ export const useDataStore = create<DataStore>((set, get) => ({
 
       set({
         hoveredNode: null,
-        isTimestampLoaded: false,
         selectedNode,
         disableCameraRotation: true,
         selectedNodeRelativeIds: relativeIds,
@@ -198,5 +195,3 @@ export const useFilteredNodes = () =>
   useDataStore((s) =>
     (s.data?.nodes || []).filter((i) => (s.sidebarFilter === 'all' ? true : i.node_type === s.sidebarFilter)),
   )
-
-export const setIsTimestampLoaded = (isTimestampLoaded: boolean) => useDataStore.setState({ isTimestampLoaded })
