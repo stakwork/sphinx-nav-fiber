@@ -198,6 +198,7 @@ const Paragraph = styled.div`
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
+  letter-spacing: 0.3pt;
 `
 
 const Wrapper = styled(Flex)`

@@ -38,11 +38,11 @@ const Heading = styled(Flex).attrs({
   .title {
     color: ${colors.white};
     font-family: Barlow;
-    font-size: 10px;
+    font-size: 12px;
     font-style: normal;
     font-weight: 700;
     line-height: normal;
-    letter-spacing: 1px;
+    letter-spacing: 1pt;
     text-transform: uppercase;
   }
 `
@@ -60,8 +60,9 @@ const Box = styled(Flex)`
   text-overflow: ellipsis;
   whitespace: nowrap;
   font-family: Barlow;
-  font-size: 13px;
+  letter-spacing: 0.2pt;
+  font-size: 15px;
   font-style: normal;
-  font-weight: 400;
-  line-height: 18px;
+  font-weight: 300;
+  line-height: 22px;
 `
