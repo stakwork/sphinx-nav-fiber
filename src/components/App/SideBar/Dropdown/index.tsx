@@ -45,7 +45,9 @@ export const SelectWithPopover = () => {
     <div>
       <Action onClick={handleOpenPopover}>
         <div className="text">Show</div>
-        <div className="value">{options[sidebarFilter]}</div>
+        <div className="value" data-testid="value">
+          {options[sidebarFilter]}
+        </div>
         <div className="icon">{!anchorEl ? <ChevronDownIcon /> : <ChevronUpIcon />}</div>
       </Action>
       <StyledPopover
