@@ -1,4 +1,4 @@
-import create from 'zustand'
+import { create } from 'zustand'
 import { nodesAreRelatives } from '~/components/Universe/constants'
 import { isChileGraph } from '~/constants'
 import { fetchGraphData } from '~/network/fetchGraphData'
