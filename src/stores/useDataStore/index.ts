@@ -1,5 +1,4 @@
-import { create } from 'zustand'
-import { devtools } from 'zustand/middleware'
+import create from 'zustand'
 import { nodesAreRelatives } from '~/components/Universe/constants'
 import { isChileGraph } from '~/constants'
 import { fetchGraphData } from '~/network/fetchGraphData'
@@ -10,7 +9,13 @@ export type GraphStyle = 'sphere' | 'force' | 'split' | 'earth'
 
 export const graphStyles: GraphStyle[] = ['sphere', 'force', 'split', 'earth']
 
-type DataStore = {
+export type FetchNodeParams = {
+  word?: string
+  skip_cache?: string
+  free?: string
+}
+
+export type DataStore = {
   scrollEventsDisabled: boolean
   categoryFilter: NodeType | null
   disableCameraRotation: boolean
@@ -19,6 +24,7 @@ type DataStore = {
   selectionGraphData: GraphData
   graphStyle: GraphStyle
   isFetching: boolean
+  isTimestampLoaded: boolean
   hoveredNode: NodeExtended | null
   selectedNode: NodeExtended | null
   selectedTimestamp: NodeExtended | null
@@ -41,7 +47,7 @@ type DataStore = {
   setScrollEventsDisabled: (scrollEventsDisabled: boolean) => void
   setCategoryFilter: (categoryFilter: NodeType | null) => void
   setDisableCameraRotation: (rotation: boolean) => void
-  fetchData: (setBudget: (value: number | null) => void, search?: string | null) => void
+  fetchData: (setBudget: (value: number | null) => void, params?: FetchNodeParams) => void
   setData: (data: GraphData) => void
   setGraphStyle: (graphStyle: GraphStyle) => void
   setGraphRadius: (graphRadius?: number | null) => void
@@ -95,6 +101,7 @@ const defaultData: Omit<
   graphRadius: isChileGraph ? 1600 : 3056, // calculated from initial load
   graphStyle: (localStorage.getItem('graphStyle') as GraphStyle) || 'sphere',
   isFetching: false,
+  isTimestampLoaded: false,
   queuedSources: null,
   hoveredNode: null,
   selectedNode: null,
@@ -112,79 +119,78 @@ const defaultData: Omit<
   stats: null,
 }
 
-export const useDataStore = create<DataStore>()(
-  devtools((set, get) => ({
-    ...defaultData,
-    fetchData: async (setBudget, search) => {
-      if (get().isFetching) {
-        return
-      }
+export const useDataStore = create<DataStore>((set, get) => ({
+  ...defaultData,
+  fetchData: async (setBudget, params) => {
+    if (get().isFetching) {
+      return
+    }
 
-      set({ isFetching: true, sphinxModalIsOpen: true })
+    set({ isFetching: true, sphinxModalIsOpen: true })
 
-      const data = await fetchGraphData(search || '', get().graphStyle, setBudget)
+    const data = await fetchGraphData(get().graphStyle, setBudget, params ?? {})
 
-      if (search) {
-        await saveSearchTerm()
-      }
+    if (params?.word) {
+      await saveSearchTerm()
+    }
+
+    set({
+      data,
+      isFetching: false,
+      sphinxModalIsOpen: false,
+      disableCameraRotation: false,
+      nearbyNodeIds: [],
+      selectedNodeRelativeIds: [],
+      showSelectionGraph: false,
+      showTeachMe: false,
+    })
+  },
+  setTrendingTopics: (trendingTopics) => set({ trendingTopics }),
+  setStats: (stats) => set({ stats }),
+  setIsFetching: (isFetching) => set({ isFetching }),
+  setData: (data) => set({ data }),
+  setSelectionData: (selectionGraphData) => set({ selectionGraphData }),
+  setScrollEventsDisabled: (scrollEventsDisabled) => set({ scrollEventsDisabled }),
+  setCategoryFilter: (categoryFilter) => set({ categoryFilter }),
+  setDisableCameraRotation: (rotation) => set({ disableCameraRotation: rotation }),
+  setGraphRadius: (graphRadius) => set({ graphRadius }),
+  setGraphStyle: (graphStyle) => set({ graphStyle }),
+  setQueuedSources: (queuedSources) => set({ queuedSources }),
+  setHoveredNode: (hoveredNode) => set({ hoveredNode }),
+  setSelectedNode: (selectedNode) => {
+    const stateSelectedNode = get().selectedNode
+
+    if (stateSelectedNode?.ref_id !== selectedNode?.ref_id) {
+      const { data } = get()
+
+      const relativeIds =
+        data?.nodes.filter((f) => f.ref_id && nodesAreRelatives(f, selectedNode)).map((n) => n?.ref_id || '') || []
 
       set({
-        data,
-        isFetching: false,
-        sphinxModalIsOpen: false,
-        disableCameraRotation: false,
-        nearbyNodeIds: [],
-        selectedNodeRelativeIds: [],
-        showSelectionGraph: false,
-        showTeachMe: false,
+        hoveredNode: null,
+        isTimestampLoaded: false,
+        selectedNode,
+        disableCameraRotation: true,
+        selectedNodeRelativeIds: relativeIds,
       })
-    },
-    setTrendingTopics: (trendingTopics) => set({ trendingTopics }),
-    setStats: (stats) => set({ stats }),
-    setIsFetching: (isFetching) => set({ isFetching }),
-    setData: (data) => set({ data }),
-    setSelectionData: (selectionGraphData) => set({ selectionGraphData }),
-    setScrollEventsDisabled: (scrollEventsDisabled) => set({ scrollEventsDisabled }),
-    setCategoryFilter: (categoryFilter) => set({ categoryFilter }),
-    setDisableCameraRotation: (rotation) => set({ disableCameraRotation: rotation }),
-    setGraphRadius: (graphRadius) => set({ graphRadius }),
-    setGraphStyle: (graphStyle) => set({ graphStyle }),
-    setQueuedSources: (queuedSources) => set({ queuedSources }),
-    setHoveredNode: (hoveredNode) => set({ hoveredNode }),
-    setSelectedNode: (selectedNode) => {
-      const stateSelectedNode = get().selectedNode
+    }
+  },
+  setSidebarFilter: (sidebarFilter: string) => set({ sidebarFilter }),
+  setSelectedTimestamp: (selectedTimestamp) => set({ selectedTimestamp }),
+  setSources: (sources) => set({ sources }),
+  setSphinxModalOpen: (sphinxModalIsOpen) => set({ sphinxModalIsOpen }),
+  setCameraFocusTrigger: (cameraFocusTrigger) => set({ cameraFocusTrigger }),
+  setNearbyNodeIds: (nearbyNodeIds) => {
+    const stateNearbyNodeIds = get().nearbyNodeIds
 
-      if (stateSelectedNode?.ref_id !== selectedNode?.ref_id) {
-        const { data } = get()
-
-        const relativeIds =
-          data?.nodes.filter((f) => f.ref_id && nodesAreRelatives(f, selectedNode)).map((n) => n?.ref_id || '') || []
-
-        set({
-          hoveredNode: null,
-          selectedNode,
-          disableCameraRotation: true,
-          selectedNodeRelativeIds: relativeIds,
-        })
-      }
-    },
-    setSidebarFilter: (sidebarFilter: string) => set({ sidebarFilter }),
-    setSelectedTimestamp: (selectedTimestamp) => set({ selectedTimestamp }),
-    setSources: (sources) => set({ sources }),
-    setSphinxModalOpen: (sphinxModalIsOpen) => set({ sphinxModalIsOpen }),
-    setCameraFocusTrigger: (cameraFocusTrigger) => set({ cameraFocusTrigger }),
-    setNearbyNodeIds: (nearbyNodeIds) => {
-      const stateNearbyNodeIds = get().nearbyNodeIds
-
-      if (nearbyNodeIds.length !== stateNearbyNodeIds.length || nearbyNodeIds[0] !== stateNearbyNodeIds[0]) {
-        set({ nearbyNodeIds })
-      }
-    },
-    setShowSelectionGraph: (showSelectionGraph) => set({ showSelectionGraph }),
-    setHideNodeDetails: (hideNodeDetails) => set({ hideNodeDetails }),
-    setTeachMe: (showTeachMe) => set({ showTeachMe }),
-  })),
-)
+    if (nearbyNodeIds.length !== stateNearbyNodeIds.length || nearbyNodeIds[0] !== stateNearbyNodeIds[0]) {
+      set({ nearbyNodeIds })
+    }
+  },
+  setShowSelectionGraph: (showSelectionGraph) => set({ showSelectionGraph }),
+  setHideNodeDetails: (hideNodeDetails) => set({ hideNodeDetails }),
+  setTeachMe: (showTeachMe) => set({ showTeachMe }),
+}))
 
 export const useSelectedNode = () => useDataStore((s) => s.selectedNode)
 
@@ -192,3 +198,5 @@ export const useFilteredNodes = () =>
   useDataStore((s) =>
     (s.data?.nodes || []).filter((i) => (s.sidebarFilter === 'all' ? true : i.node_type === s.sidebarFilter)),
   )
+
+export const setIsTimestampLoaded = (isTimestampLoaded: boolean) => useDataStore.setState({ isTimestampLoaded })

@@ -9,6 +9,7 @@ import {
 } from '~/constants'
 import { mock } from '~/mocks/getMockGraphData/mockResponse'
 import { api } from '~/network/api'
+import { FetchNodeParams } from '~/stores/useDataStore'
 import {
   FetchDataResponse,
   FetchSentimentResponse,
@@ -60,21 +61,29 @@ const shouldIncludeTopics = true
 const maxScale = 26
 
 export const fetchGraphData = async (
-  search: string,
   graphStyle: 'split' | 'force' | 'sphere' | 'earth',
   setBudget: (value: number | null) => void,
+  params: FetchNodeParams,
 ) => {
   try {
-    return getGraphData(search, graphStyle, setBudget)
+    return getGraphData(graphStyle, setBudget, params)
   } catch (e) {
     return defaultData
   }
 }
 
-const fetchNodes = async (search: string, setBudget: (value: number | null) => void): Promise<FetchDataResponse> => {
-  if (!search) {
+const fetchNodes = async (
+  setBudget: (value: number | null) => void,
+  params: FetchNodeParams,
+): Promise<FetchDataResponse> => {
+  const args = new URLSearchParams({
+    ...(isDevelopment || isE2E ? { free: 'true' } : {}),
+    ...params,
+  }).toString()
+
+  if (!params.word) {
     try {
-      const response = await api.get<FetchDataResponse>(`/prediction/content/latest`)
+      const response = await api.get<FetchDataResponse>(`/prediction/content/latest?${args}`)
 
       return response
     } catch (e) {
@@ -85,7 +94,7 @@ const fetchNodes = async (search: string, setBudget: (value: number | null) => v
   }
 
   if (isDevelopment || isE2E) {
-    const response = await api.get<FetchDataResponse>(`/v2/search?word=${search}&free=true`)
+    const response = await api.get<FetchDataResponse>(`/v2/search?${args}`)
 
     return response
   }
@@ -93,7 +102,7 @@ const fetchNodes = async (search: string, setBudget: (value: number | null) => v
   const lsatToken = await getLSat()
 
   try {
-    const response = await api.get<FetchDataResponse>(`/v2/search?word=${search}`, {
+    const response = await api.get<FetchDataResponse>(`/v2/search?${args}`, {
       Authorization: lsatToken,
     })
 
@@ -103,7 +112,7 @@ const fetchNodes = async (search: string, setBudget: (value: number | null) => v
     if (error.status === 402) {
       await payLsat(setBudget)
 
-      return fetchNodes(search, setBudget)
+      return fetchNodes(setBudget, params)
     }
 
     throw error
@@ -334,14 +343,14 @@ const generateGuestsMap = (
 }
 
 export const getGraphData = async (
-  searchterm: string,
   graphStyle: 'split' | 'force' | 'sphere' | 'earth',
   setBudget: (value: number | null) => void,
+  params: FetchNodeParams,
 ) => {
   try {
-    const dataInit = await fetchNodes(searchterm, setBudget)
+    const dataInit = await fetchNodes(setBudget, params)
 
-    return formatFetchNodes(dataInit, searchterm, graphStyle)
+    return formatFetchNodes(dataInit, params?.word || '', graphStyle)
   } catch (e) {
     console.error(e)
 

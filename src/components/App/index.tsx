@@ -1,4 +1,4 @@
-import { Suspense, lazy, useCallback, useEffect, useRef } from 'react'
+import { Suspense, lazy, useCallback, useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import 'react-toastify/dist/ReactToastify.css'
 import { Socket } from 'socket.io-client'
@@ -6,7 +6,7 @@ import styled from 'styled-components'
 import { DataRetriever } from '~/components/DataRetriever'
 import { GlobalStyle } from '~/components/GlobalStyle'
 import { Flex } from '~/components/common/Flex'
-import useSocket from '~/hooks/useSockets'
+import { useSocket } from '~/hooks/useSockets'
 import { getGraphDataPositions } from '~/network/fetchGraphData/const'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
@@ -20,7 +20,6 @@ import { ActionsToolbar } from './ActionsToolbar'
 import { AppBar } from './AppBar'
 import { DeviceCompatibilityNotice } from './DeviceCompatibilityNotification'
 import { Helper } from './Helper'
-import { AppProviders } from './Providers'
 import { SecondarySideBar } from './SecondarySidebar'
 import { Toasts } from './Toasts'
 
@@ -77,9 +76,7 @@ export const App = () => {
     useDataStore((s) => s.setCategoryFilter),
   ]
 
-  const isSocketSet: { current: boolean } = useRef<boolean>(false)
-
-  const socket: Socket | null = useSocket()
+  const socket: Socket | undefined = useSocket()
 
   const form = useForm<{ search: string }>({ mode: 'onChange' })
 
@@ -93,7 +90,7 @@ export const App = () => {
   })
 
   const runSearch = useCallback(async () => {
-    await fetchData(setBudget, searchTerm)
+    await fetchData(setBudget, { word: searchTerm ?? '' })
     setSidebarOpen(true)
 
     if (searchTerm) {
@@ -126,19 +123,29 @@ export const App = () => {
 
   // setup socket
   useEffect(() => {
-    if (isSocketSet.current) {
-      return
-    }
-
     if (socket) {
-      socket.on('newnode', handleNewNode)
+      socket.on('connect_error', (error: unknown) => {
+        console.error('Socket connection error:', error)
+      })
 
-      isSocketSet.current = true
+      socket.on('connect', () => console.log('connected'))
+      socket.on('disconnect', () => console.log('disconnected'))
+      socket.on('newnode', handleNewNode)
     }
   }, [socket, handleNewNode])
 
+  useEffect(
+    () => () => {
+      if (socket) {
+        console.log('disc')
+        socket.disconnect()
+      }
+    },
+    [socket],
+  )
+
   return (
-    <AppProviders>
+    <>
       <GlobalStyle />
 
       <DeviceCompatibilityNotice />
@@ -168,6 +175,6 @@ export const App = () => {
           <Helper />
         </Wrapper>
       </Suspense>
-    </AppProviders>
+    </>
   )
 }

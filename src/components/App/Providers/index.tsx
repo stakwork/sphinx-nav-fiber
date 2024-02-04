@@ -9,6 +9,7 @@ import { ThemeProvider as StyleThemeProvider } from 'styled-components'
 import { colors } from '~/utils/colors'
 import { breakpoints } from '~/utils/media'
 import { MuiButton } from './MuiButton'
+import { SocketProvider } from './Socket'
 
 const palette = createPalette({
   mode: 'dark',
@@ -50,7 +51,9 @@ export const AppProviders: FC<PropsWithChildren> = ({ children }) => (
   <ThemeProvider theme={appTheme}>
     <StyledEngineProvider injectFirst />
     <StyleThemeProvider theme={appTheme}>
-      <LocalizationProvider dateAdapter={AdapterMoment}>{children}</LocalizationProvider>
+      <LocalizationProvider dateAdapter={AdapterMoment}>
+        <SocketProvider>{children}</SocketProvider>
+      </LocalizationProvider>
     </StyleThemeProvider>
   </ThemeProvider>
 )
