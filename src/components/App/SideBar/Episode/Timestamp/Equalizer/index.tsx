@@ -6,7 +6,7 @@ export const Equalizer = () => {
   const lottieRef = useRef<AnimationItem | null>(null)
 
   useEffect(() => {
-    const container = document.getElementById('lottie-equalizer')
+    const container = document.getElementById('lottie-timestamp-equalizer')
 
     if (container) {
       lottieRef.current = lottie.loadAnimation({
@@ -24,5 +24,5 @@ export const Equalizer = () => {
     }
   }, [])
 
-  return <div id="lottie-equalizer" style={{ width: '40px', height: '40px' }} />
+  return <div id="lottie-timestamp-equalizer" style={{ width: '18px', height: '18px' }} />
 }

@@ -1,18 +1,22 @@
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 import styled from 'styled-components'
 import { Booster } from '~/components/Booster'
 import { Divider } from '~/components/common/Divider'
 import { Flex } from '~/components/common/Flex'
 import { useDataStore } from '~/stores/useDataStore'
+import { NodeExtended } from '~/types'
 import { formatDescription } from '~/utils/formatDescription'
 import { BoostAmt } from '../../Helper/BoostAmt'
 import { Description } from '../Description'
 import { Episode } from '../Relevance/Episode'
 import { Transcript } from '../Transcript'
 
-export const YouTube = () => {
+type Props = {
+  node?: NodeExtended
+}
+
+export const Media = ({ node }: Props) => {
   const selectedNode = useDataStore((s) => s.selectedNode)
-  const scrollTargetRef = useRef<HTMLDivElement | null>(null)
 
   const {
     link,
@@ -25,7 +29,7 @@ export const YouTube = () => {
     show_title: showTitle,
     episode_title: episodeTitle,
     ref_id: refId,
-  } = selectedNode || {}
+  } = node || selectedNode || {}
 
   const [boostAmount, setBoostAmount] = useState<number>(boost || 0)
 
@@ -34,14 +38,13 @@ export const YouTube = () => {
   }
 
   return (
-    <div ref={scrollTargetRef} style={{ overflow: 'auto', flex: 1, width: '100%' }}>
+    <div style={{ overflow: 'auto', flex: 1, width: '100%' }}>
       <Wrapper>
         <StyledEpisode
           boostCount={boostAmount || 0}
           date={date || 0}
           episodeTitle={formatDescription(episodeTitle)}
-          id={id}
-          imageUrl={imageUrl || 'video_default.svg'}
+          imageUrl={imageUrl}
           isSelectedView
           link={link}
           onClick={() => null}

@@ -1,5 +1,5 @@
 import { Mesh } from 'three'
-import create from 'zustand'
+import { create } from 'zustand'
 
 type DataStore = {
   earthRef: React.MutableRefObject<Mesh | null> | null

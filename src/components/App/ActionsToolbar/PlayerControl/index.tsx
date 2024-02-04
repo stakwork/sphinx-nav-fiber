@@ -17,7 +17,7 @@ export const PlayerControl = () => {
   const [scrollWidth, setScrollWidth] = useState(0)
   const selectedNode = useSelectedNode()
   const setSelectedNode = useDataStore((s) => s.setSelectedNode)
-  const sidebarIsOpen = useAppStore((s) => s.sidebarIsOpen)
+  const [sidebarIsOpen, setSidebarOpen] = useAppStore((s) => [s.sidebarIsOpen, s.setSidebarOpen])
 
   const [isPlaying, setIsPlaying, playingTime, playingNode, miniPlayerIsVisible, setMiniPlayerIsVisible] =
     usePlayerStore((s) => [
@@ -49,6 +49,7 @@ export const PlayerControl = () => {
 
   const openNodeDetails = () => {
     setSelectedNode(playingNode)
+    setSidebarOpen(true)
   }
 
   const showPlayer = (sidebarIsOpen && selectedNode?.ref_id !== playingNode?.ref_id) || (playingNode && !sidebarIsOpen)

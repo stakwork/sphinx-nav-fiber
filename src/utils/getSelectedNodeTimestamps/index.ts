@@ -9,11 +9,10 @@ export const getSelectedNodeTimestamps = (nodes: NodeExtended[], selectedNode: N
 
   const selectedNodeShowEpisodes = nodes.filter(
     (node) =>
-      (node.show_title && node.link && node.show_title === selectedNode.show_title) ||
-      (node.show_title &&
-        node.link &&
-        node.show_title === selectedNode.show_title &&
-        node.episode_title === selectedNode.episode_title),
+      node.show_title &&
+      node.link &&
+      node.show_title === selectedNode.show_title &&
+      node.episode_title === selectedNode.episode_title,
   )
 
   const groupedTimestamps = groupBy(selectedNodeShowEpisodes, (n) => n.timestamp)

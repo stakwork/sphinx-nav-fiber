@@ -60,7 +60,6 @@ export const Relevance = ({ isSearchResult }: Props) => {
             date,
             boost,
             type,
-            id,
             episode_title: episodeTitle,
             show_title: showTitle,
             node_type: nodeType,
@@ -80,7 +79,6 @@ export const Relevance = ({ isSearchResult }: Props) => {
               boostCount={boost || 0}
               date={date || 0}
               episodeTitle={formatDescription(episodeTitle)}
-              id={id}
               imageUrl={imageUrl || ''}
               link={link}
               name={name || ''}

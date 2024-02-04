@@ -89,7 +89,8 @@
     "prettier:check": "npx prettier --config prettier.config.js --check ./src",
     "postinstall": "husky install",
     "typecheck": "tsc --noEmit",
-    "lint": "eslint src --max-warnings 24"
+    "lint": "eslint src --max-warnings 24",
+    "generate-icons": "node ./svgLibBuilder.js"
   },
   "eslintConfig": {
     "extends": [

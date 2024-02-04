@@ -1,4 +1,5 @@
-import create from 'zustand'
+import { create } from 'zustand'
+import { devtools } from 'zustand/middleware'
 import { NodeExtended } from '~/types'
 
 type PlayerStore = {
@@ -17,6 +18,7 @@ type PlayerStore = {
   setMiniPlayerIsVisible: (miniPlayerIsVisible: boolean) => void
   setHasError: (hasError: boolean) => void
   setPlayingNode: (playingNode: NodeExtended | null) => void
+  setPlayingNodeLink: (link: string) => void
 }
 
 const defaultData: Omit<
@@ -29,6 +31,7 @@ const defaultData: Omit<
   | 'setHasError'
   | 'resetPlayer'
   | 'setMiniPlayerIsVisible'
+  | 'setPlayingNodeLink'
 > = {
   isPlaying: false,
   miniPlayerIsVisible: false,
@@ -39,36 +42,47 @@ const defaultData: Omit<
   volume: 0.5,
 }
 
-export const usePlayerStore = create<PlayerStore>((set, get) => ({
-  ...defaultData,
-  setIsPlaying: (isPlaying) => set({ isPlaying }),
-  setMiniPlayerIsVisible: (miniPlayerIsVisible) => {
-    if (!miniPlayerIsVisible) {
-      set({ miniPlayerIsVisible, isPlaying: false })
-    } else {
-      set({ miniPlayerIsVisible })
-    }
-  },
-  setHasError: (hasError) => set({ hasError }),
-  setPlayingTime: (time) => set({ playingTime: time }),
-  setDuration: (duration) => set({ duration }),
-  setVolume: (volume) => set({ volume }),
-  setPlayingNode: (playingNode) => {
-    if (!playingNode) {
-      set({
-        ...defaultData,
-      })
-    }
+export const usePlayerStore = create<PlayerStore>()(
+  devtools((set, get) => ({
+    ...defaultData,
+    setIsPlaying: (isPlaying) => set({ isPlaying }),
+    setMiniPlayerIsVisible: (miniPlayerIsVisible) => {
+      if (!miniPlayerIsVisible) {
+        set({ miniPlayerIsVisible, isPlaying: false })
+      } else {
+        set({ miniPlayerIsVisible })
+      }
+    },
+    setHasError: (hasError) => set({ hasError }),
+    setPlayingTime: (time) => set({ playingTime: time }),
+    setDuration: (duration) => set({ duration }),
+    setVolume: (volume) => set({ volume }),
+    setPlayingNodeLink: (link: string) => {
+      const { playingNode } = get()
 
-    const statePlayingNode = get().playingNode
+      if (!playingNode) {
+        return
+      }
 
-    if (statePlayingNode?.ref_id !== playingNode?.ref_id) {
-      set({
-        ...defaultData,
-        miniPlayerIsVisible: true,
-        playingNode,
-      })
-    }
-  },
-  resetPlayer: () => set({ duration: defaultData.duration, hasError: defaultData.hasError }),
-}))
+      set({ playingNode: { ...playingNode, link } })
+    },
+    setPlayingNode: (playingNode) => {
+      if (!playingNode) {
+        set({
+          ...defaultData,
+        })
+      }
+
+      const statePlayingNode = get().playingNode
+
+      if (statePlayingNode?.ref_id !== playingNode?.ref_id) {
+        set({
+          ...defaultData,
+          miniPlayerIsVisible: true,
+          playingNode,
+        })
+      }
+    },
+    resetPlayer: () => set({ duration: defaultData.duration, hasError: defaultData.hasError }),
+  })),
+)

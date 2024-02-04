@@ -17,7 +17,6 @@ type Props = {
   handleVolumeChange: (_: Event, value: number | number[]) => void
   playingTime: number
   duration: number
-  hasError: boolean
   onFullScreenClick: () => void
   showToolbar: boolean
 }
@@ -29,7 +28,6 @@ export const Toolbar: FC<Props> = ({
   duration,
   handleProgressChange,
   handleVolumeChange,
-  hasError,
   onFullScreenClick,
   showToolbar,
 }) => (
@@ -43,37 +41,32 @@ export const Toolbar: FC<Props> = ({
         value={playingTime}
       />
     )}
-    {hasError ? (
-      <Wrapper className="error-wrapper" showToolbar={showToolbar}>
-        Error happened, please try later
-      </Wrapper>
-    ) : (
-      <Wrapper align="center" direction="row" showToolbar={showToolbar}>
-        <Action onClick={setIsPlaying} size="small">
-          {!isPlaying ? <PlayIcon /> : <PauseIcon />}
-        </Action>
-        <TimeStamp direction="row">
-          <span>{secondsToMediaTime(playingTime)}</span>
-          <span className="separator">/</span>
-          <span className="duration">{secondsToMediaTime(duration)}</span>
-        </TimeStamp>
-        <VolumeControl direction="row" px={9}>
-          <Slider
-            className="volume-slider"
-            defaultValue={0.5}
-            max={1}
-            min={0}
-            onChange={handleVolumeChange}
-            size="small"
-            step={0.1}
-          />
-          <VolumeIcon />
-        </VolumeControl>
-        <Fullscreen onClick={() => onFullScreenClick()}>
-          {!showToolbar ? <FullScreenIcon /> : <ExitFullScreen />}
-        </Fullscreen>
-      </Wrapper>
-    )}
+
+    <Wrapper align="center" direction="row" showToolbar={showToolbar}>
+      <Action onClick={setIsPlaying} size="small">
+        {!isPlaying ? <PlayIcon /> : <PauseIcon />}
+      </Action>
+      <TimeStamp direction="row">
+        <span>{secondsToMediaTime(playingTime)}</span>
+        <span className="separator">/</span>
+        <span className="duration">{secondsToMediaTime(duration)}</span>
+      </TimeStamp>
+      <VolumeControl direction="row" px={9}>
+        <Slider
+          className="volume-slider"
+          defaultValue={0.5}
+          max={1}
+          min={0}
+          onChange={handleVolumeChange}
+          size="small"
+          step={0.1}
+        />
+        <VolumeIcon />
+      </VolumeControl>
+      <Fullscreen onClick={() => onFullScreenClick()}>
+        {!showToolbar ? <FullScreenIcon /> : <ExitFullScreen />}
+      </Fullscreen>
+    </Wrapper>
   </Flex>
 )
 

@@ -16,9 +16,8 @@ const MediaPlayerComponent: FC<Props> = ({ hidden }) => {
   const playerRef = useRef<ReactPlayer | null>(null)
   const wrapperRef = useRef<HTMLDivElement | null>(null)
   const [isFullScreen, setIsFullScreen] = useState(false)
-  const [isBuffering, setIsBuffering] = useState(false)
-  const [isReady, setIsReady] = useState(false)
   const [isMouseNearBottom, setIsMouseNearBottom] = useState(false)
+  const [status, setStatus] = useState<'buffering' | 'error' | 'ready'>('ready')
 
   const [
     isPlaying,
@@ -30,7 +29,6 @@ const MediaPlayerComponent: FC<Props> = ({ hidden }) => {
     playingNode,
     volume,
     setVolume,
-    hasError,
     setHasError,
     resetPlayer,
   ] = usePlayerStore((s) => [
@@ -43,7 +41,6 @@ const MediaPlayerComponent: FC<Props> = ({ hidden }) => {
     s.playingNode,
     s.volume,
     s.setVolume,
-    s.hasError,
     s.setHasError,
     s.resetPlayer,
   ])
@@ -79,6 +76,7 @@ const MediaPlayerComponent: FC<Props> = ({ hidden }) => {
 
   const handleError = () => {
     setHasError(true)
+    setStatus('error')
   }
 
   const handleProgress = (progress: { playedSeconds: number }) => {
@@ -89,7 +87,7 @@ const MediaPlayerComponent: FC<Props> = ({ hidden }) => {
 
   const handleReady = () => {
     if (playerRef.current) {
-      setIsReady(true)
+      setStatus('ready')
 
       const videoDuration = playerRef.current.getDuration()
 
@@ -155,7 +153,7 @@ const MediaPlayerComponent: FC<Props> = ({ hidden }) => {
     }
   })
 
-  return playingNode ? (
+  return playingNode?.link ? (
     <Wrapper ref={wrapperRef} hidden={hidden}>
       <Cover>
         <Avatar size={120} src={playingNode?.image_url || ''} type="clip" />
@@ -164,8 +162,8 @@ const MediaPlayerComponent: FC<Props> = ({ hidden }) => {
         ref={playerRef}
         controls={false}
         height={!isFullScreen ? '200px' : window.screen.height}
-        onBuffer={() => setIsBuffering(true)}
-        onBufferEnd={() => setIsBuffering(false)}
+        onBuffer={() => setStatus('buffering')}
+        onBufferEnd={() => setStatus('ready')}
         onError={handleError}
         onPause={handlePause}
         onPlay={handlePlay}
@@ -176,20 +174,22 @@ const MediaPlayerComponent: FC<Props> = ({ hidden }) => {
         volume={volume}
         width="100%"
       />
-      {isReady ? (
+      {status === 'error' ? (
+        <ErrorWrapper className="error-wrapper">Error happened, please try later</ErrorWrapper>
+      ) : null}
+      {status === 'ready' ? (
         <Toolbar
           duration={duration}
           handleProgressChange={handleProgressChange}
           handleVolumeChange={handleVolumeChange}
-          hasError={hasError}
           isPlaying={isPlaying}
           onFullScreenClick={toggleFullScreen}
           playingTime={playingTime}
           setIsPlaying={togglePlay}
-          showToolbar={isMouseNearBottom && isFullScreen} // New prop to conditionally show toolbar
+          showToolbar={isMouseNearBottom && isFullScreen}
         />
       ) : null}
-      {isBuffering || !isReady ? (
+      {status === 'buffering' ? (
         <Buffering>
           <ClipLoader color={colors.lightGray} />
         </Buffering>
@@ -222,6 +222,12 @@ const Buffering = styled(Flex)`
   left: 50%;
   transform: translateX(-50%);
   z-index: 1;
+`
+
+const ErrorWrapper = styled(Flex)`
+  height: 60px;
+  padding: 12px 16px;
+  color: ${colors.primaryRed};
 `
 
 export const MediaPlayer = memo(MediaPlayerComponent)

@@ -1,4 +1,4 @@
-import create from 'zustand'
+import { create } from 'zustand'
 import { DATE } from '~/components/SourcesTableModal/SourcesView/constants'
 import { TtopicsParams, getTopicsData } from '~/network/fetchSourcesData'
 import { FetchTopicResponse, Topic, TopicFilter } from '~/types'
