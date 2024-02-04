@@ -176,7 +176,7 @@ export const Date = styled(Text)`
   line-height: 18px;
   margin-right: 8px;
   flex-shrink: 0;
-  letter-spacing:0.2pt;
+  letter-spacing: 0.2pt;
 `
 
 export const TypeTopic = styled.div`
