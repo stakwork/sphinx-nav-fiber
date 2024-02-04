@@ -90,7 +90,7 @@ export const App = () => {
   })
 
   const runSearch = useCallback(async () => {
-    await fetchData(setBudget, searchTerm)
+    await fetchData(setBudget, { word: searchTerm ?? '' })
     setSidebarOpen(true)
 
     if (searchTerm) {
