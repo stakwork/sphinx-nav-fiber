@@ -1,4 +1,4 @@
-import{Y as r,X as s,Z as b,j as e,ad as x,a0 as d,r as A,a1 as v}from"./index-5a54136d.js";import{ax as M,co as $,cp as j,cq as B,aH as y,cr as D,cs as k,ct as h,aN as C,cu as F,cv as G,u as L,cj as R}from"./index-4dc425a4.js";const P=({onClose:a})=>{const[n]=M(t=>[t.graphStyle]),i=()=>{localStorage.setItem("graphStyle",n),a()};return e.jsxs(V,{direction:"column",children:[e.jsx(z,{children:"Default graph view:"}),e.jsx($,{}),e.jsx(s,{mt:308,children:e.jsx(j,{kind:"big",onClick:i,children:"Save changes"})})]})},V=r(s)`
+import{Y as r,X as s,Z as b,j as e,ad as x,a0 as d,r as A,a1 as v}from"./index-5737e71e.js";import{ax as M,co as $,cp as j,cq as B,aH as y,cr as D,cs as k,ct as h,aN as C,cu as F,cv as G,u as L,cj as R}from"./index-b1d3367e.js";const P=({onClose:a})=>{const[n]=M(t=>[t.graphStyle]),i=()=>{localStorage.setItem("graphStyle",n),a()};return e.jsxs(V,{direction:"column",children:[e.jsx(z,{children:"Default graph view:"}),e.jsx($,{}),e.jsx(s,{mt:308,children:e.jsx(j,{kind:"big",onClick:i,children:"Save changes"})})]})},V=r(s)`
   display: flex;
   gap: 10px;
   padding: 36px;
