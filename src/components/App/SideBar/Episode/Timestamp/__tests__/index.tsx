@@ -10,11 +10,6 @@ import { formatTimestamp } from '../../../../../../utils/formatTimestamp'
 jest.mock('../../../../../../utils/formatTimestamp')
 jest.mock('../../../../../../utils/formatDescription')
 
-// jest.mock('react-icons/md', () => ({
-//   ...jest.requireActual('react-icons/md'),
-//   MdAccessTime: jest.fn(() => <div data-testid="access-time-icon" />),
-// }))
-
 jest.mock('../Equalizer', () => ({
   Equalizer: jest.fn(() => <div data-testid="mock-equalizer" />),
 }))
