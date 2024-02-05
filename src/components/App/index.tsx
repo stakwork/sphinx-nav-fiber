@@ -50,6 +50,8 @@ const LazyAddContentModal = lazy(() =>
   import('../AddContentModal').then(({ AddContentModal }) => ({ default: AddContentModal })),
 )
 
+const LazyAddItemModal = lazy(() => import('../AddItemModal').then(({ AddItemModal }) => ({ default: AddItemModal })))
+
 const LazySourcesTableModal = lazy(() =>
   import('../SourcesTableModal').then(({ SourcesTableModal }) => ({ default: SourcesTableModal })),
 )
@@ -165,7 +167,7 @@ export const App = () => {
               <ActionsToolbar />
             </FormProvider>
           </DataRetriever>
-
+          <LazyAddItemModal />
           <LazyAddContentModal />
           <LazySettingsModal />
 
