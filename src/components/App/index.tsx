@@ -1,3 +1,4 @@
+import { Leva } from 'leva'
 import { Suspense, lazy, useCallback, useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import 'react-toastify/dist/ReactToastify.css'
@@ -6,6 +7,7 @@ import styled from 'styled-components'
 import { DataRetriever } from '~/components/DataRetriever'
 import { GlobalStyle } from '~/components/GlobalStyle'
 import { Flex } from '~/components/common/Flex'
+import { isDevelopment } from '~/constants'
 import { useSocket } from '~/hooks/useSockets'
 import { getGraphDataPositions } from '~/network/fetchGraphData/const'
 import { useAppStore } from '~/stores/useAppStore'
@@ -152,7 +154,7 @@ export const App = () => {
 
       <DeviceCompatibilityNotice />
 
-      {/* <Leva hidden={!isDevelopment} /> */}
+      <Leva hidden={!isDevelopment} />
 
       <Suspense fallback={<div>Loading...</div>}>
         <Wrapper direction="row">
