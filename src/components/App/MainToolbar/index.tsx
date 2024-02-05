@@ -1,5 +1,6 @@
 import styled from 'styled-components'
 import AddContentIcon from '~/components/Icons/AddContentIcon'
+import AddSourceIcon from '~/components/Icons/AddSourceIcon'
 import SettingsIcon from '~/components/Icons/SettingsIcon'
 import SourcesTableIcon from '~/components/Icons/SourcesTableIcon'
 import { Flex } from '~/components/common/Flex'
@@ -20,7 +21,7 @@ export const MainToolbar = () => {
       </LogoButton>
       <ActionButton data-testid="add-item-modal" onClick={openItemAddModal}>
         <IconWrapper>
-          <AddContentIcon />
+          <AddSourceIcon />
         </IconWrapper>
         <Text>Add Item</Text>
       </ActionButton>
