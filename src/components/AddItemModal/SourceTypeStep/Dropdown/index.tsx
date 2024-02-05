@@ -1,33 +1,37 @@
 import FormControl from '@mui/material/FormControl'
 import Popover from '@mui/material/Popover'
 import clsx from 'clsx'
-import { useState } from 'react'
+import { FC, useState } from 'react'
 import styled from 'styled-components'
 import CheckIcon from '~/components/Icons/CheckIcon'
 import ChevronDownIcon from '~/components/Icons/ChevronDownIcon'
 import ChevronUpIcon from '~/components/Icons/ChevronUpIcon'
 import { Flex } from '~/components/common/Flex'
-import { useDataStore } from '~/stores/useDataStore'
 import { colors } from '~/utils/colors'
 
 type Option = Record<string, string>
 
 const NodeType: Option = {
-  corporation: 'Corporation',
-  event: 'Event',
-  image: 'Image',
-  organization: 'Organization',
-  person: 'Person',
-  place: 'Place',
+  Corporation: 'Corporation',
+  Event: 'Event',
+  Image: 'Image',
+  Organization: 'Organization',
+  Person: 'Person',
+  Place: 'Place',
   Project: 'Project',
   Show: 'Show',
   Software: 'Software',
   Topic: 'Topic',
+  '': 'Not selected',
 }
 
-export const DropDown = () => {
+type Props = {
+  selectedValue?: string
+  onSelect: (val: string) => void
+}
+
+export const DropDown: FC<Props> = ({ onSelect, selectedValue = '' }) => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null)
-  const [sidebarFilter, setSidebarFilter] = useDataStore((s) => [s.sidebarFilter, s.setSidebarFilter])
 
   const handleOpenPopover = (event: React.MouseEvent<HTMLDivElement>) => {
     setAnchorEl(event.currentTarget as HTMLElement)
@@ -38,15 +42,15 @@ export const DropDown = () => {
   }
 
   const handleSelectChange = (option: string) => {
-    setSidebarFilter(option)
+    onSelect(option)
     handleClosePopover()
   }
 
   return (
     <div>
       <Action onClick={handleOpenPopover}>
-        <div className="text">Show</div>
-        <div className="value">{NodeType[sidebarFilter]}</div>
+        <div className="text">Node type</div>
+        <div className="value">{NodeType[selectedValue]}</div>
         <div className="icon">{!anchorEl ? <ChevronDownIcon /> : <ChevronUpIcon />}</div>
       </Action>
       <StyledPopover
@@ -70,10 +74,10 @@ export const DropDown = () => {
           {Object.keys(NodeType).map((option) => (
             <MenuItem
               key={option}
-              className={clsx({ active: option === sidebarFilter })}
+              className={clsx({ active: option === selectedValue })}
               onClick={() => handleSelectChange(option)}
             >
-              <span className="icon">{option === sidebarFilter ? <CheckIcon /> : null}</span>
+              <span className="icon">{option === selectedValue ? <CheckIcon /> : null}</span>
               <span>{NodeType[option]}</span>
             </MenuItem>
           ))}

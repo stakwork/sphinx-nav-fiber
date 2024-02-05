@@ -7,18 +7,16 @@ import { Text } from '~/components/common/Text'
 import { getPriceData } from '~/network/fetchSourcesData'
 import { useUserStore } from '~/stores/useUserStore'
 import { colors, formatBudget } from '~/utils'
-import { isSource } from '../utils'
 
 type Props = {
   onClick: () => void
   loading: boolean
-  type: string
 }
 
-export const BudgetStep: FC<Props> = ({ onClick, loading, type }) => {
+export const BudgetStep: FC<Props> = ({ onClick, loading }) => {
   const budget = useUserStore((s) => s.budget)
   const [price, setPrice] = useState<number>(10)
-  const endPoint = isSource(type) ? 'radar' : 'add_node'
+  const endPoint = 'node'
 
   useEffect(() => {
     const run = async () => {

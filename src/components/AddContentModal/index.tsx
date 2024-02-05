@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import * as sphinx from 'sphinx-bridge'
-import { notify } from '~/components/common/Toast/toastMessage'
 import { BaseModal } from '~/components/Modal'
+import { notify } from '~/components/common/Toast/toastMessage'
 import {
   DOCUMENT,
   LINK,
@@ -22,9 +22,9 @@ import { executeIfProd, getLSat, payLsat, updateBudget } from '~/utils'
 import { BudgetStep } from './BudgetStep'
 import { LocationStep } from './LocationStep'
 import { SourceStep } from './SourceStep'
+import { validateSourceURL } from './SourceStep/utils'
 import { SourceTypeStep } from './SourceTypeStep'
 import { getInputType, isSource, twitterHandlePattern } from './utils'
-import { validateSourceURL } from './SourceStep/utils'
 
 export type FormData = {
   input: string
