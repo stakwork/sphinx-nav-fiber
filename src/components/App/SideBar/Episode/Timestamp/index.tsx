@@ -50,14 +50,15 @@ export const Timestamp = ({ onClick, timestamp, isSelected, setOpenClip }: Props
   const color: ColorName = isSelected ? 'blueTextAccent' : 'placeholderText'
 
   const icon = isSelected ? (
-    <MdPlayArrow color={colors[color]} fontSize={18} />
+    <MdPlayArrow color={colors[color]} data-testid="play-arrow-icon" fontSize={18} />
   ) : (
-    <MdAccessTime color={colors[color]} fontSize={18} />
+    <MdAccessTime color={colors[color]} data-testid="access-time-icon" fontSize={18} />
   )
 
   return (
     <Wrapper
       align="center"
+      data-testid="wrapper"
       direction="row"
       isSelected={isSelected}
       justify="flex-start"

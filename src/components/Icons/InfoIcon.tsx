@@ -2,7 +2,14 @@
 import React from 'react'
 
 const InfoIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
-  <svg width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  <svg
+    width="1em"
+    height="1em"
+    viewBox="0 0 16 16"
+    fill="currentColor"
+    xmlns="http://www.w3.org/2000/svg"
+    data-testid="info-icon"
+  >
     <g id="info">
       <mask id="mask0_2682_970" maskUnits="userSpaceOnUse" x="0" y="0" width="16" height="16">
         <rect id="Bounding box" width="1em" height="1em" fill="currentColor" />
