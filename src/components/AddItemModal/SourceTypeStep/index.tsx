@@ -16,7 +16,7 @@ export const SourceTypeStep: FC<Props> = ({ onNextStep, allowNextStep, onSelectT
   <Flex>
     <Flex align="center" direction="row" justify="space-between" mb={20}>
       <Flex align="center" direction="row">
-        <StyledText>Choose Type</StyledText>
+        <StyledText>Select Type</StyledText>
       </Flex>
     </Flex>
 

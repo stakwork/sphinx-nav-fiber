@@ -21,10 +21,13 @@ export const SourceStep: FC<Props> = ({ type, onNextStep, onPrevStep, name, sour
     <Flex>
       <Flex align="center" direction="row" justify="space-between" mb={18}>
         <Flex align="center" direction="row">
-          <StyledText>Add Item</StyledText>
+          <StyledText>Enter details</StyledText>
         </Flex>
       </Flex>
 
+      <Flex mb={4}>
+        <Text>{type} name</Text>
+      </Flex>
       <Flex mb={12}>
         <TextInput
           id="cy-item-name"
@@ -37,17 +40,23 @@ export const SourceStep: FC<Props> = ({ type, onNextStep, onPrevStep, name, sour
         />
       </Flex>
       {type === 'Image' ? (
-        <Flex mb={12}>
-          <TextInput
-            id="cy-item-link"
-            maxLength={250}
-            name="sourceLink"
-            placeholder="Paste link here..."
-            rules={{
-              ...requiredRule,
-            }}
-          />
-        </Flex>
+        <>
+          <Flex mb={4}>
+            <Text>Link</Text>
+          </Flex>
+
+          <Flex mb={12}>
+            <TextInput
+              id="cy-item-link"
+              maxLength={250}
+              name="sourceLink"
+              placeholder="Paste link here..."
+              rules={{
+                ...requiredRule,
+              }}
+            />
+          </Flex>
+        </>
       ) : null}
       <Flex direction="row">
         <Flex grow={1}>

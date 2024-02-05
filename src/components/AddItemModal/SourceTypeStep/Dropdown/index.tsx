@@ -49,7 +49,7 @@ export const DropDown: FC<Props> = ({ onSelect, selectedValue = '' }) => {
   return (
     <div>
       <Action onClick={handleOpenPopover}>
-        <div className="text">Node type</div>
+        <div className="text">Type</div>
         <div className="value">{NodeType[selectedValue]}</div>
         <div className="icon">{!anchorEl ? <ChevronDownIcon /> : <ChevronUpIcon />}</div>
       </Action>
