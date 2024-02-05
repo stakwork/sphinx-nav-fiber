@@ -12,7 +12,7 @@ import { Show } from '../Show'
 import { Topic } from '../Topic'
 import { TwitData } from '../TwitData'
 
-const MEDIA_TYPES = ['clip', 'twitter_space', 'youtube', 'episode']
+const MEDIA_TYPES = ['clip', 'twitter_space', 'youtube', 'episode', 'podcast']
 
 // eslint-disable-next-line no-underscore-dangle
 const _View = () => {
@@ -46,6 +46,7 @@ const _View = () => {
     case 'show':
       return <Show />
     case 'youtube':
+    case 'podcast':
     case 'clip':
     case 'twitter_space':
       return <Media />
