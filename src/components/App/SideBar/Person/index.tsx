@@ -10,7 +10,12 @@ export const Person = () => {
 
   return (
     <Flex direction="row" px={24} py={16}>
-      <Avatar size={80} src={selectedNode?.image_url || 'person_placeholder_img.png'} type="person" />
+      <Avatar
+        data-testid="person-image"
+        size={80}
+        src={selectedNode?.image_url || 'person_placeholder_img.png'}
+        type="person"
+      />
       <Flex p={20}>
         <Text color="primaryText1" kind="bigHeading">
           {personName}
