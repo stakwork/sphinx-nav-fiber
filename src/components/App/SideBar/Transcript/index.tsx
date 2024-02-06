@@ -36,7 +36,7 @@ export const Transcript = ({ stateless, node }: TranscriptProps) => {
     return null
   }
 
-  const loadFullTranscript = async (refId) => {
+  const loadFullTranscript = async (refId: string) => {
     try {
       const response = await fetch(`/node/text/${refId}`)
 
