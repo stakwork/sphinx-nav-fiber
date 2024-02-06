@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react'
 import { MdBolt } from 'react-icons/md'
 import ClipLoader from 'react-spinners/ClipLoader'
 import { toast } from 'react-toastify'
+import BoostIcon from '~/components/Icons/BoostIcon'
 import { Flex } from '~/components/common/Flex'
 import { Pill } from '~/components/common/Pill'
-import BoostIcon from '~/components/Icons/BoostIcon'
 import { BOOST_ERROR_BUDGET, BOOST_SUCCESS } from '~/constants'
 import { Node } from '~/types'
 import { boost } from '~/utils/boost'
@@ -86,6 +86,7 @@ export const Booster = ({ count = 0, updateCount, content, readOnly, refId }: Pr
   return (
     <div>
       <Pill
+        data-testid="booster-pill"
         disabled={submitting}
         onClick={async () => {
           if (isSuccess || submitting) {

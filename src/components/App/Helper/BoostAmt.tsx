@@ -11,7 +11,9 @@ export const BoostAmt = ({ amt }: Props) => (
     <div className="icon">
       <BoostIcon />
     </div>
-    <div className="value">{amt}</div>
+    <div className="value" data-testid="boost-amt">
+      {amt}
+    </div>
     <div className="text">sat</div>
   </Wrapper>
 )
