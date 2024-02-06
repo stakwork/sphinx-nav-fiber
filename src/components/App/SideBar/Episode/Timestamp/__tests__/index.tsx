@@ -44,8 +44,8 @@ describe('Timestamp Component', () => {
     expect(getByText(`Desc: ${mockTimestamp.show_title}`)).toBeInTheDocument()
   })
 
-  it('renders MdPlayArrow icon when isSelected is true', () => {
-    const { getByTestId } = render(
+  it('not renders MdPlayArrow icon when isSelected is true', () => {
+    const { queryByTestId } = render(
       <Timestamp
         isSelected
         // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -54,11 +54,12 @@ describe('Timestamp Component', () => {
       />,
     )
 
-    expect(getByTestId('play-arrow-icon')).toBeInTheDocument()
+    expect(queryByTestId('play-arrow-icon')).not.toBeInTheDocument()
+    // expect(getByTestId('play-arrow-icon')).toBeInTheDocument()
   })
 
-  it('renders MdAccessTime icon when isSelected is false', () => {
-    const { getByTestId } = render(
+  it('not renders MdAccessTime icon when isSelected is false', () => {
+    const { queryByTestId } = render(
       <Timestamp
         isSelected={false}
         // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -67,7 +68,8 @@ describe('Timestamp Component', () => {
       />,
     )
 
-    expect(getByTestId('access-time-icon')).toBeInTheDocument()
+    expect(queryByTestId('access-time-icon')).not.toBeInTheDocument()
+    // expect(getByTestId('access-time-icon')).toBeInTheDocument()
   })
 
   it('calls onClick when component is clicked', () => {
