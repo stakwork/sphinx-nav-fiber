@@ -36,17 +36,19 @@ export const Transcript = ({ stateless, node }: TranscriptProps) => {
     return null
   }
 
+  const url = 'https://knowledge-graph.sphinx.chat'
+
   const loadFullTranscript = async (refId: string) => {
     try {
-      const response = await fetch(`/node/text/${refId}`)
+      const response = await fetch(`https://${url}/node/text/${refId}`) // can you please change "https://knowledge-graph.sphinx.chat" to host var
 
       if (!response.ok) {
         throw new Error('Network response was not ok')
       }
 
-      const data = await response.text() // or response.json() if your server responds with JSON
+      const data = await response.json()
 
-      setFullTranscript(data)
+      setFullTranscript(data.data.text)
       setShowFullTranscript(true)
     } catch (error) {
       console.error('Error fetching full transcript', error)
