@@ -122,7 +122,7 @@ export const Transcript = ({ stateless, node }: TranscriptProps) => {
       </Header>
       <Box>
         {showFullTranscript ? fullTranscript : `${node?.text?.substring(0, 100)}...`}
-        <MoreText onClick={handleMoreClick}>{showFullTranscript ? '...less' : '...more'}</MoreText>
+        <MoreText onClick={handleMoreClick}>{showFullTranscript ? 'less' : 'more'}</MoreText>
       </Box>
     </Flex>
   )
