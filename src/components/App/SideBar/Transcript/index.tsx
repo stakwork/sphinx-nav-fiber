@@ -40,7 +40,7 @@ export const Transcript = ({ stateless, node }: TranscriptProps) => {
 
   const loadFullTranscript = async (refId: string) => {
     try {
-      const response = await fetch(`https://${url}/node/text/${refId}`) // can you please change "https://knowledge-graph.sphinx.chat" to host var
+      const response = await fetch(`${url}/node/text/${refId}`) // can you please change "https://knowledge-graph.sphinx.chat" to host var
 
       if (!response.ok) {
         throw new Error('Network response was not ok')
