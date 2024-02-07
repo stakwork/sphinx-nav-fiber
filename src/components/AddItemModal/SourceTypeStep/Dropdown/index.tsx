@@ -19,7 +19,6 @@ const NodeType: Option = {
   Person: 'Person',
   Place: 'Place',
   Project: 'Project',
-  Show: 'Show',
   Software: 'Software',
   Topic: 'Topic',
   '': 'Not selected',
