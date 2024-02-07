@@ -96,7 +96,7 @@ describe('Timestamp Component', () => {
       <Timestamp isSelected={false} setOpenClip={handleOpenClip} timestamp={mockTimestamp} />,
     )
 
-    fireEvent.click(getByTestId('info-icon'))
+    fireEvent.click(getByTestId('info-icon-wrapper').firstChild as Element)
     expect(handleOpenClip).toHaveBeenCalledWith(mockTimestamp)
   })
 

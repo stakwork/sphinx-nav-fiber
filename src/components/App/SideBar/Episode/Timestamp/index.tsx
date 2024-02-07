@@ -80,7 +80,7 @@ export const Timestamp = ({ onClick, timestamp, isSelected, setOpenClip }: Props
         <span className="title">{formatDescription(timestamp.show_title)}</span>
       </About>
       <div className="info">
-        <Flex onClick={() => setOpenClip(timestamp)} pt={4}>
+        <Flex data-testid="info-icon-wrapper" onClick={() => setOpenClip(timestamp)} pt={4}>
           <InfoIcon />
         </Flex>
       </div>
