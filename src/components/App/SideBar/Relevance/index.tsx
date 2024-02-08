@@ -28,6 +28,8 @@ export const Relevance = ({ isSearchResult }: Props) => {
 
   const filteredNodes = useFilteredNodes()
 
+  console.log(filteredNodes)
+
   const startSlice = currentPage * pageSize
   const endSlice = startSlice + pageSize
 

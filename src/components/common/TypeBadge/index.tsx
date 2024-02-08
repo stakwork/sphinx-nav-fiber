@@ -20,6 +20,7 @@ const EpisodeTypeImages: EpisodeTypeImage = {
   youtube: { img: 'video_badge.svg', label: 'clip' },
   episode: { img: 'video_badge.svg', label: 'episode' },
   document: { img: 'notes_badge.svg', label: 'text' },
+  image: { img: 'image_badge.png', label: 'image' },
 }
 
 type Props = {
@@ -28,7 +29,7 @@ type Props = {
 
 export const TypeBadge = ({ type }: Props) => (
   <EpisodeWrapper>
-    <img alt={EpisodeTypeImages[type]?.label || type} src={EpisodeTypeImages[type]?.img || ''} />
+    <img alt={EpisodeTypeImages[type]?.label || type} src={EpisodeTypeImages[type]?.img || 'image_badge.png'} />
     <div className="label">{EpisodeTypeImages[type]?.label || type}</div>
   </EpisodeWrapper>
 )

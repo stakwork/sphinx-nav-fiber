@@ -10778,13 +10778,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"loadjs@npm:^4.2.0":
-  version: 4.2.0
-  resolution: "loadjs@npm:4.2.0"
-  checksum: 2144723f55c75260ce6781b36009c40d098d96fe06e3ec5c85ba250cf96c3a0aa37169b829e818c40bcba7c5141a8e52736fec193333bb6260ab95f9a493a2ef
-  languageName: node
-  linkType: hard
-
 "locate-path@npm:^5.0.0":
   version: 5.0.0
   resolution: "locate-path@npm:5.0.0"
@@ -13119,29 +13112,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-twitter-embed@npm:^4.0.4":
-  version: 4.0.4
-  resolution: "react-twitter-embed@npm:4.0.4"
-  dependencies:
-    scriptjs: ^2.5.9
-  peerDependencies:
-    react: ^16.0.0 || ^17.0.0 || ^18.0.0
-    react-dom: ^16.0.0 || ^17.0.0 || ^18.0.0
-  checksum: cdb3c5bd04c4da0efa767476be47c0a3865fb6335f2a1b9e242170167b51615c38164223278cef60c77143c4bac27ba582cbea054d0af3f138104fa5ec537c4c
-  languageName: node
-  linkType: hard
-
-"react-twitter-widgets@npm:^1.11.0":
-  version: 1.11.0
-  resolution: "react-twitter-widgets@npm:1.11.0"
-  dependencies:
-    loadjs: ^4.2.0
-  peerDependencies:
-    react: ^16.8.0 || ^17 || ^18
-  checksum: b568e0ceed94c997e2a41215e25422db3131d262ae7e0c80fd95fa2bf842078738ca677756219adf576846f04cc5ec46e5ec0342a6a076583dd1debff29bc5ab
-  languageName: node
-  linkType: hard
-
 "react-use-measure@npm:^2.1.1":
   version: 2.1.1
   resolution: "react-use-measure@npm:2.1.1"
@@ -13773,13 +13743,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"scriptjs@npm:^2.5.9":
-  version: 2.5.9
-  resolution: "scriptjs@npm:2.5.9"
-  checksum: fc84cb6b60b6fb9aa6f1b3bc59fc94b233bd5241ed3a04233579014382b5eb60640269c87d8657902acc09f9b785ee33230c218627cea00e653564bda8f5acb6
-  languageName: node
-  linkType: hard
-
 "secp256k1@npm:^4.0.2":
   version: 4.0.3
   resolution: "secp256k1@npm:4.0.3"
@@ -14235,8 +14198,6 @@ __metadata:
     react-player: ^2.11.2
     react-spinners: ^0.13.3
     react-toastify: ^8.2.0
-    react-twitter-embed: ^4.0.4
-    react-twitter-widgets: ^1.11.0
     reactflow: ^11.9.2
     recharts: ^2.4.3
     rollup-plugin-node-builtins: ^2.1.2

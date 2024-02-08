@@ -33,7 +33,33 @@ const dataCube = {
   },
 }
 
+export const customCube = {
+  scale: universeScale / 2,
+  position: {
+    x: universeScale / 2,
+    y: 0,
+    z: 0,
+  },
+}
+
 function generateGuestNodePosition() {
+  const { scale, position } = guestCube
+
+  const center = {
+    x: position.x + Math.random() * scale - scale * 0.5,
+    y: position.y + Math.random() * scale - scale * 0.5,
+    z: position.z + Math.random() * scale - scale * 0.5,
+  }
+  // apply perlin noise
+
+  const perlinNoise = 1
+
+  const amp = 10
+
+  return new Vector3(center.x + perlinNoise * amp, center.y + perlinNoise * amp, center.z + perlinNoise * amp)
+}
+
+export function generateCusomNodePosition() {
   const { scale, position } = guestCube
 
   const center = {

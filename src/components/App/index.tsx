@@ -24,6 +24,7 @@ import { DeviceCompatibilityNotice } from './DeviceCompatibilityNotification'
 import { Helper } from './Helper'
 import { SecondarySideBar } from './SecondarySidebar'
 import { Toasts } from './Toasts'
+import { ModalsContainer } from '../ModalsContainer'
 
 const Wrapper = styled(Flex)`
   height: 100%;
@@ -43,20 +44,6 @@ const Version = styled(Flex)`
 const LazyMainToolbar = lazy(() => import('./MainToolbar').then(({ MainToolbar }) => ({ default: MainToolbar })))
 const LazyUniverse = lazy(() => import('~/components/Universe').then(({ Universe }) => ({ default: Universe })))
 const LazySideBar = lazy(() => import('./SideBar').then(({ SideBar }) => ({ default: SideBar })))
-
-const LazySettingsModal = lazy(() =>
-  import('../SettingsModal').then(({ SettingsModal }) => ({ default: SettingsModal })),
-)
-
-const LazyAddContentModal = lazy(() =>
-  import('../AddContentModal').then(({ AddContentModal }) => ({ default: AddContentModal })),
-)
-
-const LazyAddItemModal = lazy(() => import('../AddItemModal').then(({ AddItemModal }) => ({ default: AddItemModal })))
-
-const LazySourcesTableModal = lazy(() =>
-  import('../SourcesTableModal').then(({ SourcesTableModal }) => ({ default: SourcesTableModal })),
-)
 
 export const App = () => {
   const [setBudget, setNodeCount] = useUserStore((s) => [s.setBudget, s.setNodeCount])
@@ -169,13 +156,8 @@ export const App = () => {
               <ActionsToolbar />
             </FormProvider>
           </DataRetriever>
-          <LazyAddItemModal />
-          <LazyAddContentModal />
-          <LazySettingsModal />
-
+          <ModalsContainer />
           <Toasts />
-
-          <LazySourcesTableModal />
           <Helper />
         </Wrapper>
       </Suspense>

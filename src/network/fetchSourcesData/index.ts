@@ -98,7 +98,7 @@ export const getStats = async () => {
 }
 
 export const getEdgeTypes = async () => {
-  const response = await api.get<FetchEdgesResponse>(`curation/edge/type`)
+  const response = await api.get<FetchEdgesResponse>(`/curation/edge/type`)
 
   return response
 }
@@ -143,6 +143,12 @@ export const approveRadarData = async (id: string, pubkey: string) => {
 
 export const deleteRadarData = async (id: string) => {
   const response = await api.delete(`/radar/${id}`)
+
+  return response
+}
+
+export const deleteNode = async (id: string) => {
+  const response = await api.delete(`/node/?ref_id=${id}`)
 
   return response
 }
