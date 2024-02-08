@@ -5,6 +5,7 @@ import { TextType } from '../../Helper/AskQuestion/Text'
 import { TeachMeText } from '../../Helper/TeachMe'
 import { Data } from '../Data'
 import { Episode } from '../Episode'
+import { Image } from '../Image'
 import { Media } from '../Media'
 import { Messages } from '../Messages'
 import { Person } from '../Person'
@@ -54,6 +55,8 @@ const _View = () => {
       return <TextType />
     case 'episode':
       return <Episode key={selectedNode.ref_id} />
+    case 'image':
+      return <Image />
     default:
       return null
   }

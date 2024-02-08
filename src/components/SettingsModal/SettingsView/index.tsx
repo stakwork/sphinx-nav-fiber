@@ -50,6 +50,8 @@ export const SettingsView: React.FC<Props> = ({ onClose }) => {
   const [isAdmin, pubKey] = useUserStore((s) => [s.isAdmin, s.setPubKey, s.pubKey])
   const appMetaData = useAppStore((s) => s.appMetaData)
 
+  console.log(appMetaData)
+
   const getSettingsLabel = () => (isAdmin ? 'Admin Settings' : 'Settings')
 
   const SettingsHeader = ({ children }: { children: React.ReactNode }) => (

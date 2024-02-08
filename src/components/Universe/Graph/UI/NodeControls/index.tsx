@@ -4,8 +4,14 @@ import { memo, useCallback, useMemo, useRef } from 'react'
 import { MdClose, MdViewInAr } from 'react-icons/md'
 import styled from 'styled-components'
 import { Group, Vector3 } from 'three'
+import DeleteIcon from '~/components/Icons/DeleteIcon'
+import EditIcon from '~/components/Icons/EditIcon'
+import PlusIcon from '~/components/Icons/PlusIcon'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
+import { useModal } from '~/stores/useModalStore'
+import { useUserStore } from '~/stores/useUserStore'
+import { colors } from '~/utils'
 import { buttonColors } from './constants'
 
 const reuseableVector3 = new Vector3()
@@ -13,6 +19,13 @@ const reuseableVector3 = new Vector3()
 export const NodeControls = memo(() => {
   const ref = useRef<Group | null>(null)
   const setSidebarOpen = useAppStore((s) => s.setSidebarOpen)
+
+  const { open: openEditNodeNameModal } = useModal('editNodeName')
+  const { open: openRemoveNodeModal } = useModal('removeNode')
+  const { open: addEdgeToNodeModal } = useModal('addEdgeToNode')
+
+  const [isAdmin] = useUserStore((s) => [s.isAdmin])
+
   const showSelectionGraph = useDataStore((s) => s.showSelectionGraph)
   const selectionGraphData = useDataStore((s) => s.selectionGraphData)
   const allGraphData = useDataStore((s) => s.data)
@@ -39,36 +52,79 @@ export const NodeControls = memo(() => {
   }, [selectedNode, showSelectionGraph, selectionGraphData, allGraphData])
 
   const buttons = useMemo(
-    () => [
-      {
-        key: 'control-key-1',
-        colors: buttonColors(showSelectionGraph).focus,
-        icon: <MdViewInAr />,
-        left: 10,
-        className: 'expand',
-        onClick: () => {
-          const nextState = !showSelectionGraph
+    () =>
+      isAdmin
+        ? [
+            {
+              key: 'control-key-1',
+              colors: buttonColors(showSelectionGraph).focus,
+              icon: <PlusIcon />,
+              left: -80,
+              className: 'add',
+              onClick: () => {
+                addEdgeToNodeModal()
+              },
+            },
+            {
+              key: 'control-key-2',
+              colors: buttonColors(showSelectionGraph).focus,
+              icon: <EditIcon />,
+              left: -40,
+              className: 'edit',
+              onClick: () => {
+                openEditNodeNameModal()
+              },
+            },
+            {
+              key: 'control-key-3',
+              colors: buttonColors(showSelectionGraph).focus,
+              icon: <DeleteIcon />,
+              left: 0,
+              className: 'delete',
+              onClick: () => {
+                openRemoveNodeModal()
+              },
+            },
+          ]
+        : [
+            {
+              key: 'control-key-4',
+              colors: buttonColors(showSelectionGraph).focus,
+              icon: <MdViewInAr />,
+              left: 0,
+              className: 'expand',
+              onClick: () => {
+                const nextState = !showSelectionGraph
 
-          setShowSelectionGraph(nextState)
+                setShowSelectionGraph(nextState)
 
-          if (nextState) {
-            setSidebarOpen(true)
-          }
-        },
-      },
-      {
-        key: 'control-key-2',
-        colors: buttonColors(true).close,
-        icon: <MdClose />,
-        left: 40,
-        className: 'exit',
-        onClick: () => {
-          setSelectedNode(null)
-          setShowSelectionGraph(false)
-        },
-      },
+                if (nextState) {
+                  setSidebarOpen(true)
+                }
+              },
+            },
+            {
+              key: 'control-key-5',
+              colors: buttonColors(true).close,
+              icon: <MdClose />,
+              left: 40,
+              className: 'exit',
+              onClick: () => {
+                setSelectedNode(null)
+                setShowSelectionGraph(false)
+              },
+            },
+          ],
+    [
+      showSelectionGraph,
+      addEdgeToNodeModal,
+      openEditNodeNameModal,
+      openRemoveNodeModal,
+      setShowSelectionGraph,
+      setSidebarOpen,
+      setSelectedNode,
+      isAdmin,
     ],
-    [setShowSelectionGraph, setSelectedNode, setSidebarOpen, showSelectionGraph],
   )
 
   if (!selectedNode) {
@@ -132,6 +188,7 @@ const IconButton = styled.div<ButtonProps>`
   align-items: center;
   background: ${(p: ButtonProps) => (p.backgroundColor ? p.backgroundColor : '#000000bb')};
   color: ${(p: ButtonProps) => (p.fontColor ? p.fontColor : '#ffffff')};
+  color: ${colors.BG1_PRESS};
   border-radius: 100%;
   font-size: 16px;
   cursor: pointer;

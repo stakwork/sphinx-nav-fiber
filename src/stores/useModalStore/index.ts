@@ -11,6 +11,9 @@ export type AvailableModals =
   | 'settings'
   | 'mergeTopic'
   | 'briefDescription'
+  | 'editNodeName'
+  | 'removeNode'
+  | 'addEdgeToNode'
 
 type ModalStore = {
   currentModals: Record<AvailableModals, boolean>
@@ -31,6 +34,9 @@ const defaultData = {
     settings: false,
     mergeTopic: false,
     briefDescription: false,
+    editNodeName: false,
+    removeNode: false,
+    addEdgeToNode: false,
   },
 }
 

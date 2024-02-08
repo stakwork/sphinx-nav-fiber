@@ -250,6 +250,8 @@ const getNodeScale = (node: NodeExtended) => {
       return 2
     case 'show':
       return 3
+    case 'image':
+      return 4
     default:
       return 1.5
   }
@@ -342,7 +344,7 @@ const generateGuestsMap = (
   return updatedGuestMap // Return the new variable
 }
 
-export const getGraphData = async (
+const getGraphData = async (
   graphStyle: 'split' | 'force' | 'sphere' | 'earth',
   setBudget: (value: number | null) => void,
   params: FetchNodeParams,
@@ -457,7 +459,7 @@ export const formatFetchNodes = (
       }
 
       // TODO: simplify this to ref_id
-      if (['data_series', 'document', 'tweet'].includes(node.node_type)) {
+      if (['data_series', 'document', 'tweet', 'image'].includes(node.node_type)) {
         const imageUrlsMapper: { [key: string]: string } = {
           data_series: 'node_data.webp',
           document: 'document.jpeg',
@@ -469,7 +471,7 @@ export const formatFetchNodes = (
           scale: getNodeScale(node),
           id: node.ref_id || `${node.unique_id}_${index}`,
           ref_id: node.ref_id || `${node.unique_id}_${index}`,
-          image_url: imageUrlsMapper[node.node_type],
+          image_url: node.node_type === 'image' ? node.source_link : imageUrlsMapper[node.node_type],
           type: node.type || node.node_type,
         })
 
@@ -578,7 +580,7 @@ export const formatFetchNodes = (
   return { links, nodes }
 }
 
-export const addWeightNormalizationToNodes = (
+const addWeightNormalizationToNodes = (
   topWeightValue: number,
   maxSuperficialWeight: Record<string, number>,
   nodes: NodeExtended[],

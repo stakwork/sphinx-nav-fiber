@@ -21,6 +21,7 @@ const TypesMapper: TTypeMapper = {
   guest: 'person',
   twitter_space: 'audio',
   show: 'show',
+  image: 'image',
 }
 
 export const Avatar = styled.div<Props>`
