@@ -3,7 +3,7 @@ import { FC } from 'react'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
-import { DropDown } from './Dropdown'
+import { AutoComplete } from './AutoComplete'
 
 type Props = {
   onNextStep: () => void
@@ -21,7 +21,7 @@ export const SourceTypeStep: FC<Props> = ({ onNextStep, allowNextStep, onSelectT
     </Flex>
 
     <Flex direction="row" mb={20}>
-      <DropDown onSelect={onSelectType} selectedValue={selectedType} />
+      <AutoComplete onSelect={onSelectType} selectedValue={selectedType} />
     </Flex>
 
     <Flex>
