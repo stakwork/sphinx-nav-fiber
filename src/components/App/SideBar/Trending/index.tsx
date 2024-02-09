@@ -156,13 +156,17 @@ export const Trending = ({ onSubmit }: Props) => {
             {loading ? (
               <div>
                 <ClipLoader color={colors.PRIMARY_BLUE} size={16} />
-                <>
-                  <StyledSkeleton animation="wave" height={47} variant="rectangular" width={382} />
-                  <StyledSkeleton animation="wave" height={47} variant="rectangular" width={382} />
-                  <StyledSkeleton animation="wave" height={47} variant="rectangular" width={382} />
-                  <StyledSkeleton animation="wave" height={47} variant="rectangular" width={382} />
-                  <StyledSkeleton animation="wave" height={47} variant="rectangular" width={382} />
-                </>
+                {[...Array(5)].map((_, i) => (
+                  <StyledSkeleton
+                    // eslint-disable-next-line
+                    key={i}
+                    animation="wave"
+                    data-testid="loading-skeleton"
+                    height={47}
+                    variant="rectangular"
+                    width={382}
+                  />
+                ))}
               </div>
             ) : (
               <>
