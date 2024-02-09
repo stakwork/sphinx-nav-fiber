@@ -25,7 +25,14 @@ export const SourceTypeStep: FC<Props> = ({ onNextStep, allowNextStep, onSelectT
     </Flex>
 
     <Flex>
-      <Button color="secondary" disabled={!allowNextStep} onClick={onNextStep} size="large" variant="contained">
+      <Button
+        color="secondary"
+        disabled={!allowNextStep}
+        onClick={onNextStep}
+        size="large"
+        type="button"
+        variant="contained"
+      >
         Next
       </Button>
     </Flex>
