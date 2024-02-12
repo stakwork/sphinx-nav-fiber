@@ -8,6 +8,7 @@ import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { TypeBadge } from '~/components/common/TypeBadge'
 import { colors } from '~/utils/colors'
+import { TypeDocument } from './TypeDocument'
 import { TypePerson } from './TypePerson'
 import { TypeTweet } from './TypeTweet'
 
@@ -75,7 +76,7 @@ export const Episode = ({
   const description = type === 'show' ? showTitle : episodeTitle
   const subtitle = type === 'show' ? '' : showTitle
 
-  const defaultViewTypes = ['tweet', 'person', 'guest', 'topic']
+  const defaultViewTypes = ['tweet', 'person', 'guest', 'topic', 'document']
 
   const imageType = type === 'youtube' ? 'video' : 'audio'
 
@@ -134,6 +135,7 @@ export const Episode = ({
               verified={verified}
             />
           )}
+          {type === 'document' && <TypeDocument sourceLink={sourceLink || ''} text={text || ''} type={type} />}
         </>
       )}
     </EpisodeWrapper>
