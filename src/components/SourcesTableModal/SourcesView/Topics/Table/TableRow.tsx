@@ -26,7 +26,7 @@ const TableRowComponent: FC<TTableRaw> = ({ topic, onClick }) => {
     setLoading(true)
 
     try {
-      await putNodeData({ ref_id: refId, node_name: 'muted_topic', node_value: shouldMute })
+      await putNodeData(refId, { muted_topic: shouldMute })
       useTopicsStore.setState({ ids: ids.filter((i) => i !== refId), total: total - 1 })
     } catch (error) {
       console.warn(error)

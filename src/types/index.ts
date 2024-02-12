@@ -33,9 +33,8 @@ export type RadarRequest = {
 }
 
 export type NodeRequest = {
-  ref_id: string
-  node_name: string // 'topic' | 'name'
-  node_value: boolean | string
+  muted_topic?: boolean
+  topic?: string
 }
 
 export type Node = {

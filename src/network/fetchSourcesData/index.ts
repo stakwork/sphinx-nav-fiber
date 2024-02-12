@@ -129,8 +129,8 @@ export const putRadarData = async (id: string, data: RadarRequest) => {
   return response
 }
 
-export const putNodeData = async (data: NodeRequest) => {
-  const response = await api.put(`/node`, JSON.stringify(data))
+export const putNodeData = async (ref_id: string, data: NodeRequest) => {
+  const response = await api.put(`/node?ref_id=${ref_id}`, JSON.stringify(data))
 
   return response
 }
