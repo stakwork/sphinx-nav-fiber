@@ -39,7 +39,7 @@ const ModalContainer = styled(Flex)<Pick<Props, 'kind'>>`
   animation: ${scaleAnimation} 0.2s ease-in-out;
   position: relative;
   max-width: 100%;
-  overflow: hidden;
+  overflow: visible;
   background: ${colors.BG1};
   ${getModalKindStyles}
 `

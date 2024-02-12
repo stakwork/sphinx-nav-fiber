@@ -5,9 +5,10 @@ import { BaseModal } from '~/components/Modal'
 import { notify } from '~/components/common/Toast/toastMessage'
 import { NODE_ADD_ERROR, NODE_ADD_SUCCESS } from '~/constants'
 import { api } from '~/network/api'
+import { useDataStore } from '~/stores/useDataStore'
 import { useModal } from '~/stores/useModalStore'
 import { useUserStore } from '~/stores/useUserStore'
-import { SubmitErrRes } from '~/types'
+import { NodeExtended, SubmitErrRes } from '~/types'
 import { executeIfProd, getLSat, payLsat, updateBudget } from '~/utils'
 import { BudgetStep } from './BudgetStep'
 import { SourceStep } from './SourceStep'
@@ -23,6 +24,7 @@ const handleSubmitForm = async (
   data: FieldValues,
   close: () => void,
   setBudget: (value: number | null) => void,
+  onAddNewData: (value: FieldValues) => void,
 ): Promise<void> => {
   const endPoint = 'node'
 
@@ -61,6 +63,8 @@ const handleSubmitForm = async (
       throw new Error(message)
     }
 
+    onAddNewData(data)
+
     notify(NODE_ADD_SUCCESS)
     close()
 
@@ -71,7 +75,7 @@ const handleSubmitForm = async (
 
       await updateBudget(setBudget)
 
-      await handleSubmitForm(data, close, setBudget)
+      await handleSubmitForm(data, close, setBudget, onAddNewData)
     }
 
     if (err.status === 400) {
@@ -95,6 +99,8 @@ export const AddItemModal = () => {
   const form = useForm<FormData>({ mode: 'onChange' })
   const { watch, setValue, reset } = form
   const [loading, setLoading] = useState(false)
+
+  const [addNewNode, setSelectedNode] = useDataStore((s) => [s.addNewNode, s.setSelectedNode])
 
   useEffect(
     () => () => {
@@ -120,11 +126,35 @@ export const AddItemModal = () => {
     setCurrentStep(currentStep - 1)
   }
 
+  const onAddNewNode = (data: FieldValues) => {
+    const newId = `new-id-${Math.random()}`
+    const newType = data.nodeType.toLocaleLowerCase()
+
+    const node: NodeExtended = {
+      name: data.name,
+      type: newType,
+      label: data.name,
+      node_type: newType,
+      id: newId,
+      ref_id: newId,
+      x: Math.random(),
+      y: Math.random(),
+      z: Math.random(),
+      date: +new Date(),
+      weight: 4,
+      ...(data.sourceLink ? { source_link: data.sourceLink } : {}),
+    }
+
+    addNewNode(node)
+
+    setSelectedNode(node)
+  }
+
   const onSubmit = form.handleSubmit(async (data) => {
     setLoading(true)
 
     try {
-      await handleSubmitForm(data, handleClose, setBudget)
+      await handleSubmitForm(data, handleClose, setBudget, onAddNewNode)
     } catch {
       notify(NODE_ADD_ERROR)
     } finally {

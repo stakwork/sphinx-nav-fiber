@@ -8,6 +8,7 @@ import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { TypeBadge } from '~/components/common/TypeBadge'
 import { colors } from '~/utils/colors'
+import { TypeCustom } from './TypeCustom'
 import { TypeDocument } from './TypeDocument'
 import { TypePerson } from './TypePerson'
 import { TypeTweet } from './TypeTweet'
@@ -125,6 +126,7 @@ export const Episode = ({
           {['person', 'guest'].includes(type as string) && (
             <TypePerson imageUrl={imageUrl} name={name || ''} title={showTitle || ''} />
           )}
+          {['image'].includes(type as string) && <TypeCustom imageUrl={sourceLink} name={name || ''} />}
           {type === 'tweet' && (
             <TypeTweet
               date={date}
