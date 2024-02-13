@@ -195,8 +195,6 @@ export const AddContentModal = () => {
 
         const response = (await api.post('/validate_content', JSON.stringify(data))) as ApiResponse
 
-        console.log('valid api data', response)
-
         if (response.status === 404 || response.status === 400) {
           notify('Please enter a valid URL')
           reset()
