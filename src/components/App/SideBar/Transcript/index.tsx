@@ -15,13 +15,54 @@ type TranscriptProps = {
   node: NodeExtended | null
 }
 
+const MoreText = styled.span`
+  color: ${colors.white};
+  cursor: pointer;
+  margin-left: 5px;
+  &:hover {
+    text-decoration: underline;
+  }
+`
+
 export const Transcript = ({ stateless, node }: TranscriptProps) => {
   const [transcriptIsOpen, setTranscriptOpen] = useAppStore((s) => [s.transcriptIsOpen, s.setTranscriptOpen])
 
   const [isCopied, setIsCopied] = useState(false)
 
+  const [fullTranscript, setFullTranscript] = useState('')
+  const [showFullTranscript, setShowFullTranscript] = useState(false)
+
   if (!stateless && !transcriptIsOpen) {
     return null
+  }
+
+  const url = 'https://knowledge-graph.sphinx.chat'
+
+  const loadFullTranscript = async (refId: string) => {
+    try {
+      const response = await fetch(`${url}/node/text/${refId}`) // can you please change "https://knowledge-graph.sphinx.chat" to host var
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok')
+      }
+
+      const data = await response.json()
+
+      setFullTranscript(data.data.text)
+      setShowFullTranscript(true)
+    } catch (error) {
+      console.error('Error fetching full transcript', error)
+    }
+  }
+
+  const handleMoreClick = () => {
+    if (!showFullTranscript) {
+      if (node?.ref_id) {
+        loadFullTranscript(node.ref_id)
+      }
+    } else {
+      setShowFullTranscript(false)
+    }
   }
 
   const copyNodeText = (text: string | undefined) => {
@@ -79,7 +120,10 @@ export const Transcript = ({ stateless, node }: TranscriptProps) => {
           </CloseButton>
         )}
       </Header>
-      <Box>{node?.text ? `"${node?.text}"` : '...'}</Box>
+      <Box>
+        {showFullTranscript ? fullTranscript : `${node?.text?.substring(0, 100)}...`}
+        <MoreText onClick={handleMoreClick}>{showFullTranscript ? 'less' : 'more'}</MoreText>
+      </Box>
     </Flex>
   )
 }
