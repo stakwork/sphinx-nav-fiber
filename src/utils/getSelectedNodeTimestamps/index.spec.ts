@@ -42,7 +42,7 @@ const selectedNode = [
     link: 'https://www.youtube.com/watch?v=0XiNuMOdWbY',
     longitude: null,
     node_type: 'youtube',
-    pub_key: '',
+    pubkey: '',
     ref_id: '95f71ca1-b9aa-4443-bb22-fa4fec4b6392',
     show_title: 'Synonym',
     source_link: null,
