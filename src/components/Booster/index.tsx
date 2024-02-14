@@ -106,7 +106,7 @@ export const Booster = ({ count = 0, updateCount, content, readOnly, refId }: Pr
         {submitting ? (
           <ClipLoader color="#fff" loading size={10} />
         ) : (
-          <Flex align="center" direction="row" justify="space-around">
+          <Flex align="center" data-testid="loader" direction="row" justify="space-around">
             <BoostIcon style={{ color: colors.white }} />
 
             <div style={{ marginLeft: 8, marginRight: 8 }}>Boost</div>
