@@ -34,17 +34,6 @@ export type FormData = {
   latitude: string
 }
 
-interface ApiResponse {
-  status: number
-  source?: string
-  content?: string
-}
-
-interface ApiError {
-  status: number
-  message?: string
-}
-
 const handleSubmitForm = async (
   data: FieldValues,
   close: () => void,
@@ -159,8 +148,6 @@ export const AddContentModal = () => {
   const form = useForm<FormData>({ mode: 'onChange' })
   const { watch, setValue, reset } = form
   const [loading, setLoading] = useState(false)
-  const [isSourceRes, setIsSourceRes] = useState(false)
-  const [isContentRes, setIsContentRes] = useState(false)
 
   useEffect(
     () => () => {
@@ -188,38 +175,8 @@ export const AddContentModal = () => {
     close()
   }
 
-  const onNextStep = async () => {
-    if (currentStep === 0) {
-      try {
-        const data = { source }
-
-        const response = (await api.post('/validate_content', JSON.stringify(data))) as ApiResponse
-
-        if (response.status === 404 || response.status === 400) {
-          notify('Please enter a valid URL')
-          reset()
-
-          return
-        }
-
-        if (response.source) {
-          setIsSourceRes(true)
-          setCurrentStep(currentStep + 1)
-        }
-
-        if (response.content) {
-          setIsContentRes(true)
-          setCurrentStep(currentStep + 1)
-        }
-      } catch (e) {
-        const error = e as ApiError
-
-        if (error.status === 404 || error.status === 400) {
-          notify('Please enter a valid URL')
-          reset()
-        }
-      }
-    }
+  const onNextStep = () => {
+    setCurrentStep(currentStep + 1)
   }
 
   const onPrevStep = () => {
@@ -245,10 +202,9 @@ export const AddContentModal = () => {
           {currentStep === 0 && <SourceStep allowNextStep={isValidSource} onNextStep={onNextStep} type={type} />}
           {currentStep === 1 && (
             <>
-              {isSourceRes && (
+              {!isSource(type) ? (
                 <LocationStep form={form} latitude={latitude} longitude={longitude} onNextStep={onNextStep} />
-              )}
-              {isContentRes && (
+              ) : (
                 <SourceTypeStep onNextStep={onNextStep} onPrevStep={onPrevStep} type={type} value={sourceValue} />
               )}
             </>
