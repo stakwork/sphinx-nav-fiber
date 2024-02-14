@@ -15,13 +15,6 @@ jest.mock('~/components/Icons/NodesIcon', () => jest.fn(() => <div data-testid="
 jest.mock('~/components/Icons/TwitterIcon', () => jest.fn(() => <div data-testid="TwitterIcon" />))
 jest.mock('~/components/Icons/VideoIcon', () => jest.fn(() => <div data-testid="VideoIcon" />))
 
-jest.mock('d3-force-3d', () => ({
-  forceSimulation: jest.fn(() => ({
-    stop: jest.fn(),
-  })),
-  forceCollide: jest.fn(),
-}))
-
 jest.mock('~/stores/useDataStore', () => ({
   useDataStore: jest.fn(),
 }))
@@ -88,7 +81,7 @@ describe('Component Test Stats', () => {
     const mockedFormatStats = jest.spyOn(formatStats, 'formatNumberWithCommas')
 
     render(<Stats />)
-    
+
     ;(async () => {
       await waitFor(() => {
         expect(mockedFormatStats).toHaveBeenCalledTimes(7)
