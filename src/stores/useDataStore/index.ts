@@ -66,6 +66,7 @@ export type DataStore = {
   setHideNodeDetails: (_: boolean) => void
   setTeachMe: (_: boolean) => void
   addNewNode: (node: NodeExtended) => void
+  removeNode: (node: NodeExtended) => void
 }
 
 const defaultData: Omit<
@@ -95,6 +96,7 @@ const defaultData: Omit<
   | 'setHideNodeDetails'
   | 'setTeachMe'
   | 'addNewNode'
+  | 'removeNode'
 > = {
   categoryFilter: null,
   data: null,
@@ -202,6 +204,22 @@ export const useDataStore = create<DataStore>()(
       const newData = { ...data, nodes: [node, ...data.nodes] }
 
       set({ data: newData })
+    },
+    removeNode: (node) => {
+      const { data } = get()
+
+      if (!data) {
+        return
+      }
+
+      const removeData = {
+        ...data,
+        nodes: data.nodes.filter(
+          (el) => el.ref_id !== node.ref_id && el.id !== node.id && el.id !== node.ref_id && el.ref_id !== node.id,
+        ),
+      }
+
+      set({ data: removeData })
     },
   })),
 )
