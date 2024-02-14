@@ -95,18 +95,18 @@ export const Relevance = ({ isSearchResult }: Props) => {
         })}
 
         <LoadMoreWrapper align="center" background="BG1" direction="row" justify="center">
-          <Button
-            disabled={!hasNext}
-            onClick={() => {
-              if (hasNext) {
-                setCurrentPage(currentPage + 1)
-                scrollViewRef.current?.scrollTo(0, 0)
-              }
-            }}
-            size="medium"
-          >
-            Load More
-          </Button>
+          {hasNext && (
+            <Button
+              onClick={() => {
+                if (hasNext) {
+                  setCurrentPage(currentPage + 1)
+                }
+              }}
+              size="medium"
+            >
+              Load More
+            </Button>
+          )}
         </LoadMoreWrapper>
       </ScrollView>
     </>
