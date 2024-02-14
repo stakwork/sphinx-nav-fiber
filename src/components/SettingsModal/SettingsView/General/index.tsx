@@ -23,8 +23,6 @@ export const General: FC<Props> = ({ initialValues }) => {
     try {
       const res = (await postAboutData(data)) as Awaited<{ status: string }>
 
-      console.log(res)
-
       if (res.status === 'success') {
         setAppMetaData(data)
       }

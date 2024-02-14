@@ -23,8 +23,6 @@ export const Body = () => {
   const [topicIsLoading, setTopicIsLoading] = useState(false)
   const [selectedTopic, setSelectedTopic] = useState<Topic | null>(null)
 
-  console.log(topicIsLoading)
-
   const [actualNode, setActualNode] = useState<null | Topic>()
 
   const selectedNode = useSelectedNode()
@@ -44,7 +42,6 @@ export const Body = () => {
 
         setActualNode(node)
       } catch (error) {
-        console.log(error)
         console.log(error)
       } finally {
         setTopicIsLoading(false)

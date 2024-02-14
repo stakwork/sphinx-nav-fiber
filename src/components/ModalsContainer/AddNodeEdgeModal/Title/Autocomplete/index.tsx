@@ -40,8 +40,6 @@ export const DropdownSearch: React.FC<Props> = ({ onSelect, selectedTopic }) => 
     try {
       const responseData: FetchTopicResponse = await getTopicsData(filters)
 
-      console.log(responseData.data)
-
       setOptions(responseData.data)
     } catch (error) {
       setOptions([])

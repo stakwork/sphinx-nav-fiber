@@ -119,8 +119,6 @@ export const App = () => {
         console.error('Socket connection error:', error)
       })
 
-      socket.on('connect', () => console.log('connected'))
-      socket.on('disconnect', () => console.log('disconnected'))
       socket.on('newnode', handleNewNode)
     }
   }, [socket, handleNewNode])
@@ -128,7 +126,6 @@ export const App = () => {
   useEffect(
     () => () => {
       if (socket) {
-        console.log('disc')
         socket.disconnect()
       }
     },

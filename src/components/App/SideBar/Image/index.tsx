@@ -8,8 +8,6 @@ export const Image = () => {
 
   const imageName = selectedNode?.name
 
-  console.log(selectedNode)
-
   return (
     <Flex direction="column" px={24} py={16}>
       <Avatar data-testid="person-image" size={80} src={selectedNode?.source_link || ''} type="image" />

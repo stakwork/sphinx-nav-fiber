@@ -1,5 +1,5 @@
 import { Button } from '@mui/material'
-import { useCallback, useMemo, useRef, useState } from 'react'
+import { memo, useCallback, useMemo, useRef, useState } from 'react'
 import styled from 'styled-components'
 import { ScrollView } from '~/components/ScrollView'
 import { Flex } from '~/components/common/Flex'
@@ -15,7 +15,8 @@ type Props = {
   isSearchResult: boolean
 }
 
-export const Relevance = ({ isSearchResult }: Props) => {
+// eslint-disable-next-line no-underscore-dangle
+const _Relevance = ({ isSearchResult }: Props) => {
   const scrollViewRef = useRef<HTMLDivElement | null>(null)
 
   const pageSize = !isSearchResult ? 10 : 80
@@ -27,8 +28,6 @@ export const Relevance = ({ isSearchResult }: Props) => {
   const [currentPage, setCurrentPage] = useState(0)
 
   const filteredNodes = useFilteredNodes()
-
-  console.log(filteredNodes)
 
   const startSlice = currentPage * pageSize
   const endSlice = startSlice + pageSize
@@ -114,6 +113,8 @@ export const Relevance = ({ isSearchResult }: Props) => {
     </>
   )
 }
+
+export const Relevance = memo(_Relevance)
 
 const LoadMoreWrapper = styled(Flex)`
   flex: 0 0 86px;
