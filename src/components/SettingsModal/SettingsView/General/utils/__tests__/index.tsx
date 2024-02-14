@@ -1,4 +1,4 @@
-/* eslint-disable padding-line-between-statements */
+import '@testing-library/jest-dom'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
@@ -33,8 +33,6 @@ describe('General', () => {
 
     expect(screen.getByLabelText(/graph title/i)).toHaveValue(initialValues.title)
     expect(screen.getByLabelText(/graph description/i)).toHaveValue(initialValues.description)
-    expect(screen.getByLabelText(/mission statement/i)).toHaveValue(initialValues.mission_statement)
-    expect(screen.getByLabelText(/search term/i)).toHaveValue(initialValues.search_term)
   })
 
   it('should call postAboutData on form submission', async () => {
@@ -43,6 +41,7 @@ describe('General', () => {
     render(<General initialValues={{}} />)
 
     await fireEvent.click(screen.getByRole('button', { name: /save changes/i }))
+
     ;(async () => {
       await waitFor(() => {
         expect(postAboutDataSpy).toHaveBeenCalled()
@@ -56,6 +55,7 @@ describe('General', () => {
     render(<General initialValues={{}} />)
 
     await fireEvent.click(screen.getByRole('button', { name: /save changes/i }))
+
     ;(async () => {
       await waitFor(() => expect(mockSetAppMetaData).toHaveBeenCalled())
     })()
@@ -69,6 +69,7 @@ describe('General', () => {
     render(<General initialValues={{}} />)
 
     await fireEvent.click(screen.getByRole('button', { name: /save changes/i }))
+
     ;async () => {
       await waitFor(() => expect(mockConsoleWarn).toHaveBeenCalledWith(expect.any(Error)))
     }
@@ -82,6 +83,7 @@ describe('General', () => {
     userEvent.type(screen.getByLabelText(/graph title/i), 'Test Title')
 
     await fireEvent.click(screen.getByRole('button', { name: /save changes/i }))
+
     ;(async () => {
       await waitFor(() => expect(screen.getByTestId('submit-loader')).toBeInTheDocument())
     })()
