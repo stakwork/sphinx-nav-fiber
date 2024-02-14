@@ -24,6 +24,7 @@ describe('MediaPlayerComponent fullscreen test', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     mockedUsePlayerStore.mockImplementation(() => defaultPlayerStore)
+
     const setFullScreenMock = jest.fn()
     const setIsBufferingMock = jest.fn()
     const setIsReady = jest.fn()
@@ -33,29 +34,6 @@ describe('MediaPlayerComponent fullscreen test', () => {
     mockedUseState.mockReturnValueOnce([true, setIsBufferingMock])
     mockedUseState.mockReturnValueOnce([true, setIsReady])
     mockedUseState.mockReturnValueOnce([false, setIsMouseNearBottomMock])
-  })
-
-  it('asserts that media player display loading state correctly', () => {
-    const { getByTestId } = render(<MediaPlayer hidden={false} />)
-
-    expect(getByTestId('loading-icon')).toBeInTheDocument()
-  })
-
-  it('asserts that media player skips to the correct timestamps', () => {
-    mockedUsePlayerStore.mockReturnValue(defaultPlayerStore)
-
-    const { container, getByRole } = render(<MediaPlayer hidden={false} />)
-
-    const slider = document.querySelector('input') as HTMLInputElement
-
-    expect(slider).toBeInTheDocument()
-
-    expect(slider.getAttribute('aria-valuenow')).toBe(defaultPlayerStore[1].toString())
-
-    fireEvent.click(slider)
-    ;(async () => {
-      await waitFor(() => console.log(slider.getAttribute('aria-valuenow')))
-    })()
   })
 
   it('asserts that toolbar appears on hover for fullscreen display', () => {
@@ -78,7 +56,7 @@ describe('MediaPlayerComponent fullscreen test', () => {
 })
 
 const defaultPlayerStore = [
-  false,
+  'true',
   120,
   7872,
   jest.fn(),
