@@ -88,7 +88,6 @@ describe('test Relevance Component', () => {
     expect(getByText('Load More')).toBeInTheDocument()
 
     fireEvent.click(getByText('Load More'))
-    
     ;(async () => {
       await waitFor(() => {
         expect(container.querySelectorAll('.episode-wrapper').length).toBe(20)

@@ -69,7 +69,6 @@ describe('Trending Component', () => {
     mockedUseDataStore.mockReturnValue([mockTrends, mockedSetTrendingTopics])
 
     render(<Trending />)
-
     ;(async () => {
       await waitFor(() => {
         expect(mockedGetTrends).toHaveBeenCalled()
@@ -118,7 +117,6 @@ describe('Trending Component', () => {
     const { open: openAddContentMock } = mockedUseModal('addContent')
 
     expect(mockedUseModal).toHaveBeenCalledWith('addContent')
-
     ;(async () => {
       await waitFor(() => expect(openAddContentMock).toHaveBeenCalled())
     })()
@@ -134,7 +132,6 @@ describe('Trending Component', () => {
     const { open: openBriefDescriptionModal } = mockedUseModal('briefDescription')
 
     expect(mockedUseModal).toHaveBeenCalledWith('briefDescription')
-
     ;(async () => {
       await waitFor(() => expect(openBriefDescriptionModal).toHaveBeenCalled())
     })()
@@ -165,7 +162,6 @@ describe('Trending Component', () => {
     const { getByText } = render(<Trending />)
 
     fireEvent.click(getByText(`#${mockTrends[0].topic}`))
-
     ;(async () => {
       await waitFor(() => expect(mockedSelectTrendingTopic).toHaveBeenCalled())
     })()
