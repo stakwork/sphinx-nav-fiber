@@ -41,7 +41,6 @@ describe('General', () => {
     render(<General initialValues={{}} />)
 
     await fireEvent.click(screen.getByRole('button', { name: /save changes/i }))
-
     ;(async () => {
       await waitFor(() => {
         expect(postAboutDataSpy).toHaveBeenCalled()
@@ -55,7 +54,6 @@ describe('General', () => {
     render(<General initialValues={{}} />)
 
     await fireEvent.click(screen.getByRole('button', { name: /save changes/i }))
-
     ;(async () => {
       await waitFor(() => expect(mockSetAppMetaData).toHaveBeenCalled())
     })()
@@ -69,7 +67,6 @@ describe('General', () => {
     render(<General initialValues={{}} />)
 
     await fireEvent.click(screen.getByRole('button', { name: /save changes/i }))
-
     ;async () => {
       await waitFor(() => expect(mockConsoleWarn).toHaveBeenCalledWith(expect.any(Error)))
     }
@@ -83,7 +80,6 @@ describe('General', () => {
     userEvent.type(screen.getByLabelText(/graph title/i), 'Test Title')
 
     await fireEvent.click(screen.getByRole('button', { name: /save changes/i }))
-
     ;(async () => {
       await waitFor(() => expect(screen.getByTestId('submit-loader')).toBeInTheDocument())
     })()
