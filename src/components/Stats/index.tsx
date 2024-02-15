@@ -9,7 +9,7 @@ import VideoIcon from '~/components/Icons/VideoIcon'
 import { getStats } from '~/network/fetchSourcesData'
 import { useDataStore } from '~/stores/useDataStore'
 import { useUserStore } from '~/stores/useUserStore'
-import { formatNumberWithCommas } from '~/utils'
+import { formatNumberWithCommas, formatBudget } from '~/utils'
 import { colors } from '~/utils/colors'
 import EpisodeIcon from '../Icons/EpisodeIcon'
 import { Flex } from '../common/Flex'
@@ -17,18 +17,6 @@ import { Flex } from '../common/Flex'
 export const Stats = () => {
   const [budget] = useUserStore((s) => [s.budget])
   const [stats, setStats] = useDataStore((s) => [s.stats, s.setStats])
-
-  function formatBudget(value: number | null) {
-    if (value === null) {
-      return '?'
-    }
-
-    const stringBudget = value.toLocaleString()
-
-    const splittedBudget = stringBudget.split(',')
-
-    return splittedBudget.join(' ')
-  }
 
   useEffect(() => {
     const run = async () => {
