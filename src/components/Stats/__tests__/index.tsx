@@ -49,7 +49,6 @@ describe('Component Test Stats', () => {
     const mockedGetStats = jest.spyOn(network, 'getStats')
 
     render(<Stats />)
-
     ;(async () => {
       await waitFor(() => {
         expect(mockedGetStats).toHaveBeenCalled()
@@ -81,7 +80,6 @@ describe('Component Test Stats', () => {
     const mockedFormatStats = jest.spyOn(formatStats, 'formatNumberWithCommas')
 
     render(<Stats />)
-
     ;(async () => {
       await waitFor(() => {
         expect(mockedFormatStats).toHaveBeenCalledTimes(7)
