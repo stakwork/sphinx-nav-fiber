@@ -3,7 +3,7 @@ export function formatBudget(value: number | null) {
     return '?'
   }
 
-  const stringBudget = value.toLocaleString()
+  const stringBudget = value.toLocaleString('en-US')
 
   const splittedBudget = stringBudget.split(',')
 
