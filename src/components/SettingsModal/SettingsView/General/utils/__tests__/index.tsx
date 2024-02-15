@@ -1,3 +1,4 @@
+/* eslint-disable padding-line-between-statements */
 import '@testing-library/jest-dom'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -67,9 +68,9 @@ describe('General', () => {
     render(<General initialValues={{}} />)
 
     await fireEvent.click(screen.getByRole('button', { name: /save changes/i }))
-    ;async () => {
+    ;(async () => {
       await waitFor(() => expect(mockConsoleWarn).toHaveBeenCalledWith(expect.any(Error)))
-    }
+    })()
 
     mockConsoleWarn.mockRestore()
   })
