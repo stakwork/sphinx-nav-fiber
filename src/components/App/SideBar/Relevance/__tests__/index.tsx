@@ -88,6 +88,7 @@ describe('test Relevance Component', () => {
     expect(getByText('Load More')).toBeInTheDocument()
 
     fireEvent.click(getByText('Load More'))
+    // eslint-disable-next-line padding-line-between-statements
     ;(async () => {
       await waitFor(() => {
         expect(container.querySelectorAll('.episode-wrapper').length).toBe(20)
