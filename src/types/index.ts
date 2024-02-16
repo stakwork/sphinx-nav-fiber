@@ -101,8 +101,8 @@ type Coordinates = {
 }
 
 type Audio = {
-  link: string,
-  language: string,
+  link: string
+  language: string
 }
 
 export type NodeExtended = Node & {
@@ -112,7 +112,7 @@ export type NodeExtended = Node & {
   longitude?: number
   latitude?: number
   coordinates?: Coordinates
-  audio: Audio[]
+  audio?: Audio[]
 }
 
 export type Link<T = string> = {
