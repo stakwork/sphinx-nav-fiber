@@ -22,7 +22,7 @@ export const TitleEditor: FC<Props> = () => (
         id="cy-topic"
         maxLength={50}
         name="topic"
-        placeholder="Add your topic"
+        placeholder="Node name"
         rules={{
           ...requiredRule,
         }}

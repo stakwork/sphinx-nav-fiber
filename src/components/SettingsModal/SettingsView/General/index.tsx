@@ -56,38 +56,10 @@ export const General: FC<Props> = ({ initialValues }) => {
                 maxLength={50}
                 name="description"
                 placeholder="Type graph description here..."
-                rules={{
-                  ...requiredRule,
-                }}
-              />
-            </Flex>
-            <Flex pt={20}>
-              <TextInput
-                id="cy-about-mission_statement-id"
-                label="Mission Statement"
-                maxLength={50}
-                name="mission_statement"
-                placeholder="Type mission statement here..."
-                rules={{
-                  ...requiredRule,
-                }}
-              />
-            </Flex>
-            <Flex pt={20}>
-              <TextInput
-                id="cy-about-search_term-id"
-                label="Search Term"
-                maxLength={50}
-                name="search_term"
-                placeholder="Type search term here..."
-                rules={{
-                  ...requiredRule,
-                }}
               />
             </Flex>
           </Flex>
-
-          <Flex my={36} py={24}>
+          <Flex mt={210} py={24}>
             {isSubmitting ? (
               <SubmitLoader>
                 <ClipLoader color={colors.white} size={20} />

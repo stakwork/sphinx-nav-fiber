@@ -140,7 +140,7 @@ export const AddItemModal = () => {
       x: Math.random(),
       y: Math.random(),
       z: Math.random(),
-      date: +new Date(),
+      date: parseInt((new Date().getTime() / 1000).toFixed(0), 10),
       weight: 4,
       ...(data.sourceLink ? { source_link: data.sourceLink } : {}),
     }

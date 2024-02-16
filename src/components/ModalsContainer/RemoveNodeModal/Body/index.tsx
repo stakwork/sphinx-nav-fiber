@@ -40,10 +40,6 @@ export const Body = () => {
 
         const node = data.find((i) => i.topic === selectedNode.name)
 
-        console.log(data)
-
-        console.log(node)
-
         setActualNode(node)
       } catch (error) {
         console.log(error)
