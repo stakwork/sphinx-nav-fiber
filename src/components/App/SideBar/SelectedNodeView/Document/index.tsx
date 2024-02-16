@@ -1,17 +1,46 @@
+import { Button } from '@mui/material'
+import { useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 import GlobeIcon from '~/components/Icons/GlobeIcon'
 import LinkIcon from '~/components/Icons/LinkIcon'
+import PauseIcon from '~/components/Icons/PauseIcon'
+import PlayIcon from '~/components/Icons/PlayIcon'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { useSelectedNode } from '~/stores/useDataStore'
 import { colors } from '~/utils'
 
-export const TextType = () => {
+export const Document = () => {
+  const [playing, setPlaying] = useState(false)
   const selectedNode = useSelectedNode()
   const hasSourceLink = !!selectedNode?.source_link
 
+  const audioRef = useRef<HTMLVideoElement>(null)
+
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.stopPropagation()
+    e.currentTarget.blur()
+    setPlaying(!playing)
+  }
+
+  useEffect(() => {
+    if (playing) {
+      audioRef.current?.play()
+    } else {
+      audioRef.current?.pause()
+    }
+  }, [playing])
+
   return (
-    <Flex align="center" justify="center" p={12}>
+    <Flex
+      align="flex-start"
+      basis="100%"
+      direction="column"
+      grow={1}
+      justify="center"
+      pt={hasSourceLink ? 62 : 0}
+      shrink={1}
+    >
       {hasSourceLink && (
         <StyledHeader>
           <GlobeIcon color={colors.GRAY6} />
@@ -21,7 +50,17 @@ export const TextType = () => {
           </StyledLink>
         </StyledHeader>
       )}
-      <StyledContent hasSourceLink={hasSourceLink}>
+      {selectedNode?.audio?.length ? (
+        <Flex justify="flex-start" p={12}>
+          <Button onClick={(e) => handleClick(e)} startIcon={playing ? <PauseIcon /> : <PlayIcon />}>
+            {playing ? 'Pause' : 'Play'}
+          </Button>
+          <StyledAudio ref={audioRef} src={selectedNode.audio[0]?.link || ''}>
+            <track kind="captions" />
+          </StyledAudio>
+        </Flex>
+      ) : null}
+      <StyledContent grow={1} justify="flex-start" p={12} shrink={1}>
         <Text color="primaryText1" kind="regular">
           {selectedNode?.text}
         </Text>
@@ -62,8 +101,8 @@ const StyledLink = styled.a`
   align-items: center;
 `
 
-const StyledContent = styled(Flex)<{ hasSourceLink: boolean }>`
-  margin-top: ${(props) => (props.hasSourceLink ? '48px' : '')};
+const StyledContent = styled(Flex)`
+  overflow: auto;
 `
 
 const SyledLinkText = styled(Text)`
@@ -71,4 +110,9 @@ const SyledLinkText = styled(Text)`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+`
+
+const StyledAudio = styled.audio`
+  height: 0;
+  width: 0;
 `
