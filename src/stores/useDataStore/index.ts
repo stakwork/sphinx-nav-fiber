@@ -14,6 +14,7 @@ export type FetchNodeParams = {
   word?: string
   skip_cache?: string
   free?: string
+  media_type?: string
 }
 
 export type DataStore = {

@@ -220,11 +220,11 @@ export type BalanceResponse = {
 }
 
 export type TStats = {
-  numAudio: string
-  numContributors: string
-  numDaily: string
-  numEpisodes: string
-  numNodes: string
-  numTwitterSpace: string
-  numVideo: string
+  numAudio?: string
+  numContributors?: string
+  numDaily?: string
+  numEpisodes?: string
+  numNodes?: string
+  numTwitterSpace?: string
+  numVideo?: string
 }
