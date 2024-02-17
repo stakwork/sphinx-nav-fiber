@@ -10,64 +10,52 @@ import { TStatParams, getStats } from '~/network/fetchSourcesData'
 import { useDataStore } from '~/stores/useDataStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { TStats } from '~/types'
-import { formatNumberWithCommas } from '~/utils'
+import { formatBudget, formatNumberWithCommas } from '~/utils'
 import { colors } from '~/utils/colors'
 import EpisodeIcon from '../Icons/EpisodeIcon'
 import { Flex } from '../common/Flex'
 
+export const StatsConfig = [
+  {
+    name: 'Nodes',
+    icon: <NodesIcon />,
+    key: 'numNodes',
+    dataKey: 'num_audio',
+    mediaType: '',
+  },
+  {
+    name: 'Episodes',
+    icon: <EpisodeIcon />,
+    key: 'numEpisodes',
+    dataKey: 'num_episodes',
+    mediaType: 'episode',
+  },
+  {
+    name: 'Audio',
+    icon: <AudioIcon />,
+    key: 'numAudio',
+    dataKey: 'num_audio',
+    mediaType: 'audio',
+  },
+  {
+    name: 'Video',
+    icon: <VideoIcon />,
+    key: 'numVideo',
+    dataKey: 'num_video',
+    mediaType: 'video',
+  },
+  {
+    name: 'Twitter Spaces',
+    icon: <TwitterIcon />,
+    key: 'numTwitterSpace',
+    dataKey: 'num_twitter_space',
+    mediaType: 'twitter',
+  },
+]
+
 export const Stats = () => {
   const [budget, setBudget] = useUserStore((s) => [s.budget, s.setBudget])
   const [stats, setStats, fetchData] = useDataStore((s) => [s.stats, s.setStats, s.fetchData])
-
-  const StatsConfig = [
-    {
-      name: 'Nodes',
-      icon: <NodesIcon />,
-      key: 'numNodes',
-      dataKey: 'num_audio',
-      mediaType: '',
-    },
-    {
-      name: 'Episodes',
-      icon: <EpisodeIcon />,
-      key: 'numEpisodes',
-      dataKey: 'num_episodes',
-      mediaType: 'episode',
-    },
-    {
-      name: 'Audio',
-      icon: <AudioIcon />,
-      key: 'numAudio',
-      dataKey: 'num_audio',
-      mediaType: 'audio',
-    },
-    {
-      name: 'Video',
-      icon: <VideoIcon />,
-      key: 'numVideo',
-      dataKey: 'num_video',
-      mediaType: 'video',
-    },
-    {
-      name: 'Twitter Spaces',
-      icon: <TwitterIcon />,
-      key: 'numTwitterSpace',
-      dataKey: 'num_twitter_space',
-      mediaType: 'twitter',
-    },
-  ]
-
-  function formatBudget(value: number | null) {
-    if (value === null) {
-      return '?'
-    }
-
-    const stringBudget = value.toLocaleString()
-
-    const splittedBudget = stringBudget.split(',')
-
-    return splittedBudget.join(' ')
-  }
 
   function handleStatClick(mediaType: string) {
     fetchData(setBudget, { ...(mediaType ? { media_type: mediaType } : {}) })
