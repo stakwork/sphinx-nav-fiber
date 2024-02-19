@@ -1,43 +1,52 @@
 import { Button } from '@mui/material'
-import { FC } from 'react'
+import { FC, useEffect, useState } from 'react'
 import styled from 'styled-components'
+import { AutoComplete, TAutocompleteOption } from '~/components/common/AutoComplete'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
-import { AutoComplete } from './AutoComplete'
+import { OPTIONS, initialValue } from './constants'
+import { Props, TOption } from './types'
 
-type Props = {
-  onNextStep: () => void
-  allowNextStep?: boolean
-  onSelectType: (val: string) => void
-  selectedType: string
-}
+export const SourceTypeStep: FC<Props> = ({ onNextStep, allowNextStep, onSelectType, selectedType }) => {
+  const [selectedOption, setSelectedOption] = useState<TOption>(initialValue)
 
-export const SourceTypeStep: FC<Props> = ({ onNextStep, allowNextStep, onSelectType, selectedType }) => (
-  <Flex>
-    <Flex align="center" direction="row" justify="space-between" mb={20}>
-      <Flex align="center" direction="row">
-        <StyledText>Select Type</StyledText>
+  useEffect(() => {
+    setSelectedOption((prevState: TOption) =>
+      prevState.value === selectedType ? prevState : OPTIONS.find((i) => i.value === selectedType) || initialValue,
+    )
+  }, [selectedType])
+
+  const onSelect = (val: TAutocompleteOption | null) => {
+    onSelectType(val?.label || '')
+  }
+
+  return (
+    <Flex>
+      <Flex align="center" direction="row" justify="space-between" mb={20}>
+        <Flex align="center" direction="row">
+          <StyledText>Select Type</StyledText>
+        </Flex>
+      </Flex>
+
+      <Flex direction="row" mb={20}>
+        <AutoComplete onSelect={onSelect} options={OPTIONS} selectedValue={selectedOption} />
+      </Flex>
+
+      <Flex>
+        <Button
+          color="secondary"
+          disabled={!allowNextStep}
+          onClick={onNextStep}
+          size="large"
+          type="button"
+          variant="contained"
+        >
+          Next
+        </Button>
       </Flex>
     </Flex>
-
-    <Flex direction="row" mb={20}>
-      <AutoComplete onSelect={onSelectType} selectedValue={selectedType} />
-    </Flex>
-
-    <Flex>
-      <Button
-        color="secondary"
-        disabled={!allowNextStep}
-        onClick={onNextStep}
-        size="large"
-        type="button"
-        variant="contained"
-      >
-        Next
-      </Button>
-    </Flex>
-  </Flex>
-)
+  )
+}
 
 const StyledText = styled(Text)`
   font-size: 22px;
