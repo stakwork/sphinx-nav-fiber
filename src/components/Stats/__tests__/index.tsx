@@ -1,8 +1,8 @@
 /* eslint-disable padding-line-between-statements */
 import '@testing-library/jest-dom'
-import { render, waitFor } from '@testing-library/react'
+import { fireEvent, render, waitFor } from '@testing-library/react'
 import React from 'react'
-import { Stats } from '..'
+import { Stats, StatsConfig } from '..'
 import * as network from '../../../network/fetchSourcesData'
 import { useDataStore } from '../../../stores/useDataStore'
 import { useUserStore } from '../../../stores/useUserStore'
@@ -115,5 +115,23 @@ describe('Component Test Stats', () => {
     expect(getByTestId('NodesIcon')).toBeInTheDocument()
     expect(getByTestId('TwitterIcon')).toBeInTheDocument()
     expect(getByTestId('VideoIcon')).toBeInTheDocument()
+  })
+
+  it('asserts that OnClick, prediction/content/latest endpoint is called with media type query', () => {
+    const mockedSetBudget = jest.fn()
+    const fetchDataMock = jest.fn()
+    mockedUseUserStore.mockReturnValue([mockBudget, mockedSetBudget])
+    mockedUseDataStore.mockReturnValue([mockStats, jest.fn(), fetchDataMock])
+
+    const { getByText } = render(<Stats />)
+
+    StatsConfig.forEach(async ({ key, mediaType }) => {
+      expect(getByText(mockStats[key])).toBeInTheDocument()
+      fireEvent.click(getByText(mockStats[key]))
+
+      await waitFor(() => {
+        expect(fetchDataMock).toHaveBeenCalledWith(mockedSetBudget, { ...(mediaType ? { media_type: mediaType } : {}) })
+      })
+    })
   })
 })
