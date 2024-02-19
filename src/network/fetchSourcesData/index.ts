@@ -1,4 +1,5 @@
 import {
+  FetchEdgeTypesResponse,
   FetchEdgesResponse,
   FetchRadarResponse,
   FetchTopicResponse,
@@ -98,7 +99,13 @@ export const getStats = async () => {
 }
 
 export const getEdgeTypes = async () => {
-  const response = await api.get<FetchEdgesResponse>(`/curation/edge/type`)
+  const response = await api.get<FetchEdgeTypesResponse>(`/curation/edge/type`)
+
+  return response
+}
+
+export const getEdges = async (term: string) => {
+  const response = await api.get<FetchEdgesResponse>(`/curation/search/${term}`)
 
   return response
 }
