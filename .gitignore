@@ -10,6 +10,7 @@
 /cypress/videos
 /cypress/screenshots
 /.nyc_output
+/relay/nodes.json
 
 # production
 build/

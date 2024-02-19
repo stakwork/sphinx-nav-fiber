@@ -7,7 +7,8 @@ import { Text } from '~/components/common/Text'
 import { isDevelopment, isE2E } from '~/constants'
 import { getIsAdmin } from '~/network/auth'
 import { useUserStore } from '~/stores/useUserStore'
-import { executeIfProd, getSignedMessageFromRelay, updateBudget } from '~/utils'
+import { sphinxBridge } from '~/testSphinxBridge'
+import { getSignedMessageFromRelay, updateBudget } from '~/utils'
 
 interface setAuthenticated {
   setAuthenticated: (state: boolean) => void
@@ -18,49 +19,55 @@ export const Auth = ({ setAuthenticated }: setAuthenticated) => {
   const [setBudget, setIsAdmin, setPubKey] = useUserStore((s) => [s.setBudget, s.setIsAdmin, s.setPubKey])
 
   const handleAuth = useCallback(async () => {
-    await executeIfProd(async () => {
-      localStorage.removeItem('admin')
+    // await executeIfProd(async () => {
+    localStorage.removeItem('admin')
 
-      try {
+    let sphinxEnable
+
+    try {
+      if (!isE2E) {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        const sphinxEnable = await sphinx.enable()
-
-        sessionStorage.setItem('isSphinx', sphinxEnable ? 'true' : 'false')
-
-        setPubKey(sphinxEnable?.pubkey)
-      } catch (error) {
-        setPubKey('')
+        sphinxEnable = await sphinx.enable()
+      } else {
+        sphinxEnable = await sphinxBridge.enable()
       }
 
-      await updateBudget(setBudget)
+      sessionStorage.setItem('isSphinx', sphinxEnable ? 'true' : 'false')
 
-      try {
-        const sigAndMessage = await getSignedMessageFromRelay()
+      setPubKey(sphinxEnable?.pubkey)
+    } catch (error) {
+      setPubKey('')
+    }
 
-        const res = await getIsAdmin({
-          message: sigAndMessage.message,
-          signature: sigAndMessage.signature,
-        })
+    await updateBudget(setBudget)
 
-        if (!res.data.isPublic && !res.data.isAdmin && !res.data.isMember) {
-          setUnauthorized(true)
+    try {
+      const sigAndMessage = await getSignedMessageFromRelay()
 
-          return
-        }
+      const res = await getIsAdmin({
+        message: sigAndMessage.message,
+        signature: sigAndMessage.signature,
+      })
 
-        if (res.data.isAdmin) {
-          localStorage.setItem('admin', JSON.stringify({ isAdmin: true }))
-          setIsAdmin(true)
-        }
+      if (!res.data.isPublic && !res.data.isAdmin && !res.data.isMember) {
+        setUnauthorized(true)
 
-        setAuthenticated(true)
-
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      } catch (error: any) {
-        /* not an admin */
+        return
       }
-    })
+
+      if (res.data.isAdmin) {
+        localStorage.setItem('admin', JSON.stringify({ isAdmin: true }))
+        setIsAdmin(true)
+      }
+
+      setAuthenticated(true)
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      /* not an admin */
+    }
+    // })
 
     if (isE2E || isDevelopment) {
       setAuthenticated(true)
