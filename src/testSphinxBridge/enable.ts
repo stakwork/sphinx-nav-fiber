@@ -1,26 +1,12 @@
-import nodes from '../../relay/nodes.json'
+import { getCurrentUser } from './helper'
 
 export function enableSphinx() {
   /* eslint-disable  @typescript-eslint/no-explicit-any */
-  if ((window as any).CYPRESS_USER) {
-    const user = (window as any).CYPRESS_USER
+  const user = getCurrentUser()
 
-    let pubkey = ''
-
-    for (let i = 0; i < nodes.length; i += 1) {
-      if (nodes[i].alias === user) {
-        pubkey = nodes[i].pubkey
-
-        break
-      }
-    }
-
-    if (!pubkey) {
-      return null
-    }
-
-    return { budget: 0, pubkey }
+  if (!user) {
+    return null
   }
 
-  return null
+  return { budget: 0, pubkey: user.pubkey }
 }
