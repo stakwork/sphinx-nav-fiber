@@ -1,6 +1,6 @@
 /* eslint-disable padding-line-between-statements */
 import '@testing-library/jest-dom'
-import { fireEvent, render, waitFor } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import React from 'react'
 import { Trending } from '..'
 import * as fetchGraphData from '../../../../../network/fetchGraphData'
@@ -165,6 +165,22 @@ describe('Trending Component', () => {
     fireEvent.click(getByText(`#${mockTrends[0].topic}`))
     ;(async () => {
       await waitFor(() => expect(mockedSelectTrendingTopic).toHaveBeenCalled())
+    })()
+  })
+
+  test('Add test to submit form with selected trending topic', () => {
+    const mockedSelectTrendingTopic = jest.fn()
+
+    mockedUseDataStore.mockReturnValue([mockTrends, mockedSelectTrendingTopic])
+
+    const { getByText } = render(<Trending />)
+
+    fireEvent.click(getByText(`#${mockTrends[0].topic}`))
+    ;(async () => {
+      await waitFor(() => {
+        const searchInput = screen.getByPlaceholderText('Search') as HTMLInputElement
+        expect(searchInput.value).toBe('Drivechain')
+      })
     })()
   })
 })
