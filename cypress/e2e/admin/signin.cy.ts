@@ -5,5 +5,17 @@ describe('Admin Login', () => {
         win['CYPRESS_USER'] = 'alice'
       },
     })
+    let title = `Testing NavFiber`
+    cy.wait(10000)
+    cy.get('div[data-testid="settings-modal"]').click()
+    cy.get('#cy-about-title-id').click()
+    cy.get('#cy-about-title-id').type('{selectAll}')
+    cy.get('#cy-about-title-id').type(title)
+
+    cy.get('#add-node-submit-cta').click()
+    cy.wait(200)
+    cy.get('div[data-testid="close-modal"]').click()
+
+    cy.get('.title').should('have.text', title)
   })
 })

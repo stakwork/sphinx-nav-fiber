@@ -138,7 +138,7 @@ export const BaseModal = ({
           py={noWrap ? 0 : 20}
         >
           {onClose && (
-            <CloseButton onClick={onClose}>
+            <CloseButton data-testid="close-modal" onClick={onClose}>
               <ClearIcon />
             </CloseButton>
           )}
