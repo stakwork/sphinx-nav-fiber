@@ -12,6 +12,7 @@ import { useUserStore } from '~/stores/useUserStore'
 import { TStats } from '~/types'
 import { formatBudget, formatNumberWithCommas } from '~/utils'
 import { colors } from '~/utils/colors'
+import DocumentIcon from '../Icons/DocumentIcon'
 import EpisodeIcon from '../Icons/EpisodeIcon'
 import { Flex } from '../common/Flex'
 
@@ -51,6 +52,13 @@ export const StatsConfig = [
     dataKey: 'num_twitter_space',
     mediaType: 'twitter',
   },
+  {
+    name: 'Document',
+    icon: <DocumentIcon />,
+    key: 'numDocuments',
+    dataKey: 'document',
+    mediaType: 'document',
+  },
 ]
 
 export const Stats = () => {
@@ -70,7 +78,7 @@ export const Stats = () => {
           const updatedStats: TStats = {}
 
           StatsConfig.forEach(({ key, dataKey }) => {
-            updatedStats[key as keyof TStats] = formatNumberWithCommas(data[dataKey as keyof TStatParams])
+            updatedStats[key as keyof TStats] = formatNumberWithCommas(data[dataKey as keyof TStatParams] ?? 0)
           })
 
           setStats(updatedStats)
@@ -93,12 +101,16 @@ export const Stats = () => {
   return (
     <StatisticsContainer>
       <StatisticsWrapper>
-        {StatsConfig.map(({ name, icon, key, mediaType }) => (
-          <Stat key={name} onClick={() => handleStatClick(mediaType)}>
-            <div className="icon">{icon}</div>
-            <div className="text">{stats[key as keyof TStats]}</div>
-          </Stat>
-        ))}
+        {StatsConfig.map(({ name, icon, key, mediaType }) =>
+          stats[key as keyof TStats] !== '0' ? (
+            <Stat key={name} onClick={() => handleStatClick(mediaType)}>
+              <div className="icon">{icon}</div>
+              <div className="text">{stats[key as keyof TStats]}</div>
+            </Stat>
+          ) : (
+            <></>
+          ),
+        )}
       </StatisticsWrapper>
       <StatisticsBudget>
         <Budget>
