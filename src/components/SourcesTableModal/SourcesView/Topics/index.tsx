@@ -12,11 +12,13 @@ import { Heading } from '../common'
 import { AddEdgeModal } from './AddEdgeTopicModal'
 import { EditTopicModal } from './EditTopicModal'
 import { MergeTopicModal } from './MergeTopicModal'
-import { Search } from './Search'
+import { Search, SearchRef } from './Search'
 import { Filter } from './Sort'
 import { Table } from './Table'
 
 export const TopicSources = () => {
+  const searchRef = useRef<SearchRef>(null)
+
   const [loading, setLoading] = useState(false)
 
   const [data, ids, total, setTopics, filters, setFilters, terminate] = useTopicsStore((s) => [
@@ -101,6 +103,12 @@ export const TopicSources = () => {
     }
   }
 
+  const handleSearch = (kw: string) => {
+    if (searchRef.current) {
+      searchRef.current.triggerSearch(kw)
+    }
+  }
+
   return (
     <>
       <Wrapper direction="column" justify="flex-end">
@@ -113,7 +121,7 @@ export const TopicSources = () => {
         </Heading>
 
         <ActionsWrapper>
-          <Search />
+          <Search ref={searchRef} />
 
           <Filter currentFilter={filters.sortBy} onChangeFilter={handleFilterChange} />
         </ActionsWrapper>
@@ -123,7 +131,7 @@ export const TopicSources = () => {
             <ClipLoader color={colors.white} />
           ) : (
             <>
-              <Table onTopicEdit={onTopicEdit} showMuted={filters.muted} />
+              <Table onSearch={handleSearch} onTopicEdit={onTopicEdit} showMuted={filters.muted} />
               {total > ids.length ? (
                 <Button className="load-more" disabled={loading} onClick={handleLoadMore}>
                   Load more

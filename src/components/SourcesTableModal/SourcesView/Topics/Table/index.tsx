@@ -12,7 +12,7 @@ import { IS_ALIAS } from '../../constants'
 import { TopicTableProps } from '../../types'
 import { TopicRow } from './TableRow'
 
-export const Table: React.FC<TopicTableProps> = ({ showMuted, onTopicEdit }) => {
+export const Table: React.FC<TopicTableProps> = ({ showMuted, onTopicEdit, onSearch }) => {
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
   const [selectedRefId, setSelectedRefId] = React.useState<string>('')
 
@@ -64,7 +64,7 @@ export const Table: React.FC<TopicTableProps> = ({ showMuted, onTopicEdit }) => 
             {data && (
               <tbody>
                 {ids?.map((i: string) => (
-                  <TopicRow key={i} onClick={handleClick} topic={data[i]} />
+                  <TopicRow key={i} onClick={handleClick} onSearch={onSearch} topic={data[i]} />
                 ))}
               </tbody>
             )}
