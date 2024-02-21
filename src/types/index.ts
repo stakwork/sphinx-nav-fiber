@@ -7,6 +7,12 @@ export type FetchDataResponse = {
   related: Node[]
 }
 
+export type TEdge = {
+  node_type: string
+  ref_id: string
+  search_value: string
+}
+
 export type FetchTrendingResponse = Trending[]
 
 export type FetchSentimentResponse = {
@@ -22,8 +28,13 @@ export type FetchTopicResponse = {
   topicCount: number
 }
 
-export type FetchEdgesResponse = {
+export type FetchEdgeTypesResponse = {
   data: { edge_types: string[] }
+  status: string
+}
+
+export type FetchEdgesResponse = {
+  data: TEdge[]
   status: string
 }
 
@@ -188,6 +199,9 @@ export type TopicFilter = {
 
 export type SubmitErrRes = {
   error?: { message?: string }
+  data: {
+    ref_id: string
+  }
 }
 
 export type AuthRequest = {

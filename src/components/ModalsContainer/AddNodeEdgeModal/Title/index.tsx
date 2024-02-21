@@ -2,21 +2,21 @@ import { FC } from 'react'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
-import { Topic } from '~/types'
+import { TEdge } from '~/types'
 import { colors } from '~/utils/colors'
-import { DropdownSearch } from './Autocomplete'
-import { Dropdown } from './Dropdown'
+import { ConnectionType } from './ConnectionType'
+import { ToNode } from './ToNode'
 
 type Props = {
   from: string
-  onSelect: (topic: Topic | null) => void
-  selectedTopic: Topic | null
+  onSelect: (edge: TEdge | null) => void
   selectedType: string
   setSelectedType: (type: string) => void
+  selectedToNode: TEdge | null
 }
 
-export const TitleEditor: FC<Props> = ({ from, onSelect, selectedTopic, selectedType, setSelectedType }) => (
-  <Flex>
+export const TitleEditor: FC<Props> = ({ from, onSelect, selectedType, setSelectedType, selectedToNode }) => (
+  <Flex mb={20}>
     <Flex align="center" direction="row" justify="space-between" mb={18}>
       <Flex align="center" direction="row">
         <StyledText>Add edge</StyledText>
@@ -29,11 +29,12 @@ export const TitleEditor: FC<Props> = ({ from, onSelect, selectedTopic, selected
         <div>{from}</div>
       </SectionWrapper>
       <SectionWrapper>
-        <Dropdown selectedType={selectedType} setSelectedType={setSelectedType} />
+        <div className="label">Type</div>
+        <ConnectionType selectedType={selectedType} setSelectedType={setSelectedType} />
       </SectionWrapper>
       <SectionWrapper>
         <div className="label">To</div>
-        <DropdownSearch onSelect={onSelect} selectedTopic={selectedTopic} />
+        <ToNode onSelect={onSelect} selectedValue={selectedToNode} />
       </SectionWrapper>
     </Content>
   </Flex>
@@ -46,8 +47,8 @@ const StyledText = styled(Text)`
 `
 
 const Content = styled(Flex).attrs({
-  align: 'flex-start',
-  direction: 'row',
+  align: 'stretch',
+  direction: 'column',
   justify: 'flex-start',
 })`
   color: ${colors.white};
@@ -61,4 +62,6 @@ const Content = styled(Flex).attrs({
 
 const SectionWrapper = styled(Flex)`
   flex: 1 1 100%;
+  min-height: unset;
+  margin-bottom: 8px;
 `

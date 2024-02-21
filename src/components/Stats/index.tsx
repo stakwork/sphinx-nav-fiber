@@ -58,7 +58,7 @@ export const Stats = () => {
   const [stats, setStats, fetchData] = useDataStore((s) => [s.stats, s.setStats, s.fetchData])
 
   function handleStatClick(mediaType: string) {
-    fetchData(setBudget, { ...(mediaType ? { media_type: mediaType } : {}) })
+    fetchData(setBudget, { ...(mediaType ? { media_type: mediaType } : {}), skip_cache: 'true' })
   }
 
   useEffect(() => {
