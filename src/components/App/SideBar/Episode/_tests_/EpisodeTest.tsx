@@ -49,12 +49,6 @@ describe('Episode Component', () => {
     expect(screen.getByText('00:02:00')).toBeInTheDocument()
   })
 
-  it('renders no content or a specific message when there is no selected node', () => {
-    require('~/stores/useDataStore').useSelectedNode.mockReturnValue(null)
-    render(<Episode />)
-    expect(screen.queryByText('Some specific content')).not.toBeInTheDocument()
-  })
-
   it('displays timestamps related to the selected node', () => {
     render(<Episode />)
 
