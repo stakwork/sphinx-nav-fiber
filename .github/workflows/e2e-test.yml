@@ -28,7 +28,7 @@ jobs:
           git clone -b feat/second-brain-compose https://github.com/stakwork/sphinx-stack.git stack
 
       - name: Give Permissions to Sphinx Nav Fiber
-        run: chmod 777 -R cypress
+        run: chmod 777 -R relay
 
       - name: Give Permissions to Stack
         working-directory: ./stack
