@@ -57,6 +57,10 @@ export type TAddEdgeParams = {
   relationship: string
 }
 
+type TGetEdges = {
+  [key: string]: string
+}
+
 export type TtopicsParams = {
   muted?: string
   skip?: string
@@ -104,8 +108,13 @@ export const getEdgeTypes = async () => {
   return response
 }
 
-export const getEdges = async (term: string) => {
-  const response = await api.get<FetchEdgesResponse>(`/curation/search/${term}`)
+export const getEdges = async (term: string, queryParams?: TGetEdges) => {
+  const response = await api.get<FetchEdgesResponse>(
+    `/curation/search/${term}?${new URLSearchParams({
+      exact_match: 'false',
+      ...queryParams,
+    }).toString()}`,
+  )
 
   return response
 }
