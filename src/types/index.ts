@@ -199,6 +199,9 @@ export type TopicFilter = {
 
 export type SubmitErrRes = {
   error?: { message?: string }
+  data: {
+    ref_id: string
+  }
 }
 
 export type AuthRequest = {

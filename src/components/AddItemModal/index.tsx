@@ -24,7 +24,7 @@ const handleSubmitForm = async (
   data: FieldValues,
   close: () => void,
   setBudget: (value: number | null) => void,
-  onAddNewData: (value: FieldValues) => void,
+  onAddNewData: (value: FieldValues, id: string) => void,
 ): Promise<void> => {
   const endPoint = 'node'
 
@@ -63,7 +63,7 @@ const handleSubmitForm = async (
       throw new Error(message)
     }
 
-    onAddNewData(data)
+    onAddNewData(data, res?.data?.ref_id)
 
     notify(NODE_ADD_SUCCESS)
     close()
@@ -126,8 +126,8 @@ export const AddItemModal = () => {
     setCurrentStep(currentStep - 1)
   }
 
-  const onAddNewNode = (data: FieldValues) => {
-    const newId = `new-id-${Math.random()}`
+  const onAddNewNode = (data: FieldValues, id: string) => {
+    const newId = id || `new-id-${Math.random()}`
     const newType = data.nodeType.toLocaleLowerCase()
 
     const node: NodeExtended = {
