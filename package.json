@@ -68,7 +68,7 @@
   },
   "scripts": {
     "start": "vite --port 3000",
-    "start-e2e": "VITE_APP_IS_E2E=true vite --host --port 3000",
+    "start-e2e": "VITE_APP_IS_E2E=true VITE_APP_API_URL=http://localhost:8444/api vite --host --port 3000",
     "dev-tribe": "vite --port 3004",
     "build": "tsc && vite build",
     "build-docker": "tsc && vite build",
