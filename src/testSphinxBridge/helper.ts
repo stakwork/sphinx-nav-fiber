@@ -6,10 +6,12 @@ export function getCurrentUser(): RelayUser | null {
   if ((window as any).CYPRESS_USER) {
     const user = (window as any).CYPRESS_USER
 
+    const newNodes = [...nodes]
+
     let userNode
 
     for (let i = 0; i < nodes.length; i += 1) {
-      if (nodes[i].alias === user) {
+      if (newNodes[i].alias === user) {
         userNode = nodes[i]
 
         break
