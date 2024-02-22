@@ -2,7 +2,7 @@ import { getCurrentUser } from './helper'
 
 export async function getLsatSphinx(host: string) {
   try {
-    const user = await getCurrentUser()
+    const user = getCurrentUser()
 
     if (user) {
       const result = await fetch(`${user.external_ip}/active_lsat?issuer=${host}`, {

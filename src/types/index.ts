@@ -242,3 +242,19 @@ export type TStats = {
   numTwitterSpace?: string
   numVideo?: string
 }
+
+export type RelayUser = {
+  alias: string
+  pubkey: string
+  ip: string
+  external_ip: string
+  authToken: string
+  transportToken: string
+  contact_key: string
+  privkey: string
+  exported_keys: string
+  pin: string
+  proxy_ip?: string
+  admin_token?: string
+  routeHint?: string
+}
