@@ -14,7 +14,7 @@
 // ***********************************************************
 
 // Import commands.js using ES2015 syntax:
-import nodes from '../fixtures/nodes.json'
+import nodes from '../../relay/nodes.json'
 import './commands'
 
 // Alternatively you can use CommonJS syntax:
