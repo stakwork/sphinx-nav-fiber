@@ -20,7 +20,7 @@ export const StatsConfig = [
     name: 'Nodes',
     icon: <NodesIcon />,
     key: 'numNodes',
-    dataKey: 'num_audio',
+    dataKey: 'num_nodes',
     mediaType: '',
   },
   {
