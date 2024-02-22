@@ -56,7 +56,7 @@ export const StatsConfig = [
     name: 'Document',
     icon: <DocumentIcon />,
     key: 'numDocuments',
-    dataKey: 'document',
+    dataKey: 'num_documents',
     mediaType: 'document',
   },
 ]
