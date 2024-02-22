@@ -6,12 +6,12 @@ export function getCurrentUser(): RelayUser | null {
   if ((window as any).CYPRESS_USER) {
     const user = (window as any).CYPRESS_USER
 
-    const newNodes = [...nodes]
-
     let userNode
 
     for (let i = 0; i < nodes.length; i += 1) {
-      if (newNodes[i].alias === user) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      if (nodes[i].alias === user) {
         userNode = nodes[i]
 
         break
