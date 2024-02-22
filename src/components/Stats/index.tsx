@@ -48,7 +48,7 @@ export const StatsConfig = [
     name: 'Twitter Spaces',
     icon: <TwitterIcon />,
     key: 'numTwitterSpace',
-    dataKey: 'num_twitter_space',
+    dataKey: 'num_tweet',
     mediaType: 'twitter',
   },
 ]
