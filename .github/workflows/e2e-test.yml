@@ -67,7 +67,7 @@ jobs:
 
       - name: Run Cypress Test
         run: |
-          sleep 20
+          sleep 100
           yarn run cy-run
 
       - name: Stop Stack
