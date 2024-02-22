@@ -88,7 +88,13 @@ export const Auth = ({ setAuthenticated }: setAuthenticated) => {
   const message = 'This is a private Graph, Contact Admin'
 
   return (
-    <StyledFlex>{!unAuthorized ? <PropagateLoader color="#909BAA" /> : <StyledText>{message}</StyledText>}</StyledFlex>
+    <StyledFlex>
+      {!unAuthorized ? (
+        <PropagateLoader color="#909BAA" data-testid="PropagateLoader" />
+      ) : (
+        <StyledText>{message}</StyledText>
+      )}
+    </StyledFlex>
   )
 }
 

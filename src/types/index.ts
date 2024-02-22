@@ -241,6 +241,7 @@ export type TStats = {
   numNodes?: string
   numTwitterSpace?: string
   numVideo?: string
+  numDocuments?: string
 }
 
 export type RelayUser = {
