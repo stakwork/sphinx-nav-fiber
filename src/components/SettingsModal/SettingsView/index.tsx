@@ -55,7 +55,7 @@ export const SettingsView: React.FC<Props> = ({ onClose }) => {
   const SettingsHeader = ({ children }: { children: React.ReactNode }) => (
     <StyledHeader>
       <Flex direction="row" pt={3}>
-        <StyledText>{getSettingsLabel()}</StyledText>
+        <StyledText data-testid="setting-label">{getSettingsLabel()}</StyledText>
         {resolveAdminActions()}
       </Flex>
       {children}
