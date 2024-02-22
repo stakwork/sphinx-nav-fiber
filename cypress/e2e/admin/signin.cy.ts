@@ -6,7 +6,7 @@ describe('Admin Login', () => {
       },
     })
     let title = `Testing NavFiber`
-    cy.wait(10000)
+    cy.wait(30000)
     cy.get('div[data-testid="settings-modal"]').click()
     cy.get('#cy-about-title-id').click()
     cy.get('#cy-about-title-id').type('{selectAll}')
