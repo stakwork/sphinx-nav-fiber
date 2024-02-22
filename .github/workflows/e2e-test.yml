@@ -82,6 +82,13 @@ jobs:
           sleep 100
           yarn run cy-run
 
+      - name: Upload Cypress logs
+        if: failure()
+        uses: actions/upload-artifact@v2
+        with:
+          name: cypress-logs
+          path: cypress/videos
+
       - name: Stop Stack
         working-directory: ./stack
         run: docker-compose down

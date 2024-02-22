@@ -8,7 +8,7 @@ describe('Admin Login', () => {
     let title = `Testing NavFiber`
     cy.wait(30000)
     cy.get('div[data-testid="settings-modal"]').click()
-    cy.get('[data-testid="setting-label"]').should('have.text', 'Settings')
+    // cy.get('[data-testid="setting-label"]').should('have.text', 'Settings')
     cy.get('[data-testid="setting-label"]').should('have.text', 'Admin Settings')
     // .invoke('text')
     // .then((value) => {
