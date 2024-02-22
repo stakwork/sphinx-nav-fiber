@@ -86,6 +86,13 @@ jobs:
         run: yarn run cy-comp
         continue-on-error: false
 
+      - name: Upload Cypress logs
+        if: failure()
+        uses: actions/upload-artifact@v2
+        with:
+          name: cypress-logs
+          path: cypress/videos
+
       - name: Check the coverage value
         run: yarn test-coverage
 
