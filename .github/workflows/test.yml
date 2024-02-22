@@ -7,14 +7,62 @@ jobs:
   cypress-run:
     runs-on: ubuntu-latest
     steps:
+      - name: Enable docker.host.internal for Ubuntu
+        run: |
+          pwd && sudo bash -c 'echo "172.17.0.1 host.docker.internal" >> /etc/hosts'
+
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version-file: '.nvmrc'
-          cache: 'yarn'
+          node-version-file: ".nvmrc"
+          cache: "yarn"
+      - name: Clone Stack
+        run: |
+          git clone -b feat/second-brain-compose https://github.com/stakwork/sphinx-stack.git stack
+
+      - name: Give Permissions to Sphinx Nav Fiber
+        run: pwd && ls && chmod 777 -R relay
+
+      - name: Give Permissions to Sphinx Tribes Frontend Cypress
+        run: chmod 777 -R cypress
+
+      - name: Give Permissions to Stack
+        working-directory: ./stack
+        run: |
+          chmod 777 ./bitcoind;
+          chmod 777 -R ./relay;
+          chmod 777 -R ./lnd;
+          chmod 777 -R ./proxy;
+          chmod 777 -R ./cln;
+
+      - name: Check for NODES
+        uses: nick-fields/retry@v2
+        with:
+          timeout_minutes: 10
+          max_attempts: 3
+          command: |
+            GITACTION_ENV=gitactionenv docker-compose -f ./stack/alts/navfiber.yml --project-dir ./stack up -d;
+            sleep 240;
+            docker ps
+            docker logs meme.sphinx
+            docker logs dave.sphinx
+            docker wait stack_relaysetup_1
+            cat stack/relay/NODES.json;
+
+      - name: Copy Node.json
+        uses: canastro/copy-file-action@master
+        with:
+          source: "stack/relay/NODES.json"
+          target: "relay/nodes.json"
+
+      - name: Copy Node.json 2
+        uses: canastro/copy-file-action@master
+        with:
+          source: "stack/relay/NODES.json"
+          target: "cypress/fixtures/nodes.json"
 
       - name: Install
         run: yarn --immutable
@@ -26,7 +74,7 @@ jobs:
           install-command: yarn --immutable
           browser: chrome
           start: yarn run start-e2e
-          wait-on: 'http://localhost:3000' # Waits for above
+          wait-on: "http://localhost:3000" # Waits for above
           wait-on-timeout: 120 # Waits for 2 minutes
           # Records to Cypress Dashboard
           record: true
@@ -40,3 +88,7 @@ jobs:
 
       - name: Check the coverage value
         run: yarn test-coverage
+
+      - name: Stop Stack
+        working-directory: ./stack
+        run: docker-compose down

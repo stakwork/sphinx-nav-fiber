@@ -68,9 +68,6 @@ jobs:
           source: "stack/relay/NODES.json"
           target: "cypress/fixtures/nodes.json"
 
-      - name: View relay nodes
-        run: cat relay/nodes.json
-
       - name: Install Frontend Dependencies
         run: yarn install
 
