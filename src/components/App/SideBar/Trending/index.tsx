@@ -206,6 +206,7 @@ const Paragraph = styled.div`
 `
 
 const Wrapper = styled(Flex)`
+  min-height: 167.5px;
   .heading-container {
     display: flex;
     flex-direction: row;
@@ -263,6 +264,7 @@ const Wrapper = styled(Flex)`
 const StyledSkeleton = styled(Skeleton)`
   && {
     background: rgba(0, 0, 0, 0.15);
+    min-height: 167.5px;
   }
 `
 
