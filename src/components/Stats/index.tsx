@@ -21,7 +21,7 @@ export const StatsConfig = [
     name: 'Nodes',
     icon: <NodesIcon />,
     key: 'numNodes',
-    dataKey: 'num_audio',
+    dataKey: 'num_nodes',
     mediaType: '',
   },
   {
@@ -49,7 +49,7 @@ export const StatsConfig = [
     name: 'Twitter Spaces',
     icon: <TwitterIcon />,
     key: 'numTwitterSpace',
-    dataKey: 'num_twitter_space',
+    dataKey: 'num_tweet',
     mediaType: 'twitter',
   },
   {
