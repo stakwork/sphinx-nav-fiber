@@ -2,28 +2,15 @@ import { Divider } from '@mui/material'
 import IconButton from '@mui/material/IconButton'
 import InputBase from '@mui/material/InputBase'
 import Paper from '@mui/material/Paper'
-import { forwardRef, useImperativeHandle, useState } from 'react'
+import { forwardRef, useState } from 'react'
 import styled from 'styled-components'
 import ClearIcon from '~/components/Icons/ClearIcon'
 import SearchIcon from '~/components/Icons/SearchIcon'
 import { useTopicsStore } from '~/stores/useTopicsStore'
 
-export type SearchRef = {
-  triggerSearch: (value: string) => void
-}
-
-const SearchComponent = (_: unknown, ref: React.ForwardedRef<SearchRef>) => {
-  useImperativeHandle(ref, () => ({
-    triggerSearch,
-  }))
-
+const SearchComponent = () => {
   const [filters, setFilters] = useTopicsStore((s) => [s.filters, s.setFilters])
   const [inputValue, setInputValue] = useState('')
-
-  const triggerSearch = (kw: string) => {
-    setInputValue(kw)
-    setFilters({ search: kw })
-  }
 
   const handleSearch = (e: { preventDefault: () => void }) => {
     e.preventDefault()

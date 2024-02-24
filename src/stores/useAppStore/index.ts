@@ -6,6 +6,7 @@ export type SecondarySidebarActiveTab = '' | 'sentiment' | 'sources' | 'about'
 
 type AppStore = {
   currentSearch: string | null
+  searchFormValue: string
   secondarySidebarActiveTab: SecondarySidebarActiveTab
   sidebarIsOpen: boolean
   hasBudgetExplanationModalBeSeen: boolean
@@ -16,6 +17,7 @@ type AppStore = {
   appMetaData: TAboutParams
   clearSearch: () => void
   setCurrentSearch: (_: string) => void
+  setSearchFormValue: (_: string) => void
   setRelevanceSelected: (_: boolean) => void
   setSecondarySidebarActiveTab: (_: SecondarySidebarActiveTab) => void
   setSidebarOpen: (_: boolean) => void
@@ -26,6 +28,7 @@ type AppStore = {
 
 const defaultData = {
   currentSearch: null,
+  searchFormValue: '',
   flagErrorIsOpen: false,
   hasBudgetExplanationModalBeSeen: false,
   relevanceIsSelected: false,
@@ -40,6 +43,7 @@ export const useAppStore = create<AppStore>((set, get) => ({
   ...defaultData,
   clearSearch: () => set({ currentSearch: null }),
   setCurrentSearch: (currentSearch) => set({ currentSearch }),
+  setSearchFormValue: (searchFormValue) => set({ searchFormValue }),
   setFlagErrorOpen: (flagErrorIsOpen) => set({ flagErrorIsOpen }),
   setRelevanceSelected: (relevanceIsSelected) => set({ relevanceIsSelected }),
   setSecondarySidebarActiveTab: (secondarySidebarActiveTab) =>
