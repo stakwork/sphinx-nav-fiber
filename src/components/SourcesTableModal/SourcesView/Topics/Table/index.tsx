@@ -33,8 +33,8 @@ export const Table: React.FC<TopicTableProps> = ({ showMuted, onTopicEdit }) => 
   }
 
   const handleSearch = (search: string) => {
-    setCurrentSearch(search)
     setSearchFormValue(search)
+    setCurrentSearch(search)
     close()
   }
 

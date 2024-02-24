@@ -2,13 +2,13 @@ import { Divider } from '@mui/material'
 import IconButton from '@mui/material/IconButton'
 import InputBase from '@mui/material/InputBase'
 import Paper from '@mui/material/Paper'
-import { forwardRef, useState } from 'react'
+import { useState } from 'react'
 import styled from 'styled-components'
 import ClearIcon from '~/components/Icons/ClearIcon'
 import SearchIcon from '~/components/Icons/SearchIcon'
 import { useTopicsStore } from '~/stores/useTopicsStore'
 
-const SearchComponent = () => {
+export const Search = () => {
   const [filters, setFilters] = useTopicsStore((s) => [s.filters, s.setFilters])
   const [inputValue, setInputValue] = useState('')
 
@@ -56,8 +56,6 @@ const SearchComponent = () => {
     </Paper>
   )
 }
-
-export const Search = forwardRef(SearchComponent)
 
 const StyledButton = styled(IconButton)`
   font-size: 24px;
