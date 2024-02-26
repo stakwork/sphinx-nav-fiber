@@ -72,8 +72,10 @@ const handleSubmitForm = async (
   } catch (err: any) {
     let errorMessage = NODE_ADD_ERROR
 
-    if (err?.response && err.response.data && err.response.data.message) {
-      errorMessage = err.response.data.message
+    if (err.status === 400) {
+      const error = await err.json()
+
+      errorMessage = error.errorCode || error?.status || NODE_ADD_ERROR
     } else if (err instanceof Error) {
       errorMessage = err.message
     }
