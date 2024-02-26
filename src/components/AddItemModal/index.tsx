@@ -9,7 +9,7 @@ import { useDataStore } from '~/stores/useDataStore'
 import { useModal } from '~/stores/useModalStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { NodeExtended, SubmitErrRes } from '~/types'
-import { executeIfProd, getLSat, payLsat, updateBudget } from '~/utils'
+import { executeIfProd, getLSat } from '~/utils'
 import { BudgetStep } from './BudgetStep'
 import { SourceStep } from './SourceStep'
 import { SourceTypeStep } from './SourceTypeStep'
@@ -70,25 +70,16 @@ const handleSubmitForm = async (
 
     // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   } catch (err: any) {
-    if (err.status === 402) {
-      await payLsat(setBudget)
+    let errorMessage = NODE_ADD_ERROR;
 
-      await updateBudget(setBudget)
-
-      await handleSubmitForm(data, close, setBudget, onAddNewData)
+    if (err?.response && err.response.data && err.response.data.message) {
+      errorMessage = err.response.data.message;
+    } else if (err instanceof Error) {
+      errorMessage = err.message;
     }
 
-    if (err.status === 400) {
-      const error = await err.json()
-
-      notify(error?.status || NODE_ADD_ERROR)
-      close()
-    }
-
-    if (err instanceof Error) {
-      notify(err.message || NODE_ADD_ERROR)
-      close()
-    }
+    notify(errorMessage);
+    close();
   }
 }
 
