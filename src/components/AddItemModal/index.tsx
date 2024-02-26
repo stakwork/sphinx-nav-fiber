@@ -70,16 +70,16 @@ const handleSubmitForm = async (
 
     // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   } catch (err: any) {
-    let errorMessage = NODE_ADD_ERROR;
+    let errorMessage = NODE_ADD_ERROR
 
     if (err?.response && err.response.data && err.response.data.message) {
-      errorMessage = err.response.data.message;
+      errorMessage = err.response.data.message
     } else if (err instanceof Error) {
-      errorMessage = err.message;
+      errorMessage = err.message
     }
 
-    notify(errorMessage);
-    close();
+    notify(errorMessage)
+    close()
   }
 }
 
