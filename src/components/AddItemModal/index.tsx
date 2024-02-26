@@ -9,7 +9,7 @@ import { useDataStore } from '~/stores/useDataStore'
 import { useModal } from '~/stores/useModalStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { NodeExtended, SubmitErrRes } from '~/types'
-import { executeIfProd, getLSat, payLsat, updateBudget } from '~/utils'
+import { executeIfProd, getLSat } from '~/utils'
 import { BudgetStep } from './BudgetStep'
 import { SourceStep } from './SourceStep'
 import { SourceTypeStep } from './SourceTypeStep'
@@ -24,7 +24,7 @@ const handleSubmitForm = async (
   data: FieldValues,
   close: () => void,
   setBudget: (value: number | null) => void,
-  onAddNewData: (value: FieldValues) => void,
+  onAddNewData: (value: FieldValues, id: string) => void,
 ): Promise<void> => {
   const endPoint = 'node'
 
@@ -63,32 +63,25 @@ const handleSubmitForm = async (
       throw new Error(message)
     }
 
-    onAddNewData(data)
+    onAddNewData(data, res?.data?.ref_id)
 
     notify(NODE_ADD_SUCCESS)
     close()
 
     // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   } catch (err: any) {
-    if (err.status === 402) {
-      await payLsat(setBudget)
-
-      await updateBudget(setBudget)
-
-      await handleSubmitForm(data, close, setBudget, onAddNewData)
-    }
+    let errorMessage = NODE_ADD_ERROR
 
     if (err.status === 400) {
       const error = await err.json()
 
-      notify(error?.status || NODE_ADD_ERROR)
-      close()
+      errorMessage = error.errorCode || error?.status || NODE_ADD_ERROR
+    } else if (err instanceof Error) {
+      errorMessage = err.message
     }
 
-    if (err instanceof Error) {
-      notify(err.message || NODE_ADD_ERROR)
-      close()
-    }
+    notify(errorMessage)
+    close()
   }
 }
 
@@ -126,8 +119,8 @@ export const AddItemModal = () => {
     setCurrentStep(currentStep - 1)
   }
 
-  const onAddNewNode = (data: FieldValues) => {
-    const newId = `new-id-${Math.random()}`
+  const onAddNewNode = (data: FieldValues, id: string) => {
+    const newId = id || `new-id-${Math.random()}`
     const newType = data.nodeType.toLocaleLowerCase()
 
     const node: NodeExtended = {
@@ -140,7 +133,7 @@ export const AddItemModal = () => {
       x: Math.random(),
       y: Math.random(),
       z: Math.random(),
-      date: +new Date(),
+      date: parseInt((new Date().getTime() / 1000).toFixed(0), 10),
       weight: 4,
       ...(data.sourceLink ? { source_link: data.sourceLink } : {}),
     }

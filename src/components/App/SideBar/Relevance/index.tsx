@@ -83,7 +83,9 @@ const _Relevance = ({ isSearchResult }: Props) => {
               imageUrl={imageUrl || ''}
               link={link}
               name={name || ''}
-              onClick={() => handleNodeClick(n)}
+              onClick={() => {
+                handleNodeClick(n)
+              }}
               profilePicture={profilePicture}
               showTitle={formatDescription(showTitle)}
               sourceLink={sourceLink}

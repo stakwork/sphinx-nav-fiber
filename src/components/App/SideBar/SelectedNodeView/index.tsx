@@ -1,7 +1,6 @@
 import { memo, useEffect } from 'react'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { usePlayerStore } from '~/stores/usePlayerStore'
-import { TextType } from '../../Helper/AskQuestion/Text'
 import { TeachMeText } from '../../Helper/TeachMe'
 import { Data } from '../Data'
 import { Episode } from '../Episode'
@@ -12,6 +11,7 @@ import { Person } from '../Person'
 import { Show } from '../Show'
 import { Topic } from '../Topic'
 import { TwitData } from '../TwitData'
+import { Document } from './Document'
 
 const MEDIA_TYPES = ['clip', 'twitter_space', 'youtube', 'episode', 'podcast']
 
@@ -52,7 +52,7 @@ const _View = () => {
     case 'twitter_space':
       return <Media />
     case 'document':
-      return <TextType />
+      return <Document />
     case 'episode':
       return <Episode key={selectedNode.ref_id} />
     case 'image':

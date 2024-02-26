@@ -1,7 +1,8 @@
+/* eslint-disable padding-line-between-statements */
 import '@testing-library/jest-dom'
-import { render, waitFor } from '@testing-library/react'
+import { fireEvent, render, waitFor } from '@testing-library/react'
 import React from 'react'
-import { Stats } from '..'
+import { Stats, StatsConfig } from '..'
 import * as network from '../../../network/fetchSourcesData'
 import { useDataStore } from '../../../stores/useDataStore'
 import { useUserStore } from '../../../stores/useUserStore'
@@ -14,6 +15,7 @@ jest.mock('~/components/Icons/BudgetIcon', () => jest.fn(() => <div data-testid=
 jest.mock('~/components/Icons/NodesIcon', () => jest.fn(() => <div data-testid="NodesIcon" />))
 jest.mock('~/components/Icons/TwitterIcon', () => jest.fn(() => <div data-testid="TwitterIcon" />))
 jest.mock('~/components/Icons/VideoIcon', () => jest.fn(() => <div data-testid="VideoIcon" />))
+jest.mock('~/components/Icons/DocumentIcon', () => jest.fn(() => <div data-testid="DocumentIcon" />))
 
 jest.mock('~/stores/useDataStore', () => ({
   useDataStore: jest.fn(),
@@ -34,6 +36,7 @@ const mockStats = {
   numNodes: '5,000',
   numTwitterSpace: '300',
   numVideo: '800',
+  numDocuments: '1483',
 }
 
 const mockBudget = 20000
@@ -74,6 +77,7 @@ describe('Component Test Stats', () => {
     expect(getByText(mockStats.numEpisodes)).toBeInTheDocument()
     expect(getByText(mockStats.numVideo)).toBeInTheDocument()
     expect(getByText(mockStats.numTwitterSpace)).toBeInTheDocument()
+    expect(getByText(mockStats.numDocuments)).toBeInTheDocument()
   })
 
   it('test formatting of numbers', () => {
@@ -82,9 +86,17 @@ describe('Component Test Stats', () => {
     render(<Stats />)
     ;(async () => {
       await waitFor(() => {
-        expect(mockedFormatStats).toHaveBeenCalledTimes(7)
+        expect(mockedFormatStats).toHaveBeenCalledTimes(8)
       })
     })()
+  })
+
+  it('tests that document stat pill is not displayed when document is returned in the response', () => {
+    mockedUseDataStore.mockReturnValue([{ ...mockStats, numDocuments: '0' }, jest.fn()])
+
+    const { queryByTestId } = render(<Stats />)
+
+    expect(queryByTestId('DocumentIcon')).toBeNull()
   })
 
   it('test the formatting of the budget', () => {
@@ -114,5 +126,24 @@ describe('Component Test Stats', () => {
     expect(getByTestId('NodesIcon')).toBeInTheDocument()
     expect(getByTestId('TwitterIcon')).toBeInTheDocument()
     expect(getByTestId('VideoIcon')).toBeInTheDocument()
+    expect(getByTestId('DocumentIcon')).toBeInTheDocument()
+  })
+
+  it('asserts that OnClick, prediction/content/latest endpoint is called with media type query', () => {
+    const mockedSetBudget = jest.fn()
+    const fetchDataMock = jest.fn()
+    mockedUseUserStore.mockReturnValue([mockBudget, mockedSetBudget])
+    mockedUseDataStore.mockReturnValue([mockStats, jest.fn(), fetchDataMock])
+
+    const { getByText } = render(<Stats />)
+
+    StatsConfig.forEach(async ({ key, mediaType }) => {
+      expect(getByText(mockStats[key])).toBeInTheDocument()
+      fireEvent.click(getByText(mockStats[key]))
+
+      await waitFor(() => {
+        expect(fetchDataMock).toHaveBeenCalledWith(mockedSetBudget, { ...(mediaType ? { media_type: mediaType } : {}) })
+      })
+    })
   })
 })

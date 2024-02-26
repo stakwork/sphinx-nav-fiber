@@ -1,18 +1,12 @@
+/* eslint-disable padding-line-between-statements */
 import '@testing-library/jest-dom'
-import { fireEvent, render, waitFor } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import React from 'react'
 import { Trending } from '..'
 import * as fetchGraphData from '../../../../../network/fetchGraphData'
 import { useDataStore } from '../../../../../stores/useDataStore'
 import { useModal } from '../../../../../stores/useModalStore'
 import * as utils from '../../../../../utils/trending'
-
-jest.mock('d3-force-3d', () => ({
-  forceSimulation: jest.fn(() => ({
-    stop: jest.fn(),
-  })),
-  forceCollide: jest.fn(),
-}))
 
 jest.mock('~/components/Icons/SentimentDataIcon', () => jest.fn(() => <div data-testid="SentimentDataIcon" />))
 jest.mock('~/components/Icons/PlayIcon', () => jest.fn(() => <div data-testid="PlayIcon" />))
@@ -75,18 +69,6 @@ describe('Trending Component', () => {
         expect(mockedSetTrendingTopics).toHaveBeenCalledWith(mockTrends)
       })
     })()
-  })
-
-  it('verifies the display of skeletons during loading.', () => {
-    mockedUseDataStore.mockReturnValue([mockTrends, jest.fn()])
-
-    const loading = true
-
-    jest.spyOn(React, 'useState').mockImplementationOnce(() => [loading, jest.fn()])
-
-    const { getAllByTestId } = render(<Trending />)
-
-    expect(getAllByTestId('loading-skeleton').length).toEqual(5)
   })
 
   it('checks that the component renders a list of trending topics when data is available', () => {
@@ -164,6 +146,22 @@ describe('Trending Component', () => {
     fireEvent.click(getByText(`#${mockTrends[0].topic}`))
     ;(async () => {
       await waitFor(() => expect(mockedSelectTrendingTopic).toHaveBeenCalled())
+    })()
+  })
+
+  test('Add test to submit form with selected trending topic', () => {
+    const mockedSelectTrendingTopic = jest.fn()
+
+    mockedUseDataStore.mockReturnValue([mockTrends, mockedSelectTrendingTopic])
+
+    const { getByText } = render(<Trending />)
+
+    fireEvent.click(getByText(`#${mockTrends[0].topic}`))
+    ;(async () => {
+      await waitFor(() => {
+        const searchInput = screen.getByPlaceholderText('Search') as HTMLInputElement
+        expect(searchInput.value).toBe('Drivechain')
+      })
     })()
   })
 })

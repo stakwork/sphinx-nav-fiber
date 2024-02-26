@@ -6,6 +6,7 @@ import SourcesTableIcon from '~/components/Icons/SourcesTableIcon'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { useModal } from '~/stores/useModalStore'
+import { useUserStore } from '~/stores/useUserStore'
 import { colors } from '~/utils/colors'
 
 export const MainToolbar = () => {
@@ -14,17 +15,21 @@ export const MainToolbar = () => {
   const { open: openContentAddModal } = useModal('addContent')
   const { open: openSettingsModal } = useModal('settings')
 
+  const [isAdmin] = useUserStore((s) => [s.isAdmin])
+
   return (
     <Wrapper>
       <LogoButton>
         <img alt="Second brain" src="logo.svg" />
       </LogoButton>
-      <ActionButton data-testid="add-item-modal" onClick={openItemAddModal}>
-        <IconWrapper>
-          <AddSourceIcon />
-        </IconWrapper>
-        <Text>Add Item</Text>
-      </ActionButton>
+      {isAdmin && (
+        <ActionButton data-testid="add-item-modal" onClick={openItemAddModal}>
+          <IconWrapper>
+            <AddSourceIcon />
+          </IconWrapper>
+          <Text>Add Item</Text>
+        </ActionButton>
+      )}
       <ActionButton data-testid="add-content-modal" onClick={openContentAddModal}>
         <IconWrapper>
           <AddContentIcon />

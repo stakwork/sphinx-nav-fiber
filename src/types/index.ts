@@ -7,6 +7,12 @@ export type FetchDataResponse = {
   related: Node[]
 }
 
+export type TEdge = {
+  node_type: string
+  ref_id: string
+  search_value: string
+}
+
 export type FetchTrendingResponse = Trending[]
 
 export type FetchSentimentResponse = {
@@ -22,8 +28,13 @@ export type FetchTopicResponse = {
   topicCount: number
 }
 
-export type FetchEdgesResponse = {
+export type FetchEdgeTypesResponse = {
   data: { edge_types: string[] }
+  status: string
+}
+
+export type FetchEdgesResponse = {
+  data: TEdge[]
   status: string
 }
 
@@ -100,6 +111,11 @@ type Coordinates = {
   lat: number
 }
 
+type Audio = {
+  link: string
+  language: string
+}
+
 export type NodeExtended = Node & {
   x?: number
   y?: number
@@ -107,6 +123,7 @@ export type NodeExtended = Node & {
   longitude?: number
   latitude?: number
   coordinates?: Coordinates
+  audio?: Audio[]
 }
 
 export type Link<T = string> = {
@@ -182,6 +199,9 @@ export type TopicFilter = {
 
 export type SubmitErrRes = {
   error?: { message?: string }
+  data: {
+    ref_id: string
+  }
 }
 
 export type AuthRequest = {
@@ -214,11 +234,28 @@ export type BalanceResponse = {
 }
 
 export type TStats = {
-  numAudio: string
-  numContributors: string
-  numDaily: string
-  numEpisodes: string
-  numNodes: string
-  numTwitterSpace: string
-  numVideo: string
+  numAudio?: string
+  numContributors?: string
+  numDaily?: string
+  numEpisodes?: string
+  numNodes?: string
+  numTwitterSpace?: string
+  numVideo?: string
+  numDocuments?: string
+}
+
+export type RelayUser = {
+  alias: string
+  pubkey: string
+  ip: string
+  external_ip: string
+  authToken: string
+  transportToken: string
+  contact_key: string
+  privkey: string
+  exported_keys: string
+  pin: string
+  proxy_ip?: string
+  admin_token?: string
+  routeHint?: string
 }
