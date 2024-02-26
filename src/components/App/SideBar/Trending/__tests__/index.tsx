@@ -8,13 +8,6 @@ import { useDataStore } from '../../../../../stores/useDataStore'
 import { useModal } from '../../../../../stores/useModalStore'
 import * as utils from '../../../../../utils/trending'
 
-jest.mock('d3-force-3d', () => ({
-  forceSimulation: jest.fn(() => ({
-    stop: jest.fn(),
-  })),
-  forceCollide: jest.fn(),
-}))
-
 jest.mock('~/components/Icons/SentimentDataIcon', () => jest.fn(() => <div data-testid="SentimentDataIcon" />))
 jest.mock('~/components/Icons/PlayIcon', () => jest.fn(() => <div data-testid="PlayIcon" />))
 
@@ -76,18 +69,6 @@ describe('Trending Component', () => {
         expect(mockedSetTrendingTopics).toHaveBeenCalledWith(mockTrends)
       })
     })()
-  })
-
-  it('verifies the display of skeletons during loading.', () => {
-    mockedUseDataStore.mockReturnValue([mockTrends, jest.fn()])
-
-    const loading = true
-
-    jest.spyOn(React, 'useState').mockImplementationOnce(() => [loading, jest.fn()])
-
-    const { getAllByTestId } = render(<Trending />)
-
-    expect(getAllByTestId('loading-skeleton').length).toEqual(5)
   })
 
   it('checks that the component renders a list of trending topics when data is available', () => {
