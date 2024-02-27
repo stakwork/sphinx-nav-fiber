@@ -1,4 +1,4 @@
-import { PropsWithChildren } from 'react'
+import { PropsWithChildren, useEffect } from 'react'
 import styled, { css, keyframes } from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { AvailableModals, useModal } from '~/stores/useModalStore'
@@ -108,6 +108,22 @@ export const BaseModal = ({
 }: Props) => {
   const { visible, close } = useModal(id)
 
+  useEffect(() => {
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.keyCode === 27) {
+        close()
+      }
+    }
+
+    if (visible) {
+      document.addEventListener('keydown', handleEsc)
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEsc) // Cleanup
+    }
+  }, [visible, close])
+
   if (!visible) {
     return null
   }
@@ -121,7 +137,6 @@ export const BaseModal = ({
         onClick={(e) => {
           if (!preventOutsideClose) {
             e.stopPropagation()
-
             close()
           }
         }}

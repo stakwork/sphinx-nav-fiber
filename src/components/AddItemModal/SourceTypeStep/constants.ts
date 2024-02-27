@@ -1,7 +1,7 @@
 import { TOption } from './types'
 
-export const initialValue = {
-  label: 'Not selected',
+export const initialValue: TOption = {
+  label: '',
   value: '',
 }
 
