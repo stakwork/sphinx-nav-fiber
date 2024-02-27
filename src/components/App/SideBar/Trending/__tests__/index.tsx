@@ -8,13 +8,6 @@ import { useDataStore } from '../../../../../stores/useDataStore'
 import { useModal } from '../../../../../stores/useModalStore'
 import * as utils from '../../../../../utils/trending'
 
-jest.mock('d3-force-3d', () => ({
-  forceSimulation: jest.fn(() => ({
-    stop: jest.fn(),
-  })),
-  forceCollide: jest.fn(),
-}))
-
 jest.mock('~/components/Icons/SentimentDataIcon', () => jest.fn(() => <div data-testid="SentimentDataIcon" />))
 jest.mock('~/components/Icons/PlayIcon', () => jest.fn(() => <div data-testid="PlayIcon" />))
 

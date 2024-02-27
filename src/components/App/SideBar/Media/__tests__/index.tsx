@@ -11,13 +11,6 @@ const mockedUseDataStore = useDataStore as jest.MockedFunction<typeof useDataSto
 jest.mock('~/utils/formatDescription')
 jest.mock('~/stores/useDataStore')
 
-jest.mock('d3-force-3d', () => ({
-  forceSimulation: jest.fn(() => ({
-    stop: jest.fn(),
-  })),
-  forceCollide: jest.fn(),
-}))
-
 const mockedFormatDescription = jest.spyOn(format, 'formatDescription')
 
 describe('Media Component Tests', () => {
