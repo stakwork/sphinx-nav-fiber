@@ -2,7 +2,7 @@ import { CircularProgress } from '@mui/material'
 import Autocomplete from '@mui/material/Autocomplete'
 import Stack from '@mui/material/Stack'
 import TextField from '@mui/material/TextField'
-import { ChangeEvent, FC, SyntheticEvent } from 'react'
+import { ChangeEvent, FC, SyntheticEvent, useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 import { colors } from '~/utils'
 import { Flex } from '../Flex'
@@ -20,6 +20,7 @@ type Props = {
   selectedValue?: TAutocompleteOption | null
   handleInputChange?: (val: string) => void
   isLoading?: boolean
+  autoFocus?: boolean
 }
 
 const defaultProps = {
@@ -34,7 +35,18 @@ export const AutoComplete: FC<Props> = ({
   selectedValue = null,
   handleInputChange,
   isLoading = false,
+  autoFocus = false,
 }) => {
+  const inputRef = useRef<HTMLInputElement>(null)
+  const [open, setOpen] = useState<boolean>(false)
+
+  useEffect(() => {
+    if (autoFocus && inputRef.current) {
+      inputRef.current.focus()
+      setOpen(true)
+    }
+  }, [autoFocus])
+
   const handleChange = (event: ChangeEvent<object>, newValue: TAutocompleteOption | null) => {
     onSelect(newValue)
   }
@@ -51,10 +63,14 @@ export const AutoComplete: FC<Props> = ({
         id="blur-on-select"
         loading={isLoading}
         onChange={handleChange}
+        onClose={() => setOpen(false)}
         onInputChange={(e: SyntheticEvent<Element, Event>, val) => handleInputChange?.(val)}
+        onOpen={() => setOpen(true)}
+        open={open}
         options={options}
         renderInput={(params) => (
           <StyledInput
+            inputRef={inputRef}
             {...params}
             InputProps={{
               ...params.InputProps,
@@ -70,7 +86,7 @@ export const AutoComplete: FC<Props> = ({
         renderOption={(props, option) => (
           <li {...props}>
             <Flex align="center" direction="row" grow={1} justify="space-between" shrink={1}>
-              <div className="option">{option.label}</div>
+              <div className="option">{option.label !== '' ? option.label : 'Not Selected'}</div>
               {option?.type && <TypeBadge type={option.type} />}
             </Flex>
           </li>
