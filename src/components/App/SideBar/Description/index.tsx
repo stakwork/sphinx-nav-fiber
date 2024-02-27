@@ -1,6 +1,7 @@
 import styled from 'styled-components'
 import NotesIcon from '~/components/Icons/NotesIcon'
 import { Flex } from '~/components/common/Flex'
+import { Text } from '~/components/common/Text'
 import { NodeExtended } from '~/types'
 import { colors } from '~/utils/colors'
 import { highlightSearchTerm } from '../Relevance/Episode'
@@ -23,7 +24,7 @@ export const Description = ({ stateless, node, searchTerm }: DescriptionProps) =
         </Heading>
       )}
     </Header>
-    <Box>{node?.description ? highlightSearchTerm(node.description, searchTerm) : '...'}</Box>
+    <Text>{node?.description ? highlightSearchTerm(node.description, searchTerm) : '...'}</Text>
   </Flex>
 )
 
@@ -55,16 +56,4 @@ const Header = styled(Flex).attrs({
   justify: 'space-between',
 })`
   margin-bottom: 18px;
-`
-
-const Box = styled(Flex)`
-  color: ${colors.white};
-  text-overflow: ellipsis;
-  whitespace: nowrap;
-  font-family: Barlow;
-  letter-spacing: 0.2pt;
-  font-size: 15px;
-  font-style: normal;
-  font-weight: 300;
-  line-height: 22px;
 `

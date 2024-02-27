@@ -258,9 +258,9 @@ const StyledLink = styled.a`
 `
 
 const Highlight = styled.span`
-  background-color: lightblue;
-  padding: 0.2em;
+  background-color: rgba(0, 123, 255, 0.4);
+  padding: 2;
   margin: 0;
-  border-radius: 5px;
-  color: black;
+  border-radius: 3px;
+  color: inherit;
 `
