@@ -3,13 +3,15 @@ import NotesIcon from '~/components/Icons/NotesIcon'
 import { Flex } from '~/components/common/Flex'
 import { NodeExtended } from '~/types'
 import { colors } from '~/utils/colors'
+import { highlightSearchTerm } from '../Relevance/Episode'
 
 type DescriptionProps = {
   stateless?: boolean
   node: NodeExtended | null
+  searchTerm: string | null
 }
 
-export const Description = ({ stateless, node }: DescriptionProps) => (
+export const Description = ({ stateless, node, searchTerm }: DescriptionProps) => (
   <Flex grow={1} shrink={1}>
     <Header>
       {stateless && (
@@ -21,7 +23,7 @@ export const Description = ({ stateless, node }: DescriptionProps) => (
         </Heading>
       )}
     </Header>
-    <Box>{node?.description ? `"${node?.description}"` : '...'}</Box>
+    <Box>{node?.description ? highlightSearchTerm(node.description, searchTerm) : '...'}</Box>
   </Flex>
 )
 

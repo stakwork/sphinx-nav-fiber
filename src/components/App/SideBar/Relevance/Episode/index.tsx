@@ -258,9 +258,9 @@ const StyledLink = styled.a`
 `
 
 const Highlight = styled.span`
-  background-color: lightblue; // Choose a background color that stands out
-  padding: 0.2em; // Optional: add some padding around the text
-  margin: 0; // Optional: adjust margin if needed
-  border-radius: 5px; // Optional: round the corners of the highlight
+  background-color: lightblue;
+  padding: 0.2em;
+  margin: 0;
+  border-radius: 5px;
   color: black;
 `
