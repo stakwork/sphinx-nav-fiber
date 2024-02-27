@@ -7,8 +7,10 @@ import PauseIcon from '~/components/Icons/PauseIcon'
 import PlayIcon from '~/components/Icons/PlayIcon'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
+import { useAppStore } from '~/stores/useAppStore'
 import { useSelectedNode } from '~/stores/useDataStore'
 import { colors } from '~/utils'
+import { highlightSearchTerm } from '../../Relevance/Episode'
 
 export const Document = () => {
   const [playing, setPlaying] = useState(false)
@@ -16,6 +18,8 @@ export const Document = () => {
   const hasSourceLink = !!selectedNode?.source_link
 
   const audioRef = useRef<HTMLVideoElement>(null)
+
+  const searchTerm = useAppStore((s) => s.currentSearch)
 
   const handleClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.stopPropagation()
@@ -62,7 +66,7 @@ export const Document = () => {
       ) : null}
       <StyledContent grow={1} justify="flex-start" p={12} shrink={1}>
         <Text color="primaryText1" kind="regular">
-          {selectedNode?.text}
+          {highlightSearchTerm(selectedNode?.text || '', searchTerm)}
         </Text>
       </StyledContent>
     </Flex>

@@ -144,6 +144,18 @@ export const Episode = ({
   ) : null
 }
 
+export function highlightSearchTerm(sDescription: string, sTerm: string | null) {
+  if (!sTerm?.trim()) {
+    return sDescription
+  }
+
+  const regex = new RegExp(`(${sTerm})`, 'gi')
+  const parts = sDescription.split(regex)
+
+  // eslint-disable-next-line react/no-array-index-key
+  return <>{parts.map((part, index) => (regex.test(part) ? <Highlight key={index}>{part}</Highlight> : part))}</>
+}
+
 export const Description = styled(Flex)`
   font-family: Barlow;
   font-size: 13px;
@@ -243,4 +255,12 @@ const StyledLink = styled.a`
   color: ${colors.GRAY6};
   font-size: 16px;
   height: 16px;
+`
+
+const Highlight = styled.span`
+  background-color: lightblue; // Choose a background color that stands out
+  padding: 0.2em; // Optional: add some padding around the text
+  margin: 0; // Optional: adjust margin if needed
+  border-radius: 5px; // Optional: round the corners of the highlight
+  color: black;
 `

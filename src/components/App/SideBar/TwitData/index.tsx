@@ -7,10 +7,11 @@ import LinkIcon from '~/components/Icons/LinkIcon'
 import { Avatar } from '~/components/common/Avatar'
 import { Divider } from '~/components/common/Divider'
 import { Flex } from '~/components/common/Flex'
+import { useAppStore } from '~/stores/useAppStore'
 import { useSelectedNode } from '~/stores/useDataStore'
 import { colors } from '~/utils/colors'
 import { BoostAmt } from '../../Helper/BoostAmt'
-import { Date } from '../Relevance/Episode'
+import { Date, highlightSearchTerm } from '../Relevance/Episode'
 
 export const TwitData = () => {
   const selectedNode = useSelectedNode()
@@ -28,6 +29,8 @@ export const TwitData = () => {
 
   const twitId: string = selectedNode?.tweet_id || ''
   const [boostAmount, setBoostAmount] = useState<number>(boost || 0)
+
+  const searchTerm = useAppStore((s) => s.currentSearch)
 
   return (
     selectedNode && (
@@ -51,7 +54,7 @@ export const TwitData = () => {
           </Flex>
 
           <Flex grow={1} shrink={1}>
-            <TwitText data-testid="episode-description">{text}</TwitText>
+            <TwitText data-testid="episode-description">{highlightSearchTerm(text || '', searchTerm)}</TwitText>
             <Flex direction="row" justify="flex-start">
               {!!date && <Date>{moment.unix(date).format('ll')}</Date>}
             </Flex>

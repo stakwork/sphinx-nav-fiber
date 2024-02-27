@@ -3,9 +3,11 @@ import { Avatar } from '~/components/common/Avatar'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { TypeBadge } from '~/components/common/TypeBadge'
+import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
 import { NodeExtended } from '~/types'
 import { colors } from '~/utils'
+import { highlightSearchTerm } from '../../Relevance/Episode'
 
 export const CREATOR_HEADING_HEIGHT = 240
 
@@ -36,6 +38,7 @@ const Wrapper = styled(Flex)`
 export const Heading = ({ selectedNodeShow }: { selectedNodeShow: NodeExtended | undefined }) => {
   const [selectedNode, setSelectedNode] = useDataStore((s) => [s.selectedNode, s.setSelectedNode])
   const { type } = selectedNode || {}
+  const searchTerm = useAppStore((s) => s.currentSearch)
 
   return (
     <Wrapper p={20}>
@@ -43,7 +46,7 @@ export const Heading = ({ selectedNodeShow }: { selectedNodeShow: NodeExtended |
       <Flex direction="row" mb={22} mt={22}>
         <Flex grow={1} shrink={1}>
           <Text className="episode-title" kind="heading">
-            {selectedNode?.episode_title || 'Unknown'}
+            {highlightSearchTerm(selectedNode?.episode_title || 'Unknown', searchTerm)}
           </Text>
         </Flex>
       </Flex>
