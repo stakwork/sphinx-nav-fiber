@@ -1,4 +1,6 @@
 import * as sphinx from 'sphinx-bridge'
+import { isE2E } from '~/constants'
+import { sphinxBridge } from '~/testSphinxBridge'
 import { isSphinx } from '../isSphinx'
 
 // queue for sphinx, it handles only on request at a time
@@ -16,23 +18,41 @@ export async function getSignedMessageFromRelay(): Promise<{ message: string; si
 
   if (isSphinx()) {
     if (!signingPromise) {
-      signingPromise = sphinx
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        .signMessage(message)
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        .then((storedLsat: any) => {
-          signingPromise = null // Reset the promise after it's resolved
+      if (!isE2E) {
+        signingPromise = sphinx
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          .signMessage(message)
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          .then((storedLsat: any) => {
+            signingPromise = null // Reset the promise after it's resolved
 
-          return { message, signature: storedLsat.signature }
-        })
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        .catch((error: any) => {
-          signingPromise = null // Reset the promise on error
-          console.error(error)
+            return { message, signature: storedLsat.signature }
+          })
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          .catch((error: any) => {
+            signingPromise = null // Reset the promise on error
+            console.error(error)
 
-          return { message: '', signature: '' }
-        })
+            return { message: '', signature: '' }
+          })
+      } else {
+        signingPromise = sphinxBridge
+          .signMessage(message)
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          .then((storedLsat: any) => {
+            signingPromise = null // Reset the promise after it's resolved
+
+            return { message, signature: storedLsat.response.sig }
+          })
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          .catch((error: any) => {
+            signingPromise = null // Reset the promise on error
+            console.error(error)
+
+            return { message: '', signature: '' }
+          })
+      }
     }
 
     return signingPromise

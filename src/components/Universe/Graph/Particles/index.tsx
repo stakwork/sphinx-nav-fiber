@@ -7,8 +7,8 @@ export const Particles: React.FC = () => {
   const ref = useRef<THREE.Points>(null)
 
   useFrame(() => {
-    const positions = (ref.current?.geometry.getAttribute('position') as THREE.BufferAttribute).array as Float32Array
-    const velocities = (ref.current?.geometry.getAttribute('velocity') as THREE.BufferAttribute).array as Float32Array
+    const positions = (ref.current?.geometry.getAttribute('position') as THREE.BufferAttribute)?.array as Float32Array
+    const velocities = (ref.current?.geometry.getAttribute('velocity') as THREE.BufferAttribute)?.array as Float32Array
 
     if (positions && velocities) {
       for (let i = 0; i < positions.length; i += 3) {

@@ -1,4 +1,4 @@
-import { Button, Skeleton } from '@mui/material'
+import { Button } from '@mui/material'
 import { useEffect, useRef, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { ClipLoader } from 'react-spinners'
@@ -116,6 +116,8 @@ export const Trending = ({ onSubmit }: Props) => {
     })
   }
 
+  const placeholderText = loading ? 'Loading' : 'No new trending topics in the last 24 hours'
+
   return (
     <Wrapper>
       <div>
@@ -137,11 +139,12 @@ export const Trending = ({ onSubmit }: Props) => {
             </div>
           ) : null}
         </div>
-        {trendingTopics.length === 0 && !loading ? (
-          <div className="Trendingwrapper">
-            <Text>No new trending topics in the last 24 hours</Text>
+        {trendingTopics.length === 0 ? (
+          <div className="trending-empty">
+            <Text>{placeholderText}</Text>
             <ButtonStyled
               color="secondary"
+              disabled={loading}
               onClick={openContentAddModal}
               size="medium"
               startIcon={<PlusIcon />}
@@ -153,39 +156,20 @@ export const Trending = ({ onSubmit }: Props) => {
           </div>
         ) : (
           <ul className="list">
-            {loading ? (
-              <div>
-                <ClipLoader color={colors.PRIMARY_BLUE} size={16} />
-                {[...Array(5)].map((_, i) => (
-                  <StyledSkeleton
-                    // eslint-disable-next-line
-                    key={i}
-                    animation="wave"
-                    data-testid="loading-skeleton"
-                    height={47}
-                    variant="rectangular"
-                    width={382}
-                  />
-                ))}
-              </div>
-            ) : (
-              <>
-                {trendingTopics.map((i) => (
-                  <Flex
-                    key={i.topic}
-                    align="center"
-                    className="list-item"
-                    direction="row"
-                    justify="space-between"
-                    onClick={() => selectTrending(i.topic)}
-                  >
-                    <Paragraph> #{getTrendingTopic(i)}</Paragraph>
+            {trendingTopics.map((i) => (
+              <Flex
+                key={i.topic}
+                align="center"
+                className="list-item"
+                direction="row"
+                justify="space-between"
+                onClick={() => selectTrending(i.topic)}
+              >
+                <Paragraph> #{getTrendingTopic(i)}</Paragraph>
 
-                    {i.tldr && <Button onClick={(e) => showModal(e, i)}>TLDR</Button>}
-                  </Flex>
-                ))}
-              </>
-            )}
+                {i.tldr && <Button onClick={(e) => showModal(e, i)}>TLDR</Button>}
+              </Flex>
+            ))}
           </ul>
         )}
       </div>
@@ -213,6 +197,8 @@ const Wrapper = styled(Flex)`
     padding: 16px 12px 16px 24px;
   }
   .heading {
+    display: flex;
+    align-items: center;
     color: ${colors.GRAY6};
     padding-right: 24px;
     font-family: Barlow;
@@ -224,12 +210,12 @@ const Wrapper = styled(Flex)`
     text-transform: uppercase;
     &__icon {
       margin-left: 16px;
-      font-size: 24px;
+      font-size: 23px;
+      height: 24px;
     }
   }
-  .Trendingwrapper {
-    margin-left: 23px;
-    margin-top: 20px;
+  .trending-empty {
+    padding: 0 24px;
     color: ${colors.GRAY6};
   }
 
@@ -257,12 +243,6 @@ const Wrapper = styled(Flex)`
         color: ${colors.PRIMARY_BLUE};
       }
     }
-  }
-`
-
-const StyledSkeleton = styled(Skeleton)`
-  && {
-    background: rgba(0, 0, 0, 0.15);
   }
 `
 

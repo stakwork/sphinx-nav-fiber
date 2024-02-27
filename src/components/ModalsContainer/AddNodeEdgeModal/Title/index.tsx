@@ -48,7 +48,7 @@ const StyledText = styled(Text)`
 
 const Content = styled(Flex).attrs({
   align: 'stretch',
-  direction: 'row',
+  direction: 'column',
   justify: 'flex-start',
 })`
   color: ${colors.white};
@@ -62,5 +62,6 @@ const Content = styled(Flex).attrs({
 
 const SectionWrapper = styled(Flex)`
   flex: 1 1 100%;
-  padding: 0 8px;
+  min-height: unset;
+  margin-bottom: 8px;
 `
