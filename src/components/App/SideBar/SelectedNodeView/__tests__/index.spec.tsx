@@ -31,9 +31,7 @@ describe('SelectedNodeView', () => {
 
   beforeEach(() => {
     jest.clearAllMocks()
-
     ;(DataStore.useDataStore as unknown as jest.Mock).mockImplementation(() => [false])
-
     ;(PlayerStore.usePlayerStore as unknown as jest.Mock).mockImplementation(() => [setPlayingNodeMock])
   })
 
