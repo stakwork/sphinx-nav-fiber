@@ -89,6 +89,7 @@ describe('Test SideBarSubView', () => {
     expect(getByTestId('close-icon')).toBeInTheDocument()
 
     fireEvent.click(getByTestId('close-icon'))
+
     ;(async () => {
       await waitFor(() => {
         expect(setSelectedNodeMock).toHaveBeenCalledWith(null)
@@ -125,6 +126,7 @@ describe('Test SideBarSubView', () => {
     expect(getByTestId('chevron-icon')).toBeInTheDocument()
 
     fireEvent.click(getByTestId('chevron-icon'))
+
     ;(async () => {
       await waitFor(() => {
         expect(setSidebarOpenMock).toHaveBeenCalledWith(false)
@@ -140,6 +142,7 @@ describe('Test SideBarSubView', () => {
         </StyleThemeProvider>
       </ThemeProvider>,
     )
+
     ;(async () => {
       await waitFor(() => {
         expect(useAppStoreMock).toHaveBeenCalled()
