@@ -14,6 +14,7 @@
 // ***********************************************************
 
 // Import commands.js using ES2015 syntax:
+import nodes from '../../relay/nodes.json'
 import './commands'
 
 // Alternatively you can use CommonJS syntax:
@@ -21,3 +22,28 @@ import './commands'
 
 // coverage
 import '@cypress/code-coverage/support'
+
+// Add alice as the Second Brain tribe admin
+async function setAdmin() {
+  let user
+  for (let i = 0; i < nodes.length; i++) {
+    if (nodes[i].alias === 'alice') {
+      user = nodes[i]
+      break
+    }
+  }
+  try {
+    await fetch('http://localhost:8444/api/set_admin_pubkey', {
+      method: 'POST',
+      headers: { 'x-admin-token': 'navfiber_e2e_testing', 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        pubkey: user.pubkey,
+        name: user.alias,
+      }),
+    })
+  } catch (error) {
+    console.error(JSON.stringify(error))
+  }
+}
+
+setAdmin()

@@ -29,8 +29,12 @@ type Props = {
 
 export const TypeBadge = ({ type }: Props) => (
   <EpisodeWrapper>
-    <img alt={EpisodeTypeImages[type]?.label || type} src={EpisodeTypeImages[type]?.img || 'image_badge.png'} />
-    <div className="label">{EpisodeTypeImages[type]?.label || type}</div>
+    <img
+      alt={EpisodeTypeImages[type]?.label || type}
+      className="badge__img"
+      src={EpisodeTypeImages[type]?.img || 'image_badge.png'}
+    />
+    <div className="badge__label">{EpisodeTypeImages[type]?.label || type}</div>
   </EpisodeWrapper>
 )
 
@@ -42,13 +46,13 @@ const EpisodeWrapper = styled(Flex).attrs({
   border-radius: 3px;
   overflow: hidden;
 
-  img {
+  .badge__img {
     width: 14px;
     height: 14px;
     object-fit: cover;
   }
 
-  .label {
+  .badge__label {
     color: ${colors.BG1};
     font-family: Barlow;
     font-size: 8px;

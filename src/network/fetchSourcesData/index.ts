@@ -1,4 +1,5 @@
 import {
+  FetchEdgeTypesResponse,
   FetchEdgesResponse,
   FetchRadarResponse,
   FetchTopicResponse,
@@ -56,6 +57,10 @@ export type TAddEdgeParams = {
   relationship: string
 }
 
+type TGetEdges = {
+  [key: string]: string
+}
+
 export type TtopicsParams = {
   muted?: string
   skip?: string
@@ -98,7 +103,18 @@ export const getStats = async () => {
 }
 
 export const getEdgeTypes = async () => {
-  const response = await api.get<FetchEdgesResponse>(`/curation/edge/type`)
+  const response = await api.get<FetchEdgeTypesResponse>(`/curation/edge/type`)
+
+  return response
+}
+
+export const getEdges = async (term: string, queryParams?: TGetEdges) => {
+  const response = await api.get<FetchEdgesResponse>(
+    `/curation/search/${term}?${new URLSearchParams({
+      exact_match: 'false',
+      ...queryParams,
+    }).toString()}`,
+  )
 
   return response
 }

@@ -1,12 +1,12 @@
-import { Button, Skeleton } from '@mui/material'
+import { Button } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { ClipLoader } from 'react-spinners'
 import { Flex } from '~/components/common/Flex'
-import { getTopicsData, postEdgeType } from '~/network/fetchSourcesData'
+import { getEdges, postEdgeType } from '~/network/fetchSourcesData'
 import { useSelectedNode } from '~/stores/useDataStore'
 import { useModal } from '~/stores/useModalStore'
-import { Topic } from '~/types'
+import { TEdge } from '~/types'
 import { colors } from '~/utils/colors'
 import { TitleEditor } from '../Title'
 
@@ -21,9 +21,9 @@ export const Body = () => {
   const [selectedType, setSelectedType] = useState('')
 
   const [topicIsLoading, setTopicIsLoading] = useState(false)
-  const [selectedTopic, setSelectedTopic] = useState<Topic | null>(null)
+  const [selectedToNode, setSelectedToNode] = useState<TEdge | null>(null)
 
-  const [actualNode, setActualNode] = useState<null | Topic>()
+  const [topicEdge, setTopicEdge] = useState<null | TEdge>()
 
   const selectedNode = useSelectedNode()
 
@@ -36,11 +36,13 @@ export const Body = () => {
       setTopicIsLoading(true)
 
       try {
-        const { data: topicData } = await getTopicsData({ search: selectedNode?.name })
+        if (selectedNode.type === 'topic') {
+          const { data } = await getEdges(selectedNode?.name, { exact_match: 'true', node_type: 'topic' })
 
-        const node = topicData.find((i) => i.topic === selectedNode.name)
+          const edge = data.find((i) => i.node_type === 'topic')
 
-        setActualNode(node)
+          setTopicEdge(edge)
+        }
       } catch (error) {
         console.log(error)
       } finally {
@@ -56,17 +58,19 @@ export const Body = () => {
   }
 
   const handleSave = async () => {
-    if (!selectedTopic || !actualNode) {
+    if (!selectedToNode || !topicEdge) {
       return
     }
 
     setLoading(true)
 
     try {
-      await postEdgeType({ from: actualNode.ref_id, to: selectedTopic?.ref_id, relationship: selectedType })
+      const nodeFrom = topicEdge || selectedToNode
 
-      const { ref_id: id } = actualNode
-      const { ref_id: selectedId } = selectedTopic
+      await postEdgeType({ from: nodeFrom.ref_id, to: selectedToNode?.ref_id, relationship: selectedType })
+
+      const { ref_id: id } = nodeFrom
+      const { ref_id: selectedId } = selectedToNode
 
       console.log(id, selectedId)
 
@@ -89,19 +93,19 @@ export const Body = () => {
     }
   }
 
-  const submitDisabled = loading || !selectedTopic || !selectedType
+  const submitDisabled = loading || !selectedToNode || !selectedType
 
   return (
     <FormProvider {...form}>
       {topicIsLoading ? (
-        <Flex my={24}>
-          <Skeleton />
+        <Flex align="center" my={24}>
+          <ClipLoader color={colors.BLUE_PRESS_STATE} size={24} />
         </Flex>
       ) : (
         <TitleEditor
-          from={actualNode ? actualNode.topic : ''}
-          onSelect={setSelectedTopic}
-          selectedTopic={selectedTopic}
+          from={topicEdge ? topicEdge?.search_value : selectedNode?.name || ''}
+          onSelect={setSelectedToNode}
+          selectedToNode={selectedToNode}
           selectedType={selectedType}
           setSelectedType={setSelectedType}
         />

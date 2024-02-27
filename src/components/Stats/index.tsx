@@ -6,17 +6,68 @@ import BudgetIcon from '~/components/Icons/BudgetIcon'
 import NodesIcon from '~/components/Icons/NodesIcon'
 import TwitterIcon from '~/components/Icons/TwitterIcon'
 import VideoIcon from '~/components/Icons/VideoIcon'
-import { getStats } from '~/network/fetchSourcesData'
+import { TStatParams, getStats } from '~/network/fetchSourcesData'
 import { useDataStore } from '~/stores/useDataStore'
 import { useUserStore } from '~/stores/useUserStore'
-import { formatNumberWithCommas, formatBudget } from '~/utils'
+import { TStats } from '~/types'
+import { formatBudget, formatNumberWithCommas } from '~/utils'
 import { colors } from '~/utils/colors'
+import DocumentIcon from '../Icons/DocumentIcon'
 import EpisodeIcon from '../Icons/EpisodeIcon'
 import { Flex } from '../common/Flex'
 
+export const StatsConfig = [
+  {
+    name: 'Nodes',
+    icon: <NodesIcon />,
+    key: 'numNodes',
+    dataKey: 'num_nodes',
+    mediaType: '',
+  },
+  {
+    name: 'Episodes',
+    icon: <EpisodeIcon />,
+    key: 'numEpisodes',
+    dataKey: 'num_episodes',
+    mediaType: 'episode',
+  },
+  {
+    name: 'Audio',
+    icon: <AudioIcon />,
+    key: 'numAudio',
+    dataKey: 'num_audio',
+    mediaType: 'audio',
+  },
+  {
+    name: 'Video',
+    icon: <VideoIcon />,
+    key: 'numVideo',
+    dataKey: 'num_video',
+    mediaType: 'video',
+  },
+  {
+    name: 'Twitter Spaces',
+    icon: <TwitterIcon />,
+    key: 'numTwitterSpace',
+    dataKey: 'num_tweet',
+    mediaType: 'twitter',
+  },
+  {
+    name: 'Document',
+    icon: <DocumentIcon />,
+    key: 'numDocuments',
+    dataKey: 'num_documents',
+    mediaType: 'document',
+  },
+]
+
 export const Stats = () => {
-  const [budget] = useUserStore((s) => [s.budget])
-  const [stats, setStats] = useDataStore((s) => [s.stats, s.setStats])
+  const [budget, setBudget] = useUserStore((s) => [s.budget, s.setBudget])
+  const [stats, setStats, fetchData] = useDataStore((s) => [s.stats, s.setStats, s.fetchData])
+
+  function handleStatClick(mediaType: string) {
+    fetchData(setBudget, { ...(mediaType ? { media_type: mediaType } : {}), skip_cache: 'true' })
+  }
 
   useEffect(() => {
     const run = async () => {
@@ -24,15 +75,13 @@ export const Stats = () => {
         const data = await getStats()
 
         if (data) {
-          setStats({
-            numAudio: formatNumberWithCommas(data.num_audio),
-            numContributors: formatNumberWithCommas(data.num_contributors),
-            numDaily: formatNumberWithCommas(data.num_daily),
-            numEpisodes: formatNumberWithCommas(data.num_episodes),
-            numNodes: formatNumberWithCommas(data.num_nodes),
-            numTwitterSpace: formatNumberWithCommas(data.num_twitter_space),
-            numVideo: formatNumberWithCommas(data.num_video),
+          const updatedStats: TStats = {}
+
+          StatsConfig.forEach(({ key, dataKey }) => {
+            updatedStats[key as keyof TStats] = formatNumberWithCommas(data[dataKey as keyof TStatParams] ?? 0)
           })
+
+          setStats(updatedStats)
         }
       } catch (e) {
         noop()
@@ -42,6 +91,7 @@ export const Stats = () => {
     if (!stats) {
       run()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setStats, stats])
 
   if (!stats) {
@@ -51,36 +101,16 @@ export const Stats = () => {
   return (
     <StatisticsContainer>
       <StatisticsWrapper>
-        <Stat>
-          <div className="icon">
-            <NodesIcon />
-          </div>
-          <div className="text">{stats.numNodes}</div>
-        </Stat>
-        <Stat>
-          <div className="icon">
-            <EpisodeIcon />
-          </div>
-          <div className="text">{stats.numEpisodes}</div>
-        </Stat>
-        <Stat>
-          <div className="icon">
-            <AudioIcon />
-          </div>
-          <div className="text">{stats.numAudio}</div>
-        </Stat>
-        <Stat>
-          <div className="icon">
-            <VideoIcon />
-          </div>
-          <div className="text">{stats.numVideo}</div>
-        </Stat>
-        <Stat>
-          <div className="icon">
-            <TwitterIcon />
-          </div>
-          <div className="text">{stats.numTwitterSpace}</div>
-        </Stat>
+        {StatsConfig.map(({ name, icon, key, mediaType }) =>
+          stats[key as keyof TStats] !== '0' ? (
+            <Stat key={name} onClick={() => handleStatClick(mediaType)}>
+              <div className="icon">{icon}</div>
+              <div className="text">{stats[key as keyof TStats]}</div>
+            </Stat>
+          ) : (
+            <></>
+          ),
+        )}
       </StatisticsWrapper>
       <StatisticsBudget>
         <Budget>
@@ -136,6 +166,7 @@ const Stat = styled(Flex).attrs({
   letter-spacing: 0.78px;
   margin: 0 8px;
   border-radius: 200px;
+  cursor: pointer;
 
   &:hover {
     background: ${colors.BUTTON1_PRESS};

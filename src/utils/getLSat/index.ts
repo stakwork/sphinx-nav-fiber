@@ -1,4 +1,6 @@
 import * as sphinx from 'sphinx-bridge'
+import { isE2E } from '~/constants'
+import { sphinxBridge } from '~/testSphinxBridge'
 import { isSphinx } from '../isSphinx'
 
 /**
@@ -22,9 +24,17 @@ export const getLSat = async (): Promise<string> => {
 
     // Check if sphinx app is active
     if (isSphinx()) {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      const storedLsat = await sphinx.getLsat(window.location.host)
+      let storedLsat
+
+      const { host } = window.location
+
+      if (!isE2E) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        storedLsat = await sphinx.getLsat(host)
+      } else {
+        storedLsat = await sphinxBridge.getLsat(host)
+      }
 
       if (storedLsat.macaroon) {
         window.localStorage.setItem(
