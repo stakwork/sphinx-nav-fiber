@@ -1,9 +1,10 @@
-import React from 'react'
-import { render } from '@testing-library/react'
+/* eslint-disable padding-line-between-statements */
 import '@testing-library/jest-dom'
-import { SelectedNodeView } from '../index'
+import { render } from '@testing-library/react'
+import React from 'react'
 import * as DataStore from '~/stores/useDataStore'
 import * as PlayerStore from '~/stores/usePlayerStore'
+import { SelectedNodeView } from '../index'
 
 jest.mock('~/stores/useDataStore', () => ({
   useDataStore: jest.fn(),
