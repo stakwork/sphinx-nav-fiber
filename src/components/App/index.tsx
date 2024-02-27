@@ -1,11 +1,13 @@
 import { Leva } from 'leva'
-import { Suspense, lazy, useCallback, useEffect } from 'react'
+import { Suspense, lazy, useCallback, useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import 'react-toastify/dist/ReactToastify.css'
 import { Socket } from 'socket.io-client'
 import styled from 'styled-components'
 import { DataRetriever } from '~/components/DataRetriever'
 import { GlobalStyle } from '~/components/GlobalStyle'
+import { Overlay } from '~/components/Universe/Overlay' // Import Overlay directly
+import { Preloader } from '~/components/Universe/Preloader' // Import Preloader directly
 import { Flex } from '~/components/common/Flex'
 import { isDevelopment } from '~/constants'
 import { useSocket } from '~/hooks/useSockets'
@@ -18,13 +20,13 @@ import { GraphData } from '~/types'
 import { colors } from '~/utils/colors'
 import { updateBudget } from '~/utils/setBudget'
 import version from '~/utils/versionHelper'
+import { ModalsContainer } from '../ModalsContainer'
 import { ActionsToolbar } from './ActionsToolbar'
 import { AppBar } from './AppBar'
 import { DeviceCompatibilityNotice } from './DeviceCompatibilityNotification'
 import { Helper } from './Helper'
 import { SecondarySideBar } from './SecondarySidebar'
 import { Toasts } from './Toasts'
-import { ModalsContainer } from '../ModalsContainer'
 
 const Wrapper = styled(Flex)`
   height: 100%;
@@ -47,6 +49,7 @@ const LazySideBar = lazy(() => import('./SideBar').then(({ SideBar }) => ({ defa
 
 export const App = () => {
   const [setBudget, setNodeCount] = useUserStore((s) => [s.setBudget, s.setNodeCount])
+  const [isLoading, setIsLoading] = useState(false)
 
   const [setSidebarOpen, searchTerm, setCurrentSearch, setRelevanceSelected, setTranscriptOpen] = [
     useAppStore((s) => s.setSidebarOpen),
@@ -96,9 +99,14 @@ export const App = () => {
 
   const repositionGraphDataAfterStyleChange = () => {
     if (data) {
+      setIsLoading(true)
+
       const updatedData: GraphData = getGraphDataPositions(graphStyle, data.nodes)
 
-      setData(updatedData)
+      setTimeout(() => {
+        setData(updatedData)
+        setIsLoading(false)
+      }, 1000)
     }
   }
 
@@ -147,6 +155,8 @@ export const App = () => {
               <LazyMainToolbar />
               <LazySideBar onSubmit={handleSubmit} />
               <LazyUniverse />
+              {isLoading && <Preloader fullSize={false} />}
+              <Overlay />
               <SecondarySideBar />
               <AppBar />
               <Version>v{version}</Version>
