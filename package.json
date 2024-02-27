@@ -75,7 +75,7 @@
     "preview": "vite preview --port 3004",
     "build-preview": "yarn run build && yarn run preview",
     "build-preview-e2e": "VITE_APP_IS_E2E=true yarn run build && vite preview --port 3000",
-    "test": "NODE_ENV=test yarn jest --coverage --no-cache --transformIgnorePatterns \"node_modules/(?!@ngrx|(?!d3-force-3d)|ng-dynamic)/\"",
+    "test": "NODE_ENV=test yarn jest --coverage --no-cache",
     "test-start": "yarn jest --watch",
     "test-coverage": "node ./cypress/coverageTest.js",
     "cy-open": "cypress open",
@@ -134,6 +134,9 @@
     "testEnvironment": "jsdom",
     "setupFilesAfterEnv": [
       "<rootDir>/jest.setup.js"
+    ],
+    "transformIgnorePatterns": [
+      "node_modules/(?!@ngrx|(?!d3-force-3d)|ng-dynamic)/"
     ]
   },
   "browserslist": {

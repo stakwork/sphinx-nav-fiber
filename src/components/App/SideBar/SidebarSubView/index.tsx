@@ -26,6 +26,7 @@ export const SideBarSubView = ({ open }: Props) => {
 
   return (
     <Slide
+      data-testid="sidebar-sub-view"
       direction="right"
       in={open}
       style={{ width: showTeachMe ? '700px' : '', position: open ? 'relative' : 'absolute' }}
