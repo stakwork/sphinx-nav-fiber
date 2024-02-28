@@ -27,7 +27,39 @@ function generateTopicNodePosition() {
 
   const center = {
     x: position.x + Math.random() * scale - scale * 0.5,
-    y: position.y + Math.random() * scale - scale * 0.5,
+    y: true ? 1200 : position.y + Math.random() * scale - scale * 0.5,
+    z: position.z + Math.random() * scale - scale * 0.5,
+  }
+
+  const perlinNoise = 1
+
+  const amp = 10
+
+  return new Vector3(center.x + perlinNoise * amp, center.y + perlinNoise * amp, center.z + perlinNoise * amp)
+}
+
+function generateCustomNodePosition() {
+  const { scale, position } = topicCube
+
+  const center = {
+    x: position.x + Math.random() * scale - scale * 0.5,
+    y: true ? -1200 : position.y + Math.random() * scale - scale * 0.5,
+    z: position.z + Math.random() * scale - scale * 0.5,
+  }
+
+  const perlinNoise = 1
+
+  const amp = 10
+
+  return new Vector3(center.x + perlinNoise * amp, center.y + perlinNoise * amp, center.z + perlinNoise * amp)
+}
+
+function generateOrgNodePosition() {
+  const { scale, position } = topicCube
+
+  const center = {
+    x: position.x + Math.random() * scale - scale * 0.5,
+    y: true ? 0 : position.y + Math.random() * scale - scale * 0.5,
     z: position.z + Math.random() * scale - scale * 0.5,
   }
 
@@ -48,6 +80,10 @@ export const generateSplitGraphPositions = (nodes: NodeNew[], edges: EdgeNew[]) 
 
     if (node.node_type === 'Topic') {
       position = generateTopicNodePosition()
+    } else if (node.node_type === 'Organization') {
+      position = generateOrgNodePosition()
+    } else {
+      position = generateCustomNodePosition()
     }
 
     const updated = {

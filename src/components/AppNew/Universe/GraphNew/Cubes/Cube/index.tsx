@@ -49,7 +49,7 @@ export const Cube = memo(({ node, hide, animated }: Props) => {
       return 1 * 1.2
     }
 
-    return 1
+    return 10
   }, [isSelected, showSelectionGraph])
 
   return (

@@ -76,7 +76,7 @@ const getGraphData = async (
   try {
     const dataInit = await fetchNodes(setBudget, params)
 
-    const graphData: FetchGDataResponse | null = false ? MOCKED_NODES_EDGES : dataInit
+    const graphData: FetchGDataResponse | null = true ? MOCKED_NODES_EDGES : dataInit
 
     if (graphData) {
       return formatFetchNodes(graphData, graphStyle)

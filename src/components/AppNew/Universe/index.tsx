@@ -8,6 +8,7 @@ import { BlendFunction, Resolution } from 'postprocessing'
 import { Perf } from 'r3f-perf'
 import { Suspense, memo, useCallback, useMemo } from 'react'
 import styled from 'styled-components'
+import { AxesHelper, GridHelper } from 'three'
 import { getNodeColorByType } from '~/components/Universe/Graph/constant'
 import { Flex } from '~/components/common/Flex'
 import { isDevelopment } from '~/constants'
@@ -127,6 +128,9 @@ const _Universe = () => {
       <Suspense fallback={null}>
         <Canvas camera={cameraProps} id="universe-canvas" onCreated={onCreatedHandler} onWheel={onWheelHandler}>
           {isDevelopment && <Perf position="top-right" />}
+          {isDevelopment && <primitive object={new AxesHelper(10000)} />}
+          {isDevelopment && <primitive object={new GridHelper(10000)} />}
+          {isDevelopment && <primitive object={new GridHelper(10000)} position={[0, 1200, 0]} />}
           <Suspense fallback={<Fallback />}>
             <Preload />
 
