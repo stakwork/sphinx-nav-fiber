@@ -7,11 +7,12 @@ import LinkIcon from '~/components/Icons/LinkIcon'
 import { Avatar } from '~/components/common/Avatar'
 import { Divider } from '~/components/common/Divider'
 import { Flex } from '~/components/common/Flex'
+import { highlightSearchTerm } from '~/components/common/Highlight/Highlight'
 import { useAppStore } from '~/stores/useAppStore'
 import { useSelectedNode } from '~/stores/useDataStore'
 import { colors } from '~/utils/colors'
 import { BoostAmt } from '../../Helper/BoostAmt'
-import { Date, highlightSearchTerm } from '../Relevance/Episode'
+import { Date } from '../Relevance/Episode'
 
 export const TwitData = () => {
   const selectedNode = useSelectedNode()

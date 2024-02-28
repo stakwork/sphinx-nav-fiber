@@ -1,13 +1,13 @@
 import styled from 'styled-components'
 import { Avatar } from '~/components/common/Avatar'
 import { Flex } from '~/components/common/Flex'
+import { highlightSearchTerm } from '~/components/common/Highlight/Highlight'
 import { Text } from '~/components/common/Text'
 import { TypeBadge } from '~/components/common/TypeBadge'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
 import { NodeExtended } from '~/types'
 import { colors } from '~/utils'
-import { highlightSearchTerm } from '../../Relevance/Episode'
 
 export const CREATOR_HEADING_HEIGHT = 240
 

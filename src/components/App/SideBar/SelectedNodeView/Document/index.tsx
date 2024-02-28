@@ -6,11 +6,11 @@ import LinkIcon from '~/components/Icons/LinkIcon'
 import PauseIcon from '~/components/Icons/PauseIcon'
 import PlayIcon from '~/components/Icons/PlayIcon'
 import { Flex } from '~/components/common/Flex'
+import { highlightSearchTerm } from '~/components/common/Highlight/Highlight'
 import { Text } from '~/components/common/Text'
 import { useAppStore } from '~/stores/useAppStore'
 import { useSelectedNode } from '~/stores/useDataStore'
 import { colors } from '~/utils'
-import { highlightSearchTerm } from '../../Relevance/Episode'
 
 export const Document = () => {
   const [playing, setPlaying] = useState(false)

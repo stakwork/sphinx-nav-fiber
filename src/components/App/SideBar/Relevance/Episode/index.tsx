@@ -144,18 +144,6 @@ export const Episode = ({
   ) : null
 }
 
-export function highlightSearchTerm(sDescription: string, sTerm: string | null) {
-  if (!sTerm?.trim()) {
-    return sDescription
-  }
-
-  const regex = new RegExp(`(${sTerm})`, 'gi')
-  const parts = sDescription.split(regex)
-
-  // eslint-disable-next-line react/no-array-index-key
-  return <>{parts.map((part, index) => (regex.test(part) ? <Highlight key={index}>{part}</Highlight> : part))}</>
-}
-
 export const Description = styled(Flex)`
   font-family: Barlow;
   font-size: 13px;
@@ -255,12 +243,4 @@ const StyledLink = styled.a`
   color: ${colors.GRAY6};
   font-size: 16px;
   height: 16px;
-`
-
-const Highlight = styled.span`
-  background-color: rgba(0, 123, 255, 0.4);
-  padding: 2;
-  margin: 0;
-  border-radius: 3px;
-  color: inherit;
 `

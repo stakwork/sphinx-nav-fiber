@@ -1,10 +1,10 @@
 import styled from 'styled-components'
 import NotesIcon from '~/components/Icons/NotesIcon'
 import { Flex } from '~/components/common/Flex'
+import { highlightSearchTerm } from '~/components/common/Highlight/Highlight'
 import { Text } from '~/components/common/Text'
 import { NodeExtended } from '~/types'
 import { colors } from '~/utils/colors'
-import { highlightSearchTerm } from '../Relevance/Episode'
 
 type DescriptionProps = {
   stateless?: boolean
