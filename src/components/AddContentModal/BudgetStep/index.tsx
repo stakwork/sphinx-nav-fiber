@@ -1,5 +1,6 @@
 import { Button } from '@mui/material'
 import { FC, useEffect, useState } from 'react'
+import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
 import CheckIcon from '~/components/Icons/CheckIcon'
 import { Flex } from '~/components/common/Flex'
@@ -61,11 +62,11 @@ export const BudgetStep: FC<Props> = ({ onClick, loading, type }) => {
           disabled={loading}
           onClick={onClick}
           size="large"
-          startIcon={<CheckIcon />}
+          startIcon={loading ? null : <CheckIcon />}
           type="submit"
           variant="contained"
         >
-          Approve
+          {loading ? <ClipLoader size={24} /> : 'Approve'}
         </Button>
       </Flex>
     </Flex>
