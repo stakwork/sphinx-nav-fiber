@@ -164,4 +164,15 @@ describe('Trending Component', () => {
       })
     })()
   })
+
+  test('Add tests to check that this scroll bar renders correctly', () => {
+    const { container } = render(<Trending />)
+    const scrollbar = container.firstChild
+
+    // Assert that scrollbar exists
+    expect(scrollbar).toBeInTheDocument()
+
+    // Assert that scrollbar has correct width
+    expect(scrollbar).toHaveStyle('width: 3')
+  })
 })
