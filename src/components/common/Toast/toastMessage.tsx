@@ -1,5 +1,5 @@
 import { MdCheckCircle, MdWarning } from 'react-icons/md'
-import { toast, ToastContentProps } from 'react-toastify'
+import { ToastContentProps, TypeOptions, toast } from 'react-toastify'
 import * as sphinx from 'sphinx-bridge'
 import styled from 'styled-components'
 import { Text } from '~/components/common/Text'
@@ -57,7 +57,7 @@ export const ToastMessage = ({ message }: Partial<Props>) => {
   return <div>{message}</div>
 }
 
-export const notify = (message: string) => {
+export const notify = (message: string, type?: TypeOptions) => {
   toast(<ToastMessage message={message} />, {
     icon:
       message === NODE_ADD_SUCCESS ? (
@@ -66,7 +66,7 @@ export const notify = (message: string) => {
         <MdWarning color={colors.primaryRed} />
       ),
     position: toast.POSITION.BOTTOM_CENTER,
-    type: message === NODE_ADD_SUCCESS ? 'success' : 'error',
+    type: type || message === NODE_ADD_SUCCESS ? 'success' : 'error',
   })
 }
 

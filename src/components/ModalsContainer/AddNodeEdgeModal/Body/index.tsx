@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { ClipLoader } from 'react-spinners'
 import { Flex } from '~/components/common/Flex'
+import { notify } from '~/components/common/Toast/toastMessage'
+import { NODE_ADD_ERROR } from '~/constants'
 import { getEdges, postEdgeType } from '~/network/fetchSourcesData'
 import { useSelectedNode } from '~/stores/useDataStore'
 import { useModal } from '~/stores/useModalStore'
@@ -10,12 +12,14 @@ import { TEdge } from '~/types'
 import { colors } from '~/utils/colors'
 import { TitleEditor } from '../Title'
 
+const EDGE_ADD_SUCCESS = 'Link sucessfully created!'
+
 export type FormData = {
   topic: string
 }
 
 export const Body = () => {
-  const { close } = useModal('editNodeName')
+  const { close } = useModal('addEdgeToNode')
   const form = useForm<FormData>({ mode: 'onChange' })
   const [loading, setLoading] = useState(false)
   const [selectedType, setSelectedType] = useState('')
@@ -84,10 +88,12 @@ export const Body = () => {
       //     }
 
       //     useTopicsStore.setState({ data: newData })
+      notify(EDGE_ADD_SUCCESS, 'success')
 
       closeHandler()
     } catch (error) {
       console.warn(error)
+      notify(NODE_ADD_ERROR)
     } finally {
       setLoading(false)
     }
