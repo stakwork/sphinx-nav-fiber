@@ -80,6 +80,10 @@ export const colors = {
   BUTTON1_PRESS: 'rgba(41, 44, 56, 1)',
   PRIMARY_BLUE_BORDER: 'rgba(80, 120, 242, 1)',
   BLUE_PRESS_STATE: 'rgba(57, 97, 220, 1)',
+  DROPDOWN_SELECTED: 'rgba(97, 138, 255, 0.2)',
+  DROPDOWN_HOVER: 'rgba(0, 0, 0, 0.07)',
+  DROPDOWN_BG: 'rgba(48, 51, 66, 1)',
+  SCROLL_BAR: 'rgba(255, 255, 255, 0.1)',
 } as const
 
 export type ColorName = keyof typeof colors
