@@ -1,10 +1,10 @@
 import { Segments } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import { memo, useEffect } from 'react'
-import { useGraphData } from '~/components/DataRetriever'
-import { generateLinksFromNodeData } from '~/network/fetchGraphData'
+import { EdgeExtendedNew, NodeExtendedNew } from '~/network/fetchGraphDataNew/types'
 import { useGraphStore, useSelectedNode } from '~/stores/useGraphStore'
-import { ForceSimulation, runForceSimulation } from '~/transformers/forceSimulation'
+import { ForceSimulation } from '~/transformers/forceSimulation'
+import { runForceSimulationNew } from '~/transformers/forceSimulationNew'
 import { GraphData } from '~/types'
 import { Segment } from '../../Segment'
 import { Cube } from '../Cube'
@@ -13,31 +13,23 @@ import { TextNode } from '../Text'
 let simulation2d: ForceSimulation | null = null
 
 export const SelectionDataNodes = memo(() => {
-  const data = useGraphData()
   const selectedNode = useSelectedNode()
 
-  const selectedNodeRelativeIds = useGraphStore((s) => s.selectedNodeRelativeIds)
+  const [data, selectedNodeRelativeIds] = useGraphStore((s) => [s.data, s.selectedNodeRelativeIds])
 
   const selectionGraphData = useGraphStore((s) => s.selectionGraphData)
   const setSelectionData = useGraphStore((s) => s.setSelectionData)
 
   useEffect(() => {
-    const nodes = data.nodes
-      .filter((f) => f.ref_id === selectedNode?.ref_id || selectedNodeRelativeIds.includes(f?.ref_id || ''))
-      .map((n) => {
-        const fixedPosition =
-          n.ref_id === selectedNode?.ref_id && n.node_type !== 'topic' ? { fx: 0, fy: 0, fz: 0 } : {}
+    const nodes: NodeExtendedNew[] = []
 
-        return { ...n, x: 0, y: 0, z: 0, ...fixedPosition }
-      })
-
-    const links = generateLinksFromNodeData(nodes, false, false)
+    const links: EdgeExtendedNew[] = []
 
     setSelectionData({ nodes, links })
   }, [data, selectedNode, selectedNodeRelativeIds, setSelectionData])
 
   useEffect(() => {
-    simulation2d = runForceSimulation(selectionGraphData.nodes, selectionGraphData.links, {
+    simulation2d = runForceSimulationNew(selectionGraphData.nodes, selectionGraphData.links, {
       numDimensions: 2,
       forceLinkStrength: 0.01,
       forceCenterStrength: 0.85,
@@ -60,10 +52,10 @@ export const SelectionDataNodes = memo(() => {
     <>
       {selectionGraphData?.nodes.map((node) => {
         if (node.node_type === 'topic') {
-          return <TextNode key={`${node.ref_id || node.id}-compact`} hide node={node} />
+          return <TextNode key={`${node.ref_id || node.ref_id}-compact`} hide node={node} />
         }
 
-        return <Cube key={`${node.ref_id || node.id}-compact`} animated hide node={node} />
+        return <Cube key={`${node.ref_id || node.ref_id}-compact`} animated hide node={node} />
       })}
 
       <Segments

@@ -2,17 +2,17 @@ import { FC } from 'react'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
-import { NodeNew } from '~/network/fetchGraphDataNew/types'
+import { NodeExtendedNew } from '~/network/fetchGraphDataNew/types'
 import { colors } from '~/utils/colors'
 import { ConnectionType } from './ConnectionType'
 import { ToNode } from './ToNode'
 
 type Props = {
   from: string
-  onSelect: (edge: NodeNew | null) => void
+  onSelect: (edge: NodeExtendedNew | null) => void
   selectedType: string
   setSelectedType: (type: string) => void
-  selectedToNode: NodeNew | null
+  selectedToNode: NodeExtendedNew | null
 }
 
 export const TitleEditor: FC<Props> = ({ from, onSelect, selectedType, setSelectedType, selectedToNode }) => (

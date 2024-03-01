@@ -4,7 +4,7 @@ import clsx from 'clsx'
 import { Fragment, memo, useEffect, useMemo, useRef } from 'react'
 import { Group, Vector3 } from 'three'
 import { getNodeColorByType } from '~/components/Universe/Graph/constant'
-import { maxChildrenDisplayed, nodesAreRelatives } from '~/components/Universe/constants'
+import { maxChildrenDisplayed } from '~/components/Universe/constants'
 import { Avatar } from '~/components/common/Avatar'
 import { TypeBadge } from '~/components/common/TypeBadge'
 import { useGraphStore, useSelectedNode } from '~/stores/useGraphStore'
@@ -79,14 +79,9 @@ const NodeBadge = ({ position, userData, color }: BadgeProps) => {
             </div>
           ) : null}
           {isTopic ? (
-            userData?.label
+            userData?.name
           ) : (
-            <Avatar
-              rounded={isPerson}
-              size={isSelected ? 60 : 52}
-              src={userData?.image_url || 'audio_default.svg'}
-              type={userData?.node_type}
-            />
+            <Avatar rounded={isPerson} size={isSelected ? 60 : 52} src="audio_default.svg" type={userData?.node_type} />
           )}
         </Tag>
       </Html>
@@ -112,8 +107,7 @@ export const RelevanceBadges = memo(() => {
       const color = getNodeColorByType(n.node_type || '', true) as string
       const position = new Vector3(n?.x || 0, n?.y || 0, n?.z || 0)
 
-      const relativeIds =
-        (data?.nodes || []).filter((f) => f.ref_id && nodesAreRelatives(f, n)).map((nd) => nd?.ref_id || '') || []
+      const relativeIds: string[] = []
 
       return (
         <NodeBadge

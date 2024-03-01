@@ -9,7 +9,7 @@ const LazyAppNew = lazy(() => import('../AppNew').then(({ AppNew }) => ({ defaul
 export const AppContainer = () => {
   const [authenticated, setAuthenticated] = useState(false)
 
-  const App = true ? <LazyAppNew /> : <LazyApp />
+  const App = false ? <LazyAppNew /> : <LazyApp />
 
   return (
     <AppProviders>

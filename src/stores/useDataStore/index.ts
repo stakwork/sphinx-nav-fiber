@@ -2,14 +2,13 @@ import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
 import { nodesAreRelatives } from '~/components/Universe/constants'
 import { isChileGraph } from '~/constants'
-import { fetchGraphData } from '~/network/fetchGraphDataNew'
-import { EdgeExtended, NodeExtended } from '~/network/fetchGraphDataNew/types'
-import { GraphData, NodeType, Sources, TStats, Trending } from '~/types'
+import { fetchGraphData } from '~/network/fetchGraphData'
+import { GraphData, Link, NodeExtended, NodeType, Sources, TStats, Trending } from '~/types'
 import { saveSearchTerm } from '~/utils/relayHelper/index'
 
-export type GraphStyle = 'sphere' | 'force' | 'split' | 'earth' | 'v2'
+export type GraphStyle = 'sphere' | 'force' | 'split' | 'earth'
 
-export const graphStyles: GraphStyle[] = ['sphere', 'force', 'split', 'earth', 'v2']
+export const graphStyles: GraphStyle[] = ['sphere', 'force', 'split', 'earth']
 
 export type FetchNodeParams = {
   word?: string
@@ -23,7 +22,7 @@ export type DataStore = {
   categoryFilter: NodeType | null
   disableCameraRotation: boolean
   graphRadius: number | null
-  data: { nodes: NodeExtended[]; links: EdgeExtended[] } | null
+  data: { nodes: NodeExtended[]; links: Link[] } | null
   selectionGraphData: GraphData
   graphStyle: GraphStyle
   isFetching: boolean

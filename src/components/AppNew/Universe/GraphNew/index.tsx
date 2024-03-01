@@ -53,7 +53,7 @@ export const GraphNew = () => {
     <>
       {true && <Cubes />}
       {false && <Particles />}
-      {false && data?.links?.length && <Connections connections={data?.links || []} />}
+      {false && <Connections connections={data?.links || []} />}
       {graphStyle !== 'earth' && (
         <Segments
           /** NOTE: using the key in this way the segments re-mounts

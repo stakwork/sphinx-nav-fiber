@@ -1,6 +1,5 @@
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
-import { nodesAreRelatives } from '~/components/Universe/constants'
 import { isChileGraph } from '~/constants'
 import { fetchGraphData } from '~/network/fetchGraphDataNew'
 import { EdgeExtendedNew, NodeExtendedNew, NormalizedNodes } from '~/network/fetchGraphDataNew/types'
@@ -9,8 +8,8 @@ import { saveSearchTerm } from '~/utils/relayHelper/index'
 export type GraphStyle = 'sphere' | 'force' | 'split' | 'earth' | 'v2'
 
 type GraphData = {
-  nodes: NodeExtendedNew
-  links: EdgeExtendedNew
+  nodes: NodeExtendedNew[]
+  links: EdgeExtendedNew[]
 }
 
 export const graphStyles: GraphStyle[] = ['sphere', 'force', 'split', 'earth', 'v2']
@@ -35,7 +34,6 @@ export type GraphStore = {
   selectedNodeRelativeIds: string[]
   nearbyNodeIds: string[]
   showSelectionGraph: boolean
-  hideNodeDetails: boolean
   nodesNormalized: NormalizedNodes
 
   setDisableCameraRotation: (rotation: boolean) => void
@@ -51,7 +49,6 @@ export type GraphStore = {
   setNearbyNodeIds: (_: string[]) => void
   setShowSelectionGraph: (_: boolean) => void
   setSelectionData: (data: GraphData) => void
-  setHideNodeDetails: (_: boolean) => void
   addNewNode: (node: NodeExtendedNew) => void
   addNewLink: (node: EdgeExtendedNew) => void
 }
@@ -61,7 +58,6 @@ const defaultData: Omit<
   | 'fetchData'
   | 'setIsFetching'
   | 'setData'
-  | 'setCameraAnimation'
   | 'setDisableCameraRotation'
   | 'setHoveredNode'
   | 'setSelectedNode'
@@ -71,7 +67,7 @@ const defaultData: Omit<
   | 'setNearbyNodeIds'
   | 'setShowSelectionGraph'
   | 'setSelectionData'
-  | 'setHideNodeDetails'
+  | 'addNewNode'
   | 'addNewLink'
 > = {
   data: null,
@@ -85,6 +81,8 @@ const defaultData: Omit<
   selectedNodeRelativeIds: [],
   nearbyNodeIds: [],
   showSelectionGraph: false,
+  nodesNormalized: {},
+  isFetching: false,
 }
 
 export const useGraphStore = create<GraphStore>()(
@@ -117,12 +115,10 @@ export const useGraphStore = create<GraphStore>()(
         data,
         nodesNormalized,
         isFetching: false,
-        sphinxModalIsOpen: false,
         disableCameraRotation: false,
         nearbyNodeIds: [],
         selectedNodeRelativeIds: [],
         showSelectionGraph: false,
-        showTeachMe: false,
       })
     },
     setIsFetching: (isFetching) => set({ isFetching }),
@@ -138,8 +134,9 @@ export const useGraphStore = create<GraphStore>()(
       if (stateSelectedNode?.ref_id !== selectedNode?.ref_id) {
         const { data } = get()
 
-        const relativeIds =
-          data?.nodes.filter((f) => f.ref_id && nodesAreRelatives(f, selectedNode)).map((n) => n?.ref_id || '') || []
+        console.log(data)
+
+        const relativeIds: string[] = []
 
         set({
           hoveredNode: null,
@@ -158,7 +155,6 @@ export const useGraphStore = create<GraphStore>()(
       }
     },
     setShowSelectionGraph: (showSelectionGraph) => set({ showSelectionGraph }),
-    setHideNodeDetails: (hideNodeDetails) => set({ hideNodeDetails }),
     addNewNode: (node) => {
       const { data } = get()
 

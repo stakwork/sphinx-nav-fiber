@@ -9,10 +9,7 @@ export const Layer = () => {
   const boxRef = useRef()
   const { camera } = useThree()
 
-  const handleClick = (e) => {
-    console.log(123)
-    e.stopPropagation()
-
+  const handleClick = () => {
     // const position = new Vector3(300, 300, 300)
 
     // Focus camera on the box

@@ -27,7 +27,7 @@ export const fetchGraphData = async (
   graphStyle: 'split' | 'force' | 'sphere' | 'earth' | 'v2',
   setBudget: (value: number | null) => void,
   params: FetchNodeParams,
-): Promise<GraphDataNew> => {
+): Promise<GraphDataNew | undefined> => {
   try {
     return getGraphData(graphStyle, setBudget, params)
   } catch (e) {
@@ -108,9 +108,6 @@ export const formatFetchNodes = (
   console.log(graphStyle)
 
   const dataWithPositions: GraphDataNew = generateSplitGraphPositions(nodes, edges)
-  const { links } = dataWithPositions
 
-  nodes = dataWithPositions.nodes
-
-  return { links, nodes }
+  return dataWithPositions
 }

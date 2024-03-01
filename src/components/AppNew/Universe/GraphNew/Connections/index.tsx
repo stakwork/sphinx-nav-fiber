@@ -23,29 +23,33 @@ export const Connections = ({ connections }: Props) => {
     }
   })
 
-  return connections.map((connection: EdgeExtendedNew) => {
-    const vect = new Vector3(0, 0, 0)
+  return (
+    <>
+      {connections.map((connection: EdgeExtendedNew) => {
+        const vect = new Vector3(0, 0, 0)
 
-    const midpoint = vect.addVectors(connection.sourcePosition, connection.targetPosition).divideScalar(2)
+        const midpoint = vect.addVectors(connection.sourcePosition, connection.targetPosition).divideScalar(2)
 
-    return (
-      <Text
-        key={connection.source}
-        ref={ref}
-        anchorX="center"
-        anchorY="middle"
-        color={colors.white}
-        fillOpacity={1}
-        position={[midpoint.x, midpoint.y, midpoint.z]}
-        scale={20}
-        userData={connection}
-        visible
-        {...fontProps}
-      >
-        {connection.edge_type}
-      </Text>
-    )
-  })
+        return (
+          <Text
+            key={connection.source}
+            ref={ref}
+            anchorX="center"
+            anchorY="middle"
+            color={colors.white}
+            fillOpacity={1}
+            position={[midpoint.x, midpoint.y, midpoint.z]}
+            scale={20}
+            userData={connection}
+            visible
+            {...fontProps}
+          >
+            {connection.edge_type}
+          </Text>
+        )
+      })}
+    </>
+  )
 }
 
 Connections.displayName = 'Connections'

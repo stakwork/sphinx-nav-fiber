@@ -4,10 +4,10 @@ import { Camera, useFrame, useThree } from '@react-three/fiber'
 import { RefObject, useEffect, useMemo, useState } from 'react'
 import { Vector3 } from 'three'
 import { playInspectSound } from '~/components/common/Sounds'
+import { NodeExtendedNew } from '~/network/fetchGraphDataNew/types'
 import { useControlStore } from '~/stores/useControlStore'
 import { useGraphStore, useSelectedNode } from '~/stores/useGraphStore'
 import { getPointAbove } from '~/transformers/earthGraph'
-import { NodeExtendedNew } from '~/types'
 import { getNearbyNodeIds } from '../constants'
 import { arriveDistance, selectionGraphCameraPosition, selectionGraphDistance, topicArriveDistance } from './constants'
 
@@ -50,9 +50,7 @@ export const useAutoNavigate = (cameraControlsRef: RefObject<CameraControls | nu
 
     if (selected && graphData) {
       // find all node children ... is there a better way?
-      const children: NodeExtendedNew[] = graphData?.nodes.filter((node) =>
-        selected.children?.find((str) => str === node.id),
-      )
+      const children: NodeExtendedNew[] = []
 
       // position of node
       const spos = new Vector3(selected.x, selected.y, selected.z)
@@ -66,7 +64,7 @@ export const useAutoNavigate = (cameraControlsRef: RefObject<CameraControls | nu
       })
 
       // offset from node based on children
-      const sizeOffset = selected.scale ? 1 - 1 / (selected.scale + 10) : 1
+      const sizeOffset = selected.edge_count ? 1 - 1 / (selected.edge_count + 10) : 1
       const offset = spos.sub(avgDir).multiplyScalar(0.8 * sizeOffset)
 
       pos = spos.add(offset)

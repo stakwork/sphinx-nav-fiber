@@ -9,7 +9,7 @@ import { NodeExtendedNew } from '~/network/fetchGraphDataNew/types'
 import { useGraphStore } from '~/stores/useGraphStore'
 import { useModal } from '~/stores/useModalStore'
 import { useUserStore } from '~/stores/useUserStore'
-import { NodeExtended, SubmitErrRes } from '~/types'
+import { SubmitErrRes } from '~/types'
 import { executeIfProd, getLSat, payLsat, updateBudget } from '~/utils'
 import { BudgetStep } from './BudgetStep'
 import { SourceStep } from './SourceStep'
@@ -132,19 +132,14 @@ export const AddItemModal = () => {
     const newId = `new-id-${Math.random()}`
     const newType = data.nodeType.toLocaleLowerCase()
 
-    const node: NodeExtended = {
+    const node: NodeExtendedNew = {
       name: data.name,
-      type: newType,
-      label: data.name,
       node_type: newType,
-      id: newId,
       ref_id: newId,
       x: Math.random(),
       y: Math.random(),
       z: Math.random(),
-      date: parseInt((new Date().getTime() / 1000).toFixed(0), 10),
-      weight: 4,
-      ...(data.sourceLink ? { source_link: data.sourceLink } : {}),
+      date_added_to_graph: parseInt((new Date().getTime() / 1000).toFixed(0), 10),
     }
 
     addNewNode(node)

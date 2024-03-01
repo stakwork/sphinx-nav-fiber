@@ -1,22 +1,12 @@
 import styled from 'styled-components'
 import { ActionsToolbar } from '~/components/App/ActionsToolbar'
-import { Tooltip } from '~/components/Universe/GraphNew/Cubes/Cube/components/Tooltip'
-import { useDataStore } from '~/stores/useDataStore'
 
-export const Overlay = () => {
-  const [hoveredNode] = useDataStore((s) => [s.hoveredNode])
-
-  return (
-    <OverlayWrap>
-      {hoveredNode && (
-        <div id="tooltip-portal">
-          <Tooltip node={hoveredNode} />
-        </div>
-      )}
-      <ActionsToolbar />
-    </OverlayWrap>
-  )
-}
+export const Overlay = () => (
+  <OverlayWrap>
+    <div id="tooltip-portal" />
+    <ActionsToolbar />
+  </OverlayWrap>
+)
 
 const OverlayWrap = styled('div')(({ theme }) => ({
   position: 'absolute',

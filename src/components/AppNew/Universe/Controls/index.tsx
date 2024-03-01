@@ -1,8 +1,10 @@
+/* eslint-disable */
+
 import { CameraControls } from '@react-three/drei'
 import { useThree } from '@react-three/fiber'
 import { useEffect, useRef, useState } from 'react'
 import { useControlStore } from '~/stores/useControlStore'
-import { useDataStore } from '~/stores/useDataStore'
+import { useGraphStore } from '~/stores/useGraphStore'
 import { useCameraAnimations } from './CameraAnimations'
 import { initialCameraPosition } from './CameraAnimations/constants'
 import { getNearbyNodeIds } from './constants'
@@ -13,10 +15,10 @@ type Props = {
 
 export const Controls = ({ disableAnimations }: Props) => {
   const cameraControlsRef = useRef<CameraControls | null>(null)
-  const graphStyle = useDataStore((s) => s.graphStyle)
-  const data = useDataStore((s) => s.data)
-  const setNearbyNodeIds = useDataStore((s) => s.setNearbyNodeIds)
-  const setDisableCameraRotation = useDataStore((s) => s.setDisableCameraRotation)
+  const graphStyle = useGraphStore((s) => s.graphStyle)
+  const data = useGraphStore((s) => s.data)
+  const setNearbyNodeIds = useGraphStore((s) => s.setNearbyNodeIds)
+  const setDisableCameraRotation = useGraphStore((s) => s.setDisableCameraRotation)
 
   const [smoothTime] = useState(0.8)
   const { camera } = useThree()

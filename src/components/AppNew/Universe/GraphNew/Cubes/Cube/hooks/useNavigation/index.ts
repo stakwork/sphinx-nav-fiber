@@ -3,8 +3,8 @@ import { useFrame } from '@react-three/fiber'
 import { RefObject, useCallback, useEffect, useMemo, useState } from 'react'
 import * as THREE from 'three'
 import { variableVector3 } from '~/components/Universe/constants'
+import { NodeExtendedNew } from '~/network/fetchGraphDataNew/types'
 import { useSelectedNode } from '~/stores/useGraphStore'
-import { NodeExtended } from '~/types'
 
 export const useNavigation = (thisNodeRef: RefObject<THREE.Mesh | null>) => {
   const selectedNode = useSelectedNode()
@@ -57,7 +57,7 @@ export const useNavigation = (thisNodeRef: RefObject<THREE.Mesh | null>) => {
   }, [selectedNode])
 
   const moveToNode = useCallback(
-    (thisNode: THREE.Mesh, toNode: NodeExtended) => {
+    (thisNode: THREE.Mesh, toNode: NodeExtendedNew) => {
       const mesh = variableVector3.set(toNode.x + offsets.x, toNode.y + offsets.y, toNode.z + offsets.z)
 
       const distance = thisNode.position.distanceTo(mesh)

@@ -2,13 +2,13 @@ import { Text } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import { memo, useMemo, useRef } from 'react'
 import { Mesh } from 'three'
-import { NodeExtended } from '~/network/fetchGraphDataNew/types'
+import { NodeExtendedNew } from '~/network/fetchGraphDataNew/types'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { colors } from '~/utils/colors'
 import { fontProps } from './constants'
 
 type Props = {
-  node: NodeExtended
+  node: NodeExtendedNew
   hide?: boolean
 }
 

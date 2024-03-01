@@ -1,11 +1,11 @@
 import { FC } from 'react'
 import { AutoComplete, TAutocompleteOption } from '~/components/common/AutoComplete'
-import { NodeNew } from '~/network/fetchGraphDataNew/types'
+import { NodeExtendedNew } from '~/network/fetchGraphDataNew/types'
 import { useGraphStore } from '~/stores/useGraphStore'
 
 type Props = {
-  onSelect: (topic: NodeNew | null) => void
-  selectedValue: NodeNew | null
+  onSelect: (topic: NodeExtendedNew | null) => void
+  selectedValue: NodeExtendedNew | null
 }
 
 export const ToNode: FC<Props> = ({ onSelect, selectedValue }) => {
@@ -17,9 +17,9 @@ export const ToNode: FC<Props> = ({ onSelect, selectedValue }) => {
     onSelect(option || null)
   }
 
-  const resolveOption = (i: NodeNew) => ({ label: i.name as string, value: i.ref_id, type: i.node_type })
+  const resolveOption = (i: NodeExtendedNew) => ({ label: i.name as string, value: i.ref_id, type: i.node_type })
 
-  const resolveOptions = (values: NodeNew[]) => values.map(resolveOption)
+  const resolveOptions = (values: NodeExtendedNew[]) => values.map(resolveOption)
 
   return (
     <AutoComplete

@@ -5,10 +5,8 @@ import { ClipLoader } from 'react-spinners'
 import { Vector3 } from 'three'
 import { Flex } from '~/components/common/Flex'
 import { NodeExtendedNew } from '~/network/fetchGraphDataNew/types'
-import { getTopicsData, postEdgeType } from '~/network/fetchSourcesData'
 import { useGraphStore } from '~/stores/useGraphStore'
 import { useModal } from '~/stores/useModalStore'
-import { Topic } from '~/types'
 import { colors } from '~/utils/colors'
 import { TitleEditor } from './Title'
 
@@ -27,7 +25,7 @@ export const Body = () => {
   const [topicIsLoading, setTopicIsLoading] = useState(false)
   const [selectedToNode, setSelectedToNode] = useState<NodeExtendedNew | null>(null)
 
-  const [actualNode, setActualNode] = useState<null | Topic>()
+  // const [actualNode, setActualNode] = useState<null | Topic>()
 
   useEffect(() => {
     const init = async () => {
@@ -38,11 +36,9 @@ export const Body = () => {
       setTopicIsLoading(true)
 
       try {
-        const { data: topicData } = await getTopicsData({ search: selectedNode?.name })
-
-        const node = topicData.find((i) => i.topic === selectedNode.name)
-
-        setActualNode(node)
+        // const { data: topicData } = await getTopicsData({ search: selectedNode?.name })
+        // const node = topicData.find((i) => i.topic === selectedNode.name)
+        // setActualNode(node)
       } catch (error) {
         console.log(error)
       } finally {
@@ -78,12 +74,12 @@ export const Body = () => {
     return
 
     try {
-      await postEdgeType({ from: actualNode.ref_id, to: selectedToNode?.ref_id, relationship: selectedType })
+      // await postEdgeType({ from: actualNode.ref_id, to: selectedToNode?.ref_id, relationship: selectedType })
 
-      const { ref_id: id } = actualNode
-      const { ref_id: selectedId } = selectedToNode
+      // const { ref_id: id } = actualNode
+      // const { ref_id: selectedId } = selectedToNode
 
-      console.log(id, selectedId)
+      // console.log(id, selectedId)
 
       //   if (data) {
       //     const newData = { ...data }
