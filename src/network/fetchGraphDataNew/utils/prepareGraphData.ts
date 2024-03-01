@@ -1,8 +1,27 @@
 import { Vector3 } from 'three'
-import { EdgeNew, NodeExtendedNew, NodeNew } from '../types'
+import { EdgeNew, GraphDataNew, NodeExtendedNew, NodeNew } from '../types'
+
+// [
+//   'Topic',
+//   'Alias',
+//   'Event',
+//   'Product',
+//   'Corporation',
+//   'Place',
+//   'Person',
+//   'Organization',
+//   'TLDR',
+//   'Software',
+//   'Project',
+//   'Radar',
+//   'Show',
+//   'Episode',
+// ]
 
 const universeScale = 5000
 const padding = 300
+
+const step = 300
 
 const topicCube = {
   scale: universeScale / 2,
@@ -27,7 +46,7 @@ function generateTopicNodePosition() {
 
   const center = {
     x: position.x + Math.random() * scale - scale * 0.5,
-    y: true ? 1200 : position.y + Math.random() * scale - scale * 0.5,
+    y: true ? step : position.y + Math.random() * scale - scale * 0.5,
     z: position.z + Math.random() * scale - scale * 0.5,
   }
 
@@ -38,12 +57,12 @@ function generateTopicNodePosition() {
   return new Vector3(center.x + perlinNoise * amp, center.y + perlinNoise * amp, center.z + perlinNoise * amp)
 }
 
-function generateCustomNodePosition() {
+function generateCustomNodePosition(index: number) {
   const { scale, position } = topicCube
 
   const center = {
     x: position.x + Math.random() * scale - scale * 0.5,
-    y: true ? -1200 : position.y + Math.random() * scale - scale * 0.5,
+    y: true ? -1 * index * step : position.y + Math.random() * scale - scale * 0.5,
     z: position.z + Math.random() * scale - scale * 0.5,
   }
 
@@ -70,10 +89,12 @@ function generateOrgNodePosition() {
   return new Vector3(center.x + perlinNoise * amp, center.y + perlinNoise * amp, center.z + perlinNoise * amp)
 }
 
-export const generateSplitGraphPositions = (nodes: NodeNew[], edges: EdgeNew[]) => {
+export const generateSplitGraphPositions = (nodes: NodeNew[], edges: EdgeNew[]): GraphDataNew => {
   // sort parent then children
 
   const mappedNodes: NodeExtendedNew[] = []
+
+  const types = [...new Set(nodes.map((i) => i.node_type))]
 
   const updatedNodes: NodeExtendedNew[] = nodes.map((node: NodeNew) => {
     let position = new Vector3(0, 0, 0)
@@ -83,7 +104,7 @@ export const generateSplitGraphPositions = (nodes: NodeNew[], edges: EdgeNew[]) 
     } else if (node.node_type === 'Organization') {
       position = generateOrgNodePosition()
     } else {
-      position = generateCustomNodePosition()
+      position = generateCustomNodePosition(types.indexOf(node.node_type))
     }
 
     const updated = {

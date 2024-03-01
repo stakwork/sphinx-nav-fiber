@@ -17,7 +17,7 @@ export const ToNode: FC<Props> = ({ onSelect, selectedValue }) => {
     onSelect(option || null)
   }
 
-  const resolveOption = (i: NodeNew) => ({ label: i.attributes.topic as string, value: i.ref_id, type: i.node_type })
+  const resolveOption = (i: NodeNew) => ({ label: i.name as string, value: i.ref_id, type: i.node_type })
 
   const resolveOptions = (values: NodeNew[]) => values.map(resolveOption)
 

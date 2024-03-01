@@ -4,12 +4,11 @@ import { Vector3 } from 'three'
 import { isDevelopment, isE2E, NODE_RELATIVE_HIGHLIGHT_COLORS } from '~/constants'
 import { api } from '~/network/api'
 import { FetchNodeParams } from '~/stores/useDataStore'
-import { GraphData } from '~/types'
 import { MOCKED_NODES_EDGES } from './mockedData'
-import { FetchGDataResponse } from './types'
+import { FetchGDataResponse, GraphDataNew } from './types'
 import { generateSplitGraphPositions } from './utils/prepareGraphData'
 
-const defaultData: GraphData = {
+const defaultData: GraphDataNew = {
   links: [],
   nodes: [],
 }
@@ -28,7 +27,7 @@ export const fetchGraphData = async (
   graphStyle: 'split' | 'force' | 'sphere' | 'earth' | 'v2',
   setBudget: (value: number | null) => void,
   params: FetchNodeParams,
-) => {
+): Promise<GraphDataNew> => {
   try {
     return getGraphData(graphStyle, setBudget, params)
   } catch (e) {
@@ -76,7 +75,7 @@ const getGraphData = async (
   try {
     const dataInit = await fetchNodes(setBudget, params)
 
-    const graphData: FetchGDataResponse | null = true ? MOCKED_NODES_EDGES : dataInit
+    const graphData: FetchGDataResponse | null = false ? MOCKED_NODES_EDGES : dataInit
 
     if (graphData) {
       return formatFetchNodes(graphData, graphStyle)
@@ -108,7 +107,7 @@ export const formatFetchNodes = (
 
   console.log(graphStyle)
 
-  const dataWithPositions = generateSplitGraphPositions(nodes, edges)
+  const dataWithPositions: GraphDataNew = generateSplitGraphPositions(nodes, edges)
   const { links } = dataWithPositions
 
   nodes = dataWithPositions.nodes

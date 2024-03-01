@@ -3,7 +3,7 @@ import { useFrame } from '@react-three/fiber'
 import { memo, useEffect } from 'react'
 import { useGraphData } from '~/components/DataRetriever'
 import { generateLinksFromNodeData } from '~/network/fetchGraphData'
-import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
+import { useGraphStore, useSelectedNode } from '~/stores/useGraphStore'
 import { ForceSimulation, runForceSimulation } from '~/transformers/forceSimulation'
 import { GraphData } from '~/types'
 import { Segment } from '../../Segment'
@@ -16,10 +16,10 @@ export const SelectionDataNodes = memo(() => {
   const data = useGraphData()
   const selectedNode = useSelectedNode()
 
-  const selectedNodeRelativeIds = useDataStore((s) => s.selectedNodeRelativeIds)
+  const selectedNodeRelativeIds = useGraphStore((s) => s.selectedNodeRelativeIds)
 
-  const selectionGraphData = useDataStore((s) => s.selectionGraphData)
-  const setSelectionData = useDataStore((s) => s.setSelectionData)
+  const selectionGraphData = useGraphStore((s) => s.selectionGraphData)
+  const setSelectionData = useGraphStore((s) => s.setSelectionData)
 
   useEffect(() => {
     const nodes = data.nodes
@@ -53,6 +53,8 @@ export const SelectionDataNodes = memo(() => {
       simulation2d.tick()
     }
   })
+
+  console.log(selectionGraphData)
 
   return (
     <>

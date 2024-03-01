@@ -32,7 +32,7 @@ export const TextNode = memo(({ node, hide }: Props) => {
   })
 
   const textScale = useMemo(() => {
-    let scale = (node.weight || 1) * 4
+    let scale = (node.edge_count || 1) * 4
 
     if (showSelectionGraph && isSelected) {
       scale = 40
@@ -40,8 +40,10 @@ export const TextNode = memo(({ node, hide }: Props) => {
       scale = 0
     }
 
-    return scale
-  }, [node.weight, isSelected, isRelative, showSelectionGraph])
+    console.log(scale)
+
+    return (node.edge_count || 1) * 4
+  }, [node.edge_count, isSelected, isRelative, showSelectionGraph])
 
   const fillOpacity = useMemo(() => {
     if (selectedNode && selectedNode.node_type === 'topic' && !isSelected) {
@@ -59,12 +61,12 @@ export const TextNode = memo(({ node, hide }: Props) => {
       color={colors.white}
       fillOpacity={fillOpacity}
       position={[node.x, node.y, node.z]}
-      scale={20 || textScale}
+      scale={Math.min(textScale, 10)}
       userData={node}
       visible={!hide && !isSelected}
       {...fontProps}
     >
-      {node.attributes.topic}
+      {node.name}
     </Text>
   )
 })

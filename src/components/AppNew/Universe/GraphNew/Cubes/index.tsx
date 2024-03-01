@@ -72,7 +72,7 @@ export const Cubes = memo(() => {
     [setHoveredNode, ignoreNodeEvent],
   )
 
-  const hideUniverse = showSelectionGraph && !!selectedNode
+  const hideUniverse = (true || showSelectionGraph) && !!selectedNode
 
   return (
     <Select

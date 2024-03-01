@@ -116,7 +116,7 @@ export const Body = () => {
         </Flex>
       ) : (
         <TitleEditor
-          from={(selectedNode?.attributes.topic as string) || ''}
+          from={(selectedNode?.name as string) || ''}
           onSelect={setSelectedToNode}
           selectedToNode={selectedToNode}
           selectedType={selectedType}

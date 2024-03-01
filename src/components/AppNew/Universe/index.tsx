@@ -11,7 +11,6 @@ import styled from 'styled-components'
 import { AxesHelper, GridHelper } from 'three'
 import { getNodeColorByType } from '~/components/Universe/Graph/constant'
 import { Flex } from '~/components/common/Flex'
-import { isDevelopment } from '~/constants'
 import { useControlStore } from '~/stores/useControlStore'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { colors } from '~/utils/colors'
@@ -127,10 +126,10 @@ const _Universe = () => {
     <Wrapper>
       <Suspense fallback={null}>
         <Canvas camera={cameraProps} id="universe-canvas" onCreated={onCreatedHandler} onWheel={onWheelHandler}>
-          {isDevelopment && <Perf position="top-right" />}
-          {isDevelopment && <primitive object={new AxesHelper(10000)} />}
-          {isDevelopment && <primitive object={new GridHelper(10000)} />}
-          {isDevelopment && <primitive object={new GridHelper(10000)} position={[0, 1200, 0]} />}
+          {false && <Perf position="top-right" />}
+          {true && <primitive object={new AxesHelper(10000)} />}
+          {false && <primitive object={new GridHelper(10000)} />}
+          {false && <primitive object={new GridHelper(10000)} position={[0, 1200, 0]} />}
           <Suspense fallback={<Fallback />}>
             <Preload />
 

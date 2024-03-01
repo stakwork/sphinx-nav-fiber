@@ -13,9 +13,11 @@ export type EdgeNew = {
 
 export type NodeNew = {
   ref_id: string
+  name?: string
   node_type: string
-  attributes: Attributes
-  weight?: number
+  edge_count?: number
+  attributes?: Attributes
+  date_added_to_graph?: number
 }
 
 export type FetchGDataResponse = {
@@ -32,4 +34,13 @@ export type NodeExtendedNew = NodeNew & {
 export type EdgeExtendedNew = EdgeNew & {
   sourcePosition: Vector3
   targetPosition: Vector3
+}
+
+export type NormalizedNodes = {
+  [refId: string]: NodeExtendedNew
+}
+
+export type GraphDataNew = {
+  links: EdgeExtendedNew[]
+  nodes: NodeExtendedNew[]
 }

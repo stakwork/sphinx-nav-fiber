@@ -3,6 +3,7 @@ import { useMemo } from 'react'
 import { useGraphStore } from '~/stores/useGraphStore'
 import { Connections } from './Connections'
 import { Cubes } from './Cubes'
+import { Layer } from './Layers'
 import { Particles } from './Particles'
 import { Segment } from './Segment'
 import { NodeDetailsPanel } from './UI'
@@ -50,12 +51,9 @@ export const GraphNew = () => {
 
   return (
     <>
-      <Cubes />
-
+      {true && <Cubes />}
       {false && <Particles />}
-
       {false && data?.links?.length && <Connections connections={data?.links || []} />}
-
       {graphStyle !== 'earth' && (
         <Segments
           /** NOTE: using the key in this way the segments re-mounts
@@ -72,6 +70,7 @@ export const GraphNew = () => {
         </Segments>
       )}
       <NodeDetailsPanel />
+      <Layer />
     </>
   )
 }

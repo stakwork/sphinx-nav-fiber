@@ -3,7 +3,7 @@ import { devtools } from 'zustand/middleware'
 import { nodesAreRelatives } from '~/components/Universe/constants'
 import { isChileGraph } from '~/constants'
 import { fetchGraphData } from '~/network/fetchGraphDataNew'
-import { EdgeExtendedNew, NodeExtendedNew } from '~/network/fetchGraphDataNew/types'
+import { EdgeExtendedNew, NodeExtendedNew, NormalizedNodes } from '~/network/fetchGraphDataNew/types'
 import { saveSearchTerm } from '~/utils/relayHelper/index'
 
 export type GraphStyle = 'sphere' | 'force' | 'split' | 'earth' | 'v2'
@@ -36,6 +36,7 @@ export type GraphStore = {
   nearbyNodeIds: string[]
   showSelectionGraph: boolean
   hideNodeDetails: boolean
+  nodesNormalized: NormalizedNodes
 
   setDisableCameraRotation: (rotation: boolean) => void
   fetchData: (setBudget: (value: number | null) => void, params?: FetchNodeParams) => void
@@ -98,12 +99,23 @@ export const useGraphStore = create<GraphStore>()(
 
       const data = await fetchGraphData(get().graphStyle, setBudget, params ?? {})
 
+      const nodesNormalized: NormalizedNodes = {}
+
+      data?.nodes.forEach((item) => {
+        const refId = item.ref_id
+
+        if (refId) {
+          nodesNormalized[refId] = item
+        }
+      })
+
       if (params?.word) {
         await saveSearchTerm()
       }
 
       set({
         data,
+        nodesNormalized,
         isFetching: false,
         sphinxModalIsOpen: false,
         disableCameraRotation: false,
@@ -161,14 +173,12 @@ export const useGraphStore = create<GraphStore>()(
     addNewLink: (link: EdgeExtendedNew) => {
       const { data } = get()
 
-      console.log(link)
-
       if (!data) {
         return
       }
 
       const nodes = data.nodes.map((i) =>
-        i.ref_id === link.source || i.ref_id === link.target ? { ...i, weight: (i.weight || 0) + 1 } : i,
+        i.ref_id === link.source || i.ref_id === link.target ? { ...i, edge_count: (i.edge_count || 0) + 1 } : i,
       )
 
       const links = [...data.links, link]
