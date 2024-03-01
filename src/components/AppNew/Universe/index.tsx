@@ -127,7 +127,7 @@ const _Universe = () => {
       <Suspense fallback={null}>
         <Canvas camera={cameraProps} id="universe-canvas" onCreated={onCreatedHandler} onWheel={onWheelHandler}>
           {false && <Perf position="top-right" />}
-          {true && <primitive object={new AxesHelper(10000)} />}
+          {false && <primitive object={new AxesHelper(10000)} />}
           {false && <primitive object={new GridHelper(10000)} />}
           {false && <primitive object={new GridHelper(10000)} position={[0, 1200, 0]} />}
           <Suspense fallback={<Fallback />}>

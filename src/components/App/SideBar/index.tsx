@@ -41,15 +41,20 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
 
   const filteredNodes = useFilteredNodes()
 
-  const [setSidebarOpen, searchTerm, clearSearch] = useAppStore((s) => [
+  const [setSidebarOpen, searchTerm, clearSearch, searchFormValue] = useAppStore((s) => [
     s.setSidebarOpen,
     s.currentSearch,
     s.clearSearch,
+    s.searchFormValue,
   ])
 
   const { setValue } = useFormContext()
   const componentRef = useRef<HTMLDivElement | null>(null)
   const [isScrolled, setIsScrolled] = useState(false)
+
+  useEffect(() => {
+    setValue('search', searchFormValue)
+  }, [setValue, searchFormValue])
 
   useEffect(() => {
     const component = componentRef.current

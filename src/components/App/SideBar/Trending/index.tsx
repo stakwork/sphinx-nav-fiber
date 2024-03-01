@@ -1,11 +1,12 @@
 import { Button } from '@mui/material'
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
 import PauseIcon from '~/components/Icons/PauseIcon'
 import PlayIcon from '~/components/Icons/PlayIcon'
 import PlusIcon from '~/components/Icons/PlusIcon'
+import ReloadIcon from '~/components/Icons/ReloadIcon'
 import SentimentDataIcon from '~/components/Icons/SentimentDataIcon'
 import { Flex } from '~/components/common/Flex'
 import { getTrends } from '~/network/fetchGraphData'
@@ -25,6 +26,7 @@ type Props = {
 export const Trending = ({ onSubmit }: Props) => {
   const { open: openContentAddModal } = useModal('addContent')
   const [loading, setLoading] = useState(false)
+  const [readyToUpdate, setReadyToUpdate] = useState(false)
   const [selectedTrend, setSelectedTrend] = useState<TrendingType | null>(null)
   const audioRef = useRef<HTMLVideoElement>(null)
   const [currentFileIndex, setCurrentFileIndex] = useState(0)
@@ -36,27 +38,36 @@ export const Trending = ({ onSubmit }: Props) => {
 
   const { setValue } = useFormContext()
 
-  useEffect(() => {
-    const init = async () => {
-      setLoading(true)
+  const init = useCallback(async () => {
+    setLoading(true)
+    setReadyToUpdate(false)
 
-      try {
-        const res = await getTrends()
+    try {
+      const res = await getTrends()
 
-        if (res.length && Array.isArray(res)) {
-          setTrendingTopics(res)
-        }
-      } catch (err) {
-        setTrendingTopics(TRENDING_TOPICS.map((i) => ({ topic: i, count: 0 })))
-      } finally {
-        setLoading(false)
+      if (res.length && Array.isArray(res)) {
+        setTrendingTopics(res)
       }
+    } catch (err) {
+      setTrendingTopics(TRENDING_TOPICS.map((i) => ({ topic: i, count: 0 })))
+    } finally {
+      setLoading(false)
     }
+  }, [setTrendingTopics, setReadyToUpdate])
 
+  useEffect(() => {
     if (!trendingTopics.length) {
       init()
     }
-  }, [trendingTopics, setTrendingTopics])
+  }, [init, trendingTopics.length])
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setReadyToUpdate(true)
+    }, 5000)
+
+    return () => clearTimeout(timer)
+  }, [setReadyToUpdate, loading])
 
   const selectTrending = (val: string) => {
     setValue('search', val)
@@ -125,7 +136,17 @@ export const Trending = ({ onSubmit }: Props) => {
           <div className="heading">
             <span className="heading__title">Trending Topics</span>
             <span className="heading__icon">
-              {loading ? <ClipLoader color={colors.PRIMARY_BLUE} size={16} /> : <SentimentDataIcon />}
+              {loading ? (
+                <ClipLoader color={colors.white} size={16} />
+              ) : (
+                <>
+                  {readyToUpdate ? (
+                    <StyledButton onClick={init} size="small" startIcon={<ReloadIcon />} />
+                  ) : (
+                    <SentimentDataIcon />
+                  )}
+                </>
+              )}
             </span>
           </div>
           {showPlayButton(trendingTopics) ? (
@@ -142,7 +163,7 @@ export const Trending = ({ onSubmit }: Props) => {
         {trendingTopics.length === 0 ? (
           <div className="trending-empty">
             <Text>{placeholderText}</Text>
-            <ButtonStyled
+            <Button
               color="secondary"
               disabled={loading}
               onClick={openContentAddModal}
@@ -152,7 +173,7 @@ export const Trending = ({ onSubmit }: Props) => {
               variant="contained"
             >
               Add Content
-            </ButtonStyled>
+            </Button>
           </div>
         ) : (
           <ul className="list">
@@ -251,7 +272,17 @@ const Text = styled.p`
   margin-bottom: 20px;
 `
 
-const ButtonStyled = styled(Button)``
+const StyledButton = styled(Button)`
+  && {
+    min-width: 28px;
+    width: 28px;
+    padding: 0;
+    height: 28px;
+    .MuiButton-startIcon {
+      color: ${colors.white};
+    }
+  }
+`
 
 const StyledAudio = styled.audio`
   height: 0;

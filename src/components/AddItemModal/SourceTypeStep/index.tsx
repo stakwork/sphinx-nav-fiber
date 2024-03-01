@@ -29,7 +29,7 @@ export const SourceTypeStep: FC<Props> = ({ onNextStep, allowNextStep, onSelectT
       </Flex>
 
       <Flex direction="row" mb={20}>
-        <AutoComplete onSelect={onSelect} options={OPTIONS} selectedValue={selectedOption} />
+        <AutoComplete autoFocus onSelect={onSelect} options={OPTIONS} selectedValue={selectedOption} />
       </Flex>
 
       <Flex>

@@ -1,26 +1,25 @@
 import { Button, Skeleton } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { ClipLoader } from 'react-spinners'
+import { TypeOptions, toast } from 'react-toastify'
 import { Flex } from '~/components/common/Flex'
 import { ToastMessage } from '~/components/common/Toast/toastMessage'
 import { deleteNode, getTopicsData } from '~/network/fetchSourcesData'
-import { useSelectedNode, useDataStore } from '~/stores/useDataStore'
+import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { useModal } from '~/stores/useModalStore'
-import { Topic, NodeExtended } from '~/types'
+import { NodeExtended, Topic } from '~/types'
 import { colors } from '~/utils/colors'
 import { TitleEditor } from '../Title'
-import { toast } from 'react-toastify'
-import { BOOST_SUCCESS } from '~/constants'
 
 export type FormData = {
   name: string
 }
 
-const notify = (message: string) => {
+const notify = (message: string, type: TypeOptions) => {
   toast(<ToastMessage message={message} />, {
     icon: false,
     position: toast.POSITION.BOTTOM_CENTER,
-    type: message === BOOST_SUCCESS ? 'success' : 'error',
+    type,
   })
 }
 
@@ -72,7 +71,7 @@ export const Body = () => {
     setLoading(true)
 
     try {
-      notify('Topic node removal coming soon')
+      notify('Topic node removal coming soon', 'info')
       setSelectedNode(null)
       closeHandler()
     } catch (error) {
@@ -84,13 +83,14 @@ export const Body = () => {
 
   const handleRemove = async () => {
     let refId = ''
+    const node = actualNode || actualTopicNode
 
-    if (actualNode?.ref_id) {
-      refId = actualNode.ref_id
-    } else if (actualNode?.id) {
-      refId = actualNode.id
-    } else {
+    if (!node) {
       return
+    }
+
+    if (node?.ref_id) {
+      refId = node.ref_id
     }
 
     setLoading(true)
@@ -98,11 +98,14 @@ export const Body = () => {
     try {
       await deleteNode(refId)
 
-      removeNode(actualNode)
+      removeNode(refId)
       setSelectedNode(null)
-      notify('Removed Node')
+      notify('Removed Node', 'success')
       closeHandler()
     } catch (error) {
+      console.log(error)
+      notify('Removed failed, try later', 'error')
+
       console.warn(error)
     } finally {
       setLoading(false)
@@ -121,7 +124,7 @@ export const Body = () => {
           </Button>
           <Button
             disabled={loading || (!actualNode && !actualTopicNode)}
-            onClick={actualNode && !actualTopicNode ? handleRemove : handleTopicRemove}
+            onClick={actualNode || actualTopicNode ? handleRemove : handleTopicRemove}
             size="medium"
             variant="text"
           >

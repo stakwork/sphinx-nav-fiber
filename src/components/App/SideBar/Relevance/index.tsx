@@ -23,7 +23,11 @@ const _Relevance = ({ isSearchResult }: Props) => {
 
   const [setSelectedNode, setSelectedTimestamp] = useDataStore((s) => [s.setSelectedNode, s.setSelectedTimestamp])
 
-  const [setSidebarOpen, setRelevanceSelected] = useAppStore((s) => [s.setSidebarOpen, s.setRelevanceSelected])
+  const [currentSearch, setSidebarOpen, setRelevanceSelected] = useAppStore((s) => [
+    s.currentSearch,
+    s.setSidebarOpen,
+    s.setRelevanceSelected,
+  ])
 
   const [currentPage, setCurrentPage] = useState(0)
 
@@ -36,10 +40,24 @@ const _Relevance = ({ isSearchResult }: Props) => {
 
   const isMobile = useIsMatchBreakpoint('sm', 'down')
 
-  const currentNodes = useMemo(
-    () => filteredNodes && [...filteredNodes].sort((a, b) => (b.date || 0) - (a.date || 0)).slice(0, endSlice),
-    [filteredNodes, endSlice],
-  )
+  const currentNodes = useMemo(() => {
+    if (filteredNodes) {
+      const nodes = [...filteredNodes].sort((a, b) => (b.date || 0) - (a.date || 0))
+
+      if (currentSearch) {
+        nodes.sort((a, b) => {
+          const aValue = a.node_type === 'topic' && a.name.toLowerCase() === currentSearch.toLowerCase() ? 1 : 0
+          const bValue = b.node_type === 'topic' && b.name.toLowerCase() === currentSearch.toLowerCase() ? 1 : 0
+
+          return bValue - aValue
+        })
+      }
+
+      return nodes.slice(0, endSlice)
+    }
+
+    return []
+  }, [filteredNodes, endSlice, currentSearch])
 
   const handleNodeClick = useCallback(
     (node: NodeExtended) => {
