@@ -5,7 +5,6 @@ import React from 'react'
 import { Relevance } from '..'
 import { useAppStore } from '../../../../../stores/useAppStore'
 import { useDataStore, useFilteredNodes } from '../../../../../stores/useDataStore'
-import * as utils from '../../../../../utils/useIsMatchBreakpoint'
 import * as EpisodeModule from '../Episode'
 
 Object.defineProperty(window, 'matchMedia', {
@@ -47,7 +46,7 @@ const mockedUseAppStore = useAppStore as jest.MockedFunction<typeof useAppStore>
 
 const mockedUseFilterNodes = useFilteredNodes as jest.MockedFunction<typeof useFilteredNodes>
 // const mockedSaveConsumedContent = jest.spyOn(relayHelper, 'saveConsumedContent')
-const mockedUseIsMatchBreakpoint = jest.spyOn(utils, 'useIsMatchBreakpoint')
+// const mockedUseIsMatchBreakpoint = jest.spyOn(utils, 'useIsMatchBreakpoint')
 
 describe('test Relevance Component', () => {
   beforeEach(() => {
