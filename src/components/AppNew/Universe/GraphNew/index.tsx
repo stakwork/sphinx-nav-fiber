@@ -70,7 +70,7 @@ export const GraphNew = () => {
         </Segments>
       )}
       <NodeDetailsPanel />
-      <Layer />
+      {false && <Layer />}
     </>
   )
 }

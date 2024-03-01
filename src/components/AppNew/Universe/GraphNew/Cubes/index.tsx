@@ -91,7 +91,7 @@ export const Cubes = memo(() => {
         //   return isNearbyOrPersistent || isSelected
         // })
         .map((node) => {
-          if (node.node_type === 'Topic') {
+          if (node.node_type === 'Topic' || true) {
             return <TextNode key={node.ref_id} hide={hideUniverse} node={node} />
           }
 
