@@ -17,8 +17,8 @@ export const Segment = ({ link, animated }: Props) => {
   const [color, setColor] = useState(0x888888)
   const nodesNormalized = useGraphStore((s) => s.nodesNormalized)
 
-  console.log(color)
-  console.log(animated)
+  false && console.log(color)
+  false && console.log(animated)
 
   useEffect(() => {
     setStart(new Vector3(link.sourcePosition?.x || 0, link.sourcePosition?.y || 0, link.sourcePosition?.z || 0))
@@ -31,7 +31,7 @@ export const Segment = ({ link, animated }: Props) => {
   const controlPoint = new Vector3(0, 1, 0) // Adjust this point to control the curvature
 
   const curve = new QuadraticBezierCurve3(start, controlPoint, end)
-  const curved = nodesNormalized[link.source].node_type !== nodesNormalized[link.target].node_type
+  const curved = nodesNormalized[link.source]?.node_type !== nodesNormalized[link.target]?.node_type
   const points = curved ? curve.getPoints(50) : [start, end]
 
   const isVisible = !selectedNode || selectedNode.ref_id === link.source || selectedNode.ref_id === link.target

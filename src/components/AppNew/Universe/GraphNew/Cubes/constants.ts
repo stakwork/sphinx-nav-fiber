@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import { NodeExtended } from '~/types'
+import { NodeExtendedNew } from '~/network/fetchGraphDataNew/types'
 
 const createRoundedBoxGeometry = (width: number, height: number, depth: number, radius: number, segments: number) => {
   const shape = new THREE.Shape()
@@ -66,7 +66,7 @@ export const roundedBoxGeometry = createRoundedBoxGeometry(10, 10, 10, 2, 10)
 
 export const boxGeometry = new THREE.BoxGeometry(10, 10, 10)
 
-export const isMainTopic = (node: NodeExtended) => node.node_type === 'topic' && (node.scale || 1) > 5
+export const isMainTopic = (node: NodeExtendedNew) => node.node_type === 'Topic' && (node.edge_count || 1) > 5
 
 export const meshRenderLimit = 500
 

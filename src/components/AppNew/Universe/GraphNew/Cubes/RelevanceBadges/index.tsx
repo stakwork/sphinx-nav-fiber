@@ -5,8 +5,6 @@ import { Fragment, memo, useEffect, useMemo, useRef } from 'react'
 import { Group, Vector3 } from 'three'
 import { getNodeColorByType } from '~/components/Universe/Graph/constant'
 import { maxChildrenDisplayed } from '~/components/Universe/constants'
-import { Avatar } from '~/components/common/Avatar'
-import { TypeBadge } from '~/components/common/TypeBadge'
 import { useGraphStore, useSelectedNode } from '~/stores/useGraphStore'
 import { colors } from '~/utils/colors'
 import { Tag } from './styles'
@@ -21,8 +19,9 @@ const NodeBadge = ({ position, userData, color }: BadgeProps) => {
   const hoveredNode = useGraphStore((s) => s.hoveredNode)
   const showSelectionGraph = useGraphStore((s) => s.showSelectionGraph)
 
+  console.log(userData)
+
   const isTopic = (userData?.node_type || '') === 'Topic'
-  const isPerson = (userData?.node_type || '') === 'guest' || (userData?.node_type || '') === 'person'
 
   useFrame(() => {
     if (showSelectionGraph && ref.current) {
@@ -73,16 +72,7 @@ const NodeBadge = ({ position, userData, color }: BadgeProps) => {
           size={isSelected ? 100 : 68}
           type={userData?.node_type || ''}
         >
-          {!isPerson && !isTopic ? (
-            <div className="badge-wrapper">
-              <TypeBadge type={userData?.node_type || ''} />
-            </div>
-          ) : null}
-          {isTopic ? (
-            userData?.name
-          ) : (
-            <Avatar rounded={isPerson} size={isSelected ? 60 : 52} src="audio_default.svg" type={userData?.node_type} />
-          )}
+          {userData?.name}
         </Tag>
       </Html>
     </group>

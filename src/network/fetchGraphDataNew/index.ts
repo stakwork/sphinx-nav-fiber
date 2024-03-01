@@ -31,6 +31,7 @@ export const fetchGraphData = async (
   try {
     return getGraphData(graphStyle, setBudget, params)
   } catch (e) {
+    console.log(defaultData)
     return defaultData
   }
 }
@@ -46,7 +47,7 @@ const fetchNodes = async (
 
   if (!params.word) {
     try {
-      const response = await api.get<FetchGDataResponse>(`/prediction/graph/search`)
+      const response = await api.get<FetchGDataResponse>(`/prediction/graph/search?limit=1`)
 
       return response
     } catch (e) {

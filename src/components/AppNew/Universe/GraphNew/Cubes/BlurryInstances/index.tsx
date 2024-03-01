@@ -1,8 +1,7 @@
 import { Instance, Instances } from '@react-three/drei'
 import { useMemo } from 'react'
-import { useGraphData } from '~/components/DataRetriever'
 import { getNodeColorByType } from '~/components/Universe/Graph/constant'
-import { useDataStore } from '~/stores/useDataStore'
+import { useGraphStore } from '~/stores/useGraphStore'
 import { boxGeometry, isMainTopic } from '../constants'
 import { blurryMaterial } from './constants'
 
@@ -11,13 +10,11 @@ type InstanceProps = {
 }
 
 export const BlurryInstances = ({ hide }: InstanceProps) => {
-  const data = useGraphData()
-
-  const graphStyle = useDataStore((s) => s.graphStyle)
+  const [data, graphStyle] = useGraphStore((s) => [s.data, s.graphStyle])
 
   const instances = useMemo(
     () =>
-      data.nodes.map((node, i) => {
+      data?.nodes.map((node, i) => {
         if (node.node_type === 'Topic') {
           return false
         }
@@ -28,11 +25,11 @@ export const BlurryInstances = ({ hide }: InstanceProps) => {
         return (
           <Instance
             // eslint-disable-next-line react/no-array-index-key
-            key={`${node.ref_id || node.id}-instanced-node-${i}-${graphStyle}`}
+            key={`${node.ref_id}-instanced-node-${i}-${graphStyle}`}
             color={color}
-            name={node.id}
+            name={node.ref_id}
             position={[node.x, node.y, node.z]}
-            scale={visible ? (node.scale || 1) * 0.9 : 0}
+            scale={visible ? (node.edge_count || 1) * 0.9 : 0}
             userData={node}
           />
         )

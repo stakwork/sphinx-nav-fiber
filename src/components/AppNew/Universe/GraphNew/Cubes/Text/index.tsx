@@ -40,13 +40,13 @@ export const TextNode = memo(({ node, hide }: Props) => {
       scale = 0
     }
 
-    console.log(scale)
+    false && console.log(scale)
 
     return (node.edge_count || 1) * 4
   }, [node.edge_count, isSelected, isRelative, showSelectionGraph])
 
   const fillOpacity = useMemo(() => {
-    if (selectedNode && selectedNode.node_type === 'topic' && !isSelected) {
+    if (selectedNode && selectedNode.node_type === 'Topic' && !isSelected) {
       return 0.2
     }
 

@@ -4,7 +4,6 @@ import { FormProvider, useForm } from 'react-hook-form'
 import 'react-toastify/dist/ReactToastify.css'
 import { Socket } from 'socket.io-client'
 import styled from 'styled-components'
-import { DataRetriever } from '~/components/DataRetriever'
 import { GlobalStyle } from '~/components/GlobalStyle'
 import { Flex } from '~/components/common/Flex'
 import { isDevelopment } from '~/constants'
@@ -113,16 +112,14 @@ export const AppNew = () => {
 
       <Suspense fallback={<div>Loading...</div>}>
         <Wrapper direction="row">
-          <DataRetriever>
-            <FormProvider {...form}>
-              {true && <LazyMainToolbar />}
-              {false && <LazySideBar onSubmit={handleSubmit} />}
-              {true && <LazyUniverse />}
-              <AppBar />
-              <Version>v{version}</Version>
-              <ActionsToolbar />
-            </FormProvider>
-          </DataRetriever>
+          <FormProvider {...form}>
+            {true && <LazyMainToolbar />}
+            {false && <LazySideBar onSubmit={handleSubmit} />}
+            {true && <LazyUniverse />}
+            <AppBar />
+            <Version>v{version}</Version>
+            <ActionsToolbar />
+          </FormProvider>
           <ModalsContainer />
           <Toasts />
           <Helper />

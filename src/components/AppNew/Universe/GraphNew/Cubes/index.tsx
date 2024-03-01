@@ -81,8 +81,8 @@ export const Cubes = memo(() => {
       onPointerOut={onPointerOut}
       onPointerOver={onPointerIn}
     >
-      <BlurryInstances hide={hideUniverse} />
-      <RelevanceBadges />
+      {false && <BlurryInstances hide={hideUniverse} />}
+      {false && <RelevanceBadges />}
       {data?.nodes
         // .filter((f) => {
         //   const isSelected = f?.ref_id === selectedNode?.ref_id

@@ -7,7 +7,6 @@ import { ForceSimulation } from '~/transformers/forceSimulation'
 import { runForceSimulationNew } from '~/transformers/forceSimulationNew'
 import { GraphData } from '~/types'
 import { Segment } from '../../Segment'
-import { Cube } from '../Cube'
 import { TextNode } from '../Text'
 
 let simulation2d: ForceSimulation | null = null
@@ -21,9 +20,11 @@ export const SelectionDataNodes = memo(() => {
   const setSelectionData = useGraphStore((s) => s.setSelectionData)
 
   useEffect(() => {
-    const nodes: NodeExtendedNew[] = []
+    const links: EdgeExtendedNew[] =
+      data?.links.filter((i) => i.source === selectedNode?.ref_id || i.target === selectedNode?.ref_id) || []
 
-    const links: EdgeExtendedNew[] = []
+    const nodes: NodeExtendedNew[] =
+      data?.nodes.filter((i) => links.some((l) => l.source === i.ref_id || l.target === i.ref_id)) || []
 
     setSelectionData({ nodes, links })
   }, [data, selectedNode, selectedNodeRelativeIds, setSelectionData])
@@ -50,13 +51,9 @@ export const SelectionDataNodes = memo(() => {
 
   return (
     <>
-      {selectionGraphData?.nodes.map((node) => {
-        if (node.node_type === 'topic') {
-          return <TextNode key={`${node.ref_id || node.ref_id}-compact`} hide node={node} />
-        }
-
-        return <Cube key={`${node.ref_id || node.ref_id}-compact`} animated hide node={node} />
-      })}
+      {selectionGraphData?.nodes.map((node) => (
+        <TextNode key={`${node.ref_id || node.ref_id}-compact`} node={node} />
+      ))}
 
       <Segments
         key={`selection-links-${selectionGraphData?.links.length}`}
