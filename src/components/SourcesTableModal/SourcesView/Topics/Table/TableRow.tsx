@@ -14,9 +14,10 @@ import { StyledTableCell, StyledTableRow } from '../../common'
 type TTableRaw = {
   topic: Topic
   onClick: (event: React.MouseEvent<HTMLButtonElement>, refId: string) => void
+  onSearch: (search: string) => void
 }
 
-const TableRowComponent: FC<TTableRaw> = ({ topic, onClick }) => {
+const TableRowComponent: FC<TTableRaw> = ({ topic, onClick, onSearch }) => {
   const [ids, total] = useTopicsStore((s) => [s.ids, s.total])
   const [loading, setLoading] = useState(false)
 
@@ -27,16 +28,26 @@ const TableRowComponent: FC<TTableRaw> = ({ topic, onClick }) => {
 
     try {
       await putNodeData(refId, { muted_topic: shouldMute })
-      useTopicsStore.setState({ ids: ids.filter((i) => i !== refId), total: total - 1 })
+
+      useTopicsStore.setState({
+        ids: ids.filter((i) => i !== refId),
+        total: total - 1,
+      })
     } catch (error) {
       console.warn(error)
     }
   }
 
+  const handleClickTopic = (topicItem: Topic) => {
+    onSearch(topicItem.topic)
+  }
+
   return (
     <StyledTableRow key={topic.topic}>
       <StyledTableCell className="empty" />
-      <StyledTableCell>{topic.topic}</StyledTableCell>
+      <StyledTableCell onClick={() => handleClickTopic(topic)}>
+        <ClickableText>{topic.topic}</ClickableText>
+      </StyledTableCell>
       <StyledTableCell>{topic.edgeCount}</StyledTableCell>
       <StyledTableCell>{topic.edgeList.join(', ')}</StyledTableCell>
       <StyledTableCell>
@@ -86,6 +97,13 @@ const IconWrapper = styled(Flex)`
 
   & + & {
     margin-left: 4px;
+  }
+`
+
+const ClickableText = styled.span`
+  cursor: pointer;
+  :hover {
+    text-decoration: underline;
   }
 `
 
