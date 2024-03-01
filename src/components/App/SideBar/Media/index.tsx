@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import { Booster } from '~/components/Booster'
 import { Divider } from '~/components/common/Divider'
 import { Flex } from '~/components/common/Flex'
+import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
 import { NodeExtended } from '~/types'
 import { formatDescription } from '~/utils/formatDescription'
@@ -17,6 +18,8 @@ type Props = {
 
 export const Media = ({ node }: Props) => {
   const selectedNode = useDataStore((s) => s.selectedNode)
+
+  const searchTerm = useAppStore((s) => s.currentSearch)
 
   const {
     link,
@@ -59,7 +62,7 @@ export const Media = ({ node }: Props) => {
         </BoostWrapper>
         <StyledDivider />
         <TextWrapper>
-          <Description node={selectedNode} stateless />
+          <Description node={selectedNode} searchTerm={searchTerm} stateless />
         </TextWrapper>
         <StyledDivider />
         <TextWrapper>
