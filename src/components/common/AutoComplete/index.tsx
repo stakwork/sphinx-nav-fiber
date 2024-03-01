@@ -61,6 +61,19 @@ export const AutoComplete: FC<Props> = ({
         disableClearable
         disablePortal
         id="blur-on-select"
+        ListboxProps={{
+          sx: {
+            backgroundColor: colors.DROPDOWN_BG,
+            '&::-webkit-scrollbar': {
+              width: '3px',
+            },
+            '&::-webkit-scrollbar-thumb': {
+              backgroundClip: 'padding-box',
+              backgroundColor: colors.SCROLL_BAR,
+              borderRadius: '6px',
+            },
+          },
+        }}
         loading={isLoading}
         onChange={handleChange}
         onClose={() => setOpen(false)}
@@ -91,6 +104,14 @@ export const AutoComplete: FC<Props> = ({
             </Flex>
           </li>
         )}
+        sx={{
+          '&.MuiAutocomplete-option:hover': {
+            backgroundColor: colors.DROPDOWN_HOVER,
+          },
+          "&.MuiAutocomplete-option[aria-selected='true']": {
+            backgroundColor: colors.DROPDOWN_SELECTED,
+          },
+        }}
         value={selectedValue || undefined}
       />
     </Stack>
@@ -119,6 +140,7 @@ const StyledInput = styled(TextField)`
 
     &:hover {
       background-color: ${colors.BG2_ACTIVE_INPUT};
+      box-shadow: 0 0 0 1px ${colors.primaryBlue};
     }
 
     &::placeholder {
