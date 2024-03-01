@@ -3,7 +3,7 @@ import { FC } from 'react'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
-import { TWITTER_HANDLE, YOUTUBE_CHANNEL, RSS } from '~/constants'
+import { RSS, TWITTER_HANDLE, YOUTUBE_CHANNEL } from '~/constants'
 import { colors } from '~/utils'
 import { extractNameFromLink } from '../utils'
 
@@ -14,24 +14,34 @@ type Props = {
   onPrevStep: () => void
 }
 
-const CONTENT_TYPE_MAPPING: Record<string, string> = {
-  [TWITTER_HANDLE]: 'Twitter handle',
-  [YOUTUBE_CHANNEL]: 'Youtube channel',
-  [RSS]: 'RSS Feed',
+const CONTENT_TYPE_MAPPING: Record<string, { [k: string]: string }> = {
+  [TWITTER_HANDLE]: {
+    label: 'Twitter handle',
+    img: 'twitter_default.png',
+  },
+  [YOUTUBE_CHANNEL]: {
+    label: 'Youtube channel',
+    img: 'youtube_default.png',
+  },
+  [RSS]: {
+    label: 'RSS Feed',
+    img: 'rss_feed.png',
+  },
 }
 
 export const SourceTypeStep: FC<Props> = ({ onNextStep, onPrevStep, type, value }) => (
   <Flex>
     <Flex align="center" direction="row" justify="space-between" mb={20}>
       <Flex align="center" direction="row">
-        <StyledText>Source Type</StyledText>
+        <StyledHeaderText>Source Type</StyledHeaderText>
       </Flex>
     </Flex>
-
-    <Flex direction="row" mb={20}>
-      <StyledText>
-        {CONTENT_TYPE_MAPPING[type]}: @{extractNameFromLink(value, type) ?? value}
-      </StyledText>
+    <Flex mb={20}>
+      <TextWrapper>
+        <img alt={CONTENT_TYPE_MAPPING[type].label} className="badge__img" src={CONTENT_TYPE_MAPPING[type].img} />
+        <StyledText>{CONTENT_TYPE_MAPPING[type].label}</StyledText>
+      </TextWrapper>
+      <StyledLink>{extractNameFromLink(value, type) ?? value}</StyledLink>
     </Flex>
     <Flex direction="row">
       <Flex grow={1}>
@@ -48,10 +58,45 @@ export const SourceTypeStep: FC<Props> = ({ onNextStep, onPrevStep, type, value 
   </Flex>
 )
 
+const StyledLink = styled(Flex)`
+  font-family: Barlow;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 16px;
+  letter-spacing: 0em;
+  text-align: left;
+  margin-top: 15px;
+  color: ${colors.GRAY3};
+  max-width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-wrap: break-word;
+`
+
+const StyledHeaderText = styled(Text)`
+  font-family: Barlow;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 17px;
+  letter-spacing: 0px;
+  text-align: left;
+`
+
 const StyledText = styled(Text)`
-  font-size: 22px;
+  font-family: Barlow;
+  font-size: 20px;
   font-weight: 600;
-  font-family: 'Barlow';
+  line-height: 16px;
+  letter-spacing: 0em;
+  text-align: left;
+  color: ${colors.white};
+`
+
+const TextWrapper = styled(Flex)`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
 `
 
 const StyledButton = styled(Button)`
