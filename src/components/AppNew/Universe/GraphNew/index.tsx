@@ -9,11 +9,12 @@ import { Segment } from './Segment'
 import { NodeDetailsPanel } from './UI'
 
 export const GraphNew = () => {
-  const [data, isLoading, graphStyle, showSelectionGraph] = useGraphStore((s) => [
+  const [data, isLoading, graphStyle, showSelectionGraph, selectionGraphData] = useGraphStore((s) => [
     s.data,
     s.isFetching,
     s.graphStyle,
     s.showSelectionGraph,
+    s.selectionGraphData,
   ])
 
   const lineWidth = useMemo(() => {
@@ -29,7 +30,7 @@ export const GraphNew = () => {
   }, [showSelectionGraph, graphStyle])
 
   const links = useMemo(() => {
-    const edges = data?.links
+    const edges = showSelectionGraph ? selectionGraphData.links : data?.links
 
     const badgesToRender = (edges || []).map((n) => (
       // const relativeIds =
@@ -43,7 +44,7 @@ export const GraphNew = () => {
     ))
 
     return badgesToRender
-  }, [data?.links])
+  }, [data?.links, selectionGraphData.links, showSelectionGraph])
 
   if (isLoading) {
     return null

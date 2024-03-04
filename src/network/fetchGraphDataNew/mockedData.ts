@@ -16,7 +16,7 @@ const nodesMock = [
     ref_id: 'fc3a46e2-28ec-4a5f-9836-8308ef515005',
   },
   ...generateRandomNodes('Organization', 20),
-  ...generateRandomNodes('People', 20),
+  ...generateRandomNodes('People', 2),
 ]
 
 const edgesMock = [

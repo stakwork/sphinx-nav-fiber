@@ -47,7 +47,7 @@ const fetchNodes = async (
 
   if (!params.word) {
     try {
-      const response = await api.get<FetchGDataResponse>(`/prediction/graph/search?limit=1`)
+      const response = await api.get<FetchGDataResponse>(`/prediction/graph/search?Limit=100`)
 
       return response
     } catch (e) {
@@ -77,6 +77,8 @@ const getGraphData = async (
     const dataInit = await fetchNodes(setBudget, params)
 
     const graphData: FetchGDataResponse | null = false ? MOCKED_NODES_EDGES : dataInit
+
+    console.log(graphData)
 
     if (graphData) {
       return formatFetchNodes(graphData, graphStyle)

@@ -72,7 +72,7 @@ export const Cubes = memo(() => {
     [setHoveredNode, ignoreNodeEvent],
   )
 
-  const hideUniverse = (true || showSelectionGraph) && !!selectedNode
+  const hideUniverse = showSelectionGraph && !!selectedNode
 
   return (
     <Select
@@ -82,7 +82,7 @@ export const Cubes = memo(() => {
       onPointerOver={onPointerIn}
     >
       {false && <BlurryInstances hide={hideUniverse} />}
-      {false && <RelevanceBadges />}
+      {true && <RelevanceBadges />}
       {data?.nodes
         // .filter((f) => {
         //   const isSelected = f?.ref_id === selectedNode?.ref_id

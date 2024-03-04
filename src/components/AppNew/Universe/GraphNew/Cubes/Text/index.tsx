@@ -3,7 +3,7 @@ import { useFrame } from '@react-three/fiber'
 import { memo, useMemo, useRef } from 'react'
 import { Mesh } from 'three'
 import { NodeExtendedNew } from '~/network/fetchGraphDataNew/types'
-import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
+import { useGraphStore, useSelectedNode } from '~/stores/useGraphStore'
 import { colors } from '~/utils/colors'
 import { fontProps } from './constants'
 
@@ -15,10 +15,10 @@ type Props = {
 export const TextNode = memo(({ node, hide }: Props) => {
   const ref = useRef<Mesh | null>(null)
   const selectedNode = useSelectedNode()
-  const selectedNodeRelativeIds = useDataStore((s) => s.selectedNodeRelativeIds)
+  const selectedNodeRelativeIds = useGraphStore((s) => s.selectedNodeRelativeIds)
   const isRelative = selectedNodeRelativeIds.includes(node?.ref_id || '')
   const isSelected = !!selectedNode && selectedNode?.ref_id === node.ref_id
-  const showSelectionGraph = useDataStore((s) => s.showSelectionGraph)
+  const showSelectionGraph = useGraphStore((s) => s.showSelectionGraph)
 
   useFrame(({ camera }) => {
     if (ref?.current) {
@@ -37,7 +37,7 @@ export const TextNode = memo(({ node, hide }: Props) => {
     if (showSelectionGraph && isSelected) {
       scale = 40
     } else if (!isSelected && isRelative) {
-      scale = 0
+      scale = 50
     }
 
     false && console.log(scale)
@@ -46,12 +46,12 @@ export const TextNode = memo(({ node, hide }: Props) => {
   }, [node.edge_count, isSelected, isRelative, showSelectionGraph])
 
   const fillOpacity = useMemo(() => {
-    if (selectedNode && selectedNode.node_type === 'Topic' && !isSelected) {
-      return 0.2
+    if (selectedNode && !isSelected && !isRelative) {
+      return 0.3
     }
 
     return 1
-  }, [isSelected, selectedNode])
+  }, [isSelected, selectedNode, isRelative])
 
   return (
     <Text
@@ -63,7 +63,7 @@ export const TextNode = memo(({ node, hide }: Props) => {
       position={[node.x, node.y, node.z]}
       scale={Math.min(textScale, 10)}
       userData={node}
-      visible={!hide && !isSelected}
+      visible={!hide}
       {...fontProps}
     >
       {node.name}

@@ -22,8 +22,8 @@ export const Layer = () => {
       {positions.map((i) => (
         // eslint-disable-next-line react/no-array-index-key
         <group key={i} position={[0, -1 * i * 300, 0]} rotation={[Math.PI / 2, 0, 0]}>
-          <Box ref={boxRef} args={[1000, 1000, 0]}>
-            <meshBasicMaterial color="black" opacity={0.9} transparent />
+          <Box ref={boxRef} args={[2000, 2000, 0]}>
+            <meshBasicMaterial color="black" opacity={0.5} transparent />
           </Box>
           <Html
             onClick={(e) => e.stopPropagation()}

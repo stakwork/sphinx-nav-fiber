@@ -138,6 +138,20 @@ export const useGraphStore = create<GraphStore>()(
 
         const relativeIds: string[] = []
 
+        if (selectedNode?.ref_id) {
+          data?.links.forEach((i) => {
+            console.log(i.target)
+
+            if (i.target === selectedNode?.ref_id) {
+              relativeIds.push(i.source)
+            }
+
+            if (i.source === selectedNode?.ref_id) {
+              relativeIds.push(i.target)
+            }
+          })
+        }
+
         set({
           hoveredNode: null,
           selectedNode,
