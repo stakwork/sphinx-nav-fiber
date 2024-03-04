@@ -17,15 +17,15 @@ type Props = {
 const CONTENT_TYPE_MAPPING: Record<string, { [k: string]: string }> = {
   [TWITTER_HANDLE]: {
     label: 'Twitter handle',
-    img: 'twitter_default.png',
+    img: 'twitter_default.svg',
   },
   [YOUTUBE_CHANNEL]: {
     label: 'Youtube channel',
-    img: 'youtube_default.png',
+    img: 'youtube_default.svg',
   },
   [RSS]: {
     label: 'RSS Feed',
-    img: 'rss_feed.png',
+    img: 'rss_feed.svg',
   },
 }
 
