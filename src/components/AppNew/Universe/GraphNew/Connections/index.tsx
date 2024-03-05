@@ -14,8 +14,6 @@ type Props = {
 export const Connections = ({ connections }: Props) => {
   const ref = useRef<Mesh | null>(null)
 
-  console.log(connections)
-
   useFrame(({ camera }) => {
     if (ref?.current) {
       // Make text face the camera

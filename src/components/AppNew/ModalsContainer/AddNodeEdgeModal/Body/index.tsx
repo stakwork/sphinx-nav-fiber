@@ -40,7 +40,7 @@ export const Body = () => {
         // const node = topicData.find((i) => i.topic === selectedNode.name)
         // setActualNode(node)
       } catch (error) {
-        console.log(error)
+        console.error(error)
       } finally {
         setTopicIsLoading(false)
       }

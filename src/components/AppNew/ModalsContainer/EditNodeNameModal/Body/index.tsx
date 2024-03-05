@@ -53,7 +53,7 @@ export const Body = () => {
 
         setActualNode(node)
       } catch (error) {
-        console.log(error)
+        console.error(error)
       } finally {
         setTopicIsLoading(false)
       }

@@ -106,7 +106,7 @@
       "./src/**/*.ts"
     ],
     "coveragePathIgnorePatterns": [
-      "<rootDir>/src/AppNew/*"
+      "<rootDir>/src/AppNew/."
     ],
     "coverageThreshold": {
       "global": {

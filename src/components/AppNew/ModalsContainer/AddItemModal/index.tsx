@@ -171,6 +171,7 @@ export const AddItemModal = () => {
   }
 
   const onSubmit = form.handleSubmit(async (data) => {
+    // eslint-disable-next-line no-constant-condition
     if (data || true) {
       handleMockingSubmit(data)
 

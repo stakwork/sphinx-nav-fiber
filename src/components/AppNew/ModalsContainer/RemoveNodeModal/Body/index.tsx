@@ -42,7 +42,7 @@ export const Body = () => {
 
         setActualNode(node)
       } catch (error) {
-        console.log(error)
+        console.error(error)
       } finally {
         setTopicIsLoading(false)
       }
@@ -59,15 +59,11 @@ export const Body = () => {
     setLoading(true)
 
     try {
-      const res = await deleteNode(actualNode.ref_id)
-
-      console.log(res)
-
-      console.log('remove')
+      await deleteNode(actualNode.ref_id)
 
       false && closeHandler()
     } catch (error) {
-      console.log(error)
+      console.error(error)
 
       console.warn(error)
     } finally {

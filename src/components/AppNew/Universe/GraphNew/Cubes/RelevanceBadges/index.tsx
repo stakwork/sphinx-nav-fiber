@@ -19,8 +19,6 @@ const NodeBadge = ({ position, userData, color }: BadgeProps) => {
   const hoveredNode = useGraphStore((s) => s.hoveredNode)
   const showSelectionGraph = useGraphStore((s) => s.showSelectionGraph)
 
-  console.log(userData)
-
   const isTopic = (userData?.node_type || '') === 'Topic'
 
   useFrame(() => {
