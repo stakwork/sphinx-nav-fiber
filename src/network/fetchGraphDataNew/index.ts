@@ -6,7 +6,7 @@ import { api } from '~/network/api'
 import { FetchNodeParams } from '~/stores/useDataStore'
 import { MOCKED_NODES_EDGES } from './mockedData'
 import { FetchGDataResponse, GraphDataNew } from './types'
-import { generateSplitGraphPositions } from './utils/prepareGraphData'
+import { generateSplitGraphPositions } from './utils/prepareGraphDataCircle'
 
 const defaultData: GraphDataNew = {
   links: [],
@@ -47,7 +47,7 @@ const fetchNodes = async (
 
   if (!params.word) {
     try {
-      const response = await api.get<FetchGDataResponse>(`/prediction/graph/search?Limit=100`)
+      const response = await api.get<FetchGDataResponse>(`/prediction/graph/search?top_node_count=50&limit=50`)
 
       return response
     } catch (e) {

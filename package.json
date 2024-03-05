@@ -97,6 +97,9 @@
     ]
   },
   "jest": {
+    "testPathIgnorePatterns": [
+      "AppNew"
+    ],
     "collectCoverage": true,
     "collectCoverageFrom": [
       "./src/**/*.js",

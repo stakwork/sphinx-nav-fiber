@@ -1,7 +1,7 @@
 import { Line } from '@react-three/drei'
 import { useEffect, useState } from 'react'
 import { QuadraticBezierCurve3, Vector3 } from 'three'
-import { NODE_RELATIVE_HIGHLIGHT_COLORS } from '~/constants'
+import { NODE_RELATIVE_HIGHLIGHT_COLORS_NEW } from '~/constants'
 import { useGraphStore, useSelectedNode } from '~/stores/useGraphStore'
 import { Link } from '~/types'
 
@@ -23,7 +23,7 @@ export const Segment = ({ link, animated }: Props) => {
   useEffect(() => {
     setStart(new Vector3(link.sourcePosition?.x || 0, link.sourcePosition?.y || 0, link.sourcePosition?.z || 0))
     setEnd(new Vector3(link.targetPosition?.x || 0, link.targetPosition?.y || 0, link.targetPosition?.z || 0))
-    setColor(NODE_RELATIVE_HIGHLIGHT_COLORS.children.segmentColor)
+    setColor(NODE_RELATIVE_HIGHLIGHT_COLORS_NEW.Topic?.segmentColor)
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedNode, link])
@@ -36,5 +36,5 @@ export const Segment = ({ link, animated }: Props) => {
 
   const isVisible = !selectedNode || selectedNode.ref_id === link.source || selectedNode.ref_id === link.target
 
-  return <Line color="white" opacity={0.1} points={points.map((p) => p.toArray())} transparent visible={isVisible} />
+  return <Line color={color} opacity={0.1} points={points.map((p) => p.toArray())} transparent visible={isVisible} />
 }

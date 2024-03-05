@@ -47,7 +47,7 @@ export const TextNode = memo(({ node, hide }: Props) => {
 
   const fillOpacity = useMemo(() => {
     if (selectedNode && !isSelected && !isRelative) {
-      return 0.3
+      return 0.1
     }
 
     return 1

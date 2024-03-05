@@ -67,6 +67,17 @@ export const NODE_RELATIVE_HIGHLIGHT_COLORS: Record<string, NodeRelativeHighligh
   },
 }
 
+export const NODE_RELATIVE_HIGHLIGHT_COLORS_NEW: Record<string, NodeRelativeHighlightColors> = {
+  Topic: {
+    nodeColor: 'green',
+    segmentColor: 0x3dff85,
+  },
+  Organization: {
+    nodeColor: 'purple',
+    segmentColor: 0xdd50ff,
+  },
+}
+
 export const LINK = 'link'
 export const TWITTER_HANDLE = 'twitter_handle'
 export const GITHUB_REPOSITORY = 'github_repository'

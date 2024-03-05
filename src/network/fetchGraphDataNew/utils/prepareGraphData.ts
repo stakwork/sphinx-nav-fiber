@@ -18,7 +18,7 @@ import { EdgeNew, GraphDataNew, NodeExtendedNew, NodeNew } from '../types'
 //   'Episode',
 // ]
 
-const universeScale = 5000
+const universeScale = 1000
 const padding = 300
 
 const step = 300
