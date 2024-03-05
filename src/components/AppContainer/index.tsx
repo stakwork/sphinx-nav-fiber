@@ -14,7 +14,7 @@ export const AppContainer = () => {
   const [isAdmin] = useUserStore((s) => [s.isAdmin])
   const [view, setView] = useState<'prod' | 'betta' | null>(null)
 
-  const App = view !== 'betta' ? <LazyAppNew /> : <LazyApp />
+  const App = view === 'betta' ? <LazyAppNew /> : <LazyApp />
 
   return (
     <AppProviders>
@@ -26,12 +26,14 @@ export const AppContainer = () => {
             {!view && isAdmin ? (
               <Flex align="center" direction="row" justify="center" style={{ marginTop: '25%' }}>
                 <Flex mx={20}>
-                  <Button background="dashboardSearch" onClick={() => setView('prod')}>
+                  <Button data-testid="prod-view" background="dashboardSearch" onClick={() => setView('prod')}>
                     Prod
                   </Button>
                 </Flex>
                 <Flex>
-                  <Button onClick={() => setView('betta')}>Betta (new)</Button>
+                  <Button data-testid="betta-view" onClick={() => setView('betta')}>
+                    Betta (new)
+                  </Button>
                 </Flex>
               </Flex>
             ) : (

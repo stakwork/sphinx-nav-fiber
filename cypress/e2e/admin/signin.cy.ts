@@ -2,10 +2,14 @@ describe('Admin Login', () => {
   it('Admin uses the enable function', () => {
     cy.visit('http://localhost:3000', {
       onBeforeLoad(win) {
-        win['CYPRESS_USER'] = 'alice'
+        win.CYPRESS_USER = 'alice'
       },
     })
-    let title = `Testing NavFiber`
+
+    const title = `Testing NavFiber`
+
+    cy.wait(10000)
+    cy.get('div[data-testid="prod-view"]').click()
     cy.wait(30000)
     cy.get('div[data-testid="settings-modal"]').click()
     // cy.get('[data-testid="setting-label"]').should('have.text', 'Settings')
