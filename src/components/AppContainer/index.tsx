@@ -26,7 +26,7 @@ export const AppContainer = () => {
             {!view && isAdmin ? (
               <Flex align="center" direction="row" justify="center" style={{ marginTop: '25%' }}>
                 <Flex mx={20}>
-                  <Button data-testid="prod-view" background="dashboardSearch" onClick={() => setView('prod')}>
+                  <Button background="dashboardSearch" data-testid="prod-view" onClick={() => setView('prod')}>
                     Prod
                   </Button>
                 </Flex>
