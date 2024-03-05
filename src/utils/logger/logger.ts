@@ -64,7 +64,7 @@ const logMessage = (message: string, variant: Variants) => {
 }
 
 export const overrideConsole = () => {
-  if (!window.location.hostname.includes('local')) {
+  if (!window.location.hostname.includes('local') || true) {
     return
   }
 

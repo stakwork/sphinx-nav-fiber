@@ -6,6 +6,8 @@ export const DATA_COLOR_PALETTE: Record<string, string> = {
   episode: '#FF7F50',
   guest: '#E066FF',
   topic: '#F8F8FF',
+  Topic: '#F8F8FF',
+  Organization: '#FF7F50',
 }
 
 export const getNodeColorByType = (nodeType: string, returnString?: boolean) => {

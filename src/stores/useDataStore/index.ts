@@ -3,7 +3,7 @@ import { devtools } from 'zustand/middleware'
 import { nodesAreRelatives } from '~/components/Universe/constants'
 import { isChileGraph } from '~/constants'
 import { fetchGraphData } from '~/network/fetchGraphData'
-import { GraphData, NodeExtended, NodeType, Sources, TStats, Trending } from '~/types'
+import { GraphData, Link, NodeExtended, NodeType, Sources, TStats, Trending } from '~/types'
 import { saveSearchTerm } from '~/utils/relayHelper/index'
 
 export type GraphStyle = 'sphere' | 'force' | 'split' | 'earth'
@@ -22,7 +22,7 @@ export type DataStore = {
   categoryFilter: NodeType | null
   disableCameraRotation: boolean
   graphRadius: number | null
-  data: GraphData | null
+  data: { nodes: NodeExtended[]; links: Link[] } | null
   selectionGraphData: GraphData
   graphStyle: GraphStyle
   isFetching: boolean
