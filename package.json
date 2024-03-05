@@ -115,9 +115,6 @@
       "./src/components/**/utils/**.ts": {
         "lines": 100
       },
-      "./src/components/AppNew/**/utils/**.ts": {
-        "lines": 0
-      },
       "./src/utils/": {
         "lines": 27,
         "branches": 37,
