@@ -19,8 +19,8 @@ export const SelectionLink = ({ link, animated }: Props) => {
   const [color, setColor] = useState(0x888888)
   const selectionGraphData = useGraphStore((s) => s.selectionGraphData)
 
-  console.log(start)
-  console.log(end)
+  console.warn(start)
+  console.warn(end)
 
   useEffect(() => {
     setStart(new Vector3(link.sourcePosition?.x || 0, link.sourcePosition?.y || 0, link.sourcePosition?.z || 0))

@@ -40,7 +40,7 @@ export const TextNode = memo(({ node, hide }: Props) => {
       scale = 50
     }
 
-    false && console.log(scale)
+    false && console.warn(scale)
 
     return (node.edge_count || 1) * 4
   }, [node.edge_count, isSelected, isRelative, showSelectionGraph])

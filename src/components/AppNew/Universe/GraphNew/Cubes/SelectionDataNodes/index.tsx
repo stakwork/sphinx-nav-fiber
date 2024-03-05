@@ -18,12 +18,8 @@ export const SelectionDataNodes = memo(() => {
   const [selectionGraphData, setSelectionData] = useGraphStore((s) => [s.selectionGraphData, s.setSelectionData])
 
   useEffect(() => {
-    console.log(data?.links)
-
     const links: EdgeExtendedNew[] =
       data?.links.filter((i) => i.source === selectedNode?.ref_id || i.target === selectedNode?.ref_id) || []
-
-    console.log(links)
 
     const nodes: NodeExtendedNew[] = (data?.nodes || [])
       .filter((i) => links.some((l) => l.source === i.ref_id || l.target === i.ref_id))

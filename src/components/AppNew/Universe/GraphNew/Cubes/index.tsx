@@ -32,8 +32,6 @@ export const Cubes = memo(() => {
     (nodes: Object3D[]) => {
       const node = nodes?.[0]
 
-      console.log(node)
-
       if (node) {
         // always close transcript when switching nodes
 
@@ -82,7 +80,7 @@ export const Cubes = memo(() => {
       onPointerOver={onPointerIn}
     >
       {false && <BlurryInstances hide={hideUniverse} />}
-      {true && <RelevanceBadges />}
+      <RelevanceBadges />
       {data?.nodes
         // .filter((f) => {
         //   const isSelected = f?.ref_id === selectedNode?.ref_id
