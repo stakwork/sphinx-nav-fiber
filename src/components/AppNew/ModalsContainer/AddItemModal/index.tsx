@@ -171,7 +171,7 @@ export const AddItemModal = () => {
   }
 
   const onSubmit = form.handleSubmit(async (data) => {
-    if (true) {
+    if (data || true) {
       handleMockingSubmit(data)
 
       return

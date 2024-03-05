@@ -75,9 +75,7 @@ export const Body = () => {
       await putNodeData(actualNode?.ref_id || '', { topic: topicValue.trim() })
 
       if (data) {
-        const newData = { ...data }
-
-        console.log(newData)
+        // const newData = { ...data }
       }
 
       closeHandler()

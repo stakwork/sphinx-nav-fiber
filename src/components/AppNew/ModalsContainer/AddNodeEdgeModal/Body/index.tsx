@@ -58,8 +58,6 @@ export const Body = () => {
       return
     }
 
-    console.log(123)
-
     addNewLink({
       attributes: {},
       edge_type: selectedType,
@@ -101,8 +99,6 @@ export const Body = () => {
   }
 
   const submitDisabled = loading || !selectedToNode || !selectedType
-
-  console.log(selectedNode)
 
   return (
     <FormProvider {...form}>
