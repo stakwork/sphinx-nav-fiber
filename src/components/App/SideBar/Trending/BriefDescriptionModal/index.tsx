@@ -97,6 +97,7 @@ const ScrollableContent = styled.div`
 const StyledText = styled(Text)`
   font-size: 18px;
   font-weight: 400;
+  padding-right: 8px;
   font-family: 'Barlow';
   * {
     all: revert;
