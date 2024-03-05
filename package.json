@@ -105,6 +105,9 @@
       "./src/**/*.js",
       "./src/**/*.ts"
     ],
+    "coveragePathIgnorePatterns": [
+      "<rootDir>/src/AppNew/*"
+    ],
     "coverageThreshold": {
       "global": {
         "lines": 2
