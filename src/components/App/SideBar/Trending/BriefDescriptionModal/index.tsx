@@ -79,14 +79,20 @@ export const BriefDescription: FC<Props> = ({ trend, onClose, selectTrending }) 
         </>
       ) : null}
       <Title>{trend.tldr_topic ?? trend.topic}</Title>
-      <ScrollableContent>
-        <Flex>
-          <StyledText>{trend.tldr && <Markdown>{trend.tldr}</Markdown>}</StyledText>
-        </Flex>
-      </ScrollableContent>
+      <ModalContent>
+        <ScrollableContent>
+          <Flex>
+            <StyledText>{trend.tldr && <Markdown>{trend.tldr}</Markdown>}</StyledText>
+          </Flex>
+        </ScrollableContent>
+      </ModalContent>
     </BaseModal>
   )
 }
+
+const ModalContent = styled.div`
+  margin-right: -20px;
+`
 
 const ScrollableContent = styled.div`
   max-height: 300px;
@@ -97,7 +103,7 @@ const ScrollableContent = styled.div`
 const StyledText = styled(Text)`
   font-size: 18px;
   font-weight: 400;
-  padding-right: 8px;
+  padding-right: 11px;
   font-family: 'Barlow';
   * {
     all: revert;
