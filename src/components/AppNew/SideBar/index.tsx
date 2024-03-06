@@ -39,6 +39,7 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
     s.setTeachMe,
     s.setSidebarFilter,
   ])
+
   const [trendingTopicsFlag] = useFeatureFlag((s) => [s.trendingTopicsFlag])
 
   const filteredNodes = useFilteredNodes()
