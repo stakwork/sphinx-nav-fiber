@@ -14,6 +14,14 @@ describe('youtubeRegex', () => {
     expect(getInputType('https://twitter.com/i/spaces/1zqKVqwrVzlxB?s=20')).toBe(LINK)
   })
 
+  it('should assert we can check for youtu.be link regex', async () => {
+    expect(getInputType('https://youtu.be/HfMYOeg79dM')).toBe(LINK)
+  })
+
+  it('should assert we can check for youtu.be link with parameters regex', async () => {
+    expect(getInputType('https://youtu.be/HfMYOeg79dM?t=120')).toBe(LINK)
+  })
+
   it('should assert we can check for twitter tweet regex', async () => {
     expect(getInputType('https://twitter.com/LarryRuane/status/1720496960489095668')).toBe(TWITTER_SOURCE)
   })
