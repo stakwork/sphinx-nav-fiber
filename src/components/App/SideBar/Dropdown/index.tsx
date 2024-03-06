@@ -26,7 +26,7 @@ const options: Option = {
 
 export const SelectWithPopover = () => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null)
-  const [sidebarFilter, setSidebarFilter] = useDataStore((s) => [s.sidebarFilter, s.setSidebarFilter])
+  const { sidebarFilter, setSidebarFilter } = useDataStore((s) => s)
 
   const handleOpenPopover = (event: React.MouseEvent<HTMLDivElement>) => {
     setAnchorEl(event.currentTarget as HTMLElement)

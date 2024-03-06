@@ -2,7 +2,7 @@ import '@testing-library/jest-dom'
 import { fireEvent, render } from '@testing-library/react'
 import React from 'react'
 import { SelectWithPopover } from '..' // Adjust the import path as needed
-import * as DataStore from '../../../../../stores/useDataStore'
+import { useDataStore } from '../../../../../stores/useDataStore'
 
 // Mock the useDataStore hook
 jest.mock('~/stores/useDataStore', () => ({
@@ -21,10 +21,12 @@ const options = {
   youtube: 'Video',
 }
 
+const useDataStoreMock = useDataStore as jest.MockedFunction<typeof useDataStore>
+
 describe('SelectWithPopover Component', () => {
   beforeEach(() => {
     // Mock implementation of useDataStore hook before each test
-    DataStore.useDataStore.mockImplementation(() => ['all', jest.fn()])
+    useDataStoreMock.mockImplementation(() => ({ sidebarFiler: 'all', setSidebarFilter: jest.fn() }))
   })
 
   it('should open popover on click', () => {
@@ -45,7 +47,7 @@ describe('SelectWithPopover Component', () => {
   it('should change sidebar filter upon option select', () => {
     const setSidebarFilterMock = jest.fn()
 
-    DataStore.useDataStore.mockImplementation(() => ['all', setSidebarFilterMock])
+    useDataStoreMock.mockImplementation(() => ({ sidebarFilter: 'all', setSidebarFilter: setSidebarFilterMock }))
 
     const { getByText } = render(<SelectWithPopover />)
 
@@ -56,7 +58,7 @@ describe('SelectWithPopover Component', () => {
   })
 
   it('should display correct active option', () => {
-    DataStore.useDataStore.mockImplementation(() => ['twitter_space', jest.fn()]) // 'podcast' is the active filter
+    useDataStoreMock.mockImplementation(() => ({ sidebarFilter: 'twitter_space', setSidebarFilter: jest.fn() })) // 'podcast' is the active filter
 
     const { getByText } = render(<SelectWithPopover />)
 
@@ -64,7 +66,7 @@ describe('SelectWithPopover Component', () => {
   })
 
   it('check if the each option is rendered as active', () => {
-    DataStore.useDataStore.mockImplementation(() => ['youtube', jest.fn()]) // 'podcast' is the active filter
+    useDataStoreMock.mockImplementation(() => ({ sidebarFilter: 'youtube', setSidebarFilter: jest.fn() })) // 'podcast' is the active filter
 
     const { getByText } = render(<SelectWithPopover />)
 

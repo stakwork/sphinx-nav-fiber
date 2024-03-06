@@ -1,5 +1,4 @@
 import { fireEvent, render, waitFor } from '@testing-library/react'
-import * as React from 'react'
 import { LatestView } from '..'
 import { useDataStore } from '../../../../../stores/useDataStore'
 import { useUserStore } from '../../../../../stores/useUserStore'
@@ -27,8 +26,8 @@ Object.defineProperty(window, 'matchMedia', {
 describe('LatestView Component', () => {
   beforeEach(() => {
     jest.clearAllMocks()
-    mockedUseDataStore.mockReturnValue([jest.fn()])
-    mockedUseUserStore.mockReturnValue([0, jest.fn(), jest.fn()])
+    mockedUseDataStore.mockReturnValue({ fetchData: jest.fn() })
+    mockedUseUserStore.mockReturnValue({ nodeCount: 0, setNodeCount: jest.fn(), setBudget: jest.fn() })
   })
 
   test('renders button correctly when new data added', () => {
@@ -40,7 +39,7 @@ describe('LatestView Component', () => {
   })
 
   test('does not show the latest button when there are no nodes', () => {
-    mockedUseUserStore.mockReturnValue([0, jest.fn(), jest.fn()])
+    mockedUseUserStore.mockReturnValue({ nodeCount: 0, setNodeCount: jest.fn(), setBudget: jest.fn() })
 
     const { queryByText } = render(<LatestView isSearchResult={false} />)
 
@@ -50,13 +49,13 @@ describe('LatestView Component', () => {
   test('calls latest endpoint with param on button click', async () => {
     const fetchDataMock = jest.fn()
 
-    mockedUseDataStore.mockReturnValue([fetchDataMock])
+    mockedUseDataStore.mockReturnValue({ fetchData: fetchDataMock })
 
     const setNodeCountMock = jest.fn()
 
     const setBudgetMock = jest.fn()
 
-    mockedUseUserStore.mockReturnValue([5, setNodeCountMock, setBudgetMock])
+    mockedUseUserStore.mockReturnValue({ nodeCount: 5, setNodeCount: setNodeCountMock, setBudget: setBudgetMock })
 
     const { getByText } = render(<LatestView isSearchResult={false} />)
 

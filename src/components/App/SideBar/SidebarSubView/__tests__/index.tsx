@@ -57,9 +57,9 @@ const mockSelectedNode = {
 describe('Test SideBarSubView', () => {
   beforeEach(() => {
     jest.clearAllMocks()
-    useDataStoreMock.mockReturnValue([jest.fn(), jest.fn(), jest.fn()])
+    useDataStoreMock.mockReturnValue({ setSelectedNode: jest.fn(), setTeachMe: jest.fn(), showTeachMe: false })
     useSelectedNodeMock.mockReturnValue(mockSelectedNode)
-    useAppStoreMock.mockReturnValue([])
+    useAppStoreMock.mockReturnValue({ setSidebarOpen: jest.fn() })
   })
 
   it('asserts that the component is not visible when open is false', () => {
@@ -75,9 +75,13 @@ describe('Test SideBarSubView', () => {
   })
 
   it('asserts that close button resets the selected node and hides the teach me', () => {
-    const [setSelectedNodeMock, setTeachMeMock, showTeachMeMock] = new Array(3).fill(jest.fn())
+    const [setSelectedNodeMock, setTeachMeMock] = new Array(2).fill(jest.fn())
 
-    useDataStoreMock.mockReturnValue([setSelectedNodeMock, setTeachMeMock, showTeachMeMock])
+    useDataStoreMock.mockReturnValue({
+      setSelectedNode: setSelectedNodeMock,
+      setTeachMe: setTeachMeMock,
+      showTeachMe: false,
+    })
 
     const { getByTestId } = render(
       <ThemeProvider theme={appTheme}>
@@ -113,7 +117,7 @@ describe('Test SideBarSubView', () => {
   it('asserts that the collapse button set the sidebar to close', () => {
     const setSidebarOpenMock = jest.fn()
 
-    useAppStoreMock.mockReturnValue([setSidebarOpenMock])
+    useAppStoreMock.mockReturnValue({ setSidebarOpen: setSidebarOpenMock })
 
     const { getByTestId } = render(
       <ThemeProvider theme={appTheme}>
