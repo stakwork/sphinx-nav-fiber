@@ -211,6 +211,7 @@ export type AuthRequest = {
 
 export type IsAdminResponse = {
   data: {
+    trendingTopics: boolean
     isAdmin: boolean
     isPublic: boolean
     isMember: boolean
