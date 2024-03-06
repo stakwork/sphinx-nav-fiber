@@ -117,7 +117,6 @@ describe('Test SideBar', () => {
     const searchIcon = screen.getByTestId('search-icon')
 
     expect(searchIcon).toBeInTheDocument()
-    
     ;(async () => {
       await waitFor(() => {
         expect(onSubmitMock).toHaveBeenCalled()
@@ -144,7 +143,6 @@ describe('Test SideBar', () => {
     expect(clearIcon).toBeInTheDocument()
 
     fireEvent.click(clearIcon)
-
     ;(async () => {
       await waitFor(() => {
         expect(clearSearchMock).toHaveBeenCalled()
