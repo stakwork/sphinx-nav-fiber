@@ -18,7 +18,7 @@ interface setAuthenticated {
 export const Auth = ({ setAuthenticated }: setAuthenticated) => {
   const [unAuthorized, setUnauthorized] = useState(false)
   const [setBudget, setIsAdmin, setPubKey] = useUserStore((s) => [s.setBudget, s.setIsAdmin, s.setPubKey])
-  const [setTrendingTopics] = useFeatureFlag((s) => [s.setTrendingTopics])
+  const [setTrendingTopicsFlag] = useFeatureFlag((s) => [s.setTrendingTopicsFlag])
 
   const handleAuth = useCallback(async () => {
     // await executeIfProd(async () => {
@@ -64,7 +64,7 @@ export const Auth = ({ setAuthenticated }: setAuthenticated) => {
           setIsAdmin(true)
         }
 
-        setTrendingTopics(res.data.trendingTopics)
+        setTrendingTopicsFlag(res.data.trendingTopics)
       }
 
       setAuthenticated(true)
@@ -78,7 +78,7 @@ export const Auth = ({ setAuthenticated }: setAuthenticated) => {
     if (isE2E || isDevelopment) {
       setAuthenticated(true)
     }
-  }, [setIsAdmin, setPubKey, setBudget, setAuthenticated, setTrendingTopics])
+  }, [setIsAdmin, setPubKey, setBudget, setAuthenticated, setTrendingTopicsFlag])
 
   // auth checker
   useEffect(() => {

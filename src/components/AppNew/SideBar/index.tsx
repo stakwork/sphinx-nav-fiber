@@ -5,14 +5,15 @@ import { useFormContext } from 'react-hook-form'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
 import { SelectWithPopover } from '~/components/App/SideBar/Dropdown'
+import { Flex } from '~/components/common/Flex'
+import { FetchLoaderText } from '~/components/common/Loader'
 import ChevronLeftIcon from '~/components/Icons/ChevronLeftIcon'
 import ClearIcon from '~/components/Icons/ClearIcon'
 import SearchIcon from '~/components/Icons/SearchIcon'
 import { SearchBar } from '~/components/SearchBar'
-import { Flex } from '~/components/common/Flex'
-import { FetchLoaderText } from '~/components/common/Loader'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore, useFilteredNodes, useSelectedNode } from '~/stores/useDataStore'
+import { useFeatureFlag } from '~/stores/useFeatureFlagStore'
 import { colors } from '~/utils/colors'
 import { LatestView } from './Latest'
 import { EpisodeSkeleton } from './Relevance/EpisodeSkeleton'
@@ -38,6 +39,7 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
     s.setTeachMe,
     s.setSidebarFilter,
   ])
+  const [trendingTopicsFlag] = useFeatureFlag((s) => [s.trendingTopicsFlag])
 
   const filteredNodes = useFilteredNodes()
 
@@ -122,7 +124,7 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
         </CollapseButton>
       )}
       <ScrollWrapper ref={componentRef}>
-        {!searchTerm && (
+        {!searchTerm && trendingTopicsFlag && (
           <TrendingWrapper>
             <Trending onSubmit={onSubmit} />
           </TrendingWrapper>

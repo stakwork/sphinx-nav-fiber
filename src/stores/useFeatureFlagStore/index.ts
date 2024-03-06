@@ -1,15 +1,15 @@
 import { create } from 'zustand'
 
 export type FeatureFlag = {
-  trendingTopics: boolean
-  setTrendingTopics: (val: boolean) => void
+  trendingTopicsFlag: boolean
+  setTrendingTopicsFlag: (val: boolean) => void
 }
 
 const defaultData = {
-  trendingTopics: true,
+  trendingTopicsFlag: true,
 }
 
 export const useFeatureFlag = create<FeatureFlag>((set) => ({
   ...defaultData,
-  setTrendingTopics: (trendingTopics) => set({ trendingTopics }),
+  setTrendingTopicsFlag: (trendingTopicsFlag) => set({ trendingTopicsFlag }),
 }))
