@@ -1,10 +1,11 @@
-import { Segment, SegmentObject, Text } from '@react-three/drei'
+import { Segment, SegmentObject } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import { useEffect, useRef, useState } from 'react'
 import { Vector3 } from 'three'
 import { NODE_RELATIVE_HIGHLIGHT_COLORS } from '~/constants'
 import { EdgeExtendedNew, NodeExtendedNew } from '~/network/fetchGraphDataNew/types'
 import { useGraphStore, useSelectedNode } from '~/stores/useGraphStore'
+import { PathwayBadge } from './Badge'
 
 type Props = {
   link: EdgeExtendedNew
@@ -50,17 +51,7 @@ export const SelectionLink = ({ link, animated }: Props) => {
   return (
     <>
       <Segment ref={ref} color={'0xFFFFFF' || color} end={end} start={start} />
-      {false && (
-        <Text
-          anchorX="center"
-          anchorY="middle"
-          color="white"
-          position={[midPoint.x, midPoint.y, midPoint.z + 0.2]}
-          scale={500}
-        >
-          ABC
-        </Text>
-      )}
+      <PathwayBadge position={midPoint} />
     </>
   )
 }
