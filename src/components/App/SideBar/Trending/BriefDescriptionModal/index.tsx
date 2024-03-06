@@ -55,10 +55,10 @@ export const BriefDescription: FC<Props> = ({ trend, onClose, selectTrending }) 
   }, [handleClose])
 
   return (
-    <BaseModal id="briefDescription" kind="regular" onClose={handleClose}>
+    <BaseModal id="briefDescription" kind="regular" noWrap onClose={handleClose}>
       {trend.audio_EN ? (
         <>
-          <Flex direction="row" justify="flex-start" mb={22}>
+          <Flex direction="row" justify="flex-start" m={20}>
             <Button
               onClick={togglePlay}
               size="small"
@@ -79,31 +79,26 @@ export const BriefDescription: FC<Props> = ({ trend, onClose, selectTrending }) 
         </>
       ) : null}
       <Title>{trend.tldr_topic ?? trend.topic}</Title>
-      <ModalContent>
-        <ScrollableContent>
-          <Flex>
-            <StyledText>{trend.tldr && <Markdown>{trend.tldr}</Markdown>}</StyledText>
-          </Flex>
-        </ScrollableContent>
-      </ModalContent>
+
+      <ScrollableContent>
+        <Flex>
+          <StyledText>{trend.tldr && <Markdown>{trend.tldr}</Markdown>}</StyledText>
+        </Flex>
+      </ScrollableContent>
     </BaseModal>
   )
 }
-
-const ModalContent = styled.div`
-  margin-right: -20px;
-`
 
 const ScrollableContent = styled.div`
   max-height: 300px;
   overflow-y: auto;
   margin: 8px 0;
+  padding: 0 20px;
 `
 
 const StyledText = styled(Text)`
   font-size: 18px;
   font-weight: 400;
-  padding-right: 11px;
   font-family: 'Barlow';
   * {
     all: revert;
@@ -113,6 +108,7 @@ const StyledText = styled(Text)`
 const Title = styled(Text)`
   font-weight: 600;
   font-size: 20px;
+  padding: 0 20px;
 `
 
 const StyledAudio = styled.audio`
