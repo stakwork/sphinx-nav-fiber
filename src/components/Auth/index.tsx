@@ -59,10 +59,8 @@ export const Auth = ({ setAuthenticated }: setAuthenticated) => {
       }
 
       if (res.data) {
-        if (res.data.isAdmin) {
-          localStorage.setItem('admin', JSON.stringify({ isAdmin: true }))
-          setIsAdmin(true)
-        }
+        localStorage.setItem('admin', JSON.stringify({ isAdmin: res.data.isAdmin }))
+        setIsAdmin(!!res.data.isAdmin)
 
         setTrendingTopicsFlag(res.data.trendingTopics)
       }
