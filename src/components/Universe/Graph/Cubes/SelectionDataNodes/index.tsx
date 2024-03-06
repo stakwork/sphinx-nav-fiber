@@ -54,8 +54,6 @@ export const SelectionDataNodes = memo(() => {
     }
   })
 
-  console.log(selectionGraphData)
-
   return (
     <>
       {selectionGraphData?.nodes.map((node) => {
