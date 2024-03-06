@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 import ClearIcon from '~/components/Icons/ClearIcon'
 import PlayIcon from '~/components/Icons/PlayIcon'
+import PauseIcon from '~/components/Icons/PauseIcon'
 import { Avatar } from '~/components/common/Avatar'
 import { Flex } from '~/components/common/Flex'
 import { useAppStore } from '~/stores/useAppStore'
@@ -10,7 +11,6 @@ import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { usePlayerStore } from '~/stores/usePlayerStore'
 import { videoTimeToSeconds } from '~/utils'
 import { colors } from '~/utils/colors'
-import { Equalizer } from './Equalizer'
 
 export const PlayerControl = () => {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -67,13 +67,14 @@ export const PlayerControl = () => {
           </Container>
 
           <Action
+            data-testid="play-pause-button"
             onClick={(e) => {
               setIsPlaying(!isPlaying)
               e.stopPropagation()
             }}
             size="small"
           >
-            {!isPlaying ? <PlayIcon /> : <Equalizer />}
+            {isPlaying ? <PauseIcon data-testid="pause-icon" /> : <PlayIcon data-testid="play-icon" />}
           </Action>
         </Info>
         <Close onClick={(e) => onClose(e)}>
