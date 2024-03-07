@@ -62,11 +62,11 @@ export const BudgetStep: FC<Props> = ({ onClick, loading, type }) => {
           disabled={loading}
           onClick={onClick}
           size="large"
-          startIcon={loading ? null : <CheckIcon />}
+          startIcon={loading ? <ClipLoader size={24} /> : <CheckIcon />}
           type="submit"
           variant="contained"
         >
-          {loading ? <ClipLoader size={24} /> : 'Approve'}
+          Approve
         </Button>
       </Flex>
     </Flex>
