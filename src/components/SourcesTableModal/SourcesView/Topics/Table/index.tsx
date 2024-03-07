@@ -1,5 +1,4 @@
 import { Table as MaterialTable, Popover, TableRow } from '@mui/material'
-// import moment from 'moment'
 import React, { useCallback } from 'react'
 import styled from 'styled-components'
 import FilterOffIcon from '~/components/Icons/FilterOffIcon'
@@ -7,14 +6,14 @@ import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { useAppStore } from '~/stores/useAppStore'
 import { useModal } from '~/stores/useModalStore'
-// import { useTopicsStore } from '~/stores/useTopicsStore'
+import { useTopicsStore } from '~/stores/useTopicsStore'
 import { colors } from '~/utils/colors'
 import { StyledTableCell, StyledTableHead } from '../../common'
 import { IS_ALIAS } from '../../constants'
 import { TopicTableProps } from '../../types'
 import { TopicRow } from './TableRow'
-import { Topic } from '~/types'
-import { MdSort } from 'react-icons/md'
+// import { Topic } from '~/types'
+import SortFilterIcon from '~/components/Icons/SortFilterIcon'
 
 export const Table: React.FC<TopicTableProps> = ({ showMuted, onTopicEdit, onChangeFilter }) => {
   const { close } = useModal('sourcesTable')
@@ -23,36 +22,7 @@ export const Table: React.FC<TopicTableProps> = ({ showMuted, onTopicEdit, onCha
   const [selectedRefId, setSelectedRefId] = React.useState<string>('')
 
   const [setSearchFormValue, setCurrentSearch] = useAppStore((s) => [s.setSearchFormValue, s.setCurrentSearch])
-  // const [data, ids] = useTopicsStore((s) => [s.data, s.ids])
-
-  const data: Topic[] = [
-    {
-      topic: 'Privacy Confirmation',
-      edgeCount: 4830,
-      edgeList: ['RELATED_TO', 'IS_ALIAS', 'MENTIONS', 'IS_SUMMARIZED'],
-      date_added_to_graph: '1644115200',
-      muted_topic: 'false',
-      ref_id: '0',
-    },
-    {
-      topic: 'Absence of Documents',
-      edgeCount: 630,
-      edgeList: ['RELATED_TO', 'IS_ALIAS', 'MENTIONS', 'IS_SUMMARIZED'],
-      date_added_to_graph: '1644115200',
-      muted_topic: 'true',
-      ref_id: '1',
-    },
-    {
-      topic: 'Year 2009',
-      edgeCount: 130,
-      edgeList: ['RELATED_TO', 'IS_ALIAS', 'MENTIONS', 'IS_SUMMARIZED'],
-      date_added_to_graph: '1644115200',
-      muted_topic: 'true',
-      ref_id: '2',
-    },
-  ]
-
-  const ids: string[] = data.map((topic, index) => String(index))
+  const [data, ids] = useTopicsStore((s) => [s.data, s.ids])
 
   const handleClick = useCallback((event: React.MouseEvent<HTMLButtonElement>, refId: string) => {
     setAnchorEl(event.currentTarget)
@@ -101,18 +71,18 @@ export const Table: React.FC<TopicTableProps> = ({ showMuted, onTopicEdit, onCha
                 <StyledTableCell className="empty" />
                 <StyledTableCell>
                   <SortedIcon onClick={() => handleChange('Alphabetically')}>
-                    Name <MdSort color={colors.GRAY7} fontSize={15} />
+                    Name <SortFilterIcon />
                   </SortedIcon>
                 </StyledTableCell>
                 <StyledTableCell>
                   <SortedIcon onClick={() => handleChange('Edge Count')}>
-                    Count <MdSort color={colors.GRAY7} fontSize={15} />
+                    Count <SortFilterIcon />
                   </SortedIcon>
                 </StyledTableCell>
                 <StyledTableCell>Edge list</StyledTableCell>
                 <StyledTableCell>
                   <SortedIcon onClick={() => handleChange('Date')}>
-                    Date <MdSort color={colors.GRAY7} fontSize={15} />
+                    Date <SortFilterIcon />
                   </SortedIcon>
                 </StyledTableCell>
                 <StyledTableCell>{showMuted ? 'Unmute' : 'Mute'}</StyledTableCell>
@@ -122,7 +92,7 @@ export const Table: React.FC<TopicTableProps> = ({ showMuted, onTopicEdit, onCha
             {data && (
               <tbody>
                 {ids?.map((i: string) => (
-                  <TopicRow key={i} onClick={handleClick} onSearch={handleSearch} topic={data[parseInt(i, 10)]} />
+                  <TopicRow key={i} onClick={handleClick} onSearch={handleSearch} topic={data[i]} />
                 ))}
               </tbody>
             )}
@@ -137,7 +107,7 @@ export const Table: React.FC<TopicTableProps> = ({ showMuted, onTopicEdit, onCha
               transformOrigin={{ vertical: 'top', horizontal: 'right' }}
             >
               <PopoverOption onClick={() => handlePopoverAction('editTopic')}>Rename</PopoverOption>
-              {!data[parseInt(selectedRefId, 10)].edgeList.includes(IS_ALIAS) ? (
+              {!data[selectedRefId].edgeList.includes(IS_ALIAS) ? (
                 <PopoverOption onClick={() => handlePopoverAction('mergeTopic')}>Merge</PopoverOption>
               ) : null}
               <PopoverOption onClick={() => handlePopoverAction('addEdge')}>Add edge</PopoverOption>
