@@ -101,18 +101,18 @@ export const Table: React.FC<TopicTableProps> = ({ showMuted, onTopicEdit, onCha
                 <StyledTableCell className="empty" />
                 <StyledTableCell>
                   <SortedIcon onClick={() => handleChange('Alphabetically')}>
-                    Name <MdSort color={colors.GRAY7} fontSize={16} />
+                    Name <MdSort color={colors.GRAY7} fontSize={15} />
                   </SortedIcon>
                 </StyledTableCell>
                 <StyledTableCell>
                   <SortedIcon onClick={() => handleChange('Edge Count')}>
-                    Count <MdSort color={colors.GRAY7} fontSize={16} />
+                    Count <MdSort color={colors.GRAY7} fontSize={15} />
                   </SortedIcon>
                 </StyledTableCell>
                 <StyledTableCell>Edge list</StyledTableCell>
                 <StyledTableCell>
                   <SortedIcon onClick={() => handleChange('Date')}>
-                    Date <MdSort color={colors.GRAY7} fontSize={16} />
+                    Date <MdSort color={colors.GRAY7} fontSize={15} />
                   </SortedIcon>
                 </StyledTableCell>
                 <StyledTableCell>{showMuted ? 'Unmute' : 'Mute'}</StyledTableCell>
