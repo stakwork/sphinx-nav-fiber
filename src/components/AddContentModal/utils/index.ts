@@ -4,6 +4,7 @@ export const twitterHandlePattern = /\btwitter\.com\/(?:@)?([\w_]+)(?:$|\?[^/]*$
 
 const youtubeRegex = /(https?:\/\/)?(www\.)?youtube\.com\/watch\?v=([A-Za-z0-9_-]+)/
 const youtubeLiveRegex = /(https?:\/\/)?(www\.)?youtube\.com\/live\/([A-Za-z0-9_-]+)/
+const youtubeShortRegex = /(https?:\/\/)?(www\.)?youtu\.be\/([A-Za-z0-9_-]+)/
 const twitterSpaceRegex = /https:\/\/twitter\.com\/i\/spaces\/([A-Za-z0-9_-]+)/
 const tweetUrlRegex = /https:\/\/twitter\.com\/[^/]+\/status\/(\d+)/
 const mp3Regex = /(https?:\/\/)?([A-Za-z0-9_-]+)\.mp3/
@@ -15,7 +16,14 @@ const genericUrlRegex = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/
 const twitterBroadcastRegex = /https:\/\/twitter\.com\/i\/broadcasts\/([A-Za-z0-9_-]+)/
 
 export function getInputType(source: string) {
-  const linkPatterns = [youtubeLiveRegex, twitterBroadcastRegex, youtubeRegex, twitterSpaceRegex, mp3Regex]
+  const linkPatterns = [
+    youtubeLiveRegex,
+    twitterBroadcastRegex,
+    youtubeRegex,
+    youtubeShortRegex,
+    twitterSpaceRegex,
+    mp3Regex,
+  ]
 
   if (linkPatterns.some((pattern) => pattern.test(source))) {
     return LINK

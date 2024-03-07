@@ -18,9 +18,9 @@ const MEDIA_TYPES = ['clip', 'twitter_space', 'youtube', 'episode', 'podcast']
 // eslint-disable-next-line no-underscore-dangle
 const _View = () => {
   const selectedNode = useSelectedNode()
-  const [showTeachMe] = useDataStore((s) => [s.showTeachMe])
+  const { showTeachMe } = useDataStore((s) => s)
 
-  const [setPlayingNode] = usePlayerStore((s) => [s.setPlayingNode])
+  const { setPlayingNode } = usePlayerStore((s) => s)
 
   useEffect(() => {
     if (MEDIA_TYPES.includes(selectedNode?.node_type || '')) {

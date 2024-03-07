@@ -13,16 +13,12 @@ import { MediaPlayer } from './MediaPlayer'
 type Props = { open: boolean }
 
 export const SideBarSubView = ({ open }: Props) => {
-  const [setSelectedNode, setTeachMe, showTeachMe] = useDataStore((s) => [
-    s.setSelectedNode,
-    s.setTeachMe,
-    s.showTeachMe,
-  ])
+  const { setSelectedNode, setTeachMe, showTeachMe } = useDataStore((s) => s)
 
   const selectedNode = useSelectedNode()
 
-  const [setSidebarOpen] = useAppStore((s) => [s.setSidebarOpen])
-  const [playingNode] = usePlayerStore((s) => [s.playingNode])
+  const { setSidebarOpen } = useAppStore((s) => s)
+  const { playingNode } = usePlayerStore((s) => s)
 
   return (
     <Slide

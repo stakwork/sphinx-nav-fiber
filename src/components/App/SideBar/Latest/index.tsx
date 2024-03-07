@@ -15,8 +15,8 @@ type Props = {
 
 // eslint-disable-next-line no-underscore-dangle
 const _View = ({ isSearchResult }: Props) => {
-  const [nodeCount, setNodeCount, setBudget] = useUserStore((s) => [s.nodeCount, s.setNodeCount, s.setBudget])
-  const [fetchData] = useDataStore((s) => [s.fetchData])
+  const { nodeCount, setNodeCount, setBudget } = useUserStore((s) => s)
+  const { fetchData } = useDataStore((s) => s)
 
   const getLatest = async () => {
     if (nodeCount < 1) {

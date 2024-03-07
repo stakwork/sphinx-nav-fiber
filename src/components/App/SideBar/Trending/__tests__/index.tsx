@@ -44,10 +44,7 @@ describe('Trending Component', () => {
   beforeEach(() => {
     jest.clearAllMocks()
 
-    mockedUseDataStore.mockImplementation(() => [
-      mockTrends,
-      jest.fn().mockImplementation((trendingTopics) => trendingTopics),
-    ])
+    mockedUseDataStore.mockReturnValue({ trendingTopics: mockTrends, setTrendingTopics: jest.fn() })
   })
 
   it('asserts that the component renders correctly', () => {
@@ -60,7 +57,7 @@ describe('Trending Component', () => {
   it('verifies that the component fetches trending topics on mount and updates the state accordingly', () => {
     const mockedSetTrendingTopics = jest.fn()
 
-    mockedUseDataStore.mockReturnValue([mockTrends, mockedSetTrendingTopics])
+    mockedUseDataStore.mockReturnValue({ trendingTopics: mockTrends, setTrendingTopics: mockedSetTrendingTopics })
 
     render(<Trending />)
     ;(async () => {
@@ -72,7 +69,7 @@ describe('Trending Component', () => {
   })
 
   it('checks that the component renders a list of trending topics when data is available', () => {
-    mockedUseDataStore.mockReturnValue([mockTrends, jest.fn()])
+    mockedUseDataStore.mockReturnValue({ trendingTopics: mockTrends, setTrendingTopics: jest.fn() })
 
     const { getByText } = render(<Trending />)
 
@@ -82,7 +79,7 @@ describe('Trending Component', () => {
   })
 
   it('ensures that the "Add Content" button calls the openContentAddModal function', () => {
-    mockedUseDataStore.mockReturnValue([[], jest.fn()])
+    mockedUseDataStore.mockReturnValue({ trendingTopics: [], setTrendingTopics: jest.fn() })
 
     const loading = false
 
@@ -105,7 +102,7 @@ describe('Trending Component', () => {
   })
 
   it('confirms the rendering of the BriefDescriptionModal when a TLDR button is clicked', () => {
-    mockedUseDataStore.mockReturnValue([[mockTrends[0]], jest.fn()])
+    mockedUseDataStore.mockReturnValue({ trendingTopics: [mockTrends[0]], setTrendingTopics: jest.fn() })
 
     const { getByRole } = render(<Trending />)
 
@@ -120,7 +117,7 @@ describe('Trending Component', () => {
   })
 
   it('validates the play/pause functionality of the audio', () => {
-    mockedUseDataStore.mockReturnValue([mockTrends, jest.fn()])
+    mockedUseDataStore.mockReturnValue({ trendingTopics: mockTrends, setTrendingTopics: jest.fn() })
 
     jest.spyOn(utils, 'showPlayButton')
 
@@ -139,7 +136,7 @@ describe('Trending Component', () => {
   test('tests the behavior when a user selects a trending topic', () => {
     const mockedSelectTrendingTopic = jest.fn()
 
-    mockedUseDataStore.mockReturnValue([mockTrends, mockedSelectTrendingTopic])
+    mockedUseDataStore.mockReturnValue({ trendingTopics: mockTrends, setTrendingTopics: mockedSelectTrendingTopic })
 
     const { getByText } = render(<Trending />)
 
@@ -152,7 +149,7 @@ describe('Trending Component', () => {
   test('Add test to submit form with selected trending topic', () => {
     const mockedSelectTrendingTopic = jest.fn()
 
-    mockedUseDataStore.mockReturnValue([mockTrends, mockedSelectTrendingTopic])
+    mockedUseDataStore.mockReturnValue({ trendingTopics: mockTrends, setTrendingTopics: mockedSelectTrendingTopic })
 
     const { getByText } = render(<Trending />)
 

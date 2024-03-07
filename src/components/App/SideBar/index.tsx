@@ -33,20 +33,11 @@ type ContentProp = {
 
 // eslint-disable-next-line react/display-name
 const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen }, ref) => {
-  const [isLoading, setTeachMe, setSidebarFilter] = useDataStore((s) => [
-    s.isFetching,
-    s.setTeachMe,
-    s.setSidebarFilter,
-  ])
+  const { isFetching: isLoading, setTeachMe, setSidebarFilter } = useDataStore((s) => s)
 
   const filteredNodes = useFilteredNodes()
 
-  const [setSidebarOpen, searchTerm, clearSearch, searchFormValue] = useAppStore((s) => [
-    s.setSidebarOpen,
-    s.currentSearch,
-    s.clearSearch,
-    s.searchFormValue,
-  ])
+  const { setSidebarOpen, currentSearch: searchTerm, clearSearch, searchFormValue } = useAppStore((s) => s)
 
   const { setValue } = useFormContext()
   const componentRef = useRef<HTMLDivElement | null>(null)
@@ -93,7 +84,7 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
             {!isLoading ? (
               <>{searchTerm ? <ClearIcon /> : <SearchIcon />}</>
             ) : (
-              <ClipLoader color={colors.SECONDARY_BLUE} size="20" />
+              <ClipLoader color={colors.SECONDARY_BLUE} data-testid="loader" size="20" />
             )}
           </InputButton>
         </Search>
@@ -141,12 +132,12 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
 const hideSubViewFor = ['topic', 'person', 'guest', 'event', 'organization', 'place', 'project', 'software']
 
 export const SideBar = ({ onSubmit }: Props) => {
-  const sidebarIsOpen = useAppStore((s) => s.sidebarIsOpen)
+  const { sidebarIsOpen } = useAppStore((s) => s)
   const selectedNode = useSelectedNode()
 
   const subViewIsOpen = !!selectedNode && sidebarIsOpen && !hideSubViewFor.includes(selectedNode.node_type)
 
-  const [showTeachMe] = useDataStore((s) => [s.showTeachMe])
+  const { showTeachMe } = useDataStore((s) => s)
 
   return (
     <>
