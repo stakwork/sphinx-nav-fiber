@@ -38,6 +38,8 @@ export const useTopicsStore = create<TopicsStore>((set, get) => ({
 
     const responseData: FetchTopicResponse = await getTopicsData(payload)
 
+    console.log(responseData)
+
     // Instead of replacing the data, append new data to existing data
     const newData: Record<string, Topic> = filters.page === 0 ? {} : { ...(data || {}) }
     const newIds: string[] = filters.page === 0 ? [] : [...ids]

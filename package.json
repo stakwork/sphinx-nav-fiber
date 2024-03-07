@@ -97,10 +97,16 @@
     ]
   },
   "jest": {
+    "testPathIgnorePatterns": [
+      "AppNew"
+    ],
     "collectCoverage": true,
     "collectCoverageFrom": [
       "./src/**/*.js",
       "./src/**/*.ts"
+    ],
+    "coveragePathIgnorePatterns": [
+      "AppNew"
     ],
     "coverageThreshold": {
       "global": {

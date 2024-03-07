@@ -4,7 +4,7 @@ import { TAboutParams } from '~/network/fetchSourcesData'
 
 export type SecondarySidebarActiveTab = '' | 'sentiment' | 'sources' | 'about'
 
-type AppStore = {
+export type AppStore = {
   currentSearch: string | null
   searchFormValue: string
   secondarySidebarActiveTab: SecondarySidebarActiveTab

@@ -34,7 +34,7 @@ export const Trending = ({ onSubmit }: Props) => {
 
   const { open } = useModal('briefDescription')
 
-  const [trendingTopics, setTrendingTopics] = useDataStore((s) => [s.trendingTopics, s.setTrendingTopics])
+  const { trendingTopics, setTrendingTopics } = useDataStore((s) => s)
 
   const { setValue } = useFormContext()
 
@@ -130,7 +130,7 @@ export const Trending = ({ onSubmit }: Props) => {
   const placeholderText = loading ? 'Loading' : 'No new trending topics in the last 24 hours'
 
   return (
-    <Wrapper>
+    <Wrapper data-testid="trending-component">
       <div>
         <div className="heading-container">
           <div className="heading">

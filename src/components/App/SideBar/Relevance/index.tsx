@@ -21,13 +21,9 @@ const _Relevance = ({ isSearchResult }: Props) => {
 
   const pageSize = !isSearchResult ? 10 : 80
 
-  const [setSelectedNode, setSelectedTimestamp] = useDataStore((s) => [s.setSelectedNode, s.setSelectedTimestamp])
+  const { setSelectedNode, setSelectedTimestamp } = useDataStore((s) => s)
 
-  const [currentSearch, setSidebarOpen, setRelevanceSelected] = useAppStore((s) => [
-    s.currentSearch,
-    s.setSidebarOpen,
-    s.setRelevanceSelected,
-  ])
+  const { currentSearch, setSidebarOpen, setRelevanceSelected } = useAppStore((s) => s)
 
   const [currentPage, setCurrentPage] = useState(0)
 

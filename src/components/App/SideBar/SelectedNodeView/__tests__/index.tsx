@@ -32,8 +32,10 @@ describe('SelectedNodeView', () => {
 
   beforeEach(() => {
     jest.clearAllMocks()
-    ;(DataStore.useDataStore as unknown as jest.Mock).mockImplementation(() => [false])
-    ;(PlayerStore.usePlayerStore as unknown as jest.Mock).mockImplementation(() => [setPlayingNodeMock])
+    ;(DataStore.useDataStore as unknown as jest.Mock).mockImplementation(() => ({ showTeachMe: false }))
+    ;(PlayerStore.usePlayerStore as unknown as jest.Mock).mockImplementation(() => ({
+      setPlayingNode: setPlayingNodeMock,
+    }))
   })
 
   it.each([
@@ -60,7 +62,7 @@ describe('SelectedNodeView', () => {
   })
 
   it('renders TeachMeText when showTeachMe is true', () => {
-    ;(DataStore.useDataStore as unknown as jest.Mock).mockImplementation(() => [true])
+    ;(DataStore.useDataStore as unknown as jest.Mock).mockImplementation(() => ({ showTeachMe: true }))
 
     const { getByText } = render(<SelectedNodeView />)
 
