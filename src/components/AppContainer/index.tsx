@@ -14,7 +14,7 @@ export const AppContainer = () => {
   const [isAdmin] = useUserStore((s) => [s.isAdmin])
   const [view, setView] = useState<'prod' | 'betta' | null>(null)
 
-  const App = view !== 'betta' ? <LazyAppNew /> : <LazyApp />
+  const App = view === 'betta' ? <LazyAppNew /> : <LazyApp />
 
   return (
     <AppProviders>
