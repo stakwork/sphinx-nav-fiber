@@ -6,7 +6,7 @@ import { api } from '~/network/api'
 import { FetchNodeParams } from '~/stores/useDataStore'
 import { MOCKED_NODES_EDGES } from './mockedData'
 import { FetchGDataResponse, GraphDataNew } from './types'
-import { generateForceGraphPositions } from './utils/prepareGraphDataForce'
+import { generateSplitGraphPositions } from './utils/prepareGraphDataCircle'
 
 const defaultData: GraphDataNew = {
   links: [],
@@ -111,7 +111,7 @@ export const formatFetchNodes = (
   console.log(graphStyle)
 
   // const dataWithPositions: GraphDataNew = generateSplitGraphPositions(nodes, edges)
-  const dataWithPositions: GraphDataNew = generateForceGraphPositions(nodes, edges)
+  const dataWithPositions: GraphDataNew = generateSplitGraphPositions(nodes, edges)
 
   return dataWithPositions
 }

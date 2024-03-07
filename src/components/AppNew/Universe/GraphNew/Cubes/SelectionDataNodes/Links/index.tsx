@@ -1,24 +1,22 @@
 import { Segment, SegmentObject } from '@react-three/drei'
-import { useFrame } from '@react-three/fiber'
 import { useEffect, useRef, useState } from 'react'
 import { Vector3 } from 'three'
 import { NODE_RELATIVE_HIGHLIGHT_COLORS } from '~/constants'
-import { EdgeExtendedNew, NodeExtendedNew } from '~/network/fetchGraphDataNew/types'
-import { useGraphStore, useSelectedNode } from '~/stores/useGraphStore'
+import { EdgeExtendedNew } from '~/network/fetchGraphDataNew/types'
+import { useSelectedNode } from '~/stores/useGraphStore'
 import { PathwayBadge } from './Badge'
 
 type Props = {
   link: EdgeExtendedNew
-  animated?: boolean
+  title: string
 }
 
-export const SelectionLink = ({ link, animated }: Props) => {
+export const SelectionLink = ({ link, title }: Props) => {
   const ref = useRef<SegmentObject | null>(null)
   const selectedNode = useSelectedNode()
   const [start, setStart] = useState(new Vector3(0, 0, 0))
   const [end, setEnd] = useState(new Vector3(0, 0, 0))
   const [color, setColor] = useState(0x888888)
-  const selectionGraphData = useGraphStore((s) => s.selectionGraphData)
 
   console.warn(start)
   console.warn(end)
@@ -31,27 +29,12 @@ export const SelectionLink = ({ link, animated }: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedNode, link])
 
-  useFrame(() => {
-    if (animated && ref.current) {
-      const source = selectionGraphData.nodes.find(
-        (f) => f.ref_id === (link.source as unknown as NodeExtendedNew)?.ref_id,
-      )
-
-      const target = selectionGraphData.nodes.find(
-        (f) => f.ref_id === (link.target as unknown as NodeExtendedNew).ref_id,
-      )
-
-      ref.current.start.set(source?.x || 0, source?.y || 0, source?.z || 0)
-      ref.current.end.set(target?.x || 0, target?.y || 0, target?.z || 0)
-    }
-  })
-
   const midPoint = new Vector3().addVectors(start, end).multiplyScalar(0.5)
 
   return (
     <>
       <Segment ref={ref} color={'0xFFFFFF' || color} end={end} start={start} />
-      <PathwayBadge position={midPoint} />
+      <PathwayBadge position={midPoint} title={title} />
     </>
   )
 }

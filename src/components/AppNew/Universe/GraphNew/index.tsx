@@ -55,7 +55,7 @@ export const GraphNew = () => {
       {true && <Cubes />}
       {false && <Particles />}
       {false && <Connections connections={data?.links || []} />}
-      {graphStyle !== 'earth' && (
+      {!showSelectionGraph && (
         <Segments
           /** NOTE: using the key in this way the segments re-mounts
            *  everytime the data.links count changes

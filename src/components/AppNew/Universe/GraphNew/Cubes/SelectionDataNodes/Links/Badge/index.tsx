@@ -7,7 +7,7 @@ import { Flex } from '~/components/common/Flex'
 
 export const getPercentageFromWeight = (weight: number | undefined) => ((weight || 0) * 100).toFixed()
 
-export const PathwayBadge = ({ position }: { position: Vector3 }) => {
+export const PathwayBadge = ({ position, title }: { position: Vector3; title: string }) => {
   const ref = useRef<Group | null>(null)
 
   useEffect(
@@ -35,7 +35,7 @@ export const PathwayBadge = ({ position }: { position: Vector3 }) => {
             e.stopPropagation()
           }}
         >
-          Relation%
+          {title}
         </Tag>
       </Html>
     </group>
@@ -53,7 +53,7 @@ const Tag = styled(Flex)`
   align-items: center;
   justify-content: center;
   font-family: Barlow;
-  font-size: 26px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 700;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);

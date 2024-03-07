@@ -61,6 +61,19 @@ export const SelectionDataNodes = memo(() => {
     }
   })
 
+  console.log(selectionGraphData)
+
+  const links = selectionGraphData.links.map((link) => {
+    const source = selectionGraphData.nodes.find((node) => link.source === node.ref_id)
+    const target = selectionGraphData.nodes.find((node) => link.target === node.ref_id)
+
+    return {
+      ...link,
+      sourcePosition: { x: source?.x, y: source?.y, z: source?.z },
+      targetPosition: { x: target?.x, y: target?.y, z: target?.z },
+    }
+  })
+
   return (
     <>
       {selectionGraphData?.nodes.map((node) => (
@@ -68,18 +81,18 @@ export const SelectionDataNodes = memo(() => {
       ))}
 
       <Segments
-        key={`selection-links-${selectionGraphData?.links.length}`}
+        key={`selection-links-${links.length}`}
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         fog
         lineWidth={0.9}
       >
-        {(selectionGraphData?.links as unknown as GraphDataNew['links']).map((link, index) => (
+        {(links as unknown as GraphDataNew['links']).map((link, index) => (
           <SelectionLink
             // eslint-disable-next-line react/no-array-index-key
             key={index.toString()}
-            animated
             link={link}
+            title={link.edge_type}
           />
         ))}
       </Segments>
