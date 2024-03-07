@@ -79,7 +79,6 @@ export const BriefDescription: FC<Props> = ({ trend, onClose, selectTrending }) 
         </>
       ) : null}
       <Title>{trend.tldr_topic ?? trend.topic}</Title>
-
       <ScrollableContent>
         <Flex>
           <StyledText>{trend.tldr && <Markdown>{trend.tldr}</Markdown>}</StyledText>
