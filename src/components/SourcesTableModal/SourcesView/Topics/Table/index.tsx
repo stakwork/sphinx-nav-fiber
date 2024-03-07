@@ -12,7 +12,6 @@ import { StyledTableCell, StyledTableHead } from '../../common'
 import { IS_ALIAS } from '../../constants'
 import { TopicTableProps } from '../../types'
 import { TopicRow } from './TableRow'
-// import { Topic } from '~/types'
 import SortFilterIcon from '~/components/Icons/SortFilterIcon'
 
 export const Table: React.FC<TopicTableProps> = ({ showMuted, onTopicEdit, onChangeFilter }) => {
