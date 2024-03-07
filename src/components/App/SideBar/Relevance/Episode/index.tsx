@@ -176,10 +176,12 @@ export const Date = styled(Text)`
 export const TypeTopic = styled.div`
   display: flex;
   flex-direction: row;
+  align-items: center;
 
   svg {
     color: ${colors.mainBottomIcons};
     margin-right: 10px;
+    align-self: center;
   }
 
   p {
@@ -197,6 +199,7 @@ export const TypeTopic = styled.div`
     font-style: normal;
     font-weight: 600;
     line-height: 24px;
+    margin: 0;
   }
 `
 
