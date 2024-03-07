@@ -3,7 +3,7 @@ import React, { FC, memo, useState } from 'react'
 import { MdCancel, MdCheckCircle } from 'react-icons/md'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
-import SettingsIcon from '~/components/Icons/SettingsIcon'
+import ThreeDotsIcons from '~/components/Icons/ThreeDotsIcons'
 import { Flex } from '~/components/common/Flex'
 import { putNodeData } from '~/network/fetchSourcesData'
 import { useTopicsStore } from '~/stores/useTopicsStore'
@@ -77,7 +77,7 @@ const TableRowComponent: FC<TTableRaw> = ({ topic, onClick, onSearch }) => {
       </StyledTableCell>
       <StyledTableCell>
         <IconButton onClick={(e) => onClick(e, topic.ref_id)}>
-          <SettingsIcon />
+          <ThreeDotsIcons data-testid="ThreeDotsIcons" />
         </IconButton>
       </StyledTableCell>
     </StyledTableRow>
