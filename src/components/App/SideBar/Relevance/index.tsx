@@ -36,6 +36,17 @@ const _Relevance = ({ isSearchResult }: Props) => {
 
   const isMobile = useIsMatchBreakpoint('sm', 'down')
 
+  const handleNodeClick = useCallback(
+    (node: NodeExtended) => {
+      saveConsumedContent(node)
+      setSelectedTimestamp(node)
+      setRelevanceSelected(true)
+      setSelectedNode(node)
+      isMobile && setSidebarOpen(false)
+    },
+    [setSelectedNode, setRelevanceSelected, setSidebarOpen, setSelectedTimestamp, isMobile],
+  )
+
   const currentNodes = useMemo(() => {
     if (filteredNodes) {
       const nodes = [...filteredNodes].sort((a, b) => (b.date || 0) - (a.date || 0))
@@ -47,24 +58,19 @@ const _Relevance = ({ isSearchResult }: Props) => {
 
           return bValue - aValue
         })
+
+        const exactNodeMatch = nodes.find((node) => node.node_type === 'topic' && node.name === currentSearch)
+
+        if (exactNodeMatch) {
+          handleNodeClick(exactNodeMatch)
+        }
       }
 
       return nodes.slice(0, endSlice)
     }
 
     return []
-  }, [filteredNodes, endSlice, currentSearch])
-
-  const handleNodeClick = useCallback(
-    (node: NodeExtended) => {
-      saveConsumedContent(node)
-      setSelectedTimestamp(node)
-      setRelevanceSelected(true)
-      setSelectedNode(node)
-      isMobile && setSidebarOpen(false)
-    },
-    [setSelectedNode, setRelevanceSelected, setSidebarOpen, setSelectedTimestamp, isMobile],
-  )
+  }, [filteredNodes, currentSearch, endSlice, handleNodeClick])
 
   return (
     <>
