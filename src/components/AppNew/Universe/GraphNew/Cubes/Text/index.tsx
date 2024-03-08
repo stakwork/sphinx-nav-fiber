@@ -63,7 +63,7 @@ export const TextNode = memo(({ node, hide }: Props) => {
       position={[node.x, node.y, node.z]}
       scale={Math.min(textScale, 10)}
       userData={node}
-      visible={!hide}
+      visible={!hide && selectedNode?.ref_id !== node.ref_id}
       {...fontProps}
     >
       {node.name}

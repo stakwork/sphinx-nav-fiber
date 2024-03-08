@@ -61,8 +61,6 @@ export const SelectionDataNodes = memo(() => {
     }
   })
 
-  console.log(selectionGraphData)
-
   const links = selectionGraphData.links.map((link) => {
     const source = selectionGraphData.nodes.find((node) => link.source === node.ref_id)
     const target = selectionGraphData.nodes.find((node) => link.target === node.ref_id)

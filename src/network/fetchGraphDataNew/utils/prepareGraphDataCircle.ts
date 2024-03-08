@@ -84,8 +84,6 @@ export const generateSplitGraphPositions = (nodes: NodeNew[], edges: EdgeNew[]):
 
   const types = Object.keys(nodesByType)
 
-  console.log(types)
-
   const center: Center = { x: 0, y: 0, z: 0, radius: 1000 }
 
   const updatedNodes: NodeExtendedNew[] = types.reduce((acc: NodeExtendedNew[], curr: string, index) => {
@@ -113,5 +111,5 @@ export const generateSplitGraphPositions = (nodes: NodeNew[], edges: EdgeNew[]):
     }
   })
 
-  return { nodes: updatedNodes, links }
+  return { nodes: updatedNodes, links, nodeTypes: types }
 }

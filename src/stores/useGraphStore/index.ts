@@ -35,6 +35,7 @@ export type GraphStore = {
   nearbyNodeIds: string[]
   showSelectionGraph: boolean
   nodesNormalized: NormalizedNodes
+  nodeTypes: string[]
 
   setDisableCameraRotation: (rotation: boolean) => void
   fetchData: (setBudget: (value: number | null) => void, params?: FetchNodeParams) => void
@@ -83,6 +84,7 @@ const defaultData: Omit<
   showSelectionGraph: false,
   nodesNormalized: {},
   isFetching: false,
+  nodeTypes: [],
 }
 
 export const useGraphStore = create<GraphStore>()(
@@ -112,7 +114,8 @@ export const useGraphStore = create<GraphStore>()(
       }
 
       set({
-        data,
+        data: { nodes: data?.nodes || [], links: data?.links || [] },
+        nodeTypes: data?.nodeTypes,
         nodesNormalized,
         isFetching: false,
         disableCameraRotation: false,

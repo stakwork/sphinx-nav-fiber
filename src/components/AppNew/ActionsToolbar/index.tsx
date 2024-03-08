@@ -2,8 +2,8 @@ import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { CameraRecenterControl } from './CameraRecenterControl'
-import { GraphViewControl } from './GraphViewControl'
 import { PlayerControl } from './PlayerControl'
+import { GraphViewControl } from '~/components/App/ActionsToolbar/GraphViewControl'
 
 export const ActionsToolbar = () => {
   const selectedNode = useSelectedNode()

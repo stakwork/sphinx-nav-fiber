@@ -43,4 +43,5 @@ export type NormalizedNodes = {
 export type GraphDataNew = {
   links: EdgeExtendedNew[]
   nodes: NodeExtendedNew[]
+  nodeTypes?: string[]
 }
