@@ -1,6 +1,6 @@
 import { Vector3 } from 'three'
 
-type Attributes = {
+export type Attributes = {
   [key: string]: string | boolean | number
 }
 
@@ -16,7 +16,7 @@ export type NodeNew = {
   name?: string
   node_type: string
   edge_count?: number
-  attributes?: Attributes
+  properties?: Attributes
   date_added_to_graph?: number
 }
 

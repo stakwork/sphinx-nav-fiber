@@ -5,7 +5,7 @@ import { isDevelopment, isE2E, NODE_RELATIVE_HIGHLIGHT_COLORS } from '~/constant
 import { api } from '~/network/api'
 import { FetchNodeParams } from '~/stores/useDataStore'
 import { MOCKED_NODES_EDGES } from './mockedData'
-import { FetchGDataResponse, GraphDataNew } from './types'
+import { FetchGDataResponse, GraphDataNew, NodeNew } from './types'
 import { generateSplitGraphPositions } from './utils/prepareGraphDataCircle'
 
 const defaultData: GraphDataNew = {
@@ -60,6 +60,20 @@ const fetchNodes = async (
   return null
 }
 
+export const fetchNode = async (refId: string): Promise<NodeNew | null> => {
+  try {
+    const response = await api.get<NodeNew>(`/node/${refId}`)
+
+    return response
+  } catch (e) {
+    console.error(e)
+
+    return null
+  }
+
+  return null
+}
+
 export const getAdminId = async (tribeId: string) => {
   const response = await fetch(`https://tribes.sphinx.chat/tribes/${tribeId}`)
 
@@ -77,8 +91,6 @@ const getGraphData = async (
     const dataInit = await fetchNodes(setBudget, params)
 
     const graphData: FetchGDataResponse | null = false ? MOCKED_NODES_EDGES : dataInit
-
-    console.log(graphData)
 
     if (graphData) {
       return formatFetchNodes(graphData, graphStyle)
