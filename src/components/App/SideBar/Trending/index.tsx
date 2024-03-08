@@ -280,6 +280,9 @@ const StyledButton = styled(Button)`
     height: 28px;
     .MuiButton-startIcon {
       color: ${colors.white};
+      margin: auto;
+      display: flex;
+      align-items: center;
     }
   }
 `
