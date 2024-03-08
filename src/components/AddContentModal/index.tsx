@@ -196,6 +196,10 @@ export const AddContentModal = () => {
     }
   })
 
+  useEffect(() => {
+    SuccessNotify(NODE_ADD_SUCCESS)
+  })
+
   return (
     <BaseModal id="addContent" kind="small" onClose={close} preventOutsideClose>
       <FormProvider {...form}>

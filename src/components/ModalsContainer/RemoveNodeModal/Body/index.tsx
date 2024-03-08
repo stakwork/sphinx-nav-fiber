@@ -18,7 +18,7 @@ export type FormData = {
 const notify = (message: string, type: TypeOptions) => {
   toast(<ToastMessage message={message} />, {
     icon: false,
-    position: toast.POSITION.BOTTOM_CENTER,
+    position: 'bottom-center',
     type,
   })
 }
