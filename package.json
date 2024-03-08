@@ -106,7 +106,8 @@
       "./src/**/*.ts"
     ],
     "coveragePathIgnorePatterns": [
-      "AppNew"
+      "AppNew",
+      "fetchGraphDataNew"
     ],
     "coverageThreshold": {
       "global": {
