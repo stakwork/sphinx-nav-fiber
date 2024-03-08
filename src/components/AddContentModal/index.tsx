@@ -19,7 +19,7 @@ import { useModal } from '~/stores/useModalStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { SubmitErrRes } from '~/types'
 import { executeIfProd, getLSat, payLsat, updateBudget } from '~/utils'
-import { SuccessNotify, Toast } from '../common/SuccessToast'
+import { Toast } from '../common/SuccessToast'
 import { BudgetStep } from './BudgetStep'
 import { LocationStep } from './LocationStep'
 import { SourceStep } from './SourceStep'
@@ -194,10 +194,6 @@ export const AddContentModal = () => {
     } finally {
       setLoading(false)
     }
-  })
-
-  useEffect(() => {
-    SuccessNotify(NODE_ADD_SUCCESS)
   })
 
   return (
