@@ -19,6 +19,7 @@ import { useModal } from '~/stores/useModalStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { SubmitErrRes } from '~/types'
 import { executeIfProd, getLSat, payLsat, updateBudget } from '~/utils'
+import { SuccessNotify, Toast } from '../common/SuccessToast'
 import { BudgetStep } from './BudgetStep'
 import { LocationStep } from './LocationStep'
 import { SourceStep } from './SourceStep'
@@ -195,6 +196,10 @@ export const AddContentModal = () => {
     }
   })
 
+  useEffect(() => {
+    SuccessNotify(NODE_ADD_SUCCESS)
+  })
+
   return (
     <BaseModal id="addContent" kind="small" onClose={close} preventOutsideClose>
       <FormProvider {...form}>
@@ -212,6 +217,7 @@ export const AddContentModal = () => {
           {currentStep === 2 && <BudgetStep loading={loading} onClick={() => null} type={type} />}
         </form>
       </FormProvider>
+      <Toast />
     </BaseModal>
   )
 }
