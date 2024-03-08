@@ -29,8 +29,10 @@ const notify = (message: string) => {
 
 export const Booster = ({ count = 0, updateCount, content, readOnly, refId }: Props) => {
   const [submitting, setSubmitting] = useState(false)
+  const [isSuccess, setIsSuccess] = useState(false)
 
   useEffect(() => {
+    setIsSuccess(false)
     setSubmitting(false)
   }, [refId])
 
@@ -53,6 +55,7 @@ export const Booster = ({ count = 0, updateCount, content, readOnly, refId }: Pr
     try {
       await boost(refId, defaultBoostAmount)
 
+      setIsSuccess(true)
       notify(BOOST_SUCCESS)
 
       if (updateCount) {
@@ -62,6 +65,7 @@ export const Booster = ({ count = 0, updateCount, content, readOnly, refId }: Pr
       notify(BOOST_ERROR_BUDGET)
     }
 
+    setIsSuccess(false)
     setSubmitting(false)
   }
 
@@ -86,7 +90,7 @@ export const Booster = ({ count = 0, updateCount, content, readOnly, refId }: Pr
         data-testid="booster-pill"
         disabled={submitting}
         onClick={async () => {
-          if (submitting) {
+          if (isSuccess || submitting) {
             return
           }
 
