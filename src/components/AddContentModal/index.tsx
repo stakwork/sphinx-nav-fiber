@@ -19,7 +19,7 @@ import { useModal } from '~/stores/useModalStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { SubmitErrRes } from '~/types'
 import { executeIfProd, getLSat, payLsat, updateBudget } from '~/utils'
-import { Toast } from '../common/SuccessToast'
+import { SuccessNotify, Toast } from '../common/SuccessToast'
 import { BudgetStep } from './BudgetStep'
 import { LocationStep } from './LocationStep'
 import { SourceStep } from './SourceStep'
@@ -115,7 +115,7 @@ const handleSubmitForm = async (
       throw new Error(message)
     }
 
-    notify(NODE_ADD_SUCCESS)
+    SuccessNotify(NODE_ADD_SUCCESS)
     close()
 
     // eslint-disable-next-line  @typescript-eslint/no-explicit-any
