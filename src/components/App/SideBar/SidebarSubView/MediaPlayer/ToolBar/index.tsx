@@ -12,6 +12,7 @@ import { secondsToMediaTime } from '~/utils/secondsToMediaTime'
 
 type Props = {
   isPlaying: boolean
+  isFullScreen: boolean
   setIsPlaying: () => void
   handleProgressChange: (_: Event, value: number | number[]) => void
   handleVolumeChange: (_: Event, value: number | number[]) => void
@@ -23,6 +24,7 @@ type Props = {
 
 export const Toolbar: FC<Props> = ({
   isPlaying,
+  isFullScreen,
   setIsPlaying,
   playingTime,
   duration,
@@ -64,7 +66,7 @@ export const Toolbar: FC<Props> = ({
         <VolumeIcon />
       </VolumeControl>
       <Fullscreen onClick={() => onFullScreenClick()}>
-        {!showToolbar ? <FullScreenIcon /> : <ExitFullScreen />}
+        {!isFullScreen ? <FullScreenIcon /> : <ExitFullScreen />}
       </Fullscreen>
     </Wrapper>
   </Flex>
