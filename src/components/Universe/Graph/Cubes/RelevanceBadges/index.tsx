@@ -108,9 +108,7 @@ export const RelevanceBadges = memo(() => {
       .filter((f) => selectedNodeRelativeIds.includes(f?.ref_id || '') || selectedNode?.ref_id === f?.ref_id)
       .slice(0, maxChildrenDisplayed)
 
-    const nodesToRender = selectedNode ? [...childIds, selectedNode] : childIds
-
-    const badgesToRender = nodesToRender.map((n) => {
+    const badgesToRender = childIds.map((n) => {
       const color = getNodeColorByType(n.node_type || '', true) as string
       const position = new Vector3(n?.x || 0, n?.y || 0, n?.z || 0)
 
