@@ -8,6 +8,7 @@ import { colors } from '~/utils/colors'
 import { QueuedSources } from './QueuedSources'
 import { Sources } from './Sources'
 import { TopicSources } from './Topics'
+import { Content } from '~/components/SourcesTableModal/SourcesView/Content'
 
 interface TabPanelProps {
   children?: React.ReactNode
@@ -49,17 +50,21 @@ export const SourcesView = () => {
   return (
     <Wrapper direction="column">
       <StyledTabs aria-label="sources tabs" onChange={handleChange} value={value}>
+        <StyledTab disableRipple label="View Content" {...a11yProps(0)} />
         <StyledTab disableRipple label="Sources table" {...a11yProps(0)} />
         {isAdmin && <StyledTab color={colors.white} disableRipple label="Queued sources" {...a11yProps(1)} />}
         {isAdmin && <StyledTab color={colors.white} disableRipple label="Topics" {...a11yProps(1)} />}
       </StyledTabs>
       <TabPanel index={0} value={value}>
-        <Sources />
+        <Content />
       </TabPanel>
       <TabPanel index={1} value={value}>
-        <QueuedSources />
+        <Sources />
       </TabPanel>
       <TabPanel index={2} value={value}>
+        <QueuedSources />
+      </TabPanel>
+      <TabPanel index={3} value={value}>
         <TopicSources />
       </TabPanel>
     </Wrapper>
