@@ -1,3 +1,4 @@
+/* eslint-disable padding-line-between-statements */
 import * as React from 'react'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -39,9 +40,7 @@ const mockNodes = [
 describe('SourcesView Component', () => {
   beforeEach(() => {
     jest.clearAllMocks()
-
     ;(useUserStore as unknown as jest.Mock).mockImplementation(() => [{ isAdmin: false }, jest.fn()])
-
     ;(getNodeContent as jest.Mock).mockResolvedValue({ nodes: mockNodes })
   })
 
