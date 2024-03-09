@@ -39,7 +39,9 @@ const mockNodes = [
 describe('SourcesView Component', () => {
   beforeEach(() => {
     jest.clearAllMocks()
+
     ;(useUserStore as unknown as jest.Mock).mockImplementation(() => [{ isAdmin: false }, jest.fn()])
+
     ;(getNodeContent as jest.Mock).mockResolvedValue({ nodes: mockNodes })
   })
 
