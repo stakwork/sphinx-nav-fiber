@@ -6,11 +6,9 @@ export const SourcesTableModal = () => {
   const { close } = useModal('sourcesTable')
   const { visible } = useModal('addContent')
 
-  return (
-    !visible && (
-      <BaseModal background="BG1" id="sourcesTable" kind="large" noWrap onClose={close}>
-        <SourcesView />
-      </BaseModal>
-    )
+  return visible ? null : (
+    <BaseModal background="BG1" id="sourcesTable" kind="large" noWrap onClose={close}>
+      <SourcesView />
+    </BaseModal>
   )
 }
