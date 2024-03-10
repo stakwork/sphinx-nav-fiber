@@ -119,7 +119,7 @@ export const Body = () => {
 
   return (
     <Wrapper>
-      <TitleEditor />
+      <TitleEditor nodeName={actualNode?.name || actualTopicNode?.topic || ''} />
       {topicIsLoading ? (
         <Skeleton />
       ) : (
@@ -135,8 +135,7 @@ export const Body = () => {
           </CancelButton>
           <DeleteButton
             color="secondary"
-            // TODO
-            // disabled={loading || (!actualNode && !actualTopicNode)}
+            disabled={loading || (!actualNode && !actualTopicNode)}
             onClick={actualNode || actualTopicNode ? handleRemove : handleTopicRemove}
             size="large"
             style={{ flex: 1 }}

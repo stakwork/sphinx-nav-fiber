@@ -20,7 +20,7 @@ export const Body = () => {
   const { close } = useModal('editNodeName')
   const [data] = useTopicsStore((s) => [s.data])
   const form = useForm<FormData>({ mode: 'onChange' })
-  const { watch, setValue, reset } = form
+  const { watch, setValue, reset, getValues } = form
   const [loading, setLoading] = useState(false)
 
   const [topicIsLoading, setTopicIsLoading] = useState(false)
@@ -95,6 +95,8 @@ export const Body = () => {
     openRemoveNodeModal()
   }
 
+  const isNodeNameChanged = getValues().topic && actualNode?.topic !== getValues().topic
+
   return (
     <Wrapper>
       <FormProvider {...form}>
@@ -108,7 +110,7 @@ export const Body = () => {
         <Flex direction="row" mb={6}>
           <DeleteButton
             color="secondary"
-            disabled={topicIsLoading}
+            disabled={topicIsLoading || !actualNode}
             onClick={handleDelete}
             size="large"
             style={{ marginRight: 20 }}
@@ -118,7 +120,7 @@ export const Body = () => {
           </DeleteButton>
           <Button
             color="secondary"
-            disabled={loading || topicIsLoading}
+            disabled={loading || topicIsLoading || !isNodeNameChanged}
             onClick={handleSave}
             size="large"
             style={{ flex: 1 }}

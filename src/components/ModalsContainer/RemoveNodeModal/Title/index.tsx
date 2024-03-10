@@ -3,15 +3,17 @@ import { Flex } from '~/components/common/Flex'
 import DeleteNodeIcon from '~/components/Icons/DeleteNodeIcon'
 import { colors } from '~/utils/colors'
 
-export const TitleEditor = () => (
+interface TitleEditorProps {
+  nodeName: string
+}
+
+export const TitleEditor = ({ nodeName }: TitleEditorProps) => (
   <Flex>
-    <Flex align="center" direction="row" justify="space-between" mb={18}>
-      <Flex align="center" direction="column">
-        <IconWrapper>
-          <DeleteNodeIcon />
-        </IconWrapper>
-        <Title>Are you sure you want to delete this item?</Title>
-      </Flex>
+    <Flex align="center" direction="column" justify="space-between">
+      <IconWrapper>
+        <DeleteNodeIcon />
+      </IconWrapper>
+      <Title>Are you sure you want to delete {nodeName || `this item`}?</Title>
     </Flex>
   </Flex>
 )
@@ -25,6 +27,8 @@ const Title = styled(Flex)`
   letter-spacing: 0px;
   text-align: center;
   padding: 0 20px;
+  width: 100%;
+  word-wrap: break-word;
 `
 
 const IconWrapper = styled(Flex)`
