@@ -6,7 +6,7 @@ import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { isDevelopment, isE2E } from '~/constants'
 import { getIsAdmin } from '~/network/auth'
-import { useFeatureFlag } from '~/stores/useFeatureFlagStore'
+import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { sphinxBridge } from '~/testSphinxBridge'
 import { getSignedMessageFromRelay, updateBudget } from '~/utils'
@@ -18,7 +18,11 @@ interface setAuthenticated {
 export const Auth = ({ setAuthenticated }: setAuthenticated) => {
   const [unAuthorized, setUnauthorized] = useState(false)
   const [setBudget, setIsAdmin, setPubKey] = useUserStore((s) => [s.setBudget, s.setIsAdmin, s.setPubKey])
-  const [setTrendingTopicsFlag] = useFeatureFlag((s) => [s.setTrendingTopicsFlag])
+
+  const [setTrendingTopicsFlag, setQueuedSourcesFlag] = useFeatureFlagStore((s) => [
+    s.setTrendingTopicsFlag,
+    s.setQueuedSourcesFlag,
+  ])
 
   const handleAuth = useCallback(async () => {
     // await executeIfProd(async () => {
@@ -63,6 +67,7 @@ export const Auth = ({ setAuthenticated }: setAuthenticated) => {
         setIsAdmin(!!res.data.isAdmin)
 
         setTrendingTopicsFlag(res.data.trendingTopics)
+        setQueuedSourcesFlag(res.data.queuedSources)
       }
 
       setAuthenticated(true)
@@ -76,7 +81,7 @@ export const Auth = ({ setAuthenticated }: setAuthenticated) => {
     if (isE2E || isDevelopment) {
       setAuthenticated(true)
     }
-  }, [setIsAdmin, setPubKey, setBudget, setAuthenticated, setTrendingTopicsFlag])
+  }, [setIsAdmin, setPubKey, setBudget, setAuthenticated, setTrendingTopicsFlag, setQueuedSourcesFlag])
 
   // auth checker
   useEffect(() => {

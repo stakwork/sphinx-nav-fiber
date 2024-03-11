@@ -5,15 +5,15 @@ import { useFormContext } from 'react-hook-form'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
 import { SelectWithPopover } from '~/components/App/SideBar/Dropdown'
-import { Flex } from '~/components/common/Flex'
-import { FetchLoaderText } from '~/components/common/Loader'
 import ChevronLeftIcon from '~/components/Icons/ChevronLeftIcon'
 import ClearIcon from '~/components/Icons/ClearIcon'
 import SearchIcon from '~/components/Icons/SearchIcon'
 import { SearchBar } from '~/components/SearchBar'
+import { Flex } from '~/components/common/Flex'
+import { FetchLoaderText } from '~/components/common/Loader'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore, useFilteredNodes, useSelectedNode } from '~/stores/useDataStore'
-import { useFeatureFlag } from '~/stores/useFeatureFlagStore'
+import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
 import { colors } from '~/utils/colors'
 import { LatestView } from './Latest'
 import { EpisodeSkeleton } from './Relevance/EpisodeSkeleton'
@@ -39,7 +39,7 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
   const filteredNodes = useFilteredNodes()
 
   const { setSidebarOpen, currentSearch: searchTerm, clearSearch, searchFormValue } = useAppStore((s) => s)
-  const [trendingTopicsFlag] = useFeatureFlag((s) => [s.trendingTopicsFlag])
+  const [trendingTopicsFlag] = useFeatureFlagStore((s) => [s.trendingTopicsFlag])
 
   const { setValue } = useFormContext()
   const componentRef = useRef<HTMLDivElement | null>(null)

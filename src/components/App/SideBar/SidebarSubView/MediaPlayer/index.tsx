@@ -19,7 +19,7 @@ const MediaPlayerComponent: FC<Props> = ({ hidden }) => {
   const [isMouseNearBottom, setIsMouseNearBottom] = useState(false)
   const [status, setStatus] = useState<'buffering' | 'error' | 'ready'>('ready')
 
-  const [
+  const {
     isPlaying,
     playingTime,
     duration,
@@ -31,19 +31,7 @@ const MediaPlayerComponent: FC<Props> = ({ hidden }) => {
     setVolume,
     setHasError,
     resetPlayer,
-  ] = usePlayerStore((s) => [
-    s.isPlaying,
-    s.playingTime,
-    s.duration,
-    s.setIsPlaying,
-    s.setPlayingTime,
-    s.setDuration,
-    s.playingNode,
-    s.volume,
-    s.setVolume,
-    s.setHasError,
-    s.resetPlayer,
-  ])
+  } = usePlayerStore((s) => s)
 
   useEffect(() => () => resetPlayer(), [resetPlayer])
 
@@ -182,6 +170,7 @@ const MediaPlayerComponent: FC<Props> = ({ hidden }) => {
           duration={duration}
           handleProgressChange={handleProgressChange}
           handleVolumeChange={handleVolumeChange}
+          isFullScreen={isFullScreen}
           isPlaying={isPlaying}
           onFullScreenClick={toggleFullScreen}
           playingTime={playingTime}

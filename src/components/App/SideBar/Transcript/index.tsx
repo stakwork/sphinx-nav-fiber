@@ -55,6 +55,14 @@ export const Transcript = ({ stateless, node }: TranscriptProps) => {
     }
   }
 
+  const handleCopy = () => {
+    copyNodeText(node?.text)
+
+    setTimeout(() => {
+      setIsCopied(false)
+    }, 2000)
+  }
+
   const handleMoreClick = () => {
     if (!showFullTranscript) {
       if (node?.ref_id) {
@@ -89,12 +97,7 @@ export const Transcript = ({ stateless, node }: TranscriptProps) => {
         {node?.text ? (
           <>
             {!isCopied ? (
-              <Button
-                endIcon={<CopyIcon />}
-                onPointerDown={() => copyNodeText(node?.text)}
-                size="small"
-                variant="outlined"
-              >
+              <Button endIcon={<CopyIcon />} onPointerDown={() => handleCopy()} size="small" variant="outlined">
                 Copy
               </Button>
             ) : (
