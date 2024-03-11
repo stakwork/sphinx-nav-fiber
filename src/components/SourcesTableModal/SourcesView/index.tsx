@@ -9,12 +9,19 @@ import { colors } from '~/utils/colors'
 import { QueuedSources } from './QueuedSources'
 import { Sources } from './Sources'
 import { TopicSources } from './Topics'
+import { QUEUED_SOURCES, SOURCE_TABLE, TOPICS } from './constants'
 
 interface TabPanelProps {
   children?: React.ReactNode
   index: number
   value: number
 }
+
+const tabsData = [
+  { label: SOURCE_TABLE, component: Sources },
+  { label: QUEUED_SOURCES, component: QueuedSources },
+  { label: TOPICS, component: TopicSources },
+]
 
 const TabPanel = (props: TabPanelProps) => {
   const { children, value, index, ...other } = props
@@ -48,24 +55,31 @@ export const SourcesView = () => {
     setValue(newValue)
   }
 
+  const tabs = tabsData.filter(({ label }) => {
+    if (label === TOPICS) {
+      return isAdmin
+    }
+
+    if (label === QUEUED_SOURCES) {
+      return isAdmin && queuedSourcesFlag
+    }
+
+    return true
+  })
+
   return (
     <Wrapper direction="column">
       <StyledTabs aria-label="sources tabs" onChange={handleChange} value={value}>
-        <StyledTab disableRipple label="Sources table" {...a11yProps(0)} />
-        {isAdmin && queuedSourcesFlag ? (
-          <StyledTab color={colors.white} disableRipple label="Queued sources" {...a11yProps(1)} />
-        ) : null}
-        {isAdmin && <StyledTab color={colors.white} disableRipple label="Topics" {...a11yProps(1)} />}
+        {tabs.map((tab, index) => (
+          <StyledTab key={tab.label} color={colors.white} disableRipple label={tab.label} {...a11yProps(index)} />
+        ))}
       </StyledTabs>
-      <TabPanel index={0} value={value}>
-        <Sources />
-      </TabPanel>
-      <TabPanel index={1} value={value}>
-        <QueuedSources />
-      </TabPanel>
-      <TabPanel index={2} value={value}>
-        <TopicSources />
-      </TabPanel>
+
+      {tabs.map((tab, index) => (
+        <TabPanel key={tab.label} index={index} value={value}>
+          <tab.component />
+        </TabPanel>
+      ))}
     </Wrapper>
   )
 }
