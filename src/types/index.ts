@@ -211,10 +211,11 @@ export type AuthRequest = {
 
 export type IsAdminResponse = {
   data: {
-    trendingTopics: boolean
     isAdmin: boolean
     isPublic: boolean
     isMember: boolean
+    trendingTopics: boolean
+    queuedSources: boolean
   }
   success: boolean
   message: string
