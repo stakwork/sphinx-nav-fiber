@@ -1,4 +1,4 @@
-import { Line, Point, Points, QuadraticBezierLine, Segment, SegmentObject, Sphere } from '@react-three/drei'
+import { Point, Points, QuadraticBezierLine, Segment, SegmentObject, Sphere } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import { useEffect, useRef, useState } from 'react'
 import { QuadraticBezierCurve3, Vector3 } from 'three'
@@ -46,7 +46,7 @@ const getSpherePosition = (points: Vector3[], progress: number): THREE.Vector3 =
 export const SelectionLink = ({ link, title }: Props) => {
   const ref = useRef<SegmentObject | null>(null)
   const pointsRef = useRef(null)
-  const lineRef = useRef(null)
+  const lineRef = useRef<THREE.Line>(null)
   const selectedNode = useSelectedNode()
   const [start, setStart] = useState(new Vector3(0, 0, 0))
   const [end, setEnd] = useState(new Vector3(0, 0, 0))
@@ -74,6 +74,7 @@ export const SelectionLink = ({ link, title }: Props) => {
   useFrame(() => {
     if (ref.current) {
       const source = selectionGraphData.nodes.find((f) => f.ref_id === link.source)
+
       const target = selectionGraphData.nodes.find((f) => f.ref_id === link.target)
 
       ref.current.start.set(source?.x || 0, source?.y || 0, source?.z || 0)
@@ -89,18 +90,9 @@ export const SelectionLink = ({ link, title }: Props) => {
   const curve = new QuadraticBezierCurve3(start, controlPoint, end)
   const points = curved ? curve.getPoints(2) : [start, end]
 
-  console.log(points)
-
   return (
     <>
-      <Line
-        color={curved ? '#5af0ff' : color}
-        opacity={0.1}
-        points={points.map((p) => p.toArray())}
-        transparent
-        visible
-      />
-      {false && <Segment ref={ref} color={curved ? '#5af0ff' : color} end={end} start={start} />}
+      {true && <Segment ref={ref} color={curved ? '#5af0ff' : color} end={end} start={start} />}
       {false && <QuadraticBezierLine ref={lineRef} color={curved ? '#5af0ff' : color} end={end} start={start} />}
       {false && <Sphere args={[0.5, 16, 16]} position={getSpherePosition(points, progress)} />}
       <Points
