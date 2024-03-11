@@ -4,8 +4,10 @@ import { StyledTableCell, StyledTableHead } from '../../common'
 import { TopicRow } from './TableRow'
 import { Flex } from '~/components/common/Flex'
 import { useModal } from '~/stores/useModalStore'
-import AddContentIcon from '~/components/Icons/AddContentIcon'
+import PlusIcon from '~/components/Icons/PlusIcon'
 import { Node } from '~/network/fetchSourcesData'
+import { Text } from '~/components/common/Text'
+import { colors } from '~/utils'
 
 interface TableProps {
   nodes: Node[]
@@ -20,20 +22,23 @@ export const Table: React.FC<TableProps> = ({ nodes }) => {
 
   return !nodes || nodes?.length === 0 ? (
     <>
-      <AddContentButton>
+      <AddContentSection>
+        <Subtitle align="center" direction="row" justify="space-between">
+          <Text className="subtitle">Contribute to the graph by adding content.</Text>
+        </Subtitle>
         <Flex>
           <Button
             color="secondary"
             onClick={handleAddContent}
             size="medium"
-            startIcon={<AddContentIcon />}
+            startIcon={<PlusIcon />}
             type="submit"
             variant="contained"
           >
             Add Content
           </Button>
         </Flex>
-      </AddContentButton>
+      </AddContentSection>
     </>
   ) : (
     <MaterialTable component="table">
@@ -55,10 +60,27 @@ export const Table: React.FC<TableProps> = ({ nodes }) => {
   )
 }
 
-const AddContentButton = styled(Flex)`
+const AddContentSection = styled(Flex)`
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 200px auto;
-  width: 100px;
+  margin: 100px auto;
+  width: 100%;
+`
+
+const Subtitle = styled(Flex)`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin-bottom: 30px;
+
+  .subtitle {
+    color: ${colors.GRAY3};
+    font-family: Barlow;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+  }
 `

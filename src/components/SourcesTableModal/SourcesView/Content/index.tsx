@@ -5,6 +5,8 @@ import { Flex } from '~/components/common/Flex'
 import { useEffect, useState } from 'react'
 import { ClipLoader } from 'react-spinners'
 import { getNodeContent, Node } from '~/network/fetchSourcesData'
+import { Text } from '~/components/common/Text'
+import { Heading } from '~/components/SourcesTableModal/SourcesView/common'
 
 export const Content = () => {
   const [loading, setLoading] = useState(true)
@@ -30,6 +32,9 @@ export const Content = () => {
 
   return (
     <Wrapper direction="column" justify="flex-end">
+      <Heading align="center" direction="row" justify="space-between">
+        <Text className="title">Content I&apos;ve added to the graph</Text>
+      </Heading>
       <TableWrapper align="center" justify={loading ? 'center' : 'flex-start'}>
         {loading ? (
           <ClipLoader color={colors.white} />

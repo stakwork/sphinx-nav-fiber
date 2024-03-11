@@ -1,10 +1,11 @@
 /* eslint-disable padding-line-between-statements */
-import * as React from 'react'
+import '@testing-library/jest-dom'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { SourcesView } from '../index'
-import { useUserStore } from '~/stores/useUserStore'
-import '@testing-library/jest-dom'
+import React from 'react'
+import { SourcesView } from '..'
+import { useFeatureFlagStore } from '../../../../stores/useFeatureFlagStore'
+import { useUserStore } from '../../../../stores/useUserStore'
 import { getNodeContent } from '../../../../network/fetchSourcesData'
 
 jest.mock('~/stores/useUserStore', () => ({
@@ -37,11 +38,31 @@ const mockNodes = [
   },
 ]
 
-describe('SourcesView Component', () => {
+jest.mock('~/stores/useFeatureFlagStore', () => ({
+  useFeatureFlagStore: jest.fn(),
+}))
+
+const useFeatureFlagStoreMock = useFeatureFlagStore as jest.MockedFunction<typeof useFeatureFlagStore>
+const useUserStoreMock = useUserStore as jest.MockedFunction<typeof useUserStore>
+
+describe('Test SourceView', () => {
   beforeEach(() => {
     jest.clearAllMocks()
-    ;(useUserStore as unknown as jest.Mock).mockImplementation(() => [{ isAdmin: false }, jest.fn()])
+    ;(useUserStore as unknown as jest.Mock).mockImplementation(() => [
+      { isAdmin: false },
+      { queuedSourcesFlag: false },
+      jest.fn(),
+    ])
     ;(getNodeContent as jest.Mock).mockResolvedValue({ nodes: mockNodes })
+  })
+
+  it('assserts that when queuedSourceFlag is false, queued sources column is hidden', () => {
+    useFeatureFlagStoreMock.mockReturnValue([false])
+    useUserStoreMock.mockReturnValue([false])
+
+    const { queryByText } = render(<SourcesView />)
+
+    expect(queryByText('Queued sources')).not.toBeInTheDocument()
   })
 
   it('should render the "View Content" tab correctly', () => {
@@ -55,12 +76,13 @@ describe('SourcesView Component', () => {
   it('should only render Sphinx-related content for Sphinx users', () => {
     ;(useUserStore as unknown as jest.Mock).mockImplementation(() => [{ isAdmin: true }, jest.fn()])
     render(<SourcesView />)
+    waitFor(() => {
+      const queuedSourcesTab = screen.getByRole('tab', { name: 'Queued sources' })
+      const topicsTab = screen.getByRole('tab', { name: 'Topics' })
 
-    const queuedSourcesTab = screen.getByRole('tab', { name: 'Queued sources' })
-    const topicsTab = screen.getByRole('tab', { name: 'Topics' })
-
-    expect(queuedSourcesTab).toBeInTheDocument()
-    expect(topicsTab).toBeInTheDocument()
+      expect(queuedSourcesTab).toBeInTheDocument()
+      expect(topicsTab).toBeInTheDocument()
+    })
   })
 
   it('should not render Sphinx-related content for non-Sphinx users', () => {
