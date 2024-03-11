@@ -74,6 +74,37 @@ const defaultParams = {
   limit: '500',
 }
 
+interface NodeContentResponse {
+  nodes: Node[]
+}
+
+type ViewContentParams = {
+  limit?: string
+  sort_by?: string
+}
+
+export interface Node {
+  node_type: string
+  properties: {
+    [key: string]: never
+  }
+  ref_id: string
+}
+
+const defaultViewContentParams = {
+  only_content: 'true',
+  sort_by: 'date',
+  limit: '10',
+}
+
+export const getNodeContent = async (queryParams: ViewContentParams = defaultViewContentParams) => {
+  const queryString = new URLSearchParams({ ...queryParams }).toString()
+  const url = `/node/content?${queryString}`
+  const response = await api.get<NodeContentResponse>(url)
+
+  return response
+}
+
 export const getRadarData = async (queryParams: TradarParams = defaultParams) => {
   const response = await api.get<FetchRadarResponse>(
     `/radar?${new URLSearchParams({ ...defaultParams, ...queryParams }).toString()}`,

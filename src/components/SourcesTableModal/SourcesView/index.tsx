@@ -9,7 +9,8 @@ import { colors } from '~/utils/colors'
 import { QueuedSources } from './QueuedSources'
 import { Sources } from './Sources'
 import { TopicSources } from './Topics'
-import { QUEUED_SOURCES, SOURCE_TABLE, TOPICS } from './constants'
+import { QUEUED_SOURCES, SOURCE_TABLE, TOPICS, VIEW_CONTENT } from './constants'
+import { Content } from '~/components/SourcesTableModal/SourcesView/Content'
 
 interface TabPanelProps {
   children?: React.ReactNode
@@ -18,6 +19,7 @@ interface TabPanelProps {
 }
 
 const tabsData = [
+  { label: VIEW_CONTENT, component: Content },
   { label: SOURCE_TABLE, component: Sources },
   { label: QUEUED_SOURCES, component: QueuedSources },
   { label: TOPICS, component: TopicSources },
