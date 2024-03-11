@@ -7,6 +7,8 @@ import { Group, Vector3 } from 'three'
 import DeleteIcon from '~/components/Icons/DeleteIcon'
 import EditIcon from '~/components/Icons/EditIcon'
 import PlusIcon from '~/components/Icons/PlusIcon'
+import { fetchNodeEdges } from '~/network/fetchGraphDataNew'
+import { EdgeNew, NodeNew } from '~/network/fetchGraphDataNew/types'
 import { useAppStore } from '~/stores/useAppStore'
 import { useGraphStore, useSelectedNode } from '~/stores/useGraphStore'
 import { useModal } from '~/stores/useModalStore'
@@ -26,7 +28,7 @@ export const NodeControls = memo(() => {
   const [isAdmin] = useUserStore((s) => [s.isAdmin])
 
   const showSelectionGraph = useGraphStore((s) => s.showSelectionGraph)
-  const selectionGraphData = useGraphStore((s) => s.selectionGraphData)
+  const [selectionGraphData, setSelectionData] = useGraphStore((s) => [s.selectionGraphData, s.setSelectionData])
   const allGraphData = useGraphStore((s) => s.data)
   const selectedNode = useSelectedNode()
   const setSelectedNode = useGraphStore((s) => s.setSelectedNode)
@@ -35,6 +37,34 @@ export const NodeControls = memo(() => {
   useFrame(() => {
     setPosition()
   })
+
+  const getChildren = useCallback(async () => {
+    try {
+      if (selectedNode?.ref_id) {
+        const res = await fetchNodeEdges(selectedNode?.ref_id)
+
+        const newLinks = (res?.edges || []).filter(
+          (i) => !selectionGraphData.links.some((l) => i.target === l.target && i.source === l.source),
+        )
+
+        const newNodes = (res?.nodes || []).filter((i) => !selectionGraphData.nodes.some((l) => i.ref_id === l.ref_id))
+
+        setSelectionData({
+          links: [
+            ...selectionGraphData.links,
+            ...newLinks.map((i: EdgeNew) => ({
+              ...i,
+              sourcePosition: new Vector3(),
+              targetPosition: new Vector3(),
+            })),
+          ],
+          nodes: [...selectionGraphData.nodes, ...newNodes.map((i: NodeNew) => ({ ...i, x: 0, y: 0, z: 0 }))],
+        })
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }, [selectedNode?.ref_id, selectionGraphData.links, selectionGraphData.nodes, setSelectionData])
 
   const setPosition = useCallback(() => {
     const data = showSelectionGraph ? selectionGraphData : allGraphData
@@ -115,10 +145,21 @@ export const NodeControls = memo(() => {
           setShowSelectionGraph(false)
         },
       },
+      {
+        key: 'control-key-6',
+        colors: buttonColors(true).close,
+        icon: <PlusIcon />,
+        left: 40,
+        className: 'exit',
+        onClick: () => {
+          getChildren()
+        },
+      },
     ]
 
     return [...conditionalActions, ...baseActions].map((i, index) => ({ ...i, left: -80 + index * 40 }))
   }, [
+    isAdmin,
     showSelectionGraph,
     addEdgeToNodeModal,
     openEditNodeNameModal,
@@ -126,7 +167,7 @@ export const NodeControls = memo(() => {
     setShowSelectionGraph,
     setSidebarOpen,
     setSelectedNode,
-    isAdmin,
+    getChildren,
   ])
 
   if (!selectedNode) {

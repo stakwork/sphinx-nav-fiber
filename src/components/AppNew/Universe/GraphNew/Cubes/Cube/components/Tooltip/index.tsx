@@ -60,8 +60,6 @@ export const Tooltip = ({ node }: Props) => {
     return null
   }
 
-  console.log(refId, attributes)
-
   return (
     <Wrapper align="flex-start" borderRadius={8} px={24} py={16}>
       <>

@@ -47,7 +47,7 @@ const fetchNodes = async (
 
   if (!params.word) {
     try {
-      const response = await api.get<FetchGDataResponse>(`/prediction/graph/search?top_node_count=5&limit=10`)
+      const response = await api.get<FetchGDataResponse>(`/prediction/graph/search?top_node_count=15&limit=3`)
 
       return response
     } catch (e) {
@@ -63,6 +63,20 @@ const fetchNodes = async (
 export const fetchNode = async (refId: string): Promise<NodeNew | null> => {
   try {
     const response = await api.get<NodeNew>(`/node/${refId}`)
+
+    return response
+  } catch (e) {
+    console.error(e)
+
+    return null
+  }
+
+  return null
+}
+
+export const fetchNodeEdges = async (refId: string): Promise<FetchGDataResponse | null> => {
+  try {
+    const response = await api.get<FetchGDataResponse>(`/prediction/graph/edges/${refId}?skip=2&limit=4`)
 
     return response
   } catch (e) {

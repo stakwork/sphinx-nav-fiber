@@ -137,14 +137,10 @@ export const useGraphStore = create<GraphStore>()(
       if (stateSelectedNode?.ref_id !== selectedNode?.ref_id) {
         const { data } = get()
 
-        console.log(data)
-
         const relativeIds: string[] = []
 
         if (selectedNode?.ref_id) {
           data?.links.forEach((i) => {
-            console.log(i.target)
-
             if (i.target === selectedNode?.ref_id) {
               relativeIds.push(i.source)
             }

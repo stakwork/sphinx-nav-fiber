@@ -31,10 +31,27 @@ function generateTopicNodePosition(
   center: Center,
   yPosition: number,
 ): NodeExtendedNew[] {
+  // Dictionary to store radius offsets for each unique edge count
+  const radiusOffsetMap: { [key: number]: number } = {}
+
   // Generate positions for each node
   const extendedNodes = nodes.map((node) => {
     // Calculate radius based on edge count (inverse of edge count, so nodes with more edges are closer to center)
-    const radius = center.radius - (center.radius * (node.edge_count || 0)) / maxEdgeCount
+    const edgeCount = node.edge_count || 0
+    const baseRadius = center.radius - (center.radius * edgeCount) / maxEdgeCount
+
+    // Calculate radius offset for this edge count
+    let radiusOffset
+
+    if (edgeCount in radiusOffsetMap) {
+      radiusOffset = radiusOffsetMap[edgeCount]
+    } else {
+      radiusOffset = Math.random() * 300 // Adjust this value as needed
+      radiusOffsetMap[edgeCount] = radiusOffset
+    }
+
+    // Calculate final radius by adding the offset
+    const radius = baseRadius + radiusOffset
 
     // Calculate angle for the current node (evenly spaced around the circle)
     const angle = Math.random() * Math.PI * 2 // Random angle for even distribution

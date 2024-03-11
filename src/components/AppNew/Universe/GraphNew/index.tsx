@@ -4,7 +4,6 @@ import { useGraphStore } from '~/stores/useGraphStore'
 import { Connections } from './Connections'
 import { Cubes } from './Cubes'
 import { Layer } from './Layers'
-import { Particles } from './Particles'
 import { Segment } from './Segment'
 import { NodeDetailsPanel } from './UI'
 
@@ -52,8 +51,7 @@ export const GraphNew = () => {
 
   return (
     <>
-      {true && <Cubes />}
-      {false && <Particles />}
+      <Cubes />
       {false && <Connections connections={data?.links || []} />}
       {!showSelectionGraph && (
         <Segments

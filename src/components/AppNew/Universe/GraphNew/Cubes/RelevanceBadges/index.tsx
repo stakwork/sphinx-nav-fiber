@@ -6,7 +6,7 @@ import styled from 'styled-components'
 import { Group, Vector3 } from 'three'
 import { getNodeColorByType } from '~/components/Universe/Graph/constant'
 import { maxChildrenDisplayed } from '~/components/Universe/constants'
-import { useGraphStore, useSelectedNode } from '~/stores/useGraphStore'
+import { useGraphStore } from '~/stores/useGraphStore'
 import { colors } from '~/utils/colors'
 import { Tag } from './styles'
 import { BadgeProps } from './types'
@@ -102,7 +102,7 @@ const NodeBadge = ({ position, userData, color }: BadgeProps) => {
 
 export const RelevanceBadges = memo(() => {
   const data = useGraphStore((s) => s.data)
-  const selectedNode = useSelectedNode()
+  // const selectedNode = useSelectedNode()
   const showSelectionGraph = useGraphStore((s) => s.showSelectionGraph)
   const selectionGraphData = useGraphStore((s) => s.selectionGraphData)
   const selectedNodeRelativeIds = useGraphStore((s) => s.selectedNodeRelativeIds)
@@ -111,7 +111,7 @@ export const RelevanceBadges = memo(() => {
     const nodes = showSelectionGraph ? selectionGraphData.nodes : data?.nodes || []
 
     const childIds = nodes
-      .filter((f) => selectedNodeRelativeIds.includes(f?.ref_id || '') || selectedNode?.ref_id === f?.ref_id)
+      .filter((f) => selectedNodeRelativeIds.includes(f?.ref_id || ''))
       .slice(0, maxChildrenDisplayed)
 
     const badgesToRender = childIds.map((n) => {
@@ -132,7 +132,7 @@ export const RelevanceBadges = memo(() => {
     })
 
     return badgesToRender
-  }, [selectedNodeRelativeIds, data?.nodes, showSelectionGraph, selectionGraphData, selectedNode])
+  }, [selectedNodeRelativeIds, data?.nodes, showSelectionGraph, selectionGraphData])
 
   return <Fragment key="node-badges">{nodeBadges.length ? nodeBadges : null}</Fragment>
 })
