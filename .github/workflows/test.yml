@@ -35,6 +35,19 @@ jobs:
           chmod 777 -R ./proxy;
           chmod 777 -R ./cln;
 
+      - name: Download file
+        run: |
+          curl -LO https://machinelearningneo4jbackup.s3.amazonaws.com/_data.zip
+
+      - name: Unzip file
+        run: unzip _data.zip -d data
+
+      - name: Rename folder
+        run: cd data && mv _data data && cd data && ls
+
+      - name: Copy Neo4J Data to stack
+        run: cp -r ./data ./stack/neo4j
+
       - name: Check for NODES
         uses: nick-fields/retry@v2
         with:
@@ -54,6 +67,11 @@ jobs:
         with:
           source: "stack/relay/NODES.json"
           target: "relay/nodes.json"
+
+      - name: Make API request
+        run: |
+          API_RESULT=$(curl -s http://localhost:5000/stats)
+          echo "API Result: $API_RESULT"
 
       - name: Install
         run: yarn --immutable
