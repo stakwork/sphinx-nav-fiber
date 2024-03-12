@@ -68,11 +68,6 @@ jobs:
           source: "stack/relay/NODES.json"
           target: "relay/nodes.json"
 
-      - name: Make API request
-        run: |
-          API_RESULT=$(curl -s http://localhost:5000/stats)
-          echo "API Result: $API_RESULT"
-
       - name: Install
         run: yarn --immutable
 
