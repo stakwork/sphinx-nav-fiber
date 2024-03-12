@@ -1,5 +1,5 @@
-import { IconButton } from '@mui/material'
 import React, { FC, memo, useState } from 'react'
+import { IconButton } from '@mui/material'
 import { MdCancel, MdCheckCircle } from 'react-icons/md'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
@@ -17,9 +17,11 @@ type TTableRaw = {
   onSearch: (search: string) => void
 }
 
-const TableRowComponent: FC<TTableRaw> = ({ topic, onClick, onSearch }) => {
+export const TableRowComponent: FC<TTableRaw> = ({ topic, onClick, onSearch }) => {
   const [ids, total] = useTopicsStore((s) => [s.ids, s.total])
   const [loading, setLoading] = useState(false)
+  const [showPopup, setShowPopup] = useState(false)
+  const [popupContent, setPopupContent] = useState<Topic>(topic)
 
   const date = topic.date_added_to_graph.toString()
 
@@ -42,6 +44,18 @@ const TableRowComponent: FC<TTableRaw> = ({ topic, onClick, onSearch }) => {
     onSearch(topicItem.topic)
   }
 
+  const handleMouseEnter = (hoveredTopic: Topic) => {
+    setPopupContent(hoveredTopic)
+    setShowPopup(true)
+  }
+
+  const handleMouseLeave = () => {
+    setShowPopup(false)
+  }
+
+  const lettersToShow = topic.edgeList.slice(0, 1)
+  const hiddenLettersCount = topic.edgeList.length - lettersToShow.length
+
   return (
     <StyledTableRow key={topic.topic}>
       <StyledTableCell className="empty" />
@@ -49,11 +63,18 @@ const TableRowComponent: FC<TTableRaw> = ({ topic, onClick, onSearch }) => {
         <ClickableText>{topic.topic}</ClickableText>
       </StyledTableCell>
       <StyledTableCell>{topic.edgeCount}</StyledTableCell>
-      <StyledTableCell>{topic.edgeList.join(', ')}</StyledTableCell>
+      <StyledTableCell onMouseEnter={() => handleMouseEnter(topic)} onMouseLeave={() => handleMouseLeave()}>
+        {showPopup && (
+          <PopupContent>
+            <div>{popupContent.edgeList.join(', ')}</div>
+          </PopupContent>
+        )}
+        {lettersToShow.join(', ')}
+        {hiddenLettersCount > 0 && `,...`}
+      </StyledTableCell>
       <StyledTableCell>
         <span>{new Date(Number(date) * 1000).toDateString()}</span>
       </StyledTableCell>
-
       <StyledTableCell className="cell-center">
         <Flex direction="row" justify="space-between">
           <div className="approve-wrapper">
@@ -84,6 +105,21 @@ const TableRowComponent: FC<TTableRaw> = ({ topic, onClick, onSearch }) => {
   )
 }
 
+const PopupContent = styled.div`
+  position: absolute;
+  cursor: pointer;
+  height: auto;
+  width: 150px;
+  border-radius: 4px;
+  right: 206px;
+  background-color: #000000;
+  padding: 10px;
+  border: none;
+  word-wrap: break-word;
+  opacity: 0.8;
+  z-index: 9999;
+`
+
 const IconWrapper = styled(Flex)`
   width: 20px;
   height: 20px;
@@ -94,7 +130,6 @@ const IconWrapper = styled(Flex)`
   &.centered {
     margin: 0 auto;
   }
-
   & + & {
     margin-left: 4px;
   }
