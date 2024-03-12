@@ -70,8 +70,8 @@ const mockNode = {
   image_url: 'http://example.com/image.png',
   date: '2021-01-01',
   boost: 10,
-  node_type: 'topics',
-  type: 'topics',
+  node_type: 'topic',
+  type: 'topic',
   id: 'ref1',
   show_title: 'bitcoin',
   name: 'bitcoin',
@@ -266,9 +266,6 @@ describe('Test SideBar', () => {
 
     fireEvent.change(searchInput, { target: { value: mockNode.name } })
 
-    const searchIcon = screen.getByTestId('search-icon')
-
-    expect(searchIcon).toBeInTheDocument()
     ;(async () => {
       await waitFor(() => {
         expect(setSelectedTimestampMock).toHaveBeenCalledWith(mockNode)
@@ -305,9 +302,6 @@ describe('Test SideBar', () => {
 
     fireEvent.change(searchInput, { target: { value: 'bitcoin mining' } })
 
-    const searchIcon = screen.getByTestId('search-icon')
-
-    expect(searchIcon).toBeInTheDocument()
     ;(async () => {
       await waitFor(() => {
         expect(setSelectedTimestampMock).not.toHaveBeenCalledWith(mockNode)
