@@ -24,7 +24,7 @@ describe('TableRowComponent', () => {
     edgeCount: 2,
   }
 
-  it('does not show hover state for topics with only one edge', () => {
+  it('Does not show hover state for topics with only one edge', () => {
     render(<TableRowComponent onClick={mockOnClick} onSearch={mockOnSearch} topic={singleEdgeTopic} />)
 
     waitFor(() => {
@@ -35,7 +35,7 @@ describe('TableRowComponent', () => {
     })
   })
 
-  it('shows hover state for topics with more than one edge', () => {
+  it('Shows hover state for topics with more than one edge', () => {
     render(<TableRowComponent onClick={mockOnClick} onSearch={mockOnSearch} topic={multipleEdgesTopic} />)
 
     waitFor(() => {
@@ -46,7 +46,7 @@ describe('TableRowComponent', () => {
     })
   })
 
-  it('ensures each row is the same size', () => {
+  it('Ensures each row is the same size', () => {
     const { container } = render(
       <>
         <TableRowComponent onClick={mockOnClick} onSearch={mockOnSearch} topic={singleEdgeTopic} />
