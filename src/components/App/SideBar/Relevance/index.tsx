@@ -53,16 +53,14 @@ const _Relevance = ({ isSearchResult }: Props) => {
 
       if (currentSearch) {
         nodes.sort((a, b) => {
-          const aValue = a.node_type === 'topic' && a.name.toLowerCase() === currentSearch.toLowerCase() ? 1 : 0
-          const bValue = b.node_type === 'topic' && b.name.toLowerCase() === currentSearch.toLowerCase() ? 1 : 0
+          const aValue = a.node_type === 'topic' && a.name === currentSearch ? 1 : 0
+          const bValue = b.node_type === 'topic' && b.name === currentSearch ? 1 : 0
 
           return bValue - aValue
         })
 
-        const exactNodeMatch = nodes.find((node) => node.node_type === 'topic' && node.name === currentSearch)
-
-        if (exactNodeMatch) {
-          handleNodeClick(exactNodeMatch)
+        if (nodes[0].name === currentSearch) {
+          handleNodeClick(nodes[0])
         }
       }
 
