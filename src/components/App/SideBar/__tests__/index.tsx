@@ -7,6 +7,7 @@ import { ThemeProvider as StyleThemeProvider } from 'styled-components'
 import { SideBar } from '..'
 import { AppStore, useAppStore } from '../../../../stores/useAppStore'
 import { DataStore, useDataStore, useFilteredNodes, useSelectedNode } from '../../../../stores/useDataStore'
+import * as utils from '../../../../utils/relayHelper'
 import { appTheme } from '../../Providers'
 
 jest.mock('reactflow/dist/style.css', () => null)
@@ -62,12 +63,27 @@ const useSelectedNodeMock = useSelectedNode as jest.MockedFunction<typeof useSel
 const useFilteredNodesMock = useFilteredNodes as jest.MockedFunction<typeof useFilteredNodes>
 const useDataStoreMock = useDataStore as jest.MockedFunction<typeof useDataStore>
 const useAppStoreMock = useAppStore as jest.MockedFunction<typeof useAppStore>
+const saveConsumedContentMock = jest.spyOn(utils, 'saveConsumedContent')
+
+const mockNode = {
+  link: 'http://example.com',
+  image_url: 'http://example.com/image.png',
+  date: '2021-01-01',
+  boost: 10,
+  node_type: 'topic',
+  type: 'topic',
+  id: 'ref1',
+  show_title: 'bitcoin',
+  name: 'bitcoin',
+  label: 'bitcoin',
+  ref_id: 'ref1',
+}
 
 describe('Test SideBar', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     useSelectedNodeMock.mockReturnValue([])
-    useFilteredNodesMock.mockReturnValue([])
+    useFilteredNodesMock.mockReturnValue([mockNode])
   })
 
   it('Ensure that the sidebar is not visible when sidebarIsOpen is false.', () => {
@@ -222,5 +238,75 @@ describe('Test SideBar', () => {
     // confirms that LatestView is rendered
     expect(screen.getByText('Latest')).toBeInTheDocument()
     expect(screen.getByTestId('browse_gallery-icon')).toBeInTheDocument()
+  })
+
+  it('asserts that exact search triggers node selection', () => {
+    const [setSelectedTimestampMock, setSelectedNodeMock, setRelevanceSelectedMock] = [jest.fn(), jest.fn(), jest.fn()]
+
+    useDataStoreMock.mockReturnValue({
+      currentSearch: '',
+      isFetching: false,
+      trendingTopics: [],
+      setTrendingTopics: jest.fn(),
+      setSelectedTimestamp: setSelectedTimestampMock,
+      setSelectedNode: setSelectedNodeMock,
+    })
+
+    useAppStoreMock.mockReturnValue({ setRelevanceSelected: setRelevanceSelectedMock, sidebarIsOpen: true })
+
+    render(
+      <ThemeProvider theme={appTheme}>
+        <StyleThemeProvider theme={appTheme}>
+          <SideBar />
+        </StyleThemeProvider>
+      </ThemeProvider>,
+    )
+
+    const searchInput = screen.getByPlaceholderText('Search') as HTMLInputElement
+
+    fireEvent.change(searchInput, { target: { value: mockNode.name } })
+    ;(async () => {
+      await waitFor(() => {
+        expect(setSelectedTimestampMock).toHaveBeenCalledWith(mockNode)
+        expect(setSelectedNodeMock).toHaveBeenCalledWith(mockNode)
+        expect(saveConsumedContentMock).toHaveBeenCalledWith(mockNode)
+        expect(setRelevanceSelectedMock).toHaveBeenCalledWith(true)
+      })
+    })()
+  })
+
+  it('asserts that partial match does not trigger selection', () => {
+    const [setSelectedTimestampMock, setSelectedNodeMock, setRelevanceSelectedMock] = [jest.fn(), jest.fn(), jest.fn()]
+
+    useDataStoreMock.mockReturnValue({
+      currentSearch: '',
+      isFetching: false,
+      trendingTopics: [],
+      setTrendingTopics: jest.fn(),
+      setSelectedTimestamp: setSelectedTimestampMock,
+      setSelectedNode: setSelectedNodeMock,
+    })
+
+    useAppStoreMock.mockReturnValue({ setRelevanceSelected: setRelevanceSelectedMock, sidebarIsOpen: true })
+
+    render(
+      <ThemeProvider theme={appTheme}>
+        <StyleThemeProvider theme={appTheme}>
+          <SideBar />
+        </StyleThemeProvider>
+      </ThemeProvider>,
+    )
+
+    const searchInput = screen.getByPlaceholderText('Search') as HTMLInputElement
+
+    fireEvent.change(searchInput, { target: { value: 'bitcoin mining' } })
+    ;(async () => {
+      await waitFor(() => {
+        expect(setSelectedTimestampMock).not.toHaveBeenCalledWith(mockNode)
+        expect(setSelectedNodeMock).not.toHaveBeenCalledWith(mockNode)
+        expect(saveConsumedContentMock).not.toHaveBeenCalledWith(mockNode)
+        expect(setRelevanceSelectedMock).not.toHaveBeenCalledWith(true)
+      })
+    })()
   })
 })
