@@ -265,7 +265,6 @@ describe('Test SideBar', () => {
     const searchInput = screen.getByPlaceholderText('Search') as HTMLInputElement
 
     fireEvent.change(searchInput, { target: { value: mockNode.name } })
-
     ;(async () => {
       await waitFor(() => {
         expect(setSelectedTimestampMock).toHaveBeenCalledWith(mockNode)
@@ -301,7 +300,6 @@ describe('Test SideBar', () => {
     const searchInput = screen.getByPlaceholderText('Search') as HTMLInputElement
 
     fireEvent.change(searchInput, { target: { value: 'bitcoin mining' } })
-
     ;(async () => {
       await waitFor(() => {
         expect(setSelectedTimestampMock).not.toHaveBeenCalledWith(mockNode)
