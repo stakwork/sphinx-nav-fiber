@@ -7,6 +7,7 @@ export type Props = {
 export type TopicTableProps = {
   showMuted?: boolean
   onTopicEdit: (id: string, action: string) => void
+  onChangeFilter: (val: string) => void
 }
 
 export type TdProps = {

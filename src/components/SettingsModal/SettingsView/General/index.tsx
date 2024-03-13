@@ -53,7 +53,7 @@ export const General: FC<Props> = ({ initialValues }) => {
               <TextInput
                 id="cy-about-id"
                 label="Graph Description"
-                maxLength={50}
+                maxLength={100}
                 name="description"
                 placeholder="Type graph description here..."
               />
