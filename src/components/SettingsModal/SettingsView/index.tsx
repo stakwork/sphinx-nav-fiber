@@ -50,7 +50,7 @@ type Props = {
 export const SettingsView: React.FC<Props> = ({ onClose }) => {
   const [value, setValue] = useState(0)
   const [isAdmin, pubKey] = useUserStore((s) => [s.isAdmin, s.setPubKey, s.pubKey])
-  const GraphBlueprintFlag = useFeatureFlagStore((s) => s.GraphBlueprintFlag)
+  const graphBlueprintFlag = useFeatureFlagStore((s) => s.graphBlueprintFlag)
   const appMetaData = useAppStore((s) => s.appMetaData)
 
   const getSettingsLabel = () => (isAdmin ? 'Admin Settings' : 'Settings')
@@ -77,44 +77,30 @@ export const SettingsView: React.FC<Props> = ({ onClose }) => {
     return <></>
   }
 
-  let tabPanelIndex = 0
-
-  if (isAdmin) {
-    if (GraphBlueprintFlag) {
-      tabPanelIndex = 2
-    } else {
-      tabPanelIndex = 1
-    }
-  }
-
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue)
   }
+
+  const tabs = [
+    ...(!isAdmin ? [{ label: 'General', component: General }] : []),
+    { label: 'Appearance', component: Appearance },
+    ...(!isAdmin && !graphBlueprintFlag ? [{ label: 'Graph Blueprint', component: GraphBlueprint }] : []),
+  ]
 
   return (
     <Wrapper direction="column">
       <SettingsHeader>
         <StyledTabs aria-label="settings tabs" onChange={handleChange} value={value}>
-          {isAdmin && <StyledTab disableRipple label="General" {...a11yProps(0)} />}
-          <StyledTab color={colors.white} disableRipple label="Appearance" {...a11yProps(1)} />
-          {isAdmin && GraphBlueprintFlag && <StyledTab disableRipple label="Graph Blueprint" {...a11yProps(2)} />}
+          {tabs.map((tab, index) => (
+            <StyledTab key={tab.label} disableRipple label={tab.label} {...a11yProps(index)} />
+          ))}
         </StyledTabs>
       </SettingsHeader>
-      {isAdmin && (
-        <>
-          <TabPanel index={0} value={value}>
-            <General initialValues={appMetaData} />
-          </TabPanel>
-          {GraphBlueprintFlag && (
-            <TabPanel index={2} value={value}>
-              <GraphBlueprint />
-            </TabPanel>
-          )}
-        </>
-      )}
-      <TabPanel index={tabPanelIndex} value={value}>
-        <Appearance onClose={onClose} />
-      </TabPanel>
+      {tabs.map((tab, index) => (
+        <TabPanel key={tab.label} index={index} value={value}>
+          <tab.component initialValues={appMetaData} onClose={onClose} />
+        </TabPanel>
+      ))}
     </Wrapper>
   )
 }
