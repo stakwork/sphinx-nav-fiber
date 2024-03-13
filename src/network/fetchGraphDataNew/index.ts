@@ -74,9 +74,9 @@ export const fetchNode = async (refId: string): Promise<NodeNew | null> => {
   return null
 }
 
-export const fetchNodeEdges = async (refId: string): Promise<FetchGDataResponse | null> => {
+export const fetchNodeEdges = async (refId: string, skip: number): Promise<FetchGDataResponse | null> => {
   try {
-    const response = await api.get<FetchGDataResponse>(`/prediction/graph/edges/${refId}?skip=2&limit=4`)
+    const response = await api.get<FetchGDataResponse>(`/prediction/graph/edges/${refId}?skip=${skip}&limit=4`)
 
     return response
   } catch (e) {
