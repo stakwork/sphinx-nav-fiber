@@ -82,9 +82,9 @@ export const SettingsView: React.FC<Props> = ({ onClose }) => {
   }
 
   const tabs = [
-    ...(!isAdmin ? [{ label: 'General', component: General }] : []),
+    ...(isAdmin ? [{ label: 'General', component: General }] : []),
     { label: 'Appearance', component: Appearance },
-    ...(!isAdmin && !graphBlueprintFlag ? [{ label: 'Graph Blueprint', component: GraphBlueprint }] : []),
+    ...(isAdmin && graphBlueprintFlag ? [{ label: 'Graph Blueprint', component: GraphBlueprint }] : []),
   ]
 
   return (
