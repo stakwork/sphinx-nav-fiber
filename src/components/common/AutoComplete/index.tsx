@@ -12,10 +12,11 @@ export type TAutocompleteOption = {
   label: string
   value: string
   type?: string
+  action?: () => void
 }
 
 type Props = {
-  options: TAutocompleteOption[]
+  options: TAutocompleteOption[] | null
   onSelect: (val: TAutocompleteOption | null) => void
   selectedValue?: TAutocompleteOption | null
   handleInputChange?: (val: string) => void
@@ -80,7 +81,7 @@ export const AutoComplete: FC<Props> = ({
         onInputChange={(e: SyntheticEvent<Element, Event>, val) => handleInputChange?.(val)}
         onOpen={() => setOpen(true)}
         open={open}
-        options={options}
+        options={options ?? []}
         renderInput={(params) => (
           <StyledInput
             inputRef={inputRef}
@@ -98,7 +99,7 @@ export const AutoComplete: FC<Props> = ({
         )}
         renderOption={(props, option) => (
           <li {...props}>
-            <Flex align="center" direction="row" grow={1} justify="space-between" shrink={1}>
+            <Flex align="center" direction="row" grow={1} justify="space-between" onClick={option?.action} shrink={1}>
               <div className="option">{option.label !== '' ? option.label : 'Not Selected'}</div>
               {option?.type && <TypeBadge type={option.type} />}
             </Flex>

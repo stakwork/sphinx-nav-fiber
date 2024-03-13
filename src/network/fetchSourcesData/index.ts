@@ -69,6 +69,10 @@ export type TtopicsParams = {
   search?: string
 }
 
+export type TNodeSchemaTypes = {
+  type: string
+} & { [k: string]: string | number }
+
 const defaultParams = {
   skip: '0',
   limit: '500',
@@ -171,6 +175,12 @@ export const deleteNode = async (id: string) => {
 
 export const getPriceData = async (endpoint: string) => {
   const response = await api.get<TPriceParams>(`/getprice?endpoint=${endpoint}&method=post`)
+
+  return response
+}
+
+export const getNodeSchemaTypes = async () => {
+  const response = await api.get<{ schemas: TNodeSchemaTypes[] }>(`/schema/all`)
 
   return response
 }
