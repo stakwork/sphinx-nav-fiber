@@ -2,6 +2,7 @@ import { Table as MaterialTable, Popover, TableRow } from '@mui/material'
 import React, { useCallback } from 'react'
 import styled from 'styled-components'
 import FilterOffIcon from '~/components/Icons/FilterOffIcon'
+import SortFilterIcon from '~/components/Icons/SortFilterIcon'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { useAppStore } from '~/stores/useAppStore'
@@ -9,9 +10,9 @@ import { useModal } from '~/stores/useModalStore'
 import { useTopicsStore } from '~/stores/useTopicsStore'
 import { colors } from '~/utils/colors'
 import { StyledTableCell, StyledTableHead } from '../../common'
+import { ALPHABETICALLY, DATE, EDGE_COUNT } from '../../constants'
 import { TopicTableProps } from '../../types'
 import { TopicRow } from './TableRow'
-import SortFilterIcon from '~/components/Icons/SortFilterIcon'
 
 export const Table: React.FC<TopicTableProps> = ({ showMuted, onTopicEdit, onChangeFilter }) => {
   const { close } = useModal('sourcesTable')
@@ -68,18 +69,18 @@ export const Table: React.FC<TopicTableProps> = ({ showMuted, onTopicEdit, onCha
               <TableRow component="tr">
                 <StyledTableCell className="empty" />
                 <StyledTableCell>
-                  <SortedIcon onClick={() => handleChange('Alphabetically')}>
+                  <SortedIcon onClick={() => handleChange(ALPHABETICALLY)}>
                     Name <SortFilterIcon />
                   </SortedIcon>
                 </StyledTableCell>
                 <StyledTableCell>
-                  <SortedIcon onClick={() => handleChange('Edge Count')}>
+                  <SortedIcon onClick={() => handleChange(EDGE_COUNT)}>
                     Count <SortFilterIcon />
                   </SortedIcon>
                 </StyledTableCell>
                 <StyledTableCell>Edge list</StyledTableCell>
                 <StyledTableCell>
-                  <SortedIcon onClick={() => handleChange('Date')}>
+                  <SortedIcon onClick={() => handleChange(DATE)}>
                     Date <SortFilterIcon />
                   </SortedIcon>
                 </StyledTableCell>
