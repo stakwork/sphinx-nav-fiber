@@ -7,7 +7,6 @@ import {
   DOCUMENT,
   LINK,
   NODE_ADD_ERROR,
-  NODE_ADD_SUCCESS,
   RSS,
   TWITTER_HANDLE,
   TWITTER_SOURCE,
@@ -115,7 +114,7 @@ const handleSubmitForm = async (
       throw new Error(message)
     }
 
-    SuccessNotify(NODE_ADD_SUCCESS)
+    SuccessNotify(false, 'addContent')
     close()
 
     // eslint-disable-next-line  @typescript-eslint/no-explicit-any
@@ -195,11 +194,7 @@ export const AddContentModal = () => {
       setLoading(false)
     }
   })
-
-  useEffect(() => {
-    SuccessNotify(NODE_ADD_SUCCESS)
-  })
-
+  
   return (
     <BaseModal id="addContent" kind="small" onClose={close} preventOutsideClose>
       <FormProvider {...form}>
