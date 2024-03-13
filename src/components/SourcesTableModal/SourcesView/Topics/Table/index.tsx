@@ -1,5 +1,4 @@
 import { Table as MaterialTable, Popover, TableRow } from '@mui/material'
-// import moment from 'moment'
 import React, { useCallback } from 'react'
 import styled from 'styled-components'
 import FilterOffIcon from '~/components/Icons/FilterOffIcon'
@@ -12,8 +11,9 @@ import { colors } from '~/utils/colors'
 import { StyledTableCell, StyledTableHead } from '../../common'
 import { TopicTableProps } from '../../types'
 import { TopicRow } from './TableRow'
+import SortFilterIcon from '~/components/Icons/SortFilterIcon'
 
-export const Table: React.FC<TopicTableProps> = ({ showMuted, onTopicEdit }) => {
+export const Table: React.FC<TopicTableProps> = ({ showMuted, onTopicEdit, onChangeFilter }) => {
   const { close } = useModal('sourcesTable')
 
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
@@ -42,6 +42,10 @@ export const Table: React.FC<TopicTableProps> = ({ showMuted, onTopicEdit }) => 
     handleClose()
   }
 
+  const handleChange = (option: string) => {
+    onChangeFilter(option)
+  }
+
   const open = Boolean(anchorEl)
   const id = open ? 'simple-popover' : undefined
 
@@ -63,10 +67,22 @@ export const Table: React.FC<TopicTableProps> = ({ showMuted, onTopicEdit }) => 
             <StyledTableHead>
               <TableRow component="tr">
                 <StyledTableCell className="empty" />
-                <StyledTableCell>Type</StyledTableCell>
-                <StyledTableCell>Edge Count</StyledTableCell>
+                <StyledTableCell>
+                  <SortedIcon onClick={() => handleChange('Alphabetically')}>
+                    Name <SortFilterIcon />
+                  </SortedIcon>
+                </StyledTableCell>
+                <StyledTableCell>
+                  <SortedIcon onClick={() => handleChange('Edge Count')}>
+                    Count <SortFilterIcon />
+                  </SortedIcon>
+                </StyledTableCell>
                 <StyledTableCell>Edge list</StyledTableCell>
-                <StyledTableCell>Date</StyledTableCell>
+                <StyledTableCell>
+                  <SortedIcon onClick={() => handleChange('Date')}>
+                    Date <SortFilterIcon />
+                  </SortedIcon>
+                </StyledTableCell>
                 <StyledTableCell>{showMuted ? 'Unmute' : 'Mute'}</StyledTableCell>
                 <StyledTableCell />
               </TableRow>
@@ -99,6 +115,13 @@ export const Table: React.FC<TopicTableProps> = ({ showMuted, onTopicEdit }) => 
     </>
   )
 }
+
+const SortedIcon = styled.span`
+  cursor: pointer;
+  display: flex;
+  gap: 4px;
+  align-items: center;
+`
 
 const PopoverOption = styled(Flex).attrs({
   direction: 'row',

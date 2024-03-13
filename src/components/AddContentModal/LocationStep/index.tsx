@@ -43,7 +43,7 @@ export const LocationStep: FC<Props> = ({ latitude, longitude, onNextStep, form 
       </Flex>
 
       <Flex direction="row" mb={20}>
-        <Flex grow={1}>
+        <Flex basis="100px" grow={1}>
           <TextInput
             id="add-node-latitude"
             label="Latitude"
@@ -62,7 +62,7 @@ export const LocationStep: FC<Props> = ({ latitude, longitude, onNextStep, form 
           />
         </Flex>
 
-        <Flex grow={1} ml={20}>
+        <Flex basis="100px" grow={1} ml={20}>
           <TextInput
             id="add-node-location-longitude"
             label="Longitude"
