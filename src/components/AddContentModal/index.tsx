@@ -130,13 +130,11 @@ const handleSubmitForm = async (
     if (err.status === 400) {
       const error = await err.json()
 
-      notify(error?.status || NODE_ADD_ERROR)
-      close()
+      throw new Error(error?.status || NODE_ADD_ERROR)
     }
 
     if (err instanceof Error) {
-      notify(err.message || NODE_ADD_ERROR)
-      close()
+      throw new Error(err.message || NODE_ADD_ERROR)
     }
   }
 }
@@ -148,9 +146,11 @@ export const AddContentModal = () => {
   const form = useForm<FormData>({ mode: 'onChange' })
   const { watch, setValue, reset } = form
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string>('')
 
   useEffect(
     () => () => {
+      setError('')
       setCurrentStep(0)
       reset()
     },
@@ -188,8 +188,12 @@ export const AddContentModal = () => {
 
     try {
       await handleSubmitForm(data, handleClose, type, setBudget)
-    } catch {
-      notify(NODE_ADD_ERROR)
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        setError(e.message)
+      }
+
+      setError(String(e))
     } finally {
       setLoading(false)
     }
@@ -209,7 +213,7 @@ export const AddContentModal = () => {
               )}
             </>
           )}
-          {currentStep === 2 && <BudgetStep loading={loading} onClick={() => null} type={type} />}
+          {currentStep === 2 && <BudgetStep error={error} loading={loading} onClick={() => null} type={type} />}
         </form>
       </FormProvider>
     </BaseModal>
