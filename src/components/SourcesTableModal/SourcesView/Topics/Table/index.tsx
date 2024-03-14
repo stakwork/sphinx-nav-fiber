@@ -11,9 +11,9 @@ import { colors } from '~/utils/colors'
 import { StyledTableCell, StyledTableHead } from '../../common'
 import { TopicTableProps } from '../../types'
 import { TopicRow } from './TableRow'
-import { ALPHABETICALLY, DATE, EDGE_COUNT } from '../../constants'
 import SortFilterIcon from '~/components/Icons/SortFilterIcon'
 import CheckedIcon from '~/components/Icons/CheckedIcon'
+import { ALPHABETICALLY, EDGE_COUNT, DATE } from '~/components/SourcesTableModal/SourcesView/constants'
 
 interface CheckboxIconProps {
   checked?: boolean
