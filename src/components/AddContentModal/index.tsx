@@ -2,12 +2,10 @@ import { useEffect, useState } from 'react'
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import * as sphinx from 'sphinx-bridge'
 import { BaseModal } from '~/components/Modal'
-import { notify } from '~/components/common/Toast/toastMessage'
 import {
   DOCUMENT,
   LINK,
   NODE_ADD_ERROR,
-  NODE_ADD_SUCCESS,
   RSS,
   TWITTER_HANDLE,
   TWITTER_SOURCE,
@@ -19,6 +17,7 @@ import { useModal } from '~/stores/useModalStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { SubmitErrRes } from '~/types'
 import { executeIfProd, getLSat, payLsat, updateBudget } from '~/utils'
+import { SuccessNotify, Toast } from '../common/SuccessToast'
 import { BudgetStep } from './BudgetStep'
 import { LocationStep } from './LocationStep'
 import { SourceStep } from './SourceStep'
@@ -114,7 +113,7 @@ const handleSubmitForm = async (
       throw new Error(message)
     }
 
-    notify(NODE_ADD_SUCCESS)
+    SuccessNotify(false, 'addContent')
     close()
 
     // eslint-disable-next-line  @typescript-eslint/no-explicit-any
@@ -130,13 +129,11 @@ const handleSubmitForm = async (
     if (err.status === 400) {
       const error = await err.json()
 
-      notify(error?.status || NODE_ADD_ERROR)
-      close()
+      throw new Error(error?.status || NODE_ADD_ERROR)
     }
 
     if (err instanceof Error) {
-      notify(err.message || NODE_ADD_ERROR)
-      close()
+      throw new Error(err.message || NODE_ADD_ERROR)
     }
   }
 }
@@ -148,9 +145,11 @@ export const AddContentModal = () => {
   const form = useForm<FormData>({ mode: 'onChange' })
   const { watch, setValue, reset } = form
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string>('')
 
   useEffect(
     () => () => {
+      setError('')
       setCurrentStep(0)
       reset()
     },
@@ -188,8 +187,12 @@ export const AddContentModal = () => {
 
     try {
       await handleSubmitForm(data, handleClose, type, setBudget)
-    } catch {
-      notify(NODE_ADD_ERROR)
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        setError(e.message)
+      }
+
+      setError(String(e))
     } finally {
       setLoading(false)
     }
@@ -209,9 +212,10 @@ export const AddContentModal = () => {
               )}
             </>
           )}
-          {currentStep === 2 && <BudgetStep loading={loading} onClick={() => null} type={type} />}
+          {currentStep === 2 && <BudgetStep error={error} loading={loading} onClick={() => null} type={type} />}
         </form>
       </FormProvider>
+      <Toast />
     </BaseModal>
   )
 }

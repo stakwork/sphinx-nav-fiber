@@ -42,7 +42,7 @@ export const TeachMe = () => {
       setTeachMeAnswer(response.tutorial)
 
       toast(<ToastMessage message="Tutorial is ready" />, {
-        position: toast.POSITION.BOTTOM_CENTER,
+        position: 'bottom-center',
         type: 'success',
       })
     },
@@ -54,7 +54,7 @@ export const TeachMe = () => {
       setInstagraphAnswer(response)
 
       toast(<ToastMessage message="Instagraph is ready" />, {
-        position: toast.POSITION.BOTTOM_CENTER,
+        position: 'bottom-center',
         type: 'success',
       })
     },
