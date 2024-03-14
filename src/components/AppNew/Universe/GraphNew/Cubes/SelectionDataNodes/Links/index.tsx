@@ -1,4 +1,4 @@
-import { Point, Points, QuadraticBezierLine, Segment, Sphere } from '@react-three/drei'
+import { Point, Points, Segment, SegmentObject } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import { useEffect, useRef, useState } from 'react'
 import { QuadraticBezierCurve3, Vector3 } from 'three'
@@ -44,11 +44,7 @@ const getSpherePosition = (points: Vector3[], progress: number): THREE.Vector3 =
 }
 
 export const SelectionLink = ({ link, title }: Props) => {
-  const ref = useRef(null)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const animatedRef = useRef<any>()
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const staticRef = useRef<any>()
+  const ref = useRef<SegmentObject>(null)
   const pointsRef = useRef(null)
   const selectedNode = useSelectedNode()
   const [start, setStart] = useState(new Vector3(0, 0, 0))
@@ -74,42 +70,17 @@ export const SelectionLink = ({ link, title }: Props) => {
 
   const midPoint = new Vector3().addVectors(start, end).multiplyScalar(0.5)
 
-  // useFrame(() => {
-  //   if (ref.current) {
-  //     const source = selectionGraphData.nodes.find((f) => f.ref_id === link.source)
-
-  //     const target = selectionGraphData.nodes.find((f) => f.ref_id === link.target)
-
-  //     ref.current.start.set(source?.x || 0, source?.y || 0, source?.z || 0)
-  //     ref.current.end.set(target?.x || 0, target?.y || 0, target?.z || 0)
-
-  //     setStart(new Vector3(source?.x || 0, source?.y || 0, source?.z || 0))
-  //     setEnd(new Vector3(target?.x || 0, target?.y || 0, target?.z || 0))
-  //   }
-  // })
-
-  useFrame((_, delta) => {
-    // Access the material of the line and update dashOffset
-    if (animatedRef.current && staticRef.current) {
+  useFrame(() => {
+    if (ref.current) {
       const source = selectionGraphData.nodes.find((f) => f.ref_id === link.source)
 
       const target = selectionGraphData.nodes.find((f) => f.ref_id === link.target)
 
-      animatedRef.current.setPoints(
-        [source?.x || 0, source?.y || 0, source?.z || 0],
-        [target?.x || 0, target?.y || 0, target?.z || 0],
-      )
+      ref.current.start.set(source?.x || 0, source?.y || 0, source?.z || 0)
+      ref.current.end.set(target?.x || 0, target?.y || 0, target?.z || 0)
 
-      staticRef.current.setPoints(
-        [source?.x || 0, source?.y || 0, source?.z || 0],
-        [target?.x || 0, target?.y || 0, target?.z || 0],
-      )
-
-      const { material } = animatedRef.current
-
-      if (material) {
-        material.uniforms.dashOffset.value -= delta * 10
-      }
+      setStart(new Vector3(source?.x || 0, source?.y || 0, source?.z || 0))
+      setEnd(new Vector3(target?.x || 0, target?.y || 0, target?.z || 0))
     }
   })
 
@@ -120,19 +91,7 @@ export const SelectionLink = ({ link, title }: Props) => {
 
   return (
     <>
-      {false && <Segment ref={ref} color="transparent" end={end} start={start} />}
-
-      <QuadraticBezierLine ref={animatedRef} color="white" dashed dashScale={50} end={end} gapSize={20} start={start} />
-      <QuadraticBezierLine
-        ref={staticRef}
-        color="white"
-        end={end}
-        lineWidth={0.5}
-        opacity={0.1}
-        start={start}
-        transparent
-      />
-      {false && <Sphere args={[0.5, 16, 16]} position={getSpherePosition(points, progress)} />}
+      <Segment ref={ref} color="transparent" end={end} start={start} />
       <Points
         limit={1} // Optional: max amount of items (for calculating buffer size)
         range={1} // Optional: draw-range

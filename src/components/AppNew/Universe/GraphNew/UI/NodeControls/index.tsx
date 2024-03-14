@@ -41,7 +41,7 @@ export const NodeControls = memo(() => {
   const getChildren = useCallback(async () => {
     try {
       if (selectedNode?.ref_id) {
-        const res = await fetchNodeEdges(selectedNode?.ref_id, selectedNode.edge_count || 0)
+        const res = await fetchNodeEdges(selectedNode?.ref_id, selectedNode?.edge_count || 0)
 
         const newLinks = (res?.edges || []).filter(
           (i) => !selectionGraphData.links.some((l) => i.target === l.target && i.source === l.source),
@@ -64,7 +64,13 @@ export const NodeControls = memo(() => {
     } catch (error) {
       console.log(error)
     }
-  }, [selectedNode?.ref_id, selectionGraphData.links, selectionGraphData.nodes, setSelectionData])
+  }, [
+    selectedNode?.edge_count,
+    selectedNode?.ref_id,
+    selectionGraphData.links,
+    selectionGraphData.nodes,
+    setSelectionData,
+  ])
 
   const setPosition = useCallback(() => {
     const data = showSelectionGraph ? selectionGraphData : allGraphData

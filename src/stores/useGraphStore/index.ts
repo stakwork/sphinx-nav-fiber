@@ -2,7 +2,7 @@ import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
 import { isChileGraph } from '~/constants'
 import { fetchGraphData } from '~/network/fetchGraphDataNew'
-import { EdgeExtendedNew, NodeExtendedNew, NormalizedNodes } from '~/network/fetchGraphDataNew/types'
+import { EdgeExtendedNew, NodeExtendedNew, NormalizedEdges, NormalizedNodes } from '~/network/fetchGraphDataNew/types'
 import { saveSearchTerm } from '~/utils/relayHelper/index'
 
 export type GraphStyle = 'sphere' | 'force' | 'split' | 'earth' | 'v2'
@@ -35,6 +35,7 @@ export type GraphStore = {
   nearbyNodeIds: string[]
   showSelectionGraph: boolean
   nodesNormalized: NormalizedNodes
+  edgesNormalized: NormalizedEdges
   nodeTypes: string[]
 
   setDisableCameraRotation: (rotation: boolean) => void
@@ -83,6 +84,7 @@ const defaultData: Omit<
   nearbyNodeIds: [],
   showSelectionGraph: false,
   nodesNormalized: {},
+  edgesNormalized: {},
   isFetching: false,
   nodeTypes: [],
 }
@@ -109,6 +111,16 @@ export const useGraphStore = create<GraphStore>()(
         }
       })
 
+      const edgesNormalized: NormalizedEdges = {}
+
+      data?.links.forEach((item) => {
+        const refId = `${item.source}-${item.target}`
+
+        if (refId) {
+          edgesNormalized[refId] = item
+        }
+      })
+
       if (params?.word) {
         await saveSearchTerm()
       }
@@ -117,6 +129,7 @@ export const useGraphStore = create<GraphStore>()(
         data: { nodes: data?.nodes || [], links: data?.links || [] },
         nodeTypes: data?.nodeTypes,
         nodesNormalized,
+        edgesNormalized,
         isFetching: false,
         disableCameraRotation: false,
         nearbyNodeIds: [],

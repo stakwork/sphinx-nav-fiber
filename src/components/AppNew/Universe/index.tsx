@@ -125,13 +125,7 @@ const _Universe = () => {
   return (
     <Wrapper>
       <Suspense fallback={null}>
-        <Canvas
-          camera={cameraProps}
-          id="universe-canvas"
-          onCreated={onCreatedHandler}
-          onWheel={onWheelHandler}
-          orthographic
-        >
+        <Canvas camera={cameraProps} id="universe-canvas" onCreated={onCreatedHandler} onWheel={onWheelHandler}>
           {false && <Perf position="top-right" />}
           {true && <primitive object={new AxesHelper(10000)} />}
           {false && <primitive object={new GridHelper(10000)} />}

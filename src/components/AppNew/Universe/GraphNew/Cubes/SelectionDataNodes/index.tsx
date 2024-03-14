@@ -49,23 +49,6 @@ export const SelectionDataNodes = memo(() => {
       velocityDecay: 0.9,
     })
 
-    // graphData.current = structuredClone(selectionGraphData)
-
-    // if (graphData.current) {
-    //   simulation2d = forceSimulation()
-    //     .stop()
-    //     .alpha(1)
-    //     .stop()
-    //     .numDimensions(2)
-    //     .velocityDecay(0.9)
-    //     .force('charge', forceManyBody().strength(30)) // Repulsion between nodes
-    //     .force('center', forceCenter()) // Attract nodes to the center
-    //     .force('collide', forceCollide(10))
-    //     .nodes(graphData.current.nodes)
-    //     .alpha(1)
-    //     .restart()
-    // }
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectionGraphData])
 

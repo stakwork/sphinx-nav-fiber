@@ -40,6 +40,10 @@ export type NormalizedNodes = {
   [refId: string]: NodeExtendedNew
 }
 
+export type NormalizedEdges = {
+  [refId: string]: EdgeExtendedNew
+}
+
 export type GraphDataNew = {
   links: EdgeExtendedNew[]
   nodes: NodeExtendedNew[]
