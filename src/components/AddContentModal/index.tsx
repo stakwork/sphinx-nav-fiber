@@ -7,7 +7,6 @@ import {
   DOCUMENT,
   LINK,
   NODE_ADD_ERROR,
-  NODE_ADD_SUCCESS,
   RSS,
   TWITTER_HANDLE,
   TWITTER_SOURCE,
@@ -19,6 +18,7 @@ import { useModal } from '~/stores/useModalStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { SubmitErrRes } from '~/types'
 import { executeIfProd, getLSat, payLsat, updateBudget } from '~/utils'
+import { SuccessNotify, Toast } from '../common/SuccessToast'
 import { BudgetStep } from './BudgetStep'
 import { LocationStep } from './LocationStep'
 import { SourceStep } from './SourceStep'
@@ -114,7 +114,7 @@ const handleSubmitForm = async (
       throw new Error(message)
     }
 
-    notify(NODE_ADD_SUCCESS)
+    SuccessNotify(false, 'addContent')
     close()
 
     // eslint-disable-next-line  @typescript-eslint/no-explicit-any
@@ -194,7 +194,7 @@ export const AddContentModal = () => {
       setLoading(false)
     }
   })
-
+  
   return (
     <BaseModal id="addContent" kind="small" onClose={close} preventOutsideClose>
       <FormProvider {...form}>
@@ -212,6 +212,7 @@ export const AddContentModal = () => {
           {currentStep === 2 && <BudgetStep loading={loading} onClick={() => null} type={type} />}
         </form>
       </FormProvider>
+      <Toast />
     </BaseModal>
   )
 }

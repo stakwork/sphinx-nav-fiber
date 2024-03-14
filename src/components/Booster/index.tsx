@@ -22,7 +22,7 @@ type Props = {
 const notify = (message: string) => {
   toast(<ToastMessage message={message} />, {
     icon: false,
-    position: toast.POSITION.BOTTOM_CENTER,
+    position: 'bottom-center',
     type: message === BOOST_SUCCESS ? 'success' : 'error',
   })
 }
