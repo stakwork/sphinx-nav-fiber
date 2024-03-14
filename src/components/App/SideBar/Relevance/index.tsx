@@ -58,19 +58,13 @@ const _Relevance = ({ isSearchResult }: Props) => {
 
           return bValue - aValue
         })
-
-        const exactNodeMatch = nodes.find((node) => node.node_type === 'topic' && node.name === currentSearch)
-
-        if (exactNodeMatch) {
-          handleNodeClick(exactNodeMatch)
-        }
       }
 
       return nodes.slice(0, endSlice)
     }
 
     return []
-  }, [filteredNodes, currentSearch, endSlice, handleNodeClick])
+  }, [filteredNodes, currentSearch, endSlice])
 
   return (
     <>
