@@ -1,3 +1,4 @@
+/* eslint-disable padding-line-between-statements */
 import React from 'react'
 import { render, fireEvent, waitFor, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
@@ -67,7 +68,7 @@ describe('Table Component', () => {
     })
   })
 
-  test('correctly display either mute or unmute (and correct icon) depending if filtering by muted topics', async () => {
+  test('correctly display either mute or unmute (and correct icons) depending if filtering by muted topics', async () => {
     const { rerender, getByTestId } = renderTable()
 
     waitFor(async () => {
