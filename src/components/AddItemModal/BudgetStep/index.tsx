@@ -1,5 +1,6 @@
 import { Button } from '@mui/material'
 import { FC, useEffect, useState } from 'react'
+import { MdError } from 'react-icons/md'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
 import CheckIcon from '~/components/Icons/CheckIcon'
@@ -12,9 +13,10 @@ import { colors, formatBudget } from '~/utils'
 type Props = {
   onClick: () => void
   loading: boolean
+  error?: string
 }
 
-export const BudgetStep: FC<Props> = ({ onClick, loading }) => {
+export const BudgetStep: FC<Props> = ({ onClick, loading, error }) => {
   const budget = useUserStore((s) => s.budget)
   const [price, setPrice] = useState<number>(10)
   const endPoint = 'node'
@@ -57,7 +59,7 @@ export const BudgetStep: FC<Props> = ({ onClick, loading }) => {
         <Button
           color="secondary"
           data-testid="check-icon"
-          disabled={loading}
+          disabled={loading || !!error}
           onClick={onClick}
           size="large"
           startIcon={loading ? <ClipLoader size={24} /> : <CheckIcon />}
@@ -67,6 +69,15 @@ export const BudgetStep: FC<Props> = ({ onClick, loading }) => {
           Approve
         </Button>
       </Flex>
+      {error ? (
+        <StyledError role="tooltip">
+          <StyledErrorText>
+            <MdError fontSize={13} />
+            <span>{error}</span>
+          </StyledErrorText>
+          <div className="tooltip">{error}</div>
+        </StyledError>
+      ) : null}
     </Flex>
   )
 }
@@ -123,4 +134,55 @@ const StyledText = styled(Text)`
   font-size: 22px;
   font-weight: 600;
   font-family: 'Barlow';
+`
+
+const StyledErrorText = styled(Flex)`
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  white-space: normal;
+  letter-spacing: 0.2px;
+  cursor: pointer;
+  padding-left: 4px;
+  font-size: 13px;
+  font-family: Barlow;
+  line-height: 18px;
+  justify-content: center;
+
+  span {
+    margin-left: 4px;
+  }
+`
+
+const StyledError = styled(Flex)`
+  display: flex;
+  align-items: center;
+  color: ${colors.primaryRed};
+  position: relative;
+  margin-top: 20px;
+
+  .tooltip {
+    position: absolute;
+    background-color: ${colors.black};
+    opacity: 0.8;
+    border-radius: 4px;
+    color: ${colors.white};
+    top: -10px;
+    left: 335px;
+    padding: 4px 8px;
+    font-size: 13px;
+    font-family: Barlow;
+    visibility: hidden;
+    width: 175px;
+    z-index: 1;
+  }
+
+  &:hover .tooltip {
+    visibility: visible;
+  }
+
+  &:focus .tooltip {
+    visibility: visible;
+  }
 `
