@@ -12,14 +12,20 @@ import { StyledTableCell, StyledTableHead } from '../../common'
 import { TopicTableProps } from '../../types'
 import { TopicRow } from './TableRow'
 import SortFilterIcon from '~/components/Icons/SortFilterIcon'
+import CheckedIcon from '~/components/Icons/CheckedIcon'
 
-export const Table: React.FC<TopicTableProps> = ({ showMuted, onTopicEdit, onChangeFilter }) => {
+interface CheckboxIconProps {
+  checked?: boolean
+}
+
+export const Table: React.FC<TopicTableProps> = ({ setShowMuteUnmute, showMuted, onTopicEdit, onChangeFilter }) => {
   const { close } = useModal('sourcesTable')
 
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
   const [selectedRefId, setSelectedRefId] = React.useState<string>('')
 
   const [setSearchFormValue, setCurrentSearch] = useAppStore((s) => [s.setSearchFormValue, s.setCurrentSearch])
+
   const [data, ids] = useTopicsStore((s) => [s.data, s.ids])
 
   const handleClick = useCallback((event: React.MouseEvent<HTMLButtonElement>, refId: string) => {
@@ -83,7 +89,14 @@ export const Table: React.FC<TopicTableProps> = ({ showMuted, onTopicEdit, onCha
                     Date <SortFilterIcon />
                   </SortedIcon>
                 </StyledTableCell>
-                <StyledTableCell>{showMuted ? 'Unmute' : 'Mute'}</StyledTableCell>
+                <StyledTableCell>
+                  <CheckboxSection onClick={setShowMuteUnmute}>
+                    <CheckboxIcon checked={showMuted}>
+                      <Checkmark>{showMuted && <CheckedIcon />}</Checkmark>
+                    </CheckboxIcon>
+                    Muted
+                  </CheckboxSection>
+                </StyledTableCell>
                 <StyledTableCell />
               </TableRow>
             </StyledTableHead>
@@ -115,6 +128,32 @@ export const Table: React.FC<TopicTableProps> = ({ showMuted, onTopicEdit, onCha
     </>
   )
 }
+
+const CheckboxSection = styled.td`
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+`
+
+const CheckboxIcon = styled.div<CheckboxIconProps>`
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+  border: ${({ checked }) => (checked ? '#618AFF' : '2px solid #CCCCCC')};
+  background-color: ${({ checked }) => (checked ? '#618AFF' : 'transparent')};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 8px;
+`
+
+const Checkmark = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 2px;
+  background-color: transparent;
+`
 
 const SortedIcon = styled.span`
   cursor: pointer;
