@@ -194,7 +194,7 @@ export const AddContentModal = () => {
       setLoading(false)
     }
   })
-  
+
   return (
     <BaseModal id="addContent" kind="small" onClose={close} preventOutsideClose>
       <FormProvider {...form}>
