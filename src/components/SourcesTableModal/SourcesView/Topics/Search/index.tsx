@@ -39,7 +39,6 @@ const Search: React.FC<SearchProps> = ({ placeholder, activeIcon, loadingIcon, d
 
     setLoading(true)
 
-    // Simulate a delay before updating the searchTerm
     setTimeout(() => {
       if (!value) {
         resetSearch()

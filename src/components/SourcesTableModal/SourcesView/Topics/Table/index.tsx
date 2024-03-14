@@ -11,6 +11,7 @@ import { colors } from '~/utils/colors'
 import { StyledTableCell, StyledTableHead } from '../../common'
 import { TopicTableProps } from '../../types'
 import { TopicRow } from './TableRow'
+import { ALPHABETICALLY, DATE, EDGE_COUNT } from '../../constants'
 import SortFilterIcon from '~/components/Icons/SortFilterIcon'
 import CheckedIcon from '~/components/Icons/CheckedIcon'
 
@@ -74,18 +75,18 @@ export const Table: React.FC<TopicTableProps> = ({ setShowMuteUnmute, showMuted,
               <TableRow component="tr">
                 <StyledTableCell className="empty" />
                 <StyledTableCell>
-                  <SortedIcon onClick={() => handleChange('Alphabetically')}>
+                  <SortedIcon onClick={() => handleChange(ALPHABETICALLY)}>
                     Name <SortFilterIcon />
                   </SortedIcon>
                 </StyledTableCell>
                 <StyledTableCell>
-                  <SortedIcon onClick={() => handleChange('Edge Count')}>
+                  <SortedIcon onClick={() => handleChange(EDGE_COUNT)}>
                     Count <SortFilterIcon />
                   </SortedIcon>
                 </StyledTableCell>
                 <StyledTableCell>Edge list</StyledTableCell>
                 <StyledTableCell>
-                  <SortedIcon onClick={() => handleChange('Date')}>
+                  <SortedIcon onClick={() => handleChange(DATE)}>
                     Date <SortFilterIcon />
                   </SortedIcon>
                 </StyledTableCell>
