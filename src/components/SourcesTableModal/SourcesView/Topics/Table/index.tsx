@@ -10,10 +10,10 @@ import { useTopicsStore } from '~/stores/useTopicsStore'
 import { colors } from '~/utils/colors'
 import { StyledTableCell, StyledTableHead } from '../../common'
 import { TopicTableProps } from '../../types'
+import { ALPHABETICALLY, EDGE_COUNT, DATE } from '~/components/SourcesTableModal/SourcesView/constants'
 import { TopicRow } from './TableRow'
 import SortFilterIcon from '~/components/Icons/SortFilterIcon'
-import CheckedIcon from '~/components/Icons/CheckedIcon'
-import { ALPHABETICALLY, EDGE_COUNT, DATE } from '~/components/SourcesTableModal/SourcesView/constants'
+import CheckIcon from '~/components/Icons/CheckIcon'
 
 interface CheckboxIconProps {
   checked?: boolean
@@ -93,7 +93,7 @@ export const Table: React.FC<TopicTableProps> = ({ setShowMuteUnmute, showMuted,
                 <StyledTableCell>
                   <CheckboxSection onClick={setShowMuteUnmute}>
                     <CheckboxIcon checked={showMuted}>
-                      <Checkmark>{showMuted && <CheckedIcon />}</Checkmark>
+                      <Checkmark>{showMuted && <CheckIcon />}</Checkmark>
                     </CheckboxIcon>
                     Muted
                   </CheckboxSection>
