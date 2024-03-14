@@ -36,20 +36,22 @@ export const useTopicsStore = create<TopicsStore>((set, get) => ({
       set({ data: null, ids: [], total: 0 })
     }
 
-    const responseData: FetchTopicResponse = await getTopicsData(payload)
+    try {
+      const responseData: FetchTopicResponse = await getTopicsData(payload)
 
-    console.log(responseData)
+      // Instead of replacing the data, append new data to existing data
+      const newData: Record<string, Topic> = filters.page === 0 ? {} : { ...(data || {}) }
+      const newIds: string[] = filters.page === 0 ? [] : [...ids]
 
-    // Instead of replacing the data, append new data to existing data
-    const newData: Record<string, Topic> = filters.page === 0 ? {} : { ...(data || {}) }
-    const newIds: string[] = filters.page === 0 ? [] : [...ids]
+      responseData.data.forEach((topic) => {
+        newData[topic.ref_id] = topic
+        newIds.push(topic.ref_id)
+      })
 
-    responseData.data.forEach((topic) => {
-      newData[topic.ref_id] = topic
-      newIds.push(topic.ref_id)
-    })
-
-    set({ data: newData, ids: newIds, total: responseData.topicCount })
+      set({ data: newData, ids: newIds, total: responseData.topicCount })
+    } catch (error) {
+      console.log(error)
+    }
   },
   setFilters: (filters: Partial<TopicFilter>) => set({ filters: { ...get().filters, page: 0, ...filters } }),
   terminate: () => set(defaultData),

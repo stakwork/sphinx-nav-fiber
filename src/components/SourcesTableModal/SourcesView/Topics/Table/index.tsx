@@ -1,5 +1,4 @@
 import { Table as MaterialTable, Popover, TableRow } from '@mui/material'
-// import moment from 'moment'
 import React, { useCallback } from 'react'
 import styled from 'styled-components'
 import AddCircleIcon from '~/components/Icons/AddCircleIcon'
@@ -8,6 +7,7 @@ import FilterOffIcon from '~/components/Icons/FilterOffIcon'
 import MergeIcon from '~/components/Icons/MergeIcon'
 import VisibilityOff from '~/components/Icons/VisibilityOff'
 import VisibilityOn from '~/components/Icons/VisibilityOn'
+import SortFilterIcon from '~/components/Icons/SortFilterIcon'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { useAppStore } from '~/stores/useAppStore'
@@ -15,10 +15,11 @@ import { useModal } from '~/stores/useModalStore'
 import { useTopicsStore } from '~/stores/useTopicsStore'
 import { colors } from '~/utils/colors'
 import { StyledTableCell, StyledTableHead } from '../../common'
+import { ALPHABETICALLY, DATE, EDGE_COUNT } from '../../constants'
 import { TopicTableProps } from '../../types'
 import { TopicRow } from './TableRow'
 
-export const Table: React.FC<TopicTableProps> = ({ showMuted, onTopicEdit }) => {
+export const Table: React.FC<TopicTableProps> = ({ showMuted, onTopicEdit, onChangeFilter }) => {
   const { close } = useModal('sourcesTable')
 
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
@@ -47,6 +48,10 @@ export const Table: React.FC<TopicTableProps> = ({ showMuted, onTopicEdit }) => 
     handleClose()
   }
 
+  const handleChange = (option: string) => {
+    onChangeFilter(option)
+  }
+
   const open = Boolean(anchorEl)
   const id = open ? 'simple-popover' : undefined
 
@@ -68,10 +73,22 @@ export const Table: React.FC<TopicTableProps> = ({ showMuted, onTopicEdit }) => 
             <StyledTableHead>
               <TableRow component="tr">
                 <StyledTableCell className="empty" />
-                <StyledTableCell>Type</StyledTableCell>
-                <StyledTableCell>Edge Count</StyledTableCell>
+                <StyledTableCell>
+                  <SortedIcon onClick={() => handleChange(ALPHABETICALLY)}>
+                    Name <SortFilterIcon />
+                  </SortedIcon>
+                </StyledTableCell>
+                <StyledTableCell>
+                  <SortedIcon onClick={() => handleChange(EDGE_COUNT)}>
+                    Count <SortFilterIcon />
+                  </SortedIcon>
+                </StyledTableCell>
                 <StyledTableCell>Edge list</StyledTableCell>
-                <StyledTableCell>Date</StyledTableCell>
+                <StyledTableCell>
+                  <SortedIcon onClick={() => handleChange(DATE)}>
+                    Date <SortFilterIcon />
+                  </SortedIcon>
+                </StyledTableCell>
                 <StyledTableCell>{showMuted ? 'Unmute' : 'Mute'}</StyledTableCell>
                 <StyledTableCell />
               </TableRow>
@@ -121,6 +138,13 @@ export const Table: React.FC<TopicTableProps> = ({ showMuted, onTopicEdit }) => 
     </>
   )
 }
+
+const SortedIcon = styled.span`
+  cursor: pointer;
+  display: flex;
+  gap: 4px;
+  align-items: center;
+`
 
 const PopoverOption = styled(Flex).attrs({
   direction: 'row',

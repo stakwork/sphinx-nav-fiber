@@ -2,6 +2,7 @@ import { Button, Skeleton } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { ClipLoader } from 'react-spinners'
+import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { getTopicsData, putNodeData } from '~/network/fetchSourcesData'
 import { useSelectedNode } from '~/stores/useDataStore'
@@ -19,7 +20,7 @@ export const Body = () => {
   const { close } = useModal('editNodeName')
   const [data] = useTopicsStore((s) => [s.data])
   const form = useForm<FormData>({ mode: 'onChange' })
-  const { watch, setValue, reset } = form
+  const { watch, setValue, reset, getValues } = form
   const [loading, setLoading] = useState(false)
 
   const [topicIsLoading, setTopicIsLoading] = useState(false)
@@ -27,6 +28,8 @@ export const Body = () => {
   const [actualNode, setActualNode] = useState<null | Topic>()
 
   const selectedNode = useSelectedNode()
+
+  const { open: openRemoveNodeModal } = useModal('removeNode')
 
   useEffect(() => {
     if (actualNode) {
@@ -88,25 +91,64 @@ export const Body = () => {
     }
   }
 
+  const handleDelete = async () => {
+    openRemoveNodeModal()
+  }
+
+  const isNodeNameChanged = getValues().topic && actualNode?.topic !== getValues().topic
+
   return (
-    <FormProvider {...form}>
-      {topicIsLoading ? (
-        <Flex my={24}>
-          <Skeleton />
+    <Wrapper>
+      <FormProvider {...form}>
+        {topicIsLoading ? (
+          <Flex my={24}>
+            <Skeleton />
+          </Flex>
+        ) : (
+          <TitleEditor />
+        )}
+        <Flex direction="row" mb={6}>
+          <DeleteButton
+            color="secondary"
+            disabled={topicIsLoading || !actualNode}
+            onClick={handleDelete}
+            size="large"
+            style={{ marginRight: 20 }}
+            variant="contained"
+          >
+            Delete
+          </DeleteButton>
+          <Button
+            color="secondary"
+            disabled={loading || topicIsLoading || !isNodeNameChanged}
+            onClick={handleSave}
+            size="large"
+            style={{ flex: 1 }}
+            variant="contained"
+          >
+            Save Changes
+            {loading && <ClipLoader color={colors.BLUE_PRESS_STATE} size={10} />}
+          </Button>
         </Flex>
-      ) : (
-        <TitleEditor />
-      )}
-      <Button
-        color="secondary"
-        disabled={loading || topicIsLoading}
-        onClick={handleSave}
-        size="large"
-        variant="contained"
-      >
-        Save
-        {loading && <ClipLoader color={colors.BLUE_PRESS_STATE} size={10} />}
-      </Button>
-    </FormProvider>
+      </FormProvider>
+    </Wrapper>
   )
 }
+
+const Wrapper = styled(Flex)`
+  padding: 20px;
+`
+
+const DeleteButton = styled(Button)`
+  && {
+    color: ${colors.primaryRed};
+    background-color: rgba(237, 116, 116, 0.1);
+
+    &:hover,
+    &:active,
+    &:focus {
+      color: ${colors.primaryRed};
+      background-color: rgba(237, 116, 116, 0.2);
+    }
+  }
+`
