@@ -1,9 +1,8 @@
 import { IconButton } from '@mui/material'
 import React, { FC, memo, useState } from 'react'
+import { MdCancel, MdCheckCircle } from 'react-icons/md'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
-import ProfileHide from '~/components/Icons/PropertyHide'
-import ProfileShow from '~/components/Icons/PropertyShow'
 import SettingsIcon from '~/components/Icons/SettingsIcon'
 import { Flex } from '~/components/common/Flex'
 import { putNodeData } from '~/network/fetchSourcesData'
@@ -64,11 +63,11 @@ const TableRowComponent: FC<TTableRaw> = ({ topic, onClick, onSearch }) => {
               <>
                 {topic.muted_topic ? (
                   <IconWrapper className="centered" onClick={() => handleMute(topic.ref_id, false)}>
-                    <ProfileShow />
+                    <MdCheckCircle color={colors.primaryGreen} fontSize={24} />
                   </IconWrapper>
                 ) : (
                   <IconWrapper className="centered" onClick={() => handleMute(topic.ref_id, true)}>
-                    <ProfileHide />
+                    <MdCancel color={colors.primaryRed} fontSize={24} />
                   </IconWrapper>
                 )}
               </>
