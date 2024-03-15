@@ -74,7 +74,6 @@ export const Body = () => {
     try {
       await postEdgeType({ from: selectedNode.ref_id, to: selectedToNode?.ref_id, relationship: selectedType })
     } catch (error) {
-      console.log(error)
       console.warn(error)
     } finally {
       setLoading(false)

@@ -41,13 +41,11 @@ export const Tooltip = ({ node }: Props) => {
       try {
         const data = await fetchNode(refId)
 
-        console.log(data)
-
         if (data?.properties) {
           setAttributes(data.properties)
         }
       } catch (error) {
-        console.log(error)
+        console.error(error)
       } finally {
         setLoading(false)
       }
