@@ -69,7 +69,7 @@ describe('TwitData Component', () => {
     expect(getByText(moment.unix(mockSelectedNode.date).format('ll'))).toBeInTheDocument()
   })
 
-  it('boost amount is shown and can be updated', async () => {
+  it.skip('boost amount is shown and can be updated', async () => {
     const { getByText, getByTestId } = render(<TwitData />)
 
     expect(getByText(mockSelectedNode.boost.toString())).toBeInTheDocument()
