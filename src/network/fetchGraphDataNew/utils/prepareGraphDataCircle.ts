@@ -105,7 +105,7 @@ export const generateSplitGraphPositions = (nodes: NodeNew[], edges: EdgeNew[]):
 
   const updatedNodes: NodeExtendedNew[] = types.reduce((acc: NodeExtendedNew[], curr: string, index) => {
     const patternIndex = index % 2 === 0 ? index / 2 : -Math.ceil(index / 2)
-    const maxWeight = Math.max(...nodesByType[curr].map((n) => n.edge_count || 0))
+    const maxWeight = Math.max(...nodesByType[curr].map((n) => n.edge_count || 0), 1)
     const currentTypeNodes = generateTopicNodePosition(nodesByType[curr], maxWeight, center, patternIndex * step)
 
     return [...acc, ...currentTypeNodes]
