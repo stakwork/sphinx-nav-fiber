@@ -2,17 +2,17 @@
 import { LinearProgress } from '@mui/material'
 import { memo, useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
+import { StatsConfig } from '~/components/Stats'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { TStatParams, getAboutData, getStats } from '~/network/fetchSourcesData'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
+import { TStats } from '~/types'
 import { colors, formatNumberWithCommas } from '~/utils'
 import { SphereAnimation } from './SpiningSphere'
 import { AnimatedTextContent } from './animated'
 import { Message, initialMessageData } from './constants'
-import { StatsConfig } from '~/components/Stats'
-import { TStats } from '~/types'
 
 export const Splash = memo(() => {
   const [message, setMessage] = useState<Message>(initialMessageData)
@@ -24,8 +24,6 @@ export const Splash = memo(() => {
     const run = async () => {
       try {
         const aboutResponse = await getAboutData()
-
-        setProgress(50)
 
         setAppMetaData(aboutResponse)
       } catch (error) {
@@ -74,11 +72,9 @@ export const Splash = memo(() => {
     let timeoutId: NodeJS.Timeout
 
     if (data && splashDataLoaded) {
-      timeoutId = setTimeout(() => {
-        setProgress(100)
+      setProgress(50)
 
-        setSplashDataLoading(false)
-      }, 6000)
+      timeoutId = setTimeout(() => setSplashDataLoading(false), 6000)
     }
 
     return () => clearTimeout(timeoutId)
@@ -87,7 +83,7 @@ export const Splash = memo(() => {
   useEffect(() => {
     const intervalId = setInterval(() => {
       if (splashDataLoaded) {
-        setProgress((prev) => (prev === 100 ? prev : prev + 1))
+        setProgress((prev) => (prev >= 100 ? 100 : prev + Math.floor(Math.random() * 3)))
       }
     }, 100)
 
