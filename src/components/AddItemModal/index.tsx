@@ -83,8 +83,7 @@ const handleSubmitForm = async (
       errorMessage = err.message
     }
 
-    notify(errorMessage)
-    close()
+    throw new Error(errorMessage)
   }
 }
 
@@ -95,6 +94,7 @@ export const AddItemModal = () => {
   const form = useForm<FormData>({ mode: 'onChange' })
   const { watch, setValue, reset } = form
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string>('')
 
   const [addNewNode, setSelectedNode] = useDataStore((s) => [s.addNewNode, s.setSelectedNode])
 
@@ -147,8 +147,12 @@ export const AddItemModal = () => {
 
     try {
       await handleSubmitForm(data, handleClose, setBudget, onAddNewNode)
-    } catch {
-      notify(NODE_ADD_ERROR)
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        setError(e.message)
+      }
+
+      setError(String(e))
     } finally {
       setLoading(false)
     }

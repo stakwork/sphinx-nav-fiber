@@ -61,7 +61,7 @@ export const AskQuestion = () => {
       setAskedQuestionAnswer(response.answer)
 
       toast(<ToastMessage message="Response is ready" />, {
-        position: toast.POSITION.BOTTOM_CENTER,
+        position: 'bottom-center',
         type: 'success',
       })
     },
