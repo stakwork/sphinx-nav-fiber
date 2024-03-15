@@ -54,6 +54,11 @@ const EpisodeHeaderText = styled(Text)`
   -webkit-line-clamp: 2;
 `
 
+const ScrollableList = styled.div`
+  max-height: calc(100vh - 340px);
+  overflow-y: auto;
+`
+
 export const Show = () => {
   const [selectedNode, setSelectedNode] = useDataStore((s) => [s.selectedNode, s.setSelectedNode])
   const data = useGraphData()
@@ -121,9 +126,11 @@ export const Show = () => {
             Related Episodes
           </Text>
         </Flex>
-        {episodes.map((node) => (
-          <EpisodePanel key={node.ref_id} node={node} onClick={() => setSelectedNode(node)} />
-        ))}
+        <ScrollableList>
+          {episodes.map((node) => (
+            <EpisodePanel key={node.ref_id} node={node} onClick={() => setSelectedNode(node)} />
+          ))}
+        </ScrollableList>
       </Flex>
     </Wrapper>
   )

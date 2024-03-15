@@ -13,7 +13,6 @@ import { AddEdgeModal } from './AddEdgeTopicModal'
 import { EditTopicModal } from './EditTopicModal'
 import { MergeTopicModal } from './MergeTopicModal'
 import { Search } from './Search'
-import { Filter } from './Sort'
 import { Table } from './Table'
 
 export const TopicSources = () => {
@@ -114,8 +113,6 @@ export const TopicSources = () => {
 
         <ActionsWrapper>
           <Search />
-
-          <Filter currentFilter={filters.sortBy} onChangeFilter={handleFilterChange} />
         </ActionsWrapper>
 
         <TableWrapper align="center" justify={loading && !data ? 'center' : 'flex-start'}>
@@ -123,7 +120,7 @@ export const TopicSources = () => {
             <ClipLoader color={colors.white} />
           ) : (
             <>
-              <Table onTopicEdit={onTopicEdit} showMuted={filters.muted} />
+              <Table onChangeFilter={handleFilterChange} onTopicEdit={onTopicEdit} showMuted={filters.muted} />
               {total > ids.length ? (
                 <Button className="load-more" disabled={loading} onClick={handleLoadMore}>
                   Load more

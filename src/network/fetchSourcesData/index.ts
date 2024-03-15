@@ -1,12 +1,13 @@
 import {
-  FetchEdgeTypesResponse,
   FetchEdgesResponse,
+  FetchEdgeTypesResponse,
   FetchRadarResponse,
   FetchTopicResponse,
   NodeRequest,
   RadarRequest,
   SubmitErrRes,
 } from '~/types'
+import { getSignedMessageFromRelay } from '~/utils'
 import { api } from '../api'
 
 type TradarParams = {
@@ -72,6 +73,40 @@ export type TtopicsParams = {
 const defaultParams = {
   skip: '0',
   limit: '500',
+}
+
+interface NodeContentResponse {
+  nodes: Node[]
+}
+
+type ViewContentParams = {
+  limit?: string
+  sort_by?: string
+}
+
+export interface Node {
+  node_type: string
+  properties: {
+    [key: string]: never
+  }
+  ref_id: string
+}
+
+const defaultViewContentParams = {
+  only_content: 'true',
+  sort_by: 'date',
+  limit: '10',
+}
+
+export const getNodeContent = async (queryParams: ViewContentParams = defaultViewContentParams) => {
+  const queryString = new URLSearchParams({ ...queryParams }).toString()
+
+  const signedMessage = await getSignedMessageFromRelay()
+
+  const url = `/node/content?${queryString}&msg=${signedMessage.message}&sig=${signedMessage.signature}`
+  const response = await api.get<NodeContentResponse>(url)
+
+  return response
 }
 
 export const getRadarData = async (queryParams: TradarParams = defaultParams) => {

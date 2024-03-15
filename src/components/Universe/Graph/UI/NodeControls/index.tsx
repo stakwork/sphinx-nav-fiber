@@ -4,7 +4,6 @@ import { memo, useCallback, useMemo, useRef } from 'react'
 import { MdClose, MdViewInAr } from 'react-icons/md'
 import styled from 'styled-components'
 import { Group, Vector3 } from 'three'
-import DeleteIcon from '~/components/Icons/DeleteIcon'
 import EditIcon from '~/components/Icons/EditIcon'
 import PlusIcon from '~/components/Icons/PlusIcon'
 import { useAppStore } from '~/stores/useAppStore'
@@ -20,7 +19,6 @@ export const NodeControls = memo(() => {
   const setSidebarOpen = useAppStore((s) => s.setSidebarOpen)
 
   const { open: openEditNodeNameModal } = useModal('editNodeName')
-  const { open: openRemoveNodeModal } = useModal('removeNode')
   const { open: addEdgeToNodeModal } = useModal('addEdgeToNode')
 
   const [isAdmin] = useUserStore((s) => [s.isAdmin])
@@ -73,16 +71,6 @@ export const NodeControls = memo(() => {
               openEditNodeNameModal()
             },
           },
-          {
-            key: 'control-key-3',
-            colors: buttonColors(showSelectionGraph).focus,
-            icon: <DeleteIcon />,
-            left: 0,
-            className: 'delete',
-            onClick: () => {
-              openRemoveNodeModal()
-            },
-          },
         ]
       : []
 
@@ -121,7 +109,6 @@ export const NodeControls = memo(() => {
     showSelectionGraph,
     addEdgeToNodeModal,
     openEditNodeNameModal,
-    openRemoveNodeModal,
     setShowSelectionGraph,
     setSidebarOpen,
     setSelectedNode,

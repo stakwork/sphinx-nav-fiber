@@ -25,7 +25,7 @@ const topupFromToast = async () => {
     } else {
       toast(<ToastMessage message={`You set a budget of ${res.budget} sats`} />, {
         icon: false,
-        position: toast.POSITION.BOTTOM_CENTER,
+        position: 'bottom-center',
         type: 'success',
       })
     }
@@ -33,7 +33,7 @@ const topupFromToast = async () => {
     if (err instanceof Error) {
       toast(<ToastMessage message={err.message} />, {
         icon: false,
-        position: toast.POSITION.BOTTOM_CENTER,
+        position: 'bottom-center',
         type: 'error',
       })
     }
@@ -65,7 +65,7 @@ export const notify = (message: string, type?: TypeOptions) => {
       ) : (
         <MdWarning color={colors.primaryRed} />
       ),
-    position: toast.POSITION.BOTTOM_CENTER,
+    position: 'bottom-center',
     type: type || message === NODE_ADD_SUCCESS ? 'success' : 'error',
   })
 }

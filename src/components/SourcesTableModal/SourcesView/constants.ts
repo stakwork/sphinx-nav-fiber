@@ -7,6 +7,11 @@ export const sourcesMapper: ISourceMap = {
   [YOUTUBE_CHANNEL]: 'Youtube channel',
 }
 
+export const SOURCE_TABLE = 'Sources table'
+export const QUEUED_SOURCES = 'Queued sources'
+export const TOPICS = 'Topics'
+export const VIEW_CONTENT = 'View Content'
+
 export const DATE = 'date'
 export const EDGE_COUNT = 'edge_count'
 export const ALPHABETICALLY = 'alphabetically'

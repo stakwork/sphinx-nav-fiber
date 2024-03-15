@@ -51,24 +51,17 @@ export const App = () => {
   const [setBudget, setNodeCount] = useUserStore((s) => [s.setBudget, s.setNodeCount])
   const [isLoading, setIsLoading] = useState(false)
 
-  const [setSidebarOpen, searchTerm, setCurrentSearch, setRelevanceSelected, setTranscriptOpen] = [
-    useAppStore((s) => s.setSidebarOpen),
-    useAppStore((s) => s.currentSearch),
-    useAppStore((s) => s.setCurrentSearch),
-    useAppStore((s) => s.setRelevanceSelected),
-    useAppStore((s) => s.setTranscriptOpen),
-  ]
+  const {
+    setSidebarOpen,
+    currentSearch: searchTerm,
+    setCurrentSearch,
+    setRelevanceSelected,
+    setTranscriptOpen,
+  } = useAppStore((s) => s)
 
   const setTeachMeAnswer = useTeachStore((s) => s.setTeachMeAnswer)
 
-  const [data, setData, fetchData, graphStyle, setSelectedNode, setCategoryFilter] = [
-    useDataStore((s) => s.data),
-    useDataStore((s) => s.setData),
-    useDataStore((s) => s.fetchData),
-    useDataStore((s) => s.graphStyle),
-    useDataStore((s) => s.setSelectedNode),
-    useDataStore((s) => s.setCategoryFilter),
-  ]
+  const { data, setData, fetchData, graphStyle, setSelectedNode, setCategoryFilter } = useDataStore((s) => s)
 
   const socket: Socket | undefined = useSocket()
 
@@ -84,17 +77,18 @@ export const App = () => {
   })
 
   const runSearch = useCallback(async () => {
-    await fetchData(setBudget, { word: searchTerm ?? '' })
+    await fetchData(setBudget, { ...(searchTerm ? { word: searchTerm } : {}) })
     setSidebarOpen(true)
 
     if (searchTerm) {
       await updateBudget(setBudget)
+    } else {
+      setSelectedNode(null)
     }
-  }, [fetchData, searchTerm, setSidebarOpen, setBudget])
+  }, [fetchData, setBudget, searchTerm, setSidebarOpen, setSelectedNode])
 
   useEffect(() => {
     runSearch()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchTerm, runSearch])
 
   const repositionGraphDataAfterStyleChange = () => {

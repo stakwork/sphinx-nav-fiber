@@ -11,14 +11,16 @@ const request = async <Res>(url: string, config?: RequestInit): Promise<Res> => 
 
     const existingParams = new URLSearchParams(newUrl.search)
 
-    const adminAuth = await getSignedMessageFromRelay()
+    if (!existingParams.has('sig') && !existingParams.has('msg')) {
+      const adminAuth = await getSignedMessageFromRelay()
 
-    existingParams.append('sig', adminAuth.signature)
-    existingParams.append('msg', adminAuth.message)
+      existingParams.append('sig', adminAuth.signature)
+      existingParams.append('msg', adminAuth.message)
 
-    newUrl.search = existingParams.toString()
+      newUrl.search = existingParams.toString()
 
-    updatedUrl = newUrl.toString()
+      updatedUrl = newUrl.toString()
+    }
   }
 
   const response = await fetch(updatedUrl, config)

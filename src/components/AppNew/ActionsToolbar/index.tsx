@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { GraphViewControl } from '~/components/App/ActionsToolbar/GraphViewControl'
 import { Flex } from '~/components/common/Flex'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { CameraRecenterControl } from './CameraRecenterControl'

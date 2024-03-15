@@ -22,17 +22,15 @@ type Props = {
 const notify = (message: string) => {
   toast(<ToastMessage message={message} />, {
     icon: false,
-    position: toast.POSITION.BOTTOM_CENTER,
+    position: 'bottom-center',
     type: message === BOOST_SUCCESS ? 'success' : 'error',
   })
 }
 
 export const Booster = ({ count = 0, updateCount, content, readOnly, refId }: Props) => {
   const [submitting, setSubmitting] = useState(false)
-  const [isSuccess, setIsSuccess] = useState(false)
 
   useEffect(() => {
-    setIsSuccess(false)
     setSubmitting(false)
   }, [refId])
 
@@ -55,7 +53,6 @@ export const Booster = ({ count = 0, updateCount, content, readOnly, refId }: Pr
     try {
       await boost(refId, defaultBoostAmount)
 
-      setIsSuccess(true)
       notify(BOOST_SUCCESS)
 
       if (updateCount) {
@@ -89,7 +86,7 @@ export const Booster = ({ count = 0, updateCount, content, readOnly, refId }: Pr
         data-testid="booster-pill"
         disabled={submitting}
         onClick={async () => {
-          if (isSuccess || submitting) {
+          if (submitting) {
             return
           }
 
