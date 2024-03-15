@@ -94,6 +94,7 @@ export const AddItemModal = () => {
   const form = useForm<FormData>({ mode: 'onChange' })
   const { watch, setValue, reset } = form
   const [loading, setLoading] = useState(false)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [error, setError] = useState<string>('')
 
   const [addNewNode, setSelectedNode] = useDataStore((s) => [s.addNewNode, s.setSelectedNode])
