@@ -50,7 +50,7 @@ type Props = {
 export const SettingsView: React.FC<Props> = ({ onClose }) => {
   const [value, setValue] = useState(0)
   const [isAdmin, pubKey] = useUserStore((s) => [s.isAdmin, s.setPubKey, s.pubKey])
-  const graphBlueprintFlag = useFeatureFlagStore((s) => s.graphBlueprintFlag)
+  const graphBlueprintFlag = useFeatureFlagStore((s) => s.graphBluePrint)
   const appMetaData = useAppStore((s) => s.appMetaData)
 
   const getSettingsLabel = () => (isAdmin ? 'Admin Settings' : 'Settings')
