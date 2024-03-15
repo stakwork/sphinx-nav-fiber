@@ -68,6 +68,7 @@ export const Body = () => {
       target: selectedToNode.ref_id,
       sourcePosition: new Vector3(selectedNode.x, selectedNode.y, selectedNode.z),
       targetPosition: new Vector3(selectedToNode.x, selectedToNode.y, selectedToNode.z),
+      ref_id: `new_ref_${selectedNode?.ref_id}`,
     })
 
     try {

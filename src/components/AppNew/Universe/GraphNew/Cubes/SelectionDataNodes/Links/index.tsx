@@ -100,12 +100,7 @@ export const SelectionLink = ({ link, title, onRemove }: Props) => {
         <pointsMaterial vertexColors />
         <Point ref={pointsRef} color={color} position={getSpherePosition(points, progress)} size={20} />
       </Points>
-      <PathwayBadge
-        onRemove={onRemove}
-        position={midPoint}
-        refId={(link.attributes.ref_id || '') as string}
-        title={title}
-      />
+      <PathwayBadge onRemove={onRemove} position={midPoint} title={title} />
     </>
   )
 }

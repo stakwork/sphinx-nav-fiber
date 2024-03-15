@@ -77,7 +77,7 @@ export const Cubes = memo(() => {
       onPointerOut={onPointerOut}
       onPointerOver={onPointerIn}
     >
-      {!showSelectionGraph && <RelevanceBadges />}
+      {showSelectionGraph && <RelevanceBadges />}
       {data?.nodes
         // .filter((f) => {
         //   const isSelected = f?.ref_id === selectedNode?.ref_id
