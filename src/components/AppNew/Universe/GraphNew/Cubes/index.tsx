@@ -4,8 +4,6 @@ import { memo, useCallback } from 'react'
 import { Object3D } from 'three'
 import { NodeExtendedNew } from '~/network/fetchGraphDataNew/types'
 import { useGraphStore } from '~/stores/useGraphStore'
-import { BlurryInstances } from './BlurryInstances'
-import { Cube } from './Cube'
 import { RelevanceBadges } from './RelevanceBadges'
 import { SelectionDataNodes } from './SelectionDataNodes'
 import { TextNode } from './Text'
@@ -79,8 +77,7 @@ export const Cubes = memo(() => {
       onPointerOut={onPointerOut}
       onPointerOver={onPointerIn}
     >
-      {false && <BlurryInstances hide={hideUniverse} />}
-      {!showSelectionGraph && <RelevanceBadges />}
+      {showSelectionGraph && <RelevanceBadges />}
       {data?.nodes
         // .filter((f) => {
         //   const isSelected = f?.ref_id === selectedNode?.ref_id
@@ -88,15 +85,11 @@ export const Cubes = memo(() => {
 
         //   return isNearbyOrPersistent || isSelected
         // })
-        .map((node) => {
-          if (node.node_type === 'Topic' || true) {
-            return <TextNode key={node.ref_id} hide={hideUniverse} node={node} />
-          }
+        .map((node) => (
+          <TextNode key={node.ref_id} hide={hideUniverse} node={node} />
+        ))}
 
-          return <Cube key={node.ref_id} hide={hideUniverse} node={node} />
-        })}
-
-      {hideUniverse && <SelectionDataNodes />}
+      {hideUniverse && <SelectionDataNodes key={selectedNode.ref_id} />}
     </Select>
   )
 })

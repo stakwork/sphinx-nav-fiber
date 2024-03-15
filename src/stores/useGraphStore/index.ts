@@ -2,7 +2,7 @@ import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
 import { isChileGraph } from '~/constants'
 import { fetchGraphData } from '~/network/fetchGraphDataNew'
-import { EdgeExtendedNew, NodeExtendedNew, NormalizedNodes } from '~/network/fetchGraphDataNew/types'
+import { EdgeExtendedNew, NodeExtendedNew, NormalizedEdges, NormalizedNodes } from '~/network/fetchGraphDataNew/types'
 import { saveSearchTerm } from '~/utils/relayHelper/index'
 
 export type GraphStyle = 'sphere' | 'force' | 'split' | 'earth' | 'v2'
@@ -35,6 +35,8 @@ export type GraphStore = {
   nearbyNodeIds: string[]
   showSelectionGraph: boolean
   nodesNormalized: NormalizedNodes
+  edgesNormalized: NormalizedEdges
+  nodeTypes: string[]
 
   setDisableCameraRotation: (rotation: boolean) => void
   fetchData: (setBudget: (value: number | null) => void, params?: FetchNodeParams) => void
@@ -43,6 +45,7 @@ export type GraphStore = {
   setGraphRadius: (graphRadius?: number | null) => void
   setHoveredNode: (hoveredNode: NodeExtendedNew | null) => void
   setSelectedNode: (selectedNode: NodeExtendedNew | null) => void
+  setSelectedNodeRelativeIds: (ids: string[]) => void
 
   setCameraFocusTrigger: (_: boolean) => void
   setIsFetching: (_: boolean) => void
@@ -51,6 +54,7 @@ export type GraphStore = {
   setSelectionData: (data: GraphData) => void
   addNewNode: (node: NodeExtendedNew) => void
   addNewLink: (node: EdgeExtendedNew) => void
+  removeLink: (refId: string, nodeId: string) => void
 }
 
 const defaultData: Omit<
@@ -61,6 +65,7 @@ const defaultData: Omit<
   | 'setDisableCameraRotation'
   | 'setHoveredNode'
   | 'setSelectedNode'
+  | 'setSelectedNodeRelativeIds'
   | 'setCameraFocusTrigger'
   | 'setGraphRadius'
   | 'setGraphStyle'
@@ -69,6 +74,7 @@ const defaultData: Omit<
   | 'setSelectionData'
   | 'addNewNode'
   | 'addNewLink'
+  | 'removeLink'
 > = {
   data: null,
   selectionGraphData: { nodes: [], links: [] },
@@ -82,7 +88,9 @@ const defaultData: Omit<
   nearbyNodeIds: [],
   showSelectionGraph: false,
   nodesNormalized: {},
+  edgesNormalized: {},
   isFetching: false,
+  nodeTypes: [],
 }
 
 export const useGraphStore = create<GraphStore>()(
@@ -107,13 +115,25 @@ export const useGraphStore = create<GraphStore>()(
         }
       })
 
+      const edgesNormalized: NormalizedEdges = {}
+
+      data?.links.forEach((item) => {
+        const refId = `${item.source}-${item.target}`
+
+        if (refId) {
+          edgesNormalized[refId] = item
+        }
+      })
+
       if (params?.word) {
         await saveSearchTerm()
       }
 
       set({
-        data,
+        data: { nodes: data?.nodes || [], links: data?.links || [] },
+        nodeTypes: data?.nodeTypes,
         nodesNormalized,
+        edgesNormalized,
         isFetching: false,
         disableCameraRotation: false,
         nearbyNodeIds: [],
@@ -123,6 +143,18 @@ export const useGraphStore = create<GraphStore>()(
     },
     setIsFetching: (isFetching) => set({ isFetching }),
     setData: (data) => set({ data }),
+    removeLink: (refId, nodeId) => {
+      const { data, selectedNodeRelativeIds } = get()
+
+      if (data) {
+        const { nodes, links } = data
+
+        set({
+          data: { nodes, links: links.filter((l) => l.ref_id !== refId) },
+          selectedNodeRelativeIds: selectedNodeRelativeIds.filter((i) => i !== nodeId),
+        })
+      }
+    },
     setSelectionData: (selectionGraphData) => set({ selectionGraphData }),
     setDisableCameraRotation: (rotation) => set({ disableCameraRotation: rotation }),
     setGraphRadius: (graphRadius) => set({ graphRadius }),
@@ -134,14 +166,10 @@ export const useGraphStore = create<GraphStore>()(
       if (stateSelectedNode?.ref_id !== selectedNode?.ref_id) {
         const { data } = get()
 
-        console.log(data)
-
         const relativeIds: string[] = []
 
         if (selectedNode?.ref_id) {
           data?.links.forEach((i) => {
-            console.log(i.target)
-
             if (i.target === selectedNode?.ref_id) {
               relativeIds.push(i.source)
             }
@@ -155,11 +183,14 @@ export const useGraphStore = create<GraphStore>()(
         set({
           hoveredNode: null,
           selectedNode,
+          showSelectionGraph: !!selectedNode?.ref_id,
           disableCameraRotation: true,
           selectedNodeRelativeIds: relativeIds,
+          ...(!selectedNode?.ref_id ? { selectionGraphData: { nodes: [], links: [] } } : {}),
         })
       }
     },
+    setSelectedNodeRelativeIds: (ids) => set({ selectedNodeRelativeIds: ids }),
     setCameraFocusTrigger: (cameraFocusTrigger) => set({ cameraFocusTrigger }),
     setNearbyNodeIds: (nearbyNodeIds) => {
       const stateNearbyNodeIds = get().nearbyNodeIds

@@ -5,6 +5,7 @@ import { ClipLoader } from 'react-spinners'
 import { Vector3 } from 'three'
 import { Flex } from '~/components/common/Flex'
 import { NodeExtendedNew } from '~/network/fetchGraphDataNew/types'
+import { postEdgeType } from '~/network/fetchSourcesData'
 import { useGraphStore } from '~/stores/useGraphStore'
 import { useModal } from '~/stores/useModalStore'
 import { colors } from '~/utils/colors'
@@ -58,6 +59,8 @@ export const Body = () => {
       return
     }
 
+    closeHandler()
+
     addNewLink({
       attributes: {},
       edge_type: selectedType,
@@ -65,32 +68,11 @@ export const Body = () => {
       target: selectedToNode.ref_id,
       sourcePosition: new Vector3(selectedNode.x, selectedNode.y, selectedNode.z),
       targetPosition: new Vector3(selectedToNode.x, selectedToNode.y, selectedToNode.z),
+      ref_id: `new_ref_${selectedNode?.ref_id}`,
     })
 
-    close()
-
-    return
-
     try {
-      // await postEdgeType({ from: actualNode.ref_id, to: selectedToNode?.ref_id, relationship: selectedType })
-
-      // const { ref_id: id } = actualNode
-      // const { ref_id: selectedId } = selectedToNode
-
-      // console.log(id, selectedId)
-
-      //   if (data) {
-      //     const newData = { ...data }
-
-      //     newData[id] = { ...newData[id], edgeList: [...newData[id].edgeList, selectedType] }
-
-      //     if (newData[selectedId]) {
-      //       newData[selectedId] = { ...newData[selectedId], edgeList: [...newData[selectedId].edgeList, selectedType] }
-      //     }
-
-      //     useTopicsStore.setState({ data: newData })
-
-      closeHandler()
+      await postEdgeType({ from: selectedNode.ref_id, to: selectedToNode?.ref_id, relationship: selectedType })
     } catch (error) {
       console.warn(error)
     } finally {
