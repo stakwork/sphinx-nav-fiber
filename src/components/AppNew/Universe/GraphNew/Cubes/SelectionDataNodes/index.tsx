@@ -51,9 +51,9 @@ export const SelectionDataNodes = memo(() => {
   useEffect(() => {
     simulation2d = runForceSimulation([...selectionGraphData.nodes], [...selectionGraphData.links], {
       numDimensions: 2,
-      forceLinkStrength: 0.01,
-      forceCenterStrength: 0.85,
-      forceChargeStrength: -20,
+      forceLinkStrength: 0.1,
+      forceCenterStrength: 0.1,
+      forceChargeStrength: 20,
       velocityDecay: 0.9,
     })
 
