@@ -18,6 +18,7 @@ export type FetchNodeParams = {
 }
 
 export type DataStore = {
+  splashDataLoading: boolean
   scrollEventsDisabled: boolean
   categoryFilter: NodeType | null
   disableCameraRotation: boolean
@@ -42,6 +43,7 @@ export type DataStore = {
   trendingTopics: Trending[]
   stats: TStats | null
 
+  setSplashDataLoading: (loading: boolean) => void
   setTrendingTopics: (trendingTopics: Trending[]) => void
   setStats: (stats: TStats) => void
   setSidebarFilter: (filter: string) => void
@@ -97,6 +99,7 @@ const defaultData: Omit<
   | 'setTeachMe'
   | 'addNewNode'
   | 'removeNode'
+  | 'setSplashDataLoading'
 > = {
   categoryFilter: null,
   data: null,
@@ -121,6 +124,7 @@ const defaultData: Omit<
   sidebarFilter: 'all',
   trendingTopics: [],
   stats: null,
+  splashDataLoading: true,
 }
 
 export const useDataStore = create<DataStore>()(
@@ -150,6 +154,7 @@ export const useDataStore = create<DataStore>()(
         showTeachMe: false,
       })
     },
+    setSplashDataLoading: (splashDataLoading) => set({ splashDataLoading }),
     setTrendingTopics: (trendingTopics) => set({ trendingTopics }),
     setStats: (stats) => set({ stats }),
     setIsFetching: (isFetching) => set({ isFetching }),
