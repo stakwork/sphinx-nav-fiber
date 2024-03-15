@@ -20,8 +20,6 @@ export const SelectionNode = memo(({ node }: Props) => {
   const isSelected = !!selectedNode && selectedNode?.ref_id === node.ref_id
   const showSelectionGraph = useGraphStore((s) => s.showSelectionGraph)
 
-  console.log('node-update')
-
   useFrame(({ camera }) => {
     if (ref?.current) {
       // Make text face the camera
@@ -49,7 +47,7 @@ export const SelectionNode = memo(({ node }: Props) => {
 
   const fillOpacity = useMemo(() => {
     if (selectedNode && !isSelected && !isRelative) {
-      return 0.1
+      return 1
     }
 
     return 1

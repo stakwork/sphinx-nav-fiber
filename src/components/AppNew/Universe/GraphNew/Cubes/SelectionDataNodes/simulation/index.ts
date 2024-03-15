@@ -37,7 +37,7 @@ const defaults: Required<SimulationProps> = {
   forceLinkDistanceMethod: (d: { source: NodeExtendedNew; target: NodeExtendedNew }) => {
     const sourceType = d.source.node_type
 
-    let distance = 50
+    let distance = 150
 
     switch (sourceType) {
       case 'topic':

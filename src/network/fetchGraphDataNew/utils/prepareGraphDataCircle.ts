@@ -119,10 +119,7 @@ export const generateSplitGraphPositions = (nodes: NodeNew[], edges: EdgeNew[]):
     const targetPosition = new Vector3(targetNode?.x || 0, targetNode?.y || 0, targetNode?.z || 0)
 
     return {
-      edge_type: i.edge_type,
-      attributes: i.attributes,
-      source: i.source,
-      target: i.target,
+      ...i,
       sourcePosition,
       targetPosition,
     }

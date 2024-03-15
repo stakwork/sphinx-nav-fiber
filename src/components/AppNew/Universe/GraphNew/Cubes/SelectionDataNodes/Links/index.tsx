@@ -9,6 +9,7 @@ import { PathwayBadge } from './Badge'
 type Props = {
   link: EdgeExtendedNew
   title: string
+  onRemove: () => void
 }
 
 const getSpherePosition = (points: Vector3[], progress: number): THREE.Vector3 => {
@@ -43,7 +44,7 @@ const getSpherePosition = (points: Vector3[], progress: number): THREE.Vector3 =
   return points[points.length - 1] // In case progress is beyond the line length, return the last point
 }
 
-export const SelectionLink = ({ link, title }: Props) => {
+export const SelectionLink = ({ link, title, onRemove }: Props) => {
   const ref = useRef<SegmentObject>(null)
   const pointsRef = useRef(null)
   const selectedNode = useSelectedNode()
@@ -97,9 +98,14 @@ export const SelectionLink = ({ link, title }: Props) => {
         range={1} // Optional: draw-range
       >
         <pointsMaterial vertexColors />
-        <Point ref={pointsRef} color={color} position={getSpherePosition(points, progress)} size={2} />
+        <Point ref={pointsRef} color={color} position={getSpherePosition(points, progress)} size={20} />
       </Points>
-      <PathwayBadge position={midPoint} title={title} />
+      <PathwayBadge
+        onRemove={onRemove}
+        position={midPoint}
+        refId={(link.attributes.ref_id || '') as string}
+        title={title}
+      />
     </>
   )
 }

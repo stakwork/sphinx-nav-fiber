@@ -45,6 +45,7 @@ export type GraphStore = {
   setGraphRadius: (graphRadius?: number | null) => void
   setHoveredNode: (hoveredNode: NodeExtendedNew | null) => void
   setSelectedNode: (selectedNode: NodeExtendedNew | null) => void
+  setSelectedNodeRelativeIds: (ids: string[]) => void
 
   setCameraFocusTrigger: (_: boolean) => void
   setIsFetching: (_: boolean) => void
@@ -53,6 +54,7 @@ export type GraphStore = {
   setSelectionData: (data: GraphData) => void
   addNewNode: (node: NodeExtendedNew) => void
   addNewLink: (node: EdgeExtendedNew) => void
+  removeLink: (refId: string, nodeId: string) => void
 }
 
 const defaultData: Omit<
@@ -63,6 +65,7 @@ const defaultData: Omit<
   | 'setDisableCameraRotation'
   | 'setHoveredNode'
   | 'setSelectedNode'
+  | 'setSelectedNodeRelativeIds'
   | 'setCameraFocusTrigger'
   | 'setGraphRadius'
   | 'setGraphStyle'
@@ -71,6 +74,7 @@ const defaultData: Omit<
   | 'setSelectionData'
   | 'addNewNode'
   | 'addNewLink'
+  | 'removeLink'
 > = {
   data: null,
   selectionGraphData: { nodes: [], links: [] },
@@ -139,6 +143,18 @@ export const useGraphStore = create<GraphStore>()(
     },
     setIsFetching: (isFetching) => set({ isFetching }),
     setData: (data) => set({ data }),
+    removeLink: (refId, nodeId) => {
+      const { data, selectedNodeRelativeIds } = get()
+
+      if (data) {
+        const { nodes, links } = data
+
+        set({
+          data: { nodes, links: links.filter((l) => l.ref_id !== refId) },
+          selectedNodeRelativeIds: selectedNodeRelativeIds.filter((i) => i !== nodeId),
+        })
+      }
+    },
     setSelectionData: (selectionGraphData) => set({ selectionGraphData }),
     setDisableCameraRotation: (rotation) => set({ disableCameraRotation: rotation }),
     setGraphRadius: (graphRadius) => set({ graphRadius }),
@@ -167,11 +183,14 @@ export const useGraphStore = create<GraphStore>()(
         set({
           hoveredNode: null,
           selectedNode,
+          showSelectionGraph: !!selectedNode?.ref_id,
           disableCameraRotation: true,
           selectedNodeRelativeIds: relativeIds,
+          ...(!selectedNode?.ref_id ? { selectionGraphData: { nodes: [], links: [] } } : {}),
         })
       }
     },
+    setSelectedNodeRelativeIds: (ids) => set({ selectedNodeRelativeIds: ids }),
     setCameraFocusTrigger: (cameraFocusTrigger) => set({ cameraFocusTrigger }),
     setNearbyNodeIds: (nearbyNodeIds) => {
       const stateNearbyNodeIds = get().nearbyNodeIds

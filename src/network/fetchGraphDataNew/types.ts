@@ -9,6 +9,7 @@ export type EdgeNew = {
   edge_type: string
   source: string
   target: string
+  ref_id: string
 }
 
 export type NodeNew = {

@@ -1,15 +1,15 @@
 import { Html } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import { memo, useCallback, useMemo, useRef } from 'react'
-import { MdClose, MdViewInAr } from 'react-icons/md'
+import { MdClose } from 'react-icons/md'
 import styled from 'styled-components'
 import { Group, Vector3 } from 'three'
 import DeleteIcon from '~/components/Icons/DeleteIcon'
 import EditIcon from '~/components/Icons/EditIcon'
+import NodesIcon from '~/components/Icons/NodesIcon'
 import PlusIcon from '~/components/Icons/PlusIcon'
 import { fetchNodeEdges } from '~/network/fetchGraphDataNew'
 import { EdgeNew, NodeNew } from '~/network/fetchGraphDataNew/types'
-import { useAppStore } from '~/stores/useAppStore'
 import { useGraphStore, useSelectedNode } from '~/stores/useGraphStore'
 import { useModal } from '~/stores/useModalStore'
 import { useUserStore } from '~/stores/useUserStore'
@@ -19,7 +19,6 @@ const reuseableVector3 = new Vector3()
 
 export const NodeControls = memo(() => {
   const ref = useRef<Group | null>(null)
-  const setSidebarOpen = useAppStore((s) => s.setSidebarOpen)
 
   const { open: openEditNodeNameModal } = useModal('editNodeName')
   const { open: openRemoveNodeModal } = useModal('removeNode')
@@ -28,8 +27,12 @@ export const NodeControls = memo(() => {
   const [isAdmin] = useUserStore((s) => [s.isAdmin])
 
   const showSelectionGraph = useGraphStore((s) => s.showSelectionGraph)
-  const [selectionGraphData, setSelectionData] = useGraphStore((s) => [s.selectionGraphData, s.setSelectionData])
-  const allGraphData = useGraphStore((s) => s.data)
+
+  const [selectionGraphData, setSelectionData, selectedNodeRelativeIds, setSelectedNodeRelativeIds] = useGraphStore(
+    (s) => [s.selectionGraphData, s.setSelectionData, s.selectedNodeRelativeIds, s.setSelectedNodeRelativeIds],
+  )
+
+  const [allGraphData] = useGraphStore((s) => [s.data, s.setData])
   const selectedNode = useSelectedNode()
   const setSelectedNode = useGraphStore((s) => s.setSelectedNode)
   const setShowSelectionGraph = useGraphStore((s) => s.setShowSelectionGraph)
@@ -41,7 +44,7 @@ export const NodeControls = memo(() => {
   const getChildren = useCallback(async () => {
     try {
       if (selectedNode?.ref_id) {
-        const res = await fetchNodeEdges(selectedNode?.ref_id, selectedNode?.edge_count || 0)
+        const res = await fetchNodeEdges(selectedNode?.ref_id, selectionGraphData.nodes.length || 0)
 
         const newLinks = (res?.edges || []).filter(
           (i) => !selectionGraphData.links.some((l) => i.target === l.target && i.source === l.source),
@@ -60,15 +63,18 @@ export const NodeControls = memo(() => {
           ],
           nodes: [...selectionGraphData.nodes, ...newNodes.map((i: NodeNew) => ({ ...i, x: 0, y: 0, z: 0 }))],
         })
+
+        setSelectedNodeRelativeIds([...new Set([...selectedNodeRelativeIds, ...newNodes.map((i) => i.ref_id)])])
       }
     } catch (error) {
       console.log(error)
     }
   }, [
-    selectedNode?.edge_count,
     selectedNode?.ref_id,
+    selectedNodeRelativeIds,
     selectionGraphData.links,
     selectionGraphData.nodes,
+    setSelectedNodeRelativeIds,
     setSelectionData,
   ])
 
@@ -125,23 +131,17 @@ export const NodeControls = memo(() => {
 
     const baseActions = [
       {
-        key: 'control-key-4',
-        colors: buttonColors(showSelectionGraph).focus,
-        icon: <MdViewInAr />,
-        left: 0,
-        className: 'expand',
+        key: 'control-key-5',
+        colors: buttonColors(true).close,
+        icon: <NodesIcon />,
+        left: 40,
+        className: 'exit',
         onClick: () => {
-          const nextState = !showSelectionGraph
-
-          setShowSelectionGraph(nextState)
-
-          if (nextState) {
-            setSidebarOpen(true)
-          }
+          getChildren()
         },
       },
       {
-        key: 'control-key-5',
+        key: 'control-key-6',
         colors: buttonColors(true).close,
         icon: <MdClose />,
         left: 40,
@@ -149,16 +149,6 @@ export const NodeControls = memo(() => {
         onClick: () => {
           setSelectedNode(null)
           setShowSelectionGraph(false)
-        },
-      },
-      {
-        key: 'control-key-6',
-        colors: buttonColors(true).close,
-        icon: <PlusIcon />,
-        left: 40,
-        className: 'exit',
-        onClick: () => {
-          getChildren()
         },
       },
     ]
@@ -171,7 +161,6 @@ export const NodeControls = memo(() => {
     openEditNodeNameModal,
     openRemoveNodeModal,
     setShowSelectionGraph,
-    setSidebarOpen,
     setSelectedNode,
     getChildren,
   ])

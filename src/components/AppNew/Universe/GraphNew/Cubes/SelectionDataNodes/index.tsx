@@ -13,11 +13,19 @@ let simulation2d: ForceSimulation | null = null
 export const SelectionDataNodes = memo(() => {
   const selectedNode = useSelectedNode()
 
-  const [data, selectedNodeRelativeIds] = useGraphStore((s) => [s.data, s.selectedNodeRelativeIds])
+  const [data, selectedNodeRelativeIds, removeLink] = useGraphStore((s) => [
+    s.data,
+    s.selectedNodeRelativeIds,
+    s.removeLink,
+  ])
 
   const [selectionGraphData, setSelectionData] = useGraphStore((s) => [s.selectionGraphData, s.setSelectionData])
 
   useEffect(() => {
+    if (selectionGraphData.nodes.length > 0) {
+      return
+    }
+
     const nodes: NodeExtendedNew[] = (data?.nodes || [])
       .filter((node) => selectedNodeRelativeIds.includes(node.ref_id) || node.ref_id === selectedNode?.ref_id)
       .map((n) => {
@@ -38,7 +46,7 @@ export const SelectionDataNodes = memo(() => {
     }
 
     setSelectionData(selectionData)
-  }, [data, selectedNode, selectedNodeRelativeIds, setSelectionData])
+  }, [data, selectedNode, selectedNodeRelativeIds, selectionGraphData.nodes.length, setSelectionData])
 
   useEffect(() => {
     simulation2d = runForceSimulation([...selectionGraphData.nodes], [...selectionGraphData.links], {
@@ -58,6 +66,17 @@ export const SelectionDataNodes = memo(() => {
     }
   })
 
+  const onRemoveLink = (link: EdgeExtendedNew) => {
+    const nodeId = link.target === selectedNode?.ref_id ? link.source : link.target
+
+    const nodes = selectionGraphData.nodes.filter((node) => node.ref_id !== nodeId)
+    const links = selectionGraphData.links.filter((l) => l.ref_id !== link.ref_id)
+
+    setSelectionData({ nodes, links })
+
+    removeLink(link.ref_id, nodeId)
+  }
+
   return (
     <>
       <Segments
@@ -67,11 +86,12 @@ export const SelectionDataNodes = memo(() => {
         fog
         lineWidth={0.9}
       >
-        {(selectionGraphData.links as unknown as GraphDataNew['links']).map((link, index) => (
+        {(selectionGraphData.links as unknown as GraphDataNew['links']).map((link) => (
           <SelectionLink
             // eslint-disable-next-line react/no-array-index-key
-            key={index.toString()}
+            key={link.ref_id}
             link={link}
+            onRemove={() => onRemoveLink(link)}
             title={link.edge_type}
           />
         ))}
