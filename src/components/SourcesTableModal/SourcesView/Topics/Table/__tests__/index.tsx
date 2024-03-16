@@ -2,7 +2,7 @@
 import React from 'react'
 import { render, fireEvent, screen, waitFor } from '@testing-library/react'
 import '@testing-library/jest-dom'
-import { TableRowComponent } from '../TableRow'
+import { TopicRow } from '../TableRow'
 import { Topic } from '~/types'
 
 describe('TableRowComponent', () => {
@@ -25,7 +25,7 @@ describe('TableRowComponent', () => {
   }
 
   it('Does not show hover state for topics with only one edge', () => {
-    render(<TableRowComponent onClick={mockOnClick} onSearch={mockOnSearch} topic={singleEdgeTopic} />)
+    render(<TopicRow onClick={mockOnClick} onSearch={mockOnSearch} topic={singleEdgeTopic} />)
 
     waitFor(() => {
       const cell = screen.getByText(singleEdgeTopic.topic)
@@ -36,7 +36,7 @@ describe('TableRowComponent', () => {
   })
 
   it('Shows hover state for topics with more than one edge', () => {
-    render(<TableRowComponent onClick={mockOnClick} onSearch={mockOnSearch} topic={multipleEdgesTopic} />)
+    render(<TopicRow onClick={mockOnClick} onSearch={mockOnSearch} topic={multipleEdgesTopic} />)
 
     waitFor(() => {
       const cell = screen.getByText(multipleEdgesTopic.topic)
@@ -49,8 +49,8 @@ describe('TableRowComponent', () => {
   it('Ensures each row is the same size', () => {
     const { container } = render(
       <>
-        <TableRowComponent onClick={mockOnClick} onSearch={mockOnSearch} topic={singleEdgeTopic} />
-        <TableRowComponent onClick={mockOnClick} onSearch={mockOnSearch} topic={multipleEdgesTopic} />
+        <TopicRow onClick={mockOnClick} onSearch={mockOnSearch} topic={singleEdgeTopic} />
+        <TopicRow onClick={mockOnClick} onSearch={mockOnSearch} topic={multipleEdgesTopic} />
       </>,
     )
 

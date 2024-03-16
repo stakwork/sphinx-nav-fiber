@@ -1,5 +1,5 @@
+import { IconButton, Popover, Typography } from '@mui/material'
 import React, { FC, memo, useState } from 'react'
-import { IconButton } from '@mui/material'
 import { MdCancel, MdCheckCircle } from 'react-icons/md'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
@@ -17,11 +17,9 @@ type TTableRaw = {
   onSearch: (search: string) => void
 }
 
-export const TableRowComponent: FC<TTableRaw> = ({ topic, onClick, onSearch }) => {
+const TableRowComponent: FC<TTableRaw> = ({ topic, onClick, onSearch }) => {
   const [ids, total] = useTopicsStore((s) => [s.ids, s.total])
   const [loading, setLoading] = useState(false)
-  const [showPopup, setShowPopup] = useState(false)
-  const [popupContent, setPopupContent] = useState<Topic>(topic)
 
   const date = topic.date_added_to_graph.toString()
 
@@ -44,17 +42,20 @@ export const TableRowComponent: FC<TTableRaw> = ({ topic, onClick, onSearch }) =
     onSearch(topicItem.topic)
   }
 
-  const handleMouseEnter = (hoveredTopic: Topic) => {
-    setPopupContent(hoveredTopic)
-    setShowPopup(true)
-  }
-
-  const handleMouseLeave = () => {
-    setShowPopup(false)
-  }
-
   const lettersToShow = topic.edgeList.slice(0, 1)
   const hiddenLettersCount = topic.edgeList.length - lettersToShow.length
+
+  const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null)
+
+  const handlePopoverOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget)
+  }
+
+  const handlePopoverClose = () => {
+    setAnchorEl(null)
+  }
+
+  const open = Boolean(anchorEl)
 
   return (
     <StyledTableRow key={topic.topic}>
@@ -63,18 +64,52 @@ export const TableRowComponent: FC<TTableRaw> = ({ topic, onClick, onSearch }) =
         <ClickableText>{topic.topic}</ClickableText>
       </StyledTableCell>
       <StyledTableCell>{topic.edgeCount}</StyledTableCell>
-      <StyledTableCell onMouseEnter={() => handleMouseEnter(topic)} onMouseLeave={() => handleMouseLeave()}>
-        {showPopup && (
-          <PopupContent>
-            <div>{popupContent.edgeList.join(', ')}</div>
-          </PopupContent>
-        )}
+      <StyledTableCell>
+        <Popover
+          anchorEl={anchorEl}
+          anchorOrigin={{
+            vertical: 'top',
+            horizontal: 'center',
+          }}
+          disableRestoreFocus
+          id="mouse-over-popover"
+          onClose={handlePopoverClose}
+          open={open}
+          sx={{
+            pointerEvents: 'none',
+            '& .MuiPaper-root': {
+              backgroundColor: 'rgba(0, 0, 0, 0.9)',
+              borderRadius: '4px',
+              width: '140px',
+            },
+          }}
+          transformOrigin={{
+            vertical: 'bottom',
+            horizontal: 'center',
+          }}
+        >
+          <Typography sx={{ p: 1.5, fontSize: '13px', fontWeight: 400, lineHeight: '1.8' }}>
+            {topic.edgeList.join(', ')}
+          </Typography>
+        </Popover>
         {lettersToShow.join(', ')}
-        {hiddenLettersCount > 0 && `,...`}
+        {hiddenLettersCount > 0 && (
+          <Typography
+            aria-haspopup="true"
+            aria-owns={open ? 'mouse-over-popover' : undefined}
+            component="span"
+            onMouseEnter={handlePopoverOpen}
+            onMouseLeave={handlePopoverClose}
+            sx={{ cursor: 'context-menu' }}
+          >
+            ,...
+          </Typography>
+        )}
       </StyledTableCell>
       <StyledTableCell>
         <span>{new Date(Number(date) * 1000).toDateString()}</span>
       </StyledTableCell>
+
       <StyledTableCell className="cell-center">
         <Flex direction="row" justify="space-between">
           <div className="approve-wrapper">
@@ -105,21 +140,6 @@ export const TableRowComponent: FC<TTableRaw> = ({ topic, onClick, onSearch }) =
   )
 }
 
-const PopupContent = styled.div`
-  position: absolute;
-  cursor: pointer;
-  height: auto;
-  width: 150px;
-  border-radius: 4px;
-  right: 206px;
-  background-color: #000000;
-  padding: 10px;
-  border: none;
-  word-wrap: break-word;
-  opacity: 0.8;
-  z-index: 9999;
-`
-
 const IconWrapper = styled(Flex)`
   width: 20px;
   height: 20px;
@@ -130,6 +150,7 @@ const IconWrapper = styled(Flex)`
   &.centered {
     margin: 0 auto;
   }
+
   & + & {
     margin-left: 4px;
   }
