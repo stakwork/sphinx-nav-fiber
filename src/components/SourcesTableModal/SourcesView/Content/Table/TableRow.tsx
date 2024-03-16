@@ -1,6 +1,8 @@
 import React, { memo } from 'react'
 import { StyledTableCell, StyledTableRow } from '../../common'
 import { Node } from '~/network/fetchSourcesData'
+import styled from 'styled-components'
+import { colors } from '~/utils'
 
 interface TableRowProps {
   node: Node
@@ -19,6 +21,8 @@ const TableRowComponent: React.FC<TableRowProps> = ({ node }) => {
     return formattedDate
   }
 
+  const twitterLink = 'https://www.twitter.com/anyuser/status/'
+
   return (
     <StyledTableRow>
       <StyledTableCell className="empty" />
@@ -29,11 +33,27 @@ const TableRowComponent: React.FC<TableRowProps> = ({ node }) => {
       </StyledTableCell>
       <StyledTableCell>{node?.node_type}</StyledTableCell>
       <StyledTableCell>
-        {node?.node_type === 'Tweet' ? node?.properties?.tweet_id : node?.properties?.source_link}
+        {node?.node_type === 'Tweet' ? (
+          <StyledLink href={`${twitterLink}${node?.properties?.tweet_id}`} target="_blank">
+            {node?.properties?.tweet_id}
+          </StyledLink>
+        ) : (
+          <StyledLink href={node?.properties?.source_link} target="_blank">
+            {node?.properties?.source_link}
+          </StyledLink>
+        )}
       </StyledTableCell>
       <StyledTableCell>{node?.properties?.status ? node?.properties?.status : 'processing'}</StyledTableCell>
     </StyledTableRow>
   )
 }
+
+const StyledLink = styled.a`
+  color: ${colors.white};
+  text-decoration: underline;
+  &:visited {
+    color: ${colors.white};
+  }
+`
 
 export const TopicRow = memo(TableRowComponent)
