@@ -1,5 +1,6 @@
 import React, { memo } from 'react'
 import { StyledTableCell, StyledTableRow } from '../../common'
+import { TWITTER_CONTENT_LINK } from '../../constants'
 import { Node } from '~/network/fetchSourcesData'
 import styled from 'styled-components'
 import { colors } from '~/utils'
@@ -21,8 +22,6 @@ const TableRowComponent: React.FC<TableRowProps> = ({ node }) => {
     return formattedDate
   }
 
-  const twitterLink = 'https://www.twitter.com/anyuser/status/'
-
   return (
     <StyledTableRow>
       <StyledTableCell className="empty" />
@@ -34,11 +33,21 @@ const TableRowComponent: React.FC<TableRowProps> = ({ node }) => {
       <StyledTableCell>{node?.node_type}</StyledTableCell>
       <StyledTableCell>
         {node?.node_type === 'Tweet' ? (
-          <StyledLink href={`${twitterLink}${node?.properties?.tweet_id}`} target="_blank">
+          <StyledLink
+            href={`${TWITTER_CONTENT_LINK}${node?.properties?.tweet_id}${
+              TWITTER_CONTENT_LINK.includes('?') ? '&' : '?'
+            }open=system`}
+            target="_blank"
+          >
             {node?.properties?.tweet_id}
           </StyledLink>
         ) : (
-          <StyledLink href={node?.properties?.source_link} target="_blank">
+          <StyledLink
+            href={`${node?.properties?.source_link as string}${
+              (node?.properties?.source_link as string).includes('?') ? '&' : '?'
+            }open=system`}
+            target="_blank"
+          >
             {node?.properties?.source_link}
           </StyledLink>
         )}
