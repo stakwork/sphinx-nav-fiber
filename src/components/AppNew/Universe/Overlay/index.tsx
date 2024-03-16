@@ -1,12 +1,25 @@
 import styled from 'styled-components'
 import { ActionsToolbar } from '~/components/App/ActionsToolbar'
+import { useGraphStore } from '~/stores/useGraphStore'
+import { Tooltip } from '../GraphNew/Cubes/Cube/components/Tooltip'
+import { TypesNavigation } from '../GraphNew/Cubes/Cube/components/TypesNavigatoin'
 
-export const Overlay = () => (
-  <OverlayWrap>
-    <div id="tooltip-portal" />
-    <ActionsToolbar />
-  </OverlayWrap>
-)
+export const Overlay = () => {
+  const [selectedNode] = useGraphStore((s) => [s.selectedNode])
+
+  return (
+    <OverlayWrap>
+      <TypesNavigation />
+      <div id="tooltip-portal" />
+      {selectedNode && (
+        <div id="tooltip-portal">
+          <Tooltip node={selectedNode} />
+        </div>
+      )}
+      <ActionsToolbar />
+    </OverlayWrap>
+  )
+}
 
 const OverlayWrap = styled('div')(({ theme }) => ({
   position: 'absolute',

@@ -2,14 +2,14 @@ import { useEffect, useState } from 'react'
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import * as sphinx from 'sphinx-bridge'
 import { BaseModal } from '~/components/Modal'
-import { notify } from '~/components/common/Toast/toastMessage'
-import { NODE_ADD_ERROR, NODE_ADD_SUCCESS } from '~/constants'
+import { NODE_ADD_ERROR } from '~/constants'
 import { api } from '~/network/api'
 import { useDataStore } from '~/stores/useDataStore'
 import { useModal } from '~/stores/useModalStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { NodeExtended, SubmitErrRes } from '~/types'
 import { executeIfProd, getLSat } from '~/utils'
+import { SuccessNotify } from '../common/SuccessToast'
 import { BudgetStep } from './BudgetStep'
 import { SourceStep } from './SourceStep'
 import { SourceTypeStep } from './SourceTypeStep'
@@ -22,7 +22,6 @@ export type FormData = {
 
 const handleSubmitForm = async (
   data: FieldValues,
-  close: () => void,
   setBudget: (value: number | null) => void,
   onAddNewData: (value: FieldValues, id: string) => void,
 ): Promise<void> => {
@@ -65,9 +64,6 @@ const handleSubmitForm = async (
 
     onAddNewData(data, res?.data?.ref_id)
 
-    notify(NODE_ADD_SUCCESS)
-    close()
-
     // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   } catch (err: any) {
     let errorMessage = NODE_ADD_ERROR
@@ -80,8 +76,7 @@ const handleSubmitForm = async (
       errorMessage = err.message
     }
 
-    notify(errorMessage)
-    close()
+    throw new Error(errorMessage)
   }
 }
 
@@ -92,11 +87,13 @@ export const AddItemModal = () => {
   const form = useForm<FormData>({ mode: 'onChange' })
   const { watch, setValue, reset } = form
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string>('')
 
   const [addNewNode, setSelectedNode] = useDataStore((s) => [s.addNewNode, s.setSelectedNode])
 
   useEffect(
     () => () => {
+      setError('')
       setCurrentStep(0)
       reset()
     },
@@ -147,9 +144,22 @@ export const AddItemModal = () => {
     setLoading(true)
 
     try {
-      await handleSubmitForm(data, handleClose, setBudget, onAddNewNode)
-    } catch {
-      notify(NODE_ADD_ERROR)
+      await handleSubmitForm(data, setBudget, onAddNewNode)
+      SuccessNotify('Item Added')
+      handleClose()
+      // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+    } catch (err: any) {
+      let errorMessage = NODE_ADD_ERROR
+
+      if (err?.status === 400) {
+        const errorRes = await err.json()
+
+        errorMessage = errorRes.errorCode || errorRes?.status || NODE_ADD_ERROR
+      } else if (err instanceof Error) {
+        errorMessage = err.message
+      }
+
+      setError(String(errorMessage))
     } finally {
       setLoading(false)
     }
@@ -178,7 +188,7 @@ export const AddItemModal = () => {
               type={nodeType}
             />
           )}
-          {currentStep === 2 && <BudgetStep loading={loading} onClick={() => null} />}
+          {currentStep === 2 && <BudgetStep error={error} loading={loading} onClick={() => null} />}
         </form>
       </FormProvider>
     </BaseModal>

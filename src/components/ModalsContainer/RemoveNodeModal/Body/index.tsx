@@ -2,6 +2,7 @@ import { Button, Skeleton } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { ClipLoader } from 'react-spinners'
 import { TypeOptions, toast } from 'react-toastify'
+import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { ToastMessage } from '~/components/common/Toast/toastMessage'
 import { deleteNode, getTopicsData } from '~/network/fetchSourcesData'
@@ -18,13 +19,15 @@ export type FormData = {
 const notify = (message: string, type: TypeOptions) => {
   toast(<ToastMessage message={message} />, {
     icon: false,
-    position: toast.POSITION.BOTTOM_CENTER,
+    position: 'bottom-center',
     type,
   })
 }
 
 export const Body = () => {
   const { close } = useModal('removeNode')
+  const { close: closeEditNodeModal } = useModal('editNodeName')
+
   const [loading, setLoading] = useState(false)
   const [removeNode, setSelectedNode] = useDataStore((s) => [s.removeNode, s.setSelectedNode])
 
@@ -74,6 +77,7 @@ export const Body = () => {
       notify('Topic node removal coming soon', 'info')
       setSelectedNode(null)
       closeHandler()
+      closeEditNodeModal()
     } catch (error) {
       console.warn(error)
     } finally {
@@ -102,6 +106,7 @@ export const Body = () => {
       setSelectedNode(null)
       notify('Removed Node', 'success')
       closeHandler()
+      closeEditNodeModal()
     } catch (error) {
       console.log(error)
       notify('Removed failed, try later', 'error')
@@ -113,26 +118,66 @@ export const Body = () => {
   }
 
   return (
-    <>
-      <TitleEditor />
+    <Wrapper>
+      <TitleEditor nodeName={actualNode?.name || actualTopicNode?.topic || ''} />
       {topicIsLoading ? (
         <Skeleton />
       ) : (
-        <Flex direction="row" justify="space-between">
-          <Button color="secondary" onClick={closeHandler} size="medium" variant="outlined">
+        <Flex direction="row" mt={34}>
+          <CancelButton
+            color="secondary"
+            onClick={closeHandler}
+            size="large"
+            style={{ flex: 1, marginRight: 20 }}
+            variant="contained"
+          >
             Cancel
-          </Button>
-          <Button
+          </CancelButton>
+          <DeleteButton
+            color="secondary"
             disabled={loading || (!actualNode && !actualTopicNode)}
             onClick={actualNode || actualTopicNode ? handleRemove : handleTopicRemove}
-            size="medium"
-            variant="text"
+            size="large"
+            style={{ flex: 1 }}
+            variant="contained"
           >
-            Confirm
+            Delete
             {loading && <ClipLoader color={colors.BLUE_PRESS_STATE} size={10} />}
-          </Button>
+          </DeleteButton>
         </Flex>
       )}
-    </>
+    </Wrapper>
   )
 }
+
+const Wrapper = styled(Flex)`
+  padding: 4px 12px 16px;
+`
+
+const CancelButton = styled(Button)`
+  && {
+    background: ${colors.white};
+    color: ${colors.BG2};
+
+    &:active,
+    &:hover,
+    &:focus {
+      background: ${colors.white};
+      color: ${colors.BG2};
+    }
+  }
+`
+
+const DeleteButton = styled(Button)`
+  && {
+    color: ${colors.white};
+    background-color: ${colors.primaryRed};
+
+    &:hover,
+    &:active,
+    &:focus {
+      color: ${colors.white};
+      background-color: ${colors.primaryRed};
+    }
+  }
+`

@@ -5,10 +5,8 @@ import { Canvas, RootState } from '@react-three/fiber'
 import { Bloom, EffectComposer, Outline, Selection, Vignette } from '@react-three/postprocessing'
 import { useControls } from 'leva'
 import { BlendFunction, Resolution } from 'postprocessing'
-import { Perf } from 'r3f-perf'
 import { Suspense, memo, useCallback, useMemo } from 'react'
 import styled from 'styled-components'
-import { AxesHelper, GridHelper } from 'three'
 import { getNodeColorByType } from '~/components/Universe/Graph/constant'
 import { Flex } from '~/components/common/Flex'
 import { useControlStore } from '~/stores/useControlStore'
@@ -126,10 +124,6 @@ const _Universe = () => {
     <Wrapper>
       <Suspense fallback={null}>
         <Canvas camera={cameraProps} id="universe-canvas" onCreated={onCreatedHandler} onWheel={onWheelHandler}>
-          {false && <Perf position="top-right" />}
-          {true && <primitive object={new AxesHelper(10000)} />}
-          {false && <primitive object={new GridHelper(10000)} />}
-          {false && <primitive object={new GridHelper(10000)} position={[0, 1200, 0]} />}
           <Suspense fallback={<Fallback />}>
             <Preload />
 
