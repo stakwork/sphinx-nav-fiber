@@ -137,8 +137,8 @@ describe('Test SourceView', () => {
     await waitFor(() => {
       const tweetRow = screen.getByText('123456789')
       const articleRow = screen.getByText('http://examplearticle.com')
-      const tweetDate = screen.getByText('4/4/2021')
-      const articleDate = screen.getByText('5/4/2021')
+      const tweetDate = screen.getByText('04/04/2021')
+      const articleDate = screen.getByText('05/04/2021')
       const tweetStatus = screen.getByText('complete')
       const articleStatus = screen.getByText('pending')
 
