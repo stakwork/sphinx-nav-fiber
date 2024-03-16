@@ -22,6 +22,7 @@ import { generateAuthQueryParam, getSignedMessageFromRelay } from './getSignedMe
 import { videoTimeToSeconds } from './videoTimetoSeconds'
 import { showPlayButton, getTrendingTopic } from './trending'
 import { formatNumberWithCommas } from './formatStats'
+import { formatDate } from './formatDate'
 
 export {
   E2ETests,
@@ -53,4 +54,5 @@ export {
   showPlayButton,
   getTrendingTopic,
   formatNumberWithCommas,
+  formatDate,
 }
