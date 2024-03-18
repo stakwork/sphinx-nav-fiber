@@ -1,0 +1,93 @@
+import{u,j as t,T as e,s as a,c as o,F as c}from"./index-912a006b.js";import{A as g,a as b,S as m}from"./SourcesTableIcon-ad96549e.js";import{S as j}from"./SettingsIcon-a4710d20.js";import{S as f}from"./index-acbd86c1.js";import{u as i}from"./index-c8b55d33.js";import"./index.esm-b4803265.js";import"./react-toastify.esm-5fb76b52.js";const B=()=>{const{open:n}=i("sourcesTable"),{open:d}=i("addItem"),{open:l}=i("addContent"),{open:p}=i("settings"),[x]=u(h=>[h.isAdmin]);return t.jsxs(y,{children:[t.jsx(k,{onClick:()=>f(),children:t.jsx("img",{alt:"Second brain",src:"logo.svg"})}),x&&t.jsxs(s,{"data-testid":"add-item-modal",onClick:d,children:[t.jsx(r,{children:t.jsx(g,{})}),t.jsx(e,{children:"Add Item"})]}),t.jsxs(s,{"data-testid":"add-content-modal",onClick:l,children:[t.jsx(r,{children:t.jsx(b,{})}),t.jsx(e,{children:"Add Content"})]}),t.jsxs(s,{id:"cy-open-soure-table",onClick:n,children:[t.jsx(r,{children:t.jsx(m,{})}),t.jsx(e,{children:"Source Table"})]}),t.jsxs(s,{"data-testid":"settings-modal",onClick:p,children:[t.jsx(r,{children:t.jsx(j,{})}),t.jsx(e,{children:"Settings"})]})]})},y=a(c).attrs({align:"flex-start",direction:"column",justify:"flex-start"})`
+  flex: 0 0 64px;
+  z-index: 31;
+  transition: opacity 1s;
+  background: ${o.BG2};
+`,k=a(c)`
+  background: blue;
+  align-items: center;
+  justify-content: center;
+  background: ${o.primaryBlue};
+  width: 64px;
+  height: 64px;
+  cursor: pointer;
+`,s=a(c).attrs({align:"center",justify:"center",p:0})`
+  position: relative;
+  width: 64px;
+  height: 58px;
+  padding: 0;
+  flex-direction: row;
+  color: ${o.GRAY6};
+  cursor: pointer;
+  transition: ${({theme:n})=>n.transitions.create(["opacity","box-shadow","background-color"])};
+
+  &:before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px; /* Initial width */
+    height: 32px; /* Initial height on hover */
+    background-color: transparent;
+    transition: height 0.3s, width 0.3s, background-color 0.3s;
+  }
+
+  ${e} {
+    display: none;
+    opacity: 0;
+    width: 0;
+    padding: 4px 10px;
+    border-radius: 4px;
+    background: #000;
+    box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.25);
+    position: absolute;
+    left: 90%;
+    z-index: 99;
+    white-space: nowrap;
+    visibility: visible;
+    font-size: 11px;
+    font-style: normal;
+    font-weight: 400;
+    transition: ${({theme:n})=>n.transitions.create(["opacity","visually"])};
+  }
+
+  &:hover {
+    color: ${o.white};
+
+    &:before {
+      width: 3px;
+      height: 32px;
+      background-color: ${o.primaryBlue};
+    }
+
+    ${e} {
+      display: block;
+      width: min-content;
+      opacity: 1;
+      visibility: visible;
+    }
+  }
+
+  &:active {
+    color: ${o.white};
+    background: ${o.black};
+    &:before {
+      width: 3px;
+      height: 100%;
+      background-color: ${o.primaryBlue};
+    }
+  }
+
+  &.root {
+    border-radius: 50%;
+    padding: 0;
+    align-items: center;
+    justify-content: center;
+    border: none;
+  }
+`,r=a(c)`
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+`;export{B as MainToolbar};
