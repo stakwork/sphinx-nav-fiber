@@ -2,14 +2,14 @@ import { useEffect, useState } from 'react'
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import * as sphinx from 'sphinx-bridge'
 import { BaseModal } from '~/components/Modal'
-import { notify } from '~/components/common/Toast/toastMessage'
-import { NODE_ADD_ERROR, NODE_ADD_SUCCESS } from '~/constants'
+import { NODE_ADD_ERROR } from '~/constants'
 import { api } from '~/network/api'
 import { useDataStore } from '~/stores/useDataStore'
 import { useModal } from '~/stores/useModalStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { NodeExtended, SubmitErrRes } from '~/types'
 import { executeIfProd, getLSat } from '~/utils'
+import { SuccessNotify } from '../common/SuccessToast'
 import { BudgetStep } from './BudgetStep'
 import { SourceStep } from './SourceStep'
 import { SourceTypeStep } from './SourceTypeStep'
@@ -22,7 +22,6 @@ export type FormData = {
 
 const handleSubmitForm = async (
   data: FieldValues,
-  close: () => void,
   setBudget: (value: number | null) => void,
   onAddNewData: (value: FieldValues, id: string) => void,
 ): Promise<void> => {
@@ -64,9 +63,6 @@ const handleSubmitForm = async (
     }
 
     onAddNewData(data, res?.data?.ref_id)
-
-    notify(NODE_ADD_SUCCESS)
-    close()
 
     // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   } catch (err: any) {
@@ -148,13 +144,22 @@ export const AddItemModal = () => {
     setLoading(true)
 
     try {
-      await handleSubmitForm(data, handleClose, setBudget, onAddNewNode)
-    } catch (e: unknown) {
-      if (e instanceof Error) {
-        setError(e.message)
+      await handleSubmitForm(data, setBudget, onAddNewNode)
+      SuccessNotify('Item Added')
+      handleClose()
+      // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+    } catch (err: any) {
+      let errorMessage = NODE_ADD_ERROR
+
+      if (err?.status === 400) {
+        const errorRes = await err.json()
+
+        errorMessage = errorRes.errorCode || errorRes?.status || NODE_ADD_ERROR
+      } else if (err instanceof Error) {
+        errorMessage = err.message
       }
 
-      setError(String(e))
+      setError(String(errorMessage))
     } finally {
       setLoading(false)
     }

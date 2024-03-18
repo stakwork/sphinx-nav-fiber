@@ -1,7 +1,13 @@
 import { Table as MaterialTable, Popover, TableRow } from '@mui/material'
 import React, { useCallback } from 'react'
 import styled from 'styled-components'
+import AddCircleIcon from '~/components/Icons/AddCircleIcon'
+import EditTopicIcon from '~/components/Icons/EditTopicIcon'
 import FilterOffIcon from '~/components/Icons/FilterOffIcon'
+import MergeIcon from '~/components/Icons/MergeIcon'
+import VisibilityOff from '~/components/Icons/VisibilityOff'
+import VisibilityOn from '~/components/Icons/VisibilityOn'
+import SortFilterIcon from '~/components/Icons/SortFilterIcon'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { useAppStore } from '~/stores/useAppStore'
@@ -12,7 +18,6 @@ import { StyledTableCell, StyledTableHead } from '../../common'
 import { TopicTableProps } from '../../types'
 import { ALPHABETICALLY, EDGE_COUNT, DATE } from '~/components/SourcesTableModal/SourcesView/constants'
 import { TopicRow } from './TableRow'
-import SortFilterIcon from '~/components/Icons/SortFilterIcon'
 import CheckIcon from '~/components/Icons/CheckIcon'
 
 interface CheckboxIconProps {
@@ -118,10 +123,27 @@ export const Table: React.FC<TopicTableProps> = ({ setShowMuteUnmute, showMuted,
               open={open}
               transformOrigin={{ vertical: 'top', horizontal: 'right' }}
             >
-              <PopoverOption onClick={() => handlePopoverAction('editTopic')}>Rename</PopoverOption>
+              {showMuted ? (
+                <PopoverOption onClick={() => handlePopoverAction('unMute')}>
+                  {' '}
+                  <VisibilityOn data-testid="" /> Unmute
+                </PopoverOption>
+              ) : (
+                <PopoverOption onClick={() => handlePopoverAction('mute')}>
+                  {' '}
+                  <VisibilityOff data-testid="VisibilityOff" /> Mute
+                </PopoverOption>
+              )}
+              <PopoverOption onClick={() => handlePopoverAction('editTopic')}>
+                <EditTopicIcon data-testid="EditTopicIcon" /> Rename
+              </PopoverOption>
 
-              <PopoverOption onClick={() => handlePopoverAction('mergeTopic')}>Merge</PopoverOption>
-              <PopoverOption onClick={() => handlePopoverAction('addEdge')}>Add edge</PopoverOption>
+              <PopoverOption onClick={() => handlePopoverAction('mergeTopic')}>
+                <MergeIcon data-testid="MergeIcon" /> Merge
+              </PopoverOption>
+              <PopoverOption onClick={() => handlePopoverAction('addEdge')}>
+                <AddCircleIcon data-testid="AddCircleIcon" /> Add edge
+              </PopoverOption>
             </PopoverWrapper>
           ) : null}
         </>
@@ -165,9 +187,13 @@ const SortedIcon = styled.span`
 
 const PopoverOption = styled(Flex).attrs({
   direction: 'row',
-  px: 16,
+  px: 12,
   py: 8,
 })`
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  gap: 12px;
   cursor: pointer;
   background: ${colors.BUTTON1};
   color: ${colors.white};
@@ -175,10 +201,6 @@ const PopoverOption = styled(Flex).attrs({
   &:hover {
     background: ${colors.BUTTON1_HOVER};
     color: ${colors.GRAY3};
-  }
-
-  & + & {
-    border-top: 1px solid ${colors.black};
   }
 `
 

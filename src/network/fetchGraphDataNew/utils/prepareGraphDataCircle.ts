@@ -31,10 +31,27 @@ function generateTopicNodePosition(
   center: Center,
   yPosition: number,
 ): NodeExtendedNew[] {
+  // Dictionary to store radius offsets for each unique edge count
+  const radiusOffsetMap: { [key: number]: number } = {}
+
   // Generate positions for each node
   const extendedNodes = nodes.map((node) => {
     // Calculate radius based on edge count (inverse of edge count, so nodes with more edges are closer to center)
-    const radius = center.radius - (center.radius * (node.edge_count || 0)) / maxEdgeCount
+    const edgeCount = node.edge_count || 0
+    const baseRadius = center.radius - (center.radius * edgeCount) / maxEdgeCount
+
+    // Calculate radius offset for this edge count
+    let radiusOffset
+
+    if (edgeCount in radiusOffsetMap) {
+      radiusOffset = radiusOffsetMap[edgeCount]
+    } else {
+      radiusOffset = Math.random() * 300 // Adjust this value as needed
+      radiusOffsetMap[edgeCount] = radiusOffset
+    }
+
+    // Calculate final radius by adding the offset
+    const radius = baseRadius + radiusOffset
 
     // Calculate angle for the current node (evenly spaced around the circle)
     const angle = Math.random() * Math.PI * 2 // Random angle for even distribution
@@ -84,13 +101,11 @@ export const generateSplitGraphPositions = (nodes: NodeNew[], edges: EdgeNew[]):
 
   const types = Object.keys(nodesByType)
 
-  console.log(types)
-
   const center: Center = { x: 0, y: 0, z: 0, radius: 1000 }
 
   const updatedNodes: NodeExtendedNew[] = types.reduce((acc: NodeExtendedNew[], curr: string, index) => {
     const patternIndex = index % 2 === 0 ? index / 2 : -Math.ceil(index / 2)
-    const maxWeight = Math.max(...nodesByType[curr].map((n) => n.edge_count || 0))
+    const maxWeight = Math.max(...nodesByType[curr].map((n) => n.edge_count || 0), 1)
     const currentTypeNodes = generateTopicNodePosition(nodesByType[curr], maxWeight, center, patternIndex * step)
 
     return [...acc, ...currentTypeNodes]
@@ -104,14 +119,11 @@ export const generateSplitGraphPositions = (nodes: NodeNew[], edges: EdgeNew[]):
     const targetPosition = new Vector3(targetNode?.x || 0, targetNode?.y || 0, targetNode?.z || 0)
 
     return {
-      edge_type: i.edge_type,
-      attributes: i.attributes,
-      source: i.source,
-      target: i.target,
+      ...i,
       sourcePosition,
       targetPosition,
     }
   })
 
-  return { nodes: updatedNodes, links }
+  return { nodes: updatedNodes, links, nodeTypes: types }
 }
