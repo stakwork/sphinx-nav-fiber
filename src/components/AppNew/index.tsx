@@ -20,6 +20,7 @@ import { DeviceCompatibilityNotice } from './DeviceCompatibilityNotification'
 import { Helper } from './Helper'
 import { ModalsContainer } from './ModalsContainer'
 import { Toasts } from './Toasts'
+import { Overlay } from './Universe/Overlay'
 
 const Wrapper = styled(Flex)`
   height: 100%;
@@ -119,6 +120,7 @@ export const AppNew = () => {
             <AppBar />
             <Version>v{version}</Version>
             <ActionsToolbar />
+            <Overlay />
           </FormProvider>
           <ModalsContainer />
           <Toasts />

@@ -66,6 +66,7 @@ function generateRandomEdges(nodesA: string | any[], nodesB: any[]) {
       edge_type: 'RELATED_TO',
       source: nodesA[i].ref_id,
       target: nodesB[i].ref_id,
+      ref_id: `ref_id__${i}`,
     }
 
     edges.push(newEdge)
