@@ -9,6 +9,10 @@ interface TableRowProps {
   node: Node
 }
 
+function capitalizeFirstLetter(string: string) {
+  return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase()
+}
+
 const TableRowComponent: React.FC<TableRowProps> = ({ node }) => {
   function formatDate(dateString: never) {
     const date = new Date(Number(dateString) * 1000)
@@ -52,7 +56,9 @@ const TableRowComponent: React.FC<TableRowProps> = ({ node }) => {
           </StyledLink>
         )}
       </StyledTableCell>
-      <StyledTableCell>{node?.properties?.status ? node?.properties?.status : 'processing'}</StyledTableCell>
+      <StyledTableCell>
+        {node?.properties?.status ? capitalizeFirstLetter(node.properties.status) : 'Processing'}
+      </StyledTableCell>
     </StyledTableRow>
   )
 }
