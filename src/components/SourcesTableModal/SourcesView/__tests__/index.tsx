@@ -1,12 +1,17 @@
 /* eslint-disable padding-line-between-statements */
 import '@testing-library/jest-dom'
-import { render, screen, waitFor } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
 import { SourcesView } from '..'
 import { useFeatureFlagStore } from '../../../../stores/useFeatureFlagStore'
 import { useUserStore } from '../../../../stores/useUserStore'
 import { getNodeContent } from '../../../../network/fetchSourcesData'
+import { isSphinx } from '~/utils/isSphinx'
+
+jest.mock('~/utils/isSphinx', () => ({
+  isSphinx: jest.fn(),
+}))
 
 jest.mock('~/stores/useUserStore', () => ({
   useUserStore: jest.fn(),
@@ -44,6 +49,7 @@ jest.mock('~/stores/useFeatureFlagStore', () => ({
 
 const useFeatureFlagStoreMock = useFeatureFlagStore as jest.MockedFunction<typeof useFeatureFlagStore>
 const useUserStoreMock = useUserStore as jest.MockedFunction<typeof useUserStore>
+const isSphinxMock = isSphinx as jest.MockedFunction<typeof isSphinx>
 
 describe('Test SourceView', () => {
   beforeEach(() => {
@@ -54,6 +60,7 @@ describe('Test SourceView', () => {
       jest.fn(),
     ])
     ;(getNodeContent as jest.Mock).mockResolvedValue({ nodes: mockNodes })
+    isSphinxMock.mockReturnValue(false)
   })
 
   it('assserts that when queuedSourceFlag is false, queued sources column is hidden', () => {
@@ -66,6 +73,8 @@ describe('Test SourceView', () => {
   })
 
   it('should render the "View Content" tab correctly', () => {
+    isSphinxMock.mockReturnValue(true)
+
     render(<SourcesView />)
 
     const viewContentTab = screen.getByRole('tab', { name: 'View Content' })
@@ -121,33 +130,87 @@ describe('Test SourceView', () => {
     })
   })
 
-  it('should render table if results from the GET response', async () => {
-    render(<SourcesView />)
-
-    await waitFor(() => {
-      const tableRows = screen.getAllByRole('row')
-
-      expect(tableRows.length).toBe(3)
+  it('should render the table with nodes data if GET response is successful', async () => {
+    ;(getNodeContent as jest.Mock).mockResolvedValue({
+      nodes: mockNodes,
     })
-  })
 
-  it('should use the correct output for type, source, date, and status', async () => {
     render(<SourcesView />)
 
-    await waitFor(() => {
-      const tweetRow = screen.getByText('123456789')
-      const articleRow = screen.getByText('http://examplearticle.com')
-      const tweetDate = screen.getByText('04/04/2021')
-      const articleDate = screen.getByText('05/04/2021')
-      const tweetStatus = screen.getByText('complete')
-      const articleStatus = screen.getByText('pending')
+    waitFor(async () => {
+      const viewContentTab = screen.getByRole('tab', { name: 'View Content' })
+      fireEvent.click(viewContentTab)
+
+      const tweetRow = await screen.findByText('123456789')
+      const articleRow = await screen.findByText('http://examplearticle.com')
 
       expect(tweetRow).toBeInTheDocument()
       expect(articleRow).toBeInTheDocument()
-      expect(tweetDate).toBeInTheDocument()
-      expect(articleDate).toBeInTheDocument()
-      expect(tweetStatus).toBeInTheDocument()
-      expect(articleStatus).toBeInTheDocument()
+    })
+  })
+
+  describe('should use the correct output for type, source, date, and status', () => {
+    beforeEach(() => {
+      ;(getNodeContent as jest.Mock).mockResolvedValue({ nodes: mockNodes })
+      useUserStoreMock.mockReturnValue([{ isAdmin: true }])
+      useFeatureFlagStoreMock.mockReturnValue([true])
+      isSphinxMock.mockReturnValue(true)
+    })
+
+    it('should render the correct node type for each row', async () => {
+      render(<SourcesView />)
+      waitFor(async () => {
+        const viewContentTab = screen.getByRole('tab', { name: 'View Content' })
+        fireEvent.click(viewContentTab)
+
+        const tweetType = await screen.findByText('Tweet')
+        const articleType = await screen.findByText('Article')
+
+        expect(tweetType).toBeInTheDocument()
+        expect(articleType).toBeInTheDocument()
+      })
+    })
+
+    it('should render the correct source for each row', async () => {
+      render(<SourcesView />)
+      waitFor(async () => {
+        const viewContentTab = screen.getByRole('tab', { name: 'View Content' })
+        fireEvent.click(viewContentTab)
+
+        const tweetId = await screen.findByText('123456789')
+        const articleLink = await screen.findByText('http://examplearticle.com')
+
+        expect(tweetId).toBeInTheDocument()
+        expect(articleLink).toBeInTheDocument()
+      })
+    })
+
+    it('should render the correct date for each row', async () => {
+      render(<SourcesView />)
+      waitFor(async () => {
+        const viewContentTab = screen.getByRole('tab', { name: 'View Content' })
+        fireEvent.click(viewContentTab)
+
+        const tweetDate = await screen.findByText('4/4/2021')
+        const articleDate = await screen.findByText('5/4/2021')
+
+        expect(tweetDate).toBeInTheDocument()
+        expect(articleDate).toBeInTheDocument()
+      })
+    })
+
+    it('should render the correct status for each row', async () => {
+      render(<SourcesView />)
+      waitFor(async () => {
+        const viewContentTab = screen.getByRole('tab', { name: 'View Content' })
+        fireEvent.click(viewContentTab)
+
+        const tweetStatus = await screen.findByText('complete')
+        const articleStatus = await screen.findByText('pending')
+
+        expect(tweetStatus).toBeInTheDocument()
+        expect(articleStatus).toBeInTheDocument()
+      })
     })
   })
 })
