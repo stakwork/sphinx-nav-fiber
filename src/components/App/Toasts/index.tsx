@@ -4,10 +4,10 @@ import { colors } from '~/utils/colors'
 
 export const Toasts = styled(ToastContainer)`
   .Toastify__toast {
-    background-color: ${colors.body};
+    background-color: #49c998ff;
   }
   .Toastify__toast-body {
-    background-color: ${colors.body};
+    background-color: #49c998ff;
     color: ${colors.white};
   }
   .Toastify__close-button {

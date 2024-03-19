@@ -95,3 +95,17 @@ export const requiredRule = {
     value: true,
   },
 }
+
+// export const NODE_TYPE_COLORS = ['#ff13c9', '#5af0ff', '#3233ff']
+export const NODE_TYPE_COLORS = [
+  '#ffffff',
+  '#ffffcc',
+  '#ccffcc',
+  '#ffccff',
+  '#ccccff',
+  '#ffd699',
+  '#c2f0c2',
+  '#ff6666',
+  '#99ccff',
+  '#ffb3b3',
+]

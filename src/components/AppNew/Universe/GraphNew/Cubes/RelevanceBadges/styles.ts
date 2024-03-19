@@ -14,9 +14,8 @@ type TagProps = {
 
 export const Tag = styled(Flex)<TagProps>`
   text-align: center;
-  width: ${(p: TagProps) => (p.type === 'topic' ? 'auto' : `${p.size}px`)};
-  height: ${(p: TagProps) => (p.type === 'topic' ? 'auto' : `${p.size}px`)};
-  outline: 1px solid ${(p: TagProps) => colors.white || p.color};
+  width: auto;
+  height: auto;
   outline-offset: 0px;
   background: rgba(0, 0, 0, 0.75);
   color: ${(p: TagProps) => p.fontColor};

@@ -1,10 +1,10 @@
-import { IconButton } from '@mui/material'
+import { IconButton, Popover, Typography } from '@mui/material'
 import React, { FC, memo, useState } from 'react'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
 import ProfileHide from '~/components/Icons/PropertyHide'
 import ProfileShow from '~/components/Icons/PropertyShow'
-import SettingsIcon from '~/components/Icons/SettingsIcon'
+import ThreeDotsIcons from '~/components/Icons/ThreeDotsIcons'
 import { Flex } from '~/components/common/Flex'
 import { putNodeData } from '~/network/fetchSourcesData'
 import { useTopicsStore } from '~/stores/useTopicsStore'
@@ -43,6 +43,21 @@ const TableRowComponent: FC<TTableRaw> = ({ topic, onClick, onSearch }) => {
     onSearch(topicItem.topic)
   }
 
+  const lettersToShow = topic.edgeList.slice(0, 1)
+  const hiddenLettersCount = topic.edgeList.length - lettersToShow.length
+
+  const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null)
+
+  const handlePopoverOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget)
+  }
+
+  const handlePopoverClose = () => {
+    setAnchorEl(null)
+  }
+
+  const open = Boolean(anchorEl)
+
   return (
     <StyledTableRow key={topic.topic}>
       <StyledTableCell className="empty" />
@@ -50,7 +65,48 @@ const TableRowComponent: FC<TTableRaw> = ({ topic, onClick, onSearch }) => {
         <ClickableText>{topic.topic}</ClickableText>
       </StyledTableCell>
       <StyledTableCell>{topic.edgeCount}</StyledTableCell>
-      <StyledTableCell>{topic.edgeList.join(', ')}</StyledTableCell>
+      <StyledTableCell>
+        <Popover
+          anchorEl={anchorEl}
+          anchorOrigin={{
+            vertical: 'top',
+            horizontal: 'center',
+          }}
+          disableRestoreFocus
+          id="mouse-over-popover"
+          onClose={handlePopoverClose}
+          open={open}
+          sx={{
+            pointerEvents: 'none',
+            '& .MuiPaper-root': {
+              backgroundColor: 'rgba(0, 0, 0, 0.9)',
+              borderRadius: '4px',
+              width: '140px',
+            },
+          }}
+          transformOrigin={{
+            vertical: 'bottom',
+            horizontal: 'center',
+          }}
+        >
+          <Typography sx={{ p: 1.5, fontSize: '13px', fontWeight: 400, lineHeight: '1.8' }}>
+            {topic.edgeList.join(', ')}
+          </Typography>
+        </Popover>
+        {lettersToShow.join(', ')}
+        {hiddenLettersCount > 0 && (
+          <Typography
+            aria-haspopup="true"
+            aria-owns={open ? 'mouse-over-popover' : undefined}
+            component="span"
+            onMouseEnter={handlePopoverOpen}
+            onMouseLeave={handlePopoverClose}
+            sx={{ cursor: 'context-menu' }}
+          >
+            ,...
+          </Typography>
+        )}
+      </StyledTableCell>
       <StyledTableCell>
         <span>{new Date(Number(date) * 1000).toDateString()}</span>
       </StyledTableCell>
@@ -78,7 +134,7 @@ const TableRowComponent: FC<TTableRaw> = ({ topic, onClick, onSearch }) => {
       </StyledTableCell>
       <StyledTableCell>
         <IconButton onClick={(e) => onClick(e, topic.ref_id)}>
-          <SettingsIcon />
+          <ThreeDotsIcons data-testid="ThreeDotsIcons" />
         </IconButton>
       </StyledTableCell>
     </StyledTableRow>

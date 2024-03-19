@@ -4,10 +4,17 @@ import { Group, Vector3 } from 'three'
 
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
+import DeleteIcon from '~/components/Icons/DeleteIcon'
+
+type Props = {
+  position: Vector3
+  title: string
+  onRemove: () => void
+}
 
 export const getPercentageFromWeight = (weight: number | undefined) => ((weight || 0) * 100).toFixed()
 
-export const PathwayBadge = ({ position, title }: { position: Vector3; title: string }) => {
+export const PathwayBadge = ({ position, title, onRemove }: Props) => {
   const ref = useRef<Group | null>(null)
 
   useEffect(
@@ -24,6 +31,7 @@ export const PathwayBadge = ({ position, title }: { position: Vector3; title: st
     <group ref={ref} position={position}>
       <Html center sprite>
         <Tag
+          direction="row"
           justify="center"
           onClick={(e) => {
             e.stopPropagation()
@@ -35,7 +43,10 @@ export const PathwayBadge = ({ position, title }: { position: Vector3; title: st
             e.stopPropagation()
           }}
         >
-          {title}
+          <span>{title}</span>
+          <Flex className="icon" onClick={onRemove}>
+            <DeleteIcon />
+          </Flex>
         </Tag>
       </Html>
     </group>
@@ -47,43 +58,45 @@ const Tag = styled(Flex)`
 
   outline-offset: 0px;
   background: rgba(0, 0, 0, 0.75);
-  color: #ffffff;
+  color: #eee;
   cursor: pointer;
   transition: font-size 0.4s, outline 0.4s;
   align-items: center;
   justify-content: center;
   font-family: Barlow;
-  font-size: 12px;
+  font-size: 16px;
   font-style: normal;
   font-weight: 700;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 
   &:hover {
     outline-offset: 4px;
-  }
-
-  &.selected {
-    .badge-wrapper {
-      top: 0;
+    span {
+      opacity: 0.1;
     }
 
-    font-size: 36px;
-
-    &:hover {
-      outline-offset: 0px;
+    .icon {
+      display: flex;
     }
   }
 
-  &.topic {
-    outline: none;
-    background: none;
-    &:hover {
-      font-size: 36px;
-    }
-    white-space: nowrap;
-    .badge-wrapper {
-      display: none;
-    }
+  .icon {
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    /* bottom: 100%; */
+    display: none;
+    color: #000;
+    border-radius: 40px;
+    justify-content: center;
+    align-items: center;
+    background: #ffffff;
+    color: #000;
+    border-radius: 100%;
+    font-size: 16px;
+    cursor: pointer;
+    transition: opacity 0.4s;
+    box-shadow: 0px 2px 12px rgba(0, 0, 0, 0.5);
   }
 
   .badge-wrapper {

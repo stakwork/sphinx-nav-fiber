@@ -27,3 +27,5 @@ export const SORT_MAPPING: Option = {
 export const TWITTER_LINK = 'https://twitter.com'
 
 export const IS_ALIAS = 'IS_ALIAS'
+
+export const TWITTER_CONTENT_LINK = 'https://www.twitter.com/anyuser/status/'
