@@ -82,7 +82,7 @@ const TableRowComponent: FC<TTableRaw> = ({ topic, onClick, onSearch }) => {
             '& .MuiPaper-root': {
               backgroundColor: 'rgba(0, 0, 0, 0.9)',
               borderRadius: '4px',
-              width: '140px',
+              width: '160px',
             },
           }}
           transformOrigin={{
@@ -90,7 +90,7 @@ const TableRowComponent: FC<TTableRaw> = ({ topic, onClick, onSearch }) => {
             horizontal: 'center',
           }}
         >
-          <Typography sx={{ p: 1.5, fontSize: '13px', fontWeight: 400, lineHeight: '1.8' }}>
+          <Typography sx={{ p: 1.5, fontSize: '13px', fontWeight: 400, lineHeight: '1.8', wordWrap: 'break-word' }}>
             {topic.edgeList.join(', ')}
           </Typography>
         </Popover>
