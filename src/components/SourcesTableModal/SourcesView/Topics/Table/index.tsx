@@ -15,17 +15,23 @@ import { useModal } from '~/stores/useModalStore'
 import { useTopicsStore } from '~/stores/useTopicsStore'
 import { colors } from '~/utils/colors'
 import { StyledTableCell, StyledTableHead } from '../../common'
-import { ALPHABETICALLY, DATE, EDGE_COUNT } from '../../constants'
 import { TopicTableProps } from '../../types'
+import { ALPHABETICALLY, EDGE_COUNT, DATE } from '~/components/SourcesTableModal/SourcesView/constants'
 import { TopicRow } from './TableRow'
+import CheckIcon from '~/components/Icons/CheckIcon'
 
-export const Table: React.FC<TopicTableProps> = ({ showMuted, onTopicEdit, onChangeFilter }) => {
+interface CheckboxIconProps {
+  checked?: boolean
+}
+
+export const Table: React.FC<TopicTableProps> = ({ setShowMuteUnmute, showMuted, onTopicEdit, onChangeFilter }) => {
   const { close } = useModal('sourcesTable')
 
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
   const [selectedRefId, setSelectedRefId] = React.useState<string>('')
 
   const [setSearchFormValue, setCurrentSearch] = useAppStore((s) => [s.setSearchFormValue, s.setCurrentSearch])
+
   const [data, ids] = useTopicsStore((s) => [s.data, s.ids])
 
   const handleClick = useCallback((event: React.MouseEvent<HTMLButtonElement>, refId: string) => {
@@ -89,7 +95,14 @@ export const Table: React.FC<TopicTableProps> = ({ showMuted, onTopicEdit, onCha
                     Date <SortFilterIcon />
                   </SortedIcon>
                 </StyledTableCell>
-                <StyledTableCell>{showMuted ? 'Unmute' : 'Mute'}</StyledTableCell>
+                <StyledTableCell>
+                  <CheckboxSection onClick={setShowMuteUnmute}>
+                    <CheckboxIcon checked={showMuted}>
+                      <Checkmark>{showMuted && <CheckIcon />}</Checkmark>
+                    </CheckboxIcon>
+                    Muted
+                  </CheckboxSection>
+                </StyledTableCell>
                 <StyledTableCell />
               </TableRow>
             </StyledTableHead>
@@ -138,6 +151,32 @@ export const Table: React.FC<TopicTableProps> = ({ showMuted, onTopicEdit, onCha
     </>
   )
 }
+
+const CheckboxSection = styled.td`
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+`
+
+const CheckboxIcon = styled.div<CheckboxIconProps>`
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+  border: ${({ checked }) => (checked ? '#618AFF' : '2px solid #CCCCCC')};
+  background-color: ${({ checked }) => (checked ? '#618AFF' : 'transparent')};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 8px;
+`
+
+const Checkmark = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 2px;
+  background-color: transparent;
+`
 
 const SortedIcon = styled.span`
   cursor: pointer;
