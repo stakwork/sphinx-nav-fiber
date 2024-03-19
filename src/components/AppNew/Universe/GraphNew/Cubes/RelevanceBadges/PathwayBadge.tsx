@@ -10,7 +10,7 @@ import { BadgeProps } from './types'
 
 export const getPercentageFromWeight = (weight: number | undefined) => ((weight || 0) * 100).toFixed()
 
-export const PathwayBadge = ({ color, position, relativeIds, userData }: BadgeProps) => {
+export const PathwayBadge = ({ position, relativeIds, userData }: BadgeProps) => {
   const setSelectedNode = useGraphStore((s) => s.setSelectedNode)
   const setHoveredNode = useGraphStore((s) => s.setHoveredNode)
   const selectedNode = useSelectedNode()
@@ -39,7 +39,7 @@ export const PathwayBadge = ({ color, position, relativeIds, userData }: BadgePr
       {isVisible && (
         <Html center sprite>
           <Tag
-            color={color}
+            color={colors.white}
             fontColor={colors.white}
             fontSize={18}
             justify="center"
@@ -64,7 +64,7 @@ export const PathwayBadge = ({ color, position, relativeIds, userData }: BadgePr
           >
             {`${score}%`}
             <BadgeIconWrapper>
-              <Counter color={color}>
+              <Counter color={colors.white}>
                 <MdHub style={{ marginRight: 4 }} />
                 {relativeIds.length}
               </Counter>

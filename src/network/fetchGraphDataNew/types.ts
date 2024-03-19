@@ -1,6 +1,6 @@
 import { Vector3 } from 'three'
 
-type Attributes = {
+export type Attributes = {
   [key: string]: string | boolean | number
 }
 
@@ -9,6 +9,7 @@ export type EdgeNew = {
   edge_type: string
   source: string
   target: string
+  ref_id: string
 }
 
 export type NodeNew = {
@@ -16,7 +17,7 @@ export type NodeNew = {
   name?: string
   node_type: string
   edge_count?: number
-  attributes?: Attributes
+  properties?: Attributes
   date_added_to_graph?: number
 }
 
@@ -40,7 +41,12 @@ export type NormalizedNodes = {
   [refId: string]: NodeExtendedNew
 }
 
+export type NormalizedEdges = {
+  [refId: string]: EdgeExtendedNew
+}
+
 export type GraphDataNew = {
   links: EdgeExtendedNew[]
   nodes: NodeExtendedNew[]
+  nodeTypes?: string[]
 }
