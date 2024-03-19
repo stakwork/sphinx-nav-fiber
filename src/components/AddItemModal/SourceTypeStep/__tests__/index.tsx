@@ -5,7 +5,7 @@ import { SourceTypeStep } from '..'
 
 describe('SourceTypeStep', () => {
   it('renders with initial selected type', () => {
-    const selectedType = ' '
+    const selectedType = ''
 
     render(<SourceTypeStep allowNextStep onSelectType={jest.fn()} selectedType={selectedType} skipToStep={jest.fn()} />)
 
