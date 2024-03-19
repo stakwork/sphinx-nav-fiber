@@ -2,9 +2,9 @@ import { Text } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import { memo, useMemo, useRef } from 'react'
 import { Mesh } from 'three'
+import { NODE_TYPE_COLORS } from '~/constants'
 import { NodeExtendedNew } from '~/network/fetchGraphDataNew/types'
 import { useGraphStore, useSelectedNode } from '~/stores/useGraphStore'
-import { colors } from '~/utils/colors'
 import { fontProps } from './constants'
 
 type Props = {
@@ -15,7 +15,7 @@ type Props = {
 export const TextNode = memo(({ node, hide }: Props) => {
   const ref = useRef<Mesh | null>(null)
   const selectedNode = useSelectedNode()
-  const selectedNodeRelativeIds = useGraphStore((s) => s.selectedNodeRelativeIds)
+  const [selectedNodeRelativeIds, nodeTypes] = useGraphStore((s) => [s.selectedNodeRelativeIds, s.nodeTypes])
   const isRelative = selectedNodeRelativeIds.includes(node?.ref_id || '')
   const isSelected = !!selectedNode && selectedNode?.ref_id === node.ref_id
   const showSelectionGraph = useGraphStore((s) => s.showSelectionGraph)
@@ -53,17 +53,21 @@ export const TextNode = memo(({ node, hide }: Props) => {
     return 1
   }, [isSelected, selectedNode, isRelative])
 
+  const color = NODE_TYPE_COLORS[nodeTypes.indexOf(node.node_type)] || NODE_TYPE_COLORS[0]
+
+  const visible = selectedNode ? selectedNode?.ref_id === node.ref_id : true
+
   return (
     <Text
       ref={ref}
       anchorX="center"
       anchorY="middle"
-      color={colors.white}
+      color={color}
       fillOpacity={fillOpacity}
       position={[node.x, node.y, node.z]}
       scale={Math.min(textScale, 10)}
       userData={node}
-      visible={!hide}
+      visible={!hide && visible}
       {...fontProps}
     >
       {node.name}

@@ -150,15 +150,15 @@ export const AddItemModal = () => {
 
   const handleMockingSubmit = (data: FieldValues) => {
     const newId = `new-id-${Math.random()}`
-    const newType = data.nodeType
+    const newType: string = data.nodeType
 
     const node: NodeExtendedNew = {
       ref_id: newId,
       node_type: newType,
-      attributes: {
-        topic: data.name,
-        date_added_to_graph: parseInt((new Date().getTime() / 1000).toFixed(0), 10),
-        ...(data.sourceLink ? { source_link: data.sourceLink } : {}),
+      properties: {
+        topic: (data.name || '') as string,
+        date_added_to_graph: parseInt((new Date().getTime() / 1000).toFixed(0), 10) as number,
+        ...(data.sourceLink ? { source_link: data.sourceLink as string } : {}),
       },
       x: Math.random() * 1000,
       y: Math.random() * 1000,
