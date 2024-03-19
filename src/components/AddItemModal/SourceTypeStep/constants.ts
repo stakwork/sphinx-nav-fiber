@@ -16,6 +16,17 @@ export const NoParent: TOption = {
   value: 'No Parent',
 }
 
+export const OptionTypes: TOption[] = [
+  {
+    label: 'number',
+    value: 'number'
+  },
+  {
+    label: 'string',
+    value: 'string'
+  }
+]
+
 export const OPTIONS: TOption[] = [
   {
     label: 'Corporation',

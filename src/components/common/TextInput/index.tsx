@@ -61,7 +61,7 @@ export const TextInput = ({
 
   return (
     <Flex shrink={1}>
-      <Flex align="center" direction="row" pb={4} pl={4}>
+      <Flex align="center" direction="row">
         {label && <Label htmlFor={id}>{label}</Label>}
         {message && (
           <QuestionIcon name={name} role="tooltip">

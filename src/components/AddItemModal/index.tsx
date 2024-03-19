@@ -1,7 +1,7 @@
 import { JSX, useEffect, useState } from 'react'
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import * as sphinx from 'sphinx-bridge'
-import { BaseModal } from '~/components/Modal'
+import { BaseModal, ModalKind } from '~/components/Modal'
 import { notify } from '~/components/common/Toast/toastMessage'
 import { NODE_ADD_ERROR, NODE_ADD_SUCCESS } from '~/constants'
 import { api } from '~/network/api'
@@ -11,7 +11,7 @@ import { useUserStore } from '~/stores/useUserStore'
 import { NodeExtended, SubmitErrRes } from '~/types'
 import { executeIfProd, getLSat } from '~/utils'
 import { BudgetStep } from './BudgetStep'
-import { CreateCustomTypeStep, SelectCustomNodeParent } from './CreateCustomTypeStep'
+import { CreateConfirmation, CreateCustomNodeAttribute, CreateCustomTypeStep, SelectCustomNodeParent } from './CreateCustomTypeStep'
 import { SourceStep } from './SourceStep'
 import { SourceTypeStep } from './SourceTypeStep'
 
@@ -21,7 +21,7 @@ export type FormData = {
   sourceLink?: string
 }
 
-export type AddItemModalStepID = 'sourceType' | 'source' | 'selectParent' | 'createType' | 'setBudget'
+export type AddItemModalStepID = 'sourceType' | 'source' | 'selectParent' | 'createType' | 'setBudget' | 'createNodeType' | 'createConfirmation'
 
 const handleSubmitForm = async (
   data: FieldValues,
@@ -32,7 +32,7 @@ const handleSubmitForm = async (
   const endPoint = 'node'
 
   const body: { [index: string]: unknown } = {}
-
+  
   body.node_type = data.nodeType
   body.name = data.name
 
@@ -159,7 +159,11 @@ export const AddItemModal = () => {
     }
   })
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [type, setType] = useState('')
+
   const handleSelectType = (val: string) => setValue('nodeType', val)
+  const pass = (val: string) => setType(val)
 
   const AddItemModalStepMapper: Record<AddItemModalStepID, JSX.Element> = {
     sourceType: (
@@ -171,13 +175,17 @@ export const AddItemModal = () => {
       />
     ),
     source: <SourceStep name={name} skipToStep={skipToStep} sourceLink={sourceLink || ''} type={nodeType} />,
-    selectParent: <SelectCustomNodeParent onSelectType={handleSelectType} skipToStep={skipToStep} />,
-    createType: <CreateCustomTypeStep onSelectType={handleSelectType} skipToStep={skipToStep} />,
+    selectParent: <SelectCustomNodeParent onSelectType={pass} skipToStep={skipToStep} />,
+    createType: <CreateCustomTypeStep name={name} onSelectType={handleSelectType} skipToStep={skipToStep} />,
     setBudget: <BudgetStep loading={loading} onClick={() => null} />,
+    createNodeType: <CreateCustomNodeAttribute onSelectType={() => null} parent={type} skipToStep={skipToStep} />,
+    createConfirmation: <CreateConfirmation name={name} onSelectType={handleSelectType} skipToStep={skipToStep} />,
   }
 
+  const modalKind: ModalKind = stepId === 'createNodeType' ? 'regular' : 'small'
+
   return (
-    <BaseModal id="addItem" kind="small" onClose={close} preventOutsideClose>
+    <BaseModal id="addItem" kind={modalKind} onClose={close} preventOutsideClose>
       <FormProvider {...form}>
         <form id="add-node-form" onSubmit={onSubmit}>
           {AddItemModalStepMapper[stepId]}

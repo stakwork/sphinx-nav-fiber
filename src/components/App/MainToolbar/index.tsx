@@ -22,7 +22,7 @@ export const MainToolbar = () => {
       <LogoButton>
         <img alt="Second brain" src="logo.svg" />
       </LogoButton>
-      {isAdmin && (
+      {!isAdmin && (
         <ActionButton data-testid="add-item-modal" onClick={openItemAddModal}>
           <IconWrapper>
             <AddSourceIcon />
