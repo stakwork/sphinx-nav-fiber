@@ -9,6 +9,7 @@ import { Flex } from '~/components/common/Flex'
 import { putNodeData } from '~/network/fetchSourcesData'
 import { useTopicsStore } from '~/stores/useTopicsStore'
 import { Topic } from '~/types'
+import { formatDate } from '~/utils'
 import { colors } from '~/utils/colors'
 import { StyledTableCell, StyledTableRow } from '../../common'
 
@@ -22,7 +23,7 @@ const TableRowComponent: FC<TTableRaw> = ({ topic, onClick, onSearch }) => {
   const [ids, total] = useTopicsStore((s) => [s.ids, s.total])
   const [loading, setLoading] = useState(false)
 
-  const date = topic.date_added_to_graph.toString()
+  const date = formatDate(topic.date_added_to_graph)
 
   const handleMute = async (refId: string, shouldMute: boolean) => {
     setLoading(true)
@@ -108,7 +109,7 @@ const TableRowComponent: FC<TTableRaw> = ({ topic, onClick, onSearch }) => {
         )}
       </StyledTableCell>
       <StyledTableCell>
-        <span>{new Date(Number(date) * 1000).toDateString()}</span>
+        <span>{date}</span>
       </StyledTableCell>
 
       <StyledTableCell className="cell-center">
