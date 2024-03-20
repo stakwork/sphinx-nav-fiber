@@ -45,6 +45,7 @@ export const TextInput = ({
   ...props
 }: Props) => {
   const {
+    register,
     control,
     formState: { errors },
   } = useFormContext()
@@ -73,7 +74,7 @@ export const TextInput = ({
       <Wrapper>
         <Controller
           control={control}
-          name={name}
+          {...register(name)}
           render={({ field: { onBlur, onChange, value, ref } }) => {
             const { disabled = defaultProps.disabled, textAlign = defaultProps.textAlign } = props
 
@@ -83,6 +84,7 @@ export const TextInput = ({
                 disabled={false}
                 inputRef={ref}
                 mask={mask}
+                {...register(name)}
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-ignore: maskPlaceholder prop exist, but is not added to types
                 maskPlaceholder={maskPlaceholder}
@@ -93,6 +95,7 @@ export const TextInput = ({
                 <WebTextInput
                   colorName="white"
                   disabled={disabled}
+                  {...register(name)}
                   id={id}
                   placeholderTextColor="inputPlaceholder"
                   textAlign={textAlign}
@@ -103,7 +106,7 @@ export const TextInput = ({
                 {...props}
                 colorName="white"
                 id={id}
-                name={name}
+                {...register(name)}
                 onBlur={onBlur}
                 onChange={onChange}
                 placeholderTextColor="inputPlaceholder"

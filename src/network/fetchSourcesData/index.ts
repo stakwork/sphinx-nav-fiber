@@ -70,7 +70,7 @@ export type TtopicsParams = {
 }
 
 type createCustonNode = {
-  type: string,
+  type: string
   parent: string
   name: string
   age: number
@@ -224,13 +224,13 @@ export const getNodeSchemaTypes = async () => {
 }
 
 export const getNodeType = async (parent: string) => {
-  const response = await api.get<{[k: string]: string}>(`/schema/${parent}`)
+  const response = await api.get<{ [k: string]: string }>(`/schema/${parent}`)
 
   return response
 }
 
 export const postCustomType = async (data: createCustonNode) => {
-  const response = await api.post("/schema", JSON.stringify(data))
+  const response = await api.post('/schema', JSON.stringify(data))
 
   return response
 }

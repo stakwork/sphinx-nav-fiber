@@ -1,4 +1,4 @@
-import { FocusEvent, KeyboardEvent, MutableRefObject, ComponentProps } from 'react'
+import { FocusEvent, KeyboardEvent, MutableRefObject } from 'react'
 import { ColorName } from '~/utils/colors'
 import { AutoComplete } from '../tokens/autoComplete'
 
@@ -34,4 +34,4 @@ export type BaseTextInputProps = {
   textAlign?: TextAlign
   type?: InputType
   value?: string
-} 
+}

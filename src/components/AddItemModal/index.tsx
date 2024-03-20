@@ -11,17 +11,27 @@ import { useUserStore } from '~/stores/useUserStore'
 import { NodeExtended, SubmitErrRes } from '~/types'
 import { executeIfProd, getLSat } from '~/utils'
 import { BudgetStep } from './BudgetStep'
-import { CreateConfirmation, CreateCustomNodeAttribute, CreateCustomTypeStep, SelectCustomNodeParent } from './CreateCustomTypeStep'
+import { CreateCustomTypeStep, SelectCustomNodeParent } from './CreateCustomTypeStep'
 import { SourceStep } from './SourceStep'
 import { SourceTypeStep } from './SourceTypeStep'
+import { CreateConfirmation } from './CreateComfirmationStep'
+import { CreateCustomNodeAttribute } from './CustomAttributesStep'
 
 export type FormData = {
   name: string
   nodeType: string
   sourceLink?: string
-}
+  type?: string
+} & Partial<{ [k: string]: string }>
 
-export type AddItemModalStepID = 'sourceType' | 'source' | 'selectParent' | 'createType' | 'setBudget' | 'createNodeType' | 'createConfirmation'
+export type AddItemModalStepID =
+  | 'sourceType'
+  | 'source'
+  | 'selectParent'
+  | 'createType'
+  | 'setBudget'
+  | 'createNodeType'
+  | 'createConfirmation'
 
 const handleSubmitForm = async (
   data: FieldValues,
@@ -29,61 +39,96 @@ const handleSubmitForm = async (
   setBudget: (value: number | null) => void,
   onAddNewData: (value: FieldValues, id: string) => void,
 ): Promise<void> => {
-  const endPoint = 'node'
+  if (data.nodeType === 'Create custom type') {
+    const body: { [index: string]: unknown } = {}
 
-  const body: { [index: string]: unknown } = {}
-  
-  body.node_type = data.nodeType
-  body.name = data.name
+    body.type = data.type
 
-  if (data.nodeType === 'Image') {
-    body.node_data = {
-      source_link: data.sourceLink,
+    try {
+      const res: SubmitErrRes = await api.post(`/${'schema'}`, JSON.stringify(data), {})
+
+      if (res.error) {
+        const { message } = res.error
+
+        throw new Error(message)
+      }
+
+      onAddNewData(data, res?.data?.ref_id)
+
+      notify(NODE_ADD_SUCCESS)
+      close()
+
+      // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+    } catch (err: any) {
+      let errorMessage = NODE_ADD_ERROR
+
+      if (err.status === 400) {
+        const error = await err.json()
+
+        errorMessage = error.errorCode || error?.status || NODE_ADD_ERROR
+      } else if (err instanceof Error) {
+        errorMessage = err.message
+      }
+
+      throw new Error(errorMessage)
     }
-  }
+  } else {
+    const endPoint = 'node'
 
-  let lsatToken = ''
+    const body: { [index: string]: unknown } = {}
 
-  // skipping this for end to end test because it requires a sphinx-relay to be connected
-  await executeIfProd(async () => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    const enable = await sphinx.enable()
+    body.node_type = data.nodeType
+    body.name = data.name
 
-    body.pubkey = enable?.pubkey
+    if (data.nodeType === 'Image') {
+      body.node_data = {
+        source_link: data.sourceLink,
+      }
+    }
 
-    lsatToken = await getLSat()
-  })
+    let lsatToken = ''
 
-  try {
-    const res: SubmitErrRes = await api.post(`/${endPoint}`, JSON.stringify(body), {
-      Authorization: lsatToken,
+    // skipping this for end to end test because it requires a sphinx-relay to be connected
+    await executeIfProd(async () => {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      const enable = await sphinx.enable()
+
+      body.pubkey = enable?.pubkey
+
+      lsatToken = await getLSat()
     })
 
-    if (res.error) {
-      const { message } = res.error
+    try {
+      const res: SubmitErrRes = await api.post(`/${endPoint}`, JSON.stringify(body), {
+        Authorization: lsatToken,
+      })
 
-      throw new Error(message)
+      if (res.error) {
+        const { message } = res.error
+
+        throw new Error(message)
+      }
+
+      onAddNewData(data, res?.data?.ref_id)
+
+      notify(NODE_ADD_SUCCESS)
+      close()
+
+      // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+    } catch (err: any) {
+      let errorMessage = NODE_ADD_ERROR
+
+      if (err.status === 400) {
+        const error = await err.json()
+
+        errorMessage = error.errorCode || error?.status || NODE_ADD_ERROR
+      } else if (err instanceof Error) {
+        errorMessage = err.message
+      }
+
+      throw new Error(errorMessage)
     }
-
-    onAddNewData(data, res?.data?.ref_id)
-
-    notify(NODE_ADD_SUCCESS)
-    close()
-
-    // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-  } catch (err: any) {
-    let errorMessage = NODE_ADD_ERROR
-
-    if (err.status === 400) {
-      const error = await err.json()
-
-      errorMessage = error.errorCode || error?.status || NODE_ADD_ERROR
-    } else if (err instanceof Error) {
-      errorMessage = err.message
-    }
-
-    throw new Error(errorMessage)
   }
 }
 
@@ -96,6 +141,7 @@ export const AddItemModal = () => {
   const [loading, setLoading] = useState(false)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [error, setError] = useState<string>('')
+  const [parent, setParent] = useState('')
 
   const [addNewNode, setSelectedNode] = useDataStore((s) => [s.addNewNode, s.setSelectedNode])
 
@@ -110,6 +156,9 @@ export const AddItemModal = () => {
   const nodeType = watch('nodeType')
   const name = watch('name')
   const sourceLink = watch('sourceLink')
+  const type = watch('type')
+
+  watch('title')
 
   const handleClose = () => {
     close()
@@ -160,10 +209,13 @@ export const AddItemModal = () => {
   })
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [type, setType] = useState('')
 
   const handleSelectType = (val: string) => setValue('nodeType', val)
-  const pass = (val: string) => setType(val)
+
+  const SelectParent = (val: string) => {
+    setParent(val)
+    setValue('parent', val)
+  }
 
   const AddItemModalStepMapper: Record<AddItemModalStepID, JSX.Element> = {
     sourceType: (
@@ -175,11 +227,13 @@ export const AddItemModal = () => {
       />
     ),
     source: <SourceStep name={name} skipToStep={skipToStep} sourceLink={sourceLink || ''} type={nodeType} />,
-    selectParent: <SelectCustomNodeParent onSelectType={pass} skipToStep={skipToStep} />,
-    createType: <CreateCustomTypeStep name={name} onSelectType={handleSelectType} skipToStep={skipToStep} />,
     setBudget: <BudgetStep loading={loading} onClick={() => null} />,
-    createNodeType: <CreateCustomNodeAttribute onSelectType={() => null} parent={type} skipToStep={skipToStep} />,
-    createConfirmation: <CreateConfirmation name={name} onSelectType={handleSelectType} skipToStep={skipToStep} />,
+    createType: <CreateCustomTypeStep onSelectType={handleSelectType} skipToStep={skipToStep} type={type} />,
+    selectParent: <SelectCustomNodeParent onSelectType={SelectParent} skipToStep={skipToStep} />,
+    createNodeType: (
+      <CreateCustomNodeAttribute onSelectType={handleSelectType} parent={parent} skipToStep={skipToStep} />
+    ),
+    createConfirmation: <CreateConfirmation onSelectType={handleSelectType} skipToStep={skipToStep} type={type} />,
   }
 
   const modalKind: ModalKind = stepId === 'createNodeType' ? 'regular' : 'small'

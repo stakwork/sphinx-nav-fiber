@@ -22,6 +22,7 @@ type Props = {
   handleInputChange?: (val: string) => void
   isLoading?: boolean
   autoFocus?: boolean
+  disabled?: boolean
 }
 
 const defaultProps = {
@@ -37,6 +38,7 @@ export const AutoComplete: FC<Props> = ({
   handleInputChange,
   isLoading = false,
   autoFocus = false,
+  disabled = false,
 }) => {
   const inputRef = useRef<HTMLInputElement>(null)
   const [open, setOpen] = useState<boolean>(false)
@@ -60,6 +62,7 @@ export const AutoComplete: FC<Props> = ({
         autoHighlight
         blurOnSelect
         disableClearable
+        disabled={disabled}
         disablePortal
         id="blur-on-select"
         ListboxProps={{

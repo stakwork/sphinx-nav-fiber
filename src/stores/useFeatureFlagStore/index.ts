@@ -21,7 +21,7 @@ const defaultData: Omit<
   queuedSourcesFlag: false,
   v2Flag: false,
   customSchemaFlag: false,
-  graphBluePrint: false
+  graphBluePrint: false,
 }
 
 export const useFeatureFlagStore = create<FeatureFlagStore>((set) => ({

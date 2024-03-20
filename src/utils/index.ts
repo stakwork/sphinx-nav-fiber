@@ -54,5 +54,5 @@ export {
   showPlayButton,
   getTrendingTopic,
   formatNumberWithCommas,
-  parseJson
+  parseJson,
 }
