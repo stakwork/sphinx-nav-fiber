@@ -11,7 +11,7 @@ export const AppContainer = () => {
   const [authenticated, setAuthenticated] = useState(false)
   const [v2Flag] = useFeatureFlagStore((s) => [s.v2Flag])
 
-  const App = !v2Flag ? <LazyAppNew /> : <LazyApp />
+  const App = v2Flag ? <LazyAppNew /> : <LazyApp />
 
   return (
     <AppProviders>
