@@ -37,7 +37,7 @@ export const GraphNew = () => {
 
       <Segment
         // eslint-disable-next-line react/no-array-index-key
-        key={n.source}
+        key={n.ref_id}
         link={n}
       />
     ))
@@ -58,7 +58,6 @@ export const GraphNew = () => {
           /** NOTE: using the key in this way the segments re-mounts
            *  everytime the data.links count changes
            * */
-          key={`links-${links.length}-${graphStyle}`}
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
           fog
