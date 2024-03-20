@@ -53,9 +53,15 @@ export async function payLsat(setBudget: (value: number | null) => void): Promis
       if (error.status === 402) {
         lsat = Lsat.fromHeader(error.headers.get('www-authenticate'))
 
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        const LSATRes = await sphinx.saveLsat(lsat.invoice, lsat.baseMacaroon, window.location.host)
+        let LSATRes
+
+        if (!isE2E) {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          LSATRes = await sphinx.saveLsat(lsat.invoice, lsat.baseMacaroon, window.location.host)
+        } else {
+          LSATRes = await sphinxBridge.saveLsat(lsat.invoice, lsat.baseMacaroon, window.location.host)
+        }
 
         if (LSATRes?.lsat) {
           localStorage.setItem(
