@@ -9,6 +9,7 @@ import { Flex } from '~/components/common/Flex'
 import { putNodeData } from '~/network/fetchSourcesData'
 import { useTopicsStore } from '~/stores/useTopicsStore'
 import { Topic } from '~/types'
+import { formatDate } from '~/utils'
 import { colors } from '~/utils/colors'
 import { StyledTableCell, StyledTableRow } from '../../common'
 
@@ -22,7 +23,7 @@ const TableRowComponent: FC<TTableRaw> = ({ topic, onClick, onSearch }) => {
   const [ids, total] = useTopicsStore((s) => [s.ids, s.total])
   const [loading, setLoading] = useState(false)
 
-  const date = topic.date_added_to_graph.toString()
+  const date = formatDate(topic.date_added_to_graph)
 
   const handleMute = async (refId: string, shouldMute: boolean) => {
     setLoading(true)
@@ -81,7 +82,7 @@ const TableRowComponent: FC<TTableRaw> = ({ topic, onClick, onSearch }) => {
             '& .MuiPaper-root': {
               backgroundColor: 'rgba(0, 0, 0, 0.9)',
               borderRadius: '4px',
-              width: '140px',
+              width: '160px',
             },
           }}
           transformOrigin={{
@@ -89,7 +90,7 @@ const TableRowComponent: FC<TTableRaw> = ({ topic, onClick, onSearch }) => {
             horizontal: 'center',
           }}
         >
-          <Typography sx={{ p: 1.5, fontSize: '13px', fontWeight: 400, lineHeight: '1.8' }}>
+          <Typography sx={{ p: 1.5, fontSize: '13px', fontWeight: 400, lineHeight: '1.8', wordWrap: 'break-word' }}>
             {topic.edgeList.join(', ')}
           </Typography>
         </Popover>
@@ -108,7 +109,7 @@ const TableRowComponent: FC<TTableRaw> = ({ topic, onClick, onSearch }) => {
         )}
       </StyledTableCell>
       <StyledTableCell>
-        <span>{new Date(Number(date) * 1000).toDateString()}</span>
+        <span>{date}</span>
       </StyledTableCell>
 
       <StyledTableCell className="cell-center">

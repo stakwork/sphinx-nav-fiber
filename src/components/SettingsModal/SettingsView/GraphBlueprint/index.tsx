@@ -1,18 +1,49 @@
-import React from 'react'
-import styled from 'styled-components'
+import React, { useEffect, useState } from 'react'
+import { Table } from './Table'
 import { Flex } from '~/components/common/Flex'
-import { Text } from '~/components/common/Text'
+import { getSchemaAll, Schema } from '~/network/fetchSourcesData'
+import { ClipLoader } from 'react-spinners'
+import { colors } from '~/utils'
+import styled from 'styled-components'
 
-export const GraphBlueprint: React.FC = () => (
-  <Flex direction="column">
-    <StyledText>Graph Blueprint settings will go here.</StyledText>
-  </Flex>
-)
+export const GraphBlueprint: React.FC = () => {
+  const [loading, setLoading] = useState(true)
+  const [schemaAll, setSchemaAll] = useState<Schema[]>([])
 
-const StyledText = styled(Text)`
-  font-family: Barlow;
-  font-size: 16px;
-  font-style: normal;
-  font-weight: 400;
-  margin: 120px;
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await getSchemaAll()
+
+        setSchemaAll(response.schemas)
+
+        setLoading(false)
+      } catch (error) {
+        console.error('Error fetching data:', error)
+
+        setLoading(false)
+      }
+    }
+
+    fetchData()
+  }, [])
+
+  return (
+    <TableWrapper align={loading ? 'center' : 'flex-start'} justify={loading ? 'center' : 'flex-start'}>
+      {loading ? (
+        <ClipLoader color={colors.white} />
+      ) : (
+        <>
+          <Table schemas={schemaAll} />
+        </>
+      )}
+    </TableWrapper>
+  )
+}
+
+const TableWrapper = styled(Flex)`
+  min-height: 0;
+  overflow: auto;
+  flex: 1;
+  width: 100%;
 `

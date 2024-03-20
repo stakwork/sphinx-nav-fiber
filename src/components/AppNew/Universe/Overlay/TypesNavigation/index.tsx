@@ -3,6 +3,31 @@ import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { useGraphStore } from '~/stores/useGraphStore'
 import { colors } from '~/utils/colors'
+import { GraphSearch } from '../Search'
+
+type Props = {
+  onSubmit: () => void
+}
+
+export const TypesNavigation = ({ onSubmit }: Props) => {
+  const [nodeTypes] = useGraphStore((s) => [s.nodeTypes])
+
+  return (
+    <Wrapper align="stretch" borderRadius={8} px={24} py={16}>
+      <GraphSearch onSubmit={onSubmit} />
+
+      <Flex mt={24}>
+        <>
+          {nodeTypes.map((type) => (
+            <Flex key={type} direction="row" justify="flex-start" mb={12}>
+              <Text>{type}</Text>
+            </Flex>
+          ))}
+        </>
+      </Flex>
+    </Wrapper>
+  )
+}
 
 const Wrapper = styled(Flex)(({ theme }) => ({
   position: 'absolute',
@@ -20,19 +45,3 @@ const Wrapper = styled(Flex)(({ theme }) => ({
     padding: theme.spacing(1, 1.5),
   },
 }))
-
-export const TypesNavigation = () => {
-  const [nodeTypes] = useGraphStore((s) => [s.nodeTypes])
-
-  return (
-    <Wrapper align="flex-start" borderRadius={8} px={24} py={16}>
-      <>
-        {nodeTypes.map((type) => (
-          <Flex key={type} direction="row" justify="flex-start" mb={12}>
-            <Text>{type}</Text>
-          </Flex>
-        ))}
-      </>
-    </Wrapper>
-  )
-}
