@@ -24,8 +24,7 @@ const Search: React.FC<SearchProps> = ({ placeholder, activeIcon, loadingIcon, d
   }
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    !e.target.value && resetSearch()
-    setFilters({ search: e.target.value })
+    !e.target.value.trim() ? resetSearch() : setFilters({ search: e.target.value })
   }
 
   const handleSearch = (e: KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {

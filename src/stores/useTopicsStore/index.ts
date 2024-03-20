@@ -48,7 +48,17 @@ export const useTopicsStore = create<TopicsStore>((set, get) => ({
         newIds.push(topic.ref_id)
       })
 
-      set({ data: newData, ids: newIds, total: responseData.topicCount })
+      const removeDuplicates = <T>(array: T[]) => [...new Set(array)]
+
+      const searchedIds = Object.keys(newData).filter(
+        (key) => filters?.search?.trim() && newData[key].topic.toLowerCase().includes(filters.search?.toLowerCase()),
+      )
+
+      set({
+        data: newData,
+        ...(!filters?.search?.trim() ? { ids: removeDuplicates(newIds) } : { ids: removeDuplicates(searchedIds) }),
+        total: responseData.topicCount,
+      })
     } catch (error) {
       console.log(error)
     }
