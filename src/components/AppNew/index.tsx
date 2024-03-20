@@ -114,13 +114,13 @@ export const AppNew = () => {
       <Suspense fallback={<div>Loading...</div>}>
         <Wrapper direction="row">
           <FormProvider {...form}>
-            {true && <LazyMainToolbar />}
+            <LazyMainToolbar />
             {false && <LazySideBar onSubmit={handleSubmit} />}
-            {true && <LazyUniverse />}
+            <LazyUniverse />
             <AppBar />
             <Version>v{version}</Version>
             <ActionsToolbar />
-            <Overlay />
+            <Overlay onSubmit={handleSubmit} />
           </FormProvider>
           <ModalsContainer />
           <Toasts />
