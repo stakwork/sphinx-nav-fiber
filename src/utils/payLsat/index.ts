@@ -1,7 +1,9 @@
 import { Lsat } from 'lsat-js'
 import * as sphinx from 'sphinx-bridge'
 import { requestProvider } from 'webln'
+import { isE2E } from '~/constants'
 import { buyLsat } from '~/network/buyLsat'
+import { sphinxBridge } from '~/testSphinxBridge'
 import { isSphinx } from '../isSphinx'
 
 // eslint-disable-next-line  @typescript-eslint/no-explicit-any
@@ -23,9 +25,15 @@ export async function payLsat(setBudget: (value: number | null) => void): Promis
       await sphinx.updateLsat(parsedLsat.identifier, 'expired')
     }
 
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    const budget = await sphinx.setBudget()
+    let budget
+
+    if (!isE2E) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      budget = await sphinx.setBudget()
+    } else {
+      budget = await sphinxBridge.setBudget()
+    }
 
     let budgetAmount = budget?.budget
 

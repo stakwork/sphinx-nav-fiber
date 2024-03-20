@@ -83,7 +83,14 @@ export const LocationStep: FC<Props> = ({ latitude, longitude, onNextStep, form 
       </Flex>
       <Flex direction="row">
         <Flex grow={1}>
-          <StyledButton color="secondary" disabled={false} onClick={handleSkip} size="large" variant="contained">
+          <StyledButton
+            color="secondary"
+            data-testid="skip-location-btn"
+            disabled={false}
+            onClick={handleSkip}
+            size="large"
+            variant="contained"
+          >
             Skip
           </StyledButton>
         </Flex>
