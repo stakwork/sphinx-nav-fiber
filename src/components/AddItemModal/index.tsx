@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { JSX, useEffect, useState } from 'react'
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import * as sphinx from 'sphinx-bridge'
 import { BaseModal } from '~/components/Modal'
@@ -11,6 +11,7 @@ import { NodeExtended, SubmitErrRes } from '~/types'
 import { executeIfProd, getLSat } from '~/utils'
 import { SuccessNotify } from '../common/SuccessToast'
 import { BudgetStep } from './BudgetStep'
+import { CreateCustomTypeStep, SelectCustomNodeParent } from './CreateCustomTypeStep'
 import { SourceStep } from './SourceStep'
 import { SourceTypeStep } from './SourceTypeStep'
 
@@ -19,6 +20,8 @@ export type FormData = {
   nodeType: string
   sourceLink?: string
 }
+
+export type AddItemModalStepID = 'sourceType' | 'source' | 'selectParent' | 'createType' | 'setBudget'
 
 const handleSubmitForm = async (
   data: FieldValues,
@@ -81,20 +84,20 @@ const handleSubmitForm = async (
 }
 
 export const AddItemModal = () => {
-  const [currentStep, setCurrentStep] = useState(0)
+  const [stepId, setStepId] = useState<AddItemModalStepID>('sourceType')
   const { close, visible } = useModal('addItem')
   const [setBudget] = useUserStore((s) => [s.setBudget])
   const form = useForm<FormData>({ mode: 'onChange' })
   const { watch, setValue, reset } = form
   const [loading, setLoading] = useState(false)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [error, setError] = useState<string>('')
 
   const [addNewNode, setSelectedNode] = useDataStore((s) => [s.addNewNode, s.setSelectedNode])
 
   useEffect(
     () => () => {
-      setError('')
-      setCurrentStep(0)
+      setStepId('sourceType')
       reset()
     },
     [visible, reset],
@@ -108,12 +111,8 @@ export const AddItemModal = () => {
     close()
   }
 
-  const onNextStep = () => {
-    setCurrentStep(currentStep + 1)
-  }
-
-  const onPrevStep = () => {
-    setCurrentStep(currentStep - 1)
+  const skipToStep = (step: AddItemModalStepID) => {
+    setStepId(step)
   }
 
   const onAddNewNode = (data: FieldValues, id: string) => {
@@ -167,28 +166,26 @@ export const AddItemModal = () => {
 
   const handleSelectType = (val: string) => setValue('nodeType', val)
 
+  const AddItemModalStepMapper: Record<AddItemModalStepID, JSX.Element> = {
+    sourceType: (
+      <SourceTypeStep
+        allowNextStep={!!nodeType}
+        onSelectType={handleSelectType}
+        selectedType={nodeType}
+        skipToStep={skipToStep}
+      />
+    ),
+    source: <SourceStep name={name} skipToStep={skipToStep} sourceLink={sourceLink || ''} type={nodeType} />,
+    selectParent: <SelectCustomNodeParent onSelectType={handleSelectType} skipToStep={skipToStep} />,
+    createType: <CreateCustomTypeStep onSelectType={handleSelectType} skipToStep={skipToStep} />,
+    setBudget: <BudgetStep loading={loading} onClick={() => null} />,
+  }
+
   return (
     <BaseModal id="addItem" kind="small" onClose={close} preventOutsideClose>
       <FormProvider {...form}>
         <form id="add-node-form" onSubmit={onSubmit}>
-          {currentStep === 0 && (
-            <SourceTypeStep
-              allowNextStep={!!nodeType}
-              onNextStep={onNextStep}
-              onSelectType={handleSelectType}
-              selectedType={nodeType}
-            />
-          )}
-          {currentStep === 1 && (
-            <SourceStep
-              name={name}
-              onNextStep={onNextStep}
-              onPrevStep={onPrevStep}
-              sourceLink={sourceLink || ''}
-              type={nodeType}
-            />
-          )}
-          {currentStep === 2 && <BudgetStep error={error} loading={loading} onClick={() => null} />}
+          {AddItemModalStepMapper[stepId]}
         </form>
       </FormProvider>
     </BaseModal>

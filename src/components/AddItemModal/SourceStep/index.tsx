@@ -5,16 +5,16 @@ import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { TextInput } from '~/components/common/TextInput'
 import { requiredRule } from '~/constants'
+import { AddItemModalStepID } from '..'
 
 type Props = {
   type: string
   sourceLink?: string
   name: string
-  onNextStep: () => void
-  onPrevStep: () => void
+  skipToStep: (step: AddItemModalStepID) => void
 }
 
-export const SourceStep: FC<Props> = ({ type, onNextStep, onPrevStep, name, sourceLink }) => {
+export const SourceStep: FC<Props> = ({ type, skipToStep, name, sourceLink }) => {
   const allowNextStep = type === 'Image' ? name && sourceLink : name
 
   return (
@@ -60,12 +60,18 @@ export const SourceStep: FC<Props> = ({ type, onNextStep, onPrevStep, name, sour
       ) : null}
       <Flex direction="row">
         <Flex grow={1}>
-          <Button color="secondary" onClick={onPrevStep} size="large" variant="contained">
+          <Button color="secondary" onClick={() => skipToStep('sourceType')} size="large" variant="contained">
             Prev
           </Button>
         </Flex>
         <Flex grow={1} ml={20}>
-          <Button color="secondary" disabled={!allowNextStep} onClick={onNextStep} size="large" variant="contained">
+          <Button
+            color="secondary"
+            disabled={!allowNextStep}
+            onClick={() => skipToStep('setBudget')}
+            size="large"
+            variant="contained"
+          >
             Next
           </Button>
         </Flex>
