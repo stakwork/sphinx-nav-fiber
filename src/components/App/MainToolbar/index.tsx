@@ -4,6 +4,7 @@ import AddSourceIcon from '~/components/Icons/AddSourceIcon'
 import SettingsIcon from '~/components/Icons/SettingsIcon'
 import SourcesTableIcon from '~/components/Icons/SourcesTableIcon'
 import { Flex } from '~/components/common/Flex'
+import { SuccessNotify } from '~/components/common/SuccessToast'
 import { Text } from '~/components/common/Text'
 import { useModal } from '~/stores/useModalStore'
 import { useUserStore } from '~/stores/useUserStore'
@@ -19,10 +20,10 @@ export const MainToolbar = () => {
 
   return (
     <Wrapper>
-      <LogoButton>
+      <LogoButton onClick={() => SuccessNotify()}>
         <img alt="Second brain" src="logo.svg" />
       </LogoButton>
-      {!isAdmin && (
+      {isAdmin && (
         <ActionButton data-testid="add-item-modal" onClick={openItemAddModal}>
           <IconWrapper>
             <AddSourceIcon />

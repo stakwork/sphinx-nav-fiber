@@ -1,11 +1,11 @@
+import { useEffect, useState } from 'react'
+import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
-import { Avatar } from '~/components/common/Avatar'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
-import { Guests, Node } from '~/types'
+import { fetchNode } from '~/network/fetchGraphDataNew'
+import { Attributes, NodeExtendedNew } from '~/network/fetchGraphDataNew/types'
 import { colors } from '~/utils/colors'
-import { formatDescription } from '~/utils/formatDescription'
-import { TwitData } from './Tweet'
 
 const Wrapper = styled(Flex)(({ theme }) => ({
   position: 'absolute',
@@ -24,147 +24,68 @@ const Wrapper = styled(Flex)(({ theme }) => ({
   },
 }))
 
-const Divider = styled(Flex)`
-  width: 22.5%;
-`
-
 type Props = {
-  node: Node | null
+  node: NodeExtendedNew
 }
 
 export const Tooltip = ({ node }: Props) => {
+  const [attributes, setAttributes] = useState<Attributes>({})
+  const [loading, setLoading] = useState(false)
+
+  const { node_type: nodeType, name, ref_id: refId } = node
+
+  useEffect(() => {
+    const init = async () => {
+      setLoading(true)
+
+      try {
+        const data = await fetchNode(refId)
+
+        if (data?.properties) {
+          setAttributes(data.properties)
+        }
+      } catch (error) {
+        console.error(error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    init()
+  }, [refId])
+
   if (!node) {
     return null
   }
 
-  const {
-    node_type: nodeType,
-    show_title: showTitle,
-    episode_title: episodeTitle,
-    description,
-    label,
-    text,
-    type,
-    twitter_handle: twitterHandle,
-  } = node
-
-  const guestArray = node.guests
-
-  let guests = false
-  let isGuestArrObj = false
-
-  if (guestArray) {
-    if (guestArray.length && guestArray[0] !== null) {
-      guests = true
-    }
-
-    if (typeof guestArray[0] === 'object') {
-      isGuestArrObj = true
-    }
-  }
-
-  let imageUrl = node.image_url
-
-  if (type === 'twitter_space') {
-    imageUrl = 'twitter_placeholder.png'
-  }
-
-  if (imageUrl == null) {
-    switch (nodeType) {
-      case 'guest':
-        imageUrl = 'person_placeholder2.png'
-        break
-      default:
-        imageUrl = 'noimage.jpeg'
-    }
-  }
-
-  if (nodeType === 'topic') {
-    return null
-  }
-
   return (
-    <Wrapper borderRadius={8} px={24} py={16}>
-      {nodeType === 'tweet' ? (
-        <TwitData twitterHandle={twitterHandle} />
-      ) : (
-        <>
-          <Flex direction="row">
-            <Divider />
-            <Flex align="flex-start" pb={12}>
-              <Text>{nodeType?.toUpperCase()}</Text>
-            </Flex>
+    <Wrapper align="flex-start" borderRadius={8} px={24} py={16}>
+      <>
+        <Flex direction="row" mb={12}>
+          <Flex align="flex-start">
+            <Text>{nodeType?.toUpperCase()}</Text>
           </Flex>
-
-          <Flex direction="row">
-            <Flex pr={12}>
-              <Avatar src={imageUrl} type="person" />
-            </Flex>
-
-            <div>
-              {type === 'guest' ? (
-                <Flex direction="column">
-                  <Text>{label}</Text>
-                  {text && (
-                    <Flex pt={4}>
-                      <Text color="primaryText1" kind="tiny">
-                        @{text}
-                      </Text>
-                    </Flex>
-                  )}
-                </Flex>
-              ) : (
-                <Text color="primaryText1" kind="tiny">
-                  {showTitle}
-                </Text>
-              )}
-
-              <Flex pt={4}>
-                {nodeType === 'clip' || (nodeType === 'episode' && <Text color="primaryText1">Episode</Text>)}
-
-                {nodeType === 'clip' ? (
-                  <Text as="div" kind="regularBold">
-                    {formatDescription(description)}
-                  </Text>
-                ) : (
-                  <Text color="primaryText1" kind="tiny">
-                    {episodeTitle}
-                  </Text>
-                )}
-              </Flex>
-
-              <Flex pt={12}>
-                {nodeType === 'clip' && <Text color="primaryText1">Episode</Text>}
-
-                <Text color="primaryText1" kind="tiny">
-                  {nodeType === 'clip' ? episodeTitle : formatDescription(description)}
-                </Text>
-              </Flex>
-
-              {guests && (
-                <Flex pt={12}>
-                  <Text color="primaryText1">People</Text>
-                  <Flex pt={4}>
-                    <Text color="primaryText1" kind="tiny">
-                      {isGuestArrObj
-                        ? (guestArray as Guests[])
-                            .map((guest) => {
-                              if (guest.name) {
-                                return guest.name
-                              }
-
-                              return `@${guest.twitter_handle}`
-                            })
-                            .join(', ')
-                        : guestArray?.join(', ')}
-                    </Text>
-                  </Flex>
-                </Flex>
-              )}
-            </div>
+        </Flex>
+        <Flex direction="row" mb={12}>
+          <Flex align="flex-start">
+            <Text>{name}</Text>
           </Flex>
-        </>
-      )}
+        </Flex>
+        {loading ? (
+          <ClipLoader color={colors.white} />
+        ) : (
+          Object.entries(attributes).map(([key, value]) => (
+            <Flex key={key} direction="row" justify="flex-start" mb={12}>
+              <Flex>
+                <Text>{key}: </Text>
+              </Flex>
+              <Flex ml={8}>
+                <Text>{value}</Text>
+              </Flex>
+            </Flex>
+          ))
+        )}
+      </>
     </Wrapper>
   )
 }

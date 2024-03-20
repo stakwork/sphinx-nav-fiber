@@ -5,7 +5,7 @@ import { isDevelopment, isE2E, NODE_RELATIVE_HIGHLIGHT_COLORS } from '~/constant
 import { api } from '~/network/api'
 import { FetchNodeParams } from '~/stores/useDataStore'
 import { MOCKED_NODES_EDGES } from './mockedData'
-import { FetchGDataResponse, GraphDataNew } from './types'
+import { FetchGDataResponse, GraphDataNew, NodeNew } from './types'
 import { generateSplitGraphPositions } from './utils/prepareGraphDataCircle'
 
 const defaultData: GraphDataNew = {
@@ -45,16 +45,46 @@ const fetchNodes = async (
     ...params,
   }).toString()
 
-  if (!params.word) {
-    try {
-      const response = await api.get<FetchGDataResponse>(`/prediction/graph/search?top_node_count=5&limit=10`)
+  try {
+    const response = await api.get<FetchGDataResponse>(
+      `/prediction/graph/search?top_node_count=5&limit=5` + (params.word ? `&word=${params.word}` : ''),
+    )
 
-      return response
-    } catch (e) {
-      console.error(e)
+    return response
+  } catch (e) {
+    console.error(e)
 
-      return null
-    }
+    return null
+  }
+
+  return null
+}
+
+export const fetchNode = async (refId: string): Promise<NodeNew | null> => {
+  try {
+    const response = await api.get<NodeNew>(`/node/${refId}`)
+
+    return response
+  } catch (e) {
+    console.error(e)
+
+    return null
+  }
+
+  return null
+}
+
+export const fetchNodeEdges = async (refId: string, skip: number): Promise<FetchGDataResponse | null> => {
+  try {
+    const response = await api.get<FetchGDataResponse>(
+      `/prediction/graph/edges/${refId}?skip=${skip}&limit=4&sort_by="edge_count"`,
+    )
+
+    return response
+  } catch (e) {
+    console.error(e)
+
+    return null
   }
 
   return null
@@ -77,8 +107,6 @@ const getGraphData = async (
     const dataInit = await fetchNodes(setBudget, params)
 
     const graphData: FetchGDataResponse | null = false ? MOCKED_NODES_EDGES : dataInit
-
-    console.log(graphData)
 
     if (graphData) {
       return formatFetchNodes(graphData, graphStyle)

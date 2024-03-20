@@ -10,12 +10,13 @@ import { useModal } from '~/stores/useModalStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { NodeExtended, SubmitErrRes } from '~/types'
 import { executeIfProd, getLSat } from '~/utils'
+import { SuccessNotify } from '../common/SuccessToast'
 import { BudgetStep } from './BudgetStep'
+import { CreateConfirmation } from './CreateComfirmationStep'
 import { CreateCustomTypeStep, SelectCustomNodeParent } from './CreateCustomTypeStep'
+import { CreateCustomNodeAttribute } from './CustomAttributesStep'
 import { SourceStep } from './SourceStep'
 import { SourceTypeStep } from './SourceTypeStep'
-import { CreateConfirmation } from './CreateComfirmationStep'
-import { CreateCustomNodeAttribute } from './CustomAttributesStep'
 
 export type FormData = {
   name: string
@@ -35,7 +36,6 @@ export type AddItemModalStepID =
 
 const handleSubmitForm = async (
   data: FieldValues,
-  close: () => void,
   setBudget: (value: number | null) => void,
   onAddNewData: (value: FieldValues, id: string) => void,
 ): Promise<void> => {
@@ -56,6 +56,7 @@ const handleSubmitForm = async (
       onAddNewData(data, res?.data?.ref_id)
 
       notify(NODE_ADD_SUCCESS)
+      // eslint-disable-next-line no-restricted-globals
       close()
 
       // eslint-disable-next-line  @typescript-eslint/no-explicit-any
@@ -113,6 +114,7 @@ const handleSubmitForm = async (
       onAddNewData(data, res?.data?.ref_id)
 
       notify(NODE_ADD_SUCCESS)
+      // eslint-disable-next-line no-restricted-globals
       close()
 
       // eslint-disable-next-line  @typescript-eslint/no-explicit-any
@@ -196,13 +198,22 @@ export const AddItemModal = () => {
     setLoading(true)
 
     try {
-      await handleSubmitForm(data, handleClose, setBudget, onAddNewNode)
-    } catch (e: unknown) {
-      if (e instanceof Error) {
-        setError(e.message)
+      await handleSubmitForm(data, setBudget, onAddNewNode)
+      SuccessNotify('Item Added')
+      handleClose()
+      // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+    } catch (err: any) {
+      let errorMessage = NODE_ADD_ERROR
+
+      if (err?.status === 400) {
+        const errorRes = await err.json()
+
+        errorMessage = errorRes.errorCode || errorRes?.status || NODE_ADD_ERROR
+      } else if (err instanceof Error) {
+        errorMessage = err.message
       }
 
-      setError(String(e))
+      setError(String(errorMessage))
     } finally {
       setLoading(false)
     }
@@ -233,7 +244,7 @@ export const AddItemModal = () => {
     createNodeType: (
       <CreateCustomNodeAttribute onSelectType={handleSelectType} parent={parent} skipToStep={skipToStep} />
     ),
-    createConfirmation: <CreateConfirmation onSelectType={handleSelectType} skipToStep={skipToStep} type={type} />,
+    createConfirmation: <CreateConfirmation onclose={handleClose} type={type} />,
   }
 
   const modalKind: ModalKind = stepId === 'createNodeType' ? 'regular' : 'small'

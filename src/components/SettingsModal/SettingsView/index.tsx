@@ -110,6 +110,7 @@ const StyledTabs = styled(Tabs)`
     .MuiTabs-indicator {
       background: ${colors.primaryBlue};
     }
+    width: 90%;
   }
 `
 
@@ -122,16 +123,17 @@ const StyledTab = styled(Tab)`
   && {
     padding: 30px 0 24px;
     color: ${colors.GRAY6};
-    margin-left: 36px;
+    margin-left: 10px;
     font-family: Barlow;
     font-size: 16px;
     font-style: normal;
     font-weight: 500;
-    text-align: left;
+    text-align: center;
 
     &.Mui-selected {
       color: ${colors.white};
     }
+    flex-grow: 1;
   }
 `
 

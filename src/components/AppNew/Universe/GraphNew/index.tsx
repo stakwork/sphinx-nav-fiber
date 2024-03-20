@@ -4,7 +4,6 @@ import { useGraphStore } from '~/stores/useGraphStore'
 import { Connections } from './Connections'
 import { Cubes } from './Cubes'
 import { Layer } from './Layers'
-import { Particles } from './Particles'
 import { Segment } from './Segment'
 import { NodeDetailsPanel } from './UI'
 
@@ -38,7 +37,7 @@ export const GraphNew = () => {
 
       <Segment
         // eslint-disable-next-line react/no-array-index-key
-        key={n.source}
+        key={n.ref_id}
         link={n}
       />
     ))
@@ -52,15 +51,13 @@ export const GraphNew = () => {
 
   return (
     <>
-      {true && <Cubes />}
-      {false && <Particles />}
+      <Cubes />
       {false && <Connections connections={data?.links || []} />}
       {!showSelectionGraph && (
         <Segments
           /** NOTE: using the key in this way the segments re-mounts
            *  everytime the data.links count changes
            * */
-          key={`links-${links.length}-${graphStyle}`}
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
           fog

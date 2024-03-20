@@ -20,6 +20,7 @@ import { DeviceCompatibilityNotice } from './DeviceCompatibilityNotification'
 import { Helper } from './Helper'
 import { ModalsContainer } from './ModalsContainer'
 import { Toasts } from './Toasts'
+import { Overlay } from './Universe/Overlay'
 
 const Wrapper = styled(Flex)`
   height: 100%;
@@ -113,12 +114,13 @@ export const AppNew = () => {
       <Suspense fallback={<div>Loading...</div>}>
         <Wrapper direction="row">
           <FormProvider {...form}>
-            {true && <LazyMainToolbar />}
+            <LazyMainToolbar />
             {false && <LazySideBar onSubmit={handleSubmit} />}
-            {true && <LazyUniverse />}
+            <LazyUniverse />
             <AppBar />
             <Version>v{version}</Version>
             <ActionsToolbar />
+            <Overlay onSubmit={handleSubmit} />
           </FormProvider>
           <ModalsContainer />
           <Toasts />

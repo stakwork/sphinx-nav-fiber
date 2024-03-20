@@ -29,7 +29,7 @@ export const SourceTypeStep: FC<Props> = ({ skipToStep, allowNextStep, onSelectT
 
         setOption([...schemaOptions, createNewNodeType])
       } else {
-        setOption([...OPTIONS, initialValue, createNewNodeType])
+        setOption([...OPTIONS, initialValue])
       }
     }
 

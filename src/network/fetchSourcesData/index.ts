@@ -1,12 +1,13 @@
 import {
-  FetchEdgeTypesResponse,
   FetchEdgesResponse,
+  FetchEdgeTypesResponse,
   FetchRadarResponse,
   FetchTopicResponse,
   NodeRequest,
   RadarRequest,
   SubmitErrRes,
 } from '~/types'
+import { getSignedMessageFromRelay } from '~/utils'
 import { api } from '../api'
 
 type TradarParams = {
@@ -108,9 +109,38 @@ const defaultViewContentParams = {
   limit: '10',
 }
 
+export interface Schema {
+  name?: string
+  ref_id?: string
+  type?: string
+  age?: number
+  parent?: string
+  link?: string
+  title?: string
+  app_version?: string
+  description?: string
+  mission_statement?: string
+  namespace?: string
+  search_term?: string
+}
+
+interface SchemaAllResponse {
+  schemas: Schema[]
+}
+
+export const getSchemaAll = async () => {
+  const url = '/schema/all'
+  const response = await api.get<SchemaAllResponse>(url)
+
+  return response
+}
+
 export const getNodeContent = async (queryParams: ViewContentParams = defaultViewContentParams) => {
   const queryString = new URLSearchParams({ ...queryParams }).toString()
-  const url = `/node/content?${queryString}`
+
+  const signedMessage = await getSignedMessageFromRelay()
+
+  const url = `/node/content?${queryString}&msg=${signedMessage.message}&sig=${signedMessage.signature}`
   const response = await api.get<NodeContentResponse>(url)
 
   return response
