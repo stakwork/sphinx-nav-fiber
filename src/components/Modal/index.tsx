@@ -84,7 +84,7 @@ const CloseButton = styled(Flex)`
   z-index: 1;
 `
 
-type ModalKind = 'small' | 'regular' | 'large'
+export type ModalKind = 'small' | 'regular' | 'large'
 
 type Props = PropsWithChildren<{
   id: AvailableModals

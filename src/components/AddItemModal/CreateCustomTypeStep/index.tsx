@@ -16,10 +16,24 @@ type Props = {
   skipToStep: (step: AddItemModalStepID) => void
   // eslint-disable-next-line react/no-unused-prop-types
   onSelectType: (val: string) => void
+  // eslint-disable-next-line react/no-unused-prop-types
+  parent?: string
+  // eslint-disable-next-line react/no-unused-prop-types
+  name?: string
+  // eslint-disable-next-line react/no-unused-prop-types
+  sourceLink?: string
+  // eslint-disable-next-line react/no-unused-prop-types
+  type?: string
+  // eslint-disable-next-line react/no-unused-prop-types
+  selectedType?: string
 }
 
-export const SelectCustomNodeParent: FC<Props> = ({ onSelectType, skipToStep }) => {
+export const SelectCustomNodeParent: FC<Props> = ({ onSelectType, skipToStep, selectedType }) => {
   const [option, setOption] = useState<TOption[] | null>(null)
+
+  const onSelect = (val: TAutocompleteOption | null) => {
+    onSelectType(val?.label || '')
+  }
 
   useEffect(() => {
     const init = async () => {
@@ -34,11 +48,7 @@ export const SelectCustomNodeParent: FC<Props> = ({ onSelectType, skipToStep }) 
     }
 
     init()
-  }, [])
-
-  const onSelect = (val: TAutocompleteOption | null) => {
-    onSelectType(val?.label || '')
-  }
+  }, [selectedType])
 
   return (
     <Flex>
@@ -64,36 +74,71 @@ export const SelectCustomNodeParent: FC<Props> = ({ onSelectType, skipToStep }) 
   )
 }
 
-export const CreateCustomTypeStep: FC<Props> = ({ skipToStep }) => (
-  <Flex>
-    <Flex mb={20}>
-      <StyledText>Enter Type Name</StyledText>
-    </Flex>
-    <Flex mb={12}>
-      <TextInput
-        id="cy-item-name"
-        maxLength={50}
-        name="name"
-        placeholder="Enter Type Name..."
-        rules={{
-          ...requiredRule,
-        }}
-      />
-    </Flex>
-    <Flex direction="row">
-      <Flex grow={1}>
-        <Button color="secondary" onClick={() => skipToStep('selectParent')} size="large" variant="contained">
-          Prev
-        </Button>
+export const CreateCustomTypeStep: FC<Props> = ({ type, skipToStep, sourceLink }) => {
+  const allowNextStep = type === 'Image' ? type && sourceLink : type
+
+  return (
+    <Flex>
+      <Flex align="center" direction="row" justify="space-between" mb={18}>
+        <Flex align="center" direction="row">
+          <StyledText>Enter details</StyledText>
+        </Flex>
       </Flex>
-      <Flex grow={1} ml={20}>
-        <Button color="secondary" onClick={() => skipToStep('setBudget')} size="large" variant="contained">
-          Next
-        </Button>
+
+      <Flex mb={4}>
+        <Text>Name</Text>
+      </Flex>
+      <Flex mb={12}>
+        <TextInput
+          id="cy-item-name"
+          maxLength={250}
+          name="type"
+          placeholder="Paste name here..."
+          rules={{
+            ...requiredRule,
+          }}
+        />
+      </Flex>
+      {type === 'Image' ? (
+        <>
+          <Flex mb={4}>
+            <Text>Link</Text>
+          </Flex>
+
+          <Flex mb={12}>
+            <TextInput
+              id="cy-item-link"
+              maxLength={250}
+              name="sourceLink"
+              placeholder="Paste link here..."
+              rules={{
+                ...requiredRule,
+              }}
+            />
+          </Flex>
+        </>
+      ) : null}
+      <Flex direction="row">
+        <Flex grow={1}>
+          <Button color="secondary" onClick={() => skipToStep('selectParent')} size="large" variant="contained">
+            Prev
+          </Button>
+        </Flex>
+        <Flex grow={1} ml={20}>
+          <Button
+            color="secondary"
+            disabled={!allowNextStep}
+            onClick={() => skipToStep('createNodeType')}
+            size="large"
+            variant="contained"
+          >
+            Next
+          </Button>
+        </Flex>
       </Flex>
     </Flex>
-  </Flex>
-)
+  )
+}
 
 const StyledText = styled(Text)`
   font-size: 22px;

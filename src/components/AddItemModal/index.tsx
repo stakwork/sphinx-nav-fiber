@@ -1,8 +1,9 @@
 import { JSX, useEffect, useState } from 'react'
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import * as sphinx from 'sphinx-bridge'
-import { BaseModal } from '~/components/Modal'
-import { NODE_ADD_ERROR } from '~/constants'
+import { BaseModal, ModalKind } from '~/components/Modal'
+import { notify } from '~/components/common/Toast/toastMessage'
+import { NODE_ADD_ERROR, NODE_ADD_SUCCESS } from '~/constants'
 import { api } from '~/network/api'
 import { useDataStore } from '~/stores/useDataStore'
 import { useModal } from '~/stores/useModalStore'
@@ -11,7 +12,9 @@ import { NodeExtended, SubmitErrRes } from '~/types'
 import { executeIfProd, getLSat } from '~/utils'
 import { SuccessNotify } from '../common/SuccessToast'
 import { BudgetStep } from './BudgetStep'
+import { CreateConfirmation } from './CreateComfirmationStep'
 import { CreateCustomTypeStep, SelectCustomNodeParent } from './CreateCustomTypeStep'
+import { CreateCustomNodeAttribute } from './CustomAttributesStep'
 import { SourceStep } from './SourceStep'
 import { SourceTypeStep } from './SourceTypeStep'
 
@@ -19,67 +22,115 @@ export type FormData = {
   name: string
   nodeType: string
   sourceLink?: string
-}
+  type?: string
+} & Partial<{ [k: string]: string }>
 
-export type AddItemModalStepID = 'sourceType' | 'source' | 'selectParent' | 'createType' | 'setBudget'
+export type AddItemModalStepID =
+  | 'sourceType'
+  | 'source'
+  | 'selectParent'
+  | 'createType'
+  | 'setBudget'
+  | 'createNodeType'
+  | 'createConfirmation'
 
 const handleSubmitForm = async (
   data: FieldValues,
   setBudget: (value: number | null) => void,
   onAddNewData: (value: FieldValues, id: string) => void,
 ): Promise<void> => {
-  const endPoint = 'node'
+  if (data.nodeType === 'Create custom type') {
+    const body: { [index: string]: unknown } = {}
 
-  const body: { [index: string]: unknown } = {}
+    body.type = data.type
 
-  body.node_type = data.nodeType
-  body.name = data.name
+    try {
+      const res: SubmitErrRes = await api.post(`/${'schema'}`, JSON.stringify(data), {})
 
-  if (data.nodeType === 'Image') {
-    body.node_data = {
-      source_link: data.sourceLink,
+      if (res.error) {
+        const { message } = res.error
+
+        throw new Error(message)
+      }
+
+      onAddNewData(data, res?.data?.ref_id)
+
+      notify(NODE_ADD_SUCCESS)
+      // eslint-disable-next-line no-restricted-globals
+      close()
+
+      // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+    } catch (err: any) {
+      let errorMessage = NODE_ADD_ERROR
+
+      if (err.status === 400) {
+        const error = await err.json()
+
+        errorMessage = error.errorCode || error?.status || NODE_ADD_ERROR
+      } else if (err instanceof Error) {
+        errorMessage = err.message
+      }
+
+      throw new Error(errorMessage)
     }
-  }
+  } else {
+    const endPoint = 'node'
 
-  let lsatToken = ''
+    const body: { [index: string]: unknown } = {}
 
-  // skipping this for end to end test because it requires a sphinx-relay to be connected
-  await executeIfProd(async () => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    const enable = await sphinx.enable()
+    body.node_type = data.nodeType
+    body.name = data.name
 
-    body.pubkey = enable?.pubkey
+    if (data.nodeType === 'Image') {
+      body.node_data = {
+        source_link: data.sourceLink,
+      }
+    }
 
-    lsatToken = await getLSat()
-  })
+    let lsatToken = ''
 
-  try {
-    const res: SubmitErrRes = await api.post(`/${endPoint}`, JSON.stringify(body), {
-      Authorization: lsatToken,
+    // skipping this for end to end test because it requires a sphinx-relay to be connected
+    await executeIfProd(async () => {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      const enable = await sphinx.enable()
+
+      body.pubkey = enable?.pubkey
+
+      lsatToken = await getLSat()
     })
 
-    if (res.error) {
-      const { message } = res.error
+    try {
+      const res: SubmitErrRes = await api.post(`/${endPoint}`, JSON.stringify(body), {
+        Authorization: lsatToken,
+      })
 
-      throw new Error(message)
+      if (res.error) {
+        const { message } = res.error
+
+        throw new Error(message)
+      }
+
+      onAddNewData(data, res?.data?.ref_id)
+
+      notify(NODE_ADD_SUCCESS)
+      // eslint-disable-next-line no-restricted-globals
+      close()
+
+      // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+    } catch (err: any) {
+      let errorMessage = NODE_ADD_ERROR
+
+      if (err.status === 400) {
+        const error = await err.json()
+
+        errorMessage = error.errorCode || error?.status || NODE_ADD_ERROR
+      } else if (err instanceof Error) {
+        errorMessage = err.message
+      }
+
+      throw new Error(errorMessage)
     }
-
-    onAddNewData(data, res?.data?.ref_id)
-
-    // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-  } catch (err: any) {
-    let errorMessage = NODE_ADD_ERROR
-
-    if (err.status === 400) {
-      const error = await err.json()
-
-      errorMessage = error.errorCode || error?.status || NODE_ADD_ERROR
-    } else if (err instanceof Error) {
-      errorMessage = err.message
-    }
-
-    throw new Error(errorMessage)
   }
 }
 
@@ -92,6 +143,7 @@ export const AddItemModal = () => {
   const [loading, setLoading] = useState(false)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [error, setError] = useState<string>('')
+  const [parent, setParent] = useState('')
 
   const [addNewNode, setSelectedNode] = useDataStore((s) => [s.addNewNode, s.setSelectedNode])
 
@@ -106,6 +158,9 @@ export const AddItemModal = () => {
   const nodeType = watch('nodeType')
   const name = watch('name')
   const sourceLink = watch('sourceLink')
+  const type = watch('type')
+
+  watch('title')
 
   const handleClose = () => {
     close()
@@ -164,7 +219,14 @@ export const AddItemModal = () => {
     }
   })
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
   const handleSelectType = (val: string) => setValue('nodeType', val)
+
+  const SelectParent = (val: string) => {
+    setParent(val)
+    setValue('parent', val)
+  }
 
   const AddItemModalStepMapper: Record<AddItemModalStepID, JSX.Element> = {
     sourceType: (
@@ -176,13 +238,19 @@ export const AddItemModal = () => {
       />
     ),
     source: <SourceStep name={name} skipToStep={skipToStep} sourceLink={sourceLink || ''} type={nodeType} />,
-    selectParent: <SelectCustomNodeParent onSelectType={handleSelectType} skipToStep={skipToStep} />,
-    createType: <CreateCustomTypeStep onSelectType={handleSelectType} skipToStep={skipToStep} />,
     setBudget: <BudgetStep loading={loading} onClick={() => null} />,
+    createType: <CreateCustomTypeStep onSelectType={handleSelectType} skipToStep={skipToStep} type={type} />,
+    selectParent: <SelectCustomNodeParent onSelectType={SelectParent} skipToStep={skipToStep} />,
+    createNodeType: (
+      <CreateCustomNodeAttribute onSelectType={handleSelectType} parent={parent} skipToStep={skipToStep} />
+    ),
+    createConfirmation: <CreateConfirmation onclose={handleClose} type={type} />,
   }
 
+  const modalKind: ModalKind = stepId === 'createNodeType' ? 'regular' : 'small'
+
   return (
-    <BaseModal id="addItem" kind="small" onClose={close} preventOutsideClose>
+    <BaseModal id="addItem" kind={modalKind} onClose={close} preventOutsideClose>
       <FormProvider {...form}>
         <form id="add-node-form" onSubmit={onSubmit}>
           {AddItemModalStepMapper[stepId]}

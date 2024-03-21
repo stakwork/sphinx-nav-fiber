@@ -13,16 +13,17 @@ import { payLsat } from './payLsat'
 import { saveConsumedContent, saveSearchTerm } from './relayHelper'
 import { updateBudget } from './setBudget'
 import { convertToChatMessage } from './stringToChatMessage'
-import { addToGlobalForE2e, E2ETests, executeIfProd, executeIfTetsRunning } from './tests'
+import { E2ETests, addToGlobalForE2e, executeIfProd, executeIfTetsRunning } from './tests'
 import { timeToMilliseconds } from './timeToMilliseconds'
 import { useIsMatchBreakpoint } from './useIsMatchBreakpoint'
 // import APP_VERSION from './versionHelper'
 import { extractUuidAndHost } from './auth'
-import { generateAuthQueryParam, getSignedMessageFromRelay } from './getSignedMessage'
-import { videoTimeToSeconds } from './videoTimetoSeconds'
-import { showPlayButton, getTrendingTopic } from './trending'
-import { formatNumberWithCommas } from './formatStats'
 import { formatDate } from './formatDate'
+import { formatNumberWithCommas } from './formatStats'
+import { generateAuthQueryParam, getSignedMessageFromRelay } from './getSignedMessage'
+import { parseJson } from './parseJson'
+import { getTrendingTopic, showPlayButton } from './trending'
+import { videoTimeToSeconds } from './videoTimetoSeconds'
 
 export {
   E2ETests,
@@ -33,26 +34,27 @@ export {
   convertToChatMessage,
   executeIfProd,
   executeIfTetsRunning,
+  extractUuidAndHost,
   formatBudget,
+  formatDate,
   formatDescription,
+  formatNumberWithCommas,
   formatTimestamp,
+  generateAuthQueryParam,
   getLSat,
   getSelectedNodeTimestamps,
+  getSignedMessageFromRelay,
   getSuperficialNodeWeight,
+  getTrendingTopic,
   media,
   overrideConsole,
+  parseJson,
   payLsat,
   saveConsumedContent,
   saveSearchTerm,
+  showPlayButton,
   timeToMilliseconds,
   updateBudget,
   useIsMatchBreakpoint,
   videoTimeToSeconds,
-  getSignedMessageFromRelay,
-  extractUuidAndHost,
-  generateAuthQueryParam,
-  showPlayButton,
-  getTrendingTopic,
-  formatNumberWithCommas,
-  formatDate,
 }
