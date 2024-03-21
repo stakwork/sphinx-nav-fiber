@@ -70,6 +70,17 @@ export type TtopicsParams = {
   search?: string
 }
 
+type createCustonNode = {
+  type: string
+  parent: string
+  name: string
+  age: number
+}
+
+export type TNodeSchemaTypes = {
+  type: string
+} & { [k: string]: string | number }
+
 const defaultParams = {
   skip: '0',
   limit: '500',
@@ -96,6 +107,32 @@ const defaultViewContentParams = {
   only_content: 'true',
   sort_by: 'date',
   limit: '10',
+}
+
+export interface Schema {
+  name?: string
+  ref_id?: string
+  type?: string
+  age?: number
+  parent?: string
+  link?: string
+  title?: string
+  app_version?: string
+  description?: string
+  mission_statement?: string
+  namespace?: string
+  search_term?: string
+}
+
+interface SchemaAllResponse {
+  schemas: Schema[]
+}
+
+export const getSchemaAll = async () => {
+  const url = '/schema/all'
+  const response = await api.get<SchemaAllResponse>(url)
+
+  return response
 }
 
 export const getNodeContent = async (queryParams: ViewContentParams = defaultViewContentParams) => {
@@ -206,6 +243,24 @@ export const deleteNode = async (id: string) => {
 
 export const getPriceData = async (endpoint: string) => {
   const response = await api.get<TPriceParams>(`/getprice?endpoint=${endpoint}&method=post`)
+
+  return response
+}
+
+export const getNodeSchemaTypes = async () => {
+  const response = await api.get<{ schemas: TNodeSchemaTypes[] }>(`/schema/all`)
+
+  return response
+}
+
+export const getNodeType = async (parent: string) => {
+  const response = await api.get<{ [k: string]: string }>(`/schema/${parent}`)
+
+  return response
+}
+
+export const postCustomType = async (data: createCustonNode) => {
+  const response = await api.post('/schema', JSON.stringify(data))
 
   return response
 }

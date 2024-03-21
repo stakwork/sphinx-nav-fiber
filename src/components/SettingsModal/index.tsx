@@ -4,8 +4,9 @@ import { SettingsView } from './SettingsView'
 
 export const SettingsModal = () => {
   const { close } = useModal('settings')
+  const { visible } = useModal('addItem')
 
-  return (
+  return visible ? null : (
     <BaseModal background="BG1" id="settings" noWrap onClose={close}>
       <SettingsView onClose={close} />
     </BaseModal>

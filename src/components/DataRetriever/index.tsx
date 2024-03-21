@@ -4,22 +4,17 @@ import { Vector3 } from 'three'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { NodeExtended } from '~/types'
-import { Splash } from '../App/Splash'
 import { PATHWAY_RANGE } from './constants'
 
 type Props = PropsWithChildren
 
 export const DataRetriever = ({ children }: Props) => {
-  const { fetchData, splashDataLoading: loading } = useDataStore((s) => s)
+  const { fetchData } = useDataStore((s) => s)
   const [setBudget] = useUserStore((s) => [s.setBudget])
 
   useEffect(() => {
     fetchData(setBudget)
   }, [fetchData, setBudget])
-
-  if (loading) {
-    return <Splash />
-  }
 
   return <>{children}</>
 }

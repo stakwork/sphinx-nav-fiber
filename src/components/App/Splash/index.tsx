@@ -1,6 +1,6 @@
 /* eslint-disable react/display-name */
 import { LinearProgress } from '@mui/material'
-import { memo, useEffect, useMemo, useState } from 'react'
+import { PropsWithChildren, memo, useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { StatsConfig } from '~/components/Stats'
 import { Flex } from '~/components/common/Flex'
@@ -14,11 +14,12 @@ import { SphereAnimation } from './SpiningSphere'
 import { AnimatedTextContent } from './animated'
 import { Message, initialMessageData } from './constants'
 
-export const Splash = memo(() => {
+export const Splash = memo(({ children }: PropsWithChildren) => {
   const [message, setMessage] = useState<Message>(initialMessageData)
   const [progress, setProgress] = useState(0)
+  const [isLoading, setIsLoading] = useState(true)
   const { appMetaData, setAppMetaData } = useAppStore((s) => s)
-  const { data, stats, setStats, setSplashDataLoading } = useDataStore((s) => s)
+  const { stats, setStats, isFetching } = useDataStore((s) => s)
 
   useEffect(() => {
     const run = async () => {
@@ -31,12 +32,12 @@ export const Splash = memo(() => {
 
         setProgress(100)
 
-        setSplashDataLoading(false)
+        setIsLoading(false)
       }
     }
 
     run()
-  }, [setSplashDataLoading, setAppMetaData, stats])
+  }, [setIsLoading, setAppMetaData, stats])
 
   useEffect(() => {
     const run = async () => {
@@ -71,28 +72,32 @@ export const Splash = memo(() => {
   useEffect(() => {
     let timeoutId: NodeJS.Timeout
 
-    if (data && splashDataLoaded) {
+    if (!isFetching && splashDataLoaded) {
       setProgress(50)
 
-      timeoutId = setTimeout(() => setSplashDataLoading(false), 6000)
+      timeoutId = setTimeout(() => setIsLoading(false), 5000)
     }
 
     return () => clearTimeout(timeoutId)
-  }, [setSplashDataLoading, data, splashDataLoaded])
+  }, [isFetching, setIsLoading, splashDataLoaded])
 
   useEffect(() => {
     const intervalId = setInterval(() => {
       if (splashDataLoaded) {
-        setProgress((prev) => (prev >= 100 ? 100 : prev + Math.floor(Math.random() * 3)))
+        setProgress((prev) => (prev >= 100 ? 100 : prev + Math.floor(Math.random() * 4)))
       }
     }, 100)
 
     return () => clearInterval(intervalId)
   }, [splashDataLoaded])
 
+  if (!splashDataLoaded) {
+    return null
+  }
+
   return (
-    <>
-      {splashDataLoaded ? (
+    <SplashWrapper>
+      {isLoading && splashDataLoaded ? (
         <Wrappper align="center" direction="row" justify="center">
           <SphereAnimation />
           <Flex style={{ color: colors.white }}>
@@ -104,8 +109,10 @@ export const Splash = memo(() => {
             <AnimatedTextContent message={message} />
           </Flex>
         </Wrappper>
-      ) : null}
-    </>
+      ) : (
+        children
+      )}
+    </SplashWrapper>
   )
 })
 
@@ -132,6 +139,14 @@ const TitleWrapper = styled.div`
     color: ${colors.GRAY6};
     font-weight: 400;
   }
+`
+
+const SplashWrapper = styled(Flex)`
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `
 
 const Wrappper = styled(Flex)`

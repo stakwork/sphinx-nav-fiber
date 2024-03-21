@@ -4,17 +4,37 @@ import styled from 'styled-components'
 import { AutoComplete, TAutocompleteOption } from '~/components/common/AutoComplete'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
-import { OPTIONS, initialValue } from './constants'
+import { getNodeSchemaTypes } from '~/network/fetchSourcesData'
+import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
+import { capitalizeString } from '~/utils/capitalize'
+import { OPTIONS, createNewNodeType, initialValue } from './constants'
 import { Props, TOption } from './types'
 
-export const SourceTypeStep: FC<Props> = ({ onNextStep, allowNextStep, onSelectType, selectedType }) => {
-  const [selectedOption, setSelectedOption] = useState<TOption>(initialValue)
+export const SourceTypeStep: FC<Props> = ({ skipToStep, allowNextStep, onSelectType, selectedType }) => {
+  const [customSchemaFlag] = useFeatureFlagStore((s) => [s.customSchemaFlag])
+  const [options, setOption] = useState<TOption[] | null>(null)
+
+  createNewNodeType.action = () => skipToStep('selectParent')
 
   useEffect(() => {
-    setSelectedOption((prevState: TOption) =>
-      prevState.value === selectedType ? prevState : OPTIONS.find((i) => i.value === selectedType) || initialValue,
-    )
-  }, [selectedType])
+    const init = async () => {
+      if (customSchemaFlag) {
+        const data = await getNodeSchemaTypes()
+
+        const schemaOptions = data.schemas.map((schema) => ({
+          label: capitalizeString(schema.type),
+          value: schema.type,
+          type: schema.type,
+        }))
+
+        setOption([...schemaOptions, createNewNodeType])
+      } else {
+        setOption([...OPTIONS, initialValue])
+      }
+    }
+
+    init()
+  }, [selectedType, customSchemaFlag])
 
   const onSelect = (val: TAutocompleteOption | null) => {
     onSelectType(val?.label || '')
@@ -29,14 +49,14 @@ export const SourceTypeStep: FC<Props> = ({ onNextStep, allowNextStep, onSelectT
       </Flex>
 
       <Flex direction="row" mb={20}>
-        <AutoComplete autoFocus onSelect={onSelect} options={OPTIONS} selectedValue={selectedOption} />
+        <AutoComplete autoFocus onSelect={onSelect} options={options} />
       </Flex>
 
       <Flex>
         <Button
           color="secondary"
           disabled={!allowNextStep}
-          onClick={onNextStep}
+          onClick={() => skipToStep('source')}
           size="large"
           type="button"
           variant="contained"

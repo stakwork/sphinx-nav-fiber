@@ -25,7 +25,7 @@ const defaults: Required<SimulationProps> = {
   numDimensions: 3,
   velocityDecay: 0.9,
   forceChargeStrength: -20,
-  forceChargeMinDistance: 10,
+  forceChargeMinDistance: 150,
   forceChargeMaxDistance: 8000,
   forceLinkStrength: 0.04,
   forceCenterStrength: 0.85,
@@ -33,30 +33,8 @@ const defaults: Required<SimulationProps> = {
   disableCenter: false,
   disableLink: false,
   disableCharge: false,
-  forceCollideRadiusMethod: (n: NodeExtendedNew) => (n.edge_count || 1) * 6 + 200,
-  forceLinkDistanceMethod: (d: { source: NodeExtendedNew; target: NodeExtendedNew }) => {
-    const sourceType = d.source.node_type
-
-    let distance = 150
-
-    switch (sourceType) {
-      case 'topic':
-        distance = 30
-        break
-      case 'guest':
-        distance = 30
-        break
-      case 'clip':
-        distance = 10
-        break
-      case 'episode':
-        distance = 15
-        break
-      default:
-    }
-
-    return distance * 2
-  },
+  forceCollideRadiusMethod: (n: NodeExtendedNew) => ((n.edge_count || 1) + 20) * 6 + 200,
+  forceLinkDistanceMethod: () => 150,
 }
 
 export const runForceSimulation = (
