@@ -118,45 +118,27 @@ const TableRowComponent: FC<TTableRaw> = ({ topic, onClick, onSearch }) => {
             {loading ? (
               <ClipLoader color={colors.white} size={16} />
             ) : (
-              <>
+              <Flex direction="row">
                 {topic.muted_topic ? (
-                  <IconWrapper className="centered" onClick={() => handleMute(topic.ref_id, false)}>
+                  <IconButton className="centered" onClick={() => handleMute(topic.ref_id, false)}>
                     <ProfileShow />
-                  </IconWrapper>
+                  </IconButton>
                 ) : (
-                  <IconWrapper className="centered" onClick={() => handleMute(topic.ref_id, true)}>
+                  <IconButton className="centered" onClick={() => handleMute(topic.ref_id, true)}>
                     <ProfileHide />
-                  </IconWrapper>
+                  </IconButton>
                 )}
-              </>
+                <IconButton onClick={(e) => onClick(e, topic.ref_id)}>
+                  <ThreeDotsIcons data-testid="ThreeDotsIcons" />
+                </IconButton>
+              </Flex>
             )}
           </div>
         </Flex>
       </StyledTableCell>
-      <StyledTableCell>
-        <IconButton onClick={(e) => onClick(e, topic.ref_id)}>
-          <ThreeDotsIcons data-testid="ThreeDotsIcons" />
-        </IconButton>
-      </StyledTableCell>
     </StyledTableRow>
   )
 }
-
-const IconWrapper = styled(Flex)`
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  cursor: pointer;
-  background: transparent;
-  color: ${colors.lightBlue500};
-  &.centered {
-    margin: 0 auto;
-  }
-
-  & + & {
-    margin-left: 4px;
-  }
-`
 
 const ClickableText = styled.span`
   cursor: pointer;
