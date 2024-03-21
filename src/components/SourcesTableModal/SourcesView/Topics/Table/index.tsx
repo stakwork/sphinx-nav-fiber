@@ -2,12 +2,14 @@ import { Table as MaterialTable, Popover, TableRow } from '@mui/material'
 import React, { useCallback } from 'react'
 import styled from 'styled-components'
 import AddCircleIcon from '~/components/Icons/AddCircleIcon'
+import CheckIcon from '~/components/Icons/CheckIcon'
 import EditTopicIcon from '~/components/Icons/EditTopicIcon'
 import FilterOffIcon from '~/components/Icons/FilterOffIcon'
 import MergeIcon from '~/components/Icons/MergeIcon'
+import SortFilterIcon from '~/components/Icons/SortFilterIcon'
 import VisibilityOff from '~/components/Icons/VisibilityOff'
 import VisibilityOn from '~/components/Icons/VisibilityOn'
-import SortFilterIcon from '~/components/Icons/SortFilterIcon'
+import { ALPHABETICALLY, DATE, EDGE_COUNT } from '~/components/SourcesTableModal/SourcesView/constants'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { useAppStore } from '~/stores/useAppStore'
@@ -16,9 +18,7 @@ import { useTopicsStore } from '~/stores/useTopicsStore'
 import { colors } from '~/utils/colors'
 import { StyledTableCell, StyledTableHead } from '../../common'
 import { TopicTableProps } from '../../types'
-import { ALPHABETICALLY, EDGE_COUNT, DATE } from '~/components/SourcesTableModal/SourcesView/constants'
 import { TopicRow } from './TableRow'
-import CheckIcon from '~/components/Icons/CheckIcon'
 
 interface CheckboxIconProps {
   checked?: boolean
@@ -96,14 +96,15 @@ export const Table: React.FC<TopicTableProps> = ({ setShowMuteUnmute, showMuted,
                   </SortedIcon>
                 </StyledTableCell>
                 <StyledTableCell>
-                  <CheckboxSection onClick={setShowMuteUnmute}>
-                    <CheckboxIcon checked={showMuted}>
-                      <Checkmark>{showMuted && <CheckIcon />}</Checkmark>
-                    </CheckboxIcon>
-                    Muted
-                  </CheckboxSection>
+                  <Flex px={8}>
+                    <CheckboxSection onClick={setShowMuteUnmute}>
+                      <CheckboxIcon checked={showMuted}>
+                        <Checkmark>{showMuted && <CheckIcon />}</Checkmark>
+                      </CheckboxIcon>
+                      Muted
+                    </CheckboxSection>
+                  </Flex>
                 </StyledTableCell>
-                <StyledTableCell />
               </TableRow>
             </StyledTableHead>
             {data && (
