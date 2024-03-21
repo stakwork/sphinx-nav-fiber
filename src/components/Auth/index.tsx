@@ -19,9 +19,10 @@ export const Auth = ({ setAuthenticated }: setAuthenticated) => {
   const [unAuthorized, setUnauthorized] = useState(false)
   const [setBudget, setIsAdmin, setPubKey] = useUserStore((s) => [s.setBudget, s.setIsAdmin, s.setPubKey])
 
-  const [setTrendingTopicsFlag, setQueuedSourcesFlag] = useFeatureFlagStore((s) => [
+  const [setTrendingTopicsFlag, setQueuedSourcesFlag, setCustomSchemaFlag] = useFeatureFlagStore((s) => [
     s.setTrendingTopicsFlag,
     s.setQueuedSourcesFlag,
+    s.setCustomSchemaFlag,
   ])
 
   const handleAuth = useCallback(async () => {
@@ -68,6 +69,7 @@ export const Auth = ({ setAuthenticated }: setAuthenticated) => {
 
         setTrendingTopicsFlag(res.data.trendingTopics)
         setQueuedSourcesFlag(res.data.queuedSources)
+        setCustomSchemaFlag(res.data.customSchema)
       }
 
       setAuthenticated(true)
@@ -81,7 +83,15 @@ export const Auth = ({ setAuthenticated }: setAuthenticated) => {
     if (isE2E || isDevelopment) {
       setAuthenticated(true)
     }
-  }, [setIsAdmin, setPubKey, setBudget, setAuthenticated, setTrendingTopicsFlag, setQueuedSourcesFlag])
+  }, [
+    setIsAdmin,
+    setPubKey,
+    setBudget,
+    setAuthenticated,
+    setTrendingTopicsFlag,
+    setQueuedSourcesFlag,
+    setCustomSchemaFlag,
+  ])
 
   // auth checker
   useEffect(() => {
