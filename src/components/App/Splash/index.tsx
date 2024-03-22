@@ -28,8 +28,6 @@ export const Splash = memo(({ children }: PropsWithChildren) => {
 
         setAppMetaData(aboutResponse)
       } catch (error) {
-        console.warn(error)
-
         setProgress(100)
 
         setIsLoading(false)

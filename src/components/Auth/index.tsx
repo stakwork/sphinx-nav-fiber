@@ -1,4 +1,4 @@
-import { PropsWithChildren, useCallback, useEffect } from 'react'
+import { PropsWithChildren, useCallback, useEffect, useState } from 'react'
 import * as sphinx from 'sphinx-bridge'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
@@ -13,8 +13,9 @@ import { getSignedMessageFromRelay, updateBudget } from '~/utils'
 import { Splash } from '../App/Splash'
 
 export const AuthGuard = ({ children }: PropsWithChildren) => {
+  const [unAuthorized, setUnauthorized] = useState(false)
   const { splashDataLoading } = useDataStore((s) => s)
-  const { setBudget, setIsAdmin, setPubKey, isAuthenticated, setIsAuthenticated } = useUserStore((s) => s)
+  const { setBudget, setIsAdmin, setPubKey, setIsAuthenticated } = useUserStore((s) => s)
 
   const [setTrendingTopicsFlag, setQueuedSourcesFlag, setCustomSchemaFlag] = useFeatureFlagStore((s) => [
     s.setTrendingTopicsFlag,
@@ -54,7 +55,7 @@ export const AuthGuard = ({ children }: PropsWithChildren) => {
       })
 
       if (!res.data.isPublic && !res.data.isAdmin && !res.data.isMember) {
-        setIsAuthenticated(true)
+        setUnauthorized(true)
 
         return
       }
@@ -97,7 +98,7 @@ export const AuthGuard = ({ children }: PropsWithChildren) => {
     return <Splash>{children}</Splash>
   }
 
-  if (!isAuthenticated) {
+  if (!unAuthorized) {
     return (
       <StyledFlex>
         <StyledText>{message}</StyledText>
