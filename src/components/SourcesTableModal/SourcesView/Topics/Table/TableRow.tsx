@@ -171,6 +171,7 @@ const ClickableText = styled.span`
     text-decoration: underline;
   }
 `
+
 const CheckboxSection = styled.td`
   visibility: hidden;
   cursor: pointer;
