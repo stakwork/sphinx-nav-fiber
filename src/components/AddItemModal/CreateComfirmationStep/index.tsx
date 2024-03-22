@@ -25,7 +25,7 @@ export const CreateConfirmation: FC<Props> = ({ type, onclose }) => (
       </Flex>
       <Flex grow={1} ml={20}>
         <Button color="secondary" size="large" type="submit" variant="contained">
-          Comfirm
+          Confirm
         </Button>
       </Flex>
     </Flex>

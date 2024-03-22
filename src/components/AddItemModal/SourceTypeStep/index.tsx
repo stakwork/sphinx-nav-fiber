@@ -13,21 +13,30 @@ import { Props, TOption } from './types'
 export const SourceTypeStep: FC<Props> = ({ skipToStep, allowNextStep, onSelectType, selectedType }) => {
   const [customSchemaFlag] = useFeatureFlagStore((s) => [s.customSchemaFlag])
   const [options, setOption] = useState<TOption[] | null>(null)
+  const [loading, setLoading] = useState(false)
 
   createNewNodeType.action = () => skipToStep('selectParent')
 
   useEffect(() => {
     const init = async () => {
       if (customSchemaFlag) {
-        const data = await getNodeSchemaTypes()
+        setLoading(true)
 
-        const schemaOptions = data.schemas.map((schema) => ({
-          label: capitalizeString(schema.type),
-          value: schema.type,
-          type: schema.type,
-        }))
+        try {
+          const data = await getNodeSchemaTypes()
 
-        setOption([...schemaOptions, createNewNodeType])
+          const schemaOptions = data.schemas.map((schema) => ({
+            label: capitalizeString(schema.type),
+            value: schema.type,
+            type: schema.type,
+          }))
+
+          setOption([...schemaOptions, createNewNodeType])
+        } catch (error) {
+          console.warn(error)
+        } finally {
+          setLoading(false)
+        }
       } else {
         setOption([...OPTIONS, initialValue])
       }
@@ -49,7 +58,7 @@ export const SourceTypeStep: FC<Props> = ({ skipToStep, allowNextStep, onSelectT
       </Flex>
 
       <Flex direction="row" mb={20}>
-        <AutoComplete autoFocus onSelect={onSelect} options={options} />
+        <AutoComplete autoFocus isLoading={loading} onSelect={onSelect} options={options} />
       </Flex>
 
       <Flex>

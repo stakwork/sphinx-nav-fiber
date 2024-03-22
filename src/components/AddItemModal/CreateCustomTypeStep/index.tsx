@@ -30,6 +30,7 @@ type Props = {
 
 export const SelectCustomNodeParent: FC<Props> = ({ onSelectType, skipToStep, selectedType }) => {
   const [option, setOption] = useState<TOption[] | null>(null)
+  const [loading, setLoading] = useState(false)
 
   const onSelect = (val: TAutocompleteOption | null) => {
     onSelectType(val?.label || '')
@@ -37,14 +38,22 @@ export const SelectCustomNodeParent: FC<Props> = ({ onSelectType, skipToStep, se
 
   useEffect(() => {
     const init = async () => {
-      const data = await getNodeSchemaTypes()
+      setLoading(true)
 
-      const schemaOptions = data.schemas.map((schema) => ({
-        label: capitalizeString(schema.type),
-        value: schema.type,
-      }))
+      try {
+        const data = await getNodeSchemaTypes()
 
-      setOption([...schemaOptions, NoParent])
+        const schemaOptions = data.schemas.map((schema) => ({
+          label: capitalizeString(schema.type),
+          value: schema.type,
+        }))
+
+        setOption([...schemaOptions, NoParent])
+      } catch (error) {
+        console.warn(error)
+      } finally {
+        setLoading(false)
+      }
     }
 
     init()
@@ -56,7 +65,7 @@ export const SelectCustomNodeParent: FC<Props> = ({ onSelectType, skipToStep, se
         <StyledText>Select Parent</StyledText>
       </Flex>
       <Flex direction="row" mb={20}>
-        <AutoComplete autoFocus onSelect={onSelect} options={option} />
+        <AutoComplete autoFocus isLoading={loading} onSelect={onSelect} options={option} />
       </Flex>
       <Flex direction="row">
         <Flex grow={1}>
@@ -86,14 +95,14 @@ export const CreateCustomTypeStep: FC<Props> = ({ type, skipToStep, sourceLink }
       </Flex>
 
       <Flex mb={4}>
-        <Text>Name</Text>
+        <Text>Type name</Text>
       </Flex>
       <Flex mb={12}>
         <TextInput
           id="cy-item-name"
           maxLength={250}
           name="type"
-          placeholder="Paste name here..."
+          placeholder="Enter type name"
           rules={{
             ...requiredRule,
           }}

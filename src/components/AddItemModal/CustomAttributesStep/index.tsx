@@ -1,17 +1,17 @@
 import { Button, Checkbox } from '@mui/material'
 import { FC, useEffect, useState } from 'react'
+import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
 import { AutoComplete, TAutocompleteOption } from '~/components/common/AutoComplete'
 import { Flex } from '~/components/common/Flex'
+import { Text } from '~/components/common/Text'
 import { TextInput } from '~/components/common/TextInput'
+import { requiredRule } from '~/constants'
 import { getNodeType } from '~/network/fetchSourcesData'
+import { colors } from '~/utils'
 import { parseJson, parsedObjProps } from '~/utils/parseJson'
 import { AddItemModalStepID } from '..'
-import { Text } from '~/components/common/Text'
-import { requiredRule } from '~/constants'
 import { OptionTypes } from '../SourceTypeStep/constants'
-import { ClipLoader } from 'react-spinners'
-import { colors } from '~/utils'
 
 interface Props {
   skipToStep: (step: AddItemModalStepID) => void
@@ -32,12 +32,17 @@ export const CreateCustomNodeAttribute: FC<Props> = ({ skipToStep, parent, onSel
 
   useEffect(() => {
     const init = async () => {
-      const data = await getNodeType(parentParam as string)
+      try {
+        const data = await getNodeType(parentParam as string)
 
-      const parsedData = parseJson(data)
+        const parsedData = parseJson(data)
 
-      setSchemaData(parsedData)
-      setLoading(false)
+        setSchemaData(parsedData)
+      } catch (error) {
+        console.warn(error)
+      } finally {
+        setLoading(false)
+      }
     }
 
     init()
@@ -61,7 +66,7 @@ export const CreateCustomNodeAttribute: FC<Props> = ({ skipToStep, parent, onSel
             {schemaData?.map((k) => (
               <FormInput
                 key={k.key}
-                name={k.key}
+                name={k.key || 'key-name'}
                 onSelectType={onSelectType}
                 placeholder={k.key}
                 required={k.required}
@@ -71,7 +76,7 @@ export const CreateCustomNodeAttribute: FC<Props> = ({ skipToStep, parent, onSel
             ))}
           </Flex>
           <Flex direction="row" grow={1} mt={20}>
-            <Button color="secondary" onClick={addAttributes} size="large" variant="contained">
+            <Button color="secondary" onClick={addAttributes} size="small" variant="contained">
               Add Attributes
             </Button>
           </Flex>
@@ -114,7 +119,6 @@ const FormInput = ({ placeholder, type, required, selectedValue, onSelectType, n
     <StyledInputWrapper>
       <TextInput
         className="text-input"
-        disabled={required}
         id="cy-item-name"
         maxLength={50}
         name={name}

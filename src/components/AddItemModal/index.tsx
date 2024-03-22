@@ -11,6 +11,7 @@ import { useUserStore } from '~/stores/useUserStore'
 import { NodeExtended, SubmitErrRes } from '~/types'
 import { executeIfProd, getLSat } from '~/utils'
 import { SuccessNotify } from '../common/SuccessToast'
+import { AddTypeModal } from './AddTypeModal'
 import { BudgetStep } from './BudgetStep'
 import { CreateConfirmation } from './CreateComfirmationStep'
 import { CreateCustomTypeStep, SelectCustomNodeParent } from './CreateCustomTypeStep'
@@ -137,6 +138,7 @@ const handleSubmitForm = async (
 export const AddItemModal = () => {
   const [stepId, setStepId] = useState<AddItemModalStepID>('sourceType')
   const { close, visible } = useModal('addItem')
+  const { open: openTypeModal } = useModal('addType')
   const [setBudget] = useUserStore((s) => [s.setBudget])
   const form = useForm<FormData>({ mode: 'onChange' })
   const { watch, setValue, reset } = form
@@ -221,7 +223,13 @@ export const AddItemModal = () => {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
 
-  const handleSelectType = (val: string) => setValue('nodeType', val)
+  const handleSelectType = (val: string) => {
+    if (val === 'Create custom type') {
+      openTypeModal()
+    } else {
+      setValue('nodeType', val)
+    }
+  }
 
   const SelectParent = (val: string) => {
     setParent(val)
@@ -256,6 +264,7 @@ export const AddItemModal = () => {
           {AddItemModalStepMapper[stepId]}
         </form>
       </FormProvider>
+      <AddTypeModal />
     </BaseModal>
   )
 }
