@@ -10,17 +10,14 @@ describe('Add Tweet Content', () => {
       },
     })
 
-    cy.wait(3000)
-    // cy.get('[data-testid="prod-view"]').click()
+    cy.wait(5000)
     cy.get('[data-testid="add-content-modal"]').click()
-    cy.get('[id="cy-youtube-channel-id"]').type(
-      'https://twitter.com/imabearhunter/status/1770588891831030226?t=TC5U0QShe_wRXuGahXJEVA&s=19',
-    )
+    cy.get('[id="cy-youtube-channel-id"]').type('https://twitter.com/ijbguy/status/1771096005162729663')
     cy.get('[data-testid="add-content-btn"]').click()
     cy.get('[data-testid="skip-location-btn"').click()
     cy.get('[data-testid="check-icon"]').click()
 
-    cy.wait(6000)
-    cy.get('.Toastify__toast-body')
+    cy.wait(7000)
+    cy.get('.Toastify__toast-body').should('have.text', 'Content Added')
   })
 })
