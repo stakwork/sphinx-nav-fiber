@@ -48,18 +48,17 @@ jobs:
       - name: Copy Neo4J Data to stack
         run: cp -r ./data ./stack/neo4j
 
-      - name: Debug TWITTER_BEARER
-        run: echo ${{ secrets.TWITTER_BEARER }}
-
       - name: Check for NODES
         uses: nick-fields/retry@v2
         with:
           timeout_minutes: 10
           max_attempts: 3
           command: |
+            export TWITTER_BEARER="Bearer ${ { secrets.TWITTER_BEARER }}"
             STAKWORK_TOKEN=${{ secrets.STAKWORK_TOKEN }} \
-            TWITTER_BEARER="test token" \
+            TWITTER_BEARER=$TWITTER_BEARER \
             GITACTION_ENV=gitactionenv \
+            echo $TWITTER_BEARER
             docker-compose -f ./stack/alts/navfiber.yml --project-dir ./stack up -d;
             sleep 240;
             docker ps
