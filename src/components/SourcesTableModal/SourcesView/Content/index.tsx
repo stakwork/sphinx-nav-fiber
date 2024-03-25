@@ -12,45 +12,39 @@ import { Table } from './Table'
 export const Content = () => {
   const [nodes, setNodes] = useState<Node[]>([])
   const [loading, setLoading] = useState(true)
-  const nodesPerPage = 10
-  const [loadedNodes, setLoadedNodes] = useState<Node[]>([])
+  const [loadLimit, setLoadLimit] = useState(1)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [newNodesAvailable, setNewNodesAvailable] = useState(true)
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await getNodeContent()
+  const viewContentParams = {
+    only_content: 'true',
+    sort_by: 'date',
+    limit: loadLimit.toString(),
+  }
 
-        setNodes(response.nodes)
-        setLoading(false)
-      } catch (error) {
-        console.error('Error fetching data:', error)
+  const fetchData = async () => {
+    setLoading(true)
 
-        setLoading(false)
-      }
+    try {
+      const response = await getNodeContent(viewContentParams)
+
+      setNodes(response.nodes)
+      setLoading(false)
+    } catch (error) {
+      console.error('Error fetching data:', error)
+
+      setLoading(false)
     }
-
-    if (nodes.length === 0) {
-      fetchData()
-    }
-  })
+  }
 
   useEffect(() => {
-    const initNodes = nodes.slice(0, nodesPerPage)
-
-    setLoadedNodes(initNodes)
-  }, [nodes])
+    fetchData()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loadLimit])
 
   const handleLoadMore = () => {
-    const startIndex = loadedNodes.length
-    const endIndex = startIndex + nodesPerPage
-    const newNodes = nodes.slice(startIndex, endIndex)
-
-    setLoadedNodes((prevNodes) => [...prevNodes, ...newNodes])
-
-    if (nodes.length <= endIndex) {
-      setNewNodesAvailable(false)
-    }
+    setLoadLimit(loadLimit + 10)
+    fetchData()
   }
 
   return (
@@ -63,7 +57,7 @@ export const Content = () => {
           <ClipLoader color={colors.white} />
         ) : (
           <>
-            <Table nodes={loadedNodes} />
+            <Table nodes={nodes} />
           </>
         )}
         {newNodesAvailable ? (
