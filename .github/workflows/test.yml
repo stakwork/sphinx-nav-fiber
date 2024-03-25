@@ -54,7 +54,10 @@ jobs:
           timeout_minutes: 10
           max_attempts: 3
           command: |
-            STAKWORK_TOKEN=${{ secrets.STAKWORK_TOKEN }} TWITTER_BEARER=${{ secrets.TWITTER_BEARER }} GITACTION_ENV=gitactionenv docker-compose -f ./stack/alts/navfiber.yml --project-dir ./stack up -d;
+            STAKWORK_TOKEN=${{ secrets.STAKWORK_TOKEN }} \
+            TWITTER_BEARER=${{ secrets.TWITTER_BEARER }} \
+            GITACTION_ENV=gitactionenv \
+            docker-compose -f ./stack/alts/navfiber.yml --project-dir ./stack up -d;
             sleep 240;
             docker ps
             docker logs meme.sphinx
