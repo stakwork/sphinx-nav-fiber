@@ -14,8 +14,7 @@ import { SuccessNotify } from '../common/SuccessToast'
 import { AddTypeModal } from './AddTypeModal'
 import { BudgetStep } from './BudgetStep'
 import { CreateConfirmation } from './CreateComfirmationStep'
-import { CreateCustomTypeStep, SelectCustomNodeParent } from './CreateCustomTypeStep'
-import { CreateCustomNodeAttribute } from './CustomAttributesStep'
+import { CreateCustomTypeStep } from './CreateCustomTypeStep'
 import { SourceStep } from './SourceStep'
 import { SourceTypeStep } from './SourceTypeStep'
 
@@ -29,10 +28,10 @@ export type FormData = {
 export type AddItemModalStepID =
   | 'sourceType'
   | 'source'
-  | 'selectParent'
+  // | 'selectParent'
   | 'createType'
   | 'setBudget'
-  | 'createNodeType'
+  // | 'createNodeType'
   | 'createConfirmation'
 
 const handleSubmitForm = async (
@@ -145,7 +144,6 @@ export const AddItemModal = () => {
   const [loading, setLoading] = useState(false)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [error, setError] = useState<string>('')
-  const [parent, setParent] = useState('')
 
   const [addNewNode, setSelectedNode] = useDataStore((s) => [s.addNewNode, s.setSelectedNode])
 
@@ -231,10 +229,10 @@ export const AddItemModal = () => {
     }
   }
 
-  const SelectParent = (val: string) => {
-    setParent(val)
-    setValue('parent', val)
-  }
+  // const SelectParent = (val: string) => {
+  //   setParent(val)
+  //   setValue('parent', val)
+  // }
 
   const AddItemModalStepMapper: Record<AddItemModalStepID, JSX.Element> = {
     sourceType: (
@@ -248,14 +246,14 @@ export const AddItemModal = () => {
     source: <SourceStep name={name} skipToStep={skipToStep} sourceLink={sourceLink || ''} type={nodeType} />,
     setBudget: <BudgetStep loading={loading} onClick={() => null} />,
     createType: <CreateCustomTypeStep onSelectType={handleSelectType} skipToStep={skipToStep} type={type} />,
-    selectParent: <SelectCustomNodeParent onSelectType={SelectParent} skipToStep={skipToStep} />,
-    createNodeType: (
-      <CreateCustomNodeAttribute onSelectType={handleSelectType} parent={parent} skipToStep={skipToStep} />
-    ),
+    // selectParent: <SelectCustomNodeParent onSelectType={SelectParent} skipToStep={skipToStep} />,
+    // createNodeType: (
+    //   <CreateCustomNodeAttribute onSelectType={handleSelectType} parent={parent} skipToStep={skipToStep} />
+    // ),
     createConfirmation: <CreateConfirmation onclose={handleClose} type={type} />,
   }
 
-  const modalKind: ModalKind = stepId === 'createNodeType' ? 'regular' : 'small'
+  const modalKind: ModalKind = 'small'
 
   return (
     <BaseModal id="addItem" kind={modalKind} onClose={close} preventOutsideClose>

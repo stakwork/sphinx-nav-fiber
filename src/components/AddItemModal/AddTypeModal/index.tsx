@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import { Button } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { BaseModal } from '~/components/Modal'
@@ -20,9 +21,10 @@ import { CreateCustomNodeAttribute } from './CustomAttributesStep'
 
 export type FormData = {
   name: string
-  nodeType: string
-  sourceLink?: string
-  type?: string
+  parent?: string
+  attrs?: {
+    [k: string]: string | boolean
+  }
 } & Partial<{ [k: string]: string }>
 
 export type AddItemModalStepID =
@@ -113,7 +115,7 @@ export const AddTypeModal = () => {
   const nodeType = watch('nodeType')
   const name = watch('name')
   const sourceLink = watch('sourceLink')
-  const type = watch('type')
+  const parent = watch('parent')
 
   watch('title')
 
@@ -145,10 +147,6 @@ export const AddTypeModal = () => {
     }
   })
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-
-  const handleSelectType = (val: string) => setValue('nodeType', val)
-
   return (
     <BaseModal id="addType" kind="regular" onClose={close} preventOutsideClose>
       <FormProvider {...form}>
@@ -166,7 +164,7 @@ export const AddTypeModal = () => {
               <AutoComplete
                 autoFocus
                 isLoading={parentsLoading}
-                onSelect={(e) => setSelectedParent(e?.value || '')}
+                onSelect={(e) => setValue('parent', e?.value || '')}
                 options={parentOptions}
               />
             </Flex>
@@ -178,8 +176,7 @@ export const AddTypeModal = () => {
               <TextInput
                 id="cy-item-name"
                 maxLength={250}
-                name="type"
-                onChange={setTypeName}
+                name="name"
                 placeholder="Enter type name"
                 rules={{
                   ...requiredRule,
@@ -188,7 +185,12 @@ export const AddTypeModal = () => {
               />
             </Flex>
           </Flex>
-          <CreateCustomNodeAttribute parent={selectedParent} typeName="handleSelectType" />
+          <CreateCustomNodeAttribute parent={parent} typeName="handleSelectType" />
+          <Flex direction="row" justify="center" mt={20}>
+            <Button onClick={onSubmit} size="large" variant="contained">
+              Save
+            </Button>
+          </Flex>
         </form>
       </FormProvider>
     </BaseModal>

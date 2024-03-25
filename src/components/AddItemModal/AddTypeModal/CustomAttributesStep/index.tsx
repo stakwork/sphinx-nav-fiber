@@ -1,29 +1,23 @@
-import { Button } from '@mui/material'
 import { FC, useEffect, useState } from 'react'
+import { useFormContext } from 'react-hook-form'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { getNodeType } from '~/network/fetchSourcesData'
 import { colors } from '~/utils'
-import { parseJson, parsedObjProps } from '~/utils/parseJson'
+import { parseJson } from '~/utils/parseJson'
+import { FormData } from '..'
 import { FormInput } from './FormInput'
 
 interface Props {
   parent?: string
-  typeName: string
 }
 
-export const CreateCustomNodeAttribute: FC<Props> = ({ parent, typeName }) => {
-  const [schemaData, setSchemaData] = useState<parsedObjProps[]>([])
-  const defaultSchemaOptions = { required: false, type: '', key: '' }
+export const CreateCustomNodeAttribute: FC<Props> = ({ parent }) => {
   const [loading, setLoading] = useState(true)
 
-  console.log(typeName)
-
-  const addAttributes = () => {
-    setSchemaData((prev) => [...(prev ?? []), defaultSchemaOptions])
-  }
+  const { setValue } = useFormContext<FormData>()
 
   const parentParam = parent?.toLowerCase()
 
@@ -36,7 +30,13 @@ export const CreateCustomNodeAttribute: FC<Props> = ({ parent, typeName }) => {
 
         const parsedData = parseJson(data)
 
-        setSchemaData(parsedData)
+        parsedData.forEach((item, index) => {
+          Object.entries(item).forEach(([key, value]) => {
+            if (value !== undefined) {
+              setValue(`attrs[${index}].${key}` as string, String(value))
+            }
+          })
+        })
       } catch (error) {
         console.warn(error)
       } finally {
@@ -45,15 +45,7 @@ export const CreateCustomNodeAttribute: FC<Props> = ({ parent, typeName }) => {
     }
 
     init()
-  }, [parentParam])
-
-  const updateAttrs = (index: number, values: parsedObjProps) => {
-    const newSchemaData = [...schemaData]
-
-    newSchemaData[index] = values
-
-    setSchemaData(newSchemaData)
-  }
+  }, [parentParam, setValue])
 
   return (
     <Flex>
@@ -68,27 +60,8 @@ export const CreateCustomNodeAttribute: FC<Props> = ({ parent, typeName }) => {
             <StyledTableHeader style={{ marginRight: 130 }}>Type</StyledTableHeader>
             <StyledTableHeader>Required</StyledTableHeader>
           </Flex>
-          <Flex direction="column" style={{ maxHeight: '280px', overflow: 'auto' }}>
-            {schemaData?.map((k, index) => (
-              <FormInput
-                key={k.key}
-                id={index}
-                onUpdate={(values) => {
-                  updateAttrs(index, values)
-                }}
-                values={k}
-              />
-            ))}
-          </Flex>
-          <Flex direction="row" grow={1} mt={20}>
-            <Button color="secondary" onClick={addAttributes} size="large" variant="contained">
-              Add Attributes
-            </Button>
-          </Flex>
-          <Flex direction="row" justify="center" mt={20}>
-            <Button onClick={addAttributes} size="large" variant="contained">
-              Save
-            </Button>
+          <Flex>
+            <FormInput />
           </Flex>
         </>
       )}
