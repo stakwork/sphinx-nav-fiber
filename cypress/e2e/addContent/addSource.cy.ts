@@ -10,7 +10,7 @@ describe('Add Tweeter Handler', () => {
       },
     })
 
-    cy.wait(5000)
+    cy.wait(8000)
     cy.get('[data-testid="add-content-modal"]').click()
     cy.get('[id="cy-youtube-channel-id"]').type('https://twitter.com/PhoenixWallet')
     cy.get('[data-testid="add-content-btn"]').click()
