@@ -49,7 +49,7 @@ export const Document = () => {
         <StyledHeader>
           <GlobeIcon color={colors.GRAY6} />
           <SyledLinkText>{selectedNode?.source_link}</SyledLinkText>
-          <StyledLink href={selectedNode?.source_link} onClick={(e) => e.stopPropagation()} target="_blank">
+          <StyledLink onClick={() => window.open(selectedNode?.source_link)}>
             <LinkIcon />
           </StyledLink>
         </StyledHeader>
@@ -96,7 +96,8 @@ const StyledHeader = styled(Flex)`
   }
 `
 
-const StyledLink = styled.a`
+const StyledLink = styled.div`
+  cursor: pointer;
   color: ${colors.GRAY6};
   font-size: 16px;
   height: 16px;
