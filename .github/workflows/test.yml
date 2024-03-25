@@ -48,6 +48,9 @@ jobs:
       - name: Copy Neo4J Data to stack
         run: cp -r ./data ./stack/neo4j
 
+      - name: Debug TWITTER_BEARER
+        run: echo ${{ secrets.TWITTER_BEARER }}
+
       - name: Check for NODES
         uses: nick-fields/retry@v2
         with:
