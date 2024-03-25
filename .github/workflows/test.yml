@@ -54,7 +54,7 @@ jobs:
           timeout_minutes: 10
           max_attempts: 3
           command: |
-            export TWITTER_BEARER="${{ secrets.TWITTER_BEARER }}"
+            export TWITTER_BEARER="Bearer ${{ secrets.TWITTER_BEARER }}"
             echo $TWITTER_BEARER
             STAKWORK_TOKEN=${{ secrets.STAKWORK_TOKEN }} TWITTER_BEARER=$TWITTER_BEARER GITACTION_ENV=gitactionenv docker-compose -f ./stack/alts/navfiber.yml --project-dir ./stack up -d;
             sleep 240;
