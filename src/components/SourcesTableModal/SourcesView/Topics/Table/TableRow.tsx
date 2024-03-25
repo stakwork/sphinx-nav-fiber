@@ -1,5 +1,5 @@
 import { IconButton, Popover, Typography } from '@mui/material'
-import React, { FC, memo, useState } from 'react'
+import React, { FC, memo, useState, CSSProperties } from 'react'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
 import ProfileHide from '~/components/Icons/PropertyHide'
@@ -59,6 +59,10 @@ const TableRowComponent: FC<TTableRaw> = ({ topic, onClick, onSearch }) => {
 
   const open = Boolean(anchorEl)
 
+  const ClipLoaderCss: CSSProperties = {
+    marginLeft: '12px',
+  }
+
   return (
     <StyledTableRow key={topic.topic}>
       <StyledTableCell className="empty" />
@@ -116,7 +120,7 @@ const TableRowComponent: FC<TTableRaw> = ({ topic, onClick, onSearch }) => {
         <Flex direction="row" justify="space-between">
           <div className="approve-wrapper">
             {loading ? (
-              <ClipLoader color={colors.white} size={16} />
+              <ClipLoader color={colors.white} cssOverride={ClipLoaderCss} size={16} />
             ) : (
               <Flex direction="row">
                 {topic.muted_topic ? (
