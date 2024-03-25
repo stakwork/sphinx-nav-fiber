@@ -12,7 +12,7 @@ import { Table } from './Table'
 export const Content = () => {
   const [nodes, setNodes] = useState<Node[]>([])
   const [loading, setLoading] = useState(true)
-  const [loadLimit, setLoadLimit] = useState(1)
+  const [loadLimit, setLoadLimit] = useState(10)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [newNodesAvailable, setNewNodesAvailable] = useState(true)
 
