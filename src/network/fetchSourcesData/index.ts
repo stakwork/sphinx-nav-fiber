@@ -103,7 +103,6 @@ export interface Node {
   ref_id: string
 }
 
-
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const defaultViewContentParams = {
   only_content: 'true',
@@ -138,7 +137,6 @@ export const getSchemaAll = async () => {
 }
 
 export const getNodeContent = async (queryParams: ViewContentParams) => {
-  
   const queryString = new URLSearchParams({ ...queryParams }).toString()
 
   const signedMessage = await getSignedMessageFromRelay()
