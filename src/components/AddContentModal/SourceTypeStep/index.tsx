@@ -50,7 +50,13 @@ export const SourceTypeStep: FC<Props> = ({ onNextStep, onPrevStep, type, value 
         </StyledButton>
       </Flex>
       <Flex grow={1} ml={20}>
-        <Button color="secondary" onClick={() => onNextStep()} size="large" variant="contained">
+        <Button
+          color="secondary"
+          data-testid="source_next_btn"
+          onClick={() => onNextStep()}
+          size="large"
+          variant="contained"
+        >
           Next
         </Button>
       </Flex>

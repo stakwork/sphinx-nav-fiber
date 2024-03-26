@@ -4,6 +4,7 @@ import * as sphinx from 'sphinx-bridge'
 import { BaseModal } from '~/components/Modal'
 import {
   DOCUMENT,
+  isE2E,
   LINK,
   NODE_ADD_ERROR,
   RSS,
@@ -15,8 +16,9 @@ import {
 import { api } from '~/network/api'
 import { useModal } from '~/stores/useModalStore'
 import { useUserStore } from '~/stores/useUserStore'
+import { sphinxBridge } from '~/testSphinxBridge'
 import { SubmitErrRes } from '~/types'
-import { executeIfProd, getLSat, payLsat, updateBudget } from '~/utils'
+import { getLSat, payLsat, updateBudget } from '~/utils'
 import { SuccessNotify } from '../common/SuccessToast'
 import { BudgetStep } from './BudgetStep'
 import { LocationStep } from './LocationStep'
@@ -90,16 +92,19 @@ const handleSubmitForm = async (
 
   let lsatToken = ''
 
-  // skipping this for end to end test because it requires a sphinx-relay to be connected
-  await executeIfProd(async () => {
+  let enable
+
+  if (!isE2E) {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    const enable = await sphinx.enable()
+    enable = await sphinx.enable()
+  } else {
+    enable = await sphinxBridge.enable()
+  }
 
-    body.pubkey = enable?.pubkey
+  body.pubkey = enable?.pubkey
 
-    lsatToken = await getLSat()
-  })
+  lsatToken = await getLSat()
 
   try {
     const res: SubmitErrRes = await api.post(`/${endPoint}`, JSON.stringify(body), {

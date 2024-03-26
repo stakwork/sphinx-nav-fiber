@@ -2,6 +2,7 @@ describe('Admin Login', () => {
   it.skip('Admin uses the enable function', () => {
     cy.visit('http://localhost:3000', {
       onBeforeLoad(win) {
+        // @ts-ignore
         win.CYPRESS_USER = 'alice'
       },
     })
