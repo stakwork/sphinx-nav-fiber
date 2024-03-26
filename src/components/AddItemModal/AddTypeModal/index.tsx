@@ -37,10 +37,6 @@ export type AddItemModalStepID =
   | 'createConfirmation'
 
 const handleSubmitForm = async (data: FieldValues, setBudget: (value: number | null) => void): Promise<void> => {
-  const body: { [index: string]: unknown } = {}
-
-  body.type = data.type
-
   try {
     const res: SubmitErrRes = await api.post(`/${'schema'}`, JSON.stringify(data), {})
 
@@ -78,8 +74,6 @@ export const AddTypeModal = () => {
   const { watch, setValue, reset } = form
   const [parentsLoading, setParentsLoading] = useState(false)
   const [parentOptions, setParentOptions] = useState<TOption[] | null>(null)
-  const [selectedParent, setSelectedParent] = useState('')
-  const [typeName, setTypeName] = useState('')
 
   useEffect(
     () => () => {
@@ -112,12 +106,7 @@ export const AddTypeModal = () => {
     init()
   }, [])
 
-  const nodeType = watch('nodeType')
-  const name = watch('name')
-  const sourceLink = watch('sourceLink')
   const parent = watch('parent')
-
-  watch('title')
 
   const handleClose = () => {
     close()
@@ -181,11 +170,11 @@ export const AddTypeModal = () => {
                 rules={{
                   ...requiredRule,
                 }}
-                value={selectedParent}
+                value={parent}
               />
             </Flex>
           </Flex>
-          <CreateCustomNodeAttribute parent={parent} typeName="handleSelectType" />
+          <CreateCustomNodeAttribute parent={parent} />
           <Flex direction="row" justify="center" mt={20}>
             <Button onClick={onSubmit} size="large" variant="contained">
               Save
