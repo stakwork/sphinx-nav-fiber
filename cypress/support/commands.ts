@@ -27,13 +27,44 @@ import '@testing-library/cypress/add-commands'
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 //
-// declare global {
-//   namespace Cypress {
-//     interface Chainable {
-//       login(email: string, password: string): Chainable<void>
-//       drag(subject: string, options?: Partial<TypeOptions>): Chainable<Element>
-//       dismiss(subject: string, options?: Partial<TypeOptions>): Chainable<Element>
-//       visit(originalFn: CommandOriginalFn, url: string, options: Partial<VisitOptions>): Chainable<Element>
-//     }
-//   }
-// }
+declare global {
+  namespace Cypress {
+    interface Chainable {
+      initialSetup(username?: string, budget?: number): Chainable<void>
+    }
+  }
+}
+
+Cypress.Commands.add('initialSetup', (username, budget) => {
+  cy.intercept({
+    method: 'GET',
+    url: 'http://localhost:8444/api/prediction/content/latest*',
+  }).as('loadLatest')
+
+  cy.intercept({
+    method: 'GET',
+    url: 'http://localhost:8444/api/about*',
+  }).as('loadAbout')
+
+  cy.intercept({
+    method: 'GET',
+    url: 'http://localhost:8444/api/stats*',
+  }).as('loadStats')
+
+  cy.intercept({
+    method: 'GET',
+    url: 'http://localhost:8444/api/get_trends*',
+  }).as('getTrends')
+
+  cy.visit('/', {
+    onBeforeLoad(win) {
+      // @ts-ignore
+      win.CYPRESS_USER = username || ''
+
+      // @ts-ignore
+      win.CYPRESS_USER_BUDGET = budget || 0
+    },
+  })
+
+  cy.wait(['@loadAbout', '@loadLatest', '@loadStats', '@getTrends'])
+})
