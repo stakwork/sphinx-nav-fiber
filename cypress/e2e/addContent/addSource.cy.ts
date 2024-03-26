@@ -1,5 +1,25 @@
 describe('Add Tweeter Handler', () => {
   it('Carol adds tweet handle to graph', () => {
+    cy.intercept({
+      method: 'GET',
+      url: 'http://localhost:8444/api/about*',
+    }).as('loadLatest')
+
+    cy.intercept({
+      method: 'GET',
+      url: 'http://localhost:8444/api/about*',
+    }).as('loadAbout')
+
+    cy.intercept({
+      method: 'GET',
+      url: 'http://localhost:8444/api/stats*',
+    }).as('loadStats')
+
+    cy.intercept({
+      method: 'GET',
+      url: 'http://localhost:8444/api/get_trends*',
+    }).as('getTrends')
+
     cy.visit('http://localhost:3000', {
       onBeforeLoad(win) {
         // @ts-ignore
@@ -10,7 +30,8 @@ describe('Add Tweeter Handler', () => {
       },
     })
 
-    cy.wait(50000)
+    cy.wait(['@loadAbout', '@loadLatest', '@loadStats', '@getTrends'])
+
     cy.get('[data-testid="add-content-modal"]').click()
     cy.get('[id="cy-youtube-channel-id"]').type('https://twitter.com/PhoenixWallet')
     cy.get('[data-testid="add-content-btn"]').click()
