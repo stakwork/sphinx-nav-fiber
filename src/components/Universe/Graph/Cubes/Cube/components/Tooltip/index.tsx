@@ -63,7 +63,7 @@ export const Tooltip = ({ node }: Props) => {
     }
   }
 
-  let imageUrl = node.image_url
+  let imageUrl = node.profile_picture
 
   if (type === 'twitter_space') {
     imageUrl = 'twitter_placeholder.png'
