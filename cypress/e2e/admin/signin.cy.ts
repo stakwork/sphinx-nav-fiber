@@ -2,6 +2,11 @@ describe('Admin Login', () => {
   it('Admin uses the enable function', () => {
     cy.initialSetup('alice', 50)
 
+    cy.intercept({
+      method: 'POST',
+      url: 'http://localhost:8444/api/about*',
+    }).as('updateAbout')
+
     const title = `Testing NavFiber`
 
     // Open settings modal
@@ -16,8 +21,6 @@ describe('Admin Login', () => {
     // Submit the form
     cy.get('#add-node-submit-cta').click()
 
-    // Wait for a specific action to complete, such as a network call
-    cy.intercept('POST', 'http://localhost:8444/api/about*').as('updateAbout')
     cy.wait('@updateAbout')
 
     // Close modal and assert the title
