@@ -1,16 +1,7 @@
 describe('Add Webpage Content', () => {
   it('Carol adds webpage to graph', () => {
-    cy.visit('http://localhost:3000', {
-      onBeforeLoad(win) {
-        // @ts-ignore
-        win.CYPRESS_USER = 'carol'
+    cy.initialSetup('carol', 50)
 
-        // @ts-ignore
-        win.CYPRESS_USER_BUDGET = 50
-      },
-    })
-
-    cy.wait(5000)
     cy.get('[data-testid="add-content-modal"]').click()
     cy.get('[id="cy-youtube-channel-id"]').type('https://www.netflix.com/browse')
     cy.get('[data-testid="add-content-btn"]').click()

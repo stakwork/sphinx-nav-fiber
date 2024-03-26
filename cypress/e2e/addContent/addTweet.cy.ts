@@ -1,16 +1,7 @@
 describe('Add Tweet Content', () => {
   it('Carol adds tweet content to graph', () => {
-    cy.visit('http://localhost:3000', {
-      onBeforeLoad(win) {
-        // @ts-ignore
-        win.CYPRESS_USER = 'carol'
+    cy.initialSetup('carol', 50)
 
-        // @ts-ignore
-        win.CYPRESS_USER_BUDGET = 50
-      },
-    })
-
-    cy.wait(5000)
     cy.get('[data-testid="add-content-modal"]').click()
     cy.get('[id="cy-youtube-channel-id"]').type('https://twitter.com/ijbguy/status/1771096005162729663')
     cy.get('[data-testid="add-content-btn"]').click()

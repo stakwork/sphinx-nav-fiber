@@ -1,16 +1,7 @@
 describe('Add Youtube Content', () => {
   it('Carol adds youtube video to graph', () => {
-    cy.visit('http://localhost:3000', {
-      onBeforeLoad(win) {
-        // @ts-ignore
-        win.CYPRESS_USER = 'carol'
+    cy.initialSetup('carol', 50)
 
-        // @ts-ignore
-        win.CYPRESS_USER_BUDGET = 50
-      },
-    })
-
-    cy.wait(5000)
     cy.get('[data-testid="add-content-modal"]').click()
     cy.get('[id="cy-youtube-channel-id"]').type('https://www.youtube.com/watch?v=dPLPSaFqJmY')
     cy.get('[data-testid="add-content-btn"]').click()
