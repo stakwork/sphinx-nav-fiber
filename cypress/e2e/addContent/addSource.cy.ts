@@ -1,6 +1,11 @@
 describe('Add Tweeter Handler', () => {
   it('Carol adds tweet handle to graph', () => {
-    cy.initialSetup('carol', 50)
+    cy.initialSetup('carol', 300)
+
+    cy.intercept({
+      method: 'POST',
+      url: 'http://localhost:8444/api/radar*',
+    }).as('addSource')
 
     cy.get('[data-testid="add-content-modal"]').click()
     cy.get('[id="cy-youtube-channel-id"]').type('https://twitter.com/PhoenixWallet')
@@ -8,7 +13,8 @@ describe('Add Tweeter Handler', () => {
     cy.get('[data-testid="source_next_btn"]').click()
     cy.get('[data-testid="check-icon"]').click()
 
-    cy.wait(7000)
+    cy.wait('@addSource2')
+    cy.wait(5000)
     cy.get('.Toastify__toast-body').should('have.text', 'Content Added')
   })
 })
