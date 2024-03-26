@@ -18,6 +18,7 @@ export type FetchNodeParams = {
 }
 
 export type DataStore = {
+  splashDataLoading: boolean
   scrollEventsDisabled: boolean
   categoryFilter: NodeType | null
   disableCameraRotation: boolean
@@ -121,6 +122,7 @@ const defaultData: Omit<
   sidebarFilter: 'all',
   trendingTopics: [],
   stats: null,
+  splashDataLoading: true,
 }
 
 export const useDataStore = create<DataStore>()(

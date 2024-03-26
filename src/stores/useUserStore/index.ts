@@ -4,6 +4,7 @@ type ActionType = 'CLEAR' | 'INCREMENT'
 
 export type UserStore = {
   isAdmin: boolean
+  isAuthenticated: boolean
   pubKey: string
   setIsAdmin: (val: boolean) => void
   setPubKey: (val: string) => void
@@ -15,13 +16,15 @@ export type UserStore = {
   setTribeUuid: (val: string) => void
   tribeHost: string
   setTribeHost: (val: string) => void
+  setIsAuthenticated: (val: boolean) => void
 }
 
 const defaultData: Omit<
   UserStore,
-  'setIsAdmin' | 'setPubKey' | 'setBudget' | 'setNodeCount' | 'setTribeUuid' | 'setTribeHost'
+  'setIsAdmin' | 'setPubKey' | 'setBudget' | 'setNodeCount' | 'setTribeUuid' | 'setTribeHost' | 'setIsAuthenticated'
 > = {
   isAdmin: false,
+  isAuthenticated: false,
   pubKey: '',
   budget: 0,
   nodeCount: 0,
@@ -44,4 +47,5 @@ export const useUserStore = create<UserStore>((set) => ({
     }),
   setTribeUuid: (tribeUuid) => set({ tribeUuid }),
   setTribeHost: (tribeHost) => set({ tribeHost }),
+  setIsAuthenticated: (isAuthenticated) => set({ isAuthenticated }),
 }))
