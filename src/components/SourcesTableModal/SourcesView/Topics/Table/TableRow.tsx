@@ -65,6 +65,7 @@ const TableRowComponent: FC<TTableRaw> = ({ topic, onClick, onSearch }) => {
       <StyledTableCell onClick={() => handleClickTopic(topic)}>
         <ClickableText>{topic.topic}</ClickableText>
       </StyledTableCell>
+      <StyledTableCell>{topic.node_type}</StyledTableCell>
       <StyledTableCell>{topic.edgeCount}</StyledTableCell>
       <StyledTableCell>
         <Popover

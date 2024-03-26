@@ -8,7 +8,7 @@ export const StyledTableCell = styled(TableCell)`
   && {
     color: ${colors.white};
     border: none;
-    padding: 6px 27px 6px 0;
+    padding: 6px 2px 6px 0;
     color: ${colors.GRAY3};
     font-family: Barlow;
     font-size: 14px;
