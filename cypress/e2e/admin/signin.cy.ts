@@ -17,7 +17,7 @@ describe('Admin Login', () => {
     cy.get('#add-node-submit-cta').click()
 
     // Wait for a specific action to complete, such as a network call
-    cy.intercept('POST', '/api/about*').as('updateAbout')
+    cy.intercept('POST', 'http://localhost:8444/api/about*').as('updateAbout')
     cy.wait('@updateAbout')
 
     // Close modal and assert the title
