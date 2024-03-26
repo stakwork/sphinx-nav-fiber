@@ -5,9 +5,9 @@ import { SourceTypeStep } from '..'
 
 describe('SourceTypeStep', () => {
   it('renders with initial selected type', () => {
-    const selectedType = 'Corporation'
+    const selectedType = ''
 
-    render(<SourceTypeStep allowNextStep onNextStep={jest.fn()} onSelectType={jest.fn()} selectedType={selectedType} />)
+    render(<SourceTypeStep allowNextStep onSelectType={jest.fn()} selectedType={selectedType} skipToStep={jest.fn()} />)
 
     const nextBtn = screen.getByRole('button', { name: 'Next' })
 
@@ -23,7 +23,7 @@ describe('SourceTypeStep', () => {
   })
 
   it('auto selects input field when component is rendered', () => {
-    render(<SourceTypeStep allowNextStep onNextStep={jest.fn()} onSelectType={jest.fn()} selectedType="" />)
+    render(<SourceTypeStep allowNextStep onSelectType={jest.fn()} selectedType="" skipToStep={jest.fn()} />)
 
     const inputField = screen.getByRole('combobox')
 

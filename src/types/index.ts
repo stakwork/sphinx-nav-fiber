@@ -216,6 +216,7 @@ export type IsAdminResponse = {
     isMember: boolean
     trendingTopics: boolean
     queuedSources: boolean
+    customSchema: boolean
   }
   success: boolean
   message: string

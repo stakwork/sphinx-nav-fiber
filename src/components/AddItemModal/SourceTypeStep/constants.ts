@@ -1,9 +1,31 @@
 import { TOption } from './types'
 
 export const initialValue: TOption = {
-  label: '',
-  value: '',
+  label: 'Not Selected',
+  value: 'Not Selected',
 }
+
+export const createNewNodeType: TOption = {
+  label: 'Create custom type',
+  value: 'Create custom type',
+  action: () => null,
+}
+
+export const NoParent: TOption = {
+  label: 'No Parent',
+  value: 'No Parent',
+}
+
+export const OptionTypes: TOption[] = [
+  {
+    label: 'number',
+    value: 'number',
+  },
+  {
+    label: 'string',
+    value: 'string',
+  },
+]
 
 export const OPTIONS: TOption[] = [
   {
@@ -42,5 +64,4 @@ export const OPTIONS: TOption[] = [
     label: 'Topic',
     value: 'Topic',
   },
-  initialValue,
 ]

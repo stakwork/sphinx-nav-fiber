@@ -11,6 +11,7 @@ import { Sources } from './Sources'
 import { TopicSources } from './Topics'
 import { QUEUED_SOURCES, SOURCE_TABLE, TOPICS, VIEW_CONTENT } from './constants'
 import { Content } from '~/components/SourcesTableModal/SourcesView/Content'
+import { isSphinx } from '~/utils/isSphinx'
 
 interface TabPanelProps {
   children?: React.ReactNode
@@ -52,6 +53,7 @@ export const SourcesView = () => {
   const [value, setValue] = React.useState(0)
   const [isAdmin] = useUserStore((s) => [s.isAdmin])
   const [queuedSourcesFlag] = useFeatureFlagStore((s) => [s.queuedSourcesFlag])
+  const sphinxEnabled = isSphinx()
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue)
@@ -64,6 +66,10 @@ export const SourcesView = () => {
 
     if (label === QUEUED_SOURCES) {
       return isAdmin && queuedSourcesFlag
+    }
+
+    if (label === VIEW_CONTENT) {
+      return sphinxEnabled
     }
 
     return true

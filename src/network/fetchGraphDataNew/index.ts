@@ -45,16 +45,16 @@ const fetchNodes = async (
     ...params,
   }).toString()
 
-  if (!params.word) {
-    try {
-      const response = await api.get<FetchGDataResponse>(`/prediction/graph/search?top_node_count=10&limit=10`)
+  try {
+    const response = await api.get<FetchGDataResponse>(
+      `/prediction/graph/search?top_node_count=5&limit=5` + (params.word ? `&word=${params.word}` : ''),
+    )
 
-      return response
-    } catch (e) {
-      console.error(e)
+    return response
+  } catch (e) {
+    console.error(e)
 
-      return null
-    }
+    return null
   }
 
   return null

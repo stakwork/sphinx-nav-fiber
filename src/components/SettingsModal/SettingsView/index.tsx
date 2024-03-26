@@ -50,7 +50,7 @@ type Props = {
 export const SettingsView: React.FC<Props> = ({ onClose }) => {
   const [value, setValue] = useState(0)
   const [isAdmin, pubKey] = useUserStore((s) => [s.isAdmin, s.setPubKey, s.pubKey])
-  const graphBlueprintFlag = useFeatureFlagStore((s) => s.graphBlueprintFlag)
+  const customSchemaFlag = useFeatureFlagStore((s) => s.customSchemaFlag)
   const appMetaData = useAppStore((s) => s.appMetaData)
 
   const getSettingsLabel = () => (isAdmin ? 'Admin Settings' : 'Settings')
@@ -84,7 +84,7 @@ export const SettingsView: React.FC<Props> = ({ onClose }) => {
   const tabs = [
     ...(isAdmin ? [{ label: 'General', component: General }] : []),
     { label: 'Appearance', component: Appearance },
-    ...(isAdmin && graphBlueprintFlag ? [{ label: 'Graph Blueprint', component: GraphBlueprint }] : []),
+    ...(isAdmin && customSchemaFlag ? [{ label: 'Graph Blueprint', component: GraphBlueprint }] : []),
   ]
 
   return (
@@ -110,6 +110,7 @@ const StyledTabs = styled(Tabs)`
     .MuiTabs-indicator {
       background: ${colors.primaryBlue};
     }
+    width: 90%;
   }
 `
 
@@ -122,16 +123,17 @@ const StyledTab = styled(Tab)`
   && {
     padding: 30px 0 24px;
     color: ${colors.GRAY6};
-    margin-left: 36px;
+    margin-left: 10px;
     font-family: Barlow;
     font-size: 16px;
     font-style: normal;
     font-weight: 500;
-    text-align: left;
+    text-align: center;
 
     &.Mui-selected {
       color: ${colors.white};
     }
+    flex-grow: 1;
   }
 `
 

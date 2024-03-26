@@ -12,8 +12,10 @@ import { Heading } from '../common'
 import { AddEdgeModal } from './AddEdgeTopicModal'
 import { EditTopicModal } from './EditTopicModal'
 import { MergeTopicModal } from './MergeTopicModal'
-import { Search } from './Search'
 import { Table } from './Table'
+import ClearIcon from '~/components/Icons/ClearIcon'
+import SearchIcon from '~/components/Icons/SearchIcon'
+import Search from '~/components/SourcesTableModal/SourcesView/Topics/Search'
 
 export const TopicSources = () => {
   const [loading, setLoading] = useState(false)
@@ -105,22 +107,28 @@ export const TopicSources = () => {
       <Wrapper direction="column" justify="flex-end">
         <Heading align="flex-start" direction="row" justify="space-between">
           <Text className="title">Topics</Text>
-          <Button disabled={loading} onClick={() => setFilters({ muted: !filters.muted })} size="medium">
-            {filters.muted ? 'Show Unmuted' : 'Show Muted'}
-            {loading && <ClipLoader color={colors.BLUE_PRESS_STATE} size={10} />}
-          </Button>
         </Heading>
 
-        <ActionsWrapper>
-          <Search />
-        </ActionsWrapper>
+        <InputWrapper>
+          <Search
+            activeIcon={<ClearIcon />}
+            defaultIcon={<SearchIcon />}
+            loadingIcon={<ClipLoader color={colors.PRIMARY_BLUE} size={24} />}
+            placeholder="Search ..."
+          />
+        </InputWrapper>
 
         <TableWrapper align="center" justify={loading && !data ? 'center' : 'flex-start'}>
           {loading && !data ? (
             <ClipLoader color={colors.white} />
           ) : (
             <>
-              <Table onChangeFilter={handleFilterChange} onTopicEdit={onTopicEdit} showMuted={filters.muted} />
+              <Table
+                onChangeFilter={handleFilterChange}
+                onTopicEdit={onTopicEdit}
+                setShowMuteUnmute={() => setFilters({ muted: !filters.muted })}
+                showMuted={filters.muted}
+              />
               {total > ids.length ? (
                 <Button className="load-more" disabled={loading} onClick={handleLoadMore}>
                   Load more
@@ -178,11 +186,6 @@ const TableWrapper = styled(Flex)`
   width: 100%;
 `
 
-const ActionsWrapper = styled(Flex).attrs({
-  direction: 'row',
-  align: 'center',
-  justify: 'space-between',
-})`
-  padding: 0 36px;
-  margin-bottom: 32px;
+const InputWrapper = styled(Flex)`
+  margin: 0 0 16px 36px;
 `

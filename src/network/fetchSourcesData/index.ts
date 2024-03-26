@@ -138,6 +138,7 @@ export const getSchemaAll = async () => {
 }
 
 export const getNodeContent = async (queryParams: ViewContentParams) => {
+  
   const queryString = new URLSearchParams({ ...queryParams }).toString()
 
   const signedMessage = await getSignedMessageFromRelay()
