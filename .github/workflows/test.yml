@@ -21,7 +21,7 @@ jobs:
           cache: "yarn"
       - name: Clone Stack
         run: |
-          git clone -b update/jarvis-env https://github.com/stakwork/sphinx-stack.git stack
+          git clone https://github.com/stakwork/sphinx-stack.git stack
 
       - name: Give Permissions to Sphinx Nav Fiber
         run: chmod 777 -R relay
