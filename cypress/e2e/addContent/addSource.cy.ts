@@ -13,7 +13,7 @@ describe('Add Tweeter Handler', () => {
     cy.get('[data-testid="source_next_btn"]').click()
     cy.get('[data-testid="check-icon"]').click()
 
-    cy.wait('@addSource2')
+    cy.wait('@addSource')
     cy.wait(5000)
     cy.get('.Toastify__toast-body').should('have.text', 'Content Added')
   })
