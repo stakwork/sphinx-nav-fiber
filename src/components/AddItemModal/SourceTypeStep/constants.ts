@@ -19,7 +19,7 @@ export const NoParent: TOption = {
 export const OptionTypes: TOption[] = [
   {
     label: 'number',
-    value: 'number',
+    value: 'int',
   },
   {
     label: 'string',

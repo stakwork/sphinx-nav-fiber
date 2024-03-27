@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import { Table } from './Table'
-import { Flex } from '~/components/common/Flex'
-import { getSchemaAll, Schema } from '~/network/fetchSourcesData'
 import { ClipLoader } from 'react-spinners'
-import { colors } from '~/utils'
 import styled from 'styled-components'
+import { AddTypeModal } from '~/components/AddTypeModal'
+import { Flex } from '~/components/common/Flex'
+import { Schema, getSchemaAll } from '~/network/fetchSourcesData'
+import { colors } from '~/utils'
+import { Table } from './Table'
 
 export const GraphBlueprint: React.FC = () => {
   const [loading, setLoading] = useState(true)
@@ -29,7 +30,7 @@ export const GraphBlueprint: React.FC = () => {
   }, [])
 
   return (
-    <TableWrapper align={loading ? 'center' : 'flex-start'} justify={loading ? 'center' : 'flex-start'}>
+    <TableWrapper align={loading ? 'center' : 'flex-start'} justify={loading ? 'center' : 'flex-start'} py={16}>
       {loading ? (
         <ClipLoader color={colors.white} />
       ) : (
@@ -37,6 +38,7 @@ export const GraphBlueprint: React.FC = () => {
           <Table schemas={schemaAll} />
         </>
       )}
+      <AddTypeModal />
     </TableWrapper>
   )
 }

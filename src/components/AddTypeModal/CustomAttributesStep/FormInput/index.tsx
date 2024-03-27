@@ -1,0 +1,123 @@
+import { Button, Grid, IconButton, Switch } from '@mui/material'
+import { Fragment, useEffect, useState } from 'react'
+import { useFieldArray, useFormContext } from 'react-hook-form'
+import { ClipLoader } from 'react-spinners'
+import styled from 'styled-components'
+import { NoParent, OptionTypes } from '~/components/AddItemModal/SourceTypeStep/constants'
+import DeleteIcon from '~/components/Icons/DeleteIcon'
+import PlusIcon from '~/components/Icons/PlusIcon'
+import { AutoComplete } from '~/components/common/AutoComplete'
+import { Flex } from '~/components/common/Flex'
+import { TextInput } from '~/components/common/TextInput'
+import { requiredRule } from '~/constants'
+import { getNodeType } from '~/network/fetchSourcesData'
+import { colors } from '~/utils'
+import { parseJson, parsedObjProps } from '../../utils'
+
+export const FormInput = ({ parentParam }: { parentParam: string }) => {
+  const [loading, setLoading] = useState(false)
+  const [parsedData, setParsedData] = useState<parsedObjProps[]>([])
+
+  const { fields, append, replace, remove } = useFieldArray({
+    name: 'attributes',
+  })
+
+  const { setValue, watch } = useFormContext()
+
+  useEffect(() => {
+    const init = async () => {
+      try {
+        let parsedDataDefault: parsedObjProps[] = [{ required: false, type: 'string', key: '' }]
+
+        if (parentParam !== NoParent.value.toLowerCase()) {
+          setLoading(true)
+
+          const data = await getNodeType(parentParam as string)
+
+          parsedDataDefault = parseJson(data)
+        }
+
+        replace(parsedDataDefault)
+        setParsedData(parsedDataDefault)
+      } catch (error) {
+        console.warn(error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    if (parsedData.length === 0) {
+      init()
+    }
+  }, [parentParam, setValue, replace, parsedData.length])
+
+  return (
+    <>
+      {loading ? (
+        <Flex align="center">
+          <ClipLoader color={colors.SECONDARY_BLUE} size="30" />
+        </Flex>
+      ) : (
+        <InputsWrapper>
+          <Grid container spacing={2}>
+            {fields.map((field, index) => {
+              const type = watch(`attributes[${index}].type`)
+              const checked = watch(`attributes[${index}].required`)
+
+              return (
+                <Fragment key={field.id}>
+                  <Grid item xs={5}>
+                    <TextInput
+                      className="text-input"
+                      id="cy-item-name"
+                      maxLength={50}
+                      name={`attributes.${index}.key` as const}
+                      placeholder="Enter value"
+                      rules={{
+                        ...requiredRule,
+                      }}
+                    />
+                  </Grid>
+                  <Grid item xs={4}>
+                    <AutoComplete
+                      onSelect={(val) => setValue(`attributes[${index}].type`, val?.value)}
+                      options={OptionTypes}
+                      selectedValue={OptionTypes.find((i) => i.value === type)}
+                    />
+                  </Grid>
+                  <Grid item xs={3}>
+                    <Switch
+                      checked={checked}
+                      disabled={false}
+                      name={`attributes.${index}.required` as const}
+                      onChange={(e) => setValue(`attributes[${index}].required`, e.target.checked)}
+                      size="small"
+                    />
+                    <IconButton onClick={() => remove(index)}>
+                      <DeleteIcon />
+                    </IconButton>
+                  </Grid>
+                </Fragment>
+              )
+            })}
+          </Grid>
+        </InputsWrapper>
+      )}
+      <Flex align="flex-start" py={12}>
+        <Button
+          onClick={() => append({ key: '', type: 'string', required: true })}
+          size="medium"
+          startIcon={<PlusIcon />}
+          variant="contained"
+        >
+          Add Attribute
+        </Button>
+      </Flex>
+    </>
+  )
+}
+
+const InputsWrapper = styled(Flex)`
+  max-height: 260px;
+  overflow: auto;
+`

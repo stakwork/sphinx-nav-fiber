@@ -49,7 +49,7 @@ type Props = {
 
 export const SettingsView: React.FC<Props> = ({ onClose }) => {
   const [value, setValue] = useState(0)
-  const [isAdmin, pubKey] = useUserStore((s) => [s.isAdmin, s.setPubKey, s.pubKey])
+  const [isAdmin] = useUserStore((s) => [s.isAdmin, s.setPubKey])
   const customSchemaFlag = useFeatureFlagStore((s) => s.customSchemaFlag)
   const appMetaData = useAppStore((s) => s.appMetaData)
 
@@ -59,23 +59,10 @@ export const SettingsView: React.FC<Props> = ({ onClose }) => {
     <StyledHeader>
       <Flex direction="row" pt={3}>
         <StyledText data-testid="setting-label">{getSettingsLabel()}</StyledText>
-        {resolveAdminActions()}
       </Flex>
       {children}
     </StyledHeader>
   )
-
-  const resolveAdminActions = () => {
-    if (!pubKey) {
-      return null
-    }
-
-    if (isAdmin) {
-      return null
-    }
-
-    return <></>
-  }
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue)
