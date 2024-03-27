@@ -22,15 +22,14 @@ export const MainToolbar = () => {
       <LogoButton>
         <img alt="Second brain" src="logo.svg" />
       </LogoButton>
-      {isAdmin ||
-        (true && (
-          <ActionButton data-testid="add-item-modal" onClick={openItemAddModal}>
-            <IconWrapper>
-              <AddSourceIcon />
-            </IconWrapper>
-            <Text>Add Item</Text>
-          </ActionButton>
-        ))}
+      {isAdmin && (
+        <ActionButton data-testid="add-item-modal" onClick={openItemAddModal}>
+          <IconWrapper>
+            <AddSourceIcon />
+          </IconWrapper>
+          <Text>Add Item</Text>
+        </ActionButton>
+      )}
       <ActionButton data-testid="add-content-modal" onClick={openContentAddModal}>
         <IconWrapper>
           <AddContentIcon />
