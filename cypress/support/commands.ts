@@ -1,6 +1,10 @@
 import '@testing-library/cypress/add-commands'
 
 /// <reference types="cypress" />
+
+// @ts-check
+/// <reference path="../global.d.ts" />
+
 // ***********************************************
 // This example commands.ts shows you how to
 // create various custom commands and overwrite
@@ -26,14 +30,6 @@ import '@testing-library/cypress/add-commands'
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
-//
-declare global {
-  namespace Cypress {
-    interface Chainable {
-      initialSetup(username?: string, budget?: number): Chainable<void>
-    }
-  }
-}
 
 Cypress.Commands.add('initialSetup', (username, budget) => {
   cy.intercept({
@@ -59,10 +55,10 @@ Cypress.Commands.add('initialSetup', (username, budget) => {
   cy.visit('/', {
     onBeforeLoad(win) {
       // @ts-ignore
-      win.CYPRESS_USER = username || ''
+      win.CYPRESS_USER = username || '' // eslint-disable-line no-param-reassign
 
       // @ts-ignore
-      win.CYPRESS_USER_BUDGET = budget || 0
+      win.CYPRESS_USER_BUDGET = budget || 0 // eslint-disable-line no-param-reassign
     },
   })
 

@@ -136,6 +136,7 @@ module.exports = {
         markers: ['/'],
       },
     ],
+    '@typescript-eslint/ban-ts-comment': 'off',
   },
   settings: {
     'import/resolver': {
