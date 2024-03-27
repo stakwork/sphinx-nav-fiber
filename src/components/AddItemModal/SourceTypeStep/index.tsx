@@ -7,7 +7,7 @@ import { Text } from '~/components/common/Text'
 import { getNodeSchemaTypes } from '~/network/fetchSourcesData'
 import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
 import { capitalizeString } from '~/utils/capitalize'
-import { OPTIONS, createNewNodeType, initialValue } from './constants'
+import { OPTIONS, initialValue } from './constants'
 import { Props, TOption } from './types'
 
 export const SourceTypeStep: FC<Props> = ({ skipToStep, allowNextStep, onSelectType, selectedType }) => {
@@ -29,7 +29,7 @@ export const SourceTypeStep: FC<Props> = ({ skipToStep, allowNextStep, onSelectT
             type: schema.type,
           }))
 
-          setOption([...schemaOptions, createNewNodeType])
+          setOption(schemaOptions)
         } catch (error) {
           console.warn(error)
         } finally {

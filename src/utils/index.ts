@@ -21,7 +21,6 @@ import { extractUuidAndHost } from './auth'
 import { formatDate } from './formatDate'
 import { formatNumberWithCommas } from './formatStats'
 import { generateAuthQueryParam, getSignedMessageFromRelay } from './getSignedMessage'
-import { parseJson } from './parseJson'
 import { getTrendingTopic, showPlayButton } from './trending'
 import { videoTimeToSeconds } from './videoTimetoSeconds'
 
@@ -48,7 +47,6 @@ export {
   getTrendingTopic,
   media,
   overrideConsole,
-  parseJson,
   payLsat,
   saveConsumedContent,
   saveSearchTerm,

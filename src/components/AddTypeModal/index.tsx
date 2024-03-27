@@ -14,15 +14,14 @@ import { getNodeSchemaTypes } from '~/network/fetchSourcesData'
 import { useModal } from '~/stores/useModalStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { SubmitErrRes } from '~/types'
-import { capitalizeString } from '~/utils/capitalize'
-import { NoParent } from '../SourceTypeStep/constants'
-import { TOption } from '../SourceTypeStep/types'
+import { TOption } from '../AddItemModal/SourceTypeStep/types'
 import { CreateCustomNodeAttribute } from './CustomAttributesStep'
+import { convertAttributes } from './utils'
 
 export type FormData = {
-  name: string
+  type: string
   parent?: string
-  attrs?: {
+  attributes?: {
     [k: string]: string | boolean
   }
 } & Partial<{ [k: string]: string }>
@@ -38,7 +37,14 @@ export type AddItemModalStepID =
 
 const handleSubmitForm = async (data: FieldValues, setBudget: (value: number | null) => void): Promise<void> => {
   try {
-    const res: SubmitErrRes = await api.post(`/${'schema'}`, JSON.stringify(data), {})
+    const { attributes, ...withoutAttributes } = data
+
+    const requestData = {
+      ...withoutAttributes,
+      ...convertAttributes(attributes),
+    }
+
+    const res: SubmitErrRes = await api.post(`/${'schema'}`, JSON.stringify(requestData), {})
 
     if (res.error) {
       const { message } = res.error
@@ -67,7 +73,6 @@ const handleSubmitForm = async (data: FieldValues, setBudget: (value: number | n
 }
 
 export const AddTypeModal = () => {
-  const [stepId, setStepId] = useState<AddItemModalStepID>('sourceType')
   const { close, visible } = useModal('addType')
   const [setBudget] = useUserStore((s) => [s.setBudget])
   const form = useForm<FormData>({ mode: 'onChange' })
@@ -77,7 +82,6 @@ export const AddTypeModal = () => {
 
   useEffect(
     () => () => {
-      setStepId('sourceType')
       reset()
     },
     [visible, reset],
@@ -90,12 +94,16 @@ export const AddTypeModal = () => {
       try {
         const data = await getNodeSchemaTypes()
 
-        const schemaOptions = data.schemas.map((schema) => ({
-          label: capitalizeString(schema.type),
-          value: schema.type,
-        }))
+        const schemaOptions = data.schemas.map((schema) =>
+          schema?.type === 'thing'
+            ? { label: 'No Parent', value: schema.type }
+            : {
+                label: schema.type,
+                value: schema.type,
+              },
+        )
 
-        setParentOptions([...schemaOptions, NoParent])
+        setParentOptions(schemaOptions)
       } catch (error) {
         console.warn(error)
       } finally {
@@ -110,10 +118,6 @@ export const AddTypeModal = () => {
 
   const handleClose = () => {
     close()
-  }
-
-  const skipToStep = (step: AddItemModalStepID) => {
-    setStepId(step)
   }
 
   const onSubmit = form.handleSubmit(async (data) => {
@@ -165,7 +169,7 @@ export const AddTypeModal = () => {
               <TextInput
                 id="cy-item-name"
                 maxLength={250}
-                name="name"
+                name="type"
                 placeholder="Enter type name"
                 rules={{
                   ...requiredRule,
@@ -176,7 +180,7 @@ export const AddTypeModal = () => {
           </Flex>
           <CreateCustomNodeAttribute parent={parent} />
           <Flex direction="row" justify="center" mt={20}>
-            <Button onClick={onSubmit} size="large" variant="contained">
+            <Button color="secondary" onClick={onSubmit} size="large" variant="contained">
               Save
             </Button>
           </Flex>

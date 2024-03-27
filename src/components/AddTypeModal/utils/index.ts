@@ -1,3 +1,19 @@
+export function convertAttributes(attributes: parsedObjProps[]) {
+  const convertedAttributes: { [key: string]: string } = {}
+
+  attributes.forEach((attribute) => {
+    const { key, type, required } = attribute
+
+    if (required) {
+      convertedAttributes[key] = type
+    } else {
+      convertedAttributes[key] = `?${type}`
+    }
+  })
+
+  return convertedAttributes
+}
+
 export type parsedObjProps = {
   required: boolean
   type: string

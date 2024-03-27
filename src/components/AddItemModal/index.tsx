@@ -11,10 +11,8 @@ import { useUserStore } from '~/stores/useUserStore'
 import { NodeExtended, SubmitErrRes } from '~/types'
 import { executeIfProd, getLSat } from '~/utils'
 import { SuccessNotify } from '../common/SuccessToast'
-import { AddTypeModal } from './AddTypeModal'
 import { BudgetStep } from './BudgetStep'
-import { CreateConfirmation } from './CreateComfirmationStep'
-import { CreateCustomTypeStep } from './CreateCustomTypeStep'
+import { CreateConfirmation } from './CreateConfirmationStep'
 import { SourceStep } from './SourceStep'
 import { SourceTypeStep } from './SourceTypeStep'
 
@@ -25,14 +23,7 @@ export type FormData = {
   type?: string
 } & Partial<{ [k: string]: string }>
 
-export type AddItemModalStepID =
-  | 'sourceType'
-  | 'source'
-  // | 'selectParent'
-  | 'createType'
-  | 'setBudget'
-  // | 'createNodeType'
-  | 'createConfirmation'
+export type AddItemModalStepID = 'sourceType' | 'source' | 'setBudget' | 'createConfirmation'
 
 const handleSubmitForm = async (
   data: FieldValues,
@@ -229,11 +220,6 @@ export const AddItemModal = () => {
     }
   }
 
-  // const SelectParent = (val: string) => {
-  //   setParent(val)
-  //   setValue('parent', val)
-  // }
-
   const AddItemModalStepMapper: Record<AddItemModalStepID, JSX.Element> = {
     sourceType: (
       <SourceTypeStep
@@ -245,11 +231,6 @@ export const AddItemModal = () => {
     ),
     source: <SourceStep name={name} skipToStep={skipToStep} sourceLink={sourceLink || ''} type={nodeType} />,
     setBudget: <BudgetStep loading={loading} onClick={() => null} />,
-    createType: <CreateCustomTypeStep onSelectType={handleSelectType} skipToStep={skipToStep} type={type} />,
-    // selectParent: <SelectCustomNodeParent onSelectType={SelectParent} skipToStep={skipToStep} />,
-    // createNodeType: (
-    //   <CreateCustomNodeAttribute onSelectType={handleSelectType} parent={parent} skipToStep={skipToStep} />
-    // ),
     createConfirmation: <CreateConfirmation onclose={handleClose} type={type} />,
   }
 
@@ -262,7 +243,6 @@ export const AddItemModal = () => {
           {AddItemModalStepMapper[stepId]}
         </form>
       </FormProvider>
-      <AddTypeModal />
     </BaseModal>
   )
 }
