@@ -12,7 +12,7 @@ export async function getLsatSphinx(host: string) {
       const res = await result.json()
 
       if (res.success) {
-        const { lsat } = res.response
+        const lsat = res.response
 
         return {
           paymentRequest: lsat.paymentRequest,
@@ -22,7 +22,7 @@ export async function getLsatSphinx(host: string) {
           preimage: lsat.preimage,
           paths: lsat.paths,
           status: lsat.status,
-          success: false,
+          success: true,
         }
       }
 

@@ -1,34 +1,51 @@
-import styled from 'styled-components'
-import { colors } from '~/utils/colors'
-import { Table } from './Table'
-import { Flex } from '~/components/common/Flex'
+import { Button } from '@mui/base'
 import { useEffect, useState } from 'react'
 import { ClipLoader } from 'react-spinners'
-import { getNodeContent, Node } from '~/network/fetchSourcesData'
-import { Text } from '~/components/common/Text'
+import styled from 'styled-components'
 import { Heading } from '~/components/SourcesTableModal/SourcesView/common'
+import { Flex } from '~/components/common/Flex'
+import { Text } from '~/components/common/Text'
+import { Node, getNodeContent } from '~/network/fetchSourcesData'
+import { colors } from '~/utils/colors'
+import { Table } from './Table'
 
 export const Content = () => {
-  const [loading, setLoading] = useState(true)
   const [nodes, setNodes] = useState<Node[]>([])
+  const [loading, setLoading] = useState(true)
+  const [loadLimit, setLoadLimit] = useState(10)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [newNodesAvailable, setNewNodesAvailable] = useState(true)
+
+  const viewContentParams = {
+    only_content: 'true',
+    sort_by: 'date',
+    limit: loadLimit.toString(),
+  }
+
+  const fetchData = async () => {
+    setLoading(true)
+
+    try {
+      const response = await getNodeContent(viewContentParams)
+
+      setNodes(response.nodes)
+      setLoading(false)
+    } catch (error) {
+      console.error('Error fetching data:', error)
+
+      setLoading(false)
+    }
+  }
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await getNodeContent()
-
-        setNodes(response.nodes)
-
-        setLoading(false)
-      } catch (error) {
-        console.error('Error fetching data:', error)
-
-        setLoading(false)
-      }
-    }
-
     fetchData()
-  }, [])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loadLimit])
+
+  const handleLoadMore = () => {
+    setLoadLimit(loadLimit + 10)
+    fetchData()
+  }
 
   return (
     <Wrapper direction="column" justify="flex-end">
@@ -42,6 +59,11 @@ export const Content = () => {
           <>
             <Table nodes={nodes} />
           </>
+        )}
+        {newNodesAvailable ? (
+          <SButton onClick={handleLoadMore}>Load more</SButton>
+        ) : (
+          <NoNewNodesMessage>No new nodes available</NoNewNodesMessage>
         )}
       </TableWrapper>
     </Wrapper>
@@ -85,4 +107,24 @@ const TableWrapper = styled(Flex)`
   overflow: auto;
   flex: 1;
   width: 100%;
+`
+
+const SButton = styled(Button)`
+  margin-top: 10px;
+  background-color: #618aff;
+  color: white;
+  border: none;
+  outline: none;
+  border-radius: 3px;
+  font-size: 14px;
+  font-family: Barlow;
+  padding: 5px;
+  width: 80px;
+`
+
+const NoNewNodesMessage = styled.div`
+  margin-top: 10px;
+  color: ${colors.GRAY3};
+  font-family: Barlow;
+  font-size: 14px;
 `
