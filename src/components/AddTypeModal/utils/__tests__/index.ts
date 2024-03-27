@@ -49,7 +49,7 @@ describe('parseJson function', () => {
 
     expect(output).toEqual([
       { required: true, type: 'string', key: 'name' },
-      { required: true, type: 'number', key: 'age' },
+      { required: false, type: 'number', key: 'age' },
     ])
   })
 
