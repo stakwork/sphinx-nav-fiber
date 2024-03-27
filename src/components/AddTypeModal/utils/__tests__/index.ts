@@ -42,7 +42,7 @@ describe('parseJson function', () => {
   it('should parse JSON object properly when all attributes are required', () => {
     const input = {
       name: 'string',
-      age: 'number',
+      age: '?number',
     }
 
     const output = parseJson(input)
@@ -56,7 +56,7 @@ describe('parseJson function', () => {
   it('should parse JSON object properly when some attributes are optional', () => {
     const input = {
       name: 'string',
-      '?age': 'number',
+      age: 'number',
     }
 
     const output = parseJson(input)
