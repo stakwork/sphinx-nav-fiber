@@ -88,6 +88,7 @@ export const Table: React.FC<TopicTableProps> = ({ setShowMuteUnmute, showMuted,
                     Name <SortFilterIcon />
                   </SortedIcon>
                 </StyledTableCell>
+                <StyledTableCell>Type</StyledTableCell>
                 <StyledTableCell>
                   <SortedIcon onClick={() => handleChange(EDGE_COUNT)}>
                     Count <SortFilterIcon />
