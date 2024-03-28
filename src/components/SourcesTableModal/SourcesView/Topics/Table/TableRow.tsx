@@ -12,14 +12,21 @@ import { Topic } from '~/types'
 import { formatDate } from '~/utils'
 import { colors } from '~/utils/colors'
 import { StyledTableCell, StyledTableRow } from '../../common'
+import CheckIcon from '~/components/Icons/CheckIcon'
 
 type TTableRaw = {
   topic: Topic
   onClick: (event: React.MouseEvent<HTMLButtonElement>, refId: string) => void
   onSearch: (search: string) => void
+  checkedStates: { [refId: string]: boolean }
+  setCheckedStates: React.Dispatch<React.SetStateAction<{ [refId: string]: boolean }>>
 }
 
-const TableRowComponent: FC<TTableRaw> = ({ topic, onClick, onSearch }) => {
+interface CheckboxIconProps {
+  checked?: boolean
+}
+
+const TableRowComponent: FC<TTableRaw> = ({ topic, onClick, onSearch, checkedStates, setCheckedStates }) => {
   const [ids, total] = useTopicsStore((s) => [s.ids, s.total])
   const [loading, setLoading] = useState(false)
 
@@ -38,6 +45,13 @@ const TableRowComponent: FC<TTableRaw> = ({ topic, onClick, onSearch }) => {
     } catch (error) {
       console.warn(error)
     }
+  }
+
+  const handleSelect = (refId: string) => {
+    setCheckedStates((prev) => ({
+      ...prev,
+      [refId]: !prev[refId],
+    }))
   }
 
   const handleClickTopic = (topicItem: Topic) => {
@@ -59,9 +73,20 @@ const TableRowComponent: FC<TTableRaw> = ({ topic, onClick, onSearch }) => {
 
   const open = Boolean(anchorEl)
 
+  const checkboxVisibleClass = checkedStates[topic.ref_id] ? 'visible' : ''
+
   return (
-    <StyledTableRow key={topic.topic}>
-      <StyledTableCell className="empty" />
+    <StyledTableRow key={topic.topic} className={checkedStates[topic.ref_id] ? 'checked' : ''}>
+      <StyledTableCell>
+        <CheckboxSection
+          className={`checkbox-section ${checkboxVisibleClass}`}
+          onClick={() => handleSelect(topic.ref_id)}
+        >
+          <CheckboxIcon checked={checkedStates[topic.ref_id]}>
+            <Checkmark>{checkedStates[topic.ref_id] && <CheckIcon />}</Checkmark>
+          </CheckboxIcon>
+        </CheckboxSection>
+      </StyledTableCell>
       <StyledTableCell onClick={() => handleClickTopic(topic)}>
         <ClickableText>{topic.topic}</ClickableText>
       </StyledTableCell>
@@ -145,6 +170,37 @@ const ClickableText = styled.span`
   :hover {
     text-decoration: underline;
   }
+`
+
+const CheckboxSection = styled.td`
+  visibility: hidden;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+
+  &.visible {
+    visibility: visible;
+  }
+`
+
+const CheckboxIcon = styled.div<CheckboxIconProps>`
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+  border: ${({ checked }) => (checked ? '#618AFF' : '2px solid #CCCCCC')};
+  background-color: ${({ checked }) => (checked ? '#618AFF' : 'transparent')};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 12px;
+`
+
+const Checkmark = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 2px;
+  background-color: transparent;
 `
 
 export const TopicRow = memo(TableRowComponent)

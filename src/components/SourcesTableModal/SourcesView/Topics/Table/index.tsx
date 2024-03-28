@@ -1,5 +1,5 @@
-import { Table as MaterialTable, Popover, TableRow } from '@mui/material'
-import React, { useCallback } from 'react'
+import { Table as MaterialTable, Popover, TableRow, IconButton } from '@mui/material'
+import React, { useCallback, useState } from 'react'
 import styled from 'styled-components'
 import AddCircleIcon from '~/components/Icons/AddCircleIcon'
 import CheckIcon from '~/components/Icons/CheckIcon'
@@ -19,6 +19,7 @@ import { colors } from '~/utils/colors'
 import { StyledTableCell, StyledTableHead } from '../../common'
 import { TopicTableProps } from '../../types'
 import { TopicRow } from './TableRow'
+import ClearIcon from '~/components/Icons/ClearIcon'
 
 interface CheckboxIconProps {
   checked?: boolean
@@ -29,6 +30,9 @@ export const Table: React.FC<TopicTableProps> = ({ setShowMuteUnmute, showMuted,
 
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
   const [selectedRefId, setSelectedRefId] = React.useState<string>('')
+  const [checkedStates, setCheckedStates] = useState<{ [refId: string]: boolean }>({})
+
+  const checkedCount = Object.values(checkedStates).filter((isChecked) => isChecked).length
 
   const [setSearchFormValue, setCurrentSearch] = useAppStore((s) => [s.setSearchFormValue, s.setCurrentSearch])
 
@@ -107,10 +111,46 @@ export const Table: React.FC<TopicTableProps> = ({ setShowMuteUnmute, showMuted,
                 </StyledTableCell>
               </TableRow>
             </StyledTableHead>
+            {checkedCount > 0 && (
+              <TableRow component="tr">
+                <StyledTableCell>
+                  <IconButton onClick={() => setCheckedStates({})}>
+                    <ClearIcon />
+                  </IconButton>
+                </StyledTableCell>
+                <StyledTableCell>
+                  <StatusBarSection>
+                    <CheckCountBoxSection>
+                      <CheckedCount>{checkedCount}</CheckedCount>
+                      selected
+                    </CheckCountBoxSection>
+                    <MuteStatusSection onClick={setShowMuteUnmute} role="button">
+                      {showMuted ? (
+                        <>
+                          <VisibilityOn /> Unmute All
+                        </>
+                      ) : (
+                        <>
+                          <VisibilityOff /> Mute All
+                        </>
+                      )}
+                    </MuteStatusSection>
+                  </StatusBarSection>
+                </StyledTableCell>
+              </TableRow>
+            )}
+
             {data && (
               <tbody>
                 {ids?.map((i: string) => (
-                  <TopicRow key={i} onClick={handleClick} onSearch={handleSearch} topic={data[i]} />
+                  <TopicRow
+                    key={i}
+                    checkedStates={checkedStates}
+                    onClick={handleClick}
+                    onSearch={handleSearch}
+                    setCheckedStates={setCheckedStates}
+                    topic={data[i]}
+                  />
                 ))}
               </tbody>
             )}
@@ -219,4 +259,36 @@ const PopoverWrapper = styled(Popover)`
     font-size: 14px;
     font-weight: 500;
   }
+`
+
+const CheckedCount = styled.span`
+  font-family: Barlow;
+  font-size: 13px;
+  font-weight: 500;
+  margin-right: 3px;
+`
+
+const MuteStatusSection = styled.div`
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  gap: 8px;
+  padding: 1px 8px;
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    padding: 1px 8px;
+    border-radius: 4px;
+  }
+`
+
+const CheckCountBoxSection = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 2px;
+`
+
+const StatusBarSection = styled.span`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 `
