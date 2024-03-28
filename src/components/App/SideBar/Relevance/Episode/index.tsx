@@ -124,7 +124,7 @@ export const Episode = ({
             </TypeTopic>
           )}
           {['person', 'guest'].includes(type as string) && (
-            <TypePerson imageUrl={imageUrl} name={name || ''} title={showTitle || ''} />
+            <TypePerson imageUrl={profilePicture} name={name || ''} title={showTitle || ''} />
           )}
           {['image'].includes(type as string) && <TypeCustom imageUrl={sourceLink} name={name || ''} />}
           {type === 'tweet' && (
