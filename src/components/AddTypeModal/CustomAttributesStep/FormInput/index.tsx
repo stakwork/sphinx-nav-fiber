@@ -68,6 +68,7 @@ export const FormInput = ({ parentParam }: { parentParam: string }) => {
                 <Fragment key={field.id}>
                   <Grid item xs={5}>
                     <TextInput
+                      autoComplete="off"
                       className="text-input"
                       id="cy-item-name"
                       maxLength={50}

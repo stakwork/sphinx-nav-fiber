@@ -2,21 +2,25 @@
 import { Button } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
+import { ClipLoader } from 'react-spinners'
 import { BaseModal } from '~/components/Modal'
 import { AutoComplete } from '~/components/common/AutoComplete'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { TextInput } from '~/components/common/TextInput'
-import { notify } from '~/components/common/Toast/toastMessage'
-import { NODE_ADD_ERROR, NODE_ADD_SUCCESS, requiredRule } from '~/constants'
+import { NODE_ADD_ERROR, requiredRule } from '~/constants'
 import { api } from '~/network/api'
 import { getNodeSchemaTypes } from '~/network/fetchSourcesData'
 import { useModal } from '~/stores/useModalStore'
-import { useUserStore } from '~/stores/useUserStore'
 import { SubmitErrRes } from '~/types'
+import { colors } from '~/utils'
 import { TOption } from '../AddItemModal/SourceTypeStep/types'
 import { CreateCustomNodeAttribute } from './CustomAttributesStep'
 import { convertAttributes } from './utils'
+
+type Props = {
+  onSchemaCreate: (schema: { type: string }) => void
+}
 
 export type FormData = {
   type: string
@@ -24,18 +28,9 @@ export type FormData = {
   attributes?: {
     [k: string]: string | boolean
   }
-} & Partial<{ [k: string]: string }>
+}
 
-export type AddItemModalStepID =
-  | 'sourceType'
-  | 'source'
-  | 'selectParent'
-  | 'createType'
-  | 'setBudget'
-  | 'createNodeType'
-  | 'createConfirmation'
-
-const handleSubmitForm = async (data: FieldValues, setBudget: (value: number | null) => void): Promise<void> => {
+const handleSubmitForm = async (data: FieldValues): Promise<void> => {
   try {
     const { attributes, ...withoutAttributes } = data
 
@@ -51,12 +46,7 @@ const handleSubmitForm = async (data: FieldValues, setBudget: (value: number | n
 
       throw new Error(message)
     }
-
-    notify(NODE_ADD_SUCCESS)
-    // eslint-disable-next-line no-restricted-globals
-    close()
-
-    // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {
     let errorMessage = NODE_ADD_ERROR
 
@@ -72,11 +62,11 @@ const handleSubmitForm = async (data: FieldValues, setBudget: (value: number | n
   }
 }
 
-export const AddTypeModal = () => {
+export const AddTypeModal = ({ onSchemaCreate }: Props) => {
   const { close, visible } = useModal('addType')
-  const [setBudget] = useUserStore((s) => [s.setBudget])
   const form = useForm<FormData>({ mode: 'onChange' })
   const { watch, setValue, reset } = form
+  const [loading, setLoading] = useState(false)
   const [parentsLoading, setParentsLoading] = useState(false)
   const [parentOptions, setParentOptions] = useState<TOption[] | null>(null)
 
@@ -121,8 +111,11 @@ export const AddTypeModal = () => {
   }
 
   const onSubmit = form.handleSubmit(async (data) => {
+    setLoading(false)
+
     try {
-      await handleSubmitForm(data, setBudget)
+      await handleSubmitForm(data)
+      onSchemaCreate({ type: data.type })
       handleClose()
       // eslint-disable-next-line  @typescript-eslint/no-explicit-any
     } catch (err: any) {
@@ -136,7 +129,7 @@ export const AddTypeModal = () => {
         errorMessage = err.message
       }
     } finally {
-      //   setLoading(false)
+      setLoading(false)
     }
   })
 
@@ -180,7 +173,14 @@ export const AddTypeModal = () => {
           </Flex>
           <CreateCustomNodeAttribute parent={parent} />
           <Flex direction="row" justify="center" mt={20}>
-            <Button color="secondary" onClick={onSubmit} size="large" variant="contained">
+            <Button
+              color="secondary"
+              disabled={loading}
+              onClick={onSubmit}
+              size="large"
+              startIcon={loading ? <ClipLoader color={colors.white} size={24} /> : null}
+              variant="contained"
+            >
               Save
             </Button>
           </Flex>
