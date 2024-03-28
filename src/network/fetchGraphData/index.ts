@@ -462,7 +462,7 @@ export const formatFetchNodes = (
       if (['data_series', 'document', 'tweet', 'image'].includes(node.node_type)) {
         const imageUrlsMapper: { [key: string]: string } = {
           data_series: 'node_data.webp',
-          document: 'document.svg',
+          document: node.node_type === "document" && !!node.image_url ? node.image_url : 'document.svg',
           tweet: 'twitter_placeholder.png',
         }
 
