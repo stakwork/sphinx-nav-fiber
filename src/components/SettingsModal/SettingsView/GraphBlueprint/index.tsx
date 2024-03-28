@@ -29,6 +29,10 @@ export const GraphBlueprint: React.FC = () => {
     fetchData()
   }, [])
 
+  const onSchemaCreate = (schema: Schema) => {
+    setSchemaAll([...schemaAll, schema])
+  }
+
   return (
     <TableWrapper align={loading ? 'center' : 'flex-start'} justify={loading ? 'center' : 'flex-start'} py={16}>
       {loading ? (
@@ -38,7 +42,7 @@ export const GraphBlueprint: React.FC = () => {
           <Table schemas={schemaAll} />
         </>
       )}
-      <AddTypeModal />
+      <AddTypeModal onSchemaCreate={onSchemaCreate} />
     </TableWrapper>
   )
 }
