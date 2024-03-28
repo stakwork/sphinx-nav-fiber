@@ -46,7 +46,9 @@ const Version = styled(Flex)`
 const LazyMainToolbar = lazy(() =>
   import('~/components/App/MainToolbar').then(({ MainToolbar }) => ({ default: MainToolbar })),
 )
+
 const LazyUniverse = lazy(() => import('~/components/Universe').then(({ Universe }) => ({ default: Universe })))
+
 const LazySideBar = lazy(() => import('~/components/App/SideBar').then(({ SideBar }) => ({ default: SideBar })))
 
 export const App = () => {
