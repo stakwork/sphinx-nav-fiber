@@ -1,14 +1,14 @@
 import { Leva } from 'leva'
-import { Suspense, lazy, useCallback, useEffect, useState } from 'react'
+import { lazy, Suspense, useCallback, useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import 'react-toastify/dist/ReactToastify.css'
 import { Socket } from 'socket.io-client'
 import styled from 'styled-components'
+import { Flex } from '~/components/common/Flex'
 import { DataRetriever } from '~/components/DataRetriever'
 import { GlobalStyle } from '~/components/GlobalStyle'
 import { Overlay } from '~/components/Universe/Overlay' // Import Overlay directly
 import { Preloader } from '~/components/Universe/Preloader' // Import Preloader directly
-import { Flex } from '~/components/common/Flex'
 import { isDevelopment } from '~/constants'
 import { useSocket } from '~/hooks/useSockets'
 import { getGraphDataPositions } from '~/network/fetchGraphData/const'
@@ -43,9 +43,11 @@ const Version = styled(Flex)`
   opacity: 0.5;
 `
 
-const LazyMainToolbar = lazy(() => import('./MainToolbar').then(({ MainToolbar }) => ({ default: MainToolbar })))
+const LazyMainToolbar = lazy(() =>
+  import('~/components/App/MainToolbar').then(({ MainToolbar }) => ({ default: MainToolbar })),
+)
 const LazyUniverse = lazy(() => import('~/components/Universe').then(({ Universe }) => ({ default: Universe })))
-const LazySideBar = lazy(() => import('./SideBar').then(({ SideBar }) => ({ default: SideBar })))
+const LazySideBar = lazy(() => import('~/components/App/SideBar').then(({ SideBar }) => ({ default: SideBar })))
 
 export const App = () => {
   const [setBudget, setNodeCount] = useUserStore((s) => [s.setBudget, s.setNodeCount])
