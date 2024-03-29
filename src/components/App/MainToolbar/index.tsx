@@ -9,7 +9,7 @@ import { useModal } from '~/stores/useModalStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { colors } from '~/utils/colors'
 
-export default function MainToolbar() {
+const MainToolbar = () => {
   const { open: openSourcesModal } = useModal('sourcesTable')
   const { open: openItemAddModal } = useModal('addItem')
   const { open: openContentAddModal } = useModal('addContent')
@@ -51,6 +51,8 @@ export default function MainToolbar() {
     </Wrapper>
   )
 }
+
+export default MainToolbar
 
 const Wrapper = styled(Flex).attrs({
   align: 'flex-start',
