@@ -6,32 +6,23 @@ import { useSelectedNode } from '~/stores/useDataStore'
 export const Default = () => {
   const selectedNode = useSelectedNode()
 
-  if(!selectedNode) {
+  if (!selectedNode) {
     return null
   }
 
-  const { name } = selectedNode;
+  const { name } = selectedNode
 
   return (
-    <Flex
-      align="flex-start"
-      basis="100%"
-      direction="column"
-      grow={1}
-      justify="center"
-      shrink={1}
-    >
+    <Flex align="flex-start" basis="100%" direction="column" grow={1} justify="center" shrink={1}>
       <StyledContent grow={1} justify="flex-start" p={12} shrink={1}>
-
-            <Flex>
-        <Text color="primaryText1" kind="regular">
-          Name:
-        </Text>
-        <Text color="primaryText1" kind="regular">
-          {name}
-        </Text>
-
-            </Flex>
+        <Flex>
+          <Text color="primaryText1" kind="regular">
+            Name:
+          </Text>
+          <Text color="primaryText1" kind="regular">
+            {name}
+          </Text>
+        </Flex>
       </StyledContent>
     </Flex>
   )

@@ -12,7 +12,7 @@ import { colors } from '~/utils/colors'
 
 export const SelectWithPopover = () => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null)
-  const { sidebarFilter, sidebarFilters ,setSidebarFilter } = useDataStore((s) => s)
+  const { sidebarFilter, sidebarFilters, setSidebarFilter } = useDataStore((s) => s)
 
   const handleOpenPopover = (event: React.MouseEvent<HTMLDivElement>) => {
     setAnchorEl(event.currentTarget as HTMLElement)

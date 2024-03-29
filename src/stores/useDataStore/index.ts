@@ -141,7 +141,7 @@ export const useDataStore = create<DataStore>()(
         await saveSearchTerm()
       }
 
-      const sidebarFilters = ['all' ,...new Set(data.nodes.map((i) => i.node_type))]
+      const sidebarFilters = ['all', ...new Set(data.nodes.map((i) => i.node_type))]
 
       set({
         data,

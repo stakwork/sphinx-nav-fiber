@@ -50,7 +50,7 @@ const EpisodeWrapper = styled(Flex).attrs({
     width: 14px;
     height: 14px;
     object-fit: cover;
-    background: rgba(255, 255, 255, 0.10);
+    background: rgba(255, 255, 255, 0.1);
   }
 
   .badge__label {

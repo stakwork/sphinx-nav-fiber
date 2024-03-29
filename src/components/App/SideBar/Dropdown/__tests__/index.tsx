@@ -1,8 +1,8 @@
-import '@testing-library/jest-dom';
-import { fireEvent, render } from '@testing-library/react';
-import React from 'react';
-import { SelectWithPopover } from '..'; // Adjust the import path as needed
-import { useDataStore } from '../../../../../stores/useDataStore';
+import '@testing-library/jest-dom'
+import { fireEvent, render } from '@testing-library/react'
+import React from 'react'
+import { SelectWithPopover } from '..' // Adjust the import path as needed
+import { useDataStore } from '../../../../../stores/useDataStore'
 
 // Mock the useDataStore hook
 jest.mock('~/stores/useDataStore', () => ({
