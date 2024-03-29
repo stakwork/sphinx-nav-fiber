@@ -1,5 +1,5 @@
 import { Leva } from 'leva'
-import { lazy, Suspense, useCallback, useEffect, useState } from 'react'
+import { Suspense, useCallback, useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import 'react-toastify/dist/ReactToastify.css'
 import { Socket } from 'socket.io-client'
@@ -7,6 +7,7 @@ import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { DataRetriever } from '~/components/DataRetriever'
 import { GlobalStyle } from '~/components/GlobalStyle'
+import { Universe } from '~/components/Universe'
 import { Overlay } from '~/components/Universe/Overlay' // Import Overlay directly
 import { Preloader } from '~/components/Universe/Preloader' // Import Preloader directly
 import { isDevelopment } from '~/constants'
@@ -27,6 +28,7 @@ import { DeviceCompatibilityNotice } from './DeviceCompatibilityNotification'
 import { Helper } from './Helper'
 import { MainToolbar } from './MainToolbar'
 import { SecondarySideBar } from './SecondarySidebar'
+import { SideBar } from './SideBar'
 import { Toasts } from './Toasts'
 
 const Wrapper = styled(Flex)`
@@ -45,8 +47,8 @@ const Version = styled(Flex)`
 `
 
 // const LazyMainToolbar = lazy(() => import('./MainToolbar/index'))
-const LazyUniverse = lazy(() => import('~/components/Universe').then(({ Universe }) => ({ default: Universe })))
-const LazySideBar = lazy(() => import('./SideBar').then(({ SideBar }) => ({ default: SideBar })))
+// const LazyUniverse = lazy(() => import('~/components/Universe').then(({ Universe }) => ({ default: Universe })))
+// const LazySideBar = lazy(() => import('./SideBar').then(({ SideBar }) => ({ default: SideBar })))
 
 export const App = () => {
   const [setBudget, setNodeCount] = useUserStore((s) => [s.setBudget, s.setNodeCount])
@@ -148,8 +150,8 @@ export const App = () => {
           <DataRetriever>
             <FormProvider {...form}>
               <MainToolbar />
-              <LazySideBar onSubmit={handleSubmit} />
-              <LazyUniverse />
+              <SideBar onSubmit={handleSubmit} />
+              <Universe />
               {isLoading && <Preloader fullSize={false} />}
               <Overlay />
               <SecondarySideBar />
