@@ -25,7 +25,7 @@ const TypesMapper: TTypeMapper = {
 }
 
 export const Avatar = styled.div<Props>`
-  background-image: ${({ src, type = 'audio' }) => `url(${src}), url('/${TypesMapper[type]}_placeholder_img.png')`};
+  background-image: ${({ src, type = 'audio' }) => `url(${src}), url('/${(TypesMapper[type] || 'generic')}_placeholder_img.png')`};
   background-size: contain;
   background-repeat: no-repeat;
   width: ${({ size = 45 }) => size}px;
