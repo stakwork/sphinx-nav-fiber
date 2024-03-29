@@ -43,13 +43,9 @@ const Version = styled(Flex)`
   opacity: 0.5;
 `
 
-const LazyMainToolbar = lazy(() =>
-  import('~/components/App/MainToolbar').then(({ MainToolbar }) => ({ default: MainToolbar })),
-)
-
+const LazyMainToolbar = lazy(() => import('./MainToolbar'))
 const LazyUniverse = lazy(() => import('~/components/Universe').then(({ Universe }) => ({ default: Universe })))
-
-const LazySideBar = lazy(() => import('~/components/App/SideBar').then(({ SideBar }) => ({ default: SideBar })))
+const LazySideBar = lazy(() => import('./SideBar').then(({ SideBar }) => ({ default: SideBar })))
 
 export const App = () => {
   const [setBudget, setNodeCount] = useUserStore((s) => [s.setBudget, s.setNodeCount])

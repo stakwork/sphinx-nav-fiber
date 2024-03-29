@@ -1,15 +1,15 @@
 import styled from 'styled-components'
+import { Flex } from '~/components/common/Flex'
+import { Text } from '~/components/common/Text'
 import AddContentIcon from '~/components/Icons/AddContentIcon'
 import AddSourceIcon from '~/components/Icons/AddSourceIcon'
 import SettingsIcon from '~/components/Icons/SettingsIcon'
 import SourcesTableIcon from '~/components/Icons/SourcesTableIcon'
-import { Flex } from '~/components/common/Flex'
-import { Text } from '~/components/common/Text'
 import { useModal } from '~/stores/useModalStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { colors } from '~/utils/colors'
 
-export const MainToolbar = () => {
+export default function MainToolbar() {
   const { open: openSourcesModal } = useModal('sourcesTable')
   const { open: openItemAddModal } = useModal('addItem')
   const { open: openContentAddModal } = useModal('addContent')
