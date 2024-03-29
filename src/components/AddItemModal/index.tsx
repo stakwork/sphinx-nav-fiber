@@ -15,11 +15,12 @@ import { BudgetStep } from './BudgetStep'
 import { CreateConfirmation } from './CreateComfirmationStep'
 import { CreateCustomTypeStep, SelectCustomNodeParent } from './CreateCustomTypeStep'
 import { CreateCustomNodeAttribute } from './CustomAttributesStep'
+import { SetAttributesStep } from './SetAttributesStep'
 import { SourceStep } from './SourceStep'
 import { SourceTypeStep } from './SourceTypeStep'
 
 export type FormData = {
-  name: string
+  typeName: string
   nodeType: string
   sourceLink?: string
   type?: string
@@ -33,6 +34,7 @@ export type AddItemModalStepID =
   | 'setBudget'
   | 'createNodeType'
   | 'createConfirmation'
+  | 'setAttribues'
 
 const handleSubmitForm = async (
   data: FieldValues,
@@ -76,13 +78,15 @@ const handleSubmitForm = async (
   } else {
     const endPoint = 'node'
 
-    const body: { [index: string]: unknown } = {}
-
-    body.node_type = data.nodeType
-    body.name = data.name
+    const body: { [index: string]: unknown } = {
+      node_data: { ...data.node_data },
+      node_type: data.nodeType,
+      name: data.typeName,
+    }
 
     if (data.nodeType === 'Image') {
       body.node_data = {
+        ...data.node_data,
         source_link: data.sourceLink,
       }
     }
@@ -156,7 +160,7 @@ export const AddItemModal = () => {
   )
 
   const nodeType = watch('nodeType')
-  const name = watch('name')
+  const name = watch('typeName')
   const sourceLink = watch('sourceLink')
   const type = watch('type')
 
@@ -175,9 +179,9 @@ export const AddItemModal = () => {
     const newType = data.nodeType.toLocaleLowerCase()
 
     const node: NodeExtended = {
-      name: data.name,
+      name: data.typeName,
       type: newType,
-      label: data.name,
+      label: data.typeName,
       node_type: newType,
       id: newId,
       ref_id: newId,
@@ -219,8 +223,6 @@ export const AddItemModal = () => {
     }
   })
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-
   const handleSelectType = (val: string) => setValue('nodeType', val)
 
   const SelectParent = (val: string) => {
@@ -245,6 +247,7 @@ export const AddItemModal = () => {
       <CreateCustomNodeAttribute onSelectType={handleSelectType} parent={parent} skipToStep={skipToStep} />
     ),
     createConfirmation: <CreateConfirmation onclose={handleClose} type={type} />,
+    setAttribues: <SetAttributesStep nodeType={nodeType} skipToStep={skipToStep} />,
   }
 
   const modalKind: ModalKind = stepId === 'createNodeType' ? 'regular' : 'small'
