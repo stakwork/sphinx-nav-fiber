@@ -103,6 +103,7 @@ export const Episode = ({
               ) : null}
             </Flex>
 
+            <Description data-testid="episode-name">{name}</Description>
             <Description data-testid="episode-description">{description}</Description>
             <Flex align="center" direction="row" justify="flex-start">
               {Boolean(date) && <Date>{moment.unix(date).fromNow()}</Date>}

@@ -45,8 +45,6 @@ const handleSubmitForm = async (
       }
 
       onAddNewData(data, res?.data?.ref_id)
-
-      notify(NODE_ADD_SUCCESS)
       // eslint-disable-next-line no-restricted-globals
       close()
 

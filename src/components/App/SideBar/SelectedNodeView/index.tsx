@@ -11,6 +11,7 @@ import { Person } from '../Person'
 import { Show } from '../Show'
 import { Topic } from '../Topic'
 import { TwitData } from '../TwitData'
+import { Default } from './Default'
 import { Document } from './Document'
 
 const MEDIA_TYPES = ['clip', 'twitter_space', 'youtube', 'episode', 'podcast']
@@ -58,7 +59,7 @@ const _View = () => {
     case 'image':
       return <Image />
     default:
-      return null
+      return <Default />
   }
 }
 

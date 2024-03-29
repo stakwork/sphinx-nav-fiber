@@ -2,7 +2,7 @@ import { getSignedMessageFromRelay } from '~/utils'
 import { API_URL } from '~/utils/apiUrlFromSwarmHost'
 
 const request = async <Res>(url: string, config?: RequestInit): Promise<Res> => {
-  const admin = localStorage.getItem('admin')
+  const admin = localStorage?.getItem('admin')
 
   let updatedUrl = url
 
