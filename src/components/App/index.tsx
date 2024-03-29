@@ -25,6 +25,7 @@ import { ActionsToolbar } from './ActionsToolbar'
 import { AppBar } from './AppBar'
 import { DeviceCompatibilityNotice } from './DeviceCompatibilityNotification'
 import { Helper } from './Helper'
+import { MainToolbar } from './MainToolbar'
 import { SecondarySideBar } from './SecondarySidebar'
 import { Toasts } from './Toasts'
 
@@ -43,7 +44,7 @@ const Version = styled(Flex)`
   opacity: 0.5;
 `
 
-const LazyMainToolbar = lazy(() => import('./MainToolbar/index'))
+// const LazyMainToolbar = lazy(() => import('./MainToolbar/index'))
 const LazyUniverse = lazy(() => import('~/components/Universe').then(({ Universe }) => ({ default: Universe })))
 const LazySideBar = lazy(() => import('./SideBar').then(({ SideBar }) => ({ default: SideBar })))
 
@@ -146,7 +147,7 @@ export const App = () => {
         <Wrapper direction="row">
           <DataRetriever>
             <FormProvider {...form}>
-              <LazyMainToolbar />
+              <MainToolbar />
               <LazySideBar onSubmit={handleSubmit} />
               <LazyUniverse />
               {isLoading && <Preloader fullSize={false} />}
