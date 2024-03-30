@@ -8,6 +8,8 @@ import { Topic } from '~/types'
 describe('TableRowComponent', () => {
   const mockOnClick = jest.fn()
   const mockOnSearch = jest.fn()
+  const mockCheckedStates = { '1': false }
+  const mockSetCheckedStates = jest.fn()
 
   const singleEdgeTopic: Topic = {
     topic: 'Test Topic',
@@ -25,7 +27,15 @@ describe('TableRowComponent', () => {
   }
 
   it('Does not show hover state for topics with only one edge', () => {
-    render(<TopicRow onClick={mockOnClick} onSearch={mockOnSearch} topic={singleEdgeTopic} />)
+    render(
+      <TopicRow
+        checkedStates={mockCheckedStates}
+        onClick={mockOnClick}
+        onSearch={mockOnSearch}
+        setCheckedStates={mockSetCheckedStates}
+        topic={singleEdgeTopic}
+      />,
+    )
 
     waitFor(() => {
       const cell = screen.getByText(singleEdgeTopic.topic)
@@ -36,7 +46,15 @@ describe('TableRowComponent', () => {
   })
 
   it('Shows hover state for topics with more than one edge', () => {
-    render(<TopicRow onClick={mockOnClick} onSearch={mockOnSearch} topic={multipleEdgesTopic} />)
+    render(
+      <TopicRow
+        checkedStates={mockCheckedStates}
+        onClick={mockOnClick}
+        onSearch={mockOnSearch}
+        setCheckedStates={mockSetCheckedStates}
+        topic={multipleEdgesTopic}
+      />,
+    )
 
     waitFor(() => {
       const cell = screen.getByText(multipleEdgesTopic.topic)
@@ -49,8 +67,20 @@ describe('TableRowComponent', () => {
   it('Ensures each row is the same size', () => {
     const { container } = render(
       <>
-        <TopicRow onClick={mockOnClick} onSearch={mockOnSearch} topic={singleEdgeTopic} />
-        <TopicRow onClick={mockOnClick} onSearch={mockOnSearch} topic={multipleEdgesTopic} />
+        <TopicRow
+          checkedStates={mockCheckedStates}
+          onClick={mockOnClick}
+          onSearch={mockOnSearch}
+          setCheckedStates={mockSetCheckedStates}
+          topic={singleEdgeTopic}
+        />
+        <TopicRow
+          checkedStates={mockCheckedStates}
+          onClick={mockOnClick}
+          onSearch={mockOnSearch}
+          setCheckedStates={mockSetCheckedStates}
+          topic={multipleEdgesTopic}
+        />
       </>,
     )
 

@@ -1,19 +1,19 @@
 import { Button, Table as MaterialTable, TableRow } from '@mui/material'
 import React from 'react'
-import { StyledTableHead, StyledTableCell } from '~/components/SourcesTableModal/SourcesView/common'
-import { TopicRow } from './TableRow'
-import { Flex } from '~/components/common/Flex'
-import { useModal } from '~/stores/useModalStore'
-import PlusIcon from '~/components/Icons/PlusIcon'
 import styled from 'styled-components'
+import PlusIcon from '~/components/Icons/PlusIcon'
+import { StyledTableCell, StyledTableHead } from '~/components/SourcesTableModal/SourcesView/common'
+import { Flex } from '~/components/common/Flex'
 import { Schema } from '~/network/fetchSourcesData'
+import { useModal } from '~/stores/useModalStore'
+import { TopicRow } from './TableRow'
 
 interface TableProps {
   schemas: Schema[]
 }
 
 export const Table: React.FC<TableProps> = ({ schemas }) => {
-  const { open: openContentAddModal } = useModal('addItem')
+  const { open: openContentAddModal } = useModal('addType')
 
   const handleAddContent = async () => {
     openContentAddModal()

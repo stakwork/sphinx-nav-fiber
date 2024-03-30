@@ -4,6 +4,7 @@ export type AvailableModals =
   | 'budgetExplanation'
   | 'sourcesTable'
   | 'addItem'
+  | 'addType'
   | 'addContent'
   | 'editTopic'
   | 'addEdge'
@@ -27,6 +28,7 @@ const defaultData = {
     budgetExplanation: false,
     sourcesTable: false,
     addItem: false,
+    addType: false,
     addContent: false,
     editTopic: false,
     addEdge: false,

@@ -48,7 +48,7 @@ export const TextInput = ({
     register,
     control,
     formState: { errors },
-  } = useFormContext()
+  } = useFormContext() || {}
 
   const error = get(errors, name)
 

@@ -90,6 +90,7 @@ export const LocationStep: FC<Props> = ({ latitude, longitude, onNextStep, form 
         <Flex grow={1} ml={20}>
           <Button
             color="secondary"
+            data-testid="skip-location-btn"
             disabled={!latitude || !longitude}
             onClick={handleNextStep}
             size="large"

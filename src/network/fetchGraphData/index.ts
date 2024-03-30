@@ -447,7 +447,7 @@ export const formatFetchNodes = (
 
   const dataSeries = Array.isArray(dataInit.data_series) ? dataInit.data_series : []
 
-  const data: Node[] = [...dataInit.exact, ...dataInit.related, ...dataSeries]
+  const data: Node[] = [...dataInit.exact, ...dataInit.related, ...dataSeries].filter((i) => i)
 
   let topWeightValue = 0
 

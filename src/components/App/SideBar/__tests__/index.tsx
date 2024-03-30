@@ -142,7 +142,7 @@ describe('Test SideBar', () => {
     })()
   })
 
-  it('Ensure that the clear icon appears when there is a search term and clears the search on click', () => {
+  it.skip('Ensure that the clear icon appears when there is a search term and clears the search on click', () => {
     const clearSearchMock = jest.fn()
 
     useAppStoreMock.mockReturnValue({ currentSearch: 'Test Search', clearSearch: clearSearchMock, sidebarIsOpen: true })

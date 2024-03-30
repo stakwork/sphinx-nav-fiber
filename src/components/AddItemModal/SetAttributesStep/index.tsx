@@ -7,9 +7,9 @@ import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { TextInput } from '~/components/common/TextInput'
 import { getNodeType } from '~/network/fetchSourcesData'
-import { colors, parseJson } from '~/utils'
-import { parsedObjProps } from '~/utils/parseJson'
+import { colors } from '~/utils'
 import { AddItemModalStepID } from '..'
+import { parseJson, parsedObjProps } from '../../AddTypeModal/utils'
 
 type Props = {
   skipToStep: (step: AddItemModalStepID) => void
