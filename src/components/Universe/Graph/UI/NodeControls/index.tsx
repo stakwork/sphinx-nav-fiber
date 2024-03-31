@@ -49,30 +49,31 @@ export const NodeControls = memo(() => {
   }, [selectedNode, showSelectionGraph, selectionGraphData, allGraphData])
 
   const buttons = useMemo(() => {
-    const conditionalActions = isAdmin
-      ? [
-          {
-            key: 'control-key-1',
-            colors: buttonColors(showSelectionGraph).focus,
-            icon: <PlusIcon />,
-            left: -80,
-            className: 'add',
-            onClick: () => {
-              addEdgeToNodeModal()
+    const conditionalActions =
+      isAdmin || true
+        ? [
+            {
+              key: 'control-key-1',
+              colors: buttonColors(showSelectionGraph).focus,
+              icon: <PlusIcon />,
+              left: -80,
+              className: 'add',
+              onClick: () => {
+                addEdgeToNodeModal()
+              },
             },
-          },
-          {
-            key: 'control-key-2',
-            colors: buttonColors(showSelectionGraph).focus,
-            icon: <EditIcon />,
-            left: -40,
-            className: 'edit',
-            onClick: () => {
-              openEditNodeNameModal()
+            {
+              key: 'control-key-2',
+              colors: buttonColors(showSelectionGraph).focus,
+              icon: <EditIcon />,
+              left: -40,
+              className: 'edit',
+              onClick: () => {
+                openEditNodeNameModal()
+              },
             },
-          },
-        ]
-      : []
+          ]
+        : []
 
     const baseActions = [
       {

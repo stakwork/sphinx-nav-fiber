@@ -3,7 +3,6 @@ import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { TEdge } from '~/types'
-import { colors } from '~/utils/colors'
 import { ConnectionType } from './ConnectionType'
 import { ToNode } from './ToNode'
 
@@ -19,24 +18,30 @@ export const TitleEditor: FC<Props> = ({ from, onSelect, selectedType, setSelect
   <Flex mb={20}>
     <Flex align="center" direction="row" justify="space-between" mb={18}>
       <Flex align="center" direction="row">
-        <StyledText>Add edge</StyledText>
+        <StyledText>Add Edge</StyledText>
       </Flex>
     </Flex>
 
-    <Content mb={12}>
-      <SectionWrapper>
-        <div className="label">From</div>
-        <div>{from}</div>
-      </SectionWrapper>
-      <SectionWrapper>
-        <div className="label">Type</div>
-        <ConnectionType selectedType={selectedType} setSelectedType={setSelectedType} />
-      </SectionWrapper>
-      <SectionWrapper>
-        <div className="label">To</div>
-        <ToNode onSelect={onSelect} selectedValue={selectedToNode} />
-      </SectionWrapper>
-    </Content>
+    <Div>
+      <div>
+        <StyledLabel1>From</StyledLabel1>
+        <StyledSection>
+          <StyledText2>{from}</StyledText2>
+        </StyledSection>
+      </div>
+      <div>
+        <StyledLabel>Type</StyledLabel>
+        <StyledType>
+          <ConnectionType selectedType={selectedType} setSelectedType={setSelectedType} />
+        </StyledType>
+      </div>
+      <div>
+        <StyledLabel2>To</StyledLabel2>
+        <StyledSection>
+          <ToNode onSelect={onSelect} selectedValue={selectedToNode} />
+        </StyledSection>
+      </div>
+    </Div>
   </Flex>
 )
 
@@ -46,22 +51,83 @@ const StyledText = styled(Text)`
   font-family: 'Barlow';
 `
 
-const Content = styled(Flex).attrs({
-  align: 'stretch',
-  direction: 'column',
-  justify: 'flex-start',
-})`
-  color: ${colors.white};
-  .label {
-    margin-bottom: 8px;
-    font-weight: 500;
-    font-size: 14px;
-    color: ${colors.GRAY3};
-  }
+const Div = styled.div`
+  position: relative;
+  color: white;
 `
 
-const SectionWrapper = styled(Flex)`
-  flex: 1 1 100%;
-  min-height: unset;
-  margin-bottom: 8px;
+const StyledSection = styled.div`
+  position: relative;
+  width: 258px;
+  height: 64px;
+  top: 5px;
+  left: 55px;
+  padding: 16px;
+  gap: 10px;
+  border-radius: 6px;
+  border: 1px solid #6b7a8d4d;
+  opacity: 0px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+`
+
+const StyledText2 = styled(Text)`
+  font-family: 'Barlow';
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 18px;
+  letter-spacing: 0.01em;
+  text-align: left;
+`
+
+const StyledType = styled.div`
+  margin-left: 55px;
+  width: 200px;
+  height: 54px;
+  top: 167px;
+  left: 76px;
+  gap: 6px;
+  opacity: 0px;
+`
+
+const StyledLabel2 = styled.label`
+  background-color: #23252f;
+  font-family: 'Barlow';
+  color: #bac1c6;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 18px;
+  letter-spacing: 0.01em;
+  text-align: left;
+  position: relative;
+  left: 70px;
+  top: 13px;
+`
+
+const StyledLabel = styled.label`
+  font-family: 'Barlow';
+  color: #bac1c6;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 18px;
+  letter-spacing: 0.01em;
+  text-align: left;
+  position: relative;
+  left: 55px;
+  top: -5px;
+`
+
+const StyledLabel1 = styled.label`
+  background-color: #23252f;
+  font-family: 'Barlow';
+  color: #bac1c6;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 18px;
+  letter-spacing: 0.01em;
+  text-align: left;
+  position: absolute;
+  left: 70px;
+  top: -4px;
 `
