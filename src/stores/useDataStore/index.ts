@@ -17,6 +17,11 @@ export type FetchNodeParams = {
   media_type?: string
 }
 
+export type SidebarFilterWithCount = {
+  name: string
+  count: number
+}
+
 export type DataStore = {
   scrollEventsDisabled: boolean
   categoryFilter: NodeType | null
@@ -40,6 +45,7 @@ export type DataStore = {
   hideNodeDetails: boolean
   sidebarFilter: string
   sidebarFilters: string[]
+  sidebarFilterCounts: SidebarFilterWithCount[]
   trendingTopics: Trending[]
   stats: TStats | null
 
@@ -68,6 +74,7 @@ export type DataStore = {
   setTeachMe: (_: boolean) => void
   addNewNode: (node: NodeExtended) => void
   removeNode: (id: string) => void
+  setSidebarFilterCounts: (filterCounts: SidebarFilterWithCount[]) => void
 }
 
 const defaultData: Omit<
@@ -88,6 +95,7 @@ const defaultData: Omit<
   | 'setSphinxModalOpen'
   | 'setCameraFocusTrigger'
   | 'setSources'
+  | 'setSidebarFilterCounts'
   | 'setQueuedSources'
   | 'setGraphRadius'
   | 'setGraphStyle'
@@ -122,6 +130,7 @@ const defaultData: Omit<
   sidebarFilter: 'all',
   sidebarFilters: [],
   trendingTopics: [],
+  sidebarFilterCounts: [],
   stats: null,
 }
 
@@ -141,7 +150,14 @@ export const useDataStore = create<DataStore>()(
         await saveSearchTerm()
       }
 
-      const sidebarFilters = ['all', ...new Set(data.nodes.map((i) => i.node_type))]
+      const sidebarFilters = ['all', ...new Set(data.nodes.map((i) => i.node_type || 'Other'))]
+
+      const sidebarFilterCounts = sidebarFilters.map((filter) => ({
+        name: filter,
+        count: data.nodes.filter(
+          (node) => filter === 'all' || node.node_type === filter || (!node.node_type && filter === 'Other'),
+        ).length,
+      }))
 
       set({
         data,
@@ -153,8 +169,10 @@ export const useDataStore = create<DataStore>()(
         showSelectionGraph: false,
         showTeachMe: false,
         sidebarFilters,
+        sidebarFilterCounts,
       })
     },
+    setSidebarFilterCounts: (sidebarFilterCounts) => set({ sidebarFilterCounts }),
     setTrendingTopics: (trendingTopics) => set({ trendingTopics }),
     setStats: (stats) => set({ stats }),
     setIsFetching: (isFetching) => set({ isFetching }),
@@ -230,6 +248,12 @@ export const useDataStore = create<DataStore>()(
 export const useSelectedNode = () => useDataStore((s) => s.selectedNode)
 
 export const useFilteredNodes = () =>
-  useDataStore((s) =>
-    (s.data?.nodes || []).filter((i) => (s.sidebarFilter === 'all' ? true : i.node_type === s.sidebarFilter)),
-  )
+  useDataStore((s) => {
+    if (s.sidebarFilter === 'all') {
+      return s.data?.nodes || []
+    }
+
+    return (s.data?.nodes || []).filter((i) =>
+      s.sidebarFilter === 'Other' ? !i.node_type : i.node_type === s.sidebarFilter,
+    )
+  })

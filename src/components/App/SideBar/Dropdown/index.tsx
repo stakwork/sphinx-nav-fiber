@@ -12,7 +12,17 @@ import { colors } from '~/utils/colors'
 
 export const SelectWithPopover = () => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null)
-  const { sidebarFilter, sidebarFilters, setSidebarFilter } = useDataStore((s) => s)
+  const { sidebarFilter, setSidebarFilter, sidebarFilterCounts } = useDataStore((s) => s)
+  const currentFilter = sidebarFilter === 'undefined' ? 'Other' : sidebarFilter
+  const currentFilterCount = sidebarFilterCounts.find((f) => f.name === currentFilter)?.count || 0
+
+  const capitalizeFirstLetter = (text: string): string => {
+    if (!text) {
+      return ''
+    }
+
+    return text.charAt(0).toUpperCase() + text.slice(1)
+  }
 
   const handleOpenPopover = (event: React.MouseEvent<HTMLDivElement>) => {
     setAnchorEl(event.currentTarget as HTMLElement)
@@ -32,7 +42,7 @@ export const SelectWithPopover = () => {
       <Action onClick={handleOpenPopover}>
         <div className="text">Show</div>
         <div className="value" data-testid="value">
-          {sidebarFilter}
+          {`${capitalizeFirstLetter(currentFilter)} (${currentFilterCount})`}
         </div>
         <div className="icon">{!anchorEl ? <ChevronDownIcon /> : <ChevronUpIcon />}</div>
       </Action>
@@ -54,14 +64,14 @@ export const SelectWithPopover = () => {
         }}
       >
         <FormControl>
-          {sidebarFilters.map((option) => (
+          {sidebarFilterCounts.map(({ name, count }) => (
             <MenuItem
-              key={option}
-              className={clsx({ active: option === sidebarFilter })}
-              onClick={() => handleSelectChange(option)}
+              key={name}
+              className={clsx({ active: name === sidebarFilter })}
+              onClick={() => handleSelectChange(name)}
             >
-              <span className="icon">{option === sidebarFilter ? <CheckIcon /> : null}</span>
-              <span>{option}</span>
+              <span className="icon">{name === sidebarFilter ? <CheckIcon /> : null}</span>
+              <span>{`${capitalizeFirstLetter(name)} (${count})`}</span>
             </MenuItem>
           ))}
         </FormControl>
