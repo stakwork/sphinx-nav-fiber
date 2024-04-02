@@ -6,7 +6,6 @@ import {
   DOCUMENT,
   LINK,
   NODE_ADD_ERROR,
-  NODE_ADD_SUCCESS,
   RSS,
   TWITTER_HANDLE,
   TWITTER_SOURCE,
@@ -113,8 +112,6 @@ const handleSubmitForm = async (
       throw new Error(message)
     }
 
-    console.log(NODE_ADD_SUCCESS)
-
     close()
 
     // eslint-disable-next-line  @typescript-eslint/no-explicit-any
@@ -128,16 +125,12 @@ const handleSubmitForm = async (
     }
 
     if (err.status === 400) {
-      const error = await err.json()
-
-      console.log(error?.status || NODE_ADD_ERROR)
+      await err.json()
 
       close()
     }
 
     if (err instanceof Error) {
-      console.log(err.message || NODE_ADD_ERROR)
-
       close()
     }
   }
