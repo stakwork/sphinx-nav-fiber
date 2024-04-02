@@ -3,13 +3,11 @@ import { FormControl, InputLabel, MenuItem, OutlinedInput, Select, SelectChangeE
 import { useCallback, useEffect, useState } from 'react'
 import { MdSend } from 'react-icons/md'
 import { PropagateLoader } from 'react-spinners'
-import { toast } from 'react-toastify'
 import { Socket } from 'socket.io-client'
 import * as sphinx from 'sphinx-bridge'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
-import { ToastMessage } from '~/components/common/Toast/toastMessage'
 import { useSocket } from '~/hooks/useSockets'
 import { postAskQuestion } from '~/network/fetchGraphData'
 import { useAppStore } from '~/stores/useAppStore'
@@ -59,11 +57,6 @@ export const AskQuestion = () => {
   const handleAskQuestion = useCallback(
     (response: ResponseType) => {
       setAskedQuestionAnswer(response.answer)
-
-      toast(<ToastMessage message="Response is ready" />, {
-        position: 'bottom-center',
-        type: 'success',
-      })
     },
     [setAskedQuestionAnswer],
   )
@@ -108,10 +101,6 @@ export const AskQuestion = () => {
         )
 
         await updateBudget(setBudget)
-
-        toast(<ToastMessage message="We started preparing response for you" />, {
-          type: 'success',
-        })
       }
     } catch (error) {
       console.error(error)

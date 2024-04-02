@@ -1,14 +1,12 @@
 import { Button } from '@mui/material'
 import { useCallback, useEffect, useRef } from 'react'
 import { PropagateLoader } from 'react-spinners'
-import { toast } from 'react-toastify'
 import ReactFlow from 'reactflow'
 import { Socket } from 'socket.io-client'
 import * as sphinx from 'sphinx-bridge'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
-import { ToastMessage } from '~/components/common/Toast/toastMessage'
 import { postInstagraph, postTeachMe } from '~/network/fetchGraphData'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
@@ -17,7 +15,6 @@ import { useUserStore } from '~/stores/useUserStore'
 import { colors } from '~/utils/colors'
 import { updateBudget } from '~/utils/setBudget'
 import { AskQuestion } from '../AskQuestion'
-
 import 'reactflow/dist/style.css'
 import { useSocket } from '~/hooks/useSockets'
 
@@ -40,11 +37,6 @@ export const TeachMe = () => {
   const handleTeachMe = useCallback(
     (response: ResponseType) => {
       setTeachMeAnswer(response.tutorial)
-
-      toast(<ToastMessage message="Tutorial is ready" />, {
-        position: 'bottom-center',
-        type: 'success',
-      })
     },
     [setTeachMeAnswer],
   )
@@ -52,11 +44,6 @@ export const TeachMe = () => {
   const handleInstagraph = useCallback(
     (response: InstagraphResponse) => {
       setInstagraphAnswer(response)
-
-      toast(<ToastMessage message="Instagraph is ready" />, {
-        position: 'bottom-center',
-        type: 'success',
-      })
     },
     [setInstagraphAnswer],
   )
@@ -106,10 +93,6 @@ export const TeachMe = () => {
 
         await updateBudget(setBudget)
 
-        toast(<ToastMessage message="We started preparing tutorial for you" />, {
-          type: 'success',
-        })
-
         await postInstagraph(
           {
             term: searchTerm,
@@ -119,10 +102,6 @@ export const TeachMe = () => {
         )
 
         await updateBudget(setBudget)
-
-        toast(<ToastMessage message="We started preparing an instagraph for you" />, {
-          type: 'success',
-        })
       } catch (error: unknown) {
         setHasTeachingInProgress(false)
         setHasInstagraphInProgress(false)
