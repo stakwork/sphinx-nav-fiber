@@ -103,7 +103,7 @@ const StyledSection = styled.div`
   position: relative;
   width: 258px;
   height: 64px;
-  margin-top: 15px;
+  margin-top: 25px;
   margin-left: 55px;
   padding: 10px;
   gap: 10px;
