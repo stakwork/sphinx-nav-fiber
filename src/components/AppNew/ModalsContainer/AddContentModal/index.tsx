@@ -184,7 +184,7 @@ export const AddContentModal = () => {
     try {
       await handleSubmitForm(data, handleClose, type, setBudget)
     } catch {
-      console.log(NODE_ADD_ERROR)
+      console.error(NODE_ADD_ERROR)
     } finally {
       setLoading(false)
     }
