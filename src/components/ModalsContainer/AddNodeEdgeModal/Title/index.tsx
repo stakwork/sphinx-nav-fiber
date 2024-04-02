@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { FC, useState } from 'react'
 import styled from 'styled-components'
 import ArrowRight from '~/components/Icons/ArrowRight'
 import FlipIcon from '~/components/Icons/FlipIcon'
@@ -18,45 +18,78 @@ type Props = {
   selectedToNode: TEdge | null
 }
 
-export const TitleEditor: FC<Props> = ({ from, onSelect, selectedType, setSelectedType, selectedToNode }) => (
-  <Flex mb={20}>
-    <Flex align="center" direction="row" justify="space-between" mb={18}>
-      <Flex align="center" direction="row">
-        <StyledText>Add Edge</StyledText>
+interface SectionProps {
+  swap: boolean
+}
+
+export const TitleEditor: FC<Props> = ({ from, onSelect, selectedType, setSelectedType, selectedToNode }) => {
+  const [swap, setSwap] = useState(true)
+
+  const handleButtonClick = () => {
+    setSwap(!swap)
+  }
+
+  return (
+    <Flex mb={20}>
+      <Flex align="center" direction="row" justify="space-between" mb={18}>
+        <Flex align="center" direction="row">
+          <StyledText>Add Edge</StyledText>
+        </Flex>
       </Flex>
+
+      <IconContainer>
+        <NodeConnectionIcon />
+        <IconTopContainer>
+          <NodeCircleIcon />
+        </IconTopContainer>
+        <IconMidContainer onClick={handleButtonClick}>
+          <FlipIcon />
+        </IconMidContainer>
+        <IconBottomContainer>
+          <ArrowRight />
+        </IconBottomContainer>
+      </IconContainer>
+
+      <Div>
+        {swap ? (
+          <>
+            <FromSection swap={swap}>
+              <FromLabel>From</FromLabel>
+              <StyledText2>{from}</StyledText2>
+            </FromSection>
+
+            <TypeSection swap={swap}>
+              <StyledLabel>Type</StyledLabel>
+              <ConnectionType selectedType={selectedType} setSelectedType={setSelectedType} />
+            </TypeSection>
+
+            <ToSection swap={swap}>
+              <ToLabel>To</ToLabel>
+              <ToNode onSelect={onSelect} selectedValue={selectedToNode} />
+            </ToSection>
+          </>
+        ) : (
+          <>
+            <ToSection swap={swap}>
+              <ToLabel>To</ToLabel>
+              <ToNode onSelect={onSelect} selectedValue={selectedToNode} />
+            </ToSection>
+
+            <TypeSection swap={swap}>
+              <StyledLabel>Type</StyledLabel>
+              <ConnectionType selectedType={selectedType} setSelectedType={setSelectedType} />
+            </TypeSection>
+
+            <FromSection swap={swap}>
+              <FromLabel>From</FromLabel>
+              <StyledText2>{from}</StyledText2>
+            </FromSection>
+          </>
+        )}
+      </Div>
     </Flex>
-
-    <IconContainer>
-      <NodeConnectionIcon />
-      <IconTopContainer>
-        <NodeCircleIcon />
-      </IconTopContainer>
-      <IconMidContainer>
-        <FlipIcon />
-      </IconMidContainer>
-      <IconBottomContainer>
-        <ArrowRight />
-      </IconBottomContainer>
-    </IconContainer>
-
-    <Div>
-      <FromSection>
-        <FromLabel>From</FromLabel>
-        <StyledText2>{from}</StyledText2>
-      </FromSection>
-
-      <TypeSection>
-        <StyledLabel>Type</StyledLabel>
-        <ConnectionType selectedType={selectedType} setSelectedType={setSelectedType} />
-      </TypeSection>
-
-      <StyledSection>
-        <ToLabel>To</ToLabel>
-        <ToNode onSelect={onSelect} selectedValue={selectedToNode} />
-      </StyledSection>
-    </Div>
-  </Flex>
-)
+  )
+}
 
 const StyledText = styled(Text)`
   font-size: 22px;
@@ -69,43 +102,43 @@ const Div = styled.div`
   color: white;
 `
 
-const FromSection = styled.div`
+const FromSection = styled.div<SectionProps>`
   position: relative;
   width: 258px;
   height: 64px;
-  top: 8px;
+  margin-top: ${(props) => (props.swap ? '10px' : '10px')};
   left: 55px;
   padding: 16px;
   gap: 10px;
   border-radius: 6px;
   border: 1px solid #6b7a8d4d;
   opacity: 0px;
-  margin-bottom: 20px;
+  margin-bottom: ${(props) => (props.swap ? '10px' : '10px')};
   display: flex;
   align-items: center;
   z-index: -10;
 `
 
-const TypeSection = styled.div`
+const TypeSection = styled.div<SectionProps>`
   position: relative;
-  width: 200px;
+  width: 195px;
   height: 64px;
   top: 8px;
   left: 35px;
   opacity: 0px;
-  margin-bottom: 20px;
+  margin-bottom: ${(props) => (props.swap ? '25px' : '25px')};
   display: flex;
   align-items: center;
   z-index: -10;
 `
 
-const StyledSection = styled.div`
+const ToSection = styled.div<SectionProps>`
   position: relative;
   width: 258px;
   height: 64px;
-  margin-top: 25px;
+  margin-top: ${(props) => (props.swap ? '' : '10px')};
   margin-left: 55px;
-  padding: 10px;
+  padding: 15px;
   gap: 10px;
   border-radius: 6px;
   border: 1px solid #6b7a8d4d;
@@ -182,6 +215,8 @@ const IconMidContainer = styled.div`
   position: absolute;
   top: 70px;
   left: -12px;
+  z-index: 999;
+  cursor: pointer;
 `
 
 const IconBottomContainer = styled.div`
