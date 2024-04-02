@@ -1,10 +1,8 @@
 import { Button, Skeleton } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { ClipLoader } from 'react-spinners'
-import { TypeOptions, toast } from 'react-toastify'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
-import { ToastMessage } from '~/components/common/Toast/toastMessage'
 import { deleteNode, getTopicsData } from '~/network/fetchSourcesData'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { useModal } from '~/stores/useModalStore'
@@ -14,14 +12,6 @@ import { TitleEditor } from '../Title'
 
 export type FormData = {
   name: string
-}
-
-const notify = (message: string, type: TypeOptions) => {
-  toast(<ToastMessage message={message} />, {
-    icon: false,
-    position: 'bottom-center',
-    type,
-  })
 }
 
 export const Body = () => {
@@ -74,7 +64,6 @@ export const Body = () => {
     setLoading(true)
 
     try {
-      notify('Topic node removal coming soon', 'info')
       setSelectedNode(null)
       closeHandler()
       closeEditNodeModal()
@@ -104,12 +93,11 @@ export const Body = () => {
 
       removeNode(refId)
       setSelectedNode(null)
-      notify('Removed Node', 'success')
+
       closeHandler()
       closeEditNodeModal()
     } catch (error) {
       console.log(error)
-      notify('Removed failed, try later', 'error')
 
       console.warn(error)
     } finally {

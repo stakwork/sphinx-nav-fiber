@@ -1,15 +1,12 @@
 import { useEffect, useState } from 'react'
 import { MdBolt } from 'react-icons/md'
 import ClipLoader from 'react-spinners/ClipLoader'
-import { toast } from 'react-toastify'
 import BoostIcon from '~/components/Icons/BoostIcon'
 import { Flex } from '~/components/common/Flex'
 import { Pill } from '~/components/common/Pill'
-import { BOOST_ERROR_BUDGET, BOOST_SUCCESS } from '~/constants'
 import { Node } from '~/types'
 import { boost } from '~/utils/boost'
 import { colors } from '~/utils/colors'
-import { ToastMessage } from '../common/Toast/toastMessage'
 
 type Props = {
   count?: number
@@ -17,14 +14,6 @@ type Props = {
   content?: Node | null
   refId?: string
   readOnly?: boolean
-}
-
-const notify = (message: string) => {
-  toast(<ToastMessage message={message} />, {
-    icon: false,
-    position: 'bottom-center',
-    type: message === BOOST_SUCCESS ? 'success' : 'error',
-  })
 }
 
 export const Booster = ({ count = 0, updateCount, content, readOnly, refId }: Props) => {
@@ -53,13 +42,11 @@ export const Booster = ({ count = 0, updateCount, content, readOnly, refId }: Pr
     try {
       await boost(refId, defaultBoostAmount)
 
-      notify(BOOST_SUCCESS)
-
       if (updateCount) {
         updateCount(count + defaultBoostAmount)
       }
     } catch (e) {
-      notify(BOOST_ERROR_BUDGET)
+      console.log(e)
     }
 
     setSubmitting(false)
