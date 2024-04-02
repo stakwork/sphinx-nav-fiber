@@ -40,24 +40,20 @@ export const TitleEditor: FC<Props> = ({ from, onSelect, selectedType, setSelect
     </IconContainer>
 
     <Div>
-      <div>
-        <StyledLabel1>From</StyledLabel1>
-        <StyledSection>
-          <StyledText2>{from}</StyledText2>
-        </StyledSection>
-      </div>
-      <div>
+      <FromSection>
+        <FromLabel>From</FromLabel>
+        <StyledText2>{from}</StyledText2>
+      </FromSection>
+
+      <TypeSection>
         <StyledLabel>Type</StyledLabel>
-        <StyledType>
-          <ConnectionType selectedType={selectedType} setSelectedType={setSelectedType} />
-        </StyledType>
-      </div>
-      <div>
-        <StyledLabel2>To</StyledLabel2>
-        <StyledSection>
-          <ToNode onSelect={onSelect} selectedValue={selectedToNode} />
-        </StyledSection>
-      </div>
+        <ConnectionType selectedType={selectedType} setSelectedType={setSelectedType} />
+      </TypeSection>
+
+      <StyledSection>
+        <ToLabel>To</ToLabel>
+        <ToNode onSelect={onSelect} selectedValue={selectedToNode} />
+      </StyledSection>
     </Div>
   </Flex>
 )
@@ -73,11 +69,11 @@ const Div = styled.div`
   color: white;
 `
 
-const StyledSection = styled.div`
+const FromSection = styled.div`
   position: relative;
   width: 258px;
   height: 64px;
-  top: 5px;
+  top: 8px;
   left: 55px;
   padding: 16px;
   gap: 10px;
@@ -85,6 +81,36 @@ const StyledSection = styled.div`
   border: 1px solid #6b7a8d4d;
   opacity: 0px;
   margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  z-index: -10;
+`
+
+const TypeSection = styled.div`
+  position: relative;
+  width: 200px;
+  height: 64px;
+  top: 8px;
+  left: 35px;
+  opacity: 0px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  z-index: -10;
+`
+
+const StyledSection = styled.div`
+  position: relative;
+  width: 258px;
+  height: 64px;
+  margin-top: 15px;
+  margin-left: 55px;
+  padding: 10px;
+  gap: 10px;
+  border-radius: 6px;
+  border: 1px solid #6b7a8d4d;
+  opacity: 0px;
+  margin-bottom: 10px;
   display: flex;
   align-items: center;
   z-index: -10;
@@ -99,17 +125,7 @@ const StyledText2 = styled(Text)`
   text-align: left;
 `
 
-const StyledType = styled.div`
-  margin-left: 55px;
-  width: 200px;
-  height: 54px;
-  top: 167px;
-  left: 76px;
-  gap: 6px;
-  opacity: 0px;
-`
-
-const StyledLabel2 = styled.label`
+const StyledLabel = styled.label`
   background-color: #23252f;
   font-family: 'Barlow';
   color: #bac1c6;
@@ -119,11 +135,11 @@ const StyledLabel2 = styled.label`
   letter-spacing: 0.01em;
   text-align: left;
   position: relative;
-  left: 70px;
-  top: 13px;
+  left: 30px;
+  top: -34px;
 `
 
-const StyledLabel = styled.label`
+const ToLabel = styled.label`
   font-family: 'Barlow';
   color: #bac1c6;
   font-size: 13px;
@@ -131,12 +147,12 @@ const StyledLabel = styled.label`
   line-height: 18px;
   letter-spacing: 0.01em;
   text-align: left;
-  position: relative;
-  left: 55px;
-  top: -5px;
+  position: absolute;
+  left: 15px;
+  top: -10px;
 `
 
-const StyledLabel1 = styled.label`
+const FromLabel = styled.label`
   background-color: #23252f;
   font-family: 'Barlow';
   color: #bac1c6;
@@ -146,8 +162,8 @@ const StyledLabel1 = styled.label`
   letter-spacing: 0.01em;
   text-align: left;
   position: absolute;
-  left: 70px;
-  top: -4px;
+  left: 10px;
+  top: -10px;
 `
 
 const IconContainer = styled.div`
