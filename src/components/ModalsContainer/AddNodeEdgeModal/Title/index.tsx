@@ -1,5 +1,9 @@
 import { FC } from 'react'
 import styled from 'styled-components'
+import ArrowRight from '~/components/Icons/ArrowRight'
+import FlipIcon from '~/components/Icons/FlipIcon'
+import NodeCircleIcon from '~/components/Icons/NodeCircleIcon'
+import NodeConnectionIcon from '~/components/Icons/NodeConnectionIcon'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { TEdge } from '~/types'
@@ -21,6 +25,19 @@ export const TitleEditor: FC<Props> = ({ from, onSelect, selectedType, setSelect
         <StyledText>Add Edge</StyledText>
       </Flex>
     </Flex>
+
+    <IconContainer>
+      <NodeConnectionIcon />
+      <IconTopContainer>
+        <NodeCircleIcon />
+      </IconTopContainer>
+      <IconMidContainer>
+        <FlipIcon />
+      </IconMidContainer>
+      <IconBottomContainer>
+        <ArrowRight />
+      </IconBottomContainer>
+    </IconContainer>
 
     <Div>
       <div>
@@ -70,6 +87,7 @@ const StyledSection = styled.div`
   margin-bottom: 20px;
   display: flex;
   align-items: center;
+  z-index: -10;
 `
 
 const StyledText2 = styled(Text)`
@@ -130,4 +148,28 @@ const StyledLabel1 = styled.label`
   position: absolute;
   left: 70px;
   top: -4px;
+`
+
+const IconContainer = styled.div`
+  position: absolute;
+  top: 102px;
+  left: 35px;
+`
+
+const IconTopContainer = styled.div`
+  position: absolute;
+  top: -8px;
+  left: 33px;
+`
+
+const IconMidContainer = styled.div`
+  position: absolute;
+  top: 70px;
+  left: -12px;
+`
+
+const IconBottomContainer = styled.div`
+  position: absolute;
+  top: 157px;
+  left: 31px;
 `
