@@ -14,6 +14,7 @@ export type AvailableModals =
   | 'briefDescription'
   | 'editNodeName'
   | 'removeNode'
+  | 'removeNodeType'
   | 'addEdgeToNode'
 
 type ModalStore = {
@@ -38,6 +39,7 @@ const defaultData = {
     briefDescription: false,
     editNodeName: false,
     removeNode: false,
+    removeNodeType: false,
     addEdgeToNode: false,
   },
 }

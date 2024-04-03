@@ -1,6 +1,6 @@
 import { IconButton } from '@mui/material'
 import React, { memo } from 'react'
-import ThreeDotsIcons from '~/components/Icons/ThreeDotsIcons'
+import EditIcon from '~/components/Icons/EditIcon'
 
 import { StyledTableCell, StyledTableRow } from '~/components/SourcesTableModal/SourcesView/common'
 
@@ -21,20 +21,21 @@ interface Schema {
 
 interface TableRowProps {
   schema: Schema
+  onOpenActions: (s: Schema) => void
 }
 
 function capitalizeFirstLetter(string: string) {
   return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase()
 }
 
-const TableRowComponent: React.FC<TableRowProps> = ({ schema }) => (
+const TableRowComponent: React.FC<TableRowProps> = ({ schema, onOpenActions }) => (
   <StyledTableRow>
     <StyledTableCell className="empty" />
     <StyledTableCell>{capitalizeFirstLetter(schema.type ?? '')}</StyledTableCell>
     <StyledTableCell>
-      <IconButton onClick={(e) => onClick(e, schema.ref_id)}>
-        <ThreeDotsIcons data-testid="ThreeDotsIcons" />
-    </IconButton>
+      <IconButton disabled={schema?.type === 'thing'} onClick={() => onOpenActions(schema)}>
+        <EditIcon data-testid="EditIcon" />
+      </IconButton>
     </StyledTableCell>
   </StyledTableRow>
 )

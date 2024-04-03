@@ -1,5 +1,5 @@
 import { Button, Table as MaterialTable, Popover, TableRow } from '@mui/material'
-import React from 'react'
+import React, { useCallback } from 'react'
 import styled from 'styled-components'
 import EditTopicIcon from '~/components/Icons/EditTopicIcon'
 import PlusIcon from '~/components/Icons/PlusIcon'
@@ -12,23 +12,36 @@ import { TopicRow } from './TableRow'
 
 interface TableProps {
   schemas: Schema[]
+  setSelectedSchema: (schema: Schema | null) => void
 }
 
-export const Table: React.FC<TableProps> = ({ schemas }) => {
+export const Table: React.FC<TableProps> = ({ schemas, setSelectedSchema }) => {
   const { open: openContentAddModal } = useModal('addType')
 
-    const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
-  const [selectedRefId, setSelectedRefId] = React.useState<string>('')
+  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
 
   const handleAddContent = async () => {
     openContentAddModal()
   }
 
-    const handleClose = () => {
+  const handleOpenPopover = useCallback(
+    (s: Schema) => {
+      openContentAddModal()
+      setSelectedSchema(s)
+    },
+    [openContentAddModal, setSelectedSchema],
+  )
+
+  const handleClose = () => {
     setAnchorEl(null)
   }
 
-    const open = Boolean(anchorEl)
+  const handleEdit = () => {
+    setAnchorEl(null)
+    handleAddContent()
+  }
+
+  const open = Boolean(anchorEl)
 
   return (
     <>
@@ -37,29 +50,28 @@ export const Table: React.FC<TableProps> = ({ schemas }) => {
           <TableRow component="tr">
             <StyledTableCell className="empty" />
             <StyledTableCell>Type</StyledTableCell>
+            <StyledTableCell className="empty" />
           </TableRow>
         </StyledTableHead>
         <tbody>
           {schemas?.map((schema) => (
-            <TopicRow key={schema?.ref_id} schema={schema} />
+            <TopicRow key={schema?.type} onOpenActions={handleOpenPopover} schema={schema} />
           ))}
         </tbody>
       </MaterialTable>
-      {selectedRefId ? (
-            <PopoverWrapper
-              anchorEl={anchorEl}
-              anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-              id={'schema-editor'}
-              onClose={handleClose}
-              open={open}
-              transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-            >
-              <PopoverOption onClick={() => console.log('editTopic')}>
-                <EditTopicIcon data-testid="EditTopicIcon" /> Rename
-              </PopoverOption>
+      <PopoverWrapper
+        anchorEl={anchorEl}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+        id="schema-editor"
+        onClose={handleClose}
+        open={open}
+        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+      >
+        <PopoverOption onClick={handleEdit}>
+          <EditTopicIcon data-testid="EditTopicIcon" /> Edit
+        </PopoverOption>
+      </PopoverWrapper>
 
-            </PopoverWrapper>
-          ) : null}
       <AddContentSection>
         <Button
           color="secondary"
