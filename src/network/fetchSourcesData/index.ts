@@ -123,6 +123,7 @@ export interface Schema {
   mission_statement?: string
   namespace?: string
   search_term?: string
+  is_deleted?: boolean
 }
 
 interface SchemaAllResponse {

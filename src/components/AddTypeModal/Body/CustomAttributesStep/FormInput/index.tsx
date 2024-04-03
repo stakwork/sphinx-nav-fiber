@@ -12,7 +12,9 @@ import { TextInput } from '~/components/common/TextInput'
 import { requiredRule } from '~/constants'
 import { getNodeType } from '~/network/fetchSourcesData'
 import { colors } from '~/utils'
-import { parseJson, parsedObjProps } from '../../utils'
+import { parseJson, parsedObjProps } from '../../../utils'
+
+const noSpacePattern = /^[a-z]+$/
 
 export const FormInput = ({ parentParam }: { parentParam: string }) => {
   const [loading, setLoading] = useState(false)
@@ -58,7 +60,7 @@ export const FormInput = ({ parentParam }: { parentParam: string }) => {
           <ClipLoader color={colors.SECONDARY_BLUE} size="30" />
         </Flex>
       ) : (
-        <InputsWrapper>
+        <InputsWrapper py={8}>
           <Grid container spacing={2}>
             {fields.map((field, index) => {
               const type = watch(`attributes[${index}].type`)
@@ -76,6 +78,10 @@ export const FormInput = ({ parentParam }: { parentParam: string }) => {
                       placeholder="Enter value"
                       rules={{
                         ...requiredRule,
+                        pattern: {
+                          message: 'Please use lower case and remove spaces',
+                          value: noSpacePattern,
+                        },
                       }}
                     />
                   </Grid>

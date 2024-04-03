@@ -10,13 +10,14 @@ import { Table } from './Table'
 export const GraphBlueprint: React.FC = () => {
   const [loading, setLoading] = useState(true)
   const [schemaAll, setSchemaAll] = useState<Schema[]>([])
+  const [selectedSchema, setSelectedSchema] = useState<Schema | null>(null)
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await getSchemaAll()
 
-        setSchemaAll(response.schemas)
+        setSchemaAll(response.schemas.filter((i) => !i.is_deleted))
 
         setLoading(false)
       } catch (error) {
@@ -33,17 +34,28 @@ export const GraphBlueprint: React.FC = () => {
     setSchemaAll([...schemaAll, schema])
   }
 
+  const onSchemaDelete = (type: string) => {
+    setSchemaAll(schemaAll.filter((i) => i.type !== type))
+  }
+
   return (
-    <TableWrapper align={loading ? 'center' : 'flex-start'} justify={loading ? 'center' : 'flex-start'} py={16}>
-      {loading ? (
-        <ClipLoader color={colors.white} />
-      ) : (
-        <>
-          <Table schemas={schemaAll} />
-        </>
-      )}
-      <AddTypeModal onSchemaCreate={onSchemaCreate} />
-    </TableWrapper>
+    <>
+      <TableWrapper align={loading ? 'center' : 'flex-start'} justify={loading ? 'center' : 'flex-start'} py={16}>
+        {loading ? (
+          <ClipLoader color={colors.white} />
+        ) : (
+          <>
+            <Table schemas={schemaAll} setSelectedSchema={setSelectedSchema} />
+          </>
+        )}
+      </TableWrapper>
+      <AddTypeModal
+        onClose={() => setSelectedSchema(null)}
+        onDelete={onSchemaDelete}
+        onSchemaCreate={onSchemaCreate}
+        selectedSchema={selectedSchema}
+      />
+    </>
   )
 }
 
