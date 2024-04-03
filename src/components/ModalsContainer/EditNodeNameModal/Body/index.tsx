@@ -7,7 +7,6 @@ import { Flex } from '~/components/common/Flex'
 import { getTopicsData, putNodeData } from '~/network/fetchSourcesData'
 import { useSelectedNode } from '~/stores/useDataStore'
 import { useModal } from '~/stores/useModalStore'
-import { useTopicsStore } from '~/stores/useTopicsStore'
 import { Topic } from '~/types'
 import { colors } from '~/utils/colors'
 import { TitleEditor } from '../Title'
@@ -18,28 +17,29 @@ export type FormData = {
 
 export const Body = () => {
   const { close } = useModal('editNodeName')
-  const [data] = useTopicsStore((s) => [s.data])
   const form = useForm<FormData>({ mode: 'onChange' })
   const { watch, setValue, reset, getValues } = form
   const [loading, setLoading] = useState(false)
 
   const [topicIsLoading, setTopicIsLoading] = useState(false)
 
-  const [actualNode, setActualNode] = useState<null | Topic>()
+  const [actualTopicNode, setActualTopicNode] = useState<null | Topic>()
 
   const selectedNode = useSelectedNode()
 
   const { open: openRemoveNodeModal } = useModal('removeNode')
 
   useEffect(() => {
-    if (actualNode) {
-      setValue('topic', actualNode?.topic)
+    if (actualTopicNode) {
+      setValue('topic', actualTopicNode?.topic)
+    } else if (selectedNode) {
+      setValue('topic', selectedNode.name)
     }
 
     return () => {
       reset()
     }
-  }, [actualNode, setValue, reset])
+  }, [actualTopicNode, setValue, reset, selectedNode])
 
   useEffect(() => {
     const init = async () => {
@@ -54,7 +54,7 @@ export const Body = () => {
 
         const node = topicData.find((i) => i.topic === selectedNode.name)
 
-        setActualNode(node)
+        setActualTopicNode(node)
       } catch (error) {
         console.log(error)
       } finally {
@@ -71,17 +71,15 @@ export const Body = () => {
     close()
   }
 
+  const node = actualTopicNode || selectedNode
+
   const handleSave = async () => {
     setLoading(true)
 
+    const propName = actualTopicNode ? 'topic' : 'name'
+
     try {
-      await putNodeData(actualNode?.ref_id || '', { topic: topicValue.trim() })
-
-      if (data) {
-        const newData = { ...data }
-
-        console.log(newData)
-      }
+      await putNodeData(node?.ref_id || '', { [propName]: topicValue.trim() })
 
       closeHandler()
     } catch (error) {
@@ -95,7 +93,7 @@ export const Body = () => {
     openRemoveNodeModal()
   }
 
-  const isNodeNameChanged = getValues().topic && actualNode?.topic !== getValues().topic
+  const isNodeNameChanged = getValues().topic && actualTopicNode?.topic !== getValues().topic
 
   return (
     <Wrapper>
@@ -110,7 +108,7 @@ export const Body = () => {
         <Flex direction="row" mb={6}>
           <DeleteButton
             color="secondary"
-            disabled={topicIsLoading || !actualNode}
+            disabled={topicIsLoading || !node}
             onClick={handleDelete}
             size="large"
             style={{ marginRight: 20 }}
