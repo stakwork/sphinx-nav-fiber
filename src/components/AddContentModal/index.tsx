@@ -121,20 +121,24 @@ const handleSubmitForm = async (
   } catch (err: any) {
     if (err.status === 402) {
       await payLsat(setBudget)
-
       await updateBudget(setBudget)
-
       await handleSubmitForm(data, sourceType, setBudget)
-    }
+    } else {
+      let errorMessage = NODE_ADD_ERROR
 
-    if (err.status === 400) {
-      const error = await err.json()
+      if (err.status === 400) {
+        try {
+          const errorRes = await err.json()
 
-      throw new Error(error?.status || NODE_ADD_ERROR)
-    }
+          errorMessage = errorRes.message || NODE_ADD_ERROR
+        } catch (parseError) {
+          errorMessage = NODE_ADD_ERROR
+        }
+      } else if (err instanceof Error) {
+        errorMessage = err.message || NODE_ADD_ERROR
+      }
 
-    if (err instanceof Error) {
-      throw new Error(err.message || NODE_ADD_ERROR)
+      throw new Error(errorMessage)
     }
   }
 }
