@@ -2,12 +2,10 @@ import { useEffect, useState } from 'react'
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import * as sphinx from 'sphinx-bridge'
 import { BaseModal } from '~/components/Modal'
-import { notify } from '~/components/common/Toast/toastMessage'
 import {
   DOCUMENT,
   LINK,
   NODE_ADD_ERROR,
-  NODE_ADD_SUCCESS,
   RSS,
   TWITTER_HANDLE,
   TWITTER_SOURCE,
@@ -114,7 +112,6 @@ const handleSubmitForm = async (
       throw new Error(message)
     }
 
-    notify(NODE_ADD_SUCCESS)
     close()
 
     // eslint-disable-next-line  @typescript-eslint/no-explicit-any
@@ -128,14 +125,12 @@ const handleSubmitForm = async (
     }
 
     if (err.status === 400) {
-      const error = await err.json()
+      await err.json()
 
-      notify(error?.status || NODE_ADD_ERROR)
       close()
     }
 
     if (err instanceof Error) {
-      notify(err.message || NODE_ADD_ERROR)
       close()
     }
   }
@@ -189,7 +184,7 @@ export const AddContentModal = () => {
     try {
       await handleSubmitForm(data, handleClose, type, setBudget)
     } catch {
-      notify(NODE_ADD_ERROR)
+      console.error(NODE_ADD_ERROR)
     } finally {
       setLoading(false)
     }
