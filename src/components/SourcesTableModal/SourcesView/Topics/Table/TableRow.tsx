@@ -142,7 +142,9 @@ const TableRowComponent: FC<TTableRaw> = ({ topic, onClick, onSearch, checkedSta
         <Flex direction="row" justify="space-between">
           <div className="approve-wrapper">
             {loading ? (
-              <ClipLoader color={colors.white} size={16} />
+              <ClipLoaderWrapper>
+                <ClipLoader color={colors.white} size={16} />
+              </ClipLoaderWrapper>
             ) : (
               <Flex direction="row">
                 {topic.muted_topic ? (
@@ -165,6 +167,10 @@ const TableRowComponent: FC<TTableRaw> = ({ topic, onClick, onSearch, checkedSta
     </StyledTableRow>
   )
 }
+
+const ClipLoaderWrapper = styled.span`
+  margin-left: 12px;
+`
 
 const ClickableText = styled.span`
   cursor: pointer;
