@@ -17,7 +17,7 @@ jobs:
           cache: "yarn"
 
       - name: Install
-        run: yarn install
+        run: yarn --immutable
 
       - name: Unit tests
         run: yarn test
