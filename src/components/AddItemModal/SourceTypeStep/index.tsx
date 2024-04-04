@@ -31,6 +31,7 @@ export const SourceTypeStep: FC<Props> = ({ skipToStep, allowNextStep, onSelectT
               label: capitalizeString(schema.type),
               value: schema.type,
               type: schema.type,
+              action: () => skipToStep('setAttribues'),
             }))
 
           setOption(schemaOptions)
@@ -45,7 +46,7 @@ export const SourceTypeStep: FC<Props> = ({ skipToStep, allowNextStep, onSelectT
     }
 
     init()
-  }, [selectedType, customSchemaFlag])
+  }, [selectedType, customSchemaFlag, skipToStep])
 
   const onSelect = (val: TAutocompleteOption | null) => {
     onSelectType(val?.label || '')

@@ -32,7 +32,7 @@ export const SourceStep: FC<Props> = ({ type, skipToStep, name, sourceLink }) =>
         <TextInput
           id="cy-item-name"
           maxLength={250}
-          name="name"
+          name="typeName"
           placeholder="Paste name here..."
           rules={{
             ...requiredRule,
