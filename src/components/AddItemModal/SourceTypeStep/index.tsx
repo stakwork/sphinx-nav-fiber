@@ -23,12 +23,16 @@ export const SourceTypeStep: FC<Props> = ({ skipToStep, allowNextStep, onSelectT
         try {
           const data = await getNodeSchemaTypes()
 
-          const schemaOptions = data.schemas.map((schema) => ({
-            label: capitalizeString(schema.type),
-            value: schema.type,
-            type: schema.type,
-            action: () => skipToStep('setAttribues'),
-          }))
+          const nodeTypesToHide = ['about', 'schema']
+
+          const schemaOptions = data.schemas
+            .filter((schema) => !nodeTypesToHide.includes(schema.type))
+            .map((schema) => ({
+              label: capitalizeString(schema.type),
+              value: schema.type,
+              type: schema.type,
+              action: () => skipToStep('setAttribues'),
+            }))
 
           setOption(schemaOptions)
         } catch (error) {

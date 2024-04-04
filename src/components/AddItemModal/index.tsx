@@ -2,8 +2,7 @@ import { JSX, useEffect, useState } from 'react'
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import * as sphinx from 'sphinx-bridge'
 import { BaseModal, ModalKind } from '~/components/Modal'
-import { notify } from '~/components/common/Toast/toastMessage'
-import { NODE_ADD_ERROR, NODE_ADD_SUCCESS } from '~/constants'
+import { NODE_ADD_ERROR } from '~/constants'
 import { api } from '~/network/api'
 import { useDataStore } from '~/stores/useDataStore'
 import { useModal } from '~/stores/useModalStore'
@@ -105,7 +104,6 @@ const handleSubmitForm = async (
 
       onAddNewData(data, res?.data?.ref_id)
 
-      notify(NODE_ADD_SUCCESS)
       // eslint-disable-next-line no-restricted-globals
       close()
 
@@ -114,9 +112,13 @@ const handleSubmitForm = async (
       let errorMessage = NODE_ADD_ERROR
 
       if (err.status === 400) {
-        const error = await err.json()
+        try {
+          const errorRes = await err.json()
 
-        errorMessage = error.errorCode || error?.status || NODE_ADD_ERROR
+          errorMessage = errorRes.message || errorRes.errorCode || errorRes?.status || NODE_ADD_ERROR
+        } catch (parseError) {
+          errorMessage = NODE_ADD_ERROR
+        }
       } else if (err instanceof Error) {
         errorMessage = err.message
       }

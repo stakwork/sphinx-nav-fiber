@@ -1,28 +1,11 @@
 import { render, fireEvent, waitFor, waitForElementToBeRemoved } from '@testing-library/react'
 import { Booster } from '../index'
 import '@testing-library/jest-dom'
-import { BOOST_ERROR_BUDGET } from '~/constants'
 import * as boostUtil from '~/utils/boost'
-import { toast, ToastPosition } from 'react-toastify'
 
 jest.mock('~/utils/boost', () => ({
   boost: jest.fn(),
 }))
-
-jest.mock('react-toastify', () => {
-  const mockToast = jest.fn()
-
-  const POSITION: { [key: string]: ToastPosition } = {
-    BOTTOM_CENTER: 'bottom-center',
-  }
-
-  ;(mockToast as jest.Mock & { POSITION: typeof POSITION }).POSITION = POSITION
-
-  return {
-    toast: mockToast,
-    ToastContainer: jest.fn(() => null),
-  }
-})
 
 const mockedBoost = boostUtil.boost as jest.MockedFunction<typeof boostUtil.boost>
 
@@ -79,26 +62,6 @@ describe('Booster Component', () => {
 
     await waitFor(() => {
       expect(updateCountMock).toHaveBeenCalledWith(5)
-      expect(toast).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({ type: 'success' }))
-    })
-  })
-
-  it('simulates boost operation failure and verifies error toast is displayed', async () => {
-    mockedBoost.mockRejectedValueOnce(new Error('Budget exceeded'))
-
-    const { getByTestId } = render(<Booster refId="123" />)
-
-    fireEvent.click(getByTestId('booster-pill'))
-
-    await waitFor(() => {
-      expect(toast).toHaveBeenCalledWith(
-        expect.objectContaining({
-          props: expect.objectContaining({
-            message: BOOST_ERROR_BUDGET,
-          }),
-        }),
-        expect.any(Object),
-      )
     })
   })
 

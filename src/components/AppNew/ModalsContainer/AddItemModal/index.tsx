@@ -2,8 +2,7 @@ import { useEffect, useState } from 'react'
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import * as sphinx from 'sphinx-bridge'
 import { BaseModal } from '~/components/Modal'
-import { notify } from '~/components/common/Toast/toastMessage'
-import { NODE_ADD_ERROR, NODE_ADD_SUCCESS } from '~/constants'
+import { NODE_ADD_ERROR } from '~/constants'
 import { api } from '~/network/api'
 import { NodeExtendedNew } from '~/network/fetchGraphDataNew/types'
 import { useGraphStore } from '~/stores/useGraphStore'
@@ -66,7 +65,6 @@ const handleSubmitForm = async (
 
     onAddNewData(data)
 
-    notify(NODE_ADD_SUCCESS)
     close()
 
     // eslint-disable-next-line  @typescript-eslint/no-explicit-any
@@ -80,14 +78,12 @@ const handleSubmitForm = async (
     }
 
     if (err.status === 400) {
-      const error = await err.json()
+      await err.json()
 
-      notify(error?.status || NODE_ADD_ERROR)
       close()
     }
 
     if (err instanceof Error) {
-      notify(err.message || NODE_ADD_ERROR)
       close()
     }
   }
@@ -183,7 +179,7 @@ export const AddItemModal = () => {
     try {
       await handleSubmitForm(data, handleClose, setBudget, onAddNewNode)
     } catch {
-      notify(NODE_ADD_ERROR)
+      console.log(NODE_ADD_ERROR)
     } finally {
       setLoading(false)
     }
