@@ -4479,6 +4479,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/setimmediate@npm:^1.0.4":
+  version: 1.0.4
+  resolution: "@types/setimmediate@npm:1.0.4"
+  checksum: 7edf9938b3587fe4797264070db2e19b30547612726f018083c80bc5498fe0b92e7b8b65add5073638de67c8172befa4a8ca38f0d9e0b35e20beb667327917d0
+  languageName: node
+  linkType: hard
+
 "@types/sinonjs__fake-timers@npm:8.1.1":
   version: 8.1.1
   resolution: "@types/sinonjs__fake-timers@npm:8.1.1"
@@ -13886,7 +13893,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"setimmediate@npm:^1.0.4":
+"setimmediate@npm:^1.0.4, setimmediate@npm:^1.0.5":
   version: 1.0.5
   resolution: "setimmediate@npm:1.0.5"
   checksum: c9a6f2c5b51a2dabdc0247db9c46460152ffc62ee139f3157440bd48e7c59425093f42719ac1d7931f054f153e2d26cf37dfeb8da17a794a58198a2705e527fd
@@ -14193,6 +14200,7 @@ __metadata:
     "@types/react-dom": ^18.2.7
     "@types/react-input-mask": 3.0.2
     "@types/react-lottie": ^1.2.10
+    "@types/setimmediate": ^1.0.4
     "@types/styled-components": ^5.1.25
     "@types/three": ^0.150.2
     "@typescript-eslint/eslint-plugin": ^5.27.1
@@ -14255,6 +14263,7 @@ __metadata:
     rollup-plugin-node-builtins: ^2.1.2
     rollup-plugin-node-polyfills: ^0.2.1
     rollup-plugin-polyfill-node: ^0.12.0
+    setimmediate: ^1.0.5
     socket.io-client: ^4.6.1
     sphinx-bridge: 0.2.64
     stream-browserify: ^3.0.0
