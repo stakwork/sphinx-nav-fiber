@@ -10,6 +10,7 @@ import { getNodeType } from '~/network/fetchSourcesData'
 import { colors } from '~/utils'
 import { AddItemModalStepID } from '..'
 import { parseJson, parsedObjProps } from '../../AddTypeModal/utils'
+import { requiredRule } from '~/constants'
 
 type Props = {
   skipToStep: (step: AddItemModalStepID) => void
@@ -19,7 +20,7 @@ type Props = {
 export const SetAttributesStep: FC<Props> = ({ skipToStep, nodeType }) => {
   const [loading, setLoading] = useState(false)
   const [attributes, setAttributes] = useState<parsedObjProps[]>()
-  const { setValue, register } = useFormContext()
+  const { watch } = useFormContext()
 
   useEffect(() => {
     const init = async () => {
@@ -31,23 +32,11 @@ export const SetAttributesStep: FC<Props> = ({ skipToStep, nodeType }) => {
 
       setAttributes(parsedData)
 
-      let nodeData = {}
-
-      parsedData.forEach(({ key, required }) => {
-        const value = required ? 'Required' : 'Optional'
-
-        setValue(`${key.toLocaleLowerCase()}`, value)
-
-        nodeData = { ...nodeData, [key]: value }
-      })
-
-      setValue('node_data', nodeData)
-
       setLoading(false)
     }
 
     init()
-  }, [nodeType, register, setValue])
+  }, [nodeType, watch])
 
   return (
     <Flex>
@@ -64,11 +53,18 @@ export const SetAttributesStep: FC<Props> = ({ skipToStep, nodeType }) => {
           </Flex>
         ) : (
           <Flex className="input__wrapper">
-            {attributes?.map(({ key }: parsedObjProps) => (
+            {attributes?.map(({ key, required }: parsedObjProps) => (
               <>
                 <TextFeildWrapper>
                   <Text>{key.replace('_', ' ')}</Text>
-                  <TextInput disabled id="item-name" name={key} />
+                  <TextInput
+                    id="item-name"
+                    name={key}
+                    placeholder={required ? 'Required' : 'Optional'}
+                    rules={{
+                      ...(required ? requiredRule : {}),
+                    }}
+                  />
                 </TextFeildWrapper>
               </>
             ))}
