@@ -97,10 +97,8 @@ export const App = () => {
 
       const updatedData: GraphData = getGraphDataPositions(graphStyle, data.nodes)
 
-      setTimeout(() => {
-        setData(updatedData)
-        setIsLoading(false)
-      }, 1000)
+      setData(updatedData)
+      setIsLoading(false)
     }
   }
 

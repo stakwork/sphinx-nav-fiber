@@ -1,20 +1,25 @@
 import '@testing-library/jest-dom'
 import { render, screen, waitFor } from '@testing-library/react'
-import { afterEach } from 'node:test'
 import React from 'react'
 import * as sphinx from 'sphinx-bridge'
-import { Auth } from '..'
-import * as authNetwork from '../../../network/auth'
-import * as useUserStoreModule from '../../../stores/useUserStore'
-import * as utils from '../../../utils'
+import * as network from '../../../network/auth'
+import { useDataStore } from '../../../stores/useDataStore'
+import { useUserStore } from '../../../stores/useUserStore'
+import * as utils from '../../../utils/getSignedMessage'
+import { App } from '../../App'
+import { AuthGuard } from '../index'
 
 jest.mock('sphinx-bridge')
-jest.mock('~/network/auth')
-jest.mock('../../../utils')
+jest.mock('~/stores/useUserStore')
+jest.mock('~/stores/useDataStore')
+jest.mock('../../../../src/utils/versionHelper', () => null)
+jest.mock('react-toastify/dist/ReactToastify.css', () => null)
+jest.mock('~/components/App/Splash/SpiningSphere', () => jest.fn(() => <div data-testid="spinning sphere" />))
 
-jest.mock('../../../stores/useUserStore')
-
-const [mockSetBudget, mockSetIsAdmin, mockSetPubKey] = [jest.fn(), jest.fn(), jest.fn()]
+const useUserStoreMock = useUserStore as jest.MockedFunction<typeof useUserStore>
+const useDataStoreMock = useDataStore as jest.MockedFunction<typeof useDataStore>
+const getSignedMessageFromRelayMock = jest.spyOn(utils, 'getSignedMessageFromRelay')
+const getIsAdminMock = jest.spyOn(network, 'getIsAdmin')
 
 const message = 'This is a private Graph, Contact Admin'
 
@@ -23,144 +28,212 @@ describe('Auth Component', () => {
     jest.clearAllMocks()
     localStorage.clear()
     sessionStorage.clear()
-
-    useUserStoreModule.useUserStore.mockImplementation(() => [mockSetBudget, mockSetIsAdmin, mockSetPubKey])
-
-    jest.spyOn(utils, 'executeIfProd').mockImplementation(async (cb) => {
-      await cb()
-    })
   })
 
   beforeEach(() => {
-    jest.useFakeTimers()
-  })
+    localStorage.clear()
+    jest.resetAllMocks()
 
-  afterEach(() => {
-    jest.useRealTimers()
+    useDataStoreMock.mockReturnValue({ splashDataLoading: false })
   })
 
   test('should set authenticated state to true upon successful authentication', async () => {
-    const mockSetAuthenticated = jest.fn()
+    const [setBudget, setIsAdmin, setPubKey, setIsAuthenticated] = [jest.fn(), jest.fn(), jest.fn(), jest.fn()]
 
-    sphinx.enable.mockResolvedValue({ pubkey: 'testPubKey' })
-    authNetwork.getIsAdmin.mockResolvedValue({ data: { isAdmin: false, isPublic: true } })
-    utils.getSignedMessageFromRelay.mockResolvedValue({ message: 'testMessage', signature: 'testSignature' })
+    useUserStoreMock.mockReturnValue({
+      setBudget,
+      setIsAdmin,
+      setPubKey,
+      setIsAuthenticated,
+    })
 
-    render(<Auth setAuthenticated={mockSetAuthenticated} />)
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    sphinx.enable.mockResolvedValue()
+    getIsAdminMock.mockResolvedValue({ data: { isAdmin: false, isPublic: true } })
+    getSignedMessageFromRelayMock.mockResolvedValue({ message: 'testMessage', signature: 'testSignature' })
 
-    jest.advanceTimersByTime(5000)
+    render(
+      <AuthGuard>
+        <App />
+      </AuthGuard>,
+    )
 
-    await waitFor(() => expect(mockSetAuthenticated).toHaveBeenCalledWith(true))
+    await waitFor(() => expect(setIsAuthenticated).toHaveBeenCalledWith(true))
   })
 
   test('should update appropriate state and local storage if user is an admin', async () => {
-    sphinx.enable.mockResolvedValue({ pubkey: 'testPubKey' })
-    authNetwork.getIsAdmin.mockResolvedValue({ data: { isAdmin: true } })
-    utils.getSignedMessageFromRelay.mockResolvedValue({ message: 'testMessage', signature: 'testSignature' })
+    const [setBudget, setIsAdmin, setPubKey, setIsAuthenticated] = [jest.fn(), jest.fn(), jest.fn(), jest.fn()]
 
-    render(<Auth setAuthenticated={jest.fn()} />)
+    useUserStoreMock.mockReturnValue({
+      setBudget,
+      setIsAdmin,
+      setPubKey,
+      setIsAuthenticated,
+    })
 
-    jest.advanceTimersByTime(5000)
+    getIsAdminMock.mockResolvedValue({ data: { isAdmin: true } })
+    getSignedMessageFromRelayMock.mockResolvedValue({ message: 'testMessage', signature: 'testSignature' })
 
-    await waitFor(() => expect(mockSetIsAdmin).toHaveBeenCalledWith(true))
+    render(
+      <AuthGuard>
+        <App />
+      </AuthGuard>,
+    )
+
+    await waitFor(() => expect(setIsAdmin).toHaveBeenCalledWith(true))
     await waitFor(() => expect(localStorage.getItem('admin')).not.toBeNull())
   })
 
   test('should render the unauthorized access message if user is not authorized', async () => {
-    sphinx.enable.mockResolvedValue({ pubkey: 'testPubKey' })
-    authNetwork.getIsAdmin.mockResolvedValue({ data: { isAdmin: false, isPublic: false, isMember: false } })
-    utils.getSignedMessageFromRelay.mockResolvedValue({ message: 'testMessage', signature: 'testSignature' })
+    const [setBudget, setIsAdmin, setPubKey, setIsAuthenticated] = [jest.fn(), jest.fn(), jest.fn(), jest.fn()]
 
-    render(<Auth setAuthenticated={jest.fn()} />)
+    useUserStoreMock.mockReturnValue({
+      setBudget,
+      setIsAdmin,
+      setPubKey,
+      setIsAuthenticated,
+    })
 
-    jest.advanceTimersByTime(5000)
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    sphinx.enable.mockResolvedValue({ pubkey: 'testPubkey' })
+    getIsAdminMock.mockResolvedValue({ data: { isAdmin: false, isPublic: false, isMember: false } })
+    getSignedMessageFromRelayMock.mockResolvedValue({ message: 'testMessage', signature: 'testSignature' })
+
+    render(
+      <AuthGuard>
+        <App />
+      </AuthGuard>,
+    )
 
     await waitFor(() => expect(screen.getByText(message)).toBeInTheDocument())
   })
 
   test('the unauthorized state is correctly set when the user lacks proper credentials', async () => {
-    const mockSetAuthenticated = jest.fn()
+    const [setBudget, setIsAdmin, setPubKey, setIsAuthenticated] = [jest.fn(), jest.fn(), jest.fn(), jest.fn()]
 
+    useUserStoreMock.mockReturnValue({
+      setBudget,
+      setIsAdmin,
+      setPubKey,
+      setIsAuthenticated,
+    })
+
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     sphinx.enable.mockResolvedValue({ pubkey: 'testPubKey' })
-    authNetwork.getIsAdmin.mockResolvedValue({ data: { isAdmin: false, isPublic: true, isMember: false } })
-    utils.getSignedMessageFromRelay.mockResolvedValue({ message: 'testMessage' })
+    getIsAdminMock.mockResolvedValue({ data: { isAdmin: false, isPublic: true, isMember: false } })
+    getSignedMessageFromRelayMock.mockResolvedValue({ message: 'testMessage', signature: '' })
 
-    render(<Auth setAuthenticated={mockSetAuthenticated} />)
+    render(
+      <AuthGuard>
+        <App />
+      </AuthGuard>,
+    )
 
-    jest.advanceTimersByTime(5000)
-
-    await waitFor(() => expect(mockSetAuthenticated).toHaveBeenCalledWith(true))
+    await waitFor(() => expect(setIsAuthenticated).toHaveBeenCalledWith(true))
   })
 
   test('test unsuccessful attempts to enable Sphinx', async () => {
-    const mockSetAuthenticated = jest.fn()
+    const [setBudget, setIsAdmin, setPubKey, setIsAuthenticated] = [jest.fn(), jest.fn(), jest.fn(), jest.fn()]
 
+    useUserStoreMock.mockReturnValue({
+      setBudget,
+      setIsAdmin,
+      setPubKey,
+      setIsAuthenticated,
+    })
+
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     sphinx.enable.mockResolvedValue(null)
-    authNetwork.getIsAdmin.mockResolvedValue({ data: { isAdmin: false, isPublic: true, isMember: false } })
-    utils.getSignedMessageFromRelay.mockResolvedValue({ message: 'testMessage' })
+    getIsAdminMock.mockResolvedValue({ data: { isAdmin: false, isPublic: true, isMember: false } })
+    getSignedMessageFromRelayMock.mockResolvedValue({ message: 'testMessage', signature: '' })
 
-    render(<Auth setAuthenticated={mockSetAuthenticated} />)
+    render(
+      <AuthGuard>
+        <App />
+      </AuthGuard>,
+    )
 
-    jest.advanceTimersByTime(5000)
-
-    await waitFor(() => expect(mockSetPubKey).toHaveBeenCalledWith(undefined))
-    await waitFor(() => expect(mockSetAuthenticated).toHaveBeenCalledWith(true))
+    await waitFor(() => expect(setPubKey).toHaveBeenCalledWith(undefined))
+    await waitFor(() => expect(setIsAuthenticated).toHaveBeenCalledWith(true))
   })
 
   test('test the public key is set correctly on successful Sphinx enablement', async () => {
-    const mockSetAuthenticated = jest.fn()
+    const [setBudget, setIsAdmin, setPubKey, setIsAuthenticated] = [jest.fn(), jest.fn(), jest.fn(), jest.fn()]
 
-    sphinx.enable.mockResolvedValue({ pubkey: 'testPubKey' })
-    authNetwork.getIsAdmin.mockResolvedValue({ data: { isAdmin: false, isPublic: true, isMember: false } })
-    utils.getSignedMessageFromRelay.mockResolvedValue({ message: 'testMessage' })
+    useUserStoreMock.mockReturnValue({
+      setBudget,
+      setIsAdmin,
+      setPubKey,
+      setIsAuthenticated,
+    })
 
-    render(<Auth setAuthenticated={mockSetAuthenticated} />)
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    sphinx.enable.mockResolvedValue({ pubkey: 'testPubkey' })
+    getIsAdminMock.mockResolvedValue({ data: { isAdmin: false, isPublic: true, isMember: false } })
+    getSignedMessageFromRelayMock.mockResolvedValue({ message: 'testMessage', signature: '' })
 
-    jest.advanceTimersByTime(5000)
+    render(
+      <AuthGuard>
+        <App />
+      </AuthGuard>,
+    )
 
-    await waitFor(() => expect(mockSetPubKey).toHaveBeenCalledWith('testPubKey'))
+    await waitFor(() => expect(setPubKey).toHaveBeenCalledWith('testPubkey'))
   })
 
   test('test the public key state is handled correctly on Sphinx enablement failure', async () => {
-    const mockSetAuthenticated = jest.fn()
+    const [setBudget, setIsAdmin, setPubKey, setIsAuthenticated] = [jest.fn(), jest.fn(), jest.fn(), jest.fn()]
 
+    useUserStoreMock.mockReturnValue({
+      setBudget,
+      setIsAdmin,
+      setPubKey,
+      setIsAuthenticated,
+    })
+
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     sphinx.enable.mockRejectedValue()
-    authNetwork.getIsAdmin.mockResolvedValue({ data: { isAdmin: false, isPublic: true, isMember: false } })
-    utils.getSignedMessageFromRelay.mockResolvedValue({ message: 'testMessage' })
+    getIsAdminMock.mockResolvedValue({ data: { isAdmin: false, isPublic: true, isMember: false } })
+    getSignedMessageFromRelayMock.mockResolvedValue({ message: 'testMessage', signature: '' })
 
-    render(<Auth setAuthenticated={mockSetAuthenticated} />)
+    render(
+      <AuthGuard>
+        <App />
+      </AuthGuard>,
+    )
 
-    jest.advanceTimersByTime(5000)
-
-    await waitFor(() => expect(mockSetPubKey).toHaveBeenCalledWith(''))
+    await waitFor(() => expect(setPubKey).toHaveBeenCalledWith(''))
   })
 
   test('simulate errors during the authentication process and verify that they are handled gracefully.', async () => {
-    const mockSetAuthenticated = jest.fn()
+    const [setBudget, setIsAdmin, setPubKey, setIsAuthenticated] = [jest.fn(), jest.fn(), jest.fn(), jest.fn()]
 
+    useUserStoreMock.mockReturnValue({
+      setBudget,
+      setIsAdmin,
+      setPubKey,
+      setIsAuthenticated,
+    })
+
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     sphinx.enable.mockRejectedValue()
-    authNetwork.getIsAdmin.mockResolvedValue({ data: { isAdmin: false, isPublic: true, isMember: false } })
-    utils.getSignedMessageFromRelay.mockRejectedValue()
+    getIsAdminMock.mockResolvedValue({ data: { isAdmin: false, isPublic: true, isMember: false } })
+    getSignedMessageFromRelayMock.mockRejectedValue(null)
 
-    render(<Auth setAuthenticated={mockSetAuthenticated} />)
+    render(
+      <AuthGuard>
+        <App />
+      </AuthGuard>,
+    )
 
-    jest.advanceTimersByTime(5000)
-
-    await waitFor(() => expect(mockSetPubKey).toHaveBeenCalledWith(''))
-    await waitFor(() => expect(mockSetAuthenticated).not.toHaveBeenCalledWith(true))
-  })
-
-  test('displays a loading indicator while the authentication process is ongoing', async () => {
-    sphinx.enable.mockResolvedValue({ pubkey: 'testPubKey' })
-    authNetwork.getIsAdmin.mockResolvedValue({ data: { isAdmin: false, isPublic: false, isMember: false } })
-    utils.getSignedMessageFromRelay.mockResolvedValue({ message: 'testMessage', signature: 'testSignature' })
-
-    render(<Auth setAuthenticated={jest.fn()} />)
-
-    expect(screen.getByTestId('PropagateLoader')).toBeInTheDocument()
-
-    jest.advanceTimersByTime(5000)
-
-    await waitFor(() => expect(screen.queryByTestId('PropagateLoader')).not.toBeInTheDocument())
+    await waitFor(() => expect(setPubKey).toHaveBeenCalledWith(''))
+    await waitFor(() => expect(setIsAuthenticated).not.toHaveBeenCalledWith(true))
   })
 })

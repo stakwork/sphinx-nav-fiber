@@ -23,6 +23,7 @@ export type SidebarFilterWithCount = {
 }
 
 export type DataStore = {
+  splashDataLoading: boolean
   scrollEventsDisabled: boolean
   categoryFilter: NodeType | null
   disableCameraRotation: boolean
@@ -132,6 +133,7 @@ const defaultData: Omit<
   trendingTopics: [],
   sidebarFilterCounts: [],
   stats: null,
+  splashDataLoading: true,
 }
 
 export const useDataStore = create<DataStore>()(

@@ -1,28 +1,20 @@
 import invariant from 'invariant'
-import { PropsWithChildren, useCallback, useEffect, useState } from 'react'
+import { PropsWithChildren, useCallback, useEffect } from 'react'
 import { Vector3 } from 'three'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { NodeExtended } from '~/types'
-import { Splash } from '../App/Splash'
 import { PATHWAY_RANGE } from './constants'
 
 type Props = PropsWithChildren
 
 export const DataRetriever = ({ children }: Props) => {
-  const fetchData = useDataStore((s) => s.fetchData)
+  const { fetchData } = useDataStore((s) => s)
   const [setBudget] = useUserStore((s) => [s.setBudget])
-  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    setLoading(true)
-
     fetchData(setBudget)
   }, [fetchData, setBudget])
-
-  if (loading) {
-    return <Splash handleLoading={setLoading} />
-  }
 
   return <>{children}</>
 }

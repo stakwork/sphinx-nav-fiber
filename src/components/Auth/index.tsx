@@ -1,23 +1,21 @@
-import { useCallback, useEffect, useState } from 'react'
-import { PropagateLoader } from 'react-spinners'
+import { PropsWithChildren, useCallback, useEffect, useState } from 'react'
 import * as sphinx from 'sphinx-bridge'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { isDevelopment, isE2E } from '~/constants'
 import { getIsAdmin } from '~/network/auth'
+import { useDataStore } from '~/stores/useDataStore'
 import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { sphinxBridge } from '~/testSphinxBridge'
 import { getSignedMessageFromRelay, updateBudget } from '~/utils'
+import { Splash } from '../App/Splash'
 
-interface setAuthenticated {
-  setAuthenticated: (state: boolean) => void
-}
-
-export const Auth = ({ setAuthenticated }: setAuthenticated) => {
+export const AuthGuard = ({ children }: PropsWithChildren) => {
   const [unAuthorized, setUnauthorized] = useState(false)
-  const [setBudget, setIsAdmin, setPubKey] = useUserStore((s) => [s.setBudget, s.setIsAdmin, s.setPubKey])
+  const { splashDataLoading } = useDataStore((s) => s)
+  const { setBudget, setIsAdmin, setPubKey, setIsAuthenticated } = useUserStore((s) => s)
 
   const [setTrendingTopicsFlag, setQueuedSourcesFlag, setCustomSchemaFlag] = useFeatureFlagStore((s) => [
     s.setTrendingTopicsFlag,
@@ -26,7 +24,6 @@ export const Auth = ({ setAuthenticated }: setAuthenticated) => {
   ])
 
   const handleAuth = useCallback(async () => {
-    // await executeIfProd(async () => {
     localStorage.removeItem('admin')
 
     let sphinxEnable
@@ -72,22 +69,19 @@ export const Auth = ({ setAuthenticated }: setAuthenticated) => {
         setCustomSchemaFlag(res.data.customSchema)
       }
 
-      setAuthenticated(true)
-
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error: any) {
+      setIsAuthenticated(true)
+    } catch (error) {
       /* not an admin */
     }
-    // })
 
     if (isE2E || isDevelopment) {
-      setAuthenticated(true)
+      setIsAuthenticated(true)
     }
   }, [
-    setIsAdmin,
-    setPubKey,
     setBudget,
-    setAuthenticated,
+    setPubKey,
+    setIsAuthenticated,
+    setIsAdmin,
     setTrendingTopicsFlag,
     setQueuedSourcesFlag,
     setCustomSchemaFlag,
@@ -95,26 +89,24 @@ export const Auth = ({ setAuthenticated }: setAuthenticated) => {
 
   // auth checker
   useEffect(() => {
-    const timer = setTimeout(() => {
-      handleAuth()
-    }, 5000)
-
-    return () => {
-      clearTimeout(timer)
-    }
+    handleAuth()
   }, [handleAuth])
 
   const message = 'This is a private Graph, Contact Admin'
 
-  return (
-    <StyledFlex>
-      {!unAuthorized ? (
-        <PropagateLoader color="#909BAA" data-testid="PropagateLoader" />
-      ) : (
+  if (splashDataLoading) {
+    return <Splash>{children}</Splash>
+  }
+
+  if (!unAuthorized) {
+    return (
+      <StyledFlex>
         <StyledText>{message}</StyledText>
-      )}
-    </StyledFlex>
-  )
+      </StyledFlex>
+    )
+  }
+
+  return <>{children}</>
 }
 
 const StyledText = styled(Text)`
