@@ -43,7 +43,7 @@ export const Body = () => {
 
   useEffect(() => {
     const init = async () => {
-      if (!selectedNode) {
+      if (!selectedNode || selectedNode.type !== 'topic') {
         return
       }
 
