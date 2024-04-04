@@ -14,7 +14,7 @@ import { getNodeType } from '~/network/fetchSourcesData'
 import { colors } from '~/utils'
 import { parseJson, parsedObjProps } from '../../../utils'
 
-const noSpacePattern = /^[a-z]+$/
+const noSpacePattern = /^[a-z0-9_]+$/
 
 export const FormInput = ({ parentParam }: { parentParam: string }) => {
   const [loading, setLoading] = useState(false)
@@ -79,7 +79,7 @@ export const FormInput = ({ parentParam }: { parentParam: string }) => {
                       rules={{
                         ...requiredRule,
                         pattern: {
-                          message: 'Please use lower case and remove spaces',
+                          message: 'Please avoid special characters, spaces and uppercase',
                           value: noSpacePattern,
                         },
                       }}
