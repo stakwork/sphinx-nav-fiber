@@ -65,10 +65,12 @@ const handleSubmitForm = async (
   } else {
     const endPoint = 'node'
 
+    const { nodeType, typeName, ...nodeData } = data
+
     const body: { [index: string]: unknown } = {
-      node_data: { ...data.node_data },
-      node_type: data.nodeType,
-      name: data.typeName,
+      node_data: { ...nodeData },
+      node_type: nodeType,
+      name: typeName,
     }
 
     if (data.nodeType === 'Image') {
