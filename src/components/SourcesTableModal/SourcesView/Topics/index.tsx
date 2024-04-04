@@ -34,6 +34,7 @@ export const TopicSources = () => {
   const { open: openMergeTopic } = useModal('mergeTopic')
   const { open: openAddEdge } = useModal('addEdge')
   const [selectedTopic, setSelectedTopic] = useState<Topic | null>(null)
+  const [checkedStates, setCheckedStates] = useState<{ [refId: string]: boolean }>({})
 
   const topicActions: Record<string, () => void> = {
     editTopic: openEditTopic,
@@ -124,8 +125,10 @@ export const TopicSources = () => {
           ) : (
             <>
               <Table
+                checkedStates={checkedStates}
                 onChangeFilter={handleFilterChange}
                 onTopicEdit={onTopicEdit}
+                setCheckedStates={setCheckedStates}
                 setShowMuteUnmute={() => setFilters({ muted: !filters.muted })}
                 showMuted={filters.muted}
               />

@@ -1,5 +1,5 @@
 import { Table as MaterialTable, Popover, TableRow, IconButton } from '@mui/material'
-import React, { useCallback, useState } from 'react'
+import React, { useCallback } from 'react'
 import styled from 'styled-components'
 import AddCircleIcon from '~/components/Icons/AddCircleIcon'
 import CheckIcon from '~/components/Icons/CheckIcon'
@@ -20,17 +20,24 @@ import { StyledTableCell, StyledTableHead } from '../../common'
 import { TopicTableProps } from '../../types'
 import { TopicRow } from './TableRow'
 import ClearIcon from '~/components/Icons/ClearIcon'
+import { putNodeData } from '~/network/fetchSourcesData'
 
 interface CheckboxIconProps {
   checked?: boolean
 }
 
-export const Table: React.FC<TopicTableProps> = ({ setShowMuteUnmute, showMuted, onTopicEdit, onChangeFilter }) => {
+export const Table: React.FC<TopicTableProps> = ({
+  setShowMuteUnmute,
+  showMuted,
+  onTopicEdit,
+  onChangeFilter,
+  checkedStates,
+  setCheckedStates,
+}) => {
   const { close } = useModal('sourcesTable')
 
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
   const [selectedRefId, setSelectedRefId] = React.useState<string>('')
-  const [checkedStates, setCheckedStates] = useState<{ [refId: string]: boolean }>({})
 
   const checkedCount = Object.values(checkedStates).filter((isChecked) => isChecked).length
 
@@ -64,6 +71,22 @@ export const Table: React.FC<TopicTableProps> = ({ setShowMuteUnmute, showMuted,
 
   const open = Boolean(anchorEl)
   const id = open ? 'simple-popover' : undefined
+
+  const handleSelectedMuteUnmute = async () => {
+    const promises: Promise<unknown>[] = []
+
+    Object.keys(checkedStates).forEach((index) => {
+      const value = checkedStates[index]
+
+      if (value) {
+        const promise = putNodeData(index, { muted_topic: showMuted })
+
+        promises.push(promise)
+      }
+    })
+
+    await Promise.all(promises)
+  }
 
   return !data ? (
     <Flex>
@@ -125,7 +148,7 @@ export const Table: React.FC<TopicTableProps> = ({ setShowMuteUnmute, showMuted,
                       <CheckedCount>{checkedCount}</CheckedCount>
                       selected
                     </CheckCountBoxSection>
-                    <MuteStatusSection onClick={setShowMuteUnmute} role="button">
+                    <MuteStatusSection onClick={handleSelectedMuteUnmute} role="button">
                       {showMuted ? (
                         <>
                           <VisibilityOn /> Unmute All
