@@ -12,9 +12,7 @@ import { NodeExtended, SubmitErrRes } from '~/types'
 import { executeIfProd, getLSat } from '~/utils'
 import { SuccessNotify } from '../common/SuccessToast'
 import { BudgetStep } from './BudgetStep'
-import { CreateConfirmation } from './CreateComfirmationStep'
-import { CreateCustomTypeStep, SelectCustomNodeParent } from './CreateCustomTypeStep'
-import { CreateCustomNodeAttribute } from './CustomAttributesStep'
+import { CreateConfirmation } from './CreateConfirmationStep'
 import { SourceStep } from './SourceStep'
 import { SourceTypeStep } from './SourceTypeStep'
 
@@ -25,14 +23,7 @@ export type FormData = {
   type?: string
 } & Partial<{ [k: string]: string }>
 
-export type AddItemModalStepID =
-  | 'sourceType'
-  | 'source'
-  | 'selectParent'
-  | 'createType'
-  | 'setBudget'
-  | 'createNodeType'
-  | 'createConfirmation'
+export type AddItemModalStepID = 'sourceType' | 'source' | 'setBudget' | 'createConfirmation'
 
 const handleSubmitForm = async (
   data: FieldValues,
@@ -54,8 +45,6 @@ const handleSubmitForm = async (
       }
 
       onAddNewData(data, res?.data?.ref_id)
-
-      notify(NODE_ADD_SUCCESS)
       // eslint-disable-next-line no-restricted-globals
       close()
 
@@ -137,13 +126,13 @@ const handleSubmitForm = async (
 export const AddItemModal = () => {
   const [stepId, setStepId] = useState<AddItemModalStepID>('sourceType')
   const { close, visible } = useModal('addItem')
+  const { open: openTypeModal } = useModal('addType')
   const [setBudget] = useUserStore((s) => [s.setBudget])
   const form = useForm<FormData>({ mode: 'onChange' })
   const { watch, setValue, reset } = form
   const [loading, setLoading] = useState(false)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [error, setError] = useState<string>('')
-  const [parent, setParent] = useState('')
 
   const [addNewNode, setSelectedNode] = useDataStore((s) => [s.addNewNode, s.setSelectedNode])
 
@@ -221,11 +210,12 @@ export const AddItemModal = () => {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
 
-  const handleSelectType = (val: string) => setValue('nodeType', val)
-
-  const SelectParent = (val: string) => {
-    setParent(val)
-    setValue('parent', val)
+  const handleSelectType = (val: string) => {
+    if (val === 'Create custom type') {
+      openTypeModal()
+    } else {
+      setValue('nodeType', val)
+    }
   }
 
   const AddItemModalStepMapper: Record<AddItemModalStepID, JSX.Element> = {
@@ -239,15 +229,10 @@ export const AddItemModal = () => {
     ),
     source: <SourceStep name={name} skipToStep={skipToStep} sourceLink={sourceLink || ''} type={nodeType} />,
     setBudget: <BudgetStep loading={loading} onClick={() => null} />,
-    createType: <CreateCustomTypeStep onSelectType={handleSelectType} skipToStep={skipToStep} type={type} />,
-    selectParent: <SelectCustomNodeParent onSelectType={SelectParent} skipToStep={skipToStep} />,
-    createNodeType: (
-      <CreateCustomNodeAttribute onSelectType={handleSelectType} parent={parent} skipToStep={skipToStep} />
-    ),
     createConfirmation: <CreateConfirmation onclose={handleClose} type={type} />,
   }
 
-  const modalKind: ModalKind = stepId === 'createNodeType' ? 'regular' : 'small'
+  const modalKind: ModalKind = 'small'
 
   return (
     <BaseModal id="addItem" kind={modalKind} onClose={close} preventOutsideClose>

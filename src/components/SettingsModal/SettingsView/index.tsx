@@ -49,8 +49,8 @@ type Props = {
 
 export const SettingsView: React.FC<Props> = ({ onClose }) => {
   const [value, setValue] = useState(0)
-  const [isAdmin, pubKey] = useUserStore((s) => [s.isAdmin, s.setPubKey, s.pubKey])
-  const graphBlueprintFlag = useFeatureFlagStore((s) => s.graphBluePrint)
+  const [isAdmin] = useUserStore((s) => [s.isAdmin, s.setPubKey])
+  const customSchemaFlag = useFeatureFlagStore((s) => s.customSchemaFlag)
   const appMetaData = useAppStore((s) => s.appMetaData)
 
   const getSettingsLabel = () => (isAdmin ? 'Admin Settings' : 'Settings')
@@ -59,23 +59,10 @@ export const SettingsView: React.FC<Props> = ({ onClose }) => {
     <StyledHeader>
       <Flex direction="row" pt={3}>
         <StyledText data-testid="setting-label">{getSettingsLabel()}</StyledText>
-        {resolveAdminActions()}
       </Flex>
       {children}
     </StyledHeader>
   )
-
-  const resolveAdminActions = () => {
-    if (!pubKey) {
-      return null
-    }
-
-    if (isAdmin) {
-      return null
-    }
-
-    return <></>
-  }
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue)
@@ -84,7 +71,7 @@ export const SettingsView: React.FC<Props> = ({ onClose }) => {
   const tabs = [
     ...(isAdmin ? [{ label: 'General', component: General }] : []),
     { label: 'Appearance', component: Appearance },
-    ...(isAdmin && graphBlueprintFlag ? [{ label: 'Graph Blueprint', component: GraphBlueprint }] : []),
+    ...(isAdmin && customSchemaFlag ? [{ label: 'Graph Blueprint', component: GraphBlueprint }] : []),
   ]
 
   return (

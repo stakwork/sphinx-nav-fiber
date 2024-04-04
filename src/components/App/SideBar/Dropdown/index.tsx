@@ -10,23 +10,9 @@ import { Flex } from '~/components/common/Flex'
 import { useDataStore } from '~/stores/useDataStore'
 import { colors } from '~/utils/colors'
 
-type Option = Record<string, string>
-
-const options: Option = {
-  all: 'All',
-  podcast: 'Audio',
-  episode: 'Episode',
-  document: 'Document',
-  person: 'People',
-  show: 'Show',
-  twitter_space: 'TwitterSpace',
-  tweet: 'Tweet',
-  youtube: 'Video',
-}
-
 export const SelectWithPopover = () => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null)
-  const { sidebarFilter, setSidebarFilter } = useDataStore((s) => s)
+  const { sidebarFilter, sidebarFilters, setSidebarFilter } = useDataStore((s) => s)
 
   const handleOpenPopover = (event: React.MouseEvent<HTMLDivElement>) => {
     setAnchorEl(event.currentTarget as HTMLElement)
@@ -46,7 +32,7 @@ export const SelectWithPopover = () => {
       <Action onClick={handleOpenPopover}>
         <div className="text">Show</div>
         <div className="value" data-testid="value">
-          {options[sidebarFilter]}
+          {sidebarFilter}
         </div>
         <div className="icon">{!anchorEl ? <ChevronDownIcon /> : <ChevronUpIcon />}</div>
       </Action>
@@ -68,14 +54,14 @@ export const SelectWithPopover = () => {
         }}
       >
         <FormControl>
-          {Object.keys(options).map((option) => (
+          {sidebarFilters.map((option) => (
             <MenuItem
               key={option}
               className={clsx({ active: option === sidebarFilter })}
               onClick={() => handleSelectChange(option)}
             >
               <span className="icon">{option === sidebarFilter ? <CheckIcon /> : null}</span>
-              <span>{options[option]}</span>
+              <span>{option}</span>
             </MenuItem>
           ))}
         </FormControl>

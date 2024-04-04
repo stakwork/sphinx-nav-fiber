@@ -8,7 +8,7 @@ export const StyledTableCell = styled(TableCell)`
   && {
     color: ${colors.white};
     border: none;
-    padding: 6px 27px 6px 0;
+    padding: 6px 2px 6px 0;
     color: ${colors.GRAY3};
     font-family: Barlow;
     font-size: 14px;
@@ -33,6 +33,19 @@ export const StyledTableRow = styled(TableRow)`
   }
   &:nth-child(odd) {
     background-color: ${colors.BG3};
+  }
+  &:hover {
+    background-color: rgba(97, 138, 255, 0.05);
+    .checkbox-section {
+      visibility: visible;
+    }
+  }
+  &.checked {
+    background-color: rgba(100, 149, 237, 0.2);
+
+    .checkbox-section {
+      visibility: visible;
+    }
   }
 `
 

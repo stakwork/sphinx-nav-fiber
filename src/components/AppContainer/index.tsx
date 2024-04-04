@@ -1,4 +1,4 @@
-import { Suspense, lazy } from 'react'
+import { lazy, Suspense } from 'react'
 import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
 import { E2ETests } from '~/utils'
 import { AppProviders } from '../App/Providers'

@@ -32,7 +32,7 @@ export const TypeBadge = ({ type }: Props) => (
     <img
       alt={EpisodeTypeImages[type]?.label || type}
       className="badge__img"
-      src={EpisodeTypeImages[type]?.img || 'image_badge.png'}
+      src={EpisodeTypeImages[type]?.img || 'generic_badge.svg'}
     />
     <div className="badge__label">{EpisodeTypeImages[type]?.label || type}</div>
   </EpisodeWrapper>
@@ -50,6 +50,7 @@ const EpisodeWrapper = styled(Flex).attrs({
     width: 14px;
     height: 14px;
     object-fit: cover;
+    background: rgba(255, 255, 255, 0.1);
   }
 
   .badge__label {

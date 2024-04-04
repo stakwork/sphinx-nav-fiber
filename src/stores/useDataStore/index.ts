@@ -40,6 +40,7 @@ export type DataStore = {
   showTeachMe: boolean
   hideNodeDetails: boolean
   sidebarFilter: string
+  sidebarFilters: string[]
   trendingTopics: Trending[]
   stats: TStats | null
 
@@ -120,6 +121,7 @@ const defaultData: Omit<
   showTeachMe: false,
   hideNodeDetails: false,
   sidebarFilter: 'all',
+  sidebarFilters: [],
   trendingTopics: [],
   stats: null,
   splashDataLoading: true,
@@ -141,6 +143,8 @@ export const useDataStore = create<DataStore>()(
         await saveSearchTerm()
       }
 
+      const sidebarFilters = ['all', ...new Set(data.nodes.map((i) => i.node_type))]
+
       set({
         data,
         isFetching: false,
@@ -150,6 +154,7 @@ export const useDataStore = create<DataStore>()(
         selectedNodeRelativeIds: [],
         showSelectionGraph: false,
         showTeachMe: false,
+        sidebarFilters,
       })
     },
     setTrendingTopics: (trendingTopics) => set({ trendingTopics }),
