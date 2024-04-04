@@ -471,7 +471,7 @@ export const formatFetchNodes = (
           scale: getNodeScale(node),
           id: node.ref_id || `${node.unique_id}_${index}`,
           ref_id: node.ref_id || `${node.unique_id}_${index}`,
-          image_url: node.node_type === 'image' ? node.source_link : node.image_url || imageUrlsMapper[node.node_type],
+          image_url: node.node_type === 'image' ? node.source_link : imageUrlsMapper[node.node_type],
           type: node.type || node.node_type,
         })
 
