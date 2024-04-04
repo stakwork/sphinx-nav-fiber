@@ -82,7 +82,6 @@ const _Relevance = ({ isSearchResult }: Props) => {
             source_link: sourceLink,
             link,
             name,
-            profile_picture: profilePicture,
             verified = false,
             twitter_handle: twitterHandle,
           } = n || {}
@@ -100,7 +99,6 @@ const _Relevance = ({ isSearchResult }: Props) => {
               onClick={() => {
                 handleNodeClick(n)
               }}
-              profilePicture={profilePicture}
               showTitle={formatDescription(showTitle)}
               sourceLink={sourceLink}
               text={text || ''}

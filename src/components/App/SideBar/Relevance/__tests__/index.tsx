@@ -169,14 +169,7 @@ describe('test Relevance Component', () => {
   it('asserts that Episode component is passed the correct props derived from the node data', () => {
     mockedUseFilterNodes.mockReturnValue(mockedFilterNodes)
 
-    const {
-      text,
-      date,
-      node_type: nodeType,
-      name,
-      profile_picture: profilePicture,
-      twitter_handle: twitterHandle,
-    } = mockedFilterNodes[0]
+    const { text, date, node_type: nodeType, name, twitter_handle: twitterHandle } = mockedFilterNodes[0]
 
     const EpisodeComponent = jest.spyOn(EpisodeModule, 'Episode')
 
@@ -188,7 +181,6 @@ describe('test Relevance Component', () => {
         text,
         name,
         onClick: expect.any(Function),
-        profilePicture,
         verified: false,
         boostCount: 0,
         twitterHandle,

@@ -52,7 +52,6 @@ export type Props = {
   name?: string
   verified?: boolean
   twitterHandle?: string
-  profilePicture?: string
   className?: string
   onClick: () => void
 }
@@ -67,7 +66,6 @@ export const Episode = ({
   type,
   text,
   name,
-  profilePicture,
   sourceLink,
   verified = false,
   twitterHandle,
@@ -131,7 +129,7 @@ export const Episode = ({
           {type === 'tweet' && (
             <TypeTweet
               date={date}
-              imageUrl={profilePicture}
+              imageUrl={imageUrl}
               name={name || ''}
               text={text || ''}
               twitterHandle={twitterHandle}

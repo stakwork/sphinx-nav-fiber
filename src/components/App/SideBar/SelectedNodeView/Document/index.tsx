@@ -48,8 +48,12 @@ export const Document = () => {
       {hasSourceLink && (
         <StyledHeader>
           <GlobeIcon color={colors.GRAY6} />
-          <SyledLinkText>{selectedNode?.source_link}</SyledLinkText>
-          <StyledLink href={selectedNode?.source_link} onClick={(e) => e.stopPropagation()} target="_blank">
+          <StyledLinkText>{selectedNode?.source_link}</StyledLinkText>
+          <StyledLink
+            href={`${selectedNode?.source_link}?open=system`}
+            onClick={(e) => e.stopPropagation()}
+            target="_blank"
+          >
             <LinkIcon />
           </StyledLink>
         </StyledHeader>
@@ -109,7 +113,7 @@ const StyledContent = styled(Flex)`
   overflow: auto;
 `
 
-const SyledLinkText = styled(Text)`
+const StyledLinkText = styled(Text)`
   max-width: 150px;
   overflow: hidden;
   text-overflow: ellipsis;
