@@ -28,12 +28,20 @@ const mockData = {
 const mockIds = ['1', '2']
 const mockOnTopicEdit = jest.fn()
 
+const mockOnChangeFilter = jest.fn()
+const mockSetShowMuteUnmute = jest.fn()
+const mockSetCheckedStates = jest.fn()
+
 const defaultProps: TopicTableProps = {
   showMuted: false,
   onTopicEdit: mockOnTopicEdit,
+  onChangeFilter: mockOnChangeFilter,
+  setShowMuteUnmute: mockSetShowMuteUnmute,
+  checkedStates: {},
+  setCheckedStates: mockSetCheckedStates,
 }
 
-const renderTable = (props = defaultProps) => render(<Table {...props} />)
+const renderTable = (props = defaultProps) => render(<Table {...props} checkedStates={{}} />)
 
 describe('Table Component', () => {
   beforeEach(() => {
@@ -83,7 +91,7 @@ describe('Table Component', () => {
       await waitFor(() => expect(screen.getByText(/Mute/i)).toBeInTheDocument())
     })
 
-    rerender(<Table {...defaultProps} showMuted />)
+    rerender(<Table {...defaultProps} checkedStates={{}} showMuted />)
 
     waitFor(async () => {
       const unMuteButton = screen.queryByText(/Show Unmuted/i)
