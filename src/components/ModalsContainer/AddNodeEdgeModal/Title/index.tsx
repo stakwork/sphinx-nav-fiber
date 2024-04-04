@@ -38,15 +38,15 @@ export const TitleEditor: FC<Props> = ({ from, onSelect, selectedType, setSelect
       </Flex>
 
       <IconContainer>
-        <NodeConnectionIcon />
+        <NodeConnectionIcon fill="none" height="170" width="37" />
         <IconTopContainer>
-          <NodeCircleIcon />
+          <NodeCircleIcon fill="#23252f" stroke="#6B7A8D" />
         </IconTopContainer>
         <IconMidContainer onClick={handleButtonClick}>
-          <FlipIcon />
+          <FlipIcon color="#303342" height="2em" width="2em" />
         </IconMidContainer>
         <IconBottomContainer>
-          <ArrowRight />
+          <ArrowRight color="#6B7A8D" height={11} width={11} />
         </IconBottomContainer>
       </IconContainer>
 

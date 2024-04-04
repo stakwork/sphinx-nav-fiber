@@ -2,8 +2,14 @@
 import React from 'react'
 
 const FlipIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
-  <svg width="2em" height="2em" viewBox="0 0 32 32" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-    <rect x="32" width="32" height="32" rx="6" transform="rotate(90 32 0)" fill="#303342" />
+  <svg
+    width={props.width}
+    height={props.height}
+    viewBox="0 0 32 32"
+    fill="currentColor"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <rect x="32" width={props.width} height={props.height} rx="6" transform="rotate(90 32 0)" fill={props.color} />
     <path
       d="M10.5 12.0429L13.8333 8.83301V19.6663"
       stroke="white"
