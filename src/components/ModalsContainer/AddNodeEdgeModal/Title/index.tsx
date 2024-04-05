@@ -3,10 +3,10 @@ import styled from 'styled-components'
 import ArrowRight from '~/components/Icons/ArrowRight'
 import FlipIcon from '~/components/Icons/FlipIcon'
 import NodeCircleIcon from '~/components/Icons/NodeCircleIcon'
-import NodeConnectionIcon from '~/components/Icons/NodeConnectionIcon'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { TEdge } from '~/types'
+import ConnectorImage from '../../../../../public/Connector.png'
 import { ConnectionType } from './ConnectionType'
 import { ToNode } from './ToNode'
 
@@ -38,15 +38,15 @@ export const TitleEditor: FC<Props> = ({ from, onSelect, selectedType, setSelect
       </Flex>
 
       <IconContainer>
-        <NodeConnectionIcon fill="none" height="170" width="37" />
+        <img alt="a" src={ConnectorImage} />
         <IconTopContainer>
-          <NodeCircleIcon fill="#23252f" stroke="#6B7A8D" />
+          <NodeCircleIcon />
         </IconTopContainer>
         <IconMidContainer onClick={handleButtonClick}>
-          <FlipIcon color="#303342" height="2em" width="2em" />
+          <FlipIcon />
         </IconMidContainer>
         <IconBottomContainer>
-          <ArrowRight color="#6B7A8D" height={11} width={11} />
+          <ArrowRight />
         </IconBottomContainer>
       </IconContainer>
 
@@ -207,8 +207,11 @@ const IconContainer = styled.div`
 
 const IconTopContainer = styled.div`
   position: absolute;
-  top: -8px;
+  top: -6px;
   left: 33px;
+  color: #23252f;
+  width: 10px;
+  height: 10px;
 `
 
 const IconMidContainer = styled.div`
@@ -217,10 +220,18 @@ const IconMidContainer = styled.div`
   left: -12px;
   z-index: 999;
   cursor: pointer;
+  width: 32px;
+  height: 32px;
+  background-color: #303342;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 8px;
 `
 
 const IconBottomContainer = styled.div`
   position: absolute;
-  top: 157px;
-  left: 31px;
+  top: 160px;
+  left: 28px;
+  color: #6b7a8d;
 `
