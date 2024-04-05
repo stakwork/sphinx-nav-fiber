@@ -1,12 +1,12 @@
 import { FC, useState } from 'react'
 import styled from 'styled-components'
+import ConnectorImage from '~/../public/Connector.png'
 import ArrowRight from '~/components/Icons/ArrowRight'
 import FlipIcon from '~/components/Icons/FlipIcon'
 import NodeCircleIcon from '~/components/Icons/NodeCircleIcon'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { TEdge } from '~/types'
-import ConnectorImage from '../../../../../public/Connector.png'
 import { ConnectionType } from './ConnectionType'
 import { ToNode } from './ToNode'
 
