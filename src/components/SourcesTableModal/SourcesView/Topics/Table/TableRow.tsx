@@ -2,6 +2,7 @@ import { IconButton, Popover, Typography } from '@mui/material'
 import React, { FC, memo, useState } from 'react'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
+import CheckIcon from '~/components/Icons/CheckIcon'
 import ProfileHide from '~/components/Icons/PropertyHide'
 import ProfileShow from '~/components/Icons/PropertyShow'
 import ThreeDotsIcons from '~/components/Icons/ThreeDotsIcons'
@@ -12,7 +13,6 @@ import { Topic } from '~/types'
 import { formatDate } from '~/utils'
 import { colors } from '~/utils/colors'
 import { StyledTableCell, StyledTableRow } from '../../common'
-import CheckIcon from '~/components/Icons/CheckIcon'
 
 type TTableRaw = {
   topic: Topic
@@ -90,7 +90,6 @@ const TableRowComponent: FC<TTableRaw> = ({ topic, onClick, onSearch, checkedSta
       <StyledTableCell onClick={() => handleClickTopic(topic)}>
         <ClickableText>{topic.topic}</ClickableText>
       </StyledTableCell>
-      <StyledTableCell>{topic.node_type}</StyledTableCell>
       <StyledTableCell>{topic.edgeCount}</StyledTableCell>
       <StyledTableCell>
         <Popover

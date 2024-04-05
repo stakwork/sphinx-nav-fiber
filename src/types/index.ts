@@ -86,6 +86,7 @@ export type Node = {
   profile_picture?: string
   verified?: boolean
   unique_id?: string
+  properties?: { [key: string]: never }
 }
 
 export type DataSeriesNode = {

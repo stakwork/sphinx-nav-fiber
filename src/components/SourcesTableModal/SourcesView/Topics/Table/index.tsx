@@ -1,8 +1,9 @@
-import { Table as MaterialTable, Popover, TableRow, IconButton } from '@mui/material'
+import { IconButton, Table as MaterialTable, Popover, TableRow } from '@mui/material'
 import React, { useCallback } from 'react'
 import styled from 'styled-components'
 import AddCircleIcon from '~/components/Icons/AddCircleIcon'
 import CheckIcon from '~/components/Icons/CheckIcon'
+import ClearIcon from '~/components/Icons/ClearIcon'
 import EditTopicIcon from '~/components/Icons/EditTopicIcon'
 import FilterOffIcon from '~/components/Icons/FilterOffIcon'
 import MergeIcon from '~/components/Icons/MergeIcon'
@@ -12,6 +13,7 @@ import VisibilityOn from '~/components/Icons/VisibilityOn'
 import { ALPHABETICALLY, DATE, EDGE_COUNT } from '~/components/SourcesTableModal/SourcesView/constants'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
+import { putNodeData } from '~/network/fetchSourcesData'
 import { useAppStore } from '~/stores/useAppStore'
 import { useModal } from '~/stores/useModalStore'
 import { useTopicsStore } from '~/stores/useTopicsStore'
@@ -19,8 +21,6 @@ import { colors } from '~/utils/colors'
 import { StyledTableCell, StyledTableHead } from '../../common'
 import { TopicTableProps } from '../../types'
 import { TopicRow } from './TableRow'
-import ClearIcon from '~/components/Icons/ClearIcon'
-import { putNodeData } from '~/network/fetchSourcesData'
 
 interface CheckboxIconProps {
   checked?: boolean
@@ -111,7 +111,6 @@ export const Table: React.FC<TopicTableProps> = ({
                     Name <SortFilterIcon />
                   </SortedIcon>
                 </StyledTableCell>
-                <StyledTableCell>Type</StyledTableCell>
                 <StyledTableCell>
                   <SortedIcon onClick={() => handleChange(EDGE_COUNT)}>
                     Count <SortFilterIcon />
