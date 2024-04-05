@@ -2,8 +2,12 @@ import { Button } from '@mui/material'
 import { useEffect, useRef, useState } from 'react'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
+import ClearIcon from '~/components/Icons/ClearIcon'
+import SearchIcon from '~/components/Icons/SearchIcon'
+import Search from '~/components/SourcesTableModal/SourcesView/Topics/Search'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
+import { putNodeData } from '~/network/fetchSourcesData'
 import { useModal } from '~/stores/useModalStore'
 import { useTopicsStore } from '~/stores/useTopicsStore'
 import { Topic } from '~/types'
@@ -13,9 +17,6 @@ import { AddEdgeModal } from './AddEdgeTopicModal'
 import { EditTopicModal } from './EditTopicModal'
 import { MergeTopicModal } from './MergeTopicModal'
 import { Table } from './Table'
-import ClearIcon from '~/components/Icons/ClearIcon'
-import SearchIcon from '~/components/Icons/SearchIcon'
-import Search from '~/components/SourcesTableModal/SourcesView/Topics/Search'
 
 export const TopicSources = () => {
   const [loading, setLoading] = useState(false)
@@ -91,12 +92,25 @@ export const TopicSources = () => {
     setSelectedTopic(null)
   }
 
-  const onTopicEdit = (topicId: string, action: string) => {
+  const handleMute = async (refId: string, action: string) => {
+    try {
+      await putNodeData(refId, { muted_topic: action === 'mute' })
+      useTopicsStore.setState({ ids: ids.filter((i) => i !== refId), total: total - 1 })
+    } catch (error) {
+      console.warn(error)
+    }
+  }
+
+  const onTopicEdit = async (topicId: string, action: string) => {
     if (!data) {
       return
     }
 
     setSelectedTopic(data[topicId])
+
+    if (['mute', 'unMute'].includes(action)) {
+      await handleMute(topicId, action)
+    }
 
     if (typeof topicActions[action] === 'function') {
       topicActions[action]()
