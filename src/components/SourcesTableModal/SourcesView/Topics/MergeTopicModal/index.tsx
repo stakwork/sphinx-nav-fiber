@@ -78,7 +78,7 @@ export const MergeTopicModal: FC<Props> = ({ topic, onClose }) => {
   }
 
   return (
-    <BaseModal id="mergeTopic" kind="regular" onClose={closeHandler} preventOutsideClose>
+    <BaseModal id="mergeTopic" kind="small" onClose={closeHandler} preventOutsideClose>
       <FormProvider {...form}>
         <TitleEditor from={topic.topic} onSelect={setSelectedTopic} selectedTopic={selectedTopic} />
         <Button color="secondary" disabled={loading} onClick={handleSave} size="large" variant="contained">
