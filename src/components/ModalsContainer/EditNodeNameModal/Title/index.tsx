@@ -47,7 +47,7 @@ export const TitleEditor: FC<Props> = ({ isValidImageUrl }) => (
         image_url
       </LabelText>
       <TextInput
-        id="cy-imageurl"
+        id="cy-image_url"
         maxLength={500}
         name="image_url"
         placeholder="image_url"
