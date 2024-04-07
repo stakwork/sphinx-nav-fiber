@@ -24,6 +24,6 @@ describe('validateImageInputType function', () => {
       false,
     )
 
-    expect(validateImageInputType('pbs.twimg.com/profile_images/1729542498006294529/AjwhArl6_normal.jpg')).toBe(false)
+    expect(validateImageInputType('pbs.twimg.com/profile_images/1729542498006294529/AjwhArl6_normal.svg')).toBe(false)
   })
 })
