@@ -51,6 +51,8 @@ export const App = () => {
   const [setBudget, setNodeCount] = useUserStore((s) => [s.setBudget, s.setNodeCount])
   const [isLoading, setIsLoading] = useState(false)
 
+  console.log('try to fix')
+
   const {
     setSidebarOpen,
     currentSearch: searchTerm,
