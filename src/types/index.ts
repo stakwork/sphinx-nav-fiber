@@ -181,7 +181,7 @@ export type Sources = {
 }
 
 export type Topic = {
-  topic: string
+  name: string
   node_type: string
   ref_id: string
   muted_topic: string

@@ -88,7 +88,7 @@ const TableRowComponent: FC<TTableRaw> = ({ topic, onClick, onSearch, checkedSta
         </CheckboxSection>
       </StyledTableCell>
       <StyledTableCell onClick={() => handleClickTopic(topic)}>
-        <ClickableText>{topic.topic}</ClickableText>
+        <ClickableText>{topic.name}</ClickableText>
       </StyledTableCell>
       <StyledTableCell>{topic.node_type}</StyledTableCell>
       <StyledTableCell>{topic.edgeCount}</StyledTableCell>
