@@ -49,7 +49,7 @@ jobs:
         run: cp -r ./data ./stack/neo4j
 
       - name: Check for NODES
-        uses: nick-fields/retry@v2
+        uses: nick-fields/retry@v3
         with:
           timeout_minutes: 10
           max_attempts: 3
@@ -94,7 +94,7 @@ jobs:
 
       - name: Upload Cypress logs
         if: failure()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: cypress-logs
           path: cypress/videos
