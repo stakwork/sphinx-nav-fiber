@@ -11,19 +11,15 @@ jest.mock('~/stores/useFeatureFlagStore', () => ({
 describe('SourceTypeStep', () => {
   it('renders with initial selected type', () => {
     const selectedType = ''
-
     render(<SourceTypeStep allowNextStep onSelectType={jest.fn()} selectedType={selectedType} skipToStep={jest.fn()} />)
 
     const nextBtn = screen.getByRole('button', { name: 'Next' })
-
     expect(nextBtn).toBeInTheDocument()
 
     const selectTypeText = screen.getByText('Select Type')
-
     expect(selectTypeText).toBeInTheDocument()
 
     const inputField = screen.getByRole('combobox')
-
     expect(inputField).toHaveValue(selectedType)
   })
 
@@ -31,7 +27,6 @@ describe('SourceTypeStep', () => {
     render(<SourceTypeStep allowNextStep onSelectType={jest.fn()} selectedType="" skipToStep={jest.fn()} />)
 
     const inputField = screen.getByRole('combobox')
-
     expect(inputField).toHaveFocus()
   })
 
@@ -45,7 +40,7 @@ describe('SourceTypeStep', () => {
 
     jest.spyOn(fetchSourcesData, 'getNodeSchemaTypes').mockResolvedValue({ schemas: mockedSchemaTypes })
 
-    render(<SourceTypeStep skipToStep={jest.fn()} allowNextStep={true} onSelectType={jest.fn()} selectedType="" />)
+    render(<SourceTypeStep allowNextStep onSelectType={jest.fn()} selectedType="" skipToStep={jest.fn()} />)
 
     await waitFor(() => {
       const autocompleteOptions = screen.getAllByRole('option')
