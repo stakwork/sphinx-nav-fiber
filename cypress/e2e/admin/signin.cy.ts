@@ -2,10 +2,10 @@ describe('Admin Login', () => {
   it('Admin uses the enable function', () => {
     cy.initialSetup('alice', 50)
 
-    cy.intercept({
-      method: 'POST',
-      url: 'http://localhost:8444/api/about*',
-    }).as('updateAbout')
+    // cy.intercept({
+    //   method: 'POST',
+    //   url: 'http://localhost:8444/api/about*',
+    // }).as('updateAbout')
 
     const title = `Testing NavFiber`
 
