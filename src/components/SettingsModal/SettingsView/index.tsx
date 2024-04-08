@@ -102,6 +102,7 @@ const StyledTabs = styled(Tabs)`
 `
 
 const StyledHeader = styled(Flex)`
+  border-radius: 9px 9px 0 0;
   background: rgb(22, 24, 30);
   padding: 40px 36px 0 0;
 `
