@@ -1,17 +1,11 @@
 import '@testing-library/jest-dom'
-import { fireEvent, render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import React from 'react'
+import * as fetchSourcesData from '~/network/fetchSourcesData'
 import { SourceTypeStep } from '..'
-jest.mock('~/network/fetchSourcesData', () => ({
-  getNodeSchemaTypes: jest.fn(() =>
-    Promise.resolve({
-      schemas: [
-        { type: 'node1', is_deleted: false },
-        { type: 'node2', is_deleted: true },
-        { type: 'node3', is_deleted: false },
-      ],
-    }),
-  ),
+
+jest.mock('~/stores/useFeatureFlagStore', () => ({
+  useFeatureFlagStore: jest.fn(() => [true]),
 }))
 
 describe('SourceTypeStep', () => {
@@ -41,15 +35,25 @@ describe('SourceTypeStep', () => {
     expect(inputField).toHaveFocus()
   })
 
-  it('filters out deleted node types from the dropdown', async () => {
-    render(<SourceTypeStep allowNextStep onSelectType={jest.fn()} selectedType="" skipToStep={jest.fn()} />)
+  it('should filter out deleted node types', async () => {
+    const mockedSchemaTypes = [
+      { type: 'node1', is_deleted: false },
+      { type: 'node2', is_deleted: true },
+      { type: 'about', is_deleted: false },
+      { type: 'schema', is_deleted: false },
+    ]
 
-    const input = await screen.findByRole('combobox')
-    fireEvent.change(input, { target: { value: 'node2' } })
+    jest.spyOn(fetchSourcesData, 'getNodeSchemaTypes').mockResolvedValue({ schemas: mockedSchemaTypes })
 
-    const options = await screen.findAllByRole('option')
-    expect(options).toHaveLength(2)
-    expect(options[0]).toHaveTextContent('node1')
-    expect(options[1]).toHaveTextContent('node3')
+    render(<SourceTypeStep skipToStep={jest.fn()} allowNextStep={true} onSelectType={jest.fn()} selectedType="" />)
+
+    await waitFor(() => {
+      const autocompleteOptions = screen.getAllByRole('option')
+      expect(autocompleteOptions).toHaveLength(1)
+      expect(autocompleteOptions[0]).toHaveTextContent('Node1')
+
+      const deletedNodeType = screen.queryByText('Node2')
+      expect(deletedNodeType).toBeNull()
+    })
   })
 })
