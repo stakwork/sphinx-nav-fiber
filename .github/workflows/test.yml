@@ -64,13 +64,6 @@ jobs:
             docker wait stack_relaysetup_1
             cat stack/relay/NODES.json;
 
-      - name: Echo values
-        run: |
-          echo $TWITTER_BEARER
-          echo TObi is testing
-          echo ${{ secrets.STAKWORK_TOKEN }}
-          echo ${{ secrets.TWITTER_BEARER }}
-
       - name: Copy Node.json
         uses: canastro/copy-file-action@master
         with:
@@ -100,16 +93,11 @@ jobs:
         continue-on-error: false
 
       - name: Upload Cypress logs
-        if: failure()
+        # if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: cypress-logs
           path: cypress/videos
-
-      - name: Log Docker
-        if: failure()
-        run: |
-          docker logs jarvis-backend.sphinx
 
       - name: Check the coverage value
         run: yarn test-coverage
