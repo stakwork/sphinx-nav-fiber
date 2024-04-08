@@ -1,6 +1,6 @@
+import TextField from '@mui/material/TextField'
 import { FC, useState } from 'react'
 import styled from 'styled-components'
-import ConnectorImage from '~/../public/Connector.png'
 import ArrowRight from '~/components/Icons/ArrowRight'
 import FlipIcon from '~/components/Icons/FlipIcon'
 import NodeCircleIcon from '~/components/Icons/NodeCircleIcon'
@@ -35,7 +35,7 @@ export const TitleEditor: FC<Props> = ({ from, onSelect, selectedTopic }) => {
       </Flex>
 
       <IconContainer>
-        <img alt="a" src={ConnectorImage} />
+        <NodeConnectorDiv />
         <IconTopContainer>
           <NodeCircleIcon />
         </IconTopContainer>
@@ -47,68 +47,74 @@ export const TitleEditor: FC<Props> = ({ from, onSelect, selectedTopic }) => {
         </IconBottomContainer>
       </IconContainer>
 
-      <Div>
-        {swap ? (
-          <>
-            <FromSection swap={swap}>
-              <FromLabel>From</FromLabel>
-              <StyledText2>{from}</StyledText2>
-            </FromSection>
+      <Div swap={swap}>
+        <FromSection label="From" swap={swap} value={from} />
 
-            <TypeSection swap={swap}>
-              <StyledLabel>IS_ALIAS</StyledLabel>
-            </TypeSection>
+        <TypeSection swap={swap}>
+          <StyledLabel>IS_ALIAS</StyledLabel>
+        </TypeSection>
 
-            <ToSection swap={swap}>
-              <ToLabel>To</ToLabel>
-              <DropdownSearch onSelect={onSelect} selectedTopic={selectedTopic} />
-            </ToSection>
-          </>
-        ) : (
-          <>
-            <ToSection swap={swap}>
-              <ToLabel>To</ToLabel>
-              <DropdownSearch onSelect={onSelect} selectedTopic={selectedTopic} />
-            </ToSection>
-
-            <TypeSection swap={swap}>
-              <StyledLabel>IS_ALIAS</StyledLabel>
-            </TypeSection>
-
-            <FromSection swap={swap}>
-              <FromLabel>From</FromLabel>
-              <StyledText2>{from}</StyledText2>
-            </FromSection>
-          </>
-        )}
+        <ToSection swap={swap}>
+          <ToLabel>To</ToLabel>
+          <DropdownSearch onSelect={onSelect} selectedTopic={selectedTopic} />
+        </ToSection>
       </Div>
     </Flex>
   )
 }
 
+const NodeConnectorDiv = styled.div`
+  position: absolute;
+  top: 6px;
+  left: 4px;
+  width: 35px;
+  height: 165px;
+  border-left: 1.5px solid #6b7a8d4d;
+  border-top: 1.5px solid #6b7a8d4d;
+  border-bottom: 1.5px solid #6b7a8d4d;
+  border-radius: 12px 0 0 12px;
+`
+
 const StyledText = styled(Text)`
   font-size: 22px;
   font-weight: 600;
-  font-family: 'Barlow';
 `
 
-const Div = styled.div`
+const Div = styled.div<SectionProps>`
   position: relative;
   color: white;
+  font-family: 'Barlow';
+  display: flex;
+  flex-direction: ${(props) => (props.swap ? 'column' : 'column-reverse')};
+  margin-bottom: 10px;
 `
 
-const FromSection = styled.div<SectionProps>`
+const FromSection = styled(TextField)<SectionProps>`
   position: relative;
-  width: 258px;
+  width: 250px;
   height: 64px;
-  margin-top: ${(props) => (props.swap ? '10px' : '10px')};
+  top: ${(props) => (props.swap ? '12px' : '25px')};
   left: 55px;
   padding: 16px;
   gap: 10px;
   border-radius: 6px;
   border: 1px solid #6b7a8d4d;
   opacity: 0px;
-  margin-bottom: ${(props) => (props.swap ? '10px' : '10px')};
+  display: flex;
+  z-index: -10;
+`
+
+const ToSection = styled.div<SectionProps>`
+  position: relative;
+  width: 250px;
+  height: 64px;
+  top: ${(props) => (props.swap ? '18px' : '8px')};
+  margin-left: 55px;
+  padding: 15px;
+  gap: 10px;
+  border-radius: 6px;
+  border: 1.4px solid #6b7a8d4d;
+  opacity: 0px;
   display: flex;
   align-items: center;
   z-index: -10;
@@ -118,7 +124,7 @@ const TypeSection = styled.div<SectionProps>`
   position: relative;
   width: 195px;
   height: 64px;
-  top: 8px;
+  top: ${(props) => (props.swap ? '25px' : '25px')};
   left: 35px;
   opacity: 0px;
   margin-bottom: ${(props) => (props.swap ? '25px' : '25px')};
@@ -127,35 +133,8 @@ const TypeSection = styled.div<SectionProps>`
   z-index: -10;
 `
 
-const ToSection = styled.div<SectionProps>`
-  position: relative;
-  width: 258px;
-  height: 64px;
-  margin-top: ${(props) => (props.swap ? '' : '10px')};
-  margin-left: 55px;
-  padding: 15px;
-  gap: 10px;
-  border-radius: 6px;
-  border: 1px solid #6b7a8d4d;
-  opacity: 0px;
-  margin-bottom: 10px;
-  display: flex;
-  align-items: center;
-  z-index: -10;
-`
-
-const StyledText2 = styled(Text)`
-  font-family: 'Barlow';
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 18px;
-  letter-spacing: 0.01em;
-  text-align: left;
-`
-
 const StyledLabel = styled.label`
   background-color: #23252f;
-  font-family: 'Barlow';
   color: #bac1c6;
   font-size: 13px;
   font-weight: 400;
@@ -168,8 +147,8 @@ const StyledLabel = styled.label`
 `
 
 const ToLabel = styled.label`
-  font-family: 'Barlow';
   color: #bac1c6;
+  background-color: #23252f;
   font-size: 13px;
   font-weight: 400;
   line-height: 18px;
@@ -177,20 +156,6 @@ const ToLabel = styled.label`
   text-align: left;
   position: absolute;
   left: 15px;
-  top: -10px;
-`
-
-const FromLabel = styled.label`
-  background-color: #23252f;
-  font-family: 'Barlow';
-  color: #bac1c6;
-  font-size: 13px;
-  font-weight: 400;
-  line-height: 18px;
-  letter-spacing: 0.01em;
-  text-align: left;
-  position: absolute;
-  left: 10px;
   top: -10px;
 `
 
@@ -202,7 +167,7 @@ const IconContainer = styled.div`
 
 const IconTopContainer = styled.div`
   position: absolute;
-  top: -6px;
+  top: -2px;
   left: 33px;
   color: #23252f;
   width: 10px;
@@ -212,7 +177,7 @@ const IconTopContainer = styled.div`
 const IconMidContainer = styled.div`
   position: absolute;
   top: 70px;
-  left: -12px;
+  left: -10px;
   z-index: 999;
   cursor: pointer;
   width: 32px;
@@ -226,7 +191,7 @@ const IconMidContainer = styled.div`
 
 const IconBottomContainer = styled.div`
   position: absolute;
-  top: 160px;
+  top: 162px;
   left: 28px;
   color: #6b7a8d;
 `
