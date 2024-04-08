@@ -31,12 +31,6 @@ import '@testing-library/cypress/add-commands'
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 
-// Cypress.on('uncaught:exception', (_err, _runnable) => {
-//   // returning false here prevents Cypress from
-//   // failing the test
-//   return false
-// })
-
 Cypress.Commands.add('initialSetup', (username, budget) => {
   cy.intercept({
     method: 'GET',
