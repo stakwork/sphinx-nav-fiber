@@ -26,7 +26,7 @@ export const SourceTypeStep: FC<Props> = ({ skipToStep, allowNextStep, onSelectT
           const nodeTypesToHide = ['about', 'schema']
 
           const schemaOptions = data.schemas
-            .filter((schema) => !nodeTypesToHide.includes(schema.type))
+            .filter((schema) => !nodeTypesToHide.includes(schema.type) && !schema.is_deleted)
             .map((schema) => ({
               label: capitalizeString(schema.type),
               value: schema.type,
