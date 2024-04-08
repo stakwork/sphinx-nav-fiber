@@ -64,6 +64,11 @@ jobs:
             docker wait stack_relaysetup_1
             cat stack/relay/NODES.json;
 
+      - name: Echo values
+        run: |
+          echo $TWITTER_BEARER
+          echo TObi is testing
+
       - name: Copy Node.json
         uses: canastro/copy-file-action@master
         with:
