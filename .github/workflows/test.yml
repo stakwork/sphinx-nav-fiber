@@ -102,8 +102,8 @@ jobs:
       - name: Log Docker
         if: failure()
         run: |
-          docker logs boltwall.sphinx
           docker logs jarvis-backend.sphinx
+          docker logs boltwall.sphinx
 
       - name: Check the coverage value
         run: yarn test-coverage
