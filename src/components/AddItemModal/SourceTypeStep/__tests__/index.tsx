@@ -11,15 +11,19 @@ jest.mock('~/stores/useFeatureFlagStore', () => ({
 describe('SourceTypeStep', () => {
   it('renders with initial selected type', () => {
     const selectedType = ''
+
     render(<SourceTypeStep allowNextStep onSelectType={jest.fn()} selectedType={selectedType} skipToStep={jest.fn()} />)
 
     const nextBtn = screen.getByRole('button', { name: 'Next' })
+
     expect(nextBtn).toBeInTheDocument()
 
     const selectTypeText = screen.getByText('Select Type')
+
     expect(selectTypeText).toBeInTheDocument()
 
     const inputField = screen.getByRole('combobox')
+
     expect(inputField).toHaveValue(selectedType)
   })
 
@@ -27,6 +31,7 @@ describe('SourceTypeStep', () => {
     render(<SourceTypeStep allowNextStep onSelectType={jest.fn()} selectedType="" skipToStep={jest.fn()} />)
 
     const inputField = screen.getByRole('combobox')
+
     expect(inputField).toHaveFocus()
   })
 
@@ -44,10 +49,12 @@ describe('SourceTypeStep', () => {
 
     await waitFor(() => {
       const autocompleteOptions = screen.getAllByRole('option')
+
       expect(autocompleteOptions).toHaveLength(1)
       expect(autocompleteOptions[0]).toHaveTextContent('Node1')
 
       const deletedNodeType = screen.queryByText('Node2')
+
       expect(deletedNodeType).toBeNull()
     })
   })
