@@ -23,6 +23,8 @@ export const Body = () => {
   const [topicIsLoading, setTopicIsLoading] = useState(false)
   const [selectedToNode, setSelectedToNode] = useState<TEdge | null>(null)
 
+  console.log(1234)
+
   const [topicEdge, setTopicEdge] = useState<null | TEdge>()
 
   const selectedNode = useSelectedNode()
@@ -58,32 +60,21 @@ export const Body = () => {
   }
 
   const handleSave = async () => {
-    if (!selectedToNode || !topicEdge) {
+    const nodeFrom = topicEdge || selectedNode
+
+    if (!selectedToNode || !nodeFrom?.ref_id) {
       return
     }
 
     setLoading(true)
 
     try {
-      const nodeFrom = topicEdge || selectedToNode
-
       await postEdgeType({ from: nodeFrom.ref_id, to: selectedToNode?.ref_id, relationship: selectedType })
 
       const { ref_id: id } = nodeFrom
       const { ref_id: selectedId } = selectedToNode
 
       console.log(id, selectedId)
-
-      //   if (data) {
-      //     const newData = { ...data }
-
-      //     newData[id] = { ...newData[id], edgeList: [...newData[id].edgeList, selectedType] }
-
-      //     if (newData[selectedId]) {
-      //       newData[selectedId] = { ...newData[selectedId], edgeList: [...newData[selectedId].edgeList, selectedType] }
-      //     }
-
-      //     useTopicsStore.setState({ data: newData })
 
       closeHandler()
     } catch (error) {
@@ -110,6 +101,9 @@ export const Body = () => {
           setSelectedType={setSelectedType}
         />
       )}
+      <div>
+        {(topicEdge || selectedNode)?.ref_id}: {selectedToNode?.ref_id}
+      </div>
       <Button color="secondary" disabled={submitDisabled} onClick={handleSave} size="large" variant="contained">
         Confirm
         {loading && <ClipLoader color={colors.BLUE_PRESS_STATE} size={10} />}
