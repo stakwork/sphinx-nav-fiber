@@ -68,8 +68,8 @@ jobs:
         run: |
           echo $TWITTER_BEARER
           echo TObi is testing
-          echo secrets.TWITTER_BEARER
-          echo secrets.STAKWORK_TOKEN
+          echo ${{ secrets.STAKWORK_TOKEN }}
+          echo ${{ secrets.TWITTER_BEARER }}
 
       - name: Copy Node.json
         uses: canastro/copy-file-action@master
