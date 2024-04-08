@@ -54,8 +54,12 @@ const TableRowComponent: FC<TTableRaw> = ({ topic, onClick, onSearch, checkedSta
     }))
   }
 
-  const handleClickTopic = (topicItem: Topic) => {
-    onSearch(topicItem.topic)
+  const handleClickTopic = (event: React.MouseEvent<HTMLTableCellElement, MouseEvent>, topicItem: Topic) => {
+    if (window.getSelection()?.toString()) {
+      event.preventDefault()
+    } else {
+      onSearch(topicItem.topic)
+    }
   }
 
   const lettersToShow = topic.edgeList.slice(0, 1)
@@ -87,7 +91,7 @@ const TableRowComponent: FC<TTableRaw> = ({ topic, onClick, onSearch, checkedSta
           </CheckboxIcon>
         </CheckboxSection>
       </StyledTableCell>
-      <StyledTableCell onClick={() => handleClickTopic(topic)}>
+      <StyledTableCell onClick={(event) => handleClickTopic(event, topic)}>
         <ClickableText>{topic.topic}</ClickableText>
       </StyledTableCell>
       <StyledTableCell>{topic.edgeCount}</StyledTableCell>
