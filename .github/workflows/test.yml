@@ -99,6 +99,12 @@ jobs:
           name: cypress-logs
           path: cypress/videos
 
+      - name: Log Docker
+        if: failure()
+        run: |
+          docker logs boltwall.sphinx
+          docker logs jarvis-backend.sphinx
+
       - name: Check the coverage value
         run: yarn test-coverage
 
