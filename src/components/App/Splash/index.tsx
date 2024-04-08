@@ -89,11 +89,9 @@ export const Splash = memo(({ children }: PropsWithChildren) => {
     return () => clearInterval(intervalId)
   }, [splashDataLoaded])
 
-  // if (!splashDataLoaded) {
-  //   console.log('What do we have here??')
-
-  //   return null
-  // }
+  if (!splashDataLoaded) {
+    return null
+  }
 
   return (
     <SplashWrapper>
