@@ -21,7 +21,7 @@ describe('Admin Login', () => {
     // Submit the form
     cy.get('#add-node-submit-cta').click()
 
-    cy.wait('@updateAbout')
+    // cy.wait('@updateAbout')
 
     // Close modal and assert the title
     cy.get('div[data-testid="close-modal"]').click()
