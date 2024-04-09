@@ -95,7 +95,7 @@ export const SourcesView = () => {
 const StyledTabs = styled(Tabs)`
   && {
     background: rgba(0, 0, 0, 0.2);
-
+    border-radius: 9px 9px 0 0;
     .MuiTabs-indicator {
       background: ${colors.primaryBlue};
     }
