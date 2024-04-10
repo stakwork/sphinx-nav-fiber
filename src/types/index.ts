@@ -25,7 +25,7 @@ export type FetchRadarResponse = {
 
 export type FetchTopicResponse = {
   data: Topic[]
-  topicCount: number
+  totalCount: number
 }
 
 export type FetchEdgeTypesResponse = {
@@ -46,6 +46,7 @@ export type RadarRequest = {
 export type NodeRequest = {
   muted_topic?: boolean
   topic?: string
+  name?: string
 }
 
 export type Node = {

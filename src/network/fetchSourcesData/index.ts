@@ -68,6 +68,7 @@ export type TtopicsParams = {
   limit?: string
   sort_by?: string
   search?: string
+  node_type?: string
 }
 
 type createCustonNode = {
