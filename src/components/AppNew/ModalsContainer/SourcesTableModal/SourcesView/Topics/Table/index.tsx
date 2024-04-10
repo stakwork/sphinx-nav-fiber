@@ -37,14 +37,14 @@ export const Table: React.FC<TopicTableProps> = ({ showMuted, onTopicEdit }) => 
 
   return !data ? (
     <Flex>
-      <Text>There is not any results for selected filters</Text>
+      <Text>There are no results for selected filters</Text>
       <FilterOffIcon />
     </Flex>
   ) : (
     <>
       {!Object.keys(data).length ? (
         <Flex>
-          <Text>There is not any results for selected filters</Text>
+          <Text>There are no results for selected filters</Text>
           <FilterOffIcon />
         </Flex>
       ) : (

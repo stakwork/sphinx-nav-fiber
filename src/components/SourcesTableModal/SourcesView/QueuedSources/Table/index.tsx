@@ -56,7 +56,7 @@ const Table: React.FC<Props> = ({ data }) => {
 
   return !data?.length ? (
     <Flex>
-      <Text>There is not any results for selected filters</Text>
+      <Text>There are no results for selected filters</Text>
       <FilterOffIcon />
     </Flex>
   ) : (

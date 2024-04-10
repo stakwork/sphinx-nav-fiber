@@ -63,7 +63,7 @@ const Table: React.FC<Props> = ({ data, canEdit = false }) => {
   return !data?.length ? (
     <NoResultWrapper>
       <NoFilterResultIcon />
-      <Text className="text">There is not any results for selected filters</Text>
+      <Text className="text">There are no results for selected filters</Text>
     </NoResultWrapper>
   ) : (
     <MaterialTable aria-label="a dense table" component="table" id="sources-table" size="small">
