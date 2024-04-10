@@ -15,7 +15,7 @@ import { initialMessageData, Message } from './constants'
 import { SphereAnimation } from './SpiningSphere'
 
 export const Splash = memo(({ children }: PropsWithChildren) => {
-  const [message, setMessage] = useState<Message>(initialMessageData)
+  const [message, setMessage] = useState<Message | null>(null)
   const [progress, setProgress] = useState(0)
   const [isLoading, setIsLoading] = useState(true)
   const { appMetaData, setAppMetaData } = useAppStore((s) => s)
@@ -63,7 +63,7 @@ export const Splash = memo(({ children }: PropsWithChildren) => {
   }, [stats, setMessage, setStats])
 
   const splashDataLoaded = useMemo(
-    () => Object.values(appMetaData).some((value) => !!value) && message.some(({ value }) => !!value),
+    () => message && Object.values(appMetaData).length > 0 && message.length > 0,
     [appMetaData, message],
   )
 
@@ -104,7 +104,7 @@ export const Splash = memo(({ children }: PropsWithChildren) => {
               <Text className="subtitle">Second Brain</Text>
             </TitleWrapper>
             <LinearProgress color="inherit" sx={{ my: 1.75, height: '2px' }} value={progress} variant="determinate" />
-            <AnimatedTextContent message={message} />
+            {message && <AnimatedTextContent message={message} />}
           </Flex>
         </Wrappper>
       ) : (
