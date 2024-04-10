@@ -14,7 +14,6 @@ export const Content = () => {
   const [nodes, setNodes] = useState<Node[]>([])
   const [loading, setLoading] = useState(true)
   const [loadLimit, setLoadLimit] = useState(10)
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [newNodesAvailable, setNewNodesAvailable] = useState(true)
 
   const viewContentParams = {
@@ -28,6 +27,10 @@ export const Content = () => {
 
     try {
       const response = await getNodeContent(viewContentParams)
+
+      if (response.nodes.length === 0) {
+        setNewNodesAvailable(false)
+      }
 
       setNodes(response.nodes)
       setLoading(false)
@@ -61,7 +64,7 @@ export const Content = () => {
             <Table nodes={nodes} />
           </>
         )}
-        {!loading ? (
+        {!loading && nodes.length > 0 ? (
           newNodesAvailable ? (
             <Button onClick={handleLoadMore} size="medium">
               Load More
