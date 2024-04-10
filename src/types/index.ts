@@ -47,6 +47,7 @@ export type NodeRequest = {
   muted_topic?: boolean
   topic?: string
   name?: string
+  image_url?: string
 }
 
 export type Node = {
@@ -87,6 +88,7 @@ export type Node = {
   profile_picture?: string
   verified?: boolean
   unique_id?: string
+  properties?: { [key: string]: never }
 }
 
 export type DataSeriesNode = {

@@ -2,6 +2,7 @@ import { IconButton, Popover, Typography } from '@mui/material'
 import React, { FC, memo, useState } from 'react'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
+import CheckIcon from '~/components/Icons/CheckIcon'
 import ProfileHide from '~/components/Icons/PropertyHide'
 import ProfileShow from '~/components/Icons/PropertyShow'
 import ThreeDotsIcons from '~/components/Icons/ThreeDotsIcons'
@@ -12,7 +13,6 @@ import { Topic } from '~/types'
 import { formatDate } from '~/utils'
 import { colors } from '~/utils/colors'
 import { StyledTableCell, StyledTableRow } from '../../common'
-import CheckIcon from '~/components/Icons/CheckIcon'
 
 type TTableRaw = {
   topic: Topic
@@ -54,8 +54,12 @@ const TableRowComponent: FC<TTableRaw> = ({ topic, onClick, onSearch, checkedSta
     }))
   }
 
-  const handleClickTopic = (topicItem: Topic) => {
-    onSearch(topicItem.topic)
+  const handleClickTopic = (event: React.MouseEvent<HTMLTableCellElement, MouseEvent>, topicItem: Topic) => {
+    if (window.getSelection()?.toString()) {
+      event.preventDefault()
+    } else {
+      onSearch(topicItem.name)
+    }
   }
 
   const lettersToShow = topic.edgeList.slice(0, 1)
@@ -76,7 +80,7 @@ const TableRowComponent: FC<TTableRaw> = ({ topic, onClick, onSearch, checkedSta
   const checkboxVisibleClass = checkedStates[topic.ref_id] ? 'visible' : ''
 
   return (
-    <StyledTableRow key={topic.topic} className={checkedStates[topic.ref_id] ? 'checked' : ''}>
+    <StyledTableRow key={topic.name} className={checkedStates[topic.ref_id] ? 'checked' : ''}>
       <StyledTableCell>
         <CheckboxSection
           className={`checkbox-section ${checkboxVisibleClass}`}
@@ -87,7 +91,7 @@ const TableRowComponent: FC<TTableRaw> = ({ topic, onClick, onSearch, checkedSta
           </CheckboxIcon>
         </CheckboxSection>
       </StyledTableCell>
-      <StyledTableCell onClick={() => handleClickTopic(topic)}>
+      <StyledTableCell onClick={(event) => handleClickTopic(event, topic)}>
         <ClickableText>{topic.name}</ClickableText>
       </StyledTableCell>
       <StyledTableCell>{topic.node_type}</StyledTableCell>

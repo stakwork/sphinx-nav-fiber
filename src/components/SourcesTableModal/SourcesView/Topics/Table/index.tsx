@@ -1,8 +1,10 @@
-import { Table as MaterialTable, Popover, TableRow, IconButton } from '@mui/material'
-import React, { useCallback } from 'react'
+import { IconButton, Table as MaterialTable, Popover, TableRow } from '@mui/material'
+import React, { useCallback, useState } from 'react'
+import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
 import AddCircleIcon from '~/components/Icons/AddCircleIcon'
 import CheckIcon from '~/components/Icons/CheckIcon'
+import ClearIcon from '~/components/Icons/ClearIcon'
 import EditTopicIcon from '~/components/Icons/EditTopicIcon'
 import FilterOffIcon from '~/components/Icons/FilterOffIcon'
 import MergeIcon from '~/components/Icons/MergeIcon'
@@ -12,6 +14,7 @@ import VisibilityOn from '~/components/Icons/VisibilityOn'
 import { ALPHABETICALLY, DATE, EDGE_COUNT } from '~/components/SourcesTableModal/SourcesView/constants'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
+import { putNodeData } from '~/network/fetchSourcesData'
 import { useAppStore } from '~/stores/useAppStore'
 import { useModal } from '~/stores/useModalStore'
 import { useTopicsStore } from '~/stores/useTopicsStore'
@@ -19,8 +22,6 @@ import { colors } from '~/utils/colors'
 import { StyledTableCell, StyledTableHead } from '../../common'
 import { TopicTableProps } from '../../types'
 import { TopicRow } from './TableRow'
-import ClearIcon from '~/components/Icons/ClearIcon'
-import { putNodeData } from '~/network/fetchSourcesData'
 
 interface CheckboxIconProps {
   checked?: boolean
@@ -35,7 +36,7 @@ export const Table: React.FC<TopicTableProps> = ({
   setCheckedStates,
 }) => {
   const { close } = useModal('sourcesTable')
-
+  const [loading, setLoading] = useState(false)
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
   const [selectedRefId, setSelectedRefId] = React.useState<string>('')
 
@@ -43,7 +44,7 @@ export const Table: React.FC<TopicTableProps> = ({
 
   const [setSearchFormValue, setCurrentSearch] = useAppStore((s) => [s.setSearchFormValue, s.setCurrentSearch])
 
-  const [data, ids] = useTopicsStore((s) => [s.data, s.ids])
+  const [data, ids, total] = useTopicsStore((s) => [s.data, s.ids, s.total])
 
   const handleClick = useCallback((event: React.MouseEvent<HTMLButtonElement>, refId: string) => {
     setAnchorEl(event.currentTarget)
@@ -73,19 +74,33 @@ export const Table: React.FC<TopicTableProps> = ({
   const id = open ? 'simple-popover' : undefined
 
   const handleSelectedMuteUnmute = async () => {
+    setLoading(true)
+
     const promises: Promise<unknown>[] = []
 
-    Object.keys(checkedStates).forEach((index) => {
-      const value = checkedStates[index]
+    try {
+      Object.keys(checkedStates).forEach((index) => {
+        const value = checkedStates[index]
 
-      if (value) {
-        const promise = putNodeData(index, { muted_topic: showMuted })
+        if (value) {
+          const promise = putNodeData(index, { muted_topic: showMuted })
 
-        promises.push(promise)
-      }
-    })
+          useTopicsStore.setState({
+            ids: ids.filter((i) => i !== index),
+            total: total - 1,
+          })
 
-    await Promise.all(promises)
+          promises.push(promise)
+        }
+      })
+
+      await Promise.all(promises)
+
+      setLoading(false)
+    } catch (error) {
+      console.error('Error:', error)
+      setLoading(false)
+    }
   }
 
   return !data ? (
@@ -101,117 +116,123 @@ export const Table: React.FC<TopicTableProps> = ({
           <FilterOffIcon />
         </Flex>
       ) : (
-        <>
-          <MaterialTable component="table">
-            <StyledTableHead>
-              <TableRow component="tr">
-                <StyledTableCell className="empty" />
-                <StyledTableCell>
-                  <SortedIcon onClick={() => handleChange(ALPHABETICALLY)}>
-                    Name <SortFilterIcon />
-                  </SortedIcon>
-                </StyledTableCell>
-                <StyledTableCell>Type</StyledTableCell>
-                <StyledTableCell>
-                  <SortedIcon onClick={() => handleChange(EDGE_COUNT)}>
-                    Count <SortFilterIcon />
-                  </SortedIcon>
-                </StyledTableCell>
-                <StyledTableCell>Edge list</StyledTableCell>
-                <StyledTableCell>
-                  <SortedIcon onClick={() => handleChange(DATE)}>
-                    Date <SortFilterIcon />
-                  </SortedIcon>
-                </StyledTableCell>
-                <StyledTableCell>
-                  <Flex px={8}>
-                    <CheckboxSection onClick={setShowMuteUnmute}>
-                      <CheckboxIcon checked={showMuted}>
-                        <Checkmark>{showMuted && <CheckIcon />}</Checkmark>
-                      </CheckboxIcon>
-                      Muted
-                    </CheckboxSection>
-                  </Flex>
-                </StyledTableCell>
-              </TableRow>
-            </StyledTableHead>
-            {checkedCount > 0 && (
-              <TableRow component="tr">
-                <StyledTableCell>
-                  <IconButton onClick={() => setCheckedStates({})}>
-                    <ClearIcon />
-                  </IconButton>
-                </StyledTableCell>
-                <StyledTableCell>
-                  <StatusBarSection>
-                    <CheckCountBoxSection>
-                      <CheckedCount>{checkedCount}</CheckedCount>
-                      selected
-                    </CheckCountBoxSection>
-                    <MuteStatusSection onClick={handleSelectedMuteUnmute} role="button">
-                      {showMuted ? (
-                        <>
-                          <VisibilityOn /> Unmute All
-                        </>
-                      ) : (
-                        <>
-                          <VisibilityOff /> Mute All
-                        </>
-                      )}
-                    </MuteStatusSection>
-                  </StatusBarSection>
-                </StyledTableCell>
-              </TableRow>
-            )}
+        <TableInnerWrapper align="center" justify={loading ? 'center' : 'flex-start'}>
+          {loading ? (
+            <ClipLoader color={colors.white} />
+          ) : (
+            <>
+              <MaterialTable component="table">
+                <StyledTableHead>
+                  <TableRow component="tr">
+                    <StyledTableCell className="empty" />
+                    <StyledTableCell>
+                      <SortedIcon onClick={() => handleChange(ALPHABETICALLY)}>
+                        Name <SortFilterIcon />
+                      </SortedIcon>
+                    </StyledTableCell>
+                    <StyledTableCell>Type</StyledTableCell>
+                    <StyledTableCell>
+                      <SortedIcon onClick={() => handleChange(EDGE_COUNT)}>
+                        Count <SortFilterIcon />
+                      </SortedIcon>
+                    </StyledTableCell>
+                    <StyledTableCell>Edge list</StyledTableCell>
+                    <StyledTableCell>
+                      <SortedIcon onClick={() => handleChange(DATE)}>
+                        Date <SortFilterIcon />
+                      </SortedIcon>
+                    </StyledTableCell>
+                    <StyledTableCell>
+                      <Flex px={8}>
+                        <CheckboxSection onClick={setShowMuteUnmute}>
+                          <CheckboxIcon checked={showMuted}>
+                            <Checkmark>{showMuted && <CheckIcon />}</Checkmark>
+                          </CheckboxIcon>
+                          Muted
+                        </CheckboxSection>
+                      </Flex>
+                    </StyledTableCell>
+                  </TableRow>
+                </StyledTableHead>
+                {checkedCount > 0 && (
+                  <TableRow component="tr">
+                    <StyledTableCell>
+                      <IconButton onClick={() => setCheckedStates({})}>
+                        <ClearIcon />
+                      </IconButton>
+                    </StyledTableCell>
+                    <StyledTableCell>
+                      <StatusBarSection>
+                        <CheckCountBoxSection>
+                          <CheckedCount>{checkedCount}</CheckedCount>
+                          selected
+                        </CheckCountBoxSection>
+                        <MuteStatusSection onClick={handleSelectedMuteUnmute} role="button">
+                          {showMuted ? (
+                            <>
+                              <VisibilityOn /> Unmute All
+                            </>
+                          ) : (
+                            <>
+                              <VisibilityOff /> Mute All
+                            </>
+                          )}
+                        </MuteStatusSection>
+                      </StatusBarSection>
+                    </StyledTableCell>
+                  </TableRow>
+                )}
 
-            {data && (
-              <tbody>
-                {ids?.map((i: string) => (
-                  <TopicRow
-                    key={i}
-                    checkedStates={checkedStates}
-                    onClick={handleClick}
-                    onSearch={handleSearch}
-                    setCheckedStates={setCheckedStates}
-                    topic={data[i]}
-                  />
-                ))}
-              </tbody>
-            )}
-          </MaterialTable>
-          {selectedRefId ? (
-            <PopoverWrapper
-              anchorEl={anchorEl}
-              anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-              id={id}
-              onClose={handleClose}
-              open={open}
-              transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-            >
-              {showMuted ? (
-                <PopoverOption onClick={() => handlePopoverAction('unMute')}>
-                  {' '}
-                  <VisibilityOn data-testid="" /> Unmute
-                </PopoverOption>
-              ) : (
-                <PopoverOption onClick={() => handlePopoverAction('mute')}>
-                  {' '}
-                  <VisibilityOff data-testid="VisibilityOff" /> Mute
-                </PopoverOption>
-              )}
-              <PopoverOption onClick={() => handlePopoverAction('editTopic')}>
-                <EditTopicIcon data-testid="EditTopicIcon" /> Rename
-              </PopoverOption>
+                {data && (
+                  <tbody>
+                    {ids?.map((i: string) => (
+                      <TopicRow
+                        key={i}
+                        checkedStates={checkedStates}
+                        onClick={handleClick}
+                        onSearch={handleSearch}
+                        setCheckedStates={setCheckedStates}
+                        topic={data[i]}
+                      />
+                    ))}
+                  </tbody>
+                )}
+              </MaterialTable>
+              {selectedRefId ? (
+                <PopoverWrapper
+                  anchorEl={anchorEl}
+                  anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                  id={id}
+                  onClose={handleClose}
+                  open={open}
+                  transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+                >
+                  {showMuted ? (
+                    <PopoverOption onClick={() => handlePopoverAction('unMute')}>
+                      {' '}
+                      <VisibilityOn data-testid="" /> Unmute
+                    </PopoverOption>
+                  ) : (
+                    <PopoverOption onClick={() => handlePopoverAction('mute')}>
+                      {' '}
+                      <VisibilityOff data-testid="VisibilityOff" /> Mute
+                    </PopoverOption>
+                  )}
+                  <PopoverOption onClick={() => handlePopoverAction('editTopic')}>
+                    <EditTopicIcon data-testid="EditTopicIcon" /> Rename
+                  </PopoverOption>
 
-              <PopoverOption onClick={() => handlePopoverAction('mergeTopic')}>
-                <MergeIcon data-testid="MergeIcon" /> Merge
-              </PopoverOption>
-              <PopoverOption onClick={() => handlePopoverAction('addEdge')}>
-                <AddCircleIcon data-testid="AddCircleIcon" /> Add edge
-              </PopoverOption>
-            </PopoverWrapper>
-          ) : null}
-        </>
+                  <PopoverOption onClick={() => handlePopoverAction('mergeTopic')}>
+                    <MergeIcon data-testid="MergeIcon" /> Merge
+                  </PopoverOption>
+                  <PopoverOption onClick={() => handlePopoverAction('addEdge')}>
+                    <AddCircleIcon data-testid="AddCircleIcon" /> Add edge
+                  </PopoverOption>
+                </PopoverWrapper>
+              ) : null}
+            </>
+          )}
+        </TableInnerWrapper>
       )}
     </>
   )
@@ -315,4 +336,11 @@ const StatusBarSection = styled.span`
   display: flex;
   align-items: center;
   justify-content: space-between;
+`
+
+const TableInnerWrapper = styled(Flex)`
+  min-height: 0;
+  overflow: auto;
+  flex: 1;
+  width: 100%;
 `

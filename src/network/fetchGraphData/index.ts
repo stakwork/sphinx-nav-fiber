@@ -458,6 +458,8 @@ export const formatFetchNodes = (
         topWeightValue = node.weight
       }
 
+      const imageUrl = node.properties?.image_url || node.image_url
+
       // TODO: simplify this to ref_id
       if (['data_series', 'document', 'tweet', 'image'].includes(node.node_type)) {
         const imageUrlsMapper: { [key: string]: string } = {
@@ -471,7 +473,7 @@ export const formatFetchNodes = (
           scale: getNodeScale(node),
           id: node.ref_id || `${node.unique_id}_${index}`,
           ref_id: node.ref_id || `${node.unique_id}_${index}`,
-          image_url: node.node_type === 'image' ? node.source_link : node.image_url || imageUrlsMapper[node.node_type],
+          image_url: node.node_type === 'image' ? node.source_link : imageUrl || imageUrlsMapper[node.node_type],
           type: node.type || node.node_type,
         })
 
@@ -496,7 +498,7 @@ export const formatFetchNodes = (
       }
 
       // replace aws bucket url with cloudfront, and add size indicator to end
-      const smallImageUrl = node.image_url
+      const smallImageUrl = imageUrl
         ?.replace(AWS_IMAGE_BUCKET_URL, CLOUDFRONT_IMAGE_BUCKET_URL)
         .replace('.jpg', '_s.jpg')
 

@@ -49,14 +49,14 @@ jobs:
         run: cp -r ./data ./stack/neo4j
 
       - name: Check for NODES
-        uses: nick-fields/retry@v2
+        uses: nick-fields/retry@v3
         with:
           timeout_minutes: 10
           max_attempts: 3
           command: |
             export TWITTER_BEARER="Bearer ${{ secrets.TWITTER_BEARER }}"
             echo $TWITTER_BEARER
-            STAKWORK_TOKEN=${{ secrets.STAKWORK_TOKEN }} TWITTER_BEARER=$TWITTER_BEARER GITACTION_ENV=gitactionenv docker-compose -f ./stack/alts/navfiber.yml --project-dir ./stack up -d;
+            STAKWORK_TOKEN=daaa3a0894f0658d99781471dfccd3e1 TWITTER_BEARER=$TWITTER_BEARER GITACTION_ENV=gitactionenv docker-compose -f ./stack/alts/navfiber.yml --project-dir ./stack up -d;
             sleep 240;
             docker ps
             docker logs meme.sphinx
@@ -94,7 +94,7 @@ jobs:
 
       - name: Upload Cypress logs
         if: failure()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: cypress-logs
           path: cypress/videos
