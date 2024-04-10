@@ -1,5 +1,5 @@
 import TextField from '@mui/material/TextField'
-import { FC, useState } from 'react'
+import { FC } from 'react'
 import styled from 'styled-components'
 import ArrowRight from '~/components/Icons/ArrowRight'
 import FlipIcon from '~/components/Icons/FlipIcon'
@@ -16,17 +16,25 @@ type Props = {
   selectedType: string
   setSelectedType: (type: string) => void
   selectedToNode: TEdge | null
+  isSwapped: boolean
+  setIsSwapped: () => void
 }
 
 interface SectionProps {
   swap: boolean
 }
 
-export const TitleEditor: FC<Props> = ({ from, onSelect, selectedType, setSelectedType, selectedToNode }) => {
-  const [swap, setSwap] = useState(true)
-
+export const TitleEditor: FC<Props> = ({
+  from,
+  onSelect,
+  selectedType,
+  setSelectedType,
+  selectedToNode,
+  setIsSwapped,
+  isSwapped,
+}) => {
   const handleButtonClick = () => {
-    setSwap(!swap)
+    setIsSwapped()
   }
 
   return (
@@ -50,15 +58,15 @@ export const TitleEditor: FC<Props> = ({ from, onSelect, selectedType, setSelect
         </IconBottomContainer>
       </IconContainer>
 
-      <Div swap={swap}>
-        <FromSection label="From" swap={swap} value={from} />
+      <Div swap={isSwapped}>
+        <FromSection disabled label="From" swap={isSwapped} value={from} />
 
-        <TypeSection swap={swap}>
+        <TypeSection swap={isSwapped}>
           <StyledLabel>Type</StyledLabel>
           <ConnectionType selectedType={selectedType} setSelectedType={setSelectedType} />
         </TypeSection>
 
-        <ToSection swap={swap}>
+        <ToSection swap={isSwapped}>
           <ToLabel>To</ToLabel>
           <ToNode onSelect={onSelect} selectedValue={selectedToNode} />
         </ToSection>
@@ -105,7 +113,6 @@ const FromSection = styled(TextField)<SectionProps>`
   border: 1px solid #6b7a8d4d;
   opacity: 0px;
   display: flex;
-  z-index: -10;
 `
 
 const ToSection = styled.div<SectionProps>`
@@ -121,7 +128,6 @@ const ToSection = styled.div<SectionProps>`
   opacity: 0px;
   display: flex;
   align-items: center;
-  z-index: -10;
 `
 
 const TypeSection = styled.div<SectionProps>`
@@ -134,7 +140,6 @@ const TypeSection = styled.div<SectionProps>`
   margin-bottom: ${(props) => (props.swap ? '25px' : '25px')};
   display: flex;
   align-items: center;
-  z-index: -10;
 `
 
 const StyledLabel = styled.label`
