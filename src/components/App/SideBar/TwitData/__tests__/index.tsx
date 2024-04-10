@@ -1,3 +1,4 @@
+/* eslint-disable padding-line-between-statements */
 import '@testing-library/jest-dom'
 import { fireEvent, render, waitFor } from '@testing-library/react'
 import moment from 'moment'
@@ -84,12 +85,18 @@ describe('TwitData Component', () => {
   })
 
   it('external link to the tweet is correctly constructed', () => {
+    const mockOpen = jest.fn()
+
+    window.open = mockOpen
+
     const { getByText } = render(<TwitData />)
     const viewTweetButton = getByText('View Tweet')
 
-    expect(viewTweetButton.closest('a')).toHaveAttribute(
-      'href',
+    fireEvent.click(viewTweetButton)
+
+    expect(mockOpen).toHaveBeenCalledWith(
       `https://twitter.com/Interior/status/${mockSelectedNode.tweet_id}?open=system`,
+      '_blank',
     )
   })
 })
