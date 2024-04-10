@@ -26,7 +26,7 @@ export const SetAttributesStep: FC<Props> = ({ skipToStep, nodeType }) => {
     const init = async () => {
       setLoading(true)
 
-      const data = await getNodeType(nodeType.toLowerCase())
+      const data = await getNodeType(nodeType)
 
       const parsedData = parseJson(data)
 
