@@ -95,7 +95,11 @@ export const Episode = ({
                 {type && <TypeBadge type={type} />}
               </Flex>
               {type === 'youtube' && sourceLink ? (
-                <StyledLink href={`${sourceLink}?open=system`} onClick={(e) => e.stopPropagation()}>
+                <StyledLink
+                  href={`${sourceLink}${sourceLink.includes('?') ? '&' : '?'}open=system`}
+                  onClick={(e) => e.stopPropagation()}
+                  target="_blank"
+                >
                   <LinkIcon />
                 </StyledLink>
               ) : null}
