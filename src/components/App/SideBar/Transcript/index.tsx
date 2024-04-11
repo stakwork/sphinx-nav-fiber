@@ -38,9 +38,9 @@ export const Transcript = ({ stateless, node }: TranscriptProps) => {
 
   const url = 'https://knowledge-graph.sphinx.chat'
 
-  const loadFullTranscript = async (refId: string) => {
+  const loadFullTranscript = async () => {
     try {
-      const response = await fetch(`${url}/node/text/${refId}`) // can you please change "https://knowledge-graph.sphinx.chat" to host var
+      const response = await fetch(`${url}/node/text/${node?.ref_id}`) // can you please change "https://knowledge-graph.sphinx.chat" to host var
 
       if (!response.ok) {
         throw new Error('Network response was not ok')
@@ -49,25 +49,26 @@ export const Transcript = ({ stateless, node }: TranscriptProps) => {
       const data = await response.json()
 
       setFullTranscript(data.data.text)
-      setShowFullTranscript(true)
     } catch (error) {
       console.error('Error fetching full transcript', error)
     }
   }
 
   const handleCopy = () => {
-    copyNodeText(node?.text)
+    loadFullTranscript()
+
+    copyNodeText(fullTranscript)
 
     setTimeout(() => {
       setIsCopied(false)
     }, 2000)
   }
 
-  const handleMoreClick = () => {
+  const handleMoreClick = async () => {
     if (!showFullTranscript) {
-      if (node?.ref_id) {
-        loadFullTranscript(node.ref_id)
-      }
+      await loadFullTranscript()
+
+      setShowFullTranscript(true)
     } else {
       setShowFullTranscript(false)
     }
