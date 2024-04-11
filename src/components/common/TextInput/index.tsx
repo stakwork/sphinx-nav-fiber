@@ -137,7 +137,7 @@ export const TextInput = ({
 
 const QuestionIcon = styled(Flex)<QuestionIconProps>`
   cursor: default;
-  margin-left: 6px;
+  margin: 0 0 6px 6px;
   position: relative;
   color: ${colors.placeholderText};
 
@@ -176,4 +176,5 @@ const Label = styled.label`
   color: ${colors.lightGray};
   font-size: 12px;
   font-weight: 600;
+  margin-bottom: 6px;
 `
