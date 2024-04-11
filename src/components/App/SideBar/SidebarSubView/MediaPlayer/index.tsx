@@ -207,7 +207,7 @@ const Cover = styled(Flex)`
 
 const Buffering = styled(Flex)`
   position: absolute;
-  top: 20%;
+  top: 39%;
   left: 50%;
   transform: translateX(-50%);
   z-index: 1;
