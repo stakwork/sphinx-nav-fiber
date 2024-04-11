@@ -2,14 +2,16 @@ import Tab from '@mui/material/Tab'
 import Tabs from '@mui/material/Tabs'
 import * as React from 'react'
 import styled from 'styled-components'
-import { Content } from '~/components/SourcesTableModal/SourcesView/Content'
 import { Flex } from '~/components/common/Flex'
 import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
+import { useUserStore } from '~/stores/useUserStore'
 import { colors } from '~/utils/colors'
 import { QueuedSources } from './QueuedSources'
 import { Sources } from './Sources'
 import { TopicSources } from './Topics'
 import { QUEUED_SOURCES, SOURCE_TABLE, TOPICS, VIEW_CONTENT } from './constants'
+import { Content } from '~/components/SourcesTableModal/SourcesView/Content'
+import { isSphinx } from '~/utils/isSphinx'
 
 interface TabPanelProps {
   children?: React.ReactNode
@@ -49,9 +51,9 @@ function a11yProps(index: number) {
 
 export const SourcesView = () => {
   const [value, setValue] = React.useState(0)
-  const isAdmin = true
+  const [isAdmin] = useUserStore((s) => [s.isAdmin])
   const [queuedSourcesFlag] = useFeatureFlagStore((s) => [s.queuedSourcesFlag])
-  const sphinxEnabled = true
+  const sphinxEnabled = isSphinx()
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue)
@@ -93,7 +95,7 @@ export const SourcesView = () => {
 const StyledTabs = styled(Tabs)`
   && {
     background: rgba(0, 0, 0, 0.2);
-
+    border-radius: 9px 9px 0 0;
     .MuiTabs-indicator {
       background: ${colors.primaryBlue};
     }
