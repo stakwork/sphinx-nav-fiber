@@ -45,31 +45,34 @@ export const TitleEditor: FC<Props> = ({
         </Flex>
       </Flex>
 
-      <IconContainer>
-        <NodeConnectorDiv />
-        <IconTopContainer>
-          <NodeCircleIcon />
-        </IconTopContainer>
-        <IconMidContainer onClick={handleButtonClick}>
-          <FlipIcon />
-        </IconMidContainer>
-        <IconBottomContainer>
-          <ArrowRight />
-        </IconBottomContainer>
-      </IconContainer>
-
       <Div swap={isSwapped}>
-        <FromSection disabled label="From" swap={isSwapped} value={from} />
+        <Flex>
+          <FromSection disabled label={!isSwapped ? 'From' : 'To'} swap={isSwapped} value={from} />
+        </Flex>
 
-        <TypeSection swap={isSwapped}>
+        <Flex my={16}>
           <StyledLabel>Type</StyledLabel>
           <ConnectionType selectedType={selectedType} setSelectedType={setSelectedType} />
-        </TypeSection>
+        </Flex>
 
-        <ToSection swap={isSwapped}>
-          <ToLabel>To</ToLabel>
-          <ToNode onSelect={onSelect} selectedValue={selectedToNode} />
-        </ToSection>
+        <Flex>
+          <ToSection>
+            <ToLabel>{!isSwapped ? 'To' : 'From'}</ToLabel>
+            <ToNode onSelect={onSelect} selectedValue={selectedToNode} />
+          </ToSection>
+        </Flex>
+
+        <NodeConnectorDiv>
+          <IconTopContainer>
+            <NodeCircleIcon />
+          </IconTopContainer>
+          <IconMidContainer onClick={handleButtonClick}>
+            <FlipIcon />
+          </IconMidContainer>
+          <IconBottomContainer>
+            <ArrowRight />
+          </IconBottomContainer>
+        </NodeConnectorDiv>
       </Div>
     </Flex>
   )
@@ -77,10 +80,10 @@ export const TitleEditor: FC<Props> = ({
 
 const NodeConnectorDiv = styled.div`
   position: absolute;
-  top: 6px;
+  top: 26px;
+  bottom: 26px;
   left: 4px;
   width: 35px;
-  height: 165px;
   border-left: 1.5px solid #6b7a8d4d;
   border-top: 1.5px solid #6b7a8d4d;
   border-bottom: 1.5px solid #6b7a8d4d;
@@ -97,16 +100,14 @@ const Div = styled.div<SectionProps>`
   color: white;
   font-family: 'Barlow';
   display: flex;
-  flex-direction: ${(props) => (props.swap ? 'column' : 'column-reverse')};
+  flex-direction: ${(props) => (props.swap ? 'column-reverse' : 'column')};
   margin-bottom: 10px;
+  padding-left: 38px;
 `
 
 const FromSection = styled(TextField)<SectionProps>`
   position: relative;
   width: 250px;
-  height: 64px;
-  top: ${(props) => (props.swap ? '12px' : '25px')};
-  left: 55px;
   padding: 16px;
   gap: 10px;
   border-radius: 6px;
@@ -115,29 +116,14 @@ const FromSection = styled(TextField)<SectionProps>`
   display: flex;
 `
 
-const ToSection = styled.div<SectionProps>`
+const ToSection = styled.div`
   position: relative;
   width: 250px;
-  height: 64px;
-  top: ${(props) => (props.swap ? '18px' : '8px')};
-  margin-left: 55px;
   padding: 15px;
   gap: 10px;
   border-radius: 6px;
   border: 1.4px solid #6b7a8d4d;
   opacity: 0px;
-  display: flex;
-  align-items: center;
-`
-
-const TypeSection = styled.div<SectionProps>`
-  position: relative;
-  width: 195px;
-  height: 64px;
-  top: ${(props) => (props.swap ? '25px' : '25px')};
-  left: 35px;
-  opacity: 0px;
-  margin-bottom: ${(props) => (props.swap ? '25px' : '25px')};
   display: flex;
   align-items: center;
 `
@@ -150,9 +136,6 @@ const StyledLabel = styled.label`
   line-height: 18px;
   letter-spacing: 0.01em;
   text-align: left;
-  position: relative;
-  left: 30px;
-  top: -34px;
 `
 
 const ToLabel = styled.label`
@@ -168,26 +151,19 @@ const ToLabel = styled.label`
   top: -10px;
 `
 
-const IconContainer = styled.div`
-  position: absolute;
-  top: 102px;
-  left: 35px;
-`
-
 const IconTopContainer = styled.div`
   position: absolute;
-  top: -2px;
-  left: 33px;
+  top: 0;
+  right: 0;
+  transform: translateY(-50%) translateX(50%);
   color: #23252f;
-  width: 10px;
-  height: 10px;
 `
 
 const IconMidContainer = styled.div`
   position: absolute;
-  top: 70px;
-  left: -10px;
-  z-index: 999;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%) translateX(-50%);
   cursor: pointer;
   width: 32px;
   height: 32px;
@@ -200,7 +176,9 @@ const IconMidContainer = styled.div`
 
 const IconBottomContainer = styled.div`
   position: absolute;
-  top: 162px;
-  left: 28px;
+  bottom: 0;
+  right: 0;
+  transform: translateY(10px) translateX(3px);
   color: #6b7a8d;
+  line-height: 1;
 `
