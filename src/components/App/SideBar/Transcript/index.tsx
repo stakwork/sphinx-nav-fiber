@@ -43,7 +43,7 @@ export const Transcript = ({ stateless, node }: TranscriptProps) => {
       const response = await fetch(`${url}/node/text/${node?.ref_id}`)
 
       if (!response.ok) {
-        throw new Error('Network response was not ok')
+        throw new Error('network response was not ok')
       }
 
       const data = await response.json()
