@@ -5,12 +5,13 @@ import { Text } from '~/components/common/Text'
 import { TextInput } from '~/components/common/TextInput'
 import { requiredRule } from '~/constants'
 import { colors } from '~/utils'
+import { imageUrlRegex, validateImageInputType } from '~/components/ModalsContainer/EditNodeNameModal/utils'
 
 type Props = {
-  value?: string
+  isValidImageUrl?: boolean
 }
 
-export const TitleEditor: FC<Props> = () => (
+export const TitleEditor: FC<Props> = ({ isValidImageUrl }) => (
   <Flex>
     <Flex align="center" direction="row" justify="space-between" mb={18}>
       <Flex align="center" direction="row">
@@ -18,7 +19,7 @@ export const TitleEditor: FC<Props> = () => (
       </Flex>
     </Flex>
 
-    <Flex mb={36}>
+    <Flex mb={18}>
       <LabelText
         style={{
           marginBottom: 8,
@@ -33,6 +34,36 @@ export const TitleEditor: FC<Props> = () => (
         placeholder="Node name"
         rules={{
           ...requiredRule,
+        }}
+      />
+    </Flex>
+
+    <Flex mb={36}>
+      <LabelText
+        style={{
+          marginBottom: 8,
+        }}
+      >
+        image_url
+      </LabelText>
+      <TextInput
+        id="cy-image_url"
+        maxLength={500}
+        name="image_url"
+        placeholder="image_url"
+        rules={{
+          ...requiredRule,
+          ...(!isValidImageUrl
+            ? {
+                pattern: {
+                  message: 'Please enter a valid URL',
+                  value: imageUrlRegex,
+                },
+                validate: {
+                  source: validateImageInputType,
+                },
+              }
+            : {}),
         }}
       />
     </Flex>

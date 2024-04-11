@@ -71,7 +71,7 @@ export const Sources = () => {
           defaultIcon={<SearchIcon />}
           loadingIcon={<ClipLoader color={colors.PRIMARY_BLUE} size={24} />}
           onSearch={setSearch}
-          placeholder="Find Topic"
+          placeholder="Find Source"
         />
       </InputWrapper>
       <Flex className="filters" direction="row" pb={16} px={36}>

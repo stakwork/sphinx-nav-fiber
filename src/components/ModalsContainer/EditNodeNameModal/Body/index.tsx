@@ -10,9 +10,12 @@ import { useModal } from '~/stores/useModalStore'
 import { Topic } from '~/types'
 import { colors } from '~/utils/colors'
 import { TitleEditor } from '../Title'
+import { validateImageInputType } from '~/components/ModalsContainer/EditNodeNameModal/utils'
 
 export type FormData = {
   topic: string
+  image_url: string
+  imageInputType?: boolean
 }
 
 export const Body = () => {
@@ -34,6 +37,8 @@ export const Body = () => {
       setValue('topic', actualTopicNode?.topic)
     } else if (selectedNode) {
       setValue('topic', selectedNode.name)
+
+      setValue('image_url', selectedNode?.image_url ?? '')
     }
 
     return () => {
@@ -65,7 +70,15 @@ export const Body = () => {
     init()
   }, [selectedNode])
 
+  const isValidImageUrl = watch('imageInputType')
+
   const topicValue = watch('topic')
+
+  const imageUrl = watch('image_url')
+
+  useEffect(() => {
+    setValue('imageInputType', validateImageInputType(imageUrl))
+  }, [imageUrl, setValue])
 
   const closeHandler = () => {
     close()
@@ -79,7 +92,7 @@ export const Body = () => {
     const propName = actualTopicNode ? 'topic' : 'name'
 
     try {
-      await putNodeData(node?.ref_id || '', { [propName]: topicValue.trim() })
+      await putNodeData(node?.ref_id || '', { [propName]: topicValue.trim(), image_url: imageUrl.trim() })
 
       closeHandler()
     } catch (error) {
@@ -103,7 +116,7 @@ export const Body = () => {
             <Skeleton />
           </Flex>
         ) : (
-          <TitleEditor />
+          <TitleEditor isValidImageUrl={isValidImageUrl} />
         )}
         <Flex direction="row" mb={6}>
           <DeleteButton
@@ -118,7 +131,7 @@ export const Body = () => {
           </DeleteButton>
           <Button
             color="secondary"
-            disabled={loading || topicIsLoading || !isNodeNameChanged}
+            disabled={loading || topicIsLoading || !isNodeNameChanged || !isValidImageUrl}
             onClick={handleSave}
             size="large"
             style={{ flex: 1 }}

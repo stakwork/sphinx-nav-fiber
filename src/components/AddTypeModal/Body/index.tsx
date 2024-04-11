@@ -108,14 +108,16 @@ export const Body = ({ onSchemaCreate, selectedSchema, onDelete }: Props) => {
       try {
         const data = await getNodeSchemaTypes()
 
-        const schemaOptions = data.schemas.map((schema) =>
-          schema?.type === 'thing'
-            ? { label: 'No Parent', value: schema.type }
-            : {
-                label: schema.type,
-                value: schema.type,
-              },
-        )
+        const schemaOptions = data.schemas
+          .filter((schema) => !schema.is_deleted)
+          .map((schema) =>
+            schema?.type === 'thing'
+              ? { label: 'No Parent', value: schema.type }
+              : {
+                  label: schema.type,
+                  value: schema.type,
+                },
+          )
 
         setParentOptions(schemaOptions)
       } catch (error) {
