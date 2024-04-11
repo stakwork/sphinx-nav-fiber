@@ -10,7 +10,7 @@ export const AddNodeEdgeModal = () => {
   const { close } = useModal('addEdgeToNode')
 
   return (
-    <BaseModal id="addEdgeToNode" kind="large" onClose={close} preventOutsideClose>
+    <BaseModal id="addEdgeToNode" kind="small" onClose={close} preventOutsideClose>
       <Body />
     </BaseModal>
   )

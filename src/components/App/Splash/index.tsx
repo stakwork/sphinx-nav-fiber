@@ -1,18 +1,18 @@
 /* eslint-disable react/display-name */
 import { LinearProgress } from '@mui/material'
-import { PropsWithChildren, memo, useEffect, useMemo, useState } from 'react'
+import { memo, PropsWithChildren, useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
-import { StatsConfig } from '~/components/Stats'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
-import { TStatParams, getAboutData, getStats } from '~/network/fetchSourcesData'
+import { StatsConfig } from '~/components/Stats'
+import { getAboutData, getStats, TStatParams } from '~/network/fetchSourcesData'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
 import { TStats } from '~/types'
 import { colors, formatNumberWithCommas } from '~/utils'
-import { SphereAnimation } from './SpiningSphere'
 import { AnimatedTextContent } from './animated'
-import { Message, initialMessageData } from './constants'
+import { initialMessageData, Message } from './constants'
+import { SphereAnimation } from './SpiningSphere'
 
 export const Splash = memo(({ children }: PropsWithChildren) => {
   const [message, setMessage] = useState<Message>(initialMessageData)

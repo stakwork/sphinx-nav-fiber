@@ -61,9 +61,17 @@ export const TwitData = () => {
             </Flex>
           </Flex>
           <Flex align="stretch" mt={22}>
-            <a href={`https://twitter.com/Interior/status/${twitId}?open=system`}>
-              <StyledButton endIcon={<LinkIcon />}>View Tweet </StyledButton>
-            </a>
+            <StyledButton
+              endIcon={<LinkIcon />}
+              onClick={() =>
+                window.open(
+                  `https://twitter.com/Interior/status/${twitId}${twitId.includes('?') ? '&' : '?'}open=system`,
+                  '_blank',
+                )
+              }
+            >
+              View Tweet
+            </StyledButton>
           </Flex>
         </Flex>
         <StyledDivider />
@@ -79,7 +87,7 @@ export const TwitData = () => {
 const PictureWrapper = styled(Flex)`
   img {
     width: 64px;
-    height: 64px
+    height: 64px;
     border-radius: 50%;
     object-fit: cover;
   }

@@ -20,7 +20,11 @@ type Props = {
 export const SetAttributesStep: FC<Props> = ({ skipToStep, nodeType }) => {
   const [loading, setLoading] = useState(false)
   const [attributes, setAttributes] = useState<parsedObjProps[]>()
-  const { watch } = useFormContext()
+
+  const {
+    watch,
+    formState: { isValid },
+  } = useFormContext()
 
   useEffect(() => {
     const init = async () => {
@@ -37,6 +41,8 @@ export const SetAttributesStep: FC<Props> = ({ skipToStep, nodeType }) => {
 
     init()
   }, [nodeType, watch])
+
+  const capitalizeFirstLetter = (string: string) => string.charAt(0).toUpperCase() + string.slice(1).replace(/_/g, ' ')
 
   return (
     <Flex>
@@ -56,7 +62,7 @@ export const SetAttributesStep: FC<Props> = ({ skipToStep, nodeType }) => {
             {attributes?.map(({ key, required }: parsedObjProps) => (
               <>
                 <TextFeildWrapper>
-                  <Text>{key.replace('_', ' ')}</Text>
+                  <Text>{capitalizeFirstLetter(key)}</Text>
                   <TextInput
                     id="item-name"
                     name={key}
@@ -79,7 +85,13 @@ export const SetAttributesStep: FC<Props> = ({ skipToStep, nodeType }) => {
           </Button>
         </Flex>
         <Flex grow={1} ml={20}>
-          <Button color="secondary" onClick={() => skipToStep('setBudget')} size="large" variant="contained">
+          <Button
+            color="secondary"
+            disabled={!isValid || loading || attributes?.some((attr) => attr.required && !watch(attr.key))}
+            onClick={() => skipToStep('setBudget')}
+            size="large"
+            variant="contained"
+          >
             Next
           </Button>
         </Flex>
@@ -106,6 +118,8 @@ const StyledWrapper = styled(Flex)`
     gap: 15px;
     max-height: 225px;
     overflow-y: auto;
+    padding-right: 20px;
+    width: calc(100% + 20px);
   }
 `
 
