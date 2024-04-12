@@ -43,7 +43,7 @@ export const Transcript = ({ stateless, node }: TranscriptProps) => {
 
       setFullTranscript(response.data.text)
     } catch (error) {
-      console.error('Error fetching full transcript', error)
+      console.error('error fetching full transcript', error)
     }
   }
 
