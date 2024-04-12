@@ -9,6 +9,7 @@ import { useAppStore } from '~/stores/useAppStore'
 import { NodeExtended } from '~/types'
 import { colors } from '~/utils/colors'
 import CheckIcon from '../../../Icons/CheckIcon'
+import { getFullTranscript } from '~/network/fetchSourcesData'
 
 type TranscriptProps = {
   stateless?: boolean
@@ -36,28 +37,24 @@ export const Transcript = ({ stateless, node }: TranscriptProps) => {
     return null
   }
 
-  const url = 'https://knowledge-graph.sphinx.chat'
-
   const loadFullTranscript = async () => {
     try {
-      const response = await fetch(`${url}/node/text/${node?.ref_id}`)
+      const response = await getFullTranscript(node?.ref_id)
 
-      if (!response.ok) {
-        throw new Error('network response was not ok')
-      }
-
-      const data = await response.json()
-
-      setFullTranscript(data.data.text)
+      setFullTranscript(response.data.text)
     } catch (error) {
       console.error('Error fetching full transcript', error)
     }
   }
 
-  const handleCopy = () => {
-    loadFullTranscript()
+  const handleCopy = async () => {
+    if (fullTranscript === '') {
+      const response = await getFullTranscript(node?.ref_id)
 
-    copyNodeText(fullTranscript)
+      copyNodeText(response.data.text)
+    } else {
+      copyNodeText(fullTranscript)
+    }
 
     setTimeout(() => {
       setIsCopied(false)

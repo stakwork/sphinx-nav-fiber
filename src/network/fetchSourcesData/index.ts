@@ -130,6 +130,19 @@ interface SchemaAllResponse {
   schemas: Schema[]
 }
 
+interface FullTranscriptResponse {
+  data: {
+    text: string
+  }
+}
+
+export const getFullTranscript = async (refId: string | undefined) => {
+  const url = `/node/text/${refId}`
+  const response = await api.get<FullTranscriptResponse>(url)
+
+  return response
+}
+
 export const getSchemaAll = async () => {
   const url = '/schema/all'
   const response = await api.get<SchemaAllResponse>(url)
