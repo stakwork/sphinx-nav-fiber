@@ -127,4 +127,5 @@ export const FormInput = ({ parentParam }: { parentParam: string }) => {
 const InputsWrapper = styled(Flex)`
   max-height: 260px;
   overflow: auto;
+  width: calc(100% + 20px);
 `
