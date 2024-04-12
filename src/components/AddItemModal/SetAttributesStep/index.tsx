@@ -44,6 +44,18 @@ export const SetAttributesStep: FC<Props> = ({ skipToStep, nodeType }) => {
 
   const capitalizeFirstLetter = (string: string) => string.charAt(0).toUpperCase() + string.slice(1).replace(/_/g, ' ')
 
+  const sortedAttributes = attributes?.sort((a, b) => {
+    if (a.required && !b.required) {
+      return -1
+    }
+
+    if (!a.required && b.required) {
+      return 1
+    }
+
+    return 0
+  })
+
   return (
     <Flex>
       <Flex align="center" direction="row" justify="space-between" mb={18}>
@@ -59,7 +71,7 @@ export const SetAttributesStep: FC<Props> = ({ skipToStep, nodeType }) => {
           </Flex>
         ) : (
           <Flex className="input__wrapper">
-            {attributes?.map(({ key, required }: parsedObjProps) => (
+            {sortedAttributes?.map(({ key, required }: parsedObjProps) => (
               <>
                 <TextFeildWrapper>
                   <Text>{capitalizeFirstLetter(key)}</Text>
