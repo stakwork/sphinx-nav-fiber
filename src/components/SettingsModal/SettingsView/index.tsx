@@ -133,6 +133,8 @@ const TabPanelWrapper = styled(Flex)`
   max-height: 495px;
   height: fit-content;
   min-width: 480px;
+  overflow: hidden;
+  border-radius: 9px;
 `
 
 const Wrapper = styled(Flex)`
