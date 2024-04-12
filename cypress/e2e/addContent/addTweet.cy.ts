@@ -1,6 +1,6 @@
 describe('Add Tweet Content', () => {
   it('Carol adds tweet content to graph', () => {
-    cy.initialSetup('carol', 50)
+    cy.initialSetup('carol', 300)
 
     cy.intercept({
       method: 'POST',
@@ -14,6 +14,7 @@ describe('Add Tweet Content', () => {
     cy.get('[data-testid="check-icon"]').click()
 
     cy.wait('@addTweet')
+    cy.wait(5500) // This is because add source is currently skipped,
     cy.get('.Toastify__toast-body').should('have.text', 'Content Added')
   })
 })

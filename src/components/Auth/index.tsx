@@ -25,6 +25,7 @@ export const AuthGuard = ({ children }: PropsWithChildren) => {
 
   const handleAuth = useCallback(async () => {
     localStorage.removeItem('admin')
+    localStorage.removeItem('signature')
 
     let sphinxEnable
 
