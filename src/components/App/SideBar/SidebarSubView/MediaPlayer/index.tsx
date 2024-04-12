@@ -168,7 +168,6 @@ const MediaPlayerComponent: FC<Props> = ({ hidden }) => {
         onPlay={handlePlay}
         onProgress={handleProgress}
         onReady={handleReady}
-        // onSeek={(e) => setPlayingTime(e)}
         playing={isPlaying}
         url={playingNode?.link || ''}
         volume={volume}
