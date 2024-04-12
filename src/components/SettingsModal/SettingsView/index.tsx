@@ -8,11 +8,11 @@ import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { useAppStore } from '~/stores/useAppStore'
 import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
-import { useUserStore } from '~/stores/useUserStore'
 import { colors } from '~/utils/colors'
 import { Appearance } from './Appearance'
 import { General } from './General'
 import { GraphBlueprint } from './GraphBlueprint'
+
 
 interface TabPanelProps {
   children?: React.ReactNode
@@ -49,7 +49,8 @@ type Props = {
 
 export const SettingsView: React.FC<Props> = ({ onClose }) => {
   const [value, setValue] = useState(0)
-  const [isAdmin] = useUserStore((s) => [s.isAdmin, s.setPubKey])
+  const isAdmin = true
+  // const [isAdmin] = useUserStore((s) => [s.isAdmin, s.setPubKey])
   const customSchemaFlag = useFeatureFlagStore((s) => s.customSchemaFlag)
   const appMetaData = useAppStore((s) => s.appMetaData)
 
