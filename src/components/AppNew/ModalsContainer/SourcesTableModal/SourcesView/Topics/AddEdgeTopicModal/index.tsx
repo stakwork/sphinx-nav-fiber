@@ -71,7 +71,7 @@ export const AddEdgeModal: FC<Props> = ({ topic, onClose }) => {
     <BaseModal id="addEdge" kind="large" onClose={closeHandler} preventOutsideClose>
       <FormProvider {...form}>
         <TitleEditor
-          from={topic.topic}
+          from={topic.name}
           onSelect={setSelectedTopic}
           selectedTopic={selectedTopic}
           selectedType={selectedType}

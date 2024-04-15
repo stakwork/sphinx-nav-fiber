@@ -34,9 +34,9 @@ const TableRowComponent: FC<TTableRaw> = ({ topic, onClick }) => {
   }
 
   return (
-    <StyledTableRow key={topic.topic}>
+    <StyledTableRow key={topic.name}>
       <StyledTableCell className="empty" />
-      <StyledTableCell>{topic.topic}</StyledTableCell>
+      <StyledTableCell>{topic.name}</StyledTableCell>
       <StyledTableCell>{topic.edgeCount}</StyledTableCell>
       <StyledTableCell>{topic.edgeList.join(', ')}</StyledTableCell>
       <StyledTableCell>
