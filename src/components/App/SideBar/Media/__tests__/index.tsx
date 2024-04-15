@@ -18,7 +18,7 @@ describe('Media Component Tests', () => {
     link: 'http://example.com',
     image_url: 'http://example.com/image.png',
     date: '2021-01-01',
-    boost: 10,
+    boost: 15,
     node_type: 'episode',
     text: 'example text',
     type: 'video',
