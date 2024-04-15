@@ -1,11 +1,11 @@
 import { FC } from 'react'
 import styled from 'styled-components'
+import { imageUrlRegex, validateImageInputType } from '~/components/ModalsContainer/EditNodeNameModal/utils'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { TextInput } from '~/components/common/TextInput'
 import { requiredRule } from '~/constants'
 import { colors } from '~/utils'
-import { imageUrlRegex, validateImageInputType } from '~/components/ModalsContainer/EditNodeNameModal/utils'
 
 type Props = {
   isValidImageUrl?: boolean
@@ -30,7 +30,7 @@ export const TitleEditor: FC<Props> = ({ isValidImageUrl }) => (
       <TextInput
         id="cy-topic"
         maxLength={50}
-        name="topic"
+        name="name"
         placeholder="Node name"
         rules={{
           ...requiredRule,
