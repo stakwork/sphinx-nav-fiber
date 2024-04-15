@@ -11,6 +11,7 @@ describe('sourceUrlRegex', () => {
     expect(regex.test('www.twitter.com')).toBe(true)
     expect(regex.test('twitter.org')).toBe(true)
     expect(regex.test('facebook.com')).toBe(true)
+    expect(regex.test('https://ajcn.nutrition.org/article/S0002-9165(23)03682-1/fulltext')).toBe(true)
     expect(regex.test('https://www.youtube.com/watch?v=D900-udw9Dw&ab_channel=SwanBitcoin')).toBe(true)
     expect(regex.test('www.youtube.com/watch?v=D900-udw9Dw&ab_channel=SwanBitcoin')).toBe(true)
     expect(regex.test('youtube.com/watch?v=D900-udw9Dw&ab_channel=SwanBitcoin')).toBe(true)
