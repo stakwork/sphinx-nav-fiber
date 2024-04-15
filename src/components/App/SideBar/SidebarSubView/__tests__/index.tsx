@@ -102,7 +102,7 @@ describe('Test SideBarSubView', () => {
     })()
   })
 
-  it('asserts that the collapse button arrow renders correctly in both states', () => {
+  it('asserts that the collapse button arrow render correctly in both states', () => {
     const { getByTestId } = render(
       <ThemeProvider theme={appTheme}>
         <StyleThemeProvider theme={appTheme}>

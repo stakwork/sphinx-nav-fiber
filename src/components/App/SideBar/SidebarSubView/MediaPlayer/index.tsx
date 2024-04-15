@@ -38,6 +38,25 @@ const MediaPlayerComponent: FC<Props> = ({ hidden }) => {
   useEffect(() => () => resetPlayer(), [resetPlayer])
 
   useEffect(() => {
+    const togglePlayPause = () => {
+      setIsPlaying(!isPlaying)
+    }
+
+    const handleSpaceBar = (event: KeyboardEvent) => {
+      if (event.code === 'Space') {
+        event.preventDefault()
+        togglePlayPause()
+      }
+    }
+
+    document.addEventListener('keydown', handleSpaceBar)
+
+    return () => {
+      document.removeEventListener('keydown', handleSpaceBar)
+    }
+  }, [isPlaying, setIsPlaying])
+
+  useEffect(() => {
     if (isSeeking && playerRef.current) {
       playerRef.current.seekTo(playingTime, 'seconds')
       setIsSeeking(false)
@@ -153,7 +172,7 @@ const MediaPlayerComponent: FC<Props> = ({ hidden }) => {
   })
 
   return playingNode?.link ? (
-    <Wrapper ref={wrapperRef} hidden={hidden}>
+    <Wrapper ref={wrapperRef} hidden={hidden} onClick={togglePlay}>
       <Cover>
         <Avatar size={120} src={playingNode?.image_url || ''} type="clip" />
       </Cover>
@@ -163,6 +182,7 @@ const MediaPlayerComponent: FC<Props> = ({ hidden }) => {
         height={!isFullScreen ? '200px' : window.screen.height}
         onBuffer={() => setStatus('buffering')}
         onBufferEnd={() => setStatus('ready')}
+        onClick={togglePlay}
         onError={handleError}
         onPause={handlePause}
         onPlay={handlePlay}
