@@ -20,6 +20,7 @@ describe('Media Component Tests', () => {
     date: '2021-01-01',
     boost: 10,
     node_type: 'episode',
+    text: 'example text',
     type: 'video',
     id: '1',
     show_title: 'Example Show Title',
@@ -83,7 +84,7 @@ describe('Media Component Tests', () => {
   })
 
   it('Renders Transcript component with the selectedNode', () => {
-    const { getByText } = render(<Media />)
+    const { getByText } = render(<Media node={mockNode} />)
 
     expect(getByText('Transcript')).toBeInTheDocument()
   })
@@ -114,7 +115,7 @@ describe('Media Component Tests', () => {
       ref_id: 'ref1',
     }))
 
-    const { getByText } = render(<Media />)
+    const { getByText } = render(<Media node={mockNode} />)
 
     expect(getByText('15')).toBeInTheDocument()
     expect(getByText('sat')).toBeInTheDocument()
