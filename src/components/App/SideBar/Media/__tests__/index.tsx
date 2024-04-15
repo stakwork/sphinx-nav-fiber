@@ -43,7 +43,7 @@ describe('Media Component Tests', () => {
     expect(container).toBeEmptyDOMElement()
   })
 
-  it('Correctly formats and displays the episodeTitle using formatDescription', () => {
+  it('Correctly formats and display the episodeTitle using formatDescription', () => {
     render(<Media node={mockNode} />)
     expect(mockedFormatDescription).toHaveBeenCalledWith(mockNode.episode_title)
   })
