@@ -107,6 +107,7 @@ describe('Media Component Tests', () => {
       image_url: 'http://example.com/image.png',
       date: '2022-02-09',
       boost: 15,
+      text: 'example text',
       node_type: 'episode',
       type: 'video',
       id: '12',
@@ -115,7 +116,7 @@ describe('Media Component Tests', () => {
       ref_id: 'ref1',
     }))
 
-    const { getByText } = render(<Media node={mockNode} />)
+    const { getByText } = render(<Media />)
 
     expect(getByText('15')).toBeInTheDocument()
     expect(getByText('sat')).toBeInTheDocument()
