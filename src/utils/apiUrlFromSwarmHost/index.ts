@@ -29,9 +29,7 @@ export function apiUrlFromSwarmHost(): string | undefined {
 }
 
 export function removeApi(url: string) {
-  if (url.endsWith('/api')) {
-    return url.substring(0, url.length - 4)
-  }
+  const regex = /\/api$/
 
-  return url
+  return url.replace(regex, '')
 }
