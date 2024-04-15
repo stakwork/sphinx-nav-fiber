@@ -171,7 +171,7 @@ export type Sentiment = {
 
 export type Trending = {
   count: number
-  topic: string
+  name: string
   tldr?: string
   tldr_topic?: string | null
   audio_EN?: string
