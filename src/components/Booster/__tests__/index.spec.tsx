@@ -79,7 +79,7 @@ describe('Booster Component', () => {
     })
   })
 
-  it('shows visual feedback (any svg Icon) during the boosting pryocess', async () => {
+  it('shows visual feedback (any svg Icon) during the boosting process', async () => {
     mockedBoost.mockResolvedValueOnce(undefined)
 
     const { getByTestId } = render(<Booster refId="123" />)
