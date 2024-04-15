@@ -68,6 +68,7 @@ export type TtopicsParams = {
   limit?: string
   sort_by?: string
   search?: string
+  node_type?: string
 }
 
 type createCustonNode = {
@@ -130,6 +131,19 @@ interface SchemaAllResponse {
   schemas: Schema[]
 }
 
+interface FullTranscriptResponse {
+  data: {
+    text: string
+  }
+}
+
+export const getFullTranscript = async (refId: string | undefined) => {
+  const url = `/node/text/${refId}`
+  const response = await api.get<FullTranscriptResponse>(url)
+
+  return response
+}
+
 export const getSchemaAll = async () => {
   const url = '/schema/all'
   const response = await api.get<SchemaAllResponse>(url)
@@ -158,7 +172,7 @@ export const getRadarData = async (queryParams: TradarParams = defaultParams) =>
 
 export const getTopicsData = async (queryParams: TtopicsParams = defaultParams) => {
   const response = await api.get<FetchTopicResponse>(
-    `/topics?${new URLSearchParams({ ...defaultParams, ...queryParams }).toString()}`,
+    `/nodes/info?${new URLSearchParams({ ...defaultParams, ...queryParams }).toString()}`,
   )
 
   return response

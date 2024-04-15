@@ -4,6 +4,9 @@ import React from 'react'
 import * as fetchSourcesData from '~/network/fetchSourcesData'
 import { SourceTypeStep } from '..'
 
+// @ts-ignore
+window.setImmediate = window.setTimeout
+
 jest.mock('~/stores/useFeatureFlagStore', () => ({
   useFeatureFlagStore: jest.fn(() => [true]),
 }))

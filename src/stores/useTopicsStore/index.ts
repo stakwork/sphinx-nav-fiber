@@ -48,7 +48,7 @@ export const useTopicsStore = create<TopicsStore>((set, get) => ({
         newIds.push(topic.ref_id)
       })
 
-      set({ data: newData, ids: newIds, total: responseData.topicCount })
+      set({ data: newData, ids: newIds, total: responseData.totalCount })
     } catch (error) {
       console.log(error)
     }
@@ -63,4 +63,5 @@ const prepareTopicFilters = (filters: TopicFilter): TtopicsParams => ({
   limit: String(filters.pageSize),
   sort_by: filters.sortBy,
   search: filters.search || '',
+  ...(!filters.search ? { node_type: 'Topic' } : {}),
 })
