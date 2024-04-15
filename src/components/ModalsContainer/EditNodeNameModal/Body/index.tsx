@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
+import { validateImageInputType } from '~/components/ModalsContainer/EditNodeNameModal/utils'
 import { Flex } from '~/components/common/Flex'
 import { getTopicsData, putNodeData } from '~/network/fetchSourcesData'
 import { useSelectedNode } from '~/stores/useDataStore'
@@ -10,10 +11,9 @@ import { useModal } from '~/stores/useModalStore'
 import { Topic } from '~/types'
 import { colors } from '~/utils/colors'
 import { TitleEditor } from '../Title'
-import { validateImageInputType } from '~/components/ModalsContainer/EditNodeNameModal/utils'
 
 export type FormData = {
-  topic: string
+  name: string
   image_url: string
   imageInputType?: boolean
 }
@@ -34,9 +34,9 @@ export const Body = () => {
 
   useEffect(() => {
     if (actualTopicNode) {
-      setValue('topic', actualTopicNode?.topic)
+      setValue('name', actualTopicNode?.name)
     } else if (selectedNode) {
-      setValue('topic', selectedNode.name)
+      setValue('name', selectedNode.name)
 
       setValue('image_url', selectedNode?.image_url ?? '')
     }
@@ -57,7 +57,7 @@ export const Body = () => {
       try {
         const { data: topicData } = await getTopicsData({ search: selectedNode?.name })
 
-        const node = topicData.find((i) => i.topic === selectedNode.name)
+        const node = topicData.find((i) => i.name === selectedNode.name)
 
         setActualTopicNode(node)
       } catch (error) {
@@ -72,7 +72,7 @@ export const Body = () => {
 
   const isValidImageUrl = watch('imageInputType')
 
-  const topicValue = watch('topic')
+  const topicValue = watch('name')
 
   const imageUrl = watch('image_url')
 
@@ -89,7 +89,7 @@ export const Body = () => {
   const handleSave = async () => {
     setLoading(true)
 
-    const propName = actualTopicNode ? 'topic' : 'name'
+    const propName = 'name'
 
     try {
       await putNodeData(node?.ref_id || '', { [propName]: topicValue.trim(), image_url: imageUrl.trim() })
@@ -106,7 +106,7 @@ export const Body = () => {
     openRemoveNodeModal()
   }
 
-  const isNodeNameChanged = getValues().topic && actualTopicNode?.topic !== getValues().topic
+  const isNodeNameChanged = getValues().name && actualTopicNode?.name !== getValues().name
 
   return (
     <Wrapper>

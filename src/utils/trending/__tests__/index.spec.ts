@@ -2,11 +2,11 @@ import { getTrendingTopic, showPlayButton } from '../index'
 
 describe('trending', () => {
   it('should return topic if tldr not present', () => {
-    expect(getTrendingTopic({ topic: 'topic', count: 1 })).toEqual('topic')
+    expect(getTrendingTopic({ name: 'topic', count: 1 })).toEqual('topic')
   })
 
   it('should return tldr if tldr present', () => {
-    expect(getTrendingTopic({ topic: 'topic', tldr: 'tldr', tldr_topic: 'tldr_topic', count: 1 })).toEqual('tldr_topic')
+    expect(getTrendingTopic({ name: 'topic', tldr: 'tldr', tldr_topic: 'tldr_topic', count: 1 })).toEqual('tldr_topic')
   })
 })
 

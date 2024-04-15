@@ -25,7 +25,7 @@ export type FetchRadarResponse = {
 
 export type FetchTopicResponse = {
   data: Topic[]
-  topicCount: number
+  totalCount: number
 }
 
 export type FetchEdgeTypesResponse = {
@@ -46,6 +46,7 @@ export type RadarRequest = {
 export type NodeRequest = {
   muted_topic?: boolean
   topic?: string
+  name?: string
   image_url?: string
 }
 
@@ -170,7 +171,7 @@ export type Sentiment = {
 
 export type Trending = {
   count: number
-  topic: string
+  name: string
   tldr?: string
   tldr_topic?: string | null
   audio_EN?: string
@@ -183,7 +184,7 @@ export type Sources = {
 }
 
 export type Topic = {
-  topic: string
+  name: string
   node_type: string
   ref_id: string
   muted_topic: string

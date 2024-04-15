@@ -68,6 +68,7 @@ export type TtopicsParams = {
   limit?: string
   sort_by?: string
   search?: string
+  node_type?: string
 }
 
 type createCustonNode = {
@@ -171,7 +172,7 @@ export const getRadarData = async (queryParams: TradarParams = defaultParams) =>
 
 export const getTopicsData = async (queryParams: TtopicsParams = defaultParams) => {
   const response = await api.get<FetchTopicResponse>(
-    `/topics?${new URLSearchParams({ ...defaultParams, ...queryParams }).toString()}`,
+    `/nodes/info?${new URLSearchParams({ ...defaultParams, ...queryParams }).toString()}`,
   )
 
   return response

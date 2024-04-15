@@ -44,7 +44,7 @@ export const Body = () => {
         if (selectedNode.type === 'topic') {
           const { data } = await getTopicsData({ search: selectedNode?.name })
 
-          const node = data.find((i: Topic) => i.topic === selectedNode.name)
+          const node = data.find((i: Topic) => i.name === selectedNode.name)
 
           setActualTopicNode(node)
         } else {
@@ -107,7 +107,7 @@ export const Body = () => {
 
   return (
     <Wrapper>
-      <TitleEditor nodeName={actualNode?.name || actualTopicNode?.topic || ''} />
+      <TitleEditor nodeName={actualNode?.name || actualTopicNode?.name || ''} />
       {topicIsLoading ? (
         <Skeleton />
       ) : (

@@ -1,5 +1,6 @@
 import { IconButton, Table as MaterialTable, Popover, TableRow } from '@mui/material'
 import React, { useCallback, useState } from 'react'
+import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
 import AddCircleIcon from '~/components/Icons/AddCircleIcon'
 import CheckIcon from '~/components/Icons/CheckIcon'
@@ -21,7 +22,6 @@ import { colors } from '~/utils/colors'
 import { StyledTableCell, StyledTableHead } from '../../common'
 import { TopicTableProps } from '../../types'
 import { TopicRow } from './TableRow'
-import { ClipLoader } from 'react-spinners'
 
 interface CheckboxIconProps {
   checked?: boolean
@@ -130,6 +130,7 @@ export const Table: React.FC<TopicTableProps> = ({
                         Name <SortFilterIcon />
                       </SortedIcon>
                     </StyledTableCell>
+                    <StyledTableCell>Type</StyledTableCell>
                     <StyledTableCell>
                       <SortedIcon onClick={() => handleChange(EDGE_COUNT)}>
                         Count <SortFilterIcon />

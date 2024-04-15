@@ -38,7 +38,7 @@ export const Body = () => {
       try {
         const { data } = await getTopicsData({ search: selectedNode?.name })
 
-        const node = data.find((i) => i.topic === selectedNode.name)
+        const node = data.find((i) => i.name === selectedNode.name)
 
         setActualNode(node)
       } catch (error) {
