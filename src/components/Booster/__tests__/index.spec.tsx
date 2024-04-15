@@ -3,6 +3,9 @@ import { Booster } from '../index'
 import '@testing-library/jest-dom'
 import * as boostUtil from '~/utils/boost'
 
+// @ts-ignore
+window.setImmediate = window.setTimeout
+
 jest.mock('~/utils/boost', () => ({
   boost: jest.fn(),
 }))
