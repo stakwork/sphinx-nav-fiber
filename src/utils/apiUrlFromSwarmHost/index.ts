@@ -27,3 +27,13 @@ export function apiUrlFromSwarmHost(): string | undefined {
 
   return `${url}/api`
 }
+
+export function removeApi(url: string) {
+  if (url.endsWith('/api')) {
+    console.log(url.substring(0, url.length - 4))
+
+    return url.substring(0, url.length - 4)
+  }
+
+  return url
+}
