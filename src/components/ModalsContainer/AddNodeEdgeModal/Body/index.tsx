@@ -19,11 +19,10 @@ export const Body = () => {
   const form = useForm<FormData>({ mode: 'onChange' })
   const [loading, setLoading] = useState(false)
   const [selectedType, setSelectedType] = useState('')
+  const [isSwapped, setIsSwapped] = useState(false)
 
   const [topicIsLoading, setTopicIsLoading] = useState(false)
   const [selectedToNode, setSelectedToNode] = useState<TEdge | null>(null)
-
-  console.log(1234)
 
   const [topicEdge, setTopicEdge] = useState<null | TEdge>()
 
@@ -69,7 +68,12 @@ export const Body = () => {
     setLoading(true)
 
     try {
-      await postEdgeType({ from: nodeFrom.ref_id, to: selectedToNode?.ref_id, relationship: selectedType })
+      await postEdgeType({
+        relationship: selectedType,
+        ...(!isSwapped
+          ? { from: nodeFrom.ref_id, to: selectedToNode?.ref_id }
+          : { to: nodeFrom.ref_id, from: selectedToNode?.ref_id }),
+      })
 
       const { ref_id: id } = nodeFrom
       const { ref_id: selectedId } = selectedToNode
@@ -95,15 +99,14 @@ export const Body = () => {
       ) : (
         <TitleEditor
           from={topicEdge ? topicEdge?.search_value : selectedNode?.name || ''}
+          isSwapped={isSwapped}
           onSelect={setSelectedToNode}
           selectedToNode={selectedToNode}
           selectedType={selectedType}
+          setIsSwapped={() => setIsSwapped(!isSwapped)}
           setSelectedType={setSelectedType}
         />
       )}
-      <div>
-        {(topicEdge || selectedNode)?.ref_id}: {selectedToNode?.ref_id}
-      </div>
       <Button color="secondary" disabled={submitDisabled} onClick={handleSave} size="large" variant="contained">
         Confirm
         {loading && <ClipLoader color={colors.BLUE_PRESS_STATE} size={10} />}

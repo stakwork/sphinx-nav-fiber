@@ -1,5 +1,7 @@
+/* eslint-disable padding-line-between-statements */
 import { fireEvent, render, screen } from '@testing-library/react'
 import * as React from 'react'
+import '@testing-library/jest-dom'
 import { SettingsView } from '../../index'
 
 import * as useUserStoreModule from '../../../../../stores/useUserStore'
