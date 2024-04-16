@@ -74,6 +74,10 @@ export const SettingsView: React.FC<Props> = ({ onClose }) => {
     ...(isAdmin && customSchemaFlag ? [{ label: 'Blueprint', component: GraphBlueprint }] : []),
   ]
 
+  if (!appMetaData) {
+    return null
+  }
+
   return (
     <Wrapper direction="column">
       <SettingsHeader>
