@@ -161,6 +161,7 @@ const IconTopContainer = styled.div`
 
 const IconMidContainer = styled.div`
   position: absolute;
+  color: transparent;
   top: 50%;
   left: 0;
   transform: translateY(-50%) translateX(-50%);

@@ -1,9 +1,9 @@
 /* eslint-disable padding-line-between-statements */
-import React from 'react'
-import { render, fireEvent, screen, waitFor } from '@testing-library/react'
 import '@testing-library/jest-dom'
-import { TopicRow } from '../TableRow'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
+import React from 'react'
 import { Topic } from '~/types'
+import { TopicRow } from '../TableRow'
 
 describe('TableRowComponent', () => {
   const mockOnClick = jest.fn()
@@ -17,7 +17,7 @@ describe('TableRowComponent', () => {
     edgeCount: 1,
     date_added_to_graph: '123456789',
     ref_id: '1',
-    muted_topic: 'false',
+    is_muted: 'false',
   }
 
   const multipleEdgesTopic: Topic = {

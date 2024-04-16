@@ -17,7 +17,7 @@ type Props = {
 }
 
 export type FormData = {
-  topic: string
+  name: string
 }
 
 export const MergeTopicModal: FC<Props> = ({ topic, onClose }) => {
@@ -31,7 +31,7 @@ export const MergeTopicModal: FC<Props> = ({ topic, onClose }) => {
 
   useEffect(() => {
     if (topic) {
-      setValue('topic', topic?.topic)
+      setValue('name', topic?.name)
     }
 
     return () => {
@@ -39,7 +39,7 @@ export const MergeTopicModal: FC<Props> = ({ topic, onClose }) => {
     }
   }, [topic, setValue, reset])
 
-  const topicValue = watch('topic')
+  const topicValue = watch('name')
 
   const closeHandler = () => {
     onClose()
@@ -65,7 +65,7 @@ export const MergeTopicModal: FC<Props> = ({ topic, onClose }) => {
       if (data) {
         const newData = { ...data }
 
-        newData[topic?.ref_id].topic = topicValue.trim()
+        newData[topic?.ref_id].name = topicValue.trim()
 
         useTopicsStore.setState({ data: newData })
       }
@@ -82,7 +82,7 @@ export const MergeTopicModal: FC<Props> = ({ topic, onClose }) => {
     <BaseModal id="mergeTopic" kind="small" onClose={closeHandler} preventOutsideClose>
       <FormProvider {...form}>
         <TitleEditor
-          from={topic.topic}
+          from={topic.name}
           isSwapped={isSwapped}
           onSelect={setSelectedTopic}
           selectedTopic={selectedTopic}

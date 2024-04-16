@@ -36,7 +36,7 @@ export const Media = ({ node }: Props) => {
 
   const [boostAmount, setBoostAmount] = useState<number>(boost || 0)
 
-  if (!selectedNode) {
+  if (!node && !selectedNode) {
     return null
   }
 
@@ -58,16 +58,20 @@ export const Media = ({ node }: Props) => {
 
         <BoostWrapper>
           <BoostAmt amt={boostAmount} />
-          <Booster content={selectedNode} count={boostAmount} refId={refId} updateCount={setBoostAmount} />
+          <Booster content={node || selectedNode} count={boostAmount} refId={refId} updateCount={setBoostAmount} />
         </BoostWrapper>
         <StyledDivider />
         <TextWrapper>
-          <Description node={selectedNode} searchTerm={searchTerm} stateless />
+          <Description node={node || selectedNode} searchTerm={searchTerm} stateless />
         </TextWrapper>
-        <StyledDivider />
-        <TextWrapper>
-          <Transcript key={id} node={selectedNode} stateless />
-        </TextWrapper>
+        {(selectedNode?.text || node?.text) && (
+          <>
+            <StyledDivider />
+            <TextWrapper>
+              <Transcript key={id} node={node || selectedNode} stateless />
+            </TextWrapper>
+          </>
+        )}
       </Wrapper>
     </div>
   )

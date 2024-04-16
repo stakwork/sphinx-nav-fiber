@@ -1,14 +1,14 @@
 import { Leva } from 'leva'
-import { Suspense, lazy, useCallback, useEffect, useState } from 'react'
+import { lazy, Suspense, useCallback, useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import 'react-toastify/dist/ReactToastify.css'
 import { Socket } from 'socket.io-client'
 import styled from 'styled-components'
+import { Flex } from '~/components/common/Flex'
 import { DataRetriever } from '~/components/DataRetriever'
 import { GlobalStyle } from '~/components/GlobalStyle'
 import { Overlay } from '~/components/Universe/Overlay' // Import Overlay directly
 import { Preloader } from '~/components/Universe/Preloader' // Import Preloader directly
-import { Flex } from '~/components/common/Flex'
 import { isDevelopment } from '~/constants'
 import { useSocket } from '~/hooks/useSockets'
 import { getGraphDataPositions } from '~/network/fetchGraphData/const'
@@ -115,22 +115,21 @@ export const App = () => {
   // setup socket
   useEffect(() => {
     if (socket) {
+      socket.connect()
+
       socket.on('connect_error', (error: unknown) => {
         console.error('Socket connection error:', error)
       })
 
       socket.on('newnode', handleNewNode)
     }
-  }, [socket, handleNewNode])
 
-  useEffect(
-    () => () => {
+    return () => {
       if (socket) {
-        socket.disconnect()
+        socket.off()
       }
-    },
-    [socket],
-  )
+    }
+  }, [socket, handleNewNode])
 
   return (
     <>

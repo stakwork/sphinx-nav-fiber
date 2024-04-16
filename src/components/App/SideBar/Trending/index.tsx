@@ -3,12 +3,12 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
-import { Flex } from '~/components/common/Flex'
 import PauseIcon from '~/components/Icons/PauseIcon'
 import PlayIcon from '~/components/Icons/PlayIcon'
 import PlusIcon from '~/components/Icons/PlusIcon'
 import ReloadIcon from '~/components/Icons/ReloadIcon'
 import SentimentDataIcon from '~/components/Icons/SentimentDataIcon'
+import { Flex } from '~/components/common/Flex'
 import { getTrends } from '~/network/fetchGraphData'
 import { useDataStore } from '~/stores/useDataStore'
 import { useModal } from '~/stores/useModalStore'
@@ -49,7 +49,7 @@ export const Trending = ({ onSubmit }: Props) => {
         setTrendingTopics(res)
       }
     } catch (err) {
-      setTrendingTopics(TRENDING_TOPICS.map((i) => ({ topic: i, count: 0 })))
+      setTrendingTopics(TRENDING_TOPICS.map((i) => ({ name: i, count: 0 })))
     } finally {
       setLoading(false)
     }
@@ -179,12 +179,12 @@ export const Trending = ({ onSubmit }: Props) => {
           <ul className="list">
             {trendingTopics.map((i) => (
               <Flex
-                key={i.topic}
+                key={i.name}
                 align="center"
                 className="list-item"
                 direction="row"
                 justify="space-between"
-                onClick={() => selectTrending(i.topic)}
+                onClick={() => selectTrending(i.name)}
               >
                 <Paragraph> #{getTrendingTopic(i)}</Paragraph>
 

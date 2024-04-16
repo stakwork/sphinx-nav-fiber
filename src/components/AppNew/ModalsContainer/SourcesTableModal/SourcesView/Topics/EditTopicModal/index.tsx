@@ -16,7 +16,7 @@ type Props = {
 }
 
 export type FormData = {
-  topic: string
+  name: string
 }
 
 export const EditTopicModal: FC<Props> = ({ topic, onClose }) => {
@@ -28,7 +28,7 @@ export const EditTopicModal: FC<Props> = ({ topic, onClose }) => {
 
   useEffect(() => {
     if (topic) {
-      setValue('topic', topic?.topic)
+      setValue('name', topic?.name)
     }
 
     return () => {
@@ -36,7 +36,7 @@ export const EditTopicModal: FC<Props> = ({ topic, onClose }) => {
     }
   }, [topic, setValue, reset])
 
-  const topicValue = watch('topic')
+  const topicValue = watch('name')
 
   const closeHandler = () => {
     onClose()
@@ -52,7 +52,7 @@ export const EditTopicModal: FC<Props> = ({ topic, onClose }) => {
       if (data) {
         const newData = { ...data }
 
-        newData[topic?.ref_id].topic = topicValue.trim()
+        newData[topic?.ref_id].name = topicValue.trim()
 
         useTopicsStore.setState({ data: newData })
       }

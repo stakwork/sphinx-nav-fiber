@@ -94,7 +94,7 @@ export const TopicSources = () => {
 
   const handleMute = async (refId: string, action: string) => {
     try {
-      await putNodeData(refId, { muted_topic: action === 'mute' })
+      await putNodeData(refId, { is_muted: action === 'mute' })
       useTopicsStore.setState({ ids: ids.filter((i) => i !== refId), total: total - 1 })
     } catch (error) {
       console.warn(error)
@@ -143,8 +143,8 @@ export const TopicSources = () => {
                 onChangeFilter={handleFilterChange}
                 onTopicEdit={onTopicEdit}
                 setCheckedStates={setCheckedStates}
-                setShowMuteUnmute={() => setFilters({ muted: !filters.muted })}
-                showMuted={filters.muted}
+                setShowMuteUnmute={() => setFilters({ is_muted: !filters.is_muted })}
+                showMuted={filters.is_muted}
               />
               {total > ids.length ? (
                 <Button className="load-more" disabled={loading} onClick={handleLoadMore}>

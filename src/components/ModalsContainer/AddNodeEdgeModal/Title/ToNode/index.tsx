@@ -20,7 +20,7 @@ export const ToNode: FC<Props> = ({ onSelect, selectedValue }) => {
 
   const handleSearch = async (val: string) => {
     const filters = {
-      muted: 'False',
+      is_muted: 'False',
       sort_by: ALPHABETICALLY,
       search: val,
       skip: '0',

@@ -16,7 +16,7 @@ type Props = {
 }
 
 export type FormData = {
-  topic: string
+  name: string
 }
 
 export const AddEdgeModal: FC<Props> = ({ topic, onClose }) => {
@@ -72,7 +72,7 @@ export const AddEdgeModal: FC<Props> = ({ topic, onClose }) => {
     <BaseModal id="addEdge" kind="small" onClose={closeHandler} preventOutsideClose>
       <FormProvider {...form}>
         <TitleEditor
-          from={topic.topic}
+          from={topic.name}
           isSwapped={isSwapped}
           onSelect={setSelectedToNode}
           selectedToNode={selectedToNode}

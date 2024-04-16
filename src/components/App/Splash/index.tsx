@@ -1,15 +1,13 @@
 /* eslint-disable react/display-name */
 import { LinearProgress } from '@mui/material'
-import { memo, PropsWithChildren, useEffect, useMemo, useState } from 'react'
+import { memo, PropsWithChildren, useCallback, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
-import { StatsConfig } from '~/components/Stats'
-import { getAboutData, getStats, TStatParams } from '~/network/fetchSourcesData'
+import { getAboutData, getStats } from '~/network/fetchSourcesData'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
-import { TStats } from '~/types'
-import { colors, formatNumberWithCommas } from '~/utils'
+import { colors, formatSplashMessage, formatStatsResponse } from '~/utils'
 import { AnimatedTextContent } from './animated'
 import { initialMessageData, Message } from './constants'
 import { SphereAnimation } from './SpiningSphere'
@@ -21,81 +19,62 @@ export const Splash = memo(({ children }: PropsWithChildren) => {
   const { appMetaData, setAppMetaData } = useAppStore((s) => s)
   const { stats, setStats, isFetching } = useDataStore((s) => s)
 
-  useEffect(() => {
-    const run = async () => {
-      try {
+  const fetchData = useCallback(async () => {
+    try {
+      if (!appMetaData) {
         const aboutResponse = await getAboutData()
 
         setAppMetaData(aboutResponse)
-      } catch (error) {
-        setProgress(100)
-
-        setIsLoading(false)
       }
-    }
 
-    run()
-  }, [setIsLoading, setAppMetaData, stats])
+      if (!stats) {
+        const statsResponse = await getStats()
+
+        const updatedStats = formatStatsResponse(statsResponse)
+
+        setStats(updatedStats)
+
+        const messageData = formatSplashMessage(statsResponse)
+
+        setMessage(messageData)
+      }
+    } catch {
+      setIsLoading(false)
+
+      setProgress(100)
+    }
+  }, [appMetaData, setAppMetaData, setStats, stats])
 
   useEffect(() => {
-    const run = async () => {
-      const statsReponse = await getStats()
+    fetchData()
 
-      const updatedStats: TStats = {}
-
-      StatsConfig.forEach(({ key, dataKey }) => {
-        updatedStats[key as keyof TStats] = formatNumberWithCommas(statsReponse[dataKey as keyof TStatParams] ?? 0)
-      })
-
-      setStats(updatedStats)
-
-      const messageData = initialMessageData.map(({ dataKey, ...rest }) => ({
-        ...rest,
-        value: formatNumberWithCommas(statsReponse[dataKey as keyof TStatParams] ?? 0),
-      }))
-
-      setMessage(messageData)
-    }
-
-    if (!stats) {
-      run()
-    }
-  }, [stats, setMessage, setStats])
-
-  const splashDataLoaded = useMemo(
-    () => Object.values(appMetaData).some((value) => !!value) && message.some(({ value }) => !!value),
-    [appMetaData, message],
-  )
-
-  useEffect(() => {
     let timeoutId: NodeJS.Timeout
+    let intervalId: NodeJS.Timer
 
-    if (!isFetching && splashDataLoaded) {
-      setProgress(50)
+    if (!isFetching && message && appMetaData) {
+      // increase progress fro 0 to 50% after all data is fetched
+      setProgress((prev) => (!prev ? 50 : prev))
+
+      intervalId = setInterval(() => {
+        setProgress((prev) => (prev >= 100 ? 100 : prev + Math.floor(Math.random() * 4)))
+      }, 100)
 
       timeoutId = setTimeout(() => setIsLoading(false), 5000)
     }
 
-    return () => clearTimeout(timeoutId)
-  }, [isFetching, setIsLoading, splashDataLoaded])
+    return () => {
+      clearTimeout(timeoutId)
+      clearInterval(intervalId)
+    }
+  }, [appMetaData, fetchData, isFetching, message, stats])
 
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      if (splashDataLoaded) {
-        setProgress((prev) => (prev >= 100 ? 100 : prev + Math.floor(Math.random() * 4)))
-      }
-    }, 100)
-
-    return () => clearInterval(intervalId)
-  }, [splashDataLoaded])
-
-  if (!splashDataLoaded) {
+  if (!message.some(({ value }) => !!value) || !appMetaData) {
     return null
   }
 
   return (
     <SplashWrapper>
-      {isLoading && splashDataLoaded ? (
+      {isLoading ? (
         <Wrappper align="center" direction="row" justify="center">
           <SphereAnimation />
           <Flex style={{ color: colors.white }}>

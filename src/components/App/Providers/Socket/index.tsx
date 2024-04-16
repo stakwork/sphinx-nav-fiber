@@ -1,7 +1,7 @@
 // SocketProvider.tsx
 import { FC, ReactNode } from 'react'
 import { io } from 'socket.io-client'
-import { API_URL } from '~/utils/apiUrlFromSwarmHost'
+import { API_URL, removeApi } from '~/utils/apiUrlFromSwarmHost'
 import SocketContext from './SocketContext'
 
 interface SocketProviderProps {
@@ -9,7 +9,7 @@ interface SocketProviderProps {
 }
 
 const contextValue = {
-  socket: io(API_URL),
+  socket: io(removeApi(API_URL), { autoConnect: false }),
 }
 
 export const SocketProvider: FC<SocketProviderProps> = ({ children }) => (

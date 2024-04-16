@@ -1,7 +1,9 @@
+/* eslint-disable padding-line-between-statements */
 import React from 'react'
 import { render, screen } from '@testing-library/react'
 import { Body } from '../index'
 import * as fetchSourcesData from '~/network/fetchSourcesData'
+import '@testing-library/jest-dom'
 
 describe('Body Component', () => {
   it('filters out deleted types from the dropdown', async () => {
@@ -43,6 +45,6 @@ describe('Body Component', () => {
 
     expect(screen.queryByText('Persontest')).not.toBeInTheDocument()
 
-    expect(screen.getByText('place')).toBeInTheDocument()
+    expect(screen.getByText('Place')).toBeInTheDocument()
   })
 })
