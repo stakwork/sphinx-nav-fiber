@@ -235,7 +235,7 @@ export const Body = ({ onSchemaCreate, selectedSchema, onDelete }: Props) => {
             </Flex>
           )}
         </Flex>
-        <CreateCustomNodeAttribute parent={parent} />
+        <CreateCustomNodeAttribute parent={selectedSchema ? selectedSchema.type : parent} />
         <Flex direction="row" justify="space-between" mt={20}>
           {selectedSchema ? (
             <DeleteButton
