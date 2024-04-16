@@ -52,6 +52,10 @@ export const StyledTableRow = styled(TableRow)`
 export const StyledTableHead = styled(TableHead)`
   && {
     border-bottom: 1px solid ${colors.black};
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background-color: ${colors.BG1};
   }
 
   ${StyledTableCell} {
