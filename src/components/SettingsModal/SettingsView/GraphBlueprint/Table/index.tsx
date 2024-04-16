@@ -2,6 +2,8 @@ import { Button, Table as MaterialTable, Popover, TableRow } from '@mui/material
 import React, { useCallback } from 'react'
 import styled from 'styled-components'
 import EditTopicIcon from '~/components/Icons/EditTopicIcon'
+import MergeIcon from '~/components/Icons/MergeIcon'
+
 import PlusIcon from '~/components/Icons/PlusIcon'
 import { StyledTableCell, StyledTableHead } from '~/components/SourcesTableModal/SourcesView/common'
 import { Flex } from '~/components/common/Flex'
@@ -43,8 +45,38 @@ export const Table: React.FC<TableProps> = ({ schemas, setSelectedSchema }) => {
 
   const open = Boolean(anchorEl)
 
+  const ActionDiv = styled.div`
+    width: 127px;
+    height: 116px;
+    position: absolute;
+    top: 180px;
+    left: 300px;
+    padding-left: 26px;
+    border-radius: 6px 0px 0px 0px;
+    border: 1px 0px 0px 0px;
+    opacity: 1;
+    z-index: 999;
+    color: white;
+    background-color: #303342;
+    box-shadow: 10px;
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    justify-content: center;
+  `
+
   return (
     <>
+       
+      <ActionDiv>
+        <span>
+          <EditTopicIcon /> Edit
+        </span>
+        <span>
+          <MergeIcon /> Merge
+        </span>
+      </ActionDiv>
       <MaterialTable component="table">
         <StyledTableHead>
           <TableRow component="tr">
