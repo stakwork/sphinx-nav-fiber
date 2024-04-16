@@ -64,10 +64,14 @@ export const Media = ({ node }: Props) => {
         <TextWrapper>
           <Description node={node || selectedNode} searchTerm={searchTerm} stateless />
         </TextWrapper>
-        <StyledDivider />
-        <TextWrapper>
-          <Transcript key={id} node={node || selectedNode} stateless />
-        </TextWrapper>
+        {(selectedNode?.text || node?.text) && (
+          <>
+            <StyledDivider />
+            <TextWrapper>
+              <Transcript key={id} node={node || selectedNode} stateless />
+            </TextWrapper>
+          </>
+        )}
       </Wrapper>
     </div>
   )
