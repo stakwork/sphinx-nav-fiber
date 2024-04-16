@@ -83,7 +83,7 @@ export const Table: React.FC<TopicTableProps> = ({
         const value = checkedStates[index]
 
         if (value) {
-          const promise = putNodeData(index, { muted_topic: showMuted })
+          const promise = putNodeData(index, { is_muted: showMuted })
 
           useTopicsStore.setState({
             ids: ids.filter((i) => i !== index),

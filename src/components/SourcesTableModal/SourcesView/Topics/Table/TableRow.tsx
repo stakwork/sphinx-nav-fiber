@@ -36,7 +36,7 @@ const TableRowComponent: FC<TTableRaw> = ({ topic, onClick, onSearch, checkedSta
     setLoading(true)
 
     try {
-      await putNodeData(refId, { muted_topic: shouldMute })
+      await putNodeData(refId, { is_muted: shouldMute })
 
       useTopicsStore.setState({
         ids: ids.filter((i) => i !== refId),
@@ -151,7 +151,7 @@ const TableRowComponent: FC<TTableRaw> = ({ topic, onClick, onSearch, checkedSta
               </ClipLoaderWrapper>
             ) : (
               <Flex direction="row">
-                {topic.muted_topic ? (
+                {topic.is_muted ? (
                   <IconButton className="centered" onClick={() => handleMute(topic.ref_id, false)}>
                     <ProfileShow />
                   </IconButton>

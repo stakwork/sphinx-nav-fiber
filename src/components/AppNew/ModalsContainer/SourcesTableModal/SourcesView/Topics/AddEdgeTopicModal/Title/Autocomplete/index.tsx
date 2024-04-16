@@ -28,7 +28,7 @@ export const DropdownSearch: React.FC<Props> = ({ onSelect, selectedTopic }) => 
 
   const handleSearch = async (val: string) => {
     const filters = {
-      muted: 'False',
+      is_muted: 'False',
       sort_by: ALPHABETICALLY,
       search: val,
       skip: '0',

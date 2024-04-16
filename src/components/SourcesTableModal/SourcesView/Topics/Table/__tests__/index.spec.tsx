@@ -1,10 +1,10 @@
 /* eslint-disable padding-line-between-statements */
-import React from 'react'
-import { render, fireEvent, waitFor, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
-import { Table } from '../index'
-import { TopicTableProps } from '../../../types'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import React from 'react'
+import { TopicTableProps } from '../../../types'
+import { Table } from '../index'
 
 const mockData = {
   '1': {
@@ -13,7 +13,7 @@ const mockData = {
     edgeCount: 5,
     edgeList: ['Edge1', 'Edge2'],
     date_added_to_graph: '1616161616',
-    muted_topic: false,
+    is_muted: false,
   },
   '2': {
     ref_id: '2',
@@ -21,7 +21,7 @@ const mockData = {
     edgeCount: 3,
     edgeList: ['Edge3', 'Edge4'],
     date_added_to_graph: '1616161617',
-    muted_topic: true,
+    is_muted: true,
   },
 }
 

@@ -26,7 +26,7 @@ const TableRowComponent: FC<TTableRaw> = ({ topic, onClick }) => {
     setLoading(true)
 
     try {
-      await putNodeData(refId, { muted_topic: shouldMute })
+      await putNodeData(refId, { is_muted: shouldMute })
       useTopicsStore.setState({ ids: ids.filter((i) => i !== refId), total: total - 1 })
     } catch (error) {
       console.warn(error)
@@ -50,7 +50,7 @@ const TableRowComponent: FC<TTableRaw> = ({ topic, onClick }) => {
               <ClipLoader color={colors.white} size={16} />
             ) : (
               <>
-                {topic.muted_topic ? (
+                {topic.is_muted ? (
                   <IconWrapper className="centered" onClick={() => handleMute(topic.ref_id, false)}>
                     <MdCheckCircle color={colors.primaryGreen} fontSize={24} />
                   </IconWrapper>

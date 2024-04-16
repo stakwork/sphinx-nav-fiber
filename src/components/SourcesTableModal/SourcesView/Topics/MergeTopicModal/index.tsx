@@ -17,7 +17,7 @@ type Props = {
 }
 
 export type FormData = {
-  topic: string
+  name: string
 }
 
 export const MergeTopicModal: FC<Props> = ({ topic, onClose }) => {
@@ -26,11 +26,12 @@ export const MergeTopicModal: FC<Props> = ({ topic, onClose }) => {
   const form = useForm<FormData>({ mode: 'onChange' })
   const { watch, setValue, reset } = form
   const [loading, setLoading] = useState(false)
+  const [isSwapped, setIsSwapped] = useState(false)
   const [selectedTopic, setSelectedTopic] = useState<Topic | null>(null)
 
   useEffect(() => {
     if (topic) {
-      setValue('topic', topic?.name)
+      setValue('name', topic?.name)
     }
 
     return () => {
@@ -38,7 +39,7 @@ export const MergeTopicModal: FC<Props> = ({ topic, onClose }) => {
     }
   }, [topic, setValue, reset])
 
-  const topicValue = watch('topic')
+  const topicValue = watch('name')
 
   const closeHandler = () => {
     onClose()
@@ -78,9 +79,15 @@ export const MergeTopicModal: FC<Props> = ({ topic, onClose }) => {
   }
 
   return (
-    <BaseModal id="mergeTopic" kind="regular" onClose={closeHandler} preventOutsideClose>
+    <BaseModal id="mergeTopic" kind="small" onClose={closeHandler} preventOutsideClose>
       <FormProvider {...form}>
-        <TitleEditor from={topic.name} onSelect={setSelectedTopic} selectedTopic={selectedTopic} />
+        <TitleEditor
+          from={topic.name}
+          isSwapped={isSwapped}
+          onSelect={setSelectedTopic}
+          selectedTopic={selectedTopic}
+          setIsSwapped={() => setIsSwapped(!isSwapped)}
+        />
         <Button color="secondary" disabled={loading} onClick={handleSave} size="large" variant="contained">
           Merge topics
           {loading && <ClipLoader color={colors.BLUE_PRESS_STATE} size={10} />}

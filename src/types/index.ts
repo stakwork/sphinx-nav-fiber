@@ -44,7 +44,7 @@ export type RadarRequest = {
 }
 
 export type NodeRequest = {
-  muted_topic?: boolean
+  is_muted?: boolean
   topic?: string
   name?: string
   image_url?: string
@@ -187,7 +187,7 @@ export type Topic = {
   name: string
   node_type: string
   ref_id: string
-  muted_topic: string
+  is_muted: string
   edgeList: Array<string>
   edgeCount: number
   date_added_to_graph: string
@@ -195,7 +195,7 @@ export type Topic = {
 
 export type TopicFilter = {
   search?: string
-  muted: boolean
+  is_muted: boolean
   sortBy: string
   page: number
   pageSize: number

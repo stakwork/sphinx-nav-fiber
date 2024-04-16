@@ -106,8 +106,8 @@ export const TopicSources = () => {
       <Wrapper direction="column" justify="flex-end">
         <Heading align="flex-start" direction="row" justify="space-between">
           <Text className="title">Topics</Text>
-          <Button disabled={loading} onClick={() => setFilters({ muted: !filters.muted })} size="medium">
-            {filters.muted ? 'Show Unmuted' : 'Show Muted'}
+          <Button disabled={loading} onClick={() => setFilters({ is_muted: !filters.is_muted })} size="medium">
+            {filters.is_muted ? 'Show Unmuted' : 'Show Muted'}
             {loading && <ClipLoader color={colors.BLUE_PRESS_STATE} size={10} />}
           </Button>
         </Heading>
@@ -123,7 +123,7 @@ export const TopicSources = () => {
             <ClipLoader color={colors.white} />
           ) : (
             <>
-              <Table onTopicEdit={onTopicEdit} showMuted={filters.muted} />
+              <Table onTopicEdit={onTopicEdit} showMuted={filters.is_muted} />
               {total > ids.length ? (
                 <Button className="load-more" disabled={loading} onClick={handleLoadMore}>
                   Load more
