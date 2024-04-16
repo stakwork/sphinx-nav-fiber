@@ -35,6 +35,8 @@ export type TStatParams = {
   num_tweet: number
   num_twitter_space: number
   num_video: number
+  num_documents: number
+  [key: string]: number
 }
 
 export type TPriceParams = {
