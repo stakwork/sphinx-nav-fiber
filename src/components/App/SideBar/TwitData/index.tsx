@@ -23,7 +23,7 @@ export const TwitData = () => {
     text,
     name,
     verified,
-    profile_picture: profilePicture,
+    image_url: profilePicture,
     twitter_handle: twitterHandle,
     ref_id: refId,
   } = selectedNode || {}

@@ -24,7 +24,7 @@ export const Appearance: FC<Props> = ({ onClose }) => {
       <GraphViewControl />
       <Flex mt={308}>
         <Button kind="big" onClick={handleSave}>
-          Save changes
+          Save Changes
         </Button>
       </Flex>
     </Wrapper>

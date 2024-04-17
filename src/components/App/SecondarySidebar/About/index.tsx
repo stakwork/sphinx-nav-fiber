@@ -18,6 +18,10 @@ export const About = () => {
   const [isAdmin] = useUserStore((s) => [s.isAdmin])
   const appMetaData = useAppStore((s) => s.appMetaData)
 
+  if (!appMetaData) {
+    return null
+  }
+
   return (
     <Wrapper align="stretch" direction="column" justify="flex-end">
       <Heading align="center" direction="row" justify="space-between">

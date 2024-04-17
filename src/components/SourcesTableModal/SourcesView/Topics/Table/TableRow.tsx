@@ -36,7 +36,7 @@ const TableRowComponent: FC<TTableRaw> = ({ topic, onClick, onSearch, checkedSta
     setLoading(true)
 
     try {
-      await putNodeData(refId, { muted_topic: shouldMute })
+      await putNodeData(refId, { is_muted: shouldMute })
 
       useTopicsStore.setState({
         ids: ids.filter((i) => i !== refId),
@@ -58,7 +58,7 @@ const TableRowComponent: FC<TTableRaw> = ({ topic, onClick, onSearch, checkedSta
     if (window.getSelection()?.toString()) {
       event.preventDefault()
     } else {
-      onSearch(topicItem.topic)
+      onSearch(topicItem.name)
     }
   }
 
@@ -80,7 +80,7 @@ const TableRowComponent: FC<TTableRaw> = ({ topic, onClick, onSearch, checkedSta
   const checkboxVisibleClass = checkedStates[topic.ref_id] ? 'visible' : ''
 
   return (
-    <StyledTableRow key={topic.topic} className={checkedStates[topic.ref_id] ? 'checked' : ''}>
+    <StyledTableRow key={topic.name} className={checkedStates[topic.ref_id] ? 'checked' : ''}>
       <StyledTableCell>
         <CheckboxSection
           className={`checkbox-section ${checkboxVisibleClass}`}
@@ -92,8 +92,9 @@ const TableRowComponent: FC<TTableRaw> = ({ topic, onClick, onSearch, checkedSta
         </CheckboxSection>
       </StyledTableCell>
       <StyledTableCell onClick={(event) => handleClickTopic(event, topic)}>
-        <ClickableText>{topic.topic}</ClickableText>
+        <ClickableText>{topic.name}</ClickableText>
       </StyledTableCell>
+      <StyledTableCell>{topic.node_type}</StyledTableCell>
       <StyledTableCell>{topic.edgeCount}</StyledTableCell>
       <StyledTableCell>
         <Popover
@@ -150,7 +151,7 @@ const TableRowComponent: FC<TTableRaw> = ({ topic, onClick, onSearch, checkedSta
               </ClipLoaderWrapper>
             ) : (
               <Flex direction="row">
-                {topic.muted_topic ? (
+                {topic.is_muted ? (
                   <IconButton className="centered" onClick={() => handleMute(topic.ref_id, false)}>
                     <ProfileShow />
                   </IconButton>

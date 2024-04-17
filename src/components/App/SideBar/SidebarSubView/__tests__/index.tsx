@@ -74,7 +74,7 @@ describe('Test SideBarSubView', () => {
     expect(getByTestId('sidebar-sub-view')).toHaveStyle({ visibility: 'hidden' })
   })
 
-  it('asserts that close button resets the selected node and hides the teach me', () => {
+  it('asserts that close button resets the selected node and hide the teach me', () => {
     const [setSelectedNodeMock, setTeachMeMock] = new Array(2).fill(jest.fn())
 
     useDataStoreMock.mockReturnValue({

@@ -24,7 +24,7 @@ export const BriefDescription: FC<Props> = ({ trend, onClose, selectTrending }) 
   const audioRef = useRef<HTMLVideoElement | null>(null)
 
   const handleLearnMore = () => {
-    selectTrending(trend.topic)
+    selectTrending(trend.name)
   }
 
   const handleClose = useCallback(() => {
@@ -78,7 +78,7 @@ export const BriefDescription: FC<Props> = ({ trend, onClose, selectTrending }) 
           </StyledAudio>
         </>
       ) : null}
-      <Title>{trend.tldr_topic ?? trend.topic}</Title>
+      <Title>{trend.tldr_topic ?? trend.name}</Title>
       <ScrollableContent>
         <Flex>
           <StyledText>{trend.tldr && <Markdown>{trend.tldr}</Markdown>}</StyledText>

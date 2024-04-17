@@ -59,6 +59,7 @@ const Wrapper = styled(Flex)(({ theme }) => ({
   margin: '64px auto 20px 10px',
   borderRadius: '16px',
   zIndex: 29,
+  overflow: 'hidden',
   [theme.breakpoints.up('sm')]: {
     width: '390px',
   },

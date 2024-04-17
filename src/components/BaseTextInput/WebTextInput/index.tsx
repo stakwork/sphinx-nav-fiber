@@ -20,7 +20,7 @@ export const WebTextInput = styled.input<Props>`
   color: ${({ colorName }) => colors[colorName]};
   cursor: ${({ disabled }) => (disabled ? 'default' : 'text')};
   margin: 0;
-  opacity: 1;
+  opacity: ${({ disabled }) => (disabled ? 0.5 : 1)};
   outline: 0;
   padding: 0;
   text-align: ${({ textAlign }) => textAlign};

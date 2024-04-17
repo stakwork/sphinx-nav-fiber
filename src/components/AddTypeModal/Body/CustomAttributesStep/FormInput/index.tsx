@@ -16,6 +16,10 @@ import { parseJson, parsedObjProps } from '../../../utils'
 
 const noSpacePattern = /^[a-z0-9_]+$/
 
+interface CustomField extends Record<'id', string> {
+  isNew?: boolean
+}
+
 export const FormInput = ({ parentParam }: { parentParam: string }) => {
   const [loading, setLoading] = useState(false)
   const [parsedData, setParsedData] = useState<parsedObjProps[]>([])
@@ -62,9 +66,10 @@ export const FormInput = ({ parentParam }: { parentParam: string }) => {
       ) : (
         <InputsWrapper py={8}>
           <Grid container spacing={2}>
-            {fields.map((field, index) => {
+            {fields.map((field: CustomField, index) => {
               const type = watch(`attributes[${index}].type`)
               const checked = watch(`attributes[${index}].required`)
+              const isEditable = field.isNew || false
 
               return (
                 <Fragment key={field.id}>
@@ -72,6 +77,7 @@ export const FormInput = ({ parentParam }: { parentParam: string }) => {
                     <TextInput
                       autoComplete="off"
                       className="text-input"
+                      disabled={!isEditable}
                       id="cy-item-name"
                       maxLength={50}
                       name={`attributes.${index}.key` as const}
@@ -112,7 +118,7 @@ export const FormInput = ({ parentParam }: { parentParam: string }) => {
       )}
       <Flex align="flex-start" py={12}>
         <Button
-          onClick={() => append({ key: '', type: 'string', required: true })}
+          onClick={() => append({ key: '', type: 'string', required: true, isNew: true })}
           size="medium"
           startIcon={<PlusIcon />}
           variant="contained"
@@ -127,4 +133,5 @@ export const FormInput = ({ parentParam }: { parentParam: string }) => {
 const InputsWrapper = styled(Flex)`
   max-height: 260px;
   overflow: auto;
+  width: calc(100% + 20px);
 `

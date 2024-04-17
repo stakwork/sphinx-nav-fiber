@@ -6,6 +6,7 @@ type PlayerStore = {
   isPlaying: boolean
   miniPlayerIsVisible: boolean
   hasError: boolean
+  isSeeking: boolean
   playingTime: number
   duration: number
   volume: number
@@ -19,6 +20,7 @@ type PlayerStore = {
   setHasError: (hasError: boolean) => void
   setPlayingNode: (playingNode: NodeExtended | null) => void
   setPlayingNodeLink: (link: string) => void
+  setIsSeeking: (isSeeking: boolean) => void
 }
 
 const defaultData: Omit<
@@ -32,10 +34,12 @@ const defaultData: Omit<
   | 'resetPlayer'
   | 'setMiniPlayerIsVisible'
   | 'setPlayingNodeLink'
+  | 'setIsSeeking'
 > = {
   isPlaying: false,
   miniPlayerIsVisible: false,
   hasError: false,
+  isSeeking: false,
   playingTime: 0,
   playingNode: null,
   duration: 0,
@@ -45,6 +49,7 @@ const defaultData: Omit<
 export const usePlayerStore = create<PlayerStore>()(
   devtools((set, get) => ({
     ...defaultData,
+    setIsSeeking: (isSeeking) => set({ isSeeking }),
     setIsPlaying: (isPlaying) => set({ isPlaying }),
     setMiniPlayerIsVisible: (miniPlayerIsVisible) => {
       if (!miniPlayerIsVisible) {

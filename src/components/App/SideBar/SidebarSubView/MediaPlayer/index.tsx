@@ -31,9 +31,18 @@ const MediaPlayerComponent: FC<Props> = ({ hidden }) => {
     setVolume,
     setHasError,
     resetPlayer,
+    isSeeking,
+    setIsSeeking,
   } = usePlayerStore((s) => s)
 
   useEffect(() => () => resetPlayer(), [resetPlayer])
+
+  useEffect(() => {
+    if (isSeeking && playerRef.current) {
+      playerRef.current.seekTo(playingTime, 'seconds')
+      setIsSeeking(false)
+    }
+  }, [playingTime, isSeeking, setIsSeeking])
 
   const togglePlay = () => {
     setIsPlaying(!isPlaying)
@@ -68,9 +77,11 @@ const MediaPlayerComponent: FC<Props> = ({ hidden }) => {
   }
 
   const handleProgress = (progress: { playedSeconds: number }) => {
-    const currentTime = progress.playedSeconds
+    if (!isSeeking) {
+      const currentTime = progress.playedSeconds
 
-    setPlayingTime(currentTime)
+      setPlayingTime(currentTime)
+    }
   }
 
   const handleReady = () => {
@@ -207,7 +218,7 @@ const Cover = styled(Flex)`
 
 const Buffering = styled(Flex)`
   position: absolute;
-  top: 20%;
+  top: 39%;
   left: 50%;
   transform: translateX(-50%);
   z-index: 1;

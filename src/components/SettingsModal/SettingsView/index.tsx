@@ -85,7 +85,7 @@ export const SettingsView: React.FC<Props> = ({ onClose }) => {
       </SettingsHeader>
       {tabs.map((tab, index) => (
         <TabPanel key={tab.label} index={index} value={value}>
-          <tab.component initialValues={appMetaData} onClose={onClose} />
+          {appMetaData && <tab.component initialValues={appMetaData} onClose={onClose} />}
         </TabPanel>
       ))}
     </Wrapper>
@@ -133,6 +133,8 @@ const TabPanelWrapper = styled(Flex)`
   max-height: 495px;
   height: fit-content;
   min-width: 480px;
+  overflow: hidden;
+  border-radius: 9px;
 `
 
 const Wrapper = styled(Flex)`

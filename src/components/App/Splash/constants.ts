@@ -1,12 +1,5 @@
 import { TAboutParams } from '~/network/fetchSourcesData'
 
-export const initialAboutState = {
-  description: '',
-  mission_statement: '',
-  search_term: '',
-  title: '',
-}
-
 export const initialMessageData = [
   {
     label: 'New Content',

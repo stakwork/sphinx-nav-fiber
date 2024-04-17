@@ -28,7 +28,7 @@ export const DropdownSearch: React.FC<Props> = ({ onSelect, selectedTopic }) => 
 
   const handleSearch = async (val: string) => {
     const filters = {
-      muted: 'False',
+      is_muted: 'False',
       sort_by: ALPHABETICALLY,
       search: val,
       skip: '0',
@@ -70,7 +70,7 @@ export const DropdownSearch: React.FC<Props> = ({ onSelect, selectedTopic }) => 
 
   return selectedTopic ? (
     <SelectedValue>
-      <div className="value">{selectedTopic.topic}</div>
+      <div className="value">{selectedTopic.name}</div>
       <Flex className="icon" onClick={() => onSelect(null)}>
         <ClearIcon />
       </Flex>
@@ -113,7 +113,7 @@ export const DropdownSearch: React.FC<Props> = ({ onSelect, selectedTopic }) => 
                 className={clsx({ active: selectedTopic === option.ref_id })}
                 onClick={() => handleSelectChange(option)}
               >
-                {option.topic}
+                {option.name}
               </MenuItem>
             ))}
           </>

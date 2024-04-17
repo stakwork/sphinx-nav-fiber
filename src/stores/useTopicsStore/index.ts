@@ -18,7 +18,7 @@ const defaultData: Omit<TopicsStore, 'setTopics' | 'setFilters' | 'terminate'> =
   ids: [],
   total: 0,
   filters: {
-    muted: false,
+    is_muted: false,
     sortBy: DATE,
     page: 0,
     pageSize: 50,
@@ -48,7 +48,7 @@ export const useTopicsStore = create<TopicsStore>((set, get) => ({
         newIds.push(topic.ref_id)
       })
 
-      set({ data: newData, ids: newIds, total: responseData.topicCount })
+      set({ data: newData, ids: newIds, total: responseData.totalCount })
     } catch (error) {
       console.log(error)
     }
@@ -58,9 +58,9 @@ export const useTopicsStore = create<TopicsStore>((set, get) => ({
 }))
 
 const prepareTopicFilters = (filters: TopicFilter): TtopicsParams => ({
-  muted: filters.muted ? 'True' : 'False',
+  muted: filters.is_muted ? 'True' : 'False',
   skip: String(filters.page * filters.pageSize),
   limit: String(filters.pageSize),
   sort_by: filters.sortBy,
-  search: filters.search || '',
+  ...(!filters.search ? { node_type: 'Topic' } : { search: filters.search }),
 })

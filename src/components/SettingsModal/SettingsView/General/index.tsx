@@ -66,7 +66,7 @@ export const General: FC<Props> = ({ initialValues }) => {
               </SubmitLoader>
             ) : (
               <Button disabled={isSubmitting} id="add-node-submit-cta" kind="big" type="submit">
-                Save changes
+                Save Changes
               </Button>
             )}
           </Flex>

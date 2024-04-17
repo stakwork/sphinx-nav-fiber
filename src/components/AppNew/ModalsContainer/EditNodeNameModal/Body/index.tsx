@@ -12,7 +12,7 @@ import { colors } from '~/utils/colors'
 import { TitleEditor } from '../Title'
 
 export type FormData = {
-  topic: string
+  name: string
 }
 
 export const Body = () => {
@@ -30,7 +30,7 @@ export const Body = () => {
 
   useEffect(() => {
     if (actualNode) {
-      setValue('topic', actualNode?.topic)
+      setValue('name', actualNode?.name)
     }
 
     return () => {
@@ -49,7 +49,7 @@ export const Body = () => {
       try {
         const { data: topicData } = await getTopicsData({ search: selectedNode?.name })
 
-        const node = topicData.find((i) => i.topic === selectedNode.name)
+        const node = topicData.find((i) => i.name === selectedNode.name)
 
         setActualNode(node)
       } catch (error) {
@@ -62,7 +62,7 @@ export const Body = () => {
     init()
   }, [selectedNode])
 
-  const topicValue = watch('topic')
+  const topicValue = watch('name')
 
   const closeHandler = () => {
     close()
@@ -72,7 +72,7 @@ export const Body = () => {
     setLoading(true)
 
     try {
-      await putNodeData(actualNode?.ref_id || '', { topic: topicValue.trim() })
+      await putNodeData(actualNode?.ref_id || '', { name: topicValue.trim() })
 
       if (data) {
         // const newData = { ...data }
