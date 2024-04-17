@@ -71,9 +71,19 @@ async function addTweetNodeToJarvisBackend() {
   }
 }
 
-async function testSetup() {
-  await addTweetNodeToJarvisBackend()
-  await setAdmin()
+function testSetup() {
+  return addTweetNodeToJarvisBackend()
+    .then(() => setAdmin())
+    .catch((error) => {
+      console.error('Test setup failed:', error)
+      throw error
+    })
 }
 
 testSetup()
+  .then(() => {
+    console.log('Test setup completed successfully')
+  })
+  .catch((error) => {
+    console.error('Failed to complete test setup:', error)
+  })
