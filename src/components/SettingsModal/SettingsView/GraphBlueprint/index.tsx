@@ -1,16 +1,21 @@
+import { Button } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
 import { AddTypeModal } from '~/components/AddTypeModal'
 import { Flex } from '~/components/common/Flex'
 import { Schema, getSchemaAll } from '~/network/fetchSourcesData'
+import { useModal } from '~/stores/useModalStore'
+import { useSchemaStore } from '~/stores/useSchemaStore'
 import { colors } from '~/utils'
+import { BlueprintModal } from './BlueprintModal'
 import { Table } from './Table'
 
 export const GraphBlueprint: React.FC = () => {
   const [loading, setLoading] = useState(true)
-  const [schemaAll, setSchemaAll] = useState<Schema[]>([])
+  const [schemaAll, setSchemaAll] = useSchemaStore((s) => [s.schemas, s.setSchemas])
   const [selectedSchema, setSelectedSchema] = useState<Schema | null>(null)
+  const { open } = useModal('blueprintGraph')
 
   useEffect(() => {
     const fetchData = async () => {
@@ -28,7 +33,7 @@ export const GraphBlueprint: React.FC = () => {
     }
 
     fetchData()
-  }, [])
+  }, [setSchemaAll])
 
   const onSchemaCreate = (schema: Schema) => {
     setSchemaAll([...schemaAll, schema])
@@ -41,6 +46,7 @@ export const GraphBlueprint: React.FC = () => {
   return (
     <>
       <TableWrapper align={loading ? 'center' : 'flex-start'} justify={loading ? 'center' : 'flex-start'} py={16}>
+        <Button onClick={open}>showGraph</Button>
         {loading ? (
           <ClipLoader color={colors.white} />
         ) : (
@@ -50,6 +56,12 @@ export const GraphBlueprint: React.FC = () => {
         )}
       </TableWrapper>
       <AddTypeModal
+        onClose={() => setSelectedSchema(null)}
+        onDelete={onSchemaDelete}
+        onSchemaCreate={onSchemaCreate}
+        selectedSchema={selectedSchema}
+      />
+      <BlueprintModal
         onClose={() => setSelectedSchema(null)}
         onDelete={onSchemaDelete}
         onSchemaCreate={onSchemaCreate}

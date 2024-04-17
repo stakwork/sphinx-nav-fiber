@@ -10,7 +10,7 @@ export const EditNodeNameModal = () => {
   const { close } = useModal('editNodeName')
 
   return (
-    <BaseModal id="editNodeName" kind="small" onClose={close} preventOutsideClose>
+    <BaseModal id="editNodeName" kind="large" onClose={close} preventOutsideClose>
       <Body />
     </BaseModal>
   )

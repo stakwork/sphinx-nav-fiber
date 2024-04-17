@@ -15,6 +15,8 @@ export const SourceTypeStep: FC<Props> = ({ skipToStep, allowNextStep, onSelectT
   const [options, setOption] = useState<TOption[] | null>(null)
   const [loading, setLoading] = useState(false)
 
+  console.log()
+
   useEffect(() => {
     const init = async () => {
       if (customSchemaFlag) {
