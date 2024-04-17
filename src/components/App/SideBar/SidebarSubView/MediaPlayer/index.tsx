@@ -140,6 +140,9 @@ const MediaPlayerComponent: FC<Props> = ({ hidden }) => {
       if (isFullScreen && event.key === 'Escape') {
         event.preventDefault()
         event.stopPropagation()
+      } else if (event.key === ' ') {
+        event.preventDefault()
+        togglePlay()
       }
     }
 
@@ -152,27 +155,33 @@ const MediaPlayerComponent: FC<Props> = ({ hidden }) => {
     }
   })
 
+  const handlePlayerClick = () => {
+    togglePlay()
+  }
+
   return playingNode?.link ? (
     <Wrapper ref={wrapperRef} hidden={hidden}>
       <Cover>
         <Avatar size={120} src={playingNode?.image_url || ''} type="clip" />
       </Cover>
-      <ReactPlayer
-        ref={playerRef}
-        controls={false}
-        height={!isFullScreen ? '200px' : window.screen.height}
-        onBuffer={() => setStatus('buffering')}
-        onBufferEnd={() => setStatus('ready')}
-        onError={handleError}
-        onPause={handlePause}
-        onPlay={handlePlay}
-        onProgress={handleProgress}
-        onReady={handleReady}
-        playing={isPlaying}
-        url={playingNode?.link || ''}
-        volume={volume}
-        width="100%"
-      />
+      <PlayerWrapper onClick={handlePlayerClick}>
+        <ReactPlayer
+          ref={playerRef}
+          controls={false}
+          height={!isFullScreen ? '200px' : window.screen.height}
+          onBuffer={() => setStatus('buffering')}
+          onBufferEnd={() => setStatus('ready')}
+          onError={handleError}
+          onPause={handlePause}
+          onPlay={handlePlay}
+          onProgress={handleProgress}
+          onReady={handleReady}
+          playing={isPlaying}
+          url={playingNode?.link || ''}
+          volume={volume}
+          width="100%"
+        />
+      </PlayerWrapper>
       {status === 'error' ? (
         <ErrorWrapper className="error-wrapper">Error happened, please try later</ErrorWrapper>
       ) : null}
@@ -228,6 +237,11 @@ const ErrorWrapper = styled(Flex)`
   height: 60px;
   padding: 12px 16px;
   color: ${colors.primaryRed};
+`
+
+const PlayerWrapper = styled.div`
+  width: 100%;
+  cursor: pointer;
 `
 
 export const MediaPlayer = memo(MediaPlayerComponent)
