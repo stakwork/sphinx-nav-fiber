@@ -54,9 +54,11 @@ export const Table: React.FC<TableProps> = ({ schemas, setSelectedSchema }) => {
           </TableRow>
         </StyledTableHead>
         <tbody>
-          {schemas?.map((schema) => (
-            <TopicRow key={schema?.type} onOpenActions={handleOpenPopover} schema={schema} />
-          ))}
+          {schemas
+            ?.filter((schema) => schema.type && schema.type.trim() !== '')
+            .map((schema) => (
+              <TopicRow key={schema.type} onOpenActions={handleOpenPopover} schema={schema} />
+            ))}
         </tbody>
       </MaterialTable>
       <PopoverWrapper
