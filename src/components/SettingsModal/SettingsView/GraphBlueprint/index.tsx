@@ -17,7 +17,7 @@ export const GraphBlueprint: React.FC = () => {
       try {
         const response = await getSchemaAll()
 
-        setSchemaAll(response.schemas.filter((i) => !i.is_deleted))
+        setSchemaAll(response.schemas.filter((i) => i.ref_id && !i.is_deleted))
 
         setLoading(false)
       } catch (error) {
