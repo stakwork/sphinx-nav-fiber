@@ -81,6 +81,7 @@ export const SetAttributesStep: FC<Props> = ({ skipToStep, nodeType }) => {
                     id="item-name"
                     name={key}
                     placeholder={required ? 'Required' : 'Optional'}
+                    maxLength={50}
                     rules={{
                       ...(required ? requiredRule : {}),
                     }}
