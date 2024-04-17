@@ -71,7 +71,13 @@ export const StyledTableHead = styled(TableHead)`
 `
 
 export const StyledPill = styled(Button)`
-  &.selected {
+  &:first-child.selected {
+    background: ${colors.white};
+    color: ${colors.BG1};
+    pointer-events: none;
+  }
+
+  & + &.selected {
     background: ${colors.white};
     color: ${colors.BG1};
     pointer-events: none;
