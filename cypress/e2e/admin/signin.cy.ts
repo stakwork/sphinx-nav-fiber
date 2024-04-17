@@ -7,7 +7,7 @@ describe('Admin Login', () => {
       url: 'http://localhost:8444/api/about*',
     }).as('updateAbout')
 
-    const title = `TestingNavFiber`
+    const title = `Testing NavFiber`
 
     // Open settings modal
     cy.get('div[data-testid="settings-modal"]').should('be.visible').click()
