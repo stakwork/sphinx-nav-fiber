@@ -45,8 +45,8 @@ jobs:
       - name: Rename folder
         run: cd data && mv _data data && cd data && ls
 
-      # - name: Copy Neo4J Data to stack
-      #   run: cp -r ./data ./stack/neo4j
+      - name: Copy Neo4J Data to stack
+        run: cp -r ./data ./stack/neo4j
 
       - name: Check for NODES
         uses: nick-fields/retry@v3
