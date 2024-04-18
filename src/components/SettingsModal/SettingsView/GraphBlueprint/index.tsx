@@ -31,7 +31,13 @@ export const GraphBlueprint: React.FC = () => {
   }, [])
 
   const onSchemaCreate = (schema: Schema) => {
-    setSchemaAll([...schemaAll, schema])
+    const exists = schemaAll.some((existingSchema) => existingSchema.type === schema.type)
+
+    if (exists) {
+      setSchemaAll(schemaAll.map((existingSchema) => (existingSchema.type === schema.type ? schema : existingSchema)))
+    } else {
+      setSchemaAll([...schemaAll, schema])
+    }
   }
 
   const onSchemaDelete = (type: string) => {
