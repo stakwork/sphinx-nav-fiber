@@ -6,9 +6,9 @@ import styled from 'styled-components'
 import { validateImageInputType } from '~/components/ModalsContainer/EditNodeNameModal/utils'
 import { Flex } from '~/components/common/Flex'
 import { getTopicsData, putNodeData } from '~/network/fetchSourcesData'
-import { useSelectedNode } from '~/stores/useDataStore'
+import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { useModal } from '~/stores/useModalStore'
-import { Topic } from '~/types'
+import { NodeExtended, Topic } from '~/types'
 import { colors } from '~/utils/colors'
 import { TitleEditor } from '../Title'
 
@@ -90,9 +90,14 @@ export const Body = () => {
     setLoading(true)
 
     const propName = 'name'
+    const updatedData = { [propName]: topicValue.trim(), image_url: imageUrl.trim() }
 
     try {
-      await putNodeData(node?.ref_id || '', { [propName]: topicValue.trim(), image_url: imageUrl.trim() })
+      await putNodeData(node?.ref_id || '', updatedData)
+
+      const { updateNode } = useDataStore.getState()
+
+      updateNode({ ...node, ...updatedData } as NodeExtended)
 
       closeHandler()
     } catch (error) {
