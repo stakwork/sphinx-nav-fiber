@@ -6,7 +6,7 @@ import { BaseModal } from '~/components/Modal'
 import { postEdgeType } from '~/network/fetchSourcesData'
 import { useModal } from '~/stores/useModalStore'
 import { useTopicsStore } from '~/stores/useTopicsStore'
-import { Topic } from '~/types'
+import { TEdge, Topic } from '~/types'
 import { colors } from '~/utils/colors'
 import { TitleEditor } from './Title'
 
@@ -16,16 +16,17 @@ type Props = {
 }
 
 export type FormData = {
-  topic: string
+  name: string
 }
 
 export const AddEdgeModal: FC<Props> = ({ topic, onClose }) => {
   const { close } = useModal('addEdge')
   const [data] = useTopicsStore((s) => [s.data])
   const form = useForm<FormData>({ mode: 'onChange' })
+  const [isSwapped, setIsSwapped] = useState(false)
   const [loading, setLoading] = useState(false)
-  const [selectedTopic, setSelectedTopic] = useState<Topic | null>(null)
   const [selectedType, setSelectedType] = useState('')
+  const [selectedToNode, setSelectedToNode] = useState<TEdge | null>(null)
 
   const closeHandler = () => {
     onClose()
@@ -33,17 +34,17 @@ export const AddEdgeModal: FC<Props> = ({ topic, onClose }) => {
   }
 
   const handleSave = async () => {
-    if (!selectedTopic || !data) {
+    if (!selectedToNode || !data) {
       return
     }
 
     setLoading(true)
 
     try {
-      await postEdgeType({ from: topic.ref_id, to: selectedTopic?.ref_id, relationship: selectedType })
+      await postEdgeType({ from: topic.ref_id, to: selectedToNode?.ref_id, relationship: selectedType })
 
       const { ref_id: id } = topic
-      const { ref_id: selectedId } = selectedTopic
+      const { ref_id: selectedId } = selectedToNode
 
       if (data) {
         const newData = { ...data }
@@ -65,16 +66,18 @@ export const AddEdgeModal: FC<Props> = ({ topic, onClose }) => {
     }
   }
 
-  const submitDisabled = loading || !selectedTopic || !selectedType
+  const submitDisabled = loading || !selectedToNode || !selectedType
 
   return (
-    <BaseModal id="addEdge" kind="large" onClose={closeHandler} preventOutsideClose>
+    <BaseModal id="addEdge" kind="small" onClose={closeHandler} preventOutsideClose>
       <FormProvider {...form}>
         <TitleEditor
           from={topic.name}
-          onSelect={setSelectedTopic}
-          selectedTopic={selectedTopic}
+          isSwapped={isSwapped}
+          onSelect={setSelectedToNode}
+          selectedToNode={selectedToNode}
           selectedType={selectedType}
+          setIsSwapped={() => setIsSwapped(!isSwapped)}
           setSelectedType={setSelectedType}
         />
         <Button color="secondary" disabled={submitDisabled} onClick={handleSave} size="large" variant="contained">

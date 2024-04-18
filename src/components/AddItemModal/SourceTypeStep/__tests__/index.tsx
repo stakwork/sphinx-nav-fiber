@@ -40,10 +40,10 @@ describe('SourceTypeStep', () => {
 
   it('should filter out deleted node types', async () => {
     const mockedSchemaTypes = [
-      { type: 'node1', is_deleted: false },
+      { type: 'node1', is_deleted: false, ref_id: 'refId1' },
       { type: 'node2', is_deleted: true },
-      { type: 'about', is_deleted: false },
-      { type: 'schema', is_deleted: false },
+      { type: 'about', is_deleted: false, ref_id: 'refId2' },
+      { type: 'schema', is_deleted: false, ref_id: 'refId3' },
     ]
 
     jest.spyOn(fetchSourcesData, 'getNodeSchemaTypes').mockResolvedValue({ schemas: mockedSchemaTypes })
