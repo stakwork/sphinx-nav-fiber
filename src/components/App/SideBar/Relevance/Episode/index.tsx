@@ -82,10 +82,10 @@ export const Episode = ({
   return type ? (
     <EpisodeWrapper className={className} onClick={onClick}>
       {!defaultViewTypes.includes(type) ? (
-        <Flex direction="row">
+        <Flex align="center" direction="row" justify="center">
           {!isSelectedView && (
             <Flex align="center" pr={16}>
-              <Avatar size={64} src={imageUrl || `${imageType}_default.svg`} type={type || ''} />
+              <Avatar size={80} src={imageUrl || `${imageType}_default.svg`} type={type || ''} />
             </Flex>
           )}
 
@@ -105,7 +105,7 @@ export const Episode = ({
               ) : null}
             </Flex>
 
-            <Description data-testid="episode-name">{name}</Description>
+            {name && <Description data-testid="episode-name">{name}</Description>}
             <Description data-testid="episode-description">{description}</Description>
             <Flex align="center" direction="row" justify="flex-start">
               {Boolean(date) && <Date>{moment.unix(date).fromNow()}</Date>}
@@ -154,7 +154,7 @@ export const Description = styled(Flex)`
   font-weight: 400;
   line-height: 17px;
   color: ${colors.white};
-  margin: 16px 0;
+  margin: 8px 0;
   display: -webkit-box;
   -webkit-line-clamp: 2; /* Limit to two lines */
   -webkit-box-orient: vertical;
@@ -213,7 +213,6 @@ export const Title = styled(Date)`
   white-space: nowrap;
   text-overflow: ellipsis;
   position: relative;
-  padding-left: 12px;
   &:before {
     content: '';
     display: block;
@@ -226,8 +225,6 @@ export const Title = styled(Date)`
     flex-shrink: 0;
     height: 4px;
     background: ${colors.GRAY6};
-
-    margin-top: 20px;
   }
 
   &.is-show {
