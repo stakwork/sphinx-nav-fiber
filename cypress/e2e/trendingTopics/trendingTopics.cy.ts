@@ -20,6 +20,11 @@ describe('test trending topics', () => {
       url: 'http://localhost:8444/api/get_trends*',
     }).as('getTrends')
 
+    cy.intercept({
+      method: 'GET',
+      url: 'http://localhost:8444/api/v2/search*',
+    }).as('search')
+
     cy.visit('/', {
       onBeforeLoad(win) {
         // @ts-ignore
@@ -38,6 +43,20 @@ describe('test trending topics', () => {
       for (let i = 0; i < responseBody.length; i++) {
         cy.contains('.list', `#${responseBody[i].name}`).should('exist')
       }
+      cy.contains(`#${responseBody[0].name}`).eq(0).click()
+
+      //wait for search result
+      cy.wait('@search')
+
+      cy.get('#search-result-list').should('exist')
+
+      // Check if the search result list has more than one child
+      cy.get('#search-result-list').children().should('have.length.gt', 0)
+
+      //cancel search
+      cy.get('[data-testid="search_action_icon"]').click()
+
+      cy.get('.list').should('exist')
     })
   })
 })

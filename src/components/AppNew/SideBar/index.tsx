@@ -4,10 +4,10 @@ import { forwardRef, useEffect, useRef, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
+import { Flex } from '~/components/common/Flex'
 import ClearIcon from '~/components/Icons/ClearIcon'
 import SearchIcon from '~/components/Icons/SearchIcon'
 import { SearchBar } from '~/components/SearchBar'
-import { Flex } from '~/components/common/Flex'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { useGraphStore } from '~/stores/useGraphStore'
@@ -57,6 +57,7 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit }, ref) => {
         <Search>
           <SearchBar onSubmit={onSubmit} />
           <InputButton
+            data-testid="search_action_icon"
             onClick={() => {
               if (searchTerm) {
                 setValue('search', '')
