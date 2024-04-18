@@ -60,12 +60,15 @@ describe('Table Component Tests', () => {
     render(<Table canEdit={true} data={mockData} />)
 
     const deleteIcon = screen.getByTestId('delete-icon-2')
+
     fireEvent.click(deleteIcon)
 
     const confirmDelete = await screen.findByText('Yes')
+
     fireEvent.click(confirmDelete)
 
     const loader = await screen.findByTestId('delete-loader-2')
+
     expect(loader).toBeInTheDocument()
   })
 
@@ -73,12 +76,15 @@ describe('Table Component Tests', () => {
     render(<Table canEdit={true} data={mockData} />)
 
     const editIcon = screen.getByTestId('edit-icon-1')
+
     fireEvent.click(editIcon)
 
     const checkIcon = screen.getByTestId('check-icon-1')
+
     fireEvent.click(checkIcon)
 
     const loader = await screen.findByTestId('edit-loader-1')
+
     expect(loader).toBeInTheDocument()
   })
 })
