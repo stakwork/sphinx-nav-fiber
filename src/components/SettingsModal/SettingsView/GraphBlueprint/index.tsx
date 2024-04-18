@@ -17,7 +17,7 @@ export const GraphBlueprint: React.FC = () => {
       try {
         const response = await getSchemaAll()
 
-        setSchemaAll(response.schemas.filter((i) => !i.is_deleted))
+        setSchemaAll(response.schemas.filter((i) => i.ref_id && !i.is_deleted))
 
         setLoading(false)
       } catch (error) {
@@ -31,7 +31,13 @@ export const GraphBlueprint: React.FC = () => {
   }, [])
 
   const onSchemaCreate = (schema: Schema) => {
-    setSchemaAll([...schemaAll, schema])
+    const exists = schemaAll.some((existingSchema) => existingSchema.type === schema.type)
+
+    if (exists) {
+      setSchemaAll(schemaAll.map((existingSchema) => (existingSchema.type === schema.type ? schema : existingSchema)))
+    } else {
+      setSchemaAll([...schemaAll, schema])
+    }
   }
 
   const onSchemaDelete = (type: string) => {

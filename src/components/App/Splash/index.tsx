@@ -52,7 +52,7 @@ export const Splash = memo(({ children }: PropsWithChildren) => {
     let intervalId: NodeJS.Timer
 
     if (!isFetching && message && appMetaData) {
-      // increase progress fro 0 to 50% after all data is fetched
+      // increase progress from 0 to 50% after all data is fetched
       setProgress((prev) => (!prev ? 50 : prev))
 
       intervalId = setInterval(() => {
@@ -68,7 +68,7 @@ export const Splash = memo(({ children }: PropsWithChildren) => {
     }
   }, [appMetaData, fetchData, isFetching, message, stats])
 
-  if (!message.some(({ value }) => !!value) || !appMetaData) {
+  if (isLoading && (!message.some(({ value }) => !!value) || !appMetaData)) {
     return null
   }
 
@@ -79,7 +79,7 @@ export const Splash = memo(({ children }: PropsWithChildren) => {
           <SphereAnimation />
           <Flex style={{ color: colors.white }}>
             <TitleWrapper>
-              <Text className="title">{appMetaData.title}</Text>
+              <Text className="title">{appMetaData?.title}</Text>
               <Text className="subtitle">Second Brain</Text>
             </TitleWrapper>
             <LinearProgress color="inherit" sx={{ my: 1.75, height: '2px' }} value={progress} variant="determinate" />
