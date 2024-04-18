@@ -113,6 +113,9 @@ export const Body = () => {
 
   const isNodeNameChanged = getValues().name && actualTopicNode?.name !== getValues().name
 
+  const shouldDisableSave =
+    loading || topicIsLoading || (!!imageUrl && !isValidImageUrl) || (!imageUrl && !isNodeNameChanged)
+
   return (
     <Wrapper>
       <FormProvider {...form}>
@@ -121,7 +124,7 @@ export const Body = () => {
             <Skeleton />
           </Flex>
         ) : (
-          <TitleEditor isValidImageUrl={isValidImageUrl} />
+          <TitleEditor />
         )}
         <Flex direction="row" mb={6}>
           <DeleteButton
@@ -136,7 +139,7 @@ export const Body = () => {
           </DeleteButton>
           <Button
             color="secondary"
-            disabled={loading || topicIsLoading || !isNodeNameChanged || !isValidImageUrl}
+            disabled={shouldDisableSave}
             onClick={handleSave}
             size="large"
             style={{ flex: 1 }}
