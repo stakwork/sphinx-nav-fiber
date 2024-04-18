@@ -57,7 +57,7 @@ describe('Table Component Tests', () => {
   })
 
   it('should display loader when clicking on delete icon', async () => {
-    const isEdit: boolean = true
+    const isEdit = true
 
     render(<Table canEdit={isEdit} data={mockData} />)
 
@@ -75,7 +75,7 @@ describe('Table Component Tests', () => {
   })
 
   it('should display loader when clicking on edit icon and then check icon', async () => {
-    const isEdit: boolean = true
+    const isEdit = true
 
     render(<Table canEdit={isEdit} data={mockData} />)
 
