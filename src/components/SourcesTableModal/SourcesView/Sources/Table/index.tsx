@@ -120,7 +120,7 @@ const Table: React.FC<Props> = ({ data, canEdit = false }) => {
             </StyledTableCell>
             {canEdit && (
               <StyledTableCell align="left">
-                <div className="delete-wrapper" data-testid={`delete-wrapper-${i.ref_id}`} id={`delete-${i.source}`}>
+                <div className="delete-wrapper" id={`delete-${i.source}`}>
                   {loadingId === i.ref_id ? (
                     <ClipLoaderWrapper data-testid={`delete-loader-${i.ref_id}`}>
                       <ClipLoader color={colors.white} size={16} />
