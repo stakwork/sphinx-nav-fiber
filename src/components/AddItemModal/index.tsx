@@ -235,7 +235,7 @@ export const AddItemModal = () => {
     source: <SourceStep name={name} skipToStep={skipToStep} sourceLink={sourceLink || ''} type={nodeType} />,
     setBudget: <BudgetStep loading={loading} onClick={() => null} />,
     createConfirmation: <CreateConfirmation onclose={handleClose} type={type} />,
-    setAttribues: <SetAttributesStep nodeType={nodeType} skipToStep={skipToStep} />,
+    setAttribues: <SetAttributesStep handleSelectType={handleSelectType} nodeType={nodeType} skipToStep={skipToStep} />,
   }
 
   const modalKind: ModalKind = 'small'
