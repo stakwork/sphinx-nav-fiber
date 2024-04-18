@@ -79,9 +79,9 @@ export const SetAttributesStep: FC<Props> = ({ skipToStep, nodeType }) => {
                   <Text>{capitalizeFirstLetter(key)}</Text>
                   <TextInput
                     id="item-name"
-                    name={key}
-                    placeholder={required ? 'Required' : 'Optional'}
                     maxLength={50}
+                    name={key}
+                    placeholder={required ? 'Required' : 'Optional'}                    
                     rules={{
                       ...(required ? requiredRule : {}),
                     }}
