@@ -15,6 +15,7 @@
 
 // Import commands.js using ES2015 syntax:
 import nodes from '../../relay/nodes.json'
+import tweetNodes from '../fixtures/trendingTopics.json'
 import './commands'
 
 // Alternatively you can use CommonJS syntax:
@@ -46,4 +47,43 @@ async function setAdmin() {
   }
 }
 
-setAdmin()
+async function addTweetNodeToJarvisBackend() {
+  for (let i = 0; i < tweetNodes.length; i++) {
+    let newDate
+    const date = new Date()
+
+    if (i % 2 === 0) {
+      newDate = date.toISOString()
+    } else {
+      const formatDate = new Date(date)
+      formatDate.setDate(date.getDate() - 3)
+      newDate = formatDate.toISOString()
+    }
+
+    await fetch('http://localhost:8444/v1/tweet', {
+      method: 'POST',
+      body: JSON.stringify({ ...tweetNodes[i], date: newDate }),
+      headers: {
+        'Content-Type': 'application/json',
+        'x-stakwork-token': 'navfiber_e2e_stakwork_testing',
+      },
+    })
+  }
+}
+
+function testSetup() {
+  return addTweetNodeToJarvisBackend()
+    .then(() => setAdmin())
+    .catch((error) => {
+      console.error('Test setup failed:', error)
+      throw error
+    })
+}
+
+testSetup()
+  .then(() => {
+    console.log('Test setup completed successfully')
+  })
+  .catch((error) => {
+    console.error('Failed to complete test setup:', error)
+  })
