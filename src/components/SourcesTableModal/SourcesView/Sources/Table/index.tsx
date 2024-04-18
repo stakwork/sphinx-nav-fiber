@@ -128,7 +128,7 @@ const Table: React.FC<Props> = ({ data, canEdit = false }) => {
                   ) : (
                     <ConfirmPopover
                       data-testid={`delete-icon-${i.ref_id}`}
-                      message="Are you sure ?"
+                      message="Are you sure?"
                       onConfirm={() => handleRemove(i.ref_id)}
                     >
                       <IconWrapper className="centered" data-testid={`delete-icon-${i.ref_id}`}>
