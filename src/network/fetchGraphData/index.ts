@@ -77,7 +77,7 @@ const fetchNodes = async (
   params: FetchNodeParams,
 ): Promise<FetchDataResponse> => {
   const args = new URLSearchParams({
-    ...(isDevelopment || isE2E ? { free: 'true' } : {}),
+    ...(isDevelopment ? { free: 'true' } : {}),
     ...params,
   }).toString()
 
@@ -93,7 +93,7 @@ const fetchNodes = async (
     }
   }
 
-  if (isDevelopment || isE2E) {
+  if (isDevelopment && !isE2E) {
     const response = await api.get<FetchDataResponse>(`/v2/search?${args}`)
 
     return response
