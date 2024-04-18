@@ -1,5 +1,5 @@
-import { Sources } from '~/types'
 import React from 'react'
+import { Sources } from '~/types'
 
 export type Props = {
   data: Sources[] | undefined
@@ -12,6 +12,7 @@ export type TopicTableProps = {
   setShowMuteUnmute: () => void
   checkedStates: { [refId: string]: boolean }
   setCheckedStates: React.Dispatch<React.SetStateAction<{ [refId: string]: boolean }>>
+  disabled?: boolean
 }
 
 export type TdProps = {

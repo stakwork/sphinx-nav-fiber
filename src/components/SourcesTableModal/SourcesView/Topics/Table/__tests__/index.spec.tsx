@@ -128,4 +128,19 @@ describe('Table Component', () => {
       expect(mockOnTopicEdit).toHaveBeenCalledWith(expect.any(String), 'addEdge')
     })
   })
+
+  test('visibility and three dots icons are disabled when more than one value is selected', async () => {
+    const { getByTestId } = renderTable()
+
+    waitFor(async () => {
+      // Simulate selecting more than one value
+      mockSetCheckedStates.mockImplementation(() => ({ '1': true, '2': true }))
+
+      await screen.findAllByTestId('ThreeDotsIcons')
+      fireEvent.click(getByTestId('ThreeDotsIcons'))
+
+      expect(getByTestId('ThreeDotsIcons')).toBeDisabled()
+      expect(getByTestId('VisibilityOff')).toBeDisabled()
+    })
+  })
 })
