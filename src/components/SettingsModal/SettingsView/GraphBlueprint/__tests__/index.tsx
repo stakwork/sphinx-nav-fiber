@@ -1,22 +1,32 @@
-import React from 'react'
-import { render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
-import { GraphBlueprint } from '../index'
+import { render, waitFor } from '@testing-library/react'
+import React from 'react'
+import { GraphBlueprint } from '..'
 
-jest.mock('../../../../../network/fetchSourcesData', () => ({
-  getSchemaAll: jest.fn().mockResolvedValue({ schemas: [{ type: 'Custom', is_deleted: false }] }),
+jest.mock('~/network/fetchSourcesData', () => ({
+  getSchemaAll: jest.fn().mockResolvedValue({
+    schemas: [{ type: 'Custom', is_deleted: false }],
+  }),
 }))
 
 describe('GraphBlueprint', () => {
   beforeEach(() => {
+    jest.spyOn(React, 'useState').mockImplementation((initState?: unknown) => [initState, jest.fn()])
+  })
+
+  afterEach(() => {
     jest.clearAllMocks()
   })
 
   it('should display only one Custom node', async () => {
-    render(<GraphBlueprint />)
+    const { getAllByText } = render(<GraphBlueprint />)
 
-    const customNodes = await screen.findAllByText('Custom')
+    ;(async () => {
+      await waitFor(() => {
+        const customNode = getAllByText('Custom')
 
-    expect(customNodes).toHaveLength(1)
+        expect(customNode).toHaveLength(1)
+      })
+    })()
   })
 })
