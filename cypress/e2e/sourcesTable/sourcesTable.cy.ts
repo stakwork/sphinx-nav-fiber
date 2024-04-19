@@ -8,6 +8,6 @@ describe('Sources Table / Home interactions', () => {
 
     cy.contains('button', 'Twitter Handle').click()
 
-    cy.get('[data-testid="close-modal"').click()
+    cy.get('[data-testid="close-modal"]').click()
   })
 })
