@@ -7,7 +7,7 @@ export const SettingsModal = () => {
   const { visible } = useModal('addItem')
 
   return visible ? null : (
-    <BaseModal background="BG1" id="settings" noWrap onClose={close}>
+    <BaseModal background="BG1" id="settings" noWrap onClose={close} preventOutsideClose>
       <SettingsView onClose={close} />
     </BaseModal>
   )
