@@ -55,7 +55,7 @@ export const BriefDescription: FC<Props> = ({ trend, onClose, selectTrending }) 
   }, [handleClose])
 
   return (
-    <BaseModal id="briefDescription" kind="regular" noWrap onClose={handleClose}>
+    <BaseModal id="briefDescription" kind="regular" noWrap onClose={handleClose} preventOutsideClose>
       {trend.audio_EN ? (
         <>
           <Flex direction="row" justify="flex-start" m={20}>
