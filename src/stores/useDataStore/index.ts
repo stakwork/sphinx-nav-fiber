@@ -74,6 +74,7 @@ export type DataStore = {
   setHideNodeDetails: (_: boolean) => void
   setTeachMe: (_: boolean) => void
   addNewNode: (node: NodeExtended) => void
+  updateNode: (updatedNode: NodeExtended) => void
   removeNode: (id: string) => void
   setSidebarFilterCounts: (filterCounts: SidebarFilterWithCount[]) => void
 }
@@ -106,6 +107,7 @@ const defaultData: Omit<
   | 'setHideNodeDetails'
   | 'setTeachMe'
   | 'addNewNode'
+  | 'updateNode'
   | 'removeNode'
 > = {
   categoryFilter: null,
@@ -219,6 +221,29 @@ export const useDataStore = create<DataStore>()(
     setShowSelectionGraph: (showSelectionGraph) => set({ showSelectionGraph }),
     setHideNodeDetails: (hideNodeDetails) => set({ hideNodeDetails }),
     setTeachMe: (showTeachMe) => set({ showTeachMe }),
+    updateNode: (updatedNode) => {
+      set((state) => {
+        const nodes = state.data?.nodes || []
+        const links = state.data?.links || []
+
+        const updatedNodes = nodes.map((node) => {
+          if (node.ref_id === updatedNode.ref_id) {
+            return { ...node, ...updatedNode }
+          }
+
+          return node
+        })
+
+        return {
+          ...state,
+          data: {
+            ...state.data,
+            nodes: updatedNodes,
+            links,
+          },
+        }
+      })
+    },
     addNewNode: (node) => {
       const { data } = get()
 
