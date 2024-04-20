@@ -74,7 +74,7 @@ describe('Trending Component', () => {
     const { getByText } = render(<Trending />)
 
     mockTrends.forEach(({ name }) => {
-      expect(getByText(`#${name}`)).toBeInTheDocument()
+      expect(getByText(`${name}`)).toBeInTheDocument()
     })
   })
 
@@ -133,6 +133,16 @@ describe('Trending Component', () => {
     expect(audio.paused).toBeTruthy()
   })
 
+  it("validates that the first topic's tldr button is white", async () => {
+    mockedUseDataStore.mockReturnValue({ trendingTopics: [mockTrends[0]], setTrendingTopics: jest.fn() })
+
+    const { getByRole } = render(<Trending />)
+
+    const tldrBtn = getByRole('button', { name: 'TLDR' })
+
+    expect(tldrBtn).toHaveStyle({ color: 'rgba(35, 37, 47, 1)', 'background-color': 'rgb(255, 255, 255)' })
+  })
+
   test('tests the behavior when a user selects a trending topic', () => {
     const mockedSelectTrendingTopic = jest.fn()
 
@@ -140,7 +150,7 @@ describe('Trending Component', () => {
 
     const { getByText } = render(<Trending />)
 
-    fireEvent.click(getByText(`#${mockTrends[0].name}`))
+    fireEvent.click(getByText(`${mockTrends[0].name}`))
     ;(async () => {
       await waitFor(() => expect(mockedSelectTrendingTopic).toHaveBeenCalled())
     })()
@@ -153,7 +163,7 @@ describe('Trending Component', () => {
 
     const { getByText } = render(<Trending />)
 
-    fireEvent.click(getByText(`#${mockTrends[0].name}`))
+    fireEvent.click(getByText(`${mockTrends[0].name}`))
     ;(async () => {
       await waitFor(() => {
         const searchInput = screen.getByPlaceholderText('Search') as HTMLInputElement
