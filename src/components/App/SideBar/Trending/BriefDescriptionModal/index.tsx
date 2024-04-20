@@ -8,6 +8,7 @@ import SoundIcon from '~/components/Icons/SoundIcon'
 import { BaseModal } from '~/components/Modal'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
+import { useAppStore } from '~/stores/useAppStore'
 import { useModal } from '~/stores/useModalStore'
 import { Trending } from '~/types'
 
@@ -20,8 +21,9 @@ type Props = {
 export const BriefDescription: FC<Props> = ({ trend, onClose, selectTrending }) => {
   const [isPlaying, setIsPlaying] = useState(false)
   const { close } = useModal('briefDescription')
+  const { currentPlayingAudio, setCurrentPlayingAudio } = useAppStore()
 
-  const audioRef = useRef<HTMLVideoElement | null>(null)
+  const audioRef = useRef<HTMLAudioElement | null>(null)
 
   const handleLearnMore = () => {
     selectTrending(trend.name)
@@ -32,18 +34,29 @@ export const BriefDescription: FC<Props> = ({ trend, onClose, selectTrending }) 
     close()
   }, [onClose, close])
 
+  // checks if trend tldr audio is already playing in the background
+  const isAudioAlreadyPlaying =
+    currentPlayingAudio?.current?.src === trend.audio_EN && !currentPlayingAudio?.current?.paused
+
   const togglePlay = () => {
-    if (audioRef.current) {
-      if (isPlaying) {
-        audioRef.current.pause()
-      } else {
-        audioRef.current.play()
+    if (isAudioAlreadyPlaying) {
+      currentPlayingAudio?.current?.pause()
+
+      setIsPlaying(false)
+      setCurrentPlayingAudio(null)
+    } else {
+      if (audioRef.current) {
+        if (isPlaying) {
+          audioRef.current.pause()
+        } else {
+          audioRef.current.play()
+        }
+
+        setIsPlaying(!isPlaying)
       }
 
       setIsPlaying(!isPlaying)
     }
-
-    setIsPlaying(!isPlaying)
   }
 
   useEffect(() => {
@@ -62,7 +75,7 @@ export const BriefDescription: FC<Props> = ({ trend, onClose, selectTrending }) 
             <Button
               onClick={togglePlay}
               size="small"
-              startIcon={isPlaying ? <PauseIcon /> : <SoundIcon />}
+              startIcon={isPlaying || isAudioAlreadyPlaying ? <PauseIcon /> : <SoundIcon />}
               style={{ marginRight: '10px' }}
             >
               Listen
