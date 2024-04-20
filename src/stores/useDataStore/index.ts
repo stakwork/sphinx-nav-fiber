@@ -264,7 +264,7 @@ export const useDataStore = create<DataStore>()(
 
       const removeData = {
         ...data,
-        nodes: data.nodes.filter((el) => el.ref_id !== id && el.id !== id && el.id !== id && el.ref_id !== id),
+        nodes: data.nodes.filter((el) => el.ref_id !== id && el.id !== id),
       }
 
       set({ data: removeData })
@@ -284,3 +284,9 @@ export const useFilteredNodes = () =>
       s.sidebarFilter === 'Other' ? !i.node_type : i.node_type === s.sidebarFilter,
     )
   })
+
+export const useUpdateGraphData = () => {
+  const data = useDataStore((state) => state.data)
+
+  return data
+}

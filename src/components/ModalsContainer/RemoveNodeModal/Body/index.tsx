@@ -3,10 +3,10 @@ import { useEffect, useState } from 'react'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
-import { deleteNode, getTopicsData } from '~/network/fetchSourcesData'
+import { deleteNode } from '~/network/fetchSourcesData'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { useModal } from '~/stores/useModalStore'
-import { NodeExtended, Topic } from '~/types'
+import { NodeExtended } from '~/types'
 import { colors } from '~/utils/colors'
 import { TitleEditor } from '../Title'
 
@@ -19,12 +19,12 @@ export const Body = () => {
   const { close: closeEditNodeModal } = useModal('editNodeName')
 
   const [loading, setLoading] = useState(false)
-  const [removeNode, setSelectedNode] = useDataStore((s) => [s.removeNode, s.setSelectedNode])
+  const [removeNode, setSelectedNode, data] = useDataStore((s) => [s.removeNode, s.setSelectedNode, s.data])
 
   const [topicIsLoading, setTopicIsLoading] = useState(false)
 
   const [actualNode, setActualNode] = useState<null | NodeExtended>()
-  const [actualTopicNode, setActualTopicNode] = useState<null | Topic>()
+  const [actualTopicNode, setActualTopicNode] = useState<null | NodeExtended>()
 
   const selectedNode = useSelectedNode()
 
@@ -42,9 +42,7 @@ export const Body = () => {
 
       try {
         if (selectedNode.type === 'topic') {
-          const { data } = await getTopicsData({ search: selectedNode?.name })
-
-          const node = data.find((i: Topic) => i.name === selectedNode.name)
+          const node = data?.nodes.find((i: NodeExtended) => i.name === selectedNode.name)
 
           setActualTopicNode(node)
         } else {
@@ -58,7 +56,7 @@ export const Body = () => {
     }
 
     init()
-  }, [selectedNode])
+  }, [selectedNode, data?.nodes])
 
   const handleTopicRemove = async () => {
     setLoading(true)
