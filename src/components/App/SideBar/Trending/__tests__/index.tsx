@@ -4,6 +4,7 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import React from 'react'
 import { Trending } from '..'
 import * as fetchGraphData from '../../../../../network/fetchGraphData'
+import { useAppStore } from '../../../../../stores/useAppStore'
 import { useDataStore } from '../../../../../stores/useDataStore'
 import { useModal } from '../../../../../stores/useModalStore'
 import * as utils from '../../../../../utils/trending'
@@ -30,8 +31,13 @@ jest.mock('~/stores/useDataStore', () => ({
   useDataStore: jest.fn(),
 }))
 
+jest.mock('~/stores/useAppStore', () => ({
+  useAppStore: jest.fn(),
+}))
+
 const mockedGetTrends = jest.spyOn(fetchGraphData, 'getTrends')
 const mockedUseDataStore = useDataStore as jest.MockedFunction<typeof useDataStore>
+const useAppStoreMock = useAppStore as jest.MockedFunction<typeof useAppStore>
 const mockedUseModal = useModal as jest.MockedFunction<typeof useModal>
 const availableModal = ['briefDescription', 'addContent']
 
@@ -43,10 +49,7 @@ const mockTrends = [
 describe('Trending Component', () => {
   beforeEach(() => {
     mockedUseDataStore.mockReturnValue({ trendingTopics: mockTrends, setTrendingTopics: jest.fn() })
-  })
-
-  afterEach(() => {
-    jest.clearAllMocks()
+    useAppStoreMock.mockReturnValue({ currentPlayingAudio: { current: null }, setCurrentPlayingAudio: jest.fn() })
   })
 
   it('asserts that the component renders correctly', () => {

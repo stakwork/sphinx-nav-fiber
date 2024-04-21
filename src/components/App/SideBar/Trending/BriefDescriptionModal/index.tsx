@@ -21,7 +21,7 @@ type Props = {
 export const BriefDescription: FC<Props> = ({ trend, onClose, selectTrending }) => {
   const [isPlaying, setIsPlaying] = useState(false)
   const { close } = useModal('briefDescription')
-  const { currentPlayingAudio, setCurrentPlayingAudio } = useAppStore()
+  const { currentPlayingAudio, setCurrentPlayingAudio } = useAppStore((s) => s)
 
   const audioRef = useRef<HTMLAudioElement | null>(null)
 

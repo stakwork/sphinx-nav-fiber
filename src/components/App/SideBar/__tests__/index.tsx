@@ -87,7 +87,7 @@ describe('Test SideBar', () => {
   })
 
   it('Ensure that the sidebar is not visible when sidebarIsOpen is false.', () => {
-    useAppStoreMock.mockReturnValue({ sidebarIsOpen: false })
+    useAppStoreMock.mockReturnValue({ setCurrentPlayingAudio: jest.fn(), sidebarIsOpen: false })
 
     const { container } = render(
       <ThemeProvider theme={appTheme}>
@@ -101,7 +101,7 @@ describe('Test SideBar', () => {
   })
 
   it('Verify that the sidebar is visible when sidebarIsOpen is true.', () => {
-    useAppStoreMock.mockReturnValue({ sidebarIsOpen: true })
+    useAppStoreMock.mockReturnValue({ setCurrentPlayingAudio: jest.fn(), sidebarIsOpen: true })
 
     const { container } = render(
       <ThemeProvider theme={appTheme}>
@@ -117,7 +117,11 @@ describe('Test SideBar', () => {
   it('Test that typing into the search bar updates the search term in the application state.', () => {
     const [setCurrentSearchMock, onSubmitMock] = [jest.fn(), jest.fn()]
 
-    useAppStoreMock.mockReturnValue({ sidebarIsOpen: true, setCurrentSearch: setCurrentSearchMock })
+    useAppStoreMock.mockReturnValue({
+      setCurrentPlayingAudio: jest.fn(),
+      sidebarIsOpen: true,
+      setCurrentSearch: setCurrentSearchMock,
+    })
 
     render(
       <ThemeProvider theme={appTheme}>
@@ -145,7 +149,12 @@ describe('Test SideBar', () => {
   it.skip('Ensure that the clear icon appears when there is a search term and clears the search on click', () => {
     const clearSearchMock = jest.fn()
 
-    useAppStoreMock.mockReturnValue({ currentSearch: 'Test Search', clearSearch: clearSearchMock, sidebarIsOpen: true })
+    useAppStoreMock.mockReturnValue({
+      setCurrentPlayingAudio: jest.fn(),
+      currentSearch: 'Test Search',
+      clearSearch: clearSearchMock,
+      sidebarIsOpen: true,
+    })
 
     render(
       <ThemeProvider theme={appTheme}>
@@ -168,7 +177,7 @@ describe('Test SideBar', () => {
   })
 
   it('Verify that the search icon is displayed when there is no search term.', () => {
-    useAppStoreMock.mockReturnValue({ currentSearch: '', sidebarIsOpen: true })
+    useAppStoreMock.mockReturnValue({ setCurrentPlayingAudio: jest.fn(), currentSearch: '', sidebarIsOpen: true })
 
     render(
       <ThemeProvider theme={appTheme}>
@@ -184,7 +193,7 @@ describe('Test SideBar', () => {
   })
 
   it('Ensure that the Trending component is displayed when there is no search term.', () => {
-    useAppStoreMock.mockReturnValue({ currentSearch: '', sidebarIsOpen: true })
+    useAppStoreMock.mockReturnValue({ setCurrentPlayingAudio: jest.fn(), currentSearch: '', sidebarIsOpen: true })
 
     render(
       <ThemeProvider theme={appTheme}>
@@ -252,7 +261,11 @@ describe('Test SideBar', () => {
       setSelectedNode: setSelectedNodeMock,
     })
 
-    useAppStoreMock.mockReturnValue({ setRelevanceSelected: setRelevanceSelectedMock, sidebarIsOpen: true })
+    useAppStoreMock.mockReturnValue({
+      setCurrentPlayingAudio: jest.fn(),
+      setRelevanceSelected: setRelevanceSelectedMock,
+      sidebarIsOpen: true,
+    })
 
     render(
       <ThemeProvider theme={appTheme}>
@@ -287,7 +300,11 @@ describe('Test SideBar', () => {
       setSelectedNode: setSelectedNodeMock,
     })
 
-    useAppStoreMock.mockReturnValue({ setRelevanceSelected: setRelevanceSelectedMock, sidebarIsOpen: true })
+    useAppStoreMock.mockReturnValue({
+      setCurrentPlayingAudio: jest.fn(),
+      setRelevanceSelected: setRelevanceSelectedMock,
+      sidebarIsOpen: true,
+    })
 
     render(
       <ThemeProvider theme={appTheme}>

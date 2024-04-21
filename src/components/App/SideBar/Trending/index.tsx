@@ -34,7 +34,7 @@ export const Trending = ({ onSubmit }: Props) => {
   const audioRef = useRef<HTMLVideoElement>(null)
   const [currentFileIndex, setCurrentFileIndex] = useState(0)
   const [playing, setPlaying] = useState(false)
-  const { currentPlayingAudio, setCurrentPlayingAudio } = useAppStore()
+  const { currentPlayingAudio, setCurrentPlayingAudio } = useAppStore((s) => s)
 
   const { open } = useModal('briefDescription')
 
