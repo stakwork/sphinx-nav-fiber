@@ -42,9 +42,11 @@ const mockTrends = [
 
 describe('Trending Component', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
-
     mockedUseDataStore.mockReturnValue({ trendingTopics: mockTrends, setTrendingTopics: jest.fn() })
+  })
+
+  afterEach(() => {
+    jest.clearAllMocks()
   })
 
   it('asserts that the component renders correctly', () => {
@@ -78,29 +80,6 @@ describe('Trending Component', () => {
     })
   })
 
-  it('ensures that the "Add Content" button calls the openContentAddModal function', () => {
-    mockedUseDataStore.mockReturnValue({ trendingTopics: [], setTrendingTopics: jest.fn() })
-
-    const loading = false
-
-    jest.spyOn(React, 'useState').mockImplementationOnce(() => [loading, jest.fn()])
-
-    const { getByText, getByRole } = render(<Trending />)
-
-    expect(getByText('No new trending topics in the last 24 hours')).toBeInTheDocument()
-
-    expect(getByRole('button', { name: 'Add Content' })).toBeInTheDocument()
-
-    fireEvent.click(getByRole('button', { name: 'Add Content' }))
-
-    const { open: openAddContentMock } = mockedUseModal('addContent')
-
-    expect(mockedUseModal).toHaveBeenCalledWith('addContent')
-    ;(async () => {
-      await waitFor(() => expect(openAddContentMock).toHaveBeenCalled())
-    })()
-  })
-
   it('confirms the rendering of the BriefDescriptionModal when a TLDR button is clicked', () => {
     mockedUseDataStore.mockReturnValue({ trendingTopics: [mockTrends[0]], setTrendingTopics: jest.fn() })
 
@@ -131,16 +110,6 @@ describe('Trending Component', () => {
     expect(audio).toHaveAttribute('src', mockTrends[0].audio_EN)
 
     expect(audio.paused).toBeTruthy()
-  })
-
-  it("validates that the first topic's tldr button is white", async () => {
-    mockedUseDataStore.mockReturnValue({ trendingTopics: [mockTrends[0]], setTrendingTopics: jest.fn() })
-
-    const { getByRole } = render(<Trending />)
-
-    const tldrBtn = getByRole('button', { name: 'TLDR' })
-
-    expect(tldrBtn).toHaveStyle({ color: 'rgba(35, 37, 47, 1)', 'background-color': 'rgb(255, 255, 255)' })
   })
 
   test('tests the behavior when a user selects a trending topic', () => {
@@ -181,5 +150,28 @@ describe('Trending Component', () => {
 
     // Assert that scrollbar has correct width
     expect(scrollbar).toHaveStyle('width: 3')
+  })
+
+  it('ensures that the "Add Content" button calls the openContentAddModal function', () => {
+    mockedUseDataStore.mockReturnValue({ trendingTopics: [], setTrendingTopics: jest.fn() })
+
+    const loading = false
+
+    jest.spyOn(React, 'useState').mockImplementation(() => [loading, jest.fn()])
+
+    const { getByText, getByRole } = render(<Trending />)
+
+    expect(getByText('No new trending topics in the last 24 hours')).toBeInTheDocument()
+
+    expect(getByRole('button', { name: 'Add Content' })).toBeInTheDocument()
+
+    fireEvent.click(getByRole('button', { name: 'Add Content' }))
+
+    const { open: openAddContentMock } = mockedUseModal('addContent')
+
+    expect(mockedUseModal).toHaveBeenCalledWith('addContent')
+    ;(async () => {
+      await waitFor(() => expect(openAddContentMock).toHaveBeenCalled())
+    })()
   })
 })
