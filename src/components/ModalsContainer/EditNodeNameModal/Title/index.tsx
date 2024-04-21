@@ -1,4 +1,3 @@
-import { FC } from 'react'
 import styled from 'styled-components'
 import { imageUrlRegex, validateImageInputType } from '~/components/ModalsContainer/EditNodeNameModal/utils'
 import { Flex } from '~/components/common/Flex'
@@ -7,11 +6,7 @@ import { TextInput } from '~/components/common/TextInput'
 import { requiredRule } from '~/constants'
 import { colors } from '~/utils'
 
-type Props = {
-  isValidImageUrl?: boolean
-}
-
-export const TitleEditor: FC<Props> = ({ isValidImageUrl }) => (
+export const TitleEditor = () => (
   <Flex>
     <Flex align="center" direction="row" justify="space-between" mb={18}>
       <Flex align="center" direction="row">
@@ -52,18 +47,13 @@ export const TitleEditor: FC<Props> = ({ isValidImageUrl }) => (
         name="image_url"
         placeholder="image_url"
         rules={{
-          ...requiredRule,
-          ...(!isValidImageUrl
-            ? {
-                pattern: {
-                  message: 'Please enter a valid URL',
-                  value: imageUrlRegex,
-                },
-                validate: {
-                  source: validateImageInputType,
-                },
-              }
-            : {}),
+          pattern: {
+            message: 'Please enter a valid URL',
+            value: imageUrlRegex,
+          },
+          validate: {
+            source: validateImageInputType,
+          },
         }}
       />
     </Flex>
