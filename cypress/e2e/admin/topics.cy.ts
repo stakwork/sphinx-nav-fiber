@@ -6,6 +6,8 @@ describe('Test topics as Admin', () => {
 
     cy.contains('button', 'Topics').click()
 
+    cy.get('tbody').find('tr').should('have.length.gt', 1)
+
     cy.get('tbody').within(() => {
       // Select the first row
       cy.get('tr')
@@ -15,7 +17,18 @@ describe('Test topics as Admin', () => {
           cy.get('td').last().click()
         })
     })
+
     cy.get('[data-testid="mute"]').click()
+
+    cy.get('[data-testid="close-modal"]').click()
+
+    cy.get('#cy-open-soure-table').click()
+
+    cy.contains('button', 'Topics').click()
+
+    cy.contains('th', 'Muted').click()
+
+    cy.get('tbody').find('tr').should('have.length.gt', 0)
 
     cy.get('[data-testid="close-modal"]').click()
   })
