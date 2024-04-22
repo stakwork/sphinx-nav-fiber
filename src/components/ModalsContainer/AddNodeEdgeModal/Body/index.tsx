@@ -19,6 +19,7 @@ export const Body = () => {
   const form = useForm<FormData>({ mode: 'onChange' })
   const [loading, setLoading] = useState(false)
   const [selectedType, setSelectedType] = useState('')
+  const [isSwapped, setIsSwapped] = useState(false)
 
   const [topicIsLoading, setTopicIsLoading] = useState(false)
   const [selectedToNode, setSelectedToNode] = useState<TEdge | null>(null)
@@ -58,32 +59,26 @@ export const Body = () => {
   }
 
   const handleSave = async () => {
-    if (!selectedToNode || !topicEdge) {
+    const nodeFrom = topicEdge || selectedNode
+
+    if (!selectedToNode || !nodeFrom?.ref_id) {
       return
     }
 
     setLoading(true)
 
     try {
-      const nodeFrom = topicEdge || selectedToNode
-
-      await postEdgeType({ from: nodeFrom.ref_id, to: selectedToNode?.ref_id, relationship: selectedType })
+      await postEdgeType({
+        relationship: selectedType,
+        ...(!isSwapped
+          ? { from: nodeFrom.ref_id, to: selectedToNode?.ref_id }
+          : { to: nodeFrom.ref_id, from: selectedToNode?.ref_id }),
+      })
 
       const { ref_id: id } = nodeFrom
       const { ref_id: selectedId } = selectedToNode
 
       console.log(id, selectedId)
-
-      //   if (data) {
-      //     const newData = { ...data }
-
-      //     newData[id] = { ...newData[id], edgeList: [...newData[id].edgeList, selectedType] }
-
-      //     if (newData[selectedId]) {
-      //       newData[selectedId] = { ...newData[selectedId], edgeList: [...newData[selectedId].edgeList, selectedType] }
-      //     }
-
-      //     useTopicsStore.setState({ data: newData })
 
       closeHandler()
     } catch (error) {
@@ -104,9 +99,11 @@ export const Body = () => {
       ) : (
         <TitleEditor
           from={topicEdge ? topicEdge?.search_value : selectedNode?.name || ''}
+          isSwapped={isSwapped}
           onSelect={setSelectedToNode}
           selectedToNode={selectedToNode}
           selectedType={selectedType}
+          setIsSwapped={() => setIsSwapped(!isSwapped)}
           setSelectedType={setSelectedType}
         />
       )}

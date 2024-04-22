@@ -9,6 +9,10 @@ import { media } from '~/utils/media'
 export const AppBar = () => {
   const appMetaData = useAppStore((s) => s.appMetaData)
 
+  if (!appMetaData) {
+    return null
+  }
+
   return (
     <Header>
       <TitleWrapper>

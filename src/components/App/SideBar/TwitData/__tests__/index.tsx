@@ -1,3 +1,4 @@
+/* eslint-disable padding-line-between-statements */
 import '@testing-library/jest-dom'
 import { fireEvent, render, waitFor } from '@testing-library/react'
 import moment from 'moment'

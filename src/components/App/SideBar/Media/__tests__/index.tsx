@@ -18,8 +18,9 @@ describe('Media Component Tests', () => {
     link: 'http://example.com',
     image_url: 'http://example.com/image.png',
     date: '2021-01-01',
-    boost: 10,
+    boost: 15,
     node_type: 'episode',
+    text: 'example text',
     type: 'video',
     id: '1',
     show_title: 'Example Show Title',
@@ -43,7 +44,7 @@ describe('Media Component Tests', () => {
     expect(container).toBeEmptyDOMElement()
   })
 
-  it('Correctly formats and displays the episodeTitle using formatDescription', () => {
+  it('Correctly formats and display the episodeTitle using formatDescription', () => {
     render(<Media node={mockNode} />)
     expect(mockedFormatDescription).toHaveBeenCalledWith(mockNode.episode_title)
   })
@@ -83,7 +84,7 @@ describe('Media Component Tests', () => {
   })
 
   it('Renders Transcript component with the selectedNode', () => {
-    const { getByText } = render(<Media />)
+    const { getByText } = render(<Media node={mockNode} />)
 
     expect(getByText('Transcript')).toBeInTheDocument()
   })
@@ -106,6 +107,7 @@ describe('Media Component Tests', () => {
       image_url: 'http://example.com/image.png',
       date: '2022-02-09',
       boost: 15,
+      text: 'example text',
       node_type: 'episode',
       type: 'video',
       id: '12',

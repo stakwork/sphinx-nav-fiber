@@ -15,6 +15,7 @@ type Props = {
 const MediaPlayerComponent: FC<Props> = ({ hidden }) => {
   const playerRef = useRef<ReactPlayer | null>(null)
   const wrapperRef = useRef<HTMLDivElement | null>(null)
+  const [isFocused, setIsFocused] = useState(false)
   const [isFullScreen, setIsFullScreen] = useState(false)
   const [isMouseNearBottom, setIsMouseNearBottom] = useState(false)
   const [status, setStatus] = useState<'buffering' | 'error' | 'ready'>('ready')
@@ -31,9 +32,18 @@ const MediaPlayerComponent: FC<Props> = ({ hidden }) => {
     setVolume,
     setHasError,
     resetPlayer,
+    isSeeking,
+    setIsSeeking,
   } = usePlayerStore((s) => s)
 
   useEffect(() => () => resetPlayer(), [resetPlayer])
+
+  useEffect(() => {
+    if (isSeeking && playerRef.current) {
+      playerRef.current.seekTo(playingTime, 'seconds')
+      setIsSeeking(false)
+    }
+  }, [playingTime, isSeeking, setIsSeeking])
 
   const togglePlay = () => {
     setIsPlaying(!isPlaying)
@@ -68,9 +78,11 @@ const MediaPlayerComponent: FC<Props> = ({ hidden }) => {
   }
 
   const handleProgress = (progress: { playedSeconds: number }) => {
-    const currentTime = progress.playedSeconds
+    if (!isSeeking) {
+      const currentTime = progress.playedSeconds
 
-    setPlayingTime(currentTime)
+      setPlayingTime(currentTime)
+    }
   }
 
   const handleReady = () => {
@@ -129,6 +141,9 @@ const MediaPlayerComponent: FC<Props> = ({ hidden }) => {
       if (isFullScreen && event.key === 'Escape') {
         event.preventDefault()
         event.stopPropagation()
+      } else if (isFocused && event.key === ' ') {
+        event.preventDefault()
+        togglePlay()
       }
     }
 
@@ -141,27 +156,39 @@ const MediaPlayerComponent: FC<Props> = ({ hidden }) => {
     }
   })
 
+  const handlePlayerClick = () => {
+    togglePlay()
+  }
+
   return playingNode?.link ? (
-    <Wrapper ref={wrapperRef} hidden={hidden}>
+    <Wrapper
+      ref={wrapperRef}
+      hidden={hidden}
+      onBlur={() => setIsFocused(false)}
+      onFocus={() => setIsFocused(true)}
+      tabIndex={0}
+    >
       <Cover>
         <Avatar size={120} src={playingNode?.image_url || ''} type="clip" />
       </Cover>
-      <ReactPlayer
-        ref={playerRef}
-        controls={false}
-        height={!isFullScreen ? '200px' : window.screen.height}
-        onBuffer={() => setStatus('buffering')}
-        onBufferEnd={() => setStatus('ready')}
-        onError={handleError}
-        onPause={handlePause}
-        onPlay={handlePlay}
-        onProgress={handleProgress}
-        onReady={handleReady}
-        playing={isPlaying}
-        url={playingNode?.link || ''}
-        volume={volume}
-        width="100%"
-      />
+      <PlayerWrapper onClick={handlePlayerClick}>
+        <ReactPlayer
+          ref={playerRef}
+          controls={false}
+          height={!isFullScreen ? '200px' : window.screen.height}
+          onBuffer={() => setStatus('buffering')}
+          onBufferEnd={() => setStatus('ready')}
+          onError={handleError}
+          onPause={handlePause}
+          onPlay={handlePlay}
+          onProgress={handleProgress}
+          onReady={handleReady}
+          playing={isPlaying}
+          url={playingNode?.link || ''}
+          volume={volume}
+          width="100%"
+        />
+      </PlayerWrapper>
       {status === 'error' ? (
         <ErrorWrapper className="error-wrapper">Error happened, please try later</ErrorWrapper>
       ) : null}
@@ -195,6 +222,9 @@ const Wrapper = styled(Flex)<Props>`
   border-top-left-radius: 16px;
   overflow: hidden;
   height: ${(props) => (props.hidden ? '0px' : 'auto')};
+  &:focus {
+    outline: none;
+  }
 `
 
 const Cover = styled(Flex)`
@@ -207,7 +237,7 @@ const Cover = styled(Flex)`
 
 const Buffering = styled(Flex)`
   position: absolute;
-  top: 20%;
+  top: 39%;
   left: 50%;
   transform: translateX(-50%);
   z-index: 1;
@@ -217,6 +247,11 @@ const ErrorWrapper = styled(Flex)`
   height: 60px;
   padding: 12px 16px;
   color: ${colors.primaryRed};
+`
+
+const PlayerWrapper = styled.div`
+  width: 100%;
+  cursor: pointer;
 `
 
 export const MediaPlayer = memo(MediaPlayerComponent)

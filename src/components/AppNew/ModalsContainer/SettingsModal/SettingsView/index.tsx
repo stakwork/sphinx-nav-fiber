@@ -89,7 +89,7 @@ export const SettingsView: React.FC<Props> = ({ onClose }) => {
       {isAdmin && (
         <>
           <TabPanel index={0} value={value}>
-            <General initialValues={appMetaData} />
+            {appMetaData && <General initialValues={appMetaData} />}
           </TabPanel>
         </>
       )}

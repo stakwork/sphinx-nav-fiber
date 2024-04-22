@@ -15,18 +15,23 @@ import { requiredRule } from '~/constants'
 type Props = {
   skipToStep: (step: AddItemModalStepID) => void
   nodeType: string
+  handleSelectType: (val: string) => void
 }
 
-export const SetAttributesStep: FC<Props> = ({ skipToStep, nodeType }) => {
+export const SetAttributesStep: FC<Props> = ({ handleSelectType, skipToStep, nodeType }) => {
   const [loading, setLoading] = useState(false)
   const [attributes, setAttributes] = useState<parsedObjProps[]>()
-  const { watch } = useFormContext()
+
+  const {
+    watch,
+    formState: { isValid },
+  } = useFormContext()
 
   useEffect(() => {
     const init = async () => {
       setLoading(true)
 
-      const data = await getNodeType(nodeType.toLowerCase())
+      const data = await getNodeType(nodeType)
 
       const parsedData = parseJson(data)
 
@@ -37,6 +42,27 @@ export const SetAttributesStep: FC<Props> = ({ skipToStep, nodeType }) => {
 
     init()
   }, [nodeType, watch])
+
+  const capitalizeFirstLetter = (string: string) => string.charAt(0).toUpperCase() + string.slice(1).replace(/_/g, ' ')
+
+  const sortedAttributes = attributes
+    ? [...attributes].sort((a, b) => {
+        if (a.required && !b.required) {
+          return -1
+        }
+
+        if (!a.required && b.required) {
+          return 1
+        }
+
+        return 0
+      })
+    : []
+
+  const handlePrevButton = () => {
+    handleSelectType('')
+    skipToStep('sourceType')
+  }
 
   return (
     <Flex>
@@ -53,10 +79,10 @@ export const SetAttributesStep: FC<Props> = ({ skipToStep, nodeType }) => {
           </Flex>
         ) : (
           <Flex className="input__wrapper">
-            {attributes?.map(({ key, required }: parsedObjProps) => (
+            {sortedAttributes?.map(({ key, required }: parsedObjProps) => (
               <>
                 <TextFeildWrapper>
-                  <Text>{key.replace('_', ' ')}</Text>
+                  <Text>{capitalizeFirstLetter(key)}</Text>
                   <TextInput
                     id="item-name"
                     name={key}
@@ -74,12 +100,18 @@ export const SetAttributesStep: FC<Props> = ({ skipToStep, nodeType }) => {
 
       <Flex direction="row">
         <Flex grow={1}>
-          <Button color="secondary" onClick={() => skipToStep('sourceType')} size="large" variant="contained">
+          <Button color="secondary" onClick={handlePrevButton} size="large" variant="contained">
             Prev
           </Button>
         </Flex>
         <Flex grow={1} ml={20}>
-          <Button color="secondary" onClick={() => skipToStep('setBudget')} size="large" variant="contained">
+          <Button
+            color="secondary"
+            disabled={!isValid || loading || attributes?.some((attr) => attr.required && !watch(attr.key))}
+            onClick={() => skipToStep('setBudget')}
+            size="large"
+            variant="contained"
+          >
             Next
           </Button>
         </Flex>
@@ -106,6 +138,8 @@ const StyledWrapper = styled(Flex)`
     gap: 15px;
     max-height: 225px;
     overflow-y: auto;
+    padding-right: 20px;
+    width: calc(100% + 20px);
   }
 `
 

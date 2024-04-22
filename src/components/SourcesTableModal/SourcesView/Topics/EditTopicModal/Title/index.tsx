@@ -21,7 +21,7 @@ export const TitleEditor: FC<Props> = () => (
       <TextInput
         id="cy-topic"
         maxLength={50}
-        name="topic"
+        name="name"
         placeholder="Add your topic"
         rules={{
           ...requiredRule,

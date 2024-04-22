@@ -27,3 +27,9 @@ export function apiUrlFromSwarmHost(): string | undefined {
 
   return `${url}/api`
 }
+
+export function removeApi(url: string) {
+  const regex = /\/api$/
+
+  return url.replace(regex, '')
+}

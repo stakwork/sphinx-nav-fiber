@@ -69,5 +69,8 @@
   "typescript.format.enable": false,
   "typescript.preferences.importModuleSpecifier": "shortest",
   "typescript.preferences.quoteStyle": "single",
-  "typescript.tsdk": "node_modules/typescript/lib"
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "githubPullRequests.ignoredPullRequestBranches": [
+    "master"
+  ]
 }

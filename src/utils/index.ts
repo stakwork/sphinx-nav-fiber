@@ -21,6 +21,7 @@ import { extractUuidAndHost } from './auth'
 import { formatDate } from './formatDate'
 import { formatNumberWithCommas } from './formatStats'
 import { generateAuthQueryParam, getSignedMessageFromRelay } from './getSignedMessage'
+import { formatSplashMessage, formatStatsResponse } from './splash'
 import { getTrendingTopic, showPlayButton } from './trending'
 import { videoTimeToSeconds } from './videoTimetoSeconds'
 
@@ -38,6 +39,8 @@ export {
   formatDate,
   formatDescription,
   formatNumberWithCommas,
+  formatSplashMessage,
+  formatStatsResponse,
   formatTimestamp,
   generateAuthQueryParam,
   getLSat,

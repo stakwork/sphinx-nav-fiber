@@ -87,7 +87,7 @@ export const Splash = memo(({ handleLoading }: Props) => {
       <SphereAnimation />
       <Flex style={{ color: colors.white }}>
         <TitleWrapper>
-          {appMetaData.title && <Text className="title">{appMetaData.title}</Text>}
+          {appMetaData && <Text className="title">{appMetaData.title}</Text>}
           <Text className="subtitle">Second Brain</Text>
         </TitleWrapper>
         <LinearProgress color="inherit" sx={{ my: 1.75, height: '2px' }} value={progress} variant="determinate" />

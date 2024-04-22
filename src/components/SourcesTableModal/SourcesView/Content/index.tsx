@@ -1,4 +1,5 @@
-import { Button } from '@mui/base'
+/* eslint-disable no-nested-ternary */
+import { Button } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
@@ -60,11 +61,15 @@ export const Content = () => {
             <Table nodes={nodes} />
           </>
         )}
-        {newNodesAvailable ? (
-          <SButton onClick={handleLoadMore}>Load more</SButton>
-        ) : (
-          <NoNewNodesMessage>No new nodes available</NoNewNodesMessage>
-        )}
+        {!loading ? (
+          newNodesAvailable ? (
+            <Button onClick={handleLoadMore} size="medium">
+              Load More
+            </Button>
+          ) : (
+            <NoNewNodesMessage>No new nodes available</NoNewNodesMessage>
+          )
+        ) : null}
       </TableWrapper>
     </Wrapper>
   )
@@ -107,19 +112,6 @@ const TableWrapper = styled(Flex)`
   overflow: auto;
   flex: 1;
   width: 100%;
-`
-
-const SButton = styled(Button)`
-  margin-top: 10px;
-  background-color: #618aff;
-  color: white;
-  border: none;
-  outline: none;
-  border-radius: 3px;
-  font-size: 14px;
-  font-family: Barlow;
-  padding: 5px;
-  width: 80px;
 `
 
 const NoNewNodesMessage = styled.div`

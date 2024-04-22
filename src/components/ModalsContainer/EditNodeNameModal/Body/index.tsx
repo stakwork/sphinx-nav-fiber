@@ -3,16 +3,19 @@ import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
+import { validateImageInputType } from '~/components/ModalsContainer/EditNodeNameModal/utils'
 import { Flex } from '~/components/common/Flex'
 import { getTopicsData, putNodeData } from '~/network/fetchSourcesData'
-import { useSelectedNode } from '~/stores/useDataStore'
+import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { useModal } from '~/stores/useModalStore'
-import { Topic } from '~/types'
+import { NodeExtended, Topic } from '~/types'
 import { colors } from '~/utils/colors'
 import { TitleEditor } from '../Title'
 
 export type FormData = {
-  topic: string
+  name: string
+  image_url: string
+  imageInputType?: boolean
 }
 
 export const Body = () => {
@@ -31,9 +34,11 @@ export const Body = () => {
 
   useEffect(() => {
     if (actualTopicNode) {
-      setValue('topic', actualTopicNode?.topic)
+      setValue('name', actualTopicNode?.name)
     } else if (selectedNode) {
-      setValue('topic', selectedNode.name)
+      setValue('name', selectedNode.name)
+
+      setValue('image_url', selectedNode?.image_url ?? '')
     }
 
     return () => {
@@ -52,7 +57,7 @@ export const Body = () => {
       try {
         const { data: topicData } = await getTopicsData({ search: selectedNode?.name })
 
-        const node = topicData.find((i) => i.topic === selectedNode.name)
+        const node = topicData.find((i) => i.name === selectedNode.name)
 
         setActualTopicNode(node)
       } catch (error) {
@@ -65,7 +70,15 @@ export const Body = () => {
     init()
   }, [selectedNode])
 
-  const topicValue = watch('topic')
+  const isValidImageUrl = watch('imageInputType')
+
+  const topicValue = watch('name')
+
+  const imageUrl = watch('image_url')
+
+  useEffect(() => {
+    setValue('imageInputType', validateImageInputType(imageUrl))
+  }, [imageUrl, setValue])
 
   const closeHandler = () => {
     close()
@@ -76,10 +89,15 @@ export const Body = () => {
   const handleSave = async () => {
     setLoading(true)
 
-    const propName = actualTopicNode ? 'topic' : 'name'
+    const propName = 'name'
+    const updatedData = { [propName]: topicValue.trim(), image_url: imageUrl.trim() }
 
     try {
-      await putNodeData(node?.ref_id || '', { [propName]: topicValue.trim() })
+      await putNodeData(node?.ref_id || '', updatedData)
+
+      const { updateNode } = useDataStore.getState()
+
+      updateNode({ ...node, ...updatedData } as NodeExtended)
 
       closeHandler()
     } catch (error) {
@@ -93,7 +111,10 @@ export const Body = () => {
     openRemoveNodeModal()
   }
 
-  const isNodeNameChanged = getValues().topic && actualTopicNode?.topic !== getValues().topic
+  const isNodeNameChanged = getValues().name && actualTopicNode?.name !== getValues().name
+
+  const shouldDisableSave =
+    loading || topicIsLoading || (!!imageUrl && !isValidImageUrl) || (!imageUrl && !isNodeNameChanged)
 
   return (
     <Wrapper>
@@ -118,7 +139,7 @@ export const Body = () => {
           </DeleteButton>
           <Button
             color="secondary"
-            disabled={loading || topicIsLoading || !isNodeNameChanged}
+            disabled={shouldDisableSave}
             onClick={handleSave}
             size="large"
             style={{ flex: 1 }}

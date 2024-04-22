@@ -7,8 +7,8 @@ export const sourcesMapper: ISourceMap = {
   [YOUTUBE_CHANNEL]: 'Youtube channel',
 }
 
-export const SOURCE_TABLE = 'Sources table'
-export const QUEUED_SOURCES = 'Queued sources'
+export const SOURCE_TABLE = 'Sources Table'
+export const QUEUED_SOURCES = 'Queued Sources'
 export const TOPICS = 'Topics'
 export const VIEW_CONTENT = 'View Content'
 
