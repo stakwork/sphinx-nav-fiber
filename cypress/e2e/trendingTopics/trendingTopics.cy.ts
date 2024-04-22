@@ -43,6 +43,7 @@ describe('test trending topics', () => {
       for (let i = 0; i < responseBody.length; i++) {
         cy.contains('.list', `#${responseBody[i].name}`).should('exist')
       }
+
       cy.contains(`#${responseBody[0].name}`).eq(0).click()
 
       //wait for search result
@@ -52,6 +53,10 @@ describe('test trending topics', () => {
 
       // Check if the search result list has more than one child
       cy.get('#search-result-list').children().should('have.length.gt', 0)
+
+      cy.get('#search-result-list').children().first().click()
+
+      cy.get('[data-testid="sidebar-sub-view"]').should('have.css', 'position', 'relative')
 
       //cancel search
       cy.get('[data-testid="search_action_icon"]').click()
