@@ -1,3 +1,4 @@
+/* eslint-disable padding-line-between-statements */
 import '@testing-library/jest-dom'
 import { fireEvent, render, waitFor } from '@testing-library/react'
 import moment from 'moment'
@@ -90,6 +91,7 @@ describe('TwitData Component', () => {
     expect(viewTweetLink).toHaveAttribute(
       'href',
       `https://twitter.com/${mockSelectedNode.twitter_handle}/status/${mockSelectedNode.tweet_id}`,
+
     )
   })
 })

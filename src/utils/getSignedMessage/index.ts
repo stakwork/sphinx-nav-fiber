@@ -10,6 +10,14 @@ let signingPromise: Promise<any> | null = null
 export async function getSignedMessageFromRelay(): Promise<{ message: string; signature: string }> {
   let message = ''
 
+  const storedSignature = localStorage.getItem('signature')
+
+  if (storedSignature) {
+    const parsedSignature = JSON.parse(storedSignature)
+
+    return { signature: parsedSignature.signature, message: parsedSignature.message }
+  }
+
   try {
     message = `${window.crypto.randomUUID()}${new Date().getTime()}`
   } catch (error) {
@@ -27,7 +35,11 @@ export async function getSignedMessageFromRelay(): Promise<{ message: string; si
           .then((storedLsat: any) => {
             signingPromise = null // Reset the promise after it's resolved
 
-            return { message, signature: storedLsat.signature }
+            const response = { message, signature: storedLsat.signature }
+
+            storeSignatureInLocalStorage({ ...response })
+
+            return { ...response }
           })
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           .catch((error: any) => {
@@ -43,7 +55,11 @@ export async function getSignedMessageFromRelay(): Promise<{ message: string; si
           .then((storedLsat: any) => {
             signingPromise = null // Reset the promise after it's resolved
 
-            return { message, signature: storedLsat.response.sig }
+            const response = { message, signature: storedLsat.response.sig }
+
+            storeSignatureInLocalStorage({ ...response })
+
+            return { ...response }
           })
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           .catch((error: any) => {
@@ -59,6 +75,10 @@ export async function getSignedMessageFromRelay(): Promise<{ message: string; si
   }
 
   return Promise.resolve({ message: '', signature: '' })
+}
+
+function storeSignatureInLocalStorage(sig: { message: string; signature: string }) {
+  localStorage.setItem('signature', JSON.stringify({ ...sig }))
 }
 
 export async function generateAuthQueryParam() {

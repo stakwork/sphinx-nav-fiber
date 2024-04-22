@@ -36,8 +36,8 @@ const mockedUseModal = useModal as jest.MockedFunction<typeof useModal>
 const availableModal = ['briefDescription', 'addContent']
 
 const mockTrends = [
-  { topic: 'Drivechain', count: 10, audio_EN: 'drivechain.mp3', tldr: 'Drivechain TLDR' },
-  { topic: 'Ordinals', count: 10, audio_EN: 'ordinals.mp3', tldr: 'Ordinals TLDR' },
+  { name: 'Drivechain', count: 10, audio_EN: 'drivechain.mp3', tldr: 'Drivechain TLDR' },
+  { name: 'Ordinals', count: 10, audio_EN: 'ordinals.mp3', tldr: 'Ordinals TLDR' },
 ]
 
 describe('Trending Component', () => {
@@ -73,8 +73,8 @@ describe('Trending Component', () => {
 
     const { getByText } = render(<Trending />)
 
-    mockTrends.forEach(({ topic }) => {
-      expect(getByText(`#${topic}`)).toBeInTheDocument()
+    mockTrends.forEach(({ name }) => {
+      expect(getByText(`#${name}`)).toBeInTheDocument()
     })
   })
 
@@ -140,7 +140,7 @@ describe('Trending Component', () => {
 
     const { getByText } = render(<Trending />)
 
-    fireEvent.click(getByText(`#${mockTrends[0].topic}`))
+    fireEvent.click(getByText(`#${mockTrends[0].name}`))
     ;(async () => {
       await waitFor(() => expect(mockedSelectTrendingTopic).toHaveBeenCalled())
     })()
@@ -153,7 +153,7 @@ describe('Trending Component', () => {
 
     const { getByText } = render(<Trending />)
 
-    fireEvent.click(getByText(`#${mockTrends[0].topic}`))
+    fireEvent.click(getByText(`#${mockTrends[0].name}`))
     ;(async () => {
       await waitFor(() => {
         const searchInput = screen.getByPlaceholderText('Search') as HTMLInputElement

@@ -9,6 +9,7 @@ import { useAppStore } from '~/stores/useAppStore'
 import { NodeExtended } from '~/types'
 import { colors } from '~/utils/colors'
 import CheckIcon from '../../../Icons/CheckIcon'
+import { getFullTranscript } from '~/network/fetchSourcesData'
 
 type TranscriptProps = {
   stateless?: boolean
@@ -36,38 +37,35 @@ export const Transcript = ({ stateless, node }: TranscriptProps) => {
     return null
   }
 
-  const url = 'https://knowledge-graph.sphinx.chat'
-
-  const loadFullTranscript = async (refId: string) => {
+  const loadFullTranscript = async () => {
     try {
-      const response = await fetch(`${url}/node/text/${refId}`) // can you please change "https://knowledge-graph.sphinx.chat" to host var
+      const response = await getFullTranscript(node?.ref_id)
 
-      if (!response.ok) {
-        throw new Error('Network response was not ok')
-      }
-
-      const data = await response.json()
-
-      setFullTranscript(data.data.text)
-      setShowFullTranscript(true)
+      setFullTranscript(response.data.text)
     } catch (error) {
       console.error('Error fetching full transcript', error)
     }
   }
 
-  const handleCopy = () => {
-    copyNodeText(node?.text)
+  const handleCopy = async () => {
+    if (fullTranscript === '') {
+      const response = await getFullTranscript(node?.ref_id)
+
+      copyNodeText(response.data.text)
+    } else {
+      copyNodeText(fullTranscript)
+    }
 
     setTimeout(() => {
       setIsCopied(false)
     }, 2000)
   }
 
-  const handleMoreClick = () => {
+  const handleMoreClick = async () => {
     if (!showFullTranscript) {
-      if (node?.ref_id) {
-        loadFullTranscript(node.ref_id)
-      }
+      await loadFullTranscript()
+
+      setShowFullTranscript(true)
     } else {
       setShowFullTranscript(false)
     }

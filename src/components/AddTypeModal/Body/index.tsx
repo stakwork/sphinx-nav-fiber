@@ -101,6 +101,8 @@ export const Body = ({ onSchemaCreate, selectedSchema, onDelete }: Props) => {
     [visible, reset],
   )
 
+  const capitalizeFirstLetter = (string: string) => string.charAt(0).toUpperCase() + string.slice(1)
+
   useEffect(() => {
     const init = async () => {
       setParentsLoading(true)
@@ -108,14 +110,16 @@ export const Body = ({ onSchemaCreate, selectedSchema, onDelete }: Props) => {
       try {
         const data = await getNodeSchemaTypes()
 
-        const schemaOptions = data.schemas.map((schema) =>
-          schema?.type === 'thing'
-            ? { label: 'No Parent', value: schema.type }
-            : {
-                label: schema.type,
-                value: schema.type,
-              },
-        )
+        const schemaOptions = data.schemas
+          .filter((schema) => !schema.is_deleted)
+          .map((schema) =>
+            schema?.type === 'thing'
+              ? { label: 'No Parent', value: schema.type }
+              : {
+                  label: capitalizeFirstLetter(schema.type),
+                  value: schema.type,
+                },
+          )
 
         setParentOptions(schemaOptions)
       } catch (error) {
@@ -231,7 +235,7 @@ export const Body = ({ onSchemaCreate, selectedSchema, onDelete }: Props) => {
             </Flex>
           )}
         </Flex>
-        <CreateCustomNodeAttribute parent={parent} />
+        <CreateCustomNodeAttribute parent={selectedSchema ? selectedSchema.type : parent} />
         <Flex direction="row" justify="space-between" mt={20}>
           {selectedSchema ? (
             <DeleteButton

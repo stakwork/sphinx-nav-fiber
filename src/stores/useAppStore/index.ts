@@ -1,5 +1,4 @@
 import { create } from 'zustand'
-import { initialAboutState } from '~/components/App/Splash/constants'
 import { TAboutParams } from '~/network/fetchSourcesData'
 
 export type SecondarySidebarActiveTab = '' | 'sentiment' | 'sources' | 'about'
@@ -14,7 +13,7 @@ export type AppStore = {
   transcriptIsOpen: boolean
   flagErrorIsOpen: boolean
   relevanceIsSelected: boolean
-  appMetaData: TAboutParams
+  appMetaData: TAboutParams | null
   clearSearch: () => void
   setCurrentSearch: (_: string) => void
   setSearchFormValue: (_: string) => void
@@ -36,7 +35,7 @@ const defaultData = {
   sidebarIsOpen: true,
   theme: 'light' as const,
   transcriptIsOpen: false,
-  appMetaData: initialAboutState,
+  appMetaData: null,
 }
 
 export const useAppStore = create<AppStore>((set, get) => ({
