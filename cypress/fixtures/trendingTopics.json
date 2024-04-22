@@ -1,0 +1,270 @@
+[
+  {
+    "tweet_id": 1780202472759242953,
+    "date": "2024-04-16T11:51:58.000Z",
+    "text": "Good morning, these new Dune movies suck. \n\nEverything in them feels fake and forced and I have trouble caring about anyone in it or anything they are doing.",
+    "name": "John Carvalho",
+    "twitter_handle": "BitcoinErrorLog",
+    "profile_picture": "https://pbs.twimg.com/profile_images/1706701706799493122/h1iUnJbJ_normal.png",
+    "verified": false,
+    "topics": [
+      {
+        "topic": "Dune movies",
+        "relevancy_score": "0.0"
+      },
+      {
+        "topic": "criticism",
+        "relevancy_score": "0.3"
+      },
+      {
+        "topic": "authenticity",
+        "relevancy_score": "0.4"
+      },
+      {
+        "topic": "character engagement",
+        "relevancy_score": "0.1"
+      }
+    ],
+    "follower_count": null,
+    "pubkey": "03a9a8d953fe747d0dd94dd3c567ddc58451101e987e2d2bf7a4d1e10a2c89ff38",
+    "image_url": "https://pbs.twimg.com/profile_images/1706701706799493122/h1iUnJbJ_normal.png"
+  },
+  {
+    "tweet_id": 1780202910510444830,
+    "date": "2024-04-16T11:53:43.000Z",
+    "text": "RT @WhalePanda: A thread on moving abroad (in my case Dubai)\n\n2.5 years ago I moved to Dubai with my wife and 2 kids and it was one of the…",
+    "name": "Stephan Livera",
+    "twitter_handle": "stephanlivera",
+    "profile_picture": "https://pbs.twimg.com/profile_images/1362551718110580740/v-W5Q2uo_normal.jpg",
+    "verified": false,
+    "topics": [
+      {
+        "topic": "Moving Abroad",
+        "relevancy_score": "0.1"
+      },
+      {
+        "topic": "Dubai",
+        "relevancy_score": "0.1"
+      },
+      {
+        "topic": "Family Relocation",
+        "relevancy_score": "0.1"
+      }
+    ],
+    "follower_count": null,
+    "pubkey": "03a9a8d953fe747d0dd94dd3c567ddc58451101e987e2d2bf7a4d1e10a2c89ff38",
+    "image_url": "https://pbs.twimg.com/profile_images/1362551718110580740/v-W5Q2uo_normal.jpg"
+  },
+  {
+    "tweet_id": 1780201629997838790,
+    "date": "2024-04-16T11:48:37.000Z",
+    "text": "@0xCobra_ @waleswoosh Bitcoin and the Lightning Network",
+    "name": "Maple 🍁",
+    "twitter_handle": "GhostofMaplHodl",
+    "profile_picture": "https://pbs.twimg.com/profile_images/1630485909765226497/EWRJT89w_normal.jpg",
+    "verified": false,
+    "topics": [
+      {
+        "topic": "Bitcoin",
+        "relevancy_score": "1.0"
+      },
+      {
+        "topic": "Lightning Network",
+        "relevancy_score": "0.9"
+      }
+    ],
+    "follower_count": null,
+    "pubkey": "03a9a8d953fe747d0dd94dd3c567ddc58451101e987e2d2bf7a4d1e10a2c89ff38",
+    "image_url": "https://pbs.twimg.com/profile_images/1630485909765226497/EWRJT89w_normal.jpg"
+  },
+  {
+    "tweet_id": 1780204300796334243,
+    "date": "2024-04-16T11:59:14.000Z",
+    "text": "RT @WarrenDavidson: Freedom surrendered is rarely reclaimed. If we don’t stop this #FISA expansion, privacy in America will take a turn for…",
+    "name": "Ryan Selkis (d/acc)🪳",
+    "twitter_handle": "twobitidiot",
+    "profile_picture": "https://pbs.twimg.com/profile_images/1574392800963174402/mea0sjf2_normal.jpg",
+    "verified": false,
+    "topics": [
+      {
+        "topic": "Freedom",
+        "relevancy_score": "0.5"
+      },
+      {
+        "topic": "FISA Expansion",
+        "relevancy_score": "0.3"
+      },
+      {
+        "topic": "Privacy in America",
+        "relevancy_score": "0.6"
+      }
+    ],
+    "follower_count": null,
+    "pubkey": "03a9a8d953fe747d0dd94dd3c567ddc58451101e987e2d2bf7a4d1e10a2c89ff38",
+    "image_url": "https://pbs.twimg.com/profile_images/1574392800963174402/mea0sjf2_normal.jpg"
+  },
+  {
+    "tweet_id": 1780202180303012329,
+    "date": "2024-04-16T11:50:48.000Z",
+    "text": "RT @pmarca: Vitalik is the #1 funder of AI doomerism and astroturf lobbying. Nothing funny about that.",
+    "name": "Ryan Selkis (d/acc)🪳",
+    "twitter_handle": "twobitidiot",
+    "profile_picture": "https://pbs.twimg.com/profile_images/1574392800963174402/mea0sjf2_normal.jpg",
+    "verified": false,
+    "topics": [
+      {
+        "topic": "Vitalik",
+        "relevancy_score": "0.3"
+      },
+      {
+        "topic": "AI doomerism",
+        "relevancy_score": "0.1"
+      },
+      {
+        "topic": "Astroturf lobbying",
+        "relevancy_score": "0.1"
+      }
+    ],
+    "follower_count": null,
+    "pubkey": "03a9a8d953fe747d0dd94dd3c567ddc58451101e987e2d2bf7a4d1e10a2c89ff38",
+    "image_url": "https://pbs.twimg.com/profile_images/1574392800963174402/mea0sjf2_normal.jpg"
+  },
+  {
+    "tweet_id": 1780202096165310939,
+    "date": "2024-04-16T11:50:28.000Z",
+    "text": "RT @pmarca: * $665 million to AI doomers",
+    "name": "Ryan Selkis (d/acc)🪳",
+    "twitter_handle": "twobitidiot",
+    "profile_picture": "https://pbs.twimg.com/profile_images/1574392800963174402/mea0sjf2_normal.jpg",
+    "verified": false,
+    "topics": [
+      {
+        "topic": "AI",
+        "relevancy_score": "0.1"
+      },
+      {
+        "topic": "Funding",
+        "relevancy_score": "0.5"
+      }
+    ],
+    "follower_count": null,
+    "pubkey": "03a9a8d953fe747d0dd94dd3c567ddc58451101e987e2d2bf7a4d1e10a2c89ff38",
+    "image_url": "https://pbs.twimg.com/profile_images/1574392800963174402/mea0sjf2_normal.jpg"
+  },
+  {
+    "tweet_id": 1780201956687962538,
+    "date": "2024-04-16T11:49:55.000Z",
+    "text": "We're approaching the point of no return.\n\nD.C. is evil. https://t.co/gZH5banBJm",
+    "name": "Ryan Selkis (d/acc)🪳",
+    "twitter_handle": "twobitidiot",
+    "profile_picture": "https://pbs.twimg.com/profile_images/1574392800963174402/mea0sjf2_normal.jpg",
+    "verified": false,
+    "topics": [
+      {
+        "topic": "Point of No Return",
+        "relevancy_score": "0.1"
+      },
+      {
+        "topic": "D.C.",
+        "relevancy_score": "0.2"
+      },
+      {
+        "topic": "Evil",
+        "relevancy_score": "0.1"
+      }
+    ],
+    "follower_count": null,
+    "pubkey": "03a9a8d953fe747d0dd94dd3c567ddc58451101e987e2d2bf7a4d1e10a2c89ff38",
+    "image_url": "https://pbs.twimg.com/profile_images/1574392800963174402/mea0sjf2_normal.jpg"
+  },
+  {
+    "tweet_id": 1780201787175170112,
+    "date": "2024-04-16T11:49:15.000Z",
+    "text": "RT @RepThomasMassie: Speaker Johnson has led the GOP to pass:\n\n1) an omnibus that spends more than Pelosi’s highest year\n\n2) an expansion o…",
+    "name": "Ryan Selkis (d/acc)🪳",
+    "twitter_handle": "twobitidiot",
+    "profile_picture": "https://pbs.twimg.com/profile_images/1574392800963174402/mea0sjf2_normal.jpg",
+    "verified": false,
+    "topics": [
+      {
+        "topic": "Omnibus Spending Bill",
+        "relevancy_score": "0.1"
+      },
+      {
+        "topic": "GOP Leadership",
+        "relevancy_score": "0.1"
+      },
+      {
+        "topic": "Speaker Johnson",
+        "relevancy_score": "0.1"
+      }
+    ],
+    "follower_count": null,
+    "pubkey": "03a9a8d953fe747d0dd94dd3c567ddc58451101e987e2d2bf7a4d1e10a2c89ff38",
+    "image_url": "https://pbs.twimg.com/profile_images/1574392800963174402/mea0sjf2_normal.jpg"
+  },
+  {
+    "tweet_id": 1780201636779917445,
+    "date": "2024-04-16T11:48:39.000Z",
+    "text": "@WafflesSmo3578 Progressive tax is no longer sufficient: billionaires shouldn't exist and wealth should be seized.\n\nChoice should be available up to live birth on demand.\n\nNo crimes should be prosecuted because of racism.\n\nSpeech can be \"violence\" and \"misinformation\" so kill it.\n\nFlags in bio.",
+    "name": "Ryan Selkis (d/acc)🪳",
+    "twitter_handle": "twobitidiot",
+    "profile_picture": "https://pbs.twimg.com/profile_images/1574392800963174402/mea0sjf2_normal.jpg",
+    "verified": false,
+    "topics": [
+      {
+        "topic": "Progressive Tax",
+        "relevancy_score": "0.1"
+      },
+      {
+        "topic": "Billionaires",
+        "relevancy_score": "0.4"
+      },
+      {
+        "topic": "Wealth Redistribution",
+        "relevancy_score": "0.2"
+      },
+      {
+        "topic": "Abortion Rights",
+        "relevancy_score": "0.0"
+      },
+      {
+        "topic": "Criminal Justice",
+        "relevancy_score": "0.0"
+      },
+      {
+        "topic": "Racism",
+        "relevancy_score": "0.0"
+      },
+      {
+        "topic": "Free Speech",
+        "relevancy_score": "0.3"
+      },
+      {
+        "topic": "Misinformation",
+        "relevancy_score": "0.5"
+      }
+    ],
+    "follower_count": null,
+    "pubkey": "03a9a8d953fe747d0dd94dd3c567ddc58451101e987e2d2bf7a4d1e10a2c89ff38",
+    "image_url": "https://pbs.twimg.com/profile_images/1574392800963174402/mea0sjf2_normal.jpg"
+  },
+  {
+    "tweet_id": 1780199687536124044,
+    "date": "2024-04-16T11:40:54.000Z",
+    "text": "@saifedean @moicanoufc The Six Lessons of #Bitcoin",
+    "name": "Bitstein",
+    "twitter_handle": "bitstein",
+    "profile_picture": "https://pbs.twimg.com/profile_images/1362578436665995266/yssI-4C__normal.jpg",
+    "verified": false,
+    "topics": [
+      {
+        "topic": "Bitcoin",
+        "relevancy_score": "1.0"
+      }
+    ],
+    "follower_count": null,
+    "pubkey": "03a9a8d953fe747d0dd94dd3c567ddc58451101e987e2d2bf7a4d1e10a2c89ff38",
+    "image_url": "https://pbs.twimg.com/profile_images/1362578436665995266/yssI-4C__normal.jpg"
+  }
+]

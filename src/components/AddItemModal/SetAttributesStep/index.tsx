@@ -15,9 +15,10 @@ import { requiredRule } from '~/constants'
 type Props = {
   skipToStep: (step: AddItemModalStepID) => void
   nodeType: string
+  handleSelectType: (val: string) => void
 }
 
-export const SetAttributesStep: FC<Props> = ({ skipToStep, nodeType }) => {
+export const SetAttributesStep: FC<Props> = ({ handleSelectType, skipToStep, nodeType }) => {
   const [loading, setLoading] = useState(false)
   const [attributes, setAttributes] = useState<parsedObjProps[]>()
 
@@ -58,6 +59,11 @@ export const SetAttributesStep: FC<Props> = ({ skipToStep, nodeType }) => {
       })
     : []
 
+  const handlePrevButton = () => {
+    handleSelectType('')
+    skipToStep('sourceType')
+  }
+
   return (
     <Flex>
       <Flex align="center" direction="row" justify="space-between" mb={18}>
@@ -95,7 +101,7 @@ export const SetAttributesStep: FC<Props> = ({ skipToStep, nodeType }) => {
 
       <Flex direction="row">
         <Flex grow={1}>
-          <Button color="secondary" onClick={() => skipToStep('sourceType')} size="large" variant="contained">
+          <Button color="secondary" onClick={handlePrevButton} size="large" variant="contained">
             Prev
           </Button>
         </Flex>

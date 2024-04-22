@@ -10,6 +10,10 @@ describe('validateImageInputType function', () => {
       true,
     )
 
+    expect(
+      validateImageInputType('https://pbs.twimg.com/profile_images/1729542498006294529/AjwhArl6_normal.jpeg'),
+    ).toBe(true)
+
     expect(validateImageInputType('https://pbs.twimg.com/profile_images/1729542498006294529/AjwhArl6_normal.svg')).toBe(
       true,
     )

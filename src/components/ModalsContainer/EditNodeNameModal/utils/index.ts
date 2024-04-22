@@ -1,4 +1,4 @@
-export const imageUrlRegex = /^https:\/\/.*\.(png|jpg|svg)$/
+export const imageUrlRegex = /^https:\/\/.*\.(png|jpe?g|svg)$/
 
 export function validateImageInputType(url: string): boolean {
   if (imageUrlRegex.test(url)) {

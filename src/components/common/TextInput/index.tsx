@@ -48,9 +48,11 @@ export const TextInput = ({
     register,
     control,
     formState: { errors },
+    getValues,
   } = useFormContext() || {}
 
   const error = get(errors, name)
+  const feildValue = getValues(name)
 
   useEffect(() => {
     const inputElement = document.getElementById(id)
@@ -118,7 +120,7 @@ export const TextInput = ({
         />
       </Wrapper>
 
-      {error && (
+      {feildValue && error && (
         <Flex pl={4} pt={8} shrink={1} tabIndex={0}>
           <Text color="primaryRed" kind="regularBold">
             <Flex align="center" direction="row" shrink={1}>
