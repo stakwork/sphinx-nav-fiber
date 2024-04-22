@@ -17,9 +17,21 @@ type Props = {
   selectTrending: (val: string) => void
 }
 
+type ScrollableContentProps = {
+  isContentLarge: boolean
+}
+
 export const BriefDescription: FC<Props> = ({ trend, onClose, selectTrending }) => {
   const [isPlaying, setIsPlaying] = useState(false)
   const { close } = useModal('briefDescription')
+  const [isContentLarge, setIsContentLarge] = useState(false)
+  const contentRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (contentRef.current) {
+      setIsContentLarge(contentRef.current.scrollHeight > 300)
+    }
+  }, [trend.tldr])
 
   const audioRef = useRef<HTMLVideoElement | null>(null)
 
@@ -79,7 +91,7 @@ export const BriefDescription: FC<Props> = ({ trend, onClose, selectTrending }) 
         </>
       ) : null}
       <Title>{trend.tldr_topic ?? trend.name}</Title>
-      <ScrollableContent>
+      <ScrollableContent ref={contentRef} isContentLarge={isContentLarge}>
         <Flex>
           <StyledText>{trend.tldr && <Markdown>{trend.tldr}</Markdown>}</StyledText>
         </Flex>
@@ -88,9 +100,9 @@ export const BriefDescription: FC<Props> = ({ trend, onClose, selectTrending }) 
   )
 }
 
-const ScrollableContent = styled.div`
+const ScrollableContent = styled.div<ScrollableContentProps>`
   max-height: 300px;
-  overflow-y: auto;
+  overflow-y: ${({ isContentLarge }) => (isContentLarge ? 'auto' : 'hidden')};
   margin: 8px 0;
   padding: 0 20px;
 `
