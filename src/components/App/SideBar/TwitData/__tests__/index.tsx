@@ -84,12 +84,12 @@ describe('TwitData Component', () => {
   })
 
   it('external link to the tweet is correctly constructed', () => {
-    const { getByText } = render(<TwitData />)
-    const viewTweetButton = getByText('View Tweet')
+    const { getByRole } = render(<TwitData />)
+    const viewTweetLink = getByRole('link', { name: /View Tweet/i })
 
-    expect(viewTweetButton.closest('a')).toHaveAttribute(
+    expect(viewTweetLink).toHaveAttribute(
       'href',
-      `https://twitter.com/Interior/status/${mockSelectedNode.tweet_id}?open=system`,
+      `https://twitter.com/${mockSelectedNode.twitter_handle}/status/${mockSelectedNode.tweet_id}`,
     )
   })
 })
