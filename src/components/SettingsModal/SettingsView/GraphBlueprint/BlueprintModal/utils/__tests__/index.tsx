@@ -61,4 +61,11 @@ describe('calculateNodePositions', () => {
 
     expect(result).toHaveLength(0)
   })
+
+  it('returns empty array if root node is not found', () => {
+    const nodesWithoutRoot: SchemaWithChildren[] = [{ type: 'NotThing', children: [] }]
+    const result: SchemaExtended[] = calculateNodePositions(nodesWithoutRoot)
+
+    expect(result).toHaveLength(0)
+  })
 })
