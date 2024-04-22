@@ -3,6 +3,8 @@ import React, { useEffect, useState } from 'react'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
 import { AddTypeModal } from '~/components/AddTypeModal'
+import BubbleChartIcon from '~/components/Icons/BubbleChartIcon'
+import PlusIcon from '~/components/Icons/PlusIcon'
 import { Flex } from '~/components/common/Flex'
 import { Schema, getSchemaAll } from '~/network/fetchSourcesData'
 import { useModal } from '~/stores/useModalStore'
@@ -13,9 +15,10 @@ import { Table } from './Table'
 
 export const GraphBlueprint: React.FC = () => {
   const [loading, setLoading] = useState(true)
-  const [schemaAll, setSchemaAll] = useSchemaStore((s) => [s.schemas, s.setSchemas])
+  const [schemaAll, setSchemaAll, setSchemaLinks] = useSchemaStore((s) => [s.schemas, s.setSchemas, s.setSchemaLinks])
   const [selectedSchema, setSelectedSchema] = useState<Schema | null>(null)
   const { open } = useModal('blueprintGraph')
+  const { open: openContentAddModal } = useModal('addType')
 
   useEffect(() => {
     const fetchData = async () => {
@@ -23,6 +26,7 @@ export const GraphBlueprint: React.FC = () => {
         const response = await getSchemaAll()
 
         setSchemaAll(response.schemas.filter((i) => i.ref_id && !i.is_deleted))
+        setSchemaLinks(response.edges)
 
         setLoading(false)
       } catch (error) {
@@ -33,7 +37,7 @@ export const GraphBlueprint: React.FC = () => {
     }
 
     fetchData()
-  }, [setSchemaAll])
+  }, [setSchemaAll, setSchemaLinks])
 
   const onSchemaCreate = (schema: Schema) => {
     setSchemaAll([...schemaAll, schema])
@@ -44,9 +48,23 @@ export const GraphBlueprint: React.FC = () => {
   }
 
   return (
-    <>
-      <TableWrapper align={loading ? 'center' : 'flex-start'} justify={loading ? 'center' : 'flex-start'} py={16}>
-        <Button onClick={open}>showGraph</Button>
+    <Flex grow={1} shrink={1}>
+      <Flex direction="row" justify="space-between" px={37} py={21}>
+        <Button
+          color="primary"
+          onClick={openContentAddModal}
+          size="medium"
+          startIcon={<PlusIcon />}
+          type="submit"
+          variant="contained"
+        >
+          Create New Type
+        </Button>
+        <Button onClick={open} startIcon={<BubbleChartIcon />} variant="text">
+          Graph View
+        </Button>
+      </Flex>
+      <TableWrapper align={loading ? 'center' : 'flex-start'} justify={loading ? 'center' : 'flex-start'}>
         {loading ? (
           <ClipLoader color={colors.white} />
         ) : (
@@ -67,7 +85,7 @@ export const GraphBlueprint: React.FC = () => {
         onSchemaCreate={onSchemaCreate}
         selectedSchema={selectedSchema}
       />
-    </>
+    </Flex>
   )
 }
 

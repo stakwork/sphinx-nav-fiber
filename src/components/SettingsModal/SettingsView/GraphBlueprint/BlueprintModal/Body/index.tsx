@@ -1,16 +1,12 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Canvas } from '@react-three/fiber'
-import { Vector3 } from 'three'
+import styled from 'styled-components'
 import { Lights } from '~/components/Universe/Lights'
+import { Flex } from '~/components/common/Flex'
 import { Schema } from '~/network/fetchSourcesData'
-import { Node } from './Node'
-
-const defaultValues = {
-  type: '',
-  parent: '',
-}
-
-const initialCameraPosition = new Vector3(0, 0, 1500)
+import { useSchemaStore } from '~/stores/useSchemaStore'
+import { SchemaWithChildren, calculateNodePositions } from '../utils'
+import { Lines } from './Links'
+import { Nodes } from './Nodes'
 
 export type FormData = {
   type: string
@@ -26,22 +22,62 @@ type Props = {
   onDelete: (type: string) => void
 }
 
-const cameraProps = {
-  aspect: window.innerWidth / window.innerHeight,
-  far: 30000,
-  near: 1,
-  position: [initialCameraPosition.x, initialCameraPosition.y, initialCameraPosition.z],
-} as const
-
 export const Body = ({ onSchemaCreate, selectedSchema, onDelete }: Props) => {
   console.log(onSchemaCreate, selectedSchema, onDelete)
 
+  const [schemasNonFiltered, links] = useSchemaStore((s) => [s.schemas, s.links])
+
+  const schemasWithDuplicates = schemasNonFiltered.filter((i) => i.ref_id && !i.is_deleted)
+
+  const schemas: Schema[] = []
+
+  schemasWithDuplicates.forEach((i) => {
+    if (!schemas.some((j) => j.ref_id === i.ref_id)) {
+      schemas.push(i)
+    }
+  })
+
+  const schemasWithChildren: SchemaWithChildren[] = schemas.map((schema) => ({
+    ...schema,
+    children: schemas
+      .filter((childSchema) => childSchema.parent === schema.type)
+      .map((childSchema) => childSchema.ref_id || ''),
+  }))
+
+  const schemasWithPositions = calculateNodePositions(schemasWithChildren)
+
+  const linksFiltered = links.filter(
+    (link) =>
+      link.edge_type === 'CHILD_OF' &&
+      schemasWithPositions.some((schema) => schema.ref_id === link.source || schema.ref_id === link.target),
+  )
+
+  const linksWithPositions = linksFiltered.map((link) => {
+    const startNode = schemasWithPositions.find((schema) => schema.ref_id === link.source) || { x: 0, y: 0, z: 0 }
+    const endNode = schemasWithPositions.find((schema) => schema.ref_id === link.target) || { x: 0, y: 0, z: 0 }
+
+    return {
+      ...link,
+      start: { x: startNode.x, y: startNode.y, z: startNode.z },
+      end: { x: endNode.x, y: endNode.y, z: endNode.z },
+    }
+  })
+
   return (
-    <div>
-      <Canvas camera={cameraProps} id="schema-canvas">
+    <Wrapper>
+      <Canvas camera={{ zoom: 80 }} id="schema-canvas" orthographic>
         <Lights />
-        <Node node={{ x: 0, y: 0, z: 0, id: '0' }} />
+        <Lines links={linksWithPositions} />
+        <>
+          <Nodes nodes={schemasWithPositions} />
+        </>
       </Canvas>
-    </div>
+    </Wrapper>
   )
 }
+
+const Wrapper = styled(Flex)`
+  flex: 1 1 100%;
+  justify-content: center;
+  align-items: center;
+`

@@ -3,7 +3,6 @@ import { BaseModal } from '~/components/Modal'
 import { Schema } from '~/network/fetchSourcesData'
 import { useModal } from '~/stores/useModalStore'
 import { Body } from './Body'
-import { useSchemaStore } from '~/stores/useSchemaStore'
 
 const defaultValues = {
   type: '',
@@ -27,7 +26,6 @@ type Props = {
 
 export const BlueprintModal = ({ onSchemaCreate, selectedSchema, onDelete, onClose }: Props) => {
   const { close } = useModal('blueprintGraph')
-  const [schemas] = useSchemaStore((s) => [s.schemas])
 
   const handleClose = () => {
     close()
@@ -35,7 +33,7 @@ export const BlueprintModal = ({ onSchemaCreate, selectedSchema, onDelete, onClo
   }
 
   return (
-    <BaseModal id="blueprintGraph" kind="large" onClose={handleClose} preventOutsideClose>
+    <BaseModal id="blueprintGraph" kind="full" onClose={handleClose} preventOutsideClose>
       <Body onDelete={onDelete} onSchemaCreate={onSchemaCreate} selectedSchema={selectedSchema} />
     </BaseModal>
   )
