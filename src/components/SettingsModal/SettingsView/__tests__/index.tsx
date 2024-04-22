@@ -1,19 +1,21 @@
 /* eslint-disable padding-line-between-statements */
+import '@testing-library/jest-dom'
 import { fireEvent, render, screen } from '@testing-library/react'
 import * as React from 'react'
-import '@testing-library/jest-dom'
-import { SettingsView } from '../../index'
 
-import * as useUserStoreModule from '../../../../../stores/useUserStore'
+import { SettingsView } from '..'
+import { useUserStore } from '../../../../stores/useUserStore'
 
 jest.mock('~/stores/useUserStore')
 jest.mock('~/stores/useAppStore')
+
+const useUserStoreMock = useUserStore as jest.MockedFunction<typeof useUserStore>
 
 describe('SettingsView Component', () => {
   test('renders SettingsView component correctly for non-admin user', async () => {
     const isAdminMock = jest.fn(() => [false])
 
-    useUserStoreModule.useUserStore.mockImplementation(isAdminMock)
+    useUserStoreMock.mockImplementation(isAdminMock)
 
     render(
       <SettingsView
@@ -31,7 +33,7 @@ describe('SettingsView Component', () => {
   test('renders SettingsView component correctly for admin user', () => {
     const isAdminMock = jest.fn(() => [true])
 
-    useUserStoreModule.useUserStore.mockImplementation(isAdminMock)
+    useUserStoreMock.mockImplementation(isAdminMock)
 
     render(
       <SettingsView
@@ -49,7 +51,7 @@ describe('SettingsView Component', () => {
   test('handles interaction of switching tabs', () => {
     const isAdminMock = jest.fn(() => [true])
 
-    useUserStoreModule.useUserStore.mockImplementation(isAdminMock)
+    useUserStoreMock.mockImplementation(isAdminMock)
 
     render(
       <SettingsView
