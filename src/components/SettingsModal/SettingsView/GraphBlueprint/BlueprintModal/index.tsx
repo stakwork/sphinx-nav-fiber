@@ -24,7 +24,7 @@ type Props = {
   onClose: () => void
 }
 
-export const AddTypeModal = ({ onSchemaCreate, selectedSchema, onDelete, onClose }: Props) => {
+export const BlueprintModal = ({ onSchemaCreate, selectedSchema, onDelete, onClose }: Props) => {
   const { close } = useModal('blueprintGraph')
 
   const handleClose = () => {
@@ -33,7 +33,7 @@ export const AddTypeModal = ({ onSchemaCreate, selectedSchema, onDelete, onClose
   }
 
   return (
-    <BaseModal id="addType" kind="regular" onClose={handleClose} preventOutsideClose>
+    <BaseModal id="blueprintGraph" kind="full" onClose={handleClose} preventOutsideClose>
       <Body onDelete={onDelete} onSchemaCreate={onSchemaCreate} selectedSchema={selectedSchema} />
     </BaseModal>
   )
