@@ -45,6 +45,14 @@ describe('See latest button as new node are added', () => {
 
         expect(query.media_type).to.equal('twitter')
       })
+
+      cy.get('#search-result-list').children().first().click()
+
+      cy.get('[data-testid="sidebar-sub-view"]').should('have.css', 'position', 'relative')
+
+      cy.get('[data-testid="close-sidebar-sub-view"]').click()
+
+      cy.get('[data-testid="sidebar-sub-view"]').should('have.css', 'position', 'absolute')
     })
   })
 })
