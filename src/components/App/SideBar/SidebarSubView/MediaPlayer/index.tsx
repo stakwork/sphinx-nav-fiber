@@ -103,7 +103,7 @@ const MediaPlayerComponent: FC<Props> = ({ hidden }) => {
         })
       } else {
         document.exitFullscreen()
-        setIsFullScreen(false)
+        setTimeout(() => setIsFullScreen(false), 300)
       }
     }
   }
