@@ -180,9 +180,11 @@ export const getRadarData = async (queryParams: TradarParams = defaultParams) =>
   return response
 }
 
-export const getTopicsData = async (queryParams: TtopicsParams = defaultParams) => {
+export const getTopicsData = async (queryParams: TtopicsParams = defaultParams, signal?: AbortSignal) => {
   const response = await api.get<FetchTopicResponse>(
     `/nodes/info?${new URLSearchParams({ ...defaultParams, ...queryParams }).toString()}`,
+    undefined,
+    signal,
   )
 
   return response
