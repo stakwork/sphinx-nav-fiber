@@ -61,7 +61,7 @@ export const Content = () => {
             <Table nodes={nodes} />
           </>
         )}
-        {!loading ? (
+        {nodes.length > 1 ? (
           newNodesAvailable ? (
             <Button onClick={handleLoadMore} size="medium">
               Load More
@@ -103,7 +103,7 @@ const Wrapper = styled(Flex)`
 
   .load-more {
     margin: 8px auto;
-    align-self: center;
+    align-self: bottom;
   }
 `
 
