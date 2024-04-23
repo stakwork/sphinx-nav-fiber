@@ -178,6 +178,9 @@ export const Table: React.FC<TopicTableProps> = ({
                             </>
                           )}
                         </MuteStatusSection>
+                        <MultiSelectMerge onClick={() => handlePopoverAction('mergeTopic')}>
+                          <MergeIcon /> Merge
+                        </MultiSelectMerge>
                       </StatusBarSection>
                     </StyledTableCell>
                   </TableRow>
@@ -343,4 +346,17 @@ const TableInnerWrapper = styled(Flex)`
   overflow: auto;
   flex: 1;
   width: 100%;
+`
+
+const MultiSelectMerge = styled.div`
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  gap: 8px;
+  padding: 1px 8px;
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    padding: 1px 8px;
+    border-radius: 4px;
+  }
 `

@@ -10,18 +10,23 @@ import { Topic } from '~/types'
 import { DropdownSearch } from './Autocomplete'
 
 type Props = {
-  from: string
+  from?: string
   onSelect: (topic: Topic | null) => void
   selectedTopic: Topic | null
   isSwapped: boolean
   setIsSwapped: () => void
+  multiTopics?: Topic[]
 }
 
 interface SectionProps {
   swap: boolean
 }
 
-export const TitleEditor: FC<Props> = ({ from, onSelect, selectedTopic, isSwapped, setIsSwapped }) => (
+interface IconMidContainerProps {
+  disabled: boolean
+}
+
+export const TitleEditor: FC<Props> = ({ from, onSelect, multiTopics, selectedTopic, isSwapped, setIsSwapped }) => (
   <Flex>
     <Flex align="center" direction="row" justify="space-between" mb={18}>
       <Flex align="center" direction="row">
@@ -49,7 +54,7 @@ export const TitleEditor: FC<Props> = ({ from, onSelect, selectedTopic, isSwappe
         <IconTopContainer>
           <NodeCircleIcon />
         </IconTopContainer>
-        <IconMidContainer onClick={setIsSwapped}>
+        <IconMidContainer disabled={Boolean(multiTopics)} onClick={!multiTopics ? setIsSwapped : undefined}>
           <FlipIcon />
         </IconMidContainer>
         <IconBottomContainer>
@@ -146,13 +151,13 @@ const IconTopContainer = styled.div`
   color: #23252f;
 `
 
-const IconMidContainer = styled.div`
+const IconMidContainer = styled.div<IconMidContainerProps>`
   position: absolute;
   color: transparent;
   top: 50%;
   left: 0;
   transform: translateY(-50%) translateX(-50%);
-  cursor: pointer;
+  cursor: ${(props) => (props.disabled ? 'not-allowed' : 'pointer')};
   width: 32px;
   height: 32px;
   background-color: #303342;

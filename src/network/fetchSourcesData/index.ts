@@ -50,7 +50,7 @@ export type TPriceParams = {
 }
 
 export type TMergeTopicsParams = {
-  from: string
+  from?: string | string[]
   to: string
 }
 
@@ -180,11 +180,9 @@ export const getRadarData = async (queryParams: TradarParams = defaultParams) =>
   return response
 }
 
-export const getTopicsData = async (queryParams: TtopicsParams = defaultParams, signal?: AbortSignal) => {
+export const getTopicsData = async (queryParams: TtopicsParams = defaultParams) => {
   const response = await api.get<FetchTopicResponse>(
     `/nodes/info?${new URLSearchParams({ ...defaultParams, ...queryParams }).toString()}`,
-    undefined,
-    signal,
   )
 
   return response
