@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { IconButton, Table as MaterialTable, Popover, TableRow } from '@mui/material'
 import React, { useCallback, useState } from 'react'
 import { ClipLoader } from 'react-spinners'
@@ -34,6 +35,7 @@ export const Table: React.FC<TopicTableProps> = ({
   onChangeFilter,
   checkedStates,
   setCheckedStates,
+  disabled,
 }) => {
   const { close } = useModal('sourcesTable')
   const [loading, setLoading] = useState(false)
@@ -189,6 +191,7 @@ export const Table: React.FC<TopicTableProps> = ({
                       <TopicRow
                         key={i}
                         checkedStates={checkedStates}
+                        disabled={disabled}
                         onClick={handleClick}
                         onSearch={handleSearch}
                         setCheckedStates={setCheckedStates}
