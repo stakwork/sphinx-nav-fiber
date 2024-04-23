@@ -31,7 +31,6 @@ function capitalizeFirstLetter(string: string) {
   return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase()
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const TableRowComponent: React.FC<TableRowProps> = ({ schema, onOpenActions }) => {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
 
@@ -51,43 +50,45 @@ const TableRowComponent: React.FC<TableRowProps> = ({ schema, onOpenActions }) =
   const id = open ? 'popover' : undefined
 
   return (
-    <StyledTableRow>
-      <StyledTableCell className="empty" />
-      <StyledTableCell>{capitalizeFirstLetter(schema.type ?? '')}</StyledTableCell>
-      <StyledTableCell>
-        <IconButton disabled={schema?.type === 'thing'} onClick={handleClick}>
-          <ThreeDotsIcons data-testid="EditIcon" />
-        </IconButton>
-        <PopoverWrapper
-          anchorEl={anchorEl}
-          anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'center',
-          }}
-          id={id}
-          onClose={handleClose}
-          open={open}
-          transformOrigin={{
-            vertical: 'top',
-            horizontal: 'center',
+    <>
+      <StyledTableRow>
+        <StyledTableCell className="empty" />
+        <StyledTableCell>{capitalizeFirstLetter(schema.type ?? '')}</StyledTableCell>
+        <StyledTableCell>
+          <IconButton disabled={schema?.type === 'thing'} onClick={handleClick}>
+            <ThreeDotsIcons data-testid="EditIcon" />
+          </IconButton>
+        </StyledTableCell>
+      </StyledTableRow>
+      <PopoverWrapper
+        anchorEl={anchorEl}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'center',
+        }}
+        id={id}
+        onClose={handleClose}
+        open={open}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'center',
+        }}
+      >
+        <PopoverOption
+          onClick={() => {
+            onOpenActions(schema)
+            handlePopoverOptionClick()
           }}
         >
-          <PopoverOption
-            onClick={() => {
-              onOpenActions(schema)
-              handlePopoverOptionClick()
-            }}
-          >
-            <EditTopicIcon />
-            Edit
-          </PopoverOption>
-          <PopoverOption onClick={handlePopoverOptionClick}>
-            <AddCircleIcon />
-            Add Edge
-          </PopoverOption>
-        </PopoverWrapper>
-      </StyledTableCell>
-    </StyledTableRow>
+          <EditTopicIcon />
+          Edit
+        </PopoverOption>
+        <PopoverOption onClick={handlePopoverOptionClick}>
+          <AddCircleIcon />
+          Add Edge
+        </PopoverOption>
+      </PopoverWrapper>
+    </>
   )
 }
 
