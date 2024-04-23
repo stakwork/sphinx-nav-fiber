@@ -6,11 +6,11 @@ import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { TextInput } from '~/components/common/TextInput'
+import { requiredRule } from '~/constants'
 import { getNodeType } from '~/network/fetchSourcesData'
 import { colors } from '~/utils'
 import { AddItemModalStepID } from '..'
 import { parseJson, parsedObjProps } from '../../AddTypeModal/utils'
-import { requiredRule } from '~/constants'
 
 type Props = {
   skipToStep: (step: AddItemModalStepID) => void
@@ -81,17 +81,18 @@ export const SetAttributesStep: FC<Props> = ({ handleSelectType, skipToStep, nod
           <Flex className="input__wrapper">
             {sortedAttributes?.map(({ key, required }: parsedObjProps) => (
               <>
-                <TextFeildWrapper>
+                <TextFieldWrapper>
                   <Text>{capitalizeFirstLetter(key)}</Text>
                   <TextInput
                     id="item-name"
+                    maxLength={50}
                     name={key}
                     placeholder={required ? 'Required' : 'Optional'}
                     rules={{
                       ...(required ? requiredRule : {}),
                     }}
                   />
-                </TextFeildWrapper>
+                </TextFieldWrapper>
               </>
             ))}
           </Flex>
@@ -143,7 +144,7 @@ const StyledWrapper = styled(Flex)`
   }
 `
 
-const TextFeildWrapper = styled(Flex)`
+const TextFieldWrapper = styled(Flex)`
   display: flex;
   gap: 10px;
 
