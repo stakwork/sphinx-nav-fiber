@@ -1,4 +1,4 @@
-import { SchemaExtended } from '../../utils'
+import { SchemaExtended } from '../../types'
 import { Node } from './Node'
 
 type Props = {

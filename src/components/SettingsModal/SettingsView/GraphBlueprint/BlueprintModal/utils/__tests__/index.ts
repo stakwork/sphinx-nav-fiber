@@ -1,4 +1,5 @@
-import { SchemaExtended, SchemaWithChildren, calculateNodePositions } from '..'
+import { calculateNodePositions } from '..'
+import { SchemaExtended, SchemaWithChildren } from '../../types'
 
 describe('calculateNodePositions', () => {
   const rootNode: SchemaWithChildren = {

@@ -4,9 +4,10 @@ import { Lights } from '~/components/Universe/Lights'
 import { Flex } from '~/components/common/Flex'
 import { Schema } from '~/network/fetchSourcesData'
 import { useSchemaStore } from '~/stores/useSchemaStore'
-import { SchemaWithChildren, calculateNodePositions } from '../utils'
+import { calculateNodePositions } from '../utils'
 import { Lines } from './Links'
 import { Nodes } from './Nodes'
+import { SchemaWithChildren } from '../types'
 
 export type FormData = {
   type: string
