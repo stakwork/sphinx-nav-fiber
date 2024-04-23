@@ -210,7 +210,7 @@ export const Trending = ({ onSubmit }: Props) => {
                 </Paragraph>
                 {i.tldr && (
                   <StyledTLDRButton
-                    className={clsx('value', { show: currentFileIndex === index })}
+                    className={clsx({ isPlaying: currentFileIndex === index })}
                     onClick={(e) => showModal(e, i)}
                   >
                     TLDR
@@ -321,12 +321,10 @@ const StyledButton = styled(Button)`
 
 const StyledTLDRButton = styled(Button)`
   && {
-    &.value {
-      &.show {
-        font-weight: 700;
-        color: ${colors.BG1};
-        background-color: ${colors.white};
-      }
+    &.isPlaying {
+      font-weight: 700;
+      color: ${colors.BG1};
+      background-color: ${colors.white};
     }
   }
 `

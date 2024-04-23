@@ -213,6 +213,7 @@ export const Title = styled(Date)`
   white-space: nowrap;
   text-overflow: ellipsis;
   position: relative;
+  padding-left: 10px;
   &:before {
     content: '';
     display: block;

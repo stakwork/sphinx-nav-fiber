@@ -1,8 +1,7 @@
-import { Button, Table as MaterialTable, Popover, TableRow } from '@mui/material'
+import { Table as MaterialTable, Popover, TableRow } from '@mui/material'
 import React, { useCallback } from 'react'
 import styled from 'styled-components'
 import EditTopicIcon from '~/components/Icons/EditTopicIcon'
-import PlusIcon from '~/components/Icons/PlusIcon'
 import { StyledTableCell, StyledTableHead } from '~/components/SourcesTableModal/SourcesView/common'
 import { Flex } from '~/components/common/Flex'
 import { Schema } from '~/network/fetchSourcesData'
@@ -71,28 +70,9 @@ export const Table: React.FC<TableProps> = ({ schemas, setSelectedSchema }) => {
           <EditTopicIcon data-testid="EditTopicIcon" /> Edit
         </PopoverOption>
       </PopoverWrapper>
-
-      <AddContentSection>
-        <Button
-          color="secondary"
-          endIcon={<PlusIcon />}
-          onClick={handleAddContent}
-          size="medium"
-          type="submit"
-          variant="contained"
-        >
-          Create New Type
-        </Button>
-      </AddContentSection>
     </>
   )
 }
-
-const AddContentSection = styled(Flex)`
-  display: flex;
-  margin: 20px 0px 0px 30px;
-  width: 28%;
-`
 
 const PopoverOption = styled(Flex).attrs({
   direction: 'row',

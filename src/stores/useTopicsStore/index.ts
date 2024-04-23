@@ -6,6 +6,7 @@ import { FetchTopicResponse, Topic, TopicFilter } from '~/types'
 type TopicsStore = {
   data: Record<string, Topic> | null
   ids: string[]
+  loading: boolean
   total: number
   filters: TopicFilter
   setTopics: () => void
@@ -16,6 +17,7 @@ type TopicsStore = {
 const defaultData: Omit<TopicsStore, 'setTopics' | 'setFilters' | 'terminate'> = {
   data: null,
   ids: [],
+  loading: false,
   total: 0,
   filters: {
     is_muted: false,
@@ -25,9 +27,22 @@ const defaultData: Omit<TopicsStore, 'setTopics' | 'setFilters' | 'terminate'> =
   },
 }
 
+let abortController: AbortController | null = null
+
 export const useTopicsStore = create<TopicsStore>((set, get) => ({
   ...defaultData,
   setTopics: async () => {
+    set({ loading: true })
+
+    if (abortController) {
+      abortController.abort()
+    }
+
+    const controller = new AbortController()
+    const { signal } = controller
+
+    abortController = controller
+
     const { data, ids, filters } = get()
 
     const payload = prepareTopicFilters(filters)
@@ -37,7 +52,7 @@ export const useTopicsStore = create<TopicsStore>((set, get) => ({
     }
 
     try {
-      const responseData: FetchTopicResponse = await getTopicsData(payload)
+      const responseData: FetchTopicResponse = await getTopicsData(payload, signal)
 
       // Instead of replacing the data, append new data to existing data
       const newData: Record<string, Topic> = filters.page === 0 ? {} : { ...(data || {}) }
@@ -49,6 +64,8 @@ export const useTopicsStore = create<TopicsStore>((set, get) => ({
       })
 
       set({ data: newData, ids: newIds, total: responseData.totalCount })
+
+      set({ loading: false })
     } catch (error) {
       console.log(error)
     }
