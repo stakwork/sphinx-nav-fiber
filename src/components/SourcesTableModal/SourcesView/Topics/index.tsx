@@ -1,4 +1,3 @@
-/* eslint-disable no-restricted-syntax */
 import { Button } from '@mui/material'
 import { useEffect, useRef, useState } from 'react'
 import { ClipLoader } from 'react-spinners'
