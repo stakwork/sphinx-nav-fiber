@@ -5,7 +5,7 @@ import React from 'react'
 import { Toolbar } from '../index'
 
 describe('MediaPlayer in Fullscreen', () => {
-  it('shows the progress bar in fullscreen mode', () => {
+  it('Shows the progress bar in fullscreen mode', () => {
     const { getByTestId } = render(
       <Toolbar
         duration={120}
