@@ -1,54 +1,49 @@
 import IconButton from '@mui/material/IconButton'
 import InputBase, { InputBaseProps } from '@mui/material/InputBase'
 import Paper from '@mui/material/Paper'
-import React, { ChangeEvent, KeyboardEvent, useState } from 'react'
+import { debounce } from 'lodash'
+import React, { ChangeEvent, useCallback, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
-import { colors } from '~/utils/colors'
 import { useTopicsStore } from '~/stores/useTopicsStore'
+import { colors } from '~/utils/colors'
 
 interface SearchProps extends Omit<InputBaseProps, 'onChange'> {
   placeholder?: string
   activeIcon?: React.ReactNode
   defaultIcon?: React.ReactNode
   loadingIcon?: React.ReactNode
+  loading: boolean
 }
 
-const Search: React.FC<SearchProps> = ({ placeholder, activeIcon, loadingIcon, defaultIcon, ...props }) => {
+const Search: React.FC<SearchProps> = ({ placeholder, activeIcon, loadingIcon, defaultIcon, loading, ...props }) => {
   const [filters, setFilters] = useTopicsStore((s) => [s.filters, s.setFilters])
-  const [loading, setLoading] = useState(false)
+  const [searchValue, setSearchValue] = useState('')
 
   const resetSearch = () => {
     setFilters({ search: '' })
-    setLoading(false)
   }
+
+  const handleSearch = useCallback(
+    (value: string) => {
+      setFilters({ search: value })
+    },
+    [setFilters],
+  )
+
+  const debouncedSearch = useMemo(() => debounce(handleSearch, 300), [handleSearch])
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    !e.target.value && resetSearch()
-    setFilters({ search: e.target.value })
-  }
+    const { value } = e.target
 
-  const handleSearch = (e: KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { value } = e.currentTarget
+    setSearchValue(value)
 
-    setFilters({ search: value })
-
-    if (loading) {
-      return
+    if (!e.target.value) {
+      setFilters({ search: '' })
     }
 
-    setLoading(true)
-
-    setTimeout(() => {
-      if (!value) {
-        resetSearch()
-      }
-
-      setLoading(false)
-    }, 1000)
-
-    if (!value) {
-      resetSearch()
+    if (e.target.value.length > 2) {
+      debouncedSearch(e.target.value)
     }
   }
 
@@ -81,13 +76,8 @@ const Search: React.FC<SearchProps> = ({ placeholder, activeIcon, loadingIcon, d
         autoCorrect="off"
         inputProps={{ 'aria-label': 'search sources' }}
         onChange={handleChange}
-        onKeyDown={(event) => {
-          if (event.key === 'Enter') {
-            handleSearch(event)
-          }
-        }}
         placeholder={placeholder}
-        value={filters.search}
+        value={searchValue}
         {...props}
       />
       {getSearchIcon()}
