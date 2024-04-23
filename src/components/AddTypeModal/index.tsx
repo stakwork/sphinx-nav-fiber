@@ -25,7 +25,7 @@ type Props = {
 }
 
 export const AddTypeModal = ({ onSchemaCreate, selectedSchema, onDelete, onClose }: Props) => {
-  const { close } = useModal('addType')
+  const { close } = useModal('blueprintGraph')
 
   const handleClose = () => {
     close()
