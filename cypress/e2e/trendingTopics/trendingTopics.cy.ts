@@ -41,10 +41,10 @@ describe('test trending topics', () => {
       const responseBody = interception.response.body
       cy.get('.list').should('exist')
       for (let i = 0; i < responseBody.length; i++) {
-        cy.contains('.list', `#${responseBody[i].name}`).should('exist')
+        cy.contains('.list', `${responseBody[i].name}`).should('exist')
       }
 
-      cy.contains(`#${responseBody[0].name}`).eq(0).click()
+      cy.contains(`${responseBody[0].name}`).eq(0).click()
 
       //wait for search result
       cy.wait('@search')
