@@ -1,11 +1,26 @@
-// This regex is specifically for youtube videos, twitter spaces and mp3 links
-export const sourceUrlRegex =
-  /^(https?:\/\/)?(((?:[a-zA-Z\d](?:[a-zA-Z\d-]*[a-zA-Z\d])*)\.)+[a-zA-Z]{2,}|((\d{1,3}\.){3}\d{1,3}))(:\d+)?(\/[-a-zA-Z\d%_.~+]*)*(\?[;&a-zA-Z\d%_.~+=-]*)?(#[-a-zA-Z\d_]*)?(@[a-zA-Z\d-]+)?$/i
+// mandatory protocol: http or https
+const protocol = /^(https?:\/\/)/g
 
-export function validateSourceURL(input: string) {
-  if (sourceUrlRegex.test(input)) {
-    return true
-  }
+// optional subdomain 'www.' prefix
+const subDomain = /(www\.)?/g
 
-  return false
-}
+// domain name: Letters, numbers, hyphens, and dots
+const rootDomain = /[\w-]+(\.[\w-]+)*/g
+
+// extensive TLD matching
+const topLevelDomains =
+  /(com|org|net|info|edu|gov|mil|co|biz|name|museum|club|email|link|city|solutions|photography|tips|today|technology|directory|center|gallery|graphics|equipment|exchange|estate|land|media|money|news|network|world|international|services|engineer|systems|software|ninja|xyz|site|online|space|store|tech|fun|press|website|co.uk)/g
+
+// path: Optional, can include multiple slashes and allowable characters
+const path = /(\/[^\s?]*)?/g
+
+// query string: Optional, starts with '?' followed by non-space characters
+const query = /(\?[^\s]*)?/g
+
+// full regex for source url
+export const sourceUrlRegex = new RegExp(
+  `${protocol.source}${subDomain.source}${rootDomain.source}\\.${topLevelDomains.source}?${path.source}${query.source}$`,
+  'i',
+)
+
+export const validateSourceURL = (input: string) => sourceUrlRegex.test(input)
