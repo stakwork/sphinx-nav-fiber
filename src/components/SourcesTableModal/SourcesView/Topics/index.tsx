@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-syntax */
 import { Button } from '@mui/material'
 import { useEffect, useRef, useState } from 'react'
 import { ClipLoader } from 'react-spinners'
@@ -36,6 +37,7 @@ export const TopicSources = () => {
   const { open: openAddEdge } = useModal('addEdge')
   const [selectedTopic, setSelectedTopic] = useState<Topic | null>(null)
   const [checkedStates, setCheckedStates] = useState<{ [refId: string]: boolean }>({})
+  const [disabled, setDisabled] = useState<boolean>(false)
 
   const topicActions: Record<string, () => void> = {
     editTopic: openEditTopic,
@@ -117,6 +119,26 @@ export const TopicSources = () => {
     }
   }
 
+  let trueCount = 0
+
+  const checkerFunc = () => {
+    for (const key in checkedStates) {
+      if (checkedStates[key]) {
+        trueCount += 1
+      }
+    }
+
+    if (trueCount > 1) {
+      setDisabled(true)
+    } else {
+      setDisabled(false)
+    }
+  }
+
+  useEffect(() => {
+    checkerFunc()
+  })
+
   return (
     <>
       <Wrapper direction="column" justify="flex-end">
@@ -140,6 +162,7 @@ export const TopicSources = () => {
             <>
               <Table
                 checkedStates={checkedStates}
+                disabled={disabled}
                 onChangeFilter={handleFilterChange}
                 onTopicEdit={onTopicEdit}
                 setCheckedStates={setCheckedStates}
