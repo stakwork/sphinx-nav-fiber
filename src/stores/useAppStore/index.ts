@@ -13,6 +13,7 @@ export type AppStore = {
   transcriptIsOpen: boolean
   flagErrorIsOpen: boolean
   relevanceIsSelected: boolean
+  currentPlayingAudio: React.MutableRefObject<HTMLAudioElement | null> | null
   appMetaData: TAboutParams | null
   clearSearch: () => void
   setCurrentSearch: (_: string) => void
@@ -23,6 +24,7 @@ export type AppStore = {
   setTranscriptOpen: (_: boolean) => void
   setFlagErrorOpen: (_: boolean) => void
   setAppMetaData: (val: TAboutParams) => void
+  setCurrentPlayingAudio: (_: React.MutableRefObject<HTMLAudioElement | null> | null) => void
 }
 
 const defaultData = {
@@ -36,6 +38,7 @@ const defaultData = {
   theme: 'light' as const,
   transcriptIsOpen: false,
   appMetaData: null,
+  currentPlayingAudio: null,
 }
 
 export const useAppStore = create<AppStore>((set, get) => ({
@@ -45,6 +48,7 @@ export const useAppStore = create<AppStore>((set, get) => ({
   setSearchFormValue: (searchFormValue) => set({ searchFormValue }),
   setFlagErrorOpen: (flagErrorIsOpen) => set({ flagErrorIsOpen }),
   setRelevanceSelected: (relevanceIsSelected) => set({ relevanceIsSelected }),
+  setCurrentPlayingAudio: (currentPlayingAudio) => set({ currentPlayingAudio }),
   setSecondarySidebarActiveTab: (secondarySidebarActiveTab) =>
     set({
       secondarySidebarActiveTab,

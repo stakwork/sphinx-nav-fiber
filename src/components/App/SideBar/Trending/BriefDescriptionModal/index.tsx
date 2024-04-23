@@ -1,4 +1,5 @@
 import { Button } from '@mui/material'
+import clsx from 'clsx'
 import { FC, useCallback, useEffect, useRef, useState } from 'react'
 import Markdown from 'react-markdown'
 import styled from 'styled-components'
@@ -8,8 +9,10 @@ import SoundIcon from '~/components/Icons/SoundIcon'
 import { BaseModal } from '~/components/Modal'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
+import { useAppStore } from '~/stores/useAppStore'
 import { useModal } from '~/stores/useModalStore'
 import { Trending } from '~/types'
+import { colors } from '~/utils'
 
 type Props = {
   trend: Trending
@@ -24,6 +27,7 @@ type ScrollableContentProps = {
 export const BriefDescription: FC<Props> = ({ trend, onClose, selectTrending }) => {
   const [isPlaying, setIsPlaying] = useState(false)
   const { close } = useModal('briefDescription')
+  const { currentPlayingAudio, setCurrentPlayingAudio } = useAppStore((s) => s)
   const [isContentLarge, setIsContentLarge] = useState(false)
   const contentRef = useRef<HTMLDivElement>(null)
 
@@ -33,18 +37,16 @@ export const BriefDescription: FC<Props> = ({ trend, onClose, selectTrending }) 
     }
   }, [trend.tldr])
 
-  const audioRef = useRef<HTMLVideoElement | null>(null)
+  const audioRef = useRef<HTMLAudioElement | null>(null)
 
-  const handleLearnMore = () => {
-    selectTrending(trend.name)
-  }
+  const handleLearnMore = () => selectTrending(trend.name)
 
   const handleClose = useCallback(() => {
     onClose()
     close()
   }, [onClose, close])
 
-  const togglePlay = () => {
+  const handleToggle = () => {
     if (audioRef.current) {
       if (isPlaying) {
         audioRef.current.pause()
@@ -54,8 +56,19 @@ export const BriefDescription: FC<Props> = ({ trend, onClose, selectTrending }) 
 
       setIsPlaying(!isPlaying)
     }
+  }
 
-    setIsPlaying(!isPlaying)
+  const togglePlay = () => {
+    const isBackgroundAudioPlaying = !currentPlayingAudio?.current?.paused
+
+    if (isBackgroundAudioPlaying) {
+      currentPlayingAudio?.current?.pause()
+      setCurrentPlayingAudio(null)
+    }
+
+    if (currentPlayingAudio?.current?.src !== trend.audio_EN || !isBackgroundAudioPlaying) {
+      handleToggle()
+    }
   }
 
   useEffect(() => {
@@ -66,36 +79,40 @@ export const BriefDescription: FC<Props> = ({ trend, onClose, selectTrending }) 
     }
   }, [handleClose])
 
+  const showPlayBtn =
+    (currentPlayingAudio?.current?.src === trend.audio_EN && !currentPlayingAudio?.current?.paused) || isPlaying
+
   return (
     <BaseModal id="briefDescription" kind="regular" noWrap onClose={handleClose}>
       {trend.audio_EN ? (
         <>
-          <Flex direction="row" justify="flex-start" m={20}>
-            <Button
+          <StyledHeader>
+            <StyleButton
+              className={clsx('default', { play: showPlayBtn })}
               onClick={togglePlay}
               size="small"
-              startIcon={isPlaying ? <PauseIcon /> : <SoundIcon />}
-              style={{ marginRight: '10px' }}
+              startIcon={showPlayBtn ? <PauseIcon /> : <SoundIcon />}
             >
-              Listen
-            </Button>
+              {showPlayBtn ? 'Pause' : 'Listen'}
+            </StyleButton>
 
-            <Button onClick={handleLearnMore} size="small" startIcon={<BubbleChartIcon />}>
+            <StyleButton className="default" onClick={handleLearnMore} size="small" startIcon={<BubbleChartIcon />}>
               Learn More
-            </Button>
-          </Flex>
-
+            </StyleButton>
+          </StyledHeader>
           <StyledAudio ref={audioRef} src={trend.audio_EN}>
             <track kind="captions" />
           </StyledAudio>
         </>
       ) : null}
-      <Title>{trend.tldr_topic ?? trend.name}</Title>
-      <ScrollableContent ref={contentRef} isContentLarge={isContentLarge}>
-        <Flex>
-          <StyledText>{trend.tldr && <Markdown>{trend.tldr}</Markdown>}</StyledText>
-        </Flex>
-      </ScrollableContent>
+      <Flex mt={75}>
+        <Title>{trend.tldr_topic ?? trend.name}</Title>
+        <ScrollableContent ref={contentRef} isContentLarge={isContentLarge}>
+          <Flex>
+            <StyledText>{trend.tldr && <Markdown>{trend.tldr}</Markdown>}</StyledText>
+          </Flex>
+        </ScrollableContent>
+      </Flex>
     </BaseModal>
   )
 }
@@ -123,6 +140,35 @@ const Title = styled(Text)`
 `
 
 const StyledAudio = styled.audio`
-  height: 0;
-  width: 0;
+  display: none;
+`
+
+const StyleButton = styled(Button)`
+  && {
+    &.default {
+      font-size: 13px;
+      font-weight: 500;
+      font-family: Barlow;
+      padding: 12px, 16px, 12px, 10px;
+
+      &.play {
+        color: ${colors.BG3};
+        background-color: ${colors.white};
+      }
+    }
+  }
+`
+
+const StyledHeader = styled(Flex)`
+  top: 0px;
+  position: absolute;
+  border-radius: 16px 16px 0px 0px;
+  padding: 0px 12px;
+  width: 100%;
+  height: 60px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background-color: ${colors.BG3};
+  gap: 10px;
 `

@@ -25,6 +25,11 @@ const getModalKindStyles = ({ kind = 'regular' }: Pick<Props, 'kind'>) => {
       return css`
         width: 709px;
       `
+    case 'full':
+      return css`
+        width: 100%;
+        height: 100%;
+      `
     default:
       return css`
         width: 520px;
@@ -84,7 +89,7 @@ const CloseButton = styled(Flex)`
   z-index: 1;
 `
 
-export type ModalKind = 'small' | 'regular' | 'large'
+export type ModalKind = 'small' | 'regular' | 'large' | 'full'
 
 type Props = PropsWithChildren<{
   id: AvailableModals

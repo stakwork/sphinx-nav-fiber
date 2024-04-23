@@ -1,9 +1,9 @@
 import { Button } from '@mui/material'
 import { memo } from 'react'
 import styled from 'styled-components'
+import { Flex } from '~/components/common/Flex'
 import BrowseGalleryIcon from '~/components/Icons/BrowseGalleryIcon'
 import DownloadIcon from '~/components/Icons/DownloadIcon'
-import { Flex } from '~/components/common/Flex'
 import { useDataStore } from '~/stores/useDataStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { colors } from '~/utils/colors'
@@ -39,7 +39,12 @@ const _View = ({ isSearchResult }: Props) => {
           </div>
           {nodeCount ? (
             <div className="button_container">
-              <ButtonStyled className="button" onClick={getLatest} startIcon={<DownloadIcon />}>
+              <ButtonStyled
+                className="button"
+                data-testid="see_latest_button"
+                onClick={getLatest}
+                startIcon={<DownloadIcon />}
+              >
                 {`See Latest (${nodeCount})`}
               </ButtonStyled>
             </div>

@@ -1,8 +1,8 @@
 import { Slide } from '@mui/material'
 import styled from 'styled-components'
+import { Flex } from '~/components/common/Flex'
 import ChevronLeftIcon from '~/components/Icons/ChevronLeftIcon'
 import CloseIcon from '~/components/Icons/CloseIcon'
-import { Flex } from '~/components/common/Flex'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { usePlayerStore } from '~/stores/usePlayerStore'
@@ -33,6 +33,7 @@ export const SideBarSubView = ({ open }: Props) => {
           <SelectedNodeView />
         </ScrollWrapper>
         <CloseButton
+          data-testid="close-sidebar-sub-view"
           onClick={() => {
             setSelectedNode(null)
             setTeachMe(false)
