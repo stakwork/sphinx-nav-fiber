@@ -5,11 +5,11 @@ import styled from 'styled-components'
 import CopyIcon from '~/components/Icons/CopyIcon'
 import NotesIcon from '~/components/Icons/NotesIcon'
 import { Flex } from '~/components/common/Flex'
+import { getFullTranscript } from '~/network/fetchSourcesData'
 import { useAppStore } from '~/stores/useAppStore'
 import { NodeExtended } from '~/types'
 import { colors } from '~/utils/colors'
 import CheckIcon from '../../../Icons/CheckIcon'
-import { getFullTranscript } from '~/network/fetchSourcesData'
 
 type TranscriptProps = {
   stateless?: boolean
@@ -19,9 +19,13 @@ type TranscriptProps = {
 const MoreText = styled.span`
   color: ${colors.white};
   cursor: pointer;
-  margin-left: 5px;
+  text-transform: uppercase;
+  font-weight: 500;
+  font-size: 12px;
+  text-align: right;
+
   &:hover {
-    text-decoration: underline;
+    color: ${colors.GRAY3};
   }
 `
 
@@ -122,8 +126,8 @@ export const Transcript = ({ stateless, node }: TranscriptProps) => {
         )}
       </Header>
       <Box>
-        {showFullTranscript ? fullTranscript : `${node?.text?.substring(0, 100)}...`}
-        <MoreText onClick={handleMoreClick}>{showFullTranscript ? 'less' : 'more'}</MoreText>
+        {showFullTranscript ? fullTranscript : `${node?.text?.substring(0, 100)}`}
+        <MoreText onClick={handleMoreClick}>... {showFullTranscript ? 'show less' : 'more'}</MoreText>
       </Box>
     </Flex>
   )
@@ -169,7 +173,6 @@ const CloseButton = styled(Flex).attrs({})`
 
 const Box = styled(Flex)`
   color: ${colors.white};
-  text-overflow: ellipsis;
   whitespace: nowrap;
   font-family: Barlow;
   letter-spacing: 0.2pt;
