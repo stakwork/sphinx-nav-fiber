@@ -1,5 +1,5 @@
 import React from 'react'
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import { GraphBlueprint } from '../index'
 
@@ -15,10 +15,8 @@ describe('GraphBlueprint', () => {
   it('should display only one Custom node', async () => {
     render(<GraphBlueprint />)
 
-    waitFor(async () => {
-      const customNodes = await screen.findAllByText('Custom')
+    const customNodes = await screen.findAllByText('Custom')
 
-      expect(customNodes).toHaveLength(1)
-    })
+    expect(customNodes).toHaveLength(1)
   })
 })
