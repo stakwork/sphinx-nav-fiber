@@ -19,9 +19,7 @@ import { MergeTopicModal } from './MergeTopicModal'
 import { Table } from './Table'
 
 export const TopicSources = () => {
-  const [loading, setLoading] = useState(false)
-
-  const [data, ids, total, setTopics, filters, setFilters, terminate] = useTopicsStore((s) => [
+  const [data, ids, total, setTopics, filters, setFilters, terminate, loading] = useTopicsStore((s) => [
     s.data,
     s.ids,
     s.total,
@@ -29,6 +27,7 @@ export const TopicSources = () => {
     s.filters,
     s.setFilters,
     s.terminate,
+    s.loading,
   ])
 
   const { open: openEditTopic } = useModal('editTopic')
@@ -54,12 +53,9 @@ export const TopicSources = () => {
   useEffect(() => {
     const init = async () => {
       try {
-        setLoading(true)
         await setTopics()
       } catch {
         console.error('err')
-      } finally {
-        setLoading(false)
       }
     }
 
@@ -67,14 +63,7 @@ export const TopicSources = () => {
   }, [setTopics, filters])
 
   const handleLoadMore = async () => {
-    try {
-      setLoading(true)
-      setFilters({ page: filters.page + 1 })
-    } catch (error) {
-      console.error('Error loading more data:', error)
-    } finally {
-      setLoading(false)
-    }
+    setFilters({ page: filters.page + 1 })
   }
 
   useEffect(
@@ -128,6 +117,7 @@ export const TopicSources = () => {
           <Search
             activeIcon={<ClearIcon />}
             defaultIcon={<SearchIcon />}
+            loading={loading}
             loadingIcon={<ClipLoader color={colors.PRIMARY_BLUE} size={24} />}
             placeholder="Search ..."
           />
