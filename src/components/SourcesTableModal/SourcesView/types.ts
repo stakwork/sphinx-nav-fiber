@@ -12,7 +12,6 @@ export type TopicTableProps = {
   setShowMuteUnmute: () => void
   checkedStates: { [refId: string]: boolean }
   setCheckedStates: React.Dispatch<React.SetStateAction<{ [refId: string]: boolean }>>
-  disabled?: boolean
 }
 
 export type TdProps = {

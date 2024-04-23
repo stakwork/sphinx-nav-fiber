@@ -34,7 +34,6 @@ export const Table: React.FC<TopicTableProps> = ({
   onChangeFilter,
   checkedStates,
   setCheckedStates,
-  disabled,
 }) => {
   const { close } = useModal('sourcesTable')
   const [loading, setLoading] = useState(false)
@@ -190,7 +189,7 @@ export const Table: React.FC<TopicTableProps> = ({
                       <TopicRow
                         key={i}
                         checkedStates={checkedStates}
-                        disabled={disabled}
+                        disabled={Object.values(checkedStates).filter((isChecked) => isChecked).length > 1}
                         onClick={handleClick}
                         onSearch={handleSearch}
                         setCheckedStates={setCheckedStates}
