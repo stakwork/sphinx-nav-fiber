@@ -129,8 +129,16 @@ export interface Schema {
   is_deleted?: boolean
 }
 
+export interface SchemaLink {
+  edge_type: string
+  ref_id: string
+  source: string
+  target: string
+}
+
 interface SchemaAllResponse {
   schemas: Schema[]
+  edges: SchemaLink[]
 }
 
 interface FullTranscriptResponse {
