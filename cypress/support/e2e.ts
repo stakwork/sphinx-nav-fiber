@@ -47,7 +47,7 @@ async function setAdmin() {
   }
 }
 
-async function addTweetNodeToJarvisBackend() {
+export async function addTweetNodeToJarvisBackend(tweetNodes) {
   for (let i = 0; i < tweetNodes.length; i++) {
     let newDate
     const date = new Date()
@@ -72,7 +72,7 @@ async function addTweetNodeToJarvisBackend() {
 }
 
 function testSetup() {
-  return addTweetNodeToJarvisBackend()
+  return addTweetNodeToJarvisBackend(tweetNodes)
     .then(() => setAdmin())
     .catch((error) => {
       console.error('Test setup failed:', error)

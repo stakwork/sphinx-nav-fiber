@@ -1,7 +1,9 @@
-import { IconButton, Table as MaterialTable, Popover, TableRow } from '@mui/material'
+import { IconButton, Popover, Table as MaterialTable, TableRow } from '@mui/material'
 import React, { useCallback, useState } from 'react'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
+import { Flex } from '~/components/common/Flex'
+import { Text } from '~/components/common/Text'
 import AddCircleIcon from '~/components/Icons/AddCircleIcon'
 import CheckIcon from '~/components/Icons/CheckIcon'
 import ClearIcon from '~/components/Icons/ClearIcon'
@@ -12,8 +14,6 @@ import SortFilterIcon from '~/components/Icons/SortFilterIcon'
 import VisibilityOff from '~/components/Icons/VisibilityOff'
 import VisibilityOn from '~/components/Icons/VisibilityOn'
 import { ALPHABETICALLY, DATE, EDGE_COUNT } from '~/components/SourcesTableModal/SourcesView/constants'
-import { Flex } from '~/components/common/Flex'
-import { Text } from '~/components/common/Text'
 import { putNodeData } from '~/network/fetchSourcesData'
 import { useAppStore } from '~/stores/useAppStore'
 import { useModal } from '~/stores/useModalStore'
@@ -208,24 +208,24 @@ export const Table: React.FC<TopicTableProps> = ({
                   transformOrigin={{ vertical: 'top', horizontal: 'right' }}
                 >
                   {showMuted ? (
-                    <PopoverOption onClick={() => handlePopoverAction('unMute')}>
+                    <PopoverOption data-testid="unmute" onClick={() => handlePopoverAction('unMute')}>
                       {' '}
                       <VisibilityOn data-testid="" /> Unmute
                     </PopoverOption>
                   ) : (
-                    <PopoverOption onClick={() => handlePopoverAction('mute')}>
+                    <PopoverOption data-testid="mute" onClick={() => handlePopoverAction('mute')}>
                       {' '}
                       <VisibilityOff data-testid="VisibilityOff" /> Mute
                     </PopoverOption>
                   )}
-                  <PopoverOption onClick={() => handlePopoverAction('editTopic')}>
+                  <PopoverOption data-testid="rename" onClick={() => handlePopoverAction('editTopic')}>
                     <EditTopicIcon data-testid="EditTopicIcon" /> Rename
                   </PopoverOption>
 
-                  <PopoverOption onClick={() => handlePopoverAction('mergeTopic')}>
+                  <PopoverOption data-testid="merge" onClick={() => handlePopoverAction('mergeTopic')}>
                     <MergeIcon data-testid="MergeIcon" /> Merge
                   </PopoverOption>
-                  <PopoverOption onClick={() => handlePopoverAction('addEdge')}>
+                  <PopoverOption data-testid="add_edge" onClick={() => handlePopoverAction('addEdge')}>
                     <AddCircleIcon data-testid="AddCircleIcon" /> Add edge
                   </PopoverOption>
                 </PopoverWrapper>

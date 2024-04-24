@@ -1,8 +1,10 @@
 import { Button } from '@mui/material'
+import clsx from 'clsx'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
+import HashTag from '~/components/Icons/HashTag'
 import PauseIcon from '~/components/Icons/PauseIcon'
 import PlayIcon from '~/components/Icons/PlayIcon'
 import PlusIcon from '~/components/Icons/PlusIcon'
@@ -10,6 +12,7 @@ import ReloadIcon from '~/components/Icons/ReloadIcon'
 import SentimentDataIcon from '~/components/Icons/SentimentDataIcon'
 import { Flex } from '~/components/common/Flex'
 import { getTrends } from '~/network/fetchGraphData'
+import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
 import { useModal } from '~/stores/useModalStore'
 import { Trending as TrendingType } from '~/types'
@@ -31,6 +34,7 @@ export const Trending = ({ onSubmit }: Props) => {
   const audioRef = useRef<HTMLVideoElement>(null)
   const [currentFileIndex, setCurrentFileIndex] = useState(0)
   const [playing, setPlaying] = useState(false)
+  const { currentPlayingAudio, setCurrentPlayingAudio } = useAppStore((s) => s)
 
   const { open } = useModal('briefDescription')
 
@@ -41,6 +45,9 @@ export const Trending = ({ onSubmit }: Props) => {
   const init = useCallback(async () => {
     setLoading(true)
     setReadyToUpdate(false)
+    setCurrentFileIndex(0)
+    setPlaying(false)
+    setCurrentPlayingAudio(null)
 
     try {
       const res = await getTrends()
@@ -53,7 +60,7 @@ export const Trending = ({ onSubmit }: Props) => {
     } finally {
       setLoading(false)
     }
-  }, [setTrendingTopics, setReadyToUpdate])
+  }, [setCurrentPlayingAudio, setTrendingTopics])
 
   useEffect(() => {
     if (!trendingTopics.length) {
@@ -92,6 +99,7 @@ export const Trending = ({ onSubmit }: Props) => {
     e.stopPropagation()
     e.currentTarget.blur()
     setPlaying(!playing)
+    setCurrentPlayingAudio(audioRef)
   }
 
   useEffect(() => {
@@ -101,6 +109,12 @@ export const Trending = ({ onSubmit }: Props) => {
       audioRef.current?.pause()
     }
   }, [currentFileIndex, playing])
+
+  useEffect(() => {
+    if (!currentPlayingAudio) {
+      setPlaying(false)
+    }
+  }, [currentPlayingAudio])
 
   const goToNextSong = () => {
     setCurrentFileIndex((prevIndex) => {
@@ -125,6 +139,8 @@ export const Trending = ({ onSubmit }: Props) => {
 
       return newIndex
     })
+
+    setCurrentPlayingAudio(audioRef)
   }
 
   const placeholderText = loading ? 'Loading' : 'No new trending topics in the last 24 hours'
@@ -177,7 +193,7 @@ export const Trending = ({ onSubmit }: Props) => {
           </div>
         ) : (
           <ul className="list">
-            {trendingTopics.map((i) => (
+            {trendingTopics.map((i, index) => (
               <Flex
                 key={i.name}
                 align="center"
@@ -186,9 +202,20 @@ export const Trending = ({ onSubmit }: Props) => {
                 justify="space-between"
                 onClick={() => selectTrending(i.name)}
               >
-                <Paragraph> #{getTrendingTopic(i)}</Paragraph>
-
-                {i.tldr && <Button onClick={(e) => showModal(e, i)}>TLDR</Button>}
+                <Paragraph>
+                  <IconWrapper>
+                    <HashTag />
+                  </IconWrapper>
+                  <span className="tldr">{getTrendingTopic(i)}</span>
+                </Paragraph>
+                {i.tldr && (
+                  <StyledTLDRButton
+                    className={clsx({ isPlaying: currentFileIndex === index })}
+                    onClick={(e) => showModal(e, i)}
+                  >
+                    TLDR
+                  </StyledTLDRButton>
+                )}
               </Flex>
             ))}
           </ul>
@@ -200,14 +227,19 @@ export const Trending = ({ onSubmit }: Props) => {
 }
 
 const Paragraph = styled.div`
+  display: flex;
+  align-items: center;
   width: 300px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  line-height: 1.5;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  letter-spacing: 0.3pt;
+
+  span.tldr {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    letter-spacing: 0.3pt;
+  }
 `
 
 const Wrapper = styled(Flex)`
@@ -285,6 +317,23 @@ const StyledButton = styled(Button)`
       align-items: center;
     }
   }
+`
+
+const StyledTLDRButton = styled(Button)`
+  && {
+    &.isPlaying {
+      font-weight: 700;
+      color: ${colors.BG1};
+      background-color: ${colors.white};
+    }
+  }
+`
+
+const IconWrapper = styled.span`
+  justify-content: center;
+  align-items: center;
+  color: ${colors.GRAY6};
+  margin-right: 4px;
 `
 
 const StyledAudio = styled.audio`
