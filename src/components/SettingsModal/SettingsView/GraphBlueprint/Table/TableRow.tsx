@@ -1,12 +1,8 @@
-import { IconButton, Popover } from '@mui/material'
-import React, { memo, useState } from 'react'
-import styled from 'styled-components'
-import AddCircleIcon from '~/components/Icons/AddCircleIcon'
-import EditTopicIcon from '~/components/Icons/EditTopicIcon'
+/* eslint-disable arrow-body-style */
+import { IconButton } from '@mui/material'
+import React, { memo } from 'react'
 import ThreeDotsIcons from '~/components/Icons/ThreeDotsIcons'
 import { StyledTableCell, StyledTableRow } from '~/components/SourcesTableModal/SourcesView/common'
-import { Flex } from '~/components/common/Flex'
-import { colors } from '~/utils/colors'
 
 interface Schema {
   name?: string
@@ -24,107 +20,27 @@ interface Schema {
 }
 interface TableRowProps {
   schema: Schema
-  onOpenActions: (s: Schema) => void
+  click: (event: React.MouseEvent<HTMLButtonElement>) => void
 }
 
 function capitalizeFirstLetter(string: string) {
   return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase()
 }
 
-const TableRowComponent: React.FC<TableRowProps> = ({ schema, onOpenActions }) => {
-  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
-
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget)
-  }
-
-  const handleClose = () => {
-    setAnchorEl(null)
-  }
-
-  const handlePopoverOptionClick = () => {
-    handleClose()
-  }
-
-  const open = Boolean(anchorEl)
-  const id = open ? 'popover' : undefined
-
+const TableRowComponent: React.FC<TableRowProps> = ({ schema, click }) => {
   return (
     <>
       <StyledTableRow>
         <StyledTableCell className="empty" />
         <StyledTableCell>{capitalizeFirstLetter(schema.type ?? '')}</StyledTableCell>
         <StyledTableCell>
-          <IconButton disabled={schema?.type === 'thing'} onClick={handleClick}>
+          <IconButton disabled={schema?.type === 'thing'} onClick={click}>
             <ThreeDotsIcons data-testid="EditIcon" />
           </IconButton>
         </StyledTableCell>
       </StyledTableRow>
-      <PopoverWrapper
-        anchorEl={anchorEl}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'center',
-        }}
-        id={id}
-        onClose={handleClose}
-        open={open}
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'center',
-        }}
-      >
-        <PopoverOption
-          onClick={() => {
-            onOpenActions(schema)
-            handlePopoverOptionClick()
-          }}
-        >
-          <EditTopicIcon />
-          Edit
-        </PopoverOption>
-        <PopoverOption onClick={handlePopoverOptionClick}>
-          <AddCircleIcon />
-          Add Edge
-        </PopoverOption>
-      </PopoverWrapper>
     </>
   )
 }
-
-const PopoverWrapper = styled(Popover)`
-  && {
-    z-index: 9999;
-  }
-  .MuiPaper-root {
-    min-width: 149px;
-    color: ${colors.GRAY3};
-    box-shadow: 0px 1px 6px 0px rgba(0, 0, 0, 0.2);
-    border-radius: 6px;
-    z-index: 1;
-    font-family: Barlow;
-    font-size: 14px;
-    font-weight: 500;
-  }
-`
-
-const PopoverOption = styled(Flex).attrs({
-  direction: 'row',
-  px: 12,
-  py: 8,
-})`
-  display: flex;
-  align-items: center;
-  justify-content: start;
-  gap: 12px;
-  cursor: pointer;
-  background: ${colors.BUTTON1};
-  color: ${colors.white};
-
-  &:hover {
-    background: ${colors.BUTTON1_HOVER};
-    color: ${colors.GRAY3};
-  }
-`
 
 export const TopicRow = memo(TableRowComponent)
