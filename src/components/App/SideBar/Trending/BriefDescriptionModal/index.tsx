@@ -106,7 +106,7 @@ export const BriefDescription: FC<Props> = ({ trend, onClose, selectTrending }) 
 }
 
 const ScrollableContent = styled.div`
-  max-height: 300px;
+  max-height: 310px;
   overflow-y: auto;
   margin: 8px 0;
   padding: 0 20px;
