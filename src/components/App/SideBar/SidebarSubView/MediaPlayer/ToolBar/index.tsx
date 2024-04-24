@@ -34,9 +34,11 @@ export const Toolbar: FC<Props> = ({
   showToolbar,
 }) => (
   <Flex>
-    {!showToolbar && (
+    {(!showToolbar || isFullScreen) && (
       <ProgressSlider
         aria-label="Small"
+        data-testid="progress-bar"
+        isFullScreen={isFullScreen}
         max={duration}
         onChange={handleProgressChange}
         size="small"
@@ -44,7 +46,7 @@ export const Toolbar: FC<Props> = ({
       />
     )}
 
-    <Wrapper align="center" direction="row" showToolbar={showToolbar}>
+    <Wrapper align="center" direction="row" showToolbar={showToolbar || isFullScreen}>
       <Action onClick={setIsPlaying} size="small">
         {!isPlaying ? <PlayIcon /> : <PauseIcon />}
       </Action>
@@ -65,7 +67,7 @@ export const Toolbar: FC<Props> = ({
         />
         <VolumeIcon />
       </VolumeControl>
-      <Fullscreen onClick={() => onFullScreenClick()}>
+      <Fullscreen data-testid="fullscreen-button" onClick={() => onFullScreenClick()}>
         {!isFullScreen ? <FullScreenIcon /> : <ExitFullScreen />}
       </Fullscreen>
     </Wrapper>
@@ -145,13 +147,13 @@ const Fullscreen = styled(Flex)`
   color: #d9d9d9;
 `
 
-const ProgressSlider = styled(Slider)`
+const ProgressSlider = styled(Slider)<{ isFullScreen: boolean }>`
   && {
     z-index: 20;
     color: ${colors.white};
     height: 3px;
     width: calc(100% - 12px);
-    margin: -12px auto;
+    margin: ${(props) => (props.isFullScreen ? '-75px auto' : '-12px auto')};
     box-sizing: border-box;
     .MuiSlider-track {
       border: none;
