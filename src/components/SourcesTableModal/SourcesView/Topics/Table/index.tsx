@@ -198,6 +198,7 @@ export const Table: React.FC<TopicTableProps> = ({
                       <TopicRow
                         key={i}
                         checkedStates={checkedStates}
+                        isMuteDisabled={Object.values(checkedStates).filter((isChecked) => isChecked).length > 1}
                         onClick={handleClick}
                         onSearch={handleSearch}
                         setCheckedStates={setCheckedStates}

@@ -20,13 +20,21 @@ type TTableRaw = {
   onSearch: (search: string) => void
   checkedStates: { [refId: string]: boolean }
   setCheckedStates: React.Dispatch<React.SetStateAction<{ [refId: string]: boolean }>>
+  isMuteDisabled?: boolean
 }
 
 interface CheckboxIconProps {
   checked?: boolean
 }
 
-const TableRowComponent: FC<TTableRaw> = ({ topic, onClick, onSearch, checkedStates, setCheckedStates }) => {
+const TableRowComponent: FC<TTableRaw> = ({
+  topic,
+  onClick,
+  onSearch,
+  checkedStates,
+  setCheckedStates,
+  isMuteDisabled,
+}) => {
   const [ids, total] = useTopicsStore((s) => [s.ids, s.total])
   const [loading, setLoading] = useState(false)
 
@@ -152,15 +160,23 @@ const TableRowComponent: FC<TTableRaw> = ({ topic, onClick, onSearch, checkedSta
             ) : (
               <Flex direction="row">
                 {topic.is_muted ? (
-                  <IconButton className="centered" onClick={() => handleMute(topic.ref_id, false)}>
+                  <IconButton
+                    className="centered"
+                    disabled={isMuteDisabled}
+                    onClick={() => handleMute(topic.ref_id, false)}
+                  >
                     <ProfileShow />
                   </IconButton>
                 ) : (
-                  <IconButton className="centered" onClick={() => handleMute(topic.ref_id, true)}>
+                  <IconButton
+                    className="centered"
+                    disabled={isMuteDisabled}
+                    onClick={() => handleMute(topic.ref_id, true)}
+                  >
                     <ProfileHide />
                   </IconButton>
                 )}
-                <IconButton onClick={(e) => onClick(e, topic.ref_id)}>
+                <IconButton disabled={isMuteDisabled} onClick={(e) => onClick(e, topic.ref_id)}>
                   <ThreeDotsIcons data-testid="ThreeDotsIcons" />
                 </IconButton>
               </Flex>
