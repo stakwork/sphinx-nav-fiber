@@ -15,8 +15,6 @@ export const SourceTypeStep: FC<Props> = ({ skipToStep, allowNextStep, onSelectT
   const [options, setOption] = useState<TOption[] | null>(null)
   const [loading, setLoading] = useState(false)
 
-  console.log()
-
   useEffect(() => {
     const init = async () => {
       if (customSchemaFlag) {
@@ -32,12 +30,12 @@ export const SourceTypeStep: FC<Props> = ({ skipToStep, allowNextStep, onSelectT
             .map((schema) => ({
               label: capitalizeString(schema.type),
               value: schema.type,
-              type: schema.type,
               action: () => skipToStep('setAttribues'),
             }))
 
           setOption(schemaOptions)
         } catch (error) {
+          ;``
           console.warn(error)
         } finally {
           setLoading(false)
