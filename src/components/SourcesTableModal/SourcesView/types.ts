@@ -1,5 +1,5 @@
-import React from 'react'
 import { Sources } from '~/types'
+import React from 'react'
 
 export type Props = {
   data: Sources[] | undefined
