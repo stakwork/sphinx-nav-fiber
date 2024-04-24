@@ -210,7 +210,7 @@ export const Trending = ({ onSubmit }: Props) => {
                 </Paragraph>
                 {i.tldr && (
                   <StyledTLDRButton
-                    className={clsx({ isPlaying: currentFileIndex === index })}
+                    className={clsx({ isPlaying: currentFileIndex === index && playing })}
                     onClick={(e) => showModal(e, i)}
                   >
                     TLDR
