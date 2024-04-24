@@ -53,24 +53,20 @@ describe('formatFetchNodes', () => {
         {
           id: undefined,
           image_url: undefined,
-          index: 0,
           label: 'test',
           name: 'test',
           node_type: 'test',
           scale: 1.5,
           type: 'test',
-          vx: 0,
-          vy: 0,
-          vz: 0,
+          x: expect.any(Number),
+          y: expect.any(Number),
+          z: expect.any(Number),
           weight: NaN,
-          x: 0,
-          y: 0,
-          z: 0,
         },
       ],
     }
 
-    expect(formatFetchNodes(emptyInput)).toStrictEqual(emptyResponse)
+    expect(formatFetchNodes(emptyInput, 'searchterm', 'split')).toEqual(emptyResponse)
   })
 
   it('should give us the expected output for two of the same node', () => {
@@ -86,24 +82,20 @@ describe('formatFetchNodes', () => {
         {
           id: undefined,
           image_url: undefined,
-          index: 0,
           label: 'test',
           name: 'test',
           node_type: 'test',
           scale: 1.5,
           type: 'test',
-          vx: 0,
-          vy: 0,
-          vz: 0,
+          x: expect.any(Number),
+          y: expect.any(Number),
+          z: expect.any(Number),
           weight: NaN,
-          x: 0,
-          y: 0,
-          z: 0,
         },
       ],
     }
 
-    expect(formatFetchNodes(emptyInput)).toStrictEqual(emptyResponse)
+    expect(formatFetchNodes(emptyInput, 'searchterm', 'split')).toEqual(emptyResponse)
   })
 
   it('should give us the expected output for two different nodes', () => {
@@ -113,7 +105,7 @@ describe('formatFetchNodes', () => {
       related: [node1, dataSeriesNode],
     }
 
-    const formattedResponse = formatFetchNodes(emptyInput)
+    const formattedResponse = formatFetchNodes(emptyInput, 'searchterm', 'split')
 
     expect(formattedResponse.links).toStrictEqual([])
     expect(formattedResponse.nodes[0].label).toBe('test')
@@ -121,21 +113,18 @@ describe('formatFetchNodes', () => {
     expect(formattedResponse.nodes[0].node_type).toBe('test')
     expect(formattedResponse.nodes[0].scale).toBe(1.5)
     expect(formattedResponse.nodes[0].type).toBe('test')
-    expect(formattedResponse.nodes[0].index).toBe(0)
+    expect(formattedResponse.nodes[0].x).toEqual(expect.any(Number))
+    expect(formattedResponse.nodes[0].y).toEqual(expect.any(Number))
+    expect(formattedResponse.nodes[0].z).toEqual(expect.any(Number))
 
     expect(formattedResponse.nodes[1].label).toBe('test2')
     expect(formattedResponse.nodes[1].name).toBe('test2')
     expect(formattedResponse.nodes[1].node_type).toBe('data_series')
     expect(formattedResponse.nodes[1].scale).toBe(1.5)
     expect(formattedResponse.nodes[1].type).toBe('data_series')
-    expect(formattedResponse.nodes[1].index).toBe(1)
-
-    expect(formattedResponse.nodes[2].label).toBe('test2')
-    expect(formattedResponse.nodes[2].name).toBe('test2')
-    expect(formattedResponse.nodes[2].node_type).toBe('data_series')
-    expect(formattedResponse.nodes[2].scale).toBe(1.5)
-    expect(formattedResponse.nodes[2].type).toBe('data_series')
-    expect(formattedResponse.nodes[2].index).toBe(2)
+    expect(formattedResponse.nodes[1].x).toEqual(expect.any(Number))
+    expect(formattedResponse.nodes[1].y).toEqual(expect.any(Number))
+    expect(formattedResponse.nodes[1].z).toEqual(expect.any(Number))
   })
 
   it('should create topic nodes for each topic from tweet, and guest node for posted_by', () => {

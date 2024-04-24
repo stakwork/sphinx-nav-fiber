@@ -16,11 +16,14 @@ import { isMainTopic } from './constants'
 export const Cubes = memo(() => {
   const data = useGraphData()
   const selectedNode = useSelectedNode()
-  const nearbyNodeIds = useDataStore((s) => s.nearbyNodeIds)
-  const setHoveredNode = useDataStore((s) => s.setHoveredNode)
-  const showSelectionGraph = useDataStore((s) => s.showSelectionGraph)
-  const selectionGraphData = useDataStore((s) => s.selectionGraphData)
+
+  const { nearbyNodeIds, setHoveredNode, showSelectionGraph, selectionGraphData, trendingTopics } = useDataStore(
+    (s) => s,
+  )
+
   const setTranscriptOpen = useAppStore((s) => s.setTranscriptOpen)
+
+  const isTrendingTopic = (node: NodeExtended) => trendingTopics.map((t) => t.name).includes(node.name)
 
   const ignoreNodeEvent = useCallback(
     (node: NodeExtended) => {
@@ -92,7 +95,7 @@ export const Cubes = memo(() => {
           const isSelected = f?.ref_id === selectedNode?.ref_id
           const isNearbyOrPersistent = nearbyNodeIds.includes(f.ref_id || '') || isMainTopic(f)
 
-          return isNearbyOrPersistent || isSelected
+          return isNearbyOrPersistent || isSelected || isTrendingTopic(f)
         })
         .map((node) => {
           if (node.node_type === 'topic') {

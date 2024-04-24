@@ -19,6 +19,7 @@ import {
   Link,
   Node,
   NodeExtended,
+  Trending,
 } from '~/types'
 import { getLSat } from '~/utils/getLSat'
 import { getMaxSuperficialWeightPerNodeType, getSuperficialNodeWeight } from '~/utils/getSuperficialNodeWeight'
@@ -257,6 +258,10 @@ const getNodeScale = (node: NodeExtended) => {
   }
 }
 
+function getTrendingTopicsWithNoParentNode(topicMap: TopicMap, trends: Trending[]) {
+  return trends.map((t) => t.name).filter((f) => !Object.keys(topicMap).includes(f))
+}
+
 function generateTopicNodesFromMap(topicMap: TopicMap, doNodeCallback: (node: NodeExtended) => void) {
   Object.entries(topicMap).forEach(([topic, content], index) => {
     const { children, position } = content
@@ -352,7 +357,9 @@ const getGraphData = async (
   try {
     const dataInit = await fetchNodes(setBudget, params)
 
-    return formatFetchNodes(dataInit, params?.word || '', graphStyle)
+    const trends = await getTrends()
+
+    return formatFetchNodes(dataInit, params?.word || '', graphStyle, trends)
   } catch (e) {
     console.error(e)
 
@@ -439,6 +446,7 @@ export const formatFetchNodes = (
   dataInit: FetchDataResponse,
   searchterm: string,
   graphStyle: 'split' | 'force' | 'sphere' | 'earth',
+  trends: Trending[] = [],
 ) => {
   let nodes: NodeExtended[] = []
 
@@ -553,6 +561,14 @@ export const formatFetchNodes = (
           }
         }
       })
+    }
+  })
+
+  // extract trendingTopics to topicMap
+  getTrendingTopicsWithNoParentNode(topicMap, trends).forEach((topic) => {
+    topicMap[topic] = {
+      position: new Vector3(0, 0, 0),
+      children: [topic],
     }
   })
 

@@ -1,6 +1,6 @@
 import { Text } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
-import { memo, useMemo, useRef } from 'react'
+import { memo, useCallback, useMemo, useRef } from 'react'
 import { Mesh } from 'three'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { NodeExtended } from '~/types'
@@ -15,10 +15,14 @@ type Props = {
 export const TextNode = memo(({ node, hide }: Props) => {
   const ref = useRef<Mesh | null>(null)
   const selectedNode = useSelectedNode()
-  const selectedNodeRelativeIds = useDataStore((s) => s.selectedNodeRelativeIds)
+  const { selectedNodeRelativeIds, showSelectionGraph, trendingTopics } = useDataStore((s) => s)
   const isRelative = selectedNodeRelativeIds.includes(node?.ref_id || '')
   const isSelected = !!selectedNode && selectedNode?.id === node.id
-  const showSelectionGraph = useDataStore((s) => s.showSelectionGraph)
+
+  const isTrendingTopic = useCallback(
+    (n: NodeExtended) => trendingTopics.map((t) => t.name).includes(n.name),
+    [trendingTopics],
+  )
 
   useFrame(({ camera }) => {
     if (ref?.current) {
@@ -36,12 +40,14 @@ export const TextNode = memo(({ node, hide }: Props) => {
 
     if (showSelectionGraph && isSelected) {
       scale = 40
+    } else if (isTrendingTopic(node)) {
+      scale = 75
     } else if (!isSelected && isRelative) {
       scale = 0
     }
 
     return scale
-  }, [node.scale, isSelected, isRelative, showSelectionGraph])
+  }, [node, showSelectionGraph, isSelected, isTrendingTopic, isRelative])
 
   const fillOpacity = useMemo(() => {
     if (selectedNode && selectedNode.node_type === 'topic' && !isSelected) {
