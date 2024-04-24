@@ -1,9 +1,7 @@
-import { IconButton, Popover, Table as MaterialTable, TableRow } from '@mui/material'
+import { IconButton, Table as MaterialTable, Popover, TableRow } from '@mui/material'
 import React, { useCallback, useState } from 'react'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
-import { Flex } from '~/components/common/Flex'
-import { Text } from '~/components/common/Text'
 import AddCircleIcon from '~/components/Icons/AddCircleIcon'
 import CheckIcon from '~/components/Icons/CheckIcon'
 import ClearIcon from '~/components/Icons/ClearIcon'
@@ -14,6 +12,8 @@ import SortFilterIcon from '~/components/Icons/SortFilterIcon'
 import VisibilityOff from '~/components/Icons/VisibilityOff'
 import VisibilityOn from '~/components/Icons/VisibilityOn'
 import { ALPHABETICALLY, DATE, EDGE_COUNT } from '~/components/SourcesTableModal/SourcesView/constants'
+import { Flex } from '~/components/common/Flex'
+import { Text } from '~/components/common/Text'
 import { putNodeData } from '~/network/fetchSourcesData'
 import { useAppStore } from '~/stores/useAppStore'
 import { useModal } from '~/stores/useModalStore'
@@ -76,25 +76,34 @@ export const Table: React.FC<TopicTableProps> = ({
   const handleSelectedMuteUnmute = async () => {
     setLoading(true)
 
-    const promises: Promise<unknown>[] = []
-
     try {
-      Object.keys(checkedStates).forEach((index) => {
-        const value = checkedStates[index]
+      const promises = Object.keys(checkedStates).map(async (checkedId) => {
+        const value = checkedStates[checkedId]
 
         if (value) {
-          const promise = putNodeData(index, { is_muted: showMuted })
+          try {
+            await putNodeData(checkedId, { is_muted: !showMuted })
 
-          useTopicsStore.setState({
-            ids: ids.filter((i) => i !== index),
-            total: total - 1,
-          })
+            return checkedId
+          } catch (error) {
+            // Handle specific error if needed
+            console.error('Error updating node data:', error)
 
-          promises.push(promise)
+            return null
+          }
         }
+
+        return null
       })
 
-      await Promise.all(promises)
+      const res = await Promise.all(promises)
+
+      useTopicsStore.setState({
+        ids: ids.filter((i) => !res.includes(i)),
+        total: total - res.length,
+      })
+
+      setCheckedStates({})
 
       setLoading(false)
     } catch (error) {
