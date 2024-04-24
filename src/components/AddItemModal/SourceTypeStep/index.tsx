@@ -35,7 +35,6 @@ export const SourceTypeStep: FC<Props> = ({ skipToStep, allowNextStep, onSelectT
 
           setOption(schemaOptions)
         } catch (error) {
-          ;``
           console.warn(error)
         } finally {
           setLoading(false)
