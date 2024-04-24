@@ -6,22 +6,22 @@ import FlipIcon from '~/components/Icons/FlipIcon'
 import NodeCircleIcon from '~/components/Icons/NodeCircleIcon'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
-import { Topic } from '~/types'
-import { DropdownSearch } from './Autocomplete'
+import { TEdge } from '~/types'
+import { ToNode } from './ToNode'
 
 type Props = {
   from: string
-  onSelect: (topic: Topic | null) => void
-  selectedTopic: Topic | null
+  onSelect: (edge: TEdge | null) => void
   isSwapped: boolean
   setIsSwapped: () => void
+  selectedToNode: TEdge | null
 }
 
 interface SectionProps {
   swap: boolean
 }
 
-export const TitleEditor: FC<Props> = ({ from, onSelect, selectedTopic, isSwapped, setIsSwapped }) => (
+export const TitleEditor: FC<Props> = ({ from, onSelect, selectedToNode, isSwapped, setIsSwapped }) => (
   <Flex>
     <Flex align="center" direction="row" justify="space-between" mb={18}>
       <Flex align="center" direction="row">
@@ -41,7 +41,7 @@ export const TitleEditor: FC<Props> = ({ from, onSelect, selectedTopic, isSwappe
       <Flex>
         <ToSection>
           <ToLabel>{!isSwapped ? 'To' : 'From'}</ToLabel>
-          <DropdownSearch onSelect={onSelect} selectedTopic={selectedTopic} />
+          <ToNode onSelect={onSelect} selectedValue={selectedToNode} />
         </ToSection>
       </Flex>
 
@@ -94,7 +94,7 @@ const Div = styled.div<SectionProps>`
 
 const FromSection = styled(TextField)<SectionProps>`
   position: relative;
-  width: 250px;
+  width: 100%;
   padding: 16px;
   gap: 10px;
   border-radius: 6px;
@@ -105,7 +105,7 @@ const FromSection = styled(TextField)<SectionProps>`
 
 const ToSection = styled.div`
   position: relative;
-  width: 250px;
+  width: 100%;
   padding: 15px;
   gap: 10px;
   border-radius: 6px;
