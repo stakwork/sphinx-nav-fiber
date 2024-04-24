@@ -107,7 +107,7 @@ const Div = styled.div<SectionProps>`
 
 const FromSection = styled(TextField)<SectionProps>`
   position: relative;
-  width: 250px;
+  width: 100%;
   padding: 16px;
   gap: 10px;
   border-radius: 6px;
@@ -118,7 +118,7 @@ const FromSection = styled(TextField)<SectionProps>`
 
 const ToSection = styled.div`
   position: relative;
-  width: 250px;
+  width: 100%;
   padding: 15px;
   gap: 10px;
   border-radius: 6px;
