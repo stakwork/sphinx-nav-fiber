@@ -6,6 +6,7 @@ import { ChangeEvent, FC, SyntheticEvent, useEffect, useRef, useState } from 're
 import styled from 'styled-components'
 import { colors } from '~/utils'
 import { Flex } from '../Flex'
+import { TypeBadge } from '../TypeBadge'
 
 export type TAutocompleteOption = {
   label: string
@@ -103,6 +104,7 @@ export const AutoComplete: FC<Props> = ({
           <li {...props}>
             <Flex align="center" direction="row" grow={1} justify="space-between" onClick={option?.action} shrink={1}>
               <div className="option">{option.label !== '' ? option.label : 'Not Selected'}</div>
+              {option?.type && <TypeBadge type={option.type} />}
             </Flex>
           </li>
         )}

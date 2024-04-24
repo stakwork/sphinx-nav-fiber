@@ -137,6 +137,7 @@ export const BaseModal = ({
     <>
       <Bg
         align="center"
+        data-testid="modal-overlay"
         hideBg={hideBg}
         justify="center"
         onClick={(e) => {

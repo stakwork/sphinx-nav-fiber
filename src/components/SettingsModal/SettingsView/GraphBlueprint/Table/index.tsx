@@ -1,6 +1,7 @@
 import { Table as MaterialTable, Popover, TableRow } from '@mui/material'
-import React, { useCallback } from 'react'
+import React, { useCallback, useState } from 'react'
 import styled from 'styled-components'
+import AddCircleIcon from '~/components/Icons/AddCircleIcon'
 import EditTopicIcon from '~/components/Icons/EditTopicIcon'
 import { StyledTableCell, StyledTableHead } from '~/components/SourcesTableModal/SourcesView/common'
 import { Flex } from '~/components/common/Flex'
@@ -17,12 +18,6 @@ interface TableProps {
 export const Table: React.FC<TableProps> = ({ schemas, setSelectedSchema }) => {
   const { open: openContentAddModal } = useModal('addType')
 
-  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
-
-  const handleAddContent = async () => {
-    openContentAddModal()
-  }
-
   const handleOpenPopover = useCallback(
     (s: Schema) => {
       openContentAddModal()
@@ -31,16 +26,22 @@ export const Table: React.FC<TableProps> = ({ schemas, setSelectedSchema }) => {
     [openContentAddModal, setSelectedSchema],
   )
 
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget)
+  }
+
   const handleClose = () => {
     setAnchorEl(null)
   }
 
-  const handleEdit = () => {
-    setAnchorEl(null)
-    handleAddContent()
+  const handlePopoverOptionClick = () => {
+    handleClose()
   }
 
   const open = Boolean(anchorEl)
+  const id = open ? 'popover' : undefined
 
   return (
     <>
@@ -54,20 +55,36 @@ export const Table: React.FC<TableProps> = ({ schemas, setSelectedSchema }) => {
         </StyledTableHead>
         <tbody>
           {schemas?.map((schema) => (
-            <TopicRow key={schema?.type} onOpenActions={handleOpenPopover} schema={schema} />
+            <TopicRow key={schema?.type} click={handleClick} schema={schema} />
           ))}
         </tbody>
       </MaterialTable>
       <PopoverWrapper
         anchorEl={anchorEl}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-        id="schema-editor"
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'center',
+        }}
+        id={id}
         onClose={handleClose}
         open={open}
-        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'center',
+        }}
       >
-        <PopoverOption onClick={handleEdit}>
-          <EditTopicIcon data-testid="EditTopicIcon" /> Edit
+        <PopoverOption
+          onClick={() => {
+            handleOpenPopover(schemas[0])
+            handlePopoverOptionClick()
+          }}
+        >
+          <EditTopicIcon />
+          Edit
+        </PopoverOption>
+        <PopoverOption onClick={handlePopoverOptionClick}>
+          <AddCircleIcon />
+          Add Edge
         </PopoverOption>
       </PopoverWrapper>
     </>

@@ -76,7 +76,7 @@ export const SourcesView = () => {
   })
 
   return (
-    <Wrapper direction="column">
+    <Wrapper data-testid="sources-table" direction="column">
       <StyledTabs aria-label="sources tabs" onChange={handleChange} value={value}>
         {tabs.map((tab, index) => (
           <StyledTab key={tab.label} color={colors.white} disableRipple label={tab.label} {...a11yProps(index)} />
