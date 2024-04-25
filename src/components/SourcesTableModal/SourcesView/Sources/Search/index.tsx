@@ -125,6 +125,17 @@ const Wrapper = styled(Paper)`
 `
 
 const StyledInput = styled(InputBase)`
+  -webkit-autofill,
+  -webkit-autocomplete,
+  -webkit-contacts-auto-fill,
+  -webkit-credentials-auto-fill {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    position: absolute !important;
+    right: 0 !important;
+  }
+
   .MuiInputBase-input {
     z-index: 2;
     width: 100%;

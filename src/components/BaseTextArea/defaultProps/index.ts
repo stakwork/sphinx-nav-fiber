@@ -3,6 +3,7 @@ import { BaseTextAreaProps } from '../types'
 type DefaultProps = Required<
   Pick<
     BaseTextAreaProps,
+    | 'autoComplete'
     | 'colorName'
     | 'disabled'
     | 'maxLength'
@@ -15,6 +16,7 @@ type DefaultProps = Required<
 >
 
 export const defaultProps: DefaultProps = {
+  autoComplete: 'off',
   colorName: 'black',
   disabled: false,
   maxLength: 524288,

@@ -2,9 +2,8 @@ import { Select } from '@react-three/drei'
 import { ThreeEvent } from '@react-three/fiber'
 import { memo, useCallback } from 'react'
 import { Object3D } from 'three'
-import { useGraphData } from '~/components/DataRetriever'
 import { useAppStore } from '~/stores/useAppStore'
-import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
+import { useDataStore, useSelectedNode, useUpdateGraphData } from '~/stores/useDataStore'
 import { NodeExtended } from '~/types'
 import { BlurryInstances } from './BlurryInstances'
 import { Cube } from './Cube'
@@ -14,7 +13,7 @@ import { TextNode } from './Text'
 import { isMainTopic } from './constants'
 
 export const Cubes = memo(() => {
-  const data = useGraphData()
+  const data = useUpdateGraphData()
   const selectedNode = useSelectedNode()
   const nearbyNodeIds = useDataStore((s) => s.nearbyNodeIds)
   const setHoveredNode = useDataStore((s) => s.setHoveredNode)
@@ -87,7 +86,7 @@ export const Cubes = memo(() => {
     >
       <BlurryInstances hide={hideUniverse} />
       <RelevanceBadges />
-      {data.nodes
+      {data?.nodes
         .filter((f) => {
           const isSelected = f?.ref_id === selectedNode?.ref_id
           const isNearbyOrPersistent = nearbyNodeIds.includes(f.ref_id || '') || isMainTopic(f)

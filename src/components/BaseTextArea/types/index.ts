@@ -10,6 +10,7 @@ type ReturnKeyType = 'done' | 'go' | 'next' | 'search' | 'send'
 export type InputType = 'email' | 'number' | 'password' | 'search' | 'tel' | 'text' | 'url'
 
 export type BaseTextAreaProps = {
+  autoComplete?: string
   autoFocus?: boolean
   className?: string
   colorName?: ColorName
