@@ -3,6 +3,10 @@ import { FC, useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
+import {
+  parseJson,
+  parsedObjProps,
+} from '~/components/SettingsModal/SettingsView/GraphBlueprint/BlueprintModal/Body/Editor/utils'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { TextInput } from '~/components/common/TextInput'
@@ -10,7 +14,6 @@ import { requiredRule } from '~/constants'
 import { getNodeType } from '~/network/fetchSourcesData'
 import { colors } from '~/utils'
 import { AddItemModalStepID } from '..'
-import { parseJson, parsedObjProps } from '../../AddTypeModal/utils'
 
 type Props = {
   skipToStep: (step: AddItemModalStepID) => void

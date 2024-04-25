@@ -1,4 +1,4 @@
-import { CircularProgress } from '@mui/material'
+import { CircularProgress, Popper } from '@mui/material'
 import Autocomplete from '@mui/material/Autocomplete'
 import Stack from '@mui/material/Stack'
 import TextField from '@mui/material/TextField'
@@ -85,6 +85,7 @@ export const AutoComplete: FC<Props> = ({
         onOpen={() => setOpen(true)}
         open={open}
         options={options ?? []}
+        PopperComponent={(props) => <Popper {...props} placement="top-end" />}
         renderInput={(params) => (
           <StyledInput
             inputRef={inputRef}

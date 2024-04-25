@@ -12,7 +12,7 @@ import { TextInput } from '~/components/common/TextInput'
 import { requiredRule } from '~/constants'
 import { getNodeType } from '~/network/fetchSourcesData'
 import { colors } from '~/utils'
-import { parseJson, parsedObjProps } from '../../../utils'
+import { parseJson, parsedObjProps } from '../../utils'
 
 const noSpacePattern = /^[a-z0-9_]+$/
 
