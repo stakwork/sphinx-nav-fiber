@@ -88,10 +88,12 @@ export const Body = () => {
 
     setLoading(true)
 
+    const selectedNodeId = selectedNode?.ref_id as string
+
     try {
       await deleteNode(refId)
 
-      removeNode(refId)
+      removeNode(selectedNodeId)
       setSelectedNode(null)
 
       closeHandler()
