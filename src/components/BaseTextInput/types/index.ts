@@ -1,20 +1,16 @@
 import { FocusEvent, KeyboardEvent, MutableRefObject } from 'react'
 import { ColorName } from '~/utils/colors'
-import { AutoComplete } from '../tokens/autoComplete'
 
 export type ForwardedRef<T> = ((instance: T | null) => void) | MutableRefObject<T | null> | null
 
 type TextAlign = 'left' | 'right'
-
-type AutoCapitalize = 'characters' | 'none' | 'sentences' | 'words'
 
 type ReturnKeyType = 'done' | 'go' | 'next' | 'search' | 'send'
 
 export type InputType = 'email' | 'number' | 'password' | 'search' | 'tel' | 'text' | 'url'
 
 export type BaseTextInputProps = {
-  autoCapitalize?: AutoCapitalize
-  autoComplete?: AutoComplete
+  autoComplete?: string
   autoFocus?: boolean
   className?: string
   colorName?: ColorName

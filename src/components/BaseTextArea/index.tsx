@@ -6,6 +6,7 @@ import { WebTextArea } from './WebTextArea'
 export const BaseTextArea = forwardRef(
   (
     {
+      autoComplete = defaultProps.autoComplete,
       autoFocus,
       className,
       colorName = defaultProps.colorName,
@@ -37,6 +38,7 @@ export const BaseTextArea = forwardRef(
     return (
       <WebTextArea
         ref={ref}
+        autoComplete={autoComplete}
         autoFocus={autoFocus}
         className={className}
         colorName={colorName}
