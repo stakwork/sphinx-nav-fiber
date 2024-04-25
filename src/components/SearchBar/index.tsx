@@ -24,6 +24,17 @@ const Input = styled.input.attrs(() => ({
   border-radius: 200px;
   background: ${colors.BG2};
 
+  -webkit-autofill,
+  -webkit-autocomplete,
+  -webkit-contacts-auto-fill,
+  -webkit-credentials-auto-fill {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    position: absolute !important;
+    right: 0 !important;
+  }
+
   &:focus {
     outline: 1px solid ${colors.primaryBlue};
   }

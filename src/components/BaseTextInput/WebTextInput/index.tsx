@@ -2,14 +2,6 @@ import styled from 'styled-components'
 import { colors } from '~/utils/colors'
 import { BaseTextInputProps } from '../types'
 
-const whiteAutofill = `
-  &:-webkit-autofill:active,
-  &:-webkit-autofill:focus,
-  &:-webkit-autofill:hover {
-    box-shadow: inset 0 0 0 1000px ${colors.white};
-  }
-`
-
 type Props = Required<Pick<BaseTextInputProps, 'colorName' | 'disabled' | 'placeholderTextColor' | 'textAlign'>>
 
 export const WebTextInput = styled.input<Props>`
@@ -24,8 +16,6 @@ export const WebTextInput = styled.input<Props>`
   outline: 0;
   padding: 0;
   text-align: ${({ textAlign }) => textAlign};
-
-  ${whiteAutofill}
 
   &:focus {
     border: none;
