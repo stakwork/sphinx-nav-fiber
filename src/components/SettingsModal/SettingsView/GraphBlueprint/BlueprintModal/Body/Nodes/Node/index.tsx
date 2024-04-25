@@ -1,5 +1,6 @@
-import { Html, Text } from '@react-three/drei'
+import { Html } from '@react-three/drei'
 import { Select } from '@react-three/postprocessing'
+import clsx from 'clsx'
 import { memo, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { BoxGeometry, Vector3 } from 'three'
@@ -16,11 +17,13 @@ type SchemaNode = {
 
 type Props = {
   node: SchemaNode
+  setSelectedNode: () => void
+  isSelected: boolean
 }
 
 export const boxGeometry = new BoxGeometry(4, 4, 4)
 
-export const Node = memo(({ node }: Props) => {
+export const Node = memo(({ node, setSelectedNode, isSelected }: Props) => {
   const [geometry] = useState(boxGeometry)
 
   useEffect(
@@ -33,22 +36,11 @@ export const Node = memo(({ node }: Props) => {
 
   return (
     <Select>
-      {false && (
-        <Text
-          anchorX="center"
-          anchorY="middle"
-          color={colors.white}
-          fillOpacity={1}
-          position={[node.x, node.y, node.z]}
-          scale={10}
-          userData={node}
-        >
-          {node.type}
-        </Text>
-      )}
-      <group position={new Vector3(node.x, node.y, node.z)}>
+      <group onClick={setSelectedNode} position={new Vector3(node.x, node.y, node.z)}>
         <Html center sprite zIndexRange={[0, 0]}>
-          <NodeView>{node.type}</NodeView>
+          <NodeView className={clsx({ selected: isSelected })} onClick={setSelectedNode}>
+            {node.type}
+          </NodeView>
         </Html>
       </group>
     </Select>
@@ -58,11 +50,15 @@ export const Node = memo(({ node }: Props) => {
 Node.displayName = 'Node'
 
 const NodeView = styled(Flex)`
-  width: 50px;
-  height: 50px;
+  width: 100px;
+  height: 100px;
   border-radius: 50%;
   color: ${colors.white};
   border: 1px solid ${colors.white};
   align-items: center;
   justify-content: center;
+
+  &.selected {
+    font-size: 20px;
+  }
 `

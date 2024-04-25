@@ -15,8 +15,8 @@ import { Schema, getNodeSchemaTypes } from '~/network/fetchSourcesData'
 import { useModal } from '~/stores/useModalStore'
 import { SubmitErrRes } from '~/types'
 import { colors } from '~/utils'
-import { convertAttributes } from '../utils/index'
 import { CreateCustomNodeAttribute } from './CustomAttributesStep'
+import { convertAttributes } from './utils'
 
 const defaultValues = {
   type: '',
@@ -32,7 +32,7 @@ export type FormData = {
 }
 
 type Props = {
-  onSchemaCreate: (schema: { type: string; parent: string }) => void
+  onSchemaCreate: (schema: { type: string; parent: string; ref_id: string }) => void
   selectedSchema: Schema | null
   onDelete: (type: string) => void
 }
@@ -75,8 +75,10 @@ const handleSubmitForm = async (data: FieldValues, isUpdate = false): Promise<vo
   }
 }
 
-export const Body = ({ onSchemaCreate, selectedSchema, onDelete }: Props) => {
+export const Editor = ({ onSchemaCreate, selectedSchema, onDelete }: Props) => {
   const { close, visible } = useModal('addType')
+
+  const [isNew, setIsNew] = useState(false)
 
   const form = useForm<FormData>({
     mode: 'onChange',
@@ -151,15 +153,17 @@ export const Body = ({ onSchemaCreate, selectedSchema, onDelete }: Props) => {
       close()
     } catch (error) {
       console.warn(error)
+    } finally {
+      setIsNew(false)
     }
   }
 
   const onSubmit = form.handleSubmit(async (data) => {
-    setLoading(false)
+    setLoading(true)
 
     try {
       await handleSubmitForm(data, !!selectedSchema)
-      onSchemaCreate({ type: data.type, parent: parent || '' })
+      onSchemaCreate({ type: data.type, parent: parent || '', ref_id: selectedSchema?.ref_id || 'new' })
       handleClose()
       // eslint-disable-next-line  @typescript-eslint/no-explicit-any
     } catch (err: any) {
@@ -174,94 +178,105 @@ export const Body = ({ onSchemaCreate, selectedSchema, onDelete }: Props) => {
       }
     } finally {
       setLoading(false)
+      setIsNew(false)
     }
   })
 
   const resolvedParentValue = () => parentOptions?.find((i) => i.value === parent)
 
   return (
-    <FormProvider {...form}>
-      <form id="add-type-form" onSubmit={onSubmit}>
+    <Flex>
+      {!isNew && !selectedSchema ? (
+        <Flex mt={20}>
+          <Button onClick={() => setIsNew(true)}>Create new</Button>
+        </Flex>
+      ) : (
         <Flex>
-          <Flex align="center" direction="row" justify="space-between" mb={18}>
-            <Flex align="center" direction="row">
-              <Text>Enter details</Text>
-            </Flex>
-          </Flex>
-          {!selectedSchema ? (
-            <>
-              <Flex mb={20}>
-                <Text>Select Parent</Text>
-              </Flex>
-              <Flex direction="row" mb={20}>
-                <AutoComplete
-                  key={parent}
-                  autoFocus={!selectedSchema}
-                  disabled={parentsLoading}
-                  isLoading={parentsLoading}
-                  onSelect={(e) => setValue('parent', e?.value || '')}
-                  options={parentOptions}
-                  selectedValue={resolvedParentValue()}
-                />
-              </Flex>
-            </>
-          ) : (
-            <Flex mb={20}>
-              <Text kind="headingBold">Parent: {selectedSchema.parent}</Text>
-            </Flex>
-          )}
+          <FormProvider {...form}>
+            <form id="add-type-form" onSubmit={onSubmit}>
+              <Flex>
+                <Flex align="center" direction="row" justify="space-between" mb={18}>
+                  <Flex align="center" direction="row">
+                    <Text>Enter details</Text>
+                  </Flex>
+                </Flex>
+                {!selectedSchema ? (
+                  <>
+                    <Flex mb={20}>
+                      <Text>Select Parent</Text>
+                    </Flex>
+                    <Flex direction="row" mb={20}>
+                      <AutoComplete
+                        key={parent}
+                        autoFocus={!selectedSchema}
+                        disabled={parentsLoading}
+                        isLoading={parentsLoading}
+                        onSelect={(e) => setValue('parent', e?.value || '')}
+                        options={parentOptions}
+                        selectedValue={resolvedParentValue()}
+                      />
+                    </Flex>
+                  </>
+                ) : (
+                  <Flex mb={20}>
+                    <Text kind="headingBold">Parent: {selectedSchema.parent}</Text>
+                  </Flex>
+                )}
 
-          {!selectedSchema ? (
-            <>
-              <Flex mb={4}>
-                <Text>Type name</Text>
+                {!selectedSchema ? (
+                  <>
+                    <Flex mb={4}>
+                      <Text>Type name</Text>
+                    </Flex>
+                    <Flex mb={12}>
+                      <TextInput
+                        id="cy-item-name"
+                        maxLength={250}
+                        name="type"
+                        placeholder="Enter type name"
+                        rules={{
+                          ...requiredRule,
+                        }}
+                        value={parent}
+                      />
+                    </Flex>
+                  </>
+                ) : (
+                  <Flex mb={20}>
+                    <Text kind="headingBold">Type: {selectedSchema.type}</Text>
+                  </Flex>
+                )}
               </Flex>
-              <Flex mb={12}>
-                <TextInput
-                  id="cy-item-name"
-                  maxLength={250}
-                  name="type"
-                  placeholder="Enter type name"
-                  rules={{
-                    ...requiredRule,
-                  }}
-                  value={parent}
-                />
-              </Flex>
-            </>
-          ) : (
-            <Flex mb={20}>
-              <Text kind="headingBold">Type: {selectedSchema.type}</Text>
-            </Flex>
-          )}
-        </Flex>
-        <CreateCustomNodeAttribute parent={selectedSchema ? selectedSchema.type : parent} />
-        <Flex direction="row" justify="space-between" mt={20}>
-          {selectedSchema ? (
-            <DeleteButton
-              color="secondary"
-              onClick={handleDelete}
-              size="large"
-              style={{ marginRight: 20 }}
-              variant="contained"
-            >
-              Delete
-            </DeleteButton>
-          ) : null}
+              <CreateCustomNodeAttribute parent={selectedSchema ? selectedSchema.type : parent} />
+              <Flex direction="row" justify="space-between" mt={20}>
+                {selectedSchema ? (
+                  <DeleteButton
+                    color="secondary"
+                    onClick={handleDelete}
+                    size="large"
+                    style={{ marginRight: 20 }}
+                    variant="contained"
+                  >
+                    Delete
+                  </DeleteButton>
+                ) : null}
 
-          <Button
-            color="secondary"
-            disabled={loading}
-            onClick={onSubmit}
-            size="large"
-            startIcon={loading ? <ClipLoader color={colors.white} size={24} /> : null}
-            variant="contained"
-          >
-            Save
-          </Button>
+                <Button
+                  color="secondary"
+                  disabled={loading}
+                  onClick={onSubmit}
+                  size="large"
+                  startIcon={loading ? <ClipLoader color={colors.white} size={24} /> : null}
+                  variant="contained"
+                >
+                  Save
+                </Button>
+              </Flex>
+            </form>
+          </FormProvider>
         </Flex>
-      </form>
-    </FormProvider>
+      )}
+    </Flex>
   )
 }
 

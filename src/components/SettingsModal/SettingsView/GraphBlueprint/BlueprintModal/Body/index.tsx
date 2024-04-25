@@ -1,13 +1,16 @@
 import { Canvas } from '@react-three/fiber'
+import { useState } from 'react'
 import styled from 'styled-components'
 import { Lights } from '~/components/Universe/Lights'
 import { Flex } from '~/components/common/Flex'
 import { Schema } from '~/network/fetchSourcesData'
 import { useSchemaStore } from '~/stores/useSchemaStore'
+import { colors } from '~/utils'
+import { SchemaWithChildren } from '../types'
 import { calculateNodePositions } from '../utils'
+import { Editor } from './Editor'
 import { Lines } from './Links'
 import { Nodes } from './Nodes'
-import { SchemaWithChildren } from '../types'
 
 export type FormData = {
   type: string
@@ -17,16 +20,10 @@ export type FormData = {
   }
 }
 
-type Props = {
-  onSchemaCreate: (schema: { type: string; parent: string }) => void
-  selectedSchema: Schema | null
-  onDelete: (type: string) => void
-}
+export const Body = () => {
+  const [selectedSchemaId, setSelectedSchemaId] = useState<string>('')
 
-export const Body = ({ onSchemaCreate, selectedSchema, onDelete }: Props) => {
-  console.log(onSchemaCreate, selectedSchema, onDelete)
-
-  const [schemasNonFiltered, links] = useSchemaStore((s) => [s.schemas, s.links])
+  const [schemasNonFiltered, links, setSchemaAll] = useSchemaStore((s) => [s.schemas, s.links, s.setSchemas])
 
   const schemasWithDuplicates = schemasNonFiltered.filter((i) => i.ref_id && !i.is_deleted)
 
@@ -37,6 +34,22 @@ export const Body = ({ onSchemaCreate, selectedSchema, onDelete }: Props) => {
       schemas.push(i)
     }
   })
+
+  const onSchemaCreate = (schema: Schema) => {
+    const exists = schemasNonFiltered.some((existingSchema) => existingSchema.ref_id === schema.ref_id)
+
+    if (exists) {
+      setSchemaAll(
+        schemasNonFiltered.map((existingSchema) => (existingSchema.type === schema.type ? schema : existingSchema)),
+      )
+    } else {
+      setSchemaAll([...schemasNonFiltered, schema])
+    }
+  }
+
+  const onSchemaDelete = (type: string) => {
+    setSchemaAll(schemasNonFiltered.filter((i) => i.type !== type))
+  }
 
   const schemasWithChildren: SchemaWithChildren[] = schemas.map((schema) => ({
     ...schema,
@@ -64,15 +77,26 @@ export const Body = ({ onSchemaCreate, selectedSchema, onDelete }: Props) => {
     }
   })
 
+  const selectedSchema = schemasNonFiltered.find((i) => i.ref_id === selectedSchemaId) || null
+
   return (
-    <Wrapper>
-      <Canvas camera={{ zoom: 80 }} id="schema-canvas" orthographic>
-        <Lights />
-        <Lines links={linksWithPositions} />
-        <>
-          <Nodes nodes={schemasWithPositions} />
-        </>
-      </Canvas>
+    <Wrapper direction="row">
+      <div className="graph">
+        <Canvas camera={{ zoom: 80 }} id="schema-canvas" orthographic>
+          <Lights />
+          <Lines links={linksWithPositions} />
+          <>
+            <Nodes
+              nodes={schemasWithPositions}
+              selectedId={selectedSchemaId}
+              setSelectedSchemaId={setSelectedSchemaId}
+            />
+          </>
+        </Canvas>
+      </div>
+      <div className="editor">
+        <Editor onDelete={onSchemaDelete} onSchemaCreate={onSchemaCreate} selectedSchema={selectedSchema} />
+      </div>
     </Wrapper>
   )
 }
@@ -80,5 +104,15 @@ export const Body = ({ onSchemaCreate, selectedSchema, onDelete }: Props) => {
 const Wrapper = styled(Flex)`
   flex: 1 1 100%;
   justify-content: center;
-  align-items: center;
+  align-items: top;
+  .graph {
+    flex-grow: 1;
+  }
+
+  .editor {
+    position: relative;
+    width: 400px;
+    padding: 16px;
+    border-left: 1px solid ${colors.black};
+  }
 `
