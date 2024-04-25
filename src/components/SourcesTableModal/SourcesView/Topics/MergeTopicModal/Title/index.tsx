@@ -6,22 +6,27 @@ import FlipIcon from '~/components/Icons/FlipIcon'
 import NodeCircleIcon from '~/components/Icons/NodeCircleIcon'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
-import { TEdge } from '~/types'
+import { TEdge, Topic } from '~/types'
 import { ToNode } from './ToNode'
 
 type Props = {
-  from: string
+  from?: string
   onSelect: (edge: TEdge | null) => void
   isSwapped: boolean
   setIsSwapped: () => void
   selectedToNode: TEdge | null
+  multiTopics?: Topic[]
 }
 
 interface SectionProps {
   swap: boolean
 }
 
-export const TitleEditor: FC<Props> = ({ from, onSelect, selectedToNode, isSwapped, setIsSwapped }) => (
+interface IconMidContainerProps {
+  disabled: boolean
+}
+
+export const TitleEditor: FC<Props> = ({ from, onSelect, multiTopics, selectedToNode, isSwapped, setIsSwapped }) => (
   <Flex>
     <Flex align="center" direction="row" justify="space-between" mb={18}>
       <Flex align="center" direction="row">
@@ -49,7 +54,10 @@ export const TitleEditor: FC<Props> = ({ from, onSelect, selectedToNode, isSwapp
         <IconTopContainer>
           <NodeCircleIcon />
         </IconTopContainer>
-        <IconMidContainer onClick={setIsSwapped}>
+        <IconMidContainer
+          disabled={Boolean(multiTopics?.length !== 1)}
+          onClick={multiTopics?.length === 1 ? setIsSwapped : undefined}
+        >
           <FlipIcon />
         </IconMidContainer>
         <IconBottomContainer>
@@ -146,13 +154,13 @@ const IconTopContainer = styled.div`
   color: #23252f;
 `
 
-const IconMidContainer = styled.div`
+const IconMidContainer = styled.div<IconMidContainerProps>`
   position: absolute;
   color: transparent;
   top: 50%;
   left: 0;
   transform: translateY(-50%) translateX(-50%);
-  cursor: pointer;
+  cursor: ${(props) => (props.disabled ? 'not-allowed' : 'pointer')};
   width: 32px;
   height: 32px;
   background-color: #303342;
