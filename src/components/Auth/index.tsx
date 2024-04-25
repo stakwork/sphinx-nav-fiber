@@ -68,6 +68,9 @@ export const AuthGuard = ({ children }: PropsWithChildren) => {
         setTrendingTopicsFlag(res.data.trendingTopics)
         setQueuedSourcesFlag(res.data.queuedSources)
         setCustomSchemaFlag(res.data.customSchema)
+        //addItem
+        //addContent
+        //settings
       }
 
       setIsAuthenticated(true)

@@ -4,6 +4,9 @@ export type FeatureFlagStore = {
   trendingTopicsFlag: boolean
   queuedSourcesFlag: boolean
   customSchemaFlag: boolean
+  addItem: boolean
+  addContent: boolean
+  settings: boolean
   v2Flag: boolean
   graphBluePrint: boolean
   setTrendingTopicsFlag: (val: boolean) => void
@@ -11,17 +14,30 @@ export type FeatureFlagStore = {
   setQueuedSourcesFlag: (val: boolean) => void
   setCustomSchemaFlag: (val: boolean) => void
   setGraphBluePrint: (val: boolean) => void
+  setAddItem: (val: boolean) => void
+  setAddContent: (val: boolean) => void
+  setSettings: (val: boolean) => void
 }
 
 const defaultData: Omit<
   FeatureFlagStore,
-  'setTrendingTopicsFlag' | 'setV2Flag' | 'setQueuedSourcesFlag' | 'setCustomSchemaFlag' | 'setGraphBluePrint'
+  | 'setTrendingTopicsFlag'
+  | 'setV2Flag'
+  | 'setQueuedSourcesFlag'
+  | 'setCustomSchemaFlag'
+  | 'setGraphBluePrint'
+  | 'setAddItem'
+  | 'setAddContent'
+  | 'setSettings'
 > = {
   trendingTopicsFlag: true,
   queuedSourcesFlag: false,
   v2Flag: false,
   customSchemaFlag: false,
   graphBluePrint: false,
+  addContent: false,
+  addItem: false,
+  settings: false,
 }
 
 export const useFeatureFlagStore = create<FeatureFlagStore>((set) => ({
@@ -31,4 +47,7 @@ export const useFeatureFlagStore = create<FeatureFlagStore>((set) => ({
   setQueuedSourcesFlag: (queuedSourcesFlag) => set({ queuedSourcesFlag }),
   setCustomSchemaFlag: (customSchemaFlag) => set({ customSchemaFlag }),
   setGraphBluePrint: (graphBluePrint) => set({ graphBluePrint }),
+  setAddContent: (addContent) => set({ addContent }),
+  setAddItem: (addItem) => set({ addItem }),
+  setSettings: (settings) => set({ settings }),
 }))
