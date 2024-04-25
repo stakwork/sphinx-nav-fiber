@@ -90,7 +90,7 @@ describe('TwitData Component', () => {
 
     expect(viewTweetLink).toHaveAttribute(
       'href',
-      `https://twitter.com/${mockSelectedNode.twitter_handle}/status/${mockSelectedNode.tweet_id}`,
+      `https://twitter.com/${mockSelectedNode.twitter_handle}/status/${mockSelectedNode.tweet_id}?open=system`,
     )
   })
 })

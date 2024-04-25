@@ -61,7 +61,11 @@ export const TwitData = () => {
             </Flex>
           </Flex>
           <Flex align="stretch" mt={22}>
-            <a href={`https://twitter.com/${twitterHandle}/status/${twitId}`} rel="noopener noreferrer" target="_blank">
+            <a
+              href={`https://twitter.com/${twitterHandle}/status/${twitId}?open=system`}
+              rel="noopener noreferrer"
+              target="_blank"
+            >
               <StyledButton endIcon={<LinkIcon />}>View Tweet</StyledButton>
             </a>
           </Flex>
