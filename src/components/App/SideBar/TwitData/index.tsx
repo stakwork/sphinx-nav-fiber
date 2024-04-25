@@ -61,17 +61,13 @@ export const TwitData = () => {
             </Flex>
           </Flex>
           <Flex align="stretch" mt={22}>
-            <StyledButton
-              endIcon={<LinkIcon />}
-              onClick={() =>
-                window.open(
-                  `https://twitter.com/Interior/status/${twitId}${twitId.includes('?') ? '&' : '?'}open=system`,
-                  '_blank',
-                )
-              }
+            <a
+              href={`https://twitter.com/${twitterHandle}/status/${twitId}?open=system`}
+              rel="noopener noreferrer"
+              target="_blank"
             >
-              View Tweet
-            </StyledButton>
+              <StyledButton endIcon={<LinkIcon />}>View Tweet</StyledButton>
+            </a>
           </Flex>
         </Flex>
         <StyledDivider />

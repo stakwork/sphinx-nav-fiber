@@ -85,18 +85,12 @@ describe('TwitData Component', () => {
   })
 
   it('external link to the tweet is correctly constructed', () => {
-    const mockOpen = jest.fn()
+    const { getByRole } = render(<TwitData />)
+    const viewTweetLink = getByRole('link', { name: /View Tweet/i })
 
-    window.open = mockOpen
-
-    const { getByText } = render(<TwitData />)
-    const viewTweetButton = getByText('View Tweet')
-
-    fireEvent.click(viewTweetButton)
-
-    expect(mockOpen).toHaveBeenCalledWith(
-      `https://twitter.com/Interior/status/${mockSelectedNode.tweet_id}?open=system`,
-      '_blank',
+    expect(viewTweetLink).toHaveAttribute(
+      'href',
+      `https://twitter.com/${mockSelectedNode.twitter_handle}/status/${mockSelectedNode.tweet_id}?open=system`,
     )
   })
 })
