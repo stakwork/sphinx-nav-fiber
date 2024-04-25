@@ -1,10 +1,11 @@
 import styled from 'styled-components'
+import { Flex } from '~/components/common/Flex'
+import { Text } from '~/components/common/Text'
 import AddContentIcon from '~/components/Icons/AddContentIcon'
 import AddSourceIcon from '~/components/Icons/AddSourceIcon'
 import SettingsIcon from '~/components/Icons/SettingsIcon'
 import SourcesTableIcon from '~/components/Icons/SourcesTableIcon'
-import { Flex } from '~/components/common/Flex'
-import { Text } from '~/components/common/Text'
+import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
 import { useModal } from '~/stores/useModalStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { colors } from '~/utils/colors'
@@ -17,12 +18,14 @@ export const MainToolbar = () => {
 
   const [isAdmin] = useUserStore((s) => [s.isAdmin])
 
+  const [addContent, addItem, settings] = useFeatureFlagStore((s) => [s.addContent, s.addItem, s.settings])
+
   return (
     <Wrapper>
       <LogoButton>
         <img alt="Second brain" src="logo.svg" />
       </LogoButton>
-      {isAdmin && (
+      {isAdmin && addItem && (
         <ActionButton data-testid="add-item-modal" onClick={openItemAddModal}>
           <IconWrapper>
             <AddSourceIcon />
@@ -30,24 +33,28 @@ export const MainToolbar = () => {
           <Text>Add Item</Text>
         </ActionButton>
       )}
-      <ActionButton data-testid="add-content-modal" onClick={openContentAddModal}>
-        <IconWrapper>
-          <AddContentIcon />
-        </IconWrapper>
-        <Text>Add Content</Text>
-      </ActionButton>
+      {addContent && (
+        <ActionButton data-testid="add-content-modals" onClick={openContentAddModal}>
+          <IconWrapper>
+            <AddContentIcon />
+          </IconWrapper>
+          <Text>Add Content</Text>
+        </ActionButton>
+      )}
       <ActionButton id="cy-open-soure-table" onClick={openSourcesModal}>
         <IconWrapper>
           <SourcesTableIcon />
         </IconWrapper>
         <Text>Source Table</Text>
       </ActionButton>
-      <ActionButton data-testid="settings-modal" onClick={openSettingsModal}>
-        <IconWrapper>
-          <SettingsIcon />
-        </IconWrapper>
-        <Text>Settings</Text>
-      </ActionButton>
+      {settings && (
+        <ActionButton data-testid="settings-modal" onClick={openSettingsModal}>
+          <IconWrapper>
+            <SettingsIcon />
+          </IconWrapper>
+          <Text>Settings</Text>
+        </ActionButton>
+      )}
     </Wrapper>
   )
 }

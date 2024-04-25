@@ -22,8 +22,8 @@ export const AuthGuard = ({ children }: PropsWithChildren) => {
       s.setTrendingTopicsFlag,
       s.setQueuedSourcesFlag,
       s.setCustomSchemaFlag,
-      s.setAddContent,
       s.setAddItem,
+      s.setAddContent,
       s.setSettings,
     ])
 
