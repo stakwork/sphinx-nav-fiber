@@ -66,9 +66,9 @@ export const AuthGuard = ({ children }: PropsWithChildren) => {
         setTrendingTopicsFlag(res.data.trendingTopics)
         setQueuedSourcesFlag(res.data.queuedSources)
         setCustomSchemaFlag(res.data.customSchema)
-        setAddContent(res.data.addContent)
-        setAddItem(res.data.addItem)
-        setSettings(res.data.settings)
+        setAddContent(res.data.addContent === undefined ? true : res.data.addContent)
+        setAddItem(res.data.addItem === undefined ? true : res.data.addItem)
+        setSettings(res.data.settings === undefined ? true : res.data.settings)
       }
 
       if (!res.data.isPublic && !res.data.isAdmin && !res.data.isMember) {
