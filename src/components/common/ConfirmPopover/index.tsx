@@ -18,7 +18,7 @@ const ConfirmPopover: React.FC<ConfirmPopoverProps> = ({
   message = 'Are you sure you want to delete this item?',
   onConfirm,
   children,
-  anchorOrigin = { vertical: 'bottom', horizontal: 'center' },
+  anchorOrigin = { vertical: 'bottom', horizontal: 'left' },
   transformOrigin = { vertical: 'top', horizontal: 'center' },
 }) => {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
@@ -52,16 +52,16 @@ const ConfirmPopover: React.FC<ConfirmPopoverProps> = ({
         open={open}
         transformOrigin={transformOrigin}
       >
-        <Wrapper justify="space-around">
-          <Text>{message}</Text>
-          <Flex align="center" direction="row" justify="center" pt={8}>
-            <Button kind="small" onClick={handleConfirm}>
+        <Wrapper>
+          <Text className="message">{message}</Text>
+          <ButtonWrapper>
+            <Button background="primaryBlue" kind="small" onClick={handleConfirm}>
               Yes
             </Button>
-            <Button className="secondary" kind="small" onClick={handleCancel}>
+            <Button background="white" kind="small" onClick={handleCancel} textColor="black">
               No
             </Button>
-          </Flex>
+          </ButtonWrapper>
         </Wrapper>
       </StyledPopover>
     </>
@@ -69,15 +69,19 @@ const ConfirmPopover: React.FC<ConfirmPopoverProps> = ({
 }
 
 const Wrapper = styled(Flex)`
-  background: ${colors.headerBackground};
+  align-items: center;
+  background: ${colors.BUTTON1};
   color: ${colors.white};
-  padding: 16px 8px;
+  min-width: 124px;
+  padding: 18px 8px;
   z-index: 100000;
+  box-shadow: 0px 1px 6px 0px rgba(0, 0, 0, 0.2);
+  border-radius: 9px;
 
-  .secondary {
-    margin-left: 8px;
-    background: transparent;
-    border: 1px solid ${colors.primaryButton};
+  .message {
+    font-family: Barlow;
+    font-size: 16px;
+    font-weight: 500;
   }
 `
 
@@ -85,6 +89,14 @@ const StyledPopover = styled(Popover)`
   && {
     z-index: 9999;
   }
+`
+
+const ButtonWrapper = styled(Flex)`
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  align-items: center;
+  margin-top: 16px;
 `
 
 export default ConfirmPopover
