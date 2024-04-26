@@ -39,14 +39,16 @@ describe('test trending topics', () => {
 
     cy.wait('@getTrends').then((interception) => {
       const responseBody = interception.response.body
+
       cy.get('.list').should('exist')
-      for (let i = 0; i < responseBody.length; i++) {
+
+      for (let i = 0; i < responseBody.length; i += 1) {
         cy.contains('.list', `${responseBody[i].name}`).should('exist')
       }
 
       cy.contains(`${responseBody[0].name}`).eq(0).click()
 
-      //wait for search result
+      // wait for search result
       cy.wait('@search')
 
       cy.get('#search-result-list').should('exist')
@@ -58,7 +60,7 @@ describe('test trending topics', () => {
 
       cy.get('[data-testid="sidebar-sub-view"]').should('have.css', 'position', 'relative')
 
-      //cancel search
+      // cancel search
       cy.get('[data-testid="search_action_icon"]').click()
 
       cy.get('.list').should('exist')
