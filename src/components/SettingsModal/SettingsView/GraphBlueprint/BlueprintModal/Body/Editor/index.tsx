@@ -26,6 +26,7 @@ const defaultValues = {
 export type FormData = {
   type: string
   parent?: string
+  node_key: string
   attributes?: {
     [k: string]: string | boolean
   }
@@ -51,7 +52,7 @@ const handleSubmitForm = async (data: FieldValues, isUpdate = false): Promise<vo
     if (isUpdate) {
       res = await api.put(`/schema`, JSON.stringify(requestData), {})
     } else {
-      res = await api.post(`/schema`, JSON.stringify(requestData), {})
+      res = await api.post(`/schema`, JSON.stringify({ ...requestData, node_key: 'name' }), {})
     }
 
     if (res.error) {
@@ -113,7 +114,7 @@ export const Editor = ({ onSchemaCreate, selectedSchema, onDelete }: Props) => {
         const data = await getNodeSchemaTypes()
 
         const schemaOptions = data.schemas
-          .filter((schema) => !schema.is_deleted)
+          .filter((schema) => !schema.is_deleted && schema.type)
           .map((schema) =>
             schema?.type === 'thing'
               ? { label: 'No Parent', value: schema.type }
