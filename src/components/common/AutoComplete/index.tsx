@@ -77,6 +77,7 @@ export const AutoComplete: FC<Props> = ({
               borderRadius: '6px',
             },
           },
+          ref: inputRef,
         }}
         loading={isLoading}
         onChange={handleChange}
