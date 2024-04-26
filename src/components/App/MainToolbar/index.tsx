@@ -34,7 +34,7 @@ export const MainToolbar = () => {
         </ActionButton>
       )}
       {addContent && (
-        <ActionButton data-testid="add-content-modals" onClick={openContentAddModal}>
+        <ActionButton data-testid="add-content-modal" onClick={openContentAddModal}>
           <IconWrapper>
             <AddContentIcon />
           </IconWrapper>
