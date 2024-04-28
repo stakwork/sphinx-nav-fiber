@@ -72,7 +72,7 @@ export const AddEdgeModal: FC<Props> = ({ topic, onClose }) => {
     <BaseModal id="addEdge" kind="small" onClose={closeHandler} preventOutsideClose>
       <FormProvider {...form}>
         <TitleEditor
-          from={topic.name}
+          from={topic}
           isSwapped={isSwapped}
           onSelect={setSelectedToNode}
           selectedToNode={selectedToNode}

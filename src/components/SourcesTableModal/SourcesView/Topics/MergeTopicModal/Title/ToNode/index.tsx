@@ -10,37 +10,42 @@ import { getEdges } from '~/network/fetchSourcesData'
 import { FetchEdgesResponse, TEdge } from '~/types'
 
 type Props = {
+  topicId: string
   onSelect: (topic: TEdge | null) => void
   selectedValue: TEdge | null
 }
 
-export const ToNode: FC<Props> = ({ onSelect, selectedValue }) => {
+export const ToNode: FC<Props> = ({ topicId, onSelect, selectedValue }) => {
   const [options, setOptions] = useState<TEdge[]>([])
   const [optionsIsLoading, setOptionsIsLoading] = useState(false)
 
-  const handleSearch = async (val: string) => {
-    const filters = {
-      is_muted: 'False',
-      sort_by: ALPHABETICALLY,
-      search: val,
-      skip: '0',
-      limit: '1000',
+  const debouncedSearch = useMemo(() => {
+    const handleSearch = async (val: string) => {
+      const filters = {
+        is_muted: 'False',
+        sort_by: ALPHABETICALLY,
+        search: val,
+        skip: '0',
+        limit: '1000',
+      }
+
+      setOptionsIsLoading(true)
+
+      try {
+        const responseData: FetchEdgesResponse = await getEdges(filters.search)
+
+        const filteredData = responseData.data.filter((item) => item?.ref_id !== topicId)
+
+        setOptions(filteredData)
+      } catch (error) {
+        setOptions([])
+      } finally {
+        setOptionsIsLoading(false)
+      }
     }
 
-    setOptionsIsLoading(true)
-
-    try {
-      const responseData: FetchEdgesResponse = await getEdges(filters.search)
-
-      setOptions(responseData.data)
-    } catch (error) {
-      setOptions([])
-    } finally {
-      setOptionsIsLoading(false)
-    }
-  }
-
-  const debouncedSearch = useMemo(() => debounce(handleSearch, 300), [])
+    return debounce(handleSearch, 300)
+  }, [topicId])
 
   const handleChange = (e: string) => {
     if (!e) {

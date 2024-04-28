@@ -6,12 +6,12 @@ import FlipIcon from '~/components/Icons/FlipIcon'
 import NodeCircleIcon from '~/components/Icons/NodeCircleIcon'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
-import { TEdge } from '~/types'
+import { TEdge, Topic } from '~/types'
 import { ConnectionType } from './ConnectionType'
 import { ToNode } from './ToNode'
 
 type Props = {
-  from: string
+  from: Topic
   onSelect: (edge: TEdge | null) => void
   selectedType: string
   setSelectedType: (type: string) => void
@@ -42,7 +42,7 @@ export const TitleEditor: FC<Props> = ({
 
     <Div swap={isSwapped}>
       <Flex>
-        <FromSection disabled label={!isSwapped ? 'From' : 'To'} swap={isSwapped} value={from} />
+        <FromSection disabled label={!isSwapped ? 'From' : 'To'} swap={isSwapped} value={from?.name} />
       </Flex>
 
       <Flex my={16}>
@@ -53,7 +53,7 @@ export const TitleEditor: FC<Props> = ({
       <Flex>
         <ToSection>
           <ToLabel>{!isSwapped ? 'To' : 'From'}</ToLabel>
-          <ToNode onSelect={onSelect} selectedValue={selectedToNode} />
+          <ToNode onSelect={onSelect} selectedValue={selectedToNode} topicId={from?.ref_id} />
         </ToSection>
       </Flex>
 
