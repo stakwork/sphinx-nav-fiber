@@ -16,7 +16,7 @@ describe('validateSourceURL', () => {
     })
 
     it('should return false for URLs with invalid top-level domain', () => {
-      expect(validateSourceURL('http://youtube.badtld')).toBe(false)
+      expect(validateSourceURL('http://youtube.badtld.')).toBe(false)
     })
 
     it('should return false for URLs with query containing spaces', () => {

@@ -7,9 +7,8 @@ const subDomain = /(www\.)?/g
 // domain name: Letters, numbers, hyphens, and dots
 const rootDomain = /[\w-]+(\.[\w-]+)*/g
 
-// extensive TLD matching
-const topLevelDomains =
-  /(com|org|net|info|edu|gov|mil|co|biz|name|museum|club|email|link|city|solutions|photography|tips|today|technology|directory|center|gallery|graphics|equipment|exchange|estate|land|media|money|news|network|world|international|services|engineer|systems|software|ninja|xyz|site|online|space|store|tech|fun|press|website|co.uk)/g
+// regular expression for extensive top-level domain (TLD) matching
+const topLevelDomains = /(?:\.[a-zA-Z0-9][a-zA-Z0-9-]{0,61})[a-zA-Z0-9](?:\.[a-zA-Z]{2,})/g
 
 // path: Optional, can include multiple slashes and allowable characters
 const path = /(\/[^\s?]*)?/g
@@ -19,7 +18,7 @@ const query = /(\?[^\s]*)?/g
 
 // full regex for source url
 export const sourceUrlRegex = new RegExp(
-  `${protocol.source}${subDomain.source}${rootDomain.source}\\.${topLevelDomains.source}?${path.source}${query.source}$`,
+  `${protocol.source}${subDomain.source}${rootDomain.source}${topLevelDomains.source}?${path.source}${query.source}$`,
   'i',
 )
 
