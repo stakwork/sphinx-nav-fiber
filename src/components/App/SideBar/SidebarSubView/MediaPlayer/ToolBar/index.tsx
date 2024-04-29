@@ -1,12 +1,12 @@
 import { IconButton, Slider } from '@mui/material'
 import { FC } from 'react'
 import styled from 'styled-components'
+import { Flex } from '~/components/common/Flex'
 import ExitFullScreen from '~/components/Icons/ExitFullScreen'
 import FullScreenIcon from '~/components/Icons/FullScreenIcon'
 import PauseIcon from '~/components/Icons/PauseIcon'
 import PlayIcon from '~/components/Icons/PlayIcon'
 import VolumeIcon from '~/components/Icons/VolumeIcon'
-import { Flex } from '~/components/common/Flex'
 import { colors } from '~/utils'
 import { secondsToMediaTime } from '~/utils/secondsToMediaTime'
 
@@ -47,7 +47,7 @@ export const Toolbar: FC<Props> = ({
     )}
 
     <Wrapper align="center" direction="row" showToolbar={showToolbar || isFullScreen}>
-      <Action onClick={setIsPlaying} size="small">
+      <Action data-testid="play-or-pause" onClick={setIsPlaying} size="small">
         {!isPlaying ? <PlayIcon /> : <PauseIcon />}
       </Action>
       <TimeStamp direction="row">

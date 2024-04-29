@@ -175,6 +175,7 @@ const MediaPlayerComponent: FC<Props> = ({ hidden }) => {
         <ReactPlayer
           ref={playerRef}
           controls={false}
+          data-testid="video-player"
           height={!isFullScreen ? '200px' : window.screen.height}
           onBuffer={() => setStatus('buffering')}
           onBufferEnd={() => setStatus('ready')}
