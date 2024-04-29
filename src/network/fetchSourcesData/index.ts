@@ -50,8 +50,8 @@ export type TPriceParams = {
 }
 
 export type TMergeTopicsParams = {
-  from: string
-  to: string
+  from?: string | string[]
+  to?: string
 }
 
 export type TAddEdgeParams = {

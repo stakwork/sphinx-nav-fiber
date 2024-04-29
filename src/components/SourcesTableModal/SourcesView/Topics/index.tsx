@@ -34,6 +34,7 @@ export const TopicSources = () => {
   const { open: openMergeTopic } = useModal('mergeTopic')
   const { open: openAddEdge } = useModal('addEdge')
   const [selectedTopic, setSelectedTopic] = useState<Topic | null>(null)
+  const [multiSelectedTopics, setMultiSelectedTopics] = useState<Topic[]>([])
   const [checkedStates, setCheckedStates] = useState<{ [refId: string]: boolean }>({})
 
   const topicActions: Record<string, () => void> = {
@@ -79,6 +80,7 @@ export const TopicSources = () => {
 
   const modalCloseHandler = () => {
     setSelectedTopic(null)
+    setMultiSelectedTopics([])
   }
 
   const handleMute = async (refId: string, action: string) => {
@@ -95,14 +97,27 @@ export const TopicSources = () => {
       return
     }
 
-    setSelectedTopic(data[topicId])
+    if (action === 'mergeTopic') {
+      if (Object.values(checkedStates).filter((isChecked) => isChecked).length > 0) {
+        const selectedTopics = Object.entries(checkedStates)
+          .filter(([, isChecked]) => isChecked)
+          .map(([id]) => data[id])
 
-    if (['mute', 'unMute'].includes(action)) {
-      await handleMute(topicId, action)
-    }
+        setMultiSelectedTopics(selectedTopics)
+        openMergeTopic()
+      } else {
+        setMultiSelectedTopics([data[topicId]])
+        setSelectedTopic(data[topicId])
+        openMergeTopic()
+      }
+    } else {
+      if (['mute', 'unMute'].includes(action)) {
+        await handleMute(topicId, action)
+      }
 
-    if (typeof topicActions[action] === 'function') {
-      topicActions[action]()
+      if (typeof topicActions[action] === 'function') {
+        topicActions[action]()
+      }
     }
   }
 
@@ -147,7 +162,9 @@ export const TopicSources = () => {
         </TableWrapper>
       </Wrapper>
 
-      {selectedTopic && <MergeTopicModal onClose={modalCloseHandler} topic={selectedTopic} />}
+      {multiSelectedTopics.length > 0 && (
+        <MergeTopicModal multiTopics={multiSelectedTopics} onClose={modalCloseHandler} />
+      )}
       {selectedTopic && <EditTopicModal onClose={modalCloseHandler} topic={selectedTopic} />}
       {selectedTopic && <AddEdgeModal onClose={modalCloseHandler} topic={selectedTopic} />}
     </>

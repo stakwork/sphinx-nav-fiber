@@ -12,34 +12,34 @@ import { IS_ALIAS } from '../../constants'
 import { TitleEditor } from './Title'
 
 type Props = {
-  topic: Topic
   onClose: () => void
+  multiTopics: Topic[]
 }
 
 export type FormData = {
   name: string
 }
 
-export const MergeTopicModal: FC<Props> = ({ topic, onClose }) => {
+export const MergeTopicModal: FC<Props> = ({ onClose, multiTopics }) => {
   const { close } = useModal('mergeTopic')
   const [data, ids, total] = useTopicsStore((s) => [s.data, s.ids, s.total])
   const form = useForm<FormData>({ mode: 'onChange' })
-  const { watch, setValue, reset } = form
+  const { setValue, reset } = form
   const [loading, setLoading] = useState(false)
   const [isSwapped, setIsSwapped] = useState(false)
   const [selectedToNode, setSelectedToNode] = useState<TEdge | null>(null)
 
   useEffect(() => {
-    if (topic) {
-      setValue('name', topic?.name)
+    if (multiTopics && multiTopics.length > 0) {
+      const topicNames = multiTopics.map((t) => t.name).join(', ')
+
+      setValue('name', topicNames)
     }
 
     return () => {
       reset()
     }
-  }, [topic, setValue, reset])
-
-  const topicValue = watch('name')
+  }, [multiTopics, setValue, reset])
 
   const closeHandler = () => {
     onClose()
@@ -47,28 +47,38 @@ export const MergeTopicModal: FC<Props> = ({ topic, onClose }) => {
   }
 
   const handleSave = async () => {
-    if (!selectedToNode || !data) {
-      return
-    }
-
     setLoading(true)
 
+    const fromIds = multiTopics?.map((t) => t.ref_id).filter((id): id is string => !!id)
+
+    const multiFromIds = fromIds?.slice(0, -1)
+    const multiLastId = fromIds?.slice(-1)[0]
+
     try {
-      await postMergeTopics({ from: topic.ref_id, to: selectedToNode?.ref_id })
+      if (multiTopics && multiTopics.length > 1) {
+        if (!(multiTopics?.length !== 1) || !data) {
+          return
+        }
 
-      const { ref_id: id } = topic
+        await postMergeTopics({ from: multiFromIds, to: multiLastId })
+      } else {
+        if (!selectedToNode || !data) {
+          return
+        }
 
-      data[id] = { ...data[id], edgeList: [IS_ALIAS], edgeCount: data[id].edgeCount - 1 }
-
-      useTopicsStore.setState({ ids: ids.filter((i) => i !== selectedToNode.ref_id), total: total - 1 })
-
-      if (data) {
-        const newData = { ...data }
-
-        newData[topic?.ref_id].name = topicValue.trim()
-
-        useTopicsStore.setState({ data: newData })
+        await postMergeTopics({ from: fromIds, to: selectedToNode.ref_id })
       }
+
+      fromIds?.forEach((id) => {
+        if (data[id]) {
+          data[id] = { ...data[id], edgeList: [IS_ALIAS], edgeCount: data[id].edgeCount - 1 }
+        }
+      })
+
+      useTopicsStore.setState({
+        ids: ids.filter((i) => !fromIds?.includes(i)),
+        total: total - (fromIds ? fromIds.length : 0),
+      })
 
       closeHandler()
     } catch (error) {
@@ -82,13 +92,13 @@ export const MergeTopicModal: FC<Props> = ({ topic, onClose }) => {
     <BaseModal id="mergeTopic" kind="small" onClose={closeHandler} preventOutsideClose>
       <FormProvider {...form}>
         <TitleEditor
-          from={topic}
+          from={multiTopics}
           isSwapped={isSwapped}
           onSelect={setSelectedToNode}
           selectedToNode={selectedToNode}
           setIsSwapped={() => setIsSwapped(!isSwapped)}
         />
-        <Button color="secondary" disabled={loading} onClick={handleSave} size="large" variant="contained">
+        <Button color="secondary" disabled={loading || isSwapped} onClick={handleSave} size="large" variant="contained">
           Merge topics
           {loading && <ClipLoader color={colors.BLUE_PRESS_STATE} size={10} />}
         </Button>
