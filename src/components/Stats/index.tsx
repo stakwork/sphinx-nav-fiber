@@ -22,6 +22,7 @@ interface StatConfigItem {
   key: keyof TStats
   dataKey: keyof TStatParams
   mediaType: string
+  tooltip: string
 }
 
 export const StatsConfig: StatConfigItem[] = [
@@ -31,6 +32,7 @@ export const StatsConfig: StatConfigItem[] = [
     key: 'numNodes',
     dataKey: 'num_nodes',
     mediaType: '',
+    tooltip: 'All Nodes',
   },
   {
     name: 'Episodes',
@@ -38,6 +40,7 @@ export const StatsConfig: StatConfigItem[] = [
     key: 'numEpisodes',
     dataKey: 'num_episodes',
     mediaType: 'episode',
+    tooltip: 'Episodes',
   },
   {
     name: 'Audio',
@@ -45,6 +48,7 @@ export const StatsConfig: StatConfigItem[] = [
     key: 'numAudio',
     dataKey: 'num_audio',
     mediaType: 'audio',
+    tooltip: 'Audios',
   },
   {
     name: 'Video',
@@ -52,6 +56,7 @@ export const StatsConfig: StatConfigItem[] = [
     key: 'numVideo',
     dataKey: 'num_video',
     mediaType: 'video',
+    tooltip: 'Videos',
   },
   {
     name: 'Twitter Spaces',
@@ -59,6 +64,7 @@ export const StatsConfig: StatConfigItem[] = [
     key: 'numTwitterSpace',
     dataKey: 'num_tweet',
     mediaType: 'twitter',
+    tooltip: 'Posts',
   },
   {
     name: 'Document',
@@ -66,6 +72,7 @@ export const StatsConfig: StatConfigItem[] = [
     key: 'numDocuments',
     dataKey: 'num_documents',
     mediaType: 'document',
+    tooltip: 'Documents',
   },
 ]
 
@@ -105,11 +112,12 @@ export const Stats = () => {
   return (
     <StatisticsContainer>
       <StatisticsWrapper>
-        {StatsConfig.map(({ name, icon, key, mediaType }) =>
+        {StatsConfig.map(({ name, icon, key, mediaType, tooltip }) =>
           stats[key as keyof TStats] !== '0' ? (
             <Stat key={name} data-testid={mediaType} onClick={() => handleStatClick(mediaType)}>
               <div className="icon">{icon}</div>
               <div className="text">{stats[key as keyof TStats]}</div>
+              <div className="tooltip">{tooltip}</div>
             </Stat>
           ) : (
             <></>
@@ -126,6 +134,7 @@ export const Stats = () => {
               {`${formatBudget(budget)} `} <span className="budgetUnit">SAT</span>
             </p>
           </div>
+          <div className="tooltip">Budget</div>
         </Budget>
       </StatisticsBudget>
     </StatisticsContainer>
@@ -171,9 +180,15 @@ const Stat = styled(Flex).attrs({
   margin: 0 8px;
   border-radius: 200px;
   cursor: pointer;
+  position: relative;
 
   &:hover {
     background: ${colors.BUTTON1_PRESS};
+
+    .tooltip {
+      visibility: visible;
+      opacity: 1;
+    }
   }
 
   &:active {
@@ -186,6 +201,29 @@ const Stat = styled(Flex).attrs({
   }
 
   .text {
+  }
+
+  .tooltip {
+    visibility: hidden;
+    min-width: auto;
+    background-color: white;
+    color: black;
+    text-align: center;
+    border-radius: 4px;
+    padding: 5px 8px;
+    position: absolute;
+    z-index: 1;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 8px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 12px;
+    font-weight: 600;
   }
 `
 
@@ -210,6 +248,10 @@ const Budget = styled(Flex).attrs({
 
   &:hover {
     background: ${colors.BUTTON1_PRESS};
+    .tooltip {
+      visibility: visible;
+      opacity: 1;
+    }
   }
 
   &:active {
@@ -230,5 +272,26 @@ const Budget = styled(Flex).attrs({
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+
+  .tooltip {
+    visibility: hidden;
+    min-width: auto;
+    background-color: white;
+    color: black;
+    text-align: center;
+    border-radius: 4px;
+    padding: 5px 8px;
+    position: absolute;
+    z-index: 1;
+    top: 93%;
+    right: 2.5%;
+    opacity: 0;
+    transition: opacity 0.3s;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 12px;
+    font-weight: 600;
   }
 `
