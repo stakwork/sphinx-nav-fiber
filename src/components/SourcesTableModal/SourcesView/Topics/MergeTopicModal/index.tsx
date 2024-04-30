@@ -8,7 +8,6 @@ import { useModal } from '~/stores/useModalStore'
 import { useTopicsStore } from '~/stores/useTopicsStore'
 import { TEdge, Topic } from '~/types'
 import { colors } from '~/utils/colors'
-import { IS_ALIAS } from '../../constants'
 import { TitleEditor } from './Title'
 
 type Props = {
@@ -22,7 +21,7 @@ export type FormData = {
 
 export const MergeTopicModal: FC<Props> = ({ onClose, multiTopics }) => {
   const { close } = useModal('mergeTopic')
-  const [data, ids, total] = useTopicsStore((s) => [s.data, s.ids, s.total])
+  const [ids, total] = useTopicsStore((s) => [s.ids, s.total])
   const form = useForm<FormData>({ mode: 'onChange' })
   const { setValue, reset } = form
   const [loading, setLoading] = useState(false)
@@ -51,36 +50,17 @@ export const MergeTopicModal: FC<Props> = ({ onClose, multiTopics }) => {
 
     const fromIds = multiTopics?.map((t) => t.ref_id).filter((id): id is string => !!id)
 
-    const multiFromIds = fromIds?.slice(0, -1)
-    const multiLastId = fromIds?.slice(-1)[0]
-
     try {
-      if (multiTopics && multiTopics.length > 1) {
-        if (!(multiTopics?.length !== 1) || !data) {
-          return
-        }
+      if (fromIds.length && selectedToNode) {
+        await postMergeTopics({ from: fromIds, to: selectedToNode?.ref_id })
 
-        await postMergeTopics({ from: multiFromIds, to: multiLastId })
-      } else {
-        if (!selectedToNode || !data) {
-          return
-        }
+        useTopicsStore.setState({
+          ids: ids.filter((i) => !fromIds?.includes(i)),
+          total: total - (fromIds ? fromIds.length : 0),
+        })
 
-        await postMergeTopics({ from: fromIds, to: selectedToNode.ref_id })
+        closeHandler()
       }
-
-      fromIds?.forEach((id) => {
-        if (data[id]) {
-          data[id] = { ...data[id], edgeList: [IS_ALIAS], edgeCount: data[id].edgeCount - 1 }
-        }
-      })
-
-      useTopicsStore.setState({
-        ids: ids.filter((i) => !fromIds?.includes(i)),
-        total: total - (fromIds ? fromIds.length : 0),
-      })
-
-      closeHandler()
     } catch (error) {
       console.warn(error)
     } finally {
