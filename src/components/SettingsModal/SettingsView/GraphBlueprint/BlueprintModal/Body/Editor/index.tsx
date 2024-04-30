@@ -38,21 +38,22 @@ type Props = {
   onDelete: (type: string) => void
 }
 
-const handleSubmitForm = async (data: FieldValues, isUpdate = false): Promise<void> => {
+const handleSubmitForm = async (data: FieldValues, isUpdate = false, deletedAttributes: string[]): Promise<void> => {
   try {
     const { attributes, ...withoutAttributes } = data
 
     const requestData = {
       ...withoutAttributes,
       ...convertAttributes(attributes),
+      ...deletedAttributes.reduce<{ [key: string]: string }>((acc, key) => ({ ...acc, [key]: 'delete' }), {}),
     }
 
     let res: SubmitErrRes
 
     if (isUpdate) {
-      res = await api.put(`/schema`, JSON.stringify(requestData), {})
+      res = await api.put(`/schema`, JSON.stringify(requestData))
     } else {
-      res = await api.post(`/schema`, JSON.stringify({ ...requestData, node_key: 'name' }), {})
+      res = await api.post(`/schema`, JSON.stringify({ ...requestData, node_key: 'name' }))
     }
 
     if (res.error) {
@@ -64,10 +65,10 @@ const handleSubmitForm = async (data: FieldValues, isUpdate = false): Promise<vo
   } catch (err: any) {
     let errorMessage = NODE_ADD_ERROR
 
-    if (err.status === 400) {
+    if (err instanceof Response && err.status === 400) {
       const error = await err.json()
 
-      errorMessage = error.errorCode || error?.status || NODE_ADD_ERROR
+      errorMessage = error.errorCode || error.status || NODE_ADD_ERROR
     } else if (err instanceof Error) {
       errorMessage = err.message
     }
@@ -96,6 +97,7 @@ export const Editor = ({ onSchemaCreate, selectedSchema, onDelete }: Props) => {
   const [loading, setLoading] = useState(false)
   const [parentsLoading, setParentsLoading] = useState(false)
   const [parentOptions, setParentOptions] = useState<TOption[] | null>(null)
+  const [deletedAttributes, setDeletedAttributes] = useState<string[]>([])
 
   useEffect(
     () => () => {
@@ -105,6 +107,10 @@ export const Editor = ({ onSchemaCreate, selectedSchema, onDelete }: Props) => {
   )
 
   const capitalizeFirstLetter = (string: string) => string.charAt(0).toUpperCase() + string.slice(1)
+
+  const handleDeleteAttribute = (attributeKey: string) => {
+    setDeletedAttributes((prev) => [...prev, attributeKey])
+  }
 
   useEffect(() => {
     const init = async () => {
@@ -163,7 +169,7 @@ export const Editor = ({ onSchemaCreate, selectedSchema, onDelete }: Props) => {
     setLoading(true)
 
     try {
-      await handleSubmitForm(data, !!selectedSchema)
+      await handleSubmitForm(data, !!selectedSchema, deletedAttributes)
       onSchemaCreate({ type: data.type, parent: parent || '', ref_id: selectedSchema?.ref_id || 'new' })
       handleClose()
       // eslint-disable-next-line  @typescript-eslint/no-explicit-any
@@ -248,7 +254,10 @@ export const Editor = ({ onSchemaCreate, selectedSchema, onDelete }: Props) => {
                   </Flex>
                 )}
               </Flex>
-              <CreateCustomNodeAttribute parent={selectedSchema ? selectedSchema.type : parent} />
+              <CreateCustomNodeAttribute
+                onDelete={handleDeleteAttribute}
+                parent={selectedSchema ? selectedSchema.type : parent}
+              />{' '}
               <Flex direction="row" justify="space-between" mt={20}>
                 {selectedSchema ? (
                   <DeleteButton
