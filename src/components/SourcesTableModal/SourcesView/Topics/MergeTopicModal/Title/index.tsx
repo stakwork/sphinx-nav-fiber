@@ -10,7 +10,7 @@ import { TEdge, Topic } from '~/types'
 import { ToNode } from './ToNode'
 
 type Props = {
-  from: Topic
+  from: Topic[]
   onSelect: (edge: TEdge | null) => void
   isSwapped: boolean
   setIsSwapped: () => void
@@ -21,44 +21,57 @@ interface SectionProps {
   swap: boolean
 }
 
-export const TitleEditor: FC<Props> = ({ from, onSelect, selectedToNode, isSwapped, setIsSwapped }) => (
-  <Flex>
-    <Flex align="center" direction="row" justify="space-between" mb={18}>
-      <Flex align="center" direction="row">
-        <StyledText>Merge topic</StyledText>
+interface IconMidContainerProps {
+  disabled: boolean
+}
+
+export const TitleEditor: FC<Props> = ({ from, onSelect, selectedToNode, isSwapped, setIsSwapped }) => {
+  const topicNames = from?.map((t) => t.name).join(', ')
+
+  const fromTopicNames = from && from.length === 1 ? from[0].name : `${topicNames?.substring(0, 25)} ...`
+
+  return (
+    <Flex>
+      <Flex align="center" direction="row" justify="space-between" mb={18}>
+        <Flex align="center" direction="row">
+          <StyledText>Merge topic</StyledText>
+        </Flex>
       </Flex>
+      <Div swap={isSwapped}>
+        <SectionWrapper>
+          <FromSection disabled label={!isSwapped ? 'From' : 'To'} swap={isSwapped} value={fromTopicNames} />
+        </SectionWrapper>
+
+        <Flex my={16}>
+          <StyledLabel>Type</StyledLabel>
+          <Text>IS AlIAS</Text>
+        </Flex>
+
+        <Flex>
+          <ToSection>
+            <ToLabel>{!isSwapped ? 'To' : 'From'}</ToLabel>
+            <ToNode onSelect={onSelect} selectedValue={selectedToNode} topicId={from[from.length - 1]?.ref_id} />
+          </ToSection>
+        </Flex>
+
+        <NodeConnectorDiv>
+          <IconTopContainer>
+            <NodeCircleIcon />
+          </IconTopContainer>
+          <IconMidContainer
+            disabled={Boolean(from?.length !== 1)}
+            onClick={from?.length === 1 ? setIsSwapped : undefined}
+          >
+            <FlipIcon />
+          </IconMidContainer>
+          <IconBottomContainer>
+            <ArrowRight />
+          </IconBottomContainer>
+        </NodeConnectorDiv>
+      </Div>
     </Flex>
-    <Div swap={isSwapped}>
-      <SectionWrapper>
-        <FromSection disabled label={!isSwapped ? 'From' : 'To'} swap={isSwapped} value={from.name} />
-      </SectionWrapper>
-
-      <Flex my={16}>
-        <StyledLabel>Type</StyledLabel>
-        <Text>IS AlIAS</Text>
-      </Flex>
-
-      <Flex>
-        <ToSection>
-          <ToLabel>{!isSwapped ? 'To' : 'From'}</ToLabel>
-          <ToNode onSelect={onSelect} selectedValue={selectedToNode} topicId={from?.ref_id} />
-        </ToSection>
-      </Flex>
-
-      <NodeConnectorDiv>
-        <IconTopContainer>
-          <NodeCircleIcon />
-        </IconTopContainer>
-        <IconMidContainer onClick={setIsSwapped}>
-          <FlipIcon />
-        </IconMidContainer>
-        <IconBottomContainer>
-          <ArrowRight />
-        </IconBottomContainer>
-      </NodeConnectorDiv>
-    </Div>
-  </Flex>
-)
+  )
+}
 
 const StyledText = styled(Text)`
   font-size: 22px;
@@ -146,13 +159,13 @@ const IconTopContainer = styled.div`
   color: #23252f;
 `
 
-const IconMidContainer = styled.div`
+const IconMidContainer = styled.div<IconMidContainerProps>`
   position: absolute;
   color: transparent;
   top: 50%;
   left: 0;
   transform: translateY(-50%) translateX(-50%);
-  cursor: pointer;
+  cursor: ${(props) => (props.disabled ? 'not-allowed' : 'pointer')};
   width: 32px;
   height: 32px;
   background-color: #303342;
