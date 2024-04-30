@@ -1,5 +1,5 @@
 import { noop } from 'lodash'
-import {useEffect, useState} from 'react'
+import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import AudioIcon from '~/components/Icons/AudioIcon'
 import BudgetIcon from '~/components/Icons/BudgetIcon'
@@ -79,9 +79,7 @@ export const Stats = () => {
 
   const { open: openSourcesModal } = useModal('sourcesTable')
 
-
   const fetchProcessingData = async () => {
-
     try {
       const response = await getTotalProcessing()
 
@@ -147,16 +145,16 @@ export const Stats = () => {
         )}
       </StatisticsWrapper>
       {isTotalProcessing ? (
-          <StatisticsContent data-testid="statistics-container" onClick={openSourcesModal}>
-            <ViewContent>
-              <div className="icon" style={{ marginLeft: '7px' }}>
-                <Animation />
-              </div>
-              <div className="text">
-                <p>{totalProcessing}</p>
-              </div>
-            </ViewContent>
-          </StatisticsContent>
+        <StatisticsContent data-testid="statistics-container" onClick={openSourcesModal}>
+          <ViewContent>
+            <div className="icon" style={{ marginLeft: '7px' }}>
+              <Animation />
+            </div>
+            <div className="text">
+              <p>{totalProcessing}</p>
+            </div>
+          </ViewContent>
+        </StatisticsContent>
       ) : null}
       <StatisticsBudget>
         <Budget>

@@ -94,8 +94,8 @@ interface NodeContentResponse {
 }
 
 export interface ProcessingResponse {
-  nodes: Node[],
-  totalCount: number,
+  nodes: Node[]
+  totalCount: number
   totalProcessing: number
 }
 
@@ -179,7 +179,6 @@ export const getNodeContent = async (queryParams: ViewContentParams) => {
 }
 
 export const getTotalProcessing = async () => {
-
   const signedMessage = await getSignedMessageFromRelay()
 
   const url = `/node/content?msg=${signedMessage.message}&sig=${signedMessage.signature}`

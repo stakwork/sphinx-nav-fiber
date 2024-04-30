@@ -28,7 +28,7 @@ jest.mock('~/stores/useUserStore', () => ({
 
 jest.mock('~/network/fetchSourcesData', () => ({
   getTotalProcessing: jest.fn(),
-}));
+}))
 
 const mockedUseDataStore = useDataStore as jest.MockedFunction<typeof useDataStore>
 const mockedUseUserStore = useUserStore as jest.MockedFunction<typeof useUserStore>
@@ -153,40 +153,40 @@ describe('Component Test Stats', () => {
   })
 
   it('should render the button only if totalProcessing is present and greater than 0', async () => {
-    const mockedGetTotalProcessing = getTotalProcessing as jest.MockedFunction<() => Promise<ProcessingResponse>>;
+    const mockedGetTotalProcessing = getTotalProcessing as jest.MockedFunction<() => Promise<ProcessingResponse>>
 
     const mockResponse: ProcessingResponse = {
       nodes: [],
       totalCount: 0,
       totalProcessing: 0,
-    };
+    }
 
     // Now, simulate a response where totalProcessing is not present or is 0
-    mockedGetTotalProcessing.mockResolvedValueOnce(mockResponse);
+    mockedGetTotalProcessing.mockResolvedValueOnce(mockResponse)
 
     // Re-render the component to reflect the new mock response
-    render(<Stats />);
+    render(<Stats />)
 
     // The button should not be visible since totalProcessing is equal to 0
-    const statisticsContainer = screen.queryByTestId('statistics-container');
-    expect(statisticsContainer).toBeNull();
+    const statisticsContainer = screen.queryByTestId('statistics-container')
+    expect(statisticsContainer).toBeNull()
 
     const mockResponse2: ProcessingResponse = {
       nodes: [],
       totalCount: 0,
       totalProcessing: 100,
-    };
+    }
 
     // Mocking a response where totalProcessing is present and greater than 0
-    mockedGetTotalProcessing.mockResolvedValueOnce(mockResponse2);
+    mockedGetTotalProcessing.mockResolvedValueOnce(mockResponse2)
 
-    render(<Stats />);
+    render(<Stats />)
 
     // Wait for the component to finish loading
-    await screen.findByTestId('statistics-container');
+    await screen.findByTestId('statistics-container')
 
     // The button should be visible since totalProcessing is present and greater than 0
-    const button = screen.getByText('100');
-    expect(button).toBeInTheDocument();
-  });
+    const button = screen.getByText('100')
+    expect(button).toBeInTheDocument()
+  })
 })
