@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { Booster } from '~/components/Booster'
 import { Divider } from '~/components/common/Divider'
@@ -35,6 +35,10 @@ export const Media = ({ node }: Props) => {
   } = node || selectedNode || {}
 
   const [boostAmount, setBoostAmount] = useState<number>(boost || 0)
+
+  useEffect(() => {
+    setBoostAmount(boost ?? 0)
+  }, [boost])
 
   if (!node && !selectedNode) {
     return null
