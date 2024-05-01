@@ -52,7 +52,7 @@ function a11yProps(index: number) {
 export const SourcesView = () => {
   const [value, setValue] = React.useState(0)
   const [isAdmin] = useUserStore((s) => [s.isAdmin])
-  const [queuedSourcesFlag] = useFeatureFlagStore((s) => [s.queuedSourcesFlag])
+  const [queuedSourcesFeatureFlag] = useFeatureFlagStore((s) => [s.queuedSourcesFeatureFlag])
   const sphinxEnabled = isSphinx()
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -65,7 +65,7 @@ export const SourcesView = () => {
     }
 
     if (label === QUEUED_SOURCES) {
-      return isAdmin && queuedSourcesFlag
+      return isAdmin && queuedSourcesFeatureFlag
     }
 
     if (label === VIEW_CONTENT) {

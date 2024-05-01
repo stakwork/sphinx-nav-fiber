@@ -30,12 +30,12 @@ const IconsMapper = {
 
 export const GraphViewControl = () => {
   const [graphStyle, setGraphStyle] = useDataStore((s) => [s.graphStyle, s.setGraphStyle])
-  const [v2Flag, setV2Flag] = useFeatureFlagStore((s) => [s.v2Flag, s.setV2Flag])
+  const [v2FeatureFlag, setV2FeatureFlag] = useFeatureFlagStore((s) => [s.v2FeatureFlag, s.setV2FeatureFlag])
   const [isAdmin] = useUserStore((s) => [s.isAdmin])
 
   const changeGraphType = (val: GraphStyle) => {
     setGraphStyle(val)
-    setV2Flag(false)
+    setV2FeatureFlag(false)
   }
 
   return (
@@ -43,14 +43,14 @@ export const GraphViewControl = () => {
       {graphStyles.map((i) => (
         <Flex
           key={i}
-          className={clsx('icon', { active: graphStyle === i && !v2Flag })}
+          className={clsx('icon', { active: graphStyle === i && !v2FeatureFlag })}
           onClick={() => changeGraphType(i)}
         >
           {IconsMapper[i]}
         </Flex>
       ))}
       {isAdmin && (
-        <Flex className={clsx('icon', { active: v2Flag })} onClick={() => setV2Flag(true)}>
+        <Flex className={clsx('icon', { active: v2FeatureFlag })} onClick={() => setV2FeatureFlag(true)}>
           {IconsMapper.v2}
         </Flex>
       )}

@@ -11,13 +11,13 @@ import { OPTIONS, initialValue } from './constants'
 import { Props, TOption } from './types'
 
 export const SourceTypeStep: FC<Props> = ({ skipToStep, allowNextStep, onSelectType, selectedType }) => {
-  const [customSchemaFlag] = useFeatureFlagStore((s) => [s.customSchemaFlag])
+  const [customSchemaFeatureFlag] = useFeatureFlagStore((s) => [s.customSchemaFeatureFlag])
   const [options, setOption] = useState<TOption[] | null>(null)
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     const init = async () => {
-      if (customSchemaFlag) {
+      if (customSchemaFeatureFlag) {
         setLoading(true)
 
         try {
@@ -45,7 +45,7 @@ export const SourceTypeStep: FC<Props> = ({ skipToStep, allowNextStep, onSelectT
     }
 
     init()
-  }, [selectedType, customSchemaFlag, skipToStep])
+  }, [selectedType, customSchemaFeatureFlag, skipToStep])
 
   const onSelect = (val: TAutocompleteOption | null) => {
     onSelectType(val?.label || '')

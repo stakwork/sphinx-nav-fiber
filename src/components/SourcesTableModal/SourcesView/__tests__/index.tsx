@@ -56,7 +56,7 @@ describe('Test SourceView', () => {
     jest.clearAllMocks()
     ;(useUserStore as unknown as jest.Mock).mockImplementation(() => [
       { isAdmin: false },
-      { queuedSourcesFlag: false },
+      { queuedSourcesFeatureFlag: false },
       jest.fn(),
     ])
     ;(getNodeContent as jest.Mock).mockResolvedValue({ nodes: mockNodes })
