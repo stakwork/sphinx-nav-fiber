@@ -5,12 +5,20 @@ import { Text } from '~/components/common/Text'
 import { TextInput } from '~/components/common/TextInput'
 import { requiredRule } from '~/constants'
 import { colors } from '~/utils'
+import EditNodeIcon from '~/components/Icons/EditNodeIcon'
 
 export const TitleEditor = () => (
   <Flex>
     <Flex align="center" direction="row" justify="space-between" mb={18}>
       <Flex align="center" direction="row">
         <StyledText>Edit Node</StyledText>
+        <LabelWrapper>
+          <img alt="editnode" className="badge__img" src="edit_node_badge.svg" />
+
+          <EditIconWrapper>
+            <EditNodeIcon />
+          </EditIconWrapper>
+        </LabelWrapper>
       </Flex>
     </Flex>
 
@@ -72,4 +80,20 @@ const LabelText = styled(Text)`
   font-size: 12px;
   font-weight: 400;
   line-height: 18px;
+`
+
+const LabelWrapper = styled.span`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  margin: 5px 0 0 40px;
+
+  .badge__img {
+    width: 48px;
+  }
+`
+
+const EditIconWrapper = styled(Flex)`
+  align-items: center;
 `
