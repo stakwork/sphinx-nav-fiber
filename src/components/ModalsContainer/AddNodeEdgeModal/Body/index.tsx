@@ -98,7 +98,7 @@ export const Body = () => {
         </Flex>
       ) : (
         <TitleEditor
-          from={topicEdge ? topicEdge?.search_value : selectedNode?.name || ''}
+          from={topicEdge ?? selectedNode}
           isSwapped={isSwapped}
           onSelect={setSelectedToNode}
           selectedToNode={selectedToNode}

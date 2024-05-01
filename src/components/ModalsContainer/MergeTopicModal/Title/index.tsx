@@ -1,4 +1,4 @@
-import TextField from '@mui/material/TextField'
+import { TextField } from '@mui/material'
 import { FC } from 'react'
 import styled from 'styled-components'
 import ArrowRight from '~/components/Icons/ArrowRight'
@@ -6,79 +6,69 @@ import FlipIcon from '~/components/Icons/FlipIcon'
 import NodeCircleIcon from '~/components/Icons/NodeCircleIcon'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
-import { NodeExtended, TEdge } from '~/types'
-import { ConnectionType } from './ConnectionType'
+import { TEdge, Topic } from '~/types'
 import { ToNode } from './ToNode'
 
 type Props = {
-  from: TEdge | NodeExtended | null
+  from: Topic
   onSelect: (edge: TEdge | null) => void
-  selectedType: string
-  setSelectedType: (type: string) => void
-  selectedToNode: TEdge | null
   isSwapped: boolean
   setIsSwapped: () => void
+  selectedToNode: TEdge | null
 }
 
 interface SectionProps {
   swap: boolean
 }
 
-export const TitleEditor: FC<Props> = ({
-  from,
-  onSelect,
-  selectedType,
-  setSelectedType,
-  selectedToNode,
-  setIsSwapped,
-  isSwapped,
-}) => {
-  const handleButtonClick = () => {
-    setIsSwapped()
-  }
+export const TitleEditor: FC<Props> = ({ from, onSelect, selectedToNode, isSwapped, setIsSwapped }) => (
+  <Flex>
+    <Flex align="center" direction="row" justify="space-between" mb={18}>
+      <Flex align="center" direction="row">
+        <StyledText>Merge topic</StyledText>
+      </Flex>
+    </Flex>
+    <Div swap={isSwapped}>
+      <SectionWrapper>
+        <FromSection disabled label={!isSwapped ? 'From' : 'To'} swap={isSwapped} value={from?.name} />
+      </SectionWrapper>
 
-  const nodeName: string | null = from && ('search_value' in from ? from.search_value : from.name)
-
-  return (
-    <Flex mb={20}>
-      <Flex align="center" direction="row" justify="space-between" mb={18}>
-        <Flex align="center" direction="row">
-          <StyledText>Add Edge</StyledText>
-        </Flex>
+      <Flex my={16}>
+        <StyledLabel>Type</StyledLabel>
+        <Text>IS AlIAS</Text>
       </Flex>
 
-      <Div swap={isSwapped}>
-        <Flex>
-          <FromSection disabled label={!isSwapped ? 'From' : 'To'} swap={isSwapped} value={nodeName} />
-        </Flex>
+      <Flex>
+        <ToSection>
+          <ToLabel>{!isSwapped ? 'To' : 'From'}</ToLabel>
+          <ToNode onSelect={onSelect} selectedValue={selectedToNode} topicId={from?.ref_id as string} />
+        </ToSection>
+      </Flex>
 
-        <Flex my={16}>
-          <StyledLabel>Type</StyledLabel>
-          <ConnectionType selectedType={selectedType} setSelectedType={setSelectedType} />
-        </Flex>
+      <NodeConnectorDiv>
+        <IconTopContainer>
+          <NodeCircleIcon />
+        </IconTopContainer>
+        <IconMidContainer onClick={setIsSwapped}>
+          <FlipIcon />
+        </IconMidContainer>
+        <IconBottomContainer>
+          <ArrowRight />
+        </IconBottomContainer>
+      </NodeConnectorDiv>
+    </Div>
+  </Flex>
+)
 
-        <Flex>
-          <ToSection>
-            <ToLabel>{!isSwapped ? 'To' : 'From'}</ToLabel>
-            <ToNode onSelect={onSelect} selectedValue={selectedToNode} topicId={from?.ref_id as string} />
-          </ToSection>
-        </Flex>
+const StyledText = styled(Text)`
+  font-size: 22px;
+  font-weight: 600;
+  font-family: 'Barlow';
+`
 
-        <NodeConnectorDiv>
-          <IconTopContainer>
-            <NodeCircleIcon />
-          </IconTopContainer>
-          <IconMidContainer onClick={handleButtonClick}>
-            <FlipIcon />
-          </IconMidContainer>
-          <IconBottomContainer>
-            <ArrowRight />
-          </IconBottomContainer>
-        </NodeConnectorDiv>
-      </Div>
-    </Flex>
-  )
-}
+const SectionWrapper = styled(Flex)`
+  flex: 1 1 100%;
+`
 
 const NodeConnectorDiv = styled.div`
   position: absolute;
@@ -90,11 +80,6 @@ const NodeConnectorDiv = styled.div`
   border-top: 1.5px solid #6b7a8d4d;
   border-bottom: 1.5px solid #6b7a8d4d;
   border-radius: 12px 0 0 12px;
-`
-
-const StyledText = styled(Text)`
-  font-size: 22px;
-  font-weight: 600;
 `
 
 const Div = styled.div<SectionProps>`
