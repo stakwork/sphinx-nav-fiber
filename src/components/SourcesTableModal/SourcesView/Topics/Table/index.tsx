@@ -179,11 +179,11 @@ export const Table: React.FC<TopicTableProps> = ({
                         <MuteStatusSection onClick={handleSelectedMuteUnmute} role="button">
                           {showMuted ? (
                             <>
-                              <VisibilityOn /> Unmute All
+                              <VisibilityOn /> Unmute ALL
                             </>
                           ) : (
                             <>
-                              <VisibilityOff /> Mute All
+                              <VisibilityOff /> Mute ALL
                             </>
                           )}
                         </MuteStatusSection>
