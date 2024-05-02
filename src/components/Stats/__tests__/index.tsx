@@ -28,6 +28,7 @@ jest.mock('~/stores/useUserStore', () => ({
 
 jest.mock('~/network/fetchSourcesData', () => ({
   getTotalProcessing: jest.fn(),
+  getStats: jest.fn(),
 }))
 
 const mockedUseDataStore = useDataStore as jest.MockedFunction<typeof useDataStore>
