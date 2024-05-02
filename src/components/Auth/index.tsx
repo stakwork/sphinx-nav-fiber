@@ -17,11 +17,15 @@ export const AuthGuard = ({ children }: PropsWithChildren) => {
   const { splashDataLoading } = useDataStore((s) => s)
   const { setBudget, setIsAdmin, setPubKey, setIsAuthenticated } = useUserStore((s) => s)
 
-  const [setTrendingTopicsFlag, setQueuedSourcesFlag, setCustomSchemaFlag] = useFeatureFlagStore((s) => [
-    s.setTrendingTopicsFlag,
-    s.setQueuedSourcesFlag,
-    s.setCustomSchemaFlag,
-  ])
+  const [setTrendingTopicsFlag, setQueuedSourcesFlag, setCustomSchemaFlag, setAddItem, setAddContent, setSettings] =
+    useFeatureFlagStore((s) => [
+      s.setTrendingTopicsFlag,
+      s.setQueuedSourcesFlag,
+      s.setCustomSchemaFlag,
+      s.setAddItem,
+      s.setAddContent,
+      s.setSettings,
+    ])
 
   const handleAuth = useCallback(async () => {
     localStorage.removeItem('admin')
@@ -55,12 +59,6 @@ export const AuthGuard = ({ children }: PropsWithChildren) => {
         signature: sigAndMessage.signature,
       })
 
-      if (!res.data.isPublic && !res.data.isAdmin && !res.data.isMember) {
-        setUnauthorized(true)
-
-        return
-      }
-
       if (res.data) {
         localStorage.setItem('admin', JSON.stringify({ isAdmin: res.data.isAdmin }))
         setIsAdmin(!!res.data.isAdmin)
@@ -68,6 +66,15 @@ export const AuthGuard = ({ children }: PropsWithChildren) => {
         setTrendingTopicsFlag(res.data.trendingTopics)
         setQueuedSourcesFlag(res.data.queuedSources)
         setCustomSchemaFlag(res.data.customSchema)
+        setAddContent(res.data.addContent === undefined ? true : res.data.addContent)
+        setAddItem(res.data.addItem === undefined ? true : res.data.addItem)
+        setSettings(res.data.settings === undefined ? true : res.data.settings)
+      }
+
+      if (!res.data.isPublic && !res.data.isAdmin && !res.data.isMember) {
+        setUnauthorized(true)
+
+        return
       }
 
       setIsAuthenticated(true)
@@ -86,6 +93,9 @@ export const AuthGuard = ({ children }: PropsWithChildren) => {
     setTrendingTopicsFlag,
     setQueuedSourcesFlag,
     setCustomSchemaFlag,
+    setAddContent,
+    setAddItem,
+    setSettings,
   ])
 
   // auth checker
@@ -99,7 +109,7 @@ export const AuthGuard = ({ children }: PropsWithChildren) => {
     return <Splash>{children}</Splash>
   }
 
-  if (!unAuthorized) {
+  if (unAuthorized) {
     return (
       <StyledFlex>
         <StyledText>{message}</StyledText>

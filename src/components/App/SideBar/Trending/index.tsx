@@ -4,16 +4,17 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
+import { Flex } from '~/components/common/Flex'
 import HashTag from '~/components/Icons/HashTag'
 import PauseIcon from '~/components/Icons/PauseIcon'
 import PlayIcon from '~/components/Icons/PlayIcon'
 import PlusIcon from '~/components/Icons/PlusIcon'
 import ReloadIcon from '~/components/Icons/ReloadIcon'
 import SentimentDataIcon from '~/components/Icons/SentimentDataIcon'
-import { Flex } from '~/components/common/Flex'
 import { getTrends } from '~/network/fetchGraphData'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
+import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
 import { useModal } from '~/stores/useModalStore'
 import { Trending as TrendingType } from '~/types'
 import { getTrendingTopic, showPlayButton } from '~/utils'
@@ -39,6 +40,7 @@ export const Trending = ({ onSubmit }: Props) => {
   const { open } = useModal('briefDescription')
 
   const { trendingTopics, setTrendingTopics } = useDataStore((s) => s)
+  const [addContent] = useFeatureFlagStore((s) => [s.addContent])
 
   const { setValue } = useFormContext()
 
@@ -179,17 +181,19 @@ export const Trending = ({ onSubmit }: Props) => {
         {trendingTopics.length === 0 ? (
           <div className="trending-empty">
             <Text>{placeholderText}</Text>
-            <Button
-              color="secondary"
-              disabled={loading}
-              onClick={openContentAddModal}
-              size="medium"
-              startIcon={<PlusIcon />}
-              sx={{ alignSelf: 'flex-end', m: '0 36px 16px 0' }}
-              variant="contained"
-            >
-              Add Content
-            </Button>
+            {addContent && (
+              <Button
+                color="secondary"
+                disabled={loading}
+                onClick={openContentAddModal}
+                size="medium"
+                startIcon={<PlusIcon />}
+                sx={{ alignSelf: 'flex-end', m: '0 36px 16px 0' }}
+                variant="contained"
+              >
+                Add Content
+              </Button>
+            )}
           </div>
         ) : (
           <ul className="list">
