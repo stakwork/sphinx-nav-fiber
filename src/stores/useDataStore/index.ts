@@ -154,7 +154,7 @@ export const useDataStore = create<DataStore>()(
         await saveSearchTerm()
       }
 
-      const sidebarFilters = ['all', ...new Set(data.nodes.map((i) => i.node_type.toLowerCase()))]
+      const sidebarFilters = ['all', ...new Set(data.nodes.map((i) => i.node_type?.toLowerCase()))]
 
       const sidebarFilterCounts = sidebarFilters
         .map((filter) => ({
@@ -162,7 +162,7 @@ export const useDataStore = create<DataStore>()(
           count:
             filter === 'all'
               ? data.nodes.length
-              : data.nodes.filter((node) => filter === node.node_type.toLowerCase()).length,
+              : data.nodes.filter((node) => filter === node.node_type?.toLowerCase()).length,
         }))
         .sort((a, b) => b.count - a.count)
 
