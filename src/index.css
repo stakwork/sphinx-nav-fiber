@@ -86,7 +86,7 @@ body {
 }
 
 /* Works on firefox */
-@-moz-document url-prefix(){
+@-moz-document url-prefix() {
   * {
     scrollbar-width: thin;
     scrollbar-color: var(--scrollbar-color) transparent;
