@@ -9,8 +9,6 @@ import {
 } from '~/components/SettingsModal/SettingsView/GraphBlueprint/BlueprintModal/Body/Editor/utils'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
-// import { TextInput } from '~/components/common/TextInput'
-// import { requiredRule } from '~/constants'
 import { getNodeType } from '~/network/fetchSourcesData'
 import { colors } from '~/utils'
 import { MapNodeTypeModalStepID } from '..'
@@ -82,7 +80,6 @@ export const MapPropertiesStep: FC<Props> = ({ handleSelectType, skipToStep, nod
           </Flex>
         ) : (
           <FlexContainer>
-            {/* Sorted attributes on the left side */}
             <AttributesContainer>
               {sortedAttributes?.map(({ key }: parsedObjProps) => (
                 <AttributeItem key={key}>
@@ -91,7 +88,6 @@ export const MapPropertiesStep: FC<Props> = ({ handleSelectType, skipToStep, nod
               ))}
             </AttributesContainer>
 
-            {/* Dropdown for selecting properties on the right side */}
             <DropdownContainer>
               {sortedAttributes?.map(({ key }: parsedObjProps) => (
                 <SelectInput key={key}>
@@ -152,17 +148,6 @@ const StyledWrapper = styled(Flex)`
   }
 `
 
-// const TextFieldWrapper = styled(Flex)`
-//   display: flex;
-//   gap: 10px;
-//
-//   #item-name {
-//     color: ${colors.GRAY7};
-//     -webkit-text-fill-color: ${colors.GRAY7};
-//   }
-// `
-
-// Define styled components
 const FlexContainer = styled.div`
   display: flex;
 `

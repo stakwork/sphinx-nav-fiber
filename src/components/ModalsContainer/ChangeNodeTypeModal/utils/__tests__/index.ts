@@ -1,13 +1,5 @@
 import { extractNameFromLink, getInputType } from '..'
-import {
-  DOCUMENT,
-  LINK,
-  RSS,
-  TWITTER_HANDLE,
-  TWITTER_SOURCE,
-  WEB_PAGE,
-  YOUTUBE_CHANNEL,
-} from '../../../../../constants'
+import { DOCUMENT, LINK, RSS, TWITTER_HANDLE, TWITTER_SOURCE, WEB_PAGE, YOUTUBE_CHANNEL } from '~/constants'
 
 describe('youtubeRegex', () => {
   it('should assert we can check for youtube clip regex', async () => {
