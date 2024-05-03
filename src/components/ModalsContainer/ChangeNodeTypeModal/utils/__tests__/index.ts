@@ -62,7 +62,7 @@ describe('extractNameFromLink', () => {
     expect(result).toBeNull()
   })
 
-  it('should handle multiple occurrences and return the first match', () => {
+  it('should handle multiples occurrences and return the first match', () => {
     const inputString = 'twitter.com/@support?&val=@help'
     const result = extractNameFromLink(inputString, TWITTER_HANDLE)
 
