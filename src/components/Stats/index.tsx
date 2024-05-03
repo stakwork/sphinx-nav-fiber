@@ -1,6 +1,7 @@
 import { noop } from 'lodash'
 import { useEffect } from 'react'
 import styled from 'styled-components'
+import { Tooltip } from '~/components/common/ToolTip'
 import AudioIcon from '~/components/Icons/AudioIcon'
 import BudgetIcon from '~/components/Icons/BudgetIcon'
 import NodesIcon from '~/components/Icons/NodesIcon'
@@ -115,9 +116,10 @@ export const Stats = () => {
         {StatsConfig.map(({ name, icon, key, mediaType, tooltip }) =>
           stats[key as keyof TStats] !== '0' ? (
             <Stat key={name} data-testid={mediaType} onClick={() => handleStatClick(mediaType)}>
-              <div className="icon">{icon}</div>
-              <div className="text">{stats[key as keyof TStats]}</div>
-              <div className="tooltip">{tooltip}</div>
+              <Tooltip content={tooltip} margin="13px">
+                <div className="icon">{icon}</div>
+                <div className="text">{stats[key as keyof TStats]}</div>
+              </Tooltip>
             </Stat>
           ) : (
             <></>
@@ -126,15 +128,16 @@ export const Stats = () => {
       </StatisticsWrapper>
       <StatisticsBudget>
         <Budget>
-          <div className="icon">
-            <BudgetIcon />
-          </div>
-          <div className="text">
-            <p>
-              {`${formatBudget(budget)} `} <span className="budgetUnit">SAT</span>
-            </p>
-          </div>
-          <div className="tooltip">Budget</div>
+          <Tooltip content="Budget" margin="18px">
+            <div className="icon">
+              <BudgetIcon />
+            </div>
+            <div className="text">
+              <p>
+                {`${formatBudget(budget)} `} <span className="budgetUnit">SAT</span>
+              </p>
+            </div>
+          </Tooltip>
         </Budget>
       </StatisticsBudget>
     </StatisticsContainer>
@@ -180,15 +183,9 @@ const Stat = styled(Flex).attrs({
   margin: 0 8px;
   border-radius: 200px;
   cursor: pointer;
-  position: relative;
 
   &:hover {
     background: ${colors.BUTTON1_PRESS};
-
-    .tooltip {
-      visibility: visible;
-      opacity: 1;
-    }
   }
 
   &:active {
@@ -201,29 +198,6 @@ const Stat = styled(Flex).attrs({
   }
 
   .text {
-  }
-
-  .tooltip {
-    visibility: hidden;
-    min-width: auto;
-    background-color: white;
-    color: black;
-    text-align: center;
-    border-radius: 4px;
-    padding: 5px 8px;
-    position: absolute;
-    z-index: 1;
-    top: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    margin-top: 8px;
-    opacity: 0;
-    transition: opacity 0.3s;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    font-size: 12px;
-    font-weight: 600;
   }
 `
 
@@ -248,10 +222,6 @@ const Budget = styled(Flex).attrs({
 
   &:hover {
     background: ${colors.BUTTON1_PRESS};
-    .tooltip {
-      visibility: visible;
-      opacity: 1;
-    }
   }
 
   &:active {
@@ -262,6 +232,7 @@ const Budget = styled(Flex).attrs({
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-right: 10px;
   }
 
   .budgetUnit {
@@ -272,26 +243,5 @@ const Budget = styled(Flex).attrs({
     display: flex;
     align-items: center;
     justify-content: center;
-  }
-
-  .tooltip {
-    visibility: hidden;
-    min-width: auto;
-    background-color: white;
-    color: black;
-    text-align: center;
-    border-radius: 4px;
-    padding: 5px 8px;
-    position: absolute;
-    z-index: 1;
-    top: 93%;
-    right: 2.5%;
-    opacity: 0;
-    transition: opacity 0.3s;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    font-size: 12px;
-    font-weight: 600;
   }
 `
