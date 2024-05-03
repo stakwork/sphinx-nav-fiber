@@ -1,6 +1,7 @@
 import { noop } from 'lodash'
 import { useEffect } from 'react'
 import styled from 'styled-components'
+import { Tooltip } from '~/components/common/ToolTip'
 import AudioIcon from '~/components/Icons/AudioIcon'
 import BudgetIcon from '~/components/Icons/BudgetIcon'
 import NodesIcon from '~/components/Icons/NodesIcon'
@@ -22,6 +23,7 @@ interface StatConfigItem {
   key: keyof TStats
   dataKey: keyof TStatParams
   mediaType: string
+  tooltip: string
 }
 
 export const StatsConfig: StatConfigItem[] = [
@@ -31,6 +33,7 @@ export const StatsConfig: StatConfigItem[] = [
     key: 'numNodes',
     dataKey: 'num_nodes',
     mediaType: '',
+    tooltip: 'All Nodes',
   },
   {
     name: 'Episodes',
@@ -38,6 +41,7 @@ export const StatsConfig: StatConfigItem[] = [
     key: 'numEpisodes',
     dataKey: 'num_episodes',
     mediaType: 'episode',
+    tooltip: 'Episodes',
   },
   {
     name: 'Audio',
@@ -45,6 +49,7 @@ export const StatsConfig: StatConfigItem[] = [
     key: 'numAudio',
     dataKey: 'num_audio',
     mediaType: 'audio',
+    tooltip: 'Audios',
   },
   {
     name: 'Video',
@@ -52,6 +57,7 @@ export const StatsConfig: StatConfigItem[] = [
     key: 'numVideo',
     dataKey: 'num_video',
     mediaType: 'video',
+    tooltip: 'Videos',
   },
   {
     name: 'Twitter Spaces',
@@ -59,6 +65,7 @@ export const StatsConfig: StatConfigItem[] = [
     key: 'numTwitterSpace',
     dataKey: 'num_tweet',
     mediaType: 'twitter',
+    tooltip: 'Posts',
   },
   {
     name: 'Document',
@@ -66,6 +73,7 @@ export const StatsConfig: StatConfigItem[] = [
     key: 'numDocuments',
     dataKey: 'num_documents',
     mediaType: 'document',
+    tooltip: 'Documents',
   },
 ]
 
@@ -105,11 +113,13 @@ export const Stats = () => {
   return (
     <StatisticsContainer>
       <StatisticsWrapper>
-        {StatsConfig.map(({ name, icon, key, mediaType }) =>
+        {StatsConfig.map(({ name, icon, key, mediaType, tooltip }) =>
           stats[key as keyof TStats] !== '0' ? (
             <Stat key={name} data-testid={mediaType} onClick={() => handleStatClick(mediaType)}>
-              <div className="icon">{icon}</div>
-              <div className="text">{stats[key as keyof TStats]}</div>
+              <Tooltip content={tooltip} margin="13px">
+                <div className="icon">{icon}</div>
+                <div className="text">{stats[key as keyof TStats]}</div>
+              </Tooltip>
             </Stat>
           ) : (
             <></>
@@ -118,14 +128,16 @@ export const Stats = () => {
       </StatisticsWrapper>
       <StatisticsBudget>
         <Budget>
-          <div className="icon">
-            <BudgetIcon />
-          </div>
-          <div className="text">
-            <p>
-              {`${formatBudget(budget)} `} <span className="budgetUnit">SAT</span>
-            </p>
-          </div>
+          <Tooltip content="Budget" margin="18px">
+            <div className="icon">
+              <BudgetIcon />
+            </div>
+            <div className="text">
+              <p>
+                {`${formatBudget(budget)} `} <span className="budgetUnit">SAT</span>
+              </p>
+            </div>
+          </Tooltip>
         </Budget>
       </StatisticsBudget>
     </StatisticsContainer>
@@ -220,6 +232,7 @@ const Budget = styled(Flex).attrs({
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-right: 10px;
   }
 
   .budgetUnit {

@@ -39,7 +39,7 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
   const filteredNodes = useFilteredNodes()
 
   const { setSidebarOpen, currentSearch: searchTerm, clearSearch, searchFormValue } = useAppStore((s) => s)
-  const [trendingTopicsFlag] = useFeatureFlagStore((s) => [s.trendingTopicsFlag])
+  const [trendingTopicsFeatureFlag] = useFeatureFlagStore((s) => [s.trendingTopicsFeatureFlag])
 
   const { setValue } = useFormContext()
   const componentRef = useRef<HTMLDivElement | null>(null)
@@ -121,7 +121,7 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
         </CollapseButton>
       )}
       <ScrollWrapper ref={componentRef}>
-        {!searchTerm && trendingTopicsFlag && (
+        {!searchTerm && trendingTopicsFeatureFlag && (
           <TrendingWrapper>
             <Trending onSubmit={onSubmit} />
           </TrendingWrapper>

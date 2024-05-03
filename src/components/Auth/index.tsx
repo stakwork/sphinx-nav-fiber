@@ -17,11 +17,9 @@ export const AuthGuard = ({ children }: PropsWithChildren) => {
   const { splashDataLoading } = useDataStore((s) => s)
   const { setBudget, setIsAdmin, setPubKey, setIsAuthenticated } = useUserStore((s) => s)
 
-  const [setTrendingTopicsFlag, setQueuedSourcesFlag, setCustomSchemaFlag] = useFeatureFlagStore((s) => [
-    s.setTrendingTopicsFlag,
-    s.setQueuedSourcesFlag,
-    s.setCustomSchemaFlag,
-  ])
+  const [setTrendingTopicsFeatureFlag, setQueuedSourcesFeatureFlag, setCustomSchemaFeatureFlag] = useFeatureFlagStore(
+    (s) => [s.setTrendingTopicsFeatureFlag, s.setQueuedSourcesFeatureFlag, s.setCustomSchemaFeatureFlag],
+  )
 
   const handleAuth = useCallback(async () => {
     localStorage.removeItem('admin')
@@ -65,9 +63,9 @@ export const AuthGuard = ({ children }: PropsWithChildren) => {
         localStorage.setItem('admin', JSON.stringify({ isAdmin: res.data.isAdmin }))
         setIsAdmin(!!res.data.isAdmin)
 
-        setTrendingTopicsFlag(res.data.trendingTopics)
-        setQueuedSourcesFlag(res.data.queuedSources)
-        setCustomSchemaFlag(res.data.customSchema)
+        setTrendingTopicsFeatureFlag(res.data.trendingTopics)
+        setQueuedSourcesFeatureFlag(res.data.queuedSources)
+        setCustomSchemaFeatureFlag(res.data.customSchema)
       }
 
       setIsAuthenticated(true)
@@ -83,9 +81,9 @@ export const AuthGuard = ({ children }: PropsWithChildren) => {
     setPubKey,
     setIsAuthenticated,
     setIsAdmin,
-    setTrendingTopicsFlag,
-    setQueuedSourcesFlag,
-    setCustomSchemaFlag,
+    setTrendingTopicsFeatureFlag,
+    setQueuedSourcesFeatureFlag,
+    setCustomSchemaFeatureFlag,
   ])
 
   // auth checker
