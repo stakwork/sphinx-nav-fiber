@@ -127,6 +127,7 @@ export type NodeExtended = Node & {
   latitude?: number
   coordinates?: Coordinates
   audio?: Audio[]
+  properties?: { [key: string]: never }
 }
 
 export type Link<T = string> = {
