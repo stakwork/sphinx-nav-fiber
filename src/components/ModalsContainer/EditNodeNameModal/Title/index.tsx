@@ -6,67 +6,74 @@ import { TextInput } from '~/components/common/TextInput'
 import { requiredRule } from '~/constants'
 import { colors } from '~/utils'
 import EditNodeIcon from '~/components/Icons/EditNodeIcon'
+import { TypeBadge } from '~/components/common/TypeBadge'
+import { useSelectedNode } from '~/stores/useDataStore'
 
-export const TitleEditor = () => (
-  <Flex>
-    <Flex align="center" direction="row" justify="space-between" mb={18}>
-      <Flex align="center" direction="row">
-        <StyledText>Edit Node</StyledText>
-        <LabelWrapper>
-          <img alt="editnode" className="badge__img" src="edit_node_badge.svg" />
+export const TitleEditor = () => {
+  const selectedNode = useSelectedNode()
+  const nodeType = selectedNode?.node_type as string
 
-          <EditIconWrapper>
-            <EditNodeIcon />
-          </EditIconWrapper>
-        </LabelWrapper>
+  return (
+    <Flex>
+      <Flex align="center" direction="row" justify="space-between" mb={18}>
+        <Flex align="center" direction="row">
+          <StyledText>Edit Node</StyledText>
+          <LabelWrapper>
+            <TypeBadge type={nodeType} />
+
+            <EditIconWrapper>
+              <EditNodeIcon />
+            </EditIconWrapper>
+          </LabelWrapper>
+        </Flex>
+      </Flex>
+
+      <Flex mb={18}>
+        <LabelText
+          style={{
+            marginBottom: 8,
+          }}
+        >
+          Node Name
+        </LabelText>
+        <TextInput
+          id="cy-topic"
+          maxLength={50}
+          name="name"
+          placeholder="Node name"
+          rules={{
+            ...requiredRule,
+          }}
+        />
+      </Flex>
+
+      <Flex mb={36}>
+        <LabelText
+          style={{
+            marginBottom: 8,
+          }}
+        >
+          image_url
+        </LabelText>
+        <TextInput
+          id="cy-image_url"
+          maxLength={500}
+          name="image_url"
+          placeholder="image_url"
+          rules={{
+            pattern: {
+              message: 'Please enter a valid URL',
+              value: imageUrlRegex,
+            },
+            validate: {
+              source: validateImageInputType,
+            },
+          }}
+        />
       </Flex>
     </Flex>
-
-    <Flex mb={18}>
-      <LabelText
-        style={{
-          marginBottom: 8,
-        }}
-      >
-        Node Name
-      </LabelText>
-      <TextInput
-        id="cy-topic"
-        maxLength={50}
-        name="name"
-        placeholder="Node name"
-        rules={{
-          ...requiredRule,
-        }}
-      />
-    </Flex>
-
-    <Flex mb={36}>
-      <LabelText
-        style={{
-          marginBottom: 8,
-        }}
-      >
-        image_url
-      </LabelText>
-      <TextInput
-        id="cy-image_url"
-        maxLength={500}
-        name="image_url"
-        placeholder="image_url"
-        rules={{
-          pattern: {
-            message: 'Please enter a valid URL',
-            value: imageUrlRegex,
-          },
-          validate: {
-            source: validateImageInputType,
-          },
-        }}
-      />
-    </Flex>
-  </Flex>
-)
+  )
+}
 
 const StyledText = styled(Text)`
   font-size: 22px;
@@ -88,10 +95,6 @@ const LabelWrapper = styled.span`
   justify-content: center;
   gap: 15px;
   margin: 5px 0 0 40px;
-
-  .badge__img {
-    width: 48px;
-  }
 `
 
 const EditIconWrapper = styled(Flex)`
