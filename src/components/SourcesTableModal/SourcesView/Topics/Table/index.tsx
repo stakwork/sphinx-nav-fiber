@@ -19,7 +19,7 @@ import { useAppStore } from '~/stores/useAppStore'
 import { useModal } from '~/stores/useModalStore'
 import { useTopicsStore } from '~/stores/useTopicsStore'
 import { colors } from '~/utils/colors'
-import { StyledTableCell, StyledTableHead } from '../../common'
+import { ActionStyledTableHead, StyledTableCell, StyledTableHead } from '../../common'
 import { TopicTableProps } from '../../types'
 import { TopicRow } from './TableRow'
 
@@ -131,68 +131,76 @@ export const Table: React.FC<TopicTableProps> = ({
           ) : (
             <>
               <MaterialTable component="table">
-                <StyledTableHead>
-                  <TableRow component="tr">
-                    <StyledTableCell className="empty" />
-                    <StyledTableCell>
-                      <SortedIcon onClick={() => handleChange(ALPHABETICALLY)}>
-                        Name <SortFilterIcon />
-                      </SortedIcon>
-                    </StyledTableCell>
-                    <StyledTableCell>Type</StyledTableCell>
-                    <StyledTableCell>
-                      <SortedIcon onClick={() => handleChange(EDGE_COUNT)}>
-                        Count <SortFilterIcon />
-                      </SortedIcon>
-                    </StyledTableCell>
-                    <StyledTableCell>Edge list</StyledTableCell>
-                    <StyledTableCell>
-                      <SortedIcon onClick={() => handleChange(DATE)}>
-                        Date <SortFilterIcon />
-                      </SortedIcon>
-                    </StyledTableCell>
-                    <StyledTableCell>
-                      <Flex px={8}>
-                        <CheckboxSection onClick={setShowMuteUnmute}>
-                          <CheckboxIcon checked={showMuted}>
-                            <Checkmark>{showMuted && <CheckIcon />}</Checkmark>
-                          </CheckboxIcon>
-                          Muted
-                        </CheckboxSection>
-                      </Flex>
-                    </StyledTableCell>
-                  </TableRow>
-                </StyledTableHead>
-                {checkedCount > 0 && (
-                  <TableRow component="tr">
-                    <StyledTableCell>
-                      <IconButton onClick={() => setCheckedStates({})}>
-                        <ClearIcon />
-                      </IconButton>
-                    </StyledTableCell>
-                    <StyledTableCell>
-                      <StatusBarSection>
-                        <CheckCountBoxSection>
-                          <CheckedCount>{checkedCount}</CheckedCount>
-                          selected
-                        </CheckCountBoxSection>
-                        <MuteStatusSection onClick={handleSelectedMuteUnmute} role="button">
-                          {showMuted ? (
-                            <>
-                              <VisibilityOn /> Unmute All
-                            </>
-                          ) : (
-                            <>
-                              <VisibilityOff /> Mute All
-                            </>
-                          )}
-                        </MuteStatusSection>
-                        <MultiSelectMerge onClick={() => handlePopoverAction('mergeTopic')}>
-                          <MergeIcon /> Merge
-                        </MultiSelectMerge>
-                      </StatusBarSection>
-                    </StyledTableCell>
-                  </TableRow>
+                {checkedCount > 0 ? (
+                  <ActionStyledTableHead>
+                    <TableRow component="tr">
+                      <StyledTableCell>
+                        <IconButton onClick={() => setCheckedStates({})}>
+                          <ClearIcon />
+                        </IconButton>
+                      </StyledTableCell>
+                      <StyledTableCell>
+                        <StatusBarSection>
+                          <CheckCountBoxSection>
+                            <CheckedCount>{checkedCount}</CheckedCount>
+                            selected
+                          </CheckCountBoxSection>
+                          <MuteStatusSection onClick={handleSelectedMuteUnmute} role="button">
+                            {showMuted ? (
+                              <>
+                                <VisibilityOn /> Unmute ALL
+                              </>
+                            ) : (
+                              <>
+                                <VisibilityOff /> Mute ALL
+                              </>
+                            )}
+                          </MuteStatusSection>
+                          <MuteStatusSection onClick={() => handlePopoverAction('mergeTopic')}>
+                            <MergeIcon /> Merge
+                          </MuteStatusSection>
+                        </StatusBarSection>
+                      </StyledTableCell>
+                      <StyledTableCell className="empty" />
+                      <StyledTableCell className="empty" />
+                      <StyledTableCell className="empty" />
+                      <StyledTableCell className="empty" />
+                      <StyledTableCell className="empty" />
+                    </TableRow>
+                  </ActionStyledTableHead>
+                ) : (
+                  <StyledTableHead>
+                    <TableRow component="tr">
+                      <StyledTableCell className="empty" />
+                      <StyledTableCell>
+                        <SortedIcon onClick={() => handleChange(ALPHABETICALLY)}>
+                          Name <SortFilterIcon />
+                        </SortedIcon>
+                      </StyledTableCell>
+                      <StyledTableCell>Type</StyledTableCell>
+                      <StyledTableCell>
+                        <SortedIcon onClick={() => handleChange(EDGE_COUNT)}>
+                          Count <SortFilterIcon />
+                        </SortedIcon>
+                      </StyledTableCell>
+                      <StyledTableCell>Edge list</StyledTableCell>
+                      <StyledTableCell>
+                        <SortedIcon onClick={() => handleChange(DATE)}>
+                          Date <SortFilterIcon />
+                        </SortedIcon>
+                      </StyledTableCell>
+                      <StyledTableCell>
+                        <Flex px={8}>
+                          <CheckboxSection onClick={setShowMuteUnmute}>
+                            <CheckboxIcon checked={showMuted}>
+                              <Checkmark>{showMuted && <CheckIcon />}</Checkmark>
+                            </CheckboxIcon>
+                            Muted
+                          </CheckboxSection>
+                        </Flex>
+                      </StyledTableCell>
+                    </TableRow>
+                  </StyledTableHead>
                 )}
 
                 {data && (
@@ -323,13 +331,15 @@ const CheckedCount = styled.span`
   font-family: Barlow;
   font-size: 13px;
   font-weight: 500;
-  margin-right: 3px;
+  margin-right: 4px;
+  margin-top: 1px;
 `
 
 const MuteStatusSection = styled.div`
   display: flex;
   align-items: center;
   cursor: pointer;
+  flex-wrap: nowrap;
   gap: 8px;
   padding: 1px 8px;
   &:hover {
@@ -356,17 +366,18 @@ const TableInnerWrapper = styled(Flex)`
   overflow: auto;
   flex: 1;
   width: 100%;
+  position: relative;
 `
 
-const MultiSelectMerge = styled.div`
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  gap: 6px;
-  padding: 1px 6px;
-  &:hover {
-    background-color: rgba(255, 255, 255, 0.2);
-    padding: 1px 6px;
-    border-radius: 4px;
-  }
-`
+// const MultiSelectMerge = styled.div`
+//   display: flex;
+//   align-items: center;
+//   cursor: pointer;
+//   gap: 6px;
+//   padding: 1px 6px;
+//   &:hover {
+//     background-color: rgba(255, 255, 255, 0.2);
+//     padding: 1px 6px;
+//     border-radius: 4px;
+//   }
+// `

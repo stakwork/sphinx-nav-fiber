@@ -154,14 +154,17 @@ export const useDataStore = create<DataStore>()(
         await saveSearchTerm()
       }
 
-      const sidebarFilters = ['all', ...new Set(data.nodes.map((i) => i.node_type || 'Other'))]
+      const sidebarFilters = ['all', ...new Set(data.nodes.map((i) => i.node_type.toLowerCase()))]
 
-      const sidebarFilterCounts = sidebarFilters.map((filter) => ({
-        name: filter,
-        count: data.nodes.filter(
-          (node) => filter === 'all' || node.node_type === filter || (!node.node_type && filter === 'Other'),
-        ).length,
-      }))
+      const sidebarFilterCounts = sidebarFilters
+        .map((filter) => ({
+          name: filter,
+          count:
+            filter === 'all'
+              ? data.nodes.length
+              : data.nodes.filter((node) => filter === node.node_type.toLowerCase()).length,
+        }))
+        .sort((a, b) => b.count - a.count)
 
       set({
         data,
@@ -275,15 +278,9 @@ export const useDataStore = create<DataStore>()(
 export const useSelectedNode = () => useDataStore((s) => s.selectedNode)
 
 export const useFilteredNodes = () =>
-  useDataStore((s) => {
-    if (s.sidebarFilter === 'all') {
-      return s.data?.nodes || []
-    }
-
-    return (s.data?.nodes || []).filter((i) =>
-      s.sidebarFilter === 'Other' ? !i.node_type : i.node_type === s.sidebarFilter,
-    )
-  })
+  useDataStore((s) =>
+    (s.data?.nodes || []).filter((i) => (s.sidebarFilter === 'all' ? true : i.node_type === s.sidebarFilter)),
+  )
 
 export const useUpdateGraphData = () => {
   const data = useDataStore((state) => state.data)

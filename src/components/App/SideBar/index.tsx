@@ -5,12 +5,12 @@ import { useFormContext } from 'react-hook-form'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
 import { SelectWithPopover } from '~/components/App/SideBar/Dropdown'
-import { Flex } from '~/components/common/Flex'
-import { FetchLoaderText } from '~/components/common/Loader'
 import ChevronLeftIcon from '~/components/Icons/ChevronLeftIcon'
 import ClearIcon from '~/components/Icons/ClearIcon'
 import SearchIcon from '~/components/Icons/SearchIcon'
 import { SearchBar } from '~/components/SearchBar'
+import { Flex } from '~/components/common/Flex'
+import { FetchLoaderText } from '~/components/common/Loader'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore, useFilteredNodes, useSelectedNode } from '~/stores/useDataStore'
 import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
@@ -34,12 +34,12 @@ type ContentProp = {
 
 // eslint-disable-next-line react/display-name
 const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen }, ref) => {
-  const { isFetching: isLoading, setTeachMe, setSidebarFilter } = useDataStore((s) => s)
+  const { isFetching: isLoading, setTeachMe, setSidebarFilter, data } = useDataStore((s) => s)
 
   const filteredNodes = useFilteredNodes()
 
   const { setSidebarOpen, currentSearch: searchTerm, clearSearch, searchFormValue } = useAppStore((s) => s)
-  const [trendingTopicsFlag] = useFeatureFlagStore((s) => [s.trendingTopicsFlag])
+  const [trendingTopicsFeatureFlag] = useFeatureFlagStore((s) => [s.trendingTopicsFeatureFlag])
 
   const { setValue } = useFormContext()
   const componentRef = useRef<HTMLDivElement | null>(null)
@@ -103,7 +103,7 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
                 </div>
                 <div className="right" style={{ alignItems: 'center' }}>
                   {/* <TeachMe /> */}
-                  <SelectWithPopover />
+                  {data?.nodes.length ? <SelectWithPopover /> : null}
                 </div>
               </>
             )}
@@ -121,7 +121,7 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
         </CollapseButton>
       )}
       <ScrollWrapper ref={componentRef}>
-        {!searchTerm && trendingTopicsFlag && (
+        {!searchTerm && trendingTopicsFeatureFlag && (
           <TrendingWrapper>
             <Trending onSubmit={onSubmit} />
           </TrendingWrapper>

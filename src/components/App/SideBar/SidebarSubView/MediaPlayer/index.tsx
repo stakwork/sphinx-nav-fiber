@@ -12,6 +12,10 @@ type Props = {
   hidden: boolean
 }
 
+type FullScreenProps = {
+  isFullScreen: boolean
+}
+
 const MediaPlayerComponent: FC<Props> = ({ hidden }) => {
   const playerRef = useRef<ReactPlayer | null>(null)
   const wrapperRef = useRef<HTMLDivElement | null>(null)
@@ -35,6 +39,8 @@ const MediaPlayerComponent: FC<Props> = ({ hidden }) => {
     isSeeking,
     setIsSeeking,
   } = usePlayerStore((s) => s)
+
+  const isYouTubeVideo = playingNode?.link?.includes('youtube') || playingNode?.link?.includes('youtu.be')
 
   useEffect(() => () => resetPlayer(), [resetPlayer])
 
@@ -168,7 +174,7 @@ const MediaPlayerComponent: FC<Props> = ({ hidden }) => {
       onFocus={() => setIsFocused(true)}
       tabIndex={0}
     >
-      <Cover>
+      <Cover isFullScreen={isFullScreen}>
         <Avatar size={120} src={playingNode?.image_url || ''} type="clip" />
       </Cover>
       <PlayerWrapper onClick={handlePlayerClick}>
@@ -205,8 +211,8 @@ const MediaPlayerComponent: FC<Props> = ({ hidden }) => {
           showToolbar={isMouseNearBottom && isFullScreen}
         />
       ) : null}
-      {status === 'buffering' ? (
-        <Buffering>
+      {status === 'buffering' && !isYouTubeVideo ? (
+        <Buffering isFullScreen={isFullScreen}>
           <ClipLoader color={colors.lightGray} />
         </Buffering>
       ) : null}
@@ -227,17 +233,17 @@ const Wrapper = styled(Flex)<Props>`
   }
 `
 
-const Cover = styled(Flex)`
+const Cover = styled(Flex)<FullScreenProps>`
   position: absolute;
-  top: 20%;
+  top: ${(props) => (props.isFullScreen ? '38%' : '18%')};
   left: 50%;
   transform: translateX(-50%);
   z-index: -1;
 `
 
-const Buffering = styled(Flex)`
+const Buffering = styled(Flex)<FullScreenProps>`
   position: absolute;
-  top: 39%;
+  top: ${(props) => (props.isFullScreen ? '43%' : '39%')};
   left: 50%;
   transform: translateX(-50%);
   z-index: 1;

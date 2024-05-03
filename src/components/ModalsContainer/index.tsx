@@ -26,6 +26,10 @@ const LazyAddNodeEdgeModal = lazy(() =>
   import('./AddNodeEdgeModal').then(({ AddNodeEdgeModal }) => ({ default: AddNodeEdgeModal })),
 )
 
+const LazyChangeNodeTypeModal = lazy(() =>
+  import('./ChangeNodeTypeModal').then(({ ChangeNodeTypeModal }) => ({ default: ChangeNodeTypeModal })),
+)
+
 const LazyMergeNodeModal = lazy(() =>
   import('./MergeTopicModal').then(({ MergeNodeModal }) => ({ default: MergeNodeModal })),
 )
@@ -39,6 +43,7 @@ export const ModalsContainer = () => (
     <LazyRemoveNodeModal />
     <LazySourcesTableModal />
     <LazyAddNodeEdgeModal />
+    <LazyChangeNodeTypeModal />
     <LazyMergeNodeModal />
   </>
 )
