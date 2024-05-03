@@ -5,36 +5,6 @@ import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { TypeBadge } from '~/components/common/TypeBadge'
 import { useSelectedNode } from '~/stores/useDataStore'
-import { NodeExtended } from '~/types'
-
-const excludedKeys: Set<string> = new Set([
-  'id',
-  'image_url',
-  'index',
-  'node_type',
-  'ref_id',
-  'scale',
-  'type',
-  'vx',
-  'vy',
-  'vz',
-  'x',
-  'y',
-  'z',
-  'properties',
-  'weight',
-])
-
-const formatKey = (key: string): string =>
-  key
-    .split('_')
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ')
-
-const filterKeys = (selectedNode: NodeExtended): NodeExtended =>
-  Object.entries(selectedNode)
-    .filter(([key]) => !excludedKeys.has(key))
-    .reduce((obj, [key, value]) => ({ ...obj, [formatKey(key)]: value }), {} as NodeExtended)
 
 export const Default = () => {
   const selectedNode = useSelectedNode()
@@ -43,12 +13,13 @@ export const Default = () => {
     return null
   }
 
-  const filteredKeys = filterKeys(selectedNode)
-  const hashImage = !!selectedNode.image_url
+  const hasImage = !!selectedNode.image_url
+
+  const customKeys = selectedNode.properties || {}
 
   return (
-    <StyledContent grow={1} justify="flex-start" pt={hashImage ? 0 : 8} shrink={1}>
-      {hashImage ? (
+    <StyledContent grow={1} justify="flex-start" pt={hasImage ? 0 : 8} shrink={1}>
+      {hasImage ? (
         <StyledImageWrapper>
           <img alt="img_a11y" src={selectedNode.image_url} />
         </StyledImageWrapper>
@@ -59,7 +30,7 @@ export const Default = () => {
       </Flex>
 
       <StyledWrapper>
-        {Object.entries(filteredKeys).map(([key, value]) => (
+        {Object.entries(customKeys).map(([key, value]) => (
           <NodeDetail key={key} label={key} value={value} />
         ))}
       </StyledWrapper>
