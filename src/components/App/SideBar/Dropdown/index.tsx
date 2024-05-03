@@ -13,8 +13,7 @@ import { colors } from '~/utils/colors'
 export const SelectWithPopover = () => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null)
   const { sidebarFilter, setSidebarFilter, sidebarFilterCounts } = useDataStore((s) => s)
-  const currentFilter = sidebarFilter === 'undefined' ? 'Other' : sidebarFilter
-  const currentFilterCount = sidebarFilterCounts.find((f) => f.name === currentFilter)?.count || 0
+  const currentFilterCount = sidebarFilterCounts.find((f) => f.name === sidebarFilter)?.count || 0
 
   const capitalizeFirstLetter = (text: string): string => {
     if (!text) {
@@ -42,7 +41,7 @@ export const SelectWithPopover = () => {
       <Action onClick={handleOpenPopover}>
         <div className="text">Show</div>
         <div className="value" data-testid="value">
-          {`${capitalizeFirstLetter(currentFilter)} (${currentFilterCount})`}
+          {`${capitalizeFirstLetter(sidebarFilter)} (${currentFilterCount})`}
         </div>
         <div className="icon">{!anchorEl ? <ChevronDownIcon /> : <ChevronUpIcon />}</div>
       </Action>
