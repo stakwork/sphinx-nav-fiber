@@ -42,7 +42,7 @@ function a11yProps(index: number) {
 export const SourcesView = () => {
   const [value, setValue] = React.useState(0)
   const [isAdmin] = useUserStore((s) => [s.isAdmin])
-  const [queuedSourcesFlag] = useFeatureFlagStore((s) => [s.queuedSourcesFlag])
+  const [queuedSourcesFeatureFlag] = useFeatureFlagStore((s) => [s.queuedSourcesFeatureFlag])
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue)
@@ -52,7 +52,7 @@ export const SourcesView = () => {
     <Wrapper direction="column">
       <StyledTabs aria-label="sources tabs" onChange={handleChange} value={value}>
         <StyledTab disableRipple label="Sources table" {...a11yProps(0)} />
-        {isAdmin && queuedSourcesFlag ? (
+        {isAdmin && queuedSourcesFeatureFlag ? (
           <StyledTab color={colors.white} disableRipple label="Queued sources" {...a11yProps(1)} />
         ) : null}
         {isAdmin && <StyledTab color={colors.white} disableRipple label="Topics" {...a11yProps(1)} />}

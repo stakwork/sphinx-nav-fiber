@@ -50,7 +50,7 @@ type Props = {
 export const SettingsView: React.FC<Props> = ({ onClose }) => {
   const [value, setValue] = useState(0)
   const [isAdmin] = useUserStore((s) => [s.isAdmin, s.setPubKey])
-  const customSchemaFlag = useFeatureFlagStore((s) => s.customSchemaFlag)
+  const customSchemaFeatureFlag = useFeatureFlagStore((s) => s.customSchemaFeatureFlag)
   const appMetaData = useAppStore((s) => s.appMetaData)
 
   const getSettingsLabel = () => (isAdmin ? 'Admin Settings' : 'Settings')
@@ -71,7 +71,7 @@ export const SettingsView: React.FC<Props> = ({ onClose }) => {
   const tabs = [
     ...(isAdmin ? [{ label: 'General', component: General }] : []),
     { label: 'Appearance', component: Appearance },
-    ...(isAdmin && customSchemaFlag ? [{ label: 'Blueprint', component: GraphBlueprint }] : []),
+    ...(isAdmin && customSchemaFeatureFlag ? [{ label: 'Blueprint', component: GraphBlueprint }] : []),
   ]
 
   return (

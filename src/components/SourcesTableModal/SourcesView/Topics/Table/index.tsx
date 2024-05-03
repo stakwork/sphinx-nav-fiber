@@ -179,17 +179,17 @@ export const Table: React.FC<TopicTableProps> = ({
                         <MuteStatusSection onClick={handleSelectedMuteUnmute} role="button">
                           {showMuted ? (
                             <>
-                              <VisibilityOn /> Unmute All
+                              <VisibilityOn /> Unmute ALL
                             </>
                           ) : (
                             <>
-                              <VisibilityOff /> Mute All
+                              <VisibilityOff /> Mute ALL
                             </>
                           )}
                         </MuteStatusSection>
-                        <MultiSelectMerge onClick={() => handlePopoverAction('mergeTopic')}>
+                        <MuteStatusSection onClick={() => handlePopoverAction('mergeTopic')}>
                           <MergeIcon /> Merge
-                        </MultiSelectMerge>
+                        </MuteStatusSection>
                       </StatusBarSection>
                     </StyledTableCell>
                   </TableRow>
@@ -330,6 +330,7 @@ const MuteStatusSection = styled.div`
   display: flex;
   align-items: center;
   cursor: pointer;
+  flex-wrap: nowrap;
   gap: 8px;
   padding: 1px 8px;
   &:hover {
@@ -358,15 +359,15 @@ const TableInnerWrapper = styled(Flex)`
   width: 100%;
 `
 
-const MultiSelectMerge = styled.div`
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  gap: 6px;
-  padding: 1px 6px;
-  &:hover {
-    background-color: rgba(255, 255, 255, 0.2);
-    padding: 1px 6px;
-    border-radius: 4px;
-  }
-`
+// const MultiSelectMerge = styled.div`
+//   display: flex;
+//   align-items: center;
+//   cursor: pointer;
+//   gap: 6px;
+//   padding: 1px 6px;
+//   &:hover {
+//     background-color: rgba(255, 255, 255, 0.2);
+//     padding: 1px 6px;
+//     border-radius: 4px;
+//   }
+// `
