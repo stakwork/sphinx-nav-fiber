@@ -4,7 +4,7 @@ import * as sphinx from 'sphinx-bridge'
 import { BaseModal, ModalKind } from '~/components/Modal'
 import { NODE_ADD_ERROR } from '~/constants'
 import { api } from '~/network/api'
-import { useDataStore } from '~/stores/useDataStore'
+import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { useModal } from '~/stores/useModalStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { NodeExtended, SubmitErrRes } from '~/types'
@@ -149,6 +149,12 @@ export const ChangeNodeTypeModal = () => {
     [visible, reset],
   )
 
+  const selectedNode = useSelectedNode()
+
+  const selectedNodeType = selectedNode?.node_type
+    ? selectedNode.node_type.charAt(0).toUpperCase() + selectedNode.node_type.slice(1)
+    : ''
+
   const nodeType = watch('nodeType')
   const name = watch('typeName')
   const sourceLink = watch('sourceLink')
@@ -228,11 +234,16 @@ export const ChangeNodeTypeModal = () => {
     source: <SourceStep name={name} skipToStep={skipToStep} sourceLink={sourceLink || ''} type={nodeType} />,
     createConfirmation: <CreateConfirmation onclose={handleClose} type={type} />,
     mapProperties: (
-      <MapPropertiesStep handleSelectType={handleSelectType} nodeType={nodeType} skipToStep={skipToStep} />
+      <MapPropertiesStep
+        handleSelectType={handleSelectType}
+        nodeType={nodeType}
+        selectedNodeType={selectedNodeType}
+        skipToStep={skipToStep}
+      />
     ),
   }
 
-  const modalKind: ModalKind = 'small'
+  const modalKind: ModalKind = stepId === 'mapProperties' ? 'regular' : 'small'
 
   const handleCloseModal = () => {
     close()
