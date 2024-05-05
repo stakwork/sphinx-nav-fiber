@@ -1,5 +1,6 @@
 import { Canvas } from '@react-three/fiber'
 import { useState } from 'react'
+import { useRete } from 'rete-react-plugin'
 import styled from 'styled-components'
 import { Lights } from '~/components/Universe/Lights'
 import { Flex } from '~/components/common/Flex'
@@ -8,7 +9,7 @@ import { useSchemaStore } from '~/stores/useSchemaStore'
 import { colors } from '~/utils'
 import { SchemaWithChildren } from '../types'
 import { calculateNodePositions } from '../utils'
-import { Editor } from './Editor'
+import { createEditor } from './Editor'
 import { Lines } from './Links'
 import { Nodes } from './Nodes'
 
@@ -22,6 +23,7 @@ export type FormData = {
 
 export const Body = () => {
   const [selectedSchemaId, setSelectedSchemaId] = useState<string>('')
+  const [ref] = useRete(createEditor)
 
   const [schemasNonFiltered, links, setSchemaAll] = useSchemaStore((s) => [s.schemas, s.links, s.setSchemas])
 
@@ -35,6 +37,7 @@ export const Body = () => {
     }
   })
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const onSchemaCreate = (schema: Schema) => {
     const exists = schemasNonFiltered.some((existingSchema) => existingSchema.ref_id === schema.ref_id)
 
@@ -47,6 +50,7 @@ export const Body = () => {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const onSchemaDelete = (type: string) => {
     setSchemaAll(schemasNonFiltered.filter((i) => i.type !== type))
   }
@@ -77,25 +81,29 @@ export const Body = () => {
     }
   })
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const selectedSchema = schemasNonFiltered.find((i) => i.ref_id === selectedSchemaId) || null
 
   return (
     <Wrapper direction="row">
       <div className="graph">
-        <Canvas camera={{ zoom: 80 }} id="schema-canvas" orthographic>
-          <Lights />
-          <Lines links={linksWithPositions} />
-          <>
-            <Nodes
-              nodes={schemasWithPositions}
-              selectedId={selectedSchemaId}
-              setSelectedSchemaId={setSelectedSchemaId}
-            />
-          </>
-        </Canvas>
+        {false && (
+          <Canvas camera={{ zoom: 80 }} id="schema-canvas" orthographic>
+            <Lights />
+            <Lines links={linksWithPositions} />
+            <>
+              <Nodes
+                nodes={schemasWithPositions}
+                selectedId={selectedSchemaId}
+                setSelectedSchemaId={setSelectedSchemaId}
+              />
+            </>
+          </Canvas>
+        )}
       </div>
       <div className="editor">
-        <Editor onDelete={onSchemaDelete} onSchemaCreate={onSchemaCreate} selectedSchema={selectedSchema} />
+        <div ref={ref} style={{ height: '100vh', width: '100vw' }} />
+        <div />
       </div>
     </Wrapper>
   )

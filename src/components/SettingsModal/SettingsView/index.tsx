@@ -71,7 +71,7 @@ export const SettingsView: React.FC<Props> = ({ onClose }) => {
   const tabs = [
     ...(isAdmin ? [{ label: 'General', component: General }] : []),
     { label: 'Appearance', component: Appearance },
-    ...(isAdmin && customSchemaFeatureFlag ? [{ label: 'Blueprint', component: GraphBlueprint }] : []),
+    ...((isAdmin && customSchemaFeatureFlag) || true ? [{ label: 'Blueprint', component: GraphBlueprint }] : []),
   ]
 
   return (
