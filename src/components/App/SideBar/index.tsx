@@ -41,7 +41,7 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
   const { setSidebarOpen, currentSearch: searchTerm, clearSearch, searchFormValue } = useAppStore((s) => s)
   const [trendingTopicsFeatureFlag] = useFeatureFlagStore((s) => [s.trendingTopicsFeatureFlag])
 
-  const { setValue } = useFormContext()
+  const { setValue, watch } = useFormContext()
   const componentRef = useRef<HTMLDivElement | null>(null)
   const [isScrolled, setIsScrolled] = useState(false)
 
@@ -63,6 +63,8 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
     component.addEventListener('scroll', handleScroll)
   }, [])
 
+  const typing = watch('search')
+
   return (
     <Wrapper ref={ref} id="sidebar-wrapper">
       <TitlePlaceholder />
@@ -81,11 +83,15 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
                 return
               }
 
+              if (typing.trim() === '') {
+                return
+              }
+
               onSubmit?.()
             }}
           >
             {!isLoading ? (
-              <>{searchTerm ? <ClearIcon /> : <SearchIcon />}</>
+              <>{searchTerm?.trim() ? <ClearIcon /> : <SearchIcon />}</>
             ) : (
               <ClipLoader color={colors.SECONDARY_BLUE} data-testid="loader" size="20" />
             )}
