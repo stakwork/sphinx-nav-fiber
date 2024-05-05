@@ -31,6 +31,7 @@ jest.mock('react-hook-form', () => ({
   useFormContext: jest.fn(() => ({
     setValue: jest.fn(),
     register: jest.fn(),
+    watch: jest.fn(() => ''),
   })),
 }))
 
