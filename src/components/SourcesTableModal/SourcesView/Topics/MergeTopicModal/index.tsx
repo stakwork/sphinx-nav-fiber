@@ -21,7 +21,6 @@ export type FormData = {
 
 export const MergeTopicModal: FC<Props> = ({ onClose, multiTopics }) => {
   const { close } = useModal('mergeTopic')
-  const [ids, total] = useTopicsStore((s) => [s.ids, s.total])
   const form = useForm<FormData>({ mode: 'onChange' })
   const { setValue, reset } = form
   const [loading, setLoading] = useState(false)
@@ -54,10 +53,10 @@ export const MergeTopicModal: FC<Props> = ({ onClose, multiTopics }) => {
       if (fromIds.length && selectedToNode) {
         await postMergeTopics({ from: fromIds, to: selectedToNode?.ref_id })
 
-        useTopicsStore.setState({
-          ids: ids.filter((i) => !fromIds?.includes(i)),
-          total: total - (fromIds ? fromIds.length : 0),
-        })
+        useTopicsStore.setState((prev) => ({
+          ids: prev.ids.filter((id) => !fromIds.includes(id)),
+          total: prev.total - fromIds.length,
+        }))
 
         closeHandler()
       }
@@ -78,7 +77,14 @@ export const MergeTopicModal: FC<Props> = ({ onClose, multiTopics }) => {
           selectedToNode={selectedToNode}
           setIsSwapped={() => setIsSwapped(!isSwapped)}
         />
-        <Button color="secondary" disabled={loading || isSwapped} onClick={handleSave} size="large" variant="contained">
+        <Button
+          color="secondary"
+          data-testid="merge-topics-button"
+          disabled={loading || isSwapped}
+          onClick={handleSave}
+          size="large"
+          variant="contained"
+        >
           Merge topics
           {loading && <ClipLoader color={colors.BLUE_PRESS_STATE} size={10} />}
         </Button>
