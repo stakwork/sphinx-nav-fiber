@@ -1,10 +1,8 @@
 import styled from 'styled-components'
-import { colors } from '~/utils/colors'
 import { Flex } from '../Flex'
 
 type Episode = {
   img: string
-  label: string
 }
 
 type EpisodeTypeImage = {
@@ -12,15 +10,21 @@ type EpisodeTypeImage = {
 }
 
 const EpisodeTypeImages: EpisodeTypeImage = {
-  podcast: { img: 'audio_badge.svg', label: 'podcast' },
-  clip: { img: 'audio_badge.svg', label: 'clip' },
-  show: { img: 'show_badge.svg', label: 'show' },
-  tweet: { img: 'twitter_badge.svg', label: 'tweet' },
-  twitter_space: { img: 'audio_badge.svg', label: 'clip' },
-  youtube: { img: 'video_badge.svg', label: 'clip' },
-  episode: { img: 'video_badge.svg', label: 'episode' },
-  document: { img: 'notes_badge.svg', label: 'text' },
-  image: { img: 'image_badge.png', label: 'image' },
+  podcast: { img: 'clip_badge.svg' },
+  clip: { img: 'clip_badge.svg' },
+  show: { img: 'show_badge.svg' },
+  tweet: { img: 'tweet_badge.svg' },
+  twitter_space: { img: 'clip_badge.svg' },
+  youtube: { img: 'clip_badge.svg' },
+  episode: { img: 'episode_badge.svg' },
+  document: { img: 'text_badge.svg' },
+  image: { img: 'thing_badge.png' },
+  organization: { img: 'organization_badge.svg' },
+  person: { img: 'person_badge.svg' },
+  guest: { img: 'person_badge.svg' },
+  host: { img: 'person_badge.svg' },
+  event: { img: 'event_badge.svg' },
+  topic: { img: 'topic_badge.svg' },
 }
 
 type Props = {
@@ -29,12 +33,7 @@ type Props = {
 
 export const TypeBadge = ({ type }: Props) => (
   <EpisodeWrapper>
-    <img
-      alt={EpisodeTypeImages[type]?.label || type}
-      className="badge__img"
-      src={EpisodeTypeImages[type]?.img || 'generic_badge.svg'}
-    />
-    <div className="badge__label">{EpisodeTypeImages[type]?.label || type}</div>
+    <img alt={type} className="badge__img" src={EpisodeTypeImages[type]?.img || 'generic_badge.svg'} />
   </EpisodeWrapper>
 )
 
@@ -42,27 +41,10 @@ const EpisodeWrapper = styled(Flex).attrs({
   direction: 'row',
 })`
   cursor: pointer;
-  background: ${colors.white};
   border-radius: 3px;
   overflow: hidden;
 
   .badge__img {
-    width: 14px;
-    height: 14px;
     object-fit: cover;
-    background: rgba(255, 255, 255, 0.1);
-  }
-
-  .badge__label {
-    color: ${colors.BG1};
-    font-family: Barlow;
-    font-size: 8px;
-    font-style: normal;
-    font-weight: 800;
-    line-height: 14px;
-    text-transform: uppercase;
-    line-height: 14px;
-    letter-spacing: 0.48px;
-    padding: 0 4px;
   }
 `

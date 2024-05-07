@@ -1,5 +1,5 @@
 import { Button } from '@mui/material'
-import { FC, useEffect, useState } from 'react'
+import { FC, Fragment, useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
@@ -11,38 +11,52 @@ import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { getNodeType } from '~/network/fetchSourcesData'
 import { colors } from '~/utils'
-import { MapNodeTypeModalStepID } from '..'
+import { MapNodeTypeModalStepID, SelectedValues } from '..'
 
 type Props = {
   skipToStep: (step: MapNodeTypeModalStepID) => void
   nodeType: string
   handleSelectType: (val: string) => void
+  selectedNodeType: string
+  selectedValues: SelectedValues
+  setSelectedValues: (values: React.SetStateAction<SelectedValues>) => void // Corrected type
 }
 
-export const MapPropertiesStep: FC<Props> = ({ handleSelectType, skipToStep, nodeType }) => {
+export const MapPropertiesStep: FC<Props> = ({
+  handleSelectType,
+  skipToStep,
+  selectedNodeType,
+  nodeType,
+  selectedValues,
+  setSelectedValues,
+}) => {
   const [loading, setLoading] = useState(false)
   const [attributes, setAttributes] = useState<parsedObjProps[]>()
+  const [selectedAttributes, setSelectedAttributes] = useState<parsedObjProps[]>()
 
-  const {
-    watch,
-    formState: { isValid },
-  } = useFormContext()
+  const { watch } = useFormContext()
 
   useEffect(() => {
-    const init = async () => {
+    const init = async (type: string, setter: (data: parsedObjProps[]) => void) => {
       setLoading(true)
 
-      const data = await getNodeType(nodeType)
+      const data = await getNodeType(type)
 
       const parsedData = parseJson(data)
 
-      setAttributes(parsedData)
+      setter(parsedData)
 
       setLoading(false)
     }
 
-    init()
-  }, [nodeType, watch])
+    if (nodeType) {
+      init(nodeType, setAttributes)
+    }
+
+    if (selectedNodeType) {
+      init(selectedNodeType, setSelectedAttributes)
+    }
+  }, [nodeType, selectedNodeType, watch])
 
   const capitalizeFirstLetter = (string: string) => string.charAt(0).toUpperCase() + string.slice(1).replace(/_/g, ' ')
 
@@ -60,9 +74,41 @@ export const MapPropertiesStep: FC<Props> = ({ handleSelectType, skipToStep, nod
       })
     : []
 
+  const sortedSelectedAttributes = selectedAttributes
+    ? [...selectedAttributes].sort((a, b) => {
+        if (a.required && !b.required) {
+          return -1
+        }
+
+        if (!a.required && b.required) {
+          return 1
+        }
+
+        return 0
+      })
+    : []
+
   const handlePrevButton = () => {
     handleSelectType('')
     skipToStep('sourceType')
+  }
+
+  useEffect(() => {
+    if (attributes && selectedAttributes) {
+      const initialSelectedValues = selectedAttributes.reduce((acc, attr) => {
+        const match = attributes.find((a) => a.key === attr.key)
+
+        acc[attr.key] = match ? attr.key : 'none'
+
+        return acc
+      }, {} as SelectedValues)
+
+      setSelectedValues(initialSelectedValues)
+    }
+  }, [attributes, selectedAttributes, setSelectedValues])
+
+  const handleSelectChange = (key: string, value: string) => {
+    setSelectedValues((prev) => ({ ...prev, [key]: value }))
   }
 
   return (
@@ -81,7 +127,8 @@ export const MapPropertiesStep: FC<Props> = ({ handleSelectType, skipToStep, nod
         ) : (
           <FlexContainer>
             <AttributesContainer>
-              {sortedAttributes?.map(({ key }: parsedObjProps) => (
+              <SmallHeading>{capitalizeFirstLetter(selectedNodeType)}</SmallHeading>
+              {sortedSelectedAttributes.map(({ key }: parsedObjProps) => (
                 <AttributeItem key={key}>
                   <Text>{capitalizeFirstLetter(key)}</Text>
                 </AttributeItem>
@@ -89,15 +136,27 @@ export const MapPropertiesStep: FC<Props> = ({ handleSelectType, skipToStep, nod
             </AttributesContainer>
 
             <DropdownContainer>
-              {sortedAttributes?.map(({ key }: parsedObjProps) => (
-                <SelectInput key={key}>
-                  {sortedAttributes.map(({ key: sKey }: parsedObjProps) => (
-                    <option key={sKey} value={sKey}>
-                      {sKey}
-                    </option>
-                  ))}
-                </SelectInput>
-              ))}
+              <SmallHeading>{capitalizeFirstLetter(nodeType)}</SmallHeading>
+              {sortedSelectedAttributes.map(({ key }: parsedObjProps) => {
+                const selectedValue = selectedValues[key] || 'none'
+
+                return (
+                  <Fragment key={key}>
+                    <SelectInput onChange={(e) => handleSelectChange(key, e.target.value)} value={selectedValue}>
+                      <StyledOption value="none">None</StyledOption>
+                      {sortedAttributes
+                        .filter(
+                          (attr) => !Object.values(selectedValues).includes(attr.key) || attr.key === selectedValue,
+                        )
+                        .map(({ key: sKey }: parsedObjProps) => (
+                          <StyledOption key={sKey} value={sKey}>
+                            {capitalizeFirstLetter(sKey)}
+                          </StyledOption>
+                        ))}
+                    </SelectInput>
+                  </Fragment>
+                )
+              })}
             </DropdownContainer>
           </FlexContainer>
         )}
@@ -112,8 +171,20 @@ export const MapPropertiesStep: FC<Props> = ({ handleSelectType, skipToStep, nod
         <Flex grow={1} ml={20}>
           <Button
             color="secondary"
-            disabled={!isValid || loading || attributes?.some((attr) => attr.required && !watch(attr.key))}
-            onClick={() => skipToStep('source')}
+            disabled={loading}
+            onClick={() => {
+              // Check if all required attributes are set in selectedValues
+              const allRequiredSet = sortedSelectedAttributes.every(
+                ({ key, required }) => !required || (required && selectedValues[key] && selectedValues[key] !== 'none'),
+              )
+
+              if (allRequiredSet) {
+                skipToStep('createConfirmation')
+              } else {
+                // If not all required attributes are set, redirect to RequiredPropertiesStep
+                skipToStep('requiredProperties')
+              }
+            }}
             size="large"
             variant="contained"
           >
@@ -169,10 +240,38 @@ const SelectInput = styled.select`
   width: 100%;
   color: #fff;
   font-size: 15px;
-  box-shadow: none;
-  border-radius: 6px;
-  pointer-events: auto;
   background-color: ${colors.BG2};
+  border-radius: 6px;
+  padding: 2px 8px;
+  margin-bottom: 8px;
+  border: none;
   box-shadow: 0px 1px 6px rgba(0, 0, 0, 0.1);
-  padding: 0 8px;
+
+  &:focus {
+    background-color: ${colors.BG2_ACTIVE_INPUT};
+    outline: 1px solid ${colors.primaryBlue};
+  }
+`
+
+const StyledOption = styled.option`
+  background-color: ${colors.DROPDOWN_BG};
+  color: #fff;
+
+  &:hover,
+  &:focus {
+    background-color: black;
+  }
+
+  &[aria-selected='true'] {
+    background-color: ${colors.DROPDOWN_SELECTED};
+  }
+`
+
+const SmallHeading = styled.h3`
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 8px;
+  font-family: 'Barlow';
+  color: white;
+  margin-bottom: 15px;
 `
