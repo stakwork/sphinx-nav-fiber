@@ -139,7 +139,7 @@ export const Table: React.FC<TopicTableProps> = ({
                           <ClearIcon />
                         </IconButton>
                       </StyledTableCell>
-                      <StyledTableCell>
+                      <StyledTableCell colSpan={3}>
                         <StatusBarSection>
                           <CheckCountBoxSection>
                             <CheckedCount>{checkedCount}</CheckedCount>
@@ -161,7 +161,6 @@ export const Table: React.FC<TopicTableProps> = ({
                           </MuteStatusSection>
                         </StatusBarSection>
                       </StyledTableCell>
-                      <StyledTableCell className="empty" />
                       <StyledTableCell className="empty" />
                       <StyledTableCell className="empty" />
                       <StyledTableCell className="empty" />
