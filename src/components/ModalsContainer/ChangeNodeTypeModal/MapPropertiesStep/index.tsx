@@ -19,7 +19,7 @@ type Props = {
   handleSelectType: (val: string) => void
   selectedNodeType: string
   selectedValues: SelectedValues
-  setSelectedValues: (values: React.SetStateAction<SelectedValues>) => void // Corrected type
+  setSelectedValues: (values: React.SetStateAction<SelectedValues>) => void
 }
 
 export const MapPropertiesStep: FC<Props> = ({
@@ -173,7 +173,6 @@ export const MapPropertiesStep: FC<Props> = ({
             color="secondary"
             disabled={loading}
             onClick={() => {
-              // Check if all required attributes are set in selectedValues
               const allRequiredSet = sortedSelectedAttributes.every(
                 ({ key, required }) => !required || (required && selectedValues[key] && selectedValues[key] !== 'none'),
               )
@@ -181,7 +180,6 @@ export const MapPropertiesStep: FC<Props> = ({
               if (allRequiredSet) {
                 skipToStep('createConfirmation')
               } else {
-                // If not all required attributes are set, redirect to RequiredPropertiesStep
                 skipToStep('requiredProperties')
               }
             }}

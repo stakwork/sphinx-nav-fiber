@@ -26,8 +26,6 @@ const handleSubmitForm = async (
   data: FieldValues,
   onAddNewData: (value: FieldValues, id: string) => void,
 ): Promise<void> => {
-  console.log('data', data)
-
   if (data.nodeType === 'Create custom type') {
     const body: { [index: string]: unknown } = {}
 
