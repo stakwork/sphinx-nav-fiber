@@ -1,5 +1,6 @@
+/* eslint-disable padding-line-between-statements */
 import '@testing-library/jest-dom'
-import { fireEvent, render } from '@testing-library/react'
+import {fireEvent, render, waitFor} from '@testing-library/react'
 import React from 'react'
 import { Heading } from '..'
 import { useDataStore } from '../../../../../../stores/useDataStore'
@@ -48,7 +49,9 @@ describe('Heading Component', () => {
     mockedUseDataStore.mockImplementation(() => [{ type: 'podcast' }, jest.fn()])
 
     const { getByText } = render(<Heading selectedNodeShow={undefined} />)
+waitFor(() => {
+  expect(getByText('podcast')).toBeInTheDocument()
 
-    expect(getByText('podcast')).toBeInTheDocument()
+})
   })
 })

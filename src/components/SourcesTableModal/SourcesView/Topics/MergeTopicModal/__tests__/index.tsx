@@ -1,3 +1,4 @@
+/* eslint-disable padding-line-between-statements */
 import { render, fireEvent, waitFor } from '@testing-library/react'
 import { MergeTopicModal } from '../index'
 import * as TopicsStore from '~/stores/useTopicsStore'
