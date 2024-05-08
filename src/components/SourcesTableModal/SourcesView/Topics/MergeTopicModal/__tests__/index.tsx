@@ -1,9 +1,8 @@
-/* eslint-disable padding-line-between-statements */
-import { render, fireEvent, waitFor } from '@testing-library/react'
-import { MergeTopicModal } from '../index'
-import * as TopicsStore from '~/stores/useTopicsStore'
 import '@testing-library/jest-dom'
+import { fireEvent, render, waitFor } from '@testing-library/react'
 import { postMergeTopics } from '~/network/fetchSourcesData'
+import * as TopicsStore from '~/stores/useTopicsStore'
+import { MergeTopicModal } from '../index'
 
 jest.mock('~/stores/useTopicsStore')
 jest.mock('~/network/fetchSourcesData')
@@ -19,6 +18,8 @@ describe('MergeTopicModal', () => {
       total: 3,
       setState: mockSetState,
     }))
+
+    //
     ;(postMergeTopics as jest.Mock).mockImplementation(mockPostMergeTopics)
 
     const { getByTestId } = render(
