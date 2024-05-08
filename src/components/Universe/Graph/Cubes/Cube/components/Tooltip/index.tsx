@@ -45,6 +45,7 @@ export const Tooltip = ({ node }: Props) => {
     label,
     text,
     type,
+    name,
     twitter_handle: twitterHandle,
   } = node
 
@@ -117,6 +118,19 @@ export const Tooltip = ({ node }: Props) => {
                 <Text color="primaryText1" kind="tiny">
                   {showTitle}
                 </Text>
+              )}
+
+              {type === 'person' && (
+                <Flex direction="column">
+                  <Text>{name}</Text>
+                  {twitterHandle && (
+                    <Flex pt={4}>
+                      <Text color="primaryText1" kind="tiny">
+                        @{twitterHandle}
+                      </Text>
+                    </Flex>
+                  )}
+                </Flex>
               )}
 
               <Flex pt={4}>
