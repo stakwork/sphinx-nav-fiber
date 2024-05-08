@@ -123,6 +123,7 @@ export const Tooltip = ({ node }: Props) => {
               {type === 'person' && (
                 <Flex direction="column">
                   <Text>{name}</Text>
+
                   {twitterHandle && (
                     <Flex pt={4}>
                       <Text color="primaryText1" kind="tiny">
