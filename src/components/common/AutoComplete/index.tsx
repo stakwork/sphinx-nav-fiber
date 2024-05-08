@@ -86,7 +86,11 @@ export const AutoComplete: FC<Props> = ({
         onOpen={() => setOpen(true)}
         open={open}
         options={options ?? []}
-        PopperComponent={(props) => <Popper {...props} placement="top-end" />}
+        PopperComponent={({ children, ...popperProps }) => (
+          <Popper {...popperProps} placement="bottom-start">
+            {children}
+          </Popper>
+        )}
         renderInput={(params) => (
           <StyledInput
             inputRef={inputRef}

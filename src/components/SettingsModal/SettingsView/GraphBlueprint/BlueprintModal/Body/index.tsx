@@ -1,17 +1,14 @@
-import { Canvas } from '@react-three/fiber'
 import { useState } from 'react'
-import { useRete } from 'rete-react-plugin'
 import styled from 'styled-components'
-import { Lights } from '~/components/Universe/Lights'
 import { Flex } from '~/components/common/Flex'
 import { Schema } from '~/network/fetchSourcesData'
 import { useSchemaStore } from '~/stores/useSchemaStore'
 import { colors } from '~/utils'
 import { SchemaWithChildren } from '../types'
-import { calculateNodePositions } from '../utils'
-import { createEditor } from './Editor'
-import { Lines } from './Links'
-import { Nodes } from './Nodes'
+import { calculateNodePositionsTree } from '../utils'
+import { Editor } from './Editor'
+import { Graph } from './Graph'
+import { Toolbar } from './Toolbar'
 
 export type FormData = {
   type: string
@@ -23,7 +20,7 @@ export type FormData = {
 
 export const Body = () => {
   const [selectedSchemaId, setSelectedSchemaId] = useState<string>('')
-  const [ref] = useRete(createEditor)
+  const [isCreateNew, setIsCreateNew] = useState(false)
 
   const [schemasNonFiltered, links, setSchemaAll] = useSchemaStore((s) => [s.schemas, s.links, s.setSchemas])
 
@@ -62,12 +59,12 @@ export const Body = () => {
       .map((childSchema) => childSchema.ref_id || ''),
   }))
 
-  const schemasWithPositions = calculateNodePositions(schemasWithChildren)
+  const schemasWithPositions = calculateNodePositionsTree(schemasWithChildren)
 
   const linksFiltered = links.filter(
     (link) =>
       link.edge_type === 'CHILD_OF' &&
-      schemasWithPositions.some((schema) => schema.ref_id === link.source || schema.ref_id === link.target),
+      schemasWithPositions.some((schema) => schema.ref_id === link.source || schema.type === link.target),
   )
 
   const linksWithPositions = linksFiltered.map((link) => {
@@ -85,27 +82,34 @@ export const Body = () => {
   const selectedSchema = schemasNonFiltered.find((i) => i.ref_id === selectedSchemaId) || null
 
   return (
-    <Wrapper direction="row">
-      <div className="graph">
-        {false && (
-          <Canvas camera={{ zoom: 80 }} id="schema-canvas" orthographic>
-            <Lights />
-            <Lines links={linksWithPositions} />
-            <>
-              <Nodes
-                nodes={schemasWithPositions}
-                selectedId={selectedSchemaId}
-                setSelectedSchemaId={setSelectedSchemaId}
-              />
-            </>
-          </Canvas>
-        )}
-      </div>
-      <div className="editor">
-        <div ref={ref} style={{ height: '100vh', width: '100vw' }} />
-        <div />
-      </div>
-    </Wrapper>
+    <>
+      <Flex direction="row" grow={1}>
+        <Flex ml={-20} my={-20}>
+          <Toolbar onCreateNew={() => setIsCreateNew(true)} />
+        </Flex>
+        <Wrapper direction="row" grow={1}>
+          <div className="graph">
+            <Graph
+              linksWithPositions={linksWithPositions}
+              schemasWithPositions={schemasWithPositions}
+              selectedSchemaId={selectedSchemaId}
+              setSelectedSchemaId={setSelectedSchemaId}
+            />
+          </div>
+        </Wrapper>
+      </Flex>
+      {selectedSchema || isCreateNew ? (
+        <EditorWrapper>
+          <Editor
+            onDelete={onSchemaDelete}
+            onSchemaCreate={onSchemaCreate}
+            selectedSchema={selectedSchema}
+            setIsCreateNew={setIsCreateNew}
+            setSelectedSchemaId={setSelectedSchemaId}
+          />
+        </EditorWrapper>
+      ) : null}
+    </>
   )
 }
 
@@ -113,14 +117,21 @@ const Wrapper = styled(Flex)`
   flex: 1 1 100%;
   justify-content: center;
   align-items: top;
+  position: relative;
   .graph {
     flex-grow: 1;
   }
+`
 
-  .editor {
-    position: relative;
-    width: 400px;
-    padding: 16px;
-    border-left: 1px solid ${colors.black};
-  }
+const EditorWrapper = styled(Flex)`
+  width: 400px;
+  background: ${colors.BG1};
+  position: absolute;
+  left: 64px;
+  padding: 16px;
+  border-left: 1px solid ${colors.black};
+  bottom: 16px;
+  top: 16px;
+  border-top-right-radius: 16px;
+  border-bottom-right-radius: 16px;
 `

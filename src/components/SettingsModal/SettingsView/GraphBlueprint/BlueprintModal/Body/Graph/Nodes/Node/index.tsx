@@ -21,7 +21,7 @@ type Props = {
   isSelected: boolean
 }
 
-export const boxGeometry = new BoxGeometry(4, 4, 4)
+export const boxGeometry = new BoxGeometry(2, 2, 2)
 
 export const Node = memo(({ node, setSelectedNode, isSelected }: Props) => {
   const [geometry] = useState(boxGeometry)
@@ -50,13 +50,14 @@ export const Node = memo(({ node, setSelectedNode, isSelected }: Props) => {
 Node.displayName = 'Node'
 
 const NodeView = styled(Flex)`
-  width: 100px;
-  height: 100px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
   color: ${colors.white};
-  border: 1px solid ${colors.white};
+  border: 3px solid rgba(225, 225, 225, 0.6);
   align-items: center;
   justify-content: center;
+  cursor: pointer;
 
   &.selected {
     font-size: 20px;

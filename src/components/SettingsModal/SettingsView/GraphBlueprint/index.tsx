@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
 import BubbleChartIcon from '~/components/Icons/BubbleChartIcon'
-import PlusIcon from '~/components/Icons/PlusIcon'
 import { Flex } from '~/components/common/Flex'
 import { getSchemaAll } from '~/network/fetchSourcesData'
 import { useModal } from '~/stores/useModalStore'
@@ -16,7 +15,6 @@ export const GraphBlueprint: React.FC = () => {
   const [loading, setLoading] = useState(true)
   const [schemaAll, setSchemaAll, setSchemaLinks] = useSchemaStore((s) => [s.schemas, s.setSchemas, s.setSchemaLinks])
   const { open } = useModal('blueprintGraph')
-  const { open: openContentAddModal } = useModal('addType')
 
   useEffect(() => {
     const fetchData = async () => {
@@ -40,17 +38,7 @@ export const GraphBlueprint: React.FC = () => {
   return (
     <Flex grow={1} shrink={1}>
       <Flex direction="row" justify="space-between" px={37} py={21}>
-        <Button
-          color="primary"
-          onClick={openContentAddModal}
-          size="medium"
-          startIcon={<PlusIcon />}
-          type="submit"
-          variant="contained"
-        >
-          Create New Type
-        </Button>
-        <Button onClick={open} startIcon={<BubbleChartIcon />} variant="text">
+        <Button disabled={loading} onClick={open} startIcon={<BubbleChartIcon />} variant="text">
           Graph View
         </Button>
       </Flex>

@@ -2,7 +2,7 @@ import { PropsWithChildren, useEffect } from 'react'
 import styled, { css, keyframes } from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { AvailableModals, useModal } from '~/stores/useModalStore'
-import { ColorName, colors } from '~/utils/colors'
+import { colors } from '~/utils/colors'
 import ClearIcon from '../Icons/ClearIcon'
 
 const scaleAnimation = keyframes`
@@ -45,7 +45,7 @@ const ModalContainer = styled(Flex)<Pick<Props, 'kind'>>`
   position: relative;
   max-width: 100%;
   overflow: visible;
-  background: ${colors.BG1};
+  background: ${(props) => props.background};
   ${getModalKindStyles}
 `
 
@@ -93,7 +93,7 @@ export type ModalKind = 'small' | 'regular' | 'large' | 'full'
 
 type Props = PropsWithChildren<{
   id: AvailableModals
-  background?: ColorName
+  background?: string
   hideBg?: boolean
   kind?: ModalKind
   preventOutsideClose?: boolean
@@ -102,7 +102,7 @@ type Props = PropsWithChildren<{
 }>
 
 export const BaseModal = ({
-  background = 'modalBg',
+  background = colors.BG1,
   children,
   id,
   hideBg,

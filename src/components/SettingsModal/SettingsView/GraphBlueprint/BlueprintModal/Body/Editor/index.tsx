@@ -1,57 +1,304 @@
-import { createRoot } from 'react-dom/client'
-import { ClassicPreset, GetSchemes, NodeEditor } from 'rete'
-import { AreaExtensions, AreaPlugin } from 'rete-area-plugin'
-import { ConnectionPlugin, Presets as ConnectionPresets } from 'rete-connection-plugin'
-import { Presets, ReactArea2D, ReactPlugin } from 'rete-react-plugin'
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { Button } from '@mui/material'
+import { useEffect, useState } from 'react'
+import { FieldValues, FormProvider, useForm } from 'react-hook-form'
+import { ClipLoader } from 'react-spinners'
+import styled from 'styled-components'
+import { TOption } from '~/components/AddItemModal/SourceTypeStep/types'
+import { AutoComplete } from '~/components/common/AutoComplete'
+import { Flex } from '~/components/common/Flex'
+import { Text } from '~/components/common/Text'
+import { TextInput } from '~/components/common/TextInput'
+import { NODE_ADD_ERROR, requiredRule } from '~/constants'
+import { api } from '~/network/api'
+import { Schema, getNodeSchemaTypes } from '~/network/fetchSourcesData'
+import { useModal } from '~/stores/useModalStore'
+import { SubmitErrRes } from '~/types'
+import { colors } from '~/utils'
+import { CreateCustomNodeAttribute } from './CustomAttributesStep'
+import { convertAttributes } from './utils'
 
-type Schemes = GetSchemes<ClassicPreset.Node, ClassicPreset.Connection<ClassicPreset.Node, ClassicPreset.Node>>
-type AreaExtra = ReactArea2D<Schemes>
+const defaultValues = {
+  type: '',
+  parent: '',
+}
 
-export async function createEditor(container: HTMLElement) {
-  const socket = new ClassicPreset.Socket('socket')
-
-  const editor = new NodeEditor<Schemes>()
-  const area = new AreaPlugin<Schemes, AreaExtra>(container)
-  const connection = new ConnectionPlugin<Schemes, AreaExtra>()
-  const render = new ReactPlugin<Schemes, AreaExtra>({ createRoot })
-
-  AreaExtensions.selectableNodes(area, AreaExtensions.selector(), {
-    accumulating: AreaExtensions.accumulateOnCtrl(),
-  })
-
-  render.addPreset(Presets.classic.setup())
-
-  connection.addPreset(ConnectionPresets.classic.setup())
-
-  editor.use(area)
-  area.use(connection)
-  area.use(render)
-
-  AreaExtensions.simpleNodesOrder(area)
-
-  const a = new ClassicPreset.Node('A')
-
-  a.addControl('a', new ClassicPreset.InputControl('text', { initial: 'a' }))
-  a.addOutput('a', new ClassicPreset.Output(socket))
-  await editor.addNode(a)
-
-  const b = new ClassicPreset.Node('B')
-
-  b.addControl('b', new ClassicPreset.InputControl('text', { initial: 'b' }))
-  b.addInput('b', new ClassicPreset.Input(socket))
-  await editor.addNode(b)
-
-  await editor.addConnection(new ClassicPreset.Connection(a, 'a', b, 'b'))
-
-  await area.translate(a.id, { x: 0, y: 0 })
-  await area.translate(b.id, { x: 270, y: 0 })
-
-  setTimeout(() => {
-    // wait until nodes rendered because they dont have predefined width and height
-    AreaExtensions.zoomAt(area, editor.getNodes())
-  }, 10)
-
-  return {
-    destroy: () => area.destroy(),
+export type FormData = {
+  type: string
+  parent?: string
+  node_key: string
+  attributes?: {
+    [k: string]: string | boolean
   }
 }
+
+type Props = {
+  onSchemaCreate: (schema: { type: string; parent: string; ref_id: string }) => void
+  selectedSchema: Schema | null
+  onDelete: (type: string) => void
+  setSelectedSchemaId: (id: string) => void
+  setIsCreateNew: (isNew: boolean) => void
+}
+
+const handleSubmitForm = async (data: FieldValues, isUpdate = false): Promise<string | undefined> => {
+  try {
+    const { attributes, ...withoutAttributes } = data
+
+    const requestData = {
+      ...withoutAttributes,
+      ...convertAttributes(attributes),
+    }
+
+    let res: SubmitErrRes
+
+    if (isUpdate) {
+      res = await api.put(`/schema`, JSON.stringify(requestData), {})
+    } else {
+      res = await api.post(`/schema`, JSON.stringify({ ...requestData, node_key: 'name' }), {})
+    }
+
+    if (res.error) {
+      const { message } = res.error
+
+      throw new Error(message)
+    }
+
+    return res?.data?.ref_id
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (err: any) {
+    let errorMessage = NODE_ADD_ERROR
+
+    if (err.status === 400) {
+      const error = await err.json()
+
+      errorMessage = error.errorCode || error?.status || NODE_ADD_ERROR
+    } else if (err instanceof Error) {
+      errorMessage = err.message
+    }
+
+    throw new Error(errorMessage)
+  }
+}
+
+export const Editor = ({ onSchemaCreate, selectedSchema, onDelete, setSelectedSchemaId, setIsCreateNew }: Props) => {
+  const { close, visible } = useModal('addType')
+
+  const form = useForm<FormData>({
+    mode: 'onChange',
+    defaultValues: selectedSchema
+      ? {
+          type: selectedSchema.type,
+          parent: selectedSchema.parent,
+        }
+      : defaultValues,
+  })
+
+  const { watch, setValue, reset } = form
+
+  const [loading, setLoading] = useState(false)
+  const [parentsLoading, setParentsLoading] = useState(false)
+  const [parentOptions, setParentOptions] = useState<TOption[] | null>(null)
+
+  useEffect(
+    () => () => {
+      reset()
+    },
+    [visible, reset],
+  )
+
+  const onCancel = () => {
+    setIsCreateNew(false)
+    setSelectedSchemaId('')
+  }
+
+  const capitalizeFirstLetter = (string: string) => string.charAt(0).toUpperCase() + string.slice(1)
+
+  useEffect(() => {
+    const init = async () => {
+      setParentsLoading(true)
+
+      try {
+        const data = await getNodeSchemaTypes()
+
+        const schemaOptions = data.schemas
+          .filter((schema) => !schema.is_deleted && schema.type)
+          .map((schema) =>
+            schema?.type === 'thing'
+              ? { label: 'No Parent', value: schema.type }
+              : {
+                  label: capitalizeFirstLetter(schema.type),
+                  value: schema.type,
+                },
+          )
+
+        setParentOptions(schemaOptions)
+      } catch (error) {
+        console.warn(error)
+      } finally {
+        setParentsLoading(false)
+      }
+    }
+
+    if (!selectedSchema) {
+      init()
+    }
+  }, [selectedSchema])
+
+  const parent = watch('parent')
+
+  const handleClose = () => {
+    close()
+  }
+
+  const handleDelete = async () => {
+    if (!selectedSchema?.type) {
+      return
+    }
+
+    try {
+      await api.delete(`/schema/${selectedSchema.ref_id}`)
+      onDelete(selectedSchema.type)
+      close()
+    } catch (error) {
+      console.warn(error)
+    } finally {
+      setIsCreateNew(false)
+    }
+  }
+
+  const onSubmit = form.handleSubmit(async (data) => {
+    setLoading(true)
+
+    try {
+      const res = await handleSubmitForm(
+        { ...data, ...(selectedSchema ? { ref_id: selectedSchema?.ref_id } : {}) },
+        !!selectedSchema,
+      )
+
+      console.log(res)
+
+      onSchemaCreate({ type: data.type, parent: parent || '', ref_id: selectedSchema?.ref_id || res || 'new' })
+      handleClose()
+      // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+    } catch (err: any) {
+      let errorMessage = NODE_ADD_ERROR
+
+      if (err?.status === 400) {
+        const errorRes = await err.json()
+
+        errorMessage = errorRes.errorCode || errorRes?.status || NODE_ADD_ERROR
+      } else if (err instanceof Error) {
+        errorMessage = err.message
+      }
+    } finally {
+      setLoading(false)
+      setIsCreateNew(false)
+    }
+  })
+
+  const resolvedParentValue = () => parentOptions?.find((i) => i.value === parent)
+
+  return (
+    <Flex>
+      <Flex direction="row" justify="flex-end" mt={20}>
+        <Button disabled={loading} onClick={onCancel}>
+          Cancel
+        </Button>
+      </Flex>
+      <Flex>
+        <FormProvider {...form}>
+          <form id="add-type-form" onSubmit={onSubmit}>
+            <Flex>
+              {!selectedSchema ? (
+                <>
+                  <Flex mb={20}>
+                    <Text>Select Parent</Text>
+                  </Flex>
+                  <Flex direction="row" mb={20}>
+                    <AutoComplete
+                      key={parent}
+                      autoFocus={!selectedSchema}
+                      disabled={parentsLoading}
+                      isLoading={parentsLoading}
+                      onSelect={(e) => setValue('parent', e?.value || '')}
+                      options={parentOptions}
+                      selectedValue={resolvedParentValue()}
+                    />
+                  </Flex>
+                </>
+              ) : (
+                <Flex mb={20}>
+                  <Text kind="headingBold">Parent: {selectedSchema.parent}</Text>
+                </Flex>
+              )}
+
+              {!selectedSchema ? (
+                <>
+                  <Flex mb={4}>
+                    <Text>Type name</Text>
+                  </Flex>
+                  <Flex mb={12}>
+                    <TextInput
+                      id="cy-item-name"
+                      maxLength={250}
+                      name="type"
+                      placeholder="Enter type name"
+                      rules={{
+                        ...requiredRule,
+                      }}
+                      value={parent}
+                    />
+                  </Flex>
+                </>
+              ) : (
+                <Flex mb={20}>
+                  <Text kind="headingBold">Type: {selectedSchema.type}</Text>
+                </Flex>
+              )}
+            </Flex>
+            <CreateCustomNodeAttribute parent={selectedSchema ? selectedSchema.type : parent} />
+            <Flex direction="row" justify="space-between" mt={20}>
+              {selectedSchema ? (
+                <DeleteButton
+                  color="secondary"
+                  onClick={handleDelete}
+                  size="large"
+                  style={{ marginRight: 20 }}
+                  variant="contained"
+                >
+                  Delete
+                </DeleteButton>
+              ) : null}
+
+              <Button
+                color="secondary"
+                disabled={loading}
+                onClick={onSubmit}
+                size="large"
+                startIcon={loading ? <ClipLoader color={colors.white} size={24} /> : null}
+                variant="contained"
+              >
+                Save
+              </Button>
+            </Flex>
+          </form>
+        </FormProvider>
+      </Flex>
+    </Flex>
+  )
+}
+
+const DeleteButton = styled(Button)`
+  && {
+    color: ${colors.primaryRed};
+    background-color: rgba(237, 116, 116, 0.1);
+
+    &:hover,
+    &:active,
+    &:focus {
+      color: ${colors.primaryRed};
+      background-color: rgba(237, 116, 116, 0.2);
+    }
+  }
+`
