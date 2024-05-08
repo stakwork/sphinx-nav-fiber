@@ -279,7 +279,9 @@ export const useSelectedNode = () => useDataStore((s) => s.selectedNode)
 
 export const useFilteredNodes = () =>
   useDataStore((s) =>
-    (s.data?.nodes || []).filter((i) => (s.sidebarFilter === 'all' ? true : i.node_type === s.sidebarFilter)),
+    (s.data?.nodes || []).filter((i) =>
+      s.sidebarFilter === 'all' ? true : i.node_type.toLocaleLowerCase() === s.sidebarFilter.toLocaleLowerCase(),
+    ),
   )
 
 export const useUpdateGraphData = () => {
