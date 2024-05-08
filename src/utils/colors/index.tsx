@@ -84,6 +84,15 @@ export const colors = {
   DROPDOWN_HOVER: 'rgba(0, 0, 0, 0.07)',
   DROPDOWN_BG: 'rgba(48, 51, 66, 1)',
   SCROLL_BAR: 'rgba(255, 255, 255, 0.1)',
+  CLIP: 'rgba(143, 38, 44, 1)',
+  TEXT: 'rgba(40, 74, 178, 1)',
+  SHOW: 'rgba(79, 111, 24, 1)',
+  EPISODE: 'rgba(109, 33, 151, 1)',
+  ORGANIZATION: 'rgba(153, 62, 19, 1)',
+  TWEET: 'rgba(22, 23, 29, 1)',
+  PERSON: 'rgba(7, 105, 82, 1)',
+  EVENT: 'rgba(137, 107, 0, 1)',
+  TOPIC: 'rgba(255, 255, 255, 0.85)',
 } as const
 
 export type ColorName = keyof typeof colors
