@@ -79,6 +79,7 @@ export const StatsConfig: StatConfigItem[] = [
 
 export const Stats = () => {
   const [budget, setBudget] = useUserStore((s) => [s.budget, s.setBudget])
+
   const [stats, setStats, fetchData, setSelectedNode] = useDataStore((s) => [
     s.stats,
     s.setStats,
