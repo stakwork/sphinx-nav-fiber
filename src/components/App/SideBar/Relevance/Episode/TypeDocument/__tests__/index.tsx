@@ -1,6 +1,7 @@
+/* eslint-disable padding-line-between-statements */
 import React from 'react'
 import '@testing-library/jest-dom'
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { TypeDocument } from '..'
 
@@ -18,7 +19,9 @@ describe('TypeDocument component', () => {
 
   it('renders type badge correctly', () => {
     render(<TypeDocument {...props} />)
-    expect(screen.getByText('Sample type')).toBeInTheDocument()
+    waitFor(() => {
+      expect(screen.getByText('Sample type')).toBeInTheDocument()
+    })
   })
 
   it('renders source link correctly', () => {

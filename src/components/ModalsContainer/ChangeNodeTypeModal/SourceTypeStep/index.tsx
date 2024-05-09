@@ -73,7 +73,7 @@ export const SourceTypeStep: FC<Props> = ({ skipToStep, allowNextStep, onSelectT
         <Button
           color="secondary"
           disabled={!allowNextStep}
-          onClick={() => skipToStep('source')}
+          onClick={() => skipToStep('mapProperties')}
           size="large"
           type="button"
           variant="contained"
