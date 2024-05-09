@@ -132,8 +132,9 @@ describe('Component Test Stats', () => {
   it('asserts that OnClick, prediction/content/latest endpoint is called with media type query', () => {
     const mockedSetBudget = jest.fn()
     const fetchDataMock = jest.fn()
+    const setSelectedNode = jest.fn()
     mockedUseUserStore.mockReturnValue([mockBudget, mockedSetBudget])
-    mockedUseDataStore.mockReturnValue([mockStats, jest.fn(), fetchDataMock])
+    mockedUseDataStore.mockReturnValue([mockStats, setSelectedNode, jest.fn(), fetchDataMock])
 
     const { getByText } = render(<Stats />)
 
