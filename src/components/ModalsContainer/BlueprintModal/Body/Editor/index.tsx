@@ -5,6 +5,7 @@ import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
 import { TOption } from '~/components/AddItemModal/SourceTypeStep/types'
+import ClearIcon from '~/components/Icons/ClearIcon'
 import { AutoComplete } from '~/components/common/AutoComplete'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
@@ -201,10 +202,10 @@ export const Editor = ({ onSchemaCreate, selectedSchema, onDelete, setSelectedSc
 
   return (
     <Flex>
-      <Flex direction="row" justify="flex-end" mt={20}>
-        <Button disabled={loading} onClick={onCancel}>
-          Cancel
-        </Button>
+      <Flex direction="row" justify="flex-end">
+        <CloseButton data-testid="close-sidebar-sub-view" onClick={onCancel}>
+          <ClearIcon />
+        </CloseButton>
       </Flex>
       <Flex>
         <FormProvider {...form}>
@@ -212,49 +213,47 @@ export const Editor = ({ onSchemaCreate, selectedSchema, onDelete, setSelectedSc
             <Flex>
               {!selectedSchema ? (
                 <>
-                  <Flex mb={20}>
-                    <Text>Select Parent</Text>
-                  </Flex>
-                  <Flex direction="row" mb={20}>
+                  <Flex mb={12}>
+                    <Flex mb={12}>
+                      <Text>Select Parent</Text>
+                    </Flex>
+
                     <AutoComplete
-                      key={parent}
-                      autoFocus={!selectedSchema}
-                      disabled={parentsLoading}
                       isLoading={parentsLoading}
                       onSelect={(e) => setValue('parent', e?.value || '')}
                       options={parentOptions}
                       selectedValue={resolvedParentValue()}
                     />
                   </Flex>
+                  <Flex>
+                    <Flex mb={12}>
+                      <Text>Type name</Text>
+                    </Flex>
+                    <Flex mb={12}>
+                      <TextInput
+                        id="cy-item-name"
+                        maxLength={250}
+                        name="type"
+                        placeholder="Enter type name"
+                        rules={{
+                          ...requiredRule,
+                        }}
+                        value={parent}
+                      />
+                    </Flex>
+                  </Flex>
                 </>
               ) : (
-                <Flex mb={20}>
-                  <Text kind="headingBold">Parent: {selectedSchema.parent}</Text>
-                </Flex>
-              )}
-
-              {!selectedSchema ? (
                 <>
-                  <Flex mb={4}>
-                    <Text>Type name</Text>
-                  </Flex>
+                  {selectedSchema.parent ? (
+                    <Flex mb={12}>
+                      <Text kind="headingBold">Parent: {selectedSchema.parent}</Text>
+                    </Flex>
+                  ) : null}
                   <Flex mb={12}>
-                    <TextInput
-                      id="cy-item-name"
-                      maxLength={250}
-                      name="type"
-                      placeholder="Enter type name"
-                      rules={{
-                        ...requiredRule,
-                      }}
-                      value={parent}
-                    />
+                    <Text kind="headingBold">Type: {selectedSchema.type}</Text>
                   </Flex>
                 </>
-              ) : (
-                <Flex mb={20}>
-                  <Text kind="headingBold">Type: {selectedSchema.type}</Text>
-                </Flex>
               )}
             </Flex>
             <CreateCustomNodeAttribute parent={selectedSchema ? selectedSchema.type : parent} />
@@ -301,4 +300,10 @@ const DeleteButton = styled(Button)`
       background-color: rgba(237, 116, 116, 0.2);
     }
   }
+`
+
+const CloseButton = styled(Flex)`
+  font-size: 32px;
+  color: ${colors.white};
+  cursor: pointer;
 `

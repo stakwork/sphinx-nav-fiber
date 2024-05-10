@@ -35,36 +35,42 @@ export const calculateNodePositionsRadial = (nodes: SchemaWithChildren[]): Schem
   return nodesWithPositions
 }
 
-const countDescendants = (item: SchemaWithChildren, allData: SchemaWithChildren[]): number => {
-  const children = allData.filter((child) => child.parent === item.type)
-
-  return children.reduce((count, child) => count + 1 + countDescendants(child, allData), 0)
-}
-
-type SchemaWithDescendants = SchemaWithChildren & { descendants: number }
-
 export const calculateNodePositionsTree = (nodes: SchemaWithChildren[]): SchemaExtended[] => {
-  const withDescendants: SchemaWithDescendants[] = nodes.map((item) => ({
-    ...item,
-    descendants: countDescendants(item, nodes),
-  }))
+  const nodesNormalized = nodes.reduce<{ [key: string]: SchemaWithChildren }>((acc, curr) => {
+    if (curr.ref_id) {
+      acc[curr.ref_id] = curr
+    }
 
-  const root = withDescendants.find((i) => i.type === 'Thing')
+    return acc
+  }, {})
+
+  const root = nodes.find((i) => i.type === 'Thing')
   const nodesWithPositions: SchemaExtended[] = []
-  const stepX = 2
+  const maxChildren = Math.max(...nodes.filter((i) => i.type !== 'Thing').map((i) => i.children.length))
   const stepY = 2
 
   const loopThroughNodes = (nodeId: string, childIndex: number, childrenLength: number, parentX = 0, depth = 0) => {
     const node = nodes.find((n) => n.ref_id === nodeId)
 
+    const stepX =
+      childrenLength && childrenLength <= maxChildren ? Math.floor(maxChildren / childrenLength) : maxChildren
+
+    const position = (childIndex % 2 === 0 ? childIndex : -(childIndex + 1)) / 2
+    const deltaX = childrenLength && childrenLength % 2 === 0 ? stepX / 2 : 0
+
     if (node) {
-      const x = parentX + childIndex * stepX - (childrenLength * stepX) / 2 + stepX / 2
+      const x = parentX + deltaX + position * stepX
       const y = -depth * stepY + 3
+      // const siblingsLength = node.children.reduce((acc, curr) => acc + curr.children.length, 0)
 
       nodesWithPositions.push({ ...node, x, y, z: 0 })
 
-      node.children.forEach((child, index, arr) => {
-        loopThroughNodes(child, index, arr.length, x, depth + 1)
+      const sortedByChildrenLength = [...node.children].sort(
+        (a, b) => nodesNormalized[b].children.length - nodesNormalized[a].children.length,
+      )
+
+      sortedByChildrenLength.forEach((childId, index, arr) => {
+        loopThroughNodes(childId, index, arr.length, x, depth + 1)
       })
     }
   }

@@ -1,7 +1,7 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
-import { Schema } from '~/network/fetchSourcesData'
+import { Schema, getSchemaAll } from '~/network/fetchSourcesData'
 import { useSchemaStore } from '~/stores/useSchemaStore'
 import { colors } from '~/utils'
 import { SchemaWithChildren } from '../types'
@@ -21,8 +21,35 @@ export type FormData = {
 export const Body = () => {
   const [selectedSchemaId, setSelectedSchemaId] = useState<string>('')
   const [isCreateNew, setIsCreateNew] = useState(false)
+  const [loading, setLoading] = useState(false)
 
-  const [schemasNonFiltered, links, setSchemaAll] = useSchemaStore((s) => [s.schemas, s.links, s.setSchemas])
+  console.log(loading)
+
+  const [schemasNonFiltered, links, setSchemaAll, setSchemaLinks] = useSchemaStore((s) => [
+    s.schemas,
+    s.links,
+    s.setSchemas,
+    s.setSchemaLinks,
+  ])
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await getSchemaAll()
+
+        setSchemaAll(response.schemas.filter((i) => i.ref_id && !i.is_deleted))
+        setSchemaLinks(response.edges)
+
+        setLoading(false)
+      } catch (error) {
+        console.error('Error fetching data:', error)
+
+        setLoading(false)
+      }
+    }
+
+    fetchData()
+  }, [setSchemaAll, setSchemaLinks])
 
   const schemasWithDuplicates = schemasNonFiltered.filter((i) => i.ref_id && !i.is_deleted)
 
@@ -87,28 +114,28 @@ export const Body = () => {
         <Flex ml={-20} my={-20}>
           <Toolbar onCreateNew={() => setIsCreateNew(true)} />
         </Flex>
+        <Flex>
+          {selectedSchema || isCreateNew ? (
+            <EditorWrapper>
+              <Editor
+                onDelete={onSchemaDelete}
+                onSchemaCreate={onSchemaCreate}
+                selectedSchema={selectedSchema}
+                setIsCreateNew={setIsCreateNew}
+                setSelectedSchemaId={setSelectedSchemaId}
+              />
+            </EditorWrapper>
+          ) : null}
+        </Flex>
         <Wrapper direction="row" grow={1}>
-          <div className="graph">
-            <Graph
-              linksWithPositions={linksWithPositions}
-              schemasWithPositions={schemasWithPositions}
-              selectedSchemaId={selectedSchemaId}
-              setSelectedSchemaId={setSelectedSchemaId}
-            />
-          </div>
-        </Wrapper>
-      </Flex>
-      {selectedSchema || isCreateNew ? (
-        <EditorWrapper>
-          <Editor
-            onDelete={onSchemaDelete}
-            onSchemaCreate={onSchemaCreate}
-            selectedSchema={selectedSchema}
-            setIsCreateNew={setIsCreateNew}
+          <Graph
+            linksWithPositions={linksWithPositions}
+            schemasWithPositions={schemasWithPositions}
+            selectedSchemaId={selectedSchemaId}
             setSelectedSchemaId={setSelectedSchemaId}
           />
-        </EditorWrapper>
-      ) : null}
+        </Wrapper>
+      </Flex>
     </>
   )
 }
@@ -116,22 +143,14 @@ export const Body = () => {
 const Wrapper = styled(Flex)`
   flex: 1 1 100%;
   justify-content: center;
-  align-items: top;
   position: relative;
-  .graph {
-    flex-grow: 1;
-  }
 `
 
 const EditorWrapper = styled(Flex)`
   width: 400px;
   background: ${colors.BG1};
-  position: absolute;
-  left: 64px;
   padding: 16px;
-  border-left: 1px solid ${colors.black};
-  bottom: 16px;
-  top: 16px;
   border-top-right-radius: 16px;
   border-bottom-right-radius: 16px;
+  flex-grow: 1;
 `

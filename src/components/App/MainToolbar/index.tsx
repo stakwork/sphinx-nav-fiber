@@ -1,10 +1,12 @@
 import styled from 'styled-components'
 import AddContentIcon from '~/components/Icons/AddContentIcon'
 import AddSourceIcon from '~/components/Icons/AddSourceIcon'
+import CommunitiesIcon from '~/components/Icons/CommunitiesIcon'
 import SettingsIcon from '~/components/Icons/SettingsIcon'
 import SourcesTableIcon from '~/components/Icons/SourcesTableIcon'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
+import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
 import { useModal } from '~/stores/useModalStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { colors } from '~/utils/colors'
@@ -14,6 +16,11 @@ export const MainToolbar = () => {
   const { open: openItemAddModal } = useModal('addItem')
   const { open: openContentAddModal } = useModal('addContent')
   const { open: openSettingsModal } = useModal('settings')
+  const { open: openBlueprintModal } = useModal('blueprintGraph')
+
+  const customSchemaFeatureFlag = useFeatureFlagStore((s) => s.customSchemaFeatureFlag)
+
+  console.log(customSchemaFeatureFlag)
 
   const [isAdmin] = useUserStore((s) => [s.isAdmin])
 
@@ -22,14 +29,15 @@ export const MainToolbar = () => {
       <LogoButton>
         <img alt="Second brain" src="logo.svg" />
       </LogoButton>
-      {isAdmin && (
-        <ActionButton data-testid="add-item-modal" onClick={openItemAddModal}>
-          <IconWrapper>
-            <AddSourceIcon />
-          </IconWrapper>
-          <Text>Add Item</Text>
-        </ActionButton>
-      )}
+      {isAdmin ||
+        (true && (
+          <ActionButton data-testid="add-item-modal" onClick={openItemAddModal}>
+            <IconWrapper>
+              <AddSourceIcon />
+            </IconWrapper>
+            <Text>Add Item</Text>
+          </ActionButton>
+        ))}
       <ActionButton data-testid="add-content-modal" onClick={openContentAddModal}>
         <IconWrapper>
           <AddContentIcon />
@@ -41,6 +49,12 @@ export const MainToolbar = () => {
           <SourcesTableIcon />
         </IconWrapper>
         <Text>Source Table</Text>
+      </ActionButton>
+      <ActionButton id="cy-open-soure-table" onClick={openBlueprintModal}>
+        <IconWrapper>
+          <CommunitiesIcon />
+        </IconWrapper>
+        <Text>Blueprint</Text>
       </ActionButton>
       <ActionButton data-testid="settings-modal" onClick={openSettingsModal}>
         <IconWrapper>

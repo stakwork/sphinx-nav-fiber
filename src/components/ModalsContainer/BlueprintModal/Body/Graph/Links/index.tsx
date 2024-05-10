@@ -62,8 +62,17 @@ export const Lines = ({ links }: Props) => {
     <group ref={group}>
       {lines.map((line, index) => (
         <Fragment key={index}>
-          <CubicBezierLine {...line} color="white" dashed dashScale={50} gapSize={20} lineWidth={2} opacity={0.8} />
-          <CubicBezierLine {...line} color="white" lineWidth={2} opacity={0.2} transparent />
+          <CubicBezierLine
+            userData={{ ind: index }}
+            {...line}
+            color="white"
+            dashed
+            dashScale={50}
+            gapSize={20}
+            lineWidth={2}
+            opacity={0.8}
+          />
+          <CubicBezierLine {...line} color="white" lineWidth={2} opacity={0.2} transparent userData={{ ind: index }} />
           <Cone args={[0.08, 0.1, 32]} position={[line.end.x, line.end.y + 0.1, line.end.z]} rotation={[0, 0, 0]} />
         </Fragment>
       ))}

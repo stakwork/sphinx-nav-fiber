@@ -1,9 +1,10 @@
-import { Html } from '@react-three/drei'
+import { Html, Text } from '@react-three/drei'
 import { Select } from '@react-three/postprocessing'
 import clsx from 'clsx'
 import { memo, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { BoxGeometry, Vector3 } from 'three'
+import { fontProps } from '~/components/Universe/Graph/Cubes/Text/constants'
 import { Flex } from '~/components/common/Flex'
 import { colors } from '~/utils'
 
@@ -36,13 +37,24 @@ export const Node = memo(({ node, setSelectedNode, isSelected }: Props) => {
 
   return (
     <Select>
-      <group onClick={setSelectedNode} position={new Vector3(node.x, node.y, node.z)}>
-        <Html center sprite zIndexRange={[0, 0]}>
-          <NodeView className={clsx({ selected: isSelected })} onClick={setSelectedNode}>
-            {node.type}
-          </NodeView>
-        </Html>
-      </group>
+      {false && (
+        <group onClick={setSelectedNode} position={new Vector3(node.x, node.y, node.z)}>
+          <Html center sprite zIndexRange={[0, 0]}>
+            <NodeView className={clsx({ selected: isSelected })} onClick={setSelectedNode}>
+              {node.type}
+            </NodeView>
+          </Html>
+        </group>
+      )}
+      <Text
+        onClick={setSelectedNode}
+        {...fontProps}
+        fontSize={1}
+        position={new Vector3(node.x, node.y, node.z)}
+        scale={0.2}
+      >
+        {node.type}
+      </Text>
     </Select>
   )
 })
