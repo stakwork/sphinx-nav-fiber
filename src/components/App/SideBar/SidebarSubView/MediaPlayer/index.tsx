@@ -23,6 +23,7 @@ const MediaPlayerComponent: FC<Props> = ({ hidden }) => {
   const [isFullScreen, setIsFullScreen] = useState(false)
   const [isMouseNearBottom, setIsMouseNearBottom] = useState(false)
   const [status, setStatus] = useState<'buffering' | 'error' | 'ready'>('ready')
+  const [isReady, setIsReady] = useState(false)
 
   const {
     isPlaying,
@@ -43,6 +44,14 @@ const MediaPlayerComponent: FC<Props> = ({ hidden }) => {
   const isYouTubeVideo = playingNode?.link?.includes('youtube') || playingNode?.link?.includes('youtu.be')
 
   useEffect(() => () => resetPlayer(), [resetPlayer])
+
+  useEffect(() => {
+    if (playingNode && !isReady) {
+      setPlayingTime(0)
+      setDuration(0)
+      setIsReady(false)
+    }
+  }, [playingNode, setPlayingTime, setDuration, setIsReady, isReady])
 
   useEffect(() => {
     if (isSeeking && playerRef.current) {

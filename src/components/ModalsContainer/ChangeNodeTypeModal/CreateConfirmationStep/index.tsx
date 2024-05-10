@@ -5,17 +5,21 @@ import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 
 type Props = {
-  type?: string
+  nodeType?: string
   onclose: () => void
+  selectedNodeType: string
 }
 
-export const CreateConfirmation: FC<Props> = ({ type, onclose }) => (
+export const CreateConfirmation: FC<Props> = ({ nodeType, onclose, selectedNodeType }) => (
   <Flex>
     <Flex mb={20}>
-      <StyledText>Comfirm New Type</StyledText>
+      <StyledText>Comfirm Type Change</StyledText>
     </Flex>
     <Flex mb={25}>
-      <StyledText>Type: {type}</StyledText>
+      <StyledText>From: {selectedNodeType}</StyledText>
+    </Flex>
+    <Flex mb={25}>
+      <StyledText>To: {nodeType}</StyledText>
     </Flex>
     <Flex direction="row">
       <Flex grow={1}>
