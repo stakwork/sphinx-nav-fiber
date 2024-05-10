@@ -4,15 +4,14 @@ import * as sphinx from 'sphinx-bridge'
 import { BaseModal, ModalKind } from '~/components/Modal'
 import { NODE_ADD_ERROR } from '~/constants'
 import { api } from '~/network/api'
-import { useDataStore } from '~/stores/useDataStore'
+import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { useModal } from '~/stores/useModalStore'
-import { useUserStore } from '~/stores/useUserStore'
 import { NodeExtended, SubmitErrRes } from '~/types'
 import { executeIfProd, getLSat } from '~/utils'
 import { CreateConfirmation } from './CreateConfirmationStep'
 import { MapPropertiesStep } from './MapPropertiesStep'
-import { SourceStep } from './SourceStep'
 import { SourceTypeStep } from './SourceTypeStep'
+import { RequiredPropertiesStep } from '~/components/ModalsContainer/ChangeNodeTypeModal/RequiredPropertiesStep'
 
 export type FormData = {
   typeName: string
@@ -21,11 +20,10 @@ export type FormData = {
   type?: string
 } & Partial<{ [k: string]: string }>
 
-export type MapNodeTypeModalStepID = 'sourceType' | 'source' | 'createConfirmation' | 'mapProperties'
+export type MapNodeTypeModalStepID = 'sourceType' | 'requiredProperties' | 'createConfirmation' | 'mapProperties'
 
 const handleSubmitForm = async (
   data: FieldValues,
-  setBudget: (value: number | null) => void,
   onAddNewData: (value: FieldValues, id: string) => void,
 ): Promise<void> => {
   if (data.nodeType === 'Create custom type') {
@@ -128,18 +126,20 @@ const handleSubmitForm = async (
   }
 }
 
+export type SelectedValues = { [key: string]: string }
+
 export const ChangeNodeTypeModal = () => {
   const [stepId, setStepId] = useState<MapNodeTypeModalStepID>('sourceType')
   const { close, visible } = useModal('changeNodeType')
   const { open: openEditNodeNameModal } = useModal('editNodeName')
   const { open: openTypeModal } = useModal('addType')
-  const [setBudget] = useUserStore((s) => [s.setBudget])
   const form = useForm<FormData>({ mode: 'onChange' })
   const { watch, setValue, reset } = form
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [error, setError] = useState<string>('')
 
   const [addNewNode, setSelectedNode] = useDataStore((s) => [s.addNewNode, s.setSelectedNode])
+  const [selectedValues, setSelectedValues] = useState<SelectedValues>({})
 
   useEffect(
     () => () => {
@@ -149,10 +149,13 @@ export const ChangeNodeTypeModal = () => {
     [visible, reset],
   )
 
+  const selectedNode = useSelectedNode()
+
+  const selectedNodeType = selectedNode?.node_type
+    ? selectedNode.node_type.charAt(0).toUpperCase() + selectedNode.node_type.slice(1)
+    : ''
+
   const nodeType = watch('nodeType')
-  const name = watch('typeName')
-  const sourceLink = watch('sourceLink')
-  const type = watch('type')
 
   watch('title')
 
@@ -190,7 +193,7 @@ export const ChangeNodeTypeModal = () => {
 
   const onSubmit = form.handleSubmit(async (data) => {
     try {
-      await handleSubmitForm(data, setBudget, onAddNewNode)
+      await handleSubmitForm(data, onAddNewNode)
       handleClose()
       // eslint-disable-next-line  @typescript-eslint/no-explicit-any
     } catch (err: any) {
@@ -225,14 +228,30 @@ export const ChangeNodeTypeModal = () => {
         skipToStep={skipToStep}
       />
     ),
-    source: <SourceStep name={name} skipToStep={skipToStep} sourceLink={sourceLink || ''} type={nodeType} />,
-    createConfirmation: <CreateConfirmation onclose={handleClose} type={type} />,
+    requiredProperties: (
+      <RequiredPropertiesStep
+        handleSelectType={handleSelectType}
+        nodeType={nodeType}
+        selectedValues={selectedValues}
+        skipToStep={skipToStep}
+      />
+    ),
+    createConfirmation: (
+      <CreateConfirmation nodeType={nodeType} onclose={handleClose} selectedNodeType={selectedNodeType} />
+    ),
     mapProperties: (
-      <MapPropertiesStep handleSelectType={handleSelectType} nodeType={nodeType} skipToStep={skipToStep} />
+      <MapPropertiesStep
+        handleSelectType={handleSelectType}
+        nodeType={nodeType}
+        selectedNodeType={selectedNodeType}
+        selectedValues={selectedValues}
+        setSelectedValues={setSelectedValues}
+        skipToStep={skipToStep}
+      />
     ),
   }
 
-  const modalKind: ModalKind = 'small'
+  const modalKind: ModalKind = stepId === 'mapProperties' ? 'regular' : 'small'
 
   const handleCloseModal = () => {
     close()
