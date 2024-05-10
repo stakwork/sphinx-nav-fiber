@@ -13,7 +13,7 @@ type BadgeProps = {
 }
 
 export const TypeBadge = ({ type }: Props) => {
-  let badgeProps: BadgeProps
+  let badgeProps: Omit<BadgeProps, 'label'>
 
   const nodeType = type.toLowerCase()
 
@@ -25,7 +25,6 @@ export const TypeBadge = ({ type }: Props) => {
       badgeProps = {
         iconStart: 'video_badge.svg',
         color: colors.CLIP,
-        label: 'clip',
       }
 
       break
@@ -34,7 +33,6 @@ export const TypeBadge = ({ type }: Props) => {
       badgeProps = {
         iconStart: 'show_badge.svg',
         color: colors.SHOW,
-        label: 'show',
       }
 
       break
@@ -43,7 +41,6 @@ export const TypeBadge = ({ type }: Props) => {
       badgeProps = {
         iconStart: 'twitter_badge.svg',
         color: colors.TWEET,
-        label: 'tweet',
       }
 
       break
@@ -52,7 +49,6 @@ export const TypeBadge = ({ type }: Props) => {
       badgeProps = {
         iconStart: 'audio_badge.svg',
         color: colors.EPISODE,
-        label: 'episode',
       }
 
       break
@@ -61,7 +57,6 @@ export const TypeBadge = ({ type }: Props) => {
       badgeProps = {
         iconStart: 'notes_badge.svg',
         color: colors.TEXT,
-        label: 'text',
       }
 
       break
@@ -70,7 +65,6 @@ export const TypeBadge = ({ type }: Props) => {
       badgeProps = {
         iconStart: 'organization_badge.svg',
         color: colors.ORGANIZATION,
-        label: 'organization',
       }
 
       break
@@ -81,7 +75,6 @@ export const TypeBadge = ({ type }: Props) => {
       badgeProps = {
         iconStart: 'person_badge.svg',
         color: colors.PERSON,
-        label: 'person',
       }
 
       break
@@ -90,7 +83,6 @@ export const TypeBadge = ({ type }: Props) => {
       badgeProps = {
         iconStart: 'event_badge.svg',
         color: colors.EVENT,
-        label: 'event',
       }
 
       break
@@ -99,7 +91,6 @@ export const TypeBadge = ({ type }: Props) => {
       badgeProps = {
         iconStart: 'topic_badge.svg',
         color: colors.TOPIC,
-        label: 'topic',
       }
 
       break
@@ -108,13 +99,12 @@ export const TypeBadge = ({ type }: Props) => {
       badgeProps = {
         iconStart: 'generic_badge.svg',
         color: colors.black,
-        label: 'Unknown',
       }
 
       break
   }
 
-  return <Badge {...badgeProps} />
+  return <Badge {...badgeProps} label={type} />
 }
 
 const Badge = ({ iconStart, color, label }: BadgeProps) => (
