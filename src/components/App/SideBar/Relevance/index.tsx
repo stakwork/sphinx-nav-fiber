@@ -112,6 +112,7 @@ const _Relevance = ({ isSearchResult }: Props) => {
         <LoadMoreWrapper align="center" background="BG1" direction="row" justify="center">
           {hasNext && (
             <Button
+              key={`load-more-${currentPage}`}
               onClick={() => {
                 if (hasNext) {
                   setCurrentPage(currentPage + 1)
