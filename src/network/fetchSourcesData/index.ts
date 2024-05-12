@@ -147,6 +147,13 @@ interface FullTranscriptResponse {
   }
 }
 
+export interface ChangeNodeType {
+  [index: string]: unknown
+}
+
+export const changeNodeType = async (ref_id: string, data: ChangeNodeType) =>
+  api.put(`/node/${ref_id}`, JSON.stringify(data))
+
 export const getFullTranscript = async (refId: string | undefined) => {
   const url = `/node/text/${refId}`
   const response = await api.get<FullTranscriptResponse>(url)
