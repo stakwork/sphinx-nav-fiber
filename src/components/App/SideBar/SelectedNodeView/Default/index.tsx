@@ -91,6 +91,8 @@ const StyledDetail = styled(Flex)`
 
     .node-detail__value {
       font-weight: 400;
+      word-wrap: normal;
+      word-break: break-word;
     }
 
     &__long {
