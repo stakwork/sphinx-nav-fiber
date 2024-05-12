@@ -46,15 +46,17 @@ export const Node = memo(({ node, setSelectedNode, isSelected }: Props) => {
           </Html>
         </group>
       )}
-      <Text
-        onClick={setSelectedNode}
-        {...fontProps}
-        fontSize={1}
-        position={new Vector3(node.x, node.y, node.z)}
-        scale={0.2}
-      >
-        {node.type}
-      </Text>
+      {true && (
+        <Text
+          onClick={setSelectedNode}
+          {...fontProps}
+          fontSize={1}
+          position={new Vector3(node.x, node.y, node.z)}
+          scale={20}
+        >
+          {node.type}
+        </Text>
+      )}
     </Select>
   )
 })

@@ -1,4 +1,5 @@
 import { forceCenter, forceCollide, forceLink, forceManyBody, forceSimulation } from 'd3-force-3d'
+import { SchemaExtended } from '~/components/ModalsContainer/BlueprintModal/types'
 import { Link, NodeExtended } from '~/types'
 
 export type ForceSimulation = typeof forceSimulation
@@ -13,7 +14,10 @@ type SimulationProps = {
   forceChargeMaxDistance?: number
   forceLinkStrength?: number
   forceCenterStrength?: number
-  forceLinkDistanceMethod?: (link: { source: NodeExtended; target: NodeExtended }) => void
+  forceLinkDistanceMethod?: (link: {
+    source: NodeExtended | SchemaExtended
+    target: NodeExtended | SchemaExtended
+  }) => void
   forceCollideRadiusMethod?: (node: NodeExtended) => void
   disableCollide?: boolean
   disableCenter?: boolean
@@ -34,8 +38,8 @@ const defaults: Required<SimulationProps> = {
   disableLink: false,
   disableCharge: false,
   forceCollideRadiusMethod: (n: NodeExtended) => (n.scale || 1) * 6 + 200,
-  forceLinkDistanceMethod: (d: { source: NodeExtended; target: NodeExtended }) => {
-    const sourceType = d.source.node_type
+  forceLinkDistanceMethod: (d: { source: NodeExtended | SchemaExtended; target: NodeExtended | SchemaExtended }) => {
+    const sourceType = (d.source as NodeExtended).node_type
 
     let distance = 50
 
@@ -55,12 +59,12 @@ const defaults: Required<SimulationProps> = {
       default:
     }
 
-    return distance * 2
+    return (distance * 2) / 50
   },
 }
 
 export const runForceSimulation = (
-  nodes: NodeExtended[],
+  nodes: NodeExtended[] | SchemaExtended[],
   links: Link[],
   {
     numDimensions = defaults.numDimensions,
@@ -99,11 +103,10 @@ export const runForceSimulation = (
       'link',
       disableLink
         ? null
-        : forceLink()
+        : forceLink(links)
+            .id((d: NodeExtended) => d.ref_id)
             .distance(forceLinkDistanceMethod)
-            .strength(forceLinkStrength)
-            .id((d: NodeExtended) => d.id)
-            .links(links.filter((f) => !f.onlyVisibleOnSelect)),
+            .strength(forceLinkStrength),
     )
     .alpha(1)
     .restart()

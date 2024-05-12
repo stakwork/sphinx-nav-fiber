@@ -3,7 +3,7 @@ import { Cone, CubicBezierLine, Line } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import { Fragment, useMemo, useRef } from 'react'
 import { Group, Mesh, ShaderMaterial, Vector3 } from 'three'
-import { SchemaLinkExtended } from '../../../types'
+import { SchemaExtended, SchemaLinkExtended } from '../../../types'
 
 type Line = {
   start: Vector3
@@ -14,9 +14,10 @@ type Line = {
 
 type Props = {
   links: SchemaLinkExtended[]
+  nodes?: SchemaExtended[]
 }
 
-export const Lines = ({ links }: Props) => {
+export const Lines = ({ links, nodes }: Props) => {
   const group = useRef<Group>(null)
 
   const lines = useMemo<Line[]>(() => {
@@ -26,8 +27,13 @@ export const Lines = ({ links }: Props) => {
       const coefficient = index % 2 === 0 ? 1 : -1
 
       const { start, end } = link
-      const startVector = new Vector3(start.x, start.y + 0.3, start.z)
-      const endVector = new Vector3(end.x, end.y - 0.4, end.z)
+      const nodeStart = nodes.find((i) => i.ref_id === link.source)
+      const nodeEnd = nodes.find((i) => i.type === link.target)
+
+      const startVector = new Vector3(nodeStart?.x || 0, nodeStart?.y || 0 + 0.3, nodeStart?.z || 0)
+      const endVector = new Vector3(nodeEnd?.x || 0, nodeEnd?.y || 0 - 0.4, nodeEnd?.z || 0)
+      // const startVector = new Vector3(start.x, start.y + 0.3, start.z)
+      // const endVector = new Vector3(end.x, end.y - 0.4, end.z)
       const deltaStart = new Vector3(0, coefficient * 0, 0)
       const deltaEnd = new Vector3(0, coefficient * 0, 0)
 
@@ -43,7 +49,7 @@ export const Lines = ({ links }: Props) => {
     })
 
     return linesArr
-  }, [links])
+  }, [links, nodes])
 
   useFrame((_, delta: number) => {
     if (group.current) {
