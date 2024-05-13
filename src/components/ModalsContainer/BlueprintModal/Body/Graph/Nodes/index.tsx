@@ -7,15 +7,19 @@ type Props = {
   selectedId: string
 }
 
-export const Nodes = ({ nodes, setSelectedSchemaId, selectedId }: Props) => (
-  <>
-    {nodes.map((schema) => (
-      <Node
-        key={schema.ref_id}
-        isSelected={schema.ref_id === selectedId}
-        node={{ x: schema.x, y: schema.y, z: schema.z, id: schema.ref_id || '', type: schema.type || '' }}
-        setSelectedNode={() => schema.ref_id && setSelectedSchemaId(schema.ref_id)}
-      />
-    ))}
-  </>
-)
+export const Nodes = ({ nodes, setSelectedSchemaId, selectedId }: Props) => {
+  console.log(nodes)
+
+  return (
+    <>
+      {nodes.map((schema) => (
+        <Node
+          key={schema.ref_id}
+          isSelected={schema.ref_id === selectedId}
+          node={schema}
+          setSelectedNode={() => schema.ref_id && setSelectedSchemaId(schema.ref_id)}
+        />
+      ))}
+    </>
+  )
+}

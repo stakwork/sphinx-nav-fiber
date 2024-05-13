@@ -82,6 +82,8 @@ export const runForceSimulation = (
     disableCharge = defaults.disableCharge,
   }: SimulationProps,
 ) => {
+  console.log(forceLinkDistanceMethod)
+
   simulation
     .alpha(1)
     .stop()
@@ -105,7 +107,7 @@ export const runForceSimulation = (
         ? null
         : forceLink(links)
             .id((d: NodeExtended) => d.ref_id)
-            .distance(forceLinkDistanceMethod)
+            // .distance(forceLinkDistanceMethod)
             .strength(forceLinkStrength),
     )
     .alpha(1)
