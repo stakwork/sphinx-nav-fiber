@@ -25,6 +25,8 @@ export const SetAttributesStep: FC<Props> = ({ handleSelectType, skipToStep, nod
   const [loading, setLoading] = useState(false)
   const [attributes, setAttributes] = useState<parsedObjProps[]>()
 
+  const noSpacePattern = /^[^\s][\w\s]*$/
+
   const {
     watch,
     formState: { isValid },
@@ -92,7 +94,15 @@ export const SetAttributesStep: FC<Props> = ({ handleSelectType, skipToStep, nod
                     name={key}
                     placeholder={required ? 'Required' : 'Optional'}
                     rules={{
-                      ...(required ? requiredRule : {}),
+                      ...(required
+                        ? {
+                            ...requiredRule,
+                            pattern: {
+                              message: 'Please avoid special characters and spaces',
+                              value: noSpacePattern,
+                            },
+                          }
+                        : {}),
                     }}
                   />
                 </TextFieldWrapper>

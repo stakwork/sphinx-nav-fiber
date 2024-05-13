@@ -15,7 +15,11 @@ type Props = {
 }
 
 export const SourceStep: FC<Props> = ({ type, skipToStep, name, sourceLink }) => {
-  const allowNextStep = type === 'Image' ? name && sourceLink : name
+  const noSpacePattern = /^[^\s].*$/
+
+  const isValidInput = (input: string | undefined) => noSpacePattern.test(input ?? '')
+
+  const allowNextStep = type === 'Image' ? isValidInput(name) && isValidInput(sourceLink) : isValidInput(name)
 
   return (
     <Flex>
@@ -36,6 +40,10 @@ export const SourceStep: FC<Props> = ({ type, skipToStep, name, sourceLink }) =>
           placeholder="Paste name here..."
           rules={{
             ...requiredRule,
+            pattern: {
+              message: 'Please avoid special characters and spaces',
+              value: noSpacePattern,
+            },
           }}
         />
       </Flex>
@@ -53,6 +61,10 @@ export const SourceStep: FC<Props> = ({ type, skipToStep, name, sourceLink }) =>
               placeholder="Paste link here..."
               rules={{
                 ...requiredRule,
+                pattern: {
+                  message: 'Please avoid special characters and spaces',
+                  value: noSpacePattern,
+                },
               }}
             />
           </Flex>
