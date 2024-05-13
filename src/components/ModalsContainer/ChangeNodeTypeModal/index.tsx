@@ -34,10 +34,10 @@ const handleSubmitForm = async (
   Object.entries(selectedValues).forEach(([key, value]) => {
     if (value !== 'none') {
       swappedValues[value] = key
+    }
 
-      if (key !== value) {
-        propertiesToBeDeleted.push(key)
-      }
+    if (key !== value) {
+      propertiesToBeDeleted.push(key)
     }
   })
 
@@ -77,6 +77,8 @@ const handleSubmitForm = async (
     }
 
     const refId = Id ?? selectedNode?.ref_id
+
+    console.log(refId, body)
 
     await changeNodeType(refId, body)
 
