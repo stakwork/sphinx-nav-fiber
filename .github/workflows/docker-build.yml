@@ -50,6 +50,7 @@ jobs:
           docker buildx build \
           --cache-to "type=local,dest=/tmp/.buildx-cache" \
           --platform linux/amd64 \
+          --load \
           --tag "sphinx-nav-fiber:temp" \
           ./
       - name: Tag and push Docker image with specific version tag
