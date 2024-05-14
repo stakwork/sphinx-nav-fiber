@@ -6,6 +6,7 @@ import { Text } from '~/components/common/Text'
 import { TextInput } from '~/components/common/TextInput'
 import { requiredRule } from '~/constants'
 import { AddItemModalStepID } from '..'
+import { noSpaceSourceStepPattern } from '~/components/AddItemModal/SourceTypeStep/constants'
 
 type Props = {
   type: string
@@ -15,9 +16,7 @@ type Props = {
 }
 
 export const SourceStep: FC<Props> = ({ type, skipToStep, name, sourceLink }) => {
-  const noSpacePattern = /^[^\s].*$/
-
-  const isValidInput = (input: string | undefined) => noSpacePattern.test(input ?? '')
+  const isValidInput = (input: string | undefined) => noSpaceSourceStepPattern.test(input ?? '')
 
   const allowNextStep = type === 'Image' ? isValidInput(name) && isValidInput(sourceLink) : isValidInput(name)
 
@@ -42,7 +41,7 @@ export const SourceStep: FC<Props> = ({ type, skipToStep, name, sourceLink }) =>
             ...requiredRule,
             pattern: {
               message: 'Please avoid special characters and spaces',
-              value: noSpacePattern,
+              value: noSpaceSourceStepPattern,
             },
           }}
         />
@@ -63,7 +62,7 @@ export const SourceStep: FC<Props> = ({ type, skipToStep, name, sourceLink }) =>
                 ...requiredRule,
                 pattern: {
                   message: 'Please avoid special characters and spaces',
-                  value: noSpacePattern,
+                  value: noSpaceSourceStepPattern,
                 },
               }}
             />

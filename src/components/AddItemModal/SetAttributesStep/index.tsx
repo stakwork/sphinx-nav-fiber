@@ -14,6 +14,7 @@ import { requiredRule } from '~/constants'
 import { getNodeType } from '~/network/fetchSourcesData'
 import { colors } from '~/utils'
 import { AddItemModalStepID } from '..'
+import { noSpaceAttributePattern } from '~/components/AddItemModal/SourceTypeStep/constants'
 
 type Props = {
   skipToStep: (step: AddItemModalStepID) => void
@@ -24,8 +25,6 @@ type Props = {
 export const SetAttributesStep: FC<Props> = ({ handleSelectType, skipToStep, nodeType }) => {
   const [loading, setLoading] = useState(false)
   const [attributes, setAttributes] = useState<parsedObjProps[]>()
-
-  const noSpacePattern = /^[^\s][\w\s]*$/
 
   const {
     watch,
@@ -99,7 +98,7 @@ export const SetAttributesStep: FC<Props> = ({ handleSelectType, skipToStep, nod
                             ...requiredRule,
                             pattern: {
                               message: 'Please avoid special characters and spaces',
-                              value: noSpacePattern,
+                              value: noSpaceAttributePattern,
                             },
                           }
                         : {}),
