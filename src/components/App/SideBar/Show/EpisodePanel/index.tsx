@@ -17,7 +17,7 @@ export const EpisodePanel = ({ node, onClick }: EpisodeProps) => {
   const mins = Math.ceil(secs / 60)
 
   return (
-    <EpisodeWrapper onClick={onClick} p={24}>
+    <EpisodeWrapper onClick={onClick} p={20}>
       <div>
         <Flex align="flex-start" direction="row" justify="flex-start">
           <Flex align="center">
@@ -38,7 +38,7 @@ export const EpisodePanel = ({ node, onClick }: EpisodeProps) => {
           </div>
         </Flex>
 
-        <Flex align="center" direction="row" justify="flex-end" pt={4}>
+        <Flex align="center" direction="row" justify="flex-end">
           <Text className="clipText" color="mainBottomIcons" kind="regular">
             {node?.children?.length || 0} {node?.children?.length === 1 ? 'Clip' : 'Clips'}
           </Text>
@@ -62,10 +62,11 @@ const EpisodeWrapper = styled(Flex).attrs({})`
     display: flex;
     flex-direction: column;
     width: 100%;
+    margin-bottom: 24px;
   }
 
   .title {
-    margin-top: 16px;
+    margin-top: 12px;
     display: block;
   }
 

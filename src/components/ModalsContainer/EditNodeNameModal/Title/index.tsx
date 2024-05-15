@@ -108,4 +108,5 @@ const LabelWrapper = styled.span`
 
 const EditIconWrapper = styled(Flex)`
   align-items: center;
+  cursor: pointer;
 `
