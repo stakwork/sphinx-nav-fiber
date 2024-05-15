@@ -83,7 +83,13 @@ export const Stats = () => {
   const [isTotalProcessing, setIsTotalProcessing] = useState(false)
   const [totalProcessing, setTotalProcessing] = useState(0)
   const [budget, setBudget] = useUserStore((s) => [s.budget, s.setBudget])
-  const [stats, setStats, fetchData] = useDataStore((s) => [s.stats, s.setStats, s.fetchData])
+
+  const [stats, setStats, fetchData, setSelectedNode] = useDataStore((s) => [
+    s.stats,
+    s.setStats,
+    s.fetchData,
+    s.setSelectedNode,
+  ])
 
   const { open: openSourcesModal } = useModal('sourcesTable')
 
@@ -106,6 +112,8 @@ export const Stats = () => {
 
   function handleStatClick(mediaType: string) {
     fetchData(setBudget, { ...(mediaType ? { media_type: mediaType } : {}), skip_cache: 'true' })
+
+    setSelectedNode(null)
   }
 
   useEffect(() => {
