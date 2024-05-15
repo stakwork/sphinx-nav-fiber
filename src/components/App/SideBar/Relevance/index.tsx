@@ -26,6 +26,7 @@ const _Relevance = ({ isSearchResult }: Props) => {
   const { currentSearch, setSidebarOpen, setRelevanceSelected } = useAppStore((s) => s)
 
   const [currentPage, setCurrentPage] = useState(0)
+  const [buttonKey, setButtonKey] = useState(0)
 
   const filteredNodes = useFilteredNodes()
 
@@ -46,6 +47,13 @@ const _Relevance = ({ isSearchResult }: Props) => {
     },
     [setSelectedNode, setRelevanceSelected, setSidebarOpen, setSelectedTimestamp, isMobile],
   )
+
+  const handleLoadMoreClick = () => {
+    if (hasNext) {
+      setCurrentPage(currentPage + 1)
+      setButtonKey((prevKey) => prevKey + 1)
+    }
+  }
 
   const currentNodes = useMemo(() => {
     if (filteredNodes) {
@@ -111,15 +119,7 @@ const _Relevance = ({ isSearchResult }: Props) => {
 
         <LoadMoreWrapper align="center" background="BG1" direction="row" justify="center">
           {hasNext && (
-            <Button
-              key={`load-more-${currentPage}`}
-              onClick={() => {
-                if (hasNext) {
-                  setCurrentPage(currentPage + 1)
-                }
-              }}
-              size="medium"
-            >
+            <Button key={buttonKey} onClick={handleLoadMoreClick} size="medium">
               Load More
             </Button>
           )}
