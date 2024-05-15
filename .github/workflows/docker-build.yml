@@ -53,6 +53,9 @@ jobs:
           --output "type=local,dest=./built-image" \
           --tag "sphinx-nav-fiber:temp" \
           ./
+
+      - name: Check Directory
+        run: ls -al
       - name: Load Image to Local Docker
         run: docker load -i ./built-image/image.tar
 
