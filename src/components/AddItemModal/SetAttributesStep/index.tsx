@@ -39,7 +39,9 @@ export const SetAttributesStep: FC<Props> = ({ handleSelectType, skipToStep, nod
 
       const parsedData = parseJson(data)
 
-      setAttributes(parsedData)
+      const filteredAttributes = parsedData.filter((attr) => attr.key !== 'node_key')
+
+      setAttributes(filteredAttributes)
 
       setLoading(false)
     }
@@ -84,28 +86,26 @@ export const SetAttributesStep: FC<Props> = ({ handleSelectType, skipToStep, nod
         ) : (
           <Flex className="input__wrapper">
             {sortedAttributes?.map(({ key, required }: parsedObjProps) => (
-              <>
-                <TextFieldWrapper>
-                  <Text>{capitalizeFirstLetter(key)}</Text>
-                  <TextInput
-                    id="item-name"
-                    maxLength={50}
-                    name={key}
-                    placeholder={required ? 'Required' : 'Optional'}
-                    rules={{
-                      ...(required
-                        ? {
-                            ...requiredRule,
-                            pattern: {
-                              message: 'Please avoid special characters and spaces',
-                              value: noSpaceAttributePattern,
-                            },
-                          }
-                        : {}),
-                    }}
-                  />
-                </TextFieldWrapper>
-              </>
+              <TextFieldWrapper key={key}>
+                <Text>{capitalizeFirstLetter(key)}</Text>
+                <TextInput
+                  id="item-name"
+                  maxLength={50}
+                  name={key}
+                  placeholder={required ? 'Required' : 'Optional'}
+                  rules={{
+                    ...(required
+                      ? {
+                          ...requiredRule,
+                          pattern: {
+                            message: 'Please avoid special characters and spaces',
+                            value: noSpaceAttributePattern,
+                          },
+                        }
+                      : {}),
+                  }}
+                />
+              </TextFieldWrapper>
             ))}
           </Flex>
         )}
