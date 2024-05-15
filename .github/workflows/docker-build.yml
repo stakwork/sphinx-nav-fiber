@@ -49,10 +49,16 @@ jobs:
         run: |
           docker buildx build \
           --cache-to "type=local,dest=/tmp/.buildx-cache" \
-          --platform linux/amd64 \
-          --load \
+          --platform linux/amd64,linux/arm64 \
+          --output "type=local,dest=./built-image" \
           --tag "sphinx-nav-fiber:temp" \
           ./
+      - name: Load Image to Local Docker
+        run: docker load -i ./built-image/image.tar
+
+      - name: List images
+        run: docker images
+
       - name: Tag and push Docker image with specific version tag
         run: |
           docker tag "sphinx-nav-fiber:temp" "${{ secrets.DOCKER_HUB_USER }}/sphinx-nav-fiber:${{ env.RELEASE_TAG }}"
