@@ -13,7 +13,8 @@ import { colors } from '~/utils/colors'
 export const SelectWithPopover = () => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null)
   const { sidebarFilter, setSidebarFilter, sidebarFilterCounts } = useDataStore((s) => s)
-  const currentFilterCount = sidebarFilterCounts.find((f) => f.name === sidebarFilter)?.count || 0
+  const currentFilter = sidebarFilter === 'undefined' ? '' : sidebarFilter.toLowerCase()
+  const currentFilterCount = sidebarFilterCounts.find((f) => f.name === currentFilter)?.count || 0
 
   const capitalizeFirstLetter = (text: string): string => {
     if (!text) {
@@ -41,7 +42,7 @@ export const SelectWithPopover = () => {
       <Action onClick={handleOpenPopover}>
         <div className="text">Show</div>
         <div className="value" data-testid="value">
-          {`${capitalizeFirstLetter(sidebarFilter)} (${currentFilterCount})`}
+          {`${capitalizeFirstLetter(currentFilter)} (${currentFilterCount})`}
         </div>
         <div className="icon">{!anchorEl ? <ChevronDownIcon /> : <ChevronUpIcon />}</div>
       </Action>
@@ -63,16 +64,21 @@ export const SelectWithPopover = () => {
         }}
       >
         <FormControl>
-          {sidebarFilterCounts.map(({ name, count }) => (
-            <MenuItem
-              key={name}
-              className={clsx({ active: name === sidebarFilter })}
-              onClick={() => handleSelectChange(name)}
-            >
-              <span className="icon">{name === sidebarFilter ? <CheckIcon /> : null}</span>
-              <span>{`${capitalizeFirstLetter(name)} (${count})`}</span>
-            </MenuItem>
-          ))}
+          {sidebarFilterCounts
+            .filter(({ name }) => name)
+            .map(({ name, count }) => (
+              <MenuItem
+                key={name}
+                className={clsx({ active: name === sidebarFilter })}
+                onClick={(e) => {
+                  e.preventDefault()
+                  handleSelectChange(name)
+                }}
+              >
+                <span className="icon">{name === sidebarFilter ? <CheckIcon /> : null}</span>
+                <span>{`${capitalizeFirstLetter(name)} (${count})`}</span>
+              </MenuItem>
+            ))}
         </FormControl>
       </StyledPopover>
     </div>
