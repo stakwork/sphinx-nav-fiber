@@ -14,6 +14,7 @@ import { requiredRule } from '~/constants'
 import { getNodeType } from '~/network/fetchSourcesData'
 import { colors } from '~/utils'
 import { AddItemModalStepID } from '..'
+import { noSpaceAttributePattern } from '~/components/AddItemModal/SourceTypeStep/constants'
 
 type Props = {
   skipToStep: (step: AddItemModalStepID) => void
@@ -92,7 +93,15 @@ export const SetAttributesStep: FC<Props> = ({ handleSelectType, skipToStep, nod
                     name={key}
                     placeholder={required ? 'Required' : 'Optional'}
                     rules={{
-                      ...(required ? requiredRule : {}),
+                      ...(required
+                        ? {
+                            ...requiredRule,
+                            pattern: {
+                              message: 'Please avoid special characters and spaces',
+                              value: noSpaceAttributePattern,
+                            },
+                          }
+                        : {}),
                     }}
                   />
                 </TextFieldWrapper>
