@@ -108,4 +108,9 @@ export const ActionStyledTableHead = styled(TableHead)`
   ${StyledTableCell} {
     color: ${colors.white};
   }
+
+  ${StyledTableCell}.empty {
+    width: 0;
+    padding: 0;
+  }
 `
