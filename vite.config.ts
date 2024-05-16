@@ -78,7 +78,14 @@ const prodConfigOptions: UserConfigExport = {
       resolve: {},
       build: {
         outDir: 'build',
-        minify: true
+        minify: true,
+        terserOptions: {
+          compress: {
+            keep_infinity: true,
+            pure_getters: true,
+            passes: 10,
+          },
+        },
       },
       rollupOptions: {
         plugins: [
