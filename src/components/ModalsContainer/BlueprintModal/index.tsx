@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import { memo } from 'react'
 import { BaseModal } from '~/components/Modal'
 import { useModal } from '~/stores/useModalStore'
 import { Body } from './Body'
@@ -16,7 +17,8 @@ export type FormData = {
   }
 }
 
-export const BlueprintModal = () => {
+// eslint-disable-next-line no-underscore-dangle
+const _BlueprintModal = () => {
   const { close } = useModal('blueprintGraph')
 
   const handleClose = () => {
@@ -24,8 +26,10 @@ export const BlueprintModal = () => {
   }
 
   return (
-    <BaseModal id="blueprintGraph" kind="full" onClose={handleClose} preventOutsideClose>
+    <BaseModal background="black" id="blueprintGraph" kind="full" onClose={handleClose} preventOutsideClose>
       <Body />
     </BaseModal>
   )
 }
+
+export const BlueprintModal = memo(_BlueprintModal)

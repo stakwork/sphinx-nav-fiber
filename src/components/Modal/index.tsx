@@ -45,7 +45,7 @@ const ModalContainer = styled(Flex)<Pick<Props, 'kind'>>`
   position: relative;
   max-width: 100%;
   overflow: visible;
-  background: ${colors.BG1};
+  background: ${colors};
   ${getModalKindStyles}
 `
 

@@ -5,6 +5,7 @@ import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
 import { TOption } from '~/components/AddItemModal/SourceTypeStep/types'
+import ClearIcon from '~/components/Icons/ClearIcon'
 import { AutoComplete } from '~/components/common/AutoComplete'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
@@ -13,7 +14,6 @@ import { NODE_ADD_ERROR, requiredRule } from '~/constants'
 import { api } from '~/network/api'
 import { Schema, getNodeSchemaTypes } from '~/network/fetchSourcesData'
 import { useModal } from '~/stores/useModalStore'
-import { SubmitErrRes } from '~/types'
 import { colors } from '~/utils'
 import { CreateCustomNodeAttribute } from './CustomAttributesStep'
 import { convertAttributes } from './utils'
@@ -36,18 +36,20 @@ type Props = {
   onSchemaCreate: (schema: { type: string; parent: string; ref_id: string }) => void
   selectedSchema: Schema | null
   onDelete: (type: string) => void
+  setSelectedSchemaId: (id: string) => void
+  setIsCreateNew: (isNew: boolean) => void
 }
 
-const handleSubmitForm = async (data: FieldValues, isUpdate = false): Promise<void> => {
+const handleSubmitForm = async (data: FieldValues, isUpdate = false): Promise<string | undefined> => {
   try {
     const { attributes, ...withoutAttributes } = data
 
     const requestData = {
       ...withoutAttributes,
-      ...convertAttributes(attributes),
+      attributes: convertAttributes(attributes),
     }
 
-    let res: SubmitErrRes
+    let res: { status: string; ref_id: string }
 
     if (isUpdate) {
       res = await api.put(`/schema`, JSON.stringify(requestData), {})
@@ -55,11 +57,12 @@ const handleSubmitForm = async (data: FieldValues, isUpdate = false): Promise<vo
       res = await api.post(`/schema`, JSON.stringify({ ...requestData, node_key: 'name' }), {})
     }
 
-    if (res.error) {
-      const { message } = res.error
-
-      throw new Error(message)
+    if (res.status !== 'success') {
+      throw new Error('error')
     }
+
+    return res?.ref_id
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {
     let errorMessage = NODE_ADD_ERROR
@@ -76,10 +79,8 @@ const handleSubmitForm = async (data: FieldValues, isUpdate = false): Promise<vo
   }
 }
 
-export const Editor = ({ onSchemaCreate, selectedSchema, onDelete }: Props) => {
+export const Editor = ({ onSchemaCreate, selectedSchema, onDelete, setSelectedSchemaId, setIsCreateNew }: Props) => {
   const { close, visible } = useModal('addType')
-
-  const [isNew, setIsNew] = useState(false)
 
   const form = useForm<FormData>({
     mode: 'onChange',
@@ -103,6 +104,11 @@ export const Editor = ({ onSchemaCreate, selectedSchema, onDelete }: Props) => {
     },
     [visible, reset],
   )
+
+  const onCancel = () => {
+    setIsCreateNew(false)
+    setSelectedSchemaId('')
+  }
 
   const capitalizeFirstLetter = (string: string) => string.charAt(0).toUpperCase() + string.slice(1)
 
@@ -149,22 +155,26 @@ export const Editor = ({ onSchemaCreate, selectedSchema, onDelete }: Props) => {
     }
 
     try {
-      await api.delete(`/schema/${selectedSchema.type}`)
+      await api.delete(`/schema/${selectedSchema.ref_id}`)
       onDelete(selectedSchema.type)
       close()
     } catch (error) {
       console.warn(error)
     } finally {
-      setIsNew(false)
+      setIsCreateNew(false)
     }
   }
 
   const onSubmit = form.handleSubmit(async (data) => {
-    setLoading(true)
+    setLoading(false)
 
     try {
-      await handleSubmitForm(data, !!selectedSchema)
-      onSchemaCreate({ type: data.type, parent: parent || '', ref_id: selectedSchema?.ref_id || 'new' })
+      const res = await handleSubmitForm(
+        { ...data, ...(selectedSchema ? { ref_id: selectedSchema?.ref_id } : {}) },
+        !!selectedSchema,
+      )
+
+      onSchemaCreate({ type: data.type, parent: parent || '', ref_id: selectedSchema?.ref_id || res || 'new' })
       handleClose()
       // eslint-disable-next-line  @typescript-eslint/no-explicit-any
     } catch (err: any) {
@@ -179,7 +189,7 @@ export const Editor = ({ onSchemaCreate, selectedSchema, onDelete }: Props) => {
       }
     } finally {
       setLoading(false)
-      setIsNew(false)
+      setIsCreateNew(false)
     }
   })
 
@@ -187,46 +197,31 @@ export const Editor = ({ onSchemaCreate, selectedSchema, onDelete }: Props) => {
 
   return (
     <Flex>
-      {!isNew && !selectedSchema ? (
-        <Flex mt={20}>
-          <Button onClick={() => setIsNew(true)}>Create new</Button>
-        </Flex>
-      ) : (
-        <Flex>
-          <FormProvider {...form}>
-            <form id="add-type-form" onSubmit={onSubmit}>
-              <Flex>
-                <Flex align="center" direction="row" justify="space-between" mb={18}>
-                  <Flex align="center" direction="row">
-                    <Text>Enter details</Text>
-                  </Flex>
-                </Flex>
-                {!selectedSchema ? (
-                  <>
-                    <Flex mb={20}>
+      <Flex direction="row" justify="flex-end">
+        <CloseButton data-testid="close-sidebar-sub-view" onClick={onCancel}>
+          <ClearIcon />
+        </CloseButton>
+      </Flex>
+      <Flex>
+        <FormProvider {...form}>
+          <form id="add-type-form" onSubmit={onSubmit}>
+            <Flex>
+              {!selectedSchema ? (
+                <>
+                  <Flex mb={12}>
+                    <Flex mb={12}>
                       <Text>Select Parent</Text>
                     </Flex>
-                    <Flex direction="row" mb={20}>
-                      <AutoComplete
-                        key={parent}
-                        autoFocus={!selectedSchema}
-                        disabled={parentsLoading}
-                        isLoading={parentsLoading}
-                        onSelect={(e) => setValue('parent', e?.value || '')}
-                        options={parentOptions}
-                        selectedValue={resolvedParentValue()}
-                      />
-                    </Flex>
-                  </>
-                ) : (
-                  <Flex mb={20}>
-                    <Text kind="headingBold">Parent: {selectedSchema.parent}</Text>
-                  </Flex>
-                )}
 
-                {!selectedSchema ? (
-                  <>
-                    <Flex mb={4}>
+                    <AutoComplete
+                      isLoading={parentsLoading}
+                      onSelect={(e) => setValue('parent', e?.value || '')}
+                      options={parentOptions}
+                      selectedValue={resolvedParentValue()}
+                    />
+                  </Flex>
+                  <Flex>
+                    <Flex mb={12}>
                       <Text>Type name</Text>
                     </Flex>
                     <Flex mb={12}>
@@ -241,42 +236,49 @@ export const Editor = ({ onSchemaCreate, selectedSchema, onDelete }: Props) => {
                         value={parent}
                       />
                     </Flex>
-                  </>
-                ) : (
-                  <Flex mb={20}>
+                  </Flex>
+                </>
+              ) : (
+                <>
+                  {selectedSchema.parent ? (
+                    <Flex mb={12}>
+                      <Text kind="headingBold">Parent: {selectedSchema.parent}</Text>
+                    </Flex>
+                  ) : null}
+                  <Flex mb={12}>
                     <Text kind="headingBold">Type: {selectedSchema.type}</Text>
                   </Flex>
-                )}
-              </Flex>
-              <CreateCustomNodeAttribute parent={selectedSchema ? selectedSchema.type : parent} />
-              <Flex direction="row" justify="space-between" mt={20}>
-                {selectedSchema ? (
-                  <DeleteButton
-                    color="secondary"
-                    onClick={handleDelete}
-                    size="large"
-                    style={{ marginRight: 20 }}
-                    variant="contained"
-                  >
-                    Delete
-                  </DeleteButton>
-                ) : null}
-
-                <Button
+                </>
+              )}
+            </Flex>
+            <CreateCustomNodeAttribute parent={selectedSchema ? selectedSchema.type : parent} />
+            <Flex direction="row" justify="space-between" mt={20}>
+              {selectedSchema ? (
+                <DeleteButton
                   color="secondary"
-                  disabled={loading}
-                  onClick={onSubmit}
+                  onClick={handleDelete}
                   size="large"
-                  startIcon={loading ? <ClipLoader color={colors.white} size={24} /> : null}
+                  style={{ marginRight: 20 }}
                   variant="contained"
                 >
-                  Save
-                </Button>
-              </Flex>
-            </form>
-          </FormProvider>
-        </Flex>
-      )}
+                  Delete
+                </DeleteButton>
+              ) : null}
+
+              <Button
+                color="secondary"
+                disabled={loading}
+                onClick={onSubmit}
+                size="large"
+                startIcon={loading ? <ClipLoader color={colors.white} size={24} /> : null}
+                variant="contained"
+              >
+                Save
+              </Button>
+            </Flex>
+          </form>
+        </FormProvider>
+      </Flex>
     </Flex>
   )
 }
@@ -293,4 +295,10 @@ const DeleteButton = styled(Button)`
       background-color: rgba(237, 116, 116, 0.2);
     }
   }
+`
+
+const CloseButton = styled(Flex)`
+  font-size: 32px;
+  color: ${colors.white};
+  cursor: pointer;
 `
