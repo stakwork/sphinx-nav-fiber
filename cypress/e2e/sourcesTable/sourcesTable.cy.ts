@@ -6,7 +6,11 @@ describe('Sources Table / Home interactions', () => {
 
     cy.get('#cy-open-soure-table').click()
 
+    cy.wait(2000)
+
     cy.contains('button', 'Sources Table').click()
+
+    cy.wait(2000)
 
     cy.get('tbody.MuiTableBody-root').find('tr').its('length').should('be.gt', 0)
 
@@ -19,6 +23,8 @@ describe('Sources Table / Home interactions', () => {
     cy.get('tbody.MuiTableBody-root').find('tr').its('length').should('be.gt', 0)
 
     cy.contains('button', 'All').click()
+
+    cy.wait(1000)
 
     cy.get('tbody.MuiTableBody-root')
       .find('tr')
@@ -37,6 +43,8 @@ describe('Sources Table / Home interactions', () => {
         cy.get('tbody.MuiTableBody-root').find('tr').eq(0).find('.delete-wrapper').click()
 
         cy.get('button[kind="small"]').contains('Yes').click()
+
+        cy.wait(1000)
 
         cy.get('tbody.MuiTableBody-root')
           .find('tr')
