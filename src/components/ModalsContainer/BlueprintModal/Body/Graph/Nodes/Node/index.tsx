@@ -53,9 +53,6 @@ export const Node = memo(({ node, setSelectedNode, onSimulationUpdate, isSelecte
       node.fx = VectorPosition2.x
       // eslint-disable-next-line no-param-reassign
       node.fy = VectorPosition2.y
-    } else {
-      console.log('stop simulation')
-      // onSimulationStop()
     }
   })
 

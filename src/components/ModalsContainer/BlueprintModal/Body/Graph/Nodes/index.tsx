@@ -1,5 +1,3 @@
-import { useFrame } from '@react-three/fiber'
-import { useEffect } from 'react'
 import { useSchemaStore } from '~/stores/useSchemaStore'
 import { ForceSimulation } from '~/transformers/forceSimulation'
 import { SchemaExtended } from '../../../types'
@@ -14,31 +12,12 @@ type Props = {
 export const Nodes = ({ simulation, setSelectedSchemaId, selectedId }: Props) => {
   const [schemaAll] = useSchemaStore((s) => [s.schemas])
 
-  useEffect(() => {
-    console.log('sim use effect')
-  }, [simulation])
-
   const onSimulationUpdate = () => {
     if (simulation) {
       simulation.alpha(0.05)
       simulation.restart()
     }
   }
-
-  const onSimulationStop = () => {
-    if (simulation) {
-      simulation.stop()
-    }
-  }
-
-  console.log(onSimulationStop)
-
-  useFrame(() => {
-    if (simulation) {
-      // simulation.tick()
-      // setUpdate(!update)
-    }
-  })
 
   return (
     <>
