@@ -55,7 +55,10 @@ jobs:
           ./
 
       - name: Check Directory
-        run: ls -al
+        run: |
+          cd built-image
+          ls -al
+
       - name: Load Image to Local Docker
         run: docker load -i ./built-image/image.tar
 
