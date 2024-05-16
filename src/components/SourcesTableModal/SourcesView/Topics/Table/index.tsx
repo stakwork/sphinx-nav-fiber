@@ -139,7 +139,7 @@ export const Table: React.FC<TopicTableProps> = ({
                           <ClearIcon />
                         </IconButton>
                       </StyledTableCell>
-                      <StyledTableCell>
+                      <StyledTableCell colSpan={3}>
                         <StatusBarSection>
                           <CheckCountBoxSection>
                             <CheckedCount>{checkedCount}</CheckedCount>
@@ -161,7 +161,6 @@ export const Table: React.FC<TopicTableProps> = ({
                           </MuteStatusSection>
                         </StatusBarSection>
                       </StyledTableCell>
-                      <StyledTableCell className="empty" />
                       <StyledTableCell className="empty" />
                       <StyledTableCell className="empty" />
                       <StyledTableCell className="empty" />
@@ -342,6 +341,7 @@ const MuteStatusSection = styled.div`
   flex-wrap: nowrap;
   gap: 8px;
   padding: 1px 8px;
+  white-space: nowrap;
   &:hover {
     background-color: rgba(255, 255, 255, 0.2);
     padding: 1px 8px;
@@ -358,7 +358,7 @@ const CheckCountBoxSection = styled.div`
 const StatusBarSection = styled.span`
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 27px;
 `
 
 const TableInnerWrapper = styled(Flex)`
