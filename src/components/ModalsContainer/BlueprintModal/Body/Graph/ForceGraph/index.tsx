@@ -1,8 +1,10 @@
 import { useFrame } from '@react-three/fiber'
-import { useEffect } from 'react'
-import { ForceSimulation, runForceSimulation } from '~/transformers/forceSimulation'
-import { NodeExtended } from '~/types'
-import { SchemaExtended, SchemaLinkExtended } from '../../../types'
+import { forceCenter, forceCollide, forceLink, forceManyBody, forceSimulation } from 'd3-force-3d'
+import { useEffect, useState } from 'react'
+import { usePrevious } from '~/hooks/usePrevious'
+import { SchemaLink } from '~/network/fetchSourcesData'
+import { ForceSimulation } from '~/transformers/forceSimulation'
+import { SchemaExtended } from '../../../types'
 import { Lines } from '../Links'
 import { Nodes } from '../Nodes'
 
@@ -10,69 +12,75 @@ type Props = {
   selectedSchemaId: string
   setSelectedSchemaId: (id: string) => void
   schemasWithPositions: SchemaExtended[]
-  linksWithPositions: SchemaLinkExtended[]
+  filteredLinks: SchemaLink[]
 }
 
-let simulation2d: ForceSimulation | null = null
+export const ForceGraph = ({ schemasWithPositions, filteredLinks, setSelectedSchemaId, selectedSchemaId }: Props) => {
+  const [simulation2d, setSimulation2d] = useState<ForceSimulation | null>(null)
 
-export const ForceGraph = ({
-  schemasWithPositions,
-  linksWithPositions,
-  setSelectedSchemaId,
-  selectedSchemaId,
-}: Props) => {
-  // const [update, setUpdate] = useState(false)
+  const prevSchemas = usePrevious<SchemaExtended[]>(schemasWithPositions)
+  const prevLinks = usePrevious<SchemaLink[]>(filteredLinks)
 
   useEffect(() => {
-    if (!schemasWithPositions.length || !linksWithPositions.length) {
+    if (!schemasWithPositions.length || !filteredLinks.length) {
       return
     }
+
+    const nodes = structuredClone(schemasWithPositions)
+    const links = structuredClone(filteredLinks)
 
     if (simulation2d) {
+      if (
+        prevSchemas &&
+        prevSchemas.length !== schemasWithPositions.length &&
+        prevLinks &&
+        prevLinks.length !== filteredLinks.length
+      ) {
+        simulation2d
+          .nodes(nodes)
+          .force(
+            'link',
+            forceLink(links)
+              // .links(linksData)
+              .id((d: SchemaExtended) => d.ref_id),
+          )
+          .force('charge', forceManyBody())
+          .force('center', forceCenter())
+          .force('collide', forceCollide(13))
+          .alpha(0.5)
+          .restart()
+
+        setSimulation2d({ ...simulation2d })
+      }
+
       return
     }
 
-    simulation2d = runForceSimulation(
-      schemasWithPositions.map((s) =>
-        s.type === 'Thing' ? { ...s, x: 0, y: 0, fx: 0, fy: 0, fz: 0 } : { ...s, x: 0, y: 0 },
-      ),
-      linksWithPositions,
-      {
-        numDimensions: 2,
-        forceLinkStrength: 1,
-        forceCenterStrength: 0.95,
-        forceChargeStrength: -50,
-        velocityDecay: 0.9,
-        forceCollideRadiusMethod: () => 50,
-        forceLinkDistanceMethod: (d: {
-          source: SchemaExtended | NodeExtended
-          target: SchemaExtended | NodeExtended
-        }) => {
-          let distance = 1
+    const simulation = forceSimulation(nodes)
+      .force(
+        'link',
+        forceLink(links)
+          // .links(linksData)
+          .id((d: SchemaExtended) => d.ref_id),
+      )
+      .force('charge', forceManyBody())
+      .force('center', forceCenter())
+      .force('collide', forceCollide(18))
 
-          if (d.source.type === 'Thing') {
-            distance = 30
-          }
-
-          return distance
-        },
-      },
-    )
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [schemasWithPositions, linksWithPositions])
+    setSimulation2d(simulation)
+  }, [schemasWithPositions, simulation2d, filteredLinks, prevSchemas, prevLinks])
 
   useFrame(() => {
     if (simulation2d) {
-      simulation2d.tick()
+      // simulation2d.tick()
       // setUpdate(!update)
     }
   })
 
   return simulation2d ? (
     <>
-      <Lines links={linksWithPositions} nodes={simulation2d.nodes()} />
-      <Nodes nodes={simulation2d.nodes()} selectedId={selectedSchemaId} setSelectedSchemaId={setSelectedSchemaId} />
+      <Lines links={filteredLinks} nodes={simulation2d.nodes()} />
+      <Nodes selectedId={selectedSchemaId} setSelectedSchemaId={setSelectedSchemaId} simulation={simulation2d} />
     </>
   ) : null
 }

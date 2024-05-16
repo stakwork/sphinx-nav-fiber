@@ -14,7 +14,6 @@ import { NODE_ADD_ERROR, requiredRule } from '~/constants'
 import { api } from '~/network/api'
 import { Schema, getNodeSchemaTypes } from '~/network/fetchSourcesData'
 import { useModal } from '~/stores/useModalStore'
-import { SubmitErrRes } from '~/types'
 import { colors } from '~/utils'
 import { CreateCustomNodeAttribute } from './CustomAttributesStep'
 import { convertAttributes } from './utils'
@@ -47,10 +46,10 @@ const handleSubmitForm = async (data: FieldValues, isUpdate = false): Promise<st
 
     const requestData = {
       ...withoutAttributes,
-      ...convertAttributes(attributes),
+      attributes: convertAttributes(attributes),
     }
 
-    let res: SubmitErrRes
+    let res: { status: string; ref_id: string }
 
     if (isUpdate) {
       res = await api.put(`/schema`, JSON.stringify(requestData), {})
@@ -58,13 +57,11 @@ const handleSubmitForm = async (data: FieldValues, isUpdate = false): Promise<st
       res = await api.post(`/schema`, JSON.stringify({ ...requestData, node_key: 'name' }), {})
     }
 
-    if (res.error) {
-      const { message } = res.error
-
-      throw new Error(message)
+    if (res.status !== 'success') {
+      throw new Error('error')
     }
 
-    return res?.data?.ref_id
+    return res?.ref_id
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {
@@ -169,15 +166,13 @@ export const Editor = ({ onSchemaCreate, selectedSchema, onDelete, setSelectedSc
   }
 
   const onSubmit = form.handleSubmit(async (data) => {
-    setLoading(true)
+    setLoading(false)
 
     try {
       const res = await handleSubmitForm(
         { ...data, ...(selectedSchema ? { ref_id: selectedSchema?.ref_id } : {}) },
         !!selectedSchema,
       )
-
-      console.log(res)
 
       onSchemaCreate({ type: data.type, parent: parent || '', ref_id: selectedSchema?.ref_id || res || 'new' })
       handleClose()

@@ -1,47 +1,61 @@
-import { Html, Text } from '@react-three/drei'
+import { Circle, Text } from '@react-three/drei'
 import { useFrame, useThree } from '@react-three/fiber'
-import { Select } from '@react-three/postprocessing'
 import { useDrag } from '@use-gesture/react'
-import clsx from 'clsx'
 import { memo, useEffect, useRef, useState } from 'react'
-import styled from 'styled-components'
 import { BoxGeometry, Mesh, Vector3 } from 'three'
 import { SchemaExtended } from '~/components/ModalsContainer/BlueprintModal/types'
 import { fontProps } from '~/components/Universe/Graph/Cubes/Text/constants'
-import { Flex } from '~/components/common/Flex'
-import { colors } from '~/utils'
 
-// type SchemaNode = {
-//   x: number
-//   y: number
-//   z: number
-//   id: string
-//   type: string
-// }
+export const NODE_TYPE_COLORS = ['#ff13c9', '#5af0ff', '#3233ff', '#c2f0c2', '#ff6666', '#99ccff', '#ffb3b3']
 
 type Props = {
   node: SchemaExtended
   setSelectedNode: () => void
   isSelected: boolean
+  onSimulationUpdate: () => void
 }
 
 export const boxGeometry = new BoxGeometry(2, 2, 2)
 
-export const Node = memo(({ node, setSelectedNode, isSelected }: Props) => {
+export const Node = memo(({ node, setSelectedNode, onSimulationUpdate, isSelected }: Props) => {
   const [geometry] = useState(boxGeometry)
   const meshRef = useRef<Mesh | null>(null)
 
-  console.log(setSelectedNode)
+  const { size, camera } = useThree()
 
-  const { size, viewport } = useThree()
+  const bind = useDrag((args) => {
+    const {
+      xy: [x, y],
+      down,
+      dragging,
+      first,
+      elapsedTime,
+    } = args
 
-  const aspect = size.width / viewport.width
+    if (!dragging || first || elapsedTime < 100) {
+      return
+    }
 
-  const bind = useDrag(({ direction: [x, y], down }) => {
     if (down && meshRef.current) {
+      onSimulationUpdate()
+
+      const canvasX = ((x - 80) / window.innerWidth) * size.width
+      const canvasY = ((y - 36) / window.innerHeight) * size.height
+
+      const VectorPosition = new Vector3((canvasX / size.width) * 2 - 1, (-canvasY / size.height) * 2 + 1, 0)
+
+      const VectorPosition1 = VectorPosition.unproject(camera)
+
+      const VectorPosition2 = VectorPosition1.multiply(new Vector3(1, 1, 0)).clone()
+
       // Move the mesh to the new position
-      node.x += x / aspect
-      node.y += -y / aspect
+      // eslint-disable-next-line no-param-reassign
+      node.fx = VectorPosition2.x
+      // eslint-disable-next-line no-param-reassign
+      node.fy = VectorPosition2.y
+    } else {
+      console.log('stop simulation')
+      // onSimulationStop()
     }
   })
 
@@ -55,50 +69,30 @@ export const Node = memo(({ node, setSelectedNode, isSelected }: Props) => {
 
   useFrame(() => {
     if (meshRef.current) {
-      meshRef.current.position.set(node.x, node.y, node.z)
+      meshRef.current.position.set(node.x || 0, node.y || 0, 0)
     }
   })
 
+  const color = NODE_TYPE_COLORS[node?.children?.length] || 'red'
+
+  const handleClick = (e: { stopPropagation: () => void }) => {
+    e.stopPropagation()
+    setSelectedNode()
+  }
+
   return (
-    <Select>
-      {true && (
-        <mesh ref={meshRef} position={new Vector3(node.x, node.y, node.z)}>
-          <Html center sprite zIndexRange={[0, 0]}>
-            <NodeView className={clsx({ selected: isSelected })} {...bind()}>
-              {node.type}
-            </NodeView>
-          </Html>
-        </mesh>
-      )}
-      {false && (
-        <Text
-          onClick={setSelectedNode}
-          {...fontProps}
-          fontSize={1}
-          position={new Vector3(node.x, node.y, node.z)}
-          scale={20}
-        >
-          {node.type}
-        </Text>
-      )}
-    </Select>
+    // @ts-ignore Ignores type error on next line)
+
+    <mesh ref={meshRef} {...bind()} position={new Vector3(node.x, node.y, 0)}>
+      <Circle args={[isSelected ? 17 : 15, 20, 20]}>
+        <meshStandardMaterial attach="material" color={color} />
+      </Circle>
+
+      <Text onClick={handleClick} {...fontProps} color="#000" fontSize={4}>
+        {node.type}
+      </Text>
+    </mesh>
   )
 })
 
 Node.displayName = 'Node'
-
-const NodeView = styled(Flex)`
-  width: 100px;
-  height: 100px;
-  background: ${colors.green300};
-  border-radius: 50%;
-  color: ${colors.white};
-  border: 3px solid rgba(225, 225, 225, 0.6);
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-
-  &.selected {
-    font-size: 20px;
-  }
-`

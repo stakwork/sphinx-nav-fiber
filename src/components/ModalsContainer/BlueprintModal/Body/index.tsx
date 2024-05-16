@@ -5,7 +5,6 @@ import { Schema, getSchemaAll } from '~/network/fetchSourcesData'
 import { useSchemaStore } from '~/stores/useSchemaStore'
 import { colors } from '~/utils'
 import { SchemaWithChildren } from '../types'
-import { calculateNodePositionsTree } from '../utils'
 import { Editor } from './Editor'
 import { Graph } from './Graph'
 import { Toolbar } from './Toolbar'
@@ -25,7 +24,7 @@ export const Body = () => {
 
   console.log(loading)
 
-  const [schemasNonFiltered, links, setSchemaAll, setSchemaLinks] = useSchemaStore((s) => [
+  const [schemas, links, setSchemaAll, setSchemaLinks] = useSchemaStore((s) => [
     s.schemas,
     s.links,
     s.setSchemas,
@@ -37,7 +36,8 @@ export const Body = () => {
       try {
         const response = await getSchemaAll()
 
-        setSchemaAll(response.schemas.filter((i) => i.ref_id && !i.is_deleted))
+        setSchemaAll(response.schemas.filter((i) => i.ref_id && !i.is_deleted && i.ref_id))
+
         setSchemaLinks(response.edges)
 
         setLoading(false)
@@ -51,32 +51,36 @@ export const Body = () => {
     fetchData()
   }, [setSchemaAll, setSchemaLinks])
 
-  const schemasWithDuplicates = schemasNonFiltered.filter((i) => i.ref_id && !i.is_deleted)
-
-  const schemas: Schema[] = []
-
-  schemasWithDuplicates.forEach((i) => {
-    if (!schemas.some((j) => j.ref_id === i.ref_id)) {
-      schemas.push(i)
-    }
-  })
-
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const onSchemaCreate = (schema: Schema) => {
-    const exists = schemasNonFiltered.some((existingSchema) => existingSchema.ref_id === schema.ref_id)
+    const exists = schemas.some((existingSchema) => existingSchema.ref_id === schema.ref_id)
 
     if (exists) {
       setSchemaAll(
-        schemasNonFiltered.map((existingSchema) => (existingSchema.type === schema.type ? schema : existingSchema)),
+        schemas.map((existingSchema) =>
+          existingSchema.ref_id === schema.ref_id ? { ...schema, children: [] } : existingSchema,
+        ),
       )
     } else {
-      setSchemaAll([...schemasNonFiltered, schema])
+      setSchemaAll([...schemas, { ...schema, children: [] }])
+
+      const parentSchema = schemas.find((sch) => schema.parent === sch.type)
+
+      setSchemaLinks([
+        ...links,
+        {
+          ref_id: `new-link-${links.length}`,
+          edge_type: 'CHILD_OF',
+          source: schema.ref_id || 'new',
+          target: parentSchema?.ref_id || 'new',
+        },
+      ])
     }
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const onSchemaDelete = (type: string) => {
-    setSchemaAll(schemasNonFiltered.filter((i) => i.type !== type))
+    setSchemaAll(schemas.filter((i) => i.type !== type))
   }
 
   const schemasWithChildren: SchemaWithChildren[] = schemas.map((schema) => ({
@@ -86,31 +90,23 @@ export const Body = () => {
       .map((childSchema) => childSchema.ref_id || ''),
   }))
 
-  const schemasWithPositions = calculateNodePositionsTree(schemasWithChildren)
-
   const linksFiltered = links.filter(
     (link) =>
       link.edge_type === 'CHILD_OF' &&
-      schemasWithPositions.some((schema) => schema.ref_id === link.source || schema.type === link.target),
+      schemasWithChildren.some((schema) => schema.ref_id === link.source) &&
+      schemasWithChildren.some((schema) => schema.ref_id === link.target),
   )
 
-  const linksWithPositions = linksFiltered.map((link) => {
-    const startNode = schemasWithPositions.find((schema) => schema.ref_id === link.source) || { x: 0, y: 0, z: 0 }
-    const endNode = schemasWithPositions.find((schema) => schema.ref_id === link.target) || { x: 0, y: 0, z: 0 }
-
-    return {
-      ...link,
-      start: { x: startNode.x, y: startNode.y, z: startNode.z },
-      end: { x: endNode.x, y: endNode.y, z: endNode.z },
-    }
-  })
-
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const selectedSchema = schemasNonFiltered.find((i) => i.ref_id === selectedSchemaId) || null
+  const selectedSchema = schemas.find((i) => i.ref_id === selectedSchemaId) || null
+
+  if (loading) {
+    return <Flex>Loading</Flex>
+  }
 
   return (
     <>
-      <Flex direction="row" grow={1}>
+      <Flex align="stretch" direction="row" grow={1}>
         <Flex ml={-20} my={-20}>
           <Toolbar onCreateNew={() => setIsCreateNew(true)} />
         </Flex>
@@ -128,12 +124,14 @@ export const Body = () => {
           ) : null}
         </Flex>
         <Wrapper direction="row" grow={1}>
-          <Graph
-            linksWithPositions={linksWithPositions}
-            schemasWithPositions={schemasWithPositions}
-            selectedSchemaId={selectedSchemaId}
-            setSelectedSchemaId={setSelectedSchemaId}
-          />
+          <Container>
+            <Graph
+              links={linksFiltered}
+              schemasWithPositions={schemasWithChildren}
+              selectedSchemaId={selectedSchemaId}
+              setSelectedSchemaId={setSelectedSchemaId}
+            />
+          </Container>
         </Wrapper>
       </Flex>
     </>
@@ -153,4 +151,9 @@ const EditorWrapper = styled(Flex)`
   border-top-right-radius: 16px;
   border-bottom-right-radius: 16px;
   flex-grow: 1;
+`
+
+const Container = styled(Flex)`
+  flex: 1 1 100%;
+  background: blue;
 `

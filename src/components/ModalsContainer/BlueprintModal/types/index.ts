@@ -5,9 +5,15 @@ export type SchemaWithChildren = Schema & {
 }
 
 export type SchemaExtended = SchemaWithChildren & {
-  x: number
-  y: number
-  z: number
+  x?: number
+  y?: number
+  z?: number
+  fx?: number
+  fy?: number
+  fz?: number
+  vx?: number
+  vy?: number
+  vz?: number
 }
 
 export type SchemaLinkExtended = SchemaLink & {

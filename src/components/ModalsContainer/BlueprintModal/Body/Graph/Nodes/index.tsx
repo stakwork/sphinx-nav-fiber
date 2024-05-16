@@ -1,25 +1,60 @@
+import { useFrame } from '@react-three/fiber'
+import { useEffect } from 'react'
+import { useSchemaStore } from '~/stores/useSchemaStore'
+import { ForceSimulation } from '~/transformers/forceSimulation'
 import { SchemaExtended } from '../../../types'
 import { Node } from './Node'
 
 type Props = {
-  nodes: SchemaExtended[]
   setSelectedSchemaId: (id: string) => void
   selectedId: string
+  simulation: ForceSimulation
 }
 
-export const Nodes = ({ nodes, setSelectedSchemaId, selectedId }: Props) => {
-  console.log(nodes)
+export const Nodes = ({ simulation, setSelectedSchemaId, selectedId }: Props) => {
+  const [schemaAll] = useSchemaStore((s) => [s.schemas])
+
+  useEffect(() => {
+    console.log('sim use effect')
+  }, [simulation])
+
+  const onSimulationUpdate = () => {
+    if (simulation) {
+      simulation.alpha(0.05)
+      simulation.restart()
+    }
+  }
+
+  const onSimulationStop = () => {
+    if (simulation) {
+      simulation.stop()
+    }
+  }
+
+  console.log(onSimulationStop)
+
+  useFrame(() => {
+    if (simulation) {
+      // simulation.tick()
+      // setUpdate(!update)
+    }
+  })
 
   return (
     <>
-      {nodes.map((schema) => (
-        <Node
-          key={schema.ref_id}
-          isSelected={schema.ref_id === selectedId}
-          node={schema}
-          setSelectedNode={() => schema.ref_id && setSelectedSchemaId(schema.ref_id)}
-        />
-      ))}
+      {schemaAll.map((schema: SchemaExtended, index: number) => {
+        const node = simulation.nodes()[index]
+
+        return node ? (
+          <Node
+            key={node.ref_id}
+            isSelected={node.ref_id === selectedId}
+            node={node}
+            onSimulationUpdate={onSimulationUpdate}
+            setSelectedNode={() => setSelectedSchemaId(node.ref_id)}
+          />
+        ) : null
+      })}
     </>
   )
 }

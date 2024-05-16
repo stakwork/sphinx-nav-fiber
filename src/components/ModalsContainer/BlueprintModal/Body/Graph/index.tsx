@@ -1,55 +1,32 @@
-import { AdaptiveDpr, Html, Loader, OrbitControls } from '@react-three/drei'
+import { OrbitControls } from '@react-three/drei'
 import { Canvas } from '@react-three/fiber'
-import { Suspense } from 'react'
+import { Perf } from 'r3f-perf'
+import { Color } from 'three'
 import { Lights } from '~/components/Universe/Lights'
-import { SchemaExtended, SchemaLinkExtended } from '../../types'
+import { SchemaLink } from '~/network/fetchSourcesData'
+import { SchemaExtended } from '../../types'
 import { ForceGraph } from './ForceGraph'
-import { Lines } from './Links'
-import { Nodes } from './Nodes'
 
 type Props = {
   schemasWithPositions: SchemaExtended[]
-  linksWithPositions: SchemaLinkExtended[]
+  links: SchemaLink[]
   selectedSchemaId: string
   setSelectedSchemaId: (id: string) => void
 }
 
-const Fallback = () => (
-  <Html>
-    <Loader />
-  </Html>
+const bgColor = new Color(0x17171b)
+
+export const Graph = ({ selectedSchemaId, links, schemasWithPositions, setSelectedSchemaId }: Props) => (
+  <Canvas camera={{ zoom: 1, position: [0, 0, 200] }} id="schema-canvas" linear orthographic>
+    <color args={[bgColor.r, bgColor.g, bgColor.b]} attach="background" />
+    <Perf position="right-bottom" />
+    <OrbitControls enableRotate={false} enableZoom />
+    <Lights />
+    <ForceGraph
+      filteredLinks={links}
+      schemasWithPositions={schemasWithPositions}
+      selectedSchemaId={selectedSchemaId}
+      setSelectedSchemaId={setSelectedSchemaId}
+    />
+  </Canvas>
 )
-
-export const Graph = ({ selectedSchemaId, linksWithPositions, schemasWithPositions, setSelectedSchemaId }: Props) => {
-  const filteredLinks = selectedSchemaId
-    ? linksWithPositions.filter((i) => [i.source, i.target].includes(selectedSchemaId))
-    : linksWithPositions
-
-  return (
-    <Canvas camera={{ zoom: 1 }} flat id="schema-canvas" linear orthographic>
-      <Suspense fallback={<Fallback />}>
-        <AdaptiveDpr pixelated />
-        <OrbitControls enableRotate={false} enableZoom />
-        <Lights />
-        {false && (
-          <>
-            <Lines links={filteredLinks} nodes={[]} />
-            <>
-              <Nodes
-                nodes={schemasWithPositions}
-                selectedId={selectedSchemaId}
-                setSelectedSchemaId={setSelectedSchemaId}
-              />
-            </>
-          </>
-        )}
-        <ForceGraph
-          linksWithPositions={linksWithPositions}
-          schemasWithPositions={schemasWithPositions}
-          selectedSchemaId={selectedSchemaId}
-          setSelectedSchemaId={setSelectedSchemaId}
-        />
-      </Suspense>
-    </Canvas>
-  )
-}
