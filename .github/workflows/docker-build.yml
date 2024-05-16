@@ -56,7 +56,12 @@ jobs:
 
       - name: Check Directory
         run: |
-          cd built-image
+          cd built-image/linux_amd64
+          ls -al
+
+      - name: Check Directory linux_arm64
+        run: |
+          cd built-image/linux_arm64
           ls -al
 
       - name: Load Image to Local Docker
