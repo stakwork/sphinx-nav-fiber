@@ -78,6 +78,7 @@ const prodConfigOptions: UserConfigExport = {
       resolve: {},
       build: {
         outDir: 'build',
+        minify: true
       },
       rollupOptions: {
         plugins: [
