@@ -1,5 +1,4 @@
 import { forceCenter, forceCollide, forceLink, forceManyBody, forceSimulation } from 'd3-force-3d'
-import { SchemaExtended } from '~/components/ModalsContainer/BlueprintModal/types'
 import { Link, NodeExtended } from '~/types'
 
 export type ForceSimulation = typeof forceSimulation
@@ -14,10 +13,7 @@ type SimulationProps = {
   forceChargeMaxDistance?: number
   forceLinkStrength?: number
   forceCenterStrength?: number
-  forceLinkDistanceMethod?: (link: {
-    source: NodeExtended | SchemaExtended
-    target: NodeExtended | SchemaExtended
-  }) => void
+  forceLinkDistanceMethod?: (link: { source: NodeExtended; target: NodeExtended }) => void
   forceCollideRadiusMethod?: (node: NodeExtended) => void
   disableCollide?: boolean
   disableCenter?: boolean
@@ -38,7 +34,7 @@ const defaults: Required<SimulationProps> = {
   disableLink: false,
   disableCharge: false,
   forceCollideRadiusMethod: (n: NodeExtended) => (n.scale || 1) * 6 + 200,
-  forceLinkDistanceMethod: (d: { source: NodeExtended | SchemaExtended; target: NodeExtended | SchemaExtended }) => {
+  forceLinkDistanceMethod: (d: { source: NodeExtended; target: NodeExtended }) => {
     const sourceType = (d.source as NodeExtended).node_type
 
     let distance = 50
@@ -64,7 +60,7 @@ const defaults: Required<SimulationProps> = {
 }
 
 export const runForceSimulation = (
-  nodes: NodeExtended[] | SchemaExtended[],
+  nodes: NodeExtended[],
   links: Link[],
   {
     numDimensions = defaults.numDimensions,
@@ -82,8 +78,6 @@ export const runForceSimulation = (
     disableCharge = defaults.disableCharge,
   }: SimulationProps,
 ) => {
-  console.log(forceLinkDistanceMethod)
-
   simulation
     .alpha(1)
     .stop()
@@ -107,7 +101,7 @@ export const runForceSimulation = (
         ? null
         : forceLink(links)
             .id((d: NodeExtended) => d.ref_id)
-            // .distance(forceLinkDistanceMethod)
+            .distance(forceLinkDistanceMethod)
             .strength(forceLinkStrength),
     )
     .alpha(1)
