@@ -162,9 +162,9 @@ export const Stats = () => {
           ),
         )}
       </StatisticsWrapper>
-      {isTotalProcessing ? (
-        <StatisticsContent data-testid="statistics-container" onClick={openSourcesModal}>
-          <ViewContent>
+      <StatisticsBudget>
+        {isTotalProcessing ? (
+          <ViewContent data-testid="view-content" onClick={openSourcesModal}>
             <div className="icon" style={{ marginLeft: '7px' }}>
               <Animation />
             </div>
@@ -172,9 +172,7 @@ export const Stats = () => {
               <p>{totalProcessing}</p>
             </div>
           </ViewContent>
-        </StatisticsContent>
-      ) : null}
-      <StatisticsBudget>
+        ) : null}
         <Budget>
           <Tooltip content="Budget" margin="18px">
             <div className="icon">
@@ -197,14 +195,6 @@ const StatisticsWrapper = styled(Flex).attrs({
   direction: 'row',
   grow: 1,
   justify: 'flex-start',
-})``
-
-const StatisticsContent = styled(Flex).attrs({
-  align: 'center',
-  direction: 'row',
-  grow: 1,
-  justify: 'flex-end',
-  marginRight: '16px',
 })``
 
 const StatisticsBudget = styled(Flex).attrs({
@@ -306,6 +296,7 @@ const ViewContent = styled(Flex).attrs({
   align: 'center',
   direction: 'row',
 })`
+  margin-right: 10px;
   display: flex;
   width: 51px;
   height: 28px;
