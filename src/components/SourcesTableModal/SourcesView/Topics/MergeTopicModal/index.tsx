@@ -80,7 +80,7 @@ export const MergeTopicModal: FC<Props> = ({ onClose, multiTopics }) => {
         <Button
           color="secondary"
           data-testid="merge-topics-button"
-          disabled={loading || isSwapped}
+          disabled={loading || isSwapped || !selectedToNode}
           onClick={handleSave}
           size="large"
           variant="contained"

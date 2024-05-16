@@ -118,6 +118,8 @@ export const TopicSources = () => {
       if (typeof topicActions[action] === 'function') {
         topicActions[action]()
       }
+
+      setSelectedTopic(data[topicId])
     }
   }
 
