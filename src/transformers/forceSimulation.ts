@@ -35,7 +35,7 @@ const defaults: Required<SimulationProps> = {
   disableCharge: false,
   forceCollideRadiusMethod: (n: NodeExtended) => (n.scale || 1) * 6 + 200,
   forceLinkDistanceMethod: (d: { source: NodeExtended; target: NodeExtended }) => {
-    const sourceType = d.source.node_type
+    const sourceType = (d.source as NodeExtended).node_type
 
     let distance = 50
 
@@ -55,7 +55,7 @@ const defaults: Required<SimulationProps> = {
       default:
     }
 
-    return distance * 2
+    return (distance * 2) / 50
   },
 }
 
@@ -99,11 +99,10 @@ export const runForceSimulation = (
       'link',
       disableLink
         ? null
-        : forceLink()
+        : forceLink(links)
+            .id((d: NodeExtended) => d.ref_id)
             .distance(forceLinkDistanceMethod)
-            .strength(forceLinkStrength)
-            .id((d: NodeExtended) => d.id)
-            .links(links.filter((f) => !f.onlyVisibleOnSelect)),
+            .strength(forceLinkStrength),
     )
     .alpha(1)
     .restart()

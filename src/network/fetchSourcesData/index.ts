@@ -1,3 +1,4 @@
+import { SchemaExtended } from '~/components/ModalsContainer/BlueprintModal/types'
 import {
   FetchEdgesResponse,
   FetchEdgeTypesResponse,
@@ -133,6 +134,7 @@ export interface Schema {
   namespace?: string
   search_term?: string
   is_deleted?: boolean
+  children?: string[]
 }
 
 export interface SchemaLink {
@@ -143,7 +145,7 @@ export interface SchemaLink {
 }
 
 interface SchemaAllResponse {
-  schemas: Schema[]
+  schemas: SchemaExtended[]
   edges: SchemaLink[]
 }
 

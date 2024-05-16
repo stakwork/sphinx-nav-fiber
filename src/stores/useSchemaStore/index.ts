@@ -1,10 +1,11 @@
 import { create } from 'zustand'
-import { Schema, SchemaLink } from '~/network/fetchSourcesData'
+import { SchemaExtended } from '~/components/ModalsContainer/BlueprintModal/types'
+import { SchemaLink } from '~/network/fetchSourcesData'
 
 type SchemasStore = {
-  schemas: Schema[]
+  schemas: SchemaExtended[]
   links: SchemaLink[]
-  setSchemas: (schema: Schema[]) => void
+  setSchemas: (schema: SchemaExtended[]) => void
   setSchemaLinks: (schema: SchemaLink[]) => void
 }
 
@@ -15,7 +16,7 @@ const defaultData: Omit<SchemasStore, 'setSchemas' | 'setSchemaLinks'> = {
 
 export const useSchemaStore = create<SchemasStore>((set) => ({
   ...defaultData,
-  setSchemas: (schemas: Schema[]) => {
+  setSchemas: (schemas: SchemaExtended[]) => {
     set({ schemas })
   },
   setSchemaLinks: (links: SchemaLink[]) => {
