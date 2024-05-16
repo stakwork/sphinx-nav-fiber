@@ -20,8 +20,6 @@ export const MainToolbar = () => {
 
   const customSchemaFeatureFlag = useFeatureFlagStore((s) => s.customSchemaFeatureFlag)
 
-  console.log(customSchemaFeatureFlag)
-
   const [isAdmin] = useUserStore((s) => [s.isAdmin])
 
   return (
@@ -29,15 +27,14 @@ export const MainToolbar = () => {
       <LogoButton>
         <img alt="Second brain" src="logo.svg" />
       </LogoButton>
-      {isAdmin ||
-        (true && (
-          <ActionButton data-testid="add-item-modal" onClick={openItemAddModal}>
-            <IconWrapper>
-              <AddSourceIcon />
-            </IconWrapper>
-            <Text>Add Item</Text>
-          </ActionButton>
-        ))}
+      {isAdmin ? (
+        <ActionButton data-testid="add-item-modal" onClick={openItemAddModal}>
+          <IconWrapper>
+            <AddSourceIcon />
+          </IconWrapper>
+          <Text>Add Item</Text>
+        </ActionButton>
+      ) : null}
       <ActionButton data-testid="add-content-modal" onClick={openContentAddModal}>
         <IconWrapper>
           <AddContentIcon />
@@ -50,12 +47,14 @@ export const MainToolbar = () => {
         </IconWrapper>
         <Text>Source Table</Text>
       </ActionButton>
-      <ActionButton id="cy-open-soure-table" onClick={openBlueprintModal}>
-        <IconWrapper>
-          <CommunitiesIcon />
-        </IconWrapper>
-        <Text>Blueprint</Text>
-      </ActionButton>
+      {customSchemaFeatureFlag && isAdmin ? (
+        <ActionButton id="cy-open-soure-table" onClick={openBlueprintModal}>
+          <IconWrapper>
+            <CommunitiesIcon />
+          </IconWrapper>
+          <Text>Blueprint</Text>
+        </ActionButton>
+      ) : null}
       <ActionButton data-testid="settings-modal" onClick={openSettingsModal}>
         <IconWrapper>
           <SettingsIcon />

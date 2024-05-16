@@ -10,7 +10,7 @@ type Props = {
 
 export const Toolbar = ({ onCreateNew }: Props) => (
   <Wrapper>
-    <LogoButton>SCHEMAS</LogoButton>
+    <LogoButton>BLUEPRINT</LogoButton>
     <ActionButton data-testid="add-schema-type" onClick={onCreateNew}>
       <IconWrapper>
         <AddContentIcon />
@@ -120,7 +120,7 @@ const LogoButton = styled(Flex)`
   width: 64px;
   height: 64px;
   cursor: pointer;
-  font-size: 12px;
+  font-size: 10px;
   font-weight: 600;
   color: ${colors.white};
 `

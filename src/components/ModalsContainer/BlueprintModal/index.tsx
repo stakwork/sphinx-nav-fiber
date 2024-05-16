@@ -2,7 +2,6 @@
 import { memo } from 'react'
 import { BaseModal } from '~/components/Modal'
 import { useModal } from '~/stores/useModalStore'
-import { colors } from '~/utils'
 import { Body } from './Body'
 
 const defaultValues = {
@@ -27,7 +26,7 @@ const _BlueprintModal = () => {
   }
 
   return (
-    <BaseModal background={colors.black} id="blueprintGraph" kind="full" onClose={handleClose} preventOutsideClose>
+    <BaseModal background="black" id="blueprintGraph" kind="full" onClose={handleClose} preventOutsideClose>
       <Body />
     </BaseModal>
   )

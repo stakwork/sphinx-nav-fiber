@@ -22,8 +22,6 @@ export const Body = () => {
   const [isCreateNew, setIsCreateNew] = useState(false)
   const [loading, setLoading] = useState(false)
 
-  console.log(loading)
-
   const [schemas, links, setSchemaAll, setSchemaLinks] = useSchemaStore((s) => [
     s.schemas,
     s.links,
@@ -33,6 +31,8 @@ export const Body = () => {
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true)
+
       try {
         const response = await getSchemaAll()
 
@@ -155,5 +155,4 @@ const EditorWrapper = styled(Flex)`
 
 const Container = styled(Flex)`
   flex: 1 1 100%;
-  background: blue;
 `
