@@ -9,6 +9,7 @@ import { useTopicsStore } from '~/stores/useTopicsStore'
 import { TEdge, Topic } from '~/types'
 import { colors } from '~/utils/colors'
 import { TitleEditor } from './Title'
+import styled from 'styled-components'
 
 type Props = {
   topic: Topic
@@ -80,11 +81,16 @@ export const AddEdgeModal: FC<Props> = ({ topic, onClose }) => {
           setIsSwapped={() => setIsSwapped(!isSwapped)}
           setSelectedType={setSelectedType}
         />
-        <Button color="secondary" disabled={submitDisabled} onClick={handleSave} size="large" variant="contained">
+        <CustomButton color="secondary" disabled={submitDisabled} onClick={handleSave} size="large" variant="contained">
           Confirm
           {loading && <ClipLoader color={colors.BLUE_PRESS_STATE} size={10} />}
-        </Button>
+        </CustomButton>
       </FormProvider>
     </BaseModal>
   )
 }
+
+const CustomButton = styled(Button)`
+  width: 293px !important;
+  margin: 0 0 10px auto !important;
+`
