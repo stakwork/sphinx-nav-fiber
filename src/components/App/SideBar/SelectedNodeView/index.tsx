@@ -14,7 +14,7 @@ import { TwitData } from '../TwitData'
 import { Default } from './Default'
 import { Document } from './Document'
 
-const MEDIA_TYPES = ['clip', 'twitter_space', 'youtube', 'episode', 'podcast']
+const MEDIA_TYPES = ['clip', 'twitter_space', 'video', 'episode', 'podcast']
 
 // eslint-disable-next-line no-underscore-dangle
 const _View = () => {
@@ -47,7 +47,7 @@ const _View = () => {
       return <Topic />
     case 'show':
       return <Show />
-    case 'youtube':
+    case 'video':
     case 'podcast':
     case 'clip':
     case 'twitter_space':
