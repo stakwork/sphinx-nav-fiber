@@ -42,11 +42,14 @@ describe('test trending topics', () => {
 
       cy.get('.list').should('exist')
 
-      for (let i = 0; i < responseBody.length; i++) {
+      for (let i = 0; i < responseBody.length; i += 1) {
         cy.contains('.list', `${responseBody[i].name}`).should('exist')
       }
 
       cy.contains(`${responseBody[0].name}`).eq(0).click()
+
+      // ensure the search request is triggered before waiting for it
+      cy.get('[data-testid="search_action_icon"]').click()
 
       // wait for search result
       cy.wait('@search', { timeout: 90000 }).then(() => {
