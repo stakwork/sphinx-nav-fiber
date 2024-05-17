@@ -7,8 +7,6 @@ import { colors } from '~/utils/colors'
 
 const messages = [
   ['Searching', 'Podcast Index'],
-  ['Searching', 'YouTube'],
-  ['Searching', 'Twitter Spaces'],
   ['Finding', 'Transcripts'],
   ['Loading', 'Audio Clips'],
   ['Loading', 'Video Clips'],
