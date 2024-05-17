@@ -13,7 +13,7 @@ type Props = {
 export const CreateConfirmation: FC<Props> = ({ nodeType, onclose, selectedNodeType }) => (
   <Flex>
     <Flex mb={20}>
-      <StyledText>Comfirm Type Change</StyledText>
+      <StyledText>Confirm Type Change</StyledText>
     </Flex>
     <Flex mb={25}>
       <StyledText>From: {selectedNodeType}</StyledText>
