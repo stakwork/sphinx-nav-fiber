@@ -1,15 +1,15 @@
 import { JSX, useEffect, useState } from 'react'
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { BaseModal, ModalKind } from '~/components/Modal'
+import { RequiredPropertiesStep } from '~/components/ModalsContainer/ChangeNodeTypeModal/RequiredPropertiesStep'
 import { NODE_ADD_ERROR } from '~/constants'
+import { changeNodeType, getTopicsData } from '~/network/fetchSourcesData'
 import { useSelectedNode } from '~/stores/useDataStore'
 import { useModal } from '~/stores/useModalStore'
+import { NodeExtended, Topic } from '~/types'
 import { CreateConfirmation } from './CreateConfirmationStep'
 import { MapPropertiesStep } from './MapPropertiesStep'
 import { SourceTypeStep } from './SourceTypeStep'
-import { RequiredPropertiesStep } from '~/components/ModalsContainer/ChangeNodeTypeModal/RequiredPropertiesStep'
-import { NodeExtended, Topic } from '~/types'
-import { changeNodeType, getTopicsData } from '~/network/fetchSourcesData'
 
 export type FormData = {
   typeName: string
@@ -66,24 +66,26 @@ const handleSubmitForm = async (
   }
 
   try {
-    let Id = ''
+    let id = selectedNode?.ref_id
 
     if (selectedNode?.type === 'topic') {
       const { data } = await getTopicsData({ search: selectedNode?.name })
 
       const node = data.find((i: Topic) => i.name === selectedNode.name)
 
-      Id = node?.ref_id as string
+      id = node?.ref_id as string
     }
 
-    const refId = Id ?? selectedNode?.ref_id
+    const refId = id || selectedNode?.ref_id
 
-    console.log(refId, body)
-
-    await changeNodeType(refId, body)
+    if (refId) {
+      await changeNodeType(refId, body)
+    }
 
     // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   } catch (err: any) {
+    console.log(err)
+
     let errorMessage = NODE_ADD_ERROR
 
     if (err.status === 400) {

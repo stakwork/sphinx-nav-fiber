@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { Schema, getSchemaAll } from '~/network/fetchSourcesData'
@@ -101,7 +102,11 @@ export const Body = () => {
   const selectedSchema = schemas.find((i) => i.ref_id === selectedSchemaId) || null
 
   if (loading) {
-    return <Flex>Loading</Flex>
+    return (
+      <Flex align="center" basis="100%" grow={1} justify="center" shrink={1}>
+        <ClipLoader color={colors.white} />
+      </Flex>
+    )
   }
 
   return (

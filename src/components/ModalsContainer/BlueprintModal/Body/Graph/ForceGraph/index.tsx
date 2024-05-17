@@ -7,6 +7,7 @@ import { ForceSimulation } from '~/transformers/forceSimulation'
 import { SchemaExtended } from '../../../types'
 import { Lines } from '../Links'
 import { Nodes } from '../Nodes'
+import { NODE_RADIUS } from '../constants'
 
 type Props = {
   selectedSchemaId: string
@@ -46,7 +47,7 @@ export const ForceGraph = ({ schemasWithPositions, filteredLinks, setSelectedSch
           )
           .force('charge', forceManyBody())
           .force('center', forceCenter())
-          .force('collide', forceCollide(13))
+          .force('collide', forceCollide(NODE_RADIUS + 1))
           .alpha(0.5)
           .restart()
 
@@ -65,7 +66,7 @@ export const ForceGraph = ({ schemasWithPositions, filteredLinks, setSelectedSch
       )
       .force('charge', forceManyBody())
       .force('center', forceCenter())
-      .force('collide', forceCollide(18))
+      .force('collide', forceCollide(0))
 
     setSimulation2d(simulation)
   }, [schemasWithPositions, simulation2d, filteredLinks, prevSchemas, prevLinks])
