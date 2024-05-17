@@ -1,10 +1,11 @@
 import { Circle, Text } from '@react-three/drei'
 import { useFrame, useThree } from '@react-three/fiber'
 import { useDrag } from '@use-gesture/react'
-import { memo, useEffect, useRef, useState } from 'react'
+import { memo, useRef } from 'react'
 import { BoxGeometry, Mesh, Vector3 } from 'three'
 import { SchemaExtended } from '~/components/ModalsContainer/BlueprintModal/types'
 import { fontProps } from '~/components/Universe/Graph/Cubes/Text/constants'
+import { NODE_RADIUS } from '../../constants'
 
 export const NODE_TYPE_COLORS = ['#ff13c9', '#5af0ff', '#3233ff', '#c2f0c2', '#ff6666', '#99ccff', '#ffb3b3']
 
@@ -18,8 +19,9 @@ type Props = {
 export const boxGeometry = new BoxGeometry(2, 2, 2)
 
 export const Node = memo(({ node, setSelectedNode, onSimulationUpdate, isSelected }: Props) => {
-  const [geometry] = useState(boxGeometry)
   const meshRef = useRef<Mesh | null>(null)
+
+  console.log(isSelected)
 
   const { size, camera } = useThree()
 
@@ -39,8 +41,8 @@ export const Node = memo(({ node, setSelectedNode, onSimulationUpdate, isSelecte
     if (down && meshRef.current) {
       onSimulationUpdate()
 
-      const canvasX = ((x - 80) / window.innerWidth) * size.width
-      const canvasY = ((y - 36) / window.innerHeight) * size.height
+      const canvasX = ((x - size.left) / window.innerWidth) * size.width
+      const canvasY = ((y - size.top) / window.innerHeight) * size.height
 
       const VectorPosition = new Vector3((canvasX / size.width) * 2 - 1, (-canvasY / size.height) * 2 + 1, 0)
 
@@ -55,14 +57,6 @@ export const Node = memo(({ node, setSelectedNode, onSimulationUpdate, isSelecte
       node.fy = VectorPosition2.y
     }
   })
-
-  useEffect(
-    () =>
-      function cleanup() {
-        geometry.dispose()
-      },
-    [geometry],
-  )
 
   useFrame(() => {
     if (meshRef.current) {
@@ -79,13 +73,12 @@ export const Node = memo(({ node, setSelectedNode, onSimulationUpdate, isSelecte
 
   return (
     // @ts-ignore Ignores type error on next line)
-
     <mesh ref={meshRef} {...bind()} position={new Vector3(node.x, node.y, 0)}>
-      <Circle args={[isSelected ? 17 : 15, 20, 20]}>
+      <Circle args={[NODE_RADIUS, 30, 20]}>
         <meshStandardMaterial attach="material" color={color} />
       </Circle>
 
-      <Text onClick={handleClick} {...fontProps} color="#000" fontSize={4}>
+      <Text onClick={handleClick} {...fontProps} color="#000" fontSize={2}>
         {node.type}
       </Text>
     </mesh>
