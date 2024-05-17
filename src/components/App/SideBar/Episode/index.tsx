@@ -86,19 +86,20 @@ export const Episode = () => {
   }
 
   return (
-    <Wrapper>
-      {openClip && (
-        <StyledSlide className="slide-me" direction="up" in={!!openClip}>
-          <InfoWrapper>
-            <Flex className="close-info" onClick={() => setOpenClip(null)}>
-              <ChevronDownIcon />
-            </Flex>
-            {openClip && <Media node={openClip} />}
-          </InfoWrapper>
-        </StyledSlide>
-      )}
-      <div style={{ overflow: 'auto', flex: 1, width: '100%' }}>
+    <div style={{ overflow: 'auto', flex: 1, width: '100%' }}>
+      <Wrapper>
+        {openClip && (
+          <StyledSlide className="slide-me" direction="up" in={!!openClip}>
+            <InfoWrapper>
+              <Flex className="close-info" onClick={() => setOpenClip(null)}>
+                <ChevronDownIcon />
+              </Flex>
+              {openClip && <Media node={openClip} />}
+            </InfoWrapper>
+          </StyledSlide>
+        )}
         <Heading selectedNodeShow={selectedNodeShow} />
+
         {!!selectedNodeTimestamps?.length && (
           <ClipsWrapper>
             <Flex pb={20}>
@@ -115,8 +116,8 @@ export const Episode = () => {
             </Flex>
           </ClipsWrapper>
         )}
-      </div>
-    </Wrapper>
+      </Wrapper>
+    </div>
   )
 }
 
@@ -146,7 +147,7 @@ const Wrapper = styled(Flex)`
 
 const StyledSlide = styled(Slide)`
   && {
-    position: absolute;
+    position: sticky;
     left: 0;
     right: 0;
     bottom: 0;
