@@ -39,8 +39,8 @@ export const Node = memo(({ node, setSelectedNode, onSimulationUpdate, isSelecte
     if (down && meshRef.current) {
       onSimulationUpdate()
 
-      const canvasX = ((x - 80) / window.innerWidth) * size.width
-      const canvasY = ((y - 36) / window.innerHeight) * size.height
+      const canvasX = ((x - size.left) / window.innerWidth) * size.width
+      const canvasY = ((y - size.top) / window.innerHeight) * size.height
 
       const VectorPosition = new Vector3((canvasX / size.width) * 2 - 1, (-canvasY / size.height) * 2 + 1, 0)
 

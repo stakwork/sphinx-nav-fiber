@@ -14,7 +14,7 @@ type Props = {
   setSelectedSchemaId: (id: string) => void
 }
 
-const bgColor = new Color(0x17171b)
+const bgColor = new Color(0x000)
 
 export const Graph = ({ selectedSchemaId, links, schemasWithPositions, setSelectedSchemaId }: Props) => (
   <Canvas camera={{ zoom: 1, position: [0, 0, 200] }} id="schema-canvas" linear orthographic>

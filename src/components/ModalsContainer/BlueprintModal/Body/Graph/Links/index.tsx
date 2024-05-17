@@ -1,7 +1,7 @@
 /* eslint-disable react/no-array-index-key */
 import { Line, QuadraticBezierLine } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
-import { Fragment, useMemo, useRef } from 'react'
+import { useMemo, useRef } from 'react'
 import { Group, Vector3 } from 'three'
 import { SchemaLink } from '~/network/fetchSourcesData'
 import { SchemaExtended } from '../../../types'
@@ -56,24 +56,32 @@ export const Lines = ({ links, nodes }: Props) => {
       group.current.children.forEach((child, index) => {
         const link = links[index]
 
+        if (!link) {
+          return
+        }
+
         const nodeStart = nodes.find((i) => i.ref_id === link.source)
         const nodeEnd = nodes.find((i) => i.ref_id === link.target)
 
-        const startVector = new Vector3(nodeStart?.x || 0, nodeStart?.y || 0 + 0.3, nodeStart?.z || 0)
-        const endVector = new Vector3(nodeEnd?.x || 0, nodeEnd?.y || 0 - 0.4, nodeEnd?.z || 0)
-        // const startVector = new Vector3(start.x, start.y + 0.3, start.z)
-        // const endVector = new Vector3(end.x, end.y - 0.4, end.z)
-        const deltaStart = new Vector3(0, 0 * 0, -1)
-        const deltaEnd = new Vector3(0, 0 * 0, -1)
+        const startVector = new Vector3(nodeStart?.x || 0, (nodeStart?.y || 0) + 0.3, nodeStart?.z || 0)
+        const endVector = new Vector3(nodeEnd?.x || 0, (nodeEnd?.y || 0) - 0.4, nodeEnd?.z || 0)
 
-        const startPosition = startVector.clone().add(deltaStart)
-        const endPosition = endVector.clone().add(deltaEnd)
+        const startPosition = startVector.clone()
+        const endPosition = endVector.clone()
+        const middlePoint = new Vector3().lerpVectors(startPosition, endPosition, 0.5)
 
-        const line = child as { setPoints?: (start: Vector3, end: Vector3) => void }
+        const line = child.children[0] as { setPoints?: (start: Vector3, middlePoint: Vector3, end: Vector3) => void }
+        const arrow = child.children[1]
 
-        if (line.setPoints) {
-          line.setPoints(startPosition, endPosition)
-        }
+        // Set line points
+        line.setPoints?.(startPosition, middlePoint, endPosition)
+
+        // Set arrow position
+        arrow.position.set(endPosition.x, endPosition.y, endPosition.z)
+
+        // Make the arrow point towards the start position
+        arrow.lookAt(startPosition)
+        arrow.rotateX(Math.PI / 2)
       })
     }
   })
@@ -81,9 +89,13 @@ export const Lines = ({ links, nodes }: Props) => {
   return (
     <group ref={group}>
       {lines.map((line, index) => (
-        <Fragment key={index}>
+        <group key={index}>
           <QuadraticBezierLine userData={{ ind: index }} {...line} color="white" lineWidth={2} />
-        </Fragment>
+          <mesh position={new Vector3(0, 0, 0)}>
+            <coneGeometry args={[18, 18, 32]} />
+            <meshBasicMaterial color="red" />
+          </mesh>
+        </group>
       ))}
     </group>
   )

@@ -1,15 +1,15 @@
 import { JSX, useEffect, useState } from 'react'
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { BaseModal, ModalKind } from '~/components/Modal'
+import { RequiredPropertiesStep } from '~/components/ModalsContainer/ChangeNodeTypeModal/RequiredPropertiesStep'
 import { NODE_ADD_ERROR } from '~/constants'
+import { changeNodeType, getTopicsData } from '~/network/fetchSourcesData'
 import { useSelectedNode } from '~/stores/useDataStore'
 import { useModal } from '~/stores/useModalStore'
+import { NodeExtended, Topic } from '~/types'
 import { CreateConfirmation } from './CreateConfirmationStep'
 import { MapPropertiesStep } from './MapPropertiesStep'
 import { SourceTypeStep } from './SourceTypeStep'
-import { RequiredPropertiesStep } from '~/components/ModalsContainer/ChangeNodeTypeModal/RequiredPropertiesStep'
-import { NodeExtended, Topic } from '~/types'
-import { changeNodeType, getTopicsData } from '~/network/fetchSourcesData'
 
 export type FormData = {
   typeName: string
@@ -66,7 +66,9 @@ const handleSubmitForm = async (
   }
 
   try {
-    let Id = ''
+    let Id = selectedNode?.ref_id
+
+    console.log(selectedNode)
 
     if (selectedNode?.type === 'topic') {
       const { data } = await getTopicsData({ search: selectedNode?.name })
@@ -84,6 +86,8 @@ const handleSubmitForm = async (
 
     // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   } catch (err: any) {
+    console.log(err)
+
     let errorMessage = NODE_ADD_ERROR
 
     if (err.status === 400) {
