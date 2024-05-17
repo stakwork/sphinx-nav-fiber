@@ -504,6 +504,7 @@ export const formatFetchNodes = (
 
       nodes.push({
         ...node,
+        node_type: node.node_type === 'youtube' ? 'video' : node.node_type,
         scale: getNodeScale(node),
         id: node.ref_id || node.id,
         image_url: smallImageUrl,
