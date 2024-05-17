@@ -46,7 +46,7 @@ describe('SelectedNodeView', () => {
     ['tweet', 'TwitData component'],
     ['topic', 'Topic component'],
     ['show', 'Show component'],
-    ['youtube', 'Media component'],
+    ['video', 'Media component'],
     ['podcast', 'Media component'],
     ['clip', 'Media component'],
     ['twitter_space', 'Media component'],
@@ -70,7 +70,7 @@ describe('SelectedNodeView', () => {
   })
 
   // Additional test to check if setPlayingNode is called for MEDIA_TYPES
-  it.each([['clip'], ['twitter_space'], ['youtube'], ['episode'], ['podcast']])(
+  it.each([['clip'], ['twitter_space'], ['video'], ['episode'], ['podcast']])(
     'calls setPlayingNode for media type %s',
     (nodeType) => {
       ;(DataStore.useSelectedNode as jest.Mock).mockImplementation(() => ({ node_type: nodeType }))
