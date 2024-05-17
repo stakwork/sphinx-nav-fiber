@@ -298,9 +298,8 @@ const ViewContent = styled(Flex).attrs({
 })`
   margin-right: 10px;
   display: flex;
-  width: 51px;
   height: 28px;
-  padding: 6px, 12px, 6px, 6px;
+  padding: 0.75rem 0.6375rem 0.75rem 0.3187rem;
   align-items: center;
   gap: 4px;
   color: ${colors.white};
