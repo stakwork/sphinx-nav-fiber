@@ -66,23 +66,21 @@ const handleSubmitForm = async (
   }
 
   try {
-    let Id = selectedNode?.ref_id
-
-    console.log(selectedNode)
+    let id = selectedNode?.ref_id
 
     if (selectedNode?.type === 'topic') {
       const { data } = await getTopicsData({ search: selectedNode?.name })
 
       const node = data.find((i: Topic) => i.name === selectedNode.name)
 
-      Id = node?.ref_id as string
+      id = node?.ref_id as string
     }
 
-    const refId = Id ?? selectedNode?.ref_id
+    const refId = id || selectedNode?.ref_id
 
-    console.log(refId, body)
-
-    await changeNodeType(refId, body)
+    if (refId) {
+      await changeNodeType(refId, body)
+    }
 
     // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   } catch (err: any) {
