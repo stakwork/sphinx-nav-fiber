@@ -133,7 +133,7 @@ const EpisodeWrapper = styled(Flex).attrs({
   }
 
   .badge__label {
-    color: ${({ label }) => (label === 'topic' ? colors.black : colors.white)};
+    color: ${({ label }) => (label.toLowerCase() === 'topic' ? colors.black : colors.white)};
     font-family: Barlow;
     font-size: 8px;
     font-style: normal;
