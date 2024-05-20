@@ -170,8 +170,8 @@ describe('Component Test Stats', () => {
     render(<Stats />)
 
     // The button should not be visible since totalProcessing is equal to 0
-    const statisticsContainer = screen.queryByTestId('statistics-container')
-    expect(statisticsContainer).toBeNull()
+    const viewContent = screen.queryByTestId('view-content')
+    expect(viewContent).toBeNull()
 
     const mockResponse2: ProcessingResponse = {
       nodes: [],
@@ -185,7 +185,7 @@ describe('Component Test Stats', () => {
     render(<Stats />)
 
     // Wait for the component to finish loading
-    await screen.findByTestId('statistics-container')
+    await screen.findByTestId('view-content')
 
     // The button should be visible since totalProcessing is present and greater than 0
     const button = screen.getByText('100')
