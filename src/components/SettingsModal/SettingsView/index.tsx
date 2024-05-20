@@ -129,13 +129,26 @@ const TabPanelWrapper = styled(Flex)`
   max-height: 495px;
   height: fit-content;
   min-width: 480px;
-  overflow: hidden;
+  overflow: auto;
   border-radius: 9px;
+
+  @media (max-width: 1024px) {
+    min-height: auto;
+    max-height: 400px;
+    min-width: 480px;
+  }
+
+  @media (max-width: 768px) {
+    min-height: auto;
+    max-height: 300px;
+    min-width: 380px;
+  }
 `
 
 const Wrapper = styled(Flex)`
   min-height: 0;
   flex: 1;
+  overflow: hidden;
 `
 
 const StyledText = styled(Text)`
@@ -143,4 +156,12 @@ const StyledText = styled(Text)`
   font-weight: 600;
   font-family: Barlow;
   padding: 0 0 0 36px;
+
+  @media (max-width: 1024px) {
+    font-size: 20px;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 18px;
+  }
 `

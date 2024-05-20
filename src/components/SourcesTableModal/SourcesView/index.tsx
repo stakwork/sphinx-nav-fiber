@@ -104,7 +104,7 @@ const StyledTabs = styled(Tabs)`
 
 const StyledTab = styled(Tab)`
   && {
-    padding: 20px 0 24px;
+    padding: 30px 0 24px;
     color: ${colors.GRAY6};
     margin-left: 34px;
     font-family: Barlow;
@@ -121,12 +121,36 @@ const StyledTab = styled(Tab)`
 const TabPanelWrapper = styled(Flex)`
   display: flex;
   flex: 1;
-  min-height: 515px;
+  min-height: 572px;
   padding: 20px 0;
-  max-height: 515px;
+  max-height: 572px;
+  overflow: auto;
+
+  @media (max-width: 1024px) {
+    width: 100%;
+    min-height: 400px;
+    max-height: 400px;
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
+    min-height: 300px;
+    max-height: 300px;
+  }
+
+  @media (max-width: 480px) {
+    width: 100%;
+    min-height: 250px;
+    max-height: 250px;
+  }
 `
 
 const Wrapper = styled(Flex)`
   min-height: 0;
   flex: 1;
+  overflow: hidden;
+
+  @media (max-width: 768px) {
+    padding: 3px;
+  }
 `
