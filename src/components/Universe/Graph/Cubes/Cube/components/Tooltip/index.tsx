@@ -49,6 +49,8 @@ export const Tooltip = ({ node }: Props) => {
     twitter_handle: twitterHandle,
   } = node
 
+  const correctType = type?.toLowerCase()
+
   const guestArray = node.guests
 
   let guests = false
@@ -66,7 +68,7 @@ export const Tooltip = ({ node }: Props) => {
 
   let imageUrl = node.image_url
 
-  if (type === 'twitter_space') {
+  if (correctType === 'twitter_space') {
     imageUrl = 'twitter_placeholder.png'
   }
 
@@ -82,6 +84,51 @@ export const Tooltip = ({ node }: Props) => {
 
   if (nodeType === 'topic') {
     return null
+  }
+
+  const renderContent = () => {
+    switch (correctType) {
+      case 'guest':
+        return (
+          <Flex direction="column">
+            <Text>{label ?? name}</Text>
+            {text && (
+              <Flex pt={4}>
+                <Text color="primaryText1" kind="tiny">
+                  @{text}
+                </Text>
+              </Flex>
+            )}
+          </Flex>
+        )
+      case 'person':
+      case 'event':
+      case 'topic':
+      case 'corporation':
+      case 'organization':
+      case 'thing':
+      case 'host':
+      case 'place':
+      case 'product':
+        return (
+          <Flex direction="column">
+            <Text>{name ?? label}</Text>
+            {correctType === 'person' && twitterHandle && (
+              <Flex pt={4}>
+                <Text color="primaryText1" kind="tiny">
+                  @{twitterHandle}
+                </Text>
+              </Flex>
+            )}
+          </Flex>
+        )
+      default:
+        return (
+          <Text color="primaryText1" kind="tiny">
+            {showTitle}
+          </Text>
+        )
+    }
   }
 
   return (
@@ -103,36 +150,7 @@ export const Tooltip = ({ node }: Props) => {
             </Flex>
 
             <div>
-              {type === 'guest' ? (
-                <Flex direction="column">
-                  <Text>{label}</Text>
-                  {text && (
-                    <Flex pt={4}>
-                      <Text color="primaryText1" kind="tiny">
-                        @{text}
-                      </Text>
-                    </Flex>
-                  )}
-                </Flex>
-              ) : (
-                <Text color="primaryText1" kind="tiny">
-                  {showTitle}
-                </Text>
-              )}
-
-              {type === 'person' && (
-                <Flex direction="column">
-                  <Text>{name}</Text>
-
-                  {twitterHandle && (
-                    <Flex pt={4}>
-                      <Text color="primaryText1" kind="tiny">
-                        @{twitterHandle}
-                      </Text>
-                    </Flex>
-                  )}
-                </Flex>
-              )}
+              {renderContent()}
 
               <Flex pt={4}>
                 {nodeType === 'clip' || (nodeType === 'episode' && <Text color="primaryText1">Episode</Text>)}
