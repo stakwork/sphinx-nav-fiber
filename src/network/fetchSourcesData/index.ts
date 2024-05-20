@@ -160,7 +160,7 @@ export interface ChangeNodeType {
 }
 
 export const changeNodeType = async (ref_id: string, data: ChangeNodeType) =>
-  api.put(`/node/${ref_id}`, JSON.stringify(data))
+  api.put(`/node`, JSON.stringify({ ...data, ref_id }))
 
 export const getFullTranscript = async (refId: string | undefined) => {
   const url = `/node/text/${refId}`

@@ -7,18 +7,14 @@ import { Link } from '~/types'
 
 type Props = {
   link: Link
-  animated?: boolean
 }
 
-export const Segment = ({ link, animated }: Props) => {
+export const Segment = ({ link }: Props) => {
   const selectedNode = useSelectedNode()
   const [start, setStart] = useState(new Vector3(0, 0, 0))
   const [end, setEnd] = useState(new Vector3(0, 0, 0))
   const [color] = useState(NODE_TYPE_COLORS[0])
   const nodesNormalized = useGraphStore((s) => s.nodesNormalized)
-
-  false && console.log(color)
-  false && console.log(animated)
 
   useEffect(() => {
     setStart(new Vector3(link.sourcePosition?.x || 0, link.sourcePosition?.y || 0, link.sourcePosition?.z || 0))

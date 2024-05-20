@@ -12,7 +12,7 @@ type TTypeMapper = {
 }
 
 const TypesMapper: TTypeMapper = {
-  youtube: 'video',
+  video: 'video',
   podcast: 'audio',
   episode: 'audio',
   clip: 'audio',

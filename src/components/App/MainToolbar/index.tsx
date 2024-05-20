@@ -25,7 +25,7 @@ export const MainToolbar = () => {
   return (
     <Wrapper>
       <LogoButton>
-        <img alt="Second brain" src="logo.svg" />
+        <img alt="Second brain" height="65px" src="logo.svg" width="65px" />
       </LogoButton>
       {isAdmin ? (
         <ActionButton data-testid="add-item-modal" onClick={openItemAddModal}>

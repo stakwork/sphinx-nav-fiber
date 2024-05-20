@@ -18,7 +18,7 @@ export const TypeBadge = ({ type }: Props) => {
   const nodeType = type.toLowerCase()
 
   switch (nodeType) {
-    case 'youtube':
+    case 'video':
     case 'twitter_space':
     case 'podcast':
     case 'clip':

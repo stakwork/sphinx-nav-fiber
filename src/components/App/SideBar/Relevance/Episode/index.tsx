@@ -77,7 +77,7 @@ export const Episode = ({
 
   const defaultViewTypes = ['tweet', 'person', 'guest', 'topic', 'document']
 
-  const imageType = type === 'youtube' ? 'video' : 'audio'
+  const imageType = type === 'video' ? 'video' : 'audio'
 
   return type ? (
     <EpisodeWrapper className={className} onClick={onClick}>
@@ -94,7 +94,7 @@ export const Episode = ({
               <Flex align="center" direction="row">
                 {type && <TypeBadge type={type} />}
               </Flex>
-              {type === 'youtube' && sourceLink ? (
+              {type === 'video' && sourceLink ? (
                 <StyledLink
                   href={`${sourceLink}${sourceLink.includes('?') ? '&' : '?'}open=system`}
                   onClick={(e) => e.stopPropagation()}

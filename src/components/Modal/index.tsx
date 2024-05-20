@@ -24,6 +24,7 @@ const getModalKindStyles = ({ kind = 'regular' }: Pick<Props, 'kind'>) => {
     case 'large':
       return css`
         width: 709px;
+        height: 100%;
       `
     case 'full':
       return css`

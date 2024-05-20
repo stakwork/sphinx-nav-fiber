@@ -3,6 +3,7 @@ import { Canvas } from '@react-three/fiber'
 import { Perf } from 'r3f-perf'
 import { Color } from 'three'
 import { Lights } from '~/components/Universe/Lights'
+import { isDevelopment } from '~/constants'
 import { SchemaLink } from '~/network/fetchSourcesData'
 import { SchemaExtended } from '../../types'
 import { ForceGraph } from './ForceGraph'
@@ -14,12 +15,12 @@ type Props = {
   setSelectedSchemaId: (id: string) => void
 }
 
-const bgColor = new Color(0x17171b)
+const bgColor = new Color(0x000)
 
 export const Graph = ({ selectedSchemaId, links, schemasWithPositions, setSelectedSchemaId }: Props) => (
   <Canvas camera={{ zoom: 1, position: [0, 0, 200] }} id="schema-canvas" linear orthographic>
     <color args={[bgColor.r, bgColor.g, bgColor.b]} attach="background" />
-    <Perf position="right-bottom" />
+    {isDevelopment && <Perf position="right-bottom" />}
     <OrbitControls enableRotate={false} enableZoom />
     <Lights />
     <ForceGraph
