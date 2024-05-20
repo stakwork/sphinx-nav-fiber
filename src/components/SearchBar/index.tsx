@@ -14,7 +14,7 @@ const Input = styled.input.attrs(() => ({
 }))<{ loading?: boolean }>`
   pointer-events: auto;
   height: 48px;
-  padding: 0 30px 0px 20px;
+  padding: 0 40px 0 18px;
   z-index: 2;
   box-shadow: 0px 1px 6px rgba(0, 0, 0, 0.1);
   width: 100%;
