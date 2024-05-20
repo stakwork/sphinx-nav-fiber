@@ -61,13 +61,15 @@ export const Content = () => {
             <Table nodes={nodes} />
           </>
         )}
-        {!loading && nodes.length > 0 && newNodesAvailable ? (
+        {!loading &&
+          nodes.length > 0 &&
+          (newNodesAvailable ? (
             <Button onClick={handleLoadMore} size="medium">
               Load More
             </Button>
-        ) : (
-            !loading && nodes.length === 0 && <NoNewNodesMessage>No new nodes available</NoNewNodesMessage>
-        )}
+          ) : (
+            <NoNewNodesMessage>No new nodes available</NoNewNodesMessage>
+          ))}
       </TableWrapper>
     </Wrapper>
   )
