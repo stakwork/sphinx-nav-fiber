@@ -1,39 +1,56 @@
 describe('Test Curation Table', () => {
-  it.skip('Search Topic', () => {
-    cy.initialSetup('alice', 300)
+  it('Search Topic', () => {
+    cy.intercept({
+      method: 'GET',
+      url: 'http://localhost:8444/api/nodes/info?skip=0&limit=50&muted=False&sort_by=date&node_type=Topic*',
+    }).as('loadTopics')
 
-    cy.wait(1000)
+    cy.intercept({
+      method: 'GET',
+      url: 'http://localhost:8444/api/nodes/info?skip=0&limit=50&muted=False&sort_by=date&search=Bitcoin*',
+    }).as('searchTopic')
+
+    cy.initialSetup('alice', 300)
 
     cy.get('#cy-open-soure-table').click()
 
-    cy.wait(2000)
+    cy.get('[data-testid="sources-table"]').should('exist')
 
     cy.contains('button', 'Topics').click()
 
-    cy.wait(2000)
+    cy.wait('@loadTopics')
 
     cy.get('input[placeholder="Search ..."]').type('Bitcoin')
 
-    cy.wait(3000)
+    cy.wait('@searchTopic')
 
     cy.get('tbody').find('tr').should('have.length.greaterThan', 0)
 
     cy.get('[data-testid="topic-search-container"]').find('button[type="button"]').click()
   })
 
-  it.skip('Rename a Topic', () => {
-    const newTopic = 'Testing Rename Topic'
-    cy.initialSetup('alice', 300)
+  it('Rename a Topic', () => {
+    cy.intercept({
+      method: 'GET',
+      url: 'http://localhost:8444/api/nodes/info*',
+    }).as('loadTopics')
 
-    cy.wait(1000)
+    cy.intercept({
+      method: 'PUT',
+      url: 'http://localhost:8444/api/node*',
+    }).as('renameTopic')
+
+    const newTopic = 'Testing Rename Topic'
+
+    cy.initialSetup('alice', 300)
 
     cy.get('#cy-open-soure-table').click()
 
-    cy.wait(2000)
+    cy.get('[data-testid="sources-table"]').should('exist')
 
     cy.contains('button', 'Topics').click()
 
-    cy.wait(2000)
+    cy.wait('@loadTopics')
 
     cy.get('tbody > tr:first').within(() => {
       cy.get('td:nth-child(2)').then(($td) => {
@@ -46,7 +63,7 @@ describe('Test Curation Table', () => {
     cy.get('#cy-topic').clear().type(newTopic)
     cy.contains('button', 'Save').click()
 
-    cy.wait(2000)
+    cy.wait('@renameTopic')
 
     cy.get('tbody > tr:first').within(() => {
       cy.get('td:nth-child(2)').then(($td) => {
@@ -73,10 +90,8 @@ describe('Test Curation Table', () => {
       url: 'http://localhost:8444/api/curation/search/authenticity*',
     }).as('topicSearch')
 
-    //?exact_match=false&sig=IPdj0TwvsmPUn7pNYm2x5my7D22dVCNWrF06SKDP40vWMUM6uzyOAM3o7vkJL7JGuMKySxuYGUHtJzCKvDwps-o%3D&msg=27b5c671-9e69-4d2f-8884-fc292f7ac6991716302892380
-
-    http: const mergeTopic = 'authenticity'
-    let specificValue = '' // Replace with the value you are looking for
+    const mergeTopic = 'authenticity'
+    let specificValue = ''
     let matchFound = false
     cy.initialSetup('alice', 300)
 
