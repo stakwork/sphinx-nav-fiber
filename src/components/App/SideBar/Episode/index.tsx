@@ -35,11 +35,12 @@ export const Episode = () => {
 
   const [selectedTimestamp, setSelectedTimestamp] = useState<NodeExtended | null>(null)
 
-  const [playingNode, setPlayingNodeLink, setPlayingTime, setIsSeeking] = usePlayerStore((s) => [
+  const [playingNode, setPlayingNodeLink, setPlayingTime, setIsSeeking, playingTime] = usePlayerStore((s) => [
     s.playingNode,
     s.setPlayingNodeLink,
     s.setPlayingTime,
     s.setIsSeeking,
+    s.playingTime,
   ])
 
   const selectedNodeTimestamps = useMemo(
@@ -80,6 +81,24 @@ export const Episode = () => {
       updateActiveTimestamp(selectedNodeTimestamps[0])
     }
   }, [selectedNodeTimestamps, selectedTimestamp, updateActiveTimestamp])
+
+  useEffect(() => {
+    if (selectedNodeTimestamps?.length) {
+      const currentTimestamp = selectedNodeTimestamps.find((timestamp) => {
+        if (!timestamp.timestamp) {
+          return false
+        }
+
+        const timestampSeconds = videoTimeToSeconds(timestamp.timestamp.split('-')[0])
+
+        return Math.abs(timestampSeconds - playingTime) < 1
+      })
+
+      if (currentTimestamp && currentTimestamp.ref_id !== selectedTimestamp?.ref_id) {
+        setSelectedTimestamp(currentTimestamp)
+      }
+    }
+  }, [playingTime, selectedNodeTimestamps, selectedTimestamp])
 
   if (!selectedNode) {
     return null
