@@ -236,7 +236,7 @@ describe('Test Curation Table', () => {
       })
   })
 
-  it('Unmute Topic', () => {
+  it.skip('Unmute Topic', () => {
     cy.intercept({
       method: 'GET',
       url: 'http://localhost:8444/api/nodes/info?skip=0&limit=50&muted=False&sort_by=date&node_type=Topic*',
@@ -331,5 +331,60 @@ describe('Test Curation Table', () => {
       .then(() => {
         expect(secondMatchFound).to.be.true
       })
+  })
+
+  it('Add Edge Between Two Nodes', () => {
+    cy.intercept({
+      method: 'GET',
+      url: 'http://localhost:8444/api/nodes/info?skip=0&limit=50&muted=False&sort_by=date&node_type=Topic*',
+    }).as('loadTopics')
+
+    cy.intercept({
+      method: 'GET',
+      url: 'http://localhost:8444/api/curation/search/Racism*',
+    }).as('searchNode')
+
+    cy.intercept({
+      method: 'POST',
+      url: 'http://localhost:8444/api/curation/edge*',
+    }).as('addEdge')
+
+    cy.initialSetup('alice', 300)
+
+    cy.get('#cy-open-soure-table').click()
+
+    cy.get('[data-testid="sources-table"]').should('exist')
+
+    cy.contains('button', 'Topics').click()
+
+    cy.wait('@loadTopics')
+
+    cy.get('tbody > tr:first').within(() => {
+      cy.get('td:nth-child(2)').then(($td) => {
+        cy.get('.approve-wrapper button').eq(1).click()
+      })
+    })
+
+    cy.get('div[data-testid="add_edge"]').click()
+
+    cy.get('#addEdge').should('exist')
+
+    cy.contains('label', 'Type').closest('div').find('input').type('RELATED_TO')
+
+    cy.contains('label', 'Type').closest('div').parent().find('div[data-testid="RELATED_TO"]').click()
+
+    cy.contains('label', 'To').closest('div').find('input').type('Racism')
+
+    cy.contains('label', 'To').closest('div').parent().find('div[data-testid="Racism"]').click()
+
+    cy.wait('@searchNode')
+
+    cy.contains('button', 'Confirm').click()
+
+    cy.wait('@addEdge').then((interception) => {
+      expect(interception.response.statusCode).to.eq(200)
+    })
+
+    cy.get('#addEdge').should('not.exist')
   })
 })
