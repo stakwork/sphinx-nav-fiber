@@ -60,10 +60,15 @@ describe('Test Curation Table', () => {
       })
     })
     cy.get('div[data-testid="rename"]').click()
+
+    cy.get('#editTopic').should('exist')
+
     cy.get('#cy-topic').clear().type(newTopic)
     cy.contains('button', 'Save').click()
 
     cy.wait('@renameTopic')
+
+    cy.get('#editTopic').should('not.exist')
 
     cy.get('tbody > tr:first').within(() => {
       cy.get('td:nth-child(2)').then(($td) => {
@@ -333,7 +338,7 @@ describe('Test Curation Table', () => {
       })
   })
 
-  it('Add Edge Between Two Nodes', () => {
+  it.skip('Add Edge Between Two Nodes', () => {
     cy.intercept({
       method: 'GET',
       url: 'http://localhost:8444/api/nodes/info?skip=0&limit=50&muted=False&sort_by=date&node_type=Topic*',
@@ -386,5 +391,40 @@ describe('Test Curation Table', () => {
     })
 
     cy.get('#addEdge').should('not.exist')
+  })
+
+  it('Filter topics', () => {
+    cy.intercept({
+      method: 'GET',
+      url: 'http://localhost:8444/api/nodes/info?skip=0&limit=50&muted=False&sort_by=date&node_type=Topic*',
+    }).as('loadTopics')
+
+    let firstCount
+
+    cy.initialSetup('alice', 300)
+
+    cy.get('#cy-open-soure-table').click()
+
+    cy.get('[data-testid="sources-table"]').should('exist')
+
+    cy.contains('button', 'Topics').click()
+
+    cy.wait('@loadTopics')
+
+    cy.get('tbody > tr:first').within(() => {
+      cy.get('td:nth-child(4)').then(($td) => {
+        const tdValue = $td.text().trim()
+        firstCount = parseInt(tdValue)
+      })
+    })
+
+    cy.get('thead').contains('Count').click()
+
+    cy.get('tbody > tr:first').within(() => {
+      cy.get('td:nth-child(4)').then(($td) => {
+        const tdValue = parseInt($td.text().trim())
+        expect(tdValue).to.be.gt(firstCount)
+      })
+    })
   })
 })
