@@ -1,5 +1,5 @@
 describe('Test Curation Table', () => {
-  it.skip('Search Topic', () => {
+  it('Search Topic', () => {
     cy.intercept({
       method: 'GET',
       url: 'http://localhost:8444/api/nodes/info?skip=0&limit=50&muted=False&sort_by=date&node_type=Topic*',
@@ -29,7 +29,7 @@ describe('Test Curation Table', () => {
     cy.get('[data-testid="topic-search-container"]').find('button[type="button"]').click()
   })
 
-  it.skip('Rename a Topic', () => {
+  it('Rename a Topic', () => {
     cy.intercept({
       method: 'GET',
       url: 'http://localhost:8444/api/nodes/info*',
@@ -79,7 +79,7 @@ describe('Test Curation Table', () => {
     })
   })
 
-  it.skip('Merge Two Topics', () => {
+  it('Merge Two Topics', () => {
     cy.intercept({
       method: 'GET',
       url: 'http://localhost:8444/api/nodes/info*',
@@ -146,7 +146,7 @@ describe('Test Curation Table', () => {
       })
   })
 
-  it.skip('Mute Topic', () => {
+  it('Mute Topic', () => {
     cy.intercept({
       method: 'GET',
       url: 'http://localhost:8444/api/nodes/info?skip=0&limit=50&muted=False&sort_by=date&node_type=Topic*',
@@ -241,7 +241,7 @@ describe('Test Curation Table', () => {
       })
   })
 
-  it.skip('Unmute Topic', () => {
+  it('Unmute Topic', () => {
     cy.intercept({
       method: 'GET',
       url: 'http://localhost:8444/api/nodes/info?skip=0&limit=50&muted=False&sort_by=date&node_type=Topic*',
@@ -338,7 +338,7 @@ describe('Test Curation Table', () => {
       })
   })
 
-  it.skip('Add Edge Between Two Nodes', () => {
+  it('Add Edge Between Two Nodes', () => {
     cy.intercept({
       method: 'GET',
       url: 'http://localhost:8444/api/nodes/info?skip=0&limit=50&muted=False&sort_by=date&node_type=Topic*',
