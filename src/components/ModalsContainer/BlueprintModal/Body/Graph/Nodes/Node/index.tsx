@@ -73,12 +73,12 @@ export const Node = memo(({ node, setSelectedNode, onSimulationUpdate, isSelecte
 
   return (
     // @ts-ignore Ignores type error on next line)
-    <mesh ref={meshRef} {...bind()} position={new Vector3(node.x, node.y, 0)}>
+    <mesh ref={meshRef} onClick={handleClick} {...bind()} position={new Vector3(node.x, node.y, 0)}>
       <Circle args={[NODE_RADIUS, 30, 20]}>
         <meshStandardMaterial attach="material" color={color} />
       </Circle>
 
-      <Text onClick={handleClick} {...fontProps} color="#000" fontSize={2}>
+      <Text {...fontProps} color="#000" fontSize={2}>
         {node.type}
       </Text>
     </mesh>
