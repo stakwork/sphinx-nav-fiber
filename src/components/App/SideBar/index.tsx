@@ -141,10 +141,11 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
 const hideSubViewFor = ['topic', 'person', 'guest', 'event', 'organization', 'place', 'project', 'software']
 
 export const SideBar = ({ onSubmit }: Props) => {
-  const { sidebarIsOpen } = useAppStore((s) => s)
+  const { sidebarIsOpen, currentSearch } = useAppStore((s) => s)
   const selectedNode = useSelectedNode()
 
-  const subViewIsOpen = !!selectedNode && sidebarIsOpen && !hideSubViewFor.includes(selectedNode.node_type)
+  const subViewIsOpen =
+    !!selectedNode && sidebarIsOpen && !hideSubViewFor.includes(selectedNode.node_type) && !!currentSearch
 
   const { showTeachMe } = useDataStore((s) => s)
 
