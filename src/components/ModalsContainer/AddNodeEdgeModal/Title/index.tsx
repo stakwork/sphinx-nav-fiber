@@ -53,7 +53,7 @@ export const TitleEditor: FC<Props> = ({
         </Flex>
 
         <Flex my={16}>
-          <StyledLabel>Type</StyledLabel>
+          <StyledLabels>Type</StyledLabels>
           <ConnectionType selectedType={selectedType} setSelectedType={setSelectedType} />
         </Flex>
 
@@ -130,7 +130,7 @@ const ToSection = styled.div`
   align-items: center;
 `
 
-const StyledLabel = styled.label`
+const StyledLabels = styled.label`
   color: #bac1c6;
   font-size: 13px;
   font-weight: 400;
