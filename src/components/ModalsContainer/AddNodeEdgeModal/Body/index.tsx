@@ -9,6 +9,7 @@ import { useModal } from '~/stores/useModalStore'
 import { TEdge } from '~/types'
 import { colors } from '~/utils/colors'
 import { TitleEditor } from '../Title'
+import styled from 'styled-components'
 
 export type FormData = {
   topic: string
@@ -107,10 +108,15 @@ export const Body = () => {
           setSelectedType={setSelectedType}
         />
       )}
-      <Button color="secondary" disabled={submitDisabled} onClick={handleSave} size="large" variant="contained">
+      <CustomButton color="secondary" disabled={submitDisabled} onClick={handleSave} size="large" variant="contained">
         Confirm
         {loading && <ClipLoader color={colors.BLUE_PRESS_STATE} size={10} />}
-      </Button>
+      </CustomButton>
     </FormProvider>
   )
 }
+
+const CustomButton = styled(Button)`
+  width: 293px !important;
+  margin: 0 0 10px auto !important;
+`

@@ -22,7 +22,7 @@ interface SectionProps {
 }
 
 export const TitleEditor: FC<Props> = ({ from, onSelect, selectedToNode, isSwapped, setIsSwapped }) => (
-  <Flex>
+  <Flex mb={20}>
     <Flex align="center" direction="row" justify="space-between" mb={18}>
       <Flex align="center" direction="row">
         <StyledText>Merge topic</StyledText>
@@ -35,7 +35,7 @@ export const TitleEditor: FC<Props> = ({ from, onSelect, selectedToNode, isSwapp
 
       <Flex my={16}>
         <StyledLabel>Type</StyledLabel>
-        <Text>IS AlIAS</Text>
+        <Text>IS ALIAS</Text>
       </Flex>
 
       <Flex>
@@ -116,7 +116,6 @@ const ToSection = styled.div`
 `
 
 const StyledLabel = styled.label`
-  background-color: #23252f;
   color: #bac1c6;
   font-size: 13px;
   font-weight: 400;

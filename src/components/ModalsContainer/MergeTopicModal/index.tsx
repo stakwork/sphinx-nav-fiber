@@ -12,6 +12,7 @@ import { IS_ALIAS } from '../../SourcesTableModal/SourcesView/constants'
 import { TitleEditor } from './Title'
 import { useSelectedNode } from '~/stores/useDataStore'
 import { Flex } from '~/components/common/Flex'
+import styled from "styled-components";
 
 export type FormData = {
   name: string
@@ -104,11 +105,24 @@ export const MergeNodeModal = () => {
             setIsSwapped={() => setIsSwapped(!isSwapped)}
           />
         )}
-        <Button color="secondary" disabled={loading} onClick={handleSave} size="large" variant="contained">
+        <CustomButton
+            color="secondary"
+            data-testid="merge-topics-button"
+            disabled={loading || isSwapped || !selectedToNode}
+            onClick={handleSave}
+            size="large"
+            variant="contained"
+        >
           Merge topics
           {loading && <ClipLoader color={colors.BLUE_PRESS_STATE} size={10} />}
-        </Button>
+        </CustomButton>
       </FormProvider>
     </BaseModal>
   )
 }
+
+
+const CustomButton = styled(Button)`
+  width: 293px !important;
+  margin: 0 0 10px auto !important;
+`

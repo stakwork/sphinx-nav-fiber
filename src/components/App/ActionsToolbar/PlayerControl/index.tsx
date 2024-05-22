@@ -125,6 +125,9 @@ const Info = styled(Flex).attrs({
   .subtitle {
     font-size: 11px;
     color: ${colors.GRAY6};
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
 `
 

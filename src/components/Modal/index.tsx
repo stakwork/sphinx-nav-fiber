@@ -40,13 +40,27 @@ const getModalKindStyles = ({ kind = 'regular' }: Pick<Props, 'kind'>) => {
 const ModalContainer = styled(Flex)<Pick<Props, 'kind'>>`
   z-index: 2000;
   margin: 0 auto;
-  overflow: visible;
   animation: ${scaleAnimation} 0.2s ease-in-out;
   position: relative;
   max-width: 100%;
   overflow: visible;
-  background: ${colors.BG1};
-  ${getModalKindStyles}
+  background: ${colors};
+  ${getModalKindStyles};
+
+  @media (max-width: 1024px) {
+    height: auto;
+    max-height: 80%;
+  }
+
+  @media (max-width: 768px) {
+    height: auto;
+    max-height: 80%;
+  }
+
+  @media (max-width: 480px) {
+    height: auto;
+    max-height: 80%;
+  }
 `
 
 const fadeAnimation = keyframes`

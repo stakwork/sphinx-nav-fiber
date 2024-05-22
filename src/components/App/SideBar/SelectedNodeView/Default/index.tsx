@@ -18,23 +18,25 @@ export const Default = () => {
   const customKeys = selectedNode.properties || {}
 
   return (
-    <StyledContent grow={1} justify="flex-start" pt={hasImage ? 0 : 8} shrink={1}>
+    <StyledContainer>
       {hasImage ? (
         <StyledImageWrapper>
           <img alt="img_a11y" src={selectedNode.image_url} />
         </StyledImageWrapper>
       ) : null}
 
-      <Flex ml={24} mt={20} style={{ width: 'fit-content' }}>
-        <TypeBadge type={selectedNode.type || ''} />
-      </Flex>
+      <StyledContent grow={1} justify="flex-start" pt={hasImage ? 0 : 8} shrink={1}>
+        <Flex ml={24} mt={20} style={{ width: 'fit-content' }}>
+          <TypeBadge type={selectedNode.type || ''} />
+        </Flex>
 
-      <StyledWrapper>
-        {Object.entries(customKeys).map(([key, value]) => (
-          <NodeDetail key={key} label={key} value={value} />
-        ))}
-      </StyledWrapper>
-    </StyledContent>
+        <StyledWrapper>
+          {Object.entries(customKeys).map(([key, value]) => (
+            <NodeDetail key={key} label={key} value={value} />
+          ))}
+        </StyledWrapper>
+      </StyledContent>
+    </StyledContainer>
   )
 }
 
@@ -57,6 +59,8 @@ const NodeDetail = ({ label, value }: Props) => {
 const StyledContent = styled(Flex)`
   overflow: auto;
   width: 100%;
+  flex-grow: 1;
+  padding-top: 16px;
 `
 
 const StyledWrapper = styled(Flex)`
@@ -65,11 +69,15 @@ const StyledWrapper = styled(Flex)`
 
 const StyledImageWrapper = styled(Flex)`
   width: 100%;
-  height: 256px;
+  height: 240px;
+  padding-top: 20px;
+  justify-content: center;
+  align-items: center;
 
   img {
-    width: 100%;
-    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
   }
 `
 
@@ -91,6 +99,8 @@ const StyledDetail = styled(Flex)`
 
     .node-detail__value {
       font-weight: 400;
+      word-wrap: normal;
+      word-break: break-word;
     }
 
     &__long {
@@ -102,4 +112,9 @@ const StyledDetail = styled(Flex)`
 const StyledDivider = styled(Divider)`
   margin: auto 0px 2px 0px;
   opacity: 0.75;
+`
+
+const StyledContainer = styled(Flex)`
+  flex-direction: column;
+  height: 100%;
 `

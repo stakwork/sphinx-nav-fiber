@@ -65,3 +65,7 @@ export const OPTIONS: TOption[] = [
     value: 'Topic',
   },
 ]
+
+export const noSpaceAttributePattern = /^[^\s][\w\s]*$/
+
+export const noSpaceSourceStepPattern = /^[^\s].*$/

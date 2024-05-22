@@ -3,10 +3,7 @@ import { FC, useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
-import {
-  parseJson,
-  parsedObjProps,
-} from '~/components/SettingsModal/SettingsView/GraphBlueprint/BlueprintModal/Body/Editor/utils'
+import { parseJson, parsedObjProps } from '~/components/ModalsContainer/BlueprintModal/Body/Editor/utils'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { TextInput } from '~/components/common/TextInput'
@@ -14,6 +11,7 @@ import { requiredRule } from '~/constants'
 import { getNodeType } from '~/network/fetchSourcesData'
 import { colors } from '~/utils'
 import { AddItemModalStepID } from '..'
+import { noSpaceAttributePattern } from '~/components/AddItemModal/SourceTypeStep/constants'
 
 type Props = {
   skipToStep: (step: AddItemModalStepID) => void
@@ -38,7 +36,9 @@ export const SetAttributesStep: FC<Props> = ({ handleSelectType, skipToStep, nod
 
       const parsedData = parseJson(data)
 
-      setAttributes(parsedData)
+      const filteredAttributes = parsedData.filter((attr) => attr.key !== 'node_key')
+
+      setAttributes(filteredAttributes)
 
       setLoading(false)
     }
@@ -83,20 +83,26 @@ export const SetAttributesStep: FC<Props> = ({ handleSelectType, skipToStep, nod
         ) : (
           <Flex className="input__wrapper">
             {sortedAttributes?.map(({ key, required }: parsedObjProps) => (
-              <>
-                <TextFieldWrapper>
-                  <Text>{capitalizeFirstLetter(key)}</Text>
-                  <TextInput
-                    id="item-name"
-                    maxLength={50}
-                    name={key}
-                    placeholder={required ? 'Required' : 'Optional'}
-                    rules={{
-                      ...(required ? requiredRule : {}),
-                    }}
-                  />
-                </TextFieldWrapper>
-              </>
+              <TextFieldWrapper key={key}>
+                <Text>{capitalizeFirstLetter(key)}</Text>
+                <TextInput
+                  id="item-name"
+                  maxLength={50}
+                  name={key}
+                  placeholder={required ? 'Required' : 'Optional'}
+                  rules={{
+                    ...(required
+                      ? {
+                          ...requiredRule,
+                          pattern: {
+                            message: 'Please avoid special characters and spaces',
+                            value: noSpaceAttributePattern,
+                          },
+                        }
+                      : {}),
+                  }}
+                />
+              </TextFieldWrapper>
             ))}
           </Flex>
         )}

@@ -1,17 +1,15 @@
 import { JSX, useEffect, useState } from 'react'
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
-import * as sphinx from 'sphinx-bridge'
 import { BaseModal, ModalKind } from '~/components/Modal'
+import { RequiredPropertiesStep } from '~/components/ModalsContainer/ChangeNodeTypeModal/RequiredPropertiesStep'
 import { NODE_ADD_ERROR } from '~/constants'
-import { api } from '~/network/api'
-import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
+import { changeNodeType, getTopicsData } from '~/network/fetchSourcesData'
+import { useSelectedNode } from '~/stores/useDataStore'
 import { useModal } from '~/stores/useModalStore'
-import { NodeExtended, SubmitErrRes } from '~/types'
-import { executeIfProd, getLSat } from '~/utils'
+import { NodeExtended, Topic } from '~/types'
 import { CreateConfirmation } from './CreateConfirmationStep'
 import { MapPropertiesStep } from './MapPropertiesStep'
 import { SourceTypeStep } from './SourceTypeStep'
-import { RequiredPropertiesStep } from '~/components/ModalsContainer/ChangeNodeTypeModal/RequiredPropertiesStep'
 
 export type FormData = {
   typeName: string
@@ -21,112 +19,90 @@ export type FormData = {
 } & Partial<{ [k: string]: string }>
 
 export type MapNodeTypeModalStepID = 'sourceType' | 'requiredProperties' | 'createConfirmation' | 'mapProperties'
+export type SelectedValues = { [key: string]: string }
 
 const handleSubmitForm = async (
-  data: FieldValues,
-  onAddNewData: (value: FieldValues, id: string) => void,
+  requiredFieldsData: FieldValues,
+  nodeType: string,
+  selectedValues: SelectedValues,
+  selectedNode: NodeExtended | null,
 ): Promise<void> => {
-  if (data.nodeType === 'Create custom type') {
-    const body: { [index: string]: unknown } = {}
+  const swappedValues: SelectedValues = {}
 
-    body.type = data.type
+  const propertiesToBeDeleted: string[] = []
 
-    try {
-      const res: SubmitErrRes = await api.post(`/${'schema'}`, JSON.stringify(data), {})
-
-      if (res.error) {
-        const { message } = res.error
-
-        throw new Error(message)
-      }
-
-      onAddNewData(data, res?.data?.ref_id)
-      // eslint-disable-next-line no-restricted-globals
-      close()
-
-      // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-    } catch (err: any) {
-      let errorMessage = NODE_ADD_ERROR
-
-      if (err.status === 400) {
-        const error = await err.json()
-
-        errorMessage = error.errorCode || error?.status || NODE_ADD_ERROR
-      } else if (err instanceof Error) {
-        errorMessage = err.message
-      }
-
-      throw new Error(errorMessage)
-    }
-  } else {
-    const endPoint = 'node'
-
-    const { nodeType, typeName, ...nodeData } = data
-
-    const body: { [index: string]: unknown } = {
-      node_data: { ...nodeData },
-      node_type: nodeType,
-      name: typeName,
+  Object.entries(selectedValues).forEach(([key, value]) => {
+    if (value !== 'none') {
+      swappedValues[value] = key
     }
 
-    if (data.nodeType === 'Image') {
-      body.node_data = {
-        ...data.node_data,
-        source_link: data.sourceLink,
-      }
+    if (key !== value) {
+      propertiesToBeDeleted.push(key)
     }
+  })
 
-    let lsatToken = ''
+  const properties: { [key: string]: unknown } = {}
 
-    // skipping this for end to end test because it requires a sphinx-relay to be connected
-    await executeIfProd(async () => {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      const enable = await sphinx.enable()
+  Object.keys(selectedNode || {}).forEach((selectedNodeKey) => {
+    const selectedNodeValue = selectedNode?.[selectedNodeKey as keyof NodeExtended]
 
-      body.pubkey = enable?.pubkey
-
-      lsatToken = await getLSat()
+    Object.entries(swappedValues).forEach(([key, value]) => {
+      if (value === selectedNodeKey) {
+        properties[swappedValues[key]] = selectedNodeValue as string
+      }
     })
+  })
 
-    try {
-      const res: SubmitErrRes = await api.post(`/${endPoint}`, JSON.stringify(body), {
-        Authorization: lsatToken,
-      })
-
-      if (res.error) {
-        const { message } = res.error
-
-        throw new Error(message)
-      }
-
-      onAddNewData(data, res?.data?.ref_id)
-
-      // eslint-disable-next-line no-restricted-globals
-      close()
-
-      // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-    } catch (err: any) {
-      let errorMessage = NODE_ADD_ERROR
-
-      if (err.status === 400) {
-        try {
-          const errorRes = await err.json()
-
-          errorMessage = errorRes.message || errorRes.errorCode || errorRes?.status || NODE_ADD_ERROR
-        } catch (parseError) {
-          errorMessage = NODE_ADD_ERROR
-        }
-      } else if (err instanceof Error) {
-        errorMessage = err.message
-      }
-
-      throw new Error(errorMessage)
+  Object.keys(requiredFieldsData).forEach((key) => {
+    if (key !== 'nodeType') {
+      properties[key] = requiredFieldsData[key]
     }
+  })
+
+  const body: { [index: string]: unknown } = {
+    node_type: nodeType,
+    properties,
+    properties_to_be_deleted: propertiesToBeDeleted,
+  }
+
+  try {
+    let id = selectedNode?.ref_id
+
+    if (selectedNode?.type === 'topic') {
+      const { data } = await getTopicsData({ search: selectedNode?.name })
+
+      const node = data.find((i: Topic) => i.name === selectedNode.name)
+
+      id = node?.ref_id as string
+    }
+
+    const refId = id || selectedNode?.ref_id
+
+    if (refId) {
+      await changeNodeType(refId, body)
+    }
+
+    // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+  } catch (err: any) {
+    console.log(err)
+
+    let errorMessage = NODE_ADD_ERROR
+
+    if (err.status === 400) {
+      try {
+        const errorRes = await err.json()
+
+        errorMessage = errorRes.message || errorRes.errorCode || errorRes?.status || NODE_ADD_ERROR
+      } catch (parseError) {
+        errorMessage = NODE_ADD_ERROR
+      }
+    } else if (err instanceof Error) {
+      errorMessage = err.message
+    }
+
+    throw new Error(errorMessage)
   }
 }
-
-export type SelectedValues = { [key: string]: string }
 
 export const ChangeNodeTypeModal = () => {
   const [stepId, setStepId] = useState<MapNodeTypeModalStepID>('sourceType')
@@ -138,7 +114,6 @@ export const ChangeNodeTypeModal = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [error, setError] = useState<string>('')
 
-  const [addNewNode, setSelectedNode] = useDataStore((s) => [s.addNewNode, s.setSelectedNode])
   const [selectedValues, setSelectedValues] = useState<SelectedValues>({})
 
   useEffect(
@@ -167,37 +142,15 @@ export const ChangeNodeTypeModal = () => {
     setStepId(step)
   }
 
-  const onAddNewNode = (data: FieldValues, id: string) => {
-    const newId = id || `new-id-${Math.random()}`
-    const newType = data.nodeType.toLocaleLowerCase()
-
-    const node: NodeExtended = {
-      name: data.typeName,
-      type: newType,
-      label: data.typeName,
-      node_type: newType,
-      id: newId,
-      ref_id: newId,
-      x: Math.random(),
-      y: Math.random(),
-      z: Math.random(),
-      date: parseInt((new Date().getTime() / 1000).toFixed(0), 10),
-      weight: 4,
-      ...(data.sourceLink ? { source_link: data.sourceLink } : {}),
-    }
-
-    addNewNode(node)
-
-    setSelectedNode(node)
-  }
-
   const onSubmit = form.handleSubmit(async (data) => {
     try {
-      await handleSubmitForm(data, onAddNewNode)
+      await handleSubmitForm(data, nodeType, selectedValues, selectedNode)
       handleClose()
       // eslint-disable-next-line  @typescript-eslint/no-explicit-any
     } catch (err: any) {
       let errorMessage = NODE_ADD_ERROR
+
+      handleClose()
 
       if (err?.status === 400) {
         const errorRes = await err.json()
