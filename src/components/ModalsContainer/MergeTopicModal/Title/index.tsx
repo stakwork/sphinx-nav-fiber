@@ -122,6 +122,7 @@ const StyledLabel = styled.label`
   line-height: 18px;
   letter-spacing: 0.01em;
   text-align: left;
+  margin-bottom: 6px;
 `
 
 const ToLabel = styled.label`
