@@ -5,7 +5,7 @@ describe('See latest button as new node are added', () => {
     // add tweet node
     cy.fixture('trendingTopics.json').then(async (data) => {
       //   await addTweetNodeToJarvisBackend(data)
-      for (let i = 0; i < data.length; i+=1) {
+      for (let i = 0; i < data.length; i += 1) {
         let newDate
         const date = new Date()
 
@@ -48,11 +48,17 @@ describe('See latest button as new node are added', () => {
         expect(query.media_type).to.equal('twitter')
       })
 
+      cy.wait(3000)
+
       cy.get('#search-result-list').children().first().click()
+
+      cy.wait(3000)
 
       cy.get('[data-testid="sidebar-sub-view"]').should('have.css', 'position', 'relative')
 
       cy.get('[data-testid="close-sidebar-sub-view"]').click()
+
+      cy.wait(1000)
 
       cy.get('[data-testid="sidebar-sub-view"]').should('have.css', 'position', 'absolute')
     })
