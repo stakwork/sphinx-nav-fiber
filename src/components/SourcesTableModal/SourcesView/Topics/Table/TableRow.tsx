@@ -104,7 +104,7 @@ const TableRowComponent: FC<TTableRaw> = ({
       </StyledTableCell>
       <StyledTableCell>{topic.node_type}</StyledTableCell>
       <StyledTableCell>
-        <CountWrapper>{topic.edgeCount}</CountWrapper>
+        <CountEdgeWrapper>{topic.edgeCount}</CountEdgeWrapper>
       </StyledTableCell>
       <StyledTableCell>
         <Popover
@@ -232,7 +232,7 @@ const Checkmark = styled.div`
   background-color: transparent;
 `
 
-const CountWrapper = styled.span`
+const CountEdgeWrapper = styled.span`
   display: flex;
   align-items: center;
   justify-content: center;
