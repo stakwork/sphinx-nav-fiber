@@ -8,9 +8,9 @@ const LazyApp = lazy(() => import('../App').then(({ App }) => ({ default: App })
 const LazyAppNew = lazy(() => import('../AppNew').then(({ AppNew }) => ({ default: AppNew })))
 
 export const AppContainer = () => {
-  const [v2Flag] = useFeatureFlagStore((s) => [s.v2Flag])
+  const [v2FeatureFlag] = useFeatureFlagStore((s) => [s.v2FeatureFlag])
 
-  const App = v2Flag ? <LazyAppNew /> : <LazyApp />
+  const App = v2FeatureFlag ? <LazyAppNew /> : <LazyApp />
 
   return (
     <AppProviders>

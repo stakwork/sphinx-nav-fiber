@@ -179,7 +179,7 @@ export const AddItemModal = () => {
     try {
       await handleSubmitForm(data, handleClose, setBudget, onAddNewNode)
     } catch {
-      console.log(NODE_ADD_ERROR)
+      console.error(NODE_ADD_ERROR)
     } finally {
       setLoading(false)
     }

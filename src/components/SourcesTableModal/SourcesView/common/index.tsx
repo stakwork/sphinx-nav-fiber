@@ -8,7 +8,7 @@ export const StyledTableCell = styled(TableCell)`
   && {
     color: ${colors.white};
     border: none;
-    padding: 6px 2px 6px 0;
+    padding: 6px 2px 6px 7px;
     color: ${colors.GRAY3};
     font-family: Barlow;
     font-size: 14px;
@@ -93,5 +93,24 @@ export const Heading = styled(Flex)`
   padding: 0 36px;
   ${Text} {
     margin-bottom: 0;
+  }
+`
+
+export const ActionStyledTableHead = styled(TableHead)`
+  && {
+    border-bottom: 1px solid ${colors.black};
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background-color: ${colors.BG1};
+  }
+
+  ${StyledTableCell} {
+    color: ${colors.white};
+  }
+
+  ${StyledTableCell}.empty {
+    width: 0;
+    padding: 0;
   }
 `

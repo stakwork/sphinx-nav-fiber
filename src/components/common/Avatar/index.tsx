@@ -12,7 +12,7 @@ type TTypeMapper = {
 }
 
 const TypesMapper: TTypeMapper = {
-  youtube: 'video',
+  video: 'video',
   podcast: 'audio',
   episode: 'audio',
   clip: 'audio',
@@ -27,7 +27,8 @@ const TypesMapper: TTypeMapper = {
 export const Avatar = styled.div<Props>`
   background-image: ${({ src, type = 'audio' }) =>
     `url(${src}), url('/${TypesMapper[type] || 'generic'}_placeholder_img.png')`};
-  background-size: contain;
+  background-size: cover;
+  background-position: center;
   background-repeat: no-repeat;
   width: ${({ size = 45 }) => size}px;
   height: ${({ size = 45 }) => size}px;

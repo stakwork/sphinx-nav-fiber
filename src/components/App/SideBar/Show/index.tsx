@@ -42,7 +42,7 @@ const Header = styled(Flex)`
 `
 
 const EpisodeHeaderText = styled(Text)`
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 700;
   max-width: 250px;
   -webkit-box-orient: vertical;
@@ -52,6 +52,7 @@ const EpisodeHeaderText = styled(Text)`
   text-overflow: ellipsis;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  margin-bottom: 26px;
 `
 
 const ScrollableList = styled.div`
@@ -107,7 +108,7 @@ export const Show = () => {
           </Flex>
           <Flex direction="column">
             <Flex direction="column" grow={1} justify="space-between">
-              <Flex align="center" direction="row" justify="flex-start" mb={16}>
+              <Flex align="center" direction="row" justify="flex-start">
                 <TypeBadge type="show" />{' '}
                 <div className="subtitle">by {showHost.join(', ') || selectedNode?.show_title}</div>
               </Flex>

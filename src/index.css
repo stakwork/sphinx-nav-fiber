@@ -67,8 +67,8 @@ body {
   z-index: 0;
 }
 
-* {
-  scrollbar-width: 3px;
+*:root {
+  --scrollbar-color: #ffffff33;
 }
 
 /* Works on Chrome, Edge, and Safari */
@@ -80,8 +80,15 @@ body {
 
 *::-webkit-scrollbar-thumb {
   background-clip: padding-box;
-  background-color: rgba(255, 255, 255, 0.2);
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--scrollbar-color);
   width: 8px;
   border-radius: 0px;
+}
+
+/* Works on firefox */
+@-moz-document url-prefix() {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar-color) transparent;
+  }
 }

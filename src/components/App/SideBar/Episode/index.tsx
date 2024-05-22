@@ -58,6 +58,14 @@ export const Episode = () => {
 
       if (playingNode && timestamp.link && playingNode?.link !== timestamp.link) {
         setPlayingNodeLink(timestamp.link)
+        setPlayingTime(0)
+        setIsSeeking(true)
+      } else if (!playingNode || playingNode?.link !== timestamp.link) {
+        if (timestamp.link !== undefined) {
+          setPlayingNodeLink(timestamp.link)
+          setPlayingTime(0)
+          setIsSeeking(true)
+        }
       }
 
       setPlayingTime(newTime)
@@ -139,7 +147,7 @@ const Wrapper = styled(Flex)`
 
 const StyledSlide = styled(Slide)`
   && {
-    position: absolute;
+    position: sticky;
     left: 0;
     right: 0;
     bottom: 0;

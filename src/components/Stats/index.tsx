@@ -1,12 +1,13 @@
 import { noop } from 'lodash'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import styled from 'styled-components'
+import { Tooltip } from '~/components/common/ToolTip'
 import AudioIcon from '~/components/Icons/AudioIcon'
 import BudgetIcon from '~/components/Icons/BudgetIcon'
 import NodesIcon from '~/components/Icons/NodesIcon'
 import TwitterIcon from '~/components/Icons/TwitterIcon'
 import VideoIcon from '~/components/Icons/VideoIcon'
-import { getStats, TStatParams } from '~/network/fetchSourcesData'
+import { getStats, getTotalProcessing, TStatParams } from '~/network/fetchSourcesData'
 import { useDataStore } from '~/stores/useDataStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { TStats } from '~/types'
@@ -15,6 +16,8 @@ import { colors } from '~/utils/colors'
 import { Flex } from '../common/Flex'
 import DocumentIcon from '../Icons/DocumentIcon'
 import EpisodeIcon from '../Icons/EpisodeIcon'
+import { Animation } from './Animation'
+import { useModal } from '~/stores/useModalStore'
 
 interface StatConfigItem {
   name: string
@@ -22,6 +25,7 @@ interface StatConfigItem {
   key: keyof TStats
   dataKey: keyof TStatParams
   mediaType: string
+  tooltip: string
 }
 
 export const StatsConfig: StatConfigItem[] = [
@@ -31,6 +35,7 @@ export const StatsConfig: StatConfigItem[] = [
     key: 'numNodes',
     dataKey: 'num_nodes',
     mediaType: '',
+    tooltip: 'All Nodes',
   },
   {
     name: 'Episodes',
@@ -38,6 +43,7 @@ export const StatsConfig: StatConfigItem[] = [
     key: 'numEpisodes',
     dataKey: 'num_episodes',
     mediaType: 'episode',
+    tooltip: 'Episodes',
   },
   {
     name: 'Audio',
@@ -45,6 +51,7 @@ export const StatsConfig: StatConfigItem[] = [
     key: 'numAudio',
     dataKey: 'num_audio',
     mediaType: 'audio',
+    tooltip: 'Audios',
   },
   {
     name: 'Video',
@@ -52,6 +59,7 @@ export const StatsConfig: StatConfigItem[] = [
     key: 'numVideo',
     dataKey: 'num_video',
     mediaType: 'video',
+    tooltip: 'Videos',
   },
   {
     name: 'Twitter Spaces',
@@ -59,6 +67,7 @@ export const StatsConfig: StatConfigItem[] = [
     key: 'numTwitterSpace',
     dataKey: 'num_tweet',
     mediaType: 'twitter',
+    tooltip: 'Posts',
   },
   {
     name: 'Document',
@@ -66,15 +75,45 @@ export const StatsConfig: StatConfigItem[] = [
     key: 'numDocuments',
     dataKey: 'num_documents',
     mediaType: 'document',
+    tooltip: 'Documents',
   },
 ]
 
 export const Stats = () => {
+  const [isTotalProcessing, setIsTotalProcessing] = useState(false)
+  const [totalProcessing, setTotalProcessing] = useState(0)
   const [budget, setBudget] = useUserStore((s) => [s.budget, s.setBudget])
-  const [stats, setStats, fetchData] = useDataStore((s) => [s.stats, s.setStats, s.fetchData])
+
+  const [stats, setStats, fetchData, setSelectedNode] = useDataStore((s) => [
+    s.stats,
+    s.setStats,
+    s.fetchData,
+    s.setSelectedNode,
+  ])
+
+  const { open: openSourcesModal } = useModal('sourcesTable')
+
+  const fetchProcessingData = async () => {
+    try {
+      const response = await getTotalProcessing()
+
+      if (response.totalProcessing && response.totalProcessing > 0) {
+        setIsTotalProcessing(true)
+        setTotalProcessing(response.totalProcessing)
+      } else {
+        setIsTotalProcessing(false)
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error)
+
+      setIsTotalProcessing(false)
+    }
+  }
 
   function handleStatClick(mediaType: string) {
     fetchData(setBudget, { ...(mediaType ? { media_type: mediaType } : {}), skip_cache: 'true' })
+
+    setSelectedNode(null)
   }
 
   useEffect(() => {
@@ -98,6 +137,11 @@ export const Stats = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setStats, stats])
 
+  useEffect(() => {
+    fetchProcessingData()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   if (!stats) {
     return null
   }
@@ -105,11 +149,13 @@ export const Stats = () => {
   return (
     <StatisticsContainer>
       <StatisticsWrapper>
-        {StatsConfig.map(({ name, icon, key, mediaType }) =>
+        {StatsConfig.map(({ name, icon, key, mediaType, tooltip }) =>
           stats[key as keyof TStats] !== '0' ? (
             <Stat key={name} data-testid={mediaType} onClick={() => handleStatClick(mediaType)}>
-              <div className="icon">{icon}</div>
-              <div className="text">{stats[key as keyof TStats]}</div>
+              <Tooltip content={tooltip} margin="13px">
+                <div className="icon">{icon}</div>
+                <div className="text">{stats[key as keyof TStats]}</div>
+              </Tooltip>
             </Stat>
           ) : (
             <></>
@@ -117,15 +163,27 @@ export const Stats = () => {
         )}
       </StatisticsWrapper>
       <StatisticsBudget>
+        {isTotalProcessing ? (
+          <ViewContent data-testid="view-content" onClick={openSourcesModal}>
+            <div className="icon" style={{ marginLeft: '7px' }}>
+              <Animation />
+            </div>
+            <div className="text">
+              <p>{totalProcessing}</p>
+            </div>
+          </ViewContent>
+        ) : null}
         <Budget>
-          <div className="icon">
-            <BudgetIcon />
-          </div>
-          <div className="text">
-            <p>
-              {`${formatBudget(budget)} `} <span className="budgetUnit">SAT</span>
-            </p>
-          </div>
+          <Tooltip content="Budget" margin="18px">
+            <div className="icon">
+              <BudgetIcon />
+            </div>
+            <div className="text">
+              <p>
+                {`${formatBudget(budget)} `} <span className="budgetUnit">SAT</span>
+              </p>
+            </div>
+          </Tooltip>
         </Budget>
       </StatisticsBudget>
     </StatisticsContainer>
@@ -220,10 +278,50 @@ const Budget = styled(Flex).attrs({
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-right: 10px;
   }
 
   .budgetUnit {
     color: ${colors.GRAY6};
+  }
+
+  .text {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+`
+
+const ViewContent = styled(Flex).attrs({
+  align: 'center',
+  direction: 'row',
+})`
+  margin-right: 10px;
+  display: flex;
+  height: 28px;
+  padding: 0.75rem 0.6375rem 0.75rem 0.3187rem;
+  align-items: center;
+  gap: 4px;
+  color: ${colors.white};
+  background: ${colors.modalShield};
+  font-family: Barlow;
+  font-size: 0.75rem;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  letter-spacing: 0.0075rem;
+  border-radius: 12.5rem;
+
+  &:active {
+    background: ${colors.BUTTON1};
+  }
+
+  .icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
   }
 
   .text {

@@ -60,7 +60,6 @@ const Wrapper = styled(Flex)(({ theme }) => ({
   margin: '64px auto 20px 10px',
   borderRadius: '16px',
   zIndex: 29,
-  overflow: 'hidden',
   [theme.breakpoints.up('sm')]: {
     width: '390px',
   },
@@ -84,6 +83,8 @@ const CloseButton = styled(Flex)`
 
 const ScrollWrapper = styled(Flex)`
   flex: 1 1 100%;
+  border-radius: 16px;
+  overflow: hidden;
 `
 
 const CollapseButton = styled(Flex).attrs({

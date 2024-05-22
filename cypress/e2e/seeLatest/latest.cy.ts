@@ -2,10 +2,10 @@ describe('See latest button as new node are added', () => {
   it('See latest as nodes are being added', () => {
     cy.initialSetup('carol', 300)
 
-    //add tweet node
+    // add tweet node
     cy.fixture('trendingTopics.json').then(async (data) => {
       //   await addTweetNodeToJarvisBackend(data)
-      for (let i = 0; i < data.length; i++) {
+      for (let i = 0; i < data.length; i+=1) {
         let newDate
         const date = new Date()
 
@@ -13,9 +13,11 @@ describe('See latest button as new node are added', () => {
           newDate = date.toISOString()
         } else {
           const formatDate = new Date(date)
+
           formatDate.setDate(date.getDate() - 3)
           newDate = formatDate.toISOString()
         }
+
         cy.request('POST', 'http://localhost:8444/v1/tweet', { ...data[i], newDate })
       }
 

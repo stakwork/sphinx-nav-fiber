@@ -13,7 +13,7 @@ import { colors } from '~/utils/colors'
 export const SelectWithPopover = () => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null)
   const { sidebarFilter, setSidebarFilter, sidebarFilterCounts } = useDataStore((s) => s)
-  const currentFilter = sidebarFilter === 'undefined' ? 'Other' : sidebarFilter
+  const currentFilter = sidebarFilter === 'undefined' ? '' : sidebarFilter.toLowerCase()
   const currentFilterCount = sidebarFilterCounts.find((f) => f.name === currentFilter)?.count || 0
 
   const capitalizeFirstLetter = (text: string): string => {
@@ -64,16 +64,21 @@ export const SelectWithPopover = () => {
         }}
       >
         <FormControl>
-          {sidebarFilterCounts.map(({ name, count }) => (
-            <MenuItem
-              key={name}
-              className={clsx({ active: name === sidebarFilter })}
-              onClick={() => handleSelectChange(name)}
-            >
-              <span className="icon">{name === sidebarFilter ? <CheckIcon /> : null}</span>
-              <span>{`${capitalizeFirstLetter(name)} (${count})`}</span>
-            </MenuItem>
-          ))}
+          {sidebarFilterCounts
+            .filter(({ name }) => name)
+            .map(({ name, count }) => (
+              <MenuItem
+                key={name}
+                className={clsx({ active: name === sidebarFilter })}
+                onClick={(e) => {
+                  e.preventDefault()
+                  handleSelectChange(name)
+                }}
+              >
+                <span className="icon">{name === sidebarFilter ? <CheckIcon /> : null}</span>
+                <span>{`${capitalizeFirstLetter(name)} (${count})`}</span>
+              </MenuItem>
+            ))}
         </FormControl>
       </StyledPopover>
     </div>

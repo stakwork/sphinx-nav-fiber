@@ -133,7 +133,7 @@ const StyledInput = styled(InputBase)`
     border-radius: 6px;
     pointer-events: auto;
     background-color: ${colors.BG2};
-    padding: 0px 8px 0px 16px !important;
+    padding: 0px 34px 0px 16px !important;
     box-shadow: 0px 1px 6px rgba(0, 0, 0, 0.1);
 
     &:focus,

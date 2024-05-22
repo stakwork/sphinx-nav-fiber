@@ -52,7 +52,7 @@ function a11yProps(index: number) {
 export const SourcesView = () => {
   const [value, setValue] = React.useState(0)
   const [isAdmin] = useUserStore((s) => [s.isAdmin])
-  const [queuedSourcesFlag] = useFeatureFlagStore((s) => [s.queuedSourcesFlag])
+  const [queuedSourcesFeatureFlag] = useFeatureFlagStore((s) => [s.queuedSourcesFeatureFlag])
   const sphinxEnabled = isSphinx()
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -65,7 +65,7 @@ export const SourcesView = () => {
     }
 
     if (label === QUEUED_SOURCES) {
-      return isAdmin && queuedSourcesFlag
+      return isAdmin && queuedSourcesFeatureFlag
     }
 
     if (label === VIEW_CONTENT) {
@@ -124,9 +124,33 @@ const TabPanelWrapper = styled(Flex)`
   min-height: 572px;
   padding: 20px 0;
   max-height: 572px;
+  overflow: auto;
+
+  @media (max-width: 1024px) {
+    width: 100%;
+    min-height: 400px;
+    max-height: 400px;
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
+    min-height: 300px;
+    max-height: 300px;
+  }
+
+  @media (max-width: 480px) {
+    width: 100%;
+    min-height: 250px;
+    max-height: 250px;
+  }
 `
 
 const Wrapper = styled(Flex)`
   min-height: 0;
   flex: 1;
+  overflow: hidden;
+
+  @media (max-width: 768px) {
+    padding: 3px;
+  }
 `

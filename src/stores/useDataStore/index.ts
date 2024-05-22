@@ -154,13 +154,11 @@ export const useDataStore = create<DataStore>()(
         await saveSearchTerm()
       }
 
-      const sidebarFilters = ['all', ...new Set(data.nodes.map((i) => i.node_type || 'Other'))]
+      const sidebarFilters = ['all', ...new Set(data.nodes.map((i) => (i.node_type || '').toLowerCase()))]
 
       const sidebarFilterCounts = sidebarFilters.map((filter) => ({
         name: filter,
-        count: data.nodes.filter(
-          (node) => filter === 'all' || node.node_type === filter || (!node.node_type && filter === 'Other'),
-        ).length,
+        count: data.nodes.filter((node) => filter === 'all' || node.node_type?.toLowerCase() === filter).length,
       }))
 
       set({
@@ -280,9 +278,7 @@ export const useFilteredNodes = () =>
       return s.data?.nodes || []
     }
 
-    return (s.data?.nodes || []).filter((i) =>
-      s.sidebarFilter === 'Other' ? !i.node_type : i.node_type === s.sidebarFilter,
-    )
+    return (s.data?.nodes || []).filter((i) => i.node_type?.toLowerCase() === s.sidebarFilter.toLowerCase())
   })
 
 export const useUpdateGraphData = () => {
