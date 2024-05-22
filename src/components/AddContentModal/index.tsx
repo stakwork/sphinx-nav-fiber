@@ -4,7 +4,6 @@ import * as sphinx from 'sphinx-bridge'
 import { BaseModal } from '~/components/Modal'
 import {
   DOCUMENT,
-  isE2E,
   LINK,
   NODE_ADD_ERROR,
   RSS,
@@ -12,6 +11,7 @@ import {
   TWITTER_SOURCE,
   WEB_PAGE,
   YOUTUBE_CHANNEL,
+  isE2E,
 } from '~/constants'
 import { api } from '~/network/api'
 import { useModal } from '~/stores/useModalStore'
@@ -130,7 +130,7 @@ const handleSubmitForm = async (
         try {
           const errorRes = await err.json()
 
-          errorMessage = errorRes.message || NODE_ADD_ERROR
+          errorMessage = errorRes.message || errorRes.errorCode || NODE_ADD_ERROR
         } catch (parseError) {
           errorMessage = NODE_ADD_ERROR
         }
