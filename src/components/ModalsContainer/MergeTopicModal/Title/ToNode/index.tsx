@@ -10,12 +10,12 @@ import { getEdges } from '~/network/fetchSourcesData'
 import { FetchEdgesResponse, TEdge } from '~/types'
 
 type Props = {
+  topicId: string
   onSelect: (topic: TEdge | null) => void
   selectedValue: TEdge | null
-  topicId: string
 }
 
-export const ToNode: FC<Props> = ({ onSelect, selectedValue, topicId }) => {
+export const ToNode: FC<Props> = ({ topicId, onSelect, selectedValue }) => {
   const [options, setOptions] = useState<TEdge[]>([])
   const [optionsIsLoading, setOptionsIsLoading] = useState(false)
 
