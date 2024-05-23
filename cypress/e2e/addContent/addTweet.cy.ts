@@ -8,6 +8,8 @@ describe('Add Tweet Content', () => {
     }).as('addTweet')
 
     cy.get('[data-testid="add-content-modal"]').click()
+
+    cy.get('#addContent').should('exist')
     cy.get('[id="cy-youtube-channel-id"]').type('https://twitter.com/ijbguy/status/1771096005162729663')
     cy.get('[data-testid="add-content-btn"]').click()
     cy.get('[data-testid="skip-location-btn"').click()
@@ -16,5 +18,6 @@ describe('Add Tweet Content', () => {
     cy.wait('@addTweet')
     cy.wait(5500) // This is because add source is currently skipped,
     cy.get('.Toastify__toast-body').should('have.text', 'Content Added')
+    cy.get('#addContent').should('not.exist')
   })
 })
