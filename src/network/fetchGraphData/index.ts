@@ -64,9 +64,11 @@ export const fetchGraphData = async (
   graphStyle: 'split' | 'force' | 'sphere' | 'earth',
   setBudget: (value: number | null) => void,
   params: FetchNodeParams,
+  signal: AbortSignal,
+  setAbortRequests: (status: boolean) => void,
 ) => {
   try {
-    return getGraphData(graphStyle, setBudget, params)
+    return getGraphData(graphStyle, setBudget, params, signal, setAbortRequests)
   } catch (e) {
     return defaultData
   }
@@ -75,6 +77,8 @@ export const fetchGraphData = async (
 const fetchNodes = async (
   setBudget: (value: number | null) => void,
   params: FetchNodeParams,
+  signal: AbortSignal,
+  setAbortRequests: (status: boolean) => void,
 ): Promise<FetchDataResponse> => {
   const args = new URLSearchParams({
     ...(isDevelopment ? { free: 'true' } : {}),
@@ -83,18 +87,23 @@ const fetchNodes = async (
 
   if (!params.word) {
     try {
-      const response = await api.get<FetchDataResponse>(`/prediction/content/latest?${args}`)
+      const response = await api.get<FetchDataResponse>(`/prediction/content/latest?${args}`, undefined, signal)
 
       return response
-    } catch (e) {
+      // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+    } catch (e: any) {
       console.error(e)
+
+      if (e?.message === 'signal is aborted without reason') {
+        setAbortRequests(true)
+      }
 
       return mock as FetchDataResponse
     }
   }
 
   if (isDevelopment && !isE2E) {
-    const response = await api.get<FetchDataResponse>(`/v2/search?${args}`)
+    const response = await api.get<FetchDataResponse>(`/v2/search?${args}`, undefined, signal)
 
     return response
   }
@@ -102,9 +111,13 @@ const fetchNodes = async (
   const lsatToken = await getLSat()
 
   try {
-    const response = await api.get<FetchDataResponse>(`/v2/search?${args}`, {
-      Authorization: lsatToken,
-    })
+    const response = await api.get<FetchDataResponse>(
+      `/v2/search?${args}`,
+      {
+        Authorization: lsatToken,
+      },
+      signal,
+    )
 
     return response
     // eslint-disable-next-line  @typescript-eslint/no-explicit-any
@@ -112,7 +125,7 @@ const fetchNodes = async (
     if (error.status === 402) {
       await payLsat(setBudget)
 
-      return fetchNodes(setBudget, params)
+      return fetchNodes(setBudget, params, signal, setAbortRequests)
     }
 
     throw error
@@ -348,9 +361,11 @@ const getGraphData = async (
   graphStyle: 'split' | 'force' | 'sphere' | 'earth',
   setBudget: (value: number | null) => void,
   params: FetchNodeParams,
+  signal: AbortSignal,
+  setAbortRequests: (status: boolean) => void,
 ) => {
   try {
-    const dataInit = await fetchNodes(setBudget, params)
+    const dataInit = await fetchNodes(setBudget, params, signal, setAbortRequests)
 
     return formatFetchNodes(dataInit, params?.word || '', graphStyle)
   } catch (e) {

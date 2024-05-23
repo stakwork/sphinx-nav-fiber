@@ -7,7 +7,8 @@ describe('Add Webpage Content', () => {
       url: 'http://localhost:8444/api/add_node*',
     }).as('addWebpage')
 
-    http: cy.get('[data-testid="add-content-modal"]').click()
+    cy.get('[data-testid="add-content-modal"]').click()
+    cy.get('#addContent').should('exist')
     cy.get('[id="cy-youtube-channel-id"]').type('https://www.netflix.com/browse')
     cy.wait(1000)
     cy.get('[data-testid="add-content-btn"]').should('not.be.disabled').click()
@@ -16,5 +17,6 @@ describe('Add Webpage Content', () => {
 
     cy.wait('@addWebpage')
     cy.get('.Toastify__toast-body').should('have.text', 'Content Added')
+    cy.get('#addContent').should('not.exist')
   })
 })
