@@ -60,9 +60,20 @@ export const BriefDescription: FC<Props> = ({ trend, onClose, selectTrending }) 
   }
 
   useEffect(() => {
+    const audioElement = audioRef.current
+    const onAudioPlaybackComplete = () => setIsPlaying(false)
+
+    if (audioElement) {
+      audioElement.addEventListener('ended', onAudioPlaybackComplete)
+    }
+
     window.addEventListener('keydown', handleClose)
 
     return () => {
+      if (audioElement) {
+        audioElement.removeEventListener('ended', onAudioPlaybackComplete)
+      }
+
       window.removeEventListener('keydown', handleClose)
     }
   }, [handleClose])

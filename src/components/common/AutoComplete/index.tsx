@@ -108,7 +108,15 @@ export const AutoComplete: FC<Props> = ({
         )}
         renderOption={(props, option) => (
           <li {...props}>
-            <Flex align="center" direction="row" grow={1} justify="space-between" onClick={option?.action} shrink={1}>
+            <Flex
+              align="center"
+              data-testid={option.label}
+              direction="row"
+              grow={1}
+              justify="space-between"
+              onClick={option?.action}
+              shrink={1}
+            >
               <div className="option">{option.label !== '' ? option.label : 'Not Selected'}</div>
               {option?.type && <TypeBadge type={option.type} />}
             </Flex>
