@@ -105,7 +105,7 @@ jobs:
 
       - name: See boltwalllogs
         if: failure()
-        run: docker logs boltwall
+        run: docker logs boltwall.sphinx
 
       - name: Check the coverage value
         run: yarn test-coverage
