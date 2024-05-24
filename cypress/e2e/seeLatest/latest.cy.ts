@@ -5,7 +5,7 @@ describe('See latest button as new node are added', () => {
     // add tweet node
     cy.fixture('trendingTopics.json').then(async (data) => {
       //   await addTweetNodeToJarvisBackend(data)
-      for (let i = 0; i < data.length; i+=1) {
+      for (let i = 0; i < data.length; i += 1) {
         let newDate
         const date = new Date()
 
