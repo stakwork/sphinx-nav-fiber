@@ -17,9 +17,17 @@ export const AuthGuard = ({ children }: PropsWithChildren) => {
   const { splashDataLoading } = useDataStore((s) => s)
   const { setBudget, setIsAdmin, setPubKey, setIsAuthenticated } = useUserStore((s) => s)
 
-  const [setTrendingTopicsFeatureFlag, setQueuedSourcesFeatureFlag, setCustomSchemaFeatureFlag] = useFeatureFlagStore(
-    (s) => [s.setTrendingTopicsFeatureFlag, s.setQueuedSourcesFeatureFlag, s.setCustomSchemaFeatureFlag],
-  )
+  const [
+    setTrendingTopicsFeatureFlag,
+    setQueuedSourcesFeatureFlag,
+    setCustomSchemaFeatureFlag,
+    setRealtimeGraphFeatureFlag,
+  ] = useFeatureFlagStore((s) => [
+    s.setTrendingTopicsFeatureFlag,
+    s.setQueuedSourcesFeatureFlag,
+    s.setCustomSchemaFeatureFlag,
+    s.setRealtimeGraphFeatureFlag,
+  ])
 
   const handleAuth = useCallback(async () => {
     localStorage.removeItem('admin')
@@ -66,6 +74,7 @@ export const AuthGuard = ({ children }: PropsWithChildren) => {
         setTrendingTopicsFeatureFlag(res.data.trendingTopics)
         setQueuedSourcesFeatureFlag(res.data.queuedSources)
         setCustomSchemaFeatureFlag(res.data.customSchema)
+        setRealtimeGraphFeatureFlag(res.data.realtimeGraph || false)
       }
 
       setIsAuthenticated(true)
