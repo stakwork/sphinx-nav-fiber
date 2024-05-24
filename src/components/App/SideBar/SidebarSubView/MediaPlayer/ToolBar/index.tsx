@@ -1,11 +1,12 @@
 import { IconButton, Slider } from '@mui/material'
-import { FC } from 'react'
+import { FC, useState } from 'react'
 import styled from 'styled-components'
 import ExitFullScreen from '~/components/Icons/ExitFullScreen'
 import FullScreenIcon from '~/components/Icons/FullScreenIcon'
 import PauseIcon from '~/components/Icons/PauseIcon'
 import PlayIcon from '~/components/Icons/PlayIcon'
 import VolumeIcon from '~/components/Icons/VolumeIcon'
+import MuteVolumeIcon from '~/components/Icons/MuteVolumeIcon'
 import { Flex } from '~/components/common/Flex'
 import { colors } from '~/utils'
 import { secondsToMediaTime } from '~/utils/secondsToMediaTime'
@@ -32,47 +33,86 @@ export const Toolbar: FC<Props> = ({
   handleVolumeChange,
   onFullScreenClick,
   showToolbar,
-}) => (
-  <Flex>
-    {(!showToolbar || isFullScreen) && (
-      <ProgressSlider
-        aria-label="Small"
-        data-testid="progress-bar"
-        isFullScreen={isFullScreen}
-        max={duration}
-        onChange={handleProgressChange}
-        size="small"
-        value={playingTime}
-      />
-    )}
+}) => {
+  const [volume, setVolume] = useState<number>(0.5)
+  const [isMuted, setIsMuted] = useState<boolean>(false)
+  const [previousVolume, setPreviousVolume] = useState<number>(0.5)
 
-    <Wrapper align="center" direction="row" showToolbar={showToolbar || isFullScreen}>
-      <Action onClick={setIsPlaying} size="small">
-        {!isPlaying ? <PlayIcon /> : <PauseIcon />}
-      </Action>
-      <TimeStamp direction="row">
-        <span>{secondsToMediaTime(playingTime)}</span>
-        <span className="separator">/</span>
-        <span className="duration">{secondsToMediaTime(duration)}</span>
-      </TimeStamp>
-      <VolumeControl direction="row" px={9}>
-        <Slider
-          className="volume-slider"
-          defaultValue={0.5}
-          max={1}
-          min={0}
-          onChange={handleVolumeChange}
+  const volumeChangeHandler = (event: Event, value: number | number[]) => {
+    const newValue = Array.isArray(value) ? value[0] : value
+
+    setVolume(newValue)
+    handleVolumeChange(event, newValue)
+
+    if (isMuted) {
+      setIsMuted(false)
+    }
+  }
+
+  const toggleMute = () => {
+    if (isMuted) {
+      setVolume(previousVolume)
+      handleVolumeChange(new Event('input'), previousVolume)
+    } else {
+      setPreviousVolume(volume)
+      setVolume(0)
+      handleVolumeChange(new Event('input'), 0)
+    }
+
+    setIsMuted(!isMuted)
+  }
+
+  return (
+    <Flex>
+      {(!showToolbar || isFullScreen) && (
+        <ProgressSlider
+          aria-label="Small"
+          data-testid="progress-bar"
+          isFullScreen={isFullScreen}
+          max={duration}
+          onChange={handleProgressChange}
           size="small"
-          step={0.1}
+          value={playingTime}
         />
-        <VolumeIcon />
-      </VolumeControl>
-      <Fullscreen data-testid="fullscreen-button" onClick={() => onFullScreenClick()}>
-        {!isFullScreen ? <FullScreenIcon /> : <ExitFullScreen />}
-      </Fullscreen>
-    </Wrapper>
-  </Flex>
-)
+      )}
+
+      <Wrapper align="center" direction="row" showToolbar={showToolbar || isFullScreen}>
+        <Action onClick={setIsPlaying} size="small">
+          {!isPlaying ? <PlayIcon /> : <PauseIcon />}
+        </Action>
+        <TimeStamp direction="row">
+          <span>{secondsToMediaTime(playingTime)}</span>
+          <span className="separator">/</span>
+          <span className="duration">{secondsToMediaTime(duration)}</span>
+        </TimeStamp>
+        <VolumeControl direction="row" px={9}>
+          <Slider
+            className="volume-slider"
+            max={1}
+            min={0}
+            onChange={volumeChangeHandler}
+            size="small"
+            step={0.1}
+            value={volume}
+          />
+
+          <VolumeWrapper onClick={toggleMute}>
+            {isMuted ? (
+              <MuteVolumeWrapper>
+                <MuteVolumeIcon />
+              </MuteVolumeWrapper>
+            ) : (
+              <VolumeIcon />
+            )}
+          </VolumeWrapper>
+        </VolumeControl>
+        <Fullscreen data-testid="fullscreen-button" onClick={onFullScreenClick}>
+          {!isFullScreen ? <FullScreenIcon /> : <ExitFullScreen />}
+        </Fullscreen>
+      </Wrapper>
+    </Flex>
+  )
+}
 
 const Wrapper = styled(Flex)<{ showToolbar: boolean }>`
   height: 60px;
@@ -91,6 +131,12 @@ const Wrapper = styled(Flex)<{ showToolbar: boolean }>`
   &.error-wrapper {
     color: ${colors.primaryRed};
   }
+`
+
+const VolumeWrapper = styled.span``
+
+const MuteVolumeWrapper = styled.span`
+  color: gray;
 `
 
 const Action = styled(IconButton)`

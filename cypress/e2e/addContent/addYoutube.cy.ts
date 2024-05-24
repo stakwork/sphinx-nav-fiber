@@ -8,6 +8,7 @@ describe('Add Youtube Content', () => {
     }).as('addYoutube')
 
     cy.get('[data-testid="add-content-modal"]').click()
+    cy.get('#addContent').should('exist')
     cy.get('[id="cy-youtube-channel-id"]').type('https://www.youtube.com/watch?v=dPLPSaFqJmY')
     cy.wait(1000)
     cy.get('[data-testid="add-content-btn"]').should('not.be.disabled').click()
@@ -16,5 +17,6 @@ describe('Add Youtube Content', () => {
 
     cy.wait('@addYoutube')
     cy.get('.Toastify__toast-body').should('have.text', 'Content Added')
+    cy.get('#addContent').should('not.exist')
   })
 })

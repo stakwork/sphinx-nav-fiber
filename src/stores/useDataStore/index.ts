@@ -3,7 +3,7 @@ import { devtools } from 'zustand/middleware'
 import { nodesAreRelatives } from '~/components/Universe/constants'
 import { isChileGraph } from '~/constants'
 import { fetchGraphData } from '~/network/fetchGraphData'
-import { GraphData, Link, NodeExtended, NodeType, Sources, TStats, Trending } from '~/types'
+import { GraphData, Link, NodeExtended, NodeType, Sources, Trending, TStats } from '~/types'
 import { saveSearchTerm } from '~/utils/relayHelper/index'
 
 export type GraphStyle = 'sphere' | 'force' | 'split' | 'earth'
@@ -25,6 +25,7 @@ export type SidebarFilterWithCount = {
 export type DataStore = {
   splashDataLoading: boolean
   scrollEventsDisabled: boolean
+  abortRequest: boolean
   categoryFilter: NodeType | null
   disableCameraRotation: boolean
   graphRadius: number | null
@@ -56,7 +57,11 @@ export type DataStore = {
   setScrollEventsDisabled: (scrollEventsDisabled: boolean) => void
   setCategoryFilter: (categoryFilter: NodeType | null) => void
   setDisableCameraRotation: (rotation: boolean) => void
-  fetchData: (setBudget: (value: number | null) => void, params?: FetchNodeParams) => void
+  fetchData: (
+    setBudget: (value: number | null) => void,
+    setAbortRequests: (status: boolean) => void,
+    params?: FetchNodeParams,
+  ) => void
   setData: (data: GraphData) => void
   setGraphStyle: (graphStyle: GraphStyle) => void
   setGraphRadius: (graphRadius?: number | null) => void
@@ -77,6 +82,7 @@ export type DataStore = {
   updateNode: (updatedNode: NodeExtended) => void
   removeNode: (id: string) => void
   setSidebarFilterCounts: (filterCounts: SidebarFilterWithCount[]) => void
+  setAbortRequests: (abortRequest: boolean) => void
 }
 
 const defaultData: Omit<
@@ -109,6 +115,7 @@ const defaultData: Omit<
   | 'addNewNode'
   | 'updateNode'
   | 'removeNode'
+  | 'setAbortRequests'
 > = {
   categoryFilter: null,
   data: null,
@@ -136,19 +143,29 @@ const defaultData: Omit<
   sidebarFilterCounts: [],
   stats: null,
   splashDataLoading: true,
+  abortRequest: false,
 }
+
+let abortController: AbortController | null = null
 
 export const useDataStore = create<DataStore>()(
   devtools((set, get) => ({
     ...defaultData,
-    fetchData: async (setBudget, params) => {
-      if (get().isFetching) {
-        return
-      }
-
+    fetchData: async (setBudget, setAbortRequests, params) => {
       set({ isFetching: true, sphinxModalIsOpen: true })
 
-      const data = await fetchGraphData(get().graphStyle, setBudget, params ?? {})
+      if (abortController) {
+        abortController.abort()
+      }
+
+      const controller = new AbortController()
+      const { signal } = controller
+
+      abortController = controller
+
+      const data = await fetchGraphData(get().graphStyle, setBudget, params ?? {}, signal, setAbortRequests)
+
+      let loadingState = false
 
       if (params?.word) {
         await saveSearchTerm()
@@ -161,10 +178,16 @@ export const useDataStore = create<DataStore>()(
         count: data.nodes.filter((node) => filter === 'all' || node.node_type?.toLowerCase() === filter).length,
       }))
 
+      if (get().abortRequest) {
+        loadingState = true
+
+        set({ abortRequest: false })
+      }
+
       set({
         data,
-        isFetching: false,
-        sphinxModalIsOpen: false,
+        isFetching: loadingState,
+        sphinxModalIsOpen: loadingState,
         disableCameraRotation: false,
         nearbyNodeIds: [],
         selectedNodeRelativeIds: [],
@@ -267,6 +290,7 @@ export const useDataStore = create<DataStore>()(
 
       set({ data: removeData })
     },
+    setAbortRequests: (abortRequest) => set({ abortRequest }),
   })),
 )
 
