@@ -93,6 +93,7 @@ export const AuthGuard = ({ children }: PropsWithChildren) => {
     setTrendingTopicsFeatureFlag,
     setQueuedSourcesFeatureFlag,
     setCustomSchemaFeatureFlag,
+    setRealtimeGraphFeatureFlag,
   ])
 
   // auth checker
