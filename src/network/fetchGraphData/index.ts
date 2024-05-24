@@ -94,7 +94,7 @@ const fetchNodes = async (
     } catch (e: any) {
       console.error(e)
 
-      if (e?.message === 'signal is aborted without reason') {
+      if (e?.message.includes('aborted')) {
         setAbortRequests(true)
       }
 
