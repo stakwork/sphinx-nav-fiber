@@ -2,7 +2,7 @@
 import '@testing-library/jest-dom'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import React from 'react'
-import { getTrends } from '~/network/trends'
+import * as trends from '~/network/trends'
 import { Trending } from '..'
 import { useAppStore } from '../../../../../stores/useAppStore'
 import { useDataStore } from '../../../../../stores/useDataStore'
@@ -35,7 +35,7 @@ jest.mock('~/stores/useAppStore', () => ({
   useAppStore: jest.fn(),
 }))
 
-const mockedGetTrends = jest.spyOn(getTrends, 'getTrends')
+const mockedGetTrends = jest.spyOn(trends, 'getTrends')
 const mockedUseDataStore = useDataStore as jest.MockedFunction<typeof useDataStore>
 const useAppStoreMock = useAppStore as jest.MockedFunction<typeof useAppStore>
 const mockedUseModal = useModal as jest.MockedFunction<typeof useModal>
