@@ -1,6 +1,6 @@
 import { NodeExtended } from '~/types'
-import { maxScale } from '../../const'
-import { TopicMap } from '../../types'
+import { maxScale } from '../../../const'
+import { TopicMap } from '../../../types'
 
 export const generateTopicNodesFromMap = (topicMap: TopicMap, doNodeCallback: (node: NodeExtended) => void) => {
   Object.entries(topicMap).forEach(([topic, content], index) => {

@@ -1,6 +1,6 @@
 import { Guests, NodeExtended } from '~/types'
-import { maxScale } from '../../const'
-import { GuestMapChild } from '../../types'
+import { maxScale } from '../../../const'
+import { GuestMapChild } from '../../../types'
 
 export const generateGuestsMap = (
   currentGuest: Guests,
