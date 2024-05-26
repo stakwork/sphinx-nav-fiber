@@ -34,7 +34,7 @@ export const TitleEditor: FC<Props> = ({ from, onSelect, selectedToNode, isSwapp
       </SectionWrapper>
 
       <Flex my={16}>
-        <StyledLabels>Type</StyledLabels>
+        <StyledLabel>Type</StyledLabel>
         <Text>IS ALIAS</Text>
       </Flex>
 
@@ -115,7 +115,7 @@ const ToSection = styled.div`
   align-items: center;
 `
 
-const StyledLabels = styled.label`
+const StyledLabel = styled.label`
   color: #bac1c6;
   font-size: 13px;
   font-weight: 400;
