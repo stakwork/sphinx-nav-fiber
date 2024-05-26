@@ -9,12 +9,12 @@ import { PATHWAY_RANGE } from './constants'
 type Props = PropsWithChildren
 
 export const DataRetriever = ({ children }: Props) => {
-  const { fetchData } = useDataStore((s) => s)
+  const [fetchData, setAbortRequests] = useDataStore((s) => [s.fetchData, s.setAbortRequests])
   const [setBudget] = useUserStore((s) => [s.setBudget])
 
   useEffect(() => {
-    fetchData(setBudget)
-  }, [fetchData, setBudget])
+    fetchData(setBudget, setAbortRequests)
+  }, [fetchData, setBudget, setAbortRequests])
 
   return <>{children}</>
 }

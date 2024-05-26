@@ -2,11 +2,11 @@ import { Button } from '@mui/material'
 import { useEffect, useRef, useState } from 'react'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
+import { Flex } from '~/components/common/Flex'
+import { Text } from '~/components/common/Text'
 import ClearIcon from '~/components/Icons/ClearIcon'
 import SearchIcon from '~/components/Icons/SearchIcon'
 import Search from '~/components/SourcesTableModal/SourcesView/Topics/Search'
-import { Flex } from '~/components/common/Flex'
-import { Text } from '~/components/common/Text'
 import { putNodeData } from '~/network/fetchSourcesData'
 import { useModal } from '~/stores/useModalStore'
 import { useTopicsStore } from '~/stores/useTopicsStore'
@@ -130,7 +130,7 @@ export const TopicSources = () => {
           <Text className="title">Topics</Text>
         </Heading>
 
-        <InputWrapper>
+        <InputWrapper data-testid="topic-search-container">
           <Search
             activeIcon={<ClearIcon />}
             defaultIcon={<SearchIcon />}

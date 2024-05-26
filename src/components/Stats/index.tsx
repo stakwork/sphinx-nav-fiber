@@ -9,6 +9,7 @@ import TwitterIcon from '~/components/Icons/TwitterIcon'
 import VideoIcon from '~/components/Icons/VideoIcon'
 import { getStats, getTotalProcessing, TStatParams } from '~/network/fetchSourcesData'
 import { useDataStore } from '~/stores/useDataStore'
+import { useModal } from '~/stores/useModalStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { TStats } from '~/types'
 import { formatBudget, formatStatsResponse } from '~/utils'
@@ -17,7 +18,6 @@ import { Flex } from '../common/Flex'
 import DocumentIcon from '../Icons/DocumentIcon'
 import EpisodeIcon from '../Icons/EpisodeIcon'
 import { Animation } from './Animation'
-import { useModal } from '~/stores/useModalStore'
 
 interface StatConfigItem {
   name: string
@@ -84,11 +84,12 @@ export const Stats = () => {
   const [totalProcessing, setTotalProcessing] = useState(0)
   const [budget, setBudget] = useUserStore((s) => [s.budget, s.setBudget])
 
-  const [stats, setStats, fetchData, setSelectedNode] = useDataStore((s) => [
+  const [stats, setStats, fetchData, setSelectedNode, setAbortRequests] = useDataStore((s) => [
     s.stats,
     s.setStats,
     s.fetchData,
     s.setSelectedNode,
+    s.setAbortRequests,
   ])
 
   const { open: openSourcesModal } = useModal('sourcesTable')
@@ -111,7 +112,7 @@ export const Stats = () => {
   }
 
   function handleStatClick(mediaType: string) {
-    fetchData(setBudget, { ...(mediaType ? { media_type: mediaType } : {}), skip_cache: 'true' })
+    fetchData(setBudget, setAbortRequests, { ...(mediaType ? { media_type: mediaType } : {}), skip_cache: 'true' })
 
     setSelectedNode(null)
   }
@@ -162,9 +163,9 @@ export const Stats = () => {
           ),
         )}
       </StatisticsWrapper>
-      {isTotalProcessing ? (
-        <StatisticsContent data-testid="statistics-container" onClick={openSourcesModal}>
-          <ViewContent>
+      <StatisticsBudget>
+        {isTotalProcessing ? (
+          <ViewContent data-testid="view-content" onClick={openSourcesModal}>
             <div className="icon" style={{ marginLeft: '7px' }}>
               <Animation />
             </div>
@@ -172,9 +173,7 @@ export const Stats = () => {
               <p>{totalProcessing}</p>
             </div>
           </ViewContent>
-        </StatisticsContent>
-      ) : null}
-      <StatisticsBudget>
+        ) : null}
         <Budget>
           <Tooltip content="Budget" margin="18px">
             <div className="icon">
@@ -197,14 +196,6 @@ const StatisticsWrapper = styled(Flex).attrs({
   direction: 'row',
   grow: 1,
   justify: 'flex-start',
-})``
-
-const StatisticsContent = styled(Flex).attrs({
-  align: 'center',
-  direction: 'row',
-  grow: 1,
-  justify: 'flex-end',
-  marginRight: '16px',
 })``
 
 const StatisticsBudget = styled(Flex).attrs({
@@ -306,10 +297,10 @@ const ViewContent = styled(Flex).attrs({
   align: 'center',
   direction: 'row',
 })`
+  margin-right: 10px;
   display: flex;
-  width: 51px;
   height: 28px;
-  padding: 6px, 12px, 6px, 6px;
+  padding: 0.75rem 0.6375rem 0.75rem 0.3187rem;
   align-items: center;
   gap: 4px;
   color: ${colors.white};

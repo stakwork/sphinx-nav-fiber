@@ -1,8 +1,9 @@
 import { Button } from '@mui/material'
-import { FC, Fragment, useEffect, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
+import { AutoComplete, TAutocompleteOption } from '~/components/common/AutoComplete'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { getNodeType } from '~/network/fetchSourcesData'
@@ -137,21 +138,24 @@ export const MapPropertiesStep: FC<Props> = ({
               {sortedSelectedAttributes.map(({ key }: parsedObjProps) => {
                 const selectedValue = selectedValues[key] || 'none'
 
+                const autoCompleteOptions: TAutocompleteOption[] = sortedAttributes
+                  .filter((attr) => !Object.values(selectedValues).includes(attr.key) || attr.key === selectedValue)
+                  .map((attr) => ({
+                    label: capitalizeFirstLetter(attr.key),
+                    value: attr.key,
+                  }))
+
+                autoCompleteOptions.unshift({ label: 'None', value: 'none' })
+
                 return (
-                  <Fragment key={key}>
-                    <SelectInput onChange={(e) => handleSelectChange(key, e.target.value)} value={selectedValue}>
-                      <StyledOption value="none">None</StyledOption>
-                      {sortedAttributes
-                        .filter(
-                          (attr) => !Object.values(selectedValues).includes(attr.key) || attr.key === selectedValue,
-                        )
-                        .map(({ key: sKey }: parsedObjProps) => (
-                          <StyledOption key={sKey} value={sKey}>
-                            {capitalizeFirstLetter(sKey)}
-                          </StyledOption>
-                        ))}
-                    </SelectInput>
-                  </Fragment>
+                  <Flex key={key}>
+                    <AutoComplete
+                      isLoading={loading}
+                      onSelect={(option) => handleSelectChange(key, option ? option.value : 'none')}
+                      options={autoCompleteOptions}
+                      selectedValue={autoCompleteOptions.find((option) => option.value === selectedValue)}
+                    />
+                  </Flex>
                 )
               })}
             </DropdownContainer>
@@ -216,6 +220,7 @@ const StyledWrapper = styled(Flex)`
 
 const FlexContainer = styled.div`
   display: flex;
+  justify-content: space-between;
 `
 
 const AttributesContainer = styled.div`
@@ -224,42 +229,16 @@ const AttributesContainer = styled.div`
 `
 
 const AttributeItem = styled.div`
-  margin-bottom: 8px;
+  display: flex;
+  gap: 16px;
+  margin-top: 38px;
 `
 
 const DropdownContainer = styled.div`
-  width: 200px;
-`
-
-const SelectInput = styled.select`
-  width: 100%;
-  color: #fff;
-  font-size: 15px;
-  background-color: ${colors.BG2};
-  border-radius: 6px;
-  padding: 2px 8px;
-  margin-bottom: 8px;
-  border: none;
-  box-shadow: 0px 1px 6px rgba(0, 0, 0, 0.1);
-
-  &:focus {
-    background-color: ${colors.BG2_ACTIVE_INPUT};
-    outline: 1px solid ${colors.primaryBlue};
-  }
-`
-
-const StyledOption = styled.option`
-  background-color: ${colors.DROPDOWN_BG};
-  color: #fff;
-
-  &:hover,
-  &:focus {
-    background-color: black;
-  }
-
-  &[aria-selected='true'] {
-    background-color: ${colors.DROPDOWN_SELECTED};
-  }
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 `
 
 const SmallHeading = styled.h3`

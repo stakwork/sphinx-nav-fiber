@@ -9,6 +9,7 @@ import { useTopicsStore } from '~/stores/useTopicsStore'
 import { TEdge, Topic } from '~/types'
 import { colors } from '~/utils/colors'
 import { TitleEditor } from './Title'
+import styled from 'styled-components'
 
 type Props = {
   onClose: () => void
@@ -77,7 +78,7 @@ export const MergeTopicModal: FC<Props> = ({ onClose, multiTopics }) => {
           selectedToNode={selectedToNode}
           setIsSwapped={() => setIsSwapped(!isSwapped)}
         />
-        <Button
+        <CustomButton
           color="secondary"
           data-testid="merge-topics-button"
           disabled={loading || isSwapped || !selectedToNode}
@@ -87,8 +88,13 @@ export const MergeTopicModal: FC<Props> = ({ onClose, multiTopics }) => {
         >
           Merge topics
           {loading && <ClipLoader color={colors.BLUE_PRESS_STATE} size={10} />}
-        </Button>
+        </CustomButton>
       </FormProvider>
     </BaseModal>
   )
 }
+
+const CustomButton = styled(Button)`
+  width: 293px !important;
+  margin: 0 0 10px auto !important;
+`

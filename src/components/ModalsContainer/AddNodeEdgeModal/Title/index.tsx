@@ -129,13 +129,13 @@ const ToSection = styled.div`
 `
 
 const StyledLabel = styled.label`
-  background-color: #23252f;
   color: #bac1c6;
   font-size: 13px;
   font-weight: 400;
   line-height: 18px;
   letter-spacing: 0.01em;
   text-align: left;
+  margin-bottom: 6px;
 `
 
 const ToLabel = styled.label`

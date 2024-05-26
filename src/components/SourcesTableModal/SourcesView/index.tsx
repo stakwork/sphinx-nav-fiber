@@ -124,9 +124,33 @@ const TabPanelWrapper = styled(Flex)`
   min-height: 572px;
   padding: 20px 0;
   max-height: 572px;
+  overflow: auto;
+
+  @media (max-width: 1024px) {
+    width: 100%;
+    min-height: 400px;
+    max-height: 400px;
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
+    min-height: 300px;
+    max-height: 300px;
+  }
+
+  @media (max-width: 480px) {
+    width: 100%;
+    min-height: 250px;
+    max-height: 250px;
+  }
 `
 
 const Wrapper = styled(Flex)`
   min-height: 0;
   flex: 1;
+  overflow: hidden;
+
+  @media (max-width: 768px) {
+    padding: 3px;
+  }
 `

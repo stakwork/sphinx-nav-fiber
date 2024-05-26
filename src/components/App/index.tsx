@@ -61,7 +61,9 @@ export const App = () => {
 
   const setTeachMeAnswer = useTeachStore((s) => s.setTeachMeAnswer)
 
-  const { data, setData, fetchData, graphStyle, setSelectedNode, setCategoryFilter } = useDataStore((s) => s)
+  const { data, setData, fetchData, graphStyle, setSelectedNode, setCategoryFilter, setAbortRequests } = useDataStore(
+    (s) => s,
+  )
 
   const socket: Socket | undefined = useSocket()
 
@@ -77,7 +79,7 @@ export const App = () => {
   })
 
   const runSearch = useCallback(async () => {
-    await fetchData(setBudget, { ...(searchTerm ? { word: searchTerm } : {}) })
+    await fetchData(setBudget, setAbortRequests, { ...(searchTerm ? { word: searchTerm } : {}) })
     setSidebarOpen(true)
 
     if (searchTerm) {
@@ -85,7 +87,7 @@ export const App = () => {
     } else {
       setSelectedNode(null)
     }
-  }, [fetchData, setBudget, searchTerm, setSidebarOpen, setSelectedNode])
+  }, [fetchData, setBudget, searchTerm, setSidebarOpen, setSelectedNode, setAbortRequests])
 
   useEffect(() => {
     runSearch()
