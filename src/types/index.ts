@@ -13,8 +13,6 @@ export type TEdge = {
   search_value: string
 }
 
-export type FetchTrendingResponse = Trending[]
-
 export type FetchSentimentResponse = {
   data: Sentiment[]
 }

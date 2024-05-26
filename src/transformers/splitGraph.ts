@@ -1,5 +1,5 @@
 import { Vector3 } from 'three'
-import { generateLinksFromNodeData } from '~/network/fetchGraphData'
+import { generateLinksFromNodeData } from '~/network/fetchGraphData/helpers/generateLinksFromNodeData'
 import { Link, NodeExtended } from '~/types'
 import { getMyChildren, getMyParents, sortNodesByHierarchy } from './helpers'
 

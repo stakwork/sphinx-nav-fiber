@@ -1,6 +1,6 @@
 import { forceCollide } from 'd3-force-3d'
 import { Vector3 } from 'three'
-import { generateLinksFromNodeData } from '~/network/fetchGraphData'
+import { generateLinksFromNodeData } from '~/network/fetchGraphData/helpers/generateLinksFromNodeData'
 import { NodeExtended } from '~/types'
 import { ForceSimulation, runForceSimulation } from './forceSimulation'
 import { getMyParents } from './helpers'
