@@ -3,6 +3,7 @@ import { FC, useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
+import { noSpacePattern } from '~/components/AddItemModal/SourceTypeStep/constants'
 import { parseJson, parsedObjProps } from '~/components/ModalsContainer/BlueprintModal/Body/Editor/utils'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
@@ -11,7 +12,6 @@ import { requiredRule } from '~/constants'
 import { getNodeType } from '~/network/fetchSourcesData'
 import { colors } from '~/utils'
 import { AddItemModalStepID } from '..'
-import { noSpaceAttributePattern } from '~/components/AddItemModal/SourceTypeStep/constants'
 
 type Props = {
   skipToStep: (step: AddItemModalStepID) => void
@@ -25,6 +25,7 @@ export const SetAttributesStep: FC<Props> = ({ handleSelectType, skipToStep, nod
 
   const {
     watch,
+    setValue,
     formState: { isValid },
   } = useFormContext()
 
@@ -67,6 +68,22 @@ export const SetAttributesStep: FC<Props> = ({ handleSelectType, skipToStep, nod
     skipToStep('sourceType')
   }
 
+  const handleNextButton = () => {
+    attributes?.forEach(({ key, required }) => {
+      if (required) {
+        const value = watch(key)
+
+        if (typeof value === 'string') {
+          setValue(key, value.trim(), { shouldValidate: true })
+        }
+      }
+    })
+
+    if (isValid && !loading && attributes?.every((attr) => !attr.required || watch(attr.key))) {
+      skipToStep('setBudget')
+    }
+  }
+
   return (
     <Flex>
       <Flex align="center" direction="row" justify="space-between" mb={18}>
@@ -95,8 +112,8 @@ export const SetAttributesStep: FC<Props> = ({ handleSelectType, skipToStep, nod
                       ? {
                           ...requiredRule,
                           pattern: {
-                            message: 'Please avoid special characters and spaces',
-                            value: noSpaceAttributePattern,
+                            message: 'No leading whitespace allowed',
+                            value: noSpacePattern,
                           },
                         }
                       : {}),
@@ -118,7 +135,7 @@ export const SetAttributesStep: FC<Props> = ({ handleSelectType, skipToStep, nod
           <Button
             color="secondary"
             disabled={!isValid || loading || attributes?.some((attr) => attr.required && !watch(attr.key))}
-            onClick={() => skipToStep('setBudget')}
+            onClick={handleNextButton}
             size="large"
             variant="contained"
           >
