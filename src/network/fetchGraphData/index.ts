@@ -34,28 +34,46 @@ const fetchNodes = async (
   }).toString()
 
   if (!params.word) {
-    try {
-      const response = await api.get<FetchDataResponse>(`/prediction/content/latest?${args}`, undefined, signal)
-
-      return response
-      // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-    } catch (e: any) {
-      console.error(e)
-
-      if (e?.message === 'signal is aborted without reason') {
-        setAbortRequests(true)
-      }
-
-      return mock as FetchDataResponse
-    }
+    return fetchLatestContent(args, signal, setAbortRequests)
   }
 
   if (isDevelopment && !isE2E) {
-    const response = await api.get<FetchDataResponse>(`/v2/search?${args}`, undefined, signal)
-
-    return response
+    return fetchSearchData(args, signal)
   }
 
+  return fetchProtectedSearchData(args, signal, setBudget, params, setAbortRequests)
+}
+
+const fetchLatestContent = async (
+  args: string,
+  signal: AbortSignal,
+  setAbortRequests: (status: boolean) => void,
+): Promise<FetchDataResponse> => {
+  try {
+    const response = await api.get<FetchDataResponse>(`/prediction/content/latest?${args}`, undefined, signal)
+
+    return response
+    // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+  } catch (e: any) {
+    handleFetchError(e, setAbortRequests)
+
+    return mock as FetchDataResponse
+  }
+}
+
+const fetchSearchData = async (args: string, signal: AbortSignal): Promise<FetchDataResponse> => {
+  const response = await api.get<FetchDataResponse>(`/v2/search?${args}`, undefined, signal)
+
+  return response
+}
+
+const fetchProtectedSearchData = async (
+  args: string,
+  signal: AbortSignal,
+  setBudget: (value: number | null) => void,
+  params: FetchNodeParams,
+  setAbortRequests: (status: boolean) => void,
+): Promise<FetchDataResponse> => {
   const lsatToken = await getLSat()
 
   try {
@@ -77,6 +95,15 @@ const fetchNodes = async (
     }
 
     throw error
+  }
+}
+
+// eslint-disable-next-line  @typescript-eslint/no-explicit-any
+const handleFetchError = (error: any, setAbortRequests: (status: boolean) => void) => {
+  console.error(error)
+
+  if (error?.message.includes('aborted')) {
+    setAbortRequests(true)
   }
 }
 

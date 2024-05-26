@@ -99,18 +99,6 @@ const getGraphData = async (
   }
 }
 
-const getSegmentColor = (aType: string, bType: string) => {
-  if (aType === 'topic' || bType === 'topic') {
-    return NODE_RELATIVE_HIGHLIGHT_COLORS.topics.segmentColor
-  }
-
-  if (aType === 'guest' || bType === 'guest') {
-    return NODE_RELATIVE_HIGHLIGHT_COLORS.guests.segmentColor
-  }
-
-  return NODE_RELATIVE_HIGHLIGHT_COLORS.children.segmentColor
-}
-
 export const formatFetchNodes = (
   dataInit: FetchGDataResponse,
   graphStyle: 'split' | 'force' | 'sphere' | 'earth' | 'v2',

@@ -2,8 +2,10 @@ import { Vector3 } from 'three'
 import { AWS_IMAGE_BUCKET_URL, CLOUDFRONT_IMAGE_BUCKET_URL } from '~/constants'
 import { FetchDataResponse, Guests, Link, Node, NodeExtended } from '~/types'
 import { getMaxSuperficialWeightPerNodeType, getSuperficialNodeWeight } from '~/utils/getSuperficialNodeWeight'
-import { getGraphDataPositions, maxScale } from '../const'
+import { getGraphDataPositions } from '../const'
 import { GuestMapChild, TopicMap } from '../types'
+import { generateGuestNodesFromMap, generateGuestsMap } from './handleGuests'
+import { generateTopicNodesFromMap } from './handleTopics'
 
 const getNodeScale = (node: NodeExtended) => {
   switch (node.node_type) {
@@ -18,60 +20,6 @@ const getNodeScale = (node: NodeExtended) => {
     default:
       return 1.5
   }
-}
-
-const generateGuestsMap = (
-  currentGuest: Guests,
-  id: string,
-  guestMap: Record<string, GuestMapChild> = {},
-): Record<string, GuestMapChild> => {
-  let updatedGuestMap = { ...guestMap }
-
-  if (currentGuest.name && currentGuest.ref_id && id) {
-    updatedGuestMap = {
-      ...updatedGuestMap,
-      [currentGuest.ref_id]: {
-        children: [...(updatedGuestMap[currentGuest.ref_id]?.children || []), id],
-        imageUrl: currentGuest.profile_picture || '',
-        name: currentGuest.name,
-        twitterHandle: currentGuest.twitter_handle,
-      },
-    }
-  }
-
-  return updatedGuestMap // Return the new variable
-}
-
-function generateGuestNodesFromMap(
-  guestMap: Record<string, GuestMapChild>,
-  doNodeCallback: (node: NodeExtended) => void,
-) {
-  Object.entries(guestMap).forEach(([guest, guestValue], index) => {
-    const guestChildren = guestValue.children
-    const scale = guestChildren.length * 2 > maxScale ? maxScale : guestChildren.length * 2
-    const guestNodeId = guest || `guestnode_${index}`
-
-    const guestNode: NodeExtended = {
-      ...guestValue,
-      x: 0,
-      y: 0,
-      z: 0,
-      colors: ['#000'],
-      id: guestNodeId,
-      image_url: guestValue.imageUrl,
-      label: guestValue.name,
-      name: guestValue.name,
-      node_type: 'guest',
-      ref_id: guestNodeId,
-      scale,
-      show_title: guestValue.name,
-      text: guestValue.twitterHandle,
-      type: 'guest',
-      weight: 0,
-    }
-
-    doNodeCallback(guestNode)
-  })
 }
 
 export const formatFetchNodes = (
@@ -219,39 +167,6 @@ export const formatFetchNodes = (
   nodes = addWeightNormalizationToNodes(topWeightValue, maxSuperficialWeight, nodes, links)
 
   return { links, nodes }
-}
-
-function generateTopicNodesFromMap(topicMap: TopicMap, doNodeCallback: (node: NodeExtended) => void) {
-  Object.entries(topicMap).forEach(([topic, content], index) => {
-    const { children, position } = content
-    const { x, y, z } = position
-    /** we dont create topic node for search term,
-     *  otherwise everything will be linked to it
-     */
-
-    const scale = children.length * 2 > maxScale ? maxScale : children.length * 2
-    const topicNodeId = `topic_node_${index}`
-
-    const topicNode: NodeExtended = {
-      x,
-      y,
-      z,
-      children,
-      colors: ['#000'],
-      id: topicNodeId,
-      label: topic,
-      name: topic,
-      type: 'topic',
-      node_type: 'topic',
-      ref_id: topicNodeId,
-      scale,
-      show_title: topic,
-      text: topic,
-      weight: 0,
-    }
-
-    doNodeCallback(topicNode)
-  })
 }
 
 const addWeightNormalizationToNodes = (
