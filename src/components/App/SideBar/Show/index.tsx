@@ -113,9 +113,7 @@ export const Show = () => {
                 <div className="subtitle">by {showHost.join(', ') || selectedNode?.show_title}</div>
               </Flex>
 
-              <EpisodeHeaderText kind="bigHeading" title={selectedNode?.show_title || 'Unknown'}>
-                {selectedNode?.show_title || 'Unknown'}
-              </EpisodeHeaderText>
+              <EpisodeHeaderText kind="bigHeading">{selectedNode?.show_title || 'Unknown'}</EpisodeHeaderText>
             </Flex>
           </Flex>
         </Flex>
