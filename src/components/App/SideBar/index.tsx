@@ -34,7 +34,7 @@ type ContentProp = {
 
 // eslint-disable-next-line react/display-name
 const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen }, ref) => {
-  const { isFetching: isLoading, setTeachMe, setSidebarFilter } = useDataStore((s) => s)
+  const { isFetching: isLoading, setTeachMe, setSidebarFilter, setSelectedNode } = useDataStore((s) => s)
 
   const filteredNodes = useFilteredNodes()
 
@@ -79,6 +79,7 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
                 setValue('search', '')
                 clearSearch()
                 setSidebarFilter('all')
+                setSelectedNode(null)
 
                 return
               }
