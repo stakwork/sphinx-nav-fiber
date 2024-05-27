@@ -37,6 +37,7 @@ const TableRowComponent: FC<TTableRaw> = ({
 }) => {
   const [ids, total] = useTopicsStore((s) => [s.ids, s.total])
   const [loading, setLoading] = useState(false)
+  const [isPopoverOpen, setIsPopoverOpen] = useState(false)
 
   const date = formatDate(topic.date_added_to_graph)
 
@@ -77,13 +78,14 @@ const TableRowComponent: FC<TTableRaw> = ({
 
   const handlePopoverOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget)
+    setIsPopoverOpen(true)
   }
 
   const handlePopoverClose = () => {
-    setAnchorEl(null)
+    setIsPopoverOpen(false)
   }
 
-  const open = Boolean(anchorEl)
+  const open = Boolean(anchorEl) && isPopoverOpen
 
   const checkboxVisibleClass = checkedStates[topic.ref_id] ? 'visible' : ''
 
@@ -116,13 +118,17 @@ const TableRowComponent: FC<TTableRaw> = ({
           disableRestoreFocus
           id="mouse-over-popover"
           onClose={handlePopoverClose}
+          onMouseEnter={() => setIsPopoverOpen(true)}
+          onMouseLeave={handlePopoverClose}
           open={open}
           sx={{
-            pointerEvents: 'none',
+            pointerEvents: 'auto',
             '& .MuiPaper-root': {
               backgroundColor: 'rgba(0, 0, 0, 0.9)',
               borderRadius: '4px',
               width: '160px',
+              maxHeight: '200px',
+              overflowY: 'scroll',
             },
           }}
           transformOrigin={{
@@ -142,7 +148,7 @@ const TableRowComponent: FC<TTableRaw> = ({
             component="span"
             onMouseEnter={handlePopoverOpen}
             onMouseLeave={handlePopoverClose}
-            sx={{ cursor: 'context-menu' }}
+            sx={{ cursor: 'pointer' }}
           >
             ,...
           </Typography>
