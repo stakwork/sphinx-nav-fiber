@@ -362,35 +362,81 @@ describe('Test Curation Table', () => {
 
     cy.contains('button', 'Topics').click()
 
-    cy.wait('@loadTopics')
+    cy.wait('@loadTopics').then((interception) => {
+      const responseBody = interception.response.body
 
-    cy.get('tbody > tr:first').within(() => {
-      cy.get('td:nth-child(2)').then(($td) => {
-        cy.get('.approve-wrapper button').eq(1).click()
-      })
+      const responseData = responseBody.data
+
+      let currentTopic
+
+      let topicName
+
+      let edgeTopicName = 'Racism'
+
+      let edgeType = 'RELATED_TO'
+
+      cy.get('tbody > tr:first')
+        .within(() => {
+          cy.get('td:nth-child(2)').then(($td) => {
+            topicName = $td.text().trim()
+            cy.get('.approve-wrapper button').eq(1).click()
+          })
+        })
+        .then(() => {
+          cy.get('div[data-testid="add_edge"]').click()
+
+          cy.get('#addEdge').should('exist')
+
+          cy.contains('label', 'Type').closest('div').find('input').type(edgeType)
+
+          cy.contains('label', 'Type').closest('div').parent().find('div[data-testid="RELATED_TO"]').click()
+
+          cy.contains('label', 'To').closest('div').find('input').type(edgeTopicName)
+
+          cy.contains('label', 'To').closest('div').parent().find('div[data-testid="Racism"]').click()
+
+          cy.wait('@searchNode')
+
+          for (let i = 0; i < responseData.length; i++) {
+            const data = responseData[i]
+            if (data.name === topicName) {
+              currentTopic = { ...data }
+              break
+            }
+          }
+
+          cy.contains('button', 'Confirm').click()
+
+          cy.wait('@addEdge').then((interception) => {
+            expect(interception.response.statusCode).to.eq(200)
+          })
+
+          cy.request(`http://localhost:8444/api/prediction/graph/edges/${currentTopic.ref_id}`).then((response) => {
+            const responseBody = response.body
+            let node
+            let edge
+            for (let i = 0; i < responseBody.nodes.length; i++) {
+              if (responseBody.nodes[i].name === edgeTopicName) {
+                node = { ...responseBody.nodes[i] }
+                break
+              }
+            }
+
+            expect(edgeTopicName).to.equal(node?.name)
+
+            for (let i = 0; i < responseBody.edges.length; i++) {
+              if (responseBody.edges[i].target === node.ref_id) {
+                edge = { ...responseBody.edges[i] }
+                break
+              }
+            }
+
+            expect(edge.edge_type).to.equal(edgeType)
+          })
+
+          cy.get('#addEdge').should('not.exist')
+        })
     })
-
-    cy.get('div[data-testid="add_edge"]').click()
-
-    cy.get('#addEdge').should('exist')
-
-    cy.contains('label', 'Type').closest('div').find('input').type('RELATED_TO')
-
-    cy.contains('label', 'Type').closest('div').parent().find('div[data-testid="RELATED_TO"]').click()
-
-    cy.contains('label', 'To').closest('div').find('input').type('Racism')
-
-    cy.contains('label', 'To').closest('div').parent().find('div[data-testid="Racism"]').click()
-
-    cy.wait('@searchNode')
-
-    cy.contains('button', 'Confirm').click()
-
-    cy.wait('@addEdge').then((interception) => {
-      expect(interception.response.statusCode).to.eq(200)
-    })
-
-    cy.get('#addEdge').should('not.exist')
   })
 
   it('Filter topics', () => {

@@ -3,7 +3,7 @@ import { useState } from 'react'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
-import { getSentimentData } from '~/network/fetchGraphData'
+import { getSentimentData } from '~/network/sentiments'
 
 import { Stack } from '@mui/material'
 import { PropagateLoader } from 'react-spinners'

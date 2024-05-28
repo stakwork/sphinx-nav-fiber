@@ -11,7 +11,7 @@ import PlusIcon from '~/components/Icons/PlusIcon'
 import ReloadIcon from '~/components/Icons/ReloadIcon'
 import SentimentDataIcon from '~/components/Icons/SentimentDataIcon'
 import { Flex } from '~/components/common/Flex'
-import { getTrends } from '~/network/fetchGraphData'
+import { getTrends } from '~/network/trends'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
 import { useModal } from '~/stores/useModalStore'
@@ -53,7 +53,11 @@ export const Trending = ({ onSubmit }: Props) => {
       const res = await getTrends()
 
       if (res.length && Array.isArray(res)) {
-        setTrendingTopics(res)
+        const topicsMap = new Map(res.map((item) => [item.name, item]))
+
+        const uniqueTopics = Array.from(topicsMap.values())
+
+        setTrendingTopics(uniqueTopics)
       }
     } catch (err) {
       setTrendingTopics(TRENDING_TOPICS.map((i) => ({ name: i, count: 0 })))

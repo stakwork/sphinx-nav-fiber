@@ -1,4 +1,4 @@
-import { render, screen, within, fireEvent } from '@testing-library/react'
+import { fireEvent, render, screen, within } from '@testing-library/react'
 import React from 'react'
 import { TWITTER_LINK, sourcesMapper } from '~/components/SourcesTableModal/SourcesView/constants'
 import { RSS, TWITTER_HANDLE, YOUTUBE_CHANNEL } from '~/constants'

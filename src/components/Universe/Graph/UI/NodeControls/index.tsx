@@ -1,15 +1,20 @@
+import Popover from '@mui/material/Popover'
 import { Html } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
-import { memo, useCallback, useMemo, useRef } from 'react'
+import React, { memo, useCallback, useMemo, useRef } from 'react'
 import { MdClose, MdViewInAr } from 'react-icons/md'
 import styled from 'styled-components'
 import { Group, Vector3 } from 'three'
+import AddCircleIcon from '~/components/Icons/AddCircleIcon'
 import EditIcon from '~/components/Icons/EditIcon'
+import MergeIcon from '~/components/Icons/MergeIcon'
 import PlusIcon from '~/components/Icons/PlusIcon'
+import { Flex } from '~/components/common/Flex'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { useModal } from '~/stores/useModalStore'
 import { useUserStore } from '~/stores/useUserStore'
+import { colors } from '~/utils/colors'
 import { buttonColors } from './constants'
 
 const reuseableVector3 = new Vector3()
@@ -17,9 +22,11 @@ const reuseableVector3 = new Vector3()
 export const NodeControls = memo(() => {
   const ref = useRef<Group | null>(null)
   const setSidebarOpen = useAppStore((s) => s.setSidebarOpen)
+  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
 
   const { open: openEditNodeNameModal } = useModal('editNodeName')
   const { open: addEdgeToNodeModal } = useModal('addEdgeToNode')
+  const { open: mergeTopicModal } = useModal('mergeToNode')
 
   const [isAdmin] = useUserStore((s) => [s.isAdmin])
 
@@ -57,8 +64,8 @@ export const NodeControls = memo(() => {
             icon: <PlusIcon />,
             left: -80,
             className: 'add',
-            onClick: () => {
-              addEdgeToNodeModal()
+            onClick: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+              setAnchorEl(event.currentTarget as unknown as HTMLButtonElement)
             },
           },
           {
@@ -105,19 +112,19 @@ export const NodeControls = memo(() => {
     ]
 
     return [...conditionalActions, ...baseActions].map((i, index) => ({ ...i, left: -80 + index * 40 }))
-  }, [
-    showSelectionGraph,
-    addEdgeToNodeModal,
-    openEditNodeNameModal,
-    setShowSelectionGraph,
-    setSidebarOpen,
-    setSelectedNode,
-    isAdmin,
-  ])
+  }, [showSelectionGraph, openEditNodeNameModal, setShowSelectionGraph, setSidebarOpen, setSelectedNode, isAdmin])
 
   if (!selectedNode) {
     return null
   }
+
+  const handleClose = () => {
+    setAnchorEl(null)
+  }
+
+  const open = Boolean(anchorEl)
+
+  const id = open ? 'simple-popover' : undefined
 
   return (
     <group ref={ref}>
@@ -143,12 +150,40 @@ export const NodeControls = memo(() => {
             left={b.left}
             onClick={(e) => {
               e.stopPropagation()
-              b.onClick()
+              b.onClick(e)
             }}
           >
             {b.icon}
           </IconButton>
         ))}
+
+        <PopoverWrapper
+          anchorEl={anchorEl}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+          id={id}
+          onClose={handleClose}
+          open={open}
+          transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+        >
+          <PopoverOption
+            data-testid="merge"
+            onClick={() => {
+              mergeTopicModal()
+              handleClose()
+            }}
+          >
+            <MergeIcon data-testid="MergeIcon" /> Merge
+          </PopoverOption>
+          <PopoverOption
+            data-testid="add_edge"
+            onClick={() => {
+              addEdgeToNodeModal()
+              handleClose()
+            }}
+          >
+            <AddCircleIcon data-testid="AddCircleIcon" /> Add edge
+          </PopoverOption>
+        </PopoverWrapper>
       </Html>
     </group>
   )
@@ -181,4 +216,39 @@ const IconButton = styled.div<ButtonProps>`
   cursor: pointer;
   transition: opacity 0.4s;
   box-shadow: 0px 2px 12px rgba(0, 0, 0, 0.5);
+`
+
+const PopoverOption = styled(Flex).attrs({
+  direction: 'row',
+  px: 12,
+  py: 8,
+})`
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  gap: 12px;
+  cursor: pointer;
+  background: ${colors.BUTTON1};
+  color: ${colors.white};
+
+  &:hover {
+    background: ${colors.BUTTON1_HOVER};
+    color: ${colors.GRAY3};
+  }
+`
+
+const PopoverWrapper = styled(Popover)`
+  && {
+    z-index: 9999;
+  }
+  .MuiPaper-root {
+    min-width: 149px;
+    color: ${colors.GRAY3};
+    box-shadow: 0px 1px 6px 0px rgba(0, 0, 0, 0.2);
+    border-radius: 6px;
+    z-index: 1;
+    font-family: Barlow;
+    font-size: 14px;
+    font-weight: 500;
+  }
 `

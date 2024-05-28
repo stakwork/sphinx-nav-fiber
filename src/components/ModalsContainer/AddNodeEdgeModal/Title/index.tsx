@@ -6,12 +6,12 @@ import FlipIcon from '~/components/Icons/FlipIcon'
 import NodeCircleIcon from '~/components/Icons/NodeCircleIcon'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
-import { TEdge } from '~/types'
+import { NodeExtended, TEdge } from '~/types'
 import { ConnectionType } from './ConnectionType'
 import { ToNode } from './ToNode'
 
 type Props = {
-  from: string
+  from: TEdge | NodeExtended | null
   onSelect: (edge: TEdge | null) => void
   selectedType: string
   setSelectedType: (type: string) => void
@@ -37,6 +37,8 @@ export const TitleEditor: FC<Props> = ({
     setIsSwapped()
   }
 
+  const nodeName: string | null = from && ('search_value' in from ? from.search_value : from.name)
+
   return (
     <Flex mb={20}>
       <Flex align="center" direction="row" justify="space-between" mb={18}>
@@ -47,18 +49,18 @@ export const TitleEditor: FC<Props> = ({
 
       <Div swap={isSwapped}>
         <Flex>
-          <FromSection disabled label={!isSwapped ? 'From' : 'To'} swap={isSwapped} value={from} />
+          <FromSection disabled label={!isSwapped ? 'From' : 'To'} swap={isSwapped} value={nodeName} />
         </Flex>
 
         <Flex my={16}>
-          <StyledLabel>Type</StyledLabel>
+          <StyledLabels>Type</StyledLabels>
           <ConnectionType selectedType={selectedType} setSelectedType={setSelectedType} />
         </Flex>
 
         <Flex>
           <ToSection>
             <ToLabel>{!isSwapped ? 'To' : 'From'}</ToLabel>
-            <ToNode onSelect={onSelect} selectedValue={selectedToNode} />
+            <ToNode onSelect={onSelect} selectedValue={selectedToNode} topicId={from?.ref_id as string} />
           </ToSection>
         </Flex>
 
@@ -128,7 +130,7 @@ const ToSection = styled.div`
   align-items: center;
 `
 
-const StyledLabel = styled.label`
+const StyledLabels = styled.label`
   color: #bac1c6;
   font-size: 13px;
   font-weight: 400;

@@ -103,7 +103,9 @@ const TableRowComponent: FC<TTableRaw> = ({
         <ClickableText>{topic.name}</ClickableText>
       </StyledTableCell>
       <StyledTableCell>{topic.node_type}</StyledTableCell>
-      <StyledTableCell>{topic.edgeCount}</StyledTableCell>
+      <StyledTableCell>
+        <CountEdgeWrapper>{topic.edgeCount}</CountEdgeWrapper>
+      </StyledTableCell>
       <StyledTableCell>
         <Popover
           anchorEl={anchorEl}
@@ -228,6 +230,12 @@ const Checkmark = styled.div`
   justify-content: center;
   border-radius: 2px;
   background-color: transparent;
+`
+
+const CountEdgeWrapper = styled.span`
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `
 
 export const TopicRow = memo(TableRowComponent)

@@ -183,6 +183,9 @@ export const AddItemModal = () => {
       date: parseInt((new Date().getTime() / 1000).toFixed(0), 10),
       weight: 4,
       ...(data.sourceLink ? { source_link: data.sourceLink } : {}),
+      properties: {
+        ...data,
+      },
     }
 
     addNewNode(node)
