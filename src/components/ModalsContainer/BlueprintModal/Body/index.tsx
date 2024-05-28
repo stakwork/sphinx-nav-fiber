@@ -149,18 +149,46 @@ export const Body = () => {
 }
 
 const Wrapper = styled(Flex)`
-  flex: 1 1 100%;
+  flex: 1 1 auto;
   justify-content: center;
   position: relative;
+  overflow: hidden;
+  padding: 10px;
+  max-height: 80vh;
+
+  @media (max-width: 1440px) {
+    max-height: 85vh;
+  }
+
+  @media (max-width: 1024px) {
+    max-height: 70vh;
+  }
 `
 
 const EditorWrapper = styled(Flex)`
-  width: 400px;
+  width: 100%;
+  max-width: 400px;
   background: ${colors.BG1};
   padding: 16px;
   border-top-right-radius: 16px;
   border-bottom-right-radius: 16px;
   flex-grow: 1;
+  flex-shrink: 1;
+  min-width: 300px;
+  overflow: auto;
+  max-height: calc(100vh - 20px);
+
+  @media (max-width: 1440px) {
+    max-height: calc(95vh - 20px);
+  }
+
+  @media (max-width: 1024px) {
+    max-height: calc(70vh - 20px);
+  }
+
+  @media (max-width: 924px) {
+    max-height: calc(70vh - 20px);
+  }
 `
 
 const Container = styled(Flex)`

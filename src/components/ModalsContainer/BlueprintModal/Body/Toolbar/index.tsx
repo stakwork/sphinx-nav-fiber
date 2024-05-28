@@ -25,10 +25,24 @@ const Wrapper = styled(Flex).attrs({
   direction: 'column',
   justify: 'flex-start',
 })`
-  flex: 1 1 64px;
+  flex: 1 1 auto;
   z-index: 31;
   transition: opacity 1s;
   background: ${colors.BG2};
+  overflow: hidden;
+  max-height: 100vh;
+
+  @media (max-width: 1440px) {
+    max-height: 95.2vh;
+  }
+
+  @media (max-width: 1024px) {
+    max-height: 74.8vh;
+  }
+
+  @media (max-width: 924px) {
+    max-height: 73.1vh;
+  }
 `
 
 const ActionButton = styled(Flex).attrs({
