@@ -149,6 +149,11 @@ const StyleButton = styled(Button)`
       font-weight: 500;
       font-family: Barlow;
       padding: 12px, 16px, 12px, 10px;
+      color: ${colors.white};
+
+      &:hover {
+        color: ${colors.GRAY3};
+      }
 
       &.play {
         color: ${colors.BG3};
