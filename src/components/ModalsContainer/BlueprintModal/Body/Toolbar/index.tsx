@@ -15,7 +15,7 @@ export const Toolbar = ({ onCreateNew }: Props) => (
       <IconWrapper>
         <AddContentIcon />
       </IconWrapper>
-      <Text>Add Item</Text>
+      <Text>Add Type</Text>
     </ActionButton>
   </Wrapper>
 )

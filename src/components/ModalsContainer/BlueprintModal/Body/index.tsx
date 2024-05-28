@@ -113,7 +113,12 @@ export const Body = () => {
     <>
       <Flex align="stretch" direction="row" grow={1}>
         <Flex ml={-20} my={-20}>
-          <Toolbar onCreateNew={() => setIsCreateNew(true)} />
+          <Toolbar
+            onCreateNew={() => {
+              setIsCreateNew(true)
+              setSelectedSchemaId('')
+            }}
+          />
         </Flex>
         <Flex>
           {selectedSchema || isCreateNew ? (
