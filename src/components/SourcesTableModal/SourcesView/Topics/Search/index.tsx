@@ -35,15 +35,18 @@ const Search: React.FC<SearchProps> = ({ placeholder, activeIcon, loadingIcon, d
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target
+    const trimmedValue = value.trim()
 
-    setSearchValue(value)
+    setSearchValue(trimmedValue)
 
-    if (!e.target.value) {
+    if (!trimmedValue) {
       setFilters({ search: '' })
+
+      return
     }
 
-    if (e.target.value.length > 2) {
-      debouncedSearch(e.target.value)
+    if (trimmedValue.length > 2) {
+      debouncedSearch(trimmedValue)
     }
   }
 

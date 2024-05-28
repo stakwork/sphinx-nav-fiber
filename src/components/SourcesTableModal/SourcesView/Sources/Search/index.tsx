@@ -25,34 +25,32 @@ const Search: React.FC<SearchProps> = ({ onSearch, placeholder, activeIcon, load
   }
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    !e.target.value && resetSearch()
-    setSearchTerm(e.target.value)
+    const { value } = e.target
+
+    if (!value.trim()) {
+      resetSearch()
+    } else {
+      setSearchTerm(value)
+    }
   }
 
   const handleSearch = (e: KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { value } = e.currentTarget
+    if (e.key === 'Enter') {
+      const { value } = e.currentTarget
+      const trimmedValue = value.trim()
 
-    setSearchTerm(value)
-
-    if (loading) {
-      return
-    }
-
-    setLoading(true)
-
-    // Simulate a delay before updating the searchTerm
-    setTimeout(() => {
-      onSearch(value)
-
-      if (!value) {
+      if (!trimmedValue) {
         resetSearch()
+
+        return
       }
 
-      setLoading(false)
-    }, 1000)
+      setLoading(true)
 
-    if (!value) {
-      resetSearch()
+      setTimeout(() => {
+        onSearch(trimmedValue)
+        setLoading(false)
+      }, 1000)
     }
   }
 
@@ -85,11 +83,7 @@ const Search: React.FC<SearchProps> = ({ onSearch, placeholder, activeIcon, load
         autoCorrect="off"
         inputProps={{ 'aria-label': 'search sources' }}
         onChange={handleChange}
-        onKeyDown={(event) => {
-          if (event.key === 'Enter') {
-            handleSearch(event)
-          }
-        }}
+        onKeyDown={handleSearch}
         placeholder={placeholder}
         value={searchTerm}
         {...props}
