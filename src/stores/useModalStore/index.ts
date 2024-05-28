@@ -11,6 +11,7 @@ export type AvailableModals =
   | 'addSource'
   | 'settings'
   | 'mergeTopic'
+  | 'mergeToNode'
   | 'briefDescription'
   | 'editNodeName'
   | 'removeNode'
@@ -41,6 +42,7 @@ const defaultData = {
     briefDescription: false,
     editNodeName: false,
     removeNode: false,
+    mergeToNode: false,
     removeNodeType: false,
     addEdgeToNode: false,
     blueprintGraph: false,
