@@ -21,7 +21,14 @@ export const Default = () => {
     <StyledContainer>
       {hasImage ? (
         <StyledImageWrapper>
-          <img alt="img_a11y" src={selectedNode.image_url} />
+          <img
+            alt="img_a11y"
+            onError={(e) => {
+              e.currentTarget.src = 'generic_placeholder_img.png'
+              e.currentTarget.className = 'default-img'
+            }}
+            src={selectedNode.image_url}
+          />
         </StyledImageWrapper>
       ) : null}
 
@@ -78,6 +85,15 @@ const StyledImageWrapper = styled(Flex)`
     max-width: 100%;
     max-height: 100%;
     object-fit: contain;
+  }
+
+  .default-img {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    width: 100px;
+    height: 100px;
+    border-radius: 2px;
   }
 `
 

@@ -73,7 +73,7 @@ export const BudgetStep: FC<Props> = ({ onClick, loading, type, error }) => {
       {error ? (
         <StyledError role="tooltip">
           <StyledErrorText>
-            <MdError fontSize={13} />
+            <MdError className="errorIcon" />
             <span>{error}</span>
           </StyledErrorText>
           <div className="tooltip">{error}</div>
@@ -138,21 +138,31 @@ const StyledText = styled(Text)`
 `
 
 const StyledErrorText = styled(Flex)`
-  display: -webkit-box;
-  -webkit-line-clamp: 1;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  white-space: normal;
-  letter-spacing: 0.2px;
-  cursor: pointer;
-  padding-left: 4px;
-  font-size: 13px;
-  font-family: Barlow;
-  line-height: 18px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
   justify-content: center;
+  gap: 2px;
+
+  .errorIcon {
+    display: block;
+    font-size: 13px;
+    min-height: 13px;
+    min-width: 13px;
+  }
 
   span {
-    margin-left: 4px;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    white-space: normal;
+    letter-spacing: 0.2px;
+    cursor: pointer;
+    padding-left: 4px;
+    font-size: 13px;
+    font-family: Barlow;
+    line-height: 18px;
   }
 `
 

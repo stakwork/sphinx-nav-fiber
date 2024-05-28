@@ -13,8 +13,6 @@ export type TEdge = {
   search_value: string
 }
 
-export type FetchTrendingResponse = Trending[]
-
 export type FetchSentimentResponse = {
   data: Sentiment[]
 }
@@ -88,7 +86,7 @@ export type Node = {
   profile_picture?: string
   verified?: boolean
   unique_id?: string
-  properties?: { [key: string]: never }
+  properties?: { [key: string]: never | undefined }
 }
 
 export type DataSeriesNode = {
@@ -127,7 +125,7 @@ export type NodeExtended = Node & {
   latitude?: number
   coordinates?: Coordinates
   audio?: Audio[]
-  properties?: { [key: string]: never }
+  properties?: { [key: string]: never | undefined }
 }
 
 export type Link<T = string> = {

@@ -47,7 +47,7 @@ export const MainToolbar = () => {
         </IconWrapper>
         <Text>Source Table</Text>
       </ActionButton>
-      {(customSchemaFeatureFlag && isAdmin) || true ? (
+      {customSchemaFeatureFlag && isAdmin ? (
         <ActionButton id="cy-open-soure-table" onClick={openBlueprintModal}>
           <IconWrapper>
             <CommunitiesIcon />

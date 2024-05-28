@@ -1,5 +1,5 @@
 import { Vector3 } from 'three'
-import { generateLinksFromNodeData } from '~/network/fetchGraphData'
+import { generateLinksFromNodeData } from '~/network/fetchGraphData/helpers/generateLinksFromNodeData'
 import { NodeExtended } from '~/types'
 
 export const EARTH_RADIUS = 1800

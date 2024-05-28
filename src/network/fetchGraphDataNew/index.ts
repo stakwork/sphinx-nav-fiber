@@ -1,5 +1,4 @@
 /* eslint-disable */
-import { Vector3 } from 'three'
 // import { getNodeColorByType } from '~/components/Universe/Graph/constant'
 import { isDevelopment, isE2E, NODE_RELATIVE_HIGHLIGHT_COLORS } from '~/constants'
 import { api } from '~/network/api'
@@ -12,16 +11,6 @@ const defaultData: GraphDataNew = {
   links: [],
   nodes: [],
 }
-
-type TopicMapItem = {
-  children: string[]
-  position: Vector3
-}
-
-type TopicMap = Record<string, TopicMapItem>
-
-const shouldIncludeTopics = true
-const maxScale = 26
 
 export const fetchGraphData = async (
   graphStyle: 'split' | 'force' | 'sphere' | 'earth' | 'v2',
@@ -90,14 +79,6 @@ export const fetchNodeEdges = async (refId: string, skip: number): Promise<Fetch
   return null
 }
 
-export const getAdminId = async (tribeId: string) => {
-  const response = await fetch(`https://tribes.sphinx.chat/tribes/${tribeId}`)
-
-  const jsonData = await response.json()
-
-  return jsonData
-}
-
 const getGraphData = async (
   graphStyle: 'split' | 'force' | 'sphere' | 'earth' | 'v2',
   setBudget: (value: number | null) => void,
@@ -116,18 +97,6 @@ const getGraphData = async (
 
     return defaultData
   }
-}
-
-const getSegmentColor = (aType: string, bType: string) => {
-  if (aType === 'topic' || bType === 'topic') {
-    return NODE_RELATIVE_HIGHLIGHT_COLORS.topics.segmentColor
-  }
-
-  if (aType === 'guest' || bType === 'guest') {
-    return NODE_RELATIVE_HIGHLIGHT_COLORS.guests.segmentColor
-  }
-
-  return NODE_RELATIVE_HIGHLIGHT_COLORS.children.segmentColor
 }
 
 export const formatFetchNodes = (

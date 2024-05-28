@@ -97,6 +97,7 @@ export const Editor = ({ onSchemaCreate, selectedSchema, onDelete, setSelectedSc
   const [loading, setLoading] = useState(false)
   const [parentsLoading, setParentsLoading] = useState(false)
   const [parentOptions, setParentOptions] = useState<TOption[] | null>(null)
+  const [displayParentError, setDisplayParentError] = useState(false)
 
   useEffect(
     () => () => {
@@ -166,6 +167,12 @@ export const Editor = ({ onSchemaCreate, selectedSchema, onDelete, setSelectedSc
   }
 
   const onSubmit = form.handleSubmit(async (data) => {
+    if (!parent) {
+      setDisplayParentError(true)
+
+      return
+    }
+
     setLoading(false)
 
     try {
@@ -215,10 +222,14 @@ export const Editor = ({ onSchemaCreate, selectedSchema, onDelete, setSelectedSc
 
                     <AutoComplete
                       isLoading={parentsLoading}
-                      onSelect={(e) => setValue('parent', e?.value || '')}
+                      onSelect={(e) => {
+                        setValue('parent', e?.value || '')
+                        setDisplayParentError(false)
+                      }}
                       options={parentOptions}
                       selectedValue={resolvedParentValue()}
                     />
+                    {displayParentError && <StyledError>A parent type must be selected</StyledError>}
                   </Flex>
                   <Flex>
                     <Flex mb={12}>
@@ -267,7 +278,7 @@ export const Editor = ({ onSchemaCreate, selectedSchema, onDelete, setSelectedSc
 
               <Button
                 color="secondary"
-                disabled={loading}
+                disabled={loading || displayParentError}
                 onClick={onSubmit}
                 size="large"
                 startIcon={loading ? <ClipLoader color={colors.white} size={24} /> : null}
@@ -301,4 +312,12 @@ const CloseButton = styled(Flex)`
   font-size: 32px;
   color: ${colors.white};
   cursor: pointer;
+`
+
+const StyledError = styled(Flex)`
+  font-size: 13px;
+  font-family: Barlow;
+  color: #ff8f80;
+  line-height: 0.2px;
+  margin-top: 12px;
 `

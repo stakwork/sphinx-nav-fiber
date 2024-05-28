@@ -47,37 +47,24 @@ export const Tooltip = ({ node }: Props) => {
     type,
     name,
     twitter_handle: twitterHandle,
+    image_url: imageUrl,
+    guests: guestArray,
   } = node
 
-  const guestArray = node.guests
+  const guests = guestArray && guestArray.length > 0
 
-  let guests = false
-  let isGuestArrObj = false
+  const isGuestArrObj = guests && typeof guestArray[0] === 'object'
 
-  if (guestArray) {
-    if (guestArray.length && guestArray[0] !== null) {
-      guests = true
-    }
+  let displayImageUrl = imageUrl
 
-    if (typeof guestArray[0] === 'object') {
-      isGuestArrObj = true
-    }
+  if (nodeType === 'guest' && !imageUrl) {
+    displayImageUrl = 'person_placeholder2.png'
+  } else if (!imageUrl) {
+    displayImageUrl = 'noimage.jpeg'
   }
-
-  let imageUrl = node.image_url
 
   if (type === 'twitter_space') {
-    imageUrl = 'twitter_placeholder.png'
-  }
-
-  if (imageUrl == null) {
-    switch (nodeType) {
-      case 'guest':
-        imageUrl = 'person_placeholder2.png'
-        break
-      default:
-        imageUrl = 'noimage.jpeg'
-    }
+    displayImageUrl = 'twitter_placeholder.png'
   }
 
   if (nodeType === 'topic') {
@@ -99,79 +86,74 @@ export const Tooltip = ({ node }: Props) => {
 
           <Flex direction="row">
             <Flex pr={12}>
-              <Avatar src={imageUrl} type="person" />
+              <Avatar src={displayImageUrl as string} type="person" />
             </Flex>
 
             <div>
-              {type === 'guest' ? (
+              {(name || label) && (
                 <Flex direction="column">
-                  <Text>{label}</Text>
-                  {text && (
-                    <Flex pt={4}>
-                      <Text color="primaryText1" kind="tiny">
-                        @{text}
-                      </Text>
-                    </Flex>
+                  {name ? (
+                    <Text>{name}</Text>
+                  ) : (
+                    <>
+                      <Text>{label}</Text>
+                      {text && (
+                        <Flex pt={4}>
+                          <Text color="primaryText1" kind="tiny">
+                            @{text}
+                          </Text>
+                        </Flex>
+                      )}
+                    </>
                   )}
                 </Flex>
-              ) : (
+              )}
+
+              {showTitle && (
                 <Text color="primaryText1" kind="tiny">
                   {showTitle}
                 </Text>
               )}
 
-              {type === 'person' && (
-                <Flex direction="column">
-                  <Text>{name}</Text>
-
-                  {twitterHandle && (
-                    <Flex pt={4}>
-                      <Text color="primaryText1" kind="tiny">
-                        @{twitterHandle}
-                      </Text>
-                    </Flex>
-                  )}
-                </Flex>
-              )}
-
-              <Flex pt={4}>
-                {nodeType === 'clip' || (nodeType === 'episode' && <Text color="primaryText1">Episode</Text>)}
-
-                {nodeType === 'clip' ? (
-                  <Text as="div" kind="regularBold">
-                    {formatDescription(description)}
-                  </Text>
-                ) : (
+              {episodeTitle && (
+                <Flex pt={4}>
                   <Text color="primaryText1" kind="tiny">
                     {episodeTitle}
                   </Text>
-                )}
-              </Flex>
+                </Flex>
+              )}
 
-              <Flex pt={12}>
-                {nodeType === 'clip' && <Text color="primaryText1">Episode</Text>}
+              {description && (
+                <Flex pt={12}>
+                  <Text as="div" kind="regularBold">
+                    {formatDescription(description)}
+                  </Text>
+                </Flex>
+              )}
 
-                <Text color="primaryText1" kind="tiny">
-                  {nodeType === 'clip' ? episodeTitle : formatDescription(description)}
-                </Text>
-              </Flex>
+              {twitterHandle && (
+                <Flex pt={4}>
+                  <Text color="primaryText1" kind="tiny">
+                    @{twitterHandle}
+                  </Text>
+                </Flex>
+              )}
 
-              {guests && (
+              {guestArray && guestArray.length > 0 && (
                 <Flex pt={12}>
                   <Text color="primaryText1">People</Text>
                   <Flex pt={4}>
                     <Text color="primaryText1" kind="tiny">
-                      {isGuestArrObj
-                        ? (guestArray as Guests[])
-                            .map((guest) => {
-                              if (guest.name) {
-                                return guest.name
-                              }
-
-                              return `@${guest.twitter_handle}`
-                            })
-                            .join(', ')
-                        : guestArray?.join(', ')}
+                      {guests && (
+                        <Flex pt={12}>
+                          <Text>Guests:</Text>
+                          <Text>
+                            {isGuestArrObj
+                              ? (guestArray as Guests[]).map((guest) => `@${guest?.twitter_handle}`).join(', ')
+                              : guestArray.join(', ')}
+                          </Text>
+                        </Flex>
+                      )}
                     </Text>
                   </Flex>
                 </Flex>
