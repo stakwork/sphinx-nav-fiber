@@ -53,7 +53,11 @@ export const Trending = ({ onSubmit }: Props) => {
       const res = await getTrends()
 
       if (res.length && Array.isArray(res)) {
-        setTrendingTopics(res)
+        const topicsMap = new Map(res.map((item) => [item.name, item]))
+
+        const uniqueTopics = Array.from(topicsMap.values())
+
+        setTrendingTopics(uniqueTopics)
       }
     } catch (err) {
       setTrendingTopics(TRENDING_TOPICS.map((i) => ({ name: i, count: 0 })))

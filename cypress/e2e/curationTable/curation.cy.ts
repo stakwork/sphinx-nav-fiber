@@ -118,9 +118,12 @@ describe('Test Curation Table', () => {
       })
     })
     cy.get('div[data-testid="merge"]').click()
+
     cy.get('#blur-on-select').type(mergeTopic)
+
     cy.wait('@topicSearch')
     cy.get('div[data-testid="authenticity"]').click()
+
     cy.get('[data-testid="merge-topics-button"]').click()
 
     cy.wait('@mergeTopic')
