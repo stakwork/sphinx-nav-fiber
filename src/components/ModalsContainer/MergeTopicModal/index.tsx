@@ -2,24 +2,24 @@ import { Button } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { ClipLoader } from 'react-spinners'
+import styled from 'styled-components'
 import { BaseModal } from '~/components/Modal'
+import { Flex } from '~/components/common/Flex'
 import { getTopicsData, postMergeTopics } from '~/network/fetchSourcesData'
+import { useSelectedNode } from '~/stores/useDataStore'
 import { useModal } from '~/stores/useModalStore'
 import { useTopicsStore } from '~/stores/useTopicsStore'
 import { TEdge, Topic } from '~/types'
 import { colors } from '~/utils/colors'
 import { IS_ALIAS } from '../../SourcesTableModal/SourcesView/constants'
 import { TitleEditor } from './Title'
-import { useSelectedNode } from '~/stores/useDataStore'
-import { Flex } from '~/components/common/Flex'
-import styled from 'styled-components'
 
 export type FormData = {
   name: string
 }
 
 export const MergeNodeModal = () => {
-  const { close } = useModal('mergeTopic')
+  const { close } = useModal('mergeToNode')
   const [data, ids, total] = useTopicsStore((s) => [s.data, s.ids, s.total])
   const form = useForm<FormData>({ mode: 'onChange' })
   const [loading, setLoading] = useState(false)
@@ -90,7 +90,7 @@ export const MergeNodeModal = () => {
   }
 
   return (
-    <BaseModal id="mergeTopic" kind="small" onClose={close} preventOutsideClose>
+    <BaseModal id="mergeToNode" kind="small" onClose={close} preventOutsideClose>
       <FormProvider {...form}>
         {topicIsLoading ? (
           <Flex align="center" my={24}>
