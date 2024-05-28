@@ -1,11 +1,11 @@
 import { TextField } from '@mui/material'
 import { FC } from 'react'
 import styled from 'styled-components'
+import { Flex } from '~/components/common/Flex'
+import { Text } from '~/components/common/Text'
 import ArrowRight from '~/components/Icons/ArrowRight'
 import FlipIcon from '~/components/Icons/FlipIcon'
 import NodeCircleIcon from '~/components/Icons/NodeCircleIcon'
-import { Flex } from '~/components/common/Flex'
-import { Text } from '~/components/common/Text'
 import { TEdge, Topic } from '~/types'
 import { ToNode } from './ToNode'
 
@@ -38,7 +38,7 @@ export const TitleEditor: FC<Props> = ({ from, onSelect, selectedToNode, isSwapp
         <Text>IS ALIAS</Text>
       </Flex>
 
-      <Flex>
+      <Flex data-testid="to-section-container">
         <ToSection>
           <ToLabel>{!isSwapped ? 'To' : 'From'}</ToLabel>
           <ToNode onSelect={onSelect} selectedValue={selectedToNode} topicId={from?.ref_id as string} />
