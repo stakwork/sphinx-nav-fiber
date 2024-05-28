@@ -70,6 +70,7 @@ export const FormInput = ({ parentParam }: { parentParam: string }) => {
               const type = watch(`attributes[${index}].type`)
               const checked = watch(`attributes[${index}].required`)
               const isEditable = field.isNew || false
+              const requiredKey = ['name'].includes(watch(`attributes[${index}].key`))
 
               return (
                 <Fragment key={field.id}>
@@ -93,6 +94,7 @@ export const FormInput = ({ parentParam }: { parentParam: string }) => {
                   </Grid>
                   <Grid item xs={4}>
                     <AutoComplete
+                      disabled={requiredKey}
                       onSelect={(val) => setValue(`attributes[${index}].type`, val?.value)}
                       options={OptionTypes}
                       selectedValue={OptionTypes.find((i) => i.value === type)}
@@ -101,14 +103,16 @@ export const FormInput = ({ parentParam }: { parentParam: string }) => {
                   <Grid item xs={3}>
                     <Switch
                       checked={checked}
-                      disabled={false}
+                      disabled={requiredKey}
                       name={`attributes.${index}.required` as const}
                       onChange={(e) => setValue(`attributes[${index}].required`, e.target.checked)}
                       size="small"
                     />
-                    <IconButton onClick={() => remove(index)}>
-                      <DeleteIcon />
-                    </IconButton>
+                    {!requiredKey && (
+                      <IconButton onClick={() => remove(index)}>
+                        <DeleteIcon />
+                      </IconButton>
+                    )}
                   </Grid>
                 </Fragment>
               )
