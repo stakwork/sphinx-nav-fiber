@@ -11,6 +11,7 @@ export type AvailableModals =
   | 'addSource'
   | 'settings'
   | 'mergeTopic'
+  | 'mergeToNode'
   | 'briefDescription'
   | 'editNodeName'
   | 'removeNode'
