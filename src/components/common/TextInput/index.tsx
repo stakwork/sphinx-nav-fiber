@@ -153,7 +153,8 @@ const QuestionIcon = styled(Flex)<QuestionIconProps>`
     padding: 4px 8px;
     font-size: 13px;
     visibility: hidden;
-    width: 175px;
+    width: auto;
+    white-space: nowrap;
     z-index: 1;
   }
 
