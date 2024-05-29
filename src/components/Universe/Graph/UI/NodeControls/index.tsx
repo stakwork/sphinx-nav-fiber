@@ -1,21 +1,21 @@
+import Popover from '@mui/material/Popover'
 import { Html } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import React, { memo, useCallback, useMemo, useRef } from 'react'
 import { MdClose, MdViewInAr } from 'react-icons/md'
 import styled from 'styled-components'
 import { Group, Vector3 } from 'three'
+import AddCircleIcon from '~/components/Icons/AddCircleIcon'
 import EditIcon from '~/components/Icons/EditIcon'
+import MergeIcon from '~/components/Icons/MergeIcon'
 import PlusIcon from '~/components/Icons/PlusIcon'
+import { Flex } from '~/components/common/Flex'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
 import { useModal } from '~/stores/useModalStore'
 import { useUserStore } from '~/stores/useUserStore'
-import { buttonColors } from './constants'
-import { Flex } from '~/components/common/Flex'
 import { colors } from '~/utils/colors'
-import MergeIcon from '~/components/Icons/MergeIcon'
-import AddCircleIcon from '~/components/Icons/AddCircleIcon'
-import Popover from '@mui/material/Popover'
+import { buttonColors } from './constants'
 
 const reuseableVector3 = new Vector3()
 
@@ -26,7 +26,7 @@ export const NodeControls = memo(() => {
 
   const { open: openEditNodeNameModal } = useModal('editNodeName')
   const { open: addEdgeToNodeModal } = useModal('addEdgeToNode')
-  const { open: mergeTopicModal } = useModal('mergeTopic')
+  const { open: mergeTopicModal } = useModal('mergeToNode')
 
   const [isAdmin] = useUserStore((s) => [s.isAdmin])
 
