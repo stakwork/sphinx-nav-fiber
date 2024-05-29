@@ -9,6 +9,7 @@ import { useTopicsStore } from '~/stores/useTopicsStore'
 import { Topic } from '~/types'
 import { colors } from '~/utils/colors'
 import { TitleEditor } from './Title'
+import styled from 'styled-components'
 
 type Props = {
   topic: Topic
@@ -69,11 +70,26 @@ export const EditTopicModal: FC<Props> = ({ topic, onClose }) => {
     <BaseModal id="editTopic" kind="regular" onClose={closeHandler} preventOutsideClose>
       <FormProvider {...form}>
         <TitleEditor />
-        <Button color="secondary" disabled={loading} onClick={handleSave} size="large" variant="contained">
+        <Button
+          color="secondary"
+          disabled={loading || !nameValue}
+          onClick={handleSave}
+          size="large"
+          variant="contained"
+        >
           Save
-          {loading && <ClipLoader color={colors.BLUE_PRESS_STATE} size={10} />}
+          {loading && (
+            <ClipLoaderWrapper>
+              {' '}
+              <ClipLoader color={colors.lightGray} size={12} />
+            </ClipLoaderWrapper>
+          )}
         </Button>
       </FormProvider>
     </BaseModal>
   )
 }
+
+const ClipLoaderWrapper = styled.span`
+  margin-top: 2px;
+`
