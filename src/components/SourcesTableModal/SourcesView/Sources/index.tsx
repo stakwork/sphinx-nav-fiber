@@ -13,7 +13,7 @@ import { FetchRadarResponse, Sources as TSources } from '~/types'
 import { colors } from '~/utils/colors'
 import { Heading, StyledPill } from '../common'
 import { sourcesMapper } from '../constants'
-import Search from './Search'
+import Search from '~/components/SourcesTableModal/SourcesView/common/search'
 import Table from './Table'
 
 export const Sources = () => {
@@ -69,6 +69,7 @@ export const Sources = () => {
         <Search
           activeIcon={<ClearIcon />}
           defaultIcon={<SearchIcon />}
+          loading={loading}
           loadingIcon={<ClipLoader color={colors.PRIMARY_BLUE} size={24} />}
           onSearch={setSearch}
           placeholder="Find Source"

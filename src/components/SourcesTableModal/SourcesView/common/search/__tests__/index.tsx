@@ -1,10 +1,12 @@
+/* eslint-disable padding-line-between-statements */
+import '@testing-library/jest-dom'
 import { act, fireEvent, render, waitFor } from '@testing-library/react'
 import React from 'react'
-import Search from '..'
+import Search from '../index'
 
 describe('Search component', () => {
   it('highlights input field on click', () => {
-    const { container } = render(<Search onSearch={() => jest.fn()} />)
+    const { container } = render(<Search loading onSearch={() => jest.fn()} />)
 
     const inputElement = container.querySelector('input') as HTMLInputElement
 
@@ -17,7 +19,7 @@ describe('Search component', () => {
     jest.useFakeTimers()
 
     const onSearchMock = jest.fn()
-    const { container } = render(<Search onSearch={onSearchMock} />)
+    const { container } = render(<Search loading onSearch={onSearchMock} />)
     const inputElement = container.querySelector('input') as HTMLInputElement
 
     fireEvent.change(inputElement, { target: { value: 'test query' } })
@@ -31,7 +33,7 @@ describe('Search component', () => {
   })
 
   it('displays clear button after executing search', () => {
-    const { container, getByRole } = render(<Search onSearch={() => jest.fn()} />)
+    const { container, getByRole } = render(<Search loading onSearch={() => jest.fn()} />)
 
     const inputElement = container.querySelector('input') as HTMLInputElement
 
@@ -43,13 +45,18 @@ describe('Search component', () => {
   })
 
   it('clears search input on clicking clear button', () => {
-    const { container } = render(<Search onSearch={() => jest.fn()} />)
+    const onSearchMock = jest.fn()
+    const { container } = render(<Search loading onSearch={onSearchMock} />)
 
     const inputElement = container.querySelector('input') as HTMLInputElement
+    const clearButton = container.querySelector('button') as HTMLButtonElement
 
-    fireEvent.change(inputElement, { target: { value: 'test query' } })
-    fireEvent.click(container.querySelector('button') as HTMLInputElement)
+    waitFor(() => {
+      fireEvent.change(inputElement, { target: { value: 'test query' } })
 
-    expect(inputElement.value).toEqual('')
+      fireEvent.click(clearButton)
+
+      expect(inputElement.value).toEqual('')
+    })
   })
 })
