@@ -63,7 +63,18 @@ export const BudgetStep: FC<Props> = ({ onClick, loading, type, error }) => {
           disabled={loading || !!error}
           onClick={onClick}
           size="large"
-          startIcon={loading ? <ClipLoader size={24} /> : <CheckIcon />}
+          startIcon={
+            loading ? (
+              <IconWrapper>
+                <ClipLoader color="gray" size={12} />
+              </IconWrapper>
+            ) : (
+              <IconWrapper>
+                {' '}
+                <CheckIcon />
+              </IconWrapper>
+            )
+          }
           type="submit"
           variant="contained"
         >
@@ -195,5 +206,17 @@ const StyledError = styled(Flex)`
 
   &:focus .tooltip {
     visibility: visible;
+  }
+`
+
+const IconWrapper = styled.span`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2px;
+
+  svg {
+    width: 16px;
+    height: 16px;
   }
 `
