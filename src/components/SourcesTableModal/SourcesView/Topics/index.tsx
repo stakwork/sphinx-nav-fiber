@@ -2,11 +2,11 @@ import { Button } from '@mui/material'
 import { useEffect, useRef, useState } from 'react'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
-import { Flex } from '~/components/common/Flex'
-import { Text } from '~/components/common/Text'
 import ClearIcon from '~/components/Icons/ClearIcon'
 import SearchIcon from '~/components/Icons/SearchIcon'
-import Search from '~/components/SourcesTableModal/SourcesView/Topics/Search'
+import Search from '~/components/SourcesTableModal/SourcesView/common/search'
+import { Flex } from '~/components/common/Flex'
+import { Text } from '~/components/common/Text'
 import { putNodeData } from '~/network/fetchSourcesData'
 import { useModal } from '~/stores/useModalStore'
 import { useTopicsStore } from '~/stores/useTopicsStore'
@@ -123,6 +123,10 @@ export const TopicSources = () => {
     }
   }
 
+  const handleSearch = (query: string) => {
+    setFilters({ ...filters, search: query })
+  }
+
   return (
     <>
       <Wrapper direction="column" justify="flex-end">
@@ -136,6 +140,7 @@ export const TopicSources = () => {
             defaultIcon={<SearchIcon />}
             loading={loading}
             loadingIcon={<ClipLoader color={colors.PRIMARY_BLUE} size={24} />}
+            onSearch={handleSearch}
             placeholder="Search ..."
           />
         </InputWrapper>

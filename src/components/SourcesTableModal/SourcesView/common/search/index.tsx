@@ -1,7 +1,8 @@
 import IconButton from '@mui/material/IconButton'
 import InputBase, { InputBaseProps } from '@mui/material/InputBase'
 import Paper from '@mui/material/Paper'
-import React, { ChangeEvent, KeyboardEvent, useState } from 'react'
+import { debounce } from 'lodash'
+import React, { ChangeEvent, useCallback, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { colors } from '~/utils/colors'
@@ -12,47 +13,43 @@ interface SearchProps extends Omit<InputBaseProps, 'onChange'> {
   activeIcon?: React.ReactNode
   defaultIcon?: React.ReactNode
   loadingIcon?: React.ReactNode
+  loading: boolean
 }
 
-const Search: React.FC<SearchProps> = ({ onSearch, placeholder, activeIcon, loadingIcon, defaultIcon, ...props }) => {
+const Search: React.FC<SearchProps> = ({
+  onSearch,
+  placeholder,
+  activeIcon,
+  defaultIcon,
+  loadingIcon,
+  loading,
+  ...props
+}) => {
   const [searchTerm, setSearchTerm] = useState('')
-  const [loading, setLoading] = useState(false)
 
   const resetSearch = () => {
     setSearchTerm('')
     onSearch('')
-    setLoading(false)
   }
+
+  const handleSearch = useCallback(
+    (value: string) => {
+      onSearch(value)
+    },
+    [onSearch],
+  )
+
+  const debouncedSearch = useMemo(() => debounce(handleSearch, 300), [handleSearch])
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    !e.target.value && resetSearch()
-    setSearchTerm(e.target.value)
-  }
+    const trimmedValue = e.target.value.trim()
 
-  const handleSearch = (e: KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { value } = e.currentTarget
+    setSearchTerm(trimmedValue)
 
-    setSearchTerm(value)
-
-    if (loading) {
-      return
-    }
-
-    setLoading(true)
-
-    // Simulate a delay before updating the searchTerm
-    setTimeout(() => {
-      onSearch(value)
-
-      if (!value) {
-        resetSearch()
-      }
-
-      setLoading(false)
-    }, 1000)
-
-    if (!value) {
+    if (!trimmedValue) {
       resetSearch()
+    } else {
+      debouncedSearch(trimmedValue)
     }
   }
 
@@ -83,13 +80,8 @@ const Search: React.FC<SearchProps> = ({ onSearch, placeholder, activeIcon, load
       <StyledInput
         autoComplete="off"
         autoCorrect="off"
-        inputProps={{ 'aria-label': 'search sources' }}
+        inputProps={{ 'aria-label': 'search' }}
         onChange={handleChange}
-        onKeyDown={(event) => {
-          if (event.key === 'Enter') {
-            handleSearch(event)
-          }
-        }}
         placeholder={placeholder}
         value={searchTerm}
         {...props}
