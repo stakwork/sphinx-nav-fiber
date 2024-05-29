@@ -42,6 +42,10 @@ const Search: React.FC<SearchProps> = ({
   const debouncedSearch = useMemo(() => debounce(handleSearch, 300), [handleSearch])
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.nativeEvent instanceof KeyboardEvent && e.nativeEvent.key === ' ') {
+      return
+    }
+
     const trimmedValue = e.target.value.trim()
 
     setSearchTerm(trimmedValue)
