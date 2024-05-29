@@ -163,6 +163,7 @@ export const AddItemModal = () => {
   }
 
   const skipToStep = (step: AddItemModalStepID) => {
+    setError('')
     setStepId(step)
   }
 
@@ -194,6 +195,7 @@ export const AddItemModal = () => {
   }
 
   const onSubmit = form.handleSubmit(async (data) => {
+    setError('')
     setLoading(true)
 
     try {
@@ -236,7 +238,7 @@ export const AddItemModal = () => {
       />
     ),
     source: <SourceStep name={name} skipToStep={skipToStep} sourceLink={sourceLink || ''} type={nodeType} />,
-    setBudget: <BudgetStep loading={loading} onClick={() => null} />,
+    setBudget: <BudgetStep error={error} loading={loading} onClick={() => null} />,
     createConfirmation: <CreateConfirmation onclose={handleClose} type={type} />,
     setAttribues: <SetAttributesStep handleSelectType={handleSelectType} nodeType={nodeType} skipToStep={skipToStep} />,
   }
