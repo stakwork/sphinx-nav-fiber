@@ -1,6 +1,6 @@
 describe('Add Tweet Content', () => {
   it('Carol adds tweet content to graph', () => {
-    cy.initialSetup('carol', 300)
+    cy.initialSetup('virtualNode1', 300)
 
     cy.intercept({
       method: 'POST',

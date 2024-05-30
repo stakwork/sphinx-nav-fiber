@@ -2,7 +2,7 @@ describe('Sources Table / Home interactions', () => {
   it('Source Table Flow', () => {
     let trCount
 
-    cy.initialSetup('alice', 300)
+    cy.initialSetup('bob', 300)
 
     cy.wait(3000)
 

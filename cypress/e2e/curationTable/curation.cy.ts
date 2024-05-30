@@ -10,7 +10,7 @@ describe('Test Curation Table', () => {
       url: 'http://localhost:8444/api/nodes/info?skip=0&limit=50&muted=False&sort_by=date&search=Bitcoin*',
     }).as('searchTopic')
 
-    cy.initialSetup('alice', 300)
+    cy.initialSetup('bob', 300)
 
     cy.get('#cy-open-soure-table').click()
 
@@ -42,7 +42,7 @@ describe('Test Curation Table', () => {
 
     const newTopic = 'Testing Rename Topic'
 
-    cy.initialSetup('alice', 300)
+    cy.initialSetup('bob', 300)
 
     cy.get('#cy-open-soure-table').click()
 
@@ -98,7 +98,7 @@ describe('Test Curation Table', () => {
     const mergeTopic = 'authenticity'
     let specificValue = ''
     let matchFound = false
-    cy.initialSetup('alice', 300)
+    cy.initialSetup('bob', 300)
 
     cy.get('#cy-open-soure-table').click()
 
@@ -170,7 +170,7 @@ describe('Test Curation Table', () => {
     let firstMatchFound = false
     let secondMatchFound = false
 
-    cy.initialSetup('alice', 300)
+    cy.initialSetup('bob', 300)
 
     cy.get('#cy-open-soure-table').click()
 
@@ -265,7 +265,7 @@ describe('Test Curation Table', () => {
     let firstMatchFound = false
     let secondMatchFound = false
 
-    cy.initialSetup('alice', 300)
+    cy.initialSetup('bob', 300)
 
     cy.get('#cy-open-soure-table').click()
 
@@ -357,7 +357,7 @@ describe('Test Curation Table', () => {
       url: 'http://localhost:8444/api/curation/edge*',
     }).as('addEdge')
 
-    cy.initialSetup('alice', 300)
+    cy.initialSetup('bob', 300)
 
     cy.get('#cy-open-soure-table').click()
 
@@ -450,7 +450,7 @@ describe('Test Curation Table', () => {
 
     let firstCount
 
-    cy.initialSetup('alice', 300)
+    cy.initialSetup('bob', 300)
 
     cy.get('#cy-open-soure-table').click()
 

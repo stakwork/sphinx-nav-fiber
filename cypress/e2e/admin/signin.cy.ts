@@ -1,6 +1,6 @@
 describe('Admin Login', () => {
   it('Admin uses the enable function', () => {
-    cy.initialSetup('alice', 50)
+    cy.initialSetup('bob', 50)
 
     cy.intercept({
       method: 'POST',

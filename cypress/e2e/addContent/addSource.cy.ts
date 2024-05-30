@@ -1,6 +1,6 @@
 describe('Add Tweeter Handler', () => {
   it.skip('Carol adds tweet handle to graph', () => {
-    cy.initialSetup('carol', 300)
+    cy.initialSetup('virtualNode1', 300)
 
     cy.intercept({
       method: 'POST',

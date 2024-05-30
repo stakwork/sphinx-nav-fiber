@@ -28,7 +28,7 @@ import '@cypress/code-coverage/support'
 async function setAdmin() {
   let user
   for (let i = 0; i < nodes.length; i++) {
-    if (nodes[i].alias === 'alice') {
+    if (nodes[i].alias === 'bob') {
       user = nodes[i]
       break
     }

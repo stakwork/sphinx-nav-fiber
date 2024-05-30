@@ -1,6 +1,6 @@
 describe('Add Youtube Content', () => {
   it('Carol adds youtube video to graph', () => {
-    cy.initialSetup('carol', 50)
+    cy.initialSetup('virtualNode1', 50)
 
     cy.intercept({
       method: 'POST',

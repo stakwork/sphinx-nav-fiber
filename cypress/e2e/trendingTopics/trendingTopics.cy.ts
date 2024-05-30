@@ -28,7 +28,7 @@ describe('test trending topics', () => {
     cy.visit('/', {
       onBeforeLoad(win) {
         // @ts-ignore
-        win.CYPRESS_USER = 'carol' // eslint-disable-line no-param-reassign
+        win.CYPRESS_USER = 'virtualNode1' // eslint-disable-line no-param-reassign
 
         // @ts-ignore
         win.CYPRESS_USER_BUDGET = 300 // eslint-disable-line no-param-reassign
