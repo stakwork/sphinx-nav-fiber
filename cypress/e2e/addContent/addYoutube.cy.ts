@@ -1,5 +1,5 @@
 describe('Add Youtube Content', () => {
-  it('Carol adds youtube video to graph', () => {
+  it('virtualNode1 adds youtube video to graph', () => {
     cy.initialSetup('virtualNode1', 50)
 
     cy.intercept({
