@@ -316,3 +316,15 @@ export const postCustomType = async (data: createCustonNode) => {
 
   return response
 }
+
+export const postNewItem = async (
+  endpoint: string,
+  data: Record<string, unknown>,
+  lsatToken = '',
+): Promise<SubmitErrRes> => {
+  const response = await api.post(`/${endpoint}`, JSON.stringify(data), {
+    Authorization: lsatToken,
+  })
+
+  return response as SubmitErrRes
+}

@@ -3,11 +3,11 @@ import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import * as sphinx from 'sphinx-bridge'
 import { BaseModal, ModalKind } from '~/components/Modal'
 import { NODE_ADD_ERROR } from '~/constants'
-import { api } from '~/network/api'
+import { postNewItem } from '~/network/fetchSourcesData'
 import { useDataStore } from '~/stores/useDataStore'
 import { useModal } from '~/stores/useModalStore'
 import { useUserStore } from '~/stores/useUserStore'
-import { NodeExtended, SubmitErrRes } from '~/types'
+import { NodeExtended } from '~/types'
 import { executeIfProd, getLSat } from '~/utils'
 import { SuccessNotify } from '../common/SuccessToast'
 import { BudgetStep } from './BudgetStep'
@@ -30,103 +30,61 @@ const handleSubmitForm = async (
   setBudget: (value: number | null) => void,
   onAddNewData: (value: FieldValues, id: string) => void,
 ): Promise<void> => {
-  if (data.nodeType === 'Create custom type') {
-    const body: { [index: string]: unknown } = {}
+  const { nodeType, typeName, ...nodeData } = data
 
-    body.type = data.type
+  const body: { [index: string]: unknown } =
+    nodeType === 'Image'
+      ? {
+          node_data: { ...nodeData, source_link: data.sourceLink },
+          node_type: nodeType,
+          name: typeName,
+        }
+      : {
+          node_data: { ...nodeData },
+          node_type: nodeType,
+          name: typeName,
+        }
 
-    try {
-      const res: SubmitErrRes = await api.post(`/${'schema'}`, JSON.stringify(data), {})
+  const endpoint = nodeType === 'Create custom type' ? 'schema' : 'node'
 
-      if (res.error) {
-        const { message } = res.error
+  let lsatToken = ''
 
-        throw new Error(message)
-      }
-
-      onAddNewData(data, res?.data?.ref_id)
-      // eslint-disable-next-line no-restricted-globals
-      close()
-
-      // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-    } catch (err: any) {
-      let errorMessage = NODE_ADD_ERROR
-
-      if (err.status === 400) {
-        const error = await err.json()
-
-        errorMessage = error.errorCode || error?.status || NODE_ADD_ERROR
-      } else if (err instanceof Error) {
-        errorMessage = err.message
-      }
-
-      throw new Error(errorMessage)
-    }
-  } else {
-    const endPoint = 'node'
-
-    const { nodeType, typeName, ...nodeData } = data
-
-    const body: { [index: string]: unknown } = {
-      node_data: { ...nodeData },
-      node_type: nodeType,
-      name: typeName,
-    }
-
-    if (data.nodeType === 'Image') {
-      body.node_data = {
-        ...data.node_data,
-        source_link: data.sourceLink,
-      }
-    }
-
-    let lsatToken = ''
-
-    // skipping this for end to end test because it requires a sphinx-relay to be connected
+  if (endpoint === 'node') {
     await executeIfProd(async () => {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       const enable = await sphinx.enable()
 
       body.pubkey = enable?.pubkey
-
       lsatToken = await getLSat()
     })
+  }
 
-    try {
-      const res: SubmitErrRes = await api.post(`/${endPoint}`, JSON.stringify(body), {
-        Authorization: lsatToken,
-      })
+  try {
+    const res = await postNewItem(endpoint, body, lsatToken)
 
-      if (res.error) {
-        const { message } = res.error
+    onAddNewData(data, res?.data?.ref_id)
 
-        throw new Error(message)
+    // eslint-disable-next-line no-restricted-globals
+    close()
+
+    // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+  } catch (err: any) {
+    let errorMessage = NODE_ADD_ERROR
+
+    if (err.status === 400) {
+      try {
+        const errorRes = await err.json()
+
+        errorMessage = errorRes.message || errorRes.errorCode || errorRes?.status || NODE_ADD_ERROR
+      } catch (parseError) {
+        errorMessage = NODE_ADD_ERROR
       }
-
-      onAddNewData(data, res?.data?.ref_id)
-
-      // eslint-disable-next-line no-restricted-globals
-      close()
-
-      // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-    } catch (err: any) {
-      let errorMessage = NODE_ADD_ERROR
-
-      if (err.status === 400) {
-        try {
-          const errorRes = await err.json()
-
-          errorMessage = errorRes.message || errorRes.errorCode || errorRes?.status || NODE_ADD_ERROR
-        } catch (parseError) {
-          errorMessage = NODE_ADD_ERROR
-        }
-      } else if (err instanceof Error) {
-        errorMessage = err.message
-      }
-
-      throw new Error(errorMessage)
+    } else if (err instanceof Error) {
+      errorMessage = err.message
     }
+
+    throw new Error(errorMessage)
   }
 }
 

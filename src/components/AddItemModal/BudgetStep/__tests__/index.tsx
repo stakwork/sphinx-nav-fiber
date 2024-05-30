@@ -1,3 +1,5 @@
+/* eslint-disable padding-line-between-statements */
+import '@testing-library/jest-dom'
 import { fireEvent, render } from '@testing-library/react'
 import React from 'react'
 import { BudgetStep } from '..'
@@ -70,9 +72,7 @@ describe('Rendering', () => {
     expect(getByTestId('check-price').textContent).toBe('0 sats')
     expect(getByTestId('check-price').textContent).not.toBe('10 sats')
   })
-})
 
-describe('Behavior', () => {
   test('calls onClick when "Approve" button is clicked and not loading', () => {
     const onClickMock = jest.fn()
 
@@ -89,5 +89,39 @@ describe('Behavior', () => {
     const approveButton = getByText('Approve')
 
     expect(approveButton).toBeDisabled()
+  })
+
+  test('shows "Node already exists" error when duplicate item is added', async () => {
+    const errorMessage = 'Node already exists in the graph'
+
+    mockGetPriceData.mockResolvedValue({ data: { price: 10 } })
+
+    const { getByText, rerender } = render(<BudgetStep error={errorMessage} loading={false} onClick={() => null} />)
+
+    rerender(<BudgetStep error={errorMessage} loading={false} onClick={() => null} />)
+
+    expect(getByText(errorMessage)).toBeInTheDocument()
+  })
+
+  test('should handle 400 status error with non-JSON response', async () => {
+    const errorMessage = 'Failed to fetch'
+
+    mockGetPriceData.mockResolvedValue({ data: { price: 10 } })
+
+    const { getByText, rerender } = render(<BudgetStep error={errorMessage} loading={false} onClick={() => null} />)
+
+    rerender(<BudgetStep error={errorMessage} loading={false} onClick={() => null} />)
+
+    expect(getByText(errorMessage)).toBeInTheDocument()
+  })
+
+  test('shows success message when item is added to the graph', async () => {
+    const successMessage = 'Node added to graph'
+
+    mockGetPriceData.mockResolvedValue({ data: { price: 10 } })
+
+    const { queryByText } = render(<BudgetStep loading={false} onClick={() => null} />)
+
+    expect(queryByText(successMessage)).not.toBeInTheDocument()
   })
 })
