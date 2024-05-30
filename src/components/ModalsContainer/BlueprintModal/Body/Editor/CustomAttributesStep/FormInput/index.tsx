@@ -18,7 +18,6 @@ const noSpacePattern = /^[a-z0-9_]+$/
 
 interface CustomField extends Record<'id', string> {
   isNew?: boolean
-  key?: string
 }
 
 export const FormInput = ({ parentParam }: { parentParam: string }) => {
@@ -44,6 +43,8 @@ export const FormInput = ({ parentParam }: { parentParam: string }) => {
           parsedDataDefault = parseJson(data)
         }
 
+        parsedDataDefault = parsedDataDefault.filter((x) => x.key !== 'node_key')
+
         replace(parsedDataDefault)
         setParsedData(parsedDataDefault)
       } catch (error) {
@@ -58,8 +59,6 @@ export const FormInput = ({ parentParam }: { parentParam: string }) => {
     }
   }, [parentParam, setValue, replace, parsedData.length])
 
-  const filteredFields = fields.filter((field: CustomField) => field?.key !== 'node_key')
-
   return (
     <>
       {loading ? (
@@ -69,7 +68,7 @@ export const FormInput = ({ parentParam }: { parentParam: string }) => {
       ) : (
         <InputsWrapper py={8}>
           <Grid container spacing={2}>
-            {filteredFields.map((field: CustomField, index) => {
+            {fields.map((field: CustomField, index) => {
               const type = watch(`attributes[${index}].type`)
               const checked = watch(`attributes[${index}].required`)
               const isEditable = field.isNew || false
