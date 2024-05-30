@@ -9,6 +9,7 @@ import { GlobalStyle } from '~/components/GlobalStyle'
 import { isDevelopment } from '~/constants'
 import { useSocket } from '~/hooks/useSockets'
 import { useAppStore } from '~/stores/useAppStore'
+import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
 import { useGraphStore } from '~/stores/useGraphStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { colors } from '~/utils/colors'
@@ -54,6 +55,8 @@ export const AppNew = () => {
 
   const [fetchData, setSelectedNode] = useGraphStore((s) => [s.fetchData, s.setSelectedNode])
 
+  const [realtimeGraphFeatureFlag] = useFeatureFlagStore((s) => [s.realtimeGraphFeatureFlag])
+
   const socket: Socket | undefined = useSocket()
 
   const form = useForm<{ search: string }>({ mode: 'onChange' })
@@ -83,6 +86,12 @@ export const AppNew = () => {
     setNodeCount('INCREMENT')
   }, [setNodeCount])
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleNewNodeCreated = useCallback((node: any) => {
+    // Use the data recieved to create graph in realtime
+    console.log(node)
+  }, [])
+
   // setup socket
   useEffect(() => {
     if (socket) {
@@ -91,8 +100,12 @@ export const AppNew = () => {
       })
 
       socket.on('newnode', handleNewNode)
+
+      if (realtimeGraphFeatureFlag) {
+        socket.on('new_node_created', handleNewNodeCreated)
+      }
     }
-  }, [socket, handleNewNode])
+  }, [socket, handleNewNode, handleNewNodeCreated, realtimeGraphFeatureFlag])
 
   useEffect(
     () => () => {
