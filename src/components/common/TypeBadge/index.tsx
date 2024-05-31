@@ -97,8 +97,8 @@ export const TypeBadge = ({ type }: Props) => {
 
     default:
       badgeProps = {
-        iconStart: 'generic_badge.svg',
-        color: colors.black,
+        iconStart: 'thing_badge.svg',
+        color: colors.THING,
       }
 
       break
