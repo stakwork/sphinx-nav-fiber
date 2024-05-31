@@ -7,7 +7,7 @@ import { getNodeColorByType } from '~/components/Universe/Graph/constant'
 import { maxChildrenDisplayed, nodesAreRelatives } from '~/components/Universe/constants'
 import { Avatar } from '~/components/common/Avatar'
 import { TypeBadge } from '~/components/common/TypeBadge'
-import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
+import { useGraphStore } from '~/stores/useGraphStoreLatest'
 import { colors } from '~/utils/colors'
 import { Tag } from './styles'
 import { BadgeProps } from './types'
@@ -16,10 +16,8 @@ const variableVector3 = new Vector3()
 
 const NodeBadge = ({ position, userData, color }: BadgeProps) => {
   const ref = useRef<Group | null>(null)
-  const [selectedNode, setSelectedNode] = useDataStore((s) => [s.selectedNode, s.setSelectedNode])
-  const setHoveredNode = useDataStore((s) => s.setHoveredNode)
-  const hoveredNode = useDataStore((s) => s.hoveredNode)
-  const showSelectionGraph = useDataStore((s) => s.showSelectionGraph)
+
+  const { selectedNode, setSelectedNode, showSelectionGraph, hoveredNode, setHoveredNode } = useGraphStore((s) => s)
 
   const isTopic = (userData?.node_type || '') === 'topic'
   const isPerson = (userData?.node_type || '') === 'guest' || (userData?.node_type || '') === 'person'
@@ -95,11 +93,9 @@ const NodeBadge = ({ position, userData, color }: BadgeProps) => {
 }
 
 export const RelevanceBadges = memo(() => {
-  const data = useDataStore((s) => s.data)
-  const selectedNode = useSelectedNode()
-  const showSelectionGraph = useDataStore((s) => s.showSelectionGraph)
-  const selectionGraphData = useDataStore((s) => s.selectionGraphData)
-  const selectedNodeRelativeIds = useDataStore((s) => s.selectedNodeRelativeIds)
+  const { data, showSelectionGraph, selectedNode, selectionGraphData, selectedNodeRelativeIds } = useGraphStore(
+    (s) => s,
+  )
 
   const nodeBadges = useMemo(() => {
     const nodes = showSelectionGraph ? selectionGraphData.nodes : data?.nodes || []

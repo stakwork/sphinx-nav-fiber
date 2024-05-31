@@ -3,7 +3,7 @@ import { useFrame } from '@react-three/fiber'
 import { memo, useEffect } from 'react'
 import { useGraphData } from '~/components/DataRetriever'
 import { generateLinksFromNodeData } from '~/network/fetchGraphData/helpers/generateLinksFromNodeData'
-import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
+import { useGraphStore, useSelectedNode } from '~/stores/useGraphStoreLatest'
 import { ForceSimulation, runForceSimulation } from '~/transformers/forceSimulation'
 import { GraphData } from '~/types'
 import { Segment } from '../../Segment'
@@ -16,13 +16,10 @@ export const SelectionDataNodes = memo(() => {
   const data = useGraphData()
   const selectedNode = useSelectedNode()
 
-  const selectedNodeRelativeIds = useDataStore((s) => s.selectedNodeRelativeIds)
-
-  const selectionGraphData = useDataStore((s) => s.selectionGraphData)
-  const setSelectionData = useDataStore((s) => s.setSelectionData)
+  const { selectedNodeRelativeIds, selectionGraphData, setSelectionData } = useGraphStore((s) => s)
 
   useEffect(() => {
-    const nodes = data.nodes
+    const nodes = data?.nodes
       .filter((f) => f.ref_id === selectedNode?.ref_id || selectedNodeRelativeIds.includes(f?.ref_id || ''))
       .map((n) => {
         const fixedPosition =
@@ -31,9 +28,11 @@ export const SelectionDataNodes = memo(() => {
         return { ...n, x: 0, y: 0, z: 0, ...fixedPosition }
       })
 
-    const links = generateLinksFromNodeData(nodes, false, false)
+    if (nodes) {
+      const links = generateLinksFromNodeData(nodes, false, false)
 
-    setSelectionData({ nodes, links })
+      setSelectionData({ nodes, links })
+    }
   }, [data, selectedNode, selectedNodeRelativeIds, setSelectionData])
 
   useEffect(() => {

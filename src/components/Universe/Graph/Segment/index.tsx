@@ -3,7 +3,7 @@ import { useFrame } from '@react-three/fiber'
 import { useEffect, useRef, useState } from 'react'
 import { Vector3 } from 'three'
 import { NODE_RELATIVE_HIGHLIGHT_COLORS } from '~/constants'
-import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
+import { useGraphStore, useSelectedNode } from '~/stores/useGraphStoreLatest'
 import { Link } from '~/types'
 
 type Props = {
@@ -17,7 +17,7 @@ export const Segment = ({ link, animated }: Props) => {
   const [start, setStart] = useState(new Vector3(0, 0, 0))
   const [end, setEnd] = useState(new Vector3(0, 0, 0))
   const [color, setColor] = useState(0x888888)
-  const selectionGraphData = useDataStore((s) => s.selectionGraphData)
+  const selectionGraphData = useGraphStore((s) => s.selectionGraphData)
 
   useEffect(() => {
     const refId = selectedNode?.ref_id || ''

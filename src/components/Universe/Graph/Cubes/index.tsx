@@ -3,7 +3,7 @@ import { ThreeEvent } from '@react-three/fiber'
 import { memo, useCallback } from 'react'
 import { Object3D } from 'three'
 import { useAppStore } from '~/stores/useAppStore'
-import { useDataStore, useSelectedNode, useUpdateGraphData } from '~/stores/useDataStore'
+import { useGraphStore, useSelectedNode } from '~/stores/useGraphStoreLatest'
 import { NodeExtended } from '~/types'
 import { BlurryInstances } from './BlurryInstances'
 import { Cube } from './Cube'
@@ -13,12 +13,12 @@ import { TextNode } from './Text'
 import { isMainTopic } from './constants'
 
 export const Cubes = memo(() => {
-  const data = useUpdateGraphData()
   const selectedNode = useSelectedNode()
-  const nearbyNodeIds = useDataStore((s) => s.nearbyNodeIds)
-  const setHoveredNode = useDataStore((s) => s.setHoveredNode)
-  const showSelectionGraph = useDataStore((s) => s.showSelectionGraph)
-  const selectionGraphData = useDataStore((s) => s.selectionGraphData)
+  const nearbyNodeIds = useGraphStore((s) => s.nearbyNodeIds)
+  const setHoveredNode = useGraphStore((s) => s.setHoveredNode)
+  const showSelectionGraph = useGraphStore((s) => s.showSelectionGraph)
+  const selectionGraphData = useGraphStore((s) => s.selectionGraphData)
+  const data = useGraphStore((s) => s.data)
   const setTranscriptOpen = useAppStore((s) => s.setTranscriptOpen)
 
   const ignoreNodeEvent = useCallback(
@@ -42,7 +42,7 @@ export const Cubes = memo(() => {
 
         if (node.userData) {
           if (!ignoreNodeEvent(node.userData as NodeExtended)) {
-            useDataStore.getState().setSelectedNode((node?.userData as NodeExtended) || null)
+            useGraphStore.getState().setSelectedNode((node?.userData as NodeExtended) || null)
           }
         }
       }
@@ -87,14 +87,14 @@ export const Cubes = memo(() => {
       <BlurryInstances hide={hideUniverse} />
       <RelevanceBadges />
       {data?.nodes
-        .filter((f) => {
+        .filter((f: NodeExtended) => {
           const isSelected = f?.ref_id === selectedNode?.ref_id
           const isNearbyOrPersistent = nearbyNodeIds.includes(f.ref_id || '') || isMainTopic(f)
 
-          return isNearbyOrPersistent || isSelected
+          return true || isNearbyOrPersistent || isSelected
         })
-        .map((node) => {
-          if (node.node_type === 'topic') {
+        .map((node: NodeExtended) => {
+          if (node.node_type === 'Topic') {
             return <TextNode key={node.ref_id || node.id} hide={hideUniverse} node={node} />
           }
 

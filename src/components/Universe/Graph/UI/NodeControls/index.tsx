@@ -11,7 +11,7 @@ import MergeIcon from '~/components/Icons/MergeIcon'
 import PlusIcon from '~/components/Icons/PlusIcon'
 import { Flex } from '~/components/common/Flex'
 import { useAppStore } from '~/stores/useAppStore'
-import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
+import { useGraphStore, useSelectedNode } from '~/stores/useGraphStoreLatest'
 import { useModal } from '~/stores/useModalStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { colors } from '~/utils/colors'
@@ -30,12 +30,15 @@ export const NodeControls = memo(() => {
 
   const [isAdmin] = useUserStore((s) => [s.isAdmin])
 
-  const showSelectionGraph = useDataStore((s) => s.showSelectionGraph)
-  const selectionGraphData = useDataStore((s) => s.selectionGraphData)
-  const allGraphData = useDataStore((s) => s.data)
   const selectedNode = useSelectedNode()
-  const setSelectedNode = useDataStore((s) => s.setSelectedNode)
-  const setShowSelectionGraph = useDataStore((s) => s.setShowSelectionGraph)
+
+  const {
+    showSelectionGraph,
+    selectionGraphData,
+    data: allGraphData,
+    setSelectedNode,
+    setShowSelectionGraph,
+  } = useGraphStore((s) => s)
 
   useFrame(() => {
     setPosition()

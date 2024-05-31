@@ -5,7 +5,7 @@ import { RefObject, useEffect, useMemo, useState } from 'react'
 import { Vector3 } from 'three'
 import { playInspectSound } from '~/components/common/Sounds'
 import { useControlStore } from '~/stores/useControlStore'
-import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
+import { useGraphStore, useSelectedNode } from '~/stores/useGraphStoreLatest'
 import { getPointAbove } from '~/transformers/earthGraph'
 import { NodeExtended } from '~/types'
 import { getNearbyNodeIds } from '../constants'
@@ -18,17 +18,18 @@ const lookAtAnimationTimerLength = 2000
 
 export const useAutoNavigate = (cameraControlsRef: RefObject<CameraControls | null>) => {
   const selectedNode = useSelectedNode()
-  const cameraFocusTrigger = useDataStore((s) => s.cameraFocusTrigger)
 
   const isUserDragging = useControlStore((s) => s.isUserDragging)
   const isUserScrolling = useControlStore((s) => s.isUserScrolling)
   const setUserMovedCamera = useControlStore((s) => s.setUserMovedCamera)
 
-  const setNearbyNodeIds = useDataStore((s) => s.setNearbyNodeIds)
-  const showSelectionGraph = useDataStore((s) => s.showSelectionGraph)
-  const graphData = useDataStore((s) => s.data)
-
-  const graphStyle = useDataStore((s) => s.graphStyle)
+  const {
+    data: graphData,
+    graphStyle,
+    showSelectionGraph,
+    setNearbyNodeIds,
+    cameraFocusTrigger,
+  } = useGraphStore((s) => s)
 
   const { camera } = useThree()
 

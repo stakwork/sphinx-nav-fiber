@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
-import { useSelectedNode } from '~/stores/useDataStore'
+import { useSelectedNode } from '~/stores/useGraphStoreLatest'
 import { colors } from '~/utils/colors'
 import { convertToChatMessage } from '~/utils/stringToChatMessage'
 

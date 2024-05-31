@@ -180,6 +180,8 @@ export const useGraphStore = create<GraphStore>()(
           })
         }
 
+        console.log(relativeIds)
+
         set({
           hoveredNode: null,
           selectedNode,

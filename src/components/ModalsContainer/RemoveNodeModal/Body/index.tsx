@@ -4,7 +4,8 @@ import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { deleteNode, getTopicsData } from '~/network/fetchSourcesData'
-import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
+import { useDataStore } from '~/stores/useDataStore'
+import { useGraphStore, useSelectedNode } from '~/stores/useGraphStoreLatest'
 import { useModal } from '~/stores/useModalStore'
 import { NodeExtended, Topic } from '~/types'
 import { colors } from '~/utils/colors'
@@ -19,7 +20,8 @@ export const Body = () => {
   const { close: closeEditNodeModal } = useModal('editNodeName')
 
   const [loading, setLoading] = useState(false)
-  const [removeNode, setSelectedNode] = useDataStore((s) => [s.removeNode, s.setSelectedNode])
+  const [setSelectedNode] = useGraphStore((s) => [s.setSelectedNode])
+  const [removeNode] = useDataStore((s) => [s.removeNode])
 
   const [topicIsLoading, setTopicIsLoading] = useState(false)
 

@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Color, Material, Mesh, Vector3 } from 'three'
 import { useGraphData } from '~/components/DataRetriever'
 import { useAppStore } from '~/stores/useAppStore'
-import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
+import { useGraphStore, useSelectedNode } from '~/stores/useGraphStoreLatest'
 import { NodeExtended } from '~/types'
 import { boxGeometry } from '../constants'
 import { getHighlighter, highlightMaterial } from './constants'
@@ -12,16 +12,17 @@ const materials: Record<string, Material> = {}
 
 export const AnimatedHighlights = () => {
   const data = useGraphData()
-  const selectionGraphData = useDataStore((s) => s.selectionGraphData)
-  const showSelectionGraph = useDataStore((s) => s.showSelectionGraph)
+
+  const { selectionGraphData, showSelectionGraph } = useGraphStore((s) => s)
+
   const selectedNode = useSelectedNode()
   const searchTerm = useAppStore((s) => s.currentSearch)
 
-  const nodeData = showSelectionGraph ? selectionGraphData.nodes : data.nodes
+  const nodeData = showSelectionGraph ? selectionGraphData.nodes : data?.nodes
 
   return (
     <>
-      {nodeData.map((node: NodeExtended, i) => {
+      {(nodeData || []).map((node: NodeExtended, i) => {
         const { highlight, highlightColor } = getHighlighter({ node, selectedNode, searchTerm })
 
         if (!highlight) {

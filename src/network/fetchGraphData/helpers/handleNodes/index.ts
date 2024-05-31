@@ -23,6 +23,8 @@ const getNodeScale = (node: NodeExtended) => {
 export const handleNodes = (dataInit: FetchDataResponse, searchterm: string) => {
   const nodes: NodeExtended[] = []
 
+  console.log('handleNodes')
+
   const topicMap: TopicMap = {}
   let guestMap: Record<string, GuestMapChild> = {}
 

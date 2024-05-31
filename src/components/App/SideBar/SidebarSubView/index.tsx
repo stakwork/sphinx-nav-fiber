@@ -1,10 +1,11 @@
 import { Slide } from '@mui/material'
 import styled from 'styled-components'
-import { Flex } from '~/components/common/Flex'
 import ChevronLeftIcon from '~/components/Icons/ChevronLeftIcon'
 import CloseIcon from '~/components/Icons/CloseIcon'
+import { Flex } from '~/components/common/Flex'
 import { useAppStore } from '~/stores/useAppStore'
-import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
+import { useDataStore } from '~/stores/useDataStore'
+import { useGraphStore, useSelectedNode } from '~/stores/useGraphStoreLatest'
 import { usePlayerStore } from '~/stores/usePlayerStore'
 import { colors } from '~/utils/colors'
 import { SelectedNodeView } from '../SelectedNodeView'
@@ -13,7 +14,8 @@ import { MediaPlayer } from './MediaPlayer'
 type Props = { open: boolean }
 
 export const SideBarSubView = ({ open }: Props) => {
-  const { setSelectedNode, setTeachMe, showTeachMe } = useDataStore((s) => s)
+  const { setTeachMe, showTeachMe } = useDataStore((s) => s)
+  const { setSelectedNode } = useGraphStore((s) => s)
 
   const selectedNode = useSelectedNode()
 

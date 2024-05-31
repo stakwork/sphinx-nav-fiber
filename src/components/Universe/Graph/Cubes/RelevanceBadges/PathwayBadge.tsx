@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef } from 'react'
 import { MdHub } from 'react-icons/md'
 import { Group } from 'three'
 
-import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
+import { useGraphStore, useSelectedNode } from '~/stores/useGraphStoreLatest'
 import { colors } from '~/utils/colors'
 import { BadgeIconWrapper, Counter, Tag } from './styles'
 import { BadgeProps } from './types'
@@ -11,10 +11,8 @@ import { BadgeProps } from './types'
 export const getPercentageFromWeight = (weight: number | undefined) => ((weight || 0) * 100).toFixed()
 
 export const PathwayBadge = ({ color, position, relativeIds, userData }: BadgeProps) => {
-  const setSelectedNode = useDataStore((s) => s.setSelectedNode)
-  const setHoveredNode = useDataStore((s) => s.setHoveredNode)
   const selectedNode = useSelectedNode()
-  const hoveredNode = useDataStore((s) => s.hoveredNode)
+  const { hoveredNode, setHoveredNode, setSelectedNode } = useGraphStore((s) => s)
   const selected = userData?.ref_id === selectedNode?.ref_id
   const ref = useRef<Group | null>(null)
 

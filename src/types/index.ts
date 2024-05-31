@@ -2,9 +2,20 @@
 import { Mesh, Vector3 } from 'three'
 
 export type FetchDataResponse = {
-  data_series?: { title: string }
-  exact: Node[]
-  related: Node[]
+  nodes: Node[]
+  edges: Link[]
+}
+
+export type FilterParams = {
+  skip: string
+  limit: string
+  depth: string
+  sort_by: string
+  top_node_count: string
+  include_properties: string
+  node_type: string
+  free?: string
+  word?: string // Add other optional filter properties as needed
 }
 
 export type TEdge = {
@@ -54,6 +65,7 @@ export type Node = {
   x: number
   y: number
   z: number
+  edge_count: number
   hidden?: boolean
   colors?: string[]
   date?: number

@@ -2,7 +2,7 @@ import { Text } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import { memo, useMemo, useRef } from 'react'
 import { Mesh } from 'three'
-import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
+import { useGraphStore, useSelectedNode } from '~/stores/useGraphStoreLatest'
 import { NodeExtended } from '~/types'
 import { colors } from '~/utils/colors'
 import { fontProps } from './constants'
@@ -15,10 +15,10 @@ type Props = {
 export const TextNode = memo(({ node, hide }: Props) => {
   const ref = useRef<Mesh | null>(null)
   const selectedNode = useSelectedNode()
-  const selectedNodeRelativeIds = useDataStore((s) => s.selectedNodeRelativeIds)
+  const selectedNodeRelativeIds = useGraphStore((s) => s.selectedNodeRelativeIds)
   const isRelative = selectedNodeRelativeIds.includes(node?.ref_id || '')
-  const isSelected = !!selectedNode && selectedNode?.id === node.id
-  const showSelectionGraph = useDataStore((s) => s.showSelectionGraph)
+  const isSelected = !!selectedNode && selectedNode?.ref_id === node.ref_id
+  const showSelectionGraph = useGraphStore((s) => s.showSelectionGraph)
 
   useFrame(({ camera }) => {
     if (ref?.current) {
@@ -32,7 +32,7 @@ export const TextNode = memo(({ node, hide }: Props) => {
   })
 
   const textScale = useMemo(() => {
-    let scale = (node.scale || 1) * 4
+    let scale = (node.edge_count || 1) * 4
 
     if (showSelectionGraph && isSelected) {
       scale = 40
@@ -41,10 +41,10 @@ export const TextNode = memo(({ node, hide }: Props) => {
     }
 
     return scale
-  }, [node.scale, isSelected, isRelative, showSelectionGraph])
+  }, [node.edge_count, isSelected, isRelative, showSelectionGraph])
 
   const fillOpacity = useMemo(() => {
-    if (selectedNode && selectedNode.node_type === 'topic' && !isSelected) {
+    if (selectedNode && selectedNode.node_type === 'Topic' && !isSelected) {
       return 0.2
     }
 
@@ -52,20 +52,22 @@ export const TextNode = memo(({ node, hide }: Props) => {
   }, [isSelected, selectedNode])
 
   return (
-    <Text
-      ref={ref}
-      anchorX="center"
-      anchorY="middle"
-      color={colors.white}
-      fillOpacity={fillOpacity}
-      position={[node.x, node.y, node.z]}
-      scale={textScale}
-      userData={node}
-      visible={!hide && !isSelected}
-      {...fontProps}
-    >
-      {node.label}
-    </Text>
+    <>
+      <Text
+        ref={ref}
+        anchorX="center"
+        anchorY="middle"
+        color={colors.white}
+        fillOpacity={fillOpacity}
+        position={[node.x, node.y, node.z]}
+        scale={textScale}
+        userData={node}
+        visible={!hide && !isSelected}
+        {...fontProps}
+      >
+        {node.name}
+      </Text>
+    </>
   )
 })
 

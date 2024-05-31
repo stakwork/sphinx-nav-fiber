@@ -1,5 +1,5 @@
 import { Leva } from 'leva'
-import { lazy, Suspense, useCallback, useEffect, useState } from 'react'
+import { lazy, Suspense, useCallback, useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import 'react-toastify/dist/ReactToastify.css'
 import { Socket } from 'socket.io-client'
@@ -11,12 +11,10 @@ import { Overlay } from '~/components/Universe/Overlay' // Import Overlay direct
 import { Preloader } from '~/components/Universe/Preloader' // Import Preloader directly
 import { isDevelopment } from '~/constants'
 import { useSocket } from '~/hooks/useSockets'
-import { getGraphDataPositions } from '~/network/fetchGraphData/const'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
 import { useTeachStore } from '~/stores/useTeachStore'
 import { useUserStore } from '~/stores/useUserStore'
-import { GraphData } from '~/types'
 import { colors } from '~/utils/colors'
 import { updateBudget } from '~/utils/setBudget'
 import version from '~/utils/versionHelper'
@@ -27,6 +25,7 @@ import { DeviceCompatibilityNotice } from './DeviceCompatibilityNotification'
 import { Helper } from './Helper'
 import { SecondarySideBar } from './SecondarySidebar'
 import { Toasts } from './Toasts'
+import { useUpdateSelectedNode } from '~/stores/useGraphStoreLatest'
 
 const Wrapper = styled(Flex)`
   height: 100%;
@@ -49,7 +48,6 @@ const LazySideBar = lazy(() => import('./SideBar').then(({ SideBar }) => ({ defa
 
 export const App = () => {
   const [setBudget, setNodeCount] = useUserStore((s) => [s.setBudget, s.setNodeCount])
-  const [isLoading, setIsLoading] = useState(false)
 
   const {
     setSidebarOpen,
@@ -61,9 +59,9 @@ export const App = () => {
 
   const setTeachMeAnswer = useTeachStore((s) => s.setTeachMeAnswer)
 
-  const { data, setData, fetchData, graphStyle, setSelectedNode, setCategoryFilter, setAbortRequests } = useDataStore(
-    (s) => s,
-  )
+  const { fetchData, setCategoryFilter, setAbortRequests } = useDataStore((s) => s)
+
+  const setSelectedNode = useUpdateSelectedNode()
 
   const socket: Socket | undefined = useSocket()
 
@@ -79,7 +77,7 @@ export const App = () => {
   })
 
   const runSearch = useCallback(async () => {
-    await fetchData(setBudget, setAbortRequests, { ...(searchTerm ? { word: searchTerm } : {}) })
+    await fetchData(setBudget, setAbortRequests)
     setSidebarOpen(true)
 
     if (searchTerm) {
@@ -92,23 +90,6 @@ export const App = () => {
   useEffect(() => {
     runSearch()
   }, [searchTerm, runSearch])
-
-  const repositionGraphDataAfterStyleChange = () => {
-    if (data) {
-      setIsLoading(true)
-
-      const updatedData: GraphData = getGraphDataPositions(graphStyle, data.nodes)
-
-      setData(updatedData)
-      setIsLoading(false)
-    }
-  }
-
-  // switch graph style
-  useEffect(() => {
-    repositionGraphDataAfterStyleChange()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [graphStyle])
 
   const handleNewNode = useCallback(() => {
     setNodeCount('INCREMENT')
@@ -148,7 +129,7 @@ export const App = () => {
               <LazyMainToolbar />
               <LazySideBar onSubmit={handleSubmit} />
               <LazyUniverse />
-              {isLoading && <Preloader fullSize={false} />}
+              {false && <Preloader fullSize={false} />}
               <Overlay />
               <SecondarySideBar />
               <AppBar />

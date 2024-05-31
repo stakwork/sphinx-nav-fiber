@@ -172,10 +172,10 @@ export const generateSplitGraphPositions = (nodes: NodeExtended[]) => {
     let position = new Vector3(0, 0, 0)
 
     switch (node.node_type) {
-      case 'guest':
+      case 'Guest':
         position = generateGuestNodePosition()
         break
-      case 'topic':
+      case 'Topic':
         position = generateTopicNodePosition()
         break
       case 'data_series':
@@ -204,12 +204,7 @@ export const generateSplitGraphPositions = (nodes: NodeExtended[]) => {
     const targetNode = updatedNodes.find((f) => f.ref_id === l.targetRef)
     let onlyVisibleOnSelect = false
 
-    if (
-      sourceNode?.node_type === 'guest' ||
-      sourceNode?.node_type === 'topic' ||
-      targetNode?.node_type === 'guest' ||
-      targetNode?.node_type === 'topic'
-    ) {
+    if (sourceNode?.node_type === 'Guest' || sourceNode?.node_type === 'Topic') {
       onlyVisibleOnSelect = true
     }
 

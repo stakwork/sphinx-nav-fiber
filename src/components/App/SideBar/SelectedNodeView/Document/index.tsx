@@ -9,7 +9,7 @@ import { Flex } from '~/components/common/Flex'
 import { highlightSearchTerm } from '~/components/common/Highlight/Highlight'
 import { Text } from '~/components/common/Text'
 import { useAppStore } from '~/stores/useAppStore'
-import { useSelectedNode } from '~/stores/useDataStore'
+import { useSelectedNode } from '~/stores/useGraphStoreLatest'
 import { colors } from '~/utils'
 
 export const Document = () => {

@@ -5,7 +5,7 @@ import { highlightSearchTerm } from '~/components/common/Highlight/Highlight'
 import { Text } from '~/components/common/Text'
 import { TypeBadge } from '~/components/common/TypeBadge'
 import { useAppStore } from '~/stores/useAppStore'
-import { useDataStore } from '~/stores/useDataStore'
+import { useGraphStore } from '~/stores/useGraphStoreLatest'
 import { NodeExtended } from '~/types'
 import { colors } from '~/utils'
 
@@ -36,7 +36,7 @@ const Wrapper = styled(Flex)`
 `
 
 export const Heading = ({ selectedNodeShow }: { selectedNodeShow: NodeExtended | undefined }) => {
-  const [selectedNode, setSelectedNode] = useDataStore((s) => [s.selectedNode, s.setSelectedNode])
+  const { selectedNode, setSelectedNode } = useGraphStore((s) => s)
   const { type } = selectedNode || {}
   const searchTerm = useAppStore((s) => s.currentSearch)
 
