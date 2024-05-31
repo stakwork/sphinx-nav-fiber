@@ -26,6 +26,10 @@ describe('youtubeRegex', () => {
     expect(getInputType('https://twitter.com/LarryRuane/status/1720496960489095668')).toBe(TWITTER_SOURCE)
   })
 
+  it('should assert we can check for x.com tweet regex', async () => {
+    expect(getInputType('https://x.com/bernaaaljg/status/1795260855002583101')).toBe(TWITTER_SOURCE)
+  })
+
   it('should assert we can check for mp3 url regex', async () => {
     expect(getInputType('https://hahaha.com/i/spaces/1zqKVqwrVzlxB?s=20.mp3')).toBe(LINK)
   })
