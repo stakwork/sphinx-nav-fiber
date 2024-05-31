@@ -38,9 +38,9 @@ export const Default = () => {
         </Flex>
 
         <StyledWrapper>
-          {Object.entries(customKeys).map(([key, value]) => (
-            <NodeDetail key={key} label={key} value={value} />
-          ))}
+          {Object.entries(customKeys).map(
+            ([key, value]) => value && <NodeDetail key={key} label={key} value={value} />,
+          )}
         </StyledWrapper>
       </StyledContent>
     </StyledContainer>

@@ -65,18 +65,26 @@ const handleSubmitForm = async (
   } else {
     const endPoint = 'node'
 
-    const { nodeType, typeName, ...nodeData } = data
+    const filteredNodeData = Object.entries(data).reduce((acc, [key, value]) => {
+      if (value !== null && value !== undefined && value !== '') {
+        acc[key] = value
+      }
+
+      return acc
+    }, {} as FieldValues)
+
+    const { nodeType, name, ...nodeData } = filteredNodeData
 
     const body: { [index: string]: unknown } = {
       node_data: { ...nodeData },
       node_type: nodeType,
-      name: typeName,
+      name,
     }
 
-    if (data.nodeType === 'Image') {
+    if (filteredNodeData.nodeType === 'Image') {
       body.node_data = {
-        ...data.node_data,
-        source_link: data.sourceLink,
+        ...filteredNodeData.node_data,
+        source_link: filteredNodeData.source_link,
       }
     }
 
@@ -171,10 +179,18 @@ export const AddItemModal = () => {
     const newId = id || `new-id-${Math.random()}`
     const newType = data.nodeType.toLocaleLowerCase()
 
+    const filteredData = Object.entries(data).reduce((acc, [key, value]) => {
+      if (value !== null && value !== undefined && value !== '') {
+        acc[key] = value
+      }
+
+      return acc
+    }, {} as FieldValues)
+
     const node: NodeExtended = {
-      name: data.typeName,
+      name: data.name,
       type: newType,
-      label: data.typeName,
+      label: data.name,
       node_type: newType,
       id: newId,
       ref_id: newId,
@@ -183,9 +199,9 @@ export const AddItemModal = () => {
       z: Math.random(),
       date: parseInt((new Date().getTime() / 1000).toFixed(0), 10),
       weight: 4,
-      ...(data.sourceLink ? { source_link: data.sourceLink } : {}),
+      ...(data.source_link ? { source_link: data.source_link } : {}),
       properties: {
-        ...data,
+        ...filteredData,
       },
     }
 
