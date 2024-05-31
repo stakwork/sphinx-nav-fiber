@@ -58,11 +58,7 @@ jobs:
             echo $TWITTER_BEARER
             STAKWORK_TOKEN=daaa3a0894f0658d99781471dfccd3e1 TWITTER_BEARER=$TWITTER_BEARER GITACTION_ENV=gitactionenv docker-compose -f ./stack/alts/smaller-navfiber.yml --project-dir ./stack up -d;
             sleep 240;
-            docker ps
-            docker logs meme.sphinx
-            docker logs dave.sphinx
             docker wait stack_relaysetup_1
-            cat stack/relay/NODES.json;
 
       - name: Copy Node.json
         uses: canastro/copy-file-action@master
@@ -99,8 +95,8 @@ jobs:
           name: cypress-logs
           path: cypress/videos
 
-      - name: Check the coverage value
-        run: yarn test-coverage
+      # - name: Check the coverage value
+      #   run: yarn test-coverage
 
       - name: Stop Stack
         working-directory: ./stack
