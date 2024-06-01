@@ -32,10 +32,8 @@ export const ForceGraph = ({ schemasWithPositions, filteredLinks, setSelectedSch
 
     if (simulation2d) {
       if (
-        prevSchemas &&
-        prevSchemas.length !== schemasWithPositions.length &&
-        prevLinks &&
-        prevLinks.length !== filteredLinks.length
+        (prevSchemas && prevSchemas.length !== schemasWithPositions.length) ||
+        (prevLinks && prevLinks.length !== filteredLinks.length)
       ) {
         simulation2d
           .nodes(nodes)
@@ -73,8 +71,8 @@ export const ForceGraph = ({ schemasWithPositions, filteredLinks, setSelectedSch
 
   useFrame(() => {
     if (simulation2d) {
-      // simulation2d.tick()
-      // setUpdate(!update)
+      simulation2d.tick()
+      setSimulation2d({ ...simulation2d })
     }
   })
 
