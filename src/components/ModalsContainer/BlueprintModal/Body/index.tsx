@@ -9,6 +9,7 @@ import { SchemaWithChildren } from '../types'
 import { Editor } from './Editor'
 import { Graph } from './Graph'
 import { Toolbar } from './Toolbar'
+import { useModal } from '~/stores/useModalStore'
 
 export type FormData = {
   type: string
@@ -22,6 +23,11 @@ export const Body = () => {
   const [selectedSchemaId, setSelectedSchemaId] = useState<string>('')
   const [isCreateNew, setIsCreateNew] = useState(false)
   const [loading, setLoading] = useState(false)
+  const { open } = useModal('addEdgeToBluePrint')
+
+  const onAddEdge = () => {
+    open()
+  }
 
   const [schemas, links, setSchemaAll, setSchemaLinks] = useSchemaStore((s) => [
     s.schemas,
@@ -114,6 +120,7 @@ export const Body = () => {
       <Flex align="stretch" direction="row" grow={1}>
         <Flex ml={-20} my={-20}>
           <Toolbar
+            onAddEdge={onAddEdge}
             onCreateNew={() => {
               setIsCreateNew(true)
               setSelectedSchemaId('')

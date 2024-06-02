@@ -6,9 +6,10 @@ import { colors } from '~/utils/colors'
 
 type Props = {
   onCreateNew: () => void
+  onAddEdge: () => void
 }
 
-export const Toolbar = ({ onCreateNew }: Props) => (
+export const Toolbar = ({ onCreateNew, onAddEdge }: Props) => (
   <Wrapper>
     <LogoButton>BLUEPRINT</LogoButton>
     <ActionButton data-testid="add-schema-type" onClick={onCreateNew}>
@@ -16,6 +17,12 @@ export const Toolbar = ({ onCreateNew }: Props) => (
         <AddContentIcon />
       </IconWrapper>
       <Text>Add Type</Text>
+    </ActionButton>
+    <ActionButton data-testid="add-edge" onClick={onAddEdge}>
+      <IconWrapper>
+        <AddContentIcon />
+      </IconWrapper>
+      <Text>Add Edge</Text>
     </ActionButton>
   </Wrapper>
 )
