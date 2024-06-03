@@ -154,7 +154,7 @@ export type Link<T = string> = {
 
 export type GraphData<T = string> = {
   links: Link<T>[]
-  nodes: NodeExtended[]
+  nodes: Node[]
 }
 
 export class NodeMesh extends Mesh {

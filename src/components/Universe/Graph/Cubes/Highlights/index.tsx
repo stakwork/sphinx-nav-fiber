@@ -16,7 +16,11 @@ export const Highlights = () => {
   const highlights = useMemo(() => {
     const h: HighlightProps[] = []
 
-    data.nodes.forEach((node: NodeExtended) => {
+    if (!data?.nodes?.length) {
+      return h
+    }
+
+    data?.nodes.forEach((node: NodeExtended) => {
       const { highlight, highlightColor } = getHighlighter({ node, selectedNode, searchTerm })
 
       if (highlight) {
@@ -37,7 +41,7 @@ export const Highlights = () => {
     })
 
     return h
-  }, [selectedNode, searchTerm, data.nodes, materials])
+  }, [selectedNode, searchTerm, data?.nodes, materials])
 
   return (
     <>

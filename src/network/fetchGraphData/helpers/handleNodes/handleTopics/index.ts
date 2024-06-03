@@ -22,6 +22,7 @@ export const generateTopicNodesFromMap = (topicMap: TopicMap, doNodeCallback: (n
       id: topicNodeId,
       label: topic,
       name: topic,
+      edge_count: 0,
       type: 'topic',
       node_type: 'topic',
       ref_id: topicNodeId,

@@ -14,8 +14,7 @@ import { FetchLoaderText } from '~/components/common/Loader'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore, useFilteredNodes } from '~/stores/useDataStore'
 import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
-import { useGraphStore } from '~/stores/useGraphStore'
-import { useSelectedNode } from '~/stores/useGraphStoreLatest'
+import { useSelectedNode, useUpdateSelectedNode } from '~/stores/useGraphStoreLatest'
 import { colors } from '~/utils/colors'
 import { LatestView } from './Latest'
 import { EpisodeSkeleton } from './Relevance/EpisodeSkeleton'
@@ -37,7 +36,7 @@ type ContentProp = {
 // eslint-disable-next-line react/display-name
 const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen }, ref) => {
   const { isFetching: isLoading, setSidebarFilter } = useDataStore((s) => s)
-  const { setSelectedNode } = useGraphStore((s) => s)
+  const setSelectedNode = useUpdateSelectedNode()
 
   const filteredNodes = useFilteredNodes()
 

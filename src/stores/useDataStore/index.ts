@@ -1,11 +1,10 @@
 // @ts-nocheck
 // @ts-ignore
 
-import { GraphData } from 'three-forcegraph'
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
 import { fetchGraphData } from '~/network/fetchGraphData'
-import { FilterParams, Link, NodeExtended, NodeType, Sources, TStats, Trending } from '~/types'
+import { FilterParams, GraphData, Link, NodeExtended, NodeType, Sources, TStats, Trending } from '~/types'
 
 // eslint-disable-next-line no-promise-executor-return
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
@@ -33,7 +32,7 @@ export type DataStore = {
   abortRequest: boolean
   categoryFilter: NodeType | null
   dataInitial: { nodes: NodeExtended[]; links: Link[] } | null
-  dataNew: { nodes: Node[]; links: Link[] } | null
+  dataNew: { nodes: NodeExtended[]; links: Link[] } | null
   currentPage: number
   itemsPerPage: number
   filters: FilterParams

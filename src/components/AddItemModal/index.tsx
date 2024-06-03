@@ -5,6 +5,7 @@ import { BaseModal, ModalKind } from '~/components/Modal'
 import { NODE_ADD_ERROR } from '~/constants'
 import { api } from '~/network/api'
 import { useDataStore } from '~/stores/useDataStore'
+import { useGraphStore } from '~/stores/useGraphStoreLatest'
 import { useModal } from '~/stores/useModalStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { NodeExtended, SubmitErrRes } from '~/types'
@@ -141,7 +142,8 @@ export const AddItemModal = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [error, setError] = useState<string>('')
 
-  const [addNewNode, setSelectedNode] = useDataStore((s) => [s.addNewNode, s.setSelectedNode])
+  const [addNewNode] = useDataStore((s) => [s.addNewNode])
+  const [setSelectedNode] = useGraphStore((s) => [s.setSelectedNode])
 
   useEffect(
     () => () => {
@@ -177,6 +179,7 @@ export const AddItemModal = () => {
       label: data.typeName,
       node_type: newType,
       id: newId,
+      edge_count: 0,
       ref_id: newId,
       x: Math.random(),
       y: Math.random(),
@@ -189,7 +192,7 @@ export const AddItemModal = () => {
       },
     }
 
-    addNewNode(node)
+    addNewNode({ nodes: [node], links: [] })
 
     setSelectedNode(node)
   }

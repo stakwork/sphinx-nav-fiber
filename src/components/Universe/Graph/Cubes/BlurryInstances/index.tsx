@@ -2,7 +2,7 @@ import { Instance, Instances } from '@react-three/drei'
 import { useMemo } from 'react'
 import { useGraphData } from '~/components/DataRetriever'
 import { getNodeColorByType } from '~/components/Universe/Graph/constant'
-import { useDataStore } from '~/stores/useDataStore'
+import { useGraphStore } from '~/stores/useGraphStoreLatest'
 import { boxGeometry, isMainTopic } from '../constants'
 import { blurryMaterial } from './constants'
 
@@ -13,7 +13,7 @@ type InstanceProps = {
 export const BlurryInstances = ({ hide }: InstanceProps) => {
   const data = useGraphData()
 
-  const graphStyle = useDataStore((s) => s.graphStyle)
+  const graphStyle = useGraphStore((s) => s.graphStyle)
 
   const instances = useMemo(
     () =>

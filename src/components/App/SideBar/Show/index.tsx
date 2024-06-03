@@ -1,11 +1,11 @@
 import { useMemo, useState } from 'react'
 import styled from 'styled-components'
+import { useGraphData } from '~/components/DataRetriever'
 import { Avatar } from '~/components/common/Avatar'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { TypeBadge } from '~/components/common/TypeBadge'
-import { useGraphData } from '~/components/DataRetriever'
-import { useDataStore } from '~/stores/useDataStore'
+import { useGraphStore } from '~/stores/useGraphStoreLatest'
 import { NodeExtended } from '~/types'
 import { getSelectedNodeTimestamps } from '~/utils'
 import { colors } from '~/utils/colors'
@@ -61,7 +61,7 @@ const ScrollableList = styled.div`
 `
 
 export const Show = () => {
-  const [selectedNode, setSelectedNode] = useDataStore((s) => [s.selectedNode, s.setSelectedNode])
+  const [selectedNode, setSelectedNode] = useGraphStore((s) => [s.selectedNode, s.setSelectedNode])
   const data = useGraphData()
   const [showHost, setShowHost] = useState<string[]>([])
 

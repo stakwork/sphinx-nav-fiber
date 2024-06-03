@@ -1,22 +1,23 @@
 import { noop } from 'lodash'
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
-import { Tooltip } from '~/components/common/ToolTip'
 import AudioIcon from '~/components/Icons/AudioIcon'
 import BudgetIcon from '~/components/Icons/BudgetIcon'
 import NodesIcon from '~/components/Icons/NodesIcon'
 import TwitterIcon from '~/components/Icons/TwitterIcon'
 import VideoIcon from '~/components/Icons/VideoIcon'
-import { getStats, getTotalProcessing, TStatParams } from '~/network/fetchSourcesData'
+import { Tooltip } from '~/components/common/ToolTip'
+import { TStatParams, getStats, getTotalProcessing } from '~/network/fetchSourcesData'
 import { useDataStore } from '~/stores/useDataStore'
+import { useUpdateSelectedNode } from '~/stores/useGraphStoreLatest'
 import { useModal } from '~/stores/useModalStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { TStats } from '~/types'
 import { formatBudget, formatStatsResponse } from '~/utils'
 import { colors } from '~/utils/colors'
-import { Flex } from '../common/Flex'
 import DocumentIcon from '../Icons/DocumentIcon'
 import EpisodeIcon from '../Icons/EpisodeIcon'
+import { Flex } from '../common/Flex'
 import { Animation } from './Animation'
 
 interface StatConfigItem {
@@ -84,13 +85,14 @@ export const Stats = () => {
   const [totalProcessing, setTotalProcessing] = useState(0)
   const [budget, setBudget] = useUserStore((s) => [s.budget, s.setBudget])
 
-  const [stats, setStats, fetchData, setSelectedNode, setAbortRequests] = useDataStore((s) => [
+  const [stats, setStats, fetchData, setAbortRequests] = useDataStore((s) => [
     s.stats,
     s.setStats,
     s.fetchData,
-    s.setSelectedNode,
     s.setAbortRequests,
   ])
+
+  const setSelectedNode = useUpdateSelectedNode()
 
   const { open: openSourcesModal } = useModal('sourcesTable')
 

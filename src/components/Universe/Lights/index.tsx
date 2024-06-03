@@ -3,7 +3,7 @@ import { useControls } from 'leva'
 import { useRef } from 'react'
 import { DirectionalLight, PointLight } from 'three'
 import { GRAPH_FOG_COLOR, GRAPH_GROUND_COLOR, GRAPH_LIGHT_INTENSITY } from '~/constants'
-import { useDataStore } from '~/stores/useDataStore'
+import { useGraphStore } from '~/stores/useGraphStoreLatest'
 import { colors } from '~/utils/colors'
 import { UNIVERSE_SCALE } from '../Graph/constant'
 
@@ -12,7 +12,7 @@ export const Lights = () => {
     fogColor: GRAPH_FOG_COLOR,
   })
 
-  const graphStyle = useDataStore((s) => s.graphStyle)
+  const graphStyle = useGraphStore((s) => s.graphStyle)
 
   const pLightRefAmbient = useRef<PointLight | null>(null)
   const cameraLightRef = useRef<PointLight | null>(null)

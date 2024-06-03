@@ -4,7 +4,7 @@ import { Booster } from '~/components/Booster'
 import { Divider } from '~/components/common/Divider'
 import { Flex } from '~/components/common/Flex'
 import { useAppStore } from '~/stores/useAppStore'
-import { useDataStore } from '~/stores/useDataStore'
+import { useSelectedNode } from '~/stores/useGraphStoreLatest'
 import { NodeExtended } from '~/types'
 import { formatDescription } from '~/utils/formatDescription'
 import { BoostAmt } from '../../Helper/BoostAmt'
@@ -17,7 +17,7 @@ type Props = {
 }
 
 export const Media = ({ node }: Props) => {
-  const selectedNode = useDataStore((s) => s.selectedNode)
+  const selectedNode = useSelectedNode()
 
   const searchTerm = useAppStore((s) => s.currentSearch)
 

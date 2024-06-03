@@ -38,6 +38,7 @@ export function generateGuestNodesFromMap(
       x: 0,
       y: 0,
       z: 0,
+      edge_count: 0,
       colors: ['#000'],
       id: guestNodeId,
       image_url: guestValue.imageUrl,

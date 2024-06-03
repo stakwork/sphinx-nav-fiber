@@ -27,7 +27,8 @@ const fetchNodes = async (
 
     const response = await api.get<FetchDataResponse>(url, { Authorization: lsatToken }, signal)
 
-    if (response.status === 402) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    if ((response as any).status === 402) {
       await payLsat(setBudget)
 
       return fetchNodes(setBudget, params, signal, setAbortRequests)

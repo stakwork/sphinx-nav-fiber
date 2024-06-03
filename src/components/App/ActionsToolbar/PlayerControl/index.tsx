@@ -7,8 +7,7 @@ import PlayIcon from '~/components/Icons/PlayIcon'
 import { Avatar } from '~/components/common/Avatar'
 import { Flex } from '~/components/common/Flex'
 import { useAppStore } from '~/stores/useAppStore'
-import { useDataStore } from '~/stores/useDataStore'
-import { useSelectedNode } from '~/stores/useGraphStoreLatest'
+import { useGraphStore, useSelectedNode } from '~/stores/useGraphStoreLatest'
 import { usePlayerStore } from '~/stores/usePlayerStore'
 import { videoTimeToSeconds } from '~/utils'
 import { colors } from '~/utils/colors'
@@ -17,7 +16,7 @@ export const PlayerControl = () => {
   const containerRef = useRef<HTMLDivElement>(null)
   const [scrollWidth, setScrollWidth] = useState(0)
   const selectedNode = useSelectedNode()
-  const setSelectedNode = useDataStore((s) => s.setSelectedNode)
+  const setSelectedNode = useGraphStore((s) => s.setSelectedNode)
   const [sidebarIsOpen, setSidebarOpen] = useAppStore((s) => [s.sidebarIsOpen, s.setSidebarOpen])
 
   const [isPlaying, setIsPlaying, playingTime, playingNode, miniPlayerIsVisible, setMiniPlayerIsVisible] =
