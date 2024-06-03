@@ -269,7 +269,7 @@ export const useDataStore = create<DataStore>()(
       console.log(updatedNode)
     },
     addNewNode: (data) => {
-      const { currentPage, dataInitial: existingData } = get()
+      const { dataInitial: existingData } = get()
 
       if (!data?.nodes) {
         return
@@ -277,8 +277,8 @@ export const useDataStore = create<DataStore>()(
 
       console.log(data)
 
-      const currentNodes = currentPage === 0 ? [] : [...(existingData?.nodes || [])]
-      const currentLinks = currentPage === 0 ? [] : [...(existingData?.links || [])]
+      const currentNodes = [...(existingData?.nodes || [])]
+      const currentLinks = [...(existingData?.links || [])]
 
       const newNodes = (data?.nodes || []).filter((n) => !currentNodes.some((c) => c.ref_id === n.ref_id))
       const newLinks = (data?.edges || []).filter((n) => !currentLinks.some((c) => c.ref_id === n.ref_id))

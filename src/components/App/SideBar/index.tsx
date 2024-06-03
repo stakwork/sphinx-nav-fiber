@@ -101,7 +101,7 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
             )}
           </InputButton>
         </Search>
-        {searchTerm && (
+        {(searchTerm || true) && (
           <SearchDetails>
             {isLoading ? (
               <FetchLoaderText />

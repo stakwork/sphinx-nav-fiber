@@ -11,6 +11,8 @@ import { useDataStore } from '~/stores/useDataStore'
 import { colors } from '~/utils/colors'
 
 export const SelectWithPopover = () => {
+  console.log(123)
+
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null)
   const { sidebarFilter, setSidebarFilter, sidebarFilterCounts } = useDataStore((s) => s)
   const currentFilter = sidebarFilter === 'undefined' ? '' : sidebarFilter.toLowerCase()
