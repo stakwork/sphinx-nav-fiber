@@ -8,9 +8,6 @@ import { api } from '~/network/api'
 jest.mock('~/network/api', () => ({
   api: {
     delete: jest.fn().mockResolvedValue({ status: 200 }),
-    get: jest.fn(),
-    post: jest.fn(),
-    put: jest.fn(),
   },
 }))
 
