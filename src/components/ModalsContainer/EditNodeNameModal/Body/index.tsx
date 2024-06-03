@@ -114,7 +114,12 @@ export const Body = () => {
   const isNodeNameChanged = getValues().name && actualTopicNode?.name !== getValues().name
 
   const shouldDisableSave =
-    loading || topicIsLoading || (!!imageUrl && !isValidImageUrl) || (!imageUrl && !isNodeNameChanged)
+    loading ||
+    topicIsLoading ||
+    (!!imageUrl && !isValidImageUrl) ||
+    (!imageUrl && !isNodeNameChanged) ||
+    !imageUrl ||
+    !topicValue
 
   return (
     <Wrapper>
@@ -146,7 +151,12 @@ export const Body = () => {
             variant="contained"
           >
             Save Changes
-            {loading && <ClipLoader color={colors.BLUE_PRESS_STATE} size={10} />}
+            {loading && (
+              <ClipLoaderWrapper>
+                {' '}
+                <ClipLoader color={colors.lightGray} size={12} />
+              </ClipLoaderWrapper>
+            )}
           </Button>
         </Flex>
       </FormProvider>
@@ -170,4 +180,8 @@ const DeleteButton = styled(Button)`
       background-color: rgba(237, 116, 116, 0.2);
     }
   }
+`
+
+const ClipLoaderWrapper = styled.span`
+  margin-top: 3px;
 `
