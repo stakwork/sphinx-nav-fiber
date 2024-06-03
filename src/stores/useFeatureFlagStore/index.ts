@@ -7,12 +7,14 @@ export type FeatureFlagStore = {
   v2FeatureFlag: boolean
   graphBluePrintFeatureFlag: boolean
   changeNodeTypeFeatureFlag: boolean
+  realtimeGraphFeatureFlag: boolean
   setTrendingTopicsFeatureFlag: (val: boolean) => void
   setV2FeatureFlag: (val: boolean) => void
   setQueuedSourcesFeatureFlag: (val: boolean) => void
   setCustomSchemaFeatureFlag: (val: boolean) => void
   setGraphBluePrintFeatureFlag: (val: boolean) => void
   setChangeNodeTypeFeatureFlag: (val: boolean) => void
+  setRealtimeGraphFeatureFlag: (val: boolean) => void
 }
 
 const defaultData: Omit<
@@ -23,6 +25,7 @@ const defaultData: Omit<
   | 'setCustomSchemaFeatureFlag'
   | 'setGraphBluePrintFeatureFlag'
   | 'setChangeNodeTypeFeatureFlag'
+  | 'setRealtimeGraphFeatureFlag'
 > = {
   trendingTopicsFeatureFlag: true,
   queuedSourcesFeatureFlag: false,
@@ -30,6 +33,7 @@ const defaultData: Omit<
   customSchemaFeatureFlag: false,
   graphBluePrintFeatureFlag: false,
   changeNodeTypeFeatureFlag: false,
+  realtimeGraphFeatureFlag: false,
 }
 
 export const useFeatureFlagStore = create<FeatureFlagStore>((set) => ({
@@ -40,4 +44,5 @@ export const useFeatureFlagStore = create<FeatureFlagStore>((set) => ({
   setCustomSchemaFeatureFlag: (customSchemaFeatureFlag) => set({ customSchemaFeatureFlag }),
   setGraphBluePrintFeatureFlag: (graphBluePrintFeatureFlag) => set({ graphBluePrintFeatureFlag }),
   setChangeNodeTypeFeatureFlag: (changeNodeTypeFeatureFlag) => set({ changeNodeTypeFeatureFlag }),
+  setRealtimeGraphFeatureFlag: (realtimeGraphFeatureFlag) => set({ realtimeGraphFeatureFlag }),
 }))

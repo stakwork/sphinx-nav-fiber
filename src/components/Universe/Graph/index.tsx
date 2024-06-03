@@ -1,8 +1,7 @@
 import { Segments } from '@react-three/drei'
-import { useEffect, useMemo } from 'react'
-import { Vector3 } from 'three'
-import { usePrevious } from '~/hooks/usePrevious'
-import { getGraphDataPositions } from '~/network/fetchGraphData/const'
+import { isEqual } from 'lodash'
+import { useEffect, useMemo, useRef } from 'react'
+import { Group, Vector3 } from 'three'
 import { useDataStore } from '~/stores/useDataStore'
 import { useGraphStore } from '~/stores/useGraphStoreLatest'
 import { Link } from '~/types'
@@ -15,30 +14,42 @@ import { Segment } from './Segment'
 import { NodeDetailsPanel } from './UI'
 
 export const Graph = () => {
-  const { dataInitial, isLoadingNew, isFetching } = useDataStore((s) => s)
+  const { dataInitial, isLoadingNew, isFetching, dataNew, resetDataNew } = useDataStore((s) => s)
+  const groupRef = useRef<Group>(null)
 
-  const { data, setData, graphStyle, showSelectionGraph, selectedNodeRelativeIds, selectionGraphData, selectedNode } =
-    useGraphStore((s) => s)
-
-  const prevNodesLength = usePrevious<number>(dataInitial?.nodes ? dataInitial.nodes.length : 0)
-  const prevGraphStyle = usePrevious<string>(graphStyle)
+  const {
+    data,
+    setData,
+    simulation,
+    simulationCreate,
+    simulationHelpers,
+    graphStyle,
+    showSelectionGraph,
+    selectedNodeRelativeIds,
+    selectionGraphData,
+    selectedNode,
+  } = useGraphStore((s) => s)
 
   useEffect(() => {
-    if (!dataInitial?.nodes) {
+    if (!dataNew) {
       return
     }
 
-    if (prevNodesLength !== dataInitial?.nodes.length || prevGraphStyle !== graphStyle) {
-      const { links, nodes } = getGraphDataPositions(graphStyle, dataInitial.nodes)
+    const nodes = dataNew.nodes || []
+    const links = dataNew.links || []
 
-      console.log('update simulation')
+    if (simulation && !isEqual(dataNew, dataInitial)) {
+      console.log('not equal')
 
-      setData({
-        nodes,
-        links,
-      })
+      simulationHelpers.addNodesAndLinks(nodes, links)
     }
-  }, [prevNodesLength, graphStyle, setData, prevGraphStyle, dataInitial?.nodes])
+
+    if (!simulation) {
+      simulationCreate(nodes, links)
+    }
+
+    resetDataNew()
+  }, [setData, dataNew, simulation, simulationCreate, resetDataNew, simulationHelpers, dataInitial])
 
   const lineWidth = useMemo(() => {
     if (showSelectionGraph) {
@@ -85,16 +96,52 @@ export const Graph = () => {
     return badgesToRender
   }, [selectedNodeRelativeIds, data?.nodes, showSelectionGraph, selectionGraphData, selectedNode])
 
-  if (!data) {
+  useEffect(() => {
+    if (!simulation) {
+      return
+    }
+
+    if (graphStyle === 'split') {
+      simulationHelpers.addSplitForce()
+    }
+
+    if (graphStyle === 'sphere') {
+      simulationHelpers.addRadialForce()
+    }
+  }, [graphStyle, simulationHelpers, simulation])
+
+  useEffect(() => {
+    if (!simulation) {
+      return
+    }
+
+    simulation.on('tick', () => {
+      console.log('tick')
+
+      if (groupRef.current) {
+        const gr = groupRef.current.getObjectByName('simulation-3d-group') as Group
+
+        gr.children.forEach((mesh, index) => {
+          const simulationNode = simulation.nodes()[index]
+
+          if (simulationNode) {
+            mesh.position.set(simulationNode.x, simulationNode.y, simulationNode.z)
+          }
+        })
+      }
+    })
+  }, [simulation])
+
+  if (!simulation) {
     return null
   }
 
   return (
-    <>
+    <group ref={groupRef}>
       <Cubes />
       <Earth />
 
-      <Particles />
+      {false && <Particles />}
       {(isLoadingNew || isFetching) && <LoadingNodes />}
 
       {graphStyle !== 'earth' && (
@@ -113,6 +160,6 @@ export const Graph = () => {
         </Segments>
       )}
       <NodeDetailsPanel />
-    </>
+    </group>
   )
 }

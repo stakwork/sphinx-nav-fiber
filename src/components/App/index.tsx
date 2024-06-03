@@ -13,6 +13,8 @@ import { isDevelopment } from '~/constants'
 import { useSocket } from '~/hooks/useSockets'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
+import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
+import { useUpdateSelectedNode } from '~/stores/useGraphStoreLatest'
 import { useTeachStore } from '~/stores/useTeachStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { colors } from '~/utils/colors'
@@ -25,7 +27,6 @@ import { DeviceCompatibilityNotice } from './DeviceCompatibilityNotification'
 import { Helper } from './Helper'
 import { SecondarySideBar } from './SecondarySidebar'
 import { Toasts } from './Toasts'
-import { useUpdateSelectedNode } from '~/stores/useGraphStoreLatest'
 
 const Wrapper = styled(Flex)`
   height: 100%;
@@ -59,9 +60,11 @@ export const App = () => {
 
   const setTeachMeAnswer = useTeachStore((s) => s.setTeachMeAnswer)
 
-  const { fetchData, setCategoryFilter, setAbortRequests } = useDataStore((s) => s)
+  const { fetchData, setCategoryFilter, setAbortRequests, addNewNode } = useDataStore((s) => s)
 
   const setSelectedNode = useUpdateSelectedNode()
+
+  const [realtimeGraphFeatureFlag] = useFeatureFlagStore((s) => [s.realtimeGraphFeatureFlag])
 
   const socket: Socket | undefined = useSocket()
 
@@ -95,6 +98,15 @@ export const App = () => {
     setNodeCount('INCREMENT')
   }, [setNodeCount])
 
+  const handleNewNodeCreated = useCallback(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (data: any) => {
+      // Use the data recieved to create graph in realtime
+      addNewNode(data)
+    },
+    [addNewNode],
+  )
+
   // setup socket
   useEffect(() => {
     if (socket) {
@@ -105,6 +117,10 @@ export const App = () => {
       })
 
       socket.on('newnode', handleNewNode)
+
+      if (realtimeGraphFeatureFlag) {
+        socket.on('new_node_created', handleNewNodeCreated)
+      }
     }
 
     return () => {
@@ -112,7 +128,7 @@ export const App = () => {
         socket.off()
       }
     }
-  }, [socket, handleNewNode])
+  }, [socket, handleNewNode, handleNewNodeCreated, realtimeGraphFeatureFlag])
 
   return (
     <>

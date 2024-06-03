@@ -1,8 +1,16 @@
-import { uniqBy } from 'lodash'
+// @ts-nocheck
+// @ts-ignore
+
+import { GraphData } from 'three-forcegraph'
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
 import { fetchGraphData } from '~/network/fetchGraphData'
 import { FilterParams, Link, NodeExtended, NodeType, Sources, TStats, Trending } from '~/types'
+
+// eslint-disable-next-line no-promise-executor-return
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
+
+console.log(delay)
 
 export type GraphStyle = 'sphere' | 'force' | 'split' | 'earth'
 
@@ -25,6 +33,7 @@ export type DataStore = {
   abortRequest: boolean
   categoryFilter: NodeType | null
   dataInitial: { nodes: NodeExtended[]; links: Link[] } | null
+  dataNew: { nodes: Node[]; links: Link[] } | null
   currentPage: number
   itemsPerPage: number
   filters: FilterParams
@@ -40,8 +49,11 @@ export type DataStore = {
   sidebarFilterCounts: SidebarFilterWithCount[]
   trendingTopics: Trending[]
   stats: TStats | null
+  nodeTypes: string[]
 
   setTrendingTopics: (trendingTopics: Trending[]) => void
+  setDataNew: (data: GraphData) => void
+  resetDataNew: () => void
   setStats: (stats: TStats) => void
   setSidebarFilter: (filter: string) => void
   setCategoryFilter: (categoryFilter: NodeType | null) => void
@@ -56,7 +68,7 @@ export type DataStore = {
   setQueuedSources: (sources: Sources[] | null) => void
   setIsFetching: (_: boolean) => void
   setHideNodeDetails: (_: boolean) => void
-  addNewNode: (node: NodeExtended) => void
+  addNewNode: (node: GraphData) => void
   updateNode: (updatedNode: NodeExtended) => void
   removeNode: (id: string) => void
   setSidebarFilterCounts: (filterCounts: SidebarFilterWithCount[]) => void
@@ -71,20 +83,13 @@ const defaultData: Omit<
   | 'setSidebarFilter'
   | 'fetchData'
   | 'setIsFetching'
-  | 'setCameraAnimation'
   | 'setCategoryFilter'
-  | 'setDisableCameraRotation'
   | 'setHoveredNode'
   | 'setSelectedTimestamp'
   | 'setSphinxModalOpen'
-  | 'setCameraFocusTrigger'
   | 'setSources'
   | 'setSidebarFilterCounts'
   | 'setQueuedSources'
-  | 'setGraphRadius'
-  | 'setGraphStyle'
-  | 'setNearbyNodeIds'
-  | 'setShowSelectionGraph'
   | 'setSelectionData'
   | 'setHideNodeDetails'
   | 'setTeachMe'
@@ -93,11 +98,13 @@ const defaultData: Omit<
   | 'removeNode'
   | 'setAbortRequests'
   | 'nextPage'
+  | 'setDataNew'
+  | 'resetDataNew'
 > = {
   categoryFilter: null,
   dataInitial: null,
   currentPage: 0,
-  itemsPerPage: 15,
+  itemsPerPage: 1,
   filters: {
     skip: '0',
     limit: '15',
@@ -120,6 +127,7 @@ const defaultData: Omit<
   stats: null,
   splashDataLoading: true,
   abortRequest: false,
+  dataNew: null,
 }
 
 let abortController: AbortController | null = null
@@ -158,26 +166,70 @@ export const useDataStore = create<DataStore>()(
           return
         }
 
-        const newNodes = currentPage === 0 ? [] : [...(existingData?.nodes || [])]
-        const newLinks = currentPage === 0 ? [] : [...(existingData?.links || [])]
+        const currentNodes = currentPage === 0 ? [] : [...(existingData?.nodes || [])]
+        const currentLinks = currentPage === 0 ? [] : [...(existingData?.links || [])]
 
-        newNodes.push(...(data?.nodes || []))
-        newLinks.push(...(data?.edges || []))
+        const newNodes = (data?.nodes || []).filter((n) => !currentNodes.some((c) => c.ref_id === n.ref_id))
+        const newLinks = (data?.edges || []).filter((n) => !currentLinks.some((c) => c.ref_id === n.ref_id))
 
-        const sidebarFilters = ['all', ...new Set(newNodes.map((i) => (i.node_type || '').toLowerCase()))]
+        currentNodes.push(...newNodes)
+        currentLinks.push(...newLinks)
+
+        const nodeTypes = [...new Set(currentNodes.map((i) => i.node_type))]
+
+        const sidebarFilters = ['all', ...nodeTypes.map((i) => i.toLowerCase())]
 
         const sidebarFilterCounts = sidebarFilters.map((filter) => ({
           name: filter,
-          count: newNodes.filter((node) => filter === 'all' || node.node_type?.toLowerCase() === filter).length,
+          count: currentNodes.filter((node) => filter === 'all' || node.node_type?.toLowerCase() === filter).length,
         }))
 
         set({
-          dataInitial: { nodes: uniqBy(newNodes, 'ref_id'), links: uniqBy(newLinks, 'ref_id') },
+          dataInitial: { nodes: currentNodes, links: currentLinks },
+          dataNew: { nodes: newNodes, links: newLinks },
           isFetching: false,
           isLoadingNew: false,
+          nodeTypes,
           sidebarFilters,
           sidebarFilterCounts,
         })
+
+        // const addNode = (initialData) => {
+        //   set((state) => ({
+        //     dataInitial: {
+        //       ...state.dataInitial,
+        //       nodes: uniqBy([...(state.dataInitial?.nodes || []), ...initialData.nodes], 'ref_id'),
+        //       links: initialData.links,
+        //     },
+        //   }))
+        // }
+
+        // const addItemsWithDelay = async (initialData, addItem) => {
+        //   // eslint-disable-next-line no-plusplus
+        //   for (let i = 0; i < initialData.nodes.length; i++) {
+        //     const node = initialData.nodes[i]
+
+        //     const links = initialData.edges.filter((link) => {
+        //       if (node.ref_id === link.source) {
+        //         return existingData?.nodes.some((n) => n.ref_id === link.target)
+        //       }
+
+        //       if (node.ref_id === link.target) {
+        //         return existingData?.nodes.some((n) => n.ref_id === link.source)
+        //       }
+
+        //       return false
+        //     })
+
+        //     // eslint-disable-next-line no-await-in-loop
+        //     await delay(i * 200) // Delay of 1 second for each item
+        //     addItem({ nodes: [node], links })
+        //   }
+        // }
+
+        // if (data) {
+        //   await addItemsWithDelay(data, addNode)
+        // }
       } catch (error) {
         console.log(error)
         set({ isFetching: false })
@@ -199,6 +251,7 @@ export const useDataStore = create<DataStore>()(
         fetchData()
       }
     },
+    resetDataNew: () => null,
     setFilters: (filters: FilterParams) => set((state) => ({ filters: { ...state.filters, ...filters, page: 0 } })),
     setSidebarFilterCounts: (sidebarFilterCounts) => set({ sidebarFilterCounts }),
     setTrendingTopics: (trendingTopics) => set({ trendingTopics }),
@@ -215,8 +268,40 @@ export const useDataStore = create<DataStore>()(
     updateNode: (updatedNode) => {
       console.log(updatedNode)
     },
-    addNewNode: (node) => {
-      console.log(node)
+    addNewNode: (data) => {
+      const { currentPage, dataInitial: existingData } = get()
+
+      if (!data?.nodes) {
+        return
+      }
+
+      console.log(data)
+
+      const currentNodes = currentPage === 0 ? [] : [...(existingData?.nodes || [])]
+      const currentLinks = currentPage === 0 ? [] : [...(existingData?.links || [])]
+
+      const newNodes = (data?.nodes || []).filter((n) => !currentNodes.some((c) => c.ref_id === n.ref_id))
+      const newLinks = (data?.edges || []).filter((n) => !currentLinks.some((c) => c.ref_id === n.ref_id))
+
+      currentNodes.push(...newNodes)
+      currentLinks.push(...newLinks)
+
+      const nodeTypes = [...new Set(currentNodes.map((i) => i.node_type))]
+
+      const sidebarFilters = ['all', ...nodeTypes.map((i) => i.toLowerCase())]
+
+      const sidebarFilterCounts = sidebarFilters.map((filter) => ({
+        name: filter,
+        count: currentNodes.filter((node) => filter === 'all' || node.node_type?.toLowerCase() === filter).length,
+      }))
+
+      set({
+        dataInitial: { nodes: currentNodes, links: currentLinks },
+        dataNew: { nodes: newNodes, links: newLinks },
+        nodeTypes,
+        sidebarFilters,
+        sidebarFilterCounts,
+      })
     },
     removeNode: (id) => {
       console.log(id)

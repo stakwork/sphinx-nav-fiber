@@ -32,7 +32,7 @@ export const TextNode = memo(({ node, hide }: Props) => {
   })
 
   const textScale = useMemo(() => {
-    let scale = (node.edge_count || 1) * 4
+    let scale = (node.edge_count || 30) * 4
 
     if (showSelectionGraph && isSelected) {
       scale = 40
@@ -59,14 +59,17 @@ export const TextNode = memo(({ node, hide }: Props) => {
         anchorY="middle"
         color={colors.white}
         fillOpacity={fillOpacity}
-        position={[node.x, node.y, node.z]}
-        scale={textScale}
+        // position={[node.x, node.y, node.z]}
+        scale={20 || textScale}
         userData={node}
         visible={!hide && !isSelected}
         {...fontProps}
       >
         {node.name}
       </Text>
+
+      {/* <sphereBufferGeometry args={[2, 10, 10]} />
+      <meshStandardMaterial color="#f1c40f" /> */}
     </>
   )
 })

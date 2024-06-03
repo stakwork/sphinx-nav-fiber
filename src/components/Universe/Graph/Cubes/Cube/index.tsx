@@ -59,7 +59,7 @@ export const Cube = memo(({ node, hide, animated }: Props) => {
         geometry={boxGeometry}
         material={material}
         name={node.id}
-        position={[node.x, node.y, node.z]}
+        // position={[node.x, node.y, node.z]}
         scale={scale}
         userData={node}
         visible={!hide}

@@ -3,6 +3,7 @@ import { ThreeEvent } from '@react-three/fiber'
 import { memo, useCallback } from 'react'
 import { Object3D } from 'three'
 import { useAppStore } from '~/stores/useAppStore'
+import { useDataStore } from '~/stores/useDataStore'
 import { useGraphStore, useSelectedNode } from '~/stores/useGraphStoreLatest'
 import { NodeExtended } from '~/types'
 import { BlurryInstances } from './BlurryInstances'
@@ -18,7 +19,8 @@ export const Cubes = memo(() => {
   const setHoveredNode = useGraphStore((s) => s.setHoveredNode)
   const showSelectionGraph = useGraphStore((s) => s.showSelectionGraph)
   const selectionGraphData = useGraphStore((s) => s.selectionGraphData)
-  const data = useGraphStore((s) => s.data)
+  // const data = useGraphStore((s) => s.data)
+  const data = useDataStore((s) => s.dataInitial)
   const setTranscriptOpen = useAppStore((s) => s.setTranscriptOpen)
 
   const ignoreNodeEvent = useCallback(
@@ -79,27 +81,31 @@ export const Cubes = memo(() => {
 
   return (
     <Select
-      filter={(selected) => selected.filter((f) => !!f.userData?.id)}
+      filter={(selected) => selected.filter((f) => !!f.userData?.ref_id)}
       onChange={handleSelect}
       onPointerOut={onPointerOut}
       onPointerOver={onPointerIn}
     >
       <BlurryInstances hide={hideUniverse} />
       <RelevanceBadges />
-      {data?.nodes
-        .filter((f: NodeExtended) => {
-          const isSelected = f?.ref_id === selectedNode?.ref_id
-          const isNearbyOrPersistent = nearbyNodeIds.includes(f.ref_id || '') || isMainTopic(f)
+      <group name="simulation-3d-group">
+        {data?.nodes
+          .filter((f: NodeExtended) => {
+            const isSelected = f?.ref_id === selectedNode?.ref_id
+            const isNearbyOrPersistent = nearbyNodeIds.includes(f.ref_id || '') || isMainTopic(f)
 
-          return true || isNearbyOrPersistent || isSelected
-        })
-        .map((node: NodeExtended) => {
-          if (node.node_type === 'Topic') {
-            return <TextNode key={node.ref_id || node.id} hide={hideUniverse} node={node} />
-          }
-
-          return <Cube key={node.ref_id || node.id} hide={hideUniverse} node={node} />
-        })}
+            return true || isNearbyOrPersistent || isSelected
+          })
+          .map((node: NodeExtended) => (
+            <mesh key={node.ref_id}>
+              {node.node_type === 'Topic' ? (
+                <TextNode key={node.ref_id || node.id} hide={hideUniverse} node={node} />
+              ) : (
+                <Cube key={node.ref_id || node.id} hide={hideUniverse} node={node} />
+              )}
+            </mesh>
+          ))}
+      </group>
 
       {hideUniverse && <SelectionDataNodes />}
     </Select>
