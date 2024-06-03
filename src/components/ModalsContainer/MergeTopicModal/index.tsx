@@ -58,6 +58,7 @@ export const MergeNodeModal = () => {
   }, [selectedNode])
 
   const closeHandler = () => {
+    setSelectedToNode(null)
     close()
   }
 
@@ -90,7 +91,7 @@ export const MergeNodeModal = () => {
   }
 
   return (
-    <BaseModal id="mergeToNode" kind="small" onClose={close} preventOutsideClose>
+    <BaseModal id="mergeToNode" kind="small" onClose={closeHandler} preventOutsideClose>
       <FormProvider {...form}>
         {topicIsLoading ? (
           <Flex align="center" my={24}>
