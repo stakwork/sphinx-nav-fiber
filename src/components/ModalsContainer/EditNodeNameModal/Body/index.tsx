@@ -153,7 +153,6 @@ export const Body = () => {
             Save Changes
             {loading && (
               <ClipLoaderWrapper>
-                {' '}
                 <ClipLoader color={colors.lightGray} size={12} />
               </ClipLoaderWrapper>
             )}
