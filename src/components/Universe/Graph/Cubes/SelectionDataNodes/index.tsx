@@ -2,10 +2,11 @@ import { Segments } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import { memo, useEffect } from 'react'
 import { useGraphData } from '~/components/DataRetriever'
+import { usePrevious } from '~/hooks/usePrevious'
 import { generateLinksFromNodeData } from '~/network/fetchGraphData/helpers/generateLinksFromNodeData'
 import { useGraphStore, useSelectedNode } from '~/stores/useGraphStoreLatest'
 import { ForceSimulation, runForceSimulation } from '~/transformers/forceSimulation'
-import { GraphData } from '~/types'
+import { GraphData, NodeExtended } from '~/types'
 import { Segment } from '../../Segment'
 import { Cube } from '../Cube'
 import { TextNode } from '../Text'
@@ -16,12 +17,20 @@ export const SelectionDataNodes = memo(() => {
   const data = useGraphData()
   const selectedNode = useSelectedNode()
 
+  const prevNodesLength = usePrevious(data.nodes.length)
+
   const { selectedNodeRelativeIds, selectionGraphData, setSelectionData } = useGraphStore((s) => s)
 
   useEffect(() => {
+    if (prevNodesLength === data?.nodes.length) {
+      return
+    }
+
     const nodes = data?.nodes
-      .filter((f) => f.ref_id === selectedNode?.ref_id || selectedNodeRelativeIds.includes(f?.ref_id || ''))
-      .map((n) => {
+      .filter(
+        (f: NodeExtended) => f.ref_id === selectedNode?.ref_id || selectedNodeRelativeIds.includes(f?.ref_id || ''),
+      )
+      .map((n: NodeExtended) => {
         const fixedPosition =
           n.ref_id === selectedNode?.ref_id && n.node_type !== 'topic' ? { fx: 0, fy: 0, fz: 0 } : {}
 
@@ -33,7 +42,7 @@ export const SelectionDataNodes = memo(() => {
 
       setSelectionData({ nodes, links })
     }
-  }, [data, selectedNode, selectedNodeRelativeIds, setSelectionData])
+  }, [data, selectedNode, selectedNodeRelativeIds, setSelectionData, prevNodesLength])
 
   useEffect(() => {
     simulation2d = runForceSimulation(selectionGraphData.nodes, selectionGraphData.links, {
@@ -56,7 +65,7 @@ export const SelectionDataNodes = memo(() => {
   return (
     <>
       {selectionGraphData?.nodes.map((node) => {
-        if (node.node_type === 'topic') {
+        if (node.node_type === 'Topic') {
           return <TextNode key={`${node.ref_id || node.id}-compact`} hide node={node} />
         }
 

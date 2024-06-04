@@ -98,7 +98,7 @@ export const Cubes = memo(() => {
           })
           .map((node: NodeExtended) => (
             <mesh key={node.ref_id}>
-              {node.node_type === 'Topic' ? (
+              {node.node_type ? (
                 <TextNode key={node.ref_id || node.id} hide={hideUniverse} node={node} />
               ) : (
                 <Cube key={node.ref_id || node.id} hide={hideUniverse} node={node} />

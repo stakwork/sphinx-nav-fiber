@@ -8,6 +8,7 @@ import { maxChildrenDisplayed, nodesAreRelatives } from '~/components/Universe/c
 import { Avatar } from '~/components/common/Avatar'
 import { TypeBadge } from '~/components/common/TypeBadge'
 import { useGraphStore } from '~/stores/useGraphStoreLatest'
+import { NodeExtended } from '~/types'
 import { colors } from '~/utils/colors'
 import { Tag } from './styles'
 import { BadgeProps } from './types'
@@ -77,7 +78,7 @@ const NodeBadge = ({ position, userData, color }: BadgeProps) => {
             </div>
           ) : null}
           {isTopic ? (
-            userData?.label
+            userData?.name
           ) : (
             <Avatar
               rounded={isPerson}
@@ -93,23 +94,28 @@ const NodeBadge = ({ position, userData, color }: BadgeProps) => {
 }
 
 export const RelevanceBadges = memo(() => {
-  const { data, showSelectionGraph, selectedNode, selectionGraphData, selectedNodeRelativeIds } = useGraphStore(
+  const { simulation, showSelectionGraph, selectedNode, selectionGraphData, selectedNodeRelativeIds } = useGraphStore(
     (s) => s,
   )
 
   const nodeBadges = useMemo(() => {
-    const nodes = showSelectionGraph ? selectionGraphData.nodes : data?.nodes || []
+    const nodesData = simulation?.nodes() || []
+    const nodes = showSelectionGraph ? selectionGraphData.nodes : nodesData
 
     const childIds = nodes
-      .filter((f) => selectedNodeRelativeIds.includes(f?.ref_id || '') || selectedNode?.ref_id === f?.ref_id)
+      .filter(
+        (f: NodeExtended) => selectedNodeRelativeIds.includes(f?.ref_id || '') || selectedNode?.ref_id === f?.ref_id,
+      )
       .slice(0, maxChildrenDisplayed)
 
-    const badgesToRender = childIds.map((n) => {
+    const badgesToRender = childIds.map((n: NodeExtended) => {
       const color = getNodeColorByType(n.node_type || '', true) as string
       const position = new Vector3(n?.x || 0, n?.y || 0, n?.z || 0)
 
       const relativeIds =
-        (data?.nodes || []).filter((f) => f.ref_id && nodesAreRelatives(f, n)).map((nd) => nd?.ref_id || '') || []
+        nodesData
+          .filter((f: NodeExtended) => f.ref_id && nodesAreRelatives(f, n))
+          .map((nd: NodeExtended) => nd?.ref_id || '') || []
 
       return (
         <NodeBadge
@@ -123,7 +129,7 @@ export const RelevanceBadges = memo(() => {
     })
 
     return badgesToRender
-  }, [selectedNodeRelativeIds, data?.nodes, showSelectionGraph, selectionGraphData, selectedNode])
+  }, [simulation, showSelectionGraph, selectionGraphData.nodes, selectedNodeRelativeIds, selectedNode?.ref_id])
 
   return <Fragment key="node-badges">{nodeBadges.length ? nodeBadges : null}</Fragment>
 })

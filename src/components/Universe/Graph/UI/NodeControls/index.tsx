@@ -5,6 +5,7 @@ import React, { memo, useCallback, useMemo, useRef } from 'react'
 import { MdClose, MdViewInAr } from 'react-icons/md'
 import styled from 'styled-components'
 import { Group, Vector3 } from 'three'
+import { useGraphData } from '~/components/DataRetriever'
 import AddCircleIcon from '~/components/Icons/AddCircleIcon'
 import EditIcon from '~/components/Icons/EditIcon'
 import MergeIcon from '~/components/Icons/MergeIcon'
@@ -14,6 +15,7 @@ import { useAppStore } from '~/stores/useAppStore'
 import { useGraphStore, useSelectedNode } from '~/stores/useGraphStoreLatest'
 import { useModal } from '~/stores/useModalStore'
 import { useUserStore } from '~/stores/useUserStore'
+import { NodeExtended } from '~/types'
 import { colors } from '~/utils/colors'
 import { buttonColors } from './constants'
 
@@ -32,13 +34,9 @@ export const NodeControls = memo(() => {
 
   const selectedNode = useSelectedNode()
 
-  const {
-    showSelectionGraph,
-    selectionGraphData,
-    data: allGraphData,
-    setSelectedNode,
-    setShowSelectionGraph,
-  } = useGraphStore((s) => s)
+  const { showSelectionGraph, selectionGraphData, setSelectedNode, setShowSelectionGraph } = useGraphStore((s) => s)
+
+  const allGraphData = useGraphData()
 
   useFrame(() => {
     setPosition()
@@ -48,7 +46,7 @@ export const NodeControls = memo(() => {
     const data = showSelectionGraph ? selectionGraphData : allGraphData
 
     if (ref.current) {
-      const selected = data?.nodes.find((f) => f.ref_id === selectedNode?.ref_id)
+      const selected = data?.nodes.find((f: NodeExtended) => f.ref_id === selectedNode?.ref_id)
 
       if (selected) {
         const newPosition = reuseableVector3.set(selected?.x, selected?.y, selected?.z)

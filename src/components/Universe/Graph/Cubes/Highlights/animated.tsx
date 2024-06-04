@@ -22,7 +22,7 @@ export const AnimatedHighlights = () => {
 
   return (
     <>
-      {(nodeData || []).map((node: NodeExtended, i) => {
+      {(nodeData || []).map((node: NodeExtended, i: number) => {
         const { highlight, highlightColor } = getHighlighter({ node, selectedNode, searchTerm })
 
         if (!highlight) {

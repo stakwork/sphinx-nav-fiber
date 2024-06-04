@@ -14,6 +14,7 @@ interface SimulationHelpers {
   addSplitForce: () => void
   resetSplitForce: () => void
   simulationRestart: () => void
+  getLinks: () => void
 }
 
 const defaultSimulationHelpers: SimulationHelpers = {
@@ -33,6 +34,9 @@ const defaultSimulationHelpers: SimulationHelpers = {
     /* do nothing */
   },
   simulationRestart: () => {
+    /* do nothing */
+  },
+  getLinks: () => {
     /* do nothing */
   },
 }
@@ -122,15 +126,17 @@ export const useGraphStore = create<GraphStore>()(
       const links = simulation ? simulation.force('link').links() : []
 
       if (stateSelectedNode?.ref_id !== selectedNode?.ref_id) {
-        const selectedNodeWithCoordinates = simulation.nodes().find((i) => i.ref_id === selectedNode?.ref_id)
+        const selectedNodeWithCoordinates = simulation
+          .nodes()
+          .find((i: NodeExtended) => i.ref_id === selectedNode?.ref_id)
 
-        const relativeIds = (links as Link[]).reduce<string[]>((acc, curr) => {
-          if (curr.source === selectedNode?.ref_id) {
-            acc.push(curr.target)
+        const relativeIds = (links as Link<NodeExtended>[]).reduce<string[]>((acc, curr) => {
+          if (curr.source.ref_id === selectedNode?.ref_id) {
+            acc.push(curr.target.ref_id)
           }
 
-          if (curr.target === selectedNode?.ref_id) {
-            acc.push(curr.source)
+          if (curr.target.ref_id === selectedNode?.ref_id) {
+            acc.push(curr.source.ref_id)
           }
 
           return acc
@@ -215,6 +221,12 @@ export const useGraphStore = create<GraphStore>()(
           )
           .alpha(2)
           .restart()
+      },
+
+      getLinks: () => {
+        const { simulation } = get()
+
+        return simulation ? simulation.force('link').links() : []
       },
 
       resetSplitForce: () => {

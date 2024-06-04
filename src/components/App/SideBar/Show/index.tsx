@@ -72,7 +72,7 @@ export const Show = () => {
     if (selectedNode?.children?.length) {
       selectedNode.children.forEach((childRefId, index) => {
         const timeStamp = getSelectedNodeTimestamps(data?.nodes || [], selectedNode) || []
-        const childNode = data?.nodes.find((f) => f.ref_id === childRefId)
+        const childNode = data?.nodes.find((f: NodeExtended) => f.ref_id === childRefId)
 
         if (childNode) {
           childNode.timestamp = timeStamp[0]?.timestamp

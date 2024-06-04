@@ -49,7 +49,7 @@ export const Episode = () => {
   )
 
   const selectedNodeShow: NodeExtended | undefined = useMemo(
-    () => data?.nodes.find((i) => i.node_type === 'show' && i.show_title === selectedNode?.show_title),
+    () => data?.nodes.find((i: NodeExtended) => i.node_type === 'show' && i.show_title === selectedNode?.show_title),
     [data?.nodes, selectedNode],
   )
 

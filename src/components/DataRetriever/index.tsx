@@ -20,11 +20,14 @@ export const DataRetriever = ({ children }: Props) => {
 }
 
 export const useGraphData = () => {
-  const data = useGraphStore((s) => s.data)
+  const { simulation, simulationHelpers } = useGraphStore((s) => s)
 
   // invariant(data !== null, 'This hook is meant to be used inside a DataRetriever component')
 
-  return data
+  return {
+    nodes: simulation?.nodes() || [],
+    links: simulationHelpers.getLinks(),
+  }
 }
 
 type BadgeProps = {

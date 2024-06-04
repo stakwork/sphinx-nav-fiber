@@ -107,7 +107,7 @@ const defaultData: Omit<
   filters: {
     skip: '0',
     limit: '15',
-    depth: '1',
+    depth: '2',
     sort_by: 'edge_count',
     include_properties: 'true',
     top_node_count: '10',

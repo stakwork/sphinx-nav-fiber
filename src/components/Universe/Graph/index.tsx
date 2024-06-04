@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef } from 'react'
 import { Group, Vector3 } from 'three'
 import { useDataStore } from '~/stores/useDataStore'
 import { useGraphStore } from '~/stores/useGraphStoreLatest'
-import { Link } from '~/types'
+import { Link, NodeExtended } from '~/types'
 import { maxChildrenDisplayed } from '../constants'
 import { Cubes } from './Cubes'
 import { Earth } from './Earth'
@@ -72,10 +72,10 @@ export const Graph = () => {
     const nodes = showSelectionGraph ? selectionGraphData.nodes : simulation?.nodes() || []
 
     const childIds = nodes
-      .filter((f) => selectedNodeRelativeIds.includes(f?.ref_id || '') || selectedRefId === f?.ref_id)
+      .filter((f: NodeExtended) => selectedNodeRelativeIds.includes(f?.ref_id || '') || selectedRefId === f?.ref_id)
       .slice(0, maxChildrenDisplayed)
 
-    const badgesToRender = childIds.map((n) => {
+    const badgesToRender = childIds.map((n: NodeExtended) => {
       const spos = new Vector3(x, y, z)
 
       const tpos = new Vector3(n.x, n.y, n.z)
