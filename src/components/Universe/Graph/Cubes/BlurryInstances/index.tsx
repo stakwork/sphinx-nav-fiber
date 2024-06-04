@@ -18,7 +18,7 @@ export const BlurryInstances = ({ hide }: InstanceProps) => {
   const instances = useMemo(
     () =>
       data?.nodes.map((node, i) => {
-        if (node.node_type === 'topic') {
+        if (node.node_type === 'Topic') {
           return false
         }
 

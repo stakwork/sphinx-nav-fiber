@@ -19,8 +19,8 @@ const NodeBadge = ({ position, userData, color }: BadgeProps) => {
 
   const { selectedNode, setSelectedNode, showSelectionGraph, hoveredNode, setHoveredNode } = useGraphStore((s) => s)
 
-  const isTopic = (userData?.node_type || '') === 'topic'
-  const isPerson = (userData?.node_type || '') === 'guest' || (userData?.node_type || '') === 'person'
+  const isTopic = (userData?.node_type || '') === 'Topic'
+  const isPerson = (userData?.node_type || '') === 'Guest' || (userData?.node_type || '') === 'Person'
 
   useFrame(() => {
     if (showSelectionGraph && ref.current) {
