@@ -112,6 +112,7 @@ export const Editor = ({
   const [displayParentError, setDisplayParentError] = useState(false)
   const [selectedNodeParentOptions, setSelectedNodeParentOptions] = useState<TOption[] | null>(null)
   const [errMessage, setErrMessage] = useState<string>('')
+  const [deleteError, setDeleteError] = useState<string | null>(null)
 
   useEffect(
     () => () => {
@@ -206,7 +207,17 @@ export const Editor = ({
       onDelete(selectedSchema.type)
       close()
     } catch (error) {
-      console.warn(error)
+      let errorMessage = NODE_ADD_ERROR
+
+      if ((error as Response)?.status === 400) {
+        const errorRes = await (error as Response).json()
+
+        errorMessage = errorRes.errorCode || errorRes?.status || NODE_ADD_ERROR
+      } else if (error instanceof Error) {
+        errorMessage = error.message
+      }
+
+      setDeleteError(errorMessage)
     } finally {
       setIsCreateNew(false)
     }
@@ -281,7 +292,7 @@ export const Editor = ({
                     </Flex>
 
                     <AutoComplete
-                      isLoading={parentsLoading || graphLoading}
+                      isLoading={parentsLoading}
                       onSelect={(e) => {
                         setValue('parent', e?.value || '')
                         setDisplayParentError(false)
@@ -351,15 +362,18 @@ export const Editor = ({
             <CreateCustomNodeAttribute parent={selectedSchema ? selectedSchema.type : parent} />
             <Flex direction="row" justify="space-between" mt={20}>
               {selectedSchema ? (
-                <DeleteButton
-                  color="secondary"
-                  onClick={handleDelete}
-                  size="large"
-                  style={{ marginRight: 20 }}
-                  variant="contained"
-                >
-                  Delete
-                </DeleteButton>
+                <Flex direction="column">
+                  <DeleteButton
+                    color="secondary"
+                    onClick={handleDelete}
+                    size="large"
+                    style={{ marginRight: 20 }}
+                    variant="contained"
+                  >
+                    Delete
+                  </DeleteButton>
+                  {deleteError && <StyledError>{deleteError}</StyledError>}
+                </Flex>
               ) : null}
 
               <Button
@@ -406,4 +420,5 @@ const StyledError = styled(Flex)`
   color: #ff8f80;
   line-height: 0.2px;
   margin-top: 12px;
+  padding-top: 20px;
 `
