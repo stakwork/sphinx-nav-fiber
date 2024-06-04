@@ -122,6 +122,8 @@ export const useGraphStore = create<GraphStore>()(
       const links = simulation ? simulation.force('link').links() : []
 
       if (stateSelectedNode?.ref_id !== selectedNode?.ref_id) {
+        const selectedNodeWithCoordinates = simulation.nodes().find((i) => i.ref_id === selectedNode?.ref_id)
+
         const relativeIds = (links as Link[]).reduce<string[]>((acc, curr) => {
           if (curr.source === selectedNode?.ref_id) {
             acc.push(curr.target)
@@ -136,7 +138,7 @@ export const useGraphStore = create<GraphStore>()(
 
         set({
           hoveredNode: null,
-          selectedNode,
+          selectedNode: selectedNodeWithCoordinates,
           disableCameraRotation: true,
           selectedNodeRelativeIds: relativeIds,
         })

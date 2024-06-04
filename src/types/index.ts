@@ -84,7 +84,7 @@ export type Node = {
   link?: string
   name: string
   node_type: string
-  ref_id?: string
+  ref_id: string
   scale?: number
   show_title?: string
   text?: string

@@ -18,7 +18,6 @@ export const Graph = () => {
   const groupRef = useRef<Group>(null)
 
   const {
-    data,
     setData,
     simulation,
     simulationCreate,
@@ -64,22 +63,28 @@ export const Graph = () => {
   }, [showSelectionGraph, graphStyle])
 
   const nodeBadges = useMemo(() => {
-    const nodes = showSelectionGraph ? selectionGraphData.nodes : data?.nodes || []
+    if (!selectedNode) {
+      return []
+    }
+
+    const { ref_id: selectedRefId, x, y, z } = selectedNode
+
+    const nodes = showSelectionGraph ? selectionGraphData.nodes : simulation?.nodes() || []
 
     const childIds = nodes
-      .filter((f) => selectedNodeRelativeIds.includes(f?.ref_id || '') || selectedNode?.ref_id === f?.ref_id)
+      .filter((f) => selectedNodeRelativeIds.includes(f?.ref_id || '') || selectedRefId === f?.ref_id)
       .slice(0, maxChildrenDisplayed)
 
     const badgesToRender = childIds.map((n) => {
-      const spos = new Vector3(selectedNode?.x, selectedNode?.y, selectedNode?.z)
+      const spos = new Vector3(x, y, z)
 
       const tpos = new Vector3(n.x, n.y, n.z)
 
       const l: Link<string> = {
-        source: selectedNode?.ref_id ? selectedNode.ref_id : '',
+        source: selectedRefId || '',
         target: n.ref_id ? n.ref_id : '',
         targetRef: n.ref_id,
-        sourceRef: selectedNode?.ref_id,
+        sourceRef: selectedRefId,
         sourcePosition: spos,
         targetPosition: tpos,
       }
@@ -94,7 +99,7 @@ export const Graph = () => {
     })
 
     return badgesToRender
-  }, [selectedNodeRelativeIds, data?.nodes, showSelectionGraph, selectionGraphData, selectedNode])
+  }, [selectedNode, showSelectionGraph, selectionGraphData.nodes, simulation, selectedNodeRelativeIds])
 
   useEffect(() => {
     if (!simulation) {

@@ -103,7 +103,7 @@ const defaultData: Omit<
   categoryFilter: null,
   dataInitial: null,
   currentPage: 0,
-  itemsPerPage: 1,
+  itemsPerPage: 20,
   filters: {
     skip: '0',
     limit: '15',
@@ -111,7 +111,7 @@ const defaultData: Omit<
     sort_by: 'edge_count',
     include_properties: 'true',
     top_node_count: '10',
-    node_type: "['Topic', 'Person']",
+    // node_type: "['Topic', 'Person']",
   },
   isFetching: false,
   isLoadingNew: false,
@@ -169,9 +169,17 @@ export const useDataStore = create<DataStore>()(
         const currentLinks = currentPage === 0 ? [] : [...(existingData?.links || [])]
 
         const newNodes = (data?.nodes || []).filter((n) => !currentNodes.some((c) => c.ref_id === n.ref_id))
-        const newLinks = (data?.edges || []).filter((n) => !currentLinks.some((c) => c.ref_id === n.ref_id))
 
         currentNodes.push(...newNodes)
+
+        const newLinks = (data?.edges || [])
+          .filter((n) => !currentLinks.some((c) => c.ref_id === n.ref_id))
+          .filter((c) => {
+            const { target, source } = c
+
+            return currentNodes.some((n) => n.ref_id === target) && currentNodes.some((n) => n.ref_id === source)
+          })
+
         currentLinks.push(...newLinks)
 
         const nodeTypes = [...new Set(currentNodes.map((i) => i.node_type))]
@@ -192,43 +200,6 @@ export const useDataStore = create<DataStore>()(
           sidebarFilters,
           sidebarFilterCounts,
         })
-
-        // const addNode = (initialData) => {
-        //   set((state) => ({
-        //     dataInitial: {
-        //       ...state.dataInitial,
-        //       nodes: uniqBy([...(state.dataInitial?.nodes || []), ...initialData.nodes], 'ref_id'),
-        //       links: initialData.links,
-        //     },
-        //   }))
-        // }
-
-        // const addItemsWithDelay = async (initialData, addItem) => {
-        //   // eslint-disable-next-line no-plusplus
-        //   for (let i = 0; i < initialData.nodes.length; i++) {
-        //     const node = initialData.nodes[i]
-
-        //     const links = initialData.edges.filter((link) => {
-        //       if (node.ref_id === link.source) {
-        //         return existingData?.nodes.some((n) => n.ref_id === link.target)
-        //       }
-
-        //       if (node.ref_id === link.target) {
-        //         return existingData?.nodes.some((n) => n.ref_id === link.source)
-        //       }
-
-        //       return false
-        //     })
-
-        //     // eslint-disable-next-line no-await-in-loop
-        //     await delay(i * 200) // Delay of 1 second for each item
-        //     addItem({ nodes: [node], links })
-        //   }
-        // }
-
-        // if (data) {
-        //   await addItemsWithDelay(data, addNode)
-        // }
       } catch (error) {
         console.log(error)
         set({ isFetching: false })
@@ -280,9 +251,17 @@ export const useDataStore = create<DataStore>()(
       const currentLinks = [...(existingData?.links || [])]
 
       const newNodes = (data?.nodes || []).filter((n) => !currentNodes.some((c) => c.ref_id === n.ref_id))
-      const newLinks = (data?.edges || []).filter((n) => !currentLinks.some((c) => c.ref_id === n.ref_id))
 
       currentNodes.push(...newNodes)
+
+      const newLinks = (data?.edges || [])
+        .filter((n) => !currentLinks.some((c) => c.ref_id === n.ref_id))
+        .filter((c) => {
+          const { target, source } = c
+
+          return currentNodes.some((n) => n.ref_id === target) && currentNodes.some((n) => n.ref_id === source)
+        })
+
       currentLinks.push(...newLinks)
 
       const nodeTypes = [...new Set(currentNodes.map((i) => i.node_type))]
