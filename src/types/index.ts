@@ -220,6 +220,7 @@ export type IsAdminResponse = {
     trendingTopics: boolean
     queuedSources: boolean
     customSchema: boolean
+    realtimeGraph: boolean
   }
   success: boolean
   message: string

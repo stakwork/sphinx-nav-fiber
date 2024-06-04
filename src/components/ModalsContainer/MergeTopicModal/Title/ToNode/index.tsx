@@ -1,11 +1,10 @@
-import { IconButton } from '@mui/material'
 import { debounce } from 'lodash'
 import { FC, useMemo, useState } from 'react'
 import { OPTIONS } from '~/components/AddItemModal/SourceTypeStep/constants'
 import { AutoComplete, TAutocompleteOption } from '~/components/common/AutoComplete'
 import { Flex } from '~/components/common/Flex'
 import ClearIcon from '~/components/Icons/ClearIcon'
-import { ALPHABETICALLY } from '~/components/SourcesTableModal/SourcesView/constants'
+import { ALPHABETICALLY, StyledIconButton } from '~/components/SourcesTableModal/SourcesView/constants'
 import { getEdges } from '~/network/fetchSourcesData'
 import { FetchEdgesResponse, TEdge } from '~/types'
 
@@ -72,9 +71,9 @@ export const ToNode: FC<Props> = ({ topicId, onSelect, selectedValue }) => {
   return selectedValue ? (
     <Flex align="center" basis="100%" direction="row" grow={1} shrink={1}>
       <span>{selectedValue.search_value}</span>
-      <IconButton onClick={() => onSelect(null)} size="small">
+      <StyledIconButton onClick={() => onSelect(null)} size="medium">
         <ClearIcon />
-      </IconButton>
+      </StyledIconButton>
     </Flex>
   ) : (
     <AutoComplete
