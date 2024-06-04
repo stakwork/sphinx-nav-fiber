@@ -3,7 +3,7 @@ import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import * as sphinx from 'sphinx-bridge'
 import { BaseModal, ModalKind } from '~/components/Modal'
 import { NODE_ADD_ERROR } from '~/constants'
-import { postNewItem } from '~/network/fetchSourcesData'
+import { postNewNodeItem } from '~/network/fetchSourcesData'
 import { useDataStore } from '~/stores/useDataStore'
 import { useModal } from '~/stores/useModalStore'
 import { useUserStore } from '~/stores/useUserStore'
@@ -30,56 +30,34 @@ const handleSubmitForm = async (
   setBudget: (value: number | null) => void,
   onAddNewData: (value: FieldValues, id: string) => void,
 ): Promise<void> => {
-  const { nodeType, typeName, ...nodeData } = data
-
-  const body: { [index: string]: unknown } =
-    nodeType === 'Image'
-      ? {
-          node_data: { ...nodeData, source_link: data.sourceLink },
-          node_type: nodeType,
-          name: typeName,
-        }
-      : {
-          node_data: { ...nodeData },
-          node_type: nodeType,
-          name: typeName,
-        }
-
-  const endpoint = nodeType === 'Create custom type' ? 'schema' : 'node'
-
+  const { nodeType, typeName, sourceLink, ...nodeData } = data
   let lsatToken = ''
 
-  if (endpoint === 'node') {
+  if (nodeType !== 'Create custom type') {
     await executeIfProd(async () => {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       const enable = await sphinx.enable()
 
-      body.pubkey = enable?.pubkey
+      nodeData.pubkey = enable?.pubkey
       lsatToken = await getLSat()
     })
   }
 
   try {
-    const res = await postNewItem(endpoint, body, lsatToken)
+    const res = await postNewNodeItem(nodeType, nodeData, sourceLink, typeName, lsatToken)
 
     onAddNewData(data, res?.data?.ref_id)
-
     // eslint-disable-next-line no-restricted-globals
     close()
-
     // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   } catch (err: any) {
     let errorMessage = NODE_ADD_ERROR
 
     if (err.status === 400) {
-      try {
-        const errorRes = await err.json()
+      const errorRes = await err.json()
 
-        errorMessage = errorRes.message || errorRes.errorCode || errorRes?.status || NODE_ADD_ERROR
-      } catch (parseError) {
-        errorMessage = NODE_ADD_ERROR
-      }
+      errorMessage = errorRes.message || errorRes.errorCode || errorRes?.status || NODE_ADD_ERROR
     } else if (err instanceof Error) {
       errorMessage = err.message
     }

@@ -328,3 +328,21 @@ export const postNewItem = async (
 
   return response as SubmitErrRes
 }
+
+export const postNewNodeItem = async (
+  nodeType: string,
+  nodeData: Record<string, unknown>,
+  sourceLink: string | undefined,
+  typeName: string,
+  lsatToken: string,
+): Promise<SubmitErrRes> => {
+  const endpoint = nodeType === 'Create custom type' ? 'schema' : 'node'
+
+  const body: Record<string, unknown> = {
+    node_data: { ...nodeData, ...(nodeType === 'Image' && { source_link: sourceLink }) },
+    node_type: nodeType,
+    name: typeName,
+  }
+
+  return postNewItem(endpoint, body, lsatToken)
+}
