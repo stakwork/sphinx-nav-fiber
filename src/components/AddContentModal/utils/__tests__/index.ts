@@ -50,6 +50,10 @@ describe('youtubeRegex', () => {
     expect(getInputType('https://twitter.com/@KevKevPal')).toBe(TWITTER_HANDLE)
   })
 
+  it('should assert we can check for x.com handle regex', async () => {
+    expect(getInputType('https://x.com/@KevKevPal')).toBe(TWITTER_HANDLE)
+  })
+
   it('should assert we can check for youtube live clip regex', async () => {
     expect(getInputType('https://www.youtube.com/@MrBeast')).toBe(YOUTUBE_CHANNEL)
   })
