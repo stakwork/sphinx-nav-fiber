@@ -34,7 +34,7 @@ export const Default = () => {
 
       <StyledContent grow={1} justify="flex-start" pt={hasImage ? 0 : 8} shrink={1}>
         <Flex ml={24} mt={20} style={{ width: 'fit-content' }}>
-          <TypeBadge type={selectedNode.type || ''} />
+          <TypeBadge type={selectedNode.node_type || ''} />
         </Flex>
 
         <StyledWrapper>

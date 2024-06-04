@@ -126,9 +126,8 @@ export const useGraphStore = create<GraphStore>()(
       const links = simulation ? simulation.force('link').links() : []
 
       if (stateSelectedNode?.ref_id !== selectedNode?.ref_id) {
-        const selectedNodeWithCoordinates = simulation
-          .nodes()
-          .find((i: NodeExtended) => i.ref_id === selectedNode?.ref_id)
+        const selectedNodeWithCoordinates =
+          simulation.nodes().find((i: NodeExtended) => i.ref_id === selectedNode?.ref_id) || null
 
         const relativeIds = (links as Link<NodeExtended>[]).reduce<string[]>((acc, curr) => {
           if (curr.source.ref_id === selectedNode?.ref_id) {
@@ -219,7 +218,7 @@ export const useGraphStore = create<GraphStore>()(
             'y',
             forceY().y((node: NodeExtended) => nodeTypes.indexOf(node.node_type) * 200),
           )
-          .alpha(2)
+          .alpha(1)
           .restart()
       },
 

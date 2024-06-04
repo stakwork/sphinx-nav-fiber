@@ -296,3 +296,5 @@ export const useFilteredNodes = () =>
 
     return (s.dataInitial?.nodes || []).filter((i) => i.node_type?.toLowerCase() === s.sidebarFilter.toLowerCase())
   })
+
+export const useNodeTypes = () => useDataStore((s) => s.nodeTypes)

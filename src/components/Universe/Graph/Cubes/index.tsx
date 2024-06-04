@@ -86,7 +86,7 @@ export const Cubes = memo(() => {
       onPointerOut={onPointerOut}
       onPointerOver={onPointerIn}
     >
-      <BlurryInstances hide={hideUniverse} />
+      {false && <BlurryInstances hide={hideUniverse} />}
       <RelevanceBadges />
       <group name="simulation-3d-group">
         {data?.nodes
@@ -98,7 +98,7 @@ export const Cubes = memo(() => {
           })
           .map((node: NodeExtended) => (
             <mesh key={node.ref_id}>
-              {node.node_type ? (
+              {node.name ? (
                 <TextNode key={node.ref_id || node.id} hide={hideUniverse} node={node} />
               ) : (
                 <Cube key={node.ref_id || node.id} hide={hideUniverse} node={node} />
