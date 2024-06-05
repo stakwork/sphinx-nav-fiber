@@ -43,6 +43,8 @@ export const FormInput = ({ parentParam }: { parentParam: string }) => {
           parsedDataDefault = parseJson(data)
         }
 
+        parsedDataDefault = parsedDataDefault.filter((x) => x.key !== 'node_key')
+
         replace(parsedDataDefault)
         setParsedData(parsedDataDefault)
       } catch (error) {
