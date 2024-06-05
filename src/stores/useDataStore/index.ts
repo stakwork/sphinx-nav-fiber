@@ -5,11 +5,7 @@ import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
 import { fetchGraphData } from '~/network/fetchGraphData'
 import { FilterParams, GraphData, Link, NodeExtended, NodeType, Sources, TStats, Trending } from '~/types'
-
-// eslint-disable-next-line no-promise-executor-return
-const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
-
-console.log(delay)
+import { useAppStore } from '../useAppStore'
 
 export type GraphStyle = 'sphere' | 'force' | 'split' | 'earth'
 
@@ -103,15 +99,14 @@ const defaultData: Omit<
   categoryFilter: null,
   dataInitial: null,
   currentPage: 0,
-  itemsPerPage: 20,
+  itemsPerPage: 25,
   filters: {
     skip: '0',
     limit: '15',
-    depth: '2',
+    depth: '1',
     sort_by: 'edge_count',
     include_properties: 'true',
     top_node_count: '10',
-    // node_type: "['Topic', 'Person']",
   },
   isFetching: false,
   isLoadingNew: false,
@@ -136,6 +131,7 @@ export const useDataStore = create<DataStore>()(
     ...defaultData,
     fetchData: async (setBudget, setAbortRequests) => {
       const { currentPage, itemsPerPage, dataInitial: existingData, filters } = get()
+      const { currentSearch } = useAppStore.getState()
 
       if (!currentPage) {
         set({ isFetching: true })
@@ -156,6 +152,7 @@ export const useDataStore = create<DataStore>()(
         ...filters,
         skip: currentPage === 0 ? String(currentPage * itemsPerPage) : String(currentPage * itemsPerPage + 1),
         limit: String(itemsPerPage),
+        ...(currentSearch ? { word: currentSearch } : {}),
       }
 
       try {
