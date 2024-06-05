@@ -3,7 +3,6 @@ import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import * as sphinx from 'sphinx-bridge'
 import { BaseModal, ModalKind } from '~/components/Modal'
 import { NODE_ADD_ERROR } from '~/constants'
-import { postNewNodeItem } from '~/network/fetchSourcesData'
 import { useDataStore } from '~/stores/useDataStore'
 import { useModal } from '~/stores/useModalStore'
 import { useUserStore } from '~/stores/useUserStore'
@@ -15,6 +14,7 @@ import { CreateConfirmation } from './CreateConfirmationStep'
 import { SetAttributesStep } from './SetAttributesStep'
 import { SourceStep } from './SourceStep'
 import { SourceTypeStep } from './SourceTypeStep'
+import { postNewNodeItem } from '~/network/addItemRequest/addItemRequests'
 
 export type FormData = {
   typeName: string
