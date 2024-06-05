@@ -71,6 +71,31 @@ export const Node = memo(({ node, setSelectedNode, onSimulationUpdate, isSelecte
     setSelectedNode()
   }
 
+  const wrapText = (text: string, maxChar: number): string[] => {
+    const wrappedText = []
+    const words = text.split(' ')
+
+    let currentLine = ''
+
+    words.forEach((word) => {
+      if (currentLine.length + word.length + (currentLine ? 1 : 0) <= maxChar) {
+        currentLine += (currentLine ? ' ' : '') + word
+      } else {
+        wrappedText.push(currentLine)
+        currentLine = word
+      }
+    })
+
+    if (currentLine) {
+      wrappedText.push(currentLine)
+    }
+
+    // Replace spaces with hyphens in the final wrapped text
+    return wrappedText.map((line) => line.replace(/ /g, '-'))
+  }
+
+  const wrappedText = wrapText(node.type || '', 10)
+
   return (
     // @ts-ignore Ignores type error on next line)
     <mesh ref={meshRef} onClick={handleClick} {...bind()} position={new Vector3(node.x, node.y, 0)}>
@@ -78,9 +103,19 @@ export const Node = memo(({ node, setSelectedNode, onSimulationUpdate, isSelecte
         <meshStandardMaterial attach="material" color={color} />
       </Circle>
 
-      <Text {...fontProps} color="#000" fontSize={2}>
-        {node.type}
-      </Text>
+      {wrappedText.map((line, index) => (
+        <Text
+          {...fontProps}
+          key={`${node.type}-${line}`}
+          anchorX="center"
+          anchorY="middle"
+          color="#000"
+          fontSize={2}
+          position={[0, -index * 2 + (wrappedText.length - 1), 0]}
+        >
+          {line}
+        </Text>
+      ))}
     </mesh>
   )
 })
