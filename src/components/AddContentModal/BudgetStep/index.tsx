@@ -82,12 +82,11 @@ export const BudgetStep: FC<Props> = ({ onClick, loading, type, error }) => {
         </Button>
       </Flex>
       {error ? (
-        <StyledError role="tooltip">
+        <StyledError>
           <StyledErrorText>
             <MdError className="errorIcon" />
             <span>{error}</span>
           </StyledErrorText>
-          <div className="tooltip">{error}</div>
         </StyledError>
       ) : null}
     </Flex>
@@ -183,30 +182,6 @@ const StyledError = styled(Flex)`
   color: ${colors.primaryRed};
   position: relative;
   margin-top: 20px;
-
-  .tooltip {
-    position: absolute;
-    background-color: ${colors.black};
-    opacity: 0.8;
-    border-radius: 4px;
-    color: ${colors.white};
-    top: -10px;
-    left: 335px;
-    padding: 4px 8px;
-    font-size: 13px;
-    font-family: Barlow;
-    visibility: hidden;
-    width: 175px;
-    z-index: 1;
-  }
-
-  &:hover .tooltip {
-    visibility: visible;
-  }
-
-  &:focus .tooltip {
-    visibility: visible;
-  }
 `
 
 const IconWrapper = styled.span`
