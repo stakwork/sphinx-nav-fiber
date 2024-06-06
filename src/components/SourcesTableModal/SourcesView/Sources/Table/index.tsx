@@ -297,6 +297,11 @@ const EditableCellWrapper = styled(Flex)`
 const StyledLink = styled.a`
   color: ${colors.white};
   text-decoration: underline;
+  max-width: 400px;
+  display: inline-block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   &:visited {
     color: ${colors.white};
   }
