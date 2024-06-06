@@ -93,7 +93,6 @@ export const Body = () => {
 
   const linksFiltered = links.filter(
     (link) =>
-      link.edge_type === 'CHILD_OF' &&
       schemasWithChildren.some((schema) => schema.ref_id === link.source) &&
       schemasWithChildren.some((schema) => schema.ref_id === link.target),
   )
