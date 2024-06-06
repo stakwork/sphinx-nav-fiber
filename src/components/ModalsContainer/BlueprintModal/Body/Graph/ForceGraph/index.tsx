@@ -1,6 +1,6 @@
 import { useFrame } from '@react-three/fiber'
 import { forceCenter, forceCollide, forceLink, forceManyBody, forceSimulation } from 'd3-force-3d'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import { usePrevious } from '~/hooks/usePrevious'
 import { SchemaLink } from '~/network/fetchSourcesData'
 import { ForceSimulation } from '~/transformers/forceSimulation'
@@ -17,8 +17,7 @@ type Props = {
 }
 
 export const ForceGraph = ({ schemasWithPositions, filteredLinks, setSelectedSchemaId, selectedSchemaId }: Props) => {
-  const [simulation2d, setSimulation2d] = useState<ForceSimulation | null>(null)
-
+  const simulation2dRef = useRef<ForceSimulation | null>(null)
   const prevSchemas = usePrevious<SchemaExtended[]>(schemasWithPositions)
   const prevLinks = usePrevious<SchemaLink[]>(filteredLinks)
 
@@ -30,26 +29,24 @@ export const ForceGraph = ({ schemasWithPositions, filteredLinks, setSelectedSch
     const nodes = structuredClone(schemasWithPositions)
     const links = structuredClone(filteredLinks)
 
-    if (simulation2d) {
+    if (simulation2dRef.current) {
       if (
-        (prevSchemas && prevSchemas.length !== schemasWithPositions.length) ||
-        (prevLinks && prevLinks.length !== filteredLinks.length)
+        prevSchemas &&
+        prevSchemas.length !== schemasWithPositions.length &&
+        prevLinks &&
+        prevLinks.length !== filteredLinks.length
       ) {
-        simulation2d
+        simulation2dRef.current
           .nodes(nodes)
           .force(
             'link',
-            forceLink(links)
-              // .links(linksData)
-              .id((d: SchemaExtended) => d.ref_id),
+            forceLink(links).id((d: SchemaExtended) => d.ref_id),
           )
           .force('charge', forceManyBody())
           .force('center', forceCenter())
           .force('collide', forceCollide(NODE_RADIUS + 1))
           .alpha(0.5)
           .restart()
-
-        setSimulation2d({ ...simulation2d })
       }
 
       return
@@ -58,28 +55,29 @@ export const ForceGraph = ({ schemasWithPositions, filteredLinks, setSelectedSch
     const simulation = forceSimulation(nodes)
       .force(
         'link',
-        forceLink(links)
-          // .links(linksData)
-          .id((d: SchemaExtended) => d.ref_id),
+        forceLink(links).id((d: SchemaExtended) => d.ref_id),
       )
       .force('charge', forceManyBody())
       .force('center', forceCenter())
-      .force('collide', forceCollide(0))
+      .force('collide', forceCollide(NODE_RADIUS + 1))
 
-    setSimulation2d(simulation)
-  }, [schemasWithPositions, simulation2d, filteredLinks, prevSchemas, prevLinks])
+    simulation2dRef.current = simulation
+  }, [schemasWithPositions, filteredLinks, prevSchemas, prevLinks])
 
   useFrame(() => {
-    if (simulation2d) {
-      simulation2d.tick()
-      setSimulation2d({ ...simulation2d })
+    if (simulation2dRef.current) {
+      simulation2dRef.current.tick()
     }
   })
 
-  return simulation2d ? (
+  return simulation2dRef.current ? (
     <>
-      <Lines links={filteredLinks} nodes={simulation2d.nodes()} />
-      <Nodes selectedId={selectedSchemaId} setSelectedSchemaId={setSelectedSchemaId} simulation={simulation2d} />
+      <Lines links={filteredLinks} nodes={simulation2dRef.current.nodes()} />
+      <Nodes
+        selectedId={selectedSchemaId}
+        setSelectedSchemaId={setSelectedSchemaId}
+        simulation={simulation2dRef.current}
+      />
     </>
   ) : null
 }
