@@ -31,6 +31,8 @@ const Wrapper = styled(Flex).attrs({
   background: ${colors.BG2};
   overflow: hidden;
   max-height: 100vh;
+  border-top-left-radius: 9px;
+  border-bottom-left-radius: 9px;
 
   @media (max-width: 1440px) {
     max-height: 95.2vh;
