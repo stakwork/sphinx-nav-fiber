@@ -12,6 +12,7 @@ import { TOption } from '~/components/AddItemModal/SourceTypeStep/types'
 type Props = {
   onSelect: (type: string) => void
   selectedValue: string
+  dataTestId?: string
 }
 
 const defaultValues = {
@@ -19,7 +20,7 @@ const defaultValues = {
   parent: '',
 }
 
-export const ToNode: FC<Props> = ({ onSelect, selectedValue }) => {
+export const ToNode: FC<Props> = ({ onSelect, selectedValue, dataTestId }) => {
   const form = useForm<FormData>({
     mode: 'onChange',
     defaultValues,
@@ -79,6 +80,7 @@ export const ToNode: FC<Props> = ({ onSelect, selectedValue }) => {
     </Flex>
   ) : (
     <AutoComplete
+      dataTestId={dataTestId}
       isLoading={optionsIsLoading}
       onSelect={handleSelect}
       options={options || OPTIONS}

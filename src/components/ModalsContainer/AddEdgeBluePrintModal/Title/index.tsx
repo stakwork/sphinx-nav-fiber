@@ -48,7 +48,7 @@ export const TitleEditor: FC<Props> = ({
         <Flex>
           <ToSection>
             <ToLabel>{isSwapped ? 'To' : 'From'}</ToLabel>
-            <ToNode onSelect={setSelectedFromNode} selectedValue={selectedFromNode} />
+            <ToNode dataTestId="from_node" onSelect={setSelectedFromNode} selectedValue={selectedFromNode} />
           </ToSection>
         </Flex>
 
@@ -69,7 +69,7 @@ export const TitleEditor: FC<Props> = ({
         <Flex>
           <ToSection>
             <ToLabel>{!isSwapped ? 'To' : 'From'}</ToLabel>
-            <ToNode onSelect={setSelectedToNode} selectedValue={selectedToNode} />
+            <ToNode dataTestId="to_node" onSelect={setSelectedToNode} selectedValue={selectedToNode} />
           </ToSection>
         </Flex>
 
