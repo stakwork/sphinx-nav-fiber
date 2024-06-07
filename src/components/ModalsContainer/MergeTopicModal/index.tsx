@@ -58,6 +58,7 @@ export const MergeNodeModal = () => {
   }, [selectedNode])
 
   const closeHandler = () => {
+    setSelectedToNode(null)
     close()
   }
 
@@ -90,7 +91,7 @@ export const MergeNodeModal = () => {
   }
 
   return (
-    <BaseModal id="mergeToNode" kind="small" onClose={close} preventOutsideClose>
+    <BaseModal id="mergeToNode" kind="small" onClose={closeHandler} preventOutsideClose>
       <FormProvider {...form}>
         {topicIsLoading ? (
           <Flex align="center" my={24}>
@@ -108,7 +109,7 @@ export const MergeNodeModal = () => {
         <CustomButton
           color="secondary"
           data-testid="merge-topics-button"
-          disabled={loading || isSwapped || !selectedToNode}
+          disabled={loading || !selectedToNode}
           onClick={handleSave}
           size="large"
           variant="contained"

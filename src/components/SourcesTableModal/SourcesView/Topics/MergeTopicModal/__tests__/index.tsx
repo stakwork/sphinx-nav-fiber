@@ -18,8 +18,6 @@ describe('MergeTopicModal', () => {
       total: 3,
       setState: mockSetState,
     }))
-
-    //
     ;(postMergeTopics as jest.Mock).mockImplementation(mockPostMergeTopics)
 
     const { getByTestId } = render(
@@ -50,6 +48,44 @@ describe('MergeTopicModal', () => {
 
       expect(newState.ids).not.toContain('1')
       expect(newState.total).toBe(2)
+    })
+  })
+
+  it('Merge Topics Button should be enabled on swap and on selecting a node', async () => {
+    const mockClose = jest.fn()
+
+    const { getByTestId } = render(
+      <MergeTopicModal
+        multiTopics={[
+          {
+            ref_id: '1',
+            name: 'Topic 1',
+            node_type: 'Type',
+            is_muted: 'no',
+            edgeList: [],
+            edgeCount: 0,
+            date_added_to_graph: new Date().toISOString(),
+          },
+        ]}
+        onClose={mockClose}
+      />,
+    )
+
+    waitFor(async () => {
+      const mergeButton = getByTestId('merge-topics-button')
+
+      expect(mergeButton).toBeDisabled()
+
+      const toNodeDropdown = getByTestId('to-node')
+
+      fireEvent.change(toNodeDropdown, { target: { value: 'Renewable Energy' } })
+      fireEvent.keyDown(toNodeDropdown, { key: 'Enter', code: 'Enter' })
+      expect(mergeButton).toBeEnabled()
+
+      const swapIcon = getByTestId('swap-icon')
+
+      fireEvent.click(swapIcon)
+      expect(mergeButton).toBeEnabled()
     })
   })
 })

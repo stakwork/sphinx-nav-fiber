@@ -144,3 +144,29 @@ describe('Table Component', () => {
     })
   })
 })
+
+test('Save Changes button should be diable without any change and without any text', async () => {
+  const { getByTestId } = renderTable()
+
+  waitFor(async () => {
+    fireEvent.click(getByTestId('ThreeDotsIcons'))
+
+    const renameOption = await screen.findByText(/Rename/i)
+
+    userEvent.click(renameOption)
+
+    const saveButtonBeforeChange = screen.getByRole('button', { name: 'Save Changes' })
+
+    expect(saveButtonBeforeChange).toBeDisabled()
+
+    const inputField = screen.getByPlaceholderText('Add your topic')
+    userEvent.type(inputField, 'Test topic')
+
+    const saveButton = screen.getByRole('button', { name: 'Save Changes' })
+    expect(saveButton).toBeEnabled()
+
+    fireEvent.change(inputField, { target: { value: '' } })
+
+    expect(saveButton).toBeDisabled()
+  })
+})
