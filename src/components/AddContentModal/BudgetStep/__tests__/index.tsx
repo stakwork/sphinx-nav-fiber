@@ -1,7 +1,10 @@
-import { fireEvent, render } from '@testing-library/react'
+/* eslint-disable padding-line-between-statements */
+import '@testing-library/jest-dom'
+import { fireEvent, render, waitFor } from '@testing-library/react'
 import React from 'react'
 import { BudgetStep } from '..'
 import * as fetchSourcesDataModule from '../../../../network/fetchSourcesData'
+import { api } from '../../../../network/api'
 
 jest.mock('../../../../network/fetchSourcesData')
 
@@ -89,5 +92,28 @@ describe('Behavior', () => {
     const approveButton = getByText('Approve')
 
     expect(approveButton).toBeDisabled()
+  })
+
+  test('displays API error message when node already exists', async () => {
+    const mockApiError = {
+      response: {
+        status: 400,
+        data: {
+          errorCode: 'Node already exists in the graph',
+        },
+      },
+    }
+
+    const mockSubmit = jest.fn().mockRejectedValue(mockApiError)
+    jest.spyOn(api, 'post').mockImplementation(mockSubmit)
+
+    const { getByText, findByText } = render(<BudgetStep loading={false} onClick={() => null} />)
+
+    const approveButton = await findByText('Approve')
+    fireEvent.click(approveButton)
+
+    waitFor(() => {
+      expect(getByText('Node already exists in the graph')).toBeInTheDocument()
+    })
   })
 })

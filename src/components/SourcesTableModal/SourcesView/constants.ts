@@ -1,5 +1,7 @@
 import { RSS, TWITTER_HANDLE, YOUTUBE_CHANNEL } from '~/constants'
 import { ISourceMap } from './types'
+import styled from 'styled-components'
+import { IconButton } from '@mui/material'
 
 export const sourcesMapper: ISourceMap = {
   [RSS]: 'RSS link',
@@ -29,3 +31,12 @@ export const TWITTER_LINK = 'https://twitter.com'
 export const IS_ALIAS = 'IS_ALIAS'
 
 export const TWITTER_CONTENT_LINK = 'https://www.twitter.com/anyuser/status/'
+
+export const StyledIconButton = styled(IconButton)`
+  && {
+    vertical-align: middle;
+    margin: 5px 0 0 4px;
+    padding: 4px;
+    transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+`

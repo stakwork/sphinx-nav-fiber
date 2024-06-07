@@ -116,6 +116,10 @@ export const AutoComplete: FC<Props> = ({
               justify="space-between"
               onClick={option?.action}
               shrink={1}
+              style={{
+                fontSize: '14px',
+                wordBreak: 'break-word',
+              }}
             >
               <div className="option">{option.label !== '' ? option.label : 'Not Selected'}</div>
               {option?.type && <TypeBadge type={option.type} />}
