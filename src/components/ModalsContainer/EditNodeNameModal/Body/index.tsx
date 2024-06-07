@@ -7,7 +7,7 @@ import { validateImageInputType } from '~/components/ModalsContainer/EditNodeNam
 import { Flex } from '~/components/common/Flex'
 import { getTopicsData, putNodeData } from '~/network/fetchSourcesData'
 import { useDataStore } from '~/stores/useDataStore'
-import { useSelectedNode } from '~/stores/useGraphStoreLatest'
+import { useSelectedNode } from '~/stores/useGraphStore'
 import { useModal } from '~/stores/useModalStore'
 import { NodeExtended, Topic } from '~/types'
 import { colors } from '~/utils/colors'

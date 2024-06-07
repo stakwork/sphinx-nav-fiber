@@ -1,7 +1,7 @@
 import { Avatar } from '~/components/common/Avatar'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
-import { useSelectedNode } from '~/stores/useGraphStoreLatest'
+import { useSelectedNode } from '~/stores/useGraphStore'
 
 export const Image = () => {
   const selectedNode = useSelectedNode()

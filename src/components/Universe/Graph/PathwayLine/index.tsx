@@ -4,7 +4,7 @@ import { Vector3 } from 'three'
 import { Line2 } from 'three/examples/jsm/lines/Line2'
 import { usePathway } from '~/components/DataRetriever'
 import { NODE_RELATIVE_HIGHLIGHT_COLORS } from '~/constants'
-import { useGraphStore } from '~/stores/useGraphStoreLatest'
+import { useGraphStore } from '~/stores/useGraphStore'
 import { getCurvedLineFromStartAndEnd } from '../CurvedLine/constants'
 
 export const PathwayLine = () => {

@@ -12,7 +12,7 @@ import {
 } from 'recharts'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
-import { useSelectedNode } from '~/stores/useGraphStoreLatest'
+import { useSelectedNode } from '~/stores/useGraphStore'
 
 import { colors } from '~/utils/colors'
 

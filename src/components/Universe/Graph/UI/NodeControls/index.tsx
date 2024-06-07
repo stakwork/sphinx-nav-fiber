@@ -12,7 +12,7 @@ import MergeIcon from '~/components/Icons/MergeIcon'
 import PlusIcon from '~/components/Icons/PlusIcon'
 import { Flex } from '~/components/common/Flex'
 import { useAppStore } from '~/stores/useAppStore'
-import { useGraphStore, useSelectedNode } from '~/stores/useGraphStoreLatest'
+import { useGraphStore, useSelectedNode } from '~/stores/useGraphStore'
 import { useModal } from '~/stores/useModalStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { NodeExtended } from '~/types'
@@ -106,8 +106,8 @@ export const NodeControls = memo(() => {
         left: 40,
         className: 'exit',
         onClick: () => {
-          setSelectedNode(null)
           setShowSelectionGraph(false)
+          setSelectedNode(null)
         },
       },
     ]

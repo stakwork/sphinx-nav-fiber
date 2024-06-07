@@ -3,7 +3,7 @@ import { useFrame } from '@react-three/fiber'
 import { useEffect, useRef, useState } from 'react'
 import { Vector3 } from 'three'
 import { NODE_RELATIVE_HIGHLIGHT_COLORS } from '~/constants'
-import { useGraphStore, useSelectedNode } from '~/stores/useGraphStoreLatest'
+import { useGraphStore, useSelectedNode } from '~/stores/useGraphStore'
 import { Link } from '~/types'
 
 type Props = {

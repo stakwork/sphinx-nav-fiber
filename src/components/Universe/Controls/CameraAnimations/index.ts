@@ -7,7 +7,7 @@ import { useFrame } from '@react-three/fiber'
 import { RefObject, useCallback, useEffect } from 'react'
 
 import { useControlStore } from '~/stores/useControlStore'
-import { useGraphStore, useSelectedNode } from '~/stores/useGraphStoreLatest'
+import { useGraphStore, useSelectedNode } from '~/stores/useGraphStore'
 import { getNearbyNodeIds } from '../constants'
 import { initialCameraPosition } from './constants'
 import { useAutoNavigate } from './useAutoNavigate'

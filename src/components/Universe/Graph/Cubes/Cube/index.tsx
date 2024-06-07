@@ -2,7 +2,7 @@ import { useFrame } from '@react-three/fiber'
 import { Select } from '@react-three/postprocessing'
 import { memo, useEffect, useMemo, useRef, useState } from 'react'
 import { Mesh } from 'three'
-import { useGraphStore, useSelectedNode } from '~/stores/useGraphStoreLatest'
+import { useGraphStore, useSelectedNode } from '~/stores/useGraphStore'
 import { NodeExtended } from '~/types'
 import { boxGeometry } from '../constants'
 import { useMaterial } from './hooks/useMaterial'
@@ -23,8 +23,6 @@ export const Cube = memo(({ node, hide, animated }: Props) => {
 
   useFrame((_, delta) => {
     if (animated && ref.current) {
-      ref.current.position.set(node.x, node.y, node.z)
-
       if (isSelected) {
         ref.current.rotation.y += delta * 1
         ref.current.rotation.x -= delta * 0.6

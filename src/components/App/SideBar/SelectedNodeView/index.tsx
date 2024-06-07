@@ -1,6 +1,6 @@
 import { memo, useEffect } from 'react'
 import { useDataStore } from '~/stores/useDataStore'
-import { useSelectedNode } from '~/stores/useGraphStoreLatest'
+import { useSelectedNode } from '~/stores/useGraphStore'
 import { usePlayerStore } from '~/stores/usePlayerStore'
 import { TeachMeText } from '../../Helper/TeachMe'
 import { Data } from '../Data'

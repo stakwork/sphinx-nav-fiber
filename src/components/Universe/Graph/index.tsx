@@ -3,7 +3,7 @@ import { isEqual } from 'lodash'
 import { useEffect, useMemo, useRef } from 'react'
 import { Group, Vector3 } from 'three'
 import { useDataStore } from '~/stores/useDataStore'
-import { useGraphStore } from '~/stores/useGraphStoreLatest'
+import { useGraphStore } from '~/stores/useGraphStore'
 import { Link, NodeExtended } from '~/types'
 import { maxChildrenDisplayed } from '../constants'
 import { Cubes } from './Cubes'
@@ -37,14 +37,17 @@ export const Graph = () => {
     const nodes = dataNew.nodes || []
     const links = dataNew.links || []
 
-    if (simulation && !isEqual(dataNew, dataInitial)) {
-      console.log('not equal')
+    const nodesClose = structuredClone(nodes)
+    const linksClone = structuredClone(links)
 
-      simulationHelpers.addNodesAndLinks(nodes, links)
+    if (simulation) {
+      const replace = isEqual(dataNew, dataInitial)
+
+      simulationHelpers.addNodesAndLinks(nodesClose, linksClone, replace)
     }
 
     if (!simulation) {
-      simulationCreate(nodes, links)
+      simulationCreate(nodesClose, linksClone)
     }
 
     resetDataNew()
@@ -106,13 +109,7 @@ export const Graph = () => {
       return
     }
 
-    if (graphStyle === 'split') {
-      simulationHelpers.addSplitForce()
-    }
-
-    if (graphStyle === 'sphere') {
-      simulationHelpers.addRadialForce()
-    }
+    simulationHelpers.setForces()
   }, [graphStyle, simulationHelpers, simulation])
 
   useEffect(() => {
@@ -121,8 +118,6 @@ export const Graph = () => {
     }
 
     simulation.on('tick', () => {
-      console.log('tick')
-
       if (groupRef.current) {
         const gr = groupRef.current.getObjectByName('simulation-3d-group') as Group
 

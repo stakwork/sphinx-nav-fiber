@@ -3,7 +3,7 @@ import { useControls } from 'leva'
 import { useRef } from 'react'
 import { DirectionalLight, PointLight } from 'three'
 import { GRAPH_FOG_COLOR, GRAPH_GROUND_COLOR, GRAPH_LIGHT_INTENSITY } from '~/constants'
-import { useGraphStore } from '~/stores/useGraphStoreLatest'
+import { useGraphStore } from '~/stores/useGraphStore'
 import { colors } from '~/utils/colors'
 import { UNIVERSE_SCALE } from '../Graph/constant'
 

@@ -1,7 +1,7 @@
 import { PropsWithChildren, useCallback, useEffect } from 'react'
 import { Vector3 } from 'three'
 import { useDataStore } from '~/stores/useDataStore'
-import { useGraphStore, useSelectedNode } from '~/stores/useGraphStoreLatest'
+import { useGraphStore, useSelectedNode } from '~/stores/useGraphStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { NodeExtended } from '~/types'
 import { PATHWAY_RANGE } from './constants'

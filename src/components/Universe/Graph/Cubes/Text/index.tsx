@@ -3,7 +3,7 @@ import { useFrame } from '@react-three/fiber'
 import { memo, useMemo, useRef } from 'react'
 import { Mesh } from 'three'
 import { useNodeTypes } from '~/stores/useDataStore'
-import { useGraphStore, useSelectedNode } from '~/stores/useGraphStoreLatest'
+import { useGraphStore, useSelectedNode } from '~/stores/useGraphStore'
 import { NodeExtended } from '~/types'
 import { colors } from '~/utils/colors'
 import { fontProps } from './constants'
@@ -56,10 +56,6 @@ export const TextNode = memo(({ node, hide }: Props) => {
     if (ref?.current) {
       // Make text face the camera
       ref.current.quaternion.copy(camera.quaternion)
-
-      if (showSelectionGraph) {
-        ref.current.position.set(node.x, node.y, node.z)
-      }
     }
   })
 
@@ -93,7 +89,6 @@ export const TextNode = memo(({ node, hide }: Props) => {
         anchorY="middle"
         color={color}
         fillOpacity={fillOpacity}
-        // position={[node.x, node.y, node.z]}
         scale={20 || textScale}
         userData={node}
         visible={!hide}

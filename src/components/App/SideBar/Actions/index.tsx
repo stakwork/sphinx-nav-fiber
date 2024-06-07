@@ -4,7 +4,7 @@ import { Booster } from '~/components/Booster'
 import { Flex } from '~/components/common/Flex'
 import { Pill } from '~/components/common/Pill'
 import { useAppStore } from '~/stores/useAppStore'
-import { useSelectedNode } from '~/stores/useGraphStoreLatest'
+import { useSelectedNode } from '~/stores/useGraphStore'
 import { colors } from '~/utils/colors'
 
 type FlagErrorProps = {

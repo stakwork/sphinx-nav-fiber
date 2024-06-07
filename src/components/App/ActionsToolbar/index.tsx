@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { useDataStore } from '~/stores/useDataStore'
-import { useSelectedNode } from '~/stores/useGraphStoreLatest'
+import { useSelectedNode } from '~/stores/useGraphStore'
 import { CameraRecenterControl } from './CameraRecenterControl'
 import { GraphViewControl } from './GraphViewControl'
 import { PlayerControl } from './PlayerControl'

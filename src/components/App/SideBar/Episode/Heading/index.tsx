@@ -5,7 +5,7 @@ import { highlightSearchTerm } from '~/components/common/Highlight/Highlight'
 import { Text } from '~/components/common/Text'
 import { TypeBadge } from '~/components/common/TypeBadge'
 import { useAppStore } from '~/stores/useAppStore'
-import { useGraphStore } from '~/stores/useGraphStoreLatest'
+import { useGraphStore } from '~/stores/useGraphStore'
 import { NodeExtended } from '~/types'
 import { colors } from '~/utils'
 

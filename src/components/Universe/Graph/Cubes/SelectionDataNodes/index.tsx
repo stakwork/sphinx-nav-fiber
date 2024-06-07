@@ -1,10 +1,10 @@
 import { Segments } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
-import { memo, useEffect } from 'react'
-import { useGraphData } from '~/components/DataRetriever'
+import { memo, useEffect, useRef } from 'react'
+import { Group } from 'three'
 import { usePrevious } from '~/hooks/usePrevious'
-import { generateLinksFromNodeData } from '~/network/fetchGraphData/helpers/generateLinksFromNodeData'
-import { useGraphStore, useSelectedNode } from '~/stores/useGraphStoreLatest'
+import { useDataStore } from '~/stores/useDataStore'
+import { useGraphStore, useSelectedNode } from '~/stores/useGraphStore'
 import { ForceSimulation, runForceSimulation } from '~/transformers/forceSimulation'
 import { GraphData, NodeExtended } from '~/types'
 import { Segment } from '../../Segment'
@@ -14,19 +14,20 @@ import { TextNode } from '../Text'
 let simulation2d: ForceSimulation | null = null
 
 export const SelectionDataNodes = memo(() => {
-  const data = useGraphData()
+  const { dataInitial } = useDataStore((s) => s)
   const selectedNode = useSelectedNode()
+  const groupRef = useRef<Group>(null)
 
-  const prevNodesLength = usePrevious(data.nodes.length)
+  const prevNodesLength = usePrevious(dataInitial?.nodes.length)
 
   const { selectedNodeRelativeIds, selectionGraphData, setSelectionData } = useGraphStore((s) => s)
 
   useEffect(() => {
-    if (prevNodesLength === data?.nodes.length) {
+    if (prevNodesLength === dataInitial?.nodes.length) {
       return
     }
 
-    const nodes = data?.nodes
+    const nodes = dataInitial?.nodes
       .filter(
         (f: NodeExtended) => f.ref_id === selectedNode?.ref_id || selectedNodeRelativeIds.includes(f?.ref_id || ''),
       )
@@ -38,11 +39,15 @@ export const SelectionDataNodes = memo(() => {
       })
 
     if (nodes) {
-      const links = generateLinksFromNodeData(nodes, false, false)
+      const links = (dataInitial?.links || []).filter(
+        (link) =>
+          nodes.some((node: NodeExtended) => node.ref_id === link.target) &&
+          nodes.some((node: NodeExtended) => node.ref_id === link.source),
+      )
 
       setSelectionData({ nodes, links })
     }
-  }, [data, selectedNode, selectedNodeRelativeIds, setSelectionData, prevNodesLength])
+  }, [dataInitial, selectedNode, selectedNodeRelativeIds, setSelectionData, prevNodesLength])
 
   useEffect(() => {
     simulation2d = runForceSimulation(selectionGraphData.nodes, selectionGraphData.links, {
@@ -57,20 +62,42 @@ export const SelectionDataNodes = memo(() => {
   }, [selectionGraphData])
 
   useFrame(() => {
-    if (simulation2d) {
-      simulation2d.tick()
-    }
+    console.log(simulation2d.alpha())
   })
+
+  useEffect(() => {
+    if (!simulation2d) {
+      return
+    }
+
+    simulation2d.on('tick', () => {
+      if (groupRef.current) {
+        const gr = groupRef.current as Group
+
+        gr.children.forEach((mesh, index) => {
+          const simulationNode = simulation2d.nodes()[index]
+
+          if (simulationNode) {
+            mesh.position.set(simulationNode.x, simulationNode.y, simulationNode.z)
+          }
+        })
+      }
+    })
+  }, [])
 
   return (
     <>
-      {selectionGraphData?.nodes.map((node) => {
-        if (node.node_type === 'Topic') {
-          return <TextNode key={`${node.ref_id || node.id}-compact`} hide node={node} />
-        }
-
-        return <Cube key={`${node.ref_id || node.id}-compact`} animated hide node={node} />
-      })}
+      <group name="simulation-2d-group">
+        {selectionGraphData?.nodes.map((node) => (
+          <mesh key={node.ref_id}>
+            {node.name ? (
+              <TextNode key={node.ref_id || node.id} hide node={node} />
+            ) : (
+              <Cube key={node.ref_id || node.id} hide node={node} />
+            )}
+          </mesh>
+        ))}
+      </group>
 
       <Segments
         key={`selection-links-${selectionGraphData?.links.length}`}

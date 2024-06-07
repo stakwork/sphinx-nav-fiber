@@ -6,7 +6,7 @@ import { Text } from '~/components/common/Text'
 import { TextInput } from '~/components/common/TextInput'
 import { TypeBadge } from '~/components/common/TypeBadge'
 import { requiredRule } from '~/constants'
-import { useSelectedNode } from '~/stores/useGraphStoreLatest'
+import { useSelectedNode } from '~/stores/useGraphStore'
 import { useModal } from '~/stores/useModalStore'
 import { colors } from '~/utils'
 

@@ -4,12 +4,9 @@ import styled from 'styled-components'
 import BubbleChartIcon from '~/components/Icons/BubbleChartIcon'
 import CommunitiesIcon from '~/components/Icons/CommunitiesIcon'
 import GrainIcon from '~/components/Icons/GrainIcon'
-import NodesIcon from '~/components/Icons/NodesIcon'
 import PublicIcon from '~/components/Icons/PublicIcon'
 import { Flex } from '~/components/common/Flex'
-import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
-import { GraphStyle, graphStyles, useGraphStore } from '~/stores/useGraphStoreLatest'
-import { useUserStore } from '~/stores/useUserStore'
+import { GraphStyle, graphStyles, useGraphStore } from '~/stores/useGraphStore'
 import { colors } from '~/utils/colors'
 
 interface IconsMapper {
@@ -17,7 +14,6 @@ interface IconsMapper {
   force: ReactElement
   sphere: ReactElement
   earth: ReactElement
-  v2: ReactElement
 }
 
 const IconsMapper = {
@@ -25,35 +21,22 @@ const IconsMapper = {
   force: <CommunitiesIcon />,
   sphere: <BubbleChartIcon />,
   earth: <PublicIcon />,
-  v2: <NodesIcon />,
 }
 
 export const GraphViewControl = () => {
   const [graphStyle, setGraphStyle] = useGraphStore((s) => [s.graphStyle, s.setGraphStyle])
-  const [v2FeatureFlag, setV2FeatureFlag] = useFeatureFlagStore((s) => [s.v2FeatureFlag, s.setV2FeatureFlag])
-  const [isAdmin] = useUserStore((s) => [s.isAdmin])
 
   const changeGraphType = (val: GraphStyle) => {
     setGraphStyle(val)
-    setV2FeatureFlag(false)
   }
 
   return (
     <Wrapper direction="column">
       {graphStyles.map((i) => (
-        <Flex
-          key={i}
-          className={clsx('icon', { active: graphStyle === i && !v2FeatureFlag })}
-          onClick={() => changeGraphType(i)}
-        >
+        <Flex key={i} className={clsx('icon', { active: graphStyle === i })} onClick={() => changeGraphType(i)}>
           {IconsMapper[i]}
         </Flex>
       ))}
-      {isAdmin && (
-        <Flex className={clsx('icon', { active: v2FeatureFlag })} onClick={() => setV2FeatureFlag(true)}>
-          {IconsMapper.v2}
-        </Flex>
-      )}
     </Wrapper>
   )
 }

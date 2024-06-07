@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import { ActionsToolbar } from '~/components/App/ActionsToolbar'
-import { useGraphStore } from '~/stores/useGraphStoreLatest'
+import { useGraphStore } from '~/stores/useGraphStore'
 import { Tooltip } from '../Graph/Cubes/Cube/components/Tooltip'
 
 export const Overlay = () => {

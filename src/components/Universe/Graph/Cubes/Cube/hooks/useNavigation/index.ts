@@ -3,7 +3,7 @@ import { useFrame } from '@react-three/fiber'
 import { RefObject, useCallback, useEffect, useMemo, useState } from 'react'
 import * as THREE from 'three'
 import { variableVector3 } from '~/components/Universe/constants'
-import { useSelectedNode } from '~/stores/useGraphStoreLatest'
+import { useSelectedNode } from '~/stores/useGraphStore'
 import { NodeExtended } from '~/types'
 
 export const useNavigation = (thisNodeRef: RefObject<THREE.Mesh | null>) => {

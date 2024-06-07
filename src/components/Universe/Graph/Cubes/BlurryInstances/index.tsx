@@ -2,7 +2,7 @@ import { Instance, Instances } from '@react-three/drei'
 import { useMemo } from 'react'
 import { useGraphData } from '~/components/DataRetriever'
 import { getNodeColorByType } from '~/components/Universe/Graph/constant'
-import { useGraphStore } from '~/stores/useGraphStoreLatest'
+import { useGraphStore } from '~/stores/useGraphStore'
 import { NodeExtended } from '~/types'
 import { boxGeometry, isMainTopic } from '../constants'
 import { blurryMaterial } from './constants'
@@ -20,7 +20,7 @@ export const BlurryInstances = ({ hide }: InstanceProps) => {
     () =>
       data?.nodes.map((node: NodeExtended, i: number) => {
         if (node.node_type === 'Topic') {
-          return false
+          return true
         }
 
         const visible = !isMainTopic(node)

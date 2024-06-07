@@ -6,7 +6,7 @@ import { Pill } from '~/components/common/Pill'
 import { Text } from '~/components/common/Text'
 import { api } from '~/network/api'
 import { useAppStore } from '~/stores/useAppStore'
-import { useSelectedNode } from '~/stores/useGraphStoreLatest'
+import { useSelectedNode } from '~/stores/useGraphStore'
 import { colors } from '~/utils/colors'
 
 const ErrorWrapper = styled(Flex)`

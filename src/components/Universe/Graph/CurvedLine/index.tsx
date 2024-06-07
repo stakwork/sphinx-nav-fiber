@@ -2,7 +2,7 @@ import { Line } from '@react-three/drei'
 import { useEffect, useMemo, useState } from 'react'
 import { Vector3 } from 'three'
 import { NODE_RELATIVE_HIGHLIGHT_COLORS } from '~/constants'
-import { useSelectedNode } from '~/stores/useGraphStoreLatest'
+import { useSelectedNode } from '~/stores/useGraphStore'
 import { Link } from '~/types'
 import { getCurvedLineFromStartAndEnd } from './constants'
 

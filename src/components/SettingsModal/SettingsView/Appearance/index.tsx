@@ -4,7 +4,7 @@ import { GraphViewControl } from '~/components/App/ActionsToolbar/GraphViewContr
 import { Button } from '~/components/Button'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
-import { useGraphStore } from '~/stores/useGraphStoreLatest'
+import { useGraphStore } from '~/stores/useGraphStore'
 
 type Props = {
   onClose: () => void

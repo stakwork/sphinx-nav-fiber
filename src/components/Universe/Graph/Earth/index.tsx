@@ -2,7 +2,7 @@ import { useTexture } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import { useLayoutEffect, useMemo, useRef } from 'react'
 import { DoubleSide, Mesh, MeshStandardMaterial, Vector3 } from 'three'
-import { useGraphStore } from '~/stores/useGraphStoreLatest'
+import { useGraphStore } from '~/stores/useGraphStore'
 import { useRefStore } from '~/stores/useRefStore'
 import { EARTH_RADIUS } from '~/transformers/earthGraph'
 

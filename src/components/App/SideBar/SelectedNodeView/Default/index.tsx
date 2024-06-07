@@ -4,7 +4,7 @@ import { Divider } from '~/components/common/Divider'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { TypeBadge } from '~/components/common/TypeBadge'
-import { useSelectedNode } from '~/stores/useGraphStoreLatest'
+import { useSelectedNode } from '~/stores/useGraphStore'
 
 export const Default = () => {
   const selectedNode = useSelectedNode()

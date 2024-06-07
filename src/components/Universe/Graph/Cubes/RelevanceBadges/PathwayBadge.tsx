@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef } from 'react'
 import { MdHub } from 'react-icons/md'
 import { Group } from 'three'
 
-import { useGraphStore, useSelectedNode } from '~/stores/useGraphStoreLatest'
+import { useGraphStore, useSelectedNode } from '~/stores/useGraphStore'
 import { colors } from '~/utils/colors'
 import { BadgeIconWrapper, Counter, Tag } from './styles'
 import { BadgeProps } from './types'
