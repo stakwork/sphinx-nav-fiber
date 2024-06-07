@@ -111,15 +111,13 @@ export const Body = () => {
     openRemoveNodeModal()
   }
 
-  const isNodeNameChanged = getValues().name && actualTopicNode?.name !== getValues().name
+  const name = getValues()?.name?.trim()
+
+  const isNodeNameChanged = name && actualTopicNode?.name.trim() !== name
+  const isImageUrlChanged = getValues().image_url && selectedNode?.image_url !== getValues()?.image_url
 
   const shouldDisableSave =
-    loading ||
-    topicIsLoading ||
-    (!!imageUrl && !isValidImageUrl) ||
-    (!imageUrl && !isNodeNameChanged) ||
-    !imageUrl ||
-    !topicValue
+    loading || topicIsLoading || (!!imageUrl && !isValidImageUrl) || (!isNodeNameChanged && !isImageUrlChanged)
 
   return (
     <Wrapper>
