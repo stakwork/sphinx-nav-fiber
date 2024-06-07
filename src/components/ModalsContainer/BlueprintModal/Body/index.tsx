@@ -22,6 +22,7 @@ export const Body = () => {
   const [selectedSchemaId, setSelectedSchemaId] = useState<string>('')
   const [isCreateNew, setIsCreateNew] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [graphLoading, setGraphLoading] = useState(false)
 
   const [schemas, links, setSchemaAll, setSchemaLinks] = useSchemaStore((s) => [
     s.schemas,
@@ -79,6 +80,14 @@ export const Body = () => {
     }
   }
 
+  const onSchemaUpdate = async () => {
+    const response = await getSchemaAll()
+
+    setSchemaAll(response.schemas.filter((i) => i.ref_id && !i.is_deleted && i.ref_id))
+
+    setSchemaLinks(response.edges)
+  }
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const onSchemaDelete = (type: string) => {
     setSchemaAll(schemas.filter((i) => i.type !== type))
@@ -126,7 +135,9 @@ export const Body = () => {
               <Editor
                 onDelete={onSchemaDelete}
                 onSchemaCreate={onSchemaCreate}
+                onSchemaUpdate={onSchemaUpdate}
                 selectedSchema={selectedSchema}
+                setGraphLoading={setGraphLoading}
                 setIsCreateNew={setIsCreateNew}
                 setSelectedSchemaId={setSelectedSchemaId}
               />
@@ -135,12 +146,18 @@ export const Body = () => {
         </Flex>
         <Wrapper direction="row" grow={1}>
           <Container>
-            <Graph
-              links={linksFiltered}
-              schemasWithPositions={schemasWithChildren}
-              selectedSchemaId={selectedSchemaId}
-              setSelectedSchemaId={setSelectedSchemaId}
-            />
+            {graphLoading ? (
+              <Flex align="center" basis="100%" grow={1} justify="center" shrink={1}>
+                <ClipLoader color={colors.white} />
+              </Flex>
+            ) : (
+              <Graph
+                links={linksFiltered}
+                schemasWithPositions={schemasWithChildren}
+                selectedSchemaId={selectedSchemaId}
+                setSelectedSchemaId={setSelectedSchemaId}
+              />
+            )}
           </Container>
         </Wrapper>
       </Flex>

@@ -79,9 +79,9 @@ export const handleNodes = (dataInit: FetchDataResponse, searchterm: string) => 
       }
 
       // replace aws bucket url with cloudfront, and add size indicator to end
-      const smallImageUrl = imageUrl
-        ?.replace(AWS_IMAGE_BUCKET_URL, CLOUDFRONT_IMAGE_BUCKET_URL)
-        .replace('.jpg', '_s.jpg')
+      const smallImageUrl = imageUrl?.startsWith(AWS_IMAGE_BUCKET_URL)
+        ? imageUrl.replace(AWS_IMAGE_BUCKET_URL, CLOUDFRONT_IMAGE_BUCKET_URL).replace('.jpg', '_s.jpg')
+        : imageUrl
 
       nodes.push({
         ...node,

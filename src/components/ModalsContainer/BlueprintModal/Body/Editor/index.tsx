@@ -38,6 +38,8 @@ type Props = {
   onDelete: (type: string) => void
   setSelectedSchemaId: (id: string) => void
   setIsCreateNew: (isNew: boolean) => void
+  setGraphLoading: (b: boolean) => void
+  onSchemaUpdate: () => void
 }
 
 const handleSubmitForm = async (data: FieldValues, isUpdate = false): Promise<string | undefined> => {
@@ -79,7 +81,15 @@ const handleSubmitForm = async (data: FieldValues, isUpdate = false): Promise<st
   }
 }
 
-export const Editor = ({ onSchemaCreate, selectedSchema, onDelete, setSelectedSchemaId, setIsCreateNew }: Props) => {
+export const Editor = ({
+  onSchemaCreate,
+  selectedSchema,
+  onDelete,
+  setSelectedSchemaId,
+  setGraphLoading,
+  setIsCreateNew,
+  onSchemaUpdate,
+}: Props) => {
   const { close, visible } = useModal('addType')
 
   const form = useForm<FormData>({
@@ -98,6 +108,7 @@ export const Editor = ({ onSchemaCreate, selectedSchema, onDelete, setSelectedSc
   const [parentsLoading, setParentsLoading] = useState(false)
   const [parentOptions, setParentOptions] = useState<TOption[] | null>(null)
   const [displayParentError, setDisplayParentError] = useState(false)
+  const [deleteError, setDeleteError] = useState<string | null>(null)
   const [selectedNodeParent, setSelectedNodeParent] = useState<TOption[] | null>(null)
 
   useEffect(
@@ -179,7 +190,17 @@ export const Editor = ({ onSchemaCreate, selectedSchema, onDelete, setSelectedSc
       onDelete(selectedSchema.type)
       close()
     } catch (error) {
-      console.warn(error)
+      let errorMessage = NODE_ADD_ERROR
+
+      if ((error as Response)?.status === 400) {
+        const errorRes = await (error as Response).json()
+
+        errorMessage = errorRes.errorCode || errorRes?.status || NODE_ADD_ERROR
+      } else if (error instanceof Error) {
+        errorMessage = error.message
+      }
+
+      setDeleteError(errorMessage)
     } finally {
       setIsCreateNew(false)
     }
@@ -192,11 +213,17 @@ export const Editor = ({ onSchemaCreate, selectedSchema, onDelete, setSelectedSc
       return
     }
 
-    setLoading(false)
+    setLoading(true)
 
     try {
       if (data.type !== selectedSchema?.type) {
+        setGraphLoading(true)
+
         await api.put(`/schema/${selectedSchema?.ref_id}`, JSON.stringify({ type: data.type }))
+
+        await onSchemaUpdate()
+
+        setGraphLoading(false)
       }
 
       const res = await handleSubmitForm(
@@ -314,15 +341,18 @@ export const Editor = ({ onSchemaCreate, selectedSchema, onDelete, setSelectedSc
             <CreateCustomNodeAttribute parent={selectedSchema ? selectedSchema.type : parent} />
             <Flex direction="row" justify="space-between" mt={20}>
               {selectedSchema ? (
-                <DeleteButton
-                  color="secondary"
-                  onClick={handleDelete}
-                  size="large"
-                  style={{ marginRight: 20 }}
-                  variant="contained"
-                >
-                  Delete
-                </DeleteButton>
+                <Flex direction="column">
+                  <DeleteButton
+                    color="secondary"
+                    onClick={handleDelete}
+                    size="large"
+                    style={{ marginRight: 20 }}
+                    variant="contained"
+                  >
+                    Delete
+                  </DeleteButton>
+                  {deleteError && <StyledError>{deleteError}</StyledError>}
+                </Flex>
               ) : null}
 
               <Button
@@ -330,7 +360,7 @@ export const Editor = ({ onSchemaCreate, selectedSchema, onDelete, setSelectedSc
                 disabled={loading || displayParentError}
                 onClick={onSubmit}
                 size="large"
-                startIcon={loading ? <ClipLoader color={colors.white} size={24} /> : null}
+                startIcon={loading ? <ClipLoader color={colors.white} size={10} /> : null}
                 variant="contained"
               >
                 Save
@@ -369,4 +399,5 @@ const StyledError = styled(Flex)`
   color: #ff8f80;
   line-height: 0.2px;
   margin-top: 12px;
+  padding-top: 20px;
 `
