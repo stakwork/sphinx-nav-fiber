@@ -50,7 +50,12 @@ export const TitleEditor: FC<Props> = ({ from, onSelect, selectedToNode, isSwapp
         <Flex>
           <ToSection>
             <ToLabel>{!isSwapped ? 'To' : 'From'}</ToLabel>
-            <ToNode onSelect={onSelect} selectedValue={selectedToNode} topicId={from[from.length - 1]?.ref_id} />
+            <ToNode
+              dataId="to-node"
+              onSelect={onSelect}
+              selectedValue={selectedToNode}
+              topicId={from[from.length - 1]?.ref_id}
+            />
           </ToSection>
         </Flex>
 
@@ -59,6 +64,7 @@ export const TitleEditor: FC<Props> = ({ from, onSelect, selectedToNode, isSwapp
             <NodeCircleIcon />
           </IconTopContainer>
           <IconMidContainer
+            data-testid="swap-icon"
             disabled={Boolean(from?.length !== 1)}
             onClick={from?.length === 1 ? setIsSwapped : undefined}
           >
