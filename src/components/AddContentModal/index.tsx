@@ -130,7 +130,7 @@ const handleSubmitForm = async (
         try {
           const errorRes = await err.json()
 
-          errorMessage = errorRes.message || errorRes.errorCode || NODE_ADD_ERROR
+          errorMessage = errorRes.message || errorRes.status || errorRes?.errorCode || NODE_ADD_ERROR
         } catch (parseError) {
           errorMessage = NODE_ADD_ERROR
         }
