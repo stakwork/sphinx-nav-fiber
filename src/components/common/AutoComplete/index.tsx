@@ -23,6 +23,7 @@ type Props = {
   isLoading?: boolean
   autoFocus?: boolean
   disabled?: boolean
+  dataId?: string
 }
 
 const defaultProps = {
@@ -39,6 +40,7 @@ export const AutoComplete: FC<Props> = ({
   isLoading = false,
   autoFocus = false,
   disabled = false,
+  dataId,
 }) => {
   const inputRef = useRef<HTMLInputElement>(null)
   const [open, setOpen] = useState<boolean>(false)
@@ -61,6 +63,7 @@ export const AutoComplete: FC<Props> = ({
         autoFocus
         autoHighlight
         blurOnSelect
+        data-testid={dataId}
         disableClearable
         disabled={disabled}
         disablePortal
