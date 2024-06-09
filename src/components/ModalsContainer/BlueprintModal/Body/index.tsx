@@ -132,16 +132,18 @@ export const Body = () => {
         <Flex>
           {selectedSchema || isCreateNew ? (
             <EditorWrapper>
-              <Editor
-                graphLoading={graphLoading}
-                onDelete={onSchemaDelete}
-                onSchemaCreate={onSchemaCreate}
-                onSchemaUpdate={onSchemaUpdate}
-                selectedSchema={selectedSchema}
-                setGraphLoading={setGraphLoading}
-                setIsCreateNew={setIsCreateNew}
-                setSelectedSchemaId={setSelectedSchemaId}
-              />
+              <InnerEditorWrapper>
+                <Editor
+                  graphLoading={graphLoading}
+                  onDelete={onSchemaDelete}
+                  onSchemaCreate={onSchemaCreate}
+                  onSchemaUpdate={onSchemaUpdate}
+                  selectedSchema={selectedSchema}
+                  setGraphLoading={setGraphLoading}
+                  setIsCreateNew={setIsCreateNew}
+                  setSelectedSchemaId={setSelectedSchemaId}
+                />
+              </InnerEditorWrapper>
             </EditorWrapper>
           ) : null}
         </Flex>
@@ -187,13 +189,12 @@ const EditorWrapper = styled(Flex)`
   width: 100%;
   max-width: 400px;
   background: ${colors.BG1};
-  padding: 16px;
   border-top-right-radius: 16px;
   border-bottom-right-radius: 16px;
   flex-grow: 1;
   flex-shrink: 1;
   min-width: 300px;
-  overflow: auto;
+  overflow: hidden;
   max-height: calc(100vh - 20px);
 
   @media (max-width: 1440px) {
@@ -207,6 +208,12 @@ const EditorWrapper = styled(Flex)`
   @media (max-width: 924px) {
     max-height: calc(70vh - 20px);
   }
+`
+
+const InnerEditorWrapper = styled.div`
+  height: 100%;
+  overflow-y: auto;
+  padding: 16px;
 `
 
 const Container = styled(Flex)`
