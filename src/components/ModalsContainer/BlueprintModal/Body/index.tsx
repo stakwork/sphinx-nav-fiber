@@ -142,6 +142,7 @@ export const Body = () => {
           {selectedSchema || isCreateNew ? (
             <EditorWrapper>
               <Editor
+                graphLoading={graphLoading}
                 onDelete={onSchemaDelete}
                 onSchemaCreate={onSchemaCreate}
                 onSchemaUpdate={onSchemaUpdate}
