@@ -3,8 +3,8 @@ import '@testing-library/jest-dom'
 import { fireEvent, render, waitFor } from '@testing-library/react'
 import React from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { Body } from '../Body'
 import { postBluePrintType } from '~/network/fetchSourcesData'
+import { Body } from '../Body'
 
 jest.mock('~/stores/useModalStore', () => ({
   useModal: () => ({
@@ -18,9 +18,10 @@ jest.mock('~/network/fetchSourcesData', () => ({
 
 const TestComponent = () => {
   const form = useForm()
+  const mockOnCancel = jest.fn()
   return (
     <FormProvider {...form}>
-      <Body />
+      <Body onCancel={mockOnCancel} />
     </FormProvider>
   )
 }
@@ -66,7 +67,7 @@ describe('AddEdgeToBluePrint Modal', () => {
     })
   })
   it('should disable the submit button if required fields are not filled', async () => {
-    const { getByText } = render(<Body />)
+    const { getByText } = render(<TestComponent />)
     const confirmButton = getByText('Confirm')
 
     fireEvent.click(confirmButton)

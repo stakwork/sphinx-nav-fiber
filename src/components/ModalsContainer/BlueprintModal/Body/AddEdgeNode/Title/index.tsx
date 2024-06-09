@@ -38,7 +38,7 @@ export const TitleEditor: FC<Props> = ({
 
   return (
     <Flex mb={20}>
-      <Flex align="center" direction="row" justify="space-between" mb={18}>
+      <Flex align="center" direction="row" justify="space-between" mb={35}>
         <Flex align="center" direction="row">
           <StyledText>Add Edge</StyledText>
         </Flex>
@@ -52,7 +52,7 @@ export const TitleEditor: FC<Props> = ({
           </ToSection>
         </Flex>
 
-        <Flex my={22}>
+        <Flex my={25}>
           <StyledLabels>Type</StyledLabels>
           <TextInput
             id="cy-item-name"

@@ -2,7 +2,6 @@ import { Button } from '@mui/material'
 import { useState, useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { ClipLoader } from 'react-spinners'
-import { useModal } from '~/stores/useModalStore'
 import { colors } from '~/utils/colors'
 import { TitleEditor } from '../Title'
 import styled from 'styled-components'
@@ -12,8 +11,11 @@ export type FormData = {
   type: string
 }
 
-export const Body = () => {
-  const { close } = useModal('addEdgeToBluePrint')
+export type Props = {
+  onCancel: () => void
+}
+
+export const Body = ({ onCancel }: Props) => {
   const form = useForm<FormData>({ mode: 'onChange' })
   const [loading, setLoading] = useState(false)
   const [selectedType, setSelectedType] = useState('')
@@ -28,14 +30,12 @@ export const Body = () => {
     setSelectedType(typeValue)
   }, [typeValue])
 
-  const closeHandler = () => {
-    close()
-  }
-
   const onSubmit = form.handleSubmit(async (data) => {
     if (!selectedToNode || !selectedFromNode) {
       return
     }
+
+    setLoading(true)
 
     const edgeData = {
       source: selectedFromNode,
@@ -45,12 +45,11 @@ export const Body = () => {
 
     try {
       await postBluePrintType(edgeData)
-
-      closeHandler()
     } catch (error) {
       console.warn('API Error:', error)
     } finally {
       setLoading(false)
+      onCancel()
     }
   })
 
@@ -70,7 +69,12 @@ export const Body = () => {
         />
         <CustomButton color="secondary" disabled={submitDisabled} onClick={onSubmit} size="large" variant="contained">
           Confirm
-          {loading && <ClipLoader color={colors.BLUE_PRESS_STATE} size={10} />}
+          {loading && (
+            <ClipLoaderWrapper>
+              {' '}
+              <ClipLoader color={colors.lightGray} size={12} />{' '}
+            </ClipLoaderWrapper>
+          )}
         </CustomButton>
       </form>
     </FormProvider>
@@ -80,4 +84,8 @@ export const Body = () => {
 const CustomButton = styled(Button)`
   width: 293px !important;
   margin: 0 0 10px 35px !important;
+`
+
+const ClipLoaderWrapper = styled.span`
+  margin-top: 2px;
 `

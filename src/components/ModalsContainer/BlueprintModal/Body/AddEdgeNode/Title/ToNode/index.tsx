@@ -1,13 +1,13 @@
-import { IconButton } from '@mui/material'
 import { FC, useEffect, useState } from 'react'
+import { useForm } from 'react-hook-form'
 import { OPTIONS } from '~/components/AddItemModal/SourceTypeStep/constants'
+import { TOption } from '~/components/AddItemModal/SourceTypeStep/types'
 import ClearIcon from '~/components/Icons/ClearIcon'
+import { FormData } from '~/components/ModalsContainer/BlueprintModal/Body/Editor'
+import { StyledIconButton } from '~/components/SourcesTableModal/SourcesView/constants'
 import { AutoComplete, TAutocompleteOption } from '~/components/common/AutoComplete'
 import { Flex } from '~/components/common/Flex'
 import { getNodeSchemaTypes } from '~/network/fetchSourcesData'
-import { useForm } from 'react-hook-form'
-import { FormData } from '~/components/ModalsContainer/BlueprintModal/Body/Editor'
-import { TOption } from '~/components/AddItemModal/SourceTypeStep/types'
 
 type Props = {
   onSelect: (type: string) => void
@@ -34,6 +34,11 @@ export const ToNode: FC<Props> = ({ onSelect, selectedValue, dataTestId }) => {
   const handleSelect = (val: TAutocompleteOption | null) => {
     setValue('parent', val?.value || '')
     onSelect(val?.value as string)
+  }
+
+  const handleClear = () => {
+    setValue('parent', '')
+    onSelect('')
   }
 
   const capitalizeFirstLetter = (string: string) => string.charAt(0).toUpperCase() + string.slice(1)
@@ -74,9 +79,9 @@ export const ToNode: FC<Props> = ({ onSelect, selectedValue, dataTestId }) => {
   return selectedValue ? (
     <Flex align="center" basis="100%" direction="row" grow={1} shrink={1}>
       <span>{selectedValue}</span>
-      <IconButton onClick={() => onSelect('')} size="small">
+      <StyledIconButton onClick={handleClear} size="medium">
         <ClearIcon />
-      </IconButton>
+      </StyledIconButton>
     </Flex>
   ) : (
     <AutoComplete

@@ -26,10 +26,6 @@ const LazyAddNodeEdgeModal = lazy(() =>
   import('./AddNodeEdgeModal').then(({ AddNodeEdgeModal }) => ({ default: AddNodeEdgeModal })),
 )
 
-const LazyAddEdgeBluePrintModal = lazy(() =>
-  import('./AddEdgeBluePrintModal').then(({ AddEdgeBluePrintModal }) => ({ default: AddEdgeBluePrintModal })),
-)
-
 const LazyMergeNodeModal = lazy(() =>
   import('./MergeTopicModal').then(({ MergeNodeModal }) => ({ default: MergeNodeModal })),
 )
@@ -54,6 +50,5 @@ export const ModalsContainer = () => (
     <LazyChangeNodeTypeModal />
     <LazyBlueprintModal />
     <LazyMergeNodeModal />
-    <LazyAddEdgeBluePrintModal />
   </>
 )
