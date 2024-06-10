@@ -1,4 +1,5 @@
 /* eslint-disable react/no-array-index-key */
+/* eslint-disable padding-line-between-statements */
 import { QuadraticBezierLine, Text } from '@react-three/drei'
 import { useFrame, useThree } from '@react-three/fiber'
 import { useRef } from 'react'
@@ -89,6 +90,7 @@ export const Lines = ({ links, nodes }: Props) => {
           const middlePoint = new Vector3().lerpVectors(startPosition, endPosition, 0.5)
 
           const textWidth = 30
+
           const textOffset = new Vector3()
             .subVectors(endPosition, startPosition)
             .normalize()
