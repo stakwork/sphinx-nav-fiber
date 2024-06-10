@@ -1,5 +1,4 @@
 /* eslint-disable react/no-array-index-key */
-/* eslint-disable padding-line-between-statements */
 import { QuadraticBezierLine, Text } from '@react-three/drei'
 import { useFrame, useThree } from '@react-three/fiber'
 import { useRef } from 'react'
@@ -7,6 +6,7 @@ import { Group, Vector3 } from 'three'
 import { SchemaLink } from '~/network/fetchSourcesData'
 import { SchemaExtended } from '../../../types'
 import { NODE_RADIUS } from '../constants'
+import { getLoopControlPoints, truncateText } from '~/components/ModalsContainer/BlueprintModal/Body/Editor/utils'
 
 type Props = {
   links: SchemaLink[]
@@ -25,25 +25,18 @@ const getPointOnLineAtDistance = (start: Vector3, end: Vector3, r: number): Vect
   return new Vector3().addVectors(start, displacement)
 }
 
-const getLoopControlPoints = (center: Vector3): [Vector3, Vector3, Vector3] => {
-  const controlPoint1 = new Vector3(center.x - 10, center.y + 45, center.z)
-  const controlPoint2 = new Vector3(center.x + 5, center.y + 10, center.z)
-  const endPoint = new Vector3(center.x, center.y, center.z)
-
-  return [controlPoint1, endPoint, controlPoint2]
-}
-
-const truncateText = (text: string, maxLength: number) => {
-  if (text.length > maxLength) {
-    return `${text.substring(0, maxLength)}...`
-  }
-
-  return text
-}
-
 export const Lines = ({ links, nodes }: Props) => {
   const group = useRef<Group>(null)
   const { camera } = useThree()
+
+  const startVector = new Vector3()
+  const endVector = new Vector3()
+  const middlePoint = new Vector3()
+  const textOffset = new Vector3()
+  const firstLineEnd = new Vector3()
+  const secondLineStart = new Vector3()
+  const endPosition = new Vector3()
+  const startPosition = new Vector3()
 
   useFrame(() => {
     if (group.current && nodes) {
@@ -57,14 +50,14 @@ export const Lines = ({ links, nodes }: Props) => {
         const nodeEnd = nodes.find((i) => i.ref_id === link.source)
         const nodeStart = nodes.find((i) => i.ref_id === link.target)
 
-        const startVector = new Vector3(nodeStart?.x || 0, nodeStart?.y || 0, nodeStart?.z || 0)
-        const endVector = new Vector3(nodeEnd?.x || 0, nodeEnd?.y || 0, nodeEnd?.z || 0)
+        startVector.set(nodeStart?.x || 0, nodeStart?.y || 0, nodeStart?.z || 0)
+        endVector.set(nodeEnd?.x || 0, nodeEnd?.y || 0, nodeEnd?.z || 0)
 
-        const line1 = child.children[0] as {
+        const lineStart = child.children[0] as {
           setPoints?: (start: Vector3, end: Vector3, middlePoint: Vector3) => void
         }
 
-        const line2 = child.children[1] as {
+        const lineEnd = child.children[1] as {
           setPoints?: (start: Vector3, end: Vector3, middlePoint: Vector3) => void
         }
 
@@ -75,8 +68,8 @@ export const Lines = ({ links, nodes }: Props) => {
         if (nodeStart?.ref_id === nodeEnd?.ref_id) {
           const [controlPoint1, endPoint, controlPoint2] = getLoopControlPoints(startVector)
 
-          line1.setPoints?.(startVector, controlPoint2, controlPoint1)
-          line2.setPoints?.(controlPoint2, endVector, controlPoint1)
+          lineStart.setPoints?.(startVector, controlPoint2, controlPoint1)
+          lineEnd.setPoints?.(controlPoint2, endVector, controlPoint1)
 
           arrow.position.set(controlPoint2.x, controlPoint2.y, endPoint.z)
           arrow.lookAt(controlPoint1)
@@ -85,22 +78,22 @@ export const Lines = ({ links, nodes }: Props) => {
           text.position.set(controlPoint2.x, controlPoint2.y, endPoint.z)
           text.lookAt(camera.position)
         } else {
-          const endPosition = getPointOnLineAtDistance(endVector, startVector, NODE_RADIUS + CONE_HEIGHT)
-          const startPosition = startVector.clone()
-          const middlePoint = new Vector3().lerpVectors(startPosition, endPosition, 0.5)
+          endPosition.copy(getPointOnLineAtDistance(endVector, startVector, NODE_RADIUS + CONE_HEIGHT))
+          startPosition.copy(startVector)
+          middlePoint.lerpVectors(startPosition, endPosition, 0.5)
 
           const textWidth = 30
 
-          const textOffset = new Vector3()
+          textOffset
             .subVectors(endPosition, startPosition)
             .normalize()
             .multiplyScalar(textWidth / 2)
 
-          const line1End = new Vector3().subVectors(middlePoint, textOffset)
-          const line2Start = new Vector3().addVectors(middlePoint, textOffset)
+          firstLineEnd.subVectors(middlePoint, textOffset)
+          secondLineStart.addVectors(middlePoint, textOffset)
 
-          line1.setPoints?.(startPosition, line1End, middlePoint)
-          line2.setPoints?.(line2Start, endPosition, middlePoint)
+          lineStart.setPoints?.(startPosition, firstLineEnd, middlePoint)
+          lineEnd.setPoints?.(secondLineStart, endPosition, middlePoint)
 
           arrow.position.set(endPosition.x, endPosition.y, endPosition.z)
           arrow.lookAt(startPosition)
