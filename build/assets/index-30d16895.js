@@ -1,1 +1,0 @@
-function u(r){const e={};return r.forEach(s=>{const{key:t,type:n,required:i}=s;i?e[t]=n:e[t]=`?${n}`}),e}function c(r){return Object.keys(r).map(e=>({required:!r[e].includes("?"),type:r[e].includes("?")?r[e].slice(1):r[e],key:e})).filter(({key:e})=>!["type","ref_id","parent"].includes(e))}export{u as c,c as p};

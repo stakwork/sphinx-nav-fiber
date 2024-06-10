@@ -9,6 +9,7 @@ import { SchemaWithChildren } from '../types'
 import { Editor } from './Editor'
 import { Graph } from './Graph'
 import { Toolbar } from './Toolbar'
+import { AddEdgeNode } from '~/components/ModalsContainer/BlueprintModal/Body/AddEdgeNode'
 
 export type FormData = {
   type: string
@@ -22,6 +23,9 @@ export const Body = () => {
   const [selectedSchemaId, setSelectedSchemaId] = useState<string>('')
   const [isCreateNew, setIsCreateNew] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [isAddEdgeNode, setIsAddEdgeNode] = useState(false)
+
+  const [graphLoading, setGraphLoading] = useState(false)
 
   const [schemas, links, setSchemaAll, setSchemaLinks] = useSchemaStore((s) => [
     s.schemas,
@@ -79,6 +83,14 @@ export const Body = () => {
     }
   }
 
+  const onSchemaUpdate = async () => {
+    const response = await getSchemaAll()
+
+    setSchemaAll(response.schemas.filter((i) => i.ref_id && !i.is_deleted && i.ref_id))
+
+    setSchemaLinks(response.edges)
+  }
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const onSchemaDelete = (type: string) => {
     setSchemaAll(schemas.filter((i) => i.type !== type))
@@ -114,7 +126,13 @@ export const Body = () => {
       <Flex align="stretch" direction="row" grow={1}>
         <Flex ml={-20} my={-20}>
           <Toolbar
+            onAddEdgeNode={() => {
+              setIsAddEdgeNode(true)
+              setIsCreateNew(false)
+              setSelectedSchemaId('')
+            }}
             onCreateNew={() => {
+              setIsAddEdgeNode(false)
               setIsCreateNew(true)
               setSelectedSchemaId('')
             }}
@@ -124,23 +142,40 @@ export const Body = () => {
           {selectedSchema || isCreateNew ? (
             <EditorWrapper>
               <Editor
+                graphLoading={graphLoading}
                 onDelete={onSchemaDelete}
                 onSchemaCreate={onSchemaCreate}
+                onSchemaUpdate={onSchemaUpdate}
                 selectedSchema={selectedSchema}
+                setGraphLoading={setGraphLoading}
                 setIsCreateNew={setIsCreateNew}
                 setSelectedSchemaId={setSelectedSchemaId}
               />
             </EditorWrapper>
           ) : null}
         </Flex>
+        <Flex>
+          {isAddEdgeNode ? (
+            <EditorWrapper>
+              <AddEdgeNode setIsAddEdgeNode={setIsAddEdgeNode} />
+            </EditorWrapper>
+          ) : null}
+        </Flex>
         <Wrapper direction="row" grow={1}>
           <Container>
-            <Graph
-              links={linksFiltered}
-              schemasWithPositions={schemasWithChildren}
-              selectedSchemaId={selectedSchemaId}
-              setSelectedSchemaId={setSelectedSchemaId}
-            />
+            {graphLoading ? (
+              <Flex align="center" basis="100%" grow={1} justify="center" shrink={1}>
+                <ClipLoader color={colors.white} />
+              </Flex>
+            ) : (
+              <Graph
+                links={linksFiltered}
+                schemasWithPositions={schemasWithChildren}
+                selectedSchemaId={selectedSchemaId}
+                setIsAddEdgeNode={setIsAddEdgeNode}
+                setSelectedSchemaId={setSelectedSchemaId}
+              />
+            )}
           </Container>
         </Wrapper>
       </Flex>
