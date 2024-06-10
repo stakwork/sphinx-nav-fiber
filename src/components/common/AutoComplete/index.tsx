@@ -23,6 +23,7 @@ type Props = {
   isLoading?: boolean
   autoFocus?: boolean
   disabled?: boolean
+  dataTestId?: string
   dataId?: string
 }
 
@@ -40,6 +41,7 @@ export const AutoComplete: FC<Props> = ({
   isLoading = false,
   autoFocus = false,
   disabled = false,
+  dataTestId,
   dataId,
 }) => {
   const inputRef = useRef<HTMLInputElement>(null)
@@ -98,6 +100,7 @@ export const AutoComplete: FC<Props> = ({
           <StyledInput
             inputRef={inputRef}
             {...params}
+            data-testid={dataTestId}
             InputProps={{
               ...params.InputProps,
               disableUnderline: true,
