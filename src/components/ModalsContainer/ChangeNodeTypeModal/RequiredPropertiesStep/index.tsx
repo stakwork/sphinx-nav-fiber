@@ -70,6 +70,12 @@ export const RequiredPropertiesStep: FC<Props> = ({ handleSelectType, skipToStep
     return false
   })
 
+  if (filteredAttributes.length === 0) {
+    skipToStep('createConfirmation')
+
+    return null
+  }
+
   const handlePrevButton = () => {
     handleSelectType('')
     skipToStep('sourceType')
