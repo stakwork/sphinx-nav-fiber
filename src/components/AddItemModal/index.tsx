@@ -127,9 +127,9 @@ export const AddItemModal = () => {
     }, {} as FieldValues)
 
     const node: NodeExtended = {
-      name: data.name,
+      name: data.typeName,
       type: newType,
-      label: data.name,
+      label: data.typeName,
       node_type: newType,
       id: newId,
       ref_id: newId,
