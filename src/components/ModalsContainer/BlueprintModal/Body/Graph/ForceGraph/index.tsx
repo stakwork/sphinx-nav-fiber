@@ -39,6 +39,7 @@ export const ForceGraph = ({
 
     if (simulationRef.current) {
       const sim = simulationRef.current
+
       if (
         prevSchemas &&
         prevSchemas.length !== schemasWithPositions.length &&
@@ -57,6 +58,7 @@ export const ForceGraph = ({
           .alpha(0.5)
           .restart()
       }
+
       return
     }
 
