@@ -86,6 +86,25 @@ const Label = styled.label`
   margin-bottom: 6px;
 `
 
+const StyledTextArea = styled.textarea`
+  width: 100%;
+  height: 100px;
+  border: none;
+  background: transparent;
+  color: ${colors.white};
+  font-size: 14px;
+  font-weight: 400;
+  resize: none;
+  font-family: 'Barlow';
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  box-sizing: border-box;
+  outline: none;
+  line-height: 20px;
+  letter-spacing: 0.01em;
+  text-align: left;
+`
+
 type Props = BaseTextInputProps & {
   id: string
   label?: string
@@ -94,6 +113,9 @@ type Props = BaseTextInputProps & {
   mask?: string
   showMask?: boolean
   maskPlaceholder?: string | null
+  isTextArea?: boolean
+  placeholder?: string
+  maxLength?: number
 }
 
 export const TextInput = ({
@@ -105,6 +127,9 @@ export const TextInput = ({
   rules,
   showMask = false,
   maskPlaceholder = null,
+  isTextArea = false,
+  placeholder = '',
+  maxLength,
   ...props
 }: Props) => {
   const {
@@ -151,6 +176,25 @@ export const TextInput = ({
           {...register(name)}
           render={({ field: { onBlur, onChange, value, ref } }) => {
             const { disabled = defaultProps.disabled, textAlign = defaultProps.textAlign } = props
+
+            if (isTextArea) {
+              return (
+                <StyledTextArea
+                  ref={ref}
+                  disabled={disabled}
+                  id={id}
+                  maxLength={maxLength}
+                  onBlur={() => {
+                    setIsFocused(false)
+                    onBlur()
+                  }}
+                  onChange={onChange}
+                  onFocus={() => setIsFocused(true)}
+                  placeholder={placeholder}
+                  value={value || ''}
+                />
+              )
+            }
 
             return mask ? (
               <InputMask
