@@ -1,6 +1,6 @@
 import { useFrame } from '@react-three/fiber'
 import { forceCenter, forceCollide, forceLink, forceManyBody, forceSimulation } from 'd3-force-3d'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { usePrevious } from '~/hooks/usePrevious'
 import { SchemaLink } from '~/network/fetchSourcesData'
 import { ForceSimulation } from '~/transformers/forceSimulation'
@@ -25,9 +25,9 @@ export const ForceGraph = ({
   setIsAddEdgeNode,
 }: Props) => {
   const [simulation2d, setSimulation2d] = useState<ForceSimulation | null>(null)
-
   const prevSchemas = usePrevious<SchemaExtended[]>(schemasWithPositions)
   const prevLinks = usePrevious<SchemaLink[]>(filteredLinks)
+  const simulationRef = useRef<ForceSimulation | null>(null)
 
   useEffect(() => {
     if (!schemasWithPositions.length || !filteredLinks.length) {
@@ -37,14 +37,15 @@ export const ForceGraph = ({
     const nodes = structuredClone(schemasWithPositions)
     const links = structuredClone(filteredLinks)
 
-    if (simulation2dRef.current) {
+    if (simulationRef.current) {
+      const sim = simulationRef.current
       if (
         prevSchemas &&
         prevSchemas.length !== schemasWithPositions.length &&
         prevLinks &&
         prevLinks.length !== filteredLinks.length
       ) {
-        simulation2dRef.current
+        sim
           .nodes(nodes)
           .force(
             'link',
@@ -56,7 +57,6 @@ export const ForceGraph = ({
           .alpha(0.5)
           .restart()
       }
-
       return
     }
 
@@ -68,24 +68,27 @@ export const ForceGraph = ({
       .force('charge', forceManyBody())
       .force('center', forceCenter())
       .force('collide', forceCollide(NODE_RADIUS + 1))
+      .alpha(0.5)
+      .restart()
 
-    simulation2dRef.current = simulation
+    simulationRef.current = simulation
+    setSimulation2d(simulation)
   }, [schemasWithPositions, filteredLinks, prevSchemas, prevLinks])
 
   useFrame(() => {
-    if (simulation2dRef.current) {
-      simulation2dRef.current.tick()
+    if (simulationRef.current) {
+      simulationRef.current.tick()
     }
   })
 
-  return simulation2dRef.current ? (
+  return simulation2d ? (
     <>
-      <Lines links={filteredLinks} nodes={simulation2dRef.current.nodes()} />
+      <Lines links={filteredLinks} nodes={simulation2d.nodes()} />
       <Nodes
         selectedId={selectedSchemaId}
-        setSelectedSchemaId={setSelectedSchemaId}
-        simulation={simulation2dRef.current}
         setIsAddEdgeNode={setIsAddEdgeNode}
+        setSelectedSchemaId={setSelectedSchemaId}
+        simulation={simulation2d}
       />
     </>
   ) : null
