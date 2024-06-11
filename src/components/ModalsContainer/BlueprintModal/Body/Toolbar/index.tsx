@@ -36,7 +36,6 @@ const Wrapper = styled(Flex).attrs({
   z-index: 31;
   transition: opacity 1s;
   background: ${colors.BG2};
-  overflow: hidden;
   max-height: 100vh;
   border-top-left-radius: 9px;
   border-bottom-left-radius: 9px;
