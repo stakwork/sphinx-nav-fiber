@@ -1,5 +1,5 @@
 import { Button } from '@mui/material'
-import { FC, useEffect, useState } from 'react'
+import { FC, useEffect, useMemo, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
@@ -10,6 +10,7 @@ import { getNodeType } from '~/network/fetchSourcesData'
 import { colors } from '~/utils'
 import { MapNodeTypeModalStepID, SelectedValues } from '..'
 import { parseJson, parsedObjProps } from '../../BlueprintModal/Body/Editor/utils'
+import { capitalizeFirstLetter, sortAttributesByRequired } from '~/utils/capitalize'
 
 type Props = {
   skipToStep: (step: MapNodeTypeModalStepID) => void
@@ -56,35 +57,8 @@ export const MapPropertiesStep: FC<Props> = ({
     }
   }, [nodeType, selectedNodeType, watch])
 
-  const capitalizeFirstLetter = (string: string) => string.charAt(0).toUpperCase() + string.slice(1).replace(/_/g, ' ')
-
-  const sortedAttributes = attributes
-    ? [...attributes].sort((a, b) => {
-        if (a.required && !b.required) {
-          return -1
-        }
-
-        if (!a.required && b.required) {
-          return 1
-        }
-
-        return 0
-      })
-    : []
-
-  const sortedSelectedAttributes = selectedAttributes
-    ? [...selectedAttributes].sort((a, b) => {
-        if (a.required && !b.required) {
-          return -1
-        }
-
-        if (!a.required && b.required) {
-          return 1
-        }
-
-        return 0
-      })
-    : []
+  const sortedAttributes = useMemo(() => sortAttributesByRequired(attributes), [attributes])
+  const sortedSelectedAttributes = useMemo(() => sortAttributesByRequired(selectedAttributes), [selectedAttributes])
 
   const handlePrevButton = () => {
     handleSelectType('')
@@ -108,6 +82,41 @@ export const MapPropertiesStep: FC<Props> = ({
   const handleSelectChange = (key: string, value: string) => {
     setSelectedValues((prev) => ({ ...prev, [key]: value }))
   }
+
+  const handleNextButton = () => {
+    const allRequiredSet = sortedAttributes.every(
+      ({ key, required }) => !required || (required && selectedValues[key] && selectedValues[key] !== 'none'),
+    )
+
+    if (allRequiredSet) {
+      skipToStep('createConfirmation')
+    } else {
+      skipToStep('requiredProperties')
+    }
+  }
+
+  const autoCompleteData = useMemo(
+    () =>
+      sortedSelectedAttributes.map(({ key }: parsedObjProps) => {
+        const selectedValue = selectedValues[key] || 'none'
+
+        const autoCompleteOptions: TAutocompleteOption[] = sortedAttributes
+          .filter((attr) => !Object.values(selectedValues).includes(attr.key) || attr.key === selectedValue)
+          .map((attr) => ({
+            label: capitalizeFirstLetter(attr.key),
+            value: attr.key,
+          }))
+
+        autoCompleteOptions.unshift({ label: 'None', value: 'none' })
+
+        return {
+          key,
+          autoCompleteOptions,
+          selectedValue,
+        }
+      }),
+    [sortedSelectedAttributes, sortedAttributes, selectedValues],
+  )
 
   return (
     <Flex>
@@ -135,29 +144,16 @@ export const MapPropertiesStep: FC<Props> = ({
 
             <DropdownContainer>
               <SmallHeading>{capitalizeFirstLetter(nodeType)}</SmallHeading>
-              {sortedSelectedAttributes.map(({ key }: parsedObjProps) => {
-                const selectedValue = selectedValues[key] || 'none'
-
-                const autoCompleteOptions: TAutocompleteOption[] = sortedAttributes
-                  .filter((attr) => !Object.values(selectedValues).includes(attr.key) || attr.key === selectedValue)
-                  .map((attr) => ({
-                    label: capitalizeFirstLetter(attr.key),
-                    value: attr.key,
-                  }))
-
-                autoCompleteOptions.unshift({ label: 'None', value: 'none' })
-
-                return (
-                  <Flex key={key}>
-                    <AutoComplete
-                      isLoading={loading}
-                      onSelect={(option) => handleSelectChange(key, option ? option.value : 'none')}
-                      options={autoCompleteOptions}
-                      selectedValue={autoCompleteOptions.find((option) => option.value === selectedValue)}
-                    />
-                  </Flex>
-                )
-              })}
+              {autoCompleteData.map(({ key, autoCompleteOptions, selectedValue }) => (
+                <Flex key={key}>
+                  <AutoComplete
+                    isLoading={loading}
+                    onSelect={(option) => handleSelectChange(key, option ? option.value : 'none')}
+                    options={autoCompleteOptions}
+                    selectedValue={autoCompleteOptions.find((option) => option.value === selectedValue)}
+                  />
+                </Flex>
+              ))}
             </DropdownContainer>
           </FlexContainer>
         )}
@@ -170,23 +166,7 @@ export const MapPropertiesStep: FC<Props> = ({
           </Button>
         </Flex>
         <Flex grow={1} ml={20}>
-          <Button
-            color="secondary"
-            disabled={loading}
-            onClick={() => {
-              const allRequiredSet = sortedAttributes.every(
-                ({ key, required }) => !required || (required && selectedValues[key] && selectedValues[key] !== 'none'),
-              )
-
-              if (allRequiredSet) {
-                skipToStep('createConfirmation')
-              } else {
-                skipToStep('requiredProperties')
-              }
-            }}
-            size="large"
-            variant="contained"
-          >
+          <Button color="secondary" disabled={loading} onClick={handleNextButton} size="large" variant="contained">
             Next
           </Button>
         </Flex>
