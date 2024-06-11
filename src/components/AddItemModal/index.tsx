@@ -57,8 +57,7 @@ const handleSubmitForm = async (
     const res = await postNewNodeItem(nodeType, nodeData, sourceLink, typeName, lsatToken)
 
     onAddNewData(data, res?.data?.ref_id)
-    // eslint-disable-next-line no-restricted-globals
-    close()
+
     // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   } catch (err: any) {
     let errorMessage = NODE_ADD_ERROR
@@ -125,9 +124,9 @@ export const AddItemModal = () => {
     }, {} as FieldValues)
 
     const node: NodeExtended = {
-      name: data.typeName,
+      name: data.typeName ?? data.name,
       type: newType,
-      label: data.typeName,
+      label: data.typeName ?? data.name,
       node_type: newType,
       id: newId,
       ref_id: newId,
