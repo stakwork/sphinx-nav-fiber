@@ -30,7 +30,18 @@ const handleSubmitForm = async (
   setBudget: (value: number | null) => void,
   onAddNewData: (value: FieldValues, id: string) => void,
 ): Promise<void> => {
-  const { nodeType, typeName, sourceLink, ...nodeData } = data
+
+  const filteredNodeData = Object.entries(data).reduce((acc, [key, value]) => {
+    if (value !== null && value !== undefined && value !== '') {
+      acc[key] = value
+    }
+
+    return acc
+  }, {} as FieldValues)
+
+  const { nodeType, typeName, sourceLink, ...nodeData } = filteredNodeData
+
+
   let lsatToken = ''
 
   if (nodeType !== 'Create custom type') {
@@ -107,6 +118,14 @@ export const AddItemModal = () => {
     const newId = id || `new-id-${Math.random()}`
     const newType = data.nodeType.toLocaleLowerCase()
 
+    const filteredData = Object.entries(data).reduce((acc, [key, value]) => {
+      if (value !== null && value !== undefined && value !== '') {
+        acc[key] = value
+      }
+
+      return acc
+    }, {} as FieldValues)
+
     const node: NodeExtended = {
       name: data.typeName,
       type: newType,
@@ -119,9 +138,9 @@ export const AddItemModal = () => {
       z: Math.random(),
       date: parseInt((new Date().getTime() / 1000).toFixed(0), 10),
       weight: 4,
-      ...(data.sourceLink ? { source_link: data.sourceLink } : {}),
+      ...(data.source_link ? { source_link: data.source_link } : {}),
       properties: {
-        ...data,
+        ...filteredData,
       },
     }
 
