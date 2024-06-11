@@ -55,7 +55,7 @@ export const ForceGraph = ({
           .force('charge', forceManyBody())
           .force('center', forceCenter())
           .force('collide', forceCollide(NODE_RADIUS + 1))
-          .alpha(0.5)
+          .alpha(1)
           .restart()
       }
 
@@ -70,7 +70,7 @@ export const ForceGraph = ({
       .force('charge', forceManyBody())
       .force('center', forceCenter())
       .force('collide', forceCollide(NODE_RADIUS + 1))
-      .alpha(0.5)
+      .alpha(1)
       .restart()
 
     simulationRef.current = simulation
