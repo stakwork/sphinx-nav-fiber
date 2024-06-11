@@ -10,7 +10,7 @@ import { getNodeType } from '~/network/fetchSourcesData'
 import { colors } from '~/utils'
 import { MapNodeTypeModalStepID, SelectedValues } from '..'
 import { parseJson, parsedObjProps } from '../../BlueprintModal/Body/Editor/utils'
-import { capitalizeFirstLetter, sortAttributesByRequired } from '~/utils/capitalize'
+import { capitalizeFirstLetter, sortAttributesByRequired } from '~/components/ModalsContainer/ChangeNodeTypeModal/utils'
 
 type Props = {
   skipToStep: (step: MapNodeTypeModalStepID) => void
