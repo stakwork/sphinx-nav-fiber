@@ -9,6 +9,7 @@ import { SchemaWithChildren } from '../types'
 import { Editor } from './Editor'
 import { Graph } from './Graph'
 import { Toolbar } from './Toolbar'
+import { AddEdgeNode } from '~/components/ModalsContainer/BlueprintModal/Body/AddEdgeNode'
 
 export type FormData = {
   type: string
@@ -22,6 +23,8 @@ export const Body = () => {
   const [selectedSchemaId, setSelectedSchemaId] = useState<string>('')
   const [isCreateNew, setIsCreateNew] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [isAddEdgeNode, setIsAddEdgeNode] = useState(false)
+
   const [graphLoading, setGraphLoading] = useState(false)
 
   const [schemas, links, setSchemaAll, setSchemaLinks] = useSchemaStore((s) => [
@@ -123,7 +126,13 @@ export const Body = () => {
       <Flex align="stretch" direction="row" grow={1}>
         <Flex ml={-20} my={-20}>
           <Toolbar
+            onAddEdgeNode={() => {
+              setIsAddEdgeNode(true)
+              setIsCreateNew(false)
+              setSelectedSchemaId('')
+            }}
             onCreateNew={() => {
+              setIsAddEdgeNode(false)
               setIsCreateNew(true)
               setSelectedSchemaId('')
             }}
@@ -145,6 +154,13 @@ export const Body = () => {
             </EditorWrapper>
           ) : null}
         </Flex>
+        <Flex>
+          {isAddEdgeNode ? (
+            <EditorWrapper>
+              <AddEdgeNode setIsAddEdgeNode={setIsAddEdgeNode} />
+            </EditorWrapper>
+          ) : null}
+        </Flex>
         <Wrapper direction="row" grow={1}>
           <Container>
             {graphLoading ? (
@@ -156,6 +172,7 @@ export const Body = () => {
                 links={linksFiltered}
                 schemasWithPositions={schemasWithChildren}
                 selectedSchemaId={selectedSchemaId}
+                setIsAddEdgeNode={setIsAddEdgeNode}
                 setSelectedSchemaId={setSelectedSchemaId}
               />
             )}
