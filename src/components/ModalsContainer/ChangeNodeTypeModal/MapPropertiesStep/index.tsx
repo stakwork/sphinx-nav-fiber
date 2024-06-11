@@ -174,7 +174,7 @@ export const MapPropertiesStep: FC<Props> = ({
             color="secondary"
             disabled={loading}
             onClick={() => {
-              const allRequiredSet = sortedSelectedAttributes.every(
+              const allRequiredSet = sortedAttributes.every(
                 ({ key, required }) => !required || (required && selectedValues[key] && selectedValues[key] !== 'none'),
               )
 
