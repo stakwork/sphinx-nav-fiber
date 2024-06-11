@@ -30,7 +30,6 @@ const handleSubmitForm = async (
   setBudget: (value: number | null) => void,
   onAddNewData: (value: FieldValues, id: string) => void,
 ): Promise<void> => {
-
   const filteredNodeData = Object.entries(data).reduce((acc, [key, value]) => {
     if (value !== null && value !== undefined && value !== '') {
       acc[key] = value
@@ -40,7 +39,6 @@ const handleSubmitForm = async (
   }, {} as FieldValues)
 
   const { nodeType, typeName, sourceLink, ...nodeData } = filteredNodeData
-
 
   let lsatToken = ''
 
