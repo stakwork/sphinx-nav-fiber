@@ -1,5 +1,5 @@
 import { Circle, Html, Text } from '@react-three/drei'
-import { ThreeEvent, useFrame, useThree } from '@react-three/fiber'
+import { useFrame, useThree } from '@react-three/fiber'
 import { useDrag } from '@use-gesture/react'
 import { memo, useRef, useState } from 'react'
 import styled from 'styled-components'
@@ -87,7 +87,7 @@ export const Node = memo(({ node, setSelectedNode, onSimulationUpdate, isSelecte
 
   const color = NODE_TYPE_COLORS[node?.children?.length] || 'red'
 
-  const handleClick = (e: ThreeEvent<MouseEvent>) => {
+  const handleClick = (e: { stopPropagation: () => void }) => {
     e.stopPropagation()
     setSelectedNode()
   }
@@ -106,7 +106,8 @@ export const Node = memo(({ node, setSelectedNode, onSimulationUpdate, isSelecte
     // @ts-ignore Ignores type error on next line)
     <mesh
       ref={meshRef}
-      onClick={handleClick}
+      // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+      onClick={handleClick as any}
       {...bind()}
       onPointerOut={handleMouseOut}
       onPointerOver={handleMouseOver}
