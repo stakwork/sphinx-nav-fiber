@@ -1,5 +1,5 @@
 import { Circle, Html, Text } from '@react-three/drei'
-import { useFrame, useThree } from '@react-three/fiber'
+import { ThreeEvent, useFrame, useThree } from '@react-three/fiber'
 import { useDrag } from '@use-gesture/react'
 import { memo, useRef, useState } from 'react'
 import styled from 'styled-components'
@@ -87,7 +87,7 @@ export const Node = memo(({ node, setSelectedNode, onSimulationUpdate, isSelecte
 
   const color = NODE_TYPE_COLORS[node?.children?.length] || 'red'
 
-  const handleClick = (e: { stopPropagation: () => void }) => {
+  const handleClick = (e: ThreeEvent<MouseEvent>) => {
     e.stopPropagation()
     setSelectedNode()
   }
