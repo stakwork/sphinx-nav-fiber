@@ -1,8 +1,10 @@
-import { Circle, Text } from '@react-three/drei'
+import { Circle, Html, Text } from '@react-three/drei'
 import { useFrame, useThree } from '@react-three/fiber'
 import { useDrag } from '@use-gesture/react'
-import { memo, useRef } from 'react'
+import { memo, useRef, useState } from 'react'
+import styled from 'styled-components'
 import { BoxGeometry, Mesh, Vector3 } from 'three'
+import { truncateText } from '~/components/ModalsContainer/BlueprintModal/Body/Editor/utils'
 import { SchemaExtended } from '~/components/ModalsContainer/BlueprintModal/types'
 import { fontProps } from '~/components/Universe/Graph/Cubes/Text/constants'
 import { NODE_RADIUS } from '../../constants'
@@ -16,10 +18,29 @@ type Props = {
   onSimulationUpdate: () => void
 }
 
+const Tooltip = styled.div`
+  color: white;
+  background: rgba(0, 0, 0, 1);
+  padding: 2px 5px;
+  border-radius: 4px;
+  word-wrap: break-word;
+  text-align: center;
+  white-space: nowrap;
+  visibility: visible;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+`
+
+const TooltipWrapper = styled(Html)`
+  position: absolute;
+`
+
 export const boxGeometry = new BoxGeometry(2, 2, 2)
 
 export const Node = memo(({ node, setSelectedNode, onSimulationUpdate, isSelected }: Props) => {
   const meshRef = useRef<Mesh | null>(null)
+  const [showTooltip, setShowTooltip] = useState(false)
 
   console.log(isSelected)
 
@@ -71,51 +92,46 @@ export const Node = memo(({ node, setSelectedNode, onSimulationUpdate, isSelecte
     setSelectedNode()
   }
 
-  const wrapText = (text: string, maxChar: number): string[] => {
-    const wrappedText = []
-    const words = text.split(' ')
+  const truncatedText = truncateText(node.type || '', NODE_RADIUS)
 
-    let currentLine = ''
-
-    words.forEach((word) => {
-      if (currentLine.length + word.length + (currentLine ? 1 : 0) <= maxChar) {
-        currentLine += (currentLine ? ' ' : '') + word
-      } else {
-        wrappedText.push(currentLine)
-        currentLine = word
-      }
-    })
-
-    if (currentLine) {
-      wrappedText.push(currentLine)
-    }
-
-    // Replace spaces with hyphens in the final wrapped text
-    return wrappedText.map((line) => line.replace(/ /g, '-'))
+  const handleMouseOver = () => {
+    setShowTooltip(true)
   }
 
-  const wrappedText = wrapText(node.type || '', 10)
+  const handleMouseOut = () => {
+    setShowTooltip(false)
+  }
 
   return (
     // @ts-ignore Ignores type error on next line)
-    <mesh ref={meshRef} onClick={handleClick} {...bind()} position={new Vector3(node.x, node.y, 0)}>
+    <mesh
+      ref={meshRef}
+      onClick={handleClick}
+      {...bind()}
+      onPointerOut={handleMouseOut}
+      onPointerOver={handleMouseOver}
+      position={new Vector3(node.x, node.y, 0)}
+    >
       <Circle args={[NODE_RADIUS, 30, 20]}>
         <meshStandardMaterial attach="material" color={color} />
       </Circle>
 
-      {wrappedText.map((line, index) => (
-        <Text
-          {...fontProps}
-          key={`${node.type}-${line}`}
-          anchorX="center"
-          anchorY="middle"
-          color="#000"
-          fontSize={2}
-          position={[0, -index * 2 + (wrappedText.length - 1), 0]}
-        >
-          {line}
-        </Text>
-      ))}
+      <Text
+        {...fontProps}
+        clipRect={[-NODE_RADIUS, -NODE_RADIUS, NODE_RADIUS, NODE_RADIUS]}
+        color="#000"
+        fontSize={2}
+        maxWidth={NODE_RADIUS * 2}
+        textAlign="center"
+      >
+        {truncatedText}
+      </Text>
+
+      {showTooltip && (
+        <TooltipWrapper position={[0, 5, 0]} zIndexRange={[100, 0]}>
+          <Tooltip>{node.type}</Tooltip>
+        </TooltipWrapper>
+      )}
     </mesh>
   )
 })
