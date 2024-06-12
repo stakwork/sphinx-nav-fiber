@@ -19,6 +19,7 @@ describe('MergeTopicModal', () => {
       total: 3,
       setState: mockSetState,
     }))
+
     ;(postMergeTopics as jest.Mock).mockImplementation(mockPostMergeTopics)
 
     const { getByTestId } = render(

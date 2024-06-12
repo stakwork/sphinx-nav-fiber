@@ -41,7 +41,8 @@ const MediaPlayerComponent: FC<Props> = ({ hidden }) => {
     setIsSeeking,
   } = usePlayerStore((s) => s)
 
-  const isYouTubeVideo = playingNode?.link?.includes('youtube') || playingNode?.link?.includes('youtu.be')
+  const mediaUrl = playingNode?.media_url || playingNode?.link
+  const isYouTubeVideo = mediaUrl?.includes('youtube') || mediaUrl?.includes('youtu.be')
 
   useEffect(() => () => resetPlayer(), [resetPlayer])
 
@@ -186,7 +187,7 @@ const MediaPlayerComponent: FC<Props> = ({ hidden }) => {
     togglePlay()
   }
 
-  return playingNode?.link ? (
+  return mediaUrl ? (
     <Wrapper
       ref={wrapperRef}
       hidden={hidden}
@@ -210,7 +211,7 @@ const MediaPlayerComponent: FC<Props> = ({ hidden }) => {
           onProgress={handleProgress}
           onReady={handleReady}
           playing={isPlaying}
-          url={playingNode?.link || ''}
+          url={mediaUrl || ''}
           volume={volume}
           width="100%"
         />
