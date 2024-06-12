@@ -5,7 +5,7 @@ import styled from 'styled-components'
 import { Avatar } from '~/components/common/Avatar'
 import { Flex } from '~/components/common/Flex'
 import { usePlayerStore } from '~/stores/usePlayerStore'
-import { colors } from '~/utils'
+import { colors, videoTimeToSeconds } from '~/utils'
 import { Toolbar } from './ToolBar'
 
 type Props = {
@@ -41,7 +41,8 @@ const MediaPlayerComponent: FC<Props> = ({ hidden }) => {
     setIsSeeking,
   } = usePlayerStore((s) => s)
 
-  const isYouTubeVideo = playingNode?.link?.includes('youtube') || playingNode?.link?.includes('youtu.be')
+  const mediaUrl = playingNode?.media_url || playingNode?.link
+  const isYouTubeVideo = mediaUrl?.includes('youtube') || mediaUrl?.includes('youtu.be')
 
   useEffect(() => () => resetPlayer(), [resetPlayer])
 
@@ -75,9 +76,10 @@ const MediaPlayerComponent: FC<Props> = ({ hidden }) => {
   const handleProgressChange = (_: Event, value: number | number[]) => {
     const newValue = Array.isArray(value) ? value[0] : value
 
-    if (playerRef.current) {
-      playerRef.current.seekTo(newValue)
-      setPlayingTime(newValue)
+    setPlayingTime(newValue)
+
+    if (playerRef.current && !isSeeking) {
+      playerRef.current.seekTo(newValue, 'seconds')
     }
   }
 
@@ -107,6 +109,16 @@ const MediaPlayerComponent: FC<Props> = ({ hidden }) => {
       const videoDuration = playerRef.current.getDuration()
 
       setDuration(videoDuration)
+
+      if (!isSeeking && (playingTime === 0 || Math.abs(playingTime - videoTimeToSeconds('00:00:00')) < 1)) {
+        if (playingNode?.type === 'youtube' && playingNode?.timestamp) {
+          const [startTimestamp] = playingNode.timestamp.split('-')
+          const startTimeInSeconds = videoTimeToSeconds(startTimestamp)
+
+          playerRef.current.seekTo(startTimeInSeconds, 'seconds')
+          setPlayingTime(startTimeInSeconds)
+        }
+      }
     }
   }
 
@@ -175,7 +187,7 @@ const MediaPlayerComponent: FC<Props> = ({ hidden }) => {
     togglePlay()
   }
 
-  return playingNode?.link ? (
+  return mediaUrl ? (
     <Wrapper
       ref={wrapperRef}
       hidden={hidden}
@@ -199,7 +211,7 @@ const MediaPlayerComponent: FC<Props> = ({ hidden }) => {
           onProgress={handleProgress}
           onReady={handleReady}
           playing={isPlaying}
-          url={playingNode?.link || ''}
+          url={mediaUrl || ''}
           volume={volume}
           width="100%"
         />

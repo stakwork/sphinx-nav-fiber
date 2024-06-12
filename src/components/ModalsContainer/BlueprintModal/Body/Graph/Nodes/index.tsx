@@ -7,9 +7,10 @@ type Props = {
   setSelectedSchemaId: (id: string) => void
   selectedId: string
   simulation: ForceSimulation
+  setIsAddEdgeNode: (b: boolean) => void
 }
 
-export const Nodes = ({ simulation, setSelectedSchemaId, selectedId }: Props) => {
+export const Nodes = ({ simulation, setSelectedSchemaId, selectedId, setIsAddEdgeNode }: Props) => {
   const [schemaAll] = useSchemaStore((s) => [s.schemas])
 
   const onSimulationUpdate = () => {
@@ -30,7 +31,10 @@ export const Nodes = ({ simulation, setSelectedSchemaId, selectedId }: Props) =>
             isSelected={node.ref_id === selectedId}
             node={node}
             onSimulationUpdate={onSimulationUpdate}
-            setSelectedNode={() => setSelectedSchemaId(node.ref_id)}
+            setSelectedNode={() => {
+              setIsAddEdgeNode(false)
+              setSelectedSchemaId(node.ref_id)
+            }}
           />
         ) : null
       })}

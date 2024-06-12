@@ -1,4 +1,7 @@
-import { convertAttributes, parseJson, parsedObjProps } from '..' // Update with your file path
+/* eslint-disable padding-line-between-statements */
+import '@testing-library/jest-dom'
+import { Vector3 } from 'three'
+import { convertAttributes, parseJson, parsedObjProps, getLoopControlPoints, truncateText } from '..'
 
 describe('convertAttributes function', () => {
   it('should convert attributes properly when all attributes are required', () => {
@@ -85,5 +88,36 @@ describe('parseJson function', () => {
     const output = parseJson(input)
 
     expect(output).toEqual([])
+  })
+})
+
+describe('getLoopControlPoints function', () => {
+  it('should return correct control points for a given center', () => {
+    const center = new Vector3(0, 0, 0)
+    const [controlPoint1, endPoint, controlPoint2] = getLoopControlPoints(center)
+
+    expect(controlPoint1).toEqual(new Vector3(-10, 45, 0))
+    expect(endPoint).toEqual(new Vector3(0, 0, 0))
+    expect(controlPoint2).toEqual(new Vector3(5, 10, 0))
+  })
+})
+
+describe('truncateText function', () => {
+  it('should truncate text that exceeds the maximum length', () => {
+    const text = 'This is a long text'
+    const maxLength = 10
+
+    const output = truncateText(text, maxLength)
+
+    expect(output).toBe('This is a ...')
+  })
+
+  it('should not truncate text that is within the maximum length', () => {
+    const text = 'Short text'
+    const maxLength = 10
+
+    const output = truncateText(text, maxLength)
+
+    expect(output).toBe('Short text')
   })
 })

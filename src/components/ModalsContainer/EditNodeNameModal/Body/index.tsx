@@ -111,10 +111,13 @@ export const Body = () => {
     openRemoveNodeModal()
   }
 
-  const isNodeNameChanged = getValues().name && actualTopicNode?.name !== getValues().name
+  const name = getValues()?.name?.trim()
+
+  const isNodeNameChanged = name && actualTopicNode?.name.trim() !== name
+  const isImageUrlChanged = getValues().image_url && selectedNode?.image_url !== getValues()?.image_url
 
   const shouldDisableSave =
-    loading || topicIsLoading || (!!imageUrl && !isValidImageUrl) || (!imageUrl && !isNodeNameChanged)
+    loading || topicIsLoading || (!!imageUrl && !isValidImageUrl) || (!isNodeNameChanged && !isImageUrlChanged)
 
   return (
     <Wrapper>
@@ -146,7 +149,11 @@ export const Body = () => {
             variant="contained"
           >
             Save Changes
-            {loading && <ClipLoader color={colors.BLUE_PRESS_STATE} size={10} />}
+            {loading && (
+              <ClipLoaderWrapper>
+                <ClipLoader color={colors.lightGray} size={12} />
+              </ClipLoaderWrapper>
+            )}
           </Button>
         </Flex>
       </FormProvider>
@@ -170,4 +177,8 @@ const DeleteButton = styled(Button)`
       background-color: rgba(237, 116, 116, 0.2);
     }
   }
+`
+
+const ClipLoaderWrapper = styled.span`
+  margin-top: 3px;
 `

@@ -33,11 +33,14 @@ export type FormData = {
 }
 
 type Props = {
+  graphLoading: boolean
   onSchemaCreate: (schema: { type: string; parent: string; ref_id: string }) => void
   selectedSchema: Schema | null
   onDelete: (type: string) => void
   setSelectedSchemaId: (id: string) => void
   setIsCreateNew: (isNew: boolean) => void
+  setGraphLoading: (b: boolean) => void
+  onSchemaUpdate: () => void
 }
 
 const handleSubmitForm = async (data: FieldValues, isUpdate = false): Promise<string | undefined> => {
@@ -79,7 +82,42 @@ const handleSubmitForm = async (data: FieldValues, isUpdate = false): Promise<st
   }
 }
 
-export const Editor = ({ onSchemaCreate, selectedSchema, onDelete, setSelectedSchemaId, setIsCreateNew }: Props) => {
+const capitalizeFirstLetter = (string: string) => string.charAt(0).toUpperCase() + string.slice(1)
+
+const fetchAndSetOptions = async (
+  setOptions: (options: TOption[] | null) => void,
+  filterFunc?: (schema: Schema) => boolean,
+) => {
+  try {
+    const data = await getNodeSchemaTypes()
+    const schemas = data.schemas || []
+
+    const filteredSchemas = schemas.filter(
+      (schema) => !schema.is_deleted && schema.type && (!filterFunc || filterFunc(schema)),
+    )
+
+    const options = filteredSchemas.map((schema) =>
+      schema.type === 'thing'
+        ? { label: 'No Parent', value: schema.type }
+        : { label: capitalizeFirstLetter(schema.type), value: schema.type },
+    )
+
+    setOptions(options)
+  } catch (error) {
+    console.warn(error)
+  }
+}
+
+export const Editor = ({
+  graphLoading,
+  onSchemaCreate,
+  selectedSchema,
+  onDelete,
+  setSelectedSchemaId,
+  setGraphLoading,
+  setIsCreateNew,
+  onSchemaUpdate,
+}: Props) => {
   const { close, visible } = useModal('addType')
 
   const form = useForm<FormData>({
@@ -92,14 +130,15 @@ export const Editor = ({ onSchemaCreate, selectedSchema, onDelete, setSelectedSc
       : defaultValues,
   })
 
-  const { watch, setValue, reset } = form
+  const { watch, setValue, reset, getValues } = form
 
   const [loading, setLoading] = useState(false)
   const [parentsLoading, setParentsLoading] = useState(false)
   const [parentOptions, setParentOptions] = useState<TOption[] | null>(null)
   const [displayParentError, setDisplayParentError] = useState(false)
+  const [selectedNodeParentOptions, setSelectedNodeParentOptions] = useState<TOption[] | null>(null)
+  const [errMessage, setErrMessage] = useState<string>('')
   const [deleteError, setDeleteError] = useState<string | null>(null)
-  const [selectedNodeParent, setSelectedNodeParent] = useState<TOption[] | null>(null)
 
   useEffect(
     () => () => {
@@ -113,36 +152,10 @@ export const Editor = ({ onSchemaCreate, selectedSchema, onDelete, setSelectedSc
     setSelectedSchemaId('')
   }
 
-  const capitalizeFirstLetter = (string: string) => string.charAt(0).toUpperCase() + string.slice(1)
-
   useEffect(() => {
-    const init = async () => {
-      setParentsLoading(true)
-
-      try {
-        const data = await getNodeSchemaTypes()
-
-        const schemaOptions = data.schemas
-          .filter((schema) => !schema.is_deleted && schema.type)
-          .map((schema) =>
-            schema?.type === 'thing'
-              ? { label: 'No Parent', value: schema.type }
-              : {
-                  label: capitalizeFirstLetter(schema.type),
-                  value: schema.type,
-                },
-          )
-
-        setParentOptions(schemaOptions)
-      } catch (error) {
-        console.warn(error)
-      } finally {
-        setParentsLoading(false)
-      }
-    }
-
     if (!selectedSchema) {
-      init()
+      setParentsLoading(true)
+      fetchAndSetOptions(setParentOptions).finally(() => setParentsLoading(false))
     }
   }, [selectedSchema])
 
@@ -151,18 +164,12 @@ export const Editor = ({ onSchemaCreate, selectedSchema, onDelete, setSelectedSc
       setValue('type', selectedSchema?.type as string)
       setValue('parent', selectedSchema.parent)
 
-      const parentNode: TOption[] = [
-        {
-          label: selectedSchema.parent ? capitalizeFirstLetter(selectedSchema.parent) : 'No Parent',
-          value: selectedSchema.parent as string,
-        },
-      ]
-
-      setSelectedNodeParent(parentNode)
-    } else {
-      reset(defaultValues)
+      fetchAndSetOptions(
+        setSelectedNodeParentOptions,
+        (schema) => schema.type !== selectedSchema.type && schema.type !== selectedSchema.parent,
+      )
     }
-  }, [selectedSchema, setValue, reset])
+  }, [selectedSchema, setValue])
 
   const parent = watch('parent')
 
@@ -203,11 +210,17 @@ export const Editor = ({ onSchemaCreate, selectedSchema, onDelete, setSelectedSc
       return
     }
 
-    setLoading(false)
+    setLoading(true)
 
     try {
-      if (data.type !== selectedSchema?.type) {
-        await api.put(`/schema/${selectedSchema?.ref_id}`, JSON.stringify({ type: data.type }))
+      if (data.type !== selectedSchema?.type || getValues().parent !== selectedSchema?.parent) {
+        const newParent = getValues().parent ?? selectedSchema?.parent
+
+        setGraphLoading(true)
+
+        await api.put(`/schema/${selectedSchema?.ref_id}`, JSON.stringify({ type: data.type, parent: newParent }))
+
+        await onSchemaUpdate()
       }
 
       const res = await handleSubmitForm(
@@ -228,13 +241,17 @@ export const Editor = ({ onSchemaCreate, selectedSchema, onDelete, setSelectedSc
       } else if (err instanceof Error) {
         errorMessage = err.message
       }
+
+      setErrMessage(errorMessage)
     } finally {
       setLoading(false)
+      setGraphLoading(false)
       setIsCreateNew(false)
     }
   })
 
   const resolvedParentValue = () => parentOptions?.find((i) => i.value === parent)
+  const resolvedSelectedParentValue = () => selectedNodeParentOptions?.find((i) => i.value === parent)
 
   return (
     <Flex>
@@ -309,15 +326,15 @@ export const Editor = ({ onSchemaCreate, selectedSchema, onDelete, setSelectedSc
                     </Flex>
 
                     <AutoComplete
-                      isLoading={parentsLoading}
+                      isLoading={parentsLoading || graphLoading}
                       onSelect={(e) => {
                         setValue('parent', e?.value || '')
                         setDisplayParentError(false)
                       }}
-                      options={selectedNodeParent || []}
-                      selectedValue={parentOptions?.find((option) => option.label === selectedSchema?.parent)}
+                      options={selectedNodeParentOptions || []}
+                      selectedValue={resolvedSelectedParentValue()}
                     />
-                    {displayParentError && <StyledError>A parent type must be selected</StyledError>}
+                    {errMessage && <StyledError>{errMessage}</StyledError>}
                   </Flex>
                 </>
               )}
@@ -344,7 +361,7 @@ export const Editor = ({ onSchemaCreate, selectedSchema, onDelete, setSelectedSc
                 disabled={loading || displayParentError}
                 onClick={onSubmit}
                 size="large"
-                startIcon={loading ? <ClipLoader color={colors.white} size={24} /> : null}
+                startIcon={loading ? <ClipLoader color={colors.white} size={10} /> : null}
                 variant="contained"
               >
                 Save

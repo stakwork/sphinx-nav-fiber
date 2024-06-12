@@ -6,9 +6,10 @@ import { colors } from '~/utils/colors'
 
 type Props = {
   onCreateNew: () => void
+  onAddEdgeNode: () => void
 }
 
-export const Toolbar = ({ onCreateNew }: Props) => (
+export const Toolbar = ({ onCreateNew, onAddEdgeNode }: Props) => (
   <Wrapper>
     <LogoButton>BLUEPRINT</LogoButton>
     <ActionButton data-testid="add-schema-type" onClick={onCreateNew}>
@@ -16,6 +17,12 @@ export const Toolbar = ({ onCreateNew }: Props) => (
         <AddContentIcon />
       </IconWrapper>
       <Text>Add Type</Text>
+    </ActionButton>
+    <ActionButton data-testid="add-edge" onClick={onAddEdgeNode}>
+      <IconWrapper>
+        <AddContentIcon />
+      </IconWrapper>
+      <Text>Add Edge</Text>
     </ActionButton>
   </Wrapper>
 )
@@ -29,8 +36,9 @@ const Wrapper = styled(Flex).attrs({
   z-index: 31;
   transition: opacity 1s;
   background: ${colors.BG2};
-  overflow: hidden;
   max-height: 100vh;
+  border-top-left-radius: 9px;
+  border-bottom-left-radius: 9px;
 
   @media (max-width: 1440px) {
     max-height: 95.2vh;

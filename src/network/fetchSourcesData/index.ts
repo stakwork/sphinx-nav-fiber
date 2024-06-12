@@ -159,6 +159,12 @@ export interface ChangeNodeType {
   [index: string]: unknown
 }
 
+interface EdgeData {
+  source: string
+  target: string
+  edge_type: string
+}
+
 export const changeNodeType = async (ref_id: string, data: ChangeNodeType) =>
   api.put(`/node`, JSON.stringify({ ...data, ref_id }))
 
@@ -313,6 +319,12 @@ export const getNodeType = async (parent: string) => {
 
 export const postCustomType = async (data: createCustonNode) => {
   const response = await api.post('/schema', JSON.stringify(data))
+
+  return response
+}
+
+export const postBluePrintType = async (data: EdgeData) => {
+  const response = await api.post('/schema/edge', JSON.stringify(data))
 
   return response
 }

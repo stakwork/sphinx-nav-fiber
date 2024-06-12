@@ -12,9 +12,10 @@ type Props = {
   topicId: string
   onSelect: (topic: TEdge | null) => void
   selectedValue: TEdge | null
+  dataId: string
 }
 
-export const ToNode: FC<Props> = ({ topicId, onSelect, selectedValue }) => {
+export const ToNode: FC<Props> = ({ topicId, onSelect, selectedValue, dataId }) => {
   const [options, setOptions] = useState<TEdge[]>([])
   const [optionsIsLoading, setOptionsIsLoading] = useState(false)
 
@@ -77,6 +78,7 @@ export const ToNode: FC<Props> = ({ topicId, onSelect, selectedValue }) => {
     </Flex>
   ) : (
     <AutoComplete
+      dataId={dataId}
       handleInputChange={handleChange}
       isLoading={optionsIsLoading}
       onSelect={handleSelect}
