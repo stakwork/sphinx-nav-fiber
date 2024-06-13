@@ -94,6 +94,7 @@ const TableRowComponent: FC<TTableRaw> = ({
       <StyledTableCell>
         <CheckboxSection
           className={`checkbox-section ${checkboxVisibleClass}`}
+          data-testid="topic-check-box"
           onClick={() => handleSelect(topic.ref_id)}
         >
           <CheckboxIcon checked={checkedStates[topic.ref_id]}>
