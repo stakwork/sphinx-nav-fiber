@@ -3,10 +3,11 @@ import { QuadraticBezierLine, Text } from '@react-three/drei'
 import { useFrame, useThree } from '@react-three/fiber'
 import { useRef } from 'react'
 import { Group, Vector3 } from 'three'
+import { getLoopControlPoints } from '~/components/ModalsContainer/BlueprintModal/Body/Editor/utils'
 import { SchemaLink } from '~/network/fetchSourcesData'
+import { truncateText } from '~/utils/truncateText'
 import { SchemaExtended } from '../../../types'
 import { NODE_RADIUS } from '../constants'
-import { getLoopControlPoints, truncateText } from '~/components/ModalsContainer/BlueprintModal/Body/Editor/utils'
 
 type Props = {
   links: SchemaLink[]

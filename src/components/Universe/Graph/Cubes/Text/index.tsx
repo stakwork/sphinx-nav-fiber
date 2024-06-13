@@ -6,6 +6,7 @@ import { useNodeTypes } from '~/stores/useDataStore'
 import { useGraphStore, useSelectedNode, useSelectedNodeRelativeIds } from '~/stores/useGraphStore'
 import { NodeExtended } from '~/types'
 import { colors } from '~/utils/colors'
+import { truncateText } from '~/utils/truncateText'
 import { fontProps } from './constants'
 
 const COLORS_MAP = [
@@ -94,7 +95,7 @@ export const TextNode = memo(({ node, hide }: Props) => {
         visible={!hide}
         {...fontProps}
       >
-        {node.name}
+        {truncateText(node.name, 10)}
       </Text>
     </>
   )

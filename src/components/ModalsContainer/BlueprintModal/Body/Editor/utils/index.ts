@@ -39,11 +39,3 @@ export const getLoopControlPoints = (center: Vector3): [Vector3, Vector3, Vector
 
   return [controlPoint1, endPoint, controlPoint2]
 }
-
-export const truncateText = (text: string, maxLength: number) => {
-  if (text.length > maxLength) {
-    return `${text.substring(0, maxLength)}...`
-  }
-
-  return text
-}
