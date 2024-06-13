@@ -145,8 +145,10 @@ export type Link<T = string> = {
   source: T
   target: T
   color?: number
+  ref_id: string
   sourceRef?: T
   targetRef?: T
+  edge_type: string
   sourcePosition?: Vector3
   targetPosition?: Vector3
   onlyVisibleOnSelect?: boolean

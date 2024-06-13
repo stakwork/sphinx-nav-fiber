@@ -3,7 +3,7 @@ import { isEqual } from 'lodash'
 import { useEffect, useMemo, useRef } from 'react'
 import { Group, Vector3 } from 'three'
 import { useDataStore } from '~/stores/useDataStore'
-import { useGraphStore } from '~/stores/useGraphStore'
+import { useGraphStore, useSelectedNodeRelativeIds } from '~/stores/useGraphStore'
 import { Link, NodeExtended } from '~/types'
 import { maxChildrenDisplayed } from '../constants'
 import { Cubes } from './Cubes'
@@ -24,10 +24,11 @@ export const Graph = () => {
     simulationHelpers,
     graphStyle,
     showSelectionGraph,
-    selectedNodeRelativeIds,
     selectionGraphData,
     selectedNode,
   } = useGraphStore((s) => s)
+
+  const selectedNodeRelativeIds = useSelectedNodeRelativeIds()
 
   useEffect(() => {
     if (!dataNew) {

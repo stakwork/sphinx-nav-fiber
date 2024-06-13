@@ -3,11 +3,12 @@ import { useFrame } from '@react-three/fiber'
 import clsx from 'clsx'
 import { Fragment, memo, useEffect, useMemo, useRef } from 'react'
 import { Group, Vector3 } from 'three'
+import { useShallow } from 'zustand/react/shallow'
 import { getNodeColorByType } from '~/components/Universe/Graph/constant'
 import { maxChildrenDisplayed, nodesAreRelatives } from '~/components/Universe/constants'
 import { Avatar } from '~/components/common/Avatar'
 import { TypeBadge } from '~/components/common/TypeBadge'
-import { useGraphStore } from '~/stores/useGraphStore'
+import { useGraphStore, useSelectedNodeRelativeIds } from '~/stores/useGraphStore'
 import { NodeExtended } from '~/types'
 import { colors } from '~/utils/colors'
 import { Tag } from './styles'
@@ -18,7 +19,9 @@ const variableVector3 = new Vector3()
 const NodeBadge = ({ position, userData, color }: BadgeProps) => {
   const ref = useRef<Group | null>(null)
 
-  const { selectedNode, setSelectedNode, showSelectionGraph, hoveredNode, setHoveredNode } = useGraphStore((s) => s)
+  const { selectedNode, setSelectedNode, showSelectionGraph, hoveredNode, setHoveredNode } = useGraphStore(
+    useShallow((s) => s),
+  )
 
   const isTopic = (userData?.node_type || '') === 'Topic'
   const isPerson = (userData?.node_type || '') === 'Guest' || (userData?.node_type || '') === 'Person'
@@ -69,7 +72,7 @@ const NodeBadge = ({ position, userData, color }: BadgeProps) => {
           }}
           scale={isHovered ? 1.05 : 1}
           selected={false}
-          size={isSelected ? 100 : 68}
+          size={isSelected ? 68 : 40}
           type={userData?.node_type || ''}
         >
           {!isPerson && !isTopic ? (
@@ -77,7 +80,7 @@ const NodeBadge = ({ position, userData, color }: BadgeProps) => {
               <TypeBadge type={userData?.node_type || ''} />
             </div>
           ) : null}
-          {isTopic ? (
+          {userData?.name ? (
             userData?.name
           ) : (
             <Avatar
@@ -94,9 +97,9 @@ const NodeBadge = ({ position, userData, color }: BadgeProps) => {
 }
 
 export const RelevanceBadges = memo(() => {
-  const { simulation, showSelectionGraph, selectedNode, selectionGraphData, selectedNodeRelativeIds } = useGraphStore(
-    (s) => s,
-  )
+  const { simulation, showSelectionGraph, selectedNode, selectionGraphData } = useGraphStore(useShallow((s) => s))
+
+  const selectedNodeRelativeIds = useSelectedNodeRelativeIds()
 
   const nodeBadges = useMemo(() => {
     const nodesData = simulation?.nodes() || []

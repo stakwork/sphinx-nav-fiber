@@ -1,6 +1,7 @@
 import clsx from 'clsx'
 import { ReactElement } from 'react'
 import styled from 'styled-components'
+import { useShallow } from 'zustand/react/shallow'
 import BubbleChartIcon from '~/components/Icons/BubbleChartIcon'
 import CommunitiesIcon from '~/components/Icons/CommunitiesIcon'
 import GrainIcon from '~/components/Icons/GrainIcon'
@@ -24,7 +25,7 @@ const IconsMapper = {
 }
 
 export const GraphViewControl = () => {
-  const [graphStyle, setGraphStyle] = useGraphStore((s) => [s.graphStyle, s.setGraphStyle])
+  const [graphStyle, setGraphStyle] = useGraphStore(useShallow((s) => [s.graphStyle, s.setGraphStyle]))
 
   const changeGraphType = (val: GraphStyle) => {
     setGraphStyle(val)

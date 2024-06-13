@@ -1,56 +1,66 @@
 import { Segments } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
-import { memo, useEffect, useRef } from 'react'
+import { memo, useEffect, useRef, useState } from 'react'
 import { Group } from 'three'
+import { useShallow } from 'zustand/react/shallow'
 import { usePrevious } from '~/hooks/usePrevious'
 import { useDataStore } from '~/stores/useDataStore'
-import { useGraphStore, useSelectedNode } from '~/stores/useGraphStore'
+import { useGraphStore, useSelectedNode, useSelectedNodeRelativeIds } from '~/stores/useGraphStore'
 import { ForceSimulation, runForceSimulation } from '~/transformers/forceSimulation'
-import { GraphData, NodeExtended } from '~/types'
+import { GraphData, Link, NodeExtended } from '~/types'
 import { Segment } from '../../Segment'
+import { PathwayBadges } from '../../Segment/LinkBadge'
 import { Cube } from '../Cube'
 import { TextNode } from '../Text'
 
-let simulation2d: ForceSimulation | null = null
-
 export const SelectionDataNodes = memo(() => {
+  const [simulation2d, setSimulation2D] = useState<ForceSimulation | null>(null)
+
   const { dataInitial } = useDataStore((s) => s)
   const selectedNode = useSelectedNode()
   const groupRef = useRef<Group>(null)
 
+  const selectedNodeRelativeIds = useSelectedNodeRelativeIds()
+
   const prevNodesLength = usePrevious(dataInitial?.nodes.length)
 
-  const { selectedNodeRelativeIds, selectionGraphData, setSelectionData } = useGraphStore((s) => s)
+  const { selectionGraphData, setSelectionData } = useGraphStore(useShallow((s) => s))
 
   useEffect(() => {
-    if (prevNodesLength === dataInitial?.nodes.length) {
+    const structuredNodes = structuredClone(dataInitial?.nodes || [])
+    const structuredLinks = structuredClone(dataInitial?.links || [])
+
+    if (prevNodesLength === structuredNodes.length || !selectedNodeRelativeIds.length) {
       return
     }
 
-    const nodes = dataInitial?.nodes
+    const nodes = structuredNodes
       .filter(
         (f: NodeExtended) => f.ref_id === selectedNode?.ref_id || selectedNodeRelativeIds.includes(f?.ref_id || ''),
       )
       .map((n: NodeExtended) => {
-        const fixedPosition =
-          n.ref_id === selectedNode?.ref_id && n.node_type !== 'topic' ? { fx: 0, fy: 0, fz: 0 } : {}
+        const fixedPosition = n.ref_id === selectedNode?.ref_id ? { fx: 0, fy: 0, fz: 0 } : {}
 
         return { ...n, x: 0, y: 0, z: 0, ...fixedPosition }
       })
 
     if (nodes) {
-      const links = (dataInitial?.links || []).filter(
+      const links = structuredLinks.filter(
         (link) =>
           nodes.some((node: NodeExtended) => node.ref_id === link.target) &&
           nodes.some((node: NodeExtended) => node.ref_id === link.source),
       )
 
-      setSelectionData({ nodes, links })
+      setSelectionData({ nodes, links: links as unknown as GraphData<NodeExtended>['links'] })
     }
   }, [dataInitial, selectedNode, selectedNodeRelativeIds, setSelectionData, prevNodesLength])
 
   useEffect(() => {
-    simulation2d = runForceSimulation(selectionGraphData.nodes, selectionGraphData.links, {
+    if (simulation2d || !selectionGraphData.nodes.length) {
+      return
+    }
+
+    const simulation = runForceSimulation(selectionGraphData.nodes, selectionGraphData.links as unknown as Link[], {
       numDimensions: 2,
       forceLinkStrength: 0.01,
       forceCenterStrength: 0.85,
@@ -58,11 +68,20 @@ export const SelectionDataNodes = memo(() => {
       velocityDecay: 0.9,
     })
 
+    setSimulation2D(simulation)
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectionGraphData])
+  }, [selectionGraphData, simulation2d])
+
+  useEffect(
+    () => () => {
+      setSelectionData({ nodes: [], links: [] })
+    },
+    [setSelectionData],
+  )
 
   useFrame(() => {
-    console.log(simulation2d.alpha())
+    // console.log(simulation2d.alpha())
   })
 
   useEffect(() => {
@@ -83,11 +102,11 @@ export const SelectionDataNodes = memo(() => {
         })
       }
     })
-  }, [])
+  }, [simulation2d])
 
   return (
     <>
-      <group name="simulation-2d-group">
+      <group ref={groupRef} name="simulation-2d-group">
         {selectionGraphData?.nodes.map((node) => (
           <mesh key={node.ref_id}>
             {node.name ? (
@@ -98,7 +117,6 @@ export const SelectionDataNodes = memo(() => {
           </mesh>
         ))}
       </group>
-
       <Segments
         key={`selection-links-${selectionGraphData?.links.length}`}
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -106,7 +124,7 @@ export const SelectionDataNodes = memo(() => {
         fog
         lineWidth={0.9}
       >
-        {(selectionGraphData?.links as unknown as GraphData['links']).map((link, index) => (
+        {(selectionGraphData?.links as unknown as GraphData<NodeExtended>['links']).map((link, index) => (
           <Segment
             // eslint-disable-next-line react/no-array-index-key
             key={index.toString()}
@@ -115,6 +133,7 @@ export const SelectionDataNodes = memo(() => {
           />
         ))}
       </Segments>
+      {simulation2d && <PathwayBadges links={selectionGraphData.links} simulation={simulation2d} />}
     </>
   )
 })

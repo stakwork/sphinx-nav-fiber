@@ -5,7 +5,7 @@ import { Avatar } from '~/components/common/Avatar'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { TypeBadge } from '~/components/common/TypeBadge'
-import { useGraphStore } from '~/stores/useGraphStore'
+import { useSelectedNode, useUpdateSelectedNode } from '~/stores/useGraphStore'
 import { NodeExtended } from '~/types'
 import { getSelectedNodeTimestamps } from '~/utils'
 import { colors } from '~/utils/colors'
@@ -61,7 +61,8 @@ const ScrollableList = styled.div`
 `
 
 export const Show = () => {
-  const [selectedNode, setSelectedNode] = useGraphStore((s) => [s.selectedNode, s.setSelectedNode])
+  const selectedNode = useSelectedNode()
+  const setSelectedNode = useUpdateSelectedNode()
   const data = useGraphData()
   const [showHost, setShowHost] = useState<string[]>([])
 

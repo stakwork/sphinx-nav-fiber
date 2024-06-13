@@ -63,7 +63,7 @@ export type DataStore = {
   setQueuedSources: (sources: Sources[] | null) => void
   setIsFetching: (_: boolean) => void
   setHideNodeDetails: (_: boolean) => void
-  addNewNode: (node: GraphData) => void
+  addNewNode: (data: FetchDataResponse) => void
   updateNode: (updatedNode: NodeExtended) => void
   removeNode: (id: string) => void
   setSidebarFilterCounts: (filterCounts: SidebarFilterWithCount[]) => void
@@ -85,7 +85,6 @@ const defaultData: Omit<
   | 'setSources'
   | 'setSidebarFilterCounts'
   | 'setQueuedSources'
-  | 'setSelectionData'
   | 'setHideNodeDetails'
   | 'setTeachMe'
   | 'addNewNode'
@@ -104,7 +103,7 @@ const defaultData: Omit<
     skip: '0',
     limit: '15',
     depth: '1',
-    sort_by: 'edge_count',
+    sort_by: 'date',
     include_properties: 'true',
     top_node_count: '10',
   },
