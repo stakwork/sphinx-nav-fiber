@@ -1,5 +1,5 @@
 import { DOCUMENT, LINK, RSS, TWITTER_HANDLE, TWITTER_SOURCE, WEB_PAGE, YOUTUBE_CHANNEL } from '~/constants'
-import { extractNameFromLink, getInputType } from '..'
+import { extractNameFromLink, extractTweetId, getInputType } from '..'
 
 describe('youtubeRegex', () => {
   it('should assert we can check for youtube clip regex', async () => {
@@ -106,5 +106,49 @@ describe('getInputType', () => {
     expect(getInputType('http://example.com/rss')).toBe(RSS)
     expect(getInputType('http://example.com/rss.xml')).toBe(RSS)
     expect(getInputType('http://example.com/?feed=rss')).toBe(RSS)
+  })
+})
+
+describe('extractTweetId', () => {
+  it('should extract the tweet ID from a valid Twitter URL', () => {
+    const url = 'https://twitter.com/user/status/1234567890123456789'
+    const result = extractTweetId(url)
+
+    expect(result).toBe('1234567890123456789')
+  })
+
+  it('should return the input string if the URL does not contain a tweet ID', () => {
+    const url = 'https://twitter.com/user/profile'
+    const result = extractTweetId(url)
+
+    expect(result).toBe(url)
+  })
+
+  it('should return the input string if the URL is not a Twitter status URL', () => {
+    const url = 'https://example.com/some/path'
+    const result = extractTweetId(url)
+
+    expect(result).toBe(url)
+  })
+
+  it('should handle URLs with query parameters correctly', () => {
+    const url = 'https://twitter.com/user/status/1234567890123456789?ref_src=twsrc%5Etfw'
+    const result = extractTweetId(url)
+
+    expect(result).toBe('1234567890123456789')
+  })
+
+  it('should handle URLs with additional path segments correctly', () => {
+    const url = 'https://twitter.com/user/status/1234567890123456789/likes'
+    const result = extractTweetId(url)
+
+    expect(result).toBe('1234567890123456789')
+  })
+
+  it('should return the input string if the input is not a URL', () => {
+    const url = 'not_a_url'
+    const result = extractTweetId(url)
+
+    expect(result).toBe(url)
   })
 })
