@@ -13,11 +13,18 @@ type Props = {
   links: SchemaLink[]
   selectedSchemaId: string
   setSelectedSchemaId: (id: string) => void
+  setIsAddEdgeNode: (b: boolean) => void
 }
 
 const bgColor = new Color(0x000)
 
-export const Graph = ({ selectedSchemaId, links, schemasWithPositions, setSelectedSchemaId }: Props) => (
+export const Graph = ({
+  selectedSchemaId,
+  links,
+  schemasWithPositions,
+  setSelectedSchemaId,
+  setIsAddEdgeNode,
+}: Props) => (
   <Canvas camera={{ zoom: 1, position: [0, 0, 200] }} id="schema-canvas" linear orthographic>
     <color args={[bgColor.r, bgColor.g, bgColor.b]} attach="background" />
     {isDevelopment && <Perf position="right-bottom" />}
@@ -27,6 +34,7 @@ export const Graph = ({ selectedSchemaId, links, schemasWithPositions, setSelect
       filteredLinks={links}
       schemasWithPositions={schemasWithPositions}
       selectedSchemaId={selectedSchemaId}
+      setIsAddEdgeNode={setIsAddEdgeNode}
       setSelectedSchemaId={setSelectedSchemaId}
     />
   </Canvas>

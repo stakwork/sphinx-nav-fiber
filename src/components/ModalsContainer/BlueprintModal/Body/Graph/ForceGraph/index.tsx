@@ -14,9 +14,16 @@ type Props = {
   setSelectedSchemaId: (id: string) => void
   schemasWithPositions: SchemaExtended[]
   filteredLinks: SchemaLink[]
+  setIsAddEdgeNode: (b: boolean) => void
 }
 
-export const ForceGraph = ({ schemasWithPositions, filteredLinks, setSelectedSchemaId, selectedSchemaId }: Props) => {
+export const ForceGraph = ({
+  schemasWithPositions,
+  filteredLinks,
+  setSelectedSchemaId,
+  selectedSchemaId,
+  setIsAddEdgeNode,
+}: Props) => {
   const [simulation2d, setSimulation2d] = useState<ForceSimulation | null>(null)
 
   const prevSchemas = usePrevious<SchemaExtended[]>(schemasWithPositions)
@@ -81,7 +88,12 @@ export const ForceGraph = ({ schemasWithPositions, filteredLinks, setSelectedSch
   return simulation2d ? (
     <>
       <Lines links={filteredLinks} nodes={simulation2d.nodes()} />
-      <Nodes selectedId={selectedSchemaId} setSelectedSchemaId={setSelectedSchemaId} simulation={simulation2d} />
+      <Nodes
+        selectedId={selectedSchemaId}
+        setIsAddEdgeNode={setIsAddEdgeNode}
+        setSelectedSchemaId={setSelectedSchemaId}
+        simulation={simulation2d}
+      />
     </>
   ) : null
 }

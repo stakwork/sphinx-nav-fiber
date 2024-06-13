@@ -99,6 +99,7 @@ export type Node = {
   verified?: boolean
   unique_id?: string
   properties?: { [key: string]: never | undefined }
+  media_url?: string
 }
 
 export type DataSeriesNode = {

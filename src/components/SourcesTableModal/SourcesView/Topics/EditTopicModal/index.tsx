@@ -9,6 +9,7 @@ import { useTopicsStore } from '~/stores/useTopicsStore'
 import { Topic } from '~/types'
 import { colors } from '~/utils/colors'
 import { TitleEditor } from './Title'
+import styled from 'styled-components'
 
 type Props = {
   topic: Topic
@@ -23,7 +24,7 @@ export const EditTopicModal: FC<Props> = ({ topic, onClose }) => {
   const { close } = useModal('editTopic')
   const [data] = useTopicsStore((s) => [s.data])
   const form = useForm<FormData>({ mode: 'onChange' })
-  const { watch, setValue, reset } = form
+  const { watch, setValue, reset, getValues } = form
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
@@ -37,6 +38,7 @@ export const EditTopicModal: FC<Props> = ({ topic, onClose }) => {
   }, [topic, setValue, reset])
 
   const nameValue = watch('name')
+  const name = nameValue?.trim()
 
   const closeHandler = () => {
     onClose()
@@ -47,12 +49,12 @@ export const EditTopicModal: FC<Props> = ({ topic, onClose }) => {
     setLoading(true)
 
     try {
-      await putNodeData(topic?.ref_id || '', { name: nameValue.trim() })
+      await putNodeData(topic?.ref_id || '', { name })
 
       if (data) {
         const newData = { ...data }
 
-        newData[topic?.ref_id].name = nameValue.trim()
+        newData[topic?.ref_id].name = name
 
         useTopicsStore.setState({ data: newData })
       }
@@ -65,15 +67,31 @@ export const EditTopicModal: FC<Props> = ({ topic, onClose }) => {
     }
   }
 
+  const isTopicNameChanged = getValues().name && topic?.name !== getValues().name
+
   return (
     <BaseModal id="editTopic" kind="regular" onClose={closeHandler} preventOutsideClose>
       <FormProvider {...form}>
         <TitleEditor />
-        <Button color="secondary" disabled={loading} onClick={handleSave} size="large" variant="contained">
-          Save
-          {loading && <ClipLoader color={colors.BLUE_PRESS_STATE} size={10} />}
+        <Button
+          color="secondary"
+          disabled={loading || !name || !isTopicNameChanged}
+          onClick={handleSave}
+          size="large"
+          variant="contained"
+        >
+          Save Changes
+          {loading && (
+            <ClipLoaderWrapper>
+              <ClipLoader color={colors.lightGray} size={12} />
+            </ClipLoaderWrapper>
+          )}
         </Button>
       </FormProvider>
     </BaseModal>
   )
 }
+
+const ClipLoaderWrapper = styled.span`
+  margin-top: 2px;
+`

@@ -93,6 +93,8 @@ export const colors = {
   PERSON: 'rgba(7, 105, 82, 1)',
   EVENT: 'rgba(137, 107, 0, 1)',
   TOPIC: 'rgba(255, 255, 255, 0.85)',
+  THING: 'rgba(150, 39, 119, 1)',
+  SUCESS: 'rgba(73, 201, 152, 1)',
 } as const
 
 export type ColorName = keyof typeof colors

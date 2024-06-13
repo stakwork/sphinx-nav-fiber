@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import EditNodeIcon from '~/components/Icons/EditNodeIcon'
-import { imageUrlRegex, validateImageInputType } from '~/components/ModalsContainer/EditNodeNameModal/utils'
+import { imageUrlRegex } from '~/components/ModalsContainer/EditNodeNameModal/utils'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { TextInput } from '~/components/common/TextInput'
@@ -73,9 +73,6 @@ export const TitleEditor = () => {
             pattern: {
               message: 'Please enter a valid URL',
               value: imageUrlRegex,
-            },
-            validate: {
-              source: validateImageInputType,
             },
           }}
         />
