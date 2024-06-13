@@ -14,8 +14,8 @@ export const Default = () => {
     return null
   }
 
-  const hasImage = !!selectedNode.image_url
-  const hasMedia = !!selectedNode.media_url
+  const hasImage = !!selectedNode.properties?.image_url
+  const hasMedia = !!selectedNode.properties?.media_url
 
   const customKeys = selectedNode.properties || {}
 
@@ -29,7 +29,7 @@ export const Default = () => {
               e.currentTarget.src = 'generic_placeholder_img.png'
               e.currentTarget.className = 'default-img'
             }}
-            src={selectedNode.image_url}
+            src={selectedNode.properties?.image_url}
           />
         </StyledImageWrapper>
       ) : null}
