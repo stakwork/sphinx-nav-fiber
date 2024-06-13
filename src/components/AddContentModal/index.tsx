@@ -22,10 +22,11 @@ import { getLSat, payLsat, updateBudget } from '~/utils'
 import { SuccessNotify } from '../common/SuccessToast'
 import { BudgetStep } from './BudgetStep'
 import { LocationStep } from './LocationStep'
+import ProcessSteping from './ProcessingStep'
 import { SourceStep } from './SourceStep'
 import { validateSourceURL } from './SourceStep/utils'
 import { SourceTypeStep } from './SourceTypeStep'
-import { getInputType, isSource, twitterHandlePattern } from './utils'
+import { extractTweetId, getInputType, isSource, twitterHandlePattern } from './utils'
 
 export type FormData = {
   input: string
@@ -35,54 +36,50 @@ export type FormData = {
   latitude: string
 }
 
-const handleSubmitForm = async (
-  data: FieldValues,
-  sourceType: string,
-  setBudget: (value: number | null) => void,
-): Promise<void> => {
-  const endPoint = isSource(sourceType) ? 'radar' : 'add_node'
+const getEndpoint = (sourceType: string) => (isSource(sourceType) ? 'radar' : 'add_node')
 
+const buildRequestBody = (data: FieldValues, sourceType: string) => {
   const body: { [index: string]: unknown } = {}
 
-  if (sourceType === LINK) {
-    body.media_url = data.source
-    body.content_type = 'audio_video'
-  } else if (sourceType === TWITTER_SOURCE) {
-    const regex = /(?:https?:\/\/)?(?:www\.)?twitter\.com\/\w+\/status\/\d+/s
+  switch (sourceType) {
+    case LINK:
+      body.media_url = data.source
+      body.content_type = 'audio_video'
+      break
+    case TWITTER_SOURCE:
+      body.tweet_id = extractTweetId(data.source)
+      body.content_type = 'tweet'
+      break
+    case WEB_PAGE:
+      body.content_type = 'webpage'
+      body.web_page = data.source
+      break
+    case DOCUMENT:
+      body.content_type = 'document'
+      body.text = data.source
+      break
 
-    if (regex.test(data.source)) {
-      const idRegex = /\/status\/(\d+)/
+    case TWITTER_HANDLE: {
+      const [, match] = (data.source || '').match(twitterHandlePattern) || []
 
-      const match = data.source.match(idRegex)
-
-      if (match?.[1]) {
-        const [, id] = match
-
-        body.tweet_id = id
+      if (match) {
+        body.source = match
+        body.source_type = sourceType
+      } else {
+        return null
       }
-    } else {
-      body.tweet_id = data.source
+
+      break
     }
 
-    body.content_type = 'tweet'
-  } else if (sourceType === WEB_PAGE) {
-    body.content_type = 'webpage'
-    body.web_page = data.source
-  } else if (sourceType === DOCUMENT) {
-    body.content_type = 'document'
-    body.text = data.source
-  } else if (sourceType === TWITTER_HANDLE) {
-    const [, match] = (data.source || '').match(twitterHandlePattern) || []
-
-    if (match) {
-      body.source = match
+    case YOUTUBE_CHANNEL:
+    case RSS:
+      body.source = data.source
       body.source_type = sourceType
-    } else {
-      return
-    }
-  } else if (sourceType === YOUTUBE_CHANNEL || sourceType === RSS) {
-    body.source = data.source
-    body.source_type = sourceType
+      break
+
+    default:
+      break
   }
 
   if (data.latitude && data.longitude) {
@@ -90,57 +87,66 @@ const handleSubmitForm = async (
     body.longitude = data.longitude
   }
 
-  let lsatToken = ''
+  return body
+}
 
-  let enable
+const submitFormWithLSat = async (data: FieldValues, sourceType: string, setBudget: (value: number | null) => void) => {
+  const body = buildRequestBody(data, sourceType)
 
-  if (!isE2E) {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    enable = await sphinx.enable()
-  } else {
-    enable = await sphinxBridge.enable()
+  if (!body) {
+    return
   }
+
+  const lsatToken = await getLSat()
+
+  const enable = isE2E
+    ? await sphinxBridge.enable()
+    : await (sphinx as { enable: () => Promise<{ [k: string]: unknown }> }).enable()
 
   body.pubkey = enable?.pubkey
 
-  lsatToken = await getLSat()
-
   try {
-    const res: SubmitErrRes = await api.post(`/${endPoint}`, JSON.stringify(body), {
+    const res: SubmitErrRes = await api.post(`/${getEndpoint(sourceType)}`, JSON.stringify(body), {
       Authorization: lsatToken,
     })
 
     if (res.error) {
-      const { message } = res.error
-
-      throw new Error(message)
+      throw new Error(res.error.message)
     }
-
-    // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-  } catch (err: any) {
-    if (err.status === 402) {
-      await payLsat(setBudget)
-      await updateBudget(setBudget)
-      await handleSubmitForm(data, sourceType, setBudget)
-    } else {
-      let errorMessage = NODE_ADD_ERROR
-
-      if (err.status === 400) {
-        try {
-          const errorRes = await err.json()
-
-          errorMessage = errorRes.message || errorRes.status || errorRes?.errorCode || NODE_ADD_ERROR
-        } catch (parseError) {
-          errorMessage = NODE_ADD_ERROR
-        }
-      } else if (err instanceof Error) {
-        errorMessage = err.message || NODE_ADD_ERROR
-      }
-
-      throw new Error(errorMessage)
-    }
+  } catch (err) {
+    await handleSubmissionError(err as unknown as Response, data, sourceType, setBudget)
   }
+}
+
+const handleSubmissionError = async (
+  err: Response,
+  data: FieldValues,
+  sourceType: string,
+  setBudget: (value: number | null) => void,
+) => {
+  if (err.status === 402) {
+    await payLsat(setBudget)
+    await updateBudget(setBudget)
+    await submitFormWithLSat(data, sourceType, setBudget)
+  } else {
+    throw new Error(await getErrorMessage(err))
+  }
+}
+
+const getErrorMessage = async (err: Response): Promise<string> => {
+  if (err.status === 400) {
+    try {
+      const errorRes = await err.json()
+
+      return errorRes.message || errorRes.status || errorRes?.errorCode || NODE_ADD_ERROR
+    } catch {
+      return NODE_ADD_ERROR
+    }
+  } else if (err instanceof Error) {
+    return err.message || NODE_ADD_ERROR
+  }
+
+  return NODE_ADD_ERROR
 }
 
 export const AddContentModal = () => {
@@ -163,50 +169,32 @@ export const AddContentModal = () => {
 
   const type = watch('inputType')
   const sourceValue = watch('source')
-
   const longitude = watch('longitude')
   const latitude = watch('latitude')
-
   const source = watch('source')
-
   const isValidSource = validateSourceURL(sourceValue)
 
   useEffect(() => {
     setValue('inputType', getInputType(source))
   }, [source, setValue])
 
-  const handleClose = () => {
-    close()
-  }
-
-  const onNextStep = () => {
-    setCurrentStep(currentStep + 1)
-  }
-
-  const onPrevStep = () => {
-    setCurrentStep(currentStep - 1)
-  }
+  const onNextStep = () => setCurrentStep(currentStep + 1)
+  const onPrevStep = () => setCurrentStep(currentStep - 1)
 
   const onSubmit = form.handleSubmit(async (data) => {
     setLoading(true)
 
     try {
-      await handleSubmitForm(data, type, setBudget)
+      await submitFormWithLSat(data, type, setBudget)
       SuccessNotify('Content Added')
-      handleClose()
-      // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-    } catch (err: any) {
-      let errorMessage = NODE_ADD_ERROR
 
-      if (err?.status === 400) {
-        const errorRes = await err.json()
-
-        errorMessage = errorRes.errorCode || errorRes?.status || NODE_ADD_ERROR
-      } else if (err instanceof Error) {
-        errorMessage = err.message
+      if (!isSource(type)) {
+        setCurrentStep(3)
       }
+    } catch (err) {
+      const errorMessage = await getErrorMessage(err as unknown as Response)
 
-      setError(String(errorMessage))
+      setError(errorMessage)
     } finally {
       setLoading(false)
     }
@@ -227,6 +215,7 @@ export const AddContentModal = () => {
             </>
           )}
           {currentStep === 2 && <BudgetStep error={error} loading={loading} onClick={() => null} type={type} />}
+          {currentStep === 3 && <ProcessSteping source={source} type={type} />}
         </form>
       </FormProvider>
     </BaseModal>

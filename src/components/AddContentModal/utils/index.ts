@@ -61,3 +61,10 @@ export const extractNameFromLink = (inputString: string, type = ''): string | nu
 }
 
 export const isSource = (type: string): boolean => !!type && [TWITTER_HANDLE, YOUTUBE_CHANNEL, RSS].includes(type)
+
+export const extractTweetId = (url: string) => {
+  const idRegex = /\/status\/(\d+)/
+  const match = url.match(idRegex)
+
+  return match ? match[1] : url
+}
