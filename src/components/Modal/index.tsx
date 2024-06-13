@@ -134,12 +134,23 @@ export const BaseModal = ({
       }
     }
 
+    const handleSpecialKeys = (e: KeyboardEvent) => {
+      const keyCombination = e.metaKey && e.ctrlKey && (e.key === '4' || e.key === '3')
+
+      if (keyCombination) {
+        e.stopPropagation()
+        e.preventDefault()
+      }
+    }
+
     if (visible) {
       document.addEventListener('keydown', handleEsc)
+      document.addEventListener('keydown', handleSpecialKeys)
     }
 
     return () => {
-      document.removeEventListener('keydown', handleEsc) // Cleanup
+      document.removeEventListener('keydown', handleEsc)
+      document.removeEventListener('keydown', handleSpecialKeys)
     }
   }, [visible, close])
 
