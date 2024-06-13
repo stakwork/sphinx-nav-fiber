@@ -66,7 +66,7 @@ export const BudgetStep: FC<Props> = ({ onClick, loading, type, error }) => {
           startIcon={
             loading ? (
               <IconWrapper>
-                <ClipLoader color="gray" size={12} />
+                <ClipLoader color={colors.lightGray} size={12} />
               </IconWrapper>
             ) : (
               <IconWrapper>

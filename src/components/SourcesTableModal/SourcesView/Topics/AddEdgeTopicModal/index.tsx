@@ -83,7 +83,11 @@ export const AddEdgeModal: FC<Props> = ({ topic, onClose }) => {
         />
         <CustomButton color="secondary" disabled={submitDisabled} onClick={handleSave} size="large" variant="contained">
           Confirm
-          {loading && <ClipLoader color={colors.BLUE_PRESS_STATE} size={10} />}
+          {loading && (
+            <ClipLoaderWrapper>
+              <ClipLoader color={colors.lightGray} size={12} />{' '}
+            </ClipLoaderWrapper>
+          )}
         </CustomButton>
       </FormProvider>
     </BaseModal>
@@ -93,4 +97,8 @@ export const AddEdgeModal: FC<Props> = ({ topic, onClose }) => {
 const CustomButton = styled(Button)`
   width: 293px !important;
   margin: 0 0 10px auto !important;
+`
+
+const ClipLoaderWrapper = styled.span`
+  margin-top: 2px;
 `
