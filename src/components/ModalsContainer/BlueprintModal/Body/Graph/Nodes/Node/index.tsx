@@ -26,6 +26,10 @@ export const Node = memo(({ node, setSelectedNode, onSimulationUpdate, isSelecte
   const { size, camera } = useThree()
 
   const bind = useDrag((args) => {
+    if (node.type === 'Thing') {
+      return
+    }
+
     const {
       xy: [x, y],
       down,
@@ -68,7 +72,10 @@ export const Node = memo(({ node, setSelectedNode, onSimulationUpdate, isSelecte
 
   const handleClick = (e: { stopPropagation: () => void }) => {
     e.stopPropagation()
-    setSelectedNode()
+
+    if (node.type !== 'Thing') {
+      setSelectedNode()
+    }
   }
 
   return (
