@@ -19,8 +19,6 @@ export const Body = ({ onCancel }: Props) => {
   const form = useForm<FormData>({ mode: 'onChange' })
   const [loading, setLoading] = useState(false)
   const [selectedType, setSelectedType] = useState('')
-  const [isSwapped, setIsSwapped] = useState(false)
-
   const [selectedFromNode, setSelectedFromNode] = useState<string>('')
   const [selectedToNode, setSelectedToNode] = useState<string>('')
 
@@ -59,11 +57,7 @@ export const Body = ({ onCancel }: Props) => {
     <FormProvider {...form}>
       <form id="add-type-form" onSubmit={onSubmit}>
         <TitleEditor
-          isSwapped={isSwapped}
-          selectedFromNode={selectedFromNode}
-          selectedToNode={selectedToNode}
           selectedType={selectedType}
-          setIsSwapped={() => setIsSwapped(!isSwapped)}
           setSelectedFromNode={setSelectedFromNode}
           setSelectedToNode={setSelectedToNode}
         />
@@ -83,7 +77,7 @@ export const Body = ({ onCancel }: Props) => {
 
 const CustomButton = styled(Button)`
   width: 293px !important;
-  margin: 0 0 10px 35px !important;
+  margin: 0 0 10px auto !important;
 `
 
 const ClipLoaderWrapper = styled.span`
