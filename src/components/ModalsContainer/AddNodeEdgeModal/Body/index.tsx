@@ -112,7 +112,7 @@ export const Body = () => {
         Confirm
         {loading && (
           <ClipLoaderWrapper>
-            <ClipLoader color={colors.lightGray} size={12} />{' '}
+            <ClipLoader color={colors.lightGray} size={12} />
           </ClipLoaderWrapper>
         )}
       </CustomButton>

@@ -134,7 +134,7 @@ export const Body = () => {
             Delete
             {loading && (
               <ClipLoaderWrapper>
-                <ClipLoader color={colors.lightGray} size={10} />
+                <ClipLoader color={colors.lightGray} size={12} />
               </ClipLoaderWrapper>
             )}
           </DeleteButton>
