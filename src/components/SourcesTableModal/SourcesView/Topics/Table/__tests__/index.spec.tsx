@@ -170,3 +170,15 @@ test('Save Changes button should be diable without any change and without any te
     expect(saveButton).toBeDisabled()
   })
 })
+
+test('When check a topic then Merge Topics should be display', async () => {
+  const { getByTestId, getByText } = renderTable()
+
+  waitFor(async () => {
+    fireEvent.click(getByTestId('topic-check-box'))
+
+    const mergeButton = getByText(/ Merge/i)
+
+    expect(mergeButton).toBeInTheDocument()
+  })
+})
