@@ -79,8 +79,8 @@ export const Lines = ({ links, nodes }: Props) => {
           text.position.set(controlPoint2.x, controlPoint2.y, endPoint.z)
           text.lookAt(camera.position)
         } else {
-          endPosition.copy(getPointOnLineAtDistance(endVector, startVector, NODE_RADIUS + CONE_HEIGHT))
-          startPosition.copy(startVector)
+          startPosition.copy(getPointOnLineAtDistance(startVector, endVector, NODE_RADIUS))
+          endPosition.copy(getPointOnLineAtDistance(endVector, startVector, NODE_RADIUS + 0.5))
           middlePoint.lerpVectors(startPosition, endPosition, 0.5)
 
           const textWidth = 30
@@ -103,21 +103,24 @@ export const Lines = ({ links, nodes }: Props) => {
           text.position.set(middlePoint.x, middlePoint.y, middlePoint.z)
           text.lookAt(camera.position)
 
-          const angle = Math.atan2(endPosition.y - startPosition.y, endPosition.x - startPosition.x)
+          let angle = Math.atan2(endPosition.y - startPosition.y, endPosition.x - startPosition.x)
 
           if (angle > Math.PI / 2 || angle < -Math.PI / 2) {
-            text.rotation.set(Math.PI, 0, -angle)
-          } else {
-            text.rotation.set(0, 0, angle)
+            angle += Math.PI
           }
 
+          text.rotation.set(0, 0, angle)
+
           const distance = startPosition.distanceTo(endPosition)
+          const fontSize = distance < textWidth ? 2 : 4
 
           if (distance < textWidth) {
             text.text = truncateText(link.edge_type, MAX_TEXT_LENGTH)
           } else {
             text.text = link.edge_type
           }
+
+          text.fontSize = fontSize
         }
       })
     }

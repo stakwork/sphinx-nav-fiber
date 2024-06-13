@@ -59,10 +59,15 @@ const handleSubmitForm = async (
     }
   })
 
+  const typeName = selectedNode
+    ? selectedNode.node_type.charAt(0).toUpperCase() + selectedNode.node_type.slice(1)
+    : undefined
+
   const body: { [index: string]: unknown } = {
     node_type: nodeType,
     properties,
     properties_to_be_deleted: propertiesToBeDeleted,
+    type_to_be_deleted: typeName ? [typeName] : [],
   }
 
   try {
