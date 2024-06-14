@@ -213,7 +213,10 @@ export const Editor = ({
     setLoading(true)
 
     try {
-      if (data.type !== selectedSchema?.type || getValues().parent !== selectedSchema?.parent) {
+      if (
+        (selectedSchema && data.type !== selectedSchema?.type) ||
+        (selectedSchema && getValues().parent !== selectedSchema?.parent)
+      ) {
         const newParent = getValues().parent ?? selectedSchema?.parent
 
         setGraphLoading(true)
