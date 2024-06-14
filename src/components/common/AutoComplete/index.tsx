@@ -46,6 +46,7 @@ export const AutoComplete: FC<Props> = ({
 }) => {
   const inputRef = useRef<HTMLInputElement>(null)
   const [open, setOpen] = useState<boolean>(false)
+  const [value, setValue] = useState<TAutocompleteOption | undefined>(selectedValue)
 
   useEffect(() => {
     if (autoFocus && inputRef.current) {
@@ -53,6 +54,10 @@ export const AutoComplete: FC<Props> = ({
       setOpen(true)
     }
   }, [autoFocus])
+
+  useEffect(() => {
+    setValue(selectedValue)
+  }, [selectedValue])
 
   const handleChange = (event: ChangeEvent<object>, newValue: TAutocompleteOption | null) => {
     onSelect(newValue)
@@ -140,7 +145,7 @@ export const AutoComplete: FC<Props> = ({
             backgroundColor: colors.DROPDOWN_SELECTED,
           },
         }}
-        value={selectedValue || undefined}
+        value={value}
       />
     </Stack>
   )

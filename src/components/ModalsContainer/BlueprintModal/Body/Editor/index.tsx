@@ -164,10 +164,7 @@ export const Editor = ({
       setValue('type', selectedSchema?.type as string)
       setValue('parent', selectedSchema.parent)
 
-      fetchAndSetOptions(
-        setSelectedNodeParentOptions,
-        (schema) => schema.type !== selectedSchema.type && schema.type !== selectedSchema.parent,
-      )
+      fetchAndSetOptions(setSelectedNodeParentOptions, (schema) => schema.type !== selectedSchema.type)
     }
   }, [selectedSchema, setValue])
 
@@ -254,7 +251,15 @@ export const Editor = ({
   })
 
   const resolvedParentValue = () => parentOptions?.find((i) => i.value === parent)
-  const resolvedSelectedParentValue = () => selectedNodeParentOptions?.find((i) => i.value === parent)
+
+  const resolvedSelectedParentValue = () =>
+    selectedNodeParentOptions?.find((i) => {
+      if (i.value === parent) {
+        return i
+      }
+
+      return false
+    })
 
   return (
     <Flex>
