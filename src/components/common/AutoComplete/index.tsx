@@ -46,7 +46,8 @@ export const AutoComplete: FC<Props> = ({
 }) => {
   const inputRef = useRef<HTMLInputElement>(null)
   const [open, setOpen] = useState<boolean>(false)
-  const [value, setValue] = useState<TAutocompleteOption | null>(selectedValue)
+  // eslint-disable-next-line
+  const [value, setValue] = useState<any>(selectedValue)
 
   useEffect(() => {
     if (autoFocus && inputRef.current) {
@@ -145,7 +146,7 @@ export const AutoComplete: FC<Props> = ({
             backgroundColor: colors.DROPDOWN_SELECTED,
           },
         }}
-        value={value} // eslint-disable-line
+        value={value}
       />
     </Stack>
   )
