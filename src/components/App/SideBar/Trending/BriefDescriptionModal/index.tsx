@@ -63,18 +63,24 @@ export const BriefDescription: FC<Props> = ({ trend, onClose, selectTrending }) 
     const audioElement = audioRef.current
     const onAudioPlaybackComplete = () => setIsPlaying(false)
 
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        handleClose()
+      }
+    }
+
     if (audioElement) {
       audioElement.addEventListener('ended', onAudioPlaybackComplete)
     }
 
-    window.addEventListener('keydown', handleClose)
+    window.addEventListener('keydown', handleKeyDown)
 
     return () => {
       if (audioElement) {
         audioElement.removeEventListener('ended', onAudioPlaybackComplete)
       }
 
-      window.removeEventListener('keydown', handleClose)
+      window.removeEventListener('keydown', handleKeyDown)
     }
   }, [handleClose])
 
@@ -82,7 +88,14 @@ export const BriefDescription: FC<Props> = ({ trend, onClose, selectTrending }) 
     (currentPlayingAudio?.current?.src === trend.audio_EN && !currentPlayingAudio?.current?.paused) || isPlaying
 
   return (
-    <BaseModal id="briefDescription" kind="regular" noWrap onClose={handleClose} preventOutsideClose>
+    <BaseModal
+      data-testid="brief-description-modal"
+      id="briefDescription"
+      kind="regular"
+      noWrap
+      onClose={handleClose}
+      preventOutsideClose
+    >
       {trend.audio_EN ? (
         <>
           <StyledHeader>
