@@ -159,7 +159,9 @@ export const Body = () => {
         <Flex>
           {isAddEdgeNode ? (
             <EditorWrapper>
-              <AddEdgeNode setIsAddEdgeNode={setIsAddEdgeNode} />
+              <InnerEditorWrapper>
+                <AddEdgeNode setIsAddEdgeNode={setIsAddEdgeNode} />
+              </InnerEditorWrapper>
             </EditorWrapper>
           ) : null}
         </Flex>
