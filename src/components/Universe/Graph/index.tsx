@@ -1,34 +1,27 @@
-import { Segments } from '@react-three/drei'
+import { Segment, SegmentObject, Segments } from '@react-three/drei'
 import { isEqual } from 'lodash'
 import { useEffect, useMemo, useRef } from 'react'
-import { Group, Vector3 } from 'three'
+import { Group } from 'three'
 import { useDataStore } from '~/stores/useDataStore'
 import { useGraphStore, useSelectedNodeRelativeIds } from '~/stores/useGraphStore'
 import { Link, NodeExtended } from '~/types'
-import { maxChildrenDisplayed } from '../constants'
 import { Cubes } from './Cubes'
 import { Earth } from './Earth'
 import { LoadingNodes } from './LoadingNodes'
 import { Particles } from './Particles'
-import { Segment } from './Segment'
 import { NodeDetailsPanel } from './UI'
 
 export const Graph = () => {
   const { dataInitial, isLoadingNew, isFetching, dataNew, resetDataNew } = useDataStore((s) => s)
   const groupRef = useRef<Group>(null)
+  const segmentsRef = useRef<SegmentObject[]>([])
 
-  const {
-    setData,
-    simulation,
-    simulationCreate,
-    simulationHelpers,
-    graphStyle,
-    showSelectionGraph,
-    selectionGraphData,
-    selectedNode,
-  } = useGraphStore((s) => s)
+  const { setData, simulation, simulationCreate, simulationHelpers, graphStyle, showSelectionGraph, selectedNode } =
+    useGraphStore((s) => s)
 
   const selectedNodeRelativeIds = useSelectedNodeRelativeIds()
+
+  console.log(selectedNodeRelativeIds, selectedNode)
 
   useEffect(() => {
     if (!dataNew) {
@@ -59,51 +52,34 @@ export const Graph = () => {
       return 0
     }
 
-    if (graphStyle === 'force') {
-      return 0.2
+    if (selectedNode) {
+      return 1
     }
 
-    return 0.4
-  }, [showSelectionGraph, graphStyle])
+    return 0.1
+  }, [showSelectionGraph, selectedNode])
 
   const nodeBadges = useMemo(() => {
-    if (!selectedNode) {
+    if (!dataInitial) {
       return []
     }
 
-    const { ref_id: selectedRefId, x, y, z } = selectedNode
-
-    const nodes = showSelectionGraph ? selectionGraphData.nodes : simulation?.nodes() || []
-
-    const childIds = nodes
-      .filter((f: NodeExtended) => selectedNodeRelativeIds.includes(f?.ref_id || '') || selectedRefId === f?.ref_id)
-      .slice(0, maxChildrenDisplayed)
-
-    const badgesToRender = childIds.map((n: NodeExtended) => {
-      const spos = new Vector3(x, y, z)
-
-      const tpos = new Vector3(n.x, n.y, n.z)
-
-      const l: Link<string> = {
-        source: selectedRefId || '',
-        target: n.ref_id ? n.ref_id : '',
-        targetRef: n.ref_id,
-        sourceRef: selectedRefId,
-        sourcePosition: spos,
-        targetPosition: tpos,
-      }
-
-      return (
-        <Segment
-          // eslint-disable-next-line react/no-array-index-key
-          key={n.ref_id}
-          link={l}
-        />
-      )
-    })
+    const badgesToRender = dataInitial.links.map((l: Link, i: number) => (
+      <Segment
+        key={l.ref_id}
+        ref={(r) => {
+          if (Array.isArray(segmentsRef.current) && r) {
+            segmentsRef.current[i] = r as SegmentObject
+          }
+        }}
+        color="rgba(136, 136, 136, 0.1)"
+        end={[100, 100, 100]}
+        start={[0, 0, 0]}
+      />
+    ))
 
     return badgesToRender
-  }, [selectedNode, showSelectionGraph, selectionGraphData.nodes, simulation, selectedNodeRelativeIds])
+  }, [dataInitial])
 
   useEffect(() => {
     if (!simulation) {
@@ -112,6 +88,14 @@ export const Graph = () => {
 
     simulationHelpers.setForces()
   }, [graphStyle, simulationHelpers, simulation])
+
+  // useEffect(() => {
+  //   console.log(selectedNode)
+
+  //   if (segmentsRef.current) {
+  //     console.log(selectedNode)
+  //   }
+  // }, [selectedNode, segmentsRef])
 
   useEffect(() => {
     if (!simulation) {
@@ -130,8 +114,22 @@ export const Graph = () => {
           }
         })
       }
+
+      if (segmentsRef.current?.length && dataInitial) {
+        segmentsRef.current.forEach((r, i) => {
+          const link = dataInitial.links[i]
+
+          if (link) {
+            const sourceNode = simulation.nodes().find((n: NodeExtended) => n.ref_id === link.source)
+            const targetNode = simulation.nodes().find((n: NodeExtended) => n.ref_id === link.target)
+
+            r.start.set(sourceNode.x, sourceNode.y, sourceNode.z)
+            r.end.set(targetNode.x, targetNode.y, targetNode.z)
+          }
+        })
+      }
     })
-  }, [simulation])
+  }, [dataInitial, simulation])
 
   if (!simulation) {
     return null

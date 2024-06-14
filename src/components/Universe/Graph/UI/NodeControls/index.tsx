@@ -128,7 +128,7 @@ export const NodeControls = memo(() => {
         },
       },
       {
-        key: 'control-key-5',
+        key: 'control-key-6',
         colors: buttonColors(true).close,
         icon: <MdClose />,
         left: 40,

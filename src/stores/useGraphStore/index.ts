@@ -69,7 +69,7 @@ export type GraphStore = {
   splashDataLoading: boolean
   graphRadius: number | null
   data: { nodes: NodeExtended[]; links: Link[] } | null
-  selectionGraphData: GraphData<NodeExtended>
+  selectionGraphData: GraphData
   graphStyle: GraphStyle
   hoveredNode: NodeExtended | null
   selectedNode: NodeExtended | null
@@ -91,7 +91,7 @@ export type GraphStore = {
   setCameraFocusTrigger: (_: boolean) => void
   setNearbyNodeIds: (_: string[]) => void
   setShowSelectionGraph: (_: boolean) => void
-  setSelectionData: (data: GraphData<Node>) => void
+  setSelectionData: (data: GraphData) => void
   simulationCreate: (nodes: Node[], links: Link[]) => void
 }
 

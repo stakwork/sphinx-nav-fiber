@@ -10,7 +10,7 @@ import { ForceSimulation } from '~/transformers/forceSimulation'
 import { Link, NodeExtended } from '~/types'
 
 type Props = {
-  links: Link<NodeExtended>[]
+  links: Link[]
   simulation: ForceSimulation
 }
 
@@ -34,8 +34,8 @@ export const PathwayBadges = ({ links, simulation }: Props) => {
 
       gr.children.forEach((mesh, index) => {
         const link = links[index]
-        const start = nodes.find((i: NodeExtended) => link.source.ref_id === i.ref_id)
-        const end = nodes.find((i: NodeExtended) => link.target.ref_id === i.ref_id)
+        const start = nodes.find((i: NodeExtended) => link.source === i.ref_id)
+        const end = nodes.find((i: NodeExtended) => link.target === i.ref_id)
 
         mesh.position?.set((start.x + end.x) / 2, (start.y + end.y) / 2, (start.z + end.z) / 2)
       })

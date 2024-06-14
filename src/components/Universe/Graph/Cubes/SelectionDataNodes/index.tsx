@@ -46,12 +46,12 @@ export const SelectionDataNodes = memo(() => {
 
     if (nodes) {
       const links = structuredLinks.filter(
-        (link) =>
+        (link: Link) =>
           nodes.some((node: NodeExtended) => node.ref_id === link.target) &&
           nodes.some((node: NodeExtended) => node.ref_id === link.source),
       )
 
-      setSelectionData({ nodes, links: links as unknown as GraphData<NodeExtended>['links'] })
+      setSelectionData({ nodes, links: links as unknown as GraphData['links'] })
     }
   }, [dataInitial, selectedNode, selectedNodeRelativeIds, setSelectionData, prevNodesLength])
 
@@ -60,7 +60,9 @@ export const SelectionDataNodes = memo(() => {
       return
     }
 
-    const simulation = runForceSimulation(selectionGraphData.nodes, selectionGraphData.links as unknown as Link[], {
+    const structuredLinks = structuredClone(selectionGraphData.links)
+
+    const simulation = runForceSimulation(selectionGraphData.nodes, structuredLinks as unknown as Link[], {
       numDimensions: 2,
       forceLinkStrength: 0.01,
       forceCenterStrength: 0.85,
@@ -124,7 +126,7 @@ export const SelectionDataNodes = memo(() => {
         fog
         lineWidth={0.9}
       >
-        {(selectionGraphData?.links as unknown as GraphData<NodeExtended>['links']).map((link, index) => (
+        {(selectionGraphData?.links as unknown as GraphData['links']).map((link, index) => (
           <Segment
             // eslint-disable-next-line react/no-array-index-key
             key={index.toString()}
