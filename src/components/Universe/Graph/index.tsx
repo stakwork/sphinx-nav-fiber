@@ -1,7 +1,8 @@
-import { Segment, SegmentObject, Segments } from '@react-three/drei'
+import { Line as DreiLine } from '@react-three/drei'
 import { isEqual } from 'lodash'
 import { useEffect, useMemo, useRef } from 'react'
-import { Group } from 'three'
+import { Color, Group, Vector3 } from 'three'
+import { Line2 } from 'three-stdlib'
 import { useDataStore } from '~/stores/useDataStore'
 import { useGraphStore, useSelectedNodeRelativeIds } from '~/stores/useGraphStore'
 import { Link, NodeExtended } from '~/types'
@@ -14,7 +15,7 @@ import { NodeDetailsPanel } from './UI'
 export const Graph = () => {
   const { dataInitial, isLoadingNew, isFetching, dataNew, resetDataNew } = useDataStore((s) => s)
   const groupRef = useRef<Group>(null)
-  const segmentsRef = useRef<SegmentObject[]>([])
+  const segmentsRef = useRef<Line2[]>([])
 
   const { setData, simulation, simulationCreate, simulationHelpers, graphStyle, showSelectionGraph, selectedNode } =
     useGraphStore((s) => s)
@@ -64,22 +65,27 @@ export const Graph = () => {
       return []
     }
 
+    console.log(lineWidth)
+
     const badgesToRender = dataInitial.links.map((l: Link, i: number) => (
-      <Segment
+      <DreiLine
         key={l.ref_id}
         ref={(r) => {
           if (Array.isArray(segmentsRef.current) && r) {
-            segmentsRef.current[i] = r as SegmentObject
+            segmentsRef.current[i] = r as Line2
           }
         }}
-        color="rgba(136, 136, 136, 0.1)"
-        end={[100, 100, 100]}
-        start={[0, 0, 0]}
+        color="rgba(136, 136, 136, 1)"
+        isLine2
+        lineWidth={1}
+        opacity={1}
+        points={[new Vector3(0, 0, 0), new Vector3(100, 100, 100)]}
+        transparent
       />
     ))
 
     return badgesToRender
-  }, [dataInitial])
+  }, [dataInitial, lineWidth])
 
   useEffect(() => {
     if (!simulation) {
@@ -123,8 +129,28 @@ export const Graph = () => {
             const sourceNode = simulation.nodes().find((n: NodeExtended) => n.ref_id === link.source)
             const targetNode = simulation.nodes().find((n: NodeExtended) => n.ref_id === link.target)
 
-            r.start.set(sourceNode.x, sourceNode.y, sourceNode.z)
-            r.end.set(targetNode.x, targetNode.y, targetNode.z)
+            const newPoints = [
+              new Vector3(sourceNode.x, sourceNode.y, sourceNode.z),
+              new Vector3(targetNode.x, targetNode.y, targetNode.z),
+            ]
+
+            console.log(newPoints)
+
+            // r.poin.set(sourceNode.x, sourceNode.y, sourceNode.z)
+            r.geometry.setPositions([
+              sourceNode.x,
+              sourceNode.y,
+              sourceNode.z,
+              targetNode.x,
+              targetNode.y,
+              targetNode.z,
+            ])
+
+            const { material } = r
+
+            material.color = new Color('white')
+            material.transparent = true
+            material.opacity = 0.1
           }
         })
       }
@@ -143,21 +169,7 @@ export const Graph = () => {
       {false && <Particles />}
       {(isLoadingNew || isFetching) && <LoadingNodes />}
 
-      {graphStyle !== 'earth' && (
-        <Segments
-          /** NOTE: using the key in this way the segments re-mounts
-           *  everytime the data.links count changes
-           * */
-          key={`links-${nodeBadges.length}-${graphStyle}`}
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          fog
-          limit={nodeBadges.length}
-          lineWidth={lineWidth}
-        >
-          {nodeBadges}
-        </Segments>
-      )}
+      {graphStyle !== 'earth' && <>{nodeBadges}</>}
       <NodeDetailsPanel />
     </group>
   )

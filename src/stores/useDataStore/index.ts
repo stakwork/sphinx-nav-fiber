@@ -103,7 +103,7 @@ const defaultData: Omit<
     skip: '0',
     limit: '15',
     depth: '1',
-    sort_by: 'date',
+    sort_by: 'edge_count',
     include_properties: 'true',
     top_node_count: '10',
   },

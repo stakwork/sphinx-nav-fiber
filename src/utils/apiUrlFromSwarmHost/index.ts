@@ -25,7 +25,7 @@ export function apiUrlFromSwarmHost(): string | undefined {
     url = 'https://knowledge-graph.sphinx.chat'
   }
 
-  return `${url}/api`
+  return `https://health.sphinx.chat/api/` || `${url}/api`
 }
 
 export function removeApi(url: string) {

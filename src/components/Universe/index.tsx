@@ -128,7 +128,7 @@ const _Universe = () => {
     <Wrapper>
       <Suspense fallback={null}>
         <Canvas camera={cameraProps} id="universe-canvas" onCreated={onCreatedHandler} onWheel={onWheelHandler}>
-          {isDevelopment && <Perf position="top-right" />}
+          {isDevelopment && <Perf position="bottom-right" />}
           <Suspense fallback={<Fallback />}>
             <Preload />
 
