@@ -15,7 +15,7 @@ describe('test extracting uuid and tribe host', () => {
 
     mockApiGet.mockReturnValue(Promise.resolve({ isAdmin: false }))
 
-    getIsAdmin(authRequest)
+    getIsAdmin()
 
     expect(mockApiGet).toHaveBeenCalledWith(expectedEndpoint)
   })
