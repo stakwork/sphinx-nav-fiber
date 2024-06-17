@@ -1,13 +1,14 @@
 import '@testing-library/jest-dom'
 import { render, screen, waitFor } from '@testing-library/react'
-import React from 'react'
+import React, { lazy } from 'react'
 import * as sphinx from 'sphinx-bridge'
 import * as network from '../../../network/auth'
 import { useDataStore } from '../../../stores/useDataStore'
 import { useUserStore } from '../../../stores/useUserStore'
 import * as utils from '../../../utils/getSignedMessage'
-import { App } from '../../App'
+// import { App } from '../../App'
 import { AuthGuard } from '../index'
+const App = lazy(() => import('../../App').then(({ App }) => ({ default: App })))
 
 jest.mock('sphinx-bridge')
 jest.mock('~/stores/useUserStore')
