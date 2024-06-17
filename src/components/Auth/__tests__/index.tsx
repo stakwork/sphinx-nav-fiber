@@ -1,14 +1,13 @@
 import '@testing-library/jest-dom'
 import { render, screen, waitFor } from '@testing-library/react'
-import React, { lazy } from 'react'
+import React from 'react'
 import * as sphinx from 'sphinx-bridge'
 import * as network from '../../../network/auth'
 import { useDataStore } from '../../../stores/useDataStore'
 import { useUserStore } from '../../../stores/useUserStore'
 import * as utils from '../../../utils/getSignedMessage'
-// import { App } from '../../App'
+import { App } from '../../App'
 import { AuthGuard } from '../index'
-const App = lazy(() => import('../../App').then(({ App }) => ({ default: App })))
 
 jest.mock('sphinx-bridge')
 jest.mock('~/stores/useUserStore')
@@ -225,7 +224,7 @@ describe('Auth Component', () => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     sphinx.enable.mockRejectedValue()
-    getIsAdminMock.mockResolvedValue({ data: { isAdmin: false, isPublic: false, isMember: false } })
+    getIsAdminMock.mockResolvedValue({ data: { isAdmin: false, isPublic: true, isMember: false } })
     getSignedMessageFromRelayMock.mockRejectedValue(null)
 
     render(
@@ -235,6 +234,6 @@ describe('Auth Component', () => {
     )
 
     await waitFor(() => expect(setPubKey).toHaveBeenCalledWith(''))
-    await waitFor(() => expect(setIsAuthenticated).not.toHaveBeenCalledWith(true))
+    await waitFor(() => expect(setIsAuthenticated).toHaveBeenCalledWith(true))
   })
 })
