@@ -2,26 +2,20 @@ import { getSignedMessageFromRelay } from '~/utils'
 import { API_URL } from '~/utils/apiUrlFromSwarmHost'
 
 const request = async <Res>(url: string, config?: RequestInit, signal?: AbortSignal): Promise<Res> => {
-  const admin = localStorage?.getItem('admin')
-
   let updatedUrl = url
 
-  if (admin) {
-    const newUrl = new URL(url)
+  const newUrl = new URL(url)
 
-    const existingParams = new URLSearchParams(newUrl.search)
+  const existingParams = new URLSearchParams(newUrl.search)
 
-    if (!existingParams.has('sig') && !existingParams.has('msg')) {
-      const adminAuth = await getSignedMessageFromRelay()
+  const adminAuth = await getSignedMessageFromRelay()
 
-      existingParams.append('sig', adminAuth.signature)
-      existingParams.append('msg', adminAuth.message)
+  existingParams.append('sig', adminAuth.signature)
+  existingParams.append('msg', adminAuth.message)
 
-      newUrl.search = existingParams.toString()
+  newUrl.search = existingParams.toString()
 
-      updatedUrl = newUrl.toString()
-    }
-  }
+  updatedUrl = newUrl.toString()
 
   const controller = new AbortController()
   const mergedSignal = signal || controller.signal
