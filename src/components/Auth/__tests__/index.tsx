@@ -224,7 +224,7 @@ describe('Auth Component', () => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     sphinx.enable.mockRejectedValue()
-    getIsAdminMock.mockResolvedValue({ data: { isAdmin: false, isPublic: true, isMember: false } })
+    getIsAdminMock.mockResolvedValue({ data: { isAdmin: false, isPublic: false, isMember: false } })
     getSignedMessageFromRelayMock.mockRejectedValue(null)
 
     render(
