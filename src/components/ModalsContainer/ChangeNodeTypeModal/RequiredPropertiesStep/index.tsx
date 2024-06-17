@@ -76,7 +76,7 @@ export const RequiredPropertiesStep: FC<Props> = ({ handleSelectType, skipToStep
     skipToStep('sourceType')
   }
 
-  const isNextButtonDisabled =
+  const isNextDisabled =
     !isValid || loading || filteredAttributes.some((attr) => attr.required && !watch(attr.key)?.trim())
 
   return (
@@ -131,7 +131,7 @@ export const RequiredPropertiesStep: FC<Props> = ({ handleSelectType, skipToStep
         <Flex grow={1} ml={20}>
           <Button
             color="secondary"
-            disabled={isNextButtonDisabled}
+            disabled={isNextDisabled}
             onClick={() => skipToStep('createConfirmation')}
             size="large"
             variant="contained"
