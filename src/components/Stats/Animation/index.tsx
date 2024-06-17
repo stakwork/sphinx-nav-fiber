@@ -1,9 +1,13 @@
 import lottie, { AnimationItem } from 'lottie-web'
-import { useEffect, useRef } from 'react'
-import animationData from './animation.json'
+import { ComponentProps, useEffect, useRef } from 'react'
 
-export const Animation = () => {
+interface Props extends ComponentProps<'div'> {
+  animationData: unknown
+}
+
+export const Animation = (props: Props) => {
   const lottieRef = useRef<AnimationItem | null>(null)
+  const { animationData } = props
 
   useEffect(() => {
     const container = document.getElementById('lottie-animation')
@@ -22,7 +26,7 @@ export const Animation = () => {
         lottieRef.current.destroy()
       }
     }
-  }, [])
+  }, [animationData])
 
-  return <div id="lottie-animation" style={{ width: '2em', height: '2em' }} />
+  return <div id="lottie-animation" {...props} />
 }

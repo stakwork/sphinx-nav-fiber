@@ -1,23 +1,24 @@
 import { noop } from 'lodash'
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
-import { Tooltip } from '~/components/common/ToolTip'
 import AudioIcon from '~/components/Icons/AudioIcon'
 import BudgetIcon from '~/components/Icons/BudgetIcon'
 import NodesIcon from '~/components/Icons/NodesIcon'
 import TwitterIcon from '~/components/Icons/TwitterIcon'
 import VideoIcon from '~/components/Icons/VideoIcon'
-import { getStats, getTotalProcessing, TStatParams } from '~/network/fetchSourcesData'
+import { Tooltip } from '~/components/common/ToolTip'
+import { TStatParams, getStats, getTotalProcessing } from '~/network/fetchSourcesData'
 import { useDataStore } from '~/stores/useDataStore'
 import { useModal } from '~/stores/useModalStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { TStats } from '~/types'
 import { formatBudget, formatStatsResponse } from '~/utils'
 import { colors } from '~/utils/colors'
-import { Flex } from '../common/Flex'
 import DocumentIcon from '../Icons/DocumentIcon'
 import EpisodeIcon from '../Icons/EpisodeIcon'
+import { Flex } from '../common/Flex'
 import { Animation } from './Animation'
+import animationData from './Animation/animation.json'
 
 interface StatConfigItem {
   name: string
@@ -167,7 +168,7 @@ export const Stats = () => {
         {isTotalProcessing ? (
           <ViewContent data-testid="view-content" onClick={openSourcesModal}>
             <div className="icon" style={{ marginLeft: '7px' }}>
-              <Animation />
+              <Animation animationData={animationData} />
             </div>
             <div className="text">
               <p>{totalProcessing}</p>
