@@ -1,11 +1,11 @@
-import { Line as DreiLine } from '@react-three/drei'
 import { isEqual } from 'lodash'
-import { useEffect, useMemo, useRef } from 'react'
-import { Color, Group, Vector3 } from 'three'
+import { useEffect, useRef } from 'react'
+import { Color, Group } from 'three'
 import { Line2 } from 'three-stdlib'
 import { useDataStore } from '~/stores/useDataStore'
-import { useGraphStore, useSelectedNodeRelativeIds } from '~/stores/useGraphStore'
-import { Link, NodeExtended } from '~/types'
+import { useGraphStore } from '~/stores/useGraphStore'
+import { NodeExtended } from '~/types'
+import { Connections } from './Connections'
 import { Cubes } from './Cubes'
 import { Earth } from './Earth'
 import { LoadingNodes } from './LoadingNodes'
@@ -15,14 +15,8 @@ import { NodeDetailsPanel } from './UI'
 export const Graph = () => {
   const { dataInitial, isLoadingNew, isFetching, dataNew, resetDataNew } = useDataStore((s) => s)
   const groupRef = useRef<Group>(null)
-  const segmentsRef = useRef<Line2[]>([])
 
-  const { setData, simulation, simulationCreate, simulationHelpers, graphStyle, showSelectionGraph, selectedNode } =
-    useGraphStore((s) => s)
-
-  const selectedNodeRelativeIds = useSelectedNodeRelativeIds()
-
-  console.log(selectedNodeRelativeIds, selectedNode)
+  const { setData, simulation, simulationCreate, simulationHelpers, graphStyle } = useGraphStore((s) => s)
 
   useEffect(() => {
     if (!dataNew) {
@@ -48,45 +42,6 @@ export const Graph = () => {
     resetDataNew()
   }, [setData, dataNew, simulation, simulationCreate, resetDataNew, simulationHelpers, dataInitial])
 
-  const lineWidth = useMemo(() => {
-    if (showSelectionGraph) {
-      return 0
-    }
-
-    if (selectedNode) {
-      return 1
-    }
-
-    return 0.1
-  }, [showSelectionGraph, selectedNode])
-
-  const nodeBadges = useMemo(() => {
-    if (!dataInitial) {
-      return []
-    }
-
-    console.log(lineWidth)
-
-    const badgesToRender = dataInitial.links.map((l: Link, i: number) => (
-      <DreiLine
-        key={l.ref_id}
-        ref={(r) => {
-          if (Array.isArray(segmentsRef.current) && r) {
-            segmentsRef.current[i] = r as Line2
-          }
-        }}
-        color="rgba(136, 136, 136, 1)"
-        isLine2
-        lineWidth={1}
-        opacity={1}
-        points={[new Vector3(0, 0, 0), new Vector3(100, 100, 100)]}
-        transparent
-      />
-    ))
-
-    return badgesToRender
-  }, [dataInitial, lineWidth])
-
   useEffect(() => {
     if (!simulation) {
       return
@@ -95,14 +50,6 @@ export const Graph = () => {
     simulationHelpers.setForces()
   }, [graphStyle, simulationHelpers, simulation])
 
-  // useEffect(() => {
-  //   console.log(selectedNode)
-
-  //   if (segmentsRef.current) {
-  //     console.log(selectedNode)
-  //   }
-  // }, [selectedNode, segmentsRef])
-
   useEffect(() => {
     if (!simulation) {
       return
@@ -110,7 +57,8 @@ export const Graph = () => {
 
     simulation.on('tick', () => {
       if (groupRef.current) {
-        const gr = groupRef.current.getObjectByName('simulation-3d-group') as Group
+        const gr = groupRef.current.getObjectByName('simulation-3d-group__nodes') as Group
+        const grConnections = groupRef.current.getObjectByName('simulation-3d-group__connections') as Group
 
         gr.children.forEach((mesh, index) => {
           const simulationNode = simulation.nodes()[index]
@@ -119,25 +67,16 @@ export const Graph = () => {
             mesh.position.set(simulationNode.x, simulationNode.y, simulationNode.z)
           }
         })
-      }
 
-      if (segmentsRef.current?.length && dataInitial) {
-        segmentsRef.current.forEach((r, i) => {
-          const link = dataInitial.links[i]
+        grConnections.children.forEach((r, i) => {
+          const link = dataInitial?.links[i]
+          const Line = r as Line2
 
           if (link) {
             const sourceNode = simulation.nodes().find((n: NodeExtended) => n.ref_id === link.source)
             const targetNode = simulation.nodes().find((n: NodeExtended) => n.ref_id === link.target)
 
-            const newPoints = [
-              new Vector3(sourceNode.x, sourceNode.y, sourceNode.z),
-              new Vector3(targetNode.x, targetNode.y, targetNode.z),
-            ]
-
-            console.log(newPoints)
-
-            // r.poin.set(sourceNode.x, sourceNode.y, sourceNode.z)
-            r.geometry.setPositions([
+            Line.geometry.setPositions([
               sourceNode.x,
               sourceNode.y,
               sourceNode.z,
@@ -146,7 +85,7 @@ export const Graph = () => {
               targetNode.z,
             ])
 
-            const { material } = r
+            const { material } = Line
 
             material.color = new Color('white')
             material.transparent = true
@@ -169,7 +108,7 @@ export const Graph = () => {
       {false && <Particles />}
       {(isLoadingNew || isFetching) && <LoadingNodes />}
 
-      {graphStyle !== 'earth' && <>{nodeBadges}</>}
+      {graphStyle !== 'earth' && <Connections />}
       <NodeDetailsPanel />
     </group>
   )

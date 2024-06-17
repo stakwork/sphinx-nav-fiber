@@ -88,7 +88,7 @@ export const Cubes = memo(() => {
     >
       {false && <BlurryInstances hide={hideUniverse} />}
       <RelevanceBadges />
-      <group name="simulation-3d-group">
+      <group name="simulation-3d-group__nodes">
         {data?.nodes
           .filter((f: NodeExtended) => {
             const isSelected = f?.ref_id === selectedNode?.ref_id
