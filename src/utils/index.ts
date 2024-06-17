@@ -13,14 +13,14 @@ import { payLsat } from './payLsat'
 import { saveConsumedContent, saveSearchTerm } from './relayHelper'
 import { updateBudget } from './setBudget'
 import { convertToChatMessage } from './stringToChatMessage'
-import { E2ETests, addToGlobalForE2e, executeIfProd, executeIfTetsRunning } from './tests'
+import { addToGlobalForE2e, E2ETests, executeIfProd, executeIfTetsRunning } from './tests'
 import { timeToMilliseconds } from './timeToMilliseconds'
 import { useIsMatchBreakpoint } from './useIsMatchBreakpoint'
 // import APP_VERSION from './versionHelper'
 import { extractUuidAndHost } from './auth'
 import { formatDate } from './formatDate'
 import { formatNumberWithCommas } from './formatStats'
-import { generateAuthQueryParam, getSignedMessageFromRelay } from './getSignedMessage'
+import { getSignedMessageFromRelay } from './getSignedMessage'
 import { formatSplashMessage, formatStatsResponse } from './splash'
 import { getTrendingTopic, showPlayButton } from './trending'
 import { videoTimeToSeconds } from './videoTimetoSeconds'
@@ -42,7 +42,6 @@ export {
   formatSplashMessage,
   formatStatsResponse,
   formatTimestamp,
-  generateAuthQueryParam,
   getLSat,
   getSelectedNodeTimestamps,
   getSignedMessageFromRelay,
