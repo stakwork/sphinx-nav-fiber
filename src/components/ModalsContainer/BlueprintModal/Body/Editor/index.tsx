@@ -43,13 +43,18 @@ type Props = {
   onSchemaUpdate: () => void
 }
 
-const handleSubmitForm = async (data: FieldValues, isUpdate = false): Promise<string | undefined> => {
+const handleSubmitForm = async (
+  data: FieldValues,
+  isUpdate = false,
+  deletedAttributes: string[],
+): Promise<string | undefined> => {
   try {
     const { attributes, ...withoutAttributes } = data
 
     const requestData = {
       ...withoutAttributes,
       attributes: convertAttributes(attributes),
+      ...deletedAttributes.reduce<{ [key: string]: string }>((acc, key) => ({ ...acc, [key]: 'delete' }), {}),
     }
 
     let res: { status: string; ref_id: string }
@@ -139,6 +144,7 @@ export const Editor = ({
   const [selectedNodeParentOptions, setSelectedNodeParentOptions] = useState<TOption[] | null>(null)
   const [errMessage, setErrMessage] = useState<string>('')
   const [deleteError, setDeleteError] = useState<string | null>(null)
+  const [deletedAttributes, setDeletedAttributes] = useState<string[]>([])
 
   useEffect(
     () => () => {
@@ -175,6 +181,10 @@ export const Editor = ({
 
   const handleClose = () => {
     close()
+  }
+
+  const handleDeleteAttribute = (attributeKey: string) => {
+    setDeletedAttributes((prev) => [...prev, attributeKey])
   }
 
   const handleDelete = async () => {
@@ -229,6 +239,7 @@ export const Editor = ({
       const res = await handleSubmitForm(
         { ...data, ...(selectedSchema ? { ref_id: selectedSchema?.ref_id } : {}) },
         !!selectedSchema,
+        deletedAttributes,
       )
 
       onSchemaCreate({ type: data.type, parent: parent || '', ref_id: selectedSchema?.ref_id || res || 'new' })
@@ -342,7 +353,10 @@ export const Editor = ({
                 </>
               )}
             </Flex>
-            <CreateCustomNodeAttribute parent={selectedSchema ? selectedSchema.type : parent} />
+            <CreateCustomNodeAttribute
+              onDelete={handleDeleteAttribute}
+              parent={selectedSchema ? selectedSchema.type : parent}
+            />
             <Flex direction="row" justify="space-between" mt={20}>
               {selectedSchema ? (
                 <Flex direction="column">
