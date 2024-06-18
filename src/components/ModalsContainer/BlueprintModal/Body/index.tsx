@@ -41,9 +41,11 @@ export const Body = () => {
       try {
         const response = await getSchemaAll()
 
-        setSchemaAll(response.schemas.filter((i) => i.ref_id && !i.is_deleted && i.ref_id))
+        const filteredSchemas = response.schemas.filter((i) => i.ref_id && !i.is_deleted)
 
-        setSchemaLinks(response.edges)
+        setSchemaAll(filteredSchemas.length > 0 ? filteredSchemas : response.schemas)
+
+        setSchemaLinks(response.edges.length > 0 ? response.edges : [])
 
         setLoading(false)
       } catch (error) {
