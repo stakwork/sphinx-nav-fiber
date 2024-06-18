@@ -60,29 +60,23 @@ export const BriefDescription: FC<Props> = ({ trend, onClose, selectTrending }) 
   }
 
   useEffect(() => {
-    const audioElement = audioRef.current
-    const onAudioPlaybackComplete = () => setIsPlaying(false)
+    const audioElement = audioRef.current;
 
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        handleClose()
-      }
-    }
+    const onAudioPlaybackComplete = () => {
+      setIsPlaying(false);
+      setCurrentPlayingAudio(null);
+    };
 
     if (audioElement) {
-      audioElement.addEventListener('ended', onAudioPlaybackComplete)
+      audioElement.addEventListener('ended', onAudioPlaybackComplete);
     }
-
-    window.addEventListener('keydown', handleKeyDown)
 
     return () => {
       if (audioElement) {
-        audioElement.removeEventListener('ended', onAudioPlaybackComplete)
+        audioElement.removeEventListener('ended', onAudioPlaybackComplete);
       }
-
-      window.removeEventListener('keydown', handleKeyDown)
-    }
-  }, [handleClose])
+    };
+  }, [setCurrentPlayingAudio]);
 
   const showPlayBtn =
     (currentPlayingAudio?.current?.src === trend.audio_EN && !currentPlayingAudio?.current?.paused) || isPlaying
