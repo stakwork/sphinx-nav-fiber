@@ -72,7 +72,7 @@ export const Sources = () => {
           activeIcon={<ClearIcon />}
           defaultIcon={<SearchIcon />}
           loading={loading}
-          loadingIcon={<ClipLoader color={colors.PRIMARY_BLUE} size={24} />}
+          loadingIcon={<ClipLoader color={colors.lightGray} size={24} />}
           onSearch={setSearch}
           placeholder="Find Source"
         />

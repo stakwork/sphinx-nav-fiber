@@ -208,11 +208,6 @@ export type SubmitErrRes = {
   }
 }
 
-export type AuthRequest = {
-  message: string
-  signature: string
-}
-
 export type IsAdminResponse = {
   data: {
     isAdmin: boolean
