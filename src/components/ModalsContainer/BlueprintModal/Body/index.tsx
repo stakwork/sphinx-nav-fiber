@@ -192,7 +192,6 @@ const Wrapper = styled(Flex)`
   justify-content: center;
   position: relative;
   overflow: hidden;
-  margin: calc(0px - 10px);
   max-height: calc(100vh - 20px);
 
   @media (max-width: 1440px) {
