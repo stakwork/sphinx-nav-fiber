@@ -77,15 +77,13 @@ export const Episode = ({
 
   const defaultViewTypes = ['tweet', 'person', 'guest', 'topic', 'document']
 
-  const imageType = type === 'video' ? 'video' : 'audio'
-
   return type ? (
     <EpisodeWrapper className={className} onClick={onClick}>
       {!defaultViewTypes.includes(type) ? (
         <Flex align="center" direction="row" justify="center">
           {!isSelectedView && imageUrl && (
             <Flex align="center" pr={16}>
-              <Avatar size={80} src={imageUrl || `${imageType}_default.svg`} type={type || ''} />
+              <Avatar size={80} src={imageUrl} type={type || ''} />
             </Flex>
           )}
 
