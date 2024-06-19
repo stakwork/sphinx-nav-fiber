@@ -60,23 +60,23 @@ export const BriefDescription: FC<Props> = ({ trend, onClose, selectTrending }) 
   }
 
   useEffect(() => {
-    const audioElement = audioRef.current;
+    const audioElement = audioRef.current
 
     const onAudioPlaybackComplete = () => {
-      setIsPlaying(false);
-      setCurrentPlayingAudio(null);
-    };
+      setIsPlaying(false)
+      setCurrentPlayingAudio(null)
+    }
 
     if (audioElement) {
-      audioElement.addEventListener('ended', onAudioPlaybackComplete);
+      audioElement.addEventListener('ended', onAudioPlaybackComplete)
     }
 
     return () => {
       if (audioElement) {
-        audioElement.removeEventListener('ended', onAudioPlaybackComplete);
+        audioElement.removeEventListener('ended', onAudioPlaybackComplete)
       }
-    };
-  }, [setCurrentPlayingAudio]);
+    }
+  }, [setCurrentPlayingAudio])
 
   const showPlayBtn =
     (currentPlayingAudio?.current?.src === trend.audio_EN && !currentPlayingAudio?.current?.paused) || isPlaying
