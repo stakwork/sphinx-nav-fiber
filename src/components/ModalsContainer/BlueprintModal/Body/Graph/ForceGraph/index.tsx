@@ -1,6 +1,6 @@
 import { useFrame } from '@react-three/fiber'
 import { forceCenter, forceCollide, forceLink, forceManyBody, forceSimulation } from 'd3-force-3d'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { usePrevious } from '~/hooks/usePrevious'
 import { SchemaLink } from '~/network/fetchSourcesData'
 import { ForceSimulation } from '~/transformers/forceSimulation'
@@ -25,9 +25,9 @@ export const ForceGraph = ({
   setIsAddEdgeNode,
 }: Props) => {
   const [simulation2d, setSimulation2d] = useState<ForceSimulation | null>(null)
-
   const prevSchemas = usePrevious<SchemaExtended[]>(schemasWithPositions)
   const prevLinks = usePrevious<SchemaLink[]>(filteredLinks)
+  const simulationRef = useRef<ForceSimulation | null>(null)
 
   useEffect(() => {
     if (!schemasWithPositions.length || !filteredLinks.length) {
@@ -37,28 +37,26 @@ export const ForceGraph = ({
     const nodes = structuredClone(schemasWithPositions)
     const links = structuredClone(filteredLinks)
 
-    if (simulation2d) {
+    if (simulationRef.current) {
+      const sim = simulationRef.current
+
       if (
         prevSchemas &&
         prevSchemas.length !== schemasWithPositions.length &&
         prevLinks &&
         prevLinks.length !== filteredLinks.length
       ) {
-        simulation2d
+        sim
           .nodes(nodes)
           .force(
             'link',
-            forceLink(links)
-              // .links(linksData)
-              .id((d: SchemaExtended) => d.ref_id),
+            forceLink(links).id((d: SchemaExtended) => d.ref_id),
           )
           .force('charge', forceManyBody())
           .force('center', forceCenter())
           .force('collide', forceCollide(NODE_RADIUS + 1))
-          .alpha(0.5)
+          .alpha(1)
           .restart()
-
-        setSimulation2d({ ...simulation2d })
       }
 
       return
@@ -67,21 +65,21 @@ export const ForceGraph = ({
     const simulation = forceSimulation(nodes)
       .force(
         'link',
-        forceLink(links)
-          // .links(linksData)
-          .id((d: SchemaExtended) => d.ref_id),
+        forceLink(links).id((d: SchemaExtended) => d.ref_id),
       )
       .force('charge', forceManyBody())
       .force('center', forceCenter())
-      .force('collide', forceCollide(0))
+      .force('collide', forceCollide(NODE_RADIUS + 1))
+      .alpha(1)
+      .restart()
 
+    simulationRef.current = simulation
     setSimulation2d(simulation)
-  }, [schemasWithPositions, simulation2d, filteredLinks, prevSchemas, prevLinks])
+  }, [schemasWithPositions, filteredLinks, prevSchemas, prevLinks])
 
   useFrame(() => {
-    if (simulation2d) {
-      // simulation2d.tick()
-      // setUpdate(!update)
+    if (simulationRef.current) {
+      simulationRef.current.tick()
     }
   })
 
