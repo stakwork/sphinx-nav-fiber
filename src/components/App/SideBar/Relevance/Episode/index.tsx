@@ -83,7 +83,7 @@ export const Episode = ({
     <EpisodeWrapper className={className} onClick={onClick}>
       {!defaultViewTypes.includes(type) ? (
         <Flex align="center" direction="row" justify="center">
-          {!isSelectedView && (
+          {!isSelectedView && imageUrl && (
             <Flex align="center" pr={16}>
               <Avatar size={80} src={imageUrl || `${imageType}_default.svg`} type={type || ''} />
             </Flex>
