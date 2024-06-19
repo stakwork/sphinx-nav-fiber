@@ -81,13 +81,17 @@ export const MergeTopicModal: FC<Props> = ({ onClose, multiTopics }) => {
         <CustomButton
           color="secondary"
           data-testid="merge-topics-button"
-          disabled={loading || isSwapped || !selectedToNode}
+          disabled={loading || !selectedToNode}
           onClick={handleSave}
           size="large"
           variant="contained"
         >
           Merge topics
-          {loading && <ClipLoader color={colors.BLUE_PRESS_STATE} size={10} />}
+          {loading && (
+            <ClipLoaderWrapper>
+              <ClipLoader color={colors.lightGray} size={12} />
+            </ClipLoaderWrapper>
+          )}
         </CustomButton>
       </FormProvider>
     </BaseModal>
@@ -97,4 +101,8 @@ export const MergeTopicModal: FC<Props> = ({ onClose, multiTopics }) => {
 const CustomButton = styled(Button)`
   width: 293px !important;
   margin: 0 0 10px auto !important;
+`
+
+const ClipLoaderWrapper = styled.span`
+  margin-top: 2px;
 `

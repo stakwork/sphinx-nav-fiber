@@ -139,12 +139,14 @@ export const Table: React.FC<TopicTableProps> = ({
                           <ClearIcon />
                         </IconButton>
                       </StyledTableCell>
-                      <StyledTableCell colSpan={3}>
+                      <StyledTableCell colSpan={12}>
                         <StatusBarSection>
                           <CheckCountBoxSection>
                             <CheckedCount>{checkedCount}</CheckedCount>
                             selected
                           </CheckCountBoxSection>
+                          <StyledTableCell className="empty" />
+
                           <MuteStatusSection onClick={handleSelectedMuteUnmute} role="button">
                             {showMuted ? (
                               <>
@@ -156,14 +158,12 @@ export const Table: React.FC<TopicTableProps> = ({
                               </>
                             )}
                           </MuteStatusSection>
+                          <StyledTableCell className="empty" />
                           <MuteStatusSection onClick={() => handlePopoverAction('mergeTopic')}>
                             <MergeIcon /> Merge
                           </MuteStatusSection>
                         </StatusBarSection>
                       </StyledTableCell>
-                      <StyledTableCell className="empty" />
-                      <StyledTableCell className="empty" />
-                      <StyledTableCell className="empty" />
                       <StyledTableCell className="empty" />
                     </TableRow>
                   </ActionStyledTableHead>
@@ -368,16 +368,3 @@ const TableInnerWrapper = styled(Flex)`
   width: 100%;
   position: relative;
 `
-
-// const MultiSelectMerge = styled.div`
-//   display: flex;
-//   align-items: center;
-//   cursor: pointer;
-//   gap: 6px;
-//   padding: 1px 6px;
-//   &:hover {
-//     background-color: rgba(255, 255, 255, 0.2);
-//     padding: 1px 6px;
-//     border-radius: 4px;
-//   }
-// `

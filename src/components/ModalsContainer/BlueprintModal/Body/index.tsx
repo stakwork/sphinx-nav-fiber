@@ -9,6 +9,7 @@ import { SchemaWithChildren } from '../types'
 import { Editor } from './Editor'
 import { Graph } from './Graph'
 import { Toolbar } from './Toolbar'
+import { AddEdgeNode } from '~/components/ModalsContainer/BlueprintModal/Body/AddEdgeNode'
 
 export type FormData = {
   type: string
@@ -22,6 +23,9 @@ export const Body = () => {
   const [selectedSchemaId, setSelectedSchemaId] = useState<string>('')
   const [isCreateNew, setIsCreateNew] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [isAddEdgeNode, setIsAddEdgeNode] = useState(false)
+
+  const [graphLoading, setGraphLoading] = useState(false)
 
   const [schemas, links, setSchemaAll, setSchemaLinks] = useSchemaStore((s) => [
     s.schemas,
@@ -79,6 +83,14 @@ export const Body = () => {
     }
   }
 
+  const onSchemaUpdate = async () => {
+    const response = await getSchemaAll()
+
+    setSchemaAll(response.schemas.filter((i) => i.ref_id && !i.is_deleted && i.ref_id))
+
+    setSchemaLinks(response.edges)
+  }
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const onSchemaDelete = (type: string) => {
     setSchemaAll(schemas.filter((i) => i.type !== type))
@@ -113,7 +125,13 @@ export const Body = () => {
       <Flex align="stretch" direction="row" grow={1}>
         <Flex ml={-20} my={-20}>
           <Toolbar
+            onAddEdgeNode={() => {
+              setIsAddEdgeNode(true)
+              setIsCreateNew(false)
+              setSelectedSchemaId('')
+            }}
             onCreateNew={() => {
+              setIsAddEdgeNode(false)
               setIsCreateNew(true)
               setSelectedSchemaId('')
             }}
@@ -122,24 +140,45 @@ export const Body = () => {
         <Flex>
           {selectedSchema || isCreateNew ? (
             <EditorWrapper>
-              <Editor
-                onDelete={onSchemaDelete}
-                onSchemaCreate={onSchemaCreate}
-                selectedSchema={selectedSchema}
-                setIsCreateNew={setIsCreateNew}
-                setSelectedSchemaId={setSelectedSchemaId}
-              />
+              <InnerEditorWrapper>
+                <Editor
+                  graphLoading={graphLoading}
+                  onDelete={onSchemaDelete}
+                  onSchemaCreate={onSchemaCreate}
+                  onSchemaUpdate={onSchemaUpdate}
+                  selectedSchema={selectedSchema}
+                  setGraphLoading={setGraphLoading}
+                  setIsCreateNew={setIsCreateNew}
+                  setSelectedSchemaId={setSelectedSchemaId}
+                />
+              </InnerEditorWrapper>
+            </EditorWrapper>
+          ) : null}
+        </Flex>
+        <Flex>
+          {isAddEdgeNode ? (
+            <EditorWrapper>
+              <InnerEditorWrapper>
+                <AddEdgeNode setIsAddEdgeNode={setIsAddEdgeNode} />
+              </InnerEditorWrapper>
             </EditorWrapper>
           ) : null}
         </Flex>
         <Wrapper direction="row" grow={1}>
           <Container>
-            <Graph
-              links={linksFiltered}
-              schemasWithPositions={schemasWithChildren}
-              selectedSchemaId={selectedSchemaId}
-              setSelectedSchemaId={setSelectedSchemaId}
-            />
+            {graphLoading ? (
+              <Flex align="center" basis="100%" grow={1} justify="center" shrink={1}>
+                <ClipLoader color={colors.white} />
+              </Flex>
+            ) : (
+              <Graph
+                links={linksFiltered}
+                schemasWithPositions={schemasWithChildren}
+                selectedSchemaId={selectedSchemaId}
+                setIsAddEdgeNode={setIsAddEdgeNode}
+                setSelectedSchemaId={setSelectedSchemaId}
+              />
+            )}
           </Container>
         </Wrapper>
       </Flex>
@@ -152,29 +191,7 @@ const Wrapper = styled(Flex)`
   justify-content: center;
   position: relative;
   overflow: hidden;
-  padding: 10px;
-  max-height: 80vh;
-
-  @media (max-width: 1440px) {
-    max-height: 85vh;
-  }
-
-  @media (max-width: 1024px) {
-    max-height: 70vh;
-  }
-`
-
-const EditorWrapper = styled(Flex)`
-  width: 100%;
-  max-width: 400px;
-  background: ${colors.BG1};
-  padding: 16px;
-  border-top-right-radius: 16px;
-  border-bottom-right-radius: 16px;
-  flex-grow: 1;
-  flex-shrink: 1;
-  min-width: 300px;
-  overflow: auto;
+  margin: calc(0px - 10px);
   max-height: calc(100vh - 20px);
 
   @media (max-width: 1440px) {
@@ -188,6 +205,37 @@ const EditorWrapper = styled(Flex)`
   @media (max-width: 924px) {
     max-height: calc(70vh - 20px);
   }
+`
+
+const EditorWrapper = styled(Flex)`
+  width: 100%;
+  max-width: 400px;
+  background: ${colors.BG1};
+  border-top-right-radius: 16px;
+  border-bottom-right-radius: 16px;
+  flex-grow: 1;
+  flex-shrink: 1;
+  min-width: 300px;
+  overflow: hidden;
+  max-height: calc(100vh - 20px);
+
+  @media (max-width: 1440px) {
+    max-height: calc(95vh - 20px);
+  }
+
+  @media (max-width: 1024px) {
+    max-height: calc(70vh - 20px);
+  }
+
+  @media (max-width: 924px) {
+    max-height: calc(70vh - 20px);
+  }
+`
+
+const InnerEditorWrapper = styled.div`
+  height: 100%;
+  overflow-y: auto;
+  padding: 16px;
 `
 
 const Container = styled(Flex)`

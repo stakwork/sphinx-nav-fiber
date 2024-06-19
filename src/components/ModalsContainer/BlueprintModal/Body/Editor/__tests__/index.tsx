@@ -8,6 +8,14 @@ import { api } from '~/network/api'
 jest.mock('~/network/api', () => ({
   api: {
     delete: jest.fn().mockResolvedValue({ status: 200 }),
+    get: jest.fn().mockResolvedValue({
+      data: {
+        schemas: [
+          { type: 'exampleType', is_deleted: false },
+          { type: 'exampleParent', is_deleted: false },
+        ],
+      },
+    }),
   },
 }))
 
@@ -16,8 +24,22 @@ describe('Editor Component - Delete Node', () => {
     jest.clearAllMocks()
   })
 
+  const mockProps = {
+    graphLoading: false,
+    onSchemaCreate: jest.fn(),
+    selectedSchema: {
+      type: 'exampleType',
+      ref_id: '123',
+      parent: 'exampleParent',
+    },
+    onDelete: jest.fn(),
+    setSelectedSchemaId: jest.fn(),
+    setIsCreateNew: jest.fn(),
+    setGraphLoading: jest.fn(),
+    onSchemaUpdate: jest.fn(),
+  }
+
   it('should display an error message and not update the UI if the delete operation fails', async () => {
-    const onDeleteMock = jest.fn()
     const mockErrorResponse = {
       status: 400,
       json: () =>
@@ -28,59 +50,66 @@ describe('Editor Component - Delete Node', () => {
 
     ;(api.delete as jest.Mock).mockRejectedValue(mockErrorResponse)
 
-    const { getByText } = render(
-      <Editor
-        onDelete={onDeleteMock}
-        onSchemaCreate={() => {
-          jest.fn()
-        }}
-        selectedSchema={{ type: 'exampleType', ref_id: '123' }}
-        setIsCreateNew={() => {
-          jest.fn()
-        }}
-        setSelectedSchemaId={() => {
-          jest.fn()
-        }}
-      />,
-    )
+    render(<Editor {...mockProps} />)
 
-    fireEvent.click(getByText('Delete'))
+    fireEvent.click(screen.getByText('Delete'))
 
     await waitFor(() => {
       expect(api.delete).toHaveBeenCalledWith('/schema/123')
       expect(screen.getByText('Cannot delete node with children')).toBeInTheDocument()
     })
 
-    expect(onDeleteMock).not.toHaveBeenCalled()
+    expect(mockProps.onDelete).not.toHaveBeenCalled()
   })
 
   it('should update the UI and not show an error message if the delete operation succeeds', async () => {
-    const onDeleteMock = jest.fn()
     ;(api.delete as jest.Mock).mockResolvedValue({ status: 200 })
 
-    const { getByText, queryByText } = render(
-      <Editor
-        onDelete={onDeleteMock}
-        onSchemaCreate={() => {
-          jest.fn()
-        }}
-        selectedSchema={{ type: 'exampleType', ref_id: '123' }}
-        setIsCreateNew={() => {
-          jest.fn()
-        }}
-        setSelectedSchemaId={() => {
-          jest.fn()
-        }}
-      />,
-    )
+    render(<Editor {...mockProps} />)
 
-    fireEvent.click(getByText('Delete'))
+    fireEvent.click(screen.getByText('Delete'))
 
     await waitFor(() => {
       expect(api.delete).toHaveBeenCalledWith('/schema/123')
-      expect(queryByText('Cannot delete node with children')).not.toBeInTheDocument()
+      expect(screen.queryByText('Cannot delete node with children')).not.toBeInTheDocument()
     })
 
-    expect(onDeleteMock).toHaveBeenCalled()
+    expect(mockProps.onDelete).toHaveBeenCalled()
+  })
+
+  it('should send a PUT request with deleted attributes marked as "delete" when editing a node', async () => {
+    const deletedAttributes = ['oldAttribute']
+    const updatedData = {
+      type: 'exampleType',
+      parent: 'exampleParent',
+      attributes: {
+        newAttribute: 'newValue',
+      },
+    }
+
+    api.put = jest.fn().mockResolvedValue({ status: 'success', ref_id: '123' })
+
+    render(<Editor {...mockProps} />)
+
+    waitFor(async () => {
+      const handleSubmit = jest.spyOn(Editor.prototype, 'handleSubmitForm')
+      // @ts-ignore
+      await handleSubmit(updatedData, true, deletedAttributes)
+
+      expect(api.put).toHaveBeenCalledWith(
+        '/schema',
+        JSON.stringify({
+          type: 'exampleType',
+          parent: 'exampleParent',
+          attributes: {
+            newAttribute: 'newValue',
+            oldAttribute: 'delete',
+          },
+        }),
+        {},
+      )
+
+      handleSubmit.mockRestore()
+    })
   })
 })

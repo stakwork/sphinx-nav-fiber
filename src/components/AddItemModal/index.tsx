@@ -3,11 +3,10 @@ import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import * as sphinx from 'sphinx-bridge'
 import { BaseModal, ModalKind } from '~/components/Modal'
 import { NODE_ADD_ERROR } from '~/constants'
-import { api } from '~/network/api'
 import { useDataStore } from '~/stores/useDataStore'
 import { useModal } from '~/stores/useModalStore'
 import { useUserStore } from '~/stores/useUserStore'
-import { NodeExtended, SubmitErrRes } from '~/types'
+import { NodeExtended } from '~/types'
 import { executeIfProd, getLSat } from '~/utils'
 import { SuccessNotify } from '../common/SuccessToast'
 import { BudgetStep } from './BudgetStep'
@@ -15,6 +14,7 @@ import { CreateConfirmation } from './CreateConfirmationStep'
 import { SetAttributesStep } from './SetAttributesStep'
 import { SourceStep } from './SourceStep'
 import { SourceTypeStep } from './SourceTypeStep'
+import { postNewNodeItem } from '~/network/addItemRequest/addItemRequests'
 
 export type FormData = {
   typeName: string
@@ -30,103 +30,47 @@ const handleSubmitForm = async (
   setBudget: (value: number | null) => void,
   onAddNewData: (value: FieldValues, id: string) => void,
 ): Promise<void> => {
-  if (data.nodeType === 'Create custom type') {
-    const body: { [index: string]: unknown } = {}
-
-    body.type = data.type
-
-    try {
-      const res: SubmitErrRes = await api.post(`/${'schema'}`, JSON.stringify(data), {})
-
-      if (res.error) {
-        const { message } = res.error
-
-        throw new Error(message)
-      }
-
-      onAddNewData(data, res?.data?.ref_id)
-      // eslint-disable-next-line no-restricted-globals
-      close()
-
-      // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-    } catch (err: any) {
-      let errorMessage = NODE_ADD_ERROR
-
-      if (err.status === 400) {
-        const error = await err.json()
-
-        errorMessage = error.errorCode || error?.status || NODE_ADD_ERROR
-      } else if (err instanceof Error) {
-        errorMessage = err.message
-      }
-
-      throw new Error(errorMessage)
-    }
-  } else {
-    const endPoint = 'node'
-
-    const { nodeType, typeName, ...nodeData } = data
-
-    const body: { [index: string]: unknown } = {
-      node_data: { ...nodeData },
-      node_type: nodeType,
-      name: typeName,
+  const filteredNodeData = Object.entries(data).reduce((acc, [key, value]) => {
+    if (value !== null && value !== undefined && value !== '') {
+      acc[key] = value
     }
 
-    if (data.nodeType === 'Image') {
-      body.node_data = {
-        ...data.node_data,
-        source_link: data.sourceLink,
-      }
-    }
+    return acc
+  }, {} as FieldValues)
 
-    let lsatToken = ''
+  const { nodeType, typeName, sourceLink, ...nodeData } = filteredNodeData
 
-    // skipping this for end to end test because it requires a sphinx-relay to be connected
+  let lsatToken = ''
+
+  if (nodeType !== 'Create custom type') {
     await executeIfProd(async () => {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       const enable = await sphinx.enable()
 
-      body.pubkey = enable?.pubkey
-
+      nodeData.pubkey = enable?.pubkey
       lsatToken = await getLSat()
     })
+  }
 
-    try {
-      const res: SubmitErrRes = await api.post(`/${endPoint}`, JSON.stringify(body), {
-        Authorization: lsatToken,
-      })
+  try {
+    const res = await postNewNodeItem(nodeType, nodeData, sourceLink, typeName, lsatToken)
 
-      if (res.error) {
-        const { message } = res.error
+    onAddNewData(data, res?.data?.ref_id)
 
-        throw new Error(message)
-      }
+    // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+  } catch (err: any) {
+    let errorMessage = NODE_ADD_ERROR
 
-      onAddNewData(data, res?.data?.ref_id)
+    if (err.status === 400) {
+      const errorRes = await err.json()
 
-      // eslint-disable-next-line no-restricted-globals
-      close()
-
-      // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-    } catch (err: any) {
-      let errorMessage = NODE_ADD_ERROR
-
-      if (err.status === 400) {
-        try {
-          const errorRes = await err.json()
-
-          errorMessage = errorRes.message || errorRes.errorCode || errorRes?.status || NODE_ADD_ERROR
-        } catch (parseError) {
-          errorMessage = NODE_ADD_ERROR
-        }
-      } else if (err instanceof Error) {
-        errorMessage = err.message
-      }
-
-      throw new Error(errorMessage)
+      errorMessage = errorRes.message || errorRes.errorCode || errorRes?.status || NODE_ADD_ERROR
+    } else if (err instanceof Error) {
+      errorMessage = err.message
     }
+
+    throw new Error(errorMessage)
   }
 }
 
@@ -171,10 +115,18 @@ export const AddItemModal = () => {
     const newId = id || `new-id-${Math.random()}`
     const newType = data.nodeType.toLocaleLowerCase()
 
+    const filteredData = Object.entries(data).reduce((acc, [key, value]) => {
+      if (value !== null && value !== undefined && value !== '') {
+        acc[key] = value
+      }
+
+      return acc
+    }, {} as FieldValues)
+
     const node: NodeExtended = {
-      name: data.typeName,
+      name: data.typeName ?? data.name,
       type: newType,
-      label: data.typeName,
+      label: data.typeName ?? data.name,
       node_type: newType,
       id: newId,
       ref_id: newId,
@@ -183,9 +135,9 @@ export const AddItemModal = () => {
       z: Math.random(),
       date: parseInt((new Date().getTime() / 1000).toFixed(0), 10),
       weight: 4,
-      ...(data.sourceLink ? { source_link: data.sourceLink } : {}),
+      ...(data.source_link ? { source_link: data.source_link } : {}),
       properties: {
-        ...data,
+        ...filteredData,
       },
     }
 

@@ -95,7 +95,7 @@ export const SetAttributesStep: FC<Props> = ({ handleSelectType, skipToStep, nod
       <StyledWrapper>
         {loading ? (
           <Flex style={{ margin: 'auto' }}>
-            <ClipLoader color={colors.SECONDARY_BLUE} />
+            <ClipLoader color={colors.lightGray} />
           </Flex>
         ) : (
           <Flex className="input__wrapper">

@@ -2,6 +2,7 @@ import styled from 'styled-components'
 import AddContentIcon from '~/components/Icons/AddContentIcon'
 import AddSourceIcon from '~/components/Icons/AddSourceIcon'
 import CommunitiesIcon from '~/components/Icons/CommunitiesIcon'
+import FeedbackIcon from '~/components/Icons/FeedbackIcon'
 import SettingsIcon from '~/components/Icons/SettingsIcon'
 import SourcesTableIcon from '~/components/Icons/SourcesTableIcon'
 import { Flex } from '~/components/common/Flex'
@@ -10,6 +11,7 @@ import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
 import { useModal } from '~/stores/useModalStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { colors } from '~/utils/colors'
+import { isSphinx } from '~/utils/isSphinx'
 
 export const MainToolbar = () => {
   const { open: openSourcesModal } = useModal('sourcesTable')
@@ -17,10 +19,13 @@ export const MainToolbar = () => {
   const { open: openContentAddModal } = useModal('addContent')
   const { open: openSettingsModal } = useModal('settings')
   const { open: openBlueprintModal } = useModal('blueprintGraph')
+  const { open: openFeedbackModal } = useModal('feedback')
 
   const customSchemaFeatureFlag = useFeatureFlagStore((s) => s.customSchemaFeatureFlag)
+  const userFeedbackFeatureFlag = useFeatureFlagStore((s) => s.userFeedbackFeatureFlag)
 
   const [isAdmin] = useUserStore((s) => [s.isAdmin])
+  const sphinxEnabled = isSphinx()
 
   return (
     <Wrapper>
@@ -61,6 +66,14 @@ export const MainToolbar = () => {
         </IconWrapper>
         <Text>Settings</Text>
       </ActionButton>
+      {userFeedbackFeatureFlag && sphinxEnabled ? (
+        <FeedbackButton data-testid="feedback-modal" onClick={openFeedbackModal}>
+          <IconWrapper>
+            <FeedbackIcon />
+          </IconWrapper>
+          <Text>Send Feedback</Text>
+        </FeedbackButton>
+      ) : null}
     </Wrapper>
   )
 }
@@ -74,6 +87,7 @@ const Wrapper = styled(Flex).attrs({
   z-index: 31;
   transition: opacity 1s;
   background: ${colors.BG2};
+  position: relative;
 `
 
 const LogoButton = styled(Flex)`
@@ -165,6 +179,13 @@ const ActionButton = styled(Flex).attrs({
     justify-content: center;
     border: none;
   }
+`
+
+const FeedbackButton = styled(ActionButton)`
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
 `
 
 const IconWrapper = styled(Flex)`

@@ -87,6 +87,7 @@ export type Node = {
   verified?: boolean
   unique_id?: string
   properties?: { [key: string]: never | undefined }
+  media_url?: string
 }
 
 export type DataSeriesNode = {
@@ -205,11 +206,6 @@ export type SubmitErrRes = {
   data: {
     ref_id: string
   }
-}
-
-export type AuthRequest = {
-  message: string
-  signature: string
 }
 
 export type IsAdminResponse = {

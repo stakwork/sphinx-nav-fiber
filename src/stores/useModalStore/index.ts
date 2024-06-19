@@ -19,6 +19,7 @@ export type AvailableModals =
   | 'addEdgeToNode'
   | 'blueprintGraph'
   | 'changeNodeType'
+  | 'feedback'
 
 type ModalStore = {
   currentModals: Record<AvailableModals, boolean>
@@ -47,6 +48,7 @@ const defaultData = {
     addEdgeToNode: false,
     blueprintGraph: false,
     changeNodeType: false,
+    feedback: false,
   },
 }
 
