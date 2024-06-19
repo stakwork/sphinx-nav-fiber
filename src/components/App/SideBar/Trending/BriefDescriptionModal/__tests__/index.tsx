@@ -1,3 +1,5 @@
+/* eslint-disable padding-line-between-statements */
+import '@testing-library/jest-dom'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import React from 'react'
 import { BriefDescription } from '..'
@@ -116,5 +118,21 @@ describe('BriefDescription Component Tests', () => {
     setTimeout(() => {
       expect(onCloseMock).toHaveBeenCalled()
     }, 0)
+  })
+
+  it('does not close the modal on Command+Control+3 or Command+Control+4', () => {
+    const { getByTestId } = render(<BriefDescription {...props} />)
+
+    waitFor(() => {
+      const modal = getByTestId('brief-description-modal')
+
+      // With Command+Control+3
+      fireEvent.keyDown(window, { key: '3', ctrlKey: true, metaKey: true })
+      expect(modal).toBeInTheDocument()
+
+      // With Command+Control+4
+      fireEvent.keyDown(window, { key: '4', ctrlKey: true, metaKey: true })
+      expect(modal).toBeInTheDocument()
+    })
   })
 })
