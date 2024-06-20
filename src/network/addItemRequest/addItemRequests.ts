@@ -1,5 +1,5 @@
-import { api } from '../api'
 import { SubmitErrRes } from '~/types'
+import { api } from '../api'
 
 export const postNewItem = async (
   endpoint: string,
@@ -19,6 +19,7 @@ export const postNewNodeItem = async (
   sourceLink: string | undefined,
   typeName: string,
   lsatToken: string,
+  pubkey: string,
 ): Promise<SubmitErrRes> => {
   const endpoint = nodeType === 'Create custom type' ? 'schema' : 'node'
 
@@ -26,6 +27,7 @@ export const postNewNodeItem = async (
     node_data: { ...nodeData, ...(nodeType === 'Image' && { source_link: sourceLink }) },
     node_type: nodeType,
     name: typeName,
+    pubkey,
   }
 
   return postNewItem(endpoint, body, lsatToken)
