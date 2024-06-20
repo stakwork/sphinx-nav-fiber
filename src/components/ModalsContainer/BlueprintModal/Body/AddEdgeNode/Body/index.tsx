@@ -5,7 +5,7 @@ import { ClipLoader } from 'react-spinners'
 import { colors } from '~/utils/colors'
 import { TitleEditor } from '../Title'
 import styled from 'styled-components'
-import { postBluePrintType } from '~/network/fetchSourcesData'
+import { getNodeSchemaTypes, postBluePrintType } from '~/network/fetchSourcesData'
 
 export type FormData = {
   type: string
@@ -42,7 +42,21 @@ export const Body = ({ onCancel }: Props) => {
     }
 
     try {
-      await postBluePrintType(edgeData)
+      if (selectedFromNode === 'all' || selectedToNode === 'all') {
+        const nodes = await getNodeSchemaTypes()
+
+        const nodeTypes = nodes.schemas
+          .filter((schema) => !schema.is_deleted && schema.type)
+          .map((schema) => schema.type)
+
+        if (selectedFromNode === 'all') {
+          await Promise.all(nodeTypes.map((source) => postBluePrintType({ ...edgeData, source })))
+        } else if (selectedToNode === 'all') {
+          await Promise.all(nodeTypes.map((target) => postBluePrintType({ ...edgeData, target })))
+        }
+      } else {
+        await postBluePrintType(edgeData)
+      }
     } catch (error) {
       console.warn('API Error:', error)
     } finally {
@@ -57,6 +71,8 @@ export const Body = ({ onCancel }: Props) => {
     <FormProvider {...form}>
       <form id="add-type-form" onSubmit={onSubmit}>
         <TitleEditor
+          selectedFromNode={selectedFromNode}
+          selectedToNode={selectedToNode}
           selectedType={selectedType}
           setSelectedFromNode={setSelectedFromNode}
           setSelectedToNode={setSelectedToNode}
