@@ -130,7 +130,7 @@ export const Node = memo(({ node, setSelectedNode, onSimulationUpdate, isSelecte
         color="#000"
         fontSize={2}
         maxWidth={NODE_RADIUS * 2}
-        textAlign="center"
+        textAlign="left"
       >
         {truncatedText}
       </Text>
