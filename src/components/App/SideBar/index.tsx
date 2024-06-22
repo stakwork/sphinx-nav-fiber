@@ -38,7 +38,13 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
 
   const filteredNodes = useFilteredNodes()
 
-  const { setSidebarOpen, currentSearch: searchTerm, clearSearch, searchFormValue } = useAppStore((s) => s)
+  const {
+    setSidebarOpen,
+    currentSearch: searchTerm,
+    clearSearch,
+    searchFormValue,
+    setSearchFormValue,
+  } = useAppStore((s) => s)
   const [trendingTopicsFeatureFlag] = useFeatureFlagStore((s) => [s.trendingTopicsFeatureFlag])
 
   const { setValue, watch } = useFormContext()
@@ -122,6 +128,7 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
           onClick={() => {
             setSidebarOpen(false)
             setTeachMe(false)
+            setSearchFormValue(searchTerm || '')
           }}
         >
           <ChevronLeftIcon />
