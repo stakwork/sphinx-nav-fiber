@@ -3,6 +3,7 @@ import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import * as sphinx from 'sphinx-bridge'
 import { BaseModal, ModalKind } from '~/components/Modal'
 import { NODE_ADD_ERROR } from '~/constants'
+import { postNewNodeItem } from '~/network/addItemRequest/addItemRequests'
 import { useDataStore } from '~/stores/useDataStore'
 import { useModal } from '~/stores/useModalStore'
 import { useUserStore } from '~/stores/useUserStore'
@@ -14,7 +15,6 @@ import { CreateConfirmation } from './CreateConfirmationStep'
 import { SetAttributesStep } from './SetAttributesStep'
 import { SourceStep } from './SourceStep'
 import { SourceTypeStep } from './SourceTypeStep'
-import { postNewNodeItem } from '~/network/addItemRequest/addItemRequests'
 
 export type FormData = {
   typeName: string
@@ -41,6 +41,7 @@ const handleSubmitForm = async (
   const { nodeType, typeName, sourceLink, ...nodeData } = filteredNodeData
 
   let lsatToken = ''
+  let pubkey = ''
 
   if (nodeType !== 'Create custom type') {
     await executeIfProd(async () => {
@@ -48,13 +49,13 @@ const handleSubmitForm = async (
       // @ts-ignore
       const enable = await sphinx.enable()
 
-      nodeData.pubkey = enable?.pubkey
+      pubkey = enable?.pubkey
       lsatToken = await getLSat()
     })
   }
 
   try {
-    const res = await postNewNodeItem(nodeType, nodeData, sourceLink, typeName, lsatToken)
+    const res = await postNewNodeItem(nodeType, nodeData, sourceLink, typeName, lsatToken, pubkey)
 
     onAddNewData(data, res?.data?.ref_id)
 

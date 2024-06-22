@@ -99,7 +99,7 @@ export const Node = memo(({ node, setSelectedNode, onSimulationUpdate, isSelecte
     }
   }
 
-  const truncatedText = truncateText(node.type || '', NODE_RADIUS - 1)
+  const truncatedText = truncateText(node.type || '', NODE_RADIUS)
 
   const handleMouseOver = () => {
     setShowTooltip(true)
@@ -124,7 +124,14 @@ export const Node = memo(({ node, setSelectedNode, onSimulationUpdate, isSelecte
         <meshStandardMaterial attach="material" color={color} />
       </Circle>
 
-      <Text {...fontProps} color="#000" fontSize={2} maxWidth={NODE_RADIUS * 2} textAlign="center">
+      <Text
+        {...fontProps}
+        clipRect={[-NODE_RADIUS, -NODE_RADIUS, NODE_RADIUS, NODE_RADIUS]}
+        color="#000"
+        fontSize={2}
+        maxWidth={NODE_RADIUS * 2}
+        textAlign="left"
+      >
         {truncatedText}
       </Text>
 
