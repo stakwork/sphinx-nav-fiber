@@ -51,6 +51,7 @@ export const ToNode: FC<Props> = ({ onSelect, dataTestId }) => {
                   value: schema.type,
                 },
           )
+          .sort((a, b) => a.label.localeCompare(b.label))
 
         setOptions(schemaOptions)
       } catch (error) {

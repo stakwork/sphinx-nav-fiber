@@ -97,9 +97,9 @@ const fetchAndSetOptions = async (
     const data = await getNodeSchemaTypes()
     const schemas = data.schemas || []
 
-    const filteredSchemas = schemas.filter(
-      (schema) => !schema.is_deleted && schema.type && (!filterFunc || filterFunc(schema)),
-    )
+    const filteredSchemas = schemas
+      .filter((schema) => !schema.is_deleted && schema.type && (!filterFunc || filterFunc(schema)))
+      .sort((a, b) => a.type.localeCompare(b.type))
 
     const options = filteredSchemas.map((schema) =>
       schema.type === 'thing'
