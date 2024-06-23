@@ -12,7 +12,7 @@ import { colors } from '~/utils/colors'
 
 export const SelectWithPopover = () => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null)
-  const { sidebarFilter, setSidebarFilter, sidebarFilterCounts } = useDataStore((s) => s)
+  const { sidebarFilter, setSidebarFilter, sidebarFilterCounts, setSelectedNode } = useDataStore((s) => s)
   const currentFilter = sidebarFilter === 'undefined' ? '' : sidebarFilter.toLowerCase()
   const currentFilterCount = sidebarFilterCounts.find((f) => f.name === currentFilter)?.count || 0
 
@@ -34,6 +34,7 @@ export const SelectWithPopover = () => {
 
   const handleSelectChange = (option: string) => {
     setSidebarFilter(option)
+    setSelectedNode(null)
     handleClosePopover()
   }
 
