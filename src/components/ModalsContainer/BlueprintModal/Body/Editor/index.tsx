@@ -53,10 +53,8 @@ const handleSubmitForm = async (
 
     const requestData = {
       ...withoutAttributes,
-      attributes: {
-        ...convertAttributes(attributes),
-        ...deletedAttributes.reduce<{ [key: string]: string }>((acc, key) => ({ ...acc, [key]: 'delete' }), {}),
-      },
+      attributes: convertAttributes(attributes),
+      ...deletedAttributes.reduce<{ [key: string]: string }>((acc, key) => ({ ...acc, [key]: 'delete' }), {}),
     }
 
     let res: { status: string; ref_id: string }
