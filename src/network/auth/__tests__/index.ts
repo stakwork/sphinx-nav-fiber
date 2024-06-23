@@ -6,16 +6,11 @@ describe('test extracting uuid and tribe host', () => {
   it('should make a GET request to the correct endpoint with the correct query parameters', () => {
     const mockApiGet = jest.spyOn(api, 'get')
 
-    const authRequest = {
-      message: 'test message',
-      signature: 'test signature',
-    }
-
-    const expectedEndpoint = `/isAdmin?msg=${authRequest.message}&sig=${authRequest.signature}`
+    const expectedEndpoint = `/isAdmin`
 
     mockApiGet.mockReturnValue(Promise.resolve({ isAdmin: false }))
 
-    getIsAdmin(authRequest)
+    getIsAdmin()
 
     expect(mockApiGet).toHaveBeenCalledWith(expectedEndpoint)
   })

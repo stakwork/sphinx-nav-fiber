@@ -80,9 +80,3 @@ export async function getSignedMessageFromRelay(): Promise<{ message: string; si
 function storeSignatureInLocalStorage(sig: { message: string; signature: string }) {
   localStorage.setItem('signature', JSON.stringify({ ...sig }))
 }
-
-export async function generateAuthQueryParam() {
-  const res = await getSignedMessageFromRelay()
-
-  return `sig=${res.signature}&msg=${res.message}`
-}

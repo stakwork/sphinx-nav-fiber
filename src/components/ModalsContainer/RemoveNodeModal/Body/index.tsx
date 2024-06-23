@@ -134,7 +134,11 @@ export const Body = () => {
             variant="contained"
           >
             Delete
-            {loading && <ClipLoader color={colors.BLUE_PRESS_STATE} size={10} />}
+            {loading && (
+              <ClipLoaderWrapper>
+                <ClipLoader color={colors.lightGray} size={12} />
+              </ClipLoaderWrapper>
+            )}
           </DeleteButton>
         </Flex>
       )}
@@ -172,4 +176,8 @@ const DeleteButton = styled(Button)`
       background-color: ${colors.primaryRed};
     }
   }
+`
+
+const ClipLoaderWrapper = styled.span`
+  margin-top: 2px;
 `

@@ -7,6 +7,11 @@ import { MainToolbar } from '..'
 import { ThemeProvider } from '@mui/material'
 import { appTheme } from '../../Providers'
 import { ThemeProvider as StyleThemeProvider } from 'styled-components'
+import { isSphinx } from '../../../../utils/isSphinx'
+
+jest.mock('~/utils/isSphinx', () => ({
+  isSphinx: jest.fn(),
+}))
 
 jest.mock('~/stores/useModalStore', () => ({
   useModal: jest.fn(),
@@ -100,9 +105,12 @@ describe('MainToolbar Component Tests', () => {
     expect(openMock).toHaveBeenCalled()
   })
 
-  it('should render feedback button when userFeedbackFeatureFlag is true', () => {
+  it('should render feedback button only if userFeedbackFeatureFlag is true and isSphinx returns true', () => {
     ;(useFeatureFlagStore as unknown as jest.Mock).mockReturnValue({
       userFeedbackFeatureFlag: true,
+    })
+    ;(isSphinx as unknown as jest.Mock).mockReturnValue({
+      sphinxEnabled: true,
     })
 
     render(
@@ -116,9 +124,12 @@ describe('MainToolbar Component Tests', () => {
     expect(feedbackButton).toBeInTheDocument()
   })
 
-  it('should not render feedback button when userFeedbackFeatureFlag is false', () => {
+  it('should not render feedback button if userFeedbackFeatureFlag is true but isSphinx returns false', () => {
     ;(useFeatureFlagStore as unknown as jest.Mock).mockReturnValue({
       userFeedbackFeatureFlag: false,
+    })
+    ;(isSphinx as unknown as jest.Mock).mockReturnValue({
+      sphinxEnabled: false,
     })
 
     render(

@@ -48,7 +48,7 @@ const handleSubmitForm = async (
     body.media_url = data.source
     body.content_type = 'audio_video'
   } else if (sourceType === TWITTER_SOURCE) {
-    const regex = /(?:https?:\/\/)?(?:www\.)?twitter\.com\/\w+\/status\/\d+/s
+    const regex = /(?:https?:\/\/)?(?:www\.)?(twitter|x)\.com\/\w+\/status\/(\d+)/s
 
     if (regex.test(data.source)) {
       const idRegex = /\/status\/(\d+)/

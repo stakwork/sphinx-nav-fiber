@@ -1,6 +1,7 @@
 import { OrbitControls } from '@react-three/drei'
 import { Canvas } from '@react-three/fiber'
 import { Perf } from 'r3f-perf'
+import { useEffect } from 'react'
 import { Color } from 'three'
 import { Lights } from '~/components/Universe/Lights'
 import { isDevelopment } from '~/constants'
@@ -28,7 +29,7 @@ export const Graph = ({
   <Canvas camera={{ zoom: 1, position: [0, 0, 200] }} id="schema-canvas" linear orthographic>
     <color args={[bgColor.r, bgColor.g, bgColor.b]} attach="background" />
     {isDevelopment && <Perf position="right-bottom" />}
-    <OrbitControls enableRotate={false} enableZoom />
+    <Controls />
     <Lights />
     <ForceGraph
       filteredLinks={links}
@@ -39,3 +40,51 @@ export const Graph = ({
     />
   </Canvas>
 )
+
+const Controls = () => {
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (['Meta', 'Alt'].includes(e.key)) {
+        document.body.style.cursor = 'grab'
+      }
+    }
+
+    const handleKeyUp = (e: KeyboardEvent) => {
+      if (['Meta', 'Alt'].includes(e.key)) {
+        document.body.style.cursor = 'default'
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown, false)
+    window.addEventListener('keyup', handleKeyUp, false)
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown, false)
+      window.removeEventListener('keyup', handleKeyUp, false)
+    }
+  }, [])
+
+  const handleStart = () => {
+    document.body.style.cursor = 'grabbing'
+  }
+
+  const handleDragEnd = () => {
+    document.body.style.cursor = 'default'
+  }
+
+  return (
+    <OrbitControls
+      dampingFactor={1}
+      enableDamping
+      enablePan
+      enableRotate={false}
+      enableZoom
+      maxZoom={20}
+      minZoom={1}
+      onEnd={handleDragEnd}
+      onStart={handleStart}
+      zoomSpeed={1.5}
+      zoomToCursor
+    />
+  )
+}

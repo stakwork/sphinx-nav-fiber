@@ -47,6 +47,10 @@ export const Node = memo(({ node, setSelectedNode, onSimulationUpdate, isSelecte
   const { size, camera } = useThree()
 
   const bind = useDrag((args) => {
+    if (node.type === 'Thing') {
+      return
+    }
+
     const {
       xy: [x, y],
       down,
@@ -89,7 +93,10 @@ export const Node = memo(({ node, setSelectedNode, onSimulationUpdate, isSelecte
 
   const handleClick = (e: { stopPropagation: () => void }) => {
     e.stopPropagation()
-    setSelectedNode()
+
+    if (node.type !== 'Thing') {
+      setSelectedNode()
+    }
   }
 
   const truncatedText = truncateText(node.type || '', NODE_RADIUS)
@@ -123,7 +130,7 @@ export const Node = memo(({ node, setSelectedNode, onSimulationUpdate, isSelecte
         color="#000"
         fontSize={2}
         maxWidth={NODE_RADIUS * 2}
-        textAlign="center"
+        textAlign="left"
       >
         {truncatedText}
       </Text>

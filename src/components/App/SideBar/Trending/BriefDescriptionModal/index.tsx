@@ -61,28 +61,35 @@ export const BriefDescription: FC<Props> = ({ trend, onClose, selectTrending }) 
 
   useEffect(() => {
     const audioElement = audioRef.current
-    const onAudioPlaybackComplete = () => setIsPlaying(false)
+
+    const onAudioPlaybackComplete = () => {
+      setIsPlaying(false)
+      setCurrentPlayingAudio(null)
+    }
 
     if (audioElement) {
       audioElement.addEventListener('ended', onAudioPlaybackComplete)
     }
 
-    window.addEventListener('keydown', handleClose)
-
     return () => {
       if (audioElement) {
         audioElement.removeEventListener('ended', onAudioPlaybackComplete)
       }
-
-      window.removeEventListener('keydown', handleClose)
     }
-  }, [handleClose])
+  }, [setCurrentPlayingAudio])
 
   const showPlayBtn =
     (currentPlayingAudio?.current?.src === trend.audio_EN && !currentPlayingAudio?.current?.paused) || isPlaying
 
   return (
-    <BaseModal id="briefDescription" kind="regular" noWrap onClose={handleClose} preventOutsideClose>
+    <BaseModal
+      data-testid="brief-description-modal"
+      id="briefDescription"
+      kind="regular"
+      noWrap
+      onClose={handleClose}
+      preventOutsideClose
+    >
       {trend.audio_EN ? (
         <>
           <StyledHeader>

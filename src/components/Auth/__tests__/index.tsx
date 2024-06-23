@@ -234,6 +234,6 @@ describe('Auth Component', () => {
     )
 
     await waitFor(() => expect(setPubKey).toHaveBeenCalledWith(''))
-    await waitFor(() => expect(setIsAuthenticated).not.toHaveBeenCalledWith(true))
+    await waitFor(() => expect(setIsAuthenticated).toHaveBeenCalledWith(true))
   })
 })

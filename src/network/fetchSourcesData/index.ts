@@ -8,7 +8,6 @@ import {
   RadarRequest,
   SubmitErrRes,
 } from '~/types'
-import { getSignedMessageFromRelay } from '~/utils'
 import { api } from '../api'
 
 type TradarParams = {
@@ -185,18 +184,14 @@ export const getSchemaAll = async () => {
 export const getNodeContent = async (queryParams: ViewContentParams) => {
   const queryString = new URLSearchParams({ ...queryParams }).toString()
 
-  const signedMessage = await getSignedMessageFromRelay()
-
-  const url = `/node/content?${queryString}&msg=${signedMessage.message}&sig=${signedMessage.signature}`
+  const url = `/node/content?${queryString}`
   const response = await api.get<NodeContentResponse>(url)
 
   return response
 }
 
 export const getTotalProcessing = async () => {
-  const signedMessage = await getSignedMessageFromRelay()
-
-  const url = `/node/content?msg=${signedMessage.message}&sig=${signedMessage.signature}`
+  const url = `/node/content`
   const response = await api.get<ProcessingResponse>(url)
 
   return response

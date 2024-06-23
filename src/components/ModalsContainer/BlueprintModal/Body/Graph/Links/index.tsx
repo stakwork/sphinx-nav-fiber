@@ -3,7 +3,7 @@ import { QuadraticBezierLine, Text } from '@react-three/drei'
 import { useFrame, useThree } from '@react-three/fiber'
 import { useRef } from 'react'
 import { Group, Vector3 } from 'three'
-import { getLoopControlPoints } from '~/components/ModalsContainer/BlueprintModal/Body/Editor/utils'
+import { getLoopControlPoints, truncateText } from '~/components/ModalsContainer/BlueprintModal/Body/Editor/utils'
 import { SchemaLink } from '~/network/fetchSourcesData'
 import { truncateText } from '~/utils/truncateText'
 import { SchemaExtended } from '../../../types'
@@ -17,6 +17,7 @@ type Props = {
 const CONE_RADIUS = 2
 const CONE_HEIGHT = 2
 const MAX_TEXT_LENGTH = 10
+const OFFSET_DISTANCE = 10
 
 const getPointOnLineAtDistance = (start: Vector3, end: Vector3, r: number): Vector3 => {
   const direction = new Vector3().subVectors(end, start)
@@ -24,6 +25,15 @@ const getPointOnLineAtDistance = (start: Vector3, end: Vector3, r: number): Vect
   const displacement = unitDirection.multiplyScalar(r)
 
   return new Vector3().addVectors(start, displacement)
+}
+
+const getCurvedControlPoint = (start: Vector3, end: Vector3, offsetIndex: number, totalLinks: number): Vector3 => {
+  const middle = new Vector3().lerpVectors(start, end, 0.5)
+  const direction = new Vector3().subVectors(end, start).normalize()
+  const perpendicular = new Vector3(-direction.y, direction.x, direction.z).normalize()
+  const offset = (offsetIndex - totalLinks / 2) * OFFSET_DISTANCE
+
+  return new Vector3().addVectors(middle, perpendicular.multiplyScalar(offset))
 }
 
 export const Lines = ({ links, nodes }: Props) => {
@@ -66,6 +76,19 @@ export const Lines = ({ links, nodes }: Props) => {
         // eslint-disable-next-line  @typescript-eslint/no-explicit-any
         const text = child.children[3] as any
 
+        const totalLinksBetweenNodes = links.filter(
+          (l) =>
+            (l.source === link.source && l.target === link.target) ||
+            (l.source === link.target && l.target === link.source),
+        ).length
+
+        const offsetIndex = links.filter(
+          (l, i) =>
+            i < index &&
+            ((l.source === link.source && l.target === link.target) ||
+              (l.source === link.target && l.target === link.source)),
+        ).length
+
         if (nodeStart?.ref_id === nodeEnd?.ref_id) {
           const [controlPoint1, endPoint, controlPoint2] = getLoopControlPoints(startVector)
 
@@ -83,6 +106,14 @@ export const Lines = ({ links, nodes }: Props) => {
           endPosition.copy(getPointOnLineAtDistance(endVector, startVector, NODE_RADIUS + 0.5))
           middlePoint.lerpVectors(startPosition, endPosition, 0.5)
 
+          if (totalLinksBetweenNodes > 1) {
+            middlePoint.copy(getCurvedControlPoint(startPosition, endPosition, offsetIndex, totalLinksBetweenNodes))
+          } else {
+            middlePoint.lerpVectors(startPosition, endPosition, 0.5)
+          }
+
+          // line.setPoints?.(startPosition, endPosition, totalLinksBetweenNodes > 1 ? middlePoint : undefined)
+
           const textWidth = 30
 
           textOffset
@@ -93,8 +124,11 @@ export const Lines = ({ links, nodes }: Props) => {
           firstLineEnd.subVectors(middlePoint, textOffset)
           secondLineStart.addVectors(middlePoint, textOffset)
 
-          lineStart.setPoints?.(startPosition, firstLineEnd, middlePoint)
-          lineEnd.setPoints?.(secondLineStart, endPosition, middlePoint)
+          const midpointStart = new Vector3().addVectors(startPosition, firstLineEnd).multiplyScalar(0.5)
+          const midpointEnd = new Vector3().addVectors(secondLineStart, endPosition).multiplyScalar(0.5)
+
+          lineStart.setPoints?.(startPosition, firstLineEnd, midpointStart)
+          lineEnd.setPoints?.(secondLineStart, endPosition, midpointEnd)
 
           arrow.position.set(endPosition.x, endPosition.y, endPosition.z)
           arrow.lookAt(startPosition)
@@ -130,8 +164,8 @@ export const Lines = ({ links, nodes }: Props) => {
     <group ref={group}>
       {links.map((link) => (
         <group key={link.ref_id}>
-          <QuadraticBezierLine color="white" end={[0, 0, 0]} lineWidth={2} start={[0, 0, 0]} />
-          <QuadraticBezierLine color="white" end={[0, 0, 0]} lineWidth={2} start={[0, 0, 0]} />
+          <QuadraticBezierLine color="white" end={[0, 0, 0]} lineWidth={1} start={[0, 0, 0]} />
+          <QuadraticBezierLine color="white" end={[0, 0, 0]} lineWidth={1} start={[0, 0, 0]} />
           <mesh position={new Vector3(0, 0, 0)}>
             <coneGeometry args={[CONE_RADIUS, CONE_HEIGHT, 32]} />
             <meshBasicMaterial color="white" />

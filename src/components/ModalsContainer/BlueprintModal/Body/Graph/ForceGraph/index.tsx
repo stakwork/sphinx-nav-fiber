@@ -49,12 +49,12 @@ export const ForceGraph = ({
           .force(
             'link',
             forceLink(links)
-              // .links(linksData)
-              .id((d: SchemaExtended) => d.ref_id),
+              .id((d: SchemaExtended) => d.ref_id)
+              .distance(100),
           )
           .force('charge', forceManyBody())
           .force('center', forceCenter())
-          .force('collide', forceCollide(NODE_RADIUS + 1))
+          .force('collide', forceCollide(NODE_RADIUS + 5))
           .alpha(0.5)
           .restart()
 
@@ -68,12 +68,12 @@ export const ForceGraph = ({
       .force(
         'link',
         forceLink(links)
-          // .links(linksData)
-          .id((d: SchemaExtended) => d.ref_id),
+          .id((d: SchemaExtended) => d.ref_id)
+          .distance(120),
       )
-      .force('charge', forceManyBody())
+      .force('charge', forceManyBody().strength(-100))
       .force('center', forceCenter())
-      .force('collide', forceCollide(0))
+      .force('collide', forceCollide(NODE_RADIUS + 5))
 
     setSimulation2d(simulation)
   }, [schemasWithPositions, simulation2d, filteredLinks, prevSchemas, prevLinks])
