@@ -15,7 +15,7 @@ export const Default = () => {
   }
 
   const hasImage = !!selectedNode.image_url
-  const hasMedia = !!selectedNode.media_url
+  const hasMedia = !!selectedNode.media_url || !!selectedNode.link
 
   const customKeys = selectedNode.properties || {}
 
@@ -43,7 +43,7 @@ export const Default = () => {
 
         <StyledWrapper>
           {Object.entries(customKeys)
-            .filter(([key]) => key !== 'media_url')
+            .filter(([key]) => key !== 'media_url' && key !== 'link')
             .map(([key, value]) => (
               <NodeDetail key={key} label={key} value={value} />
             ))}
