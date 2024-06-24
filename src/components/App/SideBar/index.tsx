@@ -45,6 +45,7 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
 
   const { setSidebarOpen, currentSearch: searchTerm, clearSearch, searchFormValue } = useAppStore((s) => s)
   const [trendingTopicsFeatureFlag] = useFeatureFlagStore((s) => [s.trendingTopicsFeatureFlag])
+  const [searchFilteringFeatureFlag] = useFeatureFlagStore((s) => [s.searchFilteringFeatureFlag])
 
   const { setValue, watch } = useFormContext()
   const componentRef = useRef<HTMLDivElement | null>(null)
@@ -135,19 +136,23 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
               )}
             </InputButton>
           </Search>
-          <IconWrapper isFilterOpen={isFilterOpen} onClick={handleFilterIconClick}>
-            {isFilterOpen ? <SearchFilterCloseIcon /> : <SearchFilterIcon />}
-          </IconWrapper>
-          <FilterSearch
-            anchorEl={anchorEl}
-            schemaAll={schemaAll}
-            selectedTypes={selectedTypes}
-            setAnchorEl={setAnchorEl}
-            setIsFilterOpen={setIsFilterOpen}
-            setSelectedTypes={setSelectedTypes}
-            setShowAllSchemas={setShowAllSchemas}
-            showAllSchemas={showAllSchemas}
-          />
+          {searchFilteringFeatureFlag && (
+            <IconWrapper data-testid="search_filter_icon" isFilterOpen={isFilterOpen} onClick={handleFilterIconClick}>
+              {isFilterOpen ? <SearchFilterCloseIcon /> : <SearchFilterIcon />}
+            </IconWrapper>
+          )}
+          {searchFilteringFeatureFlag && (
+            <FilterSearch
+              anchorEl={anchorEl}
+              schemaAll={schemaAll}
+              selectedTypes={selectedTypes}
+              setAnchorEl={setAnchorEl}
+              setIsFilterOpen={setIsFilterOpen}
+              setSelectedTypes={setSelectedTypes}
+              setShowAllSchemas={setShowAllSchemas}
+              showAllSchemas={showAllSchemas}
+            />
+          )}
         </SearchFilterIconWrapper>
         {searchTerm && (
           <SearchDetails>
