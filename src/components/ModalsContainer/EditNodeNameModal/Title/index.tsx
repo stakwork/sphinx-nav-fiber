@@ -9,10 +9,15 @@ import { useModal } from '~/stores/useModalStore'
 import EditNodeIcon from '~/components/Icons/EditNodeIcon'
 import { TypeBadge } from '~/components/common/TypeBadge'
 import { useSelectedNode } from '~/stores/useDataStore'
+import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
 
 export const TitleEditor = () => {
   const { open: openAddItemNodeModal } = useModal('changeNodeType')
   const { close } = useModal('editNodeName')
+
+  const { changeNodeTypeFeatureFlag } = useFeatureFlagStore((s) => ({
+    changeNodeTypeFeatureFlag: s.changeNodeTypeFeatureFlag,
+  }))
 
   const selectedNode = useSelectedNode()
   const nodeType = selectedNode?.node_type as string
@@ -29,10 +34,11 @@ export const TitleEditor = () => {
           <StyledText>Edit Node</StyledText>
           <LabelWrapper>
             <TypeBadge type={nodeType} />
-
-            <EditIconWrapper onClick={handleEditNode}>
-              <EditNodeIcon />
-            </EditIconWrapper>
+            {changeNodeTypeFeatureFlag && (
+              <EditIconWrapper onClick={handleEditNode}>
+                <EditNodeIcon />
+              </EditIconWrapper>
+            )}
           </LabelWrapper>
         </Flex>
       </Flex>
