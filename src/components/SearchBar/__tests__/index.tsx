@@ -1,3 +1,4 @@
+/* eslint-disable padding-line-between-statements */
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import * as React from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
@@ -67,7 +68,7 @@ describe('SearchBar', () => {
       )
     }
 
-    render(<SearchBar onSubmit={handleSearch} />, { wrapper: Wrapper })
+    render(<SearchBar />, { wrapper: Wrapper })
 
     const searchInput = screen.getByPlaceholderText('Search') as HTMLInputElement
 
