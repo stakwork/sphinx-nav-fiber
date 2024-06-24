@@ -8,30 +8,38 @@ import { Flex } from '~/components/common/Flex'
 import { useAppStore } from '~/stores/useAppStore'
 import { useGraphStore } from '~/stores/useGraphStore'
 import { colors } from '~/utils/colors'
+import { useNavigate } from 'react-router-dom'
 
-type Props = {
-  onSubmit: () => void
-}
-
-export const GraphSearch = ({ onSubmit }: Props) => {
+export const GraphSearch = () => {
   const [searchTerm, clearSearch] = useAppStore((s) => [s.currentSearch, s.clearSearch])
   const [isLoading] = useGraphStore((s) => [s.isFetching])
-  const { setValue } = useFormContext()
+  const { setValue, watch } = useFormContext()
+
+  const typing = watch('search')
+
+  const navigate = useNavigate()
 
   return (
     <SearchWrapper>
       <Search>
-        <SearchBar onSubmit={onSubmit} />
+        <SearchBar />
         <InputButton
           onClick={() => {
             if (searchTerm) {
               setValue('search', '')
               clearSearch()
+              navigate(`/`)
 
               return
             }
 
-            onSubmit?.()
+            if (typing.trim() === '') {
+              return
+            }
+
+            const encodedQuery = typing.replace(/\s+/g, '+')
+
+            navigate(`/search?q=${encodedQuery}`)
           }}
         >
           {!isLoading ? (
