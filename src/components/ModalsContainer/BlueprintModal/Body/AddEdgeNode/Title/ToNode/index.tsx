@@ -9,6 +9,7 @@ import { getNodeSchemaTypes } from '~/network/fetchSourcesData'
 type Props = {
   onSelect: (type: string) => void
   dataTestId?: string
+  edgeLink?: string
 }
 
 const defaultValues = {
@@ -16,7 +17,7 @@ const defaultValues = {
   parent: '',
 }
 
-export const ToNode: FC<Props> = ({ onSelect, dataTestId }) => {
+export const ToNode: FC<Props> = ({ onSelect, dataTestId, edgeLink }) => {
   const form = useForm<FormData>({
     mode: 'onChange',
     defaultValues,
@@ -53,6 +54,10 @@ export const ToNode: FC<Props> = ({ onSelect, dataTestId }) => {
           )
 
         setOptions(schemaOptions)
+
+        if (edgeLink) {
+          setValue('parent', edgeLink)
+        }
       } catch (error) {
         console.warn(error)
       } finally {
@@ -61,15 +66,28 @@ export const ToNode: FC<Props> = ({ onSelect, dataTestId }) => {
     }
 
     init()
-  }, [])
+  }, [edgeLink, setValue])
 
   const parent = watch('parent')
 
-  const resolvedParentValue = () => options?.find((i) => i.value === parent)
+  const resolvedParentValue = (): TAutocompleteOption | undefined => {
+    const option = options?.find((i) => i.value === parent)
+
+    if (option) {
+      return option
+    }
+
+    if (edgeLink) {
+      return { label: edgeLink, value: edgeLink }
+    }
+
+    return undefined
+  }
 
   return (
     <AutoComplete
       dataTestId={dataTestId}
+      disabled={!!edgeLink}
       isLoading={optionsIsLoading}
       onSelect={handleSelect}
       options={options || OPTIONS}
