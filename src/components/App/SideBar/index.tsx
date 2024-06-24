@@ -20,20 +20,16 @@ import { EpisodeSkeleton } from './Relevance/EpisodeSkeleton'
 import { SideBarSubView } from './SidebarSubView'
 import { Tab } from './Tab'
 import { Trending } from './Trending'
+import { useNavigate } from 'react-router-dom'
 
 export const MENU_WIDTH = 390
 
-type Props = {
-  onSubmit?: () => void
-}
-
 type ContentProp = {
   subViewOpen: boolean
-  onSubmit?: () => void
 }
 
 // eslint-disable-next-line react/display-name
-const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen }, ref) => {
+const Content = forwardRef<HTMLDivElement, ContentProp>(({ subViewOpen }, ref) => {
   const { isFetching: isLoading, setTeachMe, setSidebarFilter, setSelectedNode } = useDataStore((s) => s)
 
   const filteredNodes = useFilteredNodes()
@@ -65,13 +61,15 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
 
   const typing = watch('search')
 
+  const navigate = useNavigate()
+
   return (
     <Wrapper ref={ref} id="sidebar-wrapper">
       <TitlePlaceholder />
 
       <SearchWrapper className={clsx({ 'has-shadow': isScrolled })}>
         <Search>
-          <SearchBar onSubmit={onSubmit} />
+          <SearchBar />
           <InputButton
             data-testid="search_action_icon"
             onClick={() => {
@@ -80,6 +78,7 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
                 clearSearch()
                 setSidebarFilter('all')
                 setSelectedNode(null)
+                navigate(`/`)
 
                 return
               }
@@ -88,7 +87,9 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
                 return
               }
 
-              onSubmit?.()
+              const encodedQuery = typing.replace(/\s+/g, '+')
+
+              navigate(`/search?q=${encodedQuery}`)
             }}
           >
             {!isLoading ? (
@@ -130,7 +131,7 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
       <ScrollWrapper ref={componentRef}>
         {!searchTerm && trendingTopicsFeatureFlag && (
           <TrendingWrapper>
-            <Trending onSubmit={onSubmit} />
+            <Trending />
           </TrendingWrapper>
         )}
         <Flex>{isLoading ? <EpisodeSkeleton /> : <LatestView isSearchResult={!!searchTerm} />}</Flex>
@@ -141,7 +142,7 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
 
 const hideSubViewFor = ['topic', 'person', 'guest', 'event', 'organization', 'place', 'project', 'software']
 
-export const SideBar = ({ onSubmit }: Props) => {
+export const SideBar = () => {
   const { sidebarIsOpen } = useAppStore((s) => s)
   const selectedNode = useSelectedNode()
 
@@ -152,7 +153,7 @@ export const SideBar = ({ onSubmit }: Props) => {
   return (
     <>
       <Slide direction="right" in={sidebarIsOpen} mountOnEnter unmountOnExit>
-        <Content onSubmit={onSubmit} subViewOpen={subViewIsOpen} />
+        <Content subViewOpen={subViewIsOpen} />
       </Slide>
       <SideBarSubView open={subViewIsOpen || !!showTeachMe} />
       {!sidebarIsOpen && <Tab />}
