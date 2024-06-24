@@ -10,9 +10,10 @@ type Props = {
   selectedType: string
   setSelectedFromNode: (type: string) => void
   setSelectedToNode: (type: string) => void
+  edgeLinkData?: { refId: string; edgeType: string; source: string; target: string }
 }
 
-export const TitleEditor: FC<Props> = ({ selectedType, setSelectedFromNode, setSelectedToNode }) => (
+export const TitleEditor: FC<Props> = ({ selectedType, setSelectedFromNode, setSelectedToNode, edgeLinkData }) => (
   <Flex>
     <Flex align="center" direction="row" justify="space-between" mb={35}>
       <Flex align="center" direction="row">
@@ -24,7 +25,7 @@ export const TitleEditor: FC<Props> = ({ selectedType, setSelectedFromNode, setS
       <Flex mb={12}>
         <Text>Source</Text>
       </Flex>
-      <ToNode dataTestId="from_node" onSelect={setSelectedFromNode} />
+      <ToNode dataTestId="from_node" edgeLink={edgeLinkData?.source} onSelect={setSelectedFromNode} />
     </Flex>
 
     <Flex mb={10}>
@@ -49,7 +50,7 @@ export const TitleEditor: FC<Props> = ({ selectedType, setSelectedFromNode, setS
       <Flex mb={12}>
         <Text>Destination</Text>
       </Flex>
-      <ToNode dataTestId="to_node" onSelect={setSelectedToNode} />
+      <ToNode dataTestId="to_node" edgeLink={edgeLinkData?.target} onSelect={setSelectedToNode} />
     </Flex>
   </Flex>
 )

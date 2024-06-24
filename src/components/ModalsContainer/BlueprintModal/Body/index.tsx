@@ -24,7 +24,7 @@ export const Body = () => {
   const [isCreateNew, setIsCreateNew] = useState(false)
   const [loading, setLoading] = useState(false)
   const [isAddEdgeNode, setIsAddEdgeNode] = useState(false)
-
+  const [edgeData, setEdgeData] = useState({ refId: '', edgeType: '', source: '', target: '' })
   const [graphLoading, setGraphLoading] = useState(false)
 
   const [schemas, links, setSchemaAll, setSchemaLinks] = useSchemaStore((s) => [
@@ -41,9 +41,11 @@ export const Body = () => {
       try {
         const response = await getSchemaAll()
 
-        setSchemaAll(response.schemas.filter((i) => i.ref_id && !i.is_deleted && i.ref_id))
+        const filteredSchemas = response.schemas.filter((i) => i.ref_id && !i.is_deleted)
 
-        setSchemaLinks(response.edges)
+        setSchemaAll(filteredSchemas.length > 0 ? filteredSchemas : response.schemas)
+
+        setSchemaLinks(response.edges.length > 0 ? response.edges : [])
 
         setLoading(false)
       } catch (error) {
@@ -159,7 +161,11 @@ export const Body = () => {
           {isAddEdgeNode ? (
             <EditorWrapper>
               <InnerEditorWrapper>
-                <AddEdgeNode setIsAddEdgeNode={setIsAddEdgeNode} />
+                <AddEdgeNode
+                  edgeData={edgeData}
+                  setGraphLoading={setGraphLoading}
+                  setIsAddEdgeNode={setIsAddEdgeNode}
+                />
               </InnerEditorWrapper>
             </EditorWrapper>
           ) : null}
@@ -173,6 +179,12 @@ export const Body = () => {
             ) : (
               <Graph
                 links={linksFiltered}
+                onEdgeClick={(refId, edgeType, source, target) => {
+                  setEdgeData({ refId, edgeType, source, target })
+                  setIsAddEdgeNode(true)
+                  setIsCreateNew(false)
+                  setSelectedSchemaId('')
+                }}
                 schemasWithPositions={schemasWithChildren}
                 selectedSchemaId={selectedSchemaId}
                 setIsAddEdgeNode={setIsAddEdgeNode}
@@ -191,7 +203,6 @@ const Wrapper = styled(Flex)`
   justify-content: center;
   position: relative;
   overflow: hidden;
-  margin: calc(0px - 10px);
   max-height: calc(100vh - 20px);
 
   @media (max-width: 1440px) {
