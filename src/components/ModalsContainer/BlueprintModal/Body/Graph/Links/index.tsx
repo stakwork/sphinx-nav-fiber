@@ -4,6 +4,7 @@ import { useFrame, useThree } from '@react-three/fiber'
 import { useRef } from 'react'
 import { Group, Vector3 } from 'three'
 import { getLoopControlPoints, truncateText } from '~/components/ModalsContainer/BlueprintModal/Body/Editor/utils'
+import { fontProps } from '~/components/Universe/Graph/Cubes/Text/constants'
 import { SchemaLink } from '~/network/fetchSourcesData'
 import { SchemaExtended } from '../../../types'
 import { NODE_RADIUS } from '../constants'
@@ -188,7 +189,7 @@ export const Lines = ({ links, nodes, onEdgeClick }: Props) => {
             anchorX="center"
             anchorY="middle"
             color="white"
-            fontSize={4}
+            {...fontProps}
             lineHeight={1}
             maxWidth={20}
             onClick={() => handleEdgeClick(link.edge_type, link.source, link.target, link.ref_id)}
