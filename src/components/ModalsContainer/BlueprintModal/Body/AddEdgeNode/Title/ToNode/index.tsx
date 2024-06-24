@@ -10,6 +10,7 @@ type Props = {
   onSelect: (type: string) => void
   dataTestId?: string
   hideSelectAll?: boolean
+  edgeLink?: string
 }
 
 const defaultValues = {
@@ -17,7 +18,7 @@ const defaultValues = {
   parent: '',
 }
 
-export const ToNode: FC<Props> = ({ onSelect, dataTestId, hideSelectAll }) => {
+export const ToNode: FC<Props> = ({ onSelect, dataTestId, edgeLink, hideSelectAll }) => {
   const form = useForm<FormData>({
     mode: 'onChange',
     defaultValues,
@@ -56,6 +57,10 @@ export const ToNode: FC<Props> = ({ onSelect, dataTestId, hideSelectAll }) => {
         const allOption = { label: 'Select all', value: 'all' }
 
         setOptions(hideSelectAll ? schemaOptions : [allOption, ...schemaOptions])
+
+        if (edgeLink) {
+          setValue('parent', edgeLink)
+        }
       } catch (error) {
         console.warn(error)
       } finally {
@@ -64,15 +69,28 @@ export const ToNode: FC<Props> = ({ onSelect, dataTestId, hideSelectAll }) => {
     }
 
     init()
-  }, [hideSelectAll])
+  }, [edgeLink, setValue, hideSelectAll])
 
   const parent = watch('parent')
 
-  const resolvedParentValue = () => options?.find((i) => i.value === parent)
+  const resolvedParentValue = (): TAutocompleteOption | undefined => {
+    const option = options?.find((i) => i.value === parent)
+
+    if (option) {
+      return option
+    }
+
+    if (edgeLink) {
+      return { label: edgeLink, value: edgeLink }
+    }
+
+    return undefined
+  }
 
   return (
     <AutoComplete
       dataTestId={dataTestId}
+      disabled={!!edgeLink}
       isLoading={optionsIsLoading}
       onSelect={handleSelect}
       options={options || OPTIONS}
