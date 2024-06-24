@@ -24,7 +24,7 @@ export const Body = () => {
   const [isCreateNew, setIsCreateNew] = useState(false)
   const [loading, setLoading] = useState(false)
   const [isAddEdgeNode, setIsAddEdgeNode] = useState(false)
-
+  const [edgeData, setEdgeData] = useState({ refId: '', edgeType: '', source: '', target: '' })
   const [graphLoading, setGraphLoading] = useState(false)
 
   const [schemas, links, setSchemaAll, setSchemaLinks] = useSchemaStore((s) => [
@@ -161,7 +161,11 @@ export const Body = () => {
           {isAddEdgeNode ? (
             <EditorWrapper>
               <InnerEditorWrapper>
-                <AddEdgeNode setIsAddEdgeNode={setIsAddEdgeNode} />
+                <AddEdgeNode
+                  edgeData={edgeData}
+                  setGraphLoading={setGraphLoading}
+                  setIsAddEdgeNode={setIsAddEdgeNode}
+                />
               </InnerEditorWrapper>
             </EditorWrapper>
           ) : null}
@@ -175,6 +179,12 @@ export const Body = () => {
             ) : (
               <Graph
                 links={linksFiltered}
+                onEdgeClick={(refId, edgeType, source, target) => {
+                  setEdgeData({ refId, edgeType, source, target })
+                  setIsAddEdgeNode(true)
+                  setIsCreateNew(false)
+                  setSelectedSchemaId('')
+                }}
                 schemasWithPositions={schemasWithChildren}
                 selectedSchemaId={selectedSchemaId}
                 setIsAddEdgeNode={setIsAddEdgeNode}
