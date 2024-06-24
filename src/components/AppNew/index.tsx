@@ -22,6 +22,7 @@ import { Helper } from './Helper'
 import { ModalsContainer } from './ModalsContainer'
 import { Toasts } from './Toasts'
 import { Overlay } from './Universe/Overlay'
+import { useSearchParams } from 'react-router-dom'
 
 const Wrapper = styled(Flex)`
   height: 100%;
@@ -43,6 +44,8 @@ const LazyUniverse = lazy(() => import('./Universe').then(({ Universe }) => ({ d
 const LazySideBar = lazy(() => import('./SideBar').then(({ SideBar }) => ({ default: SideBar })))
 
 export const AppNew = () => {
+  const [searchParams] = useSearchParams()
+  const query = searchParams.get('q')
   const [setBudget, setNodeCount] = useUserStore((s) => [s.setBudget, s.setNodeCount])
 
   const [setSidebarOpen, searchTerm, setCurrentSearch, setRelevanceSelected, setTranscriptOpen] = [
@@ -61,12 +64,16 @@ export const AppNew = () => {
 
   const form = useForm<{ search: string }>({ mode: 'onChange' })
 
-  const handleSubmit = form.handleSubmit(({ search }) => {
+  const { setValue } = form
+
+  useEffect(() => {
+    setValue('search', query ?? '')
+
     setTranscriptOpen(false)
     setSelectedNode(null)
     setRelevanceSelected(false)
-    setCurrentSearch(search)
-  })
+    setCurrentSearch(query ?? '')
+  }, [query, setCurrentSearch, setRelevanceSelected, setSelectedNode, setTranscriptOpen, setValue])
 
   const runSearch = useCallback(async () => {
     await fetchData(setBudget, { word: searchTerm ?? '' })
@@ -128,12 +135,12 @@ export const AppNew = () => {
         <Wrapper direction="row">
           <FormProvider {...form}>
             <LazyMainToolbar />
-            {false && <LazySideBar onSubmit={handleSubmit} />}
+            {false && <LazySideBar />}
             <LazyUniverse />
             <AppBar />
             <Version>v{version}</Version>
             <ActionsToolbar />
-            <Overlay onSubmit={handleSubmit} />
+            <Overlay />
           </FormProvider>
           <ModalsContainer />
           <Toasts />

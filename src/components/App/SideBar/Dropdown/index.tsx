@@ -12,8 +12,8 @@ import { colors } from '~/utils/colors'
 
 export const SelectWithPopover = () => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null)
-  const { sidebarFilter, setSidebarFilter, sidebarFilterCounts } = useDataStore((s) => s)
-  const currentFilter = sidebarFilter === 'undefined' ? '' : sidebarFilter.toLowerCase()
+  const { sidebarFilter, setSidebarFilter, sidebarFilterCounts = [] } = useDataStore((s) => s)
+  const currentFilter = (sidebarFilter ?? '').toLowerCase()
   const currentFilterCount = sidebarFilterCounts.find((f) => f.name === currentFilter)?.count || 0
 
   const capitalizeFirstLetter = (text: string): string => {

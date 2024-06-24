@@ -19,14 +19,11 @@ import { Trending as TrendingType } from '~/types'
 import { getTrendingTopic, showPlayButton } from '~/utils'
 import { colors } from '~/utils/colors'
 import { BriefDescription } from './BriefDescriptionModal'
+import { useNavigate } from 'react-router-dom'
 
 const TRENDING_TOPICS = ['Drivechain', 'Ordinals', 'L402', 'Nostr', 'AI']
 
-type Props = {
-  onSubmit?: () => void
-}
-
-export const Trending = ({ onSubmit }: Props) => {
+export const Trending = () => {
   const { open: openContentAddModal } = useModal('addContent')
   const [loading, setLoading] = useState(false)
   const [readyToUpdate, setReadyToUpdate] = useState(false)
@@ -35,7 +32,7 @@ export const Trending = ({ onSubmit }: Props) => {
   const [currentFileIndex, setCurrentFileIndex] = useState(0)
   const [playing, setPlaying] = useState(false)
   const { currentPlayingAudio, setCurrentPlayingAudio } = useAppStore((s) => s)
-
+  const navigate = useNavigate()
   const { open } = useModal('briefDescription')
 
   const { trendingTopics, setTrendingTopics } = useDataStore((s) => s)
@@ -82,7 +79,10 @@ export const Trending = ({ onSubmit }: Props) => {
 
   const selectTrending = (val: string) => {
     setValue('search', val)
-    onSubmit?.()
+
+    const encodedQuery = val.replace(/\s+/g, '+')
+
+    navigate(`/search?q=${encodedQuery}`)
   }
 
   const showModal = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, trending: TrendingType) => {

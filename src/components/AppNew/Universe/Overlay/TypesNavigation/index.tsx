@@ -5,16 +5,12 @@ import { useGraphStore } from '~/stores/useGraphStore'
 import { colors } from '~/utils/colors'
 import { GraphSearch } from '../Search'
 
-type Props = {
-  onSubmit: () => void
-}
-
-export const TypesNavigation = ({ onSubmit }: Props) => {
+export const TypesNavigation = () => {
   const [nodeTypes] = useGraphStore((s) => [s.nodeTypes])
 
   return (
     <Wrapper align="stretch" borderRadius={8} px={24} py={16}>
-      <GraphSearch onSubmit={onSubmit} />
+      <GraphSearch />
 
       <Flex mt={24}>
         <>

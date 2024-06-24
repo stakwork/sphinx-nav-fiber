@@ -7,8 +7,8 @@ import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { DataRetriever } from '~/components/DataRetriever'
 import { GlobalStyle } from '~/components/GlobalStyle'
-import { Overlay } from '~/components/Universe/Overlay' // Import Overlay directly
-import { Preloader } from '~/components/Universe/Preloader' // Import Preloader directly
+import { Overlay } from '~/components/Universe/Overlay'
+import { Preloader } from '~/components/Universe/Preloader'
 import { isDevelopment } from '~/constants'
 import { useSocket } from '~/hooks/useSockets'
 import { getGraphDataPositions } from '~/network/fetchGraphData/const'
@@ -28,6 +28,7 @@ import { DeviceCompatibilityNotice } from './DeviceCompatibilityNotification'
 import { Helper } from './Helper'
 import { SecondarySideBar } from './SecondarySidebar'
 import { Toasts } from './Toasts'
+import { useSearchParams } from 'react-router-dom'
 
 const Wrapper = styled(Flex)`
   height: 100%;
@@ -49,6 +50,8 @@ const LazyUniverse = lazy(() => import('~/components/Universe').then(({ Universe
 const LazySideBar = lazy(() => import('./SideBar').then(({ SideBar }) => ({ default: SideBar })))
 
 export const App = () => {
+  const [searchParams] = useSearchParams()
+  const query = searchParams.get('q')
   const [setBudget, setNodeCount] = useUserStore((s) => [s.setBudget, s.setNodeCount])
   const [isLoading, setIsLoading] = useState(false)
 
@@ -72,14 +75,27 @@ export const App = () => {
 
   const form = useForm<{ search: string }>({ mode: 'onChange' })
 
-  const handleSubmit = form.handleSubmit(({ search }) => {
+  const { setValue } = form
+
+  useEffect(() => {
+    setValue('search', query ?? '')
+
     setTranscriptOpen(false)
     setSelectedNode(null)
     setRelevanceSelected(false)
-    setCurrentSearch(search)
+    setCurrentSearch(query ?? '')
     setTeachMeAnswer('')
     setCategoryFilter(null)
-  })
+  }, [
+    query,
+    setCategoryFilter,
+    setCurrentSearch,
+    setRelevanceSelected,
+    setSelectedNode,
+    setTeachMeAnswer,
+    setTranscriptOpen,
+    setValue,
+  ])
 
   const runSearch = useCallback(async () => {
     await fetchData(setBudget, setAbortRequests, { ...(searchTerm ? { word: searchTerm } : {}) })
@@ -159,7 +175,7 @@ export const App = () => {
           <DataRetriever>
             <FormProvider {...form}>
               <LazyMainToolbar />
-              <LazySideBar onSubmit={handleSubmit} />
+              <LazySideBar />
               <LazyUniverse />
               {isLoading && <Preloader fullSize={false} />}
               <Overlay />

@@ -8,6 +8,7 @@ import { ThemeProvider } from '@mui/material'
 import { appTheme } from '../../Providers'
 import { ThemeProvider as StyleThemeProvider } from 'styled-components'
 import { isSphinx } from '../../../../utils/isSphinx'
+import { MemoryRouter } from 'react-router-dom'
 
 jest.mock('~/utils/isSphinx', () => ({
   isSphinx: jest.fn(),
@@ -40,11 +41,13 @@ describe('MainToolbar Component Tests', () => {
     })
 
     render(
-      <ThemeProvider theme={appTheme}>
-        <StyleThemeProvider theme={appTheme}>
-          <MainToolbar />
-        </StyleThemeProvider>
-      </ThemeProvider>,
+      <MemoryRouter>
+        <ThemeProvider theme={appTheme}>
+          <StyleThemeProvider theme={appTheme}>
+            <MainToolbar />
+          </StyleThemeProvider>
+        </ThemeProvider>
+      </MemoryRouter>,
     )
     waitFor(() => {
       fireEvent.click(screen.getByTestId('cy-open-soure-table'))
@@ -54,11 +57,13 @@ describe('MainToolbar Component Tests', () => {
 
   it('renders MainToolbar component with correct elements', () => {
     render(
-      <ThemeProvider theme={appTheme}>
-        <StyleThemeProvider theme={appTheme}>
-          <MainToolbar />
-        </StyleThemeProvider>
-      </ThemeProvider>,
+      <MemoryRouter>
+        <ThemeProvider theme={appTheme}>
+          <StyleThemeProvider theme={appTheme}>
+            <MainToolbar />
+          </StyleThemeProvider>
+        </ThemeProvider>
+      </MemoryRouter>,
     )
 
     waitFor(() => {
@@ -76,11 +81,13 @@ describe('MainToolbar Component Tests', () => {
     })
 
     render(
-      <ThemeProvider theme={appTheme}>
-        <StyleThemeProvider theme={appTheme}>
-          <MainToolbar />
-        </StyleThemeProvider>
-      </ThemeProvider>,
+      <MemoryRouter>
+        <ThemeProvider theme={appTheme}>
+          <StyleThemeProvider theme={appTheme}>
+            <MainToolbar />
+          </StyleThemeProvider>
+        </ThemeProvider>
+      </MemoryRouter>,
     )
     fireEvent.click(screen.getByTestId('add-content-modal'))
 
@@ -94,11 +101,13 @@ describe('MainToolbar Component Tests', () => {
     })
 
     render(
-      <ThemeProvider theme={appTheme}>
-        <StyleThemeProvider theme={appTheme}>
-          <MainToolbar />
-        </StyleThemeProvider>
-      </ThemeProvider>,
+      <MemoryRouter>
+        <ThemeProvider theme={appTheme}>
+          <StyleThemeProvider theme={appTheme}>
+            <MainToolbar />
+          </StyleThemeProvider>
+        </ThemeProvider>
+      </MemoryRouter>,
     )
     fireEvent.click(screen.getByTestId('settings-modal'))
 
@@ -114,11 +123,13 @@ describe('MainToolbar Component Tests', () => {
     })
 
     render(
-      <ThemeProvider theme={appTheme}>
-        <StyleThemeProvider theme={appTheme}>
-          <MainToolbar />
-        </StyleThemeProvider>
-      </ThemeProvider>,
+      <MemoryRouter>
+        <ThemeProvider theme={appTheme}>
+          <StyleThemeProvider theme={appTheme}>
+            <MainToolbar />
+          </StyleThemeProvider>
+        </ThemeProvider>
+      </MemoryRouter>,
     )
     const feedbackButton = screen.getByTestId('feedback-modal')
     expect(feedbackButton).toBeInTheDocument()
@@ -133,11 +144,13 @@ describe('MainToolbar Component Tests', () => {
     })
 
     render(
-      <ThemeProvider theme={appTheme}>
-        <StyleThemeProvider theme={appTheme}>
-          <MainToolbar />
-        </StyleThemeProvider>
-      </ThemeProvider>,
+      <MemoryRouter>
+        <ThemeProvider theme={appTheme}>
+          <StyleThemeProvider theme={appTheme}>
+            <MainToolbar />
+          </StyleThemeProvider>
+        </ThemeProvider>
+      </MemoryRouter>,
     )
     const feedbackButton = screen.queryByTestId('feedback-modal')
     waitFor(() => {
@@ -151,11 +164,13 @@ describe('MainToolbar Component Tests', () => {
     ;(useFeatureFlagStore as unknown as jest.Mock).mockReturnValue({ userFeedbackFeatureFlag: true })
 
     render(
-      <ThemeProvider theme={appTheme}>
-        <StyleThemeProvider theme={appTheme}>
-          <MainToolbar />
-        </StyleThemeProvider>
-      </ThemeProvider>,
+      <MemoryRouter>
+        <ThemeProvider theme={appTheme}>
+          <StyleThemeProvider theme={appTheme}>
+            <MainToolbar />
+          </StyleThemeProvider>
+        </ThemeProvider>
+      </MemoryRouter>,
     )
 
     const feedbackButton = screen.getByTestId('feedback-modal')
@@ -169,11 +184,13 @@ describe('MainToolbar Component Tests', () => {
     })
 
     render(
-      <ThemeProvider theme={appTheme}>
-        <StyleThemeProvider theme={appTheme}>
-          <MainToolbar />
-        </StyleThemeProvider>
-      </ThemeProvider>,
+      <MemoryRouter>
+        <ThemeProvider theme={appTheme}>
+          <StyleThemeProvider theme={appTheme}>
+            <MainToolbar />
+          </StyleThemeProvider>
+        </ThemeProvider>
+      </MemoryRouter>,
     )
     const feedbackButton = screen.getByTestId('feedback-modal')
     fireEvent.mouseOver(feedbackButton)

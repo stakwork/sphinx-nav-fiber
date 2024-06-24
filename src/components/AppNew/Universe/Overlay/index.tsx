@@ -4,17 +4,13 @@ import { useGraphStore } from '~/stores/useGraphStore'
 import { Tooltip } from '../GraphNew/Cubes/Cube/components/Tooltip'
 import { TypesNavigation } from './TypesNavigation'
 
-type Props = {
-  onSubmit: () => void
-}
-
-export const Overlay = ({ onSubmit }: Props) => {
+export const Overlay = () => {
   const [selectedNode] = useGraphStore((s) => [s.selectedNode])
 
   return (
     <OverlayWrap>
       {/* <GraphSearch /> */}
-      <TypesNavigation onSubmit={onSubmit} />
+      <TypesNavigation />
       <div id="tooltip-portal" />
       {selectedNode && (
         <div id="tooltip-portal">

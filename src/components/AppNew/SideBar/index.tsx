@@ -14,24 +14,17 @@ import { useGraphStore } from '~/stores/useGraphStore'
 import { colors } from '~/utils/colors'
 import { SideBarSubView } from './SidebarSubView'
 import { Tab } from './Tab'
+import { useNavigate } from 'react-router-dom'
 
 export const MENU_WIDTH = 390
 
-type Props = {
-  onSubmit?: () => void
-}
-
-type ContentProp = {
-  onSubmit?: () => void
-}
-
 // eslint-disable-next-line react/display-name
-const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit }, ref) => {
+const Content = forwardRef<HTMLDivElement>(() => {
   const [isLoading] = useGraphStore((s) => [s.isFetching])
 
   const [searchTerm, clearSearch] = useAppStore((s) => [s.currentSearch, s.clearSearch])
 
-  const { setValue } = useFormContext()
+  const { setValue, watch } = useFormContext()
   const componentRef = useRef<HTMLDivElement | null>(null)
   const [isScrolled, setIsScrolled] = useState(false)
 
@@ -49,24 +42,30 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit }, ref) => {
     component.addEventListener('scroll', handleScroll)
   }, [])
 
+  const typing = watch('search')
+  const navigate = useNavigate()
+
   return (
-    <Wrapper ref={ref} id="sidebar-wrapper">
+    <Wrapper id="sidebar-wrapper">
       <TitlePlaceholder />
 
       <SearchWrapper className={clsx({ 'has-shadow': isScrolled })}>
         <Search>
-          <SearchBar onSubmit={onSubmit} />
+          <SearchBar />
           <InputButton
             data-testid="search_action_icon"
             onClick={() => {
               if (searchTerm) {
                 setValue('search', '')
                 clearSearch()
+                navigate(`/`)
 
                 return
               }
 
-              onSubmit?.()
+              const encodedQuery = typing.replace(/\s+/g, '+')
+
+              navigate(`/search?q=${encodedQuery}`)
             }}
           >
             {!isLoading ? (
@@ -83,7 +82,7 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit }, ref) => {
 
 const hideSubViewFor = ['topic', 'person', 'guest', 'event', 'organization', 'place', 'project', 'software']
 
-export const SideBar = ({ onSubmit }: Props) => {
+export const SideBar = () => {
   const sidebarIsOpen = useAppStore((s) => s.sidebarIsOpen)
   const selectedNode = useSelectedNode()
 
@@ -94,7 +93,7 @@ export const SideBar = ({ onSubmit }: Props) => {
   return (
     <>
       <Slide direction="right" in={sidebarIsOpen} mountOnEnter unmountOnExit>
-        <Content onSubmit={onSubmit} />
+        <Content />
       </Slide>
       <SideBarSubView open={subViewIsOpen || !!showTeachMe} />
       {!sidebarIsOpen && <Tab />}
