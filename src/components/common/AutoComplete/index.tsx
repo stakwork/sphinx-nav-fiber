@@ -46,7 +46,7 @@ export const AutoComplete: FC<Props> = ({
 }) => {
   const inputRef = useRef<HTMLInputElement>(null)
   const [open, setOpen] = useState<boolean>(false)
-  // eslint-disable-next-line
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [value, setValue] = useState<any>(selectedValue)
 
   useEffect(() => {

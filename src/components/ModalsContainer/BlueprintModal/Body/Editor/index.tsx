@@ -258,7 +258,7 @@ export const Editor = ({
         return i
       }
 
-      return false
+      return undefined
     })
 
   return (
