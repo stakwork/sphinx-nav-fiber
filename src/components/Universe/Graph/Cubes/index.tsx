@@ -55,6 +55,8 @@ export const Cubes = memo(() => {
   const onPointerOut = useCallback(
     (e: ThreeEvent<PointerEvent>) => {
       e.stopPropagation()
+
+      return
       setHoveredNode(null)
     },
     [setHoveredNode],
@@ -68,7 +70,7 @@ export const Cubes = memo(() => {
       if (object?.userData?.ref_id) {
         const node = object.userData as NodeExtended
 
-        if (!ignoreNodeEvent(node)) {
+        if (!ignoreNodeEvent(node) && false) {
           e.stopPropagation()
           setHoveredNode(node)
         }

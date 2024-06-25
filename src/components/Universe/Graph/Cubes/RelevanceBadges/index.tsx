@@ -64,10 +64,14 @@ const NodeBadge = ({ position, userData, color }: BadgeProps) => {
           }}
           onPointerOut={(e) => {
             e.stopPropagation()
+
+            return
             setHoveredNode(null)
           }}
           onPointerOver={(e) => {
             e.stopPropagation()
+
+            return
             setHoveredNode(userData || null)
           }}
           scale={isHovered ? 1.05 : 1}

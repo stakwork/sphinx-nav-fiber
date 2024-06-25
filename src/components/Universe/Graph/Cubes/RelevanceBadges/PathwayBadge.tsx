@@ -50,10 +50,14 @@ export const PathwayBadge = ({ color, position, relativeIds, userData }: BadgePr
             }}
             onPointerOut={(e) => {
               e.stopPropagation()
+
+              return
               setHoveredNode(null)
             }}
             onPointerOver={(e) => {
               e.stopPropagation()
+
+              return
               setHoveredNode(userData || null)
             }}
             scale={isHovered ? 1.05 : 1}

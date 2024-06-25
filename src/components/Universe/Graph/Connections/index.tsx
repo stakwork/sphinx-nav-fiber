@@ -16,14 +16,15 @@ export const Connections = memo(() => {
   useEffect(() => {
     lineRefs.current.forEach((line, index) => {
       if (line) {
+        console.log(
+          selectedNode?.ref_id === data?.links[index].source || selectedNode?.ref_id === data?.links[index].target,
+        )
+
         gsap.fromTo(
           line.material,
           { linewidth: 5 },
           {
-            linewidth:
-              selectedNode?.ref_id === data?.links[index].source || selectedNode?.ref_id === data?.links[index].target
-                ? 2
-                : 1,
+            linewidth: false ? 2 : 1,
             duration: 3,
           },
         )
@@ -41,7 +42,7 @@ export const Connections = memo(() => {
           }}
           color="rgba(136, 136, 136, 1)"
           isLine2
-          lineWidth={0}
+          lineWidth={1}
           opacity={1}
           points={[new Vector3(0, 0, 0), new Vector3(100, 100, 100)]}
           transparent
