@@ -1,7 +1,7 @@
 /* eslint-disable padding-line-between-statements */
 import '@testing-library/jest-dom'
 import { Vector3 } from 'three'
-import { convertAttributes, parseJson, parsedObjProps, getLoopControlPoints, truncateText } from '..'
+import { convertAttributes, parseJson, parsedObjProps, getLoopControlPoints } from '..'
 
 describe('convertAttributes function', () => {
   it('should convert attributes properly when all attributes are required', () => {

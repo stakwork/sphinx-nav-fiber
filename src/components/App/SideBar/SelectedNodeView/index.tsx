@@ -42,7 +42,7 @@ const _View = () => {
       return <Data />
     case 'tribe_message':
       return <Messages />
-    case 'tweet':
+    case 'Tweet':
       return <TwitData />
     case 'topic':
       return <Topic />

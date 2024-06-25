@@ -186,8 +186,6 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
     },
 
     addRadialForce: () => {
-      console.log('addRadialForce')
-
       const { simulation } = get()
 
       simulation
@@ -205,8 +203,6 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
     },
 
     addDefaultForce: () => {
-      console.log('addDefaultForce')
-
       const { simulation } = get()
 
       simulation
@@ -224,8 +220,6 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
     },
 
     addSplitForce: () => {
-      console.log('addSplitForce')
-
       const { simulation } = get()
       const { nodeTypes } = useDataStore.getState()
 

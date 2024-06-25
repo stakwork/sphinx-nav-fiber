@@ -101,8 +101,6 @@ export const Body = () => {
       closeHandler()
       closeEditNodeModal()
     } catch (error) {
-      console.log(error)
-
       console.warn(error)
     } finally {
       setLoading(false)
