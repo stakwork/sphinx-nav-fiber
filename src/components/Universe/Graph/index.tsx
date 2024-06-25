@@ -12,9 +12,19 @@ import { LoadingNodes } from './LoadingNodes'
 import { Particles } from './Particles'
 import { NodeDetailsPanel } from './UI'
 
+export type LinkPosition = {
+  sx: number
+  sy: number
+  sz: number
+  tx: number
+  ty: number
+  tz: number
+}
+
 export const Graph = () => {
   const { dataInitial, isLoadingNew, isFetching, dataNew, resetDataNew } = useDataStore((s) => s)
   const groupRef = useRef<Group>(null)
+  const linksPositionRef = useRef<LinkPosition[]>([])
 
   const { setData, simulation, simulationCreate, simulationHelpers, graphStyle } = useGraphStore((s) => s)
 
@@ -76,14 +86,19 @@ export const Graph = () => {
             const sourceNode = simulation.nodes().find((n: NodeExtended) => n.ref_id === link.source)
             const targetNode = simulation.nodes().find((n: NodeExtended) => n.ref_id === link.target)
 
-            Line.geometry.setPositions([
-              sourceNode.x,
-              sourceNode.y,
-              sourceNode.z,
-              targetNode.x,
-              targetNode.y,
-              targetNode.z,
-            ])
+            const { x: sx, y: sy, z: sz } = sourceNode
+            const { x: tx, y: ty, z: tz } = targetNode
+
+            linksPositionRef.current[i] = {
+              sx,
+              sy,
+              sz,
+              tx,
+              ty,
+              tz,
+            }
+
+            Line.geometry.setPositions([sx, sy, sz, tx, ty, tz])
 
             const { material } = Line
 
@@ -108,7 +123,7 @@ export const Graph = () => {
       {false && <Particles />}
       {(isLoadingNew || isFetching) && <LoadingNodes />}
 
-      {graphStyle !== 'earth' && <Connections />}
+      {graphStyle !== 'earth' && <Connections linksPositions={linksPositionRef.current} />}
       <NodeDetailsPanel />
     </group>
   )

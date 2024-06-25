@@ -6,8 +6,13 @@ import { Line2 } from 'three-stdlib'
 import { useDataStore } from '~/stores/useDataStore'
 import { useSelectedNode } from '~/stores/useGraphStore'
 import { Link } from '~/types'
+import { LinkPosition } from '..'
 
-export const Connections = memo(() => {
+type Props = {
+  linksPositions: LinkPosition[]
+}
+
+export const Connections = memo(({ linksPositions }: Props) => {
   const data = useDataStore((s) => s.dataInitial)
   const selectedNode = useSelectedNode()
 
@@ -34,20 +39,34 @@ export const Connections = memo(() => {
 
   return (
     <group name="simulation-3d-group__connections">
-      {data?.links.map((l: Link, index) => (
-        <Line
-          key={l.ref_id}
-          ref={(el) => {
-            lineRefs.current[index] = el as Line2
-          }}
-          color="rgba(136, 136, 136, 1)"
-          isLine2
-          lineWidth={1}
-          opacity={1}
-          points={[new Vector3(0, 0, 0), new Vector3(100, 100, 100)]}
-          transparent
-        />
-      ))}
+      {data?.links.map((l: Link, index) => {
+        const source = new Vector3(
+          linksPositions[index]?.sx || 0,
+          linksPositions[index]?.sy || 0,
+          linksPositions[index]?.sz || 0,
+        )
+
+        const target = new Vector3(
+          linksPositions[index]?.tx || 0,
+          linksPositions[index]?.ty || 0,
+          linksPositions[index]?.tz || 0,
+        )
+
+        return (
+          <Line
+            key={l.ref_id}
+            ref={(el) => {
+              lineRefs.current[index] = el as Line2
+            }}
+            color="rgba(136, 136, 136, 1)"
+            isLine2
+            lineWidth={1}
+            opacity={1}
+            points={[source, target]}
+            transparent
+          />
+        )
+      })}
     </group>
   )
 })
