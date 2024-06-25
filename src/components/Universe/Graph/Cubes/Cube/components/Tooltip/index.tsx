@@ -59,8 +59,6 @@ export const Tooltip = ({ node }: Props) => {
 
   if (nodeType === 'guest' && !imageUrl) {
     displayImageUrl = 'person_placeholder2.png'
-  } else if (!imageUrl) {
-    displayImageUrl = 'noimage.jpeg'
   }
 
   if (type === 'twitter_space') {
@@ -78,16 +76,18 @@ export const Tooltip = ({ node }: Props) => {
       ) : (
         <>
           <Flex direction="row">
-            <Divider />
+            {displayImageUrl && <Divider />}
             <Flex align="flex-start" pb={12}>
               <Text>{nodeType?.toUpperCase()}</Text>
             </Flex>
           </Flex>
 
           <Flex direction="row">
-            <Flex pr={12}>
-              <Avatar src={displayImageUrl as string} type="person" />
-            </Flex>
+            {displayImageUrl && (
+              <Flex pr={12}>
+                <Avatar src={displayImageUrl as string} type="person" />
+              </Flex>
+            )}
 
             <div>
               {(name || label) && (

@@ -30,7 +30,7 @@ export const TitleEditor: FC<Props> = ({
     <Flex>
       <Flex align="center" direction="row" justify="space-between" mb={35}>
         <Flex align="center" direction="row">
-          <StyledText>Add Edge</StyledText>
+          <StyledText>{edgeLinkData?.refId ? 'Edit Edge' : 'Add Edge'}</StyledText>
         </Flex>
       </Flex>
 

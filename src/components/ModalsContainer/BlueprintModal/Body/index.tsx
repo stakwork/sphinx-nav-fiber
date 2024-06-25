@@ -131,6 +131,7 @@ export const Body = () => {
               setIsAddEdgeNode(true)
               setIsCreateNew(false)
               setSelectedSchemaId('')
+              setEdgeData({ refId: '', edgeType: '', source: '', target: '' })
             }}
             onCreateNew={() => {
               setIsAddEdgeNode(false)
