@@ -22,6 +22,8 @@ export const Body = ({ onCancel, edgeLinkData, setGraphLoading }: Props) => {
   const form = useForm<FormData>({ mode: 'onChange' })
   const { setValue, getValues } = form
   const [loading, setLoading] = useState(false)
+  const [delLoading, setdelLoading] = useState(false)
+
   const [selectedType, setSelectedType] = useState('')
   const [selectedFromNode, setSelectedFromNode] = useState<string>('')
   const [selectedToNode, setSelectedToNode] = useState<string>('')
@@ -62,6 +64,8 @@ export const Body = ({ onCancel, edgeLinkData, setGraphLoading }: Props) => {
     } finally {
       setLoading(false)
       setGraphLoading(false)
+      setSelectedFromNode('')
+      setSelectedToNode('')
       onCancel()
     }
   })
@@ -75,6 +79,9 @@ export const Body = ({ onCancel, edgeLinkData, setGraphLoading }: Props) => {
     : loading || !selectedToNode || !selectedFromNode || !selectedType
 
   const handleDelete = async () => {
+    setdelLoading(true)
+    setGraphLoading(true)
+
     try {
       if (edgeLinkData?.refId) {
         await deleteEdgeType(edgeLinkData?.refId)
@@ -82,6 +89,10 @@ export const Body = ({ onCancel, edgeLinkData, setGraphLoading }: Props) => {
     } catch (error) {
       console.warn('API Error:', error)
     } finally {
+      setdelLoading(false)
+      setGraphLoading(false)
+      setSelectedFromNode('')
+      setSelectedToNode('')
       onCancel()
     }
   }
@@ -100,12 +111,18 @@ export const Body = ({ onCancel, edgeLinkData, setGraphLoading }: Props) => {
             <Flex direction="column">
               <DeleteButton
                 color="secondary"
+                disabled={delLoading}
                 onClick={handleDelete}
                 size="large"
                 style={{ marginRight: 20 }}
                 variant="contained"
               >
                 Delete
+                {delLoading && (
+                  <ClipLoaderWrapper>
+                    <ClipLoader color={colors.lightGray} size={12} />{' '}
+                  </ClipLoaderWrapper>
+                )}
               </DeleteButton>
             </Flex>
           )}
