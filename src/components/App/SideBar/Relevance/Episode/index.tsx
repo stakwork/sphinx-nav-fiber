@@ -75,7 +75,7 @@ export const Episode = ({
   const description = type === 'show' ? showTitle : episodeTitle
   const subtitle = type === 'show' ? '' : showTitle
 
-  const defaultViewTypes = ['tweet', 'person', 'guest', 'topic', 'document']
+  const defaultViewTypes = ['Tweet', 'person', 'guest', 'topic', 'document']
 
   const imageType = type === 'video' ? 'video' : 'audio'
 
@@ -130,7 +130,7 @@ export const Episode = ({
             <TypePerson imageUrl={imageUrl} name={name || ''} title={showTitle || ''} />
           )}
           {['image'].includes(type as string) && <TypeCustom imageUrl={sourceLink} name={name || ''} />}
-          {type === 'tweet' && (
+          {type === 'Tweet' && (
             <TypeTweet
               date={date}
               imageUrl={imageUrl}

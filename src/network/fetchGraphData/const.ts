@@ -14,8 +14,6 @@ export const defaultData: GraphData = {
 }
 
 export const getGraphDataPositions = (graphStyle: GraphStyle, nodes: NodeExtended[], links: Link[]) => {
-  console.log('position data')
-
   // give nodes and links positions based on graphStyle
   if (graphStyle === 'split') {
     return generateSplitGraphPositions(nodes, links)

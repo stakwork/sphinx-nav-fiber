@@ -11,6 +11,7 @@ import { formatDescription } from '~/utils/formatDescription'
 import { saveConsumedContent } from '~/utils/relayHelper'
 import { useIsMatchBreakpoint } from '~/utils/useIsMatchBreakpoint'
 import { Episode } from './Episode'
+import { adaptTweetNode } from '~/utils/twitterAdapter'
 
 type Props = {
   isSearchResult: boolean
@@ -82,6 +83,8 @@ const _Relevance = ({ isSearchResult }: Props) => {
     <>
       <ScrollView ref={scrollViewRef} id="search-result-list" shrink={1}>
         {(currentNodes ?? []).map((n, index) => {
+          const adaptedNode = adaptTweetNode(n)
+
           const {
             image_url: imageUrl,
             date,
@@ -96,7 +99,7 @@ const _Relevance = ({ isSearchResult }: Props) => {
             name,
             verified = false,
             twitter_handle: twitterHandle,
-          } = n || {}
+          } = adaptedNode || {}
 
           return (
             <Episode

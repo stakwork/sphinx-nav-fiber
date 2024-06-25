@@ -107,8 +107,6 @@ export const generateForceGraphPositions = (nodes: NodeNew[], edges: EdgeNew[]):
 
   const types = Object.keys(nodesByType)
 
-  console.log(types)
-
   const center: Center = { x: 0, y: 0, z: 0, radius: 1000 }
 
   const updatedNodes: NodeExtendedNew[] = types.reduce((acc: NodeExtendedNew[], curr: string, index) => {

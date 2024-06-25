@@ -45,7 +45,6 @@ export const SourceTypeStep: FC<Props> = ({ skipToStep, allowNextStep, onSelectT
           setLoading(false)
         }
       } else {
-        console.log('data')
         setOption([...OPTIONS, initialValue])
       }
     }
