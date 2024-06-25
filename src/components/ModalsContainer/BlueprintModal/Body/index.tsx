@@ -192,15 +192,19 @@ const Wrapper = styled(Flex)`
   justify-content: center;
   position: relative;
   overflow: hidden;
-  padding: 10px;
-  max-height: 80vh;
+  margin: calc(0px - 10px);
+  max-height: calc(100vh - 20px);
 
   @media (max-width: 1440px) {
-    max-height: 85vh;
+    max-height: calc(95vh - 20px);
   }
 
   @media (max-width: 1024px) {
-    max-height: 70vh;
+    max-height: calc(70vh - 20px);
+  }
+
+  @media (max-width: 924px) {
+    max-height: calc(70vh - 20px);
   }
 `
 

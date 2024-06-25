@@ -129,7 +129,7 @@ export const MapPropertiesStep: FC<Props> = ({
       <StyledWrapper>
         {loading ? (
           <Flex style={{ margin: 'auto' }}>
-            <ClipLoader color={colors.SECONDARY_BLUE} />
+            <ClipLoader color={colors.lightGray} />
           </Flex>
         ) : (
           <FlexContainer>

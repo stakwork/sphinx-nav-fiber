@@ -7,9 +7,10 @@ import { FormInput } from './FormInput'
 
 interface Props {
   parent?: string
+  onDelete: (attributeKey: string) => void
 }
 
-export const CreateCustomNodeAttribute: FC<Props> = ({ parent }) => {
+export const CreateCustomNodeAttribute: FC<Props> = ({ parent, onDelete }) => {
   const parentParam = parent
 
   return (
@@ -27,7 +28,7 @@ export const CreateCustomNodeAttribute: FC<Props> = ({ parent }) => {
           </Grid>
         </Grid>
       </Flex>
-      {parentParam && <FormInput key={parentParam} parentParam={parentParam} />}
+      {parentParam && <FormInput key={parentParam} onDelete={onDelete} parentParam={parentParam} />}
     </Flex>
   )
 }

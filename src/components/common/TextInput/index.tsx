@@ -231,6 +231,7 @@ export const TextInput = ({
                 }}
                 onChange={onChange}
                 onFocus={() => setIsFocused(true)}
+                placeholder={placeholder}
                 placeholderTextColor="inputPlaceholder"
                 value={value || ''}
               />
