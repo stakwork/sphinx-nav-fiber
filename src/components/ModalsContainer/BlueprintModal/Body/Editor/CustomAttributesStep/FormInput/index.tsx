@@ -18,9 +18,17 @@ const noSpacePattern = /^[a-z0-9_]+$/
 
 interface CustomField extends Record<'id', string> {
   isNew?: boolean
+  onDelete?: (attributeKey: string) => void
+  key?: string
 }
 
-export const FormInput = ({ parentParam }: { parentParam: string }) => {
+export const FormInput = ({
+  parentParam,
+  onDelete,
+}: {
+  parentParam: string
+  onDelete: (attributeKey: string) => void
+}) => {
   const [loading, setLoading] = useState(false)
   const [parsedData, setParsedData] = useState<parsedObjProps[]>([])
 
@@ -111,7 +119,15 @@ export const FormInput = ({ parentParam }: { parentParam: string }) => {
                       size="small"
                     />
                     {!requiredKey && (
-                      <IconButton onClick={() => remove(index)}>
+                      <IconButton
+                        onClick={() => {
+                          remove(index)
+
+                          if (field.key !== undefined && onDelete) {
+                            onDelete(field.key)
+                          }
+                        }}
+                      >
                         <DeleteIcon />
                       </IconButton>
                     )}

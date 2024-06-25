@@ -5,8 +5,10 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import React from 'react'
 import { ThemeProvider as StyleThemeProvider } from 'styled-components'
 import { SideBar } from '..'
+import { api } from '../../../../network/api'
 import { AppStore, useAppStore } from '../../../../stores/useAppStore'
 import { DataStore, useDataStore, useFilteredNodes, useSelectedNode } from '../../../../stores/useDataStore'
+import { colors } from '../../../../utils'
 import * as utils from '../../../../utils/relayHelper'
 import { appTheme } from '../../Providers'
 
@@ -324,6 +326,53 @@ describe('Test SideBar', () => {
         expect(setSelectedNodeMock).not.toHaveBeenCalledWith(mockNode)
         expect(saveConsumedContentMock).not.toHaveBeenCalledWith(mockNode)
         expect(setRelevanceSelectedMock).not.toHaveBeenCalledWith(true)
+      })
+    })()
+  })
+
+  it('Test filter icon functionality and schema filtering', () => {
+    const mockSchemas = [{ type: 'Type1' }, { type: 'Type2' }, { type: 'Type3' }]
+
+    jest.spyOn(api, 'get').mockResolvedValue({ schemas: mockSchemas })
+
+    useAppStoreMock.mockReturnValue({
+      setCurrentPlayingAudio: jest.fn(),
+      sidebarIsOpen: true,
+      setSidebarOpen: jest.fn(),
+      clearSearch: jest.fn(),
+      currentSearch: '',
+      searchFormValue: '',
+    })
+
+    render(
+      <ThemeProvider theme={appTheme}>
+        <StyleThemeProvider theme={appTheme}>
+          <SideBar />
+        </StyleThemeProvider>
+      </ThemeProvider>,
+    )
+    ;(async () => {
+      await waitFor(() => {
+        const filterIcon = screen.getByTestId('search_filter_icon')
+        fireEvent.click(filterIcon)
+
+        expect(api.get).toHaveBeenCalledWith('/schema/all')
+
+        mockSchemas.forEach((schema) => {
+          expect(screen.getByText(schema.type)).toBeInTheDocument()
+        })
+
+        const type1Pill = screen.getByText('Type1')
+        fireEvent.click(type1Pill)
+
+        expect(type1Pill).toHaveStyle(`background: ${colors.white}`)
+        expect(type1Pill).toHaveStyle(`color: ${colors.black}`)
+
+        const selectedCount = screen.getByText('1')
+        expect(selectedCount).toBeInTheDocument()
+
+        fireEvent.click(filterIcon)
+        expect(screen.queryByText('Type1')).not.toBeInTheDocument()
       })
     })()
   })

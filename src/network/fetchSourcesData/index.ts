@@ -8,7 +8,6 @@ import {
   RadarRequest,
   SubmitErrRes,
 } from '~/types'
-import { getSignedMessageFromRelay } from '~/utils'
 import { api } from '../api'
 
 type TradarParams = {
@@ -165,6 +164,11 @@ interface EdgeData {
   edge_type: string
 }
 
+interface UpdateEdgeData {
+  ref_id?: string
+  edge_type: string
+}
+
 export const changeNodeType = async (ref_id: string, data: ChangeNodeType) =>
   api.put(`/node`, JSON.stringify({ ...data, ref_id }))
 
@@ -185,18 +189,14 @@ export const getSchemaAll = async () => {
 export const getNodeContent = async (queryParams: ViewContentParams) => {
   const queryString = new URLSearchParams({ ...queryParams }).toString()
 
-  const signedMessage = await getSignedMessageFromRelay()
-
-  const url = `/node/content?${queryString}&msg=${signedMessage.message}&sig=${signedMessage.signature}`
+  const url = `/node/content?${queryString}`
   const response = await api.get<NodeContentResponse>(url)
 
   return response
 }
 
 export const getTotalProcessing = async () => {
-  const signedMessage = await getSignedMessageFromRelay()
-
-  const url = `/node/content?msg=${signedMessage.message}&sig=${signedMessage.signature}`
+  const url = `/node/content`
   const response = await api.get<ProcessingResponse>(url)
 
   return response
@@ -325,6 +325,18 @@ export const postCustomType = async (data: createCustonNode) => {
 
 export const postBluePrintType = async (data: EdgeData) => {
   const response = await api.post('/schema/edge', JSON.stringify(data))
+
+  return response
+}
+
+export const updateEdgeType = async (data: UpdateEdgeData) => {
+  const response = await api.put(`/schema/edge/${data.ref_id}`, JSON.stringify({ edge_type: data.edge_type }))
+
+  return response
+}
+
+export const deleteEdgeType = async (ref_id: string) => {
+  const response = await api.delete(`/schema/edge/${ref_id}`)
 
   return response
 }

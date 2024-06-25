@@ -76,4 +76,40 @@ describe('Editor Component - Delete Node', () => {
 
     expect(mockProps.onDelete).toHaveBeenCalled()
   })
+
+  it('should send a PUT request with deleted attributes marked as "delete" when editing a node', async () => {
+    const deletedAttributes = ['oldAttribute']
+    const updatedData = {
+      type: 'exampleType',
+      parent: 'exampleParent',
+      attributes: {
+        newAttribute: 'newValue',
+      },
+    }
+
+    api.put = jest.fn().mockResolvedValue({ status: 'success', ref_id: '123' })
+
+    render(<Editor {...mockProps} />)
+
+    waitFor(async () => {
+      const handleSubmit = jest.spyOn(Editor.prototype, 'handleSubmitForm')
+      // @ts-ignore
+      await handleSubmit(updatedData, true, deletedAttributes)
+
+      expect(api.put).toHaveBeenCalledWith(
+        '/schema',
+        JSON.stringify({
+          type: 'exampleType',
+          parent: 'exampleParent',
+          attributes: {
+            newAttribute: 'newValue',
+            oldAttribute: 'delete',
+          },
+        }),
+        {},
+      )
+
+      handleSubmit.mockRestore()
+    })
+  })
 })

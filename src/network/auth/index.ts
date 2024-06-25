@@ -1,8 +1,8 @@
 import { api } from '~/network/api'
-import { AuthRequest, IsAdminResponse } from '~/types'
+import { IsAdminResponse } from '~/types'
 
-export async function getIsAdmin({ message, signature }: AuthRequest) {
-  const response = api.get<IsAdminResponse>(`/isAdmin?msg=${message}&sig=${signature}`)
+export async function getIsAdmin() {
+  const response = api.get<IsAdminResponse>(`/isAdmin`)
 
   return response
 }

@@ -95,7 +95,7 @@ export const Body = () => {
     <FormProvider {...form}>
       {topicIsLoading ? (
         <Flex align="center" my={24}>
-          <ClipLoader color={colors.BLUE_PRESS_STATE} size={24} />
+          <ClipLoader color={colors.lightGray} size={24} />
         </Flex>
       ) : (
         <TitleEditor
@@ -110,7 +110,11 @@ export const Body = () => {
       )}
       <CustomButton color="secondary" disabled={submitDisabled} onClick={handleSave} size="large" variant="contained">
         Confirm
-        {loading && <ClipLoader color={colors.BLUE_PRESS_STATE} size={10} />}
+        {loading && (
+          <ClipLoaderWrapper>
+            <ClipLoader color={colors.lightGray} size={12} />
+          </ClipLoaderWrapper>
+        )}
       </CustomButton>
     </FormProvider>
   )
@@ -119,4 +123,8 @@ export const Body = () => {
 const CustomButton = styled(Button)`
   width: 293px !important;
   margin: 0 0 10px auto !important;
+`
+
+const ClipLoaderWrapper = styled.span`
+  margin-top: 2px;
 `

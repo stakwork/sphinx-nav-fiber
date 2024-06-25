@@ -139,7 +139,7 @@ export const TopicSources = () => {
             activeIcon={<ClearIcon />}
             defaultIcon={<SearchIcon />}
             loading={loading}
-            loadingIcon={<ClipLoader color={colors.PRIMARY_BLUE} size={24} />}
+            loadingIcon={<ClipLoader color={colors.lightGray} size={24} />}
             onSearch={handleSearch}
             placeholder="Search ..."
           />
@@ -161,7 +161,7 @@ export const TopicSources = () => {
               {total > ids.length ? (
                 <Button className="load-more" disabled={loading} onClick={handleLoadMore}>
                   Load more
-                  {loading && <ClipLoader color={colors.BLUE_PRESS_STATE} size={10} />}
+                  {loading && <ClipLoader color={colors.lightGray} size={10} />}
                 </Button>
               ) : null}
             </>

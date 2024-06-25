@@ -11,6 +11,7 @@ import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
 import { useModal } from '~/stores/useModalStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { colors } from '~/utils/colors'
+import { isSphinx } from '~/utils/isSphinx'
 
 export const MainToolbar = () => {
   const { open: openSourcesModal } = useModal('sourcesTable')
@@ -24,6 +25,7 @@ export const MainToolbar = () => {
   const userFeedbackFeatureFlag = useFeatureFlagStore((s) => s.userFeedbackFeatureFlag)
 
   const [isAdmin] = useUserStore((s) => [s.isAdmin])
+  const sphinxEnabled = isSphinx()
 
   return (
     <Wrapper>
@@ -64,7 +66,7 @@ export const MainToolbar = () => {
         </IconWrapper>
         <Text>Settings</Text>
       </ActionButton>
-      {userFeedbackFeatureFlag ? (
+      {userFeedbackFeatureFlag && sphinxEnabled ? (
         <FeedbackButton data-testid="feedback-modal" onClick={openFeedbackModal}>
           <IconWrapper>
             <FeedbackIcon />
