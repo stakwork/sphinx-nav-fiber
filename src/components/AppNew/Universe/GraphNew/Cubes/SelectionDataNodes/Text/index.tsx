@@ -2,6 +2,7 @@ import { Text } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import { memo, useMemo, useRef } from 'react'
 import { Mesh } from 'three'
+import { truncateText } from '~/components/ModalsContainer/BlueprintModal/Body/Editor/utils'
 import { NodeExtendedNew } from '~/network/fetchGraphDataNew/types'
 import { useGraphStore, useSelectedNode } from '~/stores/useGraphStore'
 import { colors } from '~/utils/colors'
@@ -66,7 +67,7 @@ export const SelectionNode = memo(({ node }: Props) => {
       visible
       {...fontProps}
     >
-      {node.name}
+      {truncateText(node.name || '', 20)}
     </Text>
   )
 })
