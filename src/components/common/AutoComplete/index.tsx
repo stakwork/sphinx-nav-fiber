@@ -18,7 +18,7 @@ export type TAutocompleteOption = {
 type Props = {
   options: TAutocompleteOption[] | null
   onSelect: (val: TAutocompleteOption | null) => void
-  selectedValue?: TAutocompleteOption | undefined
+  selectedValue?: TAutocompleteOption | null
   handleInputChange?: (val: string) => void
   isLoading?: boolean
   autoFocus?: boolean
@@ -36,7 +36,7 @@ const defaultProps = {
 export const AutoComplete: FC<Props> = ({
   options,
   onSelect,
-  selectedValue = undefined,
+  selectedValue = null,
   handleInputChange,
   isLoading = false,
   autoFocus = false,
@@ -140,7 +140,7 @@ export const AutoComplete: FC<Props> = ({
             backgroundColor: colors.DROPDOWN_SELECTED,
           },
         }}
-        value={selectedValue}
+        value={selectedValue || undefined}
       />
     </Stack>
   )
