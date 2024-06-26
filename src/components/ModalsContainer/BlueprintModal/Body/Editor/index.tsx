@@ -6,7 +6,7 @@ import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
 import { TOption } from '~/components/AddItemModal/SourceTypeStep/types'
 import ClearIcon from '~/components/Icons/ClearIcon'
-import { AutoComplete } from '~/components/common/AutoComplete'
+import { AutoComplete, TAutocompleteOption } from '~/components/common/AutoComplete'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { TextInput } from '~/components/common/TextInput'
@@ -263,14 +263,19 @@ export const Editor = ({
 
   const resolvedParentValue = () => parentOptions?.find((i) => i.value === parent)
 
-  const resolvedSelectedParentValue = () =>
-    selectedNodeParentOptions?.find((i) => {
-      if (i.value === parent) {
-        return i
-      }
+  const resolvedSelectedParentValue = (): TAutocompleteOption | undefined => {
+    const option = selectedNodeParentOptions?.find((i) => i.value === parent)
 
-      return undefined
-    })
+    if (option) {
+      return option
+    }
+
+    if (parent) {
+      return { label: parent, value: parent }
+    }
+
+    return undefined
+  }
 
   return (
     <Flex>

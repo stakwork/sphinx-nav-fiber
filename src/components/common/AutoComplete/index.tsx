@@ -18,7 +18,7 @@ export type TAutocompleteOption = {
 type Props = {
   options: TAutocompleteOption[] | null
   onSelect: (val: TAutocompleteOption | null) => void
-  selectedValue?: TAutocompleteOption | null
+  selectedValue?: TAutocompleteOption | undefined
   handleInputChange?: (val: string) => void
   isLoading?: boolean
   autoFocus?: boolean
@@ -36,7 +36,7 @@ const defaultProps = {
 export const AutoComplete: FC<Props> = ({
   options,
   onSelect,
-  selectedValue = null,
+  selectedValue = undefined,
   handleInputChange,
   isLoading = false,
   autoFocus = false,
@@ -46,8 +46,6 @@ export const AutoComplete: FC<Props> = ({
 }) => {
   const inputRef = useRef<HTMLInputElement>(null)
   const [open, setOpen] = useState<boolean>(false)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [value, setValue] = useState<any>(selectedValue)
 
   useEffect(() => {
     if (autoFocus && inputRef.current) {
@@ -55,10 +53,6 @@ export const AutoComplete: FC<Props> = ({
       setOpen(true)
     }
   }, [autoFocus])
-
-  useEffect(() => {
-    setValue(selectedValue)
-  }, [selectedValue])
 
   const handleChange = (event: ChangeEvent<object>, newValue: TAutocompleteOption | null) => {
     onSelect(newValue)
@@ -146,7 +140,7 @@ export const AutoComplete: FC<Props> = ({
             backgroundColor: colors.DROPDOWN_SELECTED,
           },
         }}
-        value={value}
+        value={selectedValue}
       />
     </Stack>
   )
