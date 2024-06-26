@@ -67,9 +67,7 @@ export const Tooltip = ({ node }: Props) => {
           </Flex>
         </Flex>
         <Flex direction="row" mb={12}>
-          <Flex align="flex-start">
-            <Text>{name}</Text>
-          </Flex>
+          <Text>{name}</Text>
         </Flex>
         {loading ? (
           <ClipLoader color={colors.white} />
