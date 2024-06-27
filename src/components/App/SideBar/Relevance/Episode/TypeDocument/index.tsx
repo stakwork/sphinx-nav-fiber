@@ -5,6 +5,7 @@ import { Text } from '~/components/common/Text'
 import { TypeBadge } from '~/components/common/TypeBadge'
 import { colors } from '~/utils/colors'
 import { Description } from '..'
+import LinkIcon from '~/components/Icons/LinkIcon'
 
 interface Props {
   text: string
@@ -14,8 +15,19 @@ interface Props {
 
 export const TypeDocument = ({ text, type, sourceLink }: Props) => (
   <Flex direction="column">
-    <Flex align="center" direction="row">
-      <TypeBadge type={type} />
+    <Flex align="center" direction="row" justify="space-between">
+      <Flex align="center" direction="row">
+        <TypeBadge type={type} />
+      </Flex>
+      {sourceLink && (
+        <StyledLink
+          href={`${sourceLink}${sourceLink.includes('?') ? '&' : '?'}open=system`}
+          onClick={(e) => e.stopPropagation()}
+          target="_blank"
+        >
+          <LinkIcon />
+        </StyledLink>
+      )}
     </Flex>
     <Description data-testid="episode-description">{text}</Description>
     <Flex align="center" direction="row" justify="flex-start">
