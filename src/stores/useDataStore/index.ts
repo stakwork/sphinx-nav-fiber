@@ -224,7 +224,8 @@ export const useDataStore = create<DataStore>()(
       }
     },
     resetDataNew: () => null,
-    setFilters: (filters: FilterParams) => set((state) => ({ filters: { ...state.filters, ...filters, page: 0 } })),
+    setFilters: (filters: FilterParams) =>
+      set((state) => ({ filters: { ...state.filters, ...filters, page: 0 }, currentPage: 0 })),
     setSidebarFilterCounts: (sidebarFilterCounts) => set({ sidebarFilterCounts }),
     setTrendingTopics: (trendingTopics) => set({ trendingTopics }),
     setStats: (stats) => set({ stats }),
