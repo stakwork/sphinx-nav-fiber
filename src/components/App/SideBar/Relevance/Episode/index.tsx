@@ -92,7 +92,7 @@ export const Episode = ({
               <Flex align="center" direction="row">
                 {type && <TypeBadge type={type} />}
               </Flex>
-              {type === 'video' && sourceLink ? (
+              {sourceLink && (
                 <StyledLink
                   href={`${sourceLink}${sourceLink.includes('?') ? '&' : '?'}open=system`}
                   onClick={(e) => e.stopPropagation()}
@@ -100,7 +100,7 @@ export const Episode = ({
                 >
                   <LinkIcon />
                 </StyledLink>
-              ) : null}
+              )}
             </Flex>
 
             {name && <Description data-testid="episode-name">{name}</Description>}
