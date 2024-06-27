@@ -1,13 +1,13 @@
 import { isDevelopment, isE2E } from '~/constants'
 import { api } from '~/network/api'
-import { FetchDataResponse, FilterParams } from '~/types'
+import { FetchDataResponse } from '~/types'
 import { getLSat } from '~/utils/getLSat'
 import { payLsat } from '~/utils/payLsat'
 
 // Main function to fetch graph data
 export const fetchGraphData = async (
   setBudget: (value: number | null) => void,
-  params: FilterParams,
+  params: Record<string, string>,
   signal: AbortSignal,
   setAbortRequests: (status: boolean) => void,
 ): Promise<FetchDataResponse> => fetchNodes(setBudget, params, signal, setAbortRequests)
@@ -15,7 +15,7 @@ export const fetchGraphData = async (
 // Consolidated function to handle different fetch scenarios
 const fetchNodes = async (
   setBudget: (value: number | null) => void,
-  params: FilterParams,
+  params: Record<string, string>,
   signal: AbortSignal,
   setAbortRequests: (status: boolean) => void,
 ): Promise<FetchDataResponse> => {

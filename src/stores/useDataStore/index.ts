@@ -69,7 +69,7 @@ export type DataStore = {
   setSidebarFilterCounts: (filterCounts: SidebarFilterWithCount[]) => void
   setAbortRequests: (abortRequest: boolean) => void
   nextPage: () => void
-  setFilters: (filters: FilterParams) => void
+  setFilters: (filters: Partial<FilterParams>) => void
 }
 
 const defaultData: Omit<
