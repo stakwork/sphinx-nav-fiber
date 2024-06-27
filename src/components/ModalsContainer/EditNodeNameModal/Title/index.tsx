@@ -6,6 +6,7 @@ import { Text } from '~/components/common/Text'
 import { TextInput } from '~/components/common/TextInput'
 import { TypeBadge } from '~/components/common/TypeBadge'
 import { requiredRule } from '~/constants'
+import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
 import { useSelectedNode } from '~/stores/useGraphStore'
 import { useModal } from '~/stores/useModalStore'
 import { colors } from '~/utils'
@@ -13,6 +14,10 @@ import { colors } from '~/utils'
 export const TitleEditor = () => {
   const { open: openAddItemNodeModal } = useModal('changeNodeType')
   const { close } = useModal('editNodeName')
+
+  const { changeNodeTypeFeatureFlag } = useFeatureFlagStore((s) => ({
+    changeNodeTypeFeatureFlag: s.changeNodeTypeFeatureFlag,
+  }))
 
   const selectedNode = useSelectedNode()
   const nodeType = selectedNode?.node_type as string
@@ -29,10 +34,11 @@ export const TitleEditor = () => {
           <StyledText>Edit Node</StyledText>
           <LabelWrapper>
             <TypeBadge type={nodeType} />
-
-            <EditIconWrapper onClick={handleEditNode}>
-              <EditNodeIcon />
-            </EditIconWrapper>
+            {changeNodeTypeFeatureFlag && (
+              <EditIconWrapper onClick={handleEditNode}>
+                <EditNodeIcon />
+              </EditIconWrapper>
+            )}
           </LabelWrapper>
         </Flex>
       </Flex>
