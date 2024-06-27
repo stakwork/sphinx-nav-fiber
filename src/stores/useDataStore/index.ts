@@ -69,6 +69,7 @@ export type DataStore = {
   setSidebarFilterCounts: (filterCounts: SidebarFilterWithCount[]) => void
   setAbortRequests: (abortRequest: boolean) => void
   nextPage: () => void
+  setFilters: (filters: FilterParams) => void
 }
 
 const defaultData: Omit<
@@ -77,6 +78,7 @@ const defaultData: Omit<
   | 'setStats'
   | 'setSidebarFilter'
   | 'fetchData'
+  | 'setFilters'
   | 'setIsFetching'
   | 'setCategoryFilter'
   | 'setHoveredNode'
@@ -103,9 +105,10 @@ const defaultData: Omit<
     skip: '0',
     limit: '15',
     depth: '1',
-    sort_by: 'edge_count',
+    sort_by: 'date',
     include_properties: 'true',
     top_node_count: '10',
+    node_type: [],
   },
   isFetching: false,
   isLoadingNew: false,
@@ -147,10 +150,13 @@ export const useDataStore = create<DataStore>()(
 
       abortController = controller
 
+      const { node_type: filterNodeTypes, ...withoutNodeType } = filters
+
       const updatedParams = {
-        ...filters,
+        ...withoutNodeType,
         skip: currentPage === 0 ? String(currentPage * itemsPerPage) : String(currentPage * itemsPerPage + 1),
         limit: String(itemsPerPage),
+        ...(filterNodeTypes.length > 0 ? { node_type: JSON.stringify(filterNodeTypes) } : {}),
         ...(currentSearch ? { word: currentSearch } : {}),
       }
 

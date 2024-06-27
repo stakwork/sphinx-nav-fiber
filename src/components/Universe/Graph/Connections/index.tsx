@@ -4,7 +4,7 @@ import { memo, useEffect, useRef } from 'react'
 import { Vector3 } from 'three'
 import { Line2 } from 'three-stdlib'
 import { useDataStore } from '~/stores/useDataStore'
-import { useSelectedNode } from '~/stores/useGraphStore'
+import { useGraphStore, useSelectedNode } from '~/stores/useGraphStore'
 import { Link } from '~/types'
 import { LinkPosition } from '..'
 
@@ -14,6 +14,7 @@ type Props = {
 
 export const Connections = memo(({ linksPositions }: Props) => {
   const data = useDataStore((s) => s.dataInitial)
+  const { showSelectionGraph } = useGraphStore((s) => s)
   const selectedNode = useSelectedNode()
 
   const lineRefs = useRef<Line2[]>([])
@@ -21,16 +22,17 @@ export const Connections = memo(({ linksPositions }: Props) => {
   useEffect(() => {
     lineRefs.current.forEach((line, index) => {
       if (line) {
-        console.log(
-          selectedNode?.ref_id === data?.links[index].source || selectedNode?.ref_id === data?.links[index].target,
-        )
+        const lineWidth = selectedNode ? 0 : 1
+
+        const isSelected =
+          selectedNode?.ref_id === data?.links[index].source || selectedNode?.ref_id === data?.links[index].target
 
         gsap.fromTo(
           line.material,
           { linewidth: 5 },
           {
-            linewidth: false ? 2 : 1,
-            duration: 3,
+            linewidth: isSelected ? 2 : lineWidth,
+            duration: 1,
           },
         )
       }
@@ -64,6 +66,7 @@ export const Connections = memo(({ linksPositions }: Props) => {
             opacity={1}
             points={[source, target]}
             transparent
+            visible={!showSelectionGraph}
           />
         )
       })}

@@ -13,7 +13,7 @@ export type FilterParams = {
   sort_by: string
   top_node_count: string
   include_properties: string
-  node_type: string
+  node_type: string[]
   free?: string
   word?: string // Add other optional filter properties as needed
 }

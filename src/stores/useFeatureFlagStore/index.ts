@@ -41,7 +41,7 @@ const defaultData: Omit<
   changeNodeTypeFeatureFlag: false,
   realtimeGraphFeatureFlag: false,
   userFeedbackFeatureFlag: false,
-  searchFilteringFeatureFlag: false,
+  searchFilteringFeatureFlag: true,
 }
 
 export const useFeatureFlagStore = create<FeatureFlagStore>((set) => ({

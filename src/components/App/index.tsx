@@ -60,7 +60,7 @@ export const App = () => {
 
   const setTeachMeAnswer = useTeachStore((s) => s.setTeachMeAnswer)
 
-  const { fetchData, setCategoryFilter, setAbortRequests, addNewNode } = useDataStore((s) => s)
+  const { fetchData, setCategoryFilter, setAbortRequests, addNewNode, filters } = useDataStore((s) => s)
 
   const setSelectedNode = useUpdateSelectedNode()
 
@@ -92,7 +92,7 @@ export const App = () => {
 
   useEffect(() => {
     runSearch()
-  }, [searchTerm, runSearch])
+  }, [searchTerm, runSearch, filters])
 
   const handleNewNode = useCallback(() => {
     setNodeCount('INCREMENT')

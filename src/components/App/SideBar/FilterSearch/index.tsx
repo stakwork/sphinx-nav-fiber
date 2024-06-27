@@ -5,7 +5,6 @@ import ClearIcon from '~/components/Icons/ClearIcon'
 import PlusIcon from '~/components/Icons/PlusIcon'
 import { SchemaExtended } from '~/components/ModalsContainer/BlueprintModal/types'
 import { Flex } from '~/components/common/Flex'
-import { api } from '~/network/api'
 import { colors } from '~/utils/colors'
 
 type Props = {
@@ -14,6 +13,7 @@ type Props = {
   setSelectedTypes: (value: string[] | ((prevSelectedTypes: string[]) => string[])) => void
   setIsFilterOpen: (value: boolean) => void
   setAnchorEl: (value: HTMLElement | null) => void
+  handleApply: () => void
   selectedTypes: string[]
   schemaAll: SchemaExtended[]
   anchorEl: HTMLElement | null
@@ -25,6 +25,7 @@ export const FilterSearch = ({
   setSelectedTypes,
   setIsFilterOpen,
   setAnchorEl,
+  handleApply,
   selectedTypes,
   schemaAll,
   anchorEl,
@@ -37,20 +38,6 @@ export const FilterSearch = ({
 
   const handleClear = async () => {
     setSelectedTypes([])
-  }
-
-  const handleSave = async () => {
-    const endPoint = 'graph/search'
-
-    const queryParams = new URLSearchParams({
-      node_type: selectedTypes.join(','),
-    })
-
-    try {
-      await api.get(`/${endPoint}?${queryParams.toString()}`)
-    } catch (error) {
-      console.warn(error)
-    }
   }
 
   const handleViewMoreClick = () => {
@@ -126,7 +113,7 @@ export const FilterSearch = ({
             </ClearButtonWrapper>
             Clear
           </ClearButton>
-          <ShowResultButton color="secondary" onClick={handleSave} size="large" variant="contained">
+          <ShowResultButton color="secondary" onClick={handleApply} size="large" variant="contained">
             Show Results
           </ShowResultButton>
         </Flex>

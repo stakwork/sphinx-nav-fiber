@@ -40,7 +40,7 @@ type ContentProp = {
 
 // eslint-disable-next-line react/display-name
 const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen }, ref) => {
-  const { isFetching: isLoading, setSidebarFilter } = useDataStore((s) => s)
+  const { isFetching: isLoading, setSidebarFilter, setFilters } = useDataStore((s) => s)
   const setSelectedNode = useUpdateSelectedNode()
 
   const filteredNodes = useFilteredNodes()
@@ -83,7 +83,7 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
       try {
         const response = await getSchemaAll()
 
-        setSchemaAll(response.schemas)
+        setSchemaAll(response.schemas.filter((schema) => !schema.is_deleted))
       } catch (error) {
         console.error('Error fetching schema:', error)
       }
@@ -100,8 +100,15 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
     }
 
     setIsFilterOpen((prev) => !prev)
-    setSelectedTypes([])
     setShowAllSchemas(false)
+  }
+
+  const handleFiltersApply = () => {
+    setFilters({
+      node_type: selectedTypes,
+    })
+
+    // onSubmit?.()
   }
 
   return (
@@ -146,6 +153,7 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
           {searchFilteringFeatureFlag && (
             <FilterSearch
               anchorEl={anchorEl}
+              handleApply={handleFiltersApply}
               schemaAll={schemaAll}
               selectedTypes={selectedTypes}
               setAnchorEl={setAnchorEl}
@@ -167,7 +175,6 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
                   <span className="label"> results</span>
                 </div>
                 <div className="right" style={{ alignItems: 'center' }}>
-                  {/* <TeachMe /> */}
                   <SelectWithPopover />
                 </div>
               </>

@@ -47,7 +47,7 @@ const fetchNodes = async (
 export const fetchNodeEdges = async (refId: string, skip: number): Promise<FetchDataResponse | null> => {
   try {
     const response = await api.get<FetchDataResponse>(
-      `/prediction/graph/edges/${refId}?skip=${skip}&limit=5&sort_by="edge_count"`,
+      `/prediction/graph/edges/${refId}?skip=${skip}&limit=5&sort_by="edge_count&include_properties=true&includeContent=true"`,
     )
 
     return response
