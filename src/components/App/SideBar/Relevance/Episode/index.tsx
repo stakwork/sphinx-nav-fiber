@@ -92,15 +92,15 @@ export const Episode = ({
               <Flex align="center" direction="row">
                 {type && <TypeBadge type={type} />}
               </Flex>
-              {type === 'video' && sourceLink ? (
+              {sourceLink && (
                 <StyledLink
-                  href={`${sourceLink}${sourceLink.includes('?') ? '&' : '?'}open=system`}
+                  href={`${sourceLink}${sourceLink?.includes('?') ? '&' : '?'}open=system`}
                   onClick={(e) => e.stopPropagation()}
                   target="_blank"
                 >
                   <LinkIcon />
                 </StyledLink>
-              ) : null}
+              )}
             </Flex>
 
             {name && <Description data-testid="episode-name">{name}</Description>}
@@ -120,19 +120,36 @@ export const Episode = ({
         <>
           {type === 'topic' && (
             <TypeTopic>
-              <HashtagIcon />
-              <p>{subtitle}</p>
+              <Flex align="center" direction="row" justify="space-between">
+                <Flex align="center" direction="row" pr={16}>
+                  <HashtagIcon />
+
+                  <p>{subtitle}</p>
+                </Flex>
+                {sourceLink && (
+                  <StyledLink
+                    href={`${sourceLink}${sourceLink?.includes('?') ? '&' : '?'}open=system`}
+                    onClick={(e) => e.stopPropagation()}
+                    target="_blank"
+                  >
+                    <LinkIcon />
+                  </StyledLink>
+                )}
+              </Flex>
             </TypeTopic>
           )}
           {['person', 'guest'].includes(type as string) && (
-            <TypePerson imageUrl={imageUrl} name={name || ''} title={showTitle || ''} />
+            <TypePerson imageUrl={imageUrl} name={name || ''} sourceLink={sourceLink || ''} title={showTitle || ''} />
           )}
-          {['image'].includes(type as string) && <TypeCustom imageUrl={sourceLink} name={name || ''} />}
+          {['image'].includes(type as string) && (
+            <TypeCustom imageUrl={sourceLink} name={name || ''} sourceLink={sourceLink || ''} />
+          )}
           {type === 'tweet' && (
             <TypeTweet
               date={date}
               imageUrl={imageUrl}
               name={name || ''}
+              sourceLink={sourceLink || ''}
               text={text || ''}
               twitterHandle={twitterHandle}
               verified={verified}
@@ -240,8 +257,11 @@ export const Title = styled(Date)`
   }
 `
 
-const StyledLink = styled.a`
+export const StyledLink = styled.a`
   color: ${colors.GRAY6};
   font-size: 16px;
   height: 16px;
+  display: flex;
+  gap: 5px;
+  align-items: center;
 `

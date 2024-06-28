@@ -4,7 +4,8 @@ import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { TypeBadge } from '~/components/common/TypeBadge'
 import { colors } from '~/utils/colors'
-import { Description } from '..'
+import { Description, StyledLink } from '..'
+import LinkIcon from '~/components/Icons/LinkIcon'
 
 interface Props {
   text: string
@@ -14,8 +15,19 @@ interface Props {
 
 export const TypeDocument = ({ text, type, sourceLink }: Props) => (
   <Flex direction="column">
-    <Flex align="center" direction="row">
-      <TypeBadge type={type} />
+    <Flex align="center" direction="row" justify="space-between">
+      <Flex align="center" direction="row">
+        <TypeBadge type={type} />
+      </Flex>
+      {sourceLink && (
+        <StyledLink
+          href={`${sourceLink}${sourceLink?.includes('?') ? '&' : '?'}open=system`}
+          onClick={(e) => e.stopPropagation()}
+          target="_blank"
+        >
+          <LinkIcon />
+        </StyledLink>
+      )}
     </Flex>
     <Description data-testid="episode-description">{text}</Description>
     <Flex align="center" direction="row" justify="flex-start">
@@ -28,15 +40,6 @@ export const TypeDocument = ({ text, type, sourceLink }: Props) => (
     </Flex>
   </Flex>
 )
-
-const StyledLink = styled.a`
-  color: ${colors.GRAY6};
-  font-size: 16px;
-  height: 16px;
-  display: flex;
-  gap: 5px;
-  align-items: center;
-`
 
 const SyledLinkText = styled(Text)`
   max-width: 150px;
