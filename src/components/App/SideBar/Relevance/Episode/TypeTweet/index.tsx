@@ -13,7 +13,7 @@ export type Props = {
   date: number
   name: string
   verified: boolean
-  sourceLink: string
+  sourceLink?: string
 }
 
 export const TypeTweet = ({ text, imageUrl, date, twitterHandle, name, verified, sourceLink }: Props) => (

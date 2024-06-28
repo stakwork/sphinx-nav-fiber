@@ -8,7 +8,7 @@ import { StyledLink } from '~/components/App/SideBar/Relevance/Episode'
 type Props = {
   imageUrl?: string
   name: string
-  sourceLink: string
+  sourceLink?: string
 }
 
 export const TypeCustom = ({ imageUrl, name, sourceLink }: Props) => (

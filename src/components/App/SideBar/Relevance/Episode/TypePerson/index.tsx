@@ -9,7 +9,7 @@ type Props = {
   title: string
   imageUrl?: string
   name: string
-  sourceLink: string
+  sourceLink?: string
 }
 
 export const TypePerson = ({ title, imageUrl, name, sourceLink }: Props) => (
