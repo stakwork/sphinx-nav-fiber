@@ -3,7 +3,8 @@ import styled from 'styled-components'
 import { Avatar } from '~/components/common/Avatar'
 import { Flex } from '~/components/common/Flex'
 import { colors } from '~/utils/colors'
-import { Date } from '..'
+import { Date, StyledLink } from '..'
+import LinkIcon from '~/components/Icons/LinkIcon'
 
 export type Props = {
   text: string
@@ -12,25 +13,37 @@ export type Props = {
   date: number
   name: string
   verified: boolean
+  sourceLink: string
 }
 
-export const TypeTweet = ({ text, imageUrl, date, twitterHandle, name, verified }: Props) => (
+export const TypeTweet = ({ text, imageUrl, date, twitterHandle, name, verified, sourceLink }: Props) => (
   <Flex direction="column">
-    <Flex align="center" direction="row" pr={16}>
-      <PictureWrapper>
-        <Avatar rounded size={27} src={imageUrl || ''} type="person" />
-      </PictureWrapper>
-      <Flex>
-        <Name align="center" direction="row">
-          {name}
-          {verified && (
-            <div className="verification">
-              <img alt="verified" src="verified_twitter.svg" />
-            </div>
-          )}
-        </Name>
-        {twitterHandle && <TwitterHandle>@{twitterHandle}</TwitterHandle>}
+    <Flex align="center" direction="row" justify="space-between">
+      <Flex align="center" direction="row" pr={16}>
+        <PictureWrapper>
+          <Avatar rounded size={27} src={imageUrl || ''} type="person" />
+        </PictureWrapper>
+        <Flex>
+          <Name align="center" direction="row">
+            {name}
+            {verified && (
+              <div className="verification">
+                <img alt="verified" src="verified_twitter.svg" />
+              </div>
+            )}
+          </Name>
+          {twitterHandle && <TwitterHandle>@{twitterHandle}</TwitterHandle>}
+        </Flex>
       </Flex>
+      {sourceLink && (
+        <StyledLink
+          href={`${sourceLink}${sourceLink?.includes('?') ? '&' : '?'}open=system`}
+          onClick={(e) => e.stopPropagation()}
+          target="_blank"
+        >
+          <LinkIcon />
+        </StyledLink>
+      )}
     </Flex>
 
     <Flex grow={1} shrink={1}>

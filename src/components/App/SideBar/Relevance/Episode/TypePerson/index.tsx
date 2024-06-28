@@ -2,26 +2,40 @@ import styled from 'styled-components'
 import { Avatar } from '~/components/common/Avatar'
 import { Flex } from '~/components/common/Flex'
 import { colors } from '~/utils/colors'
+import LinkIcon from '~/components/Icons/LinkIcon'
+import { StyledLink } from '~/components/App/SideBar/Relevance/Episode'
 
 type Props = {
   title: string
   imageUrl?: string
   name: string
+  sourceLink: string
 }
 
-export const TypePerson = ({ title, imageUrl, name }: Props) => (
-  <Flex align="center" direction="row">
-    <PictureWrapper>
-      <Avatar rounded size={64} src={imageUrl || ''} type="person" />
-    </PictureWrapper>
-    {(title || name) && <Name>{title || name}</Name>}
+export const TypePerson = ({ title, imageUrl, name, sourceLink }: Props) => (
+  <Flex align="center" direction="row" justify="space-between">
+    <Flex align="center" direction="row">
+      <PictureWrapper>
+        <Avatar rounded size={64} src={imageUrl || ''} type="person" />
+      </PictureWrapper>
+      {(title || name) && <Name>{title || name}</Name>}
+    </Flex>
+    {sourceLink && (
+      <StyledLink
+        href={`${sourceLink}${sourceLink?.includes('?') ? '&' : '?'}open=system`}
+        onClick={(e) => e.stopPropagation()}
+        target="_blank"
+      >
+        <LinkIcon />
+      </StyledLink>
+    )}
   </Flex>
 )
 
 const PictureWrapper = styled(Flex)`
   img {
     width: 64px;
-    height: 64px
+    height: 64px;
     border-radius: 50%;
     object-fit: cover;
   }
