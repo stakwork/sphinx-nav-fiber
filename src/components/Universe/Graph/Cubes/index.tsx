@@ -4,22 +4,19 @@ import { memo, useCallback } from 'react'
 import { Object3D } from 'three'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
-import { useGraphStore, useSelectedNode } from '~/stores/useGraphStore'
+import { useGraphStore, useSelectedNode, useSelectedNodeRelativeIds } from '~/stores/useGraphStore'
 import { NodeExtended } from '~/types'
 import { BlurryInstances } from './BlurryInstances'
 import { Cube } from './Cube'
 import { RelevanceBadges } from './RelevanceBadges'
 import { SelectionDataNodes } from './SelectionDataNodes'
 import { TextNode } from './Text'
-import { isMainTopic } from './constants'
 
 export const Cubes = memo(() => {
   const selectedNode = useSelectedNode()
-  const nearbyNodeIds = useGraphStore((s) => s.nearbyNodeIds)
-  const setHoveredNode = useGraphStore((s) => s.setHoveredNode)
-  const showSelectionGraph = useGraphStore((s) => s.showSelectionGraph)
-  const selectionGraphData = useGraphStore((s) => s.selectionGraphData)
-  // const data = useGraphStore((s) => s.data)
+  const relativeIds = useSelectedNodeRelativeIds()
+  const { selectionGraphData, showSelectionGraph, setHoveredNode } = useGraphStore((s) => s)
+
   const data = useDataStore((s) => s.dataInitial)
   const setTranscriptOpen = useAppStore((s) => s.setTranscriptOpen)
 
@@ -70,7 +67,7 @@ export const Cubes = memo(() => {
       if (object?.userData?.ref_id) {
         const node = object.userData as NodeExtended
 
-        if (!ignoreNodeEvent(node) && false) {
+        if (!ignoreNodeEvent(node)) {
           e.stopPropagation()
           setHoveredNode(node)
         }
@@ -91,22 +88,19 @@ export const Cubes = memo(() => {
       {false && <BlurryInstances hide={hideUniverse} />}
       <RelevanceBadges />
       <group name="simulation-3d-group__nodes">
-        {data?.nodes
-          .filter((f: NodeExtended) => {
-            const isSelected = f?.ref_id === selectedNode?.ref_id
-            const isNearbyOrPersistent = nearbyNodeIds.includes(f.ref_id || '') || isMainTopic(f)
+        {data?.nodes.map((node: NodeExtended) => {
+          const hide = !!selectedNode && (relativeIds.includes(node.ref_id) || selectedNode.ref_id === node.ref_id)
 
-            return true || isNearbyOrPersistent || isSelected
-          })
-          .map((node: NodeExtended) => (
+          return (
             <mesh key={node.ref_id}>
               {node.name ? (
-                <TextNode key={node.ref_id || node.id} hide={hideUniverse} node={node} />
+                <TextNode key={node.ref_id || node.id} hide={hideUniverse || hide} node={node} />
               ) : (
                 <Cube key={node.ref_id || node.id} hide={hideUniverse} node={node} />
               )}
             </mesh>
-          ))}
+          )
+        })}
       </group>
 
       {hideUniverse && <SelectionDataNodes />}

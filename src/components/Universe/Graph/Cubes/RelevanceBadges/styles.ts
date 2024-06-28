@@ -68,6 +68,62 @@ export const Tag = styled(Flex)<TagProps>`
   }
 `
 
+export const TagWrapper = styled(Flex)`
+  text-align: center;
+  outline: 1px solid ${colors.white};
+  outline-offset: 0px;
+  white-space: nowrap;
+  padding: 4px;
+  background: rgba(0, 0, 0, 0.75);
+  color: ${colors.white};
+  border-radius: 6px;
+  font-size: 20px;
+  cursor: pointer;
+  transition: font-size 0.4s, outline 0.4s;
+  transform: scale(${(p: TagProps) => p.scale});
+  align-items: center;
+  justify-content: center;
+  font-family: Barlow;
+  font-size: 26px;
+  font-style: normal;
+  font-weight: 700;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+
+  &:hover {
+    outline-offset: 4px;
+  }
+
+  &.selected {
+    .badge-wrapper {
+      top: 0;
+    }
+
+    font-size: 36px;
+
+    &:hover {
+      outline-offset: 0px;
+    }
+  }
+
+  &.topic {
+    outline: none;
+    background: none;
+    &:hover {
+      font-size: 36px;
+    }
+    white-space: nowrap;
+    .badge-wrapper {
+      display: none;
+    }
+  }
+
+  .badge-wrapper {
+    position: absolute;
+    top: -7px;
+    left: -14px;
+  }
+`
+
 type ImageProps = {
   src?: string
   size: number

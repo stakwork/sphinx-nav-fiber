@@ -11,7 +11,7 @@ import { TypeBadge } from '~/components/common/TypeBadge'
 import { useGraphStore, useSelectedNodeRelativeIds } from '~/stores/useGraphStore'
 import { NodeExtended } from '~/types'
 import { colors } from '~/utils/colors'
-import { Tag } from './styles'
+import { Tag, TagWrapper } from './styles'
 import { BadgeProps } from './types'
 
 const variableVector3 = new Vector3()
@@ -23,7 +23,7 @@ const NodeBadge = ({ position, userData, color }: BadgeProps) => {
     useShallow((s) => s),
   )
 
-  const isTopic = (userData?.node_type || '') === 'Topic'
+  const isTopic = (userData?.node_type || '') === 'Topic' || !!userData.name
   const isPerson = (userData?.node_type || '') === 'Guest' || (userData?.node_type || '') === 'Person'
 
   useFrame(() => {
@@ -50,51 +50,60 @@ const NodeBadge = ({ position, userData, color }: BadgeProps) => {
   return isTopic || (isSelected && showSelectionGraph) || !isSelected ? (
     <group ref={ref} position={position}>
       <Html center sprite zIndexRange={[0, 0]}>
-        <Tag
-          className={clsx(userData?.node_type, { selected: isSelected })}
-          color={color}
-          fontColor={colors.white}
-          fontSize={isTopic ? 64 : 20}
-          onClick={(e) => {
-            e.stopPropagation()
-
-            if (userData) {
-              setSelectedNode(userData)
-            }
-          }}
-          onPointerOut={(e) => {
-            e.stopPropagation()
-
-            return
-            setHoveredNode(null)
-          }}
-          onPointerOver={(e) => {
-            e.stopPropagation()
-
-            return
-            setHoveredNode(userData || null)
-          }}
-          scale={isHovered ? 1.05 : 1}
-          selected={false}
-          size={isSelected ? 68 : 40}
-          type={userData?.node_type || ''}
-        >
-          {!isPerson && !isTopic ? (
+        {isTopic ? (
+          <TagWrapper>
             <div className="badge-wrapper">
               <TypeBadge type={userData?.node_type || ''} />
             </div>
-          ) : null}
-          {userData?.name ? (
-            userData?.name
-          ) : (
-            <Avatar
-              rounded={isPerson}
-              size={isSelected ? 60 : 52}
-              src={userData?.image_url || 'audio_default.svg'}
-              type={userData?.node_type}
-            />
-          )}
-        </Tag>
+            {userData?.name}
+          </TagWrapper>
+        ) : (
+          <Tag
+            className={clsx(userData?.node_type, { selected: isSelected })}
+            color={color}
+            fontColor={colors.white}
+            fontSize={isTopic ? 64 : 20}
+            onClick={(e) => {
+              e.stopPropagation()
+
+              if (userData) {
+                setSelectedNode(userData)
+              }
+            }}
+            onPointerOut={(e) => {
+              e.stopPropagation()
+
+              return
+              setHoveredNode(null)
+            }}
+            onPointerOver={(e) => {
+              e.stopPropagation()
+
+              return
+              setHoveredNode(userData || null)
+            }}
+            scale={isHovered ? 1.05 : 1}
+            selected={false}
+            size={isSelected ? 68 : 40}
+            type={userData?.node_type || ''}
+          >
+            {!isPerson && !isTopic ? (
+              <div className="badge-wrapper">
+                <TypeBadge type={userData?.node_type || ''} />
+              </div>
+            ) : null}
+            {userData?.name ? (
+              userData?.name
+            ) : (
+              <Avatar
+                rounded={isPerson}
+                size={isSelected ? 60 : 52}
+                src={userData?.image_url || 'audio_default.svg'}
+                type={userData?.node_type}
+              />
+            )}
+          </Tag>
+        )}
       </Html>
     </group>
   ) : null

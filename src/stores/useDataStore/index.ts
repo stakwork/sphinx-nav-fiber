@@ -108,6 +108,7 @@ const defaultData: Omit<
     sort_by: 'date',
     include_properties: 'true',
     top_node_count: '10',
+    includeContent: 'true',
     node_type: [],
   },
   isFetching: false,
