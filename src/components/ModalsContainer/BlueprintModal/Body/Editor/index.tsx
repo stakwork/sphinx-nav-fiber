@@ -12,11 +12,12 @@ import { Text } from '~/components/common/Text'
 import { TextInput } from '~/components/common/TextInput'
 import { NODE_ADD_ERROR, requiredRule } from '~/constants'
 import { api } from '~/network/api'
-import { Schema, getNodeSchemaTypes } from '~/network/fetchSourcesData'
+import { Schema, getNodeSchemaTypes, getNodeType } from '~/network/fetchSourcesData'
 import { useModal } from '~/stores/useModalStore'
 import { colors } from '~/utils'
 import { CreateCustomNodeAttribute } from './CustomAttributesStep'
-import { convertAttributes } from './utils'
+import { convertAttributes, parsedObjProps, parseJson } from './utils'
+import { NoParent } from '~/components/AddItemModal/SourceTypeStep/constants'
 
 const defaultValues = {
   type: '',
@@ -41,6 +42,24 @@ type Props = {
   setIsCreateNew: (isNew: boolean) => void
   setGraphLoading: (b: boolean) => void
   onSchemaUpdate: () => void
+}
+
+type Attribute = {
+  required?: boolean
+  type?: string
+  key: string
+}
+
+const compareAttributes = (attributees: Attribute[], parsedAttributesData: parsedObjProps[]): boolean => {
+  if (attributees.length !== parsedAttributesData.length) {
+    return true
+  }
+
+  return attributees.some((attr, index) => {
+    const parsed = parsedAttributesData[index]
+
+    return attr.required !== parsed.required || attr.type !== parsed.type || attr.key !== parsed.key
+  })
 }
 
 const handleSubmitForm = async (
@@ -147,6 +166,7 @@ export const Editor = ({
   const [errMessage, setErrMessage] = useState<string>('')
   const [deleteError, setDeleteError] = useState<string | null>(null)
   const [deletedAttributes, setDeletedAttributes] = useState<string[]>([])
+  const [parsedData, setParsedData] = useState<parsedObjProps[]>([])
 
   useEffect(
     () => () => {
@@ -168,20 +188,42 @@ export const Editor = ({
   }, [selectedSchema])
 
   useEffect(() => {
-    if (selectedSchema) {
-      setValue('type', selectedSchema?.type as string)
-      setValue('parent', selectedSchema.parent)
+    const init = async () => {
+      if (selectedSchema) {
+        setValue('type', selectedSchema?.type as string)
+        setValue('parent', selectedSchema.parent)
 
-      fetchAndSetOptions(
-        setSelectedNodeParentOptions,
-        (schema) => schema.type !== selectedSchema.type && schema.type !== selectedSchema.parent,
-      )
+        let parsedDataDefault: parsedObjProps[] = [{ required: false, type: 'string', key: '' }]
+
+        if (selectedSchema.type !== NoParent.value.toLowerCase()) {
+          const data = await getNodeType(selectedSchema.type as string)
+
+          parsedDataDefault = parseJson(data)
+        }
+
+        parsedDataDefault = parsedDataDefault.filter((x) => x.key !== 'node_key')
+
+        setParsedData(parsedDataDefault)
+
+        fetchAndSetOptions(
+          setSelectedNodeParentOptions,
+          (schema) => schema.type !== selectedSchema.type && schema.type !== selectedSchema.parent,
+        )
+      }
     }
+
+    init()
   }, [selectedSchema, setValue])
 
   const parent = watch('parent')
 
   const type = watch('type')
+
+  const isAttributeArray = (value: unknown): value is Attribute[] =>
+    Array.isArray(value) && value.every((item) => typeof item === 'object' && 'key' in item)
+
+  const attributesValue = watch('attributes')
+  const attributes: Attribute[] = isAttributeArray(attributesValue) ? attributesValue : []
 
   const handleClose = () => {
     close()
@@ -273,7 +315,10 @@ export const Editor = ({
     }
   })
 
-  const isChanged = type?.trim() !== selectedSchema?.type?.trim() || parent !== selectedSchema?.parent?.trim()
+  const isMatch = compareAttributes(attributes, parsedData)
+
+  const isChanged =
+    type?.trim() !== selectedSchema?.type?.trim() || parent !== selectedSchema?.parent?.trim() || isMatch
 
   const isValidType = !!type.trim()
 
