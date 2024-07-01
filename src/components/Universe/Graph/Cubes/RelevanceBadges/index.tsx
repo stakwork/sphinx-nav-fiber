@@ -11,6 +11,7 @@ import { TypeBadge } from '~/components/common/TypeBadge'
 import { useGraphStore, useSelectedNodeRelativeIds } from '~/stores/useGraphStore'
 import { NodeExtended } from '~/types'
 import { colors } from '~/utils/colors'
+import { truncateText } from '~/utils/truncateText'
 import { Tag, TagWrapper } from './styles'
 import { BadgeProps } from './types'
 
@@ -51,11 +52,32 @@ const NodeBadge = ({ position, userData, color }: BadgeProps) => {
     <group ref={ref} position={position}>
       <Html center sprite zIndexRange={[0, 0]}>
         {isTopic ? (
-          <TagWrapper>
+          <TagWrapper
+            direction="column"
+            onClick={(e) => {
+              e.stopPropagation()
+
+              if (userData) {
+                setSelectedNode(userData)
+              }
+            }}
+            onPointerOut={(e) => {
+              e.stopPropagation()
+
+              return
+              setHoveredNode(null)
+            }}
+            onPointerOver={(e) => {
+              e.stopPropagation()
+
+              return
+              setHoveredNode(userData || null)
+            }}
+          >
             <div className="badge-wrapper">
               <TypeBadge type={userData?.node_type || ''} />
             </div>
-            {userData?.name}
+            {truncateText(userData?.name, 20)}
           </TagWrapper>
         ) : (
           <Tag

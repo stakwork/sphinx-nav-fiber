@@ -44,7 +44,7 @@ export const PathwayBadges = ({ links, simulation }: Props) => {
 
   return links.length ? (
     <group ref={ref}>
-      {links.map((i, index) => (
+      {links.map((i) => (
         <mesh key={i.ref_id}>
           <Html center sprite>
             <Tag
@@ -60,10 +60,7 @@ export const PathwayBadges = ({ links, simulation }: Props) => {
                 e.stopPropagation()
               }}
             >
-              <span>
-                {i.edge_type}
-                {index}
-              </span>
+              <span>{i.edge_type}</span>
               <Flex className="icon" onClick={() => console.log(123)}>
                 <DeleteIcon />
               </Flex>

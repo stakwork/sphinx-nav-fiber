@@ -22,7 +22,7 @@ export const Connections = memo(({ linksPositions }: Props) => {
   useEffect(() => {
     lineRefs.current.forEach((line, index) => {
       if (line) {
-        const lineWidth = selectedNode ? 0 : 1
+        const lineWidth = selectedNode ? 0 : 0.5
 
         const isSelected =
           selectedNode?.ref_id === data?.links[index].source || selectedNode?.ref_id === data?.links[index].target

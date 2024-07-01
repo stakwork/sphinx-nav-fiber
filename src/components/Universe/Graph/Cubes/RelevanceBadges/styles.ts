@@ -82,12 +82,16 @@ export const TagWrapper = styled(Flex)`
   transition: font-size 0.4s, outline 0.4s;
   transform: scale(${(p: TagProps) => p.scale});
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   font-family: Barlow;
   font-size: 26px;
   font-style: normal;
   font-weight: 700;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  max-width: 100px;
+  max-height: 100px;
+  white-space: normal;
+  font-size: 16px;
 
   &:hover {
     outline-offset: 4px;
