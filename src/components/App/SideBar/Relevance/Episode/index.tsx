@@ -137,7 +137,7 @@ export const Episode = ({
                     </StyledLink>
                   )}
                 </Flex>
-                <Flex align="center" direction="row" justify="flex-start">
+                <Flex align="center" direction="row" justify="flex-start" mt={9}>
                   {Boolean(date) && <Date>{moment.unix(date).fromNow()}</Date>}
                 </Flex>
               </Flex>
