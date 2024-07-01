@@ -22,6 +22,7 @@ jest.mock('~/network/api', () => ({
 
 jest.mock('~/network/fetchSourcesData', () => ({
   getNodeSchemaTypes: jest.fn(),
+  getNodeType: jest.fn(),
 }))
 
 describe('Editor Component - Delete Node', () => {

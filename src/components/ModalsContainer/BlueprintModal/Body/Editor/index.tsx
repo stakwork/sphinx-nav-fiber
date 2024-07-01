@@ -198,14 +198,14 @@ export const Editor = ({
         if (selectedSchema.type !== NoParent.value.toLowerCase()) {
           const data = await getNodeType(selectedSchema.type as string)
 
-          parsedDataDefault = parseJson(data)
+          parsedDataDefault = data ? parseJson(data) : parsedDataDefault
         }
 
         parsedDataDefault = parsedDataDefault.filter((x) => x.key !== 'node_key')
 
         setParsedData(parsedDataDefault)
 
-        fetchAndSetOptions(setSelectedNodeParentOptions, (schema) => schema.type !== selectedSchema.type)
+        await fetchAndSetOptions(setSelectedNodeParentOptions, (schema) => schema.type !== selectedSchema.type)
       }
     }
 
