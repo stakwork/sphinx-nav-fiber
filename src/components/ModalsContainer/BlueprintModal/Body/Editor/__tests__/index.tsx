@@ -4,6 +4,7 @@ import '@testing-library/jest-dom'
 import { render, fireEvent, waitFor, screen } from '@testing-library/react'
 import { Editor } from '../index'
 import { api } from '~/network/api'
+import { getNodeSchemaTypes } from '~/network/fetchSourcesData'
 
 jest.mock('~/network/api', () => ({
   api: {
@@ -19,6 +20,11 @@ jest.mock('~/network/api', () => ({
   },
 }))
 
+jest.mock('~/network/fetchSourcesData', () => ({
+  getNodeSchemaTypes: jest.fn(),
+  getNodeType: jest.fn(),
+}))
+
 describe('Editor Component - Delete Node', () => {
   beforeEach(() => {
     jest.clearAllMocks()
@@ -28,6 +34,7 @@ describe('Editor Component - Delete Node', () => {
     graphLoading: false,
     onSchemaCreate: jest.fn(),
     selectedSchema: {
+      name: 'string',
       type: 'exampleType',
       ref_id: '123',
       parent: 'exampleParent',
@@ -75,6 +82,27 @@ describe('Editor Component - Delete Node', () => {
     })
 
     expect(mockProps.onDelete).toHaveBeenCalled()
+  })
+
+  it('should ensure that correct parent is rendered', async () => {
+    ;(getNodeSchemaTypes as jest.Mock).mockResolvedValue({
+      schemas: [
+        { type: 'exampleType', is_deleted: false },
+        { type: 'exampleParent', is_deleted: false },
+        { type: 'exampleChild', is_deleted: false },
+      ],
+    })
+
+    render(<Editor {...mockProps} />)
+
+    await waitFor(() => {
+      expect(getNodeSchemaTypes).toHaveBeenCalled()
+    })
+
+    await waitFor(() => {
+      expect(screen.getByText('Parent')).toBeInTheDocument()
+      expect(screen.getByDisplayValue('ExampleParent')).toBeInTheDocument()
+    })
   })
 
   it('should send a PUT request with deleted attributes marked as "delete" when editing a node', async () => {
