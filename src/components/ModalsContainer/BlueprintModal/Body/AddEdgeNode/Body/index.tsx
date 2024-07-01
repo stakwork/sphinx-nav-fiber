@@ -22,7 +22,7 @@ export const Body = ({ onCancel, edgeLinkData, setGraphLoading }: Props) => {
   const form = useForm<FormData>({ mode: 'onChange' })
   const { setValue, getValues } = form
   const [loading, setLoading] = useState(false)
-  const [delLoading, setdelLoading] = useState(false)
+  const [onDeleteLoading, setOnDeleteLoading] = useState(false)
 
   const [selectedType, setSelectedType] = useState('')
   const [selectedFromNode, setSelectedFromNode] = useState<string>('')
@@ -79,7 +79,7 @@ export const Body = ({ onCancel, edgeLinkData, setGraphLoading }: Props) => {
     : loading || !selectedToNode || !selectedFromNode || !selectedType
 
   const handleDelete = async () => {
-    setdelLoading(true)
+    setOnDeleteLoading(true)
     setGraphLoading(true)
 
     try {
@@ -89,7 +89,7 @@ export const Body = ({ onCancel, edgeLinkData, setGraphLoading }: Props) => {
     } catch (error) {
       console.warn('API Error:', error)
     } finally {
-      setdelLoading(false)
+      setOnDeleteLoading(false)
       setGraphLoading(false)
       setSelectedFromNode('')
       setSelectedToNode('')
@@ -111,14 +111,14 @@ export const Body = ({ onCancel, edgeLinkData, setGraphLoading }: Props) => {
             <Flex direction="column">
               <DeleteButton
                 color="secondary"
-                disabled={delLoading}
+                disabled={onDeleteLoading}
                 onClick={handleDelete}
                 size="large"
                 style={{ marginRight: 20 }}
                 variant="contained"
               >
                 Delete
-                {delLoading && (
+                {onDeleteLoading && (
                   <ClipLoaderWrapper>
                     <ClipLoader color={colors.lightGray} size={12} />{' '}
                   </ClipLoaderWrapper>
