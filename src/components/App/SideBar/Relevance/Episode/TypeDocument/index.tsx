@@ -4,16 +4,18 @@ import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { TypeBadge } from '~/components/common/TypeBadge'
 import { colors } from '~/utils/colors'
-import { Description, StyledLink } from '..'
+import { Date, Description, StyledLink } from '..'
 import LinkIcon from '~/components/Icons/LinkIcon'
+import moment from 'moment/moment'
 
 interface Props {
   text: string
   type: string
+  date: number
   sourceLink: string
 }
 
-export const TypeDocument = ({ text, type, sourceLink }: Props) => (
+export const TypeDocument = ({ text, type, sourceLink, date }: Props) => (
   <Flex direction="column">
     <Flex align="center" direction="row" justify="space-between">
       <Flex align="center" direction="row">
@@ -31,6 +33,9 @@ export const TypeDocument = ({ text, type, sourceLink }: Props) => (
     </Flex>
     <Description data-testid="episode-description">{text}</Description>
     <Flex align="center" direction="row" justify="flex-start">
+      <Flex align="center" direction="row" justify="flex-start">
+        {Boolean(date) && <Date>{moment.unix(date).fromNow()}</Date>}
+      </Flex>
       {sourceLink && (
         <StyledLink href={sourceLink} onClick={(e) => e.stopPropagation()} target="_blank">
           <GlobeIcon />
