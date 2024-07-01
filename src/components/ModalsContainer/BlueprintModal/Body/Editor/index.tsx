@@ -6,17 +6,18 @@ import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
 import { TOption } from '~/components/AddItemModal/SourceTypeStep/types'
 import ClearIcon from '~/components/Icons/ClearIcon'
-import { AutoComplete } from '~/components/common/AutoComplete'
+import { AutoComplete, TAutocompleteOption } from '~/components/common/AutoComplete'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { TextInput } from '~/components/common/TextInput'
 import { NODE_ADD_ERROR, requiredRule } from '~/constants'
 import { api } from '~/network/api'
-import { Schema, getNodeSchemaTypes } from '~/network/fetchSourcesData'
+import { Schema, getNodeSchemaTypes, getNodeType } from '~/network/fetchSourcesData'
 import { useModal } from '~/stores/useModalStore'
 import { colors } from '~/utils'
 import { CreateCustomNodeAttribute } from './CustomAttributesStep'
-import { convertAttributes } from './utils'
+import { convertAttributes, parsedObjProps, parseJson } from './utils'
+import { NoParent } from '~/components/AddItemModal/SourceTypeStep/constants'
 
 const defaultValues = {
   type: '',
@@ -41,6 +42,24 @@ type Props = {
   setIsCreateNew: (isNew: boolean) => void
   setGraphLoading: (b: boolean) => void
   onSchemaUpdate: () => void
+}
+
+type Attribute = {
+  required?: boolean
+  type?: string
+  key: string
+}
+
+const compareAttributes = (attributees: Attribute[], parsedAttributesData: parsedObjProps[]): boolean => {
+  if (attributees.length !== parsedAttributesData.length) {
+    return true
+  }
+
+  return attributees.some((attr, index) => {
+    const parsed = parsedAttributesData[index]
+
+    return attr.required !== parsed.required || attr.type !== parsed.type || attr.key !== parsed.key
+  })
 }
 
 const handleSubmitForm = async (
@@ -138,7 +157,7 @@ export const Editor = ({
   const { watch, setValue, reset, getValues } = form
 
   const [loading, setLoading] = useState(false)
-  const [delLoading, setdelLoading] = useState(false)
+  const [onDeleteLoading, setOnDeleteLoading] = useState(false)
 
   const [parentsLoading, setParentsLoading] = useState(false)
   const [parentOptions, setParentOptions] = useState<TOption[] | null>(null)
@@ -147,6 +166,7 @@ export const Editor = ({
   const [errMessage, setErrMessage] = useState<string>('')
   const [deleteError, setDeleteError] = useState<string | null>(null)
   const [deletedAttributes, setDeletedAttributes] = useState<string[]>([])
+  const [parsedData, setParsedData] = useState<parsedObjProps[]>([])
 
   useEffect(
     () => () => {
@@ -168,20 +188,39 @@ export const Editor = ({
   }, [selectedSchema])
 
   useEffect(() => {
-    if (selectedSchema) {
-      setValue('type', selectedSchema?.type as string)
-      setValue('parent', selectedSchema.parent)
+    const init = async () => {
+      if (selectedSchema) {
+        setValue('type', selectedSchema?.type as string)
+        setValue('parent', selectedSchema.parent)
 
-      fetchAndSetOptions(
-        setSelectedNodeParentOptions,
-        (schema) => schema.type !== selectedSchema.type && schema.type !== selectedSchema.parent,
-      )
+        let parsedDataDefault: parsedObjProps[] = [{ required: false, type: 'string', key: '' }]
+
+        if (selectedSchema.type !== NoParent.value.toLowerCase()) {
+          const data = await getNodeType(selectedSchema.type as string)
+
+          parsedDataDefault = data ? parseJson(data) : parsedDataDefault
+        }
+
+        parsedDataDefault = parsedDataDefault.filter((x) => x.key !== 'node_key')
+
+        setParsedData(parsedDataDefault)
+
+        await fetchAndSetOptions(setSelectedNodeParentOptions, (schema) => schema.type !== selectedSchema.type)
+      }
     }
+
+    init()
   }, [selectedSchema, setValue])
 
   const parent = watch('parent')
 
   const type = watch('type')
+
+  const isAttributeArray = (value: unknown): value is Attribute[] =>
+    Array.isArray(value) && value.every((item) => typeof item === 'object' && 'key' in item)
+
+  const attributesValue = watch('attributes')
+  const attributes: Attribute[] = isAttributeArray(attributesValue) ? attributesValue : []
 
   const handleClose = () => {
     close()
@@ -196,7 +235,7 @@ export const Editor = ({
       return
     }
 
-    setdelLoading(true)
+    setOnDeleteLoading(true)
     setGraphLoading(true)
 
     try {
@@ -216,7 +255,7 @@ export const Editor = ({
 
       setDeleteError(errorMessage)
     } finally {
-      setdelLoading(false)
+      setOnDeleteLoading(false)
       setGraphLoading(false)
       setIsCreateNew(false)
     }
@@ -273,7 +312,10 @@ export const Editor = ({
     }
   })
 
-  const isChanged = type?.trim() !== selectedSchema?.type?.trim() || parent !== selectedSchema?.parent?.trim()
+  const isMatch = compareAttributes(attributes, parsedData)
+
+  const isChanged =
+    type?.trim() !== selectedSchema?.type?.trim() || parent !== selectedSchema?.parent?.trim() || isMatch
 
   const isValidType = !!type.trim()
 
@@ -282,7 +324,20 @@ export const Editor = ({
     : loading || displayParentError
 
   const resolvedParentValue = () => parentOptions?.find((i) => i.value === parent)
-  const resolvedSelectedParentValue = () => selectedNodeParentOptions?.find((i) => i.value === parent)
+
+  const resolvedSelectedParentValue = (): TAutocompleteOption | undefined => {
+    const option = selectedNodeParentOptions?.find((i) => i.value === parent)
+
+    if (option) {
+      return option
+    }
+
+    if (parent) {
+      return { label: parent, value: parent }
+    }
+
+    return undefined
+  }
 
   return (
     <Flex>
@@ -380,14 +435,14 @@ export const Editor = ({
                 <Flex direction="column">
                   <DeleteButton
                     color="secondary"
-                    disabled={delLoading}
+                    disabled={onDeleteLoading}
                     onClick={handleDelete}
                     size="large"
                     style={{ marginRight: 20 }}
                     variant="contained"
                   >
                     Delete
-                    {delLoading && (
+                    {onDeleteLoading && (
                       <ClipLoaderWrapper>
                         <ClipLoader color={colors.lightGray} size={12} />{' '}
                       </ClipLoaderWrapper>

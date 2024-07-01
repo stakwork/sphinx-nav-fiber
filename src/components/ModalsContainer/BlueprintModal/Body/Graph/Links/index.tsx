@@ -60,8 +60,8 @@ export const Lines = ({ links, nodes, onEdgeClick }: Props) => {
           return
         }
 
-        const nodeEnd = nodes.find((i) => i.ref_id === link.source)
-        const nodeStart = nodes.find((i) => i.ref_id === link.target)
+        const nodeEnd = nodes.find((i) => i.ref_id === link.target)
+        const nodeStart = nodes.find((i) => i.ref_id === link.source)
 
         startVector.set(nodeStart?.x || 0, nodeStart?.y || 0, nodeStart?.z || 0)
         endVector.set(nodeEnd?.x || 0, nodeEnd?.y || 0, nodeEnd?.z || 0)

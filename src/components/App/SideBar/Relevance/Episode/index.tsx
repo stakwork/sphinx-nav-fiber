@@ -92,15 +92,15 @@ export const Episode = ({
               <Flex align="center" direction="row">
                 {type && <TypeBadge type={type} />}
               </Flex>
-              {type === 'video' && sourceLink ? (
+              {sourceLink && (
                 <StyledLink
-                  href={`${sourceLink}${sourceLink.includes('?') ? '&' : '?'}open=system`}
+                  href={`${sourceLink}${sourceLink?.includes('?') ? '&' : '?'}open=system`}
                   onClick={(e) => e.stopPropagation()}
                   target="_blank"
                 >
                   <LinkIcon />
                 </StyledLink>
-              ) : null}
+              )}
             </Flex>
 
             {name && <Description data-testid="episode-name">{name}</Description>}
@@ -120,25 +120,55 @@ export const Episode = ({
         <>
           {type === 'topic' && (
             <TypeTopic>
-              <HashtagIcon />
-              <p>{subtitle}</p>
+              <Flex grow={1} shrink={1}>
+                <Flex align="center" direction="row" justify="space-between">
+                  <Flex align="center" direction="row" pr={16}>
+                    <HashtagIcon />
+
+                    <p>{subtitle}</p>
+                  </Flex>
+                  {sourceLink && (
+                    <StyledLink
+                      href={`${sourceLink}${sourceLink?.includes('?') ? '&' : '?'}open=system`}
+                      onClick={(e) => e.stopPropagation()}
+                      target="_blank"
+                    >
+                      <LinkIcon />
+                    </StyledLink>
+                  )}
+                </Flex>
+                <Flex align="center" direction="row" justify="flex-start" mt={9}>
+                  {Boolean(date) && <Date>{moment.unix(date).fromNow()}</Date>}
+                </Flex>
+              </Flex>
             </TypeTopic>
           )}
           {['person', 'guest'].includes(type as string) && (
-            <TypePerson imageUrl={imageUrl} name={name || ''} title={showTitle || ''} />
+            <TypePerson
+              date={date}
+              imageUrl={imageUrl}
+              name={name || ''}
+              sourceLink={sourceLink || ''}
+              title={showTitle || ''}
+            />
           )}
-          {['image'].includes(type as string) && <TypeCustom imageUrl={sourceLink} name={name || ''} />}
+          {['image'].includes(type as string) && (
+            <TypeCustom date={date} imageUrl={sourceLink} name={name || ''} sourceLink={sourceLink || ''} />
+          )}
           {type === 'Tweet' && (
             <TypeTweet
               date={date}
               imageUrl={imageUrl}
               name={name || ''}
+              sourceLink={sourceLink || ''}
               text={text || ''}
               twitterHandle={twitterHandle}
               verified={verified}
             />
           )}
-          {type === 'document' && <TypeDocument sourceLink={sourceLink || ''} text={text || ''} type={type} />}
+          {type === 'document' && (
+            <TypeDocument date={date} sourceLink={sourceLink || ''} text={text || ''} type={type} />
+          )}
         </>
       )}
     </EpisodeWrapper>
@@ -240,8 +270,11 @@ export const Title = styled(Date)`
   }
 `
 
-const StyledLink = styled.a`
+export const StyledLink = styled.a`
   color: ${colors.GRAY6};
   font-size: 16px;
   height: 16px;
+  display: flex;
+  gap: 5px;
+  align-items: center;
 `
