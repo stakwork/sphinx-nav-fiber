@@ -157,7 +157,7 @@ export const Editor = ({
   const { watch, setValue, reset, getValues } = form
 
   const [loading, setLoading] = useState(false)
-  const [delLoading, setdelLoading] = useState(false)
+  const [onDeleteLoading, setOnDeleteLoading] = useState(false)
 
   const [parentsLoading, setParentsLoading] = useState(false)
   const [parentOptions, setParentOptions] = useState<TOption[] | null>(null)
@@ -238,7 +238,7 @@ export const Editor = ({
       return
     }
 
-    setdelLoading(true)
+    setOnDeleteLoading(true)
     setGraphLoading(true)
 
     try {
@@ -258,7 +258,7 @@ export const Editor = ({
 
       setDeleteError(errorMessage)
     } finally {
-      setdelLoading(false)
+      setOnDeleteLoading(false)
       setGraphLoading(false)
       setIsCreateNew(false)
     }
@@ -425,14 +425,14 @@ export const Editor = ({
                 <Flex direction="column">
                   <DeleteButton
                     color="secondary"
-                    disabled={delLoading}
+                    disabled={onDeleteLoading}
                     onClick={handleDelete}
                     size="large"
                     style={{ marginRight: 20 }}
                     variant="contained"
                   >
                     Delete
-                    {delLoading && (
+                    {onDeleteLoading && (
                       <ClipLoaderWrapper>
                         <ClipLoader color={colors.lightGray} size={12} />{' '}
                       </ClipLoaderWrapper>
