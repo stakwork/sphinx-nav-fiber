@@ -80,7 +80,6 @@ export const TagWrapper = styled(Flex)`
   font-size: 20px;
   cursor: pointer;
   transition: font-size 0.4s, outline 0.4s;
-  transform: scale(${(p: TagProps) => p.scale});
   align-items: center;
   justify-content: flex-start;
   font-family: Barlow;
