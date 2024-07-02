@@ -23,6 +23,7 @@ const commonConfigOptions = ({ mode }: { mode: Mode }): UserConfigExport => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     plugins: [react(), viteTsconfigPaths(), svgrPlugin(), eslint(), builtins({ crypto: false })],
+    server: { debug: false },
     define: {
       APP_VERSION: JSON.stringify(process.env.npm_package_version),
     },
