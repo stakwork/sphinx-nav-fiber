@@ -1,6 +1,6 @@
 describe('Add Webpage Content', () => {
-  it('Carol adds webpage to graph', () => {
-    cy.initialSetup('carol', 50)
+  it('virtualNode1 adds webpage to graph', () => {
+    cy.initialSetup('virtualNode1', 50)
 
     cy.intercept({
       method: 'POST',

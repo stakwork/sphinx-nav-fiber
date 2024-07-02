@@ -1,6 +1,6 @@
 describe('See latest button as new node are added', () => {
   it('See latest as nodes are being added', () => {
-    cy.initialSetup('carol', 300)
+    cy.initialSetup('virtualNode1', 300)
 
     // add tweet node
     cy.fixture('trendingTopics.json').then(async (data) => {

@@ -22,13 +22,13 @@ import './commands'
 // require('./commands')
 
 // coverage
-import '@cypress/code-coverage/support'
+// import '@cypress/code-coverage/support'
 
 // Add alice as the Second Brain tribe admin
 async function setAdmin() {
   let user
   for (let i = 0; i < nodes.length; i++) {
-    if (nodes[i].alias === 'alice') {
+    if (nodes[i].alias === 'bob') {
       user = nodes[i]
       break
     }
