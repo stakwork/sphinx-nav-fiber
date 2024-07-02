@@ -10,7 +10,11 @@ import { getNodeType } from '~/network/fetchSourcesData'
 import { colors } from '~/utils'
 import { MapNodeTypeModalStepID, SelectedValues } from '..'
 import { parseJson, parsedObjProps } from '../../BlueprintModal/Body/Editor/utils'
-import { capitalizeFirstLetter, sortAttributesByRequired } from '~/components/ModalsContainer/ChangeNodeTypeModal/utils'
+import {
+  capitalizeFirstLetter,
+  filterNodeKey,
+  sortAttributesByRequired,
+} from '~/components/ModalsContainer/ChangeNodeTypeModal/utils'
 
 type Props = {
   skipToStep: (step: MapNodeTypeModalStepID) => void
@@ -43,7 +47,9 @@ export const MapPropertiesStep: FC<Props> = ({
 
       const parsedData = parseJson(data)
 
-      setter(parsedData)
+      const filteredAttributes = filterNodeKey(parsedData)
+
+      setter(filteredAttributes)
 
       setLoading(false)
     }

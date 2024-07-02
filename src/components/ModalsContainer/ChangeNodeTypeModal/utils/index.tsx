@@ -5,3 +5,6 @@ export const capitalizeFirstLetter = (string: string) =>
 
 export const sortAttributesByRequired = (attributes: parsedObjProps[] | undefined) =>
   attributes ? [...attributes].sort((a, b) => Number(b.required) - Number(a.required)) : []
+
+export const filterNodeKey = (attributes: parsedObjProps[]) =>
+  attributes ? attributes.filter((attr) => attr.key !== 'node_key') : []
