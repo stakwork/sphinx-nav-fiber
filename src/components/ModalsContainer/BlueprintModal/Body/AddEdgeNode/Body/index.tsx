@@ -5,7 +5,7 @@ import { ClipLoader } from 'react-spinners'
 import { colors } from '~/utils/colors'
 import { TitleEditor } from '../Title'
 import styled from 'styled-components'
-import { deleteEdgeType, postBluePrintType, updateEdgeType } from '~/network/fetchSourcesData'
+import { deleteEdgeType, postBluePrintType, updateEdgeType, getNodeSchemaTypes } from '~/network/fetchSourcesData'
 import { Flex } from '~/components/common/Flex'
 
 export type FormData = {
@@ -56,8 +56,22 @@ export const Body = ({ onCancel, edgeLinkData, setGraphLoading }: Props) => {
     try {
       if (edgeLinkData?.refId) {
         await updateEdgeType(updateEdgeTypeData)
-      } else if (!selectedToNode || !selectedFromNode) {
-        await postBluePrintType(edgeData)
+      } else if (selectedToNode && selectedFromNode) {
+        if (selectedFromNode === 'all' || selectedToNode === 'all') {
+          const nodes = await getNodeSchemaTypes()
+
+          const nodeTypes = nodes.schemas
+            .filter((schema) => !schema.is_deleted && schema.type)
+            .map((schema) => schema.type)
+
+          if (selectedFromNode === 'all') {
+            await Promise.all(nodeTypes.map((source) => postBluePrintType({ ...edgeData, source })))
+          } else if (selectedToNode === 'all') {
+            await Promise.all(nodeTypes.map((target) => postBluePrintType({ ...edgeData, target })))
+          }
+        } else {
+          await postBluePrintType(edgeData)
+        }
       }
     } catch (error) {
       console.warn('API Error:', error)
@@ -102,6 +116,8 @@ export const Body = ({ onCancel, edgeLinkData, setGraphLoading }: Props) => {
       <form id="add-type-form" onSubmit={onSubmit}>
         <TitleEditor
           edgeLinkData={edgeLinkData}
+          selectedFromNode={selectedFromNode}
+          selectedToNode={selectedToNode}
           selectedType={selectedType}
           setSelectedFromNode={setSelectedFromNode}
           setSelectedToNode={setSelectedToNode}

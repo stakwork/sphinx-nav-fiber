@@ -9,6 +9,7 @@ import { getNodeSchemaTypes } from '~/network/fetchSourcesData'
 type Props = {
   onSelect: (type: string) => void
   dataTestId?: string
+  hideSelectAll?: boolean
   edgeLink?: string
 }
 
@@ -17,7 +18,7 @@ const defaultValues = {
   parent: '',
 }
 
-export const ToNode: FC<Props> = ({ onSelect, dataTestId, edgeLink }) => {
+export const ToNode: FC<Props> = ({ onSelect, dataTestId, edgeLink, hideSelectAll }) => {
   const form = useForm<FormData>({
     mode: 'onChange',
     defaultValues,
@@ -53,7 +54,9 @@ export const ToNode: FC<Props> = ({ onSelect, dataTestId, edgeLink }) => {
                 },
           )
 
-        setOptions(schemaOptions)
+        const allOption = { label: 'Select all', value: 'all' }
+
+        setOptions(hideSelectAll ? schemaOptions : [allOption, ...schemaOptions])
 
         if (edgeLink) {
           setValue('parent', edgeLink)
@@ -66,7 +69,7 @@ export const ToNode: FC<Props> = ({ onSelect, dataTestId, edgeLink }) => {
     }
 
     init()
-  }, [edgeLink, setValue])
+  }, [edgeLink, setValue, hideSelectAll])
 
   const parent = watch('parent')
 
