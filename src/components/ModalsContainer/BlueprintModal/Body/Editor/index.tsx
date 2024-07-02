@@ -70,16 +70,20 @@ const handleSubmitForm = async (
   try {
     const { attributes, ...withoutAttributes } = data
 
+    const updatedAttributes = {
+      ...convertAttributes(attributes),
+      ...deletedAttributes.reduce<{ [key: string]: string }>((acc, key) => ({ ...acc, [key]: 'delete' }), {}),
+    }
+
     const requestData = {
       ...withoutAttributes,
-      attributes: convertAttributes(attributes),
-      ...deletedAttributes.reduce<{ [key: string]: string }>((acc, key) => ({ ...acc, [key]: 'delete' }), {}),
+      attributes: updatedAttributes,
     }
 
     let res: { status: string; ref_id: string }
 
     if (isUpdate) {
-      res = await api.put(`/schema`, JSON.stringify(requestData), {})
+      res = await api.put(`/schema/${data.ref_id}`, JSON.stringify(requestData), {})
     } else {
       res = await api.post(`/schema`, JSON.stringify({ ...requestData, node_key: 'name' }), {})
     }
