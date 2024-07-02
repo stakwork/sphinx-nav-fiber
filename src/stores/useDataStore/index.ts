@@ -249,8 +249,6 @@ export const useDataStore = create<DataStore>()(
         return
       }
 
-      console.log(data)
-
       const currentNodes = [...(existingData?.nodes || [])]
       const currentLinks = [...(existingData?.links || [])]
 
