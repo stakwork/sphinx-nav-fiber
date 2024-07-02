@@ -17,8 +17,9 @@ import { Flex } from '~/components/common/Flex'
 import { FetchLoaderText } from '~/components/common/Loader'
 import { getSchemaAll } from '~/network/fetchSourcesData'
 import { useAppStore } from '~/stores/useAppStore'
-import { useDataStore, useFilteredNodes, useSelectedNode } from '~/stores/useDataStore'
+import { useDataStore, useFilteredNodes } from '~/stores/useDataStore'
 import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
+import { useSelectedNode, useUpdateSelectedNode } from '~/stores/useGraphStore'
 import { colors } from '~/utils/colors'
 import { LatestView } from './Latest'
 import { EpisodeSkeleton } from './Relevance/EpisodeSkeleton'
@@ -39,7 +40,8 @@ type ContentProp = {
 
 // eslint-disable-next-line react/display-name
 const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen }, ref) => {
-  const { isFetching: isLoading, setTeachMe, setSidebarFilter, setSelectedNode } = useDataStore((s) => s)
+  const { isFetching: isLoading, setSidebarFilter, setFilters } = useDataStore((s) => s)
+  const setSelectedNode = useUpdateSelectedNode()
 
   const filteredNodes = useFilteredNodes()
 
@@ -81,7 +83,7 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
       try {
         const response = await getSchemaAll()
 
-        setSchemaAll(response.schemas)
+        setSchemaAll(response.schemas.filter((schema) => !schema.is_deleted))
       } catch (error) {
         console.error('Error fetching schema:', error)
       }
@@ -98,8 +100,15 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
     }
 
     setIsFilterOpen((prev) => !prev)
-    setSelectedTypes([])
     setShowAllSchemas(false)
+  }
+
+  const handleFiltersApply = () => {
+    setFilters({
+      node_type: selectedTypes,
+    })
+
+    // onSubmit?.()
   }
 
   return (
@@ -144,6 +153,7 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
           {searchFilteringFeatureFlag && (
             <FilterSearch
               anchorEl={anchorEl}
+              handleApply={handleFiltersApply}
               schemaAll={schemaAll}
               selectedTypes={selectedTypes}
               setAnchorEl={setAnchorEl}
@@ -165,7 +175,6 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
                   <span className="label"> results</span>
                 </div>
                 <div className="right" style={{ alignItems: 'center' }}>
-                  {/* <TeachMe /> */}
                   <SelectWithPopover />
                 </div>
               </>
@@ -177,7 +186,6 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
         <CollapseButton
           onClick={() => {
             setSidebarOpen(false)
-            setTeachMe(false)
           }}
         >
           <ChevronLeftIcon />

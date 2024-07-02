@@ -4,14 +4,14 @@ import { Vector3 } from 'three'
 import { Line2 } from 'three/examples/jsm/lines/Line2'
 import { usePathway } from '~/components/DataRetriever'
 import { NODE_RELATIVE_HIGHLIGHT_COLORS } from '~/constants'
-import { useDataStore } from '~/stores/useDataStore'
+import { useGraphStore } from '~/stores/useGraphStore'
 import { getCurvedLineFromStartAndEnd } from '../CurvedLine/constants'
 
 export const PathwayLine = () => {
   const { pathway } = usePathway()
   const ref = useRef<Line2>(null)
 
-  const graphStyle = useDataStore((s) => s.graphStyle)
+  const graphStyle = useGraphStore((s) => s.graphStyle)
 
   const points = useMemo(() => {
     if (ref.current) {

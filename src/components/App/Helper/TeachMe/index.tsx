@@ -24,7 +24,7 @@ type ResponseType = {
 }
 
 export const TeachMe = () => {
-  const [data, setTeachMe] = useDataStore((s) => [s.data, s.setTeachMe])
+  const [data, setTeachMe] = useDataStore((s) => [s.dataInitial, s.setTeachMe])
   const [searchTerm, setSideBarOpen] = useAppStore((s) => [s.currentSearch, s.setSidebarOpen])
   const [setBudget] = useUserStore((s) => [s.setBudget])
 

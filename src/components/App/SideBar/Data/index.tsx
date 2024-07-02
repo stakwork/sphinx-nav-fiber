@@ -12,7 +12,8 @@ import {
 } from 'recharts'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
-import { useSelectedNode } from '~/stores/useDataStore'
+import { useSelectedNode } from '~/stores/useGraphStore'
+
 import { colors } from '~/utils/colors'
 
 const RenderDot: FC<DotProps> = ({ cx, cy }) => <Dot cx={cx} cy={cy} fill={colors.blueTextAccent} r={2} />

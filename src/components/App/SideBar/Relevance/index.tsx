@@ -5,11 +5,13 @@ import { ScrollView } from '~/components/ScrollView'
 import { Flex } from '~/components/common/Flex'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore, useFilteredNodes } from '~/stores/useDataStore'
+import { useUpdateSelectedNode } from '~/stores/useGraphStore'
 import { NodeExtended } from '~/types'
 import { formatDescription } from '~/utils/formatDescription'
 import { saveConsumedContent } from '~/utils/relayHelper'
 import { useIsMatchBreakpoint } from '~/utils/useIsMatchBreakpoint'
 import { Episode } from './Episode'
+import { adaptTweetNode } from '~/utils/twitterAdapter'
 
 type Props = {
   isSearchResult: boolean
@@ -19,9 +21,10 @@ type Props = {
 const _Relevance = ({ isSearchResult }: Props) => {
   const scrollViewRef = useRef<HTMLDivElement | null>(null)
 
-  const pageSize = !isSearchResult ? 10 : 80
+  const pageSize = !isSearchResult ? 100 : 80
 
-  const { setSelectedNode, setSelectedTimestamp } = useDataStore((s) => s)
+  const { setSelectedTimestamp, nextPage } = useDataStore((s) => s)
+  const setSelectedNode = useUpdateSelectedNode()
 
   const { currentSearch, setSidebarOpen, setRelevanceSelected } = useAppStore((s) => s)
 
@@ -49,6 +52,8 @@ const _Relevance = ({ isSearchResult }: Props) => {
   )
 
   const handleLoadMoreClick = () => {
+    nextPage()
+
     if (hasNext) {
       setCurrentPage(currentPage + 1)
       setButtonKey((prevKey) => prevKey + 1)
@@ -78,6 +83,8 @@ const _Relevance = ({ isSearchResult }: Props) => {
     <>
       <ScrollView ref={scrollViewRef} id="search-result-list" shrink={1}>
         {(currentNodes ?? []).map((n, index) => {
+          const adaptedNode = adaptTweetNode(n)
+
           const {
             image_url: imageUrl,
             date,
@@ -92,7 +99,7 @@ const _Relevance = ({ isSearchResult }: Props) => {
             name,
             verified = false,
             twitter_handle: twitterHandle,
-          } = n || {}
+          } = adaptedNode || {}
 
           return (
             <Episode
@@ -118,11 +125,12 @@ const _Relevance = ({ isSearchResult }: Props) => {
         })}
 
         <LoadMoreWrapper align="center" background="BG1" direction="row" justify="center">
-          {hasNext && (
-            <Button key={buttonKey} onClick={handleLoadMoreClick} size="medium">
-              Load More
-            </Button>
-          )}
+          {hasNext ||
+            (true && (
+              <Button key={buttonKey} onClick={handleLoadMoreClick} size="medium">
+                Load More
+              </Button>
+            ))}
         </LoadMoreWrapper>
       </ScrollView>
     </>

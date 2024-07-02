@@ -11,7 +11,8 @@ import styled from 'styled-components'
 import { getNodeColorByType } from '~/components/Universe/Graph/constant'
 import { isDevelopment } from '~/constants'
 import { useControlStore } from '~/stores/useControlStore'
-import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
+import { useDataStore } from '~/stores/useDataStore'
+import { useSelectedNode } from '~/stores/useGraphStore'
 import { colors } from '~/utils/colors'
 import { addToGlobalForE2e } from '~/utils/tests'
 import { Flex } from '../common/Flex'
@@ -127,7 +128,7 @@ const _Universe = () => {
     <Wrapper>
       <Suspense fallback={null}>
         <Canvas camera={cameraProps} id="universe-canvas" onCreated={onCreatedHandler} onWheel={onWheelHandler}>
-          {isDevelopment && <Perf position="top-right" />}
+          {isDevelopment && <Perf position="bottom-right" />}
           <Suspense fallback={<Fallback />}>
             <Preload />
 

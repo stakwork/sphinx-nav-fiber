@@ -1,11 +1,11 @@
 import clsx from 'clsx'
 import styled from 'styled-components'
+import { MediaPlayer } from '~/components/App/SideBar/SidebarSubView/MediaPlayer'
 import { Divider } from '~/components/common/Divider'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { TypeBadge } from '~/components/common/TypeBadge'
-import { useSelectedNode } from '~/stores/useDataStore'
-import { MediaPlayer } from '~/components/App/SideBar/SidebarSubView/MediaPlayer'
+import { useSelectedNode } from '~/stores/useGraphStore'
 
 export const Default = () => {
   const selectedNode = useSelectedNode()
@@ -29,7 +29,7 @@ export const Default = () => {
               e.currentTarget.src = 'generic_placeholder_img.png'
               e.currentTarget.className = 'default-img'
             }}
-            src={selectedNode.image_url}
+            src={selectedNode.properties?.image_url}
           />
         </StyledImageWrapper>
       ) : null}
@@ -38,7 +38,7 @@ export const Default = () => {
 
       <StyledContent grow={1} justify="flex-start" pt={hasImage ? 0 : 8} shrink={1}>
         <Flex ml={24} mt={20} style={{ width: 'fit-content' }}>
-          <TypeBadge type={selectedNode.type || ''} />
+          <TypeBadge type={selectedNode.node_type || ''} />
         </Flex>
 
         <StyledWrapper>

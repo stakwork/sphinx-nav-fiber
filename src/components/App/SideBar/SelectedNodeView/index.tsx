@@ -1,5 +1,6 @@
 import { memo, useEffect } from 'react'
-import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
+import { useDataStore } from '~/stores/useDataStore'
+import { useSelectedNode } from '~/stores/useGraphStore'
 import { usePlayerStore } from '~/stores/usePlayerStore'
 import { TeachMeText } from '../../Helper/TeachMe'
 import { Data } from '../Data'
@@ -41,7 +42,7 @@ const _View = () => {
       return <Data />
     case 'tribe_message':
       return <Messages />
-    case 'tweet':
+    case 'Tweet':
       return <TwitData />
     case 'topic':
       return <Topic />

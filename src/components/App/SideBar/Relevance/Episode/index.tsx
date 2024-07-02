@@ -75,7 +75,7 @@ export const Episode = ({
   const description = type === 'show' ? showTitle : episodeTitle
   const subtitle = type === 'show' ? '' : showTitle
 
-  const defaultViewTypes = ['tweet', 'person', 'guest', 'topic', 'document']
+  const defaultViewTypes = ['Tweet', 'person', 'guest', 'topic', 'document']
 
   return type ? (
     <EpisodeWrapper className={className} onClick={onClick}>
@@ -155,7 +155,7 @@ export const Episode = ({
           {['image'].includes(type as string) && (
             <TypeCustom date={date} imageUrl={sourceLink} name={name || ''} sourceLink={sourceLink || ''} />
           )}
-          {type === 'tweet' && (
+          {type === 'Tweet' && (
             <TypeTweet
               date={date}
               imageUrl={imageUrl}

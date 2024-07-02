@@ -2,10 +2,42 @@ import { Text } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import { memo, useMemo, useRef } from 'react'
 import { Mesh } from 'three'
-import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
+import { useNodeTypes } from '~/stores/useDataStore'
+import { useGraphStore, useSelectedNode, useSelectedNodeRelativeIds } from '~/stores/useGraphStore'
 import { NodeExtended } from '~/types'
 import { colors } from '~/utils/colors'
+import { truncateText } from '~/utils/truncateText'
 import { fontProps } from './constants'
+
+const COLORS_MAP = [
+  '#fff',
+  '#9747FF',
+  '#00887A',
+  '#0098A6',
+  '#0288D1',
+  '#33691E',
+  '#465A65',
+  '#512DA7',
+  '#5C6BC0',
+  '#5D4038',
+  '#662C00',
+  '#689F39',
+  '#6B1B00',
+  '#750000',
+  '#78909C',
+  '#7E57C2',
+  '#8C6E63',
+  '#AA47BC',
+  '#BF360C',
+  '#C2175B',
+  '#EC407A',
+  '#EF6C00',
+  '#F5511E',
+  '#FF9696',
+  '#FFC064',
+  '#FFCD29',
+  '#FFEA60',
+]
 
 type Props = {
   node: NodeExtended
@@ -15,24 +47,21 @@ type Props = {
 export const TextNode = memo(({ node, hide }: Props) => {
   const ref = useRef<Mesh | null>(null)
   const selectedNode = useSelectedNode()
-  const selectedNodeRelativeIds = useDataStore((s) => s.selectedNodeRelativeIds)
+  const selectedNodeRelativeIds = useSelectedNodeRelativeIds()
   const isRelative = selectedNodeRelativeIds.includes(node?.ref_id || '')
-  const isSelected = !!selectedNode && selectedNode?.id === node.id
-  const showSelectionGraph = useDataStore((s) => s.showSelectionGraph)
+  const isSelected = !!selectedNode && selectedNode?.ref_id === node.ref_id
+  const showSelectionGraph = useGraphStore((s) => s.showSelectionGraph)
+  const nodeTypes = useNodeTypes()
 
   useFrame(({ camera }) => {
     if (ref?.current) {
       // Make text face the camera
       ref.current.quaternion.copy(camera.quaternion)
-
-      if (showSelectionGraph) {
-        ref.current.position.set(node.x, node.y, node.z)
-      }
     }
   })
 
   const textScale = useMemo(() => {
-    let scale = (node.scale || 1) * 4
+    let scale = (node.edge_count || 30) * 4
 
     if (showSelectionGraph && isSelected) {
       scale = 40
@@ -41,31 +70,34 @@ export const TextNode = memo(({ node, hide }: Props) => {
     }
 
     return scale
-  }, [node.scale, isSelected, isRelative, showSelectionGraph])
+  }, [node.edge_count, isSelected, isRelative, showSelectionGraph])
 
   const fillOpacity = useMemo(() => {
-    if (selectedNode && selectedNode.node_type === 'topic' && !isSelected) {
+    if (selectedNode && selectedNode.node_type === 'Topic' && !isSelected) {
       return 0.2
     }
 
     return 1
   }, [isSelected, selectedNode])
 
+  const color = COLORS_MAP[nodeTypes.indexOf(node.node_type)] || colors.white
+
   return (
-    <Text
-      ref={ref}
-      anchorX="center"
-      anchorY="middle"
-      color={colors.white}
-      fillOpacity={fillOpacity}
-      position={[node.x, node.y, node.z]}
-      scale={textScale}
-      userData={node}
-      visible={!hide && !isSelected}
-      {...fontProps}
-    >
-      {node.label}
-    </Text>
+    <>
+      <Text
+        ref={ref}
+        anchorX="center"
+        anchorY="middle"
+        color={color}
+        fillOpacity={fillOpacity}
+        scale={20 || textScale}
+        userData={node}
+        visible={!hide}
+        {...fontProps}
+      >
+        {truncateText(node.name, 10)}
+      </Text>
+    </>
   )
 })
 
