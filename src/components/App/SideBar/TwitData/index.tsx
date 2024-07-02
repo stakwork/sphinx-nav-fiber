@@ -123,11 +123,6 @@ const TwitText = styled(Flex)`
   line-height: 130%;
   letter-spacing: -0.39px;
   margin: 8px 0;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  white-space: normal;
 `
 
 const StyledDivider = styled(Divider)`
