@@ -38,7 +38,7 @@ To create a test coverage report
 yarn run cy-run
 ```
 
-- whithout running the application do
+- without running the application do
 
 ```bash
 yarn run test-coverage
