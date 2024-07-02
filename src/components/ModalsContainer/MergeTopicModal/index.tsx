@@ -40,13 +40,11 @@ export const MergeNodeModal = () => {
       setTopicIsLoading(true)
 
       try {
-        if (selectedNode.type === 'topic') {
-          const response = await getTopicsData({ search: selectedNode?.name })
+        const response = await getTopicsData({ search: selectedNode?.name })
 
-          const node = response?.data.find((i: Topic) => i.name === selectedNode.name)
+        const node = response?.data.find((i: Topic) => i.name === selectedNode.name)
 
-          setTopic(node)
-        }
+        setTopic(node)
       } catch (error) {
         console.log(error)
       } finally {
