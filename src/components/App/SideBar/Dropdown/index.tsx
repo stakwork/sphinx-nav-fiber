@@ -25,7 +25,9 @@ export const SelectWithPopover = () => {
   }
 
   const handleOpenPopover = (event: React.MouseEvent<HTMLDivElement>) => {
-    setAnchorEl(event.currentTarget as HTMLElement)
+    if (currentFilterCount >= 1) {
+      setAnchorEl(event.currentTarget as HTMLElement)
+    }
   }
 
   const handleClosePopover = () => {
@@ -44,7 +46,7 @@ export const SelectWithPopover = () => {
         <div className="value" data-testid="value">
           {`${capitalizeFirstLetter(currentFilter)} (${currentFilterCount})`}
         </div>
-        <div className="icon">{!anchorEl ? <ChevronDownIcon /> : <ChevronUpIcon />}</div>
+        {currentFilterCount >= 1 && <div className="icon">{!anchorEl ? <ChevronDownIcon /> : <ChevronUpIcon />}</div>}
       </Action>
       <StyledPopover
         anchorEl={anchorEl}
