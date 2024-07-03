@@ -30,7 +30,7 @@ export const PlayerControl = () => {
     ])
 
   const [start, end] = playingNode?.properties?.timestamp
-    ? playingNode.properties.timestamp.split('-').map((time) => videoTimeToSeconds(time))
+    ? (playingNode.properties.timestamp as string).split('-').map((time) => videoTimeToSeconds(time))
     : [0, 0]
 
   const startTime = ((playingTime - start) / (end - start)) * 100
