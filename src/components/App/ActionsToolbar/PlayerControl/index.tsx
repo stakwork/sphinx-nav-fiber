@@ -29,8 +29,8 @@ export const PlayerControl = () => {
       s.setMiniPlayerIsVisible,
     ])
 
-  const [start, end] = playingNode?.timestamp
-    ? playingNode.timestamp.split('-').map((time) => videoTimeToSeconds(time))
+  const [start, end] = playingNode?.properties?.timestamp
+    ? playingNode.properties.timestamp.split('-').map((time) => videoTimeToSeconds(time))
     : [0, 0]
 
   const startTime = ((playingTime - start) / (end - start)) * 100
@@ -57,13 +57,13 @@ export const PlayerControl = () => {
   return miniPlayerIsVisible && playingNode && showPlayer ? (
     <Wrapper onClick={openNodeDetails}>
       <Controls>
-        <Avatar src={playingNode.image_url || ''} type={playingNode.node_type} />
+        <Avatar src={playingNode?.properties?.image_url || ''} type={playingNode.node_type} />
         <Info>
           <Container ref={containerRef}>
             <ScrollText className="title" scrollValue={scrollWidth}>
-              {playingNode.episode_title}
+              {playingNode?.properties?.episode_title}
             </ScrollText>
-            <div className="subtitle">{playingNode.show_title}</div>
+            <div className="subtitle">{playingNode?.properties?.show_title}</div>
           </Container>
 
           <Action
