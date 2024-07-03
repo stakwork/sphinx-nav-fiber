@@ -10,8 +10,6 @@ type Props = {
   showAllSchemas: boolean
   setShowAllSchemas: (value: boolean) => void
   setSelectedTypes: (value: string[] | ((prevSelectedTypes: string[]) => string[])) => void
-  setIsFilterOpen: (value: boolean) => void
-  setAnchorEl: (value: HTMLElement | null) => void
   handleApply: () => void
   selectedTypes: string[]
   schemaAll: SchemaExtended[]
@@ -22,8 +20,6 @@ export const FilterSearch = ({
   showAllSchemas,
   setShowAllSchemas,
   setSelectedTypes,
-  setIsFilterOpen,
-  setAnchorEl,
   handleApply,
   selectedTypes,
   schemaAll,
@@ -34,8 +30,6 @@ export const FilterSearch = ({
       prevSelectedTypes.includes(type) ? prevSelectedTypes.filter((t) => t !== type) : [...prevSelectedTypes, type],
     )
   }
-
-  console.log(setIsFilterOpen, setAnchorEl)
 
   const handleClear = async () => {
     setSelectedTypes([])
