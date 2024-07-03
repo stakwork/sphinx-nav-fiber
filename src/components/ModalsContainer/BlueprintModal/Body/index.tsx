@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
+import { AddEdgeNode } from '~/components/ModalsContainer/BlueprintModal/Body/AddEdgeNode'
 import { Flex } from '~/components/common/Flex'
 import { Schema, getSchemaAll } from '~/network/fetchSourcesData'
 import { useSchemaStore } from '~/stores/useSchemaStore'
@@ -9,7 +10,6 @@ import { SchemaWithChildren } from '../types'
 import { Editor } from './Editor'
 import { Graph } from './Graph'
 import { Toolbar } from './Toolbar'
-import { AddEdgeNode } from '~/components/ModalsContainer/BlueprintModal/Body/AddEdgeNode'
 
 export type FormData = {
   type: string
@@ -43,7 +43,18 @@ export const Body = () => {
 
         const filteredSchemas = response.schemas.filter((i) => i.ref_id && !i.is_deleted)
 
-        setSchemaAll(filteredSchemas.length > 0 ? filteredSchemas : response.schemas)
+        const processedSchemas = filteredSchemas.map((schema) => {
+          if (schema.attributes) {
+            return {
+              ...schema,
+              ...schema.attributes,
+            }
+          }
+
+          return schema
+        })
+
+        setSchemaAll(processedSchemas.length > 0 ? processedSchemas : response.schemas)
 
         setSchemaLinks(response.edges.length > 0 ? response.edges : [])
 
@@ -88,7 +99,18 @@ export const Body = () => {
   const onSchemaUpdate = async () => {
     const response = await getSchemaAll()
 
-    setSchemaAll(response.schemas.filter((i) => i.ref_id && !i.is_deleted && i.ref_id))
+    const processedSchemas = response.schemas.map((schema) => {
+      if (schema.attributes) {
+        return {
+          ...schema,
+          ...schema.attributes,
+        }
+      }
+
+      return schema
+    })
+
+    setSchemaAll(processedSchemas.filter((i) => i.ref_id && !i.is_deleted && i.ref_id))
 
     setSchemaLinks(response.edges)
   }

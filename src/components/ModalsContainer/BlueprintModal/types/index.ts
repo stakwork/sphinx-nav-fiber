@@ -14,6 +14,9 @@ export type SchemaExtended = SchemaWithChildren & {
   vx?: number
   vy?: number
   vz?: number
+  attributes?: {
+    [k: string]: string | boolean
+  }
 }
 
 export type SchemaLinkExtended = SchemaLink & {
