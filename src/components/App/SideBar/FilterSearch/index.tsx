@@ -1,5 +1,4 @@
-import { Button } from '@mui/material'
-import Popover from '@mui/material/Popover'
+import { Button, Popper } from '@mui/material'
 import styled from 'styled-components'
 import ClearIcon from '~/components/Icons/ClearIcon'
 import PlusIcon from '~/components/Icons/PlusIcon'
@@ -36,6 +35,8 @@ export const FilterSearch = ({
     )
   }
 
+  console.log(setIsFilterOpen, setAnchorEl)
+
   const handleClear = async () => {
     setSelectedTypes([])
   }
@@ -47,29 +48,17 @@ export const FilterSearch = ({
   return (
     <SearchFilterPopover
       anchorEl={anchorEl}
-      anchorOrigin={{
-        vertical: 'bottom',
-        horizontal: 'left',
-      }}
-      anchorPosition={{
-        top: 200,
-        left: 0,
-      }}
-      onClose={() => {
-        setAnchorEl(null)
-        setIsFilterOpen(false)
-      }}
-      open={Boolean(anchorEl)}
-      PaperProps={{
-        style: {
-          marginTop: '13px',
-          marginLeft: '30px',
+      disablePortal
+      modifiers={[
+        {
+          name: 'offset',
+          options: {
+            offset: [0, 10],
+          },
         },
-      }}
-      transformOrigin={{
-        vertical: 'top',
-        horizontal: 'right',
-      }}
+      ]}
+      open={Boolean(anchorEl)}
+      placement="bottom-end"
     >
       <PopoverHeader>
         <div>Type</div>
@@ -80,7 +69,7 @@ export const FilterSearch = ({
       </PopoverHeader>
       <PopoverBody>
         <SchemaTypeWrapper>
-          {(showAllSchemas ? schemaAll : schemaAll.slice(0, 15)).map((schema) => (
+          {(showAllSchemas ? schemaAll : schemaAll.slice(0, 4)).map((schema) => (
             <SchemaType
               key={schema.type}
               isSelected={selectedTypes.includes(schema.type as string)}
@@ -90,7 +79,7 @@ export const FilterSearch = ({
             </SchemaType>
           ))}
         </SchemaTypeWrapper>
-        {!showAllSchemas && schemaAll.length > 15 && (
+        {!showAllSchemas && schemaAll.length > 4 && (
           <ViewMoreButton onClick={handleViewMoreClick}>
             <PlusIconWrapper>
               <PlusIcon /> View More
@@ -122,8 +111,8 @@ export const FilterSearch = ({
   )
 }
 
-const SearchFilterPopover = styled(Popover)`
-  .MuiPaper-root {
+const SearchFilterPopover = styled(Popper)`
+  &&.MuiPopper-root {
     background: ${colors.BG2};
     padding: 16px;
     min-width: 360px;
@@ -132,6 +121,7 @@ const SearchFilterPopover = styled(Popover)`
     border-radius: 9px;
     max-width: 361px;
     border: 1px solid ${colors.black};
+    z-index: 100;
   }
 `
 
