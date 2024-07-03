@@ -84,7 +84,7 @@ const handleSubmitForm = async (
     const refId = id || selectedNode?.ref_id
 
     if (refId) {
-      await changeNodeType(refId, body)
+      await changeNodeType(refId, { node_data: body })
     }
 
     // eslint-disable-next-line  @typescript-eslint/no-explicit-any
