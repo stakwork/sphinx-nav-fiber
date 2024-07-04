@@ -53,10 +53,12 @@ export type RadarRequest = {
 }
 
 export type NodeRequest = {
-  is_muted?: boolean
-  topic?: string
-  name?: string
-  image_url?: string
+  node_data: {
+    name?: string
+    is_muted?: boolean
+    topic?: string
+    image_url?: string
+  }
 }
 
 export type Node = {
