@@ -54,6 +54,10 @@ type Props = { label: string; value: unknown }
 const NodeDetail = ({ label, value }: Props) => {
   const isLong = (value as string).length > 140
 
+  if (!value) {
+    return null
+  }
+
   return (
     <>
       <StyledDetail className={clsx('node-detail', { 'node-detail__long': isLong })}>
