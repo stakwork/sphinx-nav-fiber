@@ -13,16 +13,19 @@ const defaultData = {
   aiSummaryAnswers: {},
 }
 
-export const useAppStore = create<AiSummaryStore>((set, get) => ({
+export const useAiSummaryStore = create<AiSummaryStore>((set, get) => ({
   ...defaultData,
   setAiSummaryIsLoading: (status) => set({ aiSummaryIsLoading: status }),
   setAiSummaryAnswer: (key, answer) => {
     const summaryAnswers = get().aiSummaryAnswers
+
     const newSummaryAnswers = { ...summaryAnswers, [key]: answer }
+
     set({ aiSummaryAnswers: { ...newSummaryAnswers } })
   },
   getAiSummaryAnswer: (key) => {
     const summaryAnswers = get().aiSummaryAnswers
+
     return summaryAnswers[key]
   },
 }))
