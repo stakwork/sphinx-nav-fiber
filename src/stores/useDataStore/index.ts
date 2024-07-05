@@ -136,6 +136,7 @@ export const useDataStore = create<DataStore>()(
     fetchData: async (setBudget, setAbortRequests) => {
       const { currentPage, itemsPerPage, dataInitial: existingData, filters } = get()
       const { currentSearch } = useAppStore.getState()
+      const { setAiSummaryIsLoading, setAiSummaryAnswer } = useAiSummaryStore.getState()
 
       if (!currentPage) {
         set({ isFetching: true })
@@ -144,7 +145,8 @@ export const useDataStore = create<DataStore>()(
       }
 
       if (currentSearch) {
-        useAiSummaryStore.getState().setAiSummaryIsLoading(true)
+        setAiSummaryIsLoading(true)
+        setAiSummaryAnswer(currentSearch, '')
       }
 
       if (abortController) {

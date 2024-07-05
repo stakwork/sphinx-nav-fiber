@@ -64,7 +64,7 @@ export const App = () => {
 
   const { fetchData, setCategoryFilter, setAbortRequests, addNewNode, filters } = useDataStore((s) => s)
 
-  const { setAiSummaryIsLoading, setAiSummaryAnswer } = useAiSummaryStore((s) => s)
+  const { setAiSummaryIsLoading, setAiSummaryAnswer, getKeyExist } = useAiSummaryStore((s) => s)
 
   const setSelectedNode = useUpdateSelectedNode()
 
@@ -104,12 +104,12 @@ export const App = () => {
 
   const handleAiSummaryAnswer = useCallback(
     (data: AiSummaryAnswerResponse) => {
-      if (searchTerm && data.question === searchTerm) {
+      if (searchTerm && data.question === searchTerm && getKeyExist(data.question)) {
         setAiSummaryAnswer(data.question, data.answer)
         setAiSummaryIsLoading(false)
       }
     },
-    [searchTerm, setAiSummaryAnswer, setAiSummaryIsLoading],
+    [searchTerm, setAiSummaryAnswer, setAiSummaryIsLoading, getKeyExist],
   )
 
   const handleNewNodeCreated = useCallback(

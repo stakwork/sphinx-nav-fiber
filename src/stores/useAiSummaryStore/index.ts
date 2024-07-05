@@ -6,6 +6,7 @@ export type AiSummaryStore = {
   setAiSummaryAnswer: (key: string, answer: string) => void
   setAiSummaryIsLoading: (status: boolean) => void
   getAiSummaryAnswer: (key: string) => string
+  getKeyExist: (key: string) => boolean
 }
 
 const defaultData = {
@@ -27,5 +28,12 @@ export const useAiSummaryStore = create<AiSummaryStore>((set, get) => ({
     const summaryAnswers = get().aiSummaryAnswers
 
     return summaryAnswers[key]
+  },
+  getKeyExist: (key) => {
+    if (key in get().aiSummaryAnswers) {
+      return true
+    }
+
+    return false
   },
 }))

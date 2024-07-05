@@ -22,8 +22,9 @@ import { useDataStore, useFilteredNodes } from '~/stores/useDataStore'
 import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
 import { useSelectedNode, useUpdateSelectedNode } from '~/stores/useGraphStore'
 import { colors } from '~/utils/colors'
+import { AiSummaryDetails } from './AiSummary/AiSummaryDetail'
+import { AiSummarySkeleton } from './AiSummary/AiSummarySkeleton'
 import { LatestView } from './Latest'
-import { AiSummarySkeleton } from './Relevance/AiSummarySkeleton'
 import { EpisodeSkeleton } from './Relevance/EpisodeSkeleton'
 import { SideBarSubView } from './SidebarSubView'
 import { Tab } from './Tab'
@@ -196,7 +197,12 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
           </TrendingWrapper>
         )}
         <Flex>
-          {searchTerm && (aiSummaryIsLoading ? <AiSummarySkeleton /> : <div>{getAiSummaryAnswer(searchTerm)}</div>)}
+          {searchTerm &&
+            (aiSummaryIsLoading ? (
+              <AiSummarySkeleton />
+            ) : (
+              <AiSummaryDetails answer={getAiSummaryAnswer(searchTerm)} question={searchTerm} />
+            ))}
           {isLoading ? <EpisodeSkeleton /> : <LatestView isSearchResult={!!searchTerm} />}
         </Flex>
       </ScrollWrapper>
