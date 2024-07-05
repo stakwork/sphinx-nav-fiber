@@ -11,7 +11,7 @@ describe('MediaPlayer in Fullscreen', () => {
         duration={120}
         handleProgressChange={jest.fn()}
         handleVolumeChange={jest.fn()}
-        isFullScreen={true}
+        isFullScreen
         isPlaying={false}
         onFullScreenClick={jest.fn()}
         playingTime={0}
