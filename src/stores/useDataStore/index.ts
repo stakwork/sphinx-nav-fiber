@@ -4,7 +4,8 @@
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
 import { fetchGraphData } from '~/network/fetchGraphData'
-import { FilterParams, GraphData, Link, NodeExtended, NodeType, Sources, TStats, Trending } from '~/types'
+import { FilterParams, GraphData, Link, NodeExtended, NodeType, Sources, Trending, TStats } from '~/types'
+import { useAiSummaryStore } from '../useAiSummaryStore'
 import { useAppStore } from '../useAppStore'
 
 export type GraphStyle = 'sphere' | 'force' | 'split' | 'earth'
@@ -140,6 +141,10 @@ export const useDataStore = create<DataStore>()(
         set({ isFetching: true })
       } else {
         set({ isLoadingNew: true })
+      }
+
+      if (currentSearch) {
+        useAiSummaryStore.getState().setAiSummaryIsLoading(true)
       }
 
       if (abortController) {
