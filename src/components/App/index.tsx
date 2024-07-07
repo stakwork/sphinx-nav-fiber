@@ -27,6 +27,7 @@ import { DeviceCompatibilityNotice } from './DeviceCompatibilityNotification'
 import { Helper } from './Helper'
 import { SecondarySideBar } from './SecondarySidebar'
 import { Toasts } from './Toasts'
+import { useSearchParams } from 'react-router-dom'
 
 const Wrapper = styled(Flex)`
   height: 100%;
@@ -48,6 +49,8 @@ const LazyUniverse = lazy(() => import('~/components/Universe').then(({ Universe
 const LazySideBar = lazy(() => import('./SideBar').then(({ SideBar }) => ({ default: SideBar })))
 
 export const App = () => {
+  const [searchParams] = useSearchParams()
+  const query = searchParams.get('q')
   const [setBudget, setNodeCount] = useUserStore((s) => [s.setBudget, s.setNodeCount])
 
   const {
@@ -70,14 +73,27 @@ export const App = () => {
 
   const form = useForm<{ search: string }>({ mode: 'onChange' })
 
-  const handleSubmit = form.handleSubmit(({ search }) => {
+  const { setValue } = form
+
+  useEffect(() => {
+    setValue('search', query ?? '')
+
     setTranscriptOpen(false)
     setSelectedNode(null)
     setRelevanceSelected(false)
-    setCurrentSearch(search)
+    setCurrentSearch(query ?? '')
     setTeachMeAnswer('')
     setCategoryFilter(null)
-  })
+  }, [
+    query,
+    setCategoryFilter,
+    setCurrentSearch,
+    setRelevanceSelected,
+    setSelectedNode,
+    setTeachMeAnswer,
+    setTranscriptOpen,
+    setValue,
+  ])
 
   const runSearch = useCallback(async () => {
     await fetchData(setBudget, setAbortRequests)
@@ -143,7 +159,7 @@ export const App = () => {
           <DataRetriever>
             <FormProvider {...form}>
               <LazyMainToolbar />
-              <LazySideBar onSubmit={handleSubmit} />
+              <LazySideBar />
               <LazyUniverse />
               {false && <Preloader fullSize={false} />}
               <Overlay />
