@@ -35,7 +35,8 @@ export const SetAttributesStep: FC<Props> = ({ handleSelectType, skipToStep, nod
 
       const data = await getNodeType(nodeType)
 
-      const parsedData = parseJson(data)
+      const parsedData =
+        data.attributes && typeof data.attributes === 'object' ? parseJson(data.attributes) : parseJson(data)
 
       const filteredAttributes = parsedData.filter((attr) => attr.key !== 'node_key')
 

@@ -43,18 +43,7 @@ export const Body = () => {
 
         const filteredSchemas = response.schemas.filter((i) => i.ref_id && !i.is_deleted)
 
-        const processedSchemas = filteredSchemas.map((schema) => {
-          if (schema.attributes) {
-            return {
-              ...schema,
-              ...schema.attributes,
-            }
-          }
-
-          return schema
-        })
-
-        setSchemaAll(processedSchemas.length > 0 ? processedSchemas : response.schemas)
+        setSchemaAll(filteredSchemas.length > 0 ? filteredSchemas : response.schemas)
 
         setSchemaLinks(response.edges.length > 0 ? response.edges : [])
 
@@ -99,18 +88,7 @@ export const Body = () => {
   const onSchemaUpdate = async () => {
     const response = await getSchemaAll()
 
-    const processedSchemas = response.schemas.map((schema) => {
-      if (schema.attributes) {
-        return {
-          ...schema,
-          ...schema.attributes,
-        }
-      }
-
-      return schema
-    })
-
-    setSchemaAll(processedSchemas.filter((i) => i.ref_id && !i.is_deleted && i.ref_id))
+    setSchemaAll(response.schemas.filter((i) => i.ref_id && !i.is_deleted && i.ref_id))
 
     setSchemaLinks(response.edges)
   }

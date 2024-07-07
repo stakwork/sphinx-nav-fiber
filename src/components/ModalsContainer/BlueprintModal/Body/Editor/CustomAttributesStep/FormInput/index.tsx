@@ -48,7 +48,11 @@ export const FormInput = ({
 
           const data = await getNodeType(parentParam as string)
 
-          parsedDataDefault = parseJson(data)
+          if (data.attributes && typeof data.attributes === 'object') {
+            parsedDataDefault = parseJson(data.attributes)
+          } else {
+            parsedDataDefault = parseJson(data)
+          }
         }
 
         parsedDataDefault = parsedDataDefault.filter((x) => x.key !== 'node_key')
