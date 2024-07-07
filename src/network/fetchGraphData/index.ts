@@ -38,7 +38,7 @@ const fetchNodes = async (
   }
 
   if (!params.word || (isDevelopment && !isE2E)) {
-    return api.get<FetchDataResponse>(url, undefined, signal)
+    return api.get<FetchDataResponse>(`${url}&free=true`, undefined, signal)
   }
 
   return fetchWithLSAT()

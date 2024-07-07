@@ -11,12 +11,14 @@ import { Overlay } from '~/components/Universe/Overlay' // Import Overlay direct
 import { Preloader } from '~/components/Universe/Preloader' // Import Preloader directly
 import { isDevelopment } from '~/constants'
 import { useSocket } from '~/hooks/useSockets'
+import { useAiSummaryStore } from '~/stores/useAiSummaryStore'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
 import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
 import { useUpdateSelectedNode } from '~/stores/useGraphStore'
 import { useTeachStore } from '~/stores/useTeachStore'
 import { useUserStore } from '~/stores/useUserStore'
+import { AiSummaryAnswerResponse } from '~/types'
 import { colors } from '~/utils/colors'
 import { updateBudget } from '~/utils/setBudget'
 import version from '~/utils/versionHelper'
@@ -62,6 +64,8 @@ export const App = () => {
 
   const { fetchData, setCategoryFilter, setAbortRequests, addNewNode, filters } = useDataStore((s) => s)
 
+  const { setAiSummaryIsLoading, setAiSummaryAnswer, getKeyExist } = useAiSummaryStore((s) => s)
+
   const setSelectedNode = useUpdateSelectedNode()
 
   const [realtimeGraphFeatureFlag] = useFeatureFlagStore((s) => [s.realtimeGraphFeatureFlag])
@@ -98,6 +102,16 @@ export const App = () => {
     setNodeCount('INCREMENT')
   }, [setNodeCount])
 
+  const handleAiSummaryAnswer = useCallback(
+    (data: AiSummaryAnswerResponse) => {
+      if (searchTerm && data.question === searchTerm && getKeyExist(data.question)) {
+        setAiSummaryAnswer(data.question, data.answer)
+        setAiSummaryIsLoading(false)
+      }
+    },
+    [searchTerm, setAiSummaryAnswer, setAiSummaryIsLoading, getKeyExist],
+  )
+
   const handleNewNodeCreated = useCallback(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (data: any) => {
@@ -118,6 +132,9 @@ export const App = () => {
 
       socket.on('newnode', handleNewNode)
 
+      // subscribe to ai_summary
+      socket.on('askquestionhook', handleAiSummaryAnswer)
+
       if (realtimeGraphFeatureFlag) {
         socket.on('new_node_created', handleNewNodeCreated)
       }
@@ -128,7 +145,7 @@ export const App = () => {
         socket.off()
       }
     }
-  }, [socket, handleNewNode, handleNewNodeCreated, realtimeGraphFeatureFlag])
+  }, [socket, handleNewNode, handleNewNodeCreated, realtimeGraphFeatureFlag, handleAiSummaryAnswer])
 
   return (
     <>

@@ -276,3 +276,8 @@ export type RelayUser = {
   admin_token?: string
   routeHint?: string
 }
+
+export type AiSummaryAnswerResponse = {
+  question: string
+  answer: string
+}

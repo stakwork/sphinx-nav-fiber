@@ -6,6 +6,8 @@ import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
 import { SelectWithPopover } from '~/components/App/SideBar/Dropdown'
 import { FilterSearch } from '~/components/App/SideBar/FilterSearch'
+import { Flex } from '~/components/common/Flex'
+import { FetchLoaderText } from '~/components/common/Loader'
 import ChevronLeftIcon from '~/components/Icons/ChevronLeftIcon'
 import ClearIcon from '~/components/Icons/ClearIcon'
 import SearchFilterCloseIcon from '~/components/Icons/SearchFilterCloseIcon'
@@ -13,14 +15,15 @@ import SearchFilterIcon from '~/components/Icons/SearchFilterIcon'
 import SearchIcon from '~/components/Icons/SearchIcon'
 import { SchemaExtended } from '~/components/ModalsContainer/BlueprintModal/types'
 import { SearchBar } from '~/components/SearchBar'
-import { Flex } from '~/components/common/Flex'
-import { FetchLoaderText } from '~/components/common/Loader'
 import { getSchemaAll } from '~/network/fetchSourcesData'
+import { useAiSummaryStore } from '~/stores/useAiSummaryStore'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore, useFilteredNodes } from '~/stores/useDataStore'
 import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
 import { useSelectedNode, useUpdateSelectedNode } from '~/stores/useGraphStore'
 import { colors } from '~/utils/colors'
+import { AiSummaryDetails } from './AiSummary/AiSummaryDetail'
+import { AiSummarySkeleton } from './AiSummary/AiSummarySkeleton'
 import { LatestView } from './Latest'
 import { EpisodeSkeleton } from './Relevance/EpisodeSkeleton'
 import { SideBarSubView } from './SidebarSubView'
@@ -41,6 +44,7 @@ type ContentProp = {
 // eslint-disable-next-line react/display-name
 const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen }, ref) => {
   const { isFetching: isLoading, setSidebarFilter, setFilters } = useDataStore((s) => s)
+  const { aiSummaryIsLoading, getAiSummaryAnswer } = useAiSummaryStore((s) => s)
   const setSelectedNode = useUpdateSelectedNode()
 
   const filteredNodes = useFilteredNodes()
@@ -192,7 +196,15 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
             <Trending onSubmit={onSubmit} />
           </TrendingWrapper>
         )}
-        <Flex>{isLoading ? <EpisodeSkeleton /> : <LatestView isSearchResult={!!searchTerm} />}</Flex>
+        <Flex>
+          {searchTerm &&
+            (aiSummaryIsLoading ? (
+              <AiSummarySkeleton />
+            ) : (
+              <AiSummaryDetails answer={getAiSummaryAnswer(searchTerm)} question={searchTerm} />
+            ))}
+          {isLoading ? <EpisodeSkeleton /> : <LatestView isSearchResult={!!searchTerm} />}
+        </Flex>
       </ScrollWrapper>
     </Wrapper>
   )
