@@ -173,8 +173,6 @@ export const useDataStore = create<DataStore>()(
         ...(currentSearch ? { word: currentSearch } : {}),
       }
 
-      console.log(updatedParams)
-
       try {
         const data = await fetchGraphData(setBudget, updatedParams, signal, setAbortRequests)
 
