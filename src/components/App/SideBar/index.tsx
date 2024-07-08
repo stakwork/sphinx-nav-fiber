@@ -50,7 +50,11 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
   const filteredNodes = useFilteredNodes()
 
   const { setSidebarOpen, currentSearch: searchTerm, clearSearch, searchFormValue } = useAppStore((s) => s)
-  const [trendingTopicsFeatureFlag] = useFeatureFlagStore((s) => [s.trendingTopicsFeatureFlag])
+
+  const [trendingTopicsFeatureFlag, chatInterfaceFeatureFlag] = useFeatureFlagStore((s) => [
+    s.trendingTopicsFeatureFlag,
+    s.chatInterfaceFeatureFlag,
+  ])
 
   const { setValue, watch } = useFormContext()
   const componentRef = useRef<HTMLDivElement | null>(null)
@@ -198,6 +202,7 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
         )}
         <Flex>
           {searchTerm &&
+            chatInterfaceFeatureFlag &&
             (aiSummaryIsLoading ? (
               <AiSummarySkeleton />
             ) : (

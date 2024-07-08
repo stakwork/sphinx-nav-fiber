@@ -231,6 +231,7 @@ export type IsAdminResponse = {
     queuedSources: boolean
     customSchema: boolean
     realtimeGraph: boolean
+    chatInterface: boolean
   }
   success: boolean
   message: string
