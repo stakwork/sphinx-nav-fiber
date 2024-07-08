@@ -7,6 +7,7 @@ import { fetchGraphData } from '~/network/fetchGraphData'
 import { FilterParams, GraphData, Link, NodeExtended, NodeType, Sources, Trending, TStats } from '~/types'
 import { useAiSummaryStore } from '../useAiSummaryStore'
 import { useAppStore } from '../useAppStore'
+import { useFeatureFlagStore } from '../useFeatureFlagStore'
 
 export type GraphStyle = 'sphere' | 'force' | 'split' | 'earth'
 
@@ -137,6 +138,8 @@ export const useDataStore = create<DataStore>()(
       const { currentPage, itemsPerPage, dataInitial: existingData, filters } = get()
       const { currentSearch } = useAppStore.getState()
       const { setAiSummaryIsLoading, setAiSummaryAnswer } = useAiSummaryStore.getState()
+      const { chatInterfaceFeatureFlag } = useFeatureFlagStore.getState()
+      let ai = { ai_summary: String(false) }
 
       if (!currentPage) {
         set({ isFetching: true })
@@ -144,9 +147,10 @@ export const useDataStore = create<DataStore>()(
         set({ isLoadingNew: true })
       }
 
-      if (currentSearch) {
+      if (currentSearch && chatInterfaceFeatureFlag) {
         setAiSummaryIsLoading(true)
         setAiSummaryAnswer(currentSearch, '')
+        ai = { ...ai, ai_summary: String(true) }
       }
 
       if (abortController) {
@@ -162,6 +166,7 @@ export const useDataStore = create<DataStore>()(
 
       const updatedParams = {
         ...withoutNodeType,
+        ...ai,
         skip: currentPage === 0 ? String(currentPage * itemsPerPage) : String(currentPage * itemsPerPage + 1),
         limit: String(itemsPerPage),
         ...(filterNodeTypes.length > 0 ? { node_type: JSON.stringify(filterNodeTypes) } : {}),

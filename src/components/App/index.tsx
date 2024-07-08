@@ -68,7 +68,10 @@ export const App = () => {
 
   const setSelectedNode = useUpdateSelectedNode()
 
-  const [realtimeGraphFeatureFlag] = useFeatureFlagStore((s) => [s.realtimeGraphFeatureFlag])
+  const [realtimeGraphFeatureFlag, chatInterfaceFeatureFlag] = useFeatureFlagStore((s) => [
+    s.realtimeGraphFeatureFlag,
+    s.chatInterfaceFeatureFlag,
+  ])
 
   const socket: Socket | undefined = useSocket()
 
@@ -133,7 +136,9 @@ export const App = () => {
       socket.on('newnode', handleNewNode)
 
       // subscribe to ai_summary
-      socket.on('askquestionhook', handleAiSummaryAnswer)
+      if (chatInterfaceFeatureFlag) {
+        socket.on('askquestionhook', handleAiSummaryAnswer)
+      }
 
       if (realtimeGraphFeatureFlag) {
         socket.on('new_node_created', handleNewNodeCreated)
@@ -145,7 +150,14 @@ export const App = () => {
         socket.off()
       }
     }
-  }, [socket, handleNewNode, handleNewNodeCreated, realtimeGraphFeatureFlag, handleAiSummaryAnswer])
+  }, [
+    socket,
+    handleNewNode,
+    handleNewNodeCreated,
+    realtimeGraphFeatureFlag,
+    handleAiSummaryAnswer,
+    chatInterfaceFeatureFlag,
+  ])
 
   return (
     <>
