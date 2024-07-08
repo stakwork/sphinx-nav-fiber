@@ -6,6 +6,9 @@ import { SchemaExtended } from '~/components/ModalsContainer/BlueprintModal/type
 import { Flex } from '~/components/common/Flex'
 import { colors } from '~/utils/colors'
 
+const AVG_FILTERS_PER_ROW = 3.5
+const MAX_ROWS = 4
+
 type Props = {
   showAllSchemas: boolean
   setShowAllSchemas: (value: boolean) => void
@@ -25,6 +28,9 @@ export const FilterSearch = ({
   schemaAll,
   anchorEl,
 }: Props) => {
+  const maxVisibleFilters = AVG_FILTERS_PER_ROW * MAX_ROWS
+  const visibleFilterCount = showAllSchemas ? schemaAll.length : Math.min(schemaAll.length, maxVisibleFilters)
+
   const handleSchemaTypeClick = (type: string) => {
     setSelectedTypes((prevSelectedTypes) =>
       prevSelectedTypes.includes(type) ? prevSelectedTypes.filter((t) => t !== type) : [...prevSelectedTypes, type],
@@ -38,6 +44,8 @@ export const FilterSearch = ({
   const handleViewMoreClick = () => {
     setShowAllSchemas(true)
   }
+
+  const showViewMoreButton = !showAllSchemas && schemaAll.length > visibleFilterCount
 
   return (
     <SearchFilterPopover
@@ -63,7 +71,7 @@ export const FilterSearch = ({
       </PopoverHeader>
       <PopoverBody>
         <SchemaTypeWrapper>
-          {(showAllSchemas ? schemaAll : schemaAll.slice(0, 4)).map((schema) => (
+          {schemaAll.slice(0, visibleFilterCount).map((schema) => (
             <SchemaType
               key={schema.type}
               isSelected={selectedTypes.includes(schema.type as string)}
@@ -73,7 +81,7 @@ export const FilterSearch = ({
             </SchemaType>
           ))}
         </SchemaTypeWrapper>
-        {!showAllSchemas && schemaAll.length > 4 && (
+        {showViewMoreButton && (
           <ViewMoreButton onClick={handleViewMoreClick}>
             <PlusIconWrapper>
               <PlusIcon /> View More
