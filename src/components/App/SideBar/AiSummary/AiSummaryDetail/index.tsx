@@ -37,7 +37,14 @@ export const AiSummaryDetails = ({ question, answer }: Props) => {
 
     const typeCharacter = () => {
       if (currentIndex < answer.length) {
-        setDisplayedText((prev) => prev + answer[currentIndex])
+        setDisplayedText((prev) => {
+          if (prev === answer) {
+            return prev
+          }
+
+          return `${prev}${answer[currentIndex]}`
+        })
+
         currentIndex += 1
         setTimeout(typeCharacter, 25)
       }
@@ -49,9 +56,7 @@ export const AiSummaryDetails = ({ question, answer }: Props) => {
 
     // Cleanup function in case the component unmounts during typing
     return () => {
-      if (answer) {
-        currentIndex = answer.length
-      }
+      currentIndex = answer?.length || 0
     }
   }, [answer])
 
