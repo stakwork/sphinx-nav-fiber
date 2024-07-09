@@ -134,6 +134,7 @@ export interface Schema {
   search_term?: string
   is_deleted?: boolean
   children?: string[]
+  attributes?: { [key: string]: string }
 }
 
 export interface SchemaLink {
