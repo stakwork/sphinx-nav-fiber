@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
@@ -28,9 +29,42 @@ const SummaryText = styled(Text)`
   line-height: 19.6px;
 `
 
-export const AiSummaryDetails = ({ question, answer }: Props) => (
-  <AiSummaryDetailsWrapper>
-    <Title>{question}</Title>
-    <SummaryText>{answer}</SummaryText>
-  </AiSummaryDetailsWrapper>
-)
+export const AiSummaryDetails = ({ question, answer }: Props) => {
+  const [displayedText, setDisplayedText] = useState('')
+
+  useEffect(() => {
+    let currentIndex = 0
+
+    const typeCharacter = () => {
+      if (currentIndex < answer.length) {
+        setDisplayedText((prev) => {
+          if (prev === answer) {
+            return prev
+          }
+
+          return `${prev}${answer[currentIndex]}`
+        })
+
+        currentIndex += 1
+        setTimeout(typeCharacter, 25)
+      }
+    }
+
+    if (answer) {
+      typeCharacter()
+    }
+
+    // Cleanup function in case the component unmounts during typing
+    return () => {
+      currentIndex = answer?.length || 0
+    }
+  }, [answer])
+
+  return (
+    <AiSummaryDetailsWrapper>
+      <Title>{question}</Title>
+
+      <SummaryText>{displayedText}</SummaryText>
+    </AiSummaryDetailsWrapper>
+  )
+}
