@@ -10,11 +10,13 @@ import { Suspense, memo, useCallback, useMemo } from 'react'
 import styled from 'styled-components'
 import { getNodeColorByType } from '~/components/Universe/Graph/constant'
 import { isDevelopment } from '~/constants'
+import { useAppStore } from '~/stores/useAppStore'
 import { useControlStore } from '~/stores/useControlStore'
 import { useDataStore } from '~/stores/useDataStore'
 import { useSelectedNode } from '~/stores/useGraphStore'
 import { colors } from '~/utils/colors'
 import { addToGlobalForE2e } from '~/utils/tests'
+import { UniverseQuestion } from '../App/UniverseQuestion'
 import { Flex } from '../common/Flex'
 import { Controls } from './Controls'
 import { initialCameraPosition } from './Controls/CameraAnimations/constants'
@@ -94,6 +96,7 @@ const _Universe = () => {
   ]
 
   const isLoading = useDataStore((s) => s.isFetching)
+  const universeQuestionIsOpen = useAppStore((s) => s.universeQuestionIsOpen)
 
   const onWheelHandler = useCallback(
     (e: React.WheelEvent) => {
@@ -140,6 +143,7 @@ const _Universe = () => {
           </Suspense>
         </Canvas>
       </Suspense>
+      {universeQuestionIsOpen && <UniverseQuestion />}
       {isLoading && <Preloader fullSize={false} />}
       <Overlay />
     </Wrapper>

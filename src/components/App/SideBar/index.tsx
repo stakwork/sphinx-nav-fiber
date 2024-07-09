@@ -6,8 +6,6 @@ import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
 import { SelectWithPopover } from '~/components/App/SideBar/Dropdown'
 import { FilterSearch } from '~/components/App/SideBar/FilterSearch'
-import { Flex } from '~/components/common/Flex'
-import { FetchLoaderText } from '~/components/common/Loader'
 import ChevronLeftIcon from '~/components/Icons/ChevronLeftIcon'
 import ClearIcon from '~/components/Icons/ClearIcon'
 import SearchFilterCloseIcon from '~/components/Icons/SearchFilterCloseIcon'
@@ -15,6 +13,8 @@ import SearchFilterIcon from '~/components/Icons/SearchFilterIcon'
 import SearchIcon from '~/components/Icons/SearchIcon'
 import { SchemaExtended } from '~/components/ModalsContainer/BlueprintModal/types'
 import { SearchBar } from '~/components/SearchBar'
+import { Flex } from '~/components/common/Flex'
+import { FetchLoaderText } from '~/components/common/Loader'
 import { getSchemaAll } from '~/network/fetchSourcesData'
 import { useAiSummaryStore } from '~/stores/useAiSummaryStore'
 import { useAppStore } from '~/stores/useAppStore'
@@ -44,7 +44,7 @@ type ContentProp = {
 // eslint-disable-next-line react/display-name
 const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen }, ref) => {
   const { isFetching: isLoading, setSidebarFilter, setFilters } = useDataStore((s) => s)
-  const { aiSummaryIsLoading, getAiSummaryAnswer } = useAiSummaryStore((s) => s)
+  const { aiSummaryIsLoading, aiSummaryAnswers } = useAiSummaryStore((s) => s)
   const setSelectedNode = useUpdateSelectedNode()
 
   const filteredNodes = useFilteredNodes()
@@ -201,12 +201,15 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
           </TrendingWrapper>
         )}
         <Flex>
-          {searchTerm &&
-            chatInterfaceFeatureFlag &&
+          {chatInterfaceFeatureFlag &&
             (aiSummaryIsLoading ? (
               <AiSummarySkeleton />
             ) : (
-              <AiSummaryDetails answer={getAiSummaryAnswer(searchTerm)} question={searchTerm} />
+              <>
+                {Object.keys(aiSummaryAnswers).map((i: string) => (
+                  <AiSummaryDetails key={i} answer={aiSummaryAnswers[i]} question={i} />
+                ))}
+              </>
             ))}
           {isLoading ? <EpisodeSkeleton /> : <LatestView isSearchResult={!!searchTerm} />}
         </Flex>
