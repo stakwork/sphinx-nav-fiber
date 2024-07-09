@@ -107,12 +107,12 @@ export const App = () => {
 
   const handleAiSummaryAnswer = useCallback(
     (data: AiSummaryAnswerResponse) => {
-      if (searchTerm && data.question === searchTerm && getKeyExist(data.question)) {
+      if (data.question && getKeyExist(data.question)) {
         setAiSummaryAnswer(data.question, data.answer)
         setAiSummaryIsLoading(false)
       }
     },
-    [searchTerm, setAiSummaryAnswer, setAiSummaryIsLoading, getKeyExist],
+    [setAiSummaryAnswer, setAiSummaryIsLoading, getKeyExist],
   )
 
   const handleNewNodeCreated = useCallback(
@@ -184,6 +184,7 @@ export const App = () => {
           </DataRetriever>
           <ModalsContainer />
           <Toasts />
+
           <Helper />
         </Wrapper>
       </Suspense>

@@ -7,7 +7,6 @@ import { fetchGraphData } from '~/network/fetchGraphData'
 import { FilterParams, GraphData, Link, NodeExtended, NodeType, Sources, Trending, TStats } from '~/types'
 import { useAiSummaryStore } from '../useAiSummaryStore'
 import { useAppStore } from '../useAppStore'
-import { useFeatureFlagStore } from '../useFeatureFlagStore'
 
 export type GraphStyle = 'sphere' | 'force' | 'split' | 'earth'
 
@@ -57,6 +56,7 @@ export type DataStore = {
   fetchData: (
     setBudget: (value: number | null) => void,
     setAbortRequests: (status: boolean) => void,
+    AISearchQuery?: string,
     params?: FetchNodeParams,
   ) => void
   setSelectedTimestamp: (selectedTimestamp: NodeExtended | null) => void
@@ -134,12 +134,11 @@ let abortController: AbortController | null = null
 export const useDataStore = create<DataStore>()(
   devtools((set, get) => ({
     ...defaultData,
-    fetchData: async (setBudget, setAbortRequests) => {
+    fetchData: async (setBudget, setAbortRequests, AISearchQuery = '') => {
       const { currentPage, itemsPerPage, dataInitial: existingData, filters } = get()
       const { currentSearch } = useAppStore.getState()
-      const { setAiSummaryIsLoading, setAiSummaryAnswer } = useAiSummaryStore.getState()
-      const { chatInterfaceFeatureFlag } = useFeatureFlagStore.getState()
-      let ai = { ai_summary: String(false) }
+      const { setAiSummaryIsLoading, setAiSummaryAnswer, setAiSummaryRequest } = useAiSummaryStore.getState()
+      let ai = { ai_summary: String(!!AISearchQuery) }
 
       if (!currentPage) {
         set({ isFetching: true })
@@ -147,9 +146,10 @@ export const useDataStore = create<DataStore>()(
         set({ isLoadingNew: true })
       }
 
-      if (currentSearch && chatInterfaceFeatureFlag) {
+      if (AISearchQuery) {
         setAiSummaryIsLoading(true)
-        setAiSummaryAnswer(currentSearch, '')
+        setAiSummaryAnswer(AISearchQuery, '')
+        setAiSummaryRequest(AISearchQuery)
         ai = { ...ai, ai_summary: String(true) }
       }
 
@@ -164,13 +164,15 @@ export const useDataStore = create<DataStore>()(
 
       const { node_type: filterNodeTypes, ...withoutNodeType } = filters
 
+      const word = AISearchQuery || currentSearch
+
       const updatedParams = {
         ...withoutNodeType,
         ...ai,
         skip: currentPage === 0 ? String(currentPage * itemsPerPage) : String(currentPage * itemsPerPage + 1),
         limit: String(itemsPerPage),
         ...(filterNodeTypes.length > 0 ? { node_type: JSON.stringify(filterNodeTypes) } : {}),
-        ...(currentSearch ? { word: currentSearch } : {}),
+        ...(word ? { word } : {}),
       }
 
       try {

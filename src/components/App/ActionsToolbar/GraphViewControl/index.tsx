@@ -50,7 +50,6 @@ const Wrapper = styled(Flex).attrs({
   padding: 6px 6px 6px 11px;
   background: ${colors.BG1};
   border-radius: 200px;
-  margin-top: 16px;
   .icon {
     color: ${colors.GRAY6};
     font-size: 20px;
