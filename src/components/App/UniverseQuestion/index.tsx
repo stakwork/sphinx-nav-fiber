@@ -90,7 +90,7 @@ export const UniverseQuestion = ({ onSubmit }: Prop) => {
         </StyledButton>
       </TextAreaWrapper>
       <CloseButton onClick={handleUniverseQuestionIsOpen} startIcon={<ExploreIcon />}>
-        Explore graph
+        Explore Graph
       </CloseButton>
     </Wrapper>
   )
