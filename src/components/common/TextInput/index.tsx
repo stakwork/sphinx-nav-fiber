@@ -16,6 +16,7 @@ type WrapperProps = {
   isFocused: boolean
   hasError: boolean
   isHovered: boolean
+  borderColor?: string
 }
 
 const getBorderColor = (props: WrapperProps): string => {
@@ -33,8 +34,8 @@ const getBorderColor = (props: WrapperProps): string => {
 const Wrapper = styled(Flex)<WrapperProps>`
   background: ${colors.inputBg2};
   border-radius: 8px;
-  border: 1px solid ${getBorderColor};
   padding: 12px 8px;
+  border: ${({ borderColor }) => `1px solid ${borderColor ?? getBorderColor}`};
 `
 
 type QuestionIconProps = {
@@ -116,6 +117,7 @@ type Props = BaseTextInputProps & {
   isTextArea?: boolean
   placeholder?: string
   maxLength?: number
+  borderColor?: string
 }
 
 export const TextInput = ({
@@ -130,6 +132,7 @@ export const TextInput = ({
   isTextArea = false,
   placeholder = '',
   maxLength,
+  borderColor,
   ...props
 }: Props) => {
   const {
@@ -164,6 +167,7 @@ export const TextInput = ({
         )}
       </Flex>
       <Wrapper
+        borderColor={borderColor}
         hasContent={!!fieldValue}
         hasError={!!error}
         isFocused={isFocused}

@@ -173,7 +173,7 @@ export const App = () => {
             <FormProvider {...form}>
               <LazyMainToolbar />
               <LazySideBar onSubmit={handleSubmit} />
-              <LazyUniverse />
+              <LazyUniverse onSubmit={handleSubmit} />
               {false && <Preloader fullSize={false} />}
               <Overlay />
               <SecondarySideBar />

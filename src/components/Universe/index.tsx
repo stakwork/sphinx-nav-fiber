@@ -32,6 +32,10 @@ const Fallback = () => (
   </Html>
 )
 
+type Prop = {
+  onSubmit?: () => void
+}
+
 const Content = () => {
   const { universeColor } = useControls('universe', {
     universeColor: colors.black,
@@ -88,7 +92,7 @@ const cameraProps = {
   position: [initialCameraPosition.x, initialCameraPosition.y, initialCameraPosition.z],
 } as const
 
-const _Universe = () => {
+const _Universe = ({ onSubmit }: Prop) => {
   const [setIsUserScrollingOnHtmlPanel, setIsUserScrolling, setUserMovedCamera] = [
     useControlStore((s) => s.setIsUserScrollingOnHtmlPanel),
     useControlStore((s) => s.setIsUserScrolling),
@@ -143,7 +147,7 @@ const _Universe = () => {
           </Suspense>
         </Canvas>
       </Suspense>
-      {universeQuestionIsOpen && <UniverseQuestion />}
+      {universeQuestionIsOpen && <UniverseQuestion onSubmit={onSubmit} />}
       {isLoading && <Preloader fullSize={false} />}
       <Overlay />
     </Wrapper>

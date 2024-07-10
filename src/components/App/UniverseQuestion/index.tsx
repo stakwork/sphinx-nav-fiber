@@ -1,28 +1,56 @@
-import styled from 'styled-components'
-import { Flex } from '~/components/common/Flex'
-
-import { TextareaAutosize } from '@mui/base'
 import { Button } from '@mui/material'
-import { useState } from 'react'
+import { useEffect } from 'react'
+import { useFormContext } from 'react-hook-form'
+import styled from 'styled-components'
 import ArrowForwardIcon from '~/components/Icons/ArrowForwardIcon'
 import ExploreIcon from '~/components/Icons/ExploreIcon'
+import { Flex } from '~/components/common/Flex'
+import { TextInput } from '~/components/common/TextInput'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { colors } from '~/utils/colors'
 
-export const UniverseQuestion = () => {
-  const [question, setQuestion] = useState('')
+type Prop = {
+  onSubmit?: () => void
+}
+
+export const UniverseQuestion = ({ onSubmit }: Prop) => {
   const { fetchData, setAbortRequests } = useDataStore((s) => s)
   const [setBudget] = useUserStore((s) => [s.setBudget])
-  const setUniverseQuestionIsOpen = useAppStore((s) => s.setUniverseQuestionIsOpen)
+
+  const { setUniverseQuestionIsOpen, setSidebarOpen, setShowCollapseButton, setSearchFormValue } = useAppStore((s) => ({
+    setUniverseQuestionIsOpen: s.setUniverseQuestionIsOpen,
+    setSidebarOpen: s.setSidebarOpen,
+    setShowCollapseButton: s.setShowCollapseButton,
+    setSearchFormValue: s.setSearchFormValue,
+  }))
+
+  const handleUniverseQuestionIsOpen = () => {
+    setUniverseQuestionIsOpen()
+    setSidebarOpen(true)
+    setShowCollapseButton(true)
+  }
+
+  const { watch } = useFormContext()
+
+  const searchChat = watch('search')
+  const isValidSearch = !!searchChat && searchChat.trim().length > 0
+
+  useEffect(() => {
+    setSearchFormValue(searchChat)
+  }, [searchChat, setSearchFormValue])
 
   const handleSubmitQuestion = async () => {
-    if (question) {
+    if (searchChat) {
       setUniverseQuestionIsOpen()
     }
 
-    await fetchData(setBudget, setAbortRequests, question)
+    setSidebarOpen(true)
+    setShowCollapseButton(true)
+    onSubmit?.()
+
+    await fetchData(setBudget, setAbortRequests, searchChat)
   }
 
   const canSubmit = true
@@ -36,38 +64,44 @@ export const UniverseQuestion = () => {
 
   return (
     <Wrapper>
-      Ideas have shape
+      Ideas have shapes
       <TextAreaWrapper onKeyDown={onEnterPress} py={12} tabIndex={-1}>
-        <StyledTextarea
-          minRows={5}
-          onChange={(e) => setQuestion(e.target.value)}
-          placeholder="Enter your question"
-          value={question}
+        <StyledTextArea
+          borderColor="#353A46"
+          id="main-search"
+          isTextArea
+          name="search"
+          placeholder="What do you want to know?"
         />
         <StyledButton
+          allowSearch={isValidSearch}
           color="secondary"
-          endIcon={<ArrowForwardIcon />}
+          disabled={!isValidSearch}
           onClick={handleSubmitQuestion}
           variant="contained"
         >
-          Search
+          {isValidSearch ? (
+            <>
+              Search <ArrowForwardIcon />
+            </>
+          ) : (
+            <ArrowForwardIcon />
+          )}
         </StyledButton>
       </TextAreaWrapper>
-      <CloseButton onClick={setUniverseQuestionIsOpen} startIcon={<ExploreIcon />}>
+      <CloseButton onClick={handleUniverseQuestionIsOpen} startIcon={<ExploreIcon />}>
         Explore graph
       </CloseButton>
     </Wrapper>
   )
 }
 
-const StyledTextarea = styled(TextareaAutosize)`
+const StyledTextArea = styled(TextInput)`
   background: ${colors.BG1};
   max-width: 702px;
-  width: 702px;
+  width: 900px;
   color: ${colors.white};
   padding: 16px 8px;
-  border: none;
-  outline: none;
   border-radius: 12px;
   box-shadow: 0px 1px 6px 0px rgba(0, 0, 0, 0.5);
 
@@ -82,6 +116,7 @@ const StyledTextarea = styled(TextareaAutosize)`
 
 const TextAreaWrapper = styled(Flex)`
   position: relative;
+  width: 50%;
   margin-top: 30px;
 `
 
@@ -98,16 +133,23 @@ const Wrapper = styled(Flex)`
   font-size: 32px;
   font-style: normal;
   font-weight: 700;
+  font-family: 'Barlow';
   line-height: 16px;
 `
 
-const StyledButton = styled(Button)`
+const StyledButton = styled(Button)<{ allowSearch?: boolean }>`
   && {
     position: absolute;
-    bottom: 20px;
-    right: 20px;
-    height: 32px;
-    border-radius: 16px;
+    bottom: 27px;
+    margin-left: ${({ allowSearch }) => (allowSearch ? '88%' : '93%')};
+    height: 30px;
+    padding: 8px 7px;
+    min-width: 32px;
+  }
+
+  svg {
+    width: 12px;
+    height: 12px;
   }
 `
 

@@ -5,13 +5,23 @@ import { useAppStore } from '~/stores/useAppStore'
 import { colors } from '~/utils'
 
 export const UniverseQuestionControl = () => {
-  const setUniverseQuestionIsOpen = useAppStore((s) => s.setUniverseQuestionIsOpen)
+  const { setUniverseQuestionIsOpen, setSidebarOpen, setShowCollapseButton } = useAppStore((s) => ({
+    setUniverseQuestionIsOpen: s.setUniverseQuestionIsOpen,
+    setSidebarOpen: s.setSidebarOpen,
+    setShowCollapseButton: s.setShowCollapseButton,
+  }))
+
+  const handleOpenChatModal = () => {
+    setUniverseQuestionIsOpen()
+    setSidebarOpen(false)
+    setShowCollapseButton(false)
+  }
 
   return (
     <StyledButton
       color="secondary"
       href=""
-      onClick={() => setUniverseQuestionIsOpen()}
+      onClick={handleOpenChatModal}
       size="medium"
       startIcon={<MenuIcon />}
       variant="contained"
