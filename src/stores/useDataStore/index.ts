@@ -102,7 +102,7 @@ const defaultData: Omit<
   categoryFilter: null,
   dataInitial: null,
   currentPage: 0,
-  itemsPerPage: 25,
+  itemsPerPage: 5,
   filters: {
     skip: '0',
     limit: '15',
@@ -137,7 +137,7 @@ export const useDataStore = create<DataStore>()(
     fetchData: async (setBudget, setAbortRequests, AISearchQuery = '') => {
       const { currentPage, itemsPerPage, dataInitial: existingData, filters } = get()
       const { currentSearch } = useAppStore.getState()
-      const { setAiSummaryIsLoading, setAiSummaryAnswer, setAiSummaryRequest } = useAiSummaryStore.getState()
+      const { setAiSummaryAnswer } = useAiSummaryStore.getState()
       let ai = { ai_summary: String(!!AISearchQuery) }
 
       if (!currentPage) {
@@ -147,9 +147,7 @@ export const useDataStore = create<DataStore>()(
       }
 
       if (AISearchQuery) {
-        setAiSummaryIsLoading(true)
-        setAiSummaryAnswer(AISearchQuery, '')
-        setAiSummaryRequest(AISearchQuery)
+        setAiSummaryAnswer(AISearchQuery, { answer: '', answerLoading: true, sourcesLoading: true })
         ai = { ...ai, ai_summary: String(true) }
       }
 
@@ -182,8 +180,8 @@ export const useDataStore = create<DataStore>()(
           return
         }
 
-        const currentNodes = currentPage === 0 ? [] : [...(existingData?.nodes || [])]
-        const currentLinks = currentPage === 0 ? [] : [...(existingData?.links || [])]
+        const currentNodes = currentPage === 0 && !AISearchQuery ? [] : [...(existingData?.nodes || [])]
+        const currentLinks = currentPage === 0 && !AISearchQuery ? [] : [...(existingData?.links || [])]
 
         const newNodes = (data?.nodes || []).filter((n) => !currentNodes.some((c) => c.ref_id === n.ref_id))
 

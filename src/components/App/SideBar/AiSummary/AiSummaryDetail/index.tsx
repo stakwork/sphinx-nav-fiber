@@ -2,11 +2,15 @@ import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
+import { AIEntity } from '~/types'
 import { colors } from '~/utils/colors'
+import { EpisodeSkeleton } from '../../Relevance/EpisodeSkeleton'
+import { AiSummarySkeleton } from '../AiSummarySkeleton'
+import { AiSources } from './AiSources'
 
 type Props = {
   question: string
-  answer: string
+  response: AIEntity
 }
 
 const AiSummaryDetailsWrapper = styled(Flex).attrs({
@@ -29,42 +33,38 @@ const SummaryText = styled(Text)`
   line-height: 19.6px;
 `
 
-export const AiSummaryDetails = ({ question, answer }: Props) => {
+export const AiSummaryDetails = ({ question, response }: Props) => {
   const [displayedText, setDisplayedText] = useState('')
 
   useEffect(() => {
-    let currentIndex = 0
+    const { answer } = response
+    let timeoutId: NodeJS.Timeout
 
-    const typeCharacter = () => {
-      if (currentIndex < answer.length) {
-        setDisplayedText((prev) => {
-          if (prev === answer) {
-            return prev
-          }
-
-          return `${prev}${answer[currentIndex]}`
-        })
-
-        currentIndex += 1
-        setTimeout(typeCharacter, 25)
-      }
+    if (!answer) {
+      return
     }
 
-    if (answer) {
-      typeCharacter()
-    }
+    if (displayedText.length < answer.length) {
+      timeoutId = setTimeout(() => {
+        setDisplayedText(answer.slice(0, displayedText.length + 1))
+      }, 10)
 
-    // Cleanup function in case the component unmounts during typing
-    return () => {
-      currentIndex = answer?.length || 0
+      // eslint-disable-next-line consistent-return
+      return () => clearTimeout(timeoutId)
     }
-  }, [answer])
+  }, [response, displayedText])
 
   return (
-    <AiSummaryDetailsWrapper>
-      <Title>{question}</Title>
-
-      <SummaryText>{displayedText}</SummaryText>
-    </AiSummaryDetailsWrapper>
+    <>
+      {response.answerLoading ? (
+        <AiSummarySkeleton />
+      ) : (
+        <AiSummaryDetailsWrapper>
+          <Title>{question}</Title>
+          <SummaryText>{displayedText}</SummaryText>
+        </AiSummaryDetailsWrapper>
+      )}
+      {response.sourcesLoading ? <EpisodeSkeleton /> : <AiSources sourceIds={response.sources || []} />}
+    </>
   )
 }

@@ -18,7 +18,7 @@ import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
 import { useUpdateSelectedNode } from '~/stores/useGraphStore'
 import { useTeachStore } from '~/stores/useTeachStore'
 import { useUserStore } from '~/stores/useUserStore'
-import { AiSummaryAnswerResponse } from '~/types'
+import { AiSummaryAnswerResponse, AiSummarySourcesResponse } from '~/types'
 import { colors } from '~/utils/colors'
 import { updateBudget } from '~/utils/setBudget'
 import version from '~/utils/versionHelper'
@@ -64,7 +64,7 @@ export const App = () => {
 
   const { fetchData, setCategoryFilter, setAbortRequests, addNewNode, filters } = useDataStore((s) => s)
 
-  const { setAiSummaryIsLoading, setAiSummaryAnswer, getKeyExist } = useAiSummaryStore((s) => s)
+  const { setAiSummaryAnswer, getKeyExist } = useAiSummaryStore((s) => s)
 
   const setSelectedNode = useUpdateSelectedNode()
 
@@ -107,12 +107,33 @@ export const App = () => {
 
   const handleAiSummaryAnswer = useCallback(
     (data: AiSummaryAnswerResponse) => {
+      console.log(data)
+
       if (data.question && getKeyExist(data.question)) {
-        setAiSummaryAnswer(data.question, data.answer)
-        setAiSummaryIsLoading(false)
+        setAiSummaryAnswer(data.question, { answer: data.answer, answerLoading: false })
       }
     },
-    [setAiSummaryAnswer, setAiSummaryIsLoading, getKeyExist],
+    [setAiSummaryAnswer, getKeyExist],
+  )
+
+  const handleAiRelevantQuestions = useCallback(
+    (data: AiSummaryAnswerResponse) => {
+      console.log(data)
+
+      if (false && data.question && getKeyExist(data.question)) {
+        setAiSummaryAnswer(data.question, { answer: data.answer, answerLoading: false })
+      }
+    },
+    [setAiSummaryAnswer, getKeyExist],
+  )
+
+  const handleAiSources = useCallback(
+    (data: AiSummarySourcesResponse) => {
+      if (data.question && getKeyExist(data.question)) {
+        setAiSummaryAnswer(data.question, { sources: data.sources.map((i) => i.ref_id), sourcesLoading: false })
+      }
+    },
+    [setAiSummaryAnswer, getKeyExist],
   )
 
   const handleNewNodeCreated = useCallback(
@@ -140,6 +161,14 @@ export const App = () => {
         socket.on('askquestionhook', handleAiSummaryAnswer)
       }
 
+      if (chatInterfaceFeatureFlag) {
+        socket.on('relevantquestionshook', handleAiRelevantQuestions)
+      }
+
+      if (chatInterfaceFeatureFlag) {
+        socket.on('answersourceshook', handleAiSources)
+      }
+
       if (realtimeGraphFeatureFlag) {
         socket.on('new_node_created', handleNewNodeCreated)
       }
@@ -157,6 +186,8 @@ export const App = () => {
     realtimeGraphFeatureFlag,
     handleAiSummaryAnswer,
     chatInterfaceFeatureFlag,
+    handleAiRelevantQuestions,
+    handleAiSources,
   ])
 
   return (
