@@ -207,7 +207,7 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
             ) : (
               <>
                 {Object.keys(aiSummaryAnswers).map((i: string) => (
-                  <AiSummaryDetails key={i} answer={aiSummaryAnswers[i]} question={i} />
+                  <AiSummaryDetails key={i} question={i} response={aiSummaryAnswers[i]} />
                 ))}
               </>
             ))}

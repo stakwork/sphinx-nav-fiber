@@ -1,12 +1,15 @@
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
+import { AIEntity } from '~/types'
+
+type AIAnswer = {
+  [key: string]: AIEntity
+}
 
 export type AiSummaryStore = {
-  aiSummaryRequest: string
   aiSummaryIsLoading: boolean
-  aiSummaryAnswers: { [k: string]: string }
-  setAiSummaryAnswer: (key: string, answer: string) => void
-  setAiSummaryRequest: (query: string) => void
+  aiSummaryAnswers: AIAnswer
+  setAiSummaryAnswer: (key: string, answer: AIEntity) => void
   setAiSummaryIsLoading: (status: boolean) => void
   getAiSummaryAnswer: (key: string) => string
   getKeyExist: (key: string) => boolean
@@ -25,16 +28,17 @@ export const useAiSummaryStore = create<AiSummaryStore>()(
     setAiSummaryAnswer: (key, answer) => {
       const summaryAnswers = get().aiSummaryAnswers
 
-      const newSummaryAnswers = { ...summaryAnswers, [key]: answer }
+      summaryAnswers[key] = { ...(summaryAnswers[key] || {}), ...answer }
 
-      set({ aiSummaryAnswers: { ...newSummaryAnswers } })
+      const clone = structuredClone(summaryAnswers)
+
+      set({ aiSummaryAnswers: clone })
     },
     getAiSummaryAnswer: (key) => {
       const summaryAnswers = get().aiSummaryAnswers
 
-      return summaryAnswers[key]
+      return summaryAnswers[key].answer || ''
     },
-    setAiSummaryRequest: (aiSummaryRequest) => ({ aiSummaryRequest }),
 
     getKeyExist: (key) => {
       if (key in get().aiSummaryAnswers) {

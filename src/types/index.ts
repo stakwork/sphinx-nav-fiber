@@ -282,3 +282,17 @@ export type AiSummaryAnswerResponse = {
   question: string
   answer: string
 }
+
+export type AiSummarySourcesResponse = {
+  question: string
+  sources: { ref_id: string }[]
+}
+
+export type AIEntity = {
+  answer?: string
+  sources?: string[]
+  questions?: string[]
+  answerLoading?: boolean
+  sourcesLoading?: boolean
+  questionsLoading?: boolean
+}
