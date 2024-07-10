@@ -7,7 +7,7 @@ import { useFrame } from '@react-three/fiber'
 import { RefObject, useCallback, useEffect } from 'react'
 
 import { useControlStore } from '~/stores/useControlStore'
-import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
+import { useGraphStore, useSelectedNode } from '~/stores/useGraphStore'
 import { getNearbyNodeIds } from '../constants'
 import { initialCameraPosition } from './constants'
 import { useAutoNavigate } from './useAutoNavigate'
@@ -25,12 +25,8 @@ export const useCameraAnimations = (
   useAutoNavigate(cameraControlsRef)
 
   const isUserDragging = useControlStore((s) => s.isUserDragging)
-  const disableCameraRotation = useDataStore((s) => s.disableCameraRotation)
 
-  const data = useDataStore((s) => s.data)
-  const graphStyle = useDataStore((s) => s.graphStyle)
-  const graphRadius = useDataStore((s) => s.graphRadius)
-  const setNearbyNodeIds = useDataStore((s) => s.setNearbyNodeIds)
+  const { graphStyle, data, setNearbyNodeIds, graphRadius, disableCameraRotation } = useGraphStore((s) => s)
 
   useEffect(() => {
     if (!enabled) {

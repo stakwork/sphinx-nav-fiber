@@ -1,20 +1,29 @@
 import { Slide } from '@mui/material'
 import clsx from 'clsx'
-import { forwardRef, useEffect, useRef, useState } from 'react'
+import React, { forwardRef, useEffect, useRef, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
 import { SelectWithPopover } from '~/components/App/SideBar/Dropdown'
+import { FilterSearch } from '~/components/App/SideBar/FilterSearch'
 import ChevronLeftIcon from '~/components/Icons/ChevronLeftIcon'
 import ClearIcon from '~/components/Icons/ClearIcon'
+import SearchFilterCloseIcon from '~/components/Icons/SearchFilterCloseIcon'
+import SearchFilterIcon from '~/components/Icons/SearchFilterIcon'
 import SearchIcon from '~/components/Icons/SearchIcon'
+import { SchemaExtended } from '~/components/ModalsContainer/BlueprintModal/types'
 import { SearchBar } from '~/components/SearchBar'
 import { Flex } from '~/components/common/Flex'
 import { FetchLoaderText } from '~/components/common/Loader'
+import { getSchemaAll } from '~/network/fetchSourcesData'
+import { useAiSummaryStore } from '~/stores/useAiSummaryStore'
 import { useAppStore } from '~/stores/useAppStore'
-import { useDataStore, useFilteredNodes, useSelectedNode } from '~/stores/useDataStore'
+import { useDataStore, useFilteredNodes } from '~/stores/useDataStore'
 import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
+import { useSelectedNode, useUpdateSelectedNode } from '~/stores/useGraphStore'
 import { colors } from '~/utils/colors'
+import { AiSummaryDetails } from './AiSummary/AiSummaryDetail'
+import { AiSummarySkeleton } from './AiSummary/AiSummarySkeleton'
 import { LatestView } from './Latest'
 import { EpisodeSkeleton } from './Relevance/EpisodeSkeleton'
 import { SideBarSubView } from './SidebarSubView'
@@ -34,7 +43,9 @@ type ContentProp = {
 
 // eslint-disable-next-line react/display-name
 const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen }, ref) => {
-  const { isFetching: isLoading, setTeachMe, setSidebarFilter, setSelectedNode } = useDataStore((s) => s)
+  const { isFetching: isLoading, setSidebarFilter, setFilters } = useDataStore((s) => s)
+  const { aiSummaryIsLoading, aiSummaryAnswers } = useAiSummaryStore((s) => s)
+  const setSelectedNode = useUpdateSelectedNode()
 
   const filteredNodes = useFilteredNodes()
 
@@ -46,11 +57,19 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
     setSearchFormValue,
   } = useAppStore((s) => s)
 
-  const [trendingTopicsFeatureFlag] = useFeatureFlagStore((s) => [s.trendingTopicsFeatureFlag])
+  const [trendingTopicsFeatureFlag, chatInterfaceFeatureFlag] = useFeatureFlagStore((s) => [
+    s.trendingTopicsFeatureFlag,
+    s.chatInterfaceFeatureFlag,
+  ])
 
   const { setValue, watch } = useFormContext()
   const componentRef = useRef<HTMLDivElement | null>(null)
   const [isScrolled, setIsScrolled] = useState(false)
+  const [isFilterOpen, setIsFilterOpen] = useState(false)
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
+  const [schemaAll, setSchemaAll] = useState<SchemaExtended[]>([])
+  const [selectedTypes, setSelectedTypes] = useState<string[]>([])
+  const [showAllSchemas, setShowAllSchemas] = useState(false)
 
   useEffect(() => {
     setValue('search', searchFormValue)
@@ -72,39 +91,88 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
 
   const typing = watch('search')
 
+  useEffect(() => {
+    const fetchSchemaData = async () => {
+      try {
+        const response = await getSchemaAll()
+
+        setSchemaAll(response.schemas.filter((schema) => !schema.is_deleted))
+      } catch (error) {
+        console.error('Error fetching schema:', error)
+      }
+    }
+
+    fetchSchemaData()
+  }, [])
+
+  const handleFilterIconClick = (event: React.MouseEvent<HTMLElement>) => {
+    if (isFilterOpen) {
+      setAnchorEl(null)
+    } else {
+      setAnchorEl(event.currentTarget)
+    }
+
+    setIsFilterOpen((prev) => !prev)
+    setShowAllSchemas(false)
+  }
+
+  const handleFiltersApply = () => {
+    setFilters({
+      node_type: selectedTypes,
+    })
+
+    // onSubmit?.()
+  }
+
   return (
     <Wrapper ref={ref} id="sidebar-wrapper">
       <TitlePlaceholder />
 
       <SearchWrapper className={clsx({ 'has-shadow': isScrolled })}>
-        <Search>
-          <SearchBar onSubmit={onSubmit} />
-          <InputButton
-            data-testid="search_action_icon"
-            onClick={() => {
-              if (searchTerm) {
-                setValue('search', '')
-                clearSearch()
-                setSidebarFilter('all')
-                setSelectedNode(null)
+        <SearchFilterIconWrapper>
+          <Search>
+            <SearchBar onSubmit={onSubmit} />
+            <InputButton
+              data-testid="search_action_icon"
+              onClick={() => {
+                if (searchTerm) {
+                  setValue('search', '')
+                  clearSearch()
+                  setSidebarFilter('all')
+                  setSelectedNode(null)
 
-                return
-              }
+                  return
+                }
 
-              if (typing.trim() === '') {
-                return
-              }
+                if (typing.trim() === '') {
+                  return
+                }
 
-              onSubmit?.()
-            }}
-          >
-            {!isLoading ? (
-              <>{searchTerm?.trim() ? <ClearIcon /> : <SearchIcon />}</>
-            ) : (
-              <ClipLoader color={colors.SECONDARY_BLUE} data-testid="loader" size="20" />
-            )}
-          </InputButton>
-        </Search>
+                onSubmit?.()
+              }}
+            >
+              {!isLoading ? (
+                <>{searchTerm?.trim() ? <ClearIcon /> : <SearchIcon />}</>
+              ) : (
+                <ClipLoader color={colors.SECONDARY_BLUE} data-testid="loader" size="20" />
+              )}
+            </InputButton>
+          </Search>
+
+          <IconWrapper data-testid="search_filter_icon" isFilterOpen={isFilterOpen} onClick={handleFilterIconClick}>
+            {isFilterOpen ? <SearchFilterCloseIcon /> : <SearchFilterIcon />}
+          </IconWrapper>
+
+          <FilterSearch
+            anchorEl={anchorEl}
+            handleApply={handleFiltersApply}
+            schemaAll={schemaAll}
+            selectedTypes={selectedTypes}
+            setSelectedTypes={setSelectedTypes}
+            setShowAllSchemas={setShowAllSchemas}
+            showAllSchemas={showAllSchemas}
+          />
+        </SearchFilterIconWrapper>
         {searchTerm && (
           <SearchDetails>
             {isLoading ? (
@@ -116,7 +184,6 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
                   <span className="label"> results</span>
                 </div>
                 <div className="right" style={{ alignItems: 'center' }}>
-                  {/* <TeachMe /> */}
                   <SelectWithPopover />
                 </div>
               </>
@@ -128,7 +195,6 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
         <CollapseButton
           onClick={() => {
             setSidebarOpen(false)
-            setTeachMe(false)
             setSearchFormValue(searchTerm || '')
           }}
         >
@@ -141,7 +207,19 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
             <Trending onSubmit={onSubmit} />
           </TrendingWrapper>
         )}
-        <Flex>{isLoading ? <EpisodeSkeleton /> : <LatestView isSearchResult={!!searchTerm} />}</Flex>
+        <Flex>
+          {chatInterfaceFeatureFlag &&
+            (aiSummaryIsLoading ? (
+              <AiSummarySkeleton />
+            ) : (
+              <>
+                {Object.keys(aiSummaryAnswers).map((i: string) => (
+                  <AiSummaryDetails key={i} answer={aiSummaryAnswers[i]} question={i} />
+                ))}
+              </>
+            ))}
+          {isLoading ? <EpisodeSkeleton /> : <LatestView isSearchResult={!!searchTerm} />}
+        </Flex>
       </ScrollWrapper>
     </Wrapper>
   )
@@ -294,6 +372,37 @@ const TrendingWrapper = styled(Flex)`
   padding: 0;
   margin-bottom: 36px;
   margin-top: 20px;
+`
+
+const SearchFilterIconWrapper = styled(Flex)`
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: row;
+  gap: 10px;
+`
+
+const IconWrapper = styled.div<{ isFilterOpen: boolean }>`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s;
+  margin: 1px 2px 0 0;
+  border-radius: 8px;
+  width: 32px;
+  height: 32px;
+  background-color: ${({ isFilterOpen }) => (isFilterOpen ? colors.white : 'transparent')};
+
+  &:hover {
+    background-color: ${({ isFilterOpen }) =>
+      isFilterOpen ? 'rgba(255, 255, 255, 0.85)' : 'rgba(255, 255, 255, 0.2)'};
+  }
+
+  svg {
+    width: 15px;
+    height: ${({ isFilterOpen }) => (isFilterOpen ? '11px' : '24px')};
+    color: ${({ isFilterOpen }) => (isFilterOpen ? colors.black : colors.GRAY7)};
+    fill: none;
+  }
 `
 
 SideBar.displayName = 'Sidebar'

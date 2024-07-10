@@ -41,7 +41,9 @@ const MediaPlayerComponent: FC<Props> = ({ hidden }) => {
     setIsSeeking,
   } = usePlayerStore((s) => s)
 
-  const mediaUrl = playingNode?.media_url || playingNode?.link
+  const mediaUrl =
+    playingNode?.media_url || playingNode?.link || playingNode?.properties?.link || playingNode?.properties?.media_url
+
   const isYouTubeVideo = mediaUrl?.includes('youtube') || mediaUrl?.includes('youtu.be')
 
   useEffect(() => () => resetPlayer(), [resetPlayer])

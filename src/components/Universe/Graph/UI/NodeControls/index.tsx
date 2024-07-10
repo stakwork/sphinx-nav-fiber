@@ -5,15 +5,20 @@ import React, { memo, useCallback, useMemo, useRef } from 'react'
 import { MdClose, MdViewInAr } from 'react-icons/md'
 import styled from 'styled-components'
 import { Group, Vector3 } from 'three'
+import { useGraphData } from '~/components/DataRetriever'
 import AddCircleIcon from '~/components/Icons/AddCircleIcon'
 import EditIcon from '~/components/Icons/EditIcon'
 import MergeIcon from '~/components/Icons/MergeIcon'
+import NodesIcon from '~/components/Icons/NodesIcon'
 import PlusIcon from '~/components/Icons/PlusIcon'
 import { Flex } from '~/components/common/Flex'
+import { fetchNodeEdges } from '~/network/fetchGraphData'
 import { useAppStore } from '~/stores/useAppStore'
-import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
+import { useDataStore } from '~/stores/useDataStore'
+import { useGraphStore, useSelectedNode } from '~/stores/useGraphStore'
 import { useModal } from '~/stores/useModalStore'
 import { useUserStore } from '~/stores/useUserStore'
+import { NodeExtended } from '~/types'
 import { colors } from '~/utils/colors'
 import { buttonColors } from './constants'
 
@@ -29,13 +34,27 @@ export const NodeControls = memo(() => {
   const { open: mergeTopicModal } = useModal('mergeToNode')
 
   const [isAdmin] = useUserStore((s) => [s.isAdmin])
+  const [addNewNode] = useDataStore((s) => [s.addNewNode])
 
-  const showSelectionGraph = useDataStore((s) => s.showSelectionGraph)
-  const selectionGraphData = useDataStore((s) => s.selectionGraphData)
-  const allGraphData = useDataStore((s) => s.data)
   const selectedNode = useSelectedNode()
-  const setSelectedNode = useDataStore((s) => s.setSelectedNode)
-  const setShowSelectionGraph = useDataStore((s) => s.setShowSelectionGraph)
+
+  const { showSelectionGraph, selectionGraphData, setSelectedNode, setShowSelectionGraph } = useGraphStore((s) => s)
+
+  const allGraphData = useGraphData()
+
+  const getChildren = useCallback(async () => {
+    try {
+      if (selectedNode?.ref_id) {
+        const res = await fetchNodeEdges(selectedNode?.ref_id, selectionGraphData.nodes.length || 0)
+
+        if (res) {
+          addNewNode(res)
+        }
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }, [addNewNode, selectedNode?.ref_id, selectionGraphData.nodes.length])
 
   useFrame(() => {
     setPosition()
@@ -45,7 +64,7 @@ export const NodeControls = memo(() => {
     const data = showSelectionGraph ? selectionGraphData : allGraphData
 
     if (ref.current) {
-      const selected = data?.nodes.find((f) => f.ref_id === selectedNode?.ref_id)
+      const selected = data?.nodes.find((f: NodeExtended) => f.ref_id === selectedNode?.ref_id)
 
       if (selected) {
         const newPosition = reuseableVector3.set(selected?.x, selected?.y, selected?.z)
@@ -101,18 +120,36 @@ export const NodeControls = memo(() => {
       {
         key: 'control-key-5',
         colors: buttonColors(true).close,
+        icon: <NodesIcon />,
+        left: 40,
+        className: 'exit',
+        onClick: () => {
+          getChildren()
+        },
+      },
+      {
+        key: 'control-key-6',
+        colors: buttonColors(true).close,
         icon: <MdClose />,
         left: 40,
         className: 'exit',
         onClick: () => {
-          setSelectedNode(null)
           setShowSelectionGraph(false)
+          setSelectedNode(null)
         },
       },
     ]
 
     return [...conditionalActions, ...baseActions].map((i, index) => ({ ...i, left: -80 + index * 40 }))
-  }, [showSelectionGraph, openEditNodeNameModal, setShowSelectionGraph, setSidebarOpen, setSelectedNode, isAdmin])
+  }, [
+    isAdmin,
+    showSelectionGraph,
+    openEditNodeNameModal,
+    setShowSelectionGraph,
+    setSidebarOpen,
+    getChildren,
+    setSelectedNode,
+  ])
 
   if (!selectedNode) {
     return null

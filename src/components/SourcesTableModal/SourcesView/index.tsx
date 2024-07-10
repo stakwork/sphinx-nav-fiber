@@ -2,16 +2,16 @@ import Tab from '@mui/material/Tab'
 import Tabs from '@mui/material/Tabs'
 import * as React from 'react'
 import styled from 'styled-components'
+import { Content } from '~/components/SourcesTableModal/SourcesView/Content'
 import { Flex } from '~/components/common/Flex'
 import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { colors } from '~/utils/colors'
+import { isSphinx } from '~/utils/isSphinx'
 import { QueuedSources } from './QueuedSources'
 import { Sources } from './Sources'
 import { TopicSources } from './Topics'
 import { QUEUED_SOURCES, SOURCE_TABLE, TOPICS, VIEW_CONTENT } from './constants'
-import { Content } from '~/components/SourcesTableModal/SourcesView/Content'
-import { isSphinx } from '~/utils/isSphinx'
 
 interface TabPanelProps {
   children?: React.ReactNode
@@ -61,7 +61,7 @@ export const SourcesView = () => {
 
   const tabs = tabsData.filter(({ label }) => {
     if (label === TOPICS) {
-      return isAdmin
+      return isAdmin || true
     }
 
     if (label === QUEUED_SOURCES) {

@@ -14,6 +14,7 @@ import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
 import { useTeachStore } from '~/stores/useTeachStore'
 import { useUserStore } from '~/stores/useUserStore'
+import { Node } from '~/types'
 import { colors } from '~/utils/colors'
 import { updateBudget } from '~/utils/setBudget'
 
@@ -36,7 +37,7 @@ const MenuProps = {
 const names = ['Beginner', 'Intermediate', 'Advanced', 'Expert']
 
 export const AskQuestion = () => {
-  const data = useDataStore((s) => s.data)
+  const data = useDataStore((s) => s.dataInitial)
   const [question, setQuestion] = useState('')
   const [selectedValue, setSelectedValue] = useState<string>('Beginner')
   const searchTerm = useAppStore((s) => s.currentSearch)
@@ -78,7 +79,7 @@ export const AskQuestion = () => {
     }
 
     try {
-      const nodesWithTranscript = data?.nodes.filter((i) => i.text)
+      const nodesWithTranscript = data?.nodes.filter((i: Node) => i.text)
       const firstFiveItems = nodesWithTranscript?.slice(0, 5)
 
       const transcripts = (firstFiveItems?.length ? firstFiveItems.map((i) => i.text).join(' ') : '')

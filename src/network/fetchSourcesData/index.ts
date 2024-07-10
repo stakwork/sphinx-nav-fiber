@@ -134,6 +134,7 @@ export interface Schema {
   search_term?: string
   is_deleted?: boolean
   children?: string[]
+  attributes?: { [key: string]: string }
 }
 
 export interface SchemaLink {
@@ -161,6 +162,11 @@ export interface ChangeNodeType {
 interface EdgeData {
   source: string
   target: string
+  edge_type: string
+}
+
+interface UpdateEdgeData {
+  ref_id?: string
   edge_type: string
 }
 
@@ -320,6 +326,18 @@ export const postCustomType = async (data: createCustonNode) => {
 
 export const postBluePrintType = async (data: EdgeData) => {
   const response = await api.post('/schema/edge', JSON.stringify(data))
+
+  return response
+}
+
+export const updateEdgeType = async (data: UpdateEdgeData) => {
+  const response = await api.put(`/schema/edge/${data.ref_id}`, JSON.stringify({ edge_type: data.edge_type }))
+
+  return response
+}
+
+export const deleteEdgeType = async (ref_id: string) => {
+  const response = await api.delete(`/schema/edge/${ref_id}`)
 
   return response
 }

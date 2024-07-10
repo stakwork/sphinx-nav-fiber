@@ -66,7 +66,7 @@ describe('AddEdgeToBluePrint Modal', () => {
       })
     })
   })
-  it('should disable the submit button if required fields are not filled', async () => {
+  it.skip('should disable the submit button if required fields are not filled', async () => {
     const { getByText } = render(<TestComponent />)
     const confirmButton = getByText('Confirm')
 

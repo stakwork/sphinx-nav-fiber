@@ -6,10 +6,10 @@ import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { getNodeSchemaTypes } from '~/network/fetchSourcesData'
 import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
+import { useSelectedNode } from '~/stores/useGraphStore'
 import { capitalizeString } from '~/utils/capitalize'
 import { OPTIONS, initialValue } from './constants'
 import { Props, TOption } from './types'
-import { useSelectedNode } from '~/stores/useDataStore'
 
 export const SourceTypeStep: FC<Props> = ({ skipToStep, allowNextStep, onSelectType, selectedType }) => {
   const [customSchemaFeatureFlag] = useFeatureFlagStore((s) => [s.customSchemaFeatureFlag])
@@ -45,7 +45,6 @@ export const SourceTypeStep: FC<Props> = ({ skipToStep, allowNextStep, onSelectT
           setLoading(false)
         }
       } else {
-        console.log('data')
         setOption([...OPTIONS, initialValue])
       }
     }

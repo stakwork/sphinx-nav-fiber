@@ -3,22 +3,21 @@ import { ThreeEvent } from '@react-three/fiber'
 import { memo, useCallback } from 'react'
 import { Object3D } from 'three'
 import { useAppStore } from '~/stores/useAppStore'
-import { useDataStore, useSelectedNode, useUpdateGraphData } from '~/stores/useDataStore'
+import { useDataStore } from '~/stores/useDataStore'
+import { useGraphStore, useSelectedNode, useSelectedNodeRelativeIds } from '~/stores/useGraphStore'
 import { NodeExtended } from '~/types'
 import { BlurryInstances } from './BlurryInstances'
 import { Cube } from './Cube'
 import { RelevanceBadges } from './RelevanceBadges'
 import { SelectionDataNodes } from './SelectionDataNodes'
 import { TextNode } from './Text'
-import { isMainTopic } from './constants'
 
 export const Cubes = memo(() => {
-  const data = useUpdateGraphData()
   const selectedNode = useSelectedNode()
-  const nearbyNodeIds = useDataStore((s) => s.nearbyNodeIds)
-  const setHoveredNode = useDataStore((s) => s.setHoveredNode)
-  const showSelectionGraph = useDataStore((s) => s.showSelectionGraph)
-  const selectionGraphData = useDataStore((s) => s.selectionGraphData)
+  const relativeIds = useSelectedNodeRelativeIds()
+  const { selectionGraphData, showSelectionGraph, setHoveredNode } = useGraphStore((s) => s)
+
+  const data = useDataStore((s) => s.dataInitial)
   const setTranscriptOpen = useAppStore((s) => s.setTranscriptOpen)
 
   const ignoreNodeEvent = useCallback(
@@ -42,7 +41,7 @@ export const Cubes = memo(() => {
 
         if (node.userData) {
           if (!ignoreNodeEvent(node.userData as NodeExtended)) {
-            useDataStore.getState().setSelectedNode((node?.userData as NodeExtended) || null)
+            useGraphStore.getState().setSelectedNode((node?.userData as NodeExtended) || null)
           }
         }
       }
@@ -53,6 +52,8 @@ export const Cubes = memo(() => {
   const onPointerOut = useCallback(
     (e: ThreeEvent<PointerEvent>) => {
       e.stopPropagation()
+
+      return
       setHoveredNode(null)
     },
     [setHoveredNode],
@@ -79,27 +80,28 @@ export const Cubes = memo(() => {
 
   return (
     <Select
-      filter={(selected) => selected.filter((f) => !!f.userData?.id)}
+      filter={(selected) => selected.filter((f) => !!f.userData?.ref_id)}
       onChange={handleSelect}
       onPointerOut={onPointerOut}
       onPointerOver={onPointerIn}
     >
-      <BlurryInstances hide={hideUniverse} />
+      {false && <BlurryInstances hide={hideUniverse} />}
       <RelevanceBadges />
-      {data?.nodes
-        .filter((f) => {
-          const isSelected = f?.ref_id === selectedNode?.ref_id
-          const isNearbyOrPersistent = nearbyNodeIds.includes(f.ref_id || '') || isMainTopic(f)
+      <group name="simulation-3d-group__nodes">
+        {data?.nodes.map((node: NodeExtended) => {
+          const hide = !!selectedNode && (relativeIds.includes(node.ref_id) || selectedNode.ref_id === node.ref_id)
 
-          return isNearbyOrPersistent || isSelected
-        })
-        .map((node) => {
-          if (node.node_type === 'topic') {
-            return <TextNode key={node.ref_id || node.id} hide={hideUniverse} node={node} />
-          }
-
-          return <Cube key={node.ref_id || node.id} hide={hideUniverse} node={node} />
+          return (
+            <mesh key={node.ref_id}>
+              {node.name ? (
+                <TextNode key={node.ref_id || node.id} hide={hideUniverse || hide} node={node} />
+              ) : (
+                <Cube key={node.ref_id || node.id} hide={hideUniverse} node={node} />
+              )}
+            </mesh>
+          )
         })}
+      </group>
 
       {hideUniverse && <SelectionDataNodes />}
     </Select>

@@ -1,6 +1,5 @@
 import { forceCollide } from 'd3-force-3d'
 import { Vector3 } from 'three'
-import { generateLinksFromNodeData } from '~/network/fetchGraphData/helpers/generateLinksFromNodeData'
 import { NodeExtended } from '~/types'
 import { ForceSimulation, runForceSimulation } from './forceSimulation'
 import { getMyParents } from './helpers'
@@ -76,9 +75,7 @@ export const generateSphereGraphPositions = (nodes: NodeExtended[]) => {
     return updatedNode
   })
 
-  const links = generateLinksFromNodeData(updatedNodes, true, true)
-
-  const forceSimulation = runForceSimulation(updatedNodes, links, {
+  const forceSimulation = runForceSimulation(updatedNodes, [], {
     numDimensions: 3,
     forceLinkStrength: 0.01,
     forceChargeStrength: -80,
@@ -93,21 +90,5 @@ export const generateSphereGraphPositions = (nodes: NodeExtended[]) => {
 
   forceSimulation.stop()
 
-  // update link positions
-  const updatedLinks = links.map((link) => {
-    const sourceNode = updatedNodes.find((f) => f.ref_id === link.sourceRef)
-    const targetNode = updatedNodes.find((f) => f.ref_id === link.targetRef)
-    const sourcePosition = new Vector3(sourceNode?.x || 0, sourceNode?.y || 0, sourceNode?.z || 0)
-    const targetPosition = new Vector3(targetNode?.x || 0, targetNode?.y || 0, targetNode?.z || 0)
-    const onlyVisibleOnSelect = true
-
-    return {
-      ...link,
-      onlyVisibleOnSelect,
-      sourcePosition,
-      targetPosition,
-    }
-  })
-
-  return { nodes: updatedNodes, links: updatedLinks }
+  return { nodes: updatedNodes, links: [] }
 }
