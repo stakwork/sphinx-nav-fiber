@@ -18,7 +18,7 @@ import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
 import { useUpdateSelectedNode } from '~/stores/useGraphStore'
 import { useTeachStore } from '~/stores/useTeachStore'
 import { useUserStore } from '~/stores/useUserStore'
-import { AiSummaryAnswerResponse, AiSummarySourcesResponse } from '~/types'
+import { AiSummaryAnswerResponse, AiSummaryQuestionsResponse, AiSummarySourcesResponse } from '~/types'
 import { colors } from '~/utils/colors'
 import { updateBudget } from '~/utils/setBudget'
 import version from '~/utils/versionHelper'
@@ -117,11 +117,12 @@ export const App = () => {
   )
 
   const handleAiRelevantQuestions = useCallback(
-    (data: AiSummaryAnswerResponse) => {
-      console.log(data)
-
-      if (false && data.question && getKeyExist(data.question)) {
-        setAiSummaryAnswer(data.question, { answer: data.answer, answerLoading: false })
+    (data: AiSummaryQuestionsResponse) => {
+      if (data.question && getKeyExist(data.question)) {
+        setAiSummaryAnswer(data.question, {
+          questions: data.relevant_questions.map((i) => i.question),
+          questionsLoading: false,
+        })
       }
     },
     [setAiSummaryAnswer, getKeyExist],
