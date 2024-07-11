@@ -1,35 +1,32 @@
-import { Button, Popper } from '@mui/material'
+import { Button, Checkbox, FormControlLabel, Popper, Slider } from '@mui/material'
+import { useState } from 'react'
 import styled from 'styled-components'
 import ClearIcon from '~/components/Icons/ClearIcon'
 import PlusIcon from '~/components/Icons/PlusIcon'
 import { SchemaExtended } from '~/components/ModalsContainer/BlueprintModal/types'
 import { Flex } from '~/components/common/Flex'
+import { useDataStore } from '~/stores/useDataStore'
 import { colors } from '~/utils/colors'
 
 type Props = {
   showAllSchemas: boolean
   setShowAllSchemas: (value: boolean) => void
-  setSelectedTypes: (value: string[] | ((prevSelectedTypes: string[]) => string[])) => void
-  handleApply: () => void
-  selectedTypes: string[]
   schemaAll: SchemaExtended[]
   anchorEl: HTMLElement | null
 }
 
-export const FilterSearch = ({
-  showAllSchemas,
-  setShowAllSchemas,
-  setSelectedTypes,
-  handleApply,
-  selectedTypes,
-  schemaAll,
-  anchorEl,
-}: Props) => {
+export const FilterSearch = ({ showAllSchemas, setShowAllSchemas, schemaAll, anchorEl }: Props) => {
   const handleSchemaTypeClick = (type: string) => {
     setSelectedTypes((prevSelectedTypes) =>
       prevSelectedTypes.includes(type) ? prevSelectedTypes.filter((t) => t !== type) : [...prevSelectedTypes, type],
     )
   }
+
+  const { setFilters } = useDataStore((s) => s)
+  const [selectedTypes, setSelectedTypes] = useState<string[]>([])
+  const [hops, setHops] = useState(1)
+  const [sourceNodes, setSourceNodes] = useState<number>(10)
+  const [maxResults, setMaxResults] = useState<number>(30)
 
   const handleClear = async () => {
     setSelectedTypes([])
@@ -37,6 +34,27 @@ export const FilterSearch = ({
 
   const handleViewMoreClick = () => {
     setShowAllSchemas(true)
+  }
+
+  const MaxResultsChangeHandler = (event: Event, value: number | number[]) => {
+    const newValue = Array.isArray(value) ? value[0] : value
+
+    setMaxResults(newValue)
+  }
+
+  const SourceNodesChangeHandler = (event: Event, value: number | number[]) => {
+    const newValue = Array.isArray(value) ? value[0] : value
+
+    setSourceNodes(newValue)
+  }
+
+  const handleFiltersApply = () => {
+    setFilters({
+      node_type: selectedTypes,
+      limit: maxResults.toString(),
+      depth: hops.toString(),
+      top_node_count: sourceNodes.toString(),
+    })
   }
 
   return (
@@ -82,6 +100,71 @@ export const FilterSearch = ({
         )}
       </PopoverBody>
       <LineBar />
+
+      <HeadingWrapper>
+        <div>Source Nodes</div>
+        <SubHeading>Core set of nodes based on search term</SubHeading>
+      </HeadingWrapper>
+      <PopoverBody>
+        <SourceNodesStepWrapper>
+          <span>1</span>
+          <span>{sourceNodes}</span>
+        </SourceNodesStepWrapper>
+        <VolumeControl direction="row">
+          <Slider
+            className="volume-slider"
+            data-testid="source-nodes-slider"
+            max={100}
+            min={1}
+            onChange={SourceNodesChangeHandler}
+            size="medium"
+            step={1}
+            value={sourceNodes}
+          />
+        </VolumeControl>
+      </PopoverBody>
+
+      <LineBar />
+      <HeadingWrapper>
+        <div>Hops</div>
+        <SubHeading>Distance away from source nodes</SubHeading>
+      </HeadingWrapper>
+      <PopoverBody>
+        <HopsWrapper>
+          <FormControlLabel
+            control={<CustomCheckbox checked={hops === 1} onChange={() => setHops(1)} />}
+            label="Direct relationship"
+          />
+          <FormControlLabel
+            control={<CustomCheckbox checked={hops === 2} onChange={() => setHops(2)} />}
+            label="2 hops away"
+          />
+        </HopsWrapper>
+      </PopoverBody>
+      <LineBar />
+      <HeadingWrapper>
+        <div>Max results</div>
+        <SubHeading>Total number of relationships</SubHeading>
+      </HeadingWrapper>
+      <PopoverBody>
+        <SourceNodesStepWrapper>
+          <span>1</span>
+          <span>{maxResults}</span>
+        </SourceNodesStepWrapper>
+        <VolumeControl direction="row">
+          <Slider
+            className="volume-slider"
+            data-testid="max-results-slider"
+            max={300}
+            min={1}
+            onChange={MaxResultsChangeHandler}
+            size="medium"
+            step={1}
+            value={maxResults}
+          />
+        </VolumeControl>
+      </PopoverBody>
+      <LineBar />
       <PopoverFooter>
         <Flex direction="row" mb={6}>
           <ClearButton
@@ -96,7 +179,7 @@ export const FilterSearch = ({
             </ClearButtonWrapper>
             Clear
           </ClearButton>
-          <ShowResultButton color="secondary" onClick={handleApply} size="large" variant="contained">
+          <ShowResultButton color="secondary" onClick={handleFiltersApply} size="large" variant="contained">
             Show Results
           </ShowResultButton>
         </Flex>
@@ -110,12 +193,24 @@ const SearchFilterPopover = styled(Popper)`
     background: ${colors.BG2};
     padding: 16px;
     min-width: 360px;
+    max-height: calc(100% - 20%);
     color: ${colors.white};
     box-shadow: 0px 1px 6px 0px rgba(0, 0, 0, 0.2);
     border-radius: 9px;
     max-width: 361px;
+    overflow: auto;
     border: 1px solid ${colors.black};
     z-index: 100;
+    &::-webkit-scrollbar {
+      width: 3px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: ${colors.BG2};
+      border-radius: 9px;
+      margin: 5px;
+      overflow-y: hidden;
+    }
   }
 `
 
@@ -268,4 +363,73 @@ const ShowResultButton = styled(Button)`
     flex: 1;
     padding: 2px 55px;
   }
+`
+
+const SubHeading = styled.div`
+  font-family: Barlow;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 15.6px;
+  text-align: left;
+  margin-top: 10px;
+  color: ${colors.modalAuth};
+`
+
+const HeadingWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  font-family: Barlow;
+  font-size: 18px;
+  font-weight: 500;
+`
+
+const HopsWrapper = styled(Flex).attrs({
+  direction: 'column',
+  align: 'flex-start',
+})`
+  gap: 10px;
+`
+
+const CustomCheckbox = styled(Checkbox)`
+  && {
+    .MuiSvgIcon-root {
+      border-radius: 8px;
+    }
+  }
+`
+
+const VolumeControl = styled(Flex)`
+  margin: 10px auto;
+
+  .volume-slider {
+    display: block;
+    color: ${colors.modalShield};
+    height: 4px;
+    .MuiSlider-track {
+      border: none;
+    }
+    .MuiSlider-rail {
+      background-color: ${colors.black};
+    }
+    .MuiSlider-thumb {
+      width: 20px;
+      height: 20px;
+      background-color: ${colors.white};
+      &:before {
+        box-shadow: '0 4px 8px rgba(0,0,0,0.4)';
+      }
+      &:hover,
+      &.Mui-focusVisible,
+      &.Mui-active {
+        box-shadow: none;
+      }
+    }
+  }
+`
+
+const SourceNodesStepWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin: 10px auto;
 `

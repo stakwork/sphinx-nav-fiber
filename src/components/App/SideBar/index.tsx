@@ -43,7 +43,7 @@ type ContentProp = {
 
 // eslint-disable-next-line react/display-name
 const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen }, ref) => {
-  const { isFetching: isLoading, setSidebarFilter, setFilters } = useDataStore((s) => s)
+  const { isFetching: isLoading, setSidebarFilter } = useDataStore((s) => s)
   const { aiSummaryIsLoading, aiSummaryAnswers } = useAiSummaryStore((s) => s)
   const setSelectedNode = useUpdateSelectedNode()
 
@@ -62,7 +62,6 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
   const [isFilterOpen, setIsFilterOpen] = useState(false)
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const [schemaAll, setSchemaAll] = useState<SchemaExtended[]>([])
-  const [selectedTypes, setSelectedTypes] = useState<string[]>([])
   const [showAllSchemas, setShowAllSchemas] = useState(false)
 
   useEffect(() => {
@@ -110,14 +109,6 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
     setShowAllSchemas(false)
   }
 
-  const handleFiltersApply = () => {
-    setFilters({
-      node_type: selectedTypes,
-    })
-
-    // onSubmit?.()
-  }
-
   return (
     <Wrapper ref={ref} id="sidebar-wrapper">
       <TitlePlaceholder />
@@ -159,10 +150,7 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
 
           <FilterSearch
             anchorEl={anchorEl}
-            handleApply={handleFiltersApply}
             schemaAll={schemaAll}
-            selectedTypes={selectedTypes}
-            setSelectedTypes={setSelectedTypes}
             setShowAllSchemas={setShowAllSchemas}
             showAllSchemas={showAllSchemas}
           />
