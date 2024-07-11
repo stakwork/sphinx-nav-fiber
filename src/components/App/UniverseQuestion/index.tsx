@@ -74,53 +74,66 @@ export const UniverseQuestion = () => {
     return array
   }
 
-  const displayedSeedQuestions = shuffleArray([...seedQuestions]).slice(0, 4)
+  const displayedSeedQuestions = seedQuestions.slice(0, 4)
+
+  const isValidText = !!question && question.trim().length > 0
 
   return (
-      <Wrapper>
-        Ideas have shape
-        <TextAreaWrapper onKeyDown={onEnterPress} py={12} tabIndex={-1}>
-          <StyledTextarea
-              minRows={5}
-              onChange={(e) => setQuestion(e.target.value)}
-              placeholder="Enter your question"
-              value={question}
-          />
-          <StyledButton
-              color="secondary"
-              endIcon={<ArrowForwardIcon />}
-              onClick={() => handleSubmitQuestion(question)}
-              variant="contained"
-          >
-            Search
-          </StyledButton>
-        </TextAreaWrapper>
-        {displayedSeedQuestions.length > 0 && (
-            <SeedQuestionsWrapper>
-              {displayedSeedQuestions.map((seedQuestion) => (
-                  <SeedQuestion key={seedQuestion} onClick={() => handleSeedQuestionClick(seedQuestion)}>
-                    <HelpIcon />
-                    {seedQuestion}
-                  </SeedQuestion>
-              ))}
-            </SeedQuestionsWrapper>
-        )}
-        <CloseButton onClick={setUniverseQuestionIsOpen} startIcon={<ExploreIcon />}>
-          Explore graph
-        </CloseButton>
-      </Wrapper>
+    <Wrapper>
+      Ideas have shapes
+      <TextAreaWrapper onKeyDown={onEnterPress} py={12} tabIndex={-1}>
+        <StyledTextarea
+          onChange={(e) => setQuestion(e.target.value)}
+          placeholder="What do you want to know?"
+          value={question}
+        />
+        <StyledButton
+          color="secondary"
+          disabled={!isValidText}
+          onClick={() => handleSubmitQuestion(question)}
+          variant="contained"
+        >
+          {isValidText ? (
+            <>
+              Search <ArrowForwardIcon />
+            </>
+          ) : (
+            <ArrowForwardIcon />
+          )}
+        </StyledButton>
+      </TextAreaWrapper>
+      {displayedSeedQuestions.length > 0 && (
+        <SeedQuestionsWrapper>
+          {displayedSeedQuestions.map((seedQuestion) => (
+            <SeedQuestion key={seedQuestion} onClick={() => handleSeedQuestionClick(seedQuestion)}>
+              <HelpIcon />
+              {seedQuestion}
+            </SeedQuestion>
+          ))}
+        </SeedQuestionsWrapper>
+      )}
+      <CloseButton onClick={setUniverseQuestionIsOpen} startIcon={<ExploreIcon />}>
+        Explore Graph
+      </CloseButton>
+    </Wrapper>
   )
 }
 
-const StyledTextarea = styled(TextareaAutosize)`
+const StyledTextarea = styled(TextareaAutosize).attrs({
+  minRows: 5,
+})`
   background: ${colors.BG1};
   max-width: 702px;
   width: 702px;
   color: ${colors.white};
   padding: 16px 8px;
-  border: none;
+  border: 1px solid ${colors.modalShield};
+  resize: none;
   outline: none;
   border-radius: 12px;
+  font-family: 'Barlow';
+  font-size: 16px;
+  font-weight: 400;
   box-shadow: 0px 1px 6px 0px rgba(0, 0, 0, 0.5);
 
   &:-moz-placeholder, /* Firefox 18- */
@@ -151,15 +164,27 @@ const Wrapper = styled(Flex)`
   font-style: normal;
   font-weight: 700;
   line-height: 16px;
+  font-family: 'Barlow';
 `
 
 const StyledButton = styled(Button)`
   && {
     position: absolute;
-    bottom: 20px;
-    right: 20px;
+    bottom: 26px;
+    right: 14px;
     height: 32px;
     border-radius: 16px;
+    min-width: 32px;
+    padding: 2px;
+  }
+
+  &&.MuiButton-root {
+    padding: 10px;
+  }
+
+  svg {
+    width: 12px;
+    height: 12px;
   }
 `
 
