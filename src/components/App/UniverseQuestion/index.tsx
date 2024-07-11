@@ -3,9 +3,10 @@ import { Flex } from '~/components/common/Flex'
 
 import { TextareaAutosize } from '@mui/base'
 import { Button } from '@mui/material'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import ArrowForwardIcon from '~/components/Icons/ArrowForwardIcon'
 import ExploreIcon from '~/components/Icons/ExploreIcon'
+import { getAboutData } from '~/network/fetchSourcesData'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
 import { useUserStore } from '~/stores/useUserStore'
@@ -13,16 +14,33 @@ import { colors } from '~/utils/colors'
 
 export const UniverseQuestion = () => {
   const [question, setQuestion] = useState('')
+  const [seedQuestions, setSeedQuestions] = useState<string[]>([])
   const { fetchData, setAbortRequests } = useDataStore((s) => s)
   const [setBudget] = useUserStore((s) => [s.setBudget])
   const setUniverseQuestionIsOpen = useAppStore((s) => s.setUniverseQuestionIsOpen)
 
-  const handleSubmitQuestion = async () => {
-    if (question) {
+  useEffect(() => {
+    const fetchSeedQuestions = async () => {
+      try {
+        const response = await getAboutData()
+
+        if (response.seed_questions) {
+          setSeedQuestions(response.seed_questions)
+        }
+      } catch (error) {
+        console.error('Error fetching seed questions:', error)
+      }
+    }
+
+    fetchSeedQuestions()
+  }, [])
+
+  const handleSubmitQuestion = async (questionToSubmit: string) => {
+    if (questionToSubmit) {
       setUniverseQuestionIsOpen()
     }
 
-    await fetchData(setBudget, setAbortRequests, question)
+    await fetchData(setBudget, setAbortRequests, questionToSubmit)
   }
 
   const canSubmit = true
@@ -30,8 +48,13 @@ export const UniverseQuestion = () => {
   const onEnterPress = async (e: React.KeyboardEvent) => {
     if (e.keyCode === 13 && e.shiftKey === false && canSubmit) {
       e.preventDefault()
-      handleSubmitQuestion()
+      handleSubmitQuestion(question)
     }
+  }
+
+  const handleSeedQuestionClick = async (seedQuestion: string) => {
+    setQuestion(seedQuestion)
+    await handleSubmitQuestion(seedQuestion)
   }
 
   return (
@@ -47,12 +70,21 @@ export const UniverseQuestion = () => {
         <StyledButton
           color="secondary"
           endIcon={<ArrowForwardIcon />}
-          onClick={handleSubmitQuestion}
+          onClick={() => handleSubmitQuestion(question)}
           variant="contained"
         >
           Search
         </StyledButton>
       </TextAreaWrapper>
+      {seedQuestions.length > 0 && (
+        <SeedQuestionsWrapper>
+          {seedQuestions.map((seedQuestion) => (
+            <SeedQuestion key={seedQuestion} onClick={() => handleSeedQuestionClick(seedQuestion)}>
+              {seedQuestion}
+            </SeedQuestion>
+          ))}
+        </SeedQuestionsWrapper>
+      )}
       <CloseButton onClick={setUniverseQuestionIsOpen} startIcon={<ExploreIcon />}>
         Explore graph
       </CloseButton>
@@ -117,5 +149,32 @@ const CloseButton = styled(Button)`
     bottom: 20px;
     right: 20px;
     border-radius: 16px;
+  }
+`
+
+const SeedQuestionsWrapper = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-top: 20px;
+  max-width: 702px;
+  width: 100%;
+`
+
+const SeedQuestion = styled.div`
+  background: ${colors.BG1};
+  color: ${colors.white};
+  padding: 15px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-family: Barlow;
+  font-size: 13px;
+  font-weight: 500;
+  &:hover {
+    background: ${colors.DROPDOWN_SELECTED};
   }
 `
