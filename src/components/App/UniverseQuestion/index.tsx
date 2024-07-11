@@ -6,6 +6,7 @@ import { Button } from '@mui/material'
 import { useEffect, useState } from 'react'
 import ArrowForwardIcon from '~/components/Icons/ArrowForwardIcon'
 import ExploreIcon from '~/components/Icons/ExploreIcon'
+import HelpIcon from '~/components/Icons/HelpIcon'
 import { getAboutData } from '~/network/fetchSourcesData'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
@@ -25,7 +26,9 @@ export const UniverseQuestion = () => {
         const response = await getAboutData()
 
         if (response.seed_questions) {
-          setSeedQuestions(response.seed_questions)
+          const shuffledQuestions = shuffleArray(response.seed_questions)
+
+          setSeedQuestions(shuffledQuestions)
         }
       } catch (error) {
         console.error('Error fetching seed questions:', error)
@@ -57,38 +60,55 @@ export const UniverseQuestion = () => {
     await handleSubmitQuestion(seedQuestion)
   }
 
+  const shuffleArray = (inputArray: string[]) => {
+    const array = [...inputArray]
+    let i = array.length - 1
+
+    while (i > 0) {
+      const j = Math.floor(Math.random() * (i + 1))
+
+      ;[array[i], array[j]] = [array[j], array[i]]
+      i -= 1
+    }
+
+    return array
+  }
+
+  const displayedSeedQuestions = shuffleArray([...seedQuestions]).slice(0, 4)
+
   return (
-    <Wrapper>
-      Ideas have shape
-      <TextAreaWrapper onKeyDown={onEnterPress} py={12} tabIndex={-1}>
-        <StyledTextarea
-          minRows={5}
-          onChange={(e) => setQuestion(e.target.value)}
-          placeholder="Enter your question"
-          value={question}
-        />
-        <StyledButton
-          color="secondary"
-          endIcon={<ArrowForwardIcon />}
-          onClick={() => handleSubmitQuestion(question)}
-          variant="contained"
-        >
-          Search
-        </StyledButton>
-      </TextAreaWrapper>
-      {seedQuestions.length > 0 && (
-        <SeedQuestionsWrapper>
-          {seedQuestions.map((seedQuestion) => (
-            <SeedQuestion key={seedQuestion} onClick={() => handleSeedQuestionClick(seedQuestion)}>
-              {seedQuestion}
-            </SeedQuestion>
-          ))}
-        </SeedQuestionsWrapper>
-      )}
-      <CloseButton onClick={setUniverseQuestionIsOpen} startIcon={<ExploreIcon />}>
-        Explore graph
-      </CloseButton>
-    </Wrapper>
+      <Wrapper>
+        Ideas have shape
+        <TextAreaWrapper onKeyDown={onEnterPress} py={12} tabIndex={-1}>
+          <StyledTextarea
+              minRows={5}
+              onChange={(e) => setQuestion(e.target.value)}
+              placeholder="Enter your question"
+              value={question}
+          />
+          <StyledButton
+              color="secondary"
+              endIcon={<ArrowForwardIcon />}
+              onClick={() => handleSubmitQuestion(question)}
+              variant="contained"
+          >
+            Search
+          </StyledButton>
+        </TextAreaWrapper>
+        {displayedSeedQuestions.length > 0 && (
+            <SeedQuestionsWrapper>
+              {displayedSeedQuestions.map((seedQuestion) => (
+                  <SeedQuestion key={seedQuestion} onClick={() => handleSeedQuestionClick(seedQuestion)}>
+                    <HelpIcon />
+                    {seedQuestion}
+                  </SeedQuestion>
+              ))}
+            </SeedQuestionsWrapper>
+        )}
+        <CloseButton onClick={setUniverseQuestionIsOpen} startIcon={<ExploreIcon />}>
+          Explore graph
+        </CloseButton>
+      </Wrapper>
   )
 }
 
@@ -164,17 +184,30 @@ const SeedQuestionsWrapper = styled.div`
 const SeedQuestion = styled.div`
   background: ${colors.BG1};
   color: ${colors.white};
-  padding: 15px 20px;
+  padding: 15px 12px;
   border-radius: 8px;
   cursor: pointer;
   display: flex;
   align-items: center;
-  justify-content: center;
-  text-align: center;
+  justify-content: flex-start;
+  text-align: left;
   font-family: Barlow;
-  font-size: 13px;
-  font-weight: 500;
+  font-size: 14px;
+  font-weight: 400;
+  gap: 10px;
   &:hover {
-    background: ${colors.DROPDOWN_SELECTED};
+    background: ${colors.SEEDQUESTION_HOVER};
+  }
+
+  &:active {
+    background: ${colors.SEEDQUESTION};
+  }
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  path {
+    fill: ${colors.modalWhiteOverlayBg};
   }
 `
