@@ -288,6 +288,11 @@ export type AiSummarySourcesResponse = {
   sources: { ref_id: string }[]
 }
 
+export type AiSummaryQuestionsResponse = {
+  question: string
+  relevant_questions: { question: string }[]
+}
+
 export type AIEntity = {
   answer?: string
   sources?: string[]
