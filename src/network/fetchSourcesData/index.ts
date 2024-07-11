@@ -23,6 +23,7 @@ export type TAboutParams = {
   description?: string
   mission_statement?: string
   search_term?: string
+  seed_questions?: string[]
 }
 
 export type TStatParams = {
