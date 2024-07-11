@@ -9,7 +9,7 @@ export default defineConfig({
     },
   },
   e2e: {
-    // retries: 5,
+    retries: 5,
     baseUrl: 'http://localhost:3000',
     defaultCommandTimeout: 10000,
     pageLoadTimeout: 90000,
