@@ -12,7 +12,6 @@ import ClearIcon from '~/components/Icons/ClearIcon'
 import SearchFilterCloseIcon from '~/components/Icons/SearchFilterCloseIcon'
 import SearchFilterIcon from '~/components/Icons/SearchFilterIcon'
 import SearchIcon from '~/components/Icons/SearchIcon'
-import { SchemaExtended } from '~/components/ModalsContainer/BlueprintModal/types'
 import { SearchBar } from '~/components/SearchBar'
 import { Flex } from '~/components/common/Flex'
 import { FetchLoaderText } from '~/components/common/Loader'
@@ -30,6 +29,7 @@ import { EpisodeSkeleton } from './Relevance/EpisodeSkeleton'
 import { SideBarSubView } from './SidebarSubView'
 import { Tab } from './Tab'
 import { Trending } from './Trending'
+import { useSchemaStore } from '~/stores/useSchemaStore'
 
 export const MENU_WIDTH = 390
 
@@ -45,6 +45,8 @@ type ContentProp = {
 // eslint-disable-next-line react/display-name
 const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen }, ref) => {
   const { isFetching: isLoading, setSidebarFilter, setFilters } = useDataStore((s) => s)
+  const [schemaAll, setSchemaAll] = useSchemaStore((s) => [s.schemas, s.setSchemas])
+
   const { aiSummaryAnswers } = useAiSummaryStore((s) => s)
   const setSelectedNode = useUpdateSelectedNode()
 
@@ -59,7 +61,6 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
   const [isScrolled, setIsScrolled] = useState(false)
   const [isFilterOpen, setIsFilterOpen] = useState(false)
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
-  const [schemaAll, setSchemaAll] = useState<SchemaExtended[]>([])
   const [selectedTypes, setSelectedTypes] = useState<string[]>([])
   const [showAllSchemas, setShowAllSchemas] = useState(false)
 
@@ -95,7 +96,7 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
     }
 
     fetchSchemaData()
-  }, [])
+  }, [setSchemaAll])
 
   const handleFilterIconClick = (event: React.MouseEvent<HTMLElement>) => {
     if (isFilterOpen) {

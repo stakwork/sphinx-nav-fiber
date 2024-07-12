@@ -135,6 +135,7 @@ export interface Schema {
   search_term?: string
   is_deleted?: boolean
   children?: string[]
+  primary_color?: string
   attributes?: { [key: string]: string }
 }
 
