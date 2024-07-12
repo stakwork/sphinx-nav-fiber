@@ -1,9 +1,14 @@
 /* eslint-disable camelcase */
 import { Mesh, Vector3 } from 'three'
 
+type QueryData = {
+  ref_id: string
+}
+
 export type FetchDataResponse = {
   nodes: Node[]
   edges: Link[]
+  query_data?: QueryData
 }
 
 export type FilterParams = {
