@@ -2,8 +2,10 @@ import clsx from 'clsx'
 import styled from 'styled-components'
 import { Divider } from '~/components/common/Divider'
 import { Flex } from '~/components/common/Flex'
+import { highlightSearchTerm } from '~/components/common/Highlight/Highlight'
 import { Text } from '~/components/common/Text'
 import { TypeBadge } from '~/components/common/TypeBadge'
+import { useAppStore } from '~/stores/useAppStore'
 import { useSelectedNode } from '~/stores/useGraphStore'
 
 export const Default = () => {
@@ -53,12 +55,17 @@ type Props = { label: string; value: unknown }
 
 const NodeDetail = ({ label, value }: Props) => {
   const isLong = (value as string).length > 140
+  const searchTerm = useAppStore((s) => s.currentSearch)
+
+  if (!value) {
+    return null
+  }
 
   return (
     <>
       <StyledDetail className={clsx('node-detail', { 'node-detail__long': isLong })}>
         <Text className="node-detail__label">{label}</Text>
-        <Text className="node-detail__value">{value as string}</Text>
+        <Text className="node-detail__value">{highlightSearchTerm(String(value), searchTerm)}</Text>
       </StyledDetail>
       <StyledDivider />
     </>

@@ -1,5 +1,6 @@
 import { Slide } from '@mui/material'
 import clsx from 'clsx'
+import { isEmpty } from 'lodash'
 import React, { forwardRef, useEffect, useRef, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { ClipLoader } from 'react-spinners'
@@ -11,22 +12,26 @@ import ClearIcon from '~/components/Icons/ClearIcon'
 import SearchFilterCloseIcon from '~/components/Icons/SearchFilterCloseIcon'
 import SearchFilterIcon from '~/components/Icons/SearchFilterIcon'
 import SearchIcon from '~/components/Icons/SearchIcon'
-import { SchemaExtended } from '~/components/ModalsContainer/BlueprintModal/types'
 import { SearchBar } from '~/components/SearchBar'
 import { Flex } from '~/components/common/Flex'
 import { FetchLoaderText } from '~/components/common/Loader'
 import { getSchemaAll } from '~/network/fetchSourcesData'
+import { useAiSummaryStore } from '~/stores/useAiSummaryStore'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore, useFilteredNodes } from '~/stores/useDataStore'
 import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
 import { useSelectedNode, useUpdateSelectedNode } from '~/stores/useGraphStore'
 import { colors } from '~/utils/colors'
+import { AiSearch } from './AiSearch'
+import { AiSummaryDetails } from './AiSummary/AiSummaryDetail'
 import { LatestView } from './Latest'
 import { EpisodeSkeleton } from './Relevance/EpisodeSkeleton'
 import { SideBarSubView } from './SidebarSubView'
 import { Tab } from './Tab'
 import { Trending } from './Trending'
 import { useNavigate } from 'react-router-dom'
+import { useSchemaStore } from '~/stores/useSchemaStore'
+
 
 export const MENU_WIDTH = 390
 
@@ -37,11 +42,15 @@ type ContentProp = {
 // eslint-disable-next-line react/display-name
 const Content = forwardRef<HTMLDivElement, ContentProp>(({ subViewOpen }, ref) => {
   const { isFetching: isLoading, setSidebarFilter, setFilters } = useDataStore((s) => s)
+  const [schemaAll, setSchemaAll] = useSchemaStore((s) => [s.schemas, s.setSchemas])
+
+  const { aiSummaryAnswers } = useAiSummaryStore((s) => s)
   const setSelectedNode = useUpdateSelectedNode()
 
   const filteredNodes = useFilteredNodes()
 
   const { setSidebarOpen, currentSearch: searchTerm, clearSearch, searchFormValue } = useAppStore((s) => s)
+
   const [trendingTopicsFeatureFlag] = useFeatureFlagStore((s) => [s.trendingTopicsFeatureFlag])
 
   const { setValue, watch } = useFormContext()
@@ -49,7 +58,6 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ subViewOpen }, ref) =
   const [isScrolled, setIsScrolled] = useState(false)
   const [isFilterOpen, setIsFilterOpen] = useState(false)
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
-  const [schemaAll, setSchemaAll] = useState<SchemaExtended[]>([])
   const [selectedTypes, setSelectedTypes] = useState<string[]>([])
   const [showAllSchemas, setShowAllSchemas] = useState(false)
 
@@ -85,7 +93,7 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ subViewOpen }, ref) =
     }
 
     fetchSchemaData()
-  }, [])
+  }, [setSchemaAll])
 
   const handleFilterIconClick = (event: React.MouseEvent<HTMLElement>) => {
     if (isFilterOpen) {
@@ -111,7 +119,6 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ subViewOpen }, ref) =
   return (
     <Wrapper ref={ref} id="sidebar-wrapper">
       <TitlePlaceholder />
-
       <SearchWrapper className={clsx({ 'has-shadow': isScrolled })}>
         <SearchFilterIconWrapper>
           <Search>
@@ -193,8 +200,15 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ subViewOpen }, ref) =
             <Trending />
           </TrendingWrapper>
         )}
-        <Flex>{isLoading ? <EpisodeSkeleton /> : <LatestView isSearchResult={!!searchTerm} />}</Flex>
+        <Flex>
+          {Object.keys(aiSummaryAnswers).map((i: string) => (
+            <AiSummaryDetails key={i} question={i} response={aiSummaryAnswers[i]} />
+          ))}
+
+          {isLoading ? <EpisodeSkeleton /> : <LatestView isSearchResult={!!searchTerm} />}
+        </Flex>
       </ScrollWrapper>
+      {!isEmpty(aiSummaryAnswers) ? <AiSearch /> : null}
     </Wrapper>
   )
 })

@@ -22,11 +22,13 @@ export const AuthGuard = ({ children }: PropsWithChildren) => {
     setQueuedSourcesFeatureFlag,
     setCustomSchemaFeatureFlag,
     setRealtimeGraphFeatureFlag,
+    setChatInterfaceFeatureFlag,
   ] = useFeatureFlagStore((s) => [
     s.setTrendingTopicsFeatureFlag,
     s.setQueuedSourcesFeatureFlag,
     s.setCustomSchemaFeatureFlag,
     s.setRealtimeGraphFeatureFlag,
+    s.setChatInterfaceFeatureFlag,
   ])
 
   const handleAuth = useCallback(async () => {
@@ -70,6 +72,7 @@ export const AuthGuard = ({ children }: PropsWithChildren) => {
         setQueuedSourcesFeatureFlag(res.data.queuedSources)
         setCustomSchemaFeatureFlag(res.data.customSchema)
         setRealtimeGraphFeatureFlag(res.data.realtimeGraph || false)
+        setChatInterfaceFeatureFlag(res.data.chatInterface || false)
       }
 
       setIsAuthenticated(true)
@@ -89,6 +92,7 @@ export const AuthGuard = ({ children }: PropsWithChildren) => {
     setQueuedSourcesFeatureFlag,
     setCustomSchemaFeatureFlag,
     setRealtimeGraphFeatureFlag,
+    setChatInterfaceFeatureFlag,
   ])
 
   // auth checker

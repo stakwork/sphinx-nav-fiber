@@ -21,7 +21,7 @@ type Props = {
 const _Relevance = ({ isSearchResult }: Props) => {
   const scrollViewRef = useRef<HTMLDivElement | null>(null)
 
-  const pageSize = !isSearchResult ? 100 : 80
+  const pageSize = !isSearchResult ? 10 : 80
 
   const { setSelectedTimestamp, nextPage } = useDataStore((s) => s)
   const setSelectedNode = useUpdateSelectedNode()
@@ -125,12 +125,11 @@ const _Relevance = ({ isSearchResult }: Props) => {
         })}
 
         <LoadMoreWrapper align="center" background="BG1" direction="row" justify="center">
-          {hasNext ||
-            (true && (
-              <Button key={buttonKey} onClick={handleLoadMoreClick} size="medium">
-                Load More
-              </Button>
-            ))}
+          {hasNext && (
+            <Button key={buttonKey} onClick={handleLoadMoreClick} size="medium">
+              Load More
+            </Button>
+          )}
         </LoadMoreWrapper>
       </ScrollView>
     </>

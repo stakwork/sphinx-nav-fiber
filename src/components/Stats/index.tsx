@@ -114,7 +114,7 @@ export const Stats = () => {
   }
 
   function handleStatClick(mediaType: string) {
-    fetchData(setBudget, setAbortRequests, { ...(mediaType ? { media_type: mediaType } : {}), skip_cache: 'true' })
+    fetchData(setBudget, setAbortRequests, '', { ...(mediaType ? { media_type: mediaType } : {}), skip_cache: 'true' })
 
     setSelectedNode(null)
   }
