@@ -1,4 +1,5 @@
 import { useFormContext } from 'react-hook-form'
+import { useNavigate } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import { colors } from '~/utils/colors'
 
@@ -58,10 +59,11 @@ const Input = styled.input.attrs(() => ({
     `}
 `
 
-export const SearchBar = ({ loading, onSubmit, placeholder = 'Search' }: Props) => {
+export const SearchBar = ({ loading, placeholder = 'Search' }: Props) => {
   const { register, watch } = useFormContext()
 
   const typing = watch('search')
+  const navigate = useNavigate()
 
   return (
     <Input
@@ -75,7 +77,9 @@ export const SearchBar = ({ loading, onSubmit, placeholder = 'Search' }: Props) 
             return
           }
 
-          onSubmit?.()
+          const encodedQuery = typing.replace(/\s+/g, '+')
+
+          navigate(`/search?q=${encodedQuery}`)
         }
       }}
       placeholder={placeholder}
