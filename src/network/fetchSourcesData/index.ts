@@ -23,6 +23,7 @@ export type TAboutParams = {
   description?: string
   mission_statement?: string
   search_term?: string
+  seed_questions?: string[]
 }
 
 export type TStatParams = {
@@ -135,6 +136,7 @@ export interface Schema {
   is_deleted?: boolean
   children?: string[]
   primary_color?: string
+  attributes?: { [key: string]: string }
 }
 
 export interface SchemaLink {

@@ -11,12 +11,14 @@ import { Overlay } from '~/components/Universe/Overlay' // Import Overlay direct
 import { Preloader } from '~/components/Universe/Preloader' // Import Preloader directly
 import { isDevelopment } from '~/constants'
 import { useSocket } from '~/hooks/useSockets'
+import { useAiSummaryStore } from '~/stores/useAiSummaryStore'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
 import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
 import { useUpdateSelectedNode } from '~/stores/useGraphStore'
 import { useTeachStore } from '~/stores/useTeachStore'
 import { useUserStore } from '~/stores/useUserStore'
+import { AiSummaryAnswerResponse, AiSummaryQuestionsResponse, AiSummarySourcesResponse } from '~/types'
 import { colors } from '~/utils/colors'
 import { updateBudget } from '~/utils/setBudget'
 import version from '~/utils/versionHelper'
@@ -62,9 +64,14 @@ export const App = () => {
 
   const { fetchData, setCategoryFilter, setAbortRequests, addNewNode, filters } = useDataStore((s) => s)
 
+  const { setAiSummaryAnswer, getKeyExist } = useAiSummaryStore((s) => s)
+
   const setSelectedNode = useUpdateSelectedNode()
 
-  const [realtimeGraphFeatureFlag] = useFeatureFlagStore((s) => [s.realtimeGraphFeatureFlag])
+  const [realtimeGraphFeatureFlag, chatInterfaceFeatureFlag] = useFeatureFlagStore((s) => [
+    s.realtimeGraphFeatureFlag,
+    s.chatInterfaceFeatureFlag,
+  ])
 
   const socket: Socket | undefined = useSocket()
 
@@ -98,6 +105,38 @@ export const App = () => {
     setNodeCount('INCREMENT')
   }, [setNodeCount])
 
+  const handleAiSummaryAnswer = useCallback(
+    (data: AiSummaryAnswerResponse) => {
+      console.log(data)
+
+      if (data.question && getKeyExist(data.question)) {
+        setAiSummaryAnswer(data.question, { answer: data.answer, answerLoading: false })
+      }
+    },
+    [setAiSummaryAnswer, getKeyExist],
+  )
+
+  const handleAiRelevantQuestions = useCallback(
+    (data: AiSummaryQuestionsResponse) => {
+      if (data.question && getKeyExist(data.question)) {
+        setAiSummaryAnswer(data.question, {
+          questions: data.relevant_questions.map((i) => i.question),
+          questionsLoading: false,
+        })
+      }
+    },
+    [setAiSummaryAnswer, getKeyExist],
+  )
+
+  const handleAiSources = useCallback(
+    (data: AiSummarySourcesResponse) => {
+      if (data.question && getKeyExist(data.question)) {
+        setAiSummaryAnswer(data.question, { sources: data.sources.map((i) => i.ref_id), sourcesLoading: false })
+      }
+    },
+    [setAiSummaryAnswer, getKeyExist],
+  )
+
   const handleNewNodeCreated = useCallback(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (data: any) => {
@@ -118,6 +157,19 @@ export const App = () => {
 
       socket.on('newnode', handleNewNode)
 
+      // subscribe to ai_summary
+      if (chatInterfaceFeatureFlag) {
+        socket.on('askquestionhook', handleAiSummaryAnswer)
+      }
+
+      if (chatInterfaceFeatureFlag) {
+        socket.on('relevantquestionshook', handleAiRelevantQuestions)
+      }
+
+      if (chatInterfaceFeatureFlag) {
+        socket.on('answersourceshook', handleAiSources)
+      }
+
       if (realtimeGraphFeatureFlag) {
         socket.on('new_node_created', handleNewNodeCreated)
       }
@@ -128,7 +180,16 @@ export const App = () => {
         socket.off()
       }
     }
-  }, [socket, handleNewNode, handleNewNodeCreated, realtimeGraphFeatureFlag])
+  }, [
+    socket,
+    handleNewNode,
+    handleNewNodeCreated,
+    realtimeGraphFeatureFlag,
+    handleAiSummaryAnswer,
+    chatInterfaceFeatureFlag,
+    handleAiRelevantQuestions,
+    handleAiSources,
+  ])
 
   return (
     <>
@@ -155,6 +216,7 @@ export const App = () => {
           </DataRetriever>
           <ModalsContainer />
           <Toasts />
+
           <Helper />
         </Wrapper>
       </Suspense>
