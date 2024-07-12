@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
+import { NoParent } from '~/components/AddItemModal/SourceTypeStep/constants'
 import { TOption } from '~/components/AddItemModal/SourceTypeStep/types'
 import ClearIcon from '~/components/Icons/ClearIcon'
 import { AutoComplete, TAutocompleteOption } from '~/components/common/AutoComplete'
@@ -12,12 +13,11 @@ import { Text } from '~/components/common/Text'
 import { TextInput } from '~/components/common/TextInput'
 import { NODE_ADD_ERROR, requiredRule } from '~/constants'
 import { api } from '~/network/api'
-import { Schema, getNodeSchemaTypes, getNodeType } from '~/network/fetchSourcesData'
+import { getNodeSchemaTypes, getNodeType, Schema } from '~/network/fetchSourcesData'
 import { useModal } from '~/stores/useModalStore'
 import { colors } from '~/utils'
 import { CreateCustomNodeAttribute } from './CustomAttributesStep'
 import { convertAttributes, parsedObjProps, parseJson } from './utils'
-import { NoParent } from '~/components/AddItemModal/SourceTypeStep/constants'
 
 const defaultValues = {
   type: '',
@@ -375,6 +375,7 @@ export const Editor = ({
                     <Flex mb={12}>
                       <TextInput
                         id="cy-item-name"
+                        dataTestId="cy-item-name"
                         maxLength={250}
                         name="type"
                         placeholder="Enter type name"
@@ -394,6 +395,7 @@ export const Editor = ({
                     </Flex>
                     <Flex mb={12}>
                       <TextInput
+                        dataTestId="cy-item-name"
                         defaultValue={selectedSchema?.type}
                         id="cy-item-name"
                         maxLength={250}
