@@ -7,24 +7,23 @@ type AIAnswer = {
 }
 
 export type AiSummaryStore = {
-  aiSummaryIsLoading: boolean
   aiSummaryAnswers: AIAnswer
+  aiRefId: string
   setAiSummaryAnswer: (key: string, answer: AIEntity) => void
-  setAiSummaryIsLoading: (status: boolean) => void
+  resetAiSummaryAnswer: () => void
   getAiSummaryAnswer: (key: string) => string
   getKeyExist: (key: string) => boolean
+  setAiRefId: (aiRefId: string) => void
 }
 
 const defaultData = {
-  aiSummaryRequest: '',
-  aiSummaryIsLoading: false,
   aiSummaryAnswers: {},
+  aiRefId: '',
 }
 
 export const useAiSummaryStore = create<AiSummaryStore>()(
   devtools((set, get) => ({
     ...defaultData,
-    setAiSummaryIsLoading: (status) => set({ aiSummaryIsLoading: status }),
     setAiSummaryAnswer: (key, answer) => {
       const summaryAnswers = get().aiSummaryAnswers
 
@@ -34,11 +33,16 @@ export const useAiSummaryStore = create<AiSummaryStore>()(
 
       set({ aiSummaryAnswers: clone })
     },
+    resetAiSummaryAnswer: () => {
+      set({ aiSummaryAnswers: {}, aiRefId: '' })
+    },
     getAiSummaryAnswer: (key) => {
       const summaryAnswers = get().aiSummaryAnswers
 
       return summaryAnswers[key].answer || ''
     },
+
+    setAiRefId: (aiRefId) => set({ aiRefId }),
 
     getKeyExist: (key) => {
       if (key in get().aiSummaryAnswers) {

@@ -12,6 +12,7 @@ import { useModal } from '~/stores/useModalStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { colors } from '~/utils/colors'
 import { isSphinx } from '~/utils/isSphinx'
+import { useNavigate } from 'react-router-dom'
 
 export const MainToolbar = () => {
   const { open: openSourcesModal } = useModal('sourcesTable')
@@ -20,6 +21,7 @@ export const MainToolbar = () => {
   const { open: openSettingsModal } = useModal('settings')
   const { open: openBlueprintModal } = useModal('blueprintGraph')
   const { open: openFeedbackModal } = useModal('feedback')
+  const navigate = useNavigate()
 
   const customSchemaFeatureFlag = useFeatureFlagStore((s) => s.customSchemaFeatureFlag)
   const userFeedbackFeatureFlag = useFeatureFlagStore((s) => s.userFeedbackFeatureFlag)
@@ -29,7 +31,7 @@ export const MainToolbar = () => {
 
   return (
     <Wrapper>
-      <LogoButton>
+      <LogoButton onClick={() => navigate('/')}>
         <img alt="Second brain" src="logo.svg" />
       </LogoButton>
       {isAdmin ? (

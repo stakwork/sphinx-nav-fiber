@@ -40,7 +40,7 @@ const _AiSources = ({ sourceIds }: Props) => {
   const visibleNodes = showAll ? currentNodes : [...currentNodes].slice(0, 3)
 
   return (
-    <Flex>
+    <SectionWrapper>
       <Heading className="heading" direction="row">
         <div className="heading__icon">
           <SourcesIcon />
@@ -103,7 +103,7 @@ const _AiSources = ({ sourceIds }: Props) => {
           ) : null}
         </LoadMoreWrapper>
       </ScrollView>
-    </Flex>
+    </SectionWrapper>
   )
 }
 
@@ -118,7 +118,6 @@ const Heading = styled(Flex)`
     font-weight: 600;
     color: ${colors.white};
     font-size: 14px;
-    padding: 24px;
 
     .heading__icon {
       margin-right: 12px;
@@ -131,4 +130,9 @@ const Heading = styled(Flex)`
       margin-left: 16px;
     }
   }
+`
+
+const SectionWrapper = styled(Flex)`
+  padding: 24px;
+  border-top: 1px solid ${colors.black};
 `

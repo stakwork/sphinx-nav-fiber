@@ -23,7 +23,7 @@ export const AppBar = () => {
             </Text>
           )}
         </>
-        <Text className="subtitle"> Second Brain</Text>
+        <Text className="subtitle">Second Brain</Text>
       </TitleWrapper>
       <Stats />
     </Header>

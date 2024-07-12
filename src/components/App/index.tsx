@@ -18,7 +18,7 @@ import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
 import { useUpdateSelectedNode } from '~/stores/useGraphStore'
 import { useTeachStore } from '~/stores/useTeachStore'
 import { useUserStore } from '~/stores/useUserStore'
-import { AiSummaryAnswerResponse, AiSummarySourcesResponse } from '~/types'
+import { AiSummaryAnswerResponse, AiSummaryQuestionsResponse, AiSummarySourcesResponse } from '~/types'
 import { colors } from '~/utils/colors'
 import { updateBudget } from '~/utils/setBudget'
 import version from '~/utils/versionHelper'
@@ -29,6 +29,7 @@ import { DeviceCompatibilityNotice } from './DeviceCompatibilityNotification'
 import { Helper } from './Helper'
 import { SecondarySideBar } from './SecondarySidebar'
 import { Toasts } from './Toasts'
+import { useSearchParams } from 'react-router-dom'
 
 const Wrapper = styled(Flex)`
   height: 100%;
@@ -50,6 +51,8 @@ const LazyUniverse = lazy(() => import('~/components/Universe').then(({ Universe
 const LazySideBar = lazy(() => import('./SideBar').then(({ SideBar }) => ({ default: SideBar })))
 
 export const App = () => {
+  const [searchParams] = useSearchParams()
+  const query = searchParams.get('q')
   const [setBudget, setNodeCount] = useUserStore((s) => [s.setBudget, s.setNodeCount])
 
   const {
@@ -77,14 +80,27 @@ export const App = () => {
 
   const form = useForm<{ search: string }>({ mode: 'onChange' })
 
-  const handleSubmit = form.handleSubmit(({ search }) => {
+  const { setValue } = form
+
+  useEffect(() => {
+    setValue('search', query ?? '')
+
     setTranscriptOpen(false)
     setSelectedNode(null)
     setRelevanceSelected(false)
-    setCurrentSearch(search)
+    setCurrentSearch(query ?? '')
     setTeachMeAnswer('')
     setCategoryFilter(null)
-  })
+  }, [
+    query,
+    setCategoryFilter,
+    setCurrentSearch,
+    setRelevanceSelected,
+    setSelectedNode,
+    setTeachMeAnswer,
+    setTranscriptOpen,
+    setValue,
+  ])
 
   const runSearch = useCallback(async () => {
     await fetchData(setBudget, setAbortRequests)
@@ -117,11 +133,12 @@ export const App = () => {
   )
 
   const handleAiRelevantQuestions = useCallback(
-    (data: AiSummaryAnswerResponse) => {
-      console.log(data)
-
-      if (false && data.question && getKeyExist(data.question)) {
-        setAiSummaryAnswer(data.question, { answer: data.answer, answerLoading: false })
+    (data: AiSummaryQuestionsResponse) => {
+      if (data.question && getKeyExist(data.question)) {
+        setAiSummaryAnswer(data.question, {
+          questions: data.relevant_questions.map((i) => i.question),
+          questionsLoading: false,
+        })
       }
     },
     [setAiSummaryAnswer, getKeyExist],
@@ -203,7 +220,7 @@ export const App = () => {
           <DataRetriever>
             <FormProvider {...form}>
               <LazyMainToolbar />
-              <LazySideBar onSubmit={handleSubmit} />
+              <LazySideBar />
               <LazyUniverse />
               {false && <Preloader fullSize={false} />}
               <Overlay />

@@ -6,6 +6,7 @@ import { AIEntity } from '~/types'
 import { colors } from '~/utils/colors'
 import { EpisodeSkeleton } from '../../Relevance/EpisodeSkeleton'
 import { AiSummarySkeleton } from '../AiSummarySkeleton'
+import { AiQuestions } from './AiQuestions'
 import { AiSources } from './AiSources'
 
 type Props = {
@@ -64,7 +65,8 @@ export const AiSummaryDetails = ({ question, response }: Props) => {
           <SummaryText>{displayedText}</SummaryText>
         </AiSummaryDetailsWrapper>
       )}
-      {response.sourcesLoading ? <EpisodeSkeleton /> : <AiSources sourceIds={response.sources || []} />}
+      {response.sourcesLoading ? <EpisodeSkeleton count={1} /> : <AiSources sourceIds={response.sources || []} />}
+      {response.questionsLoading ? <EpisodeSkeleton count={1} /> : <AiQuestions questions={response.questions || []} />}
     </>
   )
 }

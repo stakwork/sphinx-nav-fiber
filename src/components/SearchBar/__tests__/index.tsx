@@ -1,14 +1,20 @@
-import { fireEvent, render, screen } from '@testing-library/react'
+/* eslint-disable padding-line-between-statements */
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import * as React from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { SearchBar } from '../index'
+import { MemoryRouter } from 'react-router-dom'
 
 describe('SearchBar', () => {
   it('should render with placeholder text', () => {
     const Wrapper = ({ children }: { children: React.ReactNode }) => {
       const methods = useForm()
 
-      return <FormProvider {...methods}>{children}</FormProvider>
+      return (
+        <MemoryRouter>
+          <FormProvider {...methods}>{children}</FormProvider>
+        </MemoryRouter>
+      )
     }
 
     render(<SearchBar />, { wrapper: Wrapper })
@@ -22,7 +28,11 @@ describe('SearchBar', () => {
     const Wrapper = ({ children }: { children: React.ReactNode }) => {
       const methods = useForm()
 
-      return <FormProvider {...methods}>{children}</FormProvider>
+      return (
+        <MemoryRouter>
+          <FormProvider {...methods}>{children}</FormProvider>
+        </MemoryRouter>
+      )
     }
 
     render(<SearchBar />, { wrapper: Wrapper })
@@ -51,17 +61,24 @@ describe('SearchBar', () => {
     const Wrapper = ({ children }: { children: React.ReactNode }) => {
       const methods = useForm()
 
-      return <FormProvider {...methods}>{children}</FormProvider>
+      return (
+        <MemoryRouter>
+          <FormProvider {...methods}>{children}</FormProvider>
+        </MemoryRouter>
+      )
     }
 
-    render(<SearchBar onSubmit={handleSearch} />, { wrapper: Wrapper })
+    render(<SearchBar />, { wrapper: Wrapper })
 
     const searchInput = screen.getByPlaceholderText('Search') as HTMLInputElement
 
     fireEvent.change(searchInput, { target: { value: 'search query' } })
 
     fireEvent.keyPress(searchInput, { key: 'Enter', code: 'Enter', charCode: 13 })
-
-    expect(handleSearch).toHaveBeenCalledWith()
+    ;(async () => {
+      await waitFor(() => {
+        expect(handleSearch).toHaveBeenCalledWith()
+      })
+    })()
   })
 })

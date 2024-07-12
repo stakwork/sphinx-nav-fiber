@@ -8,6 +8,7 @@ import { NodeExtended } from '~/types'
 import { colors } from '~/utils/colors'
 import { truncateText } from '~/utils/truncateText'
 import { fontProps } from './constants'
+import { useSchemaStore } from '~/stores/useSchemaStore'
 
 const COLORS_MAP = [
   '#fff',
@@ -51,6 +52,8 @@ export const TextNode = memo(({ node, hide }: Props) => {
   const isRelative = selectedNodeRelativeIds.includes(node?.ref_id || '')
   const isSelected = !!selectedNode && selectedNode?.ref_id === node.ref_id
   const showSelectionGraph = useGraphStore((s) => s.showSelectionGraph)
+  const [getPrimaryColorByType] = useSchemaStore((s) => [s.getPrimaryColorByType])
+
   const nodeTypes = useNodeTypes()
 
   useFrame(({ camera }) => {
@@ -80,7 +83,9 @@ export const TextNode = memo(({ node, hide }: Props) => {
     return 1
   }, [isSelected, selectedNode])
 
-  const color = COLORS_MAP[nodeTypes.indexOf(node.node_type)] || colors.white
+  const primaryColor = getPrimaryColorByType(node.node_type)
+
+  const color = primaryColor ?? (COLORS_MAP[nodeTypes.indexOf(node.node_type)] || colors.white)
 
   return (
     <>

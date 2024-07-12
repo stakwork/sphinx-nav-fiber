@@ -1,5 +1,6 @@
 import { Slide } from '@mui/material'
 import clsx from 'clsx'
+import { isEmpty } from 'lodash'
 import React, { forwardRef, useEffect, useRef, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { ClipLoader } from 'react-spinners'
@@ -11,7 +12,6 @@ import ClearIcon from '~/components/Icons/ClearIcon'
 import SearchFilterCloseIcon from '~/components/Icons/SearchFilterCloseIcon'
 import SearchFilterIcon from '~/components/Icons/SearchFilterIcon'
 import SearchIcon from '~/components/Icons/SearchIcon'
-import { SchemaExtended } from '~/components/ModalsContainer/BlueprintModal/types'
 import { SearchBar } from '~/components/SearchBar'
 import { Flex } from '~/components/common/Flex'
 import { FetchLoaderText } from '~/components/common/Loader'
@@ -21,9 +21,10 @@ import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore, useFilteredNodes } from '~/stores/useDataStore'
 import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
 import { useSelectedNode, useUpdateSelectedNode } from '~/stores/useGraphStore'
+import { useSchemaStore } from '~/stores/useSchemaStore'
 import { colors } from '~/utils/colors'
+import { AiSearch } from './AiSearch'
 import { AiSummaryDetails } from './AiSummary/AiSummaryDetail'
-import { AiSummarySkeleton } from './AiSummary/AiSummarySkeleton'
 import { LatestView } from './Latest'
 import { EpisodeSkeleton } from './Relevance/EpisodeSkeleton'
 import { SideBarSubView } from './SidebarSubView'
@@ -32,36 +33,30 @@ import { Trending } from './Trending'
 
 export const MENU_WIDTH = 390
 
-type Props = {
-  onSubmit?: () => void
-}
-
 type ContentProp = {
   subViewOpen: boolean
-  onSubmit?: () => void
 }
 
 // eslint-disable-next-line react/display-name
-const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen }, ref) => {
+const Content = forwardRef<HTMLDivElement, ContentProp>(({ subViewOpen }, ref) => {
   const { isFetching: isLoading, setSidebarFilter } = useDataStore((s) => s)
-  const { aiSummaryIsLoading, aiSummaryAnswers } = useAiSummaryStore((s) => s)
+  const [schemaAll, setSchemaAll] = useSchemaStore((s) => [s.schemas, s.setSchemas])
+
+  const { aiSummaryAnswers } = useAiSummaryStore((s) => s)
+
   const setSelectedNode = useUpdateSelectedNode()
 
   const filteredNodes = useFilteredNodes()
 
   const { setSidebarOpen, currentSearch: searchTerm, clearSearch, searchFormValue } = useAppStore((s) => s)
 
-  const [trendingTopicsFeatureFlag, chatInterfaceFeatureFlag] = useFeatureFlagStore((s) => [
-    s.trendingTopicsFeatureFlag,
-    s.chatInterfaceFeatureFlag,
-  ])
+  const [trendingTopicsFeatureFlag] = useFeatureFlagStore((s) => [s.trendingTopicsFeatureFlag])
 
   const { setValue, watch } = useFormContext()
   const componentRef = useRef<HTMLDivElement | null>(null)
   const [isScrolled, setIsScrolled] = useState(false)
   const [isFilterOpen, setIsFilterOpen] = useState(false)
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
-  const [schemaAll, setSchemaAll] = useState<SchemaExtended[]>([])
   const [showAllSchemas, setShowAllSchemas] = useState(false)
 
   useEffect(() => {
@@ -96,7 +91,7 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
     }
 
     fetchSchemaData()
-  }, [])
+  }, [setSchemaAll])
 
   const handleFilterIconClick = (event: React.MouseEvent<HTMLElement>) => {
     if (isFilterOpen) {
@@ -112,11 +107,10 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
   return (
     <Wrapper ref={ref} id="sidebar-wrapper">
       <TitlePlaceholder />
-
       <SearchWrapper className={clsx({ 'has-shadow': isScrolled })}>
         <SearchFilterIconWrapper>
           <Search>
-            <SearchBar onSubmit={onSubmit} />
+            <SearchBar />
             <InputButton
               data-testid="search_action_icon"
               onClick={() => {
@@ -125,6 +119,7 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
                   clearSearch()
                   setSidebarFilter('all')
                   setSelectedNode(null)
+                  navigate(`/`)
 
                   return
                 }
@@ -133,7 +128,9 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
                   return
                 }
 
-                onSubmit?.()
+                const encodedQuery = typing.replace(/\s+/g, '+')
+
+                navigate(`/search?q=${encodedQuery}`)
               }}
             >
               {!isLoading ? (
@@ -185,30 +182,25 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
       <ScrollWrapper ref={componentRef}>
         {!searchTerm && trendingTopicsFeatureFlag && (
           <TrendingWrapper>
-            <Trending onSubmit={onSubmit} />
+            <Trending />
           </TrendingWrapper>
         )}
         <Flex>
-          {chatInterfaceFeatureFlag &&
-            (aiSummaryIsLoading ? (
-              <AiSummarySkeleton />
-            ) : (
-              <>
-                {Object.keys(aiSummaryAnswers).map((i: string) => (
-                  <AiSummaryDetails key={i} question={i} response={aiSummaryAnswers[i]} />
-                ))}
-              </>
-            ))}
+          {Object.keys(aiSummaryAnswers).map((i: string) => (
+            <AiSummaryDetails key={i} question={i} response={aiSummaryAnswers[i]} />
+          ))}
+
           {isLoading ? <EpisodeSkeleton /> : <LatestView isSearchResult={!!searchTerm} />}
         </Flex>
       </ScrollWrapper>
+      {!isEmpty(aiSummaryAnswers) ? <AiSearch /> : null}
     </Wrapper>
   )
 })
 
 const hideSubViewFor = ['topic', 'person', 'guest', 'event', 'organization', 'place', 'project', 'software']
 
-export const SideBar = ({ onSubmit }: Props) => {
+export const SideBar = () => {
   const { sidebarIsOpen } = useAppStore((s) => s)
   const selectedNode = useSelectedNode()
 
@@ -219,7 +211,7 @@ export const SideBar = ({ onSubmit }: Props) => {
   return (
     <>
       <Slide direction="right" in={sidebarIsOpen} mountOnEnter unmountOnExit>
-        <Content onSubmit={onSubmit} subViewOpen={subViewIsOpen} />
+        <Content subViewOpen={subViewIsOpen} />
       </Slide>
       <SideBarSubView open={subViewIsOpen || !!showTeachMe} />
       {!sidebarIsOpen && <Tab />}

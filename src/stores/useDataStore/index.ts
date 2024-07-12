@@ -137,7 +137,7 @@ export const useDataStore = create<DataStore>()(
     fetchData: async (setBudget, setAbortRequests, AISearchQuery = '') => {
       const { currentPage, itemsPerPage, dataInitial: existingData, filters } = get()
       const { currentSearch } = useAppStore.getState()
-      const { setAiSummaryAnswer } = useAiSummaryStore.getState()
+      const { setAiSummaryAnswer, aiRefId } = useAiSummaryStore.getState()
       let ai = { ai_summary: String(!!AISearchQuery) }
 
       if (!currentPage) {
@@ -171,6 +171,7 @@ export const useDataStore = create<DataStore>()(
         limit: String(itemsPerPage),
         ...(filterNodeTypes.length > 0 ? { node_type: JSON.stringify(filterNodeTypes) } : {}),
         ...(word ? { word } : {}),
+        ...(aiRefId && AISearchQuery ? { previous_search_ref_id: aiRefId } : {}),
       }
 
       try {
@@ -180,8 +181,12 @@ export const useDataStore = create<DataStore>()(
           return
         }
 
-        const currentNodes = currentPage === 0 && !AISearchQuery ? [] : [...(existingData?.nodes || [])]
-        const currentLinks = currentPage === 0 && !AISearchQuery ? [] : [...(existingData?.links || [])]
+        if (data?.query_data?.ref_id) {
+          useAiSummaryStore.setState({ aiRefId: data?.query_data?.ref_id })
+        }
+
+        const currentNodes = currentPage === 0 && !aiRefId ? [] : [...(existingData?.nodes || [])]
+        const currentLinks = currentPage === 0 && !aiRefId ? [] : [...(existingData?.links || [])]
 
         const newNodes = (data?.nodes || []).filter((n) => !currentNodes.some((c) => c.ref_id === n.ref_id))
 
