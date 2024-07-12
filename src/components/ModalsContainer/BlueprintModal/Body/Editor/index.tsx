@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Button } from '@mui/material'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
@@ -167,6 +167,7 @@ export const Editor = ({
   const [deleteError, setDeleteError] = useState<string | null>(null)
   const [deletedAttributes, setDeletedAttributes] = useState<string[]>([])
   const [parsedData, setParsedData] = useState<parsedObjProps[]>([])
+  const [submitDisabled, setSubmitDisabled] = useState(true)
 
   useEffect(
     () => () => {
@@ -220,7 +221,11 @@ export const Editor = ({
     Array.isArray(value) && value.every((item) => typeof item === 'object' && 'key' in item)
 
   const attributesValue = watch('attributes')
-  const attributes: Attribute[] = isAttributeArray(attributesValue) ? attributesValue : []
+
+  const attributes: Attribute[] = useMemo(
+    () => (isAttributeArray(attributesValue) ? attributesValue : []),
+    [attributesValue],
+  )
 
   const handleClose = () => {
     close()
@@ -312,16 +317,26 @@ export const Editor = ({
     }
   })
 
-  const isMatch = compareAttributes(attributes, parsedData)
+  useEffect(() => {
+    const subscription = form.watch((values) => {
+      const isMatch = compareAttributes(attributes, parsedData)
 
-  const isChanged =
-    type?.trim() !== selectedSchema?.type?.trim() || parent !== selectedSchema?.parent?.trim() || isMatch
+      const isChanged =
+        values.type?.trim() !== selectedSchema?.type?.trim() ||
+        values.parent?.trim() !== selectedSchema?.parent?.trim() ||
+        isMatch
 
-  const isValidType = !!type.trim()
+      const isValidType = !!values.type?.trim()
 
-  const submitDisabled = selectedSchema
-    ? loading || !isChanged || !isValidType || displayParentError
-    : loading || displayParentError
+      setSubmitDisabled(
+        selectedSchema
+          ? loading || !isChanged || !isValidType || displayParentError
+          : loading || displayParentError || !isValidType,
+      )
+    })
+
+    return () => subscription.unsubscribe()
+  }, [form, attributes, parsedData, selectedSchema, loading, displayParentError])
 
   const resolvedParentValue = () => parentOptions?.find((i) => i.value === parent)
 
