@@ -1,5 +1,6 @@
 import { Slide } from '@mui/material'
 import clsx from 'clsx'
+import { isEmpty } from 'lodash'
 import React, { forwardRef, useEffect, useRef, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { ClipLoader } from 'react-spinners'
@@ -22,6 +23,7 @@ import { useDataStore, useFilteredNodes } from '~/stores/useDataStore'
 import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
 import { useSelectedNode, useUpdateSelectedNode } from '~/stores/useGraphStore'
 import { colors } from '~/utils/colors'
+import { AiSearch } from './AiSearch'
 import { AiSummaryDetails } from './AiSummary/AiSummaryDetail'
 import { AiSummarySkeleton } from './AiSummary/AiSummarySkeleton'
 import { LatestView } from './Latest'
@@ -121,7 +123,6 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
   return (
     <Wrapper ref={ref} id="sidebar-wrapper">
       <TitlePlaceholder />
-
       <SearchWrapper className={clsx({ 'has-shadow': isScrolled })}>
         <SearchFilterIconWrapper>
           <Search>
@@ -214,6 +215,7 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
           {isLoading ? <EpisodeSkeleton /> : <LatestView isSearchResult={!!searchTerm} />}
         </Flex>
       </ScrollWrapper>
+      {!isEmpty(aiSummaryAnswers) ? <AiSearch /> : null}
     </Wrapper>
   )
 })
