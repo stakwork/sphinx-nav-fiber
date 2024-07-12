@@ -25,7 +25,6 @@ import { useSelectedNode, useUpdateSelectedNode } from '~/stores/useGraphStore'
 import { colors } from '~/utils/colors'
 import { AiSearch } from './AiSearch'
 import { AiSummaryDetails } from './AiSummary/AiSummaryDetail'
-import { AiSummarySkeleton } from './AiSummary/AiSummarySkeleton'
 import { LatestView } from './Latest'
 import { EpisodeSkeleton } from './Relevance/EpisodeSkeleton'
 import { SideBarSubView } from './SidebarSubView'
@@ -46,7 +45,7 @@ type ContentProp = {
 // eslint-disable-next-line react/display-name
 const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen }, ref) => {
   const { isFetching: isLoading, setSidebarFilter, setFilters } = useDataStore((s) => s)
-  const { aiSummaryIsLoading, aiSummaryAnswers } = useAiSummaryStore((s) => s)
+  const { aiSummaryAnswers } = useAiSummaryStore((s) => s)
   const setSelectedNode = useUpdateSelectedNode()
 
   const filteredNodes = useFilteredNodes()
@@ -202,16 +201,10 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
           </TrendingWrapper>
         )}
         <Flex>
-          {chatInterfaceFeatureFlag &&
-            (aiSummaryIsLoading ? (
-              <AiSummarySkeleton />
-            ) : (
-              <>
-                {Object.keys(aiSummaryAnswers).map((i: string) => (
-                  <AiSummaryDetails key={i} question={i} response={aiSummaryAnswers[i]} />
-                ))}
-              </>
-            ))}
+          {Object.keys(aiSummaryAnswers).map((i: string) => (
+            <AiSummaryDetails key={i} question={i} response={aiSummaryAnswers[i]} />
+          ))}
+
           {isLoading ? <EpisodeSkeleton /> : <LatestView isSearchResult={!!searchTerm} />}
         </Flex>
       </ScrollWrapper>
