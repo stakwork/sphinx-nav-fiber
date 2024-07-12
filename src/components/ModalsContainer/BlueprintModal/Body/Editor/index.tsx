@@ -375,7 +375,6 @@ export const Editor = ({
                     <Flex mb={12}>
                       <TextInput
                         id="cy-item-name"
-                        dataTestId="cy-item-name"
                         maxLength={250}
                         name="type"
                         placeholder="Enter type name"
