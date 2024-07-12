@@ -1,4 +1,3 @@
-import React from 'react'
 import { useFormContext } from 'react-hook-form'
 import styled, { css } from 'styled-components'
 import { colors } from '~/utils/colors'
@@ -6,6 +5,7 @@ import { colors } from '~/utils/colors'
 type Props = {
   loading?: boolean
   onSubmit?: () => void
+  placeholder?: string
 }
 
 const Input = styled.input.attrs(() => ({
@@ -58,7 +58,7 @@ const Input = styled.input.attrs(() => ({
     `}
 `
 
-export const SearchBar = ({ loading, onSubmit }: Props) => {
+export const SearchBar = ({ loading, onSubmit, placeholder = 'Search' }: Props) => {
   const { register, watch } = useFormContext()
 
   const typing = watch('search')
@@ -78,7 +78,7 @@ export const SearchBar = ({ loading, onSubmit }: Props) => {
           onSubmit?.()
         }
       }}
-      placeholder="Search"
+      placeholder={placeholder}
       type="text"
     />
   )

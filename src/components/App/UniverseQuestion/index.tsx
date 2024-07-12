@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react'
 import ArrowForwardIcon from '~/components/Icons/ArrowForwardIcon'
 import ExploreIcon from '~/components/Icons/ExploreIcon'
 import { getAboutData } from '~/network/fetchSourcesData'
+import { useAiSummaryStore } from '~/stores/useAiSummaryStore'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
 import { useUserStore } from '~/stores/useUserStore'
@@ -18,6 +19,7 @@ export const UniverseQuestion = () => {
   const { fetchData, setAbortRequests } = useDataStore((s) => s)
   const [setBudget] = useUserStore((s) => [s.setBudget])
   const setUniverseQuestionIsOpen = useAppStore((s) => s.setUniverseQuestionIsOpen)
+  const resetAiSummaryAnswer = useAiSummaryStore((s) => s.resetAiSummaryAnswer)
 
   useEffect(() => {
     const fetchSeedQuestions = async () => {
@@ -37,6 +39,7 @@ export const UniverseQuestion = () => {
 
   const handleSubmitQuestion = async (questionToSubmit: string) => {
     if (questionToSubmit) {
+      resetAiSummaryAnswer()
       setUniverseQuestionIsOpen()
     }
 
