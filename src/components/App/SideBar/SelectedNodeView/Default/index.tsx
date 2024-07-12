@@ -57,6 +57,10 @@ const NodeDetail = ({ label, value }: Props) => {
   const isLong = (value as string).length > 140
   const searchTerm = useAppStore((s) => s.currentSearch)
 
+  if (!value) {
+    return null
+  }
+
   return (
     <>
       <StyledDetail className={clsx('node-detail', { 'node-detail__long': isLong })}>
