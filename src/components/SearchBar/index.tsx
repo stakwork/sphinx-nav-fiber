@@ -1,7 +1,7 @@
 import { useFormContext } from 'react-hook-form'
+import { useNavigate } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import { colors } from '~/utils/colors'
-import { useNavigate } from 'react-router-dom'
 
 type Props = {
   loading?: boolean
@@ -59,8 +59,7 @@ const Input = styled.input.attrs(() => ({
     `}
 `
 
-
-export const SearchBar = ({ loading, onSubmit, placeholder = 'Search' }: Props) => {
+export const SearchBar = ({ loading, placeholder = 'Search' }: Props) => {
   const { register, watch } = useFormContext()
 
   const typing = watch('search')
