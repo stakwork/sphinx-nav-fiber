@@ -200,7 +200,7 @@ const MediaPlayerComponent: FC<Props> = ({ hidden }) => {
       <Cover isFullScreen={isFullScreen}>
         <Avatar size={120} src={playingNode?.image_url || ''} type="clip" />
       </Cover>
-      <PlayerWrapper onClick={handlePlayerClick}>
+      <PlayerWrapper isFullScreen={isFullScreen} onClick={handlePlayerClick}>
         <ReactPlayer
           ref={playerRef}
           controls={false}
@@ -278,7 +278,8 @@ const ErrorWrapper = styled(Flex)`
   color: ${colors.primaryRed};
 `
 
-const PlayerWrapper = styled.div`
+const PlayerWrapper = styled.div<{ isFullScreen: boolean }>`
+  margin: ${(props) => (props.isFullScreen ? '80px auto' : '0')};
   width: 100%;
   cursor: pointer;
 `
