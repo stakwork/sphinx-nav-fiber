@@ -3,6 +3,7 @@ import clsx from 'clsx'
 import { isEmpty } from 'lodash'
 import React, { forwardRef, useEffect, useRef, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
+import { useNavigate } from 'react-router-dom'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
 import { SelectWithPopover } from '~/components/App/SideBar/Dropdown'
@@ -103,6 +104,8 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ subViewOpen }, ref) =
     setIsFilterOpen((prev) => !prev)
     setShowAllSchemas(false)
   }
+
+  const navigate = useNavigate()
 
   return (
     <Wrapper ref={ref} id="sidebar-wrapper">
