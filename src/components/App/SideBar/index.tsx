@@ -32,7 +32,6 @@ import { Trending } from './Trending'
 import { useNavigate } from 'react-router-dom'
 import { useSchemaStore } from '~/stores/useSchemaStore'
 
-
 export const MENU_WIDTH = 390
 
 type ContentProp = {
