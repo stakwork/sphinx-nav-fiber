@@ -52,10 +52,7 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ onSubmit, subViewOpen
 
   const { setSidebarOpen, currentSearch: searchTerm, clearSearch, searchFormValue } = useAppStore((s) => s)
 
-  const [trendingTopicsFeatureFlag, chatInterfaceFeatureFlag] = useFeatureFlagStore((s) => [
-    s.trendingTopicsFeatureFlag,
-    s.chatInterfaceFeatureFlag,
-  ])
+  const [trendingTopicsFeatureFlag] = useFeatureFlagStore((s) => [s.trendingTopicsFeatureFlag])
 
   const { setValue, watch } = useFormContext()
   const componentRef = useRef<HTMLDivElement | null>(null)
