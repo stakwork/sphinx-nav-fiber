@@ -15,7 +15,7 @@ describe('Add Node Type Via BluePrint', () => {
     cy.wait(200)
 
     cy.get('#blur-on-select').click()
-    cy.get('[data-testid="Thing"]').click({ force: true })
+    cy.get('[data-testid="Thing"]').click()
     cy.wait(200)
 
     cy.get('#cy-item-name').type(nodeType)
@@ -26,25 +26,24 @@ describe('Add Node Type Via BluePrint', () => {
 
     cy.get('[data-testid="cy-item-name-1"]').type('age')
     cy.get('[data-testid="cy-item-select-1"]').click()
-    cy.contains('number').click({ force: true })
+    cy.contains('number').click()
     cy.get('[data-testid="cy-item-1"]').click()
     cy.wait(200)
 
-    cy.contains('Confirm').click({ force: true })
+    cy.contains('Confirm').click()
     cy.wait('@schemaRequest')
 
     cy.get('body').trigger('keydown', { keyCode: 27 })
     cy.wait(500)
-    cy.get('body').trigger('keyup', { keyCode: 27 })
 
     cy.get('[data-testid="add-item-modal"]').click()
     cy.wait(100)
 
-    cy.contains(nodeType).click({ force: true })
+    cy.get(`[data-testid="${nodeType}"]`).click()
     cy.wait(100)
 
     cy.get('[placeholder="Required"]').type('Lionel Messi')
-    cy.contains('Next').click({ force: true })
+    cy.contains('Next').click()
     cy.wait(500)
 
     cy.get('[data-testid="check-icon"]').click()
