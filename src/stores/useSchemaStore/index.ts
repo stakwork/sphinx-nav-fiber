@@ -18,7 +18,7 @@ const defaultData: Omit<SchemasStore, 'setSchemas' | 'setSchemaLinks' | 'getPrim
 export const useSchemaStore = create<SchemasStore>((set, get) => ({
   ...defaultData,
   setSchemas: (schemas: SchemaExtended[]) => {
-    set({ schemas: schemas.map((i) => ({ ...i, ref_id: i?.attributes?.ref_id || '' })) })
+    set({ schemas: schemas.map((i) => ({ ...i })) })
   },
   setSchemaLinks: (links: SchemaLink[]) => {
     set({ links })
