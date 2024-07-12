@@ -9,7 +9,7 @@ window.React = React
 
 jest.mock('~/stores/useModalStore', () => ({
   ...jest.requireActual('~/stores/useModalStore'),
-  useModal: (id) => ({
+  useModal: (id: string) => ({
     close: jest.fn(),
     open: jest.fn(),
     visible: id === 'briefDescription',
@@ -27,6 +27,8 @@ const useAppStoreMock = useAppStore as jest.MockedFunction<typeof useAppStore>
 
 describe('BriefDescription Component Tests', () => {
   const trendMock = {
+    count: 1,
+    name: 'trend',
     audio_EN: 'fake-audio-url',
     tldr_topic: 'Test Topic',
     tldr: '',
@@ -35,7 +37,6 @@ describe('BriefDescription Component Tests', () => {
   const props = {
     onClose: jest.fn(),
     trend: trendMock,
-    selectTrending: jest.fn(),
   }
 
   beforeEach(() => {
