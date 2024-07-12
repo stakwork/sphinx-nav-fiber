@@ -17,17 +17,32 @@ import { colors } from '~/utils'
 type Props = {
   trend: Trending
   onClose: () => void
-  selectTrending: (val: string) => void
 }
 
-export const BriefDescription: FC<Props> = ({ trend, onClose, selectTrending }) => {
+export const BriefDescription: FC<Props> = ({ trend, onClose }) => {
   const [isPlaying, setIsPlaying] = useState(false)
   const { close } = useModal('briefDescription')
-  const { currentPlayingAudio, setCurrentPlayingAudio } = useAppStore((s) => s)
+
+  const {
+    currentPlayingAudio,
+    setCurrentPlayingAudio,
+    universeQuestionIsOpen,
+    setUniverseQuestionIsOpen,
+    setQuestion,
+  } = useAppStore((s) => s)
 
   const audioRef = useRef<HTMLAudioElement | null>(null)
 
-  const handleLearnMore = () => selectTrending(trend.name)
+  const handleLearnMore = () => {
+    setQuestion(trend.name)
+
+    if (universeQuestionIsOpen) {
+      setUniverseQuestionIsOpen()
+    }
+
+    setUniverseQuestionIsOpen()
+    handleClose()
+  }
 
   const handleClose = useCallback(() => {
     onClose()
