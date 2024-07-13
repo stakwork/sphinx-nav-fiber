@@ -247,7 +247,7 @@ export const TextInput = ({
             <Flex align="center" direction="row" shrink={1}>
               <MdError fontSize={18} />
               <Flex pl={4} shrink={1}>
-                {error.message}
+                {error.message !== '' ? error.message : 'Please enter a valid URL'}
               </Flex>
             </Flex>
           </Text>
