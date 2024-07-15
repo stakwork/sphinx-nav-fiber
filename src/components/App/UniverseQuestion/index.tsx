@@ -21,6 +21,7 @@ export const UniverseQuestion = () => {
   const [setBudget] = useUserStore((s) => [s.setBudget])
   const setUniverseQuestionIsOpen = useAppStore((s) => s.setUniverseQuestionIsOpen)
   const resetAiSummaryAnswer = useAiSummaryStore((s) => s.resetAiSummaryAnswer)
+  const setCurrentSearch = useAppStore((s) => s.setCurrentSearch)
 
   useEffect(() => {
     const fetchSeedQuestions = async () => {
@@ -44,6 +45,7 @@ export const UniverseQuestion = () => {
     if (questionToSubmit) {
       resetAiSummaryAnswer()
       setUniverseQuestionIsOpen()
+      setCurrentSearch(questionToSubmit)
     }
 
     await fetchData(setBudget, setAbortRequests, questionToSubmit)
