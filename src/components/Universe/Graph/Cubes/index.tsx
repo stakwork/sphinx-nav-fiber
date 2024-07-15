@@ -53,7 +53,6 @@ export const Cubes = memo(() => {
     (e: ThreeEvent<PointerEvent>) => {
       e.stopPropagation()
 
-      return
       setHoveredNode(null)
     },
     [setHoveredNode],
