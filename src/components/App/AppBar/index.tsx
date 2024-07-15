@@ -71,5 +71,6 @@ const TitleWrapper = styled.div`
     font-weight: 400;
     line-height: 16px;
     letter-spacing: 0.22px;
+    margin-left: 8px;
   }
 `
