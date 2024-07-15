@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 import AddContentIcon from '~/components/Icons/AddContentIcon'
 import AddSourceIcon from '~/components/Icons/AddSourceIcon'
@@ -12,7 +13,6 @@ import { useModal } from '~/stores/useModalStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { colors } from '~/utils/colors'
 import { isSphinx } from '~/utils/isSphinx'
-import { useNavigate } from 'react-router-dom'
 
 export const MainToolbar = () => {
   const { open: openSourcesModal } = useModal('sourcesTable')

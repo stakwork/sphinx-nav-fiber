@@ -2,9 +2,9 @@ import { FC } from 'react'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
-import { ToNode } from './ToNode'
 import { TextInput } from '~/components/common/TextInput'
 import { requiredRule } from '~/constants'
+import { ToNode } from './ToNode'
 
 type Props = {
   selectedType: string
@@ -34,6 +34,7 @@ export const TitleEditor: FC<Props> = ({ selectedType, setSelectedFromNode, setS
       </Flex>
       <Flex mb={12}>
         <TextInput
+          dataTestId="edge_name"
           id="cy-item-name"
           maxLength={250}
           name="type"

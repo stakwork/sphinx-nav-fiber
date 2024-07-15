@@ -14,6 +14,7 @@ export type BaseTextInputProps = {
   autoFocus?: boolean
   className?: string
   colorName?: ColorName
+  dataTestId?: string
   defaultValue?: string
   dataTestId?: string
   disabled?: boolean
