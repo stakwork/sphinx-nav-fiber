@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
@@ -36,6 +36,7 @@ const SummaryText = styled(Text)`
 
 export const AiSummaryDetails = ({ question, response }: Props) => {
   const [displayedText, setDisplayedText] = useState('')
+  const ref = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const { answer } = response
@@ -55,10 +56,16 @@ export const AiSummaryDetails = ({ question, response }: Props) => {
     }
   }, [response, displayedText])
 
+  useEffect(() => {
+    if (ref.current) {
+      ref.current.scrollIntoView({ behavior: 'smooth' })
+    }
+  }, [response])
+
   return (
     <>
       {response.answerLoading ? (
-        <AiSummarySkeleton />
+        <AiSummarySkeleton ref={ref} />
       ) : (
         <AiSummaryDetailsWrapper>
           <Title>{question}</Title>
