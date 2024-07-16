@@ -68,7 +68,18 @@ const Heading = styled(Flex)`
 const QuestionWrapper = styled(Flex)`
   color: ${colors.GRAY3};
   padding: 12px 0;
-  border-bottom: 1px solid ${colors.black};
+  border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+  font-size: 14px;
+  cursor: pointer;
+  line-height: 1.4;
+
+  &:hover {
+    color: ${colors.white};
+    .icon {
+      color: ${colors.white};
+    }
+  }
+
   .icon {
     font-size: 20px;
     color: ${colors.GRAY7};
@@ -78,5 +89,5 @@ const QuestionWrapper = styled(Flex)`
 
 const SectionWrapper = styled(Flex)`
   padding: 24px;
-  border-top: 1px solid ${colors.black};
+  border-top: 1px solid rgba(0, 0, 0, 0.3);
 `

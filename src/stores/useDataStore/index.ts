@@ -140,10 +140,12 @@ export const useDataStore = create<DataStore>()(
       const { setAiSummaryAnswer, aiRefId } = useAiSummaryStore.getState()
       let ai = { ai_summary: String(!!AISearchQuery) }
 
-      if (!currentPage) {
-        set({ isFetching: true })
-      } else {
-        set({ isLoadingNew: true })
+      if (!AISearchQuery) {
+        if (!currentPage) {
+          set({ isFetching: true })
+        } else {
+          set({ isLoadingNew: true })
+        }
       }
 
       if (AISearchQuery) {

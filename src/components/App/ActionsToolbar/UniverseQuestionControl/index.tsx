@@ -31,7 +31,7 @@ const StyledButton = styled(Button)`
     margin-right: 8px;
 
     .MuiButton-startIcon {
-      margin-left: 0;
+      margin-left: 2px;
       color: ${colors.white};
     }
   }
