@@ -1,4 +1,3 @@
-import { forwardRef } from 'react'
 import { Skeleton } from '@mui/material'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
@@ -55,7 +54,7 @@ const height = 8
 
 const fullWidth = 332
 
-const AiSummarySkeleton = forwardRef<HTMLDivElement>((props, ref) => (
+export const AiSummarySkeleton = () => (
   <>
     <EpisodeWrapper>
       <Flex direction="column">
@@ -64,7 +63,7 @@ const AiSummarySkeleton = forwardRef<HTMLDivElement>((props, ref) => (
             <AiSummaryIcon />
           </IconWrapper>
 
-          <Title ref={ref}>Answer</Title>
+          <Title>Answer</Title>
         </Flex>
         <SkeletonWrapper grow={1} shrink={1}>
           <StyledSkeleton height={height} variant="rectangular" width={fullWidth} />
@@ -80,8 +79,4 @@ const AiSummarySkeleton = forwardRef<HTMLDivElement>((props, ref) => (
       </Flex>
     </EpisodeWrapper>
   </>
-))
-
-AiSummarySkeleton.displayName = 'AiSummarySkeleton'
-
-export { AiSummarySkeleton }
+)
