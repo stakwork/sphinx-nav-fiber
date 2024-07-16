@@ -15,17 +15,12 @@ import { useUserStore } from '~/stores/useUserStore'
 import { colors } from '~/utils/colors'
 
 export const UniverseQuestion = () => {
-  const initialQuestion = useAppStore((s) => s.question)
-  const [question, setQuestion] = useState(initialQuestion || '')
+  const [question, setQuestion] = useState('')
   const [seedQuestions, setSeedQuestions] = useState<string[]>([])
   const { fetchData, setAbortRequests } = useDataStore((s) => s)
   const [setBudget] = useUserStore((s) => [s.setBudget])
   const setUniverseQuestionIsOpen = useAppStore((s) => s.setUniverseQuestionIsOpen)
   const resetAiSummaryAnswer = useAiSummaryStore((s) => s.resetAiSummaryAnswer)
-
-  useEffect(() => {
-    setQuestion(initialQuestion || '')
-  }, [initialQuestion])
 
   useEffect(() => {
     const fetchSeedQuestions = async () => {

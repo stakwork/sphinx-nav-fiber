@@ -13,6 +13,8 @@ import { useAppStore } from '~/stores/useAppStore'
 import { useModal } from '~/stores/useModalStore'
 import { Trending } from '~/types'
 import { colors } from '~/utils'
+import { useUserStore } from '~/stores/useUserStore'
+import { useDataStore } from '~/stores/useDataStore'
 
 type Props = {
   trend: Trending
@@ -23,25 +25,16 @@ export const BriefDescription: FC<Props> = ({ trend, onClose }) => {
   const [isPlaying, setIsPlaying] = useState(false)
   const { close } = useModal('briefDescription')
 
-  const {
-    currentPlayingAudio,
-    setCurrentPlayingAudio,
-    universeQuestionIsOpen,
-    setUniverseQuestionIsOpen,
-    setQuestion,
-  } = useAppStore((s) => s)
+  const { currentPlayingAudio, setCurrentPlayingAudio } = useAppStore((s) => s)
+
+  const [setBudget] = useUserStore((s) => [s.setBudget])
+  const { fetchData, setAbortRequests } = useDataStore((s) => s)
 
   const audioRef = useRef<HTMLAudioElement | null>(null)
 
-  const handleLearnMore = () => {
-    setQuestion(trend.name)
-
-    if (universeQuestionIsOpen) {
-      setUniverseQuestionIsOpen()
-    }
-
-    setUniverseQuestionIsOpen()
+  const handleLearnMore = async () => {
     handleClose()
+    await fetchData(setBudget, setAbortRequests, trend.name)
   }
 
   const handleClose = useCallback(() => {
