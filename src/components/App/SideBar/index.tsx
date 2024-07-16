@@ -1,8 +1,8 @@
 import { Slide } from '@mui/material'
 import clsx from 'clsx'
-import { isEmpty } from 'lodash'
 import React, { forwardRef, useEffect, useRef, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
+import { useNavigate } from 'react-router-dom'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
 import { SelectWithPopover } from '~/components/App/SideBar/Dropdown'
@@ -16,21 +16,20 @@ import { SearchBar } from '~/components/SearchBar'
 import { Flex } from '~/components/common/Flex'
 import { FetchLoaderText } from '~/components/common/Loader'
 import { getSchemaAll } from '~/network/fetchSourcesData'
-import { useAiSummaryStore } from '~/stores/useAiSummaryStore'
+import { useAiSummaryStore, useHasAiChats } from '~/stores/useAiSummaryStore'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore, useFilteredNodes } from '~/stores/useDataStore'
 import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
 import { useSelectedNode, useUpdateSelectedNode } from '~/stores/useGraphStore'
+import { useSchemaStore } from '~/stores/useSchemaStore'
 import { colors } from '~/utils/colors'
 import { AiSearch } from './AiSearch'
-import { AiSummaryDetails } from './AiSummary/AiSummaryDetail'
+import { AiSummary } from './AiSummary'
 import { LatestView } from './Latest'
 import { EpisodeSkeleton } from './Relevance/EpisodeSkeleton'
 import { SideBarSubView } from './SidebarSubView'
 import { Tab } from './Tab'
 import { Trending } from './Trending'
-import { useNavigate } from 'react-router-dom'
-import { useSchemaStore } from '~/stores/useSchemaStore'
 
 export const MENU_WIDTH = 390
 
@@ -115,6 +114,8 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ subViewOpen }, ref) =
 
   const navigate = useNavigate()
 
+  const hasAiChats = useHasAiChats()
+
   return (
     <Wrapper ref={ref} id="sidebar-wrapper">
       <TitlePlaceholder />
@@ -194,20 +195,20 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ subViewOpen }, ref) =
         </CollapseButton>
       )}
       <ScrollWrapper ref={componentRef}>
-        {!searchTerm && trendingTopicsFeatureFlag && (
+        {!searchTerm && !hasAiChats && trendingTopicsFeatureFlag && (
           <TrendingWrapper>
             <Trending />
           </TrendingWrapper>
         )}
         <Flex>
           {Object.keys(aiSummaryAnswers).map((i: string) => (
-            <AiSummaryDetails key={i} question={i} response={aiSummaryAnswers[i]} />
+            <AiSummary key={i} question={i} response={aiSummaryAnswers[i]} />
           ))}
 
-          {isLoading ? <EpisodeSkeleton /> : <LatestView isSearchResult={!!searchTerm} />}
+          {isLoading ? <EpisodeSkeleton /> : <LatestView isSearchResult={!!searchTerm || hasAiChats} />}
         </Flex>
       </ScrollWrapper>
-      {!isEmpty(aiSummaryAnswers) ? <AiSearch /> : null}
+      {hasAiChats ? <AiSearch /> : null}
     </Wrapper>
   )
 })

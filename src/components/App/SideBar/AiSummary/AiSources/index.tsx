@@ -69,7 +69,7 @@ const _AiSources = ({ sourceIds }: Props) => {
           } = adaptedNode || {}
 
           return (
-            <Episode
+            <StyledEpisode
               // eslint-disable-next-line react/no-array-index-key
               key={index.toString()}
               boostCount={boost || 0}
@@ -91,8 +91,8 @@ const _AiSources = ({ sourceIds }: Props) => {
           )
         })}
 
-        <LoadMoreWrapper align="center" background="BG1" direction="row" justify="flex-end">
-          {currentNodes.length > 3 ? (
+        {currentNodes.length > 3 ? (
+          <LoadMoreWrapper align="center" background="BG1" direction="row" justify="flex-end">
             <Button
               endIcon={showAll ? <ChevronDownIcon /> : <ChevronUpIcon />}
               onClick={handleLoadMoreClick}
@@ -100,8 +100,8 @@ const _AiSources = ({ sourceIds }: Props) => {
             >
               {showAll ? 'Hide' : 'Show all'}
             </Button>
-          ) : null}
-        </LoadMoreWrapper>
+          </LoadMoreWrapper>
+        ) : null}
       </ScrollView>
     </SectionWrapper>
   )
@@ -118,6 +118,7 @@ const Heading = styled(Flex)`
     font-weight: 600;
     color: ${colors.white};
     font-size: 14px;
+    padding: 24px 24px 0;
 
     .heading__icon {
       margin-right: 12px;
@@ -133,6 +134,11 @@ const Heading = styled(Flex)`
 `
 
 const SectionWrapper = styled(Flex)`
-  padding: 24px;
-  border-top: 1px solid ${colors.black};
+  border-top: 1px solid rgba(0, 0, 0, 0.3);
+`
+
+const StyledEpisode = styled(Episode)`
+  &:first-child {
+    border-top: none;
+  }
 `
