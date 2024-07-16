@@ -129,7 +129,7 @@ const StyledTextarea = styled(TextareaAutosize).attrs({
   max-width: 702px;
   width: 702px;
   color: ${colors.white};
-  padding: 16px 8px;
+  padding: 16px;
   border: 1px solid ${colors.modalShield};
   resize: none;
   outline: none;
