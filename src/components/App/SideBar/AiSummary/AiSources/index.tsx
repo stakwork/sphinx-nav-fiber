@@ -1,4 +1,3 @@
-import { Button } from '@mui/material'
 import { memo, useCallback, useRef, useState } from 'react'
 import styled from 'styled-components'
 import { Episode } from '~/components/App/SideBar/Relevance/Episode'
@@ -41,77 +40,69 @@ const _AiSources = ({ sourceIds }: Props) => {
 
   return (
     <SectionWrapper>
-      <Heading className="heading" direction="row">
-        <div className="heading__icon">
-          <SourcesIcon />
-        </div>
-        <span>Sources</span>
-        <span className="heading__count">{sourceIds.length}</span>
+      <Heading align="center" className="heading" direction="row" justify="space-between">
+        <Flex align="center" direction="row">
+          <div className="heading__icon">
+            <SourcesIcon />
+          </div>
+          <span className="tittle">Sources</span>
+          <span className="heading__count">{sourceIds.length}</span>
+        </Flex>
+        <CollapseButton onClick={handleLoadMoreClick}>
+          {showAll ? 'Hide all' : 'Show all'}
+          {showAll ? <ChevronUpIcon /> : <ChevronDownIcon />}
+        </CollapseButton>
       </Heading>
-      <ScrollView ref={scrollViewRef} id="search-result-list" shrink={1}>
-        {visibleNodes.map((n, index) => {
-          const adaptedNode = adaptTweetNode(n)
+      {showAll && visibleNodes.length > 0 && (
+        <ScrollView ref={scrollViewRef} id="search-result-list" shrink={1}>
+          {visibleNodes.map((n, index) => {
+            const adaptedNode = adaptTweetNode(n)
 
-          const {
-            image_url: imageUrl,
-            date,
-            boost,
-            type,
-            episode_title: episodeTitle,
-            show_title: showTitle,
-            node_type: nodeType,
-            text,
-            source_link: sourceLink,
-            link,
-            name,
-            verified = false,
-            twitter_handle: twitterHandle,
-          } = adaptedNode || {}
+            const {
+              image_url: imageUrl,
+              date,
+              boost,
+              type,
+              episode_title: episodeTitle,
+              show_title: showTitle,
+              node_type: nodeType,
+              text,
+              source_link: sourceLink,
+              link,
+              name,
+              verified = false,
+              twitter_handle: twitterHandle,
+            } = adaptedNode || {}
 
-          return (
-            <StyledEpisode
-              // eslint-disable-next-line react/no-array-index-key
-              key={index.toString()}
-              boostCount={boost || 0}
-              date={date || 0}
-              episodeTitle={formatDescription(episodeTitle)}
-              imageUrl={imageUrl || ''}
-              link={link}
-              name={name || ''}
-              onClick={() => {
-                handleNodeClick(n)
-              }}
-              showTitle={formatDescription(showTitle)}
-              sourceLink={sourceLink}
-              text={text || ''}
-              twitterHandle={twitterHandle}
-              type={nodeType || type}
-              verified={verified}
-            />
-          )
-        })}
-
-        {currentNodes.length > 3 ? (
-          <LoadMoreWrapper align="center" background="BG1" direction="row" justify="flex-end">
-            <Button
-              endIcon={showAll ? <ChevronDownIcon /> : <ChevronUpIcon />}
-              onClick={handleLoadMoreClick}
-              size="medium"
-            >
-              {showAll ? 'Hide' : 'Show all'}
-            </Button>
-          </LoadMoreWrapper>
-        ) : null}
-      </ScrollView>
+            return (
+              <StyledEpisode
+                // eslint-disable-next-line react/no-array-index-key
+                key={index.toString()}
+                boostCount={boost || 0}
+                date={date || 0}
+                episodeTitle={formatDescription(episodeTitle)}
+                imageUrl={imageUrl || ''}
+                link={link}
+                name={name || ''}
+                onClick={() => {
+                  handleNodeClick(n)
+                }}
+                showTitle={formatDescription(showTitle)}
+                sourceLink={sourceLink}
+                text={text || ''}
+                twitterHandle={twitterHandle}
+                type={nodeType || type}
+                verified={verified}
+              />
+            )
+          })}
+        </ScrollView>
+      )}
     </SectionWrapper>
   )
 }
 
 export const AiSources = memo(_AiSources)
-
-const LoadMoreWrapper = styled(Flex)`
-  flex: 0 0 86px;
-`
 
 const Heading = styled(Flex)`
   &.heading {
@@ -119,26 +110,62 @@ const Heading = styled(Flex)`
     color: ${colors.white};
     font-size: 14px;
     padding: 24px 24px 0;
+    align-items: center;
 
     .heading__icon {
       margin-right: 12px;
       font-size: 20px;
+      align-items: center;
     }
 
     .heading__count {
       font-weight: 400;
       color: ${colors.GRAY7};
       margin-left: 16px;
+      margin-bottom: 4px;
+    }
+
+    .tittle {
+      margin-bottom: 4px;
+      font-size: 14px;
+      font-weight: 400;
+      font-family: Barlow;
     }
   }
 `
 
 const SectionWrapper = styled(Flex)`
   border-top: 1px solid rgba(0, 0, 0, 0.3);
+  padding-bottom: 25px;
 `
 
 const StyledEpisode = styled(Episode)`
   &:first-child {
     border-top: none;
+  }
+`
+
+const CollapseButton = styled.button`
+  background-color: ${colors.COLLAPSE_BUTTON} !important;
+  border: none;
+  cursor: pointer;
+  color: ${colors.white};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 200px;
+  flex-shrink: 0;
+  width: 72px;
+  height: 27px;
+  font-size: 10px;
+  font-weight: 500;
+  font-family: Barlow;
+  margin-bottom: 3px;
+
+  svg {
+    margin-left: 8px;
+    width: 8px;
+    height: 8px;
+    color: white;
   }
 `

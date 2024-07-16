@@ -15,7 +15,7 @@ export const adaptTweetNode = (node: any): Node => {
     colors: [],
     date: properties?.date,
     description: '',
-    episode_title: properties?.episode_title || '',
+    episode_title: node?.episode_title || '',
     hosts: [],
     guests: [],
     id: '',
