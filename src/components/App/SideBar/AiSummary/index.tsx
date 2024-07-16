@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
@@ -19,14 +20,24 @@ const Title = styled(Text)`
   padding: 24px 24px 0;
 `
 
-export const AiSummary = ({ question, response }: Props) => (
-  <Wrapper>
-    <Title>{question}</Title>
-    {response.answerLoading ? <AiSummarySkeleton /> : <AiAnswer answer={response.answer || ''} />}
-    {response.sourcesLoading ? <EpisodeSkeleton count={1} /> : <AiSources sourceIds={response.sources || []} />}
-    {response.questionsLoading ? <EpisodeSkeleton count={1} /> : <AiQuestions questions={response.questions || []} />}
-  </Wrapper>
-)
+export const AiSummary = ({ question, response }: Props) => {
+  const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (ref.current) {
+      ref.current.scrollIntoView({ behavior: 'smooth' })
+    }
+  }, [])
+
+  return (
+    <Wrapper>
+      <Title ref={ref}>{question}</Title>
+      {response.answerLoading ? <AiSummarySkeleton /> : <AiAnswer answer={response.answer || ''} />}
+      {response.sourcesLoading ? <EpisodeSkeleton count={1} /> : <AiSources sourceIds={response.sources || []} />}
+      {response.questionsLoading ? <EpisodeSkeleton count={1} /> : <AiQuestions questions={response.questions || []} />}
+    </Wrapper>
+  )
+}
 
 const Wrapper = styled(Flex).attrs({
   direction: 'column',
