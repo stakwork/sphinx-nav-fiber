@@ -41,21 +41,21 @@ const handleSubmitForm = async (
     }
   })
 
-  const properties: { [key: string]: unknown } = {}
+  const nodeData: { [key: string]: unknown } = {}
 
   Object.keys(selectedNode || {}).forEach((selectedNodeKey) => {
     const selectedNodeValue = selectedNode?.[selectedNodeKey as keyof NodeExtended]
 
     Object.entries(swappedValues).forEach(([key, value]) => {
       if (value === selectedNodeKey) {
-        properties[swappedValues[key]] = selectedNodeValue as string
+        nodeData[swappedValues[key]] = selectedNodeValue as string
       }
     })
   })
 
   Object.keys(requiredFieldsData).forEach((key) => {
     if (key !== 'nodeType') {
-      properties[key] = requiredFieldsData[key]
+      nodeData[key] = requiredFieldsData[key]
     }
   })
 
@@ -65,7 +65,7 @@ const handleSubmitForm = async (
 
   const body: { [index: string]: unknown } = {
     node_type: nodeType,
-    properties,
+    node_data: nodeData,
     properties_to_be_deleted: propertiesToBeDeleted,
     type_to_be_deleted: typeName ? [typeName] : [],
   }
