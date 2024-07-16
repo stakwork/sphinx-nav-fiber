@@ -11,7 +11,6 @@ export function highlightAiSummary(
     return sDescription
   }
 
-  // Escape and sort node names
   const sortedTerms = nodesTerm
     .map((node) => node.name)
     .filter((name) => typeof name === 'string')
@@ -25,14 +24,13 @@ export function highlightAiSummary(
 
   return (
     <>
-      {parts.map((part, index) => {
+      {parts.map((part) => {
         if (regex.test(part) && !highlighted.has(part.toLowerCase())) {
           highlighted.add(part.toLowerCase())
 
-          // eslint-disable-next-line react/no-array-index-key
           return (
             <Highlight
-              key={index}
+              key={part}
               onClick={() => {
                 handleSubmit(part)
               }}
@@ -48,7 +46,6 @@ export function highlightAiSummary(
   )
 }
 
-// Function to escape special characters for regex
 function escapeRegExp(string: string) {
   return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }
