@@ -64,3 +64,48 @@ Cypress.Commands.add('initialSetup', (username, budget) => {
 
   cy.wait(['@loadAbout', '@loadStats', '@getTrends'])
 })
+
+Cypress.Commands.add('addNodeType', (nodeType, parentNode, nodeAttributes) => {
+  cy.intercept({
+    method: 'POST',
+    url: 'http://localhost:8444/api/schema*',
+  }).as('schemaRequest')
+
+  cy.intercept({
+    method: 'GET',
+    url: 'http://localhost:8444/api/schema/all*',
+  }).as('schemaList')
+
+  cy.initialSetup('alice', 300)
+
+  cy.get('[data-testid="add-blueprint-modal"]').click()
+  cy.wait(1000)
+
+  cy.get('[data-testid="add-schema-type"]').click()
+  cy.wait('@schemaList')
+
+  cy.get('#blur-on-select').click()
+  cy.get(`[data-testid="${parentNode}"]`).click()
+
+  cy.get('#cy-item-name').type(nodeType)
+  cy.wait(500)
+
+  if (nodeAttributes.length > 0) {
+    nodeAttributes.forEach((attr) => {
+      cy.get('[data-testid="add-attribute-btn"]').click()
+      cy.wait(500)
+
+      cy.get('[data-testid="cy-item-name-1"]').type(attr.name)
+      cy.get('[data-testid="cy-item-select-1"]').click()
+      cy.contains(attr.type).click()
+
+      if (!attr.required) {
+        cy.get('[data-testid="cy-item-1"]').click()
+        cy.wait(200)
+      }
+    })
+  }
+
+  cy.contains('Confirm').click()
+  cy.wait('@schemaRequest')
+})
