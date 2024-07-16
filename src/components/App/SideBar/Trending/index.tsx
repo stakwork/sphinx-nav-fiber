@@ -226,7 +226,7 @@ export const Trending = () => {
           </ul>
         )}
       </div>
-      {selectedTrend && <BriefDescription onClose={hideModal} selectTrending={selectTrending} trend={selectedTrend} />}
+      {selectedTrend && <BriefDescription onClose={hideModal} trend={selectedTrend} />}
     </Wrapper>
   )
 }
