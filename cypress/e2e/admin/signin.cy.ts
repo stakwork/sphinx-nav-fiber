@@ -8,6 +8,7 @@ describe('Admin Login', () => {
     }).as('updateAbout')
 
     const title = `Testing NavFiber`
+    const description = 'Testing Graph Description'
 
     // Open settings modal
     cy.get('div[data-testid="settings-modal"]').should('be.visible').click()
@@ -18,6 +19,9 @@ describe('Admin Login', () => {
     // Efficiently interact with the about title
     cy.get('#cy-about-title-id').should('be.visible').click().type('{selectAll}').type(title)
 
+    // Efficiently interact with the about description
+    cy.get('#cy-about-id').should('be.visible').click().type('{selectAll}').type(description)
+
     // Submit the form
     cy.get('#add-node-submit-cta').click()
 
@@ -26,5 +30,10 @@ describe('Admin Login', () => {
     // Close modal and assert the title
     cy.get('div[data-testid="close-modal"]').click()
     cy.get('.title').should('have.text', title)
+
+    cy.contains('About').click({ force: true })
+    cy.wait(1000)
+
+    cy.contains(description).should('be.visible')
   })
 })
