@@ -75,6 +75,9 @@ const QuestionWrapper = styled(Flex)`
   color: ${colors.GRAY3};
   padding: 12px 0;
   border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+  &:last-child {
+    border: none;
+  }
   font-size: 14px;
   cursor: pointer;
   line-height: 1.4;
