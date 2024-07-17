@@ -1,15 +1,13 @@
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
-import { highlightAiSummary } from '~/components/common/AiSummaryHighlight'
+import { highlightAiSummary } from '~/components/App/SideBar/AiSummary/utils/AiSummaryHighlight'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
-import { useDataStore } from '~/stores/useDataStore'
+import { useDataStore, useFilteredNodes } from '~/stores/useDataStore'
 import { useUserStore } from '~/stores/useUserStore'
-import { NodeExtended } from '~/types'
 
 type Props = {
   answer: string
-  filteredNodes: NodeExtended[]
 }
 
 const Wrapper = styled(Flex).attrs({
@@ -25,10 +23,11 @@ const SummaryText = styled(Text)`
   line-height: 19.6px;
 `
 
-export const AiAnswer = ({ answer, filteredNodes }: Props) => {
+export const AiAnswer = ({ answer }: Props) => {
   const { fetchData, setAbortRequests } = useDataStore((s) => s)
   const { setBudget } = useUserStore((s) => s)
   const [displayedText, setDisplayedText] = useState('')
+  const filteredNodes = useFilteredNodes()
 
   useEffect(() => {
     let timeoutId: NodeJS.Timeout

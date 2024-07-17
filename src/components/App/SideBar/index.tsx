@@ -202,7 +202,7 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ subViewOpen }, ref) =
         )}
         <Flex>
           {Object.keys(aiSummaryAnswers).map((i: string) => (
-            <AiSummary key={i} filteredNodes={filteredNodes} question={i} response={aiSummaryAnswers[i]} />
+            <AiSummary key={i} question={i} response={aiSummaryAnswers[i]} />
           ))}
 
           {isLoading ? <EpisodeSkeleton /> : <LatestView isSearchResult={!!searchTerm || hasAiChats} />}
