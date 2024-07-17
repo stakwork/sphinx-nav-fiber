@@ -307,4 +307,5 @@ export type AIEntity = {
   answerLoading?: boolean
   sourcesLoading?: boolean
   questionsLoading?: boolean
+  hasBeenRendered?: boolean
 }
