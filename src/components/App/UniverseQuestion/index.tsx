@@ -86,6 +86,7 @@ export const UniverseQuestion = () => {
       Ideas have shapes
       <TextAreaWrapper onKeyDown={onEnterPress} py={12} tabIndex={-1}>
         <StyledTextarea
+          hasText={!!question.trim()}
           onChange={(e) => setQuestion(e.target.value)}
           placeholder="What do you want to know?"
           value={question}
@@ -124,17 +125,23 @@ export const UniverseQuestion = () => {
 
 const StyledTextarea = styled(TextareaAutosize).attrs({
   minRows: 5,
-})`
+})<{ hasText: boolean }>`
   background: ${colors.BG1};
   max-width: 702px;
   width: 702px;
   color: ${colors.white};
   padding: 16px;
+  padding-bottom: ${(props) => (props.hasText ? '50px' : '16px')};
+  max-height: 200px;
+  overflow-y: auto !important;
   border: 1px solid ${colors.modalShield};
   resize: none;
   outline: none;
   border-radius: 12px;
   font-family: 'Barlow';
+  display: flex;
+  align-items: center;
+  text-align: justify;
   font-size: 16px;
   font-weight: 400;
   box-shadow: 0px 1px 6px 0px rgba(0, 0, 0, 0.5);
@@ -145,6 +152,16 @@ const StyledTextarea = styled(TextareaAutosize).attrs({
   &::-webkit-input-placeholder, /* Webkit based */
   &::placeholder {
     color: #0bf;
+  }
+
+  &::-webkit-scrollbar {
+    width: 3px;
+  }
+
+  &::-webkit-scrollbar-track {
+    border-radius: 12px;
+    margin: 13px;
+    overflow-y: hidden;
   }
 `
 
