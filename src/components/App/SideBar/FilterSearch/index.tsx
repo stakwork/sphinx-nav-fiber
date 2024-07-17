@@ -1,4 +1,4 @@
-import { Button, Checkbox, FormControlLabel, Popper, Slider } from '@mui/material'
+import { Button, Popper } from '@mui/material'
 import { useState } from 'react'
 import styled from 'styled-components'
 import ClearIcon from '~/components/Icons/ClearIcon'
@@ -7,6 +7,9 @@ import { SchemaExtended } from '~/components/ModalsContainer/BlueprintModal/type
 import { Flex } from '~/components/common/Flex'
 import { useDataStore } from '~/stores/useDataStore'
 import { colors } from '~/utils/colors'
+import { Hops } from './Hops'
+import { MaxResults } from './MaxResults'
+import { SourceNodes } from './SourceNodes'
 
 type Props = {
   showAllSchemas: boolean
@@ -34,18 +37,6 @@ export const FilterSearch = ({ showAllSchemas, setShowAllSchemas, schemaAll, anc
 
   const handleViewMoreClick = () => {
     setShowAllSchemas(true)
-  }
-
-  const MaxResultsChangeHandler = (event: Event, value: number | number[]) => {
-    const newValue = Array.isArray(value) ? value[0] : value
-
-    setMaxResults(newValue)
-  }
-
-  const SourceNodesChangeHandler = (event: Event, value: number | number[]) => {
-    const newValue = Array.isArray(value) ? value[0] : value
-
-    setSourceNodes(newValue)
   }
 
   const handleFiltersApply = () => {
@@ -101,69 +92,12 @@ export const FilterSearch = ({ showAllSchemas, setShowAllSchemas, schemaAll, anc
       </PopoverBody>
       <LineBar />
 
-      <HeadingWrapper>
-        <div>Source Nodes</div>
-        <SubHeading>Core set of nodes based on search term</SubHeading>
-      </HeadingWrapper>
-      <PopoverBody>
-        <SourceNodesStepWrapper>
-          <span>1</span>
-          <span>{sourceNodes}</span>
-        </SourceNodesStepWrapper>
-        <VolumeControl direction="row">
-          <Slider
-            className="volume-slider"
-            data-testid="source-nodes-slider"
-            max={100}
-            min={1}
-            onChange={SourceNodesChangeHandler}
-            size="medium"
-            step={1}
-            value={sourceNodes}
-          />
-        </VolumeControl>
-      </PopoverBody>
+      <SourceNodes setSourceNodes={setSourceNodes} sourceNodes={sourceNodes} />
 
       <LineBar />
-      <HeadingWrapper>
-        <div>Hops</div>
-        <SubHeading>Distance away from source nodes</SubHeading>
-      </HeadingWrapper>
-      <PopoverBody>
-        <HopsWrapper>
-          <FormControlLabel
-            control={<CustomCheckbox checked={hops === 1} onChange={() => setHops(1)} />}
-            label="Direct relationship"
-          />
-          <FormControlLabel
-            control={<CustomCheckbox checked={hops === 2} onChange={() => setHops(2)} />}
-            label="2 hops away"
-          />
-        </HopsWrapper>
-      </PopoverBody>
+      <Hops hops={hops} setHops={setHops} />
       <LineBar />
-      <HeadingWrapper>
-        <div>Max results</div>
-        <SubHeading>Total number of relationships</SubHeading>
-      </HeadingWrapper>
-      <PopoverBody>
-        <SourceNodesStepWrapper>
-          <span>1</span>
-          <span>{maxResults}</span>
-        </SourceNodesStepWrapper>
-        <VolumeControl direction="row">
-          <Slider
-            className="volume-slider"
-            data-testid="max-results-slider"
-            max={300}
-            min={1}
-            onChange={MaxResultsChangeHandler}
-            size="medium"
-            step={1}
-            value={maxResults}
-          />
-        </VolumeControl>
-      </PopoverBody>
+      <MaxResults maxResults={maxResults} setMaxResults={setMaxResults} />
       <LineBar />
       <PopoverFooter>
         <Flex direction="row" mb={6}>
@@ -239,7 +173,7 @@ const SelectedText = styled.span`
   margin-left: 4px;
 `
 
-const PopoverBody = styled.div`
+export const PopoverBody = styled.div`
   padding: 13px 0;
   position: relative;
 `
@@ -365,7 +299,7 @@ const ShowResultButton = styled(Button)`
   }
 `
 
-const SubHeading = styled.div`
+export const SubHeading = styled.div`
   font-family: Barlow;
   font-size: 13px;
   font-weight: 500;
@@ -375,7 +309,7 @@ const SubHeading = styled.div`
   color: ${colors.modalAuth};
 `
 
-const HeadingWrapper = styled.div`
+export const HeadingWrapper = styled.div`
   display: flex;
   flex-direction: column;
   font-family: Barlow;
@@ -383,22 +317,7 @@ const HeadingWrapper = styled.div`
   font-weight: 500;
 `
 
-const HopsWrapper = styled(Flex).attrs({
-  direction: 'column',
-  align: 'flex-start',
-})`
-  gap: 10px;
-`
-
-const CustomCheckbox = styled(Checkbox)`
-  && {
-    .MuiSvgIcon-root {
-      border-radius: 8px;
-    }
-  }
-`
-
-const VolumeControl = styled(Flex)`
+export const VolumeControl = styled(Flex)`
   margin: 10px auto;
 
   .volume-slider {
@@ -427,7 +346,7 @@ const VolumeControl = styled(Flex)`
   }
 `
 
-const SourceNodesStepWrapper = styled.div`
+export const SourceNodesStepWrapper = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
