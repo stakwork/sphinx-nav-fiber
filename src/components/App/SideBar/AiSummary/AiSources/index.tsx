@@ -1,3 +1,4 @@
+import Button from '@mui/material/Button'
 import { memo, useCallback, useRef, useState } from 'react'
 import styled from 'styled-components'
 import { Episode } from '~/components/App/SideBar/Relevance/Episode'
@@ -145,27 +146,35 @@ const StyledEpisode = styled(Episode)`
   }
 `
 
-const CollapseButton = styled.button`
-  background-color: ${colors.COLLAPSE_BUTTON} !important;
-  border: none;
-  cursor: pointer;
-  color: ${colors.white};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 200px;
-  flex-shrink: 0;
-  width: 72px;
-  height: 27px;
-  font-size: 10px;
-  font-weight: 500;
-  font-family: Barlow;
-  margin-bottom: 3px;
+const CollapseButton = styled(Button)`
+  &&.MuiButton-root {
+    background-color: ${colors.COLLAPSE_BUTTON};
+    color: ${colors.white};
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 10px;
+    font-weight: 500;
+    font-family: Barlow;
+    margin-bottom: 3px;
+    height: 27px;
+    border-radius: 200px;
+    padding: 0px 10px;
+    min-width: auto;
+  }
+
+  &&:hover {
+    background-color: ${colors.COLLAPSE_BUTTON};
+    color: ${colors.white};
+  }
 
   svg {
-    margin-left: 8px;
-    width: 8px;
-    height: 8px;
+    margin-left: 3px;
+    width: 9px;
+    height: 9px;
     color: white;
   }
 `

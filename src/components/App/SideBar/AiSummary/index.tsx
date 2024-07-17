@@ -1,3 +1,4 @@
+import Button from '@mui/material/Button'
 import { useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 import ChevronDownIcon from '~/components/Icons/ChevronDownIcon'
@@ -9,8 +10,8 @@ import { colors } from '~/utils/colors'
 import { EpisodeSkeleton } from '../Relevance/EpisodeSkeleton'
 import { AiAnswer } from './AiAnswer'
 import { AiQuestions } from './AiQuestions'
-import { AiSummarySkeleton } from './AiSummarySkeleton'
 import { AiSources } from './AiSources'
+import { AiSummarySkeleton } from './AiSummarySkeleton'
 
 type Props = {
   question: string
@@ -71,21 +72,25 @@ const Wrapper = styled(Flex).attrs({
   border-top: 1px solid #101317;
 `
 
-const CollapseButton = styled.button`
-  background-color: ${colors.COLLAPSE_BUTTON} !important;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 27px;
-  border-radius: 6px;
-  flex-shrink: 0;
+const CollapseButton = styled(Button)`
+  &&.MuiButton-root {
+    background-color: ${colors.COLLAPSE_BUTTON};
+    border: none;
+    cursor: pointer;
+    flex-shrink: 0;
+    padding: 0px;
+    width: 29px;
+    height: 26px;
+    min-width: 26px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 
   svg {
-    width: 8px;
-    height: 8px;
+    width: 9px;
+    height: 9px;
     color: white;
   }
 `

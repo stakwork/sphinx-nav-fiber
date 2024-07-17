@@ -26,11 +26,11 @@ import { colors } from '~/utils/colors'
 import { AiSearch } from './AiSearch'
 import { AiSummary } from './AiSummary'
 import { LatestView } from './Latest'
+import { Relevance } from './Relevance'
 import { EpisodeSkeleton } from './Relevance/EpisodeSkeleton'
 import { SideBarSubView } from './SidebarSubView'
 import { Tab } from './Tab'
 import { Trending } from './Trending'
-import { Relevance } from './Relevance'
 
 export const MENU_WIDTH = 390
 
@@ -196,7 +196,7 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ subViewOpen }, ref) =
         </CollapseButton>
       )}
       <ScrollWrapper ref={componentRef}>
-        {!searchTerm && !hasAiChats && trendingTopicsFeatureFlag && !Object.keys(aiSummaryAnswers).length && (
+        {!searchTerm && !hasAiChats && trendingTopicsFeatureFlag && (
           <TrendingWrapper>
             <Trending />
           </TrendingWrapper>
@@ -206,13 +206,9 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ subViewOpen }, ref) =
             <AiSummary key={i} question={i} response={aiSummaryAnswers[i]} />
           ))}
 
-          {isLoading ? (
-            <EpisodeSkeleton />
-          ) : (
-            !Object.keys(aiSummaryAnswers).length && <LatestView isSearchResult={!!searchTerm || hasAiChats} />
-          )}
+          {isLoading ? <EpisodeSkeleton /> : !hasAiChats && <LatestView isSearchResult={!!searchTerm || hasAiChats} />}
         </Flex>
-        {!Object.keys(aiSummaryAnswers).length && <Relevance isSearchResult={!!searchTerm || hasAiChats} />}
+        {!hasAiChats && <Relevance isSearchResult={!!searchTerm || hasAiChats} />}
       </ScrollWrapper>
       {hasAiChats ? <AiSearch /> : null}
     </Wrapper>
