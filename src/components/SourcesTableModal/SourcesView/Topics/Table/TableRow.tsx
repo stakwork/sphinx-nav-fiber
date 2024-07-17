@@ -45,7 +45,7 @@ const TableRowComponent: FC<TTableRaw> = ({
     setLoading(true)
 
     try {
-      await putNodeData(refId, { node_data: { is_muted: shouldMute } })
+      await putNodeData(refId, { is_muted: shouldMute })
 
       useTopicsStore.setState({
         ids: ids.filter((i) => i !== refId),

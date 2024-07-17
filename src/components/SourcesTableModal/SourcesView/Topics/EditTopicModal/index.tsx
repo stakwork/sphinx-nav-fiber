@@ -49,7 +49,7 @@ export const EditTopicModal: FC<Props> = ({ topic, onClose }) => {
     setLoading(true)
 
     try {
-      await putNodeData(topic?.ref_id || '', { node_data: { name } })
+      await putNodeData(topic?.ref_id || '', { name })
 
       if (data) {
         const newData = { ...data }
