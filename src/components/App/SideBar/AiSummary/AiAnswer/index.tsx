@@ -15,7 +15,7 @@ type Props = {
 const Wrapper = styled(Flex).attrs({
   direction: 'column',
 })`
-  padding: 1.5rem;
+  padding: 0 1.5rem 1.5rem;
   gap: 1rem;
 `
 
