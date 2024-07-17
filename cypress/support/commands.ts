@@ -62,5 +62,5 @@ Cypress.Commands.add('initialSetup', (username, budget) => {
     },
   })
 
-  cy.wait(['@loadAbout', '@loadLatest', '@loadStats', '@getTrends'])
+  cy.wait(['@loadAbout', '@loadStats', '@getTrends'])
 })

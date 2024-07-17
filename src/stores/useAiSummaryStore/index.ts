@@ -1,3 +1,4 @@
+import { isEmpty } from 'lodash'
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
 import { AIEntity } from '~/types'
@@ -53,3 +54,5 @@ export const useAiSummaryStore = create<AiSummaryStore>()(
     },
   })),
 )
+
+export const useHasAiChats = () => useAiSummaryStore((s) => !isEmpty(s.aiSummaryAnswers))

@@ -59,7 +59,7 @@ const Input = styled.input.attrs(() => ({
     `}
 `
 
-export const SearchBar = ({ loading, placeholder = 'Search' }: Props) => {
+export const SearchBar = ({ loading, placeholder = 'Search', onSubmit }: Props) => {
   const { register, watch } = useFormContext()
 
   const typing = watch('search')
@@ -74,6 +74,12 @@ export const SearchBar = ({ loading, placeholder = 'Search' }: Props) => {
       onKeyPress={(event) => {
         if (event.key === 'Enter') {
           if (typing.trim() === '') {
+            return
+          }
+
+          if (onSubmit) {
+            onSubmit()
+
             return
           }
 
