@@ -32,15 +32,9 @@ const _AiQuestions = ({ questions }: Props) => {
       </Heading>
       <Flex>
         {questions.map((i) => (
-          <QuestionWrapper
-            key={i}
-            align="center"
-            direction="row"
-            justify="space-between"
-            onClick={() => handleSubmitQuestion(i)}
-          >
+          <QuestionWrapper key={i} align="center" direction="row" justify="space-between">
             <span>{i}</span>
-            <Flex className="icon">
+            <Flex className="icon" onClick={() => handleSubmitQuestion(i)}>
               <PlusIcon />
             </Flex>
           </QuestionWrapper>
