@@ -5,6 +5,7 @@ import ChevronDownIcon from '~/components/Icons/ChevronDownIcon'
 import ChevronUpIcon from '~/components/Icons/ChevronUpIcon'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
+import { useAiSummaryStore } from '~/stores/useAiSummaryStore'
 import { AIEntity } from '~/types'
 import { colors } from '~/utils/colors'
 import { EpisodeSkeleton } from '../Relevance/EpisodeSkeleton'
@@ -34,6 +35,7 @@ const TitleWrapper = styled(Flex).attrs({
 export const AiSummary = ({ question, response }: Props) => {
   const ref = useRef<HTMLDivElement>(null)
   const [collapsed, setCollapsed] = useState(false)
+  const { setAiSummaryAnswer } = useAiSummaryStore((s) => s)
 
   useEffect(() => {
     if (ref.current) {
@@ -45,15 +47,29 @@ export const AiSummary = ({ question, response }: Props) => {
     setCollapsed(!collapsed)
   }
 
+  const handleLoaded = () => {
+    if (question) {
+      setAiSummaryAnswer(question, { hasBeenRendered: true })
+    }
+  }
+
   return (
     <Wrapper>
       <TitleWrapper>
         <Title ref={ref}>{question}</Title>
         <CollapseButton onClick={toggleCollapse}>{collapsed ? <ChevronDownIcon /> : <ChevronUpIcon />}</CollapseButton>
       </TitleWrapper>
-      {response.answerLoading ? <AiSummarySkeleton /> : <AiAnswer answer={response.answer || ''} />}
       {!collapsed && (
         <>
+          {response.answerLoading ? (
+            <AiSummarySkeleton />
+          ) : (
+            <AiAnswer
+              answer={response.answer || ''}
+              handleLoaded={() => handleLoaded()}
+              hasBeenRendered={!!response?.hasBeenRendered}
+            />
+          )}
           {response.questionsLoading ? (
             <EpisodeSkeleton count={1} />
           ) : (

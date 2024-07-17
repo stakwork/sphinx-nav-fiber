@@ -8,6 +8,8 @@ import { useUserStore } from '~/stores/useUserStore'
 
 type Props = {
   answer: string
+  hasBeenRendered: boolean
+  handleLoaded: () => void
 }
 
 const Wrapper = styled(Flex).attrs({
@@ -23,7 +25,7 @@ const SummaryText = styled(Text)`
   line-height: 19.6px;
 `
 
-export const AiAnswer = ({ answer }: Props) => {
+export const AiAnswer = ({ answer, handleLoaded, hasBeenRendered }: Props) => {
   const { fetchData, setAbortRequests } = useDataStore((s) => s)
   const { setBudget } = useUserStore((s) => s)
   const [displayedText, setDisplayedText] = useState('')
@@ -32,7 +34,7 @@ export const AiAnswer = ({ answer }: Props) => {
   useEffect(() => {
     let timeoutId: NodeJS.Timeout
 
-    if (!answer) {
+    if (!answer || hasBeenRendered) {
       return
     }
 
@@ -44,7 +46,19 @@ export const AiAnswer = ({ answer }: Props) => {
       // eslint-disable-next-line consistent-return
       return () => clearTimeout(timeoutId)
     }
-  }, [answer, displayedText])
+
+    handleLoaded()
+  }, [answer, displayedText, handleLoaded, hasBeenRendered])
+
+  useEffect(() => {
+    if (displayedText) {
+      return
+    }
+
+    if (hasBeenRendered) {
+      setDisplayedText(answer)
+    }
+  }, [answer, displayedText, hasBeenRendered])
 
   const handleSubmit = (search: string) => {
     fetchData(setBudget, setAbortRequests, search)

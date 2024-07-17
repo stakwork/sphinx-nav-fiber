@@ -94,6 +94,5 @@ const QuestionWrapper = styled(Flex)`
 `
 
 const SectionWrapper = styled(Flex)`
-  padding: 24px;
-  border-top: 1px solid rgba(0, 0, 0, 0.3);
+  padding: 0 24px 24px 24px;
 `
