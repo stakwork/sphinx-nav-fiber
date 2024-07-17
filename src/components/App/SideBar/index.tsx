@@ -26,6 +26,7 @@ import { colors } from '~/utils/colors'
 import { AiSearch } from './AiSearch'
 import { AiSummary } from './AiSummary'
 import { LatestView } from './Latest'
+import { Relevance } from './Relevance'
 import { EpisodeSkeleton } from './Relevance/EpisodeSkeleton'
 import { SideBarSubView } from './SidebarSubView'
 import { Tab } from './Tab'
@@ -205,8 +206,9 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ subViewOpen }, ref) =
             <AiSummary key={i} question={i} response={aiSummaryAnswers[i]} />
           ))}
 
-          {isLoading ? <EpisodeSkeleton /> : <LatestView isSearchResult={!!searchTerm || hasAiChats} />}
+          {isLoading ? <EpisodeSkeleton /> : !hasAiChats && <LatestView isSearchResult={!!searchTerm || hasAiChats} />}
         </Flex>
+        {!hasAiChats && <Relevance isSearchResult={!!searchTerm || hasAiChats} />}
       </ScrollWrapper>
       {hasAiChats ? <AiSearch /> : null}
     </Wrapper>
