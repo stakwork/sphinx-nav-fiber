@@ -51,7 +51,7 @@ function escapeRegExp(string: string) {
 }
 
 const Highlight = styled.span`
-  padding: 2px;
+  padding: 0;
   margin: 0;
   color: ${colors.SECONDARY_BLUE};
 
