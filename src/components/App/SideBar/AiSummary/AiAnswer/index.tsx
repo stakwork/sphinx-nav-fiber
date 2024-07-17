@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
+import { highlightAiSummary } from '~/components/App/SideBar/AiSummary/utils/AiSummaryHighlight'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
+import { useDataStore, useFilteredNodes } from '~/stores/useDataStore'
+import { useUserStore } from '~/stores/useUserStore'
 
 type Props = {
   answer: string
@@ -21,7 +24,10 @@ const SummaryText = styled(Text)`
 `
 
 export const AiAnswer = ({ answer }: Props) => {
+  const { fetchData, setAbortRequests } = useDataStore((s) => s)
+  const { setBudget } = useUserStore((s) => s)
   const [displayedText, setDisplayedText] = useState('')
+  const filteredNodes = useFilteredNodes()
 
   useEffect(() => {
     let timeoutId: NodeJS.Timeout
@@ -40,9 +46,15 @@ export const AiAnswer = ({ answer }: Props) => {
     }
   }, [answer, displayedText])
 
+  const handleSubmit = (search: string) => {
+    fetchData(setBudget, setAbortRequests, search)
+  }
+
+  const responseTextDisplay = highlightAiSummary(displayedText, filteredNodes, handleSubmit)
+
   return (
     <Wrapper>
-      <SummaryText>{displayedText}</SummaryText>
+      <SummaryText>{responseTextDisplay}</SummaryText>
     </Wrapper>
   )
 }
