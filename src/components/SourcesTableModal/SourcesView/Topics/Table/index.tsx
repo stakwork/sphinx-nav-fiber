@@ -82,7 +82,7 @@ export const Table: React.FC<TopicTableProps> = ({
 
         if (value) {
           try {
-            await putNodeData(checkedId, { is_muted: !showMuted })
+            await putNodeData(checkedId, { node_data: { is_muted: !showMuted } })
 
             return checkedId
           } catch (error) {
