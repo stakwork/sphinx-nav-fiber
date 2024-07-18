@@ -1,22 +1,23 @@
+import { Tooltip } from '@mui/material'
 import styled from 'styled-components'
-import { NodeExtended } from '~/types'
+import { ExtractedEntity } from '~/types/index'
 import { colors } from '~/utils'
 
 export function highlightAiSummary(
   sDescription: string,
-  nodesTerm: NodeExtended[] | null,
   handleSubmit: (search: string) => void,
+  entities?: ExtractedEntity[],
 ) {
-  if (!nodesTerm || nodesTerm.length === 0) {
+  if (!entities || entities.length === 0) {
     return sDescription
   }
 
-  const sortedTerms = nodesTerm
-    .map((node) => node.name)
-    .filter((name) => typeof name === 'string')
+  const sortedEntities = entities
+    .map((entity) => entity.entity)
+    .filter((entity) => typeof entity === 'string')
     .sort((a, b) => b.length - a.length)
 
-  const escapedTerms = sortedTerms.map((term) => escapeRegExp(term))
+  const escapedTerms = sortedEntities.map((entity) => escapeRegExp(entity))
   const regex = new RegExp(`(${escapedTerms.join('|')})`, 'gi')
 
   const parts = sDescription.split(regex)
@@ -25,18 +26,21 @@ export function highlightAiSummary(
   return (
     <>
       {parts.map((part) => {
-        if (regex.test(part) && !highlighted.has(part.toLowerCase())) {
+        const entity = entities.find((e) => e.entity.toLowerCase() === part.toLowerCase())
+
+        if (entity && !highlighted.has(part.toLowerCase())) {
           highlighted.add(part.toLowerCase())
 
           return (
-            <Highlight
-              key={part}
-              onClick={() => {
-                handleSubmit(part)
-              }}
-            >
-              {part}
-            </Highlight>
+            <Tooltip key={part} arrow title={entity.description}>
+              <Highlight
+                onClick={() => {
+                  handleSubmit(part)
+                }}
+              >
+                {part}
+              </Highlight>
+            </Tooltip>
           )
         }
 
