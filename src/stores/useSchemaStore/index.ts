@@ -7,19 +7,25 @@ type SchemasStore = {
   links: SchemaLink[]
   setSchemas: (schema: SchemaExtended[]) => void
   setSchemaLinks: (schema: SchemaLink[]) => void
+  getPrimaryColorByType: (type: string) => string | undefined
 }
 
-const defaultData: Omit<SchemasStore, 'setSchemas' | 'setSchemaLinks'> = {
+const defaultData: Omit<SchemasStore, 'setSchemas' | 'setSchemaLinks' | 'getPrimaryColorByType'> = {
   schemas: [],
   links: [],
 }
 
-export const useSchemaStore = create<SchemasStore>((set) => ({
+export const useSchemaStore = create<SchemasStore>((set, get) => ({
   ...defaultData,
   setSchemas: (schemas: SchemaExtended[]) => {
-    set({ schemas: schemas.map((i) => ({ ...i, ref_id: i?.attributes?.ref_id || '' })) })
+    set({ schemas: schemas.map((i) => ({ ...i })) })
   },
   setSchemaLinks: (links: SchemaLink[]) => {
     set({ links })
+  },
+  getPrimaryColorByType: (type: string) => {
+    const schema = get().schemas.find((schem) => schem.type === type)
+
+    return schema ? schema.primary_color : undefined
   },
 }))

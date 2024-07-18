@@ -1,40 +1,49 @@
+import { isEmpty } from 'lodash'
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
+import { AIEntity } from '~/types'
+
+type AIAnswer = {
+  [key: string]: AIEntity
+}
 
 export type AiSummaryStore = {
-  aiSummaryRequest: string
-  aiSummaryIsLoading: boolean
-  aiSummaryAnswers: { [k: string]: string }
-  setAiSummaryAnswer: (key: string, answer: string) => void
-  setAiSummaryRequest: (query: string) => void
-  setAiSummaryIsLoading: (status: boolean) => void
+  aiSummaryAnswers: AIAnswer
+  aiRefId: string
+  setAiSummaryAnswer: (key: string, answer: AIEntity) => void
+  resetAiSummaryAnswer: () => void
   getAiSummaryAnswer: (key: string) => string
   getKeyExist: (key: string) => boolean
+  setAiRefId: (aiRefId: string) => void
 }
 
 const defaultData = {
-  aiSummaryRequest: '',
-  aiSummaryIsLoading: false,
   aiSummaryAnswers: {},
+  aiRefId: '',
 }
 
 export const useAiSummaryStore = create<AiSummaryStore>()(
   devtools((set, get) => ({
     ...defaultData,
-    setAiSummaryIsLoading: (status) => set({ aiSummaryIsLoading: status }),
     setAiSummaryAnswer: (key, answer) => {
       const summaryAnswers = get().aiSummaryAnswers
 
-      const newSummaryAnswers = { ...summaryAnswers, [key]: answer }
+      summaryAnswers[key] = { ...(summaryAnswers[key] || {}), ...answer }
 
-      set({ aiSummaryAnswers: { ...newSummaryAnswers } })
+      const clone = structuredClone(summaryAnswers)
+
+      set({ aiSummaryAnswers: clone })
+    },
+    resetAiSummaryAnswer: () => {
+      set({ aiSummaryAnswers: {}, aiRefId: '' })
     },
     getAiSummaryAnswer: (key) => {
       const summaryAnswers = get().aiSummaryAnswers
 
-      return summaryAnswers[key]
+      return summaryAnswers[key].answer || ''
     },
-    setAiSummaryRequest: (aiSummaryRequest) => ({ aiSummaryRequest }),
+
+    setAiRefId: (aiRefId) => set({ aiRefId }),
 
     getKeyExist: (key) => {
       if (key in get().aiSummaryAnswers) {
@@ -45,3 +54,5 @@ export const useAiSummaryStore = create<AiSummaryStore>()(
     },
   })),
 )
+
+export const useHasAiChats = () => useAiSummaryStore((s) => !isEmpty(s.aiSummaryAnswers))

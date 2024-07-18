@@ -15,6 +15,7 @@ export type BaseTextInputProps = {
   className?: string
   colorName?: ColorName
   defaultValue?: string
+  dataTestId?: string
   disabled?: boolean
   id?: string
   maxLength?: number

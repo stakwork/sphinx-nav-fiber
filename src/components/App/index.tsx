@@ -18,7 +18,7 @@ import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
 import { useUpdateSelectedNode } from '~/stores/useGraphStore'
 import { useTeachStore } from '~/stores/useTeachStore'
 import { useUserStore } from '~/stores/useUserStore'
-import { AiSummaryAnswerResponse } from '~/types'
+import { AiSummaryAnswerResponse, AiSummaryQuestionsResponse, AiSummarySourcesResponse } from '~/types'
 import { colors } from '~/utils/colors'
 import { updateBudget } from '~/utils/setBudget'
 import version from '~/utils/versionHelper'
@@ -29,6 +29,7 @@ import { DeviceCompatibilityNotice } from './DeviceCompatibilityNotification'
 import { Helper } from './Helper'
 import { SecondarySideBar } from './SecondarySidebar'
 import { Toasts } from './Toasts'
+import { useSearchParams } from 'react-router-dom'
 
 const Wrapper = styled(Flex)`
   height: 100%;
@@ -50,6 +51,8 @@ const LazyUniverse = lazy(() => import('~/components/Universe').then(({ Universe
 const LazySideBar = lazy(() => import('./SideBar').then(({ SideBar }) => ({ default: SideBar })))
 
 export const App = () => {
+  const [searchParams] = useSearchParams()
+  const query = searchParams.get('q')
   const [setBudget, setNodeCount] = useUserStore((s) => [s.setBudget, s.setNodeCount])
 
   const {
@@ -64,7 +67,7 @@ export const App = () => {
 
   const { fetchData, setCategoryFilter, setAbortRequests, addNewNode, filters } = useDataStore((s) => s)
 
-  const { setAiSummaryIsLoading, setAiSummaryAnswer, getKeyExist } = useAiSummaryStore((s) => s)
+  const { setAiSummaryAnswer, getKeyExist } = useAiSummaryStore((s) => s)
 
   const setSelectedNode = useUpdateSelectedNode()
 
@@ -77,14 +80,27 @@ export const App = () => {
 
   const form = useForm<{ search: string }>({ mode: 'onChange' })
 
-  const handleSubmit = form.handleSubmit(({ search }) => {
+  const { setValue } = form
+
+  useEffect(() => {
+    setValue('search', query ?? '')
+
     setTranscriptOpen(false)
     setSelectedNode(null)
     setRelevanceSelected(false)
-    setCurrentSearch(search)
+    setCurrentSearch(query ?? '')
     setTeachMeAnswer('')
     setCategoryFilter(null)
-  })
+  }, [
+    query,
+    setCategoryFilter,
+    setCurrentSearch,
+    setRelevanceSelected,
+    setSelectedNode,
+    setTeachMeAnswer,
+    setTranscriptOpen,
+    setValue,
+  ])
 
   const runSearch = useCallback(async () => {
     await fetchData(setBudget, setAbortRequests)
@@ -107,12 +123,34 @@ export const App = () => {
 
   const handleAiSummaryAnswer = useCallback(
     (data: AiSummaryAnswerResponse) => {
+      console.log(data)
+
       if (data.question && getKeyExist(data.question)) {
-        setAiSummaryAnswer(data.question, data.answer)
-        setAiSummaryIsLoading(false)
+        setAiSummaryAnswer(data.question, { answer: data.answer, answerLoading: false })
       }
     },
-    [setAiSummaryAnswer, setAiSummaryIsLoading, getKeyExist],
+    [setAiSummaryAnswer, getKeyExist],
+  )
+
+  const handleAiRelevantQuestions = useCallback(
+    (data: AiSummaryQuestionsResponse) => {
+      if (data.question && getKeyExist(data.question)) {
+        setAiSummaryAnswer(data.question, {
+          questions: data.relevant_questions.map((i) => i.question),
+          questionsLoading: false,
+        })
+      }
+    },
+    [setAiSummaryAnswer, getKeyExist],
+  )
+
+  const handleAiSources = useCallback(
+    (data: AiSummarySourcesResponse) => {
+      if (data.question && getKeyExist(data.question)) {
+        setAiSummaryAnswer(data.question, { sources: data.sources.map((i) => i.ref_id), sourcesLoading: false })
+      }
+    },
+    [setAiSummaryAnswer, getKeyExist],
   )
 
   const handleNewNodeCreated = useCallback(
@@ -140,6 +178,14 @@ export const App = () => {
         socket.on('askquestionhook', handleAiSummaryAnswer)
       }
 
+      if (chatInterfaceFeatureFlag) {
+        socket.on('relevantquestionshook', handleAiRelevantQuestions)
+      }
+
+      if (chatInterfaceFeatureFlag) {
+        socket.on('answersourceshook', handleAiSources)
+      }
+
       if (realtimeGraphFeatureFlag) {
         socket.on('new_node_created', handleNewNodeCreated)
       }
@@ -157,6 +203,8 @@ export const App = () => {
     realtimeGraphFeatureFlag,
     handleAiSummaryAnswer,
     chatInterfaceFeatureFlag,
+    handleAiRelevantQuestions,
+    handleAiSources,
   ])
 
   return (
@@ -172,7 +220,7 @@ export const App = () => {
           <DataRetriever>
             <FormProvider {...form}>
               <LazyMainToolbar />
-              <LazySideBar onSubmit={handleSubmit} />
+              <LazySideBar />
               <LazyUniverse />
               {false && <Preloader fullSize={false} />}
               <Overlay />
