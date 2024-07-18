@@ -6,10 +6,11 @@ import { Bloom, EffectComposer, Outline, Selection, Vignette } from '@react-thre
 import { useControls } from 'leva'
 import { BlendFunction, Resolution } from 'postprocessing'
 import { Perf } from 'r3f-perf'
-import { Suspense, memo, useCallback, useMemo } from 'react'
+import { Suspense, memo, useCallback, useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { getNodeColorByType } from '~/components/Universe/Graph/constant'
 import { isDevelopment } from '~/constants'
+import { getAboutData } from '~/network/fetchSourcesData'
 import { useAppStore } from '~/stores/useAppStore'
 import { useControlStore } from '~/stores/useControlStore'
 import { useDataStore } from '~/stores/useDataStore'
@@ -97,6 +98,37 @@ const _Universe = () => {
 
   const isLoading = useDataStore((s) => s.isFetching)
   const universeQuestionIsOpen = useAppStore((s) => s.universeQuestionIsOpen)
+  const [seedQuestions, setSeedQuestions] = useState<string[]>([])
+
+  useEffect(() => {
+    const fetchSeedQuestions = async () => {
+      try {
+        const response = await getAboutData()
+
+        if (response.seed_questions) {
+          setSeedQuestions(shuffleArray(response.seed_questions))
+        }
+      } catch (error) {
+        console.error('Error fetching seed questions:', error)
+      }
+    }
+
+    fetchSeedQuestions()
+  }, [])
+
+  const shuffleArray = (inputArray: string[]) => {
+    const array = [...inputArray]
+    let i = array.length - 1
+
+    while (i > 0) {
+      const j = Math.floor(Math.random() * (i + 1))
+
+      ;[array[i], array[j]] = [array[j], array[i]]
+      i -= 1
+    }
+
+    return array
+  }
 
   const onWheelHandler = useCallback(
     (e: React.WheelEvent) => {
@@ -143,7 +175,7 @@ const _Universe = () => {
           </Suspense>
         </Canvas>
       </Suspense>
-      {universeQuestionIsOpen && <UniverseQuestion />}
+      {universeQuestionIsOpen && <UniverseQuestion seedQuestions={seedQuestions} />}
       {isLoading && <Preloader fullSize={false} />}
       <Overlay />
     </Wrapper>
