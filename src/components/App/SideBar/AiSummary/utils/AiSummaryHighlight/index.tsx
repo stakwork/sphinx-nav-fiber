@@ -1,4 +1,4 @@
-import { Tooltip } from '@mui/material'
+import { Tooltip, tooltipClasses } from '@mui/material'
 import styled from 'styled-components'
 import { ExtractedEntity } from '~/types/index'
 import { colors } from '~/utils'
@@ -32,7 +32,22 @@ export function highlightAiSummary(
           highlighted.add(part.toLowerCase())
 
           return (
-            <Tooltip key={part} arrow title={entity.description}>
+            <StyledTooltip
+              key={part}
+              arrow
+              placement="top"
+              PopperProps={{
+                modifiers: [
+                  {
+                    name: 'offset',
+                    options: {
+                      offset: [0, -10],
+                    },
+                  },
+                ],
+              }}
+              title={entity.description}
+            >
               <Highlight
                 onClick={() => {
                   handleSubmit(part)
@@ -40,7 +55,7 @@ export function highlightAiSummary(
               >
                 {part}
               </Highlight>
-            </Tooltip>
+            </StyledTooltip>
           )
         }
 
@@ -62,5 +77,22 @@ const Highlight = styled.span`
   &:hover {
     text-decoration: underline;
     cursor: pointer;
+  }
+`
+
+const StyledTooltip = styled(({ className, ...props }) => <Tooltip {...props} classes={{ popper: className }} />)`
+  & .${tooltipClasses.tooltip} {
+    background-color: ${colors.BG2};
+    width: 160px;
+    padding: 10px;
+    font-size: 12px;
+    color: white;
+    border-radius: 6px;
+    font-family: Barlow;
+    font-weight: 500;
+  }
+
+  & .${tooltipClasses.arrow} {
+    color: ${colors.BG2};
   }
 `
