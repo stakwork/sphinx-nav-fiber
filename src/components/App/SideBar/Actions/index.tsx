@@ -4,7 +4,7 @@ import { Booster } from '~/components/Booster'
 import { Flex } from '~/components/common/Flex'
 import { Pill } from '~/components/common/Pill'
 import { useAppStore } from '~/stores/useAppStore'
-import { useDataStore } from '~/stores/useDataStore'
+import { useSelectedNode } from '~/stores/useGraphStore'
 import { colors } from '~/utils/colors'
 
 type FlagErrorProps = {
@@ -29,7 +29,7 @@ export const Actions = ({ transcript }: ActionsProps) => {
 
   const [flagErrorIsOpen, setFlagErrorOpen] = useAppStore((s) => [s.flagErrorIsOpen, s.setFlagErrorOpen])
 
-  const selectedNode = useDataStore((s) => s.selectedNode)
+  const selectedNode = useSelectedNode()
 
   return (
     <Flex align="center" direction="row" justify="space-between">

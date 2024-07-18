@@ -1,11 +1,11 @@
 import { useMemo, useState } from 'react'
 import styled from 'styled-components'
+import { useGraphData } from '~/components/DataRetriever'
 import { Avatar } from '~/components/common/Avatar'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { TypeBadge } from '~/components/common/TypeBadge'
-import { useGraphData } from '~/components/DataRetriever'
-import { useDataStore } from '~/stores/useDataStore'
+import { useSelectedNode, useUpdateSelectedNode } from '~/stores/useGraphStore'
 import { NodeExtended } from '~/types'
 import { getSelectedNodeTimestamps } from '~/utils'
 import { colors } from '~/utils/colors'
@@ -61,7 +61,8 @@ const ScrollableList = styled.div`
 `
 
 export const Show = () => {
-  const [selectedNode, setSelectedNode] = useDataStore((s) => [s.selectedNode, s.setSelectedNode])
+  const selectedNode = useSelectedNode()
+  const setSelectedNode = useUpdateSelectedNode()
   const data = useGraphData()
   const [showHost, setShowHost] = useState<string[]>([])
 
@@ -72,7 +73,7 @@ export const Show = () => {
     if (selectedNode?.children?.length) {
       selectedNode.children.forEach((childRefId, index) => {
         const timeStamp = getSelectedNodeTimestamps(data?.nodes || [], selectedNode) || []
-        const childNode = data?.nodes.find((f) => f.ref_id === childRefId)
+        const childNode = data?.nodes.find((f: NodeExtended) => f.ref_id === childRefId)
 
         if (childNode) {
           childNode.timestamp = timeStamp[0]?.timestamp

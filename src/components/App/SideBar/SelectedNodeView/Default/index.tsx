@@ -2,10 +2,11 @@ import clsx from 'clsx'
 import styled from 'styled-components'
 import { Divider } from '~/components/common/Divider'
 import { Flex } from '~/components/common/Flex'
+import { highlightSearchTerm } from '~/components/common/Highlight/Highlight'
 import { Text } from '~/components/common/Text'
 import { TypeBadge } from '~/components/common/TypeBadge'
-import { useSelectedNode } from '~/stores/useDataStore'
-import { MediaPlayer } from '~/components/App/SideBar/SidebarSubView/MediaPlayer'
+import { useAppStore } from '~/stores/useAppStore'
+import { useSelectedNode } from '~/stores/useGraphStore'
 
 export const Default = () => {
   const selectedNode = useSelectedNode()
@@ -15,7 +16,6 @@ export const Default = () => {
   }
 
   const hasImage = !!selectedNode.image_url
-  const hasMedia = !!selectedNode.media_url || !!selectedNode.link
 
   const customKeys = selectedNode.properties || {}
 
@@ -29,16 +29,14 @@ export const Default = () => {
               e.currentTarget.src = 'generic_placeholder_img.png'
               e.currentTarget.className = 'default-img'
             }}
-            src={selectedNode.image_url}
+            src={selectedNode.properties?.image_url}
           />
         </StyledImageWrapper>
       ) : null}
 
-      {hasMedia ? <MediaPlayer hidden={false} /> : null}
-
       <StyledContent grow={1} justify="flex-start" pt={hasImage ? 0 : 8} shrink={1}>
         <Flex ml={24} mt={20} style={{ width: 'fit-content' }}>
-          <TypeBadge type={selectedNode.type || ''} />
+          <TypeBadge type={selectedNode.node_type || ''} />
         </Flex>
 
         <StyledWrapper>
@@ -57,12 +55,17 @@ type Props = { label: string; value: unknown }
 
 const NodeDetail = ({ label, value }: Props) => {
   const isLong = (value as string).length > 140
+  const searchTerm = useAppStore((s) => s.currentSearch)
+
+  if (!value) {
+    return null
+  }
 
   return (
     <>
       <StyledDetail className={clsx('node-detail', { 'node-detail__long': isLong })}>
         <Text className="node-detail__label">{label}</Text>
-        <Text className="node-detail__value">{value as string}</Text>
+        <Text className="node-detail__value">{highlightSearchTerm(String(value), searchTerm)}</Text>
       </StyledDetail>
       <StyledDivider />
     </>

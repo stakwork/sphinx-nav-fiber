@@ -116,10 +116,12 @@ type Props = BaseTextInputProps & {
   isTextArea?: boolean
   placeholder?: string
   maxLength?: number
+  dataTestId?: string
 }
 
 export const TextInput = ({
   id,
+  dataTestId,
   label,
   mask = '',
   message,
@@ -181,6 +183,7 @@ export const TextInput = ({
               return (
                 <StyledTextArea
                   ref={ref}
+                  data-testid={dataTestId}
                   disabled={disabled}
                   id={id}
                   maxLength={maxLength}
@@ -210,6 +213,7 @@ export const TextInput = ({
               >
                 <WebTextInput
                   colorName="white"
+                  data-testid={dataTestId}
                   disabled={disabled}
                   {...register(name)}
                   id={id}
@@ -223,6 +227,7 @@ export const TextInput = ({
               <BaseTextInput
                 {...props}
                 colorName="white"
+                dataTestId={dataTestId}
                 id={id}
                 {...register(name)}
                 onBlur={() => {
@@ -247,7 +252,7 @@ export const TextInput = ({
             <Flex align="center" direction="row" shrink={1}>
               <MdError fontSize={18} />
               <Flex pl={4} shrink={1}>
-                {error.message}
+                {error.message !== '' ? error.message : 'Please enter a valid URL'}
               </Flex>
             </Flex>
           </Text>
