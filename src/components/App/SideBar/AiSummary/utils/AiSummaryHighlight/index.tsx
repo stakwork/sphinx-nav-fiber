@@ -1,6 +1,7 @@
 import styled from 'styled-components'
+import { Tooltip } from '~/components/common/ToolTip'
+import { ExtractedEntity } from '~/types'
 import { colors } from '~/utils'
-import { ExtractedEntity } from '~/types/index'
 
 export function highlightAiSummary(
   sDescription: string,
@@ -25,18 +26,21 @@ export function highlightAiSummary(
   return (
     <>
       {parts.map((part) => {
-        if (regex.test(part) && !highlighted.has(part.toLowerCase())) {
+        const entity = entities.find((e) => e.entity.toLowerCase() === part.toLowerCase())
+
+        if (entity && !highlighted.has(part.toLowerCase())) {
           highlighted.add(part.toLowerCase())
 
           return (
-            <Highlight
-              key={part}
-              onClick={() => {
-                handleSubmit(part)
-              }}
-            >
-              {part}
-            </Highlight>
+            <StyledTooltip key={part} content={entity.description}>
+              <Highlight
+                onClick={() => {
+                  handleSubmit(part)
+                }}
+              >
+                {part}
+              </Highlight>
+            </StyledTooltip>
           )
         }
 
@@ -58,5 +62,26 @@ const Highlight = styled.span`
   &:hover {
     text-decoration: underline;
     cursor: pointer;
+  }
+`
+
+const StyledTooltip = styled(({ className, ...props }) => (
+  <Tooltip
+    {...props}
+    backgroundColor={colors.BG2}
+    borderRadius="6px"
+    className={className}
+    color="white"
+    fontSize="12px"
+    fontWeight="500"
+    minWidth="160px"
+    padding="10px"
+    position="top"
+    textAlign="start"
+    whiteSpace="normal"
+  />
+))`
+  & .tooltip-content {
+    color: white;
   }
 `

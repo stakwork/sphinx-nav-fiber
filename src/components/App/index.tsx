@@ -1,6 +1,7 @@
 import { Leva } from 'leva'
 import { lazy, Suspense, useCallback, useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
+import { useSearchParams } from 'react-router-dom'
 import 'react-toastify/dist/ReactToastify.css'
 import { Socket } from 'socket.io-client'
 import styled from 'styled-components'
@@ -34,7 +35,6 @@ import { DeviceCompatibilityNotice } from './DeviceCompatibilityNotification'
 import { Helper } from './Helper'
 import { SecondarySideBar } from './SecondarySidebar'
 import { Toasts } from './Toasts'
-import { useSearchParams } from 'react-router-dom'
 
 const Wrapper = styled(Flex)`
   height: 100%;
