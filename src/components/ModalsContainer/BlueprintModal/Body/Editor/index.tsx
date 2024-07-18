@@ -1,23 +1,23 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Button } from '@mui/material'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
+import { NoParent } from '~/components/AddItemModal/SourceTypeStep/constants'
 import { TOption } from '~/components/AddItemModal/SourceTypeStep/types'
 import ClearIcon from '~/components/Icons/ClearIcon'
-import { AutoComplete } from '~/components/common/AutoComplete'
+import { AutoComplete, TAutocompleteOption } from '~/components/common/AutoComplete'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { TextInput } from '~/components/common/TextInput'
 import { NODE_ADD_ERROR, requiredRule } from '~/constants'
 import { api } from '~/network/api'
-import { Schema, getNodeSchemaTypes, getNodeType } from '~/network/fetchSourcesData'
+import { getNodeSchemaTypes, getNodeType, Schema } from '~/network/fetchSourcesData'
 import { useModal } from '~/stores/useModalStore'
 import { colors } from '~/utils'
 import { CreateCustomNodeAttribute } from './CustomAttributesStep'
 import { convertAttributes, parsedObjProps, parseJson } from './utils'
-import { NoParent } from '~/components/AddItemModal/SourceTypeStep/constants'
 
 const defaultValues = {
   type: '',
@@ -167,6 +167,7 @@ export const Editor = ({
   const [deleteError, setDeleteError] = useState<string | null>(null)
   const [deletedAttributes, setDeletedAttributes] = useState<string[]>([])
   const [parsedData, setParsedData] = useState<parsedObjProps[]>([])
+  const [submitDisabled, setSubmitDisabled] = useState(true)
 
   useEffect(
     () => () => {
@@ -198,17 +199,14 @@ export const Editor = ({
         if (selectedSchema.type !== NoParent.value.toLowerCase()) {
           const data = await getNodeType(selectedSchema.type as string)
 
-          parsedDataDefault = parseJson(data)
+          parsedDataDefault = data ? parseJson(data) : parsedDataDefault
         }
 
         parsedDataDefault = parsedDataDefault.filter((x) => x.key !== 'node_key')
 
         setParsedData(parsedDataDefault)
 
-        fetchAndSetOptions(
-          setSelectedNodeParentOptions,
-          (schema) => schema.type !== selectedSchema.type && schema.type !== selectedSchema.parent,
-        )
+        await fetchAndSetOptions(setSelectedNodeParentOptions, (schema) => schema.type !== selectedSchema.type)
       }
     }
 
@@ -223,7 +221,11 @@ export const Editor = ({
     Array.isArray(value) && value.every((item) => typeof item === 'object' && 'key' in item)
 
   const attributesValue = watch('attributes')
-  const attributes: Attribute[] = isAttributeArray(attributesValue) ? attributesValue : []
+
+  const attributes: Attribute[] = useMemo(
+    () => (isAttributeArray(attributesValue) ? attributesValue : []),
+    [attributesValue],
+  )
 
   const handleClose = () => {
     close()
@@ -315,19 +317,42 @@ export const Editor = ({
     }
   })
 
-  const isMatch = compareAttributes(attributes, parsedData)
+  useEffect(() => {
+    const subscription = form.watch((values) => {
+      const isMatch = compareAttributes(attributes, parsedData)
 
-  const isChanged =
-    type?.trim() !== selectedSchema?.type?.trim() || parent !== selectedSchema?.parent?.trim() || isMatch
+      const isChanged =
+        values.type?.trim() !== selectedSchema?.type?.trim() ||
+        values.parent?.trim() !== selectedSchema?.parent?.trim() ||
+        isMatch
 
-  const isValidType = !!type.trim()
+      const isValidType = !!values.type?.trim()
 
-  const submitDisabled = selectedSchema
-    ? loading || !isChanged || !isValidType || displayParentError
-    : loading || displayParentError
+      setSubmitDisabled(
+        selectedSchema
+          ? loading || !isChanged || !isValidType || displayParentError
+          : loading || displayParentError || !isValidType,
+      )
+    })
+
+    return () => subscription.unsubscribe()
+  }, [form, attributes, parsedData, selectedSchema, loading, displayParentError])
 
   const resolvedParentValue = () => parentOptions?.find((i) => i.value === parent)
-  const resolvedSelectedParentValue = () => selectedNodeParentOptions?.find((i) => i.value === parent)
+
+  const resolvedSelectedParentValue = (): TAutocompleteOption | undefined => {
+    const option = selectedNodeParentOptions?.find((i) => i.value === parent)
+
+    if (option) {
+      return option
+    }
+
+    if (parent) {
+      return { label: parent, value: parent }
+    }
+
+    return undefined
+  }
 
   return (
     <Flex>
@@ -384,6 +409,7 @@ export const Editor = ({
                     </Flex>
                     <Flex mb={12}>
                       <TextInput
+                        dataTestId="cy-item-name"
                         defaultValue={selectedSchema?.type}
                         id="cy-item-name"
                         maxLength={250}

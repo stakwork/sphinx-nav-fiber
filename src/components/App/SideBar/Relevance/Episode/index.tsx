@@ -5,8 +5,10 @@ import HashtagIcon from '~/components/Icons/HashtagIcon'
 import LinkIcon from '~/components/Icons/LinkIcon'
 import { Avatar } from '~/components/common/Avatar'
 import { Flex } from '~/components/common/Flex'
+import { highlightSearchTerm } from '~/components/common/Highlight/Highlight'
 import { Text } from '~/components/common/Text'
 import { TypeBadge } from '~/components/common/TypeBadge'
+import { useAppStore } from '~/stores/useAppStore'
 import { colors } from '~/utils/colors'
 import { TypeCustom } from './TypeCustom'
 import { TypeDocument } from './TypeDocument'
@@ -64,18 +66,23 @@ export const Episode = ({
   imageUrl,
   showTitle,
   type,
-  text,
-  name,
+  text: newText,
+  name: newName,
   sourceLink,
   verified = false,
   twitterHandle,
   className = 'episode-wrapper',
   onClick,
 }: Props) => {
-  const description = type === 'show' ? showTitle : episodeTitle
-  const subtitle = type === 'show' ? '' : showTitle
+  const searchTerm = useAppStore((s) => s.currentSearch)
+  const descriptionSource = type === 'show' ? showTitle : episodeTitle
+  const description = highlightSearchTerm(String(descriptionSource), searchTerm) as string
+  const text = highlightSearchTerm(String(newText), searchTerm) as string
+  const name = highlightSearchTerm(String(newName), searchTerm) as string
+  const subtitleSource = type === 'show' ? '' : showTitle
+  const subtitle = highlightSearchTerm(String(subtitleSource), searchTerm) as string
 
-  const defaultViewTypes = ['tweet', 'person', 'guest', 'topic', 'document']
+  const defaultViewTypes = ['Tweet', 'person', 'guest', 'topic', 'document']
 
   return type ? (
     <EpisodeWrapper className={className} onClick={onClick}>
@@ -155,7 +162,7 @@ export const Episode = ({
           {['image'].includes(type as string) && (
             <TypeCustom date={date} imageUrl={sourceLink} name={name || ''} sourceLink={sourceLink || ''} />
           )}
-          {type === 'tweet' && (
+          {type === 'Tweet' && (
             <TypeTweet
               date={date}
               imageUrl={imageUrl}

@@ -1,9 +1,9 @@
 import { Button } from '@mui/material'
 import { memo } from 'react'
 import styled from 'styled-components'
-import { Flex } from '~/components/common/Flex'
 import BrowseGalleryIcon from '~/components/Icons/BrowseGalleryIcon'
 import DownloadIcon from '~/components/Icons/DownloadIcon'
+import { Flex } from '~/components/common/Flex'
 import { useDataStore } from '~/stores/useDataStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { colors } from '~/utils/colors'
@@ -23,7 +23,7 @@ const _View = ({ isSearchResult }: Props) => {
       return
     }
 
-    await fetchData(setBudget, setAbortRequests, { skip_cache: 'true' })
+    await fetchData(setBudget, setAbortRequests, '', { skip_cache: 'true' })
     setNodeCount('CLEAR')
   }
 
