@@ -36,6 +36,7 @@ export const AiSummary = ({ question, response }: Props) => {
   const ref = useRef<HTMLDivElement>(null)
   const [collapsed, setCollapsed] = useState(false)
   const { setAiSummaryAnswer } = useAiSummaryStore((s) => s)
+  const [displayedText, setDisplayedText] = useState('')
 
   useEffect(() => {
     if (ref.current) {
@@ -66,8 +67,10 @@ export const AiSummary = ({ question, response }: Props) => {
           ) : (
             <AiAnswer
               answer={response.answer || ''}
+              displayedText={displayedText}
               handleLoaded={() => handleLoaded()}
               hasBeenRendered={!!response?.hasBeenRendered}
+              setDisplayedText={setDisplayedText}
             />
           )}
           {response.questionsLoading ? (

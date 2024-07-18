@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import styled from 'styled-components'
 import { highlightAiSummary } from '~/components/App/SideBar/AiSummary/utils/AiSummaryHighlight'
 import { Flex } from '~/components/common/Flex'
@@ -10,6 +10,8 @@ type Props = {
   answer: string
   hasBeenRendered: boolean
   handleLoaded: () => void
+  displayedText: string
+  setDisplayedText: (text: string) => void
 }
 
 const Wrapper = styled(Flex).attrs({
@@ -25,10 +27,9 @@ const SummaryText = styled(Text)`
   line-height: 19.6px;
 `
 
-export const AiAnswer = ({ answer, handleLoaded, hasBeenRendered }: Props) => {
+export const AiAnswer = ({ answer, handleLoaded, hasBeenRendered, displayedText, setDisplayedText }: Props) => {
   const { fetchData, setAbortRequests } = useDataStore((s) => s)
   const { setBudget } = useUserStore((s) => s)
-  const [displayedText, setDisplayedText] = useState('')
   const filteredNodes = useFilteredNodes()
 
   useEffect(() => {
@@ -48,7 +49,7 @@ export const AiAnswer = ({ answer, handleLoaded, hasBeenRendered }: Props) => {
     }
 
     handleLoaded()
-  }, [answer, displayedText, handleLoaded, hasBeenRendered])
+  }, [answer, displayedText, handleLoaded, hasBeenRendered, setDisplayedText])
 
   useEffect(() => {
     if (displayedText) {
@@ -58,7 +59,7 @@ export const AiAnswer = ({ answer, handleLoaded, hasBeenRendered }: Props) => {
     if (hasBeenRendered) {
       setDisplayedText(answer)
     }
-  }, [answer, displayedText, hasBeenRendered])
+  }, [answer, displayedText, hasBeenRendered, setDisplayedText])
 
   const handleSubmit = (search: string) => {
     fetchData(setBudget, setAbortRequests, search)
