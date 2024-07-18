@@ -7,11 +7,6 @@ describe('Admin Login', () => {
       url: 'http://localhost:8444/api/about*',
     }).as('updateAbout')
 
-    cy.intercept({
-      method: 'GET',
-      url: 'http://localhost:8444/api/about*',
-    }).as('loadAbout')
-
     const title = `Testing NavFiber`
     const description = 'Testing Graph Description'
 
