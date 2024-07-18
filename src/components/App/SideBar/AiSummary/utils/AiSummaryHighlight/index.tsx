@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { Tooltip as OriginalTooltip, TooltipText } from '~/components/common/ToolTip'
+import { Tooltip } from '~/components/common/ToolTip'
 import { colors } from '~/utils'
 import { ExtractedEntity } from '~/types/index'
 
@@ -62,11 +62,5 @@ const Highlight = styled.span`
   &:hover {
     text-decoration: underline;
     cursor: pointer;
-  }
-`
-
-const Tooltip = styled(OriginalTooltip)`
-  ${TooltipText} {
-    min-width: 8rem;
   }
 `
