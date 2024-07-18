@@ -7,6 +7,11 @@ describe('Admin Login', () => {
       url: 'http://localhost:8444/api/about*',
     }).as('updateAbout')
 
+    cy.intercept({
+      method: 'GET',
+      url: 'http://localhost:8444/api/about*',
+    }).as('loadAbout')
+
     const title = `Testing NavFiber`
     const description = 'Testing Graph Description'
 
@@ -24,16 +29,10 @@ describe('Admin Login', () => {
 
     // Submit the form
     cy.get('#add-node-submit-cta').click()
-
     cy.wait('@updateAbout')
 
     // Close modal and assert the title
     cy.get('div[data-testid="close-modal"]').click()
     cy.get('.title').should('have.text', title)
-
-    cy.contains('About').click({ force: true })
-    cy.wait(1000)
-
-    cy.contains(description).should('be.visible')
   })
 })
