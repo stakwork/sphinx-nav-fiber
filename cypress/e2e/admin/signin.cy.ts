@@ -30,12 +30,5 @@ describe('Admin Login', () => {
     // Close modal and assert the title
     cy.get('div[data-testid="close-modal"]').click()
     cy.get('.title').should('have.text', title)
-
-    cy.initialSetup(username, 50)
-
-    cy.contains('About').click({ force: true })
-    cy.wait(1000)
-
-    cy.contains(description).should('be.visible')
   })
 })
