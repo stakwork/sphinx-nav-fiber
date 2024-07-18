@@ -4,6 +4,8 @@ interface TooltipProps {
   content: string
   children: React.ReactNode
   margin?: string
+  minWidth?: string
+  whiteSpace?: string
 }
 
 const TooltipContainer = styled.div`
@@ -12,7 +14,7 @@ const TooltipContainer = styled.div`
   align-items: center;
 `
 
-const TooltipText = styled.div<{ margin?: string }>`
+export const TooltipText = styled.div<{ margin?: string; minWidth?: string; whiteSpace?: string }>`
   visibility: hidden;
   width: auto;
   background-color: white;
@@ -28,7 +30,8 @@ const TooltipText = styled.div<{ margin?: string }>`
   margin-top: ${({ margin }) => margin || '0px'};
   opacity: 0;
   transition: opacity 0.3s;
-  white-space: nowrap;
+  white-space: ${({ whiteSpace }) => whiteSpace || 'nowrap'};
+  min-width: ${({ minWidth }) => minWidth || 'auto'};
   overflow: hidden;
   text-overflow: ellipsis;
   font-size: 12px;
@@ -40,9 +43,11 @@ const TooltipText = styled.div<{ margin?: string }>`
   }
 `
 
-export const Tooltip = ({ content, children, margin }: TooltipProps) => (
+export const Tooltip = ({ content, children, margin, minWidth, whiteSpace }: TooltipProps) => (
   <TooltipContainer>
     {children}
-    <TooltipText margin={margin}>{content}</TooltipText>
+    <TooltipText margin={margin} minWidth={minWidth} whiteSpace={whiteSpace}>
+      {content}
+    </TooltipText>
   </TooltipContainer>
 )

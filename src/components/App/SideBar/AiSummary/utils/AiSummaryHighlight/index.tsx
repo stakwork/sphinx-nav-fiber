@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { Tooltip as OriginalTooltip, TooltipText } from '~/components/common/ToolTip'
 import { colors } from '~/utils'
 import { ExtractedEntity } from '~/types/index'
 
@@ -12,11 +13,11 @@ export function highlightAiSummary(
   }
 
   const sortedEntities = entities
-    .map((entity) => entity.entity)
-    .filter((entity) => typeof entity === 'string')
-    .sort((a, b) => b.length - a.length)
+    .map((entity) => entity)
+    .filter((entity) => typeof entity.entity === 'string')
+    .sort((a, b) => b.entity.length - a.entity.length)
 
-  const escapedTerms = sortedEntities.map((entity) => escapeRegExp(entity))
+  const escapedTerms = sortedEntities.map((entity) => escapeRegExp(entity.entity))
   const regex = new RegExp(`(${escapedTerms.join('|')})`, 'gi')
 
   const parts = sDescription.split(regex)
@@ -25,18 +26,21 @@ export function highlightAiSummary(
   return (
     <>
       {parts.map((part) => {
-        if (regex.test(part) && !highlighted.has(part.toLowerCase())) {
+        const matchedEntity = sortedEntities.find((entity) => entity.entity.toLowerCase() === part.toLowerCase())
+
+        if (matchedEntity && !highlighted.has(part.toLowerCase())) {
           highlighted.add(part.toLowerCase())
 
           return (
-            <Highlight
-              key={part}
-              onClick={() => {
-                handleSubmit(part)
-              }}
-            >
-              {part}
-            </Highlight>
+            <Tooltip key={part} content={matchedEntity.description} margin="13px" minWidth="8rem" whiteSpace="normal">
+              <Highlight
+                onClick={() => {
+                  handleSubmit(part)
+                }}
+              >
+                {part}
+              </Highlight>
+            </Tooltip>
           )
         }
 
@@ -58,5 +62,11 @@ const Highlight = styled.span`
   &:hover {
     text-decoration: underline;
     cursor: pointer;
+  }
+`
+
+const Tooltip = styled(OriginalTooltip)`
+  ${TooltipText} {
+    min-width: 8rem;
   }
 `
