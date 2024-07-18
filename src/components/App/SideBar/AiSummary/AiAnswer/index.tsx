@@ -1,16 +1,21 @@
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
+import { highlightAiSummary } from '~/components/App/SideBar/AiSummary/utils/AiSummaryHighlight'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
+import { useDataStore, useFilteredNodes } from '~/stores/useDataStore'
+import { useUserStore } from '~/stores/useUserStore'
 
 type Props = {
   answer: string
+  hasBeenRendered: boolean
+  handleLoaded: () => void
 }
 
 const Wrapper = styled(Flex).attrs({
   direction: 'column',
 })`
-  padding: 1.5rem;
+  padding: 0 1.5rem 1.5rem;
   gap: 1rem;
 `
 
@@ -20,13 +25,16 @@ const SummaryText = styled(Text)`
   line-height: 19.6px;
 `
 
-export const AiAnswer = ({ answer }: Props) => {
+export const AiAnswer = ({ answer, handleLoaded, hasBeenRendered }: Props) => {
+  const { fetchData, setAbortRequests } = useDataStore((s) => s)
+  const { setBudget } = useUserStore((s) => s)
   const [displayedText, setDisplayedText] = useState('')
+  const filteredNodes = useFilteredNodes()
 
   useEffect(() => {
     let timeoutId: NodeJS.Timeout
 
-    if (!answer) {
+    if (!answer || hasBeenRendered) {
       return
     }
 
@@ -38,11 +46,29 @@ export const AiAnswer = ({ answer }: Props) => {
       // eslint-disable-next-line consistent-return
       return () => clearTimeout(timeoutId)
     }
-  }, [answer, displayedText])
+
+    handleLoaded()
+  }, [answer, displayedText, handleLoaded, hasBeenRendered])
+
+  useEffect(() => {
+    if (displayedText) {
+      return
+    }
+
+    if (hasBeenRendered) {
+      setDisplayedText(answer)
+    }
+  }, [answer, displayedText, hasBeenRendered])
+
+  const handleSubmit = (search: string) => {
+    fetchData(setBudget, setAbortRequests, search)
+  }
+
+  const responseTextDisplay = highlightAiSummary(displayedText, filteredNodes, handleSubmit)
 
   return (
     <Wrapper>
-      <SummaryText>{displayedText}</SummaryText>
+      <SummaryText>{responseTextDisplay}</SummaryText>
     </Wrapper>
   )
 }
