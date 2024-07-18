@@ -70,7 +70,6 @@ export const SearchBar = ({ loading, placeholder = 'Search', onSubmit }: Props) 
       {...register('search')}
       disabled={loading}
       id="main-search"
-      loading={loading}
       onKeyPress={(event) => {
         if (event.key === 'Enter') {
           if (typing.trim() === '') {

@@ -56,3 +56,21 @@ export const useAiSummaryStore = create<AiSummaryStore>()(
 )
 
 export const useHasAiChats = () => useAiSummaryStore((s) => !isEmpty(s.aiSummaryAnswers))
+
+export const useHasAiChatsResponse = () =>
+  useAiSummaryStore((s) => {
+    const answers = s.aiSummaryAnswers
+
+    if (isEmpty(answers)) {
+      return false
+    }
+
+    const allKeys = Object.keys(answers)
+    const hasAnswers = allKeys.every((key) => !!answers[key]?.answer)
+
+    if (!hasAnswers) {
+      return false
+    }
+
+    return true
+  })
