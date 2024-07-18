@@ -13,21 +13,29 @@ import { useAppStore } from '~/stores/useAppStore'
 import { useModal } from '~/stores/useModalStore'
 import { Trending } from '~/types'
 import { colors } from '~/utils'
+import { useUserStore } from '~/stores/useUserStore'
+import { useDataStore } from '~/stores/useDataStore'
 
 type Props = {
   trend: Trending
   onClose: () => void
-  selectTrending: (val: string) => void
 }
 
-export const BriefDescription: FC<Props> = ({ trend, onClose, selectTrending }) => {
+export const BriefDescription: FC<Props> = ({ trend, onClose }) => {
   const [isPlaying, setIsPlaying] = useState(false)
   const { close } = useModal('briefDescription')
+
   const { currentPlayingAudio, setCurrentPlayingAudio } = useAppStore((s) => s)
+
+  const [setBudget] = useUserStore((s) => [s.setBudget])
+  const { fetchData, setAbortRequests } = useDataStore((s) => s)
 
   const audioRef = useRef<HTMLAudioElement | null>(null)
 
-  const handleLearnMore = () => selectTrending(trend.name)
+  const handleLearnMore = async () => {
+    handleClose()
+    await fetchData(setBudget, setAbortRequests, trend.name)
+  }
 
   const handleClose = useCallback(() => {
     onClose()
@@ -61,28 +69,35 @@ export const BriefDescription: FC<Props> = ({ trend, onClose, selectTrending }) 
 
   useEffect(() => {
     const audioElement = audioRef.current
-    const onAudioPlaybackComplete = () => setIsPlaying(false)
+
+    const onAudioPlaybackComplete = () => {
+      setIsPlaying(false)
+      setCurrentPlayingAudio(null)
+    }
 
     if (audioElement) {
       audioElement.addEventListener('ended', onAudioPlaybackComplete)
     }
 
-    window.addEventListener('keydown', handleClose)
-
     return () => {
       if (audioElement) {
         audioElement.removeEventListener('ended', onAudioPlaybackComplete)
       }
-
-      window.removeEventListener('keydown', handleClose)
     }
-  }, [handleClose])
+  }, [setCurrentPlayingAudio])
 
   const showPlayBtn =
     (currentPlayingAudio?.current?.src === trend.audio_EN && !currentPlayingAudio?.current?.paused) || isPlaying
 
   return (
-    <BaseModal id="briefDescription" kind="regular" noWrap onClose={handleClose} preventOutsideClose>
+    <BaseModal
+      data-testid="brief-description-modal"
+      id="briefDescription"
+      kind="regular"
+      noWrap
+      onClose={handleClose}
+      preventOutsideClose
+    >
       {trend.audio_EN ? (
         <>
           <StyledHeader>

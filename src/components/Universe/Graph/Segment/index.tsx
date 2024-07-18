@@ -3,7 +3,7 @@ import { useFrame } from '@react-three/fiber'
 import { useEffect, useRef, useState } from 'react'
 import { Vector3 } from 'three'
 import { NODE_RELATIVE_HIGHLIGHT_COLORS } from '~/constants'
-import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
+import { useGraphStore, useSelectedNode } from '~/stores/useGraphStore'
 import { Link } from '~/types'
 
 type Props = {
@@ -17,11 +17,11 @@ export const Segment = ({ link, animated }: Props) => {
   const [start, setStart] = useState(new Vector3(0, 0, 0))
   const [end, setEnd] = useState(new Vector3(0, 0, 0))
   const [color, setColor] = useState(0x888888)
-  const selectionGraphData = useDataStore((s) => s.selectionGraphData)
+  const selectionGraphData = useGraphStore((s) => s.selectionGraphData)
 
   useEffect(() => {
     const refId = selectedNode?.ref_id || ''
-    const linkIsSelected = selectedNode && (refId === link.targetRef || refId === link.sourceRef)
+    const linkIsSelected = selectedNode && (refId === link.target || refId === link.source)
 
     if (!link.onlyVisibleOnSelect || linkIsSelected) {
       setStart(new Vector3(link.sourcePosition?.x || 0, link.sourcePosition?.y || 0, link.sourcePosition?.z || 0))
@@ -44,13 +44,17 @@ export const Segment = ({ link, animated }: Props) => {
 
   useFrame(() => {
     if (animated && ref.current) {
-      const source = selectionGraphData.nodes.find((f) => f.ref_id === link.sourceRef)
-      const target = selectionGraphData.nodes.find((f) => f.ref_id === link.targetRef)
+      const source = selectionGraphData.nodes.find((f) => f.ref_id === link.source)
+      const target = selectionGraphData.nodes.find((f) => f.ref_id === link.target)
 
       ref.current.start.set(source?.x || 0, source?.y || 0, source?.z || 0)
       ref.current.end.set(target?.x || 0, target?.y || 0, target?.z || 0)
     }
   })
 
-  return <DreiSegment ref={ref} color={'0xFFFFFF' || color} end={end} start={start} />
+  return (
+    <>
+      <DreiSegment ref={ref} color={'0xFFFFFF' || color} end={end} start={start} />
+    </>
+  )
 }

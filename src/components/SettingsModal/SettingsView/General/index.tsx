@@ -27,7 +27,6 @@ export const General: FC<Props> = ({ initialValues }) => {
         setAppMetaData(data)
       }
     } catch (error) {
-      console.log(error)
       console.warn(error)
     }
   })

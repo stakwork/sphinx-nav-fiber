@@ -33,7 +33,7 @@ const defaults: Required<SimulationProps> = {
   disableCenter: false,
   disableLink: false,
   disableCharge: false,
-  forceCollideRadiusMethod: (n: NodeExtended) => (n.scale || 1) * 6 + 200,
+  forceCollideRadiusMethod: (n: NodeExtended) => (n.edge_count || 1) * 6 + 200,
   forceLinkDistanceMethod: (d: { source: NodeExtended; target: NodeExtended }) => {
     const sourceType = (d.source as NodeExtended).node_type
 

@@ -15,6 +15,7 @@ type Props = {
   selectedSchemaId: string
   setSelectedSchemaId: (id: string) => void
   setIsAddEdgeNode: (b: boolean) => void
+  onEdgeClick: (refId: string, edgeType: string, source: string, target: string) => void
 }
 
 const bgColor = new Color(0x000)
@@ -25,6 +26,7 @@ export const Graph = ({
   schemasWithPositions,
   setSelectedSchemaId,
   setIsAddEdgeNode,
+  onEdgeClick,
 }: Props) => (
   <Canvas camera={{ zoom: 1, position: [0, 0, 200] }} id="schema-canvas" linear orthographic>
     <color args={[bgColor.r, bgColor.g, bgColor.b]} attach="background" />
@@ -33,6 +35,7 @@ export const Graph = ({
     <Lights />
     <ForceGraph
       filteredLinks={links}
+      onEdgeClick={onEdgeClick}
       schemasWithPositions={schemasWithPositions}
       selectedSchemaId={selectedSchemaId}
       setIsAddEdgeNode={setIsAddEdgeNode}

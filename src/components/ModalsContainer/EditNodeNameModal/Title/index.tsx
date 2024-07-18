@@ -1,18 +1,23 @@
 import styled from 'styled-components'
+import EditNodeIcon from '~/components/Icons/EditNodeIcon'
 import { imageUrlRegex } from '~/components/ModalsContainer/EditNodeNameModal/utils'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { TextInput } from '~/components/common/TextInput'
-import { requiredRule } from '~/constants'
-import { colors } from '~/utils'
-import { useModal } from '~/stores/useModalStore'
-import EditNodeIcon from '~/components/Icons/EditNodeIcon'
 import { TypeBadge } from '~/components/common/TypeBadge'
-import { useSelectedNode } from '~/stores/useDataStore'
+import { requiredRule } from '~/constants'
+import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
+import { useSelectedNode } from '~/stores/useGraphStore'
+import { useModal } from '~/stores/useModalStore'
+import { colors } from '~/utils'
 
 export const TitleEditor = () => {
   const { open: openAddItemNodeModal } = useModal('changeNodeType')
   const { close } = useModal('editNodeName')
+
+  const { changeNodeTypeFeatureFlag } = useFeatureFlagStore((s) => ({
+    changeNodeTypeFeatureFlag: s.changeNodeTypeFeatureFlag,
+  }))
 
   const selectedNode = useSelectedNode()
   const nodeType = selectedNode?.node_type as string
@@ -29,10 +34,11 @@ export const TitleEditor = () => {
           <StyledText>Edit Node</StyledText>
           <LabelWrapper>
             <TypeBadge type={nodeType} />
-
-            <EditIconWrapper onClick={handleEditNode}>
-              <EditNodeIcon />
-            </EditIconWrapper>
+            {changeNodeTypeFeatureFlag && (
+              <EditIconWrapper onClick={handleEditNode}>
+                <EditNodeIcon />
+              </EditIconWrapper>
+            )}
           </LabelWrapper>
         </Flex>
       </Flex>

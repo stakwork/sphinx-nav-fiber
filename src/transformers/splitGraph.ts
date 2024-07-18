@@ -1,5 +1,4 @@
 import { Vector3 } from 'three'
-import { generateLinksFromNodeData } from '~/network/fetchGraphData/helpers/generateLinksFromNodeData'
 import { Link, NodeExtended } from '~/types'
 import { getMyChildren, getMyParents, sortNodesByHierarchy } from './helpers'
 
@@ -162,7 +161,7 @@ function generateNodePosition(node: NodeExtended, allNodes: NodeExtended[], mapp
   return new Vector3(center.x + perlinNoise * amp, center.y + perlinNoise * amp, center.z + perlinNoise * amp)
 }
 
-export const generateSplitGraphPositions = (nodes: NodeExtended[]) => {
+export const generateSplitGraphPositions = (nodes: NodeExtended[], links: Link[]) => {
   // sort parent then children
   const sortedNodes = sortNodesByHierarchy(nodes)
 
@@ -172,10 +171,10 @@ export const generateSplitGraphPositions = (nodes: NodeExtended[]) => {
     let position = new Vector3(0, 0, 0)
 
     switch (node.node_type) {
-      case 'guest':
+      case 'Guest':
         position = generateGuestNodePosition()
         break
-      case 'topic':
+      case 'Topic':
         position = generateTopicNodePosition()
         break
       case 'data_series':
@@ -196,7 +195,7 @@ export const generateSplitGraphPositions = (nodes: NodeExtended[]) => {
     return updated
   })
 
-  const links = generateLinksFromNodeData(updatedNodes, true, true)
+  // const links = generateLinksFromNodeData(updatedNodes, true, true)
 
   // do links
   const updatedLinks = links.map((l: Link) => {
@@ -204,12 +203,7 @@ export const generateSplitGraphPositions = (nodes: NodeExtended[]) => {
     const targetNode = updatedNodes.find((f) => f.ref_id === l.targetRef)
     let onlyVisibleOnSelect = false
 
-    if (
-      sourceNode?.node_type === 'guest' ||
-      sourceNode?.node_type === 'topic' ||
-      targetNode?.node_type === 'guest' ||
-      targetNode?.node_type === 'topic'
-    ) {
+    if (sourceNode?.node_type === 'Guest' || sourceNode?.node_type === 'Topic') {
       onlyVisibleOnSelect = true
     }
 
@@ -224,8 +218,10 @@ export const generateSplitGraphPositions = (nodes: NodeExtended[]) => {
     }
   })
 
+  console.log(updatedLinks)
+
   // sort back to weighted sort
   updatedNodes.sort((a, b) => (b.weight || 0) - (a.weight || 0))
 
-  return { nodes: updatedNodes, links: updatedLinks }
+  return { nodes: updatedNodes, links }
 }

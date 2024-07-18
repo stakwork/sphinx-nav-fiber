@@ -1,3 +1,5 @@
+/* eslint-disable padding-line-between-statements */
+import '@testing-library/jest-dom'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import React from 'react'
 import { BriefDescription } from '..'
@@ -7,7 +9,7 @@ window.React = React
 
 jest.mock('~/stores/useModalStore', () => ({
   ...jest.requireActual('~/stores/useModalStore'),
-  useModal: (id) => ({
+  useModal: (id: string) => ({
     close: jest.fn(),
     open: jest.fn(),
     visible: id === 'briefDescription',
@@ -25,6 +27,8 @@ const useAppStoreMock = useAppStore as jest.MockedFunction<typeof useAppStore>
 
 describe('BriefDescription Component Tests', () => {
   const trendMock = {
+    count: 1,
+    name: 'trend',
     audio_EN: 'fake-audio-url',
     tldr_topic: 'Test Topic',
     tldr: '',
@@ -33,7 +37,6 @@ describe('BriefDescription Component Tests', () => {
   const props = {
     onClose: jest.fn(),
     trend: trendMock,
-    selectTrending: jest.fn(),
   }
 
   beforeEach(() => {
@@ -116,5 +119,21 @@ describe('BriefDescription Component Tests', () => {
     setTimeout(() => {
       expect(onCloseMock).toHaveBeenCalled()
     }, 0)
+  })
+
+  it('does not close the modal on Command+Control+3 or Command+Control+4', () => {
+    const { getByTestId } = render(<BriefDescription {...props} />)
+
+    waitFor(() => {
+      const modal = getByTestId('brief-description-modal')
+
+      // With Command+Control+3
+      fireEvent.keyDown(window, { key: '3', ctrlKey: true, metaKey: true })
+      expect(modal).toBeInTheDocument()
+
+      // With Command+Control+4
+      fireEvent.keyDown(window, { key: '4', ctrlKey: true, metaKey: true })
+      expect(modal).toBeInTheDocument()
+    })
   })
 })

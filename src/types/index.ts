@@ -1,10 +1,26 @@
 /* eslint-disable camelcase */
 import { Mesh, Vector3 } from 'three'
 
+type QueryData = {
+  ref_id: string
+}
+
 export type FetchDataResponse = {
-  data_series?: { title: string }
-  exact: Node[]
-  related: Node[]
+  nodes: Node[]
+  edges: Link[]
+  query_data?: QueryData
+}
+
+export type FilterParams = {
+  skip: string
+  limit: string
+  depth: string
+  sort_by: string
+  top_node_count: string
+  include_properties: string
+  node_type: string[] | string
+  free?: string
+  word?: string // Add other optional filter properties as needed
 }
 
 export type TEdge = {
@@ -42,10 +58,12 @@ export type RadarRequest = {
 }
 
 export type NodeRequest = {
-  is_muted?: boolean
-  topic?: string
-  name?: string
-  image_url?: string
+  node_data: {
+    name?: string
+    is_muted?: boolean
+    topic?: string
+    image_url?: string
+  }
 }
 
 export type Node = {
@@ -54,6 +72,7 @@ export type Node = {
   x: number
   y: number
   z: number
+  edge_count: number
   hidden?: boolean
   colors?: string[]
   date?: number
@@ -72,7 +91,7 @@ export type Node = {
   link?: string
   name: string
   node_type: string
-  ref_id?: string
+  ref_id: string
   scale?: number
   show_title?: string
   text?: string
@@ -134,8 +153,10 @@ export type Link<T = string> = {
   source: T
   target: T
   color?: number
+  ref_id: string
   sourceRef?: T
   targetRef?: T
+  edge_type: string
   sourcePosition?: Vector3
   targetPosition?: Vector3
   onlyVisibleOnSelect?: boolean
@@ -143,7 +164,7 @@ export type Link<T = string> = {
 
 export type GraphData<T = string> = {
   links: Link<T>[]
-  nodes: NodeExtended[]
+  nodes: Node[]
 }
 
 export class NodeMesh extends Mesh {
@@ -217,6 +238,7 @@ export type IsAdminResponse = {
     queuedSources: boolean
     customSchema: boolean
     realtimeGraph: boolean
+    chatInterface: boolean
   }
   success: boolean
   message: string
@@ -261,4 +283,29 @@ export type RelayUser = {
   proxy_ip?: string
   admin_token?: string
   routeHint?: string
+}
+
+export type AiSummaryAnswerResponse = {
+  question: string
+  answer: string
+}
+
+export type AiSummarySourcesResponse = {
+  question: string
+  sources: { ref_id: string }[]
+}
+
+export type AiSummaryQuestionsResponse = {
+  question: string
+  relevant_questions: { question: string }[]
+}
+
+export type AIEntity = {
+  answer?: string
+  sources?: string[]
+  questions?: string[]
+  answerLoading?: boolean
+  sourcesLoading?: boolean
+  questionsLoading?: boolean
+  hasBeenRendered?: boolean
 }

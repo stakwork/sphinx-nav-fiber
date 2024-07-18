@@ -1,5 +1,6 @@
 import { memo, useEffect } from 'react'
-import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
+import { useDataStore } from '~/stores/useDataStore'
+import { useSelectedNode } from '~/stores/useGraphStore'
 import { usePlayerStore } from '~/stores/usePlayerStore'
 import { TeachMeText } from '../../Helper/TeachMe'
 import { Data } from '../Data'
@@ -14,8 +15,6 @@ import { TwitData } from '../TwitData'
 import { Default } from './Default'
 import { Document } from './Document'
 
-const MEDIA_TYPES = ['clip', 'twitter_space', 'video', 'episode', 'podcast']
-
 // eslint-disable-next-line no-underscore-dangle
 const _View = () => {
   const selectedNode = useSelectedNode()
@@ -24,7 +23,14 @@ const _View = () => {
   const { setPlayingNode } = usePlayerStore((s) => s)
 
   useEffect(() => {
-    if (MEDIA_TYPES.includes(selectedNode?.node_type || '')) {
+    if (!selectedNode) {
+      return
+    }
+
+    const media =
+      selectedNode.media_url || selectedNode.link || selectedNode.properties?.link || selectedNode.properties?.media_url
+
+    if (media) {
       setPlayingNode(selectedNode)
     }
   }, [setPlayingNode, selectedNode])
@@ -41,7 +47,7 @@ const _View = () => {
       return <Data />
     case 'tribe_message':
       return <Messages />
-    case 'tweet':
+    case 'Tweet':
       return <TwitData />
     case 'topic':
       return <Topic />
