@@ -52,7 +52,7 @@ export const UniverseQuestion = () => {
   const canSubmit = true
 
   const onEnterPress = async (e: React.KeyboardEvent) => {
-    if (e.keyCode === 13 && e.shiftKey === false && canSubmit) {
+    if (e.keyCode === 13 && e.shiftKey === false && canSubmit && question.trim().length > 0) {
       e.preventDefault()
       handleSubmitQuestion(question)
     }
