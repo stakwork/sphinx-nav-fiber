@@ -18,7 +18,12 @@ import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
 import { useUpdateSelectedNode } from '~/stores/useGraphStore'
 import { useTeachStore } from '~/stores/useTeachStore'
 import { useUserStore } from '~/stores/useUserStore'
-import { AiSummaryAnswerResponse, AiSummaryQuestionsResponse, AiSummarySourcesResponse } from '~/types'
+import {
+  AiSummaryAnswerResponse,
+  AiSummaryQuestionsResponse,
+  AiSummarySourcesResponse,
+  ExtractedEntitiesResponse,
+} from '~/types'
 import { colors } from '~/utils/colors'
 import { updateBudget } from '~/utils/setBudget'
 import version from '~/utils/versionHelper'
@@ -162,6 +167,15 @@ export const App = () => {
     [addNewNode],
   )
 
+  const handleExtractedEntities = useCallback(
+    (data: ExtractedEntitiesResponse) => {
+      if (data.question && getKeyExist(data.question)) {
+        setAiSummaryAnswer(data.question, { answerLoading: false, entities: data.entities })
+      }
+    },
+    [setAiSummaryAnswer, getKeyExist],
+  )
+
   // setup socket
   useEffect(() => {
     if (socket) {
@@ -172,6 +186,10 @@ export const App = () => {
       })
 
       socket.on('newnode', handleNewNode)
+
+      if (chatInterfaceFeatureFlag) {
+        socket.on('extractedentitieshook', handleExtractedEntities)
+      }
 
       // subscribe to ai_summary
       if (chatInterfaceFeatureFlag) {
@@ -205,6 +223,7 @@ export const App = () => {
     chatInterfaceFeatureFlag,
     handleAiRelevantQuestions,
     handleAiSources,
+    handleExtractedEntities,
   ])
 
   return (
