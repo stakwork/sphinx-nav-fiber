@@ -3,7 +3,9 @@ import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import * as sphinx from 'sphinx-bridge'
 import { BaseModal, ModalKind } from '~/components/Modal'
 import { NODE_ADD_ERROR } from '~/constants'
+import { postNewNodeItem } from '~/network/addItemRequest/addItemRequests'
 import { useDataStore } from '~/stores/useDataStore'
+import { useGraphStore } from '~/stores/useGraphStore'
 import { useModal } from '~/stores/useModalStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { NodeExtended } from '~/types'
@@ -14,7 +16,6 @@ import { CreateConfirmation } from './CreateConfirmationStep'
 import { SetAttributesStep } from './SetAttributesStep'
 import { SourceStep } from './SourceStep'
 import { SourceTypeStep } from './SourceTypeStep'
-import { postNewNodeItem } from '~/network/addItemRequest/addItemRequests'
 
 export type FormData = {
   typeName: string
@@ -41,6 +42,7 @@ const handleSubmitForm = async (
   const { nodeType, typeName, sourceLink, ...nodeData } = filteredNodeData
 
   let lsatToken = ''
+  let pubkey = ''
 
   if (nodeType !== 'Create custom type') {
     await executeIfProd(async () => {
@@ -48,13 +50,13 @@ const handleSubmitForm = async (
       // @ts-ignore
       const enable = await sphinx.enable()
 
-      nodeData.pubkey = enable?.pubkey
+      pubkey = enable?.pubkey
       lsatToken = await getLSat()
     })
   }
 
   try {
-    const res = await postNewNodeItem(nodeType, nodeData, sourceLink, typeName, lsatToken)
+    const res = await postNewNodeItem(nodeType, nodeData, sourceLink, typeName, lsatToken, pubkey)
 
     onAddNewData(data, res?.data?.ref_id)
 
@@ -85,7 +87,8 @@ export const AddItemModal = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [error, setError] = useState<string>('')
 
-  const [addNewNode, setSelectedNode] = useDataStore((s) => [s.addNewNode, s.setSelectedNode])
+  const [addNewNode] = useDataStore((s) => [s.addNewNode])
+  const [setSelectedNode] = useGraphStore((s) => [s.setSelectedNode])
 
   useEffect(
     () => () => {
@@ -129,6 +132,7 @@ export const AddItemModal = () => {
       label: data.typeName ?? data.name,
       node_type: newType,
       id: newId,
+      edge_count: 0,
       ref_id: newId,
       x: Math.random(),
       y: Math.random(),
@@ -141,7 +145,7 @@ export const AddItemModal = () => {
       },
     }
 
-    addNewNode(node)
+    addNewNode({ nodes: [node], links: [] })
 
     setSelectedNode(node)
   }

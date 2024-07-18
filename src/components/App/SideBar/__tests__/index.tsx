@@ -4,9 +4,12 @@ import '@testing-library/jest-dom'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import React from 'react'
 import { ThemeProvider as StyleThemeProvider } from 'styled-components'
+import { MemoryRouter } from 'react-router-dom'
 import { SideBar } from '..'
+import { api } from '../../../../network/api'
 import { AppStore, useAppStore } from '../../../../stores/useAppStore'
-import { DataStore, useDataStore, useFilteredNodes, useSelectedNode } from '../../../../stores/useDataStore'
+import { DataStore, useDataStore, useFilteredNodes } from '../../../../stores/useDataStore'
+import { colors } from '../../../../utils'
 import * as utils from '../../../../utils/relayHelper'
 import { appTheme } from '../../Providers'
 
@@ -60,7 +63,6 @@ jest.mock('~/stores/useAppStore', () => ({
   })),
 }))
 
-const useSelectedNodeMock = useSelectedNode as jest.MockedFunction<typeof useSelectedNode>
 const useFilteredNodesMock = useFilteredNodes as jest.MockedFunction<typeof useFilteredNodes>
 const useDataStoreMock = useDataStore as jest.MockedFunction<typeof useDataStore>
 const useAppStoreMock = useAppStore as jest.MockedFunction<typeof useAppStore>
@@ -83,7 +85,6 @@ const mockNode = {
 describe('Test SideBar', () => {
   beforeEach(() => {
     jest.clearAllMocks()
-    useSelectedNodeMock.mockReturnValue([])
     useFilteredNodesMock.mockReturnValue([mockNode])
   })
 
@@ -91,11 +92,13 @@ describe('Test SideBar', () => {
     useAppStoreMock.mockReturnValue({ setCurrentPlayingAudio: jest.fn(), sidebarIsOpen: false })
 
     const { container } = render(
-      <ThemeProvider theme={appTheme}>
-        <StyleThemeProvider theme={appTheme}>
-          <SideBar />
-        </StyleThemeProvider>
-      </ThemeProvider>,
+      <MemoryRouter>
+        <ThemeProvider theme={appTheme}>
+          <StyleThemeProvider theme={appTheme}>
+            <SideBar />
+          </StyleThemeProvider>
+        </ThemeProvider>
+      </MemoryRouter>,
     )
 
     expect(container.querySelector('#sidebar-wrapper')).not.toBeInTheDocument()
@@ -105,11 +108,13 @@ describe('Test SideBar', () => {
     useAppStoreMock.mockReturnValue({ setCurrentPlayingAudio: jest.fn(), sidebarIsOpen: true })
 
     const { container } = render(
-      <ThemeProvider theme={appTheme}>
-        <StyleThemeProvider theme={appTheme}>
-          <SideBar />
-        </StyleThemeProvider>
-      </ThemeProvider>,
+      <MemoryRouter>
+        <ThemeProvider theme={appTheme}>
+          <StyleThemeProvider theme={appTheme}>
+            <SideBar />
+          </StyleThemeProvider>
+        </ThemeProvider>
+      </MemoryRouter>,
     )
 
     expect(container.querySelector('#sidebar-wrapper')).toBeInTheDocument()
@@ -125,11 +130,13 @@ describe('Test SideBar', () => {
     })
 
     render(
-      <ThemeProvider theme={appTheme}>
-        <StyleThemeProvider theme={appTheme}>
-          <SideBar onSubmit={onSubmitMock} />
-        </StyleThemeProvider>
-      </ThemeProvider>,
+      <MemoryRouter>
+        <ThemeProvider theme={appTheme}>
+          <StyleThemeProvider theme={appTheme}>
+            <SideBar />
+          </StyleThemeProvider>
+        </ThemeProvider>
+      </MemoryRouter>,
     )
 
     const searchInput = screen.getByPlaceholderText('Search') as HTMLInputElement
@@ -158,11 +165,13 @@ describe('Test SideBar', () => {
     })
 
     render(
-      <ThemeProvider theme={appTheme}>
-        <StyleThemeProvider theme={appTheme}>
-          <SideBar />
-        </StyleThemeProvider>
-      </ThemeProvider>,
+      <MemoryRouter>
+        <ThemeProvider theme={appTheme}>
+          <StyleThemeProvider theme={appTheme}>
+            <SideBar />
+          </StyleThemeProvider>
+        </ThemeProvider>
+      </MemoryRouter>,
     )
 
     const clearIcon = screen.getByTestId('clear-icon')
@@ -181,11 +190,13 @@ describe('Test SideBar', () => {
     useAppStoreMock.mockReturnValue({ setCurrentPlayingAudio: jest.fn(), currentSearch: '', sidebarIsOpen: true })
 
     render(
-      <ThemeProvider theme={appTheme}>
-        <StyleThemeProvider theme={appTheme}>
-          <SideBar />
-        </StyleThemeProvider>
-      </ThemeProvider>,
+      <MemoryRouter>
+        <ThemeProvider theme={appTheme}>
+          <StyleThemeProvider theme={appTheme}>
+            <SideBar />
+          </StyleThemeProvider>
+        </ThemeProvider>
+      </MemoryRouter>,
     )
 
     const searchIcon = screen.getByTestId('search-icon')
@@ -197,11 +208,13 @@ describe('Test SideBar', () => {
     useAppStoreMock.mockReturnValue({ setCurrentPlayingAudio: jest.fn(), currentSearch: '', sidebarIsOpen: true })
 
     render(
-      <ThemeProvider theme={appTheme}>
-        <StyleThemeProvider theme={appTheme}>
-          <SideBar />
-        </StyleThemeProvider>
-      </ThemeProvider>,
+      <MemoryRouter>
+        <ThemeProvider theme={appTheme}>
+          <StyleThemeProvider theme={appTheme}>
+            <SideBar />
+          </StyleThemeProvider>
+        </ThemeProvider>
+      </MemoryRouter>,
     )
 
     expect(screen.getByTestId('trending-component')).toBeInTheDocument()
@@ -216,11 +229,13 @@ describe('Test SideBar', () => {
     })
 
     render(
-      <ThemeProvider theme={appTheme}>
-        <StyleThemeProvider theme={appTheme}>
-          <SideBar />
-        </StyleThemeProvider>
-      </ThemeProvider>,
+      <MemoryRouter>
+        <ThemeProvider theme={appTheme}>
+          <StyleThemeProvider theme={appTheme}>
+            <SideBar />
+          </StyleThemeProvider>
+        </ThemeProvider>
+      </MemoryRouter>,
     )
 
     const ClipLoader = screen.getByTestId('loader')
@@ -238,11 +253,13 @@ describe('Test SideBar', () => {
     })
 
     render(
-      <ThemeProvider theme={appTheme}>
-        <StyleThemeProvider theme={appTheme}>
-          <SideBar />
-        </StyleThemeProvider>
-      </ThemeProvider>,
+      <MemoryRouter>
+        <ThemeProvider theme={appTheme}>
+          <StyleThemeProvider theme={appTheme}>
+            <SideBar />
+          </StyleThemeProvider>
+        </ThemeProvider>
+      </MemoryRouter>,
     )
 
     // confirms that LatestView is rendered
@@ -269,11 +286,13 @@ describe('Test SideBar', () => {
     })
 
     render(
-      <ThemeProvider theme={appTheme}>
-        <StyleThemeProvider theme={appTheme}>
-          <SideBar />
-        </StyleThemeProvider>
-      </ThemeProvider>,
+      <MemoryRouter>
+        <ThemeProvider theme={appTheme}>
+          <StyleThemeProvider theme={appTheme}>
+            <SideBar />
+          </StyleThemeProvider>
+        </ThemeProvider>
+      </MemoryRouter>,
     )
 
     const searchInput = screen.getByPlaceholderText('Search') as HTMLInputElement
@@ -308,11 +327,13 @@ describe('Test SideBar', () => {
     })
 
     render(
-      <ThemeProvider theme={appTheme}>
-        <StyleThemeProvider theme={appTheme}>
-          <SideBar />
-        </StyleThemeProvider>
-      </ThemeProvider>,
+      <MemoryRouter>
+        <ThemeProvider theme={appTheme}>
+          <StyleThemeProvider theme={appTheme}>
+            <SideBar />
+          </StyleThemeProvider>
+        </ThemeProvider>
+      </MemoryRouter>,
     )
 
     const searchInput = screen.getByPlaceholderText('Search') as HTMLInputElement
@@ -324,6 +345,55 @@ describe('Test SideBar', () => {
         expect(setSelectedNodeMock).not.toHaveBeenCalledWith(mockNode)
         expect(saveConsumedContentMock).not.toHaveBeenCalledWith(mockNode)
         expect(setRelevanceSelectedMock).not.toHaveBeenCalledWith(true)
+      })
+    })()
+  })
+
+  it('Test filter icon functionality and schema filtering', () => {
+    const mockSchemas = [{ type: 'Type1' }, { type: 'Type2' }, { type: 'Type3' }]
+
+    jest.spyOn(api, 'get').mockResolvedValue({ schemas: mockSchemas })
+
+    useAppStoreMock.mockReturnValue({
+      setCurrentPlayingAudio: jest.fn(),
+      sidebarIsOpen: true,
+      setSidebarOpen: jest.fn(),
+      clearSearch: jest.fn(),
+      currentSearch: '',
+      searchFormValue: '',
+    })
+
+    render(
+      <MemoryRouter>
+        <ThemeProvider theme={appTheme}>
+          <StyleThemeProvider theme={appTheme}>
+            <SideBar />
+          </StyleThemeProvider>
+        </ThemeProvider>
+      </MemoryRouter>,
+    )
+    ;(async () => {
+      await waitFor(() => {
+        const filterIcon = screen.getByTestId('search_filter_icon')
+        fireEvent.click(filterIcon)
+
+        expect(api.get).toHaveBeenCalledWith('/schema/all')
+
+        mockSchemas.forEach((schema) => {
+          expect(screen.getByText(schema.type)).toBeInTheDocument()
+        })
+
+        const type1Pill = screen.getByText('Type1')
+        fireEvent.click(type1Pill)
+
+        expect(type1Pill).toHaveStyle(`background: ${colors.white}`)
+        expect(type1Pill).toHaveStyle(`color: ${colors.black}`)
+
+        const selectedCount = screen.getByText('1')
+        expect(selectedCount).toBeInTheDocument()
+
+        fireEvent.click(filterIcon)
+        expect(screen.queryByText('Type1')).not.toBeInTheDocument()
       })
     })()
   })

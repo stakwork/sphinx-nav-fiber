@@ -1,6 +1,6 @@
 export const fontProps = {
   font: '/fonts/Inter-Bold.woff',
-  characters: 'abcdefghijklmnopqrstuvwxyz0123456789!',
+  characters: 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!',
   fontSize: 2,
   letterSpacing: -0.05,
   lineHeight: 1,

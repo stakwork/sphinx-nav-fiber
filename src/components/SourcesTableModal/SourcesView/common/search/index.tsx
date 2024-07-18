@@ -44,7 +44,9 @@ const Search: React.FC<SearchProps> = ({
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const trimmedValue = e.target.value.trim()
 
-    setSearchTerm(trimmedValue)
+    const { value } = e.target
+
+    setSearchTerm(value)
 
     if (!trimmedValue) {
       resetSearch()

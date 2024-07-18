@@ -24,12 +24,25 @@ export type parsedObjProps = {
 
 export function parseJson(object: { [k: string]: string }): parsedObjProps[] {
   return Object.keys(object)
-    .map((key) => ({
-      required: !object[key].includes('?'),
-      type: !object[key].includes('?') ? object[key] : object[key].slice(1),
-      key,
-    }))
-    .filter(({ key }) => !['type', 'ref_id', 'parent'].includes(key)) // exclude
+    .map((key) => {
+      const value = object[key]
+      let type = ''
+
+      if (typeof value === 'string') {
+        if (value.includes('?')) {
+          type = value.slice(1)
+        } else {
+          type = value
+        }
+      }
+
+      return {
+        required: type ? !value.includes('?') : false,
+        type,
+        key,
+      }
+    })
+    .filter(({ key, type }) => !['type', 'ref_id', 'parent'].includes(key) && type)
 }
 
 export const getLoopControlPoints = (center: Vector3): [Vector3, Vector3, Vector3] => {
@@ -38,12 +51,4 @@ export const getLoopControlPoints = (center: Vector3): [Vector3, Vector3, Vector
   const endPoint = new Vector3(center.x, center.y, center.z)
 
   return [controlPoint1, endPoint, controlPoint2]
-}
-
-export const truncateText = (text: string, maxLength: number) => {
-  if (text.length > maxLength) {
-    return `${text.substring(0, maxLength)}...`
-  }
-
-  return text
 }

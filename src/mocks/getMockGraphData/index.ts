@@ -1,5 +1,5 @@
 import getLinks from './links'
-import getNodes from './nodes'
+import { getNodes } from './nodes'
 
 import { isChileGraph } from '~/constants'
 import getLinksChile from './linksChile'

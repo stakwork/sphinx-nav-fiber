@@ -22,4 +22,22 @@ export const sourceUrlRegex = new RegExp(
   'i',
 )
 
-export const validateSourceURL = (input: string) => sourceUrlRegex.test(input)
+export const validateSourceURL = (input: string) => {
+  const match = input?.match(sourceUrlRegex)
+
+  if (match) {
+    // Extract domain from input
+    const url = new URL(input)
+    const domain = url.hostname
+
+    if (domain?.startsWith('www.')) {
+      // Check for two dots if 'www.' is present
+      return (domain?.match(/\./g) || []).length >= 2
+    }
+    // Check for one dot if 'www.' is not present
+
+    return (domain?.match(/\./g) || []).length >= 1
+  }
+
+  return false
+}

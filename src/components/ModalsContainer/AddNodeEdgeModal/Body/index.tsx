@@ -2,14 +2,14 @@ import { Button } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { ClipLoader } from 'react-spinners'
+import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { getEdges, postEdgeType } from '~/network/fetchSourcesData'
-import { useSelectedNode } from '~/stores/useDataStore'
+import { useSelectedNode } from '~/stores/useGraphStore'
 import { useModal } from '~/stores/useModalStore'
 import { TEdge } from '~/types'
 import { colors } from '~/utils/colors'
 import { TitleEditor } from '../Title'
-import styled from 'styled-components'
 
 export type FormData = {
   topic: string

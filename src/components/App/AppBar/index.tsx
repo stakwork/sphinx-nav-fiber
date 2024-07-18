@@ -23,7 +23,7 @@ export const AppBar = () => {
             </Text>
           )}
         </>
-        <Text className="subtitle"> Second Brain</Text>
+        <Text className="subtitle">Second Brain</Text>
       </TitleWrapper>
       <Stats />
     </Header>
@@ -71,5 +71,6 @@ const TitleWrapper = styled.div`
     font-weight: 400;
     line-height: 16px;
     letter-spacing: 0.22px;
+    margin-left: 8px;
   }
 `

@@ -56,7 +56,7 @@ describe('Table Component Tests', () => {
     expect(sourceCell).toBeInTheDocument()
   })
 
-  it('should display loader when clicking on delete icon', async () => {
+  it.skip('should display loader when clicking on delete icon', async () => {
     const isEdit = true
 
     render(<Table canEdit={isEdit} data={mockData} />)

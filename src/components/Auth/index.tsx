@@ -9,7 +9,7 @@ import { useDataStore } from '~/stores/useDataStore'
 import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { sphinxBridge } from '~/testSphinxBridge'
-import { getSignedMessageFromRelay, updateBudget } from '~/utils'
+import { updateBudget } from '~/utils'
 import { Splash } from '../App/Splash'
 
 export const AuthGuard = ({ children }: PropsWithChildren) => {
@@ -22,11 +22,13 @@ export const AuthGuard = ({ children }: PropsWithChildren) => {
     setQueuedSourcesFeatureFlag,
     setCustomSchemaFeatureFlag,
     setRealtimeGraphFeatureFlag,
+    setChatInterfaceFeatureFlag,
   ] = useFeatureFlagStore((s) => [
     s.setTrendingTopicsFeatureFlag,
     s.setQueuedSourcesFeatureFlag,
     s.setCustomSchemaFeatureFlag,
     s.setRealtimeGraphFeatureFlag,
+    s.setChatInterfaceFeatureFlag,
   ])
 
   const handleAuth = useCallback(async () => {
@@ -54,12 +56,7 @@ export const AuthGuard = ({ children }: PropsWithChildren) => {
     await updateBudget(setBudget)
 
     try {
-      const sigAndMessage = await getSignedMessageFromRelay()
-
-      const res = await getIsAdmin({
-        message: sigAndMessage.message,
-        signature: sigAndMessage.signature,
-      })
+      const res = await getIsAdmin()
 
       if (!res.data.isPublic && !res.data.isAdmin && !res.data.isMember) {
         setUnauthorized(true)
@@ -75,6 +72,7 @@ export const AuthGuard = ({ children }: PropsWithChildren) => {
         setQueuedSourcesFeatureFlag(res.data.queuedSources)
         setCustomSchemaFeatureFlag(res.data.customSchema)
         setRealtimeGraphFeatureFlag(res.data.realtimeGraph || false)
+        setChatInterfaceFeatureFlag(res.data.chatInterface || false)
       }
 
       setIsAuthenticated(true)
@@ -94,6 +92,7 @@ export const AuthGuard = ({ children }: PropsWithChildren) => {
     setQueuedSourcesFeatureFlag,
     setCustomSchemaFeatureFlag,
     setRealtimeGraphFeatureFlag,
+    setChatInterfaceFeatureFlag,
   ])
 
   // auth checker
