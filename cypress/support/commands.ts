@@ -34,7 +34,7 @@ import '@testing-library/cypress/add-commands'
 Cypress.Commands.add('initialSetup', (username, budget) => {
   cy.intercept({
     method: 'GET',
-    url: 'http://localhost:8444/api/prediction/content/latest*',
+    url: 'http://localhost:8444/api/prediction/graph/search*',
   }).as('loadLatest')
 
   cy.intercept({
@@ -62,5 +62,5 @@ Cypress.Commands.add('initialSetup', (username, budget) => {
     },
   })
 
-  cy.wait(['@loadAbout', '@loadLatest', '@loadStats', '@getTrends'])
+  cy.wait(['@loadAbout', '@loadStats', '@getTrends'])
 })

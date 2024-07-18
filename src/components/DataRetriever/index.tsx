@@ -1,7 +1,7 @@
-import invariant from 'invariant'
 import { PropsWithChildren, useCallback, useEffect } from 'react'
 import { Vector3 } from 'three'
-import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
+import { useDataStore } from '~/stores/useDataStore'
+import { useGraphStore, useSelectedNode } from '~/stores/useGraphStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { NodeExtended } from '~/types'
 import { PATHWAY_RANGE } from './constants'
@@ -20,11 +20,14 @@ export const DataRetriever = ({ children }: Props) => {
 }
 
 export const useGraphData = () => {
-  const data = useDataStore((s) => s.data)
+  const { simulation, simulationHelpers } = useGraphStore((s) => s)
 
-  invariant(data !== null, 'This hook is meant to be used inside a DataRetriever component')
+  // invariant(data !== null, 'This hook is meant to be used inside a DataRetriever component')
 
-  return data
+  return {
+    nodes: simulation?.nodes() || [],
+    links: simulationHelpers.getLinks(),
+  }
 }
 
 type BadgeProps = {
@@ -36,7 +39,7 @@ type BadgeProps = {
 export const usePathway = () => {
   const selectedNode = useSelectedNode()
 
-  return useDataStore(
+  return useGraphStore(
     useCallback(
       (s) => {
         const nodes = s.showSelectionGraph ? [] : s.data!.nodes || []

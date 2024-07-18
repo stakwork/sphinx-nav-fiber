@@ -9,7 +9,7 @@ export type FeatureFlagStore = {
   changeNodeTypeFeatureFlag: boolean
   realtimeGraphFeatureFlag: boolean
   userFeedbackFeatureFlag: boolean
-  searchFilteringFeatureFlag: boolean
+  chatInterfaceFeatureFlag: boolean
   setTrendingTopicsFeatureFlag: (val: boolean) => void
   setV2FeatureFlag: (val: boolean) => void
   setQueuedSourcesFeatureFlag: (val: boolean) => void
@@ -18,7 +18,7 @@ export type FeatureFlagStore = {
   setChangeNodeTypeFeatureFlag: (val: boolean) => void
   setRealtimeGraphFeatureFlag: (val: boolean) => void
   setUserFeedbackFeatureFlag: (val: boolean) => void
-  setSearchFilteringFeatureFlag: (val: boolean) => void
+  setChatInterfaceFeatureFlag: (val: boolean) => void
 }
 
 const defaultData: Omit<
@@ -31,7 +31,7 @@ const defaultData: Omit<
   | 'setChangeNodeTypeFeatureFlag'
   | 'setRealtimeGraphFeatureFlag'
   | 'setUserFeedbackFeatureFlag'
-  | 'setSearchFilteringFeatureFlag'
+  | 'setChatInterfaceFeatureFlag'
 > = {
   trendingTopicsFeatureFlag: true,
   queuedSourcesFeatureFlag: false,
@@ -41,7 +41,7 @@ const defaultData: Omit<
   changeNodeTypeFeatureFlag: false,
   realtimeGraphFeatureFlag: false,
   userFeedbackFeatureFlag: false,
-  searchFilteringFeatureFlag: false,
+  chatInterfaceFeatureFlag: false,
 }
 
 export const useFeatureFlagStore = create<FeatureFlagStore>((set) => ({
@@ -54,5 +54,5 @@ export const useFeatureFlagStore = create<FeatureFlagStore>((set) => ({
   setChangeNodeTypeFeatureFlag: (changeNodeTypeFeatureFlag) => set({ changeNodeTypeFeatureFlag }),
   setRealtimeGraphFeatureFlag: (realtimeGraphFeatureFlag) => set({ realtimeGraphFeatureFlag }),
   setUserFeedbackFeatureFlag: (userFeedbackFeatureFlag) => set({ userFeedbackFeatureFlag }),
-  setSearchFilteringFeatureFlag: (searchFilteringFeatureFlag) => set({ searchFilteringFeatureFlag }),
+  setChatInterfaceFeatureFlag: (chatInterfaceFeatureFlag) => set({ chatInterfaceFeatureFlag }),
 }))

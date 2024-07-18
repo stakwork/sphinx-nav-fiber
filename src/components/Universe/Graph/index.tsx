@@ -1,99 +1,130 @@
-import { Segments } from '@react-three/drei'
-import { useMemo } from 'react'
-import { Vector3 } from 'three'
+import { isEqual } from 'lodash'
+import { useEffect, useRef } from 'react'
+import { Color, Group } from 'three'
+import { Line2 } from 'three-stdlib'
 import { useDataStore } from '~/stores/useDataStore'
-import { Link } from '~/types'
-import { maxChildrenDisplayed } from '../constants'
+import { useGraphStore } from '~/stores/useGraphStore'
+import { NodeExtended } from '~/types'
+import { Connections } from './Connections'
 import { Cubes } from './Cubes'
 import { Earth } from './Earth'
+import { LoadingNodes } from './LoadingNodes'
 import { Particles } from './Particles'
-import { Segment } from './Segment'
 import { NodeDetailsPanel } from './UI'
 
+export type LinkPosition = {
+  sx: number
+  sy: number
+  sz: number
+  tx: number
+  ty: number
+  tz: number
+}
+
 export const Graph = () => {
-  const data = useDataStore((s) => s.data)
-  const isLoading = useDataStore((s) => s.isFetching)
-  const graphStyle = useDataStore((s) => s.graphStyle)
-  const showSelectionGraph = useDataStore((s) => s.showSelectionGraph)
-  const selectedNodeRelativeIds = useDataStore((s) => s.selectedNodeRelativeIds)
-  const selectionGraphData = useDataStore((s) => s.selectionGraphData)
-  const selectedNode = useDataStore((s) => s.selectedNode)
+  const { dataInitial, isLoadingNew, isFetching, dataNew, resetDataNew } = useDataStore((s) => s)
+  const groupRef = useRef<Group>(null)
+  const linksPositionRef = useRef<LinkPosition[]>([])
 
-  const lineWidth = useMemo(() => {
-    if (showSelectionGraph) {
-      return 0
+  const { setData, simulation, simulationCreate, simulationHelpers, graphStyle } = useGraphStore((s) => s)
+
+  useEffect(() => {
+    if (!dataNew) {
+      return
     }
 
-    if (graphStyle === 'force') {
-      return 0.2
+    const nodes = dataNew.nodes || []
+    const links = dataNew.links || []
+
+    const nodesClose = structuredClone(nodes)
+    const linksClone = structuredClone(links)
+
+    if (simulation) {
+      const replace = isEqual(dataNew, dataInitial)
+
+      simulationHelpers.addNodesAndLinks(nodesClose, linksClone, replace)
     }
 
-    return 0.4
-  }, [showSelectionGraph, graphStyle])
+    if (!simulation) {
+      simulationCreate(nodesClose, linksClone)
+    }
 
-  const nodeBadges = useMemo(() => {
-    const nodes = showSelectionGraph ? selectionGraphData.nodes : data?.nodes || []
+    resetDataNew()
+  }, [setData, dataNew, simulation, simulationCreate, resetDataNew, simulationHelpers, dataInitial])
 
-    const childIds = nodes
-      .filter((f) => selectedNodeRelativeIds.includes(f?.ref_id || '') || selectedNode?.ref_id === f?.ref_id)
-      .slice(0, maxChildrenDisplayed)
+  useEffect(() => {
+    if (!simulation) {
+      return
+    }
 
-    const badgesToRender = childIds.map((n) => {
-      // const relativeIds =
-      // (data?.nodes || []).filter((f) => f.ref_id && nodesAreRelatives(f, n)).map((nd) => nd?.ref_id || '') || []
+    simulationHelpers.setForces()
+  }, [graphStyle, simulationHelpers, simulation])
 
-      const spos = new Vector3(selectedNode?.x, selectedNode?.y, selectedNode?.z)
+  useEffect(() => {
+    if (!simulation) {
+      return
+    }
 
-      const tpos = new Vector3(n.x, n.y, n.z)
+    simulation.on('tick', () => {
+      if (groupRef.current) {
+        const gr = groupRef.current.getObjectByName('simulation-3d-group__nodes') as Group
+        const grConnections = groupRef.current.getObjectByName('simulation-3d-group__connections') as Group
 
-      const l: Link<string> = {
-        source: selectedNode?.id ? selectedNode.id : '',
-        target: n.id ? n.id : '',
-        targetRef: n.ref_id,
-        sourceRef: selectedNode?.ref_id,
-        sourcePosition: spos,
-        targetPosition: tpos,
+        gr.children.forEach((mesh, index) => {
+          const simulationNode = simulation.nodes()[index]
+
+          if (simulationNode) {
+            mesh.position.set(simulationNode.x, simulationNode.y, simulationNode.z)
+          }
+        })
+
+        grConnections.children.forEach((r, i) => {
+          const link = dataInitial?.links[i]
+          const Line = r as Line2
+
+          if (link) {
+            const sourceNode = simulation.nodes().find((n: NodeExtended) => n.ref_id === link.source)
+            const targetNode = simulation.nodes().find((n: NodeExtended) => n.ref_id === link.target)
+
+            const { x: sx, y: sy, z: sz } = sourceNode
+            const { x: tx, y: ty, z: tz } = targetNode
+
+            linksPositionRef.current[i] = {
+              sx,
+              sy,
+              sz,
+              tx,
+              ty,
+              tz,
+            }
+
+            Line.geometry.setPositions([sx, sy, sz, tx, ty, tz])
+
+            const { material } = Line
+
+            material.color = new Color('white')
+            material.transparent = true
+            material.opacity = 0.1
+          }
+        })
       }
-
-      return (
-        <Segment
-          // eslint-disable-next-line react/no-array-index-key
-          key={n.id}
-          link={l}
-        />
-      )
     })
+  }, [dataInitial, simulation])
 
-    return badgesToRender
-  }, [selectedNodeRelativeIds, data?.nodes, showSelectionGraph, selectionGraphData, selectedNode])
-
-  if (isLoading) {
+  if (!simulation) {
     return null
   }
 
   return (
-    <>
+    <group ref={groupRef}>
       <Cubes />
       <Earth />
 
-      <Particles />
+      {false && <Particles />}
+      {(isLoadingNew || isFetching) && <LoadingNodes />}
 
-      {graphStyle !== 'earth' && (
-        <Segments
-          /** NOTE: using the key in this way the segments re-mounts
-           *  everytime the data.links count changes
-           * */
-          key={`links-${nodeBadges.length}-${graphStyle}`}
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          fog
-          limit={nodeBadges.length}
-          lineWidth={lineWidth}
-        >
-          {nodeBadges}
-        </Segments>
-      )}
+      {graphStyle !== 'earth' && <Connections linksPositions={linksPositionRef.current} />}
       <NodeDetailsPanel />
-    </>
+    </group>
   )
 }

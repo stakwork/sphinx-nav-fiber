@@ -1,19 +1,16 @@
-import { Button } from '@mui/material'
-import Popover from '@mui/material/Popover'
+import { Button, Popper } from '@mui/material'
 import styled from 'styled-components'
 import ClearIcon from '~/components/Icons/ClearIcon'
 import PlusIcon from '~/components/Icons/PlusIcon'
 import { SchemaExtended } from '~/components/ModalsContainer/BlueprintModal/types'
 import { Flex } from '~/components/common/Flex'
-import { api } from '~/network/api'
 import { colors } from '~/utils/colors'
 
 type Props = {
   showAllSchemas: boolean
   setShowAllSchemas: (value: boolean) => void
   setSelectedTypes: (value: string[] | ((prevSelectedTypes: string[]) => string[])) => void
-  setIsFilterOpen: (value: boolean) => void
-  setAnchorEl: (value: HTMLElement | null) => void
+  handleApply: () => void
   selectedTypes: string[]
   schemaAll: SchemaExtended[]
   anchorEl: HTMLElement | null
@@ -23,8 +20,7 @@ export const FilterSearch = ({
   showAllSchemas,
   setShowAllSchemas,
   setSelectedTypes,
-  setIsFilterOpen,
-  setAnchorEl,
+  handleApply,
   selectedTypes,
   schemaAll,
   anchorEl,
@@ -39,20 +35,6 @@ export const FilterSearch = ({
     setSelectedTypes([])
   }
 
-  const handleSave = async () => {
-    const endPoint = 'graph/search'
-
-    const queryParams = new URLSearchParams({
-      node_type: selectedTypes.join(','),
-    })
-
-    try {
-      await api.get(`/${endPoint}?${queryParams.toString()}`)
-    } catch (error) {
-      console.warn(error)
-    }
-  }
-
   const handleViewMoreClick = () => {
     setShowAllSchemas(true)
   }
@@ -60,29 +42,17 @@ export const FilterSearch = ({
   return (
     <SearchFilterPopover
       anchorEl={anchorEl}
-      anchorOrigin={{
-        vertical: 'bottom',
-        horizontal: 'left',
-      }}
-      anchorPosition={{
-        top: 200,
-        left: 0,
-      }}
-      onClose={() => {
-        setAnchorEl(null)
-        setIsFilterOpen(false)
-      }}
-      open={Boolean(anchorEl)}
-      PaperProps={{
-        style: {
-          marginTop: '13px',
-          marginLeft: '30px',
+      disablePortal
+      modifiers={[
+        {
+          name: 'offset',
+          options: {
+            offset: [0, 10],
+          },
         },
-      }}
-      transformOrigin={{
-        vertical: 'top',
-        horizontal: 'right',
-      }}
+      ]}
+      open={Boolean(anchorEl)}
+      placement="bottom-end"
     >
       <PopoverHeader>
         <div>Type</div>
@@ -93,7 +63,7 @@ export const FilterSearch = ({
       </PopoverHeader>
       <PopoverBody>
         <SchemaTypeWrapper>
-          {(showAllSchemas ? schemaAll : schemaAll.slice(0, 15)).map((schema) => (
+          {(showAllSchemas ? schemaAll : schemaAll.slice(0, 4)).map((schema) => (
             <SchemaType
               key={schema.type}
               isSelected={selectedTypes.includes(schema.type as string)}
@@ -103,7 +73,7 @@ export const FilterSearch = ({
             </SchemaType>
           ))}
         </SchemaTypeWrapper>
-        {!showAllSchemas && schemaAll.length > 15 && (
+        {!showAllSchemas && schemaAll.length > 4 && (
           <ViewMoreButton onClick={handleViewMoreClick}>
             <PlusIconWrapper>
               <PlusIcon /> View More
@@ -126,7 +96,7 @@ export const FilterSearch = ({
             </ClearButtonWrapper>
             Clear
           </ClearButton>
-          <ShowResultButton color="secondary" onClick={handleSave} size="large" variant="contained">
+          <ShowResultButton color="secondary" onClick={handleApply} size="large" variant="contained">
             Show Results
           </ShowResultButton>
         </Flex>
@@ -135,8 +105,8 @@ export const FilterSearch = ({
   )
 }
 
-const SearchFilterPopover = styled(Popover)`
-  .MuiPaper-root {
+const SearchFilterPopover = styled(Popper)`
+  &&.MuiPopper-root {
     background: ${colors.BG2};
     padding: 16px;
     min-width: 360px;
@@ -145,6 +115,7 @@ const SearchFilterPopover = styled(Popover)`
     border-radius: 9px;
     max-width: 361px;
     border: 1px solid ${colors.black};
+    z-index: 100;
   }
 `
 

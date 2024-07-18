@@ -2,10 +2,9 @@ import { useTexture } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import { useLayoutEffect, useMemo, useRef } from 'react'
 import { DoubleSide, Mesh, MeshStandardMaterial, Vector3 } from 'three'
-import { useDataStore } from '~/stores/useDataStore'
+import { useGraphStore } from '~/stores/useGraphStore'
 import { useRefStore } from '~/stores/useRefStore'
 import { EARTH_RADIUS } from '~/transformers/earthGraph'
-import { CurvedLine } from '../CurvedLine'
 
 const center = new Vector3(0, 0, 0)
 
@@ -13,11 +12,9 @@ export const Earth = () => {
   const ref = useRef<Mesh | null>(null)
   const lightRef = useRef<THREE.DirectionalLight | null>(null)
 
-  const graphStyle = useDataStore((s) => s.graphStyle)
+  const { graphStyle, showSelectionGraph } = useGraphStore((s) => s)
 
-  const showSelectionGraph = useDataStore((s) => s.showSelectionGraph)
-
-  const data = useDataStore((s) => s.data)
+  // const data = useDataStore((s) => s.data)
 
   const setEarthRef = useRefStore((s) => s.setEarthRef)
 
@@ -60,10 +57,10 @@ export const Earth = () => {
 
       <directionalLight ref={lightRef} intensity={0.9} position={[0, 0, EARTH_RADIUS * 3]} />
 
-      {data?.links.map((link, i) => (
+      {/* {data?.links.map((link, i) => (
         // eslint-disable-next-line react/no-array-index-key
         <CurvedLine key={`curved-${i}`} link={link} />
-      ))}
+      ))} */}
     </>
   )
 }

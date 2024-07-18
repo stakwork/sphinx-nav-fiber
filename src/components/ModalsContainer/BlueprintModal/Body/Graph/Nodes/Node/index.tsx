@@ -4,9 +4,9 @@ import { useDrag } from '@use-gesture/react'
 import { memo, useRef, useState } from 'react'
 import styled from 'styled-components'
 import { BoxGeometry, Mesh, Vector3 } from 'three'
-import { truncateText } from '~/components/ModalsContainer/BlueprintModal/Body/Editor/utils'
 import { SchemaExtended } from '~/components/ModalsContainer/BlueprintModal/types'
 import { fontProps } from '~/components/Universe/Graph/Cubes/Text/constants'
+import { truncateText } from '~/utils/truncateText'
 import { NODE_RADIUS } from '../../constants'
 
 export const NODE_TYPE_COLORS = ['#ff13c9', '#5af0ff', '#3233ff', '#c2f0c2', '#ff6666', '#99ccff', '#ffb3b3']
@@ -130,6 +130,7 @@ export const Node = memo(({ node, setSelectedNode, onSimulationUpdate, isSelecte
         color="#000"
         fontSize={2}
         maxWidth={NODE_RADIUS * 2}
+        name={node.type}
         textAlign="left"
       >
         {truncatedText}

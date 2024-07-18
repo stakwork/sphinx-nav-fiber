@@ -1,5 +1,4 @@
 import { Vector3 } from 'three'
-import { generateLinksFromNodeData } from '~/network/fetchGraphData/helpers/generateLinksFromNodeData'
 import { NodeExtended } from '~/types'
 
 export const EARTH_RADIUS = 1800
@@ -45,7 +44,5 @@ export const generateEarthGraphPositions = (nodes: NodeExtended[]) => {
     return updatedNode
   })
 
-  const links = generateLinksFromNodeData(updatedNodes, true, true)
-
-  return { nodes: updatedNodes, links }
+  return { nodes: updatedNodes, links: [] }
 }

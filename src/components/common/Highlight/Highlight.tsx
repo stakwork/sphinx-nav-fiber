@@ -1,11 +1,13 @@
 import styled from 'styled-components'
 
 export function highlightSearchTerm(sDescription: string, sTerm: string | null) {
-  if (!sTerm?.trim()) {
+  const term = sTerm != null ? String(sTerm).trim() : ''
+
+  if (!term) {
     return sDescription
   }
 
-  const regex = new RegExp(`(${sTerm})`, 'gi')
+  const regex = new RegExp(`(${term})`, 'gi')
   const parts = sDescription.split(regex)
 
   // eslint-disable-next-line react/no-array-index-key

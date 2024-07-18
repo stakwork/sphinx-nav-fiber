@@ -1,10 +1,10 @@
 import styled from 'styled-components'
 import { ActionsToolbar } from '~/components/App/ActionsToolbar'
-import { useDataStore } from '~/stores/useDataStore'
+import { useGraphStore } from '~/stores/useGraphStore'
 import { Tooltip } from '../Graph/Cubes/Cube/components/Tooltip'
 
 export const Overlay = () => {
-  const [hoveredNode] = useDataStore((s) => [s.hoveredNode])
+  const [hoveredNode] = useGraphStore((s) => [s.hoveredNode])
 
   return (
     <OverlayWrap>

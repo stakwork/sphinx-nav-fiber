@@ -3,9 +3,10 @@ import { QuadraticBezierLine, Text } from '@react-three/drei'
 import { useFrame, useThree } from '@react-three/fiber'
 import { useRef } from 'react'
 import { Group, Vector3 } from 'three'
-import { getLoopControlPoints, truncateText } from '~/components/ModalsContainer/BlueprintModal/Body/Editor/utils'
+import { getLoopControlPoints } from '~/components/ModalsContainer/BlueprintModal/Body/Editor/utils'
 import { fontProps } from '~/components/Universe/Graph/Cubes/Text/constants'
 import { SchemaLink } from '~/network/fetchSourcesData'
+import { truncateText } from '~/utils/truncateText'
 import { SchemaExtended } from '../../../types'
 import { NODE_RADIUS } from '../constants'
 
@@ -59,8 +60,8 @@ export const Lines = ({ links, nodes, onEdgeClick }: Props) => {
           return
         }
 
-        const nodeEnd = nodes.find((i) => i.ref_id === link.source)
-        const nodeStart = nodes.find((i) => i.ref_id === link.target)
+        const nodeEnd = nodes.find((i) => i.ref_id === link.target)
+        const nodeStart = nodes.find((i) => i.ref_id === link.source)
 
         startVector.set(nodeStart?.x || 0, nodeStart?.y || 0, nodeStart?.z || 0)
         endVector.set(nodeEnd?.x || 0, nodeEnd?.y || 0, nodeEnd?.z || 0)

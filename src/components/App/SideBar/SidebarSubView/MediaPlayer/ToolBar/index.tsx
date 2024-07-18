@@ -199,8 +199,21 @@ const ProgressSlider = styled(Slider)<{ isFullScreen: boolean }>`
     color: ${colors.white};
     height: 3px;
     width: calc(100% - 12px);
-    margin: ${(props) => (props.isFullScreen ? '-75px auto' : '-12px auto')};
+    margin: ${(props) => (props.isFullScreen ? '80px auto' : '-12px auto')};
     box-sizing: border-box;
+
+    ${(props) =>
+      props.isFullScreen &&
+      `
+      width: calc(100% - 80px)
+    padding: 12px auto;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index:1;
+  `}
+
     .MuiSlider-track {
       border: none;
     }

@@ -1,17 +1,17 @@
-import React, { FC } from 'react'
+import { FC } from 'react'
 import styled from 'styled-components'
 import { GraphViewControl } from '~/components/App/ActionsToolbar/GraphViewControl'
 import { Button } from '~/components/Button'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
-import { useDataStore } from '~/stores/useDataStore'
+import { useGraphStore } from '~/stores/useGraphStore'
 
 type Props = {
   onClose: () => void
 }
 
 export const Appearance: FC<Props> = ({ onClose }) => {
-  const [graphStyle] = useDataStore((s) => [s.graphStyle])
+  const [graphStyle] = useGraphStore((s) => [s.graphStyle])
 
   const handleSave = () => {
     localStorage.setItem('graphStyle', graphStyle)
