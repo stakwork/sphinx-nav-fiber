@@ -1,9 +1,14 @@
 /* eslint-disable camelcase */
 import { Mesh, Vector3 } from 'three'
 
+type QueryData = {
+  ref_id: string
+}
+
 export type FetchDataResponse = {
   nodes: Node[]
   edges: Link[]
+  query_data?: QueryData
 }
 
 export type FilterParams = {
@@ -53,10 +58,12 @@ export type RadarRequest = {
 }
 
 export type NodeRequest = {
-  is_muted?: boolean
-  topic?: string
-  name?: string
-  image_url?: string
+  node_data: {
+    name?: string
+    is_muted?: boolean
+    topic?: string
+    image_url?: string
+  }
 }
 
 export type Node = {
@@ -231,6 +238,7 @@ export type IsAdminResponse = {
     queuedSources: boolean
     customSchema: boolean
     realtimeGraph: boolean
+    chatInterface: boolean
   }
   success: boolean
   message: string
@@ -275,4 +283,29 @@ export type RelayUser = {
   proxy_ip?: string
   admin_token?: string
   routeHint?: string
+}
+
+export type AiSummaryAnswerResponse = {
+  question: string
+  answer: string
+}
+
+export type AiSummarySourcesResponse = {
+  question: string
+  sources: { ref_id: string }[]
+}
+
+export type AiSummaryQuestionsResponse = {
+  question: string
+  relevant_questions: { question: string }[]
+}
+
+export type AIEntity = {
+  answer?: string
+  sources?: string[]
+  questions?: string[]
+  answerLoading?: boolean
+  sourcesLoading?: boolean
+  questionsLoading?: boolean
+  hasBeenRendered?: boolean
 }

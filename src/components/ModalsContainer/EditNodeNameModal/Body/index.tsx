@@ -94,7 +94,7 @@ export const Body = () => {
     const updatedData = { [propName]: topicValue.trim(), image_url: imageUrl.trim() }
 
     try {
-      await putNodeData(node?.ref_id || '', updatedData)
+      await putNodeData(node?.ref_id || '', { node_data: updatedData })
 
       const { updateNode } = useDataStore.getState()
 
