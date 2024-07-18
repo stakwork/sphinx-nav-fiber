@@ -28,7 +28,7 @@ const _AiQuestions = ({ questions }: Props) => {
         <div className="heading__icon">
           <StackIcon />
         </div>
-        <span className="tittle">More on this</span>
+        <HeadingTitle>More on this</HeadingTitle>
       </Heading>
       <Flex>
         {questions.map((i) => (
@@ -68,11 +68,11 @@ const Heading = styled(Flex)`
       color: ${colors.GRAY7};
       margin-left: 16px;
     }
-
-    .tittle {
-      margin-bottom: 2px;
-    }
   }
+`
+
+const HeadingTitle = styled.span`
+  margin-top: 1px;
 `
 
 const QuestionWrapper = styled(Flex)`
