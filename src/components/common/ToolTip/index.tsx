@@ -14,6 +14,7 @@ interface TooltipProps {
   position?: string
   minWidth?: string
   whiteSpace?: string
+  textAlign?: string
 }
 
 const TooltipContainer = styled.div`
@@ -34,12 +35,13 @@ const TooltipText = styled.div<{
   position?: string
   minWidth?: string
   whiteSpace?: string
+  textAlign?: string
 }>`
   visibility: hidden;
   width: ${({ width }) => width || 'auto'};
   background-color: ${({ backgroundColor }) => backgroundColor || 'white'};
   color: ${({ color }) => color || 'black'};
-  text-align: center;
+  text-align: ${({ textAlign }) => textAlign || 'center'};
   min-width: ${({ minWidth }) => minWidth || 'auto'};
   border-radius: ${({ borderRadius }) => borderRadius || '4px'};
   padding: ${({ padding }) => padding || '5px 8px'};
@@ -78,6 +80,7 @@ export const Tooltip = ({
   minWidth,
   whiteSpace,
   position,
+  textAlign,
 }: TooltipProps) => (
   <TooltipContainer>
     {children}
@@ -91,6 +94,7 @@ export const Tooltip = ({
       minWidth={minWidth}
       padding={padding}
       position={position}
+      textAlign={textAlign}
       whiteSpace={whiteSpace}
       width={width}
     >

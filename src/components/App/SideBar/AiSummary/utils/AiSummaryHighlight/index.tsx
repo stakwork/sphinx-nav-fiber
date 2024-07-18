@@ -78,20 +78,12 @@ const StyledTooltip = styled(({ className, ...props }) => (
     minWidth="160px"
     padding="10px"
     position="top"
+    textAlign="left"
     whiteSpace="normal"
     width="160px"
   />
 ))`
   & .tooltip-content {
-    background-color: ${colors.BG2};
     color: white;
-    width: 160px;
-    padding: 10px;
-    font-size: 12px;
-    font-weight: 500;
-    border-radius: 6px;
-    white-space: normal; /* Override ellipsis */
-    overflow: visible; /* Override ellipsis */
-    text-overflow: clip; /* Override ellipsis */
   }
 `
