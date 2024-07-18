@@ -6,7 +6,8 @@ import styled from 'styled-components'
 import { validateImageInputType } from '~/components/ModalsContainer/EditNodeNameModal/utils'
 import { Flex } from '~/components/common/Flex'
 import { getTopicsData, putNodeData } from '~/network/fetchSourcesData'
-import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
+import { useDataStore } from '~/stores/useDataStore'
+import { useSelectedNode } from '~/stores/useGraphStore'
 import { useModal } from '~/stores/useModalStore'
 import { NodeExtended, Topic } from '~/types'
 import { colors } from '~/utils/colors'
@@ -93,7 +94,7 @@ export const Body = () => {
     const updatedData = { [propName]: topicValue.trim(), image_url: imageUrl.trim() }
 
     try {
-      await putNodeData(node?.ref_id || '', updatedData)
+      await putNodeData(node?.ref_id || '', { node_data: updatedData })
 
       const { updateNode } = useDataStore.getState()
 

@@ -11,6 +11,7 @@ export const BaseTextInput = forwardRef(
       autoFocus,
       className,
       colorName = defaultProps.colorName,
+      dataTestId,
       defaultValue,
       disabled = defaultProps.disabled,
       id,
@@ -44,6 +45,7 @@ export const BaseTextInput = forwardRef(
         autoFocus={autoFocus}
         className={className}
         colorName={colorName}
+        data-testid={dataTestId}
         defaultValue={defaultValue}
         disabled={disabled}
         id={id}

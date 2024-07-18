@@ -9,6 +9,10 @@ type EpisodeWrapperProps = FlexboxProps & {
   isSelected?: boolean
 }
 
+type Props = {
+  count?: number
+}
+
 const EpisodeWrapper = styled(Flex).attrs({
   direction: 'column',
 })<EpisodeWrapperProps>`
@@ -43,9 +47,9 @@ const StyledSkeleton = styled(Skeleton)`
   }
 `
 
-export const EpisodeSkeleton = () => (
+export const EpisodeSkeleton = ({ count = 7 }: Props) => (
   <>
-    {Array(7)
+    {Array(count)
       .fill(null)
       .map((val, index) => (
         // eslint-disable-next-line react/no-array-index-key

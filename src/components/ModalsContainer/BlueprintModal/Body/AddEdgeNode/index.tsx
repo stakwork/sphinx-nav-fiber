@@ -6,9 +6,11 @@ import { colors } from '~/utils'
 
 export type Props = {
   setIsAddEdgeNode: (b: boolean) => void
+  edgeData?: { refId: string; edgeType: string; source: string; target: string }
+  setGraphLoading: (b: boolean) => void
 }
 
-export const AddEdgeNode = ({ setIsAddEdgeNode }: Props) => {
+export const AddEdgeNode = ({ setIsAddEdgeNode, edgeData, setGraphLoading }: Props) => {
   const onCancel = () => {
     setIsAddEdgeNode(false)
   }
@@ -20,7 +22,7 @@ export const AddEdgeNode = ({ setIsAddEdgeNode }: Props) => {
           <ClearIcon />
         </CloseButton>
       </Flex>
-      <Body onCancel={onCancel} />
+      <Body edgeLinkData={edgeData} onCancel={onCancel} setGraphLoading={setGraphLoading} />
     </Flex>
   )
 }

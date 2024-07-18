@@ -65,7 +65,7 @@ export async function addTweetNodeToJarvisBackend(tweetNodes) {
       body: JSON.stringify({ ...tweetNodes[i], date: newDate }),
       headers: {
         'Content-Type': 'application/json',
-        'x-stakwork-token': 'navfiber_e2e_stakwork_testing',
+        'x-api-token': 'navfiber-tester',
       },
     })
   }

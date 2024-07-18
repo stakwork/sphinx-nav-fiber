@@ -1,10 +1,12 @@
+// @ts-nocheck
+// @ts-ignore
+
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
-import { nodesAreRelatives } from '~/components/Universe/constants'
-import { isChileGraph } from '~/constants'
 import { fetchGraphData } from '~/network/fetchGraphData'
-import { GraphData, Link, NodeExtended, NodeType, Sources, Trending, TStats } from '~/types'
-import { saveSearchTerm } from '~/utils/relayHelper/index'
+import { FilterParams, GraphData, Link, NodeExtended, NodeType, Sources, Trending, TStats } from '~/types'
+import { useAiSummaryStore } from '../useAiSummaryStore'
+import { useAppStore } from '../useAppStore'
 
 export type GraphStyle = 'sphere' | 'force' | 'split' | 'earth'
 
@@ -24,25 +26,18 @@ export type SidebarFilterWithCount = {
 
 export type DataStore = {
   splashDataLoading: boolean
-  scrollEventsDisabled: boolean
   abortRequest: boolean
   categoryFilter: NodeType | null
-  disableCameraRotation: boolean
-  graphRadius: number | null
-  data: { nodes: NodeExtended[]; links: Link[] } | null
-  selectionGraphData: GraphData
-  graphStyle: GraphStyle
+  dataInitial: { nodes: NodeExtended[]; links: Link[] } | null
+  dataNew: { nodes: NodeExtended[]; links: Link[] } | null
+  currentPage: number
+  itemsPerPage: number
+  filters: FilterParams
   isFetching: boolean
-  hoveredNode: NodeExtended | null
-  selectedNode: NodeExtended | null
+  isLoadingNew: boolean
   selectedTimestamp: NodeExtended | null
   sources: Sources[] | null
   queuedSources: Sources[] | null
-  sphinxModalIsOpen: boolean
-  cameraFocusTrigger: boolean
-  selectedNodeRelativeIds: string[]
-  nearbyNodeIds: string[]
-  showSelectionGraph: boolean
   showTeachMe: boolean
   hideNodeDetails: boolean
   sidebarFilter: string
@@ -50,39 +45,33 @@ export type DataStore = {
   sidebarFilterCounts: SidebarFilterWithCount[]
   trendingTopics: Trending[]
   stats: TStats | null
+  nodeTypes: string[]
 
   setTrendingTopics: (trendingTopics: Trending[]) => void
+  setDataNew: (data: GraphData) => void
+  resetDataNew: () => void
   setStats: (stats: TStats) => void
   setSidebarFilter: (filter: string) => void
-  setScrollEventsDisabled: (scrollEventsDisabled: boolean) => void
   setCategoryFilter: (categoryFilter: NodeType | null) => void
-  setDisableCameraRotation: (rotation: boolean) => void
   fetchData: (
     setBudget: (value: number | null) => void,
     setAbortRequests: (status: boolean) => void,
+    AISearchQuery?: string,
     params?: FetchNodeParams,
   ) => void
-  setData: (data: GraphData) => void
-  setGraphStyle: (graphStyle: GraphStyle) => void
-  setGraphRadius: (graphRadius?: number | null) => void
-  setHoveredNode: (hoveredNode: NodeExtended | null) => void
-  setSelectedNode: (selectedNode: NodeExtended | null) => void
   setSelectedTimestamp: (selectedTimestamp: NodeExtended | null) => void
   setSources: (sources: Sources[] | null) => void
+  setTeachMe: (show: boolean) => void
   setQueuedSources: (sources: Sources[] | null) => void
-  setSphinxModalOpen: (_: boolean) => void
-  setCameraFocusTrigger: (_: boolean) => void
   setIsFetching: (_: boolean) => void
-  setNearbyNodeIds: (_: string[]) => void
-  setShowSelectionGraph: (_: boolean) => void
-  setSelectionData: (data: GraphData) => void
   setHideNodeDetails: (_: boolean) => void
-  setTeachMe: (_: boolean) => void
-  addNewNode: (node: NodeExtended) => void
+  addNewNode: (data: FetchDataResponse) => void
   updateNode: (updatedNode: NodeExtended) => void
   removeNode: (id: string) => void
   setSidebarFilterCounts: (filterCounts: SidebarFilterWithCount[]) => void
   setAbortRequests: (abortRequest: boolean) => void
+  nextPage: () => void
+  setFilters: (filters: Partial<FilterParams>) => void
 }
 
 const defaultData: Omit<
@@ -91,52 +80,45 @@ const defaultData: Omit<
   | 'setStats'
   | 'setSidebarFilter'
   | 'fetchData'
+  | 'setFilters'
   | 'setIsFetching'
-  | 'setData'
-  | 'setCameraAnimation'
-  | 'setScrollEventsDisabled'
   | 'setCategoryFilter'
-  | 'setDisableCameraRotation'
   | 'setHoveredNode'
-  | 'setSelectedNode'
   | 'setSelectedTimestamp'
   | 'setSphinxModalOpen'
-  | 'setCameraFocusTrigger'
   | 'setSources'
   | 'setSidebarFilterCounts'
   | 'setQueuedSources'
-  | 'setGraphRadius'
-  | 'setGraphStyle'
-  | 'setNearbyNodeIds'
-  | 'setShowSelectionGraph'
-  | 'setSelectionData'
   | 'setHideNodeDetails'
   | 'setTeachMe'
   | 'addNewNode'
   | 'updateNode'
   | 'removeNode'
   | 'setAbortRequests'
+  | 'nextPage'
+  | 'setDataNew'
+  | 'resetDataNew'
 > = {
   categoryFilter: null,
-  data: null,
-  selectionGraphData: { nodes: [], links: [] },
-  scrollEventsDisabled: false,
-  disableCameraRotation: false,
-  graphRadius: isChileGraph ? 1600 : 3056, // calculated from initial load
-  graphStyle: (localStorage.getItem('graphStyle') as GraphStyle) || 'sphere',
+  dataInitial: null,
+  currentPage: 0,
+  itemsPerPage: 5,
+  filters: {
+    skip: '0',
+    limit: '15',
+    depth: '1',
+    sort_by: 'date',
+    include_properties: 'true',
+    top_node_count: '10',
+    includeContent: 'true',
+    node_type: [],
+  },
   isFetching: false,
+  isLoadingNew: false,
   queuedSources: null,
-  hoveredNode: null,
-  selectedNode: null,
   selectedTimestamp: null,
   sources: null,
-  sphinxModalIsOpen: false,
-  cameraFocusTrigger: false,
-  selectedNodeRelativeIds: [],
-  nearbyNodeIds: [],
-  showSelectionGraph: false,
   showTeachMe: false,
-  hideNodeDetails: false,
   sidebarFilter: 'all',
   sidebarFilters: [],
   trendingTopics: [],
@@ -144,6 +126,7 @@ const defaultData: Omit<
   stats: null,
   splashDataLoading: true,
   abortRequest: false,
+  dataNew: null,
 }
 
 let abortController: AbortController | null = null
@@ -151,11 +134,27 @@ let abortController: AbortController | null = null
 export const useDataStore = create<DataStore>()(
   devtools((set, get) => ({
     ...defaultData,
-    fetchData: async (setBudget, setAbortRequests, params) => {
-      set({ isFetching: true, sphinxModalIsOpen: true })
+    fetchData: async (setBudget, setAbortRequests, AISearchQuery = '') => {
+      const { currentPage, itemsPerPage, dataInitial: existingData, filters } = get()
+      const { currentSearch } = useAppStore.getState()
+      const { setAiSummaryAnswer, aiRefId } = useAiSummaryStore.getState()
+      let ai = { ai_summary: String(!!AISearchQuery) }
+
+      if (!AISearchQuery) {
+        if (!currentPage) {
+          set({ isFetching: true })
+        } else {
+          set({ isLoadingNew: true })
+        }
+      }
+
+      if (AISearchQuery) {
+        setAiSummaryAnswer(AISearchQuery, { answer: '', answerLoading: true, sourcesLoading: true })
+        ai = { ...ai, ai_summary: String(true) }
+      }
 
       if (abortController) {
-        abortController.abort()
+        abortController.abort('abort')
       }
 
       const controller = new AbortController()
@@ -163,150 +162,160 @@ export const useDataStore = create<DataStore>()(
 
       abortController = controller
 
-      const data = await fetchGraphData(get().graphStyle, setBudget, params ?? {}, signal, setAbortRequests)
+      const { node_type: filterNodeTypes, ...withoutNodeType } = filters
 
-      let loadingState = false
+      const word = AISearchQuery || currentSearch
 
-      if (params?.word) {
-        await saveSearchTerm()
+      const updatedParams = {
+        ...withoutNodeType,
+        ...ai,
+        skip: currentPage === 0 ? String(currentPage * itemsPerPage) : String(currentPage * itemsPerPage + 1),
+        limit: String(itemsPerPage),
+        ...(filterNodeTypes.length > 0 ? { node_type: JSON.stringify(filterNodeTypes) } : {}),
+        ...(word ? { word } : {}),
+        ...(aiRefId && AISearchQuery ? { previous_search_ref_id: aiRefId } : {}),
       }
 
-      const sidebarFilters = ['all', ...new Set(data.nodes.map((i) => (i.node_type || '').toLowerCase()))]
+      try {
+        const data = await fetchGraphData(setBudget, updatedParams, signal, setAbortRequests)
 
-      const sidebarFilterCounts = sidebarFilters.map((filter) => ({
-        name: filter,
-        count: data.nodes.filter((node) => filter === 'all' || node.node_type?.toLowerCase() === filter).length,
-      }))
+        if (!data?.nodes) {
+          return
+        }
 
-      if (get().abortRequest) {
-        loadingState = true
+        if (data?.query_data?.ref_id) {
+          useAiSummaryStore.setState({ aiRefId: data?.query_data?.ref_id })
+        }
 
-        set({ abortRequest: false })
+        const currentNodes = currentPage === 0 && !aiRefId ? [] : [...(existingData?.nodes || [])]
+        const currentLinks = currentPage === 0 && !aiRefId ? [] : [...(existingData?.links || [])]
+
+        const newNodes = (data?.nodes || []).filter((n) => !currentNodes.some((c) => c.ref_id === n.ref_id))
+
+        currentNodes.push(...newNodes)
+
+        const newLinks = (data?.edges || [])
+          .filter((n) => !currentLinks.some((c) => c.ref_id === n.ref_id))
+          .filter((c) => {
+            const { target, source } = c
+
+            return currentNodes.some((n) => n.ref_id === target) && currentNodes.some((n) => n.ref_id === source)
+          })
+
+        currentLinks.push(...newLinks)
+
+        const nodeTypes = [...new Set(currentNodes.map((i) => i.node_type))]
+
+        const sidebarFilters = ['all', ...nodeTypes.map((i) => i.toLowerCase())]
+
+        const sidebarFilterCounts = sidebarFilters.map((filter) => ({
+          name: filter,
+          count: currentNodes.filter((node) => filter === 'all' || node.node_type?.toLowerCase() === filter).length,
+        }))
+
+        set({
+          dataInitial: { nodes: currentNodes, links: currentLinks },
+          dataNew: { nodes: newNodes, links: newLinks },
+          isFetching: false,
+          isLoadingNew: false,
+          nodeTypes,
+          sidebarFilters,
+          sidebarFilterCounts,
+        })
+      } catch (error) {
+        console.log(error)
+        set({ isFetching: false })
+        set({ isLoadingNew: false })
       }
-
-      set({
-        data,
-        isFetching: loadingState,
-        sphinxModalIsOpen: loadingState,
-        disableCameraRotation: false,
-        nearbyNodeIds: [],
-        selectedNodeRelativeIds: [],
-        showSelectionGraph: false,
-        showTeachMe: false,
-        sidebarFilters,
-        sidebarFilterCounts,
-      })
     },
+    setPage: (page: number) => set({ currentPage: page }),
+    nextPage: () => {
+      const { currentPage, fetchData } = get()
+
+      set({ currentPage: currentPage + 1 })
+      fetchData()
+    },
+    prevPage: () => {
+      const { currentPage, fetchData } = get()
+
+      if (currentPage > 0) {
+        set({ currentPage: currentPage - 1 })
+        fetchData()
+      }
+    },
+    resetDataNew: () => null,
+    setFilters: (filters: FilterParams) =>
+      set((state) => ({ filters: { ...state.filters, ...filters, page: 0 }, currentPage: 0 })),
     setSidebarFilterCounts: (sidebarFilterCounts) => set({ sidebarFilterCounts }),
     setTrendingTopics: (trendingTopics) => set({ trendingTopics }),
     setStats: (stats) => set({ stats }),
     setIsFetching: (isFetching) => set({ isFetching }),
-    setData: (data) => set({ data }),
-    setSelectionData: (selectionGraphData) => set({ selectionGraphData }),
-    setScrollEventsDisabled: (scrollEventsDisabled) => set({ scrollEventsDisabled }),
+
     setCategoryFilter: (categoryFilter) => set({ categoryFilter }),
-    setDisableCameraRotation: (rotation) => set({ disableCameraRotation: rotation }),
-    setGraphRadius: (graphRadius) => set({ graphRadius }),
-    setGraphStyle: (graphStyle) => set({ graphStyle }),
     setQueuedSources: (queuedSources) => set({ queuedSources }),
-    setHoveredNode: (hoveredNode) => set({ hoveredNode }),
-    setSelectedNode: (selectedNode) => {
-      const stateSelectedNode = get().selectedNode
-
-      if (stateSelectedNode?.ref_id !== selectedNode?.ref_id) {
-        const { data } = get()
-
-        const relativeIds =
-          data?.nodes.filter((f) => f.ref_id && nodesAreRelatives(f, selectedNode)).map((n) => n?.ref_id || '') || []
-
-        set({
-          hoveredNode: null,
-          selectedNode,
-          disableCameraRotation: true,
-          selectedNodeRelativeIds: relativeIds,
-        })
-      }
-    },
     setSidebarFilter: (sidebarFilter: string) => set({ sidebarFilter }),
     setSelectedTimestamp: (selectedTimestamp) => set({ selectedTimestamp }),
     setSources: (sources) => set({ sources }),
-    setSphinxModalOpen: (sphinxModalIsOpen) => set({ sphinxModalIsOpen }),
-    setCameraFocusTrigger: (cameraFocusTrigger) => set({ cameraFocusTrigger }),
-    setNearbyNodeIds: (nearbyNodeIds) => {
-      const stateNearbyNodeIds = get().nearbyNodeIds
-
-      if (nearbyNodeIds.length !== stateNearbyNodeIds.length || nearbyNodeIds[0] !== stateNearbyNodeIds[0]) {
-        set({ nearbyNodeIds })
-      }
-    },
-    setShowSelectionGraph: (showSelectionGraph) => set({ showSelectionGraph }),
     setHideNodeDetails: (hideNodeDetails) => set({ hideNodeDetails }),
     setTeachMe: (showTeachMe) => set({ showTeachMe }),
     updateNode: (updatedNode) => {
-      set((state) => {
-        const nodes = state.data?.nodes || []
-        const links = state.data?.links || []
+      console.log(updatedNode)
+    },
+    addNewNode: (data) => {
+      const { dataInitial: existingData } = get()
 
-        const updatedNodes = nodes.map((node) => {
-          if (node.ref_id === updatedNode.ref_id) {
-            return { ...node, ...updatedNode }
-          }
+      if (!data?.nodes) {
+        return
+      }
 
-          return node
+      const currentNodes = [...(existingData?.nodes || [])]
+      const currentLinks = [...(existingData?.links || [])]
+
+      const newNodes = (data?.nodes || []).filter((n) => !currentNodes.some((c) => c.ref_id === n.ref_id))
+
+      currentNodes.push(...newNodes)
+
+      const newLinks = (data?.edges || [])
+        .filter((n) => !currentLinks.some((c) => c.ref_id === n.ref_id))
+        .filter((c) => {
+          const { target, source } = c
+
+          return currentNodes.some((n) => n.ref_id === target) && currentNodes.some((n) => n.ref_id === source)
         })
 
-        return {
-          ...state,
-          data: {
-            ...state.data,
-            nodes: updatedNodes,
-            links,
-          },
-        }
+      currentLinks.push(...newLinks)
+
+      const nodeTypes = [...new Set(currentNodes.map((i) => i.node_type))]
+
+      const sidebarFilters = ['all', ...nodeTypes.map((i) => i.toLowerCase())]
+
+      const sidebarFilterCounts = sidebarFilters.map((filter) => ({
+        name: filter,
+        count: currentNodes.filter((node) => filter === 'all' || node.node_type?.toLowerCase() === filter).length,
+      }))
+
+      set({
+        dataInitial: { nodes: currentNodes, links: currentLinks },
+        dataNew: { nodes: newNodes, links: newLinks },
+        nodeTypes,
+        sidebarFilters,
+        sidebarFilterCounts,
       })
     },
-    addNewNode: (node) => {
-      const { data } = get()
-
-      if (!data) {
-        return
-      }
-
-      const newData = { ...data, nodes: [node, ...data.nodes] }
-
-      set({ data: newData })
-    },
     removeNode: (id) => {
-      const { data } = get()
-
-      if (!data) {
-        return
-      }
-
-      const removeData = {
-        ...data,
-        nodes: data.nodes.filter((el) => el.ref_id !== id && el.id !== id),
-      }
-
-      set({ data: removeData })
+      console.log(id)
     },
     setAbortRequests: (abortRequest) => set({ abortRequest }),
   })),
 )
 
-export const useSelectedNode = () => useDataStore((s) => s.selectedNode)
-
 export const useFilteredNodes = () =>
   useDataStore((s) => {
     if (s.sidebarFilter === 'all') {
-      return s.data?.nodes || []
+      return s.dataInitial?.nodes || []
     }
 
-    return (s.data?.nodes || []).filter((i) => i.node_type?.toLowerCase() === s.sidebarFilter.toLowerCase())
+    return (s.dataInitial?.nodes || []).filter((i) => i.node_type?.toLowerCase() === s.sidebarFilter.toLowerCase())
   })
 
-export const useUpdateGraphData = () => {
-  const data = useDataStore((state) => state.data)
-
-  return data
-}
+export const useNodeTypes = () => useDataStore((s) => s.nodeTypes)

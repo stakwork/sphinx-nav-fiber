@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 import { Color, Material, Vector3 } from 'three'
 import { useGraphData } from '~/components/DataRetriever'
 import { useAppStore } from '~/stores/useAppStore'
-import { useSelectedNode } from '~/stores/useDataStore'
+import { useSelectedNode } from '~/stores/useGraphStore'
 import { NodeExtended } from '~/types'
 import { boxGeometry } from '../constants'
 import { HighlightProps, getHighlighter, highlightMaterial } from './constants'
@@ -16,7 +16,11 @@ export const Highlights = () => {
   const highlights = useMemo(() => {
     const h: HighlightProps[] = []
 
-    data.nodes.forEach((node: NodeExtended) => {
+    if (!data?.nodes?.length) {
+      return h
+    }
+
+    data?.nodes.forEach((node: NodeExtended) => {
       const { highlight, highlightColor } = getHighlighter({ node, selectedNode, searchTerm })
 
       if (highlight) {
@@ -37,7 +41,7 @@ export const Highlights = () => {
     })
 
     return h
-  }, [selectedNode, searchTerm, data.nodes, materials])
+  }, [selectedNode, searchTerm, data?.nodes, materials])
 
   return (
     <>

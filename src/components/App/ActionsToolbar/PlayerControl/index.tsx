@@ -2,12 +2,12 @@ import { IconButton, LinearProgress } from '@mui/material'
 import { useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 import ClearIcon from '~/components/Icons/ClearIcon'
-import PlayIcon from '~/components/Icons/PlayIcon'
 import PauseIcon from '~/components/Icons/PauseIcon'
+import PlayIcon from '~/components/Icons/PlayIcon'
 import { Avatar } from '~/components/common/Avatar'
 import { Flex } from '~/components/common/Flex'
 import { useAppStore } from '~/stores/useAppStore'
-import { useDataStore, useSelectedNode } from '~/stores/useDataStore'
+import { useSelectedNode, useUpdateSelectedNode } from '~/stores/useGraphStore'
 import { usePlayerStore } from '~/stores/usePlayerStore'
 import { videoTimeToSeconds } from '~/utils'
 import { colors } from '~/utils/colors'
@@ -16,7 +16,7 @@ export const PlayerControl = () => {
   const containerRef = useRef<HTMLDivElement>(null)
   const [scrollWidth, setScrollWidth] = useState(0)
   const selectedNode = useSelectedNode()
-  const setSelectedNode = useDataStore((s) => s.setSelectedNode)
+  const setSelectedNode = useUpdateSelectedNode()
   const [sidebarIsOpen, setSidebarOpen] = useAppStore((s) => [s.sidebarIsOpen, s.setSidebarOpen])
 
   const [isPlaying, setIsPlaying, playingTime, playingNode, miniPlayerIsVisible, setMiniPlayerIsVisible] =

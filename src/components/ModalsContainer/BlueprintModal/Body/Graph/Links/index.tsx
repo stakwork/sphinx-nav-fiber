@@ -3,14 +3,17 @@ import { QuadraticBezierLine, Text } from '@react-three/drei'
 import { useFrame, useThree } from '@react-three/fiber'
 import { useRef } from 'react'
 import { Group, Vector3 } from 'three'
-import { getLoopControlPoints, truncateText } from '~/components/ModalsContainer/BlueprintModal/Body/Editor/utils'
+import { getLoopControlPoints } from '~/components/ModalsContainer/BlueprintModal/Body/Editor/utils'
+import { fontProps } from '~/components/Universe/Graph/Cubes/Text/constants'
 import { SchemaLink } from '~/network/fetchSourcesData'
+import { truncateText } from '~/utils/truncateText'
 import { SchemaExtended } from '../../../types'
 import { NODE_RADIUS } from '../constants'
 
 type Props = {
   links: SchemaLink[]
   nodes?: SchemaExtended[]
+  onEdgeClick: (refId: string, edgeType: string, source: string, target: string) => void
 }
 
 const CONE_RADIUS = 2
@@ -35,7 +38,7 @@ const getCurvedControlPoint = (start: Vector3, end: Vector3, offsetIndex: number
   return new Vector3().addVectors(middle, perpendicular.multiplyScalar(offset))
 }
 
-export const Lines = ({ links, nodes }: Props) => {
+export const Lines = ({ links, nodes, onEdgeClick }: Props) => {
   const group = useRef<Group>(null)
   const { camera } = useThree()
 
@@ -57,8 +60,8 @@ export const Lines = ({ links, nodes }: Props) => {
           return
         }
 
-        const nodeEnd = nodes.find((i) => i.ref_id === link.source)
-        const nodeStart = nodes.find((i) => i.ref_id === link.target)
+        const nodeEnd = nodes.find((i) => i.ref_id === link.target)
+        const nodeStart = nodes.find((i) => i.ref_id === link.source)
 
         startVector.set(nodeStart?.x || 0, nodeStart?.y || 0, nodeStart?.z || 0)
         endVector.set(nodeEnd?.x || 0, nodeEnd?.y || 0, nodeEnd?.z || 0)
@@ -159,6 +162,20 @@ export const Lines = ({ links, nodes }: Props) => {
     }
   })
 
+  const handleEdgeClick = (edgeType: string, source: string, target: string, refId: string) => {
+    if (edgeType === 'CHILD_OF' || source === 'string' || target === 'string') {
+      return
+    }
+
+    const sourceNode = nodes?.find((node) => node.ref_id === source)
+    const targetNode = nodes?.find((node) => node.ref_id === target)
+
+    const sourceName = sourceNode?.type || ''
+    const targetName = targetNode?.type || ''
+
+    onEdgeClick(refId, edgeType, sourceName, targetName)
+  }
+
   return (
     <group ref={group}>
       {links.map((link) => (
@@ -173,9 +190,10 @@ export const Lines = ({ links, nodes }: Props) => {
             anchorX="center"
             anchorY="middle"
             color="white"
-            fontSize={4}
+            {...fontProps}
             lineHeight={1}
             maxWidth={20}
+            onClick={() => handleEdgeClick(link.edge_type, link.source, link.target, link.ref_id)}
             rotation={[0, 0, 0]}
             textAlign="center"
           >
