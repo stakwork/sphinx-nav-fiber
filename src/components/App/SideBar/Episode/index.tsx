@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import { useGraphData } from '~/components/DataRetriever'
 import ChevronDownIcon from '~/components/Icons/ChevronDownIcon'
 import { Flex } from '~/components/common/Flex'
-import { useSelectedNode } from '~/stores/useDataStore'
+import { useSelectedNode } from '~/stores/useGraphStore'
 import { usePlayerStore } from '~/stores/usePlayerStore'
 import { NodeExtended } from '~/types'
 import { colors, videoTimeToSeconds } from '~/utils'
@@ -49,7 +49,7 @@ export const Episode = () => {
   )
 
   const selectedNodeShow: NodeExtended | undefined = useMemo(
-    () => data?.nodes.find((i) => i.node_type === 'show' && i.show_title === selectedNode?.show_title),
+    () => data?.nodes.find((i: NodeExtended) => i.node_type === 'show' && i.show_title === selectedNode?.show_title),
     [data?.nodes, selectedNode],
   )
 

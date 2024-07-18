@@ -8,6 +8,7 @@ export type AppStore = {
   searchFormValue: string
   secondarySidebarActiveTab: SecondarySidebarActiveTab
   sidebarIsOpen: boolean
+  universeQuestionIsOpen: boolean
   hasBudgetExplanationModalBeSeen: boolean
   theme: 'dark' | 'light'
   transcriptIsOpen: boolean
@@ -24,6 +25,7 @@ export type AppStore = {
   setTranscriptOpen: (_: boolean) => void
   setFlagErrorOpen: (_: boolean) => void
   setAppMetaData: (val: TAboutParams) => void
+  setUniverseQuestionIsOpen: () => void
   setCurrentPlayingAudio: (_: React.MutableRefObject<HTMLAudioElement | null> | null) => void
 }
 
@@ -31,6 +33,7 @@ const defaultData = {
   currentSearch: null,
   searchFormValue: '',
   flagErrorIsOpen: false,
+  universeQuestionIsOpen: false,
   hasBudgetExplanationModalBeSeen: false,
   relevanceIsSelected: false,
   secondarySidebarActiveTab: '' as const,
@@ -59,5 +62,6 @@ export const useAppStore = create<AppStore>((set, get) => ({
       transcriptIsOpen: !sidebarIsOpen ? false : get().transcriptIsOpen,
     }),
   setTranscriptOpen: (transcriptIsOpen) => set({ transcriptIsOpen }),
+  setUniverseQuestionIsOpen: () => set({ universeQuestionIsOpen: !get().universeQuestionIsOpen }),
   setAppMetaData: (appMetaData) => set({ appMetaData }),
 }))

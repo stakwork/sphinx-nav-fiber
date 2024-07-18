@@ -88,8 +88,9 @@ export const FormInput = ({
                     <TextInput
                       autoComplete="off"
                       className="text-input"
+                      dataTestId={`cy-item-name-${index}`}
                       disabled={!isEditable}
-                      id="cy-item-name"
+                      id={`cy-item-name-${index}`}
                       maxLength={50}
                       name={`attributes.${index}.key` as const}
                       placeholder="Enter value"
@@ -104,6 +105,7 @@ export const FormInput = ({
                   </Grid>
                   <Grid item xs={4}>
                     <AutoComplete
+                      dataTestId={`cy-item-select-${index}`}
                       disabled={requiredKey}
                       onSelect={(val) => setValue(`attributes[${index}].type`, val?.value)}
                       options={OptionTypes}
@@ -113,6 +115,7 @@ export const FormInput = ({
                   <Grid item xs={3}>
                     <Switch
                       checked={checked}
+                      data-testid={`cy-item-${index}`}
                       disabled={requiredKey}
                       name={`attributes.${index}.required` as const}
                       onChange={(e) => setValue(`attributes[${index}].required`, e.target.checked)}
@@ -140,6 +143,7 @@ export const FormInput = ({
       )}
       <Flex align="flex-start" py={12}>
         <Button
+          data-testid="add-attribute-btn"
           onClick={() => append({ key: '', type: 'string', required: true, isNew: true })}
           size="medium"
           startIcon={<PlusIcon />}
