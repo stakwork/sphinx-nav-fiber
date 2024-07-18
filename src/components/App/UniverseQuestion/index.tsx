@@ -14,30 +14,52 @@ import { useDataStore } from '~/stores/useDataStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { colors } from '~/utils/colors'
 
+const fetchSeedQuestions = async () => {
+  try {
+    const response = await getAboutData()
+
+    if (response.seed_questions) {
+      return shuffleArray(response.seed_questions)
+    }
+  } catch (error) {
+    console.error('Error fetching seed questions:', error)
+  }
+
+  return []
+}
+
+const shuffleArray = (inputArray: string[]) => {
+  const array = [...inputArray]
+  let i = array.length - 1
+
+  while (i > 0) {
+    const j = Math.floor(Math.random() * (i + 1))
+
+    ;[array[i], array[j]] = [array[j], array[i]]
+    i -= 1
+  }
+
+  return array
+}
+
 export const UniverseQuestion = () => {
   const [question, setQuestion] = useState('')
   const [seedQuestions, setSeedQuestions] = useState<string[]>([])
+  const [loading, setLoading] = useState(true)
   const { fetchData, setAbortRequests } = useDataStore((s) => s)
   const [setBudget] = useUserStore((s) => [s.setBudget])
   const setUniverseQuestionIsOpen = useAppStore((s) => s.setUniverseQuestionIsOpen)
   const resetAiSummaryAnswer = useAiSummaryStore((s) => s.resetAiSummaryAnswer)
 
   useEffect(() => {
-    const fetchSeedQuestions = async () => {
-      try {
-        const response = await getAboutData()
+    const initializeSeedQuestions = async () => {
+      const questions = await fetchSeedQuestions()
 
-        if (response.seed_questions) {
-          const shuffledQuestions = shuffleArray(response.seed_questions)
-
-          setSeedQuestions(shuffledQuestions)
-        }
-      } catch (error) {
-        console.error('Error fetching seed questions:', error)
-      }
+      setSeedQuestions(questions)
+      setLoading(false)
     }
 
-    fetchSeedQuestions()
+    initializeSeedQuestions()
   }, [])
 
   const handleSubmitQuestion = async (questionToSubmit: string) => {
@@ -61,20 +83,6 @@ export const UniverseQuestion = () => {
   const handleSeedQuestionClick = async (seedQuestion: string) => {
     setQuestion(seedQuestion)
     await handleSubmitQuestion(seedQuestion)
-  }
-
-  const shuffleArray = (inputArray: string[]) => {
-    const array = [...inputArray]
-    let i = array.length - 1
-
-    while (i > 0) {
-      const j = Math.floor(Math.random() * (i + 1))
-
-      ;[array[i], array[j]] = [array[j], array[i]]
-      i -= 1
-    }
-
-    return array
   }
 
   const displayedSeedQuestions = seedQuestions.slice(0, 4)
@@ -105,15 +113,19 @@ export const UniverseQuestion = () => {
           )}
         </StyledButton>
       </TextAreaWrapper>
-      {displayedSeedQuestions.length > 0 && (
-        <SeedQuestionsWrapper>
-          {displayedSeedQuestions.map((seedQuestion) => (
-            <SeedQuestion key={seedQuestion} onClick={() => handleSeedQuestionClick(seedQuestion)}>
-              <HelpIcon />
-              {seedQuestion}
-            </SeedQuestion>
-          ))}
-        </SeedQuestionsWrapper>
+      {loading ? (
+        <LoadingIndicator>Loading seed questions...</LoadingIndicator>
+      ) : (
+        displayedSeedQuestions.length > 0 && (
+          <SeedQuestionsWrapper>
+            {displayedSeedQuestions.map((seedQuestion) => (
+              <SeedQuestion key={seedQuestion} onClick={() => handleSeedQuestionClick(seedQuestion)}>
+                <HelpIcon />
+                {seedQuestion}
+              </SeedQuestion>
+            ))}
+          </SeedQuestionsWrapper>
+        )
       )}
       <CloseButton onClick={setUniverseQuestionIsOpen} startIcon={<ExploreIcon />}>
         Explore Graph
@@ -238,4 +250,12 @@ const SeedQuestion = styled.div`
   path {
     fill: ${colors.modalWhiteOverlayBg};
   }
+`
+
+const LoadingIndicator = styled.div`
+  margin-top: 20px;
+  font-size: 16px;
+  font-weight: 400;
+  font-family: Barlow;
+  color: ${colors.white};
 `
