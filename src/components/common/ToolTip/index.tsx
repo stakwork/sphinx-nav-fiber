@@ -6,7 +6,6 @@ interface TooltipProps {
   margin?: string
   backgroundColor?: string
   color?: string
-  width?: string
   padding?: string
   fontSize?: string
   fontWeight?: string
@@ -27,7 +26,6 @@ const TooltipText = styled.div<{
   margin?: string
   backgroundColor?: string
   color?: string
-  width?: string
   padding?: string
   fontSize?: string
   fontWeight?: string
@@ -38,7 +36,7 @@ const TooltipText = styled.div<{
   textAlign?: string
 }>`
   visibility: hidden;
-  width: ${({ width }) => width || 'auto'};
+  width: auto;
   background-color: ${({ backgroundColor }) => backgroundColor || 'white'};
   color: ${({ color }) => color || 'black'};
   text-align: ${({ textAlign }) => textAlign || 'center'};
@@ -50,11 +48,10 @@ const TooltipText = styled.div<{
   ${({ position }) => (position === 'top' ? 'bottom: 100%;' : 'top: 100%;')}
   left: 50%;
   transform: translateX(-50%);
-  margin-top: ${({ margin, position }) => (position === 'top' ? `-${margin || '0px'}` : margin || '0px')};
+  margin-top: ${({ margin }) => margin || '0px'};
   opacity: 0;
   transition: opacity 0.3s;
   white-space: ${({ whiteSpace }) => whiteSpace || 'nowrap'};
-  min-width: ${({ minWidth }) => minWidth || 'auto'};
   overflow: hidden;
   text-overflow: ellipsis;
   font-size: ${({ fontSize }) => fontSize || '12px'};
@@ -72,7 +69,6 @@ export const Tooltip = ({
   margin,
   backgroundColor,
   color,
-  width,
   padding,
   fontSize,
   fontWeight,
@@ -96,7 +92,6 @@ export const Tooltip = ({
       position={position}
       textAlign={textAlign}
       whiteSpace={whiteSpace}
-      width={width}
     >
       {content}
     </TooltipText>

@@ -32,7 +32,7 @@ export function highlightAiSummary(
           highlighted.add(part.toLowerCase())
 
           return (
-            <StyledTooltip key={part} content={entity.description} position="top">
+            <StyledTooltip key={part} content={entity.description}>
               <Highlight
                 onClick={() => {
                   handleSubmit(part)
@@ -74,13 +74,11 @@ const StyledTooltip = styled(({ className, ...props }) => (
     color="white"
     fontSize="12px"
     fontWeight="500"
-    margin="10px"
     minWidth="160px"
     padding="10px"
     position="top"
-    textAlign="left"
+    textAlign="start"
     whiteSpace="normal"
-    width="160px"
   />
 ))`
   & .tooltip-content {
