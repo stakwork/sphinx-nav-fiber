@@ -3,42 +3,26 @@ import { Flex } from '~/components/common/Flex'
 
 import { TextareaAutosize } from '@mui/base'
 import { Button } from '@mui/material'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import ArrowForwardIcon from '~/components/Icons/ArrowForwardIcon'
 import ExploreIcon from '~/components/Icons/ExploreIcon'
 import HelpIcon from '~/components/Icons/HelpIcon'
-import { getAboutData } from '~/network/fetchSourcesData'
 import { useAiSummaryStore } from '~/stores/useAiSummaryStore'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { colors } from '~/utils/colors'
 
-export const UniverseQuestion = () => {
+interface UniverseQuestionProps {
+  seedQuestions: string[]
+}
+
+export const UniverseQuestion = ({ seedQuestions }: UniverseQuestionProps) => {
   const [question, setQuestion] = useState('')
-  const [seedQuestions, setSeedQuestions] = useState<string[]>([])
   const { fetchData, setAbortRequests } = useDataStore((s) => s)
   const [setBudget] = useUserStore((s) => [s.setBudget])
   const setUniverseQuestionIsOpen = useAppStore((s) => s.setUniverseQuestionIsOpen)
   const resetAiSummaryAnswer = useAiSummaryStore((s) => s.resetAiSummaryAnswer)
-
-  useEffect(() => {
-    const fetchSeedQuestions = async () => {
-      try {
-        const response = await getAboutData()
-
-        if (response.seed_questions) {
-          const shuffledQuestions = shuffleArray(response.seed_questions)
-
-          setSeedQuestions(shuffledQuestions)
-        }
-      } catch (error) {
-        console.error('Error fetching seed questions:', error)
-      }
-    }
-
-    fetchSeedQuestions()
-  }, [])
 
   const handleSubmitQuestion = async (questionToSubmit: string) => {
     if (questionToSubmit) {
@@ -77,7 +61,7 @@ export const UniverseQuestion = () => {
     return array
   }
 
-  const displayedSeedQuestions = seedQuestions.slice(0, 4)
+  const displayedSeedQuestions = shuffleArray(seedQuestions).slice(0, 4)
 
   const isValidText = !!question && question.trim().length > 0
 
