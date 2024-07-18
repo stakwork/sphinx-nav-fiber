@@ -65,7 +65,7 @@ export const AiAnswer = ({ answer, entities, handleLoaded, hasBeenRendered }: Pr
     fetchData(setBudget, setAbortRequests, search)
   }
 
-  const responseTextDisplay = highlightAiSummary(displayedText, entities, handleSubmit)
+  const responseTextDisplay = highlightAiSummary(displayedText, handleSubmit, entities)
 
   return (
     <Wrapper>

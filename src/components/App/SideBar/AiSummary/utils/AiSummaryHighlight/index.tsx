@@ -4,8 +4,8 @@ import { ExtractedEntity } from '~/types/index'
 
 export function highlightAiSummary(
   sDescription: string,
-  entities: ExtractedEntity[],
   handleSubmit: (search: string) => void,
+  entities?: ExtractedEntity[],
 ) {
   if (!entities || entities.length === 0) {
     return sDescription
