@@ -1,6 +1,7 @@
 import { Leva } from 'leva'
 import { lazy, Suspense, useCallback, useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
+import { useSearchParams } from 'react-router-dom'
 import 'react-toastify/dist/ReactToastify.css'
 import { Socket } from 'socket.io-client'
 import styled from 'styled-components'
@@ -18,7 +19,12 @@ import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
 import { useUpdateSelectedNode } from '~/stores/useGraphStore'
 import { useTeachStore } from '~/stores/useTeachStore'
 import { useUserStore } from '~/stores/useUserStore'
-import { AiSummaryAnswerResponse, AiSummaryQuestionsResponse, AiSummarySourcesResponse } from '~/types'
+import {
+  AiSummaryAnswerResponse,
+  AiSummaryQuestionsResponse,
+  AiSummarySourcesResponse,
+  ExtractedEntitiesResponse,
+} from '~/types'
 import { colors } from '~/utils/colors'
 import { updateBudget } from '~/utils/setBudget'
 import version from '~/utils/versionHelper'
@@ -29,7 +35,6 @@ import { DeviceCompatibilityNotice } from './DeviceCompatibilityNotification'
 import { Helper } from './Helper'
 import { SecondarySideBar } from './SecondarySidebar'
 import { Toasts } from './Toasts'
-import { useSearchParams } from 'react-router-dom'
 
 const Wrapper = styled(Flex)`
   height: 100%;
@@ -162,6 +167,15 @@ export const App = () => {
     [addNewNode],
   )
 
+  const handleExtractedEntities = useCallback(
+    (data: ExtractedEntitiesResponse) => {
+      if (data.question && getKeyExist(data.question)) {
+        setAiSummaryAnswer(data.question, { answerLoading: false, entities: data.entities })
+      }
+    },
+    [setAiSummaryAnswer, getKeyExist],
+  )
+
   // setup socket
   useEffect(() => {
     if (socket) {
@@ -172,6 +186,10 @@ export const App = () => {
       })
 
       socket.on('newnode', handleNewNode)
+
+      if (chatInterfaceFeatureFlag) {
+        socket.on('extractedentitieshook', handleExtractedEntities)
+      }
 
       // subscribe to ai_summary
       if (chatInterfaceFeatureFlag) {
@@ -205,6 +223,7 @@ export const App = () => {
     chatInterfaceFeatureFlag,
     handleAiRelevantQuestions,
     handleAiSources,
+    handleExtractedEntities,
   ])
 
   return (

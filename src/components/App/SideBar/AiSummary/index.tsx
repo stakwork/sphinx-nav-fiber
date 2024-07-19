@@ -66,6 +66,7 @@ export const AiSummary = ({ question, response }: Props) => {
           ) : (
             <AiAnswer
               answer={response.answer || ''}
+              entities={response.entities}
               handleLoaded={() => handleLoaded()}
               hasBeenRendered={!!response?.hasBeenRendered}
             />
