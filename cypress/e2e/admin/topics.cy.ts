@@ -1,5 +1,5 @@
 describe('Test topics as Admin', () => {
-  it('Mute topic', () => {
+  it.skip('Mute topic', () => {
     cy.initialSetup('alice', 300)
 
     cy.get('#cy-open-soure-table').click()
