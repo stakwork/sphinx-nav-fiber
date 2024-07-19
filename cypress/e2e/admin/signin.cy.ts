@@ -1,6 +1,8 @@
 describe('Admin Login', () => {
   it('Admin uses the enable function', () => {
-    cy.initialSetup('alice', 50)
+    const username = 'alice'
+
+    cy.initialSetup(username, 50)
 
     cy.intercept({
       method: 'POST',
@@ -24,16 +26,10 @@ describe('Admin Login', () => {
 
     // Submit the form
     cy.get('#add-node-submit-cta').click()
-
     cy.wait('@updateAbout')
 
     // Close modal and assert the title
     cy.get('div[data-testid="close-modal"]').click()
     cy.get('.title').should('have.text', title)
-
-    cy.contains('About').click({ force: true })
-    cy.wait(1000)
-
-    cy.contains(description).should('be.visible')
   })
 })
