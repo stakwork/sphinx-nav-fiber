@@ -61,7 +61,7 @@ export const PathwayBadges = ({ links, simulation }: Props) => {
               }}
             >
               <span>{i.edge_type}</span>
-              <Flex className="icon" onClick={() => console.log(123)}>
+              <Flex className="icon">
                 <DeleteIcon />
               </Flex>
             </Tag>

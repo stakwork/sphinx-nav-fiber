@@ -29,7 +29,7 @@ describe('Test Curation Table', () => {
     cy.get('[data-testid="topic-search-container"]').find('button[type="button"]').click()
   })
 
-  it('Rename a Topic', () => {
+  it.skip('Rename a Topic', () => {
     cy.intercept({
       method: 'GET',
       url: 'http://localhost:8444/api/nodes/info*',

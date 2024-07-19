@@ -46,7 +46,7 @@ export const Body = () => {
           setTopicEdge(edge)
         }
       } catch (error) {
-        console.log(error)
+        console.error(error)
       } finally {
         setTopicIsLoading(false)
       }

@@ -128,8 +128,6 @@ export const App = () => {
 
   const handleAiSummaryAnswer = useCallback(
     (data: AiSummaryAnswerResponse) => {
-      console.log(data)
-
       if (data.question && getKeyExist(data.question)) {
         setAiSummaryAnswer(data.question, { answer: data.answer, answerLoading: false })
       }
