@@ -61,16 +61,5 @@ export const useHasAiChatsResponse = () =>
   useAiSummaryStore((s) => {
     const answers = s.aiSummaryAnswers
 
-    if (isEmpty(answers)) {
-      return false
-    }
-
-    const allKeys = Object.keys(answers)
-    const hasAnswers = allKeys.every((key) => !!answers[key]?.answer)
-
-    if (!hasAnswers) {
-      return false
-    }
-
-    return true
+    return Object.values(answers).at(-1)?.answerLoading
   })

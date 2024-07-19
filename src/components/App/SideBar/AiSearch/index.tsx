@@ -30,18 +30,18 @@ export const AiSearch = () => {
     <AiSearchWrapper>
       <FormProvider {...form}>
         <Search>
-          <SearchBar loading={!isLoading} onSubmit={handleSubmit} placeholder="Ask follow-up" />
+          <SearchBar loading={isLoading} onSubmit={handleSubmit} placeholder="Ask follow-up" />
           <InputButton
             data-testid="search-ai_action_icon"
             onClick={() => {
-              if (!isLoading) {
+              if (isLoading) {
                 return
               }
 
               handleSubmit()
             }}
           >
-            {isLoading ? <SearchIcon /> : <ClipLoader color={colors.lightGray} data-testid="loader" size="20" />}
+            {!isLoading ? <SearchIcon /> : <ClipLoader color={colors.lightGray} data-testid="loader" size="20" />}
           </InputButton>
         </Search>
       </FormProvider>
