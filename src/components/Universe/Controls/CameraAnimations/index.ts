@@ -75,7 +75,7 @@ export const useCameraAnimations = (
   useEffect(() => {
     if (cameraControlsRef.current && graphRadius) {
       if (graphStyle === 'sphere') {
-        cameraControlsRef.current.maxDistance = 8000
+        cameraControlsRef.current.maxDistance = 2000
         cameraControlsRef.current.minDistance = 200
         cameraControlsRef.current.setTarget(0, 0, 500, true)
       } else {
