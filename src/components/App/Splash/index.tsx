@@ -17,7 +17,7 @@ export const Splash = memo(({ children }: PropsWithChildren) => {
   const [progress, setProgress] = useState(0)
   const [isLoading, setIsLoading] = useState(true)
   const { appMetaData, setAppMetaData } = useAppStore((s) => s)
-  const { stats, setStats, isFetching } = useDataStore((s) => s)
+  const { stats, setStats, isFetching, setSeedQuestions } = useDataStore((s) => s)
 
   const fetchData = useCallback(async () => {
     try {
@@ -25,6 +25,10 @@ export const Splash = memo(({ children }: PropsWithChildren) => {
         const aboutResponse = await getAboutData()
 
         setAppMetaData(aboutResponse)
+
+        if (aboutResponse.seed_questions) {
+          setSeedQuestions(aboutResponse.seed_questions)
+        }
       }
 
       if (!stats) {
@@ -43,7 +47,7 @@ export const Splash = memo(({ children }: PropsWithChildren) => {
 
       setProgress(100)
     }
-  }, [appMetaData, setAppMetaData, setStats, stats])
+  }, [appMetaData, setAppMetaData, setStats, stats, setSeedQuestions])
 
   useEffect(() => {
     fetchData()
