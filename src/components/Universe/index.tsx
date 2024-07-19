@@ -6,11 +6,10 @@ import { Bloom, EffectComposer, Outline, Selection, Vignette } from '@react-thre
 import { useControls } from 'leva'
 import { BlendFunction, Resolution } from 'postprocessing'
 import { Perf } from 'r3f-perf'
-import { Suspense, memo, useCallback, useEffect, useMemo, useState } from 'react'
+import { Suspense, memo, useCallback, useMemo } from 'react'
 import styled from 'styled-components'
 import { getNodeColorByType } from '~/components/Universe/Graph/constant'
 import { isDevelopment } from '~/constants'
-import { getAboutData } from '~/network/fetchSourcesData'
 import { useAppStore } from '~/stores/useAppStore'
 import { useControlStore } from '~/stores/useControlStore'
 import { useDataStore } from '~/stores/useDataStore'
@@ -98,23 +97,6 @@ const _Universe = () => {
 
   const isLoading = useDataStore((s) => s.isFetching)
   const universeQuestionIsOpen = useAppStore((s) => s.universeQuestionIsOpen)
-  const [seedQuestions, setSeedQuestions] = useState<string[]>([])
-
-  useEffect(() => {
-    const fetchSeedQuestions = async () => {
-      try {
-        const response = await getAboutData()
-
-        if (response.seed_questions) {
-          setSeedQuestions(response.seed_questions)
-        }
-      } catch (error) {
-        console.error('Error fetching seed questions:', error)
-      }
-    }
-
-    fetchSeedQuestions()
-  }, [])
 
   const onWheelHandler = useCallback(
     (e: React.WheelEvent) => {
@@ -161,7 +143,7 @@ const _Universe = () => {
           </Suspense>
         </Canvas>
       </Suspense>
-      {universeQuestionIsOpen && <UniverseQuestion seedQuestions={seedQuestions} />}
+      {universeQuestionIsOpen && <UniverseQuestion />}
       {isLoading && <Preloader fullSize={false} />}
       <Overlay />
     </Wrapper>

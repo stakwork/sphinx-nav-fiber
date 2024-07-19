@@ -13,13 +13,9 @@ import { useDataStore } from '~/stores/useDataStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { colors } from '~/utils/colors'
 
-interface UniverseQuestionProps {
-  seedQuestions: string[]
-}
-
-export const UniverseQuestion = ({ seedQuestions }: UniverseQuestionProps) => {
+export const UniverseQuestion = () => {
   const [question, setQuestion] = useState('')
-  const { fetchData, setAbortRequests } = useDataStore((s) => s)
+  const { fetchData, setAbortRequests, seedQuestions } = useDataStore((s) => s)
   const [setBudget] = useUserStore((s) => [s.setBudget])
   const setUniverseQuestionIsOpen = useAppStore((s) => s.setUniverseQuestionIsOpen)
   const resetAiSummaryAnswer = useAiSummaryStore((s) => s.resetAiSummaryAnswer)
@@ -61,7 +57,7 @@ export const UniverseQuestion = ({ seedQuestions }: UniverseQuestionProps) => {
     return array
   }
 
-  const displayedSeedQuestions = shuffleArray(seedQuestions).slice(0, 4)
+  const displayedSeedQuestions = seedQuestions ? shuffleArray(seedQuestions).slice(0, 4) : []
 
   const isValidText = !!question && question.trim().length > 0
 
