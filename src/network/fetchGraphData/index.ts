@@ -1,8 +1,8 @@
 import { isDevelopment, isE2E } from '~/constants'
 import { api } from '~/network/api'
 import { FetchDataResponse } from '~/types'
+import { payLsat } from '~/utils'
 import { getLSat } from '~/utils/getLSat'
-import { payLsat } from '~/utils/payLsat'
 
 // Main function to fetch graph data
 export const fetchGraphData = async (
@@ -25,16 +25,20 @@ const fetchNodes = async (
   const fetchWithLSAT = async (): Promise<FetchDataResponse> => {
     const lsatToken = await getLSat()
 
-    const response = await api.get<FetchDataResponse>(url, { Authorization: lsatToken }, signal)
+    try {
+      const response = await api.get<FetchDataResponse>(url, { Authorization: lsatToken }, signal)
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    if ((response as any).status === 402) {
-      await payLsat(setBudget)
+      return response
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      if (error.status === 402) {
+        await payLsat(setBudget)
 
-      return fetchNodes(setBudget, params, signal, setAbortRequests)
+        return fetchNodes(setBudget, params, signal, setAbortRequests)
+      }
+
+      throw error
     }
-
-    return response
   }
 
   if (!params.word || (isDevelopment && !isE2E)) {
