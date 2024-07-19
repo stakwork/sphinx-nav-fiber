@@ -4,6 +4,16 @@ interface TooltipProps {
   content: string
   children: React.ReactNode
   margin?: string
+  backgroundColor?: string
+  color?: string
+  padding?: string
+  fontSize?: string
+  fontWeight?: string
+  borderRadius?: string
+  position?: string
+  minWidth?: string
+  whiteSpace?: string
+  textAlign?: string
 }
 
 const TooltipContainer = styled.div`
@@ -12,27 +22,40 @@ const TooltipContainer = styled.div`
   align-items: center;
 `
 
-const TooltipText = styled.div<{ margin?: string }>`
+const TooltipText = styled.div<{
+  margin?: string
+  backgroundColor?: string
+  color?: string
+  padding?: string
+  fontSize?: string
+  fontWeight?: string
+  borderRadius?: string
+  position?: string
+  minWidth?: string
+  whiteSpace?: string
+  textAlign?: string
+}>`
   visibility: hidden;
   width: auto;
-  background-color: white;
-  color: black;
-  text-align: center;
-  border-radius: 4px;
-  padding: 5px 8px;
+  background-color: ${({ backgroundColor }) => backgroundColor || 'white'};
+  color: ${({ color }) => color || 'black'};
+  text-align: ${({ textAlign }) => textAlign || 'center'};
+  min-width: ${({ minWidth }) => minWidth || 'auto'};
+  border-radius: ${({ borderRadius }) => borderRadius || '4px'};
+  padding: ${({ padding }) => padding || '5px 8px'};
   position: absolute;
   z-index: 1;
-  top: 100%;
+  ${({ position }) => (position === 'top' ? 'bottom: 100%;' : 'top: 100%;')}
   left: 50%;
   transform: translateX(-50%);
   margin-top: ${({ margin }) => margin || '0px'};
   opacity: 0;
   transition: opacity 0.3s;
-  white-space: nowrap;
+  white-space: ${({ whiteSpace }) => whiteSpace || 'nowrap'};
   overflow: hidden;
   text-overflow: ellipsis;
-  font-size: 12px;
-  font-weight: 600;
+  font-size: ${({ fontSize }) => fontSize || '12px'};
+  font-weight: ${({ fontWeight }) => fontWeight || '600'};
 
   ${TooltipContainer}:hover & {
     visibility: visible;
@@ -40,9 +63,37 @@ const TooltipText = styled.div<{ margin?: string }>`
   }
 `
 
-export const Tooltip = ({ content, children, margin }: TooltipProps) => (
+export const Tooltip = ({
+  content,
+  children,
+  margin,
+  backgroundColor,
+  color,
+  padding,
+  fontSize,
+  fontWeight,
+  borderRadius,
+  minWidth,
+  whiteSpace,
+  position,
+  textAlign,
+}: TooltipProps) => (
   <TooltipContainer>
     {children}
-    <TooltipText margin={margin}>{content}</TooltipText>
+    <TooltipText
+      backgroundColor={backgroundColor}
+      borderRadius={borderRadius}
+      color={color}
+      fontSize={fontSize}
+      fontWeight={fontWeight}
+      margin={margin}
+      minWidth={minWidth}
+      padding={padding}
+      position={position}
+      textAlign={textAlign}
+      whiteSpace={whiteSpace}
+    >
+      {content}
+    </TooltipText>
   </TooltipContainer>
 )
