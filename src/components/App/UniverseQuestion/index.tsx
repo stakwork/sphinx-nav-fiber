@@ -183,6 +183,7 @@ const StyledButton = styled(Button)`
   }
 
   svg {
+    margin-top: 1px;
     width: 12px;
     height: 12px;
   }
