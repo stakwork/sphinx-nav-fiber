@@ -61,7 +61,7 @@ export const AiSummary = ({ question, response }: Props) => {
       </TitleWrapper>
       {!collapsed && (
         <>
-          {response.answerLoading ? (
+          {response.answerLoading || !response.entities?.length ? (
             <AiSummarySkeleton />
           ) : (
             <AiAnswer
