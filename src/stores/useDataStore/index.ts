@@ -46,6 +46,7 @@ export type DataStore = {
   trendingTopics: Trending[]
   stats: TStats | null
   nodeTypes: string[]
+  seedQuestions: string[] | null
 
   setTrendingTopics: (trendingTopics: Trending[]) => void
   setDataNew: (data: GraphData) => void
@@ -72,6 +73,7 @@ export type DataStore = {
   setAbortRequests: (abortRequest: boolean) => void
   nextPage: () => void
   setFilters: (filters: Partial<FilterParams>) => void
+  setSeedQuestions: (questions: string[]) => void
 }
 
 const defaultData: Omit<
@@ -98,6 +100,7 @@ const defaultData: Omit<
   | 'nextPage'
   | 'setDataNew'
   | 'resetDataNew'
+  | 'setSeedQuestions'
 > = {
   categoryFilter: null,
   dataInitial: null,
@@ -127,6 +130,7 @@ const defaultData: Omit<
   splashDataLoading: true,
   abortRequest: false,
   dataNew: null,
+  seedQuestions: null,
 }
 
 let abortController: AbortController | null = null
@@ -258,6 +262,7 @@ export const useDataStore = create<DataStore>()(
     setSources: (sources) => set({ sources }),
     setHideNodeDetails: (hideNodeDetails) => set({ hideNodeDetails }),
     setTeachMe: (showTeachMe) => set({ showTeachMe }),
+    setSeedQuestions: (questions) => set({ seedQuestions: questions }),
     updateNode: (updatedNode) => {
       console.log(updatedNode)
     },

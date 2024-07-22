@@ -308,4 +308,16 @@ export type AIEntity = {
   sourcesLoading?: boolean
   questionsLoading?: boolean
   hasBeenRendered?: boolean
+  entities?: ExtractedEntity[]
+}
+
+export interface ExtractedEntity {
+  entity: string
+  description: string
+}
+
+export interface ExtractedEntitiesResponse {
+  ref_id: string
+  question: string
+  entities: ExtractedEntity[]
 }

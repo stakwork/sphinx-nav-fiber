@@ -29,7 +29,7 @@ const TitleWrapper = styled(Flex).attrs({
   direction: 'row',
   alignItems: 'center',
 })`
-  padding: 24px 10px 0 24px;
+  padding: 24px 10px 24px 24px;
 `
 
 export const AiSummary = ({ question, response }: Props) => {
@@ -66,6 +66,7 @@ export const AiSummary = ({ question, response }: Props) => {
           ) : (
             <AiAnswer
               answer={response.answer || ''}
+              entities={response.entities}
               handleLoaded={() => handleLoaded()}
               hasBeenRendered={!!response?.hasBeenRendered}
             />

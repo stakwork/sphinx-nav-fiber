@@ -46,7 +46,7 @@ export const Booster = ({ count = 0, updateCount, content, readOnly, refId }: Pr
         updateCount(count + defaultBoostAmount)
       }
     } catch (e) {
-      console.log(e)
+      console.error(e)
     }
 
     setSubmitting(false)

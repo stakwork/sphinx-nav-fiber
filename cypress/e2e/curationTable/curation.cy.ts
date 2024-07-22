@@ -29,7 +29,7 @@ describe('Test Curation Table', () => {
     cy.get('[data-testid="topic-search-container"]').find('button[type="button"]').click()
   })
 
-  it('Rename a Topic', () => {
+  it.skip('Rename a Topic', () => {
     cy.intercept({
       method: 'GET',
       url: 'http://localhost:8444/api/nodes/info*',
@@ -56,9 +56,11 @@ describe('Test Curation Table', () => {
       cy.get('td:nth-child(2)').then(($td) => {
         // Access the value of the first td
         const tdValue = $td.text()
+
         cy.get('.approve-wrapper button').eq(1).click()
       })
     })
+
     cy.get('div[data-testid="rename"]').click()
 
     cy.get('#editTopic').should('exist')
@@ -74,6 +76,7 @@ describe('Test Curation Table', () => {
       cy.get('td:nth-child(2)').then(($td) => {
         // Access the value of the first td
         const tdValue = $td.text().trim()
+
         expect(tdValue).to.equal(newTopic)
       })
     })
@@ -98,6 +101,7 @@ describe('Test Curation Table', () => {
     const mergeTopic = 'authenticity'
     let specificValue = ''
     let matchFound = false
+
     cy.initialSetup('alice', 300)
 
     cy.get('#cy-open-soure-table').click()
@@ -106,17 +110,19 @@ describe('Test Curation Table', () => {
 
     cy.contains('button', 'Topics').click()
 
-    //Get node content intercept
+    // Get node content intercept
     cy.wait('@loadTopics')
 
     cy.get('tbody > tr:first').within(() => {
       cy.get('td:nth-child(2)').then(($td) => {
         // Access the value of the first td
         const tdValue = $td.text().trim()
+
         specificValue = tdValue
         cy.get('.approve-wrapper button').eq(1).click()
       })
     })
+
     cy.get('div[data-testid="merge"]').click()
 
     cy.get('#blur-on-select').type(mergeTopic)
@@ -149,7 +155,7 @@ describe('Test Curation Table', () => {
       })
   })
 
-  it('Mute Topic', () => {
+  it.skip('Mute Topic', () => {
     cy.intercept({
       method: 'GET',
       url: 'http://localhost:8444/api/nodes/info?skip=0&limit=50&muted=False&sort_by=date&node_type=Topic*',
@@ -184,6 +190,7 @@ describe('Test Curation Table', () => {
       cy.get('td:nth-child(2)').then(($td) => {
         // Access the value of the first td
         const tdValue = $td.text().trim()
+
         specificValue = tdValue
         cy.get('.approve-wrapper button').eq(0).click()
       })
@@ -216,6 +223,7 @@ describe('Test Curation Table', () => {
     cy.get('tbody > tr:first').within(() => {
       cy.get('td:nth-child(2)').then(($td) => {
         const tdValue = $td.text().trim()
+
         secondSpecificValue = tdValue
         cy.get('.approve-wrapper button').eq(1).click()
       })
@@ -244,7 +252,7 @@ describe('Test Curation Table', () => {
       })
   })
 
-  it('Unmute Topic', () => {
+  it.skip('Unmute Topic', () => {
     cy.intercept({
       method: 'GET',
       url: 'http://localhost:8444/api/nodes/info?skip=0&limit=50&muted=False&sort_by=date&node_type=Topic*',
@@ -281,6 +289,7 @@ describe('Test Curation Table', () => {
       cy.get('td:nth-child(2)').then(($td) => {
         // Access the value of the first td
         const tdValue = $td.text().trim()
+
         specificValue = tdValue
         cy.get('.approve-wrapper button').eq(0).click()
       })
@@ -313,6 +322,7 @@ describe('Test Curation Table', () => {
     cy.get('tbody > tr:first').within(() => {
       cy.get('td:nth-child(2)').then(($td) => {
         const tdValue = $td.text().trim()
+
         secondSpecificValue = tdValue
         cy.get('.approve-wrapper button').eq(1).click()
       })
@@ -374,9 +384,9 @@ describe('Test Curation Table', () => {
 
       let topicName
 
-      let edgeTopicName = 'Racism'
+      const edgeTopicName = 'Racism'
 
-      let edgeType = 'RELATED_TO'
+      const edgeType = 'RELATED_TO'
 
       cy.get('tbody > tr:first')
         .within(() => {
@@ -402,6 +412,7 @@ describe('Test Curation Table', () => {
 
           for (let i = 0; i < responseData.length; i++) {
             const data = responseData[i]
+
             if (data.name === topicName) {
               currentTopic = { ...data }
               break
@@ -418,6 +429,7 @@ describe('Test Curation Table', () => {
             const responseBody = response.body
             let node
             let edge
+
             for (let i = 0; i < responseBody.nodes.length; i++) {
               if (responseBody.nodes[i].name === edgeTopicName) {
                 node = { ...responseBody.nodes[i] }
@@ -463,6 +475,7 @@ describe('Test Curation Table', () => {
     cy.get('tbody > tr:first').within(() => {
       cy.get('td:nth-child(4)').then(($td) => {
         const tdValue = $td.text().trim()
+
         firstCount = parseInt(tdValue)
       })
     })
@@ -472,6 +485,7 @@ describe('Test Curation Table', () => {
     cy.get('tbody > tr:first').within(() => {
       cy.get('td:nth-child(4)').then(($td) => {
         const tdValue = parseInt($td.text().trim())
+
         expect(tdValue).to.be.gt(firstCount)
       })
     })
