@@ -68,13 +68,13 @@ export const TitleEditor = () => {
             marginBottom: 8,
           }}
         >
-          image_url
+          Image Url
         </LabelText>
         <TextInput
           id="cy-image_url"
           maxLength={500}
           name="image_url"
-          placeholder="image_url"
+          placeholder="Image url"
           rules={{
             pattern: {
               message: 'Please enter a valid URL',
