@@ -17,6 +17,7 @@ const Wrapper = styled(Flex)(({ theme }) => ({
   boxShadow: '0px 1px 6px rgba(0, 0, 0, 0.1)',
   color: colors.primaryText1,
   zIndex: 100,
+  overflow: auto,
   transition: 'opacity 0.6s',
   padding: theme.spacing(2, 3),
   [theme.breakpoints.down('sm')]: {
