@@ -12,19 +12,17 @@ const Wrapper = styled(Flex)(({ theme }) => ({
   top: '65px',
   right: '55px',
   width: '300px',
-  pointerEvents: 'auto',
+  pointerEvents: 'none',
   background: colors.dashboardHeader,
   boxShadow: '0px 1px 6px rgba(0, 0, 0, 0.1)',
   color: colors.primaryText1,
   zIndex: 100,
-  overflow: 'hidden',
+  maxHeight: '400px',
+  overflowY: 'auto',
   transition: 'opacity 0.6s',
   padding: theme.spacing(2, 3),
   [theme.breakpoints.down('sm')]: {
     padding: theme.spacing(1, 1.5),
-  },
-  '&:hover': {
-    overflow: 'auto',
   },
 }))
 
