@@ -12,6 +12,8 @@ const Wrapper = styled(Flex)(({ theme }) => ({
   top: '65px',
   right: '55px',
   width: '300px',
+  maxHeight: '400px',
+  overflowY: 'auto',
   pointerEvents: 'none',
   background: colors.dashboardHeader,
   boxShadow: '0px 1px 6px rgba(0, 0, 0, 0.1)',
