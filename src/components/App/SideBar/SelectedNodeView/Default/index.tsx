@@ -1,5 +1,6 @@
 import clsx from 'clsx'
 import styled from 'styled-components'
+import moment from 'moment'
 import { Divider } from '~/components/common/Divider'
 import { Flex } from '~/components/common/Flex'
 import { highlightSearchTerm } from '~/components/common/Highlight/Highlight'
@@ -43,7 +44,11 @@ export const Default = () => {
           {Object.entries(customKeys)
             .filter(([key]) => key !== 'media_url' && key !== 'link')
             .map(([key, value]) => (
-              <NodeDetail key={key} label={key} value={value} />
+              <NodeDetail
+                key={key}
+                label={key}
+                value={key === 'date' && value ? moment(value * 1000).format('MMMM Do YYYY') : value}
+              />
             ))}
         </StyledWrapper>
       </StyledContent>
