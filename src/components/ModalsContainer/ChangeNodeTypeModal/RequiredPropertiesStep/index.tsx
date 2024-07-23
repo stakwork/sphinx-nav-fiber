@@ -14,7 +14,6 @@ import { parseJson, parsedObjProps } from '../../BlueprintModal/Body/Editor/util
 import { filterNodeKey } from '~/components/ModalsContainer/ChangeNodeTypeModal/utils'
 import { noSpacePattern } from '~/components/AddItemModal/SourceTypeStep/constants'
 
-
 type Props = {
   skipToStep: (step: MapNodeTypeModalStepID) => void
   nodeType: string
