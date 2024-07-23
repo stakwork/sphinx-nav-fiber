@@ -12,7 +12,7 @@ const Wrapper = styled(Flex)(({ theme }) => ({
   top: '65px',
   right: '55px',
   width: '300px',
-  pointerEvents: 'none',
+  pointerEvents: 'auto',
   background: colors.dashboardHeader,
   boxShadow: '0px 1px 6px rgba(0, 0, 0, 0.1)',
   color: colors.primaryText1,
