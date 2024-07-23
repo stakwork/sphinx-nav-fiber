@@ -159,5 +159,13 @@ export const FormInput = ({
 const InputsWrapper = styled(Flex)`
   overflow-y: auto;
   width: calc(100% + 20px);
-  max-height: 230px;
+  max-height: 31vh;
+
+  @media (max-height: 600px) {
+    max-height: 28vh;
+  }
+
+  @media (max-height: 400px) {
+    max-height: 23vh;
+  }
 `
