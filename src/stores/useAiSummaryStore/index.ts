@@ -56,3 +56,10 @@ export const useAiSummaryStore = create<AiSummaryStore>()(
 )
 
 export const useHasAiChats = () => useAiSummaryStore((s) => !isEmpty(s.aiSummaryAnswers))
+
+export const useHasAiChatsResponse = () =>
+  useAiSummaryStore((s) => {
+    const answers = s.aiSummaryAnswers
+
+    return Object.values(answers).at(-1)?.answerLoading
+  })

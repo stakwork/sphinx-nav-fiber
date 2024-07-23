@@ -6,12 +6,16 @@ import { Flex } from '~/components/common/Flex'
 import { useDataStore } from '~/stores/useDataStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { colors } from '~/utils'
+import { useHasAiChatsResponse } from '~/stores/useAiSummaryStore'
+import { ClipLoader } from 'react-spinners'
 
 export const AiSearch = () => {
   const form = useForm<{ search: string }>({ mode: 'onChange' })
   const { fetchData, setAbortRequests } = useDataStore((s) => s)
   const { setBudget } = useUserStore((s) => s)
   const { reset } = form
+
+  const isLoading = useHasAiChatsResponse()
 
   const handleSubmit = form.handleSubmit(({ search }) => {
     if (search.trim() === '') {
@@ -26,14 +30,18 @@ export const AiSearch = () => {
     <AiSearchWrapper>
       <FormProvider {...form}>
         <Search>
-          <SearchBar onSubmit={handleSubmit} placeholder="Ask follow-up" />
+          <SearchBar loading={isLoading} onSubmit={handleSubmit} placeholder="Ask follow-up" />
           <InputButton
             data-testid="search-ai_action_icon"
             onClick={() => {
+              if (isLoading) {
+                return
+              }
+
               handleSubmit()
             }}
           >
-            <SearchIcon />
+            {!isLoading ? <SearchIcon /> : <ClipLoader color={colors.lightGray} data-testid="loader" size="20" />}
           </InputButton>
         </Search>
       </FormProvider>
