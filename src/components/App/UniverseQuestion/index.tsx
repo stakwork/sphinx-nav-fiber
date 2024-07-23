@@ -3,7 +3,7 @@ import { Flex } from '~/components/common/Flex'
 
 import { TextareaAutosize } from '@mui/base'
 import { Button } from '@mui/material'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import ArrowForwardIcon from '~/components/Icons/ArrowForwardIcon'
 import ExploreIcon from '~/components/Icons/ExploreIcon'
 import HelpIcon from '~/components/Icons/HelpIcon'
@@ -19,6 +19,13 @@ export const UniverseQuestion = () => {
   const [setBudget] = useUserStore((s) => [s.setBudget])
   const setUniverseQuestionIsOpen = useAppStore((s) => s.setUniverseQuestionIsOpen)
   const resetAiSummaryAnswer = useAiSummaryStore((s) => s.resetAiSummaryAnswer)
+  const [displayedSeedQuestions, setDisplayedSeedQuestions] = useState<string[]>([])
+
+  useEffect(() => {
+    if (seedQuestions) {
+      setDisplayedSeedQuestions(shuffleArray(seedQuestions).slice(0, 4))
+    }
+  }, [seedQuestions])
 
   const handleSubmitQuestion = async (questionToSubmit: string) => {
     if (questionToSubmit) {
@@ -56,8 +63,6 @@ export const UniverseQuestion = () => {
 
     return array
   }
-
-  const displayedSeedQuestions = seedQuestions ? shuffleArray(seedQuestions).slice(0, 4) : []
 
   const isValidText = !!question && question.trim().length > 0
 
