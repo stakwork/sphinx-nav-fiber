@@ -1,5 +1,4 @@
 import { Segments } from '@react-three/drei'
-import { useFrame } from '@react-three/fiber'
 import { memo, useEffect, useRef, useState } from 'react'
 import { Group } from 'three'
 import { useShallow } from 'zustand/react/shallow'
@@ -81,10 +80,6 @@ export const SelectionDataNodes = memo(() => {
     },
     [setSelectionData],
   )
-
-  useFrame(() => {
-    // console.log(simulation2d.alpha())
-  })
 
   useEffect(() => {
     if (!simulation2d) {
