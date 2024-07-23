@@ -14,6 +14,10 @@ export const AiSearch = () => {
   const { reset } = form
 
   const handleSubmit = form.handleSubmit(({ search }) => {
+    if (search.trim() === '') {
+      return
+    }
+
     fetchData(setBudget, setAbortRequests, search)
     reset({ search: '' })
   })
