@@ -96,13 +96,14 @@ const CollapseButton = styled(Button)`
     cursor: pointer;
     flex-shrink: 0;
     padding: 0px;
-    width: 29px;
+    width: 27px;
     height: 26px;
     min-width: 26px;
     border-radius: 6px;
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-top: 1px;
   }
 
   svg {

@@ -67,4 +67,8 @@ const InputButton = styled(Flex).attrs({
   &:hover {
     /* background-color: ${colors.gray200}; */
   }
+
+  ${AiSearchWrapper} input:focus + & {
+    color: ${colors.primaryBlue};
+  }
 `
