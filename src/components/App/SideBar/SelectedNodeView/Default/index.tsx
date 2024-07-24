@@ -57,6 +57,16 @@ const NodeDetail = ({ label, value }: Props) => {
   const isLong = (value as string).length > 140
   const searchTerm = useAppStore((s) => s.currentSearch)
 
+  let formattedValue = String(value)
+
+  if (label.toLowerCase() === 'timestamp') {
+    formattedValue = formattedValue.replace(/-/g, ' - ')
+  }
+
+  if (label.toLowerCase() === 'topics') {
+    formattedValue = formattedValue.split(',').join(', ')
+  }
+
   if (!value) {
     return null
   }
@@ -65,7 +75,7 @@ const NodeDetail = ({ label, value }: Props) => {
     <>
       <StyledDetail className={clsx('node-detail', { 'node-detail__long': isLong })}>
         <Text className="node-detail__label">{label}</Text>
-        <Text className="node-detail__value">{highlightSearchTerm(String(value), searchTerm)}</Text>
+        <Text className="node-detail__value">{highlightSearchTerm(formattedValue, searchTerm)}</Text>
       </StyledDetail>
       <StyledDivider />
     </>
