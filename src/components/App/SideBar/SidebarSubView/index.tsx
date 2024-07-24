@@ -85,7 +85,7 @@ const CloseButton = styled(Flex)`
 
 const ScrollWrapper = styled(Flex)`
   flex: 1 1 100%;
-  border-radius: 16px;
+  border-radius: 0 0 16px 16px;
   overflow: hidden;
 `
 
