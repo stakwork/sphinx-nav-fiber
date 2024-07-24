@@ -34,7 +34,7 @@ export const Default = () => {
         </StyledImageWrapper>
       ) : null}
 
-      <StyledContent grow={1} justify="flex-start" pt={hasImage ? 0 : 8} shrink={1}>
+      <StyledContent grow={1} justify="flex-start" shrink={1}>
         <Flex ml={24} mt={20} style={{ width: 'fit-content' }}>
           <TypeBadge type={selectedNode.node_type || ''} />
         </Flex>
@@ -76,7 +76,6 @@ const StyledContent = styled(Flex)`
   overflow: auto;
   width: 100%;
   flex-grow: 1;
-  padding-top: 16px;
 `
 
 const StyledWrapper = styled(Flex)`
