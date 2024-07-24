@@ -42,8 +42,8 @@ export const Default = () => {
         <StyledWrapper>
           {Object.entries(customKeys)
             .filter(([key]) => key !== 'media_url' && key !== 'link')
-            .map(([key, value]) => (
-              <NodeDetail key={key} label={key} value={value} />
+            .map(([key, value], index, array) => (
+              <NodeDetail key={key} isLast={index === array.length - 1} label={key} value={value} />
             ))}
         </StyledWrapper>
       </StyledContent>
@@ -51,9 +51,9 @@ export const Default = () => {
   )
 }
 
-type Props = { label: string; value: unknown }
+type Props = { isLast: boolean; label: string; value: unknown }
 
-const NodeDetail = ({ label, value }: Props) => {
+const NodeDetail = ({ isLast, label, value }: Props) => {
   const isLong = (value as string).length > 140
   const searchTerm = useAppStore((s) => s.currentSearch)
 
@@ -67,7 +67,7 @@ const NodeDetail = ({ label, value }: Props) => {
         <Text className="node-detail__label">{label}</Text>
         <Text className="node-detail__value">{highlightSearchTerm(String(value), searchTerm)}</Text>
       </StyledDetail>
-      <StyledDivider />
+      {!isLast && <StyledDivider />}
     </>
   )
 }
