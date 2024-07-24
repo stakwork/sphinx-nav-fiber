@@ -71,7 +71,6 @@ export const UniverseQuestion = () => {
       Ideas have shapes
       <TextAreaWrapper onKeyDown={onEnterPress} py={12} tabIndex={-1}>
         <StyledTextarea
-          hasText={!!question.trim()}
           onChange={(e) => setQuestion(e.target.value)}
           placeholder="What do you want to know?"
           value={question}
@@ -109,17 +108,15 @@ export const UniverseQuestion = () => {
 }
 
 const StyledTextarea = styled(TextareaAutosize).attrs({
-  minRows: 5,
-})<{ hasText: boolean }>`
+  maxRows: 3,
+})`
   background: ${colors.BG1};
-  max-width: 702px;
-  width: 702px;
+  max-width: 700px;
+  width: 700px;
   color: ${colors.white};
-  padding: 16px;
-  padding-bottom: ${(props) => (props.hasText ? '50px' : '16px')};
-  max-height: 200px;
+  padding: 15px;
   overflow-y: auto !important;
-  border: 1px solid ${colors.modalShield};
+  border: none;
   resize: none;
   outline: none;
   border-radius: 12px;
@@ -129,7 +126,6 @@ const StyledTextarea = styled(TextareaAutosize).attrs({
   text-align: justify;
   font-size: 16px;
   font-weight: 400;
-  box-shadow: 0px 1px 6px 0px rgba(0, 0, 0, 0.5);
 
   &:-moz-placeholder, /* Firefox 18- */
   &::-moz-placeholder, /* Firefox 19+ */
@@ -153,6 +149,16 @@ const StyledTextarea = styled(TextareaAutosize).attrs({
 const TextAreaWrapper = styled(Flex)`
   position: relative;
   margin-top: 30px;
+  background: ${colors.BG1};
+  max-width: 702px;
+  width: 702px;
+  color: ${colors.white};
+  min-height: 150px;
+  border: 1px solid ${colors.modalShield};
+  resize: none;
+  outline: none;
+  border-radius: 12px;
+  box-shadow: 0px 1px 6px 0px rgba(0, 0, 0, 0.5);
 `
 
 const Wrapper = styled(Flex)`
@@ -175,7 +181,7 @@ const Wrapper = styled(Flex)`
 const StyledButton = styled(Button)`
   && {
     position: absolute;
-    bottom: 26px;
+    bottom: 12px;
     right: 14px;
     height: 32px;
     border-radius: 16px;
