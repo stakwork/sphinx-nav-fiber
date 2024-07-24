@@ -23,6 +23,9 @@ const Title = styled(Text)`
   font-size: 20px;
   font-weight: 600;
   flex-grow: 1;
+  overflow-wrap: break-word;
+  white-space: normal;
+  word-break: break-word;
 `
 
 const TitleWrapper = styled(Flex).attrs({
@@ -30,6 +33,8 @@ const TitleWrapper = styled(Flex).attrs({
   alignItems: 'center',
 })`
   padding: 24px 10px 24px 24px;
+  flex-shrink: 1;
+  overflow: hidden;
 `
 
 export const AiSummary = ({ question, response }: Props) => {
