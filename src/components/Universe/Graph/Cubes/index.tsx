@@ -15,7 +15,7 @@ import { TextNode } from './Text'
 export const Cubes = memo(() => {
   const selectedNode = useSelectedNode()
   const relativeIds = useSelectedNodeRelativeIds()
-  const { selectionGraphData, showSelectionGraph, setHoveredNode } = useGraphStore((s) => s)
+  const { selectionGraphData, showSelectionGraph, setHoveredNode, setIsHovering } = useGraphStore((s) => s)
 
   const data = useDataStore((s) => s.dataInitial)
   const setTranscriptOpen = useAppStore((s) => s.setTranscriptOpen)
@@ -52,10 +52,9 @@ export const Cubes = memo(() => {
   const onPointerOut = useCallback(
     (e: ThreeEvent<PointerEvent>) => {
       e.stopPropagation()
-
-      setHoveredNode(null)
+      setIsHovering(false)
     },
-    [setHoveredNode],
+    [setIsHovering],
   )
 
   const onPointerIn = useCallback(
@@ -69,10 +68,11 @@ export const Cubes = memo(() => {
         if (!ignoreNodeEvent(node)) {
           e.stopPropagation()
           setHoveredNode(node)
+          setIsHovering(true)
         }
       }
     },
-    [setHoveredNode, ignoreNodeEvent],
+    [setHoveredNode, setIsHovering, ignoreNodeEvent],
   )
 
   const hideUniverse = showSelectionGraph && !!selectedNode

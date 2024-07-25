@@ -80,6 +80,7 @@ export type GraphStore = {
   scrollEventsDisabled: boolean
   simulation: ForceSimulation | null
   simulationHelpers: SimulationHelpers
+  isHovering: boolean
 
   setDisableCameraRotation: (rotation: boolean) => void
   setScrollEventsDisabled: (rotation: boolean) => void
@@ -93,6 +94,7 @@ export type GraphStore = {
   setShowSelectionGraph: (_: boolean) => void
   setSelectionData: (data: GraphData) => void
   simulationCreate: (nodes: Node[], links: Link[]) => void
+  setIsHovering: (isHovering: boolean) => void
 }
 
 const defaultData: Omit<
@@ -111,6 +113,7 @@ const defaultData: Omit<
   | 'setSelectionData'
   | 'setHideNodeDetails'
   | 'simulationCreate'
+  | 'setIsHovering'
 > = {
   data: null,
   simulation: null,
@@ -126,6 +129,7 @@ const defaultData: Omit<
   showSelectionGraph: false,
   splashDataLoading: true,
   simulationHelpers: defaultSimulationHelpers,
+  isHovering: false,
 }
 
 export const useGraphStore = create<GraphStore>()((set, get) => ({
@@ -136,6 +140,7 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
   setSelectionData: (selectionGraphData) => set({ selectionGraphData }),
   setScrollEventsDisabled: (scrollEventsDisabled) => set({ scrollEventsDisabled }),
   setDisableCameraRotation: (rotation) => set({ disableCameraRotation: rotation }),
+  setIsHovering: (isHovering) => set({ isHovering }),
   setGraphRadius: (graphRadius) => set({ graphRadius }),
   setGraphStyle: (graphStyle) => set({ graphStyle }),
   setHoveredNode: (hoveredNode) => {
