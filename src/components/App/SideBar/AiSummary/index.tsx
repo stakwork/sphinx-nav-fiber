@@ -81,7 +81,7 @@ export const AiSummary = ({ question, response }: Props) => {
           ) : (
             <AiQuestions questions={response.questions || []} />
           )}
-          {response.sourcesLoading ? <EpisodeSkeleton count={1} /> : <AiSources sourceIds={response.sources || []} />}
+          {(response?.sources || []).length ? <AiSources sourceIds={response.sources || []} /> : null}
         </>
       )}
     </Wrapper>
