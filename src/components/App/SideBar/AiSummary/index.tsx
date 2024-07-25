@@ -19,9 +19,9 @@ type Props = {
   response: AIEntity
 }
 
-const Title = styled(Text)`
-  font-size: 20px;
-  font-weight: 600;
+const Title = styled(Text)<{ isLong: boolean }>`
+  font-size: ${({ isLong }) => (isLong ? '18px' : '20px')};
+  font-weight: ${({ isLong }) => (isLong ? '500' : '600')};
   flex-grow: 1;
   overflow-wrap: break-word;
   white-space: normal;
@@ -37,9 +37,27 @@ const TitleWrapper = styled(Flex).attrs({
   overflow: hidden;
 `
 
+const MoreText = styled.span<{ isFull: boolean }>`
+  color: ${colors.white};
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+  text-align: right;
+  margin-left: ${({ isFull }) => (isFull ? '8px' : '4px')};
+  padding: 2px 5px;
+  border-radius: 4px;
+  background-color: ${colors.GRAY6};
+
+  &:hover {
+    background-color: ${colors.GRAY7};
+  }
+`
+
 export const AiSummary = ({ question, response }: Props) => {
   const ref = useRef<HTMLDivElement>(null)
   const [collapsed, setCollapsed] = useState(false)
+  const [showFullQuestion, setShowFullQuestion] = useState(false)
   const { setAiSummaryAnswer } = useAiSummaryStore((s) => s)
 
   useEffect(() => {
@@ -52,16 +70,37 @@ export const AiSummary = ({ question, response }: Props) => {
     setCollapsed(!collapsed)
   }
 
+  const handleMoreClick = async () => {
+    setShowFullQuestion(!showFullQuestion)
+  }
+
   const handleLoaded = () => {
     if (question) {
       setAiSummaryAnswer(question, { hasBeenRendered: true })
     }
   }
 
+  const renderQuestion = () => {
+    if (question.length > 200) {
+      return (
+        <>
+          {showFullQuestion ? `${question}` : `${question.substring(0, 200)} ... `}
+          <MoreText isFull={showFullQuestion} onClick={handleMoreClick}>
+            {showFullQuestion ? 'less' : 'more'}
+          </MoreText>
+        </>
+      )
+    }
+
+    return question
+  }
+
   return (
     <Wrapper>
       <TitleWrapper>
-        <Title ref={ref}>{question}</Title>
+        <Title ref={ref} isLong={question.length > 200}>
+          {renderQuestion()}
+        </Title>
         <CollapseButton onClick={toggleCollapse}>{collapsed ? <ChevronDownIcon /> : <ChevronUpIcon />}</CollapseButton>
       </TitleWrapper>
       {!collapsed && (
