@@ -12,6 +12,8 @@ type AnimatedTextProps = {
 export const AnimatedTextContent = ({ message }: AnimatedTextProps) => {
   const [currentMessageIndex, setCurrentMessageIndex] = useState(0)
 
+  const filteredMessage = message.filter((i) => i.value !== '0')
+
   useEffect(() => {
     const intervalId = setInterval(() => setCurrentMessageIndex((index) => (index + 1) % message.length), 1000)
 
@@ -23,14 +25,14 @@ export const AnimatedTextContent = ({ message }: AnimatedTextProps) => {
     <TextWrapper>
       <Text className="loading">LOADING</Text>
       <Flex className="value-wrapper">
-        {message.map(({ key, value }, index) => (
+        {filteredMessage.map(({ key, value }, index) => (
           <div key={key} className={clsx('value', { show: currentMessageIndex === index })}>
             {value}
           </div>
         ))}
       </Flex>
       <Flex>
-        {message.map(({ key, label }, index) => (
+        {filteredMessage.map(({ key, label }, index) => (
           <Flex key={key} className={clsx('label-wrapper', { show: currentMessageIndex === index })}>
             <div className="label">{label}</div>
           </Flex>

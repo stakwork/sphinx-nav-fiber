@@ -3,12 +3,12 @@ import { useFrame } from '@react-three/fiber'
 import { memo, useMemo, useRef } from 'react'
 import { Mesh } from 'three'
 import { useNodeTypes } from '~/stores/useDataStore'
-import { useGraphStore, useSelectedNode, useSelectedNodeRelativeIds } from '~/stores/useGraphStore'
+import { useGraphStore, useHoveredNode, useSelectedNode, useSelectedNodeRelativeIds } from '~/stores/useGraphStore'
+import { useSchemaStore } from '~/stores/useSchemaStore'
 import { NodeExtended } from '~/types'
 import { colors } from '~/utils/colors'
 import { truncateText } from '~/utils/truncateText'
 import { fontProps } from './constants'
-import { useSchemaStore } from '~/stores/useSchemaStore'
 
 const COLORS_MAP = [
   '#fff',
@@ -45,12 +45,38 @@ type Props = {
   hide?: boolean
 }
 
+function splitStringIntoThreeParts(text: string): string {
+  // Split the string into an array of words
+
+  const truncatedText = truncateText(text, 30)
+  const words = truncatedText.split(' ')
+
+  // If the word count is 5 or less, return the original text
+  if (text.split(' ').length <= 5) {
+    return truncatedText
+  }
+
+  // Determine the split points
+  const third = Math.ceil(words.length / 3)
+  const twoThirds = third * 2
+
+  // Split the array into three parts
+  const firstPart = words.slice(0, third).join(' ')
+  const secondPart = words.slice(third, twoThirds).join(' ')
+  const thirdPart = words.slice(twoThirds).join(' ')
+
+  // Return the three parts as a single string with newline characters in between
+  return `${firstPart}\n${secondPart}\n${thirdPart}`
+}
+
 export const TextNode = memo(({ node, hide }: Props) => {
   const ref = useRef<Mesh | null>(null)
   const selectedNode = useSelectedNode()
+  const hoveredNode = useHoveredNode()
   const selectedNodeRelativeIds = useSelectedNodeRelativeIds()
   const isRelative = selectedNodeRelativeIds.includes(node?.ref_id || '')
   const isSelected = !!selectedNode && selectedNode?.ref_id === node.ref_id
+  const isHovered = !!hoveredNode && hoveredNode?.ref_id === node.ref_id
   const showSelectionGraph = useGraphStore((s) => s.showSelectionGraph)
   const [getPrimaryColorByType] = useSchemaStore((s) => [s.getPrimaryColorByType])
 
@@ -64,7 +90,7 @@ export const TextNode = memo(({ node, hide }: Props) => {
   })
 
   const textScale = useMemo(() => {
-    let scale = (node.edge_count || 30) * 4
+    let scale = (node.edge_count || 1) * 20
 
     if (showSelectionGraph && isSelected) {
       scale = 40
@@ -72,16 +98,24 @@ export const TextNode = memo(({ node, hide }: Props) => {
       scale = 0
     }
 
+    const nodeScale = scale / Math.sqrt(node.name.length)
+
+    scale = Math.max(nodeScale, 20)
+
     return scale
-  }, [node.edge_count, isSelected, isRelative, showSelectionGraph])
+  }, [node.edge_count, node.name, isSelected, isRelative, showSelectionGraph])
 
   const fillOpacity = useMemo(() => {
-    if (selectedNode && selectedNode.node_type === 'Topic' && !isSelected) {
+    if (selectedNode && !isSelected) {
+      return 0.2
+    }
+
+    if (hoveredNode && !isHovered) {
       return 0.2
     }
 
     return 1
-  }, [isSelected, selectedNode])
+  }, [isSelected, selectedNode, isHovered, hoveredNode])
 
   const primaryColor = getPrimaryColorByType(node.node_type)
 
@@ -95,12 +129,12 @@ export const TextNode = memo(({ node, hide }: Props) => {
         anchorY="middle"
         color={color}
         fillOpacity={fillOpacity}
-        scale={20 || textScale}
+        scale={textScale}
         userData={node}
         visible={!hide}
         {...fontProps}
       >
-        {truncateText(node.name, 10)}
+        {splitStringIntoThreeParts(String(node.name))}
       </Text>
     </>
   )
