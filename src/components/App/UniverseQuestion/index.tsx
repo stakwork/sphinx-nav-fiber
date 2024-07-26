@@ -3,7 +3,7 @@ import { Flex } from '~/components/common/Flex'
 
 import { TextareaAutosize } from '@mui/base'
 import { Button } from '@mui/material'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import ArrowForwardIcon from '~/components/Icons/ArrowForwardIcon'
 import ExploreIcon from '~/components/Icons/ExploreIcon'
 import HelpIcon from '~/components/Icons/HelpIcon'
@@ -19,6 +19,13 @@ export const UniverseQuestion = () => {
   const [setBudget] = useUserStore((s) => [s.setBudget])
   const setUniverseQuestionIsOpen = useAppStore((s) => s.setUniverseQuestionIsOpen)
   const resetAiSummaryAnswer = useAiSummaryStore((s) => s.resetAiSummaryAnswer)
+  const [displayedSeedQuestions, setDisplayedSeedQuestions] = useState<string[]>([])
+
+  useEffect(() => {
+    if (seedQuestions) {
+      setDisplayedSeedQuestions(shuffleArray(seedQuestions).slice(0, 4))
+    }
+  }, [seedQuestions])
 
   const handleSubmitQuestion = async (questionToSubmit: string) => {
     if (questionToSubmit) {
@@ -56,8 +63,6 @@ export const UniverseQuestion = () => {
 
     return array
   }
-
-  const displayedSeedQuestions = seedQuestions ? shuffleArray(seedQuestions).slice(0, 4) : []
 
   const isValidText = !!question && question.trim().length > 0
 
@@ -103,21 +108,24 @@ export const UniverseQuestion = () => {
 }
 
 const StyledTextarea = styled(TextareaAutosize).attrs({
-  minRows: 5,
+  maxRows: 3,
 })`
   background: ${colors.BG1};
-  max-width: 702px;
-  width: 702px;
+  max-width: 700px;
+  width: 700px;
   color: ${colors.white};
-  padding: 16px;
-  border: 1px solid ${colors.modalShield};
+  padding: 15px;
+  overflow-y: auto !important;
+  border: none;
   resize: none;
   outline: none;
   border-radius: 12px;
   font-family: 'Barlow';
+  display: flex;
+  align-items: center;
+  text-align: justify;
   font-size: 16px;
   font-weight: 400;
-  box-shadow: 0px 1px 6px 0px rgba(0, 0, 0, 0.5);
 
   &:-moz-placeholder, /* Firefox 18- */
   &::-moz-placeholder, /* Firefox 19+ */
@@ -126,11 +134,31 @@ const StyledTextarea = styled(TextareaAutosize).attrs({
   &::placeholder {
     color: #0bf;
   }
+
+  &::-webkit-scrollbar {
+    width: 3px;
+  }
+
+  &::-webkit-scrollbar-track {
+    border-radius: 12px;
+    margin: 13px;
+    overflow-y: hidden;
+  }
 `
 
 const TextAreaWrapper = styled(Flex)`
   position: relative;
   margin-top: 30px;
+  background: ${colors.BG1};
+  max-width: 702px;
+  width: 702px;
+  color: ${colors.white};
+  min-height: 150px;
+  border: 1px solid ${colors.modalShield};
+  resize: none;
+  outline: none;
+  border-radius: 12px;
+  box-shadow: 0px 1px 6px 0px rgba(0, 0, 0, 0.5);
 `
 
 const Wrapper = styled(Flex)`
@@ -153,7 +181,7 @@ const Wrapper = styled(Flex)`
 const StyledButton = styled(Button)`
   && {
     position: absolute;
-    bottom: 26px;
+    bottom: 12px;
     right: 14px;
     height: 32px;
     border-radius: 16px;
@@ -166,6 +194,7 @@ const StyledButton = styled(Button)`
   }
 
   svg {
+    margin-top: 1px;
     width: 12px;
     height: 12px;
   }

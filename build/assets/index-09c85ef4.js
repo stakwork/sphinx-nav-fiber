@@ -1,0 +1,1 @@
+import{ad as e,j as s}from"./index-628c0c10.js";import{aG as a,aS as t}from"./index-e2aabfe6.js";const u=()=>{const{close:o}=e("sourcesTable"),{visible:r}=e("addContent");return r?null:s.jsx(a,{background:"BG1",id:"sourcesTable",kind:"large",noWrap:!0,onClose:o,preventOutsideClose:!0,children:s.jsx(t,{})})};export{u as SourcesTableModal};

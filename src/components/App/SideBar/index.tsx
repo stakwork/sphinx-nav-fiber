@@ -120,72 +120,74 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ subViewOpen }, ref) =
   return (
     <Wrapper ref={ref} id="sidebar-wrapper">
       <TitlePlaceholder />
-      <SearchWrapper className={clsx({ 'has-shadow': isScrolled })}>
-        <SearchFilterIconWrapper>
-          <Search>
-            <SearchBar />
-            <InputButton
-              data-testid="search_action_icon"
-              onClick={() => {
-                if (searchTerm) {
-                  setValue('search', '')
-                  clearSearch()
-                  setSidebarFilter('all')
-                  setSelectedNode(null)
-                  navigate(`/`)
+      {!hasAiChats && (
+        <SearchWrapper className={clsx({ 'has-shadow': isScrolled })}>
+          <SearchFilterIconWrapper>
+            <Search>
+              <SearchBar />
+              <InputButton
+                data-testid="search_action_icon"
+                onClick={() => {
+                  if (searchTerm) {
+                    setValue('search', '')
+                    clearSearch()
+                    setSidebarFilter('all')
+                    setSelectedNode(null)
+                    navigate(`/`)
 
-                  return
-                }
+                    return
+                  }
 
-                if (typing.trim() === '') {
-                  return
-                }
+                  if (typing.trim() === '') {
+                    return
+                  }
 
-                const encodedQuery = typing.replace(/\s+/g, '+')
+                  const encodedQuery = typing.replace(/\s+/g, '+')
 
-                navigate(`/search?q=${encodedQuery}`)
-              }}
-            >
-              {!isLoading ? (
-                <>{searchTerm?.trim() ? <ClearIcon /> : <SearchIcon />}</>
+                  navigate(`/search?q=${encodedQuery}`)
+                }}
+              >
+                {!isLoading ? (
+                  <>{searchTerm?.trim() ? <ClearIcon /> : <SearchIcon />}</>
+                ) : (
+                  <ClipLoader color={colors.SECONDARY_BLUE} data-testid="loader" size="20" />
+                )}
+              </InputButton>
+            </Search>
+
+            <IconWrapper data-testid="search_filter_icon" isFilterOpen={isFilterOpen} onClick={handleFilterIconClick}>
+              {isFilterOpen ? <SearchFilterCloseIcon /> : <SearchFilterIcon />}
+            </IconWrapper>
+
+            <FilterSearch
+              anchorEl={anchorEl}
+              handleApply={handleFiltersApply}
+              schemaAll={schemaAll}
+              selectedTypes={selectedTypes}
+              setSelectedTypes={setSelectedTypes}
+              setShowAllSchemas={setShowAllSchemas}
+              showAllSchemas={showAllSchemas}
+            />
+          </SearchFilterIconWrapper>
+          {searchTerm && (
+            <SearchDetails>
+              {isLoading ? (
+                <FetchLoaderText />
               ) : (
-                <ClipLoader color={colors.SECONDARY_BLUE} data-testid="loader" size="20" />
+                <>
+                  <div className="left">
+                    <span className="count">{filteredNodes.length}</span>
+                    <span className="label"> results</span>
+                  </div>
+                  <div className="right" style={{ alignItems: 'center' }}>
+                    <SelectWithPopover />
+                  </div>
+                </>
               )}
-            </InputButton>
-          </Search>
-
-          <IconWrapper data-testid="search_filter_icon" isFilterOpen={isFilterOpen} onClick={handleFilterIconClick}>
-            {isFilterOpen ? <SearchFilterCloseIcon /> : <SearchFilterIcon />}
-          </IconWrapper>
-
-          <FilterSearch
-            anchorEl={anchorEl}
-            handleApply={handleFiltersApply}
-            schemaAll={schemaAll}
-            selectedTypes={selectedTypes}
-            setSelectedTypes={setSelectedTypes}
-            setShowAllSchemas={setShowAllSchemas}
-            showAllSchemas={showAllSchemas}
-          />
-        </SearchFilterIconWrapper>
-        {searchTerm && (
-          <SearchDetails>
-            {isLoading ? (
-              <FetchLoaderText />
-            ) : (
-              <>
-                <div className="left">
-                  <span className="count">{filteredNodes.length}</span>
-                  <span className="label"> results</span>
-                </div>
-                <div className="right" style={{ alignItems: 'center' }}>
-                  <SelectWithPopover />
-                </div>
-              </>
-            )}
-          </SearchDetails>
-        )}
-      </SearchWrapper>
+            </SearchDetails>
+          )}
+        </SearchWrapper>
+      )}
       {!subViewOpen && (
         <CollapseButton
           onClick={() => {

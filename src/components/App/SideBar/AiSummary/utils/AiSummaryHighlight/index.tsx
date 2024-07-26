@@ -76,7 +76,6 @@ const StyledTooltip = styled(({ className, ...props }) => (
     fontWeight="500"
     minWidth="160px"
     padding="10px"
-    position="top"
     textAlign="start"
     whiteSpace="normal"
   />

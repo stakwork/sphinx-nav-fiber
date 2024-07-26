@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
+import { AddEdgeNode } from '~/components/ModalsContainer/BlueprintModal/Body/AddEdgeNode'
 import { Flex } from '~/components/common/Flex'
 import { Schema, getSchemaAll } from '~/network/fetchSourcesData'
 import { useSchemaStore } from '~/stores/useSchemaStore'
@@ -9,7 +10,6 @@ import { SchemaWithChildren } from '../types'
 import { Editor } from './Editor'
 import { Graph } from './Graph'
 import { Toolbar } from './Toolbar'
-import { AddEdgeNode } from '~/components/ModalsContainer/BlueprintModal/Body/AddEdgeNode'
 
 export type FormData = {
   type: string
