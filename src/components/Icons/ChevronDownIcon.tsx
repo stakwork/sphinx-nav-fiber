@@ -1,13 +1,19 @@
 /* eslint-disable */
-import React from 'react'
+import React from 'react';
 
 const ChevronDownIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
-  <svg width="1em" height="1em" viewBox="0 0 10 6" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  <svg
+    width="1em"
+    height="1em"
+    viewBox="0 0 10 6"
+    fill="currentColor"
+    xmlns="http://www.w3.org/2000/svg"
+  >
     <path
       d="M5.00031 5.21584C4.89989 5.21584 4.80642 5.1998 4.71989 5.16772C4.63337 5.13577 4.55107 5.08077 4.47302 5.00272L0.72781 1.25751C0.612533 1.14209 0.551421 0.999177 0.544477 0.82876C0.537532 0.658482 0.598644 0.508691 0.72781 0.379385C0.848644 0.258691 0.995032 0.198343 1.16698 0.198343C1.33892 0.198343 1.48531 0.258691 1.60614 0.379385L5.00031 3.76084L8.39448 0.379385C8.50989 0.263968 8.65281 0.202788 8.82323 0.195843C8.99364 0.188899 9.14351 0.250079 9.27281 0.379385C9.39351 0.50008 9.45385 0.646399 9.45385 0.818344C9.45385 0.990427 9.39351 1.13682 9.27281 1.25751L5.5276 5.00272C5.44955 5.08077 5.36725 5.13577 5.28073 5.16772C5.1942 5.1998 5.10073 5.21584 5.00031 5.21584Z"
       fill="currentColor"
     />
   </svg>
-)
+);
 
-export default ChevronDownIcon
+export default ChevronDownIcon;

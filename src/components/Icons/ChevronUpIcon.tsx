@@ -1,13 +1,19 @@
 /* eslint-disable */
-import React from 'react'
+import React from 'react';
 
 const ChevronUpIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
-  <svg width="1em" height="1em" viewBox="0 0 10 6" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  <svg
+    width="1em"
+    height="1em"
+    viewBox="0 0 10 6"
+    fill="currentColor"
+    xmlns="http://www.w3.org/2000/svg"
+  >
     <path
       d="M4.99993 1.71281L1.60576 5.10719C1.49034 5.22247 1.34528 5.28149 1.17055 5.28427C0.99597 5.28691 0.848262 5.22788 0.727428 5.10719C0.606734 4.98635 0.546387 4.83997 0.546387 4.66802C0.546387 4.49608 0.606734 4.34969 0.727428 4.22885L4.47264 0.483646C4.62333 0.333091 4.7991 0.257812 4.99993 0.257812C5.20076 0.257812 5.37653 0.333091 5.52722 0.483646L9.27243 4.22885C9.38771 4.34427 9.44673 4.48934 9.44951 4.66406C9.45215 4.83865 9.39312 4.98635 9.27243 5.10719C9.1516 5.22788 9.00521 5.28823 8.83326 5.28823C8.66132 5.28823 8.51493 5.22788 8.39409 5.10719L4.99993 1.71281Z"
       fill="currentColor"
     />
   </svg>
-)
+);
 
-export default ChevronUpIcon
+export default ChevronUpIcon;
