@@ -1,23 +1,10 @@
 /* eslint-disable */
-import React from 'react';
+import React from 'react'
 
 const ArrowBackIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
-  <svg
-    width="1em"
-    height="1em"
-    viewBox="0 0 20 20"
-    fill="currentColor"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width="1em" height="1em" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
     <g id="arrow_forward">
-      <mask
-        id="mask0_8980_24763"
-        maskUnits="userSpaceOnUse"
-        x="0"
-        y="0"
-        width="20"
-        height="20"
-      >
+      <mask id="mask0_8980_24763" maskUnits="userSpaceOnUse" x="0" y="0" width="20" height="20">
         <rect
           id="Bounding box"
           x="20"
@@ -37,6 +24,6 @@ const ArrowBackIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
       </g>
     </g>
   </svg>
-);
+)
 
-export default ArrowBackIcon;
+export default ArrowBackIcon
