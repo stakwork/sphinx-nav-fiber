@@ -1,10 +1,11 @@
 import { FC } from 'react'
 import styled from 'styled-components'
+import { noSpacePattern } from '~/components/AddItemModal/SourceTypeStep/constants'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
-import { ToNode } from './ToNode'
 import { TextInput } from '~/components/common/TextInput'
 import { requiredRule } from '~/constants'
+import { ToNode } from './ToNode'
 
 type Props = {
   selectedType: string
@@ -58,6 +59,10 @@ export const TitleEditor: FC<Props> = ({
             placeholder="Enter type name"
             rules={{
               ...requiredRule,
+              pattern: {
+                message: 'No leading whitespace allowed',
+                value: noSpacePattern,
+              },
             }}
             value={selectedType}
           />

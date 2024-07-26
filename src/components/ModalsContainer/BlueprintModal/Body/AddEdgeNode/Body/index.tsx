@@ -1,12 +1,12 @@
 import { Button } from '@mui/material'
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { ClipLoader } from 'react-spinners'
+import styled from 'styled-components'
+import { Flex } from '~/components/common/Flex'
+import { deleteEdgeType, getNodeSchemaTypes, postBluePrintType, updateEdgeType } from '~/network/fetchSourcesData'
 import { colors } from '~/utils/colors'
 import { TitleEditor } from '../Title'
-import styled from 'styled-components'
-import { deleteEdgeType, postBluePrintType, updateEdgeType, getNodeSchemaTypes } from '~/network/fetchSourcesData'
-import { Flex } from '~/components/common/Flex'
 
 export type FormData = {
   type: string
@@ -90,7 +90,7 @@ export const Body = ({ onCancel, edgeLinkData, setGraphLoading }: Props) => {
 
   const submitDisabled = edgeLinkData?.refId
     ? loading || !isEdgeLinkChange
-    : loading || !selectedToNode || !selectedFromNode || !selectedType
+    : loading || !selectedToNode.trim() || !selectedFromNode.trim() || !selectedType.trim()
 
   const handleDelete = async () => {
     setOnDeleteLoading(true)
