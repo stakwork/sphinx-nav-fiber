@@ -1,4 +1,4 @@
-import { Slide } from '@mui/material'
+import { Button, Slide } from '@mui/material'
 import clsx from 'clsx'
 import React, { forwardRef, useEffect, useRef, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
@@ -7,6 +7,7 @@ import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
 import { SelectWithPopover } from '~/components/App/SideBar/Dropdown'
 import { FilterSearch } from '~/components/App/SideBar/FilterSearch'
+import ArrowBackIcon from '~/components/Icons/ArrowBackIcon'
 import ChevronLeftIcon from '~/components/Icons/ChevronLeftIcon'
 import ClearIcon from '~/components/Icons/ClearIcon'
 import SearchFilterCloseIcon from '~/components/Icons/SearchFilterCloseIcon'
@@ -43,7 +44,7 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ subViewOpen }, ref) =
   const { isFetching: isLoading, setSidebarFilter, setFilters } = useDataStore((s) => s)
   const [schemaAll, setSchemaAll] = useSchemaStore((s) => [s.schemas, s.setSchemas])
 
-  const { aiSummaryAnswers } = useAiSummaryStore((s) => s)
+  const { aiSummaryAnswers, resetAiSummaryAnswer } = useAiSummaryStore((s) => s)
   const setSelectedNode = useUpdateSelectedNode()
 
   const filteredNodes = useFilteredNodes()
@@ -103,6 +104,11 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ subViewOpen }, ref) =
 
     setIsFilterOpen((prev) => !prev)
     setShowAllSchemas(false)
+  }
+
+  const handleCloseAi = () => {
+    resetAiSummaryAnswer()
+    navigate('/')
   }
 
   const handleFiltersApply = () => {
@@ -203,7 +209,14 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ subViewOpen }, ref) =
             <Trending />
           </TrendingWrapper>
         )}
-        <Flex>
+        <Flex align="flex-start">
+          {hasAiChats ? (
+            <Flex p={24}>
+              <Button onClick={handleCloseAi} startIcon={<ArrowBackIcon />}>
+                Home
+              </Button>
+            </Flex>
+          ) : null}
           {Object.keys(aiSummaryAnswers).map((i: string) => (
             <AiSummary key={i} question={i} response={aiSummaryAnswers[i]} />
           ))}

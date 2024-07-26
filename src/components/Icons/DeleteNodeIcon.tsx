@@ -1,8 +1,14 @@
 /* eslint-disable */
-import React from 'react'
+import React from 'react';
 
 const DeleteNodeIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
-  <svg width="1em" height="1em" viewBox="0 0 60 52" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  <svg
+    width="1em"
+    height="1em"
+    viewBox="0 0 60 52"
+    fill="currentColor"
+    xmlns="http://www.w3.org/2000/svg"
+  >
     <path
       d="M12.849 16.2461L31.5592 5.44376L50.2694 16.2461V37.8508L31.5592 48.6531L12.849 37.8508V16.2461Z"
       stroke="#6B7A8D"
@@ -22,6 +28,6 @@ const DeleteNodeIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
       stroke-linecap="round"
     />
   </svg>
-)
+);
 
-export default DeleteNodeIcon
+export default DeleteNodeIcon;
