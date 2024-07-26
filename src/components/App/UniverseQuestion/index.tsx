@@ -3,7 +3,7 @@ import { Flex } from '~/components/common/Flex'
 
 import { TextareaAutosize } from '@mui/base'
 import { Button } from '@mui/material'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import ArrowForwardIcon from '~/components/Icons/ArrowForwardIcon'
 import ExploreIcon from '~/components/Icons/ExploreIcon'
 import HelpIcon from '~/components/Icons/HelpIcon'
@@ -20,12 +20,19 @@ export const UniverseQuestion = () => {
   const setUniverseQuestionIsOpen = useAppStore((s) => s.setUniverseQuestionIsOpen)
   const resetAiSummaryAnswer = useAiSummaryStore((s) => s.resetAiSummaryAnswer)
   const [displayedSeedQuestions, setDisplayedSeedQuestions] = useState<string[]>([])
+  const [focus, setFocus] = useState(false)
+
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   useEffect(() => {
     if (seedQuestions) {
       setDisplayedSeedQuestions(shuffleArray(seedQuestions).slice(0, 4))
     }
   }, [seedQuestions])
+
+  useEffect(() => {
+    textareaRef.current?.focus()
+  }, [])
 
   const handleSubmitQuestion = async (questionToSubmit: string) => {
     if (questionToSubmit) {
@@ -69,9 +76,12 @@ export const UniverseQuestion = () => {
   return (
     <Wrapper>
       Ideas have shapes
-      <TextAreaWrapper onKeyDown={onEnterPress} py={12} tabIndex={-1}>
+      <TextAreaWrapper focused={focus} onKeyDown={onEnterPress} py={12} tabIndex={-1}>
         <StyledTextarea
+          ref={textareaRef}
+          onBlur={() => setFocus(false)}
           onChange={(e) => setQuestion(e.target.value)}
+          onFocus={() => setFocus(true)}
           placeholder="What do you want to know?"
           value={question}
         />
@@ -146,7 +156,7 @@ const StyledTextarea = styled(TextareaAutosize).attrs({
   }
 `
 
-const TextAreaWrapper = styled(Flex)`
+const TextAreaWrapper = styled(Flex)<{ focused: boolean }>`
   position: relative;
   margin-top: 30px;
   background: ${colors.BG1};
@@ -154,7 +164,7 @@ const TextAreaWrapper = styled(Flex)`
   width: 702px;
   color: ${colors.white};
   min-height: 150px;
-  border: 1px solid ${colors.modalShield};
+  border: 1px solid ${({ focused }) => (focused ? colors.modalShield : 'transparent')};
   resize: none;
   outline: none;
   border-radius: 12px;
