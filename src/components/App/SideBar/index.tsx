@@ -48,7 +48,13 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ subViewOpen }, ref) =
 
   const filteredNodes = useFilteredNodes()
 
-  const { setSidebarOpen, currentSearch: searchTerm, clearSearch, searchFormValue } = useAppStore((s) => s)
+  const {
+    setSidebarOpen,
+    currentSearch: searchTerm,
+    clearSearch,
+    searchFormValue,
+    setCurrentSearch,
+  } = useAppStore((s) => s)
 
   const [trendingTopicsFeatureFlag] = useFeatureFlagStore((s) => [s.trendingTopicsFeatureFlag])
 
@@ -132,6 +138,7 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ subViewOpen }, ref) =
                   clearSearch()
                   setSidebarFilter('all')
                   setSelectedNode(null)
+                  setCurrentSearch('')
                   navigate(`/`)
 
                   return
