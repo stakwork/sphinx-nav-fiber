@@ -41,7 +41,7 @@ type ContentProp = {
 
 // eslint-disable-next-line react/display-name
 const Content = forwardRef<HTMLDivElement, ContentProp>(({ subViewOpen }, ref) => {
-  const { isFetching: isLoading, setSidebarFilter, setFilters } = useDataStore((s) => s)
+  const { isFetching: isLoading, setSidebarFilter } = useDataStore((s) => s)
   const [schemaAll, setSchemaAll] = useSchemaStore((s) => [s.schemas, s.setSchemas])
 
   const { aiSummaryAnswers, resetAiSummaryAnswer } = useAiSummaryStore((s) => s)
@@ -58,7 +58,6 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ subViewOpen }, ref) =
   const [isScrolled, setIsScrolled] = useState(false)
   const [isFilterOpen, setIsFilterOpen] = useState(false)
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
-  const [selectedTypes, setSelectedTypes] = useState<string[]>([])
   const [showAllSchemas, setShowAllSchemas] = useState(false)
 
   useEffect(() => {
@@ -111,14 +110,6 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ subViewOpen }, ref) =
     navigate('/')
   }
 
-  const handleFiltersApply = () => {
-    setFilters({
-      node_type: selectedTypes,
-    })
-
-    // onSubmit?.()
-  }
-
   const navigate = useNavigate()
 
   const hasAiChats = useHasAiChats()
@@ -167,10 +158,7 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ subViewOpen }, ref) =
 
             <FilterSearch
               anchorEl={anchorEl}
-              handleApply={handleFiltersApply}
               schemaAll={schemaAll}
-              selectedTypes={selectedTypes}
-              setSelectedTypes={setSelectedTypes}
               setShowAllSchemas={setShowAllSchemas}
               showAllSchemas={showAllSchemas}
             />
