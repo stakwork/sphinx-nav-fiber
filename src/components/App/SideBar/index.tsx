@@ -192,19 +192,21 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ subViewOpen }, ref) =
         </CollapseButton>
       )}
       <ScrollWrapper ref={componentRef}>
-        {!searchTerm && !hasAiChats && trendingTopicsFeatureFlag && (
-          <TrendingWrapper>
-            <Trending />
-          </TrendingWrapper>
-        )}
-        <Flex align="flex-start">
-          {hasAiChats ? (
+        {hasAiChats ? (
+          <Flex align="flex-start">
             <Flex p={24}>
               <Button onClick={handleCloseAi} startIcon={<ArrowBackIcon />}>
                 Home
               </Button>
             </Flex>
-          ) : null}
+          </Flex>
+        ) : null}
+        {!searchTerm && !hasAiChats && trendingTopicsFeatureFlag && (
+          <TrendingWrapper>
+            <Trending />
+          </TrendingWrapper>
+        )}
+        <Flex>
           {Object.keys(aiSummaryAnswers).map((i: string) => (
             <AiSummary key={i} question={i} response={aiSummaryAnswers[i]} />
           ))}
