@@ -23,6 +23,9 @@ const Title = styled(Text)`
   font-size: 20px;
   font-weight: 600;
   flex-grow: 1;
+  overflow-wrap: break-word;
+  white-space: normal;
+  word-break: break-word;
 `
 
 const TitleWrapper = styled(Flex).attrs({
@@ -30,6 +33,8 @@ const TitleWrapper = styled(Flex).attrs({
   alignItems: 'center',
 })`
   padding: 24px 10px 24px 24px;
+  flex-shrink: 1;
+  overflow: hidden;
 `
 
 export const AiSummary = ({ question, response }: Props) => {
@@ -76,7 +81,7 @@ export const AiSummary = ({ question, response }: Props) => {
           ) : (
             <AiQuestions questions={response.questions || []} />
           )}
-          {response.sourcesLoading ? <EpisodeSkeleton count={1} /> : <AiSources sourceIds={response.sources || []} />}
+          {(response?.sources || []).length ? <AiSources sourceIds={response.sources || []} /> : null}
         </>
       )}
     </Wrapper>
@@ -96,13 +101,14 @@ const CollapseButton = styled(Button)`
     cursor: pointer;
     flex-shrink: 0;
     padding: 0px;
-    width: 29px;
+    width: 27px;
     height: 26px;
     min-width: 26px;
     border-radius: 6px;
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-top: 1px;
   }
 
   svg {

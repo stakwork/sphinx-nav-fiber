@@ -11,6 +11,8 @@ import { getNodeType } from '~/network/fetchSourcesData'
 import { colors } from '~/utils'
 import { MapNodeTypeModalStepID, SelectedValues } from '..'
 import { parseJson, parsedObjProps } from '../../BlueprintModal/Body/Editor/utils'
+import { filterNodeKey } from '~/components/ModalsContainer/ChangeNodeTypeModal/utils'
+import { noSpacePattern } from '~/components/AddItemModal/SourceTypeStep/constants'
 
 type Props = {
   skipToStep: (step: MapNodeTypeModalStepID) => void
@@ -36,7 +38,9 @@ export const RequiredPropertiesStep: FC<Props> = ({ handleSelectType, skipToStep
 
       const parsedData = parseJson(data)
 
-      setAttributes(parsedData)
+      const filteredAttributes = filterNodeKey(parsedData)
+
+      setAttributes(filteredAttributes)
 
       setLoading(false)
     }
@@ -75,6 +79,9 @@ export const RequiredPropertiesStep: FC<Props> = ({ handleSelectType, skipToStep
     skipToStep('sourceType')
   }
 
+  const isNextDisabled =
+    !isValid || loading || filteredAttributes.some((attr) => attr.required && !watch(attr.key)?.trim())
+
   return (
     <Flex>
       <Flex align="center" direction="row" justify="space-between" mb={18}>
@@ -100,7 +107,15 @@ export const RequiredPropertiesStep: FC<Props> = ({ handleSelectType, skipToStep
                     name={key}
                     placeholder={required ? 'Required' : 'Optional'}
                     rules={{
-                      ...(required ? requiredRule : {}),
+                      ...(required
+                        ? {
+                            ...requiredRule,
+                            pattern: {
+                              message: 'No leading whitespace allowed',
+                              value: noSpacePattern,
+                            },
+                          }
+                        : {}),
                     }}
                   />
                 </TextFieldWrapper>
@@ -119,7 +134,7 @@ export const RequiredPropertiesStep: FC<Props> = ({ handleSelectType, skipToStep
         <Flex grow={1} ml={20}>
           <Button
             color="secondary"
-            disabled={!isValid || loading || filteredAttributes?.some((attr) => attr.required && !watch(attr.key))}
+            disabled={isNextDisabled}
             onClick={() => skipToStep('createConfirmation')}
             size="large"
             variant="contained"

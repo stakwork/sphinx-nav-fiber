@@ -1,6 +1,6 @@
 import { isEqual } from 'lodash'
 import { useEffect, useRef } from 'react'
-import { Color, Group } from 'three'
+import { Box3, Color, Group, Sphere, Vector3 } from 'three'
 import { Line2 } from 'three-stdlib'
 import { useDataStore } from '~/stores/useDataStore'
 import { useGraphStore } from '~/stores/useGraphStore'
@@ -26,7 +26,9 @@ export const Graph = () => {
   const groupRef = useRef<Group>(null)
   const linksPositionRef = useRef<LinkPosition[]>([])
 
-  const { setData, simulation, simulationCreate, simulationHelpers, graphStyle } = useGraphStore((s) => s)
+  const { setData, simulation, simulationCreate, simulationHelpers, graphStyle, setGraphRadius } = useGraphStore(
+    (s) => s,
+  )
 
   useEffect(() => {
     if (!dataNew) {
@@ -109,7 +111,21 @@ export const Graph = () => {
         })
       }
     })
-  }, [dataInitial, simulation])
+
+    simulation.on('end', () => {
+      const nodesVector = simulation.nodes().map((i: NodeExtended) => new Vector3(i.x, i.y, i.z))
+
+      const boundingBox = new Box3().setFromPoints(nodesVector)
+
+      const boundingSphere = new Sphere()
+
+      boundingBox.getBoundingSphere(boundingSphere)
+
+      const sphereRadius = boundingSphere.radius
+
+      setGraphRadius(sphereRadius)
+    })
+  }, [dataInitial, simulation, setGraphRadius])
 
   if (!simulation) {
     return null

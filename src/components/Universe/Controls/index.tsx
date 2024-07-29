@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from 'react'
 import { useControlStore } from '~/stores/useControlStore'
 import { useGraphStore } from '~/stores/useGraphStore'
 import { useCameraAnimations } from './CameraAnimations'
-import { initialCameraPosition } from './CameraAnimations/constants'
 import { getNearbyNodeIds } from './constants'
 
 type Props = {
@@ -13,7 +12,7 @@ type Props = {
 
 export const Controls = ({ disableAnimations }: Props) => {
   const cameraControlsRef = useRef<CameraControls | null>(null)
-  const { graphStyle, data, setNearbyNodeIds, setDisableCameraRotation } = useGraphStore((s) => s)
+  const { data, setNearbyNodeIds, setDisableCameraRotation } = useGraphStore((s) => s)
 
   const [smoothTime] = useState(0.8)
   const { camera } = useThree()
@@ -26,22 +25,6 @@ export const Controls = ({ disableAnimations }: Props) => {
   ])
 
   useCameraAnimations(cameraControlsRef, { enabled: !disableAnimations && !isUserScrolling && !isUserDragging })
-
-  useEffect(() => {
-    // reset camera on graph style change
-    if (cameraControlsRef.current) {
-      cameraControlsRef.current.setLookAt(
-        initialCameraPosition.x,
-        initialCameraPosition.y,
-        initialCameraPosition.z,
-        0,
-        0,
-        0,
-        true,
-      )
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [graphStyle])
 
   useEffect(() => {
     if (!isUserDragging) {

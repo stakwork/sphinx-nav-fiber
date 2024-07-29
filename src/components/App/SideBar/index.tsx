@@ -1,4 +1,4 @@
-import { Slide } from '@mui/material'
+import { Button, Slide } from '@mui/material'
 import clsx from 'clsx'
 import React, { forwardRef, useEffect, useRef, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
@@ -7,6 +7,7 @@ import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
 import { SelectWithPopover } from '~/components/App/SideBar/Dropdown'
 import { FilterSearch } from '~/components/App/SideBar/FilterSearch'
+import ArrowBackIcon from '~/components/Icons/ArrowBackIcon'
 import ChevronLeftIcon from '~/components/Icons/ChevronLeftIcon'
 import ClearIcon from '~/components/Icons/ClearIcon'
 import SearchFilterCloseIcon from '~/components/Icons/SearchFilterCloseIcon'
@@ -43,8 +44,7 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ subViewOpen }, ref) =
   const { isFetching: isLoading, setSidebarFilter } = useDataStore((s) => s)
   const [schemaAll, setSchemaAll] = useSchemaStore((s) => [s.schemas, s.setSchemas])
 
-  const { aiSummaryAnswers } = useAiSummaryStore((s) => s)
-
+  const { aiSummaryAnswers, resetAiSummaryAnswer } = useAiSummaryStore((s) => s)
   const setSelectedNode = useUpdateSelectedNode()
 
   const filteredNodes = useFilteredNodes()
@@ -105,6 +105,11 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ subViewOpen }, ref) =
     setShowAllSchemas(false)
   }
 
+  const handleCloseAi = () => {
+    resetAiSummaryAnswer()
+    navigate('/')
+  }
+
   const navigate = useNavigate()
 
   const hasAiChats = useHasAiChats()
@@ -112,69 +117,71 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ subViewOpen }, ref) =
   return (
     <Wrapper ref={ref} id="sidebar-wrapper">
       <TitlePlaceholder />
-      <SearchWrapper className={clsx({ 'has-shadow': isScrolled })}>
-        <SearchFilterIconWrapper>
-          <Search>
-            <SearchBar />
-            <InputButton
-              data-testid="search_action_icon"
-              onClick={() => {
-                if (searchTerm) {
-                  setValue('search', '')
-                  clearSearch()
-                  setSidebarFilter('all')
-                  setSelectedNode(null)
-                  navigate(`/`)
+      {!hasAiChats && (
+        <SearchWrapper className={clsx({ 'has-shadow': isScrolled })}>
+          <SearchFilterIconWrapper>
+            <Search>
+              <SearchBar />
+              <InputButton
+                data-testid="search_action_icon"
+                onClick={() => {
+                  if (searchTerm) {
+                    setValue('search', '')
+                    clearSearch()
+                    setSidebarFilter('all')
+                    setSelectedNode(null)
+                    navigate(`/`)
 
-                  return
-                }
+                    return
+                  }
 
-                if (typing.trim() === '') {
-                  return
-                }
+                  if (typing.trim() === '') {
+                    return
+                  }
 
-                const encodedQuery = typing.replace(/\s+/g, '+')
+                  const encodedQuery = typing.replace(/\s+/g, '+')
 
-                navigate(`/search?q=${encodedQuery}`)
-              }}
-            >
-              {!isLoading ? (
-                <>{searchTerm?.trim() ? <ClearIcon /> : <SearchIcon />}</>
+                  navigate(`/search?q=${encodedQuery}`)
+                }}
+              >
+                {!isLoading ? (
+                  <>{searchTerm?.trim() ? <ClearIcon /> : <SearchIcon />}</>
+                ) : (
+                  <ClipLoader color={colors.SECONDARY_BLUE} data-testid="loader" size="20" />
+                )}
+              </InputButton>
+            </Search>
+
+            <IconWrapper data-testid="search_filter_icon" isFilterOpen={isFilterOpen} onClick={handleFilterIconClick}>
+              {isFilterOpen ? <SearchFilterCloseIcon /> : <SearchFilterIcon />}
+            </IconWrapper>
+
+            <FilterSearch
+              anchorEl={anchorEl}
+              schemaAll={schemaAll}
+              setShowAllSchemas={setShowAllSchemas}
+              showAllSchemas={showAllSchemas}
+            />
+          </SearchFilterIconWrapper>
+          {searchTerm && (
+            <SearchDetails>
+              {isLoading ? (
+                <FetchLoaderText />
               ) : (
-                <ClipLoader color={colors.SECONDARY_BLUE} data-testid="loader" size="20" />
+                <>
+                  <div className="left">
+                    <span className="count">{filteredNodes.length}</span>
+                    <span className="label"> results</span>
+                  </div>
+                  <div className="right" style={{ alignItems: 'center' }}>
+                    <SelectWithPopover />
+                  </div>
+                </>
               )}
-            </InputButton>
-          </Search>
-
-          <IconWrapper data-testid="search_filter_icon" isFilterOpen={isFilterOpen} onClick={handleFilterIconClick}>
-            {isFilterOpen ? <SearchFilterCloseIcon /> : <SearchFilterIcon />}
-          </IconWrapper>
-
-          <FilterSearch
-            anchorEl={anchorEl}
-            schemaAll={schemaAll}
-            setShowAllSchemas={setShowAllSchemas}
-            showAllSchemas={showAllSchemas}
-          />
-        </SearchFilterIconWrapper>
-        {searchTerm && (
-          <SearchDetails>
-            {isLoading ? (
-              <FetchLoaderText />
-            ) : (
-              <>
-                <div className="left">
-                  <span className="count">{filteredNodes.length}</span>
-                  <span className="label"> results</span>
-                </div>
-                <div className="right" style={{ alignItems: 'center' }}>
-                  <SelectWithPopover />
-                </div>
-              </>
-            )}
-          </SearchDetails>
-        )}
-      </SearchWrapper>
+            </SearchDetails>
+          )}
+        </SearchWrapper>
+      )}
       {!subViewOpen && (
         <CollapseButton
           onClick={() => {
@@ -190,7 +197,14 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ subViewOpen }, ref) =
             <Trending />
           </TrendingWrapper>
         )}
-        <Flex>
+        <Flex align="flex-start">
+          {hasAiChats ? (
+            <Flex p={24}>
+              <Button onClick={handleCloseAi} startIcon={<ArrowBackIcon />}>
+                Home
+              </Button>
+            </Flex>
+          ) : null}
           {Object.keys(aiSummaryAnswers).map((i: string) => (
             <AiSummary key={i} question={i} response={aiSummaryAnswers[i]} />
           ))}
