@@ -48,6 +48,8 @@ export const FilterSearch = ({ showAllSchemas, setShowAllSchemas, schemaAll, anc
     })
   }
 
+  const formatType = (type: string) => type.replace(/_/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase())
+
   return (
     <SearchFilterPopover
       anchorEl={anchorEl}
@@ -78,7 +80,7 @@ export const FilterSearch = ({ showAllSchemas, setShowAllSchemas, schemaAll, anc
               isSelected={selectedTypes.includes(schema.type as string)}
               onClick={() => handleSchemaTypeClick(schema?.type as string)}
             >
-              {schema.type}
+              {formatType(schema.type ?? '')}
             </SchemaType>
           ))}
         </SchemaTypeWrapper>
