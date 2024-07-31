@@ -62,6 +62,7 @@ const Search = styled(Flex).attrs({
   align: 'center',
 })`
   flex-grow: 1;
+  margin-right: 10px;
 `
 
 const InputButton = styled(Flex).attrs({
