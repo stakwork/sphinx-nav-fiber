@@ -159,6 +159,7 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ subViewOpen }, ref) =
             <FilterSearch
               anchorEl={anchorEl}
               schemaAll={schemaAll}
+              setAnchorEl={setAnchorEl}
               setShowAllSchemas={setShowAllSchemas}
               showAllSchemas={showAllSchemas}
             />

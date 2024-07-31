@@ -16,9 +16,10 @@ type Props = {
   setShowAllSchemas: (value: boolean) => void
   schemaAll: SchemaExtended[]
   anchorEl: HTMLElement | null
+  setAnchorEl: (value: HTMLElement | null) => void
 }
 
-export const FilterSearch = ({ showAllSchemas, setShowAllSchemas, schemaAll, anchorEl }: Props) => {
+export const FilterSearch = ({ showAllSchemas, setShowAllSchemas, schemaAll, anchorEl, setAnchorEl }: Props) => {
   const handleSchemaTypeClick = (type: string) => {
     setSelectedTypes((prevSelectedTypes) =>
       prevSelectedTypes.includes(type) ? prevSelectedTypes.filter((t) => t !== type) : [...prevSelectedTypes, type],
@@ -46,6 +47,8 @@ export const FilterSearch = ({ showAllSchemas, setShowAllSchemas, schemaAll, anc
       depth: hops.toString(),
       top_node_count: sourceNodes.toString(),
     })
+
+    setAnchorEl(null)
   }
 
   return (
