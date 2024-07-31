@@ -33,8 +33,6 @@ describe('Auth Component', () => {
   beforeEach(() => {
     localStorage.clear()
     jest.resetAllMocks()
-
-    useDataStoreMock.mockReturnValue({ splashDataLoading: false })
   })
 
   test.skip('should set authenticated state to true upon successful authentication', async () => {

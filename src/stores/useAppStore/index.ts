@@ -4,7 +4,7 @@ import { TAboutParams } from '~/network/fetchSourcesData'
 export type SecondarySidebarActiveTab = '' | 'sentiment' | 'sources' | 'about'
 
 export type AppStore = {
-  currentSearch: string | null
+  currentSearch: string
   searchFormValue: string
   secondarySidebarActiveTab: SecondarySidebarActiveTab
   sidebarIsOpen: boolean
@@ -30,7 +30,7 @@ export type AppStore = {
 }
 
 const defaultData = {
-  currentSearch: null,
+  currentSearch: '',
   searchFormValue: '',
   flagErrorIsOpen: false,
   universeQuestionIsOpen: false,
@@ -46,7 +46,7 @@ const defaultData = {
 
 export const useAppStore = create<AppStore>((set, get) => ({
   ...defaultData,
-  clearSearch: () => set({ currentSearch: null }),
+  clearSearch: () => set({ currentSearch: '' }),
   setCurrentSearch: (currentSearch) => set({ currentSearch }),
   setSearchFormValue: (searchFormValue) => set({ searchFormValue }),
   setFlagErrorOpen: (flagErrorIsOpen) => set({ flagErrorIsOpen }),
