@@ -124,6 +124,7 @@ export const FilterSearch = ({ showAllSchemas, setShowAllSchemas, schemaAll, anc
 
 const SearchFilterPopover = styled(Popper)`
   &&.MuiPopper-root {
+    margin-top: 10px !important;
     background: ${colors.BG2};
     padding: 16px;
     min-width: 360px;
