@@ -6,7 +6,6 @@ import 'react-toastify/dist/ReactToastify.css'
 import { Socket } from 'socket.io-client'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
-import { DataRetriever } from '~/components/DataRetriever'
 import { GlobalStyle } from '~/components/GlobalStyle'
 import { Overlay } from '~/components/Universe/Overlay' // Import Overlay directly
 import { isDevelopment } from '~/constants'
@@ -31,8 +30,6 @@ import { ModalsContainer } from '../ModalsContainer'
 import { ActionsToolbar } from './ActionsToolbar'
 import { AppBar } from './AppBar'
 import { DeviceCompatibilityNotice } from './DeviceCompatibilityNotification'
-import { Helper } from './Helper'
-import { SecondarySideBar } from './SecondarySidebar'
 import { Toasts } from './Toasts'
 
 const Wrapper = styled(Flex)`
@@ -69,7 +66,7 @@ export const App = () => {
 
   const setTeachMeAnswer = useTeachStore((s) => s.setTeachMeAnswer)
 
-  const { fetchData, setCategoryFilter, setAbortRequests, addNewNode, filters } = useDataStore((s) => s)
+  const { fetchData, setCategoryFilter, setAbortRequests, addNewNode, splashDataLoading } = useDataStore((s) => s)
 
   const { setAiSummaryAnswer, getKeyExist, aiRefId } = useAiSummaryStore((s) => s)
 
@@ -106,20 +103,33 @@ export const App = () => {
     setValue,
   ])
 
-  const runSearch = useCallback(async () => {
-    await fetchData(setBudget, setAbortRequests)
-    setSidebarOpen(true)
+  // const runSearch = useCallback(async () => {
+  //   await fetchData(setBudget, setAbortRequests)
+  //   setSidebarOpen(true)
 
-    if (searchTerm) {
-      await updateBudget(setBudget)
-    } else {
-      setSelectedNode(null)
-    }
-  }, [fetchData, setBudget, searchTerm, setSidebarOpen, setSelectedNode, setAbortRequests])
+  //   if (searchTerm) {
+  //     await updateBudget(setBudget)
+  //   } else {
+  //     setSelectedNode(null)
+  //   }
+  // }, [fetchData, setBudget, searchTerm, setSidebarOpen, setSelectedNode, setAbortRequests])
 
   useEffect(() => {
+    console.log('runsearch', searchTerm)
+
+    const runSearch = async () => {
+      await fetchData(setBudget, setAbortRequests)
+      setSidebarOpen(true)
+
+      if (searchTerm) {
+        await updateBudget(setBudget)
+      } else {
+        setSelectedNode(null)
+      }
+    }
+
     runSearch()
-  }, [searchTerm, runSearch, filters])
+  }, [searchTerm, fetchData, setBudget, setAbortRequests, setSidebarOpen, setSelectedNode])
 
   const handleNewNode = useCallback(() => {
     setNodeCount('INCREMENT')
@@ -232,24 +242,22 @@ export const App = () => {
       <Leva hidden={!isDevelopment} />
 
       <Suspense fallback={<div>Loading...</div>}>
-        <Wrapper direction="row">
-          <DataRetriever>
+        {!splashDataLoading ? (
+          <Wrapper direction="row">
             <FormProvider {...form}>
               <LazyMainToolbar />
               <LazySideBar />
               <LazyUniverse />
               <Overlay />
-              <SecondarySideBar />
               <AppBar />
               <Version>v{version}</Version>
               <ActionsToolbar />
             </FormProvider>
-          </DataRetriever>
-          <ModalsContainer />
-          <Toasts />
 
-          <Helper />
-        </Wrapper>
+            <ModalsContainer />
+            <Toasts />
+          </Wrapper>
+        ) : null}
       </Suspense>
     </>
   )

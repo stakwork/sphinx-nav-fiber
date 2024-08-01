@@ -233,14 +233,12 @@ export const SideBar = () => {
 
   const subViewIsOpen = !!selectedNode && sidebarIsOpen && !hideSubViewFor.includes(selectedNode.node_type)
 
-  const { showTeachMe } = useDataStore((s) => s)
-
   return (
     <>
       <Slide direction="right" in={sidebarIsOpen} mountOnEnter unmountOnExit>
         <Content subViewOpen={subViewIsOpen} />
       </Slide>
-      <SideBarSubView open={subViewIsOpen || !!showTeachMe} />
+      <SideBarSubView open={subViewIsOpen} />
       {!sidebarIsOpen && <Tab />}
     </>
   )
