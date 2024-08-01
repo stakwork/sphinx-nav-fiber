@@ -103,20 +103,7 @@ export const App = () => {
     setValue,
   ])
 
-  // const runSearch = useCallback(async () => {
-  //   await fetchData(setBudget, setAbortRequests)
-  //   setSidebarOpen(true)
-
-  //   if (searchTerm) {
-  //     await updateBudget(setBudget)
-  //   } else {
-  //     setSelectedNode(null)
-  //   }
-  // }, [fetchData, setBudget, searchTerm, setSidebarOpen, setSelectedNode, setAbortRequests])
-
   useEffect(() => {
-    console.log('runsearch', searchTerm)
-
     const runSearch = async () => {
       await fetchData(setBudget, setAbortRequests)
       setSidebarOpen(true)
@@ -158,11 +145,11 @@ export const App = () => {
 
   const handleAiSources = useCallback(
     (data: AiSummarySourcesResponse) => {
-      if (data.question && getKeyExist(aiRefId)) {
-        setAiSummaryAnswer(aiRefId, { sources: data.sources.map((i) => i.ref_id), sourcesLoading: false })
+      if (data.ref_id) {
+        setAiSummaryAnswer(data.ref_id, { sources: data.sources.map((i) => i.ref_id), sourcesLoading: false })
       }
     },
-    [setAiSummaryAnswer, getKeyExist, aiRefId],
+    [setAiSummaryAnswer],
   )
 
   const handleNewNodeCreated = useCallback(
