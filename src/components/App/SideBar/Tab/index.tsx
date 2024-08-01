@@ -5,16 +5,23 @@ import { useAppStore } from '~/stores/useAppStore'
 import { colors } from '~/utils/colors'
 
 export const Tab = () => {
-  const setSidebarOpen = useAppStore((s) => s.setSidebarOpen)
+  const { sidebarIsOpen, showCollapseButton } = useAppStore((s) => ({
+    sidebarIsOpen: s.setSidebarOpen,
+    showCollapseButton: s.showCollapseButton,
+  }))
 
   return (
-    <ExpandButton
-      onClick={() => {
-        setSidebarOpen(true)
-      }}
-    >
-      <ChevronRightIcon />
-    </ExpandButton>
+    <>
+      {showCollapseButton && (
+        <ExpandButton
+          onClick={() => {
+            sidebarIsOpen(true)
+          }}
+        >
+          <ChevronRightIcon />
+        </ExpandButton>
+      )}
+    </>
   )
 }
 
