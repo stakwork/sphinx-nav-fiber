@@ -3,7 +3,6 @@ import { render, screen, waitFor } from '@testing-library/react'
 import React from 'react'
 import * as sphinx from 'sphinx-bridge'
 import * as network from '../../../network/auth'
-import { useDataStore } from '../../../stores/useDataStore'
 import { useUserStore } from '../../../stores/useUserStore'
 import * as utils from '../../../utils/getSignedMessage'
 import { App } from '../../App'
@@ -17,7 +16,6 @@ jest.mock('react-toastify/dist/ReactToastify.css', () => null)
 jest.mock('~/components/App/Splash/SpiningSphere', () => jest.fn(() => <div data-testid="spinning sphere" />))
 
 const useUserStoreMock = useUserStore as jest.MockedFunction<typeof useUserStore>
-const useDataStoreMock = useDataStore as jest.MockedFunction<typeof useDataStore>
 const getSignedMessageFromRelayMock = jest.spyOn(utils, 'getSignedMessageFromRelay')
 const getIsAdminMock = jest.spyOn(network, 'getIsAdmin')
 
