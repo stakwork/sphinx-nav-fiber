@@ -95,9 +95,7 @@ export const AuthGuard = ({ children }: PropsWithChildren) => {
 
   // auth checker
   useEffect(() => {
-    const isBrowser = !isWebView()
-
-    if (!isBrowser) {
+    if (!isWebView()) {
       return
     }
 
