@@ -9,7 +9,6 @@ import { Flex } from '~/components/common/Flex'
 import { DataRetriever } from '~/components/DataRetriever'
 import { GlobalStyle } from '~/components/GlobalStyle'
 import { Overlay } from '~/components/Universe/Overlay' // Import Overlay directly
-import { Preloader } from '~/components/Universe/Preloader' // Import Preloader directly
 import { isDevelopment } from '~/constants'
 import { useSocket } from '~/hooks/useSockets'
 import { useAiSummaryStore } from '~/stores/useAiSummaryStore'
@@ -128,23 +127,23 @@ export const App = () => {
 
   const handleAiSummaryAnswer = useCallback(
     (data: AiSummaryAnswerResponse) => {
-      if (data.question && getKeyExist(aiRefId)) {
-        setAiSummaryAnswer(aiRefId, { answer: data.answer, answerLoading: false })
+      if (data.ref_id) {
+        setAiSummaryAnswer(data.ref_id, { answer: data.answer, answerLoading: false })
       }
     },
-    [setAiSummaryAnswer, getKeyExist, aiRefId],
+    [setAiSummaryAnswer],
   )
 
   const handleAiRelevantQuestions = useCallback(
     (data: AiSummaryQuestionsResponse) => {
-      if (data.question && getKeyExist(aiRefId)) {
-        setAiSummaryAnswer(aiRefId, {
+      if (data.ref_id) {
+        setAiSummaryAnswer(data.ref_id, {
           questions: data.relevant_questions.map((i) => i.question),
           questionsLoading: false,
         })
       }
     },
-    [setAiSummaryAnswer, getKeyExist, aiRefId],
+    [setAiSummaryAnswer],
   )
 
   const handleAiSources = useCallback(
@@ -239,7 +238,6 @@ export const App = () => {
               <LazyMainToolbar />
               <LazySideBar />
               <LazyUniverse />
-              {false && <Preloader fullSize={false} />}
               <Overlay />
               <SecondarySideBar />
               <AppBar />
