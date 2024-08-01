@@ -68,7 +68,7 @@ export const App = () => {
 
   const { fetchData, setCategoryFilter, setAbortRequests, addNewNode, splashDataLoading } = useDataStore((s) => s)
 
-  const { setAiSummaryAnswer, getKeyExist } = useAiSummaryStore((s) => s)
+  const { setAiSummaryAnswer, getKeyExist, aiRefId } = useAiSummaryStore((s) => s)
 
   const setSelectedNode = useUpdateSelectedNode()
 
@@ -137,32 +137,32 @@ export const App = () => {
 
   const handleAiSummaryAnswer = useCallback(
     (data: AiSummaryAnswerResponse) => {
-      if (data.question && getKeyExist(data.question)) {
-        setAiSummaryAnswer(data.question, { answer: data.answer, answerLoading: false })
+      if (data.ref_id) {
+        setAiSummaryAnswer(data.ref_id, { answer: data.answer, answerLoading: false })
       }
     },
-    [setAiSummaryAnswer, getKeyExist],
+    [setAiSummaryAnswer],
   )
 
   const handleAiRelevantQuestions = useCallback(
     (data: AiSummaryQuestionsResponse) => {
-      if (data.question && getKeyExist(data.question)) {
-        setAiSummaryAnswer(data.question, {
+      if (data.ref_id) {
+        setAiSummaryAnswer(data.ref_id, {
           questions: data.relevant_questions.map((i) => i.question),
           questionsLoading: false,
         })
       }
     },
-    [setAiSummaryAnswer, getKeyExist],
+    [setAiSummaryAnswer],
   )
 
   const handleAiSources = useCallback(
     (data: AiSummarySourcesResponse) => {
-      if (data.question && getKeyExist(data.question)) {
-        setAiSummaryAnswer(data.question, { sources: data.sources.map((i) => i.ref_id), sourcesLoading: false })
+      if (data.question && getKeyExist(aiRefId)) {
+        setAiSummaryAnswer(aiRefId, { sources: data.sources.map((i) => i.ref_id), sourcesLoading: false })
       }
     },
-    [setAiSummaryAnswer, getKeyExist],
+    [setAiSummaryAnswer, getKeyExist, aiRefId],
   )
 
   const handleNewNodeCreated = useCallback(
@@ -176,11 +176,11 @@ export const App = () => {
 
   const handleExtractedEntities = useCallback(
     (data: ExtractedEntitiesResponse) => {
-      if (data.question && getKeyExist(data.question)) {
-        setAiSummaryAnswer(data.question, { answerLoading: false, entities: data.entities })
+      if (data.question && getKeyExist(aiRefId)) {
+        setAiSummaryAnswer(aiRefId, { answerLoading: false, entities: data.entities })
       }
     },
-    [setAiSummaryAnswer, getKeyExist],
+    [setAiSummaryAnswer, getKeyExist, aiRefId],
   )
 
   // setup socket

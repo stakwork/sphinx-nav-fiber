@@ -16,6 +16,7 @@ export type AppStore = {
   relevanceIsSelected: boolean
   currentPlayingAudio: React.MutableRefObject<HTMLAudioElement | null> | null
   appMetaData: TAboutParams | null
+  showCollapseButton: boolean
   clearSearch: () => void
   setCurrentSearch: (_: string) => void
   setSearchFormValue: (_: string) => void
@@ -27,6 +28,7 @@ export type AppStore = {
   setAppMetaData: (val: TAboutParams) => void
   setUniverseQuestionIsOpen: () => void
   setCurrentPlayingAudio: (_: React.MutableRefObject<HTMLAudioElement | null> | null) => void
+  setShowCollapseButton: (_: boolean) => void
 }
 
 const defaultData = {
@@ -42,6 +44,7 @@ const defaultData = {
   transcriptIsOpen: false,
   appMetaData: null,
   currentPlayingAudio: null,
+  showCollapseButton: true,
 }
 
 export const useAppStore = create<AppStore>((set, get) => ({
@@ -64,4 +67,5 @@ export const useAppStore = create<AppStore>((set, get) => ({
   setTranscriptOpen: (transcriptIsOpen) => set({ transcriptIsOpen }),
   setUniverseQuestionIsOpen: () => set({ universeQuestionIsOpen: !get().universeQuestionIsOpen }),
   setAppMetaData: (appMetaData) => set({ appMetaData }),
+  setShowCollapseButton: (showCollapseButton) => set({ showCollapseButton }),
 }))

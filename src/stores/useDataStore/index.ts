@@ -149,7 +149,6 @@ export const useDataStore = create<DataStore>()(
       }
 
       if (AISearchQuery) {
-        setAiSummaryAnswer(AISearchQuery, { answer: '', answerLoading: true, sourcesLoading: true })
         ai = { ...ai, ai_summary: String(true) }
       }
 
@@ -185,6 +184,13 @@ export const useDataStore = create<DataStore>()(
 
         if (data?.query_data?.ref_id) {
           useAiSummaryStore.setState({ aiRefId: data?.query_data?.ref_id })
+
+          setAiSummaryAnswer(data?.query_data?.ref_id, {
+            question: AISearchQuery,
+            answer: '',
+            answerLoading: true,
+            sourcesLoading: true,
+          })
         }
 
         const currentNodes = currentPage === 0 && !aiRefId ? [] : [...(existingData?.nodes || [])]

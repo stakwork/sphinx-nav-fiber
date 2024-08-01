@@ -17,6 +17,7 @@ import { AiSummarySkeleton } from './AiSummarySkeleton'
 type Props = {
   question: string
   response: AIEntity
+  refId: string
 }
 
 const Title = styled(Text)`
@@ -37,7 +38,7 @@ const TitleWrapper = styled(Flex).attrs({
   overflow: hidden;
 `
 
-export const AiSummary = ({ question, response }: Props) => {
+export const AiSummary = ({ question, response, refId }: Props) => {
   const ref = useRef<HTMLDivElement>(null)
   const [collapsed, setCollapsed] = useState(false)
   const { setAiSummaryAnswer } = useAiSummaryStore((s) => s)
@@ -53,8 +54,8 @@ export const AiSummary = ({ question, response }: Props) => {
   }
 
   const handleLoaded = () => {
-    if (question) {
-      setAiSummaryAnswer(question, { hasBeenRendered: true })
+    if (refId) {
+      setAiSummaryAnswer(refId, { hasBeenRendered: true })
     }
   }
 
