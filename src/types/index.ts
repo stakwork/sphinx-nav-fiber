@@ -288,19 +288,23 @@ export type RelayUser = {
 export type AiSummaryAnswerResponse = {
   question: string
   answer: string
+  ref_id: string
 }
 
 export type AiSummarySourcesResponse = {
   question: string
   sources: { ref_id: string }[]
+  ref_id: string
 }
 
 export type AiSummaryQuestionsResponse = {
   question: string
   relevant_questions: { question: string }[]
+  ref_id: string
 }
 
 export type AIEntity = {
+  question?: string
   answer?: string
   sources?: string[]
   questions?: string[]
