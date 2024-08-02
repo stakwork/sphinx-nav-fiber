@@ -100,7 +100,7 @@ export const FilterSearch = ({ showAllSchemas, setShowAllSchemas, schemaAll, anc
       <MaxResults maxResults={maxResults} setMaxResults={setMaxResults} />
       <LineBar />
       <PopoverFooter>
-        <Flex direction="row" mb={6}>
+        <ButtonsWrapper>
           <ClearButton
             color="secondary"
             onClick={handleClear}
@@ -116,7 +116,7 @@ export const FilterSearch = ({ showAllSchemas, setShowAllSchemas, schemaAll, anc
           <ShowResultButton color="secondary" onClick={handleFiltersApply} size="large" variant="contained">
             Show Results
           </ShowResultButton>
-        </Flex>
+        </ButtonsWrapper>
       </PopoverFooter>
     </SearchFilterPopover>
   )
@@ -288,7 +288,7 @@ const ClearButtonWrapper = styled.span`
     height: 32px;
     color: ${colors.GRAY7};
     fill: none;
-    margin-top: 2px;
+    margin-top: 4px;
   }
 `
 
@@ -351,4 +351,9 @@ export const SourceNodesStepWrapper = styled.div`
   flex-direction: row;
   justify-content: space-between;
   margin: 10px auto;
+`
+
+export const ButtonsWrapper = styled(Flex)`
+  flex-direction: row;
+  margin: 0 0 6px 8px;
 `

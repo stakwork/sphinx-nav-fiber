@@ -17,7 +17,13 @@ export const UniverseQuestion = () => {
   const [question, setQuestion] = useState('')
   const { fetchData, setAbortRequests, seedQuestions } = useDataStore((s) => s)
   const [setBudget] = useUserStore((s) => [s.setBudget])
-  const setUniverseQuestionIsOpen = useAppStore((s) => s.setUniverseQuestionIsOpen)
+
+  const { setUniverseQuestionIsOpen, setSidebarOpen, setShowCollapseButton } = useAppStore((s) => ({
+    setUniverseQuestionIsOpen: s.setUniverseQuestionIsOpen,
+    setSidebarOpen: s.setSidebarOpen,
+    setShowCollapseButton: s.setShowCollapseButton,
+  }))
+
   const resetAiSummaryAnswer = useAiSummaryStore((s) => s.resetAiSummaryAnswer)
   const [displayedSeedQuestions, setDisplayedSeedQuestions] = useState<string[]>([])
 
@@ -31,6 +37,8 @@ export const UniverseQuestion = () => {
     if (questionToSubmit) {
       resetAiSummaryAnswer()
       setUniverseQuestionIsOpen()
+      setSidebarOpen(true)
+      setShowCollapseButton(true)
     }
 
     await fetchData(setBudget, setAbortRequests, questionToSubmit)
@@ -48,6 +56,12 @@ export const UniverseQuestion = () => {
   const handleSeedQuestionClick = async (seedQuestion: string) => {
     setQuestion(seedQuestion)
     await handleSubmitQuestion(seedQuestion)
+  }
+
+  const handleUniverseQuestionIsOpen = () => {
+    setUniverseQuestionIsOpen()
+    setSidebarOpen(true)
+    setShowCollapseButton(true)
   }
 
   const shuffleArray = (inputArray: string[]) => {
@@ -100,7 +114,7 @@ export const UniverseQuestion = () => {
           ))}
         </SeedQuestionsWrapper>
       )}
-      <CloseButton onClick={setUniverseQuestionIsOpen} startIcon={<ExploreIcon />}>
+      <CloseButton onClick={handleUniverseQuestionIsOpen} startIcon={<ExploreIcon />}>
         Explore Graph
       </CloseButton>
     </Wrapper>

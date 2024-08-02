@@ -5,16 +5,14 @@ import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { isDevelopment, isE2E } from '~/constants'
 import { getIsAdmin } from '~/network/auth'
-import { useDataStore } from '~/stores/useDataStore'
 import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { sphinxBridge } from '~/testSphinxBridge'
 import { updateBudget } from '~/utils'
-import { Splash } from '../App/Splash'
+import { isWebView } from '~/utils/isWebView'
 
 export const AuthGuard = ({ children }: PropsWithChildren) => {
   const [unAuthorized, setUnauthorized] = useState(false)
-  const { splashDataLoading } = useDataStore((s) => s)
   const { setBudget, setIsAdmin, setPubKey, setIsAuthenticated } = useUserStore((s) => s)
 
   const [
@@ -55,6 +53,12 @@ export const AuthGuard = ({ children }: PropsWithChildren) => {
 
     await updateBudget(setBudget)
 
+    if (isE2E || isDevelopment) {
+      setIsAuthenticated(true)
+    }
+  }, [setBudget, setPubKey, setIsAuthenticated])
+
+  const handleIsAdmin = useCallback(async () => {
     try {
       const res = await getIsAdmin()
 
@@ -79,13 +83,7 @@ export const AuthGuard = ({ children }: PropsWithChildren) => {
     } catch (error) {
       /* not an admin */
     }
-
-    if (isE2E || isDevelopment) {
-      setIsAuthenticated(true)
-    }
   }, [
-    setBudget,
-    setPubKey,
     setIsAuthenticated,
     setIsAdmin,
     setTrendingTopicsFeatureFlag,
@@ -97,16 +95,20 @@ export const AuthGuard = ({ children }: PropsWithChildren) => {
 
   // auth checker
   useEffect(() => {
-    handleAuth()
-  }, [handleAuth])
+    const init = async () => {
+      if (isWebView() || isE2E) {
+        await handleAuth()
+      }
+
+      await handleIsAdmin()
+    }
+
+    init()
+  }, [handleAuth, handleIsAdmin])
 
   const message = 'This is a private Graph, Contact Admin'
 
-  if (splashDataLoading) {
-    return <Splash>{children}</Splash>
-  }
-
-  if (!unAuthorized) {
+  if (unAuthorized) {
     return (
       <StyledFlex>
         <StyledText>{message}</StyledText>
