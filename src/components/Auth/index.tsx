@@ -53,6 +53,12 @@ export const AuthGuard = ({ children }: PropsWithChildren) => {
 
     await updateBudget(setBudget)
 
+    if (isE2E || isDevelopment) {
+      setIsAuthenticated(true)
+    }
+  }, [setBudget, setPubKey, setIsAuthenticated])
+
+  const handleIsAdmin = useCallback(async () => {
     try {
       const res = await getIsAdmin()
 
@@ -77,13 +83,7 @@ export const AuthGuard = ({ children }: PropsWithChildren) => {
     } catch (error) {
       /* not an admin */
     }
-
-    if (isE2E || isDevelopment) {
-      setIsAuthenticated(true)
-    }
   }, [
-    setBudget,
-    setPubKey,
     setIsAuthenticated,
     setIsAdmin,
     setTrendingTopicsFeatureFlag,
@@ -95,12 +95,16 @@ export const AuthGuard = ({ children }: PropsWithChildren) => {
 
   // auth checker
   useEffect(() => {
-    if (!isWebView() && !isE2E && false) {
-      return
+    const init = async () => {
+      if (isWebView() || isE2E) {
+        await handleAuth()
+      }
+
+      await handleIsAdmin()
     }
 
-    handleAuth()
-  }, [handleAuth])
+    init()
+  }, [handleAuth, handleIsAdmin])
 
   const message = 'This is a private Graph, Contact Admin'
 
