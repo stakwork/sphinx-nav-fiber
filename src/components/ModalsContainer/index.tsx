@@ -1,4 +1,5 @@
 import { lazy } from 'react'
+import { useSomeModalIsOpen } from '~/stores/useModalStore'
 
 const LazySettingsModal = lazy(() =>
   import('../SettingsModal').then(({ SettingsModal }) => ({ default: SettingsModal })),
@@ -42,18 +43,22 @@ const LazyUserFeedBackModal = lazy(() =>
   import('./UserFeedBackModal').then(({ UserFeedBackModal }) => ({ default: UserFeedBackModal })),
 )
 
-export const ModalsContainer = () => (
-  <>
-    <LazyAddItemModal />
-    <LazyAddContentModal />
-    <LazySettingsModal />
-    <LazyEditNodeNameModal />
-    <LazyRemoveNodeModal />
-    <LazySourcesTableModal />
-    <LazyAddNodeEdgeModal />
-    <LazyChangeNodeTypeModal />
-    <LazyBlueprintModal />
-    <LazyMergeNodeModal />
-    <LazyUserFeedBackModal />
-  </>
-)
+export const ModalsContainer = () => {
+  const someModalIsOpen = useSomeModalIsOpen()
+
+  return someModalIsOpen ? (
+    <>
+      <LazyAddItemModal />
+      <LazyAddContentModal />
+      <LazySettingsModal />
+      <LazyEditNodeNameModal />
+      <LazyRemoveNodeModal />
+      <LazySourcesTableModal />
+      <LazyAddNodeEdgeModal />
+      <LazyChangeNodeTypeModal />
+      <LazyBlueprintModal />
+      <LazyMergeNodeModal />
+      <LazyUserFeedBackModal />
+    </>
+  ) : null
+}

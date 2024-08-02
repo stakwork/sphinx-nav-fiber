@@ -66,7 +66,7 @@ export const App = () => {
 
   const setTeachMeAnswer = useTeachStore((s) => s.setTeachMeAnswer)
 
-  const { fetchData, setCategoryFilter, setAbortRequests, addNewNode, splashDataLoading } = useDataStore((s) => s)
+  const { fetchData, setCategoryFilter, setAbortRequests, addNewNode } = useDataStore((s) => s)
 
   const { setAiSummaryAnswer, getKeyExist, aiRefId } = useAiSummaryStore((s) => s)
 
@@ -229,22 +229,20 @@ export const App = () => {
       <Leva hidden={!isDevelopment} />
 
       <Suspense fallback={<div>Loading...</div>}>
-        {!splashDataLoading ? (
-          <Wrapper direction="row">
-            <FormProvider {...form}>
-              <LazyMainToolbar />
-              <LazySideBar />
-              <LazyUniverse />
-              <Overlay />
-              <AppBar />
-              <Version>v{version}</Version>
-              <ActionsToolbar />
-            </FormProvider>
+        <Wrapper direction="row">
+          <FormProvider {...form}>
+            <LazyMainToolbar />
+            <LazySideBar />
+            <LazyUniverse />
+            <Overlay />
+            <AppBar />
+            <Version>v{version}</Version>
+            <ActionsToolbar />
+          </FormProvider>
 
-            <ModalsContainer />
-            <Toasts />
-          </Wrapper>
-        ) : null}
+          <ModalsContainer />
+          <Toasts />
+        </Wrapper>
       </Suspense>
     </>
   )
