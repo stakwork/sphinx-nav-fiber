@@ -177,7 +177,7 @@ describe('FilterSearch Component', () => {
     expect(screen.queryByText('Type')).not.toBeInTheDocument()
   })
 
-  it('should reset Source Nodes, Hops, and Max Results to default values when "Clear" button is clicked', async () => {
+  it('should reset Source Nodes, Hops, and Max Result to default values when "Clear" button is clicked', async () => {
     renderComponent()
 
     const type1Pill = screen.getByText('Type1')
