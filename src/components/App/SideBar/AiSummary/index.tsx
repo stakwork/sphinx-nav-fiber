@@ -27,6 +27,7 @@ const Title = styled(Text)`
   overflow-wrap: break-word;
   white-space: normal;
   word-break: break-word;
+  margin-right: 10px;
 `
 
 const TitleWrapper = styled(Flex).attrs({
