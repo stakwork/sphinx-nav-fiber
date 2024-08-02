@@ -38,7 +38,6 @@ export type DataStore = {
   selectedTimestamp: NodeExtended | null
   sources: Sources[] | null
   queuedSources: Sources[] | null
-  showTeachMe: boolean
   hideNodeDetails: boolean
   sidebarFilter: string
   sidebarFilters: string[]
@@ -62,7 +61,6 @@ export type DataStore = {
   ) => void
   setSelectedTimestamp: (selectedTimestamp: NodeExtended | null) => void
   setSources: (sources: Sources[] | null) => void
-  setTeachMe: (show: boolean) => void
   setQueuedSources: (sources: Sources[] | null) => void
   setIsFetching: (_: boolean) => void
   setHideNodeDetails: (_: boolean) => void
@@ -92,7 +90,6 @@ const defaultData: Omit<
   | 'setSidebarFilterCounts'
   | 'setQueuedSources'
   | 'setHideNodeDetails'
-  | 'setTeachMe'
   | 'addNewNode'
   | 'updateNode'
   | 'removeNode'
@@ -121,7 +118,6 @@ const defaultData: Omit<
   queuedSources: null,
   selectedTimestamp: null,
   sources: null,
-  showTeachMe: false,
   sidebarFilter: 'all',
   sidebarFilters: [],
   trendingTopics: [],
@@ -153,7 +149,6 @@ export const useDataStore = create<DataStore>()(
       }
 
       if (AISearchQuery) {
-        setAiSummaryAnswer(AISearchQuery, { answer: '', answerLoading: true, sourcesLoading: true })
         ai = { ...ai, ai_summary: String(true) }
       }
 
@@ -189,6 +184,13 @@ export const useDataStore = create<DataStore>()(
 
         if (data?.query_data?.ref_id) {
           useAiSummaryStore.setState({ aiRefId: data?.query_data?.ref_id })
+
+          setAiSummaryAnswer(data?.query_data?.ref_id, {
+            question: AISearchQuery,
+            answer: '',
+            answerLoading: true,
+            sourcesLoading: true,
+          })
         }
 
         const currentNodes = currentPage === 0 && !aiRefId ? [] : [...(existingData?.nodes || [])]
@@ -222,14 +224,17 @@ export const useDataStore = create<DataStore>()(
           dataNew: { nodes: newNodes, links: newLinks },
           isFetching: false,
           isLoadingNew: false,
+          splashDataLoading: false,
           nodeTypes,
           sidebarFilters,
           sidebarFilterCounts,
         })
       } catch (error) {
         console.log(error)
-        set({ isFetching: false })
-        set({ isLoadingNew: false })
+
+        if (error !== 'abort') {
+          set({ isLoadingNew: false, isFetching: false })
+        }
       }
     },
     setPage: (page: number) => set({ currentPage: page }),
@@ -261,7 +266,6 @@ export const useDataStore = create<DataStore>()(
     setSelectedTimestamp: (selectedTimestamp) => set({ selectedTimestamp }),
     setSources: (sources) => set({ sources }),
     setHideNodeDetails: (hideNodeDetails) => set({ hideNodeDetails }),
-    setTeachMe: (showTeachMe) => set({ showTeachMe }),
     setSeedQuestions: (questions) => set({ seedQuestions: questions }),
     updateNode: (updatedNode) => {
       console.log(updatedNode)

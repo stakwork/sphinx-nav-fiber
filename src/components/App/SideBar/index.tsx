@@ -208,7 +208,12 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ subViewOpen }, ref) =
         )}
         <Flex>
           {Object.keys(aiSummaryAnswers).map((i: string) => (
-            <AiSummary key={i} question={i} response={aiSummaryAnswers[i]} />
+            <AiSummary
+              key={i}
+              question={aiSummaryAnswers[i]?.question || ''}
+              refId={i}
+              response={aiSummaryAnswers[i]}
+            />
           ))}
 
           {isLoading ? <EpisodeSkeleton /> : !hasAiChats && <LatestView isSearchResult={!!searchTerm || hasAiChats} />}
@@ -228,14 +233,12 @@ export const SideBar = () => {
 
   const subViewIsOpen = !!selectedNode && sidebarIsOpen && !hideSubViewFor.includes(selectedNode.node_type)
 
-  const { showTeachMe } = useDataStore((s) => s)
-
   return (
     <>
       <Slide direction="right" in={sidebarIsOpen} mountOnEnter unmountOnExit>
         <Content subViewOpen={subViewIsOpen} />
       </Slide>
-      <SideBarSubView open={subViewIsOpen || !!showTeachMe} />
+      <SideBarSubView open={subViewIsOpen} />
       {!sidebarIsOpen && <Tab />}
     </>
   )
