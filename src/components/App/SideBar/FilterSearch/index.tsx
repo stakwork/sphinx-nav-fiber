@@ -18,6 +18,8 @@ type Props = {
   anchorEl: HTMLElement | null
 }
 
+const formatType = (type: string) => type.replace(/_/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase())
+
 export const FilterSearch = ({ showAllSchemas, setShowAllSchemas, schemaAll, anchorEl }: Props) => {
   const handleSchemaTypeClick = (type: string) => {
     setSelectedTypes((prevSelectedTypes) =>
@@ -47,8 +49,6 @@ export const FilterSearch = ({ showAllSchemas, setShowAllSchemas, schemaAll, anc
       top_node_count: sourceNodes.toString(),
     })
   }
-
-  const formatType = (type: string) => type.replace(/_/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase())
 
   return (
     <SearchFilterPopover
