@@ -56,7 +56,7 @@ jobs:
           command: |
             export TWITTER_BEARER="Bearer ${{ secrets.TWITTER_BEARER }}"
             echo $TWITTER_BEARER
-            STAKWORK_TOKEN=daaa3a0894f0658d99781471dfccd3e1 TWITTER_BEARER=$TWITTER_BEARER GITACTION_ENV=gitactionenv docker compose -f ./stack/alts/navfiber.yml up -d;
+            STAKWORK_TOKEN=daaa3a0894f0658d99781471dfccd3e1 TWITTER_BEARER=$TWITTER_BEARER GITACTION_ENV=gitactionenv docker compose -f ./stack/alts/navfiber.yml --project-directory ./stack up -d;
             sleep 240;
             docker ps
             docker logs meme.sphinx
