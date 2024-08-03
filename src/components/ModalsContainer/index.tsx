@@ -46,7 +46,7 @@ const LazyUserFeedBackModal = lazy(() =>
 export const ModalsContainer = () => {
   const someModalIsOpen = useSomeModalIsOpen()
 
-  return someModalIsOpen ? (
+  return someModalIsOpen || true ? (
     <>
       <LazyAddItemModal />
       <LazyAddContentModal />
