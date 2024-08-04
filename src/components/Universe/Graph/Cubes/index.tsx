@@ -13,6 +13,8 @@ import { SelectionDataNodes } from './SelectionDataNodes'
 import { TextNode } from './Text'
 
 export const Cubes = memo(() => {
+  // console.log('check')
+
   const selectedNode = useSelectedNode()
   const relativeIds = useSelectedNodeRelativeIds()
   const { selectionGraphData, showSelectionGraph, setHoveredNode } = useGraphStore((s) => s)
