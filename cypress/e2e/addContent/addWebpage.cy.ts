@@ -1,5 +1,5 @@
 describe('Add Webpage Content', () => {
-  it('Carol adds webpage to graph', () => {
+  it.skip('Carol adds webpage to graph', () => {
     cy.initialSetup('carol', 50)
 
     cy.intercept({

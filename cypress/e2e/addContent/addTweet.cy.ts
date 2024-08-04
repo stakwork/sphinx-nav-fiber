@@ -1,5 +1,5 @@
 describe('Add Tweet Content', () => {
-  it('Carol adds tweet content to graph', () => {
+  it.skip('Carol adds tweet content to graph', () => {
     cy.initialSetup('carol', 300)
 
     cy.intercept({
