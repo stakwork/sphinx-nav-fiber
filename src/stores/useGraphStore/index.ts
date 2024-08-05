@@ -66,8 +66,7 @@ const runSimulationPhase = (simulation: ForceSimulation) => {
 export const graphStyles: GraphStyle[] = ['sphere', 'force', 'split', 'earth']
 
 export type GraphStore = {
-  splashDataLoading: boolean
-  graphRadius: number | null
+  graphRadius: number
   data: { nodes: NodeExtended[]; links: Link[] } | null
   selectionGraphData: GraphData
   graphStyle: GraphStyle
@@ -86,7 +85,7 @@ export type GraphStore = {
   setScrollEventsDisabled: (rotation: boolean) => void
   setData: (data: GraphData) => void
   setGraphStyle: (graphStyle: GraphStyle) => void
-  setGraphRadius: (graphRadius?: number | null) => void
+  setGraphRadius: (graphRadius: number) => void
   setHoveredNode: (hoveredNode: NodeExtended | null) => void
   setSelectedNode: (selectedNode: NodeExtended | null) => void
   setCameraFocusTrigger: (_: boolean) => void
@@ -120,14 +119,13 @@ const defaultData: Omit<
   selectionGraphData: { nodes: [], links: [] },
   disableCameraRotation: false,
   scrollEventsDisabled: false,
-  graphRadius: 3056, // calculated from initial load
+  graphRadius: 1500, // calculated from initial load
   graphStyle: (localStorage.getItem('graphStyle') as GraphStyle) || 'sphere',
   hoveredNode: null,
   selectedNode: null,
   cameraFocusTrigger: false,
   nearbyNodeIds: [],
   showSelectionGraph: false,
-  splashDataLoading: true,
   simulationHelpers: defaultSimulationHelpers,
   isHovering: false,
 }
@@ -301,6 +299,7 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
 }))
 
 export const useSelectedNode = () => useGraphStore((s) => s.selectedNode)
+export const useHoveredNode = () => useGraphStore((s) => s.hoveredNode)
 export const useUpdateSelectedNode = () => useGraphStore((s) => s.setSelectedNode)
 
 export const useSelectedNodeRelativeIds = () => {
