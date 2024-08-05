@@ -17,8 +17,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version-file: '.nvmrc'
-          cache: 'yarn'
+          node-version-file: ".nvmrc"
+          cache: "yarn"
       - name: Clone Stack
         run: |
           git clone https://github.com/stakwork/sphinx-stack.git stack
@@ -56,7 +56,7 @@ jobs:
           command: |
             export TWITTER_BEARER="Bearer ${{ secrets.TWITTER_BEARER }}"
             echo $TWITTER_BEARER
-            STAKWORK_TOKEN=daaa3a0894f0658d99781471dfccd3e1 TWITTER_BEARER=$TWITTER_BEARER GITACTION_ENV=gitactionenv docker compose -f ./stack/alts/navfiber.yml --project-directory ./stack up -d;
+            STAKWORK_TOKEN=daaa3a0894f0658d99781471dfccd3e1 TWITTER_BEARER=$TWITTER_BEARER GITACTION_ENV=gitactionenv docker-compose -f ./stack/alts/navfiber.yml --project-dir ./stack up -d;
             sleep 240;
             docker ps
             docker logs meme.sphinx
@@ -67,8 +67,8 @@ jobs:
       - name: Copy Node.json
         uses: canastro/copy-file-action@master
         with:
-          source: 'stack/relay/NODES.json'
-          target: 'relay/nodes.json'
+          source: "stack/relay/NODES.json"
+          target: "relay/nodes.json"
 
       - name: Install
         run: yarn --immutable
@@ -80,7 +80,7 @@ jobs:
           install-command: yarn --immutable
           browser: chrome
           start: yarn run start-e2e
-          wait-on: 'http://localhost:3000' # Waits for above
+          wait-on: "http://localhost:3000" # Waits for above
           wait-on-timeout: 120 # Waits for 2 minutes
           # Records to Cypress Dashboard
           record: true
@@ -104,4 +104,4 @@ jobs:
 
       - name: Stop Stack
         working-directory: ./stack
-        run: docker compose down
+        run: docker-compose down
