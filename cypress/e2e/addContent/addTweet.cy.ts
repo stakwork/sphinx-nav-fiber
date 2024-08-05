@@ -2,10 +2,16 @@ describe('Add Tweet Content', () => {
   it('Carol adds tweet content to graph', () => {
     cy.initialSetup('carol', 300)
 
-    cy.intercept({
-      method: 'POST',
-      url: 'http://localhost:8444/api/add_node*',
-    }).as('addTweet')
+    cy.intercept(
+      {
+        method: 'POST',
+        url: 'http://localhost:8444/api/add_node*',
+      },
+      {
+        statusCode: 200,
+        body: { success: true },
+      },
+    ).as('addTweet')
 
     cy.get('[data-testid="add-content-modal"]').click()
 
