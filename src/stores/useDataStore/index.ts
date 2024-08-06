@@ -185,11 +185,15 @@ export const useDataStore = create<DataStore>()(
         if (data?.query_data?.ref_id) {
           useAiSummaryStore.setState({ aiRefId: data?.query_data?.ref_id })
 
+          const { aiSummaryAnswers } = useAiSummaryStore.getState()
+          const { answer } = aiSummaryAnswers[data?.query_data?.ref_id] || {}
+
           setAiSummaryAnswer(data?.query_data?.ref_id, {
             question: AISearchQuery,
-            answer: '',
-            answerLoading: true,
-            sourcesLoading: true,
+            answer: answer || '',
+            answerLoading: !answer,
+            sourcesLoading: !answer,
+            shouldRender: true,
           })
         }
 
