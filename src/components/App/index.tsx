@@ -19,6 +19,7 @@ import { useTeachStore } from '~/stores/useTeachStore'
 import { useUserStore } from '~/stores/useUserStore'
 import {
   AiSummaryAnswerResponse,
+  AiSummaryAudioResponse,
   AiSummaryQuestionsResponse,
   AiSummarySourcesResponse,
   ExtractedEntitiesResponse,
@@ -131,6 +132,15 @@ export const App = () => {
     [setAiSummaryAnswer],
   )
 
+  const handleAiSummaryAudio = useCallback(
+    (data: AiSummaryAudioResponse) => {
+      if (data.ref_id) {
+        setAiSummaryAnswer(data.ref_id, { audio_en: data.audio_en })
+      }
+    },
+    [setAiSummaryAnswer],
+  )
+
   const handleAiRelevantQuestions = useCallback(
     (data: AiSummaryQuestionsResponse) => {
       if (data.ref_id) {
@@ -201,6 +211,10 @@ export const App = () => {
       if (realtimeGraphFeatureFlag) {
         socket.on('new_node_created', handleNewNodeCreated)
       }
+
+      if (chatInterfaceFeatureFlag) {
+        socket.on('answeraudiohook', handleAiSummaryAudio)
+      }
     }
 
     return () => {
@@ -218,6 +232,7 @@ export const App = () => {
     handleAiRelevantQuestions,
     handleAiSources,
     handleExtractedEntities,
+    handleAiSummaryAudio,
   ])
 
   return (
