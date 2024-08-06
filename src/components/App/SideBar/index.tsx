@@ -207,14 +207,16 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ subViewOpen }, ref) =
           </TrendingWrapper>
         )}
         <Flex>
-          {Object.keys(aiSummaryAnswers).map((i: string) => (
-            <AiSummary
-              key={i}
-              question={aiSummaryAnswers[i]?.question || ''}
-              refId={i}
-              response={aiSummaryAnswers[i]}
-            />
-          ))}
+          {Object.keys(aiSummaryAnswers)
+            .filter((key) => aiSummaryAnswers[key].shouldRender)
+            .map((i: string) => (
+              <AiSummary
+                key={i}
+                question={aiSummaryAnswers[i]?.question || ''}
+                refId={i}
+                response={aiSummaryAnswers[i]}
+              />
+            ))}
 
           {isLoading ? <EpisodeSkeleton /> : !hasAiChats && <LatestView isSearchResult={!!searchTerm || hasAiChats} />}
         </Flex>

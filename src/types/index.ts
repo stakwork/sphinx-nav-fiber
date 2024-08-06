@@ -313,6 +313,7 @@ export type AIEntity = {
   questionsLoading?: boolean
   hasBeenRendered?: boolean
   entities?: ExtractedEntity[]
+  shouldRender?: boolean
 }
 
 export interface ExtractedEntity {
