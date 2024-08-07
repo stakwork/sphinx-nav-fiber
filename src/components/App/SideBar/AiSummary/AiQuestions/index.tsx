@@ -1,3 +1,4 @@
+import { Slide } from '@mui/material'
 import { memo } from 'react'
 import styled from 'styled-components'
 import PlusIcon from '~/components/Icons/PlusIcon'
@@ -24,28 +25,32 @@ const _AiQuestions = ({ questions }: Props) => {
 
   return questions?.length ? (
     <SectionWrapper>
-      <Heading className="heading" direction="row">
-        <div className="heading__icon">
-          <StackIcon />
-        </div>
-        <HeadingTitle>More on this</HeadingTitle>
-      </Heading>
-      <Flex>
-        {questions.map((i) => (
-          <QuestionWrapper
-            key={i}
-            align="center"
-            direction="row"
-            justify="space-between"
-            onClick={() => handleSubmitQuestion(i)}
-          >
-            <span>{i}</span>
-            <Flex className="icon">
-              <PlusIcon />
-            </Flex>
-          </QuestionWrapper>
-        ))}
-      </Flex>
+      <Slide direction="right" in mountOnEnter>
+        <Heading className="heading" direction="row">
+          <div className="heading__icon">
+            <StackIcon />
+          </div>
+          <HeadingTitle>More on this</HeadingTitle>
+        </Heading>
+      </Slide>
+      <Slide direction="right" in mountOnEnter>
+        <Flex>
+          {questions.map((i) => (
+            <QuestionWrapper
+              key={i}
+              align="center"
+              direction="row"
+              justify="space-between"
+              onClick={() => handleSubmitQuestion(i)}
+            >
+              <span>{i}</span>
+              <Flex className="icon">
+                <PlusIcon />
+              </Flex>
+            </QuestionWrapper>
+          ))}
+        </Flex>
+      </Slide>
     </SectionWrapper>
   ) : null
 }

@@ -1,13 +1,13 @@
 import { FormProvider, useForm } from 'react-hook-form'
+import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
 import SearchIcon from '~/components/Icons/SearchIcon'
 import { SearchBar } from '~/components/SearchBar'
 import { Flex } from '~/components/common/Flex'
+import { useHasAiChatsResponseLoading } from '~/stores/useAiSummaryStore'
 import { useDataStore } from '~/stores/useDataStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { colors } from '~/utils'
-import { useHasAiChatsResponse } from '~/stores/useAiSummaryStore'
-import { ClipLoader } from 'react-spinners'
 
 export const AiSearch = () => {
   const form = useForm<{ search: string }>({ mode: 'onChange' })
@@ -15,7 +15,7 @@ export const AiSearch = () => {
   const { setBudget } = useUserStore((s) => s)
   const { reset } = form
 
-  const isLoading = useHasAiChatsResponse()
+  const isLoading = useHasAiChatsResponseLoading()
 
   const handleSubmit = form.handleSubmit(({ search }) => {
     if (search.trim() === '') {
