@@ -1,10 +1,12 @@
-import { FC } from 'react'
+import { FC, useState } from 'react'
+import { Button } from '@mui/material'
 import styled from 'styled-components'
 import { GraphViewControl } from '~/components/App/ActionsToolbar/GraphViewControl'
-import { Button } from '~/components/Button'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { useGraphStore } from '~/stores/useGraphStore'
+import { ClipLoader } from 'react-spinners'
+import { colors } from '~/utils'
 
 type Props = {
   onClose: () => void
@@ -12,9 +14,12 @@ type Props = {
 
 export const Appearance: FC<Props> = ({ onClose }) => {
   const [graphStyle] = useGraphStore((s) => [s.graphStyle])
+  const [loading, setLoading] = useState(false)
 
   const handleSave = () => {
+    setLoading(true)
     localStorage.setItem('graphStyle', graphStyle)
+    setLoading(false)
     onClose()
   }
 
@@ -22,8 +27,23 @@ export const Appearance: FC<Props> = ({ onClose }) => {
     <Wrapper direction="column">
       <StyledText>Default graph view:</StyledText>
       <GraphViewControl />
-      <Flex mt={308}>
-        <Button kind="big" onClick={handleSave}>
+      <Flex mt={308} py={24}>
+        <Button
+          color="secondary"
+          disabled={loading}
+          id="add-node-submit-cta"
+          onClick={handleSave}
+          size="large"
+          startIcon={
+            loading && (
+              <IconWrapper>
+                <ClipLoader color={colors.lightGray} size={12} />
+              </IconWrapper>
+            )
+          }
+          type="submit"
+          variant="contained"
+        >
           Save Changes
         </Button>
       </Flex>
@@ -41,4 +61,16 @@ const StyledText = styled(Text)`
   font-family: Barlow;
   font-size: 13px;
   font-weight: 400;
+`
+
+const IconWrapper = styled.span`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2px;
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
 `
