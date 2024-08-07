@@ -51,7 +51,7 @@ const _View = ({ isSearchResult }: Props) => {
           ) : null}
         </div>
       )}
-      <Relevance isSearchResult={isSearchResult} />
+      {!isSearchResult && <Relevance isSearchResult={isSearchResult} />}
     </Wrapper>
   )
 }
