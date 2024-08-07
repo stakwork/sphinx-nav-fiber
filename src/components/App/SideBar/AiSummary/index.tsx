@@ -80,7 +80,7 @@ export const AiSummary = ({ question, response, refId }: Props) => {
     <Wrapper>
       <TitleWrapper>
         <Title ref={ref}>{question}</Title>
-        {!response.audio_en && (
+        {response.audio_en && (
           <AudioButton onClick={handleToggleAudio}>{isPlaying ? <AiPauseIcon /> : <AiPlayIcon />}</AudioButton>
         )}
         <CollapseButton onClick={toggleCollapse}>{collapsed ? <ChevronDownIcon /> : <ChevronUpIcon />}</CollapseButton>
