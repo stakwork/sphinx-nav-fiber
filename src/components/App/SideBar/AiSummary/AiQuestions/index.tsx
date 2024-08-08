@@ -1,9 +1,11 @@
 import { Slide } from '@mui/material'
 import { memo } from 'react'
+import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
 import PlusIcon from '~/components/Icons/PlusIcon'
 import StackIcon from '~/components/Icons/StackIcon'
 import { Flex } from '~/components/common/Flex'
+import { useHasAiChatsResponseLoading } from '~/stores/useAiSummaryStore'
 import { useDataStore } from '~/stores/useDataStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { colors } from '~/utils'
@@ -16,8 +18,13 @@ type Props = {
 const _AiQuestions = ({ questions }: Props) => {
   const { fetchData, setAbortRequests } = useDataStore((s) => s)
   const [setBudget] = useUserStore((s) => [s.setBudget])
+  const hasLoadingResponse = useHasAiChatsResponseLoading()
 
   const handleSubmitQuestion = (question: string) => {
+    if (hasLoadingResponse) {
+      return
+    }
+
     if (question) {
       fetchData(setBudget, setAbortRequests, question)
     }
@@ -45,7 +52,7 @@ const _AiQuestions = ({ questions }: Props) => {
             >
               <span>{i}</span>
               <Flex className="icon">
-                <PlusIcon />
+                {hasLoadingResponse ? <ClipLoader color={colors.white} size={13} /> : <PlusIcon />}
               </Flex>
             </QuestionWrapper>
           ))}
