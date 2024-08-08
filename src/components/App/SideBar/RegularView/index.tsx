@@ -194,7 +194,7 @@ const Search = styled(Flex).attrs({
   justify: 'center',
   align: 'center',
 })`
-  flex-grow: 1;
+  width: 85%;
 `
 
 const SearchDetails = styled(Flex).attrs({
@@ -231,6 +231,7 @@ const InputButton = styled(Flex).attrs({
   transition-duration: 0.2s;
   margin-left: -42px;
   z-index: 2;
+  width: 30px;
 
   &:hover {
     /* background-color: ${colors.gray200}; */
