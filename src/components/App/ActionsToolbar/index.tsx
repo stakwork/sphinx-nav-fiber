@@ -1,5 +1,6 @@
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
+import { useHasAiChatsResponseLoading } from '~/stores/useAiSummaryStore'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
 import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
@@ -14,12 +15,15 @@ export const ActionsToolbar = () => {
   const isLoading = useDataStore((s) => s.isFetching)
   const universeQuestionIsOpen = useAppStore((s) => s.universeQuestionIsOpen)
   const chatInterfaceFeatureFlag = useFeatureFlagStore((s) => s.chatInterfaceFeatureFlag)
+  const newQuestionInProgress = useHasAiChatsResponseLoading()
 
   return (
     <Wrapper align="flex-end" id="actions-toolbar">
       {!isLoading && !universeQuestionIsOpen && <CameraRecenterControl />}
       <Flex align="center" direction="row" mt={16}>
-        {!isLoading && chatInterfaceFeatureFlag && !universeQuestionIsOpen && <UniverseQuestionControl />}
+        {!newQuestionInProgress && !isLoading && chatInterfaceFeatureFlag && !universeQuestionIsOpen && (
+          <UniverseQuestionControl />
+        )}
         {!isLoading && !universeQuestionIsOpen && <GraphViewControl />}
       </Flex>
       <PlayerControl key={selectedNode?.ref_id} />
