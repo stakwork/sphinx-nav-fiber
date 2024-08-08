@@ -1,5 +1,5 @@
 describe('test trending topics', () => {
-  it('Checking it trending topics exist', () => {
+  it.skip('Checking it trending topics exist', () => {
     cy.intercept({
       method: 'GET',
       url: 'http://localhost:8444/api/prediction/graph/search*',

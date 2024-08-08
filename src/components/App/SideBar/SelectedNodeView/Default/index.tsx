@@ -43,13 +43,15 @@ export const Default = () => {
           {Object.entries(customKeys)
             .filter(([key]) => key !== 'media_url' && key !== 'link')
             .map(([key, value]) => (
-              <NodeDetail key={key} label={key} value={value} />
+              <NodeDetail key={key} label={formatLabel(key)} value={value} />
             ))}
         </StyledWrapper>
       </StyledContent>
     </StyledContainer>
   )
 }
+
+const formatLabel = (label: string) => label.replace(/_/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase())
 
 type Props = { label: string; value: unknown }
 

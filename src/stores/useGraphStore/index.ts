@@ -66,7 +66,6 @@ const runSimulationPhase = (simulation: ForceSimulation) => {
 export const graphStyles: GraphStyle[] = ['sphere', 'force', 'split', 'earth']
 
 export type GraphStore = {
-  splashDataLoading: boolean
   graphRadius: number
   data: { nodes: NodeExtended[]; links: Link[] } | null
   selectionGraphData: GraphData
@@ -124,7 +123,6 @@ const defaultData: Omit<
   cameraFocusTrigger: false,
   nearbyNodeIds: [],
   showSelectionGraph: false,
-  splashDataLoading: true,
   simulationHelpers: defaultSimulationHelpers,
 }
 
