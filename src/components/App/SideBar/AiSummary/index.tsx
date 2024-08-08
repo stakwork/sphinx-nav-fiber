@@ -76,8 +76,6 @@ export const AiSummary = ({ question, response, refId }: Props) => {
     }
   }
 
-  const hasAiAnswer = response.answerLoading || !response.entities?.length
-
   return (
     <Wrapper>
       <TitleWrapper>
@@ -89,7 +87,7 @@ export const AiSummary = ({ question, response, refId }: Props) => {
       </TitleWrapper>
       {!collapsed && (
         <>
-          {hasAiAnswer ? (
+          {response.answerLoading ? (
             <AiSummarySkeleton />
           ) : (
             <AiAnswer
