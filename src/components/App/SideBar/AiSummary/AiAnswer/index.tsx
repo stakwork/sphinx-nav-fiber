@@ -31,6 +31,8 @@ export const AiAnswer = ({ answer, entities, handleLoaded, hasBeenRendered }: Pr
   const { fetchData, setAbortRequests } = useDataStore((s) => s)
   const { setBudget } = useUserStore((s) => s)
   const [displayedText, setDisplayedText] = useState('')
+  const [highlightedEntities, setHighlightedEntities] = useState<ExtractedEntity[] | undefined>(entities)
+  const [isDescriptionComplete, setIsDescriptionComplete] = useState(false)
 
   useEffect(() => {
     let timeoutId: NodeJS.Timeout
@@ -49,6 +51,7 @@ export const AiAnswer = ({ answer, entities, handleLoaded, hasBeenRendered }: Pr
     }
 
     handleLoaded()
+    setIsDescriptionComplete(true)
   }, [answer, displayedText, handleLoaded, hasBeenRendered])
 
   useEffect(() => {
@@ -65,7 +68,18 @@ export const AiAnswer = ({ answer, entities, handleLoaded, hasBeenRendered }: Pr
     fetchData(setBudget, setAbortRequests, search)
   }
 
-  const responseTextDisplay = highlightAiSummary(displayedText, handleSubmit, entities)
+  useEffect(() => {
+    if (entities && highlightedEntities !== entities) {
+      setHighlightedEntities(entities)
+    }
+  }, [entities, highlightedEntities])
+
+  const responseTextDisplay = highlightAiSummary(
+    displayedText,
+    handleSubmit,
+    highlightedEntities,
+    isDescriptionComplete,
+  )
 
   return (
     <Wrapper>

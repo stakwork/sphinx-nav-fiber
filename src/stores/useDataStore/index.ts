@@ -137,7 +137,7 @@ export const useDataStore = create<DataStore>()(
     fetchData: async (setBudget, setAbortRequests, AISearchQuery = '') => {
       const { currentPage, itemsPerPage, dataInitial: existingData, filters } = get()
       const { currentSearch } = useAppStore.getState()
-      const { setAiSummaryAnswer, aiRefId } = useAiSummaryStore.getState()
+      const { setAiSummaryAnswer, setNewLoading, aiRefId } = useAiSummaryStore.getState()
       let ai = { ai_summary: String(!!AISearchQuery) }
 
       if (!AISearchQuery) {
@@ -150,6 +150,7 @@ export const useDataStore = create<DataStore>()(
 
       if (AISearchQuery) {
         ai = { ...ai, ai_summary: String(true) }
+        setNewLoading({ question: AISearchQuery, answerLoading: true })
       }
 
       if (abortController) {
@@ -185,12 +186,18 @@ export const useDataStore = create<DataStore>()(
         if (data?.query_data?.ref_id) {
           useAiSummaryStore.setState({ aiRefId: data?.query_data?.ref_id })
 
+          const { aiSummaryAnswers } = useAiSummaryStore.getState()
+          const { answer } = aiSummaryAnswers[data?.query_data?.ref_id] || {}
+
           setAiSummaryAnswer(data?.query_data?.ref_id, {
             question: AISearchQuery,
-            answer: '',
-            answerLoading: true,
-            sourcesLoading: true,
+            answer: answer || '',
+            answerLoading: !answer,
+            sourcesLoading: !answer,
+            shouldRender: true,
           })
+
+          setNewLoading(null)
         }
 
         const currentNodes = currentPage === 0 && !aiRefId ? [] : [...(existingData?.nodes || [])]
