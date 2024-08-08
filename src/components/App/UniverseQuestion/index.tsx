@@ -129,7 +129,7 @@ const StyledTextarea = styled(TextareaAutosize).attrs({
   width: 700px;
   color: ${colors.white};
   padding: 15px;
-  overflow-y: auto !important;
+  overflow-y: hidden;
   border: none;
   resize: none;
   outline: none;
@@ -157,6 +157,10 @@ const StyledTextarea = styled(TextareaAutosize).attrs({
     border-radius: 12px;
     margin: 13px;
     overflow-y: hidden;
+  }
+
+  &:not(:empty) {
+    overflow-y: auto !important;
   }
 `
 
