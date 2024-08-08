@@ -1,12 +1,45 @@
-import styled from 'styled-components'
-import { Tooltip } from '~/components/common/ToolTip'
-import { ExtractedEntity } from '~/types'
+import styled, { keyframes, css } from 'styled-components'
 import { colors } from '~/utils'
+import { ExtractedEntity } from '~/types'
+import { Tooltip } from '~/components/common/ToolTip'
+
+// Define a keyframe animation for highlighting from top-left to bottom-right
+const highlightAnimation = keyframes`
+  0% {
+    background-color: ${colors.SECONDARY_BLUE};
+    color: white;
+    clip-path: polygon(0 0, 0 0, 0 100%, 0 100%);
+  }
+  100% {
+    background-color: transparent;
+    color: ${colors.SECONDARY_BLUE};
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+  }
+`
+
+const Highlight = styled.span<{ isDescriptionComplete?: boolean }>`
+  padding: 0;
+  margin: 0;
+  color: ${colors.SECONDARY_BLUE};
+  background-color: transparent;
+  animation: ${(props) =>
+    props.isDescriptionComplete
+      ? css`
+          ${highlightAnimation} 0.5s ease-in-out forwards
+        `
+      : 'none'};
+
+  &:hover {
+    text-decoration: underline;
+    cursor: pointer;
+  }
+`
 
 export function highlightAiSummary(
   sDescription: string,
   handleSubmit: (search: string) => void,
   entities?: ExtractedEntity[],
+  isDescriptionComplete?: boolean,
 ) {
   if (!entities || entities.length === 0) {
     return sDescription
@@ -21,23 +54,18 @@ export function highlightAiSummary(
   const regex = new RegExp(`(${escapedTerms.join('|')})`, 'gi')
 
   const parts = sDescription.split(regex)
-  const highlighted = new Set()
 
   return (
     <>
       {parts.map((part) => {
         const entity = entities.find((e) => e.entity.toLowerCase() === part.toLowerCase())
 
-        if (entity && !highlighted.has(part.toLowerCase())) {
-          highlighted.add(part.toLowerCase())
+        if (entity) {
+          const uniqueKey = `${entity.entity}-${part}-${Math.random().toString(36).substr(2, 9)}`
 
           return (
-            <StyledTooltip key={part} content={entity.description}>
-              <Highlight
-                onClick={() => {
-                  handleSubmit(part)
-                }}
-              >
+            <StyledTooltip key={uniqueKey} content={entity.description}>
+              <Highlight isDescriptionComplete={isDescriptionComplete} onClick={() => handleSubmit(part)}>
                 {part}
               </Highlight>
             </StyledTooltip>
@@ -53,17 +81,6 @@ export function highlightAiSummary(
 function escapeRegExp(string: string) {
   return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }
-
-const Highlight = styled.span`
-  padding: 0;
-  margin: 0;
-  color: ${colors.SECONDARY_BLUE};
-
-  &:hover {
-    text-decoration: underline;
-    cursor: pointer;
-  }
-`
 
 const StyledTooltip = styled(({ className, ...props }) => (
   <Tooltip
