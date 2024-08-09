@@ -18,6 +18,8 @@ type Props = {
   anchorEl: HTMLElement | null
 }
 
+const formatType = (type: string) => type.replace(/_/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase())
+
 export const FilterSearch = ({ showAllSchemas, setShowAllSchemas, schemaAll, anchorEl }: Props) => {
   const handleSchemaTypeClick = (type: string) => {
     setSelectedTypes((prevSelectedTypes) =>
@@ -78,7 +80,7 @@ export const FilterSearch = ({ showAllSchemas, setShowAllSchemas, schemaAll, anc
               isSelected={selectedTypes.includes(schema.type as string)}
               onClick={() => handleSchemaTypeClick(schema?.type as string)}
             >
-              {schema.type}
+              {formatType(schema.type ?? '')}
             </SchemaType>
           ))}
         </SchemaTypeWrapper>
