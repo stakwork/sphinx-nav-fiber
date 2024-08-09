@@ -4,6 +4,7 @@ import styled from 'styled-components'
 import ArrowBackIcon from '~/components/Icons/ArrowBackIcon'
 import { Flex } from '~/components/common/Flex'
 import { useAiSummaryStore } from '~/stores/useAiSummaryStore'
+import { useDataStore } from '~/stores/useDataStore'
 import { colors } from '~/utils/colors'
 import { AiSearch } from '../AiSearch'
 import { AiSummary } from '../AiSummary'
@@ -12,14 +13,17 @@ export const MENU_WIDTH = 390
 
 // eslint-disable-next-line react/display-name
 export const AiView = () => {
-  const { aiSummaryAnswers, resetAiSummaryAnswer, newLoading } = useAiSummaryStore((s) => s)
+  const { aiSummaryAnswers, resetAiSummaryAnswer, newLoading, setNewLoading } = useAiSummaryStore((s) => s)
+  const { abortFetchData } = useDataStore((s) => s)
+
+  const navigate = useNavigate()
 
   const handleCloseAi = () => {
+    setNewLoading(null)
+    abortFetchData()
     resetAiSummaryAnswer()
     navigate('/')
   }
-
-  const navigate = useNavigate()
 
   return (
     <Wrapper>
