@@ -135,7 +135,7 @@ export const App = () => {
   const handleAiSummaryAudio = useCallback(
     (data: AiSummaryAudioResponse) => {
       if (data.ref_id) {
-        setAiSummaryAnswer(data.ref_id, { audio_en: data.audio_en })
+        setAiSummaryAnswer(data.ref_id, { audio_en: data.audio_EN })
       }
     },
     [setAiSummaryAnswer],
