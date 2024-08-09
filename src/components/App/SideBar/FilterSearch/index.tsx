@@ -33,6 +33,9 @@ export const FilterSearch = ({ showAllSchemas, setShowAllSchemas, schemaAll, anc
 
   const handleClear = async () => {
     setSelectedTypes([])
+    setHops(1)
+    setSourceNodes(10)
+    setMaxResults(30)
   }
 
   const handleViewMoreClick = () => {
