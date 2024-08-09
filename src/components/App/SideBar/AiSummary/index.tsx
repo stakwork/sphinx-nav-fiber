@@ -86,7 +86,7 @@ export const AiSummary = ({ question, response, refId }: Props) => {
         <CollapseButton onClick={toggleCollapse}>{collapsed ? <ChevronDownIcon /> : <ChevronUpIcon />}</CollapseButton>
       </TitleWrapper>
       {!collapsed && (
-        <>
+        <ContentWrapper>
           {response.answerLoading ? (
             <AiSummarySkeleton />
           ) : (
@@ -103,7 +103,7 @@ export const AiSummary = ({ question, response, refId }: Props) => {
             <AiQuestions questions={response.questions || []} />
           )}
           {(response?.sources || []).length ? <AiSources sourceIds={response.sources || []} /> : null}
-        </>
+        </ContentWrapper>
       )}
       {response.audio_en && (
         <StyledAudio ref={audioRef} src={response.audio_en}>
@@ -118,6 +118,15 @@ const Wrapper = styled(Flex).attrs({
   direction: 'column',
 })`
   border-top: 1px solid #101317;
+  width: 100%;
+  overflow-x: hidden;
+`
+
+const ContentWrapper = styled(Flex).attrs({
+  direction: 'column',
+})`
+  width: 100%;
+  overflow-x: hidden;
 `
 
 const CollapseButton = styled(Button)`
