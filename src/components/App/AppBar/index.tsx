@@ -42,7 +42,7 @@ const Header = styled(Flex).attrs({
   left: 64px;
   right: 32px;
   transition: opacity 1s;
-  z-index: 99;
+  z-index: 1;
   padding: 20px 23px;
 `
 
