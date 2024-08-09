@@ -330,5 +330,5 @@ export interface ExtractedEntitiesResponse {
 
 export type AiSummaryAudioResponse = {
   ref_id: string
-  audio_en: string
+  audio_EN: string
 }
