@@ -36,7 +36,7 @@ export const RegularView = () => {
 
   const filteredNodes = useFilteredNodes()
 
-  const { currentSearch: searchTerm, clearSearch, searchFormValue } = useAppStore((s) => s)
+  const { currentSearch: searchTerm, clearSearch, searchFormValue, setCurrentSearch } = useAppStore((s) => s)
 
   const [trendingTopicsFeatureFlag] = useFeatureFlagStore((s) => [s.trendingTopicsFeatureFlag])
 
@@ -108,6 +108,7 @@ export const RegularView = () => {
                   clearSearch()
                   setSidebarFilter('all')
                   setSelectedNode(null)
+                  setCurrentSearch('')
                   navigate(`/`)
 
                   return
