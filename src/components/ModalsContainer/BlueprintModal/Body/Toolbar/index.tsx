@@ -11,7 +11,6 @@ type Props = {
 
 export const Toolbar = ({ onCreateNew, onAddEdgeNode }: Props) => (
   <Wrapper>
-    <LogoButton>BLUEPRINT</LogoButton>
     <ActionButton data-testid="add-schema-type" onClick={onCreateNew}>
       <IconWrapper>
         <AddContentIcon />
@@ -132,19 +131,6 @@ const ActionButton = styled(Flex).attrs({
     justify-content: center;
     border: none;
   }
-`
-
-const LogoButton = styled(Flex)`
-  background: blue;
-  align-items: center;
-  justify-content: center;
-  background: ${colors.primaryBlue};
-  width: 64px;
-  height: 64px;
-  cursor: pointer;
-  font-size: 10px;
-  font-weight: 600;
-  color: ${colors.white};
 `
 
 const IconWrapper = styled(Flex)`
