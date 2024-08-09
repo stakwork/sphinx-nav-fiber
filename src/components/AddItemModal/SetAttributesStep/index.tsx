@@ -174,9 +174,4 @@ const StyledWrapper = styled(Flex)`
 const TextFieldWrapper = styled(Flex)`
   display: flex;
   gap: 10px;
-
-  #item-name {
-    color: ${colors.GRAY7};
-    -webkit-text-fill-color: ${colors.GRAY7};
-  }
 `
