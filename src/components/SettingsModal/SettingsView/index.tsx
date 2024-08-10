@@ -1,9 +1,8 @@
-/* eslint-disable no-restricted-syntax */
 /* eslint-disable react/no-unstable-nested-components */
 import Tab from '@mui/material/Tab'
 import Tabs from '@mui/material/Tabs'
 import * as React from 'react'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
@@ -50,37 +49,12 @@ export const SettingsView: React.FC<Props> = ({ onClose }) => {
   const [value, setValue] = useState(0)
   const [isAdmin] = useUserStore((s) => [s.isAdmin, s.setPubKey])
   const appMetaData = useAppStore((s) => s.appMetaData)
-  const [navigatorData, setNavigatorData] = useState('')
-
-  const [counter, setCounter] = useState(0)
 
   const getSettingsLabel = () => (isAdmin ? 'Admin Settings' : 'Settings')
 
-  useEffect(() => {
-    if (counter >= 7) {
-      const getNavigatorProperties = () => {
-        let properties = ''
-
-        // eslint-disable-next-line guard-for-in
-        for (const key in navigator) {
-          try {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            properties += `${key}: ${(navigator as any)[key]}\n`
-          } catch (e) {
-            properties += `${key}: [Unable to access]\n`
-          }
-        }
-
-        return properties
-      }
-
-      setNavigatorData(getNavigatorProperties())
-    }
-  }, [counter])
-
   const SettingsHeader = ({ children }: { children: React.ReactNode }) => (
     <StyledHeader>
-      <Flex direction="row" onClick={() => setCounter((val) => val + 1)} pt={3}>
+      <Flex direction="row" pt={3}>
         <StyledText data-testid="setting-label">{getSettingsLabel()}</StyledText>
       </Flex>
       {children}
@@ -96,9 +70,7 @@ export const SettingsView: React.FC<Props> = ({ onClose }) => {
     { label: 'Appearance', component: Appearance },
   ]
 
-  return navigatorData ? (
-    <pre style={{ color: '#f0f8ff' }}>{navigatorData}</pre>
-  ) : (
+  return (
     <Wrapper data-testid="settings-modal" direction="column">
       <SettingsHeader>
         <StyledTabs aria-label="settings tabs" onChange={handleChange} value={value}>
