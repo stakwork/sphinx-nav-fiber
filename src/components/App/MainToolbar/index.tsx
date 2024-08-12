@@ -9,6 +9,7 @@ import SourcesTableIcon from '~/components/Icons/SourcesTableIcon'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { useAiSummaryStore } from '~/stores/useAiSummaryStore'
+import { useDataStore } from '~/stores/useDataStore'
 import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
 import { useModal } from '~/stores/useModalStore'
 import { useUserStore } from '~/stores/useUserStore'
@@ -24,7 +25,8 @@ export const MainToolbar = () => {
   const { open: openFeedbackModal } = useModal('feedback')
   const navigate = useNavigate()
 
-  const { resetAiSummaryAnswer } = useAiSummaryStore()
+  const { resetAiSummaryAnswer, setNewLoading } = useAiSummaryStore()
+  const { abortFetchData } = useDataStore((s) => s)
   const customSchemaFeatureFlag = useFeatureFlagStore((s) => s.customSchemaFeatureFlag)
   const userFeedbackFeatureFlag = useFeatureFlagStore((s) => s.userFeedbackFeatureFlag)
 
@@ -32,6 +34,8 @@ export const MainToolbar = () => {
   const sphinxEnabled = isSphinx()
 
   const handleLogoClick = () => {
+    setNewLoading(null)
+    abortFetchData()
     resetAiSummaryAnswer()
     navigate('/')
   }
