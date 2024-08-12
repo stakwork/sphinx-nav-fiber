@@ -8,6 +8,7 @@ import ChevronUpIcon from '~/components/Icons/ChevronUpIcon'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { useAiSummaryStore } from '~/stores/useAiSummaryStore'
+import { useAppStore } from '~/stores/useAppStore'
 import { AIEntity } from '~/types'
 import { colors } from '~/utils/colors'
 import { EpisodeSkeleton } from '../Relevance/EpisodeSkeleton'
@@ -47,12 +48,32 @@ export const AiSummary = ({ question, response, refId }: Props) => {
   const { setAiSummaryAnswer } = useAiSummaryStore((s) => s)
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const [isPlaying, setIsPlaying] = useState(false)
+  const { currentPlayingAudio, setCurrentPlayingAudio } = useAppStore((s) => s)
 
   useEffect(() => {
     if (ref.current) {
       ref.current.scrollIntoView({ behavior: 'smooth' })
     }
   }, [])
+
+  useEffect(() => {
+    const audioElement = audioRef.current
+
+    const onAudioPlaybackComplete = () => {
+      setIsPlaying(false)
+      setCurrentPlayingAudio(null)
+    }
+
+    if (audioElement) {
+      audioElement.addEventListener('ended', onAudioPlaybackComplete)
+    }
+
+    return () => {
+      if (audioElement) {
+        audioElement.removeEventListener('ended', onAudioPlaybackComplete)
+      }
+    }
+  }, [setCurrentPlayingAudio])
 
   const toggleCollapse = () => {
     setCollapsed(!collapsed)
@@ -76,12 +97,25 @@ export const AiSummary = ({ question, response, refId }: Props) => {
     }
   }
 
+  const togglePlay = () => {
+    const isBackgroundAudioPlaying = !currentPlayingAudio?.current?.paused
+
+    if (isBackgroundAudioPlaying) {
+      currentPlayingAudio?.current?.pause()
+      setCurrentPlayingAudio(null)
+    }
+
+    if (currentPlayingAudio?.current?.src !== response.audio_en || !isBackgroundAudioPlaying) {
+      handleToggleAudio()
+    }
+  }
+
   return (
     <Wrapper>
       <TitleWrapper>
         <Title ref={ref}>{question}</Title>
         {response.audio_en && (
-          <AudioButton onClick={handleToggleAudio}>{isPlaying ? <AiPauseIcon /> : <AiPlayIcon />}</AudioButton>
+          <AudioButton onClick={togglePlay}>{isPlaying ? <AiPauseIcon /> : <AiPlayIcon />}</AudioButton>
         )}
         <CollapseButton onClick={toggleCollapse}>{collapsed ? <ChevronDownIcon /> : <ChevronUpIcon />}</CollapseButton>
       </TitleWrapper>
