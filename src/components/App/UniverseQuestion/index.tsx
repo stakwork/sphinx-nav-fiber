@@ -12,11 +12,13 @@ import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { colors } from '~/utils/colors'
+import { useUpdateSelectedNode } from '~/stores/useGraphStore'
 
 export const UniverseQuestion = () => {
   const [question, setQuestion] = useState('')
   const { fetchData, setAbortRequests, seedQuestions } = useDataStore((s) => s)
   const [setBudget] = useUserStore((s) => [s.setBudget])
+  const setSelectedNode = useUpdateSelectedNode()
 
   const { setUniverseQuestionIsOpen, setSidebarOpen, setShowCollapseButton } = useAppStore((s) => ({
     setUniverseQuestionIsOpen: s.setUniverseQuestionIsOpen,
@@ -35,6 +37,7 @@ export const UniverseQuestion = () => {
 
   const handleSubmitQuestion = async (questionToSubmit: string) => {
     if (questionToSubmit) {
+      setSelectedNode(null)
       resetAiSummaryAnswer()
       setUniverseQuestionIsOpen()
       setSidebarOpen(true)
