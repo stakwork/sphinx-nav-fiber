@@ -1,6 +1,6 @@
 import { Slide } from '@mui/material'
+import clsx from 'clsx'
 import { memo } from 'react'
-import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
 import PlusIcon from '~/components/Icons/PlusIcon'
 import StackIcon from '~/components/Icons/StackIcon'
@@ -46,13 +46,14 @@ const _AiQuestions = ({ questions }: Props) => {
             <QuestionWrapper
               key={i}
               align="center"
+              className={clsx({ disabled: hasLoadingResponse })}
               direction="row"
               justify="space-between"
               onClick={() => handleSubmitQuestion(i)}
             >
               <span>{i}</span>
-              <Flex className="icon">
-                {hasLoadingResponse ? <ClipLoader color={colors.white} size={13} /> : <PlusIcon />}
+              <Flex className={clsx({ disabled: hasLoadingResponse }, 'icon')}>
+                <PlusIcon />
               </Flex>
             </QuestionWrapper>
           ))}
@@ -97,6 +98,17 @@ const QuestionWrapper = styled(Flex)`
   font-size: 14px;
   cursor: pointer;
   line-height: 1.4;
+
+  &.disabled {
+    cursor: default;
+    &:hover {
+      color: ${colors.GRAY3};
+      .icon {
+        color: ${colors.GRAY7};
+        cursor: default;
+      }
+    }
+  }
 
   &:hover {
     color: ${colors.white};
