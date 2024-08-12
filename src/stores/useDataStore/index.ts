@@ -72,6 +72,7 @@ export type DataStore = {
   nextPage: () => void
   setFilters: (filters: Partial<FilterParams>) => void
   setSeedQuestions: (questions: string[]) => void
+  abortFetchData: () => void
 }
 
 const defaultData: Omit<
@@ -244,6 +245,13 @@ export const useDataStore = create<DataStore>()(
         }
       }
     },
+
+    abortFetchData: () => {
+      if (abortController) {
+        abortController.abort('abort')
+      }
+    },
+
     setPage: (page: number) => set({ currentPage: page }),
     nextPage: () => {
       const { currentPage, fetchData } = get()

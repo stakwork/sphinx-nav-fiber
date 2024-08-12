@@ -11,6 +11,7 @@ import { Cube } from './Cube'
 import { RelevanceBadges } from './RelevanceBadges'
 import { SelectionDataNodes } from './SelectionDataNodes'
 import { TextNode } from './Text'
+import { useAiSummaryStore } from '~/stores/useAiSummaryStore'
 
 const POINTER_IN_DELAY = 200
 
@@ -18,8 +19,9 @@ export const Cubes = memo(() => {
   const selectedNode = useSelectedNode()
   const relativeIds = useSelectedNodeRelativeIds()
   const { selectionGraphData, showSelectionGraph, setHoveredNode, setIsHovering } = useGraphStore((s) => s)
+  const { resetAiSummaryAnswer, setNewLoading } = useAiSummaryStore()
 
-  const data = useDataStore((s) => s.dataInitial)
+  const [data, abortFetchData] = useDataStore((s) => [s.dataInitial, s.abortFetchData])
   const setTranscriptOpen = useAppStore((s) => s.setTranscriptOpen)
 
   const ignoreNodeEvent = useCallback(
@@ -41,6 +43,10 @@ export const Cubes = memo(() => {
         // always close transcript when switching nodes
         setTranscriptOpen(false)
 
+        setNewLoading(null)
+        abortFetchData()
+        resetAiSummaryAnswer()
+
         if (node.userData) {
           if (!ignoreNodeEvent(node.userData as NodeExtended)) {
             useGraphStore.getState().setSelectedNode((node?.userData as NodeExtended) || null)
@@ -48,7 +54,7 @@ export const Cubes = memo(() => {
         }
       }
     },
-    [setTranscriptOpen, ignoreNodeEvent],
+    [setTranscriptOpen, setNewLoading, abortFetchData, resetAiSummaryAnswer, ignoreNodeEvent],
   )
 
   const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null)
