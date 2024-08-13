@@ -32,7 +32,8 @@ export const AiAnswer = ({ answer, entities, handleLoaded, hasBeenRendered }: Pr
   const { setBudget } = useUserStore((s) => s)
   const [displayedText, setDisplayedText] = useState('')
   const [highlightedEntities, setHighlightedEntities] = useState<ExtractedEntity[] | undefined>(entities)
-  const [isDescriptionComplete, setIsDescriptionComplete] = useState(false)
+  const [mousePosition, setMousePosition] = useState(0)
+  const [isDescriptionComplete, setIsDescriptionComplete] = useState(true)
 
   useEffect(() => {
     let timeoutId: NodeJS.Timeout
@@ -50,8 +51,8 @@ export const AiAnswer = ({ answer, entities, handleLoaded, hasBeenRendered }: Pr
       return () => clearTimeout(timeoutId)
     }
 
-    handleLoaded()
     setIsDescriptionComplete(true)
+    handleLoaded()
   }, [answer, displayedText, handleLoaded, hasBeenRendered])
 
   useEffect(() => {
@@ -74,15 +75,21 @@ export const AiAnswer = ({ answer, entities, handleLoaded, hasBeenRendered }: Pr
     }
   }, [entities, highlightedEntities])
 
+  const handleMouseMove = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    setIsDescriptionComplete(false)
+    setMousePosition(event.clientX)
+  }
+
   const responseTextDisplay = highlightAiSummary(
     displayedText,
     handleSubmit,
+    mousePosition,
     highlightedEntities,
     isDescriptionComplete,
   )
 
   return (
-    <Wrapper>
+    <Wrapper onMouseMove={handleMouseMove}>
       <SummaryText>{responseTextDisplay}</SummaryText>
     </Wrapper>
   )
