@@ -1,7 +1,7 @@
 import styled, { keyframes } from 'styled-components'
-import { colors } from '~/utils'
-import { ExtractedEntity } from '~/types'
 import { Tooltip } from '~/components/common/ToolTip'
+import { ExtractedEntity } from '~/types'
+import { colors } from '~/utils'
 
 // Define a keyframe animation for highlighting from top-left to bottom-right
 const highlightAnimation = keyframes`
@@ -63,12 +63,16 @@ export function highlightAiSummary(
     positionLeft = '50%'
   }
 
+  const highlightedEntities = new Set()
+
   return (
     <>
       {parts.map((part, index) => {
         const entity = entities.find((e) => e.entity.toLowerCase() === part.toLowerCase())
 
-        if (entity) {
+        if (entity && !highlightedEntities.has(entity.entity.toLowerCase())) {
+          highlightedEntities.add(entity.entity.toLowerCase())
+
           const uniqueKey = `${entity.entity}-${index}`
 
           return (
