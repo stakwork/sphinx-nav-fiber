@@ -20,6 +20,14 @@ const Wrapper = styled(Flex)(({ theme }) => ({
   [theme.breakpoints.down('sm')]: {
     padding: theme.spacing(1, 1.5),
   },
+  '&::-webkit-scrollbar': {
+    width: '3px',
+  },
+  '&::-webkit-scrollbar-track': {
+    borderRadius: '8px',
+    margin: '8px',
+    overflowY: 'hidden',
+  },
 }))
 
 const Divider = styled(Flex)`
