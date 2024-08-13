@@ -57,11 +57,11 @@ export function highlightAiSummary(
 
   return (
     <>
-      {parts.map((part) => {
+      {parts.map((part, index) => {
         const entity = entities.find((e) => e.entity.toLowerCase() === part.toLowerCase())
 
         if (entity) {
-          const uniqueKey = `${entity.entity}-${entities.indexOf(entity)}`
+          const uniqueKey = `${entity.entity}-${index}`
 
           return (
             <StyledTooltip key={uniqueKey} content={entity.description}>
