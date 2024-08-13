@@ -47,7 +47,6 @@ export const AiSummary = ({ question, response, refId }: Props) => {
   const [collapsed, setCollapsed] = useState(false)
   const { setAiSummaryAnswer } = useAiSummaryStore((s) => s)
   const audioRef = useRef<HTMLAudioElement | null>(null)
-  const [isPlaying, setIsPlaying] = useState(false)
   const { currentPlayingAudio, setCurrentPlayingAudio } = useAppStore((s) => s)
 
   useEffect(() => {
@@ -60,7 +59,6 @@ export const AiSummary = ({ question, response, refId }: Props) => {
     const audioElement = audioRef.current
 
     const onAudioPlaybackComplete = () => {
-      setIsPlaying(false)
       setCurrentPlayingAudio(null)
     }
 
@@ -87,27 +85,23 @@ export const AiSummary = ({ question, response, refId }: Props) => {
 
   const handleToggleAudio = () => {
     if (audioRef.current) {
-      if (isPlaying) {
-        audioRef.current.pause()
-      } else {
+      if (audioRef.current.paused) {
         audioRef.current.play()
+        setCurrentPlayingAudio(audioRef)
+      } else {
+        audioRef.current.pause()
+        setCurrentPlayingAudio(null)
       }
-
-      setIsPlaying(!isPlaying)
     }
   }
 
   const togglePlay = () => {
-    const isBackgroundAudioPlaying = !currentPlayingAudio?.current?.paused
-
-    if (isBackgroundAudioPlaying) {
-      currentPlayingAudio?.current?.pause()
+    if (currentPlayingAudio?.current && currentPlayingAudio.current !== audioRef.current) {
+      currentPlayingAudio.current.pause()
       setCurrentPlayingAudio(null)
     }
 
-    if (currentPlayingAudio?.current?.src !== response.audio_en || !isBackgroundAudioPlaying) {
-      handleToggleAudio()
-    }
+    handleToggleAudio()
   }
 
   return (
@@ -115,7 +109,13 @@ export const AiSummary = ({ question, response, refId }: Props) => {
       <TitleWrapper>
         <Title ref={ref}>{question}</Title>
         {response.audio_en && (
-          <AudioButton onClick={togglePlay}>{isPlaying ? <AiPauseIcon /> : <AiPlayIcon />}</AudioButton>
+          <AudioButton onClick={togglePlay}>
+            {currentPlayingAudio?.current === audioRef.current && !audioRef.current?.paused ? (
+              <AiPauseIcon />
+            ) : (
+              <AiPlayIcon />
+            )}
+          </AudioButton>
         )}
         <CollapseButton onClick={toggleCollapse}>{collapsed ? <ChevronDownIcon /> : <ChevronUpIcon />}</CollapseButton>
       </TitleWrapper>
