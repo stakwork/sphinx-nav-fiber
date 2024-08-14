@@ -18,6 +18,13 @@ type Props = {
   anchorEl: HTMLElement | null
 }
 
+const defaultValues = {
+  selectedTypes: [] as string[],
+  hops: 1,
+  sourceNodes: 10,
+  maxResults: 30,
+}
+
 export const FilterSearch = ({ showAllSchemas, setShowAllSchemas, schemaAll, anchorEl }: Props) => {
   const handleSchemaTypeClick = (type: string) => {
     setSelectedTypes((prevSelectedTypes) =>
@@ -26,13 +33,20 @@ export const FilterSearch = ({ showAllSchemas, setShowAllSchemas, schemaAll, anc
   }
 
   const { setFilters } = useDataStore((s) => s)
-  const [selectedTypes, setSelectedTypes] = useState<string[]>([])
-  const [hops, setHops] = useState(1)
-  const [sourceNodes, setSourceNodes] = useState<number>(10)
-  const [maxResults, setMaxResults] = useState<number>(30)
+  const [selectedTypes, setSelectedTypes] = useState<string[]>(defaultValues.selectedTypes)
+  const [hops, setHops] = useState(defaultValues.hops)
+  const [sourceNodes, setSourceNodes] = useState<number>(defaultValues.sourceNodes)
+  const [maxResults, setMaxResults] = useState<number>(defaultValues.maxResults)
+
+  const resetToDefaultValues = () => {
+    setSelectedTypes(defaultValues.selectedTypes)
+    setHops(defaultValues.hops)
+    setSourceNodes(defaultValues.sourceNodes)
+    setMaxResults(defaultValues.maxResults)
+  }
 
   const handleClear = async () => {
-    setSelectedTypes([])
+    resetToDefaultValues()
   }
 
   const handleViewMoreClick = () => {
