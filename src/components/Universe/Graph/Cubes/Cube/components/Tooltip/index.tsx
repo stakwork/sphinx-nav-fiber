@@ -2,6 +2,7 @@ import styled from 'styled-components'
 import { Avatar } from '~/components/common/Avatar'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
+import { TypeBadge } from '~/components/common/TypeBadge'
 import { Guests, Node } from '~/types'
 import { colors } from '~/utils/colors'
 import { formatDescription } from '~/utils/formatDescription'
@@ -84,7 +85,7 @@ export const Tooltip = ({ node }: Props) => {
           <Flex direction="row">
             {displayImageUrl && <Divider />}
             <Flex align="flex-start" pb={12}>
-              <Text>{nodeType?.toUpperCase()}</Text>
+              <TypeBadge type={nodeType} />
             </Flex>
           </Flex>
 
