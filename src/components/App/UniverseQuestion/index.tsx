@@ -128,7 +128,7 @@ const StyledTextarea = styled(TextareaAutosize).attrs({
   max-width: 700px;
   width: 700px;
   color: ${colors.white};
-  padding: 15px;
+  padding: 0 16px 0 16px;
   overflow-y: auto !important;
   border: none;
   resize: none;
@@ -195,22 +195,21 @@ const Wrapper = styled(Flex)`
 const StyledButton = styled(Button)`
   && {
     position: absolute;
-    bottom: 12px;
-    right: 14px;
+    bottom: 16px;
+    right: 16px;
     height: 32px;
     border-radius: 16px;
     min-width: 32px;
-    padding: 2px;
   }
 
   &&.MuiButton-root {
-    padding: 10px;
+    padding: 0 10px 0 12px;
   }
 
   svg {
     margin-top: 1px;
-    width: 12px;
-    height: 12px;
+    width: 11px;
+    height: 11px;
   }
 `
 
