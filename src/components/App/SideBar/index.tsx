@@ -43,11 +43,26 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ subViewOpen }, ref) =
 
 const hideSubViewFor = ['topic', 'person', 'guest', 'event', 'organization', 'place', 'project', 'software']
 
+const hasOnlyNameProperty = (obj: object | null | undefined): boolean => {
+  if (obj === undefined || obj === null) {
+    return false
+  }
+
+  const keys = Object.keys(obj)
+  const nonEmptyKeys = keys.filter((key) => key !== 'pubkey')
+
+  return nonEmptyKeys.length === 1 && nonEmptyKeys[0] === 'name'
+}
+
 export const SideBar = () => {
   const { sidebarIsOpen } = useAppStore((s) => s)
   const selectedNode = useSelectedNode()
 
-  const subViewIsOpen = !!selectedNode && sidebarIsOpen && !hideSubViewFor.includes(selectedNode.node_type)
+  const subViewIsOpen =
+    !!selectedNode &&
+    sidebarIsOpen &&
+    !hideSubViewFor.includes(selectedNode.node_type) &&
+    !hasOnlyNameProperty(selectedNode.properties)
 
   return (
     <>
