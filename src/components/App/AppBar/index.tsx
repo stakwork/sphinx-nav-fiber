@@ -5,17 +5,30 @@ import { Stats } from '~/components/Stats'
 import { useAppStore } from '~/stores/useAppStore'
 import { colors } from '~/utils/colors'
 import { media } from '~/utils/media'
+import { useAiSummaryStore } from '~/stores/useAiSummaryStore'
+import { useDataStore } from '~/stores/useDataStore'
+import { useNavigate } from 'react-router-dom'
 
 export const AppBar = () => {
   const appMetaData = useAppStore((s) => s.appMetaData)
+  const { resetAiSummaryAnswer, setNewLoading } = useAiSummaryStore()
+  const { abortFetchData } = useDataStore((s) => s)
+  const navigate = useNavigate()
 
   if (!appMetaData) {
     return null
   }
 
+  const handleLogoClick = () => {
+    setNewLoading(null)
+    abortFetchData()
+    resetAiSummaryAnswer()
+    navigate('/')
+  }
+
   return (
     <Header>
-      <TitleWrapper>
+      <TitleWrapper onClick={handleLogoClick}>
         <>
           {appMetaData.title && (
             <Text className="title" color="white">
@@ -52,7 +65,7 @@ const TitleWrapper = styled.div`
   `}
 
   width: 367px;
-
+  cursor: pointer;
   .title {
     color: var(--Primary-Text, #fff);
     font-family: Barlow;
