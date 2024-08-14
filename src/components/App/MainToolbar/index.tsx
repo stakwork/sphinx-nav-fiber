@@ -30,7 +30,7 @@ export const MainToolbar = () => {
   const customSchemaFeatureFlag = useFeatureFlagStore((s) => s.customSchemaFeatureFlag)
   const userFeedbackFeatureFlag = useFeatureFlagStore((s) => s.userFeedbackFeatureFlag)
 
-  const [isAdmin] = useUserStore((s) => [s.isAdmin])
+  const { isAdmin } = useUserStore((s) => s)
   const sphinxEnabled = isSphinx()
 
   const handleLogoClick = () => {
