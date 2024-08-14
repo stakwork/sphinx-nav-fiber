@@ -149,12 +149,18 @@ export const Stats = () => {
     return null
   }
 
+  const isTemporarilyDisabled = true
+
   return (
     <StatisticsContainer>
       <StatisticsWrapper>
         {StatsConfig.map(({ name, icon, key, mediaType, tooltip }) =>
           stats[key as keyof TStats] !== '0' ? (
-            <Stat key={name} data-testid={mediaType} onClick={() => handleStatClick(mediaType)}>
+            <Stat
+              key={name}
+              data-testid={mediaType}
+              onClick={!isTemporarilyDisabled ? () => handleStatClick(mediaType) : () => 'undefined'}
+            >
               <Tooltip content={tooltip} margin="13px">
                 <div className="icon">{icon}</div>
                 <div className="text">{stats[key as keyof TStats]}</div>
