@@ -125,15 +125,20 @@ const Heading = styled(Flex)`
     .heading__count {
       font-weight: 400;
       color: ${colors.GRAY7};
-      margin-left: 16px;
+      margin-left: 12px;
+      line-height: 32px;
+      text-align: left;
       margin-bottom: 4px;
     }
 
     .tittle {
       margin-bottom: 4px;
       font-size: 14px;
-      font-weight: 400;
+      font-weight: 600;
       font-family: Barlow;
+      line-height: 32px;
+      text-align: left;
+      color: ${colors.white};
     }
   }
 `
