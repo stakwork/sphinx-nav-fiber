@@ -65,7 +65,7 @@ const TitleWrapper = styled.div`
   `}
 
   width: 367px;
-  cursor: pointer;
+
   .title {
     color: var(--Primary-Text, #fff);
     font-family: Barlow;
@@ -74,6 +74,7 @@ const TitleWrapper = styled.div`
     font-weight: 700;
     line-height: 16px; /* 72.727% */
     letter-spacing: 0.22px;
+    cursor: pointer;
   }
 
   .subtitle {
@@ -85,5 +86,6 @@ const TitleWrapper = styled.div`
     line-height: 16px;
     letter-spacing: 0.22px;
     margin-left: 8px;
+    cursor: pointer;
   }
 `
