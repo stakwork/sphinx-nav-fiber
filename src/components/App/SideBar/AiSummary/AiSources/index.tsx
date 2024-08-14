@@ -1,3 +1,4 @@
+import { Slide } from '@mui/material'
 import Button from '@mui/material/Button'
 import { memo, useCallback, useRef, useState } from 'react'
 import styled from 'styled-components'
@@ -41,19 +42,21 @@ const _AiSources = ({ sourceIds }: Props) => {
 
   return (
     <SectionWrapper>
-      <Heading align="center" className="heading" direction="row" justify="space-between">
-        <Flex align="center" direction="row">
-          <div className="heading__icon">
-            <SourcesIcon />
-          </div>
-          <span className="tittle">Sources</span>
-          <span className="heading__count">{sourceIds.length}</span>
-        </Flex>
-        <CollapseButton onClick={handleLoadMoreClick}>
-          {showAll ? 'Hide all' : 'Show all'}
-          {showAll ? <ChevronUpIcon /> : <ChevronDownIcon />}
-        </CollapseButton>
-      </Heading>
+      <Slide direction="right" in mountOnEnter>
+        <Heading align="center" className="heading" direction="row" justify="space-between">
+          <Flex align="center" direction="row">
+            <div className="heading__icon">
+              <SourcesIcon />
+            </div>
+            <span className="tittle">Sources</span>
+            <span className="heading__count">{sourceIds.length}</span>
+          </Flex>
+          <CollapseButton onClick={handleLoadMoreClick}>
+            {showAll ? 'Hide all' : 'Show all'}
+            {showAll ? <ChevronUpIcon /> : <ChevronDownIcon />}
+          </CollapseButton>
+        </Heading>
+      </Slide>
       {showAll && visibleNodes.length > 0 && (
         <ScrollView ref={scrollViewRef} id="search-result-list" shrink={1}>
           {visibleNodes.map((n, index) => {
@@ -122,15 +125,20 @@ const Heading = styled(Flex)`
     .heading__count {
       font-weight: 400;
       color: ${colors.GRAY7};
-      margin-left: 16px;
+      margin-left: 12px;
+      line-height: 32px;
+      text-align: left;
       margin-bottom: 4px;
     }
 
     .tittle {
       margin-bottom: 4px;
       font-size: 14px;
-      font-weight: 400;
+      font-weight: 600;
       font-family: Barlow;
+      line-height: 32px;
+      text-align: left;
+      color: ${colors.white};
     }
   }
 `

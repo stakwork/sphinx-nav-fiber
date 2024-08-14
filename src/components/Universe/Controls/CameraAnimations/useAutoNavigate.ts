@@ -13,7 +13,7 @@ import { arriveDistance, selectionGraphCameraPosition, selectionGraphDistance, t
 
 let lookAtAnimationTimer: ReturnType<typeof setTimeout>
 let departAnimationTimer: ReturnType<typeof setTimeout>
-const departAnimationTimerLength = 4000
+const departAnimationTimerLength = 1000
 const lookAtAnimationTimerLength = 2000
 
 export const useAutoNavigate = (cameraControlsRef: RefObject<CameraControls | null>) => {
@@ -29,6 +29,7 @@ export const useAutoNavigate = (cameraControlsRef: RefObject<CameraControls | nu
     showSelectionGraph,
     setNearbyNodeIds,
     cameraFocusTrigger,
+    graphRadius,
   } = useGraphStore((s) => s)
 
   const { camera } = useThree()
@@ -47,7 +48,9 @@ export const useAutoNavigate = (cameraControlsRef: RefObject<CameraControls | nu
 
     const selected = graphData?.nodes.find((f) => f.ref_id === selectedNode?.ref_id)
 
-    let pos = new Vector3(2000, 2000, 3000)
+    const cameraDistance = graphRadius + 300
+
+    let pos = new Vector3(0, 0, cameraDistance)
 
     if (selected && graphData) {
       // find all node children ... is there a better way?
@@ -74,7 +77,7 @@ export const useAutoNavigate = (cameraControlsRef: RefObject<CameraControls | nu
     }
 
     return pos
-  }, [showSelectionGraph, selectedNode, graphData])
+  }, [showSelectionGraph, selectedNode, graphData, graphRadius])
 
   // find the node that the camera should look at
   const lookat = useMemo(() => {

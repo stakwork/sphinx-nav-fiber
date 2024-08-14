@@ -6,10 +6,8 @@ import 'react-toastify/dist/ReactToastify.css'
 import { Socket } from 'socket.io-client'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
-import { DataRetriever } from '~/components/DataRetriever'
 import { GlobalStyle } from '~/components/GlobalStyle'
 import { Overlay } from '~/components/Universe/Overlay' // Import Overlay directly
-import { Preloader } from '~/components/Universe/Preloader' // Import Preloader directly
 import { isDevelopment } from '~/constants'
 import { useSocket } from '~/hooks/useSockets'
 import { useAiSummaryStore } from '~/stores/useAiSummaryStore'
@@ -21,6 +19,7 @@ import { useTeachStore } from '~/stores/useTeachStore'
 import { useUserStore } from '~/stores/useUserStore'
 import {
   AiSummaryAnswerResponse,
+  AiSummaryAudioResponse,
   AiSummaryQuestionsResponse,
   AiSummarySourcesResponse,
   ExtractedEntitiesResponse,
@@ -32,8 +31,6 @@ import { ModalsContainer } from '../ModalsContainer'
 import { ActionsToolbar } from './ActionsToolbar'
 import { AppBar } from './AppBar'
 import { DeviceCompatibilityNotice } from './DeviceCompatibilityNotification'
-import { Helper } from './Helper'
-import { SecondarySideBar } from './SecondarySidebar'
 import { Toasts } from './Toasts'
 
 const Wrapper = styled(Flex)`
@@ -70,9 +67,9 @@ export const App = () => {
 
   const setTeachMeAnswer = useTeachStore((s) => s.setTeachMeAnswer)
 
-  const { fetchData, setCategoryFilter, setAbortRequests, addNewNode, filters } = useDataStore((s) => s)
+  const { fetchData, setCategoryFilter, setAbortRequests, addNewNode, splashDataLoading } = useDataStore((s) => s)
 
-  const { setAiSummaryAnswer, getKeyExist } = useAiSummaryStore((s) => s)
+  const { setAiSummaryAnswer, getKeyExist, aiRefId } = useAiSummaryStore((s) => s)
 
   const setSelectedNode = useUpdateSelectedNode()
 
@@ -107,20 +104,20 @@ export const App = () => {
     setValue,
   ])
 
-  const runSearch = useCallback(async () => {
-    await fetchData(setBudget, setAbortRequests)
-    setSidebarOpen(true)
-
-    if (searchTerm) {
-      await updateBudget(setBudget)
-    } else {
-      setSelectedNode(null)
-    }
-  }, [fetchData, setBudget, searchTerm, setSidebarOpen, setSelectedNode, setAbortRequests])
-
   useEffect(() => {
+    const runSearch = async () => {
+      await fetchData(setBudget, setAbortRequests)
+      setSidebarOpen(true)
+
+      if (searchTerm) {
+        await updateBudget(setBudget)
+      } else {
+        setSelectedNode(null)
+      }
+    }
+
     runSearch()
-  }, [searchTerm, runSearch, filters])
+  }, [searchTerm, fetchData, setBudget, setAbortRequests, setSidebarOpen, setSelectedNode])
 
   const handleNewNode = useCallback(() => {
     setNodeCount('INCREMENT')
@@ -128,32 +125,41 @@ export const App = () => {
 
   const handleAiSummaryAnswer = useCallback(
     (data: AiSummaryAnswerResponse) => {
-      if (data.question && getKeyExist(data.question)) {
-        setAiSummaryAnswer(data.question, { answer: data.answer, answerLoading: false })
+      if (data.ref_id) {
+        setAiSummaryAnswer(data.ref_id, { answer: data.answer, answerLoading: false })
       }
     },
-    [setAiSummaryAnswer, getKeyExist],
+    [setAiSummaryAnswer],
+  )
+
+  const handleAiSummaryAudio = useCallback(
+    (data: AiSummaryAudioResponse) => {
+      if (data.ref_id) {
+        setAiSummaryAnswer(data.ref_id, { audio_en: data.audio_EN })
+      }
+    },
+    [setAiSummaryAnswer],
   )
 
   const handleAiRelevantQuestions = useCallback(
     (data: AiSummaryQuestionsResponse) => {
-      if (data.question && getKeyExist(data.question)) {
-        setAiSummaryAnswer(data.question, {
+      if (data.ref_id) {
+        setAiSummaryAnswer(data.ref_id, {
           questions: data.relevant_questions.map((i) => i.question),
           questionsLoading: false,
         })
       }
     },
-    [setAiSummaryAnswer, getKeyExist],
+    [setAiSummaryAnswer],
   )
 
   const handleAiSources = useCallback(
     (data: AiSummarySourcesResponse) => {
-      if (data.question && getKeyExist(data.question)) {
-        setAiSummaryAnswer(data.question, { sources: data.sources.map((i) => i.ref_id), sourcesLoading: false })
+      if (data.ref_id) {
+        setAiSummaryAnswer(data.ref_id, { sources: data.sources.map((i) => i.ref_id), sourcesLoading: false })
       }
     },
-    [setAiSummaryAnswer, getKeyExist],
+    [setAiSummaryAnswer],
   )
 
   const handleNewNodeCreated = useCallback(
@@ -167,11 +173,11 @@ export const App = () => {
 
   const handleExtractedEntities = useCallback(
     (data: ExtractedEntitiesResponse) => {
-      if (data.question && getKeyExist(data.question)) {
-        setAiSummaryAnswer(data.question, { answerLoading: false, entities: data.entities })
+      if (data.question && getKeyExist(aiRefId)) {
+        setAiSummaryAnswer(aiRefId, { answerLoading: false, entities: data.entities })
       }
     },
-    [setAiSummaryAnswer, getKeyExist],
+    [setAiSummaryAnswer, getKeyExist, aiRefId],
   )
 
   // setup socket
@@ -205,6 +211,10 @@ export const App = () => {
       if (realtimeGraphFeatureFlag) {
         socket.on('new_node_created', handleNewNodeCreated)
       }
+
+      if (chatInterfaceFeatureFlag) {
+        socket.on('answeraudiohook', handleAiSummaryAudio)
+      }
     }
 
     return () => {
@@ -222,6 +232,7 @@ export const App = () => {
     handleAiRelevantQuestions,
     handleAiSources,
     handleExtractedEntities,
+    handleAiSummaryAudio,
   ])
 
   return (
@@ -233,25 +244,22 @@ export const App = () => {
       <Leva hidden={!isDevelopment} />
 
       <Suspense fallback={<div>Loading...</div>}>
-        <Wrapper direction="row">
-          <DataRetriever>
+        {!splashDataLoading ? (
+          <Wrapper direction="row">
             <FormProvider {...form}>
               <LazyMainToolbar />
               <LazySideBar />
               <LazyUniverse />
-              {false && <Preloader fullSize={false} />}
               <Overlay />
-              <SecondarySideBar />
               <AppBar />
               <Version>v{version}</Version>
               <ActionsToolbar />
             </FormProvider>
-          </DataRetriever>
-          <ModalsContainer />
-          <Toasts />
 
-          <Helper />
-        </Wrapper>
+            <ModalsContainer />
+            <Toasts />
+          </Wrapper>
+        ) : null}
       </Suspense>
     </>
   )

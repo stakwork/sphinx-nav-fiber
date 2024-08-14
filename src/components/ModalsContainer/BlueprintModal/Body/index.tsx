@@ -9,6 +9,7 @@ import { colors } from '~/utils'
 import { SchemaWithChildren } from '../types'
 import { Editor } from './Editor'
 import { Graph } from './Graph'
+import { Header } from './Header'
 import { Toolbar } from './Toolbar'
 
 export type FormData = {
@@ -19,13 +20,18 @@ export type FormData = {
   }
 }
 
-export const Body = () => {
+interface BodyProps {
+  Close: () => void
+}
+
+export const Body = ({ Close }: BodyProps) => {
   const [selectedSchemaId, setSelectedSchemaId] = useState<string>('')
   const [isCreateNew, setIsCreateNew] = useState(false)
   const [loading, setLoading] = useState(false)
   const [isAddEdgeNode, setIsAddEdgeNode] = useState(false)
   const [edgeData, setEdgeData] = useState({ refId: '', edgeType: '', source: '', target: '' })
   const [graphLoading, setGraphLoading] = useState(false)
+  const [activeTab, setActiveTab] = useState<'all' | 'parent'>('all')
 
   const [schemas, links, setSchemaAll, setSchemaLinks] = useSchemaStore((s) => [
     s.schemas,
@@ -122,10 +128,16 @@ export const Body = () => {
     )
   }
 
+  const filteredLinks =
+    activeTab === 'all' ? linksFiltered : linksFiltered.filter((link) => link.edge_type === 'CHILD_OF')
+
   return (
     <>
+      <Flex ml={-20} mr={-20} mt={-20}>
+        <Header activeTab={activeTab} onClose={Close} setActiveTab={setActiveTab} />
+      </Flex>
       <Flex align="stretch" direction="row" grow={1}>
-        <Flex ml={-20} my={-20}>
+        <Flex mb={-20} ml={-20}>
           <Toolbar
             onAddEdgeNode={() => {
               setIsAddEdgeNode(true)
@@ -179,7 +191,7 @@ export const Body = () => {
               </Flex>
             ) : (
               <Graph
-                links={linksFiltered}
+                links={filteredLinks}
                 onEdgeClick={(refId, edgeType, source, target) => {
                   setEdgeData({ refId, edgeType, source, target })
                   setIsAddEdgeNode(true)

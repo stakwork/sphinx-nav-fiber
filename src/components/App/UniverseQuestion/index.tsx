@@ -17,7 +17,13 @@ export const UniverseQuestion = () => {
   const [question, setQuestion] = useState('')
   const { fetchData, setAbortRequests, seedQuestions } = useDataStore((s) => s)
   const [setBudget] = useUserStore((s) => [s.setBudget])
-  const setUniverseQuestionIsOpen = useAppStore((s) => s.setUniverseQuestionIsOpen)
+
+  const { setUniverseQuestionIsOpen, setSidebarOpen, setShowCollapseButton } = useAppStore((s) => ({
+    setUniverseQuestionIsOpen: s.setUniverseQuestionIsOpen,
+    setSidebarOpen: s.setSidebarOpen,
+    setShowCollapseButton: s.setShowCollapseButton,
+  }))
+
   const resetAiSummaryAnswer = useAiSummaryStore((s) => s.resetAiSummaryAnswer)
   const [displayedSeedQuestions, setDisplayedSeedQuestions] = useState<string[]>([])
 
@@ -31,6 +37,8 @@ export const UniverseQuestion = () => {
     if (questionToSubmit) {
       resetAiSummaryAnswer()
       setUniverseQuestionIsOpen()
+      setSidebarOpen(true)
+      setShowCollapseButton(true)
     }
 
     await fetchData(setBudget, setAbortRequests, questionToSubmit)
@@ -48,6 +56,12 @@ export const UniverseQuestion = () => {
   const handleSeedQuestionClick = async (seedQuestion: string) => {
     setQuestion(seedQuestion)
     await handleSubmitQuestion(seedQuestion)
+  }
+
+  const handleUniverseQuestionIsOpen = () => {
+    setUniverseQuestionIsOpen()
+    setSidebarOpen(true)
+    setShowCollapseButton(true)
   }
 
   const shuffleArray = (inputArray: string[]) => {
@@ -100,7 +114,7 @@ export const UniverseQuestion = () => {
           ))}
         </SeedQuestionsWrapper>
       )}
-      <CloseButton onClick={setUniverseQuestionIsOpen} startIcon={<ExploreIcon />}>
+      <CloseButton onClick={handleUniverseQuestionIsOpen} startIcon={<ExploreIcon />}>
         Explore Graph
       </CloseButton>
     </Wrapper>
@@ -114,7 +128,7 @@ const StyledTextarea = styled(TextareaAutosize).attrs({
   max-width: 700px;
   width: 700px;
   color: ${colors.white};
-  padding: 15px;
+  padding: 0 16px 0 16px;
   overflow-y: hidden;
   border: none;
   resize: none;
@@ -185,22 +199,21 @@ const Wrapper = styled(Flex)`
 const StyledButton = styled(Button)`
   && {
     position: absolute;
-    bottom: 12px;
-    right: 14px;
+    bottom: 16px;
+    right: 16px;
     height: 32px;
     border-radius: 16px;
     min-width: 32px;
-    padding: 2px;
   }
 
   &&.MuiButton-root {
-    padding: 10px;
+    padding: 0 10px 0 12px;
   }
 
   svg {
     margin-top: 1px;
-    width: 12px;
-    height: 12px;
+    width: 11px;
+    height: 11px;
   }
 `
 

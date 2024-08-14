@@ -31,7 +31,7 @@ describe('LatestView Component', () => {
   })
 
   test('renders button correctly when new data added', () => {
-    const { getByText } = render(<LatestView isSearchResult={false} />)
+    const { getByText } = render(<LatestView />)
     const galleryIcon = document.querySelector('.heading__icon') as Node
 
     expect(getByText('Latest')).toBeInTheDocument()
@@ -41,7 +41,7 @@ describe('LatestView Component', () => {
   test('does not show the latest button when there are no nodes', () => {
     mockedUseUserStore.mockReturnValue({ nodeCount: 0, setNodeCount: jest.fn(), setBudget: jest.fn() })
 
-    const { queryByText } = render(<LatestView isSearchResult={false} />)
+    const { queryByText } = render(<LatestView />)
 
     expect(queryByText('See Latest (0)')).toBeNull()
   })
@@ -57,7 +57,7 @@ describe('LatestView Component', () => {
 
     mockedUseUserStore.mockReturnValue({ nodeCount: 5, setNodeCount: setNodeCountMock, setBudget: setBudgetMock })
 
-    const { getByText } = render(<LatestView isSearchResult={false} />)
+    const { getByText } = render(<LatestView />)
 
     fireEvent.click(getByText('See Latest (5)'))
 
