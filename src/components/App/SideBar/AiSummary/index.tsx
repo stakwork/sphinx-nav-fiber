@@ -1,11 +1,14 @@
 import Button from '@mui/material/Button'
 import { useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
+import AiPauseIcon from '~/components/Icons/AiPauseIcon'
+import AiPlayIcon from '~/components/Icons/AiPlayIcon'
 import ChevronDownIcon from '~/components/Icons/ChevronDownIcon'
 import ChevronUpIcon from '~/components/Icons/ChevronUpIcon'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { useAiSummaryStore } from '~/stores/useAiSummaryStore'
+import { useAppStore } from '~/stores/useAppStore'
 import { AIEntity } from '~/types'
 import { colors } from '~/utils/colors'
 import { EpisodeSkeleton } from '../Relevance/EpisodeSkeleton'
@@ -43,12 +46,32 @@ export const AiSummary = ({ question, response, refId }: Props) => {
   const ref = useRef<HTMLDivElement>(null)
   const [collapsed, setCollapsed] = useState(false)
   const { setAiSummaryAnswer } = useAiSummaryStore((s) => s)
+  const audioRef = useRef<HTMLAudioElement | null>(null)
+  const { currentPlayingAudio, setCurrentPlayingAudio } = useAppStore((s) => s)
 
   useEffect(() => {
     if (ref.current) {
       ref.current.scrollIntoView({ behavior: 'smooth' })
     }
   }, [])
+
+  useEffect(() => {
+    const audioElement = audioRef.current
+
+    const onAudioPlaybackComplete = () => {
+      setCurrentPlayingAudio(null)
+    }
+
+    if (audioElement) {
+      audioElement.addEventListener('ended', onAudioPlaybackComplete)
+    }
+
+    return () => {
+      if (audioElement) {
+        audioElement.removeEventListener('ended', onAudioPlaybackComplete)
+      }
+    }
+  }, [setCurrentPlayingAudio])
 
   const toggleCollapse = () => {
     setCollapsed(!collapsed)
@@ -60,10 +83,40 @@ export const AiSummary = ({ question, response, refId }: Props) => {
     }
   }
 
+  const handleToggleAudio = () => {
+    if (audioRef.current) {
+      if (audioRef.current.paused) {
+        audioRef.current.play()
+        setCurrentPlayingAudio(audioRef)
+      } else {
+        audioRef.current.pause()
+        setCurrentPlayingAudio(null)
+      }
+    }
+  }
+
+  const togglePlay = () => {
+    if (currentPlayingAudio?.current && currentPlayingAudio.current !== audioRef.current) {
+      currentPlayingAudio.current.pause()
+      setCurrentPlayingAudio(null)
+    }
+
+    handleToggleAudio()
+  }
+
   return (
     <Wrapper>
       <TitleWrapper>
         <Title ref={ref}>{question}</Title>
+        {response.audio_en && (
+          <AudioButton onClick={togglePlay}>
+            {currentPlayingAudio?.current === audioRef.current && !audioRef.current?.paused ? (
+              <AiPauseIcon />
+            ) : (
+              <AiPlayIcon />
+            )}
+          </AudioButton>
+        )}
         <CollapseButton onClick={toggleCollapse}>{collapsed ? <ChevronDownIcon /> : <ChevronUpIcon />}</CollapseButton>
       </TitleWrapper>
       {!collapsed && (
@@ -85,6 +138,11 @@ export const AiSummary = ({ question, response, refId }: Props) => {
           )}
           {(response?.sources || []).length ? <AiSources sourceIds={response.sources || []} /> : null}
         </>
+      )}
+      {response.audio_en && (
+        <StyledAudio ref={audioRef} src={response.audio_en}>
+          <track kind="captions" />
+        </StyledAudio>
       )}
     </Wrapper>
   )
@@ -118,4 +176,33 @@ const CollapseButton = styled(Button)`
     height: 9px;
     color: white;
   }
+`
+
+const AudioButton = styled(Button)`
+  &&.MuiButton-root {
+    background-color: ${colors.COLLAPSE_BUTTON};
+    border: none;
+    cursor: pointer;
+    flex-shrink: 0;
+    padding: 0px;
+    width: 27px;
+    height: 26px;
+    min-width: 26px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1px;
+    margin-right: 10px;
+  }
+
+  svg {
+    width: 29px;
+    height: 12px;
+    color: white;
+  }
+`
+
+const StyledAudio = styled.audio`
+  display: none;
 `

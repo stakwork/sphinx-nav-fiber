@@ -313,6 +313,8 @@ export type AIEntity = {
   questionsLoading?: boolean
   hasBeenRendered?: boolean
   entities?: ExtractedEntity[]
+  shouldRender?: boolean
+  audio_en?: string
 }
 
 export interface ExtractedEntity {
@@ -324,4 +326,9 @@ export interface ExtractedEntitiesResponse {
   ref_id: string
   question: string
   entities: ExtractedEntity[]
+}
+
+export type AiSummaryAudioResponse = {
+  ref_id: string
+  audio_EN: string
 }

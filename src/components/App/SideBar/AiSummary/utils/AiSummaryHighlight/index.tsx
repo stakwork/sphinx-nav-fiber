@@ -1,12 +1,43 @@
-import styled from 'styled-components'
-import { Tooltip } from '~/components/common/ToolTip'
-import { ExtractedEntity } from '~/types'
+import styled, { keyframes } from 'styled-components'
 import { colors } from '~/utils'
+import { ExtractedEntity } from '~/types'
+import { Tooltip } from '~/components/common/ToolTip'
+
+// Define a keyframe animation for highlighting from top-left to bottom-right
+const highlightAnimation = keyframes`
+  0% {
+    background-color: ${colors.SECONDARY_BLUE};
+    color: white;
+    clip-path: polygon(0 0, 0 0, 0 100%, 0 100%);
+  }
+  100% {
+    background-color: transparent;
+    color: ${colors.SECONDARY_BLUE};
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+  }
+`
+
+const Highlight = styled.span<{ animate: boolean }>`
+  padding: 0;
+  margin: 0;
+  color: ${colors.SECONDARY_BLUE};
+  background-color: transparent;
+  animation: ${({ animate }) => (animate ? highlightAnimation : 'none')} 0.5s ease-in-out forwards;
+  animation-play-state: ${({ animate }) => (animate ? 'running' : 'paused')};
+
+  &:hover {
+    text-decoration: underline;
+    cursor: pointer;
+    animation: none;
+  }
+`
 
 export function highlightAiSummary(
   sDescription: string,
   handleSubmit: (search: string) => void,
+  mousePosition: number,
   entities?: ExtractedEntity[],
+  isDescriptionComplete?: boolean,
 ) {
   if (!entities || entities.length === 0) {
     return sDescription
@@ -21,23 +52,28 @@ export function highlightAiSummary(
   const regex = new RegExp(`(${escapedTerms.join('|')})`, 'gi')
 
   const parts = sDescription.split(regex)
-  const highlighted = new Set()
+
+  let positionLeft: string
+
+  if (mousePosition <= 180) {
+    positionLeft = '145%'
+  } else if (mousePosition >= 250) {
+    positionLeft = '10%'
+  } else {
+    positionLeft = '50%'
+  }
 
   return (
     <>
-      {parts.map((part) => {
+      {parts.map((part, index) => {
         const entity = entities.find((e) => e.entity.toLowerCase() === part.toLowerCase())
 
-        if (entity && !highlighted.has(part.toLowerCase())) {
-          highlighted.add(part.toLowerCase())
+        if (entity) {
+          const uniqueKey = `${entity.entity}-${index}`
 
           return (
-            <StyledTooltip key={part} content={entity.description}>
-              <Highlight
-                onClick={() => {
-                  handleSubmit(part)
-                }}
-              >
+            <StyledTooltip key={uniqueKey} content={entity.description} positionLeft={positionLeft}>
+              <Highlight animate={!!isDescriptionComplete} onClick={() => handleSubmit(part)}>
                 {part}
               </Highlight>
             </StyledTooltip>
@@ -54,18 +90,7 @@ function escapeRegExp(string: string) {
   return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }
 
-const Highlight = styled.span`
-  padding: 0;
-  margin: 0;
-  color: ${colors.SECONDARY_BLUE};
-
-  &:hover {
-    text-decoration: underline;
-    cursor: pointer;
-  }
-`
-
-const StyledTooltip = styled(({ className, ...props }) => (
+const StyledTooltip = styled(({ className, positionLeft, ...props }) => (
   <Tooltip
     {...props}
     backgroundColor={colors.BG2}
@@ -75,6 +100,7 @@ const StyledTooltip = styled(({ className, ...props }) => (
     fontSize="12px"
     fontWeight="500"
     minWidth="160px"
+    mrLeft={positionLeft}
     padding="10px"
     textAlign="start"
     whiteSpace="normal"

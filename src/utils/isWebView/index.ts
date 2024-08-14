@@ -5,3 +5,5 @@ export const isWebView = () => {
 
   return userAgent === 'Sphinx'
 }
+
+export const isAndroid = () => navigator.userAgent.includes('Android')

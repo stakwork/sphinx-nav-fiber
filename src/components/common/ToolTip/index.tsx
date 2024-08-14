@@ -14,6 +14,7 @@ interface TooltipProps {
   minWidth?: string
   whiteSpace?: string
   textAlign?: string
+  mrLeft?: string
 }
 
 const TooltipContainer = styled.div`
@@ -34,6 +35,7 @@ const TooltipText = styled.div<{
   minWidth?: string
   whiteSpace?: string
   textAlign?: string
+  mrLeft?: string
 }>`
   visibility: hidden;
   width: auto;
@@ -46,7 +48,7 @@ const TooltipText = styled.div<{
   position: absolute;
   z-index: 1;
   ${({ position }) => (position === 'top' ? 'bottom: 100%;' : 'top: 100%;')}
-  left: 50%;
+  left: ${({ mrLeft }) => mrLeft || '50%'};
   transform: translateX(-50%);
   margin-top: ${({ margin }) => margin || '0px'};
   opacity: 0;
@@ -77,6 +79,7 @@ export const Tooltip = ({
   whiteSpace,
   position,
   textAlign,
+  mrLeft,
 }: TooltipProps) => (
   <TooltipContainer>
     {children}
@@ -88,6 +91,7 @@ export const Tooltip = ({
       fontWeight={fontWeight}
       margin={margin}
       minWidth={minWidth}
+      mrLeft={mrLeft}
       padding={padding}
       position={position}
       textAlign={textAlign}
