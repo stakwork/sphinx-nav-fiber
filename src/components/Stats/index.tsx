@@ -114,6 +114,8 @@ export const Stats = () => {
   }
 
   function handleStatClick(mediaType: string) {
+    return
+
     fetchData(setBudget, setAbortRequests, '', { ...(mediaType ? { media_type: mediaType } : {}), skip_cache: 'true' })
 
     setSelectedNode(null)
@@ -149,18 +151,12 @@ export const Stats = () => {
     return null
   }
 
-  const isTemporarilyDisabled = true
-
   return (
     <StatisticsContainer>
       <StatisticsWrapper>
         {StatsConfig.map(({ name, icon, key, mediaType, tooltip }) =>
           stats[key as keyof TStats] !== '0' ? (
-            <Stat
-              key={name}
-              data-testid={mediaType}
-              onClick={!isTemporarilyDisabled ? () => handleStatClick(mediaType) : () => 'undefined'}
-            >
+            <Stat key={name} data-testid={mediaType} onClick={() => handleStatClick(mediaType)}>
               <Tooltip content={tooltip} margin="13px">
                 <div className="icon">{icon}</div>
                 <div className="text">{stats[key as keyof TStats]}</div>
