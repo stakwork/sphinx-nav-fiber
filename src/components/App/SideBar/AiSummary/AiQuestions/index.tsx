@@ -117,6 +117,13 @@ const QuestionWrapper = styled(Flex)`
     }
   }
 
+  &:active {
+    color: ${colors.SECONDARY_BLUE};
+    .icon {
+      color: ${colors.SECONDARY_BLUE};
+    }
+  }
+
   .icon {
     font-size: 20px;
     color: ${colors.GRAY7};
