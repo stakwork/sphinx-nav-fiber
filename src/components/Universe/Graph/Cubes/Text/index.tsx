@@ -102,7 +102,7 @@ export const TextNode = memo(({ node, hide }: Props) => {
 
     scale = Math.max(nodeScale, 20)
 
-    return scale
+    return Math.min(scale, 30)
   }, [node.edge_count, node.name, isSelected, isRelative, showSelectionGraph])
 
   const fillOpacity = useMemo(() => {
