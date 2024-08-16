@@ -55,7 +55,7 @@ const hasOnlyNameProperty = (obj: object | null | undefined): boolean => {
 }
 
 export const SideBar = () => {
-  const { sidebarIsOpen } = useAppStore((s) => s)
+  const { sidebarIsOpen, universeQuestionIsOpen } = useAppStore((s) => s)
   const selectedNode = useSelectedNode()
 
   const subViewIsOpen =
@@ -66,9 +66,11 @@ export const SideBar = () => {
 
   return (
     <>
-      <Slide direction="right" in={sidebarIsOpen} mountOnEnter unmountOnExit>
-        <Content subViewOpen={subViewIsOpen} />
-      </Slide>
+      {!universeQuestionIsOpen && (
+        <Slide direction="right" in={sidebarIsOpen} mountOnEnter unmountOnExit>
+          <Content subViewOpen={subViewIsOpen} />
+        </Slide>
+      )}
       <SideBarSubView open={subViewIsOpen} />
       {!sidebarIsOpen && <Tab />}
     </>
