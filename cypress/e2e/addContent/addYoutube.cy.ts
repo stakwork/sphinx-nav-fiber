@@ -6,7 +6,7 @@ describe('Add Youtube Content', () => {
       method: 'POST',
       url: 'http://localhost:8444/api/add_node*',
     }).as('addYoutube')
-
+    cy.get('#explore-graph').should('be.visible').click()
     cy.get('[data-testid="add-content-modal"]').click()
     cy.get('#addContent').should('exist')
     cy.get('[id="cy-youtube-channel-id"]').type('https://www.youtube.com/watch?v=dPLPSaFqJmY')

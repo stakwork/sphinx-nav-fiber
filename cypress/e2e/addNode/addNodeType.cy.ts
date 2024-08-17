@@ -13,6 +13,7 @@ describe('Add Node Type Via BluePrint', () => {
     cy.initialSetup('alice', 300)
 
     const nodeType = 'Player'
+    cy.get('#explore-graph').should('be.visible').click()
     cy.get('[data-testid="add-blueprint-modal"]').click()
     cy.wait(1000)
 
