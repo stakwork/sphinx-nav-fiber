@@ -6,7 +6,7 @@ describe('Sources Table / Home interactions', () => {
 
     cy.wait(3000)
 
-    cy.get('#explore-graph').should('be.visible').click()
+    cy.get('#explore-graph', { timeout: 60000 }).should('be.visible').click()
 
     cy.get('#cy-open-soure-table').click()
 
