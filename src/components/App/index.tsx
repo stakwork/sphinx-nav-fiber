@@ -78,6 +78,16 @@ export const App = () => {
     s.chatInterfaceFeatureFlag,
   ])
 
+  const { setUniverseQuestionIsOpen } = useAppStore((s) => ({
+    setUniverseQuestionIsOpen: s.setUniverseQuestionIsOpen,
+  }))
+
+  useEffect(() => {
+    if (!splashDataLoading) {
+      setUniverseQuestionIsOpen()
+    }
+  }, [splashDataLoading, setUniverseQuestionIsOpen])
+
   const socket: Socket | undefined = useSocket()
 
   const form = useForm<{ search: string }>({ mode: 'onChange' })
