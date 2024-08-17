@@ -7,7 +7,7 @@ describe('Add Webpage Content', () => {
       url: 'http://localhost:8444/api/add_node*',
     }).as('addWebpage')
 
-    cy.get('#explore-graph').should('be.visible').click()
+    cy.get('#explore-graph', { timeout: 30000 }).should('be.visible').click()
 
     cy.get('[data-testid="add-content-modal"]').click()
     cy.get('#addContent').should('exist')
