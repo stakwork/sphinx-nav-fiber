@@ -26,21 +26,19 @@ export const MainToolbar = () => {
   const navigate = useNavigate()
 
   const { resetAiSummaryAnswer, setNewLoading } = useAiSummaryStore()
-  const { abortFetchData, fetchData, setAbortRequests } = useDataStore((s) => s)
-  const [setBudget] = useUserStore((s) => [s.setBudget])
+  const { abortFetchData, resetGraph } = useDataStore((s) => s)
   const customSchemaFeatureFlag = useFeatureFlagStore((s) => s.customSchemaFeatureFlag)
   const userFeedbackFeatureFlag = useFeatureFlagStore((s) => s.userFeedbackFeatureFlag)
 
   const [isAdmin] = useUserStore((s) => [s.isAdmin])
   const sphinxEnabled = isSphinx()
 
-  const handleLogoClick = async () => {
+  const handleLogoClick = () => {
     setNewLoading(null)
     abortFetchData()
     resetAiSummaryAnswer()
+    resetGraph()
     navigate('/')
-
-    await fetchData(setBudget, setAbortRequests)
   }
 
   return (

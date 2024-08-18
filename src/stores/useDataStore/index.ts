@@ -73,6 +73,7 @@ export type DataStore = {
   setFilters: (filters: Partial<FilterParams>) => void
   setSeedQuestions: (questions: string[]) => void
   abortFetchData: () => void
+  resetGraph: () => void
 }
 
 const defaultData: Omit<
@@ -135,6 +136,7 @@ let abortController: AbortController | null = null
 export const useDataStore = create<DataStore>()(
   devtools((set, get) => ({
     ...defaultData,
+
     fetchData: async (setBudget, setAbortRequests, AISearchQuery = '') => {
       const { currentPage, itemsPerPage, dataInitial: existingData, filters } = get()
       const { currentSearch } = useAppStore.getState()
@@ -250,6 +252,14 @@ export const useDataStore = create<DataStore>()(
       if (abortController) {
         abortController.abort('abort')
       }
+    },
+    resetGraph: () => {
+      set({
+        filters: defaultData.filters,
+        dataNew: null,
+      })
+
+      get().fetchData()
     },
 
     setPage: (page: number) => set({ currentPage: page }),
