@@ -1,9 +1,11 @@
 import { Table as MaterialTable, TableBody, TableRow } from '@mui/material'
 import React, { useState } from 'react'
-import { MdCheck, MdClose, MdOutlineModeEdit } from 'react-icons/md'
+import { MdCheck, MdClose } from 'react-icons/md'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
 import { BaseTextInput } from '~/components/BaseTextInput'
+import DeleteIcon from '~/components/Icons/DeleteIcon'
+import EditIcon from '~/components/Icons/EditIcon'
 import NoFilterResultIcon from '~/components/Icons/NoFilterResultIcon'
 import ConfirmPopover from '~/components/common/ConfirmPopover'
 import { Flex } from '~/components/common/Flex'
@@ -15,7 +17,6 @@ import { RadarRequest, Sources } from '~/types'
 import { colors } from '~/utils/colors'
 import { StyledTableCell, StyledTableHead, StyledTableRow } from '../../common'
 import { TWITTER_LINK, sourcesMapper } from '../../constants'
-import DeleteIcon from '~/components/Icons/DeleteIcon'
 
 type Props = {
   data: Sources[] | undefined
@@ -209,9 +210,10 @@ const EditableCell: React.FC<EditableCellProps> = ({ value, onSave, id, children
         </EditModeCellWrapper>
       ) : (
         <EditableCellWrapper direction="row">
-          {children}
+          <div className="name">{children}</div>
+          <div className="spacer" />
           <IconWrapper onClick={() => setEditing(true)}>
-            <MdOutlineModeEdit data-testid={`edit-icon-${id}`} size={20} />
+            <EditIcon data-testid={`edit-icon-${id}`} />
           </IconWrapper>
         </EditableCellWrapper>
       )}
@@ -246,6 +248,7 @@ const IconWrapper = styled(Flex)`
   background: transparent;
   align-items: center;
   justify-content: center;
+  display: flex;
   &.centered {
     margin: 0 auto;
   }
@@ -276,21 +279,25 @@ const NoResultWrapper = styled(Flex)`
     letter-spacing: 0em;
     color: ${colors.GRAY6};
   }
+
+  svg {
+    color: ${colors.GRAY6};
+  }
 `
 
 const EditableCellWrapper = styled(Flex)`
   display: flex;
   padding: 4px;
   position: relative;
+  width: 100%;
+  align-items: center;
 
-  ${IconWrapper} {
-    visibility: hidden;
+  .name {
+    flex: 1;
   }
 
-  &:hover {
-    ${IconWrapper} {
-      visibility: visible;
-    }
+  .spacer {
+    flex: 1;
   }
 `
 
@@ -304,6 +311,9 @@ const StyledLink = styled.a`
   text-overflow: ellipsis;
   &:visited {
     color: ${colors.white};
+  }
+  &:hover {
+    color: ${colors.SOURCE_TABLE_LINK};
   }
 `
 

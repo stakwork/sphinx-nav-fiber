@@ -1,13 +1,14 @@
-import { Button, styled, Table as MaterialTable, TableRow } from '@mui/material'
+import { Button, Table as MaterialTable, styled, TableRow } from '@mui/material'
 import React from 'react'
-import { StyledTableCell, StyledTableHead } from '../../common'
-import { TopicRow } from './TableRow'
 import { Flex } from '~/components/common/Flex'
-import { useModal } from '~/stores/useModalStore'
+import { Text } from '~/components/common/Text'
+import ContentIcon from '~/components/Icons/ContentIcon'
 import PlusIcon from '~/components/Icons/PlusIcon'
 import { Node } from '~/network/fetchSourcesData'
-import { Text } from '~/components/common/Text'
+import { useModal } from '~/stores/useModalStore'
 import { colors } from '~/utils'
+import { StyledTableCell, StyledTableHead } from '../../common'
+import { TopicRow } from './TableRow'
 
 interface TableProps {
   nodes: Node[]
@@ -23,10 +24,13 @@ export const Table: React.FC<TableProps> = ({ nodes }) => {
   return !nodes || nodes?.length === 0 ? (
     <>
       <AddContentSection>
-        <Subtitle align="center" direction="row" justify="space-between">
-          <Text className="subtitle">Contribute to the graph by adding content.</Text>
+        <IconWrapper>
+          <ContentIcon />
+        </IconWrapper>
+        <Subtitle>
+          <Text className="subtitle">Contribute to the graph by adding your first content.</Text>
         </Subtitle>
-        <Flex>
+        <Flex justify="center">
           <Button
             color="secondary"
             onClick={handleAddContent}
@@ -64,8 +68,9 @@ const AddContentSection = styled(Flex)`
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 100px auto;
+  margin: 150px auto;
   width: 100%;
+  flex-direction: column;
 `
 
 const Subtitle = styled(Flex)`
@@ -73,7 +78,9 @@ const Subtitle = styled(Flex)`
   align-items: center;
   justify-content: center;
   width: 100%;
-  margin-bottom: 30px;
+  max-width: 200px;
+  margin-bottom: 25px;
+  text-align: center;
 
   .subtitle {
     color: ${colors.GRAY3};
@@ -82,5 +89,15 @@ const Subtitle = styled(Flex)`
     font-style: normal;
     font-weight: 400;
     line-height: normal;
+  }
+`
+
+const IconWrapper = styled(Flex)`
+  margin-bottom: 20px;
+
+  svg {
+    fill: none;
+    height: 60px;
+    width: 60px;
   }
 `
