@@ -62,5 +62,9 @@ Cypress.Commands.add('initialSetup', (username, budget) => {
     },
   })
 
+  cy.wait(20000)
+
+  cy.get('[data-testid="explore-graph-btn"]').click()
+
   cy.wait(['@loadAbout', '@loadStats', '@getTrends'])
 })
