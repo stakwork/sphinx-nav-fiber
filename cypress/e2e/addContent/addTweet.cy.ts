@@ -7,6 +7,10 @@ describe('Add Tweet Content', () => {
       url: 'http://localhost:8444/api/add_node*',
     }).as('addTweet')
 
+    cy.wait(20000)
+
+    cy.get('[data-testid="explore-graph-btn"]').click()
+
     cy.get('[data-testid="add-content-modal"]').click()
 
     cy.get('#addContent').should('exist')

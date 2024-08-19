@@ -12,6 +12,10 @@ describe('Admin Login', () => {
     const title = `Testing NavFiber`
     const description = 'Testing Graph Description'
 
+    cy.wait(20000)
+
+    cy.get('[data-testid="explore-graph-btn"]').click()
+
     // Open settings modal
     cy.get('div[data-testid="settings-modal"]').should('be.visible').click()
 

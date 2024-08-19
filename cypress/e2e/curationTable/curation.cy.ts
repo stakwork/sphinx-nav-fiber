@@ -12,6 +12,10 @@ describe('Test Curation Table', () => {
 
     cy.initialSetup('alice', 300)
 
+    cy.wait(20000)
+
+    cy.get('[data-testid="explore-graph-btn"]').click()
+
     cy.get('#cy-open-soure-table').click()
 
     cy.get('[data-testid="sources-table"]').should('exist')
