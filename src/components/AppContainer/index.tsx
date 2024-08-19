@@ -10,6 +10,7 @@ const LazyApp = lazy(() => import('../App').then(({ App }) => ({ default: App })
 
 export const AppContainer = () => {
   const App = <LazyApp />
+
   const { splashDataLoading } = useDataStore((s) => s)
 
   return (
