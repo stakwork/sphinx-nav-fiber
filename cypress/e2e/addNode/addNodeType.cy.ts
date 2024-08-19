@@ -14,10 +14,6 @@ describe('Add Node Type Via BluePrint', () => {
 
     const nodeType = 'Player'
 
-    cy.wait(20000)
-
-    cy.get('[data-testid="explore-graph-btn"]').click()
-
     cy.get('[data-testid="add-blueprint-modal"]').click()
     cy.wait(1000)
 

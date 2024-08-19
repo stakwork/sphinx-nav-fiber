@@ -4,10 +4,6 @@ describe('Sources Table / Home interactions', () => {
 
     cy.initialSetup('alice', 300)
 
-    cy.wait(20000)
-
-    cy.get('[data-testid="explore-graph-btn"]').click()
-
     cy.wait(3000)
 
     cy.get('#cy-open-soure-table').click()
