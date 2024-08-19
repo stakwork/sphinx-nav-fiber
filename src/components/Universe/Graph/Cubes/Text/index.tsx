@@ -45,6 +45,13 @@ type Props = {
   hide?: boolean
 }
 
+function removeEmojis(text: string): string {
+  return text.replace(
+    /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{1FA70}-\u{1FAFF}\u{1FB00}-\u{1FBFF}\u{1FC00}-\u{1FCFF}\u{1FD00}-\u{1FDFF}\u{1FE00}-\u{1FEFF}\u{1FF00}-\u{1FFFF}\u{20000}-\u{2A6DF}\u{2A700}-\u{2B73F}\u{2B740}-\u{2B81F}\u{2B820}-\u{2CEAF}\u{2F800}-\u{2FA1F}]/gu,
+    '',
+  )
+}
+
 function splitStringIntoThreeParts(text: string): string {
   // Split the string into an array of words
 
@@ -121,6 +128,8 @@ export const TextNode = memo(({ node, hide }: Props) => {
 
   const color = primaryColor ?? (COLORS_MAP[nodeTypes.indexOf(node.node_type)] || colors.white)
 
+  const sanitizedNodeName = removeEmojis(String(node.name))
+
   return (
     <>
       <Text
@@ -134,7 +143,7 @@ export const TextNode = memo(({ node, hide }: Props) => {
         visible={!hide}
         {...fontProps}
       >
-        {splitStringIntoThreeParts(String(node.name))}
+        {splitStringIntoThreeParts(sanitizedNodeName)}
       </Text>
     </>
   )
