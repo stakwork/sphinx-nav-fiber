@@ -53,13 +53,16 @@ const IconWrapper = styled.div`
 
   svg {
     color: ${colors.GRAY6};
-    margin-left: 4px;
+    margin-left: 6px;
   }
 `
 
 const Title = styled.span`
   color: ${colors.white};
+  font-weight: 400;
+  font-family: Barlow;
   margin-left: 15px;
+  font-size: 22px;
 `
 
 const TabsWrapper = styled.div`

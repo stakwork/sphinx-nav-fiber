@@ -138,21 +138,6 @@ export const Body = ({ Close }: BodyProps) => {
       </Flex>
       <Flex align="stretch" direction="row" grow={1}>
         <Flex mb={-20} ml={-20}>
-          <Toolbar
-            onAddEdgeNode={() => {
-              setIsAddEdgeNode(true)
-              setIsCreateNew(false)
-              setSelectedSchemaId('')
-              setEdgeData({ refId: '', edgeType: '', source: '', target: '' })
-            }}
-            onCreateNew={() => {
-              setIsAddEdgeNode(false)
-              setIsCreateNew(true)
-              setSelectedSchemaId('')
-            }}
-          />
-        </Flex>
-        <Flex>
           {selectedSchema || isCreateNew ? (
             <EditorWrapper>
               <InnerEditorWrapper>
@@ -182,6 +167,21 @@ export const Body = ({ Close }: BodyProps) => {
               </InnerEditorWrapper>
             </EditorWrapper>
           ) : null}
+        </Flex>
+        <Flex>
+          <Toolbar
+            onAddEdgeNode={() => {
+              setIsAddEdgeNode(true)
+              setIsCreateNew(false)
+              setSelectedSchemaId('')
+              setEdgeData({ refId: '', edgeType: '', source: '', target: '' })
+            }}
+            onCreateNew={() => {
+              setIsAddEdgeNode(false)
+              setIsCreateNew(true)
+              setSelectedSchemaId('')
+            }}
+          />
         </Flex>
         <Wrapper direction="row" grow={1}>
           <Container>
@@ -235,7 +235,6 @@ const EditorWrapper = styled(Flex)`
   width: 100%;
   max-width: 400px;
   background: ${colors.BG1};
-  border-top-right-radius: 16px;
   border-bottom-right-radius: 16px;
   flex-grow: 1;
   flex-shrink: 1;
