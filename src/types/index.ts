@@ -263,7 +263,7 @@ export type TStats = {
   numContributors?: string
   numDaily?: string
   numEpisodes?: string
-  numNodes?: string
+  nodeCount?: string
   numTwitterSpace?: string
   numVideo?: string
   numDocuments?: string
