@@ -1,5 +1,6 @@
 export const colors = {
   black: 'rgb(0, 0, 0)',
+  disableBtn: 'rgba(35, 37, 47, 0.8)',
   bluePressState: 'rgb(57, 97, 220)',
   blueTextAccent: 'rgb(130, 180, 255)',
   body: 'rgb(21, 30, 39)',
