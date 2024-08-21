@@ -33,8 +33,8 @@ export const StatsConfig: StatConfigItem[] = [
   {
     name: 'Nodes',
     icon: <NodesIcon />,
-    key: 'numNodes',
-    dataKey: 'num_nodes',
+    key: 'nodeCount',
+    dataKey: 'node_count',
     mediaType: '',
     tooltip: 'All Nodes',
   },
