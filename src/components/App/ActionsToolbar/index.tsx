@@ -6,7 +6,7 @@ import { useDataStore } from '~/stores/useDataStore'
 import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
 import { useSelectedNode } from '~/stores/useGraphStore'
 import { CameraRecenterControl } from './CameraRecenterControl'
-import { GraphViewControl } from './GraphViewControl'
+import { GraphViewControl } from '~/components/common/GraphViewControl'
 import { PlayerControl } from './PlayerControl'
 import { UniverseQuestionControl } from './UniverseQuestionControl'
 

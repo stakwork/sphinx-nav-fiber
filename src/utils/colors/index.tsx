@@ -1,5 +1,6 @@
 export const colors = {
   black: 'rgb(0, 0, 0)',
+  appearanceBg: 'rgba(60, 64, 83, 0.3)',
   bluePressState: 'rgb(57, 97, 220)',
   blueTextAccent: 'rgb(130, 180, 255)',
   body: 'rgb(21, 30, 39)',
