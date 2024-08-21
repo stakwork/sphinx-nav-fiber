@@ -78,35 +78,32 @@ const _Relevance = ({ isSearchResult }: Props) => {
 
   return (
     <>
-      {(currentNodes ?? []).map((n, index) => {
+      {(currentNodes ?? []).map((n) => {
         const adaptedNode = adaptTweetNode(n)
 
         const {
           image_url: imageUrl,
           date,
           boost,
-          type,
           episode_title: episodeTitle,
           show_title: showTitle,
           node_type: nodeType,
           text,
           source_link: sourceLink,
-          link,
           name,
           verified = false,
           twitter_handle: twitterHandle,
         } = adaptedNode || {}
 
-        return (
+        return nodeType ? (
           <Episode
-            // eslint-disable-next-line react/no-array-index-key
-            key={index.toString()}
+            key={adaptedNode.ref_id}
             boostCount={boost || 0}
             date={date || 0}
             episodeTitle={formatDescription(episodeTitle)}
             imageUrl={imageUrl || ''}
-            link={link}
             name={name || ''}
+            node={n}
             onClick={() => {
               handleNodeClick(n)
             }}
@@ -114,10 +111,10 @@ const _Relevance = ({ isSearchResult }: Props) => {
             sourceLink={sourceLink}
             text={text || ''}
             twitterHandle={twitterHandle}
-            type={nodeType || type}
+            type={nodeType}
             verified={verified}
           />
-        )
+        ) : null
       })}
 
       <LoadMoreWrapper align="center" background="BG1" direction="row" justify="center">
