@@ -28,7 +28,7 @@ export const MainToolbar = () => {
   const navigate = useNavigate()
 
   const { resetAiSummaryAnswer, setNewLoading } = useAiSummaryStore()
-  const { abortFetchData } = useDataStore((s) => s)
+  const { abortFetchData, resetGraph } = useDataStore((s) => s)
   const { setUniverseQuestionIsOpen, setSidebarOpen, setShowCollapseButton, sidebarIsOpen } = useAppStore((s) => s)
   const { customSchemaFeatureFlag, userFeedbackFeatureFlag, chatInterfaceFeatureFlag } = useFeatureFlagStore((s) => s)
 
@@ -39,6 +39,7 @@ export const MainToolbar = () => {
     setNewLoading(null)
     abortFetchData()
     resetAiSummaryAnswer()
+    resetGraph()
     navigate('/')
   }
 
