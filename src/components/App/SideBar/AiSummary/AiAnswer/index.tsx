@@ -22,6 +22,7 @@ const Wrapper = styled(Flex).attrs({
   overflow-wrap: break-word;
   white-space: normal;
   word-break: break-word;
+  overflow: hidden;
 `
 
 const SummaryText = styled(Text)`
