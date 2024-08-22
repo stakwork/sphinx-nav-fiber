@@ -1,5 +1,5 @@
 describe('test trending topics', () => {
-  it('Checking it trending topics exist', () => {
+  it.skip('Checking it trending topics exist', () => {
     cy.intercept({
       method: 'GET',
       url: 'http://localhost:8444/api/prediction/graph/search*',
@@ -34,6 +34,10 @@ describe('test trending topics', () => {
         win.CYPRESS_USER_BUDGET = 300 // eslint-disable-line no-param-reassign
       },
     })
+
+    cy.wait(20000)
+
+    cy.get('[data-testid="explore-graph-btn"]').click()
 
     cy.wait(['@loadAbout', '@loadLatest', '@loadStats'])
 

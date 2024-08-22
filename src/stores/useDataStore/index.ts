@@ -38,7 +38,6 @@ export type DataStore = {
   selectedTimestamp: NodeExtended | null
   sources: Sources[] | null
   queuedSources: Sources[] | null
-  showTeachMe: boolean
   hideNodeDetails: boolean
   sidebarFilter: string
   sidebarFilters: string[]
@@ -62,7 +61,6 @@ export type DataStore = {
   ) => void
   setSelectedTimestamp: (selectedTimestamp: NodeExtended | null) => void
   setSources: (sources: Sources[] | null) => void
-  setTeachMe: (show: boolean) => void
   setQueuedSources: (sources: Sources[] | null) => void
   setIsFetching: (_: boolean) => void
   setHideNodeDetails: (_: boolean) => void
@@ -74,6 +72,8 @@ export type DataStore = {
   nextPage: () => void
   setFilters: (filters: Partial<FilterParams>) => void
   setSeedQuestions: (questions: string[]) => void
+  abortFetchData: () => void
+  resetGraph: () => void
 }
 
 const defaultData: Omit<
@@ -92,7 +92,6 @@ const defaultData: Omit<
   | 'setSidebarFilterCounts'
   | 'setQueuedSources'
   | 'setHideNodeDetails'
-  | 'setTeachMe'
   | 'addNewNode'
   | 'updateNode'
   | 'removeNode'
@@ -105,14 +104,14 @@ const defaultData: Omit<
   categoryFilter: null,
   dataInitial: null,
   currentPage: 0,
-  itemsPerPage: 25,
+  itemsPerPage: 300,
   filters: {
     skip: '0',
-    limit: '25',
+    limit: '300',
     depth: '2',
-    sort_by: 'date',
+    sort_by: 'date_added_to_graph',
     include_properties: 'true',
-    top_node_count: '10',
+    top_node_count: '50',
     includeContent: 'true',
     node_type: [],
   },
@@ -121,7 +120,6 @@ const defaultData: Omit<
   queuedSources: null,
   selectedTimestamp: null,
   sources: null,
-  showTeachMe: false,
   sidebarFilter: 'all',
   sidebarFilters: [],
   trendingTopics: [],
@@ -138,10 +136,11 @@ let abortController: AbortController | null = null
 export const useDataStore = create<DataStore>()(
   devtools((set, get) => ({
     ...defaultData,
+
     fetchData: async (setBudget, setAbortRequests, AISearchQuery = '') => {
       const { currentPage, itemsPerPage, dataInitial: existingData, filters } = get()
       const { currentSearch } = useAppStore.getState()
-      const { setAiSummaryAnswer, aiRefId } = useAiSummaryStore.getState()
+      const { setAiSummaryAnswer, setNewLoading, aiRefId } = useAiSummaryStore.getState()
       let ai = { ai_summary: String(!!AISearchQuery) }
 
       if (!AISearchQuery) {
@@ -153,8 +152,8 @@ export const useDataStore = create<DataStore>()(
       }
 
       if (AISearchQuery) {
-        setAiSummaryAnswer(AISearchQuery, { answer: '', answerLoading: true, sourcesLoading: true })
         ai = { ...ai, ai_summary: String(true) }
+        setNewLoading({ question: AISearchQuery, answerLoading: true })
       }
 
       if (abortController) {
@@ -174,7 +173,7 @@ export const useDataStore = create<DataStore>()(
         ...withoutNodeType,
         ...ai,
         skip: currentPage === 0 ? String(currentPage * itemsPerPage) : String(currentPage * itemsPerPage + 1),
-        limit: String(itemsPerPage),
+        limit: word ? 25 : String(itemsPerPage),
         ...(filterNodeTypes.length > 0 ? { node_type: JSON.stringify(filterNodeTypes) } : {}),
         ...(word ? { word } : {}),
         ...(aiRefId && AISearchQuery ? { previous_search_ref_id: aiRefId } : {}),
@@ -189,6 +188,19 @@ export const useDataStore = create<DataStore>()(
 
         if (data?.query_data?.ref_id) {
           useAiSummaryStore.setState({ aiRefId: data?.query_data?.ref_id })
+
+          const { aiSummaryAnswers } = useAiSummaryStore.getState()
+          const { answer } = aiSummaryAnswers[data?.query_data?.ref_id] || {}
+
+          setAiSummaryAnswer(data?.query_data?.ref_id, {
+            question: AISearchQuery,
+            answer: answer || '',
+            answerLoading: !answer,
+            sourcesLoading: !answer,
+            shouldRender: true,
+          })
+
+          setNewLoading(null)
         }
 
         const currentNodes = currentPage === 0 && !aiRefId ? [] : [...(existingData?.nodes || [])]
@@ -222,16 +234,34 @@ export const useDataStore = create<DataStore>()(
           dataNew: { nodes: newNodes, links: newLinks },
           isFetching: false,
           isLoadingNew: false,
+          splashDataLoading: false,
           nodeTypes,
           sidebarFilters,
           sidebarFilterCounts,
         })
       } catch (error) {
         console.log(error)
-        set({ isFetching: false })
-        set({ isLoadingNew: false })
+
+        if (error !== 'abort') {
+          set({ isLoadingNew: false, isFetching: false })
+        }
       }
     },
+
+    abortFetchData: () => {
+      if (abortController) {
+        abortController.abort('abort')
+      }
+    },
+    resetGraph: () => {
+      set({
+        filters: defaultData.filters,
+        dataNew: null,
+      })
+
+      get().fetchData()
+    },
+
     setPage: (page: number) => set({ currentPage: page }),
     nextPage: () => {
       const { currentPage, fetchData } = get()
@@ -261,7 +291,6 @@ export const useDataStore = create<DataStore>()(
     setSelectedTimestamp: (selectedTimestamp) => set({ selectedTimestamp }),
     setSources: (sources) => set({ sources }),
     setHideNodeDetails: (hideNodeDetails) => set({ hideNodeDetails }),
-    setTeachMe: (showTeachMe) => set({ showTeachMe }),
     setSeedQuestions: (questions) => set({ seedQuestions: questions }),
     updateNode: (updatedNode) => {
       console.log(updatedNode)

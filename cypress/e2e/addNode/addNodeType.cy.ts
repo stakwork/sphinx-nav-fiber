@@ -13,6 +13,7 @@ describe('Add Node Type Via BluePrint', () => {
     cy.initialSetup('alice', 300)
 
     const nodeType = 'Player'
+
     cy.get('[data-testid="add-blueprint-modal"]').click()
     cy.wait(1000)
 
@@ -28,10 +29,11 @@ describe('Add Node Type Via BluePrint', () => {
     cy.get('[data-testid="add-attribute-btn"]').click()
     cy.wait(500)
 
-    cy.get('[data-testid="cy-item-name-1"]').type('age')
-    cy.get('[data-testid="cy-item-select-1"]').click()
+    cy.get('[data-testid^="cy-item-name-"]').last().type('age')
+
+    cy.get('[data-testid^="cy-item-select-"]').last().click()
     cy.contains('number').click()
-    cy.get('[data-testid="cy-item-1"]').click()
+    cy.get('[data-testid^="cy-item-"]').last().click()
     cy.wait(200)
 
     cy.contains('Confirm').click()

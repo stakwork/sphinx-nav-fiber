@@ -1,7 +1,6 @@
 import { Button } from '@mui/material'
-import { memo, useCallback, useMemo, useRef, useState } from 'react'
+import { memo, useCallback, useMemo, useState } from 'react'
 import styled from 'styled-components'
-import { ScrollView } from '~/components/ScrollView'
 import { Flex } from '~/components/common/Flex'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore, useFilteredNodes } from '~/stores/useDataStore'
@@ -9,9 +8,9 @@ import { useUpdateSelectedNode } from '~/stores/useGraphStore'
 import { NodeExtended } from '~/types'
 import { formatDescription } from '~/utils/formatDescription'
 import { saveConsumedContent } from '~/utils/relayHelper'
+import { adaptTweetNode } from '~/utils/twitterAdapter'
 import { useIsMatchBreakpoint } from '~/utils/useIsMatchBreakpoint'
 import { Episode } from './Episode'
-import { adaptTweetNode } from '~/utils/twitterAdapter'
 
 type Props = {
   isSearchResult: boolean
@@ -19,8 +18,6 @@ type Props = {
 
 // eslint-disable-next-line no-underscore-dangle
 const _Relevance = ({ isSearchResult }: Props) => {
-  const scrollViewRef = useRef<HTMLDivElement | null>(null)
-
   const pageSize = !isSearchResult ? 10 : 80
 
   const { setSelectedTimestamp, nextPage } = useDataStore((s) => s)
@@ -81,57 +78,52 @@ const _Relevance = ({ isSearchResult }: Props) => {
 
   return (
     <>
-      <ScrollView ref={scrollViewRef} id="search-result-list" shrink={1}>
-        {(currentNodes ?? []).map((n, index) => {
-          const adaptedNode = adaptTweetNode(n)
+      {(currentNodes ?? []).map((n) => {
+        const adaptedNode = adaptTweetNode(n)
 
-          const {
-            image_url: imageUrl,
-            date,
-            boost,
-            type,
-            episode_title: episodeTitle,
-            show_title: showTitle,
-            node_type: nodeType,
-            text,
-            source_link: sourceLink,
-            link,
-            name,
-            verified = false,
-            twitter_handle: twitterHandle,
-          } = adaptedNode || {}
+        const {
+          image_url: imageUrl,
+          date,
+          boost,
+          episode_title: episodeTitle,
+          show_title: showTitle,
+          node_type: nodeType,
+          text,
+          source_link: sourceLink,
+          name,
+          verified = false,
+          twitter_handle: twitterHandle,
+        } = adaptedNode || {}
 
-          return (
-            <Episode
-              // eslint-disable-next-line react/no-array-index-key
-              key={index.toString()}
-              boostCount={boost || 0}
-              date={date || 0}
-              episodeTitle={formatDescription(episodeTitle)}
-              imageUrl={imageUrl || ''}
-              link={link}
-              name={name || ''}
-              onClick={() => {
-                handleNodeClick(n)
-              }}
-              showTitle={formatDescription(showTitle)}
-              sourceLink={sourceLink}
-              text={text || ''}
-              twitterHandle={twitterHandle}
-              type={nodeType || type}
-              verified={verified}
-            />
-          )
-        })}
+        return nodeType ? (
+          <Episode
+            key={adaptedNode.ref_id}
+            boostCount={boost || 0}
+            date={date || 0}
+            episodeTitle={formatDescription(episodeTitle)}
+            imageUrl={imageUrl || ''}
+            name={name || ''}
+            node={n}
+            onClick={() => {
+              handleNodeClick(n)
+            }}
+            showTitle={formatDescription(showTitle)}
+            sourceLink={sourceLink}
+            text={text || ''}
+            twitterHandle={twitterHandle}
+            type={nodeType}
+            verified={verified}
+          />
+        ) : null
+      })}
 
-        <LoadMoreWrapper align="center" background="BG1" direction="row" justify="center">
-          {hasNext && (
-            <Button key={buttonKey} onClick={handleLoadMoreClick} size="medium">
-              Load More
-            </Button>
-          )}
-        </LoadMoreWrapper>
-      </ScrollView>
+      <LoadMoreWrapper align="center" background="BG1" direction="row" justify="center">
+        {hasNext && (
+          <Button key={buttonKey} onClick={handleLoadMoreClick} size="medium">
+            Load More
+          </Button>
+        )}
+      </LoadMoreWrapper>
     </>
   )
 }

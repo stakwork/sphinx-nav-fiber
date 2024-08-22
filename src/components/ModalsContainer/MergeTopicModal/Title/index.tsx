@@ -1,16 +1,16 @@
 import { TextField } from '@mui/material'
 import { FC } from 'react'
 import styled from 'styled-components'
-import { Flex } from '~/components/common/Flex'
-import { Text } from '~/components/common/Text'
 import ArrowRight from '~/components/Icons/ArrowRight'
 import FlipIcon from '~/components/Icons/FlipIcon'
 import NodeCircleIcon from '~/components/Icons/NodeCircleIcon'
-import { TEdge, Topic } from '~/types'
+import { Flex } from '~/components/common/Flex'
+import { Text } from '~/components/common/Text'
+import { NodeExtended, TEdge } from '~/types'
 import { ToNode } from './ToNode'
 
 type Props = {
-  from: Topic
+  from: NodeExtended | undefined
   onSelect: (edge: TEdge | null) => void
   isSwapped: boolean
   setIsSwapped: () => void

@@ -1,8 +1,9 @@
 import styled from 'styled-components'
-import AddContentIcon from '~/components/Icons/AddContentIcon'
 import { Flex } from '~/components/common/Flex'
-import { Text } from '~/components/common/Text'
 import { colors } from '~/utils/colors'
+import PlusIcon from '~/components/Icons/PlusIcon'
+import CreateEdgeIcon from '~/components/Icons/CreateEdgeIcon'
+import DeleteIcon from '~/components/Icons/DeleteIcon'
 
 type Props = {
   onCreateNew: () => void
@@ -11,18 +12,20 @@ type Props = {
 
 export const Toolbar = ({ onCreateNew, onAddEdgeNode }: Props) => (
   <Wrapper>
-    <LogoButton>BLUEPRINT</LogoButton>
     <ActionButton data-testid="add-schema-type" onClick={onCreateNew}>
       <IconWrapper>
-        <AddContentIcon />
+        <PlusIcon />
       </IconWrapper>
-      <Text>Add Type</Text>
     </ActionButton>
     <ActionButton data-testid="add-edge" onClick={onAddEdgeNode}>
       <IconWrapper>
-        <AddContentIcon />
+        <CreateEdgeIcon />
       </IconWrapper>
-      <Text>Add Edge</Text>
+    </ActionButton>
+    <ActionButton disabled>
+      <IconWrapper>
+        <DeleteIcon />
+      </IconWrapper>
     </ActionButton>
   </Wrapper>
 )
@@ -32,97 +35,35 @@ const Wrapper = styled(Flex).attrs({
   direction: 'column',
   justify: 'flex-start',
 })`
-  flex: 1 1 auto;
-  z-index: 31;
-  transition: opacity 1s;
-  background: ${colors.BG2};
-  max-height: 100vh;
-  border-top-left-radius: 9px;
-  border-bottom-left-radius: 9px;
-
-  @media (max-width: 1440px) {
-    max-height: 95.2vh;
-  }
-
-  @media (max-width: 1024px) {
-    max-height: 74.8vh;
-  }
-
-  @media (max-width: 924px) {
-    max-height: 73.1vh;
-  }
+  flex: 1;
+  gap: 17px;
+  padding: 16px 0 0 16px;
 `
 
 const ActionButton = styled(Flex).attrs({
   align: 'center',
   justify: 'center',
   p: 0,
-})`
+})<{
+  disabled?: boolean
+}>`
   position: relative;
-  width: 64px;
-  height: 58px;
-  padding: 0;
+  width: 40px;
+  height: 40px;
   flex-direction: row;
   color: ${colors.GRAY6};
+  background: ${({ disabled }) => (disabled ? colors.disableBtn : colors.BG1)};
   cursor: pointer;
+  border-radius: 6px;
   transition: ${({ theme }) => theme.transitions.create(['opacity', 'box-shadow', 'background-color'])};
 
-  &:before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 4px; /* Initial width */
-    height: 32px; /* Initial height on hover */
-    background-color: transparent;
-    transition: height 0.3s, width 0.3s, background-color 0.3s;
-  }
-
-  ${Text} {
-    display: none;
-    opacity: 0;
-    width: 0;
-    padding: 4px 10px;
-    border-radius: 4px;
-    background: #000;
-    box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.25);
-    position: absolute;
-    left: 90%;
-    z-index: 99;
-    white-space: nowrap;
-    visibility: visible;
-    font-size: 11px;
-    font-style: normal;
-    font-weight: 400;
-    transition: ${({ theme }) => theme.transitions.create(['opacity', 'visually'])};
-  }
-
   &:hover {
-    color: ${colors.white};
-
-    &:before {
-      width: 3px;
-      height: 32px;
-      background-color: ${colors.primaryBlue};
-    }
-
-    ${Text} {
-      display: block;
-      width: min-content;
-      opacity: 1;
-      visibility: visible;
-    }
+    color: ${({ disabled }) => (disabled ? colors.GRAY6 : colors.white)};
   }
 
   &:active {
     color: ${colors.white};
-    background: ${colors.black};
-    &:before {
-      width: 3px;
-      height: 100%;
-      background-color: ${colors.primaryBlue};
-    }
+    background: ${({ disabled }) => (disabled ? colors.BG1 : colors.black)};
   }
 
   &.root {
@@ -132,19 +73,6 @@ const ActionButton = styled(Flex).attrs({
     justify-content: center;
     border: none;
   }
-`
-
-const LogoButton = styled(Flex)`
-  background: blue;
-  align-items: center;
-  justify-content: center;
-  background: ${colors.primaryBlue};
-  width: 64px;
-  height: 64px;
-  cursor: pointer;
-  font-size: 10px;
-  font-weight: 600;
-  color: ${colors.white};
 `
 
 const IconWrapper = styled(Flex)`

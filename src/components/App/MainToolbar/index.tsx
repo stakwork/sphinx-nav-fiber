@@ -1,18 +1,22 @@
+import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 import AddContentIcon from '~/components/Icons/AddContentIcon'
 import AddSourceIcon from '~/components/Icons/AddSourceIcon'
 import CommunitiesIcon from '~/components/Icons/CommunitiesIcon'
 import FeedbackIcon from '~/components/Icons/FeedbackIcon'
+import MenuIcon from '~/components/Icons/MenuIcon'
 import SettingsIcon from '~/components/Icons/SettingsIcon'
 import SourcesTableIcon from '~/components/Icons/SourcesTableIcon'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
+import { useAiSummaryStore } from '~/stores/useAiSummaryStore'
+import { useAppStore } from '~/stores/useAppStore'
+import { useDataStore } from '~/stores/useDataStore'
 import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
 import { useModal } from '~/stores/useModalStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { colors } from '~/utils/colors'
 import { isSphinx } from '~/utils/isSphinx'
-import { useNavigate } from 'react-router-dom'
 
 export const MainToolbar = () => {
   const { open: openSourcesModal } = useModal('sourcesTable')
@@ -23,17 +27,41 @@ export const MainToolbar = () => {
   const { open: openFeedbackModal } = useModal('feedback')
   const navigate = useNavigate()
 
-  const customSchemaFeatureFlag = useFeatureFlagStore((s) => s.customSchemaFeatureFlag)
-  const userFeedbackFeatureFlag = useFeatureFlagStore((s) => s.userFeedbackFeatureFlag)
+  const { resetAiSummaryAnswer, setNewLoading } = useAiSummaryStore()
+  const { abortFetchData, resetGraph } = useDataStore((s) => s)
+  const { setUniverseQuestionIsOpen, setSidebarOpen, setShowCollapseButton, sidebarIsOpen } = useAppStore((s) => s)
+  const { customSchemaFeatureFlag, userFeedbackFeatureFlag, chatInterfaceFeatureFlag } = useFeatureFlagStore((s) => s)
 
   const [isAdmin] = useUserStore((s) => [s.isAdmin])
   const sphinxEnabled = isSphinx()
 
+  const handleLogoClick = () => {
+    setNewLoading(null)
+    abortFetchData()
+    resetAiSummaryAnswer()
+    resetGraph()
+    navigate('/')
+  }
+
+  const handleOpenChatModal = () => {
+    setUniverseQuestionIsOpen()
+    setSidebarOpen(!sidebarIsOpen)
+    setShowCollapseButton(false)
+  }
+
   return (
     <Wrapper>
-      <LogoButton onClick={() => navigate('/')}>
+      <LogoButton onClick={handleLogoClick}>
         <img alt="Second brain" src="logo.svg" />
       </LogoButton>
+      {chatInterfaceFeatureFlag ? (
+        <ActionButton onClick={handleOpenChatModal}>
+          <IconWrapper>
+            <MenuIcon />
+          </IconWrapper>
+          <Text>New Chat</Text>
+        </ActionButton>
+      ) : null}
       {isAdmin ? (
         <ActionButton data-testid="add-item-modal" onClick={openItemAddModal}>
           <IconWrapper>

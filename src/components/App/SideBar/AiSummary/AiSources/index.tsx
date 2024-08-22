@@ -1,3 +1,4 @@
+import { Slide } from '@mui/material'
 import Button from '@mui/material/Button'
 import { memo, useCallback, useRef, useState } from 'react'
 import styled from 'styled-components'
@@ -41,19 +42,21 @@ const _AiSources = ({ sourceIds }: Props) => {
 
   return (
     <SectionWrapper>
-      <Heading align="center" className="heading" direction="row" justify="space-between">
-        <Flex align="center" direction="row">
-          <div className="heading__icon">
-            <SourcesIcon />
-          </div>
-          <span className="tittle">Sources</span>
-          <span className="heading__count">{sourceIds.length}</span>
-        </Flex>
-        <CollapseButton onClick={handleLoadMoreClick}>
-          {showAll ? 'Hide all' : 'Show all'}
-          {showAll ? <ChevronUpIcon /> : <ChevronDownIcon />}
-        </CollapseButton>
-      </Heading>
+      <Slide direction="right" in mountOnEnter>
+        <Heading align="center" className="heading" direction="row" justify="space-between">
+          <Flex align="center" direction="row">
+            <div className="heading__icon">
+              <SourcesIcon />
+            </div>
+            <span className="tittle">Sources</span>
+            <span className="heading__count">{sourceIds.length}</span>
+          </Flex>
+          <CollapseButton onClick={handleLoadMoreClick}>
+            {showAll ? 'Hide all' : 'Show all'}
+            {showAll ? <ChevronUpIcon /> : <ChevronDownIcon />}
+          </CollapseButton>
+        </Heading>
+      </Slide>
       {showAll && visibleNodes.length > 0 && (
         <ScrollView ref={scrollViewRef} id="search-result-list" shrink={1}>
           {visibleNodes.map((n, index) => {
@@ -63,13 +66,11 @@ const _AiSources = ({ sourceIds }: Props) => {
               image_url: imageUrl,
               date,
               boost,
-              type,
               episode_title: episodeTitle,
               show_title: showTitle,
               node_type: nodeType,
               text,
               source_link: sourceLink,
-              link,
               name,
               verified = false,
               twitter_handle: twitterHandle,
@@ -83,8 +84,8 @@ const _AiSources = ({ sourceIds }: Props) => {
                 date={date || 0}
                 episodeTitle={formatDescription(episodeTitle)}
                 imageUrl={imageUrl || ''}
-                link={link}
                 name={name || ''}
+                node={n}
                 onClick={() => {
                   handleNodeClick(n)
                 }}
@@ -92,7 +93,7 @@ const _AiSources = ({ sourceIds }: Props) => {
                 sourceLink={sourceLink}
                 text={text || ''}
                 twitterHandle={twitterHandle}
-                type={nodeType || type}
+                type={nodeType}
                 verified={verified}
               />
             )
@@ -122,15 +123,20 @@ const Heading = styled(Flex)`
     .heading__count {
       font-weight: 400;
       color: ${colors.GRAY7};
-      margin-left: 16px;
+      margin-left: 12px;
+      line-height: 32px;
+      text-align: left;
       margin-bottom: 4px;
     }
 
     .tittle {
       margin-bottom: 4px;
       font-size: 14px;
-      font-weight: 400;
+      font-weight: 600;
       font-family: Barlow;
+      line-height: 32px;
+      text-align: left;
+      color: ${colors.white};
     }
   }
 `
