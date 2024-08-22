@@ -63,6 +63,8 @@ export const App = () => {
     setCurrentSearch,
     setRelevanceSelected,
     setTranscriptOpen,
+    universeQuestionIsOpen,
+    setUniverseQuestionIsOpen,
   } = useAppStore((s) => s)
 
   const setTeachMeAnswer = useTeachStore((s) => s.setTeachMeAnswer)
@@ -235,6 +237,12 @@ export const App = () => {
     handleAiSummaryAudio,
   ])
 
+  useEffect(() => {
+    if (!splashDataLoading) {
+      setUniverseQuestionIsOpen()
+    }
+  }, [setUniverseQuestionIsOpen, splashDataLoading])
+
   return (
     <>
       <GlobalStyle />
@@ -248,7 +256,7 @@ export const App = () => {
           <Wrapper direction="row">
             <FormProvider {...form}>
               <LazyMainToolbar />
-              <LazySideBar />
+              {!universeQuestionIsOpen && <LazySideBar />}
               <LazyUniverse />
               <Overlay />
               <AppBar />

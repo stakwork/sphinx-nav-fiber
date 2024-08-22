@@ -34,7 +34,7 @@ export const BriefDescription: FC<Props> = ({ trend, onClose }) => {
 
   const handleLearnMore = async () => {
     handleClose()
-    await fetchData(setBudget, setAbortRequests, trend.name)
+    await fetchData(setBudget, setAbortRequests, trend.tldr_topic ?? trend.name)
   }
 
   const handleClose = useCallback(() => {

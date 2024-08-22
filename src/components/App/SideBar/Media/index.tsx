@@ -22,12 +22,10 @@ export const Media = ({ node }: Props) => {
   const searchTerm = useAppStore((s) => s.currentSearch)
 
   const {
-    link,
     image_url: imageUrl,
     date,
     boost,
     node_type: nodeType,
-    type,
     id,
     show_title: showTitle,
     episode_title: episodeTitle,
@@ -44,20 +42,23 @@ export const Media = ({ node }: Props) => {
     return null
   }
 
+  const currentNode = node || selectedNode
+
   return (
     <div style={{ overflow: 'auto', flex: 1, width: '100%' }}>
       <Wrapper>
-        <StyledEpisode
-          boostCount={boostAmount || 0}
-          date={date || 0}
-          episodeTitle={formatDescription(episodeTitle)}
-          imageUrl={imageUrl}
-          isSelectedView
-          link={link}
-          onClick={() => null}
-          showTitle={showTitle}
-          type={nodeType || type}
-        />
+        {currentNode && nodeType ? (
+          <StyledEpisode
+            boostCount={boostAmount || 0}
+            date={date || 0}
+            episodeTitle={formatDescription(episodeTitle)}
+            imageUrl={imageUrl}
+            node={currentNode}
+            onClick={() => null}
+            showTitle={showTitle}
+            type={nodeType}
+          />
+        ) : null}
         <StyledDivider />
 
         <BoostWrapper>

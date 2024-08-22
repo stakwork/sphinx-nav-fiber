@@ -114,7 +114,7 @@ export const UniverseQuestion = () => {
           ))}
         </SeedQuestionsWrapper>
       )}
-      <CloseButton onClick={handleUniverseQuestionIsOpen} startIcon={<ExploreIcon />}>
+      <CloseButton data-testid="explore-graph-btn" onClick={handleUniverseQuestionIsOpen} startIcon={<ExploreIcon />}>
         Explore Graph
       </CloseButton>
     </Wrapper>

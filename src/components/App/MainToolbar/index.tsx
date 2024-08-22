@@ -4,11 +4,13 @@ import AddContentIcon from '~/components/Icons/AddContentIcon'
 import AddSourceIcon from '~/components/Icons/AddSourceIcon'
 import CommunitiesIcon from '~/components/Icons/CommunitiesIcon'
 import FeedbackIcon from '~/components/Icons/FeedbackIcon'
+import MenuIcon from '~/components/Icons/MenuIcon'
 import SettingsIcon from '~/components/Icons/SettingsIcon'
 import SourcesTableIcon from '~/components/Icons/SourcesTableIcon'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { useAiSummaryStore } from '~/stores/useAiSummaryStore'
+import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
 import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
 import { useModal } from '~/stores/useModalStore'
@@ -27,8 +29,8 @@ export const MainToolbar = () => {
 
   const { resetAiSummaryAnswer, setNewLoading } = useAiSummaryStore()
   const { abortFetchData, resetGraph } = useDataStore((s) => s)
-  const customSchemaFeatureFlag = useFeatureFlagStore((s) => s.customSchemaFeatureFlag)
-  const userFeedbackFeatureFlag = useFeatureFlagStore((s) => s.userFeedbackFeatureFlag)
+  const { setUniverseQuestionIsOpen, setSidebarOpen, setShowCollapseButton, sidebarIsOpen } = useAppStore((s) => s)
+  const { customSchemaFeatureFlag, userFeedbackFeatureFlag, chatInterfaceFeatureFlag } = useFeatureFlagStore((s) => s)
 
   const [isAdmin] = useUserStore((s) => [s.isAdmin])
   const sphinxEnabled = isSphinx()
@@ -41,11 +43,25 @@ export const MainToolbar = () => {
     navigate('/')
   }
 
+  const handleOpenChatModal = () => {
+    setUniverseQuestionIsOpen()
+    setSidebarOpen(!sidebarIsOpen)
+    setShowCollapseButton(false)
+  }
+
   return (
     <Wrapper>
       <LogoButton onClick={handleLogoClick}>
         <img alt="Second brain" src="logo.svg" />
       </LogoButton>
+      {chatInterfaceFeatureFlag ? (
+        <ActionButton onClick={handleOpenChatModal}>
+          <IconWrapper>
+            <MenuIcon />
+          </IconWrapper>
+          <Text>New Chat</Text>
+        </ActionButton>
+      ) : null}
       {isAdmin ? (
         <ActionButton data-testid="add-item-modal" onClick={openItemAddModal}>
           <IconWrapper>

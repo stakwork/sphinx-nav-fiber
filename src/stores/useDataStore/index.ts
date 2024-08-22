@@ -104,10 +104,10 @@ const defaultData: Omit<
   categoryFilter: null,
   dataInitial: null,
   currentPage: 0,
-  itemsPerPage: 1000,
+  itemsPerPage: 300,
   filters: {
     skip: '0',
-    limit: '10000',
+    limit: '300',
     depth: '2',
     sort_by: 'date_added_to_graph',
     include_properties: 'true',
