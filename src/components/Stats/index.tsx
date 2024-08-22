@@ -33,8 +33,8 @@ export const StatsConfig: StatConfigItem[] = [
   {
     name: 'Nodes',
     icon: <NodesIcon />,
-    key: 'numNodes',
-    dataKey: 'num_nodes',
+    key: 'nodeCount',
+    dataKey: 'node_count',
     mediaType: '',
     tooltip: 'All Nodes',
   },
@@ -114,6 +114,8 @@ export const Stats = () => {
   }
 
   function handleStatClick(mediaType: string) {
+    return
+
     fetchData(setBudget, setAbortRequests, '', { ...(mediaType ? { media_type: mediaType } : {}), skip_cache: 'true' })
 
     setSelectedNode(null)

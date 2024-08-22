@@ -57,6 +57,7 @@ const TextWrapper = styled.div`
     line-height: normal;
     letter-spacing: 1.5px;
     text-transform: uppercase;
+    margin-left: 4px;
   }
 
   .value-wrapper {
