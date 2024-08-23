@@ -99,6 +99,7 @@ export const colors = {
   SEEDQUESTION: 'rgba(47, 58, 89, 1)',
   SEEDQUESTION_HOVER: 'rgba(38, 42, 58, 1)',
   COLLAPSE_BUTTON: 'rgba(48, 51, 66, 1)',
+  AI_HIGHLIGHT: 'rgba(0, 123, 255, 0.1)',
 } as const
 
 export type ColorName = keyof typeof colors
