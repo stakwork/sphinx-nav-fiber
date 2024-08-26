@@ -4,7 +4,7 @@ import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
 import { useSelectedNode } from '~/stores/useGraphStore'
 import { CameraRecenterControl } from './CameraRecenterControl'
-import { GraphViewControl } from './GraphViewControl'
+import { GraphViewControl } from '~/components/common/GraphViewControl'
 import { PlayerControl } from './PlayerControl'
 
 export const ActionsToolbar = () => {

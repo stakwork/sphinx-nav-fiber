@@ -27,7 +27,8 @@ export const Appearance: FC<Props> = ({ onClose }) => {
     <Wrapper direction="column">
       <StyledText>Default graph view:</StyledText>
       <GraphViewControl />
-      <Flex mt={308} py={24}>
+
+      <Flex mt={308} py={8}>
         <Button
           color="secondary"
           disabled={loading}
@@ -61,6 +62,7 @@ const StyledText = styled(Text)`
   font-family: Barlow;
   font-size: 13px;
   font-weight: 400;
+  color: ${colors.lightGray};
 `
 
 const IconWrapper = styled.span`
