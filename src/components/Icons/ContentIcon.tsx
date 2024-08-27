@@ -1,14 +1,8 @@
 /* eslint-disable */
-import React from 'react';
+import React from 'react'
 
 const ContentIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
-  <svg
-    width="1em"
-    height="1em"
-    viewBox="0 0 56 56"
-    fill="currentColor"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width="1em" height="1em" viewBox="0 0 56 56" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
     <path
       d="M4.75129 14.5773L28 1.1547L51.2487 14.5773V41.4226L28 54.8453L4.75129 41.4226V14.5773Z"
       stroke="#47505E"
@@ -20,6 +14,6 @@ const ContentIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
       stroke-width="2"
     />
   </svg>
-);
+)
 
-export default ContentIcon;
+export default ContentIcon
