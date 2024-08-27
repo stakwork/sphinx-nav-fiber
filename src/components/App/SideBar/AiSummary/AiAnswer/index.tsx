@@ -19,6 +19,9 @@ const Wrapper = styled(Flex).attrs({
 })`
   padding: 0 1.5rem 1.5rem;
   gap: 1rem;
+  overflow-wrap: break-word;
+  white-space: normal;
+  word-break: break-word;
 `
 
 const SummaryText = styled(Text)`

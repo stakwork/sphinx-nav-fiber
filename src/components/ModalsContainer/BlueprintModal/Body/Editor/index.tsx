@@ -17,6 +17,7 @@ import { getNodeSchemaTypes, getNodeType, Schema } from '~/network/fetchSourcesD
 import { useModal } from '~/stores/useModalStore'
 import { colors } from '~/utils'
 import { CreateCustomNodeAttribute } from './CustomAttributesStep'
+import MediaOptions from './MediaOptions'
 import { convertAttributes, parsedObjProps, parseJson } from './utils'
 
 const defaultValues = {
@@ -66,6 +67,7 @@ const handleSubmitForm = async (
   data: FieldValues,
   isUpdate = false,
   deletedAttributes: string[],
+  mediaOptions: { videoAudio: boolean; image: boolean; sourceLink: boolean },
 ): Promise<string | undefined> => {
   try {
     const { attributes, ...withoutAttributes } = data
@@ -75,9 +77,26 @@ const handleSubmitForm = async (
       ...deletedAttributes.reduce<{ [key: string]: string }>((acc, key) => ({ ...acc, [key]: 'delete' }), {}),
     }
 
-    const requestData = {
+    const requestData: {
+      attributes: { [key: string]: string }
+      media_url?: string
+      image_url?: string
+      source_link?: string
+    } = {
       ...withoutAttributes,
       attributes: updatedAttributes,
+    }
+
+    if (mediaOptions.videoAudio) {
+      requestData.media_url = ''
+    }
+
+    if (mediaOptions.image) {
+      requestData.image_url = ''
+    }
+
+    if (mediaOptions.sourceLink) {
+      requestData.source_link = ''
     }
 
     let res: { status: string; ref_id: string }
@@ -172,6 +191,12 @@ export const Editor = ({
   const [deletedAttributes, setDeletedAttributes] = useState<string[]>([])
   const [parsedData, setParsedData] = useState<parsedObjProps[]>([])
   const [submitDisabled, setSubmitDisabled] = useState(true)
+
+  const [mediaOptions, setMediaOptions] = useState({
+    videoAudio: false,
+    image: false,
+    sourceLink: false,
+  })
 
   useEffect(
     () => () => {
@@ -297,6 +322,7 @@ export const Editor = ({
         { ...data, ...(selectedSchema ? { ref_id: selectedSchema?.ref_id } : {}) },
         !!selectedSchema,
         deletedAttributes,
+        mediaOptions,
       )
 
       onSchemaCreate({ type: data.type, parent: parent || '', ref_id: selectedSchema?.ref_id || res || 'new' })
@@ -449,7 +475,7 @@ export const Editor = ({
               onDelete={handleDeleteAttribute}
               parent={selectedSchema ? selectedSchema.type : parent}
             />
-
+            <MediaOptions setMediaOptions={setMediaOptions} />
             <Flex direction="row" justify="space-between" mt={20}>
               {selectedSchema && (
                 <Flex direction="column">
