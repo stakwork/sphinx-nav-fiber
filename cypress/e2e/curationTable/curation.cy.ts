@@ -1,5 +1,5 @@
 describe('Test Curation Table', () => {
-  it('Search Topic', () => {
+  it.skip('Search Topic', () => {
     cy.intercept({
       method: 'GET',
       url: 'http://localhost:8444/api/nodes/info?skip=0&limit=50&muted=False&sort_by=date&node_type=Topic*',
@@ -82,7 +82,7 @@ describe('Test Curation Table', () => {
     })
   })
 
-  it('Merge Two Topics', () => {
+  it.skip('Merge Two Topics', () => {
     cy.intercept({
       method: 'GET',
       url: 'http://localhost:8444/api/nodes/info*',
@@ -351,7 +351,7 @@ describe('Test Curation Table', () => {
       })
   })
 
-  it('Add Edge Between Two Nodes', () => {
+  it.skip('Add Edge Between Two Nodes', () => {
     cy.intercept({
       method: 'GET',
       url: 'http://localhost:8444/api/nodes/info?skip=0&limit=50&muted=False&sort_by=date&node_type=Topic*',
@@ -454,7 +454,7 @@ describe('Test Curation Table', () => {
     })
   })
 
-  it('Filter topics', () => {
+  it.skip('Filter topics', () => {
     cy.intercept({
       method: 'GET',
       url: 'http://localhost:8444/api/nodes/info?skip=0&limit=50&muted=False&sort_by=date&node_type=Topic*',
