@@ -1,5 +1,6 @@
 export const colors = {
   black: 'rgb(0, 0, 0)',
+  appearanceBg: 'rgba(60, 64, 83, 0.3)',
   disableBtn: 'rgba(35, 37, 47, 0.8)',
   bluePressState: 'rgb(57, 97, 220)',
   blueTextAccent: 'rgb(130, 180, 255)',
@@ -99,6 +100,8 @@ export const colors = {
   SEEDQUESTION: 'rgba(47, 58, 89, 1)',
   SEEDQUESTION_HOVER: 'rgba(38, 42, 58, 1)',
   COLLAPSE_BUTTON: 'rgba(48, 51, 66, 1)',
+  SOURCE_TABLE_LINK: 'rgba(171, 204, 254, 1)',
+  AI_HIGHLIGHT: 'rgba(0, 123, 255, 0.1)',
 } as const
 
 export type ColorName = keyof typeof colors
