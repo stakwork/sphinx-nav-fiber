@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Button } from '@mui/material'
+import { Button, Grid } from '@mui/material'
 import { useEffect, useMemo, useState } from 'react'
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { ClipLoader } from 'react-spinners'
@@ -32,6 +32,7 @@ export type FormData = {
   attributes?: {
     [k: string]: string | boolean
   }
+  selectedIndex?: string
 }
 
 type Props = {
@@ -70,7 +71,7 @@ const handleSubmitForm = async (
   mediaOptions: { videoAudio: boolean; image: boolean; sourceLink: boolean },
 ): Promise<string | undefined> => {
   try {
-    const { attributes, ...withoutAttributes } = data
+    const { attributes, selectedIndex, ...withoutAttributes } = data
 
     const updatedAttributes = {
       ...convertAttributes(attributes),
@@ -79,12 +80,14 @@ const handleSubmitForm = async (
 
     const requestData: {
       attributes: { [key: string]: string }
+      index?: string
       media_url?: string
       image_url?: string
       source_link?: string
     } = {
       ...withoutAttributes,
       attributes: updatedAttributes,
+      index: selectedIndex,
     }
 
     if (mediaOptions.videoAudio) {
@@ -476,6 +479,20 @@ export const Editor = ({
               parent={selectedSchema ? selectedSchema.type : parent}
             />
             <MediaOptions setMediaOptions={setMediaOptions} />
+            <Flex>
+              <LineBar />
+              <Flex mb={12} mt={12}>
+                <Text>Indexes</Text>
+              </Flex>
+              <Grid item mb={2} width="70%">
+                <AutoComplete
+                  dataTestId="cy-item-select-indexes"
+                  onSelect={(val) => setValue(`selectedIndex`, val?.value)}
+                  options={attributes.map((attr) => ({ label: attr.key, value: attr.key }))}
+                />
+              </Grid>
+              <LineBar />
+            </Flex>
             <Flex direction="row" justify="space-between" mt={20}>
               {selectedSchema && (
                 <Flex direction="column">
@@ -556,4 +573,11 @@ const StyledError = styled(Flex)`
   line-height: 0.2px;
   margin-top: 12px;
   padding-top: 20px;
+`
+
+const LineBar = styled.div`
+  border: 1px solid ${colors.BG2};
+  width: calc(100% + 32px);
+  opacity: 0.5;
+  margin-left: -16px;
 `
