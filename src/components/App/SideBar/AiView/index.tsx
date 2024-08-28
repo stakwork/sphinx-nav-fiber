@@ -65,8 +65,9 @@ const Wrapper = styled(Flex)(({ theme }) => ({
   },
 }))
 
-const ScrollWrapper = styled(Flex)(() => ({
-  overflow: 'auto',
-  flex: 1,
-  width: '100%',
-}))
+const ScrollWrapper = styled(Flex)`
+  overflow-y: auto;
+  overflow-x: hidden;
+  flex: 1;
+  width: 100%;
+`
