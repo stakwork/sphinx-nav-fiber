@@ -486,7 +486,6 @@ export const Editor = ({
               </Flex>
               <Grid item mb={2} width="70%">
                 <AutoComplete
-                  dataTestId="cy-item-select-indexes"
                   onSelect={(val) => setValue(`selectedIndex`, val?.value)}
                   options={attributes.map((attr) => ({ label: attr.key, value: attr.key }))}
                 />
