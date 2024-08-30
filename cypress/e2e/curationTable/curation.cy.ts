@@ -1,34 +1,4 @@
 describe('Test Curation Table', () => {
-  it.skip('Search Topic', () => {
-    cy.intercept({
-      method: 'GET',
-      url: 'http://localhost:8444/api/nodes/info?skip=0&limit=50&muted=False&sort_by=date&node_type=Topic*',
-    }).as('loadTopics')
-
-    cy.intercept({
-      method: 'GET',
-      url: 'http://localhost:8444/api/nodes/info?skip=0&limit=50&muted=False&sort_by=date&search=Bitcoin*',
-    }).as('searchTopic')
-
-    cy.initialSetup('alice', 300)
-
-    cy.get('#cy-open-soure-table').click()
-
-    cy.get('[data-testid="sources-table"]').should('exist')
-
-    cy.contains('button', 'Topics').click()
-
-    cy.wait('@loadTopics')
-
-    cy.get('input[placeholder="Search ..."]').type('Bitcoin')
-
-    cy.wait('@searchTopic')
-
-    cy.get('tbody').find('tr').should('have.length.greaterThan', 0)
-
-    cy.get('[data-testid="topic-search-container"]').find('button[type="button"]').click()
-  })
-
   it.skip('Merge Two Topics', () => {
     cy.intercept({
       method: 'GET',
