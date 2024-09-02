@@ -1,6 +1,7 @@
 // @ts-nocheck
 // @ts-ignore
 
+import { isEqual } from 'lodash'
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
 import { fetchGraphData } from '~/network/fetchGraphData'
@@ -30,8 +31,6 @@ export type DataStore = {
   categoryFilter: NodeType | null
   dataInitial: { nodes: NodeExtended[]; links: Link[] } | null
   dataNew: { nodes: NodeExtended[]; links: Link[] } | null
-  currentPage: number
-  itemsPerPage: number
   filters: FilterParams
   isFetching: boolean
   isLoadingNew: boolean
@@ -106,8 +105,8 @@ const defaultData: Omit<
   currentPage: 0,
   itemsPerPage: 300,
   filters: {
-    skip: '0',
-    limit: '300',
+    skip: 0,
+    limit: 300,
     depth: '2',
     sort_by: 'date_added_to_graph',
     include_properties: 'true',
@@ -138,7 +137,9 @@ export const useDataStore = create<DataStore>()(
     ...defaultData,
 
     fetchData: async (setBudget, setAbortRequests, AISearchQuery = '') => {
-      const { currentPage, itemsPerPage, dataInitial: existingData, filters } = get()
+      const { dataInitial: existingData, filters } = get()
+      const currentPage = filters.skip
+      const itemsPerPage = filters.limit
       const { currentSearch } = useAppStore.getState()
       const { setAiSummaryAnswer, setNewLoading, aiRefId } = useAiSummaryStore.getState()
       let ai = { ai_summary: String(!!AISearchQuery) }
@@ -169,18 +170,20 @@ export const useDataStore = create<DataStore>()(
 
       const word = AISearchQuery || currentSearch
 
+      const isLatest = isEqual(filters, defaultData.filters) && !word
+
       const updatedParams = {
         ...withoutNodeType,
         ...ai,
         skip: currentPage === 0 ? String(currentPage * itemsPerPage) : String(currentPage * itemsPerPage + 1),
-        limit: word ? 25 : String(itemsPerPage),
+        limit: word ? '25' : String(itemsPerPage),
         ...(filterNodeTypes.length > 0 ? { node_type: JSON.stringify(filterNodeTypes) } : {}),
         ...(word ? { word } : {}),
         ...(aiRefId && AISearchQuery ? { previous_search_ref_id: aiRefId } : {}),
       }
 
       try {
-        const data = await fetchGraphData(setBudget, updatedParams, signal, setAbortRequests)
+        const data = await fetchGraphData(setBudget, updatedParams, isLatest, signal, setAbortRequests)
 
         if (!data?.nodes) {
           return
@@ -264,22 +267,13 @@ export const useDataStore = create<DataStore>()(
 
     setPage: (page: number) => set({ currentPage: page }),
     nextPage: () => {
-      const { currentPage, fetchData } = get()
+      const { filters, fetchData } = get()
 
-      set({ currentPage: currentPage + 1 })
+      set({ filters: { ...filters, skip: filters.skip + 1 } })
       fetchData()
     },
-    prevPage: () => {
-      const { currentPage, fetchData } = get()
-
-      if (currentPage > 0) {
-        set({ currentPage: currentPage - 1 })
-        fetchData()
-      }
-    },
     resetDataNew: () => null,
-    setFilters: (filters: FilterParams) =>
-      set((state) => ({ filters: { ...state.filters, ...filters, page: 0 }, currentPage: 0 })),
+    setFilters: (filters: FilterParams) => set((state) => ({ filters: { ...state.filters, ...filters, page: 0 } })),
     setSidebarFilterCounts: (sidebarFilterCounts) => set({ sidebarFilterCounts }),
     setTrendingTopics: (trendingTopics) => set({ trendingTopics }),
     setStats: (stats) => set({ stats }),
