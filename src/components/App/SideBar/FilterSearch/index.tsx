@@ -44,7 +44,7 @@ export const FilterSearch = ({ showAllSchemas, setShowAllSchemas, schemaAll, anc
   const handleFiltersApply = async () => {
     setFilters({
       node_type: selectedTypes,
-      limit: maxResults.toString(),
+      limit: maxResults,
       depth: hops.toString(),
       top_node_count: sourceNodes.toString(),
     })
