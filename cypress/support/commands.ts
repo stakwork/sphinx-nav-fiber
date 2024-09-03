@@ -34,7 +34,7 @@ import '@testing-library/cypress/add-commands'
 Cypress.Commands.add('initialSetup', (username, budget) => {
   cy.intercept({
     method: 'GET',
-    url: 'http://localhost:8444/api/prediction/graph/search*',
+    url: 'http://localhost:8444/api/prediction/graph/search/latest*',
   }).as('loadLatest')
 
   cy.intercept({
@@ -62,8 +62,6 @@ Cypress.Commands.add('initialSetup', (username, budget) => {
     },
   })
 
-  cy.wait(20000)
-  cy.wait(['@loadLatest'])
   cy.get('[data-testid="explore-graph-btn"]', { timeout: 30000 }).should('be.visible').click()
-  cy.wait(['@loadAbout', '@loadStats', '@getTrends'])
+  cy.wait(['@loadAbout', '@loadStats', '@getTrends', '@loadLatest'])
 })
