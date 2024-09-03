@@ -8,19 +8,21 @@ import { getLSat } from '~/utils/getLSat'
 export const fetchGraphData = async (
   setBudget: (value: number | null) => void,
   params: Record<string, string>,
+  isLatest = false,
   signal: AbortSignal,
   setAbortRequests: (status: boolean) => void,
-): Promise<FetchDataResponse> => fetchNodes(setBudget, params, signal, setAbortRequests)
+): Promise<FetchDataResponse> => fetchNodes(setBudget, params, isLatest, signal, setAbortRequests)
 
 // Consolidated function to handle different fetch scenarios
 const fetchNodes = async (
   setBudget: (value: number | null) => void,
   params: Record<string, string>,
+  isLatest = false,
   signal: AbortSignal,
   setAbortRequests: (status: boolean) => void,
 ): Promise<FetchDataResponse> => {
   const args = new URLSearchParams(params).toString()
-  const url = `/prediction/graph/search?${args}`
+  const url = isLatest ? `/prediction/graph/search/latest?` : `/prediction/graph/search?${args}`
 
   const fetchWithLSAT = async (): Promise<FetchDataResponse> => {
     const lsatToken = await getLSat()
@@ -34,7 +36,7 @@ const fetchNodes = async (
       if (error.status === 402) {
         await payLsat(setBudget)
 
-        return fetchNodes(setBudget, params, signal, setAbortRequests)
+        return fetchNodes(setBudget, params, isLatest, signal, setAbortRequests)
       }
 
       throw error
