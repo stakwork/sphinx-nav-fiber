@@ -63,7 +63,6 @@ Cypress.Commands.add('initialSetup', (username, budget) => {
   })
 
   cy.wait(20000)
-  cy.wait(['@loadLatest'])
   cy.get('[data-testid="explore-graph-btn"]', { timeout: 30000 }).should('be.visible').click()
   cy.wait(['@loadAbout', '@loadStats', '@getTrends'])
 })
