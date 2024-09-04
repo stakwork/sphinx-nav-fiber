@@ -12,8 +12,8 @@ export type FetchDataResponse = {
 }
 
 export type FilterParams = {
-  skip: string
-  limit: string
+  skip: number
+  limit: number
   depth: string
   sort_by: string
   top_node_count: string
@@ -263,7 +263,7 @@ export type TStats = {
   numContributors?: string
   numDaily?: string
   numEpisodes?: string
-  numNodes?: string
+  nodeCount?: string
   numTwitterSpace?: string
   numVideo?: string
   numDocuments?: string

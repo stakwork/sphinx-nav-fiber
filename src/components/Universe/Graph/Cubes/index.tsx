@@ -57,13 +57,14 @@ export const Cubes = memo(() => {
     (e: ThreeEvent<PointerEvent>) => {
       e.stopPropagation()
       setIsHovering(false)
+      setHoveredNode(null)
 
       if (hoverTimeoutRef.current) {
         clearTimeout(hoverTimeoutRef.current)
         hoverTimeoutRef.current = null
       }
     },
-    [setIsHovering],
+    [setIsHovering, setHoveredNode],
   )
 
   const onPointerIn = useCallback(

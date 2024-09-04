@@ -6,6 +6,7 @@ import PlusIcon from '~/components/Icons/PlusIcon'
 import { SchemaExtended } from '~/components/ModalsContainer/BlueprintModal/types'
 import { Flex } from '~/components/common/Flex'
 import { useDataStore } from '~/stores/useDataStore'
+import { useUserStore } from '~/stores/useUserStore'
 import { colors } from '~/utils/colors'
 import { Hops } from './Hops'
 import { MaxResults } from './MaxResults'
@@ -32,7 +33,8 @@ export const FilterSearch = ({ showAllSchemas, setShowAllSchemas, schemaAll, anc
     )
   }
 
-  const { setFilters } = useDataStore((s) => s)
+  const { setFilters, fetchData, setAbortRequests } = useDataStore((s) => s)
+  const [setBudget] = useUserStore((s) => [s.setBudget])
   const [selectedTypes, setSelectedTypes] = useState<string[]>(defaultValues.selectedTypes)
   const [hops, setHops] = useState(defaultValues.hops)
   const [sourceNodes, setSourceNodes] = useState<number>(defaultValues.sourceNodes)
@@ -53,13 +55,15 @@ export const FilterSearch = ({ showAllSchemas, setShowAllSchemas, schemaAll, anc
     setShowAllSchemas(true)
   }
 
-  const handleFiltersApply = () => {
+  const handleFiltersApply = async () => {
     setFilters({
       node_type: selectedTypes,
-      limit: maxResults.toString(),
+      limit: maxResults,
       depth: hops.toString(),
       top_node_count: sourceNodes.toString(),
     })
+
+    await fetchData(setBudget, setAbortRequests)
   }
 
   return (

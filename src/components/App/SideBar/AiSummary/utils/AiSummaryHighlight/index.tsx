@@ -1,7 +1,7 @@
 import styled, { keyframes } from 'styled-components'
-import { colors } from '~/utils'
-import { ExtractedEntity } from '~/types'
 import { Tooltip } from '~/components/common/ToolTip'
+import { ExtractedEntity } from '~/types'
+import { colors } from '~/utils'
 
 // Define a keyframe animation for highlighting from top-left to bottom-right
 const highlightAnimation = keyframes`
@@ -29,6 +29,12 @@ const Highlight = styled.span<{ animate: boolean }>`
     text-decoration: underline;
     cursor: pointer;
     animation: none;
+  }
+
+  &:active {
+    background-color: ${colors.AI_HIGHLIGHT};
+    border-radius: 4px;
+    text-decoration: none;
   }
 `
 

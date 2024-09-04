@@ -66,13 +66,11 @@ const _AiSources = ({ sourceIds }: Props) => {
               image_url: imageUrl,
               date,
               boost,
-              type,
               episode_title: episodeTitle,
               show_title: showTitle,
               node_type: nodeType,
               text,
               source_link: sourceLink,
-              link,
               name,
               verified = false,
               twitter_handle: twitterHandle,
@@ -86,8 +84,8 @@ const _AiSources = ({ sourceIds }: Props) => {
                 date={date || 0}
                 episodeTitle={formatDescription(episodeTitle)}
                 imageUrl={imageUrl || ''}
-                link={link}
                 name={name || ''}
+                node={n}
                 onClick={() => {
                   handleNodeClick(n)
                 }}
@@ -95,7 +93,7 @@ const _AiSources = ({ sourceIds }: Props) => {
                 sourceLink={sourceLink}
                 text={text || ''}
                 twitterHandle={twitterHandle}
-                type={nodeType || type}
+                type={nodeType}
                 verified={verified}
               />
             )

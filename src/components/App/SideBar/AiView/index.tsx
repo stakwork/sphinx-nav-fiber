@@ -14,13 +14,13 @@ export const MENU_WIDTH = 390
 // eslint-disable-next-line react/display-name
 export const AiView = () => {
   const { aiSummaryAnswers, resetAiSummaryAnswer, newLoading, setNewLoading } = useAiSummaryStore((s) => s)
-  const { abortFetchData } = useDataStore((s) => s)
-
+  const { abortFetchData, resetGraph } = useDataStore((s) => s)
   const navigate = useNavigate()
 
   const handleCloseAi = () => {
     setNewLoading(null)
     abortFetchData()
+    resetGraph()
     resetAiSummaryAnswer()
     navigate('/')
   }
@@ -65,8 +65,9 @@ const Wrapper = styled(Flex)(({ theme }) => ({
   },
 }))
 
-const ScrollWrapper = styled(Flex)(() => ({
-  overflow: 'auto',
-  flex: 1,
-  width: '100%',
-}))
+const ScrollWrapper = styled(Flex)`
+  overflow-y: auto;
+  overflow-x: hidden;
+  flex: 1;
+  width: 100%;
+`
