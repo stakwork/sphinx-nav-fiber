@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Button } from '@mui/material'
+import { Button, Grid } from '@mui/material'
 import { useEffect, useMemo, useState } from 'react'
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { ClipLoader } from 'react-spinners'
@@ -17,6 +17,7 @@ import { getNodeSchemaTypes, getNodeType, Schema } from '~/network/fetchSourcesD
 import { useModal } from '~/stores/useModalStore'
 import { colors } from '~/utils'
 import { CreateCustomNodeAttribute } from './CustomAttributesStep'
+import MediaOptions from './MediaOptions'
 import { convertAttributes, parsedObjProps, parseJson } from './utils'
 
 const defaultValues = {
@@ -31,6 +32,7 @@ export type FormData = {
   attributes?: {
     [k: string]: string | boolean
   }
+  selectedIndex?: string
 }
 
 type Props = {
@@ -66,18 +68,38 @@ const handleSubmitForm = async (
   data: FieldValues,
   isUpdate = false,
   deletedAttributes: string[],
+  mediaOptions: { videoAudio: boolean; image: boolean; sourceLink: boolean },
 ): Promise<string | undefined> => {
   try {
-    const { attributes, ...withoutAttributes } = data
+    const { attributes, selectedIndex, ...withoutAttributes } = data
 
     const updatedAttributes = {
       ...convertAttributes(attributes),
       ...deletedAttributes.reduce<{ [key: string]: string }>((acc, key) => ({ ...acc, [key]: 'delete' }), {}),
     }
 
-    const requestData = {
+    const requestData: {
+      attributes: { [key: string]: string }
+      index?: string
+      media_url?: string
+      image_url?: string
+      source_link?: string
+    } = {
       ...withoutAttributes,
       attributes: updatedAttributes,
+      index: selectedIndex,
+    }
+
+    if (mediaOptions.videoAudio) {
+      requestData.media_url = ''
+    }
+
+    if (mediaOptions.image) {
+      requestData.image_url = ''
+    }
+
+    if (mediaOptions.sourceLink) {
+      requestData.source_link = ''
     }
 
     let res: { status: string; ref_id: string }
@@ -172,6 +194,12 @@ export const Editor = ({
   const [deletedAttributes, setDeletedAttributes] = useState<string[]>([])
   const [parsedData, setParsedData] = useState<parsedObjProps[]>([])
   const [submitDisabled, setSubmitDisabled] = useState(true)
+
+  const [mediaOptions, setMediaOptions] = useState({
+    videoAudio: false,
+    image: false,
+    sourceLink: false,
+  })
 
   useEffect(
     () => () => {
@@ -297,6 +325,7 @@ export const Editor = ({
         { ...data, ...(selectedSchema ? { ref_id: selectedSchema?.ref_id } : {}) },
         !!selectedSchema,
         deletedAttributes,
+        mediaOptions,
       )
 
       onSchemaCreate({ type: data.type, parent: parent || '', ref_id: selectedSchema?.ref_id || res || 'new' })
@@ -449,7 +478,20 @@ export const Editor = ({
               onDelete={handleDeleteAttribute}
               parent={selectedSchema ? selectedSchema.type : parent}
             />
-
+            <MediaOptions setMediaOptions={setMediaOptions} />
+            <Flex>
+              <LineBar />
+              <Flex mb={12} mt={12}>
+                <Text>Indexes</Text>
+              </Flex>
+              <Grid item mb={2} width="70%">
+                <AutoComplete
+                  onSelect={(val) => setValue(`selectedIndex`, val?.value)}
+                  options={attributes.map((attr) => ({ label: attr.key, value: attr.key }))}
+                />
+              </Grid>
+              <LineBar />
+            </Flex>
             <Flex direction="row" justify="space-between" mt={20}>
               {selectedSchema && (
                 <Flex direction="column">
@@ -530,4 +572,11 @@ const StyledError = styled(Flex)`
   line-height: 0.2px;
   margin-top: 12px;
   padding-top: 20px;
+`
+
+const LineBar = styled.div`
+  border: 1px solid ${colors.BG2};
+  width: calc(100% + 32px);
+  opacity: 0.5;
+  margin-left: -16px;
 `

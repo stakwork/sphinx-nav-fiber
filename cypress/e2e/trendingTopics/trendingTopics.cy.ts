@@ -35,6 +35,10 @@ describe('test trending topics', () => {
       },
     })
 
+    cy.wait(20000)
+
+    cy.get('[data-testid="explore-graph-btn"]').click()
+
     cy.wait(['@loadAbout', '@loadLatest', '@loadStats'])
 
     cy.wait('@getTrends').then((interception) => {

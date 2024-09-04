@@ -205,7 +205,7 @@ export const Trending = () => {
                 className="list-item"
                 direction="row"
                 justify="space-between"
-                onClick={() => selectTrending(i.name)}
+                onClick={() => selectTrending(i.tldr_topic ?? i.name)}
               >
                 <Paragraph>
                   <IconWrapper>

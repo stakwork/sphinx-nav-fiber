@@ -9,7 +9,7 @@ import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { sphinxBridge } from '~/testSphinxBridge'
 import { updateBudget } from '~/utils'
-import { isWebView } from '~/utils/isWebView'
+import { isAndroid, isWebView } from '~/utils/isWebView'
 
 export const AuthGuard = ({ children }: PropsWithChildren) => {
   const [unAuthorized, setUnauthorized] = useState(false)
@@ -96,8 +96,17 @@ export const AuthGuard = ({ children }: PropsWithChildren) => {
   // auth checker
   useEffect(() => {
     const init = async () => {
-      if (isWebView() || isE2E) {
-        await handleAuth()
+      if (isWebView() || isE2E || isAndroid()) {
+        try {
+          if (isAndroid()) {
+            // eslint-disable-next-line no-promise-executor-return
+            await new Promise((r) => setTimeout(r, 5000))
+          }
+
+          await handleAuth()
+        } catch (error) {
+          console.log(error)
+        }
       }
 
       await handleIsAdmin()

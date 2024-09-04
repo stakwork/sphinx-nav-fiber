@@ -41,7 +41,7 @@ export const AiSearch = () => {
               handleSubmit()
             }}
           >
-            {!isLoading ? <SearchIcon /> : <ClipLoader color={colors.lightGray} data-testid="loader" size="20" />}
+            {!isLoading ? <SearchIcon /> : <StyledClipLoader color={colors.lightGray} data-testid="loader" size="20" />}
           </InputButton>
         </Search>
       </FormProvider>
@@ -83,4 +83,8 @@ const InputButton = styled(Flex).attrs({
   ${AiSearchWrapper} input:focus + & {
     color: ${colors.primaryBlue};
   }
+`
+
+const StyledClipLoader = styled(ClipLoader)`
+  margin-right: 10px;
 `

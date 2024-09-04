@@ -26,8 +26,8 @@ const _BlueprintModal = () => {
   }
 
   return (
-    <BaseModal background="black" id="blueprintGraph" kind="full" onClose={handleClose} preventOutsideClose>
-      <Body />
+    <BaseModal background="black" id="blueprintGraph" kind="full" preventOutsideClose>
+      <Body Close={handleClose} />
     </BaseModal>
   )
 }

@@ -2,27 +2,32 @@ import styled from 'styled-components'
 import { Avatar } from '~/components/common/Avatar'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
+import { TypeBadge } from '~/components/common/TypeBadge'
 import { Guests, Node } from '~/types'
 import { colors } from '~/utils/colors'
 import { formatDescription } from '~/utils/formatDescription'
 import { TwitData } from './Tweet'
 
 const Wrapper = styled(Flex)(({ theme }) => ({
-  position: 'absolute',
-  top: '65px',
-  right: '55px',
   width: '300px',
   pointerEvents: 'auto',
-  background: colors.dashboardHeader,
+  background: colors.BG3,
   boxShadow: '0px 1px 6px rgba(0, 0, 0, 0.1)',
   color: colors.primaryText1,
-  zIndex: 100,
   maxHeight: '400px',
   overflowY: 'auto',
   transition: 'opacity 0.6s',
   padding: theme.spacing(2, 3),
   [theme.breakpoints.down('sm')]: {
     padding: theme.spacing(1, 1.5),
+  },
+  '&::-webkit-scrollbar': {
+    width: '3px',
+  },
+  '&::-webkit-scrollbar-track': {
+    borderRadius: '8px',
+    margin: '8px',
+    overflowY: 'hidden',
   },
 }))
 
@@ -80,7 +85,7 @@ export const Tooltip = ({ node }: Props) => {
           <Flex direction="row">
             {displayImageUrl && <Divider />}
             <Flex align="flex-start" pb={12}>
-              <Text>{nodeType?.toUpperCase()}</Text>
+              <TypeBadge type={nodeType} />
             </Flex>
           </Flex>
 
