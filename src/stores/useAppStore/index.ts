@@ -39,7 +39,7 @@ const defaultData = {
   hasBudgetExplanationModalBeSeen: false,
   relevanceIsSelected: false,
   secondarySidebarActiveTab: '' as const,
-  sidebarIsOpen: true,
+  sidebarIsOpen: false,
   theme: 'light' as const,
   transcriptIsOpen: false,
   appMetaData: null,
@@ -61,7 +61,7 @@ export const useAppStore = create<AppStore>((set, get) => ({
     }),
   setSidebarOpen: (sidebarIsOpen) =>
     set({
-      sidebarIsOpen,
+      sidebarIsOpen: !get().sidebarIsOpen,
       transcriptIsOpen: !sidebarIsOpen ? false : get().transcriptIsOpen,
     }),
   setTranscriptOpen: (transcriptIsOpen) => set({ transcriptIsOpen }),

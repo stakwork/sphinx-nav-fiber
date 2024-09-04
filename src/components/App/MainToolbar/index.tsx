@@ -46,7 +46,7 @@ export const MainToolbar = () => {
   const handleOpenChatModal = () => {
     setUniverseQuestionIsOpen()
     setSidebarOpen(!sidebarIsOpen)
-    setShowCollapseButton(false)
+    setShowCollapseButton(!sidebarIsOpen)
   }
 
   return (
