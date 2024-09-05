@@ -118,7 +118,7 @@ const NodeDetail = ({ label, value, hasAudio, isPlaying, togglePlay }: Props) =>
   const isLong = (value as string).length > 140
   const searchTerm = useAppStore((s) => s.currentSearch)
 
-  if (!value) {
+  if (!value || label === 'Audio EN') {
     return null
   }
 
