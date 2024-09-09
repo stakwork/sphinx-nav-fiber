@@ -61,7 +61,7 @@ export const useAppStore = create<AppStore>((set, get) => ({
     }),
   setSidebarOpen: (sidebarIsOpen) =>
     set({
-      sidebarIsOpen: get().sidebarIsOpen,
+      sidebarIsOpen,
       transcriptIsOpen: !sidebarIsOpen ? false : get().transcriptIsOpen,
     }),
   setTranscriptOpen: (transcriptIsOpen) => set({ transcriptIsOpen }),

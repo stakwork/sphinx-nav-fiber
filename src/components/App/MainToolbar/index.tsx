@@ -29,7 +29,7 @@ export const MainToolbar = () => {
 
   const { resetAiSummaryAnswer, setNewLoading } = useAiSummaryStore()
   const { abortFetchData, resetGraph } = useDataStore((s) => s)
-  const { setUniverseQuestionIsOpen, setSidebarOpen, setShowCollapseButton, sidebarIsOpen } = useAppStore((s) => s)
+  const { setUniverseQuestionIsOpen, setSidebarOpen, setShowCollapseButton } = useAppStore((s) => s)
   const { customSchemaFeatureFlag, userFeedbackFeatureFlag, chatInterfaceFeatureFlag } = useFeatureFlagStore((s) => s)
 
   const [isAdmin] = useUserStore((s) => [s.isAdmin])
@@ -45,8 +45,8 @@ export const MainToolbar = () => {
 
   const handleOpenChatModal = () => {
     setUniverseQuestionIsOpen()
-    setSidebarOpen(!sidebarIsOpen)
-    setShowCollapseButton(!sidebarIsOpen)
+    setSidebarOpen(true)
+    setShowCollapseButton(true)
   }
 
   return (
