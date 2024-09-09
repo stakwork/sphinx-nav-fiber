@@ -176,4 +176,31 @@ describe('FilterSearch Component', () => {
 
     expect(screen.queryByText('Type')).not.toBeInTheDocument()
   })
+
+  it('should reset Source Nodes, Hops, and Max Results to default values when "Clear" button is clicked', async () => {
+    renderComponent()
+
+    const type1Pill = screen.getByText('Type1')
+    fireEvent.click(type1Pill)
+
+    const hopsCheckbox = screen.getByLabelText('2 hops away')
+    fireEvent.click(hopsCheckbox)
+
+    const maxResultsSlider = screen.getByTestId('max-results-slider')
+    fireEvent.mouseDown(maxResultsSlider)
+    fireEvent.mouseUp(maxResultsSlider, { clientX: 50 })
+
+    const sourceNodesSlider = screen.getByTestId('source-nodes-slider')
+    fireEvent.mouseDown(sourceNodesSlider)
+    fireEvent.mouseUp(sourceNodesSlider, { clientX: 20 })
+
+    const clearButton = screen.getByText('Clear')
+    fireEvent.click(clearButton)
+
+    waitFor(() => {
+      expect(screen.getByLabelText('Direct relationship')).toBeChecked()
+      expect(screen.getByTestId('max-results-slider')).toHaveValue(30)
+      expect(screen.getByTestId('source-nodes-slider')).toHaveValue(10)
+    })
+  })
 })
