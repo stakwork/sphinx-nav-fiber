@@ -42,6 +42,7 @@ const HeaderWrapper = styled(Flex)`
   border-top-right-radius: 9px;
   justify-content: space-between;
   padding: 17px;
+  border-bottom: 1px solid ${colors.black};
 `
 
 const IconWrapper = styled.div`

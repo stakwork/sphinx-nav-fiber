@@ -389,11 +389,13 @@ export const Editor = ({
 
   return (
     <Flex>
-      <Flex direction="row" justify="flex-end">
+      <HeaderRow>
+        <HeaderText>{selectedSchema ? 'Edit Type' : 'Create Type'}</HeaderText>
         <CloseButton data-testid="close-sidebar-sub-view" onClick={onCancel}>
           <ClearIcon />
         </CloseButton>
-      </Flex>
+      </HeaderRow>
+      <LineBarWrapper />
       <Flex>
         <FormProvider {...form}>
           <form id="add-type-form" onSubmit={onSubmit}>
@@ -541,6 +543,13 @@ const CustomButton = styled(Button)`
   margin: 0 auto !important;
 `
 
+const LineBarWrapper = styled.div`
+  border-bottom: 1px solid ${colors.black};
+  width: calc(100% + 32px);
+  margin: 0 -16px 16px;
+  opacity: 0.3;
+`
+
 const ClipLoaderWrapper = styled.span`
   margin-top: 2px;
 `
@@ -563,6 +572,16 @@ const CloseButton = styled(Flex)`
   font-size: 32px;
   color: ${colors.white};
   cursor: pointer;
+
+  svg {
+    color: ${colors.GRAY6};
+  }
+
+  &:hover {
+    svg {
+      color: ${colors.white};
+    }
+  }
 `
 
 const StyledError = styled(Flex)`
@@ -579,4 +598,22 @@ const LineBar = styled.div`
   width: calc(100% + 32px);
   opacity: 0.5;
   margin-left: -16px;
+`
+
+const HeaderRow = styled(Flex)`
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 16px;
+`
+
+const HeaderText = styled(Text)`
+  font-family: Barlow;
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 16px;
+  letter-spacing: 0.01em;
+  text-align: left;
+  color: ${colors.white};
 `
