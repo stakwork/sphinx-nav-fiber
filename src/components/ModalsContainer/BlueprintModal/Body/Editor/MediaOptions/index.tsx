@@ -65,7 +65,9 @@ const StyledFlex = styled(Flex)`
 
 const StyledFormControlLabel = styled(FormControlLabel)`
   justify-content: space-between;
-  margin: 8px 0;
+  margin-left: 2px !important;
+  margin-top: 8px;
+  margin-bottom: 8px;
 `
 
 const StyledLabel = styled.span<{ active: boolean }>`
