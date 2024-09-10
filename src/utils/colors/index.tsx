@@ -7,6 +7,7 @@ export const colors = {
   body: 'rgb(21, 30, 39)',
   boostBg1: 'rgb(32, 63, 62)',
   budgetExplanationModalBg: 'rgb(21, 28, 35)',
+  addAttributeBtn: 'rgba(107, 122, 141, 0.25)',
   dashboardHeader: 'rgba(26, 36, 46, 0.3)',
   dashboardSearch: 'rgb(21, 30, 39)',
   dashboardWashedoutText: 'rgb(107, 122, 141)',

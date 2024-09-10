@@ -81,10 +81,10 @@ const StyledLabel = styled.span<{ active: boolean }>`
 const CustomSwitch = styled((props: SwitchProps) => <Switch {...props} />)`
   &.MuiSwitch-root {
     width: 53px;
-    height: 38px;
+    height: 39px;
   }
   & .MuiSwitch-switchBase {
-    margin-top: 3px;
+    margin-top: 4px;
     &.Mui-checked {
       color: ${colors.white};
       & + .MuiSwitch-track {
