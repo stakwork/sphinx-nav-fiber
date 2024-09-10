@@ -23,6 +23,8 @@ export default defineConfig({
       // with any changed environment variables
       return config
     },
+    experimentalMemoryManagement: true,
+    numTestsKeptInMemory: 0,
     viewportHeight: 900,
     viewportWidth: 1440,
     watchForFileChanges: false,
