@@ -255,7 +255,7 @@ export const Editor = ({
   const attributesValue = watch('attributes')
 
   const attributes: Attribute[] = useMemo(
-    () => (isAttributeArray(attributesValue) ? attributesValue : []),
+    () => (isAttributeArray(attributesValue) ? attributesValue.filter((attr) => attr.key.trim() !== '') : []),
     [attributesValue],
   )
 
