@@ -25,6 +25,8 @@ type Props = {
   disabled?: boolean
   dataTestId?: string
   dataId?: string
+  placeholder?: string
+  className?: string
 }
 
 const defaultProps = {
@@ -43,6 +45,8 @@ export const AutoComplete: FC<Props> = ({
   disabled = false,
   dataTestId,
   dataId,
+  placeholder,
+  className,
 }) => {
   const inputRef = useRef<HTMLInputElement>(null)
   const [open, setOpen] = useState<boolean>(false)
@@ -65,6 +69,7 @@ export const AutoComplete: FC<Props> = ({
         autoFocus
         autoHighlight
         blurOnSelect
+        className={className}
         data-testid={dataId}
         disableClearable
         disabled={disabled}
@@ -108,6 +113,7 @@ export const AutoComplete: FC<Props> = ({
                 <>{isLoading ? <CircularProgress color="inherit" size={20} /> : params.InputProps.endAdornment}</>
               ),
             }}
+            placeholder={placeholder}
             size="medium"
             variant="standard"
           />
