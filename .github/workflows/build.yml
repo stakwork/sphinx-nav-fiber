@@ -34,8 +34,3 @@ jobs:
           git add ./build -f
           git commit -m "ci: automatic build fixes" || echo -n
           git push --set-upstream origin master
-      - name: Create New Release
-        uses: rymndhng/release-on-push-action@master
-        with:
-          bump_version_scheme: patch
-          use_github_release_notes: true

@@ -61,7 +61,7 @@ export const Default = () => {
     return null
   }
 
-  const hasImage = !!selectedNode.image_url
+  const hasImage = !!selectedNode.properties?.image_url
   const hasAudio = !!selectedNode.properties?.audio_EN
   const customKeys = selectedNode.properties || {}
 
