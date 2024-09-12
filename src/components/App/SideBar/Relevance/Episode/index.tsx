@@ -1,15 +1,14 @@
 import moment from 'moment'
 import styled from 'styled-components'
-import { BoostAmt } from '~/components/App/Helper/BoostAmt'
 import HashtagIcon from '~/components/Icons/HashtagIcon'
 import LinkIcon from '~/components/Icons/LinkIcon'
-import { Avatar } from '~/components/common/Avatar'
 import { Flex } from '~/components/common/Flex'
 import { highlightSearchTerm } from '~/components/common/Highlight/Highlight'
 import { Text } from '~/components/common/Text'
-import { TypeBadge } from '~/components/common/TypeBadge'
 import { useAppStore } from '~/stores/useAppStore'
+import { NodeExtended } from '~/types'
 import { colors } from '~/utils/colors'
+import { Default } from './Default'
 import { TypeCustom } from './TypeCustom'
 import { TypeDocument } from './TypeDocument'
 import { TypePerson } from './TypePerson'
@@ -43,26 +42,23 @@ export type Props = {
   boostCount: number
   date: number
   episodeTitle: string
-  isSelectedView?: boolean
   imageUrl?: string
   showTitle?: string
   text?: string
-  // eslint-disable-next-line react/no-unused-prop-types
-  link?: string
   sourceLink?: string
-  type?: string
+  type: string
   name?: string
   verified?: boolean
   twitterHandle?: string
   className?: string
   onClick: () => void
+  node: NodeExtended
 }
 
 export const Episode = ({
   boostCount,
   date,
   episodeTitle,
-  isSelectedView = false,
   imageUrl,
   showTitle,
   type,
@@ -73,10 +69,9 @@ export const Episode = ({
   twitterHandle,
   className = 'episode-wrapper',
   onClick,
+  node,
 }: Props) => {
   const searchTerm = useAppStore((s) => s.currentSearch)
-  const descriptionSource = type === 'show' ? showTitle : episodeTitle
-  const description = highlightSearchTerm(String(descriptionSource), searchTerm) as string
   const text = highlightSearchTerm(String(newText), searchTerm) as string
   const name = highlightSearchTerm(String(newName), searchTerm) as string
   const subtitleSource = type === 'show' ? '' : showTitle
@@ -84,20 +79,29 @@ export const Episode = ({
 
   const defaultViewTypes = ['Tweet', 'person', 'guest', 'topic', 'document']
 
-  return type ? (
+  return (
     <EpisodeWrapper className={className} onClick={onClick}>
-      {!defaultViewTypes.includes(type) ? (
-        <Flex align="center" direction="row" justify="center">
-          {!isSelectedView && imageUrl && (
-            <Flex align="center" pr={16}>
-              <Avatar size={80} src={imageUrl} type={type || ''} />
-            </Flex>
-          )}
+      {!defaultViewTypes.includes(type) && (
+        <Default
+          boostCount={boostCount}
+          date={date}
+          episodeTitle={episodeTitle}
+          imageUrl={imageUrl}
+          newName={newName}
+          node={node}
+          showTitle={showTitle}
+          type={type}
+        />
+      )}
 
+      {type === 'topic' && (
+        <TypeTopic>
           <Flex grow={1} shrink={1}>
             <Flex align="center" direction="row" justify="space-between">
-              <Flex align="center" direction="row">
-                {type && <TypeBadge type={type} />}
+              <Flex align="center" direction="row" pr={16}>
+                <HashtagIcon />
+
+                <p>{subtitle}</p>
               </Flex>
               {sourceLink && (
                 <StyledLink
@@ -109,77 +113,38 @@ export const Episode = ({
                 </StyledLink>
               )}
             </Flex>
-
-            {name && <Description data-testid="episode-name">{name}</Description>}
-            <Description data-testid="episode-description">{description}</Description>
-            <Flex align="center" direction="row" justify="flex-start">
+            <Flex align="center" direction="row" justify="flex-start" mt={9}>
               {Boolean(date) && <Date>{moment.unix(date).fromNow()}</Date>}
-              {Boolean(subtitle) && <Title>{subtitle}</Title>}
-              {!isSelectedView && boostCount > 0 && (
-                <Flex style={{ marginLeft: 'auto' }}>
-                  <BoostAmt amt={boostCount} />
-                </Flex>
-              )}
             </Flex>
           </Flex>
-        </Flex>
-      ) : (
-        <>
-          {type === 'topic' && (
-            <TypeTopic>
-              <Flex grow={1} shrink={1}>
-                <Flex align="center" direction="row" justify="space-between">
-                  <Flex align="center" direction="row" pr={16}>
-                    <HashtagIcon />
-
-                    <p>{subtitle}</p>
-                  </Flex>
-                  {sourceLink && (
-                    <StyledLink
-                      href={`${sourceLink}${sourceLink?.includes('?') ? '&' : '?'}open=system`}
-                      onClick={(e) => e.stopPropagation()}
-                      target="_blank"
-                    >
-                      <LinkIcon />
-                    </StyledLink>
-                  )}
-                </Flex>
-                <Flex align="center" direction="row" justify="flex-start" mt={9}>
-                  {Boolean(date) && <Date>{moment.unix(date).fromNow()}</Date>}
-                </Flex>
-              </Flex>
-            </TypeTopic>
-          )}
-          {['person', 'guest'].includes(type as string) && (
-            <TypePerson
-              date={date}
-              imageUrl={imageUrl}
-              name={name || ''}
-              sourceLink={sourceLink || ''}
-              title={showTitle || ''}
-            />
-          )}
-          {['image'].includes(type as string) && (
-            <TypeCustom date={date} imageUrl={sourceLink} name={name || ''} sourceLink={sourceLink || ''} />
-          )}
-          {type === 'Tweet' && (
-            <TypeTweet
-              date={date}
-              imageUrl={imageUrl}
-              name={name || ''}
-              sourceLink={sourceLink || ''}
-              text={text || ''}
-              twitterHandle={twitterHandle}
-              verified={verified}
-            />
-          )}
-          {type === 'document' && (
-            <TypeDocument date={date} sourceLink={sourceLink || ''} text={text || ''} type={type} />
-          )}
-        </>
+        </TypeTopic>
       )}
+      {['person', 'guest'].includes(type as string) && (
+        <TypePerson
+          date={date}
+          imageUrl={imageUrl}
+          name={name || ''}
+          sourceLink={sourceLink || ''}
+          title={showTitle || ''}
+        />
+      )}
+      {['image'].includes(type as string) && (
+        <TypeCustom date={date} imageUrl={sourceLink} name={name || ''} sourceLink={sourceLink || ''} />
+      )}
+      {type === 'Tweet' && (
+        <TypeTweet
+          date={date}
+          imageUrl={imageUrl}
+          name={name || ''}
+          sourceLink={sourceLink || ''}
+          text={text || ''}
+          twitterHandle={twitterHandle}
+          verified={verified}
+        />
+      )}
+      {type === 'document' && <TypeDocument date={date} sourceLink={sourceLink || ''} text={text || ''} type={type} />}
     </EpisodeWrapper>
-  ) : null
+  )
 }
 
 export const Description = styled(Flex)`

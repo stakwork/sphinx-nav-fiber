@@ -1,8 +1,6 @@
 import { memo, useEffect } from 'react'
-import { useDataStore } from '~/stores/useDataStore'
 import { useSelectedNode } from '~/stores/useGraphStore'
 import { usePlayerStore } from '~/stores/usePlayerStore'
-import { TeachMeText } from '../../Helper/TeachMe'
 import { Data } from '../Data'
 import { Episode } from '../Episode'
 import { Image } from '../Image'
@@ -18,7 +16,6 @@ import { Document } from './Document'
 // eslint-disable-next-line no-underscore-dangle
 const _View = () => {
   const selectedNode = useSelectedNode()
-  const { showTeachMe } = useDataStore((s) => s)
 
   const { setPlayingNode } = usePlayerStore((s) => s)
 
@@ -34,10 +31,6 @@ const _View = () => {
       setPlayingNode(selectedNode)
     }
   }, [setPlayingNode, selectedNode])
-
-  if (showTeachMe) {
-    return <TeachMeText />
-  }
 
   switch (selectedNode?.node_type) {
     case 'guest':

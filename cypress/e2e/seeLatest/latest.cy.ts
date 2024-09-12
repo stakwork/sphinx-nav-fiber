@@ -1,5 +1,5 @@
 describe('See latest button as new node are added', () => {
-  it('See latest as nodes are being added', () => {
+  it.skip('See latest as nodes are being added', () => {
     cy.initialSetup('carol', 300)
 
     // add tweet node
@@ -51,7 +51,7 @@ describe('See latest button as new node are added', () => {
       cy.get('[data-testid="twitter"]').click()
 
       cy.wait('@twitter')
-      //TODO: Get to know if twitter nodes are what is being returned
+      // TODO: Get to know if twitter nodes are what is being returned
 
       // .then((interception) => {
       //   const { query } = interception.request

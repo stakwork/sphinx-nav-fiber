@@ -1,8 +1,11 @@
+import { Slide } from '@mui/material'
+import clsx from 'clsx'
 import { memo } from 'react'
 import styled from 'styled-components'
 import PlusIcon from '~/components/Icons/PlusIcon'
 import StackIcon from '~/components/Icons/StackIcon'
 import { Flex } from '~/components/common/Flex'
+import { useHasAiChatsResponseLoading } from '~/stores/useAiSummaryStore'
 import { useDataStore } from '~/stores/useDataStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { colors } from '~/utils'
@@ -15,8 +18,13 @@ type Props = {
 const _AiQuestions = ({ questions }: Props) => {
   const { fetchData, setAbortRequests } = useDataStore((s) => s)
   const [setBudget] = useUserStore((s) => [s.setBudget])
+  const hasLoadingResponse = useHasAiChatsResponseLoading()
 
   const handleSubmitQuestion = (question: string) => {
+    if (hasLoadingResponse) {
+      return
+    }
+
     if (question) {
       fetchData(setBudget, setAbortRequests, question)
     }
@@ -24,28 +32,33 @@ const _AiQuestions = ({ questions }: Props) => {
 
   return questions?.length ? (
     <SectionWrapper>
-      <Heading className="heading" direction="row">
-        <div className="heading__icon">
-          <StackIcon />
-        </div>
-        <HeadingTitle>More on this</HeadingTitle>
-      </Heading>
-      <Flex>
-        {questions.map((i) => (
-          <QuestionWrapper
-            key={i}
-            align="center"
-            direction="row"
-            justify="space-between"
-            onClick={() => handleSubmitQuestion(i)}
-          >
-            <span>{i}</span>
-            <Flex className="icon">
-              <PlusIcon />
-            </Flex>
-          </QuestionWrapper>
-        ))}
-      </Flex>
+      <Slide direction="right" in mountOnEnter>
+        <Heading className="heading" direction="row">
+          <div className="heading__icon">
+            <StackIcon />
+          </div>
+          <HeadingTitle>More on this</HeadingTitle>
+        </Heading>
+      </Slide>
+      <Slide direction="right" in mountOnEnter>
+        <Flex>
+          {questions.map((i) => (
+            <QuestionWrapper
+              key={i}
+              align="center"
+              className={clsx({ disabled: hasLoadingResponse })}
+              direction="row"
+              justify="space-between"
+              onClick={() => handleSubmitQuestion(i)}
+            >
+              <span>{i}</span>
+              <Flex className={clsx({ disabled: hasLoadingResponse }, 'icon')}>
+                <PlusIcon />
+              </Flex>
+            </QuestionWrapper>
+          ))}
+        </Flex>
+      </Slide>
     </SectionWrapper>
   ) : null
 }
@@ -86,10 +99,28 @@ const QuestionWrapper = styled(Flex)`
   cursor: pointer;
   line-height: 1.4;
 
+  &.disabled {
+    cursor: default;
+    &:hover {
+      color: ${colors.GRAY3};
+      .icon {
+        color: ${colors.GRAY7};
+        cursor: default;
+      }
+    }
+  }
+
   &:hover {
     color: ${colors.white};
     .icon {
       color: ${colors.white};
+    }
+  }
+
+  &:active {
+    color: ${colors.SECONDARY_BLUE};
+    .icon {
+      color: ${colors.SECONDARY_BLUE};
     }
   }
 

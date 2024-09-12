@@ -1,6 +1,6 @@
 import { Select } from '@react-three/drei'
 import { ThreeEvent } from '@react-three/fiber'
-import { memo, useCallback } from 'react'
+import { memo, useCallback, useRef } from 'react'
 import { Object3D } from 'three'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
@@ -12,10 +12,12 @@ import { RelevanceBadges } from './RelevanceBadges'
 import { SelectionDataNodes } from './SelectionDataNodes'
 import { TextNode } from './Text'
 
+const POINTER_IN_DELAY = 200
+
 export const Cubes = memo(() => {
   const selectedNode = useSelectedNode()
   const relativeIds = useSelectedNodeRelativeIds()
-  const { selectionGraphData, showSelectionGraph, setHoveredNode } = useGraphStore((s) => s)
+  const { selectionGraphData, showSelectionGraph, setHoveredNode, setIsHovering } = useGraphStore((s) => s)
 
   const data = useDataStore((s) => s.dataInitial)
   const setTranscriptOpen = useAppStore((s) => s.setTranscriptOpen)
@@ -49,13 +51,20 @@ export const Cubes = memo(() => {
     [setTranscriptOpen, ignoreNodeEvent],
   )
 
+  const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+
   const onPointerOut = useCallback(
     (e: ThreeEvent<PointerEvent>) => {
       e.stopPropagation()
-
+      setIsHovering(false)
       setHoveredNode(null)
+
+      if (hoverTimeoutRef.current) {
+        clearTimeout(hoverTimeoutRef.current)
+        hoverTimeoutRef.current = null
+      }
     },
-    [setHoveredNode],
+    [setIsHovering, setHoveredNode],
   )
 
   const onPointerIn = useCallback(
@@ -68,11 +77,15 @@ export const Cubes = memo(() => {
 
         if (!ignoreNodeEvent(node)) {
           e.stopPropagation()
-          setHoveredNode(node)
+          setIsHovering(true)
+
+          hoverTimeoutRef.current = setTimeout(() => {
+            setHoveredNode(node)
+          }, POINTER_IN_DELAY)
         }
       }
     },
-    [setHoveredNode, ignoreNodeEvent],
+    [setHoveredNode, ignoreNodeEvent, setIsHovering],
   )
 
   const hideUniverse = showSelectionGraph && !!selectedNode

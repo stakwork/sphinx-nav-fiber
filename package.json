@@ -130,7 +130,8 @@
       }
     },
     "moduleNameMapper": {
-      "~/(.*)": "<rootDir>/src/$1"
+      "~/(.*)": "<rootDir>/src/$1",
+      "\\.(css|less|sass|scss)$": "<rootDir>/styleMock.js"
     },
     "globals": {
       "window": {

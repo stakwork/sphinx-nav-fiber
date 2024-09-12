@@ -1,6 +1,6 @@
 /* eslint-disable react/display-name */
 import { LinearProgress } from '@mui/material'
-import { memo, PropsWithChildren, useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
@@ -8,14 +8,13 @@ import { getAboutData, getStats } from '~/network/fetchSourcesData'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
 import { colors, formatSplashMessage, formatStatsResponse } from '~/utils'
-import { AnimatedTextContent } from './animated'
-import { initialMessageData, Message } from './constants'
 import { SphereAnimation } from './SpiningSphere'
+import { AnimatedTextContent } from './animated'
+import { Message, initialMessageData } from './constants'
 
-export const Splash = memo(({ children }: PropsWithChildren) => {
+export const Splash = () => {
   const [message, setMessage] = useState<Message>(initialMessageData)
   const [progress, setProgress] = useState(0)
-  const [isLoading, setIsLoading] = useState(true)
   const { appMetaData, setAppMetaData } = useAppStore((s) => s)
   const { stats, setStats, isFetching, setSeedQuestions } = useDataStore((s) => s)
 
@@ -43,8 +42,6 @@ export const Splash = memo(({ children }: PropsWithChildren) => {
         setMessage(messageData)
       }
     } catch {
-      setIsLoading(false)
-
       setProgress(100)
     }
   }, [appMetaData, setAppMetaData, setStats, stats, setSeedQuestions])
@@ -52,7 +49,6 @@ export const Splash = memo(({ children }: PropsWithChildren) => {
   useEffect(() => {
     fetchData()
 
-    let timeoutId: NodeJS.Timeout
     let intervalId: NodeJS.Timer
 
     if (!isFetching && message && appMetaData) {
@@ -62,40 +58,29 @@ export const Splash = memo(({ children }: PropsWithChildren) => {
       intervalId = setInterval(() => {
         setProgress((prev) => (prev >= 100 ? 100 : prev + Math.floor(Math.random() * 4)))
       }, 100)
-
-      timeoutId = setTimeout(() => setIsLoading(false), 5000)
     }
 
     return () => {
-      clearTimeout(timeoutId)
       clearInterval(intervalId)
     }
   }, [appMetaData, fetchData, isFetching, message, stats])
 
-  if (isLoading && (!message.some(({ value }) => !!value) || !appMetaData)) {
-    return null
-  }
-
   return (
     <SplashWrapper>
-      {isLoading ? (
-        <Wrappper align="center" direction="row" justify="center">
-          <SphereAnimation />
-          <Flex style={{ color: colors.white }}>
-            <TitleWrapper>
-              <Text className="title">{appMetaData?.title}</Text>
-              <Text className="subtitle">Second Brain</Text>
-            </TitleWrapper>
-            <LinearProgress color="inherit" sx={{ my: 1.75, height: '2px' }} value={progress} variant="determinate" />
-            <AnimatedTextContent message={message} />
-          </Flex>
-        </Wrappper>
-      ) : (
-        children
-      )}
+      <Wrapper align="center" direction="row" justify="center">
+        <SphereAnimation />
+        <Flex style={{ color: colors.white }}>
+          <TitleWrapper>
+            <Text className="title">{appMetaData?.title}</Text>
+            <Text className="subtitle">Second Brain</Text>
+          </TitleWrapper>
+          <LinearProgress color="inherit" sx={{ my: 1.75, height: '2px' }} value={progress} variant="determinate" />
+          <AnimatedTextContent message={message} />
+        </Flex>
+      </Wrapper>
     </SplashWrapper>
   )
-})
+}
 
 const TitleWrapper = styled.div`
   display: flex;
@@ -128,9 +113,12 @@ const SplashWrapper = styled(Flex)`
   display: flex;
   justify-content: center;
   align-items: center;
+  position: fixed;
+  top: 0;
+  background: ${colors.black};
 `
 
-const Wrappper = styled(Flex)`
+const Wrapper = styled(Flex)`
   width: 442.879px;
   margin: 0 auto;
   gap: 27px;

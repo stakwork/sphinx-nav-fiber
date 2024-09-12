@@ -136,6 +136,7 @@ export interface Schema {
   is_deleted?: boolean
   children?: string[]
   primary_color?: string
+  node_key?: string
   attributes?: { [key: string]: string }
 }
 

@@ -30,7 +30,7 @@ describe('General', () => {
       search_term: 'Test Search Term',
     }
 
-    render(<General initialValues={initialValues} />)
+    render(<General initialValues={initialValues} onClose={jest.fn()} />)
 
     expect(screen.getByLabelText(/graph title/i)).toHaveValue(initialValues.title)
     expect(screen.getByLabelText(/graph description/i)).toHaveValue(initialValues.description)
@@ -39,7 +39,7 @@ describe('General', () => {
   it('should call postAboutData on form submission', async () => {
     const postAboutDataSpy = jest.spyOn(fetchSourcesDataModule, 'postAboutData')
 
-    render(<General initialValues={{}} />)
+    render(<General initialValues={{}} onClose={jest.fn()} />)
 
     await fireEvent.click(screen.getByRole('button', { name: /save changes/i }))
     ;(async () => {
@@ -52,7 +52,7 @@ describe('General', () => {
   it('should update app metadata on successful form submission', async () => {
     fetchSourcesDataModule.postAboutData.mockResolvedValue({ status: 'success' })
 
-    render(<General initialValues={{}} />)
+    render(<General initialValues={{}} onClose={jest.fn()} />)
 
     await fireEvent.click(screen.getByRole('button', { name: /save changes/i }))
     ;(async () => {
@@ -65,7 +65,7 @@ describe('General', () => {
 
     postAboutData.mockRejectedValue(new Error('Test error'))
 
-    render(<General initialValues={{}} />)
+    render(<General initialValues={{}} onClose={jest.fn()} />)
 
     await fireEvent.click(screen.getByRole('button', { name: /save changes/i }))
     ;(async () => {
@@ -76,7 +76,7 @@ describe('General', () => {
   })
 
   it('should show loading state when isSubmitting is true', async () => {
-    render(<General initialValues={{}} />)
+    render(<General initialValues={{}} onClose={jest.fn()} />)
 
     userEvent.type(screen.getByLabelText(/graph title/i), 'Test Title')
 

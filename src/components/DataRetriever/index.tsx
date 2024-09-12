@@ -1,23 +1,8 @@
-import { PropsWithChildren, useCallback, useEffect } from 'react'
+import { useCallback } from 'react'
 import { Vector3 } from 'three'
-import { useDataStore } from '~/stores/useDataStore'
 import { useGraphStore, useSelectedNode } from '~/stores/useGraphStore'
-import { useUserStore } from '~/stores/useUserStore'
 import { NodeExtended } from '~/types'
 import { PATHWAY_RANGE } from './constants'
-
-type Props = PropsWithChildren
-
-export const DataRetriever = ({ children }: Props) => {
-  const [fetchData, setAbortRequests] = useDataStore((s) => [s.fetchData, s.setAbortRequests])
-  const [setBudget] = useUserStore((s) => [s.setBudget])
-
-  useEffect(() => {
-    fetchData(setBudget, setAbortRequests)
-  }, [fetchData, setBudget, setAbortRequests])
-
-  return <>{children}</>
-}
 
 export const useGraphData = () => {
   const { simulation, simulationHelpers } = useGraphStore((s) => s)

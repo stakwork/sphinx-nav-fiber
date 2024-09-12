@@ -1,6 +1,7 @@
 // @ts-nocheck
 // @ts-ignore
 
+import { isEqual } from 'lodash'
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
 import { fetchGraphData } from '~/network/fetchGraphData'
@@ -30,15 +31,12 @@ export type DataStore = {
   categoryFilter: NodeType | null
   dataInitial: { nodes: NodeExtended[]; links: Link[] } | null
   dataNew: { nodes: NodeExtended[]; links: Link[] } | null
-  currentPage: number
-  itemsPerPage: number
   filters: FilterParams
   isFetching: boolean
   isLoadingNew: boolean
   selectedTimestamp: NodeExtended | null
   sources: Sources[] | null
   queuedSources: Sources[] | null
-  showTeachMe: boolean
   hideNodeDetails: boolean
   sidebarFilter: string
   sidebarFilters: string[]
@@ -62,7 +60,6 @@ export type DataStore = {
   ) => void
   setSelectedTimestamp: (selectedTimestamp: NodeExtended | null) => void
   setSources: (sources: Sources[] | null) => void
-  setTeachMe: (show: boolean) => void
   setQueuedSources: (sources: Sources[] | null) => void
   setIsFetching: (_: boolean) => void
   setHideNodeDetails: (_: boolean) => void
@@ -74,6 +71,8 @@ export type DataStore = {
   nextPage: () => void
   setFilters: (filters: Partial<FilterParams>) => void
   setSeedQuestions: (questions: string[]) => void
+  abortFetchData: () => void
+  resetGraph: () => void
 }
 
 const defaultData: Omit<
@@ -92,7 +91,6 @@ const defaultData: Omit<
   | 'setSidebarFilterCounts'
   | 'setQueuedSources'
   | 'setHideNodeDetails'
-  | 'setTeachMe'
   | 'addNewNode'
   | 'updateNode'
   | 'removeNode'
@@ -105,14 +103,14 @@ const defaultData: Omit<
   categoryFilter: null,
   dataInitial: null,
   currentPage: 0,
-  itemsPerPage: 25,
+  itemsPerPage: 300,
   filters: {
-    skip: '0',
-    limit: '25',
+    skip: 0,
+    limit: 300,
     depth: '2',
-    sort_by: 'date',
+    sort_by: 'date_added_to_graph',
     include_properties: 'true',
-    top_node_count: '10',
+    top_node_count: '50',
     includeContent: 'true',
     node_type: [],
   },
@@ -121,7 +119,6 @@ const defaultData: Omit<
   queuedSources: null,
   selectedTimestamp: null,
   sources: null,
-  showTeachMe: false,
   sidebarFilter: 'all',
   sidebarFilters: [],
   trendingTopics: [],
@@ -138,10 +135,13 @@ let abortController: AbortController | null = null
 export const useDataStore = create<DataStore>()(
   devtools((set, get) => ({
     ...defaultData,
+
     fetchData: async (setBudget, setAbortRequests, AISearchQuery = '') => {
-      const { currentPage, itemsPerPage, dataInitial: existingData, filters } = get()
+      const { dataInitial: existingData, filters } = get()
+      const currentPage = filters.skip
+      const itemsPerPage = filters.limit
       const { currentSearch } = useAppStore.getState()
-      const { setAiSummaryAnswer, aiRefId } = useAiSummaryStore.getState()
+      const { setAiSummaryAnswer, setNewLoading, aiRefId } = useAiSummaryStore.getState()
       let ai = { ai_summary: String(!!AISearchQuery) }
 
       if (!AISearchQuery) {
@@ -153,8 +153,8 @@ export const useDataStore = create<DataStore>()(
       }
 
       if (AISearchQuery) {
-        setAiSummaryAnswer(AISearchQuery, { answer: '', answerLoading: true, sourcesLoading: true })
         ai = { ...ai, ai_summary: String(true) }
+        setNewLoading({ question: AISearchQuery, answerLoading: true })
       }
 
       if (abortController) {
@@ -170,18 +170,20 @@ export const useDataStore = create<DataStore>()(
 
       const word = AISearchQuery || currentSearch
 
+      const isLatest = isEqual(filters, defaultData.filters) && !word
+
       const updatedParams = {
         ...withoutNodeType,
         ...ai,
         skip: currentPage === 0 ? String(currentPage * itemsPerPage) : String(currentPage * itemsPerPage + 1),
-        limit: String(itemsPerPage),
+        limit: word ? '25' : String(itemsPerPage),
         ...(filterNodeTypes.length > 0 ? { node_type: JSON.stringify(filterNodeTypes) } : {}),
         ...(word ? { word } : {}),
         ...(aiRefId && AISearchQuery ? { previous_search_ref_id: aiRefId } : {}),
       }
 
       try {
-        const data = await fetchGraphData(setBudget, updatedParams, signal, setAbortRequests)
+        const data = await fetchGraphData(setBudget, updatedParams, isLatest, signal, setAbortRequests)
 
         if (!data?.nodes) {
           return
@@ -189,6 +191,19 @@ export const useDataStore = create<DataStore>()(
 
         if (data?.query_data?.ref_id) {
           useAiSummaryStore.setState({ aiRefId: data?.query_data?.ref_id })
+
+          const { aiSummaryAnswers } = useAiSummaryStore.getState()
+          const { answer } = aiSummaryAnswers[data?.query_data?.ref_id] || {}
+
+          setAiSummaryAnswer(data?.query_data?.ref_id, {
+            question: AISearchQuery,
+            answer: answer || '',
+            answerLoading: !answer,
+            sourcesLoading: !answer,
+            shouldRender: true,
+          })
+
+          setNewLoading(null)
         }
 
         const currentNodes = currentPage === 0 && !aiRefId ? [] : [...(existingData?.nodes || [])]
@@ -222,34 +237,43 @@ export const useDataStore = create<DataStore>()(
           dataNew: { nodes: newNodes, links: newLinks },
           isFetching: false,
           isLoadingNew: false,
+          splashDataLoading: false,
           nodeTypes,
           sidebarFilters,
           sidebarFilterCounts,
         })
       } catch (error) {
         console.log(error)
-        set({ isFetching: false })
-        set({ isLoadingNew: false })
+
+        if (error !== 'abort') {
+          set({ isLoadingNew: false, isFetching: false })
+        }
       }
     },
+
+    abortFetchData: () => {
+      if (abortController) {
+        abortController.abort('abort')
+      }
+    },
+    resetGraph: () => {
+      set({
+        filters: defaultData.filters,
+        dataNew: null,
+      })
+
+      get().fetchData()
+    },
+
     setPage: (page: number) => set({ currentPage: page }),
     nextPage: () => {
-      const { currentPage, fetchData } = get()
+      const { filters, fetchData } = get()
 
-      set({ currentPage: currentPage + 1 })
+      set({ filters: { ...filters, skip: filters.skip + 1 } })
       fetchData()
     },
-    prevPage: () => {
-      const { currentPage, fetchData } = get()
-
-      if (currentPage > 0) {
-        set({ currentPage: currentPage - 1 })
-        fetchData()
-      }
-    },
     resetDataNew: () => null,
-    setFilters: (filters: FilterParams) =>
-      set((state) => ({ filters: { ...state.filters, ...filters, page: 0 }, currentPage: 0 })),
+    setFilters: (filters: FilterParams) => set((state) => ({ filters: { ...state.filters, ...filters, page: 0 } })),
     setSidebarFilterCounts: (sidebarFilterCounts) => set({ sidebarFilterCounts }),
     setTrendingTopics: (trendingTopics) => set({ trendingTopics }),
     setStats: (stats) => set({ stats }),
@@ -261,7 +285,6 @@ export const useDataStore = create<DataStore>()(
     setSelectedTimestamp: (selectedTimestamp) => set({ selectedTimestamp }),
     setSources: (sources) => set({ sources }),
     setHideNodeDetails: (hideNodeDetails) => set({ hideNodeDetails }),
-    setTeachMe: (showTeachMe) => set({ showTeachMe }),
     setSeedQuestions: (questions) => set({ seedQuestions: questions }),
     updateNode: (updatedNode) => {
       console.log(updatedNode)

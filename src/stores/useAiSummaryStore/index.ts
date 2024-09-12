@@ -1,4 +1,3 @@
-import { isEmpty } from 'lodash'
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
 import { AIEntity } from '~/types'
@@ -11,15 +10,18 @@ export type AiSummaryStore = {
   aiSummaryAnswers: AIAnswer
   aiRefId: string
   setAiSummaryAnswer: (key: string, answer: AIEntity) => void
+  setNewLoading: (answer: AIEntity | null) => void
   resetAiSummaryAnswer: () => void
   getAiSummaryAnswer: (key: string) => string
   getKeyExist: (key: string) => boolean
   setAiRefId: (aiRefId: string) => void
+  newLoading: AIEntity | null
 }
 
 const defaultData = {
   aiSummaryAnswers: {},
   aiRefId: '',
+  newLoading: null,
 }
 
 export const useAiSummaryStore = create<AiSummaryStore>()(
@@ -33,6 +35,9 @@ export const useAiSummaryStore = create<AiSummaryStore>()(
       const clone = structuredClone(summaryAnswers)
 
       set({ aiSummaryAnswers: clone })
+    },
+    setNewLoading: (newLoading) => {
+      set({ newLoading })
     },
     resetAiSummaryAnswer: () => {
       set({ aiSummaryAnswers: {}, aiRefId: '' })
@@ -55,11 +60,12 @@ export const useAiSummaryStore = create<AiSummaryStore>()(
   })),
 )
 
-export const useHasAiChats = () => useAiSummaryStore((s) => !isEmpty(s.aiSummaryAnswers))
+export const useHasAiChats = () =>
+  useAiSummaryStore((s) => Object.values(s.aiSummaryAnswers).filter((i) => i.shouldRender).length || !!s.newLoading)
 
-export const useHasAiChatsResponse = () =>
+export const useHasAiChatsResponseLoading = () =>
   useAiSummaryStore((s) => {
     const answers = s.aiSummaryAnswers
 
-    return Object.values(answers).at(-1)?.answerLoading
+    return !!s.newLoading || Object.values(answers).at(-1)?.answerLoading
   })

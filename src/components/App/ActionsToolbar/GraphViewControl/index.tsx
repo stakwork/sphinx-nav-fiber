@@ -47,13 +47,15 @@ const Wrapper = styled(Flex).attrs({
   align: 'center',
   justify: 'space-between',
 })`
-  padding: 6px 6px 6px 11px;
-  background: ${colors.BG1};
-  border-radius: 200px;
+  width: 447px;
+  height: 48px;
+  background: ${colors.appearanceBg};
+  border-radius: 6px;
   .icon {
     color: ${colors.GRAY6};
     font-size: 20px;
     cursor: pointer;
+    padding: 12px 20px;
 
     &:hover {
       color: ${colors.GRAY3};
@@ -65,6 +67,9 @@ const Wrapper = styled(Flex).attrs({
 
     &.active {
       color: ${colors.white};
+      background: ${colors.primaryBlue};
+      padding: 12px 20px;
+      border-radius: 6px;
     }
   }
 

@@ -12,8 +12,8 @@ export type FetchDataResponse = {
 }
 
 export type FilterParams = {
-  skip: string
-  limit: string
+  skip: number
+  limit: number
   depth: string
   sort_by: string
   top_node_count: string
@@ -263,7 +263,7 @@ export type TStats = {
   numContributors?: string
   numDaily?: string
   numEpisodes?: string
-  numNodes?: string
+  nodeCount?: string
   numTwitterSpace?: string
   numVideo?: string
   numDocuments?: string
@@ -288,19 +288,23 @@ export type RelayUser = {
 export type AiSummaryAnswerResponse = {
   question: string
   answer: string
+  ref_id: string
 }
 
 export type AiSummarySourcesResponse = {
   question: string
   sources: { ref_id: string }[]
+  ref_id: string
 }
 
 export type AiSummaryQuestionsResponse = {
   question: string
   relevant_questions: { question: string }[]
+  ref_id: string
 }
 
 export type AIEntity = {
+  question?: string
   answer?: string
   sources?: string[]
   questions?: string[]
@@ -309,6 +313,8 @@ export type AIEntity = {
   questionsLoading?: boolean
   hasBeenRendered?: boolean
   entities?: ExtractedEntity[]
+  shouldRender?: boolean
+  audio_en?: string
 }
 
 export interface ExtractedEntity {
@@ -320,4 +326,9 @@ export interface ExtractedEntitiesResponse {
   ref_id: string
   question: string
   entities: ExtractedEntity[]
+}
+
+export type AiSummaryAudioResponse = {
+  ref_id: string
+  audio_EN: string
 }

@@ -7,14 +7,9 @@ import { Flex } from '~/components/common/Flex'
 import { useDataStore } from '~/stores/useDataStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { colors } from '~/utils/colors'
-import { Relevance } from '../Relevance'
-
-type Props = {
-  isSearchResult: boolean
-}
 
 // eslint-disable-next-line no-underscore-dangle
-const _View = ({ isSearchResult }: Props) => {
+const _View = () => {
   const { nodeCount, setNodeCount, setBudget } = useUserStore((s) => s)
   const { fetchData, setAbortRequests } = useDataStore((s) => s)
 
@@ -29,29 +24,26 @@ const _View = ({ isSearchResult }: Props) => {
 
   return (
     <Wrapper>
-      {!isSearchResult && (
-        <div className="heading-container">
-          <div className="heading">
-            <span className="heading__title">Latest</span>
-            <span className="heading__icon">
-              <BrowseGalleryIcon />
-            </span>
-          </div>
-          {nodeCount ? (
-            <div className="button_container">
-              <ButtonStyled
-                className="button"
-                data-testid="see_latest_button"
-                onClick={getLatest}
-                startIcon={<DownloadIcon />}
-              >
-                {`See Latest (${nodeCount})`}
-              </ButtonStyled>
-            </div>
-          ) : null}
+      <div className="heading-container">
+        <div className="heading">
+          <span className="heading__title">Latest</span>
+          <span className="heading__icon">
+            <BrowseGalleryIcon />
+          </span>
         </div>
-      )}
-      <Relevance isSearchResult={isSearchResult} />
+        {nodeCount ? (
+          <div className="button_container">
+            <ButtonStyled
+              className="button"
+              data-testid="see_latest_button"
+              onClick={getLatest}
+              startIcon={<DownloadIcon />}
+            >
+              {`See Latest (${nodeCount})`}
+            </ButtonStyled>
+          </div>
+        ) : null}
+      </div>
     </Wrapper>
   )
 }

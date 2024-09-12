@@ -4,12 +4,11 @@ import { FormProvider, useForm } from 'react-hook-form'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
 import { BaseModal } from '~/components/Modal'
-import { Flex } from '~/components/common/Flex'
-import { getTopicsData, postMergeTopics } from '~/network/fetchSourcesData'
+import { postMergeTopics } from '~/network/fetchSourcesData'
 import { useSelectedNode } from '~/stores/useGraphStore'
 import { useModal } from '~/stores/useModalStore'
 import { useTopicsStore } from '~/stores/useTopicsStore'
-import { TEdge, Topic } from '~/types'
+import { NodeExtended, TEdge } from '~/types'
 import { colors } from '~/utils/colors'
 import { IS_ALIAS } from '../../SourcesTableModal/SourcesView/constants'
 import { TitleEditor } from './Title'
@@ -25,36 +24,17 @@ export const MergeNodeModal = () => {
   const [loading, setLoading] = useState(false)
   const [isSwapped, setIsSwapped] = useState(false)
   const [selectedToNode, setSelectedToNode] = useState<TEdge | null>(null)
-  const [topicIsLoading, setTopicIsLoading] = useState(false)
 
-  const [topic, setTopic] = useState<Topic>()
+  const [topic, setTopic] = useState<NodeExtended>()
 
   const selectedNode = useSelectedNode()
 
   useEffect(() => {
-    const init = async () => {
-      if (!selectedNode) {
-        return
-      }
-
-      setTopicIsLoading(true)
-
-      try {
-        if (selectedNode.type === 'topic') {
-          const response = await getTopicsData({ search: selectedNode?.name })
-
-          const node = response?.data.find((i: Topic) => i.name === selectedNode.name)
-
-          setTopic(node)
-        }
-      } catch (error) {
-        console.log(error)
-      } finally {
-        setTopicIsLoading(false)
-      }
+    if (!selectedNode) {
+      return
     }
 
-    init()
+    setTopic(selectedNode)
   }, [selectedNode])
 
   const closeHandler = () => {
@@ -93,19 +73,14 @@ export const MergeNodeModal = () => {
   return (
     <BaseModal id="mergeToNode" kind="small" onClose={closeHandler} preventOutsideClose>
       <FormProvider {...form}>
-        {topicIsLoading ? (
-          <Flex align="center" my={24}>
-            <ClipLoader color={colors.lightGray} size={24} />
-          </Flex>
-        ) : (
-          <TitleEditor
-            from={topic as Topic}
-            isSwapped={isSwapped}
-            onSelect={setSelectedToNode}
-            selectedToNode={selectedToNode}
-            setIsSwapped={() => setIsSwapped(!isSwapped)}
-          />
-        )}
+        <TitleEditor
+          from={topic}
+          isSwapped={isSwapped}
+          onSelect={setSelectedToNode}
+          selectedToNode={selectedToNode}
+          setIsSwapped={() => setIsSwapped(!isSwapped)}
+        />
+
         <CustomButton
           color="secondary"
           data-testid="merge-topics-button"

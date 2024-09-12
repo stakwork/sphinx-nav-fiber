@@ -19,7 +19,7 @@ export async function getSignedMessageFromRelay(): Promise<{ message: string; si
   }
 
   try {
-    message = `${window.crypto.randomUUID()}${new Date().getTime()}`
+    message = btoa(`${window.crypto.randomUUID()}${new Date().getTime()}`)
   } catch (error) {
     return { message: '', signature: '' }
   }

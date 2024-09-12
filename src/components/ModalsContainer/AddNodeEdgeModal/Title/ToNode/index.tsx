@@ -47,13 +47,15 @@ export const ToNode: FC<Props> = ({ onSelect, selectedValue, topicId }) => {
   }, [topicId])
 
   const handleChange = (e: string) => {
-    if (!e) {
+    const inputValue = e.trim()
+
+    if (!inputValue) {
       setOptions([])
 
       return
     }
 
-    if (e.length > 2) {
+    if (inputValue.length > 2) {
       debouncedSearch(e)
     }
   }

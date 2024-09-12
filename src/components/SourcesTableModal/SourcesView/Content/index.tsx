@@ -3,9 +3,7 @@ import { Button } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
-import { Heading } from '~/components/SourcesTableModal/SourcesView/common'
 import { Flex } from '~/components/common/Flex'
-import { Text } from '~/components/common/Text'
 import { Node, getNodeContent } from '~/network/fetchSourcesData'
 import { colors } from '~/utils/colors'
 import { Table } from './Table'
@@ -50,9 +48,6 @@ export const Content = () => {
 
   return (
     <Wrapper direction="column" justify="flex-end">
-      <Heading align="center" direction="row" justify="space-between">
-        <Text className="title">Content I&apos;ve added to the graph</Text>
-      </Heading>
       <TableWrapper align="center" justify={loading ? 'center' : 'flex-start'}>
         {loading ? (
           <ClipLoader color={colors.white} />

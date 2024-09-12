@@ -4,7 +4,7 @@ import { TAboutParams } from '~/network/fetchSourcesData'
 export type SecondarySidebarActiveTab = '' | 'sentiment' | 'sources' | 'about'
 
 export type AppStore = {
-  currentSearch: string | null
+  currentSearch: string
   searchFormValue: string
   secondarySidebarActiveTab: SecondarySidebarActiveTab
   sidebarIsOpen: boolean
@@ -16,6 +16,7 @@ export type AppStore = {
   relevanceIsSelected: boolean
   currentPlayingAudio: React.MutableRefObject<HTMLAudioElement | null> | null
   appMetaData: TAboutParams | null
+  showCollapseButton: boolean
   clearSearch: () => void
   setCurrentSearch: (_: string) => void
   setSearchFormValue: (_: string) => void
@@ -27,10 +28,11 @@ export type AppStore = {
   setAppMetaData: (val: TAboutParams) => void
   setUniverseQuestionIsOpen: () => void
   setCurrentPlayingAudio: (_: React.MutableRefObject<HTMLAudioElement | null> | null) => void
+  setShowCollapseButton: (_: boolean) => void
 }
 
 const defaultData = {
-  currentSearch: null,
+  currentSearch: '',
   searchFormValue: '',
   flagErrorIsOpen: false,
   universeQuestionIsOpen: false,
@@ -42,11 +44,12 @@ const defaultData = {
   transcriptIsOpen: false,
   appMetaData: null,
   currentPlayingAudio: null,
+  showCollapseButton: true,
 }
 
 export const useAppStore = create<AppStore>((set, get) => ({
   ...defaultData,
-  clearSearch: () => set({ currentSearch: null }),
+  clearSearch: () => set({ currentSearch: '' }),
   setCurrentSearch: (currentSearch) => set({ currentSearch }),
   setSearchFormValue: (searchFormValue) => set({ searchFormValue }),
   setFlagErrorOpen: (flagErrorIsOpen) => set({ flagErrorIsOpen }),
@@ -64,4 +67,5 @@ export const useAppStore = create<AppStore>((set, get) => ({
   setTranscriptOpen: (transcriptIsOpen) => set({ transcriptIsOpen }),
   setUniverseQuestionIsOpen: () => set({ universeQuestionIsOpen: !get().universeQuestionIsOpen }),
   setAppMetaData: (appMetaData) => set({ appMetaData }),
+  setShowCollapseButton: (showCollapseButton) => set({ showCollapseButton }),
 }))
