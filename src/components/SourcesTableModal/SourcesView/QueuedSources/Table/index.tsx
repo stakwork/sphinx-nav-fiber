@@ -145,7 +145,6 @@ const StyledLink = styled.a`
   }
 `
 
-
 const CheckCircleWrapper = styled.div`
   margin-right: 40px;
-    `
+`
