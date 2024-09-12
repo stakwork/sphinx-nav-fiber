@@ -1,5 +1,5 @@
 import { FormControlLabel, Switch, SwitchProps } from '@mui/material'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { colors } from '~/utils/colors'
@@ -8,14 +8,15 @@ type MediaOptionKey = 'videoAudio' | 'image' | 'sourceLink'
 
 type MediaOptionsProps = {
   setMediaOptions: (options: { videoAudio: boolean; image: boolean; sourceLink: boolean }) => void
+  initialOptions: { videoAudio: boolean; image: boolean; sourceLink: boolean }
 }
 
-const MediaOptions = ({ setMediaOptions }: MediaOptionsProps) => {
-  const [mediaOptions, setLocalMediaOptions] = useState({
-    videoAudio: false,
-    image: false,
-    sourceLink: false,
-  })
+const MediaOptions = ({ setMediaOptions, initialOptions }: MediaOptionsProps) => {
+  const [mediaOptions, setLocalMediaOptions] = useState(initialOptions)
+
+  useEffect(() => {
+    setLocalMediaOptions(initialOptions)
+  }, [initialOptions])
 
   const handleToggle = (option: MediaOptionKey) => {
     setLocalMediaOptions((prevOptions) => {
