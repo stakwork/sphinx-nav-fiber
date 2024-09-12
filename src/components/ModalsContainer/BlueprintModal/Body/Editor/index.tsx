@@ -221,29 +221,36 @@ export const Editor = ({
   }, [selectedSchema])
 
   useEffect(() => {
-    const init = async () => {
-      if (selectedSchema) {
-        setValue('type', selectedSchema?.type as string)
-        setValue('parent', selectedSchema.parent)
+    const resetForm = () => {
+      reset(defaultValues)
+      setParsedData([{ required: false, type: 'string', key: '' }])
+      setDeletedAttributes([])
 
-        let parsedDataDefault: parsedObjProps[] = [{ required: false, type: 'string', key: '' }]
-
-        if (selectedSchema.type !== NoParent.value.toLowerCase()) {
-          const data = await getNodeType(selectedSchema.type as string)
-
-          parsedDataDefault = data ? parseJson(data) : parsedDataDefault
-        }
-
-        parsedDataDefault = parsedDataDefault.filter((x) => x.key !== 'node_key')
-
-        setParsedData(parsedDataDefault)
-
-        await fetchAndSetOptions(setSelectedNodeParentOptions, (schema) => schema.type !== selectedSchema.type)
-      }
+      setMediaOptions({
+        videoAudio: false,
+        image: false,
+        sourceLink: false,
+      })
     }
 
-    init()
-  }, [selectedSchema, setValue])
+    resetForm()
+
+    if (selectedSchema) {
+      setValue('type', selectedSchema.type as string)
+      setValue('parent', selectedSchema.parent)
+
+      if (selectedSchema.type !== NoParent.value.toLowerCase()) {
+        getNodeType(selectedSchema.type as string).then((data) => {
+          const parsedDataDefault = data ? parseJson(data) : [{ required: false, type: 'string', key: '' }]
+          const filteredData = parsedDataDefault.filter((x) => x.key !== 'node_key')
+
+          setParsedData(filteredData)
+        })
+      }
+
+      fetchAndSetOptions(setSelectedNodeParentOptions, (schema) => schema.type !== selectedSchema.type)
+    }
+  }, [selectedSchema, setValue, reset])
 
   const parent = watch('parent')
 
@@ -373,19 +380,23 @@ export const Editor = ({
 
   const resolvedParentValue = () => parentOptions?.find((i) => i.value === parent)
 
-  const resolvedSelectedParentValue = (): TAutocompleteOption | undefined => {
-    const option = selectedNodeParentOptions?.find((i) => i.value === parent)
+  const resolvedSelectedParentValue = useMemo((): TAutocompleteOption | undefined => {
+    if (!selectedSchema) {
+      return undefined
+    }
+
+    const option = selectedNodeParentOptions?.find((i) => i.value === selectedSchema.parent)
 
     if (option) {
       return option
     }
 
-    if (parent) {
-      return { label: parent, value: parent }
+    if (selectedSchema.parent) {
+      return { label: selectedSchema.parent, value: selectedSchema.parent }
     }
 
     return undefined
-  }
+  }, [selectedSchema, selectedNodeParentOptions])
 
   return (
     <Flex>
@@ -469,7 +480,7 @@ export const Editor = ({
                         setDisplayParentError(false)
                       }}
                       options={selectedNodeParentOptions || []}
-                      selectedValue={resolvedSelectedParentValue()}
+                      selectedValue={resolvedSelectedParentValue}
                     />
                     {errMessage && <StyledError>{errMessage}</StyledError>}
                   </Flex>
