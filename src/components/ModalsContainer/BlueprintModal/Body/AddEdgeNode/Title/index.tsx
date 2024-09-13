@@ -1,5 +1,6 @@
 import { FC } from 'react'
 import styled from 'styled-components'
+import { noSpacePattern } from '~/components/AddItemModal/SourceTypeStep/constants'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { TextInput } from '~/components/common/TextInput'
@@ -54,6 +55,10 @@ export const TitleEditor: FC<Props> = ({
             placeholder="Enter Edge Name"
             rules={{
               ...requiredRule,
+              pattern: {
+                message: 'No leading whitespace allowed',
+                value: noSpacePattern,
+              },
             }}
             value={selectedType}
           />
