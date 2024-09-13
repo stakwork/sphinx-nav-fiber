@@ -367,11 +367,12 @@ export const Editor = ({
         isMatch
 
       const isValidType = !!values.type?.trim()
+      const isValidParent = !!values.parent?.trim()
 
       setSubmitDisabled(
         selectedSchema
           ? loading || !isChanged || !isValidType || displayParentError
-          : loading || displayParentError || !isValidType,
+          : loading || displayParentError || !isValidType || !isValidParent,
       )
     })
 
