@@ -13,7 +13,7 @@ import { Text } from '~/components/common/Text'
 import { TextInput } from '~/components/common/TextInput'
 import { NODE_ADD_ERROR, requiredRule } from '~/constants'
 import { api } from '~/network/api'
-import { getNodeSchemaTypes, getNodeType, Schema } from '~/network/fetchSourcesData'
+import { getNodeSchemaTypes, getNodeType, Schema, editNodeSchemaUpdate } from '~/network/fetchSourcesData'
 import { useModal } from '~/stores/useModalStore'
 import { colors } from '~/utils'
 import { CreateCustomNodeAttribute } from './CustomAttributesStep'
@@ -320,10 +320,17 @@ export const Editor = ({
         (selectedSchema && getValues().parent !== selectedSchema?.parent)
       ) {
         const newParent = getValues().parent ?? selectedSchema?.parent
+        const { selectedIndex } = getValues()
 
         setGraphLoading(true)
 
-        await api.put(`/schema/${selectedSchema?.ref_id}`, JSON.stringify({ type: data.type, parent: newParent }))
+        await editNodeSchemaUpdate(selectedSchema?.ref_id as string, {
+          type: data.type,
+          parent: newParent as string,
+          attributes: {
+            index: selectedIndex as string,
+          },
+        })
 
         await onSchemaUpdate()
       }
