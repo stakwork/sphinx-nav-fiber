@@ -177,6 +177,20 @@ interface UpdateEdgeData {
   edge_type: string
 }
 
+export interface UpdateSchemaParams {
+  type: string
+  parent: string
+  attributes: {
+    index: string
+  }
+}
+
+export const editNodeSchemaUpdate = async (ref_id: string, data: UpdateSchemaParams) => {
+  const response = await api.put(`/schema/${ref_id}`, JSON.stringify(data))
+
+  return response
+}
+
 export const changeNodeType = async (ref_id: string, data: ChangeNodeType) =>
   api.put(`/node`, JSON.stringify({ ...data, ref_id }))
 
