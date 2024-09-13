@@ -137,6 +137,7 @@ export const RegularView = () => {
           <FilterSearch
             anchorEl={anchorEl}
             schemaAll={schemaAll}
+            setAnchorEl={setAnchorEl}
             setShowAllSchemas={setShowAllSchemas}
             showAllSchemas={showAllSchemas}
           />
