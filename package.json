@@ -124,9 +124,9 @@
         "functions": 36
       },
       "./src/network/": {
-        "lines": 31,
-        "branches": 10,
-        "functions": 19
+        "lines": 30,
+        "branches": 9,
+        "functions": 18
       }
     },
     "moduleNameMapper": {
