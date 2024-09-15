@@ -55,7 +55,7 @@ const LazySideBar = lazy(() => import('./SideBar').then(({ SideBar }) => ({ defa
 export const App = () => {
   const [searchParams] = useSearchParams()
   const query = searchParams.get('q')
-  const [setBudget, setNodeCount] = useUserStore((s) => [s.setBudget, s.setNodeCount])
+  const { setBudget, setNodeCount } = useUserStore((s) => s)
 
   const {
     setSidebarOpen,

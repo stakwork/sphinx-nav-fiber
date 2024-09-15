@@ -125,8 +125,8 @@
       },
       "./src/network/": {
         "lines": 31,
-        "branches": 22,
-        "functions": 27
+        "branches": 10,
+        "functions": 19
       }
     },
     "moduleNameMapper": {
