@@ -28,6 +28,7 @@ export default defineConfig({
     watchForFileChanges: false,
     experimentalMemoryManagement: true,
     numTestsKeptInMemory: 1,
+    video: false,
   },
   component: {
     supportFile: './cypress/support/components.ts',
