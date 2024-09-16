@@ -26,6 +26,8 @@ export default defineConfig({
     viewportHeight: 900,
     viewportWidth: 1440,
     watchForFileChanges: false,
+    experimentalMemoryManagement: true,
+    numTestsKeptInMemory: 1,
   },
   component: {
     supportFile: './cypress/support/components.ts',
