@@ -30,9 +30,9 @@ describe('AddEdgeToBluePrint Modal', () => {
   it('should render the modal and allow submitting an edge', async () => {
     const { getByText, getByTestId, getByPlaceholderText } = render(<TestComponent />)
 
-    expect(getByText('Add Edge')).toBeInTheDocument()
-
     waitFor(async () => {
+      expect(getByTestId('edge-modal-title')).toHaveTextContent('Add Edge')
+
       const fromAutocomplete = getByTestId('from_node')
       fireEvent.click(fromAutocomplete)
 
@@ -66,7 +66,8 @@ describe('AddEdgeToBluePrint Modal', () => {
       })
     })
   })
-  it.skip('should disable the submit button if required fields are not filled', async () => {
+
+  it('should disable the submit button if required fields are not filled', async () => {
     const { getByText } = render(<TestComponent />)
     const confirmButton = getByText('Confirm')
 

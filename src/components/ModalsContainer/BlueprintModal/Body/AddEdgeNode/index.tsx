@@ -19,7 +19,7 @@ export const AddEdgeNode = ({ setIsAddEdgeNode, edgeData, setGraphLoading }: Pro
   return (
     <Flex>
       <HeaderFlex align="center" direction="row" justify="space-between">
-        <StyledText>{edgeData?.refId ? 'Edit Edge' : 'Add Edge'}</StyledText>
+        <StyledText data-testid="edge-modal-title">{edgeData?.refId ? 'Edit Edge' : 'Add Edge'}</StyledText>
         <CloseButton data-testid="close-sidebar-sub-view" onClick={onCancel}>
           <ClearIcon />
         </CloseButton>
