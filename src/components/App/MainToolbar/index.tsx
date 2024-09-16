@@ -32,7 +32,7 @@ export const MainToolbar = () => {
   const { setUniverseQuestionIsOpen, setSidebarOpen, setShowCollapseButton } = useAppStore((s) => s)
   const { customSchemaFeatureFlag, userFeedbackFeatureFlag, chatInterfaceFeatureFlag } = useFeatureFlagStore((s) => s)
 
-  const [isAdmin] = useUserStore((s) => [s.isAdmin])
+  const { isAdmin } = useUserStore((s) => s)
   const sphinxEnabled = isSphinx()
 
   const handleLogoClick = () => {
