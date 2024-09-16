@@ -3,11 +3,11 @@ import '@testing-library/jest-dom'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
+import { isSphinx } from '~/utils/isSphinx'
 import { SourcesView } from '..'
+import { getNodeContent } from '../../../../network/fetchSourcesData'
 import { useFeatureFlagStore } from '../../../../stores/useFeatureFlagStore'
 import { useUserStore } from '../../../../stores/useUserStore'
-import { getNodeContent } from '../../../../network/fetchSourcesData'
-import { isSphinx } from '~/utils/isSphinx'
 
 jest.mock('~/utils/isSphinx', () => ({
   isSphinx: jest.fn(),
@@ -72,14 +72,14 @@ describe('Test SourceView', () => {
     expect(queryByText('Queued sources')).not.toBeInTheDocument()
   })
 
-  it('should render the "View Content" tab correctly', () => {
+  it('should render the "My Content" tab correctly', () => {
     isSphinxMock.mockReturnValue(true)
 
     render(<SourcesView />)
 
-    const viewContentTab = screen.getByRole('tab', { name: 'View Content' })
+    const myContentTab = screen.getByRole('tab', { name: 'My Content' })
 
-    expect(viewContentTab).toBeInTheDocument()
+    expect(myContentTab).toBeInTheDocument()
   })
 
   it('should only render Sphinx-related content for Sphinx users', () => {
@@ -138,8 +138,8 @@ describe('Test SourceView', () => {
     render(<SourcesView />)
 
     waitFor(async () => {
-      const viewContentTab = screen.getByRole('tab', { name: 'View Content' })
-      fireEvent.click(viewContentTab)
+      const myContentTab = screen.getByRole('tab', { name: 'My Content' })
+      fireEvent.click(myContentTab)
 
       const tweetRow = await screen.findByText('123456789')
       const articleRow = await screen.findByText('http://examplearticle.com')
@@ -160,8 +160,8 @@ describe('Test SourceView', () => {
     it('should render the correct node type for each row', async () => {
       render(<SourcesView />)
       waitFor(async () => {
-        const viewContentTab = screen.getByRole('tab', { name: 'View Content' })
-        fireEvent.click(viewContentTab)
+        const myContentTab = screen.getByRole('tab', { name: 'My Content' })
+        fireEvent.click(myContentTab)
 
         const tweetType = await screen.findByText('Tweet')
         const articleType = await screen.findByText('Article')
@@ -174,8 +174,8 @@ describe('Test SourceView', () => {
     it('should render the correct source for each row', async () => {
       render(<SourcesView />)
       waitFor(async () => {
-        const viewContentTab = screen.getByRole('tab', { name: 'View Content' })
-        fireEvent.click(viewContentTab)
+        const myContentTab = screen.getByRole('tab', { name: 'My Content' })
+        fireEvent.click(myContentTab)
 
         const tweetId = await screen.findByText('123456789')
         const articleLink = await screen.findByText('http://examplearticle.com')
@@ -188,8 +188,8 @@ describe('Test SourceView', () => {
     it('should render the correct date for each row', async () => {
       render(<SourcesView />)
       waitFor(async () => {
-        const viewContentTab = screen.getByRole('tab', { name: 'View Content' })
-        fireEvent.click(viewContentTab)
+        const myContentTab = screen.getByRole('tab', { name: 'My Content' })
+        fireEvent.click(myContentTab)
 
         const tweetDate = await screen.findByText('4/4/2021')
         const articleDate = await screen.findByText('5/4/2021')
@@ -202,8 +202,8 @@ describe('Test SourceView', () => {
     it('should render the correct status for each row', async () => {
       render(<SourcesView />)
       waitFor(async () => {
-        const viewContentTab = screen.getByRole('tab', { name: 'View Content' })
-        fireEvent.click(viewContentTab)
+        const myContentTab = screen.getByRole('tab', { name: 'My Content' })
+        fireEvent.click(myContentTab)
 
         const tweetStatus = await screen.findByText('complete')
         const articleStatus = await screen.findByText('pending')

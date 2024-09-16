@@ -11,7 +11,7 @@ import { isSphinx } from '~/utils/isSphinx'
 import { QueuedSources } from './QueuedSources'
 import { Sources } from './Sources'
 import { TopicSources } from './Topics'
-import { QUEUED_SOURCES, SOURCE_TABLE, TOPICS, VIEW_CONTENT } from './constants'
+import { MY_CONTENT, QUEUED_SOURCES, SOURCE_TABLE, TOPICS } from './constants'
 
 interface TabPanelProps {
   children?: React.ReactNode
@@ -20,7 +20,7 @@ interface TabPanelProps {
 }
 
 const tabsData = [
-  { label: VIEW_CONTENT, component: Content },
+  { label: MY_CONTENT, component: Content },
   { label: SOURCE_TABLE, component: Sources },
   { label: QUEUED_SOURCES, component: QueuedSources },
   { label: TOPICS, component: TopicSources },
@@ -68,7 +68,7 @@ export const SourcesView = () => {
       return isAdmin && queuedSourcesFeatureFlag
     }
 
-    if (label === VIEW_CONTENT) {
+    if (label === MY_CONTENT) {
       return sphinxEnabled
     }
 

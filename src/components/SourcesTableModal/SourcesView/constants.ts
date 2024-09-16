@@ -1,7 +1,7 @@
+import { IconButton } from '@mui/material'
+import styled from 'styled-components'
 import { RSS, TWITTER_HANDLE, YOUTUBE_CHANNEL } from '~/constants'
 import { ISourceMap } from './types'
-import styled from 'styled-components'
-import { IconButton } from '@mui/material'
 
 export const sourcesMapper: ISourceMap = {
   [RSS]: 'RSS link',
@@ -12,7 +12,7 @@ export const sourcesMapper: ISourceMap = {
 export const SOURCE_TABLE = 'Sources Table'
 export const QUEUED_SOURCES = 'Queued Sources'
 export const TOPICS = 'Topics'
-export const VIEW_CONTENT = 'View Content'
+export const MY_CONTENT = 'My Content'
 
 export const DATE = 'date'
 export const EDGE_COUNT = 'edge_count'
