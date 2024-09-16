@@ -29,7 +29,7 @@ export const SelectionDataNodes = memo(() => {
     const structuredNodes = structuredClone(dataInitial?.nodes || [])
     const structuredLinks = structuredClone(dataInitial?.links || [])
 
-    if (prevNodesLength === structuredNodes.length || !selectedNodeRelativeIds.length) {
+    if (prevNodesLength === structuredNodes.length) {
       return
     }
 
@@ -100,6 +100,8 @@ export const SelectionDataNodes = memo(() => {
       }
     })
   }, [simulation2d])
+
+  console.log(selectionGraphData.nodes)
 
   return (
     <>

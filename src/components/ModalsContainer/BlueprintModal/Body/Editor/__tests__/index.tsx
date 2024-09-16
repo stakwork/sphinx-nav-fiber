@@ -22,7 +22,7 @@ jest.mock('~/network/api', () => ({
 
 jest.mock('~/network/fetchSourcesData', () => ({
   getNodeSchemaTypes: jest.fn(),
-  getNodeType: jest.fn(),
+  getNodeType: jest.fn().mockResolvedValue(null),
 }))
 
 describe('Editor Component - Delete Node', () => {
@@ -46,7 +46,7 @@ describe('Editor Component - Delete Node', () => {
     onSchemaUpdate: jest.fn(),
   }
 
-  it.skip('should display an error message and not update the UI if the delete operation fails', async () => {
+  it('should display an error message and not update the UI if the delete operation fails', async () => {
     const mockErrorResponse = {
       status: 400,
       json: () =>
@@ -69,7 +69,7 @@ describe('Editor Component - Delete Node', () => {
     expect(mockProps.onDelete).not.toHaveBeenCalled()
   })
 
-  it.skip('should update the UI and not show an error message if the delete operation succeeds', async () => {
+  it('should update the UI and not show an error message if the delete operation succeeds', async () => {
     ;(api.delete as jest.Mock).mockResolvedValue({ status: 200 })
 
     render(<Editor {...mockProps} />)
@@ -84,7 +84,7 @@ describe('Editor Component - Delete Node', () => {
     expect(mockProps.onDelete).toHaveBeenCalled()
   })
 
-  it.skip('should ensure that correct parent is rendered', async () => {
+  it('should ensure that correct parent is rendered', async () => {
     ;(getNodeSchemaTypes as jest.Mock).mockResolvedValue({
       schemas: [
         { type: 'exampleType', is_deleted: false },

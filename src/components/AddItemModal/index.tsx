@@ -80,14 +80,14 @@ export const AddItemModal = () => {
   const [stepId, setStepId] = useState<AddItemModalStepID>('sourceType')
   const { close, visible } = useModal('addItem')
   const { open: openTypeModal } = useModal('addType')
-  const [setBudget] = useUserStore((s) => [s.setBudget])
+  const { setBudget } = useUserStore((s) => s)
   const form = useForm<FormData>({ mode: 'onChange' })
   const { watch, setValue, reset } = form
   const [loading, setLoading] = useState(false)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [error, setError] = useState<string>('')
 
-  const [addNewNode] = useDataStore((s) => [s.addNewNode])
+  const { addNewNode } = useDataStore((s) => s)
   const [setSelectedNode] = useGraphStore((s) => [s.setSelectedNode])
 
   useEffect(

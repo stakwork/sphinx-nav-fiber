@@ -15,13 +15,20 @@ jest.mock('~/stores/useDataStore', () => ({
 
 const mockSetFilters = jest.fn()
 const mockSetShowAllSchemas = jest.fn()
+const mockSetAnchorEl = jest.fn()
+const mockFetchData = jest.fn()
+const mockSetAbortRequests = jest.fn()
 
 const mockSchemaAll = [{ type: 'Type1' }, { type: 'Type2' }, { type: 'Type3' }, { type: 'Type4' }, { type: 'Type5' }]
 
 describe('FilterSearch Component', () => {
   beforeEach(() => {
     jest.clearAllMocks()
-    ;(useDataStore as unknown as jest.Mock).mockReturnValue({ setFilters: mockSetFilters })
+    ;(useDataStore as jest.Mock).mockReturnValue({
+      setFilters: mockSetFilters,
+      fetchData: mockFetchData,
+      setAbortRequests: mockSetAbortRequests,
+    })
   })
 
   const renderComponent = (showAllSchemas = false) =>
@@ -31,6 +38,7 @@ describe('FilterSearch Component', () => {
           <FilterSearch
             anchorEl={document.createElement('div')}
             schemaAll={mockSchemaAll}
+            setAnchorEl={mockSetAnchorEl}
             setShowAllSchemas={mockSetShowAllSchemas}
             showAllSchemas={showAllSchemas}
           />
@@ -167,6 +175,7 @@ describe('FilterSearch Component', () => {
           <FilterSearch
             anchorEl={null}
             schemaAll={mockSchemaAll}
+            setAnchorEl={mockSetAnchorEl}
             setShowAllSchemas={mockSetShowAllSchemas}
             showAllSchemas
           />

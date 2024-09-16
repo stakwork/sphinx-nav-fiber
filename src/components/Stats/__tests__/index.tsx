@@ -39,7 +39,7 @@ const mockStats = {
   numContributors: '500',
   numDaily: '100',
   numEpisodes: '2,000',
-  numNodes: '5,000',
+  nodeCount: '5,000',
   numTwitterSpace: '300',
   numVideo: '800',
   numDocuments: '1483',
@@ -78,7 +78,7 @@ describe('Component Test Stats', () => {
 
     const { getByText } = render(<Stats />)
 
-    expect(getByText(mockStats.numNodes)).toBeInTheDocument()
+    expect(getByText(mockStats.nodeCount)).toBeInTheDocument()
     expect(getByText(mockStats.numAudio)).toBeInTheDocument()
     expect(getByText(mockStats.numEpisodes)).toBeInTheDocument()
     expect(getByText(mockStats.numVideo)).toBeInTheDocument()
@@ -121,7 +121,7 @@ describe('Component Test Stats', () => {
 
     const { getByText, getByTestId } = render(<Stats />)
 
-    expect(getByText(mockStats.numNodes)).toBeInTheDocument()
+    expect(getByText(mockStats.nodeCount)).toBeInTheDocument()
     expect(getByText(mockStats.numAudio)).toBeInTheDocument()
     expect(getByText(mockStats.numEpisodes)).toBeInTheDocument()
     expect(getByText(mockStats.numVideo)).toBeInTheDocument()
@@ -154,7 +154,7 @@ describe('Component Test Stats', () => {
     })
   })
 
-  it.skip('should render the button only if totalProcessing is present and greater than 0', async () => {
+  it('should render the button only if totalProcessing is present and greater than 0', async () => {
     const mockedGetTotalProcessing = getTotalProcessing as jest.MockedFunction<() => Promise<ProcessingResponse>>
 
     const mockResponse: ProcessingResponse = {

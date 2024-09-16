@@ -43,7 +43,7 @@ export const FilterSearch = ({
   }
 
   const { setFilters, fetchData, setAbortRequests } = useDataStore((s) => s)
-  const [setBudget] = useUserStore((s) => [s.setBudget])
+  const { setBudget } = useUserStore((s) => s)
   const [selectedTypes, setSelectedTypes] = useState<string[]>(defaultValues.selectedTypes)
   const [hops, setHops] = useState(defaultValues.hops)
   const [sourceNodes, setSourceNodes] = useState<number>(defaultValues.sourceNodes)
