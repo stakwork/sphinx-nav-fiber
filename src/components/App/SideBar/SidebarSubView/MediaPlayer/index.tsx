@@ -7,6 +7,7 @@ import { Flex } from '~/components/common/Flex'
 import { usePlayerStore } from '~/stores/usePlayerStore'
 import { colors, videoTimeToSeconds } from '~/utils'
 import { Toolbar } from './ToolBar'
+import { useSelectedNode } from '~/stores/useGraphStore'
 
 type Props = {
   hidden: boolean
@@ -24,6 +25,20 @@ const MediaPlayerComponent: FC<Props> = ({ hidden }) => {
   const [isMouseNearBottom, setIsMouseNearBottom] = useState(false)
   const [status, setStatus] = useState<'buffering' | 'error' | 'ready'>('ready')
   const [isReady, setIsReady] = useState(false)
+  const [hasSeekedToStart, setHasSeekedToStart] = useState(false)
+  const [NodeStartTime, setNodeStartTime] = useState<string>('')
+  const selectedNode = useSelectedNode()
+
+  useEffect(() => {
+    const customKeys = selectedNode?.properties || {}
+
+    const timestampEntry = Object.entries(customKeys).find(([key]) => key === 'timestamp')
+
+    const timestamp = timestampEntry ? timestampEntry[1] : ('' as string)
+    const startTime = timestamp?.split('-')[0] as string
+
+    setNodeStartTime(startTime)
+  }, [selectedNode])
 
   const {
     isPlaying,
@@ -53,6 +68,7 @@ const MediaPlayerComponent: FC<Props> = ({ hidden }) => {
       setPlayingTime(0)
       setDuration(0)
       setIsReady(false)
+      setHasSeekedToStart(false)
     }
   }, [playingNode, setPlayingTime, setDuration, setIsReady, isReady])
 
@@ -62,6 +78,16 @@ const MediaPlayerComponent: FC<Props> = ({ hidden }) => {
       setIsSeeking(false)
     }
   }, [playingTime, isSeeking, setIsSeeking])
+
+  useEffect(() => {
+    if (isReady && NodeStartTime && playerRef.current && !hasSeekedToStart) {
+      const startTimeInSeconds = videoTimeToSeconds(NodeStartTime)
+
+      playerRef.current.seekTo(startTimeInSeconds, 'seconds')
+      setPlayingTime(startTimeInSeconds)
+      setHasSeekedToStart(true)
+    }
+  }, [isReady, NodeStartTime, setPlayingTime, hasSeekedToStart])
 
   const togglePlay = () => {
     setIsPlaying(!isPlaying)
@@ -112,14 +138,12 @@ const MediaPlayerComponent: FC<Props> = ({ hidden }) => {
 
       setDuration(videoDuration)
 
-      if (!isSeeking && (playingTime === 0 || Math.abs(playingTime - videoTimeToSeconds('00:00:00')) < 1)) {
-        if (playingNode?.type === 'youtube' && playingNode?.timestamp) {
-          const [startTimestamp] = playingNode.timestamp.split('-')
-          const startTimeInSeconds = videoTimeToSeconds(startTimestamp)
+      if (NodeStartTime && !hasSeekedToStart) {
+        const startTimeInSeconds = videoTimeToSeconds(NodeStartTime)
 
-          playerRef.current.seekTo(startTimeInSeconds, 'seconds')
-          setPlayingTime(startTimeInSeconds)
-        }
+        playerRef.current.seekTo(startTimeInSeconds, 'seconds')
+        setPlayingTime(startTimeInSeconds)
+        setHasSeekedToStart(true)
       }
     }
   }
@@ -152,7 +176,7 @@ const MediaPlayerComponent: FC<Props> = ({ hidden }) => {
         const windowHeight = window.screen.height
         const mousePositionY = event.clientY
         const distanceFromBottom = windowHeight - mousePositionY
-        const threshold = 50 // Adjust this value as needed
+        const threshold = 50
 
         setIsMouseNearBottom(distanceFromBottom <= threshold)
       }
