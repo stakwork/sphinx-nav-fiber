@@ -1,18 +1,18 @@
+import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { Stats } from '~/components/Stats'
+import { useAiSummaryStore } from '~/stores/useAiSummaryStore'
 import { useAppStore } from '~/stores/useAppStore'
+import { useDataStore } from '~/stores/useDataStore'
 import { colors } from '~/utils/colors'
 import { media } from '~/utils/media'
-import { useAiSummaryStore } from '~/stores/useAiSummaryStore'
-import { useDataStore } from '~/stores/useDataStore'
-import { useNavigate } from 'react-router-dom'
 
 export const AppBar = () => {
   const appMetaData = useAppStore((s) => s.appMetaData)
   const { resetAiSummaryAnswer, setNewLoading } = useAiSummaryStore()
-  const { abortFetchData } = useDataStore((s) => s)
+  const { abortFetchData, resetGraph } = useDataStore((s) => s)
   const navigate = useNavigate()
 
   if (!appMetaData) {
@@ -22,6 +22,7 @@ export const AppBar = () => {
   const handleLogoClick = () => {
     setNewLoading(null)
     abortFetchData()
+    resetGraph()
     resetAiSummaryAnswer()
     navigate('/')
   }
