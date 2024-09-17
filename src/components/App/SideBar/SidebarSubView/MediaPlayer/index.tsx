@@ -25,8 +25,8 @@ const MediaPlayerComponent: FC<Props> = ({ hidden }) => {
   const [isMouseNearBottom, setIsMouseNearBottom] = useState(false)
   const [status, setStatus] = useState<'buffering' | 'error' | 'ready'>('ready')
   const [isReady, setIsReady] = useState(false)
-  const [hasSeekedToStart, setHasSeekedToStart] = useState(false)
   const [NodeStartTime, setNodeStartTime] = useState<string>('')
+  const [hasSeekedToStart, setHasSeekedToStart] = useState(false)
   const selectedNode = useSelectedNode()
 
   useEffect(() => {
