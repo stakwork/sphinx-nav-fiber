@@ -388,22 +388,28 @@ export const Editor = ({
   const resolvedParentValue = () => parentOptions?.find((i) => i.value === parent)
 
   const resolvedSelectedParentValue = useMemo((): TAutocompleteOption | undefined => {
-    if (!selectedSchema) {
-      return undefined
+    if (parent) {
+      const option = selectedNodeParentOptions?.find((i) => i.value === parent)
+
+      if (option) {
+        return option
+      }
+
+      return { label: parent, value: parent }
     }
 
-    const option = selectedNodeParentOptions?.find((i) => i.value === selectedSchema.parent)
+    if (selectedSchema?.parent) {
+      const option = selectedNodeParentOptions?.find((i) => i.value === selectedSchema.parent)
 
-    if (option) {
-      return option
-    }
+      if (option) {
+        return option
+      }
 
-    if (selectedSchema.parent) {
       return { label: selectedSchema.parent, value: selectedSchema.parent }
     }
 
     return undefined
-  }, [selectedSchema, selectedNodeParentOptions])
+  }, [parent, selectedSchema, selectedNodeParentOptions])
 
   return (
     <Flex>
