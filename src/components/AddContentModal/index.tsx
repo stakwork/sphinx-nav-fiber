@@ -146,7 +146,7 @@ const handleSubmitForm = async (
 export const AddContentModal = () => {
   const [currentStep, setCurrentStep] = useState(0)
   const { close, visible } = useModal('addContent')
-  const [setBudget] = useUserStore((s) => [s.setBudget])
+  const { setBudget } = useUserStore((s) => s)
   const form = useForm<FormData>({ mode: 'onChange' })
   const { watch, setValue, reset } = form
   const [loading, setLoading] = useState(false)

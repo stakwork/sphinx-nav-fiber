@@ -13,7 +13,7 @@ import { Text } from '~/components/common/Text'
 import { TextInput } from '~/components/common/TextInput'
 import { NODE_ADD_ERROR, requiredRule } from '~/constants'
 import { api } from '~/network/api'
-import { getNodeSchemaTypes, getNodeType, Schema } from '~/network/fetchSourcesData'
+import { getNodeSchemaTypes, getNodeType, Schema, editNodeSchemaUpdate } from '~/network/fetchSourcesData'
 import { useModal } from '~/stores/useModalStore'
 import { colors } from '~/utils'
 import { CreateCustomNodeAttribute } from './CustomAttributesStep'
@@ -221,29 +221,36 @@ export const Editor = ({
   }, [selectedSchema])
 
   useEffect(() => {
-    const init = async () => {
-      if (selectedSchema) {
-        setValue('type', selectedSchema?.type as string)
-        setValue('parent', selectedSchema.parent)
+    const resetForm = () => {
+      reset(defaultValues)
+      setParsedData([{ required: false, type: 'string', key: '' }])
+      setDeletedAttributes([])
 
-        let parsedDataDefault: parsedObjProps[] = [{ required: false, type: 'string', key: '' }]
-
-        if (selectedSchema.type !== NoParent.value.toLowerCase()) {
-          const data = await getNodeType(selectedSchema.type as string)
-
-          parsedDataDefault = data ? parseJson(data) : parsedDataDefault
-        }
-
-        parsedDataDefault = parsedDataDefault.filter((x) => x.key !== 'node_key')
-
-        setParsedData(parsedDataDefault)
-
-        await fetchAndSetOptions(setSelectedNodeParentOptions, (schema) => schema.type !== selectedSchema.type)
-      }
+      setMediaOptions({
+        videoAudio: false,
+        image: false,
+        sourceLink: false,
+      })
     }
 
-    init()
-  }, [selectedSchema, setValue])
+    resetForm()
+
+    if (selectedSchema) {
+      setValue('type', selectedSchema.type as string)
+      setValue('parent', selectedSchema.parent)
+
+      if (selectedSchema.type !== NoParent.value.toLowerCase()) {
+        getNodeType(selectedSchema.type as string).then((data) => {
+          const parsedDataDefault = data ? parseJson(data) : [{ required: false, type: 'string', key: '' }]
+          const filteredData = parsedDataDefault.filter((x) => x.key !== 'node_key')
+
+          setParsedData(filteredData)
+        })
+      }
+
+      fetchAndSetOptions(setSelectedNodeParentOptions, (schema) => schema.type !== selectedSchema.type)
+    }
+  }, [selectedSchema, setValue, reset])
 
   const parent = watch('parent')
 
@@ -255,7 +262,7 @@ export const Editor = ({
   const attributesValue = watch('attributes')
 
   const attributes: Attribute[] = useMemo(
-    () => (isAttributeArray(attributesValue) ? attributesValue : []),
+    () => (isAttributeArray(attributesValue) ? attributesValue.filter((attr) => attr.key.trim() !== '') : []),
     [attributesValue],
   )
 
@@ -313,10 +320,17 @@ export const Editor = ({
         (selectedSchema && getValues().parent !== selectedSchema?.parent)
       ) {
         const newParent = getValues().parent ?? selectedSchema?.parent
+        const { selectedIndex } = getValues()
 
         setGraphLoading(true)
 
-        await api.put(`/schema/${selectedSchema?.ref_id}`, JSON.stringify({ type: data.type, parent: newParent }))
+        await editNodeSchemaUpdate(selectedSchema?.ref_id as string, {
+          type: data.type,
+          parent: newParent as string,
+          attributes: {
+            index: selectedIndex as string,
+          },
+        })
 
         await onSchemaUpdate()
       }
@@ -373,27 +387,33 @@ export const Editor = ({
 
   const resolvedParentValue = () => parentOptions?.find((i) => i.value === parent)
 
-  const resolvedSelectedParentValue = (): TAutocompleteOption | undefined => {
-    const option = selectedNodeParentOptions?.find((i) => i.value === parent)
+  const resolvedSelectedParentValue = useMemo((): TAutocompleteOption | undefined => {
+    if (!selectedSchema) {
+      return undefined
+    }
+
+    const option = selectedNodeParentOptions?.find((i) => i.value === selectedSchema.parent)
 
     if (option) {
       return option
     }
 
-    if (parent) {
-      return { label: parent, value: parent }
+    if (selectedSchema.parent) {
+      return { label: selectedSchema.parent, value: selectedSchema.parent }
     }
 
     return undefined
-  }
+  }, [selectedSchema, selectedNodeParentOptions])
 
   return (
     <Flex>
-      <Flex direction="row" justify="flex-end">
+      <HeaderRow>
+        <HeaderText>{selectedSchema ? 'Edit Type' : 'Create Type'}</HeaderText>
         <CloseButton data-testid="close-sidebar-sub-view" onClick={onCancel}>
           <ClearIcon />
         </CloseButton>
-      </Flex>
+      </HeaderRow>
+      <LineBarWrapper />
       <Flex>
         <FormProvider {...form}>
           <form id="add-type-form" onSubmit={onSubmit}>
@@ -467,7 +487,7 @@ export const Editor = ({
                         setDisplayParentError(false)
                       }}
                       options={selectedNodeParentOptions || []}
-                      selectedValue={resolvedSelectedParentValue()}
+                      selectedValue={resolvedSelectedParentValue}
                     />
                     {errMessage && <StyledError>{errMessage}</StyledError>}
                   </Flex>
@@ -541,6 +561,13 @@ const CustomButton = styled(Button)`
   margin: 0 auto !important;
 `
 
+const LineBarWrapper = styled.div`
+  border-bottom: 1px solid ${colors.black};
+  width: calc(100% + 32px);
+  margin: 0 -16px 16px;
+  opacity: 0.3;
+`
+
 const ClipLoaderWrapper = styled.span`
   margin-top: 2px;
 `
@@ -563,6 +590,16 @@ const CloseButton = styled(Flex)`
   font-size: 32px;
   color: ${colors.white};
   cursor: pointer;
+
+  svg {
+    color: ${colors.GRAY6};
+  }
+
+  &:hover {
+    svg {
+      color: ${colors.white};
+    }
+  }
 `
 
 const StyledError = styled(Flex)`
@@ -579,4 +616,22 @@ const LineBar = styled.div`
   width: calc(100% + 32px);
   opacity: 0.5;
   margin-left: -16px;
+`
+
+const HeaderRow = styled(Flex)`
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 16px;
+`
+
+const HeaderText = styled(Text)`
+  font-family: Barlow;
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 16px;
+  letter-spacing: 0.01em;
+  text-align: left;
+  color: ${colors.white};
 `

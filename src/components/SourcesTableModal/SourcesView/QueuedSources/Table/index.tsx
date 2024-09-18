@@ -88,12 +88,12 @@ const Table: React.FC<Props> = ({ data }) => {
                 )}
               </StyledTableCell>
               <StyledTableCell className="cell-center">
-                <Flex direction="row" justify="space-between">
-                  <div className="approve-wrapper">
+                <Flex direction="row" justify="flex-end">
+                  <CheckCircleWrapper className="approve-wrapper">
                     <IconWrapper className="centered" onClick={() => handleApprove(i.ref_id)}>
                       <MdCheckCircle color={colors.primaryGreen} fontSize={24} />
                     </IconWrapper>
-                  </div>
+                  </CheckCircleWrapper>
                   <div className="delete-wrapper">
                     {loadingId === i.ref_id ? (
                       <ClipLoader color={colors.white} size={16} />
@@ -143,4 +143,8 @@ const StyledLink = styled.a`
   &:hover {
     cursor: pointer;
   }
+`
+
+const CheckCircleWrapper = styled.div`
+  margin-right: 40px;
 `

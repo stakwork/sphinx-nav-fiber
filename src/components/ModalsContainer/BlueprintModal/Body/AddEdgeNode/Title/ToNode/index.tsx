@@ -1,16 +1,19 @@
 import { FC, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
+import styled from 'styled-components'
 import { OPTIONS } from '~/components/AddItemModal/SourceTypeStep/constants'
 import { TOption } from '~/components/AddItemModal/SourceTypeStep/types'
 import { FormData } from '~/components/ModalsContainer/BlueprintModal/Body/Editor'
 import { AutoComplete, TAutocompleteOption } from '~/components/common/AutoComplete'
 import { getNodeSchemaTypes } from '~/network/fetchSourcesData'
+import { colors } from '~/utils'
 
 type Props = {
   onSelect: (type: string) => void
   dataTestId?: string
   hideSelectAll?: boolean
   edgeLink?: string
+  placeholder?: string
 }
 
 const defaultValues = {
@@ -18,7 +21,7 @@ const defaultValues = {
   parent: '',
 }
 
-export const ToNode: FC<Props> = ({ onSelect, dataTestId, edgeLink, hideSelectAll }) => {
+export const ToNode: FC<Props> = ({ onSelect, dataTestId, edgeLink, hideSelectAll, placeholder }) => {
   const form = useForm<FormData>({
     mode: 'onChange',
     defaultValues,
@@ -88,13 +91,42 @@ export const ToNode: FC<Props> = ({ onSelect, dataTestId, edgeLink, hideSelectAl
   }
 
   return (
-    <AutoComplete
+    <StyledAutoComplete
       dataTestId={dataTestId}
       disabled={!!edgeLink}
       isLoading={optionsIsLoading}
       onSelect={handleSelect}
       options={options || OPTIONS}
+      placeholder={placeholder}
       selectedValue={resolvedParentValue()}
     />
   )
 }
+
+const StyledAutoComplete = styled(AutoComplete)`
+  .MuiInputBase-input {
+    font-family: Barlow;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 16px;
+    letter-spacing: 0.01em;
+    text-align: left;
+    color: ${colors.white};
+    padding-right: -8px;
+
+    &::placeholder {
+      font-family: Barlow;
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 16px;
+      letter-spacing: 0.01em;
+      text-align: left;
+      color: ${colors.GRAY7};
+      opacity: 1;
+    }
+  }
+
+  && .MuiInput-input.MuiInputBase-input {
+    padding-left: 0;
+  }
+`

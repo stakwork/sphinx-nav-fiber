@@ -17,6 +17,7 @@ type Props = {
   setShowAllSchemas: (value: boolean) => void
   schemaAll: SchemaExtended[]
   anchorEl: HTMLElement | null
+  setAnchorEl: (value: HTMLElement | null) => void
 }
 
 const defaultValues = {
@@ -26,7 +27,7 @@ const defaultValues = {
   maxResults: 30,
 }
 
-export const FilterSearch = ({ showAllSchemas, setShowAllSchemas, schemaAll, anchorEl }: Props) => {
+export const FilterSearch = ({ showAllSchemas, setShowAllSchemas, schemaAll, anchorEl, setAnchorEl }: Props) => {
   const handleSchemaTypeClick = (type: string) => {
     setSelectedTypes((prevSelectedTypes) =>
       prevSelectedTypes.includes(type) ? prevSelectedTypes.filter((t) => t !== type) : [...prevSelectedTypes, type],
@@ -34,7 +35,7 @@ export const FilterSearch = ({ showAllSchemas, setShowAllSchemas, schemaAll, anc
   }
 
   const { setFilters, fetchData, setAbortRequests } = useDataStore((s) => s)
-  const [setBudget] = useUserStore((s) => [s.setBudget])
+  const { setBudget } = useUserStore((s) => s)
   const [selectedTypes, setSelectedTypes] = useState<string[]>(defaultValues.selectedTypes)
   const [hops, setHops] = useState(defaultValues.hops)
   const [sourceNodes, setSourceNodes] = useState<number>(defaultValues.sourceNodes)
@@ -62,6 +63,8 @@ export const FilterSearch = ({ showAllSchemas, setShowAllSchemas, schemaAll, anc
       depth: hops.toString(),
       top_node_count: sourceNodes.toString(),
     })
+
+    setAnchorEl(null)
 
     await fetchData(setBudget, setAbortRequests)
   }
