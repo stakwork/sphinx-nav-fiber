@@ -1,65 +1,79 @@
 import { DOCUMENT, LINK, RSS, TWITTER_HANDLE, TWITTER_SOURCE, WEB_PAGE, YOUTUBE_CHANNEL } from '~/constants'
-import { extractNameFromLink, getInputType } from '..'
+import { checkIfRSS, extractNameFromLink, getInputType } from '..'
 
 describe('youtubeRegex', () => {
   it('should assert we can check for youtube clip regex', async () => {
-    expect(getInputType('https://www.youtube.com/watch?v=83eQ9flwVS0&ab_channel=EthanChlebowski')).toBe(LINK)
+    await expect(getInputType('https://www.youtube.com/watch?v=83eQ9flwVS0&ab_channel=EthanChlebowski')).resolves.toBe(
+      LINK,
+    )
   })
 
   it('should assert we can check for youtube live clip regex', async () => {
-    expect(getInputType('https://youtube.com/live/tkdMgjEFNWs')).toBe(LINK)
+    await expect(getInputType('https://youtube.com/live/tkdMgjEFNWs')).resolves.toBe(LINK)
   })
 
   it('should assert we can check for twitter spaces regex', async () => {
-    expect(getInputType('https://twitter.com/i/spaces/1zqKVqwrVzlxB?s=20')).toBe(LINK)
+    await expect(getInputType('https://twitter.com/i/spaces/1zqKVqwrVzlxB?s=20')).resolves.toBe(LINK)
   })
 
   it('should assert we can check for youtu.be link regex', async () => {
-    expect(getInputType('https://youtu.be/HfMYOeg79dM')).toBe(LINK)
+    await expect(getInputType('https://youtu.be/HfMYOeg79dM')).resolves.toBe(LINK)
   })
 
   it('should assert we can check for youtu.be link with parameters regex', async () => {
-    expect(getInputType('https://youtu.be/HfMYOeg79dM?t=120')).toBe(LINK)
+    await expect(getInputType('https://youtu.be/HfMYOeg79dM?t=120')).resolves.toBe(LINK)
   })
 
   it('should assert we can check for twitter tweet regex', async () => {
-    expect(getInputType('https://twitter.com/LarryRuane/status/1720496960489095668')).toBe(TWITTER_SOURCE)
+    await expect(getInputType('https://twitter.com/LarryRuane/status/1720496960489095668')).resolves.toBe(
+      TWITTER_SOURCE,
+    )
   })
 
   it('should assert we can check for x.com tweet regex', async () => {
-    expect(getInputType('https://x.com/bernaaaljg/status/1795260855002583101')).toBe(TWITTER_SOURCE)
+    await expect(getInputType('https://x.com/bernaaaljg/status/1795260855002583101')).resolves.toBe(TWITTER_SOURCE)
   })
 
   it('should assert we can check for mp3 url regex', async () => {
-    expect(getInputType('https://hahaha.com/i/spaces/1zqKVqwrVzlxB?s=20.mp3')).toBe(LINK)
+    await expect(getInputType('https://hahaha.com/i/spaces/1zqKVqwrVzlxB?s=20.mp3')).resolves.toBe(LINK)
   })
 
-  it('should assert we can check for Twitter broadcast regex', () => {
-    expect(getInputType('https://twitter.com/i/broadcasts/1YqxoDbOqevKv')).toBe(LINK)
+  it('should assert we can check for Twitter broadcast regex', async () => {
+    await expect(getInputType('https://twitter.com/i/broadcasts/1YqxoDbOqevKv')).resolves.toBe(LINK)
   })
 
   it('should assert we can check for generic url regex', async () => {
-    expect(getInputType('https://idkwhat.com/routeing/tou')).toBe(WEB_PAGE)
+    global.fetch = jest.fn(() =>
+      Promise.resolve({
+        headers: {
+          get: (header) => (header === 'Content-Type' ? 'text/html' : null),
+        },
+      }),
+    ) as jest.Mock
+
+    await expect(getInputType('https://idkwhat.com/routeing/tou')).resolves.toBe(WEB_PAGE)
+
+    jest.restoreAllMocks()
   })
 
   it('should assert we can check for youtube clip regex', async () => {
-    expect(getInputType('https://www.youtube.com/@MrBeast')).toBe(YOUTUBE_CHANNEL)
+    await expect(getInputType('https://www.youtube.com/@MrBeast')).resolves.toBe(YOUTUBE_CHANNEL)
   })
 
   it('should assert we can check for twitter handle regex', async () => {
-    expect(getInputType('https://twitter.com/@KevKevPal')).toBe(TWITTER_HANDLE)
+    await expect(getInputType('https://twitter.com/@KevKevPal')).resolves.toBe(TWITTER_HANDLE)
   })
 
   it('should assert we can check for x.com handle regex', async () => {
-    expect(getInputType('https://x.com/@KevKevPal')).toBe(TWITTER_HANDLE)
+    await expect(getInputType('https://x.com/@KevKevPal')).resolves.toBe(TWITTER_HANDLE)
   })
 
   it('should assert we can check for youtube live clip regex', async () => {
-    expect(getInputType('https://www.youtube.com/@MrBeast')).toBe(YOUTUBE_CHANNEL)
+    await expect(getInputType('https://www.youtube.com/@MrBeast')).resolves.toBe(YOUTUBE_CHANNEL)
   })
 
   it('should assert we can check for document regex', async () => {
-    expect(getInputType('some plain text')).toBe(DOCUMENT)
+    await expect(getInputType('some plain text')).resolves.toBe(DOCUMENT)
   })
 })
 
@@ -102,9 +116,61 @@ describe('extractNameFromLink', () => {
 
 describe('getInputType', () => {
   it('should assert we can check for RSS feed url regex', async () => {
-    expect(getInputType('http://example.com/feed')).toBe(RSS)
-    expect(getInputType('http://example.com/rss')).toBe(RSS)
-    expect(getInputType('http://example.com/rss.xml')).toBe(RSS)
-    expect(getInputType('http://example.com/?feed=rss')).toBe(RSS)
+    await expect(getInputType('http://example.com/feed')).resolves.toBe(RSS)
+    await expect(getInputType('http://example.com/rss')).resolves.toBe(RSS)
+    await expect(getInputType('http://example.com/rss.xml')).resolves.toBe(RSS)
+    await expect(getInputType('http://example.com/?feed=rss')).resolves.toBe(RSS)
+  })
+
+  it('should assert we can check for RSS feed by content type', async () => {
+    global.fetch = jest.fn(() =>
+      Promise.resolve({
+        headers: {
+          get: (header) => (header === 'Content-Type' ? 'application/rss+xml' : null),
+        },
+      }),
+    ) as jest.Mock
+
+    await expect(getInputType('https://rss.arxiv.org/rss/cs.AI')).resolves.toBe(RSS)
+
+    jest.restoreAllMocks()
+  })
+})
+
+describe('checkIfRSS', () => {
+  it('should return true for a valid RSS feed', async () => {
+    global.fetch = jest.fn(() =>
+      Promise.resolve({
+        headers: {
+          get: (header) => (header === 'Content-Type' ? 'application/rss+xml' : null),
+        },
+      }),
+    ) as jest.Mock
+
+    await expect(checkIfRSS('https://rss.arxiv.org/rss/cs.AI')).resolves.toBe(true)
+
+    jest.restoreAllMocks()
+  })
+
+  it('should return false for a non-RSS feed', async () => {
+    global.fetch = jest.fn(() =>
+      Promise.resolve({
+        headers: {
+          get: (header) => (header === 'Content-Type' ? 'text/html' : null),
+        },
+      }),
+    ) as jest.Mock
+
+    await expect(checkIfRSS('https://example.com')).resolves.toBe(false)
+
+    jest.restoreAllMocks()
+  })
+
+  it('should return false for a fetch error', async () => {
+    global.fetch = jest.fn(() => Promise.reject(new Error('Network error'))) as jest.Mock
+
+    await expect(checkIfRSS('https://example.com')).resolves.toBe(false)
+
+    jest.restoreAllMocks()
   })
 })
