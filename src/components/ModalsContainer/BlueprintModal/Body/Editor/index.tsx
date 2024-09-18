@@ -13,7 +13,7 @@ import { Text } from '~/components/common/Text'
 import { TextInput } from '~/components/common/TextInput'
 import { NODE_ADD_ERROR, requiredRule } from '~/constants'
 import { api } from '~/network/api'
-import { getNodeSchemaTypes, getNodeType, Schema, editNodeSchemaUpdate } from '~/network/fetchSourcesData'
+import { editNodeSchemaUpdate, getNodeSchemaTypes, getNodeType, Schema } from '~/network/fetchSourcesData'
 import { useModal } from '~/stores/useModalStore'
 import { colors } from '~/utils'
 import { CreateCustomNodeAttribute } from './CustomAttributesStep'
@@ -71,7 +71,8 @@ const handleSubmitForm = async (
   mediaOptions: { videoAudio: boolean; image: boolean; sourceLink: boolean },
 ): Promise<string | undefined> => {
   try {
-    const { attributes, selectedIndex, ...withoutAttributes } = data
+    // eslint-disable-next-line camelcase
+    const { attributes, selectedIndex, ref_id, ...withoutAttributes } = data
 
     const updatedAttributes = {
       ...convertAttributes(attributes),
@@ -262,7 +263,8 @@ export const Editor = ({
   const attributesValue = watch('attributes')
 
   const attributes: Attribute[] = useMemo(
-    () => (isAttributeArray(attributesValue) ? attributesValue.filter((attr) => attr.key.trim() !== '') : []),
+    () =>
+      isAttributeArray(attributesValue) ? attributesValue.filter((attr) => attr.key && attr.key.trim() !== '') : [],
     [attributesValue],
   )
 
