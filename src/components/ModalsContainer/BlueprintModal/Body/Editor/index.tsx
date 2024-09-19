@@ -542,7 +542,7 @@ export const Editor = ({
 
               <CustomButton
                 color="secondary"
-                disabled={submitDisabled}
+                disabled={submitDisabled || loading}
                 onClick={onSubmit}
                 size="large"
                 variant="contained"
