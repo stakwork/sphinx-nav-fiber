@@ -4,6 +4,7 @@ import * as sphinx from 'sphinx-bridge'
 import { BaseModal } from '~/components/Modal'
 import {
   DOCUMENT,
+  isE2E,
   LINK,
   NODE_ADD_ERROR,
   RSS,
@@ -11,7 +12,6 @@ import {
   TWITTER_SOURCE,
   WEB_PAGE,
   YOUTUBE_CHANNEL,
-  isE2E,
 } from '~/constants'
 import { api } from '~/network/api'
 import { useModal } from '~/stores/useModalStore'
@@ -111,6 +111,8 @@ const handleSubmitForm = async (
       Authorization: lsatToken,
     })
 
+    await updateBudget(setBudget)
+
     if (res.error) {
       const { message } = res.error
 
@@ -121,7 +123,6 @@ const handleSubmitForm = async (
   } catch (err: any) {
     if (err.status === 402) {
       await payLsat(setBudget)
-      await updateBudget(setBudget)
       await handleSubmitForm(data, sourceType, setBudget)
     } else {
       let errorMessage = NODE_ADD_ERROR
