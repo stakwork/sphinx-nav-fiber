@@ -4,6 +4,8 @@ import { getLSat } from '../getLSat'
 export async function updateBudget(setBudget: (value: number | null) => void) {
   const lsat = await getLSat()
 
+  console.log('LSAT Value: ', lsat)
+
   if (!lsat) {
     setBudget(0)
 
