@@ -135,11 +135,11 @@ jobs:
         run: ls -R cypress
 
       - name: Upload Cypress logs
-        if: failure()
-        # if: always()
+        # if: failure()
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: cypress-logs
+          name: ${{ matrix.file }}
           path: cypress/videos
 
       - name: Stop Stack
