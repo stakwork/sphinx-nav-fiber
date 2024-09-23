@@ -105,9 +105,6 @@ jobs:
       - name: Install
         run: yarn --immutable
 
-      - name: Debug Cypress logs location
-        run: ls -R cypress
-
       - name: Cypress run
         # Uses the official Cypress GitHub action https://github.com/cypress-io/github-action
         uses: cypress-io/github-action@v6
@@ -129,8 +126,12 @@ jobs:
         run: yarn run cy-comp
         continue-on-error: false
 
+      - name: Debug Cypress logs location
+        run: ls -R cypress
+
       - name: Upload Cypress logs
-        if: failure()
+        # if: failure()
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: cypress-logs
