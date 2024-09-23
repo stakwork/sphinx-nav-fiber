@@ -1,35 +1,35 @@
 describe('Admin Login', () => {
-  it('Admin uses the enable function', () => {
+  beforeEach(() => {
     const username = 'alice'
-
     cy.initialSetup(username, 50)
+    cy.intercept('POST', '/api/about*').as('updateAbout')
+  })
 
-    cy.intercept({
-      method: 'POST',
-      url: 'http://localhost:8444/api/about*',
-    }).as('updateAbout')
-
-    const title = `Testing NavFiber`
+  it('Admin updates the About section successfully', () => {
+    const title = 'Testing NavFiber'
     const description = 'Testing Graph Description'
 
     // Open settings modal
-    cy.get('div[data-testid="settings-modal"]').should('be.visible').click()
+    cy.get('[data-testid="settings-modal"]').click()
 
-    // Asserting the settings label text
+    // Assert settings label
     cy.get('[data-testid="setting-label"]').should('have.text', 'Admin Settings')
 
-    // Efficiently interact with the about title
-    cy.get('#cy-about-title-id').should('be.visible').click().type('{selectAll}').type(title)
-
-    // Efficiently interact with the about description
-    cy.get('#cy-about-id').should('be.visible').click().type('{selectAll}').type(description)
+    // Update About title and description
+    cy.fillInput('[data-testid="about-title-input"]', title)
+    cy.fillInput('[data-testid="about-description-input"]', description)
 
     // Submit the form
-    cy.get('#add-node-submit-cta').click()
-    cy.wait('@updateAbout')
+    cy.get('[data-testid="submit-button"]').click()
 
-    cy.wait(1000)
+    // Wait for the network request to complete and assert response
+    cy.wait('@updateAbout').its('response.statusCode').should('be.oneOf', [200, 201])
 
+    // Verify that the UI reflects the updated values
     cy.get('.title').should('have.text', title)
+    cy.get('.description').should('have.text', description)
+    cy.get('[data-testid="success-message"]')
+      .should('be.visible')
+      .and('contain', 'About section updated successfully')
   })
 })
