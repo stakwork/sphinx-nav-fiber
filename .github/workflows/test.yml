@@ -139,7 +139,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.file }}
+          name: ${{ matrix.file | replace('/', '_') }}-cypress-logs
           path: cypress/videos
 
       - name: Stop Stack
