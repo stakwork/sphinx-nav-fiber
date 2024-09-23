@@ -127,8 +127,12 @@ jobs:
         run: yarn run cy-comp
         continue-on-error: false
 
+      - name: Debug test files
+        run: |
+          echo ${{ matrix.file }}
+
       - name: Debug Cypress logs location
-        run: ls -R cypress
+        run: ls -R
 
       - name: Upload Cypress logs
         if: failure()
