@@ -127,19 +127,18 @@ jobs:
       #   run: yarn run cy-comp
       #   continue-on-error: false
 
-      - name: Debug test files
-        run: |
-          echo ${{ matrix.file }}
+      - name: Sanitize Test File Path
+        run: echo "SANITIZED_FILE=$(echo ${{ matrix.file }} | sed 's/\//_/g')" >> $GITHUB_ENV
 
-      - name: Debug Cypress logs location
-        run: ls -R cypress
+      - name: Debug sanitized file
+        run: echo "Sanitized file $SANITIZED_FILE"
 
       - name: Upload Cypress logs
         # if: failure()
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.file | replace('/', '_') }}-cypress-logs
+          name: "${{ env.SANITIZED_FILE }}-cypress-logs"
           path: cypress/videos
 
       - name: Stop Stack
