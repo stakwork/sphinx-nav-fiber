@@ -5,8 +5,7 @@ on:
       - master
 jobs:
   get-cypress-tests:
-    runs-on:
-      ubuntu-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -17,7 +16,6 @@ jobs:
         working-directory: ./sphinx-nav-fiber
         run: |
           find cypress/e2e -name '*.spec.js' -o -name '*.cy.ts' | jq -R -s -c 'split("\n") | map(select(. != ""))'
-
 
       - name: List Cypress test files
         id: list-tests
@@ -51,8 +49,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version-file: '.nvmrc'
-          cache: 'yarn'
+          node-version-file: ".nvmrc"
+          cache: "yarn"
       - name: Clone Stack
         run: |
           git clone https://github.com/stakwork/sphinx-stack.git stack
@@ -101,11 +99,14 @@ jobs:
       - name: Copy Node.json
         uses: canastro/copy-file-action@master
         with:
-          source: 'stack/relay/NODES.json'
-          target: 'relay/nodes.json'
+          source: "stack/relay/NODES.json"
+          target: "relay/nodes.json"
 
       - name: Install
         run: yarn --immutable
+
+      - name: Debug Cypress logs location
+        run: ls -R cypress
 
       - name: Cypress run
         # Uses the official Cypress GitHub action https://github.com/cypress-io/github-action
@@ -116,7 +117,7 @@ jobs:
           headless: true
           start: yarn run start-e2e
           spec: ${{ matrix.file }}
-          wait-on: 'http://localhost:3000' # Waits for above
+          wait-on: "http://localhost:3000" # Waits for above
           wait-on-timeout: 120 # Waits for 2 minutes
           # Records to Cypress Dashboard
           record: true
@@ -134,7 +135,6 @@ jobs:
         with:
           name: cypress-logs
           path: cypress/videos
-
 
       - name: Stop Stack
         working-directory: ./stack
