@@ -117,7 +117,7 @@ jobs:
           wait-on: "http://localhost:3000" # Waits for above
           wait-on-timeout: 120 # Waits for 2 minutes
           # Records to Cypress Dashboard
-          record: true
+          record: false
           video: true
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
