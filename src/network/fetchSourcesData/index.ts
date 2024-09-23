@@ -181,23 +181,6 @@ export interface UpdateSchemaParams {
   }
 }
 
-type BountyPayload = {
-  type: string
-  amount: number
-  workspace_uuid: string
-  jwt_token: string | null
-  ref_id: string
-  node_data: {
-    name: string
-  }
-}
-
-export const postBountyData = async (payload: BountyPayload) => {
-  const response = await api.post('/bounty', JSON.stringify(payload))
-
-  return response
-}
-
 export const editNodeSchemaUpdate = async (ref_id: string, data: UpdateSchemaParams) => {
   const response = await api.put(`/schema/${ref_id}`, JSON.stringify(data))
 
