@@ -132,7 +132,7 @@ jobs:
           echo ${{ matrix.file }}
 
       - name: Debug Cypress logs location
-        run: ls -R
+        run: ls -R cypress
 
       - name: Upload Cypress logs
         if: failure()
