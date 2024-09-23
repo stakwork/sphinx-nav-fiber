@@ -1,5 +1,5 @@
 describe('See latest button as new node are added', () => {
-  it.skip('See latest as nodes are being added', () => {
+  it('See latest as nodes are being added', () => {
     cy.initialSetup('carol', 300)
 
     // add tweet node
