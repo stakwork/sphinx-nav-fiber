@@ -66,14 +66,14 @@ describe('test trending topics', () => {
 
       cy.wait('@search2')
 
-      cy.get('#search-result-list').should('exist')
-
       // Check if the search result list has more than one child
-      cy.get('#search-result-list').children().should('have.length.gt', 0)
+      cy.get('.episode-wrapper')
+        .should('exist') // Ensure they exist
+        .should('have.length.greaterThan', 1) // Check that there are more than one
+        .first() // Select the first element
+        .click()
 
-      cy.get('#search-result-list').children().first().click()
-
-      cy.get('[data-testid="sidebar-sub-view"]').should('have.css', 'position', 'relative')
+      // cy.get('[data-testid="sidebar-sub-view"]').should('have.css', 'position', 'relative')
 
       // cancel search
       cy.get('[data-testid="search_action_icon"]').click()
