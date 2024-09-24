@@ -2,7 +2,7 @@ describe('test trending topics', () => {
   it('Checking it trending topics exist', () => {
     cy.intercept({
       method: 'GET',
-      url: 'http://localhost:8444/api/prediction/graph/search*',
+      url: 'http://localhost:8444/api/prediction/graph/search/latest*',
     }).as('loadLatest')
 
     cy.intercept({
