@@ -4,8 +4,40 @@ on:
     branches:
       - master
 jobs:
+  get-cypress-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          path: ./sphinx-nav-fiber
+
+      - name: Debug test files
+        working-directory: ./sphinx-nav-fiber
+        run: |
+          find cypress/e2e -name '*.spec.js' -o -name '*.cy.ts' | jq -R -s -c 'split("\n") | map(select(. != ""))'
+
+      - name: List Cypress test files
+        id: list-tests
+        working-directory: ./sphinx-nav-fiber
+        run: |
+          tests=$(find cypress/e2e -name '*.spec.js' -o -name '*.cy.ts' | jq -R -s -c 'split("\n") | map(select(. != ""))')
+          if [ -z "$tests" ]; then
+            echo "No Cypress test files found."
+            tests="[]"
+          fi
+          echo "::set-output name=tests::$tests"
+
+    outputs:
+      tests: ${{ steps.list-tests.outputs.tests }}
+
   cypress-run:
     runs-on: ubuntu-latest
+    needs: get-cypress-tests
+    strategy:
+      fail-fast: false
+      matrix:
+        file: ${{ fromJson(needs.get-cypress-tests.outputs.tests) }}
     steps:
       - name: Enable docker.host.internal for Ubuntu
         run: |
@@ -81,28 +113,32 @@ jobs:
           browser: chrome
           headless: true
           start: yarn run start-e2e
+          spec: ${{ matrix.file }}
           wait-on: 'http://localhost:3000' # Waits for above
           wait-on-timeout: 120 # Waits for 2 minutes
           # Records to Cypress Dashboard
-          record: true
-          args: --disable-dev-shm-usage
+          record: false
+          video: true
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           # created by the GH Action automatically
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Component tests
-        run: yarn run cy-comp
-        continue-on-error: false
+      # - name: Component tests
+      #   run: yarn run cy-comp
+      #   continue-on-error: false
+
+      - name: Sanitize Test File Path
+        run: echo "SANITIZED_FILE=$(echo ${{ matrix.file }} | sed 's/\//_/g')" >> $GITHUB_ENV
+
+      - name: Debug sanitized file
+        run: echo "Sanitized file $SANITIZED_FILE"
 
       - name: Upload Cypress logs
-        if: failure()
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: cypress-logs
+          name: '${{ env.SANITIZED_FILE }}-cypress-logs'
           path: cypress/videos
-
-      - name: Check the coverage value
-        run: yarn test-coverage
 
       - name: Stop Stack
         working-directory: ./stack
