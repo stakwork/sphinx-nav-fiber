@@ -13,7 +13,7 @@ import { Text } from '~/components/common/Text'
 import { TextInput } from '~/components/common/TextInput'
 import { NODE_ADD_ERROR, requiredRule } from '~/constants'
 import { api } from '~/network/api'
-import { getNodeSchemaTypes, getNodeType, Schema, editNodeSchemaUpdate } from '~/network/fetchSourcesData'
+import { editNodeSchemaUpdate, getNodeSchemaTypes, getNodeType, Schema } from '~/network/fetchSourcesData'
 import { useModal } from '~/stores/useModalStore'
 import { colors } from '~/utils'
 import { CreateCustomNodeAttribute } from './CustomAttributesStep'
@@ -71,7 +71,8 @@ const handleSubmitForm = async (
   mediaOptions: { videoAudio: boolean; image: boolean; sourceLink: boolean },
 ): Promise<string | undefined> => {
   try {
-    const { attributes, selectedIndex, ...withoutAttributes } = data
+    // eslint-disable-next-line camelcase
+    const { attributes, selectedIndex, ref_id, ...withoutAttributes } = data
 
     const updatedAttributes = {
       ...convertAttributes(attributes),
@@ -239,6 +240,16 @@ export const Editor = ({
       setValue('type', selectedSchema.type as string)
       setValue('parent', selectedSchema.parent)
 
+      if (selectedSchema.index) {
+        setValue('selectedIndex', selectedSchema.index)
+      }
+
+      setMediaOptions({
+        videoAudio: !!selectedSchema.media_url,
+        image: !!selectedSchema.image_url,
+        sourceLink: !!selectedSchema.source_link,
+      })
+
       if (selectedSchema.type !== NoParent.value.toLowerCase()) {
         getNodeType(selectedSchema.type as string).then((data) => {
           const parsedDataDefault = data ? parseJson(data) : [{ required: false, type: 'string', key: '' }]
@@ -262,7 +273,8 @@ export const Editor = ({
   const attributesValue = watch('attributes')
 
   const attributes: Attribute[] = useMemo(
-    () => (isAttributeArray(attributesValue) ? attributesValue.filter((attr) => attr.key.trim() !== '') : []),
+    () =>
+      isAttributeArray(attributesValue) ? attributesValue.filter((attr) => attr.key && attr.key.trim() !== '') : [],
     [attributesValue],
   )
 
@@ -374,11 +386,12 @@ export const Editor = ({
         isMatch
 
       const isValidType = !!values.type?.trim()
+      const isValidParent = !!values.parent?.trim()
 
       setSubmitDisabled(
         selectedSchema
           ? loading || !isChanged || !isValidType || displayParentError
-          : loading || displayParentError || !isValidType,
+          : loading || displayParentError || !isValidType || !isValidParent,
       )
     })
 
@@ -388,22 +401,46 @@ export const Editor = ({
   const resolvedParentValue = () => parentOptions?.find((i) => i.value === parent)
 
   const resolvedSelectedParentValue = useMemo((): TAutocompleteOption | undefined => {
-    if (!selectedSchema) {
-      return undefined
+    if (parent) {
+      const option = selectedNodeParentOptions?.find((i) => i.value === parent)
+
+      if (option) {
+        return option
+      }
+
+      return { label: parent, value: parent }
     }
 
-    const option = selectedNodeParentOptions?.find((i) => i.value === selectedSchema.parent)
+    if (selectedSchema?.parent) {
+      const option = selectedNodeParentOptions?.find((i) => i.value === selectedSchema.parent)
 
-    if (option) {
-      return option
-    }
+      if (option) {
+        return option
+      }
 
-    if (selectedSchema.parent) {
       return { label: selectedSchema.parent, value: selectedSchema.parent }
     }
 
     return undefined
-  }, [selectedSchema, selectedNodeParentOptions])
+  }, [parent, selectedSchema, selectedNodeParentOptions])
+
+  const resolvedSelectedIndexValue = useMemo((): TAutocompleteOption | undefined => {
+    if (!selectedSchema) {
+      return undefined
+    }
+
+    const option = attributes.find((attr) => attr.key === selectedSchema.index)
+
+    if (option) {
+      return { label: option.key, value: option.key }
+    }
+
+    if (selectedSchema.index) {
+      return { label: selectedSchema.index, value: selectedSchema.index }
+    }
+
+    return undefined
+  }, [selectedSchema, attributes])
 
   return (
     <Flex>
@@ -498,7 +535,7 @@ export const Editor = ({
               onDelete={handleDeleteAttribute}
               parent={selectedSchema ? selectedSchema.type : parent}
             />
-            <MediaOptions setMediaOptions={setMediaOptions} />
+            <MediaOptions initialOptions={mediaOptions} setMediaOptions={setMediaOptions} />
             <Flex>
               <LineBar />
               <Flex mb={12} mt={12}>
@@ -506,8 +543,9 @@ export const Editor = ({
               </Flex>
               <Grid item mb={2} width="70%">
                 <AutoComplete
-                  onSelect={(val) => setValue(`selectedIndex`, val?.value)}
+                  onSelect={(val) => setValue('selectedIndex', val?.value || '')}
                   options={attributes.map((attr) => ({ label: attr.key, value: attr.key }))}
+                  selectedValue={resolvedSelectedIndexValue}
                 />
               </Grid>
               <LineBar />
