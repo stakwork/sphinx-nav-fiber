@@ -13,7 +13,7 @@ export const ActionsToolbar = () => {
   const selectedNode = useSelectedNode()
   const isLoading = useDataStore((s) => s.isFetching)
   const universeQuestionIsOpen = useAppStore((s) => s.universeQuestionIsOpen)
-  const [isAdmin] = useUserStore((s) => [s.isAdmin])
+  const { isAdmin } = useUserStore((s) => s)
 
   return (
     <Wrapper align="flex-end" id="actions-toolbar">
