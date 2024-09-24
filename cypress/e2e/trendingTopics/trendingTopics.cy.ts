@@ -37,7 +37,8 @@ describe('test trending topics', () => {
 
     cy.wait(['@loadAbout', '@loadLatest', '@loadStats'])
 
-    cy.wait(20000)
+    // wait for boltwall queue to send tweets to jarvis
+    cy.wait(70000)
 
     cy.get('[data-testid="explore-graph-btn"]').click()
 
@@ -53,9 +54,17 @@ describe('test trending topics', () => {
       cy.contains(`${responseBody[0].name}`).eq(0).click()
 
       // wait for search result
-      cy.wait('@search', { timeout: 90000 }).then(() => {
+      cy.wait('@search', { timeout: 90000 }).then((interception) => {
         cy.log('Search request intercepted')
+        expect(interception.response.statusCode).to.eq(402)
       })
+
+      cy.intercept({
+        method: 'GET',
+        url: 'http://localhost:8444/api/prediction/graph/search*',
+      }).as('search2')
+
+      cy.wait('@search2')
 
       cy.get('#search-result-list').should('exist')
 
