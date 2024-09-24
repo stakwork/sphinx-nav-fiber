@@ -33,7 +33,7 @@ export const Body = () => {
       type: 'code_generation',
       amount: Number(budget),
       workspace_uuid: 'ck9drb84nncjnaefo090',
-      jwt_token: null,
+      jwt_token: 'abced-12345',
       ref_id: selectedNode?.ref_id as string,
       node_data: nodeData,
     }
