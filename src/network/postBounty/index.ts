@@ -7,7 +7,7 @@ type BountyPayload = {
   jwt_token: string | null
   ref_id: string
   node_data: {
-    name: string
+    [key: string]: never | undefined
   }
 }
 
