@@ -1,5 +1,6 @@
 import Button from '@mui/material/Button'
 import clsx from 'clsx'
+import moment from 'moment'
 import { useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 import { Divider } from '~/components/common/Divider'
@@ -95,7 +96,7 @@ export const Default = () => {
                 isPlaying={isPlaying}
                 label={formatLabel(key)}
                 togglePlay={togglePlay}
-                value={value}
+                value={key === 'date' && value ? moment(value * 1000).format('MMMM Do YYYY') : value}
               />
             ))}
         </StyledWrapper>

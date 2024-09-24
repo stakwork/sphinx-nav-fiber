@@ -1,4 +1,8 @@
+<<<<<<<< HEAD:build/assets/NodeCircleIcon-e840b41b.js
 import{o,a$ as e,aZ as r,aY as n,j as t}from"./index-022521cf.js";import{I as i}from"./index-586dfb7f.js";const l={[e]:"RSS link",[r]:"Twitter Handle",[n]:"Youtube channel"},w="Sources Table",p="Queued Sources",d="Topics",h="View Content",u="date",T="edge_count",x="alphabetically",E="https://twitter.com",m="IS_ALIAS",g="https://www.twitter.com/anyuser/status/",I=o(i)`
+========
+import{o,a$ as e,aZ as r,aY as n,j as t}from"./index-1e219a1f.js";import{I as i}from"./index-c1584b59.js";const l={[e]:"RSS link",[r]:"Twitter Handle",[n]:"Youtube channel"},w="Sources Table",p="Queued Sources",d="Topics",h="View Content",u="date",T="edge_count",x="alphabetically",E="https://twitter.com",m="IS_ALIAS",g="https://www.twitter.com/anyuser/status/",I=o(i)`
+>>>>>>>> origin:build/assets/NodeCircleIcon-8acc5682.js
   && {
     vertical-align: middle;
     margin: 5px 0 0 4px;

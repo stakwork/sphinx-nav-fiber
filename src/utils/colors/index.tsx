@@ -103,6 +103,7 @@ export const colors = {
   COLLAPSE_BUTTON: 'rgba(48, 51, 66, 1)',
   SOURCE_TABLE_LINK: 'rgba(171, 204, 254, 1)',
   AI_HIGHLIGHT: 'rgba(0, 123, 255, 0.1)',
+  createTestButton: 'rgb(178, 255, 102)',
 } as const
 
 export type ColorName = keyof typeof colors

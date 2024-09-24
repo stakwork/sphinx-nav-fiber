@@ -1,4 +1,8 @@
+<<<<<<<< HEAD:build/assets/index-ee20ad28.js
 import{ai as m,o as s,q as r,ag as o,F as d,O as w,r as y,j as e}from"./index-022521cf.js";import{k as v}from"./index-586dfb7f.js";const k=m`
+========
+import{ai as m,o as s,q as r,ag as o,F as d,O as w,r as y,j as e}from"./index-1e219a1f.js";import{k as v}from"./index-c1584b59.js";const k=m`
+>>>>>>>> origin:build/assets/index-856b83d2.js
   0% {
     transform: scale(0.8);
   }
