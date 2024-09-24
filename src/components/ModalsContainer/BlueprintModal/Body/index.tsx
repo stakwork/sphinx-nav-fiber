@@ -194,9 +194,18 @@ export const Body = ({ Close }: BodyProps) => {
                 links={filteredLinks}
                 onEdgeClick={(refId, edgeType, source, target) => {
                   setEdgeData({ refId, edgeType, source, target })
-                  setIsAddEdgeNode(true)
-                  setIsCreateNew(false)
-                  setSelectedSchemaId('')
+
+                  if (!isAddEdgeNode) {
+                    setIsAddEdgeNode(true)
+                    setIsCreateNew(false)
+                    setSelectedSchemaId('')
+                  } else {
+                    setIsAddEdgeNode(false)
+
+                    setTimeout(() => {
+                      setIsAddEdgeNode(true)
+                    }, 200)
+                  }
                 }}
                 schemasWithPositions={schemasWithChildren}
                 selectedSchemaId={selectedSchemaId}
