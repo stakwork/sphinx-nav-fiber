@@ -21,8 +21,8 @@ export function apiUrlFromSwarmHost(): string | undefined {
 
       url = `https://${finalHost}`
     }
-  } else if (originUrl === 'https://second-brain.sphinx.chat' || origin.includes('localhost')) {
-    url = 'https://knowledge-graph.sphinx.chat'
+  } else if (origin.includes('localhost')) {
+    url = 'https://bitcoin.sphinx.chat'
   }
 
   return `${url}/api`
