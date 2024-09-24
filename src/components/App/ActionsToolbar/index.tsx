@@ -1,19 +1,23 @@
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
+import { GraphViewControl } from '~/components/common/GraphViewControl'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
 import { useSelectedNode } from '~/stores/useGraphStore'
+import { useUserStore } from '~/stores/useUserStore'
 import { CameraRecenterControl } from './CameraRecenterControl'
-import { GraphViewControl } from '~/components/common/GraphViewControl'
+import { GraphClear } from './GraphClear'
 import { PlayerControl } from './PlayerControl'
 
 export const ActionsToolbar = () => {
   const selectedNode = useSelectedNode()
   const isLoading = useDataStore((s) => s.isFetching)
   const universeQuestionIsOpen = useAppStore((s) => s.universeQuestionIsOpen)
+  const [isAdmin] = useUserStore((s) => [s.isAdmin])
 
   return (
     <Wrapper align="flex-end" id="actions-toolbar">
+      {!isLoading && !universeQuestionIsOpen && isAdmin && <GraphClear />}
       {!isLoading && !universeQuestionIsOpen && <CameraRecenterControl />}
       <Flex align="center" direction="row" mt={16}>
         {!isLoading && !universeQuestionIsOpen && <GraphViewControl />}
