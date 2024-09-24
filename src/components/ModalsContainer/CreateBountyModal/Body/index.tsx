@@ -1,9 +1,8 @@
-import { FormProvider, useForm } from 'react-hook-form'
-import { useModal } from '~/stores/useModalStore'
-import { useSelectedNode } from '~/stores/useGraphStore'
-import { postBountyData } from '~/network/postBounty'
 import { useState } from 'react'
-import * as React from 'react'
+import { FormProvider, useForm } from 'react-hook-form'
+import { postBountyData } from '~/network/postBounty'
+import { useSelectedNode } from '~/stores/useGraphStore'
+import { useModal } from '~/stores/useModalStore'
 import { CreateBounty } from '../CreateBounty'
 
 export type FormData = {
@@ -33,7 +32,7 @@ export const Body = () => {
       type: 'code_generation',
       amount: Number(budget),
       workspace_uuid: 'ck9drb84nncjnaefo090',
-      jwt_token: null,
+      jwt_token: 'abced-12345',
       ref_id: selectedNode?.ref_id as string,
       node_data: nodeData,
     }
