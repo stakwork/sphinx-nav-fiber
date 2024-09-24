@@ -34,11 +34,6 @@ import '@testing-library/cypress/add-commands'
 Cypress.Commands.add('initialSetup', (username, budget) => {
   cy.intercept({
     method: 'GET',
-    url: 'http://localhost:8444/api/prediction/graph/search/latest*',
-  }).as('loadLatest')
-
-  cy.intercept({
-    method: 'GET',
     url: 'http://localhost:8444/api/about*',
   }).as('loadAbout')
 
@@ -51,6 +46,11 @@ Cypress.Commands.add('initialSetup', (username, budget) => {
     method: 'GET',
     url: 'http://localhost:8444/api/get_trends*',
   }).as('getTrends')
+
+  cy.intercept({
+    method: 'GET',
+    url: 'http://localhost:8444/api/prediction/graph/search/latest*',
+  }).as('loadLatest')
 
   cy.visit('/', {
     onBeforeLoad(win) {
