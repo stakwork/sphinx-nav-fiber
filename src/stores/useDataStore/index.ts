@@ -18,6 +18,10 @@ export type FetchNodeParams = {
   skip_cache?: string
   free?: string
   media_type?: string
+  node_type?: string
+  limit?: string
+  depth?: string
+  top_node_count?: string
 }
 
 export type SidebarFilterWithCount = {
@@ -136,7 +140,7 @@ export const useDataStore = create<DataStore>()(
   devtools((set, get) => ({
     ...defaultData,
 
-    fetchData: async (setBudget, setAbortRequests, AISearchQuery = '') => {
+    fetchData: async (setBudget, setAbortRequests, AISearchQuery = '', params: FetchNodeParams = {}) => {
       const { dataInitial: existingData, filters } = get()
       const currentPage = filters.skip
       const itemsPerPage = filters.limit
@@ -174,6 +178,7 @@ export const useDataStore = create<DataStore>()(
 
       const updatedParams = {
         ...withoutNodeType,
+        ...params,
         ...ai,
         skip: currentPage === 0 ? String(currentPage * itemsPerPage) : String(currentPage * itemsPerPage + 1),
         limit: word ? '25' : String(itemsPerPage),
