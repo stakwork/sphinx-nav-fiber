@@ -25,9 +25,7 @@ export const Body = () => {
   }
 
   const onSubmit = async (data: FormData) => {
-    const { budget, nodeType } = data
-
-    const nodeData = { name: nodeType }
+    const { budget } = data
 
     const payload = {
       type: 'code_generation',
@@ -35,7 +33,7 @@ export const Body = () => {
       workspace_uuid: 'ck9drb84nncjnaefo090',
       jwt_token: 'abced-12345',
       ref_id: selectedNode?.ref_id as string,
-      node_data: nodeData,
+      node_data: selectedNode?.properties || {},
     }
 
     try {
