@@ -2,7 +2,7 @@ const { origin, host } = window.location
 
 const getUrlFormEnv = () => import.meta.env.VITE_APP_API_URL
 
-export const API_URL = getUrlFormEnv() || apiUrlFromSwarmHost() || 'https://knowledge-graph.sphinx.chat'
+export const API_URL = getUrlFormEnv() || apiUrlFromSwarmHost() || 'https://bitcoin.sphinx.chat'
 
 export function apiUrlFromSwarmHost(): string | undefined {
   // for swarm deployments, always point to "boltwall"
