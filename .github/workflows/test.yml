@@ -93,6 +93,8 @@ jobs:
             docker ps
             docker logs meme.sphinx
             docker logs dave.sphinx
+            docker logs jarvis.sphinx
+            docker logs neo4j.sphinx
             docker wait stack_relaysetup_1
             cat stack/relay/NODES.json;
 
