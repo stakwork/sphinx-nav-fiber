@@ -1,15 +1,20 @@
 import { Button } from '@mui/material'
 import styled from 'styled-components'
+import { Tooltip } from '~/components/common/ToolTip'
 import ClearIcon from '~/components/Icons/ClearIcon'
 import { useDataStore } from '~/stores/useDataStore'
 
 export const GraphClear = () => {
   const { resetData } = useDataStore((s) => s)
 
-  return <CameraCenterButton href="" onClick={() => resetData()} size="medium" startIcon={<ClearIcon />} />
+  return (
+    <Tooltip content="Clear Graph" fontSize="13px" position="left">
+      <ClearButton href="" onClick={() => resetData()} size="medium" startIcon={<ClearIcon />} />
+    </Tooltip>
+  )
 }
 
-const CameraCenterButton = styled(Button)`
+const ClearButton = styled(Button)`
   && {
     padding: 0;
     width: 32px;
