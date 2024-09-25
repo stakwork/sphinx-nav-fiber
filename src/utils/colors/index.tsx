@@ -3,6 +3,7 @@ export const colors = {
   appearanceBg: 'rgba(60, 64, 83, 0.3)',
   disableBtn: 'rgba(35, 37, 47, 0.8)',
   bluePressState: 'rgb(57, 97, 220)',
+  addAttributeBtn: 'rgba(107, 122, 141, 0.25)',
   blueTextAccent: 'rgb(130, 180, 255)',
   body: 'rgb(21, 30, 39)',
   boostBg1: 'rgb(32, 63, 62)',
