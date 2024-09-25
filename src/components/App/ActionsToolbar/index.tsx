@@ -17,8 +17,10 @@ export const ActionsToolbar = () => {
 
   return (
     <Wrapper align="flex-end" id="actions-toolbar">
-      {!isLoading && !universeQuestionIsOpen && isAdmin && <GraphClear />}
-      {!isLoading && !universeQuestionIsOpen && <CameraRecenterControl />}
+      <ButtonWrapper>
+        {!isLoading && !universeQuestionIsOpen && isAdmin && <GraphClear />}
+        {!isLoading && !universeQuestionIsOpen && <CameraRecenterControl />}
+      </ButtonWrapper>
       <Flex align="center" direction="row" mt={16}>
         {!isLoading && !universeQuestionIsOpen && <GraphViewControl />}
       </Flex>
@@ -32,4 +34,10 @@ const Wrapper = styled(Flex)`
   right: 20px;
   bottom: 20px;
   pointer-events: all;
+`
+
+const ButtonWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 `
