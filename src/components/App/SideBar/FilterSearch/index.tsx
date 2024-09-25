@@ -69,6 +69,10 @@ export const FilterSearch = ({ showAllSchemas, setShowAllSchemas, schemaAll, anc
     await fetchData(setBudget, setAbortRequests)
   }
 
+  const uniqueSchemas = (showAllSchemas ? schemaAll : schemaAll.slice(0, 4)).filter(
+    (schema, index, self) => index === self.findIndex((s) => s.type === schema.type),
+  )
+
   return (
     <SearchFilterPopover
       anchorEl={anchorEl}
@@ -93,7 +97,7 @@ export const FilterSearch = ({ showAllSchemas, setShowAllSchemas, schemaAll, anc
       </PopoverHeader>
       <PopoverBody>
         <SchemaTypeWrapper>
-          {(showAllSchemas ? schemaAll : schemaAll.slice(0, 4)).map((schema) => (
+          {uniqueSchemas.map((schema) => (
             <SchemaType
               key={schema.type}
               isSelected={selectedTypes.includes(schema.type as string)}
