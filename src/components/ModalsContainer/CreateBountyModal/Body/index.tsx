@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
+import { SuccessNotify } from '~/components/common/SuccessToast'
 import { postBountyData } from '~/network/postBounty'
 import { useSelectedNode } from '~/stores/useGraphStore'
 import { useModal } from '~/stores/useModalStore'
@@ -37,6 +38,7 @@ export const Body = () => {
 
     try {
       await postBountyData(payload)
+      SuccessNotify('Bounty Created')
       // eslint-disable-next-line  @typescript-eslint/no-explicit-any
     } catch (err: any) {
       setErrMessage(err)
