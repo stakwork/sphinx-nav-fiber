@@ -18,6 +18,7 @@ type Props = {
   schemaAll: SchemaExtended[]
   anchorEl: HTMLElement | null
   setAnchorEl: (value: HTMLElement | null) => void
+  onClose: () => void
 }
 
 const defaultValues = {
@@ -27,7 +28,14 @@ const defaultValues = {
   maxResults: 30,
 }
 
-export const FilterSearch = ({ showAllSchemas, setShowAllSchemas, schemaAll, anchorEl, setAnchorEl }: Props) => {
+export const FilterSearch = ({
+  showAllSchemas,
+  setShowAllSchemas,
+  schemaAll,
+  anchorEl,
+  setAnchorEl,
+  onClose,
+}: Props) => {
   const handleSchemaTypeClick = (type: string) => {
     setSelectedTypes((prevSelectedTypes) =>
       prevSelectedTypes.includes(type) ? prevSelectedTypes.filter((t) => t !== type) : [...prevSelectedTypes, type],
@@ -65,6 +73,7 @@ export const FilterSearch = ({ showAllSchemas, setShowAllSchemas, schemaAll, anc
     })
 
     setAnchorEl(null)
+    onClose()
 
     await fetchData(setBudget, setAbortRequests)
   }
