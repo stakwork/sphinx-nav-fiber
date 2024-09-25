@@ -37,7 +37,11 @@ export const Default = () => {
         audioElement.removeEventListener('ended', onAudioPlaybackComplete)
       }
     }
-  }, [setCurrentPlayingAudio])
+  }, [setCurrentPlayingAudio, isPlaying])
+
+  useEffect(() => {
+    setIsPlaying(false)
+  }, [selectedNode])
 
   const togglePlay = () => {
     if (currentPlayingAudio?.current && currentPlayingAudio.current !== audioRef.current) {
