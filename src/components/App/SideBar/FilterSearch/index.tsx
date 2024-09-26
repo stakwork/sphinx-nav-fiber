@@ -18,6 +18,7 @@ type Props = {
   schemaAll: SchemaExtended[]
   anchorEl: HTMLElement | null
   setAnchorEl: (value: HTMLElement | null) => void
+  onClose: () => void
 }
 
 const defaultValues = {
@@ -27,7 +28,14 @@ const defaultValues = {
   maxResults: 30,
 }
 
-export const FilterSearch = ({ showAllSchemas, setShowAllSchemas, schemaAll, anchorEl, setAnchorEl }: Props) => {
+export const FilterSearch = ({
+  showAllSchemas,
+  setShowAllSchemas,
+  schemaAll,
+  anchorEl,
+  setAnchorEl,
+  onClose,
+}: Props) => {
   const handleSchemaTypeClick = (type: string) => {
     setSelectedTypes((prevSelectedTypes) =>
       prevSelectedTypes.includes(type) ? prevSelectedTypes.filter((t) => t !== type) : [...prevSelectedTypes, type],
@@ -65,9 +73,14 @@ export const FilterSearch = ({ showAllSchemas, setShowAllSchemas, schemaAll, anc
     })
 
     setAnchorEl(null)
+    onClose()
 
     await fetchData(setBudget, setAbortRequests)
   }
+
+  const uniqueSchemas = (showAllSchemas ? schemaAll : schemaAll.slice(0, 4)).filter(
+    (schema, index, self) => index === self.findIndex((s) => s.type === schema.type),
+  )
 
   return (
     <SearchFilterPopover
@@ -93,7 +106,7 @@ export const FilterSearch = ({ showAllSchemas, setShowAllSchemas, schemaAll, anc
       </PopoverHeader>
       <PopoverBody>
         <SchemaTypeWrapper>
-          {(showAllSchemas ? schemaAll : schemaAll.slice(0, 4)).map((schema) => (
+          {uniqueSchemas.map((schema) => (
             <SchemaType
               key={schema.type}
               isSelected={selectedTypes.includes(schema.type as string)}

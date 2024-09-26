@@ -32,6 +32,7 @@ export const NodeControls = memo(() => {
   const { open: openEditNodeNameModal } = useModal('editNodeName')
   const { open: addEdgeToNodeModal } = useModal('addEdgeToNode')
   const { open: mergeTopicModal } = useModal('mergeToNode')
+  const { open: createBountyModal } = useModal('createBounty')
 
   const [isAdmin] = useUserStore((s) => [s.isAdmin])
   const [addNewNode] = useDataStore((s) => [s.addNewNode])
@@ -163,6 +164,8 @@ export const NodeControls = memo(() => {
 
   const id = open ? 'simple-popover' : undefined
 
+  const isShowCreateTestButton = !!(selectedNode && selectedNode?.node_type?.toLowerCase() === 'function')
+
   return (
     <group ref={ref}>
       <Html
@@ -193,6 +196,17 @@ export const NodeControls = memo(() => {
             {b.icon}
           </IconButton>
         ))}
+
+        {isShowCreateTestButton && (
+          <CreateTestButton
+            left={2}
+            onClick={() => {
+              createBountyModal()
+            }}
+          >
+            Create Test
+          </CreateTestButton>
+        )}
 
         <PopoverWrapper
           anchorEl={anchorEl}
@@ -287,5 +301,26 @@ const PopoverWrapper = styled(Popover)`
     font-family: Barlow;
     font-size: 14px;
     font-weight: 500;
+  }
+`
+
+const CreateTestButton = styled.div<ButtonProps>`
+  position: fixed;
+  top: 40px;
+  left: ${(p: ButtonProps) => -53 + p.left}px;
+  width: 100px;
+  padding: 6px;
+  border-radius: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: ${colors.createTestButton};
+  color: ${colors.black};
+  font-size: 14px;
+  font-family: Barlow;
+  font-weight: 600;
+  cursor: pointer;
+  &:hover {
+    transform: scale(1.05);
   }
 `

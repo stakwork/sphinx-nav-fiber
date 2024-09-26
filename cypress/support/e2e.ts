@@ -22,7 +22,7 @@ import './commands'
 // require('./commands')
 
 // coverage
-import '@cypress/code-coverage/support'
+// import '@cypress/code-coverage/support'
 
 // Add alice as the Second Brain tribe admin
 async function setAdmin() {

@@ -92,6 +92,11 @@ export const RegularView = () => {
     setShowAllSchemas(false)
   }
 
+  const handleCloseFilterSearch = () => {
+    setIsFilterOpen(false)
+    setAnchorEl(null)
+  }
+
   const navigate = useNavigate()
 
   return (
@@ -136,6 +141,7 @@ export const RegularView = () => {
 
           <FilterSearch
             anchorEl={anchorEl}
+            onClose={handleCloseFilterSearch}
             schemaAll={schemaAll}
             setAnchorEl={setAnchorEl}
             setShowAllSchemas={setShowAllSchemas}

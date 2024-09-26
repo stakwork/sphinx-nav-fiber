@@ -61,7 +61,7 @@ export const SourcesView = () => {
 
   const tabs = tabsData.filter(({ label }) => {
     if (label === TOPICS) {
-      return isAdmin || true
+      return isAdmin
     }
 
     if (label === QUEUED_SOURCES) {

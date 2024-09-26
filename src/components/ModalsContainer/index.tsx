@@ -42,6 +42,10 @@ const LazyUserFeedBackModal = lazy(() =>
   import('./UserFeedBackModal').then(({ UserFeedBackModal }) => ({ default: UserFeedBackModal })),
 )
 
+const LazyCreateBountyModal = lazy(() =>
+  import('./CreateBountyModal').then(({ CreateBountyModal }) => ({ default: CreateBountyModal })),
+)
+
 export const ModalsContainer = () => (
   <>
     <LazyAddItemModal />
@@ -55,5 +59,6 @@ export const ModalsContainer = () => (
     <LazyBlueprintModal />
     <LazyMergeNodeModal />
     <LazyUserFeedBackModal />
+    <LazyCreateBountyModal />
   </>
 )

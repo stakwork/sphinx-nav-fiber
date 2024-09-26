@@ -12,11 +12,10 @@ describe('Add Tweet Content', () => {
     cy.get('#addContent').should('exist')
     cy.get('[id="cy-youtube-channel-id"]').type('https://twitter.com/ijbguy/status/1771096005162729663')
     cy.get('[data-testid="add-content-btn"]').click()
-    cy.get('[data-testid="skip-location-btn"').click()
     cy.get('[data-testid="check-icon"]').click()
 
     cy.wait('@addTweet').then((interception) => {
-      //check we get a 402 response code, when trying to add content for the first time
+      // check we get a 402 response code, when trying to add content for the first time
       expect(interception.response.statusCode).to.eq(402)
     })
 
