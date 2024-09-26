@@ -69,6 +69,7 @@ const handleSubmitForm = async (
   isUpdate = false,
   deletedAttributes: string[],
   mediaOptions: { videoAudio: boolean; image: boolean; sourceLink: boolean },
+  initialMediaOptions: { videoAudio: boolean; image: boolean; sourceLink: boolean },
 ): Promise<string | undefined> => {
   try {
     // eslint-disable-next-line camelcase
@@ -93,14 +94,20 @@ const handleSubmitForm = async (
 
     if (mediaOptions.videoAudio) {
       requestData.media_url = ''
+    } else if (initialMediaOptions.videoAudio) {
+      requestData.media_url = 'delete'
     }
 
     if (mediaOptions.image) {
       requestData.image_url = ''
+    } else if (initialMediaOptions.image) {
+      requestData.image_url = 'delete'
     }
 
     if (mediaOptions.sourceLink) {
       requestData.source_link = ''
+    } else if (initialMediaOptions.sourceLink) {
+      requestData.source_link = 'delete'
     }
 
     let res: { status: string; ref_id: string }
@@ -352,6 +359,11 @@ export const Editor = ({
         !!selectedSchema,
         deletedAttributes,
         mediaOptions,
+        {
+          videoAudio: !!selectedSchema?.media_url,
+          image: !!selectedSchema?.image_url,
+          sourceLink: !!selectedSchema?.source_link,
+        },
       )
 
       onSchemaCreate({ type: data.type, parent: parent || '', ref_id: selectedSchema?.ref_id || res || 'new' })
