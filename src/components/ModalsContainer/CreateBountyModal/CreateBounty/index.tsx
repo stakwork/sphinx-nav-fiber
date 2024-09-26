@@ -30,6 +30,12 @@ export const CreateBounty: FC<Props> = ({ errMessage, handleClose }) => {
 
   const isDisable = isBudgetValid(watchBudget) && !!watchNodeType
 
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === ' ') {
+      event.preventDefault()
+    }
+  }
+
   return (
     <Flex>
       <Flex align="center" direction="row" justify="space-between" mb={18}>
@@ -46,6 +52,7 @@ export const CreateBounty: FC<Props> = ({ errMessage, handleClose }) => {
         <TextInput
           id="budget"
           name="budget"
+          onKeyDown={handleKeyDown}
           placeholder="Enter budget"
           rules={{
             ...requiredRule,
