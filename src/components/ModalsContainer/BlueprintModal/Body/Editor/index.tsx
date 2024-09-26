@@ -547,7 +547,11 @@ export const Editor = ({
               onDelete={handleDeleteAttribute}
               parent={selectedSchema ? selectedSchema.type : parent}
             />
-            <MediaOptions initialOptions={mediaOptions} setMediaOptions={setMediaOptions} />
+            <MediaOptions
+              initialOptions={mediaOptions}
+              setMediaOptions={setMediaOptions}
+              setSubmitDisabled={setSubmitDisabled}
+            />
             <Flex>
               <LineBar />
               <Flex mb={12} mt={12}>
