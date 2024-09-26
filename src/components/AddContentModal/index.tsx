@@ -169,7 +169,13 @@ export const AddContentModal = () => {
   const isValidSource = validateSourceURL(sourceValue)
 
   useEffect(() => {
-    setValue('inputType', getInputType(source))
+    const updateInputType = async () => {
+      const inputType = await getInputType(source)
+
+      setValue('inputType', inputType)
+    }
+
+    updateInputType()
   }, [source, setValue])
 
   const handleClose = () => {
