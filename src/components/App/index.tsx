@@ -238,6 +238,32 @@ export const App = () => {
   ])
 
   useEffect(() => {
+    const ws = new WebSocket('wss://staging.stakwork.com/cable')
+
+    ws.onopen = () => {
+      console.log('WebSocket connection established')
+    }
+
+    ws.onmessage = (event) => {
+      console.log('Message from server:', event.data)
+      // Handle the message from the server here
+    }
+
+    ws.onerror = (error) => {
+      console.error('WebSocket error:', error)
+    }
+
+    ws.onclose = () => {
+      console.log('WebSocket connection closed')
+    }
+
+    // Cleanup when the component is unmounted
+    return () => {
+      ws.close()
+    }
+  }, [])
+
+  useEffect(() => {
     if (chatInterfaceFeatureFlag && !splashDataLoading) {
       setUniverseQuestionIsOpen()
     }

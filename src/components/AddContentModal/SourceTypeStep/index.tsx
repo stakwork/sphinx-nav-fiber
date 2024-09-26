@@ -3,7 +3,7 @@ import { FC } from 'react'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
-import { RSS, TWITTER_HANDLE, YOUTUBE_CHANNEL } from '~/constants'
+import { GITHUB_REPOSITORY, RSS, TWITTER_HANDLE, YOUTUBE_CHANNEL } from '~/constants'
 import { colors } from '~/utils'
 import { extractNameFromLink } from '../utils'
 
@@ -26,6 +26,10 @@ const CONTENT_TYPE_MAPPING: Record<string, { [k: string]: string }> = {
   [RSS]: {
     label: 'RSS Feed',
     img: 'rss_feed.svg',
+  },
+  [GITHUB_REPOSITORY]: {
+    label: 'GitHub Repository',
+    img: 'github_default.svg',
   },
 }
 

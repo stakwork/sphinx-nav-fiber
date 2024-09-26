@@ -124,7 +124,7 @@
         "functions": 36
       },
       "./src/network/": {
-        "lines": 29.85,
+        "lines": 30,
         "branches": 9,
         "functions": 18
       }
