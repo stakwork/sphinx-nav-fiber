@@ -8,7 +8,6 @@ import {
   WEB_PAGE,
   YOUTUBE_CHANNEL,
 } from '~/constants'
-import { extractNameFromLink, getInputType } from '..'
 import { checkIfRSS, extractNameFromLink, getInputType } from '..'
 
 describe('youtubeRegex', () => {
@@ -87,7 +86,7 @@ describe('youtubeRegex', () => {
   })
 
   it('should assert we can check for GitHub repository regex', async () => {
-    expect(getInputType('https://github.com/stakwork/sphinx-nav-fiber')).toBe(GITHUB_REPOSITORY)
+    await expect(getInputType('https://github.com/stakwork/sphinx-nav-fiber')).resolves.toBe(GITHUB_REPOSITORY)
   })
 })
 
