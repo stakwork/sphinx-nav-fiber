@@ -137,6 +137,10 @@ export interface Schema {
   children?: string[]
   primary_color?: string
   node_key?: string
+  index?: string
+  media_url?: string
+  image_url?: string
+  source_link?: string
   attributes?: { [key: string]: string }
 }
 

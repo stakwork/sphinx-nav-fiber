@@ -4,6 +4,8 @@ import * as sphinx from 'sphinx-bridge'
 import { BaseModal } from '~/components/Modal'
 import {
   DOCUMENT,
+  GITHUB_REPOSITORY,
+  isE2E,
   LINK,
   NODE_ADD_ERROR,
   RSS,
@@ -11,7 +13,6 @@ import {
   TWITTER_SOURCE,
   WEB_PAGE,
   YOUTUBE_CHANNEL,
-  isE2E,
 } from '~/constants'
 import { api } from '~/network/api'
 import { useModal } from '~/stores/useModalStore'
@@ -21,7 +22,6 @@ import { SubmitErrRes } from '~/types'
 import { getLSat, payLsat, updateBudget } from '~/utils'
 import { SuccessNotify } from '../common/SuccessToast'
 import { BudgetStep } from './BudgetStep'
-import { LocationStep } from './LocationStep'
 import { SourceStep } from './SourceStep'
 import { validateSourceURL } from './SourceStep/utils'
 import { SourceTypeStep } from './SourceTypeStep'
@@ -80,7 +80,7 @@ const handleSubmitForm = async (
     } else {
       return
     }
-  } else if (sourceType === YOUTUBE_CHANNEL || sourceType === RSS) {
+  } else if (sourceType === YOUTUBE_CHANNEL || sourceType === RSS || sourceType === GITHUB_REPOSITORY) {
     body.source = data.source
     body.source_type = sourceType
   }
@@ -164,9 +164,6 @@ export const AddContentModal = () => {
   const type = watch('inputType')
   const sourceValue = watch('source')
 
-  const longitude = watch('longitude')
-  const latitude = watch('latitude')
-
   const source = watch('source')
 
   const isValidSource = validateSourceURL(sourceValue)
@@ -186,7 +183,11 @@ export const AddContentModal = () => {
   }
 
   const onNextStep = () => {
-    setCurrentStep(currentStep + 1)
+    if (currentStep === 0) {
+      setCurrentStep(isSource(type) ? 1 : 2)
+    } else {
+      setCurrentStep(currentStep + 1)
+    }
   }
 
   const onPrevStep = () => {
@@ -223,14 +224,8 @@ export const AddContentModal = () => {
       <FormProvider {...form}>
         <form id="add-node-form" onSubmit={onSubmit}>
           {currentStep === 0 && <SourceStep allowNextStep={isValidSource} onNextStep={onNextStep} type={type} />}
-          {currentStep === 1 && (
-            <>
-              {!isSource(type) ? (
-                <LocationStep form={form} latitude={latitude} longitude={longitude} onNextStep={onNextStep} />
-              ) : (
-                <SourceTypeStep onNextStep={onNextStep} onPrevStep={onPrevStep} type={type} value={sourceValue} />
-              )}
-            </>
+          {currentStep === 1 && isSource(type) && (
+            <SourceTypeStep onNextStep={onNextStep} onPrevStep={onPrevStep} type={type} value={sourceValue} />
           )}
           {currentStep === 2 && <BudgetStep error={error} loading={loading} onClick={() => null} type={type} />}
         </form>
