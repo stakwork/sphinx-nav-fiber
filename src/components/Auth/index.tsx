@@ -71,6 +71,8 @@ export const AuthGuard = ({ children }: PropsWithChildren) => {
       if (res.data) {
         localStorage.setItem('admin', JSON.stringify({ isAdmin: res.data.isAdmin }))
         setIsAdmin(!!res.data.isAdmin)
+        //if is admin get Token from app
+        //store in environment
 
         setTrendingTopicsFeatureFlag(res.data.trendingTopics)
         setQueuedSourcesFeatureFlag(res.data.queuedSources)
