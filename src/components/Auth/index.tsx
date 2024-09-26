@@ -10,6 +10,7 @@ import { useUserStore } from '~/stores/useUserStore'
 import { sphinxBridge } from '~/testSphinxBridge'
 import { updateBudget } from '~/utils'
 import { isAndroid, isWebView } from '~/utils/isWebView'
+import { setupAdmin } from '~/utils/setupAdmin'
 
 export const AuthGuard = ({ children }: PropsWithChildren) => {
   const [unAuthorized, setUnauthorized] = useState(false)
@@ -62,6 +63,8 @@ export const AuthGuard = ({ children }: PropsWithChildren) => {
     try {
       const res = await getIsAdmin()
 
+      console.log(res)
+
       if (!res.data.isPublic && !res.data.isAdmin && !res.data.isMember) {
         setUnauthorized(true)
 
@@ -70,9 +73,14 @@ export const AuthGuard = ({ children }: PropsWithChildren) => {
 
       if (res.data) {
         localStorage.setItem('admin', JSON.stringify({ isAdmin: res.data.isAdmin }))
-        setIsAdmin(!!res.data.isAdmin)
-        //if is admin get Token from app
-        //store in environment
+
+        const isAdmin = !!res.data.isAdmin
+
+        setIsAdmin(isAdmin)
+
+        if (isAdmin) {
+          await setupAdmin()
+        }
 
         setTrendingTopicsFeatureFlag(res.data.trendingTopics)
         setQueuedSourcesFeatureFlag(res.data.queuedSources)
