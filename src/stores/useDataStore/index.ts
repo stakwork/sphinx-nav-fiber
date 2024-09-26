@@ -77,6 +77,7 @@ export type DataStore = {
   setSeedQuestions: (questions: string[]) => void
   abortFetchData: () => void
   resetGraph: () => void
+  resetData: () => void
 }
 
 const defaultData: Omit<
@@ -268,6 +269,14 @@ export const useDataStore = create<DataStore>()(
       })
 
       get().fetchData()
+    },
+
+    resetData: () => {
+      set({
+        dataNew: { nodes: [], links: [] },
+        dataInitial: { nodes: [], links: [] },
+        nodeTypes: [],
+      })
     },
 
     setPage: (page: number) => set({ currentPage: page }),

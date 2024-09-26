@@ -87,7 +87,7 @@ export const TagWrapper = styled(Flex)`
   font-style: normal;
   font-weight: 700;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-  max-width: 100px;
+  max-width: auto;
   max-height: 100px;
   white-space: normal;
   font-size: 16px;
