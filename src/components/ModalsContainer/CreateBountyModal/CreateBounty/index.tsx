@@ -1,12 +1,13 @@
 import { Button } from '@mui/material'
 import { FC } from 'react'
+import { useFormContext } from 'react-hook-form'
 import styled from 'styled-components'
+import { AutoComplete, TAutocompleteOption } from '~/components/common/AutoComplete'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
-import { useFormContext } from 'react-hook-form'
 import { TextInput } from '~/components/common/TextInput'
-import { AutoComplete, TAutocompleteOption } from '~/components/common/AutoComplete'
 import { requiredRule } from '~/constants'
+import { BUDGET_PATTERN, isBudgetValid } from '../constants'
 
 type Props = {
   errMessage: string
@@ -27,7 +28,13 @@ export const CreateBounty: FC<Props> = ({ errMessage, handleClose }) => {
 
   const options = [{ label: 'SecondBrain', value: 'SecondBrain' }]
 
-  const isDisable = !!(watchBudget && watchNodeType)
+  const isDisable = isBudgetValid(watchBudget) && !!watchNodeType
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === ' ') {
+      event.preventDefault()
+    }
+  }
 
   return (
     <Flex>
@@ -45,11 +52,12 @@ export const CreateBounty: FC<Props> = ({ errMessage, handleClose }) => {
         <TextInput
           id="budget"
           name="budget"
+          onKeyDown={handleKeyDown}
           placeholder="Enter budget"
           rules={{
             ...requiredRule,
             pattern: {
-              value: /^[0-9]+$/,
+              value: BUDGET_PATTERN,
               message: 'Please enter a valid number',
             },
           }}
