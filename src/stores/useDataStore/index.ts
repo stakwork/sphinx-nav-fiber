@@ -18,10 +18,6 @@ export type FetchNodeParams = {
   skip_cache?: string
   free?: string
   media_type?: string
-  node_type?: string
-  limit?: string
-  depth?: string
-  top_node_count?: string
 }
 
 export type SidebarFilterWithCount = {
@@ -141,7 +137,7 @@ export const useDataStore = create<DataStore>()(
   devtools((set, get) => ({
     ...defaultData,
 
-    fetchData: async (setBudget, setAbortRequests, AISearchQuery = '', params: FetchNodeParams = {}) => {
+    fetchData: async (setBudget, setAbortRequests, AISearchQuery = '') => {
       const { dataInitial: existingData, filters } = get()
       const currentPage = filters.skip
       const itemsPerPage = filters.limit
@@ -179,7 +175,6 @@ export const useDataStore = create<DataStore>()(
 
       const updatedParams = {
         ...withoutNodeType,
-        ...params,
         ...ai,
         skip: currentPage === 0 ? String(currentPage * itemsPerPage) : String(currentPage * itemsPerPage + 1),
         limit: word ? '25' : String(itemsPerPage),
@@ -287,7 +282,10 @@ export const useDataStore = create<DataStore>()(
       fetchData()
     },
     resetDataNew: () => null,
-    setFilters: (filters: FilterParams) => set((state) => ({ filters: { ...state.filters, ...filters, page: 0 } })),
+    setFilters: (filters: Partial<FilterParams>) => {
+      set((state) => ({ filters: { ...state.filters, ...filters, skip: 0 } }))
+      get().fetchData(get().setBudget, get().setAbortRequests)
+    },
     setSidebarFilterCounts: (sidebarFilterCounts) => set({ sidebarFilterCounts }),
     setTrendingTopics: (trendingTopics) => set({ trendingTopics }),
     setStats: (stats) => set({ stats }),
