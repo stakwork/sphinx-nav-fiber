@@ -246,6 +246,20 @@ export const App = () => {
 
     ws.onmessage = (event) => {
       console.log('Message from server:', event.data)
+
+      let id = 'a'
+
+      id = '51998781'
+
+      const command = {
+        command: 'subscribe',
+        identifier: JSON.stringify({ channel: 'ProjectLogChannel', id }),
+      }
+
+      // Send the command as a JSON string
+      ws.send(JSON.stringify(command))
+
+      console.log('Subscription command sent:', command)
       // Handle the message from the server here
     }
 
