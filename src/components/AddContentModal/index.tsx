@@ -15,6 +15,7 @@ import {
   YOUTUBE_CHANNEL,
 } from '~/constants'
 import { api } from '~/network/api'
+import { useDataStore } from '~/stores/useDataStore'
 import { useModal } from '~/stores/useModalStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { sphinxBridge } from '~/testSphinxBridge'
@@ -39,6 +40,7 @@ const handleSubmitForm = async (
   data: FieldValues,
   sourceType: string,
   setBudget: (value: number | null) => void,
+  setRunningProjectId: (value: string) => void,
 ): Promise<void> => {
   const endPoint = isSource(sourceType) ? 'radar' : 'add_node'
 
@@ -111,6 +113,10 @@ const handleSubmitForm = async (
       Authorization: lsatToken,
     })
 
+    if (res.data.project_id) {
+      setRunningProjectId(res.data.project_id)
+    }
+
     if (res.error) {
       const { message } = res.error
 
@@ -122,7 +128,7 @@ const handleSubmitForm = async (
     if (err.status === 402) {
       await payLsat(setBudget)
       await updateBudget(setBudget)
-      await handleSubmitForm(data, sourceType, setBudget)
+      await handleSubmitForm(data, sourceType, setBudget, setRunningProjectId)
     } else {
       let errorMessage = NODE_ADD_ERROR
 
@@ -147,6 +153,7 @@ export const AddContentModal = () => {
   const [currentStep, setCurrentStep] = useState(0)
   const { close, visible } = useModal('addContent')
   const { setBudget } = useUserStore((s) => s)
+  const { setRunningProjectId } = useDataStore((s) => s)
   const form = useForm<FormData>({ mode: 'onChange' })
   const { watch, setValue, reset } = form
   const [loading, setLoading] = useState(false)
@@ -169,7 +176,13 @@ export const AddContentModal = () => {
   const isValidSource = validateSourceURL(sourceValue)
 
   useEffect(() => {
-    setValue('inputType', getInputType(source))
+    const updateInputType = async () => {
+      const inputType = await getInputType(source)
+
+      setValue('inputType', inputType)
+    }
+
+    updateInputType()
   }, [source, setValue])
 
   const handleClose = () => {
@@ -192,7 +205,7 @@ export const AddContentModal = () => {
     setLoading(true)
 
     try {
-      await handleSubmitForm(data, type, setBudget)
+      await handleSubmitForm(data, type, setBudget, setRunningProjectId)
       SuccessNotify('Content Added')
       handleClose()
       // eslint-disable-next-line  @typescript-eslint/no-explicit-any

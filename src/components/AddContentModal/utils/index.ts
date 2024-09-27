@@ -25,7 +25,18 @@ const genericUrlRegex = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/
 const twitterBroadcastRegex = /https:\/\/twitter\.com\/i\/broadcasts\/([A-Za-z0-9_-]+)/
 const githubRepoPattern = /https:\/\/github\.com\/[\w-]+\/[\w-]+/
 
-export function getInputType(source: string) {
+export async function checkIfRSS(url: string): Promise<boolean> {
+  try {
+    const response = await fetch(url, { method: 'HEAD' })
+    const contentType = response.headers.get('Content-Type')
+
+    return contentType?.includes('application/rss+xml') ?? false
+  } catch (error) {
+    return false
+  }
+}
+
+export async function getInputType(source: string) {
   const linkPatterns = [
     youtubeLiveRegex,
     twitterBroadcastRegex,
@@ -60,7 +71,9 @@ export function getInputType(source: string) {
   }
 
   if (genericUrlRegex.test(source)) {
-    return WEB_PAGE
+    const isRSS = await checkIfRSS(source)
+
+    return isRSS ? RSS : WEB_PAGE
   }
 
   return DOCUMENT
