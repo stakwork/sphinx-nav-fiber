@@ -69,7 +69,8 @@ export const App = () => {
 
   const setTeachMeAnswer = useTeachStore((s) => s.setTeachMeAnswer)
 
-  const { fetchData, setCategoryFilter, setAbortRequests, addNewNode, splashDataLoading } = useDataStore((s) => s)
+  const { fetchData, setCategoryFilter, setAbortRequests, addNewNode, splashDataLoading, runningProjectId } =
+    useDataStore((s) => s)
 
   const { setAiSummaryAnswer, getKeyExist, aiRefId } = useAiSummaryStore((s) => s)
 
@@ -238,18 +239,16 @@ export const App = () => {
   ])
 
   useEffect(() => {
-    const ws = new WebSocket('wss://staging.stakwork.com/cable?channel=ProjectLogChannel')
-
-    ws.onopen = () => {
-      console.log('WebSocket connection established')
+    if (!runningProjectId) {
+      return
     }
 
-    ws.onmessage = (event) => {
-      console.log('Message from server:', event.data)
+    const ws = new WebSocket('wss://jobs.stakwork.com/cable?channel=ProjectLogChannel')
 
+    ws.onopen = () => {
       let id = 'a'
 
-      id = '51998781'
+      id = runningProjectId
 
       const command = {
         command: 'subscribe',
@@ -260,6 +259,12 @@ export const App = () => {
       ws.send(JSON.stringify(command))
 
       console.log('Subscription command sent:', command)
+      console.log('WebSocket connection established')
+    }
+
+    ws.onmessage = (event) => {
+      console.log('Message from server:', event.data)
+
       // Handle the message from the server here
     }
 
@@ -270,12 +275,7 @@ export const App = () => {
     ws.onclose = () => {
       console.log('WebSocket connection closed')
     }
-
-    // Cleanup when the component is unmounted
-    return () => {
-      // ws.close()
-    }
-  }, [])
+  }, [runningProjectId])
 
   useEffect(() => {
     if (!splashDataLoading) {
