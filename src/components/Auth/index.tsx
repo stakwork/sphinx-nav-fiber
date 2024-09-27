@@ -10,7 +10,6 @@ import { useUserStore } from '~/stores/useUserStore'
 import { sphinxBridge } from '~/testSphinxBridge'
 import { updateBudget } from '~/utils'
 import { isAndroid, isWebView } from '~/utils/isWebView'
-import { setupAdmin } from '~/utils/setupAdmin'
 
 export const AuthGuard = ({ children }: PropsWithChildren) => {
   const [unAuthorized, setUnauthorized] = useState(false)
@@ -72,14 +71,7 @@ export const AuthGuard = ({ children }: PropsWithChildren) => {
       if (res.data) {
         localStorage.setItem('admin', JSON.stringify({ isAdmin: res.data.isAdmin }))
 
-        const isAdmin = !!res.data.isAdmin
-
-        setIsAdmin(isAdmin)
-
-        if (isAdmin) {
-          await setupAdmin()
-        }
-
+        setIsAdmin(!!res.data.isAdmin)
         setTrendingTopicsFeatureFlag(res.data.trendingTopics)
         setQueuedSourcesFeatureFlag(res.data.queuedSources)
         setCustomSchemaFeatureFlag(res.data.customSchema)
