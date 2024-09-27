@@ -436,23 +436,27 @@ export const Editor = ({
     return undefined
   }, [parent, selectedSchema, selectedNodeParentOptions])
 
+  const selectedIndex = watch('selectedIndex')
+
   const resolvedSelectedIndexValue = useMemo((): TAutocompleteOption | undefined => {
-    if (!selectedSchema) {
-      return undefined
+    if (selectedIndex) {
+      return { label: selectedIndex, value: selectedIndex }
     }
 
-    const option = attributes.find((attr) => attr.key === selectedSchema.index)
+    if (selectedSchema) {
+      const option = attributes.find((attr) => attr.key === selectedSchema.index)
 
-    if (option) {
-      return { label: option.key, value: option.key }
-    }
+      if (option) {
+        return { label: option.key, value: option.key }
+      }
 
-    if (selectedSchema.index) {
-      return { label: selectedSchema.index, value: selectedSchema.index }
+      if (selectedSchema.index) {
+        return { label: selectedSchema.index, value: selectedSchema.index }
+      }
     }
 
     return undefined
-  }, [selectedSchema, attributes])
+  }, [selectedSchema, attributes, selectedIndex])
 
   return (
     <Flex>
