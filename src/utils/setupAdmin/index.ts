@@ -1,19 +1,12 @@
-import sphinxTobi from 'sphinx-bridge-tobibams'
+import sphinx from 'sphinx-bridge'
 import { useUserStore } from '~/stores/useUserStore'
 
 export async function setupAdmin() {
   try {
-    // enable sphinx
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    const tobi = await sphinxTobi.enable()
-
-    console.log(tobi)
-
     // get token from sphinx
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    const signedToken = await sphinxTobi.getSignedToken()
+    const signedToken = await sphinx.getSignedToken()
 
     if (signedToken.success) {
       useUserStore.getState().setSignedToken(signedToken.token)
