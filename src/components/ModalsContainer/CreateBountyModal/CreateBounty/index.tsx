@@ -23,7 +23,7 @@ type NameSpacesOption = {
 export const CreateBounty: FC<Props> = ({ errMessage, handleClose }) => {
   const { setValue, watch } = useFormContext()
   const [options, setOptions] = useState<NameSpacesOption[]>([])
-  const { pubKey, signedToken } = useUserStore()
+  const { pubKey } = useUserStore()
 
   useEffect(() => {
     async function handleGetNamesspaces() {
@@ -55,10 +55,8 @@ export const CreateBounty: FC<Props> = ({ errMessage, handleClose }) => {
       }
     }
 
-    setValue('token', signedToken)
-
     handleGetNamesspaces()
-  }, [pubKey, signedToken, setValue])
+  }, [pubKey])
 
   const watchBudget = watch('budget', '')
   const watchNodeType = watch('nodeType', '')

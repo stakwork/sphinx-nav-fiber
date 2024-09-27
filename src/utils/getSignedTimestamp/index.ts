@@ -1,7 +1,7 @@
 import { Buffer } from 'buffer'
 import sphinx from 'sphinx-bridge'
 
-export async function setupAdmin(): Promise<string> {
+export async function getSignedTimestamp(): Promise<string> {
   try {
     // get current time in seconds
     const currentTimeInSeconds = Math.floor(Date.now() / 1000)

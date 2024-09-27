@@ -4,12 +4,12 @@ import { SuccessNotify } from '~/components/common/SuccessToast'
 import { postBountyData } from '~/network/postBounty'
 import { useSelectedNode } from '~/stores/useGraphStore'
 import { useModal } from '~/stores/useModalStore'
+import { getSignedTimestamp } from '~/utils/getSignedTimestamp'
 import { CreateBounty } from '../CreateBounty'
 
 export type FormData = {
   nodeType: string
   budget: string
-  token: string
   workspaceUuid: string
 } & Partial<{ [k: string]: string }>
 
@@ -28,18 +28,20 @@ export const Body = () => {
   }
 
   const onSubmit = async (data: FormData) => {
-    const { budget, token, workspaceUuid } = data
-
-    const payload = {
-      type: 'code_generation',
-      amount: Number(budget),
-      workspace_uuid: workspaceUuid || 'ck9drb84nncjnaefo090',
-      jwt_token: token,
-      ref_id: selectedNode?.ref_id as string,
-      node_data: selectedNode?.properties || {},
-    }
+    const { budget, workspaceUuid } = data
 
     try {
+      const signedToken = await getSignedTimestamp()
+
+      const payload = {
+        type: 'code_generation',
+        amount: Number(budget),
+        workspace_uuid: workspaceUuid || 'ck9drb84nncjnaefo090',
+        ref_id: selectedNode?.ref_id as string,
+        node_data: selectedNode?.properties || {},
+        jwt_token: signedToken,
+      }
+
       await postBountyData(payload)
       SuccessNotify('Bounty Created')
       // eslint-disable-next-line  @typescript-eslint/no-explicit-any
@@ -48,7 +50,6 @@ export const Body = () => {
     } finally {
       setValue('budget', '')
       setValue('nodeType', '')
-      setValue('token', '')
       setValue('workspaceUuid', '')
       handleClose()
     }
