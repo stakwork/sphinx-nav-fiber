@@ -9,6 +9,8 @@ import { CreateBounty } from '../CreateBounty'
 export type FormData = {
   nodeType: string
   budget: string
+  token: string
+  workspaceUuid: string
 } & Partial<{ [k: string]: string }>
 
 export const Body = () => {
@@ -21,17 +23,18 @@ export const Body = () => {
   const handleClose = () => {
     setValue('budget', '')
     setValue('nodeType', '')
+    setValue('workspaceUuid', '')
     close()
   }
 
   const onSubmit = async (data: FormData) => {
-    const { budget } = data
+    const { budget, token, workspaceUuid } = data
 
     const payload = {
       type: 'code_generation',
       amount: Number(budget),
-      workspace_uuid: 'ck9drb84nncjnaefo090',
-      jwt_token: 'abced-12345',
+      workspace_uuid: workspaceUuid || 'ck9drb84nncjnaefo090',
+      jwt_token: token,
       ref_id: selectedNode?.ref_id as string,
       node_data: selectedNode?.properties || {},
     }
@@ -45,6 +48,8 @@ export const Body = () => {
     } finally {
       setValue('budget', '')
       setValue('nodeType', '')
+      setValue('token', '')
+      setValue('workspaceUuid', '')
       handleClose()
     }
   }

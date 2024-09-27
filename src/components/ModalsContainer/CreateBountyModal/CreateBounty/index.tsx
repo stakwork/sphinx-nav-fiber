@@ -1,31 +1,75 @@
 import { Button } from '@mui/material'
-import { FC } from 'react'
+import { FC, useEffect, useState } from 'react'
+import { useFormContext } from 'react-hook-form'
 import styled from 'styled-components'
+import { AutoComplete, TAutocompleteOption } from '~/components/common/AutoComplete'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
-import { useFormContext } from 'react-hook-form'
 import { TextInput } from '~/components/common/TextInput'
-import { AutoComplete, TAutocompleteOption } from '~/components/common/AutoComplete'
 import { requiredRule } from '~/constants'
+import { getTribeUserDetails, getWorkspace } from '~/network/postBounty'
+import { useUserStore } from '~/stores/useUserStore'
 
 type Props = {
   errMessage: string
   handleClose: () => void
 }
 
+type NameSpacesOption = {
+  label: string
+  value: string
+}
+
 export const CreateBounty: FC<Props> = ({ errMessage, handleClose }) => {
   const { setValue, watch } = useFormContext()
+  const [options, setOptions] = useState<NameSpacesOption[]>([])
+  const { pubKey, signedToken } = useUserStore()
+
+  useEffect(() => {
+    async function handleGetNamesspaces() {
+      try {
+        const userDetails = await getTribeUserDetails(pubKey)
+
+        if (!userDetails.id) {
+          // set options
+          setOptions([{ label: 'SecondBrain', value: 'SecondBrain' }])
+
+          return
+        }
+
+        const workspaces = await getWorkspace(userDetails.id)
+
+        if (workspaces.length > 0) {
+          const newOptions: NameSpacesOption[] = []
+
+          for (let i = 0; i < workspaces.length; i += 1) {
+            const workspace = workspaces[i]
+
+            newOptions.push({ label: workspace.name, value: workspace.uuid })
+          }
+
+          setOptions(newOptions)
+        }
+      } catch (error) {
+        console.log('Error from get user details: ', error)
+      }
+    }
+
+    setValue('token', signedToken)
+
+    handleGetNamesspaces()
+  }, [pubKey, signedToken, setValue])
 
   const watchBudget = watch('budget', '')
   const watchNodeType = watch('nodeType', '')
 
   const onSelect = (val: TAutocompleteOption | null) => {
     const selectedValue = val?.label || 'SecondBrain'
+    const selectedWorkspaceUuid = val?.value || 'ck9drb84nncjnaefo090'
 
     setValue('nodeType', selectedValue, { shouldValidate: true })
+    setValue('workspaceUuid', selectedWorkspaceUuid)
   }
-
-  const options = [{ label: 'SecondBrain', value: 'SecondBrain' }]
 
   const isDisable = !!(watchBudget && watchNodeType)
 

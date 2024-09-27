@@ -63,8 +63,6 @@ export const AuthGuard = ({ children }: PropsWithChildren) => {
     try {
       const res = await getIsAdmin()
 
-      console.log(res)
-
       if (!res.data.isPublic && !res.data.isAdmin && !res.data.isMember) {
         setUnauthorized(true)
 
