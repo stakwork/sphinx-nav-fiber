@@ -12,11 +12,10 @@ describe('Add Youtube Content', () => {
     cy.get('[id="cy-youtube-channel-id"]').type('https://www.youtube.com/watch?v=dPLPSaFqJmY')
     cy.wait(1000)
     cy.get('[data-testid="add-content-btn"]').should('not.be.disabled').click()
-    cy.get('[data-testid="skip-location-btn"').click()
     cy.get('[data-testid="check-icon"]').click()
 
     cy.wait('@addYoutube').then((interception) => {
-      //check we get a 402 response code, when trying to add content for the first time
+      // check we get a 402 response code, when trying to add content for the first time
       expect(interception.response.statusCode).to.eq(402)
     })
 

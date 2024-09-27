@@ -45,6 +45,7 @@ export type DataStore = {
   stats: TStats | null
   nodeTypes: string[]
   seedQuestions: string[] | null
+  runningProjectId: string
 
   setTrendingTopics: (trendingTopics: Trending[]) => void
   setDataNew: (data: GraphData) => void
@@ -62,6 +63,7 @@ export type DataStore = {
   setSources: (sources: Sources[] | null) => void
   setQueuedSources: (sources: Sources[] | null) => void
   setIsFetching: (_: boolean) => void
+  setRunningProjectId: (runningProjectId: string) => void
   setHideNodeDetails: (_: boolean) => void
   addNewNode: (data: FetchDataResponse) => void
   updateNode: (updatedNode: NodeExtended) => void
@@ -73,6 +75,7 @@ export type DataStore = {
   setSeedQuestions: (questions: string[]) => void
   abortFetchData: () => void
   resetGraph: () => void
+  resetData: () => void
 }
 
 const defaultData: Omit<
@@ -128,6 +131,7 @@ const defaultData: Omit<
   abortRequest: false,
   dataNew: null,
   seedQuestions: null,
+  runningProjectId: '',
 }
 
 let abortController: AbortController | null = null
@@ -265,6 +269,14 @@ export const useDataStore = create<DataStore>()(
       get().fetchData()
     },
 
+    resetData: () => {
+      set({
+        dataNew: { nodes: [], links: [] },
+        dataInitial: { nodes: [], links: [] },
+        nodeTypes: [],
+      })
+    },
+
     setPage: (page: number) => set({ currentPage: page }),
     nextPage: () => {
       const { filters, fetchData } = get()
@@ -333,6 +345,8 @@ export const useDataStore = create<DataStore>()(
     removeNode: (id) => {
       console.log(id)
     },
+
+    setRunningProjectId: (runningProjectId) => set({ runningProjectId }),
     setAbortRequests: (abortRequest) => set({ abortRequest }),
   })),
 )
