@@ -238,7 +238,7 @@ export const App = () => {
   ])
 
   useEffect(() => {
-    const ws = new WebSocket('wss://staging.stakwork.com/cable')
+    const ws = new WebSocket('wss://staging.stakwork.com/cable?channel=ProjectLogChannel')
 
     ws.onopen = () => {
       console.log('WebSocket connection established')
@@ -259,7 +259,7 @@ export const App = () => {
 
     // Cleanup when the component is unmounted
     return () => {
-      ws.close()
+      // ws.close()
     }
   }, [])
 
