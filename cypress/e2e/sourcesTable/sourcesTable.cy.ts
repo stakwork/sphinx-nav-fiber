@@ -10,9 +10,11 @@ describe('Sources Table / Home interactions', () => {
 
     cy.wait(2000)
 
+    cy.get('[data-testid="sources-table"]').should('exist')
+
     cy.contains('button', 'Sources Table').click()
 
-    cy.wait(2000)
+    cy.wait(5000)
 
     cy.get('tbody.MuiTableBody-root').find('tr').its('length').should('be.gt', 0)
 

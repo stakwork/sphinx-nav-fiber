@@ -25,7 +25,7 @@ describe('Add Webpage Content', () => {
     }).as('addWebpage2')
 
     cy.wait('@addWebpage2')
-
+    cy.wait(5000)
     cy.get('.Toastify__toast-body').should('have.text', 'Content Added')
     cy.get('#addContent').should('not.exist')
   })

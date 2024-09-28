@@ -26,6 +26,8 @@ describe('Add Tweet Content', () => {
 
     cy.wait('@addTweet2') // This is because add source is currently skipped,
 
+    cy.wait(5000)
+
     cy.get('.Toastify__toast-body').should('have.text', 'Content Added')
 
     cy.get('#addContent').should('not.exist')

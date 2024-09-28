@@ -27,6 +27,7 @@ describe('Add Youtube Content', () => {
     cy.wait('@addYoutube2')
 
     cy.get('.Toastify__toast-body').should('have.text', 'Content Added')
+    cy.wait(5000)
     cy.get('#addContent').should('not.exist')
   })
 })

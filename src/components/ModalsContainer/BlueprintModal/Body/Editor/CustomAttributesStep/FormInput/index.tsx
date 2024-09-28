@@ -148,7 +148,10 @@ export const FormInput = ({
         </InputsWrapper>
       )}
       <Flex align="flex-start" py={12}>
-        <ViewMoreButton onClick={() => append({ key: '', type: 'string', required: true, isNew: true })}>
+        <ViewMoreButton
+          data-testid="add-attribute-btn"
+          onClick={() => append({ key: '', type: 'string', required: true, isNew: true })}
+        >
           <PlusIconWrapper>
             <PlusIcon /> Add Attribute
           </PlusIconWrapper>
