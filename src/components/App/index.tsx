@@ -28,7 +28,6 @@ import {
 import { colors } from '~/utils/colors'
 import { updateBudget } from '~/utils/setBudget'
 import version from '~/utils/versionHelper'
-import { SuccessNotify } from '../common/SuccessToast'
 import { ModalsContainer } from '../ModalsContainer'
 import { ActionsToolbar } from './ActionsToolbar'
 import { AppBar } from './AppBar'
@@ -161,7 +160,7 @@ export const App = () => {
 
         queueRef.current = { nodes: [], edges: [] } // Reset the queue
         addNewNode(batchedData) // Call the original addNewNode function with batched data
-      }, 2000) // Adjust delay as necessary
+      }, 3000) // Adjust delay as necessary
     },
     [addNewNode],
   )
@@ -302,11 +301,7 @@ export const App = () => {
       const message = data?.message?.message
 
       if (message) {
-        SuccessNotify(message)
-
         setRunningProjectMessages(message)
-
-        console.log(message)
       }
 
       // Handle the message from the server here
