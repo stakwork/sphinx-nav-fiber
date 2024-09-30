@@ -18,6 +18,7 @@ import { colors } from '~/utils/colors'
 import DocumentIcon from '../Icons/DocumentIcon'
 import EpisodeIcon from '../Icons/EpisodeIcon'
 import { Flex } from '../common/Flex'
+import { Alerts } from './Alerts'
 import { Animation } from './Animation'
 
 interface StatConfigItem {
@@ -191,6 +192,7 @@ export const Stats = () => {
           </Tooltip>
         </Budget>
       </StatisticsBudget>
+      <Alerts />
     </StatisticsContainer>
   )
 }

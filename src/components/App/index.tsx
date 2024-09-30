@@ -27,6 +27,7 @@ import {
 import { colors } from '~/utils/colors'
 import { updateBudget } from '~/utils/setBudget'
 import version from '~/utils/versionHelper'
+import { SuccessNotify } from '../common/SuccessToast'
 import { ModalsContainer } from '../ModalsContainer'
 import { ActionsToolbar } from './ActionsToolbar'
 import { AppBar } from './AppBar'
@@ -69,8 +70,15 @@ export const App = () => {
 
   const setTeachMeAnswer = useTeachStore((s) => s.setTeachMeAnswer)
 
-  const { fetchData, setCategoryFilter, setAbortRequests, addNewNode, splashDataLoading, runningProjectId } =
-    useDataStore((s) => s)
+  const {
+    fetchData,
+    setCategoryFilter,
+    setAbortRequests,
+    addNewNode,
+    splashDataLoading,
+    runningProjectId,
+    setRunningProjectMessages,
+  } = useDataStore((s) => s)
 
   const { setAiSummaryAnswer, getKeyExist, aiRefId } = useAiSummaryStore((s) => s)
 
@@ -257,13 +265,20 @@ export const App = () => {
 
       // Send the command as a JSON string
       ws.send(JSON.stringify(command))
-
-      console.log('Subscription command sent:', command)
-      console.log('WebSocket connection established')
     }
 
     ws.onmessage = (event) => {
       console.log('Message from server:', event.data)
+
+      if (event.data.type === 'ping') {
+        return
+      }
+
+      SuccessNotify(event.data.message)
+
+      setRunningProjectMessages(event.data.message)
+
+      console.log(event.data)
 
       // Handle the message from the server here
     }
@@ -275,7 +290,7 @@ export const App = () => {
     ws.onclose = () => {
       console.log('WebSocket connection closed')
     }
-  }, [runningProjectId])
+  }, [runningProjectId, setRunningProjectMessages])
 
   useEffect(() => {
     if (!splashDataLoading) {

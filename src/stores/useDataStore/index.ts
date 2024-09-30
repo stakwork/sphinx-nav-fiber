@@ -46,6 +46,7 @@ export type DataStore = {
   nodeTypes: string[]
   seedQuestions: string[] | null
   runningProjectId: string
+  runningProjectMessages: string[]
 
   setTrendingTopics: (trendingTopics: Trending[]) => void
   setDataNew: (data: GraphData) => void
@@ -64,6 +65,8 @@ export type DataStore = {
   setQueuedSources: (sources: Sources[] | null) => void
   setIsFetching: (_: boolean) => void
   setRunningProjectId: (runningProjectId: string) => void
+  setRunningProjectMessages: (message: string) => void
+  resetRunningProjectMessages: () => void
   setHideNodeDetails: (_: boolean) => void
   addNewNode: (data: FetchDataResponse) => void
   updateNode: (updatedNode: NodeExtended) => void
@@ -107,6 +110,7 @@ const defaultData: Omit<
   dataInitial: null,
   currentPage: 0,
   itemsPerPage: 300,
+  runningProjectMessages: [],
   filters: {
     skip: 0,
     limit: 300,
@@ -347,6 +351,12 @@ export const useDataStore = create<DataStore>()(
     },
 
     setRunningProjectId: (runningProjectId) => set({ runningProjectId }),
+    setRunningProjectMessages: (message) => {
+      const { runningProjectMessages } = get()
+
+      set({ runningProjectMessages: [...runningProjectMessages, message] })
+    },
+    resetRunningProjectMessages: () => set({ runningProjectMessages: [] }),
     setAbortRequests: (abortRequest) => set({ abortRequest }),
   })),
 )
