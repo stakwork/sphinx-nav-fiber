@@ -1,5 +1,5 @@
 import { Popover } from '@mui/material'
-import { MouseEvent, useState } from 'react'
+import { useState } from 'react'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { Tooltip } from '~/components/common/ToolTip'
@@ -10,12 +10,12 @@ import { colors } from '~/utils'
 export const Alerts = () => {
   console.log(12)
 
-  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null)
   const [listOfItems] = useState<string[]>([])
   const { runningProjectMessages } = useDataStore((s) => s)
 
-  const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget)
+  const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    setAnchorEl(event.currentTarget as HTMLElement)
   }
 
   const handleClose = () => {
