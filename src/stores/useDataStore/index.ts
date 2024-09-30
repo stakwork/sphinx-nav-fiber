@@ -350,7 +350,7 @@ export const useDataStore = create<DataStore>()(
       console.log(id)
     },
 
-    setRunningProjectId: (runningProjectId) => set({ runningProjectId }),
+    setRunningProjectId: (runningProjectId) => set({ runningProjectId, runningProjectMessages: [] }),
     setRunningProjectMessages: (message) => {
       const { runningProjectMessages } = get()
 
