@@ -276,11 +276,15 @@ export const App = () => {
         return
       }
 
-      SuccessNotify(data.message)
+      const message = data?.message?.message
 
-      setRunningProjectMessages(data.message)
+      if (message) {
+        SuccessNotify(message)
 
-      console.log(data)
+        setRunningProjectMessages(message)
+
+        console.log(message)
+      }
 
       // Handle the message from the server here
     }
