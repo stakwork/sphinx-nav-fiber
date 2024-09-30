@@ -270,15 +270,17 @@ export const App = () => {
     ws.onmessage = (event) => {
       console.log('Message from server:', event.data)
 
-      if (event.data.type === 'ping') {
+      const data = JSON.parse(event.data)
+
+      if (data.type === 'ping') {
         return
       }
 
-      SuccessNotify(event.data.message)
+      SuccessNotify(data.message)
 
-      setRunningProjectMessages(event.data.message)
+      setRunningProjectMessages(data.message)
 
-      console.log(event.data)
+      console.log(data)
 
       // Handle the message from the server here
     }
