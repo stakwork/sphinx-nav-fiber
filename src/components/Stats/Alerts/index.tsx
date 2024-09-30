@@ -8,10 +8,7 @@ import { useDataStore } from '~/stores/useDataStore'
 import { colors } from '~/utils'
 
 export const Alerts = () => {
-  console.log(12)
-
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null)
-  const [listOfItems] = useState<string[]>([])
   const { runningProjectMessages } = useDataStore((s) => s)
 
   const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
@@ -25,7 +22,7 @@ export const Alerts = () => {
   const open = Boolean(anchorEl)
   const id = open ? 'simple-popover' : undefined
 
-  return (
+  return runningProjectMessages.length ? (
     <AlertWrapper ml={8}>
       <Info onClick={handleClick}>
         <Tooltip content="Messages" margin="18px">
@@ -47,14 +44,16 @@ export const Alerts = () => {
         onClose={handleClose}
         open={open}
       >
-        <Flex p={16}>
-          {[...listOfItems, ...runningProjectMessages].map((i) => (
-            <p key={i}>{i}</p>
+        <ContentWrapper p={16}>
+          {runningProjectMessages.map((i) => (
+            <p key={i} className="item">
+              {i}
+            </p>
           ))}
-        </Flex>
+        </ContentWrapper>
       </Popover>
     </AlertWrapper>
-  )
+  ) : null
 }
 
 const AlertWrapper = styled(Flex).attrs({
@@ -64,11 +63,28 @@ const AlertWrapper = styled(Flex).attrs({
   justify: 'flex-start',
 })``
 
+const ContentWrapper = styled(Flex)`
+  max-height: 33vh;
+  max-width: 30vw;
+
+  .item {
+    background: ${colors.BG1};
+    padding: 4px 0;
+    border-bottom: 1px solid ${colors.black};
+    word-break: break-word;
+  }
+
+  .item:last-child {
+    border: none;
+  }
+`
+
 const Info = styled(Flex).attrs({
   align: 'center',
   direction: 'row',
 })`
   display: flex;
+  cursor: pointer;
   height: 2.5rem;
   padding: 0.75rem 0.9375rem 0.75rem 0.9375rem;
   align-items: center;
