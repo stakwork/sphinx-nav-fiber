@@ -80,6 +80,7 @@ export const App = () => {
     splashDataLoading,
     runningProjectId,
     setRunningProjectMessages,
+    isFetching,
   } = useDataStore((s) => s)
 
   const { setAiSummaryAnswer, getKeyExist, aiRefId } = useAiSummaryStore((s) => s)
@@ -138,6 +139,10 @@ export const App = () => {
 
   const handleNewNodeCreated = useCallback(
     (data: FetchDataResponse) => {
+      if (isFetching) {
+        return
+      }
+
       if (!queueRef.current) {
         queueRef.current = { nodes: [], edges: [] }
       }
@@ -162,7 +167,7 @@ export const App = () => {
         addNewNode(batchedData) // Call the original addNewNode function with batched data
       }, 3000) // Adjust delay as necessary
     },
-    [addNewNode],
+    [addNewNode, isFetching],
   )
 
   const handleAiSummaryAnswer = useCallback(
