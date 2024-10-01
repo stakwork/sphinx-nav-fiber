@@ -66,10 +66,10 @@ const AlertWrapper = styled(Flex).attrs({
 const ContentWrapper = styled(Flex)`
   max-height: 33vh;
   max-width: 30vw;
+  background: ${colors.BG1};
 
   .item {
-    background: ${colors.BG1};
-    padding: 4px 0;
+    padding: 8px 0;
     border-bottom: 1px solid ${colors.black};
     word-break: break-word;
   }

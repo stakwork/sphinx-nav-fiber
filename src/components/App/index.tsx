@@ -1,5 +1,5 @@
 import { Leva } from 'leva'
-import { lazy, Suspense, useCallback, useEffect } from 'react'
+import { lazy, Suspense, useCallback, useEffect, useRef } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useSearchParams } from 'react-router-dom'
 import 'react-toastify/dist/ReactToastify.css'
@@ -23,11 +23,11 @@ import {
   AiSummaryQuestionsResponse,
   AiSummarySourcesResponse,
   ExtractedEntitiesResponse,
+  FetchDataResponse,
 } from '~/types'
 import { colors } from '~/utils/colors'
 import { updateBudget } from '~/utils/setBudget'
 import version from '~/utils/versionHelper'
-import { SuccessNotify } from '../common/SuccessToast'
 import { ModalsContainer } from '../ModalsContainer'
 import { ActionsToolbar } from './ActionsToolbar'
 import { AppBar } from './AppBar'
@@ -57,6 +57,8 @@ export const App = () => {
   const [searchParams] = useSearchParams()
   const query = searchParams.get('q')
   const { setBudget, setNodeCount } = useUserStore((s) => s)
+  const queueRef = useRef<FetchDataResponse | null>(null)
+  const timerRef = useRef<NodeJS.Timeout | null>(null)
 
   const {
     setSidebarOpen,
@@ -78,6 +80,7 @@ export const App = () => {
     splashDataLoading,
     runningProjectId,
     setRunningProjectMessages,
+    isFetching,
   } = useDataStore((s) => s)
 
   const { setAiSummaryAnswer, getKeyExist, aiRefId } = useAiSummaryStore((s) => s)
@@ -134,6 +137,39 @@ export const App = () => {
     setNodeCount('INCREMENT')
   }, [setNodeCount])
 
+  const handleNewNodeCreated = useCallback(
+    (data: FetchDataResponse) => {
+      if (isFetching) {
+        return
+      }
+
+      if (!queueRef.current) {
+        queueRef.current = { nodes: [], edges: [] }
+      }
+
+      if (data.edges) {
+        queueRef.current.edges.push(...data.edges)
+      }
+
+      if (data.nodes) {
+        queueRef.current.nodes.push(...data.nodes)
+      }
+
+      if (timerRef.current) {
+        clearTimeout(timerRef.current)
+      }
+
+      timerRef.current = setTimeout(() => {
+        // Combine all queued data into a single update
+        const batchedData = { ...queueRef.current }
+
+        queueRef.current = { nodes: [], edges: [] } // Reset the queue
+        addNewNode(batchedData) // Call the original addNewNode function with batched data
+      }, 3000) // Adjust delay as necessary
+    },
+    [addNewNode, isFetching],
+  )
+
   const handleAiSummaryAnswer = useCallback(
     (data: AiSummaryAnswerResponse) => {
       if (data.ref_id) {
@@ -171,15 +207,6 @@ export const App = () => {
       }
     },
     [setAiSummaryAnswer],
-  )
-
-  const handleNewNodeCreated = useCallback(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (data: any) => {
-      // Use the data recieved to create graph in realtime
-      addNewNode(data)
-    },
-    [addNewNode],
   )
 
   const handleExtractedEntities = useCallback(
@@ -279,11 +306,7 @@ export const App = () => {
       const message = data?.message?.message
 
       if (message) {
-        SuccessNotify(message)
-
         setRunningProjectMessages(message)
-
-        console.log(message)
       }
 
       // Handle the message from the server here
