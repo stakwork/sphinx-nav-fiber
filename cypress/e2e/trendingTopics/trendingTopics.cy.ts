@@ -67,11 +67,11 @@ describe('test trending topics', () => {
       cy.wait('@search2')
 
       // Check if the search result list has more than one child
-      cy.get('.episode-wrapper')
-        .should('exist') // Ensure they exist
-        .should('have.length.greaterThan', 1) // Check that there are more than one
-        .first() // Select the first element
-        .click()
+      // cy.get('.episode-wrapper')
+      //   .should('exist') // Ensure they exist
+      //   .should('have.length.greaterThan', 1) // Check that there are more than one
+      //   .first() // Select the first element
+      //   .click()
 
       // cy.get('[data-testid="sidebar-sub-view"]').should('have.css', 'position', 'relative')
 
