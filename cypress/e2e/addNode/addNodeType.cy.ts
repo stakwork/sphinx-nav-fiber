@@ -21,7 +21,6 @@ describe('Add Node Type Via BluePrint', () => {
     cy.wait('@schemaList')
 
     cy.get('#blur-on-select').click()
-    cy.wait(20000)
     cy.get('[data-testid="Thing"]').click()
 
     cy.get('#cy-item-name').type(nodeType)
