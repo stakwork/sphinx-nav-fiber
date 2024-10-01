@@ -2,6 +2,8 @@ import Button from '@mui/material/Button'
 import clsx from 'clsx'
 import moment from 'moment'
 import { useEffect, useRef, useState } from 'react'
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
+import { okaidia } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import styled from 'styled-components'
 import { Divider } from '~/components/common/Divider'
 import { Flex } from '~/components/common/Flex'
@@ -136,7 +138,10 @@ const NodeDetail = ({ label, value, hasAudio, isPlaying, togglePlay }: Props) =>
             <AudioButton onClick={togglePlay}>{isPlaying ? <AiPauseIcon /> : <AiPlayIcon />}</AudioButton>
           )}
         </Text>
-        <Text className="node-detail__value">{highlightSearchTerm(String(value), searchTerm)}</Text>
+        {false && <Text className="node-detail__value">{highlightSearchTerm(String(value), searchTerm)}</Text>}
+        <SyntaxHighlighter language="javascript" style={okaidia}>
+          {String(value)}
+        </SyntaxHighlighter>
       </StyledDetail>
       <StyledDivider />
     </>
