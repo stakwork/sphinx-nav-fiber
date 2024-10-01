@@ -24,7 +24,9 @@ describe('Add Tweet Content', () => {
       url: 'http://localhost:8444/api/add_node*',
     }).as('addTweet2')
 
-    cy.wait('@addTweet2') // This is because add source is currently skipped,
+    cy.wait('@addTweet2').then((intersection) => {
+      cy.log(intersection.response)
+    }) // This is because add source is currently skipped,
 
     cy.get('.Toastify__toast-body').should('have.text', 'Content Added')
 
