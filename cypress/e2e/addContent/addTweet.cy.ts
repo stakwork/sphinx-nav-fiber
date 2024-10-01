@@ -25,7 +25,8 @@ describe('Add Tweet Content', () => {
     }).as('addTweet2')
 
     cy.wait('@addTweet2').then((intersection) => {
-      cy.log(intersection.response)
+      console.log(intersection.response)
+      cy.log(JSON.stringify(intersection.response))
     }) // This is because add source is currently skipped,
 
     cy.get('.Toastify__toast-body').should('have.text', 'Content Added')
