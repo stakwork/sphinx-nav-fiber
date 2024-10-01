@@ -4636,6 +4636,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/react-syntax-highlighter@npm:^15.5.13":
+  version: 15.5.13
+  resolution: "@types/react-syntax-highlighter@npm:15.5.13"
+  dependencies:
+    "@types/react": "*"
+  checksum: 55f751c140eb6641b16a5644af3b6fc25223957141085758ae6898948e70eaca33d8276e86e75d5d60939aff63af1d20278aba0d3a25483266f9deee1eb468e3
+  languageName: node
+  linkType: hard
+
 "@types/react-transition-group@npm:^4.4.10, @types/react-transition-group@npm:^4.4.8":
   version: 4.4.10
   resolution: "@types/react-transition-group@npm:4.4.10"
@@ -14635,6 +14644,7 @@ __metadata:
     "@types/react-dom": ^18.2.7
     "@types/react-input-mask": 3.0.2
     "@types/react-lottie": ^1.2.10
+    "@types/react-syntax-highlighter": ^15.5.13
     "@types/styled-components": ^5.1.25
     "@types/three": ^0.150.2
     "@typescript-eslint/eslint-plugin": ^5.27.1
