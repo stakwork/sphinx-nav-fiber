@@ -22,7 +22,7 @@ export function apiUrlFromSwarmHost(): string | undefined {
       url = `https://${finalHost}`
     }
   } else if (origin.includes('localhost')) {
-    url = 'https://boltwall.swarm38.sphinx.chat'
+    url = 'https://bitcoin.sphinx.chat'
   }
 
   return `${url}/api`
