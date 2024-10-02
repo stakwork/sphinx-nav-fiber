@@ -1,5 +1,6 @@
 import { getTribeUserDetails, getWorkspace, postBountyData } from '..'
 import { TRIBE_BASE_URL } from '../../../utils/constants/index'
+import * as requestModule from '../../api'
 import { api } from '../../api'
 
 // Successfully retrieves user details with a valid pubkey
@@ -13,13 +14,13 @@ it('should return user details when given a valid pubkey', async () => {
     owner_alias: 'ownerAlias',
   }
 
-  jest.spyOn(api, 'get').mockResolvedValue(mockResponse)
+  const requestSpy = jest.spyOn(requestModule, 'request').mockResolvedValue(mockResponse)
 
   const result = await getTribeUserDetails(mockPubkey)
 
   expect(result).toEqual(mockResponse)
 
-  expect(api).toHaveBeenCalledWith(`${TRIBE_BASE_URL}/person/${mockPubkey}`, {
+  expect(requestSpy).toHaveBeenCalledWith(`${TRIBE_BASE_URL}/person/${mockPubkey}`, {
     headers: {
       'Content-Type': 'application/json',
     },
@@ -34,13 +35,13 @@ it('should return a list of workspaces when given a valid user ID', async () => 
     { name: 'Workspace2', uuid: '456' },
   ]
 
-  jest.spyOn(api, 'get').mockResolvedValue(mockResponse)
+  const requestSyp = jest.spyOn(requestModule, 'request').mockResolvedValue(mockResponse)
 
   const result = await getWorkspace(1)
 
   expect(result).toEqual(mockResponse)
 
-  expect(api).toHaveBeenCalledWith('https://community.sphinx.chat/workspaces/user/1', {
+  expect(requestSyp).toHaveBeenCalledWith(`${TRIBE_BASE_URL}/workspaces/user/1`, {
     headers: { 'Content-Type': 'application/json' },
     method: 'GET',
   })
