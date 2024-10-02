@@ -49,7 +49,7 @@ describe('Add Node Type Via BluePrint', () => {
 
     cy.get('[data-testid="add-item-modal"]').click()
 
-    cy.wait('schemaList1')
+    cy.wait('@schemaList1')
 
     cy.get(`[data-testid="${nodeType}"]`).click()
     cy.wait(100)
