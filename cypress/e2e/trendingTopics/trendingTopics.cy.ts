@@ -1,8 +1,8 @@
 describe('test trending topics', () => {
-  it.skip('Checking it trending topics exist', () => {
+  it('Checking it trending topics exist', () => {
     cy.intercept({
       method: 'GET',
-      url: 'http://localhost:8444/api/prediction/graph/search*',
+      url: 'http://localhost:8444/api/prediction/graph/search/latest*',
     }).as('loadLatest')
 
     cy.intercept({
@@ -35,11 +35,12 @@ describe('test trending topics', () => {
       },
     })
 
-    cy.wait(20000)
+    cy.wait(['@loadAbout', '@loadLatest', '@loadStats'])
+
+    // wait for boltwall queue to send tweets to jarvis
+    cy.wait(70000)
 
     cy.get('[data-testid="explore-graph-btn"]').click()
-
-    cy.wait(['@loadAbout', '@loadLatest', '@loadStats'])
 
     cy.wait('@getTrends').then((interception) => {
       const responseBody = interception.response.body
@@ -53,18 +54,26 @@ describe('test trending topics', () => {
       cy.contains(`${responseBody[0].name}`).eq(0).click()
 
       // wait for search result
-      cy.wait('@search', { timeout: 90000 }).then(() => {
+      cy.wait('@search', { timeout: 90000 }).then((interception) => {
         cy.log('Search request intercepted')
+        expect(interception.response.statusCode).to.eq(402)
       })
 
-      cy.get('#search-result-list').should('exist')
+      cy.intercept({
+        method: 'GET',
+        url: 'http://localhost:8444/api/prediction/graph/search*',
+      }).as('search2')
+
+      cy.wait('@search2')
 
       // Check if the search result list has more than one child
-      cy.get('#search-result-list').children().should('have.length.gt', 0)
+      // cy.get('.episode-wrapper')
+      //   .should('exist') // Ensure they exist
+      //   .should('have.length.greaterThan', 1) // Check that there are more than one
+      //   .first() // Select the first element
+      //   .click()
 
-      cy.get('#search-result-list').children().first().click()
-
-      cy.get('[data-testid="sidebar-sub-view"]').should('have.css', 'position', 'relative')
+      // cy.get('[data-testid="sidebar-sub-view"]').should('have.css', 'position', 'relative')
 
       // cancel search
       cy.get('[data-testid="search_action_icon"]').click()

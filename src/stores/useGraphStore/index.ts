@@ -182,9 +182,31 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
       nodes.push(...structuredNodes)
       links.push(...structuredLinks)
 
-      simulation.nodes(nodes).force('link').links(links)
+      try {
+        simulation.nodes(nodes)
 
-      simulationHelpers.simulationRestart()
+        const filteredLinks = links.filter((link: Link<NodeExtended | string>) => {
+          const { target, source } = link
+          const simulationNodes = simulation.nodes()
+
+          // Log the target and source ref_id for debugging
+          const targetRefId = (target as NodeExtended)?.ref_id || target
+          const sourceRefId = (source as NodeExtended)?.ref_id || source
+
+          return (
+            simulationNodes.some((n: NodeExtended) => n.ref_id === targetRefId) &&
+            simulationNodes.some((n: NodeExtended) => n.ref_id === sourceRefId)
+          )
+        })
+
+        simulation.force('link').links([]).links(filteredLinks)
+
+        simulationHelpers.simulationRestart()
+      } catch (error) {
+        console.log(error)
+        // eslint-disable-next-line no-debugger
+      }
+
       // Add simulation node to reference (so that we can access reference on tick to update position)
     },
 
@@ -241,7 +263,7 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
           'y',
           forceY()
             .y((node: NodeExtended) => nodeTypes.indexOf(node.node_type) * 400)
-            .strength(1),
+            .strength(10),
         )
     },
 
@@ -280,6 +302,8 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
     },
   },
   simulationCreate: (nodes, links) => {
+    console.log('created')
+
     const structuredNodes = structuredClone(nodes)
     const structuredLinks = structuredClone(links)
 

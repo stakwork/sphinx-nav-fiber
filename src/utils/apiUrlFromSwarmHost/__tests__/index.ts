@@ -13,18 +13,18 @@ describe('apiUrlFromSwarmHost', () => {
     jest.restoreAllMocks()
   })
 
-  it('returns "https://knowledge-graph.sphinx.chat/api" for the URL "https://second-brain.sphinx.chat"', () => {
+  it('returns "https://bitcoin.sphinx.chat/api" for the URL "https://second-brain.sphinx.chat"', () => {
     mockWindowLocation('https://second-brain.sphinx.chat')
-    expect(apiUrlFromSwarmHost()).toBe('https://knowledge-graph.sphinx.chat/api')
+    expect(apiUrlFromSwarmHost()).toBe('https://bitcoin.sphinx.chat/api')
   })
 
-  it('returns "https://knowledge-graph.sphinx.chat/api" for a URL containing "localhost"', () => {
+  it('returns "https://bitcoin.sphinx.chat/api" for a URL containing "localhost"', () => {
     mockWindowLocation('http://localhost:3000')
-    expect(apiUrlFromSwarmHost()).toBe('https://knowledge-graph.sphinx.chat/api')
+    expect(apiUrlFromSwarmHost()).toBe('https://bitcoin.sphinx.chat/api')
   })
 
   it('returns the original URL appended with /api for a URL not containing "swarm" and not hardcoded', () => {
-    const nonSwarmUrl = 'https://knowledge-graph.sphinx.chat'
+    const nonSwarmUrl = 'https://bitcoin.sphinx.chat'
 
     mockWindowLocation(nonSwarmUrl)
     expect(apiUrlFromSwarmHost()).toBe(`${nonSwarmUrl}/api`)

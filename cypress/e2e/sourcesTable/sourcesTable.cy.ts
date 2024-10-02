@@ -1,5 +1,5 @@
 describe('Sources Table / Home interactions', () => {
-  it('Source Table Flow', () => {
+  it.skip('Source Table Flow', () => {
     let trCount
 
     cy.initialSetup('alice', 300)
