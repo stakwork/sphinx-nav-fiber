@@ -29,7 +29,7 @@ export async function getSignedTimestamp(): Promise<string> {
   }
 }
 
-function bytesFromUrlBase64(base64Url: string): Buffer {
+export function bytesFromUrlBase64(base64Url: string): Buffer {
   // Revert the URL-safe changes back to regular Base64
   const base64 = base64Url.replace(/_/g, '/').replace(/-/g, '+')
 
@@ -40,7 +40,7 @@ function bytesFromUrlBase64(base64Url: string): Buffer {
   return Buffer.from(paddedBase64, 'base64')
 }
 
-function urlBase64(buf: Uint8Array): string {
+export function urlBase64(buf: Uint8Array): string {
   // Convert Uint8Array to a string
   let binary = ''
   const len = buf.byteLength
