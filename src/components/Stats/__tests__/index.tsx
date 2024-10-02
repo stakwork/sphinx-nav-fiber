@@ -47,7 +47,7 @@ const mockStats = {
 
 const mockBudget = 20000
 
-describe.skip('Component Test Stats', () => {
+describe('Component Test Stats', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     mockedUseDataStore.mockImplementation(() => [mockStats, jest.fn().mockImplementation((stats) => stats)])
@@ -154,7 +154,7 @@ describe.skip('Component Test Stats', () => {
     })
   })
 
-  it.skip('should render the button only if totalProcessing is present and greater than 0', async () => {
+  it('should render the button only if totalProcessing is present and greater than 0', async () => {
     const mockedGetTotalProcessing = getTotalProcessing as jest.MockedFunction<() => Promise<ProcessingResponse>>
 
     const mockResponse: ProcessingResponse = {
