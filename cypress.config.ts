@@ -29,6 +29,9 @@ export default defineConfig({
     experimentalMemoryManagement: true,
     numTestsKeptInMemory: 1,
     video: true,
+    env: {
+      CYPRESS_LOG_LEVEL: 'debug',
+    },
   },
   component: {
     supportFile: './cypress/support/components.ts',
