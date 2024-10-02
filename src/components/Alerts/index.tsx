@@ -34,7 +34,7 @@ export const Alerts = () => {
           </div>
         </Tooltip>
       </Info>
-      <Popover
+      <StyledPopover
         anchorEl={anchorEl}
         anchorOrigin={{
           vertical: 'bottom',
@@ -51,7 +51,7 @@ export const Alerts = () => {
             </p>
           ))}
         </ContentWrapper>
-      </Popover>
+      </StyledPopover>
     </AlertWrapper>
   ) : null
 }
@@ -67,6 +67,7 @@ const ContentWrapper = styled(Flex)`
   max-height: 33vh;
   max-width: 30vw;
   background: ${colors.BG1};
+  padding-top: 0 !important;
 
   .item {
     padding: 8px 0;
@@ -123,5 +124,11 @@ const Info = styled(Flex).attrs({
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+`
+
+const StyledPopover = styled(Popover)`
+  .MuiPopover-paper {
+    margin-top: 4px;
   }
 `
