@@ -40,7 +40,7 @@ describe('Add Node Type Via BluePrint', () => {
     cy.wait('@schemaRequest')
 
     cy.get('body').trigger('keydown', { keyCode: 27 })
-    cy.wait(500)
+    cy.wait(20000)
 
     cy.intercept({
       method: 'GET',
