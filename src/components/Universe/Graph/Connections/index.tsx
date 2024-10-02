@@ -39,6 +39,25 @@ export const Connections = memo(({ linksPositions }: Props) => {
     })
   }, [data, selectedNode])
 
+  useEffect(() => {
+    const newLinks = linksPositions.slice(lineRefs.current.length)
+
+    newLinks.forEach((_, index) => {
+      const line = lineRefs.current[lineRefs.current.length - newLinks.length + index]
+
+      if (line) {
+        gsap.fromTo(
+          line.material,
+          { linewidth: 5 },
+          {
+            linewidth: 2,
+            duration: 1,
+          },
+        )
+      }
+    })
+  }, [linksPositions])
+
   return (
     <group name="simulation-3d-group__connections">
       {data?.links.map((l: Link, index) => {
