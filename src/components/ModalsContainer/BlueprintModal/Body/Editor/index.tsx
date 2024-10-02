@@ -20,6 +20,7 @@ import { CreateCustomNodeAttribute } from './CustomAttributesStep'
 import MediaOptions from './MediaOptions'
 import { convertAttributes, parsedObjProps, parseJson } from './utils'
 import ColorPickerIcon from '~/components/Icons/ColorPickerIcon'
+import { ColorPickerPopover } from './ColorPickerPopover'
 
 const defaultValues = {
   type: '',
@@ -210,6 +211,10 @@ export const Editor = ({
     sourceLink: false,
   })
 
+  const [isPopoverOpen, setPopoverOpen] = useState(!!selectedSchema)
+
+  const handleColorPickerPopover = () => setPopoverOpen(!isPopoverOpen)
+
   useEffect(
     () => () => {
       reset()
@@ -245,6 +250,8 @@ export const Editor = ({
     resetForm()
 
     if (selectedSchema) {
+      setPopoverOpen(true)
+
       setValue('type', selectedSchema.type as string)
       setValue('parent', selectedSchema.parent)
 
@@ -505,7 +512,7 @@ export const Editor = ({
                             value={parent}
                           />
                         </InputWrapper>
-                        <ColorPickerIconWrapper>
+                        <ColorPickerIconWrapper onClick={handleColorPickerPopover}>
                           <ColorPickerIcon />
                         </ColorPickerIconWrapper>
                       </InputIconWrapper>
@@ -534,7 +541,7 @@ export const Editor = ({
                             value={parent}
                           />
                         </InputWrapper>
-                        <ColorPickerIconWrapper>
+                        <ColorPickerIconWrapper onClick={handleColorPickerPopover}>
                           <ColorPickerIcon />
                         </ColorPickerIconWrapper>
                       </InputIconWrapper>
@@ -617,6 +624,7 @@ export const Editor = ({
             </Flex>
           </form>
         </FormProvider>
+        <ColorPickerPopover isOpen={isPopoverOpen} />
       </Flex>
     </Flex>
   )
