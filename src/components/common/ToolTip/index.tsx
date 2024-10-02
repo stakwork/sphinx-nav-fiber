@@ -47,9 +47,16 @@ const TooltipText = styled.div<{
   padding: ${({ padding }) => padding || '5px 8px'};
   position: absolute;
   z-index: 1;
-  ${({ position }) => (position === 'top' ? 'bottom: 100%;' : 'top: 100%;')}
-  left: ${({ mrLeft }) => mrLeft || '50%'};
-  transform: translateX(-50%);
+  ${({ position }) => {
+    switch (position) {
+      case 'top':
+        return 'bottom: 100%; left: 50%; transform: translateX(-50%);'
+      case 'left':
+        return 'right: calc(100% + 6px); top: 50%; transform: translateY(-50%);'
+      default:
+        return 'top: 100%; left: 50%; transform: translateX(-50%);'
+    }
+  }}
   margin-top: ${({ margin }) => margin || '0px'};
   opacity: 0;
   transition: opacity 0.3s;

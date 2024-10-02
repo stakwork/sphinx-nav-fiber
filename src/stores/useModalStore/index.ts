@@ -20,6 +20,7 @@ export type AvailableModals =
   | 'blueprintGraph'
   | 'changeNodeType'
   | 'feedback'
+  | 'createBounty'
 
 type ModalStore = {
   currentModals: Record<AvailableModals, boolean>
@@ -49,6 +50,7 @@ const defaultData = {
     blueprintGraph: false,
     changeNodeType: false,
     feedback: false,
+    createBounty: false,
   },
 }
 
