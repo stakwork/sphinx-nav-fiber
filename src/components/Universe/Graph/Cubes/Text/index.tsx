@@ -7,8 +7,8 @@ import { useGraphStore, useHoveredNode, useSelectedNode, useSelectedNodeRelative
 import { useSchemaStore } from '~/stores/useSchemaStore'
 import { NodeExtended } from '~/types'
 import { colors } from '~/utils/colors'
+import { removeEmojis } from '~/utils/removeEmojisFromText'
 import { truncateText } from '~/utils/truncateText'
-import { removeEmojis } from '../../constant'
 import { fontProps } from './constants'
 
 const COLORS_MAP = [
