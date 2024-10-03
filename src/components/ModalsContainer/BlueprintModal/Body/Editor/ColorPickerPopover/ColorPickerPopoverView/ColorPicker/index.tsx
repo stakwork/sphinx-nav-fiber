@@ -6,9 +6,10 @@ import { colors } from '~/utils/colors'
 import { useState } from 'react'
 import SaturationPicker from './SaturationPicker'
 import { hslToHex, hexToHsl } from './ColorUtils'
+import { useAppStore } from '~/stores/useAppStore'
 
 export const ColorPicker = () => {
-  const [selectedColor, setSelectedColor] = useState('#C990C0') // Initial color
+  const { selectedColor, setSelectedColor } = useAppStore((s) => s)
   const [hexValue, setHexValue] = useState('#C990C0') // HEX value input
   const [hueValue, setHueValue] = useState(200) // Default hue
   const [saturation, setSaturation] = useState(50) // Default saturation
