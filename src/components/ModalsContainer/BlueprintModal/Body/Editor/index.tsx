@@ -71,6 +71,7 @@ const handleSubmitForm = async (
   data: FieldValues,
   isUpdate = false,
   deletedAttributes: string[],
+  selectedColor: string,
   mediaOptions: { videoAudio: boolean; image: boolean; sourceLink: boolean },
   initialMediaOptions: { videoAudio: boolean; image: boolean; sourceLink: boolean },
 ): Promise<string | undefined> => {
@@ -87,12 +88,17 @@ const handleSubmitForm = async (
       attributes: { [key: string]: string }
       index?: string
       media_url?: string
+      color?: string
       image_url?: string
       source_link?: string
     } = {
       ...withoutAttributes,
       attributes: updatedAttributes,
       index: selectedIndex,
+    }
+
+    if (selectedColor) {
+      requestData.color = selectedColor
     }
 
     if (mediaOptions.videoAudio) {
@@ -356,6 +362,7 @@ export const Editor = ({
         await editNodeSchemaUpdate(selectedSchema?.ref_id as string, {
           type: data.type,
           parent: newParent as string,
+          color: selectedColor,
           attributes: {
             index: selectedIndex as string,
           },
@@ -368,6 +375,7 @@ export const Editor = ({
         { ...data, ...(selectedSchema ? { ref_id: selectedSchema?.ref_id } : {}) },
         !!selectedSchema,
         deletedAttributes,
+        selectedColor,
         mediaOptions,
         {
           videoAudio: !!selectedSchema?.media_url,
