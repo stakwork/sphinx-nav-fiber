@@ -19,6 +19,8 @@ import { colors } from '~/utils'
 import { CreateCustomNodeAttribute } from './CustomAttributesStep'
 import MediaOptions from './MediaOptions'
 import { convertAttributes, parsedObjProps, parseJson } from './utils'
+import ColorPickerIcon from '~/components/Icons/ColorPickerIcon'
+import { ColorPickerPopover } from './ColorPickerPopover'
 
 const defaultValues = {
   type: '',
@@ -209,6 +211,10 @@ export const Editor = ({
     sourceLink: false,
   })
 
+  const [isPopoverOpen, setPopoverOpen] = useState(!!selectedSchema)
+
+  const handleColorPickerPopover = () => setPopoverOpen(!isPopoverOpen)
+
   useEffect(
     () => () => {
       reset()
@@ -244,6 +250,8 @@ export const Editor = ({
     resetForm()
 
     if (selectedSchema) {
+      setPopoverOpen(true)
+
       setValue('type', selectedSchema.type as string)
       setValue('parent', selectedSchema.parent)
 
@@ -473,7 +481,6 @@ export const Editor = ({
                     <Flex mb={12}>
                       <Text>Select Parent</Text>
                     </Flex>
-
                     <AutoComplete
                       isLoading={parentsLoading}
                       onSelect={(e) => {
@@ -483,23 +490,32 @@ export const Editor = ({
                       options={parentOptions}
                       selectedValue={resolvedParentValue()}
                     />
+
                     {displayParentError && <StyledError>A parent type must be selected</StyledError>}
                   </Flex>
+
                   <Flex>
                     <Flex mb={12}>
                       <Text>Type name</Text>
                     </Flex>
                     <Flex mb={12}>
-                      <TextInput
-                        id="cy-item-name"
-                        maxLength={250}
-                        name="type"
-                        placeholder="Enter type name"
-                        rules={{
-                          ...requiredRule,
-                        }}
-                        value={parent}
-                      />
+                      <InputIconWrapper>
+                        <InputWrapper>
+                          <TextInput
+                            id="cy-item-name"
+                            maxLength={250}
+                            name="type"
+                            placeholder="Enter type name"
+                            rules={{
+                              ...requiredRule,
+                            }}
+                            value={parent}
+                          />
+                        </InputWrapper>
+                        <ColorPickerIconWrapper onClick={handleColorPickerPopover}>
+                          <ColorPickerIcon />
+                        </ColorPickerIconWrapper>
+                      </InputIconWrapper>
                     </Flex>
                   </Flex>
                 </>
@@ -510,18 +526,25 @@ export const Editor = ({
                       <Text>Name</Text>
                     </Flex>
                     <Flex mb={12}>
-                      <TextInput
-                        dataTestId="cy-item-name"
-                        defaultValue={selectedSchema?.type}
-                        id="cy-item-name"
-                        maxLength={250}
-                        name="type"
-                        placeholder="Enter type name"
-                        rules={{
-                          ...requiredRule,
-                        }}
-                        value={parent}
-                      />
+                      <InputIconWrapper>
+                        <InputWrapper>
+                          <TextInput
+                            dataTestId="cy-item-name"
+                            defaultValue={selectedSchema?.type}
+                            id="cy-item-name"
+                            maxLength={250}
+                            name="type"
+                            placeholder="Enter type name"
+                            rules={{
+                              ...requiredRule,
+                            }}
+                            value={parent}
+                          />
+                        </InputWrapper>
+                        <ColorPickerIconWrapper onClick={handleColorPickerPopover}>
+                          <ColorPickerIcon />
+                        </ColorPickerIconWrapper>
+                      </InputIconWrapper>
                     </Flex>
                   </Flex>
                   <Flex mb={12}>
@@ -601,6 +624,7 @@ export const Editor = ({
             </Flex>
           </form>
         </FormProvider>
+        <ColorPickerPopover isOpen={isPopoverOpen} />
       </Flex>
     </Flex>
   )
@@ -684,4 +708,26 @@ const HeaderText = styled(Text)`
   letter-spacing: 0.01em;
   text-align: left;
   color: ${colors.white};
+`
+
+const ColorPickerIconWrapper = styled.span`
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  margin-left: 12px;
+  color: ${colors.colorPickerThing};
+  background: ${colors.THING};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`
+
+const InputIconWrapper = styled(Flex)`
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: row;
+`
+
+const InputWrapper = styled(Flex)`
+  width: 320px;
 `
