@@ -1,14 +1,8 @@
 /* eslint-disable */
-import React from 'react';
+import React from 'react'
 
 const LinkIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
-  <svg
-    width="1em"
-    height="1em"
-    viewBox="0 0 20 20"
-    fill="currentColor"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width="1em" height="1em" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
     <g id="Icons 20x20">
       <path
         id="Union"
@@ -19,6 +13,6 @@ const LinkIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
       />
     </g>
   </svg>
-);
+)
 
-export default LinkIcon;
+export default LinkIcon

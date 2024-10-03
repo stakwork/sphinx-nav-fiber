@@ -1,22 +1,9 @@
 /* eslint-disable */
-import React from 'react';
+import React from 'react'
 
 const CreateEdgeIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
-  <svg
-    width="1em"
-    height="1em"
-    viewBox="0 0 23 22"
-    fill="currentColor"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <mask
-      id="mask0_8954_27793"
-      maskUnits="userSpaceOnUse"
-      x="10"
-      y="-3"
-      width="16"
-      height="16"
-    >
+  <svg width="1em" height="1em" viewBox="0 0 23 22" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+    <mask id="mask0_8954_27793" maskUnits="userSpaceOnUse" x="10" y="-3" width="16" height="16">
       <rect x="10" y="-3" width="1em" height="1em" fill="currentColor" />
     </mask>
     <g mask="url(#mask0_8954_27793)">
@@ -30,6 +17,6 @@ const CreateEdgeIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
       fill="currentColor"
     />
   </svg>
-);
+)
 
-export default CreateEdgeIcon;
+export default CreateEdgeIcon
