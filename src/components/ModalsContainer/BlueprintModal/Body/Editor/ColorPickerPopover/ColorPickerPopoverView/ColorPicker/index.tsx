@@ -7,6 +7,7 @@ import { useState } from 'react'
 import SaturationPicker from './SaturationPicker'
 import { hslToHex, hexToHsl } from './ColorUtils'
 import { useAppStore } from '~/stores/useAppStore'
+import { circleColors } from '../../Constants'
 
 export const ColorPicker = () => {
   const { selectedColor, setSelectedColor } = useAppStore((s) => s)
@@ -57,41 +58,6 @@ export const ColorPicker = () => {
     setBrightness(l)
     setSelectedColor(newHex)
   }
-
-  const circleColors = [
-    '#C62828',
-    '#D32F2F',
-    '#F57C00',
-    '#FF9800',
-    '#FFB74D',
-    '#FFEB3B',
-    '#CDDC39',
-    '#8BC34A',
-    '#388E3C',
-    '#4CAF50',
-    '#009688',
-    '#00796B',
-    '#00BCD4',
-    '#0097A7',
-    '#3F51B5',
-    '#283593',
-    '#5C6BC0',
-    '#7E57C2',
-    '#512DA8',
-    '#9C27B0',
-    '#E91E63',
-    '#F06292',
-    '#F48FB1',
-    '#795548',
-    '#6D4C41',
-    '#9E9E9E',
-    '#757575',
-    '#607D8B',
-    '#455A64',
-    '#2196F3',
-    '#1976D2',
-    '#64B5F6',
-  ]
 
   return (
     <Wrapper direction="column" justify="flex-end">
