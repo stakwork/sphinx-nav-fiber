@@ -1,5 +1,6 @@
 import { Html, Text } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
+import { Select } from '@react-three/postprocessing'
 import { memo, useMemo, useRef } from 'react'
 import { Mesh } from 'three'
 import { Icons } from '~/components/Icons'
@@ -151,17 +152,17 @@ export const TextNode = memo(({ node, hide }: Props) => {
           {splitStringIntoThreeParts(sanitizedNodeName)}
         </Text>
       ) : (
-        <mesh userData={node}>
-          <sphereGeometry args={[20, 32, 32]} />
-          <meshStandardMaterial color="blue" />
+        <Select enabled={!!isSelected}>
+          <mesh name={node.id} userData={node} visible={!hide}>
+            <sphereGeometry args={[20, 32, 32]} userData={node} />
+            <meshStandardMaterial color="blue" />
 
-          {/* Attach SVG as HTML over the sphere, and it will move with the sphere */}
-          <Html center distanceFactor={100}>
-            <div style={{ color: '#fff', fontSize: '200px' }}>
-              <Icon />
-            </div>
-          </Html>
-        </mesh>
+            {/* Attach SVG as HTML over the sphere, and it will move with the sphere */}
+            <Html center distanceFactor={100}>
+              <div style={{ color: '#fff', fontSize: '200px' }}>{Icon && <Icon />}</div>
+            </Html>
+          </mesh>
+        </Select>
       )}
     </>
   )
