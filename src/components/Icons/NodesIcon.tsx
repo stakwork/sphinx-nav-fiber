@@ -1,10 +1,23 @@
 /* eslint-disable */
-import React from 'react'
+import React from 'react';
 
 const NodesIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
-  <svg width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  <svg
+    width="1em"
+    height="1em"
+    viewBox="0 0 16 16"
+    fill="currentColor"
+    xmlns="http://www.w3.org/2000/svg"
+  >
     <g id="Nodes">
-      <mask id="mask0_1506_141" maskUnits="userSpaceOnUse" x="0" y="0" width="16" height="16">
+      <mask
+        id="mask0_1506_141"
+        maskUnits="userSpaceOnUse"
+        x="0"
+        y="0"
+        width="16"
+        height="16"
+      >
         <rect id="Bounding box" width="1em" height="1em" fill="currentColor" />
       </mask>
       <g mask="url(#mask0_1506_141)">
@@ -16,6 +29,6 @@ const NodesIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
       </g>
     </g>
   </svg>
-)
+);
 
-export default NodesIcon
+export default NodesIcon;
