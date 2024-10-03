@@ -24,12 +24,12 @@ const ModalBackground = styled.div<{ isOpen: boolean }>`
 
 const ModalContent = styled.div`
   position: fixed;
-  top: 38%;
+  top: 40%;
   left: 34%;
   transform: translate(-50%, -50%);
   background: ${colors.BG1};
   width: 300px;
-  height: 443px;
+  height: 460px;
   z-index: 1001;
   border-radius: 8px;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);

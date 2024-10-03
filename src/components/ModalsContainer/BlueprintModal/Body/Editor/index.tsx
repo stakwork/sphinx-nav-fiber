@@ -21,6 +21,7 @@ import MediaOptions from './MediaOptions'
 import { convertAttributes, parsedObjProps, parseJson } from './utils'
 import ColorPickerIcon from '~/components/Icons/ColorPickerIcon'
 import { ColorPickerPopover } from './ColorPickerPopover'
+import { useAppStore } from '~/stores/useAppStore'
 
 const defaultValues = {
   type: '',
@@ -211,6 +212,7 @@ export const Editor = ({
     sourceLink: false,
   })
 
+  const { selectedColor } = useAppStore((s) => s)
   const [isPopoverOpen, setPopoverOpen] = useState(!!selectedSchema)
 
   const handleColorPickerPopover = () => setPopoverOpen(!isPopoverOpen)
@@ -512,7 +514,7 @@ export const Editor = ({
                             value={parent}
                           />
                         </InputWrapper>
-                        <ColorPickerIconWrapper onClick={handleColorPickerPopover}>
+                        <ColorPickerIconWrapper onClick={handleColorPickerPopover} selectedColor={selectedColor}>
                           <ColorPickerIcon />
                         </ColorPickerIconWrapper>
                       </InputIconWrapper>
@@ -541,7 +543,7 @@ export const Editor = ({
                             value={parent}
                           />
                         </InputWrapper>
-                        <ColorPickerIconWrapper onClick={handleColorPickerPopover}>
+                        <ColorPickerIconWrapper onClick={handleColorPickerPopover} selectedColor={selectedColor}>
                           <ColorPickerIcon />
                         </ColorPickerIconWrapper>
                       </InputIconWrapper>
@@ -710,13 +712,13 @@ const HeaderText = styled(Text)`
   color: ${colors.white};
 `
 
-const ColorPickerIconWrapper = styled.span`
+const ColorPickerIconWrapper = styled.span<{ selectedColor?: string }>`
   width: 36px;
   height: 36px;
   border-radius: 6px;
   margin-left: 12px;
   color: ${colors.colorPickerThing};
-  background: ${colors.THING};
+  background: ${(props) => props.selectedColor ?? colors.THING};
   display: flex;
   justify-content: center;
   align-items: center;
