@@ -1,10 +1,23 @@
 /* eslint-disable */
-import React from 'react'
+import React from 'react';
 
 const ExploreIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
-  <svg width="1em" height="1em" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  <svg
+    width="1em"
+    height="1em"
+    viewBox="0 0 20 20"
+    fill="currentColor"
+    xmlns="http://www.w3.org/2000/svg"
+  >
     <g id="captive_portal">
-      <mask id="mask0_8513_13265" maskUnits="userSpaceOnUse" x="0" y="0" width="20" height="20">
+      <mask
+        id="mask0_8513_13265"
+        maskUnits="userSpaceOnUse"
+        x="0"
+        y="0"
+        width="20"
+        height="20"
+      >
         <rect id="Bounding box" width="1em" height="1em" fill="currentColor" />
       </mask>
       <g mask="url(#mask0_8513_13265)">
@@ -21,6 +34,6 @@ const ExploreIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
       </g>
     </g>
   </svg>
-)
+);
 
-export default ExploreIcon
+export default ExploreIcon;

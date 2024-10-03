@@ -123,10 +123,11 @@ const defaultViewContentParams = {
 export interface Schema {
   name?: string
   ref_id?: string
-  type?: string
+  type: string
   age?: number
   parent?: string
   link?: string
+  icon?: string
   title?: string
   app_version?: string
   description?: string

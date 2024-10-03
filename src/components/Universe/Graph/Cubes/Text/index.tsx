@@ -1,7 +1,9 @@
-import { Text } from '@react-three/drei'
+import { Html, Text } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
+import { Select } from '@react-three/postprocessing'
 import { memo, useMemo, useRef } from 'react'
 import { Mesh } from 'three'
+import { Icons } from '~/components/Icons'
 import { useNodeTypes } from '~/stores/useDataStore'
 import { useGraphStore, useHoveredNode, useSelectedNode, useSelectedNodeRelativeIds } from '~/stores/useGraphStore'
 import { useSchemaStore } from '~/stores/useSchemaStore'
@@ -85,7 +87,7 @@ export const TextNode = memo(({ node, hide }: Props) => {
   const isSelected = !!selectedNode && selectedNode?.ref_id === node.ref_id
   const isHovered = !!hoveredNode && hoveredNode?.ref_id === node.ref_id
   const showSelectionGraph = useGraphStore((s) => s.showSelectionGraph)
-  const [getPrimaryColorByType] = useSchemaStore((s) => [s.getPrimaryColorByType])
+  const { normalizedSchemasByType } = useSchemaStore((s) => s)
 
   const nodeTypes = useNodeTypes()
 
@@ -124,27 +126,44 @@ export const TextNode = memo(({ node, hide }: Props) => {
     return 1
   }, [isSelected, selectedNode, isHovered, hoveredNode])
 
-  const primaryColor = getPrimaryColorByType(node.node_type)
+  const primaryColor = normalizedSchemasByType[node.node_type]?.primary_color
+  const primaryIcon = normalizedSchemasByType[node.node_type]?.icon
 
   const color = primaryColor ?? (COLORS_MAP[nodeTypes.indexOf(node.node_type)] || colors.white)
+
+  const Icon = primaryIcon ? Icons[primaryIcon] : null
 
   const sanitizedNodeName = removeEmojis(String(node.name))
 
   return (
     <>
-      <Text
-        ref={ref}
-        anchorX="center"
-        anchorY="middle"
-        color={color}
-        fillOpacity={fillOpacity}
-        scale={textScale}
-        userData={node}
-        visible={!hide}
-        {...fontProps}
-      >
-        {splitStringIntoThreeParts(sanitizedNodeName)}
-      </Text>
+      {!Icon ? (
+        <Text
+          ref={ref}
+          anchorX="center"
+          anchorY="middle"
+          color={color}
+          fillOpacity={fillOpacity}
+          scale={textScale}
+          userData={node}
+          visible={!hide}
+          {...fontProps}
+        >
+          {splitStringIntoThreeParts(sanitizedNodeName)}
+        </Text>
+      ) : (
+        <Select enabled={!!isSelected}>
+          <mesh name={node.id} userData={node} visible={!hide}>
+            <sphereGeometry args={[20, 32, 32]} userData={node} />
+            <meshStandardMaterial color="blue" />
+
+            {/* Attach SVG as HTML over the sphere, and it will move with the sphere */}
+            <Html center distanceFactor={100}>
+              <div style={{ color: '#fff', fontSize: '200px' }}>{Icon && <Icon />}</div>
+            </Html>
+          </mesh>
+        </Select>
+      )}
     </>
   )
 })
