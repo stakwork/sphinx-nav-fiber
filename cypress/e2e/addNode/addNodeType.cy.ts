@@ -40,10 +40,16 @@ describe('Add Node Type Via BluePrint', () => {
     cy.wait('@schemaRequest')
 
     cy.get('body').trigger('keydown', { keyCode: 27 })
-    cy.wait(500)
+    cy.wait(20000)
+
+    cy.intercept({
+      method: 'GET',
+      url: 'http://localhost:8444/api/schema/all*',
+    }).as('schemaList1')
 
     cy.get('[data-testid="add-item-modal"]').click()
-    cy.wait(100)
+
+    cy.wait('@schemaList1')
 
     cy.get(`[data-testid="${nodeType}"]`).click()
     cy.wait(100)
