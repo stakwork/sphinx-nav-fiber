@@ -1,10 +1,23 @@
 /* eslint-disable */
-import React from 'react'
+import React from 'react';
 
 const ScheduleIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
-  <svg width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  <svg
+    width="1em"
+    height="1em"
+    viewBox="0 0 24 24"
+    fill="currentColor"
+    xmlns="http://www.w3.org/2000/svg"
+  >
     <g id="schedule">
-      <mask id="mask0_4051_4016" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
+      <mask
+        id="mask0_4051_4016"
+        maskUnits="userSpaceOnUse"
+        x="0"
+        y="0"
+        width="24"
+        height="24"
+      >
         <rect id="Bounding box" width="1em" height="1em" fill="currentColor" />
       </mask>
       <g mask="url(#mask0_4051_4016)">
@@ -16,6 +29,6 @@ const ScheduleIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
       </g>
     </g>
   </svg>
-)
+);
 
-export default ScheduleIcon
+export default ScheduleIcon;

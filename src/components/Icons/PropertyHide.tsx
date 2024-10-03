@@ -1,10 +1,23 @@
 /* eslint-disable */
-import React from 'react'
+import React from 'react';
 
 const PropertyHide: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
-  <svg width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  <svg
+    width="1em"
+    height="1em"
+    viewBox="0 0 24 24"
+    fill="currentColor"
+    xmlns="http://www.w3.org/2000/svg"
+  >
     <g opacity="0.4">
-      <mask id="mask0_5162_13105" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
+      <mask
+        id="mask0_5162_13105"
+        maskUnits="userSpaceOnUse"
+        x="0"
+        y="0"
+        width="24"
+        height="24"
+      >
         <rect width="1em" height="1em" fill="currentColor" />
       </mask>
       <g mask="url(#mask0_5162_13105)">
@@ -15,6 +28,6 @@ const PropertyHide: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
       </g>
     </g>
   </svg>
-)
+);
 
-export default PropertyHide
+export default PropertyHide;

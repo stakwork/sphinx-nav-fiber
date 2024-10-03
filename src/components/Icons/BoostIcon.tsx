@@ -1,8 +1,14 @@
 /* eslint-disable */
-import React from 'react'
+import React from 'react';
 
 const BoostIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
-  <svg width="1em" height="1em" viewBox="0 0 9 9" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  <svg
+    width="1em"
+    height="1em"
+    viewBox="0 0 9 9"
+    fill="currentColor"
+    xmlns="http://www.w3.org/2000/svg"
+  >
     <path
       id="Icon"
       fill-rule="evenodd"
@@ -11,6 +17,6 @@ const BoostIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
       fill="currentColor"
     />
   </svg>
-)
+);
 
-export default BoostIcon
+export default BoostIcon;
