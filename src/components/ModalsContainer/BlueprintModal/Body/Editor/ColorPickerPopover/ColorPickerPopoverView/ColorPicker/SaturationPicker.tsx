@@ -18,8 +18,8 @@ const Pointer = styled.div<{ x: number; y: number }>`
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  border: 2px solid black;
-  background-color: white;
+  border: 2px solid white;
+  background-color: transparent;
   box-shadow: inset 0 0 0 3px transparent;
   pointer-events: none;
 `
