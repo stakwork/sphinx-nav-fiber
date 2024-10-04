@@ -1,4 +1,5 @@
-import React, { useRef, useEffect } from 'react'
+import React, { useRef, useEffect, useState } from 'react'
+import styled from 'styled-components'
 import { hslToHex } from './ColorUtils'
 
 interface SaturationPickerProps {
@@ -6,8 +7,26 @@ interface SaturationPickerProps {
   onChange: (color: string) => void
 }
 
+const Container = styled.div`
+  position: relative;
+`
+
+const Pointer = styled.div<{ x: number; y: number }>`
+  position: absolute;
+  top: ${(props) => props.y - 7}px;
+  left: ${(props) => props.x - 7}px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 2px solid black;
+  background-color: white;
+  box-shadow: inset 0 0 0 3px transparent;
+  pointer-events: none;
+`
+
 const SaturationPicker: React.FC<SaturationPickerProps> = ({ hue, onChange }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
+  const [pointerPos, setPointerPos] = useState<{ x: number; y: number } | null>(null)
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -28,8 +47,11 @@ const SaturationPicker: React.FC<SaturationPickerProps> = ({ hue, onChange }) =>
 
             ctx.fillStyle = color
             ctx.fillRect(x, y, 1, 1)
+            setPointerPos({ x, y })
           }
         }
+
+        setPointerPos({ x: 80, y: 50 })
       }
     }
   }, [hue])
@@ -47,14 +69,16 @@ const SaturationPicker: React.FC<SaturationPickerProps> = ({ hue, onChange }) =>
 
       const hexColor = hslToHex(hue, saturation * 100, brightness * 100)
 
+      setPointerPos({ x, y })
       onChange(hexColor)
     }
   }
 
   return (
-    <div>
+    <Container>
       <canvas ref={canvasRef} height={162} onClick={handleCanvasClick} width={260} />
-    </div>
+      {pointerPos && <Pointer x={pointerPos.x} y={pointerPos.y} />}
+    </Container>
   )
 }
 

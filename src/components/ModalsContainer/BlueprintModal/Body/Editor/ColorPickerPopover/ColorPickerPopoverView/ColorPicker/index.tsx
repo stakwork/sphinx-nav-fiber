@@ -11,10 +11,10 @@ import { circleColors } from '../../Constants'
 
 export const ColorPicker = () => {
   const { selectedColor, setSelectedColor } = useAppStore((s) => s)
-  const [hexValue, setHexValue] = useState('#C990C0') // HEX value input
-  const [hueValue, setHueValue] = useState(200) // Default hue
-  const [saturation, setSaturation] = useState(50) // Default saturation
-  const [brightness, setBrightness] = useState(50) // Default brightness
+  const [hexValue, setHexValue] = useState(selectedColor)
+  const [hueValue, setHueValue] = useState(315)
+  const [saturation, setSaturation] = useState(74)
+  const [brightness, setBrightness] = useState(59)
 
   const handleColorChange = (hexColor: string) => {
     setSelectedColor(hexColor)
