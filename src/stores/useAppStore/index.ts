@@ -32,7 +32,7 @@ export type AppStore = {
   selectedColor: string
   setSelectedColor: (color: string) => void
   selectedIcon: string
-  setSelectedIcon: (color: string) => void
+  setSelectedIcon: (icon: string) => void
 }
 
 const defaultData = {
