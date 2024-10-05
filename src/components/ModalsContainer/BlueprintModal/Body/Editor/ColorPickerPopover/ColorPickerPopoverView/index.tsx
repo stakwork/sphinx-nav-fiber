@@ -5,6 +5,7 @@ import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { colors } from '~/utils/colors'
 import { ColorPicker } from './ColorPicker'
+import { IconPicker } from './IconPicker'
 
 interface TabPanelProps {
   children?: React.ReactNode
@@ -42,7 +43,10 @@ export const ColorPickerPopoverView = () => {
     setValue(newValue)
   }
 
-  const tabs = [{ label: 'Color', component: ColorPicker }]
+  const tabs = [
+    { label: 'Color', component: ColorPicker },
+    { label: 'Icon', component: IconPicker },
+  ]
 
   return (
     <Wrapper direction="column">
