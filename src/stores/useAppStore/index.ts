@@ -31,6 +31,8 @@ export type AppStore = {
   setShowCollapseButton: (_: boolean) => void
   selectedColor: string
   setSelectedColor: (color: string) => void
+  selectedIcon: string
+  setSelectedIcon: (color: string) => void
 }
 
 const defaultData = {
@@ -48,6 +50,7 @@ const defaultData = {
   currentPlayingAudio: null,
   showCollapseButton: true,
   selectedColor: '#962777',
+  selectedIcon: 'ColorPickerIcon',
 }
 
 export const useAppStore = create<AppStore>((set, get) => ({
@@ -72,4 +75,5 @@ export const useAppStore = create<AppStore>((set, get) => ({
   setAppMetaData: (appMetaData) => set({ appMetaData }),
   setShowCollapseButton: (showCollapseButton) => set({ showCollapseButton }),
   setSelectedColor: (selectedColor) => set({ selectedColor }),
+  setSelectedIcon: (selectedIcon) => set({ selectedIcon }),
 }))

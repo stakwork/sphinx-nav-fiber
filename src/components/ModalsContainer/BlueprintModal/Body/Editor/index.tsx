@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Button, Grid } from '@mui/material'
-import { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
@@ -18,8 +18,8 @@ import { useModal } from '~/stores/useModalStore'
 import { colors } from '~/utils'
 import { CreateCustomNodeAttribute } from './CustomAttributesStep'
 import MediaOptions from './MediaOptions'
+import { icons } from './ColorPickerPopover/ColorPickerPopoverView/IconPicker/icons'
 import { convertAttributes, parsedObjProps, parseJson } from './utils'
-import ColorPickerIcon from '~/components/Icons/ColorPickerIcon'
 import { ColorPickerPopover } from './ColorPickerPopover'
 import { useAppStore } from '~/stores/useAppStore'
 
@@ -218,7 +218,7 @@ export const Editor = ({
     sourceLink: false,
   })
 
-  const { selectedColor } = useAppStore((s) => s)
+  const { selectedColor, selectedIcon } = useAppStore((s) => s)
   const [isPopoverOpen, setPopoverOpen] = useState(!!selectedSchema)
 
   const handleColorPickerPopover = () => setPopoverOpen(!isPopoverOpen)
@@ -523,7 +523,11 @@ export const Editor = ({
                           />
                         </InputWrapper>
                         <ColorPickerIconWrapper onClick={handleColorPickerPopover} selectedColor={selectedColor}>
-                          <ColorPickerIcon />
+                          <img
+                            alt={selectedIcon}
+                            className="badge__img"
+                            src={icons[selectedIcon as keyof typeof icons]}
+                          />
                         </ColorPickerIconWrapper>
                       </InputIconWrapper>
                     </Flex>
@@ -552,7 +556,11 @@ export const Editor = ({
                           />
                         </InputWrapper>
                         <ColorPickerIconWrapper onClick={handleColorPickerPopover} selectedColor={selectedColor}>
-                          <ColorPickerIcon />
+                          <img
+                            alt={selectedIcon}
+                            className="badge__img"
+                            src={icons[selectedIcon as keyof typeof icons]}
+                          />
                         </ColorPickerIconWrapper>
                       </InputIconWrapper>
                     </Flex>
@@ -725,11 +733,17 @@ const ColorPickerIconWrapper = styled.span<{ selectedColor?: string }>`
   height: 36px;
   border-radius: 6px;
   margin-left: 12px;
-  color: ${colors.colorPickerThing};
   background: ${(props) => props.selectedColor ?? colors.THING};
   display: flex;
   justify-content: center;
   align-items: center;
+
+  .badge__img {
+    width: 22px;
+    height: 22px;
+    object-fit: contain;
+    filter: brightness(0) invert(1);
+  }
 `
 
 const InputIconWrapper = styled(Flex)`

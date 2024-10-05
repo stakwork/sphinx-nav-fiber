@@ -1,13 +1,12 @@
-import React, { useState } from 'react'
+import React from 'react'
 import styled, { css } from 'styled-components'
 import { icons } from './icons'
 import { Flex } from '~/components/common/Flex'
 import { colors } from '~/utils'
+import { useAppStore } from '~/stores/useAppStore'
 
 export const IconPicker: React.FC = () => {
-  const [selectedIcon, setSelectedIcon] = useState<string>('')
-
-  console.log(selectedIcon)
+  const { selectedIcon, setSelectedIcon } = useAppStore((s) => s)
 
   const handleIconChange = (icon: string) => {
     setSelectedIcon(icon)
