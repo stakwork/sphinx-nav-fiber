@@ -72,6 +72,7 @@ const handleSubmitForm = async (
   isUpdate = false,
   deletedAttributes: string[],
   selectedColor: string,
+  selectedIcon: string,
   mediaOptions: { videoAudio: boolean; image: boolean; sourceLink: boolean },
   initialMediaOptions: { videoAudio: boolean; image: boolean; sourceLink: boolean },
 ): Promise<string | undefined> => {
@@ -89,6 +90,7 @@ const handleSubmitForm = async (
       index?: string
       media_url?: string
       color?: string
+      icon?: string
       image_url?: string
       source_link?: string
     } = {
@@ -99,6 +101,10 @@ const handleSubmitForm = async (
 
     if (selectedColor) {
       requestData.color = selectedColor
+    }
+
+    if (selectedIcon) {
+      requestData.icon = selectedIcon
     }
 
     if (mediaOptions.videoAudio) {
@@ -363,6 +369,7 @@ export const Editor = ({
           type: data.type,
           parent: newParent as string,
           color: selectedColor,
+          icon: selectedIcon,
           attributes: {
             index: selectedIndex as string,
           },
@@ -376,6 +383,7 @@ export const Editor = ({
         !!selectedSchema,
         deletedAttributes,
         selectedColor,
+        selectedIcon,
         mediaOptions,
         {
           videoAudio: !!selectedSchema?.media_url,
