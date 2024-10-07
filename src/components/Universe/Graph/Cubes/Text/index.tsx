@@ -152,8 +152,8 @@ export const TextNode = memo(({ node, hide }: Props) => {
             <meshStandardMaterial color="blue" />
 
             {/* Attach SVG as HTML over the sphere, and it will move with the sphere */}
-            <Html center distanceFactor={100}>
-              <div style={{ color: '#fff', fontSize: '200px' }}>{Icon && <Icon />}</div>
+            <Html center distanceFactor={100} position={[20, 20, 20]}>
+              <div style={{ color: '#fff', fontSize: '200px', pointerEvents: 'none' }}>{Icon && <Icon />}</div>
             </Html>
           </mesh>
         </Select>
