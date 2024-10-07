@@ -1,26 +1,37 @@
-import { useEffect, useState } from 'react'
-import Lottie from 'react-lottie'
+import lottie, { AnimationItem } from 'lottie-web'
 import { Flex } from '~/components/common/Flex'
-import * as preloadData from './preloader.json'
+
+import { useEffect, useRef } from 'react'
+import preloadData from './preloader.json'
 
 export const SphereAnimation = () => {
-  const [isReady, setIsReady] = useState(false)
+  const lottieRef = useRef<AnimationItem | null>(null)
 
   useEffect(() => {
-    setIsReady(true)
+    const container = document.getElementById('lottie-sphere-animation')
+
+    if (container) {
+      lottieRef.current = lottie.loadAnimation({
+        container,
+        animationData: preloadData,
+        loop: true,
+        autoplay: true,
+        rendererSettings: {
+          preserveAspectRatio: 'xMidYMid slice',
+        },
+      })
+    }
 
     return () => {
-      setIsReady(false)
+      if (lottieRef.current) {
+        lottieRef?.current?.destroy()
+      }
     }
   }, [])
 
-  if (!isReady) {
-    return <></>
-  }
-
   return (
-    <Flex style={{ width: '167px', height: '167px', opacity: 0.5 }}>
-      <Lottie
+    <Flex id="lottie-sphere-animation" style={{ width: '167px', height: '167px', opacity: 0.5 }}>
+      {/* <Lottie
         height={167}
         options={{
           loop: true,
@@ -31,7 +42,7 @@ export const SphereAnimation = () => {
           },
         }}
         width={167}
-      />
+      /> */}
     </Flex>
   )
 }
