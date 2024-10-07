@@ -184,7 +184,7 @@ export interface UpdateSchemaParams {
   color?: string
   icon?: string
   attributes: {
-    index: string
+    [key: string | number]: string
   }
 }
 
