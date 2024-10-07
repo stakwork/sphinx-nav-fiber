@@ -133,7 +133,7 @@ export const AuthGuard = ({ children }: PropsWithChildren) => {
 
   return (
     <>
-      {splashDataLoading && <Splash />}
+      {/* {splashDataLoading && <Splash />} */}
       {children}
     </>
   )
