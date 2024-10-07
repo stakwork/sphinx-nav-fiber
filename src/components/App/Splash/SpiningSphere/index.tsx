@@ -29,20 +29,5 @@ export const SphereAnimation = () => {
     }
   }, [])
 
-  return (
-    <Flex id="lottie-sphere-animation" style={{ width: '167px', height: '167px', opacity: 0.5 }}>
-      {/* <Lottie
-        height={167}
-        options={{
-          loop: true,
-          autoplay: true,
-          animationData: preloadData,
-          rendererSettings: {
-            preserveAspectRatio: 'xMidYMid slice',
-          },
-        }}
-        width={167}
-      /> */}
-    </Flex>
-  )
+  return <Flex id="lottie-sphere-animation" style={{ width: '167px', height: '167px', opacity: 0.5 }} />
 }
