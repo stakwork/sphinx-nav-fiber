@@ -181,6 +181,8 @@ interface UpdateEdgeData {
 export interface UpdateSchemaParams {
   type: string
   parent: string
+  color?: string
+  icon?: string
   attributes: {
     index: string
   }
