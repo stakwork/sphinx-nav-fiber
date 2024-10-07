@@ -77,11 +77,6 @@ export const AuthGuard = ({ children }: PropsWithChildren) => {
         setChatInterfaceFeatureFlag(res.data.chatInterface || false)
       }
 
-      if (isE2E) {
-        // eslint-disable-next-line no-promise-executor-return
-        await new Promise((r) => setTimeout(r, 5000))
-      }
-
       setIsAuthenticated(true)
       setRenderMainPage(true)
     } catch (error) {
