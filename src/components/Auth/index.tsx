@@ -11,7 +11,6 @@ import { useUserStore } from '~/stores/useUserStore'
 import { sphinxBridge } from '~/testSphinxBridge'
 import { updateBudget } from '~/utils'
 import { isAndroid, isWebView } from '~/utils/isWebView'
-import { Splash } from '../App/Splash'
 
 export const AuthGuard = ({ children }: PropsWithChildren) => {
   const [unAuthorized, setUnauthorized] = useState(false)
@@ -132,7 +131,7 @@ export const AuthGuard = ({ children }: PropsWithChildren) => {
 
   return (
     <>
-      {splashDataLoading && <Splash />}
+      {/* {splashDataLoading && <Splash />} */}
       {renderMainPage && children}
     </>
   )
