@@ -1,12 +1,15 @@
-import { Text } from '@react-three/drei'
+import { Html, Text } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
+import { Select } from '@react-three/postprocessing'
 import { memo, useMemo, useRef } from 'react'
 import { Mesh } from 'three'
+import { Icons } from '~/components/Icons'
 import { useNodeTypes } from '~/stores/useDataStore'
 import { useGraphStore, useHoveredNode, useSelectedNode, useSelectedNodeRelativeIds } from '~/stores/useGraphStore'
 import { useSchemaStore } from '~/stores/useSchemaStore'
 import { NodeExtended } from '~/types'
 import { colors } from '~/utils/colors'
+import { removeEmojis } from '~/utils/removeEmojisFromText'
 import { truncateText } from '~/utils/truncateText'
 import { fontProps } from './constants'
 
@@ -45,13 +48,6 @@ type Props = {
   hide?: boolean
 }
 
-function removeEmojis(text: string): string {
-  return text.replace(
-    /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{1FA70}-\u{1FAFF}\u{1FB00}-\u{1FBFF}\u{1FC00}-\u{1FCFF}\u{1FD00}-\u{1FDFF}\u{1FE00}-\u{1FEFF}\u{1FF00}-\u{1FFFF}\u{20000}-\u{2A6DF}\u{2A700}-\u{2B73F}\u{2B740}-\u{2B81F}\u{2B820}-\u{2CEAF}\u{2F800}-\u{2FA1F}]/gu,
-    '',
-  )
-}
-
 function splitStringIntoThreeParts(text: string): string {
   // Split the string into an array of words
 
@@ -85,7 +81,7 @@ export const TextNode = memo(({ node, hide }: Props) => {
   const isSelected = !!selectedNode && selectedNode?.ref_id === node.ref_id
   const isHovered = !!hoveredNode && hoveredNode?.ref_id === node.ref_id
   const showSelectionGraph = useGraphStore((s) => s.showSelectionGraph)
-  const [getPrimaryColorByType] = useSchemaStore((s) => [s.getPrimaryColorByType])
+  const { normalizedSchemasByType } = useSchemaStore((s) => s)
 
   const nodeTypes = useNodeTypes()
 
@@ -124,27 +120,44 @@ export const TextNode = memo(({ node, hide }: Props) => {
     return 1
   }, [isSelected, selectedNode, isHovered, hoveredNode])
 
-  const primaryColor = getPrimaryColorByType(node.node_type)
+  const primaryColor = normalizedSchemasByType[node.node_type]?.primary_color
+  const primaryIcon = normalizedSchemasByType[node.node_type]?.icon
 
   const color = primaryColor ?? (COLORS_MAP[nodeTypes.indexOf(node.node_type)] || colors.white)
+
+  const Icon = primaryIcon ? Icons[primaryIcon] : null
 
   const sanitizedNodeName = removeEmojis(String(node.name))
 
   return (
     <>
-      <Text
-        ref={ref}
-        anchorX="center"
-        anchorY="middle"
-        color={color}
-        fillOpacity={fillOpacity}
-        scale={textScale}
-        userData={node}
-        visible={!hide}
-        {...fontProps}
-      >
-        {splitStringIntoThreeParts(sanitizedNodeName)}
-      </Text>
+      {!Icon ? (
+        <Text
+          ref={ref}
+          anchorX="center"
+          anchorY="middle"
+          color={color}
+          fillOpacity={fillOpacity}
+          scale={textScale}
+          userData={node}
+          visible={!hide}
+          {...fontProps}
+        >
+          {splitStringIntoThreeParts(sanitizedNodeName)}
+        </Text>
+      ) : (
+        <Select enabled={!!isSelected}>
+          <mesh name={node.id} userData={node} visible={!hide}>
+            <sphereGeometry args={[20, 32, 32]} userData={node} />
+            <meshStandardMaterial color="blue" />
+
+            {/* Attach SVG as HTML over the sphere, and it will move with the sphere */}
+            <Html center distanceFactor={100} position={[20, 20, 20]}>
+              <div style={{ color: '#fff', fontSize: '200px', pointerEvents: 'none' }}>{Icon && <Icon />}</div>
+            </Html>
+          </mesh>
+        </Select>
+      )}
     </>
   )
 })

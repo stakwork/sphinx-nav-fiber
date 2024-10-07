@@ -66,7 +66,6 @@ const _AiSources = ({ sourceIds }: Props) => {
               image_url: imageUrl,
               date,
               boost,
-              episode_title: episodeTitle,
               show_title: showTitle,
               node_type: nodeType,
               text,
@@ -82,7 +81,6 @@ const _AiSources = ({ sourceIds }: Props) => {
                 key={index.toString()}
                 boostCount={boost || 0}
                 date={date || 0}
-                episodeTitle={formatDescription(episodeTitle)}
                 imageUrl={imageUrl || ''}
                 name={name || ''}
                 node={n}

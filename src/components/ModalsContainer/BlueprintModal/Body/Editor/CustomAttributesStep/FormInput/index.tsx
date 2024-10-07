@@ -4,15 +4,15 @@ import { useFieldArray, useFormContext } from 'react-hook-form'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
 import { NoParent, OptionTypes } from '~/components/AddItemModal/SourceTypeStep/constants'
-import DeleteIcon from '~/components/Icons/DeleteIcon'
-import PlusIcon from '~/components/Icons/PlusIcon'
 import { AutoComplete } from '~/components/common/AutoComplete'
 import { Flex } from '~/components/common/Flex'
 import { TextInput } from '~/components/common/TextInput'
+import DeleteIcon from '~/components/Icons/DeleteIcon'
+import PlusIcon from '~/components/Icons/PlusIcon'
 import { requiredRule } from '~/constants'
 import { getNodeType } from '~/network/fetchSourcesData'
 import { colors } from '~/utils'
-import { parseJson, parsedObjProps } from '../../utils'
+import { parsedObjProps, parseJson } from '../../utils'
 
 const noSpacePattern = /^[a-z0-9_]+$/
 
@@ -148,7 +148,10 @@ export const FormInput = ({
         </InputsWrapper>
       )}
       <Flex align="flex-start" py={12}>
-        <ViewMoreButton onClick={() => append({ key: '', type: 'string', required: true, isNew: true })}>
+        <ViewMoreButton
+          data-testid="add-attribute-btn"
+          onClick={() => append({ key: '', type: 'string', required: true, isNew: true })}
+        >
           <PlusIconWrapper>
             <PlusIcon /> Add Attribute
           </PlusIconWrapper>
