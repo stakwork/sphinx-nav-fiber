@@ -9,7 +9,11 @@ export const SiriLikeButton = ({ children, ...props }: ButtonBaseProps) => {
     const destroy = createBtn(ref)
 
     return () => {
-      destroy?.()
+      try {
+        destroy?.()
+      } catch (error) {
+        /* can't check destroy */
+      }
     }
   }, [])
 
