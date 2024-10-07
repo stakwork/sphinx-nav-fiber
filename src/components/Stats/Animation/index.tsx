@@ -19,7 +19,7 @@ export const Animation = () => {
 
     return () => {
       if (lottieRef.current) {
-        lottieRef?.current?.destroy()
+        lottieRef.current.destroy()
       }
     }
   }, [])

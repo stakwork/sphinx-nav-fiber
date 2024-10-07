@@ -24,7 +24,7 @@ export const SphereAnimation = () => {
 
     return () => {
       if (lottieRef.current) {
-        lottieRef?.current?.destroy()
+        lottieRef.current.destroy()
       }
     }
   }, [])
