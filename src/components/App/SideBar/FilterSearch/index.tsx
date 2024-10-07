@@ -365,6 +365,7 @@ export const VolumeControl = styled(Flex)`
       background-color: ${colors.black};
     }
     .MuiSlider-thumb {
+      overflow-x: hidden;
       width: 20px;
       height: 20px;
       background-color: ${colors.white};

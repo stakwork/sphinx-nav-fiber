@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Button, Grid } from '@mui/material'
-import { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
@@ -18,7 +18,10 @@ import { useModal } from '~/stores/useModalStore'
 import { colors } from '~/utils'
 import { CreateCustomNodeAttribute } from './CustomAttributesStep'
 import MediaOptions from './MediaOptions'
+import { Icons } from '~/components/Icons'
 import { convertAttributes, parsedObjProps, parseJson } from './utils'
+import { ColorPickerPopover } from './ColorPickerPopover'
+import { useAppStore } from '~/stores/useAppStore'
 
 const defaultValues = {
   type: '',
@@ -68,6 +71,8 @@ const handleSubmitForm = async (
   data: FieldValues,
   isUpdate = false,
   deletedAttributes: string[],
+  selectedColor: string,
+  selectedIcon: string,
   mediaOptions: { videoAudio: boolean; image: boolean; sourceLink: boolean },
   initialMediaOptions: { videoAudio: boolean; image: boolean; sourceLink: boolean },
 ): Promise<string | undefined> => {
@@ -84,12 +89,22 @@ const handleSubmitForm = async (
       attributes: { [key: string]: string }
       index?: string
       media_url?: string
+      color?: string
+      icon?: string
       image_url?: string
       source_link?: string
     } = {
       ...withoutAttributes,
       attributes: updatedAttributes,
       index: selectedIndex,
+    }
+
+    if (selectedColor) {
+      requestData.color = selectedColor
+    }
+
+    if (selectedIcon) {
+      requestData.icon = selectedIcon
     }
 
     if (mediaOptions.videoAudio) {
@@ -209,6 +224,11 @@ export const Editor = ({
     sourceLink: false,
   })
 
+  const { selectedColor, selectedIcon } = useAppStore((s) => s)
+  const [isPopoverOpen, setPopoverOpen] = useState(!!selectedSchema)
+
+  const handleColorPickerPopover = () => setPopoverOpen(!isPopoverOpen)
+
   useEffect(
     () => () => {
       reset()
@@ -244,6 +264,8 @@ export const Editor = ({
     resetForm()
 
     if (selectedSchema) {
+      setPopoverOpen(true)
+
       setValue('type', selectedSchema.type as string)
       setValue('parent', selectedSchema.parent)
 
@@ -346,6 +368,8 @@ export const Editor = ({
         await editNodeSchemaUpdate(selectedSchema?.ref_id as string, {
           type: data.type,
           parent: newParent as string,
+          color: selectedColor,
+          icon: selectedIcon,
           attributes: {
             index: selectedIndex as string,
           },
@@ -358,6 +382,8 @@ export const Editor = ({
         { ...data, ...(selectedSchema ? { ref_id: selectedSchema?.ref_id } : {}) },
         !!selectedSchema,
         deletedAttributes,
+        selectedColor,
+        selectedIcon,
         mediaOptions,
         {
           videoAudio: !!selectedSchema?.media_url,
@@ -454,6 +480,8 @@ export const Editor = ({
     return undefined
   }, [selectedSchema, attributes])
 
+  const IconComponent = Icons[selectedIcon as keyof typeof Icons]
+
   return (
     <Flex>
       <HeaderRow>
@@ -473,7 +501,6 @@ export const Editor = ({
                     <Flex mb={12}>
                       <Text>Select Parent</Text>
                     </Flex>
-
                     <AutoComplete
                       isLoading={parentsLoading}
                       onSelect={(e) => {
@@ -483,23 +510,32 @@ export const Editor = ({
                       options={parentOptions}
                       selectedValue={resolvedParentValue()}
                     />
+
                     {displayParentError && <StyledError>A parent type must be selected</StyledError>}
                   </Flex>
+
                   <Flex>
                     <Flex mb={12}>
                       <Text>Type name</Text>
                     </Flex>
                     <Flex mb={12}>
-                      <TextInput
-                        id="cy-item-name"
-                        maxLength={250}
-                        name="type"
-                        placeholder="Enter type name"
-                        rules={{
-                          ...requiredRule,
-                        }}
-                        value={parent}
-                      />
+                      <InputIconWrapper>
+                        <InputWrapper>
+                          <TextInput
+                            id="cy-item-name"
+                            maxLength={250}
+                            name="type"
+                            placeholder="Enter type name"
+                            rules={{
+                              ...requiredRule,
+                            }}
+                            value={parent}
+                          />
+                        </InputWrapper>
+                        <ColorPickerIconWrapper onClick={handleColorPickerPopover} selectedColor={selectedColor}>
+                          {IconComponent && <IconComponent />}
+                        </ColorPickerIconWrapper>
+                      </InputIconWrapper>
                     </Flex>
                   </Flex>
                 </>
@@ -510,18 +546,25 @@ export const Editor = ({
                       <Text>Name</Text>
                     </Flex>
                     <Flex mb={12}>
-                      <TextInput
-                        dataTestId="cy-item-name"
-                        defaultValue={selectedSchema?.type}
-                        id="cy-item-name"
-                        maxLength={250}
-                        name="type"
-                        placeholder="Enter type name"
-                        rules={{
-                          ...requiredRule,
-                        }}
-                        value={parent}
-                      />
+                      <InputIconWrapper>
+                        <InputWrapper>
+                          <TextInput
+                            dataTestId="cy-item-name"
+                            defaultValue={selectedSchema?.type}
+                            id="cy-item-name"
+                            maxLength={250}
+                            name="type"
+                            placeholder="Enter type name"
+                            rules={{
+                              ...requiredRule,
+                            }}
+                            value={parent}
+                          />
+                        </InputWrapper>
+                        <ColorPickerIconWrapper onClick={handleColorPickerPopover} selectedColor={selectedColor}>
+                          <IconComponent />
+                        </ColorPickerIconWrapper>
+                      </InputIconWrapper>
                     </Flex>
                   </Flex>
                   <Flex mb={12}>
@@ -605,6 +648,7 @@ export const Editor = ({
             </Flex>
           </form>
         </FormProvider>
+        <ColorPickerPopover isOpen={isPopoverOpen} />
       </Flex>
     </Flex>
   )
@@ -688,4 +732,32 @@ const HeaderText = styled(Text)`
   letter-spacing: 0.01em;
   text-align: left;
   color: ${colors.white};
+`
+
+const ColorPickerIconWrapper = styled.span<{ selectedColor?: string }>`
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  margin-left: 12px;
+  background: ${(props) => props.selectedColor ?? colors.THING};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  svg {
+    width: 22px;
+    height: 22px;
+    object-fit: contain;
+    color: white;
+  }
+`
+
+const InputIconWrapper = styled(Flex)`
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: row;
+`
+
+const InputWrapper = styled(Flex)`
+  width: 320px;
 `

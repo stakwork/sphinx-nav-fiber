@@ -21,6 +21,7 @@ async function processFiles() {
     }
 
     const files = await fs.readdir(inputDirectory)
+    const iconComponents = []
 
     for (const file of files) {
       if (path.extname(file) === '.svg') {
@@ -51,10 +52,42 @@ async function processFiles() {
         })
 
         await fs.writeFile(path.join(outputDirectory, `${componentName}.tsx`), formattedComponentCode)
+        iconComponents.push(componentName)
 
         console.log(`Converted ${file} to ${componentName}.tsx`)
       }
     }
+
+    // Generate index.tsx file with type definition and string literal keys
+    const imports = iconComponents
+      .map((componentName) => `import ${componentName} from './${componentName}';`)
+      .join('\n')
+
+    const iconsObject = iconComponents
+      .map((componentName) => `  '${componentName}': ${componentName},`) // Ensure keys are in quotes
+      .join('\n')
+
+    const indexFileContent = `
+      /* eslint-disable */
+      import React from 'react';
+
+      ${imports}
+
+      export const Icons: Record<string, React.FC<React.SVGProps<SVGSVGElement>>> = {
+      ${iconsObject}
+      };
+    `
+
+    const formattedIndexFileContent = await prettier.format(indexFileContent, {
+      parser: 'babel-ts',
+      semi: true,
+      singleQuote: true,
+      trailingComma: 'all',
+      plugins: [parser],
+    })
+
+    await fs.writeFile(path.join(outputDirectory, 'index.tsx'), formattedIndexFileContent)
+    console.log('Generated index.tsx with Icons object and types')
   } catch (error) {
     console.error('Error processing SVG files:', error)
   }

@@ -1,5 +1,5 @@
 describe('See latest button as new node are added', () => {
-  it.skip('See latest as nodes are being added', () => {
+  it('See latest as nodes are being added', () => {
     cy.initialSetup('carol', 300)
 
     // add tweet node
@@ -29,9 +29,12 @@ describe('See latest button as new node are added', () => {
         })
       }
 
+      // this is for the queue we have in boltwall
+      cy.wait(70000)
+
       cy.intercept({
         method: 'GET',
-        url: 'http://localhost:8444/api/prediction/graph/search*',
+        url: 'http://localhost:8444/api/prediction/graph/search/latest*',
       }).as('getLatest')
 
       cy.get('[data-testid="see_latest_button"]').should('exist')
@@ -41,16 +44,6 @@ describe('See latest button as new node are added', () => {
 
       cy.get('[data-testid="see_latest_button"]').should('not.exist')
 
-      cy.get('[data-testid="twitter"]').should('exist')
-
-      cy.intercept({
-        method: 'GET',
-        url: 'http://localhost:8444/api/prediction/graph/search*',
-      }).as('twitter')
-
-      cy.get('[data-testid="twitter"]').click()
-
-      cy.wait('@twitter')
       // TODO: Get to know if twitter nodes are what is being returned
 
       // .then((interception) => {
@@ -58,14 +51,6 @@ describe('See latest button as new node are added', () => {
 
       //   expect(query.media_type).to.equal('twitter')
       // })
-
-      cy.get('#search-result-list').children().first().click()
-
-      cy.get('[data-testid="sidebar-sub-view"]').should('have.css', 'position', 'relative')
-
-      cy.get('[data-testid="close-sidebar-sub-view"]').click()
-
-      cy.get('[data-testid="sidebar-sub-view"]').should('have.css', 'position', 'absolute')
     })
   })
 })

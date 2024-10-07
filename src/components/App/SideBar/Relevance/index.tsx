@@ -85,7 +85,6 @@ const _Relevance = ({ isSearchResult }: Props) => {
           image_url: imageUrl,
           date,
           boost,
-          episode_title: episodeTitle,
           show_title: showTitle,
           node_type: nodeType,
           text,
@@ -100,7 +99,6 @@ const _Relevance = ({ isSearchResult }: Props) => {
             key={adaptedNode.ref_id}
             boostCount={boost || 0}
             date={date || 0}
-            episodeTitle={formatDescription(episodeTitle)}
             imageUrl={imageUrl || ''}
             name={name || ''}
             node={n}
