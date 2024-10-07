@@ -142,6 +142,7 @@ describe('Auth Component', () => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     sphinx.enable.mockResolvedValue({ pubkey: 'testPubkey' })
+
     getIsAdminMock.mockRejectedValue({
       response: {
         status: 401,
