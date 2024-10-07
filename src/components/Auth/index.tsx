@@ -14,10 +14,10 @@ import { isAndroid, isWebView } from '~/utils/isWebView'
 import { Splash } from '../App/Splash'
 
 export const AuthGuard = ({ children }: PropsWithChildren) => {
-  const [unAuthorized, setUnauthorized] = useState(true)
+  const [unAuthorized, setUnauthorized] = useState(false)
   const { setBudget, setIsAdmin, setPubKey, setIsAuthenticated } = useUserStore((s) => s)
   const { splashDataLoading } = useDataStore((s) => s)
-  const [showSplashScreen, setShowSplashScreen] = useState(true)
+  const [renderMainPage, setRenderMainPage] = useState(false)
 
   const [
     setTrendingTopicsFeatureFlag,
@@ -66,8 +66,6 @@ export const AuthGuard = ({ children }: PropsWithChildren) => {
     try {
       const res = await getIsAdmin()
 
-      setUnauthorized(false)
-
       if (res.data) {
         localStorage.setItem('admin', JSON.stringify({ isAdmin: res.data.isAdmin }))
 
@@ -80,10 +78,10 @@ export const AuthGuard = ({ children }: PropsWithChildren) => {
       }
 
       setIsAuthenticated(true)
+      setRenderMainPage(true)
     } catch (error) {
       /* not an admin */
-    } finally {
-      setShowSplashScreen(false)
+      setUnauthorized(true)
     }
   }, [
     setIsAuthenticated,
@@ -119,10 +117,6 @@ export const AuthGuard = ({ children }: PropsWithChildren) => {
 
   const message = 'This is a private Graph, Contact Admin'
 
-  if (showSplashScreen) {
-    return <>{splashDataLoading && <Splash />}</>
-  }
-
   if (unAuthorized) {
     return (
       <StyledFlex>
@@ -133,8 +127,8 @@ export const AuthGuard = ({ children }: PropsWithChildren) => {
 
   return (
     <>
-      {/* {splashDataLoading && <Splash />} */}
-      {children}
+      {splashDataLoading && <Splash />}
+      {renderMainPage && children}
     </>
   )
 }
