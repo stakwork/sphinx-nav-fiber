@@ -1,6 +1,6 @@
 import React from 'react'
 import styled, { css } from 'styled-components'
-import { icons } from './icons'
+import { Icons } from '~/components/Icons'
 import { Flex } from '~/components/common/Flex'
 import { colors } from '~/utils'
 import { useAppStore } from '~/stores/useAppStore'
@@ -18,8 +18,8 @@ export const IconPicker: React.FC = () => {
         <PickerContainer>
           <IconPaletteWrapper>
             <IconGrid>
-              {Object.keys(icons).map((iconKey) => {
-                const IconComponent = icons[iconKey as keyof typeof icons]
+              {Object.keys(Icons).map((iconKey) => {
+                const IconComponent = Icons[iconKey as keyof typeof Icons]
 
                 return (
                   <IconBox
@@ -27,7 +27,7 @@ export const IconPicker: React.FC = () => {
                     isSelected={selectedIcon === iconKey}
                     onClick={() => handleIconChange(iconKey)}
                   >
-                    <IconComponent />
+                    {IconComponent && <IconComponent />}
                   </IconBox>
                 )
               })}

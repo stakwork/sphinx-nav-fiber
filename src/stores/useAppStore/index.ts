@@ -50,7 +50,7 @@ const defaultData = {
   currentPlayingAudio: null,
   showCollapseButton: true,
   selectedColor: '#962777',
-  selectedIcon: 'ColorPickerIcon',
+  selectedIcon: 'ConstructionIcon',
 }
 
 export const useAppStore = create<AppStore>((set, get) => ({

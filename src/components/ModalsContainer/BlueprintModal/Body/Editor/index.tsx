@@ -18,7 +18,7 @@ import { useModal } from '~/stores/useModalStore'
 import { colors } from '~/utils'
 import { CreateCustomNodeAttribute } from './CustomAttributesStep'
 import MediaOptions from './MediaOptions'
-import { icons } from './ColorPickerPopover/ColorPickerPopoverView/IconPicker/icons'
+import { Icons } from '~/components/Icons'
 import { convertAttributes, parsedObjProps, parseJson } from './utils'
 import { ColorPickerPopover } from './ColorPickerPopover'
 import { useAppStore } from '~/stores/useAppStore'
@@ -480,7 +480,7 @@ export const Editor = ({
     return undefined
   }, [selectedSchema, attributes])
 
-  const IconComponent = icons[selectedIcon as keyof typeof icons]
+  const IconComponent = Icons[selectedIcon as keyof typeof Icons]
 
   return (
     <Flex>
@@ -533,7 +533,7 @@ export const Editor = ({
                           />
                         </InputWrapper>
                         <ColorPickerIconWrapper onClick={handleColorPickerPopover} selectedColor={selectedColor}>
-                          <IconComponent />
+                          {IconComponent && <IconComponent />}
                         </ColorPickerIconWrapper>
                       </InputIconWrapper>
                     </Flex>
