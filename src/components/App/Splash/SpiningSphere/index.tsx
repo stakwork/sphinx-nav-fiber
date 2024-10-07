@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import Lottie from 'react-lottie'
 import { Flex } from '~/components/common/Flex'
-import preloadData from './preloader.json'
+import * as preloadData from './preloader.json'
 
 export const SphereAnimation = () => {
   const [isReady, setIsReady] = useState(false)
