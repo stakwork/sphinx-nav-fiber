@@ -10,6 +10,7 @@ import { useDataStore } from '~/stores/useDataStore'
 import { colors, formatSplashMessage, formatStatsResponse } from '~/utils'
 import { AnimatedTextContent } from './animated'
 import { initialMessageData, Message } from './constants'
+import { SphereAnimation } from './SpiningSphere'
 
 export const Splash = () => {
   const [message, setMessage] = useState<Message>(initialMessageData)
@@ -69,7 +70,7 @@ export const Splash = () => {
   return (
     <SplashWrapper>
       <Wrapper align="center" direction="row" justify="center">
-        {/* <SphereAnimation /> */}
+        <SphereAnimation />
         <Flex style={{ color: colors.white }}>
           <TitleWrapper>
             <Text className="title">{appMetaData?.title}</Text>
