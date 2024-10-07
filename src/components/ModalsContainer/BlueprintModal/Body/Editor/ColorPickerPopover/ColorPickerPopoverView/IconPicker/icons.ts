@@ -1,114 +1,191 @@
-// src/components/ModalsContainer/BlueprintModal/Body/Editor/ColorPickerPopover/ColorPickerPopoverView/IconPicker/icons.ts
+import AddCircleIcon from '~/components/Icons/AddCircleIcon'
+import AddContentIcon from '~/components/Icons/AddContentIcon'
+import AddSourceIcon from '~/components/Icons/AddSourceIcon'
+import AiPauseIcon from '~/components/Icons/AiPauseIcon'
+import AiPlayIcon from '~/components/Icons/AiPlayIcon'
+import AiSummaryIcon from '~/components/Icons/AiSummaryIcon'
+import AndroidIcon from '~/components/Icons/AndroidIcon'
+import ArrowBackIcon from '~/components/Icons/ArrowBackIcon'
+import ArrowForwardIcon from '~/components/Icons/ArrowForwardIcon'
+import ArrowRightIcon from '~/components/Icons/ArrowRight'
+import AudioIcon from '~/components/Icons/AudioIcon'
+import BitcoinIcon from '~/components/Icons/BitcoinIcon'
+import BoostIcon from '~/components/Icons/BoostIcon'
+import BudgetIcon from '~/components/Icons/BudgetIcon'
+import BuildIcon from '~/components/Icons/BuildIcon'
+import CameraCenterIcon from '~/components/Icons/CameraCenterIcon'
+import CheckedIcon from '~/components/Icons/CheckedIcon'
+import CheckIcon from '~/components/Icons/CheckIcon'
+import ChevronDownIcon from '~/components/Icons/ChevronDownIcon'
+import ChevronLeftIcon from '~/components/Icons/ChevronLeftIcon'
+import ChevronRightIcon from '~/components/Icons/ChevronRightIcon'
+import ChevronUpIcon from '~/components/Icons/ChevronUpIcon'
+import ClearIcon from '~/components/Icons/ClearIcon'
+import ColorPickerIcon from '~/components/Icons/ColorPickerIcon'
+import CommunitiesIcon from '~/components/Icons/CommunitiesIcon'
+import CompassIcon from '~/components/Icons/CompassIcon'
+import ConstructionIcon from '~/components/Icons/ConstructionIcon'
+import ContentIcon from '~/components/Icons/ContentIcon'
+import CopyIcon from '~/components/Icons/CopyIcon'
+import CorporationIcon from '~/components/Icons/CorporationIcon'
+import DeleteIcon from '~/components/Icons/DeleteIcon'
+import DeleteNodeIcon from '~/components/Icons/DeleteNodeIcon'
+import DesignServicesIcon from '~/components/Icons/DesignServicesIcon'
+import DocumentIcon from '~/components/Icons/DocumentIcon'
+import DownloadIcon from '~/components/Icons/DownloadIcon'
+import EditIcon from '~/components/Icons/EditIcon'
+import EditNodeIcon from '~/components/Icons/EditNodeIcon'
+import EditTopicIcon from '~/components/Icons/EditTopicIcon'
+import EpisodeIcon from '~/components/Icons/EpisodeIcon'
+import EventIcon from '~/components/Icons/EventIcon'
+import ExploreIcon from '~/components/Icons/ExploreIcon'
+import FamilyHistoryIcon from '~/components/Icons/FamilyHistoryIcon'
+import FeedbackIcon from '~/components/Icons/FeedbackIcon'
+import FingerprintIcon from '~/components/Icons/FingerprintIcon'
+import FlipIcon from '~/components/Icons/FlipIcon'
+import FortIcon from '~/components/Icons/FortIcon'
+import FunctionIcon from '~/components/Icons/FunctionIcon'
+import GlobeIcon from '~/components/Icons/GlobeIcon'
+import GrainIcon from '~/components/Icons/GrainIcon'
+import HandymanIcon from '~/components/Icons/HandymanIcon'
+import HardwareIcon from '~/components/Icons/HardwareIcon'
+import HashTagIcon from '~/components/Icons/HashTag'
+import HelpIcon from '~/components/Icons/HelpIcon'
+import HomeIcon from '~/components/Icons/HomeIcon'
+import InfoIcon from '~/components/Icons/InfoIcon'
+import JoystickIcon from '~/components/Icons/JoystickIcon'
+import LinkIcon from '~/components/Icons/LinkIcon'
+import MenuIcon from '~/components/Icons/MenuIcon'
+import MergeIcon from '~/components/Icons/MergeIcon'
+import MoneyIcon from '~/components/Icons/MoneyIcon'
+import NodeCircleIcon from '~/components/Icons/NodeCircleIcon'
+import NodesIcon from '~/components/Icons/NodesIcon'
+import NotesIcon from '~/components/Icons/NotesIcon'
+import OrganizationIcon from '~/components/Icons/OrganizationIcon'
+import PauseIcon from '~/components/Icons/PauseIcon'
+import PersonAddIcon from '~/components/Icons/PersonAdd'
+import PersonIcon from '~/components/Icons/PersonIcon'
+import PhoneIcon from '~/components/Icons/PhoneIcon'
+import PlaceIcon from '~/components/Icons/PlaceIcon'
+import PlayIcon from '~/components/Icons/PlayIcon'
+import PlusIcon from '~/components/Icons/PlusIcon'
+import PublicIcon from '~/components/Icons/PublicIcon'
+import QrCodeIcon from '~/components/Icons/QrCodeIcon'
+import ReloadIcon from '~/components/Icons/ReloadIcon'
+import RobotIcon from '~/components/Icons/RobotIcon'
+import SaveIcon from '~/components/Icons/SaveIcon'
+import SchoolIcon from '~/components/Icons/SchoolIcon'
+import SearchFilterCloseIcon from '~/components/Icons/SearchFilterCloseIcon'
+import SearchFilterIcon from '~/components/Icons/SearchFilterIcon'
+import SearchIcon from '~/components/Icons/SearchIcon'
+import SensorsIcon from '~/components/Icons/SensorsIcon'
+import SettingsIcon from '~/components/Icons/SettingsIcon'
+import ShieldPersonIcon from '~/components/Icons/ShieldPersonIcon'
+import SortFilterIcon from '~/components/Icons/SortFilterIcon'
+import SoundIcon from '~/components/Icons/SoundIcon'
+import SourcesIcon from '~/components/Icons/SourcesIcon'
+import SourcesTableIcon from '~/components/Icons/SourcesTableIcon'
+import SuccessFeedbackIcon from '~/components/Icons/SucessFeedBackIcon'
+import SumFunctionIcon from '~/components/Icons/SumFunctionIcon'
+import ThreeDotsIcon from '~/components/Icons/ThreeDotsIcons'
+import TwitterIcon from '~/components/Icons/TwitterIcon'
+import VideoIcon from '~/components/Icons/VideoIcon'
+import VisibilityOffIcon from '~/components/Icons/VisibilityOff'
+import VisibilityOnIcon from '~/components/Icons/VisibilityOn'
+
 export const icons = {
-  AddCircleIcon: 'svg-icons/AddCircleIcon.svg',
-  AddContentIcon: 'svg-icons/AddContentIcon.svg',
-  AddLinkIcon: 'svg-icons/AddLinkIcon.svg',
-  AddSourceIcon: 'svg-icons/AddSourceIcon.svg',
-  AiPauseIcon: 'svg-icons/AiPauseIcon.svg',
-  AiPlayIcon: 'svg-icons/AiPlayIcon.svg',
-  AiSummaryIcon: 'svg-icons/AiSummaryIcon.svg',
-  AndroidIcon: 'svg-icons/AndroidIcon.svg',
-  ArrowBackIcon: 'svg-icons/ArrowBackIcon.svg',
-  ArrowForwardIcon: 'svg-icons/ArrowForwardIcon.svg',
-  ArrowRightIcon: 'svg-icons/ArrowRight.svg',
-  AudioIcon: 'svg-icons/AudioIcon.svg',
-  BitcoinIcon: 'svg-icons/BitcoinIcon.svg',
-  BoostIcon: 'svg-icons/BoostIcon.svg',
-  BrowseGalleryIcon: 'svg-icons/BrowseGalleryIcon.svg',
-  BubbleChartIcon: 'svg-icons/BubbleChartIcon.svg',
-  BudgetIcon: 'svg-icons/BudgetIcon.svg',
-  BuildIcon: 'svg-icons/BuildIcon.svg',
-  CameraCenterIcon: 'svg-icons/CameraCenterIcon.svg',
-  CancelIcon: 'svg-icons/CancelIcon.svg',
-  CheckedIcon: 'svg-icons/CheckedIcon.svg',
-  CheckIcon: 'svg-icons/CheckIcon.svg',
-  ChevronDownIcon: 'svg-icons/ChevronDownIcon.svg',
-  ChevronLeftIcon: 'svg-icons/ChevronLeftIcon.svg',
-  ChevronRightIcon: 'svg-icons/ChevronRightIcon.svg',
-  ChevronUpIcon: 'svg-icons/ChevronUpIcon.svg',
-  ChipIcon: 'svg-icons/ChipIcon.svg',
-  ClearIcon: 'svg-icons/ClearIcon.svg',
-  CloseIcon: 'svg-icons/CloseIcon.svg',
-  ColorPickerIcon: 'svg-icons/ColorPickerIcon.svg',
-  CommunitiesIcon: 'svg-icons/CommunitiesIcon.svg',
-  CompassIcon: 'svg-icons/CompassIcon.svg',
-  ConstructionIcon: 'svg-icons/ConstructionIcon.svg',
-  ContentIcon: 'svg-icons/ContentIcon.svg',
-  CopyIcon: 'svg-icons/CopyIcon.svg',
-  CorporationIcon: 'svg-icons/CorporationIcon.svg',
-  CreateEdgeIcon: 'svg-icons/CreateEdgeIcon.svg',
-  DefaultShowIcon: 'svg-icons/DefaultShowIcon.svg',
-  DeleteIcon: 'svg-icons/DeleteIcon.svg',
-  DeleteNodeIcon: 'svg-icons/DeleteNodeIcon.svg',
-  DesignServicesIcon: 'svg-icons/DesignServicesIcon.svg',
-  DocumentIcon: 'svg-icons/DocumentIcon.svg',
-  DownloadIcon: 'svg-icons/DownloadIcon.svg',
-  EditIcon: 'svg-icons/EditIcon.svg',
-  EditNodeIcon: 'svg-icons/EditNodeIcon.svg',
-  EditTopicIcon: 'svg-icons/EditTopicIcon.svg',
-  EpisodeIcon: 'svg-icons/EpisodeIcon.svg',
-  EventIcon: 'svg-icons/EventIcon.svg',
-  ExploreIcon: 'svg-icons/ExploreIcon.svg',
-  FamilyHistoryIcon: 'svg-icons/FamilyHistoryIcon.svg',
-  FeedbackIcon: 'svg-icons/FeedbackIcon.svg',
-  FilterOffIcon: 'svg-icons/FilterOffIcon.svg',
-  FingerprintIcon: 'svg-icons/FingerprintIcon.svg',
-  FlipIcon: 'svg-icons/FlipIcon.svg',
-  FortIcon: 'svg-icons/FortIcon.svg',
-  FunctionIcon: 'svg-icons/FunctionIcon.svg',
-  GlobeIcon: 'svg-icons/GlobeIcon.svg',
-  GrainIcon: 'svg-icons/GrainIcon.svg',
-  HandymanIcon: 'svg-icons/HandymanIcon.svg',
-  HardwareIcon: 'svg-icons/HardwareIcon.svg',
-  HashTagIcon: 'svg-icons/HashTag.svg',
-  HashtagIcon: 'svg-icons/HashtagIcon.svg',
-  HelpIcon: 'svg-icons/HelpIcon.svg',
-  HomeIcon: 'svg-icons/HomeIcon.svg',
-  InfoIcon: 'svg-icons/InfoIcon.svg',
-  JoystickIcon: 'svg-icons/JoystickIcon.svg',
-  LinkIcon: 'svg-icons/LinkIcon.svg',
-  MenuIcon: 'svg-icons/MenuIcon.svg',
-  MergeIcon: 'svg-icons/MergeIcon.svg',
-  MoneyIcon: 'svg-icons/MoneyIcon.svg',
-  MuteVolumeIcon: 'svg-icons/MuteVolumeIcon.svg',
-  NodeCircleIcon: 'svg-icons/NodeCircleIcon.svg',
-  NodesIcon: 'svg-icons/NodesIcon.svg',
-  NotesIcon: 'svg-icons/NotesIcon.svg',
-  OrganizationIcon: 'svg-icons/OrganizationIcon.svg',
-  PauseIcon: 'svg-icons/PauseIcon.svg',
-  PersonAddIcon: 'svg-icons/PersonAdd.svg',
-  PersonIcon: 'svg-icons/PersonIcon.svg',
-  PhoneIcon: 'svg-icons/PhoneIcon.svg',
-  PlaceIcon: 'svg-icons/PlaceIcon.svg',
-  PlayIcon: 'svg-icons/PlayIcon.svg',
-  PlusIcon: 'svg-icons/PlusIcon.svg',
-  PropertyHideIcon: 'svg-icons/PropertyHide.svg',
-  PropertyShowIcon: 'svg-icons/PropertyShow.svg',
-  PublicIcon: 'svg-icons/PublicIcon.svg',
-  QrCodeIcon: 'svg-icons/QrCodeIcon.svg',
-  ReloadIcon: 'svg-icons/ReloadIcon.svg',
-  RobotIcon: 'svg-icons/RobotIcon.svg',
-  SaveIcon: 'svg-icons/SaveIcon.svg',
-  ScheduleIcon: 'svg-icons/ScheduleIcon.svg',
-  SchoolIcon: 'svg-icons/SchoolIcon.svg',
-  SearchFilterCloseIcon: 'svg-icons/SearchFilterCloseIcon.svg',
-  SearchFilterIcon: 'svg-icons/SearchFilterIcon.svg',
-  SearchIcon: 'svg-icons/SearchIcon.svg',
-  SensorsIcon: 'svg-icons/SensorsIcon.svg',
-  SentimentDataIcon: 'svg-icons/SentimentDataIcon.svg',
-  SettingsIcon: 'svg-icons/SettingsIcon.svg',
-  ShieldPersonIcon: 'svg-icons/ShieldPersonIcon.svg',
-  SortFilterIcon: 'svg-icons/SortFilterIcon.svg',
-  SoundIcon: 'svg-icons/SoundIcon.svg',
-  SourcesIcon: 'svg-icons/SourcesIcon.svg',
-  SourcesTableIcon: 'svg-icons/SourcesTableIcon.svg',
-  StackIcon: 'svg-icons/StackIcon.svg',
-  SuccessFeedbackIcon: 'svg-icons/SucessFeedBackIcon.svg',
-  SumFunctionIcon: 'svg-icons/SumFunctionIcon.svg',
-  ThreeDotsIcon: 'svg-icons/ThreeDotsIcons.svg',
-  TwitterIcon: 'svg-icons/TwitterIcon.svg',
-  VideoIcon: 'svg-icons/VideoIcon.svg',
-  VisibilityOffIcon: 'svg-icons/VisibilityOff.svg',
-  VisibilityOnIcon: 'svg-icons/VisibilityOn.svg',
-  VolumeIcon: 'svg-icons/VolumeIcon.svg',
+  AddCircleIcon,
+  AddContentIcon,
+  AddSourceIcon,
+  AiPauseIcon,
+  AiPlayIcon,
+  AiSummaryIcon,
+  AndroidIcon,
+  ArrowBackIcon,
+  ArrowForwardIcon,
+  ArrowRightIcon,
+  AudioIcon,
+  BitcoinIcon,
+  BoostIcon,
+  BudgetIcon,
+  BuildIcon,
+  CameraCenterIcon,
+  CheckedIcon,
+  CheckIcon,
+  ChevronDownIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  ChevronUpIcon,
+  ClearIcon,
+  ColorPickerIcon,
+  CommunitiesIcon,
+  CompassIcon,
+  ConstructionIcon,
+  ContentIcon,
+  CopyIcon,
+  CorporationIcon,
+  DeleteIcon,
+  DeleteNodeIcon,
+  DesignServicesIcon,
+  DocumentIcon,
+  DownloadIcon,
+  EditIcon,
+  EditNodeIcon,
+  EditTopicIcon,
+  EpisodeIcon,
+  EventIcon,
+  ExploreIcon,
+  FamilyHistoryIcon,
+  FeedbackIcon,
+  FingerprintIcon,
+  FlipIcon,
+  FortIcon,
+  FunctionIcon,
+  GlobeIcon,
+  GrainIcon,
+  HandymanIcon,
+  HardwareIcon,
+  HashTagIcon,
+  HelpIcon,
+  HomeIcon,
+  InfoIcon,
+  JoystickIcon,
+  LinkIcon,
+  MenuIcon,
+  MergeIcon,
+  MoneyIcon,
+  NodeCircleIcon,
+  NodesIcon,
+  NotesIcon,
+  OrganizationIcon,
+  PauseIcon,
+  PersonAddIcon,
+  PersonIcon,
+  PhoneIcon,
+  PlaceIcon,
+  PlayIcon,
+  PlusIcon,
+  PublicIcon,
+  QrCodeIcon,
+  ReloadIcon,
+  RobotIcon,
+  SaveIcon,
+  SchoolIcon,
+  SearchFilterCloseIcon,
+  SearchFilterIcon,
+  SearchIcon,
+  SensorsIcon,
+  SettingsIcon,
+  ShieldPersonIcon,
+  SortFilterIcon,
+  SoundIcon,
+  SourcesIcon,
+  SourcesTableIcon,
+  SuccessFeedbackIcon,
+  SumFunctionIcon,
+  ThreeDotsIcon,
+  TwitterIcon,
+  VideoIcon,
+  VisibilityOffIcon,
+  VisibilityOnIcon,
 }

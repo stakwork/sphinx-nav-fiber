@@ -18,11 +18,19 @@ export const IconPicker: React.FC = () => {
         <PickerContainer>
           <IconPaletteWrapper>
             <IconGrid>
-              {Object.keys(icons).map((iconKey) => (
-                <IconBox key={iconKey} isSelected={selectedIcon === iconKey} onClick={() => handleIconChange(iconKey)}>
-                  <img alt={iconKey} className="badge__img" src={icons[iconKey as keyof typeof icons]} />
-                </IconBox>
-              ))}
+              {Object.keys(icons).map((iconKey) => {
+                const IconComponent = icons[iconKey as keyof typeof icons]
+
+                return (
+                  <IconBox
+                    key={iconKey}
+                    isSelected={selectedIcon === iconKey}
+                    onClick={() => handleIconChange(iconKey)}
+                  >
+                    <IconComponent />
+                  </IconBox>
+                )
+              })}
             </IconGrid>
           </IconPaletteWrapper>
         </PickerContainer>
@@ -114,10 +122,10 @@ const IconBox = styled.div<{ isSelected: boolean }>`
           }
         `}
 
-  .badge__img {
+  svg {
     width: 30px;
     height: 30px;
     object-fit: contain;
-    filter: brightness(0) invert(1);
+    color: white;
   }
 `

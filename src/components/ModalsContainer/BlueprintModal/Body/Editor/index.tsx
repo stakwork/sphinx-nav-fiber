@@ -480,6 +480,8 @@ export const Editor = ({
     return undefined
   }, [selectedSchema, attributes])
 
+  const IconComponent = icons[selectedIcon as keyof typeof icons]
+
   return (
     <Flex>
       <HeaderRow>
@@ -531,11 +533,7 @@ export const Editor = ({
                           />
                         </InputWrapper>
                         <ColorPickerIconWrapper onClick={handleColorPickerPopover} selectedColor={selectedColor}>
-                          <img
-                            alt={selectedIcon}
-                            className="badge__img"
-                            src={icons[selectedIcon as keyof typeof icons]}
-                          />
+                          <IconComponent />
                         </ColorPickerIconWrapper>
                       </InputIconWrapper>
                     </Flex>
@@ -564,11 +562,7 @@ export const Editor = ({
                           />
                         </InputWrapper>
                         <ColorPickerIconWrapper onClick={handleColorPickerPopover} selectedColor={selectedColor}>
-                          <img
-                            alt={selectedIcon}
-                            className="badge__img"
-                            src={icons[selectedIcon as keyof typeof icons]}
-                          />
+                          <IconComponent />
                         </ColorPickerIconWrapper>
                       </InputIconWrapper>
                     </Flex>
@@ -746,11 +740,11 @@ const ColorPickerIconWrapper = styled.span<{ selectedColor?: string }>`
   justify-content: center;
   align-items: center;
 
-  .badge__img {
+  svg {
     width: 22px;
     height: 22px;
     object-fit: contain;
-    filter: brightness(0) invert(1);
+    color: white;
   }
 `
 
