@@ -5,16 +5,18 @@ import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { isDevelopment, isE2E } from '~/constants'
 import { getIsAdmin } from '~/network/auth'
+import { useDataStore } from '~/stores/useDataStore'
 import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { sphinxBridge } from '~/testSphinxBridge'
 import { updateBudget } from '~/utils'
 import { isAndroid, isWebView } from '~/utils/isWebView'
+import { Splash } from '../App/Splash'
 
 export const AuthGuard = ({ children }: PropsWithChildren) => {
   const [unAuthorized, setUnauthorized] = useState(false)
   const { setBudget, setIsAdmin, setPubKey, setIsAuthenticated } = useUserStore((s) => s)
-  // const { splashDataLoading } = useDataStore((s) => s)
+  const { splashDataLoading } = useDataStore((s) => s)
   const [renderMainPage, setRenderMainPage] = useState(false)
 
   const [
@@ -130,7 +132,7 @@ export const AuthGuard = ({ children }: PropsWithChildren) => {
 
   return (
     <>
-      {/* {splashDataLoading && <Splash />} */}
+      {splashDataLoading && <Splash />}
       {renderMainPage && children}
     </>
   )
