@@ -58,7 +58,7 @@ export const General: FC<Props> = ({ initialValues, onClose }) => {
   return (
     <FormProvider {...form}>
       <StyledForm id="add-node-form" onSubmit={handleSubmit}>
-        <>
+        <FormBody>
           <Flex>
             {swarmUiUrl && (
               <SwarmLinkContainer>
@@ -89,7 +89,7 @@ export const General: FC<Props> = ({ initialValues, onClose }) => {
             </Flex>
           </Flex>
 
-          <Flex mt={190} py={error ? 0 : 24}>
+          <Flex py={error ? 0 : 24}>
             <Button
               color="secondary"
               disabled={isSubmitting}
@@ -116,7 +116,7 @@ export const General: FC<Props> = ({ initialValues, onClose }) => {
               </StyledError>
             ) : null}
           </Flex>
-        </>
+        </FormBody>
       </StyledForm>
     </FormProvider>
   )
@@ -124,6 +124,7 @@ export const General: FC<Props> = ({ initialValues, onClose }) => {
 
 const StyledForm = styled.form`
   padding: 36px;
+  height: 100%;
 `
 
 const IconWrapper = styled.span`
@@ -141,6 +142,13 @@ const IconWrapper = styled.span`
 const SwarmLinkContainer = styled(Flex)`
   display: flex;
   align-items: flex-end;
+`
+
+const FormBody = styled(Flex)`
+  display: flex;
+  direction: column;
+  justify-content: space-between;
+  height: 100%;
 `
 
 const Link = styled.a`
