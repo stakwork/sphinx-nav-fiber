@@ -25,6 +25,10 @@ export const OptionTypes: TOption[] = [
     label: 'string',
     value: 'string',
   },
+  {
+    label: 'boolean',
+    value: 'boolean',
+  },
 ]
 
 export const OPTIONS: TOption[] = [

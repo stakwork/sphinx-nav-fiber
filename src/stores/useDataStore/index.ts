@@ -9,6 +9,18 @@ import { FilterParams, GraphData, Link, NodeExtended, NodeType, Sources, Trendin
 import { useAiSummaryStore } from '../useAiSummaryStore'
 import { useAppStore } from '../useAppStore'
 
+const deduplicateByRefId = (items) => {
+  const uniqueMap = new Map()
+
+  items.forEach((item) => {
+    if (!uniqueMap.has(item.ref_id)) {
+      uniqueMap.set(item.ref_id, item)
+    }
+  })
+
+  return Array.from(uniqueMap.values())
+}
+
 export type GraphStyle = 'sphere' | 'force' | 'split' | 'earth'
 
 export const graphStyles: GraphStyle[] = ['sphere', 'force', 'split', 'earth']
@@ -45,6 +57,8 @@ export type DataStore = {
   stats: TStats | null
   nodeTypes: string[]
   seedQuestions: string[] | null
+  runningProjectId: string
+  runningProjectMessages: string[]
 
   setTrendingTopics: (trendingTopics: Trending[]) => void
   setDataNew: (data: GraphData) => void
@@ -62,6 +76,9 @@ export type DataStore = {
   setSources: (sources: Sources[] | null) => void
   setQueuedSources: (sources: Sources[] | null) => void
   setIsFetching: (_: boolean) => void
+  setRunningProjectId: (runningProjectId: string) => void
+  setRunningProjectMessages: (message: string) => void
+  resetRunningProjectMessages: () => void
   setHideNodeDetails: (_: boolean) => void
   addNewNode: (data: FetchDataResponse) => void
   updateNode: (updatedNode: NodeExtended) => void
@@ -73,6 +90,7 @@ export type DataStore = {
   setSeedQuestions: (questions: string[]) => void
   abortFetchData: () => void
   resetGraph: () => void
+  resetData: () => void
 }
 
 const defaultData: Omit<
@@ -104,6 +122,7 @@ const defaultData: Omit<
   dataInitial: null,
   currentPage: 0,
   itemsPerPage: 300,
+  runningProjectMessages: [],
   filters: {
     skip: 0,
     limit: 300,
@@ -128,6 +147,7 @@ const defaultData: Omit<
   abortRequest: false,
   dataNew: null,
   seedQuestions: null,
+  runningProjectId: '',
 }
 
 let abortController: AbortController | null = null
@@ -266,6 +286,14 @@ export const useDataStore = create<DataStore>()(
       get().fetchData()
     },
 
+    resetData: () => {
+      set({
+        dataNew: { nodes: [], links: [] },
+        dataInitial: { nodes: [], links: [] },
+        nodeTypes: [],
+      })
+    },
+
     setPage: (page: number) => set({ currentPage: page }),
     nextPage: () => {
       const { filters, fetchData } = get()
@@ -297,34 +325,48 @@ export const useDataStore = create<DataStore>()(
         return
       }
 
-      const currentNodes = [...(existingData?.nodes || [])]
-      const currentLinks = [...(existingData?.links || [])]
+      const uniqueIncomingNodes = deduplicateByRefId(data.nodes || [])
+      const uniqueIncomingEdges = deduplicateByRefId(data.edges || [])
 
-      const newNodes = (data?.nodes || []).filter((n) => !currentNodes.some((c) => c.ref_id === n.ref_id))
+      // Step 2: Existing nodes and links from the current state
+      const currentNodes = existingData?.nodes ? [...existingData.nodes] : []
+      const currentLinks = existingData?.links ? [...existingData.links] : []
 
-      currentNodes.push(...newNodes)
+      // Step 3: Use Sets to track unique ref_ids of existing data
+      const nodeRefIds = new Set(currentNodes.map((node) => node.ref_id))
+      const linkRefIds = new Set(currentLinks.map((link) => link.ref_id))
 
-      const newLinks = (data?.edges || [])
-        .filter((n) => !currentLinks.some((c) => c.ref_id === n.ref_id))
-        .filter((c) => {
-          const { target, source } = c
+      // Step 4: Filter new nodes and add only unique ones
+      const newNodes = uniqueIncomingNodes.filter((node) => !nodeRefIds.has(node.ref_id))
+      const updatedNodes = [...currentNodes, ...newNodes]
 
-          return currentNodes.some((n) => n.ref_id === target) && currentNodes.some((n) => n.ref_id === source)
+      // Update `nodeRefIds` with the new nodes added
+      newNodes.forEach((node) => nodeRefIds.add(node.ref_id))
+
+      // Step 5: Filter new links based on unique ref_ids and node presence
+      const newLinks = uniqueIncomingEdges
+        .filter((link) => !linkRefIds.has(link.ref_id)) // Check for unique `ref_id`
+        .filter((link) => {
+          const { source, target } = link
+
+          return nodeRefIds.has(source) && nodeRefIds.has(target) // Ensure nodes exist
         })
 
-      currentLinks.push(...newLinks)
+      const updatedLinks = [...currentLinks, ...newLinks]
 
-      const nodeTypes = [...new Set(currentNodes.map((i) => i.node_type))]
+      // Step 6: Extract unique node types and create sidebar filters
+      const nodeTypes = [...new Set(updatedNodes.map((node) => node.node_type))]
+      const sidebarFilters = ['all', ...nodeTypes.map((type) => type.toLowerCase())]
 
-      const sidebarFilters = ['all', ...nodeTypes.map((i) => i.toLowerCase())]
-
+      // Step 7: Calculate sidebar filter counts
       const sidebarFilterCounts = sidebarFilters.map((filter) => ({
         name: filter,
-        count: currentNodes.filter((node) => filter === 'all' || node.node_type?.toLowerCase() === filter).length,
+        count: updatedNodes.filter((node) => filter === 'all' || node.node_type?.toLowerCase() === filter).length,
       }))
 
+      // Step 8: Update the state with the new data
       set({
-        dataInitial: { nodes: currentNodes, links: currentLinks },
+        dataInitial: { nodes: updatedNodes, links: updatedLinks },
         dataNew: { nodes: newNodes, links: newLinks },
         nodeTypes,
         sidebarFilters,
@@ -334,6 +376,14 @@ export const useDataStore = create<DataStore>()(
     removeNode: (id) => {
       console.log(id)
     },
+
+    setRunningProjectId: (runningProjectId) => set({ runningProjectId, runningProjectMessages: [] }),
+    setRunningProjectMessages: (message) => {
+      const { runningProjectMessages } = get()
+
+      set({ runningProjectMessages: [...runningProjectMessages, message] })
+    },
+    resetRunningProjectMessages: () => set({ runningProjectMessages: [] }),
     setAbortRequests: (abortRequest) => set({ abortRequest }),
   })),
 )
