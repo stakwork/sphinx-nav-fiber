@@ -16,9 +16,11 @@ export type UserStore = {
   tribeUuid: string
   setTribeUuid: (val: string) => void
   tribeHost: string
+  swarmUiUrl: string
   setTribeHost: (val: string) => void
   setIsAuthenticated: (val: boolean) => void
   setSignedToken: (val: string) => void
+  setSwarmUiUrl: (val: string) => void
 }
 
 const defaultData: Omit<
@@ -31,6 +33,7 @@ const defaultData: Omit<
   | 'setTribeHost'
   | 'setIsAuthenticated'
   | 'setSignedToken'
+  | 'setSwarmUiUrl'
 > = {
   isAdmin: false,
   isAuthenticated: false,
@@ -40,6 +43,7 @@ const defaultData: Omit<
   tribeHost: '',
   tribeUuid: '',
   signedToken: '',
+  swarmUiUrl: '',
 }
 
 export const useUserStore = create<UserStore>((set) => ({
@@ -59,4 +63,5 @@ export const useUserStore = create<UserStore>((set) => ({
   setTribeHost: (tribeHost) => set({ tribeHost }),
   setIsAuthenticated: (isAuthenticated) => set({ isAuthenticated }),
   setSignedToken: (signedToken) => set({ signedToken }),
+  setSwarmUiUrl: (swarmUiUrl) => set({ swarmUiUrl }),
 }))
