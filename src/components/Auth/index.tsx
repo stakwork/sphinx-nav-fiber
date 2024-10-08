@@ -15,7 +15,7 @@ import { Splash } from '../App/Splash'
 
 export const AuthGuard = ({ children }: PropsWithChildren) => {
   const [unAuthorized, setUnauthorized] = useState(false)
-  const { setBudget, setIsAdmin, setPubKey, setIsAuthenticated } = useUserStore((s) => s)
+  const { setBudget, setIsAdmin, setPubKey, setIsAuthenticated, setSwarmUiUrl } = useUserStore((s) => s)
   const { splashDataLoading } = useDataStore((s) => s)
   const [renderMainPage, setRenderMainPage] = useState(false)
 
@@ -67,9 +67,15 @@ export const AuthGuard = ({ children }: PropsWithChildren) => {
       const res = await getIsAdmin()
 
       if (res.data) {
-        localStorage.setItem('admin', JSON.stringify({ isAdmin: res.data.isAdmin }))
+        const isAdmin = !!res.data.isAdmin
 
-        setIsAdmin(!!res.data.isAdmin)
+        localStorage.setItem('admin', JSON.stringify({ isAdmin }))
+
+        if (isAdmin && res.data.swarmUiUrl) {
+          setSwarmUiUrl(res.data.swarmUiUrl)
+        }
+
+        setIsAdmin(isAdmin)
         setTrendingTopicsFeatureFlag(res.data.trendingTopics)
         setQueuedSourcesFeatureFlag(res.data.queuedSources)
         setCustomSchemaFeatureFlag(res.data.customSchema)
@@ -91,6 +97,7 @@ export const AuthGuard = ({ children }: PropsWithChildren) => {
     setCustomSchemaFeatureFlag,
     setRealtimeGraphFeatureFlag,
     setChatInterfaceFeatureFlag,
+    setSwarmUiUrl,
   ])
 
   // auth checker
