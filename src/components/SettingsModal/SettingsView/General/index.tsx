@@ -1,16 +1,17 @@
-import { FC, useState } from 'react'
 import { Button } from '@mui/material'
+import { FC, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
+import { MdError } from 'react-icons/md'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
+import { SuccessNotify } from '~/components/common/SuccessToast'
 import { TextInput } from '~/components/common/TextInput'
 import { NODE_ADD_ERROR, requiredRule } from '~/constants'
-import { TAboutParams, postAboutData } from '~/network/fetchSourcesData'
+import { postAboutData, TAboutParams } from '~/network/fetchSourcesData'
 import { useAppStore } from '~/stores/useAppStore'
+import { useUserStore } from '~/stores/useUserStore'
 import { colors } from '~/utils/colors'
-import { SuccessNotify } from '~/components/common/SuccessToast'
-import { MdError } from 'react-icons/md'
 
 type Props = {
   initialValues: TAboutParams
@@ -21,6 +22,7 @@ export const General: FC<Props> = ({ initialValues, onClose }) => {
   const form = useForm<TAboutParams>({ defaultValues: initialValues, mode: 'onSubmit' })
   const { isSubmitting } = form.formState
   const setAppMetaData = useAppStore((s) => s.setAppMetaData)
+  const { swarmUiUrl } = useUserStore((s) => s)
   const [error, setError] = useState<string>('')
 
   const onSubmit = form.handleSubmit(async (data) => {
@@ -58,6 +60,12 @@ export const General: FC<Props> = ({ initialValues, onClose }) => {
       <StyledForm id="add-node-form" onSubmit={handleSubmit}>
         <>
           <Flex>
+            {swarmUiUrl && (
+              <SwarmLinkContainer>
+                <Link href={swarmUiUrl}>View Swarm UI</Link>
+              </SwarmLinkContainer>
+            )}
+
             <Flex pt={20}>
               <TextInput
                 id="cy-about-title-id"
@@ -81,7 +89,7 @@ export const General: FC<Props> = ({ initialValues, onClose }) => {
             </Flex>
           </Flex>
 
-          <Flex mt={210} py={error ? 0 : 24}>
+          <Flex mt={190} py={error ? 0 : 24}>
             <Button
               color="secondary"
               disabled={isSubmitting}
@@ -128,6 +136,19 @@ const IconWrapper = styled.span`
     width: 16px;
     height: 16px;
   }
+`
+
+const SwarmLinkContainer = styled(Flex)`
+  display: flex;
+  align-items: flex-end;
+`
+
+const Link = styled.a`
+  font-family: 'Barlow';
+  font-size: 16px;
+  color: ${colors.PRIMARY_BLUE};
+  text-decoration: underline;
+  font-weight: 500;
 `
 
 const StyledError = styled(Flex)`
