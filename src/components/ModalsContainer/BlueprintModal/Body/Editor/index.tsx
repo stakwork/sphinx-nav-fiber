@@ -71,7 +71,7 @@ const handleSubmitForm = async (
   data: FieldValues,
   isUpdate = false,
   deletedAttributes: string[],
-  selectedColor: string,
+  selectedPrimaryColor: string,
   selectedIcon: string,
   mediaOptions: { videoAudio: boolean; image: boolean; sourceLink: boolean },
   initialMediaOptions: { videoAudio: boolean; image: boolean; sourceLink: boolean },
@@ -89,7 +89,7 @@ const handleSubmitForm = async (
       attributes: { [key: string]: string }
       index?: string
       media_url?: string
-      color?: string
+      primary_color?: string
       icon?: string
       image_url?: string
       source_link?: string
@@ -99,8 +99,8 @@ const handleSubmitForm = async (
       index: selectedIndex,
     }
 
-    if (selectedColor) {
-      requestData.color = selectedColor
+    if (selectedPrimaryColor) {
+      requestData.primary_color = selectedPrimaryColor
     }
 
     if (selectedIcon) {
@@ -226,6 +226,8 @@ export const Editor = ({
 
   const { selectedColor, selectedIcon } = useAppStore((s) => s)
   const [isPopoverOpen, setPopoverOpen] = useState(!!selectedSchema)
+
+  const selectedPrimaryColor = selectedColor.replace('#', '')
 
   const handleColorPickerPopover = () => setPopoverOpen(!isPopoverOpen)
 
@@ -367,7 +369,7 @@ export const Editor = ({
         await editNodeSchemaUpdate(selectedSchema?.ref_id as string, {
           type: data.type,
           parent: newParent as string,
-          color: selectedColor,
+          primary_color: selectedPrimaryColor,
           icon: selectedIcon,
           attributes: {
             index: selectedIndex as string,
@@ -381,7 +383,7 @@ export const Editor = ({
         { ...data, ...(selectedSchema ? { ref_id: selectedSchema?.ref_id } : {}) },
         !!selectedSchema,
         deletedAttributes,
-        selectedColor,
+        selectedPrimaryColor,
         selectedIcon,
         mediaOptions,
         {
