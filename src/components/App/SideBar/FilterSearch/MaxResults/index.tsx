@@ -46,6 +46,6 @@ export const MaxResults = ({ maxResults, setMaxResults }: MaxResultsProps) => {
 
 const CustomSlider = styled(Slider)({
   '& .MuiSlider-valueLabel': {
-    backgroundColor: `${colors.primaryBlue}`
+    backgroundColor: `${colors.primaryBlue}`,
   },
 })
