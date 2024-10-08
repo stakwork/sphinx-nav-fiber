@@ -53,7 +53,7 @@ jobs:
           cache: "yarn"
       - name: Clone Stack
         run: |
-          git clone https://github.com/stakwork/sphinx-stack.git stack
+          git clone -b multipleWorkers https://github.com/stakwork/sphinx-stack.git stack
 
       - name: Give Permissions to Sphinx Nav Fiber
         run: chmod 777 -R relay
@@ -67,18 +67,18 @@ jobs:
           chmod 777 -R ./proxy;
           chmod 777 -R ./cln;
 
-      - name: Download file
-        run: |
-          curl -LO https://machinelearningneo4jbackup.s3.amazonaws.com/_data.zip
+      # - name: Create data working-directory
+      #   run: mkdir -p data
 
-      - name: Unzip file
-        run: unzip _data.zip -d data
+      # - name: Download file
+      #   run: |
+      #     curl -LO https://machinelearningneo4jbackup.s3.amazonaws.com/neo4j.tar
 
-      - name: Rename folder
-        run: cd data && mv _data data && cd data && ls
+      # - name: untar file
+      #   run: tar -xf neo4j.tar -C data
 
-      - name: Copy Neo4J Data to stack
-        run: cp -r ./data ./stack/neo4j
+      # - name: Copy Neo4J Data to stack
+      #   run: cp -r ./data ./stack/neo4j
 
       - name: Check for NODES
         uses: nick-fields/retry@v3
@@ -101,6 +101,9 @@ jobs:
         with:
           source: "stack/relay/NODES.json"
           target: "relay/nodes.json"
+
+      - name: Sanitize Test File Path
+        run: echo "SANITIZED_FILE=$(echo ${{ matrix.file }} | sed 's/\//_/g')" >> $GITHUB_ENV
 
       - name: Install
         run: yarn --immutable
@@ -126,12 +129,6 @@ jobs:
       # - name: Component tests
       #   run: yarn run cy-comp
       #   continue-on-error: false
-
-      - name: Sanitize Test File Path
-        run: echo "SANITIZED_FILE=$(echo ${{ matrix.file }} | sed 's/\//_/g')" >> $GITHUB_ENV
-
-      - name: Debug sanitized file
-        run: echo "Sanitized file $SANITIZED_FILE"
 
       - name: Upload Cypress logs
         if: always()
