@@ -142,7 +142,7 @@ export interface Schema {
   media_url?: string
   image_url?: string
   source_link?: string
-  attributes?: { [key: string]: string }
+  attributes?: { [key: string]: string | boolean }
 }
 
 export interface SchemaLink {
