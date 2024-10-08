@@ -302,8 +302,7 @@ export const Editor = ({
   const attributesValue = watch('attributes')
 
   const attributes: Attribute[] = useMemo(
-    () =>
-      isAttributeArray(attributesValue) ? attributesValue.filter((attr) => attr.key && attr.key.trim() !== '') : [],
+    () => (isAttributeArray(attributesValue) ? attributesValue : []),
     [attributesValue],
   )
 
@@ -607,7 +606,7 @@ export const Editor = ({
               <Grid item mb={2} width="70%">
                 <AutoComplete
                   onSelect={(val) => setValue('selectedIndex', val?.value || '')}
-                  options={attributes.map((attr) => ({ label: attr.key, value: attr.key }))}
+                  options={attributes.filter((attr) => attr.key).map((attr) => ({ label: attr.key, value: attr.key }))}
                   selectedValue={resolvedSelectedIndexValue}
                 />
               </Grid>
