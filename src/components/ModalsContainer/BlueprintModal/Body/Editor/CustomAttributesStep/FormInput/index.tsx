@@ -108,7 +108,7 @@ export const FormInput = ({
                     />
                   </Grid>
                   <Grid item xs={4}>
-                    <AutoComplete
+                    <StyledAutoComplete
                       dataTestId={`cy-item-select-${index}`}
                       disabled={requiredKey}
                       onSelect={(val) => setValue(`attributes[${index}].type`, val?.value)}
@@ -233,5 +233,11 @@ const PlusIconWrapper = styled.span`
     height: 23px;
     fill: none;
     margin-top: 2px;
+  }
+`
+
+const StyledAutoComplete = styled(AutoComplete)`
+  & .MuiInput-input.MuiInputBase-input {
+    padding: 8px 2px !important;
   }
 `
