@@ -322,10 +322,10 @@ export const App = () => {
   }, [runningProjectId, setRunningProjectMessages])
 
   useEffect(() => {
-    if (!splashDataLoading) {
+    if (chatInterfaceFeatureFlag && !splashDataLoading) {
       setUniverseQuestionIsOpen()
     }
-  }, [setUniverseQuestionIsOpen, splashDataLoading])
+  }, [setUniverseQuestionIsOpen, splashDataLoading, chatInterfaceFeatureFlag])
 
   return (
     <>
@@ -336,7 +336,7 @@ export const App = () => {
       <Leva hidden={!isDevelopment} />
 
       <Suspense fallback={<div>Loading...</div>}>
-        {!splashDataLoading ? (
+        {!splashDataLoading && chatInterfaceFeatureFlag ? (
           <Wrapper direction="row">
             <FormProvider {...form}>
               <LazyMainToolbar />
