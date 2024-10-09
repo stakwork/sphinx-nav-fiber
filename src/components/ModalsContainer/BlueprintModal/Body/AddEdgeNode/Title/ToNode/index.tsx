@@ -49,13 +49,14 @@ export const ToNode: FC<Props> = ({ onSelect, dataTestId, edgeLink, hideSelectAl
         const schemaOptions = data.schemas
           .filter((schema) => !schema.is_deleted && schema.type)
           .map((schema) =>
-            schema?.type === 'thing'
+            schema.type === 'thing'
               ? { label: 'No Parent', value: schema.type }
               : {
                   label: capitalizeFirstLetter(schema.type),
                   value: schema.type,
                 },
           )
+          .filter((option, index, self) => index === self.findIndex((o) => o.value === option.value))
 
         const allOption = { label: 'Select all', value: 'all' }
 
