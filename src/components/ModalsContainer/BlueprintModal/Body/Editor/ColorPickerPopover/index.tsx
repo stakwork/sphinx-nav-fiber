@@ -1,6 +1,6 @@
-import { ColorPickerPopoverView } from './ColorPickerPopoverView'
 import styled from 'styled-components'
 import { colors } from '~/utils'
+import { ColorPickerPopoverView } from './ColorPickerPopoverView'
 
 type Props = {
   isOpen: boolean
@@ -33,4 +33,24 @@ const ModalContent = styled.div`
   z-index: 1001;
   border-radius: 8px;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+
+  @media (max-width: 1550px) {
+    top: 44%;
+    left: 38%;
+  }
+
+  @media (max-width: 1024px) {
+    top: 58%;
+    left: 56%;
+  }
+
+  @media (max-width: 768px) {
+    top: 50%;
+    left: 64%;
+  }
+
+  @media (max-width: 480px) {
+    top: 37%;
+    left: 76%;
+  }
 `
