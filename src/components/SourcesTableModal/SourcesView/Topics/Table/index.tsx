@@ -199,7 +199,11 @@ export const Table: React.FC<TopicTableProps> = ({
               </StyledTableHead>
             )}
 
-            {(loading || muteLoading) && !data && <ClipLoader color={colors.white} />}
+            {(loading || muteLoading) && !data && (
+              <ClipLoaderWrapper>
+                <ClipLoader color={colors.white} />
+              </ClipLoaderWrapper>
+            )}
 
             {data && (
               <tbody>
@@ -364,4 +368,15 @@ const TableInnerWrapper = styled(Flex)`
   flex: 1;
   width: 100%;
   position: relative;
+`
+
+const ClipLoaderWrapper = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `
