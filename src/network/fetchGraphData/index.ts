@@ -21,7 +21,11 @@ const fetchNodes = async (
   signal: AbortSignal,
   setAbortRequests: (status: boolean) => void,
 ): Promise<FetchDataResponse> => {
-  const args = new URLSearchParams(params).toString()
+  const args = new URLSearchParams({
+    ...params,
+    search_method: 'vector',
+  }).toString()
+
   const url = isLatest ? `/prediction/graph/search/latest?` : `/prediction/graph/search?${args}`
 
   const fetchWithLSAT = async (): Promise<FetchDataResponse> => {
