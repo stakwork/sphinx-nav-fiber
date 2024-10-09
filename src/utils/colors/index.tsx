@@ -74,6 +74,7 @@ export const colors = {
   BG2: 'rgba(22, 23, 29, 1)',
   BG2_ACTIVE_INPUT: 'rgba(16, 17, 22, 1)',
   BG3: 'rgba(28, 30, 38, 1)',
+  BG4: 'rgba(30, 30, 35, 0.9)',
   GRAY3: 'rgba(186, 193, 198, 1)',
   GRAY6: '#909BAA',
   GRAY7: 'rgba(107, 122, 141, 1)',
