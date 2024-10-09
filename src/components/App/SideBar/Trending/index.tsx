@@ -232,8 +232,9 @@ export const Trending = () => {
 }
 
 const Paragraph = styled.div`
+  position: relative;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   width: 300px;
 
   span.tldr {
@@ -244,6 +245,7 @@ const Paragraph = styled.div`
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     letter-spacing: 0.3pt;
+    padding-left: 20px;
   }
 `
 
@@ -335,6 +337,10 @@ const StyledTLDRButton = styled(Button)`
 `
 
 const IconWrapper = styled.span`
+  position: absolute;
+  top: 6px;
+  left: 0;
+  display: flex;
   justify-content: center;
   align-items: center;
   color: ${colors.GRAY6};
