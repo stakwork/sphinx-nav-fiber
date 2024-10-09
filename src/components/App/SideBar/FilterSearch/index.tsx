@@ -6,7 +6,6 @@ import PlusIcon from '~/components/Icons/PlusIcon'
 import { SchemaExtended } from '~/components/ModalsContainer/BlueprintModal/types'
 import { Flex } from '~/components/common/Flex'
 import { useDataStore } from '~/stores/useDataStore'
-import { useUserStore } from '~/stores/useUserStore'
 import { colors } from '~/utils/colors'
 import { Hops } from './Hops'
 import { MaxResults } from './MaxResults'
@@ -42,8 +41,7 @@ export const FilterSearch = ({
     )
   }
 
-  const { setFilters, fetchData, setAbortRequests } = useDataStore((s) => s)
-  const { setBudget } = useUserStore((s) => s)
+  const { setFilters } = useDataStore((s) => s)
   const [selectedTypes, setSelectedTypes] = useState<string[]>(defaultValues.selectedTypes)
   const [hops, setHops] = useState(defaultValues.hops)
   const [sourceNodes, setSourceNodes] = useState<number>(defaultValues.sourceNodes)
@@ -74,8 +72,6 @@ export const FilterSearch = ({
 
     setAnchorEl(null)
     onClose()
-
-    await fetchData(setBudget, setAbortRequests)
   }
 
   const uniqueSchemas = (showAllSchemas ? schemaAll : schemaAll.slice(0, 4)).filter(
