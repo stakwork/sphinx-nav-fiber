@@ -132,6 +132,7 @@ const defaultData: Omit<
     top_node_count: '50',
     includeContent: 'true',
     node_type: [],
+    search_method: 'vector',
   },
   isFetching: false,
   isLoadingNew: false,
@@ -200,6 +201,7 @@ export const useDataStore = create<DataStore>()(
         ...(filterNodeTypes.length > 0 ? { node_type: JSON.stringify(filterNodeTypes) } : {}),
         ...(word ? { word } : {}),
         ...(aiRefId && AISearchQuery ? { previous_search_ref_id: aiRefId } : {}),
+        search_method: 'vector',
       }
 
       try {
