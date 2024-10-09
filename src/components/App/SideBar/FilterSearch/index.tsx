@@ -166,7 +166,8 @@ const SearchFilterPopover = styled(Popper)`
     box-shadow: 0px 1px 6px 0px rgba(0, 0, 0, 0.2);
     border-radius: 9px;
     max-width: 361px;
-    overflow: auto;
+    overflow-x: hidden;
+    overflow-y: auto;
     border: 1px solid ${colors.black};
     z-index: 100;
     &::-webkit-scrollbar {
@@ -365,7 +366,6 @@ export const VolumeControl = styled(Flex)`
       background-color: ${colors.black};
     }
     .MuiSlider-thumb {
-      overflow-x: hidden;
       width: 20px;
       height: 20px;
       background-color: ${colors.white};
