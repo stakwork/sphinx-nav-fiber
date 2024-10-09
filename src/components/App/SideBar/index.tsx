@@ -20,7 +20,7 @@ type ContentProp = {
 
 // eslint-disable-next-line react/display-name
 const Content = forwardRef<HTMLDivElement, ContentProp>(({ subViewOpen }, ref) => {
-  const { setSidebarOpen } = useAppStore((s) => s)
+  const { setSidebarOpen, currentSearch: searchTerm, setSearchFormValue } = useAppStore((s) => s)
 
   const hasAiChats = useHasAiChats()
 
@@ -32,6 +32,7 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ subViewOpen }, ref) =
         <CollapseButton
           onClick={() => {
             setSidebarOpen(false)
+            setSearchFormValue(searchTerm || '')
           }}
         >
           <ChevronLeftIcon />
