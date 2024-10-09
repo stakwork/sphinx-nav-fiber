@@ -247,8 +247,6 @@ const SchemaTypeWrapper = styled(Flex).attrs({
 })`
   flex-wrap: wrap;
   gap: 10px;
-  max-height: 400px;
-  overflow-y: auto;
   padding-right: 10px;
   margin-right: calc(0px - 16px);
 `
