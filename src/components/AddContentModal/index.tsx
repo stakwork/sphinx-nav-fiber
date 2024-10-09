@@ -113,6 +113,8 @@ const handleSubmitForm = async (
       Authorization: lsatToken,
     })
 
+    await updateBudget(setBudget)
+
     if (res.data.project_id) {
       setRunningProjectId(res.data.project_id)
     }
@@ -127,7 +129,7 @@ const handleSubmitForm = async (
   } catch (err: any) {
     if (err.status === 402) {
       await payLsat(setBudget)
-      await updateBudget(setBudget)
+
       await handleSubmitForm(data, sourceType, setBudget, setRunningProjectId)
     } else {
       let errorMessage = NODE_ADD_ERROR
