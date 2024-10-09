@@ -22,13 +22,14 @@ describe('AiAnswer Component', () => {
 
     await waitFor(() => expect(screen.getByText(/React/)).toBeInTheDocument())
 
-    const reactEntity = screen.getByText((content, element) => {
-      return content.startsWith('React') && element.tagName === 'SPAN'
-    })
+    const reactEntity = screen.getByText(
+      (content, element) => content.startsWith('React') && element.tagName === 'SPAN',
+    )
 
     fireEvent.mouseOver(reactEntity)
 
     const tooltip = await screen.findByText('A JavaScript library for building user interfaces.')
+
     expect(tooltip).toBeVisible()
   })
 })
