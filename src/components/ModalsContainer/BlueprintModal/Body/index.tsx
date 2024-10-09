@@ -20,6 +20,10 @@ export type FormData = {
   }
 }
 
+interface EditorWrapperProps {
+  hasSchema?: boolean
+}
+
 interface BodyProps {
   Close: () => void
 }
@@ -139,7 +143,7 @@ export const Body = ({ Close }: BodyProps) => {
       <Flex align="stretch" direction="row" grow={1}>
         <Flex mb={-20} ml={-20}>
           {selectedSchema || isCreateNew ? (
-            <EditorWrapper>
+            <EditorWrapper hasSchema>
               <InnerEditorWrapper>
                 <Editor
                   graphLoading={graphLoading}
@@ -231,11 +235,12 @@ const Wrapper = styled(Flex)`
   }
 `
 
-const EditorWrapper = styled(Flex)`
+const EditorWrapper = styled(Flex)<EditorWrapperProps>`
   width: 100%;
   max-width: 400px;
   background: ${colors.BG1};
   border-bottom-right-radius: 16px;
+  border-bottom-left-radius: ${({ hasSchema }) => (hasSchema ? '9px' : '0')};
   flex-grow: 1;
   flex-shrink: 1;
   min-width: 300px;
