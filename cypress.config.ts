@@ -9,7 +9,7 @@ export default defineConfig({
     },
   },
   e2e: {
-    retries: 5,
+    // retries: 5,
     baseUrl: 'http://localhost:3000',
     defaultCommandTimeout: 10000,
     pageLoadTimeout: 90000,
@@ -28,7 +28,10 @@ export default defineConfig({
     watchForFileChanges: false,
     experimentalMemoryManagement: true,
     numTestsKeptInMemory: 1,
-    video: false,
+    video: true,
+    env: {
+      CYPRESS_LOG_LEVEL: 'debug',
+    },
   },
   component: {
     supportFile: './cypress/support/components.ts',

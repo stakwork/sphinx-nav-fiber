@@ -1,13 +1,14 @@
+import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
+import { Alerts } from '~/components/Alerts'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { Stats } from '~/components/Stats'
+import { useAiSummaryStore } from '~/stores/useAiSummaryStore'
 import { useAppStore } from '~/stores/useAppStore'
+import { useDataStore } from '~/stores/useDataStore'
 import { colors } from '~/utils/colors'
 import { media } from '~/utils/media'
-import { useAiSummaryStore } from '~/stores/useAiSummaryStore'
-import { useDataStore } from '~/stores/useDataStore'
-import { useNavigate } from 'react-router-dom'
 
 export const AppBar = () => {
   const appMetaData = useAppStore((s) => s.appMetaData)
@@ -39,6 +40,7 @@ export const AppBar = () => {
         <Text className="subtitle">Second Brain</Text>
       </TitleWrapper>
       <Stats />
+      <Alerts />
     </Header>
   )
 }

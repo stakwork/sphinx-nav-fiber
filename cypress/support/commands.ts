@@ -34,11 +34,6 @@ import '@testing-library/cypress/add-commands'
 Cypress.Commands.add('initialSetup', (username, budget) => {
   cy.intercept({
     method: 'GET',
-    url: 'http://localhost:8444/api/prediction/graph/search/latest*',
-  }).as('loadLatest')
-
-  cy.intercept({
-    method: 'GET',
     url: 'http://localhost:8444/api/about*',
   }).as('loadAbout')
 
@@ -52,6 +47,11 @@ Cypress.Commands.add('initialSetup', (username, budget) => {
     url: 'http://localhost:8444/api/get_trends*',
   }).as('getTrends')
 
+  cy.intercept({
+    method: 'GET',
+    url: 'http://localhost:8444/api/prediction/graph/search/latest*',
+  }).as('loadLatest')
+
   cy.visit('/', {
     onBeforeLoad(win) {
       // @ts-ignore
@@ -62,6 +62,9 @@ Cypress.Commands.add('initialSetup', (username, budget) => {
     },
   })
 
-  cy.get('[data-testid="explore-graph-btn"]', { timeout: 30000 }).should('be.visible').click()
-  cy.wait(['@loadAbout', '@loadStats', '@getTrends', '@loadLatest'])
+  cy.wait(['@loadAbout', '@loadLatest', '@loadStats'])
+
+  cy.get('[data-testid="explore-graph-btn"]', { timeout: 90000 }).should('be.visible').click()
+
+  cy.wait(['@getTrends'])
 })

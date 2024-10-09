@@ -5,15 +5,19 @@ import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { isDevelopment, isE2E } from '~/constants'
 import { getIsAdmin } from '~/network/auth'
+import { useDataStore } from '~/stores/useDataStore'
 import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { sphinxBridge } from '~/testSphinxBridge'
 import { updateBudget } from '~/utils'
 import { isAndroid, isWebView } from '~/utils/isWebView'
+import { Splash } from '../App/Splash'
 
 export const AuthGuard = ({ children }: PropsWithChildren) => {
   const [unAuthorized, setUnauthorized] = useState(false)
-  const { setBudget, setIsAdmin, setPubKey, setIsAuthenticated } = useUserStore((s) => s)
+  const { setBudget, setIsAdmin, setPubKey, setIsAuthenticated, setSwarmUiUrl } = useUserStore((s) => s)
+  const { splashDataLoading } = useDataStore((s) => s)
+  const [renderMainPage, setRenderMainPage] = useState(false)
 
   const [
     setTrendingTopicsFeatureFlag,
@@ -60,16 +64,16 @@ export const AuthGuard = ({ children }: PropsWithChildren) => {
     try {
       const res = await getIsAdmin()
 
-      if (!res.data.isPublic && !res.data.isAdmin && !res.data.isMember) {
-        setUnauthorized(true)
-
-        return
-      }
-
       if (res.data) {
-        localStorage.setItem('admin', JSON.stringify({ isAdmin: res.data.isAdmin }))
-        setIsAdmin(!!res.data.isAdmin)
+        const isAdmin = !!res.data.isAdmin
 
+        localStorage.setItem('admin', JSON.stringify({ isAdmin }))
+
+        if (isAdmin && res.data.swarmUiUrl) {
+          setSwarmUiUrl(res.data.swarmUiUrl)
+        }
+
+        setIsAdmin(isAdmin)
         setTrendingTopicsFeatureFlag(res.data.trendingTopics)
         setQueuedSourcesFeatureFlag(res.data.queuedSources)
         setCustomSchemaFeatureFlag(res.data.customSchema)
@@ -78,8 +82,10 @@ export const AuthGuard = ({ children }: PropsWithChildren) => {
       }
 
       setIsAuthenticated(true)
+      setRenderMainPage(true)
     } catch (error) {
       /* not an admin */
+      setUnauthorized(true)
     }
   }, [
     setIsAuthenticated,
@@ -89,6 +95,7 @@ export const AuthGuard = ({ children }: PropsWithChildren) => {
     setCustomSchemaFeatureFlag,
     setRealtimeGraphFeatureFlag,
     setChatInterfaceFeatureFlag,
+    setSwarmUiUrl,
   ])
 
   // auth checker
@@ -125,7 +132,12 @@ export const AuthGuard = ({ children }: PropsWithChildren) => {
     )
   }
 
-  return <>{children}</>
+  return (
+    <>
+      {splashDataLoading && <Splash />}
+      {renderMainPage && children}
+    </>
+  )
 }
 
 const StyledText = styled(Text)`

@@ -18,6 +18,7 @@ const mockSetShowAllSchemas = jest.fn()
 const mockSetAnchorEl = jest.fn()
 const mockFetchData = jest.fn()
 const mockSetAbortRequests = jest.fn()
+const mockOnClose = jest.fn()
 
 const mockSchemaAll = [{ type: 'Type1' }, { type: 'Type2' }, { type: 'Type3' }, { type: 'Type4' }, { type: 'Type5' }]
 
@@ -28,6 +29,7 @@ describe('FilterSearch Component', () => {
       setFilters: mockSetFilters,
       fetchData: mockFetchData,
       setAbortRequests: mockSetAbortRequests,
+      onClose: mockOnClose,
     })
   })
 
@@ -37,6 +39,7 @@ describe('FilterSearch Component', () => {
         <StyleThemeProvider theme={appTheme}>
           <FilterSearch
             anchorEl={document.createElement('div')}
+            onClose={mockOnClose}
             schemaAll={mockSchemaAll}
             setAnchorEl={mockSetAnchorEl}
             setShowAllSchemas={mockSetShowAllSchemas}
@@ -174,6 +177,7 @@ describe('FilterSearch Component', () => {
         <StyleThemeProvider theme={appTheme}>
           <FilterSearch
             anchorEl={null}
+            onClose={mockOnClose}
             schemaAll={mockSchemaAll}
             setAnchorEl={mockSetAnchorEl}
             setShowAllSchemas={mockSetShowAllSchemas}
