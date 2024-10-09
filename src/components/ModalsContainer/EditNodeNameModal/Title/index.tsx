@@ -10,6 +10,7 @@ import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
 import { useSelectedNode } from '~/stores/useGraphStore'
 import { useModal } from '~/stores/useModalStore'
 import { colors } from '~/utils'
+import { formatLabel } from '../utils'
 
 export const TitleEditor = () => {
   const { open: openAddItemNodeModal } = useModal('changeNodeType')
@@ -66,7 +67,7 @@ export const TitleEditor = () => {
                 marginBottom: 8,
               }}
             >
-              {key}
+              {formatLabel(key)}
             </LabelText>
             <TextInput
               id={`cy-${key}`}
