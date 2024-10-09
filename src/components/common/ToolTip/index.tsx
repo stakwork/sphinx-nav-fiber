@@ -14,7 +14,6 @@ interface TooltipProps {
   minWidth?: string
   whiteSpace?: string
   textAlign?: string
-  mrLeft?: string
 }
 
 const TooltipContainer = styled.div`
@@ -35,7 +34,6 @@ const TooltipText = styled.div<{
   minWidth?: string
   whiteSpace?: string
   textAlign?: string
-  mrLeft?: string
 }>`
   visibility: hidden;
   width: auto;
@@ -86,7 +84,6 @@ export const Tooltip = ({
   whiteSpace,
   position,
   textAlign,
-  mrLeft,
 }: TooltipProps) => (
   <TooltipContainer>
     {children}
@@ -98,7 +95,6 @@ export const Tooltip = ({
       fontWeight={fontWeight}
       margin={margin}
       minWidth={minWidth}
-      mrLeft={mrLeft}
       padding={padding}
       position={position}
       textAlign={textAlign}

@@ -1,5 +1,5 @@
+import Tooltip from '@mui/material/Tooltip'
 import styled, { keyframes } from 'styled-components'
-import { Tooltip } from '~/components/common/ToolTip'
 import { ExtractedEntity } from '~/types'
 import { colors } from '~/utils'
 
@@ -41,7 +41,6 @@ const Highlight = styled.span<{ animate: boolean }>`
 export function highlightAiSummary(
   sDescription: string,
   handleSubmit: (search: string) => void,
-  mousePosition: number,
   entities?: ExtractedEntity[],
   isDescriptionComplete?: boolean,
 ) {
@@ -59,16 +58,6 @@ export function highlightAiSummary(
 
   const parts = sDescription.split(regex)
 
-  let positionLeft: string
-
-  if (mousePosition <= 180) {
-    positionLeft = '145%'
-  } else if (mousePosition >= 250) {
-    positionLeft = '10%'
-  } else {
-    positionLeft = '50%'
-  }
-
   return (
     <>
       {parts.map((part, index) => {
@@ -78,7 +67,7 @@ export function highlightAiSummary(
           const uniqueKey = `${entity.entity}-${index}`
 
           return (
-            <StyledTooltip key={uniqueKey} content={entity.description} positionLeft={positionLeft}>
+            <StyledTooltip key={uniqueKey} title={entity.description}>
               <Highlight animate={!!isDescriptionComplete} onClick={() => handleSubmit(part)}>
                 {part}
               </Highlight>
@@ -96,23 +85,17 @@ function escapeRegExp(string: string) {
   return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }
 
-const StyledTooltip = styled(({ className, positionLeft, ...props }) => (
-  <Tooltip
-    {...props}
-    backgroundColor={colors.BG2}
-    borderRadius="6px"
-    className={className}
-    color="white"
-    fontSize="12px"
-    fontWeight="500"
-    minWidth="160px"
-    mrLeft={positionLeft}
-    padding="10px"
-    textAlign="start"
-    whiteSpace="normal"
-  />
-))`
-  & .tooltip-content {
+const StyledTooltip = styled((props) => <Tooltip classes={{ popper: props.className }} {...props} />)`
+  & .MuiTooltip-tooltip {
+    background-color: ${colors.BG4};
     color: white;
+    font-family: Barlow;
+    font-size: 14px;
+    font-weight: 500;
+    max-width: 180px;
+    padding: 10px;
+    transition: opacity 0.3s;
+    text-align: start;
+    white-space: normal;
   }
 `
