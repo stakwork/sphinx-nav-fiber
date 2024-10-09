@@ -13,7 +13,7 @@ import { media } from '~/utils/media'
 export const AppBar = () => {
   const appMetaData = useAppStore((s) => s.appMetaData)
   const { resetAiSummaryAnswer, setNewLoading } = useAiSummaryStore()
-  const { abortFetchData } = useDataStore((s) => s)
+  const { abortFetchData, resetGraph } = useDataStore((s) => s)
   const navigate = useNavigate()
 
   if (!appMetaData) {
@@ -23,6 +23,7 @@ export const AppBar = () => {
   const handleLogoClick = () => {
     setNewLoading(null)
     abortFetchData()
+    resetGraph()
     resetAiSummaryAnswer()
     navigate('/')
   }
