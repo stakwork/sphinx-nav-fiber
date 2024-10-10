@@ -3,6 +3,7 @@ import { useState } from 'react'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { Tooltip } from '~/components/common/ToolTip'
+import ClearIcon from '~/components/Icons/ClearIcon'
 import InfoIcon from '~/components/Icons/InfoIcon'
 import { useDataStore } from '~/stores/useDataStore'
 import { colors } from '~/utils'
@@ -34,7 +35,8 @@ export const Alerts = () => {
           </div>
         </Tooltip>
       </Info>
-      <Popover
+
+      <StyledPopover
         anchorEl={anchorEl}
         anchorOrigin={{
           vertical: 'bottom',
@@ -44,6 +46,9 @@ export const Alerts = () => {
         onClose={handleClose}
         open={open}
       >
+        <CloseButton onClick={handleClose}>
+          <ClearIcon />
+        </CloseButton>
         <ContentWrapper p={16}>
           {runningProjectMessages.map((i) => (
             <p key={i} className="item">
@@ -51,7 +56,7 @@ export const Alerts = () => {
             </p>
           ))}
         </ContentWrapper>
-      </Popover>
+      </StyledPopover>
     </AlertWrapper>
   ) : null
 }
@@ -64,18 +69,35 @@ const AlertWrapper = styled(Flex).attrs({
 })``
 
 const ContentWrapper = styled(Flex)`
-  max-height: 33vh;
+  max-height: 50vh;
   max-width: 30vw;
-  background: ${colors.BG1};
+  background: transparent;
+  padding-top: 1px !important;
+  padding-bottom: 0 !important;
+  overflow-y: auto;
+
+  &::-webkit-scrollbar {
+    width: 3px;
+  }
+
+  &::-webkit-scrollbar-track {
+    border-radius: 9px;
+    margin: 4px;
+    overflow-y: hidden;
+  }
 
   .item {
     padding: 8px 0;
-    border-bottom: 1px solid ${colors.black};
     word-break: break-word;
+    font-family: 'Barlow';
+    font-size: 12px;
+    font-weight: 400;
+    text-align: right;
+    color: ${colors.GRAY6};
   }
 
-  .item:last-child {
-    border: none;
+  &:hover {
+    background: ${colors.MESSAGE_BG_HOVER};
   }
 `
 
@@ -123,5 +145,44 @@ const Info = styled(Flex).attrs({
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+`
+
+const CloseButton = styled.div`
+  position: absolute;
+  top: 0;
+  right: 0;
+  transform: translate(50%, -50%);
+  cursor: pointer;
+  display: none;
+  z-index: 1;
+  width: 2em;
+  height: 2em;
+  background-color: ${colors.BUTTON1};
+  border-radius: 50%;
+  align-items: center;
+  justify-content: center;
+
+  svg {
+    fill: ${colors.white} !important;
+    width: 1.5em;
+    height: 1.5em;
+  }
+`
+
+const StyledPopover = styled(Popover)`
+  .MuiPopover-paper {
+    margin-top: 4px;
+    background-color: transparent !important;
+    box-shadow: none;
+    background: ${colors.MESSAGE_BG};
+    border-radius: 6px;
+    overflow: visible;
+
+    &:hover {
+      ${CloseButton} {
+        display: flex;
+      }
+    }
   }
 `
