@@ -160,6 +160,7 @@ export const Body = ({ Close }: BodyProps) => {
             <EditorWrapper>
               <InnerEditorWrapper>
                 <AddEdgeNode
+                  key={edgeData.refId}
                   edgeData={edgeData}
                   setGraphLoading={setGraphLoading}
                   setIsAddEdgeNode={setIsAddEdgeNode}
@@ -194,18 +195,9 @@ export const Body = ({ Close }: BodyProps) => {
                 links={filteredLinks}
                 onEdgeClick={(refId, edgeType, source, target) => {
                   setEdgeData({ refId, edgeType, source, target })
-
-                  if (!isAddEdgeNode) {
-                    setIsAddEdgeNode(true)
-                    setIsCreateNew(false)
-                    setSelectedSchemaId('')
-                  } else {
-                    setIsAddEdgeNode(false)
-
-                    setTimeout(() => {
-                      setIsAddEdgeNode(true)
-                    }, 200)
-                  }
+                  setIsAddEdgeNode(true)
+                  setIsCreateNew(false)
+                  setSelectedSchemaId('')
                 }}
                 schemasWithPositions={schemasWithChildren}
                 selectedSchemaId={selectedSchemaId}
