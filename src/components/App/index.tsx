@@ -165,7 +165,7 @@ export const App = () => {
 
         queueRef.current = { nodes: [], edges: [] } // Reset the queue
         addNewNode(batchedData) // Call the original addNewNode function with batched data
-      }, 3000) // Adjust delay as necessary
+      }, 3000) // Adjust delay as necessar
     },
     [addNewNode, isFetching],
   )
