@@ -1,5 +1,5 @@
 import { Leva } from 'leva'
-import { lazy, Suspense, useCallback, useEffect } from 'react'
+import { lazy, Suspense, useCallback, useEffect, useRef } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useSearchParams } from 'react-router-dom'
 import 'react-toastify/dist/ReactToastify.css'
@@ -23,6 +23,7 @@ import {
   AiSummaryQuestionsResponse,
   AiSummarySourcesResponse,
   ExtractedEntitiesResponse,
+  FetchDataResponse,
 } from '~/types'
 import { colors } from '~/utils/colors'
 import { updateBudget } from '~/utils/setBudget'
@@ -56,6 +57,8 @@ export const App = () => {
   const [searchParams] = useSearchParams()
   const query = searchParams.get('q')
   const { setBudget, setNodeCount } = useUserStore((s) => s)
+  const queueRef = useRef<FetchDataResponse | null>(null)
+  const timerRef = useRef<NodeJS.Timeout | null>(null)
 
   const {
     setSidebarOpen,
@@ -69,7 +72,16 @@ export const App = () => {
 
   const setTeachMeAnswer = useTeachStore((s) => s.setTeachMeAnswer)
 
-  const { fetchData, setCategoryFilter, setAbortRequests, addNewNode, splashDataLoading } = useDataStore((s) => s)
+  const {
+    fetchData,
+    setCategoryFilter,
+    setAbortRequests,
+    addNewNode,
+    splashDataLoading,
+    runningProjectId,
+    setRunningProjectMessages,
+    isFetching,
+  } = useDataStore((s) => s)
 
   const { setAiSummaryAnswer, getKeyExist, aiRefId } = useAiSummaryStore((s) => s)
 
@@ -125,6 +137,39 @@ export const App = () => {
     setNodeCount('INCREMENT')
   }, [setNodeCount])
 
+  const handleNewNodeCreated = useCallback(
+    (data: FetchDataResponse) => {
+      if (isFetching) {
+        return
+      }
+
+      if (!queueRef.current) {
+        queueRef.current = { nodes: [], edges: [] }
+      }
+
+      if (data.edges) {
+        queueRef.current.edges.push(...data.edges)
+      }
+
+      if (data.nodes) {
+        queueRef.current.nodes.push(...data.nodes)
+      }
+
+      if (timerRef.current) {
+        clearTimeout(timerRef.current)
+      }
+
+      timerRef.current = setTimeout(() => {
+        // Combine all queued data into a single update
+        const batchedData = { ...queueRef.current }
+
+        queueRef.current = { nodes: [], edges: [] } // Reset the queue
+        addNewNode(batchedData) // Call the original addNewNode function with batched data
+      }, 3000) // Adjust delay as necessary
+    },
+    [addNewNode, isFetching],
+  )
+
   const handleAiSummaryAnswer = useCallback(
     (data: AiSummaryAnswerResponse) => {
       if (data.ref_id) {
@@ -162,15 +207,6 @@ export const App = () => {
       }
     },
     [setAiSummaryAnswer],
-  )
-
-  const handleNewNodeCreated = useCallback(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (data: any) => {
-      // Use the data recieved to create graph in realtime
-      addNewNode(data)
-    },
-    [addNewNode],
   )
 
   const handleExtractedEntities = useCallback(
@@ -238,14 +274,41 @@ export const App = () => {
   ])
 
   useEffect(() => {
-    const ws = new WebSocket('wss://staging.stakwork.com/cable')
+    if (!runningProjectId) {
+      return
+    }
+
+    const ws = new WebSocket('wss://jobs.stakwork.com/cable?channel=ProjectLogChannel')
 
     ws.onopen = () => {
-      console.log('WebSocket connection established')
+      let id = 'a'
+
+      id = runningProjectId
+
+      const command = {
+        command: 'subscribe',
+        identifier: JSON.stringify({ channel: 'ProjectLogChannel', id }),
+      }
+
+      // Send the command as a JSON string
+      ws.send(JSON.stringify(command))
     }
 
     ws.onmessage = (event) => {
       console.log('Message from server:', event.data)
+
+      const data = JSON.parse(event.data)
+
+      if (data.type === 'ping') {
+        return
+      }
+
+      const message = data?.message?.message
+
+      if (message) {
+        setRunningProjectMessages(message)
+      }
+
       // Handle the message from the server here
     }
 
@@ -256,12 +319,7 @@ export const App = () => {
     ws.onclose = () => {
       console.log('WebSocket connection closed')
     }
-
-    // Cleanup when the component is unmounted
-    return () => {
-      ws.close()
-    }
-  }, [])
+  }, [runningProjectId, setRunningProjectMessages])
 
   useEffect(() => {
     if (chatInterfaceFeatureFlag && !splashDataLoading) {

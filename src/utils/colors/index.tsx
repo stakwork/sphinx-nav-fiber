@@ -5,6 +5,7 @@ export const colors = {
   bluePressState: 'rgb(57, 97, 220)',
   addAttributeBtn: 'rgba(107, 122, 141, 0.25)',
   blueTextAccent: 'rgb(130, 180, 255)',
+  colorPickerThing: 'rgba(255, 158, 239, 1)',
   body: 'rgb(21, 30, 39)',
   boostBg1: 'rgb(32, 63, 62)',
   budgetExplanationModalBg: 'rgb(21, 28, 35)',

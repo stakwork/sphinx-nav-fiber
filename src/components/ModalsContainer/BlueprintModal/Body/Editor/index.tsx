@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Button, Grid } from '@mui/material'
-import { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
@@ -18,7 +18,10 @@ import { useModal } from '~/stores/useModalStore'
 import { colors } from '~/utils'
 import { CreateCustomNodeAttribute } from './CustomAttributesStep'
 import MediaOptions from './MediaOptions'
+import { Icons } from '~/components/Icons'
 import { convertAttributes, parsedObjProps, parseJson } from './utils'
+import { ColorPickerPopover } from './ColorPickerPopover'
+import { useAppStore } from '~/stores/useAppStore'
 
 const defaultValues = {
   type: '',
@@ -68,6 +71,8 @@ const handleSubmitForm = async (
   data: FieldValues,
   isUpdate = false,
   deletedAttributes: string[],
+  selectedPrimaryColor: string,
+  selectedIcon: string,
   mediaOptions: { videoAudio: boolean; image: boolean; sourceLink: boolean },
   initialMediaOptions: { videoAudio: boolean; image: boolean; sourceLink: boolean },
 ): Promise<string | undefined> => {
@@ -84,12 +89,22 @@ const handleSubmitForm = async (
       attributes: { [key: string]: string }
       index?: string
       media_url?: string
+      primary_color?: string
+      icon?: string
       image_url?: string
       source_link?: string
     } = {
       ...withoutAttributes,
       attributes: updatedAttributes,
       index: selectedIndex,
+    }
+
+    if (selectedPrimaryColor) {
+      requestData.primary_color = selectedPrimaryColor
+    }
+
+    if (selectedIcon) {
+      requestData.icon = selectedIcon
     }
 
     if (mediaOptions.videoAudio) {
@@ -209,6 +224,13 @@ export const Editor = ({
     sourceLink: false,
   })
 
+  const { selectedColor, selectedIcon } = useAppStore((s) => s)
+  const [isPopoverOpen, setPopoverOpen] = useState(!!selectedSchema)
+
+  const selectedPrimaryColor = selectedColor.replace('#', '')
+
+  const handleColorPickerPopover = () => setPopoverOpen(!isPopoverOpen)
+
   useEffect(
     () => () => {
       reset()
@@ -244,6 +266,8 @@ export const Editor = ({
     resetForm()
 
     if (selectedSchema) {
+      setPopoverOpen(true)
+
       setValue('type', selectedSchema.type as string)
       setValue('parent', selectedSchema.parent)
 
@@ -280,8 +304,7 @@ export const Editor = ({
   const attributesValue = watch('attributes')
 
   const attributes: Attribute[] = useMemo(
-    () =>
-      isAttributeArray(attributesValue) ? attributesValue.filter((attr) => attr.key && attr.key.trim() !== '') : [],
+    () => (isAttributeArray(attributesValue) ? attributesValue : []),
     [attributesValue],
   )
 
@@ -346,6 +369,8 @@ export const Editor = ({
         await editNodeSchemaUpdate(selectedSchema?.ref_id as string, {
           type: data.type,
           parent: newParent as string,
+          primary_color: selectedPrimaryColor,
+          icon: selectedIcon,
           attributes: {
             index: selectedIndex as string,
           },
@@ -358,6 +383,8 @@ export const Editor = ({
         { ...data, ...(selectedSchema ? { ref_id: selectedSchema?.ref_id } : {}) },
         !!selectedSchema,
         deletedAttributes,
+        selectedPrimaryColor,
+        selectedIcon,
         mediaOptions,
         {
           videoAudio: !!selectedSchema?.media_url,
@@ -436,23 +463,29 @@ export const Editor = ({
     return undefined
   }, [parent, selectedSchema, selectedNodeParentOptions])
 
+  const selectedIndex = watch('selectedIndex')
+
   const resolvedSelectedIndexValue = useMemo((): TAutocompleteOption | undefined => {
-    if (!selectedSchema) {
-      return undefined
+    if (selectedIndex) {
+      return { label: selectedIndex, value: selectedIndex }
     }
 
-    const option = attributes.find((attr) => attr.key === selectedSchema.index)
+    if (selectedSchema) {
+      const option = attributes.find((attr) => attr.key === selectedSchema.index)
 
-    if (option) {
-      return { label: option.key, value: option.key }
-    }
+      if (option) {
+        return { label: option.key, value: option.key }
+      }
 
-    if (selectedSchema.index) {
-      return { label: selectedSchema.index, value: selectedSchema.index }
+      if (selectedSchema.index) {
+        return { label: selectedSchema.index, value: selectedSchema.index }
+      }
     }
 
     return undefined
-  }, [selectedSchema, attributes])
+  }, [selectedSchema, attributes, selectedIndex])
+
+  const IconComponent = Icons[selectedIcon as keyof typeof Icons]
 
   return (
     <Flex>
@@ -473,7 +506,6 @@ export const Editor = ({
                     <Flex mb={12}>
                       <Text>Select Parent</Text>
                     </Flex>
-
                     <AutoComplete
                       isLoading={parentsLoading}
                       onSelect={(e) => {
@@ -483,23 +515,32 @@ export const Editor = ({
                       options={parentOptions}
                       selectedValue={resolvedParentValue()}
                     />
+
                     {displayParentError && <StyledError>A parent type must be selected</StyledError>}
                   </Flex>
+
                   <Flex>
                     <Flex mb={12}>
                       <Text>Type name</Text>
                     </Flex>
                     <Flex mb={12}>
-                      <TextInput
-                        id="cy-item-name"
-                        maxLength={250}
-                        name="type"
-                        placeholder="Enter type name"
-                        rules={{
-                          ...requiredRule,
-                        }}
-                        value={parent}
-                      />
+                      <InputIconWrapper>
+                        <InputWrapper>
+                          <TextInput
+                            id="cy-item-name"
+                            maxLength={250}
+                            name="type"
+                            placeholder="Enter type name"
+                            rules={{
+                              ...requiredRule,
+                            }}
+                            value={parent}
+                          />
+                        </InputWrapper>
+                        <ColorPickerIconWrapper onClick={handleColorPickerPopover} selectedColor={selectedColor}>
+                          {IconComponent && <IconComponent />}
+                        </ColorPickerIconWrapper>
+                      </InputIconWrapper>
                     </Flex>
                   </Flex>
                 </>
@@ -510,18 +551,25 @@ export const Editor = ({
                       <Text>Name</Text>
                     </Flex>
                     <Flex mb={12}>
-                      <TextInput
-                        dataTestId="cy-item-name"
-                        defaultValue={selectedSchema?.type}
-                        id="cy-item-name"
-                        maxLength={250}
-                        name="type"
-                        placeholder="Enter type name"
-                        rules={{
-                          ...requiredRule,
-                        }}
-                        value={parent}
-                      />
+                      <InputIconWrapper>
+                        <InputWrapper>
+                          <TextInput
+                            dataTestId="cy-item-name"
+                            defaultValue={selectedSchema?.type}
+                            id="cy-item-name"
+                            maxLength={250}
+                            name="type"
+                            placeholder="Enter type name"
+                            rules={{
+                              ...requiredRule,
+                            }}
+                            value={parent}
+                          />
+                        </InputWrapper>
+                        <ColorPickerIconWrapper onClick={handleColorPickerPopover} selectedColor={selectedColor}>
+                          <IconComponent />
+                        </ColorPickerIconWrapper>
+                      </InputIconWrapper>
                     </Flex>
                   </Flex>
                   <Flex mb={12}>
@@ -547,7 +595,11 @@ export const Editor = ({
               onDelete={handleDeleteAttribute}
               parent={selectedSchema ? selectedSchema.type : parent}
             />
-            <MediaOptions initialOptions={mediaOptions} setMediaOptions={setMediaOptions} />
+            <MediaOptions
+              initialOptions={mediaOptions}
+              setMediaOptions={setMediaOptions}
+              setSubmitDisabled={setSubmitDisabled}
+            />
             <Flex>
               <LineBar />
               <Flex mb={12} mt={12}>
@@ -556,7 +608,7 @@ export const Editor = ({
               <Grid item mb={2} width="70%">
                 <AutoComplete
                   onSelect={(val) => setValue('selectedIndex', val?.value || '')}
-                  options={attributes.map((attr) => ({ label: attr.key, value: attr.key }))}
+                  options={attributes.filter((attr) => attr.key).map((attr) => ({ label: attr.key, value: attr.key }))}
                   selectedValue={resolvedSelectedIndexValue}
                 />
               </Grid>
@@ -601,6 +653,7 @@ export const Editor = ({
             </Flex>
           </form>
         </FormProvider>
+        <ColorPickerPopover isOpen={isPopoverOpen} />
       </Flex>
     </Flex>
   )
@@ -684,4 +737,32 @@ const HeaderText = styled(Text)`
   letter-spacing: 0.01em;
   text-align: left;
   color: ${colors.white};
+`
+
+const ColorPickerIconWrapper = styled.span<{ selectedColor?: string }>`
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  margin-left: 12px;
+  background: ${(props) => props.selectedColor ?? colors.THING};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  svg {
+    width: 22px;
+    height: 22px;
+    object-fit: contain;
+    color: white;
+  }
+`
+
+const InputIconWrapper = styled(Flex)`
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: row;
+`
+
+const InputWrapper = styled(Flex)`
+  width: 320px;
 `

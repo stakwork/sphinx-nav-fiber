@@ -9,9 +9,10 @@ type MediaOptionKey = 'videoAudio' | 'image' | 'sourceLink'
 type MediaOptionsProps = {
   setMediaOptions: (options: { videoAudio: boolean; image: boolean; sourceLink: boolean }) => void
   initialOptions: { videoAudio: boolean; image: boolean; sourceLink: boolean }
+  setSubmitDisabled: (disabled: boolean) => void
 }
 
-const MediaOptions = ({ setMediaOptions, initialOptions }: MediaOptionsProps) => {
+const MediaOptions = ({ setMediaOptions, initialOptions, setSubmitDisabled }: MediaOptionsProps) => {
   const [mediaOptions, setLocalMediaOptions] = useState(initialOptions)
 
   useEffect(() => {
@@ -26,6 +27,7 @@ const MediaOptions = ({ setMediaOptions, initialOptions }: MediaOptionsProps) =>
       }
 
       setMediaOptions(newOptions)
+      setSubmitDisabled(false)
 
       return newOptions
     })

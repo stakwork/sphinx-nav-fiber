@@ -6,6 +6,7 @@ export type UserStore = {
   isAdmin: boolean
   isAuthenticated: boolean
   pubKey: string
+  signedToken: string
   setIsAdmin: (val: boolean) => void
   setPubKey: (val: string) => void
   budget: number | null
@@ -15,13 +16,24 @@ export type UserStore = {
   tribeUuid: string
   setTribeUuid: (val: string) => void
   tribeHost: string
+  swarmUiUrl: string
   setTribeHost: (val: string) => void
   setIsAuthenticated: (val: boolean) => void
+  setSignedToken: (val: string) => void
+  setSwarmUiUrl: (val: string) => void
 }
 
 const defaultData: Omit<
   UserStore,
-  'setIsAdmin' | 'setPubKey' | 'setBudget' | 'setNodeCount' | 'setTribeUuid' | 'setTribeHost' | 'setIsAuthenticated'
+  | 'setIsAdmin'
+  | 'setPubKey'
+  | 'setBudget'
+  | 'setNodeCount'
+  | 'setTribeUuid'
+  | 'setTribeHost'
+  | 'setIsAuthenticated'
+  | 'setSignedToken'
+  | 'setSwarmUiUrl'
 > = {
   isAdmin: false,
   isAuthenticated: false,
@@ -30,6 +42,8 @@ const defaultData: Omit<
   nodeCount: 0,
   tribeHost: '',
   tribeUuid: '',
+  signedToken: '',
+  swarmUiUrl: '',
 }
 
 export const useUserStore = create<UserStore>((set) => ({
@@ -48,4 +62,6 @@ export const useUserStore = create<UserStore>((set) => ({
   setTribeUuid: (tribeUuid) => set({ tribeUuid }),
   setTribeHost: (tribeHost) => set({ tribeHost }),
   setIsAuthenticated: (isAuthenticated) => set({ isAuthenticated }),
+  setSignedToken: (signedToken) => set({ signedToken }),
+  setSwarmUiUrl: (swarmUiUrl) => set({ swarmUiUrl }),
 }))

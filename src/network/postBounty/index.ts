@@ -1,4 +1,5 @@
-import { api } from '~/network/api'
+import { api, request } from '~/network/api'
+import { TRIBE_BASE_URL } from '~/utils/constants'
 
 type BountyPayload = {
   type: string
@@ -11,8 +12,42 @@ type BountyPayload = {
   }
 }
 
+interface TribeUserDetails {
+  id: number
+  uuid: string
+  unique_name: string
+  owner_alias: string
+}
+
+interface TribeWorkspace {
+  name: string
+  uuid: string
+}
+
 export const postBountyData = async (payload: BountyPayload) => {
   const response = await api.post('/bounty', JSON.stringify(payload))
+
+  return response
+}
+
+export const getTribeUserDetails = async (pubkey: string) => {
+  const response = await request<TribeUserDetails>(`${TRIBE_BASE_URL}/person/${pubkey}`, {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    method: 'GET',
+  })
+
+  return response
+}
+
+export const getWorkspace = async (id: number) => {
+  const response = await request<TribeWorkspace[]>(`${TRIBE_BASE_URL}/workspaces/user/${id}`, {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    method: 'GET',
+  })
 
   return response
 }

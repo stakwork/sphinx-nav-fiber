@@ -123,10 +123,11 @@ const defaultViewContentParams = {
 export interface Schema {
   name?: string
   ref_id?: string
-  type?: string
+  type: string
   age?: number
   parent?: string
   link?: string
+  icon?: string
   title?: string
   app_version?: string
   description?: string
@@ -141,7 +142,7 @@ export interface Schema {
   media_url?: string
   image_url?: string
   source_link?: string
-  attributes?: { [key: string]: string }
+  attributes?: { [key: string]: string | boolean }
 }
 
 export interface SchemaLink {
@@ -180,6 +181,8 @@ interface UpdateEdgeData {
 export interface UpdateSchemaParams {
   type: string
   parent: string
+  primary_color?: string
+  icon?: string
   attributes: {
     index: string
   }
