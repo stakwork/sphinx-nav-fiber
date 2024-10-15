@@ -142,7 +142,17 @@ describe('Auth Component', () => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     sphinx.enable.mockResolvedValue({ pubkey: 'testPubkey' })
-    getIsAdminMock.mockResolvedValue({ data: { isAdmin: false, isPublic: false, isMember: false } })
+
+    getIsAdminMock.mockRejectedValue({
+      response: {
+        status: 401,
+        data: {
+          status: 'error',
+          message: 'Permission denied',
+        },
+      },
+    })
+
     getSignedMessageFromRelayMock.mockResolvedValue({ message: 'testMessage', signature: 'testSignature' })
 
     render(
@@ -157,7 +167,13 @@ describe('Auth Component', () => {
       </MemoryRouter>,
     )
 
-    await waitFor(() => expect(screen.getByText(message)).toBeInTheDocument())
+    await waitFor(() => {
+      expect(getIsAdminMock).toHaveBeenCalled()
+    })
+
+    await waitFor(() => {
+      expect(screen.getByText(message)).toBeInTheDocument()
+    })
   })
 
   test.skip('the unauthorized state is correctly set when the user lacks proper credentials', async () => {

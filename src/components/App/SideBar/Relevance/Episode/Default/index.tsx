@@ -15,7 +15,6 @@ import { colors } from '~/utils/colors'
 export type Props = {
   boostCount: number
   date: number
-  episodeTitle: string
   imageUrl?: string
   showTitle?: string
   sourceLink?: string
@@ -24,20 +23,9 @@ export type Props = {
   node: NodeExtended
 }
 
-export const Default = ({
-  boostCount,
-  date,
-  episodeTitle,
-  imageUrl,
-  showTitle,
-  type,
-  newName,
-  sourceLink,
-  node,
-}: Props) => {
+export const Default = ({ boostCount, date, imageUrl, showTitle, type, newName, sourceLink, node }: Props) => {
   const searchTerm = useAppStore((s) => s.currentSearch)
   const { getNodeKeysByType } = useSchemaStore((s) => s)
-  const descriptionSource = type === 'show' ? showTitle : episodeTitle
   const subtitleSource = type === 'show' ? '' : showTitle
   const subtitle = highlightSearchTerm(String(subtitleSource), searchTerm) as string
 
@@ -45,13 +33,11 @@ export const Default = ({
 
   const { properties = {} } = node
 
-  const [titleDraft = '', subtitleDraft = ''] = nodeKeys.map((key) => properties[key] || '')
+  const [titleDraft = ''] = nodeKeys.map((key) => properties[key] || '')
 
   const nameDraft = titleDraft || newName
-  const descriptionDraft = subtitleDraft || descriptionSource
 
   const name = highlightSearchTerm(String(nameDraft), searchTerm) as string
-  const description = highlightSearchTerm(String(descriptionDraft), searchTerm) as string
 
   return (
     <Flex align="center" direction="row" justify="center">
@@ -78,7 +64,9 @@ export const Default = ({
         </Flex>
 
         {name && <Description data-testid="episode-name">{name}</Description>}
-        {description && <Description data-testid="episode-description">{description}</Description>}
+        {node?.properties?.summary && (
+          <Description data-testid="episode-description">{node?.properties?.summary}</Description>
+        )}
         <Flex align="center" direction="row" justify="flex-start">
           {Boolean(date) && <Date>{moment.unix(date).fromNow()}</Date>}
           {Boolean(subtitle) && <Title>{subtitle}</Title>}

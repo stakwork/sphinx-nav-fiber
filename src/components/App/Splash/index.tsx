@@ -8,9 +8,9 @@ import { getAboutData, getStats } from '~/network/fetchSourcesData'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
 import { colors, formatSplashMessage, formatStatsResponse } from '~/utils'
-import { SphereAnimation } from './SpiningSphere'
 import { AnimatedTextContent } from './animated'
-import { Message, initialMessageData } from './constants'
+import { initialMessageData, Message } from './constants'
+import { SphereAnimation } from './SpiningSphere'
 
 export const Splash = () => {
   const [message, setMessage] = useState<Message>(initialMessageData)
@@ -61,7 +61,9 @@ export const Splash = () => {
     }
 
     return () => {
-      clearInterval(intervalId)
+      if (intervalId) {
+        clearInterval(intervalId)
+      }
     }
   }, [appMetaData, fetchData, isFetching, message, stats])
 

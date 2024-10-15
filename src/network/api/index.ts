@@ -1,7 +1,7 @@
 import { getSignedMessageFromRelay } from '~/utils'
 import { API_URL } from '~/utils/apiUrlFromSwarmHost'
 
-const request = async <Res>(url: string, config?: RequestInit, signal?: AbortSignal): Promise<Res> => {
+export const request = async <Res>(url: string, config?: RequestInit, signal?: AbortSignal): Promise<Res> => {
   let updatedUrl = url
 
   const newUrl = new URL(url)
