@@ -1,6 +1,6 @@
+import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import EditNodeIcon from '~/components/Icons/EditNodeIcon'
-import { imageUrlRegex } from '~/components/ModalsContainer/EditNodeNameModal/utils'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { TextInput } from '~/components/common/TextInput'
@@ -22,9 +22,24 @@ export const TitleEditor = () => {
   const selectedNode = useSelectedNode()
   const nodeType = selectedNode?.node_type as string
 
+  const [properties, setProperties] = useState<{ [key: string]: unknown }>({})
+
+  useEffect(() => {
+    if (selectedNode?.properties) {
+      setProperties(selectedNode.properties)
+    }
+  }, [selectedNode])
+
   const handleEditNode = () => {
     close()
     openAddItemNodeModal()
+  }
+
+  const handleChange = (key: string, value: string) => {
+    setProperties((prev) => ({
+      ...prev,
+      [key]: value,
+    }))
   }
 
   return (
@@ -43,46 +58,27 @@ export const TitleEditor = () => {
         </Flex>
       </Flex>
 
-      <Flex mb={18}>
-        <LabelText
-          style={{
-            marginBottom: 8,
-          }}
-        >
-          Node Name
-        </LabelText>
-        <TextInput
-          id="cy-topic"
-          maxLength={50}
-          name="name"
-          placeholder="Node name"
-          rules={{
-            ...requiredRule,
-          }}
-        />
-      </Flex>
-
-      <Flex mb={36}>
-        <LabelText
-          style={{
-            marginBottom: 8,
-          }}
-        >
-          Image Url
-        </LabelText>
-        <TextInput
-          id="cy-image_url"
-          maxLength={500}
-          name="image_url"
-          placeholder="Image url"
-          rules={{
-            pattern: {
-              message: 'Please enter a valid URL',
-              value: imageUrlRegex,
-            },
-          }}
-        />
-      </Flex>
+      <ScrollableContent>
+        {Object.keys(properties).map((key) => (
+          <Flex key={key} mb={18}>
+            <LabelText
+              style={{
+                marginBottom: 8,
+              }}
+            >
+              {key}
+            </LabelText>
+            <TextInput
+              id={`cy-${key}`}
+              maxLength={50}
+              name={`properties.${key}`}
+              onChange={(value: string) => handleChange(key, value)}
+              placeholder={`Please Enter the ${key}`}
+              rules={key === 'name' ? { ...requiredRule } : {}}
+            />
+          </Flex>
+        ))}
+      </ScrollableContent>
     </Flex>
   )
 }
@@ -116,4 +112,12 @@ const EditIconWrapper = styled(Flex)`
   svg {
     fill: none;
   }
+`
+
+const ScrollableContent = styled(Flex)`
+  display: flex;
+  max-height: 60vh;
+  overflow-y: auto;
+  padding-right: 40px;
+  width: calc(100% + 40px);
 `

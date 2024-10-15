@@ -1,18 +1,18 @@
-import { Button, Grid, IconButton, Switch } from '@mui/material'
+import { Grid, IconButton, Switch, SwitchProps } from '@mui/material'
 import { Fragment, useEffect, useState } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
 import { NoParent, OptionTypes } from '~/components/AddItemModal/SourceTypeStep/constants'
-import DeleteIcon from '~/components/Icons/DeleteIcon'
-import PlusIcon from '~/components/Icons/PlusIcon'
 import { AutoComplete } from '~/components/common/AutoComplete'
 import { Flex } from '~/components/common/Flex'
 import { TextInput } from '~/components/common/TextInput'
+import DeleteIcon from '~/components/Icons/DeleteIcon'
+import PlusIcon from '~/components/Icons/PlusIcon'
 import { requiredRule } from '~/constants'
 import { getNodeType } from '~/network/fetchSourcesData'
 import { colors } from '~/utils'
-import { parseJson, parsedObjProps } from '../../utils'
+import { parsedObjProps, parseJson } from '../../utils'
 
 const noSpacePattern = /^[a-z0-9_]+$/
 
@@ -117,27 +117,29 @@ export const FormInput = ({
                     />
                   </Grid>
                   <Grid item xs={3}>
-                    <Switch
-                      checked={checked}
-                      data-testid={`cy-item-${index}`}
-                      disabled={requiredKey}
-                      name={`attributes.${index}.required` as const}
-                      onChange={(e) => setValue(`attributes[${index}].required`, e.target.checked)}
-                      size="small"
-                    />
-                    {!requiredKey && (
-                      <IconButton
-                        onClick={() => {
-                          remove(index)
+                    <FlexContainer>
+                      <CustomSwitch
+                        checked={checked}
+                        data-testid={`cy-item-${index}`}
+                        disabled={requiredKey}
+                        name={`attributes.${index}.required` as const}
+                        onChange={(e) => setValue(`attributes[${index}].required`, e.target.checked)}
+                      />
 
-                          if (field.key !== undefined && onDelete) {
-                            onDelete(field.key)
-                          }
-                        }}
-                      >
-                        <DeleteIcon />
-                      </IconButton>
-                    )}
+                      {!requiredKey && (
+                        <IconButton
+                          onClick={() => {
+                            remove(index)
+
+                            if (field.key !== undefined && onDelete) {
+                              onDelete(field.key)
+                            }
+                          }}
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      )}
+                    </FlexContainer>
                   </Grid>
                 </Fragment>
               )
@@ -146,15 +148,14 @@ export const FormInput = ({
         </InputsWrapper>
       )}
       <Flex align="flex-start" py={12}>
-        <Button
+        <ViewMoreButton
           data-testid="add-attribute-btn"
           onClick={() => append({ key: '', type: 'string', required: true, isNew: true })}
-          size="medium"
-          startIcon={<PlusIcon />}
-          variant="contained"
         >
-          Add Attribute
-        </Button>
+          <PlusIconWrapper>
+            <PlusIcon /> Add Attribute
+          </PlusIconWrapper>
+        </ViewMoreButton>
       </Flex>
     </>
   )
@@ -164,4 +165,73 @@ const InputsWrapper = styled(Flex)`
   overflow-y: auto;
   width: calc(100% + 20px);
   max-height: calc(80vh - 300px);
+`
+
+const CustomSwitch = styled((props: SwitchProps) => <Switch {...props} />)`
+  &.MuiSwitch-root {
+    width: 51px;
+    height: 38px;
+  }
+  & .MuiSwitch-switchBase {
+    margin-top: 4px;
+    &.Mui-checked {
+      color: ${colors.white};
+      & + .MuiSwitch-track {
+        background-color: ${colors.primaryBlueBorder};
+        opacity: 1;
+      }
+    }
+  }
+  & .MuiSwitch-thumb {
+    width: 12px;
+    height: 12px;
+  }
+  & .MuiSwitch-track {
+    border-radius: 10px;
+    background-color: ${colors.BG2};
+    opacity: 1;
+  }
+`
+
+const FlexContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+`
+
+const ViewMoreButton = styled.button`
+  background: transparent;
+  width: 149px;
+  height: 32px;
+  color: ${colors.white};
+  border: 1px solid ${colors.addAttributeBtn};
+  padding: 2px 18px 12px 12px;
+  margin-top: 2px;
+  cursor: pointer;
+  border-radius: 6px;
+  font-family: Barlow;
+  font-size: 14px;
+  font-weight: 400;
+
+  &:hover {
+    background: ${colors.BUTTON1_HOVER};
+  }
+
+  &:active {
+    background: ${colors.BUTTON1_PRESS};
+  }
+`
+
+const PlusIconWrapper = styled.span`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+
+  svg {
+    width: 23px;
+    height: 23px;
+    fill: none;
+    margin-top: 2px;
+  }
 `

@@ -226,6 +226,7 @@ export type SubmitErrRes = {
   error?: { message?: string }
   data: {
     ref_id: string
+    project_id?: string
   }
 }
 
@@ -239,6 +240,7 @@ export type IsAdminResponse = {
     customSchema: boolean
     realtimeGraph: boolean
     chatInterface: boolean
+    swarmUiUrl: string
   }
   success: boolean
   message: string
