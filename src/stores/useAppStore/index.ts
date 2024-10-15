@@ -29,6 +29,10 @@ export type AppStore = {
   setUniverseQuestionIsOpen: () => void
   setCurrentPlayingAudio: (_: React.MutableRefObject<HTMLAudioElement | null> | null) => void
   setShowCollapseButton: (_: boolean) => void
+  selectedColor: string
+  setSelectedColor: (color: string) => void
+  selectedIcon: string
+  setSelectedIcon: (icon: string) => void
 }
 
 const defaultData = {
@@ -45,6 +49,8 @@ const defaultData = {
   appMetaData: null,
   currentPlayingAudio: null,
   showCollapseButton: true,
+  selectedColor: '#962777',
+  selectedIcon: 'ConstructionIcon',
 }
 
 export const useAppStore = create<AppStore>((set, get) => ({
@@ -68,4 +74,6 @@ export const useAppStore = create<AppStore>((set, get) => ({
   setUniverseQuestionIsOpen: () => set({ universeQuestionIsOpen: !get().universeQuestionIsOpen }),
   setAppMetaData: (appMetaData) => set({ appMetaData }),
   setShowCollapseButton: (showCollapseButton) => set({ showCollapseButton }),
+  setSelectedColor: (selectedColor) => set({ selectedColor }),
+  setSelectedIcon: (selectedIcon) => set({ selectedIcon }),
 }))

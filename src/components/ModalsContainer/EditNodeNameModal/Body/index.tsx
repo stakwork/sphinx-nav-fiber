@@ -17,6 +17,7 @@ export type FormData = {
   name: string
   image_url: string
   imageInputType?: boolean
+  [key: string]: unknown
 }
 
 export const Body = () => {
@@ -24,22 +25,20 @@ export const Body = () => {
   const form = useForm<FormData>({ mode: 'onChange' })
   const { watch, setValue, reset, getValues } = form
   const [loading, setLoading] = useState(false)
-
   const [topicIsLoading, setTopicIsLoading] = useState(false)
-
   const [actualTopicNode, setActualTopicNode] = useState<null | Topic>()
-
   const selectedNode = useSelectedNode()
-
   const { open: openRemoveNodeModal } = useModal('removeNode')
 
   useEffect(() => {
     if (actualTopicNode) {
-      setValue('name', actualTopicNode?.name)
+      Object.keys(actualTopicNode).forEach((key) => {
+        setValue(key, actualTopicNode[key as keyof Topic])
+      })
     } else if (selectedNode) {
-      setValue('name', selectedNode.name)
-
-      setValue('image_url', selectedNode?.image_url ?? '')
+      Object.keys(selectedNode).forEach((key) => {
+        setValue(key, selectedNode[key as keyof NodeExtended])
+      })
     }
 
     return () => {
@@ -72,9 +71,6 @@ export const Body = () => {
   }, [selectedNode])
 
   const isValidImageUrl = watch('imageInputType')
-
-  const topicValue = watch('name')
-
   const imageUrl = watch('image_url')
 
   useEffect(() => {
@@ -90,8 +86,7 @@ export const Body = () => {
   const handleSave = async () => {
     setLoading(true)
 
-    const propName = 'name'
-    const updatedData = { [propName]: topicValue.trim(), image_url: imageUrl.trim() }
+    const updatedData = getValues()
 
     try {
       await putNodeData(node?.ref_id || '', { node_data: updatedData })
@@ -130,23 +125,21 @@ export const Body = () => {
         ) : (
           <TitleEditor />
         )}
-        <Flex direction="row" mb={6}>
+        <Flex direction="row" mt={18}>
           <DeleteButton
             color="secondary"
             disabled={topicIsLoading || !node}
             onClick={handleDelete}
             size="large"
-            style={{ marginRight: 20 }}
             variant="contained"
           >
             Delete
           </DeleteButton>
-          <Button
+          <SaveButton
             color="secondary"
             disabled={shouldDisableSave}
             onClick={handleSave}
             size="large"
-            style={{ flex: 1 }}
             variant="contained"
           >
             Save Changes
@@ -155,7 +148,7 @@ export const Body = () => {
                 <ClipLoader color={colors.lightGray} size={12} />
               </ClipLoaderWrapper>
             )}
-          </Button>
+          </SaveButton>
         </Flex>
       </FormProvider>
     </Wrapper>
@@ -170,6 +163,8 @@ const DeleteButton = styled(Button)`
   && {
     color: ${colors.primaryRed};
     background-color: rgba(237, 116, 116, 0.1);
+    flex: 1;
+    margin-right: 10px;
 
     &:hover,
     &:active,
@@ -177,6 +172,12 @@ const DeleteButton = styled(Button)`
       color: ${colors.primaryRed};
       background-color: rgba(237, 116, 116, 0.2);
     }
+  }
+`
+
+const SaveButton = styled(Button)`
+  && {
+    flex: 1;
   }
 `
 

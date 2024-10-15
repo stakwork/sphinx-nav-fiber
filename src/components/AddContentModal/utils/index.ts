@@ -1,4 +1,13 @@
-import { DOCUMENT, LINK, RSS, TWITTER_HANDLE, TWITTER_SOURCE, WEB_PAGE, YOUTUBE_CHANNEL } from '~/constants'
+import {
+  DOCUMENT,
+  GITHUB_REPOSITORY,
+  LINK,
+  RSS,
+  TWITTER_HANDLE,
+  TWITTER_SOURCE,
+  WEB_PAGE,
+  YOUTUBE_CHANNEL,
+} from '~/constants'
 
 export const twitterHandlePattern = /\b(?:twitter\.com|x\.com)\/(?:@)?([\w_]+)(?:$|\?[^/]*$)/
 
@@ -14,8 +23,20 @@ const youtubeChannelPattern = /https?:\/\/(www\.)?youtube\.com\/(user\/)?(@)?([\
 
 const genericUrlRegex = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/
 const twitterBroadcastRegex = /https:\/\/twitter\.com\/i\/broadcasts\/([A-Za-z0-9_-]+)/
+const githubRepoPattern = /https:\/\/github\.com\/[\w-]+\/[\w-]+/
 
-export function getInputType(source: string) {
+export async function checkIfRSS(url: string): Promise<boolean> {
+  try {
+    const response = await fetch(url, { method: 'HEAD' })
+    const contentType = response.headers.get('Content-Type')
+
+    return contentType?.includes('application/rss+xml') ?? false
+  } catch (error) {
+    return false
+  }
+}
+
+export async function getInputType(source: string) {
   const linkPatterns = [
     youtubeLiveRegex,
     twitterBroadcastRegex,
@@ -45,8 +66,14 @@ export function getInputType(source: string) {
     return RSS
   }
 
+  if (githubRepoPattern.test(source)) {
+    return GITHUB_REPOSITORY
+  }
+
   if (genericUrlRegex.test(source)) {
-    return WEB_PAGE
+    const isRSS = await checkIfRSS(source)
+
+    return isRSS ? RSS : WEB_PAGE
   }
 
   return DOCUMENT
@@ -60,4 +87,5 @@ export const extractNameFromLink = (inputString: string, type = ''): string | nu
   return match ? match[1] : null
 }
 
-export const isSource = (type: string): boolean => !!type && [TWITTER_HANDLE, YOUTUBE_CHANNEL, RSS].includes(type)
+export const isSource = (type: string): boolean =>
+  !!type && [TWITTER_HANDLE, YOUTUBE_CHANNEL, RSS, GITHUB_REPOSITORY].includes(type)

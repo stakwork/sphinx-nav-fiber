@@ -41,7 +41,6 @@ const EpisodeWrapper = styled(Flex).attrs({
 export type Props = {
   boostCount: number
   date: number
-  episodeTitle: string
   imageUrl?: string
   showTitle?: string
   text?: string
@@ -58,7 +57,6 @@ export type Props = {
 export const Episode = ({
   boostCount,
   date,
-  episodeTitle,
   imageUrl,
   showTitle,
   type,
@@ -85,7 +83,6 @@ export const Episode = ({
         <Default
           boostCount={boostCount}
           date={date}
-          episodeTitle={episodeTitle}
           imageUrl={imageUrl}
           newName={newName}
           node={node}
