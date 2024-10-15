@@ -4,6 +4,7 @@ type DefaultProps = Required<
   Pick<
     BaseTextInputProps,
     | 'autoComplete'
+    | 'autoCapitalize'
     | 'colorName'
     | 'disabled'
     | 'maxLength'
@@ -18,6 +19,7 @@ type DefaultProps = Required<
 export const defaultProps: DefaultProps = {
   autoComplete: 'off',
   colorName: 'black',
+  autoCapitalize: 'none',
   disabled: false,
   maxLength: 524288,
   placeholder: '',

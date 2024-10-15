@@ -90,6 +90,7 @@ export const FormInput = ({
                 <Fragment key={field.id}>
                   <Grid item xs={5}>
                     <TextInput
+                      autoCapitalize="none"
                       autoComplete="off"
                       className="text-input"
                       dataTestId={`cy-item-name-${index}`}

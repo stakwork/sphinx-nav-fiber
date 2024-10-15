@@ -7,10 +7,13 @@ type TextAlign = 'left' | 'right'
 
 type ReturnKeyType = 'done' | 'go' | 'next' | 'search' | 'send'
 
+type AutoCapitalize = 'characters' | 'none' | 'sentences' | 'words'
+
 export type InputType = 'email' | 'number' | 'password' | 'search' | 'tel' | 'text' | 'url'
 
 export type BaseTextInputProps = {
   autoComplete?: string
+  autoCapitalize?: AutoCapitalize
   autoFocus?: boolean
   className?: string
   colorName?: ColorName

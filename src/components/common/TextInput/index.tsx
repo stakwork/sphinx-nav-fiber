@@ -212,6 +212,7 @@ export const TextInput = ({
                 value={value}
               >
                 <WebTextInput
+                  autoCapitalize="none"
                   colorName="white"
                   data-testid={dataTestId}
                   disabled={disabled}
@@ -226,6 +227,7 @@ export const TextInput = ({
             ) : (
               <BaseTextInput
                 {...props}
+                autoCapitalize="none"
                 colorName="white"
                 dataTestId={dataTestId}
                 id={id}

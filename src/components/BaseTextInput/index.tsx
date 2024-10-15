@@ -8,6 +8,7 @@ export const BaseTextInput = forwardRef(
   (
     {
       autoComplete = defaultProps.autoComplete,
+      autoCapitalize = defaultProps.autoCapitalize,
       autoFocus,
       className,
       colorName = defaultProps.colorName,
@@ -41,6 +42,7 @@ export const BaseTextInput = forwardRef(
     return (
       <WebTextInput
         ref={ref}
+        autoCapitalize={autoCapitalize}
         autoComplete={autoComplete}
         autoFocus={autoFocus}
         className={className}

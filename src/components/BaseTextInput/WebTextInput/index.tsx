@@ -2,7 +2,9 @@ import styled from 'styled-components'
 import { colors } from '~/utils/colors'
 import { BaseTextInputProps } from '../types'
 
-type Props = Required<Pick<BaseTextInputProps, 'colorName' | 'disabled' | 'placeholderTextColor' | 'textAlign'>>
+type Props = Required<
+  Pick<BaseTextInputProps, 'autoCapitalize' | 'colorName' | 'disabled' | 'placeholderTextColor' | 'textAlign'>
+>
 
 export const WebTextInput = styled.input<Props>`
   -webkit-appearance: none;
@@ -16,6 +18,7 @@ export const WebTextInput = styled.input<Props>`
   outline: 0;
   padding: 0;
   text-align: ${({ textAlign }) => textAlign};
+  text-transform: ${({ autoCapitalize }) => autoCapitalize};
 
   &:focus {
     border: none;
