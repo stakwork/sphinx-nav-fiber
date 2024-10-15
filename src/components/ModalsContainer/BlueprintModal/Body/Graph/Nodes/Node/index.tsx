@@ -8,6 +8,7 @@ import { SchemaExtended } from '~/components/ModalsContainer/BlueprintModal/type
 import { fontProps } from '~/components/Universe/Graph/Cubes/Text/constants'
 import { truncateText } from '~/utils/truncateText'
 import { NODE_RADIUS } from '../../constants'
+import { useSchemaStore } from '~/stores/useSchemaStore'
 
 export const NODE_TYPE_COLORS = ['#ff13c9', '#5af0ff', '#3233ff', '#c2f0c2', '#ff6666', '#99ccff', '#ffb3b3']
 
@@ -40,6 +41,7 @@ export const boxGeometry = new BoxGeometry(2, 2, 2)
 
 export const Node = memo(({ node, setSelectedNode, onSimulationUpdate, isSelected }: Props) => {
   const meshRef = useRef<Mesh | null>(null)
+  const [normalizedSchemasByType] = useSchemaStore((s) => [s.normalizedSchemasByType])
   const [showTooltip, setShowTooltip] = useState(false)
 
   console.log(isSelected)
@@ -89,7 +91,9 @@ export const Node = memo(({ node, setSelectedNode, onSimulationUpdate, isSelecte
     }
   })
 
-  const color = NODE_TYPE_COLORS[node?.children?.length] || 'red'
+  const primaryColor = normalizedSchemasByType[node.type]?.primary_color
+
+  const color = primaryColor ?? (NODE_TYPE_COLORS[node?.children?.length] || 'red')
 
   const handleClick = (e: { stopPropagation: () => void }) => {
     e.stopPropagation()
