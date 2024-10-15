@@ -6,7 +6,6 @@ import { Flex } from '~/components/common/Flex'
 import { useAppStore } from '~/stores/useAppStore'
 import { useSelectedNode } from '~/stores/useGraphStore'
 import { NodeExtended } from '~/types'
-import { formatDescription } from '~/utils/formatDescription'
 import { BoostAmt } from '../../Helper/BoostAmt'
 import { Description } from '../Description'
 import { Episode } from '../Relevance/Episode'
@@ -28,7 +27,6 @@ export const Media = ({ node }: Props) => {
     node_type: nodeType,
     id,
     show_title: showTitle,
-    episode_title: episodeTitle,
     ref_id: refId,
   } = node || selectedNode || {}
 
@@ -51,7 +49,6 @@ export const Media = ({ node }: Props) => {
           <StyledEpisode
             boostCount={boostAmount || 0}
             date={date || 0}
-            episodeTitle={formatDescription(episodeTitle)}
             imageUrl={imageUrl}
             node={currentNode}
             onClick={() => null}

@@ -5,17 +5,17 @@ describe('Add Node Type Via BluePrint', () => {
       url: 'http://localhost:8444/api/schema*',
     }).as('schemaRequest')
 
-    cy.intercept({
-      method: 'GET',
-      url: 'http://localhost:8444/api/schema/all*',
-    }).as('schemaList')
-
     cy.initialSetup('alice', 300)
 
     const nodeType = 'Player'
 
     cy.get('[data-testid="add-blueprint-modal"]').click()
-    cy.wait(1000)
+    cy.wait(50000)
+
+    cy.intercept({
+      method: 'GET',
+      url: 'http://localhost:8444/api/schema/all*',
+    }).as('schemaList')
 
     cy.get('[data-testid="add-schema-type"]').click()
     cy.wait('@schemaList')
@@ -40,10 +40,16 @@ describe('Add Node Type Via BluePrint', () => {
     cy.wait('@schemaRequest')
 
     cy.get('body').trigger('keydown', { keyCode: 27 })
-    cy.wait(500)
+    cy.wait(20000)
+
+    cy.intercept({
+      method: 'GET',
+      url: 'http://localhost:8444/api/schema/all*',
+    }).as('schemaList1')
 
     cy.get('[data-testid="add-item-modal"]').click()
-    cy.wait(100)
+
+    cy.wait('@schemaList1')
 
     cy.get(`[data-testid="${nodeType}"]`).click()
     cy.wait(100)

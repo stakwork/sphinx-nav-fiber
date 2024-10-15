@@ -240,6 +240,7 @@ export type IsAdminResponse = {
     customSchema: boolean
     realtimeGraph: boolean
     chatInterface: boolean
+    swarmUiUrl: string
   }
   success: boolean
   message: string

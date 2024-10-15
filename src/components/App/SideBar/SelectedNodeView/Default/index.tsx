@@ -2,6 +2,8 @@ import Button from '@mui/material/Button'
 import clsx from 'clsx'
 import moment from 'moment'
 import { useEffect, useRef, useState } from 'react'
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
+import { okaidia } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import styled from 'styled-components'
 import { Divider } from '~/components/common/Divider'
 import { Flex } from '~/components/common/Flex'
@@ -10,6 +12,7 @@ import { Text } from '~/components/common/Text'
 import { TypeBadge } from '~/components/common/TypeBadge'
 import AiPauseIcon from '~/components/Icons/AiPauseIcon'
 import AiPlayIcon from '~/components/Icons/AiPlayIcon'
+import LinkIcon from '~/components/Icons/LinkIcon'
 import { useAppStore } from '~/stores/useAppStore'
 import { useSelectedNode } from '~/stores/useGraphStore'
 import { colors } from '~/utils/colors'
@@ -69,6 +72,7 @@ export const Default = () => {
   const hasImage = !!selectedNode.properties?.image_url
   const hasAudio = !!selectedNode.properties?.audio_EN
   const customKeys = selectedNode.properties || {}
+  const sourceLink = selectedNode.properties?.source_link
 
   return (
     <StyledContainer>
@@ -86,8 +90,16 @@ export const Default = () => {
       ) : null}
 
       <StyledContent grow={1} justify="flex-start" pt={hasImage ? 0 : 8} shrink={1}>
-        <Flex ml={24} mt={20} style={{ width: 'fit-content' }}>
+        <Flex ml={24} mt={20} style={{ width: 'fit-content', flexDirection: 'row', alignItems: 'center' }}>
           <TypeBadge type={selectedNode.node_type || ''} />
+          {sourceLink && (
+            <StyledLinkIcon
+              href={`${sourceLink}${(sourceLink as string).includes('?') ? '&' : '?'}open=system`}
+              target="_blank"
+            >
+              <LinkIcon />
+            </StyledLinkIcon>
+          )}
         </Flex>
 
         <StyledWrapper>
@@ -123,7 +135,7 @@ const NodeDetail = ({ label, value, hasAudio, isPlaying, togglePlay }: Props) =>
   const isLong = (value as string).length > 140
   const searchTerm = useAppStore((s) => s.currentSearch)
 
-  if (!value || label === 'Audio EN') {
+  if (!value || label === 'Audio EN' || label === 'Source Link') {
     return null
   }
 
@@ -136,7 +148,13 @@ const NodeDetail = ({ label, value, hasAudio, isPlaying, togglePlay }: Props) =>
             <AudioButton onClick={togglePlay}>{isPlaying ? <AiPauseIcon /> : <AiPlayIcon />}</AudioButton>
           )}
         </Text>
-        <Text className="node-detail__value">{highlightSearchTerm(String(value), searchTerm)}</Text>
+        {label !== 'Text' ? (
+          <Text className="node-detail__value">{highlightSearchTerm(String(value), searchTerm)}</Text>
+        ) : (
+          <SyntaxHighlighter language="javascript" style={okaidia}>
+            {String(value)}
+          </SyntaxHighlighter>
+        )}
       </StyledDetail>
       <StyledDivider />
     </>
@@ -243,4 +261,15 @@ const AudioButton = styled(Button)`
 
 const StyledAudio = styled.audio`
   display: none;
+`
+
+const StyledLinkIcon = styled.a`
+  margin-left: 6px;
+  color: ${colors.GRAY6};
+  margin-top: 4px;
+
+  svg {
+    width: 1.3em;
+    height: 1.3em;
+  }
 `
