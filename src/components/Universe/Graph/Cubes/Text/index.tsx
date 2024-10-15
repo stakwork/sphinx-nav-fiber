@@ -1,4 +1,4 @@
-import { Html, Text } from '@react-three/drei'
+import { Svg, Text } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import { Select } from '@react-three/postprocessing'
 import { memo, useMemo, useRef } from 'react'
@@ -11,6 +11,7 @@ import { NodeExtended } from '~/types'
 import { colors } from '~/utils/colors'
 import { removeEmojis } from '~/utils/removeEmojisFromText'
 import { truncateText } from '~/utils/truncateText'
+import { smoothness } from '../Cube/constants'
 import { fontProps } from './constants'
 
 const COLORS_MAP = [
@@ -74,8 +75,10 @@ function splitStringIntoThreeParts(text: string): string {
 
 export const TextNode = memo(({ node, hide }: Props) => {
   const ref = useRef<Mesh | null>(null)
+  const svgRef = useRef<Mesh | null>(null)
   const selectedNode = useSelectedNode()
   const hoveredNode = useHoveredNode()
+
   const selectedNodeRelativeIds = useSelectedNodeRelativeIds()
   const isRelative = selectedNodeRelativeIds.includes(node?.ref_id || '')
   const isSelected = !!selectedNode && selectedNode?.ref_id === node.ref_id
@@ -89,6 +92,11 @@ export const TextNode = memo(({ node, hide }: Props) => {
     if (ref?.current) {
       // Make text face the camera
       ref.current.quaternion.copy(camera.quaternion)
+    }
+
+    if (svgRef?.current) {
+      // Make text face the camera
+      svgRef.current.quaternion.copy(camera.quaternion)
     }
   })
 
@@ -127,6 +135,8 @@ export const TextNode = memo(({ node, hide }: Props) => {
 
   const Icon = primaryIcon ? Icons[primaryIcon] : null
 
+  const iconName = Icon ? primaryIcon : 'AddCircleIcon'
+
   const sanitizedNodeName = removeEmojis(String(node.name))
 
   return (
@@ -148,13 +158,9 @@ export const TextNode = memo(({ node, hide }: Props) => {
       ) : (
         <Select enabled={!!isSelected}>
           <mesh name={node.id} userData={node} visible={!hide}>
-            <sphereGeometry args={[20, 32, 32]} userData={node} />
-            <meshStandardMaterial color="blue" />
-
-            {/* Attach SVG as HTML over the sphere, and it will move with the sphere */}
-            <Html center distanceFactor={100} position={[20, 20, 20]}>
-              <div style={{ color: '#fff', fontSize: '200px', pointerEvents: 'none' }}>{Icon && <Icon />}</div>
-            </Html>
+            <sphereGeometry args={[30, 32, 32]} userData={node} />
+            <meshStandardMaterial {...smoothness} color={color} />
+            <Svg ref={svgRef} position={[20, 20, 20]} scale={2} src={`svg-icons/${iconName}.svg`} />
           </mesh>
         </Select>
       )}
