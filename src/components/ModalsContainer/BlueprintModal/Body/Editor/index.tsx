@@ -504,7 +504,7 @@ export const Editor = ({
                 <>
                   <Flex mb={12}>
                     <Flex mb={12}>
-                      <Text>Select Parent</Text>
+                      <Text>Parent</Text>
                     </Flex>
                     <AutoComplete
                       isLoading={parentsLoading}
@@ -521,7 +521,7 @@ export const Editor = ({
 
                   <Flex>
                     <Flex mb={12}>
-                      <Text>Type name</Text>
+                      <Text>Name</Text>
                     </Flex>
                     <Flex mb={12}>
                       <InputIconWrapper>
@@ -548,6 +548,22 @@ export const Editor = ({
                 <>
                   <Flex mb={12}>
                     <Flex mb={12}>
+                      <Text>Parent</Text>
+                    </Flex>
+
+                    <AutoComplete
+                      isLoading={parentsLoading || graphLoading}
+                      onSelect={(e) => {
+                        setValue('parent', e?.value || '')
+                        setDisplayParentError(false)
+                      }}
+                      options={selectedNodeParentOptions || []}
+                      selectedValue={resolvedSelectedParentValue}
+                    />
+                    {errMessage && <StyledError>{errMessage}</StyledError>}
+                  </Flex>
+                  <Flex mb={12}>
+                    <Flex mb={12}>
                       <Text>Name</Text>
                     </Flex>
                     <Flex mb={12}>
@@ -571,22 +587,6 @@ export const Editor = ({
                         </ColorPickerIconWrapper>
                       </InputIconWrapper>
                     </Flex>
-                  </Flex>
-                  <Flex mb={12}>
-                    <Flex mb={12}>
-                      <Text>Parent</Text>
-                    </Flex>
-
-                    <AutoComplete
-                      isLoading={parentsLoading || graphLoading}
-                      onSelect={(e) => {
-                        setValue('parent', e?.value || '')
-                        setDisplayParentError(false)
-                      }}
-                      options={selectedNodeParentOptions || []}
-                      selectedValue={resolvedSelectedParentValue}
-                    />
-                    {errMessage && <StyledError>{errMessage}</StyledError>}
                   </Flex>
                 </>
               )}
