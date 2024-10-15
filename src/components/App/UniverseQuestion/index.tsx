@@ -10,6 +10,7 @@ import HelpIcon from '~/components/Icons/HelpIcon'
 import { useAiSummaryStore } from '~/stores/useAiSummaryStore'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
+import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { colors } from '~/utils/colors'
 
@@ -60,6 +61,10 @@ export const UniverseQuestion = () => {
     }
   }
 
+  const { chatInterfaceFeatureFlag } = useFeatureFlagStore((s) => ({
+    chatInterfaceFeatureFlag: s.chatInterfaceFeatureFlag,
+  }))
+
   const handleSeedQuestionClick = async (seedQuestion: string) => {
     setQuestion(seedQuestion)
     await handleSubmitQuestion(seedQuestion)
@@ -86,6 +91,10 @@ export const UniverseQuestion = () => {
   }
 
   const isValidText = !!question && question.trim().length > 0
+
+  if (!chatInterfaceFeatureFlag) {
+    return null
+  }
 
   return (
     <Wrapper>
