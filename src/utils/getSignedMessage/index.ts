@@ -35,7 +35,11 @@ export async function getSignedMessageFromRelay(): Promise<{ message: string; si
           .then((storedLsat: any) => {
             signingPromise = null // Reset the promise after it's resolved
 
-            const response = { message, signature: storedLsat.signature }
+            if (!storedLsat) {
+              return { message: '', signature: '' }
+            }
+
+            const response = { message, signature: storedLsat?.signature || '' }
 
             storeSignatureInLocalStorage({ ...response })
 
