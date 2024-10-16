@@ -148,7 +148,7 @@ const NodeDetail = ({ label, value, hasAudio, isPlaying, togglePlay }: Props) =>
             <AudioButton onClick={togglePlay}>{isPlaying ? <AiPauseIcon /> : <AiPlayIcon />}</AudioButton>
           )}
         </Text>
-        {label !== 'Text' ? (
+        {label !== 'Frame' && label !== 'Code' ? (
           <Text className="node-detail__value">{highlightSearchTerm(String(value), searchTerm)}</Text>
         ) : (
           <SyntaxHighlighter language="javascript" style={okaidia}>
