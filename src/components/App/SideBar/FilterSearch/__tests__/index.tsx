@@ -44,8 +44,13 @@ describe('FilterSearch Component', () => {
       fetchData: mockFetchData,
       setAbortRequests: mockSetAbortRequests,
     })
-    ;(useSchemaStore as jest.Mock).mockReturnValue([mockSchemaAll, jest.fn()])
-    ;(useFeatureFlagStore as jest.Mock).mockReturnValue({ fastFiltersFeatureFlag: true })
+
+    //
+    ;(useSchemaStore as jest.Mock)
+      .mockReturnValue([mockSchemaAll, jest.fn()])(useFeatureFlagStore as jest.Mock)
+      .mockReturnValue({ fastFiltersFeatureFlag: true })
+
+    //
     ;(getSchemaAll as jest.Mock).mockResolvedValue({ schemas: mockSchemaAll })
   })
 
