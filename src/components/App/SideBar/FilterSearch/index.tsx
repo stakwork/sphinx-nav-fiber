@@ -5,6 +5,7 @@ import ClearIcon from '~/components/Icons/ClearIcon'
 import { Flex } from '~/components/common/Flex'
 import { getSchemaAll } from '~/network/fetchSourcesData'
 import { useDataStore } from '~/stores/useDataStore'
+import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
 import { useSchemaStore } from '~/stores/useSchemaStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { colors } from '~/utils/colors'
@@ -35,6 +36,7 @@ export const FilterSearch = ({ anchorEl, setAnchorEl, onClose }: Props) => {
   const [hops, setHops] = useState(defaultValues.hops)
   const [sourceNodes, setSourceNodes] = useState<number>(defaultValues.sourceNodes)
   const [maxResults, setMaxResults] = useState<number>(defaultValues.maxResults)
+  const { fastFiltersFeatureFlag } = useFeatureFlagStore((s) => s)
 
   useEffect(() => {
     const fetchSchemaData = async () => {
@@ -100,7 +102,7 @@ export const FilterSearch = ({ anchorEl, setAnchorEl, onClose }: Props) => {
       open={Boolean(anchorEl)}
       placement="bottom-end"
     >
-      <FastFilters handleFastFiltersSelect={handleSchemaTypesSelect} />
+      {fastFiltersFeatureFlag && <FastFilters handleFastFiltersSelect={handleSchemaTypesSelect} />}
       <LineBar />
       <NodeTypes handleSchemaTypeClick={handleSchemaTypeClick} schemaAll={schemaAll} selectedTypes={selectedTypes} />
       <LineBar />

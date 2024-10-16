@@ -10,6 +10,7 @@ export type FeatureFlagStore = {
   realtimeGraphFeatureFlag: boolean
   userFeedbackFeatureFlag: boolean
   chatInterfaceFeatureFlag: boolean
+  fastFiltersFeatureFlag: boolean
   setTrendingTopicsFeatureFlag: (val: boolean) => void
   setV2FeatureFlag: (val: boolean) => void
   setQueuedSourcesFeatureFlag: (val: boolean) => void
@@ -19,6 +20,7 @@ export type FeatureFlagStore = {
   setRealtimeGraphFeatureFlag: (val: boolean) => void
   setUserFeedbackFeatureFlag: (val: boolean) => void
   setChatInterfaceFeatureFlag: (val: boolean) => void
+  setFastFiltersFeatureFlag: (val: boolean) => void
 }
 
 const defaultData: Omit<
@@ -32,6 +34,7 @@ const defaultData: Omit<
   | 'setRealtimeGraphFeatureFlag'
   | 'setUserFeedbackFeatureFlag'
   | 'setChatInterfaceFeatureFlag'
+  | 'setFastFiltersFeatureFlag'
 > = {
   trendingTopicsFeatureFlag: true,
   queuedSourcesFeatureFlag: false,
@@ -42,6 +45,7 @@ const defaultData: Omit<
   realtimeGraphFeatureFlag: false,
   userFeedbackFeatureFlag: false,
   chatInterfaceFeatureFlag: false,
+  fastFiltersFeatureFlag: false,
 }
 
 export const useFeatureFlagStore = create<FeatureFlagStore>((set) => ({
@@ -55,4 +59,5 @@ export const useFeatureFlagStore = create<FeatureFlagStore>((set) => ({
   setRealtimeGraphFeatureFlag: (realtimeGraphFeatureFlag) => set({ realtimeGraphFeatureFlag }),
   setUserFeedbackFeatureFlag: (userFeedbackFeatureFlag) => set({ userFeedbackFeatureFlag }),
   setChatInterfaceFeatureFlag: (chatInterfaceFeatureFlag) => set({ chatInterfaceFeatureFlag }),
+  setFastFiltersFeatureFlag: (fastFiltersFeatureFlag) => set({ fastFiltersFeatureFlag }),
 }))
