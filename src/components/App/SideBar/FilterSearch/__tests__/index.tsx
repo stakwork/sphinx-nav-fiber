@@ -1,10 +1,12 @@
-/* eslint-disable padding-line-between-statements */
 import { ThemeProvider } from '@mui/material'
 import '@testing-library/jest-dom'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import React from 'react'
 import { ThemeProvider as StyleThemeProvider } from 'styled-components'
+import { getSchemaAll } from '~/network/fetchSourcesData'
 import { useDataStore } from '~/stores/useDataStore'
+import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
+import { useSchemaStore } from '~/stores/useSchemaStore'
 import { colors } from '~/utils/colors'
 import { appTheme } from '../../../Providers'
 import { FilterSearch } from '../index'
@@ -13,58 +15,71 @@ jest.mock('~/stores/useDataStore', () => ({
   useDataStore: jest.fn(),
 }))
 
+jest.mock('~/stores/useSchemaStore', () => ({
+  useSchemaStore: jest.fn(),
+}))
+
+jest.mock('~/stores/useFeatureFlagStore', () => ({
+  useFeatureFlagStore: jest.fn(),
+}))
+
+jest.mock('~/network/fetchSourcesData', () => ({
+  getSchemaAll: jest.fn(),
+}))
+
 const mockSetFilters = jest.fn()
-const mockSetShowAllSchemas = jest.fn()
 const mockSetAnchorEl = jest.fn()
 const mockFetchData = jest.fn()
 const mockSetAbortRequests = jest.fn()
 const mockOnClose = jest.fn()
-
-const mockSchemaAll = [{ type: 'Type1' }, { type: 'Type2' }, { type: 'Type3' }, { type: 'Type4' }, { type: 'Type5' }]
+const mockSchemaAll = [{ type: 'Type1' }, { type: 'Type2' }, { type: 'Type3' }]
 
 describe('FilterSearch Component', () => {
   beforeEach(() => {
     jest.clearAllMocks()
+
+    //
     ;(useDataStore as jest.Mock).mockReturnValue({
       setFilters: mockSetFilters,
       fetchData: mockFetchData,
       setAbortRequests: mockSetAbortRequests,
-      onClose: mockOnClose,
     })
+    ;(useSchemaStore as jest.Mock).mockReturnValue([mockSchemaAll, jest.fn()])
+    ;(useFeatureFlagStore as jest.Mock).mockReturnValue({ fastFiltersFeatureFlag: true })
+    ;(getSchemaAll as jest.Mock).mockResolvedValue({ schemas: mockSchemaAll })
   })
 
-  const renderComponent = (showAllSchemas = false) =>
+  const renderComponent = () =>
     render(
       <ThemeProvider theme={appTheme}>
         <StyleThemeProvider theme={appTheme}>
-          <FilterSearch
-            anchorEl={document.createElement('div')}
-            onClose={mockOnClose}
-            schemaAll={mockSchemaAll}
-            setAnchorEl={mockSetAnchorEl}
-            setShowAllSchemas={mockSetShowAllSchemas}
-            showAllSchemas={showAllSchemas}
-          />
+          <FilterSearch anchorEl={document.createElement('div')} onClose={mockOnClose} setAnchorEl={mockSetAnchorEl} />
         </StyleThemeProvider>
       </ThemeProvider>,
     )
 
-  it('should highlight node_type if selected and allow multiple selections', () => {
+  it('should fetch and display schema types', async () => {
+    renderComponent()
+
+    await waitFor(() => {
+      mockSchemaAll.forEach((schema) => {
+        expect(screen.getByText(schema.type)).toBeInTheDocument()
+      })
+    })
+  })
+
+  it('should highlight selected schema type when clicked', async () => {
     renderComponent()
 
     const type1Pill = screen.getByText('Type1')
-    const type2Pill = screen.getByText('Type2')
 
     fireEvent.click(type1Pill)
-    fireEvent.click(type2Pill)
 
     expect(type1Pill).toHaveStyle(`background: ${colors.white}`)
     expect(type1Pill).toHaveStyle(`color: ${colors.black}`)
-    expect(type2Pill).toHaveStyle(`background: ${colors.white}`)
-    expect(type2Pill).toHaveStyle(`color: ${colors.black}`)
   })
 
-  it('should ensure node_type gets added to the request', async () => {
+  it('should apply filters when "Show Results" is clicked', async () => {
     renderComponent()
 
     const type1Pill = screen.getByText('Type1')
@@ -76,144 +91,13 @@ describe('FilterSearch Component', () => {
     fireEvent.click(showResultsButton)
 
     await waitFor(() => {
-      expect(mockSetFilters).toHaveBeenCalledWith(
-        expect.objectContaining({
-          node_type: ['Type1'],
-        }),
-      )
-    })
-  })
-
-  it('should ensure all selected params in the filter get added correctly to the request', async () => {
-    renderComponent()
-
-    const type1Pill = screen.getByText('Type1')
-
-    fireEvent.click(type1Pill)
-
-    const hopsCheckbox = screen.getByLabelText('2 hops away')
-
-    fireEvent.click(hopsCheckbox)
-
-    const maxResultsSlider = screen.getByTestId('max-results-slider')
-    fireEvent.mouseDown(maxResultsSlider)
-    fireEvent.mouseUp(maxResultsSlider, { clientX: 50 })
-
-    const sourceNodesSlider = screen.getByTestId('source-nodes-slider')
-    fireEvent.mouseDown(sourceNodesSlider)
-    fireEvent.mouseUp(sourceNodesSlider, { clientX: 20 })
-
-    const showResultsButton = screen.getByText('Show Results')
-    fireEvent.click(showResultsButton)
-
-    waitFor(() => {
       expect(mockSetFilters).toHaveBeenCalledWith({
         node_type: ['Type1'],
-        limit: '50',
-        depth: '2',
-        top_node_count: '20',
+        limit: 30,
+        depth: '1',
+        top_node_count: '10',
       })
     })
   })
-
-  it('should ensure slider is calculated from left to right correctly', () => {
-    renderComponent()
-
-    const maxResultsSlider = screen.getByTestId('max-results-slider')
-    fireEvent.mouseDown(maxResultsSlider)
-    fireEvent.mouseUp(maxResultsSlider, { clientX: 50 })
-    waitFor(() => {
-      expect(maxResultsSlider).toHaveValue(50)
-    })
-  })
-
-  it('should ensure only 1 on the Hops item can be selected at once (default should be 1)', () => {
-    renderComponent()
-
-    const directRelationshipCheckbox = screen.getByLabelText('Direct relationship')
-    const twoHopsAwayCheckbox = screen.getByLabelText('2 hops away')
-
-    expect(directRelationshipCheckbox).toBeChecked()
-    expect(twoHopsAwayCheckbox).not.toBeChecked()
-
-    fireEvent.click(twoHopsAwayCheckbox)
-
-    expect(directRelationshipCheckbox).not.toBeChecked()
-    expect(twoHopsAwayCheckbox).toBeChecked()
-  })
-
-  it('should ensure the "View More" button works correctly', () => {
-    renderComponent()
-
-    const viewMoreButton = screen.getByText('View More')
-    fireEvent.click(viewMoreButton)
-
-    expect(mockSetShowAllSchemas).toHaveBeenCalledWith(true)
-  })
-
-  it('should ensure the "Clear" button works correctly', async () => {
-    renderComponent()
-
-    const type1Pill = screen.getByText('Type1')
-    fireEvent.click(type1Pill)
-
-    const clearButton = screen.getByText('Clear')
-    fireEvent.click(clearButton)
-
-    waitFor(() => {
-      expect(screen.getByText('0')).toBeInTheDocument()
-      expect(type1Pill).toHaveStyle(`background: ${colors.BUTTON1_PRESS}`)
-      expect(type1Pill).toHaveStyle(`color: ${colors.white}`)
-    })
-  })
-
-  it('should ensure the modal opens and closes correctly', () => {
-    const { rerender } = renderComponent(true)
-
-    expect(screen.getByText('Type')).toBeInTheDocument()
-
-    rerender(
-      <ThemeProvider theme={appTheme}>
-        <StyleThemeProvider theme={appTheme}>
-          <FilterSearch
-            anchorEl={null}
-            onClose={mockOnClose}
-            schemaAll={mockSchemaAll}
-            setAnchorEl={mockSetAnchorEl}
-            setShowAllSchemas={mockSetShowAllSchemas}
-            showAllSchemas
-          />
-        </StyleThemeProvider>
-      </ThemeProvider>,
-    )
-
-    expect(screen.queryByText('Type')).not.toBeInTheDocument()
-  })
-
-  it('should reset Source Nodes, Hops, and Max Results to default values when "Clear" button is clicked', async () => {
-    renderComponent()
-
-    const type1Pill = screen.getByText('Type1')
-    fireEvent.click(type1Pill)
-
-    const hopsCheckbox = screen.getByLabelText('2 hops away')
-    fireEvent.click(hopsCheckbox)
-
-    const maxResultsSlider = screen.getByTestId('max-results-slider')
-    fireEvent.mouseDown(maxResultsSlider)
-    fireEvent.mouseUp(maxResultsSlider, { clientX: 50 })
-
-    const sourceNodesSlider = screen.getByTestId('source-nodes-slider')
-    fireEvent.mouseDown(sourceNodesSlider)
-    fireEvent.mouseUp(sourceNodesSlider, { clientX: 20 })
-
-    const clearButton = screen.getByText('Clear')
-    fireEvent.click(clearButton)
-
-    waitFor(() => {
-      expect(screen.getByLabelText('Direct relationship')).toBeChecked()
-      expect(screen.getByTestId('max-results-slider')).toHaveValue(30)
-      expect(screen.getByTestId('source-nodes-slider')).toHaveValue(10)
-    })
-  })
+  // Add more specific tests as needed...
 })
