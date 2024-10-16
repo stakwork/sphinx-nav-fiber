@@ -32,9 +32,15 @@ const mockSetAnchorEl = jest.fn()
 const mockFetchData = jest.fn()
 const mockSetAbortRequests = jest.fn()
 const mockOnClose = jest.fn()
-const mockSchemaAll = [{ type: 'Type1' }, { type: 'Type2' }, { type: 'Type3' }]
+
+jest.mock('~/stores/useSchemaStore', () => ({
+  useSchemaStore: jest.fn(),
+}))
 
 describe('FilterSearch Component', () => {
+  const mockSetSchemas = jest.fn()
+  const mockSchemaAll = [{ type: 'Type1' }, { type: 'Type2' }, { type: 'Type3' }]
+
   beforeEach(() => {
     jest.clearAllMocks()
 
@@ -46,9 +52,10 @@ describe('FilterSearch Component', () => {
     })
 
     //
-    ;(useSchemaStore as jest.Mock)
-      .mockReturnValue([mockSchemaAll, jest.fn()])(useFeatureFlagStore as jest.Mock)
-      .mockReturnValue({ fastFiltersFeatureFlag: true })
+    ;(useSchemaStore as jest.Mock).mockReturnValue([mockSchemaAll, mockSetSchemas]) // Return an array
+
+    //
+    ;(useFeatureFlagStore as jest.Mock).mockReturnValue({ fastFiltersFeatureFlag: true })
 
     //
     ;(getSchemaAll as jest.Mock).mockResolvedValue({ schemas: mockSchemaAll })
