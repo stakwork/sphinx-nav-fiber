@@ -13,12 +13,10 @@ import SearchIcon from '~/components/Icons/SearchIcon'
 import { SearchBar } from '~/components/SearchBar'
 import { Flex } from '~/components/common/Flex'
 import { FetchLoaderText } from '~/components/common/Loader'
-import { getSchemaAll } from '~/network/fetchSourcesData'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore, useFilteredNodes } from '~/stores/useDataStore'
 import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
 import { useUpdateSelectedNode } from '~/stores/useGraphStore'
-import { useSchemaStore } from '~/stores/useSchemaStore'
 import { colors } from '~/utils/colors'
 import { LatestView } from '../Latest'
 import { Relevance } from '../Relevance'
@@ -30,7 +28,6 @@ export const MENU_WIDTH = 390
 // eslint-disable-next-line react/display-name
 export const RegularView = () => {
   const { isFetching: isLoading, setSidebarFilter } = useDataStore((s) => s)
-  const [schemaAll, setSchemaAll] = useSchemaStore((s) => [s.schemas, s.setSchemas])
 
   const setSelectedNode = useUpdateSelectedNode()
 
@@ -45,7 +42,6 @@ export const RegularView = () => {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isFilterOpen, setIsFilterOpen] = useState(false)
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
-  const [showAllSchemas, setShowAllSchemas] = useState(false)
 
   useEffect(() => {
     setValue('search', searchFormValue)
@@ -67,20 +63,6 @@ export const RegularView = () => {
 
   const typing = watch('search')
 
-  useEffect(() => {
-    const fetchSchemaData = async () => {
-      try {
-        const response = await getSchemaAll()
-
-        setSchemaAll(response.schemas.filter((schema) => !schema.is_deleted))
-      } catch (error) {
-        console.error('Error fetching schema:', error)
-      }
-    }
-
-    fetchSchemaData()
-  }, [setSchemaAll])
-
   const handleFilterIconClick = (event: React.MouseEvent<HTMLElement>) => {
     if (isFilterOpen) {
       setAnchorEl(null)
@@ -89,7 +71,6 @@ export const RegularView = () => {
     }
 
     setIsFilterOpen((prev) => !prev)
-    setShowAllSchemas(false)
   }
 
   const handleCloseFilterSearch = () => {
@@ -139,14 +120,7 @@ export const RegularView = () => {
             {isFilterOpen ? <SearchFilterCloseIcon /> : <SearchFilterIcon />}
           </IconWrapper>
 
-          <FilterSearch
-            anchorEl={anchorEl}
-            onClose={handleCloseFilterSearch}
-            schemaAll={schemaAll}
-            setAnchorEl={setAnchorEl}
-            setShowAllSchemas={setShowAllSchemas}
-            showAllSchemas={showAllSchemas}
-          />
+          <FilterSearch anchorEl={anchorEl} onClose={handleCloseFilterSearch} setAnchorEl={setAnchorEl} />
         </SearchFilterIconWrapper>
         {searchTerm && (
           <SearchDetails>

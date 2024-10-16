@@ -57,6 +57,7 @@ export const BaseTextInput = forwardRef(
         onKeyDown={onKeyDown}
         placeholder={placeholder}
         placeholderTextColor={placeholderTextColor}
+        spellCheck={false}
         textAlign={textAlign}
         type={type}
         value={value}

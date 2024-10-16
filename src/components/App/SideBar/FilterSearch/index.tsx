@@ -1,21 +1,21 @@
 import { Button, Popper } from '@mui/material'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import ClearIcon from '~/components/Icons/ClearIcon'
-import PlusIcon from '~/components/Icons/PlusIcon'
-import { SchemaExtended } from '~/components/ModalsContainer/BlueprintModal/types'
 import { Flex } from '~/components/common/Flex'
+import { getSchemaAll } from '~/network/fetchSourcesData'
 import { useDataStore } from '~/stores/useDataStore'
+import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
+import { useSchemaStore } from '~/stores/useSchemaStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { colors } from '~/utils/colors'
+import { FastFilters } from './FastFilters'
 import { Hops } from './Hops'
 import { MaxResults } from './MaxResults'
+import { NodeTypes } from './NodeTypes'
 import { SourceNodes } from './SourceNodes'
 
 type Props = {
-  showAllSchemas: boolean
-  setShowAllSchemas: (value: boolean) => void
-  schemaAll: SchemaExtended[]
   anchorEl: HTMLElement | null
   setAnchorEl: (value: HTMLElement | null) => void
   onClose: () => void
@@ -28,26 +28,39 @@ const defaultValues = {
   maxResults: 30,
 }
 
-export const FilterSearch = ({
-  showAllSchemas,
-  setShowAllSchemas,
-  schemaAll,
-  anchorEl,
-  setAnchorEl,
-  onClose,
-}: Props) => {
-  const handleSchemaTypeClick = (type: string) => {
-    setSelectedTypes((prevSelectedTypes) =>
-      prevSelectedTypes.includes(type) ? prevSelectedTypes.filter((t) => t !== type) : [...prevSelectedTypes, type],
-    )
-  }
-
+export const FilterSearch = ({ anchorEl, setAnchorEl, onClose }: Props) => {
+  const [schemaAll, setSchemaAll] = useSchemaStore((s) => [s.schemas, s.setSchemas])
   const { setFilters, fetchData, setAbortRequests } = useDataStore((s) => s)
   const { setBudget } = useUserStore((s) => s)
   const [selectedTypes, setSelectedTypes] = useState<string[]>(defaultValues.selectedTypes)
   const [hops, setHops] = useState(defaultValues.hops)
   const [sourceNodes, setSourceNodes] = useState<number>(defaultValues.sourceNodes)
   const [maxResults, setMaxResults] = useState<number>(defaultValues.maxResults)
+  const { fastFiltersFeatureFlag } = useFeatureFlagStore((s) => s)
+
+  useEffect(() => {
+    const fetchSchemaData = async () => {
+      try {
+        const response = await getSchemaAll()
+
+        setSchemaAll(response.schemas.filter((schema) => !schema.is_deleted))
+      } catch (error) {
+        console.error('Error fetching schema:', error)
+      }
+    }
+
+    fetchSchemaData()
+  }, [setSchemaAll])
+
+  const handleSchemaTypeClick = (type: string) => {
+    setSelectedTypes((prevSelectedTypes) =>
+      prevSelectedTypes.includes(type) ? prevSelectedTypes.filter((t) => t !== type) : [...prevSelectedTypes, type],
+    )
+  }
+
+  const handleSchemaTypesSelect = (types: string[]) => {
+    setSelectedTypes(types)
+  }
 
   const resetToDefaultValues = () => {
     setSelectedTypes(defaultValues.selectedTypes)
@@ -58,10 +71,6 @@ export const FilterSearch = ({
 
   const handleClear = async () => {
     resetToDefaultValues()
-  }
-
-  const handleViewMoreClick = () => {
-    setShowAllSchemas(true)
   }
 
   const handleFiltersApply = async () => {
@@ -78,10 +87,6 @@ export const FilterSearch = ({
     await fetchData(setBudget, setAbortRequests)
   }
 
-  const uniqueSchemas = (showAllSchemas ? schemaAll : schemaAll.slice(0, 4)).filter(
-    (schema, index, self) => index === self.findIndex((s) => s.type === schema.type),
-  )
-
   return (
     <SearchFilterPopover
       anchorEl={anchorEl}
@@ -97,37 +102,16 @@ export const FilterSearch = ({
       open={Boolean(anchorEl)}
       placement="bottom-end"
     >
-      <PopoverHeader>
-        <div>Type</div>
-        <CountSelectedWrapper>
-          <Count>{selectedTypes.length}</Count>
-          <SelectedText>Selected</SelectedText>
-        </CountSelectedWrapper>
-      </PopoverHeader>
-      <PopoverBody>
-        <SchemaTypeWrapper>
-          {uniqueSchemas.map((schema) => (
-            <SchemaType
-              key={schema.type}
-              isSelected={selectedTypes.includes(schema.type as string)}
-              onClick={() => handleSchemaTypeClick(schema?.type as string)}
-            >
-              {schema.type}
-            </SchemaType>
-          ))}
-        </SchemaTypeWrapper>
-        {!showAllSchemas && schemaAll.length > 4 && (
-          <ViewMoreButton onClick={handleViewMoreClick}>
-            <PlusIconWrapper>
-              <PlusIcon /> View More
-            </PlusIconWrapper>
-          </ViewMoreButton>
-        )}
-      </PopoverBody>
+      {fastFiltersFeatureFlag && (
+        <>
+          <FastFilters handleFastFiltersSelect={handleSchemaTypesSelect} />
+          <LineBar />
+        </>
+      )}
+
+      <NodeTypes handleSchemaTypeClick={handleSchemaTypeClick} schemaAll={schemaAll} selectedTypes={selectedTypes} />
       <LineBar />
-
       <SourceNodes setSourceNodes={setSourceNodes} sourceNodes={sourceNodes} />
-
       <LineBar />
       <Hops hops={hops} setHops={setHops} />
       <LineBar />
@@ -182,36 +166,6 @@ const SearchFilterPopover = styled(Popper)`
   }
 `
 
-const PopoverHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-bottom: 8px;
-  font-family: Barlow;
-  font-size: 18px;
-  font-weight: 500;
-`
-
-const CountSelectedWrapper = styled.div`
-  font-size: 13px;
-  display: flex;
-  align-items: center;
-`
-
-const Count = styled.span`
-  color: ${colors.white};
-`
-
-const SelectedText = styled.span`
-  color: ${colors.GRAY3};
-  margin-left: 4px;
-`
-
-export const PopoverBody = styled.div`
-  padding: 13px 0;
-  position: relative;
-`
-
 const PopoverFooter = styled.div`
   display: flex;
   justify-content: space-between;
@@ -223,81 +177,6 @@ const LineBar = styled.div`
   border: 1px solid ${colors.black};
   width: calc(100% + 32px);
   margin: 13px -16px;
-`
-
-const PlusIconWrapper = styled.span`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 6px;
-
-  svg {
-    width: 23px;
-    height: 23px;
-    fill: none;
-    margin-top: 2px;
-  }
-`
-
-const SchemaTypeWrapper = styled(Flex).attrs({
-  align: 'center',
-  direction: 'row',
-  grow: 1,
-  justify: 'flex-start',
-})`
-  flex-wrap: wrap;
-  gap: 10px;
-  padding-right: 10px;
-  margin-right: calc(0px - 16px);
-`
-
-const SchemaType = styled(Flex).attrs({
-  align: 'center',
-  direction: 'row',
-  justify: 'flex-start',
-})<{ isSelected: boolean }>`
-  color: ${({ isSelected }) => (isSelected ? colors.black : colors.white)};
-  background: ${({ isSelected }) => (isSelected ? colors.white : colors.BUTTON1_PRESS)};
-  padding: 6px 10px 6px 8px;
-  font-family: Barlow;
-  font-size: 13px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 15px;
-  letter-spacing: 0.78px;
-  margin: 0 3px;
-  border-radius: 200px;
-  cursor: pointer;
-
-  &:hover {
-    background: ${({ isSelected }) => (isSelected ? colors.white : colors.BUTTON1_PRESS)};
-  }
-
-  &:active {
-    background: ${colors.white};
-    color: ${colors.black};
-  }
-`
-
-const ViewMoreButton = styled.button`
-  background: transparent;
-  color: ${colors.white};
-  border: none;
-  padding: 6px 12px 6px 3px;
-  margin-top: 20px;
-  cursor: pointer;
-  border-radius: 4px;
-  font-family: Barlow;
-  font-size: 13px;
-  font-weight: 500;
-
-  &:hover {
-    background: ${colors.BUTTON1_HOVER};
-  }
-
-  &:active {
-    background: ${colors.BUTTON1_PRESS};
-  }
 `
 
 const ClearButton = styled(Button)`
@@ -389,4 +268,9 @@ export const SourceNodesStepWrapper = styled.div`
 export const ButtonsWrapper = styled(Flex)`
   flex-direction: row;
   margin: 0 0 6px 8px;
+`
+
+export const PopoverBody = styled.div`
+  padding: 13px 0;
+  position: relative;
 `
