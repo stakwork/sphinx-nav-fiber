@@ -102,8 +102,13 @@ export const FilterSearch = ({ anchorEl, setAnchorEl, onClose }: Props) => {
       open={Boolean(anchorEl)}
       placement="bottom-end"
     >
-      {fastFiltersFeatureFlag && <FastFilters handleFastFiltersSelect={handleSchemaTypesSelect} />}
-      <LineBar />
+      {fastFiltersFeatureFlag && (
+        <>
+          <FastFilters handleFastFiltersSelect={handleSchemaTypesSelect} />
+          <LineBar />
+        </>
+      )}
+
       <NodeTypes handleSchemaTypeClick={handleSchemaTypeClick} schemaAll={schemaAll} selectedTypes={selectedTypes} />
       <LineBar />
       <SourceNodes setSourceNodes={setSourceNodes} sourceNodes={sourceNodes} />
