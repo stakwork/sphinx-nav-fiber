@@ -164,6 +164,7 @@ export const Body = ({ Close }: BodyProps) => {
             <EditorWrapper>
               <InnerEditorWrapper>
                 <AddEdgeNode
+                  key={edgeData.refId}
                   edgeData={edgeData}
                   setGraphLoading={setGraphLoading}
                   setIsAddEdgeNode={setIsAddEdgeNode}
