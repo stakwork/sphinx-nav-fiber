@@ -1,12 +1,13 @@
 /* eslint-disable react/display-name */
 import { LinearProgress } from '@mui/material'
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
-import { getAboutData, getStats } from '~/network/fetchSourcesData'
+import { getAboutData, getSchemaAll, getStats } from '~/network/fetchSourcesData'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
+import { useSchemaStore } from '~/stores/useSchemaStore'
 import { colors, formatSplashMessage, formatStatsResponse } from '~/utils'
 import { AnimatedTextContent } from './animated'
 import { initialMessageData, Message } from './constants'
@@ -16,43 +17,73 @@ export const Splash = () => {
   const [message, setMessage] = useState<Message>(initialMessageData)
   const [progress, setProgress] = useState(0)
   const { appMetaData, setAppMetaData } = useAppStore((s) => s)
-  const { stats, setStats, isFetching, setSeedQuestions } = useDataStore((s) => s)
+  const { stats, setStats, setSeedQuestions } = useDataStore((s) => s)
+  const { schemas, setSchemas } = useSchemaStore((s) => s)
+  const [isLoading, setIsLoading] = useState(false)
 
-  const fetchData = useCallback(async () => {
-    try {
-      if (!appMetaData) {
-        const aboutResponse = await getAboutData()
+  // Individual useEffect hooks for each data requirement
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true)
 
-        setAppMetaData(aboutResponse)
+      try {
+        if (!appMetaData) {
+          const aboutResponse = await getAboutData()
 
-        if (aboutResponse.seed_questions) {
-          setSeedQuestions(aboutResponse.seed_questions)
+          setAppMetaData(aboutResponse)
+
+          if (aboutResponse.seed_questions) {
+            setSeedQuestions(aboutResponse.seed_questions)
+          }
         }
+
+        if (!stats) {
+          const statsResponse = await getStats()
+          const updatedStats = formatStatsResponse(statsResponse)
+
+          setStats(updatedStats)
+
+          const messageData = formatSplashMessage(statsResponse)
+
+          setMessage(messageData)
+        }
+
+        if (!schemas.length) {
+          const response = await getSchemaAll()
+
+          setSchemas(response.schemas.filter((schema) => !schema.is_deleted))
+        }
+      } finally {
+        setIsLoading(false) // Ensure fetching flag is reset
       }
-
-      if (!stats) {
-        const statsResponse = await getStats()
-
-        const updatedStats = formatStatsResponse(statsResponse)
-
-        setStats(updatedStats)
-
-        const messageData = formatSplashMessage(statsResponse)
-
-        setMessage(messageData)
-      }
-    } catch {
-      setProgress(100)
     }
-  }, [appMetaData, setAppMetaData, setStats, stats, setSeedQuestions])
+
+    if (!appMetaData && !stats && !isLoading) {
+      fetchData() // Only fetch if there's no appMetaData and it's not already fetching
+    }
+  }, [appMetaData, isLoading, schemas.length, setAppMetaData, setSchemas, setSeedQuestions, setStats, stats])
 
   useEffect(() => {
-    fetchData()
+    const fetchSchemas = async () => {
+      try {
+        const response = await getSchemaAll()
 
+        setSchemas(response.schemas.filter((schema) => !schema.is_deleted))
+      } catch (err) {
+        console.error(err)
+      }
+    }
+
+    if (!schemas.length) {
+      fetchSchemas() // Only fetch if schemas is empty and it's not already fetching
+    }
+  }, [schemas.length, setSchemas])
+
+  // Progress and interval management
+  useEffect(() => {
     let intervalId: NodeJS.Timer
 
-    if (!isFetching && message && appMetaData) {
-      // increase progress from 0 to 50% after all data is fetched
+    if (message && appMetaData) {
       setProgress((prev) => (!prev ? 50 : prev))
 
       intervalId = setInterval(() => {
@@ -65,7 +96,7 @@ export const Splash = () => {
         clearInterval(intervalId)
       }
     }
-  }, [appMetaData, fetchData, isFetching, message, stats])
+  }, [message, appMetaData])
 
   return (
     <SplashWrapper>
