@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Button, Grid } from '@mui/material'
-import React, { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
 import { NoParent } from '~/components/AddItemModal/SourceTypeStep/constants'
 import { TOption } from '~/components/AddItemModal/SourceTypeStep/types'
+import { Icons } from '~/components/Icons'
 import ClearIcon from '~/components/Icons/ClearIcon'
 import { AutoComplete, TAutocompleteOption } from '~/components/common/AutoComplete'
 import { Flex } from '~/components/common/Flex'
@@ -14,14 +15,13 @@ import { TextInput } from '~/components/common/TextInput'
 import { NODE_ADD_ERROR, requiredRule } from '~/constants'
 import { api } from '~/network/api'
 import { editNodeSchemaUpdate, getNodeSchemaTypes, getNodeType, Schema } from '~/network/fetchSourcesData'
+import { useAppStore } from '~/stores/useAppStore'
 import { useModal } from '~/stores/useModalStore'
 import { colors } from '~/utils'
+import { ColorPickerPopover } from './ColorPickerPopover'
 import { CreateCustomNodeAttribute } from './CustomAttributesStep'
 import MediaOptions from './MediaOptions'
-import { Icons } from '~/components/Icons'
 import { convertAttributes, parsedObjProps, parseJson } from './utils'
-import { ColorPickerPopover } from './ColorPickerPopover'
-import { useAppStore } from '~/stores/useAppStore'
 
 const defaultValues = {
   type: '',
@@ -487,6 +487,8 @@ export const Editor = ({
 
   const IconComponent = Icons[selectedIcon as keyof typeof Icons]
 
+  const parentType = selectedSchema ? selectedSchema.type : parent
+
   return (
     <Flex>
       <HeaderRow>
@@ -504,7 +506,7 @@ export const Editor = ({
                 <>
                   <Flex mb={12}>
                     <Flex mb={12}>
-                      <Text>Select Parent</Text>
+                      <Text>Parent</Text>
                     </Flex>
                     <AutoComplete
                       isLoading={parentsLoading}
@@ -521,7 +523,7 @@ export const Editor = ({
 
                   <Flex>
                     <Flex mb={12}>
-                      <Text>Type name</Text>
+                      <Text>Name</Text>
                     </Flex>
                     <Flex mb={12}>
                       <InputIconWrapper>
@@ -548,6 +550,22 @@ export const Editor = ({
                 <>
                   <Flex mb={12}>
                     <Flex mb={12}>
+                      <Text>Parent</Text>
+                    </Flex>
+
+                    <AutoComplete
+                      isLoading={parentsLoading || graphLoading}
+                      onSelect={(e) => {
+                        setValue('parent', e?.value || '')
+                        setDisplayParentError(false)
+                      }}
+                      options={selectedNodeParentOptions || []}
+                      selectedValue={resolvedSelectedParentValue}
+                    />
+                    {errMessage && <StyledError>{errMessage}</StyledError>}
+                  </Flex>
+                  <Flex mb={12}>
+                    <Flex mb={12}>
                       <Text>Name</Text>
                     </Flex>
                     <Flex mb={12}>
@@ -572,48 +590,40 @@ export const Editor = ({
                       </InputIconWrapper>
                     </Flex>
                   </Flex>
-                  <Flex mb={12}>
-                    <Flex mb={12}>
-                      <Text>Parent</Text>
-                    </Flex>
-
-                    <AutoComplete
-                      isLoading={parentsLoading || graphLoading}
-                      onSelect={(e) => {
-                        setValue('parent', e?.value || '')
-                        setDisplayParentError(false)
-                      }}
-                      options={selectedNodeParentOptions || []}
-                      selectedValue={resolvedSelectedParentValue}
-                    />
-                    {errMessage && <StyledError>{errMessage}</StyledError>}
-                  </Flex>
                 </>
               )}
             </Flex>
-            <CreateCustomNodeAttribute
-              onDelete={handleDeleteAttribute}
-              parent={selectedSchema ? selectedSchema.type : parent}
-            />
+
+            {parentType && (
+              <CreateCustomNodeAttribute
+                onDelete={handleDeleteAttribute}
+                parent={selectedSchema ? selectedSchema.type : parent}
+              />
+            )}
             <MediaOptions
               initialOptions={mediaOptions}
               setMediaOptions={setMediaOptions}
               setSubmitDisabled={setSubmitDisabled}
             />
-            <Flex>
-              <LineBar />
-              <Flex mb={12} mt={12}>
-                <Text>Indexes</Text>
+            {parentType && (
+              <Flex>
+                <LineBar />
+                <Flex mb={12} mt={12}>
+                  <Text>Indexes</Text>
+                </Flex>
+                <Grid item mb={2} width="70%">
+                  <AutoComplete
+                    onSelect={(val) => setValue('selectedIndex', val?.value || '')}
+                    options={attributes
+                      .filter((attr) => attr.key)
+                      .map((attr) => ({ label: attr.key, value: attr.key }))}
+                    selectedValue={resolvedSelectedIndexValue}
+                  />
+                </Grid>
+                <LineBar />
               </Flex>
-              <Grid item mb={2} width="70%">
-                <AutoComplete
-                  onSelect={(val) => setValue('selectedIndex', val?.value || '')}
-                  options={attributes.filter((attr) => attr.key).map((attr) => ({ label: attr.key, value: attr.key }))}
-                  selectedValue={resolvedSelectedIndexValue}
-                />
-              </Grid>
-              <LineBar />
-            </Flex>
+            )}
+
             <Flex direction="row" justify="space-between" mt={20}>
               {selectedSchema && (
                 <Flex direction="column">
@@ -660,7 +670,7 @@ export const Editor = ({
 }
 
 const CustomButton = styled(Button)`
-  width: 100% !important;
+  width: 400px !important;
   margin: 0 auto !important;
 `
 
@@ -748,6 +758,11 @@ const ColorPickerIconWrapper = styled.span<{ selectedColor?: string }>`
   display: flex;
   justify-content: center;
   align-items: center;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.9;
+  }
 
   svg {
     width: 22px;

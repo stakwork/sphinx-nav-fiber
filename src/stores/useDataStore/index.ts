@@ -279,6 +279,7 @@ export const useDataStore = create<DataStore>()(
     resetGraph: () => {
       set({
         filters: defaultData.filters,
+        dataInitial: null,
         dataNew: null,
       })
 

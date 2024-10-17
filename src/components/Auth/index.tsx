@@ -19,19 +19,14 @@ export const AuthGuard = ({ children }: PropsWithChildren) => {
   const { splashDataLoading } = useDataStore((s) => s)
   const [renderMainPage, setRenderMainPage] = useState(false)
 
-  const [
+  const {
     setTrendingTopicsFeatureFlag,
     setQueuedSourcesFeatureFlag,
     setCustomSchemaFeatureFlag,
     setRealtimeGraphFeatureFlag,
     setChatInterfaceFeatureFlag,
-  ] = useFeatureFlagStore((s) => [
-    s.setTrendingTopicsFeatureFlag,
-    s.setQueuedSourcesFeatureFlag,
-    s.setCustomSchemaFeatureFlag,
-    s.setRealtimeGraphFeatureFlag,
-    s.setChatInterfaceFeatureFlag,
-  ])
+    setFastFiltersFeatureFlag,
+  } = useFeatureFlagStore((s) => s)
 
   const handleAuth = useCallback(async () => {
     localStorage.removeItem('admin')
@@ -55,12 +50,10 @@ export const AuthGuard = ({ children }: PropsWithChildren) => {
       setPubKey('')
     }
 
-    await updateBudget(setBudget)
-
     if (isE2E || isDevelopment) {
       setIsAuthenticated(true)
     }
-  }, [setBudget, setPubKey, setIsAuthenticated])
+  }, [setPubKey, setIsAuthenticated])
 
   const handleIsAdmin = useCallback(async () => {
     try {
@@ -81,6 +74,7 @@ export const AuthGuard = ({ children }: PropsWithChildren) => {
         setCustomSchemaFeatureFlag(res.data.customSchema)
         setRealtimeGraphFeatureFlag(res.data.realtimeGraph || false)
         setChatInterfaceFeatureFlag(res.data.chatInterface || false)
+        setFastFiltersFeatureFlag(res.data.fastFilters || false)
       }
 
       setIsAuthenticated(true)
@@ -97,6 +91,7 @@ export const AuthGuard = ({ children }: PropsWithChildren) => {
     setCustomSchemaFeatureFlag,
     setRealtimeGraphFeatureFlag,
     setChatInterfaceFeatureFlag,
+    setFastFiltersFeatureFlag,
     setSwarmUiUrl,
   ])
 
@@ -116,11 +111,13 @@ export const AuthGuard = ({ children }: PropsWithChildren) => {
         }
       }
 
+      await updateBudget(setBudget)
+
       await handleIsAdmin()
     }
 
     init()
-  }, [handleAuth, handleIsAdmin])
+  }, [handleAuth, handleIsAdmin, setBudget])
 
   const message = 'This is a private Graph, Contact Admin'
 
