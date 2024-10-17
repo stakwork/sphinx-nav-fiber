@@ -50,12 +50,10 @@ export const AuthGuard = ({ children }: PropsWithChildren) => {
       setPubKey('')
     }
 
-    await updateBudget(setBudget)
-
     if (isE2E || isDevelopment) {
       setIsAuthenticated(true)
     }
-  }, [setBudget, setPubKey, setIsAuthenticated])
+  }, [setPubKey, setIsAuthenticated])
 
   const handleIsAdmin = useCallback(async () => {
     try {
@@ -113,11 +111,13 @@ export const AuthGuard = ({ children }: PropsWithChildren) => {
         }
       }
 
+      await updateBudget(setBudget)
+
       await handleIsAdmin()
     }
 
     init()
-  }, [handleAuth, handleIsAdmin])
+  }, [handleAuth, handleIsAdmin, setBudget])
 
   const message = 'This is a private Graph, Contact Admin'
 
