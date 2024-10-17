@@ -1,23 +1,10 @@
 /* eslint-disable */
-import React from 'react';
+import React from 'react'
 
 const VolumeIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
-  <svg
-    width="1em"
-    height="1em"
-    viewBox="0 0 24 24"
-    fill="currentColor"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
     <g id="volume_up">
-      <mask
-        id="mask0_1483_75386"
-        maskUnits="userSpaceOnUse"
-        x="0"
-        y="0"
-        width="24"
-        height="24"
-      >
+      <mask id="mask0_1483_75386" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
         <rect id="Bounding box" width="1em" height="1em" fill="currentColor" />
       </mask>
       <g mask="url(#mask0_1483_75386)">
@@ -29,6 +16,6 @@ const VolumeIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
       </g>
     </g>
   </svg>
-);
+)
 
-export default VolumeIcon;
+export default VolumeIcon
