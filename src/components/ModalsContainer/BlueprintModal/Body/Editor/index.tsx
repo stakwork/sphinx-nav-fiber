@@ -487,6 +487,8 @@ export const Editor = ({
 
   const IconComponent = Icons[selectedIcon as keyof typeof Icons]
 
+  const parentType = selectedSchema ? selectedSchema.type : parent
+
   return (
     <Flex>
       <HeaderRow>
@@ -591,29 +593,37 @@ export const Editor = ({
                 </>
               )}
             </Flex>
-            <CreateCustomNodeAttribute
-              onDelete={handleDeleteAttribute}
-              parent={selectedSchema ? selectedSchema.type : parent}
-            />
+
+            {parentType && (
+              <CreateCustomNodeAttribute
+                onDelete={handleDeleteAttribute}
+                parent={selectedSchema ? selectedSchema.type : parent}
+              />
+            )}
             <MediaOptions
               initialOptions={mediaOptions}
               setMediaOptions={setMediaOptions}
               setSubmitDisabled={setSubmitDisabled}
             />
-            <Flex>
-              <LineBar />
-              <Flex mb={12} mt={12}>
-                <Text>Indexes</Text>
+            {parentType && (
+              <Flex>
+                <LineBar />
+                <Flex mb={12} mt={12}>
+                  <Text>Indexes</Text>
+                </Flex>
+                <Grid item mb={2} width="70%">
+                  <AutoComplete
+                    onSelect={(val) => setValue('selectedIndex', val?.value || '')}
+                    options={attributes
+                      .filter((attr) => attr.key)
+                      .map((attr) => ({ label: attr.key, value: attr.key }))}
+                    selectedValue={resolvedSelectedIndexValue}
+                  />
+                </Grid>
+                <LineBar />
               </Flex>
-              <Grid item mb={2} width="70%">
-                <AutoComplete
-                  onSelect={(val) => setValue('selectedIndex', val?.value || '')}
-                  options={attributes.filter((attr) => attr.key).map((attr) => ({ label: attr.key, value: attr.key }))}
-                  selectedValue={resolvedSelectedIndexValue}
-                />
-              </Grid>
-              <LineBar />
-            </Flex>
+            )}
+
             <Flex direction="row" justify="space-between" mt={20}>
               {selectedSchema && (
                 <Flex direction="column">
@@ -660,7 +670,7 @@ export const Editor = ({
 }
 
 const CustomButton = styled(Button)`
-  width: 100% !important;
+  width: 400px !important;
   margin: 0 auto !important;
 `
 
