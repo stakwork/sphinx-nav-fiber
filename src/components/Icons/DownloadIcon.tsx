@@ -1,9 +1,22 @@
 /* eslint-disable */
-import React from 'react'
+import React from 'react';
 
 const DownloadIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 20 20" fill="currentColor">
-    <mask id="mask0_2638_2680" maskUnits="userSpaceOnUse" x="0" y="0" width="20" height="20">
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="1em"
+    height="1em"
+    viewBox="0 0 20 20"
+    fill="currentColor"
+  >
+    <mask
+      id="mask0_2638_2680"
+      maskUnits="userSpaceOnUse"
+      x="0"
+      y="0"
+      width="20"
+      height="20"
+    >
       <rect width="1em" height="1em" fill="currentColor" />
     </mask>
     <g mask="url(#mask0_2638_2680)">
@@ -13,6 +26,6 @@ const DownloadIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
       />
     </g>
   </svg>
-)
+);
 
-export default DownloadIcon
+export default DownloadIcon;

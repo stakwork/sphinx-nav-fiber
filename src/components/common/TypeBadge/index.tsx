@@ -1,7 +1,7 @@
 import styled from 'styled-components'
+import { useSchemaStore } from '~/stores/useSchemaStore'
 import { colors } from '~/utils/colors'
 import { Flex } from '../Flex'
-import { useSchemaStore } from '~/stores/useSchemaStore'
 
 type Props = {
   type: string
