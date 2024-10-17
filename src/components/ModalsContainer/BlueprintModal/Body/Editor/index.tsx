@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Button, Grid } from '@mui/material'
-import React, { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
 import { NoParent } from '~/components/AddItemModal/SourceTypeStep/constants'
 import { TOption } from '~/components/AddItemModal/SourceTypeStep/types'
+import { Icons } from '~/components/Icons'
 import ClearIcon from '~/components/Icons/ClearIcon'
 import { AutoComplete, TAutocompleteOption } from '~/components/common/AutoComplete'
 import { Flex } from '~/components/common/Flex'
@@ -14,14 +15,13 @@ import { TextInput } from '~/components/common/TextInput'
 import { NODE_ADD_ERROR, requiredRule } from '~/constants'
 import { api } from '~/network/api'
 import { editNodeSchemaUpdate, getNodeSchemaTypes, getNodeType, Schema } from '~/network/fetchSourcesData'
+import { useAppStore } from '~/stores/useAppStore'
 import { useModal } from '~/stores/useModalStore'
 import { colors } from '~/utils'
+import { ColorPickerPopover } from './ColorPickerPopover'
 import { CreateCustomNodeAttribute } from './CustomAttributesStep'
 import MediaOptions from './MediaOptions'
-import { Icons } from '~/components/Icons'
 import { convertAttributes, parsedObjProps, parseJson } from './utils'
-import { ColorPickerPopover } from './ColorPickerPopover'
-import { useAppStore } from '~/stores/useAppStore'
 
 const defaultValues = {
   type: '',
@@ -758,6 +758,11 @@ const ColorPickerIconWrapper = styled.span<{ selectedColor?: string }>`
   display: flex;
   justify-content: center;
   align-items: center;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.9;
+  }
 
   svg {
     width: 22px;
