@@ -142,7 +142,7 @@ export interface Schema {
   media_url?: string
   image_url?: string
   source_link?: string
-  attributes?: { [key: string]: string }
+  attributes?: { [key: string]: string | boolean }
 }
 
 export interface SchemaLink {
@@ -181,7 +181,7 @@ interface UpdateEdgeData {
 export interface UpdateSchemaParams {
   type: string
   parent: string
-  color?: string
+  primary_color?: string
   icon?: string
   attributes: {
     [key: string | number]: string

@@ -1,4 +1,6 @@
 import { Slider } from '@mui/material'
+import styled from 'styled-components'
+import { colors } from '~/utils/colors'
 import { HeadingWrapper, PopoverBody, SourceNodesStepWrapper, SubHeading, VolumeControl } from '../index'
 
 type SourceNodesProps = {
@@ -21,22 +23,29 @@ export const SourceNodes = ({ sourceNodes, setSourceNodes }: SourceNodesProps) =
       </HeadingWrapper>
       <PopoverBody>
         <SourceNodesStepWrapper>
-          <span>1</span>
-          <span>{sourceNodes}</span>
+          <span>0</span>
+          <span>100</span>
         </SourceNodesStepWrapper>
         <VolumeControl direction="row">
-          <Slider
+          <CustomSlider
             className="volume-slider"
             data-testid="source-nodes-slider"
             max={100}
-            min={1}
+            min={0}
             onChange={SourceNodesChangeHandler}
             size="medium"
             step={1}
             value={sourceNodes}
+            valueLabelDisplay="on"
           />
         </VolumeControl>
       </PopoverBody>
     </>
   )
 }
+
+const CustomSlider = styled(Slider)({
+  '& .MuiSlider-valueLabel': {
+    backgroundColor: `${colors.primaryBlue}`,
+  },
+})

@@ -24,6 +24,7 @@ export type LinkPosition = {
 export const Graph = () => {
   const { dataInitial, isLoadingNew, isFetching, dataNew, resetDataNew } = useDataStore((s) => s)
   const groupRef = useRef<Group>(null)
+  const cameraSettled = useRef<boolean>(false)
   const linksPositionRef = useRef<LinkPosition[]>([])
 
   const { setData, simulation, simulationCreate, simulationHelpers, graphStyle, setGraphRadius } = useGraphStore(
@@ -68,6 +69,21 @@ export const Graph = () => {
     }
 
     simulation.on('tick', () => {
+      if (!cameraSettled.current && simulation.alpha() < 0.1) {
+        const nodesVector = simulation.nodes().map((i: NodeExtended) => new Vector3(i.x, i.y, i.z))
+
+        const boundingBox = new Box3().setFromPoints(nodesVector)
+
+        const boundingSphere = new Sphere()
+
+        boundingBox.getBoundingSphere(boundingSphere)
+
+        const sphereRadius = Math.min(5000, boundingSphere.radius)
+
+        setGraphRadius(sphereRadius)
+        cameraSettled.current = true
+      }
+
       if (groupRef.current) {
         const gr = groupRef.current.getObjectByName('simulation-3d-group__nodes') as Group
         const grConnections = groupRef.current.getObjectByName('simulation-3d-group__connections') as Group
@@ -124,6 +140,8 @@ export const Graph = () => {
       const sphereRadius = boundingSphere.radius
 
       setGraphRadius(sphereRadius)
+
+      cameraSettled.current = false
     })
   }, [dataInitial, simulation, setGraphRadius])
 

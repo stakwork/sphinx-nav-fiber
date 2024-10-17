@@ -1,7 +1,7 @@
 import { isDevelopment, isE2E } from '~/constants'
 import { api } from '~/network/api'
 import { FetchDataResponse } from '~/types'
-import { payLsat } from '~/utils'
+import { payLsat, updateBudget } from '~/utils'
 import { getLSat } from '~/utils/getLSat'
 
 // Main function to fetch graph data
@@ -29,6 +29,8 @@ const fetchNodes = async (
 
     try {
       const response = await api.get<FetchDataResponse>(url, { Authorization: lsatToken }, signal)
+
+      updateBudget(setBudget)
 
       return response
       // eslint-disable-next-line @typescript-eslint/no-explicit-any

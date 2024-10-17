@@ -1,5 +1,5 @@
 import { Button, Skeleton } from '@mui/material'
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
@@ -125,17 +125,21 @@ export const Body = () => {
         ) : (
           <TitleEditor />
         )}
-        <Flex direction="row" mt={18}>
-          <DeleteButton
-            color="secondary"
-            disabled={topicIsLoading || !node}
-            onClick={handleDelete}
-            size="large"
-            variant="contained"
-          >
-            Delete
-          </DeleteButton>
-          <SaveButton
+
+        <Flex direction="row" justify="space-between" mt={20}>
+          <Flex direction="column">
+            <DeleteButton
+              color="secondary"
+              disabled={topicIsLoading || !node}
+              onClick={handleDelete}
+              size="large"
+              variant="contained"
+            >
+              Delete
+            </DeleteButton>
+          </Flex>
+
+          <CustomButton
             color="secondary"
             disabled={shouldDisableSave}
             onClick={handleSave}
@@ -148,7 +152,7 @@ export const Body = () => {
                 <ClipLoader color={colors.lightGray} size={12} />
               </ClipLoaderWrapper>
             )}
-          </SaveButton>
+          </CustomButton>
         </Flex>
       </FormProvider>
     </Wrapper>
@@ -175,12 +179,11 @@ const DeleteButton = styled(Button)`
   }
 `
 
-const SaveButton = styled(Button)`
-  && {
-    flex: 1;
-  }
+const ClipLoaderWrapper = styled.span`
+  margin-top: 4px;
 `
 
-const ClipLoaderWrapper = styled.span`
-  margin-top: 3px;
+const CustomButton = styled(Button)`
+  width: 80% !important;
+  margin: 0 auto !important;
 `

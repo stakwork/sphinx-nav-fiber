@@ -74,6 +74,7 @@ export const colors = {
   BG2: 'rgba(22, 23, 29, 1)',
   BG2_ACTIVE_INPUT: 'rgba(16, 17, 22, 1)',
   BG3: 'rgba(28, 30, 38, 1)',
+  BG4: 'rgba(30, 30, 35, 0.9)',
   GRAY3: 'rgba(186, 193, 198, 1)',
   GRAY6: '#909BAA',
   GRAY7: 'rgba(107, 122, 141, 1)',
@@ -105,6 +106,8 @@ export const colors = {
   SOURCE_TABLE_LINK: 'rgba(171, 204, 254, 1)',
   AI_HIGHLIGHT: 'rgba(0, 123, 255, 0.1)',
   createTestButton: 'rgb(178, 255, 102)',
+  MESSAGE_BG: 'rgba(22, 22, 29, 0.89)',
+  MESSAGE_BG_HOVER: 'rgba(35, 37, 47, 0.3)',
 } as const
 
 export type ColorName = keyof typeof colors

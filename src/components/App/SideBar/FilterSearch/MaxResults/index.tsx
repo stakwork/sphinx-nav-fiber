@@ -1,5 +1,7 @@
 import { Slider } from '@mui/material'
 import { HeadingWrapper, PopoverBody, SourceNodesStepWrapper, SubHeading, VolumeControl } from '../index'
+import styled from 'styled-components'
+import { colors } from '~/utils'
 
 type MaxResultsProps = {
   maxResults: number
@@ -21,22 +23,29 @@ export const MaxResults = ({ maxResults, setMaxResults }: MaxResultsProps) => {
       </HeadingWrapper>
       <PopoverBody>
         <SourceNodesStepWrapper>
-          <span>1</span>
-          <span>{maxResults}</span>
+          <span>0</span>
+          <span>300</span>
         </SourceNodesStepWrapper>
         <VolumeControl direction="row">
-          <Slider
+          <CustomSlider
             className="volume-slider"
             data-testid="max-results-slider"
             max={300}
-            min={1}
+            min={0}
             onChange={MaxResultsChangeHandler}
             size="medium"
             step={1}
             value={maxResults}
+            valueLabelDisplay="on"
           />
         </VolumeControl>
       </PopoverBody>
     </>
   )
 }
+
+const CustomSlider = styled(Slider)({
+  '& .MuiSlider-valueLabel': {
+    backgroundColor: `${colors.primaryBlue}`,
+  },
+})

@@ -11,7 +11,6 @@ import { useAppStore } from '~/stores/useAppStore'
 import { useSchemaStore } from '~/stores/useSchemaStore'
 import { NodeExtended } from '~/types'
 import { colors } from '~/utils/colors'
-import { truncateText } from '~/utils/truncateText'
 
 export type Props = {
   boostCount: number
@@ -66,7 +65,7 @@ export const Default = ({ boostCount, date, imageUrl, showTitle, type, newName, 
 
         {name && <Description data-testid="episode-name">{name}</Description>}
         {node?.properties?.summary && (
-          <Description data-testid="episode-description">{truncateText(node?.properties?.summary, 20)}</Description>
+          <Description data-testid="episode-description">{node?.properties?.summary}</Description>
         )}
         <Flex align="center" direction="row" justify="flex-start">
           {Boolean(date) && <Date>{moment.unix(date).fromNow()}</Date>}
