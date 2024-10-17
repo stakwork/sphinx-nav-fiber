@@ -251,6 +251,7 @@ const IconWrapper = styled(Flex)`
   display: flex;
   &.centered {
     margin: 0 auto;
+    color: ${colors.secondaryRed};
   }
 
   & + & {
