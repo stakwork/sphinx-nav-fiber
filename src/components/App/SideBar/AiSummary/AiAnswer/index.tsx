@@ -35,7 +35,6 @@ export const AiAnswer = ({ answer, entities, handleLoaded, hasBeenRendered }: Pr
   const { setBudget } = useUserStore((s) => s)
   const [displayedText, setDisplayedText] = useState('')
   const [highlightedEntities, setHighlightedEntities] = useState<ExtractedEntity[] | undefined>(entities)
-  const [mousePosition, setMousePosition] = useState(0)
   const [isDescriptionComplete, setIsDescriptionComplete] = useState(true)
 
   useEffect(() => {
@@ -78,15 +77,13 @@ export const AiAnswer = ({ answer, entities, handleLoaded, hasBeenRendered }: Pr
     }
   }, [entities, highlightedEntities])
 
-  const handleMouseMove = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+  const handleMouseMove = () => {
     setIsDescriptionComplete(false)
-    setMousePosition(event.clientX)
   }
 
   const responseTextDisplay = highlightAiSummary(
     displayedText,
     handleSubmit,
-    mousePosition,
     highlightedEntities,
     isDescriptionComplete,
   )
