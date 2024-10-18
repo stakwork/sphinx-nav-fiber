@@ -340,7 +340,7 @@ export const App = () => {
           <Wrapper direction="row">
             <FormProvider {...form}>
               <LazyMainToolbar />
-              {!universeQuestionIsOpen && <LazySideBar />}
+              {!universeQuestionIsOpen && chatInterfaceFeatureFlag && <LazySideBar />}
               <LazyUniverse />
               <Overlay />
               <AppBar />
