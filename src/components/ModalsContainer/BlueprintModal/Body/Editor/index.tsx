@@ -169,11 +169,13 @@ const fetchAndSetOptions = async (
       (schema) => !schema.is_deleted && schema.type && (!filterFunc || filterFunc(schema)),
     )
 
-    const options = filteredSchemas.map((schema) =>
-      schema.type === 'thing'
-        ? { label: 'No Parent', value: schema.type }
-        : { label: capitalizeFirstLetter(schema.type), value: schema.type },
-    )
+    const options = filteredSchemas
+      .map((schema) =>
+        schema.type === 'thing'
+          ? { label: 'No Parent', value: schema.type }
+          : { label: capitalizeFirstLetter(schema.type), value: schema.type },
+      )
+      .filter((option, index, self) => index === self.findIndex((o) => o.value === option.value))
 
     setOptions(options)
   } catch (error) {
