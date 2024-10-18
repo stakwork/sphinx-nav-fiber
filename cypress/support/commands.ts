@@ -54,6 +54,8 @@ Cypress.Commands.add('initialSetup', (username, budget) => {
 
   cy.visit('/', {
     onBeforeLoad(win) {
+      win.localStorage.setItem('featureFlags', JSON.stringify({ chatInterfaceFeatureFlag: true }))
+
       // @ts-ignore
       win.CYPRESS_USER = username || '' // eslint-disable-line no-param-reassign
 

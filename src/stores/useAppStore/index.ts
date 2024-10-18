@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { TAboutParams } from '~/network/fetchSourcesData'
+import { useFeatureFlagStore } from '../useFeatureFlagStore'
 
 export type SecondarySidebarActiveTab = '' | 'sentiment' | 'sources' | 'about'
 
@@ -71,7 +72,13 @@ export const useAppStore = create<AppStore>((set, get) => ({
       transcriptIsOpen: !sidebarIsOpen ? false : get().transcriptIsOpen,
     }),
   setTranscriptOpen: (transcriptIsOpen) => set({ transcriptIsOpen }),
-  setUniverseQuestionIsOpen: () => set({ universeQuestionIsOpen: !get().universeQuestionIsOpen }),
+  setUniverseQuestionIsOpen: () => {
+    const { chatInterfaceFeatureFlag } = useFeatureFlagStore.getState()
+
+    if (chatInterfaceFeatureFlag) {
+      set({ universeQuestionIsOpen: !get().universeQuestionIsOpen })
+    }
+  },
   setAppMetaData: (appMetaData) => set({ appMetaData }),
   setShowCollapseButton: (showCollapseButton) => set({ showCollapseButton }),
   setSelectedColor: (selectedColor) => set({ selectedColor }),
