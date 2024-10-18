@@ -7,7 +7,6 @@ import { getSchemaAll } from '~/network/fetchSourcesData'
 import { useDataStore } from '~/stores/useDataStore'
 import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
 import { useSchemaStore } from '~/stores/useSchemaStore'
-import { useUserStore } from '~/stores/useUserStore'
 import { colors } from '~/utils/colors'
 import { FastFilters } from './FastFilters'
 import { Hops } from './Hops'
@@ -30,8 +29,7 @@ const defaultValues = {
 
 export const FilterSearch = ({ anchorEl, setAnchorEl, onClose }: Props) => {
   const [schemaAll, setSchemaAll] = useSchemaStore((s) => [s.schemas, s.setSchemas])
-  const { setFilters, fetchData, setAbortRequests } = useDataStore((s) => s)
-  const { setBudget } = useUserStore((s) => s)
+  const { setFilters } = useDataStore((s) => s)
   const [selectedTypes, setSelectedTypes] = useState<string[]>(defaultValues.selectedTypes)
   const [hops, setHops] = useState(defaultValues.hops)
   const [sourceNodes, setSourceNodes] = useState<number>(defaultValues.sourceNodes)
@@ -83,8 +81,6 @@ export const FilterSearch = ({ anchorEl, setAnchorEl, onClose }: Props) => {
 
     setAnchorEl(null)
     onClose()
-
-    await fetchData(setBudget, setAbortRequests)
   }
 
   return (
