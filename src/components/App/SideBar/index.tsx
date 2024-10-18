@@ -66,7 +66,7 @@ export const SideBar = () => {
 
   return (
     <>
-      <Slide direction="right" in={sidebarIsOpen} mountOnEnter unmountOnExit>
+      <Slide direction="right" in={sidebarIsOpen}>
         <Content subViewOpen={subViewIsOpen} />
       </Slide>
       <SideBarSubView open={subViewIsOpen} />
