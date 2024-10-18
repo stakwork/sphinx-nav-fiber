@@ -108,6 +108,10 @@ const LabelWrapper = styled.span`
 const EditIconWrapper = styled(Flex)`
   align-items: center;
   cursor: pointer;
+
+  svg {
+    fill: none;
+  }
 `
 
 const ScrollableContent = styled(Flex)`
