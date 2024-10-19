@@ -13,7 +13,6 @@ import { isDevelopment } from '~/constants'
 import { useAppStore } from '~/stores/useAppStore'
 import { useControlStore } from '~/stores/useControlStore'
 import { useDataStore } from '~/stores/useDataStore'
-import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
 import { useSelectedNode } from '~/stores/useGraphStore'
 import { colors } from '~/utils/colors'
 import { addToGlobalForE2e } from '~/utils/tests'
@@ -99,10 +98,6 @@ const _Universe = () => {
   const isLoading = useDataStore((s) => s.isFetching)
   const universeQuestionIsOpen = useAppStore((s) => s.universeQuestionIsOpen)
 
-  const { chatInterfaceFeatureFlag } = useFeatureFlagStore((s) => ({
-    chatInterfaceFeatureFlag: s.chatInterfaceFeatureFlag,
-  }))
-
   const onWheelHandler = useCallback(
     (e: React.WheelEvent) => {
       const { target } = e
@@ -148,7 +143,7 @@ const _Universe = () => {
           </Suspense>
         </Canvas>
       </Suspense>
-      {chatInterfaceFeatureFlag && universeQuestionIsOpen && <UniverseQuestion />}
+      {universeQuestionIsOpen && <UniverseQuestion />}
       {isLoading && <Preloader fullSize={false} />}
       <Overlay />
     </Wrapper>
