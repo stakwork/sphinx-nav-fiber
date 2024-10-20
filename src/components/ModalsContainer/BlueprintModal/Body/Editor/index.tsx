@@ -489,6 +489,12 @@ export const Editor = ({
 
   const parentType = selectedSchema ? selectedSchema.type : parent
 
+  const getUniqueAttributes = (attrList: Attribute[]): TAutocompleteOption[] => {
+    const uniqueKeys = new Set(attributes.map((attr) => attr.key))
+
+    return Array.from(uniqueKeys).map((key) => ({ label: key, value: key }))
+  }
+
   return (
     <Flex>
       <HeaderRow>
@@ -614,9 +620,7 @@ export const Editor = ({
                 <Grid item mb={2} width="70%">
                   <AutoComplete
                     onSelect={(val) => setValue('selectedIndex', val?.value || '')}
-                    options={attributes
-                      .filter((attr) => attr.key)
-                      .map((attr) => ({ label: attr.key, value: attr.key }))}
+                    options={getUniqueAttributes(attributes)}
                     selectedValue={resolvedSelectedIndexValue}
                   />
                 </Grid>
