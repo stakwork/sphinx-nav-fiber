@@ -323,13 +323,17 @@ export const useDataStore = create<DataStore>()(
       console.log(updatedNode)
     },
     addNewNode: (data) => {
-      const { dataInitial: existingData } = get()
+      const { dataInitial: existingData, filters } = get()
 
       if (!data?.nodes) {
         return
       }
 
-      const uniqueIncomingNodes = deduplicateByRefId(data.nodes || [])
+      const nodesFilteredByFilters = filters.node_type.length
+        ? data.nodes.filter((node) => filters.node_type.some((t) => t === node.node_type))
+        : data.nodes
+
+      const uniqueIncomingNodes = deduplicateByRefId(nodesFilteredByFilters || [])
       const uniqueIncomingEdges = deduplicateByRefId(data.edges || [])
 
       // Step 2: Existing nodes and links from the current state
