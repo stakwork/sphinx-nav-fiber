@@ -27,17 +27,7 @@ export type TAboutParams = {
 }
 
 export type TStatParams = {
-  num_audio: number
-  num_contributors: number
-  num_daily: number
-  num_episodes: number
-  num_nodes: number
-  num_people: number
-  num_tweet: number
-  num_twitter_space: number
-  num_video: number
-  num_documents: number
-  [key: string]: number
+  [type: string]: number
 }
 
 export type TPriceParams = {

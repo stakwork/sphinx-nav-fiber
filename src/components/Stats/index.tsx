@@ -1,13 +1,10 @@
 import { noop } from 'lodash'
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
-import AudioIcon from '~/components/Icons/AudioIcon'
 import BudgetIcon from '~/components/Icons/BudgetIcon'
 import NodesIcon from '~/components/Icons/NodesIcon'
-import TwitterIcon from '~/components/Icons/TwitterIcon'
-import VideoIcon from '~/components/Icons/VideoIcon'
 import { Tooltip } from '~/components/common/ToolTip'
-import { TStatParams, getStats, getTotalProcessing } from '~/network/fetchSourcesData'
+import { getStats, getTotalProcessing } from '~/network/fetchSourcesData'
 import { useDataStore } from '~/stores/useDataStore'
 import { useUpdateSelectedNode } from '~/stores/useGraphStore'
 import { useModal } from '~/stores/useModalStore'
@@ -15,75 +12,16 @@ import { useUserStore } from '~/stores/useUserStore'
 import { TStats } from '~/types'
 import { formatBudget, formatStatsResponse } from '~/utils'
 import { colors } from '~/utils/colors'
-import DocumentIcon from '../Icons/DocumentIcon'
-import EpisodeIcon from '../Icons/EpisodeIcon'
 import { Flex } from '../common/Flex'
 import { Animation } from './Animation'
-
-interface StatConfigItem {
-  name: string
-  icon: JSX.Element
-  key: keyof TStats
-  dataKey: keyof TStatParams
-  mediaType: string
-  tooltip: string
-}
-
-export const StatsConfig: StatConfigItem[] = [
-  {
-    name: 'Nodes',
-    icon: <NodesIcon />,
-    key: 'nodeCount',
-    dataKey: 'node_count',
-    mediaType: '',
-    tooltip: 'All Nodes',
-  },
-  {
-    name: 'Episodes',
-    icon: <EpisodeIcon />,
-    key: 'numEpisodes',
-    dataKey: 'num_episodes',
-    mediaType: 'episode',
-    tooltip: 'Episodes',
-  },
-  {
-    name: 'Audio',
-    icon: <AudioIcon />,
-    key: 'numAudio',
-    dataKey: 'num_audio',
-    mediaType: 'audio',
-    tooltip: 'Audios',
-  },
-  {
-    name: 'Video',
-    icon: <VideoIcon />,
-    key: 'numVideo',
-    dataKey: 'num_video',
-    mediaType: 'video',
-    tooltip: 'Videos',
-  },
-  {
-    name: 'Twitter Spaces',
-    icon: <TwitterIcon />,
-    key: 'numTwitterSpace',
-    dataKey: 'num_tweet',
-    mediaType: 'twitter',
-    tooltip: 'Posts',
-  },
-  {
-    name: 'Document',
-    icon: <DocumentIcon />,
-    key: 'numDocuments',
-    dataKey: 'num_documents',
-    mediaType: 'document',
-    tooltip: 'Documents',
-  },
-]
+import { Icons } from '~/components/Icons'
+import { useSchemaStore } from '~/stores/useSchemaStore'
 
 export const Stats = () => {
   const [isTotalProcessing, setIsTotalProcessing] = useState(false)
   const [totalProcessing, setTotalProcessing] = useState(0)
   const [budget, setBudget] = useUserStore((s) => [s.budget, s.setBudget])
+  const { normalizedSchemasByType } = useSchemaStore((s) => s)
 
   const [stats, setStats, fetchData, setAbortRequests] = useDataStore((s) => [
     s.stats,
@@ -151,14 +89,36 @@ export const Stats = () => {
     return null
   }
 
+  const convertToTitleCase = (key: string) => key.replace(/\b\w/g, (char) => char.toUpperCase())
+
+  const generateStatConfigItem = (key: string) => {
+    const name = convertToTitleCase(key.split('_')[0])
+    const tooltip = name
+    const primaryIcon = normalizedSchemasByType[name]?.icon
+    const Icon = Icons[primaryIcon as string] || NodesIcon
+
+    return {
+      name,
+      Icon,
+      key,
+      dataKey: key,
+      mediaType: name,
+      tooltip,
+    }
+  }
+
+  const StatsConfig = Object.keys(stats).map((key) => generateStatConfigItem(key))
+
   return (
     <StatisticsContainer>
       <StatisticsWrapper>
-        {StatsConfig.map(({ name, icon, key, mediaType, tooltip }) =>
-          stats[key as keyof TStats] !== '0' ? (
+        {StatsConfig.map(({ name, Icon, key, mediaType, tooltip }) =>
+          stats[key as keyof TStats] !== 0 ? (
             <Stat key={name} data-testid={mediaType} onClick={() => handleStatClick(mediaType)}>
               <Tooltip content={tooltip} margin="13px">
-                <div className="icon">{icon}</div>
+                <div className="icon">
+                  <Icon />
+                </div>
                 <div className="text">{stats[key as keyof TStats]}</div>
               </Tooltip>
             </Stat>

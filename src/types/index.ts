@@ -262,14 +262,7 @@ export type BalanceResponse = {
 }
 
 export type TStats = {
-  numAudio?: string
-  numContributors?: string
-  numDaily?: string
-  numEpisodes?: string
-  nodeCount?: string
-  numTwitterSpace?: string
-  numVideo?: string
-  numDocuments?: string
+  [key: string]: number
 }
 
 export type RelayUser = {

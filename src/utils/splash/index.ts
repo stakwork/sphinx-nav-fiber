@@ -1,5 +1,4 @@
 import { initialMessageData } from '~/components/App/Splash/constants'
-import { StatsConfig } from '~/components/Stats'
 import { TStatParams } from '~/network/fetchSourcesData'
 import { TStats } from '~/types'
 import { formatNumberWithCommas } from '../formatStats'
@@ -10,12 +9,27 @@ import { formatNumberWithCommas } from '../formatStats'
  * @returns {TStats} The formatted statistics object.
  */
 
-export const formatStatsResponse = (statsResponse: TStatParams): TStats =>
-  StatsConfig.reduce((updatedStats: TStats, { key, dataKey }) => {
-    const formattedValue = formatNumberWithCommas(statsResponse[dataKey] ?? 0)
+export const formatStatsResponse = (statsResponse: TStatParams): TStats => {
+  // Filter out keys that start with 'num_'
+  const filteredData = Object.keys(statsResponse)
+    .filter((key) => !key.startsWith('num_'))
+    .map((key) => ({
+      key,
+      value: statsResponse[key],
+    }))
 
-    return { ...updatedStats, [key]: formattedValue }
-  }, {})
+  // Sort the stats by their values and take the top 5
+  const top5 = filteredData.sort((a, b) => b.value - a.value).slice(0, 5)
+
+  // Convert the array back into an object format
+  const top5Object = top5.reduce((acc, { key, value }) => {
+    acc[key] = value
+
+    return acc
+  }, {} as Record<string, number>)
+
+  return top5Object
+}
 
 /**
  * Formats the splash message based on the statistics response.
