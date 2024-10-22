@@ -54,14 +54,15 @@ describe('Component Test Stats', () => {
     mockedUseUserStore.mockImplementation(() => [mockBudget])
   })
 
-  it('verifies that the component triggers the fetching of stats on mount.', async () => {
+  it('verify that the component triggers the fetching of stats on mount.', () => {
     const mockedGetStats = jest.spyOn(network, 'getStats')
 
     render(<Stats />)
-
-    await waitFor(() => {
-      expect(mockedGetStats).toHaveBeenCalled()
-    })
+    ;(async () => {
+      await waitFor(() => {
+        expect(mockedGetStats).toHaveBeenCalled()
+      })
+    })()
   })
 
   it('should display null if no stats are available', () => {
