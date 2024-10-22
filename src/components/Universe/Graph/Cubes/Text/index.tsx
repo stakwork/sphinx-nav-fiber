@@ -160,7 +160,7 @@ export const TextNode = memo(({ node, hide }: Props) => {
           <mesh name={node.id} userData={node} visible={!hide}>
             <sphereGeometry args={[30, 32, 32]} userData={node} />
             <meshStandardMaterial {...smoothness} color={color} />
-            <Svg ref={svgRef} position={[20, 20, 20]} scale={2} src={`svg-icons/${iconName}.svg`} />
+            <Svg ref={svgRef} position={[20, 40, 40]} scale={2} src={`svg-icons/${iconName}.svg`} />
           </mesh>
         </Select>
       )}
