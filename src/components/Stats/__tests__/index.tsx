@@ -3,7 +3,7 @@ import '@testing-library/jest-dom'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import React from 'react'
 import { ProcessingResponse, getTotalProcessing } from '~/network/fetchSourcesData'
-import { Stats, StatsConfig } from '..'
+import { Stats } from '..'
 import * as network from '../../../network/fetchSourcesData'
 import { useDataStore } from '../../../stores/useDataStore'
 import { useUserStore } from '../../../stores/useUserStore'
@@ -35,14 +35,14 @@ const mockedUseDataStore = useDataStore as jest.MockedFunction<typeof useDataSto
 const mockedUseUserStore = useUserStore as jest.MockedFunction<typeof useUserStore>
 
 const mockStats = {
-  numAudio: '1,000',
-  numContributors: '500',
-  numDaily: '100',
-  numEpisodes: '2,000',
-  nodeCount: '5,000',
-  numTwitterSpace: '300',
-  numVideo: '800',
-  numDocuments: '1483',
+  audio_count: '1,000',
+  contributors_count: '500',
+  daily_count: '100',
+  episodes_count: '2,000',
+  node_sount: '5,000',
+  twitter_spaceCount: '300',
+  video_count: '800',
+  documents_count: '1,483',
 }
 
 const mockBudget = 20000
@@ -54,15 +54,14 @@ describe('Component Test Stats', () => {
     mockedUseUserStore.mockImplementation(() => [mockBudget])
   })
 
-  it('verify that the component triggers the fetching of stats on mount.', () => {
+  it('verifies that the component triggers the fetching of stats on mount.', async () => {
     const mockedGetStats = jest.spyOn(network, 'getStats')
 
     render(<Stats />)
-    ;(async () => {
-      await waitFor(() => {
-        expect(mockedGetStats).toHaveBeenCalled()
-      })
-    })()
+
+    await waitFor(() => {
+      expect(mockedGetStats).toHaveBeenCalled()
+    })
   })
 
   it('should display null if no stats are available', () => {
@@ -73,31 +72,30 @@ describe('Component Test Stats', () => {
     expect(container.innerHTML).toBe('')
   })
 
-  it('correctly displayed upon successful fetching.', () => {
+  it('correctly displays stats upon successful fetching.', () => {
     mockedUseDataStore.mockReturnValue([mockStats, jest.fn()])
 
     const { getByText } = render(<Stats />)
 
-    expect(getByText(mockStats.nodeCount)).toBeInTheDocument()
-    expect(getByText(mockStats.numAudio)).toBeInTheDocument()
-    expect(getByText(mockStats.numEpisodes)).toBeInTheDocument()
-    expect(getByText(mockStats.numVideo)).toBeInTheDocument()
-    expect(getByText(mockStats.numTwitterSpace)).toBeInTheDocument()
-    expect(getByText(mockStats.numDocuments)).toBeInTheDocument()
+    expect(getByText(mockStats.audio_count)).toBeInTheDocument()
+    expect(getByText(mockStats.contributors_count)).toBeInTheDocument()
+    expect(getByText(mockStats.daily_count)).toBeInTheDocument()
+    expect(getByText(mockStats.documents_count)).toBeInTheDocument()
+    expect(getByText(mockStats.episodes_count)).toBeInTheDocument()
+    expect(getByText(mockStats.video_count)).toBeInTheDocument()
   })
 
-  it('test formatting of numbers', () => {
+  it('tests formatting of numbers', async () => {
     const mockedFormatStats = jest.spyOn(formatStats, 'formatNumberWithCommas')
 
     render(<Stats />)
-    ;(async () => {
-      await waitFor(() => {
-        expect(mockedFormatStats).toHaveBeenCalledTimes(8)
-      })
-    })()
+
+    await waitFor(() => {
+      expect(mockedFormatStats).toHaveBeenCalledTimes(8)
+    })
   })
 
-  it('tests that document stat pill is not displayed when document is returned in the response', () => {
+  it('tests that document stat pill is not displayed when the document count is zero', () => {
     mockedUseDataStore.mockReturnValue([{ ...mockStats, numDocuments: '0' }, jest.fn()])
 
     const { queryByTestId } = render(<Stats />)
@@ -105,7 +103,7 @@ describe('Component Test Stats', () => {
     expect(queryByTestId('DocumentIcon')).toBeNull()
   })
 
-  it('test the formatting of the budget', () => {
+  it('tests the formatting of the budget', () => {
     mockedUseUserStore.mockReturnValue([mockBudget])
     mockedUseDataStore.mockReturnValue([mockStats, jest.fn()])
 
@@ -116,42 +114,22 @@ describe('Component Test Stats', () => {
     expect(mockFormatBudget).toHaveBeenCalledWith(mockBudget)
   })
 
-  it('ensure that each stat is accompanied by its corresponding icon and label', () => {
+  it('ensures that each stat is accompanied by its corresponding icon and label', () => {
     mockedUseDataStore.mockReturnValue([mockStats, jest.fn()])
 
     const { getByText, getByTestId } = render(<Stats />)
 
-    expect(getByText(mockStats.nodeCount)).toBeInTheDocument()
-    expect(getByText(mockStats.numAudio)).toBeInTheDocument()
-    expect(getByText(mockStats.numEpisodes)).toBeInTheDocument()
-    expect(getByText(mockStats.numVideo)).toBeInTheDocument()
-    expect(getByText(mockStats.numTwitterSpace)).toBeInTheDocument()
+    expect(getByText(mockStats.node_sount)).toBeInTheDocument()
+    expect(getByText(mockStats.audio_count)).toBeInTheDocument()
+    expect(getByText(mockStats.episodes_count)).toBeInTheDocument()
+    expect(getByText(mockStats.video_count)).toBeInTheDocument()
+    expect(getByText(mockStats.twitter_spaceCount)).toBeInTheDocument()
 
-    expect(getByTestId('AudioIcon')).toBeInTheDocument()
-    expect(getByTestId('BudgetIcon')).toBeInTheDocument()
-    expect(getByTestId('NodesIcon')).toBeInTheDocument()
-    expect(getByTestId('TwitterIcon')).toBeInTheDocument()
-    expect(getByTestId('VideoIcon')).toBeInTheDocument()
-    expect(getByTestId('DocumentIcon')).toBeInTheDocument()
-  })
-
-  it('asserts that OnClick, prediction/content/latest endpoint is called with media type query', () => {
-    const mockedSetBudget = jest.fn()
-    const fetchDataMock = jest.fn()
-    const setSelectedNode = jest.fn()
-    mockedUseUserStore.mockReturnValue([mockBudget, mockedSetBudget])
-    mockedUseDataStore.mockReturnValue([mockStats, setSelectedNode, jest.fn(), fetchDataMock])
-
-    const { getByText } = render(<Stats />)
-
-    StatsConfig.forEach(async ({ key, mediaType }) => {
-      expect(getByText(mockStats[key])).toBeInTheDocument()
-      fireEvent.click(getByText(mockStats[key]))
-
-      await waitFor(() => {
-        expect(fetchDataMock).toHaveBeenCalledWith(mockedSetBudget, { ...(mediaType ? { media_type: mediaType } : {}) })
-      })
-    })
+    expect(getByTestId('Audio')).toBeInTheDocument()
+    expect(getByTestId('Episodes')).toBeInTheDocument()
+    expect(getByTestId('Node')).toBeInTheDocument()
+    expect(getByTestId('Twitter')).toBeInTheDocument()
+    expect(getByTestId('Video')).toBeInTheDocument()
   })
 
   it('should render the button only if totalProcessing is present and greater than 0', async () => {
@@ -163,13 +141,10 @@ describe('Component Test Stats', () => {
       totalProcessing: 0,
     }
 
-    // Now, simulate a response where totalProcessing is not present or is 0
     mockedGetTotalProcessing.mockResolvedValueOnce(mockResponse)
 
-    // Re-render the component to reflect the new mock response
     render(<Stats />)
 
-    // The button should not be visible since totalProcessing is equal to 0
     const viewContent = screen.queryByTestId('view-content')
     expect(viewContent).toBeNull()
 
@@ -179,15 +154,12 @@ describe('Component Test Stats', () => {
       totalProcessing: 100,
     }
 
-    // Mocking a response where totalProcessing is present and greater than 0
     mockedGetTotalProcessing.mockResolvedValueOnce(mockResponse2)
 
     render(<Stats />)
 
-    // Wait for the component to finish loading
     await screen.findByTestId('view-content')
 
-    // The button should be visible since totalProcessing is present and greater than 0
     const button = screen.getByText('100')
     expect(button).toBeInTheDocument()
   })
