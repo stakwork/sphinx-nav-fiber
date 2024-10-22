@@ -1,6 +1,6 @@
 /* eslint-disable padding-line-between-statements */
 import '@testing-library/jest-dom'
-import { fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import React from 'react'
 import { ProcessingResponse, getTotalProcessing } from '~/network/fetchSourcesData'
 import { Stats } from '..'
@@ -37,7 +37,7 @@ const mockedUseUserStore = useUserStore as jest.MockedFunction<typeof useUserSto
 const mockStats = {
   audio_count: '1,000',
   contributors_count: '500',
-  daily_count: '100',
+  daily_count: '200',
   episodes_count: '2,000',
   node_sount: '5,000',
   twitter_spaceCount: '300',
@@ -143,10 +143,13 @@ describe('Component Test Stats', () => {
       totalProcessing: 0,
     }
 
+    // Now, simulate a response where totalProcessing is not present or is 0
     mockedGetTotalProcessing.mockResolvedValueOnce(mockResponse)
 
+    // Re-render the component to reflect the new mock response
     render(<Stats />)
 
+    // The button should not be visible since totalProcessing is equal to 0
     const viewContent = screen.queryByTestId('view-content')
     expect(viewContent).toBeNull()
 
@@ -156,12 +159,15 @@ describe('Component Test Stats', () => {
       totalProcessing: 100,
     }
 
+    // Mocking a response where totalProcessing is present and greater than 0
     mockedGetTotalProcessing.mockResolvedValueOnce(mockResponse2)
 
     render(<Stats />)
 
+    // Wait for the component to finish loading
     await screen.findByTestId('view-content')
 
+    // The button should be visible since totalProcessing is present and greater than 0
     const button = screen.getByText('100')
     expect(button).toBeInTheDocument()
   })
