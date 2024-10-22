@@ -86,14 +86,15 @@ describe('Component Test Stats', () => {
     expect(getByText(mockStats.video_count)).toBeInTheDocument()
   })
 
-  it('tests formatting of numbers', async () => {
+  it('test formatting of numbers', () => {
     const mockedFormatStats = jest.spyOn(formatStats, 'formatNumberWithCommas')
 
     render(<Stats />)
-
-    await waitFor(() => {
-      expect(mockedFormatStats).toHaveBeenCalledTimes(8)
-    })
+    ;(async () => {
+      await waitFor(() => {
+        expect(mockedFormatStats).toHaveBeenCalledTimes(8)
+      })
+    })()
   })
 
   it('tests that document stat pill is not displayed when the document count is zero', () => {
