@@ -2,6 +2,7 @@ import styled from 'styled-components'
 import { useSchemaStore } from '~/stores/useSchemaStore'
 import { colors } from '~/utils/colors'
 import { Flex } from '../Flex'
+import { Icons } from '~/components/Icons'
 
 type Props = {
   type: string
@@ -21,7 +22,9 @@ export const TypeBadge = ({ type }: Props) => {
   const primaryColor = normalizedSchemasByType[type]?.primary_color
   const primaryIcon = normalizedSchemasByType[type]?.icon
 
-  const icon = primaryIcon ? `svg-icons/${primaryIcon}.svg` : null
+  const isIconPresent = primaryIcon && primaryIcon in Icons
+
+  const icon = isIconPresent ? `svg-icons/${primaryIcon}.svg` : null
 
   switch (nodeType) {
     case 'video':
