@@ -9,7 +9,6 @@ import { Connections } from './Connections'
 import { Cubes } from './Cubes'
 import { Earth } from './Earth'
 import { LoadingNodes } from './LoadingNodes'
-import { Particles } from './Particles'
 import { NodeDetailsPanel } from './UI'
 
 export type LinkPosition = {
@@ -154,7 +153,6 @@ export const Graph = () => {
       <Cubes />
       <Earth />
 
-      {false && <Particles />}
       {(isLoadingNew || isFetching) && <LoadingNodes />}
 
       {graphStyle !== 'earth' && <Connections linksPositions={linksPositionRef.current} />}

@@ -1,8 +1,9 @@
-import { Svg, Text } from '@react-three/drei'
+import { Billboard, Point, Svg, Text } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import { Select } from '@react-three/postprocessing'
+import { throttle } from 'lodash'
 import { memo, useMemo, useRef } from 'react'
-import { Mesh } from 'three'
+import { Mesh, MeshStandardMaterial, TorusGeometry, Vector3 } from 'three'
 import { Icons } from '~/components/Icons'
 import { useNodeTypes } from '~/stores/useDataStore'
 import { useGraphStore, useHoveredNode, useSelectedNode, useSelectedNodeRelativeIds } from '~/stores/useGraphStore'
@@ -11,7 +12,6 @@ import { NodeExtended } from '~/types'
 import { colors } from '~/utils/colors'
 import { removeEmojis } from '~/utils/removeEmojisFromText'
 import { truncateText } from '~/utils/truncateText'
-import { smoothness } from '../Cube/constants'
 import { fontProps } from './constants'
 
 const COLORS_MAP = [
@@ -50,32 +50,27 @@ type Props = {
 }
 
 function splitStringIntoThreeParts(text: string): string {
-  // Split the string into an array of words
-
   const truncatedText = truncateText(text, 30)
   const words = truncatedText.split(' ')
 
-  // If the word count is 5 or less, return the original text
-  if (text.split(' ').length <= 5) {
+  if (words.length <= 5) {
     return truncatedText
   }
 
-  // Determine the split points
   const third = Math.ceil(words.length / 3)
   const twoThirds = third * 2
 
-  // Split the array into three parts
   const firstPart = words.slice(0, third).join(' ')
   const secondPart = words.slice(third, twoThirds).join(' ')
   const thirdPart = words.slice(twoThirds).join(' ')
 
-  // Return the three parts as a single string with newline characters in between
   return `${firstPart}\n${secondPart}\n${thirdPart}`
 }
 
 export const TextNode = memo(({ node, hide }: Props) => {
   const ref = useRef<Mesh | null>(null)
   const svgRef = useRef<Mesh | null>(null)
+  const ringRef = useRef<Mesh | null>(null)
   const selectedNode = useSelectedNode()
   const hoveredNode = useHoveredNode()
 
@@ -86,19 +81,23 @@ export const TextNode = memo(({ node, hide }: Props) => {
   const showSelectionGraph = useGraphStore((s) => s.showSelectionGraph)
   const { normalizedSchemasByType } = useSchemaStore((s) => s)
 
-  const nodeTypes = useNodeTypes()
-
   useFrame(({ camera }) => {
-    if (ref?.current) {
-      // Make text face the camera
-      ref.current.quaternion.copy(camera.quaternion)
-    }
+    const checkDistance = throttle(() => {
+      const nodePosition = new Vector3().setFromMatrixPosition(ref.current!.matrixWorld)
+      const distance = nodePosition.distanceTo(camera.position)
+      const isLess = distance < 5000
 
-    if (svgRef?.current) {
-      // Make text face the camera
-      svgRef.current.quaternion.copy(camera.quaternion)
-    }
+      if (ringRef.current) {
+        ringRef.current.visible = isLess
+      }
+
+      // Set visibility based on distance
+    }, 1500) // Throttle checks to run only every 500ms
+
+    checkDistance()
   })
+
+  const nodeTypes = useNodeTypes()
 
   const textScale = useMemo(() => {
     let scale = (node.edge_count || 1) * 20
@@ -111,9 +110,7 @@ export const TextNode = memo(({ node, hide }: Props) => {
 
     const nodeScale = scale / Math.sqrt(node.name.length)
 
-    scale = Math.max(nodeScale, 20)
-
-    return Math.min(scale, 30)
+    return Math.min(Math.max(nodeScale, 20), 30)
   }, [node.edge_count, node.name, isSelected, isRelative, showSelectionGraph])
 
   const fillOpacity = useMemo(() => {
@@ -134,36 +131,57 @@ export const TextNode = memo(({ node, hide }: Props) => {
   const color = primaryColor ?? (COLORS_MAP[nodeTypes.indexOf(node.node_type)] || colors.white)
 
   const Icon = primaryIcon ? Icons[primaryIcon] : null
-
-  const iconName = Icon ? primaryIcon : 'AddCircleIcon'
-
+  const iconName = Icon ? primaryIcon : 'NodesIcon'
   const sanitizedNodeName = removeEmojis(String(node.name))
+
+  const ringGeometry = useMemo(() => new TorusGeometry(30, 4, 16, 100), [])
+  const ringMaterial = useMemo(() => new MeshStandardMaterial({ color }), [color])
 
   return (
     <>
-      {!Icon ? (
-        <Text
-          ref={ref}
-          anchorX="center"
-          anchorY="middle"
-          color={color}
-          fillOpacity={fillOpacity}
-          scale={textScale}
-          userData={node}
-          visible={!hide}
-          {...fontProps}
-        >
-          {splitStringIntoThreeParts(sanitizedNodeName)}
-        </Text>
-      ) : (
-        <Select enabled={!!isSelected}>
-          <mesh name={node.id} userData={node} visible={!hide}>
-            <sphereGeometry args={[30, 32, 32]} userData={node} />
-            <meshStandardMaterial {...smoothness} color={color} />
-            <Svg ref={svgRef} position={[20, 20, 20]} scale={2} src={`svg-icons/${iconName}.svg`} />
+      <Select enabled={!!isSelected}>
+        <Billboard follow lockX={false} lockY={false} lockZ={false}>
+          {/* Ring geometry */}
+          <mesh
+            ref={ringRef}
+            geometry={ringGeometry}
+            material={ringMaterial}
+            name={node.id}
+            userData={node}
+            visible={!hide}
+          >
+            <Svg
+              ref={svgRef}
+              onUpdate={(svg) => {
+                svg.traverse((child) => {
+                  if (child instanceof Mesh) {
+                    // Apply dynamic color to meshes
+                    // eslint-disable-next-line no-param-reassign
+                    child.material = new MeshStandardMaterial({ color })
+                  }
+                })
+              }}
+              position={[-15, 15, 0]}
+              scale={2}
+              src={`svg-icons/${iconName}.svg`}
+              strokeMaterial={{ color: 'yellow' }}
+            />
+
+            <Text
+              ref={ref}
+              color={color}
+              fillOpacity={fillOpacity}
+              position={[0, -40, 0]}
+              scale={textScale}
+              userData={node}
+              {...fontProps}
+            >
+              {splitStringIntoThreeParts(sanitizedNodeName)}
+            </Text>
           </mesh>
-        </Select>
-      )}
+        </Billboard>
+        <Point />
+      </Select>
     </>
   )
 })

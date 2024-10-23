@@ -6,9 +6,9 @@ import styled from 'styled-components'
 import { BoxGeometry, Mesh, Vector3 } from 'three'
 import { SchemaExtended } from '~/components/ModalsContainer/BlueprintModal/types'
 import { fontProps } from '~/components/Universe/Graph/Cubes/Text/constants'
+import { useSchemaStore } from '~/stores/useSchemaStore'
 import { truncateText } from '~/utils/truncateText'
 import { NODE_RADIUS } from '../../constants'
-import { useSchemaStore } from '~/stores/useSchemaStore'
 
 export const NODE_TYPE_COLORS = ['#ff13c9', '#5af0ff', '#3233ff', '#c2f0c2', '#ff6666', '#99ccff', '#ffb3b3']
 

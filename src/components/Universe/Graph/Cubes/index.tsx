@@ -6,8 +6,6 @@ import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
 import { useGraphStore, useSelectedNode, useSelectedNodeRelativeIds } from '~/stores/useGraphStore'
 import { NodeExtended } from '~/types'
-import { BlurryInstances } from './BlurryInstances'
-import { Cube } from './Cube'
 import { RelevanceBadges } from './RelevanceBadges'
 import { SelectionDataNodes } from './SelectionDataNodes'
 import { TextNode } from './Text'
@@ -97,7 +95,6 @@ export const Cubes = memo(() => {
       onPointerOut={onPointerOut}
       onPointerOver={onPointerIn}
     >
-      {false && <BlurryInstances hide={hideUniverse} />}
       <RelevanceBadges />
       <group name="simulation-3d-group__nodes">
         {data?.nodes.map((node: NodeExtended) => {
@@ -105,11 +102,7 @@ export const Cubes = memo(() => {
 
           return (
             <mesh key={node.ref_id}>
-              {node.name ? (
-                <TextNode key={node.ref_id || node.id} hide={hideUniverse || hide} node={node} />
-              ) : (
-                <Cube key={node.ref_id || node.id} hide={hideUniverse} node={node} />
-              )}
+              <TextNode key={node.ref_id || node.id} hide={hideUniverse || hide} node={node} />
             </mesh>
           )
         })}
