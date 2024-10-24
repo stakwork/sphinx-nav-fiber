@@ -754,6 +754,7 @@ const ColorPickerIconWrapper = styled.span<{ selectedColor?: string }>`
   height: 36px;
   border-radius: 6px;
   margin-left: 12px;
+  margin-block-start: 3px;
   background: ${(props) => props.selectedColor ?? colors.THING};
   display: flex;
   justify-content: center;
@@ -774,8 +775,9 @@ const ColorPickerIconWrapper = styled.span<{ selectedColor?: string }>`
 
 const InputIconWrapper = styled(Flex)`
   justify-content: space-between;
-  align-items: center;
   flex-direction: row;
+  position: relative;
+  display: flex;
 `
 
 const InputWrapper = styled(Flex)`
