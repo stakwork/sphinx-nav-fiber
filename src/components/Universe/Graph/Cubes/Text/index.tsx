@@ -1,6 +1,5 @@
-import { Billboard, Point, Svg, Text } from '@react-three/drei'
+import { Billboard, Svg, Text } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
-import { Select } from '@react-three/postprocessing'
 import { throttle } from 'lodash'
 import { memo, useMemo, useRef } from 'react'
 import { Mesh, MeshStandardMaterial, TorusGeometry, Vector3 } from 'three'
@@ -85,7 +84,7 @@ export const TextNode = memo(({ node, hide }: Props) => {
     const checkDistance = throttle(() => {
       const nodePosition = new Vector3().setFromMatrixPosition(ref.current!.matrixWorld)
       const distance = nodePosition.distanceTo(camera.position)
-      const isLess = distance < 5000
+      const isLess = distance < 2500
 
       if (ringRef.current) {
         ringRef.current.visible = isLess
@@ -139,49 +138,46 @@ export const TextNode = memo(({ node, hide }: Props) => {
 
   return (
     <>
-      <Select enabled={!!isSelected}>
-        <Billboard follow lockX={false} lockY={false} lockZ={false}>
-          {/* Ring geometry */}
-          <mesh
-            ref={ringRef}
-            geometry={ringGeometry}
-            material={ringMaterial}
-            name={node.id}
-            userData={node}
-            visible={!hide}
-          >
-            <Svg
-              ref={svgRef}
-              onUpdate={(svg) => {
-                svg.traverse((child) => {
-                  if (child instanceof Mesh) {
-                    // Apply dynamic color to meshes
-                    // eslint-disable-next-line no-param-reassign
-                    child.material = new MeshStandardMaterial({ color })
-                  }
-                })
-              }}
-              position={[-15, 15, 0]}
-              scale={2}
-              src={`svg-icons/${iconName}.svg`}
-              strokeMaterial={{ color: 'yellow' }}
-            />
+      <Billboard follow lockX={false} lockY={false} lockZ={false}>
+        {/* Ring geometry */}
+        <mesh
+          ref={ringRef}
+          geometry={ringGeometry}
+          material={ringMaterial}
+          name={node.id}
+          userData={node}
+          visible={!hide}
+        >
+          <Svg
+            ref={svgRef}
+            onUpdate={(svg) => {
+              svg.traverse((child) => {
+                if (child instanceof Mesh) {
+                  // Apply dynamic color to meshes
+                  // eslint-disable-next-line no-param-reassign
+                  child.material = new MeshStandardMaterial({ color })
+                }
+              })
+            }}
+            position={[-15, 15, 0]}
+            scale={2}
+            src={`svg-icons/${iconName}.svg`}
+            strokeMaterial={{ color: 'yellow' }}
+          />
 
-            <Text
-              ref={ref}
-              color={color}
-              fillOpacity={fillOpacity}
-              position={[0, -40, 0]}
-              scale={textScale}
-              userData={node}
-              {...fontProps}
-            >
-              {splitStringIntoThreeParts(sanitizedNodeName)}
-            </Text>
-          </mesh>
-        </Billboard>
-        <Point />
-      </Select>
+          <Text
+            ref={ref}
+            color={color}
+            fillOpacity={fillOpacity}
+            position={[0, -40, 0]}
+            scale={textScale}
+            userData={node}
+            {...fontProps}
+          >
+            {splitStringIntoThreeParts(sanitizedNodeName)}
+          </Text>
+        </mesh>
+      </Billboard>
     </>
   )
 })

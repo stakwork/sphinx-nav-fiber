@@ -85,9 +85,18 @@ export const Graph = () => {
 
       if (groupRef.current) {
         const gr = groupRef.current.getObjectByName('simulation-3d-group__nodes') as Group
+        const grPoints = groupRef.current.getObjectByName('simulation-3d-group__node-points') as Group
         const grConnections = groupRef.current.getObjectByName('simulation-3d-group__connections') as Group
 
         gr.children.forEach((mesh, index) => {
+          const simulationNode = simulation.nodes()[index]
+
+          if (simulationNode) {
+            mesh.position.set(simulationNode.x, simulationNode.y, simulationNode.z)
+          }
+        })
+
+        grPoints.children[0].children.forEach((mesh, index) => {
           const simulationNode = simulation.nodes()[index]
 
           if (simulationNode) {

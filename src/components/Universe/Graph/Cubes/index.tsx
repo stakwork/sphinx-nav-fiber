@@ -6,6 +6,7 @@ import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
 import { useGraphStore, useSelectedNode, useSelectedNodeRelativeIds } from '~/stores/useGraphStore'
 import { NodeExtended } from '~/types'
+import { NodePoints } from './NodePoints'
 import { RelevanceBadges } from './RelevanceBadges'
 import { SelectionDataNodes } from './SelectionDataNodes'
 import { TextNode } from './Text'
@@ -106,6 +107,9 @@ export const Cubes = memo(() => {
             </mesh>
           )
         })}
+      </group>
+      <group name="simulation-3d-group__node-points">
+        <NodePoints />
       </group>
 
       {hideUniverse && <SelectionDataNodes />}
