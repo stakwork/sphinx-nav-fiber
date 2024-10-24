@@ -1,7 +1,7 @@
 import { Line } from '@react-three/drei'
 import gsap from 'gsap'
 import { forwardRef, useEffect } from 'react'
-import { Vector3 } from 'three'
+import { Color, Vector3 } from 'three'
 import { Line2 } from 'three-stdlib'
 
 type LineComponentProps = {
@@ -29,17 +29,10 @@ const LineComponent = forwardRef<Line2, LineComponentProps>(
       }
     }, [isSelected, lineWidth, ref])
 
+    const color = new Color(0xff0000)
+
     return (
-      <Line
-        ref={ref}
-        color="rgba(136, 136, 136, 1)"
-        isLine2
-        lineWidth={1}
-        opacity={1}
-        points={[source, target]}
-        transparent
-        visible={visible}
-      />
+      <Line ref={ref} color={color} isLine2 lineWidth={2} opacity={0.5} points={[source, target]} visible={visible} />
     )
   },
 )

@@ -1,17 +1,15 @@
-import { Svg, Text } from '@react-three/drei'
+import { Billboard, Svg, Text } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
-import { Select } from '@react-three/postprocessing'
 import { memo, useMemo, useRef } from 'react'
-import { Mesh } from 'three'
+import { Mesh, MeshStandardMaterial, Vector3 } from 'three'
 import { Icons } from '~/components/Icons'
 import { useNodeTypes } from '~/stores/useDataStore'
-import { useGraphStore, useHoveredNode, useSelectedNode, useSelectedNodeRelativeIds } from '~/stores/useGraphStore'
+import { useGraphStore, useSelectedNode, useSelectedNodeRelativeIds } from '~/stores/useGraphStore'
 import { useSchemaStore } from '~/stores/useSchemaStore'
 import { NodeExtended } from '~/types'
 import { colors } from '~/utils/colors'
 import { removeEmojis } from '~/utils/removeEmojisFromText'
 import { truncateText } from '~/utils/truncateText'
-import { smoothness } from '../Cube/constants'
 import { fontProps } from './constants'
 
 const COLORS_MAP = [
@@ -47,58 +45,56 @@ const COLORS_MAP = [
 type Props = {
   node: NodeExtended
   hide?: boolean
+  isHovered: boolean
 }
 
 function splitStringIntoThreeParts(text: string): string {
-  // Split the string into an array of words
-
   const truncatedText = truncateText(text, 30)
   const words = truncatedText.split(' ')
 
-  // If the word count is 5 or less, return the original text
-  if (text.split(' ').length <= 5) {
+  if (words.length <= 5) {
     return truncatedText
   }
 
-  // Determine the split points
   const third = Math.ceil(words.length / 3)
   const twoThirds = third * 2
 
-  // Split the array into three parts
   const firstPart = words.slice(0, third).join(' ')
   const secondPart = words.slice(third, twoThirds).join(' ')
   const thirdPart = words.slice(twoThirds).join(' ')
 
-  // Return the three parts as a single string with newline characters in between
   return `${firstPart}\n${secondPart}\n${thirdPart}`
 }
 
-export const TextNode = memo(({ node, hide }: Props) => {
+export const TextNode = memo(({ node, hide, isHovered }: Props) => {
   const ref = useRef<Mesh | null>(null)
   const svgRef = useRef<Mesh | null>(null)
+  const ringRef = useRef<Mesh | null>(null)
   const selectedNode = useSelectedNode()
-  const hoveredNode = useHoveredNode()
+
+  const nodePositionRef = useRef(new Vector3())
 
   const selectedNodeRelativeIds = useSelectedNodeRelativeIds()
   const isRelative = selectedNodeRelativeIds.includes(node?.ref_id || '')
   const isSelected = !!selectedNode && selectedNode?.ref_id === node.ref_id
-  const isHovered = !!hoveredNode && hoveredNode?.ref_id === node.ref_id
   const showSelectionGraph = useGraphStore((s) => s.showSelectionGraph)
   const { normalizedSchemasByType } = useSchemaStore((s) => s)
 
-  const nodeTypes = useNodeTypes()
-
   useFrame(({ camera }) => {
-    if (ref?.current) {
-      // Make text face the camera
-      ref.current.quaternion.copy(camera.quaternion)
+    const checkDistance = () => {
+      const nodePosition = nodePositionRef.current.setFromMatrixPosition(ref.current!.matrixWorld)
+
+      if (ringRef.current) {
+        ringRef.current.visible = nodePosition.distanceTo(camera.position) < 2500
+      }
+
+      // Set visibility based on distance
     }
 
-    if (svgRef?.current) {
-      // Make text face the camera
-      svgRef.current.quaternion.copy(camera.quaternion)
-    }
+    checkDistance()
   })
+
+  const nodeTypes = useNodeTypes()
 
   const textScale = useMemo(() => {
     let scale = (node.edge_count || 1) * 20
@@ -111,9 +107,7 @@ export const TextNode = memo(({ node, hide }: Props) => {
 
     const nodeScale = scale / Math.sqrt(node.name.length)
 
-    scale = Math.max(nodeScale, 20)
-
-    return Math.min(scale, 30)
+    return Math.min(Math.max(nodeScale, 20), 30)
   }, [node.edge_count, node.name, isSelected, isRelative, showSelectionGraph])
 
   const fillOpacity = useMemo(() => {
@@ -121,12 +115,12 @@ export const TextNode = memo(({ node, hide }: Props) => {
       return 0.2
     }
 
-    if (hoveredNode && !isHovered) {
+    if (!isHovered) {
       return 0.2
     }
 
     return 1
-  }, [isSelected, selectedNode, isHovered, hoveredNode])
+  }, [isSelected, selectedNode, isHovered])
 
   const primaryColor = normalizedSchemasByType[node.node_type]?.primary_color
   const primaryIcon = normalizedSchemasByType[node.node_type]?.icon
@@ -134,37 +128,45 @@ export const TextNode = memo(({ node, hide }: Props) => {
   const color = primaryColor ?? (COLORS_MAP[nodeTypes.indexOf(node.node_type)] || colors.white)
 
   const Icon = primaryIcon ? Icons[primaryIcon] : null
-
-  const iconName = Icon ? primaryIcon : 'AddCircleIcon'
-
+  const iconName = Icon ? primaryIcon : 'NodesIcon'
   const sanitizedNodeName = removeEmojis(String(node.name))
 
   return (
-    <>
-      {!Icon ? (
+    <Billboard follow lockX={false} lockY={false} lockZ={false} name="billboard" userData={node}>
+      <mesh ref={ringRef} name={node.id} userData={node} visible={!hide}>
+        <Svg
+          ref={svgRef}
+          name="svg"
+          onUpdate={(svg) => {
+            svg.traverse((child) => {
+              if (child instanceof Mesh) {
+                // Apply dynamic color to meshes
+                // eslint-disable-next-line no-param-reassign
+                child.material = new MeshStandardMaterial({ color })
+              }
+            })
+          }}
+          position={[-15, 15, 0]}
+          scale={2}
+          src={`svg-icons/${iconName}.svg`}
+          strokeMaterial={{ color: 'yellow' }}
+          userData={node}
+        />
+
         <Text
           ref={ref}
-          anchorX="center"
-          anchorY="middle"
           color={color}
-          fillOpacity={fillOpacity}
+          fillOpacity={1 || fillOpacity}
+          name="text"
+          position={[0, -40, 0]}
           scale={textScale}
           userData={node}
-          visible={!hide}
           {...fontProps}
         >
           {splitStringIntoThreeParts(sanitizedNodeName)}
         </Text>
-      ) : (
-        <Select enabled={!!isSelected}>
-          <mesh name={node.id} userData={node} visible={!hide}>
-            <sphereGeometry args={[30, 32, 32]} userData={node} />
-            <meshStandardMaterial {...smoothness} color={color} />
-            <Svg ref={svgRef} position={[20, 20, 20]} scale={2} src={`svg-icons/${iconName}.svg`} />
-          </mesh>
-        </Select>
-      )}
-    </>
+      </mesh>
+    </Billboard>
   )
 })
 
