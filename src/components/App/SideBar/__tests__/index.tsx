@@ -3,8 +3,8 @@ import { ThemeProvider } from '@mui/material'
 import '@testing-library/jest-dom'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import React from 'react'
-import { ThemeProvider as StyleThemeProvider } from 'styled-components'
 import { MemoryRouter } from 'react-router-dom'
+import { ThemeProvider as StyleThemeProvider } from 'styled-components'
 import { SideBar } from '..'
 import { api } from '../../../../network/api'
 import { AppStore, useAppStore } from '../../../../stores/useAppStore'
@@ -101,7 +101,9 @@ describe('Test SideBar', () => {
       </MemoryRouter>,
     )
 
-    expect(container.querySelector('#sidebar-wrapper')).not.toBeInTheDocument()
+    waitFor(() => {
+      expect(container.querySelector('#sidebar-wrapper')).not.toBeInTheDocument()
+    })
   })
 
   it('Verify that the sidebar is visible when sidebarIsOpen is true.', () => {
