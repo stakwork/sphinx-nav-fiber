@@ -1,9 +1,8 @@
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
-import { colors } from '~/utils/colors'
-import PlusIcon from '~/components/Icons/PlusIcon'
 import CreateEdgeIcon from '~/components/Icons/CreateEdgeIcon'
-import DeleteIcon from '~/components/Icons/DeleteIcon'
+import PlusIcon from '~/components/Icons/PlusIcon'
+import { colors } from '~/utils/colors'
 
 type Props = {
   onCreateNew: () => void
@@ -20,11 +19,6 @@ export const Toolbar = ({ onCreateNew, onAddEdgeNode }: Props) => (
     <ActionButton data-testid="add-edge" onClick={onAddEdgeNode}>
       <IconWrapper>
         <CreateEdgeIcon />
-      </IconWrapper>
-    </ActionButton>
-    <ActionButton disabled>
-      <IconWrapper>
-        <DeleteIcon />
       </IconWrapper>
     </ActionButton>
   </Wrapper>
