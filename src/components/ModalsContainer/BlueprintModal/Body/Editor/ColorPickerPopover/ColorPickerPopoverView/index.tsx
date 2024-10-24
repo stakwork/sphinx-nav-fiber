@@ -3,6 +3,7 @@ import Tabs from '@mui/material/Tabs'
 import * as React from 'react'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
+import ClearIcon from '~/components/Icons/ClearIcon'
 import { colors } from '~/utils/colors'
 import { ColorPicker } from './ColorPicker'
 import { IconPicker } from './IconPicker'
@@ -36,7 +37,7 @@ function a11yProps(index: number) {
   }
 }
 
-export const ColorPickerPopoverView = () => {
+export const ColorPickerPopoverView = ({ onClose }: { onClose: () => void }) => {
   const [value, setValue] = React.useState(0)
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -50,6 +51,9 @@ export const ColorPickerPopoverView = () => {
 
   return (
     <Wrapper direction="column">
+      <CloseButton onClick={onClose}>
+        <ClearIcon />
+      </CloseButton>
       <StyledTabs aria-label="color picker" onChange={handleChange} value={value}>
         {tabs.map((tab, index) => (
           <StyledTab key={tab.label} color={colors.white} disableRipple label={tab.label} {...a11yProps(index)} />
@@ -125,5 +129,25 @@ const Wrapper = styled(Flex)`
 
   @media (max-width: 768px) {
     padding: 3px;
+  }
+`
+
+const CloseButton = styled.div`
+  position: absolute;
+  top: 4px;
+  right: 3px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5em;
+  height: 1.5em;
+  background-color: ${colors.primaryText1};
+  border-radius: 50%;
+  z-index: 1001;
+
+  svg {
+    width: 1.5em;
+    height: 1.5em;
   }
 `
