@@ -174,7 +174,7 @@ export interface UpdateSchemaParams {
   primary_color?: string
   icon?: string
   attributes: {
-    index: string
+    [key: string | number]: string
   }
 }
 
