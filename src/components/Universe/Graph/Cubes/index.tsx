@@ -4,7 +4,7 @@ import { memo, useCallback, useRef } from 'react'
 import { Object3D } from 'three'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
-import { useGraphStore, useSelectedNode, useSelectedNodeRelativeIds } from '~/stores/useGraphStore'
+import { useGraphStore, useHoveredNode, useSelectedNode, useSelectedNodeRelativeIds } from '~/stores/useGraphStore'
 import { NodeExtended } from '~/types'
 import { NodePoints } from './NodePoints'
 import { RelevanceBadges } from './RelevanceBadges'
@@ -15,6 +15,7 @@ const POINTER_IN_DELAY = 200
 
 export const Cubes = memo(() => {
   const selectedNode = useSelectedNode()
+  const hoveredNode = useHoveredNode()
   const relativeIds = useSelectedNodeRelativeIds()
   const { selectionGraphData, showSelectionGraph, setHoveredNode, setIsHovering } = useGraphStore((s) => s)
 
@@ -97,21 +98,29 @@ export const Cubes = memo(() => {
       onPointerOver={onPointerIn}
     >
       <RelevanceBadges />
-      <group name="simulation-3d-group__nodes">
+      <group name="simulation-3d-group__nodes" visible={!hideUniverse}>
         {data?.nodes.map((node: NodeExtended) => {
           const hide = !!selectedNode && (relativeIds.includes(node.ref_id) || selectedNode.ref_id === node.ref_id)
 
           return (
-            <mesh key={node.ref_id}>
-              <TextNode key={node.ref_id || node.id} hide={hideUniverse || hide} node={node} />
+            <mesh key={node.ref_id} name="wr2" userData={node}>
+              <boxGeometry args={[40, 40, 40]} />
+              <meshStandardMaterial opacity={0} transparent />
+              <TextNode
+                key={node.ref_id || node.id}
+                hide={hideUniverse || hide}
+                isHovered={!!hoveredNode && hoveredNode.id === node.ref_id}
+                node={node}
+              />
             </mesh>
           )
         })}
       </group>
-      <group name="simulation-3d-group__node-points">
-        <NodePoints />
-      </group>
-
+      {true && (
+        <group name="simulation-3d-group__node-points">
+          <NodePoints />
+        </group>
+      )}
       {hideUniverse && <SelectionDataNodes />}
     </Select>
   )

@@ -1,7 +1,8 @@
 import { Instances } from '@react-three/drei'
-import { memo } from 'react'
+import { memo, useMemo } from 'react'
+import { BufferGeometry, TorusGeometry } from 'three'
 import { useDataStore, useNodeTypes } from '~/stores/useDataStore'
-import { useSelectedNode, useSelectedNodeRelativeIds } from '~/stores/useGraphStore'
+import { useSelectedNode } from '~/stores/useGraphStore'
 import { useSchemaStore } from '~/stores/useSchemaStore'
 import { NodeExtended } from '~/types'
 import { colors } from '~/utils'
@@ -40,24 +41,22 @@ const COLORS_MAP = [
 // eslint-disable-next-line no-underscore-dangle
 const _NodePoints = () => {
   const selectedNode = useSelectedNode()
-  const relativeIds = useSelectedNodeRelativeIds()
   const data = useDataStore((s) => s.dataInitial)
   const { normalizedSchemasByType } = useSchemaStore((s) => s)
   const nodeTypes = useNodeTypes()
+  const ringGeometry = useMemo(() => new TorusGeometry(30, 4, 16, 100), [])
 
   return (
     <>
       <Instances
+        geometry={ringGeometry as BufferGeometry}
         limit={1000} // Optional: max amount of items (for calculating buffer size)
-        range={1000} // Optional: draw-range
+        range={1000}
+        visible={!selectedNode}
+        // Optional: draw-range
       >
-        <boxGeometry />
         <meshStandardMaterial />
         {data?.nodes.map((node: NodeExtended) => {
-          const hide = !!selectedNode && (relativeIds.includes(node.ref_id) || selectedNode.ref_id === node.ref_id)
-
-          console.log(hide)
-
           const primaryColor = normalizedSchemasByType[node.node_type]?.primary_color
           const color = primaryColor ?? (COLORS_MAP[nodeTypes.indexOf(node.node_type)] || colors.white)
 

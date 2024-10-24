@@ -1,12 +1,12 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable import/no-extraneous-dependencies */
-import { AdaptiveDpr, AdaptiveEvents, Html, Loader, PerformanceMonitor, Preload } from '@react-three/drei'
+import { AdaptiveDpr, AdaptiveEvents, Html, Loader, Preload } from '@react-three/drei'
 import { Canvas, RootState } from '@react-three/fiber'
 import { Bloom, EffectComposer, Outline, Selection, Vignette } from '@react-three/postprocessing'
 import { useControls } from 'leva'
 import { BlendFunction, Resolution } from 'postprocessing'
 import { Perf } from 'r3f-perf'
-import { Suspense, memo, useCallback, useMemo, useState } from 'react'
+import { Suspense, memo, useCallback, useMemo } from 'react'
 import styled from 'styled-components'
 import { getNodeColorByType } from '~/components/Universe/Graph/constant'
 import { isDevelopment } from '~/constants'
@@ -74,7 +74,6 @@ const Content = () => {
             />
           </EffectComposer>
         )}
-        ƒ
         <Graph />
       </Selection>
     </>
@@ -96,10 +95,6 @@ const _Universe = () => {
     useControlStore((s) => s.setIsUserScrolling),
     useControlStore((s) => s.setUserMovedCamera),
   ]
-
-  const [dpr, setDpr] = useState(2)
-
-  console.log(dpr)
 
   const isLoading = useDataStore((s) => s.isFetching)
   const universeQuestionIsOpen = useAppStore((s) => s.universeQuestionIsOpen)
@@ -136,21 +131,8 @@ const _Universe = () => {
   return (
     <Wrapper>
       <Suspense fallback={null}>
-        <Canvas
-          camera={cameraProps}
-          dpr={dpr}
-          id="universe-canvas"
-          onCreated={onCreatedHandler}
-          onWheel={onWheelHandler}
-        >
-          {isDevelopment && <Perf position="bottom-right" />}
-          <PerformanceMonitor
-            flipflops={3}
-            onChange={({ factor }) => {
-              console.log(factor)
-              setDpr(Math.floor(0.5 + 1.5 * factor, 1))
-            }}
-          />
+        <Canvas camera={cameraProps} id="universe-canvas" onCreated={onCreatedHandler} onWheel={onWheelHandler}>
+          {isDevelopment && <Perf position="top-right" style={{ top: '80px' }} />}
           <Suspense fallback={<Fallback />}>
             <Preload />
 

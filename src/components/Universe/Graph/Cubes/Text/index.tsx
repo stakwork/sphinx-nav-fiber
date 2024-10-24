@@ -1,11 +1,10 @@
 import { Billboard, Svg, Text } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
-import { throttle } from 'lodash'
 import { memo, useMemo, useRef } from 'react'
-import { Mesh, MeshStandardMaterial, TorusGeometry, Vector3 } from 'three'
+import { Mesh, MeshStandardMaterial, Vector3 } from 'three'
 import { Icons } from '~/components/Icons'
 import { useNodeTypes } from '~/stores/useDataStore'
-import { useGraphStore, useHoveredNode, useSelectedNode, useSelectedNodeRelativeIds } from '~/stores/useGraphStore'
+import { useGraphStore, useSelectedNode, useSelectedNodeRelativeIds } from '~/stores/useGraphStore'
 import { useSchemaStore } from '~/stores/useSchemaStore'
 import { NodeExtended } from '~/types'
 import { colors } from '~/utils/colors'
@@ -46,6 +45,7 @@ const COLORS_MAP = [
 type Props = {
   node: NodeExtended
   hide?: boolean
+  isHovered: boolean
 }
 
 function splitStringIntoThreeParts(text: string): string {
@@ -66,32 +66,30 @@ function splitStringIntoThreeParts(text: string): string {
   return `${firstPart}\n${secondPart}\n${thirdPart}`
 }
 
-export const TextNode = memo(({ node, hide }: Props) => {
+export const TextNode = memo(({ node, hide, isHovered }: Props) => {
   const ref = useRef<Mesh | null>(null)
   const svgRef = useRef<Mesh | null>(null)
   const ringRef = useRef<Mesh | null>(null)
   const selectedNode = useSelectedNode()
-  const hoveredNode = useHoveredNode()
+
+  const nodePositionRef = useRef(new Vector3())
 
   const selectedNodeRelativeIds = useSelectedNodeRelativeIds()
   const isRelative = selectedNodeRelativeIds.includes(node?.ref_id || '')
   const isSelected = !!selectedNode && selectedNode?.ref_id === node.ref_id
-  const isHovered = !!hoveredNode && hoveredNode?.ref_id === node.ref_id
   const showSelectionGraph = useGraphStore((s) => s.showSelectionGraph)
   const { normalizedSchemasByType } = useSchemaStore((s) => s)
 
   useFrame(({ camera }) => {
-    const checkDistance = throttle(() => {
-      const nodePosition = new Vector3().setFromMatrixPosition(ref.current!.matrixWorld)
-      const distance = nodePosition.distanceTo(camera.position)
-      const isLess = distance < 2500
+    const checkDistance = () => {
+      const nodePosition = nodePositionRef.current.setFromMatrixPosition(ref.current!.matrixWorld)
 
       if (ringRef.current) {
-        ringRef.current.visible = isLess
+        ringRef.current.visible = nodePosition.distanceTo(camera.position) < 2500
       }
 
       // Set visibility based on distance
-    }, 1500) // Throttle checks to run only every 500ms
+    }
 
     checkDistance()
   })
@@ -117,12 +115,12 @@ export const TextNode = memo(({ node, hide }: Props) => {
       return 0.2
     }
 
-    if (hoveredNode && !isHovered) {
+    if (!isHovered) {
       return 0.2
     }
 
     return 1
-  }, [isSelected, selectedNode, isHovered, hoveredNode])
+  }, [isSelected, selectedNode, isHovered])
 
   const primaryColor = normalizedSchemasByType[node.node_type]?.primary_color
   const primaryIcon = normalizedSchemasByType[node.node_type]?.icon
@@ -133,52 +131,42 @@ export const TextNode = memo(({ node, hide }: Props) => {
   const iconName = Icon ? primaryIcon : 'NodesIcon'
   const sanitizedNodeName = removeEmojis(String(node.name))
 
-  const ringGeometry = useMemo(() => new TorusGeometry(30, 4, 16, 100), [])
-  const ringMaterial = useMemo(() => new MeshStandardMaterial({ color }), [color])
-
   return (
-    <>
-      <Billboard follow lockX={false} lockY={false} lockZ={false}>
-        {/* Ring geometry */}
-        <mesh
-          ref={ringRef}
-          geometry={ringGeometry}
-          material={ringMaterial}
-          name={node.id}
+    <Billboard follow lockX={false} lockY={false} lockZ={false} name="billboard" userData={node}>
+      <mesh ref={ringRef} name={node.id} userData={node} visible={!hide}>
+        <Svg
+          ref={svgRef}
+          name="svg"
+          onUpdate={(svg) => {
+            svg.traverse((child) => {
+              if (child instanceof Mesh) {
+                // Apply dynamic color to meshes
+                // eslint-disable-next-line no-param-reassign
+                child.material = new MeshStandardMaterial({ color })
+              }
+            })
+          }}
+          position={[-15, 15, 0]}
+          scale={2}
+          src={`svg-icons/${iconName}.svg`}
+          strokeMaterial={{ color: 'yellow' }}
           userData={node}
-          visible={!hide}
-        >
-          <Svg
-            ref={svgRef}
-            onUpdate={(svg) => {
-              svg.traverse((child) => {
-                if (child instanceof Mesh) {
-                  // Apply dynamic color to meshes
-                  // eslint-disable-next-line no-param-reassign
-                  child.material = new MeshStandardMaterial({ color })
-                }
-              })
-            }}
-            position={[-15, 15, 0]}
-            scale={2}
-            src={`svg-icons/${iconName}.svg`}
-            strokeMaterial={{ color: 'yellow' }}
-          />
+        />
 
-          <Text
-            ref={ref}
-            color={color}
-            fillOpacity={fillOpacity}
-            position={[0, -40, 0]}
-            scale={textScale}
-            userData={node}
-            {...fontProps}
-          >
-            {splitStringIntoThreeParts(sanitizedNodeName)}
-          </Text>
-        </mesh>
-      </Billboard>
-    </>
+        <Text
+          ref={ref}
+          color={color}
+          fillOpacity={1 || fillOpacity}
+          name="text"
+          position={[0, -40, 0]}
+          scale={textScale}
+          userData={node}
+          {...fontProps}
+        >
+          {splitStringIntoThreeParts(sanitizedNodeName)}
+        </Text>
+      </mesh>
+    </Billboard>
   )
 })
 

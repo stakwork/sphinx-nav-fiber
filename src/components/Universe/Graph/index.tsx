@@ -96,13 +96,15 @@ export const Graph = () => {
           }
         })
 
-        grPoints.children[0].children.forEach((mesh, index) => {
-          const simulationNode = simulation.nodes()[index]
+        if (grPoints) {
+          grPoints.children[0].children.forEach((mesh, index) => {
+            const simulationNode = simulation.nodes()[index]
 
-          if (simulationNode) {
-            mesh.position.set(simulationNode.x, simulationNode.y, simulationNode.z)
-          }
-        })
+            if (simulationNode) {
+              mesh.position.set(simulationNode.x, simulationNode.y, simulationNode.z)
+            }
+          })
+        }
 
         grConnections.children.forEach((r, i) => {
           const link = dataInitial?.links[i]
