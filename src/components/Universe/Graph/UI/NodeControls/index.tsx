@@ -251,7 +251,7 @@ type ButtonProps = {
 
 const IconButton = styled.div<ButtonProps>`
   position: fixed;
-  top: -60px;
+  top: -80px;
   left: ${(p: ButtonProps) => -7 + p.left}px;
   width: 24px;
   height: 24px;
