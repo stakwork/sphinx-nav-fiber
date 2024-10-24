@@ -23,7 +23,7 @@ const getBorderColor = (props: WrapperProps): string => {
     return colors.primaryRed
   }
 
-  if (props.hasContent || props.isFocused || props.isHovered) {
+  if (props.isFocused || props.isHovered) {
     return colors.primaryBlue
   }
 
