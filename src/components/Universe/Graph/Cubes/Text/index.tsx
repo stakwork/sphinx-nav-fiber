@@ -67,7 +67,6 @@ function splitStringIntoThreeParts(text: string): string {
 }
 
 export const TextNode = memo(({ node, hide, isHovered }: Props) => {
-  const ref = useRef<Mesh | null>(null)
   const svgRef = useRef<Mesh | null>(null)
   const ringRef = useRef<Mesh | null>(null)
   const selectedNode = useSelectedNode()
@@ -82,7 +81,7 @@ export const TextNode = memo(({ node, hide, isHovered }: Props) => {
 
   useFrame(({ camera }) => {
     const checkDistance = () => {
-      const nodePosition = nodePositionRef.current.setFromMatrixPosition(ref.current!.matrixWorld)
+      const nodePosition = nodePositionRef.current.setFromMatrixPosition(ringRef.current!.matrixWorld)
 
       if (ringRef.current) {
         ringRef.current.visible = nodePosition.distanceTo(camera.position) < 2500
@@ -97,6 +96,10 @@ export const TextNode = memo(({ node, hide, isHovered }: Props) => {
   const nodeTypes = useNodeTypes()
 
   const textScale = useMemo(() => {
+    if (!node.name) {
+      return 0
+    }
+
     let scale = (node.edge_count || 1) * 20
 
     if (showSelectionGraph && isSelected) {
@@ -153,18 +156,19 @@ export const TextNode = memo(({ node, hide, isHovered }: Props) => {
           userData={node}
         />
 
-        <Text
-          ref={ref}
-          color={color}
-          fillOpacity={1 || fillOpacity}
-          name="text"
-          position={[0, -40, 0]}
-          scale={textScale}
-          userData={node}
-          {...fontProps}
-        >
-          {splitStringIntoThreeParts(sanitizedNodeName)}
-        </Text>
+        {node.name && (
+          <Text
+            color={color}
+            fillOpacity={1 || fillOpacity}
+            name="text"
+            position={[0, -40, 0]}
+            scale={textScale}
+            userData={node}
+            {...fontProps}
+          >
+            {splitStringIntoThreeParts(sanitizedNodeName)}
+          </Text>
+        )}
       </mesh>
     </Billboard>
   )
