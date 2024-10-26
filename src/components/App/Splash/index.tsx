@@ -7,7 +7,9 @@ import { Text } from '~/components/common/Text'
 import { getAboutData, getSchemaAll, getStats } from '~/network/fetchSourcesData'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
+import { useModal } from '~/stores/useModalStore'
 import { useSchemaStore } from '~/stores/useSchemaStore'
+import { useUserStore } from '~/stores/useUserStore'
 import { colors, formatSplashMessage, formatStatsResponse } from '~/utils'
 import { AnimatedTextContent } from './animated'
 import { initialMessageData, Message } from './constants'
@@ -19,6 +21,8 @@ export const Splash = () => {
   const { appMetaData, setAppMetaData } = useAppStore((s) => s)
   const { stats, setStats, setSeedQuestions } = useDataStore((s) => s)
   const { schemas, setSchemas } = useSchemaStore((s) => s)
+  const { isAdmin } = useUserStore((s) => s)
+  const { open, visible } = useModal('onboardingFlow')
   const [isLoading, setIsLoading] = useState(false)
 
   // Individual useEffect hooks for each data requirement
@@ -62,6 +66,12 @@ export const Splash = () => {
       fetchData() // Only fetch if there's no appMetaData and it's not already fetching
     }
   }, [appMetaData, isLoading, schemas.length, setAppMetaData, setSchemas, setSeedQuestions, setStats, stats])
+
+  useEffect(() => {
+    if (!isLoading && isAdmin && !appMetaData?.title && !visible) {
+      open()
+    }
+  }, [isLoading, isAdmin, appMetaData?.title, open, visible])
 
   useEffect(() => {
     const fetchSchemas = async () => {
