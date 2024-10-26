@@ -12,7 +12,7 @@ describe('Admin Login', () => {
     const title = `Testing NavFiber`
     const description = 'Testing Graph Description'
 
-    // Open settings modal
+    // Open settings modals
     cy.get('div[data-testid="settings-modal"]').should('be.visible').click()
 
     // Asserting the settings label text
