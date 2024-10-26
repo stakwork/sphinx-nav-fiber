@@ -29,7 +29,7 @@ const defaultValues = {
 
 export const FilterSearch = ({ anchorEl, setAnchorEl, onClose }: Props) => {
   const [schemaAll, setSchemaAll] = useSchemaStore((s) => [s.schemas, s.setSchemas])
-  const { setFilters } = useDataStore((s) => s)
+  const { abortFetchData, resetGraph, setFilters } = useDataStore((s) => s)
   const [selectedTypes, setSelectedTypes] = useState<string[]>(defaultValues.selectedTypes)
   const [hops, setHops] = useState(defaultValues.hops)
   const [sourceNodes, setSourceNodes] = useState<number>(defaultValues.sourceNodes)
@@ -69,6 +69,8 @@ export const FilterSearch = ({ anchorEl, setAnchorEl, onClose }: Props) => {
 
   const handleClear = async () => {
     resetToDefaultValues()
+    abortFetchData()
+    resetGraph()
   }
 
   const handleFiltersApply = async () => {
