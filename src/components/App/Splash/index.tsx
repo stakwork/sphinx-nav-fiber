@@ -21,7 +21,7 @@ export const Splash = () => {
   const { appMetaData, setAppMetaData } = useAppStore((s) => s)
   const { stats, setStats, setSeedQuestions } = useDataStore((s) => s)
   const { schemas, setSchemas } = useSchemaStore((s) => s)
-  const { isAdmin } = useUserStore((s) => s)
+  const [isAdmin] = useUserStore((s) => [s.isAdmin, s.setPubKey])
   const { open, visible } = useModal('onboardingFlow')
   const [isLoading, setIsLoading] = useState(false)
 
