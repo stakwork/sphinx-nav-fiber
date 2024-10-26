@@ -17,7 +17,7 @@ export const AppContainer = () => {
   const { appMetaData } = useAppStore((s) => s)
 
   useEffect(() => {
-    if (!isAdmin && appMetaData?.title && !visible) {
+    if (isAdmin && !appMetaData?.title && !visible) {
       open()
     }
   }, [isAdmin, appMetaData?.title, open, visible])
