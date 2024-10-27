@@ -14,14 +14,14 @@ import { Text } from '~/components/common/Text'
 import { TextInput } from '~/components/common/TextInput'
 import { NODE_ADD_ERROR, requiredRule } from '~/constants'
 import { api } from '~/network/api'
-import { editNodeSchemaUpdate, getNodeSchemaTypes, getNodeType, Schema } from '~/network/fetchSourcesData'
+import { Schema, editNodeSchemaUpdate, getNodeSchemaTypes, getNodeType } from '~/network/fetchSourcesData'
 import { useAppStore } from '~/stores/useAppStore'
 import { useModal } from '~/stores/useModalStore'
 import { colors } from '~/utils'
 import { ColorPickerPopover } from './ColorPickerPopover'
 import { CreateCustomNodeAttribute } from './CustomAttributesStep'
 import MediaOptions from './MediaOptions'
-import { convertAttributes, parsedObjProps, parseJson } from './utils'
+import { convertAttributes, parseJson, parsedObjProps } from './utils'
 
 const defaultValues = {
   type: '',
@@ -218,7 +218,7 @@ export const Editor = ({
   })
 
   const { selectedColor, selectedIcon } = useAppStore((s) => s)
-  const [isPopoverOpen, setPopoverOpen] = useState(!!selectedSchema)
+  const [isPopoverOpen, setPopoverOpen] = useState(false)
 
   const handleColorPickerPopover = () => setPopoverOpen(!isPopoverOpen)
 
@@ -257,8 +257,6 @@ export const Editor = ({
     resetForm()
 
     if (selectedSchema) {
-      setPopoverOpen(true)
-
       setValue('type', selectedSchema.type as string)
       setValue('parent', selectedSchema.parent)
 
