@@ -12,11 +12,7 @@ export type FormData = {
   description: string
 }
 
-type OnboardingModalProps = {
-  onSuccess: () => void
-}
-
-export const OnboardingModal = ({ onSuccess }: OnboardingModalProps) => {
+export const OnboardingModal = () => {
   const { close, visible } = useModal('onboardingFlow')
   const form = useForm<FormData>({ mode: 'onChange' })
   const { reset } = form
@@ -62,7 +58,6 @@ export const OnboardingModal = ({ onSuccess }: OnboardingModalProps) => {
       data,
       () => {
         close()
-        onSuccess()
       },
       setError,
     )

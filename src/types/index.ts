@@ -242,6 +242,7 @@ export type IsAdminResponse = {
     chatInterface: boolean
     swarmUiUrl: string
     fastFilters: boolean
+    title: string
   }
   success: boolean
   message: string

@@ -176,6 +176,37 @@ describe('Auth Component', () => {
     })
   })
 
+  test('should show onboarding modal if admin and no title is set', async () => {
+    const [setBudget, setIsAdmin, setPubKey, setIsAuthenticated] = [jest.fn(), jest.fn(), jest.fn(), jest.fn()]
+
+    useUserStoreMock.mockReturnValue({
+      isAdmin: true,
+      setBudget,
+      setIsAdmin,
+      setPubKey,
+      setIsAuthenticated,
+    })
+
+    getIsAdminMock.mockResolvedValue({ data: { isAdmin: true, title: null } })
+    getSignedMessageFromRelayMock.mockResolvedValue({ message: 'testMessage', signature: 'testSignature' })
+
+    render(
+      <MemoryRouter>
+        <ThemeProvider theme={appTheme}>
+          <StyleThemeProvider theme={appTheme}>
+            <AuthGuard>
+              <App />
+            </AuthGuard>
+          </StyleThemeProvider>
+        </ThemeProvider>
+      </MemoryRouter>,
+    )
+
+    waitFor(() => {
+      expect(screen.getByText('Welcome to SecondBrain')).toBeInTheDocument()
+    })
+  })
+
   test.skip('the unauthorized state is correctly set when the user lacks proper credentials', async () => {
     const [setBudget, setIsAdmin, setPubKey, setIsAuthenticated] = [jest.fn(), jest.fn(), jest.fn(), jest.fn()]
 

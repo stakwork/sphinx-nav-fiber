@@ -37,7 +37,7 @@ export const GraphDetailsStep: FC<Props> = ({ onSubmit, error }) => {
   return (
     <Flex>
       <Flex align="center" direction="column" justify="center">
-        <StyledText>Welcome to SecondBrain!</StyledText>
+        <StyledText>Welcome to SecondBrain</StyledText>
         <StyledSubText>Set a name and short description for your graph.</StyledSubText>
       </Flex>
 

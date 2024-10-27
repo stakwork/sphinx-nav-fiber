@@ -3,6 +3,7 @@ import * as sphinx from 'sphinx-bridge'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
+import { OnboardingModal } from '~/components/ModalsContainer/OnboardingFlow'
 import { isDevelopment, isE2E } from '~/constants'
 import { getIsAdmin } from '~/network/auth'
 import { useDataStore } from '~/stores/useDataStore'
@@ -18,6 +19,7 @@ export const AuthGuard = ({ children }: PropsWithChildren) => {
   const { setBudget, setIsAdmin, setPubKey, setIsAuthenticated, setSwarmUiUrl } = useUserStore((s) => s)
   const { splashDataLoading } = useDataStore((s) => s)
   const [renderMainPage, setRenderMainPage] = useState(false)
+  const [showOnboarding, setShowOnboarding] = useState(false)
 
   const {
     setTrendingTopicsFeatureFlag,
@@ -75,6 +77,10 @@ export const AuthGuard = ({ children }: PropsWithChildren) => {
         setRealtimeGraphFeatureFlag(res.data.realtimeGraph || false)
         setChatInterfaceFeatureFlag(res.data.chatInterface || false)
         setFastFiltersFeatureFlag(res.data.fastFilters || false)
+
+        if (isAdmin && !res.data.title) {
+          setShowOnboarding(true)
+        }
       }
 
       setIsAuthenticated(true)
@@ -131,6 +137,7 @@ export const AuthGuard = ({ children }: PropsWithChildren) => {
 
   return (
     <>
+      {showOnboarding && <OnboardingModal />}
       {splashDataLoading && <Splash />}
       {renderMainPage && children}
     </>
