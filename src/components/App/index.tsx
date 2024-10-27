@@ -330,7 +330,7 @@ export const App = () => {
   }, [runningProjectId, setRunningProjectMessages])
 
   useEffect(() => {
-    if (isAdmin && !appMetaData?.title && !visible) {
+    if (!isAdmin && appMetaData?.title && !visible) {
       open()
     }
   }, [isAdmin, appMetaData?.title, open, visible])
@@ -350,27 +350,28 @@ export const App = () => {
       <Leva hidden={!isDevelopment || true} isRoot />
 
       <Suspense fallback={<div>Loading...</div>}>
-        {!splashDataLoading &&
-          (visible ? (
-            <Suspense fallback={<div>Loading Onboarding...</div>}>
-              <LazyOnboardingModal onSuccess={setUniverseQuestionIsOpen} />
-            </Suspense>
-          ) : (
-            <Wrapper direction="row">
-              <FormProvider {...form}>
-                <LazyMainToolbar />
-                {!universeQuestionIsOpen && <LazySideBar />}
-                <LazyUniverse />
-                <Overlay />
-                <AppBar />
-                <Version>v{version}</Version>
-                <ActionsToolbar />
-              </FormProvider>
+        {visible && (
+          <Suspense fallback={<div>Loading Onboarding...</div>}>
+            <LazyOnboardingModal onSuccess={setUniverseQuestionIsOpen} />
+          </Suspense>
+        )}
 
-              <ModalsContainer />
-              <Toasts />
-            </Wrapper>
-          ))}
+        {!visible && !splashDataLoading && (
+          <Wrapper direction="row">
+            <FormProvider {...form}>
+              <LazyMainToolbar />
+              {!universeQuestionIsOpen && <LazySideBar />}
+              <LazyUniverse />
+              <Overlay />
+              <AppBar />
+              <Version>v{version}</Version>
+              <ActionsToolbar />
+            </FormProvider>
+
+            <ModalsContainer />
+            <Toasts />
+          </Wrapper>
+        )}
       </Suspense>
     </>
   )
