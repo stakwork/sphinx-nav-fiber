@@ -36,7 +36,7 @@ export const GraphDetailsStep: FC<Props> = ({ onSubmit, error }) => {
 
   return (
     <Flex>
-      <Flex align="center" direction="column" justify="center">
+      <Flex direction="column" justify="space-between">
         <StyledText>Welcome to SecondBrain</StyledText>
         <StyledSubText>Set a name and short description for your graph.</StyledSubText>
       </Flex>
@@ -101,7 +101,6 @@ const StyledText = styled(Text)`
   font-size: 22px;
   font-weight: 600;
   font-family: 'Barlow';
-  text-align: center;
   margin-bottom: 10px;
 `
 
