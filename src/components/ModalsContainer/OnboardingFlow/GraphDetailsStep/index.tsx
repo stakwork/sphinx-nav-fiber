@@ -37,14 +37,14 @@ export const GraphDetailsStep: FC<Props> = ({ onSubmit, error }) => {
   return (
     <Flex>
       <Flex align="center" direction="column" justify="center">
-        <StyledText data-testid="onboarding-title">Welcome to SecondBrain!</StyledText>
+        <StyledText>Welcome to SecondBrain!</StyledText>
         <StyledSubText>Set a name and short description for your graph.</StyledSubText>
       </Flex>
 
       <StyledWrapper>
         <Flex className="input__wrapper">
           <TextInput
-            id="cy-graph-title-id"
+            id="graph-title"
             label="Title"
             maxLength={50}
             name="title"
@@ -58,7 +58,7 @@ export const GraphDetailsStep: FC<Props> = ({ onSubmit, error }) => {
             }}
           />
           <TextInput
-            id="cy-graph-description-id"
+            id="graph-description"
             label="Description"
             maxLength={100}
             name="description"
@@ -78,7 +78,6 @@ export const GraphDetailsStep: FC<Props> = ({ onSubmit, error }) => {
         <Button
           color="secondary"
           disabled={isSubmitting || !!error || !isFormValid}
-          id="onboarding-confirm-cta"
           onClick={onSubmit}
           size="large"
           variant="contained"

@@ -15,6 +15,7 @@ import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
 import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
 import { useUpdateSelectedNode } from '~/stores/useGraphStore'
+import { useModal } from '~/stores/useModalStore'
 import { useTeachStore } from '~/stores/useTeachStore'
 import { useUserStore } from '~/stores/useUserStore'
 import {
@@ -29,6 +30,7 @@ import { colors } from '~/utils/colors'
 import { updateBudget } from '~/utils/setBudget'
 import version from '~/utils/versionHelper'
 import { ModalsContainer } from '../ModalsContainer'
+import { OnboardingModal } from '../ModalsContainer/OnboardingFlow'
 import { ActionsToolbar } from './ActionsToolbar'
 import { AppBar } from './AppBar'
 import { DeviceCompatibilityNotice } from './DeviceCompatibilityNotification'
@@ -56,9 +58,10 @@ const LazySideBar = lazy(() => import('./SideBar').then(({ SideBar }) => ({ defa
 export const App = () => {
   const [searchParams] = useSearchParams()
   const query = searchParams.get('q')
-  const { setBudget, setNodeCount } = useUserStore((s) => s)
+  const { setBudget, setNodeCount, isAdmin } = useUserStore((s) => s)
   const queueRef = useRef<FetchDataResponse | null>(null)
   const timerRef = useRef<NodeJS.Timeout | null>(null)
+  const { open, visible } = useModal('onboardingFlow')
 
   const {
     setSidebarOpen,
@@ -68,6 +71,7 @@ export const App = () => {
     setTranscriptOpen,
     universeQuestionIsOpen,
     setUniverseQuestionIsOpen,
+    appMetaData,
   } = useAppStore((s) => s)
 
   const setTeachMeAnswer = useTeachStore((s) => s.setTeachMeAnswer)
@@ -322,10 +326,16 @@ export const App = () => {
   }, [runningProjectId, setRunningProjectMessages])
 
   useEffect(() => {
-    if (!splashDataLoading) {
-      setUniverseQuestionIsOpen()
+    if (isAdmin && !appMetaData?.title && !visible) {
+      open() // Open the onboarding modal if conditions are met
     }
-  }, [setUniverseQuestionIsOpen, splashDataLoading])
+  }, [isAdmin, appMetaData?.title, open, visible])
+
+  useEffect(() => {
+    if (!splashDataLoading && !visible) {
+      setUniverseQuestionIsOpen() // Set universe question open only if onboarding is not visible
+    }
+  }, [setUniverseQuestionIsOpen, splashDataLoading, visible])
 
   return (
     <>
@@ -336,22 +346,25 @@ export const App = () => {
       <Leva hidden={!isDevelopment || true} isRoot />
 
       <Suspense fallback={<div>Loading...</div>}>
-        {!splashDataLoading ? (
-          <Wrapper direction="row">
-            <FormProvider {...form}>
-              <LazyMainToolbar />
-              {!universeQuestionIsOpen && <LazySideBar />}
-              <LazyUniverse />
-              <Overlay />
-              <AppBar />
-              <Version>v{version}</Version>
-              <ActionsToolbar />
-            </FormProvider>
+        {!splashDataLoading &&
+          (visible ? (
+            <OnboardingModal /> // Show OnboardingModal if visible
+          ) : (
+            <Wrapper direction="row">
+              <FormProvider {...form}>
+                <LazyMainToolbar />
+                {!universeQuestionIsOpen && <LazySideBar />}
+                <LazyUniverse />
+                <Overlay />
+                <AppBar />
+                <Version>v{version}</Version>
+                <ActionsToolbar />
+              </FormProvider>
 
-            <ModalsContainer />
-            <Toasts />
-          </Wrapper>
-        ) : null}
+              <ModalsContainer />
+              <Toasts />
+            </Wrapper>
+          ))}
       </Suspense>
     </>
   )
