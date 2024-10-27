@@ -61,10 +61,11 @@ const LazyOnboardingModal = lazy(() =>
 export const App = () => {
   const [searchParams] = useSearchParams()
   const query = searchParams.get('q')
-  const { setBudget, setNodeCount, isAdmin } = useUserStore((s) => s)
+  const { setBudget, setNodeCount } = useUserStore((s) => s)
   const queueRef = useRef<FetchDataResponse | null>(null)
   const timerRef = useRef<NodeJS.Timeout | null>(null)
   const { open, visible } = useModal('onboardingFlow')
+  const [isAdmin] = useUserStore((s) => [s.isAdmin, s.setPubKey])
 
   const {
     setSidebarOpen,
