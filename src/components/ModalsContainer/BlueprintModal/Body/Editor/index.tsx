@@ -88,11 +88,8 @@ const handleSubmitForm = async (
     const requestData: {
       attributes: { [key: string]: string }
       index?: string
-      media_url?: string
       primary_color?: string
       icon?: string
-      image_url?: string
-      source_link?: string
     } = {
       ...withoutAttributes,
       attributes: updatedAttributes,
@@ -108,21 +105,15 @@ const handleSubmitForm = async (
     }
 
     if (mediaOptions.videoAudio) {
-      requestData.media_url = ''
-    } else if (initialMediaOptions.videoAudio) {
-      requestData.media_url = 'delete'
+      requestData.attributes.media_url = '?string'
     }
 
     if (mediaOptions.image) {
-      requestData.image_url = ''
-    } else if (initialMediaOptions.image) {
-      requestData.image_url = 'delete'
+      requestData.attributes.image_url = '?string'
     }
 
     if (mediaOptions.sourceLink) {
-      requestData.source_link = ''
-    } else if (initialMediaOptions.sourceLink) {
-      requestData.source_link = 'delete'
+      requestData.attributes.source_link = '?string'
     }
 
     let res: { status: string; ref_id: string }
@@ -368,12 +359,27 @@ export const Editor = ({
 
         setGraphLoading(true)
 
+        const toggleMedia: { image_url?: string; source_link?: string; media_url?: string } = {}
+
+        if (mediaOptions.image) {
+          toggleMedia.image_url = '?string'
+        }
+
+        if (mediaOptions.sourceLink) {
+          toggleMedia.source_link = '?string'
+        }
+
+        if (mediaOptions.videoAudio) {
+          toggleMedia.media_url = '?string'
+        }
+
         await editNodeSchemaUpdate(selectedSchema?.ref_id as string, {
           type: data.type,
           parent: newParent as string,
           primary_color: selectedPrimaryColor,
           icon: selectedIcon,
           attributes: {
+            ...toggleMedia,
             index: selectedIndex as string,
           },
         })
