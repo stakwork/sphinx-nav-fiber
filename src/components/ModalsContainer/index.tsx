@@ -1,4 +1,5 @@
 import { lazy } from 'react'
+import { useAppStore } from '~/stores/useAppStore'
 
 const LazySettingsModal = lazy(() =>
   import('../SettingsModal').then(({ SettingsModal }) => ({ default: SettingsModal })),
@@ -50,20 +51,24 @@ const LazyOnboardingModal = lazy(() =>
   import('./OnboardingFlow').then(({ OnboardingModal }) => ({ default: OnboardingModal })),
 )
 
-export const ModalsContainer = () => (
-  <>
-    <LazyAddItemModal />
-    <LazyAddContentModal />
-    <LazySettingsModal />
-    <LazyEditNodeNameModal />
-    <LazyRemoveNodeModal />
-    <LazySourcesTableModal />
-    <LazyAddNodeEdgeModal />
-    <LazyChangeNodeTypeModal />
-    <LazyBlueprintModal />
-    <LazyMergeNodeModal />
-    <LazyUserFeedBackModal />
-    <LazyCreateBountyModal />
-    <LazyOnboardingModal />
-  </>
-)
+export const ModalsContainer = () => {
+  const { setUniverseQuestionIsOpen } = useAppStore((s) => s)
+
+  return (
+    <>
+      <LazyAddItemModal />
+      <LazyAddContentModal />
+      <LazySettingsModal />
+      <LazyEditNodeNameModal />
+      <LazyRemoveNodeModal />
+      <LazySourcesTableModal />
+      <LazyAddNodeEdgeModal />
+      <LazyChangeNodeTypeModal />
+      <LazyBlueprintModal />
+      <LazyMergeNodeModal />
+      <LazyUserFeedBackModal />
+      <LazyCreateBountyModal />
+      <LazyOnboardingModal onSuccess={setUniverseQuestionIsOpen} />
+    </>
+  )
+}
