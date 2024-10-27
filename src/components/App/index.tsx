@@ -15,6 +15,7 @@ import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
 import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
 import { useUpdateSelectedNode } from '~/stores/useGraphStore'
+import { useModal } from '~/stores/useModalStore'
 import { useTeachStore } from '~/stores/useTeachStore'
 import { useUserStore } from '~/stores/useUserStore'
 import {
@@ -53,12 +54,17 @@ const LazyMainToolbar = lazy(() => import('./MainToolbar').then(({ MainToolbar }
 const LazyUniverse = lazy(() => import('~/components/Universe').then(({ Universe }) => ({ default: Universe })))
 const LazySideBar = lazy(() => import('./SideBar').then(({ SideBar }) => ({ default: SideBar })))
 
+const LazyOnboardingModal = lazy(() =>
+  import('../ModalsContainer/OnboardingFlow').then(({ OnboardingModal }) => ({ default: OnboardingModal })),
+)
+
 export const App = () => {
   const [searchParams] = useSearchParams()
   const query = searchParams.get('q')
-  const { setBudget, setNodeCount } = useUserStore((s) => s)
+  const { setBudget, setNodeCount, isAdmin } = useUserStore((s) => s)
   const queueRef = useRef<FetchDataResponse | null>(null)
   const timerRef = useRef<NodeJS.Timeout | null>(null)
+  const { open, visible } = useModal('onboardingFlow')
 
   const {
     setSidebarOpen,
@@ -68,6 +74,7 @@ export const App = () => {
     setTranscriptOpen,
     universeQuestionIsOpen,
     setUniverseQuestionIsOpen,
+    appMetaData,
   } = useAppStore((s) => s)
 
   const setTeachMeAnswer = useTeachStore((s) => s.setTeachMeAnswer)
@@ -322,10 +329,16 @@ export const App = () => {
   }, [runningProjectId, setRunningProjectMessages])
 
   useEffect(() => {
-    if (!splashDataLoading) {
+    if (isAdmin && !appMetaData?.title && !visible) {
+      open()
+    }
+  }, [isAdmin, appMetaData?.title, open, visible])
+
+  useEffect(() => {
+    if (!splashDataLoading && !visible) {
       setUniverseQuestionIsOpen()
     }
-  }, [setUniverseQuestionIsOpen, splashDataLoading])
+  }, [setUniverseQuestionIsOpen, splashDataLoading, visible])
 
   return (
     <>
@@ -336,7 +349,13 @@ export const App = () => {
       <Leva hidden={!isDevelopment || true} isRoot />
 
       <Suspense fallback={<div>Loading...</div>}>
-        {!splashDataLoading ? (
+        {visible && (
+          <Suspense fallback={<div>Loading Onboarding...</div>}>
+            <LazyOnboardingModal onSuccess={setUniverseQuestionIsOpen} />
+          </Suspense>
+        )}
+
+        {!visible && !splashDataLoading && (
           <Wrapper direction="row">
             <FormProvider {...form}>
               <LazyMainToolbar />
@@ -351,7 +370,7 @@ export const App = () => {
             <ModalsContainer />
             <Toasts />
           </Wrapper>
-        ) : null}
+        )}
       </Suspense>
     </>
   )
