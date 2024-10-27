@@ -146,26 +146,21 @@ export const TopicSources = () => {
         </InputWrapper>
 
         <TableWrapper align="center" justify={loading && !data ? 'center' : 'flex-start'}>
-          {loading && !data ? (
-            <ClipLoader color={colors.white} />
-          ) : (
-            <>
-              <Table
-                checkedStates={checkedStates}
-                onChangeFilter={handleFilterChange}
-                onTopicEdit={onTopicEdit}
-                setCheckedStates={setCheckedStates}
-                setShowMuteUnmute={() => setFilters({ is_muted: !filters.is_muted })}
-                showMuted={filters.is_muted}
-              />
-              {total > ids.length ? (
-                <Button className="load-more" disabled={loading} onClick={handleLoadMore}>
-                  Load more
-                  {loading && <ClipLoader color={colors.lightGray} size={10} />}
-                </Button>
-              ) : null}
-            </>
-          )}
+          <Table
+            checkedStates={checkedStates}
+            loading={loading}
+            onChangeFilter={handleFilterChange}
+            onTopicEdit={onTopicEdit}
+            setCheckedStates={setCheckedStates}
+            setShowMuteUnmute={() => setFilters({ is_muted: !filters.is_muted })}
+            showMuted={filters.is_muted}
+          />
+          {total > ids.length ? (
+            <Button className="load-more" disabled={loading} onClick={handleLoadMore}>
+              Load more
+              {loading && <ClipLoader color={colors.lightGray} size={10} />}
+            </Button>
+          ) : null}
         </TableWrapper>
       </Wrapper>
 
