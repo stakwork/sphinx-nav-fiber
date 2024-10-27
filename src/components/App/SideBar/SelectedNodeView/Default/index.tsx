@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { okaidia } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import styled from 'styled-components'
+import { Booster } from '~/components/Booster'
 import { Divider } from '~/components/common/Divider'
 import { Flex } from '~/components/common/Flex'
 import { highlightSearchTerm } from '~/components/common/Highlight/Highlight'
@@ -16,12 +17,18 @@ import LinkIcon from '~/components/Icons/LinkIcon'
 import { useAppStore } from '~/stores/useAppStore'
 import { useSelectedNode } from '~/stores/useGraphStore'
 import { colors } from '~/utils/colors'
+import { BoostAmt } from '../../../Helper/BoostAmt'
 
 export const Default = () => {
   const selectedNode = useSelectedNode()
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const { currentPlayingAudio, setCurrentPlayingAudio } = useAppStore((s) => s)
   const [isPlaying, setIsPlaying] = useState(false)
+  const [boostAmount, setBoostAmount] = useState<number>(selectedNode?.properties?.boost || 0)
+
+  useEffect(() => {
+    setBoostAmount(selectedNode?.properties?.boost || 0)
+  }, [selectedNode])
 
   useEffect(() => {
     const audioElement = audioRef.current
@@ -73,6 +80,7 @@ export const Default = () => {
   const hasAudio = !!selectedNode.properties?.audio_EN
   const customKeys = selectedNode.properties || {}
   const sourceLink = selectedNode.properties?.source_link
+  const pubkey = selectedNode.properties?.pubkey
 
   return (
     <StyledContainer>
@@ -104,7 +112,7 @@ export const Default = () => {
 
         <StyledWrapper>
           {Object.entries(customKeys)
-            .filter(([key]) => key !== 'media_url' && key !== 'link')
+            .filter(([key]) => key !== 'media_url' && key !== 'link' && key !== 'pubkey')
             .map(([key, value]) => (
               <NodeDetail
                 key={key}
@@ -116,6 +124,18 @@ export const Default = () => {
               />
             ))}
         </StyledWrapper>
+
+        {pubkey && (
+          <Flex direction="row" justify="space-between" pt={14} px={24}>
+            <BoostAmt amt={boostAmount} />
+            <Booster
+              content={selectedNode}
+              count={boostAmount}
+              refId={selectedNode.ref_id}
+              updateCount={setBoostAmount}
+            />
+          </Flex>
+        )}
       </StyledContent>
 
       {hasAudio && selectedNode.properties?.audio_EN && (
