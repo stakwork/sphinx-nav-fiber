@@ -12,7 +12,11 @@ export type FormData = {
   description: string
 }
 
-export const OnboardingModal = () => {
+type OnboardingModalProps = {
+  onSuccess: () => void
+}
+
+export const OnboardingModal = ({ onSuccess }: OnboardingModalProps) => {
   const { close, visible } = useModal('onboardingFlow')
   const form = useForm<FormData>({ mode: 'onChange' })
   const { reset } = form
@@ -25,13 +29,17 @@ export const OnboardingModal = () => {
     }
   }, [visible, reset])
 
-  const submitGraphDetails = async (data: TAboutParams, onSuccess: () => void, onError: (error: string) => void) => {
+  const submitGraphDetails = async (
+    data: TAboutParams,
+    successCallback: () => void,
+    onError: (error: string) => void,
+  ) => {
     try {
       const res = (await postAboutData(data)) as Awaited<{ status: string }>
 
       if (res.status === 'success') {
         SuccessNotify('Graph details saved')
-        onSuccess()
+        successCallback()
       }
       // eslint-disable-next-line  @typescript-eslint/no-explicit-any
     } catch (err: any) {
@@ -54,6 +62,7 @@ export const OnboardingModal = () => {
       data,
       () => {
         close()
+        onSuccess()
       },
       setError,
     )

@@ -30,7 +30,6 @@ import { colors } from '~/utils/colors'
 import { updateBudget } from '~/utils/setBudget'
 import version from '~/utils/versionHelper'
 import { ModalsContainer } from '../ModalsContainer'
-import { OnboardingModal } from '../ModalsContainer/OnboardingFlow'
 import { ActionsToolbar } from './ActionsToolbar'
 import { AppBar } from './AppBar'
 import { DeviceCompatibilityNotice } from './DeviceCompatibilityNotification'
@@ -54,6 +53,10 @@ const Version = styled(Flex)`
 const LazyMainToolbar = lazy(() => import('./MainToolbar').then(({ MainToolbar }) => ({ default: MainToolbar })))
 const LazyUniverse = lazy(() => import('~/components/Universe').then(({ Universe }) => ({ default: Universe })))
 const LazySideBar = lazy(() => import('./SideBar').then(({ SideBar }) => ({ default: SideBar })))
+
+const LazyOnboardingModal = lazy(() =>
+  import('../ModalsContainer/OnboardingFlow').then(({ OnboardingModal }) => ({ default: OnboardingModal })),
+)
 
 export const App = () => {
   const [searchParams] = useSearchParams()
@@ -327,13 +330,13 @@ export const App = () => {
 
   useEffect(() => {
     if (isAdmin && !appMetaData?.title && !visible) {
-      open() // Open the onboarding modal if conditions are met
+      open()
     }
   }, [isAdmin, appMetaData?.title, open, visible])
 
   useEffect(() => {
     if (!splashDataLoading && !visible) {
-      setUniverseQuestionIsOpen() // Set universe question open only if onboarding is not visible
+      setUniverseQuestionIsOpen()
     }
   }, [setUniverseQuestionIsOpen, splashDataLoading, visible])
 
@@ -348,7 +351,9 @@ export const App = () => {
       <Suspense fallback={<div>Loading...</div>}>
         {!splashDataLoading &&
           (visible ? (
-            <OnboardingModal /> // Show OnboardingModal if visible
+            <Suspense fallback={<div>Loading Onboarding...</div>}>
+              <LazyOnboardingModal onSuccess={setUniverseQuestionIsOpen} />
+            </Suspense>
           ) : (
             <Wrapper direction="row">
               <FormProvider {...form}>
