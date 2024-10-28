@@ -132,6 +132,7 @@ const defaultData: Omit<
     top_node_count: '50',
     includeContent: 'true',
     node_type: [],
+    search_method: 'vector',
   },
   isFetching: false,
   isLoadingNew: false,
@@ -302,7 +303,10 @@ export const useDataStore = create<DataStore>()(
       fetchData()
     },
     resetDataNew: () => null,
-    setFilters: (filters: FilterParams) => set((state) => ({ filters: { ...state.filters, ...filters, page: 0 } })),
+    setFilters: (filters: Partial<FilterParams>) => {
+      set((state) => ({ filters: { ...state.filters, ...filters, skip: 0 } }))
+      get().fetchData(get().setBudget, get().setAbortRequests)
+    },
     setSidebarFilterCounts: (sidebarFilterCounts) => set({ sidebarFilterCounts }),
     setTrendingTopics: (trendingTopics) => set({ trendingTopics }),
     setStats: (stats) => set({ stats }),
@@ -319,13 +323,17 @@ export const useDataStore = create<DataStore>()(
       console.log(updatedNode)
     },
     addNewNode: (data) => {
-      const { dataInitial: existingData } = get()
+      const { dataInitial: existingData, filters } = get()
 
       if (!data?.nodes) {
         return
       }
 
-      const uniqueIncomingNodes = deduplicateByRefId(data.nodes || [])
+      const nodesFilteredByFilters = filters.node_type.length
+        ? data.nodes.filter((node) => filters.node_type.some((t) => t === node.node_type))
+        : data.nodes
+
+      const uniqueIncomingNodes = deduplicateByRefId(nodesFilteredByFilters || [])
       const uniqueIncomingEdges = deduplicateByRefId(data.edges || [])
 
       // Step 2: Existing nodes and links from the current state

@@ -68,6 +68,7 @@ export const SearchBar = ({ loading, placeholder = 'Search', onSubmit }: Props) 
   return (
     <Input
       {...register('search')}
+      data-testid="search_input"
       disabled={loading}
       id="main-search"
       onKeyPress={(event) => {

@@ -1,49 +1,44 @@
 import { Line } from '@react-three/drei'
 import gsap from 'gsap'
-import { forwardRef, useEffect } from 'react'
-import { Vector3 } from 'three'
+import { memo, useEffect, useRef } from 'react'
+import { Color, Vector3 } from 'three'
 import { Line2 } from 'three-stdlib'
 
 type LineComponentProps = {
-  source: Vector3
-  target: Vector3
   isSelected: boolean
   lineWidth: number
   visible: boolean
 }
 
-const LineComponent = forwardRef<Line2, LineComponentProps>(
-  ({ source, target, isSelected, lineWidth, visible }, ref) => {
-    useEffect(() => {
-      const line = (ref as React.MutableRefObject<Line2 | null>).current
+const VECTOR = new Vector3(0, 0, 0)
 
-      if (line) {
-        gsap.fromTo(
-          line.material,
-          { linewidth: 5 },
-          {
-            linewidth: isSelected ? 2 : lineWidth,
-            duration: 1,
-          },
-        )
-      }
-    }, [isSelected, lineWidth, ref])
+// eslint-disable-next-line no-underscore-dangle
+export const _LineComponent = (props: LineComponentProps) => {
+  const { isSelected, lineWidth, visible } = props
+  const ref = useRef<Line2>(null)
 
-    return (
-      <Line
-        ref={ref}
-        color="rgba(136, 136, 136, 1)"
-        isLine2
-        lineWidth={1}
-        opacity={1}
-        points={[source, target]}
-        transparent
-        visible={visible}
-      />
-    )
-  },
-)
+  useEffect(() => {
+    const line = (ref as React.MutableRefObject<Line2 | null>).current
 
-LineComponent.displayName = 'LineComponent'
+    if (line) {
+      gsap.fromTo(
+        line.material,
+        { linewidth: 5 },
+        {
+          linewidth: isSelected ? 2 : lineWidth,
+          duration: 1,
+        },
+      )
+    }
+  }, [isSelected, lineWidth, ref])
 
-export default LineComponent
+  const color = new Color(0xff0000)
+
+  return (
+    <Line ref={ref} color={color} isLine2 lineWidth={2} opacity={0.5} points={[VECTOR, VECTOR]} visible={visible} />
+  )
+}
+
+_LineComponent.displayName = 'LineComponent'
+
+export const LineComponent = memo(_LineComponent)

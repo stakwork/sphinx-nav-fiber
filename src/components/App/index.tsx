@@ -333,7 +333,7 @@ export const App = () => {
 
       <DeviceCompatibilityNotice />
 
-      <Leva hidden={!isDevelopment} />
+      <Leva hidden={!isDevelopment || true} isRoot />
 
       <Suspense fallback={<div>Loading...</div>}>
         {!splashDataLoading ? (

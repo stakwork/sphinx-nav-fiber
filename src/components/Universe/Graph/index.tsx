@@ -4,12 +4,12 @@ import { Box3, Color, Group, Sphere, Vector3 } from 'three'
 import { Line2 } from 'three-stdlib'
 import { useDataStore } from '~/stores/useDataStore'
 import { useGraphStore } from '~/stores/useGraphStore'
+import { useSchemaStore } from '~/stores/useSchemaStore'
 import { NodeExtended } from '~/types'
 import { Connections } from './Connections'
 import { Cubes } from './Cubes'
 import { Earth } from './Earth'
 import { LoadingNodes } from './LoadingNodes'
-import { Particles } from './Particles'
 import { NodeDetailsPanel } from './UI'
 
 export type LinkPosition = {
@@ -26,6 +26,7 @@ export const Graph = () => {
   const groupRef = useRef<Group>(null)
   const cameraSettled = useRef<boolean>(false)
   const linksPositionRef = useRef<LinkPosition[]>([])
+  const { normalizedSchemasByType } = useSchemaStore((s) => s)
 
   const { setData, simulation, simulationCreate, simulationHelpers, graphStyle, setGraphRadius } = useGraphStore(
     (s) => s,
@@ -86,45 +87,62 @@ export const Graph = () => {
 
       if (groupRef.current) {
         const gr = groupRef.current.getObjectByName('simulation-3d-group__nodes') as Group
+        const grPoints = groupRef.current.getObjectByName('simulation-3d-group__node-points') as Group
         const grConnections = groupRef.current.getObjectByName('simulation-3d-group__connections') as Group
 
-        gr.children.forEach((mesh, index) => {
-          const simulationNode = simulation.nodes()[index]
+        if (gr) {
+          gr.children.forEach((mesh, index) => {
+            const simulationNode = simulation.nodes()[index]
 
-          if (simulationNode) {
-            mesh.position.set(simulationNode.x, simulationNode.y, simulationNode.z)
-          }
-        })
-
-        grConnections.children.forEach((r, i) => {
-          const link = dataInitial?.links[i]
-          const Line = r as Line2
-
-          if (link) {
-            const sourceNode = simulation.nodes().find((n: NodeExtended) => n.ref_id === link.source)
-            const targetNode = simulation.nodes().find((n: NodeExtended) => n.ref_id === link.target)
-
-            const { x: sx, y: sy, z: sz } = sourceNode
-            const { x: tx, y: ty, z: tz } = targetNode
-
-            linksPositionRef.current[i] = {
-              sx,
-              sy,
-              sz,
-              tx,
-              ty,
-              tz,
+            if (simulationNode) {
+              mesh.position.set(simulationNode.x, simulationNode.y, simulationNode.z)
             }
+          })
+        }
 
-            Line.geometry.setPositions([sx, sy, sz, tx, ty, tz])
+        if (grPoints) {
+          grPoints.children[0].children.forEach((mesh, index) => {
+            const simulationNode = simulation.nodes()[index]
 
-            const { material } = Line
+            if (simulationNode) {
+              mesh.position.set(simulationNode.x, simulationNode.y, simulationNode.z)
+            }
+          })
+        }
 
-            material.color = new Color('white')
-            material.transparent = true
-            material.opacity = 0.1
-          }
-        })
+        if (grConnections) {
+          grConnections.children.forEach((r, i) => {
+            const link = dataInitial?.links[i]
+            const Line = r as Line2
+
+            if (link) {
+              const sourceNode = simulation.nodes().find((n: NodeExtended) => n.ref_id === link.source)
+              const targetNode = simulation.nodes().find((n: NodeExtended) => n.ref_id === link.target)
+
+              const { x: sx, y: sy, z: sz } = sourceNode
+              const { x: tx, y: ty, z: tz } = targetNode
+
+              linksPositionRef.current[i] = {
+                sx,
+                sy,
+                sz,
+                tx,
+                ty,
+                tz,
+              }
+
+              const lineColor = normalizedSchemasByType[sourceNode.node_type]?.primary_color || 'white'
+
+              Line.geometry.setPositions([sx, sy, sz, tx, ty, tz])
+
+              const { material } = Line
+
+              material.color = new Color(lineColor)
+              material.transparent = true
+              material.opacity = 0.2
+            }
+          })
+        }
       }
     })
 
@@ -143,7 +161,7 @@ export const Graph = () => {
 
       cameraSettled.current = false
     })
-  }, [dataInitial, simulation, setGraphRadius])
+  }, [dataInitial, simulation, setGraphRadius, normalizedSchemasByType])
 
   if (!simulation) {
     return null
@@ -152,12 +170,11 @@ export const Graph = () => {
   return (
     <group ref={groupRef}>
       <Cubes />
-      <Earth />
+      {graphStyle === 'earth' && <Earth />}
 
-      {false && <Particles />}
       {(isLoadingNew || isFetching) && <LoadingNodes />}
 
-      {graphStyle !== 'earth' && <Connections linksPositions={linksPositionRef.current} />}
+      {graphStyle !== 'earth' && <Connections />}
       <NodeDetailsPanel />
     </group>
   )

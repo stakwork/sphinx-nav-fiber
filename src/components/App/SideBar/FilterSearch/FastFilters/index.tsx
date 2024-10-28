@@ -32,7 +32,7 @@ export const FastFilters = ({ handleFastFiltersSelect }: Props) => {
   return (
     <>
       <PopoverHeader>
-        <div>Fast Filters</div>
+        <div>Favorites</div>
       </PopoverHeader>
       <PopoverBody>
         <SchemaTypeWrapper>

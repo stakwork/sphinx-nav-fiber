@@ -53,26 +53,27 @@ const Content = () => {
       <Controls />
 
       <Selection>
-        <EffectComposer autoClear={false} multisampling={8}>
-          <Vignette darkness={0.7} eskil={false} offset={0.05} />
+        {false && (
+          <EffectComposer autoClear={false} multisampling={8}>
+            <Vignette darkness={0.7} eskil={false} offset={0.05} />
 
-          <Bloom
-            luminanceThreshold={1} // luminance threshold. Raise this value to mask out darker elements in the scene.
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            mipmapBlur
-            resolutionX={Resolution.AUTO_SIZE} // The horizontal resolution.
-            resolutionY={Resolution.AUTO_SIZE} // The vertical resolution.
-          />
-          <Outline
-            blendFunction={BlendFunction.SCREEN} // set this to BlendFunction.ALPHA for dark outlines
-            blur
-            edgeStrength={4}
-            hiddenEdgeColor={outlineColor}
-            visibleEdgeColor={outlineColor} // the color of visible edges
-          />
-        </EffectComposer>
-
+            <Bloom
+              luminanceThreshold={1} // luminance threshold. Raise this value to mask out darker elements in the scene.
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore
+              mipmapBlur
+              resolutionX={Resolution.AUTO_SIZE} // The horizontal resolution.
+              resolutionY={Resolution.AUTO_SIZE} // The vertical resolution.
+            />
+            <Outline
+              blendFunction={BlendFunction.SCREEN} // set this to BlendFunction.ALPHA for dark outlines
+              blur
+              edgeStrength={4}
+              hiddenEdgeColor={outlineColor}
+              visibleEdgeColor={outlineColor} // the color of visible edges
+            />
+          </EffectComposer>
+        )}
         <Graph />
       </Selection>
     </>
@@ -131,7 +132,7 @@ const _Universe = () => {
     <Wrapper>
       <Suspense fallback={null}>
         <Canvas camera={cameraProps} id="universe-canvas" onCreated={onCreatedHandler} onWheel={onWheelHandler}>
-          {isDevelopment && <Perf position="bottom-right" />}
+          {isDevelopment && <Perf position="top-right" style={{ top: '80px' }} />}
           <Suspense fallback={<Fallback />}>
             <Preload />
 
