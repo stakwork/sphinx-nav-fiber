@@ -9,6 +9,7 @@ export function useTraceUpdate(props: { [s: string]: unknown } | ArrayLike<unkno
   useEffect(() => {
     const changedProps = Object.entries(props).reduce((ps, [k, v]) => {
       if (prev.current[k] !== v) {
+        // eslint-disable-next-line no-param-reassign
         ps[k] = [prev.current[k], v]
       }
 
