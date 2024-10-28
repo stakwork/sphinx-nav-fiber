@@ -44,7 +44,7 @@ const _NodePoints = () => {
   const data = useDataStore((s) => s.dataInitial)
   const { normalizedSchemasByType } = useSchemaStore((s) => s)
   const nodeTypes = useNodeTypes()
-  const ringGeometry = useMemo(() => new TorusGeometry(30, 4, 16, 100), [])
+  const ringGeometry = useMemo(() => new TorusGeometry(30, 2, 16, 100), [])
 
   return (
     <>
@@ -53,7 +53,6 @@ const _NodePoints = () => {
         limit={1000} // Optional: max amount of items (for calculating buffer size)
         range={1000}
         visible={!selectedNode}
-        // Optional: draw-range
       >
         <meshStandardMaterial />
         {data?.nodes.map((node: NodeExtended) => {

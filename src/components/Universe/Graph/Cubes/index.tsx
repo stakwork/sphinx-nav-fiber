@@ -16,6 +16,7 @@ const POINTER_IN_DELAY = 200
 export const Cubes = memo(() => {
   const selectedNode = useSelectedNode()
   const hoveredNode = useHoveredNode()
+
   const relativeIds = useSelectedNodeRelativeIds()
   const { selectionGraphData, showSelectionGraph, setHoveredNode, setIsHovering } = useGraphStore((s) => s)
 
@@ -56,15 +57,20 @@ export const Cubes = memo(() => {
   const onPointerOut = useCallback(
     (e: ThreeEvent<PointerEvent>) => {
       e.stopPropagation()
-      setIsHovering(false)
-      setHoveredNode(null)
 
       if (hoverTimeoutRef.current) {
         clearTimeout(hoverTimeoutRef.current)
         hoverTimeoutRef.current = null
       }
+
+      if (!hoveredNode) {
+        return
+      }
+
+      setIsHovering(false)
+      setHoveredNode(null)
     },
-    [setIsHovering, setHoveredNode],
+    [setIsHovering, setHoveredNode, hoveredNode],
   )
 
   const onPointerIn = useCallback(
@@ -72,14 +78,19 @@ export const Cubes = memo(() => {
       const objects = e.intersections.map((i) => i.object)
       const object = objects[0]
 
+      if (hoverTimeoutRef.current) {
+        clearTimeout(hoverTimeoutRef.current)
+        hoverTimeoutRef.current = null
+      }
+
       if (object?.userData?.ref_id) {
         const node = object.userData as NodeExtended
 
         if (!ignoreNodeEvent(node)) {
           e.stopPropagation()
-          setIsHovering(true)
 
           hoverTimeoutRef.current = setTimeout(() => {
+            setIsHovering(true)
             setHoveredNode(node)
           }, POINTER_IN_DELAY)
         }
