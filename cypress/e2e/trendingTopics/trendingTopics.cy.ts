@@ -40,6 +40,8 @@ describe('test trending topics', () => {
     // wait for boltwall queue to send tweets to jarvis
     cy.wait(70000)
 
+    cy.get('[data-testid="explore-graph-btn"]').click()
+
     cy.wait('@getTrends').then((interception) => {
       const responseBody = interception.response.body
 
