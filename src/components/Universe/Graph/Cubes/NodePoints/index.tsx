@@ -54,7 +54,7 @@ const _NodePoints = () => {
         range={1000}
         visible={!selectedNode}
       >
-        <meshStandardMaterial />
+        <meshBasicMaterial />
         {data?.nodes.map((node: NodeExtended) => {
           const primaryColor = normalizedSchemasByType[node.node_type]?.primary_color
           const color = primaryColor ?? (COLORS_MAP[nodeTypes.indexOf(node.node_type)] || colors.white)
