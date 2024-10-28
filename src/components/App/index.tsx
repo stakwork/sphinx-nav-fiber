@@ -322,10 +322,10 @@ export const App = () => {
   }, [runningProjectId, setRunningProjectMessages])
 
   useEffect(() => {
-    if (!splashDataLoading) {
+    if (chatInterfaceFeatureFlag && !splashDataLoading) {
       setUniverseQuestionIsOpen()
     }
-  }, [setUniverseQuestionIsOpen, splashDataLoading])
+  }, [setUniverseQuestionIsOpen, splashDataLoading, chatInterfaceFeatureFlag])
 
   return (
     <>
@@ -340,7 +340,7 @@ export const App = () => {
           <Wrapper direction="row">
             <FormProvider {...form}>
               <LazyMainToolbar />
-              {!universeQuestionIsOpen && <LazySideBar />}
+              {!universeQuestionIsOpen && chatInterfaceFeatureFlag && <LazySideBar />}
               <LazyUniverse />
               <Overlay />
               <AppBar />
