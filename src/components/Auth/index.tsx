@@ -73,7 +73,7 @@ export const AuthGuard = ({ children }: PropsWithChildren) => {
         setQueuedSourcesFeatureFlag(res.data.queuedSources)
         setCustomSchemaFeatureFlag(res.data.customSchema)
         setRealtimeGraphFeatureFlag(res.data.realtimeGraph || false)
-        setChatInterfaceFeatureFlag(res.data.chatInterface || false)
+        setChatInterfaceFeatureFlag(res.data.chatInterface || true)
         setFastFiltersFeatureFlag(res.data.fastFilters || false)
       }
 
