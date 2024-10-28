@@ -262,7 +262,12 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
         .force(
           'y',
           forceY()
-            .y((node: NodeExtended) => nodeTypes.indexOf(node.node_type) * 400)
+            .y((node: NodeExtended) => {
+              const index = nodeTypes.indexOf(node.node_type)
+              const yOffset = Math.floor(index / 2) * 400
+
+              return index % 2 === 0 ? yOffset : -yOffset
+            })
             .strength(10),
         )
     },

@@ -4,10 +4,9 @@ import { memo, useCallback, useRef } from 'react'
 import { Object3D } from 'three'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
-import { useGraphStore, useSelectedNode, useSelectedNodeRelativeIds } from '~/stores/useGraphStore'
+import { useGraphStore, useHoveredNode, useSelectedNode, useSelectedNodeRelativeIds } from '~/stores/useGraphStore'
 import { NodeExtended } from '~/types'
-import { BlurryInstances } from './BlurryInstances'
-import { Cube } from './Cube'
+import { NodePoints } from './NodePoints'
 import { RelevanceBadges } from './RelevanceBadges'
 import { SelectionDataNodes } from './SelectionDataNodes'
 import { TextNode } from './Text'
@@ -16,6 +15,8 @@ const POINTER_IN_DELAY = 200
 
 export const Cubes = memo(() => {
   const selectedNode = useSelectedNode()
+  const hoveredNode = useHoveredNode()
+
   const relativeIds = useSelectedNodeRelativeIds()
   const { selectionGraphData, showSelectionGraph, setHoveredNode, setIsHovering } = useGraphStore((s) => s)
 
@@ -56,15 +57,20 @@ export const Cubes = memo(() => {
   const onPointerOut = useCallback(
     (e: ThreeEvent<PointerEvent>) => {
       e.stopPropagation()
-      setIsHovering(false)
-      setHoveredNode(null)
 
       if (hoverTimeoutRef.current) {
         clearTimeout(hoverTimeoutRef.current)
         hoverTimeoutRef.current = null
       }
+
+      if (!hoveredNode) {
+        return
+      }
+
+      setIsHovering(false)
+      setHoveredNode(null)
     },
-    [setIsHovering, setHoveredNode],
+    [setIsHovering, setHoveredNode, hoveredNode],
   )
 
   const onPointerIn = useCallback(
@@ -72,14 +78,19 @@ export const Cubes = memo(() => {
       const objects = e.intersections.map((i) => i.object)
       const object = objects[0]
 
+      if (hoverTimeoutRef.current) {
+        clearTimeout(hoverTimeoutRef.current)
+        hoverTimeoutRef.current = null
+      }
+
       if (object?.userData?.ref_id) {
         const node = object.userData as NodeExtended
 
         if (!ignoreNodeEvent(node)) {
           e.stopPropagation()
-          setIsHovering(true)
 
           hoverTimeoutRef.current = setTimeout(() => {
+            setIsHovering(true)
             setHoveredNode(node)
           }, POINTER_IN_DELAY)
         }
@@ -97,24 +108,30 @@ export const Cubes = memo(() => {
       onPointerOut={onPointerOut}
       onPointerOver={onPointerIn}
     >
-      {false && <BlurryInstances hide={hideUniverse} />}
       <RelevanceBadges />
-      <group name="simulation-3d-group__nodes">
+      <group name="simulation-3d-group__nodes" visible={!hideUniverse}>
         {data?.nodes.map((node: NodeExtended) => {
           const hide = !!selectedNode && (relativeIds.includes(node.ref_id) || selectedNode.ref_id === node.ref_id)
 
           return (
-            <mesh key={node.ref_id}>
-              {node.name ? (
-                <TextNode key={node.ref_id || node.id} hide={hideUniverse || hide} node={node} />
-              ) : (
-                <Cube key={node.ref_id || node.id} hide={hideUniverse} node={node} />
-              )}
+            <mesh key={node.ref_id} name="wr2" scale={node.edge_count || 1} userData={node}>
+              <boxGeometry args={[40, 40, 40]} />
+              <meshStandardMaterial opacity={0} transparent />
+              <TextNode
+                key={node.ref_id || node.id}
+                hide={hideUniverse || hide}
+                isHovered={!!hoveredNode && hoveredNode.id === node.ref_id}
+                node={node}
+              />
             </mesh>
           )
         })}
       </group>
-
+      {true && (
+        <group name="simulation-3d-group__node-points">
+          <NodePoints />
+        </group>
+      )}
       {hideUniverse && <SelectionDataNodes />}
     </Select>
   )

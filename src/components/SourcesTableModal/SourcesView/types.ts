@@ -7,6 +7,7 @@ export type Props = {
 
 export type TopicTableProps = {
   showMuted?: boolean
+  loading: boolean
   onTopicEdit: (id: string, action: string) => void
   onChangeFilter: (val: string) => void
   setShowMuteUnmute: () => void

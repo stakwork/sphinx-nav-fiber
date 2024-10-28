@@ -14,14 +14,14 @@ import { Text } from '~/components/common/Text'
 import { TextInput } from '~/components/common/TextInput'
 import { NODE_ADD_ERROR, requiredRule } from '~/constants'
 import { api } from '~/network/api'
-import { editNodeSchemaUpdate, getNodeSchemaTypes, getNodeType, Schema } from '~/network/fetchSourcesData'
+import { Schema, editNodeSchemaUpdate, getNodeSchemaTypes, getNodeType } from '~/network/fetchSourcesData'
 import { useAppStore } from '~/stores/useAppStore'
 import { useModal } from '~/stores/useModalStore'
 import { colors } from '~/utils'
 import { ColorPickerPopover } from './ColorPickerPopover'
 import { CreateCustomNodeAttribute } from './CustomAttributesStep'
 import MediaOptions from './MediaOptions'
-import { convertAttributes, parsedObjProps, parseJson } from './utils'
+import { convertAttributes, parseJson, parsedObjProps } from './utils'
 
 const defaultValues = {
   type: '',
@@ -71,7 +71,7 @@ const handleSubmitForm = async (
   data: FieldValues,
   isUpdate = false,
   deletedAttributes: string[],
-  selectedPrimaryColor: string,
+  selectedColor: string,
   selectedIcon: string,
   mediaOptions: { videoAudio: boolean; image: boolean; sourceLink: boolean },
   initialMediaOptions: { videoAudio: boolean; image: boolean; sourceLink: boolean },
@@ -88,19 +88,16 @@ const handleSubmitForm = async (
     const requestData: {
       attributes: { [key: string]: string }
       index?: string
-      media_url?: string
       primary_color?: string
       icon?: string
-      image_url?: string
-      source_link?: string
     } = {
       ...withoutAttributes,
       attributes: updatedAttributes,
       index: selectedIndex,
     }
 
-    if (selectedPrimaryColor) {
-      requestData.primary_color = selectedPrimaryColor
+    if (selectedColor) {
+      requestData.primary_color = selectedColor
     }
 
     if (selectedIcon) {
@@ -108,21 +105,15 @@ const handleSubmitForm = async (
     }
 
     if (mediaOptions.videoAudio) {
-      requestData.media_url = ''
-    } else if (initialMediaOptions.videoAudio) {
-      requestData.media_url = 'delete'
+      requestData.attributes.media_url = '?string'
     }
 
     if (mediaOptions.image) {
-      requestData.image_url = ''
-    } else if (initialMediaOptions.image) {
-      requestData.image_url = 'delete'
+      requestData.attributes.image_url = '?string'
     }
 
     if (mediaOptions.sourceLink) {
-      requestData.source_link = ''
-    } else if (initialMediaOptions.sourceLink) {
-      requestData.source_link = 'delete'
+      requestData.attributes.source_link = '?string'
     }
 
     let res: { status: string; ref_id: string }
@@ -169,11 +160,13 @@ const fetchAndSetOptions = async (
       (schema) => !schema.is_deleted && schema.type && (!filterFunc || filterFunc(schema)),
     )
 
-    const options = filteredSchemas.map((schema) =>
-      schema.type === 'thing'
-        ? { label: 'No Parent', value: schema.type }
-        : { label: capitalizeFirstLetter(schema.type), value: schema.type },
-    )
+    const options = filteredSchemas
+      .map((schema) =>
+        schema.type === 'thing'
+          ? { label: 'No Parent', value: schema.type }
+          : { label: capitalizeFirstLetter(schema.type), value: schema.type },
+      )
+      .filter((option, index, self) => index === self.findIndex((o) => o.value === option.value))
 
     setOptions(options)
   } catch (error) {
@@ -225,9 +218,7 @@ export const Editor = ({
   })
 
   const { selectedColor, selectedIcon } = useAppStore((s) => s)
-  const [isPopoverOpen, setPopoverOpen] = useState(!!selectedSchema)
-
-  const selectedPrimaryColor = selectedColor.replace('#', '')
+  const [isPopoverOpen, setPopoverOpen] = useState(false)
 
   const handleColorPickerPopover = () => setPopoverOpen(!isPopoverOpen)
 
@@ -266,8 +257,6 @@ export const Editor = ({
     resetForm()
 
     if (selectedSchema) {
-      setPopoverOpen(true)
-
       setValue('type', selectedSchema.type as string)
       setValue('parent', selectedSchema.parent)
 
@@ -366,12 +355,27 @@ export const Editor = ({
 
         setGraphLoading(true)
 
+        const toggleMedia: { image_url?: string; source_link?: string; media_url?: string } = {}
+
+        if (mediaOptions.image) {
+          toggleMedia.image_url = '?string'
+        }
+
+        if (mediaOptions.sourceLink) {
+          toggleMedia.source_link = '?string'
+        }
+
+        if (mediaOptions.videoAudio) {
+          toggleMedia.media_url = '?string'
+        }
+
         await editNodeSchemaUpdate(selectedSchema?.ref_id as string, {
           type: data.type,
           parent: newParent as string,
-          primary_color: selectedPrimaryColor,
+          primary_color: selectedColor,
           icon: selectedIcon,
           attributes: {
+            ...toggleMedia,
             index: selectedIndex as string,
           },
         })
@@ -383,7 +387,7 @@ export const Editor = ({
         { ...data, ...(selectedSchema ? { ref_id: selectedSchema?.ref_id } : {}) },
         !!selectedSchema,
         deletedAttributes,
-        selectedPrimaryColor,
+        selectedColor,
         selectedIcon,
         mediaOptions,
         {
@@ -754,6 +758,7 @@ const ColorPickerIconWrapper = styled.span<{ selectedColor?: string }>`
   height: 36px;
   border-radius: 6px;
   margin-left: 12px;
+  margin-block-start: 3px;
   background: ${(props) => props.selectedColor ?? colors.THING};
   display: flex;
   justify-content: center;
@@ -774,8 +779,9 @@ const ColorPickerIconWrapper = styled.span<{ selectedColor?: string }>`
 
 const InputIconWrapper = styled(Flex)`
   justify-content: space-between;
-  align-items: center;
   flex-direction: row;
+  position: relative;
+  display: flex;
 `
 
 const InputWrapper = styled(Flex)`

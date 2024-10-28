@@ -109,7 +109,7 @@ export const SelectionDataNodes = memo(() => {
         {selectionGraphData?.nodes.map((node) => (
           <mesh key={node.ref_id}>
             {node.name ? (
-              <TextNode key={node.ref_id || node.id} hide node={node} />
+              <TextNode key={node.ref_id || node.id} hide isHovered={false} node={node} />
             ) : (
               <Cube key={node.ref_id || node.id} hide node={node} />
             )}

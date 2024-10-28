@@ -1,4 +1,4 @@
-import { RSS, TWITTER_HANDLE, YOUTUBE_CHANNEL } from '~/constants'
+import { GITHUB_REPOSITORY, RSS, TWITTER_HANDLE, YOUTUBE_CHANNEL } from '~/constants'
 import { ISourceMap } from './types'
 import styled from 'styled-components'
 import { IconButton } from '@mui/material'
@@ -7,6 +7,7 @@ export const sourcesMapper: ISourceMap = {
   [RSS]: 'RSS link',
   [TWITTER_HANDLE]: 'Twitter Handle',
   [YOUTUBE_CHANNEL]: 'Youtube channel',
+  [GITHUB_REPOSITORY]: 'Github Repository',
 }
 
 export const SOURCE_TABLE = 'Sources Table'
