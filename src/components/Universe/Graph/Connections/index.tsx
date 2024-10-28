@@ -16,7 +16,7 @@ export const Connections = memo(() => {
       {data?.links.map((l: Link) => {
         const isSelected = selectedNode?.ref_id === l.source || selectedNode?.ref_id === l.target
 
-        const lineWidth = selectedNode ? 0 : 0.5
+        const lineWidth = selectedNode ? 0 : 1
 
         return (
           <LineComponent key={l.ref_id} isSelected={isSelected} lineWidth={lineWidth} visible={!showSelectionGraph} />

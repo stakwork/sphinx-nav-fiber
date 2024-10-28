@@ -114,7 +114,7 @@ export const Cubes = memo(() => {
           const hide = !!selectedNode && (relativeIds.includes(node.ref_id) || selectedNode.ref_id === node.ref_id)
 
           return (
-            <mesh key={node.ref_id} name="wr2" userData={node}>
+            <mesh key={node.ref_id} name="wr2" scale={node.edge_count || 1} userData={node}>
               <boxGeometry args={[40, 40, 40]} />
               <meshStandardMaterial opacity={0} transparent />
               <TextNode
