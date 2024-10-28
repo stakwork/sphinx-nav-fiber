@@ -1,7 +1,7 @@
 import { Billboard, Svg, Text } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import { memo, useMemo, useRef } from 'react'
-import { Mesh, MeshStandardMaterial, Vector3 } from 'three'
+import { Mesh, MeshBasicMaterial, Vector3 } from 'three'
 import { Icons } from '~/components/Icons'
 import { useNodeTypes } from '~/stores/useDataStore'
 import { useGraphStore, useSelectedNode, useSelectedNodeRelativeIds } from '~/stores/useGraphStore'
@@ -145,7 +145,7 @@ export const TextNode = memo(({ node, hide, isHovered }: Props) => {
               if (child instanceof Mesh) {
                 // Apply dynamic color to meshes
                 // eslint-disable-next-line no-param-reassign
-                child.material = new MeshStandardMaterial({ color })
+                child.material = new MeshBasicMaterial({ color })
               }
             })
           }}
