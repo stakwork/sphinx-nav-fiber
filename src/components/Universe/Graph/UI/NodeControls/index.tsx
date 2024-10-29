@@ -7,10 +7,13 @@ import styled from 'styled-components'
 import { Group, Vector3 } from 'three'
 import { useGraphData } from '~/components/DataRetriever'
 import AddCircleIcon from '~/components/Icons/AddCircleIcon'
+import ConstructionIcon from '~/components/Icons/ConstructionIcon'
+import DocumentIcon from '~/components/Icons/DocumentIcon'
 import EditIcon from '~/components/Icons/EditIcon'
 import MergeIcon from '~/components/Icons/MergeIcon'
 import NodesIcon from '~/components/Icons/NodesIcon'
 import PlusIcon from '~/components/Icons/PlusIcon'
+import RobotIcon from '~/components/Icons/RobotIcon'
 import { Flex } from '~/components/common/Flex'
 import { fetchNodeEdges } from '~/network/fetchGraphData'
 import { useAppStore } from '~/stores/useAppStore'
@@ -164,6 +167,8 @@ export const NodeControls = memo(() => {
 
   const id = open ? 'simple-popover' : undefined
 
+  const isRepository = selectedNode?.node_type?.toLowerCase() === 'repository'
+
   const isShowCreateTestButton = !!(selectedNode && selectedNode?.node_type?.toLowerCase() === 'function')
 
   return (
@@ -216,24 +221,63 @@ export const NodeControls = memo(() => {
           open={open}
           transformOrigin={{ vertical: 'top', horizontal: 'right' }}
         >
-          <PopoverOption
-            data-testid="merge"
-            onClick={() => {
-              mergeTopicModal()
-              handleClose()
-            }}
-          >
-            <MergeIcon data-testid="MergeIcon" /> Merge
-          </PopoverOption>
-          <PopoverOption
-            data-testid="add_edge"
-            onClick={() => {
-              addEdgeToNodeModal()
-              handleClose()
-            }}
-          >
-            <AddCircleIcon data-testid="AddCircleIcon" /> Add edge
-          </PopoverOption>
+          {!isRepository ? (
+            <>
+              <PopoverOption
+                data-testid="merge"
+                onClick={() => {
+                  mergeTopicModal()
+                  handleClose()
+                }}
+              >
+                <MergeIcon data-testid="MergeIcon" /> Merge
+              </PopoverOption>
+              <PopoverOption
+                data-testid="add_edge"
+                onClick={() => {
+                  addEdgeToNodeModal()
+                  handleClose()
+                }}
+              >
+                <AddCircleIcon data-testid="AddCircleIcon" /> Add edge
+              </PopoverOption>
+            </>
+          ) : (
+            <>
+              <PopoverOption
+                data-testid="generate_tests"
+                onClick={() => {
+                  handleClose()
+                }}
+              >
+                <AddCircleIcon data-testid="AddCircleIcon" /> Generate Tests
+              </PopoverOption>
+              <PopoverOption
+                data-testid="add_comments"
+                onClick={() => {
+                  handleClose()
+                }}
+              >
+                <DocumentIcon data-testid="DocumentIcon" /> Add Comments
+              </PopoverOption>
+              <PopoverOption
+                data-testid="review_bugs"
+                onClick={() => {
+                  handleClose()
+                }}
+              >
+                <ConstructionIcon data-testid="ConstructionIcon" /> Review Bugs
+              </PopoverOption>
+              <PopoverOption
+                data-testid="find_vulnerabilities"
+                onClick={() => {
+                  handleClose()
+                }}
+              >
+                <RobotIcon data-testid="RobotIcon" /> Find Vulnerabilities
+              </PopoverOption>
+            </>
+          )}
         </PopoverWrapper>
       </Html>
     </group>
