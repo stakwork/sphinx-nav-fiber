@@ -4,9 +4,9 @@ import styled from 'styled-components'
 import { IconButton } from '@mui/material'
 
 export const sourcesMapper: ISourceMap = {
-  [RSS]: 'RSS link',
+  [RSS]: 'RSS Link',
   [TWITTER_HANDLE]: 'Twitter Handle',
-  [YOUTUBE_CHANNEL]: 'Youtube channel',
+  [YOUTUBE_CHANNEL]: 'Youtube Channel',
   [GITHUB_REPOSITORY]: 'Github Repository',
 }
 
