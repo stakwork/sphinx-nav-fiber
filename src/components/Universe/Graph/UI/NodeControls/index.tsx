@@ -239,7 +239,8 @@ export const NodeControls = memo(() => {
                   handleClose()
                 }}
               >
-                <AddCircleIcon data-testid="AddCircleIcon" /> Add edge
+                <AddCircleIcon data-testid="AddCircleIcon" />
+                Add edge
               </PopoverOption>
             </>
           ) : (
@@ -250,7 +251,10 @@ export const NodeControls = memo(() => {
                   handleClose()
                 }}
               >
-                <AddCircleIcon data-testid="AddCircleIcon" /> Generate Tests
+                <IconWrapper>
+                  <AddCircleIcon data-testid="AddCircleIcon" />
+                </IconWrapper>
+                Generate Tests
               </PopoverOption>
               <PopoverOption
                 data-testid="add_comments"
@@ -258,7 +262,10 @@ export const NodeControls = memo(() => {
                   handleClose()
                 }}
               >
-                <DocumentIcon data-testid="DocumentIcon" /> Add Comments
+                <IconWrapper>
+                  <DocumentIcon data-testid="DocumentIcon" />{' '}
+                </IconWrapper>
+                Add Comments
               </PopoverOption>
               <PopoverOption
                 data-testid="review_bugs"
@@ -347,6 +354,18 @@ const PopoverWrapper = styled(Popover)`
     font-weight: 500;
     background-color: transparent !important;
     margin: 2px;
+  }
+`
+
+const IconWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: start;
+
+  svg {
+    margin-top: 1px;
+    width: 12px;
+    height: 12px;
   }
 `
 
