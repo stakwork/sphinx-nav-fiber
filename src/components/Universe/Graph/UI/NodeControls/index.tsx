@@ -345,6 +345,8 @@ const PopoverWrapper = styled(Popover)`
     font-family: Barlow;
     font-size: 14px;
     font-weight: 500;
+    background-color: transparent !important;
+    margin: 2px;
   }
 `
 
