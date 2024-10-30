@@ -253,8 +253,28 @@ export const useDataStore = create<DataStore>()(
           count: currentNodes.filter((node) => filter === 'all' || node.node_type?.toLowerCase() === filter).length,
         }))
 
+        const minScale = 1
+        const maxScale = 4
+
+        // Find min and max edgeCount values
+        const minEdgeCount = Math.min(...currentNodes.map((node) => node.edge_count))
+        const maxEdgeCount = Math.max(...currentNodes.map((node) => node.edge_count))
+
+        // Normalize and calculate scale for each node
+        const normalizedNodes = currentNodes.map((node) => {
+          const { edge_count: edgeCount } = node
+          const count = edgeCount || 1
+
+          const scale = Math.round(
+            ((count - minEdgeCount) / (maxEdgeCount - minEdgeCount)) * (maxScale - minScale) + minScale,
+          )
+
+          // Return new object with calculated scale
+          return { ...node, scale }
+        })
+
         set({
-          dataInitial: { nodes: currentNodes, links: currentLinks },
+          dataInitial: { nodes: normalizedNodes, links: currentLinks },
           dataNew: { nodes: newNodes, links: newLinks },
           isFetching: false,
           isLoadingNew: false,
