@@ -84,7 +84,7 @@ export const TextNode = memo(({ node, hide, isHovered }: Props) => {
       const nodePosition = nodePositionRef.current.setFromMatrixPosition(ringRef.current!.matrixWorld)
 
       if (ringRef.current) {
-        ringRef.current.visible = nodePosition.distanceTo(camera.position) < 2500
+        ringRef.current.visible = nodePosition.distanceTo(camera.position) < 10000
       }
 
       // Set visibility based on distance
@@ -149,7 +149,7 @@ export const TextNode = memo(({ node, hide, isHovered }: Props) => {
               }
             })
           }}
-          position={[-15, 15, 0]}
+          position={[-10, 10, 0]}
           scale={2}
           src={`svg-icons/${iconName}.svg`}
           strokeMaterial={{ color: 'yellow' }}
