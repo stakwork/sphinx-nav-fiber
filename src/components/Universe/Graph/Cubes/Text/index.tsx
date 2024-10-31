@@ -149,7 +149,7 @@ export const TextNode = memo(({ node, hide, isHovered }: Props) => {
               }
             })
           }}
-          position={[-10, 10, 0]}
+          position={[-15, 15, 0]}
           scale={2}
           src={`svg-icons/${iconName}.svg`}
           strokeMaterial={{ color: 'yellow' }}
