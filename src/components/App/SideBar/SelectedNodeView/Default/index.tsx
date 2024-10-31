@@ -113,12 +113,13 @@ export const Default = () => {
         <StyledWrapper>
           {Object.entries(customKeys)
             .filter(([key]) => key !== 'media_url' && key !== 'link' && key !== 'pubkey')
-            .map(([key, value]) => (
+            .map(([key, value], index, array) => (
               <NodeDetail
                 key={key}
                 hasAudio={hasAudio}
                 isPlaying={isPlaying}
                 label={formatLabel(key)}
+                showDivider={index !== array.length - 1}
                 togglePlay={togglePlay}
                 value={key === 'date' && value ? moment(value * 1000).format('MMMM Do YYYY') : value}
               />
@@ -126,15 +127,18 @@ export const Default = () => {
         </StyledWrapper>
 
         {pubkey && (
-          <Flex direction="row" justify="space-between" pt={14} px={24}>
-            <BoostAmt amt={boostAmount} />
-            <Booster
-              content={selectedNode}
-              count={boostAmount}
-              refId={selectedNode.ref_id}
-              updateCount={setBoostAmount}
-            />
-          </Flex>
+          <BoostSectionWrapper>
+            <BoostStyledDivider />
+            <Flex direction="row" justify="space-between" pt={14} px={24}>
+              <BoostAmt amt={boostAmount} />
+              <Booster
+                content={selectedNode}
+                count={boostAmount}
+                refId={selectedNode.ref_id}
+                updateCount={setBoostAmount}
+              />
+            </Flex>
+          </BoostSectionWrapper>
         )}
       </StyledContent>
 
@@ -149,9 +153,16 @@ export const Default = () => {
 
 const formatLabel = (label: string) => label.replace(/_/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase())
 
-type Props = { label: string; value: unknown; hasAudio: boolean; isPlaying: boolean; togglePlay: () => void }
+type Props = {
+  label: string
+  value: unknown
+  hasAudio: boolean
+  isPlaying: boolean
+  togglePlay: () => void
+  showDivider: boolean
+}
 
-const NodeDetail = ({ label, value, hasAudio, isPlaying, togglePlay }: Props) => {
+const NodeDetail = ({ label, value, hasAudio, isPlaying, togglePlay, showDivider }: Props) => {
   const isLong = (value as string).length > 140
   const searchTerm = useAppStore((s) => s.currentSearch)
 
@@ -176,7 +187,7 @@ const NodeDetail = ({ label, value, hasAudio, isPlaying, togglePlay }: Props) =>
           </SyntaxHighlighter>
         )}
       </StyledDetail>
-      <StyledDivider />
+      {showDivider && <StyledDivider />}
     </>
   )
 }
@@ -292,4 +303,13 @@ const StyledLinkIcon = styled.a`
     width: 1.3em;
     height: 1.3em;
   }
+`
+
+const BoostSectionWrapper = styled(Flex)`
+  padding-bottom: 20px;
+`
+
+const BoostStyledDivider = styled(Divider)`
+  margin: auto 25px;
+  opacity: 0.75;
 `
