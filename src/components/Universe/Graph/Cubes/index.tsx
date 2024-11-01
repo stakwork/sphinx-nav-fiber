@@ -120,7 +120,7 @@ export const Cubes = memo(() => {
               <TextNode
                 key={node.ref_id || node.id}
                 hide={hideUniverse || hide}
-                isHovered={!!hoveredNode && hoveredNode.id === node.ref_id}
+                isHovered={!!hoveredNode && hoveredNode.ref_id === node.ref_id}
                 node={node}
               />
             </mesh>

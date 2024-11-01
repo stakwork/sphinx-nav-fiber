@@ -1,4 +1,4 @@
-import { Billboard, Svg, Text } from '@react-three/drei'
+import { Billboard, Plane, Svg, Text } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import { memo, useMemo, useRef } from 'react'
 import { Mesh, MeshBasicMaterial, Vector3 } from 'three'
@@ -11,6 +11,7 @@ import { colors } from '~/utils/colors'
 import { removeEmojis } from '~/utils/removeEmojisFromText'
 import { truncateText } from '~/utils/truncateText'
 import { fontProps } from './constants'
+import { useTexture } from './hooks/useTexture'
 
 const COLORS_MAP = [
   '#fff',
@@ -69,9 +70,12 @@ function splitStringIntoThreeParts(text: string): string {
 export const TextNode = memo(({ node, hide, isHovered }: Props) => {
   const svgRef = useRef<Mesh | null>(null)
   const ringRef = useRef<Mesh | null>(null)
+  const circleRef = useRef<Mesh | null>(null)
   const selectedNode = useSelectedNode()
 
   const nodePositionRef = useRef(new Vector3())
+
+  const { texture } = useTexture(node.properties?.image_url || '')
 
   const selectedNodeRelativeIds = useSelectedNodeRelativeIds()
   const isRelative = selectedNodeRelativeIds.includes(node?.ref_id || '')
@@ -79,7 +83,7 @@ export const TextNode = memo(({ node, hide, isHovered }: Props) => {
   const showSelectionGraph = useGraphStore((s) => s.showSelectionGraph)
   const { normalizedSchemasByType } = useSchemaStore((s) => s)
 
-  useFrame(({ camera }) => {
+  useFrame(({ camera, clock }) => {
     const checkDistance = () => {
       const nodePosition = nodePositionRef.current.setFromMatrixPosition(ringRef.current!.matrixWorld)
 
@@ -88,6 +92,20 @@ export const TextNode = memo(({ node, hide, isHovered }: Props) => {
       }
 
       // Set visibility based on distance
+    }
+
+    if (isHovered) {
+      if (ringRef.current) {
+        ringRef.current.visible = true
+      }
+
+      const scale = 1 + 0.2 * Math.sin(clock.getElapsedTime() * 2) // Adjust frequency and amplitude
+
+      if (circleRef.current) {
+        circleRef.current.scale.set(scale, scale, scale)
+      }
+
+      return
     }
 
     checkDistance()
@@ -134,27 +152,68 @@ export const TextNode = memo(({ node, hide, isHovered }: Props) => {
   const iconName = Icon ? primaryIcon : 'NodesIcon'
   const sanitizedNodeName = removeEmojis(String(node.name))
 
+  const uniforms = {
+    u_texture: { value: texture },
+    u_radius: { value: 0.5 }, // Radius of the circular mask
+  }
+
   return (
     <Billboard follow lockX={false} lockY={false} lockZ={false} name="billboard" userData={node}>
       <mesh ref={ringRef} name={node.id} userData={node} visible={!hide}>
-        <Svg
-          ref={svgRef}
-          name="svg"
-          onUpdate={(svg) => {
-            svg.traverse((child) => {
-              if (child instanceof Mesh) {
-                // Apply dynamic color to meshes
-                // eslint-disable-next-line no-param-reassign
-                child.material = new MeshBasicMaterial({ color })
-              }
-            })
-          }}
-          position={[-15, 15, 0]}
-          scale={2}
-          src={`svg-icons/${iconName}.svg`}
-          strokeMaterial={{ color: 'yellow' }}
-          userData={node}
-        />
+        {isHovered ? (
+          <mesh ref={circleRef} position={[0, 0, -2]}>
+            <circleGeometry args={[30, 32]} />
+            <meshBasicMaterial color={color} opacity={0.5} transparent />
+          </mesh>
+        ) : null}
+        {node.properties?.image_url && node.node_type === 'Person' && texture ? (
+          <Plane args={[10 * 2, 10 * 2]} scale={2}>
+            <shaderMaterial
+              fragmentShader={`
+          uniform sampler2D u_texture;
+          uniform float u_radius;
+          varying vec2 vUv;
+
+          void main() {
+            vec2 center = vec2(0.5, 0.5); // Center of the circle
+            float dist = distance(vUv, center);
+            if (dist < u_radius) {
+              gl_FragColor = texture2D(u_texture, vUv);
+            } else {
+              discard; // Discard pixels outside the circle
+            }
+          }
+        `}
+              uniforms={uniforms}
+              vertexShader={`
+          varying vec2 vUv;
+          void main() {
+            vUv = uv;
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+          }
+        `}
+            />
+          </Plane>
+        ) : (
+          <Svg
+            ref={svgRef}
+            name="svg"
+            onUpdate={(svg) => {
+              svg.traverse((child) => {
+                if (child instanceof Mesh) {
+                  // Apply dynamic color to meshes
+                  // eslint-disable-next-line no-param-reassign
+                  child.material = new MeshBasicMaterial({ color })
+                }
+              })
+            }}
+            position={[-15, 15, 0]}
+            scale={2}
+            src={`svg-icons/${iconName}.svg`}
+            strokeMaterial={{ color: 'yellow' }}
+            userData={node}
+          />
+        )}
 
         {node.name && (
           <Text

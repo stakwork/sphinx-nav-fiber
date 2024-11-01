@@ -139,7 +139,7 @@ export const Graph = () => {
 
               material.color = new Color(lineColor)
               material.transparent = true
-              material.opacity = 0.5
+              material.opacity = 0.3
             }
           })
         }
