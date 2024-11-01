@@ -2,7 +2,7 @@ import { Instances } from '@react-three/drei'
 import { memo, useMemo } from 'react'
 import { BufferGeometry, TorusGeometry } from 'three'
 import { useDataStore, useNodeTypes } from '~/stores/useDataStore'
-import { useSelectedNode } from '~/stores/useGraphStore'
+import { useHoveredNode, useSelectedNode } from '~/stores/useGraphStore'
 import { useSchemaStore } from '~/stores/useSchemaStore'
 import { NodeExtended } from '~/types'
 import { colors } from '~/utils'
@@ -41,10 +41,13 @@ const COLORS_MAP = [
 // eslint-disable-next-line no-underscore-dangle
 const _NodePoints = () => {
   const selectedNode = useSelectedNode()
+  const hoveredNode = useHoveredNode()
   const data = useDataStore((s) => s.dataInitial)
   const { normalizedSchemasByType } = useSchemaStore((s) => s)
   const nodeTypes = useNodeTypes()
   const ringGeometry = useMemo(() => new TorusGeometry(30, 2, 16, 100), [])
+
+  console.log(hoveredNode)
 
   return (
     <>
@@ -59,7 +62,14 @@ const _NodePoints = () => {
           const primaryColor = normalizedSchemasByType[node.node_type]?.primary_color
           const color = primaryColor ?? (COLORS_MAP[nodeTypes.indexOf(node.node_type)] || colors.white)
 
-          return <Point key={node.ref_id} color={color} scale={node.scale || 1} />
+          return (
+            <Point
+              key={node.ref_id}
+              color={color}
+              scale={node.scale || 1}
+              shouldPulsate={hoveredNode?.ref_id === node.ref_id}
+            />
+          )
         })}
       </Instances>
     </>

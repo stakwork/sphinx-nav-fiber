@@ -6,6 +6,7 @@ import { Flex } from '~/components/common/Flex'
 import { highlightSearchTerm } from '~/components/common/Highlight/Highlight'
 import { Text } from '~/components/common/Text'
 import { useAppStore } from '~/stores/useAppStore'
+import { useGraphStore } from '~/stores/useGraphStore'
 import { NodeExtended } from '~/types'
 import { colors } from '~/utils/colors'
 import { Default } from './Default'
@@ -70,6 +71,7 @@ export const Episode = ({
   node,
 }: Props) => {
   const searchTerm = useAppStore((s) => s.currentSearch)
+  const { setHoveredNode } = useGraphStore((s) => s)
   const text = highlightSearchTerm(String(newText), searchTerm) as string
   const name = highlightSearchTerm(String(newName), searchTerm) as string
   const subtitleSource = type === 'show' ? '' : showTitle
@@ -78,7 +80,12 @@ export const Episode = ({
   const defaultViewTypes = ['Tweet', 'person', 'guest', 'topic', 'document']
 
   return (
-    <EpisodeWrapper className={className} onClick={onClick}>
+    <EpisodeWrapper
+      className={className}
+      onClick={onClick}
+      onPointerEnter={() => setHoveredNode(node)}
+      onPointerOut={() => setHoveredNode(null)}
+    >
       {!defaultViewTypes.includes(type) && (
         <Default
           boostCount={boostCount}
