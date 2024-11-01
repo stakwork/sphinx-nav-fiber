@@ -30,14 +30,10 @@ export const useTexture = (url: string) => {
     loader.load(
       url,
       (loadedTexture) => {
-        // on load
-
         setTexture(loadedTexture)
       },
       undefined,
       () => {
-        console.log(123)
-        // on error, set blank meterial
         setTexture(null)
       },
     )

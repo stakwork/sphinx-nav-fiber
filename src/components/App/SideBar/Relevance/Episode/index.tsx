@@ -83,8 +83,12 @@ export const Episode = ({
     <EpisodeWrapper
       className={className}
       onClick={onClick}
-      onPointerEnter={() => setHoveredNode(node)}
-      onPointerOut={() => setHoveredNode(null)}
+      onMouseLeave={() => {
+        setHoveredNode(null)
+      }}
+      onMouseOver={() => {
+        setHoveredNode(node)
+      }}
     >
       {!defaultViewTypes.includes(type) && (
         <Default

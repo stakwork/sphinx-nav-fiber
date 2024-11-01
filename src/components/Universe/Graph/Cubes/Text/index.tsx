@@ -163,10 +163,10 @@ export const TextNode = memo(({ node, hide, isHovered }: Props) => {
         {isHovered ? (
           <mesh ref={circleRef} position={[0, 0, -2]}>
             <circleGeometry args={[30, 32]} />
-            <meshStandardMaterial color={color} opacity={0} transparent />
+            <meshBasicMaterial color={color} opacity={0.5} transparent />
           </mesh>
         ) : null}
-        {node.properties?.image_url && node.node_type === 'Persons' && texture ? (
+        {node.properties?.image_url && node.node_type === 'Person' && texture ? (
           <Plane args={[10 * 2, 10 * 2]} scale={2}>
             <shaderMaterial
               fragmentShader={`
@@ -184,7 +184,6 @@ export const TextNode = memo(({ node, hide, isHovered }: Props) => {
             }
           }
         `}
-              transparent
               uniforms={uniforms}
               vertexShader={`
           varying vec2 vUv;
