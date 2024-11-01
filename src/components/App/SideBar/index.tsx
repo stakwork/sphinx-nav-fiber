@@ -66,7 +66,7 @@ export const SideBar = () => {
 
   return (
     <>
-      <Slide direction="right" in={sidebarIsOpen}>
+      <Slide direction="right" in={sidebarIsOpen} mountOnEnter unmountOnExit>
         <Content subViewOpen={subViewIsOpen} />
       </Slide>
       <SideBarSubView open={subViewIsOpen} />
@@ -80,7 +80,7 @@ const Wrapper = styled(Flex)(({ theme }) => ({
   background: colors.BG1,
   height: '100vh',
   width: '100%',
-  zIndex: 1,
+  zIndex: 30,
   [theme.breakpoints.up('sm')]: {
     width: MENU_WIDTH,
   },

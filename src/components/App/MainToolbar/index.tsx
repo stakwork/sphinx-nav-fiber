@@ -114,7 +114,7 @@ const Wrapper = styled(Flex).attrs({
   justify: 'flex-start',
 })`
   flex: 0 0 64px;
-  z-index: 1;
+  z-index: 31;
   transition: opacity 1s;
   background: ${colors.BG2};
   position: relative;
