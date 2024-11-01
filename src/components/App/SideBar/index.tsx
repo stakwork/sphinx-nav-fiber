@@ -80,7 +80,7 @@ const Wrapper = styled(Flex)(({ theme }) => ({
   background: colors.BG1,
   height: '100vh',
   width: '100%',
-  zIndex: 30,
+  zIndex: 1,
   [theme.breakpoints.up('sm')]: {
     width: MENU_WIDTH,
   },
