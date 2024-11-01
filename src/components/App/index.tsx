@@ -323,9 +323,11 @@ export const App = () => {
 
   useEffect(() => {
     if (!splashDataLoading) {
-      setUniverseQuestionIsOpen()
+      if (chatInterfaceFeatureFlag) {
+        setUniverseQuestionIsOpen()
+      }
     }
-  }, [setUniverseQuestionIsOpen, splashDataLoading])
+  }, [setUniverseQuestionIsOpen, splashDataLoading, chatInterfaceFeatureFlag])
 
   return (
     <>
