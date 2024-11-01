@@ -420,6 +420,10 @@ export const Editor = ({
   })
 
   useEffect(() => {
+    if (selectedColor !== selectedSchema?.primary_color) {
+      setSubmitDisabled(false)
+    }
+
     const subscription = form.watch((values) => {
       const isMatch = compareAttributes(attributes, parsedData)
 
@@ -439,7 +443,7 @@ export const Editor = ({
     })
 
     return () => subscription.unsubscribe()
-  }, [form, attributes, parsedData, selectedSchema, loading, displayParentError])
+  }, [form, attributes, parsedData, selectedSchema, loading, displayParentError, selectedColor])
 
   const resolvedParentValue = () => parentOptions?.find((i) => i.value === parent)
 
