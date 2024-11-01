@@ -130,7 +130,7 @@ export const FilterSearch = ({ anchorEl, setAnchorEl, onClose }: Props) => {
             Clear
           </ClearButton>
           <ShowResultButton color="secondary" onClick={handleFiltersApply} size="large" variant="contained">
-            Show Results
+            Apply
           </ShowResultButton>
         </ButtonsWrapper>
       </PopoverFooter>
