@@ -16,7 +16,7 @@ type BadgeProps = {
 export const TypeBadge = ({ type }: Props) => {
   let badgeProps: Omit<BadgeProps, 'label'>
   const [normalizedSchemasByType] = useSchemaStore((s) => [s.normalizedSchemasByType])
-  const nodeType = type.toLowerCase()
+  const nodeType = type
 
   const primaryColor = normalizedSchemasByType[type]?.primary_color
   const primaryIcon = normalizedSchemasByType[type]?.icon
@@ -93,14 +93,6 @@ export const TypeBadge = ({ type }: Props) => {
 
       break
 
-    case 'topic':
-      badgeProps = {
-        iconStart: icon ?? 'topic_badge.svg',
-        color: primaryColor ?? colors.TOPIC,
-      }
-
-      break
-
     default:
       badgeProps = {
         iconStart: icon ?? 'thing_badge.svg',
@@ -114,7 +106,7 @@ export const TypeBadge = ({ type }: Props) => {
 }
 
 const Badge = ({ iconStart, color, label }: BadgeProps) => (
-  <EpisodeWrapper color={color} label={label}>
+  <EpisodeWrapper color={color}>
     <img alt={label} className="badge__img" src={iconStart} />
     <div className="badge__label">{label}</div>
   </EpisodeWrapper>
@@ -122,7 +114,7 @@ const Badge = ({ iconStart, color, label }: BadgeProps) => (
 
 const EpisodeWrapper = styled(Flex).attrs({
   direction: 'row',
-})<{ color: string; label: string }>`
+})<{ color: string }>`
   cursor: pointer;
   background: ${({ color }) => color};
   border-radius: 3px;
@@ -139,7 +131,7 @@ const EpisodeWrapper = styled(Flex).attrs({
   }
 
   .badge__label {
-    color: ${({ label }) => (label.toLowerCase() === 'topic' ? colors.black : colors.white)};
+    color: ${colors.white};
     font-family: Barlow;
     font-size: 8px;
     font-style: normal;

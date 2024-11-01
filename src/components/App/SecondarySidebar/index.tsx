@@ -40,7 +40,7 @@ const Wrapper = styled(Flex)(({ theme }) => ({
   height: '100vh',
   padding: '16px 20px',
   width: '100%',
-  zIndex: 30,
+  zIndex: 1,
   display: 'flex',
   [theme.breakpoints.up('sm')]: {
     width: MENU_WIDTH,
