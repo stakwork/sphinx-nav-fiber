@@ -110,6 +110,10 @@ export const Graph = () => {
           })
         }
 
+        if (simulation.alpha() > 1) {
+          return
+        }
+
         if (grConnections) {
           grConnections.children.forEach((r, i) => {
             const link = dataInitial?.links[i]
@@ -174,7 +178,7 @@ export const Graph = () => {
 
       {(isLoadingNew || isFetching) && <LoadingNodes />}
 
-      {graphStyle !== 'earth' && <Connections />}
+      {graphStyle !== 'earth' && <Connections linksPosition={linksPositionRef.current} />}
       <NodeDetailsPanel />
     </group>
   )
