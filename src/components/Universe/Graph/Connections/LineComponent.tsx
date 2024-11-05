@@ -1,43 +1,48 @@
 import { Line } from '@react-three/drei'
 import gsap from 'gsap'
-import { memo, useEffect, useRef } from 'react'
-import { Color, Vector3 } from 'three'
+import { forwardRef, memo, useEffect } from 'react'
+import { Vector3 } from 'three'
 import { Line2 } from 'three-stdlib'
+import { LinkPosition } from '..'
+import { LINE_WIDTH } from '../../constants'
 
 type LineComponentProps = {
   isSelected: boolean
-  lineWidth: number
-  visible: boolean
+  position: LinkPosition
 }
 
 const VECTOR = new Vector3(0, 0, 0)
 
 // eslint-disable-next-line no-underscore-dangle
-export const _LineComponent = (props: LineComponentProps) => {
-  const { isSelected, lineWidth, visible } = props
-  const ref = useRef<Line2>(null)
-
+const _LineComponent = forwardRef<Line2, LineComponentProps>(({ isSelected, position }, ref) => {
   useEffect(() => {
-    const line = (ref as React.MutableRefObject<Line2 | null>).current
+    if (ref && (ref as React.MutableRefObject<Line2 | null>).current) {
+      const line = (ref as React.MutableRefObject<Line2>).current
 
-    if (line) {
       gsap.fromTo(
         line.material,
-        { linewidth: 5 },
+        { linewidth: LINE_WIDTH * 5 },
         {
-          linewidth: isSelected ? 2 : lineWidth,
+          linewidth: LINE_WIDTH,
           duration: 1,
         },
       )
     }
-  }, [isSelected, lineWidth, ref])
-
-  const color = new Color(0xff0000)
+  }, [isSelected, ref])
 
   return (
-    <Line ref={ref} color={color} isLine2 lineWidth={2} opacity={0.5} points={[VECTOR, VECTOR]} visible={visible} />
+    <Line
+      ref={ref}
+      isLine2
+      opacity={0.5}
+      points={
+        position
+          ? [new Vector3(position.sx, position.sy, position.sz), new Vector3(position.tx, position.ty, position.tz)]
+          : [VECTOR, VECTOR]
+      }
+    />
   )
-}
+})
 
 _LineComponent.displayName = 'LineComponent'
 
