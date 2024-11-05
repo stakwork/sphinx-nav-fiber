@@ -108,6 +108,7 @@ export const colors = {
   createTestButton: 'rgb(178, 255, 102)',
   MESSAGE_BG: 'rgba(22, 22, 29, 0.89)',
   MESSAGE_BG_HOVER: 'rgba(35, 37, 47, 0.3)',
+  COMPLETED_STATUS: 'rgba(31, 61, 43, 0.50)',
 } as const
 
 export type ColorName = keyof typeof colors

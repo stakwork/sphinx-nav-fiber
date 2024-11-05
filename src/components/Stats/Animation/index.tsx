@@ -2,11 +2,16 @@ import lottie, { AnimationItem } from 'lottie-web'
 import { useEffect, useRef } from 'react'
 import animationData from './animation.json'
 
-export const Animation = () => {
+type AnimationProps = {
+  id: string
+}
+
+// eslint-disable-next-line react/prop-types
+export const Animation: React.FC<AnimationProps> = ({ id }) => {
   const lottieRef = useRef<AnimationItem | null>(null)
 
   useEffect(() => {
-    const container = document.getElementById('lottie-animation')
+    const container = document.getElementById(id)
 
     if (container) {
       lottieRef.current = lottie.loadAnimation({
@@ -22,7 +27,7 @@ export const Animation = () => {
         lottieRef.current.destroy()
       }
     }
-  }, [])
+  }, [id])
 
-  return <div id="lottie-animation" style={{ width: '2em', height: '2em' }} />
+  return <div id={id} style={{ width: '2em', height: '2em' }} />
 }
