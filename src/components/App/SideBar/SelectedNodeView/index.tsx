@@ -53,7 +53,7 @@ const _View = () => {
       return <Media />
     case 'document':
       return <Document />
-    case 'episode':
+    case 'Episode':
       return <Episode key={selectedNode.ref_id} />
     case 'image':
       return <Image />
