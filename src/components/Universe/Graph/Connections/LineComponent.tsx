@@ -11,8 +11,6 @@ type LineComponentProps = {
   position: LinkPosition
 }
 
-const VECTOR = new Vector3(0, 0, 0)
-
 // eslint-disable-next-line no-underscore-dangle
 const _LineComponent = forwardRef<Line2, LineComponentProps>(({ isSelected, position }, ref) => {
   useEffect(() => {
@@ -35,11 +33,7 @@ const _LineComponent = forwardRef<Line2, LineComponentProps>(({ isSelected, posi
       ref={ref}
       isLine2
       opacity={0.5}
-      points={
-        position
-          ? [new Vector3(position.sx, position.sy, position.sz), new Vector3(position.tx, position.ty, position.tz)]
-          : [VECTOR, VECTOR]
-      }
+      points={[new Vector3(position.sx, position.sy, position.sz), new Vector3(position.tx, position.ty, position.tz)]}
     />
   )
 })
