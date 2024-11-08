@@ -48,6 +48,7 @@ export const AiSummary = ({ question, response, refId }: Props) => {
   const { setAiSummaryAnswer } = useAiSummaryStore((s) => s)
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const { currentPlayingAudio, setCurrentPlayingAudio } = useAppStore((s) => s)
+  const [isPlaying, setIsPlaying] = useState(false)
 
   useEffect(() => {
     if (ref.current) {
@@ -60,6 +61,7 @@ export const AiSummary = ({ question, response, refId }: Props) => {
 
     const onAudioPlaybackComplete = () => {
       setCurrentPlayingAudio(null)
+      setIsPlaying(false)
     }
 
     if (audioElement) {
@@ -71,7 +73,7 @@ export const AiSummary = ({ question, response, refId }: Props) => {
         audioElement.removeEventListener('ended', onAudioPlaybackComplete)
       }
     }
-  }, [setCurrentPlayingAudio])
+  }, [setCurrentPlayingAudio, isPlaying])
 
   const toggleCollapse = () => {
     setCollapsed(!collapsed)
@@ -88,9 +90,11 @@ export const AiSummary = ({ question, response, refId }: Props) => {
       if (audioRef.current.paused) {
         audioRef.current.play()
         setCurrentPlayingAudio(audioRef)
+        setIsPlaying(true)
       } else {
         audioRef.current.pause()
         setCurrentPlayingAudio(null)
+        setIsPlaying(false)
       }
     }
   }
