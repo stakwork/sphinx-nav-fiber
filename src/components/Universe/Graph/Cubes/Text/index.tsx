@@ -220,7 +220,7 @@ export const TextNode = memo(({ node, hide, isHovered }: Props) => {
             color={color}
             fillOpacity={1 || fillOpacity}
             name="text"
-            position={[0, -40, 0]}
+            position={[0, -65, 0]}
             scale={textScale}
             userData={node}
             {...fontProps}
