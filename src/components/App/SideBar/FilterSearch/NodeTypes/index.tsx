@@ -15,7 +15,11 @@ type Props = {
 export const NodeTypes = ({ handleSchemaTypeClick, selectedTypes, schemaAll }: Props) => {
   const [showAllSchemas, setShowAllSchemas] = useState(false)
 
-  const uniqueSchemas = (showAllSchemas ? schemaAll : schemaAll.slice(0, 4)).filter(
+  const schemasPerRow = 3
+  const MAX_ROWS = 4
+  const maxVisibleSchemas = schemasPerRow * MAX_ROWS
+
+  const uniqueSchemas = (showAllSchemas ? schemaAll : schemaAll.slice(0, maxVisibleSchemas)).filter(
     (schema, index, self) => index === self.findIndex((s) => s.type === schema.type),
   )
 
@@ -40,7 +44,7 @@ export const NodeTypes = ({ handleSchemaTypeClick, selectedTypes, schemaAll }: P
             </SchemaType>
           ))}
         </SchemaTypeWrapper>
-        {!showAllSchemas && schemaAll.length > 4 && (
+        {!showAllSchemas && schemaAll.length > maxVisibleSchemas && (
           <ViewMoreButton onClick={() => setShowAllSchemas(true)}>
             <PlusIconWrapper>
               <PlusIcon /> View More
