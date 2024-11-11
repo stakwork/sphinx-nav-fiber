@@ -5,18 +5,12 @@ import { Flex } from '~/components/common/Flex'
 import { Tooltip } from '~/components/common/ToolTip'
 import ClearIcon from '~/components/Icons/ClearIcon'
 import InfoIcon from '~/components/Icons/InfoIcon'
-// import { useDataStore } from '~/stores/useDataStore'
+import { useDataStore } from '~/stores/useDataStore'
 import { colors } from '~/utils'
 
 export const Alerts = () => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null)
-  // const { runningProjectMessages } = useDataStore((s) => s)
-  const runningProjectMessages = [
-    'lorem ipsum dolor sit amet lorem lorem ipsum dolor sit amet lorem lorem ipsum dolor sit amet lorem lorem ipsum dolor sit amet lorem',
-    'lorem ipsum dolor sit amet lorem lorem ipsum dolor sit amet lorem lorem ipsum dolor sit amet lorem lorem ipsum dolor sit amet lorem',
-    'lorem ipsum dolor sit amet lorem lorem ipsum dolor sit amet lorem lorem ipsum dolor sit amet lorem lorem ipsum dolor sit amet lorem',
-    'lorem ipsum dolor sit amet lorem lorem ipsum dolor sit amet lorem lorem ipsum dolor sit amet lorem lorem ipsum dolor sit amet lorem lorem ',
-  ]
+  const { runningProjectMessages } = useDataStore((s) => s)
 
   const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
     setAnchorEl(event.currentTarget as HTMLElement)
