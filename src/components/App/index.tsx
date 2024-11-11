@@ -281,9 +281,7 @@ export const App = () => {
     const ws = new WebSocket('wss://jobs.stakwork.com/cable?channel=ProjectLogChannel')
 
     ws.onopen = () => {
-      let id = 'a'
-
-      id = runningProjectId
+      const id = runningProjectId
 
       const command = {
         command: 'subscribe',
@@ -320,6 +318,16 @@ export const App = () => {
       console.log('WebSocket connection closed')
     }
   }, [runningProjectId, setRunningProjectMessages])
+
+  useEffect(() => {
+    if (runningProjectId) {
+      try {
+        socket?.emit('update_project_id', { id: runningProjectId })
+      } catch (error) {
+        console.error(error)
+      }
+    }
+  }, [runningProjectId, socket])
 
   useEffect(() => {
     if (!splashDataLoading) {
