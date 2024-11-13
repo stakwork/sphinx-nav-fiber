@@ -19,6 +19,7 @@ export type FilterParams = {
   top_node_count: string
   include_properties: string
   node_type: string[] | string
+  edge_type: string[] | string
   free?: string
   word?: string // Add other optional filter properties as needed
 }

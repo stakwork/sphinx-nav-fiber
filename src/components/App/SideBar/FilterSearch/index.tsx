@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import ClearIcon from '~/components/Icons/ClearIcon'
 import { Flex } from '~/components/common/Flex'
-import { getSchemaAll } from '~/network/fetchSourcesData'
+import { getSchemaAll, SchemaLink } from '~/network/fetchSourcesData'
 import { useDataStore } from '~/stores/useDataStore'
 import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
 import { useSchemaStore } from '~/stores/useSchemaStore'
@@ -13,6 +13,7 @@ import { Hops } from './Hops'
 import { MaxResults } from './MaxResults'
 import { NodeTypes } from './NodeTypes'
 import { SourceNodes } from './SourceNodes'
+import { Edges } from './Edges'
 
 type Props = {
   anchorEl: HTMLElement | null
@@ -22,15 +23,22 @@ type Props = {
 
 const defaultValues = {
   selectedTypes: [] as string[],
+  selectedEdges: [] as string[],
   hops: 1,
   sourceNodes: 10,
   maxResults: 30,
 }
 
 export const FilterSearch = ({ anchorEl, setAnchorEl, onClose }: Props) => {
-  const [schemaAll, setSchemaAll] = useSchemaStore((s) => [s.schemas, s.setSchemas])
+  const [schemaAll, setSchemaAll, links, setSchemaLinks] = useSchemaStore((s) => [
+    s.schemas,
+    s.setSchemas,
+    s.links,
+    s.setSchemaLinks,
+  ])
   const { abortFetchData, resetGraph, setFilters } = useDataStore((s) => s)
   const [selectedTypes, setSelectedTypes] = useState<string[]>(defaultValues.selectedTypes)
+  const [selectedEdges, setSelectedEdges] = useState<string[]>(defaultValues.selectedEdges)
   const [hops, setHops] = useState(defaultValues.hops)
   const [sourceNodes, setSourceNodes] = useState<number>(defaultValues.sourceNodes)
   const [maxResults, setMaxResults] = useState<number>(defaultValues.maxResults)
@@ -41,6 +49,21 @@ export const FilterSearch = ({ anchorEl, setAnchorEl, onClose }: Props) => {
       try {
         const response = await getSchemaAll()
 
+        const uniqueEdges = Array.from(
+          response.edges
+            .filter((edge) => edge.edge_type !== 'CHILD_OF')
+            .reduce((map, edge) => {
+              if (!map.has(edge.edge_type)) {
+                map.set(edge.edge_type, edge)
+              }
+
+              return map
+            }, new Map<string, SchemaLink>())
+            .values(),
+        )
+
+        setSchemaLinks(uniqueEdges)
+
         setSchemaAll(response.schemas.filter((schema) => !schema.is_deleted))
       } catch (error) {
         console.error('Error fetching schema:', error)
@@ -48,11 +71,17 @@ export const FilterSearch = ({ anchorEl, setAnchorEl, onClose }: Props) => {
     }
 
     fetchSchemaData()
-  }, [setSchemaAll])
+  }, [setSchemaAll, setSchemaLinks])
 
   const handleSchemaTypeClick = (type: string) => {
     setSelectedTypes((prevSelectedTypes) =>
       prevSelectedTypes.includes(type) ? prevSelectedTypes.filter((t) => t !== type) : [...prevSelectedTypes, type],
+    )
+  }
+
+  const handleEdgeClick = (edge: string) => {
+    setSelectedEdges((prevSelectedEdges) =>
+      prevSelectedEdges.includes(edge) ? prevSelectedEdges.filter((t) => t !== edge) : [...prevSelectedEdges, edge],
     )
   }
 
@@ -62,6 +91,7 @@ export const FilterSearch = ({ anchorEl, setAnchorEl, onClose }: Props) => {
 
   const resetToDefaultValues = () => {
     setSelectedTypes(defaultValues.selectedTypes)
+    setSelectedEdges(defaultValues.selectedEdges)
     setHops(defaultValues.hops)
     setSourceNodes(defaultValues.sourceNodes)
     setMaxResults(defaultValues.maxResults)
@@ -76,6 +106,7 @@ export const FilterSearch = ({ anchorEl, setAnchorEl, onClose }: Props) => {
   const handleFiltersApply = async () => {
     setFilters({
       node_type: selectedTypes,
+      edge_type: selectedEdges,
       limit: maxResults,
       depth: hops.toString(),
       top_node_count: sourceNodes.toString(),
@@ -108,6 +139,8 @@ export const FilterSearch = ({ anchorEl, setAnchorEl, onClose }: Props) => {
       )}
 
       <NodeTypes handleSchemaTypeClick={handleSchemaTypeClick} schemaAll={schemaAll} selectedTypes={selectedTypes} />
+      <LineBar />
+      <Edges handleEdgeClick={handleEdgeClick} links={links} selectedEdges={selectedEdges} />
       <LineBar />
       <SourceNodes setSourceNodes={setSourceNodes} sourceNodes={sourceNodes} />
       <LineBar />
