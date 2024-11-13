@@ -36,6 +36,7 @@ export const FilterSearch = ({ anchorEl, setAnchorEl, onClose }: Props) => {
     s.links,
     s.setSchemaLinks,
   ])
+
   const { abortFetchData, resetGraph, setFilters } = useDataStore((s) => s)
   const [selectedTypes, setSelectedTypes] = useState<string[]>(defaultValues.selectedTypes)
   const [selectedEdges, setSelectedEdges] = useState<string[]>(defaultValues.selectedEdges)
