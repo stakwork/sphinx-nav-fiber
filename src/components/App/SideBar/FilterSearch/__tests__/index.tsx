@@ -41,24 +41,25 @@ describe('FilterSearch Component', () => {
   const mockSetSchemas = jest.fn()
   const mockSchemaAll = [{ type: 'Type1' }, { type: 'Type2' }, { type: 'Type3' }]
 
+  const mockEdges = [{ edge_type: 'Edge1' }, { edge_type: 'Edge2' }, { edge_type: 'Edge3' }]
+
   beforeEach(() => {
     jest.clearAllMocks()
-
-    //
     ;(useDataStore as jest.Mock).mockReturnValue({
       setFilters: mockSetFilters,
       fetchData: mockFetchData,
       setAbortRequests: mockSetAbortRequests,
     })
-
-    //
-    ;(useSchemaStore as jest.Mock).mockReturnValue([mockSchemaAll, mockSetSchemas]) // Return an array
-
-    //
+    ;(useSchemaStore as jest.Mock).mockReturnValue({
+      schemaAll: mockSchemaAll,
+      schemaLinks: mockEdges,
+      setSchemas: mockSetSchemas,
+    })
     ;(useFeatureFlagStore as jest.Mock).mockReturnValue({ fastFiltersFeatureFlag: true })
-
-    //
-    ;(getSchemaAll as jest.Mock).mockResolvedValue({ schemas: mockSchemaAll })
+    ;(getSchemaAll as jest.Mock).mockResolvedValue({
+      schemas: mockSchemaAll,
+      edges: mockEdges,
+    })
   })
 
   const renderComponent = () =>
