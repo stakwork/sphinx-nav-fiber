@@ -33,29 +33,29 @@ const mockFetchData = jest.fn()
 const mockSetAbortRequests = jest.fn()
 const mockOnClose = jest.fn()
 
-jest.mock('~/stores/useSchemaStore', () => ({
-  useSchemaStore: jest.fn(),
-}))
-
 describe('FilterSearch Component', () => {
   const mockSetSchemas = jest.fn()
+  const mockSetSchemaLinks = jest.fn()
   const mockSchemaAll = [{ type: 'Type1' }, { type: 'Type2' }, { type: 'Type3' }]
-
   const mockEdges = [{ edge_type: 'Edge1' }, { edge_type: 'Edge2' }, { edge_type: 'Edge3' }]
 
   beforeEach(() => {
     jest.clearAllMocks()
+
+    // Mock useDataStore
     ;(useDataStore as jest.Mock).mockReturnValue({
       setFilters: mockSetFilters,
       fetchData: mockFetchData,
       setAbortRequests: mockSetAbortRequests,
     })
-    ;(useSchemaStore as jest.Mock).mockReturnValue({
-      schemaAll: mockSchemaAll,
-      schemaLinks: mockEdges,
-      setSchemas: mockSetSchemas,
-    })
+
+    // Mock useSchemaStore to return an array for destructuring
+    ;(useSchemaStore as jest.Mock).mockReturnValue([mockSchemaAll, mockSetSchemas, mockEdges, mockSetSchemaLinks])
+
+    // Mock useFeatureFlagStore
     ;(useFeatureFlagStore as jest.Mock).mockReturnValue({ fastFiltersFeatureFlag: true })
+
+    // Mock getSchemaAll
     ;(getSchemaAll as jest.Mock).mockResolvedValue({
       schemas: mockSchemaAll,
       edges: mockEdges,
@@ -106,6 +106,7 @@ describe('FilterSearch Component', () => {
     await waitFor(() => {
       expect(mockSetFilters).toHaveBeenCalledWith({
         node_type: ['Type1'],
+        edge_type: [],
         limit: 30,
         depth: '1',
         top_node_count: '10',
