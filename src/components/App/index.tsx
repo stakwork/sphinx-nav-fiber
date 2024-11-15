@@ -274,7 +274,7 @@ export const App = () => {
   ])
 
   useEffect(() => {
-    if (!runningProjectId && false) {
+    if (!runningProjectId || true) {
       return
     }
 
