@@ -47,6 +47,7 @@ type Props = {
   node: NodeExtended
   hide?: boolean
   isHovered: boolean
+  ignoreDistance: boolean
 }
 
 function splitStringIntoThreeParts(text: string): string {
@@ -67,7 +68,7 @@ function splitStringIntoThreeParts(text: string): string {
   return `${firstPart}\n${secondPart}\n${thirdPart}`
 }
 
-export const TextNode = memo(({ node, hide, isHovered }: Props) => {
+export const TextNode = memo(({ node, hide, isHovered, ignoreDistance }: Props) => {
   const svgRef = useRef<Mesh | null>(null)
   const ringRef = useRef<Mesh | null>(null)
   const circleRef = useRef<Mesh | null>(null)
@@ -88,7 +89,7 @@ export const TextNode = memo(({ node, hide, isHovered }: Props) => {
       const nodePosition = nodePositionRef.current.setFromMatrixPosition(ringRef.current!.matrixWorld)
 
       if (ringRef.current) {
-        ringRef.current.visible = nodePosition.distanceTo(camera.position) < 2500
+        ringRef.current.visible = ignoreDistance ? true : nodePosition.distanceTo(camera.position) < 2500
       }
 
       // Set visibility based on distance
