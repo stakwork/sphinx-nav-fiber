@@ -120,6 +120,7 @@ export const Cubes = memo(() => {
               <TextNode
                 key={node.ref_id || node.id}
                 hide={hideUniverse || hide}
+                ignoreDistance={false}
                 isHovered={!!hoveredNode && hoveredNode.ref_id === node.ref_id}
                 node={node}
               />
@@ -127,11 +128,10 @@ export const Cubes = memo(() => {
           )
         })}
       </group>
-      {true && (
-        <group name="simulation-3d-group__node-points">
-          <NodePoints />
-        </group>
-      )}
+
+      <group name="simulation-3d-group__node-points">
+        <NodePoints />
+      </group>
       {hideUniverse && <SelectionDataNodes />}
     </Select>
   )
