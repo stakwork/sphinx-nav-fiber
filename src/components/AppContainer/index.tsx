@@ -5,7 +5,7 @@ import { AppProviders } from '../App/Providers'
 import { AuthGuard } from '../Auth'
 
 const LazyApp = lazy(() => import('../App').then(({ App }) => ({ default: App })))
-const LazyMindSet = lazy(() => import('../../modules').then(({ MindSet }) => ({ default: MindSet })))
+const LazyMindSet = lazy(() => import('../../modules/mindset').then(({ MindSet }) => ({ default: MindSet })))
 
 export const AppContainer = () => {
   const App = <LazyApp />
