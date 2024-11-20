@@ -114,24 +114,24 @@ export const Cubes = memo(() => {
           const hide = !!selectedNode && (relativeIds.includes(node.ref_id) || selectedNode.ref_id === node.ref_id)
 
           return (
-            <mesh key={node.ref_id} name="wr2" scale={node.edge_count || 1} userData={node}>
+            <mesh key={node.ref_id} name="wr2" scale={node.scale || 1} userData={node}>
               <boxGeometry args={[40, 40, 40]} />
               <meshStandardMaterial opacity={0} transparent />
               <TextNode
                 key={node.ref_id || node.id}
                 hide={hideUniverse || hide}
-                isHovered={!!hoveredNode && hoveredNode.id === node.ref_id}
+                ignoreDistance={false}
+                isHovered={!!hoveredNode && hoveredNode.ref_id === node.ref_id}
                 node={node}
               />
             </mesh>
           )
         })}
       </group>
-      {true && (
-        <group name="simulation-3d-group__node-points">
-          <NodePoints />
-        </group>
-      )}
+
+      <group name="simulation-3d-group__node-points">
+        <NodePoints />
+      </group>
       {hideUniverse && <SelectionDataNodes />}
     </Select>
   )

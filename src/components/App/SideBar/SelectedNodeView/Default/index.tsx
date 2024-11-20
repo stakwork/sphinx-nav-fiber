@@ -18,6 +18,7 @@ import { useAppStore } from '~/stores/useAppStore'
 import { useSelectedNode } from '~/stores/useGraphStore'
 import { colors } from '~/utils/colors'
 import { BoostAmt } from '../../../Helper/BoostAmt'
+import { usePlayerStore } from '~/stores/usePlayerStore'
 
 export const Default = () => {
   const selectedNode = useSelectedNode()
@@ -25,6 +26,8 @@ export const Default = () => {
   const { currentPlayingAudio, setCurrentPlayingAudio } = useAppStore((s) => s)
   const [isPlaying, setIsPlaying] = useState(false)
   const [boostAmount, setBoostAmount] = useState<number>(selectedNode?.properties?.boost || 0)
+
+  const { playingNode } = usePlayerStore((s) => s)
 
   useEffect(() => {
     setBoostAmount(selectedNode?.properties?.boost || 0)
@@ -76,7 +79,7 @@ export const Default = () => {
     return null
   }
 
-  const hasImage = !!selectedNode.properties?.image_url
+  const hasImage = !playingNode?.ref_id && !!selectedNode.properties?.image_url
   const hasAudio = !!selectedNode.properties?.audio_EN
   const customKeys = selectedNode.properties || {}
   const sourceLink = selectedNode.properties?.source_link
@@ -155,7 +158,7 @@ const NodeDetail = ({ label, value, hasAudio, isPlaying, togglePlay }: Props) =>
   const isLong = (value as string).length > 140
   const searchTerm = useAppStore((s) => s.currentSearch)
 
-  if (!value || label === 'Audio EN' || label === 'Source Link') {
+  if (!value || label === 'Audio EN' || label === 'Source Link' || label === 'Image Url') {
     return null
   }
 

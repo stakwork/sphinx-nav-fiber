@@ -25,8 +25,9 @@ export const Graph = () => {
   const { dataInitial, isLoadingNew, isFetching, dataNew, resetDataNew } = useDataStore((s) => s)
   const groupRef = useRef<Group>(null)
   const cameraSettled = useRef<boolean>(false)
-  const linksPositionRef = useRef<LinkPosition[]>([])
   const { normalizedSchemasByType } = useSchemaStore((s) => s)
+
+  const linksPositionRef = useRef(new Map<string, LinkPosition>())
 
   const { setData, simulation, simulationCreate, simulationHelpers, graphStyle, setGraphRadius } = useGraphStore(
     (s) => s,
@@ -110,7 +111,13 @@ export const Graph = () => {
           })
         }
 
+        if (simulation.alpha() > 1) {
+          return
+        }
+
         if (grConnections) {
+          linksPositionRef.current.clear()
+
           grConnections.children.forEach((r, i) => {
             const link = dataInitial?.links[i]
             const Line = r as Line2
@@ -122,14 +129,14 @@ export const Graph = () => {
               const { x: sx, y: sy, z: sz } = sourceNode
               const { x: tx, y: ty, z: tz } = targetNode
 
-              linksPositionRef.current[i] = {
+              linksPositionRef.current.set(link.ref_id, {
                 sx,
                 sy,
                 sz,
                 tx,
                 ty,
                 tz,
-              }
+              })
 
               const lineColor = normalizedSchemasByType[sourceNode.node_type]?.primary_color || 'white'
 
@@ -139,7 +146,7 @@ export const Graph = () => {
 
               material.color = new Color(lineColor)
               material.transparent = true
-              material.opacity = 1
+              material.opacity = 0.3
             }
           })
         }
@@ -174,7 +181,7 @@ export const Graph = () => {
 
       {(isLoadingNew || isFetching) && <LoadingNodes />}
 
-      {graphStyle !== 'earth' && <Connections />}
+      {graphStyle !== 'earth' && <Connections linksPosition={linksPositionRef.current} />}
       <NodeDetailsPanel />
     </group>
   )

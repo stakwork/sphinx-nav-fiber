@@ -2,6 +2,7 @@ import { Button } from '@mui/material'
 import clsx from 'clsx'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
+import { useNavigate } from 'react-router-dom'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
 import HashTag from '~/components/Icons/HashTag'
@@ -10,6 +11,7 @@ import PlayIcon from '~/components/Icons/PlayIcon'
 import PlusIcon from '~/components/Icons/PlusIcon'
 import ReloadIcon from '~/components/Icons/ReloadIcon'
 import SentimentDataIcon from '~/components/Icons/SentimentDataIcon'
+import { useBriefDescriptionStore } from '~/components/ModalsContainer/BriefDescriptionModal'
 import { Flex } from '~/components/common/Flex'
 import { getTrends } from '~/network/trends'
 import { useAppStore } from '~/stores/useAppStore'
@@ -18,8 +20,6 @@ import { useModal } from '~/stores/useModalStore'
 import { Trending as TrendingType } from '~/types'
 import { getTrendingTopic, showPlayButton } from '~/utils'
 import { colors } from '~/utils/colors'
-import { BriefDescription } from './BriefDescriptionModal'
-import { useNavigate } from 'react-router-dom'
 
 const TRENDING_TOPICS = ['Drivechain', 'Ordinals', 'L402', 'Nostr', 'AI']
 
@@ -27,7 +27,6 @@ export const Trending = () => {
   const { open: openContentAddModal } = useModal('addContent')
   const [loading, setLoading] = useState(false)
   const [readyToUpdate, setReadyToUpdate] = useState(false)
-  const [selectedTrend, setSelectedTrend] = useState<TrendingType | null>(null)
   const audioRef = useRef<HTMLVideoElement>(null)
   const [currentFileIndex, setCurrentFileIndex] = useState(0)
   const [playing, setPlaying] = useState(false)
@@ -39,6 +38,8 @@ export const Trending = () => {
   const { trendingTopics, setTrendingTopics } = useDataStore((s) => s)
 
   const { setValue } = useFormContext()
+
+  const { setTrend } = useBriefDescriptionStore()
 
   const init = useCallback(async () => {
     setLoading(true)
@@ -91,13 +92,9 @@ export const Trending = () => {
     e.currentTarget.blur()
 
     if (trending?.tldr) {
-      setSelectedTrend(trending)
+      setTrend(trending)
       open()
     }
-  }
-
-  const hideModal = () => {
-    setSelectedTrend(null)
   }
 
   const handleClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -226,7 +223,6 @@ export const Trending = () => {
           </ul>
         )}
       </div>
-      {selectedTrend && <BriefDescription onClose={hideModal} trend={selectedTrend} />}
     </Wrapper>
   )
 }

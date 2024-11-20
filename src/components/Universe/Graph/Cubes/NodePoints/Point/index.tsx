@@ -6,9 +6,7 @@ type Props = {
 }
 
 export const Point = ({ color, scale }: Props) => (
-  <>
-    <Billboard follow lockX={false} lockY={false} lockZ={false}>
-      <Instance color={color} scale={scale} />
-    </Billboard>
-  </>
+  <Billboard follow lockX={false} lockY={false} lockZ={false}>
+    <Instance color={color} scale={scale} />
+  </Billboard>
 )

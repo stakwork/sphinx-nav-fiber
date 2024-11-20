@@ -274,16 +274,14 @@ export const App = () => {
   ])
 
   useEffect(() => {
-    if (!runningProjectId) {
+    if (!runningProjectId || true) {
       return
     }
 
     const ws = new WebSocket('wss://jobs.stakwork.com/cable?channel=ProjectLogChannel')
 
     ws.onopen = () => {
-      let id = 'a'
-
-      id = runningProjectId
+      const id = runningProjectId
 
       const command = {
         command: 'subscribe',
@@ -322,10 +320,22 @@ export const App = () => {
   }, [runningProjectId, setRunningProjectMessages])
 
   useEffect(() => {
-    if (!splashDataLoading) {
-      setUniverseQuestionIsOpen()
+    if (runningProjectId) {
+      try {
+        socket?.emit('update_project_id', { id: runningProjectId })
+      } catch (error) {
+        console.error(error)
+      }
     }
-  }, [setUniverseQuestionIsOpen, splashDataLoading])
+  }, [runningProjectId, socket])
+
+  useEffect(() => {
+    if (!splashDataLoading) {
+      if (chatInterfaceFeatureFlag) {
+        setUniverseQuestionIsOpen()
+      }
+    }
+  }, [setUniverseQuestionIsOpen, splashDataLoading, chatInterfaceFeatureFlag])
 
   return (
     <>
