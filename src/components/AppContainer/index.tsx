@@ -5,20 +5,21 @@ import { AppProviders } from '../App/Providers'
 import { AuthGuard } from '../Auth'
 
 const LazyApp = lazy(() => import('../App').then(({ App }) => ({ default: App })))
+const LazyMindSet = lazy(() => import('../../modules').then(({ MindSet }) => ({ default: MindSet })))
 
 export const AppContainer = () => {
   const App = <LazyApp />
+  const MindSet = <LazyMindSet />
 
   return (
     <AppProviders>
       <Suspense fallback={<div>Loading...</div>}>
-        <AuthGuard>
-          <Routes>
-            <Route element={App} path="/" />
-            <Route element={App} path="/search" />
-            <Route element={App} path="*" />
-          </Routes>
-        </AuthGuard>
+        <Routes>
+          <Route element={MindSet} path="/mindset" />
+          <Route element={<AuthGuard>{App}</AuthGuard>} path="/" />
+          <Route element={<AuthGuard>{App}</AuthGuard>} path="/search" />
+          <Route element={<AuthGuard>{App}</AuthGuard>} path="*" />
+        </Routes>
       </Suspense>
       <E2ETests />
     </AppProviders>
