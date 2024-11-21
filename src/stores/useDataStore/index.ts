@@ -132,7 +132,7 @@ const defaultData: Omit<
     top_node_count: '50',
     includeContent: 'true',
     node_type: [],
-    search_method: 'vector',
+    search_method: 'score',
   },
   isFetching: false,
   isLoadingNew: false,
