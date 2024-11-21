@@ -1,14 +1,8 @@
 /* eslint-disable */
-import React from 'react';
+import React from 'react'
 
-const Logo: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
-  <svg
-    width="1em"
-    height="1em"
-    viewBox="0 0 30 28"
-    fill="currentColor"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+export const Logo: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <svg width="1em" height="1em" viewBox="0 0 30 28" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
     <path
       d="M7.2998 2.55199C7.2998 1.51094 8.11675 0.666992 9.1245 0.666992H12.1299C13.1376 0.666992 13.9546 1.51094 13.9546 2.55199C13.9546 3.59305 13.1376 4.43699 12.1299 4.43699H9.1245C8.11675 4.43699 7.2998 3.59305 7.2998 2.55199Z"
       fill="currentColor"
@@ -50,6 +44,6 @@ const Logo: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
       fill="currentColor"
     />
   </svg>
-);
+)
 
-export default Logo;
+export default Logo

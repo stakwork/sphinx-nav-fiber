@@ -1,39 +1,19 @@
-import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
-import Logo from '~/components/Icons/Logo'
-import { getAboutData } from '~/network/fetchSourcesData'
 import { colors } from '~/utils/colors'
+import { Logo } from './Icon/Logo'
 
-export const Header = () => {
-  const [title, setTitle] = useState<string>('')
-
-  useEffect(() => {
-    const fetchTitle = async () => {
-      try {
-        const response = await getAboutData()
-
-        setTitle(response.title || 'Graph Mindset')
-      } catch (error) {
-        console.error('Failed to fetch title:', error)
-      }
-    }
-
-    fetchTitle()
-  }, [])
-
-  return (
-    <Head>
-      <LogoButton>
-        <IconWrapper>
-          <Logo />
-        </IconWrapper>
-      </LogoButton>
-      <StyledText>{title}</StyledText>
-    </Head>
-  )
-}
+export const Header = () => (
+  <Head>
+    <LogoButton>
+      <IconWrapper>
+        <Logo />
+      </IconWrapper>
+    </LogoButton>
+    <StyledText>Graph Mindset</StyledText>
+  </Head>
+)
 
 const Head = styled(Flex).attrs({
   align: 'center',
