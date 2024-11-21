@@ -1,16 +1,17 @@
 import React, { memo } from 'react'
+import styled from 'styled-components'
+import { Animation } from '~/components/Stats/Animation'
+import { Node } from '~/network/fetchSourcesData'
+import { colors, formatDate } from '~/utils'
 import { StyledTableCell, StyledTableRow } from '../../common'
 import { TWITTER_CONTENT_LINK } from '../../constants'
-import { Node } from '~/network/fetchSourcesData'
-import { formatDate, colors } from '~/utils'
-import styled from 'styled-components'
 
 interface TableRowProps {
   node: Node
 }
 
-function capitalizeFirstLetter(string: string) {
-  return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase()
+function toUpperCase(string: string) {
+  return string.toUpperCase()
 }
 
 const TableRowComponent: React.FC<TableRowProps> = ({ node }) => (
@@ -44,7 +45,28 @@ const TableRowComponent: React.FC<TableRowProps> = ({ node }) => (
       )}
     </StyledTableCell>
     <StyledTableCell>
-      {node?.properties?.status ? capitalizeFirstLetter(node.properties.status) : 'Processing'}
+      {(() => {
+        const status = node?.properties?.status
+
+        if (!status) {
+          return (
+            <>
+              PROCESSING{' '}
+              <AnimationContainer>
+                <Animation id={`animation-${node.ref_id}`} />
+              </AnimationContainer>
+            </>
+          )
+        }
+
+        const statusLower = (status as string).toLowerCase()
+
+        if (statusLower === 'complete') {
+          return <CompletedStatus>{toUpperCase(status)}</CompletedStatus>
+        }
+
+        return toUpperCase(status)
+      })()}
     </StyledTableCell>
   </StyledTableRow>
 )
@@ -55,6 +77,28 @@ const StyledLink = styled.a`
   &:visited {
     color: ${colors.white};
   }
+`
+
+const CompletedStatus = styled.div`
+  background-color: ${colors.COMPLETED_STATUS};
+  color: ${colors.SUCESS};
+  padding: 4px 10px;
+  border-radius: 5px;
+  font-size: 10px;
+  font-family: 'Barlow';
+  font-weight: 600;
+  line-height: 24px;
+  letter-spacing: 0.1em;
+  text-align: right;
+  display: inline-block;
+`
+
+const AnimationContainer = styled.div`
+  display: inline-block;
+  width: 2em;
+  height: 2em;
+  vertical-align: middle;
+  margin-left: 0.5em;
 `
 
 export const TopicRow = memo(TableRowComponent)
