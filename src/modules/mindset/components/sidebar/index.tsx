@@ -30,8 +30,9 @@ const Wrapper = styled(Flex)(({ theme }) => ({
 }))
 
 const Summary = styled(Text)`
+  font-family: Inter;
   font-size: 20px;
-  font-weight: 700;
+  font-weight: Bold;
   line-height: 24.2px;
   overflow-wrap: break-word;
   white-space: normal;
@@ -40,6 +41,7 @@ const Summary = styled(Text)`
 `
 
 const EpisodeTitle = styled(Text)`
+  font-family: Inter;
   margin-top: 20px;
   font-size: 14px;
   font-weight: 500;

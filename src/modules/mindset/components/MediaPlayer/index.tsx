@@ -1,12 +1,12 @@
 import { memo, useEffect, useRef, useState } from 'react'
 import ReactPlayer from 'react-player'
-import { ClipLoader } from 'react-spinners'
+
 import styled from 'styled-components'
 import { Avatar } from '~/components/common/Avatar'
 import { Flex } from '~/components/common/Flex'
 import { usePlayerStore } from '~/stores/usePlayerStore'
 import { colors, videoTimeToSeconds } from '~/utils'
-import { Toolbar } from './ToolBar'
+
 import { useSelectedNode } from '~/stores/useGraphStore'
 
 type FullScreenProps = {
@@ -36,13 +36,11 @@ const MediaPlayerComponent = () => {
   const {
     isPlaying,
     playingTime,
-    duration,
     setIsPlaying,
     setPlayingTime,
     setDuration,
     playingNode,
     volume,
-    setVolume,
     setHasError,
     resetPlayer,
     isSeeking,
@@ -50,8 +48,6 @@ const MediaPlayerComponent = () => {
   } = usePlayerStore((s) => s)
 
   const mediaUrl = 'https://www.youtube.com/watch?v=o8Y0E5sPHr4'
-
-  const isYouTubeVideo = true
 
   useEffect(() => () => resetPlayer(), [resetPlayer])
 
@@ -93,22 +89,6 @@ const MediaPlayerComponent = () => {
     setIsPlaying(false)
   }
 
-  const handleProgressChange = (_: Event, value: number | number[]) => {
-    const newValue = Array.isArray(value) ? value[0] : value
-
-    setPlayingTime(newValue)
-
-    if (playerRef.current && !isSeeking) {
-      playerRef.current.seekTo(newValue, 'seconds')
-    }
-  }
-
-  const handleVolumeChange = (_: Event, value: number | number[]) => {
-    const newValue = Array.isArray(value) ? value[0] : value
-
-    setVolume(newValue)
-  }
-
   const handleError = () => {
     setHasError(true)
     setStatus('error')
@@ -136,19 +116,6 @@ const MediaPlayerComponent = () => {
         playerRef.current.seekTo(startTimeInSeconds, 'seconds')
         setPlayingTime(startTimeInSeconds)
         setHasSeekedToStart(true)
-      }
-    }
-  }
-
-  const toggleFullScreen = () => {
-    if (wrapperRef.current) {
-      if (!document.fullscreenElement) {
-        wrapperRef.current.requestFullscreen().then(() => {
-          document.addEventListener('fullscreenchange', handleFullScreenChange)
-        })
-      } else {
-        document.exitFullscreen()
-        setTimeout(() => setIsFullScreen(false), 300)
       }
     }
   }
@@ -214,7 +181,7 @@ const MediaPlayerComponent = () => {
         <ReactPlayer
           ref={playerRef}
           controls={false}
-          height={!isFullScreen ? '200px' : window.screen.height}
+          height={!isFullScreen ? '219px' : window.screen.height}
           onBuffer={() => setStatus('buffering')}
           onBufferEnd={() => setStatus('ready')}
           onError={handleError}
@@ -230,24 +197,6 @@ const MediaPlayerComponent = () => {
       </PlayerWrapper>
       {status === 'error' ? (
         <ErrorWrapper className="error-wrapper">Error happened, please try later</ErrorWrapper>
-      ) : null}
-      {status === 'ready' ? (
-        <Toolbar
-          duration={duration}
-          handleProgressChange={handleProgressChange}
-          handleVolumeChange={handleVolumeChange}
-          isFullScreen={isFullScreen}
-          isPlaying={isPlaying}
-          onFullScreenClick={toggleFullScreen}
-          playingTime={playingTime}
-          setIsPlaying={togglePlay}
-          showToolbar={isMouseNearBottom && isFullScreen}
-        />
-      ) : null}
-      {status === 'buffering' && !isYouTubeVideo ? (
-        <Buffering isFullScreen={isFullScreen}>
-          <ClipLoader color={colors.lightGray} />
-        </Buffering>
       ) : null}
     </Wrapper>
   ) : null
@@ -270,14 +219,6 @@ const Cover = styled(Flex)<FullScreenProps>`
   left: 50%;
   transform: translateX(-50%);
   z-index: -1;
-`
-
-const Buffering = styled(Flex)<FullScreenProps>`
-  position: absolute;
-  top: ${(props) => (props.isFullScreen ? '43%' : '39%')};
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 1;
 `
 
 const ErrorWrapper = styled(Flex)`
