@@ -58,6 +58,7 @@ export type RadarRequest = {
 }
 
 export type NodeRequest = {
+  node_type?: string
   node_data: {
     name?: string
     is_muted?: boolean
