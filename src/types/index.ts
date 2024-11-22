@@ -160,6 +160,7 @@ export type Link<T = string> = {
   sourcePosition?: Vector3
   targetPosition?: Vector3
   onlyVisibleOnSelect?: boolean
+  properties?: { [key: string]: unknown }
 }
 
 export type GraphData<T = string> = {
