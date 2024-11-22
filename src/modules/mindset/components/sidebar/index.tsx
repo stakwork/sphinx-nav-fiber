@@ -20,7 +20,7 @@ const Wrapper = styled(Flex)(({ theme }) => ({
   display: 'flex',
   alignItems: 'flex-start',
   padding: '20px',
-  background: colors.BG1,
+  background: 'transparent',
   height: '100vh',
   width: '100%',
   zIndex: 30,
@@ -32,6 +32,7 @@ const Wrapper = styled(Flex)(({ theme }) => ({
 const Summary = styled(Text)`
   font-size: 20px;
   font-weight: 700;
+  line-height: 24.2px;
   overflow-wrap: break-word;
   white-space: normal;
   word-break: break-word;
@@ -39,10 +40,10 @@ const Summary = styled(Text)`
 `
 
 const EpisodeTitle = styled(Text)`
-  margin-top: 15px;
+  margin-top: 20px;
   font-size: 14px;
   font-weight: 500;
-  line-height: 19.6px;
+  line-height: 16.94px;
 `
 
 const MediaWrapper = styled(Flex)(({ theme }) => ({
