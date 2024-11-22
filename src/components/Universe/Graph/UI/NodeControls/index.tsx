@@ -1,7 +1,7 @@
 import Popover from '@mui/material/Popover'
 import { Html } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
-import React, { memo, useCallback, useMemo, useRef } from 'react'
+import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { MdClose, MdViewInAr } from 'react-icons/md'
 import styled from 'styled-components'
 import { Group, Vector3 } from 'three'
@@ -40,11 +40,31 @@ export const NodeControls = memo(() => {
   const [isAdmin] = useUserStore((s) => [s.isAdmin])
   const [addNewNode] = useDataStore((s) => [s.addNewNode])
 
+  const [hasTestEdge, setHasTestEdge] = useState(false)
+
   const selectedNode = useSelectedNode()
 
   const { showSelectionGraph, selectionGraphData, setSelectedNode, setShowSelectionGraph } = useGraphStore((s) => s)
 
   const allGraphData = useGraphData()
+
+  useEffect(() => {
+    const checkForTestEdges = async () => {
+      if (selectedNode?.ref_id && selectedNode?.node_type?.toLowerCase() === 'function') {
+        try {
+          const edges = await fetchNodeEdges(selectedNode.ref_id, 0)
+          const hasTests = edges?.edges?.some((edge) => edge.edge_type === 'TESTS')
+
+          setHasTestEdge(!!hasTests)
+        } catch (error) {
+          console.error('Error checking for test edges:', error)
+          setHasTestEdge(false)
+        }
+      }
+    }
+
+    checkForTestEdges()
+  }, [selectedNode])
 
   const getChildren = useCallback(async () => {
     try {
@@ -169,7 +189,7 @@ export const NodeControls = memo(() => {
 
   const isRepository = selectedNode?.node_type?.toLowerCase() === 'repository'
 
-  const isShowCreateTestButton = !!(selectedNode && selectedNode?.node_type?.toLowerCase() === 'function')
+  const isFunction = selectedNode?.node_type?.toLowerCase() === 'function'
 
   return (
     <group ref={ref}>
@@ -202,17 +222,6 @@ export const NodeControls = memo(() => {
           </IconButton>
         ))}
 
-        {isShowCreateTestButton && (
-          <CreateTestButton
-            left={2}
-            onClick={() => {
-              createBountyModal()
-            }}
-          >
-            Create Test
-          </CreateTestButton>
-        )}
-
         <PopoverWrapper
           anchorEl={anchorEl}
           anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
@@ -242,6 +251,18 @@ export const NodeControls = memo(() => {
                 <AddCircleIcon data-testid="AddCircleIcon" />
                 Add edge
               </PopoverOption>
+              {isFunction && !hasTestEdge && (
+                <PopoverOption
+                  data-testid="generate_test"
+                  onClick={() => {
+                    createBountyModal()
+                    handleClose()
+                  }}
+                >
+                  <AddCircleIcon data-testid="AddCircleIcon" />
+                  Generate Test
+                </PopoverOption>
+              )}
             </>
           ) : (
             <>
@@ -366,26 +387,5 @@ const IconWrapper = styled.div`
     margin-top: 1px;
     width: 12px;
     height: 12px;
-  }
-`
-
-const CreateTestButton = styled.div<ButtonProps>`
-  position: fixed;
-  top: 40px;
-  left: ${(p: ButtonProps) => -53 + p.left}px;
-  width: 100px;
-  padding: 6px;
-  border-radius: 4px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: ${colors.createTestButton};
-  color: ${colors.black};
-  font-size: 14px;
-  font-family: Barlow;
-  font-weight: 600;
-  cursor: pointer;
-  &:hover {
-    transform: scale(1.05);
   }
 `
