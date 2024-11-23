@@ -1,10 +1,9 @@
-import { Html, Text } from '@react-three/drei'
+import { Html } from '@react-three/drei'
 import { useThree } from '@react-three/fiber'
 import { OrthographicCamera } from 'three'
 import { Flex } from '~/components/common/Flex'
-import { fontProps } from '~/components/Universe/Graph/Cubes/Text/constants'
-import { RoundedImage } from '../RoundedImage'
 import { RoundedRectangle } from '../RoundedRectangle'
+import { Content } from './Content'
 
 type Props = {
   width: number
@@ -14,10 +13,13 @@ type Props = {
   onButtonClick: () => void
   name: string
   type: string
+  color: string
 }
 
-export const Node = ({ width, height, position, url, onButtonClick, name, type }: Props) => {
+export const Node = ({ width, height, position, url, onButtonClick, name, type, color }: Props) => {
   const { camera, size } = useThree()
+
+  console.log(url, type)
 
   // Function to calculate the distance between the camera and the node
   const getPixelSize = (worldSize: number, worldHeight: number) => {
@@ -37,34 +39,7 @@ export const Node = ({ width, height, position, url, onButtonClick, name, type }
   return (
     <group position={position}>
       {/* Background Rectangle */}
-      <RoundedRectangle color="#353A46" height={height} radius={1.5} width={width} />
-
-      {/* Rounded Image */}
-      <RoundedImage position={[-width / 2 + 2, height / 4, 0.1]} scale={[1, 1, 1]} url={url} />
-
-      {/* Text */}
-      <>
-        <Text
-          {...fontProps}
-          anchorX="center"
-          anchorY="middle"
-          color="white"
-          fontSize={1}
-          position={[0, -height / 8, 0.1]}
-        >
-          {name}
-        </Text>
-        <Text
-          {...fontProps}
-          anchorX="center"
-          anchorY="middle"
-          color="white"
-          fontSize={1}
-          position={[0, -height / 8 + 1, 0.1]}
-        >
-          {type}
-        </Text>
-      </>
+      <RoundedRectangle color={color} height={height} radius={1.5} width={width} />
 
       {/* Html */}
       <Html position={[-width / 2, height / 2, 0]}>
@@ -83,7 +58,7 @@ export const Node = ({ width, height, position, url, onButtonClick, name, type }
             pointerEvents: 'auto', // Allow interaction
           }}
         >
-          {type}
+          <Content name={name} url="logo.png" />
         </Flex>
       </Html>
     </group>

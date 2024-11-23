@@ -1,22 +1,54 @@
 import { useThree } from '@react-three/fiber'
-import { useMemo } from 'react'
-import { edges, maxTimestamp, minTimestamp, nodes, normalizeTimestamp } from '~/modules/mindset/data'
+import { useEffect, useMemo } from 'react'
+import { edges, edgesMention, maxTimestamp, minTimestamp, nodes, normalizeTimestamp } from '~/modules/mindset/data'
 import { Node } from './Node'
-import { RoundedRectangle } from './RoundedRectangle'
 
 type Props = {
   w: number
-  gap: number
 }
 
-export const Board = ({ w = 16, gap = 6 }: Props) => {
-  const { width } = useThree((state) => state.viewport)
-  const xW = w + gap
+const totalDuration = 185
+
+export const Board = ({ w = 1 }: Props) => {
+  const state = useThree()
+
+  console.log(state)
+
+  const { width } = state.viewport
+  const { camera } = state
+  const xW = w
+
+  useEffect(() => {
+    const orthoCamera = camera as THREE.OrthographicCamera
+
+    const handleWheel = (event: WheelEvent) => {
+      event.preventDefault() // Prevent default scrolling behavior
+
+      if (event.ctrlKey) {
+        // Zoom the camera when ctrlKey is pressed
+        orthoCamera.zoom += event.deltaY * -0.01 // Adjust zoom level
+        orthoCamera.zoom = Math.max(0.5, Math.min(orthoCamera.zoom, 5)) // Clamp zoom
+      } else {
+        // Move the camera left/right when ctrlKey is NOT pressed
+        orthoCamera.position.x += event.deltaX * 0.01 // Horizontal movement
+      }
+
+      orthoCamera.updateProjectionMatrix() // Update projection matrix
+    }
+
+    // Add the event listener
+    window.addEventListener('wheel', handleWheel, { passive: false })
+
+    return () => {
+      // Cleanup event listener
+      window.removeEventListener('wheel', handleWheel)
+    }
+  }, [camera])
 
   console.log(width, xW)
 
   const rangeMin = 0
-  const rangeMax = 50
+  const rangeMax = 97.52 * 10
 
   const positions = useMemo(
     () =>
@@ -36,6 +68,8 @@ export const Board = ({ w = 16, gap = 6 }: Props) => {
     [rangeMin, rangeMax],
   )
 
+  console.log(-width)
+
   return (
     true && (
       <>
@@ -46,10 +80,11 @@ export const Board = ({ w = 16, gap = 6 }: Props) => {
 
           const y = hasTimeStamp ? 0 : 15
 
-          return (
+          return true ? null : (
             <Node
               key={node.ref_id}
-              height={10}
+              color="#353A46"
+              height={1}
               name={node.name}
               onButtonClick={console.log}
               position={[position, y, 0]}
@@ -59,8 +94,32 @@ export const Board = ({ w = 16, gap = 6 }: Props) => {
             />
           )
         })}
-        <mesh>
-          <RoundedRectangle color="red" height={1} radius={0} width={1} />
+        {edgesMention.map((e) => {
+          const node = nodes.find((i) => i.ref_id === e.source)
+
+          const x = (e.mentionedStart / totalDuration) * width
+
+          console.log(x)
+
+          const y = -5
+
+          return node ? (
+            <Node
+              key={node.ref_id}
+              color="red"
+              height={10}
+              name={node.name}
+              onButtonClick={console.log}
+              position={[x, y, 0]}
+              type={node.node_type}
+              url="logo.png"
+              width={5}
+            />
+          ) : null
+        })}
+        <mesh position={[-13, 0, 0]}>
+          <circleGeometry args={[3, 64]} /> {/* Radius: Half of viewport width */}
+          <meshBasicMaterial color="blue" />
         </mesh>
       </>
     )

@@ -24,6 +24,8 @@ const createRoundedRect = (width: number, height: number, radius: number) => {
 }
 
 export const RoundedRectangle = ({ width, height, radius, color }: Props) => {
+  console.log(width, height)
+
   const roundedRectShape = createRoundedRect(width, height, radius)
 
   return (
