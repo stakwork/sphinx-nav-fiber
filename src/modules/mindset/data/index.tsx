@@ -3,21 +3,21 @@ import { Link } from '~/types'
 // const transcript = 'Entrepreneurship is being revolutionized by Blockchain and AI, as they open new frontiers for innovation and secure digital solutions.'
 
 export const nodes = [
-  { ref_id: '1', node_type: 'Clip', name: 'Podcast' },
-  { ref_id: '2', node_type: 'Topic', name: 'Bitcoin' },
-  { ref_id: '3', node_type: 'Topic', name: 'Blockchain' },
-  { ref_id: '4', node_type: 'Topic', name: 'Hard Money' },
-  { ref_id: '5', node_type: 'Topic', name: 'Digital Currency' },
-  { ref_id: '6', node_type: 'Topic', name: 'Government Control' },
-  { ref_id: '7', node_type: 'Topic', name: 'Inflation' },
-  { ref_id: '8', node_type: 'Topic', name: 'Public Network' },
-  { ref_id: '9', node_type: 'Topic', name: 'Energy Consumption' },
-  { ref_id: '10', node_type: 'Topic', name: 'Immutability' },
-  { ref_id: '11', node_type: 'Topic', name: 'Scarcity' },
-  { ref_id: '12', node_type: 'Topic', name: 'Decentralization' },
-  { ref_id: '13', node_type: 'Topic', name: 'Investment Risks' },
-  { ref_id: '14', node_type: 'Topic', name: 'Adoption' },
-  { ref_id: '15', node_type: 'Person', name: 'Satoshi Nakamoto' },
+  { edge_count: 0, x: 0, y: 0, z: 0, label: 'label', ref_id: '1', node_type: 'Clip', name: 'Podcast' },
+  { edge_count: 0, x: 0, y: 0, z: 0, label: 'label', ref_id: '2', node_type: 'Topic', name: 'Bitcoin' },
+  { edge_count: 0, x: 0, y: 0, z: 0, label: 'label', ref_id: '3', node_type: 'Topic', name: 'Blockchain' },
+  { edge_count: 0, x: 0, y: 0, z: 0, label: 'label', ref_id: '4', node_type: 'Topic', name: 'Hard Money' },
+  { edge_count: 0, x: 0, y: 0, z: 0, label: 'label', ref_id: '5', node_type: 'Topic', name: 'Digital Currency' },
+  { edge_count: 0, x: 0, y: 0, z: 0, label: 'label', ref_id: '6', node_type: 'Topic', name: 'Government Control' },
+  { edge_count: 0, x: 0, y: 0, z: 0, label: 'label', ref_id: '7', node_type: 'Topic', name: 'Inflation' },
+  { edge_count: 0, x: 0, y: 0, z: 0, label: 'label', ref_id: '8', node_type: 'Topic', name: 'Public Network' },
+  { edge_count: 0, x: 0, y: 0, z: 0, label: 'label', ref_id: '9', node_type: 'Topic', name: 'Energy Consumption' },
+  { edge_count: 0, x: 0, y: 0, z: 0, label: 'label', ref_id: '10', node_type: 'Topic', name: 'Immutability' },
+  { edge_count: 0, x: 0, y: 0, z: 0, label: 'label', ref_id: '11', node_type: 'Topic', name: 'Scarcity' },
+  { edge_count: 0, x: 0, y: 0, z: 0, label: 'label', ref_id: '12', node_type: 'Topic', name: 'Decentralization' },
+  { edge_count: 0, x: 0, y: 0, z: 0, label: 'label', ref_id: '13', node_type: 'Topic', name: 'Investment Risks' },
+  { edge_count: 0, x: 0, y: 0, z: 0, label: 'label', ref_id: '14', node_type: 'Topic', name: 'Adoption' },
+  { edge_count: 0, x: 0, y: 0, z: 0, label: 'label', ref_id: '15', node_type: 'Person', name: 'Satoshi Nakamoto' },
 ]
 
 export const edges: Link[] = [
@@ -53,7 +53,7 @@ export const edges: Link[] = [
     ref_id: '4',
     edge_type: 'Mentioned',
     target: '1', // Clip
-    source: '11', // Scarcity
+    source: '5', // Scarcity
     properties: { mentionedStart: 19.439, mentionedEnd: 25.619 },
   },
 
@@ -110,20 +110,23 @@ export const edges: Link[] = [
     source: '14', // Adoption
     properties: { mentionedStart: 122.44, mentionedEnd: 130.48 },
   },
-
-  // Satoshi Nakamoto mentioned as the creator
-  {
-    ref_id: '11',
-    edge_type: 'Mentioned',
-    target: '1', // Clip
-    source: '15', // Satoshi Nakamoto
-    properties: { mentionedStart: 7.68, mentionedEnd: 19.619 },
-  },
 ]
 
 export const edgesMention: Array<{ source: string; mentionedStart: number }> = edges
   .filter((e) => e.properties?.mentionedStart)
   .map((edge) => ({ source: edge.source, mentionedStart: edge.properties?.mentionedStart as number }))
+
+export const nodesWithTimestamp = nodes
+  .filter((node) => edgesMention.some((ed) => ed.source === node.ref_id))
+  .map((node) => {
+    const edge = edgesMention.find((ed) => node.ref_id === ed.source)
+
+    if (edge) {
+      return { ...node, mentionedStart: edge.mentionedStart }
+    }
+
+    return null
+  })
 
 export const data = {
   nodes,

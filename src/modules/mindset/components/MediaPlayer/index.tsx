@@ -1,4 +1,4 @@
-import { memo, useEffect, useRef, useState } from 'react'
+import { memo, useEffect, useMemo, useRef, useState } from 'react'
 import ReactPlayer from 'react-player'
 
 import styled from 'styled-components'
@@ -7,7 +7,34 @@ import { Flex } from '~/components/common/Flex'
 import { usePlayerStore } from '~/stores/usePlayerStore'
 import { colors, videoTimeToSeconds } from '~/utils'
 
-import { useSelectedNode } from '~/stores/useGraphStore'
+import { useDataStore } from '~/stores/useDataStore'
+import { useGraphStore, useSelectedNode } from '~/stores/useGraphStore'
+import { Link } from '~/types'
+
+const findCurrentEdge = (sortedEdges: Link[], playerProgress: number): Link | null => {
+  // Sort edges by mentionedStart (preprocessing step)
+
+  let low = 0
+  let high = sortedEdges.length - 1
+
+  while (low <= high) {
+    const mid = Math.floor((low + high) / 2)
+    const edge = sortedEdges[mid]
+    const { mentionedStart, mentionedEnd } = edge.properties as { mentionedStart: number; mentionedEnd: number }
+
+    if (playerProgress >= mentionedStart && playerProgress <= mentionedEnd) {
+      return edge // Found the corresponding edge
+    }
+
+    if (playerProgress < mentionedStart) {
+      high = mid - 1 // Search in the left half
+    } else {
+      low = mid + 1 // Search in the right half
+    }
+  }
+
+  return null // No matching edge found
+}
 
 type FullScreenProps = {
   isFullScreen: boolean
@@ -24,9 +51,12 @@ const MediaPlayerComponent = () => {
   const [NodeStartTime, setNodeStartTime] = useState<string>('')
   const [hasSeekedToStart, setHasSeekedToStart] = useState(false)
   const selectedNode = useSelectedNode()
+  const { setActiveEdge } = useGraphStore((s) => s)
+
+  const { dataInitial } = useDataStore((s) => s)
 
   useEffect(() => {
-    const timestamp = '00:02:00-00:12:00'
+    const timestamp = '00:00:00-00:12:00'
 
     const startTime = timestamp?.split('-')[0] as string
 
@@ -47,7 +77,7 @@ const MediaPlayerComponent = () => {
     setIsSeeking,
   } = usePlayerStore((s) => s)
 
-  const mediaUrl = 'https://www.youtube.com/watch?v=o8Y0E5sPHr4'
+  const mediaUrl = 'https://www.youtube.com/watch?v=BL5vUVQvmX4'
 
   useEffect(() => () => resetPlayer(), [resetPlayer])
 
@@ -94,11 +124,29 @@ const MediaPlayerComponent = () => {
     setStatus('error')
   }
 
+  const edges = useMemo(() => {
+    const edgesFiltered = dataInitial?.links.filter((link) => link?.properties?.mentionedStart) || []
+
+    const sortedEdges = edgesFiltered
+      .slice()
+      .sort((a, b) => (a?.properties?.mentionedStart as number) - (b?.properties?.mentionedStart as number))
+
+    return sortedEdges
+  }, [dataInitial])
+
   const handleProgress = (progress: { playedSeconds: number }) => {
     if (!isSeeking) {
       const currentTime = progress.playedSeconds
 
       setPlayingTime(currentTime)
+
+      const edge = findCurrentEdge(edges, currentTime)
+
+      if (edge) {
+        setActiveEdge(edge)
+      }
+
+      // find playing link and set it to state
     }
   }
 
@@ -180,7 +228,7 @@ const MediaPlayerComponent = () => {
       <PlayerWrapper isFullScreen={isFullScreen} onClick={handlePlayerClick}>
         <ReactPlayer
           ref={playerRef}
-          controls={false}
+          controls
           height={!isFullScreen ? '219px' : window.screen.height}
           onBuffer={() => setStatus('buffering')}
           onBufferEnd={() => setStatus('ready')}

@@ -1,29 +1,28 @@
 import styled from 'styled-components'
-import { Flex } from '~/components/common/Flex'
-import { colors } from '~/utils'
 import { MENU_WIDTH } from '~/components/App/SideBar'
+import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { MediaPlayer } from '~/modules/mindset/components/MediaPlayer'
+import { Transcript } from './Transcript'
 
 export const SideBar = () => (
-  <Wrapper>
-    <Summary>What is the Deep State Party and what are their goals?</Summary>
-    <EpisodeTitle>John Mearsheimer and Jeffrey Sachs | All-In Summit 2024</EpisodeTitle>
+  <Wrapper align="stretch" basis="100%" grow={1} shrink={1}>
     <MediaWrapper>
+      <Summary>What is the Deep State Party and what are their goals?</Summary>
+      <EpisodeTitle>John Mearsheimer and Jeffrey Sachs | All-In Summit 2024</EpisodeTitle>
       <MediaPlayer />
     </MediaWrapper>
+    <Transcript />
   </Wrapper>
 )
 
 const Wrapper = styled(Flex)(({ theme }) => ({
   position: 'relative',
   display: 'flex',
-  alignItems: 'flex-start',
   padding: '20px',
   background: 'transparent',
-  height: '100vh',
   width: '100%',
-  zIndex: 30,
+
   [theme.breakpoints.up('sm')]: {
     width: MENU_WIDTH,
   },
@@ -49,7 +48,6 @@ const EpisodeTitle = styled(Text)`
 `
 
 const MediaWrapper = styled(Flex)(({ theme }) => ({
-  background: colors.BG1,
   width: '100%',
   margin: '16px auto',
   zIndex: 29,

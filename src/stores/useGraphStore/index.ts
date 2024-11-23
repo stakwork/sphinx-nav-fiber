@@ -80,6 +80,7 @@ export type GraphStore = {
   simulation: ForceSimulation | null
   simulationHelpers: SimulationHelpers
   isHovering: boolean
+  activeEdge: Link | null
 
   setDisableCameraRotation: (rotation: boolean) => void
   setScrollEventsDisabled: (rotation: boolean) => void
@@ -88,6 +89,7 @@ export type GraphStore = {
   setGraphRadius: (graphRadius: number) => void
   setHoveredNode: (hoveredNode: NodeExtended | null) => void
   setSelectedNode: (selectedNode: NodeExtended | null) => void
+  setActiveEdge: (edge: Link | null) => void
   setCameraFocusTrigger: (_: boolean) => void
   setNearbyNodeIds: (_: string[]) => void
   setShowSelectionGraph: (_: boolean) => void
@@ -104,6 +106,7 @@ const defaultData: Omit<
   | 'setDisableCameraRotation'
   | 'setHoveredNode'
   | 'setSelectedNode'
+  | 'setActiveEdge'
   | 'setCameraFocusTrigger'
   | 'setGraphRadius'
   | 'setGraphStyle'
@@ -123,6 +126,7 @@ const defaultData: Omit<
   graphStyle: (localStorage.getItem('graphStyle') as GraphStyle) || 'sphere',
   hoveredNode: null,
   selectedNode: null,
+  activeEdge: null,
   cameraFocusTrigger: false,
   nearbyNodeIds: [],
   showSelectionGraph: false,
@@ -143,6 +147,9 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
   setGraphStyle: (graphStyle) => set({ graphStyle }),
   setHoveredNode: (hoveredNode) => {
     set({ hoveredNode })
+  },
+  setActiveEdge: (activeEdge) => {
+    set({ activeEdge })
   },
   setSelectedNode: (selectedNode) => {
     const { selectedNode: stateSelectedNode, simulation } = get()

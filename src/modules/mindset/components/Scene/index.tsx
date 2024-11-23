@@ -10,7 +10,7 @@ export const Scene = () => {
   }
 
   return (
-    <div style={{ width: '100%', height: '100vh', position: 'relative' }}>
+    <div style={{ width: '100%', height: '100%', position: 'relative' }}>
       {/* Slider for controlling camera X-axis */}
       <div style={{ position: 'absolute', top: 10, left: 10, zIndex: 10 }}>
         <input max={100} min={-100} onChange={handleSliderChange} step={1} type="range" value={cameraX} />
