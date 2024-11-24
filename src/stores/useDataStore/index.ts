@@ -286,7 +286,7 @@ export const useDataStore = create<DataStore>()(
           sidebarFilterCounts,
         })
       } catch (error) {
-        console.log(error)
+        console.error(error)
 
         if (error !== 'abort') {
           set({ isLoadingNew: false, isFetching: false })
@@ -347,7 +347,7 @@ export const useDataStore = create<DataStore>()(
     setHideNodeDetails: (hideNodeDetails) => set({ hideNodeDetails }),
     setSeedQuestions: (questions) => set({ seedQuestions: questions }),
     updateNode: (updatedNode) => {
-      console.log(updatedNode)
+      console.info(updatedNode)
     },
     addNewNode: (data) => {
       const { dataInitial: existingData, filters } = get()

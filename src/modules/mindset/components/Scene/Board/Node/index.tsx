@@ -19,7 +19,7 @@ type Props = {
 export const Node = ({ width, height, position, url, onButtonClick, name, type, color }: Props) => {
   const { camera, size } = useThree()
 
-  console.log(url, type)
+  console.info(url, type)
 
   // Function to calculate the distance between the camera and the node
   const getPixelSize = (worldSize: number, worldHeight: number) => {

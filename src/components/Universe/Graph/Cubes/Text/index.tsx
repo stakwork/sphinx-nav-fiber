@@ -72,8 +72,6 @@ export const TextNode = memo(({ node, hide, ignoreDistance }: Props) => {
   const ringRef = useRef<Mesh | null>(null)
   const circleRef = useRef<Mesh | null>(null)
 
-  console.log('rerender')
-
   const nodePositionRef = useRef(new Vector3())
 
   const { texture } = useTexture(node.properties?.image_url || '')

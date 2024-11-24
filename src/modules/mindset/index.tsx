@@ -77,7 +77,7 @@ export const MindSet = () => {
           handleNewNodeCreated(data)
         }
       } catch (error) {
-        console.log(error)
+        console.error(error)
       }
     }
 
@@ -96,7 +96,7 @@ export const MindSet = () => {
           setSelectedEpisode(data)
         }
       } catch (error) {
-        console.log(error)
+        console.error(error)
       }
     }
 

@@ -56,7 +56,7 @@ export const NodeControls = memo(() => {
         }
       }
     } catch (error) {
-      console.log(error)
+      console.error(error)
     }
   }, [addNewNode, selectedNode?.ref_id, selectionGraphData.nodes.length])
 
