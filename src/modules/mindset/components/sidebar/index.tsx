@@ -3,18 +3,23 @@ import { MENU_WIDTH } from '~/components/App/SideBar'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { MediaPlayer } from '~/modules/mindset/components/MediaPlayer'
+import { useMindsetStore } from '~/stores/useMindsetStore'
 import { Transcript } from './Transcript'
 
-export const SideBar = () => (
-  <Wrapper align="stretch" basis="100%" grow={1} shrink={1}>
-    <MediaWrapper>
-      <Summary>What is the Deep State Party and what are their goals?</Summary>
-      <EpisodeTitle>John Mearsheimer and Jeffrey Sachs | All-In Summit 2024</EpisodeTitle>
-      <MediaPlayer />
-    </MediaWrapper>
-    <Transcript />
-  </Wrapper>
-)
+export const SideBar = () => {
+  const { selectedEpisodeLink, selectedEpisode } = useMindsetStore((s) => s)
+
+  return (
+    <Wrapper align="stretch" basis="100%" grow={1} shrink={1}>
+      <MediaWrapper>
+        {selectedEpisode?.node_type && <Summary>{selectedEpisode?.node_type}</Summary>}
+        {selectedEpisode?.name && <EpisodeTitle>{selectedEpisode?.name}</EpisodeTitle>}
+        {selectedEpisodeLink && <MediaPlayer mediaUrl={selectedEpisodeLink} />}
+      </MediaWrapper>
+      <Transcript />
+    </Wrapper>
+  )
+}
 
 const Wrapper = styled(Flex)(({ theme }) => ({
   position: 'relative',

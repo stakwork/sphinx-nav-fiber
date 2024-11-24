@@ -1,39 +1,30 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { Socket } from 'socket.io-client'
 import { Flex } from '~/components/common/Flex'
 import { Universe } from '~/components/Universe'
+import { useSocket } from '~/hooks/useSockets'
 import { fetchNodeEdges } from '~/network/fetchGraphData'
+import { getNode } from '~/network/fetchSourcesData'
 import { useDataStore } from '~/stores/useDataStore'
+import { useMindsetStore } from '~/stores/useMindsetStore'
 import { usePlayerStore } from '~/stores/usePlayerStore'
-import { FetchDataResponse } from '~/types'
+import { FetchDataResponse, NodeExtended } from '~/types'
 import { Header } from './components/Header'
 import { LandingPage } from './components/LandingPage'
 import { PlayerControl } from './components/PlayerContols'
 import { Scene } from './components/Scene'
 import { SideBar } from './components/Sidebar'
-import { edges, nodes } from './data'
 
 export const MindSet = () => {
-  const { addNewNode, isFetching } = useDataStore((s) => s)
+  const { addNewNode, isFetching, runningProjectId, dataInitial } = useDataStore((s) => s)
   const [showTwoD, setShowTwoD] = useState(false)
+  const { selectedEpisodeId, setSelectedEpisode } = useMindsetStore((s) => s)
+  const socket: Socket | undefined = useSocket()
 
   const queueRef = useRef<FetchDataResponse | null>(null)
   const timerRef = useRef<NodeJS.Timeout | null>(null)
 
   const { setPlayingNode } = usePlayerStore((s) => s)
-
-  useEffect(() => {
-    const init = async () => {
-      try {
-        const data = await fetchNodeEdges('b8769aa3-ef03-4d7c-83d6-8e62c6957e62', 0, 50)
-
-        console.log(data)
-      } catch (error) {
-        console.log(error)
-      }
-    }
-
-    init()
-  }, [])
 
   const handleNewNodeCreated = useCallback(
     (data: FetchDataResponse) => {
@@ -72,31 +63,117 @@ export const MindSet = () => {
     [addNewNode, isFetching],
   )
 
-  useEffect(() => {
-    handleNewNodeCreated({
-      nodes,
-      edges,
-    })
+  const handleNodeUpdated = useCallback((node: NodeExtended) => {
+    console.log(node, 'uuuuuupdate')
+  }, [])
 
-    setPlayingNode(nodes.find((i) => i.node_type === 'Clip') || null)
-  }, [handleNewNodeCreated, setPlayingNode])
+  useEffect(() => {
+    const init = async () => {
+      try {
+        const data = await fetchNodeEdges(selectedEpisodeId, 0, 50)
+
+        if (data) {
+          data.nodes = data?.nodes.map((i) => ({ ...i, node_type: 'Topic' }))
+          handleNewNodeCreated(data)
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    }
+
+    if (selectedEpisodeId) {
+      init()
+    }
+  }, [selectedEpisodeId, handleNewNodeCreated])
+
+  useEffect(() => {
+    const init = async () => {
+      try {
+        const data = await getNode(selectedEpisodeId)
+
+        if (data) {
+          setPlayingNode(data)
+          setSelectedEpisode(data)
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    }
+
+    if (selectedEpisodeId) {
+      init()
+    }
+  }, [selectedEpisodeId, setPlayingNode, setSelectedEpisode])
+
+  useEffect(() => {
+    if (socket) {
+      socket.on('new_node_created', handleNewNodeCreated)
+      socket.on('node_updated', handleNodeUpdated)
+    }
+
+    return () => {
+      if (socket) {
+        socket.off()
+      }
+    }
+  }, [socket, handleNodeUpdated, handleNewNodeCreated])
+
+  useEffect(() => {
+    if (runningProjectId) {
+      try {
+        socket?.emit('update_project_id', { id: runningProjectId })
+      } catch (error) {
+        console.error(error)
+      }
+    }
+  }, [runningProjectId, socket])
+
+  const markers = useMemo(() => {
+    if (dataInitial) {
+      const edgesMention: Array<{ source: string; start: number }> = dataInitial.links
+        .filter((e) => e?.start)
+        .map((edge) => ({ source: edge.source, start: edge?.start as number }))
+
+      const nodesWithTimestamps = dataInitial.nodes
+        .filter((node) => dataInitial.links.some((ed) => ed.source === node.ref_id))
+        .map((node) => {
+          const edge = edgesMention.find((ed) => node.ref_id === ed.source)
+
+          if (edge) {
+            return { ...node, start: edge.start }
+          }
+
+          return null
+        })
+        .filter((node) => node)
+
+      return nodesWithTimestamps
+    }
+
+    return []
+  }, [dataInitial])
 
   return (
     <Flex direction="row" style={{ height: '100%' }}>
-      <Flex>
-        <Flex onClick={() => setShowTwoD(!showTwoD)}>
-          <Header />
-        </Flex>
-        <SideBar />
-      </Flex>
-      <Flex basis="100%" grow={1} shrink={1}>
-        <Flex basis="100%" grow={1} shrink={1}>
-          {showTwoD ? <Scene /> : <Universe />}
-        </Flex>
+      {selectedEpisodeId ? (
+        <>
+          <Flex>
+            <Flex onClick={() => setShowTwoD(!showTwoD)}>
+              <Header />
+            </Flex>
+            <SideBar />
+          </Flex>
+          <Flex basis="100%" grow={1} shrink={1}>
+            <Flex basis="100%" grow={1} shrink={1}>
+              {showTwoD ? <Scene /> : <Universe />}
+            </Flex>
 
-        <PlayerControl />
-      </Flex>
-      {false && <LandingPage />}
+            <PlayerControl markers={markers} />
+          </Flex>
+        </>
+      ) : (
+        <LandingPage />
+      )}
     </Flex>
   )
 }

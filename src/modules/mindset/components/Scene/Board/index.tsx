@@ -53,10 +53,10 @@ export const Board = ({ w = 1 }: Props) => {
   const positions = useMemo(
     () =>
       edges
-        .filter((edge) => edge?.properties?.mentionedStart && edge?.properties?.mentionedEnd)
+        .filter((edge) => edge?.properties?.start && edge?.properties?.end)
         .map((edge) => {
-          const st: number = (edge?.properties?.mentionedStart || 0) as number
-          const ed: number = (edge?.properties?.mentionedEnd || 0) as number
+          const st: number = (edge?.properties?.start || 0) as number
+          const ed: number = (edge?.properties?.end || 0) as number
 
           return {
             source: edge.source,
@@ -97,7 +97,7 @@ export const Board = ({ w = 1 }: Props) => {
         {edgesMention.map((e) => {
           const node = nodes.find((i) => i.ref_id === e.source)
 
-          const x = (e.mentionedStart / totalDuration) * width
+          const x = (e.start / totalDuration) * width
 
           console.log(x)
 

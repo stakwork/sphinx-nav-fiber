@@ -12,7 +12,7 @@ import { useGraphStore, useSelectedNode } from '~/stores/useGraphStore'
 import { Link } from '~/types'
 
 const findCurrentEdge = (sortedEdges: Link[], playerProgress: number): Link | null => {
-  // Sort edges by mentionedStart (preprocessing step)
+  // Sort edges by start (preprocessing step)
 
   let low = 0
   let high = sortedEdges.length - 1
@@ -20,13 +20,13 @@ const findCurrentEdge = (sortedEdges: Link[], playerProgress: number): Link | nu
   while (low <= high) {
     const mid = Math.floor((low + high) / 2)
     const edge = sortedEdges[mid]
-    const { mentionedStart, mentionedEnd } = edge.properties as { mentionedStart: number; mentionedEnd: number }
+    const { start, end } = edge as { start: number; end: number }
 
-    if (playerProgress >= mentionedStart && playerProgress <= mentionedEnd) {
+    if (playerProgress >= start && playerProgress <= end) {
       return edge // Found the corresponding edge
     }
 
-    if (playerProgress < mentionedStart) {
+    if (playerProgress < start) {
       high = mid - 1 // Search in the left half
     } else {
       low = mid + 1 // Search in the right half
@@ -40,7 +40,11 @@ type FullScreenProps = {
   isFullScreen: boolean
 }
 
-const MediaPlayerComponent = () => {
+type Props = {
+  mediaUrl: string
+}
+
+const MediaPlayerComponent = ({ mediaUrl }: Props) => {
   const playerRef = useRef<ReactPlayer | null>(null)
   const wrapperRef = useRef<HTMLDivElement | null>(null)
   const [isFocused, setIsFocused] = useState(false)
@@ -76,8 +80,6 @@ const MediaPlayerComponent = () => {
     isSeeking,
     setIsSeeking,
   } = usePlayerStore((s) => s)
-
-  const mediaUrl = 'https://www.youtube.com/watch?v=BL5vUVQvmX4'
 
   useEffect(() => () => resetPlayer(), [resetPlayer])
 
@@ -125,11 +127,9 @@ const MediaPlayerComponent = () => {
   }
 
   const edges = useMemo(() => {
-    const edgesFiltered = dataInitial?.links.filter((link) => link?.properties?.mentionedStart) || []
+    const edgesFiltered = dataInitial?.links.filter((link) => link?.start) || []
 
-    const sortedEdges = edgesFiltered
-      .slice()
-      .sort((a, b) => (a?.properties?.mentionedStart as number) - (b?.properties?.mentionedStart as number))
+    const sortedEdges = edgesFiltered.slice().sort((a, b) => (a?.start as number) - (b?.start as number))
 
     return sortedEdges
   }, [dataInitial])
