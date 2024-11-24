@@ -139,11 +139,7 @@ export const MindSet = () => {
         .map((node) => {
           const edge = edgesMention.find((ed) => node.ref_id === ed.source)
 
-          if (edge) {
-            return { ...node, start: edge.start }
-          }
-
-          return null
+          return { ...node, start: edge?.start || 0 }
         })
         .filter((node) => node)
 
