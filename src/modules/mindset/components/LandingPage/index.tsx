@@ -57,8 +57,6 @@ export const LandingPage = () => {
       try {
         const res = await handleSubmitForm({ source: inputValue })
 
-        console.log(res)
-
         if (res.data.project_id) {
           setRunningProjectId(res.data.project_id)
         }
@@ -70,14 +68,10 @@ export const LandingPage = () => {
 
         // eslint-disable-next-line  @typescript-eslint/no-explicit-any
       } catch (err: any) {
-        console.log(err)
-
         let errorMessage = NODE_ADD_ERROR
 
         if (err?.status === 400) {
           const res = await err.json()
-
-          console.log(res)
 
           errorMessage = res.errorCode || res?.status || NODE_ADD_ERROR
 

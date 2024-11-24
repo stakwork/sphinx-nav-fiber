@@ -52,7 +52,7 @@ export const CreateBounty: FC<Props> = ({ errMessage, handleClose }) => {
           setOptions(newOptions)
         }
       } catch (error) {
-        console.log('Error from get user details: ', error)
+        console.error('Error from get user details: ', error)
       }
     }
 
