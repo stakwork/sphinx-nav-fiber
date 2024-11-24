@@ -1,15 +1,13 @@
-// @ts-nocheck
-// @ts-ignore
-
 import { isEqual } from 'lodash'
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
 import { fetchGraphData } from '~/network/fetchGraphData'
-import { FilterParams, GraphData, Link, NodeExtended, NodeType, Sources, Trending, TStats } from '~/types'
+import { FetchDataResponse, FilterParams, Link, NodeExtended, NodeType, Sources, Trending, TStats } from '~/types'
 import { useAiSummaryStore } from '../useAiSummaryStore'
 import { useAppStore } from '../useAppStore'
+import { useUserStore } from '../useUserStore'
 
-const deduplicateByRefId = (items) => {
+const deduplicateByRefId = (items: Array<NodeExtended | Link>) => {
   const uniqueMap = new Map()
 
   items.forEach((item) => {
@@ -61,7 +59,6 @@ export type DataStore = {
   runningProjectMessages: string[]
 
   setTrendingTopics: (trendingTopics: Trending[]) => void
-  setDataNew: (data: GraphData) => void
   resetDataNew: () => void
   setStats: (stats: TStats) => void
   setSidebarFilter: (filter: string) => void
@@ -114,14 +111,17 @@ const defaultData: Omit<
   | 'removeNode'
   | 'setAbortRequests'
   | 'nextPage'
-  | 'setDataNew'
   | 'resetDataNew'
   | 'setSeedQuestions'
+  | 'setRunningProjectId'
+  | 'setRunningProjectMessages'
+  | 'resetRunningProjectMessages'
+  | 'abortFetchData'
+  | 'resetGraph'
+  | 'resetData'
 > = {
   categoryFilter: null,
   dataInitial: null,
-  currentPage: 0,
-  itemsPerPage: 300,
   runningProjectMessages: [],
   filters: {
     skip: 0,
@@ -149,6 +149,8 @@ const defaultData: Omit<
   dataNew: null,
   seedQuestions: null,
   runningProjectId: '',
+  hideNodeDetails: false,
+  nodeTypes: [],
 }
 
 let abortController: AbortController | null = null
@@ -284,7 +286,7 @@ export const useDataStore = create<DataStore>()(
           sidebarFilterCounts,
         })
       } catch (error) {
-        console.log(error)
+        console.error(error)
 
         if (error !== 'abort') {
           set({ isLoadingNew: false, isFetching: false })
@@ -298,13 +300,16 @@ export const useDataStore = create<DataStore>()(
       }
     },
     resetGraph: () => {
+      const { setAbortRequests } = get()
+      const { setBudget } = useUserStore.getState()
+
       set({
         filters: defaultData.filters,
         dataInitial: null,
         dataNew: null,
       })
 
-      get().fetchData()
+      get().fetchData(setBudget, setAbortRequests)
     },
 
     resetData: () => {
@@ -315,17 +320,19 @@ export const useDataStore = create<DataStore>()(
       })
     },
 
-    setPage: (page: number) => set({ currentPage: page }),
     nextPage: () => {
-      const { filters, fetchData } = get()
+      const { filters, fetchData, setAbortRequests } = get()
+      const { setBudget } = useUserStore.getState()
 
       set({ filters: { ...filters, skip: filters.skip + 1 } })
-      fetchData()
+      fetchData(setBudget, setAbortRequests)
     },
     resetDataNew: () => null,
     setFilters: (filters: Partial<FilterParams>) => {
+      const { setBudget } = useUserStore.getState()
+
       set((state) => ({ filters: { ...state.filters, ...filters, skip: 0 } }))
-      get().fetchData(get().setBudget, get().setAbortRequests)
+      get().fetchData(setBudget, get().setAbortRequests)
     },
     setSidebarFilterCounts: (sidebarFilterCounts) => set({ sidebarFilterCounts }),
     setTrendingTopics: (trendingTopics) => set({ trendingTopics }),
@@ -340,7 +347,7 @@ export const useDataStore = create<DataStore>()(
     setHideNodeDetails: (hideNodeDetails) => set({ hideNodeDetails }),
     setSeedQuestions: (questions) => set({ seedQuestions: questions }),
     updateNode: (updatedNode) => {
-      console.log(updatedNode)
+      console.info(updatedNode)
     },
     addNewNode: (data) => {
       const { dataInitial: existingData, filters } = get()

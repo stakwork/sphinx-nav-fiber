@@ -15,10 +15,12 @@ export type FilterParams = {
   skip: number
   limit: number
   depth: string
+  includeContent: string
   sort_by: string
   top_node_count: string
   include_properties: string
-  node_type: string[] | string
+  node_type: string[]
+  search_method: string
   free?: string
   word?: string // Add other optional filter properties as needed
 }
@@ -141,6 +143,8 @@ export type NodeExtended = Node & {
   x?: number
   y?: number
   z?: number
+  start?: number
+  end?: number
   longitude?: number
   latitude?: number
   coordinates?: Coordinates
@@ -150,6 +154,8 @@ export type NodeExtended = Node & {
 
 export type Link<T = string> = {
   index?: T extends string ? never : number
+  start?: number
+  end?: number
   source: T
   target: T
   color?: number
@@ -160,6 +166,7 @@ export type Link<T = string> = {
   sourcePosition?: Vector3
   targetPosition?: Vector3
   onlyVisibleOnSelect?: boolean
+  properties?: { [key: string]: unknown }
 }
 
 export type GraphData<T = string> = {

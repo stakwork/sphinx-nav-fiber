@@ -117,13 +117,7 @@ export const Cubes = memo(() => {
             <mesh key={node.ref_id} name="wr2" scale={node.scale || 1} userData={node}>
               <boxGeometry args={[40, 40, 40]} />
               <meshStandardMaterial opacity={0} transparent />
-              <TextNode
-                key={node.ref_id || node.id}
-                hide={hideUniverse || hide}
-                ignoreDistance={false}
-                isHovered={!!hoveredNode && hoveredNode.ref_id === node.ref_id}
-                node={node}
-              />
+              <TextNode key={node.ref_id || node.id} hide={hideUniverse || hide} ignoreDistance={false} node={node} />
             </mesh>
           )
         })}

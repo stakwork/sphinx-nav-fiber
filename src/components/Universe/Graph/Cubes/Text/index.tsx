@@ -1,10 +1,10 @@
 import { Billboard, Plane, Svg, Text } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
-import { memo, useMemo, useRef } from 'react'
+import { memo, useRef } from 'react'
 import { Mesh, MeshBasicMaterial, Vector3 } from 'three'
 import { Icons } from '~/components/Icons'
 import { useNodeTypes } from '~/stores/useDataStore'
-import { useGraphStore, useSelectedNode, useSelectedNodeRelativeIds } from '~/stores/useGraphStore'
+import { useGraphStore } from '~/stores/useGraphStore'
 import { useSchemaStore } from '~/stores/useSchemaStore'
 import { NodeExtended } from '~/types'
 import { colors } from '~/utils/colors'
@@ -46,7 +46,6 @@ const COLORS_MAP = [
 type Props = {
   node: NodeExtended
   hide?: boolean
-  isHovered: boolean
   ignoreDistance: boolean
 }
 
@@ -68,23 +67,20 @@ function splitStringIntoThreeParts(text: string): string {
   return `${firstPart}\n${secondPart}\n${thirdPart}`
 }
 
-export const TextNode = memo(({ node, hide, isHovered, ignoreDistance }: Props) => {
+export const TextNode = memo(({ node, hide, ignoreDistance }: Props) => {
   const svgRef = useRef<Mesh | null>(null)
   const ringRef = useRef<Mesh | null>(null)
   const circleRef = useRef<Mesh | null>(null)
-  const selectedNode = useSelectedNode()
 
   const nodePositionRef = useRef(new Vector3())
 
   const { texture } = useTexture(node.properties?.image_url || '')
 
-  const selectedNodeRelativeIds = useSelectedNodeRelativeIds()
-  const isRelative = selectedNodeRelativeIds.includes(node?.ref_id || '')
-  const isSelected = !!selectedNode && selectedNode?.ref_id === node.ref_id
-  const showSelectionGraph = useGraphStore((s) => s.showSelectionGraph)
   const { normalizedSchemasByType } = useSchemaStore((s) => s)
 
   useFrame(({ camera, clock }) => {
+    const { selectedNode, hoveredNode, activeEdge } = useGraphStore.getState()
+
     const checkDistance = () => {
       const nodePosition = nodePositionRef.current.setFromMatrixPosition(ringRef.current!.matrixWorld)
 
@@ -95,54 +91,35 @@ export const TextNode = memo(({ node, hide, isHovered, ignoreDistance }: Props) 
       // Set visibility based on distance
     }
 
-    if (isHovered) {
+    const isActive =
+      node.ref_id === selectedNode?.ref_id ||
+      node.ref_id === hoveredNode?.ref_id ||
+      activeEdge?.target === node.ref_id ||
+      activeEdge?.source === node.ref_id
+
+    if (isActive) {
       if (ringRef.current) {
         ringRef.current.visible = true
       }
 
-      const scale = 1 + 0.2 * Math.sin(clock.getElapsedTime() * 2) // Adjust frequency and amplitude
+      const scale = 3 + 0.2 * Math.sin(clock.getElapsedTime() * 2) // Adjust frequency and amplitude
 
       if (circleRef.current) {
+        circleRef.current.visible = true
         circleRef.current.scale.set(scale, scale, scale)
       }
 
       return
     }
 
+    if (circleRef.current) {
+      circleRef.current.visible = false
+    }
+
     checkDistance()
   })
 
   const nodeTypes = useNodeTypes()
-
-  const textScale = useMemo(() => {
-    if (!node.name) {
-      return 0
-    }
-
-    let scale = (node.edge_count || 1) * 20
-
-    if (showSelectionGraph && isSelected) {
-      scale = 40
-    } else if (!isSelected && isRelative) {
-      scale = 0
-    }
-
-    const nodeScale = scale / Math.sqrt(node.name.length)
-
-    return Math.min(Math.max(nodeScale, 20), 30)
-  }, [node.edge_count, node.name, isSelected, isRelative, showSelectionGraph])
-
-  const fillOpacity = useMemo(() => {
-    if (selectedNode && !isSelected) {
-      return 0.2
-    }
-
-    if (!isHovered) {
-      return 0.2
-    }
-
-    return 1
-  }, [isSelected, selectedNode, isHovered])
 
   const primaryColor = normalizedSchemasByType[node.node_type]?.primary_color
   const primaryIcon = normalizedSchemasByType[node.node_type]?.icon
@@ -161,12 +138,11 @@ export const TextNode = memo(({ node, hide, isHovered, ignoreDistance }: Props) 
   return (
     <Billboard follow lockX={false} lockY={false} lockZ={false} name="billboard" userData={node}>
       <mesh ref={ringRef} name={node.id} userData={node} visible={!hide}>
-        {isHovered ? (
-          <mesh ref={circleRef} position={[0, 0, -2]}>
-            <circleGeometry args={[30, 32]} />
-            <meshBasicMaterial color={color} opacity={0.5} transparent />
-          </mesh>
-        ) : null}
+        <mesh ref={circleRef} position={[0, 0, -2]} visible={false}>
+          <circleGeometry args={[30, 32]} />
+          <meshBasicMaterial color={color} opacity={0.5} transparent />
+        </mesh>
+
         {node.properties?.image_url && node.node_type === 'Person' && texture ? (
           <Plane args={[10 * 2, 10 * 2]} scale={2}>
             <shaderMaterial
@@ -219,10 +195,10 @@ export const TextNode = memo(({ node, hide, isHovered, ignoreDistance }: Props) 
         {node.name && (
           <Text
             color={color}
-            fillOpacity={1 || fillOpacity}
+            fillOpacity={1}
             name="text"
             position={[0, -65, 0]}
-            scale={textScale}
+            scale={20}
             userData={node}
             {...fontProps}
           >

@@ -113,7 +113,7 @@ export const AuthGuard = ({ children }: PropsWithChildren) => {
 
           await handleAuth()
         } catch (error) {
-          console.log(error)
+          console.error(error)
         }
       }
 
