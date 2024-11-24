@@ -52,10 +52,10 @@ const fetchNodes = async (
   return fetchWithLSAT()
 }
 
-export const fetchNodeEdges = async (refId: string, skip: number): Promise<FetchDataResponse | null> => {
+export const fetchNodeEdges = async (refId: string, skip: number, limit = 5): Promise<FetchDataResponse | null> => {
   try {
     const response = await api.get<FetchDataResponse>(
-      `/prediction/graph/edges/${refId}?skip=${skip}&limit=5&sort_by="edge_count&include_properties=true&includeContent=true"`,
+      `/prediction/graph/edges/${refId}?skip=${skip}&limit=${limit}&sort_by="edge_count&include_properties=true&includeContent=true"`,
     )
 
     return response

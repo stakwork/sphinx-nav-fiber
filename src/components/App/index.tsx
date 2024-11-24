@@ -161,10 +161,16 @@ export const App = () => {
 
       timerRef.current = setTimeout(() => {
         // Combine all queued data into a single update
-        const batchedData = { ...queueRef.current }
+        if (queueRef.current) {
+          const { nodes: newNodes, edges: newEdges } = queueRef.current
+          const batchedData = { nodes: newNodes, edges: newEdges }
 
-        queueRef.current = { nodes: [], edges: [] } // Reset the queue
-        addNewNode(batchedData) // Call the original addNewNode function with batched data
+          queueRef.current = { nodes: [], edges: [] }
+
+          console.log(batchedData)
+
+          addNewNode(batchedData)
+        }
       }, 3000) // Adjust delay as necessary
     },
     [addNewNode, isFetching],

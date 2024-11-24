@@ -145,7 +145,7 @@ export const AddItemModal = () => {
       },
     }
 
-    addNewNode({ nodes: [node], links: [] })
+    addNewNode({ nodes: [node], edges: [] })
 
     setSelectedNode(node)
   }

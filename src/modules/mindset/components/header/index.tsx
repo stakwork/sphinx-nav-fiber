@@ -1,7 +1,6 @@
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
-import ClearIcon from '~/components/Icons/ClearIcon'
 import { colors } from '~/utils/colors'
 import { Logo } from '../Icon/Logo'
 
@@ -13,9 +12,6 @@ export const Header = () => (
       </IconWrapper>
     </LogoButton>
     <StyledText>Graph Mindset</StyledText>
-    <CloseButton>
-      <ClearIcon />
-    </CloseButton>
   </Head>
 )
 
@@ -62,31 +58,4 @@ const StyledText = styled(Text)`
   letter-spacing: 0.22px;
   margin-left: 16px;
   white-space: nowrap;
-`
-
-const CloseButton = styled.div`
-  position: absolute;
-  right: 16px;
-  top: 40%;
-  transform: translateY(-50%);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: ${colors.BUTTON1};
-  transition: background 0.2s;
-
-  &:hover {
-    background: ${colors.BUTTON1_PRESS};
-  }
-
-  svg {
-    fill: none;
-    color: ${colors.white} !important;
-    width: 16px;
-    height: 16px;
-  }
 `
