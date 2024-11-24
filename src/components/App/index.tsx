@@ -167,8 +167,6 @@ export const App = () => {
 
           queueRef.current = { nodes: [], edges: [] }
 
-          console.log(batchedData)
-
           addNewNode(batchedData)
         }
       }, 3000) // Adjust delay as necessary
@@ -299,8 +297,6 @@ export const App = () => {
     }
 
     ws.onmessage = (event) => {
-      console.log('Message from server:', event.data)
-
       const data = JSON.parse(event.data)
 
       if (data.type === 'ping') {
@@ -318,10 +314,6 @@ export const App = () => {
 
     ws.onerror = (error) => {
       console.error('WebSocket error:', error)
-    }
-
-    ws.onclose = () => {
-      console.log('WebSocket connection closed')
     }
   }, [runningProjectId, setRunningProjectMessages])
 
