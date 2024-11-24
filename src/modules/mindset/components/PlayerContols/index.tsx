@@ -25,8 +25,6 @@ export const PlayerControl = ({ markers }: Props) => {
 
   const startTime = ((playingTime - start) / (end - start)) * 100
 
-  console.log(startTime)
-
   const showPlayer = playingNode
 
   return showPlayer ? (

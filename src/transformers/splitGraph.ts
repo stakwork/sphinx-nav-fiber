@@ -195,31 +195,6 @@ export const generateSplitGraphPositions = (nodes: NodeExtended[], links: Link[]
     return updated
   })
 
-  // const links = generateLinksFromNodeData(updatedNodes, true, true)
-
-  // do links
-  const updatedLinks = links.map((l: Link) => {
-    const sourceNode = updatedNodes.find((f) => f.ref_id === l.sourceRef)
-    const targetNode = updatedNodes.find((f) => f.ref_id === l.targetRef)
-    let onlyVisibleOnSelect = false
-
-    if (sourceNode?.node_type === 'Guest' || sourceNode?.node_type === 'Topic') {
-      onlyVisibleOnSelect = true
-    }
-
-    const sourcePosition = new Vector3(sourceNode?.x || 0, sourceNode?.y || 0, sourceNode?.z || 0)
-    const targetPosition = new Vector3(targetNode?.x || 0, targetNode?.y || 0, targetNode?.z || 0)
-
-    return {
-      ...l,
-      onlyVisibleOnSelect,
-      sourcePosition,
-      targetPosition,
-    }
-  })
-
-  console.log(updatedLinks)
-
   // sort back to weighted sort
   updatedNodes.sort((a, b) => (b.weight || 0) - (a.weight || 0))
 

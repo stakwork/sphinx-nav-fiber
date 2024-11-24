@@ -210,7 +210,7 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
 
         simulationHelpers.simulationRestart()
       } catch (error) {
-        console.log(error)
+        console.error(error)
         // eslint-disable-next-line no-debugger
       }
 
@@ -314,8 +314,6 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
     },
   },
   simulationCreate: (nodes, links) => {
-    console.log('created')
-
     const structuredNodes = structuredClone(nodes)
     const structuredLinks = structuredClone(links)
 

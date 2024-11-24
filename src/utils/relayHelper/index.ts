@@ -27,10 +27,6 @@ export const saveSearchTerm = async () => {
   await executeIfProd(async () => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    const res = await sphinx.enable(true)
-
-    if (!res) {
-      console.log('Sphinx enable failed, means no pubkey and no budget (including budget of 0)')
-    }
+    await sphinx.enable(true)
   })
 }

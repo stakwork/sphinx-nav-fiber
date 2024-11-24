@@ -18,7 +18,7 @@ export const Scene = () => {
 
       <Canvas orthographic>
         <DynamicOrthographicCamera x={cameraX} />
-        <Board w={4} />
+        <Board />
         <gridHelper args={[100, 100, 'white', 'gray']} />
         <gridHelper args={[100, 100, 'white', 'gray']} rotation={[Math.PI / 2, 0, 0]} />
 
