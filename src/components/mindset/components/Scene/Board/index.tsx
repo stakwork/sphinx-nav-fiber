@@ -1,6 +1,6 @@
 import { useThree } from '@react-three/fiber'
 import { useEffect, useMemo } from 'react'
-import { edges, edgesMention, maxTimestamp, minTimestamp, nodes, normalizeTimestamp } from '~/modules/mindset/data'
+import { edges, edgesMention, maxTimestamp, minTimestamp, nodes, normalizeTimestamp } from '~/components/mindset/data'
 import { Node } from './Node'
 
 const totalDuration = 185

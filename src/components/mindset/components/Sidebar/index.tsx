@@ -2,7 +2,7 @@ import styled from 'styled-components'
 import { MENU_WIDTH } from '~/components/App/SideBar'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
-import { MediaPlayer } from '~/modules/mindset/components/MediaPlayer'
+import { MediaPlayer } from '~/components/mindset/components/MediaPlayer'
 import { useMindsetStore } from '~/stores/useMindsetStore'
 import { Transcript } from './Transcript'
 

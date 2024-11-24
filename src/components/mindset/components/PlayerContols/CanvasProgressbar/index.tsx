@@ -2,7 +2,7 @@ import { Html, OrbitControls } from '@react-three/drei'
 import { Canvas, useThree } from '@react-three/fiber'
 import { useEffect, useState } from 'react'
 import { Tooltip } from '~/components/common/ToolTip'
-import { nodesWithTimestamp } from '~/modules/mindset/data'
+import { nodesWithTimestamp } from '~/components/mindset/data'
 import { Marker } from '../../Marker'
 
 type Props = {
