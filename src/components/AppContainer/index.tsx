@@ -11,11 +11,13 @@ export const AppContainer = () => {
   const App = <LazyApp />
   const MindSet = <LazyMindSet />
 
+  const path = window.location?.hostname === 'graphmindset.sphinx.chat' ? '/' : '/mindset'
+
   return (
     <AppProviders>
       <Suspense fallback={<div>Loading...</div>}>
         <Routes>
-          <Route element={MindSet} path="/mindset" />
+          <Route element={MindSet} path={path} />
           <Route element={<AuthGuard>{App}</AuthGuard>} path="/" />
           <Route element={<AuthGuard>{App}</AuthGuard>} path="/search" />
           <Route element={<AuthGuard>{App}</AuthGuard>} path="*" />

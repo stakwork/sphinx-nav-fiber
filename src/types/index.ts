@@ -143,6 +143,8 @@ export type NodeExtended = Node & {
   x?: number
   y?: number
   z?: number
+  start?: number
+  end?: number
   longitude?: number
   latitude?: number
   coordinates?: Coordinates
@@ -152,6 +154,8 @@ export type NodeExtended = Node & {
 
 export type Link<T = string> = {
   index?: T extends string ? never : number
+  start?: number
+  end?: number
   source: T
   target: T
   color?: number

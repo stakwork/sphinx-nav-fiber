@@ -4,6 +4,7 @@ import {
   FetchEdgeTypesResponse,
   FetchRadarResponse,
   FetchTopicResponse,
+  NodeExtended,
   NodeRequest,
   RadarRequest,
   SubmitErrRes,
@@ -310,6 +311,12 @@ export const deleteRadarData = async (id: string) => {
 
 export const deleteNode = async (id: string) => {
   const response = await api.delete(`/node/?ref_id=${id}`)
+
+  return response
+}
+
+export const getNode = async (id: string) => {
+  const response = await api.get<NodeExtended>(`/node/${id}`)
 
   return response
 }

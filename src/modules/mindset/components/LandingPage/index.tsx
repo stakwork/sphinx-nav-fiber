@@ -1,13 +1,49 @@
 import { useState } from 'react'
+import { FieldValues } from 'react-hook-form'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
+import { NODE_ADD_ERROR } from '~/constants'
+import { api } from '~/network/api'
+import { useDataStore } from '~/stores/useDataStore'
+import { useMindsetStore } from '~/stores/useMindsetStore'
+import { SubmitErrRes } from '~/types'
 import { colors } from '~/utils/colors'
 import { ChevronRight } from '../Icon/ChevronRight'
 import { isValidMediaUrl } from './utils'
 
+export type FormData = {
+  input: string
+  inputType: string
+  source: string
+  longitude: string
+  latitude: string
+}
+
+const handleSubmitForm = async (data: FieldValues): Promise<SubmitErrRes> => {
+  const endPoint = 'add_node'
+
+  const body: { [index: string]: unknown } = {}
+
+  body.media_url = data.source
+  body.content_type = 'audio_video'
+
+  const res: SubmitErrRes = await api.post(`/${endPoint}`, JSON.stringify(body))
+
+  if (res.error) {
+    const { message } = res.error
+
+    throw new Error(message)
+  }
+
+  return res
+}
+
 export const LandingPage = () => {
   const [inputValue, setInputValue] = useState('')
   const [error, setError] = useState(false)
+  const [requestError, setRequestError] = useState<string>('')
+  const { setRunningProjectId } = useDataStore((s) => s)
+  const { setSelectedEpisodeId, setSelectedEpisodeLink } = useMindsetStore((s) => s)
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target
@@ -16,9 +52,45 @@ export const LandingPage = () => {
     setError(value !== '' && !isValidMediaUrl(value))
   }
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (isValidMediaUrl(inputValue)) {
-      console.log('Valid media URL:', inputValue)
+      try {
+        const res = await handleSubmitForm({ source: inputValue })
+
+        console.log(res)
+
+        if (res.data.project_id) {
+          setRunningProjectId(res.data.project_id)
+        }
+
+        if (res.data.ref_id) {
+          setSelectedEpisodeId(res.data.ref_id)
+          setSelectedEpisodeLink(inputValue)
+        }
+
+        // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+      } catch (err: any) {
+        console.log(err)
+
+        let errorMessage = NODE_ADD_ERROR
+
+        if (err?.status === 400) {
+          const res = await err.json()
+
+          console.log(res)
+
+          errorMessage = res.errorCode || res?.status || NODE_ADD_ERROR
+
+          if (res.data.ref_id) {
+            setSelectedEpisodeId(res.data.ref_id)
+            setSelectedEpisodeLink(inputValue)
+          }
+        } else if (err instanceof Error) {
+          errorMessage = err.message
+        }
+
+        setRequestError(String(errorMessage))
+      }
     }
   }
 
@@ -37,6 +109,7 @@ export const LandingPage = () => {
           <ChevronRight />
         </IconWrapper>
       </InputWrapper>
+      {requestError && <div>{requestError}</div>}
     </Wrapper>
   )
 }

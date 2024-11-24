@@ -2,28 +2,29 @@ import { LinearProgress } from '@mui/material'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { Tooltip } from '~/components/common/ToolTip'
-import { nodesWithTimestamp } from '~/modules/mindset/data'
 import { colors } from '~/utils'
-import { Marker } from './Marker'
+import { Marker } from '../../Marker'
+import { NodeExtended } from '~/types'
 
 type Props = {
   duration: number
   progress: number
+  markers: NodeExtended[]
 }
 
-export const ProgressBar = ({ duration, progress }: Props) => {
+export const ProgressBar = ({ duration, progress, markers }: Props) => {
   console.log('s')
 
   return (
     <ProgressWrapper>
       <Progress value={progress} variant="determinate" />
-      {nodesWithTimestamp.map((node) => {
-        const position = ((node?.mentionedStart || 0) / duration) * 100
+      {markers.map((node) => {
+        const position = ((node?.start || 0) / duration) * 100
         const type = node?.node_type || ''
 
         return (
           <MarkerWrapper key={node?.ref_id} style={{ left: `${position}%` }}>
-            <Tooltip content={`${node?.name || ''}|${node?.mentionedStart}`}>
+            <Tooltip content={`${node?.name || ''}|${node?.start}`}>
               <Marker type={type} />
             </Tooltip>
           </MarkerWrapper>

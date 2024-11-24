@@ -6,11 +6,17 @@ import PauseIcon from '~/components/Icons/PauseIcon'
 import PlayIcon from '~/components/Icons/PlayIcon'
 import { Flex } from '~/components/common/Flex'
 import { usePlayerStore } from '~/stores/usePlayerStore'
+import { NodeExtended } from '~/types'
 import { videoTimeToSeconds } from '~/utils'
 import { colors } from '~/utils/colors'
+import { ProgressBarCanvas } from './CanvasProgressbar'
 import { ProgressBar } from './ProgressBar'
 
-export const PlayerControl = () => {
+type Props = {
+  markers: NodeExtended[]
+}
+
+export const PlayerControl = ({ markers }: Props) => {
   const { isPlaying, setIsPlaying, playingTime, playingNode, duration } = usePlayerStore((s) => s)
 
   const [start, end] = playingNode?.properties?.timestamp
@@ -39,7 +45,8 @@ export const PlayerControl = () => {
         </Action>
         <ChevronRightIcon />
       </Controls>
-      <ProgressBar duration={duration} progress={startTime} />
+      <ProgressBar duration={duration} markers={markers} progress={startTime} />
+      {false && <ProgressBarCanvas duration={duration} progress={startTime} />}
     </Wrapper>
   ) : null
 }
