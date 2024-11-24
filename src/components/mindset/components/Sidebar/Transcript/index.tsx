@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
-import { transcript } from '~/modules/mindset/data/transcript'
+import { transcript } from '~/components/mindset/data/transcript'
 import { usePlayerStore } from '~/stores/usePlayerStore'
 import { colors } from '~/utils'
 
