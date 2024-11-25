@@ -38,7 +38,7 @@ export const Transcript = () => {
         const timestamp: string | undefined = clip?.properties?.timestamp
 
         const [start, end] = timestamp
-          ? timestamp.split('-').map(Number) // Directly convert to numbers
+          ? (timestamp as string).split('-').map(Number) // Directly convert to numbers
           : [0, duration]
 
         if (start <= playingTime * 1000 && playingTime * 1000 < end) {
