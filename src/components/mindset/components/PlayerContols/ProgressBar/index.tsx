@@ -2,9 +2,9 @@ import { LinearProgress } from '@mui/material'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { Tooltip } from '~/components/common/ToolTip'
+import { NodeExtended } from '~/types'
 import { colors } from '~/utils'
 import { Marker } from '../../Marker'
-import { NodeExtended } from '~/types'
 
 type Props = {
   duration: number
@@ -12,27 +12,23 @@ type Props = {
   markers: NodeExtended[]
 }
 
-export const ProgressBar = ({ duration, progress, markers }: Props) => {
-  console.log('s')
+export const ProgressBar = ({ duration, progress, markers }: Props) => (
+  <ProgressWrapper>
+    <Progress value={progress} variant="determinate" />
+    {markers.map((node) => {
+      const position = ((node?.start || 0) / duration) * 100
+      const type = node?.node_type || ''
 
-  return (
-    <ProgressWrapper>
-      <Progress value={progress} variant="determinate" />
-      {markers.map((node) => {
-        const position = ((node?.start || 0) / duration) * 100
-        const type = node?.node_type || ''
-
-        return (
-          <MarkerWrapper key={node?.ref_id} style={{ left: `${position}%` }}>
-            <Tooltip content={`${node?.name || ''}|${node?.start}`}>
-              <Marker type={type} />
-            </Tooltip>
-          </MarkerWrapper>
-        )
-      })}
-    </ProgressWrapper>
-  )
-}
+      return (
+        <MarkerWrapper key={node?.ref_id} style={{ left: `${position}%` }}>
+          <Tooltip content={`${node?.properties?.name || type}`}>
+            <Marker type={type} />
+          </Tooltip>
+        </MarkerWrapper>
+      )
+    })}
+  </ProgressWrapper>
+)
 
 const Progress = styled(LinearProgress)`
   && {
@@ -62,4 +58,7 @@ const MarkerWrapper = styled.div`
   transform: translateX(-50%); /* Center the marker horizontally */
   transform: translateX(-50%) translateY(-50%);
   top: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `

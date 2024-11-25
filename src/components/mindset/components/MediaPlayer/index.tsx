@@ -20,7 +20,7 @@ const findCurrentEdge = (sortedEdges: Link[], playerProgress: number): Link | nu
   while (low <= high) {
     const mid = Math.floor((low + high) / 2)
     const edge = sortedEdges[mid]
-    const { start, end } = edge as { start: number; end: number }
+    const { start, end } = edge.properties as { start: number; end: number }
 
     if (playerProgress >= start && playerProgress <= end) {
       return edge // Found the corresponding edge
@@ -127,9 +127,11 @@ const MediaPlayerComponent = ({ mediaUrl }: Props) => {
   }
 
   const edges = useMemo(() => {
-    const edgesFiltered = dataInitial?.links.filter((link) => link?.start) || []
+    const edgesFiltered = dataInitial?.links.filter((link) => link?.properties?.start) || []
 
-    const sortedEdges = edgesFiltered.slice().sort((a, b) => (a?.start as number) - (b?.start as number))
+    const sortedEdges = edgesFiltered
+      .slice()
+      .sort((a, b) => (a?.properties?.start as number) - (b?.properties?.start as number))
 
     return sortedEdges
   }, [dataInitial])

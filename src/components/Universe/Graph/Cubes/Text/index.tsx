@@ -128,7 +128,7 @@ export const TextNode = memo(({ node, hide, ignoreDistance }: Props) => {
 
   const Icon = primaryIcon ? Icons[primaryIcon] : null
   const iconName = Icon ? primaryIcon : 'NodesIcon'
-  const sanitizedNodeName = removeEmojis(String(node.name))
+  const sanitizedNodeName = removeEmojis(String(node?.properties?.name || ''))
 
   const uniforms = {
     u_texture: { value: texture },
@@ -192,7 +192,7 @@ export const TextNode = memo(({ node, hide, ignoreDistance }: Props) => {
           />
         )}
 
-        {node.name && (
+        {sanitizedNodeName && (
           <Text
             color={color}
             fillOpacity={1}
