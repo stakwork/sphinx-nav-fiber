@@ -12,8 +12,8 @@ export const SideBar = () => {
   return (
     <Wrapper align="stretch" basis="100%" grow={1} shrink={1}>
       <MediaWrapper>
-        {selectedEpisode?.node_type && <Summary>{selectedEpisode?.node_type}</Summary>}
         {selectedEpisode?.name && <EpisodeTitle>{selectedEpisode?.name}</EpisodeTitle>}
+        {selectedEpisode?.properties?.text && <Summary>{selectedEpisode?.properties?.text}</Summary>}
         {selectedEpisodeLink && <MediaPlayer mediaUrl={selectedEpisodeLink} />}
       </MediaWrapper>
       <Transcript />
@@ -34,7 +34,6 @@ const Wrapper = styled(Flex)(({ theme }) => ({
 }))
 
 const Summary = styled(Text)`
-  font-family: Inter;
   font-size: 20px;
   font-weight: Bold;
   line-height: 24.2px;
@@ -42,13 +41,13 @@ const Summary = styled(Text)`
   white-space: normal;
   word-break: break-word;
   margin-right: 10px;
+  font-weight: 500;
 `
 
 const EpisodeTitle = styled(Text)`
-  font-family: Inter;
   margin-top: 20px;
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 700;
   line-height: 16.94px;
 `
 

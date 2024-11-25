@@ -167,6 +167,7 @@ export type Link<T = string> = {
   targetPosition?: Vector3
   onlyVisibleOnSelect?: boolean
   properties?: { [key: string]: unknown }
+  attributes?: { [key: string]: unknown }
 }
 
 export type GraphData<T = string> = {

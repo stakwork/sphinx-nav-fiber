@@ -73,7 +73,6 @@ export const MindSet = () => {
         const data = await fetchNodeEdges(selectedEpisodeId, 0, 50)
 
         if (data) {
-          data.nodes = data?.nodes.map((i) => ({ ...i, node_type: 'Topic' }))
           handleNewNodeCreated(data)
         }
       } catch (error) {
@@ -130,18 +129,20 @@ export const MindSet = () => {
 
   const markers = useMemo(() => {
     if (dataInitial) {
-      const edgesMention: Array<{ source: string; start: number }> = dataInitial.links
-        .filter((e) => e?.start)
-        .map((edge) => ({ source: edge.source, start: edge?.start as number }))
+      const edgesMention: Array<{ source: string; target: string; start: number }> = dataInitial.links
+        .filter((e) => e?.properties?.start)
+        .map((edge) => ({ source: edge.source, target: edge.target, start: edge.properties?.start as number }))
 
       const nodesWithTimestamps = dataInitial.nodes
-        .filter((node) => dataInitial.links.some((ed) => ed.source === node.ref_id))
+        .filter((node) => dataInitial.links.some((ed) => ed.source === node.ref_id || ed.target === node.ref_id))
         .map((node) => {
-          const edge = edgesMention.find((ed) => node.ref_id === ed.source)
+          const edge = edgesMention.find((ed) => node.ref_id === ed.source || node.ref_id === ed.target)
 
           return { ...node, start: edge?.start || 0 }
         })
-        .filter((node) => node)
+        .filter(
+          (node) => node && node.node_type !== 'Clip' && node.node_type !== 'Episode' && node.node_type !== 'Show',
+        )
 
       return nodesWithTimestamps
     }
@@ -159,7 +160,7 @@ export const MindSet = () => {
             </Flex>
             <SideBar />
           </Flex>
-          <Flex basis="100%" grow={1} shrink={1}>
+          <Flex basis="100%" grow={1} p={16} shrink={1}>
             <Flex basis="100%" grow={1} shrink={1}>
               {showTwoD ? <Scene /> : <Universe />}
             </Flex>

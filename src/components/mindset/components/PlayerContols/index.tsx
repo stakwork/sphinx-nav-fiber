@@ -55,9 +55,9 @@ const Wrapper = styled(Flex).attrs({
   justify: 'space-between',
 })`
   padding: 20px;
-  margin: 20px;
   background: ${colors.BG2};
   height: 96px;
+  margin-top: 16px;
   border-radius: 8px;
   box-sizing: border-box;
 `

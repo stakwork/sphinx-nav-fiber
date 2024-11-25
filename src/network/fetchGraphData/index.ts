@@ -52,11 +52,45 @@ const fetchNodes = async (
   return fetchWithLSAT()
 }
 
-export const fetchNodeEdges = async (refId: string, skip: number, limit = 5): Promise<FetchDataResponse | null> => {
+interface FetchNodeEdgesParams {
+  sortBy?: string
+  includeProperties?: boolean
+  includeContent?: boolean
+  depth?: number
+  useSubGraph?: boolean
+  nodeType?: string[] // Array of strings for node types
+}
+
+export const fetchNodeEdges = async (
+  refId: string,
+  skip: number,
+  limit = 5,
+  params: FetchNodeEdgesParams = {}, // Optional params
+): Promise<FetchDataResponse | null> => {
   try {
-    const response = await api.get<FetchDataResponse>(
-      `/prediction/graph/edges/${refId}?skip=${skip}&limit=${limit}&sort_by="edge_count&include_properties=true&includeContent=true&depth=1"`,
-    )
+    // Destructure and provide defaults
+    const {
+      sortBy = 'edge_count',
+      includeProperties = true,
+      includeContent = true,
+      depth = 1,
+      useSubGraph = true,
+      nodeType = [], // Default to an empty array
+    } = params
+
+    // Construct query string
+    const query = new URLSearchParams({
+      skip: skip.toString(),
+      limit: limit.toString(),
+      sort_by: sortBy,
+      include_properties: includeProperties.toString(),
+      includeContent: includeContent.toString(),
+      depth: depth.toString(),
+      use_sub_graph: useSubGraph.toString(),
+      ...(nodeType.length > 0 && { node_type: JSON.stringify(nodeType) }), // Add node_type if not empty
+    }).toString()
+
+    const response = await api.get<FetchDataResponse>(`/prediction/graph/edges/${refId}?${query}`)
 
     return response
   } catch (e) {
