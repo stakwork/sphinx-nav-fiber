@@ -1,7 +1,5 @@
 import { IconButton } from '@mui/material'
 import styled from 'styled-components'
-import ChevronLeftIcon from '~/components/Icons/ChevronLeftIcon'
-import ChevronRightIcon from '~/components/Icons/ChevronRightIcon.js'
 import PauseIcon from '~/components/Icons/PauseIcon'
 import PlayIcon from '~/components/Icons/PlayIcon'
 import { Flex } from '~/components/common/Flex'
@@ -17,7 +15,7 @@ type Props = {
 }
 
 export const PlayerControl = ({ markers }: Props) => {
-  const { isPlaying, setIsPlaying, playingTime, playingNode, duration } = usePlayerStore((s) => s)
+  const { isPlaying, setIsPlaying, playingTime, setPlayingTime, playingNode, duration } = usePlayerStore((s) => s)
 
   const [start, end] = playingNode?.properties?.timestamp
     ? (playingNode.properties.timestamp as string).split('-').map((time) => videoTimeToSeconds(time))
@@ -25,12 +23,26 @@ export const PlayerControl = ({ markers }: Props) => {
 
   const startTime = ((playingTime - start) / (end - start)) * 100
 
+  const handleRewind = () => {
+    const newTime = playingTime - 15
+
+    setPlayingTime(newTime < 0 ? 0 : newTime)
+  }
+
+  const handleFastForward = () => {
+    const newTime = playingTime + 15
+
+    setPlayingTime(newTime > duration ? duration : newTime)
+  }
+
   const showPlayer = playingNode
 
   return showPlayer ? (
     <Wrapper>
       <Controls>
-        <ChevronLeftIcon />
+        <RewindIconWrapper onClick={handleRewind}>
+          <img alt="" src="public/svg-icons/RewindIcon.svg" />
+        </RewindIconWrapper>
         <Action
           data-testid="play-pause-button"
           onClick={(e) => {
@@ -41,7 +53,9 @@ export const PlayerControl = ({ markers }: Props) => {
         >
           {isPlaying ? <PauseIcon data-testid="pause-icon" /> : <PlayIcon data-testid="play-icon" />}
         </Action>
-        <ChevronRightIcon />
+        <ForwardIconWrapper onClick={handleFastForward}>
+          <img alt="" src="public/svg-icons/ForwardIcon.svg" />
+        </ForwardIconWrapper>
       </Controls>
       <ProgressBar duration={duration} markers={markers} progress={startTime} />
       {false && <ProgressBarCanvas duration={duration} progress={startTime} />}
@@ -84,5 +98,28 @@ const Action = styled(IconButton)`
     font-size: 36px;
     padding: 2px;
     overflow: hidden;
+  }
+`
+
+const RewindIconWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 1px 0 0 1px;
+
+  img {
+    width: 20px;
+    height: auto;
+  }
+`
+
+const ForwardIconWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  img {
+    width: 24px;
+    height: auto;
   }
 `
