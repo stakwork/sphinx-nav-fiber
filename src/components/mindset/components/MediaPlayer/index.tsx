@@ -1,4 +1,4 @@
-import { memo, useEffect, useMemo, useRef, useState } from 'react'
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import ReactPlayer from 'react-player'
 
 import styled from 'styled-components'
@@ -45,7 +45,6 @@ type Props = {
 }
 
 const MediaPlayerComponent = ({ mediaUrl }: Props) => {
-  const playerRef = useRef<ReactPlayer | null>(null)
   const wrapperRef = useRef<HTMLDivElement | null>(null)
   const [isFocused, setIsFocused] = useState(false)
   const [isFullScreen, setIsFullScreen] = useState(false)
@@ -79,6 +78,8 @@ const MediaPlayerComponent = ({ mediaUrl }: Props) => {
     resetPlayer,
     isSeeking,
     setIsSeeking,
+    setPlayerRef,
+    playerRef,
   } = usePlayerStore((s) => s)
 
   useEffect(() => () => resetPlayer(), [resetPlayer])
@@ -93,21 +94,21 @@ const MediaPlayerComponent = ({ mediaUrl }: Props) => {
   }, [playingNode, setPlayingTime, setDuration, setIsReady, isReady])
 
   useEffect(() => {
-    if (isSeeking && playerRef.current) {
-      playerRef.current.seekTo(playingTime, 'seconds')
+    if (isSeeking && playerRef) {
+      playerRef.seekTo(playingTime, 'seconds')
       setIsSeeking(false)
     }
-  }, [playingTime, isSeeking, setIsSeeking])
+  }, [playingTime, isSeeking, setIsSeeking, playerRef])
 
   useEffect(() => {
-    if (isReady && NodeStartTime && playerRef.current && !hasSeekedToStart) {
+    if (isReady && NodeStartTime && playerRef && !hasSeekedToStart) {
       const startTimeInSeconds = videoTimeToSeconds(NodeStartTime)
 
-      playerRef.current.seekTo(startTimeInSeconds, 'seconds')
+      playerRef.seekTo(startTimeInSeconds, 'seconds')
       setPlayingTime(startTimeInSeconds)
       setHasSeekedToStart(true)
     }
-  }, [isReady, NodeStartTime, setPlayingTime, hasSeekedToStart])
+  }, [isReady, NodeStartTime, setPlayingTime, hasSeekedToStart, playerRef])
 
   const togglePlay = () => {
     setIsPlaying(!isPlaying)
@@ -142,6 +143,8 @@ const MediaPlayerComponent = ({ mediaUrl }: Props) => {
 
       setPlayingTime(currentTime)
 
+      return
+
       const edge = findCurrentEdge(edges, currentTime)
 
       if (edge) {
@@ -153,17 +156,17 @@ const MediaPlayerComponent = ({ mediaUrl }: Props) => {
   }
 
   const handleReady = () => {
-    if (playerRef.current) {
+    if (playerRef) {
       setStatus('ready')
 
-      const videoDuration = playerRef.current.getDuration()
+      const videoDuration = playerRef.getDuration()
 
       setDuration(videoDuration)
 
       if (NodeStartTime && !hasSeekedToStart) {
         const startTimeInSeconds = videoTimeToSeconds(NodeStartTime)
 
-        playerRef.current.seekTo(startTimeInSeconds, 'seconds')
+        playerRef.seekTo(startTimeInSeconds, 'seconds')
         setPlayingTime(startTimeInSeconds)
         setHasSeekedToStart(true)
       }
@@ -222,6 +225,15 @@ const MediaPlayerComponent = ({ mediaUrl }: Props) => {
     togglePlay()
   }
 
+  const playerRefCallback = useCallback(
+    (player: ReactPlayer) => {
+      if (!playerRef && player) {
+        setPlayerRef(player) // Update the store with the player instance
+      }
+    },
+    [setPlayerRef, playerRef],
+  )
+
   return mediaUrl ? (
     <Wrapper ref={wrapperRef} onBlur={() => setIsFocused(false)} onFocus={() => setIsFocused(true)} tabIndex={0}>
       <Cover isFullScreen={isFullScreen}>
@@ -229,7 +241,7 @@ const MediaPlayerComponent = ({ mediaUrl }: Props) => {
       </Cover>
       <PlayerWrapper isFullScreen={isFullScreen} onClick={handlePlayerClick}>
         <ReactPlayer
-          ref={playerRef}
+          ref={playerRefCallback}
           controls
           height={!isFullScreen ? '219px' : window.screen.height}
           onBuffer={() => setStatus('buffering')}

@@ -17,7 +17,7 @@ import { SideBar } from './components/Sidebar'
 
 export const MindSet = () => {
   const { addNewNode, isFetching, runningProjectId, dataInitial } = useDataStore((s) => s)
-  const [showTwoD, setShowTwoD] = useState(false)
+  const [showTwoD, setShowTwoD] = useState(true)
   const { selectedEpisodeId, setSelectedEpisode } = useMindsetStore((s) => s)
   const socket: Socket | undefined = useSocket()
 
@@ -106,6 +106,12 @@ export const MindSet = () => {
 
   useEffect(() => {
     if (socket) {
+      socket.connect()
+
+      socket.on('connect_error', (error: unknown) => {
+        console.error('Socket connection error:', error)
+      })
+
       socket.on('new_node_created', handleNewNodeCreated)
       socket.on('node_updated', handleNodeUpdated)
     }

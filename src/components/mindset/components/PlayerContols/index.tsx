@@ -1,4 +1,5 @@
 import { IconButton } from '@mui/material'
+import { useCallback } from 'react'
 import styled from 'styled-components'
 import ChevronLeftIcon from '~/components/Icons/ChevronLeftIcon'
 import ChevronRightIcon from '~/components/Icons/ChevronRightIcon.js'
@@ -7,9 +8,7 @@ import PlayIcon from '~/components/Icons/PlayIcon'
 import { Flex } from '~/components/common/Flex'
 import { usePlayerStore } from '~/stores/usePlayerStore'
 import { NodeExtended } from '~/types'
-import { videoTimeToSeconds } from '~/utils'
 import { colors } from '~/utils/colors'
-import { ProgressBarCanvas } from './CanvasProgressbar'
 import { ProgressBar } from './ProgressBar'
 
 type Props = {
@@ -17,15 +16,20 @@ type Props = {
 }
 
 export const PlayerControl = ({ markers }: Props) => {
-  const { isPlaying, setIsPlaying, playingTime, playingNode, duration } = usePlayerStore((s) => s)
-
-  const [start, end] = playingNode?.properties?.timestamp
-    ? (playingNode.properties.timestamp as string).split('-').map((time) => videoTimeToSeconds(time))
-    : [0, duration]
-
-  const startTime = ((playingTime - start) / (end - start)) * 100
+  const { isPlaying, setIsPlaying, playingTime, playingNode, duration, playerRef } = usePlayerStore((s) => s)
 
   const showPlayer = playingNode
+
+  const handleProgressChange = useCallback(
+    (_: Event, value: number | number[]) => {
+      const newValue = Array.isArray(value) ? value[0] : value
+
+      if (playerRef) {
+        playerRef.seekTo(newValue, 'seconds')
+      }
+    },
+    [playerRef],
+  )
 
   return showPlayer ? (
     <Wrapper>
@@ -43,8 +47,14 @@ export const PlayerControl = ({ markers }: Props) => {
         </Action>
         <ChevronRightIcon />
       </Controls>
-      <ProgressBar duration={duration} markers={markers} progress={startTime} />
-      {false && <ProgressBarCanvas duration={duration} progress={startTime} />}
+      {true && (
+        <ProgressBar
+          duration={duration}
+          handleProgressChange={handleProgressChange}
+          markers={markers}
+          playingTIme={playingTime}
+        />
+      )}
     </Wrapper>
   ) : null
 }

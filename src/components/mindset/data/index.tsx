@@ -27,8 +27,7 @@ export const edges: Link[] = [
     edge_type: 'Mentioned',
     target: '1', // Clip
     source: '2', // Bitcoin
-    start: 7.68,
-    end: 19.619,
+    properties: { start: 7.68, end: 19.619 },
   },
 
   // Bitcoin's hard money nature
@@ -37,8 +36,7 @@ export const edges: Link[] = [
     edge_type: 'Mentioned',
     target: '1', // Clip
     source: '4', // Hard Money
-    start: 28.019,
-    end: 38.04,
+    properties: { start: 28.019, end: 38.04 },
   },
 
   // Blockchain as a public ledger
@@ -47,8 +45,7 @@ export const edges: Link[] = [
     edge_type: 'Mentioned',
     target: '1', // Clip
     source: '3', // Blockchain
-    start: 50.82,
-    end: 56.52,
+    properties: { start: 50.82, end: 56.52 },
   },
 
   // Scarcity of Bitcoin
@@ -57,8 +54,7 @@ export const edges: Link[] = [
     edge_type: 'Mentioned',
     target: '1', // Clip
     source: '5', // Scarcity
-    start: 19.439,
-    end: 25.619,
+    properties: { start: 19.439, end: 25.619 },
   },
 
   // Government control contrasted with Bitcoin
@@ -67,8 +63,7 @@ export const edges: Link[] = [
     edge_type: 'Mentioned',
     target: '1', // Clip
     source: '6', // Government Control
-    start: 34.619,
-    end: 43.02,
+    properties: { start: 34.619, end: 43.02 },
   },
 
   // Energy consumption in Bitcoin mining
@@ -77,8 +72,7 @@ export const edges: Link[] = [
     edge_type: 'Mentioned',
     target: '1', // Clip
     source: '9', // Energy Consumption
-    start: 31.8,
-    end: 38.04,
+    properties: { start: 31.8, end: 38.04 },
   },
 
   // Immutability ensured by the blockchain
@@ -87,8 +81,7 @@ export const edges: Link[] = [
     edge_type: 'Mentioned',
     target: '1', // Clip
     source: '10', // Immutability
-    start: 56.52,
-    end: 60.48,
+    properties: { start: 56.52, end: 60.48 },
   },
 
   // Decentralization of Bitcoin's public network
@@ -97,8 +90,7 @@ export const edges: Link[] = [
     edge_type: 'Mentioned',
     target: '1', // Clip
     source: '12', // Decentralization
-    start: 90.72,
-    end: 97.52,
+    properties: { start: 90.72, end: 97.52 },
   },
 
   // Bitcoin investment risks
@@ -107,8 +99,7 @@ export const edges: Link[] = [
     edge_type: 'Mentioned',
     target: '1', // Clip
     source: '13', // Investment Risks
-    start: 126.44,
-    end: 133.48,
+    properties: { start: 126.44, end: 133.48 },
   },
 
   // Bitcoin adoption rates and potential
@@ -117,8 +108,7 @@ export const edges: Link[] = [
     edge_type: 'Mentioned',
     target: '1', // Clip
     source: '14', // Adoption
-    start: 122.44,
-    end: 130.48,
+    properties: { start: 122.44, end: 130.48 },
   },
 ]
 
