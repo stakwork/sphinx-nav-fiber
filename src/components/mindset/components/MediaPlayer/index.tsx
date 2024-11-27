@@ -84,6 +84,12 @@ const MediaPlayerComponent = ({ mediaUrl }: Props) => {
   useEffect(() => () => resetPlayer(), [resetPlayer])
 
   useEffect(() => {
+    if (mediaUrl) {
+      setIsPlaying(true)
+    }
+  }, [mediaUrl, setIsPlaying])
+
+  useEffect(() => {
     if (playingNode && !isReady) {
       setPlayingTime(0)
       setDuration(0)
