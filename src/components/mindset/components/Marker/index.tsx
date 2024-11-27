@@ -1,10 +1,14 @@
+import { memo } from 'react'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
+import { Tooltip } from '~/components/common/ToolTip'
 import { useSchemaStore } from '~/stores/useSchemaStore'
 import { colors } from '~/utils/colors'
 
 type Props = {
   type: string
+  name: string
+  left: number
 }
 
 type BadgeProps = {
@@ -13,7 +17,7 @@ type BadgeProps = {
   label: string
 }
 
-export const Marker = ({ type }: Props) => {
+export const Marker = memo(({ type, name, left }: Props) => {
   const [normalizedSchemasByType] = useSchemaStore((s) => [s.normalizedSchemasByType])
 
   const primaryColor = normalizedSchemasByType[type]?.primary_color
@@ -26,8 +30,16 @@ export const Marker = ({ type }: Props) => {
     color: primaryColor ?? colors.THING,
   }
 
-  return <Badge {...badgeProps} label={type} />
-}
+  return (
+    <MarkerWrapper style={{ left: `${left}%` }}>
+      <Tooltip content={`${name || type}`}>
+        <Badge {...badgeProps} label={type} />
+      </Tooltip>
+    </MarkerWrapper>
+  )
+})
+
+Marker.displayName = 'Marker'
 
 const Badge = ({ iconStart, color, label }: BadgeProps) => (
   <EpisodeWrapper color={color}>
@@ -51,4 +63,19 @@ const EpisodeWrapper = styled(Flex).attrs({
     height: 10px;
     object-fit: contain;
   }
+`
+
+const MarkerWrapper = styled.div`
+  position: absolute;
+  top: -4px; /* Adjust as needed to center above the progress bar */
+  width: 8px;
+  height: 8px;
+  background-color: ${colors.white};
+  border-radius: 50%;
+  transform: translateX(-50%); /* Center the marker horizontally */
+  transform: translateX(-50%) translateY(-50%);
+  top: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `

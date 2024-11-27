@@ -1,17 +1,22 @@
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
+import { TypeBadge } from '~/components/common/TypeBadge'
 import PlusIcon from '~/components/Icons/PlusIcon'
 import { colors } from '~/utils'
 
 type Props = {
   name: string
+  type: string
   url?: string
 }
 
-export const Content = ({ name, url }: Props) => (
+export const Content = ({ name, url, type }: Props) => (
   <Wrapper>
     {url && <img alt="" className="image" src={url} />}
     <div className="title">{name}</div>
+    <div className="badge">
+      <TypeBadge type={type} />
+    </div>
     <div className="action-btn">
       <PlusIcon />
     </div>
@@ -28,6 +33,13 @@ const Wrapper = styled(Flex)`
 
   .title {
     margin-top: 8px;
+  }
+
+  .badge {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
   }
 
   .image {
