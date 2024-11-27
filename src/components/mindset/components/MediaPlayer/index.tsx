@@ -5,10 +5,10 @@ import styled from 'styled-components'
 import { Avatar } from '~/components/common/Avatar'
 import { Flex } from '~/components/common/Flex'
 import { usePlayerStore } from '~/stores/usePlayerStore'
-import { colors, videoTimeToSeconds } from '~/utils'
+import { colors } from '~/utils'
 
 import { useDataStore } from '~/stores/useDataStore'
-import { useGraphStore, useSelectedNode } from '~/stores/useGraphStore'
+import { useGraphStore } from '~/stores/useGraphStore'
 import { Link } from '~/types'
 
 const findCurrentEdge = (sortedEdges: Link[], playerProgress: number): Link | null => {
@@ -46,25 +46,11 @@ type Props = {
 
 const MediaPlayerComponent = ({ mediaUrl }: Props) => {
   const wrapperRef = useRef<HTMLDivElement | null>(null)
-  const [isFocused, setIsFocused] = useState(false)
-  const [isFullScreen, setIsFullScreen] = useState(false)
-  const [isMouseNearBottom, setIsMouseNearBottom] = useState(false)
   const [status, setStatus] = useState<'buffering' | 'error' | 'ready'>('ready')
   const [isReady, setIsReady] = useState(false)
-  const [NodeStartTime, setNodeStartTime] = useState<string>('')
-  const [hasSeekedToStart, setHasSeekedToStart] = useState(false)
-  const selectedNode = useSelectedNode()
   const { setActiveEdge } = useGraphStore((s) => s)
 
   const { dataInitial } = useDataStore((s) => s)
-
-  useEffect(() => {
-    const timestamp = '00:00:00-00:12:00'
-
-    const startTime = timestamp?.split('-')[0] as string
-
-    setNodeStartTime(startTime as string)
-  }, [selectedNode])
 
   const {
     isPlaying,
@@ -89,7 +75,6 @@ const MediaPlayerComponent = ({ mediaUrl }: Props) => {
       setPlayingTime(0)
       setDuration(0)
       setIsReady(false)
-      setHasSeekedToStart(false)
     }
   }, [playingNode, setPlayingTime, setDuration, setIsReady, isReady])
 
@@ -99,16 +84,6 @@ const MediaPlayerComponent = ({ mediaUrl }: Props) => {
       setIsSeeking(false)
     }
   }, [playingTime, isSeeking, setIsSeeking, playerRef])
-
-  useEffect(() => {
-    if (isReady && NodeStartTime && playerRef && !hasSeekedToStart) {
-      const startTimeInSeconds = videoTimeToSeconds(NodeStartTime)
-
-      playerRef.seekTo(startTimeInSeconds, 'seconds')
-      setPlayingTime(startTimeInSeconds)
-      setHasSeekedToStart(true)
-    }
-  }, [isReady, NodeStartTime, setPlayingTime, hasSeekedToStart, playerRef])
 
   const togglePlay = () => {
     setIsPlaying(!isPlaying)
@@ -158,68 +133,9 @@ const MediaPlayerComponent = ({ mediaUrl }: Props) => {
   const handleReady = () => {
     if (playerRef) {
       setStatus('ready')
-
-      const videoDuration = playerRef.getDuration()
-
-      setDuration(videoDuration)
-
-      if (NodeStartTime && !hasSeekedToStart) {
-        const startTimeInSeconds = videoTimeToSeconds(NodeStartTime)
-
-        playerRef.seekTo(startTimeInSeconds, 'seconds')
-        setPlayingTime(startTimeInSeconds)
-        setHasSeekedToStart(true)
-      }
+      togglePlay()
     }
   }
-
-  const handleFullScreenChange = () => {
-    setIsFullScreen(!!document.fullscreenElement)
-    document.removeEventListener('fullscreenchange', handleFullScreenChange)
-  }
-
-  useEffect(() => () => {
-    document.removeEventListener('fullscreenchange', handleFullScreenChange)
-  })
-
-  useEffect(() => {
-    const handleMouseMove = (event: MouseEvent) => {
-      if (isFullScreen) {
-        const windowHeight = window.screen.height
-        const mousePositionY = event.clientY
-        const distanceFromBottom = windowHeight - mousePositionY
-        const threshold = 50
-
-        setIsMouseNearBottom(distanceFromBottom <= threshold)
-      }
-    }
-
-    document.addEventListener('mousemove', handleMouseMove)
-
-    return () => {
-      document.removeEventListener('mousemove', handleMouseMove)
-    }
-  }, [isFullScreen, isMouseNearBottom])
-
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (isFullScreen && event.key === 'Escape') {
-        event.preventDefault()
-        event.stopPropagation()
-      } else if (isFocused && event.key === ' ') {
-        event.preventDefault()
-        togglePlay()
-      }
-    }
-
-    document.addEventListener('fullscreenchange', handleFullScreenChange)
-    document.addEventListener('keydown', handleKeyDown)
-
-    return () => {
-      document.removeEventListener('fullscreenchange', handleFullScreenChange)
-      document.removeEventListener('keydown', handleKeyDown)
-    }
-  })
 
   const handlePlayerClick = () => {
     togglePlay()
@@ -235,15 +151,15 @@ const MediaPlayerComponent = ({ mediaUrl }: Props) => {
   )
 
   return mediaUrl ? (
-    <Wrapper ref={wrapperRef} onBlur={() => setIsFocused(false)} onFocus={() => setIsFocused(true)} tabIndex={0}>
-      <Cover isFullScreen={isFullScreen}>
+    <Wrapper ref={wrapperRef} tabIndex={0}>
+      <Cover isFullScreen={false}>
         <Avatar size={120} src={playingNode?.image_url || ''} type="clip" />
       </Cover>
-      <PlayerWrapper isFullScreen={isFullScreen} onClick={handlePlayerClick}>
+      <PlayerWrapper isFullScreen={false} onClick={handlePlayerClick}>
         <ReactPlayer
           ref={playerRefCallback}
           controls
-          height={!isFullScreen ? '219px' : window.screen.height}
+          height="219px"
           onBuffer={() => setStatus('buffering')}
           onBufferEnd={() => setStatus('ready')}
           onError={handleError}

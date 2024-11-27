@@ -14,7 +14,7 @@ type Props = {
 }
 
 export const PlayerControl = ({ markers }: Props) => {
-  const { isPlaying, setIsPlaying, playingTime, playingNode, duration, playerRef } = usePlayerStore((s) => s)
+  const { isPlaying, setIsPlaying, playingTime, playingNode, playerRef } = usePlayerStore((s) => s)
 
   const showPlayer = playingNode
 
@@ -45,11 +45,13 @@ export const PlayerControl = ({ markers }: Props) => {
     }
   }
 
+  const duration = playerRef?.getDuration() || 0
+
   return showPlayer ? (
     <Wrapper>
       <Controls>
         <RewindIconWrapper onClick={handleRewind}>
-          <img alt="" src="public/RewindIcon.svg" />
+          <img alt="" src="RewindIcon.svg" />
         </RewindIconWrapper>
         <Action
           data-testid="play-pause-button"
@@ -62,17 +64,16 @@ export const PlayerControl = ({ markers }: Props) => {
           {isPlaying ? <PauseIcon data-testid="pause-icon" /> : <PlayIcon data-testid="play-icon" />}
         </Action>
         <ForwardIconWrapper onClick={handleFastForward}>
-          <img alt="" src="public/ForwardIcon.svg" />
+          <img alt="" src="ForwardIcon.svg" />
         </ForwardIconWrapper>
       </Controls>
-      {true && (
-        <ProgressBar
-          duration={duration}
-          handleProgressChange={handleProgressChange}
-          markers={markers}
-          playingTIme={playingTime}
-        />
-      )}
+
+      <ProgressBar
+        duration={duration}
+        handleProgressChange={handleProgressChange}
+        markers={markers}
+        playingTIme={playingTime}
+      />
     </Wrapper>
   ) : null
 }
