@@ -106,12 +106,6 @@ const MediaPlayerComponent = ({ mediaUrl }: Props) => {
   }, [playingTime, isSeeking, setIsSeeking])
 
   useEffect(() => {
-    if (playerRef.current && !isSeeking) {
-      playerRef.current.seekTo(playingTime, 'seconds')
-    }
-  }, [playingTime, isSeeking])
-
-  useEffect(() => {
     if (isReady && NodeStartTime && playerRef.current && !hasSeekedToStart) {
       const startTimeInSeconds = videoTimeToSeconds(NodeStartTime)
 
