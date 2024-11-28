@@ -1,11 +1,26 @@
 import { useThree } from '@react-three/fiber'
 import { Fragment, useEffect, useMemo, useState } from 'react'
+import { Vector3 } from 'three'
 import { useDataStore } from '~/stores/useDataStore'
+import { Link } from '~/types'
 import { Edge } from './Edges'
 import { Node } from './Node'
 
 const nodeWidth = 144 / 10
 const nodeHeight = 84 / 10
+
+type LinkExtended = Link & {
+  sourcePositions: {
+    x?: number
+    y?: number
+    z?: number
+  }
+  targetPositions: {
+    x?: number
+    y?: number
+    z?: number
+  }
+}
 
 export const Board = () => {
   const state = useThree()
@@ -69,68 +84,63 @@ export const Board = () => {
       })
       .filter((node) => node.node_type !== 'Clip' && node.node_type !== 'Episode' && node.node_type !== 'Show')
 
-    // 'fc9fc515-d9f8-4e28-ac4a-89597db29a2f'
-    // '2f919e76-90cd-41e2-92eb-15d8c89e1fd2'
-    // Step 2: Calculate positions for related nodes
-    const relatedNodes = nodesWithPositions.reduce((acc, marker) => {
-      const related = dataInitial.nodes
-        .filter((node) =>
-          dataInitial.links.some(
-            (edge) =>
-              node.node_type !== 'Episode' &&
-              node.node_type !== 'Clip' &&
-              ((edge.source === marker.ref_id && edge.target === node.ref_id) ||
-                (edge.target === marker.ref_id && edge.source === node.ref_id)),
-          ),
-        )
-        .map((relatedNode, index) => {
-          // Calculate positions relative to the main node
-          const { x } = marker
-          const y = (Math.floor(index / 2) + 1) * nodeHeight * 2 * (index % 2 === 0 ? 1 : -1) // Offset based on index
-          const z = 0
-
-          return { ...relatedNode, x, y, z }
-        })
-
-      acc[marker.ref_id] = related
-
-      return acc
-    }, {} as Record<string, typeof dataInitial.nodes>)
-
-    // Step 3: Calculate edge positions based on node and related node positions
-    // eslint-disable-next-line camelcase
-    const edgesWithPositions = Object.entries(relatedNodes).flatMap(([ref_id, related]) => {
-      // Gather all node ids in this group (ref_id + related nodes)
-      // eslint-disable-next-line camelcase
-      const allNodesInGroup = [ref_id, ...related.map((node) => node.ref_id)]
-
-      // Filter edges that connect nodes within this group
-      const edgesInGroup = dataInitial.links.filter(
-        (edge) => allNodesInGroup.includes(edge.source) && allNodesInGroup.includes(edge.target),
+    // Step 2 & Step 3: Calculate positions for related nodes and edges
+    const relatedNodesWithEdges = nodesWithPositions.reduce((acc, marker) => {
+      const linksRelatedToNodeWithoutTimestamp = dataInitial.links.filter(
+        (link) => !link?.properties?.start && [link.target, link.source].includes(marker.ref_id),
       )
 
-      // Map these edges to include source and target positions
-      return edgesInGroup.map((edge) => {
-        const sourceNode =
-          nodesWithPositions.find((node) => node.ref_id === edge.source) ||
-          related.find((node) => node.ref_id === edge.source)
+      const relatedNodes = dataInitial.nodes.filter(
+        (node) =>
+          node.node_type !== 'Episode' &&
+          node.node_type !== 'Clip' &&
+          node.ref_id !== marker.ref_id &&
+          linksRelatedToNodeWithoutTimestamp.some((link) => [link.source, link.target].includes(node.ref_id)),
+      )
 
-        const targetNode =
-          nodesWithPositions.find((node) => node.ref_id === edge.target) ||
-          related.find((node) => node.ref_id === edge.target)
+      const relatedNodesWithPositions = relatedNodes.map((relatedNode, index) => {
+        const { x } = marker
+        const y = (Math.floor(index / 2) + 1) * nodeHeight * 2 * (index % 2 === 0 ? 1 : -1) // Offset based on index
+        const z = 0
+
+        return { ...relatedNode, x, y, z }
+      })
+
+      const relatedLinksWithPositions = linksRelatedToNodeWithoutTimestamp.map((link) => {
+        if (link.source === marker.ref_id) {
+          const targetNode = relatedNodesWithPositions.find((node) => node.ref_id === link.target)
+
+          return {
+            ...link,
+            sourcePositions: { x: marker.x, y: marker.y, z: marker.z },
+            targetPositions: { x: targetNode?.x, y: targetNode?.y, z: targetNode?.z },
+          }
+        }
+
+        const sourceNode = relatedNodesWithPositions.find((node) => node.ref_id === link.source)
 
         return {
-          ...edge,
-          sourcePosition: sourceNode ? { x: sourceNode.x, y: sourceNode.y, z: sourceNode.z } : null,
-          targetPosition: targetNode ? { x: targetNode.x, y: targetNode.y, z: targetNode.z } : null,
+          ...link,
+          sourcePositions: { x: sourceNode?.x, y: sourceNode?.y, z: sourceNode?.z },
+          targetPositions: { x: marker.x, y: marker.y, z: marker.z },
         }
       })
-    })
+
+      acc[marker.ref_id] = {
+        nodes: relatedNodesWithPositions,
+        edges: relatedLinksWithPositions,
+      }
+
+      return acc
+    }, {} as Record<string, { nodes: typeof dataInitial.nodes; edges: LinkExtended[] }>)
+
+    // Combine all edges from relatedNodesWithEdges
+    const allEdgesWithPositions = Object.values(relatedNodesWithEdges).flatMap((group) => group.edges)
 
     return {
       nodes: nodesWithPositions,
-      edges: edgesWithPositions,
-      relatedNodes,
+      edges: allEdgesWithPositions,
+      relatedNodes: Object.fromEntries(Object.entries(relatedNodesWithEdges).map(([key, group]) => [key, group.nodes])),
     }
   }, [dataInitial, viewport.width])
 
@@ -170,21 +180,17 @@ export const Board = () => {
       ))}
 
       {/* Render Edges */}
-      {processedData.edges.map((edge, index) => {
-        if (!edge.sourcePosition || !edge.targetPosition) {
-          return null
-        }
-
-        const { sourcePosition, targetPosition } = edge
-
-        return (
-          // eslint-disable-next-line react/no-array-index-key
-          <Fragment key={`edge-${index}`}>
-            {/* Line */}
-            <Edge sourcePosition={sourcePosition} targetPosition={targetPosition} />
-          </Fragment>
-        )
-      })}
+      {processedData.edges.map((edge, index) =>
+        edge?.sourcePositions && edge?.targetPositions ? (
+          <Edge
+            // eslint-disable-next-line react/no-array-index-key
+            key={`edge-${index}`}
+            label={edge.edge_type || ''}
+            sourcePosition={new Vector3(edge.sourcePositions.x, edge.sourcePositions.y, edge.sourcePositions.z)}
+            targetPosition={new Vector3(edge.targetPositions.x, edge.targetPositions.y, edge.targetPositions.z)}
+          />
+        ) : null,
+      )}
     </>
   )
 }
