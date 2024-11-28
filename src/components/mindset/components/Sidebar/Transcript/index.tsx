@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
-import { transcript } from '~/modules/mindset/data/transcript'
+import { transcript } from '~/components/mindset/data/transcript'
 import { colors } from '~/utils'
 
 function formatTimestamp(seconds: number) {
