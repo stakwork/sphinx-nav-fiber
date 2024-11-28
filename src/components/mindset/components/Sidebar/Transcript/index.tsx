@@ -43,8 +43,6 @@ const Wrapper = styled(Flex)`
   padding: 24px;
   overflow: scroll;
   flex: 1 1 100%;
-  max-height: 324px;
-  max-width: 390px;
 `
 
 const TranscriptContainer = styled.div`
