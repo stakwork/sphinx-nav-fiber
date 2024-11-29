@@ -130,6 +130,8 @@ const MediaPlayerComponent = ({ mediaUrl }: Props) => {
     }
   }
 
+  console.log(handleProgress)
+
   const handleReady = () => {
     if (playerRef) {
       setStatus('ready')
@@ -165,7 +167,6 @@ const MediaPlayerComponent = ({ mediaUrl }: Props) => {
           onError={handleError}
           onPause={handlePause}
           onPlay={handlePlay}
-          onProgress={handleProgress}
           onReady={handleReady}
           playing={isPlaying}
           url={mediaUrl || ''}

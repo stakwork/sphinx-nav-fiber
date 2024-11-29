@@ -9,6 +9,7 @@ type Props = {
   type: string
   name: string
   left: number
+  img: string
 }
 
 type BadgeProps = {
@@ -17,16 +18,16 @@ type BadgeProps = {
   label: string
 }
 
-export const Marker = memo(({ type, name, left }: Props) => {
+export const Marker = memo(({ type, name, left, img }: Props) => {
   const [normalizedSchemasByType] = useSchemaStore((s) => [s.normalizedSchemasByType])
 
   const primaryColor = normalizedSchemasByType[type]?.primary_color
   const primaryIcon = normalizedSchemasByType[type]?.icon
 
-  const icon = primaryIcon ? `svg-icons/${primaryIcon}.svg` : null
+  const icon = primaryIcon ? `svg-icons/${primaryIcon}.svg` : 'thing_badge.svg'
 
   const badgeProps: Omit<BadgeProps, 'label'> = {
-    iconStart: icon ?? 'thing_badge.svg',
+    iconStart: img ?? icon,
     color: primaryColor ?? colors.THING,
   }
 

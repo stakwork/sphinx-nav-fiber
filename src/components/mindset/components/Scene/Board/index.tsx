@@ -1,5 +1,5 @@
 import { useThree } from '@react-three/fiber'
-import { Fragment, useEffect, useMemo, useState } from 'react'
+import { Fragment, useEffect, useMemo } from 'react'
 import { Vector3 } from 'three'
 import { useDataStore } from '~/stores/useDataStore'
 import { Link } from '~/types'
@@ -27,8 +27,6 @@ export const Board = () => {
   const { dataInitial } = useDataStore((s) => s)
   const { camera, viewport } = state
 
-  const [zoomState, setZoomState] = useState(camera.zoom)
-
   useEffect(() => {
     const orthoCamera = camera as THREE.OrthographicCamera
 
@@ -39,12 +37,10 @@ export const Board = () => {
         // Zoom the camera when ctrlKey is pressed
         orthoCamera.zoom += event.deltaY * -0.1 // Adjust zoom level
         orthoCamera.zoom = Math.max(2, Math.min(orthoCamera.zoom, 20)) // Clamp zoom
-
-        setZoomState(orthoCamera.zoom)
-      } else {
-        // Move the camera left/right when ctrlKey is NOT pressed
-        orthoCamera.position.x += event.deltaX * 0.1 // Horizontal movement
       }
+
+      // Move the camera left/right when ctrlKey is NOT pressed
+      orthoCamera.position.x += event.deltaX * 0.1 // Horizontal movement
 
       orthoCamera.updateProjectionMatrix() // Update projection matrix
     }
@@ -135,7 +131,9 @@ export const Board = () => {
     }, {} as Record<string, { nodes: typeof dataInitial.nodes; edges: LinkExtended[] }>)
 
     // Combine all edges from relatedNodesWithEdges
-    const allEdgesWithPositions = Object.values(relatedNodesWithEdges).flatMap((group) => group.edges)
+    const allEdgesWithPositions = Object.values(relatedNodesWithEdges)
+      .flatMap((group) => group.edges)
+      .filter((i) => i?.sourcePositions?.x)
 
     return {
       nodes: nodesWithPositions,
@@ -158,7 +156,6 @@ export const Board = () => {
             type={node.node_type}
             url={node?.properties?.image_url || 'logo.png'}
             width={nodeWidth}
-            zoom={zoomState}
           />
 
           {/* Render Related Nodes */}
@@ -173,7 +170,6 @@ export const Board = () => {
               type={relatedNode.node_type}
               url={relatedNode?.properties?.image_url || 'logo.png'}
               width={nodeWidth}
-              zoom={zoomState}
             />
           ))}
         </Fragment>

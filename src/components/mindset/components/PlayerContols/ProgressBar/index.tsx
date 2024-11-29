@@ -19,8 +19,9 @@ export const ProgressBar = ({ duration, markers, handleProgressChange, playingTI
       const position = ((node?.start || 0) / duration) * 100
       const type = node?.node_type || ''
       const name = node?.properties?.name || ''
+      const img = node?.properties?.image_url || ''
 
-      return <Marker key={node.ref_id} left={position} name={name} type={type} />
+      return <Marker key={node.ref_id} img={img} left={position} name={name} type={type} />
     })}
   </ProgressWrapper>
 )

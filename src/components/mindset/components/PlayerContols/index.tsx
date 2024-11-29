@@ -1,5 +1,5 @@
 import { IconButton } from '@mui/material'
-import { useCallback } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import PauseIcon from '~/components/Icons/PauseIcon'
 import PlayIcon from '~/components/Icons/PlayIcon'
@@ -14,7 +14,8 @@ type Props = {
 }
 
 export const PlayerControl = ({ markers }: Props) => {
-  const { isPlaying, setIsPlaying, playingTime, playingNode, playerRef } = usePlayerStore((s) => s)
+  const { isPlaying, setIsPlaying, playingNode, playerRef } = usePlayerStore((s) => s)
+  const [currentTime, setCurrentTime] = useState(0)
 
   const showPlayer = playingNode
 
@@ -28,6 +29,18 @@ export const PlayerControl = ({ markers }: Props) => {
     },
     [playerRef],
   )
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (playerRef && setCurrentTime) {
+        const time = playerRef.getCurrentTime()
+
+        setCurrentTime(time)
+      }
+    }, 100)
+
+    return () => clearInterval(interval)
+  }, [playerRef, setCurrentTime])
 
   const handleRewind = () => {
     if (playerRef) {
@@ -72,7 +85,7 @@ export const PlayerControl = ({ markers }: Props) => {
         duration={duration}
         handleProgressChange={handleProgressChange}
         markers={markers}
-        playingTIme={playingTime}
+        playingTIme={currentTime}
       />
     </Wrapper>
   ) : null
