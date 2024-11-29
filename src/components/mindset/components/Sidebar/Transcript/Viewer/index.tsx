@@ -59,7 +59,6 @@ export const Viewer = ({ transcriptString }: Props) => {
             <Start>
               {start}:{end}
             </Start>
-            <Text>{i.text}</Text>
             {i.words.map((word) => {
               const isActive = word.start < currentTime && currentTime < word.end
 
@@ -86,8 +85,6 @@ const Wrapper = styled.div`
 `
 
 const Start = styled.span``
-
-const Text = styled.span``
 
 const Word = styled.span`
   margin: 0 2px;
