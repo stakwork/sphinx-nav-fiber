@@ -1,5 +1,5 @@
 import { useThree } from '@react-three/fiber'
-import { Fragment, useEffect, useMemo } from 'react'
+import { Fragment, useMemo } from 'react'
 import { Vector3 } from 'three'
 import { useDataStore } from '~/stores/useDataStore'
 import { Link } from '~/types'
@@ -25,34 +25,7 @@ type LinkExtended = Link & {
 export const Board = () => {
   const state = useThree()
   const { dataInitial } = useDataStore((s) => s)
-  const { camera, viewport } = state
-
-  useEffect(() => {
-    const orthoCamera = camera as THREE.OrthographicCamera
-
-    const handleWheel = (event: WheelEvent) => {
-      event.preventDefault() // Prevent default scrolling behavior
-
-      if (event.ctrlKey) {
-        // Zoom the camera when ctrlKey is pressed
-        orthoCamera.zoom += event.deltaY * -0.1 // Adjust zoom level
-        orthoCamera.zoom = Math.max(2, Math.min(orthoCamera.zoom, 20)) // Clamp zoom
-      }
-
-      // Move the camera left/right when ctrlKey is NOT pressed
-      orthoCamera.position.x += event.deltaX * 0.1 // Horizontal movement
-
-      orthoCamera.updateProjectionMatrix() // Update projection matrix
-    }
-
-    // Add the event listener
-    window.addEventListener('wheel', handleWheel, { passive: false })
-
-    return () => {
-      // Cleanup event listener
-      window.removeEventListener('wheel', handleWheel)
-    }
-  }, [camera])
+  const { viewport } = state
 
   const processedData = useMemo(() => {
     if (!dataInitial) {

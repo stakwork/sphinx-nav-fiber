@@ -6,6 +6,7 @@ import { useMindsetStore } from '~/stores/useMindsetStore'
 import { usePlayerStore } from '~/stores/usePlayerStore'
 import { NodeExtended } from '~/types'
 import { colors } from '~/utils'
+import { Viewer } from './Viewer'
 
 export const Transcript = () => {
   const { selectedEpisodeId } = useMindsetStore((s) => s)
@@ -45,7 +46,8 @@ export const Transcript = () => {
           // Multiply playingTime by 1000 to match millisecond format
           return (
             <TranscriptWrapper key={clip.ref_id} direction="row">
-              {clip?.properties?.text && <span>{clip?.properties?.text}</span>}
+              {!clip.properties?.transcript && clip?.properties?.text && <span>{clip?.properties?.text}</span>}
+              {clip.properties?.transcript && <Viewer transcriptString={clip.properties?.transcript} />}
             </TranscriptWrapper>
           )
         }
