@@ -149,7 +149,15 @@ export type NodeExtended = Node & {
   latitude?: number
   coordinates?: Coordinates
   audio?: Audio[]
-  properties?: { [key: string]: never | undefined }
+  properties?: {
+    date?: number
+    episode_title?: string
+    image_url?: string
+    media_url?: string
+    pubkey?: string
+    source_link?: string
+    status?: string
+  }
 }
 
 export type Link<T = string> = {
