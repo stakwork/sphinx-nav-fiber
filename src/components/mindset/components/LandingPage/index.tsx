@@ -10,9 +10,8 @@ import { NodeExtended, SubmitErrRes } from '~/types'
 import { colors } from '~/utils/colors'
 import { ChevronRight } from '../Icon/ChevronRight'
 import { isValidMediaUrl } from './utils'
-import ReactPlayer from 'react-player'
 import { getAboutData, getNode } from '~/network/fetchSourcesData'
-import { Avatar } from '~/components/common/Avatar'
+import { VideoCard } from '../VideoCard'
 
 export type FormData = {
   input: string
@@ -21,12 +20,6 @@ export type FormData = {
   longitude: string
   latitude: string
 }
-
-const Media = ({ mediaLink }: { mediaLink: string }) => (
-  <PlayerWrapper>
-    <ReactPlayer controls height="121px" url={`${mediaLink}`} width="173px" />
-  </PlayerWrapper>
-)
 
 const handleSubmitForm = async (data: FieldValues): Promise<SubmitErrRes> => {
   const endPoint = 'add_node'
@@ -136,15 +129,13 @@ export const LandingPage = () => {
       {requestError && <div>{requestError}</div>}
       <SeedQuestionsWrapper>
         {nodeData.map((node) => (
-          <SeedQuestion key={node?.properties?.episode_title}>
-            {node?.properties?.source_link && <Media mediaLink={node?.properties?.source_link} />}
-            {!node?.properties?.source_link && node?.properties?.image_url && (
-              <Cover>
-                <Avatar size={120} src={node?.properties?.image_url || ''} type="clip" />
-              </Cover>
-            )}
-            {node?.properties?.episode_title && <EpisodeTitle>{node?.properties?.episode_title}</EpisodeTitle>}
-          </SeedQuestion>
+          <VideoCard
+            key={node?.properties?.episode_title}
+            imageUrl={node?.properties?.image_url || ''}
+            onClick={() => console.log(`Clicked on: ${node?.properties?.episode_title}`)}
+            subtitle="Subtitle Will Be Here"
+            title={node?.properties?.episode_title || 'Untitled'}
+          />
         ))}
       </SeedQuestionsWrapper>
     </Wrapper>
@@ -225,56 +216,9 @@ const IconWrapper = styled.div<{ error?: boolean }>`
 const SeedQuestionsWrapper = styled.div`
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 16px;
   margin-top: 20px;
   max-width: 648px;
   height: 237px;
-`
-
-const SeedQuestion = styled.div`
-  background: ${colors.BG1};
-  width: 205px;
-  height: 200px;
-  color: ${colors.white};
-  padding: 16px;
-  border-radius: 8px;
-  cursor: pointer;
-  display: flex;
-  align-items: start;
-  flex-direction: column;
-  text-align: left;
-  &:hover {
-    background: ${colors.SEEDQUESTION_HOVER};
-  }
-
-  &:active {
-    background: ${colors.SEEDQUESTION};
-  }
-  svg {
-    width: 20px;
-    height: 20px;
-  }
-
-  path {
-    fill: ${colors.modalWhiteOverlayBg};
-  }
-`
-
-const PlayerWrapper = styled.div`
-  width: 100%;
-  cursor: pointer;
-`
-
-const EpisodeTitle = styled.p`
-  font-family: Inter;
-  font-weight: 500;
-  font-size: 16px;
-`
-
-const Cover = styled(Flex)`
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
 `
