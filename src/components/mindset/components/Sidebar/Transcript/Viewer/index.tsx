@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { usePlayerStore } from '~/stores/usePlayerStore'
 import { colors } from '~/utils'
+import { secondsToMediaTime } from '~/utils/secondsToMediaTime'
 
 type Props = {
   transcriptString: string
@@ -51,11 +52,11 @@ export const Viewer = ({ transcriptString }: Props) => {
   return (
     <Wrapper>
       {transcriptData.map((i) => {
-        const start = i.start.toFixed(2)
-        const end = i.end.toFixed(2)
+        const start = secondsToMediaTime(i.start)
+        const end = secondsToMediaTime(i.end)
 
         return (
-          <Paragraph key={i.id}>
+          <Paragraph key={i.start}>
             <Start>
               {start}:{end}
             </Start>
@@ -82,6 +83,9 @@ const Paragraph = styled.div`
 
 const Wrapper = styled.div`
   width: 100%;
+  height: 100%;
+  overflow: scroll;
+  padding-right: 4px;
 `
 
 const Start = styled.span``

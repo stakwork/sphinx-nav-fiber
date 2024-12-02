@@ -1,11 +1,13 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { FieldValues } from 'react-hook-form'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { NODE_ADD_ERROR } from '~/constants'
 import { api } from '~/network/api'
+import { getSchemaAll } from '~/network/fetchSourcesData'
 import { useDataStore } from '~/stores/useDataStore'
 import { useMindsetStore } from '~/stores/useMindsetStore'
+import { useSchemaStore } from '~/stores/useSchemaStore'
 import { SubmitErrRes } from '~/types'
 import { colors } from '~/utils/colors'
 import { ChevronRight } from '../Icon/ChevronRight'
@@ -44,6 +46,21 @@ export const LandingPage = () => {
   const [requestError, setRequestError] = useState<string>('')
   const { setRunningProjectId } = useDataStore((s) => s)
   const { setSelectedEpisodeId, setSelectedEpisodeLink } = useMindsetStore((s) => s)
+  const { setSchemas } = useSchemaStore((s) => s)
+
+  useEffect(() => {
+    const fetchSchemaData = async () => {
+      try {
+        const response = await getSchemaAll()
+
+        setSchemas(response.schemas.filter((schema) => !schema.is_deleted))
+      } catch (err) {
+        console.error('Error fetching schema:', err)
+      }
+    }
+
+    fetchSchemaData()
+  }, [setSchemas])
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target
