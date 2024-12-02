@@ -1,13 +1,11 @@
 import { memo } from 'react'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
-import { Tooltip } from '~/components/common/ToolTip'
 import { useSchemaStore } from '~/stores/useSchemaStore'
 import { colors } from '~/utils/colors'
 
 type Props = {
   type: string
-  name: string
   left: number
   img: string
 }
@@ -18,24 +16,22 @@ type BadgeProps = {
   label: string
 }
 
-export const Marker = memo(({ type, name, left, img }: Props) => {
+export const Marker = memo(({ type, left, img }: Props) => {
   const [normalizedSchemasByType] = useSchemaStore((s) => [s.normalizedSchemasByType])
 
   const primaryColor = normalizedSchemasByType[type]?.primary_color
   const primaryIcon = normalizedSchemasByType[type]?.icon
 
-  const icon = primaryIcon ? `svg-icons/${primaryIcon}.svg` : 'thing_badge.svg'
+  const icon = primaryIcon ? `svg-icons/${primaryIcon}.svg` : ''
 
   const badgeProps: Omit<BadgeProps, 'label'> = {
-    iconStart: img ?? icon,
+    iconStart: img || icon,
     color: primaryColor ?? colors.THING,
   }
 
   return (
     <MarkerWrapper style={{ left: `${left}%` }}>
-      <Tooltip content={`${name || type}`}>
-        <Badge {...badgeProps} label={type} />
-      </Tooltip>
+      <Badge {...badgeProps} label={type} />
     </MarkerWrapper>
   )
 })
@@ -44,7 +40,7 @@ Marker.displayName = 'Marker'
 
 const Badge = ({ iconStart, color, label }: BadgeProps) => (
   <EpisodeWrapper color={color}>
-    <img alt={label} className="badge__img" src={iconStart} />
+    {iconStart && <img alt={label} className="badge__img" src={iconStart} />}
   </EpisodeWrapper>
 )
 
@@ -57,7 +53,6 @@ const EpisodeWrapper = styled(Flex).attrs({
   overflow: hidden;
   justify-content: center;
   align-items: center;
-  padding: 0 4px;
 
   .badge__img {
     width: 10px;
@@ -68,12 +63,12 @@ const EpisodeWrapper = styled(Flex).attrs({
 
 const MarkerWrapper = styled.div`
   position: absolute;
-  top: -4px; /* Adjust as needed to center above the progress bar */
-  width: 8px;
-  height: 8px;
+  top: -6px;
+  width: 12px;
+  height: 12px;
+  border-radius: 4px;
   background-color: ${colors.white};
-  border-radius: 50%;
-  transform: translateX(-50%); /* Center the marker horizontally */
+  transform: translateX(-50%);
   transform: translateX(-50%) translateY(-50%);
   top: 50%;
   display: flex;

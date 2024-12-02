@@ -12,26 +12,29 @@ type Props = {
   handleProgressChange: (_: Event, value: number | number[]) => void
 }
 
-export const ProgressBar = ({ duration, markers, handleProgressChange, playingTIme }: Props) => (
-  <ProgressWrapper>
-    <ProgressSlider max={duration} onChange={handleProgressChange} value={playingTIme} />
-    {markers.map((node) => {
-      const position = ((node?.start || 0) / duration) * 100
-      const type = node?.node_type || ''
-      const name = node?.properties?.name || ''
-      const img = node?.properties?.image_url || ''
+export const ProgressBar = ({ duration, markers, handleProgressChange, playingTIme }: Props) => {
+  const thumbWidth = (10 / duration) * 100
 
-      return <Marker key={node.ref_id} img={img} left={position} name={name} type={type} />
-    })}
-  </ProgressWrapper>
-)
+  return (
+    <ProgressWrapper>
+      <ProgressSlider max={duration} onChange={handleProgressChange} thumbWidth={thumbWidth} value={playingTIme} />
+      {markers.map((node) => {
+        const position = ((node?.start || 0) / duration) * 100
+        const type = node?.node_type || ''
+        const img = node?.properties?.image_url || ''
+
+        return <Marker key={node.ref_id} img={img} left={position} type={type} />
+      })}
+    </ProgressWrapper>
+  )
+}
 
 const ProgressWrapper = styled(Flex)`
   position: relative;
   flex: 1 1 100%;
 `
 
-const ProgressSlider = styled(Slider)`
+const ProgressSlider = styled(Slider)<{ thumbWidth: number }>`
   && {
     z-index: 20;
     color: ${colors.white};
@@ -42,9 +45,11 @@ const ProgressSlider = styled(Slider)`
       border: none;
     }
     .MuiSlider-thumb {
-      width: 10px;
-      height: 10px;
-      background-color: ${colors.white};
+      width: ${({ thumbWidth }) => `${thumbWidth}%`};
+      height: 54px;
+      border-radius: 8px;
+      background-color: ${colors.primaryBlue};
+      opacity: 0.2;
       &:before {
         box-shadow: '0 4px 8px rgba(0,0,0,0.4)';
       }
