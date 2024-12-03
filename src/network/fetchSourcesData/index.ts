@@ -10,6 +10,7 @@ import {
   SubmitErrRes,
 } from '~/types'
 import { api } from '../api'
+import { ApiResponse } from '~/components/mindset/components/LandingPage'
 
 type TradarParams = {
   skip?: string
@@ -177,6 +178,14 @@ export interface UpdateSchemaParams {
   attributes: {
     [key: string | number]: string
   }
+}
+
+export const getNodes = async (): Promise<ApiResponse> => {
+  const url = `/prediction/graph/search?node_type=['Episode']&&include_properties=true&&includecontent=true`
+
+  const response = await api.get<ApiResponse>(url)
+
+  return response
 }
 
 export const editNodeSchemaUpdate = async (ref_id: string, data: UpdateSchemaParams) => {

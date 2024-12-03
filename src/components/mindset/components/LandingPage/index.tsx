@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { NODE_ADD_ERROR } from '~/constants'
 import { api } from '~/network/api'
-import { getSchemaAll } from '~/network/fetchSourcesData'
+import { getNodes, getSchemaAll } from '~/network/fetchSourcesData'
 import { useDataStore } from '~/stores/useDataStore'
 import { useMindsetStore } from '~/stores/useMindsetStore'
 import { useSchemaStore } from '~/stores/useSchemaStore'
@@ -12,6 +12,7 @@ import { SubmitErrRes } from '~/types'
 import { colors } from '~/utils/colors'
 import { ChevronRight } from '../Icon/ChevronRight'
 import { isValidMediaUrl } from './utils'
+import { VideoCard } from '../VideoCard'
 
 export type FormData = {
   input: string
@@ -19,6 +20,26 @@ export type FormData = {
   source: string
   longitude: string
   latitude: string
+}
+
+interface EpisodeProperties {
+  date: number
+  episode_title: string
+  image_url: string
+  media_url: string
+  pubkey: string
+  source_link: string
+  status: string
+}
+
+interface Node {
+  node_type: string
+  properties?: EpisodeProperties
+}
+
+export interface ApiResponse {
+  edges: never[]
+  nodes: Node[]
 }
 
 const handleSubmitForm = async (data: FieldValues): Promise<SubmitErrRes> => {
@@ -44,13 +65,27 @@ export const LandingPage = () => {
   const [inputValue, setInputValue] = useState('')
   const [error, setError] = useState(false)
   const [requestError, setRequestError] = useState<string>('')
+  const [episodes, setEpisodes] = useState<EpisodeProperties[]>([])
   const { setRunningProjectId } = useDataStore((s) => s)
   const { setSelectedEpisodeId, setSelectedEpisodeLink } = useMindsetStore((s) => s)
   const { setSchemas } = useSchemaStore((s) => s)
 
+  const filterAndSortEpisodes = (data: ApiResponse): EpisodeProperties[] =>
+    data.nodes
+      .filter((node) => node.node_type.toLowerCase() === 'episode' && node.properties?.date)
+      .map((node) => node.properties!)
+      .sort((a, b) => b.date - a.date)
+      .slice(0, 3)
+
   useEffect(() => {
     const fetchSchemaData = async () => {
       try {
+        const res: ApiResponse = await getNodes()
+
+        const topEpisodes = filterAndSortEpisodes(res)
+
+        setEpisodes(topEpisodes)
+
         const response = await getSchemaAll()
 
         setSchemas(response.schemas.filter((schema) => !schema.is_deleted))
@@ -69,10 +104,12 @@ export const LandingPage = () => {
     setError(value !== '' && !isValidMediaUrl(value))
   }
 
-  const handleSubmit = async () => {
-    if (isValidMediaUrl(inputValue)) {
+  const handleSubmit = async (url?: string) => {
+    const source = url || inputValue
+
+    if (isValidMediaUrl(source)) {
       try {
-        const res = await handleSubmitForm({ source: inputValue })
+        const res = await handleSubmitForm({ source })
 
         if (res.data.project_id) {
           setRunningProjectId(res.data.project_id)
@@ -80,7 +117,7 @@ export const LandingPage = () => {
 
         if (res.data.ref_id) {
           setSelectedEpisodeId(res.data.ref_id)
-          setSelectedEpisodeLink(inputValue)
+          setSelectedEpisodeLink(source)
         }
 
         // eslint-disable-next-line  @typescript-eslint/no-explicit-any
@@ -94,7 +131,7 @@ export const LandingPage = () => {
 
           if (res.data.ref_id) {
             setSelectedEpisodeId(res.data.ref_id)
-            setSelectedEpisodeLink(inputValue)
+            setSelectedEpisodeLink(source)
           }
         } else if (err instanceof Error) {
           errorMessage = err.message
@@ -116,11 +153,22 @@ export const LandingPage = () => {
           placeholder="Paste podcast or video link"
           value={inputValue}
         />
-        <IconWrapper error={error} onClick={!error ? handleSubmit : undefined}>
+        <IconWrapper error={error} onClick={!error ? () => handleSubmit() : undefined}>
           <ChevronRight />
         </IconWrapper>
       </InputWrapper>
       {requestError && <div>{requestError}</div>}
+      <SeedQuestionsWrapper>
+        {episodes.map((episode) => (
+          <VideoCard
+            key={episode?.episode_title}
+            imageUrl={(episode?.image_url as string) || ''}
+            onClick={() => handleSubmit(episode?.source_link)}
+            subtitle="Subtitle for episode seed"
+            title={(episode?.episode_title as string) || ''}
+          />
+        ))}
+      </SeedQuestionsWrapper>
     </Wrapper>
   )
 }
@@ -154,7 +202,7 @@ const Title = styled(Flex)`
 
 const Input = styled.input<{ error?: boolean }>`
   width: 100%;
-  max-width: 450px;
+  max-width: 648px;
   padding: 12px 28px 12px 16px;
   border-radius: 100px;
   border: 1px solid ${(props) => (props.error ? 'red' : colors.DIVIDER_4)};
@@ -162,11 +210,9 @@ const Input = styled.input<{ error?: boolean }>`
   color: ${colors.white};
   font-family: Barlow;
   font-size: 16px;
-
   &::placeholder {
     color: ${colors.INPUT_PLACEHOLDER};
   }
-
   &:focus {
     outline: none;
     border-color: ${(props) => (props.error ? 'red' : colors.primaryBlue)};
@@ -175,7 +221,7 @@ const Input = styled.input<{ error?: boolean }>`
 
 const InputWrapper = styled.div`
   position: relative;
-  width: 450px;
+  width: 648px;
   display: flex;
   align-items: center;
 `
@@ -188,10 +234,19 @@ const IconWrapper = styled.div<{ error?: boolean }>`
   color: ${colors.white};
   font-size: 20px;
   cursor: ${(props) => (props.error ? 'not-allowed' : 'pointer')};
-
   svg {
     width: 8px;
     height: 17px;
     color: ${colors.GRAY6};
   }
+`
+
+const SeedQuestionsWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 20px;
+  max-width: 648px;
+  height: 237px;
 `
