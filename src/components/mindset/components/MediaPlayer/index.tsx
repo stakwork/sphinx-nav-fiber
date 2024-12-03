@@ -116,21 +116,17 @@ const MediaPlayerComponent = ({ mediaUrl }: Props) => {
     if (!isSeeking) {
       const currentTime = progress.playedSeconds
 
-      setPlayingTime(currentTime)
-
-      return
-
       const edge = findCurrentEdge(edges, currentTime)
 
       if (edge) {
         setActiveEdge(edge)
+      } else {
+        setActiveEdge(null)
       }
 
       // find playing link and set it to state
     }
   }
-
-  console.log(handleProgress)
 
   const handleReady = () => {
     if (playerRef) {
@@ -167,6 +163,7 @@ const MediaPlayerComponent = ({ mediaUrl }: Props) => {
           onError={handleError}
           onPause={handlePause}
           onPlay={handlePlay}
+          onProgress={handleProgress}
           onReady={handleReady}
           playing={isPlaying}
           url={mediaUrl || ''}
