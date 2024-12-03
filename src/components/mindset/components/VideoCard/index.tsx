@@ -9,53 +9,51 @@ interface VideoCardProps {
   onClick: () => void
 }
 
-export const VideoCard = ({ imageUrl, title, subtitle, onClick }: VideoCardProps) => (
-  <CardWrapper onClick={onClick}>
-    <ImageWrapper>
-      <CardImage alt={title} src={imageUrl} />
-    </ImageWrapper>
-    <TextWrapper>
-      <CardTitle>{title}</CardTitle>
-      <CardSubtitle>{subtitle}</CardSubtitle>
-    </TextWrapper>
-  </CardWrapper>
-)
+export const VideoCard = ({ imageUrl, title, subtitle, onClick }: VideoCardProps) => {
+  const truncatedTitle = title.length > 35 ? `${title.substring(0, 32)}...` : title
+  const truncatedSubtitle = subtitle.length > 50 ? `${subtitle.substring(0, 47)}...` : subtitle
+
+  return (
+    <CardWrapper onClick={onClick}>
+      <ImageWrapper>
+        <CardImage alt={title} src={imageUrl} />
+      </ImageWrapper>
+      <TextWrapper>
+        <CardTitle>{truncatedTitle}</CardTitle>
+        <CardSubtitle>{truncatedSubtitle}</CardSubtitle>
+      </TextWrapper>
+    </CardWrapper>
+  )
+}
 
 const CardWrapper = styled(Flex)`
   background: ${colors.BG1};
-  width: 26%;
+  width: 170px;
   height: 200px;
   color: ${colors.white};
   padding: 16px;
   border-radius: 8px;
   cursor: pointer;
   display: flex;
-  align-items: start;
   flex-direction: column;
-  text-align: left;
+  align-items: center;
   &:hover {
     background: ${colors.SEEDQUESTION_HOVER};
   }
-
   &:active {
     background: ${colors.SEEDQUESTION};
-  }
-  svg {
-    width: 20px;
-    height: 20px;
-  }
-
-  path {
-    fill: ${colors.modalWhiteOverlayBg};
   }
 `
 
 const ImageWrapper = styled.div`
   width: 100%;
-  height: 150px;
+  height: 140px; /* Fixed height for images */
   border-radius: 6px;
   overflow: hidden;
   margin-bottom: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `
 
 const CardImage = styled.img`
@@ -67,23 +65,29 @@ const CardImage = styled.img`
 const TextWrapper = styled(Flex)`
   flex-direction: column;
   justify-content: flex-start;
-  gap: 4px;
+  gap: 8px;
 `
 
 const CardTitle = styled.p`
   font-family: Inter;
   font-size: 16px;
   font-weight: 500;
-  line-height: 19.36px;
+  line-height: 19px;
   color: ${colors.white};
   margin: 0;
+  white-space: wrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `
 
 const CardSubtitle = styled.p`
-  font-family: 'Inter';
+  font-family: Inter;
   font-size: 14px;
   font-weight: 400;
+  line-height: 17px;
   color: ${colors.GRAY6};
-  line-height: 16.94px;
   margin: 0;
+  white-space: wrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `
