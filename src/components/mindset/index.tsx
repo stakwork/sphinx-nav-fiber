@@ -8,7 +8,7 @@ import { getNode } from '~/network/fetchSourcesData'
 import { useDataStore } from '~/stores/useDataStore'
 import { useMindsetStore } from '~/stores/useMindsetStore'
 import { usePlayerStore } from '~/stores/usePlayerStore'
-import { FetchDataResponse, NodeExtended } from '~/types'
+import { FetchDataResponse, Link, Node, NodeExtended } from '~/types'
 import { Header } from './components/Header'
 import { LandingPage } from './components/LandingPage'
 import { PlayerControl } from './components/PlayerContols'
@@ -16,10 +16,14 @@ import { Scene } from './components/Scene'
 import { SideBar } from './components/Sidebar'
 
 export const MindSet = () => {
-  const { addNewNode, isFetching, runningProjectId, dataInitial } = useDataStore((s) => s)
-  const [showTwoD, setShowTwoD] = useState(true)
+  const { addNewNode, isFetching, runningProjectId } = useDataStore((s) => s)
+  const [dataInitial, setDataInitial] = useState<FetchDataResponse | null>(null)
+  const [showTwoD, setShowTwoD] = useState(false)
   const { selectedEpisodeId, setSelectedEpisode } = useMindsetStore((s) => s)
   const socket: Socket | undefined = useSocket()
+  const requestRef = useRef<number | null>(null)
+  const previousTimeRef = useRef<number | null>(null)
+  const nodesAndEdgesRef = useRef<FetchDataResponse | null>(null)
 
   const queueRef = useRef<FetchDataResponse | null>(null)
   const timerRef = useRef<NodeJS.Timeout | null>(null)
@@ -72,9 +76,42 @@ export const MindSet = () => {
       try {
         const data = await fetchNodeEdges(selectedEpisodeId, 0, 50)
 
-        if (data) {
-          handleNewNodeCreated(data)
+        setDataInitial(data)
+
+        const [episodesAndClips, remainingNodes] = (data?.nodes || []).reduce<[Node[], Node[]]>(
+          ([matches, remaining], node) => {
+            if (['Episode', 'Show'].includes(node.node_type)) {
+              matches.push(node)
+            } else {
+              remaining.push(node)
+            }
+
+            return [matches, remaining]
+          },
+          [[], []],
+        )
+
+        const refIds = new Set(episodesAndClips.map((n) => n.ref_id))
+
+        const [matchingLinks, remainingLinks] = (data?.edges || []).reduce<[Link[], Link[]]>(
+          ([matches, remaining], link) => {
+            if (refIds.has(link.source) && refIds.has(link.target)) {
+              matches.push(link)
+            } else {
+              remaining.push(link)
+            }
+
+            return [matches, remaining]
+          },
+          [[], []],
+        )
+
+        nodesAndEdgesRef.current = {
+          nodes: remainingNodes || [],
+          edges: remainingLinks || [],
         }
+
+        handleNewNodeCreated({ nodes: episodesAndClips, edges: matchingLinks })
       } catch (error) {
         console.error(error)
       }
@@ -112,8 +149,10 @@ export const MindSet = () => {
         console.error('Socket connection error:', error)
       })
 
-      socket.on('new_node_created', handleNewNodeCreated)
-      socket.on('node_updated', handleNodeUpdated)
+      if (runningProjectId) {
+        socket.on('new_node_created', handleNewNodeCreated)
+        socket.on('node_updated', handleNodeUpdated)
+      }
     }
 
     return () => {
@@ -121,7 +160,50 @@ export const MindSet = () => {
         socket.off()
       }
     }
-  }, [socket, handleNodeUpdated, handleNewNodeCreated])
+  }, [socket, handleNodeUpdated, handleNewNodeCreated, runningProjectId])
+
+  useEffect(() => {
+    const update = (time: number) => {
+      const { playerRef } = usePlayerStore.getState()
+
+      if (previousTimeRef.current !== null) {
+        const deltaTime = time - previousTimeRef.current
+
+        if (deltaTime > 2000) {
+          if (nodesAndEdgesRef.current && playerRef) {
+            const { nodes, edges } = nodesAndEdgesRef.current
+            const currentTime = playerRef?.getCurrentTime()
+
+            const edgesWithTimestamp = edges.filter(
+              (edge) => edge?.properties?.start !== undefined && (edge?.properties?.start as number) < currentTime,
+            )
+
+            const newNodes = nodes.filter((node) =>
+              edgesWithTimestamp.some((edge) => edge.target === node.ref_id || edge.source === node.ref_id),
+            )
+
+            if (newNodes.length || edgesWithTimestamp.length) {
+              addNewNode({ nodes: newNodes, edges: edgesWithTimestamp })
+            }
+          }
+
+          previousTimeRef.current = time
+        }
+      } else {
+        previousTimeRef.current = time
+      }
+
+      requestRef.current = requestAnimationFrame(update)
+    }
+
+    requestRef.current = requestAnimationFrame(update)
+
+    return () => {
+      if (requestRef.current) {
+        cancelAnimationFrame(requestRef.current)
+      }
+    }
+  }, [nodesAndEdgesRef, addNewNode])
 
   useEffect(() => {
     if (runningProjectId) {
@@ -135,12 +217,12 @@ export const MindSet = () => {
 
   const markers = useMemo(() => {
     if (dataInitial) {
-      const edgesMention: Array<{ source: string; target: string; start: number }> = dataInitial.links
+      const edgesMention: Array<{ source: string; target: string; start: number }> = dataInitial.edges
         .filter((e) => e?.properties?.start)
         .map((edge) => ({ source: edge.source, target: edge.target, start: edge.properties?.start as number }))
 
       const nodesWithTimestamps = dataInitial.nodes
-        .filter((node) => dataInitial.links.some((ed) => ed.source === node.ref_id || ed.target === node.ref_id))
+        .filter((node) => dataInitial.edges.some((ed) => ed.source === node.ref_id || ed.target === node.ref_id))
         .map((node) => {
           const edge = edgesMention.find((ed) => node.ref_id === ed.source || node.ref_id === ed.target)
 

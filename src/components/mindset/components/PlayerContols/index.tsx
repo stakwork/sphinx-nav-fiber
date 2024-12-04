@@ -37,7 +37,7 @@ export const PlayerControl = ({ markers }: Props) => {
 
         setCurrentTime(time)
       }
-    }, 100)
+    }, 500)
 
     return () => clearInterval(interval)
   }, [playerRef, setCurrentTime])

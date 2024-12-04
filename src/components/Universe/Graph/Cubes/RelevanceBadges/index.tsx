@@ -77,7 +77,7 @@ const NodeBadge = ({ position, userData, color }: BadgeProps) => {
             <div className="badge-wrapper">
               <TypeBadge type={userData?.node_type || ''} />
             </div>
-            {truncateText(userData?.name, 20)}
+            {userData?.name ? <span>{truncateText(userData?.name, 20)}</span> : null}
           </TagWrapper>
         ) : (
           <Tag

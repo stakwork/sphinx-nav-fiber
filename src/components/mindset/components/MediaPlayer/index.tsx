@@ -131,7 +131,6 @@ const MediaPlayerComponent = ({ mediaUrl }: Props) => {
   const handleReady = () => {
     if (playerRef) {
       setStatus('ready')
-      togglePlay()
     }
   }
 
@@ -156,7 +155,6 @@ const MediaPlayerComponent = ({ mediaUrl }: Props) => {
       <PlayerWrapper isFullScreen={false} onClick={handlePlayerClick}>
         <ReactPlayer
           ref={playerRefCallback}
-          controls
           height="219px"
           onBuffer={() => setStatus('buffering')}
           onBufferEnd={() => setStatus('ready')}
