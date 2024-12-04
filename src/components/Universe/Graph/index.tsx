@@ -82,8 +82,10 @@ export const Graph = () => {
 
         const sphereRadius = Math.min(5000, boundingSphere.radius)
 
-        setGraphRadius(sphereRadius)
-        cameraSettled.current = true
+        if (false) {
+          setGraphRadius(sphereRadius)
+          cameraSettled.current = true
+        }
       }
 
       if (groupRef.current) {

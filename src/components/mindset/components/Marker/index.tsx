@@ -38,11 +38,13 @@ export const Marker = memo(({ type, left, img }: Props) => {
 
 Marker.displayName = 'Marker'
 
-const Badge = ({ iconStart, color, label }: BadgeProps) => (
+const Badge = memo(({ iconStart, color, label }: BadgeProps) => (
   <EpisodeWrapper color={color}>
     {iconStart && <img alt={label} className="badge__img" src={iconStart} />}
   </EpisodeWrapper>
-)
+))
+
+Badge.displayName = 'Badge'
 
 const EpisodeWrapper = styled(Flex).attrs({
   direction: 'row',

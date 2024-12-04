@@ -13,11 +13,11 @@ type Props = {
 }
 
 export const ProgressBar = ({ duration, markers, handleProgressChange, playingTIme }: Props) => {
-  const thumbWidth = (10 / duration) * 100
+  const width = (10 / duration) * 100
 
   return (
     <ProgressWrapper>
-      <ProgressSlider max={duration} onChange={handleProgressChange} thumbWidth={thumbWidth} value={playingTIme} />
+      <ProgressSlider max={duration} onChange={handleProgressChange} value={playingTIme} width={width} />
       {markers.map((node) => {
         const position = ((node?.start || 0) / duration) * 100
         const type = node?.node_type || ''
@@ -34,7 +34,7 @@ const ProgressWrapper = styled(Flex)`
   flex: 1 1 100%;
 `
 
-const ProgressSlider = styled(Slider)<{ thumbWidth: number }>`
+const ProgressSlider = styled(Slider)<{ width: number }>`
   && {
     z-index: 20;
     color: ${colors.white};
@@ -45,7 +45,7 @@ const ProgressSlider = styled(Slider)<{ thumbWidth: number }>`
       border: none;
     }
     .MuiSlider-thumb {
-      width: ${({ thumbWidth }) => `${thumbWidth}%`};
+      width: ${({ width }) => `${width}%`};
       height: 54px;
       border-radius: 8px;
       background-color: ${colors.primaryBlue};

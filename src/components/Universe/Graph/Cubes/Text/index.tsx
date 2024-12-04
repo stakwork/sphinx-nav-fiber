@@ -1,6 +1,7 @@
 import { Billboard, Plane, Svg, Text } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
-import { memo, useRef } from 'react'
+import gsap from 'gsap'
+import { memo, useEffect, useRef } from 'react'
 import { Mesh, MeshBasicMaterial, Vector3 } from 'three'
 import { Icons } from '~/components/Icons'
 import { useNodeTypes } from '~/stores/useDataStore'
@@ -119,6 +120,25 @@ export const TextNode = memo(({ node, hide, ignoreDistance }: Props) => {
     checkDistance()
   })
 
+  useEffect(() => {
+    if (!ringRef.current) {
+      return
+    }
+
+    gsap.fromTo(
+      ringRef.current.scale, // Target
+      { x: 1, y: 1, z: 1 }, // From values
+      {
+        x: 6,
+        y: 6,
+        z: 6, // To values
+        duration: 1.5, // Animation duration
+        yoyo: true,
+        repeat: 1,
+      },
+    )
+  }, [ringRef])
+
   const nodeTypes = useNodeTypes()
 
   const primaryColor = normalizedSchemasByType[node.node_type]?.primary_color
@@ -143,7 +163,7 @@ export const TextNode = memo(({ node, hide, ignoreDistance }: Props) => {
           <meshBasicMaterial color={color} opacity={0.5} transparent />
         </mesh>
 
-        {node.properties?.image_url && node.node_type === 'Person' && texture ? (
+        {node.properties?.image_url && ['Person', 'Episode'].includes(node.node_type) && texture ? (
           <Plane args={[10 * 2, 10 * 2]} scale={2}>
             <shaderMaterial
               fragmentShader={`
