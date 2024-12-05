@@ -45,31 +45,29 @@ export const Transcript = () => {
     return () => clearInterval(interval)
   }, [playerRef, setCurrentTime])
 
-  return (
-    currentTime && (
-      <Wrapper>
-        <Flex className="heading">Transcript</Flex>
-        {clips.map((clip) => {
-          const timestamp: string | undefined = clip?.properties?.timestamp
+  return currentTime ? (
+    <Wrapper>
+      <Flex className="heading">Transcript</Flex>
+      {clips.map((clip) => {
+        const timestamp: string | undefined = clip?.properties?.timestamp
 
-          const [start, end] = timestamp
-            ? (timestamp as string).split('-').map(Number) // Directly convert to numbers
-            : [0, 0]
+        const [start, end] = timestamp
+          ? (timestamp as string).split('-').map(Number) // Directly convert to numbers
+          : [0, 0]
 
-          if (start <= currentTime * 1000 && currentTime * 1000 < end) {
-            // Multiply playingTime by 1000 to match millisecond format
-            return (
-              <TranscriptWrapper key={clip.ref_id} direction="row">
-                {clip.properties?.transcript && <Viewer transcriptString={clip.properties?.transcript} />}
-              </TranscriptWrapper>
-            )
-          }
+        if (start <= currentTime * 1000 && currentTime * 1000 < end) {
+          // Multiply playingTime by 1000 to match millisecond format
+          return (
+            <TranscriptWrapper key={clip.ref_id} direction="row">
+              {clip.properties?.transcript && <Viewer transcriptString={clip.properties?.transcript} />}
+            </TranscriptWrapper>
+          )
+        }
 
-          return null
-        })}
-      </Wrapper>
-    )
-  )
+        return null
+      })}
+    </Wrapper>
+  ) : null
 }
 
 const Wrapper = styled(Flex)`
