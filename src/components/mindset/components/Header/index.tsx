@@ -22,6 +22,7 @@ const Head = styled(Flex).attrs({
   justify: 'flex-start',
 })`
   height: 64px;
+  box-sizing: border-box;
   padding: 20px 23px;
   gap: 0px;
   z-index: 50;

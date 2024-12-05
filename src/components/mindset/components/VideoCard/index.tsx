@@ -69,7 +69,6 @@ const TextWrapper = styled(Flex)`
 `
 
 const CardTitle = styled.p`
-  font-family: Inter;
   font-size: 16px;
   font-weight: 500;
   line-height: 19px;

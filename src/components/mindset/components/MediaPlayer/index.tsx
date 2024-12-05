@@ -89,13 +89,13 @@ const MediaPlayerComponent = ({ mediaUrl }: Props) => {
     setIsPlaying(!isPlaying)
   }
 
-  const handlePlay = () => {
+  const handlePlay = useCallback(() => {
     setIsPlaying(true)
-  }
+  }, [setIsPlaying])
 
-  const handlePause = () => {
+  const handlePause = useCallback(() => {
     setIsPlaying(false)
-  }
+  }, [setIsPlaying])
 
   const handleError = () => {
     setHasError(true)
@@ -123,8 +123,6 @@ const MediaPlayerComponent = ({ mediaUrl }: Props) => {
       } else {
         setActiveEdge(null)
       }
-
-      // find playing link and set it to state
     }
   }
 

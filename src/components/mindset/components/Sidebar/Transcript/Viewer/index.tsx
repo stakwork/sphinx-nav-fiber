@@ -1,10 +1,8 @@
-import clsx from 'clsx'
 import { useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
-import { Flex } from '~/components/common/Flex'
 import { usePlayerStore } from '~/stores/usePlayerStore'
-import { colors } from '~/utils'
 import { secondsToMediaTime } from '~/utils/secondsToMediaTime'
+import { Paragraph } from './Paragraph'
 
 type Props = {
   transcriptString: string
@@ -101,49 +99,19 @@ export const Viewer = ({ transcriptString }: Props) => {
           <Paragraph
             key={`${i.start}-${i.end}`}
             ref={isActive ? activeRef : null}
-            className={clsx({ active: isActive })}
-          >
-            <Start>{start}</Start>
-            <Words>
-              <span>{i.text}</span>
-            </Words>
-          </Paragraph>
+            active={isActive}
+            start={start}
+            text={i.text}
+          />
         )
       })}
     </Wrapper>
   )
 }
 
-const Paragraph = styled(Flex)`
-  flex-direction: row;
-  align-items: flex-start;
-  font-size: 14px;
-  padding: 8px 24px;
-  &.active {
-    background: ${colors.AI_HIGHLIGHT};
-  }
-`
-
 const Wrapper = styled.div`
   width: 100%;
   height: 100%;
   overflow: scroll;
   padding-right: 4px;
-`
-
-const Start = styled.span`
-  background: ${colors.lightBlue100};
-  color: ${colors.lightBlue500};
-  padding: 2px;
-  margin-right: 8px;
-  border-radius: 4px;
-`
-
-const Words = styled.div`
-  margin: 0 2px;
-  word-break: break-word;
-
-  &.active {
-    background: ${colors.AI_HIGHLIGHT};
-  }
 `

@@ -8,11 +8,11 @@ import { getNodes, getSchemaAll } from '~/network/fetchSourcesData'
 import { useDataStore } from '~/stores/useDataStore'
 import { useMindsetStore } from '~/stores/useMindsetStore'
 import { useSchemaStore } from '~/stores/useSchemaStore'
-import { SubmitErrRes } from '~/types'
+import { FetchDataResponse, Node, SubmitErrRes } from '~/types'
 import { colors } from '~/utils/colors'
 import { ChevronRight } from '../Icon/ChevronRight'
-import { isValidMediaUrl } from './utils'
 import { VideoCard } from '../VideoCard'
+import { isValidMediaUrl } from './utils'
 
 export type FormData = {
   input: string
@@ -20,26 +20,6 @@ export type FormData = {
   source: string
   longitude: string
   latitude: string
-}
-
-interface EpisodeProperties {
-  date: number
-  episode_title: string
-  image_url: string
-  media_url: string
-  pubkey: string
-  source_link: string
-  status: string
-}
-
-interface Node {
-  node_type: string
-  properties?: EpisodeProperties
-}
-
-export interface ApiResponse {
-  edges: never[]
-  nodes: Node[]
 }
 
 const handleSubmitForm = async (data: FieldValues): Promise<SubmitErrRes> => {
@@ -65,22 +45,18 @@ export const LandingPage = () => {
   const [inputValue, setInputValue] = useState('')
   const [error, setError] = useState(false)
   const [requestError, setRequestError] = useState<string>('')
-  const [episodes, setEpisodes] = useState<EpisodeProperties[]>([])
+  const [episodes, setEpisodes] = useState<Node[]>([])
   const { setRunningProjectId } = useDataStore((s) => s)
   const { setSelectedEpisodeId, setSelectedEpisodeLink } = useMindsetStore((s) => s)
   const { setSchemas } = useSchemaStore((s) => s)
 
-  const filterAndSortEpisodes = (data: ApiResponse): EpisodeProperties[] =>
-    data.nodes
-      .filter((node) => node.node_type.toLowerCase() === 'episode' && node.properties?.date)
-      .map((node) => node.properties!)
-      .sort((a, b) => b.date - a.date)
-      .slice(0, 3)
+  const filterAndSortEpisodes = (data: FetchDataResponse): Node[] =>
+    data.nodes.filter((node) => node.node_type.toLowerCase() === 'episode' && node.properties?.date).slice(0, 3)
 
   useEffect(() => {
     const fetchSchemaData = async () => {
       try {
-        const res: ApiResponse = await getNodes()
+        const res: FetchDataResponse = await getNodes()
 
         const topEpisodes = filterAndSortEpisodes(res)
 
@@ -161,11 +137,11 @@ export const LandingPage = () => {
       <SeedQuestionsWrapper>
         {episodes.map((episode) => (
           <VideoCard
-            key={episode?.episode_title}
-            imageUrl={(episode?.image_url as string) || ''}
-            onClick={() => handleSubmit(episode?.source_link)}
-            subtitle="Subtitle for episode seed"
-            title={(episode?.episode_title as string) || ''}
+            key={episode?.ref_id}
+            imageUrl={episode?.properties?.image_url || ''}
+            onClick={() => handleSubmit(episode?.properties?.source_link)}
+            subtitle=""
+            title={episode?.properties?.episode_title || ''}
           />
         ))}
       </SeedQuestionsWrapper>

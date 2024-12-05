@@ -77,7 +77,7 @@ export const TextNode = memo(({ node, hide, ignoreDistance }: Props) => {
 
   const { texture } = useTexture(node.properties?.image_url || '')
 
-  const { normalizedSchemasByType } = useSchemaStore((s) => s)
+  const { normalizedSchemasByType, getNodeKeysByType } = useSchemaStore((s) => s)
 
   useFrame(({ camera, clock }) => {
     const { selectedNode, hoveredNode, activeEdge } = useGraphStore.getState()
@@ -148,7 +148,10 @@ export const TextNode = memo(({ node, hide, ignoreDistance }: Props) => {
 
   const Icon = primaryIcon ? Icons[primaryIcon] : null
   const iconName = Icon ? primaryIcon : 'NodesIcon'
-  const sanitizedNodeName = removeEmojis(String(node?.properties?.name || ''))
+  const keyProperty = getNodeKeysByType(node.node_type) || ''
+
+  const sanitizedNodeName =
+    keyProperty && node?.properties ? removeEmojis(String(node?.properties[keyProperty] || '')) : ''
 
   const uniforms = {
     u_texture: { value: texture },
