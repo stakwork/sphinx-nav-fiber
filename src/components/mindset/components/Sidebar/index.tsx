@@ -24,7 +24,7 @@ export const SideBar = () => {
 const Wrapper = styled(Flex)(({ theme }) => ({
   position: 'relative',
   display: 'flex',
-  padding: '20px',
+  padding: '33px 20px 20px 20px',
   background: 'transparent',
   width: '100%',
 
@@ -45,16 +45,15 @@ const Summary = styled(Text)`
 `
 
 const EpisodeTitle = styled(Text)`
-  margin-top: 20px;
   font-size: 14px;
   font-weight: 700;
   line-height: 16.94px;
+  margin-bottom: 12px;
 `
 
 const MediaWrapper = styled(Flex)(({ theme }) => ({
   width: '100%',
-  margin: '16px auto',
-  zIndex: 29,
+  margin: '0 auto 16px',
   [theme.breakpoints.up('sm')]: {
     width: '390px',
   },

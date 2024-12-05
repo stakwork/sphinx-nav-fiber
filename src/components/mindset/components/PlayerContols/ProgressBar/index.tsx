@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { NodeExtended } from '~/types'
 import { colors } from '~/utils'
-import { Marker } from '../../Marker'
+import { Markers } from './Markers'
 
 type Props = {
   duration: number
@@ -18,13 +18,7 @@ export const ProgressBar = ({ duration, markers, handleProgressChange, playingTI
   return (
     <ProgressWrapper>
       <ProgressSlider max={duration} onChange={handleProgressChange} value={playingTIme} width={width} />
-      {markers.map((node) => {
-        const position = ((node?.start || 0) / duration) * 100
-        const type = node?.node_type || ''
-        const img = node?.properties?.image_url || ''
-
-        return <Marker key={node.ref_id} img={img} left={position} type={type} />
-      })}
+      <Markers duration={duration} markers={markers} />
     </ProgressWrapper>
   )
 }

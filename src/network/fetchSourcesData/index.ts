@@ -1,5 +1,6 @@
 import { SchemaExtended } from '~/components/ModalsContainer/BlueprintModal/types'
 import {
+  FetchDataResponse,
   FetchEdgesResponse,
   FetchEdgeTypesResponse,
   FetchRadarResponse,
@@ -10,7 +11,6 @@ import {
   SubmitErrRes,
 } from '~/types'
 import { api } from '../api'
-import { ApiResponse } from '~/components/mindset/components/LandingPage'
 
 type TradarParams = {
   skip?: string
@@ -180,10 +180,10 @@ export interface UpdateSchemaParams {
   }
 }
 
-export const getNodes = async (): Promise<ApiResponse> => {
-  const url = `/prediction/graph/search?node_type=['Episode']&&include_properties=true&&includecontent=true`
+export const getNodes = async (): Promise<FetchDataResponse> => {
+  const url = `/prediction/graph/search?node_type=['Episode']&include_properties=true&includeContent=true&sort_by=date`
 
-  const response = await api.get<ApiResponse>(url)
+  const response = await api.get<FetchDataResponse>(url)
 
   return response
 }

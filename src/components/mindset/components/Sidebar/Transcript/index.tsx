@@ -45,7 +45,7 @@ export const Transcript = () => {
     return () => clearInterval(interval)
   }, [playerRef, setCurrentTime])
 
-  return (
+  return currentTime ? (
     <Wrapper>
       <Flex className="heading">Transcript</Flex>
       {clips.map((clip) => {
@@ -59,7 +59,6 @@ export const Transcript = () => {
           // Multiply playingTime by 1000 to match millisecond format
           return (
             <TranscriptWrapper key={clip.ref_id} direction="row">
-              {!clip.properties?.transcript && clip?.properties?.text && <span>{clip?.properties?.text}</span>}
               {clip.properties?.transcript && <Viewer transcriptString={clip.properties?.transcript} />}
             </TranscriptWrapper>
           )
@@ -68,7 +67,7 @@ export const Transcript = () => {
         return null
       })}
     </Wrapper>
-  )
+  ) : null
 }
 
 const Wrapper = styled(Flex)`
