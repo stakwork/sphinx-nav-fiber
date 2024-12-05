@@ -122,6 +122,7 @@ export const Board = () => {
         <Fragment key={node.ref_id}>
           <Node
             color="#353A46"
+            description={node?.properties?.description}
             height={nodeHeight}
             name={node?.properties?.name || ''}
             onButtonClick={console.log}
@@ -136,6 +137,7 @@ export const Board = () => {
             <Node
               key={`${relatedNode.ref_id}-${node.ref_id}`}
               color="#353A46"
+              description={relatedNode?.properties?.description}
               height={nodeHeight}
               name={relatedNode?.properties?.name || ''}
               onButtonClick={console.log}
