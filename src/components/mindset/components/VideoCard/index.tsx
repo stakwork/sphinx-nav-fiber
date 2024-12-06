@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { Avatar } from '~/components/common/Avatar'
 import { Flex } from '~/components/common/Flex'
 import { colors } from '~/utils/colors'
 
@@ -16,7 +17,7 @@ export const VideoCard = ({ imageUrl, title, subtitle, onClick }: VideoCardProps
   return (
     <CardWrapper onClick={onClick}>
       <ImageWrapper>
-        <CardImage alt={title} src={imageUrl} />
+        <Avatar height={140} src={imageUrl} type="Episode" width={170} />
       </ImageWrapper>
       <TextWrapper>
         <CardTitle>{truncatedTitle}</CardTitle>
@@ -54,12 +55,6 @@ const ImageWrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-`
-
-const CardImage = styled.img`
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
 `
 
 const TextWrapper = styled(Flex)`

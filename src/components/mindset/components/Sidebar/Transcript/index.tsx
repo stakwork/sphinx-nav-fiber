@@ -8,7 +8,11 @@ import { NodeExtended } from '~/types'
 import { colors } from '~/utils'
 import { Viewer } from './Viewer'
 
-export const Transcript = () => {
+type Props = {
+  name: string
+}
+
+export const Transcript = ({ name }: Props) => {
   const { selectedEpisodeId } = useMindsetStore((s) => s)
   const { playerRef } = usePlayerStore((s) => s)
   const [currentTime, setCurrentTime] = useState(0)
@@ -47,7 +51,7 @@ export const Transcript = () => {
 
   return (
     <Wrapper>
-      <Flex className="heading">Transcript</Flex>
+      <Flex className="heading">{name}</Flex>
       {clips.map((clip) => {
         const timestamp: string | undefined = clip?.properties?.timestamp
 
