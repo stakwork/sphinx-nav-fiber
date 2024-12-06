@@ -54,7 +54,7 @@ export const PlayerControl = () => {
 
   const showPlayer = (sidebarIsOpen && selectedNode?.ref_id !== playingNode?.ref_id) || (playingNode && !sidebarIsOpen)
 
-  const isMindset = window.location?.hostname === 'graphmindset.sphinx.chat'
+  const isMindset = window.location?.hostname === 'graphmindset.sphinx.chat' || window.location.hostname === 'localhost'
 
   return miniPlayerIsVisible && playingNode && showPlayer && !isMindset ? (
     <Wrapper onClick={openNodeDetails}>

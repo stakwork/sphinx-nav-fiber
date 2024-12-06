@@ -1,6 +1,6 @@
 import { Line } from '@react-three/drei'
 import gsap from 'gsap'
-import { forwardRef, memo, useEffect } from 'react'
+import { memo, useEffect, useRef } from 'react'
 import { Vector3 } from 'three'
 import { Line2 } from 'three-stdlib'
 import { LinkPosition } from '..'
@@ -12,31 +12,33 @@ type LineComponentProps = {
 }
 
 // eslint-disable-next-line no-underscore-dangle
-const _LineComponent = forwardRef<Line2, LineComponentProps>(({ isSelected, position }, ref) => {
+const _LineComponent = ({ isSelected, position }: LineComponentProps) => {
+  const lineRef = useRef<Line2 | null>(null)
+
   useEffect(() => {
-    if (ref && (ref as React.MutableRefObject<Line2 | null>).current) {
-      const line = (ref as React.MutableRefObject<Line2>).current
+    if (lineRef.current) {
+      const line = lineRef.current
 
       gsap.fromTo(
         line.material,
-        { linewidth: LINE_WIDTH * 5 },
+        { linewidth: LINE_WIDTH * 15 },
         {
           linewidth: LINE_WIDTH,
           duration: 1,
         },
       )
     }
-  }, [isSelected, ref])
+  }, [isSelected, lineRef])
 
   return (
     <Line
-      ref={ref}
+      ref={lineRef}
       isLine2
       opacity={0.5}
       points={[new Vector3(position.sx, position.sy, position.sz), new Vector3(position.tx, position.ty, position.tz)]}
     />
   )
-})
+}
 
 _LineComponent.displayName = 'LineComponent'
 
