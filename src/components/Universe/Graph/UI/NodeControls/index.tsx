@@ -16,6 +16,7 @@ import PlusIcon from '~/components/Icons/PlusIcon'
 import RobotIcon from '~/components/Icons/RobotIcon'
 import { getActionDetails } from '~/network/actions'
 import { fetchNodeEdges } from '~/network/fetchGraphData'
+import { analyzeGitHubRepository } from '~/network/fetchSourcesData'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
 import { useGraphStore, useSelectedNode } from '~/stores/useGraphStore'
@@ -43,7 +44,7 @@ export const NodeControls = memo(() => {
   // const { open: createBountyModal } = useModal('createBounty')
 
   const [isAdmin] = useUserStore((s) => [s.isAdmin])
-  const [addNewNode] = useDataStore((s) => [s.addNewNode])
+  const { addNewNode, setGraph } = useDataStore((s) => s)
 
   const selectedNode = useSelectedNode()
 
@@ -192,10 +193,18 @@ export const NodeControls = memo(() => {
     setAnchorEl(null)
   }
 
-  const handleNodeAction = (action: ActionDetail) => {
-    setSelectedActionDetail(action)
-    openNodeAction()
-    handleClose()
+  const handleAnalyzeTestCoverage = async (githubName: string) => {
+    try {
+      const res = await analyzeGitHubRepository(githubName)
+
+      if (res) {
+        setSelectedNode(null)
+
+        setGraph({ nodes: res.functions })
+      }
+    } catch (error) {
+      console.error('Error during test coverage analysis:', error)
+    }
   }
 
   const open = Boolean(anchorEl)
@@ -294,13 +303,17 @@ export const NodeControls = memo(() => {
               <PopoverOption
                 data-testid="generate_tests"
                 onClick={() => {
+                  if (selectedNode?.name) {
+                    handleAnalyzeTestCoverage(selectedNode.name)
+                  }
+
                   handleClose()
                 }}
               >
                 <IconWrapper>
                   <AddCircleIcon data-testid="AddCircleIcon" />
                 </IconWrapper>
-                Generate Tests
+                Analyze Test Coverage
               </PopoverOption>
               <PopoverOption
                 data-testid="add_comments"

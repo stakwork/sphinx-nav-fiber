@@ -91,6 +91,7 @@ export type DataStore = {
   abortFetchData: () => void
   resetGraph: () => void
   resetData: () => void
+  setGraph: (graph: { nodes: NodeExtended[] }) => void
 }
 
 const defaultData: Omit<
@@ -122,6 +123,7 @@ const defaultData: Omit<
   | 'abortFetchData'
   | 'resetGraph'
   | 'resetData'
+  | 'setGraph'
 > = {
   categoryFilter: null,
   dataInitial: null,
@@ -335,6 +337,26 @@ export const useDataStore = create<DataStore>()(
         nodeTypes: [],
         nodesNormalized: new Map<string, NodeExtended>(),
         linksNormalized: new Map<string, Link>(),
+      })
+    },
+
+    setGraph: (data: { nodes: NodeExtended[] }) => {
+      const uniqueNodes = deduplicateByRefId(data.nodes)
+
+      const nodeTypes = [...new Set(uniqueNodes.map((node) => node.node_type))]
+      const sidebarFilters = ['all', ...nodeTypes.map((type) => type.toLowerCase())]
+
+      const sidebarFilterCounts = sidebarFilters.map((filter) => ({
+        name: filter,
+        count: uniqueNodes.filter((node) => filter === 'all' || node.node_type?.toLowerCase() === filter).length,
+      }))
+
+      set({
+        dataInitial: { nodes: uniqueNodes, links: [] },
+        dataNew: { nodes: uniqueNodes, links: [] },
+        nodeTypes,
+        sidebarFilters,
+        sidebarFilterCounts,
       })
     },
 
