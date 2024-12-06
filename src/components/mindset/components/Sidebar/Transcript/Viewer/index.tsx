@@ -90,21 +90,27 @@ export const Viewer = ({ transcriptString }: Props) => {
 
   return (
     <Wrapper ref={wrapperRef}>
-      {transcriptData.map((i) => {
-        const start = secondsToMediaTime(i.start)
+      {transcriptData[0].start > currentTime ? (
+        <Paragraph active={false} start={secondsToMediaTime(transcriptData[0].start)} text={transcriptData[0].text} />
+      ) : (
+        <>
+          {transcriptData.map((i) => {
+            const start = secondsToMediaTime(i.start)
 
-        const isActive = i.start < currentTime && currentTime < i.end
+            const isActive = i.start < currentTime && currentTime < i.end
 
-        return (
-          <Paragraph
-            key={`${i.start}-${i.end}`}
-            ref={isActive ? activeRef : null}
-            active={isActive}
-            start={start}
-            text={i.text}
-          />
-        )
-      })}
+            return i.start <= currentTime + 5 ? (
+              <Paragraph
+                key={`${i.start}-${i.end}`}
+                ref={isActive ? activeRef : null}
+                active={isActive}
+                start={start}
+                text={i.text}
+              />
+            ) : null
+          })}
+        </>
+      )}
     </Wrapper>
   )
 }

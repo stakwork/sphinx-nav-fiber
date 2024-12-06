@@ -45,7 +45,7 @@ export const Transcript = () => {
     return () => clearInterval(interval)
   }, [playerRef, setCurrentTime])
 
-  return currentTime ? (
+  return (
     <Wrapper>
       <Flex className="heading">Transcript</Flex>
       {clips.map((clip) => {
@@ -67,7 +67,7 @@ export const Transcript = () => {
         return null
       })}
     </Wrapper>
-  ) : null
+  )
 }
 
 const Wrapper = styled(Flex)`
