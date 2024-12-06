@@ -224,6 +224,8 @@ export const getTotalProcessing = async () => {
   const url = `/node/content`
   const response = await api.get<ProcessingResponse>(url)
 
+  console.log(response)
+
   return response
 }
 
