@@ -52,7 +52,7 @@ export const useSchemaStore = create<SchemasStore>()(
     getNodeKeysByType: (type: string) => {
       const schema = get().normalizedSchemasByType[type]
 
-      return schema ? schema.node_key : undefined
+      return schema ? schema.index || schema.node_key : undefined
     },
     getSchemaByType: (type: string) => get().normalizedSchemasByType[type],
   })),

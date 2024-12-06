@@ -3,7 +3,7 @@ import { Guests, NodeExtended } from '~/types'
 
 export const variableVector3 = new Vector3(0, 0, 0)
 
-export const LINE_WIDTH = 0.5
+export const LINE_WIDTH = 1
 
 export const outlineEffectColor = 0xffffff
 

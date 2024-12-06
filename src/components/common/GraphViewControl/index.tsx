@@ -31,7 +31,7 @@ export const GraphViewControl = () => {
     setGraphStyle(val)
   }
 
-  return (
+  return false ? (
     <Wrapper direction="column">
       {graphStyles.map((i) => (
         <Flex key={i} className={clsx('icon', { active: graphStyle === i })} onClick={() => changeGraphType(i)}>
@@ -39,7 +39,7 @@ export const GraphViewControl = () => {
         </Flex>
       ))}
     </Wrapper>
-  )
+  ) : null
 }
 
 const Wrapper = styled(Flex).attrs({

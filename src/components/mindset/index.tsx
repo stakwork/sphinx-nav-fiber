@@ -80,7 +80,7 @@ export const MindSet = () => {
 
         const [episodesAndClips, remainingNodes] = (data?.nodes || []).reduce<[Node[], Node[]]>(
           ([matches, remaining], node) => {
-            if (['Episode', 'Show'].includes(node.node_type)) {
+            if (['Episode', 'Show', 'Host', 'Guest'].includes(node.node_type)) {
               matches.push(node)
             } else {
               remaining.push(node)

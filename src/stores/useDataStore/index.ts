@@ -21,8 +21,6 @@ const deduplicateByRefId = (items: Array<NodeExtended | Link>) => {
 
 export type GraphStyle = 'sphere' | 'force' | 'split' | 'earth'
 
-export const graphStyles: GraphStyle[] = ['sphere', 'force', 'split', 'earth']
-
 export type FetchNodeParams = {
   word?: string
   skip_cache?: string
