@@ -187,9 +187,9 @@ type GithubRepositoryResponse = {
 export const analyzeGitHubRepository = async (github_repository: string): Promise<GithubRepositoryResponse> => {
   const url = `/github/analyze?github_repository=${github_repository}&analysis=["coverage"]`
 
-  const response = await api.get<GithubRepositoryResponse>(url)
+  const res = await api.get<GithubRepositoryResponse>(url)
 
-  return response
+  return res
 }
 
 export const getNodes = async (): Promise<FetchDataResponse> => {
