@@ -166,7 +166,7 @@ export const TextNode = memo(({ node, hide, ignoreDistance }: Props) => {
           <meshBasicMaterial color={color} opacity={0.5} transparent />
         </mesh>
 
-        {node.properties?.image_url && ['Person', 'Episode'].includes(node.node_type) && texture ? (
+        {node.properties?.image_url && ['Person', 'Episode', 'Guest', 'Host'].includes(node.node_type) && texture ? (
           <Plane args={[10 * 2, 10 * 2]} scale={2}>
             <shaderMaterial
               fragmentShader={`
