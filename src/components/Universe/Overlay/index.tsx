@@ -59,6 +59,7 @@ const OverlayWrap = styled('div')(({ theme }) => ({
   height: '100%',
   width: '100%',
   padding: '16px',
+  paddingRight: '0',
   overflow: 'hidden',
   [theme.breakpoints.down('sm')]: {
     top: 50,

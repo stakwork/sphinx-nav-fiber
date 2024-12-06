@@ -123,7 +123,7 @@ const defaultData: Omit<
   disableCameraRotation: false,
   scrollEventsDisabled: false,
   graphRadius: 1500, // calculated from initial load
-  graphStyle: (localStorage.getItem('graphStyle') as GraphStyle) || 'sphere',
+  graphStyle: 'sphere',
   hoveredNode: null,
   selectedNode: null,
   activeEdge: null,
@@ -144,7 +144,7 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
   setDisableCameraRotation: (rotation) => set({ disableCameraRotation: rotation }),
   setIsHovering: (isHovering) => set({ isHovering }),
   setGraphRadius: (graphRadius) => set({ graphRadius }),
-  setGraphStyle: (graphStyle) => set({ graphStyle }),
+  setGraphStyle: (graphStyle) => set({ graphStyle: 'sphere' || graphStyle }),
   setHoveredNode: (hoveredNode) => {
     set({ hoveredNode })
   },
