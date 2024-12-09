@@ -64,7 +64,7 @@ const Wrapper = styled(Flex).attrs({
   height: 54px;
   background: ${colors.BG1};
   border-radius: 40px;
-  margin-right: 54px;
+  margin-right: 30px;
   color: ${colors.white};
   font-size: 20px;
   padding: 12px;

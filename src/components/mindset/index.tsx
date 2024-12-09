@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Socket } from 'socket.io-client'
+import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { Universe } from '~/components/Universe'
 import { useSocket } from '~/hooks/useSockets'
@@ -248,13 +249,13 @@ export const MindSet = () => {
             </Flex>
             <SideBar />
           </Flex>
-          <Flex basis="100%" grow={1} p={16} shrink={1}>
+          <ContentContainer>
             <Flex basis="100%" grow={1} shrink={1}>
               {showTwoD ? <Scene /> : <Universe />}
             </Flex>
 
             <PlayerControl markers={markers} />
-          </Flex>
+          </ContentContainer>
         </>
       ) : (
         <LandingPage />
@@ -262,3 +263,10 @@ export const MindSet = () => {
     </Flex>
   )
 }
+
+const ContentContainer = styled(Flex)`
+  flex-basis: 100%;
+  flex-shrink: 1;
+  flex-grow: 1;
+  padding: 16px 16px 16px 0;
+`

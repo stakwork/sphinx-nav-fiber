@@ -25,13 +25,15 @@ const Wrapper = styled(Flex)(({ theme }) => ({
 
   [theme.breakpoints.up('sm')]: {
     width: MENU_WIDTH,
+    gap: '10px',
   },
 }))
 
 const MediaWrapper = styled(Flex)(({ theme }) => ({
   width: '100%',
-  margin: '0 auto 16px',
+  marginBottom: '20px',
   [theme.breakpoints.up('sm')]: {
     width: '390px',
+    margin: '0 auto',
   },
 }))
