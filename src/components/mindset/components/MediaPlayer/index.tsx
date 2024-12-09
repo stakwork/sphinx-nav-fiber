@@ -85,9 +85,9 @@ const MediaPlayerComponent = ({ mediaUrl }: Props) => {
     }
   }, [playingTime, isSeeking, setIsSeeking, playerRef])
 
-  const togglePlay = () => {
+  const togglePlay = useCallback(() => {
     setIsPlaying(!isPlaying)
-  }
+  }, [isPlaying, setIsPlaying])
 
   const handlePlay = useCallback(() => {
     setIsPlaying(true)
@@ -101,6 +101,24 @@ const MediaPlayerComponent = ({ mediaUrl }: Props) => {
     setHasError(true)
     setStatus('error')
   }
+
+  const handleKeyDown = useCallback(
+    (event: KeyboardEvent) => {
+      if (event.code === 'Space') {
+        event.preventDefault()
+        togglePlay()
+      }
+    },
+    [togglePlay],
+  )
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown)
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [handleKeyDown])
 
   const edges = useMemo(() => {
     const edgesFiltered = dataInitial?.links.filter((link) => link?.properties?.start) || []
