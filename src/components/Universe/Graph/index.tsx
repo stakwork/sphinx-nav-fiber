@@ -10,6 +10,7 @@ import { Connections } from './Connections'
 import { Cubes } from './Cubes'
 import { Earth } from './Earth'
 import { LoadingNodes } from './LoadingNodes'
+import { Particles } from './Particles/index'
 import { NodeDetailsPanel } from './UI'
 
 export type LinkPosition = {
@@ -176,7 +177,16 @@ export const Graph = () => {
     })
 
     simulation.on('end', () => {
-      const nodesVector = simulation.nodes().map((i: NodeExtended) => new Vector3(i.x, i.y, i.z))
+      const nodesVector = simulation.nodes().map((i: NodeExtended) => {
+        // eslint-disable-next-line no-param-reassign
+        i.fx = i.x
+        // eslint-disable-next-line no-param-reassign
+        i.fy = i.y
+        // eslint-disable-next-line no-param-reassign
+        i.fz = i.z
+
+        return new Vector3(i.x, i.y, i.z)
+      })
 
       const boundingBox = new Box3().setFromPoints(nodesVector)
 
@@ -200,6 +210,7 @@ export const Graph = () => {
     <group ref={groupRef}>
       <Cubes />
       {graphStyle === 'earth' && <Earth />}
+      <Particles />
 
       {(isLoadingNew || isFetching) && <LoadingNodes />}
 

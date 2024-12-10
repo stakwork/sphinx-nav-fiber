@@ -28,7 +28,16 @@ export const Connections = memo(({ linksPosition }: Props) => {
           tz: 0,
         }
 
-        return <LineComponent key={l.ref_id} isSelected={isSelected} label={l.edge_type} position={position} />
+        return (
+          <LineComponent
+            key={l.ref_id}
+            isSelected={isSelected}
+            label={l.edge_type}
+            position={position}
+            source={l.source}
+            target={l.target}
+          />
+        )
       })}
     </group>
   )

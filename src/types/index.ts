@@ -143,6 +143,9 @@ export type NodeExtended = Node & {
   x?: number
   y?: number
   z?: number
+  fx?: number
+  fy?: number
+  fz?: number
   start?: number
   end?: number
   longitude?: number
