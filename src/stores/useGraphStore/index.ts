@@ -176,14 +176,16 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
   setShowSelectionGraph: (showSelectionGraph) => set({ showSelectionGraph }),
   simulationHelpers: {
     addNodesAndLinks: (newNodes, newLinks, replace) => {
-      const structuredNodes = structuredClone(newNodes)
-      const structuredLinks = structuredClone(newLinks)
-
       const { simulation, simulationHelpers } = get()
 
       simulation.stop()
 
-      const nodes = replace ? [] : simulation.nodes().map((n: NodeExtended) => ({ ...n, fx: n.x, fy: n.y, fz: n.z }))
+      const structuredNodes = structuredClone(newNodes)
+      const structuredLinks = structuredClone(newLinks)
+
+      simulation.stop()
+
+      const nodes = replace ? [] : simulation.nodes()
       const links = replace ? [] : simulation.force('link').links()
 
       nodes.push(...structuredNodes)
@@ -192,21 +194,7 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
       try {
         simulation.nodes(nodes)
 
-        const filteredLinks = links.filter((link: Link<NodeExtended | string>) => {
-          const { target, source } = link
-          const simulationNodes = simulation.nodes()
-
-          // Log the target and source ref_id for debugging
-          const targetRefId = (target as NodeExtended)?.ref_id || target
-          const sourceRefId = (source as NodeExtended)?.ref_id || source
-
-          return (
-            simulationNodes.some((n: NodeExtended) => n.ref_id === targetRefId) &&
-            simulationNodes.some((n: NodeExtended) => n.ref_id === sourceRefId)
-          )
-        })
-
-        simulation.force('link').links([]).links(filteredLinks)
+        simulation.force('link').links([]).links(links)
 
         simulationHelpers.simulationRestart()
       } catch (error) {
