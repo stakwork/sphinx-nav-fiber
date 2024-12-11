@@ -139,8 +139,7 @@ export const TextNode = memo(
             <meshBasicMaterial color={nodeColor} opacity={0.5} transparent />
           </mesh>
 
-          {node.properties?.image_url &&
-          texture ? (
+          {node.properties?.image_url && texture ? (
             <Plane args={[10 * 2, 10 * 2]} scale={2}>
               <shaderMaterial
                 fragmentShader={`
