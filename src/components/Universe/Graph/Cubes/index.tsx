@@ -142,22 +142,20 @@ export const Cubes = memo(() => {
     >
       <RelevanceBadges />
       <group name="simulation-3d-group__nodes" visible={!hideUniverse}>
-        {data?.nodes.map((node: NodeExtended) => {
+        {data?.nodes.map((node: NodeExtended, index) => {
           const hide = !!selectedNode && (relativeIds.includes(node.ref_id) || selectedNode.ref_id === node.ref_id)
           const color = COLORS_MAP[nodeTypes.indexOf(node.node_type)] || colors.white
 
           return (
-            <mesh key={node.ref_id} name="wr2" scale={node.scale || 1} userData={node}>
-              <boxGeometry args={[40, 40, 40]} />
-              <meshStandardMaterial opacity={0} transparent />
-              <TextNode
-                key={node.ref_id}
-                color={color}
-                hide={hideUniverse || hide}
-                ignoreDistance={false}
-                node={node}
-              />
-            </mesh>
+            <TextNode
+              key={node.ref_id}
+              color={color}
+              hide={hideUniverse || hide}
+              ignoreDistance={false}
+              index={index}
+              node={node}
+              scale={node.scale || 1}
+            />
           )
         })}
       </group>
