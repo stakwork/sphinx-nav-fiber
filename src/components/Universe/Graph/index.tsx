@@ -10,7 +10,6 @@ import { Connections } from './Connections'
 import { Cubes } from './Cubes'
 import { Earth } from './Earth'
 import { LoadingNodes } from './LoadingNodes'
-import { Particles } from './Particles/index'
 import { NodeDetailsPanel } from './UI'
 
 export type LinkPosition = {
@@ -187,7 +186,6 @@ export const Graph = () => {
     <group ref={groupRef}>
       <Cubes />
       {graphStyle === 'earth' && <Earth />}
-      <Particles />
 
       {(isLoadingNew || isFetching) && <LoadingNodes />}
 
