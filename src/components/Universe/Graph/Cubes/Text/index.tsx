@@ -140,7 +140,6 @@ export const TextNode = memo(
           </mesh>
 
           {node.properties?.image_url &&
-          ['Person', 'Episode', 'Guest', 'Host', 'Show'].includes(node.node_type) &&
           texture ? (
             <Plane args={[10 * 2, 10 * 2]} scale={2}>
               <shaderMaterial
