@@ -19,7 +19,7 @@ export type FilterParams = {
   sort_by: string
   top_node_count: string
   include_properties: string
-  node_type: string[] | string
+  node_type: string[]
   edge_type: string[] | string
   search_method: string
   free?: string
