@@ -4,13 +4,13 @@ import { memo, useCallback, useRef } from 'react'
 import { Object3D } from 'three'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore, useNodeTypes } from '~/stores/useDataStore'
-import { useGraphStore, useHoveredNode, useSelectedNode, useSelectedNodeRelativeIds } from '~/stores/useGraphStore'
+import { useGraphStore, useHoveredNode, useSelectedNode } from '~/stores/useGraphStore'
 import { NodeExtended } from '~/types'
 import { colors } from '~/utils'
 import { NodePoints } from './NodePoints'
+import { NodeWrapper } from './NodeWrapper'
 import { RelevanceBadges } from './RelevanceBadges'
 import { SelectionDataNodes } from './SelectionDataNodes'
-import { TextNode } from './Text'
 
 const POINTER_IN_DELAY = 200
 
@@ -48,7 +48,6 @@ export const Cubes = memo(() => {
   const selectedNode = useSelectedNode()
   const hoveredNode = useHoveredNode()
 
-  const relativeIds = useSelectedNodeRelativeIds()
   const { selectionGraphData, showSelectionGraph, setHoveredNode, setIsHovering } = useGraphStore((s) => s)
   const nodeTypes = useNodeTypes()
 
@@ -134,37 +133,28 @@ export const Cubes = memo(() => {
   const hideUniverse = showSelectionGraph && !!selectedNode
 
   return (
-    <Select
-      filter={(selected) => selected.filter((f) => !!f.userData?.ref_id)}
-      onChange={handleSelect}
-      onPointerOut={onPointerOut}
-      onPointerOver={onPointerIn}
-    >
+    <>
+      <Select
+        filter={(selected) => selected.filter((f) => !!f.userData?.ref_id)}
+        onChange={handleSelect}
+        onPointerOut={onPointerOut}
+        onPointerOver={onPointerIn}
+      >
+        <group name="simulation-3d-group__nodes" visible={!hideUniverse}>
+          {data?.nodes.map((node: NodeExtended, index: number) => {
+            const color = COLORS_MAP[nodeTypes.indexOf(node.node_type)] || colors.white
+
+            return <NodeWrapper key={node.ref_id} color={color} index={index} node={node} scale={node.scale || 1} />
+          })}
+        </group>
+
+        <group name="simulation-3d-group__node-points">
+          <NodePoints />
+        </group>
+        {hideUniverse && <SelectionDataNodes />}
+      </Select>
       <RelevanceBadges />
-      <group name="simulation-3d-group__nodes" visible={!hideUniverse}>
-        {data?.nodes.map((node: NodeExtended, index) => {
-          const hide = !!selectedNode && (relativeIds.includes(node.ref_id) || selectedNode.ref_id === node.ref_id)
-          const color = COLORS_MAP[nodeTypes.indexOf(node.node_type)] || colors.white
-
-          return (
-            <TextNode
-              key={node.ref_id}
-              color={color}
-              hide={hideUniverse || hide}
-              ignoreDistance={false}
-              index={index}
-              node={node}
-              scale={node.scale || 1}
-            />
-          )
-        })}
-      </group>
-
-      <group name="simulation-3d-group__node-points">
-        <NodePoints />
-      </group>
-      {hideUniverse && <SelectionDataNodes />}
-    </Select>
+    </>
   )
 })
 
