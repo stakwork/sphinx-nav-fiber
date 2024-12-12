@@ -54,7 +54,9 @@ export const PlayerControl = () => {
 
   const showPlayer = (sidebarIsOpen && selectedNode?.ref_id !== playingNode?.ref_id) || (playingNode && !sidebarIsOpen)
 
-  return miniPlayerIsVisible && playingNode && showPlayer ? (
+  const isMindset = window.location?.hostname === 'graphmindset.sphinx.chat'
+
+  return miniPlayerIsVisible && playingNode && showPlayer && !isMindset ? (
     <Wrapper onClick={openNodeDetails}>
       <Controls>
         <Avatar src={playingNode?.properties?.image_url || ''} type={playingNode.node_type} />

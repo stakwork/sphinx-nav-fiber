@@ -1,4 +1,3 @@
-import { Leva } from 'leva'
 import { lazy, Suspense, useCallback, useEffect, useRef } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useSearchParams } from 'react-router-dom'
@@ -8,7 +7,6 @@ import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { GlobalStyle } from '~/components/GlobalStyle'
 import { Overlay } from '~/components/Universe/Overlay' // Import Overlay directly
-import { isDevelopment } from '~/constants'
 import { useSocket } from '~/hooks/useSockets'
 import { useAiSummaryStore } from '~/stores/useAiSummaryStore'
 import { useAppStore } from '~/stores/useAppStore'
@@ -161,10 +159,14 @@ export const App = () => {
 
       timerRef.current = setTimeout(() => {
         // Combine all queued data into a single update
-        const batchedData = { ...queueRef.current }
+        if (queueRef.current) {
+          const { nodes: newNodes, edges: newEdges } = queueRef.current
+          const batchedData = { nodes: newNodes, edges: newEdges }
 
-        queueRef.current = { nodes: [], edges: [] } // Reset the queue
-        addNewNode(batchedData) // Call the original addNewNode function with batched data
+          queueRef.current = { nodes: [], edges: [] }
+
+          addNewNode(batchedData)
+        }
       }, 3000) // Adjust delay as necessary
     },
     [addNewNode, isFetching],
@@ -274,7 +276,7 @@ export const App = () => {
   ])
 
   useEffect(() => {
-    if (!runningProjectId) {
+    if (!runningProjectId || true) {
       return
     }
 
@@ -293,8 +295,6 @@ export const App = () => {
     }
 
     ws.onmessage = (event) => {
-      console.log('Message from server:', event.data)
-
       const data = JSON.parse(event.data)
 
       if (data.type === 'ping') {
@@ -312,10 +312,6 @@ export const App = () => {
 
     ws.onerror = (error) => {
       console.error('WebSocket error:', error)
-    }
-
-    ws.onclose = () => {
-      console.log('WebSocket connection closed')
     }
   }, [runningProjectId, setRunningProjectMessages])
 
@@ -342,8 +338,6 @@ export const App = () => {
       <GlobalStyle />
 
       <DeviceCompatibilityNotice />
-
-      <Leva hidden={!isDevelopment || true} isRoot />
 
       <Suspense fallback={<div>Loading...</div>}>
         {!splashDataLoading ? (

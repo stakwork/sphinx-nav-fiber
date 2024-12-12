@@ -80,6 +80,7 @@ export type GraphStore = {
   simulation: ForceSimulation | null
   simulationHelpers: SimulationHelpers
   isHovering: boolean
+  activeEdge: Link | null
 
   setDisableCameraRotation: (rotation: boolean) => void
   setScrollEventsDisabled: (rotation: boolean) => void
@@ -88,6 +89,7 @@ export type GraphStore = {
   setGraphRadius: (graphRadius: number) => void
   setHoveredNode: (hoveredNode: NodeExtended | null) => void
   setSelectedNode: (selectedNode: NodeExtended | null) => void
+  setActiveEdge: (edge: Link | null) => void
   setCameraFocusTrigger: (_: boolean) => void
   setNearbyNodeIds: (_: string[]) => void
   setShowSelectionGraph: (_: boolean) => void
@@ -104,6 +106,7 @@ const defaultData: Omit<
   | 'setDisableCameraRotation'
   | 'setHoveredNode'
   | 'setSelectedNode'
+  | 'setActiveEdge'
   | 'setCameraFocusTrigger'
   | 'setGraphRadius'
   | 'setGraphStyle'
@@ -120,9 +123,10 @@ const defaultData: Omit<
   disableCameraRotation: false,
   scrollEventsDisabled: false,
   graphRadius: 1500, // calculated from initial load
-  graphStyle: (localStorage.getItem('graphStyle') as GraphStyle) || 'sphere',
+  graphStyle: 'sphere',
   hoveredNode: null,
   selectedNode: null,
+  activeEdge: null,
   cameraFocusTrigger: false,
   nearbyNodeIds: [],
   showSelectionGraph: false,
@@ -140,9 +144,12 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
   setDisableCameraRotation: (rotation) => set({ disableCameraRotation: rotation }),
   setIsHovering: (isHovering) => set({ isHovering }),
   setGraphRadius: (graphRadius) => set({ graphRadius }),
-  setGraphStyle: (graphStyle) => set({ graphStyle }),
+  setGraphStyle: (graphStyle) => set({ graphStyle: 'sphere' || graphStyle }),
   setHoveredNode: (hoveredNode) => {
     set({ hoveredNode })
+  },
+  setActiveEdge: (activeEdge) => {
+    set({ activeEdge })
   },
   setSelectedNode: (selectedNode) => {
     const { selectedNode: stateSelectedNode, simulation } = get()
@@ -169,14 +176,16 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
   setShowSelectionGraph: (showSelectionGraph) => set({ showSelectionGraph }),
   simulationHelpers: {
     addNodesAndLinks: (newNodes, newLinks, replace) => {
-      const structuredNodes = structuredClone(newNodes)
-      const structuredLinks = structuredClone(newLinks)
-
       const { simulation, simulationHelpers } = get()
 
       simulation.stop()
 
-      const nodes = replace ? [] : simulation.nodes().map((n: NodeExtended) => ({ ...n, fx: n.x, fy: n.y, fz: n.z }))
+      const structuredNodes = structuredClone(newNodes)
+      const structuredLinks = structuredClone(newLinks)
+
+      simulation.stop()
+
+      const nodes = replace ? [] : simulation.nodes()
       const links = replace ? [] : simulation.force('link').links()
 
       nodes.push(...structuredNodes)
@@ -185,25 +194,11 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
       try {
         simulation.nodes(nodes)
 
-        const filteredLinks = links.filter((link: Link<NodeExtended | string>) => {
-          const { target, source } = link
-          const simulationNodes = simulation.nodes()
-
-          // Log the target and source ref_id for debugging
-          const targetRefId = (target as NodeExtended)?.ref_id || target
-          const sourceRefId = (source as NodeExtended)?.ref_id || source
-
-          return (
-            simulationNodes.some((n: NodeExtended) => n.ref_id === targetRefId) &&
-            simulationNodes.some((n: NodeExtended) => n.ref_id === sourceRefId)
-          )
-        })
-
-        simulation.force('link').links([]).links(filteredLinks)
+        simulation.force('link').links([]).links(links)
 
         simulationHelpers.simulationRestart()
       } catch (error) {
-        console.log(error)
+        console.error(error)
         // eslint-disable-next-line no-debugger
       }
 
@@ -307,8 +302,6 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
     },
   },
   simulationCreate: (nodes, links) => {
-    console.log('created')
-
     const structuredNodes = structuredClone(nodes)
     const structuredLinks = structuredClone(links)
 

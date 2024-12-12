@@ -1,9 +1,11 @@
 import { SchemaExtended } from '~/components/ModalsContainer/BlueprintModal/types'
 import {
+  FetchDataResponse,
   FetchEdgesResponse,
   FetchEdgeTypesResponse,
   FetchRadarResponse,
   FetchTopicResponse,
+  NodeExtended,
   NodeRequest,
   RadarRequest,
   SubmitErrRes,
@@ -178,6 +180,14 @@ export interface UpdateSchemaParams {
   }
 }
 
+export const getNodes = async (): Promise<FetchDataResponse> => {
+  const url = `/prediction/graph/search?node_type=['Episode']&include_properties=true&includeContent=true&sort_by=date`
+
+  const response = await api.get<FetchDataResponse>(url)
+
+  return response
+}
+
 export const editNodeSchemaUpdate = async (ref_id: string, data: UpdateSchemaParams) => {
   const response = await api.put(`/schema/${ref_id}`, JSON.stringify(data))
 
@@ -310,6 +320,12 @@ export const deleteRadarData = async (id: string) => {
 
 export const deleteNode = async (id: string) => {
   const response = await api.delete(`/node/?ref_id=${id}`)
+
+  return response
+}
+
+export const getNode = async (id: string) => {
+  const response = await api.get<NodeExtended>(`/node/${id}`)
 
   return response
 }

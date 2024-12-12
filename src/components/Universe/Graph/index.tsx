@@ -82,24 +82,28 @@ export const Graph = () => {
 
         const sphereRadius = Math.min(5000, boundingSphere.radius)
 
-        setGraphRadius(sphereRadius)
-        cameraSettled.current = true
+        if (false) {
+          setGraphRadius(sphereRadius)
+          cameraSettled.current = true
+        }
       }
+    })
+
+    simulation.on('end', () => {
+      const nodesVector = simulation.nodes().map((i: NodeExtended) => {
+        // eslint-disable-next-line no-param-reassign
+        i.fx = i.x
+        // eslint-disable-next-line no-param-reassign
+        i.fy = i.y
+        // eslint-disable-next-line no-param-reassign
+        i.fz = i.z
+
+        return new Vector3(i.x, i.y, i.z)
+      })
 
       if (groupRef.current) {
-        const gr = groupRef.current.getObjectByName('simulation-3d-group__nodes') as Group
         const grPoints = groupRef.current.getObjectByName('simulation-3d-group__node-points') as Group
         const grConnections = groupRef.current.getObjectByName('simulation-3d-group__connections') as Group
-
-        if (gr) {
-          gr.children.forEach((mesh, index) => {
-            const simulationNode = simulation.nodes()[index]
-
-            if (simulationNode) {
-              mesh.position.set(simulationNode.x, simulationNode.y, simulationNode.z)
-            }
-          })
-        }
 
         if (grPoints) {
           grPoints.children[0].children.forEach((mesh, index) => {
@@ -111,62 +115,66 @@ export const Graph = () => {
           })
         }
 
-        if (simulation.alpha() > 1) {
-          return
-        }
-
         if (grConnections) {
           linksPositionRef.current.clear()
 
-          grConnections.children.forEach((r, i) => {
-            const link = dataInitial?.links[i]
-            const Line = r as Line2
+          grConnections.children.forEach((g, i) => {
+            const r = g.children[0] // Assuming Line is the first child
+            const text = g.children[1] // Assuming Text is the second child
 
-            if (link) {
-              const sourceNode = simulation.nodes().find((n: NodeExtended) => n.ref_id === link.source)
-              const targetNode = simulation.nodes().find((n: NodeExtended) => n.ref_id === link.target)
+            if (r instanceof Line2) {
+              // Ensure you have both Line and Text
+              const Line = r as Line2
+              const link = dataInitial?.links[i]
 
-              const { x: sx, y: sy, z: sz } = sourceNode
-              const { x: tx, y: ty, z: tz } = targetNode
+              if (link) {
+                const sourceNode = simulation.nodes().find((n: NodeExtended) => n.ref_id === link.source)
+                const targetNode = simulation.nodes().find((n: NodeExtended) => n.ref_id === link.target)
 
-              linksPositionRef.current.set(link.ref_id, {
-                sx,
-                sy,
-                sz,
-                tx,
-                ty,
-                tz,
-              })
+                if (!sourceNode || !targetNode) {
+                  console.warn(`Missing source or target node for link: ${link?.ref_id}`)
 
-              const lineColor = normalizedSchemasByType[sourceNode.node_type]?.primary_color || 'white'
+                  return
+                }
 
-              Line.geometry.setPositions([sx, sy, sz, tx, ty, tz])
+                const { x: sx, y: sy, z: sz } = sourceNode
+                const { x: tx, y: ty, z: tz } = targetNode
 
-              const { material } = Line
+                // Set positions for the link
+                linksPositionRef.current.set(link.ref_id, {
+                  sx,
+                  sy,
+                  sz,
+                  tx,
+                  ty,
+                  tz,
+                })
 
-              material.color = new Color(lineColor)
-              material.transparent = true
-              material.opacity = 0.3
+                // Calculate midpoint for the text position
+                const midPoint = new Vector3((sx + tx) / 2, (sy + ty) / 2, (sz + tz) / 2)
+
+                // Set text position and rotation
+                text.position.set(midPoint.x, midPoint.y, midPoint.z)
+
+                // Set line color and properties
+                const lineColor = normalizedSchemasByType[sourceNode.node_type]?.primary_color || 'white'
+
+                Line.geometry.setPositions([sx, sy, sz, tx, ty, tz])
+
+                const { material } = Line
+
+                material.color = new Color(lineColor)
+                material.transparent = true
+                material.opacity = 0.3
+              }
             }
           })
         }
       }
-    })
-
-    simulation.on('end', () => {
-      const nodesVector = simulation.nodes().map((i: NodeExtended) => new Vector3(i.x, i.y, i.z))
 
       const boundingBox = new Box3().setFromPoints(nodesVector)
 
-      const boundingSphere = new Sphere()
-
-      boundingBox.getBoundingSphere(boundingSphere)
-
-      const sphereRadius = boundingSphere.radius
-
-      setGraphRadius(sphereRadius)
-
-      cameraSettled.current = false
+      console.log(boundingBox)
     })
   }, [dataInitial, simulation, setGraphRadius, normalizedSchemasByType])
 

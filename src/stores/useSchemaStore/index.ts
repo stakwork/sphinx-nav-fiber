@@ -11,12 +11,13 @@ type SchemasStore = {
   setSchemaLinks: (schema: SchemaLink[]) => void
   getPrimaryColorByType: (type: string) => string | undefined
   getNodeKeysByType: (type: string) => string | undefined
+  getIndexByType: (type: string) => string | undefined
   getSchemaByType: (type: string) => SchemaExtended | undefined
 }
 
 const defaultData: Omit<
   SchemasStore,
-  'setSchemas' | 'setSchemaLinks' | 'getPrimaryColorByType' | 'getNodeKeysByType' | 'getSchemaByType'
+  'setSchemas' | 'setSchemaLinks' | 'getPrimaryColorByType' | 'getNodeKeysByType' | 'getSchemaByType' | 'getIndexByType'
 > = {
   schemas: [],
   links: [],
@@ -43,10 +44,15 @@ export const useSchemaStore = create<SchemasStore>()(
 
       return schema ? schema.primary_color : undefined
     },
+    getIndexByType: (type: string) => {
+      const schema = get().normalizedSchemasByType[type]
+
+      return schema ? schema.index : 'name'
+    },
     getNodeKeysByType: (type: string) => {
       const schema = get().normalizedSchemasByType[type]
 
-      return schema ? schema.node_key : undefined
+      return schema ? schema.index || schema.node_key : undefined
     },
     getSchemaByType: (type: string) => get().normalizedSchemasByType[type],
   })),

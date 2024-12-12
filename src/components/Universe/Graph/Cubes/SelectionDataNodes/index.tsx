@@ -1,15 +1,15 @@
 import { Segments } from '@react-three/drei'
+import { forceCollide, forceLink, forceSimulation } from 'd3-force-3d'
 import { memo, useEffect, useRef, useState } from 'react'
 import { Group } from 'three'
 import { useShallow } from 'zustand/react/shallow'
 import { usePrevious } from '~/hooks/usePrevious'
 import { useDataStore } from '~/stores/useDataStore'
 import { useGraphStore, useSelectedNode, useSelectedNodeRelativeIds } from '~/stores/useGraphStore'
-import { ForceSimulation, runForceSimulation } from '~/transformers/forceSimulation'
+import { ForceSimulation } from '~/transformers/forceSimulation'
 import { GraphData, Link, NodeExtended } from '~/types'
 import { Segment } from '../../Segment'
 import { PathwayBadges } from '../../Segment/LinkBadge'
-import { Cube } from '../Cube'
 import { TextNode } from '../Text'
 
 export const SelectionDataNodes = memo(() => {
@@ -61,13 +61,25 @@ export const SelectionDataNodes = memo(() => {
 
     const structuredLinks = structuredClone(selectionGraphData.links)
 
-    const simulation = runForceSimulation(selectionGraphData.nodes, structuredLinks as unknown as Link[], {
-      numDimensions: 2,
-      forceLinkStrength: 0.01,
-      forceCenterStrength: 0.85,
-      forceChargeStrength: -20,
-      velocityDecay: 0.9,
-    })
+    const simulation = forceSimulation([])
+      .numDimensions(2)
+      .stop()
+      .nodes(selectionGraphData.nodes)
+      .force(
+        'link',
+        forceLink()
+          .links(structuredLinks)
+          .id((d: NodeExtended) => d.ref_id),
+      )
+      .force(
+        'collide',
+        forceCollide()
+          .radius(() => 150)
+          .strength(1)
+          .iterations(1),
+      )
+      .alpha(1)
+      .restart()
 
     setSimulation2D(simulation)
 
@@ -101,18 +113,12 @@ export const SelectionDataNodes = memo(() => {
     })
   }, [simulation2d])
 
-  console.log(selectionGraphData.nodes)
-
   return (
     <>
       <group ref={groupRef} name="simulation-2d-group">
         {selectionGraphData?.nodes.map((node) => (
           <mesh key={node.ref_id}>
-            {node.name ? (
-              <TextNode key={node.ref_id || node.id} hide isHovered={false} node={node} />
-            ) : (
-              <Cube key={node.ref_id || node.id} hide node={node} />
-            )}
+            <TextNode key={node.ref_id || node.id} color="white" hide ignoreDistance node={node} scale={1} />
           </mesh>
         ))}
       </group>

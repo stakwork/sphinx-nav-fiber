@@ -3,22 +3,53 @@ import { ThreeEvent } from '@react-three/fiber'
 import { memo, useCallback, useRef } from 'react'
 import { Object3D } from 'three'
 import { useAppStore } from '~/stores/useAppStore'
-import { useDataStore } from '~/stores/useDataStore'
-import { useGraphStore, useHoveredNode, useSelectedNode, useSelectedNodeRelativeIds } from '~/stores/useGraphStore'
+import { useDataStore, useNodeTypes } from '~/stores/useDataStore'
+import { useGraphStore, useHoveredNode, useSelectedNode } from '~/stores/useGraphStore'
 import { NodeExtended } from '~/types'
+import { colors } from '~/utils'
 import { NodePoints } from './NodePoints'
+import { NodeWrapper } from './NodeWrapper'
 import { RelevanceBadges } from './RelevanceBadges'
 import { SelectionDataNodes } from './SelectionDataNodes'
-import { TextNode } from './Text'
 
 const POINTER_IN_DELAY = 200
+
+const COLORS_MAP = [
+  '#fff',
+  '#9747FF',
+  '#00887A',
+  '#0098A6',
+  '#0288D1',
+  '#33691E',
+  '#465A65',
+  '#512DA7',
+  '#5C6BC0',
+  '#5D4038',
+  '#662C00',
+  '#689F39',
+  '#6B1B00',
+  '#750000',
+  '#78909C',
+  '#7E57C2',
+  '#8C6E63',
+  '#AA47BC',
+  '#BF360C',
+  '#C2175B',
+  '#EC407A',
+  '#EF6C00',
+  '#F5511E',
+  '#FF9696',
+  '#FFC064',
+  '#FFCD29',
+  '#FFEA60',
+]
 
 export const Cubes = memo(() => {
   const selectedNode = useSelectedNode()
   const hoveredNode = useHoveredNode()
 
-  const relativeIds = useSelectedNodeRelativeIds()
   const { selectionGraphData, showSelectionGraph, setHoveredNode, setIsHovering } = useGraphStore((s) => s)
+  const nodeTypes = useNodeTypes()
 
   const data = useDataStore((s) => s.dataInitial)
   const setTranscriptOpen = useAppStore((s) => s.setTranscriptOpen)
@@ -102,38 +133,28 @@ export const Cubes = memo(() => {
   const hideUniverse = showSelectionGraph && !!selectedNode
 
   return (
-    <Select
-      filter={(selected) => selected.filter((f) => !!f.userData?.ref_id)}
-      onChange={handleSelect}
-      onPointerOut={onPointerOut}
-      onPointerOver={onPointerIn}
-    >
-      <RelevanceBadges />
-      <group name="simulation-3d-group__nodes" visible={!hideUniverse}>
-        {data?.nodes.map((node: NodeExtended) => {
-          const hide = !!selectedNode && (relativeIds.includes(node.ref_id) || selectedNode.ref_id === node.ref_id)
+    <>
+      <Select
+        filter={(selected) => selected.filter((f) => !!f.userData?.ref_id)}
+        onChange={handleSelect}
+        onPointerOut={onPointerOut}
+        onPointerOver={onPointerIn}
+      >
+        <group name="simulation-3d-group__nodes" visible={!hideUniverse}>
+          {data?.nodes.map((node: NodeExtended, index: number) => {
+            const color = COLORS_MAP[nodeTypes.indexOf(node.node_type)] || colors.white
 
-          return (
-            <mesh key={node.ref_id} name="wr2" scale={node.scale || 1} userData={node}>
-              <boxGeometry args={[40, 40, 40]} />
-              <meshStandardMaterial opacity={0} transparent />
-              <TextNode
-                key={node.ref_id || node.id}
-                hide={hideUniverse || hide}
-                isHovered={!!hoveredNode && hoveredNode.ref_id === node.ref_id}
-                node={node}
-              />
-            </mesh>
-          )
-        })}
-      </group>
-      {true && (
+            return <NodeWrapper key={node.ref_id} color={color} index={index} node={node} scale={node.scale || 1} />
+          })}
+        </group>
+
         <group name="simulation-3d-group__node-points">
           <NodePoints />
         </group>
-      )}
-      {hideUniverse && <SelectionDataNodes />}
-    </Select>
+        {hideUniverse && <SelectionDataNodes />}
+      </Select>
+      <RelevanceBadges />
+    </>
   )
 })
 
