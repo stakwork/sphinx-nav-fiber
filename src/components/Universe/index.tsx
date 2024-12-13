@@ -21,6 +21,7 @@ import { Flex } from '../common/Flex'
 import { outlineEffectColor } from './constants'
 import { Controls } from './Controls'
 import { initialCameraPosition } from './Controls/CameraAnimations/constants'
+import { CursorTooltip } from './CursorTooltip'
 import { Graph } from './Graph'
 import { Lights } from './Lights'
 import { Overlay } from './Overlay'
@@ -147,6 +148,7 @@ const _Universe = () => {
       </Suspense>
       {universeQuestionIsOpen && <UniverseQuestion />}
       {isLoading && <Preloader fullSize={false} />}
+      <CursorTooltip />
       <Overlay />
     </Wrapper>
   )

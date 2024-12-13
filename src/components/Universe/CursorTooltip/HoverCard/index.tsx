@@ -1,31 +1,33 @@
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
+import { TypeBadge } from '~/components/common/TypeBadge'
+import { useSchemaStore } from '~/stores/useSchemaStore'
+import { Node } from '~/types'
 import { colors } from '~/utils/colors'
 
 type Props = {
-  title?: string
-  description?: string
+  node: Node
 }
 
-export const HoverCard = ({ title, description }: Props) => (
-  <Portal>
+export const HoverCard = ({ node }: Props) => {
+  const { getNodeKeysByType } = useSchemaStore((s) => s)
+
+  const keyProperty = getNodeKeysByType(node.node_type) || ''
+
+  const description = node?.properties ? node?.properties[keyProperty] : ''
+
+  return (
     <TooltipContainer>
       <ContentWrapper>
-        <Title>{title}</Title>
+        <Title>
+          <TypeBadge type={node.node_type} />
+        </Title>
         {description && <Description>{description}</Description>}
       </ContentWrapper>
     </TooltipContainer>
-  </Portal>
-)
-
-const Portal = styled.div`
-  position: fixed;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 1000;
-`
+  )
+}
 
 const TooltipContainer = styled(Flex)`
   width: 390px;
@@ -34,20 +36,17 @@ const TooltipContainer = styled(Flex)`
   border-radius: 8px;
   padding: 15px;
   padding-bottom: 3px !important;
-  position: fixed;
   flex-direction: column;
   gap: 4px;
-  top: calc(-230px);
-  left: 100%;
-  z-index: 1000;
-  margin-left: 450px;
   pointer-events: auto;
+  align-items: flex-start;
 `
 
 const ContentWrapper = styled(Flex)`
   margin-top: 0;
   flex-direction: column;
   gap: 4px;
+  align-items: flex-start;
 `
 
 const Title = styled(Text)`
@@ -67,4 +66,11 @@ const Description = styled(Text)`
   color: ${colors.white};
   margin: 0;
   opacity: 0.8;
+  white-space: normal;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-clamp: 3;
+  -webkit-line-clamp: 3;
 `

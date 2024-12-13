@@ -42,6 +42,8 @@ const _LineComponent = ({ isSelected, position, label, target, source }: LineCom
       const line = lineRef.current
       const activeNode = selectedNode || hoveredNode
 
+      line.visible = !activeNode
+
       if (activeNode?.ref_id === source || activeNode?.ref_id === target) {
         line.visible = true
 
