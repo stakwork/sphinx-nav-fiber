@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { highlightAiSummary } from '~/components/App/SideBar/AiSummary/utils/AiSummaryHighlight'
+import { StyledMarkdown } from '~/components/App/SideBar/AiSummary/utils/AiSummaryHighlight/markdown'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { useDataStore } from '~/stores/useDataStore'
@@ -24,10 +25,15 @@ const Wrapper = styled(Flex).attrs({
   word-break: break-word;
 `
 
-const SummaryText = styled(Text)`
+const StyledAnswerMarkdown = styled(Text)`
   font-size: 14px;
   font-weight: 400;
   line-height: 19.6px;
+
+  ${StyledMarkdown} {
+    margin: 0;
+    padding: 0;
+  }
 `
 
 export const AiAnswer = ({ answer, entities, handleLoaded, hasBeenRendered }: Props) => {
@@ -90,7 +96,9 @@ export const AiAnswer = ({ answer, entities, handleLoaded, hasBeenRendered }: Pr
 
   return (
     <Wrapper onMouseMove={handleMouseMove}>
-      <SummaryText>{responseTextDisplay}</SummaryText>
+      <StyledAnswerMarkdown>
+        {entities?.length ? responseTextDisplay : <StyledMarkdown>{displayedText}</StyledMarkdown>}
+      </StyledAnswerMarkdown>
     </Wrapper>
   )
 }
