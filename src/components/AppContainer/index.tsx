@@ -17,7 +17,7 @@ export const AppContainer = () => {
     <AppProviders>
       <Suspense fallback={<div>Loading...</div>}>
         <Routes>
-          {isMindSetHost && <Route element={<LazyMindSet />} path="/" />}
+          {isMindSetHost && <Route element={<LazyMindSet />} path="/mindset" />}
           <Route
             element={
               <AuthGuard>
