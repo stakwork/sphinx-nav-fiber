@@ -1,6 +1,5 @@
 import { lazy, Suspense } from 'react'
 import { Route, Routes } from 'react-router-dom'
-import { isE2E } from '~/constants'
 import { E2ETests } from '~/utils'
 import { AppProviders } from '../App/Providers'
 import { AuthGuard } from '../Auth'
@@ -11,13 +10,13 @@ const LazyMindSet = lazy(() => import('../mindset').then(({ MindSet }) => ({ def
 
 export const AppContainer = () => {
   const isMindSetHost =
-    window.location?.hostname === 'graphmindset.sphinx.chat' || (window.location.hostname === 'localhost' && !isE2E)
+    window.location?.hostname === 'graphmindset.sphinx.chat' || window.location.hostname === 'localhost'
 
   return (
     <AppProviders>
       <Suspense fallback={<div>Loading...</div>}>
         <Routes>
-          {isMindSetHost && <Route element={<LazyMindSet />} path="/" />}
+          {isMindSetHost && <Route element={<LazyMindSet />} path="/mindset" />}
           <Route
             element={
               <AuthGuard>
