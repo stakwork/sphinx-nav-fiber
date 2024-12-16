@@ -89,14 +89,6 @@ const MediaPlayerComponent = ({ mediaUrl }: Props) => {
     setIsPlaying(!isPlaying)
   }, [isPlaying, setIsPlaying])
 
-  const handlePlay = useCallback(() => {
-    setIsPlaying(true)
-  }, [setIsPlaying])
-
-  const handlePause = useCallback(() => {
-    setIsPlaying(false)
-  }, [setIsPlaying])
-
   const handleError = () => {
     setHasError(true)
     setStatus('error')
@@ -150,8 +142,21 @@ const MediaPlayerComponent = ({ mediaUrl }: Props) => {
     }
   }
 
-  const handlePlayerClick = () => {
-    togglePlay()
+  const handlePlay = useCallback(() => {
+    if (!isPlaying) {
+      setIsPlaying(true)
+    }
+  }, [setIsPlaying, isPlaying])
+
+  const handlePause = useCallback(() => {
+    if (isPlaying) {
+      setIsPlaying(false)
+    }
+  }, [setIsPlaying, isPlaying])
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handlePlayerClick = (e: any) => {
+    e.stopPropagation() // Prevent click from propagating to the player
   }
 
   const playerRefCallback = useCallback(

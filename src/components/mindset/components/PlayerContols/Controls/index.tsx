@@ -8,7 +8,9 @@ import { usePlayerStore } from '~/stores/usePlayerStore'
 import { colors } from '~/utils/colors'
 
 export const Controls = memo(() => {
-  const { isPlaying, playerRef } = usePlayerStore((s) => s)
+  const isPlaying = usePlayerStore((s) => s.isPlaying)
+  const setIsPlaying = usePlayerStore((s) => s.setIsPlaying)
+  const playerRef = usePlayerStore((s) => s.playerRef)
 
   const handleRewind = () => {
     if (playerRef) {
@@ -27,15 +29,7 @@ export const Controls = memo(() => {
   }
 
   const togglePlay = () => {
-    if (playerRef?.getInternalPlayer()) {
-      if (isPlaying) {
-        playerRef.getInternalPlayer().pauseVideo()
-
-        return
-      }
-
-      playerRef.getInternalPlayer().playVideo()
-    }
+    setIsPlaying(!isPlaying)
   }
 
   return (
