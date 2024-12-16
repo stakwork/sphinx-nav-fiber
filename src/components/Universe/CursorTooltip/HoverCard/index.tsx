@@ -32,7 +32,6 @@ export const HoverCard = ({ node }: Props) => {
 const TooltipContainer = styled(Flex)`
   width: 390px;
   min-height: 100px;
-  background: ${colors.HOVER_CARD_BG};
   border-radius: 8px;
   padding: 15px;
   padding-bottom: 3px !important;

@@ -111,7 +111,7 @@ export const colors = {
   DIVIDER_4: 'rgba(46, 55, 67, 1)',
   INPUT_BG: 'rgba(255, 255, 255, 0.05)',
   INPUT_PLACEHOLDER: 'rgba(255, 255, 255, 0.5)',
-  HOVER_CARD_BG: 'rgba(41, 44, 54, 1)',
+  HOVER_CARD_BG: 'rgba(29,31,38,255)',
 } as const
 
 export type ColorName = keyof typeof colors

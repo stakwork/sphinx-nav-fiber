@@ -54,7 +54,7 @@ export const CursorTooltip = () => {
 const TooltipContainer = styled(Flex)`
   position: fixed;
   background: ${colors.BG1};
-  color: white;
+  border-bottom: 5px solid ${colors.HOVER_CARD_BG};
   padding: 5px;
   border-radius: 3px;
   pointer-events: none; /* Tooltip won't block mouse events */
