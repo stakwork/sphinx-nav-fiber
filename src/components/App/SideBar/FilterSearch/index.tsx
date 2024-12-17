@@ -74,7 +74,6 @@ export const FilterSearch = ({ anchorEl, setAnchorEl, onClose }: Props) => {
   }
 
   const handleFiltersApply = async () => {
-
     setFilters({
       node_type: selectedTypes,
       limit: maxResults,
