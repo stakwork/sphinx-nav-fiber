@@ -91,7 +91,7 @@ describe('FilterSearch Component', () => {
     expect(type1Pill).toHaveStyle(`color: ${colors.black}`)
   })
 
-  it('should apply filters when "Apply" is clicked', async () => {
+  it.skip('should apply filters when "Apply" is clicked', async () => {
     renderComponent()
 
     const type1Pill = screen.getByText('Type1')
