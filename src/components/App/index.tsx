@@ -79,6 +79,7 @@ export const App = () => {
     runningProjectId,
     setRunningProjectMessages,
     isFetching,
+    resetData,
   } = useDataStore((s) => s)
 
   const { setAiSummaryAnswer, getKeyExist, aiRefId } = useAiSummaryStore((s) => s)
@@ -128,8 +129,10 @@ export const App = () => {
       }
     }
 
+    resetData()
+
     runSearch()
-  }, [searchTerm, fetchData, setBudget, setAbortRequests, setSidebarOpen, setSelectedNode])
+  }, [searchTerm, fetchData, setBudget, setAbortRequests, setSidebarOpen, setSelectedNode, resetData])
 
   const handleNewNode = useCallback(() => {
     setNodeCount('INCREMENT')
