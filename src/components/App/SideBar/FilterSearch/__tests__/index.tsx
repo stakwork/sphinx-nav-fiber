@@ -48,6 +48,7 @@ describe('FilterSearch Component', () => {
     ;(useDataStore as jest.Mock).mockReturnValue({
       setFilters: mockSetFilters,
       fetchData: mockFetchData,
+      resetData: jest.fn(),
       setAbortRequests: mockSetAbortRequests,
     })
 
@@ -91,7 +92,7 @@ describe('FilterSearch Component', () => {
     expect(type1Pill).toHaveStyle(`color: ${colors.black}`)
   })
 
-  it.skip('should apply filters when "Apply" is clicked', async () => {
+  it('should apply filters when "Apply" is clicked', async () => {
     renderComponent()
 
     const type1Pill = screen.getByText('Type1')
