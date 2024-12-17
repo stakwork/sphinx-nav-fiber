@@ -313,9 +313,15 @@ export const useDataStore = create<DataStore>()(
 
     resetData: () => {
       set({
-        dataNew: { nodes: [], links: [] },
-        dataInitial: { nodes: [], links: [] },
+        dataInitial: null,
+        sidebarFilter: 'all',
+        sidebarFilters: [],
+        sidebarFilterCounts: [],
+        dataNew: null,
+        runningProjectId: '',
         nodeTypes: [],
+        nodesNormalized: new Map<string, Node>(),
+        linksNormalized: new Map<string, Link>(),
       })
     },
 
