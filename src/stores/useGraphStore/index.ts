@@ -96,6 +96,7 @@ export type GraphStore = {
   setSelectionData: (data: GraphData) => void
   simulationCreate: (nodes: Node[], links: Link[]) => void
   setIsHovering: (isHovering: boolean) => void
+  removeSimulation: () => void
 }
 
 const defaultData: Omit<
@@ -116,6 +117,7 @@ const defaultData: Omit<
   | 'setHideNodeDetails'
   | 'simulationCreate'
   | 'setIsHovering'
+  | 'removeSimulation'
 > = {
   data: null,
   simulation: null,
@@ -318,6 +320,7 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
 
     set({ simulation })
   },
+  removeSimulation: () => set({ simulation: null }),
 }))
 
 export const useSelectedNode = () => useGraphStore((s) => s.selectedNode)

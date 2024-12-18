@@ -48,6 +48,7 @@ describe('FilterSearch Component', () => {
     ;(useDataStore as jest.Mock).mockReturnValue({
       setFilters: mockSetFilters,
       fetchData: mockFetchData,
+      resetData: jest.fn(),
       setAbortRequests: mockSetAbortRequests,
     })
 
