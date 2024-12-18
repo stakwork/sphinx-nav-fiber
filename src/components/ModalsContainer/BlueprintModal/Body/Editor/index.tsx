@@ -75,6 +75,7 @@ const handleSubmitForm = async (
   selectedIcon: string,
   mediaOptions: { videoAudio: boolean; image: boolean; sourceLink: boolean },
   initialMediaOptions: { videoAudio: boolean; image: boolean; sourceLink: boolean },
+  nodeKeys: string[],
 ): Promise<string | undefined> => {
   try {
     // eslint-disable-next-line camelcase
@@ -90,10 +91,12 @@ const handleSubmitForm = async (
       index?: string
       primary_color?: string
       icon?: string
+      node_key: string
     } = {
       ...withoutAttributes,
       attributes: updatedAttributes,
       index: selectedIndex,
+      node_key: nodeKeys.join('-') || 'name',
     }
 
     if (selectedColor) {
@@ -121,7 +124,7 @@ const handleSubmitForm = async (
     if (isUpdate) {
       res = await api.put(`/schema/${data.ref_id}`, JSON.stringify(requestData), {})
     } else {
-      res = await api.post(`/schema`, JSON.stringify({ ...requestData, node_key: 'name' }), {})
+      res = await api.post(`/schema`, JSON.stringify(requestData), {})
     }
 
     if (res.status !== 'success') {
@@ -210,6 +213,7 @@ export const Editor = ({
   const [deletedAttributes, setDeletedAttributes] = useState<string[]>([])
   const [parsedData, setParsedData] = useState<parsedObjProps[]>([])
   const [submitDisabled, setSubmitDisabled] = useState(true)
+  const [selectedNodeKeys, setSelectedNodeKeys] = useState<string[]>(['name'])
 
   const [mediaOptions, setMediaOptions] = useState({
     videoAudio: false,
@@ -299,6 +303,19 @@ export const Editor = ({
 
   const handleClose = () => {
     close()
+  }
+
+  const handleNodeKeySelect = (val: TAutocompleteOption | null) => {
+    if (val) {
+      const newValue = val.value
+
+      const updatedKeys = selectedNodeKeys.includes(newValue)
+        ? selectedNodeKeys.filter((key) => key !== newValue)
+        : [...selectedNodeKeys, newValue]
+
+      setSelectedNodeKeys(updatedKeys)
+      setValue('node_key', updatedKeys.join('-'))
+    }
   }
 
   const handleDeleteAttribute = (attributeKey: string) => {
@@ -395,6 +412,7 @@ export const Editor = ({
           image: !!selectedSchema?.image_url,
           sourceLink: !!selectedSchema?.source_link,
         },
+        selectedNodeKeys,
       )
 
       onSchemaCreate({ type: data.type, parent: parent || '', ref_id: selectedSchema?.ref_id || res || 'new' })
@@ -613,6 +631,36 @@ export const Editor = ({
               setMediaOptions={setMediaOptions}
               setSubmitDisabled={setSubmitDisabled}
             />
+
+            {parentType && (
+              <Flex>
+                <LineBar />
+                <Flex mb={12} mt={12}>
+                  <Text>Node Keys</Text>
+                </Flex>
+                <Grid item mb={2} width="70%">
+                  <AutoComplete
+                    onSelect={handleNodeKeySelect}
+                    options={[
+                      { label: 'name', value: 'name' },
+                      ...attributes
+                        .filter((attr) => attr.key && attr.key !== 'name' && !attr.type?.includes('?'))
+                        .map((attr) => ({ label: attr.key, value: attr.key })),
+                    ]}
+                    selectedValue={
+                      selectedNodeKeys.length > 0
+                        ? {
+                            label: selectedNodeKeys.join(' - '),
+                            value: selectedNodeKeys.join('-'),
+                          }
+                        : { label: 'name', value: 'name' }
+                    }
+                  />
+                </Grid>
+                <LineBar />
+              </Flex>
+            )}
+
             {parentType && (
               <Flex>
                 <LineBar />
