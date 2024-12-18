@@ -25,7 +25,7 @@ const Wrapper = styled(Flex).attrs({
   word-break: break-word;
 `
 
-const StyledAnswerMarkdown = styled(Text)`
+const StyledAnswer = styled(Text)`
   font-size: 14px;
   font-weight: 400;
   line-height: 19.6px;
@@ -96,9 +96,9 @@ export const AiAnswer = ({ answer, entities, handleLoaded, hasBeenRendered }: Pr
 
   return (
     <Wrapper onMouseMove={handleMouseMove}>
-      <StyledAnswerMarkdown>
+      <StyledAnswer>
         {entities?.length ? responseTextDisplay : <StyledMarkdown>{displayedText}</StyledMarkdown>}
-      </StyledAnswerMarkdown>
+      </StyledAnswer>
     </Wrapper>
   )
 }
