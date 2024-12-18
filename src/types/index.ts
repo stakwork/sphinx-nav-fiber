@@ -60,6 +60,7 @@ export type RadarRequest = {
 }
 
 export type NodeRequest = {
+  node_type?: string
   node_data: {
     name?: string
     is_muted?: boolean
@@ -143,6 +144,9 @@ export type NodeExtended = Node & {
   x?: number
   y?: number
   z?: number
+  fx?: number
+  fy?: number
+  fz?: number
   start?: number
   end?: number
   longitude?: number

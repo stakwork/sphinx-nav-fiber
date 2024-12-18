@@ -33,6 +33,8 @@ export const Graph = () => {
     (s) => s,
   )
 
+  const removeSimulation = useGraphStore((s) => s.removeSimulation)
+
   useEffect(() => {
     if (!dataNew) {
       return
@@ -56,6 +58,12 @@ export const Graph = () => {
 
     resetDataNew()
   }, [setData, dataNew, simulation, simulationCreate, resetDataNew, simulationHelpers, dataInitial])
+
+  useEffect(() => {
+    if (!dataInitial) {
+      removeSimulation()
+    }
+  }, [dataInitial, removeSimulation])
 
   useEffect(() => {
     if (!simulation) {
@@ -87,21 +95,23 @@ export const Graph = () => {
           cameraSettled.current = true
         }
       }
+    })
+
+    simulation.on('end', () => {
+      const nodesVector = simulation.nodes().map((i: NodeExtended) => {
+        // eslint-disable-next-line no-param-reassign
+        i.fx = i.x
+        // eslint-disable-next-line no-param-reassign
+        i.fy = i.y
+        // eslint-disable-next-line no-param-reassign
+        i.fz = i.z
+
+        return new Vector3(i.x, i.y, i.z)
+      })
 
       if (groupRef.current) {
-        const gr = groupRef.current.getObjectByName('simulation-3d-group__nodes') as Group
         const grPoints = groupRef.current.getObjectByName('simulation-3d-group__node-points') as Group
         const grConnections = groupRef.current.getObjectByName('simulation-3d-group__connections') as Group
-
-        if (gr) {
-          gr.children.forEach((mesh, index) => {
-            const simulationNode = simulation.nodes()[index]
-
-            if (simulationNode) {
-              mesh.position.set(simulationNode.x, simulationNode.y, simulationNode.z)
-            }
-          })
-        }
 
         if (grPoints) {
           grPoints.children[0].children.forEach((mesh, index) => {
@@ -111,10 +121,6 @@ export const Graph = () => {
               mesh.position.set(simulationNode.x, simulationNode.y, simulationNode.z)
             }
           })
-        }
-
-        if (simulation.alpha() > 1) {
-          return
         }
 
         if (grConnections) {
@@ -173,22 +179,10 @@ export const Graph = () => {
           })
         }
       }
-    })
-
-    simulation.on('end', () => {
-      const nodesVector = simulation.nodes().map((i: NodeExtended) => new Vector3(i.x, i.y, i.z))
 
       const boundingBox = new Box3().setFromPoints(nodesVector)
 
-      const boundingSphere = new Sphere()
-
-      boundingBox.getBoundingSphere(boundingSphere)
-
-      const sphereRadius = boundingSphere.radius
-
-      setGraphRadius(sphereRadius * 1.5)
-
-      cameraSettled.current = false
+      console.log(boundingBox)
     })
   }, [dataInitial, simulation, setGraphRadius, normalizedSchemasByType])
 

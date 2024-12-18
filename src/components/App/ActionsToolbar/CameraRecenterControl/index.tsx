@@ -4,10 +4,8 @@ import CameraCenterIcon from '~/components/Icons/CameraCenterIcon'
 import { useGraphStore } from '~/stores/useGraphStore'
 
 export const CameraRecenterControl = () => {
-  const [cameraFocusTrigger, setCameraFocusTrigger] = useGraphStore((s) => [
-    s.cameraFocusTrigger,
-    s.setCameraFocusTrigger,
-  ])
+  const cameraFocusTrigger = useGraphStore((s) => s.cameraFocusTrigger)
+  const setCameraFocusTrigger = useGraphStore((s) => s.setCameraFocusTrigger)
 
   return (
     <CameraCenterButton

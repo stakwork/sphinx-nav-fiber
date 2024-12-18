@@ -118,7 +118,7 @@ export const SelectionDataNodes = memo(() => {
       <group ref={groupRef} name="simulation-2d-group">
         {selectionGraphData?.nodes.map((node) => (
           <mesh key={node.ref_id}>
-            <TextNode key={node.ref_id || node.id} hide ignoreDistance node={node} />
+            <TextNode key={node.ref_id || node.id} color="white" hide ignoreDistance node={node} scale={1} />
           </mesh>
         ))}
       </group>

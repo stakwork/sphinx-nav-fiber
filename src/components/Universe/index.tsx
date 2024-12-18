@@ -3,7 +3,7 @@
 import { AdaptiveDpr, AdaptiveEvents, Html, Loader, Preload } from '@react-three/drei'
 import { Canvas, RootState } from '@react-three/fiber'
 import { Bloom, EffectComposer, Outline, Selection, Vignette } from '@react-three/postprocessing'
-import { useControls } from 'leva'
+import { Leva, useControls } from 'leva'
 import { BlendFunction, Resolution } from 'postprocessing'
 import { Perf } from 'r3f-perf'
 import { Suspense, memo, useCallback, useMemo } from 'react'
@@ -18,13 +18,14 @@ import { colors } from '~/utils/colors'
 import { addToGlobalForE2e } from '~/utils/tests'
 import { UniverseQuestion } from '../App/UniverseQuestion'
 import { Flex } from '../common/Flex'
+import { outlineEffectColor } from './constants'
 import { Controls } from './Controls'
 import { initialCameraPosition } from './Controls/CameraAnimations/constants'
+import { CursorTooltip } from './CursorTooltip'
 import { Graph } from './Graph'
 import { Lights } from './Lights'
 import { Overlay } from './Overlay'
 import { Preloader } from './Preloader'
-import { outlineEffectColor } from './constants'
 
 const Fallback = () => (
   <Html>
@@ -131,6 +132,7 @@ const _Universe = () => {
   return (
     <Wrapper>
       <Suspense fallback={null}>
+        <Leva hidden isRoot />
         <Canvas camera={cameraProps} id="universe-canvas" onCreated={onCreatedHandler} onWheel={onWheelHandler}>
           {isDevelopment && <Perf position="top-right" style={{ top: '80px' }} />}
           <Suspense fallback={<Fallback />}>
@@ -146,6 +148,7 @@ const _Universe = () => {
       </Suspense>
       {universeQuestionIsOpen && <UniverseQuestion />}
       {isLoading && <Preloader fullSize={false} />}
+      <CursorTooltip />
       <Overlay />
     </Wrapper>
   )

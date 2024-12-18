@@ -27,7 +27,7 @@ export const Controls = memo(() => {
   }
 
   const togglePlay = () => {
-    if (playerRef) {
+    if (playerRef?.getInternalPlayer()) {
       if (isPlaying) {
         playerRef.getInternalPlayer().pauseVideo()
 
