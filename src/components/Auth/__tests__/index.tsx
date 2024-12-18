@@ -56,6 +56,7 @@ describe('Auth Component', () => {
       setCategoryFilter: jest.fn(),
       setAbortRequests: jest.fn(),
       addNewNode: jest.fn(),
+      resetData: jest.fn(),
       splashDataLoading: false,
     })
 
@@ -208,13 +209,20 @@ describe('Auth Component', () => {
   })
 
   test.skip('the unauthorized state is correctly set when the user lacks proper credentials', async () => {
-    const [setBudget, setIsAdmin, setPubKey, setIsAuthenticated] = [jest.fn(), jest.fn(), jest.fn(), jest.fn()]
+    const [setBudget, setIsAdmin, setPubKey, setIsAuthenticated, resetData] = [
+      jest.fn(),
+      jest.fn(),
+      jest.fn(),
+      jest.fn(),
+      jest.fn(),
+    ]
 
     useUserStoreMock.mockReturnValue({
       setBudget,
       setIsAdmin,
       setPubKey,
       setIsAuthenticated,
+      resetData,
     })
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -239,13 +247,20 @@ describe('Auth Component', () => {
   })
 
   test('test unsuccessful attempts to enable Sphinx', async () => {
-    const [setBudget, setIsAdmin, setPubKey, setIsAuthenticated] = [jest.fn(), jest.fn(), jest.fn(), jest.fn()]
+    const [setBudget, setIsAdmin, setPubKey, setIsAuthenticated, resetData] = [
+      jest.fn(),
+      jest.fn(),
+      jest.fn(),
+      jest.fn(),
+      jest.fn(),
+    ]
 
     useUserStoreMock.mockReturnValue({
       setBudget,
       setIsAdmin,
       setPubKey,
       setIsAuthenticated,
+      resetData,
     })
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -271,13 +286,20 @@ describe('Auth Component', () => {
   })
 
   test('test the public key is set correctly on successful Sphinx enablement', async () => {
-    const [setBudget, setIsAdmin, setPubKey, setIsAuthenticated] = [jest.fn(), jest.fn(), jest.fn(), jest.fn()]
+    const [setBudget, setIsAdmin, setPubKey, setIsAuthenticated, resetData] = [
+      jest.fn(),
+      jest.fn(),
+      jest.fn(),
+      jest.fn(),
+      jest.fn(),
+    ]
 
     useUserStoreMock.mockReturnValue({
       setBudget,
       setIsAdmin,
       setPubKey,
       setIsAuthenticated,
+      resetData,
     })
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -302,13 +324,20 @@ describe('Auth Component', () => {
   })
 
   test('test the public key state is handled correctly on Sphinx enablement failure', async () => {
-    const [setBudget, setIsAdmin, setPubKey, setIsAuthenticated] = [jest.fn(), jest.fn(), jest.fn(), jest.fn()]
+    const [setBudget, setIsAdmin, setPubKey, setIsAuthenticated, resetData] = [
+      jest.fn(),
+      jest.fn(),
+      jest.fn(),
+      jest.fn(),
+      jest.fn(),
+    ]
 
     useUserStoreMock.mockReturnValue({
       setBudget,
       setIsAdmin,
       setPubKey,
       setIsAuthenticated,
+      resetData,
     })
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -333,13 +362,20 @@ describe('Auth Component', () => {
   })
 
   test('simulate errors during the authentication process and verify that they are handled gracefully.', async () => {
-    const [setBudget, setIsAdmin, setPubKey, setIsAuthenticated] = [jest.fn(), jest.fn(), jest.fn(), jest.fn()]
+    const [setBudget, setIsAdmin, setPubKey, setIsAuthenticated, resetData] = [
+      jest.fn(),
+      jest.fn(),
+      jest.fn(),
+      jest.fn(),
+      jest.fn(),
+    ]
 
     useUserStoreMock.mockReturnValue({
       setBudget,
       setIsAdmin,
       setPubKey,
       setIsAuthenticated,
+      resetData,
     })
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment

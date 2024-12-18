@@ -89,7 +89,7 @@ export const Body = () => {
     const updatedData = getValues()
 
     try {
-      await putNodeData(node?.ref_id || '', { node_data: updatedData })
+      await putNodeData(node?.ref_id || '', { node_type: node?.node_type, node_data: updatedData })
 
       const { updateNode } = useDataStore.getState()
 

@@ -33,6 +33,8 @@ export const Graph = () => {
     (s) => s,
   )
 
+  const removeSimulation = useGraphStore((s) => s.removeSimulation)
+
   useEffect(() => {
     if (!dataNew) {
       return
@@ -56,6 +58,12 @@ export const Graph = () => {
 
     resetDataNew()
   }, [setData, dataNew, simulation, simulationCreate, resetDataNew, simulationHelpers, dataInitial])
+
+  useEffect(() => {
+    if (!dataInitial) {
+      removeSimulation()
+    }
+  }, [dataInitial, removeSimulation])
 
   useEffect(() => {
     if (!simulation) {
