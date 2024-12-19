@@ -1,7 +1,7 @@
 import Button from '@mui/material/Button'
 import clsx from 'clsx'
 import moment from 'moment'
-import { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { okaidia } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import styled from 'styled-components'
@@ -14,17 +14,33 @@ import { TypeBadge } from '~/components/common/TypeBadge'
 import AiPauseIcon from '~/components/Icons/AiPauseIcon'
 import AiPlayIcon from '~/components/Icons/AiPlayIcon'
 import LinkIcon from '~/components/Icons/LinkIcon'
+import { fetchNodeEdges } from '~/network/fetchGraphData'
 import { useAppStore } from '~/stores/useAppStore'
 import { useSelectedNode } from '~/stores/useGraphStore'
+import { usePlayerStore } from '~/stores/usePlayerStore'
+import { Link, Node } from '~/types'
 import { colors } from '~/utils/colors'
 import { BoostAmt } from '../../../Helper/BoostAmt'
-import { usePlayerStore } from '~/stores/usePlayerStore'
+
+interface SequencedNode {
+  node: Node
+  sequence: number
+}
+
+interface EdgeWithTargetNode extends Link<string> {
+  target_node?: Node
+  properties?: {
+    sequence?: number
+    [key: string]: unknown
+  }
+}
 
 export const Default = () => {
   const selectedNode = useSelectedNode()
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const { currentPlayingAudio, setCurrentPlayingAudio } = useAppStore((s) => s)
   const [isPlaying, setIsPlaying] = useState(false)
+  const [sequencedNodes, setSequencedNodes] = useState<SequencedNode[]>([])
   const [boostAmount, setBoostAmount] = useState<number>(selectedNode?.properties?.boost || 0)
 
   const { playingNode } = usePlayerStore((s) => s)
@@ -32,6 +48,37 @@ export const Default = () => {
   useEffect(() => {
     setBoostAmount(selectedNode?.properties?.boost || 0)
   }, [selectedNode])
+
+  useEffect(() => {
+    const fetchSequencedNodes = async () => {
+      if (selectedNode?.ref_id) {
+        const response = await fetchNodeEdges(selectedNode.ref_id, 0, 100, {
+          sortBy: 'sequence',
+          includeProperties: true,
+          includeContent: true,
+          depth: 1,
+          useSubGraph: true,
+        })
+
+        if (response) {
+          const nodesWithSequence =
+            response.edges
+              ?.filter(
+                (edge: EdgeWithTargetNode) => edge.properties?.sequence !== undefined && edge.target_node !== undefined,
+              )
+              .map((edge: EdgeWithTargetNode) => ({
+                node: edge.target_node as Node,
+                sequence: edge.properties?.sequence as number,
+              }))
+              .sort((a, b) => a.sequence - b.sequence) || []
+
+          setSequencedNodes(nodesWithSequence)
+        }
+      }
+    }
+
+    fetchSequencedNodes()
+  }, [selectedNode?.ref_id])
 
   useEffect(() => {
     const audioElement = audioRef.current
@@ -87,7 +134,7 @@ export const Default = () => {
 
   return (
     <StyledContainer>
-      {hasImage ? (
+      {hasImage && (
         <StyledImageWrapper>
           <img
             alt="img_a11y"
@@ -98,7 +145,7 @@ export const Default = () => {
             src={selectedNode.properties?.image_url}
           />
         </StyledImageWrapper>
-      ) : null}
+      )}
 
       <StyledContent grow={1} justify="flex-start" pt={hasImage ? 0 : 8} shrink={1}>
         <Flex ml={24} mt={20} style={{ width: 'fit-content', flexDirection: 'row', alignItems: 'center' }}>
@@ -127,6 +174,17 @@ export const Default = () => {
               />
             ))}
         </StyledWrapper>
+
+        {sequencedNodes.length > 0 && (
+          <StyledSequenceWrapper>
+            {sequencedNodes.map((item, idx) => (
+              <React.Fragment key={`${item.node.ref_id}-${item.sequence}`}>
+                <Text>{item.node.properties?.index || item.node.properties?.text}</Text>
+                {idx < sequencedNodes.length - 1 && <StyledLineBreak />}
+              </React.Fragment>
+            ))}
+          </StyledSequenceWrapper>
+        )}
 
         {pubkey && (
           <Flex direction="row" justify="space-between" pt={14} px={24}>
@@ -295,4 +353,18 @@ const StyledLinkIcon = styled.a`
     width: 1.3em;
     height: 1.3em;
   }
+`
+
+const StyledSequenceWrapper = styled(Flex)`
+  padding: 16px 24px;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+`
+
+const StyledLineBreak = styled.div`
+  width: 100%;
+  height: 1px;
+  background-color: ${colors.GRAY3};
+  margin: 8px 0;
 `
