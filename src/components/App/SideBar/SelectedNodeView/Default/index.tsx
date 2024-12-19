@@ -23,11 +23,6 @@ import { Link, Node } from '~/types'
 import { colors } from '~/utils/colors'
 import { BoostAmt } from '../../../Helper/BoostAmt'
 
-interface SequencedNode {
-  node: Node
-  sequence: number
-}
-
 interface EdgeWithTargetNode extends Link<string> {
   target_node?: Node
   properties?: {
@@ -41,7 +36,7 @@ export const Default = () => {
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const { currentPlayingAudio, setCurrentPlayingAudio } = useAppStore((s) => s)
   const [isPlaying, setIsPlaying] = useState(false)
-  const [sequencedNodes, setSequencedNodes] = useState<SequencedNode[]>([])
+  const [sequencedNodes, setSequencedNodes] = useState<Node[]>([])
   const [boostAmount, setBoostAmount] = useState<number>(selectedNode?.properties?.boost || 0)
 
   const getIndexByType = useSchemaStore((s) => s.getIndexByType)
@@ -63,16 +58,15 @@ export const Default = () => {
         })
 
         if (response) {
-          const nodesWithSequence =
-            response.edges
-              ?.filter(
-                (edge: EdgeWithTargetNode) => edge.properties?.sequence !== undefined && edge.target_node !== undefined,
-              )
-              .map((edge: EdgeWithTargetNode) => ({
-                node: edge.target_node as Node,
-                sequence: edge.properties?.sequence as number,
-              }))
-              .sort((a, b) => a.sequence - b.sequence) || []
+          const nodesWithSequence = response.edges
+            ?.filter((edge: EdgeWithTargetNode) => edge.properties?.sequence !== undefined)
+            .map((edge: EdgeWithTargetNode) => ({
+              node: edge.target,
+              sequence: edge.properties?.sequence as number,
+            }))
+            .sort((a, b) => a.sequence - b.sequence)
+            .map((i) => response.nodes.find((n) => n.ref_id === i.node))
+            .filter((i) => !!i)
 
           setSequencedNodes(nodesWithSequence)
         }
@@ -185,10 +179,10 @@ export const Default = () => {
 
         {sequencedNodes.length > 0 && (
           <StyledSequenceWrapper>
-            {sequencedNodes.map((item, idx) => (
-              <React.Fragment key={`${item.node.ref_id}-${item.sequence}`}>
-                <Text>{getNodeContent(item.node)}</Text>
-                {idx < sequencedNodes.length - 1 && <StyledLineBreak />}
+            {sequencedNodes.map((item, index) => (
+              <React.Fragment key={`${item.ref_id}`}>
+                <Text>{getNodeContent(item)}</Text>
+                {index < sequencedNodes.length - 1 && <StyledLineBreak />}
               </React.Fragment>
             ))}
           </StyledSequenceWrapper>
@@ -373,6 +367,5 @@ const StyledSequenceWrapper = styled(Flex)`
 const StyledLineBreak = styled.div`
   width: 100%;
   height: 1px;
-  background-color: ${colors.GRAY3};
   margin: 8px 0;
 `
