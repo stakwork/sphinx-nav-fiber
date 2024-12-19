@@ -66,9 +66,10 @@ export const Default = () => {
             }))
             .sort((a, b) => a.sequence - b.sequence)
             .map((i) => response.nodes.find((n) => n.ref_id === i.node))
-            .filter((i) => !!i)
 
-          setSequencedNodes(nodesWithSequence)
+          const filteredNodes = nodesWithSequence.filter((i) => !!i)
+
+          setSequencedNodes(filteredNodes as Node[])
         }
       }
     }
