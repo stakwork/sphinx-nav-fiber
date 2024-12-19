@@ -361,12 +361,12 @@ const StyledLinkIcon = styled.a`
 const StyledSequenceWrapper = styled(Flex)`
   padding: 16px 24px;
   flex-direction: column;
-  gap: 8px;
+  gap: 4px;
   overflow-y: auto;
 `
 
 const StyledLineBreak = styled.div`
   width: 100%;
   height: 1px;
-  margin: 8px 0;
+  margin: 2px 0;
 `
