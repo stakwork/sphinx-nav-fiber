@@ -18,6 +18,7 @@ import { fetchNodeEdges } from '~/network/fetchGraphData'
 import { useAppStore } from '~/stores/useAppStore'
 import { useSelectedNode } from '~/stores/useGraphStore'
 import { usePlayerStore } from '~/stores/usePlayerStore'
+import { useSchemaStore } from '~/stores/useSchemaStore'
 import { Link, Node } from '~/types'
 import { colors } from '~/utils/colors'
 import { BoostAmt } from '../../../Helper/BoostAmt'
@@ -43,6 +44,7 @@ export const Default = () => {
   const [sequencedNodes, setSequencedNodes] = useState<SequencedNode[]>([])
   const [boostAmount, setBoostAmount] = useState<number>(selectedNode?.properties?.boost || 0)
 
+  const getIndexByType = useSchemaStore((s) => s.getIndexByType)
   const { playingNode } = usePlayerStore((s) => s)
 
   useEffect(() => {
@@ -132,6 +134,12 @@ export const Default = () => {
   const sourceLink = selectedNode.properties?.source_link
   const pubkey = selectedNode.properties?.pubkey
 
+  const getNodeContent = (node: Node) => {
+    const keyProp = getIndexByType(node.node_type)
+
+    return keyProp ? node.properties?.[keyProp] : node.label
+  }
+
   return (
     <StyledContainer>
       {hasImage && (
@@ -179,7 +187,7 @@ export const Default = () => {
           <StyledSequenceWrapper>
             {sequencedNodes.map((item, idx) => (
               <React.Fragment key={`${item.node.ref_id}-${item.sequence}`}>
-                <Text>{item.node.properties?.index || item.node.properties?.text}</Text>
+                <Text>{getNodeContent(item.node)}</Text>
                 {idx < sequencedNodes.length - 1 && <StyledLineBreak />}
               </React.Fragment>
             ))}
