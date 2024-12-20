@@ -10,7 +10,6 @@ import { colors } from '~/utils'
 import { NodePoints } from './NodePoints'
 import { NodeWrapper } from './NodeWrapper'
 import { RelevanceBadges } from './RelevanceBadges'
-import { SelectionDataNodes } from './SelectionDataNodes'
 
 const POINTER_IN_DELAY = 200
 
@@ -144,14 +143,22 @@ export const Cubes = memo(() => {
           {data?.nodes.map((node: NodeExtended, index: number) => {
             const color = COLORS_MAP[nodeTypes.indexOf(node.node_type)] || colors.white
 
-            return <NodeWrapper key={node.ref_id} color={color} index={index} node={node} scale={node.scale || 1} />
+            return (
+              <NodeWrapper
+                key={node.ref_id}
+                color={color}
+                index={index}
+                node={node}
+                scale={node.scale || 1}
+                stopFrames={hideUniverse}
+              />
+            )
           })}
         </group>
 
         <group name="simulation-3d-group__node-points">
           <NodePoints />
         </group>
-        {hideUniverse && <SelectionDataNodes />}
       </Select>
       <RelevanceBadges />
     </>

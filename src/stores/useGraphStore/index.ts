@@ -67,6 +67,7 @@ export const graphStyles: GraphStyle[] = ['sphere', 'force', 'split', 'earth']
 
 export type GraphStore = {
   graphRadius: number
+  selectionGraphRadius: number
   data: { nodes: NodeExtended[]; links: Link[] } | null
   selectionGraphData: GraphData
   graphStyle: GraphStyle
@@ -87,6 +88,7 @@ export type GraphStore = {
   setData: (data: GraphData) => void
   setGraphStyle: (graphStyle: GraphStyle) => void
   setGraphRadius: (graphRadius: number) => void
+  setSelectionGraphRadius: (graphRadius: number) => void
   setHoveredNode: (hoveredNode: NodeExtended | null) => void
   setSelectedNode: (selectedNode: NodeExtended | null) => void
   setActiveEdge: (edge: Link | null) => void
@@ -110,6 +112,7 @@ const defaultData: Omit<
   | 'setActiveEdge'
   | 'setCameraFocusTrigger'
   | 'setGraphRadius'
+  | 'setSelectionGraphRadius'
   | 'setGraphStyle'
   | 'setNearbyNodeIds'
   | 'setShowSelectionGraph'
@@ -125,6 +128,7 @@ const defaultData: Omit<
   disableCameraRotation: false,
   scrollEventsDisabled: false,
   graphRadius: 1500, // calculated from initial load
+  selectionGraphRadius: 200, // calculated from initial load
   graphStyle: 'sphere',
   hoveredNode: null,
   selectedNode: null,
@@ -146,6 +150,7 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
   setDisableCameraRotation: (rotation) => set({ disableCameraRotation: rotation }),
   setIsHovering: (isHovering) => set({ isHovering }),
   setGraphRadius: (graphRadius) => set({ graphRadius }),
+  setSelectionGraphRadius: (selectionGraphRadius) => set({ selectionGraphRadius }),
   setGraphStyle: (graphStyle) => set({ graphStyle: 'sphere' || graphStyle }),
   setHoveredNode: (hoveredNode) => {
     set({ hoveredNode })
@@ -154,6 +159,15 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
     set({ activeEdge })
   },
   setSelectedNode: (selectedNode) => {
+    if (!selectedNode) {
+      set({
+        hoveredNode: null,
+        selectedNode: null,
+        disableCameraRotation: false,
+        showSelectionGraph: false,
+      })
+    }
+
     const { selectedNode: stateSelectedNode, simulation } = get()
 
     if (stateSelectedNode?.ref_id !== selectedNode?.ref_id) {
@@ -164,6 +178,7 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
         hoveredNode: null,
         selectedNode: selectedNodeWithCoordinates,
         disableCameraRotation: true,
+        showSelectionGraph: !!selectedNode,
       })
     }
   },

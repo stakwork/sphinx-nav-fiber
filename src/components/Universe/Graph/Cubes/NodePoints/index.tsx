@@ -52,7 +52,7 @@ const _NodePoints = () => {
         geometry={ringGeometry as BufferGeometry}
         limit={1000} // Optional: max amount of items (for calculating buffer size)
         range={1000}
-        visible={!selectedNode}
+        visible={!selectedNode || true}
       >
         <meshBasicMaterial />
         {data?.nodes.map((node: NodeExtended) => {
