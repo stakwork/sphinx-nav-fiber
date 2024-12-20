@@ -11,13 +11,14 @@ type Props = {
   color: string
   scale: number
   index: number
+  stopFrames: boolean
 }
 
 const offset = { x: 20, y: 20 }
 
 export const NodeWrapper = memo(
   (props: Props) => {
-    const { node, color, index } = props
+    const { node, color, index, stopFrames } = props
     const simulation = useGraphStore((s) => s.simulation)
 
     const finishedSimulationCircle = useRef<boolean>(false)
@@ -25,6 +26,10 @@ export const NodeWrapper = memo(
     const wrapperRef = useRef<Mesh | null>(null)
 
     useFrame(({ camera, size }) => {
+      if (stopFrames) {
+        return
+      }
+
       if (wrapperRef.current && simulation) {
         const simulationNode = simulation.nodes()[index]
 
