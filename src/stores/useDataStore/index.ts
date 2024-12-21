@@ -186,6 +186,7 @@ export const useDataStore = create<DataStore>()(
         ...(filterNodeTypes.length > 0 ? { node_type: JSON.stringify(filterNodeTypes) } : {}),
         ...(word ? { word } : {}),
         ...(aiRefId && AISearchQuery ? { previous_search_ref_id: aiRefId } : {}),
+        ...(!word && !AISearchQuery ? { sort_by: 'date_added_to_graph' } : {}),
       }
 
       try {
