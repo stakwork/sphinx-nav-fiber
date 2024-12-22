@@ -31,9 +31,10 @@ export const SelectionDataNodes = memo(() => {
 
   const { normalizedSchemasByType } = useSchemaStore((s) => s)
 
-  const { selectionGraphData, setSelectionData, setSelectedNode, setSelectionGraphRadius } = useGraphStore(
-    useShallow((s) => s),
-  )
+  const { selectionGraphData, selectionPath, setSelectionData, setSelectedNode, setSelectionGraphRadius } =
+    useGraphStore(useShallow((s) => s))
+
+  console.log(selectionPath)
 
   useEffect(() => {
     const structuredNodes = structuredClone(dataInitial?.nodes || [])
