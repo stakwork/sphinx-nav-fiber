@@ -82,6 +82,7 @@ export type GraphStore = {
   simulationHelpers: SimulationHelpers
   isHovering: boolean
   activeEdge: Link | null
+  selectionPath: string[]
 
   setDisableCameraRotation: (rotation: boolean) => void
   setScrollEventsDisabled: (rotation: boolean) => void
@@ -99,6 +100,7 @@ export type GraphStore = {
   simulationCreate: (nodes: Node[], links: Link[]) => void
   setIsHovering: (isHovering: boolean) => void
   removeSimulation: () => void
+  addToSelectionPath: (id: string) => void
 }
 
 const defaultData: Omit<
@@ -121,6 +123,7 @@ const defaultData: Omit<
   | 'simulationCreate'
   | 'setIsHovering'
   | 'removeSimulation'
+  | 'addToSelectionPath'
 > = {
   data: null,
   simulation: null,
@@ -138,6 +141,7 @@ const defaultData: Omit<
   showSelectionGraph: false,
   simulationHelpers: defaultSimulationHelpers,
   isHovering: false,
+  selectionPath: [],
 }
 
 export const useGraphStore = create<GraphStore>()((set, get) => ({
@@ -158,6 +162,11 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
   setActiveEdge: (activeEdge) => {
     set({ activeEdge })
   },
+  addToSelectionPath: (id: string) => {
+    const { selectionPath } = get()
+
+    set({ selectionPath: [...selectionPath, id] })
+  },
   setSelectedNode: (selectedNode) => {
     if (!selectedNode) {
       set({
@@ -165,10 +174,11 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
         selectedNode: null,
         disableCameraRotation: false,
         showSelectionGraph: false,
+        selectionPath: [],
       })
     }
 
-    const { selectedNode: stateSelectedNode, simulation } = get()
+    const { selectedNode: stateSelectedNode, simulation, selectionPath } = get()
 
     if (stateSelectedNode?.ref_id !== selectedNode?.ref_id) {
       const selectedNodeWithCoordinates =
@@ -179,6 +189,7 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
         selectedNode: selectedNodeWithCoordinates,
         disableCameraRotation: true,
         showSelectionGraph: !!selectedNode,
+        selectionPath: [...selectionPath, selectedNodeWithCoordinates.ref_id],
       })
     }
   },

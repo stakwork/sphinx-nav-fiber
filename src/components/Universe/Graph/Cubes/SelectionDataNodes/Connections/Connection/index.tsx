@@ -1,6 +1,7 @@
 import { Line, Text } from '@react-three/drei'
 import { memo, useRef } from 'react'
 import { Line2 } from 'three-stdlib'
+import { fontProps } from '../../../Text/constants'
 
 type LineComponentProps = {
   label: string
@@ -29,7 +30,9 @@ const _Connection = (props: LineComponentProps) => {
         points={[sourceX, sourceY, sourceZ, targetX, targetY, targetZ]}
       />
       <mesh>
-        <Text anchorX="center" anchorY="middle" color="white" fontSize={10}>
+        <planeGeometry args={[label.length * 6, 12]} />
+        <meshBasicMaterial color="black" />
+        <Text anchorX="center" anchorY="middle" color="white" {...fontProps} fontSize={6}>
           {label}
         </Text>
       </mesh>

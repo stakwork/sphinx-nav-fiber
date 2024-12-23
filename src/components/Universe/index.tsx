@@ -178,7 +178,7 @@ const _Universe = () => {
 
                 <AdaptiveEvents />
 
-                <SelectionContent key={selectedNode.ref_id} />
+                <SelectionContent />
               </Suspense>
             </Canvas>
           </SelectionWrapper>

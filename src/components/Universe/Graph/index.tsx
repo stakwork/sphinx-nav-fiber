@@ -24,7 +24,6 @@ export type LinkPosition = {
 export const Graph = () => {
   const { dataInitial, isLoadingNew, isFetching, dataNew, resetDataNew } = useDataStore((s) => s)
   const groupRef = useRef<Group>(null)
-  const cameraSettled = useRef<boolean>(false)
   const { normalizedSchemasByType } = useSchemaStore((s) => s)
 
   const linksPositionRef = useRef(new Map<string, LinkPosition>())
@@ -77,25 +76,6 @@ export const Graph = () => {
     if (!simulation) {
       return
     }
-
-    simulation.on('tick', () => {
-      if (!cameraSettled.current && simulation.alpha() < 0.1) {
-        const nodesVector = simulation.nodes().map((i: NodeExtended) => new Vector3(i.x, i.y, i.z))
-
-        const boundingBox = new Box3().setFromPoints(nodesVector)
-
-        const boundingSphere = new Sphere()
-
-        boundingBox.getBoundingSphere(boundingSphere)
-
-        const sphereRadius = Math.min(5000, boundingSphere.radius)
-
-        if (false) {
-          setGraphRadius(sphereRadius)
-          cameraSettled.current = true
-        }
-      }
-    })
 
     simulation.on('end', () => {
       const nodesVector = simulation.nodes().map((i: NodeExtended) => {
@@ -182,7 +162,15 @@ export const Graph = () => {
 
       const boundingBox = new Box3().setFromPoints(nodesVector)
 
-      console.log(boundingBox)
+      const boundingSphere = new Sphere()
+
+      boundingBox.getBoundingSphere(boundingSphere)
+
+      const sphereRadius = Math.min(5000, boundingSphere.radius)
+
+      console.log(sphereRadius)
+
+      setGraphRadius(sphereRadius)
     })
   }, [dataInitial, simulation, setGraphRadius, normalizedSchemasByType])
 
