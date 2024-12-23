@@ -59,7 +59,7 @@ export const Transcript = ({ name }: Props) => {
           ? (timestamp as string).split('-').map(Number) // Directly convert to numbers
           : [0, 0]
 
-        if (start <= currentTime * 1000 && currentTime * 1000 < end) {
+        if (start <= currentTime && currentTime < end) {
           // Multiply playingTime by 1000 to match millisecond format
           return (
             <TranscriptWrapper key={clip.ref_id} direction="row">
