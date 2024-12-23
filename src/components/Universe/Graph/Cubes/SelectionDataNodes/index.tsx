@@ -9,17 +9,17 @@ import { useDataStore } from '~/stores/useDataStore'
 import { useGraphStore, useSelectedNode, useSelectedNodeRelativeIds } from '~/stores/useGraphStore'
 import { useSchemaStore } from '~/stores/useSchemaStore'
 import { ForceSimulation } from '~/transformers/forceSimulation'
-import { GraphData, Link, NodeExtended } from '~/types'
+import { GraphData, Link, Node, NodeExtended } from '~/types'
 import { LinkPosition } from '../..'
 import { Connections } from './Connections'
-import { Node } from './Node'
+import { Node as GraphNode } from './Node'
 
 const MAX_LENGTH = 6
 
 export const SelectionDataNodes = memo(() => {
   const [simulation2d, setSimulation2D] = useState<ForceSimulation | null>(null)
 
-  const { dataInitial } = useDataStore((s) => s)
+  const { dataInitial, nodesNormalized } = useDataStore((s) => s)
   const selectedNode = useSelectedNode()
   const groupRef = useRef<Group>(null)
 
@@ -37,22 +37,34 @@ export const SelectionDataNodes = memo(() => {
   console.log(selectionPath)
 
   useEffect(() => {
-    const structuredNodes = structuredClone(dataInitial?.nodes || [])
     const structuredLinks = structuredClone(dataInitial?.links || [])
 
     if (prevSelectedNodeId === selectedNode?.ref_id) {
       return
     }
 
-    const nodes = structuredNodes
-      .filter(
-        (f: NodeExtended) => f.ref_id === selectedNode?.ref_id || selectedNodeRelativeIds.includes(f?.ref_id || ''),
-      )
-      .map((n: NodeExtended) => {
-        const fixedPosition = n.ref_id === selectedNode?.ref_id ? { fx: 0, fy: 0, fz: 0 } : {}
+    const pathNodes: NodeExtended[] = selectionPath
+      .slice(-3, -1)
+      .filter((id) => !!nodesNormalized.get(id))
+      .map((i, index) => {
+        const node = nodesNormalized.get(i) as unknown as Node
 
-        return { ...n, x: 0, y: 0, z: 0, ...fixedPosition }
+        return { ...node, fx: -index * 50, fy: 0, fz: 0, x: 0, y: 0, z: 0 }
       })
+
+    const graphNodes: NodeExtended[] = selectedNodeRelativeIds
+      .filter((id) => !!nodesNormalized.get(id))
+      .map((id: string) => {
+        const node = nodesNormalized.get(id) as unknown as Node
+
+        return { ...node, x: 0, y: 0, z: 0 }
+      })
+
+    const nodes: NodeExtended[] = [
+      ...graphNodes,
+      ...pathNodes,
+      { ...selectedNode, x: 0, y: 0, z: 0, fx: 0, fy: 0, fz: 0 } as NodeExtended,
+    ]
 
     if (nodes) {
       const links = structuredLinks.filter(
@@ -65,7 +77,15 @@ export const SelectionDataNodes = memo(() => {
       setSimulation2D(null)
       linksPositionRef.current = new Map()
     }
-  }, [dataInitial, selectedNode, selectedNodeRelativeIds, setSelectionData, prevSelectedNodeId])
+  }, [
+    dataInitial,
+    selectedNode,
+    selectedNodeRelativeIds,
+    setSelectionData,
+    prevSelectedNodeId,
+    selectionPath,
+    nodesNormalized,
+  ])
 
   useEffect(() => {
     if (simulation2d || !selectionGraphData.nodes.length) {
@@ -140,26 +160,32 @@ export const SelectionDataNodes = memo(() => {
               return
             }
 
-            const { x: sx, y: sy, z: sz } = sourceNode
-            const { x: tx, y: ty, z: tz } = targetNode
+            const { x: sx, y: sy } = sourceNode
+            const { x: tx, y: ty } = targetNode
 
             // Set positions for the link
             linksPositionRef.current.set(link.ref_id, {
               sx,
               sy,
-              sz,
               tx,
               ty,
-              tz,
+              sz: 0,
+              tz: 0,
             })
 
-            const midPoint = new Vector3((sx + tx) / 2, (sy + ty) / 2, (sz + tz) / 2)
+            const midPoint = new Vector3((sx + tx) / 2, (sy + ty) / 2, 0)
 
             // Position the text
-            text.position.set(midPoint.x, midPoint.y, midPoint.z)
+            text.position.set(midPoint.x, midPoint.y, 1)
+
+            // Calculate angle of rotation in 2D
+            const angle = Math.atan2(ty - sy, tx - sx)
+
+            // Apply rotation to the text
+            text.rotation.set(0, 0, angle) // Only Z-axis rotation needed for 2D alignment
 
             // Set the line positions
-            Line.geometry.setPositions([sx, sy, sz, tx, ty, tz])
+            Line.geometry.setPositions([sx, sy, 0, tx, ty, 0])
 
             const { material } = Line
 
@@ -196,7 +222,7 @@ export const SelectionDataNodes = memo(() => {
       {selectionGraphData?.nodes.map((node) => (
         <mesh key={node.ref_id}>
           <Html center sprite zIndexRange={[0, 0]}>
-            <Node node={node} onClick={() => handleSelect(node)} selected={node.ref_id === selectedNode?.ref_id} />
+            <GraphNode node={node} onClick={() => handleSelect(node)} selected={node.ref_id === selectedNode?.ref_id} />
           </Html>
 
           <mesh />

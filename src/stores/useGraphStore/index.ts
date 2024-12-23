@@ -174,10 +174,11 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
         selectedNode: null,
         disableCameraRotation: false,
         showSelectionGraph: false,
+        selectionPath: [],
       })
     }
 
-    const { selectedNode: stateSelectedNode, simulation } = get()
+    const { selectedNode: stateSelectedNode, simulation, selectionPath } = get()
 
     if (stateSelectedNode?.ref_id !== selectedNode?.ref_id) {
       const selectedNodeWithCoordinates =
@@ -188,6 +189,7 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
         selectedNode: selectedNodeWithCoordinates,
         disableCameraRotation: true,
         showSelectionGraph: !!selectedNode,
+        selectionPath: [...selectionPath, selectedNodeWithCoordinates.ref_id],
       })
     }
   },
