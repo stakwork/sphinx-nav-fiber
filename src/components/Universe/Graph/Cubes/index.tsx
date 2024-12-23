@@ -10,7 +10,6 @@ import { colors } from '~/utils'
 import { COLORS_MAP } from '../constant'
 import { NodePoints } from './NodePoints'
 import { NodeWrapper } from './NodeWrapper'
-import { RelevanceBadges } from './RelevanceBadges'
 
 const POINTER_IN_DELAY = 200
 
@@ -131,7 +130,6 @@ export const Cubes = memo(() => {
           <NodePoints />
         </group>
       </Select>
-      <RelevanceBadges />
     </>
   )
 })

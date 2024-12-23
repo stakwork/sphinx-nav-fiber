@@ -29,7 +29,9 @@ const _Connection = (props: LineComponentProps) => {
         points={[sourceX, sourceY, sourceZ, targetX, targetY, targetZ]}
       />
       <mesh>
-        <Text anchorX="center" anchorY="middle" color="white" fontSize={10}>
+        <planeGeometry args={[label.length * 6, 12]} />
+        <meshBasicMaterial color="black" />
+        <Text anchorX="center" anchorY="middle" color="white" fontSize={8}>
           {label}
         </Text>
       </mesh>

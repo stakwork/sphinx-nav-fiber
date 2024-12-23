@@ -63,6 +63,8 @@ const Text = styled(Flex)`
   color: ${colors.white};
   margin-left: 16px;
   font-weight: 700;
+  width: 100px;
+  font-size: 16px;
 `
 
 const Tag = styled(Flex)<TagProps>`
@@ -90,8 +92,11 @@ const Tag = styled(Flex)<TagProps>`
 `
 
 const Selected = styled(Tag)`
-  width: 300px;
-  height: 150px;
+  width: 200px;
+  height: 100px;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
 `
 
 const IconButton = styled(Flex)`

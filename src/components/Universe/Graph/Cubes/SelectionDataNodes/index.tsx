@@ -1,10 +1,11 @@
 import { Html } from '@react-three/drei'
 import { forceLink, forceManyBody, forceRadial, forceSimulation } from 'd3-force-3d'
-import { memo, useCallback, useEffect, useRef, useState } from 'react'
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Box3, Color, Group, Sphere, Vector3 } from 'three'
 import { Line2 } from 'three-stdlib'
 import { useShallow } from 'zustand/react/shallow'
 import { usePrevious } from '~/hooks/usePrevious'
+import { fetchNodeEdges } from '~/network/fetchGraphData'
 import { useDataStore } from '~/stores/useDataStore'
 import { useGraphStore, useSelectedNode, useSelectedNodeRelativeIds } from '~/stores/useGraphStore'
 import { useSchemaStore } from '~/stores/useSchemaStore'
@@ -19,7 +20,7 @@ const MAX_LENGTH = 6
 export const SelectionDataNodes = memo(() => {
   const [simulation2d, setSimulation2D] = useState<ForceSimulation | null>(null)
 
-  const { dataInitial, nodesNormalized } = useDataStore((s) => s)
+  const { dataInitial, nodesNormalized, addNewNode } = useDataStore((s) => s)
   const selectedNode = useSelectedNode()
   const groupRef = useRef<Group>(null)
 
@@ -34,23 +35,61 @@ export const SelectionDataNodes = memo(() => {
   const { selectionGraphData, selectionPath, setSelectionData, setSelectedNode, setSelectionGraphRadius } =
     useGraphStore(useShallow((s) => s))
 
-  console.log(selectionPath)
-
-  useEffect(() => {
-    const structuredLinks = structuredClone(dataInitial?.links || [])
-
-    if (prevSelectedNodeId === selectedNode?.ref_id) {
-      return
-    }
-
-    const pathNodes: NodeExtended[] = selectionPath
+  const pathNodes = useMemo(() => {
+    const nodes: NodeExtended[] = selectionPath
       .slice(-3, -1)
       .filter((id) => !!nodesNormalized.get(id))
       .map((i, index) => {
         const node = nodesNormalized.get(i) as unknown as Node
 
-        return { ...node, fx: -index * 50, fy: 0, fz: 0, x: 0, y: 0, z: 0 }
+        return { ...node, fx: 0, fy: -(index + 1) * 200, fz: 0, x: 0, y: 0, z: 0 }
       })
+
+    return nodes
+  }, [nodesNormalized, selectionPath])
+
+  useEffect(() => {
+    const init = async () => {
+      if (selectedNode?.ref_id && selectedNode.ref_id !== prevSelectedNodeId) {
+        try {
+          const data = await fetchNodeEdges(selectedNode.ref_id, 0, 5)
+
+          if (data) {
+            const graphNodes: NodeExtended[] = data.nodes
+              .filter((node) => node.ref_id !== selectedNode.ref_id)
+              .map((node: Node) => ({ ...node, x: 0, y: 0, z: 0 }))
+
+            const nodes: NodeExtended[] = [
+              ...graphNodes,
+              { ...selectedNode, x: 0, y: 0, z: 0, fx: 0, fy: 0, fz: 0 } as NodeExtended,
+            ]
+
+            setSelectionData({ nodes, links: data.edges as unknown as GraphData['links'] })
+            setSimulation2D(null)
+            linksPositionRef.current = new Map()
+            //
+
+            addNewNode(data)
+          }
+        } catch (error) {
+          console.error(error)
+        }
+      }
+    }
+
+    if (selectedNode) {
+      init()
+    }
+  }, [addNewNode, prevSelectedNodeId, selectedNode, setSelectionData])
+
+  useEffect(() => {
+    return
+
+    const structuredLinks = structuredClone(dataInitial?.links || [])
+
+    if (prevSelectedNodeId === selectedNode?.ref_id) {
+      return
+    }
 
     const graphNodes: NodeExtended[] = selectedNodeRelativeIds
       .filter((id) => !!nodesNormalized.get(id))
@@ -62,7 +101,6 @@ export const SelectionDataNodes = memo(() => {
 
     const nodes: NodeExtended[] = [
       ...graphNodes,
-      ...pathNodes,
       { ...selectedNode, x: 0, y: 0, z: 0, fx: 0, fy: 0, fz: 0 } as NodeExtended,
     ]
 
@@ -77,15 +115,7 @@ export const SelectionDataNodes = memo(() => {
       setSimulation2D(null)
       linksPositionRef.current = new Map()
     }
-  }, [
-    dataInitial,
-    selectedNode,
-    selectedNodeRelativeIds,
-    setSelectionData,
-    prevSelectedNodeId,
-    selectionPath,
-    nodesNormalized,
-  ])
+  }, [dataInitial, selectedNode, selectedNodeRelativeIds, setSelectionData, prevSelectedNodeId, nodesNormalized])
 
   useEffect(() => {
     if (simulation2d || !selectionGraphData.nodes.length) {
@@ -105,8 +135,8 @@ export const SelectionDataNodes = memo(() => {
           .id((d: NodeExtended) => d.ref_id)
           .distance(() => 150),
       )
-      .force('radial', forceRadial(500, 0, 0, 0).strength(0))
-      .force('charge', forceManyBody().strength(-1000))
+      .force('radial', forceRadial(20, 0, 0, 0).strength(0))
+      .force('charge', forceManyBody().strength(-500))
       .alpha(1)
       .restart()
 
@@ -114,13 +144,6 @@ export const SelectionDataNodes = memo(() => {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectionGraphData, simulation2d])
-
-  useEffect(
-    () => () => {
-      setSelectionData({ nodes: [], links: [] })
-    },
-    [setSelectionData],
-  )
 
   useEffect(() => {
     if (!simulation2d) {
@@ -145,8 +168,8 @@ export const SelectionDataNodes = memo(() => {
       const grConnections = groupRef.current.getObjectByName('simulation-3d-group__connections') as Group
 
       grConnections.children.forEach((g, i) => {
-        const r = g.children[0] // Assuming Line is the first child
-        const text = g.children[1] // Assuming Text is the second child
+        const r = g.children[0]
+        const text = g.children[1]
 
         if (r instanceof Line2) {
           const Line = r as Line2
@@ -163,7 +186,6 @@ export const SelectionDataNodes = memo(() => {
             const { x: sx, y: sy } = sourceNode
             const { x: tx, y: ty } = targetNode
 
-            // Set positions for the link
             linksPositionRef.current.set(link.ref_id, {
               sx,
               sy,
@@ -175,16 +197,16 @@ export const SelectionDataNodes = memo(() => {
 
             const midPoint = new Vector3((sx + tx) / 2, (sy + ty) / 2, 0)
 
-            // Position the text
-            text.position.set(midPoint.x, midPoint.y, 1)
+            text.position.set(midPoint.x, midPoint.y, 2)
 
-            // Calculate angle of rotation in 2D
-            const angle = Math.atan2(ty - sy, tx - sx)
+            let angle = Math.atan2(ty - sy, tx - sx)
 
-            // Apply rotation to the text
-            text.rotation.set(0, 0, angle) // Only Z-axis rotation needed for 2D alignment
+            if (tx < sx || (Math.abs(tx - sx) < 0.01 && ty < sy)) {
+              angle += Math.PI
+            }
 
-            // Set the line positions
+            text.rotation.set(0, 0, angle)
+
             Line.geometry.setPositions([sx, sy, 0, tx, ty, 0])
 
             const { material } = Line
@@ -218,18 +240,37 @@ export const SelectionDataNodes = memo(() => {
   )
 
   return (
-    <group ref={groupRef} name="simulation-2d-group">
-      {selectionGraphData?.nodes.map((node) => (
-        <mesh key={node.ref_id}>
-          <Html center sprite zIndexRange={[0, 0]}>
-            <GraphNode node={node} onClick={() => handleSelect(node)} selected={node.ref_id === selectedNode?.ref_id} />
-          </Html>
-
-          <mesh />
-        </mesh>
-      ))}
-      <Connections linksPosition={linksPositionRef.current} />
-    </group>
+    <>
+      <group ref={groupRef} name="simulation-2d-group">
+        {selectionGraphData?.nodes.map((node) => (
+          <mesh key={node.ref_id}>
+            <Html center sprite zIndexRange={[0, 0]}>
+              <GraphNode
+                node={node}
+                onClick={() => handleSelect(node)}
+                selected={node.ref_id === selectedNode?.ref_id}
+              />
+            </Html>
+          </mesh>
+        ))}
+        <Connections linksPosition={linksPositionRef.current} />
+      </group>
+      {false && (
+        <group>
+          {pathNodes.map((node) => (
+            <mesh key={node.ref_id} position={[node.fx || 0, node.fy || 0, node.fz || 0]}>
+              <Html center sprite zIndexRange={[0, 0]}>
+                <GraphNode
+                  node={node}
+                  onClick={() => handleSelect(node)}
+                  selected={node.ref_id === selectedNode?.ref_id}
+                />
+              </Html>
+            </mesh>
+          ))}
+        </group>
+      )}
+    </>
   )
 })
 
