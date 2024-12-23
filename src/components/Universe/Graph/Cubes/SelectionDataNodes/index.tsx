@@ -55,21 +55,30 @@ export const SelectionDataNodes = memo(() => {
           const data = await fetchNodeEdges(selectedNode.ref_id, 0, 5)
 
           if (data) {
-            const graphNodes: NodeExtended[] = data.nodes
-              .filter((node) => node.ref_id !== selectedNode.ref_id)
-              .map((node: Node) => ({ ...node, x: 0, y: 0, z: 0 }))
+            const filteredNodes: NodeExtended[] = data.nodes.filter(
+              (node, index) => node.ref_id !== selectedNode.ref_id && index < 7,
+            )
+
+            const graphNodes = filteredNodes.map((node: Node) => ({ ...node, x: 0, y: 0, z: 0 }))
 
             const nodes: NodeExtended[] = [
               ...graphNodes,
               { ...selectedNode, x: 0, y: 0, z: 0, fx: 0, fy: 0, fz: 0 } as NodeExtended,
             ]
 
-            setSelectionData({ nodes, links: data.edges as unknown as GraphData['links'] })
+            const links = data.edges.filter(
+              (link: Link) =>
+                nodes.some((node: NodeExtended) => node.ref_id === link.target) &&
+                nodes.some((node: NodeExtended) => node.ref_id === link.source),
+            )
+
+            setSelectionData({ nodes, links: links as unknown as GraphData['links'] })
             setSimulation2D(null)
             linksPositionRef.current = new Map()
+
             //
 
-            addNewNode(data)
+            addNewNode({ nodes: filteredNodes, edges: links })
           }
         } catch (error) {
           console.error(error)
@@ -197,7 +206,7 @@ export const SelectionDataNodes = memo(() => {
 
             const midPoint = new Vector3((sx + tx) / 2, (sy + ty) / 2, 0)
 
-            text.position.set(midPoint.x, midPoint.y, 2)
+            text.position.set(midPoint.x, midPoint.y, 1)
 
             let angle = Math.atan2(ty - sy, tx - sx)
 

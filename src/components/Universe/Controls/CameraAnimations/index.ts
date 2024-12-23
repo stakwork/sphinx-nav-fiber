@@ -24,7 +24,7 @@ export const useCameraAnimations = (
 
   const isUserDragging = useControlStore((s) => s.isUserDragging)
 
-  const { graphStyle, graphRadius, disableCameraRotation } = useGraphStore((s) => s)
+  const { graphRadius, disableCameraRotation } = useGraphStore((s) => s)
 
   useEffect(() => {
     if (!enabled) {
@@ -33,22 +33,24 @@ export const useCameraAnimations = (
     }
   }, [enabled])
 
-  useEffect(() => {
-    if (cameraControlsRef.current && graphRadius) {
-      if (graphStyle === 'sphere') {
-        cameraControlsRef.current.maxDistance = 8000
-        cameraControlsRef.current.minDistance = 200
-        cameraControlsRef.current.setTarget(0, 0, 500, true)
-      } else {
-        cameraControlsRef.current.maxDistance = cameraControlsRef.current.getDistanceToFitSphere(graphRadius + 200)
-        cameraControlsRef.current.minDistance = 100
-      }
-    }
-  }, [graphRadius, graphStyle, cameraControlsRef])
+  // useEffect(() => {
+  //   if (cameraControlsRef.current && graphRadius) {
+  //     cameraControlsRef.current.maxDistance = cameraControlsRef.current.getDistanceToFitSphere(graphRadius + 200)
+  //     cameraControlsRef.current.minDistance = 100
+  //   }
+  // }, [graphRadius, cameraControlsRef])
 
   useEffect(() => {
     if (!selectedNode && cameraControlsRef.current) {
-      cameraControlsRef.current.setLookAt(initialCameraPosition.x, initialCameraPosition.y, graphRadius, 0, 0, 0, true)
+      cameraControlsRef.current.setLookAt(
+        initialCameraPosition.x,
+        initialCameraPosition.y,
+        graphRadius + 200,
+        0,
+        0,
+        0,
+        true,
+      )
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedNode, graphRadius])

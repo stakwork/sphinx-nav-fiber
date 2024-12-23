@@ -120,7 +120,7 @@ export const Cubes = memo(() => {
                 index={index}
                 node={node}
                 scale={node.scale || 1}
-                stopFrames={hideUniverse}
+                stopFrames={false}
               />
             )
           })}

@@ -57,7 +57,9 @@ export const Node = ({ onClick, node, selected, rounded = true }: Props) => {
   )
 }
 
-const Wrapper = styled(Flex)``
+const Wrapper = styled(Flex)`
+  background: black;
+`
 
 const Text = styled(Flex)`
   color: ${colors.white};

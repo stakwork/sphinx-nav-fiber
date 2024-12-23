@@ -5,6 +5,7 @@ import { memo, useEffect, useRef } from 'react'
 import { Line2 } from 'three-stdlib'
 import { useGraphStore } from '~/stores/useGraphStore'
 import { LINE_WIDTH } from '../../constants'
+import { fontProps } from '../Cubes/Text/constants'
 
 type LineComponentProps = {
   label: string
@@ -78,8 +79,8 @@ const _LineComponent = (props: LineComponentProps) => {
         points={[sourceX, sourceY, sourceZ, targetX, targetY, targetZ]}
       />
       <Billboard>
-        <Text anchorX="center" anchorY="middle" color="white" fontSize={10}>
-          {label}1
+        <Text anchorX="center" anchorY="middle" color="white" {...fontProps} fontSize={10}>
+          {label}
         </Text>
       </Billboard>
     </group>
