@@ -86,6 +86,7 @@ export const fetchNodeEdges = async (
       include_properties: includeProperties.toString(),
       includeContent: includeContent.toString(),
       depth: depth.toString(),
+      top_node_count: '5',
       use_sub_graph: useSubGraph.toString(),
       ...(nodeType.length > 0 && { node_type: JSON.stringify(nodeType) }), // Add node_type if not empty
     }).toString()
