@@ -13,9 +13,11 @@ export const CursorTooltip = () => {
     if (tooltipRef.current) {
       tooltipRef.current.style.display = node ? 'block' : 'none'
     }
-  }, [node, tooltipRef])
+  }, [node])
 
   useEffect(() => {
+    let animationFrameId: number
+
     const handleMouseMove = (e: MouseEvent) => {
       const tooltip = tooltipRef.current
 
@@ -23,36 +25,47 @@ export const CursorTooltip = () => {
         return
       }
 
-      tooltip.style.top = `${e.clientY + 10}px`
-      tooltip.style.left = `${e.clientX + 10}px`
+      // Hide tooltip if not hovering over canvas
+      const target = e.target as Element
 
-      // Prevent clipping at screen edges
+      if (target.tagName !== 'CANVAS') {
+        tooltip.style.display = 'none'
+
+        return
+      }
+
+      tooltip.style.display = 'block' // Ensure tooltip is visible if hovering canvas
+
       const tooltipWidth = tooltip.offsetWidth
       const tooltipHeight = tooltip.offsetHeight
       const maxX = window.innerWidth - tooltipWidth - 10
       const maxY = window.innerHeight - tooltipHeight - 10
 
-      if (e.clientX + 10 + tooltipWidth > window.innerWidth) {
-        tooltip.style.left = `${maxX}px`
-      }
+      const x = Math.min(e.clientX + 10, maxX)
+      const y = Math.min(e.clientY + 10, maxY)
 
-      if (e.clientY + 10 + tooltipHeight > window.innerHeight) {
-        tooltip.style.top = `${maxY}px`
-      }
+      animationFrameId = requestAnimationFrame(() => {
+        tooltip.style.transform = `translate(${x}px, ${y}px)`
+      })
     }
 
     window.addEventListener('mousemove', handleMouseMove)
 
     return () => {
       window.removeEventListener('mousemove', handleMouseMove)
+      cancelAnimationFrame(animationFrameId)
     }
-  }, []) // Empty array ensures the listener is added only once
+  }, [])
 
   return <TooltipContainer ref={tooltipRef}>{node && <HoverCard node={node} />}</TooltipContainer>
 }
 
 const TooltipContainer = styled(Flex)`
-  position: fixed;
+  position: fixed; /* Fixed position for the tooltip */
+  left: 0;
+  top: 0;
+  transform: translate(0, 0); /* Initial transform */
+  will-change: transform; /* Optimize for transform changes */
   background: ${colors.BG1};
   color: white;
   padding: 5px;
@@ -62,5 +75,6 @@ const TooltipContainer = styled(Flex)`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  display: none; /* Start hidden */
+  display: none; /* Initially hidden */
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Optional shadow for better visibility */
 `
