@@ -31,13 +31,6 @@ export const useCameraAnimations = (
     }
   }, [enabled])
 
-  // useEffect(() => {
-  //   if (cameraControlsRef.current && graphRadius) {
-  //     cameraControlsRef.current.maxDistance = cameraControlsRef.current.getDistanceToFitSphere(graphRadius + 200)
-  //     cameraControlsRef.current.minDistance = 100
-  //   }
-  // }, [graphRadius, cameraControlsRef])
-
   useEffect(() => {
     if (!selectedNode && cameraControlsRef.current) {
       cameraControlsRef.current.setLookAt(

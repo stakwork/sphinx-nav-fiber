@@ -10,11 +10,15 @@ export const Controls = () => {
   const [smoothTime] = useState(0.8)
 
   useEffect(() => {
+    console.log(selectionGraphRadius, 'radius')
+
     if (cameraControlsRef.current) {
+      const distance = cameraControlsRef.current.getDistanceToFitSphere(50 + 5)
+
       cameraControlsRef.current.setLookAt(
         selectionGraphCameraPosition.x,
         selectionGraphCameraPosition.y,
-        selectionGraphRadius * 2,
+        distance,
         0,
         0,
         0,
@@ -31,7 +35,7 @@ export const Controls = () => {
       boundaryEnclosesCamera
       makeDefault
       maxDistance={12000}
-      minDistance={100}
+      minDistance={1}
       polarRotateSpeed={0}
       smoothTime={smoothTime}
     />

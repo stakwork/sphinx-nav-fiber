@@ -23,8 +23,8 @@ export type DataStore = {
   splashDataLoading: boolean
   abortRequest: boolean
   categoryFilter: NodeType | null
-  dataInitial: { nodes: NodeExtended[]; links: Link[] } | null
-  dataNew: { nodes: NodeExtended[]; links: Link[] } | null
+  dataInitial: { nodes: Node[]; links: Link[] } | null
+  dataNew: { nodes: Node[]; links: Link[] } | null
   filters: FilterParams
   isFetching: boolean
   isLoadingNew: boolean
@@ -41,7 +41,7 @@ export type DataStore = {
   seedQuestions: string[] | null
   runningProjectId: string
   runningProjectMessages: string[]
-  nodesNormalized: Map<string, Node>
+  nodesNormalized: Map<string, NodeExtended>
   linksNormalized: Map<string, Link>
 
   setTrendingTopics: (trendingTopics: Trending[]) => void
@@ -137,7 +137,7 @@ const defaultData: Omit<
   runningProjectId: '',
   hideNodeDetails: false,
   nodeTypes: [],
-  nodesNormalized: new Map<string, Node>(),
+  nodesNormalized: new Map<string, NodeExtended>(),
   linksNormalized: new Map<string, Link>(),
 }
 
@@ -243,7 +243,7 @@ export const useDataStore = create<DataStore>()(
 
       nodesFilteredByFilters.forEach((node) => {
         if (!normalizedNodesMap.has(node.ref_id)) {
-          normalizedNodesMap.set(node.ref_id, node)
+          normalizedNodesMap.set(node.ref_id, { ...node, sources: [], targets: [] })
           newNodes.push(node)
         }
       })
@@ -265,6 +265,24 @@ export const useDataStore = create<DataStore>()(
         ) {
           normalizedLinksMap.set(link.ref_id, link)
           newLinks.push(link)
+
+          // Update sources and targets for the respective nodes
+          const sourceNode = normalizedNodesMap.get(link.source)
+          const targetNode = normalizedNodesMap.get(link.target)
+
+          if (sourceNode && targetNode) {
+            if (sourceNode.targets) {
+              sourceNode.targets.push(link.target)
+            } else {
+              sourceNode.targets = [link.target]
+            }
+
+            if (targetNode.sources) {
+              targetNode.sources.push(link.source)
+            } else {
+              targetNode.sources = [link.source]
+            }
+          }
         }
       })
 
@@ -320,7 +338,7 @@ export const useDataStore = create<DataStore>()(
         dataNew: null,
         runningProjectId: '',
         nodeTypes: [],
-        nodesNormalized: new Map<string, Node>(),
+        nodesNormalized: new Map<string, NodeExtended>(),
         linksNormalized: new Map<string, Link>(),
       })
     },
