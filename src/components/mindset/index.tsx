@@ -258,27 +258,30 @@ export const MindSet = () => {
   }, [dataInitial])
 
   return (
-    <Flex direction="row" style={{ height: '100%' }}>
-      {selectedEpisodeId ? (
-        <>
-          <Flex>
-            <Flex onClick={() => setShowTwoD(!showTwoD)}>
-              <Header />
+    <>
+      <Flex direction="row" style={{ height: '82%' }}>
+        {selectedEpisodeId ? (
+          <>
+            <Flex>
+              <Flex onClick={() => setShowTwoD(!showTwoD)}>
+                <Header />
+              </Flex>
+              <SideBar />
             </Flex>
-            <SideBar />
-          </Flex>
-          <ContentContainer>
-            <Flex basis="100%" grow={1} shrink={1}>
-              {showTwoD ? <Scene /> : <Universe />}
-            </Flex>
-
-            <PlayerControl markers={markers} />
-          </ContentContainer>
-        </>
-      ) : (
-        <LandingPage />
-      )}
-    </Flex>
+            <ContentContainer>
+              <Flex basis="100%" grow={1} shrink={1}>
+                {showTwoD ? <Scene /> : <Universe />}
+              </Flex>
+            </ContentContainer>
+          </>
+        ) : (
+          <LandingPage />
+        )}
+      </Flex>
+      <PlayerControlWrapper>
+        <PlayerControl markers={markers} />
+      </PlayerControlWrapper>
+    </>
   )
 }
 
@@ -287,4 +290,9 @@ const ContentContainer = styled(Flex)`
   flex-shrink: 1;
   flex-grow: 1;
   padding: 16px 16px 16px 0;
+`
+
+const PlayerControlWrapper = styled(Flex)`
+  padding: 16px 16px 16px 0;
+  margin-left: 18px;
 `

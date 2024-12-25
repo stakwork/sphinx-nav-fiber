@@ -19,7 +19,7 @@ export const SideBar = () => {
 const Wrapper = styled(Flex)(({ theme }) => ({
   position: 'relative',
   display: 'flex',
-  padding: '0 20px 20px 20px',
+  padding: '0 20px 0 20px',
   background: 'transparent',
   width: '100%',
 
