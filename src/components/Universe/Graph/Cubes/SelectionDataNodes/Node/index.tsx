@@ -1,4 +1,8 @@
+import { Html } from '@react-three/drei'
+import { useFrame } from '@react-three/fiber'
+import { useRef } from 'react'
 import styled from 'styled-components'
+import { Mesh, Vector3 } from 'three'
 import { Flex } from '~/components/common/Flex'
 import { Icons } from '~/components/Icons'
 import CloseIcon from '~/components/Icons/CloseIcon'
@@ -17,12 +21,25 @@ type Props = {
   node: NodeExtended
   rounded?: boolean
   selected: boolean
-  onClick: () => void
+  onClick: (id: string) => void
+  x: number
+  y: number
+  z: number
+  id: string
 }
 
-export const Node = ({ onClick, node, selected, rounded = true }: Props) => {
+export const Node = ({ onClick, node, selected, rounded = true, x, y, z, id }: Props) => {
+  const nodeRef = useRef<Mesh | null>(null)
+
   const { normalizedSchemasByType, getNodeKeysByType } = useSchemaStore((s) => s)
   const setSelectedNode = useGraphStore((s) => s.setSelectedNode)
+  const targetPosition = new Vector3(x, y, z)
+
+  useFrame(() => {
+    if (nodeRef.current) {
+      nodeRef.current.position.lerp(targetPosition, 0.05)
+    }
+  })
 
   const primaryIcon = normalizedSchemasByType[node.node_type]?.icon
 
@@ -34,26 +51,32 @@ export const Node = ({ onClick, node, selected, rounded = true }: Props) => {
   const titleShortened = title ? truncateText(title, 30) : ''
 
   return (
-    <Wrapper align="center" direction="row" justify="flex-start">
-      <>
-        {selected ? (
-          <Selected rounded={false}>
-            <IconButton onClick={() => setSelectedNode(null)}>
-              <CloseIcon />
-            </IconButton>
-            <div>{Icon ? <Icon /> : <NodesIcon />}</div>
-            <Text>{titleShortened}</Text>
-          </Selected>
-        ) : (
+    <mesh ref={nodeRef}>
+      <Html center sprite zIndexRange={[0, 0]}>
+        <Wrapper align="center" direction="row" justify="flex-start">
           <>
-            <Tag onClick={onClick} rounded={rounded}>
-              <div>{Icon ? <Icon /> : <NodesIcon />}</div>
-            </Tag>
-            <Text>{titleShortened}</Text>
+            {selected ? (
+              <Selected rounded={false}>
+                <IconButton onClick={() => setSelectedNode(null)}>
+                  <CloseIcon />
+                </IconButton>
+                <div>{Icon ? <Icon /> : <NodesIcon />}</div>
+                <Text>{titleShortened}</Text>
+              </Selected>
+            ) : (
+              <>
+                <Tag onClick={() => onClick(id)} rounded={rounded}>
+                  <Avatar align="center" justify="center" src={node?.properties?.image_url || ''}>
+                    {!node?.properties?.image_url ? <span>{Icon ? <Icon /> : <NodesIcon />}</span> : null}
+                  </Avatar>
+                </Tag>
+                <Text>{titleShortened}</Text>
+              </>
+            )}
           </>
-        )}
-      </>
-    </Wrapper>
+        </Wrapper>
+      </Html>
+    </mesh>
   )
 }
 
@@ -105,8 +128,8 @@ const IconButton = styled(Flex)`
   position: absolute;
   top: -10px;
   right: -10px;
-  width: 24px;
-  height: 24px;
+  width: 30px;
+  height: 30px;
 
   border-radius: 40px;
   display: flex;
@@ -115,8 +138,22 @@ const IconButton = styled(Flex)`
   background: black;
   color: #ffffff;
   border-radius: 100%;
-  font-size: 16px;
+  font-size: 30px;
   cursor: pointer;
   transition: opacity 0.4s;
   box-shadow: 0px 2px 12px rgba(0, 0, 0, 0.5);
+`
+
+type AvatarProps = {
+  src: string
+}
+
+const Avatar = styled(Flex)<AvatarProps>`
+  background-image: ${({ src }) => `url(${src})`};
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
 `

@@ -153,6 +153,8 @@ export type NodeExtended = Node & {
   fx?: number
   fy?: number
   fz?: number
+  sources?: string[]
+  targets?: string[]
 }
 
 export type Link<T = string> = {

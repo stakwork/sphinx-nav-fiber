@@ -30,9 +30,9 @@ const _Connection = (props: LineComponentProps) => {
         points={[sourceX, sourceY, sourceZ, targetX, targetY, targetZ]}
       />
       <mesh>
-        <planeGeometry args={[label.length * 6, 12]} />
+        <planeGeometry args={[label.length * 2, 2]} />
         <meshBasicMaterial color="black" />
-        <Text anchorX="center" anchorY="middle" color="white" {...fontProps} fontSize={6}>
+        <Text anchorX="center" anchorY="middle" color="white" {...fontProps} fontSize={2}>
           {label}
         </Text>
       </mesh>

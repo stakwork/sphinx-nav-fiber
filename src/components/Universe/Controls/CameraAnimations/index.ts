@@ -22,9 +22,7 @@ export const useCameraAnimations = (
 
   useAutoNavigate(cameraControlsRef)
 
-  const isUserDragging = useControlStore((s) => s.isUserDragging)
-
-  const { graphRadius, disableCameraRotation } = useGraphStore((s) => s)
+  const { graphRadius } = useGraphStore((s) => s)
 
   useEffect(() => {
     if (!enabled) {
@@ -32,13 +30,6 @@ export const useCameraAnimations = (
       cameraAnimation = null
     }
   }, [enabled])
-
-  // useEffect(() => {
-  //   if (cameraControlsRef.current && graphRadius) {
-  //     cameraControlsRef.current.maxDistance = cameraControlsRef.current.getDistanceToFitSphere(graphRadius + 200)
-  //     cameraControlsRef.current.minDistance = 100
-  //   }
-  // }, [graphRadius, cameraControlsRef])
 
   useEffect(() => {
     if (!selectedNode && cameraControlsRef.current) {
@@ -58,6 +49,9 @@ export const useCameraAnimations = (
   useFrame((_, delta) => {
     if (cameraControlsRef.current) {
       //  do camera rotation
+      const { disableCameraRotation } = useGraphStore.getState()
+      const { isUserDragging } = useControlStore.getState()
+
       if (!disableCameraRotation && !isUserDragging) {
         cameraControlsRef.current.azimuthAngle += autoRotateSpeed * delta * MathUtils.DEG2RAD
       }

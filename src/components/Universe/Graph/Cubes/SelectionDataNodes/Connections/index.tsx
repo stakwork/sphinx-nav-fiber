@@ -1,20 +1,97 @@
-import { memo } from 'react'
+import { memo, useEffect, useRef } from 'react'
+import { Box3, Color, Group, Sphere, Vector3 } from 'three'
+import { Line2 } from 'three-stdlib'
+import { useShallow } from 'zustand/react/shallow'
 import { useGraphStore } from '~/stores/useGraphStore'
-import { Link } from '~/types'
+import { Link, NodeExtended } from '~/types'
 import { LinkPosition } from '../../..'
 import { Connection } from './Connection'
 
 type Props = {
-  linksPosition: Map<string, LinkPosition>
+  links: Link[]
+  nodes: NodeExtended[]
 }
 
-export const Connections = memo(({ linksPosition }: Props) => {
-  const { selectionGraphData } = useGraphStore((s) => s)
+export const Connections = memo(({ links, nodes }: Props) => {
+  const groupRef = useRef<Group>(null)
+  const linksPositionRef = useRef(new Map<string, LinkPosition>())
+  const { setSelectionGraphRadius } = useGraphStore(useShallow((s) => s))
+
+  useEffect(() => {
+    if (!groupRef.current) {
+      return
+    }
+
+    console.log('connection to updated')
+
+    const grConnections = groupRef.current
+
+    grConnections.children.forEach((g, i) => {
+      const r = g.children[0]
+      const text = g.children[1]
+
+      if (r instanceof Line2) {
+        const Line = r as Line2
+        const link = links[i]
+
+        if (link) {
+          const sourceNode = nodes.find((n: NodeExtended) => n.ref_id === link.source)
+          const targetNode = nodes.find((n: NodeExtended) => n.ref_id === link.target)
+
+          if (!sourceNode || !targetNode) {
+            return
+          }
+
+          const { x: sx, y: sy } = sourceNode
+          const { x: tx, y: ty } = targetNode
+
+          linksPositionRef.current.set(link.ref_id, {
+            sx,
+            sy,
+            tx,
+            ty,
+            sz: 0,
+            tz: 0,
+          })
+
+          const midPoint = new Vector3((sx + tx) / 2, (sy + ty) / 2, 0)
+
+          text.position.set(midPoint.x, midPoint.y, 1)
+
+          let angle = Math.atan2(ty - sy, tx - sx)
+
+          if (tx < sx || (Math.abs(tx - sx) < 0.01 && ty < sy)) {
+            angle += Math.PI
+          }
+
+          text.rotation.set(0, 0, angle)
+
+          Line.geometry.setPositions([sx, sy, 0, tx, ty, 0])
+
+          const { material } = Line
+
+          material.color = new Color('white')
+        }
+      }
+    })
+
+    console.log('connection updated')
+
+    const nodesVector = nodes.map((i: NodeExtended) => new Vector3(i.x, i.y, i.z))
+
+    const boundingBox = new Box3().setFromPoints(nodesVector)
+
+    const boundingSphere = new Sphere()
+
+    boundingBox.getBoundingSphere(boundingSphere)
+
+    setSelectionGraphRadius(boundingSphere.radius)
+  }, [links, setSelectionGraphRadius, nodes])
 
   return (
-    <group name="simulation-3d-group__connections">
-      {selectionGraphData?.links.map((l: Link) => {
-        const position = linksPosition.get(l.ref_id) || {
+    <group ref={groupRef} name="simulation-3d-group__connections">
+      {links?.map((l: Link) => {
+        const position = linksPositionRef.current?.get(l.ref_id) || {
           sx: 0,
           sy: 0,
           sz: 0,
