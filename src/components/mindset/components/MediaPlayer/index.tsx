@@ -66,6 +66,7 @@ const MediaPlayerComponent = ({ mediaUrl }: Props) => {
     setIsSeeking,
     setPlayerRef,
     playerRef,
+    playbackSpeed,
   } = usePlayerStore((s) => s)
 
   useEffect(() => () => resetPlayer(), [resetPlayer])
@@ -184,6 +185,7 @@ const MediaPlayerComponent = ({ mediaUrl }: Props) => {
           onPlay={handlePlay}
           onProgress={handleProgress}
           onReady={handleReady}
+          playbackRate={playbackSpeed}
           playing={isPlaying}
           url={mediaUrl || ''}
           volume={volume}
