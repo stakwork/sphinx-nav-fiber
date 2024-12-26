@@ -11,7 +11,7 @@ import { Connections } from './Connections'
 import { Node as GraphNode } from './Node'
 
 const radius = 50
-const MAX_LENGTH = 5
+const MAX_LENGTH = 7
 
 type GraphData<T = string> = {
   links: Link<T>[]
@@ -40,48 +40,40 @@ export const SelectionDataNodes = memo(() => {
 
     const oldNodes = pathGraph?.nodes || []
 
-    // Combine `oldNodes` and `selectionData.nodes` for position calculations
-    const combinedNodes = [...oldNodes, ...selectionData.nodes]
+    // Filter out nodes that already exist in oldNodes
+    const newNodes = selectionData.nodes.filter((i) => !oldNodes.some((n) => n.ref_id === i.ref_id))
 
-    // Calculate the angular spacing considering both old and new nodes
-    const totalNodes = combinedNodes.length
+    // Find the start position from oldNodes
+    const startPositionNode = oldNodes.find((i) => i.x !== 0 || i.y !== 0)
+    const startPosition = startPositionNode ? { x: startPositionNode.x, y: startPositionNode.y } : { x: 0, y: 0 }
+
+    // Calculate the starting angle (theta) for the start position
+    const startTheta = Math.atan2(startPosition.y, startPosition.x)
+
+    // Total nodes including both old and new ones
+    const totalNodes = oldNodes.length + newNodes.length - 1
     const thetaSpan = (Math.PI * 2) / totalNodes // Angle between points
 
-    const nodes = selectionData.nodes.map((node, index) => {
-      // Check if the node exists in oldNodes
-      const existingNode = oldNodes.find((oldNode) => oldNode.ref_id === node.ref_id)
+    const nodes = [
+      ...oldNodes,
+      ...newNodes.map((node, index) => {
+        // Calculate angular position for the new node
+        const theta = startTheta + thetaSpan * (index + 1) // Start adding from startTheta
+        const x = node.ref_id === selectedNode?.ref_id ? 0 : Math.cos(theta) * radius
+        const y = node.ref_id === selectedNode?.ref_id ? 0 : Math.sin(theta) * radius
+        const z = node.ref_id === selectedNode?.ref_id ? 0 : 0
 
-      if (existingNode) {
-        // Retain the old node's position
-        return existingNode
-      }
+        return { ...node, x, y, z }
+      }),
+    ]
 
-      // Calculate new position for nodes not in oldNodes
-      const theta = thetaSpan * (oldNodes.length + index) // Offset by oldNodes count
-      const x = node.ref_id === selectedNode?.ref_id ? 0 : Math.cos(theta) * radius
-      const y = node.ref_id === selectedNode?.ref_id ? 0 : Math.sin(theta) * radius
-      const z = node.ref_id === selectedNode?.ref_id ? 0 : 0
-
-      return { ...node, x, y, z }
-    })
-
-    // Retain old nodes with their original positions
-    const retainedOldNodes = oldNodes.filter(
-      (oldNode) => !selectionData.nodes.some((node) => node.ref_id === oldNode.ref_id),
-    )
-
-    // Merge the calculated nodes with retained old nodes
-    const mergedNodes = [...nodes, ...retainedOldNodes]
-
-    return { nodes: mergedNodes, links: selectionData.links }
+    return { nodes, links: selectionData.links }
   }, [selectionData, selectedNode, pathGraph?.nodes])
 
   const graphData: GraphData = useMemo(() => {
     if (newData?.nodes?.length) {
       return newData
     }
-
-    console.log(pathGraph)
 
     if (pathGraph) {
       return {
