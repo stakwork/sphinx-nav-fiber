@@ -22,6 +22,8 @@ const Wrapper = styled(Flex)(({ theme }) => ({
   padding: '0 20px 0 20px',
   background: 'transparent',
   width: '100%',
+  height: 'calc(100vh - 180px)',
+  overflow: 'auto',
 
   [theme.breakpoints.up('sm')]: {
     width: MENU_WIDTH,

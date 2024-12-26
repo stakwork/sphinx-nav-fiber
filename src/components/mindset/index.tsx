@@ -258,8 +258,8 @@ export const MindSet = () => {
   }, [dataInitial])
 
   return (
-    <>
-      <Flex direction="row" style={{ height: '82%' }}>
+    <MainContainer>
+      <ContentWrapper direction="row">
         {selectedEpisodeId ? (
           <>
             <Flex>
@@ -277,13 +277,25 @@ export const MindSet = () => {
         ) : (
           <LandingPage />
         )}
-      </Flex>
+      </ContentWrapper>
       <PlayerControlWrapper>
         <PlayerControl markers={markers} />
       </PlayerControlWrapper>
-    </>
+    </MainContainer>
   )
 }
+
+const MainContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100%;
+`
+
+const ContentWrapper = styled(Flex)`
+  flex: 1;
+  overflow: hidden;
+`
 
 const ContentContainer = styled(Flex)`
   flex-basis: 100%;
