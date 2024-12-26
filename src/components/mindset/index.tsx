@@ -172,7 +172,7 @@ export const MindSet = () => {
 
             const [matchingLinks, remainingLinks] = edges.reduce<[Link[], Link[]]>(
               ([matches, remaining], link) => {
-                if (link?.properties?.start !== undefined && (link?.properties?.start as number) < currentTime) {
+                if (link?.properties?.start !== undefined && (link?.properties?.start as number) < currentTime + 3) {
                   matches.push(link)
                 } else {
                   remaining.push(link)
