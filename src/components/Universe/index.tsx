@@ -21,6 +21,7 @@ import { Flex } from '../common/Flex'
 import { outlineEffectColor } from './constants'
 import { Controls } from './Controls'
 import { initialCameraPosition, selectionGraphCameraPosition } from './Controls/CameraAnimations/constants'
+import { CursorTooltip } from './CursorTooltip/index'
 import { Graph } from './Graph'
 import { Lights } from './Lights'
 import { Overlay } from './Overlay'
@@ -135,26 +136,26 @@ const _Universe = () => {
       <Suspense fallback={null}>
         <Leva hidden isRoot />
 
-        {true && (
-          <Canvas
-            camera={cameraProps}
-            frameloop={selectedNode ? 'demand' : 'always'}
-            id="universe-canvas"
-            onCreated={onCreatedHandler}
-            onWheel={onWheelHandler}
-          >
-            {isDevelopment && <Perf position="top-right" style={{ top: '80px' }} />}
-            <Suspense fallback={<Fallback />}>
-              <Preload />
+        <Canvas
+          camera={cameraProps}
+          frameloop={selectedNode ? 'demand' : 'always'}
+          id="universe-canvas"
+          onCreated={onCreatedHandler}
+          onWheel={onWheelHandler}
+        >
+          {isDevelopment && <Perf position="top-right" style={{ top: '80px' }} />}
+          <Suspense fallback={<Fallback />}>
+            <Preload />
 
-              <AdaptiveDpr />
+            <AdaptiveDpr />
 
-              <AdaptiveEvents />
+            <AdaptiveEvents />
 
-              <Content />
-            </Suspense>
-          </Canvas>
-        )}
+            <Content />
+          </Suspense>
+        </Canvas>
+        <CursorTooltip />
+
         {selectedNode ? (
           <SelectionWrapper>
             <Canvas

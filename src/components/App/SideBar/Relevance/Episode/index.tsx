@@ -71,7 +71,7 @@ export const Episode = ({
   node,
 }: Props) => {
   const searchTerm = useAppStore((s) => s.currentSearch)
-  const { setHoveredNode } = useGraphStore((s) => s)
+  const setHoveredNode = useGraphStore((s) => s.setHoveredNode)
   const text = highlightSearchTerm(String(newText), searchTerm) as string
   const name = highlightSearchTerm(String(newName), searchTerm) as string
   const subtitleSource = type === 'show' ? '' : showTitle
