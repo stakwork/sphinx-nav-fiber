@@ -23,16 +23,16 @@ const _Connection = (props: LineComponentProps) => {
     <group>
       <Line
         ref={lineRef}
-        color="blue"
+        color="white"
         isLine2
         lineWidth={2}
         name="line"
         points={[sourceX, sourceY, sourceZ, targetX, targetY, targetZ]}
       />
       <mesh>
-        <planeGeometry args={[label.length * 2, 2]} />
+        <planeGeometry args={[label.length * 1, 2]} />
         <meshBasicMaterial color="black" />
-        <Text anchorX="center" anchorY="middle" color="white" {...fontProps} fontSize={2}>
+        <Text anchorX="center" anchorY="middle" color="white" {...fontProps} scale={1.5}>
           {label}
         </Text>
       </mesh>

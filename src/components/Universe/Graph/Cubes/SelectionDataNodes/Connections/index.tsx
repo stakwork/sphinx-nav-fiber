@@ -4,13 +4,17 @@ import { Line2 } from 'three-stdlib'
 import { useShallow } from 'zustand/react/shallow'
 import { useGraphStore } from '~/stores/useGraphStore'
 import { Link, NodeExtended } from '~/types'
+import { colors } from '~/utils'
+import { PathNode } from '..'
 import { LinkPosition } from '../../..'
 import { Connection } from './Connection'
 
 type Props = {
   links: Link[]
-  nodes: NodeExtended[]
+  nodes: PathNode[]
 }
+
+const PATH_COLOR = '#68BE3E'
 
 export const Connections = memo(({ links, nodes }: Props) => {
   const groupRef = useRef<Group>(null)
@@ -21,8 +25,6 @@ export const Connections = memo(({ links, nodes }: Props) => {
     if (!groupRef.current) {
       return
     }
-
-    console.log('connection to updated')
 
     const grConnections = groupRef.current
 
@@ -70,12 +72,21 @@ export const Connections = memo(({ links, nodes }: Props) => {
 
           const { material } = Line
 
-          material.color = new Color('white')
+          material.color = new Color(colors.white)
+          text.visible = true
+          material.opacity = 1
+          material.linewidth = 2
+
+          if (targetNode.isPathNode && sourceNode.isPathNode) {
+            material.color = new Color(PATH_COLOR)
+            text.visible = false
+            material.linewidth = 4
+            material.transparent = true
+            material.opacity = 0.3
+          }
         }
       }
     })
-
-    console.log('connection updated')
 
     const nodesVector = nodes.map((i: NodeExtended) => new Vector3(i.x, i.y, i.z))
 
