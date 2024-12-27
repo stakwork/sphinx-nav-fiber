@@ -165,14 +165,14 @@ export const MindSet = () => {
       if (previousTimeRef.current !== null) {
         const deltaTime = time - previousTimeRef.current
 
-        if (deltaTime > 2000) {
+        if (deltaTime > 1000) {
           if (nodesAndEdgesRef.current && playerRef) {
             const { nodes, edges } = nodesAndEdgesRef.current
             const currentTime = playerRef?.getCurrentTime()
 
             const [matchingLinks, remainingLinks] = edges.reduce<[Link[], Link[]]>(
               ([matches, remaining], link) => {
-                if (link?.properties?.start !== undefined && (link?.properties?.start as number) < currentTime + 3) {
+                if (link?.properties?.start !== undefined && (link?.properties?.start as number) < currentTime + 5) {
                   matches.push(link)
                 } else {
                   remaining.push(link)

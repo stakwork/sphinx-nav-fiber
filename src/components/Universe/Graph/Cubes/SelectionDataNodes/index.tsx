@@ -10,8 +10,12 @@ import { LinkPosition } from '../..'
 import { Connections } from './Connections'
 import { Node as GraphNode } from './Node'
 
-const radius = 50
+const RADIUS = 50
 const MAX_LENGTH = 7
+
+export type PathNode = NodeExtended & {
+  isPathNode?: boolean
+}
 
 type GraphData<T = string> = {
   links: Link<T>[]
@@ -39,12 +43,13 @@ export const SelectionDataNodes = memo(() => {
     }
 
     const oldNodes = pathGraph?.nodes || []
+    const oldLinks = pathGraph?.links.filter((i) => !selectionData.links.some((l) => l.ref_id === i.ref_id)) || []
 
     // Filter out nodes that already exist in oldNodes
     const newNodes = selectionData.nodes.filter((i) => !oldNodes.some((n) => n.ref_id === i.ref_id))
 
     // Find the start position from oldNodes
-    const startPositionNode = oldNodes.find((i) => i.x !== 0 || i.y !== 0)
+    const startPositionNode = oldNodes.at(-1)
     const startPosition = startPositionNode ? { x: startPositionNode.x, y: startPositionNode.y } : { x: 0, y: 0 }
 
     // Calculate the starting angle (theta) for the start position
@@ -59,16 +64,16 @@ export const SelectionDataNodes = memo(() => {
       ...newNodes.map((node, index) => {
         // Calculate angular position for the new node
         const theta = startTheta + thetaSpan * (index + 1) // Start adding from startTheta
-        const x = node.ref_id === selectedNode?.ref_id ? 0 : Math.cos(theta) * radius
-        const y = node.ref_id === selectedNode?.ref_id ? 0 : Math.sin(theta) * radius
+        const x = node.ref_id === selectedNode?.ref_id ? 0 : Math.cos(theta) * RADIUS
+        const y = node.ref_id === selectedNode?.ref_id ? 0 : Math.sin(theta) * RADIUS
         const z = node.ref_id === selectedNode?.ref_id ? 0 : 0
 
         return { ...node, x, y, z }
       }),
     ]
 
-    return { nodes, links: selectionData.links }
-  }, [selectionData, selectedNode, pathGraph?.nodes])
+    return { nodes, links: [...selectionData.links, ...oldLinks] }
+  }, [selectionData?.nodes, selectionData?.links, pathGraph?.nodes, pathGraph?.links, selectedNode?.ref_id])
 
   const graphData: GraphData = useMemo(() => {
     if (newData?.nodes?.length) {
@@ -103,7 +108,7 @@ export const SelectionDataNodes = memo(() => {
 
             const graphNodes = filteredNodes.map((node: Node) => ({ ...node, x: 0, y: 0, z: 0 }))
 
-            const nodes: NodeExtended[] = [...graphNodes, { ...selectedNode, x: 0, y: 0, z: 0, fx: 0, fy: 0, fz: 0 }]
+            const nodes: PathNode[] = [...graphNodes, { ...selectedNode, x: 0, y: 0, z: 0, fx: 0, fy: 0, fz: 0 }]
 
             const links = data.edges.filter(
               (link: Link) =>
@@ -132,32 +137,76 @@ export const SelectionDataNodes = memo(() => {
       if (selectedNode) {
         const newSelectedNode = graphData.nodes.find((i) => i.ref_id === id)
 
-        const nodes = [
-          { ...newSelectedNode, x: 0, y: 0, z: 0, fx: 0, fy: 0, fz: 0 },
-          {
-            ...selectedNode,
-            ...(newSelectedNode?.x !== undefined ? { fx: -newSelectedNode.x, x: -newSelectedNode.x } : { x: 0 }),
-            ...(newSelectedNode?.y !== undefined ? { fy: -newSelectedNode.y, y: -newSelectedNode.y } : { y: 0 }),
-            ...(newSelectedNode?.z !== undefined ? { fz: newSelectedNode?.z, z: newSelectedNode.z } : { z: 0 }),
-          },
-        ]
+        if (!newSelectedNode) {
+          return
+        }
+
+        const oldPathNodes = pathGraph?.nodes.filter((i) => i.ref_id !== newSelectedNode.ref_id) || []
+
+        // Create new path nodes, keeping up to 2 older nodes
+        const newPathNodes = [
+          { ...newSelectedNode, isPathNode: false },
+          ...(oldPathNodes.length ? oldPathNodes : [{ ...selectedNode, isPathNode: true }]),
+        ].slice(0, 3)
+
+        const angle = Math.atan2(-newSelectedNode.y, -newSelectedNode.x)
+        const x = RADIUS * Math.cos(angle)
+        const y = RADIUS * Math.sin(angle)
+
+        const updatedPathNodes = newPathNodes.map((node, index) => {
+          if (index === 0) {
+            return { ...node, x: 0, y: 0, z: 0, fx: 0, fy: 0, fz: 0, isPathNode: true }
+          }
+
+          if (index === 1) {
+            return newPathNodes.length === 3
+              ? {
+                  ...node,
+                  x: x / 2,
+                  y: y / 2,
+                  z: 0,
+                  fx: x / 2,
+                  fy: y / 2,
+                  fz: 0,
+                  isPathNode: true,
+                }
+              : {
+                  ...node,
+                  x,
+                  y,
+                  z: 0,
+                  fx: x,
+                  fy: y,
+                  fz: 0,
+                  isPathNode: true,
+                }
+          }
+
+          return {
+            ...node,
+            x,
+            y,
+            z: 0,
+            fx: x,
+            fy: y,
+            fz: 0,
+            isPathNode: true,
+          }
+        })
 
         const links = graphData.links.filter(
           (i) =>
-            (i.target === selectedNode?.ref_id && i.source === id) ||
-            (i.source === selectedNode?.ref_id && i.target === id),
+            updatedPathNodes.some((node) => node.ref_id === i.target) &&
+            updatedPathNodes.some((node) => node.ref_id === i.source),
         )
 
-        console.log(links, 'here')
         setSelectionData(null)
-        setPathGraph({ nodes: nodes as NodeExtended[], links })
+        setPathGraph({ nodes: updatedPathNodes as NodeExtended[], links })
 
-        if (newSelectedNode) {
-          setSelectedNode(newSelectedNode)
-        }
+        setSelectedNode(newSelectedNode)
       }
     },
-    [graphData.links, graphData.nodes, selectedNode, setSelectedNode],
+    [graphData.links, graphData.nodes, pathGraph, selectedNode, setSelectedNode],
   )
 
   return (

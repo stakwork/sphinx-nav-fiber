@@ -9,16 +9,16 @@ import CloseIcon from '~/components/Icons/CloseIcon'
 import NodesIcon from '~/components/Icons/NodesIcon'
 import { useGraphStore } from '~/stores/useGraphStore'
 import { useSchemaStore } from '~/stores/useSchemaStore'
-import { NodeExtended } from '~/types'
 import { colors } from '~/utils'
 import { truncateText } from '~/utils/truncateText'
+import { PathNode } from '..'
 
 type TagProps = {
   rounded: boolean
 }
 
 type Props = {
-  node: NodeExtended
+  node: PathNode
   rounded?: boolean
   selected: boolean
   onClick: (id: string) => void
