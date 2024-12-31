@@ -151,7 +151,7 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
   },
   setSelectionData: (selectionGraphData) => set({ selectionGraphData }),
   setScrollEventsDisabled: (scrollEventsDisabled) => set({ scrollEventsDisabled }),
-  setDisableCameraRotation: (rotation) => set({ disableCameraRotation: true || rotation }),
+  setDisableCameraRotation: (rotation) => set({ disableCameraRotation: rotation }),
   setIsHovering: (isHovering) => set({ isHovering }),
   setGraphRadius: (graphRadius) => set({ graphRadius }),
   setSelectionGraphRadius: (selectionGraphRadius) => set({ selectionGraphRadius }),
