@@ -110,19 +110,10 @@ export const Cubes = memo(() => {
         onPointerOver={onPointerIn}
       >
         <group name="simulation-3d-group__nodes" visible={!hideUniverse}>
-          {data?.nodes.map((node: NodeExtended, index: number) => {
+          {data?.nodes.map((node: NodeExtended) => {
             const color = COLORS_MAP[nodeTypes.indexOf(node.node_type)] || colors.white
 
-            return (
-              <NodeWrapper
-                key={node.ref_id}
-                color={color}
-                index={index}
-                node={node}
-                scale={node.scale || 1}
-                stopFrames={false}
-              />
-            )
+            return <NodeWrapper key={node.ref_id} color={color} node={node} scale={node.scale || 1} />
           })}
         </group>
 
