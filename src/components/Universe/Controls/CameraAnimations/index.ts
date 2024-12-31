@@ -52,7 +52,7 @@ export const useCameraAnimations = (
       const { disableCameraRotation } = useGraphStore.getState()
       const { isUserDragging } = useControlStore.getState()
 
-      if (!disableCameraRotation && !isUserDragging) {
+      if (!disableCameraRotation && !isUserDragging && false) {
         cameraControlsRef.current.azimuthAngle += autoRotateSpeed * delta * MathUtils.DEG2RAD
       }
 
