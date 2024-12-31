@@ -128,7 +128,7 @@ const defaultData: Omit<
   data: null,
   simulation: null,
   selectionGraphData: { nodes: [], links: [] },
-  disableCameraRotation: false,
+  disableCameraRotation: true,
   scrollEventsDisabled: false,
   graphRadius: 1500, // calculated from initial load
   selectionGraphRadius: 200, // calculated from initial load
@@ -151,7 +151,7 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
   },
   setSelectionData: (selectionGraphData) => set({ selectionGraphData }),
   setScrollEventsDisabled: (scrollEventsDisabled) => set({ scrollEventsDisabled }),
-  setDisableCameraRotation: (rotation) => set({ disableCameraRotation: rotation }),
+  setDisableCameraRotation: (rotation) => set({ disableCameraRotation: true || rotation }),
   setIsHovering: (isHovering) => set({ isHovering }),
   setGraphRadius: (graphRadius) => set({ graphRadius }),
   setSelectionGraphRadius: (selectionGraphRadius) => set({ selectionGraphRadius }),
@@ -244,7 +244,7 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
         .force(
           'collide',
           forceCollide()
-            .radius(() => 250)
+            .radius(() => 150)
             .strength(1)
             .iterations(1),
         )
