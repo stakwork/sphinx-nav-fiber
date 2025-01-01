@@ -87,7 +87,6 @@ const Wrapper = styled(Flex)`
   padding: 24px;
   overflow-y: auto;
   flex: 1 1 100%;
-  max-height: 60%;
 `
 
 const TranscriptWrapper = styled(Flex)`
