@@ -5,7 +5,7 @@ import { useHoveredNode } from '~/stores/useGraphStore'
 import { colors } from '~/utils'
 import { HoverCard } from './HoverCard/index'
 
-const CURSOR_SIZE = 100
+const CURSOR_SIZE = 70
 
 export const CursorTooltip = () => {
   const tooltipRef = useRef<HTMLDivElement | null>(null)
@@ -70,20 +70,6 @@ export const CursorTooltip = () => {
     <>
       <CustomCursorWrapper ref={cursorRef}>
         <Flex className="inner-circle">
-          <Flex align="center" className="inner-circle__text" grow={1} justify="space-between">
-            {node ? (
-              <>
-                <span>Click to</span>
-                <span>Select</span>
-              </>
-            ) : (
-              <>
-                <span>Scroll to</span>
-                <span>Explore</span>
-              </>
-            )}
-          </Flex>
-
           <span className="inner-circle__center">+</span>
         </Flex>
       </CustomCursorWrapper>
@@ -126,8 +112,6 @@ const CustomCursorWrapper = styled(Flex)`
   justify-content: center;
 
   .inner-circle {
-    width: ${CURSOR_SIZE - 30}px;
-    height: ${CURSOR_SIZE - 30}px;
     border-radius: 50%;
     border: 1px solid ${colors.white};
     border-color: rgba(255, 255, 255, 0.2);
