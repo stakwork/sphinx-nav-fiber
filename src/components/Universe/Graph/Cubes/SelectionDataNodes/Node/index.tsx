@@ -12,6 +12,9 @@ import { useSchemaStore } from '~/stores/useSchemaStore'
 import { colors } from '~/utils'
 import { truncateText } from '~/utils/truncateText'
 import { PathNode } from '..'
+import EditIcon from '~/components/Icons/EditIcon'
+import { useUserStore } from '~/stores/useUserStore'
+import { useModal } from '~/stores/useModalStore'
 
 type TagProps = {
   rounded: boolean
@@ -30,6 +33,8 @@ type Props = {
 
 export const Node = ({ onClick, node, selected, rounded = true, x, y, z, id }: Props) => {
   const nodeRef = useRef<Mesh | null>(null)
+  const [isAdmin] = useUserStore((s) => [s.isAdmin])
+  const { open: openEditNodeNameModal } = useModal('editNodeName')
 
   const { normalizedSchemasByType, getNodeKeysByType } = useSchemaStore((s) => s)
   const setSelectedNode = useGraphStore((s) => s.setSelectedNode)
@@ -57,9 +62,14 @@ export const Node = ({ onClick, node, selected, rounded = true, x, y, z, id }: P
           <>
             {selected ? (
               <Selected rounded={false}>
-                <IconButton onClick={() => setSelectedNode(null)}>
+                {isAdmin && (
+                  <EditButton onClick={() => openEditNodeNameModal()}>
+                    <EditIcon />
+                  </EditButton>
+                )}
+                <CloseButton onClick={() => setSelectedNode(null)}>
                   <CloseIcon />
-                </IconButton>
+                </CloseButton>
                 <div>{Icon ? <Icon /> : <NodesIcon />}</div>
                 <Text>{titleShortened}</Text>
               </Selected>
@@ -122,26 +132,45 @@ const Selected = styled(Tag)`
   flex-direction: row;
   justify-content: center;
   align-items: center;
+  position: relative;
 `
 
 const IconButton = styled(Flex)`
-  position: absolute;
-  top: -10px;
-  right: -10px;
   width: 30px;
   height: 30px;
-
   border-radius: 40px;
   display: flex;
   justify-content: center;
   align-items: center;
   background: black;
   color: #ffffff;
-  border-radius: 100%;
   font-size: 30px;
   cursor: pointer;
   transition: opacity 0.4s;
   box-shadow: 0px 2px 12px rgba(0, 0, 0, 0.5);
+  position: absolute; /* Position relative to the parent */
+`
+
+const EditButton = styled(IconButton)`
+  left: 130px;
+  top: -10px;
+  background: ${colors.white};
+  color: ${colors.BG1};
+  border: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease-in-out;
+
+  &:hover {
+    transform: scale(1.1);
+  }
+`
+
+const CloseButton = styled(IconButton)`
+  right: -10px;
+  top: -10px;
 `
 
 type AvatarProps = {
