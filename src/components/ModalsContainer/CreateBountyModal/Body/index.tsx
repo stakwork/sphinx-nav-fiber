@@ -4,6 +4,7 @@ import { SuccessNotify } from '~/components/common/SuccessToast'
 import { postBountyData } from '~/network/postBounty'
 import { useSelectedNode } from '~/stores/useGraphStore'
 import { useModal } from '~/stores/useModalStore'
+import { useUserStore } from '~/stores/useUserStore'
 import { getSignedTimestamp } from '~/utils/getSignedTimestamp'
 import { CreateBounty } from '../CreateBounty'
 
@@ -17,6 +18,7 @@ export const Body = () => {
   const [errMessage, setErrMessage] = useState<string>('')
   const { close } = useModal('createBounty')
   const selectedNode = useSelectedNode()
+  const { pubKey } = useUserStore()
   const form = useForm<FormData>({ mode: 'onChange' })
   const { handleSubmit, setValue } = form
 
@@ -40,6 +42,7 @@ export const Body = () => {
         ref_id: selectedNode?.ref_id as string,
         node_data: selectedNode?.properties || {},
         jwt_token: signedToken,
+        pub_key: pubKey,
       }
 
       await postBountyData(payload)
