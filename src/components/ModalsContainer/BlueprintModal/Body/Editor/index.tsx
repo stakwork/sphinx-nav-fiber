@@ -778,6 +778,11 @@ const ColorPickerIconWrapper = styled.span<{ selectedColor?: string }>`
     height: 22px;
     object-fit: contain;
     color: white;
+
+    rect {
+      width: 1.5em;
+      height: 1.5em;
+    }
   }
 `
 
