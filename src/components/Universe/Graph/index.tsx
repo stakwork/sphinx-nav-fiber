@@ -162,17 +162,6 @@ export const Graph = () => {
     })
 
     simulation.on('end', () => {
-      const nodesVector = simulation.nodes().map((i: NodeExtended) => {
-        // eslint-disable-next-line no-param-reassign
-        i.fx = i.x
-        // eslint-disable-next-line no-param-reassign
-        i.fy = i.y
-        // eslint-disable-next-line no-param-reassign
-        i.fz = i.z
-
-        return new Vector3(i.x, i.y, i.z)
-      })
-
       if (groupRef.current) {
         const gr = groupRef.current.getObjectByName('simulation-3d-group__nodes') as Group
         const grPoints = groupRef.current.getObjectByName('simulation-3d-group__node-points') as Group
@@ -253,19 +242,18 @@ export const Graph = () => {
             }
           })
         }
+
+        const box = new Box3().setFromObject(gr)
+
+        // Compute the center and radius of the bounding sphere
+        const sphere = new Sphere()
+
+        box.getBoundingSphere(sphere)
+
+        if (sphere.radius) {
+          setGraphRadius(sphere.radius)
+        }
       }
-
-      const boundingBox = new Box3().setFromPoints(nodesVector)
-
-      const boundingSphere = new Sphere()
-
-      boundingBox.getBoundingSphere(boundingSphere)
-
-      const sphereRadius = Math.min(5000, boundingSphere.radius)
-
-      console.log(sphereRadius)
-
-      setGraphRadius(sphereRadius)
     })
   }, [dataInitial, simulation, setGraphRadius, normalizedSchemasByType])
 

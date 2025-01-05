@@ -6,15 +6,15 @@ import { Mesh, Vector3 } from 'three'
 import { Flex } from '~/components/common/Flex'
 import { Icons } from '~/components/Icons'
 import CloseIcon from '~/components/Icons/CloseIcon'
+import EditIcon from '~/components/Icons/EditIcon'
 import NodesIcon from '~/components/Icons/NodesIcon'
 import { useGraphStore } from '~/stores/useGraphStore'
+import { useModal } from '~/stores/useModalStore'
 import { useSchemaStore } from '~/stores/useSchemaStore'
+import { useUserStore } from '~/stores/useUserStore'
 import { colors } from '~/utils'
 import { truncateText } from '~/utils/truncateText'
 import { PathNode } from '..'
-import EditIcon from '~/components/Icons/EditIcon'
-import { useUserStore } from '~/stores/useUserStore'
-import { useModal } from '~/stores/useModalStore'
 
 type TagProps = {
   rounded: boolean
@@ -54,6 +54,8 @@ export const Node = ({ onClick, node, selected, rounded = true, x, y, z, id }: P
 
   const title = node?.properties ? node?.properties[keyProperty] : ''
   const titleShortened = title ? truncateText(title, 30) : ''
+  const description = keyProperty !== 'description' ? node.properties?.description : ''
+  const descriptionShortened = description ? truncateText(description, 60) : ''
 
   return (
     <mesh ref={nodeRef}>
@@ -70,13 +72,34 @@ export const Node = ({ onClick, node, selected, rounded = true, x, y, z, id }: P
                 <CloseButton onClick={() => setSelectedNode(null)}>
                   <CloseIcon />
                 </CloseButton>
-                <div>{Icon ? <Icon /> : <NodesIcon />}</div>
-                <Text>{titleShortened}</Text>
+                <div>
+                  <Avatar
+                    align="center"
+                    height={!descriptionShortened ? 100 : 48}
+                    justify="center"
+                    radius="6px"
+                    src={node?.properties?.image_url || ''}
+                    width={!descriptionShortened ? 200 : 72}
+                  >
+                    {!node?.properties?.image_url ? <span>{Icon ? <Icon /> : <NodesIcon />}</span> : null}
+                  </Avatar>
+                </div>
+                <Flex align="flex-start">
+                  <Text className="selected__title">{titleShortened}</Text>
+                  {descriptionShortened ? <Text>{descriptionShortened}</Text> : null}
+                </Flex>
               </Selected>
             ) : (
               <>
                 <Tag onClick={() => onClick(id)} rounded={rounded}>
-                  <Avatar align="center" justify="center" src={node?.properties?.image_url || ''}>
+                  <Avatar
+                    align="center"
+                    height={32}
+                    justify="center"
+                    radius="50%"
+                    src={node?.properties?.image_url || ''}
+                    width={32}
+                  >
                     {!node?.properties?.image_url ? <span>{Icon ? <Icon /> : <NodesIcon />}</span> : null}
                   </Avatar>
                 </Tag>
@@ -97,9 +120,7 @@ const Wrapper = styled(Flex)`
 const Text = styled(Flex)`
   color: ${colors.white};
   margin-left: 16px;
-  font-weight: 700;
   width: 100px;
-  font-size: 16px;
 `
 
 const Tag = styled(Flex)<TagProps>`
@@ -116,7 +137,7 @@ const Tag = styled(Flex)<TagProps>`
   align-items: center;
   justify-content: center;
   font-family: Barlow;
-  font-size: 24px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 700;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
@@ -131,8 +152,23 @@ const Selected = styled(Tag)`
   height: 100px;
   flex-direction: row;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   position: relative;
+  font-family: Barlow;
+  font-weight: 700;
+  text-align: left;
+  padding: 12px;
+
+  .selected__title {
+    position: absolute;
+    bottom: -24px;
+    font-size: 20px;
+    left: 50%;
+    top: 100%;
+    transform: translateX(-50%) translateY(8px);
+    margin-left: 0;
+    width: auto;
+  }
 `
 
 const IconButton = styled(Flex)`
@@ -175,6 +211,9 @@ const CloseButton = styled(IconButton)`
 
 type AvatarProps = {
   src: string
+  radius: string
+  width: number
+  height: number
 }
 
 const Avatar = styled(Flex)<AvatarProps>`
@@ -182,7 +221,8 @@ const Avatar = styled(Flex)<AvatarProps>`
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
+  width: ${({ width }) => `${width}px`};
+  height: ${({ height }) => `${height}px`};
+  border-radius: ${({ radius }) => `${radius}`};
+  font-size: 20px;
 `
