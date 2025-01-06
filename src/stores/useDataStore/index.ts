@@ -372,32 +372,22 @@ export const useDataStore = create<DataStore>()(
     setSeedQuestions: (questions) => set({ seedQuestions: questions }),
     updateNode: (updatedNode: NodeExtended) => {
       set((state) => {
-        const nodesNormalized = new Map(state.nodesNormalized)
-
-        if (updatedNode.ref_id) {
-          const existingNode = nodesNormalized.get(updatedNode.ref_id)
-
-          if (existingNode) {
-            nodesNormalized.set(updatedNode.ref_id, {
-              ...existingNode,
-              ...updatedNode,
-            })
-          }
+        if (!updatedNode.ref_id) {
+          return state
         }
 
-        const dataInitial = state.dataInitial
-          ? {
-              ...state.dataInitial,
-              nodes: state.dataInitial.nodes.map((node) =>
-                node.ref_id === updatedNode.ref_id ? { ...node, ...updatedNode } : node,
-              ),
-            }
-          : null
+        const existingNode = state.nodesNormalized.get(updatedNode.ref_id)
 
-        return {
-          nodesNormalized,
-          dataInitial,
+        if (!existingNode) {
+          return state
         }
+
+        state.nodesNormalized.set(updatedNode.ref_id, {
+          ...existingNode,
+          ...updatedNode,
+        })
+
+        return state
       })
     },
 
