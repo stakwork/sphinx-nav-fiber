@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { fetchNodeEdges } from '~/network/fetchGraphData'
+import { useGraphStore } from '~/stores/useGraphStore'
 import { useMindsetStore } from '~/stores/useMindsetStore'
 import { usePlayerStore } from '~/stores/usePlayerStore'
 import { NodeExtended } from '~/types'
@@ -16,6 +17,8 @@ export const Transcript = ({ name }: Props) => {
   const { selectedEpisodeId } = useMindsetStore((s) => s)
   const { playerRef } = usePlayerStore((s) => s)
   const [currentTime, setCurrentTime] = useState(0)
+
+  const [setActiveNode, activeNode, simulation] = useGraphStore((s) => [s.setActiveNode, s.activeNode, s.simulation])
 
   const [clips, setClips] = useState<NodeExtended[]>([])
 
@@ -48,6 +51,26 @@ export const Transcript = ({ name }: Props) => {
 
     return () => clearInterval(interval)
   }, [playerRef, setCurrentTime])
+
+  useEffect(() => {
+    const activeClip = clips.find((clip) => {
+      const timestamp: string | undefined = clip?.properties?.timestamp
+
+      const [start, end] = timestamp
+        ? (timestamp as string).split('-').map(Number) // Directly convert to numbers
+        : [0, 0]
+
+      return start <= currentTime && currentTime < end
+    })
+
+    if (!activeNode || activeClip?.ref_id !== activeNode.ref_id) {
+      const candidateNode = (simulation?.nodes() || []).find((n: NodeExtended) => n.ref_id === activeClip?.ref_id)
+
+      if (candidateNode?.fx !== undefined) {
+        setActiveNode(candidateNode)
+      }
+    }
+  }, [activeNode, clips, currentTime, setActiveNode, simulation])
 
   return (
     <Wrapper>

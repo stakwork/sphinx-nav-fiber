@@ -165,6 +165,8 @@ export const useAutoNavigate = (cameraControlsRef: RefObject<CameraControls | nu
   }, [selectedNode])
 
   useFrame((state) => {
+    // @todo-useframe
+
     if (cameraControlsRef.current) {
       // do movement animation
       if (!distanceReached) {

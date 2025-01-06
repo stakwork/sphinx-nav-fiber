@@ -1,6 +1,6 @@
 import { isEqual } from 'lodash'
 import { useEffect, useRef } from 'react'
-import { Box3, Color, Group, Sphere, Vector3 } from 'three'
+import { Box3, Color, Group, Sphere } from 'three'
 import { Line2 } from 'three-stdlib'
 import { useDataStore } from '~/stores/useDataStore'
 import { useGraphStore } from '~/stores/useGraphStore'
@@ -54,9 +54,7 @@ export const Graph = () => {
     if (!simulation) {
       simulationCreate(nodesClose, linksClone)
     }
-
-    resetDataNew()
-  }, [setData, dataNew, simulation, simulationCreate, resetDataNew, simulationHelpers, dataInitial])
+  }, [setData, dataNew, simulation, simulationCreate, simulationHelpers, dataInitial])
 
   useEffect(() => {
     if (!dataInitial) {
@@ -78,6 +76,8 @@ export const Graph = () => {
     }
 
     simulation.on('tick', () => {
+      return
+
       if (groupRef.current) {
         const gr = groupRef.current.getObjectByName('simulation-3d-group__nodes') as Group
         const grPoints = groupRef.current.getObjectByName('simulation-3d-group__node-points') as Group
@@ -107,61 +107,69 @@ export const Graph = () => {
           return
         }
 
-        grConnections.children.forEach((g, i) => {
-          const r = g.children[0] // Assuming Line is the first child
-          const text = g.children[1] // Assuming Text is the second child
+        if (grConnections) {
+          grConnections.children.forEach((g, i) => {
+            const r = g.children[0] // Assuming Line is the first child
+            const text = g.children[1] // Assuming Text is the second child
 
-          if (r instanceof Line2) {
-            // Ensure you have both Line and Text
-            const Line = r as Line2
-            const link = dataInitial?.links[i]
+            if (r instanceof Line2) {
+              // Ensure you have both Line and Text
+              const Line = r as Line2
+              const link = dataInitial?.links[i]
 
-            if (link) {
-              const sourceNode = simulation.nodes().find((n: NodeExtended) => n.ref_id === link.source)
-              const targetNode = simulation.nodes().find((n: NodeExtended) => n.ref_id === link.target)
+              if (link) {
+                const sourceNode = simulation.nodes().find((n: NodeExtended) => n.ref_id === link.source)
+                const targetNode = simulation.nodes().find((n: NodeExtended) => n.ref_id === link.target)
 
-              if (!sourceNode || !targetNode) {
-                console.warn(`Missing source or target node for link: ${link?.ref_id}`)
+                if (!sourceNode || !targetNode) {
+                  console.warn(`Missing source or target node for link: ${link?.ref_id}`)
 
-                return
+                  return
+                }
+
+                const { x: sx, y: sy, z: sz } = sourceNode
+                const { x: tx, y: ty, z: tz } = targetNode
+
+                // Set positions for the link
+                linksPositionRef.current.set(link.ref_id, {
+                  sx,
+                  sy,
+                  sz,
+                  tx,
+                  ty,
+                  tz,
+                })
+
+                text.position.set((sx + tx) / 2, (sy + ty) / 2, (sz + tz) / 2)
+
+                const lineColor = normalizedSchemasByType[sourceNode.node_type]?.primary_color || 'white'
+
+                Line.geometry.setPositions([sx, sy, sz, tx, ty, tz])
+
+                const { material } = Line
+
+                material.color = new Color(lineColor)
+                material.transparent = true
+                material.opacity = 0.3
               }
-
-              const { x: sx, y: sy, z: sz } = sourceNode
-              const { x: tx, y: ty, z: tz } = targetNode
-
-              // Set positions for the link
-              linksPositionRef.current.set(link.ref_id, {
-                sx,
-                sy,
-                sz,
-                tx,
-                ty,
-                tz,
-              })
-
-              // Calculate midpoint for the text position
-              const midPoint = new Vector3((sx + tx) / 2, (sy + ty) / 2, (sz + tz) / 2)
-
-              // Set text position and rotation
-              text.position.set(midPoint.x, midPoint.y, midPoint.z)
-
-              // Set line color and properties
-              const lineColor = normalizedSchemasByType[sourceNode.node_type]?.primary_color || 'white'
-
-              Line.geometry.setPositions([sx, sy, sz, tx, ty, tz])
-
-              const { material } = Line
-
-              material.color = new Color(lineColor)
-              material.transparent = true
-              material.opacity = 0.3
             }
-          }
-        })
+          })
+        }
       }
     })
 
     simulation.on('end', () => {
+      resetDataNew()
+
+      simulation.nodes().forEach((i: NodeExtended) => {
+        // eslint-disable-next-line no-param-reassign
+        i.fx = i.x
+        // eslint-disable-next-line no-param-reassign
+        i.fy = i.y
+        // eslint-disable-next-line no-param-reassign
+        i.fz = i.z
+      })
+
       if (groupRef.current) {
         const gr = groupRef.current.getObjectByName('simulation-3d-group__nodes') as Group
         const grPoints = groupRef.current.getObjectByName('simulation-3d-group__node-points') as Group
@@ -222,11 +230,7 @@ export const Graph = () => {
                   tz,
                 })
 
-                // Calculate midpoint for the text position
-                const midPoint = new Vector3((sx + tx) / 2, (sy + ty) / 2, (sz + tz) / 2)
-
-                // Set text position and rotation
-                text.position.set(midPoint.x, midPoint.y, midPoint.z)
+                text.position.set((sx + tx) / 2, (sy + ty) / 2, (sz + tz) / 2)
 
                 // Set line color and properties
                 const lineColor = normalizedSchemasByType[sourceNode.node_type]?.primary_color || 'white'
@@ -255,7 +259,7 @@ export const Graph = () => {
         }
       }
     })
-  }, [dataInitial, simulation, setGraphRadius, normalizedSchemasByType])
+  }, [dataInitial, simulation, setGraphRadius, normalizedSchemasByType, resetDataNew])
 
   if (!simulation) {
     return null

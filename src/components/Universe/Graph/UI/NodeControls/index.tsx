@@ -61,6 +61,8 @@ export const NodeControls = memo(() => {
   }, [addNewNode, selectedNode?.ref_id, selectionGraphData.nodes.length])
 
   useFrame(() => {
+    // @todo-useframe
+
     setPosition()
   })
 

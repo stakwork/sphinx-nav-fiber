@@ -351,7 +351,7 @@ export const useDataStore = create<DataStore>()(
       set({ filters: { ...filters, skip: filters.skip + 1 } })
       fetchData(setBudget, setAbortRequests)
     },
-    resetDataNew: () => null,
+    resetDataNew: () => set({ dataNew: null }),
     setFilters: (filters: Partial<FilterParams>) => {
       const { setBudget } = useUserStore.getState()
 

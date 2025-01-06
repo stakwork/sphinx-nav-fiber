@@ -74,7 +74,7 @@ export const TextNode = memo(
         activeEdge?.source === node.ref_id
 
       if (isActive) {
-        if (nodeRef.current) {
+        if (nodeRef.current && !nodeRef.current.visible) {
           nodeRef.current.visible = true
         }
 
@@ -85,7 +85,7 @@ export const TextNode = memo(
         const scale = 1 + t * 2 // Grow from scale 3 to 8
         const opacity = 1 - t // Fade out as it grows
 
-        if (circleRef.current) {
+        if (circleRef.current && !circleRef.current.visible) {
           circleRef.current.visible = true
           circleRef.current.scale.set(scale, scale, scale)
 
@@ -100,7 +100,7 @@ export const TextNode = memo(
         return
       }
 
-      if (circleRef.current) {
+      if (circleRef.current?.visible) {
         circleRef.current.visible = false
       }
 
@@ -174,21 +174,20 @@ export const TextNode = memo(
                   if (child instanceof Mesh) {
                     // Apply dynamic color to meshes
                     // eslint-disable-next-line no-param-reassign
-                    child.material = new MeshBasicMaterial({ color })
+                    child.material = new MeshBasicMaterial({ color: nodeColor })
                   }
                 })
               }}
               position={[-15, 15, 0]}
               scale={2}
               src={`svg-icons/${iconName}.svg`}
-              strokeMaterial={{ color: 'yellow' }}
               userData={node}
             />
           )}
 
           {sanitizedNodeName && (
             <Text
-              color={color}
+              color={nodeColor}
               fillOpacity={1}
               name="text"
               position={[0, -65, 0]}
