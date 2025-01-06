@@ -5,7 +5,6 @@ import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { Icons } from '~/components/Icons'
 import NodesIcon from '~/components/Icons/NodesIcon'
-import { useGraphStore } from '~/stores/useGraphStore'
 import { useSchemaStore } from '~/stores/useSchemaStore'
 import { NodeExtended } from '~/types'
 import { colors } from '~/utils'
@@ -26,14 +25,10 @@ export const NodeSprite = ({ node, isFixed, isLast }: Props) => {
   const keyProperty = getNodeKeysByType(node.node_type) || ''
   const title = node?.properties ? node?.properties[keyProperty] : ''
   const titleShortened = title ? truncateText(title, 30) : ''
-  const activeNode = useGraphStore((s) => s.activeNode)
-
-  console.log(activeNode)
 
   useEffect(() => {
-    const wrapper = document.querySelector('.sprite')
-    if (wrapper && isFixed) {
-      gsap.to(wrapper, {
+    if (wrapperRef.current && isFixed) {
+      gsap.to(wrapperRef.current, {
         scale: 0.1, // Scale down the inner content
         duration: 1,
         ease: 'power3.out',
@@ -42,7 +37,7 @@ export const NodeSprite = ({ node, isFixed, isLast }: Props) => {
   }, [isFixed])
 
   return (
-    <Html as="div" ref={wrapperRef} center className="sprite" sprite>
+    <Html ref={wrapperRef} as="div" center className="sprite" sprite>
       {isLast || isFixed ? (
         <Wrapper align="center" justify="center">
           <>
