@@ -370,8 +370,35 @@ export const useDataStore = create<DataStore>()(
     setSources: (sources) => set({ sources }),
     setHideNodeDetails: (hideNodeDetails) => set({ hideNodeDetails }),
     setSeedQuestions: (questions) => set({ seedQuestions: questions }),
-    updateNode: (updatedNode) => {
-      console.info(updatedNode)
+    updateNode: (updatedNode: NodeExtended) => {
+      set((state) => {
+        const nodesNormalized = new Map(state.nodesNormalized)
+
+        if (updatedNode.ref_id) {
+          const existingNode = nodesNormalized.get(updatedNode.ref_id)
+
+          if (existingNode) {
+            nodesNormalized.set(updatedNode.ref_id, {
+              ...existingNode,
+              ...updatedNode,
+            })
+          }
+        }
+
+        const dataInitial = state.dataInitial
+          ? {
+              ...state.dataInitial,
+              nodes: state.dataInitial.nodes.map((node) =>
+                node.ref_id === updatedNode.ref_id ? { ...node, ...updatedNode } : node,
+              ),
+            }
+          : null
+
+        return {
+          nodesNormalized,
+          dataInitial,
+        }
+      })
     },
 
     removeNode: (id) => {

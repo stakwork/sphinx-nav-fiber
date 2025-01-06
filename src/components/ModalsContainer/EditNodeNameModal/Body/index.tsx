@@ -9,7 +9,7 @@ import { getTopicsData, putNodeData } from '~/network/fetchSourcesData'
 import { useDataStore } from '~/stores/useDataStore'
 import { useSelectedNode } from '~/stores/useGraphStore'
 import { useModal } from '~/stores/useModalStore'
-import { NodeExtended, Topic } from '~/types'
+import { NodeExtended, NodeRequest, Topic } from '~/types'
 import { colors } from '~/utils/colors'
 import { TitleEditor } from '../Title'
 
@@ -86,14 +86,27 @@ export const Body = () => {
   const handleSave = async () => {
     setLoading(true)
 
-    const updatedData = getValues()
+    const formData = getValues()
+
+    const nodeData = {
+      node_type: node?.node_type,
+      properties: {
+        name: formData.name?.trim(),
+        ...(formData.image_url && { image_url: formData.image_url }),
+      },
+      ref_id: node?.ref_id,
+    }
 
     try {
-      await putNodeData(node?.ref_id || '', { node_type: node?.node_type, node_data: updatedData })
+      await putNodeData(node?.ref_id || '', nodeData as unknown as NodeRequest)
 
       const { updateNode } = useDataStore.getState()
 
-      updateNode({ ...node, ...updatedData } as NodeExtended)
+      updateNode({
+        ...node,
+        name: formData.name?.trim(),
+        ...(formData.image_url && { image_url: formData.image_url }),
+      } as NodeExtended)
 
       closeHandler()
     } catch (error) {
