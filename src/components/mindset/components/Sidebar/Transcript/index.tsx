@@ -17,26 +17,34 @@ export const Transcript = ({ name }: Props) => {
   const { selectedEpisodeId } = useMindsetStore((s) => s)
   const { playerRef } = usePlayerStore((s) => s)
   const [currentTime, setCurrentTime] = useState(0)
+  const [activeClip, setActiveClip] = useState<NodeExtended | null>(null)
+  const [isFirst, setIsFirst] = useState(true)
 
   const [setActiveNode, activeNode, simulation] = useGraphStore((s) => [s.setActiveNode, s.activeNode, s.simulation])
-
   const [clips, setClips] = useState<NodeExtended[]>([])
 
   useEffect(() => {
-    const init = async () => {
+    const fetchClips = async () => {
       try {
         const res = await fetchNodeEdges(selectedEpisodeId, 0, 50, { nodeType: ['Clip'], useSubGraph: false })
 
         if (res?.nodes) {
-          setClips(res.nodes)
+          const sortedClips = res.nodes.sort((a, b) => {
+            const startA = parseTimestamp(a.properties?.timestamp)[0]
+            const startB = parseTimestamp(b.properties?.timestamp)[0]
+
+            return startA - startB // Ascending order
+          })
+
+          setClips(sortedClips)
         }
       } catch (error) {
-        console.error(error)
+        console.error('Failed to fetch clips:', error)
       }
     }
 
     if (selectedEpisodeId) {
-      init()
+      fetchClips()
     }
   }, [selectedEpisodeId])
 
@@ -53,46 +61,55 @@ export const Transcript = ({ name }: Props) => {
   }, [playerRef, setCurrentTime])
 
   useEffect(() => {
-    const activeClip = clips.find((clip) => {
-      const timestamp: string | undefined = clip?.properties?.timestamp
+    const calculateActiveClip = () => {
+      const clip = clips.find((clipNode) => {
+        const [start, end] = parseTimestamp(clipNode?.properties?.timestamp)
 
-      const [start, end] = timestamp
-        ? (timestamp as string).split('-').map(Number) // Directly convert to numbers
-        : [0, 0]
+        return start <= currentTime && currentTime < end
+      })
 
-      return start <= currentTime && currentTime < end
-    })
+      if ((activeClip && clip?.ref_id === activeClip?.ref_id) || !clip) {
+        return
+      }
 
-    if (!activeNode || activeClip?.ref_id !== activeNode.ref_id) {
-      const candidateNode = (simulation?.nodes() || []).find((n: NodeExtended) => n.ref_id === activeClip?.ref_id)
+      setIsFirst(clip?.ref_id === clips[0]?.ref_id)
+
+      setActiveClip(clip || null)
+    }
+
+    if (currentTime) {
+      calculateActiveClip()
+    }
+  }, [currentTime, clips, activeClip])
+
+  useEffect(() => {
+    if (activeClip && (!activeNode || activeClip.ref_id !== activeNode.ref_id)) {
+      const candidateNode = simulation?.nodes().find((n: NodeExtended) => n.ref_id === activeClip.ref_id)
 
       if (candidateNode?.fx !== undefined) {
         setActiveNode(candidateNode)
       }
     }
-  }, [activeNode, clips, currentTime, setActiveNode, simulation])
+  }, [activeClip, activeNode, setActiveNode, simulation])
+
+  const parseTimestamp = (timestamp?: string) => {
+    if (!timestamp) {
+      return [0, 0]
+    }
+
+    return timestamp.split('-').map(Number)
+  }
 
   return (
     <Wrapper>
       <Flex className="heading">{name}</Flex>
-      {clips.map((clip) => {
-        const timestamp: string | undefined = clip?.properties?.timestamp
-
-        const [start, end] = timestamp
-          ? (timestamp as string).split('-').map(Number) // Directly convert to numbers
-          : [0, 0]
-
-        if (start <= currentTime && currentTime < end) {
-          // Multiply playingTime by 1000 to match millisecond format
-          return (
-            <TranscriptWrapper key={clip.ref_id} direction="row">
-              {clip.properties?.transcript && <Viewer transcriptString={clip.properties?.transcript} />}
-            </TranscriptWrapper>
-          )
-        }
-
-        return null
-      })}
+      {activeClip ? (
+        <TranscriptWrapper direction="row">
+          {activeClip.properties?.transcript && (
+            <Viewer isFirst={isFirst} transcriptString={activeClip.properties.transcript} />
+          )}
+        </TranscriptWrapper>
+      ) : null}
     </Wrapper>
   )
 }
@@ -103,7 +120,6 @@ const Wrapper = styled(Flex)`
     font-size: 16px;
     margin-bottom: 16px;
   }
-
   color: ${colors.white};
   background: ${colors.BG1};
   border-radius: 8px;
