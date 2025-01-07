@@ -6,6 +6,7 @@ import { Paragraph } from './Paragraph'
 
 type Props = {
   transcriptString: string
+  isFirst: boolean
 }
 
 type Word = {
@@ -29,7 +30,7 @@ type TranscriptData = {
   words: Word[]
 }
 
-export const Viewer = ({ transcriptString }: Props) => {
+export const Viewer = ({ transcriptString, isFirst }: Props) => {
   const [currentTime, setCurrentTime] = useState(0)
   const [userScrolling, setUserScrolling] = useState(false)
   const { playerRef } = usePlayerStore((s) => s)
@@ -90,27 +91,55 @@ export const Viewer = ({ transcriptString }: Props) => {
 
   return (
     <Wrapper ref={wrapperRef}>
-      {transcriptData[0].start > currentTime ? (
-        <Paragraph active={false} start={secondsToMediaTime(transcriptData[0].start)} text={transcriptData[0].text} />
-      ) : (
-        <>
-          {transcriptData.map((i) => {
-            const start = secondsToMediaTime(i.start)
-
-            const isActive = i.start < currentTime && currentTime < i.end
-
-            return i.start <= currentTime + 5 ? (
+      <>
+        {isFirst ? (
+          <>
+            {transcriptData[0].start > currentTime ? (
               <Paragraph
-                key={`${i.start}-${i.end}`}
-                ref={isActive ? activeRef : null}
-                active={isActive}
-                start={start}
-                text={i.text}
+                active={false}
+                start={secondsToMediaTime(transcriptData[0].start)}
+                text={transcriptData[0].text}
               />
-            ) : null
-          })}
-        </>
-      )}
+            ) : (
+              <>
+                {transcriptData.map((i) => {
+                  const start = secondsToMediaTime(i.start)
+
+                  const isActive = i.start < currentTime && currentTime < i.end
+
+                  return !isFirst || i.start <= currentTime + 5 ? (
+                    <Paragraph
+                      key={`${i.start}-${i.end}`}
+                      ref={isActive ? activeRef : null}
+                      active={isActive}
+                      start={start}
+                      text={i.text}
+                    />
+                  ) : null
+                })}
+              </>
+            )}
+          </>
+        ) : (
+          <>
+            {transcriptData.map((i) => {
+              const start = secondsToMediaTime(i.start)
+
+              const isActive = i.start < currentTime && currentTime < i.end
+
+              return (
+                <Paragraph
+                  key={`${i.start}-${i.end}`}
+                  ref={isActive ? activeRef : null}
+                  active={isActive}
+                  start={start}
+                  text={i.text}
+                />
+              )
+            })}
+          </>
+        )}
+      </>
     </Wrapper>
   )
 }
