@@ -86,13 +86,13 @@ export const Body = () => {
   const handleSave = async () => {
     setLoading(true)
 
-    const formData = getValues()
+    const updatedData = getValues()
 
     const nodeData = {
       node_type: node?.node_type,
       properties: {
-        name: formData.name?.trim(),
-        ...(formData.image_url && { image_url: formData.image_url }),
+        name: updatedData.name,
+        ...(updatedData.image_url && { image_url: updatedData.image_url }),
       },
       ref_id: node?.ref_id,
     }
@@ -104,8 +104,8 @@ export const Body = () => {
 
       updateNode({
         ...node,
-        name: formData.name?.trim(),
-        ...(formData.image_url && { image_url: formData.image_url }),
+        name: updatedData.name,
+        ...(updatedData.image_url && { image_url: updatedData.image_url }),
       } as NodeExtended)
 
       closeHandler()
