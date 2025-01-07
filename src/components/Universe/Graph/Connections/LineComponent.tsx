@@ -41,6 +41,7 @@ const _LineComponent = (props: LineComponentProps) => {
   }, [lineRef])
 
   useFrame(() => {
+    // @todo-useframe
     const { selectedNode, hoveredNode } = useGraphStore.getState()
 
     if (lineRef.current) {

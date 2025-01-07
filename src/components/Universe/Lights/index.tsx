@@ -11,6 +11,7 @@ export const Lights = () => {
   const dLightRef = useRef<DirectionalLight | null>(null)
 
   useFrame(({ camera, clock }) => {
+    // @todo-useframe
     const elapsedTime = clock.getElapsedTime()
 
     if (pLightRefAmbient.current) {

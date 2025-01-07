@@ -82,6 +82,7 @@ export type GraphStore = {
   simulationHelpers: SimulationHelpers
   isHovering: boolean
   activeEdge: Link | null
+  activeNode: NodeExtended | null
   selectionPath: string[]
 
   setDisableCameraRotation: (rotation: boolean) => void
@@ -93,6 +94,7 @@ export type GraphStore = {
   setHoveredNode: (hoveredNode: NodeExtended | null) => void
   setSelectedNode: (selectedNode: NodeExtended | null) => void
   setActiveEdge: (edge: Link | null) => void
+  setActiveNode: (activeNode: NodeExtended | null) => void
   setCameraFocusTrigger: (_: boolean) => void
   setNearbyNodeIds: (_: string[]) => void
   setShowSelectionGraph: (_: boolean) => void
@@ -112,6 +114,7 @@ const defaultData: Omit<
   | 'setHoveredNode'
   | 'setSelectedNode'
   | 'setActiveEdge'
+  | 'setActiveNode'
   | 'setCameraFocusTrigger'
   | 'setGraphRadius'
   | 'setSelectionGraphRadius'
@@ -142,6 +145,7 @@ const defaultData: Omit<
   simulationHelpers: defaultSimulationHelpers,
   isHovering: false,
   selectionPath: [],
+  activeNode: null,
 }
 
 export const useGraphStore = create<GraphStore>()((set, get) => ({
@@ -161,6 +165,9 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
   },
   setActiveEdge: (activeEdge) => {
     set({ activeEdge })
+  },
+  setActiveNode: (activeNode) => {
+    set({ activeNode })
   },
   addToSelectionPath: (id: string) => {
     const { selectionPath } = get()

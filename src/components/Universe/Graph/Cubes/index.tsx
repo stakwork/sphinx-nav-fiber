@@ -3,13 +3,14 @@ import { ThreeEvent } from '@react-three/fiber'
 import { memo, useCallback, useRef } from 'react'
 import { Object3D } from 'three'
 import { useAppStore } from '~/stores/useAppStore'
-import { useDataStore, useNodeTypes } from '~/stores/useDataStore'
+import { useNodeTypes } from '~/stores/useDataStore'
 import { useGraphStore, useHoveredNode, useSelectedNode } from '~/stores/useGraphStore'
 import { NodeExtended } from '~/types'
 import { colors } from '~/utils'
 import { COLORS_MAP } from '../constant'
 import { NodePoints } from './NodePoints'
 import { NodeWrapper } from './NodeWrapper'
+import { Candidates } from './Candidates'
 
 const POINTER_IN_DELAY = 200
 
@@ -17,10 +18,9 @@ export const Cubes = memo(() => {
   const selectedNode = useSelectedNode()
   const hoveredNode = useHoveredNode()
 
-  const { selectionGraphData, showSelectionGraph, setHoveredNode, setIsHovering } = useGraphStore((s) => s)
+  const { selectionGraphData, showSelectionGraph, setHoveredNode, setIsHovering, simulation } = useGraphStore((s) => s)
   const nodeTypes = useNodeTypes()
 
-  const data = useDataStore((s) => s.dataInitial)
   const setTranscriptOpen = useAppStore((s) => s.setTranscriptOpen)
 
   const ignoreNodeEvent = useCallback(
@@ -110,16 +110,24 @@ export const Cubes = memo(() => {
         onPointerOver={onPointerIn}
       >
         <group name="simulation-3d-group__nodes" visible={!hideUniverse}>
-          {data?.nodes.map((node: NodeExtended) => {
+          {simulation.nodes().map((node: NodeExtended) => {
             const color = COLORS_MAP[nodeTypes.indexOf(node.node_type)] || colors.white
 
-            return <NodeWrapper key={node.ref_id} color={color} node={node} scale={node.scale || 1} />
+            return (
+              <NodeWrapper
+                key={node.ref_id}
+                color={color}
+                isFixed={node.fx !== undefined}
+                node={node}
+                scale={node.scale || 1}
+              />
+            )
           })}
         </group>
-
         <group name="simulation-3d-group__node-points">
           <NodePoints />
         </group>
+        <Candidates />
       </Select>
     </>
   )
