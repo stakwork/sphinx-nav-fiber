@@ -1,5 +1,6 @@
 import { Html } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
+import clsx from 'clsx'
 import { useRef } from 'react'
 import styled from 'styled-components'
 import { Mesh, Vector3 } from 'three'
@@ -63,7 +64,7 @@ export const Node = ({ onClick, node, selected, rounded = true, x, y, z, id }: P
         <Wrapper align="center" direction="row" justify="flex-start">
           <>
             {selected ? (
-              <Selected rounded={false}>
+              <Selected className={clsx({ 'has-padding': descriptionShortened })} rounded={false}>
                 {isAdmin && (
                   <EditButton onClick={() => openEditNodeNameModal()}>
                     <EditIcon />
@@ -157,7 +158,9 @@ const Selected = styled(Tag)`
   font-family: Barlow;
   font-weight: 700;
   text-align: left;
-  padding: 12px;
+  &.has-padding {
+    padding: 12px;
+  }
 
   .selected__title {
     position: absolute;
