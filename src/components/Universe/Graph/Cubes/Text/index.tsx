@@ -54,8 +54,17 @@ export const TextNode = memo(
 
     const { normalizedSchemasByType, getNodeKeysByType } = useSchemaStore((s) => s)
 
+    const keyProperty = getNodeKeysByType(node.node_type) || ''
+
+    const sanitizedNodeName =
+      keyProperty && node?.properties ? removeEmojis(String(node?.properties[keyProperty] || '')) : ''
+
     useFrame(({ camera, clock }) => {
-      const { selectedNode, hoveredNode, activeEdge } = useGraphStore.getState()
+      if (!nodeRef.current) {
+        return
+      }
+
+      const { selectedNode, hoveredNode, activeEdge, searchQuery } = useGraphStore.getState()
 
       const checkDistance = () => {
         const nodePosition = nodePositionRef.current.setFromMatrixPosition(nodeRef.current!.matrixWorld)
@@ -67,11 +76,18 @@ export const TextNode = memo(
         // Set visibility based on distance
       }
 
+      if (searchQuery.length < 3) {
+        checkDistance()
+      } else {
+        nodeRef.current.visible = false
+      }
+
       const isActive =
         node.ref_id === selectedNode?.ref_id ||
         node.ref_id === hoveredNode?.ref_id ||
         activeEdge?.target === node.ref_id ||
-        activeEdge?.source === node.ref_id
+        activeEdge?.source === node.ref_id ||
+        (searchQuery && sanitizedNodeName.toLowerCase().includes(searchQuery.toLowerCase()))
 
       if (isActive) {
         if (nodeRef.current && !nodeRef.current.visible) {
@@ -103,8 +119,6 @@ export const TextNode = memo(
       if (circleRef.current?.visible) {
         circleRef.current.visible = false
       }
-
-      checkDistance()
     })
 
     const primaryColor = normalizedSchemasByType[node.node_type]?.primary_color
@@ -114,10 +128,6 @@ export const TextNode = memo(
 
     const Icon = primaryIcon ? Icons[primaryIcon] : null
     const iconName = Icon ? primaryIcon : 'NodesIcon'
-    const keyProperty = getNodeKeysByType(node.node_type) || ''
-
-    const sanitizedNodeName =
-      keyProperty && node?.properties ? removeEmojis(String(node?.properties[keyProperty] || '')) : ''
 
     const uniforms = {
       u_texture: { value: texture },

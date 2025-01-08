@@ -1,8 +1,8 @@
 import { Instances } from '@react-three/drei'
 import { memo, useMemo } from 'react'
 import { BufferGeometry, TorusGeometry } from 'three'
-import { useDataStore, useNodeTypes } from '~/stores/useDataStore'
-import { useSelectedNode } from '~/stores/useGraphStore'
+import { useNodeTypes } from '~/stores/useDataStore'
+import { useGraphStore, useSelectedNode } from '~/stores/useGraphStore'
 import { useSchemaStore } from '~/stores/useSchemaStore'
 import { NodeExtended } from '~/types'
 import { colors } from '~/utils'
@@ -41,10 +41,11 @@ const COLORS_MAP = [
 // eslint-disable-next-line no-underscore-dangle
 const _NodePoints = () => {
   const selectedNode = useSelectedNode()
-  const data = useDataStore((s) => s.dataInitial)
   const { normalizedSchemasByType } = useSchemaStore((s) => s)
+  const [simulation] = useGraphStore((s) => [s.simulation])
   const nodeTypes = useNodeTypes()
   const ringGeometry = useMemo(() => new TorusGeometry(30, 2, 16, 100), [])
+  const { getNodeKeysByType } = useSchemaStore((s) => s)
 
   return (
     <>
@@ -55,11 +56,15 @@ const _NodePoints = () => {
         visible={!selectedNode || true}
       >
         <meshBasicMaterial />
-        {data?.nodes.map((node: NodeExtended) => {
+        {simulation?.nodes().map((node: NodeExtended) => {
           const primaryColor = normalizedSchemasByType[node.node_type]?.primary_color
           const color = primaryColor ?? (COLORS_MAP[nodeTypes.indexOf(node.node_type)] || colors.white)
+          const scale = node.fx === undefined ? 0 : node.scale || 1
+          const keyProperty = getNodeKeysByType(node.node_type) || ''
 
-          return <Point key={node.ref_id} color={color} scale={node.scale || 1} />
+          const name = keyProperty && node?.properties ? node?.properties[keyProperty] || '' : ''
+
+          return <Point key={node.ref_id} color={color} name={name} scale={scale} />
         })}
       </Instances>
     </>

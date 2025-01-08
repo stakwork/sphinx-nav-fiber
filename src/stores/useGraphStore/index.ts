@@ -84,6 +84,7 @@ export type GraphStore = {
   activeEdge: Link | null
   activeNode: NodeExtended | null
   selectionPath: string[]
+  searchQuery: string
 
   setDisableCameraRotation: (rotation: boolean) => void
   setScrollEventsDisabled: (rotation: boolean) => void
@@ -103,6 +104,7 @@ export type GraphStore = {
   setIsHovering: (isHovering: boolean) => void
   removeSimulation: () => void
   addToSelectionPath: (id: string) => void
+  setSearchQuery: (id: string) => void
 }
 
 const defaultData: Omit<
@@ -127,6 +129,7 @@ const defaultData: Omit<
   | 'setIsHovering'
   | 'removeSimulation'
   | 'addToSelectionPath'
+  | 'setSearchQuery'
 > = {
   data: null,
   simulation: null,
@@ -146,6 +149,7 @@ const defaultData: Omit<
   isHovering: false,
   selectionPath: [],
   activeNode: null,
+  searchQuery: '',
 }
 
 export const useGraphStore = create<GraphStore>()((set, get) => ({
@@ -354,6 +358,7 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
     set({ simulation })
   },
   removeSimulation: () => set({ simulation: null }),
+  setSearchQuery: (searchQuery) => set({ searchQuery }),
 }))
 
 export const useSelectedNode = () => useGraphStore((s) => s.selectedNode)

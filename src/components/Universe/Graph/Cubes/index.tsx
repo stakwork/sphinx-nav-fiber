@@ -8,9 +8,9 @@ import { useGraphStore, useHoveredNode, useSelectedNode } from '~/stores/useGrap
 import { NodeExtended } from '~/types'
 import { colors } from '~/utils'
 import { COLORS_MAP } from '../constant'
+import { Candidates } from './Candidates'
 import { NodePoints } from './NodePoints'
 import { NodeWrapper } from './NodeWrapper'
-import { Candidates } from './Candidates'
 
 const POINTER_IN_DELAY = 200
 

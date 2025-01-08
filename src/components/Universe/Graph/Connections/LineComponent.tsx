@@ -2,6 +2,7 @@ import { Billboard, Line, Text } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import gsap from 'gsap'
 import { memo, useEffect, useRef } from 'react'
+import { Group } from 'three'
 import { Line2 } from 'three-stdlib'
 import { useGraphStore } from '~/stores/useGraphStore'
 import { LINE_WIDTH } from '../../constants'
@@ -22,6 +23,7 @@ type LineComponentProps = {
 // eslint-disable-next-line no-underscore-dangle
 const _LineComponent = (props: LineComponentProps) => {
   const lineRef = useRef<Line2 | null>(null)
+  const groupRef = useRef<Group | null>(null)
 
   const { label, source, target, sourceX, sourceY, sourceZ, targetX, targetY, targetZ } = props
 
@@ -38,42 +40,52 @@ const _LineComponent = (props: LineComponentProps) => {
         },
       )
     }
-  }, [lineRef])
+  }, [lineRef, sourceX])
 
   useFrame(() => {
+    if (!lineRef.current || !groupRef.current) {
+      return
+    }
+
     // @todo-useframe
-    const { selectedNode, hoveredNode } = useGraphStore.getState()
+    const { hoveredNode } = useGraphStore.getState()
 
-    if (lineRef.current) {
-      const line = lineRef.current
-      const activeNode = selectedNode || hoveredNode
+    const line = lineRef.current
+    const activeNode = hoveredNode
 
-      line.visible = !activeNode
+    if (!activeNode) {
+      groupRef.current.visible = false
 
-      if (activeNode?.ref_id === source || activeNode?.ref_id === target) {
-        line.visible = true
+      return
+    }
 
-        // Increase line width
-        gsap.to(line.material, {
-          linewidth: 6, // Target line width
-          duration: 0.5, // Smooth increase
-          ease: 'power1.out',
-        })
-      } else {
-        // Decrease line width back to default
-        gsap.to(line.material, {
-          linewidth: 1, // Default line width
-          duration: 0.5, // Smooth decrease
-          ease: 'power1.out',
-        })
-      }
+    line.visible = !activeNode
+
+    if (activeNode?.ref_id === source || activeNode?.ref_id === target) {
+      line.visible = true
+      groupRef.current.visible = true
+
+      // Increase line width
+      gsap.to(line.material, {
+        linewidth: 6, // Target line width
+        duration: 0.5, // Smooth increase
+        ease: 'power1.out',
+      })
+    } else {
+      // Decrease line width back to default
+      gsap.to(line.material, {
+        linewidth: 1, // Default line width
+        duration: 0.5, // Smooth decrease
+        ease: 'power1.out',
+      })
     }
   })
 
   return (
-    <group>
+    <group ref={groupRef}>
       <Line
         ref={lineRef}
+        color="white"
         isLine2
         lineWidth={2}
         name="line"

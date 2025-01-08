@@ -23,10 +23,13 @@ import { Controls } from './Controls'
 import { initialCameraPosition, selectionGraphCameraPosition } from './Controls/CameraAnimations/constants'
 import { CursorTooltip } from './CursorTooltip/index'
 import { Graph } from './Graph'
+import { GraphSearch } from './GraphSearch'
 import { Lights } from './Lights'
 import { Overlay } from './Overlay'
 import { Preloader } from './Preloader'
 import { SelectionContent } from './SelectionContent'
+
+const isMindSetHost = window.location?.hostname === 'graphmindset.sphinx.chat'
 
 const Fallback = () => (
   <Html>
@@ -154,6 +157,7 @@ const _Universe = () => {
             <Content />
           </Suspense>
         </Canvas>
+        {isMindSetHost && <GraphSearch />}
         <CursorTooltip />
 
         {selectedNode ? (
