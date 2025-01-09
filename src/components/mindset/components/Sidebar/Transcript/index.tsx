@@ -86,7 +86,7 @@ export const Transcript = ({ name }: Props) => {
     if (activeClip && (!activeNode || activeClip.ref_id !== activeNode.ref_id)) {
       const candidateNode = simulation?.nodes().find((n: NodeExtended) => n.ref_id === activeClip.ref_id)
 
-      if (candidateNode?.fx !== undefined) {
+      if (typeof candidateNode?.fx === 'number') {
         setActiveNode(candidateNode)
       }
     }

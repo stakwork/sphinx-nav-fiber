@@ -1,37 +1,60 @@
 import { Billboard, Instance } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import { memo, useRef } from 'react'
-import { Group } from 'three'
+import { Group, Mesh } from 'three'
 import { useGraphStore } from '~/stores/useGraphStore'
+import { NodeExtended } from '~/types'
 
 type Props = {
   color: string
   scale: number
   name: string
+  index: number
+  node: NodeExtended
 }
 
-export const Point = memo(({ color, scale, name }: Props) => {
+export const Point = memo(({ color, scale, name, index, node }: Props) => {
   const nodeRef = useRef<Group | null>(null)
+  const helperRef = useRef<Mesh | null>(null)
 
   useFrame(() => {
-    const { searchQuery } = useGraphStore.getState()
+    if (!nodeRef.current || !helperRef.current) {
+      return
+    }
 
-    if (!nodeRef.current) {
+    const { searchQuery, simulation } = useGraphStore.getState()
+
+    const simulationNode = simulation?.nodes()[index]
+
+    if (typeof simulationNode?.fx === 'number') {
+      nodeRef.current.scale.set(scale, scale, scale)
+    } else {
+      nodeRef.current.scale.set(0, 0, 0)
+
       return
     }
 
     if (searchQuery) {
-      const dynamicScale = name.toLowerCase().includes(searchQuery.toLowerCase()) ? 1 : 0.1
+      const includesQuery = name.toLowerCase().includes(searchQuery.toLowerCase())
+      const dynamicScale = includesQuery ? 1 : 0.1
+      const isVisible = !!includesQuery
+
+      helperRef.current.visible = isVisible
 
       nodeRef.current.scale.set(dynamicScale, dynamicScale, dynamicScale)
     } else {
       nodeRef.current.scale.set(1, 1, 1)
+      helperRef.current.visible = true
     }
   })
 
   return (
-    <Billboard ref={nodeRef} follow lockX={false} lockY={false} lockZ={false}>
-      <Instance color={color} scale={scale} />
+    <Billboard ref={nodeRef} follow lockX={false} lockY={false} lockZ={false} name="group-name" visible={false}>
+      <mesh ref={helperRef} name="instance-helper" scale={[scale, scale, scale]} userData={node}>
+        <sphereGeometry args={[30, 16, 16]} />
+        <meshBasicMaterial color="white" opacity={0} transparent />
+      </mesh>
+      <Instance color={color} name="instance" scale={scale} />
     </Billboard>
   )
 })

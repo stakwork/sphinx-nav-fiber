@@ -3,7 +3,7 @@ import { ThreeEvent } from '@react-three/fiber'
 import { memo, useCallback, useRef } from 'react'
 import { Object3D } from 'three'
 import { useAppStore } from '~/stores/useAppStore'
-import { useNodeTypes } from '~/stores/useDataStore'
+import { useDataStore, useNodeTypes } from '~/stores/useDataStore'
 import { useGraphStore, useHoveredNode, useSelectedNode } from '~/stores/useGraphStore'
 import { NodeExtended } from '~/types'
 import { colors } from '~/utils'
@@ -20,6 +20,8 @@ export const Cubes = memo(() => {
 
   const { selectionGraphData, showSelectionGraph, setHoveredNode, setIsHovering, simulation } = useGraphStore((s) => s)
   const nodeTypes = useNodeTypes()
+
+  const dataInitial = useDataStore((s) => s.dataInitial)
 
   const setTranscriptOpen = useAppStore((s) => s.setTranscriptOpen)
 
@@ -103,32 +105,26 @@ export const Cubes = memo(() => {
 
   return (
     <>
+      <group name="simulation-3d-group__nodes" visible={!hideUniverse}>
+        {dataInitial?.nodes.map((node: NodeExtended, index) => {
+          const color = COLORS_MAP[nodeTypes.indexOf(node.node_type)] || colors.white
+          const simulationNode = simulation.nodes()[index]
+          const isFixed = typeof simulationNode?.fx === 'number'
+
+          return <NodeWrapper key={node.ref_id} color={color} isFixed={isFixed} node={node} scale={node.scale || 1} />
+        })}
+      </group>
       <Select
         filter={(selected) => selected.filter((f) => !!f.userData?.ref_id)}
         onChange={handleSelect}
         onPointerOut={onPointerOut}
         onPointerOver={onPointerIn}
       >
-        <group name="simulation-3d-group__nodes" visible={!hideUniverse}>
-          {simulation.nodes().map((node: NodeExtended) => {
-            const color = COLORS_MAP[nodeTypes.indexOf(node.node_type)] || colors.white
-
-            return (
-              <NodeWrapper
-                key={node.ref_id}
-                color={color}
-                isFixed={node.fx !== undefined}
-                node={node}
-                scale={node.scale || 1}
-              />
-            )
-          })}
-        </group>
         <group name="simulation-3d-group__node-points">
           <NodePoints />
         </group>
-        <Candidates />
       </Select>
+      <Candidates />
     </>
   )
 })
