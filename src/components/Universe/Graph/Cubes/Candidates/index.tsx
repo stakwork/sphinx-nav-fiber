@@ -35,7 +35,7 @@ export const Candidates = memo(() => {
           return (
             <CandidateWrapper
               key={node.ref_id}
-              isFixed={node.fx !== undefined}
+              isFixed={typeof node.fx === 'number'}
               isLast={index === arr.length - 1}
               iX={center.x}
               iY={center.y}

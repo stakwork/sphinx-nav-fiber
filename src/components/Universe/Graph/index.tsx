@@ -115,6 +115,7 @@ export const Graph = () => {
             const simulationNode = simulation.nodes()[index]
 
             if (simulationNode) {
+              // eslint-disable-next-line no-param-reassign
               mesh.position.set(simulationNode.x, simulationNode.y, simulationNode.z)
             }
           })

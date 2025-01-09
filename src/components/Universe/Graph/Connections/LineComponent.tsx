@@ -48,12 +48,12 @@ const _LineComponent = (props: LineComponentProps) => {
     }
 
     // @todo-useframe
-    const { hoveredNode } = useGraphStore.getState()
+    const { hoveredNode, searchQuery } = useGraphStore.getState()
 
     const line = lineRef.current
     const activeNode = hoveredNode
 
-    if (!activeNode) {
+    if (!activeNode || searchQuery) {
       groupRef.current.visible = false
 
       return

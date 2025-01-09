@@ -44,6 +44,7 @@ export const TextNode = memo(
 
     const svgRef = useRef<Mesh | null>(null)
     const nodeRef = useRef<Mesh | null>(null)
+    const eventHandlerRef = useRef<Mesh | null>(null)
     const circleRef = useRef<Mesh | null>(null)
 
     useTraceUpdate(props)
@@ -60,7 +61,7 @@ export const TextNode = memo(
       keyProperty && node?.properties ? removeEmojis(String(node?.properties[keyProperty] || '')) : ''
 
     useFrame(({ camera, clock }) => {
-      if (!nodeRef.current) {
+      if (!nodeRef.current || !eventHandlerRef.current) {
         return
       }
 
@@ -77,9 +78,12 @@ export const TextNode = memo(
       }
 
       if (searchQuery.length < 3) {
+        eventHandlerRef.current.visible = true
         checkDistance()
       } else {
         nodeRef.current.visible = false
+
+        eventHandlerRef.current.visible = false
       }
 
       const isActive =
@@ -137,6 +141,10 @@ export const TextNode = memo(
     return (
       <Billboard follow lockX={false} lockY={false} lockZ={false} name="billboard" userData={node}>
         <mesh ref={nodeRef} name={node.ref_id} userData={node} visible={!hide}>
+          <mesh ref={eventHandlerRef} name="event-handler">
+            <boxGeometry args={[40, 40, 40]} />
+            <meshStandardMaterial opacity={0} transparent />
+          </mesh>
           <mesh ref={circleRef} position={[0, 0, -2]}>
             <ringGeometry args={[29, 30, 32]} /> {/* Inner radius, Outer radius, Segments */}
             <meshBasicMaterial
