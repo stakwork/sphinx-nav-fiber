@@ -5,11 +5,11 @@ import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
 import { validateImageInputType } from '~/components/ModalsContainer/EditNodeNameModal/utils'
 import { Flex } from '~/components/common/Flex'
-import { getTopicsData, putNodeData } from '~/network/fetchSourcesData'
+import { editNodeData, getTopicsData } from '~/network/fetchSourcesData'
 import { useDataStore } from '~/stores/useDataStore'
 import { useSelectedNode } from '~/stores/useGraphStore'
 import { useModal } from '~/stores/useModalStore'
-import { NodeExtended, Topic } from '~/types'
+import { NodeEditRequest, NodeExtended, Topic } from '~/types'
 import { colors } from '~/utils/colors'
 import { TitleEditor } from '../Title'
 
@@ -84,25 +84,30 @@ export const Body = () => {
   const node = actualTopicNode || selectedNode
 
   const handleSave = async () => {
+    if (!node) {
+      return
+    }
+
     setLoading(true)
 
-    const updatedData = getValues()
+    const formData: FormData = getValues()
 
     const nodeData = {
-      node_type: node?.node_type,
-      node_data: {
-        name: updatedData.name,
-        properties: updatedData.properties,
-        ref_id: updatedData.ref_id,
-      },
+      properties: formData.properties,
     }
 
     try {
-      await putNodeData(node?.ref_id || '', nodeData)
+      const payloadData: NodeEditRequest = {
+        node_type: node.node_type,
+        ref_id: node.ref_id,
+        properties: nodeData.properties as { [key: string]: unknown },
+      }
+
+      await editNodeData(node?.ref_id || '', payloadData)
 
       const { updateNode } = useDataStore.getState()
 
-      updateNode({ ...node, ...nodeData.node_data } as NodeExtended)
+      updateNode({ ...node, ...nodeData } as unknown as NodeExtended)
 
       closeHandler()
     } catch (error) {

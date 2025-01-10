@@ -118,6 +118,14 @@ export type NodeRequest = {
   }
 }
 
+export type NodeEditRequest = {
+  node_type: string
+  ref_id: string
+  properties: {
+    [key: string]: unknown
+  }
+}
+
 export type DataSeriesNode = {
   id: string
   image_url?: string

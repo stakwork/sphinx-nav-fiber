@@ -5,6 +5,7 @@ import {
   FetchEdgeTypesResponse,
   FetchRadarResponse,
   FetchTopicResponse,
+  NodeEditRequest,
   NodeExtended,
   NodeRequest,
   RadarRequest,
@@ -301,6 +302,12 @@ export const putRadarData = async (id: string, data: RadarRequest) => {
 }
 
 export const putNodeData = async (ref_id: string, data: NodeRequest) => {
+  const response = await api.put(`/node?ref_id=${ref_id}`, JSON.stringify(data))
+
+  return response
+}
+
+export const editNodeData = async (ref_id: string, data: NodeEditRequest) => {
   const response = await api.put(`/node?ref_id=${ref_id}`, JSON.stringify(data))
 
   return response
