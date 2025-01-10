@@ -110,12 +110,14 @@ export type RadarRequest = {
 
 export type NodeRequest = {
   node_type?: string
-  node_data: {
+  properties: {
     name?: string
     is_muted?: boolean
     topic?: string
     image_url?: string
+    [key: string]: unknown
   }
+  ref_id?: string
 }
 
 export type DataSeriesNode = {

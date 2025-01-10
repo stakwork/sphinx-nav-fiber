@@ -9,7 +9,7 @@ import { getTopicsData, putNodeData } from '~/network/fetchSourcesData'
 import { useDataStore } from '~/stores/useDataStore'
 import { useSelectedNode } from '~/stores/useGraphStore'
 import { useModal } from '~/stores/useModalStore'
-import { NodeExtended, Topic } from '~/types'
+import { NodeExtended, NodeRequest, Topic } from '~/types'
 import { colors } from '~/utils/colors'
 import { TitleEditor } from '../Title'
 
@@ -88,13 +88,13 @@ export const Body = () => {
 
     const updatedData = getValues()
 
-    const nodeData = {
+    const nodeData: NodeRequest = {
       node_type: node?.node_type,
-      node_data: {
+      properties: {
         name: updatedData.name,
-        properties: updatedData.properties,
-        ref_id: updatedData.ref_id,
+        ...(updatedData.properties as Record<string, unknown>),
       },
+      ref_id: node?.ref_id,
     }
 
     try {
@@ -102,7 +102,13 @@ export const Body = () => {
 
       const { updateNode } = useDataStore.getState()
 
-      updateNode({ ...node, ...nodeData.node_data } as NodeExtended)
+      const updatedNode: NodeExtended = {
+        ...node,
+        name: nodeData.properties.name || '',
+        properties: nodeData.properties,
+      } as NodeExtended
+
+      updateNode(updatedNode)
 
       closeHandler()
     } catch (error) {
