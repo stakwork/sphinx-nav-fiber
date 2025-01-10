@@ -9,7 +9,7 @@ import { getTopicsData, putNodeData } from '~/network/fetchSourcesData'
 import { useDataStore } from '~/stores/useDataStore'
 import { useSelectedNode } from '~/stores/useGraphStore'
 import { useModal } from '~/stores/useModalStore'
-import { NodeExtended, NodeRequest, Topic } from '~/types'
+import { NodeEditRequest, NodeExtended, Topic } from '~/types'
 import { colors } from '~/utils/colors'
 import { TitleEditor } from '../Title'
 
@@ -97,7 +97,7 @@ export const Body = () => {
     }
 
     try {
-      const payloadData: NodeRequest = {
+      const payloadData: NodeEditRequest = {
         node_type: node.node_type,
         ref_id: node.ref_id,
         properties: nodeData.properties as { [key: string]: unknown },
