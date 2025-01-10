@@ -29,7 +29,7 @@ import { Overlay } from './Overlay'
 import { Preloader } from './Preloader'
 import { SelectionContent } from './SelectionContent'
 
-const isMindSetHost = window.location?.hostname === 'graphmindset.sphinx.chat' || true
+const isMindSetHost = window.location?.hostname === 'graphmindset.sphinx.chat'
 
 const Fallback = () => (
   <Html>
