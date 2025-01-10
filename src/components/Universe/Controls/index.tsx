@@ -55,6 +55,7 @@ export const Controls = ({ disableAnimations }: Props) => {
     <CameraControls
       ref={cameraControlsRef}
       boundaryEnclosesCamera
+      dollyToCursor
       enabled={!isUserScrollingOnHtmlPanel}
       makeDefault
       maxDistance={12000}

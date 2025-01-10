@@ -44,7 +44,7 @@ const _NodePoints = () => {
   const dataInitial = useDataStore((s) => s.dataInitial)
   const { normalizedSchemasByType } = useSchemaStore((s) => s)
   const nodeTypes = useNodeTypes()
-  const ringGeometry = useMemo(() => new TorusGeometry(30, 2, 16, 100), [])
+  const ringGeometry = useMemo(() => new TorusGeometry(30, 0.5, 16, 100), [])
   const { getNodeKeysByType } = useSchemaStore((s) => s)
 
   return (
