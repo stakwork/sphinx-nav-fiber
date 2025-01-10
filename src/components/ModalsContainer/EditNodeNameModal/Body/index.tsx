@@ -5,7 +5,7 @@ import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
 import { validateImageInputType } from '~/components/ModalsContainer/EditNodeNameModal/utils'
 import { Flex } from '~/components/common/Flex'
-import { getTopicsData, putNodeData } from '~/network/fetchSourcesData'
+import { editNodeData, getTopicsData } from '~/network/fetchSourcesData'
 import { useDataStore } from '~/stores/useDataStore'
 import { useSelectedNode } from '~/stores/useGraphStore'
 import { useModal } from '~/stores/useModalStore'
@@ -103,7 +103,7 @@ export const Body = () => {
         properties: nodeData.properties as { [key: string]: unknown },
       }
 
-      await putNodeData(node?.ref_id || '', payloadData)
+      await editNodeData(node?.ref_id || '', payloadData)
 
       const { updateNode } = useDataStore.getState()
 
