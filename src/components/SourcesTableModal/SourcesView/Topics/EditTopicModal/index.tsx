@@ -2,6 +2,7 @@ import { Button } from '@mui/material'
 import { FC, useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { ClipLoader } from 'react-spinners'
+import styled from 'styled-components'
 import { BaseModal } from '~/components/Modal'
 import { putNodeData } from '~/network/fetchSourcesData'
 import { useModal } from '~/stores/useModalStore'
@@ -9,7 +10,6 @@ import { useTopicsStore } from '~/stores/useTopicsStore'
 import { Topic } from '~/types'
 import { colors } from '~/utils/colors'
 import { TitleEditor } from './Title'
-import styled from 'styled-components'
 
 type Props = {
   topic: Topic
@@ -49,13 +49,15 @@ export const EditTopicModal: FC<Props> = ({ topic, onClose }) => {
     setLoading(true)
 
     try {
-      await putNodeData(topic?.ref_id, { node_type: topic?.node_type, node_data: { name } })
+      await putNodeData(topic?.ref_id, {
+        node_type: topic?.node_type,
+        properties: { name }
+      })
 
       if (data) {
         const newData = { ...data }
 
         newData[topic?.ref_id].name = name
-
         useTopicsStore.setState({ data: newData })
       }
 

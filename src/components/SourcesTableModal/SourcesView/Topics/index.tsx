@@ -85,7 +85,10 @@ export const TopicSources = () => {
 
   const handleMute = async (refId: string, action: string) => {
     try {
-      await putNodeData(refId, { node_data: { is_muted: action === 'mute' } })
+      await putNodeData(refId, {
+        properties: { is_muted: action === 'mute' }
+      })
+
       useTopicsStore.setState({ ids: ids.filter((i) => i !== refId), total: total - 1 })
     } catch (error) {
       console.warn(error)

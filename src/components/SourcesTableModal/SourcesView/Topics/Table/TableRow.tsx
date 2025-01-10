@@ -45,7 +45,10 @@ const TableRowComponent: FC<TTableRaw> = ({
     setLoading(true)
 
     try {
-      await putNodeData(refId, { node_type: topic?.node_type, node_data: { is_muted: shouldMute } })
+      await putNodeData(refId, {
+        node_type: topic?.node_type,
+        properties: { is_muted: shouldMute }
+      })
 
       useTopicsStore.setState({
         ids: ids.filter((i) => i !== refId),
@@ -185,7 +188,7 @@ const TableRowComponent: FC<TTableRaw> = ({
                     <ProfileHide />
                   </IconButton>
                 )}
-                <IconButton disabled={isMuteDisabled} onClick={(e) => onClick(e, topic.ref_id)}>
+                <IconButton disabled={isMuteDisabled} onClick={(e: React.MouseEvent<HTMLButtonElement>) => onClick(e, topic.ref_id)}>
                   <ThreeDotsIcons data-testid="ThreeDotsIcons" />
                 </IconButton>
               </Flex>
