@@ -1,4 +1,6 @@
 import styled, { css } from 'styled-components'
+import { Flex } from '~/components/common/Flex'
+import ClearIcon from '~/components/Icons/ClearIcon'
 import { useGraphStore } from '~/stores/useGraphStore'
 import { colors } from '~/utils'
 
@@ -14,14 +16,23 @@ export const GraphSearch = () => {
         type="text"
         value={searchQuery}
       />
+      <InputButton
+        data-testid="search_action_icon"
+        onClick={() => {
+          setSearchQuery('')
+        }}
+      >
+        <>{searchQuery?.trim() ? <ClearIcon /> : null}</>
+      </InputButton>
     </Wrapper>
   )
 }
 
-const Wrapper = styled.div`
+const Wrapper = styled(Flex)`
   position: absolute;
   top: 20px;
   left: 20px;
+  flex-direction: 'row';
 `
 
 const Input = styled.input.attrs(() => ({
@@ -55,10 +66,6 @@ const Input = styled.input.attrs(() => ({
     outline: 1px solid ${colors.primaryBlue};
   }
 
-  &:hover {
-    background: ${colors.black};
-  }
-
   &::placeholder {
     color: ${colors.GRAY7};
   }
@@ -72,4 +79,18 @@ const Input = styled.input.attrs(() => ({
       background-position-x: 95%;
       background-repeat: no-repeat;
     `}
+`
+
+const InputButton = styled(Flex).attrs({
+  align: 'center',
+  justify: 'center',
+  p: 5,
+})`
+  font-size: 32px;
+  color: ${colors.mainBottomIcons};
+  cursor: pointer;
+  transition-duration: 0.2s;
+  margin-left: -42px;
+  z-index: 2;
+  width: 30px;
 `
