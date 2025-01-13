@@ -93,6 +93,8 @@ export const Body = () => {
     const formData: FormData = getValues()
 
     const nodeData = {
+      name: formData.name,
+      image_url: formData.image_url,
       properties: formData.properties,
     }
 
@@ -107,7 +109,10 @@ export const Body = () => {
 
       const { updateNode } = useDataStore.getState()
 
-      updateNode({ ...node, ...nodeData } as unknown as NodeExtended)
+      updateNode({
+        ...node,
+        ...nodeData,
+      } as NodeExtended)
 
       closeHandler()
     } catch (error) {
