@@ -4,6 +4,7 @@ import gsap from 'gsap'
 import { memo, useEffect, useRef } from 'react'
 import { Group } from 'three'
 import { Line2 } from 'three-stdlib'
+import { useDataStore } from '~/stores/useDataStore'
 import { useGraphStore } from '~/stores/useGraphStore'
 import { LINE_WIDTH } from '../../constants'
 import { fontProps } from '../Cubes/Text/constants'
@@ -24,6 +25,7 @@ type LineComponentProps = {
 const _LineComponent = (props: LineComponentProps) => {
   const lineRef = useRef<Line2 | null>(null)
   const groupRef = useRef<Group | null>(null)
+  const nodesNormalized = useDataStore((s) => s.nodesNormalized)
 
   const { label, source, target, sourceX, sourceY, sourceZ, targetX, targetY, targetZ } = props
 
@@ -43,23 +45,35 @@ const _LineComponent = (props: LineComponentProps) => {
   }, [lineRef, sourceX])
 
   useFrame(() => {
-    if (!lineRef.current || !groupRef.current) {
+    const sourceNode = nodesNormalized.get(source)
+    const targetNode = nodesNormalized.get(target)
+
+    if (!lineRef.current || !groupRef.current || !sourceNode || !targetNode) {
       return
     }
 
     // @todo-useframe
-    const { hoveredNode, searchQuery } = useGraphStore.getState()
+    const { hoveredNode, searchQuery, selectedNodeTypes } = useGraphStore.getState()
 
     const line = lineRef.current
     const activeNode = hoveredNode
 
-    if (!activeNode || searchQuery) {
+    const activeLink =
+      selectedNodeTypes.includes(sourceNode?.node_type) && selectedNodeTypes.includes(targetNode.node_type)
+
+    if (!activeLink && !activeNode && !searchQuery) {
       groupRef.current.visible = false
 
       return
     }
 
-    line.visible = !activeNode
+    line.visible = false
+    groupRef.current.visible = false
+
+    if (activeLink) {
+      line.visible = true
+      groupRef.current.visible = true
+    }
 
     if (activeNode?.ref_id === source || activeNode?.ref_id === target) {
       line.visible = true

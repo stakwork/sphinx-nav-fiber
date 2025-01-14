@@ -65,7 +65,17 @@ const _NodePoints = () => {
 
           const name = keyProperty && node?.properties ? node?.properties[keyProperty] || '' : ''
 
-          return <Point key={node.ref_id} color={color} index={index} name={name} node={node} scale={scale} />
+          return (
+            <Point
+              key={node.ref_id}
+              color={color}
+              index={index}
+              name={name}
+              node={node}
+              nodeType={node.node_type}
+              scale={scale}
+            />
+          )
         })}
       </Instances>
     </>

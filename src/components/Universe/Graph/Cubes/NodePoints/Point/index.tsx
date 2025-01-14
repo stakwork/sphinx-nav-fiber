@@ -11,9 +11,10 @@ type Props = {
   name: string
   index: number
   node: NodeExtended
+  nodeType: string
 }
 
-export const Point = memo(({ color, scale, name, index, node }: Props) => {
+export const Point = memo(({ color, scale, name, index, node, nodeType }: Props) => {
   const nodeRef = useRef<Group | null>(null)
   const helperRef = useRef<Mesh | null>(null)
 
@@ -22,7 +23,7 @@ export const Point = memo(({ color, scale, name, index, node }: Props) => {
       return
     }
 
-    const { searchQuery, simulation } = useGraphStore.getState()
+    const { searchQuery, simulation, selectedNodeTypes } = useGraphStore.getState()
 
     const simulationNode = simulation?.nodes()[index]
 
@@ -38,6 +39,15 @@ export const Point = memo(({ color, scale, name, index, node }: Props) => {
       const includesQuery = name.toLowerCase().includes(searchQuery.toLowerCase())
       const dynamicScale = includesQuery ? 1 : 0.1
       const isVisible = !!includesQuery
+
+      helperRef.current.visible = isVisible
+
+      nodeRef.current.scale.set(dynamicScale, dynamicScale, dynamicScale)
+    } else if (selectedNodeTypes.length) {
+      const includesSelectedType = selectedNodeTypes.includes(nodeType)
+
+      const dynamicScale = includesSelectedType ? 1 : 0.1
+      const isVisible = !!includesSelectedType
 
       helperRef.current.visible = isVisible
 

@@ -1,7 +1,7 @@
 import { Select } from '@react-three/drei'
-import { ThreeEvent } from '@react-three/fiber'
+import { ThreeEvent, useFrame } from '@react-three/fiber'
 import { memo, useCallback, useRef } from 'react'
-import { Object3D } from 'three'
+import { Group, Object3D } from 'three'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore, useNodeTypes } from '~/stores/useDataStore'
 import { useGraphStore, useHoveredNode, useSelectedNode } from '~/stores/useGraphStore'
@@ -17,6 +17,8 @@ const POINTER_IN_DELAY = 200
 export const Cubes = memo(() => {
   const selectedNode = useSelectedNode()
   const hoveredNode = useHoveredNode()
+  const nodesWrapperRef = useRef<Group | null>(null)
+  const instancesRef = useRef<Group | null>(null)
 
   const { selectionGraphData, showSelectionGraph, setHoveredNode, setIsHovering, simulation } = useGraphStore((s) => s)
   const nodeTypes = useNodeTypes()
@@ -24,6 +26,16 @@ export const Cubes = memo(() => {
   const dataInitial = useDataStore((s) => s.dataInitial)
 
   const setTranscriptOpen = useAppStore((s) => s.setTranscriptOpen)
+
+  useFrame(() => {
+    return
+
+    const { selectedNodeTypes, searchQuery } = useGraphStore.getState()
+
+    if (selectedNodeTypes.length || searchQuery) {
+      simulation.nodes()
+    }
+  })
 
   const ignoreNodeEvent = useCallback(
     (node: NodeExtended) => {
@@ -105,7 +117,7 @@ export const Cubes = memo(() => {
 
   return (
     <>
-      <group name="simulation-3d-group__nodes" visible={!hideUniverse}>
+      <group ref={nodesWrapperRef} name="simulation-3d-group__nodes" visible={!hideUniverse}>
         {dataInitial?.nodes.map((node: NodeExtended, index) => {
           const color = COLORS_MAP[nodeTypes.indexOf(node.node_type)] || colors.white
           const simulationNode = simulation.nodes()[index]
@@ -120,7 +132,7 @@ export const Cubes = memo(() => {
         onPointerOut={onPointerOut}
         onPointerOver={onPointerIn}
       >
-        <group name="simulation-3d-group__node-points">
+        <group ref={instancesRef} name="simulation-3d-group__node-points">
           <NodePoints />
         </group>
       </Select>
