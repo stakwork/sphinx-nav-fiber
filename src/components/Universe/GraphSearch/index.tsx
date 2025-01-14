@@ -3,36 +3,48 @@ import { Flex } from '~/components/common/Flex'
 import ClearIcon from '~/components/Icons/ClearIcon'
 import { useGraphStore } from '~/stores/useGraphStore'
 import { colors } from '~/utils'
+import { NodeType } from './NodeTypes'
 
 export const GraphSearch = () => {
   const [setSearchQuery, searchQuery] = useGraphStore((s) => [s.setSearchQuery, s.searchQuery])
 
   return (
     <Wrapper>
-      <Input
-        id="graph-search"
-        onChange={(e) => setSearchQuery(e.target.value)}
-        placeholder="Search graph"
-        type="text"
-        value={searchQuery}
-      />
-      <InputButton
-        data-testid="search_action_icon"
-        onClick={() => {
-          setSearchQuery('')
-        }}
-      >
-        <>{searchQuery?.trim() ? <ClearIcon /> : null}</>
-      </InputButton>
+      <SearchWrapper>
+        <Input
+          id="graph-search"
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="Search graph"
+          type="text"
+          value={searchQuery}
+        />
+        <InputButton
+          data-testid="search_action_icon"
+          onClick={() => {
+            setSearchQuery('')
+          }}
+        >
+          <>{searchQuery?.trim() ? <ClearIcon /> : null}</>
+        </InputButton>
+      </SearchWrapper>
+      <NodeType />
     </Wrapper>
   )
 }
 
 const Wrapper = styled(Flex)`
   position: absolute;
-  top: 20px;
-  left: 20px;
-  flex-direction: 'row';
+  top: 0;
+  left: 0;
+  flex-direction: column;
+  right: 0;
+  align-items: flex-start;
+  justify-content: flex-start;
+`
+
+const SearchWrapper = styled(Flex)`
+  flex-direction: row;
+  margin-bottom: 16px;
 `
 
 const Input = styled.input.attrs(() => ({

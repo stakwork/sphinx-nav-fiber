@@ -65,7 +65,7 @@ export const TextNode = memo(
         return
       }
 
-      const { selectedNode, hoveredNode, activeEdge, searchQuery } = useGraphStore.getState()
+      const { selectedNode, hoveredNode, activeEdge, searchQuery, selectedNodeTypes } = useGraphStore.getState()
 
       const checkDistance = () => {
         const nodePosition = nodePositionRef.current.setFromMatrixPosition(nodeRef.current!.matrixWorld)
@@ -77,7 +77,7 @@ export const TextNode = memo(
         // Set visibility based on distance
       }
 
-      if (searchQuery.length < 3) {
+      if (searchQuery.length < 3 && !selectedNodeTypes.length) {
         eventHandlerRef.current.visible = true
         checkDistance()
       } else {
@@ -91,7 +91,8 @@ export const TextNode = memo(
         node.ref_id === hoveredNode?.ref_id ||
         activeEdge?.target === node.ref_id ||
         activeEdge?.source === node.ref_id ||
-        (searchQuery && sanitizedNodeName.toLowerCase().includes(searchQuery.toLowerCase()))
+        (searchQuery && sanitizedNodeName.toLowerCase().includes(searchQuery.toLowerCase())) ||
+        selectedNodeTypes.includes(node.node_type)
 
       if (isActive) {
         if (nodeRef.current && !nodeRef.current.visible) {
