@@ -405,3 +405,13 @@ export const useFilteredNodes = () =>
   })
 
 export const useNodeTypes = () => useDataStore((s) => s.nodeTypes)
+
+export const useNormalizedNode = (refId: string) => {
+  const nodesNormalized = useDataStore((s) => s.nodesNormalized)
+
+  if (refId) {
+    return nodesNormalized.get(refId)
+  }
+
+  return null
+}

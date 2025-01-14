@@ -28,6 +28,7 @@ export const Body = () => {
   const [topicIsLoading, setTopicIsLoading] = useState(false)
   const [actualTopicNode, setActualTopicNode] = useState<null | Topic>()
   const selectedNode = useSelectedNode()
+  const updateNode = useDataStore((s) => s.updateNode)
   const { open: openRemoveNodeModal } = useModal('removeNode')
 
   useEffect(() => {
@@ -106,8 +107,6 @@ export const Body = () => {
       }
 
       await editNodeData(node?.ref_id || '', payloadData)
-
-      const { updateNode } = useDataStore.getState()
 
       updateNode({
         ...node,
