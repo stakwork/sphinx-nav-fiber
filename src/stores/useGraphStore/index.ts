@@ -205,19 +205,25 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
       })
     }
 
+    const { nodesNormalized } = useDataStore.getState()
+
     const { selectedNode: stateSelectedNode, simulation, selectionPath } = get()
 
     if (stateSelectedNode?.ref_id !== selectedNode?.ref_id) {
       const selectedNodeWithCoordinates =
         simulation.nodes().find((i: NodeExtended) => i.ref_id === selectedNode?.ref_id) || null
 
-      set({
-        hoveredNode: null,
-        selectedNode: selectedNodeWithCoordinates,
-        disableCameraRotation: true,
-        showSelectionGraph: !!selectedNode,
-        selectionPath: [...selectionPath, selectedNodeWithCoordinates.ref_id],
-      })
+      if (stateSelectedNode?.ref_id) {
+        const normalizedNode = nodesNormalized.get(stateSelectedNode?.ref_id) || {}
+
+        set({
+          hoveredNode: null,
+          selectedNode: { ...normalizedNode, ...selectedNodeWithCoordinates },
+          disableCameraRotation: true,
+          showSelectionGraph: !!selectedNode,
+          selectionPath: [...selectionPath, selectedNodeWithCoordinates.ref_id],
+        })
+      }
     }
   },
   setCameraFocusTrigger: (cameraFocusTrigger) => set({ cameraFocusTrigger }),
