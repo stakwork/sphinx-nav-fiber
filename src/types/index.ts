@@ -163,6 +163,7 @@ export type NodeExtended = Node & {
   fz?: number
   sources?: string[]
   targets?: string[]
+  edgeTypes?: string[]
 }
 
 export type Link<T = string> = {

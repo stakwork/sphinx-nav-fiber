@@ -8,7 +8,7 @@ import { useGraphStore } from '~/stores/useGraphStore'
 import { useSchemaStore } from '~/stores/useSchemaStore'
 import { colors } from '~/utils/colors'
 
-export const NodeType = () => {
+export const NodeTypes = () => {
   const { normalizedSchemasByType } = useSchemaStore((s) => s)
   const nodeTypes = useNodeTypes()
   const setSelectedNodeTypes = useGraphStore((s) => s.setSelectedNodeTypes)

@@ -53,13 +53,14 @@ const _LineComponent = (props: LineComponentProps) => {
     }
 
     // @todo-useframe
-    const { hoveredNode, searchQuery, selectedNodeTypes } = useGraphStore.getState()
+    const { hoveredNode, searchQuery, selectedNodeTypes, selectedLinkTypes } = useGraphStore.getState()
 
     const line = lineRef.current
     const activeNode = hoveredNode
 
     const activeLink =
-      selectedNodeTypes.includes(sourceNode?.node_type) && selectedNodeTypes.includes(targetNode.node_type)
+      selectedLinkTypes.includes(label) ||
+      (selectedNodeTypes.includes(sourceNode?.node_type) && selectedNodeTypes.includes(targetNode.node_type))
 
     if (!activeLink && !activeNode && !searchQuery) {
       groupRef.current.visible = false
