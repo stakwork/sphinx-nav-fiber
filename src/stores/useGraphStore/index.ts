@@ -195,6 +195,8 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
     set({ selectionPath: [...selectionPath, id] })
   },
   setSelectedNode: (selectedNode) => {
+    const { nodesNormalized } = useDataStore.getState() || {}
+
     if (!selectedNode) {
       set({
         hoveredNode: null,
@@ -205,8 +207,6 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
       })
     }
 
-    const { nodesNormalized } = useDataStore.getState()
-
     const { selectedNode: stateSelectedNode, simulation, selectionPath } = get()
 
     if (stateSelectedNode?.ref_id !== selectedNode?.ref_id) {
@@ -214,7 +214,7 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
         simulation.nodes().find((i: NodeExtended) => i.ref_id === selectedNode?.ref_id) || null
 
       if (stateSelectedNode?.ref_id) {
-        const normalizedNode = nodesNormalized.get(stateSelectedNode?.ref_id) || {}
+        const normalizedNode = nodesNormalized?.get(stateSelectedNode?.ref_id) || {}
 
         set({
           hoveredNode: null,
