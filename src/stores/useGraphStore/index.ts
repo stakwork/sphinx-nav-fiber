@@ -229,8 +229,8 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
       const selectedNodeWithCoordinates =
         simulation.nodes().find((i: NodeExtended) => i.ref_id === selectedNode?.ref_id) || null
 
-      if (stateSelectedNode?.ref_id) {
-        const normalizedNode = nodesNormalized?.get(stateSelectedNode?.ref_id) || {}
+      if (selectedNode?.ref_id) {
+        const normalizedNode = nodesNormalized?.get(selectedNode?.ref_id) || {}
 
         set({
           hoveredNode: null,
