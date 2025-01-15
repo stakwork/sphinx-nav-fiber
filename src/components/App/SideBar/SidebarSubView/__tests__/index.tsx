@@ -7,7 +7,8 @@ import React from 'react'
 import { ThemeProvider as StyleThemeProvider } from 'styled-components'
 import { SideBarSubView } from '..'
 import { useAppStore } from '../../../../../stores/useAppStore'
-import { useDataStore, useSelectedNode } from '../../../../../stores/useDataStore'
+import { useDataStore } from '../../../../../stores/useDataStore'
+import { useSelectedNode } from '../../../../../stores/useGraphStore'
 import { appTheme } from '../../../Providers'
 
 jest.mock('reactflow/dist/style.css', () => null)
@@ -57,7 +58,12 @@ const mockSelectedNode = {
 describe('Test SideBarSubView', () => {
   beforeEach(() => {
     jest.clearAllMocks()
-    useDataStoreMock.mockReturnValue({ setSelectedNode: jest.fn(), setTeachMe: jest.fn(), showTeachMe: false })
+    useDataStoreMock.mockReturnValue({
+      setSelectedNode: jest.fn(),
+      setTeachMe: jest.fn(),
+      showTeachMe: false,
+      nodesNormalized: new Map(),
+    })
     useSelectedNodeMock.mockReturnValue(mockSelectedNode)
     useAppStoreMock.mockReturnValue({ setSidebarOpen: jest.fn() })
   })
