@@ -24,6 +24,7 @@ export const Cubes = memo(() => {
   const nodeTypes = useNodeTypes()
 
   const dataInitial = useDataStore((s) => s.dataInitial)
+  const nodesNormalized = useDataStore((s) => s.nodesNormalized)
 
   const setTranscriptOpen = useAppStore((s) => s.setTranscriptOpen)
 
@@ -122,8 +123,17 @@ export const Cubes = memo(() => {
           const color = COLORS_MAP[nodeTypes.indexOf(node.node_type)] || colors.white
           const simulationNode = simulation.nodes()[index]
           const isFixed = typeof simulationNode?.fx === 'number'
+          const normalizedNode = nodesNormalized.get(node.ref_id)
 
-          return <NodeWrapper key={node.ref_id} color={color} isFixed={isFixed} node={node} scale={node.scale || 1} />
+          return normalizedNode ? (
+            <NodeWrapper
+              key={node.ref_id}
+              color={color}
+              isFixed={isFixed}
+              node={normalizedNode}
+              scale={node.scale || 1}
+            />
+          ) : null
         })}
       </group>
       <Select

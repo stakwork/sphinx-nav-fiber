@@ -2,6 +2,7 @@ import { Billboard, Instance } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import { memo, useRef } from 'react'
 import { Group, Mesh } from 'three'
+import { useDataStore } from '~/stores/useDataStore'
 import { useGraphStore } from '~/stores/useGraphStore'
 import { NodeExtended } from '~/types'
 
@@ -23,7 +24,8 @@ export const Point = memo(({ color, scale, name, index, node, nodeType }: Props)
       return
     }
 
-    const { searchQuery, simulation, selectedNodeTypes } = useGraphStore.getState()
+    const { searchQuery, simulation, selectedNodeTypes, selectedLinkTypes } = useGraphStore.getState()
+    const { nodesNormalized } = useDataStore.getState()
 
     const simulationNode = simulation?.nodes()[index]
 
@@ -45,6 +47,16 @@ export const Point = memo(({ color, scale, name, index, node, nodeType }: Props)
       nodeRef.current.scale.set(dynamicScale, dynamicScale, dynamicScale)
     } else if (selectedNodeTypes.length) {
       const includesSelectedType = selectedNodeTypes.includes(nodeType)
+
+      const dynamicScale = includesSelectedType ? 1 : 0.1
+      const isVisible = !!includesSelectedType
+
+      helperRef.current.visible = isVisible
+
+      nodeRef.current.scale.set(dynamicScale, dynamicScale, dynamicScale)
+    } else if (selectedLinkTypes.length) {
+      const normalizedNode = nodesNormalized.get(node.ref_id)
+      const includesSelectedType = normalizedNode?.edgeTypes?.some((i) => selectedLinkTypes.includes(i))
 
       const dynamicScale = includesSelectedType ? 1 : 0.1
       const isVisible = !!includesSelectedType

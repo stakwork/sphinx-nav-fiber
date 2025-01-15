@@ -73,6 +73,7 @@ export type GraphStore = {
   graphStyle: GraphStyle
   hoveredNode: NodeExtended | null
   selectedNodeTypes: string[]
+  selectedLinkTypes: string[]
   selectedNode: NodeExtended | null
   cameraFocusTrigger: boolean
   nearbyNodeIds: string[]
@@ -108,6 +109,8 @@ export type GraphStore = {
   setSearchQuery: (id: string) => void
   setSelectedNodeTypes: (type: string) => void
   resetSelectedNodeTypes: () => void
+  setSelectedLinkTypes: (type: string) => void
+  resetSelectedLinkTypes: () => void
 }
 
 const defaultData: Omit<
@@ -135,6 +138,8 @@ const defaultData: Omit<
   | 'setSearchQuery'
   | 'setSelectedNodeTypes'
   | 'resetSelectedNodeTypes'
+  | 'setSelectedLinkTypes'
+  | 'resetSelectedLinkTypes'
 > = {
   data: null,
   simulation: null,
@@ -156,6 +161,7 @@ const defaultData: Omit<
   activeNode: null,
   searchQuery: '',
   selectedNodeTypes: [],
+  selectedLinkTypes: [],
 }
 
 export const useGraphStore = create<GraphStore>()((set, get) => ({
@@ -172,7 +178,17 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
 
     set({ selectedNodeTypes: updatedTypes })
   },
+  setSelectedLinkTypes: (linkType: string) => {
+    const { selectedLinkTypes } = get()
+
+    const updatedTypes = selectedLinkTypes.includes(linkType)
+      ? selectedLinkTypes.filter((i) => i !== linkType)
+      : [...selectedLinkTypes, linkType]
+
+    set({ selectedLinkTypes: updatedTypes })
+  },
   resetSelectedNodeTypes: () => set({ selectedNodeTypes: [] }),
+  resetSelectedLinkTypes: () => set({ selectedLinkTypes: [] }),
   setSelectionData: (selectionGraphData) => set({ selectionGraphData }),
   setScrollEventsDisabled: (scrollEventsDisabled) => set({ scrollEventsDisabled }),
   setDisableCameraRotation: (rotation) => set({ disableCameraRotation: rotation }),

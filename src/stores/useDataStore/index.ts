@@ -38,6 +38,7 @@ export type DataStore = {
   trendingTopics: Trending[]
   stats: TStats | null
   nodeTypes: string[]
+  linkTypes: string[]
   seedQuestions: string[] | null
   runningProjectId: string
   runningProjectMessages: string[]
@@ -137,6 +138,7 @@ const defaultData: Omit<
   runningProjectId: '',
   hideNodeDetails: false,
   nodeTypes: [],
+  linkTypes: [],
   nodesNormalized: new Map<string, NodeExtended>(),
   linksNormalized: new Map<string, Link>(),
 }
@@ -283,6 +285,9 @@ export const useDataStore = create<DataStore>()(
             } else {
               targetNode.sources = [link.source]
             }
+
+            sourceNode.edgeTypes = [...new Set([...(sourceNode.edgeTypes || []), link.edge_type])]
+            targetNode.edgeTypes = [...new Set([...(targetNode.edgeTypes || []), link.edge_type])]
           }
         }
       })
@@ -293,6 +298,7 @@ export const useDataStore = create<DataStore>()(
 
       // Update node types and sidebar filters
       const nodeTypes = [...new Set(updatedNodes.map((node) => node.node_type))]
+      const linkTypes = [...new Set(updatedLinks.map((node) => node.edge_type))]
       const sidebarFilters = ['all', ...nodeTypes.map((type) => type.toLowerCase())]
 
       const sidebarFilterCounts = sidebarFilters.map((filter) => ({
@@ -305,6 +311,7 @@ export const useDataStore = create<DataStore>()(
         dataInitial: { nodes: updatedNodes, links: updatedLinks },
         dataNew: { nodes: newNodes, links: newLinks },
         nodeTypes,
+        linkTypes,
         sidebarFilters,
         sidebarFilterCounts,
         nodesNormalized: normalizedNodesMap,
