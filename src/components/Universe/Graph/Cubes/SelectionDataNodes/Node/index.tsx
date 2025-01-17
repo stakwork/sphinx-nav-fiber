@@ -227,5 +227,5 @@ const Avatar = styled(Flex)<AvatarProps>`
   width: ${({ width }) => `${width}px`};
   height: ${({ height }) => `${height}px`};
   border-radius: ${({ radius }) => `${radius}`};
-  font-size: 20px;
+  font-size: 21px;
 `
