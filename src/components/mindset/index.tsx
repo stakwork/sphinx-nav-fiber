@@ -21,6 +21,8 @@ export const MindSet = () => {
   const [dataInitial, setDataInitial] = useState<FetchDataResponse | null>(null)
   const [showTwoD, setShowTwoD] = useState(false)
   const { selectedEpisodeId, setSelectedEpisode } = useMindsetStore((s) => s)
+  const setClips = useMindsetStore((s) => s.setClips)
+  const clips = useMindsetStore((s) => s.clips)
   const socket: Socket | undefined = useSocket()
   const requestRef = useRef<number | null>(null)
   const previousTimeRef = useRef<number | null>(null)
@@ -30,6 +32,96 @@ export const MindSet = () => {
   const timerRef = useRef<NodeJS.Timeout | null>(null)
 
   const { setPlayingNode } = usePlayerStore((s) => s)
+
+  useEffect(() => {
+    const init = async () => {
+      try {
+        const data = await getNode(selectedEpisodeId)
+
+        if (data) {
+          setPlayingNode(data)
+          setSelectedEpisode(data)
+          addNewNode({ nodes: [data], edges: [] })
+        }
+      } catch (error) {
+        console.error(error)
+      }
+    }
+
+    if (selectedEpisodeId) {
+      init()
+    }
+  }, [selectedEpisodeId, setPlayingNode, setSelectedEpisode, addNewNode])
+
+  useEffect(() => {
+    const fetchInitialData = async () => {
+      try {
+        // Fetch the initial set of edges and nodes for the episode
+        const starterNodes = await fetchNodeEdges(selectedEpisodeId, 0, 50, {
+          nodeType: ['Show', 'Host', 'Guest'],
+          useSubGraph: false,
+        })
+
+        const clipNodes = await fetchNodeEdges(selectedEpisodeId, 0, 50, {
+          nodeType: ['Clip'],
+          useSubGraph: false,
+        })
+
+        // Update the graph with starter nodes
+        addNewNode({
+          nodes: starterNodes?.nodes ? starterNodes?.nodes : [],
+          edges: starterNodes?.edges ? starterNodes.edges : [],
+        })
+
+        if (clipNodes?.nodes) {
+          setClips(clipNodes?.nodes)
+        }
+      } catch (error) {
+        console.error('Error fetching initial data:', error)
+      }
+    }
+
+    if (selectedEpisodeId) {
+      fetchInitialData()
+    }
+  }, [selectedEpisodeId, addNewNode, setClips])
+
+  useEffect(() => {
+    if (!clips) {
+      return
+    }
+
+    const processClipNodes = async () => {
+      try {
+        const refIds = clips?.map((node) => node.ref_id).filter(Boolean) || []
+
+        const combinedData: FetchDataResponse = {
+          nodes: nodesAndEdgesRef.current?.nodes || [],
+          edges: nodesAndEdgesRef.current?.edges || [],
+        }
+
+        // eslint-disable-next-line no-restricted-syntax
+        for (const refId of refIds) {
+          // eslint-disable-next-line no-await-in-loop
+          const data = await fetchNodeEdges(refId, 0, 50)
+
+          if (data) {
+            combinedData.nodes.push(...(data?.nodes || []))
+            combinedData.edges.push(...(data?.edges || []))
+
+            nodesAndEdgesRef.current = combinedData
+            setDataInitial({ ...combinedData })
+          }
+        }
+
+        // Update references and state after all requests complete
+      } catch (error) {
+        console.error('Error processing clip nodes:', error)
+      }
+    }
+
+    processClipNodes()
+  }, [clips])
 
   const handleNewNodeCreated = useCallback(
     (data: FetchDataResponse) => {
@@ -67,76 +159,6 @@ export const MindSet = () => {
     },
     [addNewNode, isFetching],
   )
-
-  useEffect(() => {
-    const init = async () => {
-      try {
-        const data = await fetchNodeEdges(selectedEpisodeId, 0, 50)
-
-        setDataInitial(data)
-
-        const [episodesAndClips, remainingNodes] = (data?.nodes || []).reduce<[Node[], Node[]]>(
-          ([matches, remaining], node) => {
-            if (['Episode', 'Show', 'Host', 'Guest'].includes(node.node_type)) {
-              matches.push(node)
-            } else {
-              remaining.push(node)
-            }
-
-            return [matches, remaining]
-          },
-          [[], []],
-        )
-
-        const refIds = new Set(episodesAndClips.map((n) => n.ref_id))
-
-        const [matchingLinks, remainingLinks] = (data?.edges || []).reduce<[Link[], Link[]]>(
-          ([matches, remaining], link) => {
-            if (refIds.has(link.source) && refIds.has(link.target)) {
-              matches.push(link)
-            } else {
-              remaining.push(link)
-            }
-
-            return [matches, remaining]
-          },
-          [[], []],
-        )
-
-        nodesAndEdgesRef.current = {
-          nodes: remainingNodes || [],
-          edges: remainingLinks || [],
-        }
-
-        addNewNode({ nodes: episodesAndClips, edges: matchingLinks })
-      } catch (error) {
-        console.error(error)
-      }
-    }
-
-    if (selectedEpisodeId) {
-      init()
-    }
-  }, [selectedEpisodeId, addNewNode])
-
-  useEffect(() => {
-    const init = async () => {
-      try {
-        const data = await getNode(selectedEpisodeId)
-
-        if (data) {
-          setPlayingNode(data)
-          setSelectedEpisode(data)
-        }
-      } catch (error) {
-        console.error(error)
-      }
-    }
-
-    if (selectedEpisodeId) {
-      init()
-    }
-  }, [selectedEpisodeId, setPlayingNode, setSelectedEpisode])
 
   useEffect(() => {
     if (socket) {
