@@ -9,7 +9,7 @@ import { Icons } from '~/components/Icons'
 import CloseIcon from '~/components/Icons/CloseIcon'
 import EditIcon from '~/components/Icons/EditIcon'
 import NodesIcon from '~/components/Icons/NodesIcon'
-import {useGraphStore, useSelectedNode} from '~/stores/useGraphStore'
+import { useGraphStore, useSelectedNode } from '~/stores/useGraphStore'
 import { useModal } from '~/stores/useModalStore'
 import { useSchemaStore } from '~/stores/useSchemaStore'
 import { useUserStore } from '~/stores/useUserStore'
@@ -67,9 +67,7 @@ export const Node = ({ onClick, node, selected, rounded = true, x, y, z, id }: P
   const description = keyProperty !== 'description' ? node.properties?.description : ''
   const descriptionShortened = description ? truncateText(description, 60) : ''
 
-
-  const isShowCreateTestButton = !!(selectedNode && selectedNode?.node_type?.toLowerCase() === 'topic')
-
+  const isShowCreateTestButton = !!(selectedNode && selectedNode?.node_type?.toLowerCase() === 'function')
 
   return (
     <mesh ref={nodeRef}>
@@ -104,16 +102,15 @@ export const Node = ({ onClick, node, selected, rounded = true, x, y, z, id }: P
                 </Flex>
 
                 {isShowCreateTestButton && (
-                    <CreateTestButton
-                        left={2}
-                        onClick={() => {
-                          createBountyModal()
-                        }}
-                    >
-                      Generate Unit Test
-                    </CreateTestButton>
+                  <CreateTestButton
+                    left={2}
+                    onClick={() => {
+                      createBountyModal()
+                    }}
+                  >
+                    Generate Unit Test
+                  </CreateTestButton>
                 )}
-
               </Selected>
             ) : (
               <>
@@ -259,7 +256,7 @@ const Avatar = styled(Flex)<AvatarProps>`
 const CreateTestButton = styled.div<ButtonProps>`
   position: absolute;
   top: 170px;
-  left: ${(p: ButtonProps) =>30 + p.left}px;
+  left: ${(p: ButtonProps) => 30 + p.left}px;
   width: 140px;
   padding: 8px;
   border-radius: 4px;
