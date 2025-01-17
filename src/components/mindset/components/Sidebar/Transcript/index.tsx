@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
-import { fetchNodeEdges } from '~/network/fetchGraphData'
 import { useGraphStore } from '~/stores/useGraphStore'
 import { useMindsetStore } from '~/stores/useMindsetStore'
 import { usePlayerStore } from '~/stores/usePlayerStore'
-import { NodeExtended } from '~/types'
+import { Node, NodeExtended } from '~/types'
 import { colors } from '~/utils'
 import { Viewer } from './Viewer'
 
@@ -14,39 +13,13 @@ type Props = {
 }
 
 export const Transcript = ({ name }: Props) => {
-  const { selectedEpisodeId } = useMindsetStore((s) => s)
+  const clips = useMindsetStore((s) => s.clips)
   const { playerRef } = usePlayerStore((s) => s)
   const [currentTime, setCurrentTime] = useState(0)
-  const [activeClip, setActiveClip] = useState<NodeExtended | null>(null)
+  const [activeClip, setActiveClip] = useState<Node | null>(null)
   const [isFirst, setIsFirst] = useState(true)
 
   const [setActiveNode, activeNode, simulation] = useGraphStore((s) => [s.setActiveNode, s.activeNode, s.simulation])
-  const [clips, setClips] = useState<NodeExtended[]>([])
-
-  useEffect(() => {
-    const fetchClips = async () => {
-      try {
-        const res = await fetchNodeEdges(selectedEpisodeId, 0, 50, { nodeType: ['Clip'], useSubGraph: false })
-
-        if (res?.nodes) {
-          const sortedClips = res.nodes.sort((a, b) => {
-            const startA = parseTimestamp(a.properties?.timestamp)[0]
-            const startB = parseTimestamp(b.properties?.timestamp)[0]
-
-            return startA - startB // Ascending order
-          })
-
-          setClips(sortedClips)
-        }
-      } catch (error) {
-        console.error('Failed to fetch clips:', error)
-      }
-    }
-
-    if (selectedEpisodeId) {
-      fetchClips()
-    }
-  }, [selectedEpisodeId])
 
   useEffect(() => {
     const interval = setInterval(() => {
