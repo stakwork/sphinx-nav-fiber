@@ -4,6 +4,7 @@ import { isE2E } from '~/constants'
 import { E2ETests } from '~/utils'
 import { AppProviders } from '../App/Providers'
 import { AuthGuard } from '../Auth'
+import { LandingPage } from '../mindset/components/LandingPage'
 
 // Lazy-loaded components
 const LazyApp = lazy(() => import('../App').then(({ App }) => ({ default: App })))
@@ -17,7 +18,12 @@ export const AppContainer = () => {
     <AppProviders>
       <Suspense fallback={<div>Loading...</div>}>
         <Routes>
-          {isMindSetHost && <Route element={<LazyMindSet />} path="/" />}
+          {isMindSetHost && (
+            <>
+              <Route element={<LandingPage />} path="/" />
+              <Route element={<LazyMindSet />} path="/episode/:episodeId" />
+            </>
+          )}
           <Route
             element={
               <AuthGuard>

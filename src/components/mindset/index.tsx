@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useParams } from 'react-router-dom'
 import { Socket } from 'socket.io-client'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
@@ -11,16 +12,14 @@ import { useMindsetStore } from '~/stores/useMindsetStore'
 import { usePlayerStore } from '~/stores/usePlayerStore'
 import { FetchDataResponse, Link, Node } from '~/types'
 import { Header } from './components/Header'
-import { LandingPage } from './components/LandingPage'
 import { PlayerControl } from './components/PlayerContols'
-import { Scene } from './components/Scene'
 import { SideBar } from './components/Sidebar'
 
 export const MindSet = () => {
   const { addNewNode, isFetching, runningProjectId } = useDataStore((s) => s)
   const [dataInitial, setDataInitial] = useState<FetchDataResponse | null>(null)
   const [showTwoD, setShowTwoD] = useState(false)
-  const { selectedEpisodeId, setSelectedEpisode } = useMindsetStore((s) => s)
+  const { setSelectedEpisode } = useMindsetStore((s) => s)
   const setClips = useMindsetStore((s) => s.setClips)
   const clips = useMindsetStore((s) => s.clips)
   const socket: Socket | undefined = useSocket()
@@ -31,12 +30,14 @@ export const MindSet = () => {
   const queueRef = useRef<FetchDataResponse | null>(null)
   const timerRef = useRef<NodeJS.Timeout | null>(null)
 
+  const { episodeId: selectedEpisodeId } = useParams()
+
   const { setPlayingNode } = usePlayerStore((s) => s)
 
   useEffect(() => {
-    const init = async () => {
+    const init = async (id: string) => {
       try {
-        const data = await getNode(selectedEpisodeId)
+        const data = await getNode(id)
 
         if (data) {
           setPlayingNode(data)
@@ -49,7 +50,7 @@ export const MindSet = () => {
     }
 
     if (selectedEpisodeId) {
-      init()
+      init(selectedEpisodeId)
     }
   }, [selectedEpisodeId, setPlayingNode, setSelectedEpisode, addNewNode])
 
@@ -57,12 +58,12 @@ export const MindSet = () => {
     const fetchInitialData = async () => {
       try {
         // Fetch the initial set of edges and nodes for the episode
-        const starterNodes = await fetchNodeEdges(selectedEpisodeId, 0, 50, {
+        const starterNodes = await fetchNodeEdges(selectedEpisodeId || '', 0, 50, {
           nodeType: ['Show', 'Host', 'Guest'],
           useSubGraph: false,
         })
 
-        const clipNodes = await fetchNodeEdges(selectedEpisodeId, 0, 50, {
+        const clipNodes = await fetchNodeEdges(selectedEpisodeId || '', 0, 50, {
           nodeType: ['Clip'],
           useSubGraph: false,
         })
@@ -282,23 +283,19 @@ export const MindSet = () => {
   return (
     <MainContainer>
       <ContentWrapper direction="row">
-        {selectedEpisodeId ? (
-          <>
-            <Flex>
-              <Flex onClick={() => setShowTwoD(!showTwoD)}>
-                <Header />
-              </Flex>
-              <SideBar />
+        <>
+          <Flex>
+            <Flex onClick={() => setShowTwoD(!showTwoD)}>
+              <Header />
             </Flex>
-            <ContentContainer>
-              <Flex basis="100%" grow={1} shrink={1}>
-                {showTwoD ? <Scene /> : <Universe />}
-              </Flex>
-            </ContentContainer>
-          </>
-        ) : (
-          <LandingPage />
-        )}
+            <SideBar />
+          </Flex>
+          <ContentContainer>
+            <Flex basis="100%" grow={1} shrink={1}>
+              <Universe />
+            </Flex>
+          </ContentContainer>
+        </>
       </ContentWrapper>
       <PlayerControlWrapper>
         <PlayerControl markers={markers} />

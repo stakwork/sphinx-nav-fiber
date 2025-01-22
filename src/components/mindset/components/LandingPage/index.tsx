@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { FieldValues } from 'react-hook-form'
+import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { NODE_ADD_ERROR } from '~/constants'
@@ -94,8 +95,10 @@ export const LandingPage = () => {
   const [error, setError] = useState(false)
   const [requestError, setRequestError] = useState<string>('')
   const { setRunningProjectId } = useDataStore((s) => s)
-  const { setSelectedEpisodeId, setSelectedEpisodeLink } = useMindsetStore((s) => s)
+  const { setSelectedEpisodeLink } = useMindsetStore((s) => s)
   const { setSchemas } = useSchemaStore((s) => s)
+
+  const navigate = useNavigate()
 
   useEffect(() => {
     const fetchSchemaData = async () => {
@@ -130,7 +133,7 @@ export const LandingPage = () => {
         }
 
         if (res.data.ref_id) {
-          setSelectedEpisodeId(res.data.ref_id)
+          navigate(`/episode/${res.data.ref_id}`)
           setSelectedEpisodeLink(source)
         }
 
@@ -144,7 +147,7 @@ export const LandingPage = () => {
           errorMessage = res.errorCode || res?.status || NODE_ADD_ERROR
 
           if (res.data.ref_id) {
-            setSelectedEpisodeId(res.data.ref_id)
+            navigate(`/episode/${res.data.ref_id}`)
             setSelectedEpisodeLink(source)
           }
         } else if (err instanceof Error) {

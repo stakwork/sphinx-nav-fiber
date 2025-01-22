@@ -201,7 +201,7 @@ export const TextNode = memo(
               }}
               position={[-15, 15, 0]}
               scale={2}
-              src={`svg-icons/${iconName}.svg`}
+              src={`/svg-icons/${iconName}.svg`}
               userData={node}
             />
           )}
