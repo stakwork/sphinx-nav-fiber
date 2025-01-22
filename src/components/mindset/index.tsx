@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { Socket } from 'socket.io-client'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
@@ -30,6 +30,8 @@ export const MindSet = () => {
   const queueRef = useRef<FetchDataResponse | null>(null)
   const timerRef = useRef<NodeJS.Timeout | null>(null)
 
+  const navigate = useNavigate()
+
   const { episodeId: selectedEpisodeId } = useParams()
 
   const { setPlayingNode } = usePlayerStore((s) => s)
@@ -45,6 +47,7 @@ export const MindSet = () => {
           addNewNode({ nodes: [data], edges: [] })
         }
       } catch (error) {
+        navigate('/')
         console.error(error)
       }
     }
@@ -52,7 +55,7 @@ export const MindSet = () => {
     if (selectedEpisodeId) {
       init(selectedEpisodeId)
     }
-  }, [selectedEpisodeId, setPlayingNode, setSelectedEpisode, addNewNode])
+  }, [selectedEpisodeId, setPlayingNode, setSelectedEpisode, addNewNode, navigate])
 
   useEffect(() => {
     const fetchInitialData = async () => {
@@ -78,6 +81,7 @@ export const MindSet = () => {
           setClips(clipNodes?.nodes)
         }
       } catch (error) {
+        navigate('/')
         console.error('Error fetching initial data:', error)
       }
     }
@@ -85,7 +89,7 @@ export const MindSet = () => {
     if (selectedEpisodeId) {
       fetchInitialData()
     }
-  }, [selectedEpisodeId, addNewNode, setClips])
+  }, [selectedEpisodeId, addNewNode, setClips, navigate])
 
   useEffect(() => {
     if (!clips) {

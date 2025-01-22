@@ -1,5 +1,5 @@
 import { lazy, Suspense } from 'react'
-import { Route, Routes } from 'react-router-dom'
+import { Navigate, Route, Routes } from 'react-router-dom'
 import { isE2E } from '~/constants'
 import { E2ETests } from '~/utils'
 import { AppProviders } from '../App/Providers'
@@ -22,6 +22,7 @@ export const AppContainer = () => {
             <>
               <Route element={<LandingPage />} path="/" />
               <Route element={<LazyMindSet />} path="/episode/:episodeId" />
+              <Route element={<Navigate replace to="/" />} path="/episode" />
             </>
           )}
           <Route
