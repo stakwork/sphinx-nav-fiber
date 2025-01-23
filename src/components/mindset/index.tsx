@@ -19,7 +19,7 @@ export const MindSet = () => {
   const { addNewNode, isFetching, runningProjectId } = useDataStore((s) => s)
   const [dataInitial, setDataInitial] = useState<FetchDataResponse | null>(null)
   const [showTwoD, setShowTwoD] = useState(false)
-  const { setSelectedEpisode } = useMindsetStore((s) => s)
+  const setSelectedEpisode = useMindsetStore((s) => s.setSelectedEpisode)
   const setClips = useMindsetStore((s) => s.setClips)
   const clips = useMindsetStore((s) => s.clips)
   const socket: Socket | undefined = useSocket()

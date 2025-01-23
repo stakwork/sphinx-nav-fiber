@@ -7,7 +7,6 @@ import { NODE_ADD_ERROR } from '~/constants'
 import { api } from '~/network/api'
 import { getSchemaAll } from '~/network/fetchSourcesData'
 import { useDataStore } from '~/stores/useDataStore'
-import { useMindsetStore } from '~/stores/useMindsetStore'
 import { useSchemaStore } from '~/stores/useSchemaStore'
 import { SubmitErrRes } from '~/types'
 import { colors } from '~/utils/colors'
@@ -95,7 +94,6 @@ export const LandingPage = () => {
   const [error, setError] = useState(false)
   const [requestError, setRequestError] = useState<string>('')
   const { setRunningProjectId } = useDataStore((s) => s)
-  const { setSelectedEpisodeLink } = useMindsetStore((s) => s)
   const { setSchemas } = useSchemaStore((s) => s)
 
   const navigate = useNavigate()
@@ -134,7 +132,6 @@ export const LandingPage = () => {
 
         if (res.data.ref_id) {
           navigate(`/episode/${res.data.ref_id}`)
-          setSelectedEpisodeLink(source)
         }
 
         // eslint-disable-next-line  @typescript-eslint/no-explicit-any
@@ -148,7 +145,6 @@ export const LandingPage = () => {
 
           if (res.data.ref_id) {
             navigate(`/episode/${res.data.ref_id}`)
-            setSelectedEpisodeLink(source)
           }
         } else if (err instanceof Error) {
           errorMessage = err.message
