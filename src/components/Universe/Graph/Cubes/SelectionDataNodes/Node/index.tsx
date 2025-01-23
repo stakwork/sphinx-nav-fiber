@@ -1,7 +1,7 @@
 import { Html } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import clsx from 'clsx'
-import { useRef } from 'react'
+import React, { useRef } from 'react'
 import styled from 'styled-components'
 import { Mesh, Vector3 } from 'three'
 import { Flex } from '~/components/common/Flex'
@@ -9,7 +9,7 @@ import { Icons } from '~/components/Icons'
 import CloseIcon from '~/components/Icons/CloseIcon'
 import EditIcon from '~/components/Icons/EditIcon'
 import NodesIcon from '~/components/Icons/NodesIcon'
-import { useGraphStore } from '~/stores/useGraphStore'
+import { useGraphStore, useSelectedNode } from '~/stores/useGraphStore'
 import { useModal } from '~/stores/useModalStore'
 import { useSchemaStore } from '~/stores/useSchemaStore'
 import { useUserStore } from '~/stores/useUserStore'
@@ -32,10 +32,19 @@ type Props = {
   id: string
 }
 
+type ButtonProps = {
+  left: number
+  backgroundColor?: string
+  borderColor?: string
+  fontColor?: string
+}
+
 export const Node = ({ onClick, node, selected, rounded = true, x, y, z, id }: Props) => {
   const nodeRef = useRef<Mesh | null>(null)
   const [isAdmin] = useUserStore((s) => [s.isAdmin])
   const { open: openEditNodeNameModal } = useModal('editNodeName')
+  const { open: createBountyModal } = useModal('createBounty')
+  const selectedNode = useSelectedNode()
 
   const { normalizedSchemasByType, getNodeKeysByType } = useSchemaStore((s) => s)
   const setSelectedNode = useGraphStore((s) => s.setSelectedNode)
@@ -57,6 +66,8 @@ export const Node = ({ onClick, node, selected, rounded = true, x, y, z, id }: P
   const titleShortened = title ? truncateText(title, 30) : ''
   const description = keyProperty !== 'description' ? node.properties?.description : ''
   const descriptionShortened = description ? truncateText(description, 60) : ''
+
+  const isShowCreateTestButton = !!(selectedNode && selectedNode?.node_type?.toLowerCase() === 'function')
 
   return (
     <mesh ref={nodeRef}>
@@ -89,6 +100,17 @@ export const Node = ({ onClick, node, selected, rounded = true, x, y, z, id }: P
                   <Text className="selected__title">{titleShortened}</Text>
                   {descriptionShortened ? <Text>{descriptionShortened}</Text> : null}
                 </Flex>
+
+                {isShowCreateTestButton && (
+                  <CreateTestButton
+                    left={2}
+                    onClick={() => {
+                      createBountyModal()
+                    }}
+                  >
+                    Generate Unit Test
+                  </CreateTestButton>
+                )}
               </Selected>
             ) : (
               <>
@@ -170,7 +192,8 @@ const Selected = styled(Tag)`
     top: 100%;
     transform: translateX(-50%) translateY(8px);
     margin-left: 0;
-    width: auto;
+    text-align: center;
+    width: 250px;
   }
 `
 
@@ -228,4 +251,26 @@ const Avatar = styled(Flex)<AvatarProps>`
   height: ${({ height }) => `${height}px`};
   border-radius: ${({ radius }) => `${radius}`};
   font-size: 20px;
+`
+
+const CreateTestButton = styled.div<ButtonProps>`
+  position: absolute;
+  top: 170px;
+  left: ${(p: ButtonProps) => 30 + p.left}px;
+  width: 140px;
+  padding: 8px;
+  border-radius: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: ${colors.createTestButton};
+  color: ${colors.black};
+  font-size: 14px;
+  font-family: Barlow;
+  font-weight: 600;
+  z-index: 1002;
+  cursor: pointer;
+  &:hover {
+    transform: scale(1.05);
+  }
 `
