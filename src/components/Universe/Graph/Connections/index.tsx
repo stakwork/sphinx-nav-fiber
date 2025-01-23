@@ -15,10 +15,12 @@ type Props = {
 export const Connections = memo(({ linksPosition }: Props) => {
   const [dataInitial, nodesNormalized] = useDataStore((s) => [s.dataInitial, s.nodesNormalized])
 
-  const [showSelectionGraph, searchQuery, selectedNodeTypes] = useGraphStore((s) => [
+  const [showSelectionGraph, searchQuery, selectedNodeTypes, highlightNodes, hoveredNode] = useGraphStore((s) => [
     s.showSelectionGraph,
     s.searchQuery,
     s.selectedNodeTypes,
+    s.highlightNodes,
+    s.hoveredNode,
   ])
 
   const normalizedSchemasByType = useSchemaStore((s) => s.normalizedSchemasByType)
@@ -26,33 +28,40 @@ export const Connections = memo(({ linksPosition }: Props) => {
   return (
     <>
       <group name="simulation-3d-group__connections" visible={!showSelectionGraph}>
-        {dataInitial?.links.map((l: Link) => {
-          const position = linksPosition.get(l.ref_id) || {
-            sx: 0,
-            sy: 0,
-            sz: 0,
-            tx: 0,
-            ty: 0,
-            tz: 0,
-          }
+        {dataInitial?.links?.length ? (
+          <>
+            {dataInitial?.links.map((l: Link) => {
+              const position = linksPosition.get(l.ref_id) || {
+                sx: 0,
+                sy: 0,
+                sz: 0,
+                tx: 0,
+                ty: 0,
+                tz: 0,
+              }
 
-          return (
-            <LineComponent
-              key={l.ref_id}
-              label={l.edge_type}
-              source={l.source}
-              sourceX={position.sx}
-              sourceY={position.sy}
-              sourceZ={position.sz}
-              target={l.target}
-              targetX={position.tx}
-              targetY={position.ty}
-              targetZ={position.tz}
-            />
-          )
-        })}
+              return (
+                <LineComponent
+                  key={l.ref_id}
+                  label={l.edge_type}
+                  source={l.source}
+                  sourceX={position.sx}
+                  sourceY={position.sy}
+                  sourceZ={position.sz}
+                  target={l.target}
+                  targetX={position.tx}
+                  targetY={position.ty}
+                  targetZ={position.tz}
+                />
+              )
+            })}
+          </>
+        ) : null}
       </group>
-      <group visible={!searchQuery && !selectedNodeTypes.length}>
+      <group
+        key={dataInitial?.links.length}
+        visible={!searchQuery && !selectedNodeTypes.length && !highlightNodes.length && !hoveredNode}
+      >
         <Segments limit={1000} lineWidth={0.05}>
           {dataInitial?.links.map((l: Link) => {
             const position = linksPosition.get(l.ref_id) || {

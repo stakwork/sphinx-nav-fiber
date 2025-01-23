@@ -14,6 +14,7 @@ interface SimulationHelpers {
   addRadialForce: () => void
   addDefaultForce: () => void
   addSplitForce: () => void
+  addClusterForce: () => void
   simulationRestart: () => void
   getLinks: () => Link<NodeExtended>[]
 }
@@ -41,6 +42,9 @@ const defaultSimulationHelpers: SimulationHelpers = {
     /* do nothing */
   },
   addDefaultForce: () => {
+    /* do nothing */
+  },
+  addClusterForce: () => {
     /* do nothing */
   },
 
@@ -85,7 +89,9 @@ export type GraphStore = {
   isHovering: boolean
   activeEdge: Link | null
   activeNode: NodeExtended | null
+  highlightNodes: string[]
   selectionPath: string[]
+  hoveredNodeSiblings: string[]
   searchQuery: string
 
   setDisableCameraRotation: (rotation: boolean) => void
@@ -98,6 +104,7 @@ export type GraphStore = {
   setSelectedNode: (selectedNode: NodeExtended | null) => void
   setActiveEdge: (edge: Link | null) => void
   setActiveNode: (activeNode: NodeExtended | null) => void
+  setHighlightNodes: (highlightNodes: string[]) => void
   setCameraFocusTrigger: (_: boolean) => void
   setNearbyNodeIds: (_: string[]) => void
   setShowSelectionGraph: (_: boolean) => void
@@ -123,6 +130,7 @@ const defaultData: Omit<
   | 'setSelectedNode'
   | 'setActiveEdge'
   | 'setActiveNode'
+  | 'setHighlightNodes'
   | 'setCameraFocusTrigger'
   | 'setGraphRadius'
   | 'setSelectionGraphRadius'
@@ -150,6 +158,7 @@ const defaultData: Omit<
   selectionGraphRadius: 200, // calculated from initial load
   graphStyle: 'sphere',
   hoveredNode: null,
+  hoveredNodeSiblings: [],
   selectedNode: null,
   activeEdge: null,
   cameraFocusTrigger: false,
@@ -159,6 +168,7 @@ const defaultData: Omit<
   isHovering: false,
   selectionPath: [],
   activeNode: null,
+  highlightNodes: [],
   searchQuery: '',
   selectedNodeTypes: [],
   selectedLinkTypes: [],
@@ -197,13 +207,26 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
   setSelectionGraphRadius: (selectionGraphRadius) => set({ selectionGraphRadius }),
   setGraphStyle: (graphStyle) => set({ graphStyle: 'sphere' || graphStyle }),
   setHoveredNode: (hoveredNode) => {
-    set({ hoveredNode })
+    const { nodesNormalized } = useDataStore.getState() || {}
+
+    if (hoveredNode) {
+      const normalizedNode = nodesNormalized.get(hoveredNode.ref_id)
+
+      const siblings = [...(normalizedNode?.targets || []), ...(normalizedNode?.sources || [])]
+
+      set({ hoveredNode, hoveredNodeSiblings: siblings })
+    } else {
+      set({ hoveredNode, hoveredNodeSiblings: [] })
+    }
   },
   setActiveEdge: (activeEdge) => {
     set({ activeEdge })
   },
   setActiveNode: (activeNode) => {
     set({ activeNode })
+  },
+  setHighlightNodes: (highlightNodes) => {
+    set({ highlightNodes })
   },
   addToSelectionPath: (id: string) => {
     const { selectionPath } = get()
@@ -255,6 +278,9 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
     addNodesAndLinks: (newNodes, newLinks, replace) => {
       const { simulation, simulationHelpers } = get()
 
+      console.log(simulation.nodes())
+      console.log(newNodes)
+
       simulation.stop()
 
       const structuredNodes = structuredClone(newNodes)
@@ -268,12 +294,14 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
       nodes.push(...structuredNodes)
       links.push(...structuredLinks)
 
+      simulation.nodes(nodes)
+
+      simulation.force('link').links([]).links(links)
+
+      simulationHelpers.simulationRestart()
+
       try {
-        simulation.nodes(nodes)
-
-        simulation.force('link').links([]).links(links)
-
-        simulationHelpers.simulationRestart()
+        console.log('try')
       } catch (error) {
         console.error(error)
         // eslint-disable-next-line no-debugger
@@ -288,14 +316,25 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
       simulation
         .nodes(simulation.nodes().map((n: Node) => ({ ...n, ...resetPosition })))
         .force('y', null)
-        .force('radial', forceRadial(200, 0, 0, 0).strength(0.1))
+        // .force('radial', forceRadial(200, 0, 0, 0).strength(0.1))
         .force('center', forceCenter().strength(1))
+        .force('charge', forceManyBody().strength(-1))
         .force(
           'collide',
           forceCollide()
-            .radius(() => 150)
-            .strength(1)
+            .radius((node: NodeExtended) => (node.scale || 1) * 95)
+            .strength(0.5)
             .iterations(1),
+        )
+    },
+    addClusterForce: () => {
+      const { simulation, highlightNodes } = get()
+
+      simulation
+        .nodes(simulation.nodes().map((i: NodeExtended) => ({ ...i, ...resetPosition })))
+        .force(
+          'cluster',
+          forceRadial((node: NodeExtended) => (highlightNodes.includes(node.ref_id) ? 25 : 500)).strength(1),
         )
     },
 
@@ -389,6 +428,7 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
       .force(
         'link',
         forceLink()
+          .strength(0)
           .links(structuredLinks)
           .id((d: Node) => d.ref_id),
       )

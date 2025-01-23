@@ -58,15 +58,22 @@ export const TextNode = memo(
     const keyProperty = getNodeKeysByType(node.node_type) || ''
 
     const sanitizedNodeName =
-      keyProperty && node?.properties ? removeEmojis(String(node?.properties[keyProperty] || '')) : ''
+      keyProperty && node?.properties ? removeEmojis(String(node?.properties[keyProperty] || '')) : node.name || ''
 
     useFrame(({ camera, clock }) => {
       if (!nodeRef.current || !eventHandlerRef.current) {
         return
       }
 
-      const { selectedNode, hoveredNode, activeEdge, searchQuery, selectedNodeTypes, selectedLinkTypes } =
-        useGraphStore.getState()
+      const {
+        selectedNode,
+        hoveredNode,
+        activeEdge,
+        searchQuery,
+        selectedNodeTypes,
+        selectedLinkTypes,
+        hoveredNodeSiblings,
+      } = useGraphStore.getState()
 
       const checkDistance = () => {
         const nodePosition = nodePositionRef.current.setFromMatrixPosition(nodeRef.current!.matrixWorld)
@@ -74,8 +81,6 @@ export const TextNode = memo(
         if (nodeRef.current) {
           nodeRef.current.visible = ignoreDistance ? true : nodePosition.distanceTo(camera.position) < 1500
         }
-
-        // Set visibility based on distance
       }
 
       if (searchQuery.length < 3 && !selectedNodeTypes.length && !selectedLinkTypes.length) {
@@ -94,6 +99,7 @@ export const TextNode = memo(
         activeEdge?.source === node.ref_id ||
         (searchQuery && sanitizedNodeName.toLowerCase().includes(searchQuery.toLowerCase())) ||
         selectedNodeTypes.includes(node.node_type) ||
+        hoveredNodeSiblings.includes(node.ref_id) ||
         node.edgeTypes?.some((i) => selectedLinkTypes.includes(i))
 
       if (isActive) {

@@ -4,16 +4,17 @@ import styled from 'styled-components'
 import SearchIcon from '~/components/Icons/SearchIcon'
 import { SearchBar } from '~/components/SearchBar'
 import { Flex } from '~/components/common/Flex'
-import { useHasAiChatsResponseLoading } from '~/stores/useAiSummaryStore'
+import { useAiSummaryStore, useHasAiChatsResponseLoading } from '~/stores/useAiSummaryStore'
 import { useDataStore } from '~/stores/useDataStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { colors } from '~/utils'
 
 export const AiSearch = () => {
   const form = useForm<{ search: string }>({ mode: 'onChange' })
-  const { fetchData, setAbortRequests } = useDataStore((s) => s)
+  const { setAbortRequests } = useDataStore((s) => s)
   const { setBudget } = useUserStore((s) => s)
   const { reset } = form
+  const fetchAIData = useAiSummaryStore((s) => s.fetchAIData)
 
   const isLoading = useHasAiChatsResponseLoading()
 
@@ -22,7 +23,7 @@ export const AiSearch = () => {
       return
     }
 
-    fetchData(setBudget, setAbortRequests, search)
+    fetchAIData(setBudget, setAbortRequests, search)
     reset({ search: '' })
   })
 

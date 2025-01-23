@@ -1,3 +1,4 @@
+import { useControls } from 'leva'
 import { isEqual } from 'lodash'
 import { useEffect, useRef } from 'react'
 import { Box3, Group, Sphere } from 'three'
@@ -32,6 +33,9 @@ export const Graph = () => {
   const groupRef = useRef<Group>(null)
   const { normalizedSchemasByType } = useSchemaStore((s) => s)
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { useClustering } = useControls({ useClustering: false })
+
   const linksPositionRef = useRef(new Map<string, LinkPosition>())
   const nodesPositionRef = useRef(new Map<string, NodePosition>())
 
@@ -39,7 +43,16 @@ export const Graph = () => {
     (s) => s,
   )
 
+  const highlightNodes = useGraphStore((s) => s.highlightNodes)
+
   const removeSimulation = useGraphStore((s) => s.removeSimulation)
+
+  useEffect(() => {
+    if (highlightNodes.length) {
+      simulationHelpers?.addClusterForce()
+      simulationHelpers.simulationRestart()
+    }
+  }, [simulationHelpers, highlightNodes])
 
   useEffect(() => {
     if (!dataNew) {
@@ -64,10 +77,8 @@ export const Graph = () => {
   }, [setData, dataNew, simulation, simulationCreate, simulationHelpers, dataInitial])
 
   useEffect(() => {
-    if (!dataInitial) {
-      removeSimulation()
-    }
-  }, [dataInitial, removeSimulation])
+    ;() => removeSimulation()
+  }, [removeSimulation])
 
   useEffect(() => {
     if (!simulation) {

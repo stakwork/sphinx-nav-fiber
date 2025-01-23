@@ -140,7 +140,9 @@ export const AiSummary = ({ question, response, refId }: Props) => {
           ) : (
             <AiQuestions questions={response.questions || []} />
           )}
-          {(response?.sources || []).length ? <AiSources sourceIds={response.sources || []} /> : null}
+          {(response?.sources || []).length ? (
+            <AiSources question={question} sourceIds={response.sources || []} />
+          ) : null}
         </>
       )}
       {response.audio_en && (

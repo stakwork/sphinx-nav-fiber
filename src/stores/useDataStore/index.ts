@@ -2,16 +2,32 @@ import { isEqual } from 'lodash'
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
 import { fetchGraphData } from '~/network/fetchGraphData'
-import { FetchDataResponse, FilterParams, Link, Node, NodeExtended, NodeType, Sources, Trending, TStats } from '~/types'
+import {
+  FetchDataResponse,
+  FetchNodeParams,
+  FilterParams,
+  Link,
+  Node,
+  NodeExtended,
+  NodeType,
+  Sources,
+  Trending,
+  TStats,
+} from '~/types'
 import { useAiSummaryStore } from '../useAiSummaryStore'
 import { useAppStore } from '../useAppStore'
 import { useUserStore } from '../useUserStore'
 
-export type FetchNodeParams = {
-  word?: string
-  skip_cache?: string
-  free?: string
-  media_type?: string
+export const defaultFilters = {
+  skip: 0,
+  limit: 300,
+  depth: '2',
+  sort_by: 'score',
+  include_properties: 'true',
+  top_node_count: '50',
+  includeContent: 'true',
+  node_type: [],
+  search_method: 'vector',
 }
 
 export type SidebarFilterWithCount = {
@@ -110,17 +126,7 @@ const defaultData: Omit<
   categoryFilter: null,
   dataInitial: null,
   runningProjectMessages: [],
-  filters: {
-    skip: 0,
-    limit: 300,
-    depth: '2',
-    sort_by: 'score',
-    include_properties: 'true',
-    top_node_count: '50',
-    includeContent: 'true',
-    node_type: [],
-    search_method: 'vector',
-  },
+  filters: defaultFilters,
   isFetching: false,
   isLoadingNew: false,
   queuedSources: null,

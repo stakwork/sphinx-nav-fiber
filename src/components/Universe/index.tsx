@@ -42,6 +42,8 @@ const Content = () => {
     universeColor: colors.black,
   })
 
+  const dataInitial = useDataStore((s) => s.dataInitial)
+
   const selectedNode = useSelectedNode()
 
   const outlineColor: number = useMemo(
@@ -79,7 +81,7 @@ const Content = () => {
             />
           </EffectComposer>
         )}
-        <Graph />
+        {dataInitial?.nodes?.length ? <Graph /> : null}
       </Selection>
     </>
   )
