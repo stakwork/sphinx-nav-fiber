@@ -131,19 +131,15 @@ export const SelectionDataNodes = memo(() => {
     if (selectedNode) {
       const normalizedNode = nodesNormalized.get(selectedNode.ref_id)
 
-      const sourceNodes = (normalizedNode?.sources || []).map((i) => nodesNormalized.get(i))
-      const targetNodes = (normalizedNode?.targets || []).map((i) => nodesNormalized.get(i))
+      const sourceNodes = (normalizedNode?.sources || []).map((i) => nodesNormalized.get(i)).filter((i) => !!i)
+      const targetNodes = (normalizedNode?.targets || []).map((i) => nodesNormalized.get(i)).filter((i) => !!i)
 
-      const siblings = [
-        ...sourceNodes.filter((i) => !!i),
-        ...targetNodes.filter((i) => !!i),
-        { ...selectedNode, x: 0, y: 0, z: 0, fx: 0, fy: 0, fz: 0 },
-      ]
+      const siblings = [...sourceNodes, ...targetNodes, { ...selectedNode, x: 0, y: 0, z: 0, fx: 0, fy: 0, fz: 0 }]
 
       if (selectedNode.node_type === 'Question') {
         const links = (dataInitial?.links || []).filter((l: Link) =>
           siblings.some(
-            (i) =>
+            (i: NodeExtended) =>
               (i.ref_id === l.source && l.target === selectedNode.ref_id) ||
               (i.ref_id === l.target && l.source === selectedNode.ref_id),
           ),
