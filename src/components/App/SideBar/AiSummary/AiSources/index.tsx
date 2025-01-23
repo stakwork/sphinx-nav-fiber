@@ -1,6 +1,6 @@
 import { Slide } from '@mui/material'
 import Button from '@mui/material/Button'
-import { memo, useCallback, useRef, useState } from 'react'
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import styled from 'styled-components'
 import { Episode } from '~/components/App/SideBar/Relevance/Episode'
 import ChevronDownIcon from '~/components/Icons/ChevronDownIcon'
@@ -8,6 +8,7 @@ import ChevronUpIcon from '~/components/Icons/ChevronUpIcon'
 import SourcesIcon from '~/components/Icons/SourcesIcon'
 import { ScrollView } from '~/components/ScrollView'
 import { Flex } from '~/components/common/Flex'
+import { useAiSummaryStore } from '~/stores/useAiSummaryStore'
 import { useDataStore } from '~/stores/useDataStore'
 import { useUpdateSelectedNode } from '~/stores/useGraphStore'
 import { NodeExtended } from '~/types'
@@ -17,15 +18,61 @@ import { adaptTweetNode } from '~/utils/twitterAdapter'
 
 type Props = {
   sourceIds: string[]
+  question: string
+}
+
+const EDGE = {
+  edge_type: 'POSTED',
+  properties: {
+    date_added_to_graph: '1737561660.0435429',
+    weight: 1,
+  },
+  ref_id: '7efabdc1-b494-4d8c-8d55-5062ce1237d3',
+  source: 'efa4819e-a54e-49dd-858f-2aed5cf10940',
+  target: '0ba6ef37-bf92-4094-89a0-893f05d34e6c',
 }
 
 // eslint-disable-next-line no-underscore-dangle
-const _AiSources = ({ sourceIds }: Props) => {
+const _AiSources = ({ sourceIds, question }: Props) => {
   const scrollViewRef = useRef<HTMLDivElement | null>(null)
   const [showAll, setShowAll] = useState(false)
+  const addNewNode = useDataStore((s) => s.addNewNode)
 
-  const { dataInitial } = useDataStore((s) => s)
+  const beenAdded = useRef(false)
+
+  const { dataInitial } = useAiSummaryStore((s) => s)
   const setSelectedNode = useUpdateSelectedNode()
+
+  const currentNodes = useMemo(
+    () => dataInitial?.nodes.filter((i) => sourceIds.includes(i.ref_id)) || [],
+    [dataInitial?.nodes, sourceIds],
+  )
+
+  useEffect(() => {
+    if (!currentNodes.length || beenAdded.current) {
+      return
+    }
+
+    const edges = currentNodes.map((i, index) => ({
+      ...EDGE,
+      source: question,
+      target: i.ref_id,
+      ref_id: `${String(+new Date())}-${index}`,
+      edge_type: 'IS_SOURCE',
+      properties: {
+        date_added_to_graph: String(new Date()),
+        weight: 1,
+      },
+    }))
+
+    beenAdded.current = true
+
+    addNewNode({ nodes: currentNodes, edges })
+  }, [currentNodes, addNewNode, question])
+
+  const handleLoadMoreClick = () => setShowAll(!showAll)
+
+  const visibleNodes = showAll ? currentNodes : [...currentNodes].slice(0, 3)
 
   const handleNodeClick = useCallback(
     (node: NodeExtended) => {
@@ -33,12 +80,6 @@ const _AiSources = ({ sourceIds }: Props) => {
     },
     [setSelectedNode],
   )
-
-  const handleLoadMoreClick = () => setShowAll(!showAll)
-
-  const currentNodes = dataInitial?.nodes.filter((i) => sourceIds.includes(i.ref_id)) || []
-
-  const visibleNodes = showAll ? currentNodes : [...currentNodes].slice(0, 3)
 
   return (
     <SectionWrapper>

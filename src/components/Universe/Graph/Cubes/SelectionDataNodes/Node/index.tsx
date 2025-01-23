@@ -53,7 +53,7 @@ export const Node = ({ onClick, node, selected, rounded = true, x, y, z, id }: P
   // const iconName = Icon ? primaryIcon : 'NodesIcon'
   const keyProperty = getNodeKeysByType(node.node_type) || ''
 
-  const title = node?.properties ? node?.properties[keyProperty] : ''
+  const title = node?.properties && keyProperty ? node?.properties[keyProperty] || '' : node.name || ''
   const titleShortened = title ? truncateText(title, 30) : ''
   const description = keyProperty !== 'description' ? node.properties?.description : ''
   const descriptionShortened = description ? truncateText(description, 60) : ''

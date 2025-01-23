@@ -5,6 +5,13 @@ type QueryData = {
   ref_id: string
 }
 
+export type FetchNodeParams = {
+  word?: string
+  skip_cache?: string
+  free?: string
+  media_type?: string
+}
+
 export type Node = {
   boost?: number | null
   children?: string[]

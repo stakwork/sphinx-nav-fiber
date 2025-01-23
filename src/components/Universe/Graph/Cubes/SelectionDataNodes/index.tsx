@@ -26,6 +26,7 @@ export const SelectionDataNodes = memo(() => {
   const [selectionData, setSelectionData] = useState<GraphData | null>()
 
   const { addNewNode, nodesNormalized } = useDataStore((s) => s)
+  const dataInitial = useDataStore((s) => s.dataInitial)
   const selectedNode = useSelectedNode()
   const groupRef = useRef<Group>(null)
 
@@ -128,9 +129,41 @@ export const SelectionDataNodes = memo(() => {
     }
 
     if (selectedNode) {
-      init()
+      if (selectedNode.node_type === 'Question') {
+        const normalizedNode = nodesNormalized.get(selectedNode.ref_id)
+
+        if (!normalizedNode) {
+          return
+        }
+
+        const sourceNodes = (normalizedNode.sources || [])
+          .map((i) => nodesNormalized.get(i))
+          .filter((i) => !!i) as NodeExtended[]
+
+        const targetNodes = (normalizedNode.targets || [])
+          .map((i) => nodesNormalized.get(i))
+          .filter((i) => !!i) as NodeExtended[]
+
+        const siblings: NodeExtended[] = [
+          ...sourceNodes,
+          ...targetNodes,
+          { ...selectedNode, x: 0, y: 0, z: 0, fx: 0, fy: 0, fz: 0 },
+        ]
+
+        const links = (dataInitial?.links || []).filter((l: Link) =>
+          siblings.some(
+            (i: NodeExtended) =>
+              (i.ref_id === l.source && l.target === selectedNode.ref_id) ||
+              (i.ref_id === l.target && l.source === selectedNode.ref_id),
+          ),
+        )
+
+        setSelectionData({ nodes: siblings, links: links as unknown as GraphData['links'] })
+      } else {
+        init()
+      }
     }
-  }, [addNewNode, prevSelectedNodeId, selectedNode, setSelectionData])
+  }, [addNewNode, prevSelectedNodeId, selectedNode, setSelectionData, nodesNormalized, dataInitial?.links])
 
   const handleSelect = useCallback(
     (id: string) => {
