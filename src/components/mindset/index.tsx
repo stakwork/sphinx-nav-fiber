@@ -19,13 +19,14 @@ export const MindSet = () => {
   const { addNewNode, isFetching, runningProjectId } = useDataStore((s) => s)
   const [dataInitial, setDataInitial] = useState<FetchDataResponse | null>(null)
   const [showTwoD, setShowTwoD] = useState(false)
-  const { setSelectedEpisode } = useMindsetStore((s) => s)
+  const setSelectedEpisode = useMindsetStore((s) => s.setSelectedEpisode)
   const setClips = useMindsetStore((s) => s.setClips)
   const clips = useMindsetStore((s) => s.clips)
   const socket: Socket | undefined = useSocket()
   const requestRef = useRef<number | null>(null)
   const previousTimeRef = useRef<number | null>(null)
   const nodesAndEdgesRef = useRef<FetchDataResponse | null>(null)
+  const [chapters, setChapters] = useState<Node[]>([])
 
   const queueRef = useRef<FetchDataResponse | null>(null)
   const timerRef = useRef<NodeJS.Timeout | null>(null)
@@ -71,6 +72,17 @@ export const MindSet = () => {
           useSubGraph: false,
         })
 
+        const chaptersData = await fetchNodeEdges(selectedEpisodeId || '', 0, 50, {
+          nodeType: ['Chapter'],
+          useSubGraph: false,
+        })
+
+        if (chaptersData?.nodes) {
+          setChapters(chaptersData?.nodes)
+        }
+
+        console.log(chapters)
+
         // Update the graph with starter nodes
         addNewNode({
           nodes: starterNodes?.nodes ? starterNodes?.nodes : [],
@@ -89,7 +101,7 @@ export const MindSet = () => {
     if (selectedEpisodeId) {
       fetchInitialData()
     }
-  }, [selectedEpisodeId, addNewNode, setClips, navigate])
+  }, [selectedEpisodeId, addNewNode, setClips, navigate, setChapters])
 
   useEffect(() => {
     if (!clips) {
@@ -302,7 +314,7 @@ export const MindSet = () => {
         </>
       </ContentWrapper>
       <PlayerControlWrapper>
-        <PlayerControl markers={markers} />
+        <PlayerControl chapters={chapters} markers={markers} />
       </PlayerControlWrapper>
     </MainContainer>
   )
