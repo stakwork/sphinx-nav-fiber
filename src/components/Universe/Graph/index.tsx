@@ -11,7 +11,6 @@ import { Connections } from './Connections'
 import { Cubes } from './Cubes'
 import { Earth } from './Earth'
 import { LoadingNodes } from './LoadingNodes'
-import { NodeDetailsPanel } from './UI'
 
 export type LinkPosition = {
   sx: number
@@ -228,7 +227,6 @@ export const Graph = () => {
       {(isLoadingNew || isFetching) && <LoadingNodes />}
 
       {graphStyle !== 'earth' && <Connections linksPosition={linksPositionRef.current} />}
-      <NodeDetailsPanel />
     </group>
   )
 }
