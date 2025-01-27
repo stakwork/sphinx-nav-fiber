@@ -6,7 +6,6 @@ import AiPlayIcon from '~/components/Icons/AiPlayIcon'
 import ChevronDownIcon from '~/components/Icons/ChevronDownIcon'
 import ChevronUpIcon from '~/components/Icons/ChevronUpIcon'
 import { Flex } from '~/components/common/Flex'
-import { Text } from '~/components/common/Text'
 import { useAiSummaryStore } from '~/stores/useAiSummaryStore'
 import { useAppStore } from '~/stores/useAppStore'
 import { AIEntity } from '~/types'
@@ -16,6 +15,7 @@ import { AiAnswer } from './AiAnswer'
 import { AiQuestions } from './AiQuestions'
 import { AiSources } from './AiSources'
 import { AiSummarySkeleton } from './AiSummarySkeleton'
+import { StyledMarkdown } from './utils/AiSummaryHighlight/markdown'
 
 type Props = {
   question: string
@@ -23,14 +23,18 @@ type Props = {
   refId: string
 }
 
-const Title = styled(Text)`
-  font-size: 20px;
-  font-weight: 600;
+const TitleContainer = styled.div`
   flex-grow: 1;
   overflow-wrap: break-word;
   white-space: normal;
   word-break: break-word;
-  margin-right: 10px;
+  margin-top: calc(100px - 104px);
+`
+
+const TitleMarkdown = styled(StyledMarkdown)`
+  font-size: 16px;
+  font-weight: normal;
+  line-height: 1.5;
 `
 
 const TitleWrapper = styled(Flex).attrs({
@@ -111,7 +115,9 @@ export const AiSummary = ({ question, response, refId }: Props) => {
   return (
     <Wrapper>
       <TitleWrapper>
-        <Title ref={ref}>{question}</Title>
+        <TitleContainer ref={ref}>
+          <TitleMarkdown>{question}</TitleMarkdown>
+        </TitleContainer>
         {response.audio_en && (
           <AudioButton onClick={togglePlay}>
             {currentPlayingAudio?.current === audioRef.current && !audioRef.current?.paused ? (
