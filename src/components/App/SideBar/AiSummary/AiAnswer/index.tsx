@@ -2,6 +2,7 @@ import Button from '@mui/material/Button'
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { highlightAiSummary } from '~/components/App/SideBar/AiSummary/utils/AiSummaryHighlight'
+import { StyledMarkdown } from '~/components/App/SideBar/AiSummary/utils/AiSummaryHighlight/markdown'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import AiCheckIcon from '~/components/Icons/AiCheckIcon'
@@ -39,10 +40,15 @@ const Wrapper = styled(Flex).attrs({
   word-break: break-word;
 `
 
-const SummaryText = styled(Text)`
+const StyledAnswer = styled(Text)`
   font-size: 14px;
   font-weight: 400;
   line-height: 19.6px;
+
+  ${StyledMarkdown} {
+    margin: 0;
+    padding: 0;
+  }
 `
 
 const ActionsWrapper = styled(Flex)`
@@ -233,7 +239,9 @@ export const AiAnswer = ({
 
   return (
     <Wrapper>
-      <SummaryText>{responseTextDisplay}</SummaryText>
+      <StyledAnswer>
+        {entities?.length ? responseTextDisplay : <StyledMarkdown>{displayedText}</StyledMarkdown>}
+      </StyledAnswer>
       {isDescriptionComplete && displayedText.length === answer.length && (
         <ActionsWrapper>
           {hasAudio && (
