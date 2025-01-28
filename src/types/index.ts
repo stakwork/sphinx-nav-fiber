@@ -10,6 +10,7 @@ export type FetchNodeParams = {
   skip_cache?: string
   free?: string
   media_type?: string
+  force_regenerate?: boolean
 }
 
 export type Node = {

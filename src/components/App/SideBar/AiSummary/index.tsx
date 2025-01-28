@@ -1,13 +1,13 @@
 import Button from '@mui/material/Button'
 import { useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
-import AiPauseIcon from '~/components/Icons/AiPauseIcon'
-import AiPlayIcon from '~/components/Icons/AiPlayIcon'
 import ChevronDownIcon from '~/components/Icons/ChevronDownIcon'
 import ChevronUpIcon from '~/components/Icons/ChevronUpIcon'
 import { Flex } from '~/components/common/Flex'
 import { useAiSummaryStore } from '~/stores/useAiSummaryStore'
 import { useAppStore } from '~/stores/useAppStore'
+import { useDataStore } from '~/stores/useDataStore'
+import { useUserStore } from '~/stores/useUserStore'
 import { AIEntity } from '~/types'
 import { colors } from '~/utils/colors'
 import { EpisodeSkeleton } from '../Relevance/EpisodeSkeleton'
@@ -50,6 +50,8 @@ export const AiSummary = ({ question, response, refId }: Props) => {
   const ref = useRef<HTMLDivElement>(null)
   const [collapsed, setCollapsed] = useState(false)
   const { setAiSummaryAnswer } = useAiSummaryStore((s) => s)
+  const { setBudget } = useUserStore((s) => s)
+  const { setAbortRequests } = useDataStore((s) => s)
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const { currentPlayingAudio, setCurrentPlayingAudio } = useAppStore((s) => s)
   const [isPlaying, setIsPlaying] = useState(false)
@@ -112,21 +114,34 @@ export const AiSummary = ({ question, response, refId }: Props) => {
     handleToggleAudio()
   }
 
+  const handleRegenerate = async () => {
+    setAiSummaryAnswer(refId, {
+      question,
+      answer: '',
+      answerLoading: true,
+      sourcesLoading: true,
+      questionsLoading: true,
+      entities: undefined,
+      shouldRender: true,
+      questions: [],
+      sources: [],
+      audio_en: undefined,
+    })
+
+    const { fetchData } = useDataStore.getState()
+    const { resetAiSummaryAnswer } = useAiSummaryStore.getState()
+
+    resetAiSummaryAnswer()
+
+    await fetchData(setBudget, setAbortRequests, question, { force_regenerate: true })
+  }
+
   return (
     <Wrapper>
       <TitleWrapper>
         <TitleContainer ref={ref}>
           <TitleMarkdown>{question}</TitleMarkdown>
         </TitleContainer>
-        {response.audio_en && (
-          <AudioButton onClick={togglePlay}>
-            {currentPlayingAudio?.current === audioRef.current && !audioRef.current?.paused ? (
-              <AiPauseIcon />
-            ) : (
-              <AiPlayIcon />
-            )}
-          </AudioButton>
-        )}
         <CollapseButton onClick={toggleCollapse}>{collapsed ? <ChevronDownIcon /> : <ChevronUpIcon />}</CollapseButton>
       </TitleWrapper>
       {!collapsed && (
@@ -138,7 +153,11 @@ export const AiSummary = ({ question, response, refId }: Props) => {
               answer={response.answer || ''}
               entities={response.entities}
               handleLoaded={() => handleLoaded()}
+              hasAudio={!!response.audio_en}
               hasBeenRendered={!!response?.hasBeenRendered}
+              isPlaying={isPlaying && currentPlayingAudio?.current === audioRef.current}
+              onRegenerate={handleRegenerate}
+              onTogglePlay={togglePlay}
             />
           )}
           {response.questionsLoading ? (
@@ -186,31 +205,6 @@ const CollapseButton = styled(Button)`
   svg {
     width: 9px;
     height: 9px;
-    color: white;
-  }
-`
-
-const AudioButton = styled(Button)`
-  &&.MuiButton-root {
-    background-color: ${colors.COLLAPSE_BUTTON};
-    border: none;
-    cursor: pointer;
-    flex-shrink: 0;
-    padding: 0px;
-    width: 27px;
-    height: 26px;
-    min-width: 26px;
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-top: 1px;
-    margin-right: 10px;
-  }
-
-  svg {
-    width: 29px;
-    height: 12px;
     color: white;
   }
 `
