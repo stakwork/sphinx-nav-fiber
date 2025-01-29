@@ -3,8 +3,8 @@ import { Flex } from '~/components/common/Flex'
 import ClearIcon from '~/components/Icons/ClearIcon'
 import { useGraphStore } from '~/stores/useGraphStore'
 import { colors } from '~/utils'
-import { NodeTypes } from './NodeTypes'
 import { LinkTypes } from './LinkTypes'
+import { NodeTypes } from './NodeTypes'
 
 export const GraphSearch = () => {
   const [setSearchQuery, searchQuery] = useGraphStore((s) => [s.setSearchQuery, s.searchQuery])
@@ -35,6 +35,7 @@ export const GraphSearch = () => {
 }
 
 const Wrapper = styled(Flex)`
+  padding: 16px;
   position: absolute;
   top: 0;
   left: 0;
