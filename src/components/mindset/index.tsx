@@ -16,7 +16,8 @@ import { PlayerControl } from './components/PlayerContols'
 import { SideBar } from './components/Sidebar'
 
 export const MindSet = () => {
-  const { addNewNode, isFetching, runningProjectId } = useDataStore((s) => s)
+  const { isFetching, runningProjectId } = useDataStore((s) => s)
+  const addNewNode = useDataStore((s) => s.addNewNode)
   const [dataInitial, setDataInitial] = useState<FetchDataResponse | null>(null)
   const [showTwoD, setShowTwoD] = useState(false)
   const setSelectedEpisode = useMindsetStore((s) => s.setSelectedEpisode)
@@ -61,24 +62,32 @@ export const MindSet = () => {
     const fetchInitialData = async () => {
       try {
         // Fetch the initial set of edges and nodes for the episode
-        const starterNodes = await fetchNodeEdges(selectedEpisodeId || '', 0, 50, {
+        const startedData = await fetchNodeEdges(selectedEpisodeId || '', 0, 50, {
           nodeType: ['Show', 'Host', 'Guest'],
           useSubGraph: false,
         })
 
-        const clipNodes = await fetchNodeEdges(selectedEpisodeId || '', 0, 50, {
+        const clipData = await fetchNodeEdges(selectedEpisodeId || '', 0, 1000, {
           nodeType: ['Clip'],
           useSubGraph: false,
         })
 
-        // Update the graph with starter nodes
         addNewNode({
-          nodes: starterNodes?.nodes ? starterNodes?.nodes : [],
-          edges: starterNodes?.edges ? starterNodes.edges : [],
+          nodes: startedData?.nodes ? startedData?.nodes : [],
+          edges: startedData?.edges ? startedData.edges : [],
         })
 
-        if (clipNodes?.nodes) {
-          setClips(clipNodes?.nodes)
+        if (clipData?.nodes) {
+          const clipNodes = clipData.nodes
+            .filter((i) => i.properties?.timestamp)
+            .sort((a, b) => {
+              const startA = Number((a.properties?.timestamp as unknown as string)?.split('-')[0])
+              const startB = Number((b.properties?.timestamp as unknown as string)?.split('-')[0])
+
+              return startA - startB
+            })
+
+          setClips(clipNodes)
         }
       } catch (error) {
         navigate('/')

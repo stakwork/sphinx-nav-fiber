@@ -1,13 +1,13 @@
 import { IconButton } from '@mui/material'
 import { memo, useState } from 'react'
 import styled from 'styled-components'
+import MuteVolumeIcon from '~/components/Icons/MuteVolumeIcon'
 import PauseIcon from '~/components/Icons/PauseIcon'
 import PlayIcon from '~/components/Icons/PlayIcon'
+import VolumeIcon from '~/components/Icons/VolumeIcon'
 import { Flex } from '~/components/common/Flex'
 import { usePlayerStore } from '~/stores/usePlayerStore'
 import { colors } from '~/utils/colors'
-import VolumeIcon from '~/components/Icons/VolumeIcon'
-import MuteVolumeIcon from '~/components/Icons/MuteVolumeIcon'
 
 export const Controls = memo(() => {
   const isPlaying = usePlayerStore((s) => s.isPlaying)
@@ -64,13 +64,13 @@ export const Controls = memo(() => {
     <Wrapper>
       <MuteWrapper onClick={toggleMute}>{isMuted ? <MuteVolumeIcon /> : <VolumeIcon />}</MuteWrapper>
       <RewindIconWrapper onClick={handleRewind}>
-        <img alt="" src="RewindIcon.svg" />
+        <img alt="" src="/RewindIcon.svg" />
       </RewindIconWrapper>
       <Action data-testid="play-pause-button" onClick={togglePlay} size="small">
         {isPlaying ? <PauseIcon data-testid="pause-icon" /> : <PlayIcon data-testid="play-icon" />}
       </Action>
       <ForwardIconWrapper onClick={handleFastForward}>
-        <img alt="" src="ForwardIcon.svg" />
+        <img alt="" src="/ForwardIcon.svg" />
       </ForwardIconWrapper>
       <SpeedButton onClick={cycleSpeed}>{playbackSpeed}x</SpeedButton>
     </Wrapper>
