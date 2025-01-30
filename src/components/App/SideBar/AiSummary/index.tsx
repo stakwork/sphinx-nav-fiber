@@ -41,7 +41,7 @@ const TitleWrapper = styled(Flex).attrs({
   direction: 'row',
   alignItems: 'center',
 })`
-  padding: 24px 10px 24px 24px;
+  padding: 24px 10px 0 24px;
   flex-shrink: 1;
   overflow: hidden;
 `
@@ -139,7 +139,7 @@ export const AiSummary = ({ question, response, refId }: Props) => {
     <Wrapper>
       <TitleWrapper>
         <TitleContainer ref={ref}>
-          <TitleMarkdown>{question}</TitleMarkdown>
+          <TitleMarkdown>{`# ${question}`}</TitleMarkdown>
         </TitleContainer>
         <CollapseButton onClick={toggleCollapse}>{collapsed ? <ChevronDownIcon /> : <ChevronUpIcon />}</CollapseButton>
       </TitleWrapper>

@@ -4,8 +4,9 @@ import { colors } from '~/utils/colors'
 
 export const StyledMarkdown = styled(ReactMarkdown)`
   color: ${colors.white};
-  font-family: 'Barlow', sans-serif;
+  font-family: 'Barlow';
   line-height: 1.5;
+  margin-top: 5px;
 
   h1,
   h2,
@@ -20,13 +21,13 @@ export const StyledMarkdown = styled(ReactMarkdown)`
   }
 
   h1 {
-    font-size: 24px;
+    font-size: 20px;
+    font-family: 'Barlow';
     font-weight: 600;
-    margin-bottom: 16px;
   }
 
   h2 {
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 600;
     margin-bottom: 12px;
   }
