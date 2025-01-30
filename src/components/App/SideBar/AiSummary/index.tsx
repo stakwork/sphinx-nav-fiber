@@ -49,7 +49,9 @@ const TitleWrapper = styled(Flex).attrs({
 export const AiSummary = ({ question, response, refId }: Props) => {
   const ref = useRef<HTMLDivElement>(null)
   const [collapsed, setCollapsed] = useState(false)
-  const { setAiSummaryAnswer } = useAiSummaryStore((s) => s)
+  const setAiSummaryAnswer = useAiSummaryStore((s) => s.setAiSummaryAnswer)
+  const fetchAiData = useAiSummaryStore((s) => s.fetchAIData)
+  const resetAiSummaryAnswer = useAiSummaryStore((s) => s.resetAiSummaryAnswer)
   const { setBudget } = useUserStore((s) => s)
   const { setAbortRequests } = useDataStore((s) => s)
   const audioRef = useRef<HTMLAudioElement | null>(null)
@@ -128,12 +130,9 @@ export const AiSummary = ({ question, response, refId }: Props) => {
       audio_en: undefined,
     })
 
-    const { fetchData } = useDataStore.getState()
-    const { resetAiSummaryAnswer } = useAiSummaryStore.getState()
-
     resetAiSummaryAnswer()
 
-    await fetchData(setBudget, setAbortRequests, question, { force_regenerate: true })
+    await fetchAiData(setBudget, setAbortRequests, question, { force_regenerate: true })
   }
 
   return (
