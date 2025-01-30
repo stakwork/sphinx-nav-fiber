@@ -216,6 +216,8 @@ export const AiAnswer = ({
     isDescriptionComplete,
   )
 
+  console.log(responseTextDisplay)
+
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(answer)
@@ -240,7 +242,7 @@ export const AiAnswer = ({
   return (
     <Wrapper>
       <StyledAnswer>
-        {entities?.length ? responseTextDisplay : <StyledMarkdown>{displayedText}</StyledMarkdown>}
+        <StyledMarkdown>{displayedText}</StyledMarkdown>
       </StyledAnswer>
       {isDescriptionComplete && displayedText.length === answer.length && (
         <ActionsWrapper>
