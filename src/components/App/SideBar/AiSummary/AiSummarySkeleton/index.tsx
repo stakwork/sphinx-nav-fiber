@@ -13,7 +13,7 @@ type EpisodeWrapperProps = FlexboxProps & {
 const EpisodeWrapper = styled(Flex).attrs({
   direction: 'column',
 })<EpisodeWrapperProps>`
-  padding: 24px;
+  padding: 15px 24px 24px 24px;
   cursor: pointer;
   background: ${colors.BG1};
 
