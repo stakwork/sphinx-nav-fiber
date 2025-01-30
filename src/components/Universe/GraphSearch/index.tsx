@@ -48,6 +48,7 @@ const Wrapper = styled(Flex)`
 const SearchWrapper = styled(Flex)`
   flex-direction: row;
   margin-bottom: 16px;
+  z-index: 100;
 `
 
 const Input = styled.input.attrs(() => ({

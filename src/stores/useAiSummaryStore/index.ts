@@ -76,7 +76,7 @@ export const useAiSummaryStore = create<AiSummaryStore>()(
 
     setAiRefId: (aiRefId) => set({ aiRefId }),
 
-    fetchAIData: async (setBudget, setAbortRequests, AISearchQuery = '') => {
+    fetchAIData: async (setBudget, setAbortRequests, AISearchQuery = '', params) => {
       const { filters, addNewNode } = useDataStore.getState()
       const currentPage = filters.skip
       const itemsPerPage = filters.limit
@@ -114,6 +114,7 @@ export const useAiSummaryStore = create<AiSummaryStore>()(
         ...(word ? { word } : {}),
         ...(aiRefId && AISearchQuery ? { previous_search_ref_id: aiRefId } : {}),
         ...(!word && !AISearchQuery ? { sort_by: 'date_added_to_graph' } : {}),
+        ...(params?.force_regenerate ? { force_regenerate: 'true' } : {}),
       }
 
       try {
