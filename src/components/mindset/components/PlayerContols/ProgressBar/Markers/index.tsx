@@ -10,7 +10,7 @@ type Props = {
 export const Markers = memo(({ markers, duration }: Props) => (
   <>
     {markers.map((node, index) => {
-      const position = Math.floor(((node?.start || 0) / duration) * 200)
+      const position = Math.floor(((node?.start || 0) / duration) * 100)
       const type = node?.node_type || ''
       const img = node?.properties?.image_url || ''
 
