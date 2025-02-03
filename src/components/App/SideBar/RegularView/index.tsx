@@ -11,12 +11,12 @@ import SearchFilterCloseIcon from '~/components/Icons/SearchFilterCloseIcon'
 import SearchFilterIcon from '~/components/Icons/SearchFilterIcon'
 import SearchIcon from '~/components/Icons/SearchIcon'
 import { SearchBar } from '~/components/SearchBar'
+import { useNodeNavigation } from '~/components/Universe/useNodeNavigation'
 import { Flex } from '~/components/common/Flex'
 import { FetchLoaderText } from '~/components/common/Loader'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore, useFilteredNodes } from '~/stores/useDataStore'
 import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
-import { useUpdateSelectedNode } from '~/stores/useGraphStore'
 import { colors } from '~/utils/colors'
 import { LatestView } from '../Latest'
 import { Relevance } from '../Relevance'
@@ -28,7 +28,7 @@ export const MENU_WIDTH = 390
 export const RegularView = () => {
   const { isFetching: isLoading, setSidebarFilter } = useDataStore((s) => s)
 
-  const setSelectedNode = useUpdateSelectedNode()
+  const { navigateToNode } = useNodeNavigation()
 
   const filteredNodes = useFilteredNodes()
 
@@ -94,7 +94,7 @@ export const RegularView = () => {
                   setValue('search', '')
                   clearSearch()
                   setSidebarFilter('all')
-                  setSelectedNode(null)
+                  navigateToNode(null)
                   navigate(`/`)
 
                   return

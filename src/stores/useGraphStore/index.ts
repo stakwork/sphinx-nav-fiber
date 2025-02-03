@@ -441,7 +441,6 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
 
 export const useSelectedNode = () => useGraphStore((s) => s.selectedNode)
 export const useHoveredNode = () => useGraphStore((s) => s.hoveredNode)
-export const useUpdateSelectedNode = () => useGraphStore((s) => s.setSelectedNode)
 
 export const useSelectedNodeRelativeIds = () => {
   const selectedNode = useGraphStore((s) => s.selectedNode)

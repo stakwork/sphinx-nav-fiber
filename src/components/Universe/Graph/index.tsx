@@ -7,6 +7,7 @@ import { useDataStore } from '~/stores/useDataStore'
 import { useGraphStore } from '~/stores/useGraphStore'
 import { useSchemaStore } from '~/stores/useSchemaStore'
 import { NodeExtended } from '~/types'
+import { useSelectedNodeFromUrl } from '../useSelectedNodeFromUrl'
 import { Connections } from './Connections'
 import { Cubes } from './Cubes'
 import { Earth } from './Earth'
@@ -45,6 +46,8 @@ export const Graph = () => {
   const highlightNodes = useGraphStore((s) => s.highlightNodes)
 
   const removeSimulation = useGraphStore((s) => s.removeSimulation)
+
+  useSelectedNodeFromUrl()
 
   useEffect(() => {
     if (highlightNodes.length) {
