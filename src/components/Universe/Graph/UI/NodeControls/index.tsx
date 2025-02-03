@@ -1,7 +1,7 @@
 import Popover from '@mui/material/Popover'
 import { Html } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
-import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import React, { memo, useCallback, useMemo, useRef, useState } from 'react'
 import { MdClose, MdViewInAr } from 'react-icons/md'
 import styled from 'styled-components'
 import { Group, Vector3 } from 'three'
@@ -14,7 +14,7 @@ import EditIcon from '~/components/Icons/EditIcon'
 import NodesIcon from '~/components/Icons/NodesIcon'
 import PlusIcon from '~/components/Icons/PlusIcon'
 import RobotIcon from '~/components/Icons/RobotIcon'
-import { getActionDetails } from '~/network/actions'
+import { useNodeNavigation } from '~/components/Universe/useNodeNavigation'
 import { fetchNodeEdges } from '~/network/fetchGraphData'
 import { analyzeGitHubRepository } from '~/network/fetchSourcesData'
 import { useAppStore } from '~/stores/useAppStore'
@@ -48,7 +48,8 @@ export const NodeControls = memo(() => {
 
   const selectedNode = useSelectedNode()
 
-  const { showSelectionGraph, selectionGraphData, setSelectedNode, setShowSelectionGraph } = useGraphStore((s) => s)
+  const { showSelectionGraph, selectionGraphData, setShowSelectionGraph } = useGraphStore((s) => s)
+  const { navigateToNode } = useNodeNavigation()
 
   const allGraphData = useGraphData()
 
@@ -147,7 +148,7 @@ export const NodeControls = memo(() => {
         className: 'exit',
         onClick: () => {
           setShowSelectionGraph(false)
-          setSelectedNode(null)
+          navigateToNode(null)
         },
       },
     ]
@@ -162,28 +163,6 @@ export const NodeControls = memo(() => {
     getChildren,
     setSelectedNode,
   ])
-
-  const nodeType = selectedNode?.node_type
-
-  useEffect(() => {
-    async function handleGetActionDetails() {
-      try {
-        if (!normalizedSchemasByType[nodeType!]) {
-          return
-        }
-
-        const { action } = normalizedSchemasByType[nodeType!]
-
-        const res = await getActionDetails(action!)
-
-        setNodeActions(res.actions)
-      } catch (error) {
-        console.error(error)
-      }
-    }
-
-    handleGetActionDetails()
-  }, [normalizedSchemasByType, nodeType])
 
   if (!selectedNode) {
     return null

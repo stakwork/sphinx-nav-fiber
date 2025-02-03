@@ -12,7 +12,6 @@ import { useAiSummaryStore } from '~/stores/useAiSummaryStore'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
 import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
-import { useUpdateSelectedNode } from '~/stores/useGraphStore'
 import { useTeachStore } from '~/stores/useTeachStore'
 import { useUserStore } from '~/stores/useUserStore'
 import {
@@ -27,6 +26,7 @@ import { colors } from '~/utils/colors'
 import { updateBudget } from '~/utils/setBudget'
 import version from '~/utils/versionHelper'
 import { ModalsContainer } from '../ModalsContainer'
+import { useNodeNavigation } from '../Universe/useNodeNavigation'
 import { ActionsToolbar } from './ActionsToolbar'
 import { AppBar } from './AppBar'
 import { DeviceCompatibilityNotice } from './DeviceCompatibilityNotification'
@@ -83,7 +83,7 @@ export const App = () => {
 
   const { setAiSummaryAnswer, getKeyExist, aiRefId } = useAiSummaryStore((s) => s)
 
-  const setSelectedNode = useUpdateSelectedNode()
+  const { navigateToNode } = useNodeNavigation()
 
   const [realtimeGraphFeatureFlag, chatInterfaceFeatureFlag] = useFeatureFlagStore((s) => [
     s.realtimeGraphFeatureFlag,
@@ -100,17 +100,17 @@ export const App = () => {
     setValue('search', query ?? '')
 
     setTranscriptOpen(false)
-    setSelectedNode(null)
+    navigateToNode(null)
     setRelevanceSelected(false)
     setCurrentSearch(query ?? '')
     setTeachMeAnswer('')
     setCategoryFilter(null)
   }, [
+    navigateToNode,
     query,
     setCategoryFilter,
     setCurrentSearch,
     setRelevanceSelected,
-    setSelectedNode,
     setTeachMeAnswer,
     setTranscriptOpen,
     setValue,
@@ -124,14 +124,14 @@ export const App = () => {
       if (searchTerm) {
         await updateBudget(setBudget)
       } else {
-        setSelectedNode(null)
+        navigateToNode(null)
       }
     }
 
     resetData()
 
     runSearch()
-  }, [searchTerm, fetchData, setBudget, setAbortRequests, setSidebarOpen, setSelectedNode, resetData])
+  }, [searchTerm, fetchData, setBudget, setAbortRequests, setSidebarOpen, navigateToNode, resetData])
 
   const handleNewNode = useCallback(() => {
     setNodeCount('INCREMENT')

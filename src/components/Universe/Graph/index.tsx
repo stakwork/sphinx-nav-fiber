@@ -9,6 +9,7 @@ import { distributeNodesOnSphere, useGraphStore } from '~/stores/useGraphStore'
 import { useMindsetStore } from '~/stores/useMindsetStore'
 import { useSchemaStore } from '~/stores/useSchemaStore'
 import { NodeExtended } from '~/types'
+import { useSelectedNodeFromUrl } from '../useSelectedNodeFromUrl'
 import { Connections } from './Connections'
 import { Cubes } from './Cubes'
 import { fontProps } from './Cubes/Text/constants'
@@ -51,6 +52,8 @@ export const Graph = () => {
   const highlightNodes = useGraphStore((s) => s.highlightNodes)
 
   const removeSimulation = useGraphStore((s) => s.removeSimulation)
+
+  useSelectedNodeFromUrl()
 
   useEffect(() => {
     if (highlightNodes.length) {

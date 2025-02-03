@@ -1,3 +1,46 @@
+import { useLocation, useNavigate } from 'react-router-dom'
+
+export const useNodeNavigation = () => {
+  const navigate = useNavigate()
+  const location = useLocation()
+
+  return {
+    navigateToNode: (selectedNodeId: string | null) => {
+      if (!selectedNodeId) {
+        navigate('..', { replace: true })
+
+        return
+      }
+
+      const basePath = location.pathname.split('/node/')[0].replace(/\/$/, '')
+
+      navigate(`${basePath}/node/${selectedNodeId}`, { replace: true })
+    },
+  }
+}
+import { useEffect } from 'react'
+import { useParams } from 'react-router-dom'
+import { useDataStore } from '~/stores/useDataStore'
+import { useNodeNavigation } from './useNodeNavigation'
+
+export const useSelectedNodeFromUrl = () => {
+  const { selectedNodeId } = useParams()
+
+  const { navigateToNode } = useNodeNavigation()
+  const nodesNormalized = useDataStore((state) => state.nodesNormalized)
+
+  useEffect(() => {
+    if (selectedNodeId) {
+      const node = nodesNormalized.get(selectedNodeId)
+
+      if (node) {
+        navigateToNode(node.ref_id)
+      }
+    } else {
+      navigateToNode(null)
+    }
+  }, [selectedNodeId, nodesNormalized, navigateToNode])
+}
 import { Button } from '@mui/material'
 import { memo, useCallback, useMemo, useState } from 'react'
 import styled from 'styled-components'
