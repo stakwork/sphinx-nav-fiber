@@ -1,0 +1,29 @@
+/* eslint-disable */
+import React from 'react'
+
+const RegenerateIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <svg width="1em" height="1em" viewBox="0 0 14 14" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+    <path
+      d="M12.1202 4.54418C11.1202 2.56043 8.94933 1.28755 6.5718 1.50867C4.38822 1.71176 2.61672 3.1205 1.87502 5.0013"
+      stroke="#909BAA"
+      stroke-width="1.3"
+      stroke-linecap="round"
+    />
+    <path
+      d="M9.01213 4.98787L12.9879 1.01213C13.1769 0.823143 13.5 0.956993 13.5 1.22426V5.2C13.5 5.36569 13.3657 5.5 13.2 5.5H9.22426C8.95699 5.5 8.82314 5.17686 9.01213 4.98787Z"
+      fill="currentColor"
+    />
+    <path
+      d="M1.96282 9.45582C2.96283 11.4396 5.13368 12.7124 7.5112 12.4913C9.69478 12.2882 11.4663 10.8795 12.208 8.9987"
+      stroke="#909BAA"
+      stroke-width="1.3"
+      stroke-linecap="round"
+    />
+    <path
+      d="M5.07088 9.01213L1.09514 12.9879C0.90615 13.1769 0.583008 13.043 0.583008 12.7757L0.583008 8.8C0.583008 8.63431 0.717323 8.5 0.883008 8.5L4.85874 8.5C5.12602 8.5 5.25987 8.82314 5.07088 9.01213Z"
+      fill="currentColor"
+    />
+  </svg>
+)
+
+export default RegenerateIcon

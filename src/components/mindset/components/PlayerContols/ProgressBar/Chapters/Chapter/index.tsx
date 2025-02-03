@@ -9,7 +9,7 @@ type Props = {
 }
 
 export const Chapter = memo(({ left, width, title }: Props) => (
-  <ChapterWrapper style={{ left: `${left}%`, width: `calc(${width}% - 2px)` }}>
+  <ChapterWrapper style={{ left: `${left}%`, width: `calc(${width}%)` }}>
     <div className="title">{title}</div>
   </ChapterWrapper>
 ))
@@ -19,17 +19,16 @@ Chapter.displayName = 'Chapter'
 const ChapterWrapper = styled.div`
   position: absolute;
   top: -3px;
-  height: 6px;
-  background-color: rgba(255, 255, 255, 0.2);
-  transform: translateX(-50%);
-  transform: translateX(-50%) translateY(-50%);
-  top: 50%;
+  height: 100%;
+  top: 0%;
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 100;
-  border-left: 1px solid ${colors.white};
-  border-right: 1px solid ${colors.white};
+
+  & + & {
+    border-left: 0.1px solid ${colors.white};
+  }
 
   .title {
     position: absolute;
@@ -42,7 +41,7 @@ const ChapterWrapper = styled.div`
   }
 
   &:hover {
-    height: 16px;
+    background-color: rgba(255, 255, 255, 0.2);
     .title {
       display: block;
     }

@@ -279,7 +279,7 @@ export const App = () => {
   ])
 
   useEffect(() => {
-    if (!runningProjectId || true) {
+    if (!runningProjectId) {
       return
     }
 
@@ -299,6 +299,8 @@ export const App = () => {
 
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data)
+
+      console.log(data)
 
       if (data.type === 'ping') {
         return

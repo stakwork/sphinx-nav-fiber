@@ -1,8 +1,8 @@
 import { Button } from '@mui/material'
 import clsx from 'clsx'
 import { FC, useCallback, useEffect, useRef, useState } from 'react'
-import Markdown from 'react-markdown'
 import styled from 'styled-components'
+import { StyledMarkdown } from '~/components/App/SideBar/AiSummary/utils/AiSummaryHighlight/markdown'
 import BubbleChartIcon from '~/components/Icons/BubbleChartIcon'
 import PauseIcon from '~/components/Icons/PauseIcon'
 import SoundIcon from '~/components/Icons/SoundIcon'
@@ -115,7 +115,7 @@ export const BriefDescriptionContent: FC<Props> = ({ trend, onClose }) => {
         <Title>{trend.tldr_topic ?? trend.name}</Title>
         <ScrollableContent>
           <Flex>
-            <StyledText>{trend.tldr && <Markdown>{trend.tldr}</Markdown>}</StyledText>
+            <StyledText>{trend.tldr && <StyledMarkdown>{trend.tldr}</StyledMarkdown>}</StyledText>
           </Flex>
         </ScrollableContent>
       </Flex>

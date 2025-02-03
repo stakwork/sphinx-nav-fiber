@@ -40,7 +40,7 @@ export const AppBar = () => {
         </>
         <Text className="subtitle">Second Brain</Text>
       </TitleWrapper>
-      <Stats />
+      {false && <Stats />}
       <Alerts />
     </Header>
   )

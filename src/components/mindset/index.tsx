@@ -11,12 +11,14 @@ import { useDataStore } from '~/stores/useDataStore'
 import { useMindsetStore } from '~/stores/useMindsetStore'
 import { usePlayerStore } from '~/stores/usePlayerStore'
 import { FetchDataResponse, Link, Node } from '~/types'
+import { timeToMilliseconds } from '~/utils'
 import { Header } from './components/Header'
 import { PlayerControl } from './components/PlayerContols'
 import { SideBar } from './components/Sidebar'
 
 export const MindSet = () => {
-  const { addNewNode, isFetching, runningProjectId } = useDataStore((s) => s)
+  const { isFetching, runningProjectId } = useDataStore((s) => s)
+  const addNewNode = useDataStore((s) => s.addNewNode)
   const [dataInitial, setDataInitial] = useState<FetchDataResponse | null>(null)
   const [showTwoD, setShowTwoD] = useState(false)
   const setSelectedEpisode = useMindsetStore((s) => s.setSelectedEpisode)
@@ -62,35 +64,33 @@ export const MindSet = () => {
     const fetchInitialData = async () => {
       try {
         // Fetch the initial set of edges and nodes for the episode
-        const starterNodes = await fetchNodeEdges(selectedEpisodeId || '', 0, 50, {
+        const startedData = await fetchNodeEdges(selectedEpisodeId || '', 0, 50, {
           nodeType: ['Show', 'Host', 'Guest'],
           useSubGraph: false,
         })
 
-        const clipNodes = await fetchNodeEdges(selectedEpisodeId || '', 0, 50, {
+        const clipData = await fetchNodeEdges(selectedEpisodeId || '', 0, 1000, {
           nodeType: ['Clip'],
           useSubGraph: false,
         })
 
-        const chaptersData = await fetchNodeEdges(selectedEpisodeId || '', 0, 50, {
-          nodeType: ['Chapter'],
-          useSubGraph: false,
-        })
-
-        if (chaptersData?.nodes) {
-          setChapters(chaptersData?.nodes)
-        }
-
-        console.log(chapters)
-
         // Update the graph with starter nodes
         addNewNode({
-          nodes: starterNodes?.nodes ? starterNodes?.nodes : [],
-          edges: starterNodes?.edges ? starterNodes.edges : [],
+          nodes: startedData?.nodes ? startedData?.nodes : [],
+          edges: startedData?.edges ? startedData.edges : [],
         })
 
-        if (clipNodes?.nodes) {
-          setClips(clipNodes?.nodes)
+        if (clipData?.nodes) {
+          const clipNodes = clipData.nodes
+            .filter((i) => i.properties?.timestamp)
+            .sort((a, b) => {
+              const startA = Number((a.properties?.timestamp as unknown as string)?.split('-')[0])
+              const startB = Number((b.properties?.timestamp as unknown as string)?.split('-')[0])
+
+              return startA - startB
+            })
+
+          setClips(clipNodes)
         }
       } catch (error) {
         navigate('/')
@@ -101,7 +101,39 @@ export const MindSet = () => {
     if (selectedEpisodeId) {
       fetchInitialData()
     }
-  }, [selectedEpisodeId, addNewNode, setClips, navigate, setChapters])
+  }, [selectedEpisodeId, addNewNode, setClips, navigate])
+
+  useEffect(() => {
+    const fetchChapters = async () => {
+      try {
+        // Fetch the initial set of edges and nodes for the episode
+
+        const chaptersData = await fetchNodeEdges(selectedEpisodeId || '', 0, 50, {
+          nodeType: ['Chapter'],
+          useSubGraph: false,
+        })
+
+        if (chaptersData?.nodes) {
+          const chapterNodes = chaptersData?.nodes
+            .filter((i) => i.node_type === 'Chapter')
+            .sort(
+              (a, b) =>
+                timeToMilliseconds(a?.properties?.timestamp || '') - timeToMilliseconds(b?.properties?.timestamp || ''),
+            )
+
+          setChapters(chapterNodes)
+        }
+
+        // Update the graph with starter nodes
+      } catch (error) {
+        console.log('no chapters was fetched')
+      }
+    }
+
+    if (selectedEpisodeId) {
+      fetchChapters()
+    }
+  }, [selectedEpisodeId, setChapters])
 
   useEffect(() => {
     if (!clips) {

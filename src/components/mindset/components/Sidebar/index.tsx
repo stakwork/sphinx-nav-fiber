@@ -6,11 +6,13 @@ import { useMindsetStore } from '~/stores/useMindsetStore'
 import { Transcript } from './Transcript'
 
 export const SideBar = () => {
-  const { selectedEpisodeLink, selectedEpisode } = useMindsetStore((s) => s)
+  const selectedEpisode = useMindsetStore((s) => s.selectedEpisode)
 
   return (
     <Wrapper align="stretch" basis="100%" grow={1} shrink={1}>
-      <MediaWrapper>{selectedEpisodeLink && <MediaPlayer mediaUrl={selectedEpisodeLink} />}</MediaWrapper>
+      <MediaWrapper>
+        {selectedEpisode?.properties?.source_link && <MediaPlayer mediaUrl={selectedEpisode.properties.source_link} />}
+      </MediaWrapper>
       <Transcript name={selectedEpisode?.name || ''} />
     </Wrapper>
   )

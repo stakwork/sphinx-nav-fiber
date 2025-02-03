@@ -17,8 +17,6 @@ type Props = {
 export const ProgressBar = ({ duration, markers, handleProgressChange, playingTIme, chapters }: Props) => {
   const width = (10 / duration) * 100
 
-  console.log(chapters)
-
   return (
     <ProgressWrapper>
       <ProgressSlider max={duration} onChange={handleProgressChange} value={playingTIme} width={width} />
@@ -37,6 +35,8 @@ const ChaptersWrapper = styled(Flex)`
   left: 0;
   right: 0;
   top: 50%;
+  height: 96px;
+  transform: translateY(-50%);
 `
 
 const ProgressWrapper = styled(Flex)`

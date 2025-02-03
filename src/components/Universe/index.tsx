@@ -29,8 +29,6 @@ import { Overlay } from './Overlay'
 import { Preloader } from './Preloader'
 import { SelectionContent } from './SelectionContent'
 
-const isMindSetHost = window.location?.hostname === 'graphmindset.sphinx.chat'
-
 const Fallback = () => (
   <Html>
     <Loader />
@@ -159,7 +157,7 @@ const _Universe = () => {
             <Content />
           </Suspense>
         </Canvas>
-        {isMindSetHost && <GraphSearch />}
+        <GraphSearch />
         <CursorTooltip />
 
         {selectedNode ? (
