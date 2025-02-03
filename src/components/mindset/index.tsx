@@ -11,6 +11,7 @@ import { useDataStore } from '~/stores/useDataStore'
 import { useMindsetStore } from '~/stores/useMindsetStore'
 import { usePlayerStore } from '~/stores/usePlayerStore'
 import { FetchDataResponse, Link, Node } from '~/types'
+import { timeToMilliseconds } from '~/utils'
 import { Header } from './components/Header'
 import { PlayerControl } from './components/PlayerContols'
 import { SideBar } from './components/Sidebar'
@@ -27,6 +28,7 @@ export const MindSet = () => {
   const requestRef = useRef<number | null>(null)
   const previousTimeRef = useRef<number | null>(null)
   const nodesAndEdgesRef = useRef<FetchDataResponse | null>(null)
+  const [chapters, setChapters] = useState<Node[]>([])
 
   const queueRef = useRef<FetchDataResponse | null>(null)
   const timerRef = useRef<NodeJS.Timeout | null>(null)
@@ -72,6 +74,7 @@ export const MindSet = () => {
           useSubGraph: false,
         })
 
+        // Update the graph with starter nodes
         addNewNode({
           nodes: startedData?.nodes ? startedData?.nodes : [],
           edges: startedData?.edges ? startedData.edges : [],
@@ -99,6 +102,38 @@ export const MindSet = () => {
       fetchInitialData()
     }
   }, [selectedEpisodeId, addNewNode, setClips, navigate])
+
+  useEffect(() => {
+    const fetchChapters = async () => {
+      try {
+        // Fetch the initial set of edges and nodes for the episode
+
+        const chaptersData = await fetchNodeEdges(selectedEpisodeId || '', 0, 50, {
+          nodeType: ['Chapter'],
+          useSubGraph: false,
+        })
+
+        if (chaptersData?.nodes) {
+          const chapterNodes = chaptersData?.nodes
+            .filter((i) => i.node_type === 'Chapter')
+            .sort(
+              (a, b) =>
+                timeToMilliseconds(a?.properties?.timestamp || '') - timeToMilliseconds(b?.properties?.timestamp || ''),
+            )
+
+          setChapters(chapterNodes)
+        }
+
+        // Update the graph with starter nodes
+      } catch (error) {
+        console.log('no chapters was fetched')
+      }
+    }
+
+    if (selectedEpisodeId) {
+      fetchChapters()
+    }
+  }, [selectedEpisodeId, setChapters])
 
   useEffect(() => {
     if (!clips) {
@@ -311,7 +346,7 @@ export const MindSet = () => {
         </>
       </ContentWrapper>
       <PlayerControlWrapper>
-        <PlayerControl markers={markers} />
+        <PlayerControl chapters={chapters} markers={markers} />
       </PlayerControlWrapper>
     </MainContainer>
   )
