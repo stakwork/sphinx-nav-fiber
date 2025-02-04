@@ -1,4 +1,14 @@
-import { forceCenter, forceCollide, forceLink, forceManyBody, forceRadial, forceSimulation, forceY } from 'd3-force-3d'
+import {
+  forceCenter,
+  forceCollide,
+  forceLink,
+  forceManyBody,
+  forceRadial,
+  forceSimulation,
+  forceX,
+  forceY,
+  forceZ,
+} from 'd3-force-3d'
 import { create } from 'zustand'
 import { ForceSimulation } from '~/transformers/forceSimulation'
 import { GraphData, Link, Node, NodeExtended } from '~/types'
@@ -92,6 +102,7 @@ export type GraphStore = {
   highlightNodes: string[]
   selectionPath: string[]
   hoveredNodeSiblings: string[]
+  selectedNodeSiblings: string[]
   searchQuery: string
 
   setDisableCameraRotation: (rotation: boolean) => void
@@ -159,6 +170,7 @@ const defaultData: Omit<
   graphStyle: 'sphere',
   hoveredNode: null,
   hoveredNodeSiblings: [],
+  selectedNodeSiblings: [],
   selectedNode: null,
   activeEdge: null,
   cameraFocusTrigger: false,
@@ -253,14 +265,15 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
         simulation.nodes().find((i: NodeExtended) => i.ref_id === selectedNode?.ref_id) || null
 
       if (selectedNode?.ref_id) {
-        const normalizedNode = nodesNormalized?.get(selectedNode?.ref_id) || {}
+        const normalizedNode: NodeExtended | undefined = nodesNormalized?.get(selectedNode?.ref_id)
 
         set({
           hoveredNode: null,
-          selectedNode: { ...selectedNodeWithCoordinates, ...normalizedNode },
+          selectedNode: { ...selectedNodeWithCoordinates, ...(normalizedNode || {}) },
           disableCameraRotation: true,
           showSelectionGraph: !!selectedNode,
           selectionPath: [...selectionPath, selectedNodeWithCoordinates.ref_id],
+          selectedNodeSiblings: [...(normalizedNode?.sources || []), ...(normalizedNode?.targets || [])],
         })
       }
     }
@@ -317,8 +330,28 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
         .nodes(simulation.nodes().map((n: Node) => ({ ...n, ...resetPosition })))
         .force('y', null)
         // .force('radial', forceRadial(200, 0, 0, 0).strength(0.1))
-        .force('center', forceCenter().strength(1))
-        .force('charge', forceManyBody().strength(-1))
+        // .force('center', forceCenter().strength(1))
+        .force(
+          'charge',
+          forceManyBody().strength((node: NodeExtended) => (node.scale || 1) * -5),
+          // .distanceMax(90),
+        )
+        .force('x', forceX().strength(0))
+        .force('y', forceY().strength(0))
+        .force('z', forceZ().strength(0))
+        .force(
+          'link',
+          forceLink()
+            .links(
+              simulation
+                .force('link')
+                .links()
+                .map((i: Link<NodeExtended>) => ({ ...i, source: i.source.ref_id, target: i.target.ref_id })),
+            )
+            .strength(1)
+            .distance(400)
+            .id((d: Node) => d.ref_id),
+        )
         .force(
           'collide',
           forceCollide()

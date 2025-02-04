@@ -141,7 +141,7 @@ const _Universe = () => {
 
         <Canvas
           camera={cameraProps}
-          frameloop={selectedNode ? 'demand' : 'always'}
+          frameloop={selectedNode ? 'always' : 'always'}
           id="universe-canvas"
           onCreated={onCreatedHandler}
           onWheel={onWheelHandler}
@@ -160,7 +160,7 @@ const _Universe = () => {
         <GraphSearch />
         <CursorTooltip />
 
-        {selectedNode ? (
+        {selectedNode && false ? (
           <SelectionWrapper>
             <Canvas
               camera={{
