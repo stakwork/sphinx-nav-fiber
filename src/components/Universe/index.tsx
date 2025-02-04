@@ -13,7 +13,7 @@ import { isDevelopment } from '~/constants'
 import { useAppStore } from '~/stores/useAppStore'
 import { useControlStore } from '~/stores/useControlStore'
 import { useDataStore } from '~/stores/useDataStore'
-import { useSelectedNode } from '~/stores/useGraphStore'
+import { useGraphStore, useSelectedNode } from '~/stores/useGraphStore'
 import { colors } from '~/utils/colors'
 import { addToGlobalForE2e } from '~/utils/tests'
 import { UniverseQuestion } from '../App/UniverseQuestion'
@@ -101,9 +101,10 @@ const _Universe = () => {
     useControlStore((s) => s.setUserMovedCamera),
   ]
 
+  const showSelectionGraph = useGraphStore((s) => s.showSelectionGraph)
+
   const isLoading = useDataStore((s) => s.isFetching)
   const universeQuestionIsOpen = useAppStore((s) => s.universeQuestionIsOpen)
-  const selectedNode = useSelectedNode()
 
   const onWheelHandler = useCallback(
     (e: React.WheelEvent) => {
@@ -141,7 +142,7 @@ const _Universe = () => {
 
         <Canvas
           camera={cameraProps}
-          frameloop={selectedNode ? 'always' : 'always'}
+          frameloop={showSelectionGraph ? 'demand' : 'always'}
           id="universe-canvas"
           onCreated={onCreatedHandler}
           onWheel={onWheelHandler}
@@ -160,7 +161,7 @@ const _Universe = () => {
         <GraphSearch />
         <CursorTooltip />
 
-        {selectedNode && false ? (
+        {showSelectionGraph ? (
           <SelectionWrapper>
             <Canvas
               camera={{
