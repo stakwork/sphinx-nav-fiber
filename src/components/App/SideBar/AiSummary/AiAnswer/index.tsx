@@ -28,6 +28,7 @@ type Props = {
   isPlaying?: boolean
   onTogglePlay?: () => void
   hasAudio?: boolean
+  chain: string // Add chain ID as a prop
 }
 
 const Wrapper = styled(Flex).attrs({
@@ -159,6 +160,7 @@ export const AiAnswer = ({
   isPlaying,
   onTogglePlay,
   hasAudio,
+  chain,
 }: Props) => {
   const { fetchData, setAbortRequests } = useDataStore((s) => s)
   const { setBudget } = useUserStore((s) => s)
@@ -216,6 +218,40 @@ export const AiAnswer = ({
     isDescriptionComplete,
   )
 
+  const sendFeedback = async (feedbackType: 'helpful' | 'unhelpful') => {
+    try {
+      const payload = {
+        answer,
+        chain,
+        feedback_type: feedbackType,
+      }
+
+      const response = await fetch('/answer/feedback', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      })
+
+      if (response.ok) {
+        setFeedback(feedbackType === 'helpful' ? 'positive' : 'negative')
+      } else {
+        console.error('Failed to send feedback')
+      }
+    } catch (error) {
+      console.error('Error sending feedback:', error)
+    }
+  }
+
+  const handlePositiveFeedback = () => {
+    sendFeedback('helpful')
+  }
+
+  const handleNegativeFeedback = () => {
+    sendFeedback('unhelpful')
+  }
+
   console.log(responseTextDisplay)
 
   const handleCopy = async () => {
@@ -229,14 +265,6 @@ export const AiAnswer = ({
     } catch (err) {
       console.error('Failed to copy text:', err)
     }
-  }
-
-  const handlePositiveFeedback = () => {
-    setFeedback((current) => (current === 'positive' ? null : 'positive'))
-  }
-
-  const handleNegativeFeedback = () => {
-    setFeedback((current) => (current === 'negative' ? null : 'negative'))
   }
 
   return (
