@@ -53,10 +53,10 @@ const _LineComponent = (props: LineComponentProps) => {
     }
 
     // @todo-useframe
-    const { hoveredNode, searchQuery, selectedNodeTypes, selectedLinkTypes } = useGraphStore.getState()
+    const { hoveredNode, searchQuery, selectedNodeTypes, selectedLinkTypes, selectedNode } = useGraphStore.getState()
 
     const line = lineRef.current
-    const activeNode = hoveredNode
+    const activeNode = hoveredNode || selectedNode
 
     const activeLink =
       selectedLinkTypes.includes(label) ||

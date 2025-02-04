@@ -24,7 +24,9 @@ export const Point = memo(({ color, scale, name, index, node, nodeType }: Props)
       return
     }
 
-    const { searchQuery, simulation, selectedNodeTypes, selectedLinkTypes } = useGraphStore.getState()
+    const { searchQuery, simulation, selectedNodeTypes, selectedLinkTypes, selectedNode, selectedNodeSiblings } =
+      useGraphStore.getState()
+
     const { nodesNormalized } = useDataStore.getState()
 
     const simulationNode = simulation?.nodes()[index]
@@ -60,6 +62,15 @@ export const Point = memo(({ color, scale, name, index, node, nodeType }: Props)
 
       const dynamicScale = includesSelectedType ? 1 : 0.1
       const isVisible = !!includesSelectedType
+
+      helperRef.current.visible = isVisible
+
+      nodeRef.current.scale.set(dynamicScale, dynamicScale, dynamicScale)
+    } else if (selectedNode) {
+      const show = selectedNodeSiblings.includes(node.ref_id) || selectedNode.ref_id === node.ref_id
+
+      const dynamicScale = show ? 1 : 0.1
+      const isVisible = !!show
 
       helperRef.current.visible = isVisible
 

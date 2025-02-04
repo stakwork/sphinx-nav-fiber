@@ -73,6 +73,7 @@ export const TextNode = memo(
         selectedNodeTypes,
         selectedLinkTypes,
         hoveredNodeSiblings,
+        selectedNodeSiblings,
       } = useGraphStore.getState()
 
       const checkDistance = () => {
@@ -83,7 +84,7 @@ export const TextNode = memo(
         }
       }
 
-      if (searchQuery.length < 3 && !selectedNodeTypes.length && !selectedLinkTypes.length) {
+      if (searchQuery.length < 3 && !selectedNodeTypes.length && !selectedLinkTypes.length && !selectedNode) {
         eventHandlerRef.current.visible = true
         checkDistance()
       } else {
@@ -100,6 +101,7 @@ export const TextNode = memo(
         (searchQuery && sanitizedNodeName.toLowerCase().includes(searchQuery.toLowerCase())) ||
         selectedNodeTypes.includes(node.node_type) ||
         hoveredNodeSiblings.includes(node.ref_id) ||
+        selectedNodeSiblings.includes(node.ref_id) ||
         node.edgeTypes?.some((i) => selectedLinkTypes.includes(i))
 
       if (isActive) {
