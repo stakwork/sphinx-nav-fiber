@@ -5,6 +5,7 @@ import React, { memo, useCallback, useMemo, useRef } from 'react'
 import { MdClose, MdViewInAr } from 'react-icons/md'
 import styled from 'styled-components'
 import { Group, Vector3 } from 'three'
+import { Flex } from '~/components/common/Flex'
 import { useGraphData } from '~/components/DataRetriever'
 import AddCircleIcon from '~/components/Icons/AddCircleIcon'
 import ConstructionIcon from '~/components/Icons/ConstructionIcon'
@@ -14,7 +15,6 @@ import MergeIcon from '~/components/Icons/MergeIcon'
 import NodesIcon from '~/components/Icons/NodesIcon'
 import PlusIcon from '~/components/Icons/PlusIcon'
 import RobotIcon from '~/components/Icons/RobotIcon'
-import { Flex } from '~/components/common/Flex'
 import { fetchNodeEdges } from '~/network/fetchGraphData'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
@@ -171,7 +171,7 @@ export const NodeControls = memo(() => {
 
   const isRepository = selectedNode?.node_type?.toLowerCase() === 'repository'
 
-  const isShowCreateTestButton = !!(selectedNode && selectedNode?.node_type?.toLowerCase() === 'function')
+  // const isShowCreateTestButton = !!(selectedNode && selectedNode?.node_type?.toLowerCase() === 'function')
 
   return (
     <group ref={ref}>
@@ -204,7 +204,7 @@ export const NodeControls = memo(() => {
           </IconButton>
         ))}
 
-        {isShowCreateTestButton && (
+        {/* {isShowCreateTestButton && (
           <CreateTestButton
             left={2}
             onClick={() => {
@@ -213,7 +213,7 @@ export const NodeControls = memo(() => {
           >
             Create Test
           </CreateTestButton>
-        )}
+        )} */}
 
         <PopoverWrapper
           anchorEl={anchorEl}
