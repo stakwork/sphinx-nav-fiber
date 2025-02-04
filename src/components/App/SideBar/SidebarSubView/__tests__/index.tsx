@@ -4,6 +4,7 @@ import '@testing-library/jest-dom'
 import { fireEvent, render, waitFor } from '@testing-library/react'
 import moment from 'moment'
 import React from 'react'
+import { MemoryRouter } from 'react-router-dom'
 import { ThemeProvider as StyleThemeProvider } from 'styled-components'
 import { SideBarSubView } from '..'
 import { useAppStore } from '../../../../../stores/useAppStore'
@@ -43,6 +44,12 @@ jest.mock('~/stores/useAppStore', () => ({
   useAppStore: jest.fn(),
 }))
 
+jest.mock('~/hooks/useNodeNavigation', () => ({
+  useNodeNavigation: () => ({
+    navigateToNode: jest.fn(),
+  }),
+}))
+
 const useDataStoreMock = useDataStore as jest.MockedFunction<typeof useDataStore>
 const useSelectedNodeMock = useSelectedNode as jest.MockedFunction<typeof useSelectedNode>
 const useAppStoreMock = useAppStore as jest.MockedFunction<typeof useAppStore>
@@ -71,11 +78,13 @@ describe('Test SideBarSubView', () => {
 
   it('asserts that the component is not visible when open is false', () => {
     const { getByTestId } = render(
-      <ThemeProvider theme={appTheme}>
-        <StyleThemeProvider theme={appTheme}>
-          <SideBarSubView open={false} />
-        </StyleThemeProvider>
-      </ThemeProvider>,
+      <MemoryRouter>
+        <ThemeProvider theme={appTheme}>
+          <StyleThemeProvider theme={appTheme}>
+            <SideBarSubView open={false} />
+          </StyleThemeProvider>
+        </ThemeProvider>
+      </MemoryRouter>,
     )
 
     expect(getByTestId('sidebar-sub-view')).toHaveStyle({ visibility: 'hidden' })

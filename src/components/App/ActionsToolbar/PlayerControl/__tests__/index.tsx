@@ -1,9 +1,10 @@
-import { render, fireEvent, screen, waitFor } from '@testing-library/react'
 import '@testing-library/jest-dom'
-import { PlayerControl } from '../index'
-import { usePlayerStore } from '~/stores/usePlayerStore'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { MemoryRouter } from 'react-router-dom'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
+import { usePlayerStore } from '~/stores/usePlayerStore'
+import { PlayerControl } from '../index'
 
 jest.mock('~/stores/usePlayerStore')
 jest.mock('~/stores/useAppStore')
@@ -40,7 +41,11 @@ describe('PlayerControl', () => {
   })
 
   test('renders play button when not playing', () => {
-    render(<PlayerControl />)
+    render(
+      <MemoryRouter>
+        <PlayerControl />
+      </MemoryRouter>,
+    )
 
     waitFor(() => {
       expect(screen.queryByTestId('play-icon')).toBeInTheDocument()
@@ -67,7 +72,11 @@ describe('PlayerControl', () => {
       jest.fn(),
     ])
 
-    render(<PlayerControl />)
+    render(
+      <MemoryRouter>
+        <PlayerControl />
+      </MemoryRouter>,
+    )
 
     waitFor(() => {
       expect(screen.queryByTestId('pause-icon')).toBeInTheDocument()
@@ -96,7 +105,12 @@ describe('PlayerControl', () => {
       jest.fn(),
     ])
 
-    render(<PlayerControl />)
+    render(
+      <MemoryRouter>
+        <PlayerControl />
+      </MemoryRouter>,
+    )
+
     fireEvent.click(screen.getByTestId('play-pause-button'))
     expect(setIsPlayingMock).toHaveBeenCalledWith(true)
   })
