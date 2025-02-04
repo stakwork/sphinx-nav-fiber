@@ -6,13 +6,13 @@ export const useNodeNavigation = () => {
 
   return {
     navigateToNode: (selectedNodeId: string | null) => {
+      const basePath = location.pathname.split('/node/')[0]
+
       if (!selectedNodeId) {
-        navigate('..', { replace: true })
+        navigate(basePath, { replace: true })
 
         return
       }
-
-      const basePath = location.pathname.split('/node/')[0].replace(/\/$/, '')
 
       navigate(`${basePath}/node/${selectedNodeId}`, { replace: true })
     },
