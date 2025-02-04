@@ -14,6 +14,7 @@ import PositiveFeedBackIcon from '~/components/Icons/PositiveFeedBackIcon'
 import RegenerateIcon from '~/components/Icons/RegenerateIcon'
 import ThumbDownIcon from '~/components/Icons/ThumbDownIcon'
 import ThumbUpIcon from '~/components/Icons/ThumbUpIcon'
+import { postFeedback } from '~/network/fetchSourcesData'
 import { useDataStore } from '~/stores/useDataStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { ExtractedEntity } from '~/types/index'
@@ -218,6 +219,10 @@ export const AiAnswer = ({
     isDescriptionComplete,
   )
 
+  interface FeedbackResponse {
+    status: 'success' | 'error'
+  }
+
   const sendFeedback = async (feedbackType: 'helpful' | 'unhelpful') => {
     try {
       const payload = {
@@ -226,18 +231,12 @@ export const AiAnswer = ({
         feedback_type: feedbackType,
       }
 
-      const response = await fetch('/answer/feedback', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-      })
+      const response = (await postFeedback(payload)) as FeedbackResponse
 
-      if (response.ok) {
+      if (response.status === 'success') {
         setFeedback(feedbackType === 'helpful' ? 'positive' : 'negative')
       } else {
-        console.error('Failed to send feedback')
+        console.error(response, 'Failed to send feedback')
       }
     } catch (error) {
       console.error('Error sending feedback:', error)
@@ -245,11 +244,19 @@ export const AiAnswer = ({
   }
 
   const handlePositiveFeedback = () => {
-    sendFeedback('helpful')
+    if (feedback === 'positive') {
+      setFeedback(null)
+    } else {
+      sendFeedback('helpful')
+    }
   }
 
   const handleNegativeFeedback = () => {
-    sendFeedback('unhelpful')
+    if (feedback === 'negative') {
+      setFeedback(null)
+    } else {
+      sendFeedback('unhelpful')
+    }
   }
 
   console.log(responseTextDisplay)
