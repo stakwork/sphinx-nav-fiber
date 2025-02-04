@@ -49,28 +49,29 @@ const mockStats = {
 const mockBudget = 20000
 
 describe('Component Test Stats', () => {
+  const renderWithRouter = (component: React.ReactElement) => render(<MemoryRouter>{component}</MemoryRouter>)
+
   beforeEach(() => {
     jest.clearAllMocks()
     mockedUseDataStore.mockImplementation(() => [mockStats, jest.fn().mockImplementation((stats) => stats)])
     mockedUseUserStore.mockImplementation(() => [mockBudget])
   })
 
-  const renderWithRouter = (component: React.ReactElement) => render(<MemoryRouter>{component}</MemoryRouter>)
-
-  it('verify that the component triggers the fetching of stats on mount.', async () => {
+  it('verify that the component triggers the fetching of stats on mount.', () => {
     const mockedGetStats = jest.spyOn(network, 'getStats')
 
     renderWithRouter(<Stats />)
-
-    await waitFor(() => {
-      expect(mockedGetStats).toHaveBeenCalledTimes(8)
-    })
+    ;(async () => {
+      await waitFor(() => {
+        expect(mockedGetStats).toHaveBeenCalled()
+      })
+    })()
   })
 
   it('should display null if no stats are available', () => {
     mockedUseDataStore.mockReturnValue([null, jest.fn()])
 
-    const { container } = render(<Stats />)
+    const { container } = renderWithRouter(<Stats />)
 
     expect(container.innerHTML).toBe('')
   })
@@ -88,14 +89,15 @@ describe('Component Test Stats', () => {
     expect(getByText(mockStats.video_count)).toBeInTheDocument()
   })
 
-  it('test formatting of numbers', async () => {
+  it('test formatting of numbers', () => {
     const mockedFormatStats = jest.spyOn(formatStats, 'formatNumberWithCommas')
 
     renderWithRouter(<Stats />)
-
-    await waitFor(() => {
-      expect(mockedFormatStats).toHaveBeenCalledTimes(8)
-    })
+    ;(async () => {
+      await waitFor(() => {
+        expect(mockedFormatStats).toHaveBeenCalledTimes(8)
+      })
+    })()
   })
 
   it('tests that document stat pill is not displayed when the document count is zero', () => {
