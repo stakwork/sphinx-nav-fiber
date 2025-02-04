@@ -2,6 +2,7 @@
 import '@testing-library/jest-dom'
 import { render, screen, waitFor } from '@testing-library/react'
 import React from 'react'
+import { MemoryRouter } from 'react-router-dom'
 import { ProcessingResponse, getTotalProcessing } from '~/network/fetchSourcesData'
 import { Stats } from '..'
 import * as network from '../../../network/fetchSourcesData'
@@ -54,15 +55,16 @@ describe('Component Test Stats', () => {
     mockedUseUserStore.mockImplementation(() => [mockBudget])
   })
 
-  it('verify that the component triggers the fetching of stats on mount.', () => {
+  const renderWithRouter = (component: React.ReactElement) => render(<MemoryRouter>{component}</MemoryRouter>)
+
+  it('verify that the component triggers the fetching of stats on mount.', async () => {
     const mockedGetStats = jest.spyOn(network, 'getStats')
 
-    render(<Stats />)
-    ;(async () => {
-      await waitFor(() => {
-        expect(mockedGetStats).toHaveBeenCalled()
-      })
-    })()
+    renderWithRouter(<Stats />)
+
+    await waitFor(() => {
+      expect(mockedGetStats).toHaveBeenCalledTimes(8)
+    })
   })
 
   it('should display null if no stats are available', () => {
@@ -76,7 +78,7 @@ describe('Component Test Stats', () => {
   it('correctly displays stats upon successful fetching.', () => {
     mockedUseDataStore.mockReturnValue([mockStats, jest.fn()])
 
-    const { getByText } = render(<Stats />)
+    const { getByText } = renderWithRouter(<Stats />)
 
     expect(getByText(mockStats.audio_count)).toBeInTheDocument()
     expect(getByText(mockStats.contributors_count)).toBeInTheDocument()
@@ -86,21 +88,20 @@ describe('Component Test Stats', () => {
     expect(getByText(mockStats.video_count)).toBeInTheDocument()
   })
 
-  it('test formatting of numbers', () => {
+  it('test formatting of numbers', async () => {
     const mockedFormatStats = jest.spyOn(formatStats, 'formatNumberWithCommas')
 
-    render(<Stats />)
-    ;(async () => {
-      await waitFor(() => {
-        expect(mockedFormatStats).toHaveBeenCalledTimes(8)
-      })
-    })()
+    renderWithRouter(<Stats />)
+
+    await waitFor(() => {
+      expect(mockedFormatStats).toHaveBeenCalledTimes(8)
+    })
   })
 
   it('tests that document stat pill is not displayed when the document count is zero', () => {
     mockedUseDataStore.mockReturnValue([{ ...mockStats, numDocuments: '0' }, jest.fn()])
 
-    const { queryByTestId } = render(<Stats />)
+    const { queryByTestId } = renderWithRouter(<Stats />)
 
     expect(queryByTestId('DocumentIcon')).toBeNull()
   })
@@ -111,7 +112,7 @@ describe('Component Test Stats', () => {
 
     const mockFormatBudget = jest.spyOn(formatBudget, 'formatBudget')
 
-    render(<Stats />)
+    renderWithRouter(<Stats />)
 
     expect(mockFormatBudget).toHaveBeenCalledWith(mockBudget)
   })
@@ -119,7 +120,7 @@ describe('Component Test Stats', () => {
   it('ensures that each stat is accompanied by its corresponding icon and label', () => {
     mockedUseDataStore.mockReturnValue([mockStats, jest.fn()])
 
-    const { getByText, getByTestId } = render(<Stats />)
+    const { getByText, getByTestId } = renderWithRouter(<Stats />)
 
     expect(getByText(mockStats.node_sount)).toBeInTheDocument()
     expect(getByText(mockStats.audio_count)).toBeInTheDocument()
@@ -147,7 +148,7 @@ describe('Component Test Stats', () => {
     mockedGetTotalProcessing.mockResolvedValueOnce(mockResponse)
 
     // Re-render the component to reflect the new mock response
-    render(<Stats />)
+    renderWithRouter(<Stats />)
 
     // The button should not be visible since totalProcessing is equal to 0
     const viewContent = screen.queryByTestId('view-content')
@@ -162,7 +163,7 @@ describe('Component Test Stats', () => {
     // Mocking a response where totalProcessing is present and greater than 0
     mockedGetTotalProcessing.mockResolvedValueOnce(mockResponse2)
 
-    render(<Stats />)
+    renderWithRouter(<Stats />)
 
     // Wait for the component to finish loading
     await screen.findByTestId('view-content')
