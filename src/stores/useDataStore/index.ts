@@ -232,7 +232,7 @@ export const useDataStore = create<DataStore>()(
     },
 
     addNewNode: (data) => {
-      const { dataInitial: existingData, filters, nodesNormalized, linksNormalized } = get()
+      const { dataInitial: existingData, nodesNormalized, linksNormalized } = get()
 
       if (!data?.nodes) {
         return
@@ -243,9 +243,7 @@ export const useDataStore = create<DataStore>()(
       const normalizedLinksMap = linksNormalized || new Map()
 
       // Filter nodes based on filters.node_type
-      const nodesFilteredByFilters = filters.node_type.length
-        ? data.nodes.filter((node) => filters.node_type.includes(node.node_type))
-        : data.nodes
+      const nodesFilteredByFilters = data.nodes
 
       // Add new nodes directly to the Map
       const newNodes: Node[] = []
