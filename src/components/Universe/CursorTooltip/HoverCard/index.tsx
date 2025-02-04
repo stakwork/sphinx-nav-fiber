@@ -15,7 +15,13 @@ export const HoverCard = ({ node }: Props) => {
 
   const keyProperty = getNodeKeysByType(node.node_type) || ''
 
-  const description = node?.properties ? node?.properties[keyProperty] : ''
+  let description = ''
+
+  if (node.node_type === 'Question') {
+    description = node.name || ''
+  } else if (node?.properties) {
+    description = node.properties[keyProperty] || ''
+  }
 
   return (
     <TooltipContainer>
