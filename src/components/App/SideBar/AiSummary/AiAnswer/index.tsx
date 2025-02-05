@@ -29,7 +29,7 @@ type Props = {
   isPlaying?: boolean
   onTogglePlay?: () => void
   hasAudio?: boolean
-  chain: string // Add chain ID as a prop
+  chain: string
 }
 
 const Wrapper = styled(Flex).attrs({
@@ -78,12 +78,18 @@ const StyledButton = styled(Button)`
     background-color: transparent;
     border-radius: 6px;
     cursor: pointer;
-    transition: ${({ theme }) => theme.transitions.create(['opacity', 'box-shadow', 'background-color'])};
+    transition: ${({ theme }) => theme.transitions.create(['opacity', 'box-shadow', 'background-color', 'transform'])};
 
     &.active {
       background-color: ${colors.COLLAPSE_BUTTON};
     }
 
+    &.hidden {
+      opacity: 0;
+      transform: scale(0.5);
+      pointer-events: none;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
     ${Text} {
       display: none;
       opacity: 0;
@@ -182,13 +188,13 @@ export const AiAnswer = ({
       timeoutId = setTimeout(() => {
         setDisplayedText(answer.slice(0, displayedText.length + 1))
       }, 10)
-
-      // eslint-disable-next-line consistent-return
-      return () => clearTimeout(timeoutId)
+    } else {
+      setIsDescriptionComplete(true)
+      handleLoaded()
     }
 
-    setIsDescriptionComplete(true)
-    handleLoaded()
+    // eslint-disable-next-line consistent-return
+    return () => clearTimeout(timeoutId)
   }, [answer, displayedText, handleLoaded, hasBeenRendered])
 
   useEffect(() => {
@@ -299,14 +305,38 @@ export const AiAnswer = ({
             )}
             <Text>Copy</Text>
           </StyledButton>
-          <StyledButton className={feedback === 'positive' ? 'active' : ''} onClick={handlePositiveFeedback}>
-            <IconWrapper>{feedback === 'positive' ? <ThumbUpIcon /> : <PositiveFeedBackIcon />}</IconWrapper>
-            <Text>Helpful</Text>
-          </StyledButton>
-          <StyledButton className={feedback === 'negative' ? 'active' : ''} onClick={handleNegativeFeedback}>
-            <IconWrapper>{feedback === 'negative' ? <ThumbDownIcon /> : <NegativeFeedBackIcon />}</IconWrapper>
-            <Text>Unhelpful</Text>
-          </StyledButton>
+          {feedback === null && (
+            <>
+              <StyledButton onClick={handlePositiveFeedback}>
+                <IconWrapper>
+                  <PositiveFeedBackIcon />
+                </IconWrapper>
+                <Text>Helpful</Text>
+              </StyledButton>
+              <StyledButton onClick={handleNegativeFeedback}>
+                <IconWrapper>
+                  <NegativeFeedBackIcon />
+                </IconWrapper>
+                <Text>Unhelpful</Text>
+              </StyledButton>
+            </>
+          )}
+          {feedback === 'positive' && (
+            <StyledButton disabled>
+              <IconWrapper>
+                <ThumbUpIcon />
+              </IconWrapper>
+              <Text>Helpful</Text>
+            </StyledButton>
+          )}
+          {feedback === 'negative' && (
+            <StyledButton disabled>
+              <IconWrapper>
+                <ThumbDownIcon />
+              </IconWrapper>
+              <Text>Unhelpful</Text>
+            </StyledButton>
+          )}
           <StyledButton onClick={onRegenerate}>
             <IconWrapper>
               <RegenerateIcon />
