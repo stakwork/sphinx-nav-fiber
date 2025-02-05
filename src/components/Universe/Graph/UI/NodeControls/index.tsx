@@ -175,7 +175,7 @@ export const NodeControls = memo(() => {
         setGraph({ nodes: res.functions })
       }
     } catch (error) {
-      console.error('Error during test coverage analysis:', error)
+      console.error('error during test coverage analysis:', error)
     }
   }
 
