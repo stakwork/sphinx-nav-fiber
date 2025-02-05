@@ -160,7 +160,7 @@ export const useDataStore = create<DataStore>()(
       const currentPage = filters.skip
       const itemsPerPage = filters.limit
       const { currentSearch } = useAppStore.getState()
-      const { setAiSummaryAnswer, setNewLoading, aiRefId } = useAiSummaryStore.getState()
+      const { setNewLoading, aiRefId } = useAiSummaryStore.getState()
 
       const ai = { ai_summary: String(!!AISearchQuery) }
 
@@ -199,23 +199,6 @@ export const useDataStore = create<DataStore>()(
 
       try {
         const data = await fetchGraphData(setBudget, updatedParams, isLatest, signal, setAbortRequests)
-
-        if (data?.query_data?.ref_id) {
-          useAiSummaryStore.setState({ aiRefId: data.query_data.ref_id })
-
-          const { aiSummaryAnswers } = useAiSummaryStore.getState()
-          const { answer } = aiSummaryAnswers[data.query_data.ref_id] || {}
-
-          setAiSummaryAnswer(data.query_data.ref_id, {
-            question: AISearchQuery,
-            answer: answer || '',
-            answerLoading: !answer,
-            sourcesLoading: !answer,
-            shouldRender: true,
-          })
-
-          setNewLoading(null)
-        }
 
         if (data?.nodes) {
           addNewNode(data)

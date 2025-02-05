@@ -1,14 +1,17 @@
+import { Billboard, Html, Text } from '@react-three/drei'
 import { useControls } from 'leva'
 import { isEqual } from 'lodash'
 import { useEffect, useRef } from 'react'
 import { Box3, Group, Sphere } from 'three'
 import { Line2 } from 'three-stdlib'
 import { useDataStore } from '~/stores/useDataStore'
-import { useGraphStore } from '~/stores/useGraphStore'
+import { distributeNodesOnSphere, useGraphStore } from '~/stores/useGraphStore'
+import { useMindsetStore } from '~/stores/useMindsetStore'
 import { useSchemaStore } from '~/stores/useSchemaStore'
 import { NodeExtended } from '~/types'
 import { Connections } from './Connections'
 import { Cubes } from './Cubes'
+import { fontProps } from './Cubes/Text/constants'
 import { Earth } from './Earth'
 import { LoadingNodes } from './LoadingNodes'
 import { NodeDetailsPanel } from './UI'
@@ -32,6 +35,8 @@ export const Graph = () => {
   const { dataInitial, isLoadingNew, isFetching, dataNew, resetDataNew } = useDataStore((s) => s)
   const groupRef = useRef<Group>(null)
   const { normalizedSchemasByType } = useSchemaStore((s) => s)
+
+  const chapters = useMindsetStore((s) => s.chapters)
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { useClustering } = useControls({ useClustering: false })
@@ -223,6 +228,38 @@ export const Graph = () => {
   return (
     <group ref={groupRef}>
       <Cubes />
+      {chapters ? (
+        <group>
+          {Object.values(distributeNodesOnSphere(chapters, 1000)).map((n, index) => (
+            <mesh key={n.x} position={[n.x, n.y, n.z]}>
+              <boxGeometry args={[400, 400, 400]} />
+              <meshBasicMaterial color="orange" opacity={0.1} transparent />
+              {false && (
+                <Billboard>
+                  <Text
+                    color="white"
+                    fillOpacity={1}
+                    name="text"
+                    position={[0, -65, 0]}
+                    scale={1}
+                    {...fontProps}
+                    fontSize={20}
+                  >
+                    {chapters[index].name}
+                  </Text>
+                  <boxGeometry args={[40, 40, 40]} />
+                  <meshStandardMaterial color="blue" />
+                </Billboard>
+              )}
+              <Html position={[0, 200, 0]}>
+                <div style={{ color: 'white', display: 'flex', whiteSpace: 'nowrap', transform: 'translateX(-50%)' }}>
+                  {chapters[index].name}
+                </div>
+              </Html>
+            </mesh>
+          ))}
+        </group>
+      ) : null}
       <NodeDetailsPanel />
       {graphStyle === 'earth' && <Earth />}
       {(isLoadingNew || isFetching) && <LoadingNodes />}
