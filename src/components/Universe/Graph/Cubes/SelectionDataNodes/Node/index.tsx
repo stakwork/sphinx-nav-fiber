@@ -1,7 +1,7 @@
 import { Html } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import clsx from 'clsx'
-import React, { useRef } from 'react'
+import { useRef } from 'react'
 import styled from 'styled-components'
 import { Mesh, Vector3 } from 'three'
 import { Flex } from '~/components/common/Flex'
@@ -73,63 +73,66 @@ export const Node = ({ onClick, node, selected, rounded = true, x, y, z, id }: P
     <mesh ref={nodeRef}>
       <Html center sprite zIndexRange={[0, 0]}>
         <Wrapper align="center" direction="row" justify="flex-start">
-          <>
-            {selected ? (
-              <Selected className={clsx({ 'has-padding': descriptionShortened })} rounded={false}>
-                {isAdmin && (
-                  <EditButton onClick={() => openEditNodeNameModal()}>
-                    <EditIcon />
-                  </EditButton>
-                )}
-                <CloseButton onClick={() => setSelectedNode(null)}>
-                  <CloseIcon />
-                </CloseButton>
-                <div>
-                  <Avatar
-                    align="center"
-                    height={!descriptionShortened ? 100 : 48}
-                    justify="center"
-                    radius="6px"
-                    src={node?.properties?.image_url || ''}
-                    width={!descriptionShortened ? 200 : 72}
-                  >
-                    {!node?.properties?.image_url ? <span>{Icon ? <Icon /> : <NodesIcon />}</span> : null}
-                  </Avatar>
-                </div>
-                <Flex align="flex-start">
-                  <Text className="selected__title">{titleShortened}</Text>
-                  {descriptionShortened ? <Text>{descriptionShortened}</Text> : null}
-                </Flex>
+          {selected ? (
+            <Selected className={clsx({ 'has-padding': descriptionShortened })} rounded={false}>
+              {isAdmin && (
+                <EditButton onClick={() => openEditNodeNameModal()}>
+                  <EditIcon />
+                </EditButton>
+              )}
+              <CloseButton onClick={() => setSelectedNode(null)}>
+                <CloseIcon />
+              </CloseButton>
 
-                {isShowCreateTestButton && (
-                  <CreateTestButton
-                    left={2}
-                    onClick={() => {
-                      createBountyModal()
-                    }}
-                  >
-                    Generate Unit Test
-                  </CreateTestButton>
-                )}
-              </Selected>
-            ) : (
-              <>
-                <Tag onClick={() => onClick(id)} rounded={rounded}>
-                  <Avatar
-                    align="center"
-                    height={32}
-                    justify="center"
-                    radius="50%"
-                    src={node?.properties?.image_url || ''}
-                    width={32}
-                  >
-                    {!node?.properties?.image_url ? <span>{Icon ? <Icon /> : <NodesIcon />}</span> : null}
-                  </Avatar>
-                </Tag>
-                <Text>{titleShortened}</Text>
-              </>
-            )}
-          </>
+              <ContentWrapper align="center" direction="row" justify="flex-start">
+                <Avatar
+                  align="center"
+                  height={48}
+                  justify="center"
+                  radius="50%"
+                  src={node?.properties?.image_url || ''}
+                  width={48}
+                >
+                  {!node?.properties?.image_url ? <span>{Icon ? <Icon /> : <NodesIcon />}</span> : null}
+                </Avatar>
+
+                <TextContent
+                  align="flex-start"
+                  direction="column"
+                  hasDescription={!!descriptionShortened}
+                  justify={descriptionShortened ? 'flex-start' : 'center'}
+                >
+                  <Title>{titleShortened}</Title>
+                  {descriptionShortened && <Description>{descriptionShortened}</Description>}
+                </TextContent>
+              </ContentWrapper>
+
+              {isShowCreateTestButton && (
+                <CreateTestButton
+                  left={2}
+                  onClick={() => createBountyModal()}
+                >
+                  Generate Unit Test
+                </CreateTestButton>
+              )}
+            </Selected>
+          ) : (
+            <>
+              <Tag onClick={() => onClick(id)} rounded={rounded}>
+                <Avatar
+                  align="center"
+                  height={32}
+                  justify="center"
+                  radius="50%"
+                  src={node?.properties?.image_url || ''}
+                  width={32}
+                >
+                  {!node?.properties?.image_url ? <span>{Icon ? <Icon /> : <NodesIcon />}</span> : null}
+                </Avatar>
+              </Tag>
+              <Text>{titleShortened}</Text>
+            </>
+          )}
         </Wrapper>
       </Html>
     </mesh>
@@ -171,29 +174,21 @@ const Tag = styled(Flex)<TagProps>`
 `
 
 const Selected = styled(Tag)`
-  width: 200px;
-  height: 100px;
-  flex-direction: row;
-  justify-content: center;
-  align-items: flex-start;
+  width: 210px;
+  min-height: 80px;
+  height: auto;
   position: relative;
-  font-family: Barlow;
-  font-weight: 700;
-  text-align: left;
+
   &.has-padding {
-    padding: 12px;
+    padding: 0;
   }
 
   .selected__title {
-    position: absolute;
-    bottom: -24px;
-    font-size: 20px;
-    left: 50%;
-    top: 100%;
-    transform: translateX(-50%) translateY(8px);
-    margin-left: 0;
-    text-align: center;
-    width: 250px;
+    position: static;
+    transform: none;
+    margin: 0;
+    text-align: left;
+    width: auto;
   }
 `
 
@@ -214,8 +209,8 @@ const IconButton = styled(Flex)`
 `
 
 const EditButton = styled(IconButton)`
-  left: 130px;
-  top: -10px;
+  left: 150px;
+  top: -14px;
   background: ${colors.white};
   color: ${colors.BG1};
   border: none;
@@ -232,7 +227,7 @@ const EditButton = styled(IconButton)`
 
 const CloseButton = styled(IconButton)`
   right: -10px;
-  top: -10px;
+  top: -15px;
 `
 
 type AvatarProps = {
@@ -273,4 +268,36 @@ const CreateTestButton = styled.div<ButtonProps>`
   &:hover {
     transform: scale(1.05);
   }
+`
+
+const ContentWrapper = styled(Flex)`
+  width: 100%;
+  padding: 12px;
+  gap: 8px;
+  min-height: 48px;
+`
+
+type TextContentProps = {
+  hasDescription: boolean
+}
+
+const TextContent = styled(Flex)<TextContentProps>`
+  flex: 1;
+  gap: 2px;
+  margin-left: 4px;
+  height: ${props => props.hasDescription ? 'auto' : '48px'};
+`
+
+const Title = styled.div`
+  color: ${colors.white};
+  font-size: 16px;
+  font-weight: 600;
+  width: 100%;
+`
+
+const Description = styled.div`
+  color: ${colors.white};
+  font-size: 14px;
+  opacity: 0.8;
+  width: 100%;
 `
