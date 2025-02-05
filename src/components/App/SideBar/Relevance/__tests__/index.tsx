@@ -2,7 +2,7 @@
 import '@testing-library/jest-dom'
 import { fireEvent, render, waitFor } from '@testing-library/react'
 import React from 'react'
-import { MemoryRouter } from 'react-router-dom'
+import { createMemoryRouter, RouterProvider } from 'react-router-dom'
 import { Relevance } from '..'
 import { useAppStore } from '../../../../../stores/useAppStore'
 import { useDataStore, useFilteredNodes } from '../../../../../stores/useDataStore'
@@ -22,20 +22,16 @@ Object.defineProperty(window, 'matchMedia', {
   })),
 })
 
-jest.mock('react-router-dom', () => {
-  const actual = jest.requireActual('react-router-dom')
-  return {
-    ...actual,
-    useLocation: () => ({
-      pathname: '/',
-      search: '',
-      hash: '',
-      state: null,
-      key: 'default',
-    }),
-  }
-})
-
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useLocation: () => ({
+    pathname: '/',
+    search: '',
+    hash: '',
+    state: null,
+    key: 'default',
+  }),
+}))
 jest.mock('react', () => ({
   ...jest.requireActual('react'),
   useRef: jest.fn(() => ({ current: { scrollTo: jest.fn() } })),
@@ -56,6 +52,12 @@ jest.mock('~/stores/useAppStore', () => ({
   useAppStore: jest.fn(),
 }))
 
+jest.mock('~/components/Universe/useNodeNavigation', () => ({
+  useNodeNavigation: () => ({
+    navigateToNode: jest.fn(),
+  }),
+}))
+
 const mockedUseDataStore = useDataStore as jest.MockedFunction<typeof useDataStore>
 const mockedUseAppStore = useAppStore as jest.MockedFunction<typeof useAppStore>
 
@@ -67,16 +69,31 @@ describe('test Relevance Component', () => {
   beforeEach(() => {
     jest.clearAllMocks()
 
-    mockedUseAppStore.mockImplementation(() => [
-      jest.fn().mockImplementation((selcetedNode) => selcetedNode),
-      jest.fn().mockImplementation((timeStamp) => timeStamp),
-    ])
+    mockedUseAppStore.mockImplementation(() => ({
+      currentSearch: '',
+      setSidebarOpen: jest.fn(),
+      setRelevanceSelected: jest.fn(),
+    }))
 
     mockedUseDataStore.mockImplementation(() => [false, jest.fn().mockImplementation((relevance) => relevance)])
   })
 
-  const renderWithRouter = (component: React.ReactElement) =>
-    render(<MemoryRouter initialEntries={['/']}>{component}</MemoryRouter>)
+  const renderWithRouter = (component: React.ReactElement) => {
+    const router = createMemoryRouter(
+      [
+        {
+          path: '/',
+          element: component,
+        },
+      ],
+      {
+        initialEntries: ['/'],
+        initialIndex: 0,
+      },
+    )
+
+    return render(<RouterProvider router={router} />)
+  }
 
   it.skip('asserts that loadMore button is hidden when is filteredNodes is empty', () => {
     mockedUseFilterNodes.mockReturnValue([])
