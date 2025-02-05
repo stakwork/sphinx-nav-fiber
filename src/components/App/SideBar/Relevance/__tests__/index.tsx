@@ -61,7 +61,8 @@ describe('test Relevance Component', () => {
     mockedUseDataStore.mockImplementation(() => [false, jest.fn().mockImplementation((relevance) => relevance)])
   })
 
-  const renderWithRouter = (component: React.ReactElement) => render(<MemoryRouter>{component}</MemoryRouter>)
+  const renderWithRouter = (component: React.ReactElement) =>
+    render(<MemoryRouter initialEntries={['/']}>{component}</MemoryRouter>)
 
   it.skip('asserts that loadMore button is hidden when is filteredNodes is empty', () => {
     mockedUseFilterNodes.mockReturnValue([])
