@@ -24,7 +24,7 @@ export const Body = () => {
   const [bounty, setBounty] = useState<BountyPayload | null>(null)
   const { close } = useModal('nodeAction')
   const selectedNode = useSelectedNode()
-  const { normalizedSchemasByType } = useSchemaStore((s) => s)
+  const { normalizedSchemasByType, getSelectedActionDetail, removeSelectedActionDetail } = useSchemaStore((s) => s)
 
   function handleActionClicked(action: ActionDetail) {
     // set selected Action to state
@@ -43,11 +43,14 @@ export const Body = () => {
   }
 
   const cancelBounty = () => {
-    setSteps(1)
     setErrMessage('')
+    removeSelectedActionDetail()
+    close()
   }
 
   const handleActionClose = () => {
+    removeSelectedActionDetail()
+
     close()
   }
 
@@ -73,8 +76,24 @@ export const Body = () => {
       }
     }
 
-    handleGetActionDetails()
-  }, [normalizedSchemasByType, selectedNode])
+    const selectedActionFromStore = getSelectedActionDetail()
+
+    if (!selectedActionFromStore) {
+      handleGetActionDetails()
+
+      return
+    }
+
+    setSelectedAction(selectedActionFromStore)
+
+    if (selectedActionFromStore.bounty) {
+      setSteps(2)
+    } else {
+      setSteps(3)
+    }
+
+    setLoadingPage(false)
+  }, [normalizedSchemasByType, selectedNode, getSelectedActionDetail])
 
   const handleSubmit = async () => {
     setLoading(true)
