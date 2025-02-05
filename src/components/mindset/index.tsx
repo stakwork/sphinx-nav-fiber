@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Socket } from 'socket.io-client'
 import styled from 'styled-components'
@@ -10,25 +10,50 @@ import { getNode } from '~/network/fetchSourcesData'
 import { useDataStore } from '~/stores/useDataStore'
 import { useMindsetStore } from '~/stores/useMindsetStore'
 import { usePlayerStore } from '~/stores/usePlayerStore'
-import { FetchDataResponse, Link, Node } from '~/types'
+import { FetchDataResponse, Link, Node, NodeExtended } from '~/types'
 import { timeToMilliseconds } from '~/utils'
 import { Header } from './components/Header'
 import { PlayerControl } from './components/PlayerContols'
 import { SideBar } from './components/Sidebar'
 
+const calculateMarkers = (data: FetchDataResponse): Node[] => {
+  // Filter edges that have a defined 'start' property
+  const edgesWithStart = data.edges
+    .filter((e) => e?.properties?.start)
+    .map((edge) => ({
+      source: edge.source,
+      target: edge.target,
+      start: edge.properties!.start as number,
+    }))
+
+  // For each node that is linked to an edge, attach the start value from the matching edge
+  const markers = data.nodes
+    .filter((node) => data.edges.some((ed) => ed.source === node.ref_id || ed.target === node.ref_id))
+    .map((node) => {
+      const matchingEdge = edgesWithStart.find((ed) => node.ref_id === ed.source || node.ref_id === ed.target)
+
+      return { ...node, start: matchingEdge?.start || 0 }
+    })
+    // Filter out nodes with specific types
+    .filter((node) => node && node.node_type !== 'Clip' && node.node_type !== 'Episode' && node.node_type !== 'Show')
+
+  return markers
+}
+
 export const MindSet = () => {
   const { isFetching, runningProjectId } = useDataStore((s) => s)
   const addNewNode = useDataStore((s) => s.addNewNode)
-  const [dataInitial, setDataInitial] = useState<FetchDataResponse | null>(null)
   const [showTwoD, setShowTwoD] = useState(false)
   const setSelectedEpisode = useMindsetStore((s) => s.setSelectedEpisode)
   const setClips = useMindsetStore((s) => s.setClips)
   const clips = useMindsetStore((s) => s.clips)
+  const setChapters = useMindsetStore((s) => s.setChapters)
+  const chapters = useMindsetStore((s) => s.chapters)
   const socket: Socket | undefined = useSocket()
   const requestRef = useRef<number | null>(null)
   const previousTimeRef = useRef<number | null>(null)
   const nodesAndEdgesRef = useRef<FetchDataResponse | null>(null)
-  const [chapters, setChapters] = useState<Node[]>([])
+  const [markers, setMarkers] = useState<NodeExtended[]>([])
 
   const queueRef = useRef<FetchDataResponse | null>(null)
   const timerRef = useRef<NodeJS.Timeout | null>(null)
@@ -136,13 +161,14 @@ export const MindSet = () => {
   }, [selectedEpisodeId, setChapters])
 
   useEffect(() => {
-    if (!clips) {
+    if (!clips || !chapters) {
       return
     }
 
     const processClipNodes = async () => {
       try {
         const refIds = clips?.map((node) => node.ref_id).filter(Boolean) || []
+        const computedMarkers = []
 
         const combinedData: FetchDataResponse = {
           nodes: nodesAndEdgesRef.current?.nodes || [],
@@ -155,13 +181,27 @@ export const MindSet = () => {
           const data = await fetchNodeEdges(refId, 0, 50)
 
           if (data) {
-            combinedData.nodes.push(...(data?.nodes || []))
+            const setOfMarkers = calculateMarkers(data)
+
+            const nodesWithNeighbourhoud = setOfMarkers.map((node: NodeExtended) => {
+              const chapterId =
+                chapters.find(
+                  (chapter) =>
+                    node.start && timeToMilliseconds(chapter?.properties?.timestamp || '') >= node.start * 1000,
+                )?.ref_id || ''
+
+              return { ...node, neighbourHood: chapterId }
+            })
+
+            combinedData.nodes.push(...(nodesWithNeighbourhoud || []))
             combinedData.edges.push(...(data?.edges || []))
 
+            computedMarkers.push(...nodesWithNeighbourhoud)
             nodesAndEdgesRef.current = combinedData
-            setDataInitial({ ...combinedData })
           }
         }
+
+        setMarkers(computedMarkers)
 
         // Update references and state after all requests complete
       } catch (error) {
@@ -170,7 +210,7 @@ export const MindSet = () => {
     }
 
     processClipNodes()
-  }, [clips])
+  }, [clips, setMarkers, chapters])
 
   const handleNewNodeCreated = useCallback(
     (data: FetchDataResponse) => {
@@ -304,29 +344,6 @@ export const MindSet = () => {
       }
     }
   }, [runningProjectId, socket])
-
-  const markers = useMemo(() => {
-    if (dataInitial) {
-      const edgesMention: Array<{ source: string; target: string; start: number }> = dataInitial.edges
-        .filter((e) => e?.properties?.start)
-        .map((edge) => ({ source: edge.source, target: edge.target, start: edge.properties?.start as number }))
-
-      const nodesWithTimestamps = dataInitial.nodes
-        .filter((node) => dataInitial.edges.some((ed) => ed.source === node.ref_id || ed.target === node.ref_id))
-        .map((node) => {
-          const edge = edgesMention.find((ed) => node.ref_id === ed.source || node.ref_id === ed.target)
-
-          return { ...node, start: edge?.start || 0 }
-        })
-        .filter(
-          (node) => node && node.node_type !== 'Clip' && node.node_type !== 'Episode' && node.node_type !== 'Show',
-        )
-
-      return nodesWithTimestamps
-    }
-
-    return []
-  }, [dataInitial])
 
   return (
     <MainContainer>

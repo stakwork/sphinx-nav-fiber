@@ -13,10 +13,35 @@ import { create } from 'zustand'
 import { ForceSimulation } from '~/transformers/forceSimulation'
 import { GraphData, Link, Node, NodeExtended } from '~/types'
 import { useDataStore } from '../useDataStore'
+import { useMindsetStore } from '../useMindsetStore'
 
 const simulationTicks = 100
 
+type Position = {
+  x: number
+  y: number
+  z: number
+}
+
 export type GraphStyle = 'sphere' | 'force' | 'split' | 'earth'
+
+export const distributeNodesOnSphere = (nodes: NodeExtended[], radius = 20) => {
+  const count = nodes.length
+  const goldenRatio = (1 + Math.sqrt(5)) / 2
+
+  return nodes.reduce((acc: Record<string, Position>, node, i) => {
+    const theta = (2 * Math.PI * i) / goldenRatio // Angle for uniform distribution
+    const phi = Math.acos(1 - (2 * (i + 0.5)) / count) // Elevation angle
+
+    acc[node.ref_id] = {
+      x: radius * Math.sin(phi) * Math.cos(theta),
+      y: radius * Math.sin(phi) * Math.sin(theta),
+      z: radius * Math.cos(phi),
+    }
+
+    return acc
+  }, {})
+}
 
 interface SimulationHelpers {
   addNodesAndLinks: (nodes: Node[], links: Link[], replace: boolean) => void
@@ -324,20 +349,92 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
 
     addRadialForce: () => {
       const { simulation } = get()
+      const { chapters } = useMindsetStore.getState()
+
+      const neighborhoodCenters = chapters ? distributeNodesOnSphere(chapters, 1000) : null
+      const neighborhoodCentersArray = neighborhoodCenters ? Object.values(neighborhoodCenters) : []
 
       simulation
-        .nodes(simulation.nodes().map((n: Node) => ({ ...n, ...resetPosition })))
-        .force('y', null)
-        // .force('radial', forceRadial(200, 0, 0, 0).strength(0.1))
-        // .force('center', forceCenter().strength(1))
+        .nodes(
+          simulation.nodes().map((n: NodeExtended) => {
+            const neighborhood = neighborhoodCenters && n.neighbourHood ? neighborhoodCenters[n.neighbourHood] : null
+
+            return { ...n, ...(neighborhood ? { x: neighborhood.x, y: neighborhood.y, z: neighborhood.z } : {}) }
+          }),
+        )
         .force(
           'charge',
-          forceManyBody().strength((node: NodeExtended) => (node.scale || 1) * -5),
-          // .distanceMax(90),
+          forceManyBody().strength((node: NodeExtended) => (node.scale || 1) * 0),
         )
-        .force('x', forceX().strength(0))
-        .force('y', forceY().strength(0))
-        .force('z', forceZ().strength(0))
+        .force(
+          'x',
+          forceX((n: NodeExtended, i: number) => {
+            const neighborhood = neighborhoodCenters && n.neighbourHood ? neighborhoodCenters[n.neighbourHood] : null
+
+            console.log(
+              'x:',
+              neighborhood?.x,
+              neighborhoodCentersArray[i % neighborhoodCentersArray.length].x,
+              neighborhoodCentersArray[3].x,
+            )
+
+            return neighborhood?.x || 0
+          }).strength(0.1), // Attract to X
+        )
+        .force(
+          'y',
+          forceY((n: NodeExtended, i: number) => {
+            const neighborhood = neighborhoodCenters && n.neighbourHood ? neighborhoodCenters[n.neighbourHood] : null
+
+            console.log(
+              'y:',
+              neighborhood?.y,
+              neighborhoodCentersArray[i % neighborhoodCentersArray.length].y,
+              neighborhoodCentersArray[3].y,
+            )
+
+            return neighborhood?.y || 0
+          }).strength(0.1), // Attract to X
+        )
+        .force(
+          'z',
+          forceZ((n: NodeExtended, i: number) => {
+            const neighborhood = neighborhoodCenters && n.neighbourHood ? neighborhoodCenters[n.neighbourHood] : null
+
+            console.log(
+              'z:',
+              neighborhood?.z,
+              neighborhoodCentersArray[i % neighborhoodCentersArray.length].z,
+              neighborhoodCentersArray[3].z,
+            )
+
+            return neighborhood?.z || 0
+          }).strength(0.1), // Attract to X
+        )
+        // .force(
+        //   'x',
+        //   forceX((_node: NodeExtended, i: number) => {
+        //     console.log(neighborhoodCentersArray[i % neighborhoodCentersArray.length].x)
+
+        //     return neighborhoodCentersArray[i % neighborhoodCentersArray.length].x
+        //   }).strength(0.1), // Attract to X
+        // )
+        // .force(
+        //   'y',
+        //   forceY((_node: NodeExtended, i: number) => {
+        //     console.log(neighborhoodCentersArray[i % neighborhoodCentersArray.length].y)
+
+        //     return neighborhoodCentersArray[i % neighborhoodCentersArray.length].y
+        //   }).strength(0.1), // Attract to Y
+        // )
+        // .force(
+        //   'z',
+        //   forceZ((_node: NodeExtended, i: number) => {
+        //     console.log(neighborhoodCentersArray[i % neighborhoodCentersArray.length].z)
+
+        //     return neighborhoodCentersArray[i % neighborhoodCentersArray.length].z
+        //   }).strength(0.1), // Attract to Z
+        // )
         .force(
           'link',
           forceLink()
@@ -347,9 +444,9 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
                 .links()
                 .map((i: Link<NodeExtended>) => ({ ...i, source: i.source.ref_id, target: i.target.ref_id })),
             )
-            .strength(1)
+            .strength(0)
             .distance(400)
-            .id((d: Node) => d.ref_id),
+            .id((d: NodeExtended) => d.ref_id),
         )
         .force(
           'collide',
@@ -359,6 +456,7 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
             .iterations(1),
         )
     },
+
     addClusterForce: () => {
       const { simulation, highlightNodes } = get()
 
