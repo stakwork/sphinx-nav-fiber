@@ -14,6 +14,7 @@ import PositiveFeedBackIcon from '~/components/Icons/PositiveFeedBackIcon'
 import RegenerateIcon from '~/components/Icons/RegenerateIcon'
 import ThumbDownIcon from '~/components/Icons/ThumbDownIcon'
 import ThumbUpIcon from '~/components/Icons/ThumbUpIcon'
+import { postFeedback } from '~/network/fetchSourcesData'
 import { useDataStore } from '~/stores/useDataStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { ExtractedEntity } from '~/types/index'
@@ -28,6 +29,7 @@ type Props = {
   isPlaying?: boolean
   onTogglePlay?: () => void
   hasAudio?: boolean
+  chain: string
 }
 
 const Wrapper = styled(Flex).attrs({
@@ -76,12 +78,18 @@ const StyledButton = styled(Button)`
     background-color: transparent;
     border-radius: 6px;
     cursor: pointer;
-    transition: ${({ theme }) => theme.transitions.create(['opacity', 'box-shadow', 'background-color'])};
+    transition: ${({ theme }) => theme.transitions.create(['opacity', 'box-shadow', 'background-color', 'transform'])};
 
     &.active {
       background-color: ${colors.COLLAPSE_BUTTON};
     }
 
+    &.hidden {
+      opacity: 0;
+      transform: scale(0.5);
+      pointer-events: none;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
     ${Text} {
       display: none;
       opacity: 0;
@@ -159,6 +167,7 @@ export const AiAnswer = ({
   isPlaying,
   onTogglePlay,
   hasAudio,
+  chain,
 }: Props) => {
   const { fetchData, setAbortRequests } = useDataStore((s) => s)
   const { setBudget } = useUserStore((s) => s)
@@ -179,13 +188,13 @@ export const AiAnswer = ({
       timeoutId = setTimeout(() => {
         setDisplayedText(answer.slice(0, displayedText.length + 1))
       }, 10)
-
-      // eslint-disable-next-line consistent-return
-      return () => clearTimeout(timeoutId)
+    } else {
+      setIsDescriptionComplete(true)
+      handleLoaded()
     }
 
-    setIsDescriptionComplete(true)
-    handleLoaded()
+    // eslint-disable-next-line consistent-return
+    return () => clearTimeout(timeoutId)
   }, [answer, displayedText, handleLoaded, hasBeenRendered])
 
   useEffect(() => {
@@ -216,6 +225,46 @@ export const AiAnswer = ({
     isDescriptionComplete,
   )
 
+  interface FeedbackResponse {
+    status: 'success' | 'error'
+  }
+
+  const sendFeedback = async (feedbackType: 'helpful' | 'unhelpful') => {
+    try {
+      const payload = {
+        answer,
+        chain,
+        feedback_type: feedbackType,
+      }
+
+      const response = (await postFeedback(payload)) as FeedbackResponse
+
+      if (response.status === 'success') {
+        setFeedback(feedbackType === 'helpful' ? 'positive' : 'negative')
+      } else {
+        console.error(response, 'Failed to send feedback')
+      }
+    } catch (error) {
+      console.error('Error sending feedback:', error)
+    }
+  }
+
+  const handlePositiveFeedback = () => {
+    if (feedback === 'positive') {
+      setFeedback(null)
+    } else {
+      sendFeedback('helpful')
+    }
+  }
+
+  const handleNegativeFeedback = () => {
+    if (feedback === 'negative') {
+      setFeedback(null)
+    } else {
+      sendFeedback('unhelpful')
+    }
+  }
+
   console.log(responseTextDisplay)
 
   const handleCopy = async () => {
@@ -229,14 +278,6 @@ export const AiAnswer = ({
     } catch (err) {
       console.error('Failed to copy text:', err)
     }
-  }
-
-  const handlePositiveFeedback = () => {
-    setFeedback((current) => (current === 'positive' ? null : 'positive'))
-  }
-
-  const handleNegativeFeedback = () => {
-    setFeedback((current) => (current === 'negative' ? null : 'negative'))
   }
 
   return (
@@ -264,14 +305,38 @@ export const AiAnswer = ({
             )}
             <Text>Copy</Text>
           </StyledButton>
-          <StyledButton className={feedback === 'positive' ? 'active' : ''} onClick={handlePositiveFeedback}>
-            <IconWrapper>{feedback === 'positive' ? <ThumbUpIcon /> : <PositiveFeedBackIcon />}</IconWrapper>
-            <Text>Helpful</Text>
-          </StyledButton>
-          <StyledButton className={feedback === 'negative' ? 'active' : ''} onClick={handleNegativeFeedback}>
-            <IconWrapper>{feedback === 'negative' ? <ThumbDownIcon /> : <NegativeFeedBackIcon />}</IconWrapper>
-            <Text>Unhelpful</Text>
-          </StyledButton>
+          {feedback === null && (
+            <>
+              <StyledButton onClick={handlePositiveFeedback}>
+                <IconWrapper>
+                  <PositiveFeedBackIcon />
+                </IconWrapper>
+                <Text>Helpful</Text>
+              </StyledButton>
+              <StyledButton onClick={handleNegativeFeedback}>
+                <IconWrapper>
+                  <NegativeFeedBackIcon />
+                </IconWrapper>
+                <Text>Unhelpful</Text>
+              </StyledButton>
+            </>
+          )}
+          {feedback === 'positive' && (
+            <StyledButton disabled>
+              <IconWrapper>
+                <ThumbUpIcon />
+              </IconWrapper>
+              <Text>Helpful</Text>
+            </StyledButton>
+          )}
+          {feedback === 'negative' && (
+            <StyledButton disabled>
+              <IconWrapper>
+                <ThumbDownIcon />
+              </IconWrapper>
+              <Text>Unhelpful</Text>
+            </StyledButton>
+          )}
           <StyledButton onClick={onRegenerate}>
             <IconWrapper>
               <RegenerateIcon />
