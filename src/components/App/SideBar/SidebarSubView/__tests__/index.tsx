@@ -57,7 +57,7 @@ jest.mock('~/stores/useAppStore', () => ({
   useAppStore: jest.fn(),
 }))
 
-jest.mock('~/hooks/useNodeNavigation', () => ({
+jest.mock('~/components/Universe/useNodeNavigation', () => ({
   useNodeNavigation: () => ({
     navigateToNode: jest.fn(),
   }),
