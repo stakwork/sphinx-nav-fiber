@@ -240,7 +240,7 @@ const NodeDetail = ({ label, value, hasAudio, isPlaying, togglePlay }: Props) =>
             <AudioButton onClick={togglePlay}>{isPlaying ? <AiPauseIcon /> : <AiPlayIcon />}</AudioButton>
           )}
         </Text>
-        {label !== 'Frame' && label !== 'Code' ? (
+        {label !== 'Frame' && label !== 'Code' && label !== 'Body' ? (
           <Text className="node-detail__value">
             <StyledMarkdown components={markdownComponents}>{String(value)}</StyledMarkdown>
           </Text>
