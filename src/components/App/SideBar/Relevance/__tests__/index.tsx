@@ -22,6 +22,20 @@ Object.defineProperty(window, 'matchMedia', {
   })),
 })
 
+jest.mock('react-router-dom', () => {
+  const actual = jest.requireActual('react-router-dom')
+  return {
+    ...actual,
+    useLocation: () => ({
+      pathname: '/',
+      search: '',
+      hash: '',
+      state: null,
+      key: 'default',
+    }),
+  }
+})
+
 jest.mock('react', () => ({
   ...jest.requireActual('react'),
   useRef: jest.fn(() => ({ current: { scrollTo: jest.fn() } })),
