@@ -11,6 +11,7 @@ type PlayerStore = {
   playingTime: number
   duration: number
   volume: number
+  playbackSpeed: number
   playingNode: NodeExtended | null
   playerRef: ReactPlayer | null
   setPlayingTime: (time: number) => void
@@ -24,6 +25,7 @@ type PlayerStore = {
   setPlayingNodeLink: (link: string) => void
   setIsSeeking: (isSeeking: boolean) => void
   setPlayerRef: (playerRef: ReactPlayer) => void
+  setPlaybackSpeed: (speed: number) => void
 }
 
 const defaultData: Omit<
@@ -39,6 +41,7 @@ const defaultData: Omit<
   | 'setPlayingNodeLink'
   | 'setIsSeeking'
   | 'setPlayerRef'
+  | 'setPlaybackSpeed'
 > = {
   isPlaying: false,
   miniPlayerIsVisible: false,
@@ -48,6 +51,7 @@ const defaultData: Omit<
   playingNode: null,
   duration: 0,
   volume: 0.5,
+  playbackSpeed: 1,
   playerRef: null,
 }
 
@@ -95,5 +99,6 @@ export const usePlayerStore = create<PlayerStore>()(
       }
     },
     resetPlayer: () => set({ duration: defaultData.duration, hasError: defaultData.hasError }),
+    setPlaybackSpeed: (speed) => set({ playbackSpeed: speed }),
   })),
 )

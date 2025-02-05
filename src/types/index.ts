@@ -5,6 +5,63 @@ type QueryData = {
   ref_id: string
 }
 
+export type FetchNodeParams = {
+  word?: string
+  skip_cache?: string
+  free?: string
+  media_type?: string
+  force_regenerate?: boolean
+}
+
+export type Node = {
+  boost?: number | null
+  children?: string[]
+  x: number
+  y: number
+  z: number
+  edge_count: number
+  hidden?: boolean
+  colors?: string[]
+  date?: number
+  description?: string
+  episode_title?: string
+  hosts?: Guests[]
+  guests?: (null | string | Guests)[]
+  id?: string
+  image_url?: string
+  sender_pic?: string
+  sender_alias?: string
+  message_content?: string
+  keyword?: boolean
+  label: string
+  source_link?: string
+  link?: string
+  name: string
+  node_type: string
+  ref_id: string
+  scale?: number
+  show_title?: string
+  text?: string
+  timestamp?: string
+  topics?: string[]
+  type?: string
+  weight?: number
+  tweet_id?: string
+  posted_by?: PostedBy
+  twitter_handle?: string
+  profile_picture?: string
+  verified?: boolean
+  unique_id?: string
+  properties?: { [key: string]: never | undefined }
+  media_url?: string
+  start?: number
+  end?: number
+  longitude?: number
+  latitude?: number
+  coordinates?: Coordinates
+  audio?: Audio[]
+}
+
 export type FetchDataResponse = {
   nodes: Node[]
   edges: Link[]
@@ -60,6 +117,7 @@ export type RadarRequest = {
 }
 
 export type NodeRequest = {
+  node_type?: string
   node_data: {
     name?: string
     is_muted?: boolean
@@ -68,47 +126,12 @@ export type NodeRequest = {
   }
 }
 
-export type Node = {
-  boost?: number | null
-  children?: string[]
-  x: number
-  y: number
-  z: number
-  edge_count: number
-  hidden?: boolean
-  colors?: string[]
-  date?: number
-  description?: string
-  episode_title?: string
-  hosts?: Guests[]
-  guests?: (null | string | Guests)[]
-  id?: string
-  image_url?: string
-  sender_pic?: string
-  sender_alias?: string
-  message_content?: string
-  keyword?: boolean
-  label: string
-  source_link?: string
-  link?: string
-  name: string
+export type NodeEditRequest = {
   node_type: string
   ref_id: string
-  scale?: number
-  show_title?: string
-  text?: string
-  timestamp?: string
-  topics?: string[]
-  type?: string
-  weight?: number
-  tweet_id?: string
-  posted_by?: PostedBy
-  twitter_handle?: string
-  profile_picture?: string
-  verified?: boolean
-  unique_id?: string
-  properties?: { [key: string]: never | undefined }
-  media_url?: string
+  properties: {
+    [key: string]: unknown
+  }
 }
 
 export type DataSeriesNode = {
@@ -143,13 +166,12 @@ export type NodeExtended = Node & {
   x?: number
   y?: number
   z?: number
-  start?: number
-  end?: number
-  longitude?: number
-  latitude?: number
-  coordinates?: Coordinates
-  audio?: Audio[]
-  properties?: { [key: string]: never | undefined }
+  fx?: number
+  fy?: number
+  fz?: number
+  sources?: string[]
+  targets?: string[]
+  edgeTypes?: string[]
 }
 
 export type Link<T = string> = {

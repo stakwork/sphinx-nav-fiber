@@ -7,7 +7,8 @@ import React from 'react'
 import { ThemeProvider as StyleThemeProvider } from 'styled-components'
 import { SideBarSubView } from '..'
 import { useAppStore } from '../../../../../stores/useAppStore'
-import { useDataStore, useSelectedNode } from '../../../../../stores/useDataStore'
+import { useDataStore } from '../../../../../stores/useDataStore'
+import { useGraphStore, useSelectedNode } from '../../../../../stores/useGraphStore'
 import { appTheme } from '../../../Providers'
 
 jest.mock('reactflow/dist/style.css', () => null)
@@ -31,6 +32,10 @@ jest.mock('react-hook-form', () => ({
 
 jest.mock('~/stores/useDataStore', () => ({
   useDataStore: jest.fn(),
+}))
+
+jest.mock('~/stores/useGraphStore', () => ({
+  useGraphStore: jest.fn(),
   useSelectedNode: jest.fn(),
 }))
 
@@ -41,6 +46,7 @@ jest.mock('~/stores/useAppStore', () => ({
 const useDataStoreMock = useDataStore as jest.MockedFunction<typeof useDataStore>
 const useSelectedNodeMock = useSelectedNode as jest.MockedFunction<typeof useSelectedNode>
 const useAppStoreMock = useAppStore as jest.MockedFunction<typeof useAppStore>
+const useGraphStoreMock = useGraphStore as jest.MockedFunction<typeof useGraphStore>
 
 const mockSelectedNode = {
   date: moment().unix(),
@@ -57,7 +63,8 @@ const mockSelectedNode = {
 describe('Test SideBarSubView', () => {
   beforeEach(() => {
     jest.clearAllMocks()
-    useDataStoreMock.mockReturnValue({ setSelectedNode: jest.fn(), setTeachMe: jest.fn(), showTeachMe: false })
+    useDataStoreMock.mockReturnValue({ setTeachMe: jest.fn(), showTeachMe: false })
+    useGraphStoreMock.mockReturnValue({ setSelectedNode: jest.fn() })
     useSelectedNodeMock.mockReturnValue(mockSelectedNode)
     useAppStoreMock.mockReturnValue({ setSidebarOpen: jest.fn() })
   })
@@ -74,13 +81,16 @@ describe('Test SideBarSubView', () => {
     expect(getByTestId('sidebar-sub-view')).toHaveStyle({ visibility: 'hidden' })
   })
 
-  it('asserts that close button resets the selected node and hide the teach me', () => {
+  it('asserts that close button resets the selected node and hides the teach me', () => {
     const [setSelectedNodeMock, setTeachMeMock] = new Array(2).fill(jest.fn())
 
     useDataStoreMock.mockReturnValue({
-      setSelectedNode: setSelectedNodeMock,
       setTeachMe: setTeachMeMock,
       showTeachMe: false,
+    })
+
+    useGraphStoreMock.mockReturnValue({
+      setSelectedNode: setSelectedNodeMock,
     })
 
     const { getByTestId } = render(
@@ -149,6 +159,7 @@ describe('Test SideBarSubView', () => {
       await waitFor(() => {
         expect(useAppStoreMock).toHaveBeenCalled()
         expect(useDataStoreMock).toHaveBeenCalled()
+        expect(useGraphStoreMock).toHaveBeenCalled()
         expect(useSelectedNodeMock).toHaveBeenCalled()
       })
     })()

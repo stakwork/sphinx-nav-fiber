@@ -5,11 +5,11 @@ import ClearIcon from '~/components/Icons/ClearIcon'
 import { useDataStore } from '~/stores/useDataStore'
 
 export const GraphClear = () => {
-  const { resetData } = useDataStore((s) => s)
+  const { resetGraph } = useDataStore((s) => s)
 
   return (
     <Tooltip content="Clear Graph" fontSize="13px" position="left">
-      <ClearButton href="" onClick={() => resetData()} size="medium" startIcon={<ClearIcon />} />
+      <ClearButton href="" onClick={() => resetGraph()} size="medium" startIcon={<ClearIcon />} />
     </Tooltip>
   )
 }

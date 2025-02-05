@@ -3,7 +3,7 @@
 import { AdaptiveDpr, AdaptiveEvents, Html, Loader, Preload } from '@react-three/drei'
 import { Canvas, RootState } from '@react-three/fiber'
 import { Bloom, EffectComposer, Outline, Selection, Vignette } from '@react-three/postprocessing'
-import { useControls } from 'leva'
+import { Leva, useControls } from 'leva'
 import { BlendFunction, Resolution } from 'postprocessing'
 import { Perf } from 'r3f-perf'
 import { Suspense, memo, useCallback, useMemo } from 'react'
@@ -13,18 +13,21 @@ import { isDevelopment } from '~/constants'
 import { useAppStore } from '~/stores/useAppStore'
 import { useControlStore } from '~/stores/useControlStore'
 import { useDataStore } from '~/stores/useDataStore'
-import { useSelectedNode } from '~/stores/useGraphStore'
+import { useGraphStore, useSelectedNode } from '~/stores/useGraphStore'
 import { colors } from '~/utils/colors'
 import { addToGlobalForE2e } from '~/utils/tests'
 import { UniverseQuestion } from '../App/UniverseQuestion'
 import { Flex } from '../common/Flex'
+import { outlineEffectColor } from './constants'
 import { Controls } from './Controls'
-import { initialCameraPosition } from './Controls/CameraAnimations/constants'
+import { initialCameraPosition, selectionGraphCameraPosition } from './Controls/CameraAnimations/constants'
+import { CursorTooltip } from './CursorTooltip/index'
 import { Graph } from './Graph'
+import { GraphSearch } from './GraphSearch'
 import { Lights } from './Lights'
 import { Overlay } from './Overlay'
 import { Preloader } from './Preloader'
-import { outlineEffectColor } from './constants'
+import { SelectionContent } from './SelectionContent'
 
 const Fallback = () => (
   <Html>
@@ -37,6 +40,8 @@ const Content = () => {
     universeColor: colors.black,
   })
 
+  const dataInitial = useDataStore((s) => s.dataInitial)
+
   const selectedNode = useSelectedNode()
 
   const outlineColor: number = useMemo(
@@ -46,7 +51,7 @@ const Content = () => {
 
   return (
     <>
-      <color args={[universeColor]} attach="background" />
+      <color args={[colors.BLUE_PRESS_STATE || universeColor]} attach="transparent" />
 
       <Lights />
 
@@ -74,7 +79,7 @@ const Content = () => {
             />
           </EffectComposer>
         )}
-        <Graph />
+        {dataInitial?.nodes?.length ? <Graph /> : null}
       </Selection>
     </>
   )
@@ -95,6 +100,8 @@ const _Universe = () => {
     useControlStore((s) => s.setIsUserScrolling),
     useControlStore((s) => s.setUserMovedCamera),
   ]
+
+  const showSelectionGraph = useGraphStore((s) => s.showSelectionGraph)
 
   const isLoading = useDataStore((s) => s.isFetching)
   const universeQuestionIsOpen = useAppStore((s) => s.universeQuestionIsOpen)
@@ -131,7 +138,15 @@ const _Universe = () => {
   return (
     <Wrapper>
       <Suspense fallback={null}>
-        <Canvas camera={cameraProps} id="universe-canvas" onCreated={onCreatedHandler} onWheel={onWheelHandler}>
+        <Leva hidden isRoot />
+
+        <Canvas
+          camera={cameraProps}
+          frameloop={showSelectionGraph ? 'demand' : 'always'}
+          id="universe-canvas"
+          onCreated={onCreatedHandler}
+          onWheel={onWheelHandler}
+        >
           {isDevelopment && <Perf position="top-right" style={{ top: '80px' }} />}
           <Suspense fallback={<Fallback />}>
             <Preload />
@@ -143,6 +158,37 @@ const _Universe = () => {
             <Content />
           </Suspense>
         </Canvas>
+        <GraphSearch />
+        <CursorTooltip />
+
+        {showSelectionGraph ? (
+          <SelectionWrapper>
+            <Canvas
+              camera={{
+                ...cameraProps,
+                position: [
+                  selectionGraphCameraPosition.x,
+                  selectionGraphCameraPosition.y,
+                  selectionGraphCameraPosition.z,
+                ],
+              }}
+              id="selection-canvas"
+              onCreated={({ gl }) => {
+                gl.setClearColor('#000000')
+                gl.setClearAlpha(0.8)
+              }}
+            >
+              {isDevelopment && <Perf position="top-right" style={{ top: '80px' }} />}
+              <Suspense fallback={<Fallback />}>
+                <AdaptiveDpr />
+
+                <AdaptiveEvents />
+
+                <SelectionContent />
+              </Suspense>
+            </Canvas>
+          </SelectionWrapper>
+        ) : null}
       </Suspense>
       {universeQuestionIsOpen && <UniverseQuestion />}
       {isLoading && <Preloader fullSize={false} />}
@@ -154,6 +200,11 @@ const _Universe = () => {
 const Wrapper = styled(Flex)`
   flex: 1 1 100%;
   position: relative;
+`
+
+const SelectionWrapper = styled(Flex)`
+  position: absolute;
+  inset: 0;
 `
 
 export const Universe = memo(_Universe)

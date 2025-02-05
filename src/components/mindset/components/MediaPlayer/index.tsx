@@ -66,6 +66,7 @@ const MediaPlayerComponent = ({ mediaUrl }: Props) => {
     setIsSeeking,
     setPlayerRef,
     playerRef,
+    playbackSpeed,
   } = usePlayerStore((s) => s)
 
   useEffect(() => () => resetPlayer(), [resetPlayer])
@@ -85,22 +86,32 @@ const MediaPlayerComponent = ({ mediaUrl }: Props) => {
     }
   }, [playingTime, isSeeking, setIsSeeking, playerRef])
 
-  const togglePlay = () => {
+  const togglePlay = useCallback(() => {
     setIsPlaying(!isPlaying)
-  }
-
-  const handlePlay = useCallback(() => {
-    setIsPlaying(true)
-  }, [setIsPlaying])
-
-  const handlePause = useCallback(() => {
-    setIsPlaying(false)
-  }, [setIsPlaying])
+  }, [isPlaying, setIsPlaying])
 
   const handleError = () => {
     setHasError(true)
     setStatus('error')
   }
+
+  const handleKeyDown = useCallback(
+    (event: KeyboardEvent) => {
+      if (event.code === 'Space' && false) {
+        event.preventDefault()
+        togglePlay()
+      }
+    },
+    [togglePlay],
+  )
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown)
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [handleKeyDown])
 
   const edges = useMemo(() => {
     const edgesFiltered = dataInitial?.links.filter((link) => link?.properties?.start) || []
@@ -132,8 +143,21 @@ const MediaPlayerComponent = ({ mediaUrl }: Props) => {
     }
   }
 
-  const handlePlayerClick = () => {
-    togglePlay()
+  const handlePlay = useCallback(() => {
+    if (!isPlaying) {
+      setIsPlaying(true)
+    }
+  }, [setIsPlaying, isPlaying])
+
+  const handlePause = useCallback(() => {
+    if (isPlaying) {
+      setIsPlaying(false)
+    }
+  }, [setIsPlaying, isPlaying])
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handlePlayerClick = (e: any) => {
+    e.stopPropagation() // Prevent click from propagating to the player
   }
 
   const playerRefCallback = useCallback(
@@ -161,6 +185,7 @@ const MediaPlayerComponent = ({ mediaUrl }: Props) => {
           onPlay={handlePlay}
           onProgress={handleProgress}
           onReady={handleReady}
+          playbackRate={playbackSpeed}
           playing={isPlaying}
           url={mediaUrl || ''}
           volume={volume}

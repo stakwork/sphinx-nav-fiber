@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react'
 import { FieldValues } from 'react-hook-form'
+import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { NODE_ADD_ERROR } from '~/constants'
 import { api } from '~/network/api'
-import { getNodes, getSchemaAll } from '~/network/fetchSourcesData'
+import { getSchemaAll } from '~/network/fetchSourcesData'
 import { useDataStore } from '~/stores/useDataStore'
-import { useMindsetStore } from '~/stores/useMindsetStore'
 import { useSchemaStore } from '~/stores/useSchemaStore'
-import { FetchDataResponse, Node, SubmitErrRes } from '~/types'
+import { SubmitErrRes } from '~/types'
 import { colors } from '~/utils/colors'
 import { ChevronRight } from '../Icon/ChevronRight'
 import { VideoCard } from '../VideoCard'
@@ -21,6 +21,54 @@ export type FormData = {
   longitude: string
   latitude: string
 }
+
+const Nodes = [
+  {
+    date_added_to_graph: 1733218679.827695,
+    node_type: 'Episode',
+    properties: {
+      date: 1731888000,
+      episode_title: 'AI Agents and AI Assistants: A Contrast in Function',
+      image_url: 'https://i.ytimg.com/vi/IivxYYkJ2DI/sddefault.jpg',
+      media_url:
+        'https://s3.amazonaws.com/stakwork-uploads/uploads/customers/4291/media_to_local/62110bc0-6b27-4779-9d5e-320eab6fae84/IivxYYkJ2DI.mp3',
+      source_link: 'https://www.youtube.com/watch?v=IivxYYkJ2DI',
+      status: 'completed',
+    },
+    ref_id: 'b8784fb9-efa8-4a25-8a78-e14be96a4387',
+  },
+  {
+    date_added_to_graph: 1733323898.765796,
+    node_type: 'Episode',
+    properties: {
+      date: 1733184000,
+      episode_title: 'Joe Rogan Experience #2237 - Mike Benz',
+      image_url: 'https://i.ytimg.com/vi_webp/rrJhQpvlkLA/sddefault.webp',
+      media_url:
+        'https://s3.amazonaws.com/stakwork-uploads/uploads/customers/4291/media_to_local/b4c6220e-7048-431c-80c4-90e56b71bd06/rrJhQpvlkLA.mp3',
+      source_link: 'https://www.youtube.com/watch?v=rrJhQpvlkLA',
+      status: 'completed',
+    },
+    ref_id: '2e51fdb8-a1f1-4e1f-b9d5-4dbdae00b1a2',
+  },
+  {
+    date_added_to_graph: 1732635410.9931817,
+    node_type: 'Episode',
+    properties: {
+      date: 1730851200,
+      description: 'Exploring the Transformative Potential of Llama, the Open-Source AI Model',
+      episode_title: "Llama: The Open-Source AI Model that's Changing How We Think About AI",
+      image_url: 'https://i.ytimg.com/vi/8c2LnKNoSmg/sddefault.jpg',
+      media_url:
+        'https://s3.amazonaws.com/stakwork-uploads/uploads/customers/4291/media_to_local/a4542523-6b12-4baa-bce7-ed63f2704955/8c2LnKNoSmg.mp3',
+      source_link: 'https://www.youtube.com/watch?v=8c2LnKNoSmg',
+      status: 'completed',
+    },
+    ref_id: '87f5e4c5-39c2-4773-8208-8c1c4fe4019b',
+  },
+]
+
+console.log(Nodes)
 
 const handleSubmitForm = async (data: FieldValues): Promise<SubmitErrRes> => {
   const endPoint = 'add_node'
@@ -45,23 +93,14 @@ export const LandingPage = () => {
   const [inputValue, setInputValue] = useState('')
   const [error, setError] = useState(false)
   const [requestError, setRequestError] = useState<string>('')
-  const [episodes, setEpisodes] = useState<Node[]>([])
   const { setRunningProjectId } = useDataStore((s) => s)
-  const { setSelectedEpisodeId, setSelectedEpisodeLink } = useMindsetStore((s) => s)
   const { setSchemas } = useSchemaStore((s) => s)
 
-  const filterAndSortEpisodes = (data: FetchDataResponse): Node[] =>
-    data.nodes.filter((node) => node.node_type.toLowerCase() === 'episode' && node.properties?.date).slice(0, 3)
+  const navigate = useNavigate()
 
   useEffect(() => {
     const fetchSchemaData = async () => {
       try {
-        const res: FetchDataResponse = await getNodes()
-
-        const topEpisodes = filterAndSortEpisodes(res)
-
-        setEpisodes(topEpisodes)
-
         const response = await getSchemaAll()
 
         setSchemas(response.schemas.filter((schema) => !schema.is_deleted))
@@ -92,8 +131,7 @@ export const LandingPage = () => {
         }
 
         if (res.data.ref_id) {
-          setSelectedEpisodeId(res.data.ref_id)
-          setSelectedEpisodeLink(source)
+          navigate(`/episode/${res.data.ref_id}`)
         }
 
         // eslint-disable-next-line  @typescript-eslint/no-explicit-any
@@ -106,8 +144,7 @@ export const LandingPage = () => {
           errorMessage = res.errorCode || res?.status || NODE_ADD_ERROR
 
           if (res.data.ref_id) {
-            setSelectedEpisodeId(res.data.ref_id)
-            setSelectedEpisodeLink(source)
+            navigate(`/episode/${res.data.ref_id}`)
           }
         } else if (err instanceof Error) {
           errorMessage = err.message
@@ -134,8 +171,9 @@ export const LandingPage = () => {
         </IconWrapper>
       </InputWrapper>
       {requestError && <div>{requestError}</div>}
+
       <SeedQuestionsWrapper>
-        {episodes.map((episode) => (
+        {Nodes.map((episode) => (
           <VideoCard
             key={episode?.ref_id}
             imageUrl={episode?.properties?.image_url || ''}

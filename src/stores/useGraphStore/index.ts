@@ -1,4 +1,14 @@
-import { forceCenter, forceCollide, forceLink, forceManyBody, forceRadial, forceSimulation, forceY } from 'd3-force-3d'
+import {
+  forceCenter,
+  forceCollide,
+  forceLink,
+  forceManyBody,
+  forceRadial,
+  forceSimulation,
+  forceX,
+  forceY,
+  forceZ,
+} from 'd3-force-3d'
 import { create } from 'zustand'
 import { ForceSimulation } from '~/transformers/forceSimulation'
 import { GraphData, Link, Node, NodeExtended } from '~/types'
@@ -14,6 +24,7 @@ interface SimulationHelpers {
   addRadialForce: () => void
   addDefaultForce: () => void
   addSplitForce: () => void
+  addClusterForce: () => void
   simulationRestart: () => void
   getLinks: () => Link<NodeExtended>[]
 }
@@ -43,6 +54,9 @@ const defaultSimulationHelpers: SimulationHelpers = {
   addDefaultForce: () => {
     /* do nothing */
   },
+  addClusterForce: () => {
+    /* do nothing */
+  },
 
   addSplitForce: () => {
     /* do nothing */
@@ -67,10 +81,13 @@ export const graphStyles: GraphStyle[] = ['sphere', 'force', 'split', 'earth']
 
 export type GraphStore = {
   graphRadius: number
+  selectionGraphRadius: number
   data: { nodes: NodeExtended[]; links: Link[] } | null
   selectionGraphData: GraphData
   graphStyle: GraphStyle
   hoveredNode: NodeExtended | null
+  selectedNodeTypes: string[]
+  selectedLinkTypes: string[]
   selectedNode: NodeExtended | null
   cameraFocusTrigger: boolean
   nearbyNodeIds: string[]
@@ -81,21 +98,37 @@ export type GraphStore = {
   simulationHelpers: SimulationHelpers
   isHovering: boolean
   activeEdge: Link | null
+  activeNode: NodeExtended | null
+  highlightNodes: string[]
+  selectionPath: string[]
+  hoveredNodeSiblings: string[]
+  selectedNodeSiblings: string[]
+  searchQuery: string
 
   setDisableCameraRotation: (rotation: boolean) => void
   setScrollEventsDisabled: (rotation: boolean) => void
   setData: (data: GraphData) => void
   setGraphStyle: (graphStyle: GraphStyle) => void
   setGraphRadius: (graphRadius: number) => void
+  setSelectionGraphRadius: (graphRadius: number) => void
   setHoveredNode: (hoveredNode: NodeExtended | null) => void
   setSelectedNode: (selectedNode: NodeExtended | null) => void
   setActiveEdge: (edge: Link | null) => void
+  setActiveNode: (activeNode: NodeExtended | null) => void
+  setHighlightNodes: (highlightNodes: string[]) => void
   setCameraFocusTrigger: (_: boolean) => void
   setNearbyNodeIds: (_: string[]) => void
   setShowSelectionGraph: (_: boolean) => void
   setSelectionData: (data: GraphData) => void
   simulationCreate: (nodes: Node[], links: Link[]) => void
   setIsHovering: (isHovering: boolean) => void
+  removeSimulation: () => void
+  addToSelectionPath: (id: string) => void
+  setSearchQuery: (id: string) => void
+  setSelectedNodeTypes: (type: string) => void
+  resetSelectedNodeTypes: () => void
+  setSelectedLinkTypes: (type: string) => void
+  resetSelectedLinkTypes: () => void
 }
 
 const defaultData: Omit<
@@ -107,8 +140,11 @@ const defaultData: Omit<
   | 'setHoveredNode'
   | 'setSelectedNode'
   | 'setActiveEdge'
+  | 'setActiveNode'
+  | 'setHighlightNodes'
   | 'setCameraFocusTrigger'
   | 'setGraphRadius'
+  | 'setSelectionGraphRadius'
   | 'setGraphStyle'
   | 'setNearbyNodeIds'
   | 'setShowSelectionGraph'
@@ -116,15 +152,25 @@ const defaultData: Omit<
   | 'setHideNodeDetails'
   | 'simulationCreate'
   | 'setIsHovering'
+  | 'removeSimulation'
+  | 'addToSelectionPath'
+  | 'setSearchQuery'
+  | 'setSelectedNodeTypes'
+  | 'resetSelectedNodeTypes'
+  | 'setSelectedLinkTypes'
+  | 'resetSelectedLinkTypes'
 > = {
   data: null,
   simulation: null,
   selectionGraphData: { nodes: [], links: [] },
-  disableCameraRotation: false,
+  disableCameraRotation: true,
   scrollEventsDisabled: false,
   graphRadius: 1500, // calculated from initial load
+  selectionGraphRadius: 200, // calculated from initial load
   graphStyle: 'sphere',
   hoveredNode: null,
+  hoveredNodeSiblings: [],
+  selectedNodeSiblings: [],
   selectedNode: null,
   activeEdge: null,
   cameraFocusTrigger: false,
@@ -132,6 +178,12 @@ const defaultData: Omit<
   showSelectionGraph: false,
   simulationHelpers: defaultSimulationHelpers,
   isHovering: false,
+  selectionPath: [],
+  activeNode: null,
+  highlightNodes: [],
+  searchQuery: '',
+  selectedNodeTypes: [],
+  selectedLinkTypes: [],
 }
 
 export const useGraphStore = create<GraphStore>()((set, get) => ({
@@ -139,30 +191,90 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
   setData: (data) => {
     set({ data })
   },
+  setSelectedNodeTypes: (nodeType: string) => {
+    const { selectedNodeTypes } = get()
+
+    const updatedTypes = selectedNodeTypes.includes(nodeType)
+      ? selectedNodeTypes.filter((i) => i !== nodeType)
+      : [...selectedNodeTypes, nodeType]
+
+    set({ selectedNodeTypes: updatedTypes })
+  },
+  setSelectedLinkTypes: (linkType: string) => {
+    const { selectedLinkTypes } = get()
+
+    const updatedTypes = selectedLinkTypes.includes(linkType)
+      ? selectedLinkTypes.filter((i) => i !== linkType)
+      : [...selectedLinkTypes, linkType]
+
+    set({ selectedLinkTypes: updatedTypes })
+  },
+  resetSelectedNodeTypes: () => set({ selectedNodeTypes: [] }),
+  resetSelectedLinkTypes: () => set({ selectedLinkTypes: [] }),
   setSelectionData: (selectionGraphData) => set({ selectionGraphData }),
   setScrollEventsDisabled: (scrollEventsDisabled) => set({ scrollEventsDisabled }),
   setDisableCameraRotation: (rotation) => set({ disableCameraRotation: rotation }),
   setIsHovering: (isHovering) => set({ isHovering }),
   setGraphRadius: (graphRadius) => set({ graphRadius }),
+  setSelectionGraphRadius: (selectionGraphRadius) => set({ selectionGraphRadius }),
   setGraphStyle: (graphStyle) => set({ graphStyle: 'sphere' || graphStyle }),
   setHoveredNode: (hoveredNode) => {
-    set({ hoveredNode })
+    const { nodesNormalized } = useDataStore.getState() || {}
+
+    if (hoveredNode) {
+      const normalizedNode = nodesNormalized.get(hoveredNode.ref_id)
+
+      const siblings = [...(normalizedNode?.targets || []), ...(normalizedNode?.sources || [])]
+
+      set({ hoveredNode, hoveredNodeSiblings: siblings })
+    } else {
+      set({ hoveredNode, hoveredNodeSiblings: [] })
+    }
   },
   setActiveEdge: (activeEdge) => {
     set({ activeEdge })
   },
+  setActiveNode: (activeNode) => {
+    set({ activeNode })
+  },
+  setHighlightNodes: (highlightNodes) => {
+    set({ highlightNodes })
+  },
+  addToSelectionPath: (id: string) => {
+    const { selectionPath } = get()
+
+    set({ selectionPath: [...selectionPath, id] })
+  },
   setSelectedNode: (selectedNode) => {
-    const { selectedNode: stateSelectedNode, simulation } = get()
+    const { nodesNormalized } = useDataStore.getState() || {}
+
+    if (!selectedNode) {
+      set({
+        hoveredNode: null,
+        selectedNode: null,
+        disableCameraRotation: false,
+        showSelectionGraph: false,
+        selectionPath: [],
+      })
+    }
+
+    const { selectedNode: stateSelectedNode, simulation, selectionPath } = get()
 
     if (stateSelectedNode?.ref_id !== selectedNode?.ref_id) {
       const selectedNodeWithCoordinates =
         simulation.nodes().find((i: NodeExtended) => i.ref_id === selectedNode?.ref_id) || null
 
-      set({
-        hoveredNode: null,
-        selectedNode: selectedNodeWithCoordinates,
-        disableCameraRotation: true,
-      })
+      if (selectedNode?.ref_id) {
+        const normalizedNode: NodeExtended | undefined = nodesNormalized?.get(selectedNode?.ref_id)
+
+        set({
+          hoveredNode: null,
+          selectedNode: { ...selectedNodeWithCoordinates, ...(normalizedNode || {}) },
+          disableCameraRotation: true,
+          selectionPath: [...selectionPath, selectedNodeWithCoordinates.ref_id],
+          selectedNodeSiblings: [...(normalizedNode?.sources || []), ...(normalizedNode?.targets || [])],
+        })
+      }
     }
   },
   setCameraFocusTrigger: (cameraFocusTrigger) => set({ cameraFocusTrigger }),
@@ -176,39 +288,32 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
   setShowSelectionGraph: (showSelectionGraph) => set({ showSelectionGraph }),
   simulationHelpers: {
     addNodesAndLinks: (newNodes, newLinks, replace) => {
-      const structuredNodes = structuredClone(newNodes)
-      const structuredLinks = structuredClone(newLinks)
-
       const { simulation, simulationHelpers } = get()
+
+      console.log(simulation.nodes())
+      console.log(newNodes)
 
       simulation.stop()
 
-      const nodes = replace ? [] : simulation.nodes().map((n: NodeExtended) => ({ ...n, fx: n.x, fy: n.y, fz: n.z }))
+      const structuredNodes = structuredClone(newNodes)
+      const structuredLinks = structuredClone(newLinks)
+
+      simulation.stop()
+
+      const nodes = replace ? [] : simulation.nodes()
       const links = replace ? [] : simulation.force('link').links()
 
       nodes.push(...structuredNodes)
       links.push(...structuredLinks)
 
+      simulation.nodes(nodes)
+
+      simulation.force('link').links([]).links(links)
+
+      simulationHelpers.simulationRestart()
+
       try {
-        simulation.nodes(nodes)
-
-        const filteredLinks = links.filter((link: Link<NodeExtended | string>) => {
-          const { target, source } = link
-          const simulationNodes = simulation.nodes()
-
-          // Log the target and source ref_id for debugging
-          const targetRefId = (target as NodeExtended)?.ref_id || target
-          const sourceRefId = (source as NodeExtended)?.ref_id || source
-
-          return (
-            simulationNodes.some((n: NodeExtended) => n.ref_id === targetRefId) &&
-            simulationNodes.some((n: NodeExtended) => n.ref_id === sourceRefId)
-          )
-        })
-
-        simulation.force('link').links([]).links(filteredLinks)
-
-        simulationHelpers.simulationRestart()
+        console.log('try')
       } catch (error) {
         console.error(error)
         // eslint-disable-next-line no-debugger
@@ -223,14 +328,45 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
       simulation
         .nodes(simulation.nodes().map((n: Node) => ({ ...n, ...resetPosition })))
         .force('y', null)
-        .force('radial', forceRadial(200, 0, 0, 0).strength(0.1))
-        .force('center', forceCenter().strength(1))
+        // .force('radial', forceRadial(200, 0, 0, 0).strength(0.1))
+        // .force('center', forceCenter().strength(1))
+        .force(
+          'charge',
+          forceManyBody().strength((node: NodeExtended) => (node.scale || 1) * -5),
+          // .distanceMax(90),
+        )
+        .force('x', forceX().strength(0))
+        .force('y', forceY().strength(0))
+        .force('z', forceZ().strength(0))
+        .force(
+          'link',
+          forceLink()
+            .links(
+              simulation
+                .force('link')
+                .links()
+                .map((i: Link<NodeExtended>) => ({ ...i, source: i.source.ref_id, target: i.target.ref_id })),
+            )
+            .strength(1)
+            .distance(400)
+            .id((d: Node) => d.ref_id),
+        )
         .force(
           'collide',
           forceCollide()
-            .radius(() => 250)
-            .strength(1)
+            .radius((node: NodeExtended) => (node.scale || 1) * 95)
+            .strength(0.5)
             .iterations(1),
+        )
+    },
+    addClusterForce: () => {
+      const { simulation, highlightNodes } = get()
+
+      simulation
+        .nodes(simulation.nodes().map((i: NodeExtended) => ({ ...i, ...resetPosition })))
+        .force(
+          'cluster',
+          forceRadial((node: NodeExtended) => (highlightNodes.includes(node.ref_id) ? 25 : 500)).strength(1),
         )
     },
 
@@ -324,12 +460,15 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
       .force(
         'link',
         forceLink()
+          .strength(0)
           .links(structuredLinks)
           .id((d: Node) => d.ref_id),
       )
 
     set({ simulation })
   },
+  removeSimulation: () => set({ simulation: null }),
+  setSearchQuery: (searchQuery) => set({ searchQuery }),
 }))
 
 export const useSelectedNode = () => useGraphStore((s) => s.selectedNode)

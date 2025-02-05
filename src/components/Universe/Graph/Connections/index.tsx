@@ -1,36 +1,101 @@
+import { Segments } from '@react-three/drei'
 import { memo } from 'react'
 import { useDataStore } from '~/stores/useDataStore'
-import { useGraphStore, useSelectedNode } from '~/stores/useGraphStore'
+import { useGraphStore } from '~/stores/useGraphStore'
+import { useSchemaStore } from '~/stores/useSchemaStore'
 import { Link } from '~/types'
 import { LinkPosition } from '..'
 import { LineComponent } from './LineComponent'
+import { LineInstance } from './LineInstance.tsx'
 
 type Props = {
   linksPosition: Map<string, LinkPosition>
 }
 
 export const Connections = memo(({ linksPosition }: Props) => {
-  const data = useDataStore((s) => s.dataInitial)
-  const { showSelectionGraph } = useGraphStore((s) => s)
-  const selectedNode = useSelectedNode()
+  const [dataInitial, nodesNormalized] = useDataStore((s) => [s.dataInitial, s.nodesNormalized])
+
+  const [showSelectionGraph, searchQuery, selectedNodeTypes, highlightNodes, hoveredNode] = useGraphStore((s) => [
+    s.showSelectionGraph,
+    s.searchQuery,
+    s.selectedNodeTypes,
+    s.highlightNodes,
+    s.hoveredNode,
+    s.selectedNode,
+  ])
+
+  const normalizedSchemasByType = useSchemaStore((s) => s.normalizedSchemasByType)
 
   return (
-    <group name="simulation-3d-group__connections" visible={!showSelectionGraph || true}>
-      {data?.links.map((l: Link) => {
-        const isSelected = selectedNode?.ref_id === l.source || selectedNode?.ref_id === l.target // Adjust to match link with its position
+    <>
+      <group name="simulation-3d-group__connections" visible={!showSelectionGraph || true}>
+        {dataInitial?.links?.length ? (
+          <>
+            {dataInitial?.links.map((l: Link) => {
+              const position = linksPosition.get(l.ref_id) || {
+                sx: 0,
+                sy: 0,
+                sz: 0,
+                tx: 0,
+                ty: 0,
+                tz: 0,
+              }
 
-        const position = linksPosition.get(l.ref_id) || {
-          sx: 0,
-          sy: 0,
-          sz: 0,
-          tx: 0,
-          ty: 0,
-          tz: 0,
-        }
+              return (
+                <LineComponent
+                  key={l.ref_id}
+                  label={l.edge_type}
+                  source={l.source}
+                  sourceX={position.sx}
+                  sourceY={position.sy}
+                  sourceZ={position.sz}
+                  target={l.target}
+                  targetX={position.tx}
+                  targetY={position.ty}
+                  targetZ={position.tz}
+                />
+              )
+            })}
+          </>
+        ) : null}
+      </group>
+      <group
+        key={dataInitial?.links.length}
+        visible={!searchQuery && !selectedNodeTypes.length && !highlightNodes.length && !hoveredNode}
+      >
+        <Segments limit={1000} lineWidth={0.1}>
+          {dataInitial?.links.map((l: Link) => {
+            const position = linksPosition.get(l.ref_id) || {
+              sx: 0,
+              sy: 0,
+              sz: 0,
+              tx: 0,
+              ty: 0,
+              tz: 0,
+            }
 
-        return <LineComponent key={l.ref_id} isSelected={isSelected} label={l.edge_type} position={position} />
-      })}
-    </group>
+            const sourceNode = nodesNormalized.get(l.source) || ''
+
+            const color = sourceNode ? normalizedSchemasByType[sourceNode.node_type]?.primary_color : 'white'
+
+            const linkColor = color || 'white'
+
+            return (
+              <LineInstance
+                key={l.ref_id}
+                color={linkColor}
+                sourceX={position.sx}
+                sourceY={position.sy}
+                sourceZ={position.sz}
+                targetX={position.tx}
+                targetY={position.ty}
+                targetZ={position.tz}
+              />
+            )
+          })}
+        </Segments>
+      </group>
+    </>
   )
 })
 

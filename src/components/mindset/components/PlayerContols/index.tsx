@@ -9,9 +9,10 @@ import { ProgressBar } from './ProgressBar'
 
 type Props = {
   markers: NodeExtended[]
+  chapters: NodeExtended[]
 }
 
-export const PlayerControl = ({ markers }: Props) => {
+export const PlayerControl = ({ markers, chapters }: Props) => {
   const { playingNode, playerRef } = usePlayerStore((s) => s)
   const [currentTime, setCurrentTime] = useState(0)
 
@@ -46,6 +47,7 @@ export const PlayerControl = ({ markers }: Props) => {
     <Wrapper>
       <Controls />
       <ProgressBar
+        chapters={chapters}
         duration={duration}
         handleProgressChange={handleProgressChange}
         markers={markers}
@@ -63,7 +65,8 @@ const Wrapper = styled(Flex).attrs({
   padding: 20px;
   background: ${colors.BG2};
   height: 96px;
-  margin-top: 16px;
+  /* margin-top: 16px; */
   border-radius: 8px;
   box-sizing: border-box;
+  margin-right: 4px;
 `

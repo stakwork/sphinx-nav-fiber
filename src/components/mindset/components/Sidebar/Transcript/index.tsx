@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
-import { fetchNodeEdges } from '~/network/fetchGraphData'
+import { useGraphStore } from '~/stores/useGraphStore'
 import { useMindsetStore } from '~/stores/useMindsetStore'
 import { usePlayerStore } from '~/stores/usePlayerStore'
-import { NodeExtended } from '~/types'
+import { Node, NodeExtended } from '~/types'
 import { colors } from '~/utils'
 import { Viewer } from './Viewer'
 
@@ -13,29 +13,13 @@ type Props = {
 }
 
 export const Transcript = ({ name }: Props) => {
-  const { selectedEpisodeId } = useMindsetStore((s) => s)
+  const clips = useMindsetStore((s) => s.clips)
   const { playerRef } = usePlayerStore((s) => s)
   const [currentTime, setCurrentTime] = useState(0)
+  const [activeClip, setActiveClip] = useState<Node | null>(null)
+  const [isFirst, setIsFirst] = useState(true)
 
-  const [clips, setClips] = useState<NodeExtended[]>([])
-
-  useEffect(() => {
-    const init = async () => {
-      try {
-        const res = await fetchNodeEdges(selectedEpisodeId, 0, 50, { nodeType: ['Clip'], useSubGraph: false })
-
-        if (res?.nodes) {
-          setClips(res.nodes)
-        }
-      } catch (error) {
-        console.error(error)
-      }
-    }
-
-    if (selectedEpisodeId) {
-      init()
-    }
-  }, [selectedEpisodeId])
+  const [setActiveNode, activeNode, simulation] = useGraphStore((s) => [s.setActiveNode, s.activeNode, s.simulation])
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -49,27 +33,56 @@ export const Transcript = ({ name }: Props) => {
     return () => clearInterval(interval)
   }, [playerRef, setCurrentTime])
 
+  useEffect(() => {
+    const calculateActiveClip = () => {
+      const clip = clips.find((clipNode) => {
+        const [start, end] = parseTimestamp(clipNode?.properties?.timestamp)
+
+        return start <= currentTime && currentTime < end
+      })
+
+      if ((activeClip && clip?.ref_id === activeClip?.ref_id) || !clip) {
+        return
+      }
+
+      setIsFirst(clip?.ref_id === clips[0]?.ref_id)
+
+      setActiveClip(clip || null)
+    }
+
+    if (currentTime) {
+      calculateActiveClip()
+    }
+  }, [currentTime, clips, activeClip])
+
+  useEffect(() => {
+    if (activeClip && (!activeNode || activeClip.ref_id !== activeNode.ref_id)) {
+      const candidateNode = simulation?.nodes().find((n: NodeExtended) => n.ref_id === activeClip.ref_id)
+
+      if (typeof candidateNode?.fx === 'number') {
+        setActiveNode(candidateNode)
+      }
+    }
+  }, [activeClip, activeNode, setActiveNode, simulation])
+
+  const parseTimestamp = (timestamp?: string) => {
+    if (!timestamp) {
+      return [0, 0]
+    }
+
+    return timestamp.split('-').map(Number)
+  }
+
   return (
     <Wrapper>
       <Flex className="heading">{name}</Flex>
-      {clips.map((clip) => {
-        const timestamp: string | undefined = clip?.properties?.timestamp
-
-        const [start, end] = timestamp
-          ? (timestamp as string).split('-').map(Number) // Directly convert to numbers
-          : [0, 0]
-
-        if (start <= currentTime * 1000 && currentTime * 1000 < end) {
-          // Multiply playingTime by 1000 to match millisecond format
-          return (
-            <TranscriptWrapper key={clip.ref_id} direction="row">
-              {clip.properties?.transcript && <Viewer transcriptString={clip.properties?.transcript} />}
-            </TranscriptWrapper>
-          )
-        }
-
-        return null
-      })}
+      {activeClip ? (
+        <TranscriptWrapper direction="row">
+          {activeClip.properties?.transcript && (
+            <Viewer isFirst={isFirst} transcriptString={activeClip.properties.transcript} />
+          )}
+        </TranscriptWrapper>
+      ) : null}
     </Wrapper>
   )
 }
@@ -80,14 +93,12 @@ const Wrapper = styled(Flex)`
     font-size: 16px;
     margin-bottom: 16px;
   }
-
   color: ${colors.white};
   background: ${colors.BG1};
   border-radius: 8px;
   padding: 24px;
   overflow-y: auto;
   flex: 1 1 100%;
-  max-height: 50%;
 `
 
 const TranscriptWrapper = styled(Flex)`

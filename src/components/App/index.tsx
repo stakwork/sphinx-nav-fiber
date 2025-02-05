@@ -1,4 +1,3 @@
-import { Leva } from 'leva'
 import { lazy, Suspense, useCallback, useEffect, useRef } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useSearchParams } from 'react-router-dom'
@@ -8,7 +7,6 @@ import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { GlobalStyle } from '~/components/GlobalStyle'
 import { Overlay } from '~/components/Universe/Overlay' // Import Overlay directly
-import { isDevelopment } from '~/constants'
 import { useSocket } from '~/hooks/useSockets'
 import { useAiSummaryStore } from '~/stores/useAiSummaryStore'
 import { useAppStore } from '~/stores/useAppStore'
@@ -81,6 +79,7 @@ export const App = () => {
     runningProjectId,
     setRunningProjectMessages,
     isFetching,
+    resetData,
   } = useDataStore((s) => s)
 
   const { setAiSummaryAnswer, getKeyExist, aiRefId } = useAiSummaryStore((s) => s)
@@ -130,8 +129,10 @@ export const App = () => {
       }
     }
 
+    resetData()
+
     runSearch()
-  }, [searchTerm, fetchData, setBudget, setAbortRequests, setSidebarOpen, setSelectedNode])
+  }, [searchTerm, fetchData, setBudget, setAbortRequests, setSidebarOpen, setSelectedNode, resetData])
 
   const handleNewNode = useCallback(() => {
     setNodeCount('INCREMENT')
@@ -278,7 +279,7 @@ export const App = () => {
   ])
 
   useEffect(() => {
-    if (!runningProjectId || true) {
+    if (!runningProjectId) {
       return
     }
 
@@ -298,6 +299,8 @@ export const App = () => {
 
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data)
+
+      console.log(data)
 
       if (data.type === 'ping') {
         return
@@ -340,8 +343,6 @@ export const App = () => {
       <GlobalStyle />
 
       <DeviceCompatibilityNotice />
-
-      <Leva hidden={!isDevelopment || true} isRoot />
 
       <Suspense fallback={<div>Loading...</div>}>
         {!splashDataLoading ? (

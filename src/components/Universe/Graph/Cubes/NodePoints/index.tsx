@@ -41,10 +41,11 @@ const COLORS_MAP = [
 // eslint-disable-next-line no-underscore-dangle
 const _NodePoints = () => {
   const selectedNode = useSelectedNode()
-  const data = useDataStore((s) => s.dataInitial)
+  const dataInitial = useDataStore((s) => s.dataInitial)
   const { normalizedSchemasByType } = useSchemaStore((s) => s)
   const nodeTypes = useNodeTypes()
-  const ringGeometry = useMemo(() => new TorusGeometry(30, 2, 16, 100), [])
+  const ringGeometry = useMemo(() => new TorusGeometry(30, 1, 16, 100), [])
+  const { getNodeKeysByType } = useSchemaStore((s) => s)
 
   return (
     <>
@@ -52,14 +53,29 @@ const _NodePoints = () => {
         geometry={ringGeometry as BufferGeometry}
         limit={1000} // Optional: max amount of items (for calculating buffer size)
         range={1000}
-        visible={!selectedNode}
+        visible={!selectedNode || true}
       >
         <meshBasicMaterial />
-        {data?.nodes.map((node: NodeExtended) => {
+        {dataInitial?.nodes.map((node: NodeExtended, index) => {
           const primaryColor = normalizedSchemasByType[node.node_type]?.primary_color
           const color = primaryColor ?? (COLORS_MAP[nodeTypes.indexOf(node.node_type)] || colors.white)
+          const scale = node.scale || 1
 
-          return <Point key={node.ref_id} color={color} scale={node.scale || 1} />
+          const keyProperty = getNodeKeysByType(node.node_type) || ''
+
+          const name = keyProperty && node?.properties ? node?.properties[keyProperty] || '' : ''
+
+          return (
+            <Point
+              key={node.ref_id}
+              color={color}
+              index={index}
+              name={name}
+              node={node}
+              nodeType={node.node_type}
+              scale={scale}
+            />
+          )
         })}
       </Instances>
     </>

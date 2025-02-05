@@ -1,32 +1,47 @@
 import { Select } from '@react-three/drei'
-import { ThreeEvent } from '@react-three/fiber'
+import { ThreeEvent, useFrame } from '@react-three/fiber'
 import { memo, useCallback, useRef } from 'react'
-import { Object3D } from 'three'
+import { Group, Object3D } from 'three'
 import { useAppStore } from '~/stores/useAppStore'
-import { useDataStore } from '~/stores/useDataStore'
-import { useGraphStore, useHoveredNode, useSelectedNode, useSelectedNodeRelativeIds } from '~/stores/useGraphStore'
+import { useDataStore, useNodeTypes } from '~/stores/useDataStore'
+import { useGraphStore, useHoveredNode, useSelectedNode } from '~/stores/useGraphStore'
 import { NodeExtended } from '~/types'
+import { colors } from '~/utils'
+import { COLORS_MAP } from '../constant'
+import { Candidates } from './Candidates'
 import { NodePoints } from './NodePoints'
-import { RelevanceBadges } from './RelevanceBadges'
-import { SelectionDataNodes } from './SelectionDataNodes'
-import { TextNode } from './Text'
+import { NodeWrapper } from './NodeWrapper'
 
 const POINTER_IN_DELAY = 200
 
 export const Cubes = memo(() => {
   const selectedNode = useSelectedNode()
   const hoveredNode = useHoveredNode()
+  const nodesWrapperRef = useRef<Group | null>(null)
+  const instancesRef = useRef<Group | null>(null)
 
-  const relativeIds = useSelectedNodeRelativeIds()
-  const { selectionGraphData, showSelectionGraph, setHoveredNode, setIsHovering } = useGraphStore((s) => s)
+  const { selectionGraphData, showSelectionGraph, setHoveredNode, setIsHovering, simulation } = useGraphStore((s) => s)
+  const nodeTypes = useNodeTypes()
 
-  const data = useDataStore((s) => s.dataInitial)
+  const dataInitial = useDataStore((s) => s.dataInitial)
+  const nodesNormalized = useDataStore((s) => s.nodesNormalized)
+
   const setTranscriptOpen = useAppStore((s) => s.setTranscriptOpen)
+
+  useFrame(() => {
+    return
+
+    const { selectedNodeTypes, searchQuery } = useGraphStore.getState()
+
+    if (selectedNodeTypes.length || searchQuery) {
+      simulation.nodes()
+    }
+  })
 
   const ignoreNodeEvent = useCallback(
     (node: NodeExtended) => {
       if (showSelectionGraph && !selectionGraphData.nodes.find((n) => n.ref_id === node.ref_id)) {
-        return true
+        return false
       }
 
       return false
@@ -99,35 +114,40 @@ export const Cubes = memo(() => {
     [setHoveredNode, ignoreNodeEvent, setIsHovering],
   )
 
-  const hideUniverse = showSelectionGraph && !!selectedNode
+  const hideUniverse = showSelectionGraph && !!selectedNode && false
 
   return (
-    <Select
-      filter={(selected) => selected.filter((f) => !!f.userData?.ref_id)}
-      onChange={handleSelect}
-      onPointerOut={onPointerOut}
-      onPointerOver={onPointerIn}
-    >
-      <RelevanceBadges />
-      <group name="simulation-3d-group__nodes" visible={!hideUniverse}>
-        {data?.nodes.map((node: NodeExtended) => {
-          const hide = !!selectedNode && (relativeIds.includes(node.ref_id) || selectedNode.ref_id === node.ref_id)
+    <>
+      <group ref={nodesWrapperRef} name="simulation-3d-group__nodes" visible={!hideUniverse}>
+        {dataInitial?.nodes.map((node: NodeExtended, index) => {
+          const color = COLORS_MAP[nodeTypes.indexOf(node.node_type)] || colors.white
+          const simulationNode = simulation.nodes()[index]
+          const isFixed = typeof simulationNode?.fx === 'number'
+          const normalizedNode = nodesNormalized.get(node.ref_id)
 
-          return (
-            <mesh key={node.ref_id} name="wr2" scale={node.scale || 1} userData={node}>
-              <boxGeometry args={[40, 40, 40]} />
-              <meshStandardMaterial opacity={0} transparent />
-              <TextNode key={node.ref_id || node.id} hide={hideUniverse || hide} ignoreDistance={false} node={node} />
-            </mesh>
-          )
+          return normalizedNode ? (
+            <NodeWrapper
+              key={node.ref_id}
+              color={color}
+              isFixed={isFixed}
+              node={normalizedNode}
+              scale={node.scale || 1}
+            />
+          ) : null
         })}
       </group>
-
-      <group name="simulation-3d-group__node-points">
-        <NodePoints />
-      </group>
-      {hideUniverse && <SelectionDataNodes />}
-    </Select>
+      <Select
+        filter={(selected) => selected.filter((f) => !!f.userData?.ref_id)}
+        onChange={handleSelect}
+        onPointerOut={onPointerOut}
+        onPointerOver={onPointerIn}
+      >
+        <group ref={instancesRef} name="simulation-3d-group__node-points">
+          <NodePoints />
+        </group>
+      </Select>
+      <Candidates />
+    </>
   )
 })
 

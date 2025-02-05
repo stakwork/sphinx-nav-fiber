@@ -62,6 +62,8 @@ export const NodeControls = memo(() => {
   }, [addNewNode, selectedNode?.ref_id, selectionGraphData.nodes.length])
 
   useFrame(() => {
+    // @todo-useframe
+
     setPosition()
   })
 
@@ -188,7 +190,7 @@ export const NodeControls = memo(() => {
   const isShowCreateTestButton = !!(selectedNode && selectedNode?.node_type?.toLowerCase() === 'function')
 
   return (
-    <group ref={ref}>
+    <group ref={ref} position={[selectedNode.x, selectedNode.y, selectedNode.z]}>
       <Html
         center
         className="control-panel"

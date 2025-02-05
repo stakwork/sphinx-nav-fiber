@@ -17,12 +17,12 @@ type BadgeProps = {
 }
 
 export const Marker = memo(({ type, left, img }: Props) => {
-  const [normalizedSchemasByType] = useSchemaStore((s) => [s.normalizedSchemasByType])
+  const normalizedSchemasByType = useSchemaStore((s) => s.normalizedSchemasByType)
 
   const primaryColor = normalizedSchemasByType[type]?.primary_color
   const primaryIcon = normalizedSchemasByType[type]?.icon
 
-  const icon = primaryIcon ? `svg-icons/${primaryIcon}.svg` : ''
+  const icon = primaryIcon ? `/svg-icons/${primaryIcon}.svg` : ''
 
   const badgeProps: Omit<BadgeProps, 'label'> = {
     iconStart: img || icon,
@@ -40,7 +40,7 @@ Marker.displayName = 'Marker'
 
 const Badge = memo(({ iconStart, color, label }: BadgeProps) => (
   <EpisodeWrapper color={color}>
-    {iconStart && <img alt={label} className="badge__img" src={iconStart} />}
+    {iconStart && <img alt={label} className="badge__img" onError={console.log} src={iconStart} />}
   </EpisodeWrapper>
 ))
 

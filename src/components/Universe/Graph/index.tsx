@@ -1,6 +1,7 @@
+import { useControls } from 'leva'
 import { isEqual } from 'lodash'
 import { useEffect, useRef } from 'react'
-import { Box3, Color, Group, Sphere, Vector3 } from 'three'
+import { Box3, Group, Sphere } from 'three'
 import { Line2 } from 'three-stdlib'
 import { useDataStore } from '~/stores/useDataStore'
 import { useGraphStore } from '~/stores/useGraphStore'
@@ -21,17 +22,37 @@ export type LinkPosition = {
   tz: number
 }
 
+export type NodePosition = {
+  x: number
+  y: number
+  z: number
+}
+
 export const Graph = () => {
   const { dataInitial, isLoadingNew, isFetching, dataNew, resetDataNew } = useDataStore((s) => s)
   const groupRef = useRef<Group>(null)
-  const cameraSettled = useRef<boolean>(false)
   const { normalizedSchemasByType } = useSchemaStore((s) => s)
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { useClustering } = useControls({ useClustering: false })
+
   const linksPositionRef = useRef(new Map<string, LinkPosition>())
+  const nodesPositionRef = useRef(new Map<string, NodePosition>())
 
   const { setData, simulation, simulationCreate, simulationHelpers, graphStyle, setGraphRadius } = useGraphStore(
     (s) => s,
   )
+
+  const highlightNodes = useGraphStore((s) => s.highlightNodes)
+
+  const removeSimulation = useGraphStore((s) => s.removeSimulation)
+
+  useEffect(() => {
+    if (highlightNodes.length) {
+      simulationHelpers?.addClusterForce()
+      simulationHelpers.simulationRestart()
+    }
+  }, [simulationHelpers, highlightNodes])
 
   useEffect(() => {
     if (!dataNew) {
@@ -53,9 +74,11 @@ export const Graph = () => {
     if (!simulation) {
       simulationCreate(nodesClose, linksClone)
     }
+  }, [setData, dataNew, simulation, simulationCreate, simulationHelpers, dataInitial])
 
-    resetDataNew()
-  }, [setData, dataNew, simulation, simulationCreate, resetDataNew, simulationHelpers, dataInitial])
+  useEffect(() => {
+    ;() => removeSimulation()
+  }, [removeSimulation])
 
   useEffect(() => {
     if (!simulation) {
@@ -70,25 +93,20 @@ export const Graph = () => {
       return
     }
 
-    simulation.on('tick', () => {
-      if (!cameraSettled.current && simulation.alpha() < 0.1) {
-        const nodesVector = simulation.nodes().map((i: NodeExtended) => new Vector3(i.x, i.y, i.z))
+    simulation.on('end', () => {
+      resetDataNew()
 
-        const boundingBox = new Box3().setFromPoints(nodesVector)
+      simulation.nodes().forEach((i: NodeExtended) => {
+        // eslint-disable-next-line no-param-reassign
+        i.fx = i.x
+        // eslint-disable-next-line no-param-reassign
+        i.fy = i.y
+        // eslint-disable-next-line no-param-reassign
+        i.fz = i.z
+        nodesPositionRef.current.set(i.ref_id, { x: i.x, y: i.y, z: i.z })
+      })
 
-        const boundingSphere = new Sphere()
-
-        boundingBox.getBoundingSphere(boundingSphere)
-
-        const sphereRadius = Math.min(5000, boundingSphere.radius)
-
-        if (false) {
-          setGraphRadius(sphereRadius)
-          cameraSettled.current = true
-        }
-      }
-
-      if (groupRef.current) {
+      if (groupRef?.current) {
         const gr = groupRef.current.getObjectByName('simulation-3d-group__nodes') as Group
         const grPoints = groupRef.current.getObjectByName('simulation-3d-group__node-points') as Group
         const grConnections = groupRef.current.getObjectByName('simulation-3d-group__connections') as Group
@@ -108,18 +126,33 @@ export const Graph = () => {
             const simulationNode = simulation.nodes()[index]
 
             if (simulationNode) {
+              // eslint-disable-next-line no-param-reassign
               mesh.position.set(simulationNode.x, simulationNode.y, simulationNode.z)
             }
           })
         }
 
-        if (simulation.alpha() > 1) {
-          return
-        }
+        linksPositionRef.current.clear()
+
+        dataInitial?.links.forEach((link) => {
+          const sourceNode = nodesPositionRef.current.get(link.source) || { x: 0, y: 0, z: 0 }
+          const targetNode = nodesPositionRef.current.get(link.target) || { x: 0, y: 0, z: 0 }
+
+          const { x: sx, y: sy, z: sz } = sourceNode
+          const { x: tx, y: ty, z: tz } = targetNode
+
+          // Set positions for the link
+          linksPositionRef.current.set(link.ref_id, {
+            sx,
+            sy,
+            sz,
+            tx,
+            ty,
+            tz,
+          })
+        })
 
         if (grConnections) {
-          linksPositionRef.current.clear()
-
           grConnections.children.forEach((g, i) => {
             const r = g.children[0] // Assuming Line is the first child
             const text = g.children[1] // Assuming Text is the second child
@@ -130,8 +163,8 @@ export const Graph = () => {
               const link = dataInitial?.links[i]
 
               if (link) {
-                const sourceNode = simulation.nodes().find((n: NodeExtended) => n.ref_id === link.source)
-                const targetNode = simulation.nodes().find((n: NodeExtended) => n.ref_id === link.target)
+                const sourceNode = nodesPositionRef.current.get(link.source) || { x: 0, y: 0, z: 0 }
+                const targetNode = nodesPositionRef.current.get(link.target) || { x: 0, y: 0, z: 0 }
 
                 if (!sourceNode || !targetNode) {
                   console.warn(`Missing source or target node for link: ${link?.ref_id}`)
@@ -152,45 +185,36 @@ export const Graph = () => {
                   tz,
                 })
 
-                // Calculate midpoint for the text position
-                const midPoint = new Vector3((sx + tx) / 2, (sy + ty) / 2, (sz + tz) / 2)
-
-                // Set text position and rotation
-                text.position.set(midPoint.x, midPoint.y, midPoint.z)
+                text.position.set((sx + tx) / 2, (sy + ty) / 2, (sz + tz) / 2)
 
                 // Set line color and properties
-                const lineColor = normalizedSchemasByType[sourceNode.node_type]?.primary_color || 'white'
+                // const lineColor = normalizedSchemasByType[sourceNode.node_type]?.primary_color || 'white'
 
                 Line.geometry.setPositions([sx, sy, sz, tx, ty, tz])
 
                 const { material } = Line
 
-                material.color = new Color(lineColor)
+                // material.color = new Color(lineColor)
                 material.transparent = true
                 material.opacity = 0.3
               }
             }
           })
         }
+
+        const box = new Box3().setFromObject(gr)
+
+        // Compute the center and radius of the bounding sphere
+        const sphere = new Sphere()
+
+        box.getBoundingSphere(sphere)
+
+        if (sphere.radius) {
+          setGraphRadius(sphere.radius)
+        }
       }
     })
-
-    simulation.on('end', () => {
-      const nodesVector = simulation.nodes().map((i: NodeExtended) => new Vector3(i.x, i.y, i.z))
-
-      const boundingBox = new Box3().setFromPoints(nodesVector)
-
-      const boundingSphere = new Sphere()
-
-      boundingBox.getBoundingSphere(boundingSphere)
-
-      const sphereRadius = boundingSphere.radius
-
-      setGraphRadius(sphereRadius * 1.5)
-
-      cameraSettled.current = false
-    })
-  }, [dataInitial, simulation, setGraphRadius, normalizedSchemasByType])
+  }, [dataInitial, simulation, setGraphRadius, normalizedSchemasByType, resetDataNew])
 
   if (!simulation) {
     return null
@@ -199,12 +223,10 @@ export const Graph = () => {
   return (
     <group ref={groupRef}>
       <Cubes />
-      {graphStyle === 'earth' && <Earth />}
-
-      {(isLoadingNew || isFetching) && <LoadingNodes />}
-
-      {graphStyle !== 'earth' && <Connections linksPosition={linksPositionRef.current} />}
       <NodeDetailsPanel />
+      {graphStyle === 'earth' && <Earth />}
+      {(isLoadingNew || isFetching) && <LoadingNodes />}
+      {graphStyle !== 'earth' && <Connections linksPosition={linksPositionRef.current} />}
     </group>
   )
 }

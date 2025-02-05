@@ -9,12 +9,13 @@ type Props = {
 
 export const Markers = memo(({ markers, duration }: Props) => (
   <>
-    {markers.map((node) => {
-      const position = ((node?.start || 0) / duration) * 100
+    {markers.map((node, index) => {
+      const position = Math.floor(((node?.start || 0) / duration) * 100)
       const type = node?.node_type || ''
       const img = node?.properties?.image_url || ''
 
-      return <Marker key={node.ref_id} img={img} left={position} type={type} />
+      // eslint-disable-next-line react/no-array-index-key
+      return <Marker key={`${node.ref_id}_${index}`} img={img} left={position} type={type} />
     })}
   </>
 ))

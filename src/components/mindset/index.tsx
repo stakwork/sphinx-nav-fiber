@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
 import { Socket } from 'socket.io-client'
+import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { Universe } from '~/components/Universe'
 import { useSocket } from '~/hooks/useSockets'
@@ -8,27 +10,167 @@ import { getNode } from '~/network/fetchSourcesData'
 import { useDataStore } from '~/stores/useDataStore'
 import { useMindsetStore } from '~/stores/useMindsetStore'
 import { usePlayerStore } from '~/stores/usePlayerStore'
-import { FetchDataResponse, Link, Node, NodeExtended } from '~/types'
+import { FetchDataResponse, Link, Node } from '~/types'
+import { timeToMilliseconds } from '~/utils'
 import { Header } from './components/Header'
-import { LandingPage } from './components/LandingPage'
 import { PlayerControl } from './components/PlayerContols'
-import { Scene } from './components/Scene'
 import { SideBar } from './components/Sidebar'
 
 export const MindSet = () => {
-  const { addNewNode, isFetching, runningProjectId } = useDataStore((s) => s)
+  const { isFetching, runningProjectId } = useDataStore((s) => s)
+  const addNewNode = useDataStore((s) => s.addNewNode)
   const [dataInitial, setDataInitial] = useState<FetchDataResponse | null>(null)
   const [showTwoD, setShowTwoD] = useState(false)
-  const { selectedEpisodeId, setSelectedEpisode } = useMindsetStore((s) => s)
+  const setSelectedEpisode = useMindsetStore((s) => s.setSelectedEpisode)
+  const setClips = useMindsetStore((s) => s.setClips)
+  const clips = useMindsetStore((s) => s.clips)
   const socket: Socket | undefined = useSocket()
   const requestRef = useRef<number | null>(null)
   const previousTimeRef = useRef<number | null>(null)
   const nodesAndEdgesRef = useRef<FetchDataResponse | null>(null)
+  const [chapters, setChapters] = useState<Node[]>([])
 
   const queueRef = useRef<FetchDataResponse | null>(null)
   const timerRef = useRef<NodeJS.Timeout | null>(null)
 
+  const navigate = useNavigate()
+
+  const { episodeId: selectedEpisodeId } = useParams()
+
   const { setPlayingNode } = usePlayerStore((s) => s)
+
+  useEffect(() => {
+    const init = async (id: string) => {
+      try {
+        const data = await getNode(id)
+
+        if (data) {
+          setPlayingNode(data)
+          setSelectedEpisode(data)
+          addNewNode({ nodes: [data], edges: [] })
+        }
+      } catch (error) {
+        navigate('/')
+        console.error(error)
+      }
+    }
+
+    if (selectedEpisodeId) {
+      init(selectedEpisodeId)
+    }
+  }, [selectedEpisodeId, setPlayingNode, setSelectedEpisode, addNewNode, navigate])
+
+  useEffect(() => {
+    const fetchInitialData = async () => {
+      try {
+        // Fetch the initial set of edges and nodes for the episode
+        const startedData = await fetchNodeEdges(selectedEpisodeId || '', 0, 50, {
+          nodeType: ['Show', 'Host', 'Guest'],
+          useSubGraph: false,
+        })
+
+        const clipData = await fetchNodeEdges(selectedEpisodeId || '', 0, 1000, {
+          nodeType: ['Clip'],
+          useSubGraph: false,
+        })
+
+        // Update the graph with starter nodes
+        addNewNode({
+          nodes: startedData?.nodes ? startedData?.nodes : [],
+          edges: startedData?.edges ? startedData.edges : [],
+        })
+
+        if (clipData?.nodes) {
+          const clipNodes = clipData.nodes
+            .filter((i) => i.properties?.timestamp)
+            .sort((a, b) => {
+              const startA = Number((a.properties?.timestamp as unknown as string)?.split('-')[0])
+              const startB = Number((b.properties?.timestamp as unknown as string)?.split('-')[0])
+
+              return startA - startB
+            })
+
+          setClips(clipNodes)
+        }
+      } catch (error) {
+        navigate('/')
+        console.error('Error fetching initial data:', error)
+      }
+    }
+
+    if (selectedEpisodeId) {
+      fetchInitialData()
+    }
+  }, [selectedEpisodeId, addNewNode, setClips, navigate])
+
+  useEffect(() => {
+    const fetchChapters = async () => {
+      try {
+        // Fetch the initial set of edges and nodes for the episode
+
+        const chaptersData = await fetchNodeEdges(selectedEpisodeId || '', 0, 50, {
+          nodeType: ['Chapter'],
+          useSubGraph: false,
+        })
+
+        if (chaptersData?.nodes) {
+          const chapterNodes = chaptersData?.nodes
+            .filter((i) => i.node_type === 'Chapter')
+            .sort(
+              (a, b) =>
+                timeToMilliseconds(a?.properties?.timestamp || '') - timeToMilliseconds(b?.properties?.timestamp || ''),
+            )
+
+          setChapters(chapterNodes)
+        }
+
+        // Update the graph with starter nodes
+      } catch (error) {
+        console.log('no chapters was fetched')
+      }
+    }
+
+    if (selectedEpisodeId) {
+      fetchChapters()
+    }
+  }, [selectedEpisodeId, setChapters])
+
+  useEffect(() => {
+    if (!clips) {
+      return
+    }
+
+    const processClipNodes = async () => {
+      try {
+        const refIds = clips?.map((node) => node.ref_id).filter(Boolean) || []
+
+        const combinedData: FetchDataResponse = {
+          nodes: nodesAndEdgesRef.current?.nodes || [],
+          edges: nodesAndEdgesRef.current?.edges || [],
+        }
+
+        // eslint-disable-next-line no-restricted-syntax
+        for (const refId of refIds) {
+          // eslint-disable-next-line no-await-in-loop
+          const data = await fetchNodeEdges(refId, 0, 50)
+
+          if (data) {
+            combinedData.nodes.push(...(data?.nodes || []))
+            combinedData.edges.push(...(data?.edges || []))
+
+            nodesAndEdgesRef.current = combinedData
+            setDataInitial({ ...combinedData })
+          }
+        }
+
+        // Update references and state after all requests complete
+      } catch (error) {
+        console.error('Error processing clip nodes:', error)
+      }
+    }
+
+    processClipNodes()
+  }, [clips])
 
   const handleNewNodeCreated = useCallback(
     (data: FetchDataResponse) => {
@@ -67,80 +209,6 @@ export const MindSet = () => {
     [addNewNode, isFetching],
   )
 
-  const handleNodeUpdated = useCallback((node: NodeExtended) => {
-    console.log(node, 'uuuuuupdate')
-  }, [])
-
-  useEffect(() => {
-    const init = async () => {
-      try {
-        const data = await fetchNodeEdges(selectedEpisodeId, 0, 50)
-
-        setDataInitial(data)
-
-        const [episodesAndClips, remainingNodes] = (data?.nodes || []).reduce<[Node[], Node[]]>(
-          ([matches, remaining], node) => {
-            if (['Episode', 'Show', 'Host', 'Guest'].includes(node.node_type)) {
-              matches.push(node)
-            } else {
-              remaining.push(node)
-            }
-
-            return [matches, remaining]
-          },
-          [[], []],
-        )
-
-        const refIds = new Set(episodesAndClips.map((n) => n.ref_id))
-
-        const [matchingLinks, remainingLinks] = (data?.edges || []).reduce<[Link[], Link[]]>(
-          ([matches, remaining], link) => {
-            if (refIds.has(link.source) && refIds.has(link.target)) {
-              matches.push(link)
-            } else {
-              remaining.push(link)
-            }
-
-            return [matches, remaining]
-          },
-          [[], []],
-        )
-
-        nodesAndEdgesRef.current = {
-          nodes: remainingNodes || [],
-          edges: remainingLinks || [],
-        }
-
-        handleNewNodeCreated({ nodes: episodesAndClips, edges: matchingLinks })
-      } catch (error) {
-        console.error(error)
-      }
-    }
-
-    if (selectedEpisodeId) {
-      init()
-    }
-  }, [selectedEpisodeId, handleNewNodeCreated])
-
-  useEffect(() => {
-    const init = async () => {
-      try {
-        const data = await getNode(selectedEpisodeId)
-
-        if (data) {
-          setPlayingNode(data)
-          setSelectedEpisode(data)
-        }
-      } catch (error) {
-        console.error(error)
-      }
-    }
-
-    if (selectedEpisodeId) {
-      init()
-    }
-  }, [selectedEpisodeId, setPlayingNode, setSelectedEpisode])
-
   useEffect(() => {
     if (socket) {
       socket.connect()
@@ -151,7 +219,6 @@ export const MindSet = () => {
 
       if (runningProjectId) {
         socket.on('new_node_created', handleNewNodeCreated)
-        socket.on('node_updated', handleNodeUpdated)
       }
     }
 
@@ -160,7 +227,7 @@ export const MindSet = () => {
         socket.off()
       }
     }
-  }, [socket, handleNodeUpdated, handleNewNodeCreated, runningProjectId])
+  }, [socket, handleNewNodeCreated, runningProjectId])
 
   useEffect(() => {
     const update = (time: number) => {
@@ -169,21 +236,44 @@ export const MindSet = () => {
       if (previousTimeRef.current !== null) {
         const deltaTime = time - previousTimeRef.current
 
-        if (deltaTime > 2000) {
+        if (deltaTime > 1000) {
           if (nodesAndEdgesRef.current && playerRef) {
             const { nodes, edges } = nodesAndEdgesRef.current
             const currentTime = playerRef?.getCurrentTime()
 
-            const edgesWithTimestamp = edges.filter(
-              (edge) => edge?.properties?.start !== undefined && (edge?.properties?.start as number) < currentTime,
+            const [matchingLinks, remainingLinks] = edges.reduce<[Link[], Link[]]>(
+              ([matches, remaining], link) => {
+                if (link?.properties?.start !== undefined && (link?.properties?.start as number) < currentTime + 1) {
+                  matches.push(link)
+                } else {
+                  remaining.push(link)
+                }
+
+                return [matches, remaining]
+              },
+              [[], []],
             )
 
-            const newNodes = nodes.filter((node) =>
-              edgesWithTimestamp.some((edge) => edge.target === node.ref_id || edge.source === node.ref_id),
+            const [matchingNodes, remainingNodes] = nodes.reduce<[Node[], Node[]]>(
+              ([matches, remaining], node) => {
+                if (matchingLinks.some((edge) => edge.target === node.ref_id || edge.source === node.ref_id)) {
+                  matches.push(node)
+                } else {
+                  remaining.push(node)
+                }
+
+                return [matches, remaining]
+              },
+              [[], []],
             )
 
-            if (newNodes.length || edgesWithTimestamp.length) {
-              addNewNode({ nodes: newNodes, edges: edgesWithTimestamp })
+            nodesAndEdgesRef.current = {
+              nodes: remainingNodes,
+              edges: remainingLinks,
+            }
+
+            if (matchingNodes.length || matchingLinks.length) {
+              addNewNode({ nodes: matchingNodes, edges: matchingLinks })
             }
           }
 
@@ -239,8 +329,8 @@ export const MindSet = () => {
   }, [dataInitial])
 
   return (
-    <Flex direction="row" style={{ height: '100%' }}>
-      {selectedEpisodeId ? (
+    <MainContainer>
+      <ContentWrapper direction="row">
         <>
           <Flex>
             <Flex onClick={() => setShowTwoD(!showTwoD)}>
@@ -248,17 +338,40 @@ export const MindSet = () => {
             </Flex>
             <SideBar />
           </Flex>
-          <Flex basis="100%" grow={1} p={16} shrink={1}>
+          <ContentContainer>
             <Flex basis="100%" grow={1} shrink={1}>
-              {showTwoD ? <Scene /> : <Universe />}
+              <Universe />
             </Flex>
-
-            <PlayerControl markers={markers} />
-          </Flex>
+          </ContentContainer>
         </>
-      ) : (
-        <LandingPage />
-      )}
-    </Flex>
+      </ContentWrapper>
+      <PlayerControlWrapper>
+        <PlayerControl chapters={chapters} markers={markers} />
+      </PlayerControlWrapper>
+    </MainContainer>
   )
 }
+
+const MainContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100%;
+`
+
+const ContentWrapper = styled(Flex)`
+  flex: 1;
+  overflow: hidden;
+`
+
+const ContentContainer = styled(Flex)`
+  flex-basis: 100%;
+  flex-shrink: 1;
+  flex-grow: 1;
+  padding: 16px 16px 16px 0;
+`
+
+const PlayerControlWrapper = styled(Flex)`
+  padding: 16px 16px 16px 0;
+  margin-left: 18px;
+`
