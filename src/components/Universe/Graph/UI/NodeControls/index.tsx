@@ -39,7 +39,7 @@ export const NodeControls = memo(() => {
   const { open: createBountyModal } = useModal('createBounty')
 
   const [isAdmin] = useUserStore((s) => [s.isAdmin])
-  const { addNewNode, setGraph } = useDataStore((s) => s)
+  const { addNewNode, setGraph, resetData } = useDataStore((s) => s)
 
   const selectedNode = useSelectedNode()
 
@@ -169,8 +169,9 @@ export const NodeControls = memo(() => {
       const res = await analyzeGitHubRepository(githubName)
 
       if (res) {
+        resetData()
         setSelectedNode(null)
-
+        addNewNode({ nodes: res.functions, edges: [] })
         setGraph({ nodes: res.functions })
       }
     } catch (error) {
