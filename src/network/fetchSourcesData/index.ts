@@ -190,6 +190,12 @@ export const getNodes = async (): Promise<FetchDataResponse> => {
   return response
 }
 
+export const postFeedback = async (data: { answer: string; chain: string; feedback_type: 'helpful' | 'unhelpful' }) => {
+  const response = await api.post('/answer/feedback', JSON.stringify(data))
+
+  return response
+}
+
 export const editNodeSchemaUpdate = async (ref_id: string, data: UpdateSchemaParams) => {
   const response = await api.put(`/schema/${ref_id}`, JSON.stringify(data))
 

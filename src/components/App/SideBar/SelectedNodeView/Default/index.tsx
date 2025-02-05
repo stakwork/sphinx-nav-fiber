@@ -2,14 +2,16 @@ import Button from '@mui/material/Button'
 import clsx from 'clsx'
 import moment from 'moment'
 import React, { useEffect, useRef, useState } from 'react'
+import { Components } from 'react-markdown'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { okaidia } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import styled from 'styled-components'
+import { StyledMarkdown } from '~/components/App/SideBar/AiSummary/utils/AiSummaryHighlight/markdown'
 import { Booster } from '~/components/Booster'
 import { Divider } from '~/components/common/Divider'
 import { Flex } from '~/components/common/Flex'
 import { highlightSearchTerm } from '~/components/common/Highlight/Highlight'
-import { Text } from '~/components/common/Text'
+import { Text as MarkdownText, Text } from '~/components/common/Text'
 import { TypeBadge } from '~/components/common/TypeBadge'
 import AiPauseIcon from '~/components/Icons/AiPauseIcon'
 import AiPlayIcon from '~/components/Icons/AiPlayIcon'
@@ -219,6 +221,12 @@ const NodeDetail = ({ label, value, hasAudio, isPlaying, togglePlay }: Props) =>
   const isLong = (value as string).length > 140
   const searchTerm = useAppStore((s) => s.currentSearch)
 
+  const markdownComponents: Components = {
+    text: ({ children }) => (
+      <MarkdownText>{searchTerm ? highlightSearchTerm(String(children), searchTerm) : children}</MarkdownText>
+    ),
+  }
+
   if (!value || label === 'Audio EN' || label === 'Source Link' || label === 'Image Url') {
     return null
   }
@@ -233,7 +241,9 @@ const NodeDetail = ({ label, value, hasAudio, isPlaying, togglePlay }: Props) =>
           )}
         </Text>
         {label !== 'Frame' && label !== 'Code' ? (
-          <Text className="node-detail__value">{highlightSearchTerm(String(value), searchTerm)}</Text>
+          <Text className="node-detail__value">
+            <StyledMarkdown components={markdownComponents}>{String(value)}</StyledMarkdown>
+          </Text>
         ) : (
           <SyntaxHighlighter language="javascript" style={okaidia}>
             {String(value)}
