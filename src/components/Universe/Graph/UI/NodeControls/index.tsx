@@ -171,7 +171,7 @@ export const NodeControls = memo(() => {
       if (res) {
         resetData()
         setSelectedNode(null)
-
+        addNewNode({ nodes: res.functions, edges: [] })
         setGraph({ nodes: res.functions })
       }
     } catch (error) {
