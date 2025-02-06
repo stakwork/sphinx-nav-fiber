@@ -1,4 +1,3 @@
-import { Button } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
@@ -28,20 +27,29 @@ export const Body = () => {
   const { normalizedSchemasByType, getSelectedActionDetail, removeSelectedActionDetail } = useSchemaStore((s) => s)
   const { pubKey } = useUserStore()
 
-  function handleActionClicked(action: ActionDetail) {
+  async function handleActionClicked(action: ActionDetail) {
     // set selected Action to state
     setSelectedAction(action)
 
     if (action.bounty) {
       setSteps(2)
-    } else {
-      setSteps(3)
+
+      return
     }
+
+    await handleSubmit(action)
   }
 
-  const handleSetBounty = (bountyPayload: BountyPayload) => {
+  const handleSetBounty = async (bountyPayload: BountyPayload) => {
     setBounty(bountyPayload)
-    setSteps(3)
+
+    if (selectedAction) {
+      await handleSubmit(selectedAction)
+
+      return
+    }
+
+    setErrMessage('Node Action not selected')
   }
 
   const cancelBounty = () => {
@@ -50,10 +58,42 @@ export const Body = () => {
     close()
   }
 
-  const handleActionClose = () => {
-    removeSelectedActionDetail()
+  const handleSubmit = async (action: ActionDetail) => {
+    if (!action) {
+      setErrMessage('Node Action not selected')
 
-    close()
+      return
+    }
+
+    setLoading(true)
+
+    try {
+      const payload = {
+        ref_id: selectedNode?.ref_id || '',
+        pubkey: pubKey,
+        action_name: action.name,
+        bounty,
+      }
+
+      await postNodeAction(payload)
+
+      close()
+      SuccessNotify('Node Action Submited Successfully')
+      removeSelectedActionDetail()
+      // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+    } catch (err: any) {
+      const newError = await err?.json()
+
+      if (newError) {
+        setErrMessage(newError.message || newError.errorCode)
+
+        return
+      }
+
+      setErrMessage('Unable to submit node action')
+    } finally {
+      setLoading(false)
+    }
   }
 
   useEffect(() => {
@@ -91,51 +131,19 @@ export const Body = () => {
     if (selectedActionFromStore.bounty) {
       setSteps(2)
     } else {
-      setSteps(3)
+      handleSubmit(selectedActionFromStore)
     }
 
     setLoadingPage(false)
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [normalizedSchemasByType, selectedNode, getSelectedActionDetail])
-
-  const handleSubmit = async () => {
-    setLoading(true)
-
-    if (!selectedAction) {
-      setErrMessage('Node Action not selected')
-
-      return
-    }
-
-    try {
-      const payload = {
-        ref_id: selectedNode?.ref_id || '',
-        pubkey: pubKey,
-        action_name: selectedAction.name,
-        bounty,
-      }
-
-      await postNodeAction(payload)
-
-      close()
-      SuccessNotify('Node Action Submited Successfully')
-      // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-    } catch (err: any) {
-      const newError = await err?.json()
-
-      if (newError) {
-        setErrMessage(newError.message || newError.errorCode)
-
-        return
-      }
-
-      setErrMessage('Unable to submit node action')
-    } finally {
-      setLoading(false)
-    }
-  }
 
   return (
     <>
+      <Flex align="center" direction="row" justify="space-between" mb={18}>
+        <StyledHeadingText>Node Action</StyledHeadingText>
+      </Flex>
       {loadingPage && (
         <ClipLoaderWrapper>
           <ClipLoader color={colors.lightGray} size={50} />{' '}
@@ -151,32 +159,12 @@ export const Body = () => {
         </Flex>
       )}
       {steps === 2 && <BountyBody cancelBounty={cancelBounty} setBounty={handleSetBounty} />}
-      {steps === 3 && (
-        <Flex mb={16} mt={16}>
-          <StyledText>Are you sure you want to Submit this action?</StyledText>
-          <Flex direction="row" mt={32}>
-            <Flex grow={1}>
-              <Button color="error" onClick={handleActionClose} size="large" variant="contained">
-                Cancel
-              </Button>
-            </Flex>
-            <Flex grow={1} ml={20}>
-              <Button
-                color="secondary"
-                disabled={loading}
-                onClick={handleSubmit}
-                size="large"
-                type="submit"
-                variant="contained"
-              >
-                Confirm
-              </Button>
-            </Flex>
-          </Flex>
-
-          {errMessage && <StyledError>{errMessage}</StyledError>}
+      {loading && (
+        <Flex align="center" justify="center" mt={20}>
+          <ClipLoader color={colors.lightGray} size={25} />
         </Flex>
       )}
+      {errMessage && <StyledError>{errMessage}</StyledError>}
     </>
   )
 }
@@ -209,4 +197,11 @@ const StyledError = styled(Flex)`
   margin-top: 0.75rem;
   padding-top: 1.25rem;
   align-items: center;
+`
+
+const StyledHeadingText = styled(Text)`
+  font-size: 1.5rem;
+  font-weight: 600;
+  font-family: 'Barlow';
+  margin-bottom: 6px;
 `
