@@ -181,18 +181,6 @@ export interface UpdateSchemaParams {
   }
 }
 
-type GithubRepositoryResponse = {
-  functions: NodeExtended[]
-}
-
-export const analyzeGitHubRepository = async (github_repository: string): Promise<GithubRepositoryResponse> => {
-  const url = `/github/analyze?github_repository=${github_repository}&analysis=["coverage"]`
-
-  const res = await api.get<GithubRepositoryResponse>(url)
-
-  return res
-}
-
 export const getNodes = async (): Promise<FetchDataResponse> => {
   const url = `/prediction/graph/search?node_type=['Episode']&include_properties=true&includeContent=true&sort_by=date`
 
