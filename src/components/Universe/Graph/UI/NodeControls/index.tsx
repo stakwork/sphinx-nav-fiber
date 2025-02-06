@@ -44,7 +44,7 @@ export const NodeControls = memo(() => {
   // const { open: createBountyModal } = useModal('createBounty')
 
   const [isAdmin] = useUserStore((s) => [s.isAdmin])
-  const { addNewNode, setGraph, resetData } = useDataStore((s) => s)
+  const { addNewNode } = useDataStore((s) => s)
 
   const selectedNode = useSelectedNode()
 
@@ -195,14 +195,7 @@ export const NodeControls = memo(() => {
 
   const handleAnalyzeTestCoverage = async (githubName: string) => {
     try {
-      const res = await analyzeGitHubRepository(githubName)
-
-      if (res) {
-        resetData()
-        setSelectedNode(null)
-        addNewNode({ nodes: res.functions, edges: [] })
-        setGraph({ nodes: res.functions })
-      }
+      await analyzeGitHubRepository(githubName)
     } catch (error) {
       console.error('error during test coverage analysis:', error)
     }
