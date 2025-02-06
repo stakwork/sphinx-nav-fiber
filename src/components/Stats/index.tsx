@@ -1,6 +1,7 @@
 import { noop } from 'lodash'
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
+import { Icons } from '~/components/Icons'
 import BudgetIcon from '~/components/Icons/BudgetIcon'
 import NodesIcon from '~/components/Icons/NodesIcon'
 import { Tooltip } from '~/components/common/ToolTip'
@@ -8,14 +9,13 @@ import { getStats, getTotalProcessing } from '~/network/fetchSourcesData'
 import { useDataStore } from '~/stores/useDataStore'
 import { useUpdateSelectedNode } from '~/stores/useGraphStore'
 import { useModal } from '~/stores/useModalStore'
+import { useSchemaStore } from '~/stores/useSchemaStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { TStats } from '~/types'
-import { formatBudget, formatStatsResponse } from '~/utils'
+import { formatBudget, formatNumberWithCommas, formatStatsResponse } from '~/utils'
 import { colors } from '~/utils/colors'
 import { Flex } from '../common/Flex'
 import { Animation } from './Animation'
-import { Icons } from '~/components/Icons'
-import { useSchemaStore } from '~/stores/useSchemaStore'
 
 export const Stats = () => {
   const [isTotalProcessing, setIsTotalProcessing] = useState(false)
@@ -119,7 +119,7 @@ export const Stats = () => {
                 <div className="icon">
                   <Icon />
                 </div>
-                <div className="text">{stats[key as keyof TStats]}</div>
+                <div className="text">{formatNumberWithCommas(stats[key as keyof TStats] ?? 0)}</div>
               </Tooltip>
             </Stat>
           ) : (
