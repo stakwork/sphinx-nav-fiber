@@ -26,7 +26,6 @@ import { colors } from '~/utils/colors'
 import { updateBudget } from '~/utils/setBudget'
 import version from '~/utils/versionHelper'
 import { ModalsContainer } from '../ModalsContainer'
-import { useNodeNavigation } from '../Universe/useNodeNavigation'
 import { ActionsToolbar } from './ActionsToolbar'
 import { AppBar } from './AppBar'
 import { DeviceCompatibilityNotice } from './DeviceCompatibilityNotification'
@@ -83,8 +82,6 @@ export const App = () => {
 
   const { setAiSummaryAnswer, getKeyExist, aiRefId } = useAiSummaryStore((s) => s)
 
-  const { navigateToNode } = useNodeNavigation()
-
   const [realtimeGraphFeatureFlag, chatInterfaceFeatureFlag] = useFeatureFlagStore((s) => [
     s.realtimeGraphFeatureFlag,
     s.chatInterfaceFeatureFlag,
@@ -100,21 +97,11 @@ export const App = () => {
     setValue('search', query ?? '')
 
     setTranscriptOpen(false)
-    navigateToNode(null)
     setRelevanceSelected(false)
     setCurrentSearch(query ?? '')
     setTeachMeAnswer('')
     setCategoryFilter(null)
-  }, [
-    navigateToNode,
-    query,
-    setCategoryFilter,
-    setCurrentSearch,
-    setRelevanceSelected,
-    setTeachMeAnswer,
-    setTranscriptOpen,
-    setValue,
-  ])
+  }, [query, setCategoryFilter, setCurrentSearch, setRelevanceSelected, setTeachMeAnswer, setTranscriptOpen, setValue])
 
   useEffect(() => {
     const runSearch = async () => {
@@ -123,15 +110,13 @@ export const App = () => {
 
       if (searchTerm) {
         await updateBudget(setBudget)
-      } else {
-        navigateToNode(null)
       }
     }
 
     resetData()
 
     runSearch()
-  }, [searchTerm, fetchData, setBudget, setAbortRequests, setSidebarOpen, navigateToNode, resetData])
+  }, [searchTerm, fetchData, setBudget, setAbortRequests, setSidebarOpen, resetData])
 
   const handleNewNode = useCallback(() => {
     setNodeCount('INCREMENT')
