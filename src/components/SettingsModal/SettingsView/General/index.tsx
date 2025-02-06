@@ -89,7 +89,7 @@ export const General: FC<Props> = ({ initialValues, onClose }) => {
             </Flex>
           </Flex>
 
-          <Flex mt={210} py={error ? 0 : 24}>
+          <Flex mt={180} py={error ? 0 : 24}>
             <Button
               color="secondary"
               disabled={isSubmitting}
