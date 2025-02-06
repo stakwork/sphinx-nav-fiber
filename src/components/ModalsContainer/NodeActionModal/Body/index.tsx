@@ -10,6 +10,7 @@ import { BountyPayload } from '~/network/postBounty'
 import { useSelectedNode } from '~/stores/useGraphStore'
 import { useModal } from '~/stores/useModalStore'
 import { useSchemaStore } from '~/stores/useSchemaStore'
+import { useUserStore } from '~/stores/useUserStore'
 import { ActionDetail } from '~/types'
 import { colors } from '~/utils'
 import { Body as BountyBody } from '../../CreateBountyModal/Body'
@@ -25,6 +26,7 @@ export const Body = () => {
   const { close } = useModal('nodeAction')
   const selectedNode = useSelectedNode()
   const { normalizedSchemasByType, getSelectedActionDetail, removeSelectedActionDetail } = useSchemaStore((s) => s)
+  const { pubKey } = useUserStore()
 
   function handleActionClicked(action: ActionDetail) {
     // set selected Action to state
@@ -107,6 +109,7 @@ export const Body = () => {
     try {
       const payload = {
         ref_id: selectedNode?.ref_id || '',
+        pubkey: pubKey,
         action_name: selectedAction.name,
         bounty,
       }

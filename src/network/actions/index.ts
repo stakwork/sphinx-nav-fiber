@@ -10,6 +10,7 @@ interface ActionDetailsResponse {
 interface NodeActionPayload {
   ref_id: string
   action_name: string
+  pubkey: string
   bounty: BountyPayload | null
 }
 
