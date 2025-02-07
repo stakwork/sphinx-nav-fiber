@@ -40,7 +40,7 @@ export const SearchHeader = () => {
   const [isAIChatActive, setIsAIChatActive] = useState(false)
 
   const { setAbortRequests, resetData } = useDataStore((s) => s)
-  const [setBudget] = useUserStore((s) => [s.setBudget])
+  const { setBudget } = useUserStore((s) => s)
 
   const resetAiSummaryAnswer = useAiSummaryStore((s) => s.resetAiSummaryAnswer)
   const fetchAIData = useAiSummaryStore((s) => s.fetchAIData)
