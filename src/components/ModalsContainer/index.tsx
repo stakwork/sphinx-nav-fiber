@@ -54,6 +54,10 @@ const LazyBriefDescriptionModal = lazy(() =>
   import('./BriefDescriptionModal').then(({ BriefDescription }) => ({ default: BriefDescription })),
 )
 
+const LazyNodeActionModal = lazy(() =>
+  import('./NodeActionModal').then(({ NodeActionModal }) => ({ default: NodeActionModal })),
+)
+
 export const ModalsContainer = () => (
   <>
     <LazyAddItemModal />
@@ -70,5 +74,6 @@ export const ModalsContainer = () => (
     <LazyCreateBountyModal />
     <LazyOnboardingModal />
     <LazyBriefDescriptionModal />
+    <LazyNodeActionModal />
   </>
 )

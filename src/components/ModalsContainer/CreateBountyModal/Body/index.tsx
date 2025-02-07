@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { SuccessNotify } from '~/components/common/SuccessToast'
-import { postBountyData } from '~/network/postBounty'
+import { BountyPayload, postBountyData } from '~/network/postBounty'
 import { useSelectedNode } from '~/stores/useGraphStore'
 import { useModal } from '~/stores/useModalStore'
 import { useUserStore } from '~/stores/useUserStore'
@@ -14,7 +14,12 @@ export type FormData = {
   workspaceUuid: string
 } & Partial<{ [k: string]: string }>
 
-export const Body = () => {
+interface Props {
+  setBounty?: (bounty: BountyPayload) => void
+  cancelBounty?: () => void
+}
+
+export const Body = ({ setBounty, cancelBounty }: Props) => {
   const [errMessage, setErrMessage] = useState<string>('')
   const { close } = useModal('createBounty')
   const selectedNode = useSelectedNode()
@@ -26,7 +31,12 @@ export const Body = () => {
     setValue('budget', '')
     setValue('nodeType', '')
     setValue('workspaceUuid', '')
-    close()
+
+    if (cancelBounty) {
+      cancelBounty()
+    } else {
+      close()
+    }
   }
 
   const onSubmit = async (data: FormData) => {
@@ -45,8 +55,12 @@ export const Body = () => {
         pub_key: pubKey,
       }
 
-      await postBountyData(payload)
-      SuccessNotify('Bounty Created')
+      if (setBounty) {
+        setBounty(payload)
+      } else {
+        await postBountyData(payload)
+        SuccessNotify('Bounty Created')
+      }
       // eslint-disable-next-line  @typescript-eslint/no-explicit-any
     } catch (err: any) {
       setErrMessage(err)
@@ -54,7 +68,7 @@ export const Body = () => {
       setValue('budget', '')
       setValue('nodeType', '')
       setValue('workspaceUuid', '')
-      handleClose()
+      close()
     }
   }
 

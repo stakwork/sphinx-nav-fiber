@@ -1,27 +1,28 @@
 import Popover from '@mui/material/Popover'
 import { Html } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
-import React, { memo, useCallback, useMemo, useRef } from 'react'
+import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { MdClose, MdViewInAr } from 'react-icons/md'
 import styled from 'styled-components'
 import { Group, Vector3 } from 'three'
+import { Flex } from '~/components/common/Flex'
 import { useGraphData } from '~/components/DataRetriever'
 import AddCircleIcon from '~/components/Icons/AddCircleIcon'
 import ConstructionIcon from '~/components/Icons/ConstructionIcon'
 import DocumentIcon from '~/components/Icons/DocumentIcon'
 import EditIcon from '~/components/Icons/EditIcon'
-import MergeIcon from '~/components/Icons/MergeIcon'
 import NodesIcon from '~/components/Icons/NodesIcon'
 import PlusIcon from '~/components/Icons/PlusIcon'
 import RobotIcon from '~/components/Icons/RobotIcon'
-import { Flex } from '~/components/common/Flex'
+import { getActionDetails } from '~/network/actions'
 import { fetchNodeEdges } from '~/network/fetchGraphData'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
 import { useGraphStore, useSelectedNode } from '~/stores/useGraphStore'
 import { useModal } from '~/stores/useModalStore'
+import { useSchemaStore } from '~/stores/useSchemaStore'
 import { useUserStore } from '~/stores/useUserStore'
-import { NodeExtended } from '~/types'
+import { ActionDetail, NodeExtended } from '~/types'
 import { colors } from '~/utils/colors'
 import { buttonColors } from './constants'
 
@@ -30,12 +31,16 @@ const reuseableVector3 = new Vector3()
 export const NodeControls = memo(() => {
   const ref = useRef<Group | null>(null)
   const setSidebarOpen = useAppStore((s) => s.setSidebarOpen)
+  const { normalizedSchemasByType, setSelectedActionDetail } = useSchemaStore((s) => s)
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
+  const [nodeActions, setNodeActions] = useState<ActionDetail[]>([])
 
   const { open: openEditNodeNameModal } = useModal('editNodeName')
-  const { open: addEdgeToNodeModal } = useModal('addEdgeToNode')
-  const { open: mergeTopicModal } = useModal('mergeToNode')
-  const { open: createBountyModal } = useModal('createBounty')
+  const { open: openNodeAction } = useModal('nodeAction')
+
+  // const { open: addEdgeToNodeModal } = useModal('addEdgeToNode')
+  // const { open: mergeTopicModal } = useModal('mergeToNode')
+  // const { open: createBountyModal } = useModal('createBounty')
 
   const [isAdmin] = useUserStore((s) => [s.isAdmin])
   const [addNewNode] = useDataStore((s) => [s.addNewNode])
@@ -157,6 +162,28 @@ export const NodeControls = memo(() => {
     setSelectedNode,
   ])
 
+  const nodeType = selectedNode?.node_type
+
+  useEffect(() => {
+    async function handleGetActionDetails() {
+      try {
+        if (!normalizedSchemasByType[nodeType!]) {
+          return
+        }
+
+        const { action } = normalizedSchemasByType[nodeType!]
+
+        const res = await getActionDetails(action!)
+
+        setNodeActions(res.actions)
+      } catch (error) {
+        console.error(error)
+      }
+    }
+
+    handleGetActionDetails()
+  }, [normalizedSchemasByType, nodeType])
+
   if (!selectedNode) {
     return null
   }
@@ -165,13 +192,19 @@ export const NodeControls = memo(() => {
     setAnchorEl(null)
   }
 
+  const handleNodeAction = (action: ActionDetail) => {
+    setSelectedActionDetail(action)
+    openNodeAction()
+    handleClose()
+  }
+
   const open = Boolean(anchorEl)
 
   const id = open ? 'simple-popover' : undefined
 
   const isRepository = selectedNode?.node_type?.toLowerCase() === 'repository'
 
-  const isShowCreateTestButton = !!(selectedNode && selectedNode?.node_type?.toLowerCase() === 'function')
+  // const isShowCreateTestButton = !!(selectedNode && selectedNode?.node_type?.toLowerCase() === 'function')
 
   return (
     <group ref={ref} position={[selectedNode.x, selectedNode.y, selectedNode.z]}>
@@ -204,7 +237,7 @@ export const NodeControls = memo(() => {
           </IconButton>
         ))}
 
-        {isShowCreateTestButton && (
+        {/* {isShowCreateTestButton && (
           <CreateTestButton
             left={2}
             onClick={() => {
@@ -213,7 +246,7 @@ export const NodeControls = memo(() => {
           >
             Create Test
           </CreateTestButton>
-        )}
+        )} */}
 
         <PopoverWrapper
           anchorEl={anchorEl}
@@ -225,7 +258,18 @@ export const NodeControls = memo(() => {
         >
           {!isRepository ? (
             <>
-              <PopoverOption
+              {nodeActions.map((action) => (
+                <PopoverOption
+                  key={action.name}
+                  data-testid={action.name}
+                  onClick={() => {
+                    handleNodeAction(action)
+                  }}
+                >
+                  {action.display_name}
+                </PopoverOption>
+              ))}
+              {/* <PopoverOption
                 data-testid="merge"
                 onClick={() => {
                   mergeTopicModal()
@@ -243,7 +287,7 @@ export const NodeControls = memo(() => {
               >
                 <AddCircleIcon data-testid="AddCircleIcon" />
                 Add edge
-              </PopoverOption>
+              </PopoverOption> */}
             </>
           ) : (
             <>
@@ -371,23 +415,23 @@ const IconWrapper = styled.div`
   }
 `
 
-const CreateTestButton = styled.div<ButtonProps>`
-  position: fixed;
-  top: 40px;
-  left: ${(p: ButtonProps) => -53 + p.left}px;
-  width: 100px;
-  padding: 6px;
-  border-radius: 4px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: ${colors.createTestButton};
-  color: ${colors.black};
-  font-size: 14px;
-  font-family: Barlow;
-  font-weight: 600;
-  cursor: pointer;
-  &:hover {
-    transform: scale(1.05);
-  }
-`
+// const CreateTestButton = styled.div<ButtonProps>`
+//   position: fixed;
+//   top: 40px;
+//   left: ${(p: ButtonProps) => -53 + p.left}px;
+//   width: 100px;
+//   padding: 6px;
+//   border-radius: 4px;
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+//   background: ${colors.createTestButton};
+//   color: ${colors.black};
+//   font-size: 14px;
+//   font-family: Barlow;
+//   font-weight: 600;
+//   cursor: pointer;
+//   &:hover {
+//     transform: scale(1.05);
+//   }
+// `

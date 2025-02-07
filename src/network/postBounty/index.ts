@@ -1,7 +1,7 @@
 import { api, request } from '~/network/api'
 import { TRIBE_BASE_URL } from '~/utils/constants'
 
-type BountyPayload = {
+export type BountyPayload = {
   type: string
   amount: number
   workspace_uuid: string
