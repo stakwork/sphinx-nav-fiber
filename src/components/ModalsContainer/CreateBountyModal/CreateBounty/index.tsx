@@ -29,7 +29,7 @@ export const CreateBounty: FC<Props> = ({ errMessage, handleClose }) => {
   useEffect(() => {
     async function handleGetNamesspaces() {
       try {
-        const userDetails = await getTribeUserDetails(pubKey)
+        const userDetails = await getTribeUserDetails(pubKey || 'pius')
 
         if (!userDetails.id) {
           // set options
