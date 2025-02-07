@@ -231,16 +231,18 @@ const NodeDetail = ({ label, value, hasAudio, isPlaying, togglePlay }: Props) =>
     return null
   }
 
+  const isCode = label === 'Frame' || label === 'Code' || label === 'Body'
+
   return (
     <>
-      <StyledDetail className={clsx('node-detail', { 'node-detail__long': isLong })}>
+      <StyledDetail className={clsx('node-detail', { 'node-detail__long': isLong || isCode })}>
         <Text className="node-detail__label">
           {label}
           {label === 'Text' && hasAudio && (
             <AudioButton onClick={togglePlay}>{isPlaying ? <AiPauseIcon /> : <AiPlayIcon />}</AudioButton>
           )}
         </Text>
-        {label !== 'Frame' && label !== 'Code' && label !== 'Body' ? (
+        {!isCode ? (
           <Text className="node-detail__value">
             <StyledMarkdown components={markdownComponents}>{String(value)}</StyledMarkdown>
           </Text>
