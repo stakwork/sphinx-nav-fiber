@@ -18,7 +18,7 @@ export const AiSearch = ({ contextSearch }: { contextSearch?: boolean }) => {
   const { setBudget } = useUserStore((s) => s)
   const { reset } = form
   const fetchAIData = useAiSummaryStore((s) => s.fetchAIData)
-  const [selectedNode] = useGraphStore((s) => [s.selectedNode])
+  const { selectedNode } = useGraphStore((s) => s)
   const normalizedSchemasByType = useSchemaStore((s) => s.normalizedSchemasByType)
 
   const isLoading = useHasAiChatsResponseLoading()

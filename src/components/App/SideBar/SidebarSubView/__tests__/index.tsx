@@ -28,6 +28,10 @@ jest.mock('react-hook-form', () => ({
   useFormContext: jest.fn(() => ({
     register: jest.fn(),
   })),
+  useForm: jest.fn(() => ({
+    register: jest.fn(),
+    handleSubmit: jest.fn((fn) => (event) => fn(event)),
+  })),
 }))
 
 jest.mock('~/stores/useDataStore', () => ({
