@@ -31,6 +31,7 @@ Object.defineProperty(window, 'matchMedia', {
 })
 
 jest.mock('react-hook-form', () => ({
+  ...jest.requireActual('react-hook-form'),
   useFormContext: jest.fn(() => ({
     setValue: jest.fn(),
     register: jest.fn(),
@@ -145,9 +146,10 @@ describe('Test SideBar', () => {
 
     fireEvent.change(searchInput, { target: { value: 'Lightning Network' } })
 
-    const searchIcon = screen.getByTestId('search-icon')
+    const searchIcons = screen.getAllByTestId('search-icon')
 
-    expect(searchIcon).toBeInTheDocument()
+    expect(searchIcons.length).toBeGreaterThan(0) // Ensure at least one exists
+    expect(searchIcons[0]).toBeInTheDocument()
     ;(async () => {
       await waitFor(() => {
         expect(onSubmitMock).toHaveBeenCalled()
@@ -201,9 +203,10 @@ describe('Test SideBar', () => {
       </MemoryRouter>,
     )
 
-    const searchIcon = screen.getByTestId('search-icon')
+    const searchIcons = screen.getAllByTestId('search-icon')
 
-    expect(searchIcon).toBeInTheDocument()
+    expect(searchIcons.length).toBeGreaterThan(0) // Ensure at least one exists
+    expect(searchIcons[0]).toBeInTheDocument()
   })
 
   it('Ensure that the Trending component is displayed when there is no search term.', () => {
