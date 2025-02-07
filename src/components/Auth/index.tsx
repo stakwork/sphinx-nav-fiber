@@ -70,8 +70,7 @@ export const AuthGuard = ({ children }: PropsWithChildren) => {
           setSwarmUiUrl(res.data.swarmUiUrl)
         }
 
-        // setIsAdmin(isAdmin)
-        setIsAdmin(true)
+        setIsAdmin(isAdmin)
         setTrendingTopicsFeatureFlag(res.data.trendingTopics)
         setQueuedSourcesFeatureFlag(res.data.queuedSources)
         setCustomSchemaFeatureFlag(res.data.customSchema)
