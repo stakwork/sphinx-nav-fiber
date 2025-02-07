@@ -136,6 +136,7 @@ export interface Schema {
   image_url?: string
   source_link?: string
   attributes?: { [key: string]: string | boolean }
+  action?: string[]
 }
 
 export interface SchemaLink {
