@@ -4,7 +4,7 @@ import React, { ReactElement } from 'react'
 import { FormProvider, useForm, useFormContext } from 'react-hook-form'
 import { MemoryRouter } from 'react-router-dom'
 import { ThemeProvider as StyleThemeProvider } from 'styled-components'
-import { RegularView } from '..'
+import { SearchHeader } from '..'
 import { appTheme } from '../../../Providers'
 
 const QUERY_SEARCH = 'satoshi'
@@ -48,7 +48,7 @@ const renderWithProviders = (ui: ReactElement): RenderResult => {
   )
 }
 
-describe('RegularView Component', () => {
+describe('SearchHeader Component', () => {
   let setValueMock: jest.Mock
 
   beforeEach(() => {
@@ -64,12 +64,12 @@ describe('RegularView Component', () => {
   })
 
   it('should call setValue with "search" and the correct query value on mount', () => {
-    renderWithProviders(<RegularView />)
+    renderWithProviders(<SearchHeader />)
     expect(setValueMock).toHaveBeenCalledWith('search', QUERY_SEARCH)
   })
 
   it('should display the correct search query in the input field', () => {
-    const { queryByTestId } = renderWithProviders(<RegularView />)
+    const { queryByTestId } = renderWithProviders(<SearchHeader />)
     const searchInput = queryByTestId('search_input') as HTMLInputElement
 
     expect(searchInput.value).toBe(QUERY_SEARCH)
