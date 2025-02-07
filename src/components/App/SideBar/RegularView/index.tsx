@@ -2,7 +2,7 @@ import clsx from 'clsx'
 import React, { useEffect, useRef, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { ClipLoader } from 'react-spinners'
+import { BeatLoader, ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
 import { SelectWithPopover } from '~/components/App/SideBar/Dropdown'
 import { FilterSearch } from '~/components/App/SideBar/FilterSearch'
@@ -12,7 +12,6 @@ import SearchFilterIcon from '~/components/Icons/SearchFilterIcon'
 import SearchIcon from '~/components/Icons/SearchIcon'
 import { SearchBar } from '~/components/SearchBar'
 import { Flex } from '~/components/common/Flex'
-import { FetchLoaderText } from '~/components/common/Loader'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore, useFilteredNodes } from '~/stores/useDataStore'
 import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
@@ -126,7 +125,9 @@ export const RegularView = () => {
         {searchTerm && (
           <SearchDetails>
             {isLoading ? (
-              <FetchLoaderText />
+              <SearchLoader>
+                Searching <BeatLoader color={colors.SECONDARY_BLUE} size={2} />
+              </SearchLoader>
             ) : (
               <>
                 <div className="left">
@@ -265,4 +266,10 @@ const IconWrapper = styled.div<{ isFilterOpen: boolean }>`
     color: ${({ isFilterOpen }) => (isFilterOpen ? colors.black : colors.GRAY7)};
     fill: none;
   }
+`
+
+const SearchLoader = styled(Flex)`
+  display: flex;
+  align-items: baseline;
+  flex-direction: row;
 `
