@@ -6,7 +6,7 @@ import { AppProviders } from '../App/Providers'
 import { AuthGuard } from '../Auth'
 import { LandingPage } from '../mindset/components/LandingPage'
 
-// Lazy-loaded components
+// Lazy-loaded componentss
 const LazyApp = lazy(() => import('../App').then(({ App }) => ({ default: App })))
 const LazyMindSet = lazy(() => import('../mindset').then(({ MindSet }) => ({ default: MindSet })))
 
