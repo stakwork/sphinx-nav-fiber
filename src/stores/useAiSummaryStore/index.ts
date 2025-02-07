@@ -37,6 +37,7 @@ export type AiSummaryStore = {
     setAbortRequests: (status: boolean) => void,
     AISearchQuery?: string,
     params?: FetchNodeParams,
+    context?: string,
   ) => void
   newLoading: AIEntity | null
 }
@@ -76,16 +77,17 @@ export const useAiSummaryStore = create<AiSummaryStore>()(
 
     setAiRefId: (aiRefId) => set({ aiRefId }),
 
-    fetchAIData: async (setBudget, setAbortRequests, AISearchQuery = '', params) => {
+    fetchAIData: async (setBudget, setAbortRequests, AISearchQuery = '', params, context) => {
       const { filters, addNewNode } = useDataStore.getState()
       const currentPage = filters.skip
       const itemsPerPage = filters.limit
       const { currentSearch } = useAppStore.getState()
       const { setAiSummaryAnswer, setNewLoading, aiRefId } = get()
+      const fullAiSearchQuery = context ? `${context} ${AISearchQuery}` : AISearchQuery
 
       const ai = { ai_summary: String(!!AISearchQuery) }
 
-      addNewNode({ nodes: [{ ...QuestionNode, name: AISearchQuery, ref_id: AISearchQuery }], edges: [] })
+      addNewNode({ nodes: [{ ...QuestionNode, name: fullAiSearchQuery, ref_id: fullAiSearchQuery }], edges: [] })
 
       if (AISearchQuery) {
         setNewLoading({ question: AISearchQuery, answerLoading: true })
@@ -101,7 +103,7 @@ export const useAiSummaryStore = create<AiSummaryStore>()(
       abortController = controller
 
       const { node_type: filterNodeTypes, ...withoutNodeType } = filters
-      const word = AISearchQuery || currentSearch
+      const word = fullAiSearchQuery || currentSearch
 
       const isLatest = isEqual(filters, defaultFilters) && !word
 

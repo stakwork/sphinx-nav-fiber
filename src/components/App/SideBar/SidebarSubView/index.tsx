@@ -1,12 +1,13 @@
 import { Slide } from '@mui/material'
 import styled from 'styled-components'
+import { Flex } from '~/components/common/Flex'
 import ChevronLeftIcon from '~/components/Icons/ChevronLeftIcon'
 import CloseIcon from '~/components/Icons/CloseIcon'
-import { Flex } from '~/components/common/Flex'
 import { useAppStore } from '~/stores/useAppStore'
 import { useGraphStore, useSelectedNode } from '~/stores/useGraphStore'
 import { usePlayerStore } from '~/stores/usePlayerStore'
 import { colors } from '~/utils/colors'
+import { AiSearch } from '../AiSearch'
 import { SelectedNodeView } from '../SelectedNodeView'
 import { MediaPlayer } from './MediaPlayer'
 
@@ -29,9 +30,12 @@ export const SideBarSubView = ({ open }: Props) => {
     >
       <Wrapper>
         <MediaPlayer key={playingNode?.ref_id} hidden={selectedNode?.ref_id !== playingNode?.ref_id} />
-        <ScrollWrapper>
-          <SelectedNodeView />
-        </ScrollWrapper>
+        <AiSearchScrollWrapper>
+          <ScrollWrapper>
+            <SelectedNodeView />
+          </ScrollWrapper>
+          <AiSearch contextSearch />
+        </AiSearchScrollWrapper>
         <CloseButton
           data-testid="close-sidebar-sub-view"
           onClick={() => {
@@ -78,6 +82,11 @@ const CloseButton = styled(Flex)`
 
   &:active {
   }
+`
+
+const AiSearchScrollWrapper = styled(Flex)`
+  flex: 1 1 100%;
+  overflow: hidden;
 `
 
 const ScrollWrapper = styled(Flex)`
