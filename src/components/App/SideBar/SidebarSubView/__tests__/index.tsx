@@ -25,13 +25,22 @@ Object.defineProperty(window, 'matchMedia', {
 })
 
 jest.mock('react-hook-form', () => ({
+  ...jest.requireActual('react-hook-form'),
   useFormContext: jest.fn(() => ({
+    setValue: jest.fn(),
     register: jest.fn(),
+    watch: jest.fn(() => ''),
   })),
   useForm: jest.fn(() => ({
     register: jest.fn(),
     handleSubmit: jest.fn((fn) => (event) => fn(event)),
+    reset: jest.fn((fn) => () => fn()),
   })),
+}))
+
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useNavigate: jest.fn(),
 }))
 
 jest.mock('~/stores/useDataStore', () => ({
@@ -67,7 +76,7 @@ const mockSelectedNode = {
 describe('Test SideBarSubView', () => {
   beforeEach(() => {
     jest.clearAllMocks()
-    useDataStoreMock.mockReturnValue({ setTeachMe: jest.fn(), showTeachMe: false })
+    useDataStoreMock.mockReturnValue({ setTeachMe: jest.fn(), showTeachMe: false, setAbortRequests: jest.fn() })
     useGraphStoreMock.mockReturnValue({ setSelectedNode: jest.fn() })
     useSelectedNodeMock.mockReturnValue(mockSelectedNode)
     useAppStoreMock.mockReturnValue({ setSidebarOpen: jest.fn() })
