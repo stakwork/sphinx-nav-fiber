@@ -150,6 +150,7 @@ export const AiSummary = ({ question, response, refId }: Props) => {
           ) : (
             <AiAnswer
               answer={response.answer || ''}
+              chain={refId}
               entities={response.entities}
               handleLoaded={() => handleLoaded()}
               hasAudio={!!response.audio_en}

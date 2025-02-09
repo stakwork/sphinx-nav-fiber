@@ -136,6 +136,7 @@ export interface Schema {
   image_url?: string
   source_link?: string
   attributes?: { [key: string]: string | boolean }
+  action?: string[]
 }
 
 export interface SchemaLink {
@@ -185,6 +186,12 @@ export const getNodes = async (): Promise<FetchDataResponse> => {
   const url = `/prediction/graph/search?node_type=['Episode']&include_properties=true&includeContent=true&sort_by=date`
 
   const response = await api.get<FetchDataResponse>(url)
+
+  return response
+}
+
+export const postFeedback = async (data: { answer: string; chain: string; feedback_type: 'helpful' | 'unhelpful' }) => {
+  const response = await api.post('/answer/feedback', JSON.stringify(data))
 
   return response
 }

@@ -1,6 +1,6 @@
 import { Instances } from '@react-three/drei'
 import { memo, useMemo } from 'react'
-import { BufferGeometry, TorusGeometry } from 'three'
+import { BufferGeometry, Shape, ShapeGeometry } from 'three'
 import { useDataStore, useNodeTypes } from '~/stores/useDataStore'
 import { useSelectedNode } from '~/stores/useGraphStore'
 import { useSchemaStore } from '~/stores/useSchemaStore'
@@ -44,13 +44,54 @@ const _NodePoints = () => {
   const dataInitial = useDataStore((s) => s.dataInitial)
   const { normalizedSchemasByType } = useSchemaStore((s) => s)
   const nodeTypes = useNodeTypes()
-  const ringGeometry = useMemo(() => new TorusGeometry(30, 0.5, 16, 100), [])
+
+  // Create a rounded rectangle geometry
+  const roundedRectGeometry = useMemo(() => {
+    // Set your desired dimensions and corner radius
+    const width = 30
+    const height = 30
+    const radius = 6
+
+    // Create a shape and draw the rectangle
+    const shape = new Shape()
+
+    // Start at the bottom left, but offset to account for the left rounding.
+    // This will be the end point of the bottom-left corner curve.
+    shape.moveTo(-width / 2 + radius, -height / 2)
+
+    // Bottom edge: Draw a straight line to the bottom-right corner (sharp corner)
+    shape.lineTo(width / 2, -height / 2)
+
+    // Right edge: Draw a straight line upward to the top-right corner (sharp corner)
+    shape.lineTo(width / 2, height / 2)
+
+    // Top edge: Draw a straight line from the top-right corner to a point near the top-left.
+    // We stop at (-width/2 + radius, height/2) so that we can later round the top-left corner.
+    shape.lineTo(-width / 2 + radius, height / 2)
+
+    // Top-left corner: Round this corner with a quadratic curve.
+    // The control point is at the actual corner (-width/2, height/2) and the curve ends
+    // at (-width/2, height/2 - radius).
+    shape.quadraticCurveTo(-width / 2, height / 2, -width / 2, height / 2 - radius)
+
+    // Left edge: Draw a straight line downward to a point just above the bottom-left corner,
+    // where the rounding should begin.
+    shape.lineTo(-width / 2, -height / 2 + radius)
+
+    // Bottom-left corner: Round this corner with a quadratic curve.
+    // The control point is at (-width/2, -height/2) and the curve ends at our starting point.
+    shape.quadraticCurveTo(-width / 2, -height / 2, -width / 2 + radius, -height / 2)
+
+    // Create geometry from the shape
+    return new ShapeGeometry(shape)
+  }, [])
+
   const { getNodeKeysByType } = useSchemaStore((s) => s)
 
   return (
     <>
       <Instances
-        geometry={ringGeometry as BufferGeometry}
+        geometry={roundedRectGeometry as BufferGeometry}
         limit={1000} // Optional: max amount of items (for calculating buffer size)
         range={1000}
         visible={!selectedNode || true}

@@ -44,7 +44,7 @@ export const Cubes = memo(() => {
   const ignoreNodeEvent = useCallback(
     (node: NodeExtended) => {
       if (showSelectionGraph && !selectionGraphData.nodes.find((n) => n.ref_id === node.ref_id)) {
-        return true
+        return false
       }
 
       return false
@@ -117,7 +117,7 @@ export const Cubes = memo(() => {
     [setHoveredNode, ignoreNodeEvent, setIsHovering],
   )
 
-  const hideUniverse = showSelectionGraph && !!selectedNode
+  const hideUniverse = showSelectionGraph && !!selectedNode && false
 
   return (
     <>
