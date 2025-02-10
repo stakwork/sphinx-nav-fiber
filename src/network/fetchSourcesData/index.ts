@@ -135,6 +135,7 @@ export interface Schema {
   media_url?: string
   image_url?: string
   source_link?: string
+  type_description?: string
   attributes?: { [key: string]: string | boolean }
   action?: string[]
 }
