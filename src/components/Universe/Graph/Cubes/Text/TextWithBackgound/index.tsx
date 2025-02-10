@@ -40,7 +40,7 @@ const RoundedRect = ({ width, height, radius, color }: RoundedRectProps) => {
     <mesh>
       {/* The shapeGeometry automatically triangulates the THREE.Shape */}
       <shapeGeometry args={[rectShape]} />
-      <meshBasicMaterial color={color} opacity={1} transparent />
+      <meshBasicMaterial color={color} opacity={0.95} transparent />
     </mesh>
   )
 }
@@ -54,7 +54,7 @@ export const TextWithBackground = memo(({ text }: PropTypes) => {
   const [bgWidth, setBgWidth] = useState(100)
   const bgHeight = 30
   const bgRadius = 6
-  const padding = 4 // extra space to the right of the text
+  const padding = 10 // extra space to the right of the text
 
   const updateBgWidth = (textRef: Mesh) => {
     if (textRef) {

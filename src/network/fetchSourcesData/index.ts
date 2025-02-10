@@ -130,6 +130,7 @@ export interface Schema {
   is_deleted?: boolean
   children?: string[]
   primary_color?: string
+  secondary_color?: string
   node_key?: string
   index?: string
   media_url?: string

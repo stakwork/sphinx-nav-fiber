@@ -89,7 +89,7 @@ export const TextNode = memo(
       }
     })
 
-    const primaryColor = normalizedSchemasByType[node.node_type]?.primary_color
+    const primaryColor = normalizedSchemasByType[node.node_type]?.secondary_color
     const primaryIcon = normalizedSchemasByType[node.node_type]?.icon
 
     const nodeColor = primaryColor ?? color
@@ -109,7 +109,7 @@ export const TextNode = memo(
                   const newColor = generatePalette(nodeColor, 3, 10)
 
                   // eslint-disable-next-line no-param-reassign
-                  child.material = new MeshBasicMaterial({ color: newColor[0] })
+                  child.material = new MeshBasicMaterial({ color: newColor[3] })
                 }
               })
             }}
