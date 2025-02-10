@@ -9,6 +9,7 @@ import { useSelectedNode } from '~/stores/useGraphStore'
 import { colors } from '~/utils/colors'
 import { AiView } from './AiView'
 import { RegularView } from './RegularView'
+import { SearchHeader } from './SearchHeader'
 import { SideBarSubView } from './SidebarSubView'
 import { Tab } from './Tab'
 
@@ -27,6 +28,7 @@ const Content = forwardRef<HTMLDivElement, ContentProp>(({ subViewOpen }, ref) =
   return (
     <Wrapper ref={ref} id="sidebar-wrapper">
       <TitlePlaceholder />
+      <SearchHeader />
       {!hasAiChats ? <RegularView /> : <AiView />}
       {!subViewOpen && (
         <CollapseButton

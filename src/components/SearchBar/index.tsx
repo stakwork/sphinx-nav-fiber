@@ -14,7 +14,7 @@ const Input = styled.input.attrs(() => ({
   autoComplete: 'off',
 }))<{ loading?: boolean }>`
   pointer-events: auto;
-  height: 48px;
+  height: 40px;
   padding: 0 40px 0 18px;
   z-index: 2;
   box-shadow: 0px 1px 6px rgba(0, 0, 0, 0.1);
