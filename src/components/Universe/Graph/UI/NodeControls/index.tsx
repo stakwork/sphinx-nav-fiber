@@ -25,6 +25,7 @@ import { useUserStore } from '~/stores/useUserStore'
 import { ActionDetail, NodeExtended } from '~/types'
 import { colors } from '~/utils/colors'
 import { buttonColors } from './constants'
+import { analyzeGitHubRepository } from '~/network/analyzeGithubRepo'
 
 const reuseableVector3 = new Vector3()
 
@@ -43,7 +44,7 @@ export const NodeControls = memo(() => {
   // const { open: createBountyModal } = useModal('createBounty')
 
   const [isAdmin] = useUserStore((s) => [s.isAdmin])
-  const [addNewNode] = useDataStore((s) => [s.addNewNode])
+  const { addNewNode } = useDataStore((s) => s)
 
   const selectedNode = useSelectedNode()
 
@@ -192,6 +193,15 @@ export const NodeControls = memo(() => {
     setAnchorEl(null)
   }
 
+
+  const handleAnalyzeTestCoverage = async (githubName: string) => {
+    try {
+      await analyzeGitHubRepository(githubName)
+    } catch (error) {
+      console.error('error during test coverage analysis:', error)
+    }
+  }
+
   const handleNodeAction = (action: ActionDetail) => {
     setSelectedActionDetail(action)
     openNodeAction()
@@ -294,13 +304,17 @@ export const NodeControls = memo(() => {
               <PopoverOption
                 data-testid="generate_tests"
                 onClick={() => {
+                  if (selectedNode?.name) {
+                    handleAnalyzeTestCoverage(selectedNode.name)
+                  }
+
                   handleClose()
                 }}
               >
                 <IconWrapper>
                   <AddCircleIcon data-testid="AddCircleIcon" />
                 </IconWrapper>
-                Generate Tests
+                Analyze Test Coverage
               </PopoverOption>
               <PopoverOption
                 data-testid="add_comments"
