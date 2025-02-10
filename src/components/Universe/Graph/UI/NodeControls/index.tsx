@@ -193,7 +193,6 @@ export const NodeControls = memo(() => {
     setAnchorEl(null)
   }
 
-
   const handleAnalyzeTestCoverage = async (githubName: string) => {
     try {
       await analyzeGitHubRepository(githubName)
