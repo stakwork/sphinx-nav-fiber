@@ -2,10 +2,10 @@ import { JSX, useEffect, useState } from 'react'
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import * as sphinx from 'sphinx-bridge'
 import { BaseModal, ModalKind } from '~/components/Modal'
+import { useNodeNavigation } from '~/components/Universe/useNodeNavigation'
 import { NODE_ADD_ERROR } from '~/constants'
 import { postNewNodeItem } from '~/network/addItemRequest/addItemRequests'
 import { useDataStore } from '~/stores/useDataStore'
-import { useGraphStore } from '~/stores/useGraphStore'
 import { useModal } from '~/stores/useModalStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { NodeExtended } from '~/types'
@@ -88,7 +88,7 @@ export const AddItemModal = () => {
   const [error, setError] = useState<string>('')
 
   const { addNewNode } = useDataStore((s) => s)
-  const [setSelectedNode] = useGraphStore((s) => [s.setSelectedNode])
+  const { navigateToNode } = useNodeNavigation()
 
   useEffect(
     () => () => {
@@ -147,7 +147,7 @@ export const AddItemModal = () => {
 
     addNewNode({ nodes: [node], edges: [] })
 
-    setSelectedNode(node)
+    navigateToNode(node.ref_id)
   }
 
   const onSubmit = form.handleSubmit(async (data) => {

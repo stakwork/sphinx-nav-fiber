@@ -12,7 +12,6 @@ import { useAiSummaryStore } from '~/stores/useAiSummaryStore'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
 import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
-import { useUpdateSelectedNode } from '~/stores/useGraphStore'
 import { useTeachStore } from '~/stores/useTeachStore'
 import { useUserStore } from '~/stores/useUserStore'
 import {
@@ -83,8 +82,6 @@ export const App = () => {
 
   const { setAiSummaryAnswer, getKeyExist, aiRefId } = useAiSummaryStore((s) => s)
 
-  const setSelectedNode = useUpdateSelectedNode()
-
   const [realtimeGraphFeatureFlag, chatInterfaceFeatureFlag] = useFeatureFlagStore((s) => [
     s.realtimeGraphFeatureFlag,
     s.chatInterfaceFeatureFlag,
@@ -100,21 +97,11 @@ export const App = () => {
     setValue('search', query ?? '')
 
     setTranscriptOpen(false)
-    setSelectedNode(null)
     setRelevanceSelected(false)
     setCurrentSearch(query ?? '')
     setTeachMeAnswer('')
     setCategoryFilter(null)
-  }, [
-    query,
-    setCategoryFilter,
-    setCurrentSearch,
-    setRelevanceSelected,
-    setSelectedNode,
-    setTeachMeAnswer,
-    setTranscriptOpen,
-    setValue,
-  ])
+  }, [query, setCategoryFilter, setCurrentSearch, setRelevanceSelected, setTeachMeAnswer, setTranscriptOpen, setValue])
 
   useEffect(() => {
     const runSearch = async () => {
@@ -123,15 +110,13 @@ export const App = () => {
 
       if (searchTerm) {
         await updateBudget(setBudget)
-      } else {
-        setSelectedNode(null)
       }
     }
 
     resetData()
 
     runSearch()
-  }, [searchTerm, fetchData, setBudget, setAbortRequests, setSidebarOpen, setSelectedNode, resetData])
+  }, [searchTerm, fetchData, setBudget, setAbortRequests, setSidebarOpen, resetData])
 
   const handleNewNode = useCallback(() => {
     setNodeCount('INCREMENT')

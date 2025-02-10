@@ -2,9 +2,9 @@ import { Button } from '@mui/material'
 import { memo, useCallback, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
+import { useNodeNavigation } from '~/components/Universe/useNodeNavigation'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore, useFilteredNodes } from '~/stores/useDataStore'
-import { useUpdateSelectedNode } from '~/stores/useGraphStore'
 import { NodeExtended } from '~/types'
 import { formatDescription } from '~/utils/formatDescription'
 import { saveConsumedContent } from '~/utils/relayHelper'
@@ -21,7 +21,7 @@ const _Relevance = ({ isSearchResult }: Props) => {
   const pageSize = !isSearchResult ? 10 : 80
 
   const { setSelectedTimestamp, nextPage } = useDataStore((s) => s)
-  const setSelectedNode = useUpdateSelectedNode()
+  const { navigateToNode } = useNodeNavigation()
 
   const { currentSearch, setSidebarOpen, setRelevanceSelected } = useAppStore((s) => s)
 
@@ -42,10 +42,10 @@ const _Relevance = ({ isSearchResult }: Props) => {
       saveConsumedContent(node)
       setSelectedTimestamp(node)
       setRelevanceSelected(true)
-      setSelectedNode(node)
+      navigateToNode(node.ref_id)
       isMobile && setSidebarOpen(false)
     },
-    [setSelectedNode, setRelevanceSelected, setSidebarOpen, setSelectedTimestamp, isMobile],
+    [setSelectedTimestamp, setRelevanceSelected, navigateToNode, isMobile, setSidebarOpen],
   )
 
   const handleLoadMoreClick = () => {

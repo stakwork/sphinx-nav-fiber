@@ -6,6 +6,7 @@ import { Group, Vector3 } from 'three'
 import { useShallow } from 'zustand/react/shallow'
 import { getNodeColorByType } from '~/components/Universe/Graph/constant'
 import { maxChildrenDisplayed, nodesAreRelatives } from '~/components/Universe/constants'
+import { useNodeNavigation } from '~/components/Universe/useNodeNavigation'
 import { Avatar } from '~/components/common/Avatar'
 import { TypeBadge } from '~/components/common/TypeBadge'
 import { useGraphStore, useSelectedNodeRelativeIds } from '~/stores/useGraphStore'
@@ -20,9 +21,8 @@ const variableVector3 = new Vector3()
 const NodeBadge = ({ position, userData, color }: BadgeProps) => {
   const ref = useRef<Group | null>(null)
 
-  const { selectedNode, setSelectedNode, showSelectionGraph, hoveredNode, setHoveredNode } = useGraphStore(
-    useShallow((s) => s),
-  )
+  const { selectedNode, showSelectionGraph, hoveredNode, setHoveredNode } = useGraphStore(useShallow((s) => s))
+  const { navigateToNode } = useNodeNavigation()
 
   const isTopic = (userData?.node_type || '') === 'Topic' || !!userData.name
   const isPerson = (userData?.node_type || '') === 'Guest' || (userData?.node_type || '') === 'Person'
@@ -58,7 +58,7 @@ const NodeBadge = ({ position, userData, color }: BadgeProps) => {
               e.stopPropagation()
 
               if (userData) {
-                setSelectedNode(userData)
+                navigateToNode(userData.ref_id)
               }
             }}
             onPointerOut={(e) => {
@@ -89,7 +89,7 @@ const NodeBadge = ({ position, userData, color }: BadgeProps) => {
               e.stopPropagation()
 
               if (userData) {
-                setSelectedNode(userData)
+                navigateToNode(userData.ref_id)
               }
             }}
             onPointerOut={(e) => {
