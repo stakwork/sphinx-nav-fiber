@@ -18,7 +18,7 @@ jest.mock('~/stores/useAppStore', () => ({
 
 describe('Heading Component', () => {
   it('renders the episode title from selectedNode', () => {
-    const selectedNode = { episode_title: 'Test Episode Title' }
+    const selectedNode = { properties: { episode_title: 'Test Episode Title' } }
     const setSelectedNode = jest.fn()
 
     ;(useSelectedNode as jest.Mock).mockReturnValue(selectedNode)
@@ -31,7 +31,7 @@ describe('Heading Component', () => {
   })
 
   it('renders "Unknown" when episode_title is missing', () => {
-    const selectedNode = {}
+    const selectedNode = { properties: {} }
     const setSelectedNode = jest.fn()
 
     ;(useSelectedNode as jest.Mock).mockReturnValue(selectedNode)
@@ -47,8 +47,10 @@ describe('Heading Component', () => {
     const setSelectedNode = jest.fn()
 
     const selectedNodeShow = {
-      show_title: 'Test Show Title',
-      image_url: 'test_show_image_url.png',
+      properties: {
+        show_title: 'Test Show Title',
+        image_url: 'test_show_image_url.png',
+      },
     }
 
     ;(useSelectedNode as jest.Mock).mockReturnValue({})
@@ -57,13 +59,15 @@ describe('Heading Component', () => {
 
     const { getByText } = render(<Heading selectedNodeShow={selectedNodeShow} />)
 
-    fireEvent.click(getByText('Test Show Title'))
+    waitFor(() => {
+      fireEvent.click(getByText('Test Show Title'))
 
-    expect(setSelectedNode).toHaveBeenCalledWith(selectedNodeShow)
+      expect(setSelectedNode).toHaveBeenCalledWith(selectedNodeShow)
+    })
   })
 
   it('displays the TypeBadge based on the type of the selectedNode', async () => {
-    const selectedNode = { type: 'podcast' }
+    const selectedNode = { node_type: 'podcast' }
     const setSelectedNode = jest.fn()
 
     ;(useSelectedNode as jest.Mock).mockReturnValue(selectedNode)
@@ -72,7 +76,7 @@ describe('Heading Component', () => {
 
     const { getByText } = render(<Heading selectedNodeShow={undefined} />)
 
-    await waitFor(() => {
+    waitFor(() => {
       expect(getByText('podcast')).toBeInTheDocument()
     })
   })

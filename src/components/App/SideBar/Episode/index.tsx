@@ -4,6 +4,7 @@ import styled from 'styled-components'
 import { useGraphData } from '~/components/DataRetriever'
 import ChevronDownIcon from '~/components/Icons/ChevronDownIcon'
 import { Flex } from '~/components/common/Flex'
+import { fetchNodeEdges } from '~/network/fetchGraphData'
 import { useSelectedNode } from '~/stores/useGraphStore'
 import { usePlayerStore } from '~/stores/usePlayerStore'
 import { NodeExtended } from '~/types'
@@ -34,28 +35,50 @@ export const Episode = () => {
   const [openClip, setOpenClip] = useState<NodeExtended | null>(null)
 
   const [selectedTimestamp, setSelectedTimestamp] = useState<NodeExtended | null>(null)
+  const [episodeData, setEpisodeData] = useState<NodeExtended[]>([])
 
-  const [playingNode, setPlayingNodeLink, setPlayingTime, setIsSeeking, playingTime] = usePlayerStore((s) => [
-    s.playingNode,
-    s.setPlayingNodeLink,
-    s.setPlayingTime,
-    s.setIsSeeking,
-    s.playingTime,
-  ])
+  const [playingNode, setPlayingNodeLink, setPlayingTime, setIsSeeking, playingTime, setPlayingNode] = usePlayerStore(
+    (s) => [s.playingNode, s.setPlayingNodeLink, s.setPlayingTime, s.setIsSeeking, s.playingTime, s.setPlayingNode],
+  )
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (selectedNode?.ref_id) {
+        const response = await fetchNodeEdges(selectedNode.ref_id, 0)
+
+        const filteredNodes =
+          response?.nodes.filter((node) => node.properties?.link || node.properties?.media_url) || []
+
+        setEpisodeData(filteredNodes)
+
+        const mediaFromNodes = filteredNodes.find((node) => node.properties?.link || node.properties?.media_url)
+          ?.properties?.link
+
+        if (mediaFromNodes && !selectedNode.media_url) {
+          setPlayingNode({ ...selectedNode, media_url: mediaFromNodes, link: mediaFromNodes })
+        }
+      }
+    }
+
+    fetchData()
+  }, [selectedNode, setPlayingNode])
 
   const selectedNodeTimestamps = useMemo(
-    () => getSelectedNodeTimestamps(data?.nodes || [], selectedNode),
-    [data?.nodes, selectedNode],
+    () => getSelectedNodeTimestamps(episodeData, selectedNode),
+    [episodeData, selectedNode],
   )
 
   const selectedNodeShow: NodeExtended | undefined = useMemo(
-    () => data?.nodes.find((i: NodeExtended) => i.node_type === 'show' && i.show_title === selectedNode?.show_title),
+    () =>
+      data?.nodes.find(
+        (i: NodeExtended) => i.node_type === 'show' && i.show_title === selectedNode?.properties?.show_title,
+      ),
     [data?.nodes, selectedNode],
   )
 
   const updateActiveTimestamp = useCallback(
     (timestamp: NodeExtended) => {
-      const newTime = videoTimeToSeconds(timestamp?.timestamp?.split('-')[0] || '00:00:01')
+      const newTime = videoTimeToSeconds((timestamp?.properties?.timestamp || '00:00:01').split('-')[0])
 
       if (playingNode && timestamp.link && playingNode?.link !== timestamp.link) {
         setPlayingNodeLink(timestamp.link)
@@ -85,11 +108,12 @@ export const Episode = () => {
   useEffect(() => {
     if (selectedNodeTimestamps?.length) {
       const currentTimestamp = selectedNodeTimestamps.find((timestamp) => {
-        if (!timestamp.timestamp) {
+        if (!timestamp.properties?.timestamp) {
           return false
         }
 
-        const timestampSeconds = videoTimeToSeconds(timestamp.timestamp.split('-')[0])
+        const timestampString = (timestamp.properties?.timestamp || '') as string
+        const timestampSeconds = videoTimeToSeconds(timestampString.split('-')[0])
 
         return Math.abs(timestampSeconds - playingTime) < 1
       })

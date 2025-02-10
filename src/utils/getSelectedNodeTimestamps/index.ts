@@ -9,13 +9,13 @@ export const getSelectedNodeTimestamps = (nodes: NodeExtended[], selectedNode: N
 
   const selectedNodeShowEpisodes = nodes.filter(
     (node) =>
-      node.show_title &&
-      node.link &&
-      node.show_title === selectedNode.show_title &&
-      node.episode_title === selectedNode.episode_title,
+      node.properties?.show_title &&
+      node.properties?.link &&
+      node.properties.show_title === selectedNode.properties?.show_title &&
+      node.properties.episode_title === selectedNode.properties?.episode_title,
   )
 
-  const groupedTimestamps = groupBy(selectedNodeShowEpisodes, (n) => n.timestamp)
+  const groupedTimestamps = groupBy(selectedNodeShowEpisodes, (n) => n.properties?.timestamp)
 
   const timestamps = values(groupedTimestamps).reduce((acc, items) => {
     if (items[0]) {
@@ -26,8 +26,12 @@ export const getSelectedNodeTimestamps = (nodes: NodeExtended[], selectedNode: N
   }, [])
 
   timestamps.sort((a, b) => {
-    const [aSplit] = a.timestamp?.split('-') || ['']
-    const [bSplit] = b.timestamp?.split('-') || ['']
+    const aTimestamp = a.properties?.timestamp || ''
+    const bTimestamp = b.properties?.timestamp || ''
+
+    const [aSplit] = typeof aTimestamp === 'string' ? aTimestamp.split('-') : ['']
+    const [bSplit] = typeof bTimestamp === 'string' ? bTimestamp.split('-') : ['']
+
     const aTime = videoTimeToSeconds(aSplit)
     const bTime = videoTimeToSeconds(bSplit)
 
