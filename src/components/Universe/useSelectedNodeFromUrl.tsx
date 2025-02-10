@@ -1,10 +1,12 @@
 import { useEffect } from 'react'
-import { useParams } from 'react-router-dom'
+import { useSearchParams } from 'react-router-dom'
 import { useDataStore } from '~/stores/useDataStore'
 import { useGraphStore } from '~/stores/useGraphStore'
 
 export const useSelectedNodeFromUrl = () => {
-  const { selectedNodeId } = useParams()
+  const [searchParams] = useSearchParams()
+  const selectedNodeId = searchParams.get('node') // Get node ID from query params
+
   const nodesNormalized = useDataStore((state) => state.nodesNormalized)
   const setSelectedNode = useGraphStore((s) => s.setSelectedNode)
 

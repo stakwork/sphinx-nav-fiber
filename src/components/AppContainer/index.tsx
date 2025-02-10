@@ -41,9 +41,7 @@ export const AppContainer = () => {
               </AuthGuard>
             }
             path="/search"
-          >
-            <Route path="node/:selectedNodeId" />
-          </Route>
+          />
           <Route
             element={
               <AuthGuard>
