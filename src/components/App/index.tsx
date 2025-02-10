@@ -64,7 +64,6 @@ export const App = () => {
     setRelevanceSelected,
     setTranscriptOpen,
     universeQuestionIsOpen,
-    setUniverseQuestionIsOpen,
   } = useAppStore((s) => s)
 
   const setTeachMeAnswer = useTeachStore((s) => s.setTeachMeAnswer)
@@ -314,14 +313,6 @@ export const App = () => {
       }
     }
   }, [runningProjectId, socket])
-
-  useEffect(() => {
-    if (!splashDataLoading) {
-      if (chatInterfaceFeatureFlag) {
-        setUniverseQuestionIsOpen()
-      }
-    }
-  }, [setUniverseQuestionIsOpen, splashDataLoading, chatInterfaceFeatureFlag])
 
   return (
     <>

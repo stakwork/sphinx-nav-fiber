@@ -1,29 +1,66 @@
 import { FormProvider, useForm } from 'react-hook-form'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
+import { Flex } from '~/components/common/Flex'
 import SearchIcon from '~/components/Icons/SearchIcon'
 import { SearchBar } from '~/components/SearchBar'
-import { Flex } from '~/components/common/Flex'
 import { useAiSummaryStore, useHasAiChatsResponseLoading } from '~/stores/useAiSummaryStore'
 import { useDataStore } from '~/stores/useDataStore'
+import { useGraphStore } from '~/stores/useGraphStore'
+import { useSchemaStore } from '~/stores/useSchemaStore'
 import { useUserStore } from '~/stores/useUserStore'
+import { NodeExtended } from '~/types'
 import { colors } from '~/utils'
 
-export const AiSearch = () => {
+export const AiSearch = ({ contextSearch }: { contextSearch?: boolean }) => {
   const form = useForm<{ search: string }>({ mode: 'onChange' })
   const { setAbortRequests } = useDataStore((s) => s)
   const { setBudget } = useUserStore((s) => s)
   const { reset } = form
   const fetchAIData = useAiSummaryStore((s) => s.fetchAIData)
+  const { selectedNode } = useGraphStore((s) => s)
+  const normalizedSchemasByType = useSchemaStore((s) => s.normalizedSchemasByType)
 
   const isLoading = useHasAiChatsResponseLoading()
+
+  let context = ''
+
+  function getNodeKeyDetails(nodeKey: string | undefined, currentSelectedNode: NodeExtended) {
+    let nodeKeyContextString = ''
+
+    if (!nodeKey) {
+      return nodeKeyContextString
+    }
+
+    const nodeKeyArr = nodeKey.split('-')
+
+    for (let i = 0; i < nodeKeyArr.length; i += 1) {
+      const key = nodeKeyArr[i]
+      const propertyValue = currentSelectedNode.properties ? currentSelectedNode.properties[key] : ''
+      const comma = i === nodeKeyArr.length - 1 ? '' : ','
+
+      nodeKeyContextString = `${nodeKeyContextString} ${key} - ${propertyValue}${comma}`
+    }
+
+    return nodeKeyContextString
+  }
 
   const handleSubmit = form.handleSubmit(({ search }) => {
     if (search.trim() === '') {
       return
     }
 
-    fetchAIData(setBudget, setAbortRequests, search)
+    if (contextSearch && selectedNode) {
+      const nodeType = selectedNode.node_type
+
+      const nodeKey = normalizedSchemasByType[nodeType].node_key
+
+      const nodeKeyContextString = getNodeKeyDetails(nodeKey, selectedNode)
+
+      context = `**${nodeType}: ${nodeKeyContextString}**`
+    }
+
+    fetchAIData(setBudget, setAbortRequests, search, undefined, context)
     reset({ search: '' })
   })
 
@@ -31,7 +68,11 @@ export const AiSearch = () => {
     <AiSearchWrapper>
       <FormProvider {...form}>
         <Search>
-          <SearchBar loading={isLoading} onSubmit={handleSubmit} placeholder="Ask follow-up" />
+          <SearchBar
+            loading={isLoading}
+            onSubmit={handleSubmit}
+            placeholder={contextSearch ? 'Ask a question' : 'Ask follow-up'}
+          />
           <InputButton
             data-testid="search-ai_action_icon"
             onClick={() => {
@@ -42,7 +83,13 @@ export const AiSearch = () => {
               handleSubmit()
             }}
           >
-            {!isLoading ? <SearchIcon /> : <StyledClipLoader color={colors.lightGray} data-testid="loader" size="20" />}
+            {contextSearch && <SearchIcon />}
+            {!contextSearch &&
+              (!isLoading ? (
+                <SearchIcon />
+              ) : (
+                <StyledClipLoader color={colors.lightGray} data-testid="loader" size="20" />
+              ))}
           </InputButton>
         </Search>
       </FormProvider>

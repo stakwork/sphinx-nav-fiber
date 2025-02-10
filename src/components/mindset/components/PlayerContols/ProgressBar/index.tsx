@@ -3,29 +3,58 @@ import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { NodeExtended } from '~/types'
 import { colors } from '~/utils'
+import { Chapters } from './Chapters'
 import { Markers } from './Markers'
 
 type Props = {
   duration: number
   markers: NodeExtended[]
+  chapters: NodeExtended[]
   playingTIme: number
   handleProgressChange: (_: Event, value: number | number[]) => void
 }
 
-export const ProgressBar = ({ duration, markers, handleProgressChange, playingTIme }: Props) => {
+export const ProgressBar = ({ duration, markers, handleProgressChange, playingTIme, chapters }: Props) => {
   const width = (10 / duration) * 100
 
   return (
     <ProgressWrapper>
       <ProgressSlider max={duration} onChange={handleProgressChange} value={playingTIme} width={width} />
-      <Markers duration={duration} markers={markers} />
+      <ChaptersWrapper>
+        <Chapters chapters={chapters} duration={duration} />
+      </ChaptersWrapper>
+      <MarkersWrapper>
+        <Markers duration={duration} markers={markers} />
+      </MarkersWrapper>
     </ProgressWrapper>
   )
 }
 
+const ChaptersWrapper = styled(Flex)`
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 96px;
+  transform: translateY(-50%);
+`
+
 const ProgressWrapper = styled(Flex)`
   position: relative;
   flex: 1 1 100%;
+
+  &:hover {
+    ${ChaptersWrapper} {
+      display: block;
+    }
+  }
+`
+
+const MarkersWrapper = styled(Flex)`
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
 `
 
 const ProgressSlider = styled(Slider)<{ width: number }>`
