@@ -38,25 +38,25 @@ const Wrapper = styled(Flex)`
 export const Heading = ({ selectedNodeShow }: { selectedNodeShow: NodeExtended | undefined }) => {
   const selectedNode = useSelectedNode()
   const setSelectedNode = useUpdateSelectedNode()
-  const { type } = selectedNode || {}
+  const { node_type: nodeType } = selectedNode || {}
   const searchTerm = useAppStore((s) => s.currentSearch)
 
   return (
     <Wrapper p={20}>
-      <Flex align="flex-start">{type && <TypeBadge type={type} />}</Flex>
+      <Flex align="flex-start">{nodeType && <TypeBadge type={nodeType} />}</Flex>
       <Flex direction="row" mb={22} mt={22}>
         <Flex grow={1} shrink={1}>
           <Text className="episode-title" kind="heading">
-            {highlightSearchTerm(selectedNode?.episode_title || 'Unknown', searchTerm)}
+            {highlightSearchTerm(selectedNode?.properties?.episode_title || 'Unknown', searchTerm)}
           </Text>
         </Flex>
       </Flex>
 
-      {selectedNodeShow ? (
-        <Flex className="show" direction="row" onClick={() => setSelectedNode(selectedNodeShow)}>
-          <Avatar size={16} src={selectedNodeShow?.image_url || ''} type="show" />
+      {selectedNodeShow || selectedNode ? (
+        <Flex className="show" direction="row" onClick={() => setSelectedNode(selectedNode)}>
+          <Avatar size={16} src={selectedNode?.properties?.image_url || ''} type="show" />
           <Text className="show__title" color="mainBottomIcons" kind="regular">
-            {selectedNodeShow?.show_title}
+            {selectedNode?.properties?.show_title}
           </Text>
         </Flex>
       ) : null}

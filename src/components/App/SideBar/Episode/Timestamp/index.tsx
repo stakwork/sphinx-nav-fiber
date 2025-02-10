@@ -76,8 +76,10 @@ export const Timestamp = ({ onClick, timestamp, isSelected, setOpenClip }: Props
       </div>
 
       <About align="flex-start" direction="column" justify="center">
-        {timestamp.timestamp && <span className="timestamp">{formatTimestamp(timestamp.timestamp)}</span>}
-        <span className="title">{formatDescription(timestamp.show_title)}</span>
+        {timestamp.properties?.timestamp && (
+          <span className="timestamp">{formatTimestamp(timestamp.properties.timestamp)}</span>
+        )}
+        <span className="title">{formatDescription(timestamp.properties?.show_title)}</span>
       </About>
       <div className="info">
         <Flex data-testid="info-icon-wrapper" onClick={() => setOpenClip(timestamp)} pt={4}>

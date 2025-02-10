@@ -16,8 +16,10 @@ jest.mock('../Equalizer', () => ({
 
 describe('Timestamp Component', () => {
   const mockTimestamp = {
-    timestamp: '00:10:00',
-    show_title: 'Test Show Title',
+    properties: {
+      timestamp: '00:10:00',
+      show_title: 'Test Show Title',
+    },
   }
 
   beforeEach(() => {
@@ -40,8 +42,8 @@ describe('Timestamp Component', () => {
       />,
     )
 
-    expect(getByText(`Formatted: ${mockTimestamp.timestamp}`)).toBeInTheDocument()
-    expect(getByText(`Desc: ${mockTimestamp.show_title}`)).toBeInTheDocument()
+    expect(getByText(`Formatted: ${mockTimestamp.properties.timestamp}`)).toBeInTheDocument()
+    expect(getByText(`Desc: ${mockTimestamp.properties.show_title}`)).toBeInTheDocument()
   })
 
   it('not renders MdPlayArrow icon when isSelected is true', () => {

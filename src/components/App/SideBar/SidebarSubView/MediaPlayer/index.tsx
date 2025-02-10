@@ -4,10 +4,10 @@ import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
 import { Avatar } from '~/components/common/Avatar'
 import { Flex } from '~/components/common/Flex'
+import { useSelectedNode } from '~/stores/useGraphStore'
 import { usePlayerStore } from '~/stores/usePlayerStore'
 import { colors, videoTimeToSeconds } from '~/utils'
 import { Toolbar } from './ToolBar'
-import { useSelectedNode } from '~/stores/useGraphStore'
 
 type Props = {
   hidden: boolean
@@ -73,11 +73,11 @@ const MediaPlayerComponent: FC<Props> = ({ hidden }) => {
   }, [playingNode, setPlayingTime, setDuration, setIsReady, isReady])
 
   useEffect(() => {
-    if (isSeeking && playerRef.current) {
+    if (isSeeking && playerRef.current && isReady) {
       playerRef.current.seekTo(playingTime, 'seconds')
       setIsSeeking(false)
     }
-  }, [playingTime, isSeeking, setIsSeeking])
+  }, [playingTime, isSeeking, setIsSeeking, isReady])
 
   useEffect(() => {
     if (isReady && NodeStartTime && playerRef.current && !hasSeekedToStart) {
@@ -133,6 +133,7 @@ const MediaPlayerComponent: FC<Props> = ({ hidden }) => {
   const handleReady = () => {
     if (playerRef.current) {
       setStatus('ready')
+      setIsReady(true)
 
       const videoDuration = playerRef.current.getDuration()
 
