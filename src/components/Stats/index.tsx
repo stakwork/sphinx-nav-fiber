@@ -93,7 +93,7 @@ export const Stats = () => {
 
   const generateStatConfigItem = (key: string) => {
     const name = convertToTitleCase(key.split('_')[0])
-    const tooltip = name
+    const tooltip = `${name}s`
     const primaryIcon = normalizedSchemasByType[name]?.icon
     const Icon = Icons[primaryIcon as string] || NodesIcon
 
