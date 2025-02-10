@@ -1,20 +1,21 @@
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 export const useNodeNavigation = () => {
   const navigate = useNavigate()
   const location = useLocation()
+  const [searchParams] = useSearchParams()
 
   return {
     navigateToNode: (selectedNodeId: string | null) => {
-      const basePath = location.pathname.split('/node/')[0]
+      const params = new URLSearchParams(searchParams)
 
       if (!selectedNodeId) {
-        navigate(basePath, { replace: true })
-
-        return
+        params.delete('node') // Remove the parameter when no node is selected
+      } else {
+        params.set('node', selectedNodeId) // Set the node ID in query params
       }
 
-      navigate(`${basePath}/node/${selectedNodeId}`, { replace: true })
+      navigate(`${location.pathname}?${params.toString()}`, { replace: true })
     },
   }
 }
