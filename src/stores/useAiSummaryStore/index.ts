@@ -119,6 +119,12 @@ export const useAiSummaryStore = create<AiSummaryStore>()(
         ...(params?.force_regenerate ? { force_regenerate: 'true' } : {}),
       }
 
+      if (ai.ai_summary === 'true') {
+        updatedParams.top_node_count = '0'
+        updatedParams.limit = '0'
+        Reflect.deleteProperty(updatedParams, 'search_method')
+      }
+
       try {
         const data = await fetchGraphData(setBudget, updatedParams, isLatest, signal, setAbortRequests)
 
