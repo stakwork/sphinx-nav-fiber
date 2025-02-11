@@ -75,7 +75,7 @@ export const Body = () => {
       await postNodeAction(payload)
 
       close()
-      SuccessNotify('Node Action Submited Successfully')
+      SuccessNotify('Submitted')
       removeSelectedActionDetail()
       // eslint-disable-next-line  @typescript-eslint/no-explicit-any
     } catch (err: any) {
