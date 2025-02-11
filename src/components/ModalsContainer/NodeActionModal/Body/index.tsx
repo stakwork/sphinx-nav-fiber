@@ -21,7 +21,6 @@ export const Body = () => {
   const [steps, setSteps] = useState<number>(0)
   const [actions, setActions] = useState<ActionDetail[]>([])
   const [selectedAction, setSelectedAction] = useState<ActionDetail>()
-  const [bounty, setBounty] = useState<BountyPayload | null>(null)
   const { close } = useModal('nodeAction')
   const selectedNode = useSelectedNode()
   const { normalizedSchemasByType, getSelectedActionDetail, removeSelectedActionDetail } = useSchemaStore((s) => s)
@@ -37,14 +36,12 @@ export const Body = () => {
       return
     }
 
-    await handleSubmit(action)
+    await handleSubmit(action, null)
   }
 
   const handleSetBounty = async (bountyPayload: BountyPayload) => {
-    setBounty(bountyPayload)
-
     if (selectedAction) {
-      await handleSubmit(selectedAction)
+      await handleSubmit(selectedAction, bountyPayload)
 
       return
     }
@@ -58,7 +55,7 @@ export const Body = () => {
     close()
   }
 
-  const handleSubmit = async (action: ActionDetail) => {
+  const handleSubmit = async (action: ActionDetail, bountyPayload: BountyPayload | null) => {
     if (!action) {
       setErrMessage('Node Action not selected')
 
@@ -72,7 +69,7 @@ export const Body = () => {
         ref_id: selectedNode?.ref_id || '',
         pubkey: pubKey,
         action_name: action.name,
-        bounty,
+        bounty: bountyPayload,
       }
 
       await postNodeAction(payload)
@@ -131,7 +128,7 @@ export const Body = () => {
     if (selectedActionFromStore.bounty) {
       setSteps(2)
     } else {
-      handleSubmit(selectedActionFromStore)
+      handleSubmit(selectedActionFromStore, null)
     }
 
     setLoadingPage(false)
