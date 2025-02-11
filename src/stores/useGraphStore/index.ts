@@ -115,7 +115,6 @@ export type GraphStore = {
   selectedLinkTypes: string[]
   selectedNode: NodeExtended | null
   cameraFocusTrigger: boolean
-  nearbyNodeIds: string[]
   showSelectionGraph: boolean
   disableCameraRotation: boolean
   scrollEventsDisabled: boolean
@@ -129,6 +128,7 @@ export type GraphStore = {
   hoveredNodeSiblings: string[]
   selectedNodeSiblings: string[]
   searchQuery: string
+  simulationVersion: number
 
   setDisableCameraRotation: (rotation: boolean) => void
   setScrollEventsDisabled: (rotation: boolean) => void
@@ -142,7 +142,6 @@ export type GraphStore = {
   setActiveNode: (activeNode: NodeExtended | null) => void
   setHighlightNodes: (highlightNodes: string[]) => void
   setCameraFocusTrigger: (_: boolean) => void
-  setNearbyNodeIds: (_: string[]) => void
   setShowSelectionGraph: (_: boolean) => void
   setSelectionData: (data: GraphData) => void
   simulationCreate: (nodes: Node[], links: Link[]) => void
@@ -154,6 +153,7 @@ export type GraphStore = {
   resetSelectedNodeTypes: () => void
   setSelectedLinkTypes: (type: string) => void
   resetSelectedLinkTypes: () => void
+  updateSimulationVersion: () => void
 }
 
 const defaultData: Omit<
@@ -171,7 +171,6 @@ const defaultData: Omit<
   | 'setGraphRadius'
   | 'setSelectionGraphRadius'
   | 'setGraphStyle'
-  | 'setNearbyNodeIds'
   | 'setShowSelectionGraph'
   | 'setSelectionData'
   | 'setHideNodeDetails'
@@ -184,8 +183,10 @@ const defaultData: Omit<
   | 'resetSelectedNodeTypes'
   | 'setSelectedLinkTypes'
   | 'resetSelectedLinkTypes'
+  | 'updateSimulationVersion'
 > = {
   data: null,
+  simulationVersion: 0,
   simulation: null,
   selectionGraphData: { nodes: [], links: [] },
   disableCameraRotation: true,
@@ -199,7 +200,6 @@ const defaultData: Omit<
   selectedNode: null,
   activeEdge: null,
   cameraFocusTrigger: false,
-  nearbyNodeIds: [],
   showSelectionGraph: false,
   simulationHelpers: defaultSimulationHelpers,
   isHovering: false,
@@ -233,6 +233,11 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
       : [...selectedLinkTypes, linkType]
 
     set({ selectedLinkTypes: updatedTypes })
+  },
+  updateSimulationVersion: () => {
+    const { simulationVersion } = get()
+
+    set({ simulationVersion: simulationVersion + 1 })
   },
   resetSelectedNodeTypes: () => set({ selectedNodeTypes: [] }),
   resetSelectedLinkTypes: () => set({ selectedLinkTypes: [] }),
@@ -287,9 +292,9 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
 
     if (stateSelectedNode?.ref_id !== selectedNode?.ref_id) {
       const selectedNodeWithCoordinates =
-        simulation.nodes().find((i: NodeExtended) => i.ref_id === selectedNode?.ref_id) || null
+        simulation?.nodes()?.find((i: NodeExtended) => i.ref_id === selectedNode?.ref_id) || null
 
-      if (selectedNode?.ref_id) {
+      if (selectedNode?.ref_id && selectedNodeWithCoordinates) {
         const normalizedNode: NodeExtended | undefined = nodesNormalized?.get(selectedNode?.ref_id)
 
         set({
@@ -303,13 +308,6 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
     }
   },
   setCameraFocusTrigger: (cameraFocusTrigger) => set({ cameraFocusTrigger }),
-  setNearbyNodeIds: (nearbyNodeIds) => {
-    const stateNearbyNodeIds = get().nearbyNodeIds
-
-    if (nearbyNodeIds.length !== stateNearbyNodeIds.length || nearbyNodeIds[0] !== stateNearbyNodeIds[0]) {
-      set({ nearbyNodeIds })
-    }
-  },
   setShowSelectionGraph: (showSelectionGraph) => set({ showSelectionGraph }),
   simulationHelpers: {
     addNodesAndLinks: (newNodes, newLinks, replace) => {
