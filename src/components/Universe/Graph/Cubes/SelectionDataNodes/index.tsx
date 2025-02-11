@@ -1,10 +1,10 @@
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Group } from 'three'
-import { useShallow } from 'zustand/react/shallow'
+import { useNodeNavigation } from '~/components/Universe/useNodeNavigation'
 import { usePrevious } from '~/hooks/usePrevious'
 import { fetchNodeEdges } from '~/network/fetchGraphData'
 import { useDataStore } from '~/stores/useDataStore'
-import { useGraphStore, useSelectedNode } from '~/stores/useGraphStore'
+import { useSelectedNode } from '~/stores/useGraphStore'
 import { Link, Node, NodeExtended } from '~/types'
 import { LinkPosition } from '../..'
 import { Connections } from './Connections'
@@ -36,7 +36,7 @@ export const SelectionDataNodes = memo(() => {
 
   const prevSelectedNodeId = usePrevious(selectedNode?.ref_id)
 
-  const { setSelectedNode } = useGraphStore(useShallow((s) => s))
+  const { navigateToNode } = useNodeNavigation()
 
   const newData: GraphData = useMemo(() => {
     if (!selectionData?.nodes.length) {
@@ -236,10 +236,10 @@ export const SelectionDataNodes = memo(() => {
         setSelectionData(null)
         setPathGraph({ nodes: updatedPathNodes as NodeExtended[], links })
 
-        setSelectedNode(newSelectedNode)
+        navigateToNode(newSelectedNode.ref_id)
       }
     },
-    [graphData.links, graphData.nodes, pathGraph, selectedNode, setSelectedNode],
+    [graphData.links, graphData.nodes, pathGraph, selectedNode, navigateToNode],
   )
 
   return (

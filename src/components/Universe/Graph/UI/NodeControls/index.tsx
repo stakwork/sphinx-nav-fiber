@@ -14,6 +14,7 @@ import EditIcon from '~/components/Icons/EditIcon'
 import NodesIcon from '~/components/Icons/NodesIcon'
 import PlusIcon from '~/components/Icons/PlusIcon'
 import RobotIcon from '~/components/Icons/RobotIcon'
+import { useNodeNavigation } from '~/components/Universe/useNodeNavigation'
 import { getActionDetails } from '~/network/actions'
 import { fetchNodeEdges } from '~/network/fetchGraphData'
 import { useAppStore } from '~/stores/useAppStore'
@@ -48,7 +49,8 @@ export const NodeControls = memo(() => {
 
   const selectedNode = useSelectedNode()
 
-  const { showSelectionGraph, selectionGraphData, setSelectedNode, setShowSelectionGraph } = useGraphStore((s) => s)
+  const { showSelectionGraph, selectionGraphData, setShowSelectionGraph } = useGraphStore((s) => s)
+  const { navigateToNode } = useNodeNavigation()
 
   const allGraphData = useGraphData()
 
@@ -147,7 +149,7 @@ export const NodeControls = memo(() => {
         className: 'exit',
         onClick: () => {
           setShowSelectionGraph(false)
-          setSelectedNode(null)
+          navigateToNode(null)
         },
       },
     ]
@@ -160,7 +162,7 @@ export const NodeControls = memo(() => {
     setShowSelectionGraph,
     setSidebarOpen,
     getChildren,
-    setSelectedNode,
+    navigateToNode,
   ])
 
   const nodeType = selectedNode?.node_type

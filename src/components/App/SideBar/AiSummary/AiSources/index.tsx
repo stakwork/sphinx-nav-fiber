@@ -7,10 +7,10 @@ import ChevronDownIcon from '~/components/Icons/ChevronDownIcon'
 import ChevronUpIcon from '~/components/Icons/ChevronUpIcon'
 import SourcesIcon from '~/components/Icons/SourcesIcon'
 import { ScrollView } from '~/components/ScrollView'
+import { useNodeNavigation } from '~/components/Universe/useNodeNavigation'
 import { Flex } from '~/components/common/Flex'
 import { useAiSummaryStore } from '~/stores/useAiSummaryStore'
 import { useDataStore } from '~/stores/useDataStore'
-import { useUpdateSelectedNode } from '~/stores/useGraphStore'
 import { NodeExtended } from '~/types'
 import { colors } from '~/utils'
 import { formatDescription } from '~/utils/formatDescription'
@@ -41,7 +41,7 @@ const _AiSources = ({ sourceIds, question }: Props) => {
   const beenAdded = useRef(false)
 
   const { dataInitial } = useAiSummaryStore((s) => s)
-  const setSelectedNode = useUpdateSelectedNode()
+  const { navigateToNode } = useNodeNavigation()
 
   const currentNodes = useMemo(
     () => dataInitial?.nodes.filter((i) => sourceIds.includes(i.ref_id)) || [],
@@ -76,9 +76,9 @@ const _AiSources = ({ sourceIds, question }: Props) => {
 
   const handleNodeClick = useCallback(
     (node: NodeExtended) => {
-      setSelectedNode(node)
+      navigateToNode(node.ref_id)
     },
-    [setSelectedNode],
+    [navigateToNode],
   )
 
   return (

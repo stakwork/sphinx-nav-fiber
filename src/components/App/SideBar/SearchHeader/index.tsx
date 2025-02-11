@@ -12,12 +12,12 @@ import SearchFilterCloseIcon from '~/components/Icons/SearchFilterCloseIcon'
 import SearchFilterIcon from '~/components/Icons/SearchFilterIcon'
 import SearchIcon from '~/components/Icons/SearchIcon'
 import { SearchBar } from '~/components/SearchBar'
+import { useNodeNavigation } from '~/components/Universe/useNodeNavigation'
 import { Flex } from '~/components/common/Flex'
 import { FetchLoaderText } from '~/components/common/Loader'
 import { useAiSummaryStore } from '~/stores/useAiSummaryStore'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore, useFilteredNodes } from '~/stores/useDataStore'
-import { useUpdateSelectedNode } from '~/stores/useGraphStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { colors } from '~/utils/colors'
 import { AIChatInput } from '../AIChatSearch'
@@ -25,7 +25,7 @@ import { AnimatedSearchWrapper } from './animation'
 
 export const SearchHeader = () => {
   const { isFetching: isLoading, setSidebarFilter, abortFetchData } = useDataStore((s) => s)
-  const setSelectedNode = useUpdateSelectedNode()
+  const { navigateToNode } = useNodeNavigation()
   const { setNewLoading } = useAiSummaryStore((s) => s)
   const filteredNodes = useFilteredNodes()
   const { currentSearch: searchTerm, clearSearch, searchFormValue } = useAppStore((s) => s)
@@ -128,7 +128,7 @@ export const SearchHeader = () => {
                       setValue('search', '')
                       clearSearch()
                       setSidebarFilter('all')
-                      setSelectedNode(null)
+                      navigateToNode(null)
                       navigate(`/`)
 
                       return

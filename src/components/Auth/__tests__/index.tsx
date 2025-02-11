@@ -30,6 +30,19 @@ Object.defineProperty(navigator, 'userAgent', {
   configurable: true,
 })
 
+const mockNavigateToNode = jest.fn()
+
+jest.mock('~/components/Universe/useNodeNavigation', () => ({
+  useNodeNavigation: () => ({
+    navigateToNode: mockNavigateToNode,
+  }),
+}))
+
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useSearchParams: () => [new URLSearchParams(), jest.fn()],
+}))
+
 const useDataStoreMock = useDataStore as jest.MockedFunction<typeof useDataStore>
 const useUserStoreMock = useUserStore as jest.MockedFunction<typeof useUserStore>
 const getSignedMessageFromRelayMock = jest.spyOn(utils, 'getSignedMessageFromRelay')
