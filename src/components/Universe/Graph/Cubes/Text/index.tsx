@@ -89,10 +89,10 @@ export const TextNode = memo(
       }
     })
 
-    const primaryColor = normalizedSchemasByType[node.node_type]?.secondary_color
+    const secondaryColor = normalizedSchemasByType[node.node_type]?.secondary_color
     const primaryIcon = normalizedSchemasByType[node.node_type]?.icon
 
-    const nodeColor = primaryColor ?? color
+    const nodeColor = secondaryColor ?? color
 
     const Icon = primaryIcon ? Icons[primaryIcon] : null
     const iconName = Icon ? primaryIcon : 'NodesIcon'
