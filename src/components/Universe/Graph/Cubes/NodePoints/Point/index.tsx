@@ -90,7 +90,7 @@ export const Point = memo(({ color, scale, name, index, node, nodeType }: Props)
         <sphereGeometry args={[30, 16, 16]} />
         <meshBasicMaterial color="white" opacity={0} transparent />
       </mesh>
-      <Instance color={newColor.at(-1)} name="instance" scale={scale} />
+      <Instance color={newColor.at(3)} name="instance" scale={scale} />
     </Billboard>
   )
 })
