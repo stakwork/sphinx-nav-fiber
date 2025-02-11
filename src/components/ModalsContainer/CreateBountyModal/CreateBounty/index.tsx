@@ -25,10 +25,13 @@ export const CreateBounty: FC<Props> = ({ errMessage, handleClose }) => {
   const { setValue, watch } = useFormContext()
   const [options, setOptions] = useState<NameSpacesOption[]>([])
   const { pubKey } = useUserStore()
+  const [loadingOption, setLoadingOption] = useState<boolean>(false)
 
   useEffect(() => {
     async function handleGetNamesspaces() {
       try {
+        setLoadingOption(true)
+
         const userDetails = await getTribeUserDetails(pubKey)
 
         if (!userDetails.id) {
@@ -53,6 +56,8 @@ export const CreateBounty: FC<Props> = ({ errMessage, handleClose }) => {
         }
       } catch (error) {
         console.error('Error from get user details: ', error)
+      } finally {
+        setLoadingOption(false)
       }
     }
 
@@ -86,7 +91,7 @@ export const CreateBounty: FC<Props> = ({ errMessage, handleClose }) => {
 
       <Flex mb={20}>
         <StyledText>Select Workspace</StyledText>
-        <AutoComplete autoFocus onSelect={onSelect} options={options} />
+        <AutoComplete autoFocus isLoading={loadingOption} onSelect={onSelect} options={options} />
       </Flex>
 
       <Flex mb={20}>
