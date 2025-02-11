@@ -14,6 +14,7 @@ import EditIcon from '~/components/Icons/EditIcon'
 import NodesIcon from '~/components/Icons/NodesIcon'
 import PlusIcon from '~/components/Icons/PlusIcon'
 import RobotIcon from '~/components/Icons/RobotIcon'
+import { useNodeNavigation } from '~/components/Universe/useNodeNavigation'
 import { getActionDetails } from '~/network/actions'
 import { fetchNodeEdges } from '~/network/fetchGraphData'
 import { useAppStore } from '~/stores/useAppStore'
@@ -25,6 +26,7 @@ import { useUserStore } from '~/stores/useUserStore'
 import { ActionDetail, NodeExtended } from '~/types'
 import { colors } from '~/utils/colors'
 import { buttonColors } from './constants'
+import { analyzeGitHubRepository } from '~/network/analyzeGithubRepo'
 
 const reuseableVector3 = new Vector3()
 
@@ -43,11 +45,12 @@ export const NodeControls = memo(() => {
   // const { open: createBountyModal } = useModal('createBounty')
 
   const [isAdmin] = useUserStore((s) => [s.isAdmin])
-  const [addNewNode] = useDataStore((s) => [s.addNewNode])
+  const { addNewNode } = useDataStore((s) => s)
 
   const selectedNode = useSelectedNode()
 
-  const { showSelectionGraph, selectionGraphData, setSelectedNode, setShowSelectionGraph } = useGraphStore((s) => s)
+  const { showSelectionGraph, selectionGraphData, setShowSelectionGraph } = useGraphStore((s) => s)
+  const { navigateToNode } = useNodeNavigation()
 
   const allGraphData = useGraphData()
 
@@ -146,7 +149,7 @@ export const NodeControls = memo(() => {
         className: 'exit',
         onClick: () => {
           setShowSelectionGraph(false)
-          setSelectedNode(null)
+          navigateToNode(null)
         },
       },
     ]
@@ -159,7 +162,7 @@ export const NodeControls = memo(() => {
     setShowSelectionGraph,
     setSidebarOpen,
     getChildren,
-    setSelectedNode,
+    navigateToNode,
   ])
 
   const nodeType = selectedNode?.node_type
@@ -190,6 +193,14 @@ export const NodeControls = memo(() => {
 
   const handleClose = () => {
     setAnchorEl(null)
+  }
+
+  const handleAnalyzeTestCoverage = async (githubName: string) => {
+    try {
+      await analyzeGitHubRepository(githubName)
+    } catch (error) {
+      console.error('error during test coverage analysis:', error)
+    }
   }
 
   const handleNodeAction = (action: ActionDetail) => {
@@ -294,13 +305,17 @@ export const NodeControls = memo(() => {
               <PopoverOption
                 data-testid="generate_tests"
                 onClick={() => {
+                  if (selectedNode?.name) {
+                    handleAnalyzeTestCoverage(selectedNode.name)
+                  }
+
                   handleClose()
                 }}
               >
                 <IconWrapper>
                   <AddCircleIcon data-testid="AddCircleIcon" />
                 </IconWrapper>
-                Generate Tests
+                Analyze Test Coverage
               </PopoverOption>
               <PopoverOption
                 data-testid="add_comments"

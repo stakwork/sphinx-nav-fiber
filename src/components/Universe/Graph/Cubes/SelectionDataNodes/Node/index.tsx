@@ -10,7 +10,8 @@ import AddCircleIcon from '~/components/Icons/AddCircleIcon'
 import CloseIcon from '~/components/Icons/CloseIcon'
 import EditIcon from '~/components/Icons/EditIcon'
 import NodesIcon from '~/components/Icons/NodesIcon'
-import { useGraphStore, useSelectedNode } from '~/stores/useGraphStore'
+import { useNodeNavigation } from '~/components/Universe/useNodeNavigation'
+import { useSelectedNode } from '~/stores/useGraphStore'
 import { useModal } from '~/stores/useModalStore'
 import { useSchemaStore } from '~/stores/useSchemaStore'
 import { useUserStore } from '~/stores/useUserStore'
@@ -48,8 +49,9 @@ export const Node = ({ onClick, node, selected, rounded = true, x, y, z, id }: P
   const { open: openNodeActionModal } = useModal('nodeAction')
   const selectedNode = useSelectedNode()
 
+  const { navigateToNode } = useNodeNavigation()
+
   const { normalizedSchemasByType, getNodeKeysByType } = useSchemaStore((s) => s)
-  const setSelectedNode = useGraphStore((s) => s.setSelectedNode)
   const targetPosition = new Vector3(x, y, z)
 
   useFrame(() => {
@@ -90,7 +92,7 @@ export const Node = ({ onClick, node, selected, rounded = true, x, y, z, id }: P
                     <EditIcon />
                   </EditButton>
                 )}
-                <CloseButton onClick={() => setSelectedNode(null)}>
+                <CloseButton onClick={() => navigateToNode(null)}>
                   <CloseIcon />
                 </CloseButton>
                 <div>

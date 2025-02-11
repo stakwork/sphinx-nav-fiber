@@ -7,6 +7,7 @@ import { useDataStore, useNodeTypes } from '~/stores/useDataStore'
 import { useGraphStore, useHoveredNode, useSelectedNode } from '~/stores/useGraphStore'
 import { NodeExtended } from '~/types'
 import { colors } from '~/utils'
+import { useNodeNavigation } from '../../useNodeNavigation'
 import { COLORS_MAP } from '../constant'
 import { Candidates } from './Candidates'
 import { NodePoints } from './NodePoints'
@@ -27,6 +28,8 @@ export const Cubes = memo(() => {
   const nodesNormalized = useDataStore((s) => s.nodesNormalized)
 
   const setTranscriptOpen = useAppStore((s) => s.setTranscriptOpen)
+
+  const { navigateToNode } = useNodeNavigation()
 
   useFrame(() => {
     return
@@ -59,12 +62,12 @@ export const Cubes = memo(() => {
 
         if (node.userData) {
           if (!ignoreNodeEvent(node.userData as NodeExtended)) {
-            useGraphStore.getState().setSelectedNode((node?.userData as NodeExtended) || null)
+            navigateToNode(node.userData.ref_id)
           }
         }
       }
     },
-    [setTranscriptOpen, ignoreNodeEvent],
+    [setTranscriptOpen, ignoreNodeEvent, navigateToNode],
   )
 
   const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null)

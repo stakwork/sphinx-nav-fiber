@@ -3,8 +3,9 @@ import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import ChevronLeftIcon from '~/components/Icons/ChevronLeftIcon'
 import CloseIcon from '~/components/Icons/CloseIcon'
+import { useNodeNavigation } from '~/components/Universe/useNodeNavigation'
 import { useAppStore } from '~/stores/useAppStore'
-import { useGraphStore, useSelectedNode } from '~/stores/useGraphStore'
+import { useSelectedNode } from '~/stores/useGraphStore'
 import { usePlayerStore } from '~/stores/usePlayerStore'
 import { colors } from '~/utils/colors'
 import { AiSearch } from '../AiSearch'
@@ -14,8 +15,7 @@ import { MediaPlayer } from './MediaPlayer'
 type Props = { open: boolean }
 
 export const SideBarSubView = ({ open }: Props) => {
-  const { setSelectedNode } = useGraphStore((s) => s)
-
+  const { navigateToNode } = useNodeNavigation()
   const selectedNode = useSelectedNode()
 
   const { setSidebarOpen } = useAppStore((s) => s)
@@ -39,7 +39,7 @@ export const SideBarSubView = ({ open }: Props) => {
         <CloseButton
           data-testid="close-sidebar-sub-view"
           onClick={() => {
-            setSelectedNode(null)
+            navigateToNode(null)
           }}
         >
           <CloseIcon />
