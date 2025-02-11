@@ -10,15 +10,29 @@ export const useSelectedNodeFromUrl = () => {
   const nodesNormalized = useDataStore((state) => state.nodesNormalized)
   const setSelectedNode = useGraphStore((s) => s.setSelectedNode)
 
+  const simulationVersion = useGraphStore((s) => s.simulationVersion)
+
   useEffect(() => {
     if (selectedNodeId) {
-      const node = nodesNormalized.get(selectedNodeId)
+      const nodeNormalized = nodesNormalized.get(selectedNodeId)
 
-      if (node) {
-        setSelectedNode(node)
+      if (nodeNormalized) {
+        setSelectedNode(nodeNormalized)
       }
     } else {
       setSelectedNode(null)
     }
   }, [selectedNodeId, nodesNormalized, setSelectedNode])
+
+  useEffect(() => {
+    if (selectedNodeId && simulationVersion) {
+      const nodeNormalized = nodesNormalized.get(selectedNodeId)
+
+      if (nodeNormalized) {
+        if (nodeNormalized) {
+          setSelectedNode(nodeNormalized)
+        }
+      }
+    }
+  }, [selectedNodeId, nodesNormalized, setSelectedNode, simulationVersion])
 }
