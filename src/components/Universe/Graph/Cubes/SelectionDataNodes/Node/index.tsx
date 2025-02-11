@@ -6,10 +6,10 @@ import styled from 'styled-components'
 import { Mesh, Vector3 } from 'three'
 import { Flex } from '~/components/common/Flex'
 import { Icons } from '~/components/Icons'
-import AddCircleIcon from '~/components/Icons/AddCircleIcon'
 import CloseIcon from '~/components/Icons/CloseIcon'
 import EditIcon from '~/components/Icons/EditIcon'
 import NodesIcon from '~/components/Icons/NodesIcon'
+import PlusIcon from '~/components/Icons/PlusIcon'
 import { useNodeNavigation } from '~/components/Universe/useNodeNavigation'
 import { useSelectedNode } from '~/stores/useGraphStore'
 import { useModal } from '~/stores/useModalStore'
@@ -84,7 +84,7 @@ export const Node = ({ onClick, node, selected, rounded = true, x, y, z, id }: P
               <Selected className={clsx({ 'has-padding': descriptionShortened })} rounded={false}>
                 {isAdmin && actions && (
                   <ActionButton onClick={() => openNodeActionModal()}>
-                    <AddCircleIcon />
+                    <PlusIcon />
                   </ActionButton>
                 )}
                 {isAdmin && (
@@ -249,6 +249,10 @@ const CloseButton = styled(IconButton)`
 const ActionButton = styled(IconButton)`
   left: -10px;
   top: -10px;
+  background: ${colors.white};
+  color: ${colors.BG1};
+  width: 1.5rem;
+  height: 1.5rem;
 `
 
 type AvatarProps = {
