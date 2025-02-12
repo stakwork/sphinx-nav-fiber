@@ -17,9 +17,10 @@ export type FormData = {
 interface Props {
   setBounty?: (bounty: BountyPayload) => void
   cancelBounty?: () => void
+  loading?: boolean
 }
 
-export const Body = ({ setBounty, cancelBounty }: Props) => {
+export const Body = ({ setBounty, cancelBounty, loading }: Props) => {
   const [errMessage, setErrMessage] = useState<string>('')
   const { close } = useModal('createBounty')
   const selectedNode = useSelectedNode()
@@ -75,7 +76,7 @@ export const Body = ({ setBounty, cancelBounty }: Props) => {
   return (
     <FormProvider {...form}>
       <form id="create-bounty-form" onSubmit={handleSubmit(onSubmit)}>
-        <CreateBounty errMessage={errMessage} handleClose={handleClose} />
+        <CreateBounty errMessage={errMessage} handleClose={handleClose} loading={loading} />
       </form>
     </FormProvider>
   )
