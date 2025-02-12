@@ -91,6 +91,7 @@ export type DataStore = {
   abortFetchData: () => void
   resetGraph: () => void
   resetData: () => void
+  finishLoading: () => void
 }
 
 const defaultData: Omit<
@@ -122,6 +123,7 @@ const defaultData: Omit<
   | 'abortFetchData'
   | 'resetGraph'
   | 'resetData'
+  | 'finishLoading'
 > = {
   categoryFilter: null,
   dataInitial: null,
@@ -156,7 +158,7 @@ export const useDataStore = create<DataStore>()(
     ...defaultData,
 
     fetchData: async (setBudget, setAbortRequests, AISearchQuery = '') => {
-      const { filters, addNewNode } = get()
+      const { filters, addNewNode, finishLoading } = get()
       const currentPage = filters.skip
       const itemsPerPage = filters.limit
       const { currentSearch } = useAppStore.getState()
@@ -221,7 +223,7 @@ export const useDataStore = create<DataStore>()(
           addNewNode(data)
         }
 
-        set({ isFetching: false, isLoadingNew: false, splashDataLoading: false })
+        finishLoading()
       } catch (error) {
         console.error(error)
 
@@ -229,6 +231,10 @@ export const useDataStore = create<DataStore>()(
           set({ isFetching: false, isLoadingNew: false })
         }
       }
+    },
+
+    finishLoading: () => {
+      set({ isFetching: false, isLoadingNew: false, splashDataLoading: false })
     },
 
     addNewNode: (data) => {
@@ -309,6 +315,10 @@ export const useDataStore = create<DataStore>()(
         name: filter,
         count: updatedNodes.filter((node) => filter === 'all' || node.node_type?.toLowerCase() === filter).length,
       }))
+
+      if (!newNodes.length && !newLinks.length) {
+        return
+      }
 
       // Persist updates
       set({
