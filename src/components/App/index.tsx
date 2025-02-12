@@ -7,12 +7,12 @@ import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { GlobalStyle } from '~/components/GlobalStyle'
 import { Overlay } from '~/components/Universe/Overlay' // Import Overlay directly
+import { useRetrieveData } from '~/hooks/useRetrieveData'
 import { useSocket } from '~/hooks/useSockets'
 import { useAiSummaryStore } from '~/stores/useAiSummaryStore'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
 import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
-import { useUpdateSelectedNode } from '~/stores/useGraphStore'
 import { useTeachStore } from '~/stores/useTeachStore'
 import { useUserStore } from '~/stores/useUserStore'
 import {
@@ -24,7 +24,6 @@ import {
   FetchDataResponse,
 } from '~/types'
 import { colors } from '~/utils/colors'
-import { updateBudget } from '~/utils/setBudget'
 import version from '~/utils/versionHelper'
 import { ModalsContainer } from '../ModalsContainer'
 import { ActionsToolbar } from './ActionsToolbar'
@@ -54,37 +53,20 @@ const LazySideBar = lazy(() => import('./SideBar').then(({ SideBar }) => ({ defa
 export const App = () => {
   const [searchParams] = useSearchParams()
   const query = searchParams.get('q')
-  const { setBudget, setNodeCount } = useUserStore((s) => s)
+  const { setNodeCount } = useUserStore((s) => s)
   const queueRef = useRef<FetchDataResponse | null>(null)
   const timerRef = useRef<NodeJS.Timeout | null>(null)
 
-  const {
-    setSidebarOpen,
-    currentSearch: searchTerm,
-    setCurrentSearch,
-    setRelevanceSelected,
-    setTranscriptOpen,
-    universeQuestionIsOpen,
-    setUniverseQuestionIsOpen,
-  } = useAppStore((s) => s)
+  useRetrieveData()
+
+  const { setCurrentSearch, setRelevanceSelected, setTranscriptOpen, universeQuestionIsOpen } = useAppStore((s) => s)
 
   const setTeachMeAnswer = useTeachStore((s) => s.setTeachMeAnswer)
 
-  const {
-    fetchData,
-    setCategoryFilter,
-    setAbortRequests,
-    addNewNode,
-    splashDataLoading,
-    runningProjectId,
-    setRunningProjectMessages,
-    isFetching,
-    resetData,
-  } = useDataStore((s) => s)
+  const { setCategoryFilter, addNewNode, splashDataLoading, runningProjectId, setRunningProjectMessages, isFetching } =
+    useDataStore((s) => s)
 
   const { setAiSummaryAnswer, getKeyExist, aiRefId } = useAiSummaryStore((s) => s)
-
-  const setSelectedNode = useUpdateSelectedNode()
 
   const [realtimeGraphFeatureFlag, chatInterfaceFeatureFlag] = useFeatureFlagStore((s) => [
     s.realtimeGraphFeatureFlag,
@@ -101,38 +83,11 @@ export const App = () => {
     setValue('search', query ?? '')
 
     setTranscriptOpen(false)
-    setSelectedNode(null)
     setRelevanceSelected(false)
     setCurrentSearch(query ?? '')
     setTeachMeAnswer('')
     setCategoryFilter(null)
-  }, [
-    query,
-    setCategoryFilter,
-    setCurrentSearch,
-    setRelevanceSelected,
-    setSelectedNode,
-    setTeachMeAnswer,
-    setTranscriptOpen,
-    setValue,
-  ])
-
-  useEffect(() => {
-    const runSearch = async () => {
-      await fetchData(setBudget, setAbortRequests)
-      setSidebarOpen(true)
-
-      if (searchTerm) {
-        await updateBudget(setBudget)
-      } else {
-        setSelectedNode(null)
-      }
-    }
-
-    resetData()
-
-    runSearch()
-  }, [searchTerm, fetchData, setBudget, setAbortRequests, setSidebarOpen, setSelectedNode, resetData])
+  }, [query, setCategoryFilter, setCurrentSearch, setRelevanceSelected, setTeachMeAnswer, setTranscriptOpen, setValue])
 
   const handleNewNode = useCallback(() => {
     setNodeCount('INCREMENT')
@@ -329,14 +284,6 @@ export const App = () => {
       }
     }
   }, [runningProjectId, socket])
-
-  useEffect(() => {
-    if (!splashDataLoading) {
-      if (chatInterfaceFeatureFlag) {
-        setUniverseQuestionIsOpen()
-      }
-    }
-  }, [setUniverseQuestionIsOpen, splashDataLoading, chatInterfaceFeatureFlag])
 
   return (
     <>

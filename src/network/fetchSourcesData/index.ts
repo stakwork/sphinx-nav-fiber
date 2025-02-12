@@ -1,6 +1,5 @@
 import { SchemaExtended } from '~/components/ModalsContainer/BlueprintModal/types'
 import {
-  FetchDataResponse,
   FetchEdgesResponse,
   FetchEdgeTypesResponse,
   FetchRadarResponse,
@@ -130,12 +129,14 @@ export interface Schema {
   is_deleted?: boolean
   children?: string[]
   primary_color?: string
+  secondary_color?: string
   node_key?: string
   index?: string
   media_url?: string
   image_url?: string
   source_link?: string
   attributes?: { [key: string]: string | boolean }
+  action?: string[]
 }
 
 export interface SchemaLink {
@@ -181,10 +182,8 @@ export interface UpdateSchemaParams {
   }
 }
 
-export const getNodes = async (): Promise<FetchDataResponse> => {
-  const url = `/prediction/graph/search?node_type=['Episode']&include_properties=true&includeContent=true&sort_by=date`
-
-  const response = await api.get<FetchDataResponse>(url)
+export const postFeedback = async (data: { answer: string; chain: string; feedback_type: 'helpful' | 'unhelpful' }) => {
+  const response = await api.post('/answer/feedback', JSON.stringify(data))
 
   return response
 }

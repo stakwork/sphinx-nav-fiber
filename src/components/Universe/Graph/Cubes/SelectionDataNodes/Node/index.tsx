@@ -1,15 +1,17 @@
 import { Html } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import clsx from 'clsx'
-import React, { useRef } from 'react'
+import { useRef } from 'react'
 import styled from 'styled-components'
 import { Mesh, Vector3 } from 'three'
 import { Flex } from '~/components/common/Flex'
 import { Icons } from '~/components/Icons'
+import AddCircleIcon from '~/components/Icons/AddCircleIcon'
 import CloseIcon from '~/components/Icons/CloseIcon'
 import EditIcon from '~/components/Icons/EditIcon'
 import NodesIcon from '~/components/Icons/NodesIcon'
-import { useGraphStore, useSelectedNode } from '~/stores/useGraphStore'
+import { useNodeNavigation } from '~/components/Universe/useNodeNavigation'
+import { useSelectedNode } from '~/stores/useGraphStore'
 import { useModal } from '~/stores/useModalStore'
 import { useSchemaStore } from '~/stores/useSchemaStore'
 import { useUserStore } from '~/stores/useUserStore'
@@ -44,10 +46,12 @@ export const Node = ({ onClick, node, selected, rounded = true, x, y, z, id }: P
   const [isAdmin] = useUserStore((s) => [s.isAdmin])
   const { open: openEditNodeNameModal } = useModal('editNodeName')
   const { open: createBountyModal } = useModal('createBounty')
+  const { open: openNodeActionModal } = useModal('nodeAction')
   const selectedNode = useSelectedNode()
 
+  const { navigateToNode } = useNodeNavigation()
+
   const { normalizedSchemasByType, getNodeKeysByType } = useSchemaStore((s) => s)
-  const setSelectedNode = useGraphStore((s) => s.setSelectedNode)
   const targetPosition = new Vector3(x, y, z)
 
   useFrame(() => {
@@ -57,6 +61,8 @@ export const Node = ({ onClick, node, selected, rounded = true, x, y, z, id }: P
   })
 
   const primaryIcon = normalizedSchemasByType[node.node_type]?.icon
+
+  const actions = normalizedSchemasByType[node.node_type]?.action
 
   const Icon = primaryIcon ? Icons[primaryIcon] : null
   // const iconName = Icon ? primaryIcon : 'NodesIcon'
@@ -76,12 +82,17 @@ export const Node = ({ onClick, node, selected, rounded = true, x, y, z, id }: P
           <>
             {selected ? (
               <Selected className={clsx({ 'has-padding': descriptionShortened })} rounded={false}>
+                {isAdmin && actions && (
+                  <ActionButton onClick={() => openNodeActionModal()}>
+                    <AddCircleIcon />
+                  </ActionButton>
+                )}
                 {isAdmin && (
                   <EditButton onClick={() => openEditNodeNameModal()}>
                     <EditIcon />
                   </EditButton>
                 )}
-                <CloseButton onClick={() => setSelectedNode(null)}>
+                <CloseButton onClick={() => navigateToNode(null)}>
                   <CloseIcon />
                 </CloseButton>
                 <div>
@@ -232,6 +243,11 @@ const EditButton = styled(IconButton)`
 
 const CloseButton = styled(IconButton)`
   right: -10px;
+  top: -10px;
+`
+
+const ActionButton = styled(IconButton)`
+  left: -10px;
   top: -10px;
 `
 

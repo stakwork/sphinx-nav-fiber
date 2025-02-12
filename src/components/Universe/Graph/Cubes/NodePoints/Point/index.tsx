@@ -5,6 +5,7 @@ import { Group, Mesh } from 'three'
 import { useDataStore } from '~/stores/useDataStore'
 import { useGraphStore } from '~/stores/useGraphStore'
 import { NodeExtended } from '~/types'
+import { generatePalette } from '~/utils/palleteGenerator'
 
 type Props = {
   color: string
@@ -81,13 +82,15 @@ export const Point = memo(({ color, scale, name, index, node, nodeType }: Props)
     }
   })
 
+  const newColor = generatePalette(color, 3, 10)
+
   return (
     <Billboard ref={nodeRef} follow lockX={false} lockY={false} lockZ={false} name="group-name" visible={false}>
       <mesh ref={helperRef} name="instance-helper" scale={[scale, scale, scale]} userData={node}>
         <sphereGeometry args={[30, 16, 16]} />
         <meshBasicMaterial color="white" opacity={0} transparent />
       </mesh>
-      <Instance color={color} name="instance" scale={scale} />
+      <Instance color={newColor.at(3)} name="instance" scale={scale} />
     </Billboard>
   )
 })

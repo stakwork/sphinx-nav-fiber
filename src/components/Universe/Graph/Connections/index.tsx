@@ -78,7 +78,7 @@ export const Connections = memo(({ linksPosition }: Props) => {
 
             const color = sourceNode ? normalizedSchemasByType[sourceNode.node_type]?.primary_color : 'white'
 
-            const linkColor = color || 'white'
+            const linkColor = '#494C5A' || color || 'white'
 
             return (
               <LineInstance

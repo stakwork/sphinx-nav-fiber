@@ -2,6 +2,7 @@
 import '@testing-library/jest-dom'
 import { fireEvent, render, waitFor } from '@testing-library/react'
 import React from 'react'
+import { createMemoryRouter, RouterProvider } from 'react-router-dom'
 import { Relevance } from '..'
 import { useAppStore } from '../../../../../stores/useAppStore'
 import { useDataStore, useFilteredNodes } from '../../../../../stores/useDataStore'
@@ -21,6 +22,16 @@ Object.defineProperty(window, 'matchMedia', {
   })),
 })
 
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useLocation: () => ({
+    pathname: '/',
+    search: '',
+    hash: '',
+    state: null,
+    key: 'default',
+  }),
+}))
 jest.mock('react', () => ({
   ...jest.requireActual('react'),
   useRef: jest.fn(() => ({ current: { scrollTo: jest.fn() } })),
@@ -41,6 +52,12 @@ jest.mock('~/stores/useAppStore', () => ({
   useAppStore: jest.fn(),
 }))
 
+jest.mock('~/components/Universe/useNodeNavigation', () => ({
+  useNodeNavigation: () => ({
+    navigateToNode: jest.fn(),
+  }),
+}))
+
 const mockedUseDataStore = useDataStore as jest.MockedFunction<typeof useDataStore>
 const mockedUseAppStore = useAppStore as jest.MockedFunction<typeof useAppStore>
 
@@ -52,18 +69,36 @@ describe('test Relevance Component', () => {
   beforeEach(() => {
     jest.clearAllMocks()
 
-    mockedUseAppStore.mockImplementation(() => [
-      jest.fn().mockImplementation((selcetedNode) => selcetedNode),
-      jest.fn().mockImplementation((timeStamp) => timeStamp),
-    ])
+    mockedUseAppStore.mockImplementation(() => ({
+      currentSearch: '',
+      setSidebarOpen: jest.fn(),
+      setRelevanceSelected: jest.fn(),
+    }))
 
     mockedUseDataStore.mockImplementation(() => [false, jest.fn().mockImplementation((relevance) => relevance)])
   })
 
+  const renderWithRouter = (component: React.ReactElement) => {
+    const router = createMemoryRouter(
+      [
+        {
+          path: '/',
+          element: component,
+        },
+      ],
+      {
+        initialEntries: ['/'],
+        initialIndex: 0,
+      },
+    )
+
+    return render(<RouterProvider router={router} />)
+  }
+
   it.skip('asserts that loadMore button is hidden when is filteredNodes is empty', () => {
     mockedUseFilterNodes.mockReturnValue([])
 
-    const { getByText } = render(<Relevance isSearchResult={false} />)
+    const { getByText } = renderWithRouter(<Relevance isSearchResult={false} />)
 
     expect(() => getByText('Load More')).toThrow() // error is throw since load more button is not found
   })
@@ -71,13 +106,13 @@ describe('test Relevance Component', () => {
   it('asserts that pagination button is displayed only when required', () => {
     mockedUseFilterNodes.mockReturnValue(new Array(59).fill(mockedFilterNodes).flat())
 
-    const { getByText } = render(<Relevance isSearchResult={false} />)
+    const { getByText } = renderWithRouter(<Relevance isSearchResult={false} />)
 
     expect(getByText('Load More')).toBeInTheDocument()
   })
 
   it.skip('asserts that 10 nodes are initial rendered', () => {
-    const { container } = render(<Relevance isSearchResult={false} />)
+    const { container } = renderWithRouter(<Relevance isSearchResult={false} />)
 
     expect(container.querySelectorAll('.episode-wrapper').length).toBe(10)
   })
@@ -85,7 +120,7 @@ describe('test Relevance Component', () => {
   it.skip('asserts that pagination functions properly', () => {
     mockedUseFilterNodes.mockReturnValue(new Array(20).fill(mockedFilterNodes).flat())
 
-    const { getByText, container } = render(<Relevance isSearchResult={false} />)
+    const { getByText, container } = renderWithRouter(<Relevance isSearchResult={false} />)
 
     expect(container.querySelectorAll('.episode-wrapper').length).toBe(10)
 
@@ -103,7 +138,7 @@ describe('test Relevance Component', () => {
   it.skip('asserts that component renders correctly', () => {
     mockedUseFilterNodes.mockReturnValue(new Array(20).fill(mockedFilterNodes).flat())
 
-    const { getByText, getAllByText, container } = render(<Relevance isSearchResult={false} />)
+    const { getByText, getAllByText, container } = renderWithRouter(<Relevance isSearchResult={false} />)
 
     expect(container.querySelector('#search-result-list')).toBeInTheDocument()
     expect(getAllByText(mockedFilterNodes[0].name).length).toBe(10)
@@ -173,7 +208,7 @@ describe('test Relevance Component', () => {
 
     const EpisodeComponent = jest.spyOn(EpisodeModule, 'Episode')
 
-    render(<Relevance isSearchResult={false} />)
+    renderWithRouter(<Relevance isSearchResult={false} />)
 
     expect(EpisodeComponent).toHaveBeenCalledWith(
       expect.objectContaining({

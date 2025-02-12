@@ -1,11 +1,12 @@
 import { useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { useGraphData } from '~/components/DataRetriever'
+import { useNodeNavigation } from '~/components/Universe/useNodeNavigation'
 import { Avatar } from '~/components/common/Avatar'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { TypeBadge } from '~/components/common/TypeBadge'
-import { useSelectedNode, useUpdateSelectedNode } from '~/stores/useGraphStore'
+import { useSelectedNode } from '~/stores/useGraphStore'
 import { NodeExtended } from '~/types'
 import { getSelectedNodeTimestamps } from '~/utils'
 import { colors } from '~/utils/colors'
@@ -62,7 +63,7 @@ const ScrollableList = styled.div`
 
 export const Show = () => {
   const selectedNode = useSelectedNode()
-  const setSelectedNode = useUpdateSelectedNode()
+  const { navigateToNode } = useNodeNavigation()
   const data = useGraphData()
   const [showHost, setShowHost] = useState<string[]>([])
 
@@ -128,7 +129,7 @@ export const Show = () => {
         </Flex>
         <ScrollableList>
           {episodes.map((node) => (
-            <EpisodePanel key={node.ref_id} node={node} onClick={() => setSelectedNode(node)} />
+            <EpisodePanel key={node.ref_id} node={node} onClick={() => navigateToNode(node.ref_id)} />
           ))}
         </ScrollableList>
       </Flex>

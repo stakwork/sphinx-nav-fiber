@@ -360,3 +360,10 @@ export type AiSummaryAudioResponse = {
   ref_id: string
   audio_EN: string
 }
+
+export type ActionDetail = {
+  bounty: boolean
+  display_name: string
+  name: string
+  workflow_id: string
+}

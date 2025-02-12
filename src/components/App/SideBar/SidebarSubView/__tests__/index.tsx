@@ -4,6 +4,7 @@ import '@testing-library/jest-dom'
 import { fireEvent, render, waitFor } from '@testing-library/react'
 import moment from 'moment'
 import React from 'react'
+import { MemoryRouter } from 'react-router-dom'
 import { ThemeProvider as StyleThemeProvider } from 'styled-components'
 import { SideBarSubView } from '..'
 import { useAppStore } from '../../../../../stores/useAppStore'
@@ -25,9 +26,22 @@ Object.defineProperty(window, 'matchMedia', {
 })
 
 jest.mock('react-hook-form', () => ({
+  ...jest.requireActual('react-hook-form'),
   useFormContext: jest.fn(() => ({
+    setValue: jest.fn(),
     register: jest.fn(),
+    watch: jest.fn(() => ''),
   })),
+  useForm: jest.fn(() => ({
+    register: jest.fn(),
+    handleSubmit: jest.fn((fn) => (event) => fn(event)),
+    reset: jest.fn((fn) => () => fn()),
+  })),
+}))
+
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useNavigate: jest.fn(),
 }))
 
 jest.mock('~/stores/useDataStore', () => ({
@@ -41,6 +55,12 @@ jest.mock('~/stores/useGraphStore', () => ({
 
 jest.mock('~/stores/useAppStore', () => ({
   useAppStore: jest.fn(),
+}))
+
+jest.mock('~/components/Universe/useNodeNavigation', () => ({
+  useNodeNavigation: () => ({
+    navigateToNode: jest.fn(),
+  }),
 }))
 
 const useDataStoreMock = useDataStore as jest.MockedFunction<typeof useDataStore>
@@ -63,7 +83,7 @@ const mockSelectedNode = {
 describe('Test SideBarSubView', () => {
   beforeEach(() => {
     jest.clearAllMocks()
-    useDataStoreMock.mockReturnValue({ setTeachMe: jest.fn(), showTeachMe: false })
+    useDataStoreMock.mockReturnValue({ setTeachMe: jest.fn(), showTeachMe: false, setAbortRequests: jest.fn() })
     useGraphStoreMock.mockReturnValue({ setSelectedNode: jest.fn() })
     useSelectedNodeMock.mockReturnValue(mockSelectedNode)
     useAppStoreMock.mockReturnValue({ setSidebarOpen: jest.fn() })
@@ -71,11 +91,13 @@ describe('Test SideBarSubView', () => {
 
   it('asserts that the component is not visible when open is false', () => {
     const { getByTestId } = render(
-      <ThemeProvider theme={appTheme}>
-        <StyleThemeProvider theme={appTheme}>
-          <SideBarSubView open={false} />
-        </StyleThemeProvider>
-      </ThemeProvider>,
+      <MemoryRouter>
+        <ThemeProvider theme={appTheme}>
+          <StyleThemeProvider theme={appTheme}>
+            <SideBarSubView open={false} />
+          </StyleThemeProvider>
+        </ThemeProvider>
+      </MemoryRouter>,
     )
 
     expect(getByTestId('sidebar-sub-view')).toHaveStyle({ visibility: 'hidden' })

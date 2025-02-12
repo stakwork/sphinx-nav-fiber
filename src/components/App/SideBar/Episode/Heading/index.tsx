@@ -4,8 +4,9 @@ import { Flex } from '~/components/common/Flex'
 import { highlightSearchTerm } from '~/components/common/Highlight/Highlight'
 import { Text } from '~/components/common/Text'
 import { TypeBadge } from '~/components/common/TypeBadge'
+import { useNodeNavigation } from '~/components/Universe/useNodeNavigation'
 import { useAppStore } from '~/stores/useAppStore'
-import { useSelectedNode, useUpdateSelectedNode } from '~/stores/useGraphStore'
+import { useSelectedNode } from '~/stores/useGraphStore'
 import { NodeExtended } from '~/types'
 import { colors } from '~/utils'
 
@@ -37,7 +38,7 @@ const Wrapper = styled(Flex)`
 
 export const Heading = ({ selectedNodeShow }: { selectedNodeShow: NodeExtended | undefined }) => {
   const selectedNode = useSelectedNode()
-  const setSelectedNode = useUpdateSelectedNode()
+  const { navigateToNode } = useNodeNavigation()
   const { type } = selectedNode || {}
   const searchTerm = useAppStore((s) => s.currentSearch)
 
@@ -53,7 +54,7 @@ export const Heading = ({ selectedNodeShow }: { selectedNodeShow: NodeExtended |
       </Flex>
 
       {selectedNodeShow ? (
-        <Flex className="show" direction="row" onClick={() => setSelectedNode(selectedNodeShow)}>
+        <Flex className="show" direction="row" onClick={() => navigateToNode(selectedNodeShow.ref_id)}>
           <Avatar size={16} src={selectedNodeShow?.image_url || ''} type="show" />
           <Text className="show__title" color="mainBottomIcons" kind="regular">
             {selectedNodeShow?.show_title}

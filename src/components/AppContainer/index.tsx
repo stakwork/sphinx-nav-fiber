@@ -22,6 +22,7 @@ export const AppContainer = () => {
             <>
               <Route element={<LandingPage />} path="/" />
               <Route element={<LazyMindSet />} path="/episode/:episodeId" />
+              <Route element={<LazyMindSet />} path="/episode/:episodeId/node/:selectedNodeId" />
               <Route element={<Navigate replace to="/" />} path="/episode" />
             </>
           )}

@@ -1,6 +1,7 @@
 import styled, { css } from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import ClearIcon from '~/components/Icons/ClearIcon'
+import { useAppStore } from '~/stores/useAppStore'
 import { useGraphStore } from '~/stores/useGraphStore'
 import { colors } from '~/utils'
 import { LinkTypes } from './LinkTypes'
@@ -8,6 +9,11 @@ import { NodeTypes } from './NodeTypes'
 
 export const GraphSearch = () => {
   const [setSearchQuery, searchQuery] = useGraphStore((s) => [s.setSearchQuery, s.searchQuery])
+  const universeQuestionIsOpen = useAppStore((s) => s.universeQuestionIsOpen)
+
+  if (universeQuestionIsOpen) {
+    return null
+  }
 
   return (
     <Wrapper>
