@@ -1,6 +1,5 @@
 import { SchemaExtended } from '~/components/ModalsContainer/BlueprintModal/types'
 import {
-  FetchDataResponse,
   FetchEdgesResponse,
   FetchEdgeTypesResponse,
   FetchRadarResponse,
@@ -181,14 +180,6 @@ export interface UpdateSchemaParams {
   attributes: {
     [key: string | number]: string
   }
-}
-
-export const getNodes = async (): Promise<FetchDataResponse> => {
-  const url = `/prediction/graph/search?node_type=['Episode']&include_properties=true&includeContent=true&sort_by=date`
-
-  const response = await api.get<FetchDataResponse>(url)
-
-  return response
 }
 
 export const postFeedback = async (data: { answer: string; chain: string; feedback_type: 'helpful' | 'unhelpful' }) => {
