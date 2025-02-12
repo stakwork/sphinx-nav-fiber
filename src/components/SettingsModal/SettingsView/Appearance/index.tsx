@@ -1,11 +1,10 @@
-import { FC, useState } from 'react'
 import { Button } from '@mui/material'
+import { FC, useState } from 'react'
+import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
 import { GraphViewControl } from '~/components/App/ActionsToolbar/GraphViewControl'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
-import { useGraphStore } from '~/stores/useGraphStore'
-import { ClipLoader } from 'react-spinners'
 import { colors } from '~/utils'
 
 type Props = {
@@ -13,12 +12,11 @@ type Props = {
 }
 
 export const Appearance: FC<Props> = ({ onClose }) => {
-  const [graphStyle] = useGraphStore((s) => [s.graphStyle])
   const [loading, setLoading] = useState(false)
 
   const handleSave = () => {
     setLoading(true)
-    localStorage.setItem('graphStyle', graphStyle)
+    // localStorage.setItem('graphStyle', graphStyle)
     setLoading(false)
     onClose()
   }

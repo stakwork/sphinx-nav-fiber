@@ -13,10 +13,35 @@ import { create } from 'zustand'
 import { ForceSimulation } from '~/transformers/forceSimulation'
 import { GraphData, Link, Node, NodeExtended } from '~/types'
 import { useDataStore } from '../useDataStore'
+import { useMindsetStore } from '../useMindsetStore'
 
 const simulationTicks = 100
 
+type Position = {
+  x: number
+  y: number
+  z: number
+}
+
 export type GraphStyle = 'sphere' | 'force' | 'split' | 'earth'
+
+export const distributeNodesOnSphere = (nodes: NodeExtended[], radius = 20) => {
+  const count = nodes.length
+  const goldenRatio = (1 + Math.sqrt(5)) / 2
+
+  return nodes.reduce((acc: Record<string, Position>, node, i) => {
+    const theta = (2 * Math.PI * i) / goldenRatio // Angle for uniform distribution
+    const phi = Math.acos(1 - (2 * (i + 0.5)) / count) // Elevation angle
+
+    acc[node.ref_id] = {
+      x: radius * Math.sin(phi) * Math.cos(theta),
+      y: radius * Math.sin(phi) * Math.sin(theta),
+      z: radius * Math.cos(phi),
+    }
+
+    return acc
+  }, {})
+}
 
 interface SimulationHelpers {
   addNodesAndLinks: (nodes: Node[], links: Link[], replace: boolean) => void
@@ -222,7 +247,7 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
   setIsHovering: (isHovering) => set({ isHovering }),
   setGraphRadius: (graphRadius) => set({ graphRadius }),
   setSelectionGraphRadius: (selectionGraphRadius) => set({ selectionGraphRadius }),
-  setGraphStyle: (graphStyle) => set({ graphStyle: 'sphere' || graphStyle }),
+  setGraphStyle: (graphStyle) => set({ graphStyle }),
   setHoveredNode: (hoveredNode) => {
     const { nodesNormalized } = useDataStore.getState() || {}
 
@@ -288,9 +313,6 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
     addNodesAndLinks: (newNodes, newLinks, replace) => {
       const { simulation, simulationHelpers } = get()
 
-      console.log(simulation.nodes())
-      console.log(newNodes)
-
       simulation.stop()
 
       const structuredNodes = structuredClone(newNodes)
@@ -319,7 +341,6 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
 
       // Add simulation node to reference (so that we can access reference on tick to update position)
     },
-
     addRadialForce: () => {
       const { simulation } = get()
 
@@ -357,14 +378,62 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
             .iterations(1),
         )
     },
+
     addClusterForce: () => {
-      const { simulation, highlightNodes } = get()
+      const { simulation } = get()
+      const { chapters } = useMindsetStore.getState()
+
+      const neighborhoodCenters = chapters?.length ? distributeNodesOnSphere(chapters, 1000) : null
 
       simulation
-        .nodes(simulation.nodes().map((i: NodeExtended) => ({ ...i, ...resetPosition })))
+        .nodes(simulation.nodes().map((n: Node) => ({ ...n, ...resetPosition })))
         .force(
-          'cluster',
-          forceRadial((node: NodeExtended) => (highlightNodes.includes(node.ref_id) ? 25 : 500)).strength(1),
+          'charge',
+          forceManyBody().strength((node: NodeExtended) => (node.scale || 1) * 0),
+        )
+        .force(
+          'x',
+          forceX((n: NodeExtended) => {
+            const neighborhood = neighborhoodCenters && n.neighbourHood ? neighborhoodCenters[n.neighbourHood] : null
+
+            return neighborhood?.x || 0
+          }).strength(0.1), // Attract to X
+        )
+        .force(
+          'y',
+          forceY((n: NodeExtended) => {
+            const neighborhood = neighborhoodCenters && n.neighbourHood ? neighborhoodCenters[n.neighbourHood] : null
+
+            return neighborhood?.y || 0
+          }).strength(0.1), // Attract to X
+        )
+        .force(
+          'z',
+          forceZ((n: NodeExtended) => {
+            const neighborhood = neighborhoodCenters && n.neighbourHood ? neighborhoodCenters[n.neighbourHood] : null
+
+            return neighborhood?.z || 0
+          }).strength(0.1), // Attract to X
+        )
+        .force(
+          'link',
+          forceLink()
+            .links(
+              simulation
+                .force('link')
+                .links()
+                .map((i: Link<NodeExtended>) => ({ ...i, source: i.source.ref_id, target: i.target.ref_id })),
+            )
+            .strength(0)
+            .distance(400)
+            .id((d: NodeExtended) => d.ref_id),
+        )
+        .force(
+          'collide',
+          forceCollide()
+            .radius((node: NodeExtended) => (node.scale || 1) * 95)
+            .strength(0.5)
+            .iterations(1),
         )
     },
 
@@ -431,7 +500,7 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
       }
 
       if (graphStyle === 'force') {
-        simulationHelpers.addDefaultForce()
+        simulationHelpers.addClusterForce()
       }
 
       simulationHelpers.simulationRestart()

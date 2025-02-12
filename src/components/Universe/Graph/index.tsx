@@ -5,6 +5,7 @@ import { Box3, Group, Sphere } from 'three'
 import { Line2 } from 'three-stdlib'
 import { useDataStore } from '~/stores/useDataStore'
 import { useGraphStore } from '~/stores/useGraphStore'
+import { useMindsetStore } from '~/stores/useMindsetStore'
 import { useSchemaStore } from '~/stores/useSchemaStore'
 import { NodeExtended } from '~/types'
 import { useSelectedNodeFromUrl } from '../useSelectedNodeFromUrl'
@@ -12,6 +13,7 @@ import { Connections } from './Connections'
 import { Cubes } from './Cubes'
 import { Earth } from './Earth'
 import { LoadingNodes } from './LoadingNodes'
+import { Neighbourhoods } from './Neighborhoods'
 import { NodeDetailsPanel } from './UI'
 
 export type LinkPosition = {
@@ -33,6 +35,8 @@ export const Graph = () => {
   const { dataInitial, isLoadingNew, isFetching, dataNew, resetDataNew } = useDataStore((s) => s)
   const groupRef = useRef<Group>(null)
   const { normalizedSchemasByType } = useSchemaStore((s) => s)
+
+  const chapters = useMindsetStore((s) => s.chapters)
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { useClustering } = useControls({ useClustering: false })
@@ -102,6 +106,108 @@ export const Graph = () => {
       return
     }
 
+    if (!groupRef?.current) {
+      return
+    }
+
+    const gr = groupRef.current.getObjectByName('simulation-3d-group__nodes') as Group
+    const grPoints = groupRef.current.getObjectByName('simulation-3d-group__node-points') as Group
+    const grConnections = groupRef.current.getObjectByName('simulation-3d-group__connections') as Group
+
+    simulation.on('tick', () => {
+      if (groupRef?.current) {
+        if (gr && grPoints) {
+          const nodes = simulation.nodes()
+
+          const maxLength = Math.max(gr.children.length, grPoints.children[0].children.length)
+
+          for (let index = 0; index < maxLength; index += 1) {
+            const simulationNode = nodes[index]
+
+            if (simulationNode) {
+              if (gr.children[index]) {
+                gr.children[index].position.set(simulationNode.x, simulationNode.y, simulationNode.z)
+              }
+
+              if (grPoints.children[0].children[index]) {
+                grPoints.children[0].children[index].position.set(simulationNode.x, simulationNode.y, simulationNode.z)
+              }
+            }
+          }
+        }
+
+        linksPositionRef.current.clear()
+
+        dataInitial?.links.forEach((link) => {
+          const sourceNode = nodesPositionRef.current.get(link.source) || { x: 0, y: 0, z: 0 }
+          const targetNode = nodesPositionRef.current.get(link.target) || { x: 0, y: 0, z: 0 }
+
+          const { x: sx, y: sy, z: sz } = sourceNode
+          const { x: tx, y: ty, z: tz } = targetNode
+
+          // Set positions for the link
+          linksPositionRef.current.set(link.ref_id, {
+            sx,
+            sy,
+            sz,
+            tx,
+            ty,
+            tz,
+          })
+        })
+
+        if (grConnections) {
+          grConnections.children.forEach((g, i) => {
+            const r = g.children[0] // Assuming Line is the first child
+            const text = g.children[1] // Assuming Text is the second child
+
+            if (r instanceof Line2) {
+              // Ensure you have both Line and Text
+              const Line = r as Line2
+              const link = dataInitial?.links[i]
+
+              if (link) {
+                const sourceNode = nodesPositionRef.current.get(link.source) || { x: 0, y: 0, z: 0 }
+                const targetNode = nodesPositionRef.current.get(link.target) || { x: 0, y: 0, z: 0 }
+
+                if (!sourceNode || !targetNode) {
+                  console.warn(`Missing source or target node for link: ${link?.ref_id}`)
+
+                  return
+                }
+
+                const { x: sx, y: sy, z: sz } = sourceNode
+                const { x: tx, y: ty, z: tz } = targetNode
+
+                // Set positions for the link
+                linksPositionRef.current.set(link.ref_id, {
+                  sx,
+                  sy,
+                  sz,
+                  tx,
+                  ty,
+                  tz,
+                })
+
+                text.position.set((sx + tx) / 2, (sy + ty) / 2, (sz + tz) / 2)
+
+                // Set line color and properties
+                // const lineColor = normalizedSchemasByType[sourceNode.node_type]?.primary_color || 'white'
+
+                Line.geometry.setPositions([sx, sy, sz, tx, ty, tz])
+
+                const { material } = Line
+
+                // material.color = new Color(lineColor)
+                material.transparent = true
+                material.opacity = 0.3
+              }
+            }
+          })
+        }
+      }
+    })
+
     simulation.on('end', () => {
       resetDataNew()
 
@@ -116,29 +222,24 @@ export const Graph = () => {
       })
 
       if (groupRef?.current) {
-        const gr = groupRef.current.getObjectByName('simulation-3d-group__nodes') as Group
-        const grPoints = groupRef.current.getObjectByName('simulation-3d-group__node-points') as Group
-        const grConnections = groupRef.current.getObjectByName('simulation-3d-group__connections') as Group
+        if (gr && grPoints) {
+          const nodes = simulation.nodes()
 
-        if (gr) {
-          gr.children.forEach((mesh, index) => {
-            const simulationNode = simulation.nodes()[index]
+          const maxLength = Math.max(gr.children.length, grPoints.children[0].children.length)
 
-            if (simulationNode) {
-              mesh.position.set(simulationNode.x, simulationNode.y, simulationNode.z)
-            }
-          })
-        }
-
-        if (grPoints) {
-          grPoints.children[0].children.forEach((mesh, index) => {
-            const simulationNode = simulation.nodes()[index]
+          for (let index = 0; index < maxLength; index += 1) {
+            const simulationNode = nodes[index]
 
             if (simulationNode) {
-              // eslint-disable-next-line no-param-reassign
-              mesh.position.set(simulationNode.x, simulationNode.y, simulationNode.z)
+              if (gr.children[index]) {
+                gr.children[index].position.set(simulationNode.x, simulationNode.y, simulationNode.z)
+              }
+
+              if (grPoints.children[0].children[index]) {
+                grPoints.children[0].children[index].position.set(simulationNode.x, simulationNode.y, simulationNode.z)
+              }
             }
-          })
+          }
         }
 
         linksPositionRef.current.clear()
@@ -234,6 +335,7 @@ export const Graph = () => {
   return (
     <group ref={groupRef}>
       <Cubes />
+      {chapters?.length && graphStyle === 'force' ? <Neighbourhoods chapters={chapters} /> : null}
       <NodeDetailsPanel />
       {graphStyle === 'earth' && <Earth />}
       {(isLoadingNew || isFetching) && <LoadingNodes />}

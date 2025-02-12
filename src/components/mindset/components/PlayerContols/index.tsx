@@ -9,7 +9,7 @@ import { ProgressBar } from './ProgressBar'
 
 type Props = {
   markers: NodeExtended[]
-  chapters: NodeExtended[]
+  chapters: NodeExtended[] | null
 }
 
 export const PlayerControl = ({ markers, chapters }: Props) => {

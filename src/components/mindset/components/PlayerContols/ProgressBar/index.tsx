@@ -9,7 +9,7 @@ import { Markers } from './Markers'
 type Props = {
   duration: number
   markers: NodeExtended[]
-  chapters: NodeExtended[]
+  chapters: NodeExtended[] | null
   playingTIme: number
   handleProgressChange: (_: Event, value: number | number[]) => void
 }
@@ -20,9 +20,11 @@ export const ProgressBar = ({ duration, markers, handleProgressChange, playingTI
   return (
     <ProgressWrapper>
       <ProgressSlider max={duration} onChange={handleProgressChange} value={playingTIme} width={width} />
-      <ChaptersWrapper>
-        <Chapters chapters={chapters} duration={duration} />
-      </ChaptersWrapper>
+      {chapters && (
+        <ChaptersWrapper>
+          <Chapters chapters={chapters} duration={duration} />
+        </ChaptersWrapper>
+      )}
       <MarkersWrapper>
         <Markers duration={duration} markers={markers} />
       </MarkersWrapper>
