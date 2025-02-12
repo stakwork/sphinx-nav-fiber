@@ -183,6 +183,8 @@ export const NodeControls = memo(() => {
   async function handleGetActionDetails(schemaActions: string[]) {
     setLoadActionLoading(true)
 
+    setNodeActions([])
+
     try {
       const res = await getActionDetails(schemaActions)
 
