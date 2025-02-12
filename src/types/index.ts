@@ -14,13 +14,12 @@ export type FetchNodeParams = {
 }
 
 export type Node = {
-  date_added_to_graph: number
   boost?: number | null
   children?: string[]
-  x?: number
-  y?: number
-  z?: number
-  edge_count?: number
+  x: number
+  y: number
+  z: number
+  edge_count: number
   hidden?: boolean
   colors?: string[]
   date?: number
@@ -34,10 +33,10 @@ export type Node = {
   sender_alias?: string
   message_content?: string
   keyword?: boolean
-  label?: string
+  label: string
   source_link?: string
   link?: string
-  name?: string
+  name: string
   node_type: string
   ref_id: string
   scale?: number
@@ -53,7 +52,7 @@ export type Node = {
   profile_picture?: string
   verified?: boolean
   unique_id?: string
-  properties?: { [key: string]: never | undefined | string | number }
+  properties?: { [key: string]: never | undefined }
   media_url?: string
   start?: number
   end?: number
