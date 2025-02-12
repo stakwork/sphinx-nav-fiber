@@ -1,6 +1,7 @@
 import { Button } from '@mui/material'
 import { FC, useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
+import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
 import { AutoComplete, TAutocompleteOption } from '~/components/common/AutoComplete'
 import { Flex } from '~/components/common/Flex'
@@ -9,11 +10,13 @@ import { TextInput } from '~/components/common/TextInput'
 import { requiredRule } from '~/constants'
 import { getTribeUserDetails, getWorkspace } from '~/network/postBounty'
 import { useUserStore } from '~/stores/useUserStore'
+import { colors } from '~/utils/colors'
 import { BUDGET_PATTERN, isBudgetValid } from '../constants'
 
 type Props = {
   errMessage: string
   handleClose: () => void
+  loading?: boolean
 }
 
 type NameSpacesOption = {
@@ -21,7 +24,7 @@ type NameSpacesOption = {
   value: string
 }
 
-export const CreateBounty: FC<Props> = ({ errMessage, handleClose }) => {
+export const CreateBounty: FC<Props> = ({ errMessage, handleClose, loading }) => {
   const { setValue, watch } = useFormContext()
   const [options, setOptions] = useState<NameSpacesOption[]>([])
   const { pubKey } = useUserStore()
@@ -119,7 +122,20 @@ export const CreateBounty: FC<Props> = ({ errMessage, handleClose }) => {
           </Button>
         </Flex>
         <Flex grow={1} ml={20}>
-          <Button color="secondary" disabled={!isDisable} size="large" type="submit" variant="contained">
+          <Button
+            color="secondary"
+            disabled={!isDisable || loading}
+            size="large"
+            startIcon={
+              loading && (
+                <IconWrapper>
+                  <ClipLoader color={colors.lightGray} size={12} />
+                </IconWrapper>
+              )
+            }
+            type="submit"
+            variant="contained"
+          >
             Confirm
           </Button>
         </Flex>
@@ -150,4 +166,16 @@ const StyledError = styled(Flex)`
   line-height: 0.2px;
   margin-top: 12px;
   padding-top: 20px;
+`
+
+const IconWrapper = styled.span`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2px;
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
 `

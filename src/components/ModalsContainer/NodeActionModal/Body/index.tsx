@@ -155,12 +155,8 @@ export const Body = () => {
           ))}
         </Flex>
       )}
-      {steps === 2 && <BountyBody cancelBounty={cancelBounty} setBounty={handleSetBounty} />}
-      {loading && (
-        <Flex align="center" justify="center" mt={20}>
-          <ClipLoader color={colors.lightGray} size={25} />
-        </Flex>
-      )}
+      {steps === 2 && <BountyBody cancelBounty={cancelBounty} loading={loading} setBounty={handleSetBounty} />}
+
       {errMessage && <StyledError>{errMessage}</StyledError>}
     </>
   )
