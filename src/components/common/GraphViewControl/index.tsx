@@ -31,13 +31,15 @@ export const GraphViewControl = () => {
     setGraphStyle(val)
   }
 
-  return false ? (
+  return true ? (
     <Wrapper direction="column">
-      {graphStyles.map((i) => (
-        <Flex key={i} className={clsx('icon', { active: graphStyle === i })} onClick={() => changeGraphType(i)}>
-          {IconsMapper[i]}
-        </Flex>
-      ))}
+      {graphStyles
+        .filter((i) => i === 'sphere' || i === 'force')
+        .map((i) => (
+          <Flex key={i} className={clsx('icon', { active: graphStyle === i })} onClick={() => changeGraphType(i)}>
+            {IconsMapper[i]}
+          </Flex>
+        ))}
     </Wrapper>
   ) : null
 }
