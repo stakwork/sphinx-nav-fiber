@@ -247,7 +247,7 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
   setIsHovering: (isHovering) => set({ isHovering }),
   setGraphRadius: (graphRadius) => set({ graphRadius }),
   setSelectionGraphRadius: (selectionGraphRadius) => set({ selectionGraphRadius }),
-  setGraphStyle: (graphStyle) => set({ graphStyle: 'sphere' || graphStyle }),
+  setGraphStyle: (graphStyle) => set({ graphStyle }),
   setHoveredNode: (hoveredNode) => {
     const { nodesNormalized } = useDataStore.getState() || {}
 
@@ -313,9 +313,6 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
     addNodesAndLinks: (newNodes, newLinks, replace) => {
       const { simulation, simulationHelpers } = get()
 
-      console.log(simulation.nodes())
-      console.log(newNodes)
-
       simulation.stop()
 
       const structuredNodes = structuredClone(newNodes)
@@ -344,95 +341,81 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
 
       // Add simulation node to reference (so that we can access reference on tick to update position)
     },
-
     addRadialForce: () => {
+      const { simulation } = get()
+
+      simulation
+        .nodes(simulation.nodes().map((n: Node) => ({ ...n, ...resetPosition })))
+        .force('y', null)
+        // .force('radial', forceRadial(200, 0, 0, 0).strength(0.1))
+        // .force('center', forceCenter().strength(1))
+        .force(
+          'charge',
+          forceManyBody().strength((node: NodeExtended) => (node.scale || 1) * -5),
+          // .distanceMax(90),
+        )
+        .force('x', forceX().strength(0))
+        .force('y', forceY().strength(0))
+        .force('z', forceZ().strength(0))
+        .force(
+          'link',
+          forceLink()
+            .links(
+              simulation
+                .force('link')
+                .links()
+                .map((i: Link<NodeExtended>) => ({ ...i, source: i.source.ref_id, target: i.target.ref_id })),
+            )
+            .strength(1)
+            .distance(400)
+            .id((d: Node) => d.ref_id),
+        )
+        .force(
+          'collide',
+          forceCollide()
+            .radius((node: NodeExtended) => (node.scale || 1) * 95)
+            .strength(0.5)
+            .iterations(1),
+        )
+    },
+
+    addClusterForce: () => {
       const { simulation } = get()
       const { chapters } = useMindsetStore.getState()
 
-      const neighborhoodCenters = chapters ? distributeNodesOnSphere(chapters, 1000) : null
+      const neighborhoodCenters = chapters?.length ? distributeNodesOnSphere(chapters, 1000) : null
       const neighborhoodCentersArray = neighborhoodCenters ? Object.values(neighborhoodCenters) : []
 
       simulation
-        .nodes(
-          simulation.nodes().map((n: NodeExtended) => {
-            const neighborhood = neighborhoodCenters && n.neighbourHood ? neighborhoodCenters[n.neighbourHood] : null
-
-            return { ...n, ...(neighborhood ? { x: neighborhood.x, y: neighborhood.y, z: neighborhood.z } : {}) }
-          }),
-        )
+        .nodes(simulation.nodes().map((n: Node) => ({ ...n, ...resetPosition })))
         .force(
           'charge',
           forceManyBody().strength((node: NodeExtended) => (node.scale || 1) * 0),
         )
         .force(
           'x',
-          forceX((n: NodeExtended, i: number) => {
+          forceX((n: NodeExtended) => {
             const neighborhood = neighborhoodCenters && n.neighbourHood ? neighborhoodCenters[n.neighbourHood] : null
-
-            console.log(
-              'x:',
-              neighborhood?.x,
-              neighborhoodCentersArray[i % neighborhoodCentersArray.length].x,
-              neighborhoodCentersArray[3].x,
-            )
 
             return neighborhood?.x || 0
           }).strength(0.1), // Attract to X
         )
         .force(
           'y',
-          forceY((n: NodeExtended, i: number) => {
+          forceY((n: NodeExtended) => {
             const neighborhood = neighborhoodCenters && n.neighbourHood ? neighborhoodCenters[n.neighbourHood] : null
-
-            console.log(
-              'y:',
-              neighborhood?.y,
-              neighborhoodCentersArray[i % neighborhoodCentersArray.length].y,
-              neighborhoodCentersArray[3].y,
-            )
 
             return neighborhood?.y || 0
           }).strength(0.1), // Attract to X
         )
         .force(
           'z',
-          forceZ((n: NodeExtended, i: number) => {
+          forceZ((n: NodeExtended) => {
             const neighborhood = neighborhoodCenters && n.neighbourHood ? neighborhoodCenters[n.neighbourHood] : null
-
-            console.log(
-              'z:',
-              neighborhood?.z,
-              neighborhoodCentersArray[i % neighborhoodCentersArray.length].z,
-              neighborhoodCentersArray[3].z,
-            )
 
             return neighborhood?.z || 0
           }).strength(0.1), // Attract to X
         )
-        // .force(
-        //   'x',
-        //   forceX((_node: NodeExtended, i: number) => {
-        //     console.log(neighborhoodCentersArray[i % neighborhoodCentersArray.length].x)
-
-        //     return neighborhoodCentersArray[i % neighborhoodCentersArray.length].x
-        //   }).strength(0.1), // Attract to X
-        // )
-        // .force(
-        //   'y',
-        //   forceY((_node: NodeExtended, i: number) => {
-        //     console.log(neighborhoodCentersArray[i % neighborhoodCentersArray.length].y)
-
-        //     return neighborhoodCentersArray[i % neighborhoodCentersArray.length].y
-        //   }).strength(0.1), // Attract to Y
-        // )
-        // .force(
-        //   'z',
-        //   forceZ((_node: NodeExtended, i: number) => {
-        //     console.log(neighborhoodCentersArray[i % neighborhoodCentersArray.length].z)
-
-        //     return neighborhoodCentersArray[i % neighborhoodCentersArray.length].z
-        //   }).strength(0.1), // Attract to Z
-        // )
         .force(
           'link',
           forceLink()
@@ -452,17 +435,6 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
             .radius((node: NodeExtended) => (node.scale || 1) * 95)
             .strength(0.5)
             .iterations(1),
-        )
-    },
-
-    addClusterForce: () => {
-      const { simulation, highlightNodes } = get()
-
-      simulation
-        .nodes(simulation.nodes().map((i: NodeExtended) => ({ ...i, ...resetPosition })))
-        .force(
-          'cluster',
-          forceRadial((node: NodeExtended) => (highlightNodes.includes(node.ref_id) ? 25 : 500)).strength(1),
         )
     },
 
@@ -529,7 +501,7 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
       }
 
       if (graphStyle === 'force') {
-        simulationHelpers.addDefaultForce()
+        simulationHelpers.addClusterForce()
       }
 
       simulationHelpers.simulationRestart()
