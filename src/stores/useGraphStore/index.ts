@@ -384,7 +384,6 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
       const { chapters } = useMindsetStore.getState()
 
       const neighborhoodCenters = chapters?.length ? distributeNodesOnSphere(chapters, 1000) : null
-      const neighborhoodCentersArray = neighborhoodCenters ? Object.values(neighborhoodCenters) : []
 
       simulation
         .nodes(simulation.nodes().map((n: Node) => ({ ...n, ...resetPosition })))
