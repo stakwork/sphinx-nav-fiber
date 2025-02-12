@@ -15,12 +15,10 @@ export const useRetrieveData = () => {
 
   const { setSidebarOpen, currentSearch: searchTerm } = useAppStore((s) => s)
 
-  const { fetchData, setAbortRequests, resetData } = useDataStore((s) => s)
+  const { fetchData, setAbortRequests, resetData, addNewNode, finishLoading } = useDataStore((s) => s)
 
   useEffect(() => {
     if (initialLoad.current) {
-      const { addNewNode, finishLoading } = useDataStore.getState()
-
       const runSearch = async () => {
         if (!searchTerm) {
           resetData()
@@ -54,7 +52,18 @@ export const useRetrieveData = () => {
 
       runSearch()
     }
-  }, [selectedNodeId, searchTerm, fetchData, setBudget, setAbortRequests, setSidebarOpen, resetData, initialLoad])
+  }, [
+    selectedNodeId,
+    searchTerm,
+    fetchData,
+    setBudget,
+    setAbortRequests,
+    setSidebarOpen,
+    resetData,
+    initialLoad,
+    finishLoading,
+    addNewNode,
+  ])
 
   useEffect(() => {
     if (!initialLoad.current) {
