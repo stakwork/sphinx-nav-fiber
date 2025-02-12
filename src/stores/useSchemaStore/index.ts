@@ -16,31 +16,6 @@ const COLORS_PALETTE = [
   ['#96BD3F', '#2A3229'],
   ['#BA9D39', '#353124'],
   ['#E09242', '#392828'],
-  ['#A96755', '#36292D'],
-  ['#D25353', '#362429'],
-  ['#F468D4', '#38243C'],
-  ['#C25AF3', '#302342'],
-  ['#9368FB', '#2A2545'],
-  ['#5E84F8', '#222B48'],
-  ['#4FA7D9', '#1D3140'],
-  ['#21B38A', '#1B3134'],
-  ['#54AC52', '#22362A'],
-  ['#96BD3F', '#2A3229'],
-  ['#BA9D39', '#353124'],
-  ['#E09242', '#392828'],
-  ['#A96755', '#36292D'],
-  ['#D25353', '#362429'],
-  ['#F468D4', '#38243C'],
-  ['#C25AF3', '#302342'],
-  ['#9368FB', '#2A2545'],
-  ['#5E84F8', '#222B48'],
-  ['#4FA7D9', '#1D3140'],
-  ['#21B38A', '#1B3134'],
-  ['#54AC52', '#22362A'],
-  ['#96BD3F', '#2A3229'],
-  ['#BA9D39', '#353124'],
-  ['#E09242', '#392828'],
-  ['#A96755', '#36292D'],
 ]
 
 type SchemasStore = {
@@ -83,12 +58,15 @@ export const useSchemaStore = create<SchemasStore>()(
     setSchemas: (schemasWithoutColors: SchemaExtended[]) => {
       const schemas = schemasWithoutColors.map((i, index) => {
         const paletteColor = COLORS_PALETTE.find((colorsArray) => colorsArray[1] === i.primary_color)
+        const cycleIndex = index % COLORS_PALETTE.length
 
-        const secondaryColor = paletteColor?.[0] ? paletteColor[0] : COLORS_PALETTE[index][0] || COLORS_PALETTE[0][0]
+        const secondaryColor = paletteColor?.[0]
+          ? paletteColor[0]
+          : COLORS_PALETTE[cycleIndex][0] || COLORS_PALETTE[0][0]
 
         return {
           ...i,
-          primary_color: paletteColor ? i.primary_color : COLORS_PALETTE[index][1] || COLORS_PALETTE[0][0],
+          primary_color: paletteColor ? i.primary_color : COLORS_PALETTE[cycleIndex][1] || COLORS_PALETTE[0][0],
           secondary_color: secondaryColor,
         }
       })
