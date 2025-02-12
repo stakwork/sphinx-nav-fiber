@@ -3,6 +3,7 @@ import { Html } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import React, { memo, useCallback, useMemo, useRef, useState } from 'react'
 import { MdClose, MdViewInAr } from 'react-icons/md'
+import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
 import { Group, Vector3 } from 'three'
 import { Flex } from '~/components/common/Flex'
@@ -11,12 +12,14 @@ import AddCircleIcon from '~/components/Icons/AddCircleIcon'
 import ConstructionIcon from '~/components/Icons/ConstructionIcon'
 import DocumentIcon from '~/components/Icons/DocumentIcon'
 import EditIcon from '~/components/Icons/EditIcon'
+import MergeIcon from '~/components/Icons/MergeIcon'
 import NodesIcon from '~/components/Icons/NodesIcon'
 import PlusIcon from '~/components/Icons/PlusIcon'
 import RobotIcon from '~/components/Icons/RobotIcon'
 import { useNodeNavigation } from '~/components/Universe/useNodeNavigation'
+import { getActionDetails } from '~/network/actions'
+import { analyzeGitHubRepository } from '~/network/analyzeGithubRepo'
 import { fetchNodeEdges } from '~/network/fetchGraphData'
-import { analyzeGitHubRepository } from '~/network/fetchSourcesData'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
 import { useGraphStore, useSelectedNode } from '~/stores/useGraphStore'
@@ -35,13 +38,13 @@ export const NodeControls = memo(() => {
   const { normalizedSchemasByType, setSelectedActionDetail } = useSchemaStore((s) => s)
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
   const [nodeActions, setNodeActions] = useState<ActionDetail[]>([])
+  const [nodeActionLoading, setLoadActionLoading] = useState<boolean>(false)
 
   const { open: openEditNodeNameModal } = useModal('editNodeName')
   const { open: openNodeAction } = useModal('nodeAction')
 
-  // const { open: addEdgeToNodeModal } = useModal('addEdgeToNode')
-  // const { open: mergeTopicModal } = useModal('mergeToNode')
-  // const { open: createBountyModal } = useModal('createBounty')
+  const { open: addEdgeToNodeModal } = useModal('addEdgeToNode')
+  const { open: mergeTopicModal } = useModal('mergeToNode')
 
   const [isAdmin] = useUserStore((s) => [s.isAdmin])
   const { addNewNode } = useDataStore((s) => s)
@@ -52,6 +55,14 @@ export const NodeControls = memo(() => {
   const { navigateToNode } = useNodeNavigation()
 
   const allGraphData = useGraphData()
+
+  const nodeType = selectedNode?.node_type
+
+  let action: string[] | undefined
+
+  if (normalizedSchemasByType && normalizedSchemasByType[nodeType!] && normalizedSchemasByType[nodeType!].action) {
+    action = normalizedSchemasByType[nodeType!].action
+  }
 
   const getChildren = useCallback(async () => {
     try {
@@ -98,6 +109,10 @@ export const NodeControls = memo(() => {
             className: 'add',
             onClick: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
               setAnchorEl(event.currentTarget as unknown as HTMLButtonElement)
+
+              if (action && action.length > 0) {
+                handleGetActionDetails(action)
+              }
             },
           },
           {
@@ -161,8 +176,23 @@ export const NodeControls = memo(() => {
     setShowSelectionGraph,
     setSidebarOpen,
     getChildren,
-    setSelectedNode,
+    navigateToNode,
+    action,
   ])
+
+  async function handleGetActionDetails(schemaActions: string[]) {
+    setLoadActionLoading(true)
+
+    try {
+      const res = await getActionDetails(schemaActions)
+
+      setNodeActions(res.actions)
+    } catch (error) {
+      console.error(error)
+    } finally {
+      setLoadActionLoading(false)
+    }
+  }
 
   if (!selectedNode) {
     return null
@@ -178,6 +208,12 @@ export const NodeControls = memo(() => {
     } catch (error) {
       console.error('error during test coverage analysis:', error)
     }
+  }
+
+  const handleNodeAction = (actionDetails: ActionDetail) => {
+    setSelectedActionDetail(actionDetails)
+    openNodeAction()
+    handleClose()
   }
 
   const open = Boolean(anchorEl)
@@ -240,36 +276,50 @@ export const NodeControls = memo(() => {
         >
           {!isRepository ? (
             <>
-              {nodeActions.map((action) => (
-                <PopoverOption
-                  key={action.name}
-                  data-testid={action.name}
-                  onClick={() => {
-                    handleNodeAction(action)
-                  }}
-                >
-                  {action.display_name}
-                </PopoverOption>
-              ))}
-              {/* <PopoverOption
-                data-testid="merge"
-                onClick={() => {
-                  mergeTopicModal()
-                  handleClose()
-                }}
-              >
-                <MergeIcon data-testid="MergeIcon" /> Merge
-              </PopoverOption>
-              <PopoverOption
-                data-testid="add_edge"
-                onClick={() => {
-                  addEdgeToNodeModal()
-                  handleClose()
-                }}
-              >
-                <AddCircleIcon data-testid="AddCircleIcon" />
-                Add edge
-              </PopoverOption> */}
+              {action && action.length > 0 ? (
+                <>
+                  {nodeActionLoading && (
+                    <PopoverOption>
+                      <ClipLoaderWrapper mb={10} mt={10}>
+                        <ClipLoader color={colors.lightGray} size={25} />
+                      </ClipLoaderWrapper>
+                    </PopoverOption>
+                  )}
+                  {nodeActions.map((actionDetail) => (
+                    <PopoverOption
+                      key={actionDetail.name}
+                      data-testid={actionDetail.name}
+                      onClick={() => {
+                        handleNodeAction(actionDetail)
+                      }}
+                    >
+                      {actionDetail.display_name}
+                    </PopoverOption>
+                  ))}
+                </>
+              ) : (
+                <>
+                  <PopoverOption
+                    data-testid="merge"
+                    onClick={() => {
+                      mergeTopicModal()
+                      handleClose()
+                    }}
+                  >
+                    <MergeIcon data-testid="MergeIcon" /> Merge
+                  </PopoverOption>
+                  <PopoverOption
+                    data-testid="add_edge"
+                    onClick={() => {
+                      addEdgeToNodeModal()
+                      handleClose()
+                    }}
+                  >
+                    <AddCircleIcon data-testid="AddCircleIcon" />
+                    Add edge
+                  </PopoverOption>
+                </>
+              )}
             </>
           ) : (
             <>
@@ -399,6 +449,12 @@ const IconWrapper = styled.div`
     width: 12px;
     height: 12px;
   }
+`
+
+const ClipLoaderWrapper = styled(Flex)`
+  justify-content: center;
+  align-items: center;
+  width: 100%;
 `
 
 // const CreateTestButton = styled.div<ButtonProps>`
