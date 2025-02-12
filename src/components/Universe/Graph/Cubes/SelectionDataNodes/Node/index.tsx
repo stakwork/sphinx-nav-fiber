@@ -1,7 +1,9 @@
+import Popover from '@mui/material/Popover'
 import { Html } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import clsx from 'clsx'
-import { useRef } from 'react'
+import React, { useRef, useState } from 'react'
+import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
 import { Mesh, Vector3 } from 'three'
 import { Flex } from '~/components/common/Flex'
@@ -11,10 +13,12 @@ import EditIcon from '~/components/Icons/EditIcon'
 import NodesIcon from '~/components/Icons/NodesIcon'
 import PlusIcon from '~/components/Icons/PlusIcon'
 import { useNodeNavigation } from '~/components/Universe/useNodeNavigation'
+import { getActionDetails } from '~/network/actions'
 import { useSelectedNode } from '~/stores/useGraphStore'
 import { useModal } from '~/stores/useModalStore'
 import { useSchemaStore } from '~/stores/useSchemaStore'
 import { useUserStore } from '~/stores/useUserStore'
+import { ActionDetail } from '~/types'
 import { colors } from '~/utils'
 import { truncateText } from '~/utils/truncateText'
 import { PathNode } from '..'
@@ -48,10 +52,13 @@ export const Node = ({ onClick, node, selected, rounded = true, x, y, z, id }: P
   const { open: createBountyModal } = useModal('createBounty')
   const { open: openNodeActionModal } = useModal('nodeAction')
   const selectedNode = useSelectedNode()
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
+  const [nodeActions, setNodeActions] = useState<ActionDetail[]>()
+  const [loadingActions, setLoadingActions] = useState<boolean>(false)
 
   const { navigateToNode } = useNodeNavigation()
 
-  const { normalizedSchemasByType, getNodeKeysByType } = useSchemaStore((s) => s)
+  const { normalizedSchemasByType, getNodeKeysByType, setSelectedActionDetail } = useSchemaStore((s) => s)
   const targetPosition = new Vector3(x, y, z)
 
   useFrame(() => {
@@ -60,9 +67,46 @@ export const Node = ({ onClick, node, selected, rounded = true, x, y, z, id }: P
     }
   })
 
-  const primaryIcon = normalizedSchemasByType[node.node_type]?.icon
+  const handleClose = () => {
+    setAnchorEl(null)
+  }
 
   const actions = normalizedSchemasByType[node.node_type]?.action
+
+  async function handleGetActionDetails(actionsDetail: string[]) {
+    setNodeActions(undefined)
+    setLoadingActions(true)
+
+    try {
+      const res = await getActionDetails(actionsDetail)
+
+      setNodeActions(res.actions)
+
+      setLoadingActions(false)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  const handleOnclickActionButton = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    setAnchorEl(event.currentTarget as unknown as HTMLButtonElement)
+
+    if (actions) {
+      handleGetActionDetails(actions)
+    }
+  }
+
+  const open = Boolean(anchorEl)
+
+  const popoverId = open ? 'simple-popover' : undefined
+
+  const primaryIcon = normalizedSchemasByType[node.node_type]?.icon
+
+  const handleNodeAction = (action: ActionDetail) => {
+    setSelectedActionDetail(action)
+    openNodeActionModal()
+    handleClose()
+  }
 
   const Icon = primaryIcon ? Icons[primaryIcon] : null
   // const iconName = Icon ? primaryIcon : 'NodesIcon'
@@ -82,8 +126,35 @@ export const Node = ({ onClick, node, selected, rounded = true, x, y, z, id }: P
           <>
             {selected ? (
               <Selected className={clsx({ 'has-padding': descriptionShortened })} rounded={false}>
+                <PopoverWrapper
+                  anchorEl={anchorEl}
+                  anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                  id={popoverId}
+                  onClose={handleClose}
+                  open={open}
+                  transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+                >
+                  {loadingActions && (
+                    <PopoverOption>
+                      <ClipLoaderWrapper mb={10} mt={10}>
+                        <ClipLoader color={colors.lightGray} size={25} />
+                      </ClipLoaderWrapper>
+                    </PopoverOption>
+                  )}
+                  {nodeActions?.map((action) => (
+                    <PopoverOption
+                      key={action.name}
+                      data-testid={action.name}
+                      onClick={() => {
+                        handleNodeAction(action)
+                      }}
+                    >
+                      {action.display_name}
+                    </PopoverOption>
+                  ))}
+                </PopoverWrapper>
                 {isAdmin && actions && (
-                  <ActionButton onClick={() => openNodeActionModal()}>
+                  <ActionButton onClick={(e) => handleOnclickActionButton(e)}>
                     <PlusIcon />
                   </ActionButton>
                 )}
@@ -149,6 +220,12 @@ export const Node = ({ onClick, node, selected, rounded = true, x, y, z, id }: P
 
 const Wrapper = styled(Flex)`
   background: black;
+`
+
+const ClipLoaderWrapper = styled(Flex)`
+  justify-content: center;
+  align-items: center;
+  width: 100%;
 `
 
 const Text = styled(Flex)`
@@ -292,5 +369,43 @@ const CreateTestButton = styled.div<ButtonProps>`
   cursor: pointer;
   &:hover {
     transform: scale(1.05);
+  }
+`
+
+const PopoverOption = styled(Flex).attrs({
+  direction: 'row',
+  px: 12,
+  py: 8,
+})`
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  gap: 12px;
+  cursor: pointer;
+  background: ${colors.BUTTON1};
+  color: ${colors.white};
+  width: 100%;
+
+  &:hover {
+    background: ${colors.BUTTON1_HOVER};
+    color: ${colors.GRAY3};
+  }
+`
+
+const PopoverWrapper = styled(Popover)`
+  && {
+    z-index: 9999;
+  }
+  .MuiPaper-root {
+    min-width: 149px;
+    color: ${colors.GRAY3};
+    box-shadow: 0px 1px 6px 0px rgba(0, 0, 0, 0.2);
+    border-radius: 6px;
+    z-index: 1;
+    font-family: Barlow;
+    font-size: 14px;
+    font-weight: 500;
+    background-color: transparent !important;
+    margin: 2px;
   }
 `
