@@ -5,9 +5,7 @@ import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { NODE_ADD_ERROR } from '~/constants'
 import { api } from '~/network/api'
-import { getSchemaAll } from '~/network/fetchSourcesData'
 import { useDataStore } from '~/stores/useDataStore'
-import { useSchemaStore } from '~/stores/useSchemaStore'
 import { FetchDataResponse, Node, SubmitErrRes } from '~/types'
 import { colors } from '~/utils/colors'
 import { ChevronRight } from '../Icon/ChevronRight'
@@ -56,29 +54,24 @@ export const LandingPage = () => {
   const [episodes, setEpisodes] = useState<Node[]>([])
   const [requestError, setRequestError] = useState<string>('')
   const { setRunningProjectId } = useDataStore((s) => s)
-  const { setSchemas } = useSchemaStore((s) => s)
 
   const navigate = useNavigate()
 
   useEffect(() => {
-    const fetchSchemaData = async () => {
+    const fetchLatest = async () => {
       try {
         const res: FetchDataResponse = await getNodes()
 
         const topEpisodes = filterAndSortEpisodes(res)
 
         setEpisodes(topEpisodes)
-
-        const response = await getSchemaAll()
-
-        setSchemas(response.schemas.filter((schema) => !schema.is_deleted))
       } catch (err) {
         console.error('Error fetching schema:', err)
       }
     }
 
-    fetchSchemaData()
-  }, [setSchemas])
+    fetchLatest()
+  }, [])
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target
