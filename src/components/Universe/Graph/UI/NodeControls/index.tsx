@@ -8,12 +8,9 @@ import { Group, Vector3 } from 'three'
 import { Flex } from '~/components/common/Flex'
 import { useGraphData } from '~/components/DataRetriever'
 import AddCircleIcon from '~/components/Icons/AddCircleIcon'
-import ConstructionIcon from '~/components/Icons/ConstructionIcon'
-import DocumentIcon from '~/components/Icons/DocumentIcon'
 import EditIcon from '~/components/Icons/EditIcon'
 import NodesIcon from '~/components/Icons/NodesIcon'
 import PlusIcon from '~/components/Icons/PlusIcon'
-import RobotIcon from '~/components/Icons/RobotIcon'
 import { useNodeNavigation } from '~/components/Universe/useNodeNavigation'
 import { getActionDetails } from '~/network/actions'
 import { fetchNodeEdges } from '~/network/fetchGraphData'
@@ -316,33 +313,6 @@ export const NodeControls = memo(() => {
                   <AddCircleIcon data-testid="AddCircleIcon" />
                 </IconWrapper>
                 Analyze Test Coverage
-              </PopoverOption>
-              <PopoverOption
-                data-testid="add_comments"
-                onClick={() => {
-                  handleClose()
-                }}
-              >
-                <IconWrapper>
-                  <DocumentIcon data-testid="DocumentIcon" />{' '}
-                </IconWrapper>
-                Add Comments
-              </PopoverOption>
-              <PopoverOption
-                data-testid="review_bugs"
-                onClick={() => {
-                  handleClose()
-                }}
-              >
-                <ConstructionIcon data-testid="ConstructionIcon" /> Review Bugs
-              </PopoverOption>
-              <PopoverOption
-                data-testid="find_vulnerabilities"
-                onClick={() => {
-                  handleClose()
-                }}
-              >
-                <RobotIcon data-testid="RobotIcon" /> Find Vulnerabilities
               </PopoverOption>
             </>
           )}
