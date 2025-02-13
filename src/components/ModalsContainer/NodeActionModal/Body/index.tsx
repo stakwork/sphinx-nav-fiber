@@ -139,7 +139,7 @@ export const Body = () => {
   return (
     <>
       <Flex align="center" direction="row" justify="space-between" mb={18}>
-        <StyledHeadingText>Node Action</StyledHeadingText>
+        <StyledHeadingText>{selectedAction?.display_name}</StyledHeadingText>
       </Flex>
       {loadingPage && (
         <ClipLoaderWrapper>
