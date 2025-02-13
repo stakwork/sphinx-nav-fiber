@@ -12,14 +12,16 @@ export type FormData = {
   nodeType: string
   budget: string
   workspaceUuid: string
+  publicBounty: boolean
 } & Partial<{ [k: string]: string }>
 
 interface Props {
   setBounty?: (bounty: BountyPayload) => void
   cancelBounty?: () => void
+  loading?: boolean
 }
 
-export const Body = ({ setBounty, cancelBounty }: Props) => {
+export const Body = ({ setBounty, cancelBounty, loading }: Props) => {
   const [errMessage, setErrMessage] = useState<string>('')
   const { close } = useModal('createBounty')
   const selectedNode = useSelectedNode()
@@ -31,6 +33,7 @@ export const Body = ({ setBounty, cancelBounty }: Props) => {
     setValue('budget', '')
     setValue('nodeType', '')
     setValue('workspaceUuid', '')
+    setValue('publicBounty', false)
 
     if (cancelBounty) {
       cancelBounty()
@@ -40,7 +43,7 @@ export const Body = ({ setBounty, cancelBounty }: Props) => {
   }
 
   const onSubmit = async (data: FormData) => {
-    const { budget, workspaceUuid } = data
+    const { budget, workspaceUuid, publicBounty } = data
 
     try {
       const signedToken = await getSignedTimestamp()
@@ -53,6 +56,7 @@ export const Body = ({ setBounty, cancelBounty }: Props) => {
         node_data: selectedNode?.properties || {},
         jwt_token: signedToken,
         pub_key: pubKey,
+        public_bounty: publicBounty || false,
       }
 
       if (setBounty) {
@@ -68,6 +72,7 @@ export const Body = ({ setBounty, cancelBounty }: Props) => {
       setValue('budget', '')
       setValue('nodeType', '')
       setValue('workspaceUuid', '')
+      setValue('publicBounty', false)
       close()
     }
   }
@@ -75,7 +80,7 @@ export const Body = ({ setBounty, cancelBounty }: Props) => {
   return (
     <FormProvider {...form}>
       <form id="create-bounty-form" onSubmit={handleSubmit(onSubmit)}>
-        <CreateBounty errMessage={errMessage} handleClose={handleClose} />
+        <CreateBounty errMessage={errMessage} handleClose={handleClose} loading={loading} />
       </form>
     </FormProvider>
   )

@@ -75,7 +75,7 @@ export const Body = () => {
       await postNodeAction(payload)
 
       close()
-      SuccessNotify('Node Action Submited Successfully')
+      SuccessNotify('Submitted')
       removeSelectedActionDetail()
       // eslint-disable-next-line  @typescript-eslint/no-explicit-any
     } catch (err: any) {
@@ -139,7 +139,7 @@ export const Body = () => {
   return (
     <>
       <Flex align="center" direction="row" justify="space-between" mb={18}>
-        <StyledHeadingText>Node Action</StyledHeadingText>
+        <StyledHeadingText>{selectedAction?.display_name}</StyledHeadingText>
       </Flex>
       {loadingPage && (
         <ClipLoaderWrapper>
@@ -155,12 +155,8 @@ export const Body = () => {
           ))}
         </Flex>
       )}
-      {steps === 2 && <BountyBody cancelBounty={cancelBounty} setBounty={handleSetBounty} />}
-      {loading && (
-        <Flex align="center" justify="center" mt={20}>
-          <ClipLoader color={colors.lightGray} size={25} />
-        </Flex>
-      )}
+      {steps === 2 && <BountyBody cancelBounty={cancelBounty} loading={loading} setBounty={handleSetBounty} />}
+
       {errMessage && <StyledError>{errMessage}</StyledError>}
     </>
   )
