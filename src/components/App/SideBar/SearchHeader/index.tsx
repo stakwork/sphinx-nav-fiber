@@ -46,6 +46,14 @@ export const SearchHeader = () => {
   const fetchAIData = useAiSummaryStore((s) => s.fetchAIData)
 
   const handleChatButtonClick = () => {
+    setValue('search', '')
+    clearSearch()
+    setSidebarFilter('all')
+    navigateToNode(null)
+    navigate('/')
+
+    setValue('aiChat', '')
+
     setIsAIChatActive(true)
   }
 
