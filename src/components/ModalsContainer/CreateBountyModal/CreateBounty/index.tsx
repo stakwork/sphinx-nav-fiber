@@ -117,9 +117,9 @@ export const CreateBounty: FC<Props> = ({ errMessage, handleClose, loading }) =>
 
       <Flex direction="row">
         <Flex grow={1}>
-          <Button color="secondary" onClick={() => handleClose()} size="large" variant="contained">
+          <StyledButton color="secondary" onClick={() => handleClose()} size="large" variant="contained">
             Cancel
-          </Button>
+          </StyledButton>
         </Flex>
         <Flex grow={1} ml={20}>
           <Button
@@ -177,5 +177,19 @@ const IconWrapper = styled.span`
   svg {
     width: 16px;
     height: 16px;
+  }
+`
+
+const StyledButton = styled(Button)`
+  && {
+    background: ${colors.white};
+    color: ${colors.BG2};
+
+    &:active,
+    &:hover,
+    &:focus {
+      background: ${colors.TOPIC};
+      color: ${colors.BG2};
+    }
   }
 `
