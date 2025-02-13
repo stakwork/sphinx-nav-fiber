@@ -14,7 +14,6 @@ import NodesIcon from '~/components/Icons/NodesIcon'
 import PlusIcon from '~/components/Icons/PlusIcon'
 import { useNodeNavigation } from '~/components/Universe/useNodeNavigation'
 import { getActionDetails } from '~/network/actions'
-import { useSelectedNode } from '~/stores/useGraphStore'
 import { useModal } from '~/stores/useModalStore'
 import { useSchemaStore } from '~/stores/useSchemaStore'
 import { useUserStore } from '~/stores/useUserStore'
@@ -38,20 +37,20 @@ type Props = {
   id: string
 }
 
-type ButtonProps = {
-  left: number
-  backgroundColor?: string
-  borderColor?: string
-  fontColor?: string
-}
+// type ButtonProps = {
+//   left: number
+//   backgroundColor?: string
+//   borderColor?: string
+//   fontColor?: string
+// }
 
 export const Node = ({ onClick, node, selected, rounded = true, x, y, z, id }: Props) => {
   const nodeRef = useRef<Mesh | null>(null)
   const [isAdmin] = useUserStore((s) => [s.isAdmin])
   const { open: openEditNodeNameModal } = useModal('editNodeName')
-  const { open: createBountyModal } = useModal('createBounty')
+  // const { open: createBountyModal } = useModal('createBounty')
   const { open: openNodeActionModal } = useModal('nodeAction')
-  const selectedNode = useSelectedNode()
+  // const selectedNode = useSelectedNode()
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
   const [nodeActions, setNodeActions] = useState<ActionDetail[]>()
   const [loadingActions, setLoadingActions] = useState<boolean>(false)
@@ -117,7 +116,7 @@ export const Node = ({ onClick, node, selected, rounded = true, x, y, z, id }: P
   const description = keyProperty !== 'description' ? node.properties?.description : ''
   const descriptionShortened = description ? truncateText(description, 60) : ''
 
-  const isShowCreateTestButton = !!(selectedNode && selectedNode?.node_type?.toLowerCase() === 'function')
+  // const isShowCreateTestButton = !!(selectedNode && selectedNode?.node_type?.toLowerCase() === 'function')
 
   return (
     <mesh ref={nodeRef}>
@@ -183,7 +182,7 @@ export const Node = ({ onClick, node, selected, rounded = true, x, y, z, id }: P
                   {descriptionShortened ? <Text>{descriptionShortened}</Text> : null}
                 </Flex>
 
-                {isShowCreateTestButton && (
+                {/* {isShowCreateTestButton && (
                   <CreateTestButton
                     left={2}
                     onClick={() => {
@@ -192,7 +191,7 @@ export const Node = ({ onClick, node, selected, rounded = true, x, y, z, id }: P
                   >
                     Generate Unit Test
                   </CreateTestButton>
-                )}
+                )} */}
               </Selected>
             ) : (
               <>
@@ -350,27 +349,27 @@ const Avatar = styled(Flex)<AvatarProps>`
   font-size: 20px;
 `
 
-const CreateTestButton = styled.div<ButtonProps>`
-  position: absolute;
-  top: 170px;
-  left: ${(p: ButtonProps) => 30 + p.left}px;
-  width: 140px;
-  padding: 8px;
-  border-radius: 4px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: ${colors.createTestButton};
-  color: ${colors.black};
-  font-size: 14px;
-  font-family: Barlow;
-  font-weight: 600;
-  z-index: 1002;
-  cursor: pointer;
-  &:hover {
-    transform: scale(1.05);
-  }
-`
+// const CreateTestButton = styled.div<ButtonProps>`
+//   position: absolute;
+//   top: 170px;
+//   left: ${(p: ButtonProps) => 30 + p.left}px;
+//   width: 140px;
+//   padding: 8px;
+//   border-radius: 4px;
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+//   background: ${colors.createTestButton};
+//   color: ${colors.black};
+//   font-size: 14px;
+//   font-family: Barlow;
+//   font-weight: 600;
+//   z-index: 1002;
+//   cursor: pointer;
+//   &:hover {
+//     transform: scale(1.05);
+//   }
+// `
 
 const PopoverOption = styled(Flex).attrs({
   direction: 'row',
