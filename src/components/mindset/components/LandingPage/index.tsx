@@ -8,6 +8,7 @@ import { api } from '~/network/api'
 import { useDataStore } from '~/stores/useDataStore'
 import { FetchDataResponse, Node, SubmitErrRes } from '~/types'
 import { colors } from '~/utils/colors'
+import { Header } from '../Header'
 import { ChevronRight } from '../Icon/ChevronRight'
 import { VideoCard } from '../VideoCard'
 import { getNodes } from './fetchNodes'
@@ -117,34 +118,39 @@ export const LandingPage = () => {
   }
 
   return (
-    <Wrapper>
-      <Title>Ideas have shapes</Title>
-      <InputWrapper>
-        <Input
-          error={error}
-          onChange={handleInputChange}
-          onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
-          placeholder="Paste podcast or video link"
-          value={inputValue}
-        />
-        <IconWrapper error={error} onClick={!error ? () => handleSubmit() : undefined}>
-          <ChevronRight />
-        </IconWrapper>
-      </InputWrapper>
-      {requestError && <div>{requestError}</div>}
-
-      <SeedQuestionsWrapper>
-        {episodes.map((episode) => (
-          <VideoCard
-            key={episode?.ref_id}
-            imageUrl={episode?.properties?.image_url || ''}
-            onClick={() => handleSubmit(episode?.properties?.source_link)}
-            subtitle=""
-            title={episode?.properties?.episode_title || ''}
+    <>
+      <Flex>
+        <Header />
+      </Flex>
+      <Wrapper>
+        <Title>Ideas have shapes</Title>
+        <InputWrapper>
+          <Input
+            error={error}
+            onChange={handleInputChange}
+            onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
+            placeholder="Paste podcast or video link"
+            value={inputValue}
           />
-        ))}
-      </SeedQuestionsWrapper>
-    </Wrapper>
+          <IconWrapper error={error} onClick={!error ? () => handleSubmit() : undefined}>
+            <ChevronRight />
+          </IconWrapper>
+        </InputWrapper>
+        {requestError && <div>{requestError}</div>}
+
+        <SeedQuestionsWrapper>
+          {episodes.map((episode) => (
+            <VideoCard
+              key={episode?.ref_id}
+              imageUrl={episode?.properties?.image_url || ''}
+              onClick={() => handleSubmit(episode?.properties?.source_link)}
+              subtitle=""
+              title={episode?.properties?.episode_title || ''}
+            />
+          ))}
+        </SeedQuestionsWrapper>
+      </Wrapper>
+    </>
   )
 }
 
