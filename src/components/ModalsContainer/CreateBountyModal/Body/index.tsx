@@ -12,6 +12,7 @@ export type FormData = {
   nodeType: string
   budget: string
   workspaceUuid: string
+  publicBounty: boolean
 } & Partial<{ [k: string]: string }>
 
 interface Props {
@@ -32,6 +33,7 @@ export const Body = ({ setBounty, cancelBounty, loading }: Props) => {
     setValue('budget', '')
     setValue('nodeType', '')
     setValue('workspaceUuid', '')
+    setValue('publicBounty', false)
 
     if (cancelBounty) {
       cancelBounty()
@@ -41,7 +43,7 @@ export const Body = ({ setBounty, cancelBounty, loading }: Props) => {
   }
 
   const onSubmit = async (data: FormData) => {
-    const { budget, workspaceUuid } = data
+    const { budget, workspaceUuid, publicBounty } = data
 
     try {
       const signedToken = await getSignedTimestamp()
@@ -54,6 +56,7 @@ export const Body = ({ setBounty, cancelBounty, loading }: Props) => {
         node_data: selectedNode?.properties || {},
         jwt_token: signedToken,
         pub_key: pubKey,
+        public_bounty: publicBounty || false,
       }
 
       if (setBounty) {
@@ -69,6 +72,7 @@ export const Body = ({ setBounty, cancelBounty, loading }: Props) => {
       setValue('budget', '')
       setValue('nodeType', '')
       setValue('workspaceUuid', '')
+      setValue('publicBounty', false)
       close()
     }
   }

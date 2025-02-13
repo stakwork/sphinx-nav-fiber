@@ -1,4 +1,4 @@
-import { Button } from '@mui/material'
+import { Button, FormControlLabel, Switch, SwitchProps } from '@mui/material'
 import { FC, useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { ClipLoader } from 'react-spinners'
@@ -29,13 +29,14 @@ export const CreateBounty: FC<Props> = ({ errMessage, handleClose, loading }) =>
   const [options, setOptions] = useState<NameSpacesOption[]>([])
   const { pubKey } = useUserStore()
   const [loadingOption, setLoadingOption] = useState<boolean>(false)
+  const [isPublic, setIsPublic] = useState<boolean>(false)
 
   useEffect(() => {
     async function handleGetNamesspaces() {
       try {
         setLoadingOption(true)
 
-        const userDetails = await getTribeUserDetails(pubKey)
+        const userDetails = await getTribeUserDetails(pubKey || 'pius')
 
         if (!userDetails.id) {
           // set options
@@ -78,6 +79,20 @@ export const CreateBounty: FC<Props> = ({ errMessage, handleClose, loading }) =>
     setValue('workspaceUuid', selectedWorkspaceUuid)
   }
 
+  const handleToggleOnClick = () => {
+    let isPublicNewValue = false
+
+    setIsPublic((prev) => {
+      const newValue = !prev
+
+      isPublicNewValue = newValue
+
+      return newValue
+    })
+
+    setValue('publicBounty', isPublicNewValue)
+  }
+
   const isDisable = isBudgetValid(watchBudget) && !!watchNodeType
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -115,6 +130,12 @@ export const CreateBounty: FC<Props> = ({ errMessage, handleClose, loading }) =>
         />
       </Flex>
 
+      <StyledFormControlLabel
+        control={<CustomSwitch checked={isPublic} onChange={() => handleToggleOnClick()} />}
+        label={<StyledText>Public</StyledText>}
+        labelPlacement="start"
+      />
+
       <Flex direction="row">
         <Flex grow={1}>
           <StyledButton color="secondary" onClick={() => handleClose()} size="large" variant="contained">
@@ -149,7 +170,7 @@ const StyledText = styled(Text)`
   font-size: 14px;
   font-weight: 600;
   font-family: 'Barlow';
-  margin-bottom: 6px;
+  margin-bottom: 20px;
 `
 
 const StyledHeadingText = styled(Text)`
@@ -191,5 +212,38 @@ const StyledButton = styled(Button)`
       background: ${colors.TOPIC};
       color: ${colors.BG2};
     }
+  }
+`
+
+const StyledFormControlLabel = styled(FormControlLabel)`
+  justify-content: start;
+  align-items: center;
+  margin-left: 2px !important;
+  margin-bottom: 8px;
+`
+
+const CustomSwitch = styled((props: SwitchProps) => <Switch {...props} />)`
+  &.MuiSwitch-root {
+    width: 58px;
+    height: 42px;
+  }
+  & .MuiSwitch-switchBase {
+    margin-top: 4px;
+    &.Mui-checked {
+      color: ${colors.white};
+      & + .MuiSwitch-track {
+        background-color: ${colors.primaryBlueBorder};
+        opacity: 1;
+      }
+    }
+  }
+  & .MuiSwitch-thumb {
+    width: 16px;
+    height: 16px;
+  }
+  & .MuiSwitch-track {
+    border-radius: 10px;
+    background-color: ${colors.BG2};
+    opacity: 1;
   }
 `
