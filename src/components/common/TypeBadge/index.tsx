@@ -107,7 +107,7 @@ export const TypeBadge = ({ type }: Props) => {
 
 const Badge = ({ iconStart, color, label }: BadgeProps) => (
   <EpisodeWrapper color={color}>
-    <img alt={label} className="badge__img" src={iconStart} />
+    <img alt={label} className="badge__img" src={`/${iconStart}`} />
     <div className="badge__label">{label}</div>
   </EpisodeWrapper>
 )
