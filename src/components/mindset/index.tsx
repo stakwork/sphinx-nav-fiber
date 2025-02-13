@@ -6,10 +6,11 @@ import { Flex } from '~/components/common/Flex'
 import { Universe } from '~/components/Universe'
 import { useSocket } from '~/hooks/useSockets'
 import { fetchNodeEdges } from '~/network/fetchGraphData'
-import { getNode } from '~/network/fetchSourcesData'
+import { getNode, getSchemaAll } from '~/network/fetchSourcesData'
 import { useDataStore } from '~/stores/useDataStore'
 import { useMindsetStore } from '~/stores/useMindsetStore'
 import { usePlayerStore } from '~/stores/usePlayerStore'
+import { useSchemaStore } from '~/stores/useSchemaStore'
 import { FetchDataResponse, Link, Node, NodeExtended } from '~/types'
 import { timeToMilliseconds } from '~/utils'
 import { Header } from './components/Header'
@@ -54,6 +55,7 @@ export const MindSet = () => {
   const previousTimeRef = useRef<number | null>(null)
   const nodesAndEdgesRef = useRef<FetchDataResponse | null>(null)
   const [markers, setMarkers] = useState<NodeExtended[]>([])
+  const { setSchemas } = useSchemaStore((s) => s)
 
   const queueRef = useRef<FetchDataResponse | null>(null)
   const timerRef = useRef<NodeJS.Timeout | null>(null)
@@ -63,6 +65,20 @@ export const MindSet = () => {
   const { episodeId: selectedEpisodeId } = useParams()
 
   const { setPlayingNode } = usePlayerStore((s) => s)
+
+  useEffect(() => {
+    const fetchSchemaData = async () => {
+      try {
+        const response = await getSchemaAll()
+
+        setSchemas(response.schemas.filter((schema) => !schema.is_deleted))
+      } catch (err) {
+        console.error('Error fetching schema:', err)
+      }
+    }
+
+    fetchSchemaData()
+  }, [setSchemas])
 
   useEffect(() => {
     const init = async (id: string) => {
