@@ -36,7 +36,7 @@ export const CreateBounty: FC<Props> = ({ errMessage, handleClose, loading }) =>
       try {
         setLoadingOption(true)
 
-        const userDetails = await getTribeUserDetails(pubKey || 'pius')
+        const userDetails = await getTribeUserDetails(pubKey)
 
         if (!userDetails.id) {
           // set options
