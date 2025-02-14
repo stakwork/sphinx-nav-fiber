@@ -32,6 +32,7 @@ export type FormData = {
   type: string
   parent?: string
   node_key: string
+  type_description?: string
   attributes?: {
     [k: string]: string | boolean
   }
@@ -192,6 +193,7 @@ export const Editor = ({
       ? {
           type: selectedSchema.type,
           parent: selectedSchema.parent,
+          type_description: selectedSchema.type_description,
         }
       : defaultValues,
   })
@@ -600,6 +602,24 @@ export const Editor = ({
                   </Flex>
                 </>
               )}
+            </Flex>
+
+            <Flex mb={12}>
+              <Flex mb={12}>
+                <Text>Description</Text>
+              </Flex>
+              <Flex mb={12}>
+                <InputWrapper>
+                  <TextInput
+                    dataTestId="cy-item-description"
+                    defaultValue={selectedSchema?.type_description}
+                    id="cy-item-description"
+                    maxLength={500}
+                    name="type_description"
+                    placeholder="Enter type description"
+                  />
+                </InputWrapper>
+              </Flex>
             </Flex>
 
             {parentType && (

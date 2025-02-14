@@ -5,11 +5,10 @@ import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { NODE_ADD_ERROR } from '~/constants'
 import { api } from '~/network/api'
-import { getSchemaAll } from '~/network/fetchSourcesData'
 import { useDataStore } from '~/stores/useDataStore'
-import { useSchemaStore } from '~/stores/useSchemaStore'
 import { FetchDataResponse, Node, SubmitErrRes } from '~/types'
 import { colors } from '~/utils/colors'
+import { Header } from '../Header'
 import { ChevronRight } from '../Icon/ChevronRight'
 import { VideoCard } from '../VideoCard'
 import { getNodes } from './fetchNodes'
@@ -56,29 +55,24 @@ export const LandingPage = () => {
   const [episodes, setEpisodes] = useState<Node[]>([])
   const [requestError, setRequestError] = useState<string>('')
   const { setRunningProjectId } = useDataStore((s) => s)
-  const { setSchemas } = useSchemaStore((s) => s)
 
   const navigate = useNavigate()
 
   useEffect(() => {
-    const fetchSchemaData = async () => {
+    const fetchLatest = async () => {
       try {
         const res: FetchDataResponse = await getNodes()
 
         const topEpisodes = filterAndSortEpisodes(res)
 
         setEpisodes(topEpisodes)
-
-        const response = await getSchemaAll()
-
-        setSchemas(response.schemas.filter((schema) => !schema.is_deleted))
       } catch (err) {
         console.error('Error fetching schema:', err)
       }
     }
 
-    fetchSchemaData()
-  }, [setSchemas])
+    fetchLatest()
+  }, [])
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target
@@ -124,34 +118,39 @@ export const LandingPage = () => {
   }
 
   return (
-    <Wrapper>
-      <Title>Ideas have shapes</Title>
-      <InputWrapper>
-        <Input
-          error={error}
-          onChange={handleInputChange}
-          onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
-          placeholder="Paste podcast or video link"
-          value={inputValue}
-        />
-        <IconWrapper error={error} onClick={!error ? () => handleSubmit() : undefined}>
-          <ChevronRight />
-        </IconWrapper>
-      </InputWrapper>
-      {requestError && <div>{requestError}</div>}
-
-      <SeedQuestionsWrapper>
-        {episodes.map((episode) => (
-          <VideoCard
-            key={episode?.ref_id}
-            imageUrl={episode?.properties?.image_url || ''}
-            onClick={() => handleSubmit(episode?.properties?.source_link)}
-            subtitle=""
-            title={episode?.properties?.episode_title || ''}
+    <>
+      <Flex>
+        <Header />
+      </Flex>
+      <Wrapper>
+        <Title>Ideas have shapes</Title>
+        <InputWrapper>
+          <Input
+            error={error}
+            onChange={handleInputChange}
+            onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
+            placeholder="Paste podcast or video link"
+            value={inputValue}
           />
-        ))}
-      </SeedQuestionsWrapper>
-    </Wrapper>
+          <IconWrapper error={error} onClick={!error ? () => handleSubmit() : undefined}>
+            <ChevronRight />
+          </IconWrapper>
+        </InputWrapper>
+        {requestError && <div>{requestError}</div>}
+
+        <SeedQuestionsWrapper>
+          {episodes.map((episode) => (
+            <VideoCard
+              key={episode?.ref_id}
+              imageUrl={episode?.properties?.image_url || ''}
+              onClick={() => handleSubmit(episode?.properties?.source_link)}
+              subtitle=""
+              title={episode?.properties?.episode_title || ''}
+            />
+          ))}
+        </SeedQuestionsWrapper>
+      </Wrapper>
+    </>
   )
 }
 

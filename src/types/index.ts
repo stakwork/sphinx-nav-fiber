@@ -60,6 +60,7 @@ export type Node = {
   latitude?: number
   coordinates?: Coordinates
   audio?: Audio[]
+  neighbourHood?: string
 }
 
 export type FetchDataResponse = {
