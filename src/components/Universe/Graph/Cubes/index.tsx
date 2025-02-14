@@ -1,5 +1,5 @@
 import { Select } from '@react-three/drei'
-import { ThreeEvent, useFrame } from '@react-three/fiber'
+import { ThreeEvent } from '@react-three/fiber'
 import { memo, useCallback, useRef } from 'react'
 import { Group, Object3D } from 'three'
 import { useAppStore } from '~/stores/useAppStore'
@@ -30,16 +30,6 @@ export const Cubes = memo(() => {
   const setTranscriptOpen = useAppStore((s) => s.setTranscriptOpen)
 
   const { navigateToNode } = useNodeNavigation()
-
-  useFrame(() => {
-    return
-
-    const { selectedNodeTypes, searchQuery } = useGraphStore.getState()
-
-    if (selectedNodeTypes.length || searchQuery) {
-      simulation.nodes()
-    }
-  })
 
   const ignoreNodeEvent = useCallback(
     (node: NodeExtended) => {
@@ -102,7 +92,7 @@ export const Cubes = memo(() => {
       }
 
       if (object?.userData?.ref_id) {
-        const node = object.userData as NodeExtended
+        const node = nodesNormalized.get(object.userData.ref_id) as NodeExtended
 
         if (!ignoreNodeEvent(node)) {
           e.stopPropagation()
@@ -114,7 +104,7 @@ export const Cubes = memo(() => {
         }
       }
     },
-    [setHoveredNode, ignoreNodeEvent, setIsHovering],
+    [setHoveredNode, ignoreNodeEvent, setIsHovering, nodesNormalized],
   )
 
   const hideUniverse = showSelectionGraph && !!selectedNode && false
