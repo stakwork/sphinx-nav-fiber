@@ -325,8 +325,8 @@ export const NodeControls = memo(() => {
               <PopoverOption
                 data-testid="generate_tests"
                 onClick={() => {
-                  if (selectedNode?.name) {
-                    handleAnalyzeTestCoverage(selectedNode.name)
+                  if (selectedNode?.properties?.name) {
+                    handleAnalyzeTestCoverage(selectedNode?.properties?.name)
                   }
 
                   handleClose()
