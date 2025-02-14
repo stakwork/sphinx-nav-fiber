@@ -121,30 +121,31 @@ export const Cubes = memo(() => {
 
   return (
     <>
-      <group ref={nodesWrapperRef} name="simulation-3d-group__nodes" visible={!hideUniverse}>
-        {dataInitial?.nodes.map((node: NodeExtended, index) => {
-          const color = COLORS_MAP[nodeTypes.indexOf(node.node_type)] || colors.white
-          const simulationNode = simulation.nodes()[index]
-          const isFixed = typeof simulationNode?.fx === 'number'
-          const normalizedNode = nodesNormalized.get(node.ref_id)
-
-          return normalizedNode ? (
-            <NodeWrapper
-              key={node.ref_id}
-              color={color}
-              isFixed={isFixed}
-              node={normalizedNode}
-              scale={node.scale || 1}
-            />
-          ) : null
-        })}
-      </group>
       <Select
         filter={(selected) => selected.filter((f) => !!f.userData?.ref_id)}
         onChange={handleSelect}
         onPointerOut={onPointerOut}
         onPointerOver={onPointerIn}
       >
+        <group ref={nodesWrapperRef} name="simulation-3d-group__nodes" visible={!hideUniverse}>
+          {dataInitial?.nodes.map((node: NodeExtended, index) => {
+            const color = COLORS_MAP[nodeTypes.indexOf(node.node_type)] || colors.white
+            const simulationNode = simulation.nodes()[index]
+            const isFixed = typeof simulationNode?.fx === 'number'
+            const normalizedNode = nodesNormalized.get(node.ref_id)
+
+            return normalizedNode ? (
+              <NodeWrapper
+                key={node.ref_id}
+                color={color}
+                isFixed={isFixed}
+                node={normalizedNode}
+                scale={node.scale || 1}
+              />
+            ) : null
+          })}
+        </group>
+
         <group ref={instancesRef} name="simulation-3d-group__node-points">
           <NodePoints />
         </group>
