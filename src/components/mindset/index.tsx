@@ -106,7 +106,7 @@ export const MindSet = () => {
       try {
         // Fetch the initial set of edges and nodes for the episode
         const startedData = await fetchNodeEdges(selectedEpisodeId || '', 0, 50, {
-          nodeType: ['Show', 'Host', 'Guest'],
+          // nodeType: ['Show', 'Host', 'Guest'],
           useSubGraph: false,
         })
 
