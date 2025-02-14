@@ -15,7 +15,7 @@ export const NodeWrapper = memo(
 
     return (
       <mesh key={node.ref_id} name="wr2" scale={node.scale || 1} userData={node}>
-        <mesh visible={isFixed}>
+        <mesh name="text-node-wrapper" visible={isFixed}>
           <TextNode key={node.ref_id} color={color} ignoreDistance={false} node={node} scale={node.scale || 1} />
         </mesh>
       </mesh>

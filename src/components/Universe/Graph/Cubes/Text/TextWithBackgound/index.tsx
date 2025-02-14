@@ -47,9 +47,10 @@ const RoundedRect = ({ width, height, radius, color }: RoundedRectProps) => {
 
 type PropTypes = {
   text: string
+  id?: string
 }
 
-export const TextWithBackground = memo(({ text }: PropTypes) => {
+export const TextWithBackground = memo(({ text, id }: PropTypes) => {
   // Default values (in case the text ref hasn't measured yet)
   const [bgWidth, setBgWidth] = useState(100)
   const bgHeight = 30
@@ -78,7 +79,14 @@ export const TextWithBackground = memo(({ text }: PropTypes) => {
           Its mesh is positioned at [bgWidth/2 + 15, 0, 0] so that its left edge is at 15
           (since its center is bgWidth/2 to the right of its left edge).
       */}
-      <mesh position={[bgWidth / 2 + 15, 0, 0]}>
+      <mesh name="evt-handle" position={[bgWidth / 2 + 15, 0, 0]}>
+        <mesh
+          position={[0, 0, 2]} // Move slightly forward to ensure it captures events
+          userData={{ ref_id: id }}
+        >
+          <boxGeometry args={[bgWidth, bgHeight, 1]} />
+          <meshBasicMaterial color="yellow" depthWrite={false} opacity={0} transparent />
+        </mesh>
         <RoundedRect color="#23252F" height={bgHeight} radius={bgRadius} width={bgWidth} />
       </mesh>
       {/* The text – its left edge should align with the background's left edge */}
@@ -89,6 +97,7 @@ export const TextWithBackground = memo(({ text }: PropTypes) => {
         {...fontProps}
         anchorX="left" // ensures the text starts at the left rather than being centered
         fontSize={10}
+        name="text"
         onSync={updateBgWidth}
       >
         {text}

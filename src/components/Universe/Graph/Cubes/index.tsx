@@ -1,5 +1,5 @@
 import { Select } from '@react-three/drei'
-import { ThreeEvent, useFrame } from '@react-three/fiber'
+import { ThreeEvent } from '@react-three/fiber'
 import { memo, useCallback, useRef } from 'react'
 import { Group, Object3D } from 'three'
 import { useAppStore } from '~/stores/useAppStore'
@@ -30,16 +30,6 @@ export const Cubes = memo(() => {
   const setTranscriptOpen = useAppStore((s) => s.setTranscriptOpen)
 
   const { navigateToNode } = useNodeNavigation()
-
-  useFrame(() => {
-    return
-
-    const { selectedNodeTypes, searchQuery } = useGraphStore.getState()
-
-    if (selectedNodeTypes.length || searchQuery) {
-      simulation.nodes()
-    }
-  })
 
   const ignoreNodeEvent = useCallback(
     (node: NodeExtended) => {
@@ -102,7 +92,7 @@ export const Cubes = memo(() => {
       }
 
       if (object?.userData?.ref_id) {
-        const node = object.userData as NodeExtended
+        const node = nodesNormalized.get(object.userData.ref_id) as NodeExtended
 
         if (!ignoreNodeEvent(node)) {
           e.stopPropagation()
@@ -114,37 +104,38 @@ export const Cubes = memo(() => {
         }
       }
     },
-    [setHoveredNode, ignoreNodeEvent, setIsHovering],
+    [setHoveredNode, ignoreNodeEvent, setIsHovering, nodesNormalized],
   )
 
   const hideUniverse = showSelectionGraph && !!selectedNode && false
 
   return (
     <>
-      <group ref={nodesWrapperRef} name="simulation-3d-group__nodes" visible={!hideUniverse}>
-        {dataInitial?.nodes.map((node: NodeExtended, index) => {
-          const color = COLORS_MAP[nodeTypes.indexOf(node.node_type)] || colors.white
-          const simulationNode = simulation.nodes()[index]
-          const isFixed = typeof simulationNode?.fx === 'number'
-          const normalizedNode = nodesNormalized.get(node.ref_id)
-
-          return normalizedNode ? (
-            <NodeWrapper
-              key={node.ref_id}
-              color={color}
-              isFixed={isFixed}
-              node={normalizedNode}
-              scale={node.scale || 1}
-            />
-          ) : null
-        })}
-      </group>
       <Select
         filter={(selected) => selected.filter((f) => !!f.userData?.ref_id)}
         onChange={handleSelect}
         onPointerOut={onPointerOut}
         onPointerOver={onPointerIn}
       >
+        <group ref={nodesWrapperRef} name="simulation-3d-group__nodes" visible={!hideUniverse}>
+          {dataInitial?.nodes.map((node: NodeExtended, index) => {
+            const color = COLORS_MAP[nodeTypes.indexOf(node.node_type)] || colors.white
+            const simulationNode = simulation.nodes()[index]
+            const isFixed = typeof simulationNode?.fx === 'number'
+            const normalizedNode = nodesNormalized.get(node.ref_id)
+
+            return normalizedNode ? (
+              <NodeWrapper
+                key={node.ref_id}
+                color={color}
+                isFixed={isFixed}
+                node={normalizedNode}
+                scale={node.scale || 1}
+              />
+            ) : null
+          })}
+        </group>
+
         <group ref={instancesRef} name="simulation-3d-group__node-points">
           <NodePoints />
         </group>
