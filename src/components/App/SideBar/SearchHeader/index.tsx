@@ -54,6 +54,13 @@ export const SearchHeader = () => {
 
     setValue('aiChat', '')
 
+    setNewLoading({
+      question: '',
+      answerLoading: false,
+      sourcesLoading: false,
+      shouldRender: true,
+    })
+
     setIsAIChatActive(true)
   }
 
