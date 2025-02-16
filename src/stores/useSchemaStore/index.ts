@@ -60,12 +60,13 @@ export const useSchemaStore = create<SchemasStore>()(
         const paletteColor = COLORS_PALETTE.find((colorsArray) => colorsArray[1] === i.primary_color)
         const cycleIndex = index % COLORS_PALETTE.length
 
-        const secondaryColor = paletteColor?.[0] ?? COLORS_PALETTE[index]?.[0] ?? COLORS_PALETTE[0][0]
+        const secondaryColor = paletteColor?.[0]
+          ? paletteColor[0]
+          : COLORS_PALETTE[cycleIndex][0] || COLORS_PALETTE[0][0]
 
         return {
           ...i,
-          primary_color: paletteColor ? i.primary_color : COLORS_PALETTE[index]?.[1] ?? COLORS_PALETTE[0][0],
-
+          primary_color: paletteColor ? i.primary_color : COLORS_PALETTE[cycleIndex][1] || COLORS_PALETTE[0][0],
           secondary_color: secondaryColor,
         }
       })
