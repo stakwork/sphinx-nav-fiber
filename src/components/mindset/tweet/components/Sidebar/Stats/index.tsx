@@ -1,43 +1,65 @@
 import styled from 'styled-components'
-import { Flex } from '~/components/common/Flex'
 import { Node } from '~/types'
-import { colors } from '~/utils'
+import { colors } from '~/utils/colors'
 
 type Props = {
   node: Node
 }
 
-const analyticsData = {
-  bookmark_count: 0,
-  impression_count: 1091,
-  like_count: 5,
-  quote_count: 0,
-  reply_count: 11,
-  retweet_count: 0,
+const analyticsMapper = {
+  impression_count: { label: 'Impressions', formatter: (value: number) => value.toLocaleString() },
+  like_count: { label: 'Likes', formatter: (value: number) => value },
+  reply_count: { label: 'Replies', formatter: (value: number) => value },
+  retweet_count: { label: 'Retweets', formatter: (value: number) => value },
+  quote_count: { label: 'Quotes', formatter: (value: number) => value },
+  bookmark_count: { label: 'Bookmarks', formatter: (value: number) => value },
 }
 
 export const Stats = ({ node }: Props) => (
-  <Wrapper>
-    {Object.keys(analyticsData).map((i) =>
-      node?.properties?.[i] ? (
-        <Flex key={i} className="heading">
-          {i}: {node?.properties?.[i]}
-        </Flex>
-      ) : null,
-    )}
-  </Wrapper>
+  <Card>
+    <Title>Analytics</Title>
+    <Grid>
+      {Object.entries(analyticsMapper).map(([key, { label, formatter }]) =>
+        node?.properties?.[key] !== undefined ? (
+          <Metric key={key}>
+            <span>{label}</span>
+            <Value>{formatter(node.properties[key] ?? 0)}</Value>
+          </Metric>
+        ) : null,
+      )}
+    </Grid>
+  </Card>
 )
 
-const Wrapper = styled(Flex)`
-  .heading {
-    font-weight: 700;
-    font-size: 16px;
-    margin-bottom: 16px;
-  }
+const Card = styled.div`
+  background: ${colors.ANALYTICS_CARD_BG};
+  border-radius: 16px;
+  padding: 16px 20px;
+  width: 100%;
+  max-width: 350px;
+`
+
+const Title = styled.h2`
   color: ${colors.white};
-  background: ${colors.BG1};
-  border-radius: 8px;
-  padding: 24px;
-  overflow-y: auto;
-  flex: 1 1 100%;
+  font-size: 16px;
+  font-weight: 500;
+  margin: 0 0 16px 0;
+`
+
+const Grid = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px 24px;
+`
+
+const Metric = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: ${colors.GRAY3};
+  font-size: 14px;
+`
+
+const Value = styled.span`
+  color: ${colors.GRAY6};
 `

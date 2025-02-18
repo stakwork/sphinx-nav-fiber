@@ -113,6 +113,7 @@ export const colors = {
   INPUT_PLACEHOLDER: 'rgba(255, 255, 255, 0.5)',
   HOVER_CARD_BG: 'rgba(41, 44, 54, 1)',
   GRAY_FILTER_ICON: 'rgba(70,79,93,255)',
+  ANALYTICS_CARD_BG: 'rgba(21, 22, 28, 1)',
 } as const
 
 export type ColorName = keyof typeof colors
