@@ -8,17 +8,25 @@ type MindsetStore = {
   selectedTweet: NodeExtended | null
   tweetPlayingTime: number
   tweetIsPlaying: boolean
+  tweetDuration: number
   setSelectedEpisode: (node: NodeExtended) => void
   setSelectedTweet: (node: NodeExtended) => void
   setClips: (clips: Node[]) => void
   setChapters: (chapters: Node[]) => void
   setTweetPlayingTime: (time: number) => void
   setTweetIsPlaying: (playing: boolean) => void
+  setTweetDuration: (duration: number) => void
 }
 
 const defaultData: Omit<
   MindsetStore,
-  'setSelectedEpisode' | 'setSelectedTweet' | 'setClips' | 'setChapters' | 'setTweetPlayingTime' | 'setTweetIsPlaying'
+  | 'setSelectedEpisode'
+  | 'setSelectedTweet'
+  | 'setClips'
+  | 'setChapters'
+  | 'setTweetPlayingTime'
+  | 'setTweetIsPlaying'
+  | 'setTweetDuration'
 > = {
   selectedEpisode: null,
   selectedTweet: null,
@@ -26,6 +34,7 @@ const defaultData: Omit<
   chapters: [],
   tweetPlayingTime: 0,
   tweetIsPlaying: false,
+  tweetDuration: 1,
 }
 
 export const useMindsetStore = create<MindsetStore>((set) => ({
@@ -36,4 +45,5 @@ export const useMindsetStore = create<MindsetStore>((set) => ({
   setChapters: (chapters) => set({ chapters }),
   setTweetPlayingTime: (time: number) => set({ tweetPlayingTime: time }),
   setTweetIsPlaying: (isPlaying: boolean) => set({ tweetIsPlaying: isPlaying }),
+  setTweetDuration: (tweetDuration: number) => set({ tweetDuration }),
 }))

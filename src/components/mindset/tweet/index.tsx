@@ -15,7 +15,7 @@ import { SideBar } from './components/Sidebar'
 const calculateMarkers = (data: FetchDataResponse): Node[] => {
   // Filter edges that have a defined 'start' property
   const edgesWithStart = data.edges
-    .filter((e) => e?.properties?.start)
+    .filter((e) => e?.properties?.start && typeof e.properties.start === 'string')
     .map((edge) => ({
       source: edge.source,
       target: edge.target,
@@ -31,7 +31,14 @@ const calculateMarkers = (data: FetchDataResponse): Node[] => {
       return { ...node, start: matchingEdge?.start || 0 }
     })
     // Filter out nodes with specific types
-    .filter((node) => node && node.node_type !== 'Clip' && node.node_type !== 'Episode' && node.node_type !== 'Show')
+    .filter(
+      (node) =>
+        node &&
+        typeof node.start === 'string' &&
+        node.node_type !== 'Clip' &&
+        node.node_type !== 'Episode' &&
+        node.node_type !== 'Show',
+    )
 
   return markers
 }
@@ -93,7 +100,13 @@ export const TweetMindset = () => {
 
   useEffect(() => {
     const update = (time: number) => {
-      const { tweetPlayingTime } = useMindsetStore.getState()
+      const { tweetPlayingTime, tweetDuration } = useMindsetStore.getState()
+
+      const PLAYBACK_DURATION = 30000 // 20 seconds
+      const progressOffset = (6000 / PLAYBACK_DURATION) * 100 // Convert 3s to progress scale
+
+      // Convert progressOffset back to real-time equivalent
+      const realOffsetTime = (progressOffset / 100) * tweetDuration
 
       if (previousTimeRef.current !== null) {
         const deltaTime = time - previousTimeRef.current
@@ -108,7 +121,7 @@ export const TweetMindset = () => {
                 const linkTime =
                   typeof link?.properties?.start === 'string' ? new Date(link.properties.start || 0).getTime() : 0
 
-                if (linkTime <= currentTime + 3000) {
+                if (linkTime <= currentTime + realOffsetTime) {
                   matches.push(link)
                 } else {
                   remaining.push(link)

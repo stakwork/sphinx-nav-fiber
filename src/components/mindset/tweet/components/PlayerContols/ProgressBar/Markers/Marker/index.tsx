@@ -34,7 +34,7 @@ export const Marker = memo(({ type, left, img, start, showDate }: Props) => {
 
   return (
     <MarkerWrapper style={{ left: `${left}%` }}>
-      {(showDate || true) && (
+      {showDate && (
         <div style={{ fontSize: '10px', marginBottom: '80px', position: 'absolute' }}>
           {moment(start).format('DD/MM/YY HH:mm:ss')}
         </div>
