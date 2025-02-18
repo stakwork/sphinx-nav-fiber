@@ -17,8 +17,6 @@ import { Document } from './Document'
 const _View = () => {
   const selectedNode = useSelectedNode()
 
-  console.log(selectedNode?.ref_id)
-
   const { setPlayingNode } = usePlayerStore((s) => s)
 
   useEffect(() => {
