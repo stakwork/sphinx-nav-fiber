@@ -1,44 +1,38 @@
 import styled from 'styled-components'
 import { Node } from '~/types'
+import { colors } from '~/utils/colors'
 
 type Props = {
   node: Node
+}
+
+const analyticsMapper = {
+  impression_count: { label: 'Impressions', formatter: (value: number) => value.toLocaleString() },
+  like_count: { label: 'Likes', formatter: (value: number) => value },
+  reply_count: { label: 'Replies', formatter: (value: number) => value },
+  retweet_count: { label: 'Retweets', formatter: (value: number) => value },
+  quote_count: { label: 'Quotes', formatter: (value: number) => value },
+  bookmark_count: { label: 'Bookmarks', formatter: (value: number) => value },
 }
 
 export const Stats = ({ node }: Props) => (
   <Card>
     <Title>Analytics</Title>
     <Grid>
-      <Metric>
-        <span>Impressions</span>
-        <Value>{(node.properties?.impression_count ?? 0).toLocaleString()}</Value>
-      </Metric>
-      <Metric>
-        <span>Likes</span>
-        <Value>{node.properties?.like_count ?? 0}</Value>
-      </Metric>
-      <Metric>
-        <span>Replies</span>
-        <Value>{node.properties?.reply_count ?? 0}</Value>
-      </Metric>
-      <Metric>
-        <span>Retweets</span>
-        <Value>{node.properties?.retweet_count ?? 0}</Value>
-      </Metric>
-      <Metric>
-        <span>Quotes</span>
-        <Value>{node.properties?.quote_count ?? 0}</Value>
-      </Metric>
-      <Metric>
-        <span>Bookmarks</span>
-        <Value>{node.properties?.bookmark_count ?? 0}</Value>
-      </Metric>
+      {Object.entries(analyticsMapper).map(([key, { label, formatter }]) =>
+        node?.properties?.[key] !== undefined ? (
+          <Metric key={key}>
+            <span>{label}</span>
+            <Value>{formatter(node.properties[key])}</Value>
+          </Metric>
+        ) : null,
+      )}
     </Grid>
   </Card>
 )
 
 const Card = styled.div`
-  background: #0f1117;
+  background: ${colors.ANALYTICS_CARD_BG};
   border-radius: 16px;
   padding: 16px 20px;
   width: 100%;
@@ -46,7 +40,7 @@ const Card = styled.div`
 `
 
 const Title = styled.h2`
-  color: #fff;
+  color: ${colors.white};
   font-size: 16px;
   font-weight: 500;
   margin: 0 0 16px 0;
@@ -62,10 +56,10 @@ const Metric = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  color: #9ca3af;
+  color: ${colors.GRAY3};
   font-size: 14px;
 `
 
 const Value = styled.span`
-  color: #e5e7eb;
+  color: ${colors.GRAY6};
 `
