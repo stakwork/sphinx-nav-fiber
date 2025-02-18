@@ -37,20 +37,11 @@ type Props = {
   id: string
 }
 
-// type ButtonProps = {
-//   left: number
-//   backgroundColor?: string
-//   borderColor?: string
-//   fontColor?: string
-// }
-
 export const Node = ({ onClick, node, selected, rounded = true, x, y, z, id }: Props) => {
   const nodeRef = useRef<Mesh | null>(null)
   const [isAdmin] = useUserStore((s) => [s.isAdmin])
   const { open: openEditNodeNameModal } = useModal('editNodeName')
-  // const { open: createBountyModal } = useModal('createBounty')
   const { open: openNodeActionModal } = useModal('nodeAction')
-  // const selectedNode = useSelectedNode()
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
   const [nodeActions, setNodeActions] = useState<ActionDetail[]>()
   const [loadingActions, setLoadingActions] = useState<boolean>(false)
@@ -116,8 +107,6 @@ export const Node = ({ onClick, node, selected, rounded = true, x, y, z, id }: P
   const description = keyProperty !== 'description' ? node.properties?.description : ''
   const descriptionShortened = description ? truncateText(description, 60) : ''
 
-  // const isShowCreateTestButton = !!(selectedNode && selectedNode?.node_type?.toLowerCase() === 'function')
-
   return (
     <mesh ref={nodeRef}>
       <Html center sprite zIndexRange={[0, 0]}>
@@ -181,17 +170,6 @@ export const Node = ({ onClick, node, selected, rounded = true, x, y, z, id }: P
                   <Text className="selected__title">{titleShortened}</Text>
                   {descriptionShortened ? <Text>{descriptionShortened}</Text> : null}
                 </Flex>
-
-                {/* {isShowCreateTestButton && (
-                  <CreateTestButton
-                    left={2}
-                    onClick={() => {
-                      createBountyModal()
-                    }}
-                  >
-                    Generate Unit Test
-                  </CreateTestButton>
-                )} */}
               </Selected>
             ) : (
               <>
@@ -348,28 +326,6 @@ const Avatar = styled(Flex)<AvatarProps>`
   border-radius: ${({ radius }) => `${radius}`};
   font-size: 20px;
 `
-
-// const CreateTestButton = styled.div<ButtonProps>`
-//   position: absolute;
-//   top: 170px;
-//   left: ${(p: ButtonProps) => 30 + p.left}px;
-//   width: 140px;
-//   padding: 8px;
-//   border-radius: 4px;
-//   display: flex;
-//   justify-content: center;
-//   align-items: center;
-//   background: ${colors.createTestButton};
-//   color: ${colors.black};
-//   font-size: 14px;
-//   font-family: Barlow;
-//   font-weight: 600;
-//   z-index: 1002;
-//   cursor: pointer;
-//   &:hover {
-//     transform: scale(1.05);
-//   }
-// `
 
 const PopoverOption = styled(Flex).attrs({
   direction: 'row',
