@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { useMindsetStore } from '~/stores/useMindsetStore'
@@ -17,13 +17,22 @@ export const PlayerControl = ({ markers }: Props) => {
   const tweetPlayingTime = useMindsetStore((s) => s.tweetPlayingTime)
   const setTweetPlayingTime = useMindsetStore((s) => s.setTweetPlayingTime)
   const setTweetIsPlaying = useMindsetStore((s) => s.setTweetIsPlaying)
+  const setTweetDuration = useMindsetStore((s) => s.setTweetDuration)
+  const duration = useMindsetStore((s) => s.tweetDuration)
   const tweetIsPlaying = useMindsetStore((s) => s.tweetIsPlaying)
+  const [minTime, setMinTime] = useState(0)
+  const [maxTime, setMaxTime] = useState(0)
 
-  // Extract timestamps
-  const timestamps = markers.map((event) => (event.start ? new Date(event.start).getTime() : 0))
-  const minTime = Math.min(...timestamps)
-  const maxTime = Math.max(...timestamps)
-  const duration = maxTime - minTime
+  useEffect(() => {
+    const timestamps = markers.map((event) => (event.start ? new Date(event.start).getTime() : 0))
+    const min = Math.min(...timestamps)
+    const max = Math.max(...timestamps)
+    const dur = max - min
+
+    setMinTime(min)
+    setMaxTime(max)
+    setTweetDuration(dur)
+  }, [markers, setTweetDuration])
 
   // Track animation frame reference
   const animationFrameRef = useRef<number | null>(null)

@@ -24,7 +24,6 @@ export const ProgressBar = ({ duration, markers, handleProgressChange, playingTi
         <Markers markers={markers} />
       </MarkersWrapper>
       <CurrentTime>
-        <div>{tweetPlayingTime}</div>
         <div>{moment(tweetPlayingTime).format('DD/MM/YY HH:mm:ss')}</div>
       </CurrentTime>
     </ProgressWrapper>
