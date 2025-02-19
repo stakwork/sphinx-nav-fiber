@@ -10,9 +10,9 @@ import { useSchemaStore } from '~/stores/useSchemaStore'
 import { NodeExtended } from '~/types'
 import { generatePalette } from '~/utils/palleteGenerator'
 import { removeEmojis } from '~/utils/removeEmojisFromText'
+import { removeLeadingMentions } from '~/utils/removeLeadingMentions'
 import { truncateText } from '~/utils/truncateText'
 import { TextWithBackground } from './TextWithBackgound'
-import { removeLeadingMentions } from '~/utils/removeLeadingMentions'
 
 type Props = {
   node: NodeExtended
@@ -59,26 +59,46 @@ export const TextNode = memo(
         return
       }
 
-      const state = useGraphStore.getState()
+      const {
+        selectedNode,
+        hoveredNode,
+        activeEdge,
+        searchQuery,
+        selectedNodeTypes,
+        selectedLinkTypes,
+        hoveredNodeSiblings,
+        selectedNodeSiblings,
+      } = useGraphStore.getState()
 
-      const nodePosition = nodePositionRef.current.setFromMatrixPosition(nodeRef.current.matrixWorld)
+      const checkDistance = () => {
+        const nodePosition = nodePositionRef.current.setFromMatrixPosition(nodeRef.current!.matrixWorld)
 
-      nodeRef.current.visible = ignoreDistance || nodePosition.distanceTo(camera.position) < 1500
+        if (nodeRef.current) {
+          nodeRef.current.visible = ignoreDistance ? true : nodePosition.distanceTo(camera.position) < 1500
+        }
+      }
+
+      if (searchQuery.length < 3 && !selectedNodeTypes.length && !selectedLinkTypes.length && !selectedNode) {
+        checkDistance()
+      } else {
+        nodeRef.current.visible = false
+      }
 
       const isActive =
-        [
-          state.selectedNode?.ref_id,
-          state.hoveredNode?.ref_id,
-          state.activeEdge?.target,
-          state.activeEdge?.source,
-          ...state.selectedNodeTypes,
-          ...state.hoveredNodeSiblings,
-          ...state.selectedNodeSiblings,
-          ...state.selectedLinkTypes,
-        ].includes(node.ref_id) || sanitizedNodeName.toLowerCase().includes(state.searchQuery.toLowerCase())
+        node.ref_id === selectedNode?.ref_id ||
+        node.ref_id === hoveredNode?.ref_id ||
+        activeEdge?.target === node.ref_id ||
+        activeEdge?.source === node.ref_id ||
+        (searchQuery && sanitizedNodeName.toLowerCase().includes(searchQuery.toLowerCase())) ||
+        selectedNodeTypes.includes(node.node_type) ||
+        hoveredNodeSiblings.includes(node.ref_id) ||
+        selectedNodeSiblings.includes(node.ref_id) ||
+        node.edgeTypes?.some((i) => selectedLinkTypes.includes(i))
 
       if (isActive) {
-        nodeRef.current.visible = true
+        if (nodeRef.current && !nodeRef.current.visible) {
+          nodeRef.current.visible = true
+        }
       }
     })
 
@@ -86,12 +106,12 @@ export const TextNode = memo(
     const primaryIcon = normalizedSchemasByType[node.node_type]?.icon
     const nodeColor = secondaryColor ?? color
     const Icon = primaryIcon ? Icons[primaryIcon] : null
-    const iconName = Icon ? primaryIcon : ''
+    const iconName = Icon ? primaryIcon : 'NodesIcon'
 
     return (
       <Billboard follow lockX={false} lockY={false} lockZ={false} name="billboard" userData={node}>
         {node?.properties?.image_url && texture ? (
-          <mesh ref={nodeRef} name={node.ref_id} userData={node} visible={!hide}>
+          <mesh ref={nodeRef} name={node.ref_id} position={[0, 0, 1]} userData={node} visible={!hide}>
             <planeGeometry args={[15, 15]} />
             <meshBasicMaterial map={texture} />
             {sanitizedNodeName && <TextWithBackground id={node.ref_id} text={truncateText(sanitizedNodeName, 20)} />}
