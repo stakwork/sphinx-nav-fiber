@@ -1,4 +1,3 @@
-import moment from 'moment'
 import { memo } from 'react'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
@@ -9,8 +8,6 @@ type Props = {
   type: string
   left: number
   img: string
-  start: number
-  showDate: boolean
 }
 
 type BadgeProps = {
@@ -19,7 +16,7 @@ type BadgeProps = {
   label: string
 }
 
-export const Marker = memo(({ type, left, img, start, showDate }: Props) => {
+export const Marker = memo(({ type, left, img }: Props) => {
   const normalizedSchemasByType = useSchemaStore((s) => s.normalizedSchemasByType)
 
   const primaryColor = normalizedSchemasByType[type]?.primary_color
@@ -34,11 +31,6 @@ export const Marker = memo(({ type, left, img, start, showDate }: Props) => {
 
   return (
     <MarkerWrapper style={{ left: `${left}%` }}>
-      {showDate && (
-        <div style={{ fontSize: '10px', marginBottom: '80px', position: 'absolute' }}>
-          {moment(start).format('DD/MM/YY HH:mm:ss')}
-        </div>
-      )}
       <Badge {...badgeProps} label={type} />
     </MarkerWrapper>
   )

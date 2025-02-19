@@ -30,8 +30,6 @@ export const Markers = memo(({ markers }: Props) => {
             key={`${node.ref_id}_${index}`}
             img={img}
             left={position}
-            showDate={index === 0 || index === markers.length - 1}
-            start={node.start || 0}
             type={type}
           />
         )
