@@ -16,16 +16,15 @@ type Props = {
 
 export const ProgressBar = ({ duration, markers, handleProgressChange, playingTime, tweetPlayingTime }: Props) => {
   const width = 1
+  const formattedTime = moment(tweetPlayingTime).format('MMM D - h:mma')
 
   return (
     <ProgressWrapper>
+      <TimeBubble style={{ left: `${playingTime}%` }}>{formattedTime}</TimeBubble>
       <ProgressSlider max={duration} onChange={handleProgressChange} value={playingTime} width={width} />
       <MarkersWrapper>
         <Markers markers={markers} />
       </MarkersWrapper>
-      <CurrentTime>
-        <div>{moment(tweetPlayingTime).format('DD/MM/YY HH:mm:ss')}</div>
-      </CurrentTime>
     </ProgressWrapper>
   )
 }
@@ -57,12 +56,22 @@ const MarkersWrapper = styled(Flex)`
   top: 50%;
 `
 
-const CurrentTime = styled(Flex)`
+const TimeBubble = styled.div`
   position: absolute;
-  left: 50%;
-  right: 0;
-  bottom: -150%;
-  color: white;
+  top: -35px;
+  transform: translateX(-50%);
+  background: rgba(230, 230, 230, 255);
+  color: ${colors.black};
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-family: 'Barlow';
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  z-index: 30;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(8px);
+  letter-spacing: 0.2px;
 `
 
 const ProgressSlider = styled(Slider)<{ width: number }>`
