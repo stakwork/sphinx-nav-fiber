@@ -34,10 +34,6 @@ export const Point = memo(({ color, scale, name, index, node, nodeType }: Props)
 
     if (true || typeof simulationNode?.fx === 'number') {
       nodeRef.current.scale.set(scale, scale, scale)
-    } else {
-      nodeRef.current.scale.set(0, 0, 0)
-
-      return
     }
 
     if (searchQuery) {
