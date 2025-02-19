@@ -12,6 +12,7 @@ import { generatePalette } from '~/utils/palleteGenerator'
 import { removeEmojis } from '~/utils/removeEmojisFromText'
 import { truncateText } from '~/utils/truncateText'
 import { TextWithBackground } from './TextWithBackgound'
+import { removeLeadingMentions } from '~/utils/removeLeadingMentions'
 
 type Props = {
   node: NodeExtended
@@ -39,7 +40,9 @@ export const TextNode = memo(
     const keyProperty = getNodeKeysByType(node.node_type) || ''
 
     const sanitizedNodeName =
-      keyProperty && node?.properties ? removeEmojis(String(node?.properties[keyProperty] || '')) : node.name || ''
+      keyProperty && node?.properties
+        ? removeLeadingMentions(removeEmojis(String(node?.properties[keyProperty] || '')))
+        : removeLeadingMentions(node.name || '')
 
     useFrame(({ camera }) => {
       if (!nodeRef.current) {
