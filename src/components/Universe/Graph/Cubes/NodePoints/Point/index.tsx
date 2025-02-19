@@ -32,7 +32,7 @@ export const Point = memo(({ color, scale, name, index, node, nodeType }: Props)
 
     const simulationNode = simulation?.nodes()[index]
 
-    if (typeof simulationNode?.fx === 'number') {
+    if (true || typeof simulationNode?.fx === 'number') {
       nodeRef.current.scale.set(scale, scale, scale)
     } else {
       nodeRef.current.scale.set(0, 0, 0)

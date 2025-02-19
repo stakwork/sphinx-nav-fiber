@@ -1,7 +1,7 @@
 import { useControls } from 'leva'
 import { isEqual } from 'lodash'
 import { useEffect, useRef } from 'react'
-import { Box3, Group, Sphere } from 'three'
+import { Group } from 'three'
 import { Line2 } from 'three-stdlib'
 import { useDataStore } from '~/stores/useDataStore'
 import { useGraphStore } from '~/stores/useGraphStore'
@@ -15,6 +15,7 @@ import { Earth } from './Earth'
 import { LoadingNodes } from './LoadingNodes'
 import { Neighbourhoods } from './Neighborhoods'
 import { NodeDetailsPanel } from './UI'
+import { calculateRadius } from './utils/calculateGroupRadius'
 
 export type LinkPosition = {
   sx: number
@@ -35,6 +36,7 @@ export const Graph = () => {
   const { dataInitial, isLoadingNew, isFetching, dataNew, resetDataNew } = useDataStore((s) => s)
   const groupRef = useRef<Group>(null)
   const { normalizedSchemasByType } = useSchemaStore((s) => s)
+  const prevRadius = useRef(0)
 
   const chapters = useMindsetStore((s) => s.chapters)
 
@@ -109,6 +111,8 @@ export const Graph = () => {
     if (!groupRef?.current) {
       return
     }
+
+    const { selectedNode } = useGraphStore.getState()
 
     const gr = groupRef.current.getObjectByName('simulation-3d-group__nodes') as Group
     const grPoints = groupRef.current.getObjectByName('simulation-3d-group__node-points') as Group
@@ -204,6 +208,19 @@ export const Graph = () => {
               }
             }
           })
+        }
+
+        if (gr) {
+          if (selectedNode) {
+            return
+          }
+
+          const newRadius = calculateRadius(gr)
+
+          if (prevRadius.current === 0 || Math.abs(prevRadius.current - newRadius) > 200) {
+            setGraphRadius(newRadius)
+            prevRadius.current = newRadius
+          }
         }
       }
     })
@@ -312,15 +329,17 @@ export const Graph = () => {
           })
         }
 
-        const box = new Box3().setFromObject(gr)
+        if (gr) {
+          if (selectedNode) {
+            return
+          }
 
-        // Compute the center and radius of the bounding sphere
-        const sphere = new Sphere()
+          const newRadius = calculateRadius(gr)
 
-        box.getBoundingSphere(sphere)
-
-        if (sphere.radius) {
-          setGraphRadius(sphere.radius)
+          if (prevRadius.current === 0 || Math.abs(prevRadius.current - newRadius) > 200) {
+            setGraphRadius(newRadius)
+            prevRadius.current = newRadius
+          }
         }
 
         updateSimulationVersion()

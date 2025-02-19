@@ -23,6 +23,8 @@ type Position = {
   z: number
 }
 
+type NodesToHide = Record<string, boolean>
+
 export type GraphStyle = 'sphere' | 'force' | 'split' | 'earth'
 
 export const distributeNodesOnSphere = (nodes: NodeExtended[], radius = 20) => {
@@ -129,6 +131,7 @@ export type GraphStore = {
   selectedNodeSiblings: string[]
   searchQuery: string
   simulationVersion: number
+  nodesToHide: NodesToHide
 
   setDisableCameraRotation: (rotation: boolean) => void
   setScrollEventsDisabled: (rotation: boolean) => void
@@ -154,6 +157,7 @@ export type GraphStore = {
   setSelectedLinkTypes: (type: string) => void
   resetSelectedLinkTypes: () => void
   updateSimulationVersion: () => void
+  setNodesToHide: (nodes: NodesToHide) => void
 }
 
 const defaultData: Omit<
@@ -184,8 +188,10 @@ const defaultData: Omit<
   | 'setSelectedLinkTypes'
   | 'resetSelectedLinkTypes'
   | 'updateSimulationVersion'
+  | 'setNodesToHide'
 > = {
   data: null,
+  nodesToHide: {},
   simulationVersion: 0,
   simulation: null,
   selectionGraphData: { nodes: [], links: [] },
@@ -248,6 +254,7 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
   setGraphRadius: (graphRadius) => set({ graphRadius }),
   setSelectionGraphRadius: (selectionGraphRadius) => set({ selectionGraphRadius }),
   setGraphStyle: (graphStyle) => set({ graphStyle }),
+  setNodesToHide: (nodesToHide) => set({ nodesToHide }),
   setHoveredNode: (hoveredNode) => {
     const { nodesNormalized } = useDataStore.getState() || {}
 
