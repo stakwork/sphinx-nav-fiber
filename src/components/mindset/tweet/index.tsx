@@ -11,6 +11,7 @@ import { FetchDataResponse, Link, Node, NodeExtended } from '~/types'
 import { Header } from '../components/Header'
 import { PlayerControl } from './components/PlayerContols'
 import { SideBar } from './components/Sidebar'
+import { PLAYBACK_DURATION } from './constant'
 
 const calculateMarkers = (data: FetchDataResponse): Node[] => {
   // Filter edges that have a defined 'start' property
@@ -102,11 +103,8 @@ export const TweetMindset = () => {
     const update = (time: number) => {
       const { tweetPlayingTime, tweetDuration } = useMindsetStore.getState()
 
-      const PLAYBACK_DURATION = 30000 // 20 seconds
-      const progressOffset = (6000 / PLAYBACK_DURATION) * 100 // Convert 3s to progress scale
-
       // Convert progressOffset back to real-time equivalent
-      const realOffsetTime = (progressOffset / 100) * tweetDuration
+      const realOffsetTime = (tweetDuration / PLAYBACK_DURATION) * 3000
 
       if (previousTimeRef.current !== null) {
         const deltaTime = time - previousTimeRef.current
@@ -121,7 +119,7 @@ export const TweetMindset = () => {
                 const linkTime =
                   typeof link?.properties?.start === 'string' ? new Date(link.properties.start || 0).getTime() : 0
 
-                if (linkTime <= currentTime + realOffsetTime) {
+                if (linkTime !== 0 && linkTime <= currentTime + realOffsetTime) {
                   matches.push(link)
                 } else {
                   remaining.push(link)

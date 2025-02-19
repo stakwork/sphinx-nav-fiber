@@ -15,19 +15,24 @@ import { isValidMediaUrl } from './utils'
 
 const HARDCODE = [
   {
-    date_added_to_graph: 1739798585.4924533,
+    date_added_to_graph: 1739963879.991741,
     node_type: 'Tweet',
     properties: {
-      date: 1739778050,
-      image_url: 'https://pbs.twimg.com/profile_images/1805669997340942336/kz7fZu2d_normal.jpg',
-      like_count: 20863,
-      name: 'Coinjoined Chris ⚡',
-      text: "We had a good thing, you stupid son of a bitch! We had the chance to slash the state, to build something real. And it was working! You could've stayed the course, wielded your chainsaw and made history. But no! You just had to shill a Solana rugpull.\nYou and your pride and your… https://t.co/Jw5B6ZUnbw https://t.co/IvDYmcwfuD",
-      tweet_id: '1891392347013108131',
-      twitter_handle: 'coinjoined',
+      bookmark_count: 5,
+      date: 1739927020,
+      image_url: 'https://pbs.twimg.com/profile_images/1740015728105832448/fRPNehGE_normal.png',
+      impression_count: 2443,
+      like_count: 18,
+      name: 'Carlos E. Perez',
+      quote_count: 2,
+      reply_count: 6,
+      retweet_count: 2,
+      text: "Ok.  I'm very disappointed with Grok-3.  I'm sharing two chats, one with Grok-3 and the other with OpenAI o3-mini-high.  The quality is not even comparable! \n\nhttps://t.co/6eLOnxzQq1\n\nhttps://t.co/rLsPY1NOkp\n\nI'm unimpressed.",
+      tweet_id: '1892017172488052944',
+      twitter_handle: 'IntuitMachine',
       verified: false,
     },
-    ref_id: '4b8206d8-1355-4067-a83b-4a9fc65a9991',
+    ref_id: '473a666e-fbb3-4c75-bd5a-36827fa15e31',
   },
 
   {

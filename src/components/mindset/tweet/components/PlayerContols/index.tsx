@@ -4,14 +4,13 @@ import { Flex } from '~/components/common/Flex'
 import { useMindsetStore } from '~/stores/useMindsetStore'
 import { NodeExtended } from '~/types'
 import { colors } from '~/utils/colors'
+import { PLAYBACK_DURATION } from '../../constant'
 import { Controls } from './Controls'
 import { ProgressBar } from './ProgressBar'
 
 type Props = {
   markers: NodeExtended[]
 }
-
-const PLAYBACK_DURATION = 30000 // 20 seconds in milliseconds
 
 export const PlayerControl = ({ markers }: Props) => {
   const tweetPlayingTime = useMindsetStore((s) => s.tweetPlayingTime)

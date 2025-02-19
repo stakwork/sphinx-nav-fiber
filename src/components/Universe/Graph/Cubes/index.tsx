@@ -121,7 +121,7 @@ export const Cubes = memo(() => {
           {dataInitial?.nodes.map((node: NodeExtended, index) => {
             const color = COLORS_MAP[nodeTypes.indexOf(node.node_type)] || colors.white
             const simulationNode = simulation.nodes()[index]
-            const isFixed = typeof simulationNode?.fx === 'number'
+            const isFixed = true || typeof simulationNode?.fx === 'number'
             const normalizedNode = nodesNormalized.get(node.ref_id)
 
             return normalizedNode ? (
@@ -140,7 +140,7 @@ export const Cubes = memo(() => {
           <NodePoints />
         </group>
       </Select>
-      <Candidates />
+      {false && <Candidates />}
     </>
   )
 })

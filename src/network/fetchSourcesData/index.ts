@@ -340,8 +340,8 @@ export const getNode = async (id: string) => {
 
 export const getPathway = async (id: string) => {
   const response = await api.get<FetchDataResponse>(
-    `/graph/pathway?node_type=['Tweet', 'Person', 'User']&edge_type=['HAS_REPLY', 'HAS_QUOTE', 'RETWEETED_BY', 'THREAD_NEXT',
-    'POSTED']&include_properties=true&start_node=${id}&depth=50`,
+    `/graph/pathway?node_type=['Tweet', 'Person', 'User']&edge_type=['HAS_REPLY>', 'HAS_QUOTE>', 'RETWEETED_BY>', 'THREAD_NEXT>',
+    'POSTED']&include_properties=true&start_node=${id}&depth=10`,
   )
 
   return response
