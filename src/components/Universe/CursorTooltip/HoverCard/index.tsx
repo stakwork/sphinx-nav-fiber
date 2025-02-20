@@ -23,14 +23,14 @@ export const HoverCard = ({ node }: Props) => {
       username,
       twitter_handle: twitterHandle,
       image_url: imageUrl,
-      followers_count: followersCount,
+      followers: followersCount,
       verified,
       alias,
     } = properties as {
       username?: string
       twitter_handle?: string
       image_url?: string
-      followers_count?: number
+      followers?: number
       verified?: boolean
       alias?: string
     }
