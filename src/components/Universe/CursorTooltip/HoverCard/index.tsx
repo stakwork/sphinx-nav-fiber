@@ -33,9 +33,9 @@ export const HoverCard = ({ node }: Props) => {
     node.name ??
     node.show_title ??
     node.episode_title ??
-    node?.properties.alias ??
-    node?.properties.twitter_handle ??
-    node?.properties.username ??
+    node?.properties?.alias ??
+    node?.properties?.twitter_handle ??
+    node?.properties?.username ??
     ''
 
   return (
