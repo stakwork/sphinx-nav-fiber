@@ -15,13 +15,14 @@ type Props = {
 }
 
 export const ProgressBar = ({ duration, markers, handleProgressChange, playingTime, tweetPlayingTime }: Props) => {
-  const width = 1
   const formattedTime = moment(tweetPlayingTime).format('MMM D - h:mma')
+
+  const boundedPlayingTime = Math.min(Math.max(playingTime, 0), 100)
 
   return (
     <ProgressWrapper>
-      <TimeBubble style={{ left: `${playingTime}%` }}>{formattedTime}</TimeBubble>
-      <ProgressSlider max={duration} onChange={handleProgressChange} value={playingTime} width={width} />
+      <TimeBubble $progress={boundedPlayingTime}>{formattedTime}</TimeBubble>
+      <ProgressSlider max={duration} onChange={handleProgressChange} value={boundedPlayingTime} width={12} />
       <MarkersWrapper>
         <Markers markers={markers} />
       </MarkersWrapper>
@@ -41,6 +42,9 @@ const ChaptersWrapper = styled(Flex)`
 const ProgressWrapper = styled(Flex)`
   position: relative;
   flex: 1 1 100%;
+  padding: 0;
+  box-sizing: border-box;
+  margin-right: 12px;
 
   &:hover {
     ${ChaptersWrapper} {
@@ -56,9 +60,9 @@ const MarkersWrapper = styled(Flex)`
   top: 50%;
 `
 
-const TimeBubble = styled.div`
+const TimeBubble = styled.div<{ $progress?: number }>`
   position: absolute;
-  top: -35px;
+  top: -40px;
   transform: translateX(-50%);
   background: rgba(230, 230, 230, 255);
   color: ${colors.black};
@@ -72,6 +76,23 @@ const TimeBubble = styled.div`
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
   backdrop-filter: blur(8px);
   letter-spacing: 0.2px;
+  margin-bottom: 4px;
+
+  left: ${(props) => `${props.$progress}%`};
+
+  transition: transform 0.1s ease-out;
+
+  transform: ${(props) => {
+    const progress = props.$progress || 0
+
+    if (progress >= 95) {
+      const adjustment = Math.min((progress - 95) * 5, 50)
+
+      return `translateX(calc(-50% - ${adjustment}%))`
+    }
+
+    return 'translateX(-50%)'
+  }};
 `
 
 const ProgressSlider = styled(Slider)<{ width: number }>`
@@ -79,17 +100,33 @@ const ProgressSlider = styled(Slider)<{ width: number }>`
     z-index: 20;
     color: ${colors.white};
     height: 3px;
-    width: calc(100% - 12px);
+    width: 100%;
     box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+    position: relative;
+
+    .MuiSlider-rail {
+      opacity: 1;
+      width: 100%;
+    }
+
     .MuiSlider-track {
       border: none;
+      width: 100%;
     }
+
     .MuiSlider-thumb {
-      width: ${({ width }) => `${width}%`};
+      width: 12px;
       height: 54px;
       border-radius: 8px;
       background-color: ${colors.primaryBlue};
       opacity: 0.2;
+      margin: 0;
+      transform: translate(-50%, -50%);
+      position: absolute;
+      top: 50%;
+
       &:before {
         box-shadow: '0 4px 8px rgba(0,0,0,0.4)';
       }
