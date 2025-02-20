@@ -66,8 +66,8 @@ export const FollowersFilter = () => {
       </AttributesButton>
       <FilterWrapper>
         <FilterButton className={clsx({ isActive: followersFilter })} onClick={() => setIsOpen(!isOpen)}>
-          <FilterLabel>
-            {followersFilter ? followerRanges.find((f) => f.value === followersFilter)?.label : 'Followers'}
+          <FilterLabel className="text">
+            {followersFilter ? followerRanges.find((f) => f.value === followersFilter)?.label : 'FOLLOWERS'}
           </FilterLabel>
           <Arrow isOpen={isOpen}>▼</Arrow>
         </FilterButton>
@@ -98,7 +98,7 @@ const StatisticsWrapper = styled(Flex).attrs({
   flex: 1 1 100%;
   flex-wrap: wrap;
   gap: 8px;
-  padding: 8px;
+  padding: 7px 8px;
 `
 
 const AttributesButton = styled.button`
@@ -137,7 +137,7 @@ const AttributesButton = styled.button`
 `
 
 const FilterLabel = styled.span`
-  font-size: 14px;
+  font-size: 13px;
 `
 
 const FilterWrapper = styled(Flex)`
@@ -145,17 +145,21 @@ const FilterWrapper = styled(Flex)`
 `
 
 const FilterButton = styled.button`
-  height: 36px;
-  padding: 0 16px;
-  background: ${colors.BG2};
+  padding: 6px 10px 6px 8px;
+  background: ${colors.BG1};
   border: none;
-  border-radius: 8px;
-  color: #fff;
+  border-radius: 200px;
+  color: ${colors.white};
   display: flex;
   align-items: center;
   cursor: pointer;
   transition: background 0.2s ease;
-  font-size: 14px;
+  font-size: 13px;
+  font-style: normal;
+  font-family: Barlow;
+  font-weight: 500;
+  letter-spacing: 0.78px;
+  line-height: 15px;
 
   &.isActive {
     background: ${colors.white};
@@ -187,7 +191,7 @@ const DropdownContent = styled.div`
   top: 100%;
   left: 0;
   margin-top: 4px;
-  background: ${colors.BG2};
+  background: ${colors.BG1};
   border-radius: 8px;
   min-width: 150px;
   z-index: 100;
