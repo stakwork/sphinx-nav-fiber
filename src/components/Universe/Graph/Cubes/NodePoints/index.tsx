@@ -2,7 +2,7 @@ import { Instances } from '@react-three/drei'
 import { memo, useMemo } from 'react'
 import { BufferGeometry, Shape, ShapeGeometry } from 'three'
 import { useDataStore, useNodeTypes } from '~/stores/useDataStore'
-import { useSelectedNode } from '~/stores/useGraphStore'
+import { useGraphStore, useSelectedNode } from '~/stores/useGraphStore'
 import { useSchemaStore } from '~/stores/useSchemaStore'
 import { NodeExtended } from '~/types'
 import { colors } from '~/utils'
@@ -38,6 +38,29 @@ const COLORS_MAP = [
   '#FFCD29',
   '#FFEA60',
 ]
+
+const nodeMatchesFollowerFilter = (node: NodeExtended, value: string | null): boolean => {
+  if (!value || node.node_type !== 'User') {
+    return true
+  }
+
+  const followers = node.properties?.followers
+
+  if (followers === undefined) {
+    return true
+  }
+
+  switch (value) {
+    case 'lt_1000':
+      return followers < 1000
+    case '1000_10000':
+      return followers >= 1000 && followers <= 10000
+    case 'gt_10000':
+      return followers > 10000
+    default:
+      return true
+  }
+}
 
 // eslint-disable-next-line no-underscore-dangle
 const _NodePoints = () => {
@@ -111,6 +134,10 @@ const _NodePoints = () => {
           const keyProperty = getNodeKeysByType(node.node_type) || ''
 
           const name = keyProperty && node?.properties ? node?.properties[keyProperty] || '' : ''
+
+          if (!nodeMatchesFollowerFilter(node, useGraphStore.getState().followersFilter)) {
+            return null
+          }
 
           return (
             <Point
