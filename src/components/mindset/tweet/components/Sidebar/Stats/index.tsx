@@ -63,13 +63,13 @@ export const Stats = ({ node }: Props) => (
         node?.properties?.[key] !== undefined ? (
           <Metric key={key}>
             <span>{label}</span>
-            <Value>{formatter(node.properties[key])}</Value>
+            <Value>{formatter(node.properties[key] as never)}</Value>
           </Metric>
         ) : null,
       )}
       <Metric>
         <span>Sentiment</span>
-        <Value>{getSentimentIcon(node?.properties?.analytics_sentiment_score)}</Value>
+        <Value>{getSentimentIcon((node?.properties?.analytics_sentiment_score ?? 0) as number)}</Value>
       </Metric>
     </Grid>
   </Card>
