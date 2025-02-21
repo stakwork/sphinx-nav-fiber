@@ -88,35 +88,37 @@ export const HoverCard = ({ node }: Props) => {
 
   if (node.node_type === 'Question') {
     description = node.name ?? ''
+  } else if (properties.description) {
+    description = properties.description
   } else if (node.text) {
-    description = node.text || ''
-  } else if (node?.properties) {
-    description = node.properties[keyProperty] || ''
+    description = node.text
+  } else if (properties) {
+    description = properties[keyProperty] || ''
   }
 
   const truncatedDescription = description?.slice(0, 200) || ''
-  const descriptionLength = truncatedDescription.length
 
   const title =
     node.node_type === 'Question'
       ? node.label ??
         node.show_title ??
         node.episode_title ??
-        node?.properties?.alias ??
-        node?.properties?.twitter_handle ??
-        node?.properties?.username ??
+        properties.alias ??
+        properties.twitter_handle ??
+        properties.username ??
         ''
-      : node.label ??
+      : properties[keyProperty] ??
+        node.label ??
         node.name ??
         node.show_title ??
         node.episode_title ??
-        node?.properties?.alias ??
-        node?.properties?.twitter_handle ??
-        node?.properties?.username ??
+        properties.alias ??
+        properties.twitter_handle ??
+        properties.username ??
         ''
 
   return (
-    <TooltipContainer descriptionLength={descriptionLength} titleLength={title.length}>
+    <TooltipContainer>
       {imageUrl && (
         <ImageWrapper>
           <TooltipImage alt={node.node_type} loading="lazy" src={imageUrl} />
@@ -131,50 +133,11 @@ export const HoverCard = ({ node }: Props) => {
   )
 }
 
-const getTooltipSize = (titleLength: number, descriptionLength: number) => {
-  let minWidth = '250px'
-  let maxWidth = '450px'
-
-  if (titleLength < 20 && descriptionLength < 20) {
-    minWidth = '150px'
-    maxWidth = '300px'
-  } else if (titleLength > 100) {
-    minWidth = '300px'
-    maxWidth = '600px'
-  } else if (titleLength > 10) {
-    minWidth = '300px'
-    maxWidth = '450px'
-  }
-
-  let minHeight = '120px'
-  let maxHeight = '200px'
-
-  if (titleLength < 20 && descriptionLength < 20) {
-    minHeight = '80px'
-    maxHeight = '120px'
-  } else if (descriptionLength > 300) {
-    minHeight = '180px'
-    maxHeight = '280px'
-  } else if (descriptionLength > 150) {
-    minHeight = '140px'
-    maxHeight = '250px'
-  }
-
-  return { minWidth, maxWidth, minHeight, maxHeight }
-}
-
-const TooltipContainer = styled(Flex)<{ titleLength?: number; descriptionLength?: number }>`
-  ${({ titleLength, descriptionLength }) => {
-    const { minWidth, maxWidth, minHeight, maxHeight } = getTooltipSize(titleLength || 0, descriptionLength || 0)
-
-    return `
-      min-width: ${minWidth};
-      max-width: ${maxWidth};
-      min-height: ${minHeight};
-      max-height: ${maxHeight};
-    `
-  }}
-
+const TooltipContainer = styled(Flex)`
+  width: fit-content;
+  max-width: 600px;
+  min-height: auto;
+  max-height: 280px;
   background: ${colors.HOVER_CARD_BG};
   border-radius: 8px;
   padding: 15px;
@@ -197,7 +160,9 @@ const Title = styled(Text)<{ hasImage: boolean }>`
   font-size: 20px;
   font-weight: 600;
   color: ${colors.white};
+  word-wrap: break-word;
   display: flex;
+  white-space: normal;
   align-items: start;
   justify-content: ${(props) => (props.hasImage ? 'flex-end' : 'flex-start')};
 `
@@ -208,10 +173,11 @@ const Description = styled(Text)`
   margin-top: 4px;
   color: ${colors.white};
   opacity: 0.8;
+  word-wrap: break-word;
   max-width: 100%;
   white-space: normal;
-  text-overflow: ellipsis;
   overflow: hidden;
+  text-overflow: ellipsis;
 `
 
 const ImageWrapper = styled(Flex)`
@@ -230,10 +196,8 @@ const TooltipImage = styled.img`
 `
 
 const UserTooltipContainer = styled(TooltipContainer)`
-  width: fit-content;
   min-width: 180px;
   max-width: 300px;
-  min-height: auto;
   border-radius: 16px;
   overflow: hidden;
 `
