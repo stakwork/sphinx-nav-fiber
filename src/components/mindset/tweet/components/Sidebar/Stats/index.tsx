@@ -63,7 +63,7 @@ export const Stats = ({ node }: Props) => (
         node?.properties?.[key] !== undefined ? (
           <Metric key={key}>
             <span>{label}</span>
-            <Value>{formatter(node.properties[key] ?? 0)}</Value>
+            <Value>{formatter(node.properties[key])}</Value>
           </Metric>
         ) : null,
       )}
