@@ -123,6 +123,9 @@ export const Cubes = memo(() => {
             const simulationNode = simulation.nodes()[index]
             const isFixed = true || typeof simulationNode?.fx === 'number'
             const normalizedNode = nodesNormalized.get(node.ref_id)
+            const scale = normalizedNode?.weight || normalizedNode?.properties?.weight || 1
+            const scaleNormalized = Math.cbrt(scale)
+            const scaleToFixed = Number(scaleNormalized.toFixed(1))
 
             return normalizedNode ? (
               <NodeWrapper
@@ -130,7 +133,7 @@ export const Cubes = memo(() => {
                 color={color}
                 isFixed={isFixed}
                 node={normalizedNode}
-                scale={node.scale || 1}
+                scale={scaleToFixed}
               />
             ) : null
           })}

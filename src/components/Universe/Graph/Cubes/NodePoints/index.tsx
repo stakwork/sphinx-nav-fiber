@@ -6,6 +6,7 @@ import { useSelectedNode } from '~/stores/useGraphStore'
 import { useSchemaStore } from '~/stores/useSchemaStore'
 import { NodeExtended } from '~/types'
 import { colors } from '~/utils'
+import { nodeSize } from '../constants'
 import { Point } from './Point'
 
 const COLORS_MAP = [
@@ -42,14 +43,15 @@ const COLORS_MAP = [
 const _NodePoints = () => {
   const selectedNode = useSelectedNode()
   const dataInitial = useDataStore((s) => s.dataInitial)
+  const nodesNormalized = useDataStore((s) => s.nodesNormalized)
   const { normalizedSchemasByType } = useSchemaStore((s) => s)
   const nodeTypes = useNodeTypes()
 
   // Create a rounded rectangle geometry
   const roundedRectGeometry = useMemo(() => {
     // Set your desired dimensions and corner radius
-    const width = 30
-    const height = 30
+    const width = nodeSize
+    const height = nodeSize
     const radius = 6
 
     // Create a shape and draw the rectangle
@@ -100,7 +102,11 @@ const _NodePoints = () => {
         {dataInitial?.nodes.map((node: NodeExtended, index) => {
           const primaryColor = normalizedSchemasByType[node.node_type]?.primary_color
           const color = primaryColor ?? (COLORS_MAP[nodeTypes.indexOf(node.node_type)] || colors.white)
-          const scale = node.scale || 1
+
+          const normalizedNode = nodesNormalized.get(node.ref_id)
+          const scale = normalizedNode?.weight || normalizedNode?.properties?.weight || 1
+          const scaleNormalized = Math.cbrt(scale)
+          const scaleToFixed = Number(scaleNormalized.toFixed(1))
 
           const keyProperty = getNodeKeysByType(node.node_type) || ''
 
@@ -114,7 +120,7 @@ const _NodePoints = () => {
               name={name}
               node={node}
               nodeType={node.node_type}
-              scale={scale}
+              scale={scaleToFixed}
             />
           )
         })}

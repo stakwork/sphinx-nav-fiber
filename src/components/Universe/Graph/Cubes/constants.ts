@@ -70,4 +70,6 @@ export const isMainTopic = (node: NodeExtended) => node.node_type === 'Topic' &&
 
 export const meshRenderLimit = 500
 
+export const nodeSize = 30
+
 export const meshRenderRadius = 800
