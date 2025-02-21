@@ -19,7 +19,9 @@ export const HoverCard = ({ node }: Props) => {
 
   let description = ''
 
-  if (node.text) {
+  if (node.node_type === 'Question') {
+    description = node.name ?? ''
+  } else if (node.text) {
     description = node.text || ''
   } else if (node?.properties) {
     description = node.properties[keyProperty] || ''
@@ -29,14 +31,22 @@ export const HoverCard = ({ node }: Props) => {
   const descriptionLength = truncatedDescription.length
 
   const title =
-    node.label ??
-    node.name ??
-    node.show_title ??
-    node.episode_title ??
-    node?.properties?.alias ??
-    node?.properties?.twitter_handle ??
-    node?.properties?.username ??
-    ''
+    node.node_type === 'Question'
+      ? node.label ??
+        node.show_title ??
+        node.episode_title ??
+        node?.properties?.alias ??
+        node?.properties?.twitter_handle ??
+        node?.properties?.username ??
+        ''
+      : node.label ??
+        node.name ??
+        node.show_title ??
+        node.episode_title ??
+        node?.properties?.alias ??
+        node?.properties?.twitter_handle ??
+        node?.properties?.username ??
+        ''
 
   return (
     <TooltipContainer descriptionLength={descriptionLength} titleLength={title.length}>
