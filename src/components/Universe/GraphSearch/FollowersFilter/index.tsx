@@ -2,9 +2,7 @@ import clsx from 'clsx'
 import { useState } from 'react'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
-import { useDataStore } from '~/stores/useDataStore'
 import { useGraphStore } from '~/stores/useGraphStore'
-import { NodeExtended } from '~/types'
 import { colors } from '~/utils'
 
 const followerRanges = [
@@ -13,50 +11,13 @@ const followerRanges = [
   { label: '> 10,000', value: 'gt_10000' },
 ]
 
-const nodeMatchesFollowerFilter = (node: NodeExtended, value: string | null): boolean => {
-  if (!value || node.node_type !== 'User') {
-    return true
-  }
-
-  const followers = node.properties?.followers
-
-  if (followers === undefined) {
-    return true
-  }
-
-  switch (value) {
-    case 'lt_1000':
-      return followers < 1000
-    case '1000_10000':
-      return followers >= 1000 && followers <= 10000
-    case 'gt_10000':
-      return followers > 10000
-    default:
-      return true
-  }
-}
-
 export const FollowersFilter = () => {
   const [isOpen, setIsOpen] = useState(false)
   const [followersFilter, setFollowersFilter] = useGraphStore((s) => [s.followersFilter, s.setFollowersFilter])
-  const { dataInitial } = useDataStore()
 
   const handleSelect = (value: string | null) => {
     setFollowersFilter(value)
     setIsOpen(false)
-
-    if (dataInitial?.nodes) {
-      const nodesToHide = dataInitial.nodes.reduce((acc: Record<string, boolean>, node) => {
-        if (node.node_type === 'User') {
-          acc[node.ref_id] = !nodeMatchesFollowerFilter(node, value)
-        }
-
-        return acc
-      }, {})
-
-      useGraphStore.getState().setNodesToHide(nodesToHide)
-      useGraphStore.getState().updateSimulationVersion()
-    }
   }
 
   return (
@@ -66,7 +27,7 @@ export const FollowersFilter = () => {
       </AttributesButton>
       <FilterWrapper>
         <FilterButton className={clsx({ isActive: followersFilter })} onClick={() => setIsOpen(!isOpen)}>
-          <FilterLabel className="text">
+          <FilterLabel>
             {followersFilter ? followerRanges.find((f) => f.value === followersFilter)?.label : 'FOLLOWERS'}
           </FilterLabel>
           <Arrow isOpen={isOpen}>▼</Arrow>
