@@ -3,7 +3,6 @@ import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { TypeBadge } from '~/components/common/TypeBadge'
 import CheckIcon from '~/components/Icons/CheckIcon'
-import LinkIcon from '~/components/Icons/LinkIcon'
 import PersonIcon from '~/components/Icons/PersonIcon'
 import { useSchemaStore } from '~/stores/useSchemaStore'
 import { Node } from '~/types'
@@ -23,14 +22,14 @@ export const HoverCard = ({ node }: Props) => {
       username,
       twitter_handle: twitterHandle,
       image_url: imageUrl,
-      followers_count: followersCount,
+      followers: followersCount,
       verified,
       alias,
     } = properties as {
       username?: string
       twitter_handle?: string
       image_url?: string
-      followers_count?: number
+      followers?: number
       verified?: boolean
       alias?: string
     }
@@ -75,14 +74,6 @@ export const HoverCard = ({ node }: Props) => {
             </UserDisplaySubName>
             {followersCount && <FollowersCount>{followersCount.toLocaleString()} Followers</FollowersCount>}
           </UserInfoSection>
-
-          <LinkSection>
-            {profileUrl && (
-              <LinkIconWrapper href={profileUrl} target="_blank">
-                <LinkIcon />
-              </LinkIconWrapper>
-            )}
-          </LinkSection>
         </UserContentWrapper>
       </UserTooltipContainer>
     )
@@ -346,29 +337,4 @@ const FollowersCount = styled(Text)`
   opacity: 0.6;
   line-height: 1.2;
   margin-top: 4px;
-`
-
-const LinkSection = styled(Flex)`
-  margin-left: auto;
-  padding-left: 30px;
-  align-self: flex-start;
-`
-
-const LinkIconWrapper = styled.a`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: ${colors.white};
-  opacity: 0.6;
-  font-size: 14px;
-  flex-shrink: 0;
-  &:hover {
-    opacity: 1;
-  }
-  svg {
-    width: 20px;
-    height: 20px;
-    color: ${colors.white} !important;
-    fill: ${colors.white} !important;
-  }
 `
