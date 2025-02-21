@@ -205,7 +205,7 @@ const Title = styled(Text)<{ hasImage: boolean }>`
 const Description = styled(Text)`
   font-size: 16px;
   font-weight: 400;
-  margin-top: 15px;
+  margin-top: 4px;
   color: ${colors.white};
   opacity: 0.8;
   max-width: 100%;
