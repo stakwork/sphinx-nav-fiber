@@ -1,5 +1,5 @@
 import { IconButton } from '@mui/material'
-import { memo } from 'react'
+import { useCallback } from 'react'
 import styled from 'styled-components'
 import PauseIcon from '~/components/Icons/PauseIcon'
 import PlayIcon from '~/components/Icons/PlayIcon'
@@ -7,7 +7,11 @@ import { Flex } from '~/components/common/Flex'
 import { useMindsetStore } from '~/stores/useMindsetStore'
 import { colors } from '~/utils/colors'
 
-export const Controls = memo(() => {
+type Props = {
+  onPlaybackRestart?: () => void
+}
+
+export const Controls = ({ onPlaybackRestart }: Props) => {
   const tweetIsPlaying = useMindsetStore((s) => s.tweetIsPlaying)
   const setTweetIsPlaying = useMindsetStore((s) => s.setTweetIsPlaying)
 
@@ -17,16 +21,20 @@ export const Controls = memo(() => {
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   const handleFastForward = () => {}
 
-  const togglePlay = () => {
+  const handlePlayPause = useCallback(() => {
+    if (onPlaybackRestart) {
+      onPlaybackRestart()
+    }
+
     setTweetIsPlaying(!tweetIsPlaying)
-  }
+  }, [tweetIsPlaying, setTweetIsPlaying, onPlaybackRestart])
 
   return (
     <Wrapper>
       <RewindIconWrapper onClick={handleRewind}>
         <img alt="" src="/RewindIcon.svg" />
       </RewindIconWrapper>
-      <Action data-testid="play-pause-button" onClick={togglePlay} size="small">
+      <Action data-testid="play-pause-button" onClick={handlePlayPause} size="small">
         {tweetIsPlaying ? <PauseIcon data-testid="pause-icon" /> : <PlayIcon data-testid="play-icon" />}
       </Action>
       <ForwardIconWrapper onClick={handleFastForward}>
@@ -34,7 +42,7 @@ export const Controls = memo(() => {
       </ForwardIconWrapper>
     </Wrapper>
   )
-})
+}
 
 Controls.displayName = 'Controls'
 

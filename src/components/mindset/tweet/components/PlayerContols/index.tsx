@@ -21,6 +21,7 @@ export const PlayerControl = ({ markers }: Props) => {
   const tweetIsPlaying = useMindsetStore((s) => s.tweetIsPlaying)
   const [minTime, setMinTime] = useState(0)
   const [maxTime, setMaxTime] = useState(0)
+  const lastPlayingTimeRef = useRef<number>(0)
 
   useEffect(() => {
     const timestamps = markers.map((event) => (event.start ? new Date(event.start).getTime() : 0))
@@ -48,10 +49,19 @@ export const PlayerControl = ({ markers }: Props) => {
     [setTweetPlayingTime, minTime, duration],
   )
 
-  // Update playing time over a fixed duration
   useEffect(() => {
     if (tweetIsPlaying) {
+      if (tweetPlayingTime >= maxTime) {
+        setTweetPlayingTime(minTime)
+        lastPlayingTimeRef.current = minTime
+      }
+
       startTimeRef.current = Date.now()
+
+      const initialProgress = (tweetPlayingTime - minTime) / duration
+      const adjustedStartTime = Date.now() - initialProgress * PLAYBACK_DURATION
+
+      startTimeRef.current = adjustedStartTime
 
       const updateProgress = () => {
         const elapsedTime = Date.now() - (startTimeRef.current ?? Date.now())
@@ -61,33 +71,50 @@ export const PlayerControl = ({ markers }: Props) => {
           const newTime = minTime + progressRatio * duration
 
           setTweetPlayingTime(newTime)
+          lastPlayingTimeRef.current = newTime
           animationFrameRef.current = requestAnimationFrame(updateProgress)
         } else {
-          setTweetPlayingTime(maxTime) // Ensure it ends exactly at maxTime
+          setTweetPlayingTime(maxTime)
           setTweetIsPlaying(false)
-          cancelAnimationFrame(animationFrameRef.current!)
+          lastPlayingTimeRef.current = maxTime
+
+          if (animationFrameRef.current) {
+            cancelAnimationFrame(animationFrameRef.current)
+          }
         }
       }
 
       animationFrameRef.current = requestAnimationFrame(updateProgress)
 
-      return () => cancelAnimationFrame(animationFrameRef.current!)
+      return () => {
+        if (animationFrameRef.current) {
+          cancelAnimationFrame(animationFrameRef.current)
+        }
+      }
     }
 
-    // Stop if not playing
-    if (animationFrameRef.current) {
-      cancelAnimationFrame(animationFrameRef.current)
-      animationFrameRef.current = null
-    }
+    lastPlayingTimeRef.current = tweetPlayingTime
 
-    return () => null
-  }, [tweetIsPlaying, minTime, maxTime, setTweetPlayingTime, duration, setTweetIsPlaying])
+    return () => {
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current)
+        animationFrameRef.current = null
+      }
+    }
+  }, [tweetIsPlaying, minTime, maxTime, setTweetPlayingTime, duration, setTweetIsPlaying, tweetPlayingTime])
+
+  const handlePlaybackRestart = useCallback(() => {
+    if (tweetPlayingTime >= maxTime) {
+      setTweetPlayingTime(minTime)
+      lastPlayingTimeRef.current = minTime
+    }
+  }, [tweetPlayingTime, maxTime, minTime, setTweetPlayingTime])
 
   return (
     <Wrapper>
-      <Controls />
+      <Controls onPlaybackRestart={handlePlaybackRestart} />
       <ProgressBar
-        duration={100} // Normalize progress bar scale to 100
+        duration={100}
         handleProgressChange={handleProgressChange}
         markers={markers}
         playingTime={((tweetPlayingTime - minTime) / duration) * 100}
