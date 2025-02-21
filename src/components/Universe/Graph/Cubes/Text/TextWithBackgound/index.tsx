@@ -52,6 +52,7 @@ type PropTypes = {
 
 export const TextWithBackground = memo(({ text, id }: PropTypes) => {
   // Default values (in case the text ref hasn't measured yet)
+  const textWidth = text.length * 0.45 * 10
   const [bgWidth, setBgWidth] = useState(100)
   const bgHeight = 30
   const bgRadius = 6
@@ -67,8 +68,10 @@ export const TextWithBackground = memo(({ text, id }: PropTypes) => {
 
       box.getSize(size)
 
+      const finalSize = textWidth || size.x
+
       // Set the background width to text width plus padding
-      setBgWidth(size.x + padding * 2)
+      setBgWidth(finalSize + padding * 2)
     }
   }
 

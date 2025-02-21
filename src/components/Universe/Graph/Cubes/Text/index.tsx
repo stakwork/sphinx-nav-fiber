@@ -12,6 +12,7 @@ import { generatePalette } from '~/utils/palleteGenerator'
 import { removeEmojis } from '~/utils/removeEmojisFromText'
 import { removeLeadingMentions } from '~/utils/removeLeadingMentions'
 import { truncateText } from '~/utils/truncateText'
+import { nodeSize } from '../constants'
 import { TextWithBackground } from './TextWithBackgound'
 
 type Props = {
@@ -31,8 +32,6 @@ export const TextNode = memo(
     const [texture, setTexture] = useState<Texture | null>(null)
 
     useTraceUpdate(props)
-
-    console.log(scale)
 
     const { normalizedSchemasByType, getNodeKeysByType } = useSchemaStore((s) => s)
     const keyProperty = getNodeKeysByType(node.node_type) || ''
@@ -110,14 +109,13 @@ export const TextNode = memo(
 
     return (
       <Billboard follow lockX={false} lockY={false} lockZ={false} name="billboard" userData={node}>
-        {node?.properties?.image_url && texture ? (
-          <mesh ref={nodeRef} name={node.ref_id} position={[0, 0, 1]} userData={node} visible={!hide}>
-            <planeGeometry args={[15, 15]} />
-            <meshBasicMaterial map={texture} />
-            {sanitizedNodeName && <TextWithBackground id={node.ref_id} text={truncateText(sanitizedNodeName, 20)} />}
-          </mesh>
-        ) : (
-          <mesh ref={nodeRef} name={node.ref_id} userData={node} visible={!hide}>
+        <mesh ref={nodeRef} name={node.ref_id} position={[0, 0, 1]} scale={scale} userData={node} visible={!hide}>
+          {node?.properties?.image_url && texture ? (
+            <>
+              <planeGeometry args={[nodeSize - 2, nodeSize - 2]} />
+              <meshBasicMaterial map={texture} />
+            </>
+          ) : (
             <Svg
               ref={svgRef}
               name="svg"
@@ -131,21 +129,23 @@ export const TextNode = memo(
                   }
                 })
               }}
-              position={[-7.5, 7.5, 1]}
-              scale={1}
+              position={[-nodeSize / 4, nodeSize / 4, 1]}
               src={`/svg-icons/${iconName}.svg`}
               userData={node}
             />
-            {sanitizedNodeName && <TextWithBackground id={node.ref_id} text={truncateText(sanitizedNodeName, 20)} />}
-          </mesh>
-        )}
+          )}
+
+          {sanitizedNodeName && <TextWithBackground id={node.ref_id} text={truncateText(sanitizedNodeName, 20)} />}
+        </mesh>
       </Billboard>
     )
   },
   (prevProps, nextProps) =>
     prevProps.hide === nextProps.hide &&
+    prevProps.scale === nextProps.scale &&
     prevProps.ignoreDistance === nextProps.ignoreDistance &&
-    prevProps.node.ref_id === nextProps.node.ref_id,
+    prevProps.node.ref_id === nextProps.node.ref_id &&
+    prevProps.scale === nextProps.scale,
 )
 
 TextNode.displayName = 'TextNode'

@@ -11,17 +11,17 @@ type Props = {
 
 export const NodeWrapper = memo(
   (props: Props) => {
-    const { node, color, isFixed } = props
+    const { node, color, isFixed, scale } = props
 
     return (
-      <mesh key={node.ref_id} name="wr2" scale={node.scale || 1} userData={node}>
+      <mesh key={node.ref_id} name="wr2" userData={node}>
         <mesh name="text-node-wrapper" visible={isFixed}>
-          <TextNode key={node.ref_id} color={color} ignoreDistance={false} node={node} scale={node.scale || 1} />
+          <TextNode key={node.ref_id} color={color} ignoreDistance={false} node={node} scale={scale} />
         </mesh>
       </mesh>
     )
   },
-  (prevProps, nextProps) => prevProps.isFixed === nextProps.isFixed,
+  (prevProps, nextProps) => prevProps.isFixed === nextProps.isFixed && prevProps.scale === nextProps.scale,
 )
 
 NodeWrapper.displayName = 'NodeWrapper'
