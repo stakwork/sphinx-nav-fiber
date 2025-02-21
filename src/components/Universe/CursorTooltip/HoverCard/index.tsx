@@ -54,12 +54,49 @@ export const HoverCard = ({ node }: Props) => {
   )
 }
 
-const TooltipContainer = styled(Flex)<{ titleLength: number; descriptionLength: number }>`
-  min-width: ${(props) => (props.titleLength > 10 ? '300px' : '250px')};
-  max-width: ${(props) => (props.titleLength > 100 ? '600px' : '450px')};
+const getTooltipSize = (titleLength: number, descriptionLength: number) => {
+  let minWidth = '250px'
+  let maxWidth = '450px'
 
-  min-height: ${(props) => (props.descriptionLength > 150 ? '140px' : '120px')};
-  max-height: ${(props) => (props.descriptionLength > 300 ? '250px' : '200px')};
+  if (titleLength < 20 && descriptionLength < 20) {
+    minWidth = '150px'
+    maxWidth = '300px'
+  } else if (titleLength > 100) {
+    minWidth = '300px'
+    maxWidth = '600px'
+  } else if (titleLength > 10) {
+    minWidth = '300px'
+    maxWidth = '450px'
+  }
+
+  let minHeight = '120px'
+  let maxHeight = '200px'
+
+  if (titleLength < 20 && descriptionLength < 20) {
+    minHeight = '80px'
+    maxHeight = '120px'
+  } else if (descriptionLength > 300) {
+    minHeight = '180px'
+    maxHeight = '280px'
+  } else if (descriptionLength > 150) {
+    minHeight = '140px'
+    maxHeight = '250px'
+  }
+
+  return { minWidth, maxWidth, minHeight, maxHeight }
+}
+
+const TooltipContainer = styled(Flex)<{ titleLength: number; descriptionLength: number }>`
+  ${({ titleLength, descriptionLength }) => {
+    const { minWidth, maxWidth, minHeight, maxHeight } = getTooltipSize(titleLength, descriptionLength)
+
+    return `
+      min-width: ${minWidth};
+      max-width: ${maxWidth};
+      min-height: ${minHeight};
+      max-height: ${maxHeight};
+    `
+  }}
 
   background: ${colors.HOVER_CARD_BG};
   border-radius: 8px;
