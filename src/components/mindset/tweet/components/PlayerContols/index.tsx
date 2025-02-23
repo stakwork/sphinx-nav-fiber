@@ -58,7 +58,7 @@ export const PlayerControl = ({ markers }: Props) => {
 
       startTimeRef.current = Date.now()
 
-      const initialProgress = (tweetPlayingTime - minTime) / duration
+      const initialProgress = tweetPlayingTime ? (tweetPlayingTime - minTime) / duration : 0
       const adjustedStartTime = Date.now() - initialProgress * PLAYBACK_DURATION
 
       startTimeRef.current = adjustedStartTime
