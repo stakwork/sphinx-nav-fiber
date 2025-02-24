@@ -25,8 +25,15 @@ export const Chapters = memo(({ chapters, duration }: Props) =>
 
         const width = nextPosition - position // Calculate the width of the chapter
 
-        // eslint-disable-next-line react/no-array-index-key
-        return <Chapter key={`${node.ref_id}_${index}`} left={position} title={node.name} width={width} />
+        return (
+          <Chapter
+            // eslint-disable-next-line react/no-array-index-key
+            key={`${node.ref_id}_${index}`}
+            left={position}
+            title={node?.properties?.name || node?.name || ''}
+            width={width}
+          />
+        )
       })}
     </>
   ) : null,
