@@ -1,19 +1,28 @@
+import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { colors } from '~/utils/colors'
 import { Logo } from '../Icon/Logo'
 
-export const Header = () => (
-  <Head>
-    <LogoButton>
-      <IconWrapper>
-        <Logo />
-      </IconWrapper>
-    </LogoButton>
-    <StyledText>Graph Mindset</StyledText>
-  </Head>
-)
+export const Header = () => {
+  const navigate = useNavigate()
+
+  const handleLogoClick = () => {
+    navigate('/mindset')
+  }
+
+  return (
+    <Head>
+      <LogoButton onClick={handleLogoClick}>
+        <IconWrapper>
+          <Logo />
+        </IconWrapper>
+      </LogoButton>
+      <StyledText onClick={handleLogoClick}>Graph Mindset</StyledText>
+    </Head>
+  )
+}
 
 const Head = styled(Flex).attrs({
   align: 'center',
@@ -59,4 +68,5 @@ const StyledText = styled(Text)`
   letter-spacing: 0.22px;
   margin-left: 16px;
   white-space: nowrap;
+  cursor: pointer;
 `
