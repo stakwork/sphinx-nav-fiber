@@ -5,6 +5,7 @@ import { memo, useEffect, useRef, useState } from 'react'
 import { Mesh, MeshBasicMaterial, Texture, TextureLoader, Vector3 } from 'three'
 import { Icons } from '~/components/Icons'
 import { useTraceUpdate } from '~/hooks/useTraceUpdate'
+import { useDataStore } from '~/stores/useDataStore'
 import { useGraphStore } from '~/stores/useGraphStore'
 import { useSchemaStore } from '~/stores/useSchemaStore'
 import { NodeExtended } from '~/types'
@@ -89,9 +90,16 @@ export const TextNode = memo(
         selectedNodeTypes,
         selectedLinkTypes,
         hoveredNodeSiblings,
-        selectedNodeSiblings,
         followersFilter,
       } = useGraphStore.getState()
+
+      const { nodesNormalized } = useDataStore.getState()
+
+      const selectedNodeNormalized = selectedNode ? nodesNormalized.get(selectedNode?.ref_id) : null
+
+      const selectedNodeSiblings = selectedNodeNormalized
+        ? [...(selectedNodeNormalized?.targets || []), ...(selectedNodeNormalized.sources || [])]
+        : []
 
       const checkDistance = () => {
         const nodePosition = nodePositionRef.current.setFromMatrixPosition(nodeRef.current!.matrixWorld)

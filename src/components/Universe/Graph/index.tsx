@@ -3,6 +3,7 @@ import { isEqual } from 'lodash'
 import { useEffect, useRef } from 'react'
 import { Group } from 'three'
 import { Line2 } from 'three-stdlib'
+import { useRetrieveSelectedNodeData } from '~/hooks/useRetrieveSelectedNodeData'
 import { useDataStore } from '~/stores/useDataStore'
 import { useGraphStore } from '~/stores/useGraphStore'
 import { useMindsetStore } from '~/stores/useMindsetStore'
@@ -37,6 +38,8 @@ export const Graph = () => {
   const groupRef = useRef<Group>(null)
   const { normalizedSchemasByType } = useSchemaStore((s) => s)
   const prevRadius = useRef(0)
+
+  useRetrieveSelectedNodeData()
 
   const chapters = useMindsetStore((s) => s.chapters)
 
