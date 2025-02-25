@@ -15,13 +15,7 @@ export const useRetrieveData = () => {
 
   const { setSidebarOpen, currentSearch: searchTerm } = useAppStore((s) => s)
 
-  const fetchData = useDataStore((s) => s.fetchData)
-  const setAbortRequests = useDataStore((s) => s.setAbortRequests)
-  const resetData = useDataStore((s) => s.resetData)
-  const addNewNode = useDataStore((s) => s.addNewNode)
-  const finishLoading = useDataStore((s) => s.finishLoading)
-
-  console.log('try')
+  const { fetchData, setAbortRequests, resetData, addNewNode, finishLoading } = useDataStore((s) => s)
 
   useEffect(() => {
     if (initialLoad.current) {
