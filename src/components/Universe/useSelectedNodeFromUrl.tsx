@@ -5,7 +5,7 @@ import { useGraphStore } from '~/stores/useGraphStore'
 
 export const useSelectedNodeFromUrl = () => {
   const [searchParams] = useSearchParams()
-  const selectedNodeId = searchParams.get('node') // Get node ID from query params
+  const selectedNodeId = searchParams.get('node')
 
   const nodesNormalized = useDataStore((state) => state.nodesNormalized)
   const setSelectedNode = useGraphStore((s) => s.setSelectedNode)
