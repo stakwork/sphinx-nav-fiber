@@ -53,6 +53,29 @@ export const TextNode = memo(
       )
     }, [node?.properties?.image_url])
 
+    const nodeMatchesFollowerFilter = (targetNode: NodeExtended, value: string | null): boolean => {
+      if (!value || targetNode.node_type !== 'User') {
+        return true
+      }
+
+      const followers = targetNode.properties?.followers
+
+      if (followers === undefined) {
+        return true
+      }
+
+      switch (value) {
+        case 'lt_1000':
+          return followers < 1000
+        case '1000_10000':
+          return followers >= 1000 && followers <= 10000
+        case 'gt_10000':
+          return followers > 10000
+        default:
+          return true
+      }
+    }
+
     useFrame(({ camera }) => {
       if (!nodeRef.current) {
         return
@@ -67,6 +90,7 @@ export const TextNode = memo(
         selectedLinkTypes,
         hoveredNodeSiblings,
         selectedNodeSiblings,
+        followersFilter,
       } = useGraphStore.getState()
 
       const checkDistance = () => {
@@ -84,15 +108,16 @@ export const TextNode = memo(
       }
 
       const isActive =
-        node.ref_id === selectedNode?.ref_id ||
-        node.ref_id === hoveredNode?.ref_id ||
-        activeEdge?.target === node.ref_id ||
-        activeEdge?.source === node.ref_id ||
-        (searchQuery && sanitizedNodeName.toLowerCase().includes(searchQuery.toLowerCase())) ||
-        selectedNodeTypes.includes(node.node_type) ||
-        hoveredNodeSiblings.includes(node.ref_id) ||
-        selectedNodeSiblings.includes(node.ref_id) ||
-        node.edgeTypes?.some((i) => selectedLinkTypes.includes(i))
+        (node.ref_id === selectedNode?.ref_id ||
+          node.ref_id === hoveredNode?.ref_id ||
+          activeEdge?.target === node.ref_id ||
+          activeEdge?.source === node.ref_id ||
+          (searchQuery && sanitizedNodeName.toLowerCase().includes(searchQuery.toLowerCase())) ||
+          selectedNodeTypes.includes(node.node_type) ||
+          hoveredNodeSiblings.includes(node.ref_id) ||
+          selectedNodeSiblings.includes(node.ref_id) ||
+          node.edgeTypes?.some((i) => selectedLinkTypes.includes(i))) &&
+        nodeMatchesFollowerFilter(node, followersFilter)
 
       if (isActive) {
         if (nodeRef.current && !nodeRef.current.visible) {
