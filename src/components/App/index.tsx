@@ -9,6 +9,7 @@ import { GlobalStyle } from '~/components/GlobalStyle'
 import { Overlay } from '~/components/Universe/Overlay' // Import Overlay directly
 import { useRetrieveData } from '~/hooks/useRetrieveData'
 import { useSocket } from '~/hooks/useSockets'
+import { getNode } from '~/network/fetchSourcesData'
 import { useAiSummaryStore } from '~/stores/useAiSummaryStore'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
@@ -22,6 +23,7 @@ import {
   AiSummarySourcesResponse,
   ExtractedEntitiesResponse,
   FetchDataResponse,
+  NodeExtended,
 } from '~/types'
 import { colors } from '~/utils/colors'
 import version from '~/utils/versionHelper'
@@ -161,9 +163,38 @@ export const App = () => {
   )
 
   const handleAiSources = useCallback(
-    (data: AiSummarySourcesResponse) => {
+    async (data: AiSummarySourcesResponse) => {
       if (data.ref_id) {
-        setAiSummaryAnswer(data.ref_id, { sources: data.sources.map((i) => i.ref_id), sourcesLoading: false })
+        try {
+          setAiSummaryAnswer(data.ref_id, {
+            sources: data.sources.map((i) => i.ref_id),
+            sourcesLoading: true,
+          })
+
+          const sourceNodes = await Promise.all(
+            data.sources.map(async (source) => {
+              try {
+                const response = await getNode(source.ref_id)
+
+                return response
+              } catch (error) {
+                console.error(`Failed to fetch node data for ref_id ${source.ref_id}:`, error)
+
+                return null
+              }
+            }),
+          )
+
+          const validNodes = sourceNodes.filter((node): node is NodeExtended => node !== null)
+
+          setAiSummaryAnswer(data.ref_id, {
+            sourceNodes: validNodes,
+            sourcesLoading: false,
+          })
+        } catch (error) {
+          console.error('Error processing source nodes:', error)
+          setAiSummaryAnswer(data.ref_id, { sourcesLoading: false })
+        }
       }
     },
     [setAiSummaryAnswer],

@@ -335,6 +335,7 @@ export type AIEntity = {
   question?: string
   answer?: string
   sources?: string[]
+  sourceNodes?: NodeExtended[]
   questions?: string[]
   answerLoading?: boolean
   sourcesLoading?: boolean
