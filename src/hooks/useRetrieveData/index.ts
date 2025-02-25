@@ -21,6 +21,8 @@ export const useRetrieveData = () => {
   const addNewNode = useDataStore((s) => s.addNewNode)
   const finishLoading = useDataStore((s) => s.finishLoading)
 
+  console.log('try')
+
   useEffect(() => {
     if (initialLoad.current) {
       const runSearch = async () => {
