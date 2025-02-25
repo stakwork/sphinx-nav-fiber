@@ -11,7 +11,7 @@ import { FetchDataResponse, Node, SubmitErrRes } from '~/types'
 import { colors } from '~/utils/colors'
 import { TweetCard } from '../TweetCard'
 import { getNodes } from './fetchNodes'
-import { isValidMediaUrl } from './utils'
+import { isValidTweet } from './utils'
 
 const HARDCODE = [
   {
@@ -83,12 +83,26 @@ const filterAndSortEpisodes = (data: FetchDataResponse): Node[] =>
   data.nodes.filter((node) => node.node_type.toLowerCase() === 'tweet' && node.properties?.date).slice(0, 3)
 
 const handleSubmitForm = async (data: FieldValues): Promise<SubmitErrRes> => {
+  const regex = /(?:https?:\/\/)?(?:www\.)?(twitter|x)\.com\/\w+\/status\/(\d+)/s
   const endPoint = 'add_node'
 
   const body: { [index: string]: unknown } = {}
 
-  body.media_url = data.source
-  body.content_type = 'audio_video'
+  if (regex.test(data.source)) {
+    const idRegex = /\/status\/(\d+)/
+
+    const match = data.source.match(idRegex)
+
+    if (match?.[1]) {
+      const [, id] = match
+
+      body.tweet_id = id
+    }
+  } else {
+    body.tweet_id = data.source
+  }
+
+  body.content_type = 'tweet'
 
   const res: SubmitErrRes = await api.post(`/${endPoint}`, JSON.stringify(body))
 
@@ -130,13 +144,13 @@ export const TweetsLandingPage = () => {
     const { value } = e.target
 
     setInputValue(value)
-    setError(value !== '' && !isValidMediaUrl(value))
+    setError(value !== '' && !isValidTweet(value))
   }
 
   const handleSubmit = async (url?: string) => {
     const source = url || inputValue
 
-    if (isValidMediaUrl(source)) {
+    if (isValidTweet(source)) {
       try {
         const res = await handleSubmitForm({ source })
 
