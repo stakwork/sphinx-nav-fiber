@@ -26,7 +26,7 @@ export const Neighbourhoods = ({ chapters }: Props) => {
                 fontWeight: '600',
               }}
             >
-              {chapters[index].name}
+              {chapters[index].properties?.name}
             </div>
           </Html>
         </mesh>
