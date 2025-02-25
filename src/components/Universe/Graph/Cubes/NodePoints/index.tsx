@@ -105,7 +105,7 @@ const _NodePoints = () => {
 
           const normalizedNode = nodesNormalized.get(node.ref_id)
           const scale = normalizedNode?.weight || normalizedNode?.properties?.weight || 1
-          const scaleNormalized = Math.cbrt(scale)
+          const scaleNormalized = Math.sqrt(scale)
           const scaleToFixed = Number(scaleNormalized.toFixed(1))
 
           const keyProperty = getNodeKeysByType(node.node_type) || ''

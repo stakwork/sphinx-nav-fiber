@@ -124,7 +124,7 @@ export const Cubes = memo(() => {
             const isFixed = true || typeof simulationNode?.fx === 'number'
             const normalizedNode = nodesNormalized.get(node.ref_id)
             const scale = normalizedNode?.weight || normalizedNode?.properties?.weight || 1
-            const scaleNormalized = Math.cbrt(scale)
+            const scaleNormalized = Math.sqrt(scale)
             const scaleToFixed = Number(scaleNormalized.toFixed(1))
 
             return normalizedNode ? (
