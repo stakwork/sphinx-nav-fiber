@@ -2,7 +2,7 @@ import { api } from '~/network/api'
 import { FetchDataResponse } from '~/types'
 
 export const getNodes = async (): Promise<FetchDataResponse> => {
-  const url = `/prediction/graph/search?node_type=['Tweet']&include_properties=true&includeContent=true&sort_by=date&limit=20`
+  const url = `/graph/search/attributes?search=completed&attribute=status&exact_match=True&node_type=['Tweet']`
 
   const response = await api.get<FetchDataResponse>(url)
 
