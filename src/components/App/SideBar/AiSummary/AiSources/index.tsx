@@ -37,6 +37,7 @@ const _AiSources = ({ sourceIds, question }: Props) => {
   const scrollViewRef = useRef<HTMLDivElement | null>(null)
   const [showAll, setShowAll] = useState(false)
   const addNewNode = useDataStore((s) => s.addNewNode)
+  const { getNode } = useDataStore((s) => s)
 
   const beenAdded = useRef(false)
 
@@ -49,26 +50,47 @@ const _AiSources = ({ sourceIds, question }: Props) => {
   )
 
   useEffect(() => {
-    if (!currentNodes.length || beenAdded.current) {
+    if (!sourceIds.length || beenAdded.current) {
       return
     }
 
-    const edges = currentNodes.map((i, index) => ({
-      ...EDGE,
-      source: question,
-      target: i.ref_id,
-      ref_id: `${String(+new Date())}-${index}`,
-      edge_type: 'IS_SOURCE',
-      properties: {
-        date_added_to_graph: String(new Date()),
-        weight: 1,
-      },
-    }))
+    const fetchSourceNodes = async () => {
+      try {
+        const nodePromises = sourceIds.map(async (refId) => {
+          try {
+            return await getNode(refId)
+          } catch (error) {
+            console.error(`Failed to fetch node data for ref_id ${refId}:`, error)
 
-    beenAdded.current = true
+            return null
+          }
+        })
 
-    addNewNode({ nodes: currentNodes, edges })
-  }, [currentNodes, addNewNode, question])
+        const nodes = (await Promise.all(nodePromises)).filter((node): node is NodeExtended => node !== null)
+
+        if (nodes.length) {
+          const edges = nodes.map((node, index) => ({
+            ...EDGE,
+            source: question,
+            target: node.ref_id,
+            ref_id: `${String(+new Date())}-${index}`,
+            edge_type: 'IS_SOURCE',
+            properties: {
+              date_added_to_graph: String(new Date()),
+              weight: 1,
+            },
+          }))
+
+          beenAdded.current = true
+          addNewNode({ nodes, edges })
+        }
+      } catch (error) {
+        console.error('Error fetching source nodes:', error)
+      }
+    }
+
+    fetchSourceNodes()
+  }, [sourceIds, addNewNode, question, getNode])
 
   const handleLoadMoreClick = () => setShowAll(!showAll)
 

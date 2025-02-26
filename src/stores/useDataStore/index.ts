@@ -2,6 +2,7 @@ import { isEqual } from 'lodash'
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
 import { fetchGraphData } from '~/network/fetchGraphData'
+import { getNode as fetchNodeData } from '~/network/fetchSourcesData'
 import {
   FetchDataResponse,
   FetchNodeParams,
@@ -92,6 +93,7 @@ export type DataStore = {
   resetGraph: () => void
   resetData: () => void
   finishLoading: () => void
+  getNode: (refId: string) => Promise<NodeExtended | null>
 }
 
 const defaultData: Omit<
@@ -124,6 +126,7 @@ const defaultData: Omit<
   | 'resetGraph'
   | 'resetData'
   | 'finishLoading'
+  | 'getNode'
 > = {
   categoryFilter: null,
   dataInitial: null,
@@ -396,6 +399,17 @@ export const useDataStore = create<DataStore>()(
     },
     resetRunningProjectMessages: () => set({ runningProjectMessages: [] }),
     setAbortRequests: (abortRequest) => set({ abortRequest }),
+    getNode: async (refId: string) => {
+      try {
+        const response = await fetchNodeData(refId)
+
+        return response
+      } catch (error) {
+        console.error(`Failed to fetch node data for ref_id ${refId}:`, error)
+
+        return null
+      }
+    },
   })),
 )
 
