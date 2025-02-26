@@ -145,7 +145,7 @@ export const PostHoverCard = ({ node }: Props) => {
               <UserDisplayName href={postUrl} target="_blank">
                 {displayName}
               </UserDisplayName>
-              {!verified && (
+              {verified && (
                 <VerifiedBadge>
                   <CheckIcon />
                 </VerifiedBadge>
