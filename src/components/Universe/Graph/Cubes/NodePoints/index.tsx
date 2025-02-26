@@ -40,7 +40,11 @@ const COLORS_MAP = [
 ]
 
 const nodeMatchesFollowerFilter = (node: NodeExtended, value: string | null): boolean => {
-  if (!value || node.node_type !== 'User') {
+  if (!value) {
+    return true
+  }
+
+  if (node.node_type !== 'User') {
     return true
   }
 

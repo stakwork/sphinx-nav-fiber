@@ -55,7 +55,11 @@ export const TextNode = memo(
     }, [node?.properties?.image_url])
 
     const nodeMatchesFollowerFilter = (targetNode: NodeExtended, value: string | null): boolean => {
-      if (!value || targetNode.node_type !== 'User') {
+      if (!value) {
+        return true
+      }
+
+      if (targetNode.node_type !== 'User') {
         return true
       }
 
