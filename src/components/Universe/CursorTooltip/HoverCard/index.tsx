@@ -2,11 +2,10 @@ import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
 import { TypeBadge } from '~/components/common/TypeBadge'
-import CheckIcon from '~/components/Icons/CheckIcon'
-import PersonIcon from '~/components/Icons/PersonIcon'
 import { useSchemaStore } from '~/stores/useSchemaStore'
 import { Node } from '~/types'
 import { colors } from '~/utils/colors'
+import { User } from './User'
 
 type Props = {
   node: Node
@@ -15,103 +14,49 @@ type Props = {
 export const HoverCard = ({ node }: Props) => {
   const { getNodeKeysByType } = useSchemaStore((s) => s)
 
-  if (node.node_type === 'User') {
-    const properties = node.properties || {}
-
-    const {
-      username,
-      twitter_handle: twitterHandle,
-      image_url: imageUrl,
-      followers: followersCount,
-      verified,
-      alias,
-    } = properties as {
-      username?: string
-      twitter_handle?: string
-      image_url?: string
-      followers?: number
-      verified?: boolean
-      alias?: string
-    }
-
-    const displayName = alias || twitterHandle || username || ''
-    const displaySubName = twitterHandle || alias || username || ''
-
-    let profileUrl = ''
-
-    if (username) {
-      profileUrl = `https://x.com/${alias}`
-    } else if (twitterHandle) {
-      profileUrl = `https://x.com/${twitterHandle}`
-    }
-
-    return (
-      <UserTooltipContainer>
-        <UserContentWrapper>
-          <AvatarSection>
-            {imageUrl ? (
-              <UserAvatar alt={displayName} src={imageUrl} />
-            ) : (
-              <DefaultAvatar>
-                <PersonIcon />
-              </DefaultAvatar>
-            )}
-          </AvatarSection>
-
-          <UserInfoSection>
-            <UserNameRow>
-              <UserDisplayName href={profileUrl} target="_blank">
-                {displayName}
-              </UserDisplayName>
-              {!verified && (
-                <VerifiedBadge>
-                  <CheckIcon />
-                </VerifiedBadge>
-              )}
-            </UserNameRow>
-            <UserDisplaySubName href={profileUrl} target="_blank">
-              @{displaySubName}
-            </UserDisplaySubName>
-            {followersCount && <FollowersCount>{followersCount.toLocaleString()} Followers</FollowersCount>}
-          </UserInfoSection>
-        </UserContentWrapper>
-      </UserTooltipContainer>
-    )
-  }
-
   const keyProperty = getNodeKeysByType(node.node_type) || ''
 
-  let description = ''
+  let title = ''
+  const description = node?.properties?.description
 
   if (node.node_type === 'Question') {
-    description = node.name || ''
+    title = node.name || ''
   } else if (node?.properties) {
-    description = node.properties[keyProperty] || ''
+    title = node.properties[keyProperty] || ''
   }
 
-  return (
+  return node.node_type === 'User' ? (
+    <User node={node} />
+  ) : (
     <TooltipContainer>
       <ContentWrapper>
-        <Title>
-          <TypeBadge type={node.node_type} />
-        </Title>
+        <Heading>
+          {node?.properties?.image_url && <Avatar src={node.properties.image_url} />}
+          <TitleWrapper>
+            <TypeBadge type={node.node_type} />
+
+            {title && <Title>{title}</Title>}
+          </TitleWrapper>
+        </Heading>
         {description && <Description>{description}</Description>}
       </ContentWrapper>
     </TooltipContainer>
   )
 }
 
-const TooltipContainer = styled(Flex)`
-  width: 390px;
-  min-height: 100px;
+export const TooltipContainer = styled(Flex)`
+  width: fit-content;
   background: ${colors.HOVER_CARD_BG};
-  border-radius: 8px;
-  padding: 15px;
-  padding-bottom: 3px !important;
   flex-direction: column;
-  gap: 4px;
   pointer-events: auto;
   align-items: flex-start;
+  border-radius: 8px;
+  overflow: hidden;
+  max-width: 390px;
+  border-bottom: 5px solid rgba(0, 0, 0, 0.3);
+  padding: 16px 14px;
+
+  background: #292c36;
 `
 
 const ContentWrapper = styled(Flex)`
@@ -121,13 +66,33 @@ const ContentWrapper = styled(Flex)`
   align-items: flex-start;
 `
 
+export const Avatar = styled.img`
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 8px;
+`
+
+const Heading = styled(Flex)`
+  flex-direction: row;
+`
+
+const TitleWrapper = styled(Flex)`
+  flex-direction: column;
+  align-items: flex-start;
+`
+
 const Title = styled(Text)`
   font-family: Barlow;
   font-size: 20px;
   font-weight: 600;
   line-height: 24px;
   color: ${colors.white};
-  margin: 0;
+  margin-top: 8px;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `
 
 const Description = styled(Text)`
@@ -135,8 +100,8 @@ const Description = styled(Text)`
   font-size: 14px;
   font-weight: 400;
   line-height: 20px;
+  margin-top: 16px;
   color: ${colors.white};
-  margin: 0;
   opacity: 0.8;
   white-space: normal;
   display: -webkit-box;
@@ -145,118 +110,4 @@ const Description = styled(Text)`
   text-overflow: ellipsis;
   line-clamp: 3;
   -webkit-line-clamp: 3;
-`
-
-const UserTooltipContainer = styled(TooltipContainer)`
-  width: fit-content;
-  min-width: 180px;
-  max-width: 300px;
-  min-height: auto;
-  border-radius: 16px;
-  overflow: hidden;
-`
-
-const UserContentWrapper = styled(Flex)`
-  display: grid;
-  width: fit-content;
-  grid-template-columns: auto minmax(0, 1fr);
-  align-items: start;
-  padding-bottom: 15px;
-`
-
-const AvatarSection = styled(Flex)`
-  margin-right: 10px;
-`
-
-const DefaultAvatar = styled(Flex)`
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: ${colors.GRAY3};
-  align-items: center;
-  justify-content: center;
-  color: ${colors.white};
-  font-size: 24px;
-`
-
-const UserAvatar = styled.img`
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  object-fit: cover;
-`
-
-const UserInfoSection = styled(Flex)`
-  flex-direction: column;
-  gap: 2px;
-`
-
-const UserNameRow = styled(Flex)`
-  align-items: center;
-  flex-direction: row;
-  gap: 8px;
-  flex-wrap: nowrap;
-  width: 100%;
-`
-
-const UserDisplayName = styled.a`
-  font-family: 'Barlow';
-  font-size: 15px;
-  font-weight: 700;
-  color: ${colors.white};
-  text-decoration: none;
-  line-height: 1.2;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 100%;
-
-  &:hover {
-    text-decoration: underline;
-  }
-`
-
-const UserDisplaySubName = styled.a`
-  font-family: 'Barlow';
-  font-size: 14px;
-  font-weight: 400;
-  color: ${colors.white};
-  opacity: 0.6;
-  text-decoration: none;
-  line-height: 1.2;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 100%;
-
-  &:hover {
-    text-decoration: underline;
-  }
-`
-
-const VerifiedBadge = styled(Flex)`
-  background: #1d9bf0;
-  border-radius: 50%;
-  width: 18px;
-  height: 18px;
-  font-size: 15px;
-
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-
-  svg {
-    width: 12px;
-    height: 12px;
-    color: ${colors.BG1_HOVER};
-  }
-`
-
-const FollowersCount = styled(Text)`
-  font-family: 'Barlow';
-  font-size: 13px;
-  color: ${colors.white};
-  opacity: 0.6;
-  line-height: 1.2;
-  margin-top: 4px;
 `
