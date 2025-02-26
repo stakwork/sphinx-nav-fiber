@@ -129,33 +129,36 @@ export const PostHoverCard = ({ node }: Props) => {
   return (
     <UserTooltipContainer>
       <UserContentWrapper>
-        <AvatarSection>
-          {imageUrl ? (
-            <UserAvatar alt={displayName} src={imageUrl} />
-          ) : (
-            <DefaultAvatar>
-              <PersonIcon />
-            </DefaultAvatar>
-          )}
-        </AvatarSection>
-
-        <UserInfoSection>
-          <UserNameRow>
-            <UserDisplayName href={postUrl} target="_blank">
-              {displayName}
-            </UserDisplayName>
-            {verified && (
-              <VerifiedBadge>
-                <CheckIcon />
-              </VerifiedBadge>
+        <ContentRow>
+          <AvatarColumn>
+            {imageUrl ? (
+              <UserAvatar alt={displayName} src={imageUrl} />
+            ) : (
+              <DefaultAvatar>
+                <PersonIcon />
+              </DefaultAvatar>
             )}
-            <UserDisplaySubName href={postUrl} target="_blank">
-              @{displaySubName}
-            </UserDisplaySubName>
-          </UserNameRow>
-        </UserInfoSection>
+          </AvatarColumn>
 
-        {text && <PostText>{text}</PostText>}
+          <MainColumn>
+            <UserNameRow>
+              <UserDisplayName href={postUrl} target="_blank">
+                {displayName}
+              </UserDisplayName>
+              {!verified && (
+                <VerifiedBadge>
+                  <CheckIcon />
+                </VerifiedBadge>
+              )}
+              <UserDisplaySubName href={postUrl} target="_blank">
+                @{displaySubName}
+              </UserDisplaySubName>
+            </UserNameRow>
+
+            {text && <PostText>{text}</PostText>}
+          </MainColumn>
+        </ContentRow>
+
         <MetricsBar
           metrics={{
             impressions,
@@ -175,7 +178,7 @@ const TooltipContainer = styled(Flex)`
   width: 390px;
   min-height: 100px;
   background: ${colors.HOVER_CARD_BG};
-  border-radius: 8px;
+  border-radius: 16px;
   padding: 15px;
   padding-bottom: 3px !important;
   flex-direction: column;
@@ -185,24 +188,37 @@ const TooltipContainer = styled(Flex)`
 `
 
 const UserTooltipContainer = styled(TooltipContainer)`
-  width: fit-content;
-  min-width: 180px;
-  max-width: 300px;
+  width: 320px;
   min-height: auto;
   border-radius: 16px;
+  padding: 12px;
   overflow: hidden;
 `
 
 const UserContentWrapper = styled(Flex)`
-  display: grid;
-  width: fit-content;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  align-items: start;
-  padding-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 8px;
 `
 
-const AvatarSection = styled(Flex)`
-  margin-right: 10px;
+const ContentRow = styled(Flex)`
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  gap: 12px;
+`
+
+const AvatarColumn = styled(Flex)`
+  flex-shrink: 0;
+  width: 40px;
+`
+
+const MainColumn = styled(Flex)`
+  flex-direction: column;
+  flex-grow: 1;
+  min-width: 0;
+  max-width: calc(100% - 52px);
 `
 
 const DefaultAvatar = styled(Flex)`
@@ -223,43 +239,38 @@ const UserAvatar = styled.img`
   object-fit: cover;
 `
 
-const PostText = styled.a`
+const PostText = styled.div`
   font-family: 'Barlow';
-  font-size: 14px;
+  font-size: 15px;
   line-height: 1.4;
   color: ${colors.white};
-  text-decoration: none;
+  margin: 0;
   word-break: break-word;
-
-  &:hover {
-    text-decoration: underline;
-  }
-`
-
-const UserInfoSection = styled(Flex)`
-  flex-direction: column;
-  gap: 2px;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  width: 100%;
+  max-height: 200px;
+  overflow-y: auto;
 `
 
 const UserNameRow = styled(Flex)`
   align-items: center;
   flex-direction: row;
   gap: 8px;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   width: 100%;
+  margin-bottom: 6px;
 `
 
 const UserDisplayName = styled.a`
   font-family: 'Barlow';
   font-size: 15px;
-  font-weight: 700;
+  font-weight: 600;
   color: ${colors.white};
   text-decoration: none;
-  line-height: 1.2;
-  white-space: nowrap;
-  overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
   &:hover {
     text-decoration: underline;
   }
@@ -267,16 +278,12 @@ const UserDisplayName = styled.a`
 
 const UserDisplaySubName = styled.a`
   font-family: 'Barlow';
-  font-size: 14px;
-  font-weight: 400;
-  color: ${colors.white};
-  opacity: 0.6;
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.6);
   text-decoration: none;
-  line-height: 1.2;
-  white-space: nowrap;
-  overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
   &:hover {
     text-decoration: underline;
   }
@@ -285,36 +292,46 @@ const UserDisplaySubName = styled.a`
 const VerifiedBadge = styled(Flex)`
   background: #1d9bf0;
   border-radius: 50%;
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   font-size: 15px;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  margin: 0 2px;
   svg {
-    width: 12px;
-    height: 12px;
+    width: 10px;
+    height: 10px;
     color: ${colors.BG1_HOVER};
   }
 `
 
 const MetricsContainer = styled(Flex)`
   flex-direction: row;
-  gap: 16px;
-  padding-top: 4px;
+  gap: 20px;
+  margin-top: 4px;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
 `
 
 const MetricItem = styled(Flex)`
   flex-direction: row;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
   color: ${colors.white} !important;
-  opacity: 0.7;
   font-size: 13px;
+  margin-bottom: 10px;
 
   svg {
-    width: 14px;
-    height: 14px;
+    width: 16px;
+    height: 16px;
+    color: rgba(255, 255, 255, 0.6) !important;
+  }
+
+  span {
     color: ${colors.white} !important;
+    min-width: 8px;
+    text-align: right;
   }
 `
