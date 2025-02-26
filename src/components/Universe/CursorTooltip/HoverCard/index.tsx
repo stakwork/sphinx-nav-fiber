@@ -17,10 +17,12 @@ export const HoverCard = ({ node }: Props) => {
   const keyProperty = getNodeKeysByType(node.node_type) || ''
 
   let title = ''
-  const description = node?.properties?.description
+  const description = node?.properties?.description || node.properties?.text
 
   if (node.node_type === 'Question') {
     title = node.name || ''
+  } else if (node.node_type === 'Tweet') {
+    title = ''
   } else if (node?.properties) {
     title = node.properties[keyProperty] || ''
   }
