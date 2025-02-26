@@ -84,10 +84,8 @@ const TooltipContainer = styled(Flex)`
   top: 0;
   transform: translate(0, 0); /* Initial transform */
   will-change: transform; /* Optimize for transform changes */
-  background: ${colors.BG1};
   color: white;
   padding: 0;
-  border-radius: 16px;
   pointer-events: none; /* Tooltip won't block mouse events */
   z-index: 1000;
   white-space: nowrap;
