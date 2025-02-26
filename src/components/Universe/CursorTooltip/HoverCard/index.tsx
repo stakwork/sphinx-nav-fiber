@@ -1,115 +1,20 @@
-import styled from 'styled-components'
-import { Flex } from '~/components/common/Flex'
-import { Text } from '~/components/common/Text'
-import { TypeBadge } from '~/components/common/TypeBadge'
-import { useSchemaStore } from '~/stores/useSchemaStore'
 import { Node } from '~/types'
-import { colors } from '~/utils/colors'
-import { User } from './User'
+import { GeneralHoverCard } from './GeneralHoverCard'
+import { PostHoverCard } from './PostHoverCard'
+import { UserHoverCard } from './UserHoverCard'
 
 type Props = {
   node: Node
 }
 
 export const HoverCard = ({ node }: Props) => {
-  const { getNodeKeysByType } = useSchemaStore((s) => s)
-
-  const keyProperty = getNodeKeysByType(node.node_type) || ''
-
-  let title = ''
-  const description = node?.properties?.description || node.properties?.text
-
-  if (node.node_type === 'Question') {
-    title = node.name || ''
-  } else if (node.node_type === 'Tweet') {
-    title = ''
-  } else if (node?.properties) {
-    title = node.properties[keyProperty] || ''
+  if (node.node_type === 'User') {
+    return <UserHoverCard node={node} />
   }
 
-  return node.node_type === 'User' ? (
-    <User node={node} />
-  ) : (
-    <TooltipContainer>
-      <ContentWrapper>
-        <Heading>
-          {node?.properties?.image_url && <Avatar src={node.properties.image_url} />}
-          <TitleWrapper>
-            <TypeBadge type={node.node_type} />
+  if (node.node_type === 'Tweet' || node.node_type === 'Post') {
+    return <PostHoverCard node={node} />
+  }
 
-            {title && <Title>{title}</Title>}
-          </TitleWrapper>
-        </Heading>
-        {description && <Description>{description}</Description>}
-      </ContentWrapper>
-    </TooltipContainer>
-  )
+  return <GeneralHoverCard node={node} />
 }
-
-export const TooltipContainer = styled(Flex)`
-  width: fit-content;
-  background: ${colors.HOVER_CARD_BG};
-  flex-direction: column;
-  pointer-events: auto;
-  align-items: flex-start;
-  border-radius: 8px;
-  overflow: hidden;
-  max-width: 390px;
-  border-bottom: 5px solid rgba(0, 0, 0, 0.3);
-  padding: 16px 14px;
-
-  background: #292c36;
-`
-
-const ContentWrapper = styled(Flex)`
-  margin-top: 0;
-  flex-direction: column;
-  gap: 4px;
-  align-items: flex-start;
-`
-
-export const Avatar = styled.img`
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  object-fit: cover;
-  margin-right: 8px;
-`
-
-const Heading = styled(Flex)`
-  flex-direction: row;
-`
-
-const TitleWrapper = styled(Flex)`
-  flex-direction: column;
-  align-items: flex-start;
-`
-
-const Title = styled(Text)`
-  font-family: Barlow;
-  font-size: 20px;
-  font-weight: 600;
-  line-height: 24px;
-  color: ${colors.white};
-  margin-top: 8px;
-  max-width: 200px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-`
-
-const Description = styled(Text)`
-  font-family: Barlow;
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 20px;
-  margin-top: 16px;
-  color: ${colors.white};
-  opacity: 0.8;
-  white-space: normal;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  line-clamp: 3;
-  -webkit-line-clamp: 3;
-`

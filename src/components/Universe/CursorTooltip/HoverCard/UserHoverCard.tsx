@@ -5,13 +5,12 @@ import CheckIcon from '~/components/Icons/CheckIcon'
 import PersonIcon from '~/components/Icons/PersonIcon'
 import { Node } from '~/types'
 import { colors } from '~/utils/colors'
-import { Avatar } from '..'
 
 type Props = {
   node: Node
 }
 
-export const User = ({ node }: Props) => {
+export const UserHoverCard = ({ node }: Props) => {
   const properties = node.properties || {}
 
   const {
@@ -46,7 +45,7 @@ export const User = ({ node }: Props) => {
       <UserContentWrapper>
         <AvatarSection>
           {imageUrl ? (
-            <Avatar alt={displayName} src={imageUrl} />
+            <UserAvatar alt={displayName} src={imageUrl} />
           ) : (
             <DefaultAvatar>
               <PersonIcon />
@@ -59,7 +58,7 @@ export const User = ({ node }: Props) => {
             <UserDisplayName href={profileUrl} target="_blank">
               {displayName}
             </UserDisplayName>
-            {!verified && (
+            {verified && (
               <VerifiedBadge>
                 <CheckIcon />
               </VerifiedBadge>
@@ -75,21 +74,32 @@ export const User = ({ node }: Props) => {
   )
 }
 
-const UserTooltipContainer = styled(Flex)`
+const TooltipContainer = styled(Flex)`
+  width: 390px;
+  min-height: 100px;
+  background: ${colors.HOVER_CARD_BG};
+  border-radius: 8px;
+  padding: 15px;
+  padding-bottom: 3px !important;
+  flex-direction: column;
+  gap: 4px;
+  pointer-events: auto;
+  align-items: flex-start;
+`
+
+const UserTooltipContainer = styled(TooltipContainer)`
   width: fit-content;
   min-width: 180px;
   max-width: 300px;
   min-height: auto;
   border-radius: 16px;
   overflow: hidden;
-  background: #292c36;
-  padding: 16px 14px;
 `
 
 const UserContentWrapper = styled(Flex)`
   display: grid;
   width: fit-content;
-  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: start;
   padding-bottom: 15px;
 `
@@ -107,6 +117,13 @@ const DefaultAvatar = styled(Flex)`
   justify-content: center;
   color: ${colors.white};
   font-size: 24px;
+`
+
+const UserAvatar = styled.img`
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
 `
 
 const UserInfoSection = styled(Flex)`
@@ -133,7 +150,6 @@ const UserDisplayName = styled.a`
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 100%;
-
   &:hover {
     text-decoration: underline;
   }
@@ -151,7 +167,6 @@ const UserDisplaySubName = styled.a`
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 100%;
-
   &:hover {
     text-decoration: underline;
   }
@@ -163,11 +178,9 @@ const VerifiedBadge = styled(Flex)`
   width: 18px;
   height: 18px;
   font-size: 15px;
-
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-
   svg {
     width: 12px;
     height: 12px;
