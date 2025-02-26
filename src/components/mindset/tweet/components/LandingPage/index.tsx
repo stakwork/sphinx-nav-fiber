@@ -80,7 +80,9 @@ export type FormData = {
 }
 
 const filterAndSortEpisodes = (data: FetchDataResponse): Node[] =>
-  data.nodes.filter((node) => node.node_type.toLowerCase() === 'tweet' && node.properties?.date).slice(0, 3)
+  data.nodes
+    .filter((node) => node.node_type.toLowerCase() === 'tweet' && node.properties?.status === 'completed')
+    .slice(0, 3)
 
 const handleSubmitForm = async (data: FieldValues): Promise<SubmitErrRes> => {
   const endPoint = 'add_node'
@@ -117,7 +119,7 @@ export const TweetsLandingPage = () => {
 
         const topTweets = filterAndSortEpisodes(res)
 
-        setEpisodes((HARDCODE as unknown as Node[]) || topTweets)
+        setEpisodes(topTweets.length ? topTweets : (HARDCODE as unknown as Node[]))
       } catch (err) {
         console.error('Error fetching schema:', err)
       }
