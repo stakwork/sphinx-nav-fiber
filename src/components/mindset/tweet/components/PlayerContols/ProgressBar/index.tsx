@@ -21,7 +21,7 @@ export const ProgressBar = ({ duration, markers, handleProgressChange, playingTi
 
   return (
     <ProgressWrapper>
-      <TimeBubble $progress={boundedPlayingTime}>{formattedTime}</TimeBubble>
+      {boundedPlayingTime ? <TimeBubble $progress={boundedPlayingTime}>{formattedTime}</TimeBubble> : null}
       <ProgressSlider max={duration} onChange={handleProgressChange} value={boundedPlayingTime} width={12} />
       <MarkersWrapper>
         <Markers markers={markers} />
