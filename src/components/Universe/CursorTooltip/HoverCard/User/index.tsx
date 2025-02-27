@@ -42,7 +42,7 @@ export const User = ({ node }: Props) => {
   }
 
   return (
-    <UserTooltipContainer>
+    <TooltipContainer>
       <UserContentWrapper>
         <AvatarSection>
           {imageUrl ? (
@@ -71,18 +71,20 @@ export const User = ({ node }: Props) => {
           {followersCount && <FollowersCount>{followersCount.toLocaleString()} Followers</FollowersCount>}
         </UserInfoSection>
       </UserContentWrapper>
-    </UserTooltipContainer>
+    </TooltipContainer>
   )
 }
 
-const UserTooltipContainer = styled(Flex)`
+const TooltipContainer = styled(Flex)`
   width: fit-content;
-  min-width: 180px;
-  max-width: 300px;
-  min-height: auto;
-  border-radius: 16px;
+  background: ${colors.HOVER_CARD_BG};
+  flex-direction: column;
+  pointer-events: auto;
+  align-items: flex-start;
+  border-radius: 8px;
   overflow: hidden;
-  background: #292c36;
+  max-width: 390px;
+  border-bottom: 5px solid rgba(0, 0, 0, 0.3);
   padding: 16px 14px;
 `
 
