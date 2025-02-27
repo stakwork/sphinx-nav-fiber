@@ -37,11 +37,11 @@ const getSentimentIcon = (score?: number) => {
 
 export const Stats = ({ node }: Props) => {
   // Calculate follower-to-view ratio safely.
-  const followerToViewRatio =
+  const viewToFollowerRatio =
     node?.properties?.followers !== undefined &&
     node?.properties?.impression_count !== undefined &&
     node.properties.impression_count !== 0
-      ? (node.properties.followers / node.properties.impression_count).toFixed(2)
+      ? (node.properties.impression_count / node.properties.followers).toFixed(2)
       : 'N/A'
 
   return (
@@ -57,8 +57,8 @@ export const Stats = ({ node }: Props) => {
           ) : null,
         )}
         <Metric>
-          <span>Follower-to-view Ratio</span>
-          <Value>{followerToViewRatio}</Value>
+          <span>Views-to-followers</span>
+          <Value>{viewToFollowerRatio}</Value>
         </Metric>
         <Metric>
           <span>Sentiment</span>
