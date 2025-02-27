@@ -36,14 +36,14 @@ const mockedUseDataStore = useDataStore as jest.MockedFunction<typeof useDataSto
 const mockedUseUserStore = useUserStore as jest.MockedFunction<typeof useUserStore>
 
 const mockStats = {
-  audio_count: '1,000',
-  contributors_count: '500',
-  daily_count: '200',
-  episodes_count: '2,000',
-  node_sount: '5,000',
-  twitter_spaceCount: '300',
-  video_count: '800',
-  documents_count: '1,483',
+  audio_count: 1000,
+  contributors_count: 500,
+  daily_count: 200,
+  episodes_count: 2000,
+  node_sount: 5000,
+  twitter_spaceCount: 300,
+  video_count: 800,
+  documents_count: 1483,
 }
 
 const mockBudget = 20000
@@ -81,12 +81,9 @@ describe('Component Test Stats', () => {
 
     const { getByText } = renderWithRouter(<Stats />)
 
-    expect(getByText(mockStats.audio_count)).toBeInTheDocument()
-    expect(getByText(mockStats.contributors_count)).toBeInTheDocument()
-    expect(getByText(mockStats.daily_count)).toBeInTheDocument()
-    expect(getByText(mockStats.documents_count)).toBeInTheDocument()
-    expect(getByText(mockStats.episodes_count)).toBeInTheDocument()
-    expect(getByText(mockStats.video_count)).toBeInTheDocument()
+    Object.values(mockStats).forEach((value) => {
+      expect(getByText(formatStats.formatNumberWithCommas(value))).toBeInTheDocument()
+    })
   })
 
   it('test formatting of numbers', () => {
@@ -124,11 +121,9 @@ describe('Component Test Stats', () => {
 
     const { getByText, getByTestId } = renderWithRouter(<Stats />)
 
-    expect(getByText(mockStats.node_sount)).toBeInTheDocument()
-    expect(getByText(mockStats.audio_count)).toBeInTheDocument()
-    expect(getByText(mockStats.episodes_count)).toBeInTheDocument()
-    expect(getByText(mockStats.video_count)).toBeInTheDocument()
-    expect(getByText(mockStats.twitter_spaceCount)).toBeInTheDocument()
+    Object.values(mockStats).forEach((value) => {
+      expect(getByText(formatStats.formatNumberWithCommas(value))).toBeInTheDocument()
+    })
 
     expect(getByTestId('Audio')).toBeInTheDocument()
     expect(getByTestId('Episodes')).toBeInTheDocument()
