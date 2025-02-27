@@ -16,6 +16,7 @@ const analyticsMapper = {
   bookmark_count: { label: 'Bookmarks', formatter: (value: number) => value },
   analytics_location: { label: 'Location', formatter: (value: string) => value || 'Unknown' },
   analytics_gender: { label: 'Gender', formatter: (value: string) => value || 'Unknown' },
+  followers: { label: 'Followers', formatter: (value: number) => value.toLocaleString() },
 }
 
 const getSentimentIcon = (score?: number) => {
@@ -34,25 +35,39 @@ const getSentimentIcon = (score?: number) => {
   return <FaMeh color={colors.GRAY3} />
 }
 
-export const Stats = ({ node }: Props) => (
-  <Card>
-    <Title>Analytics</Title>
-    <Grid>
-      {Object.entries(analyticsMapper).map(([key, { label, formatter }]) =>
-        node?.properties?.[key] !== undefined ? (
-          <Metric key={key}>
-            <span>{label}</span>
-            <Value>{formatter(node.properties[key] as never)}</Value>
-          </Metric>
-        ) : null,
-      )}
-      <Metric>
-        <span>Sentiment</span>
-        <Value>{getSentimentIcon(node?.properties?.analytics_sentiment_score)}</Value>
-      </Metric>
-    </Grid>
-  </Card>
-)
+export const Stats = ({ node }: Props) => {
+  // Calculate follower-to-view ratio safely.
+  const followerToViewRatio =
+    node?.properties?.followers !== undefined &&
+    node?.properties?.impression_count !== undefined &&
+    node.properties.impression_count !== 0
+      ? (node.properties.followers / node.properties.impression_count).toFixed(2)
+      : 'N/A';
+
+  return (
+    <Card>
+      <Title>Analytics</Title>
+      <Grid>
+        {Object.entries(analyticsMapper).map(([key, { label, formatter }]) =>
+          node?.properties?.[key] !== undefined ? (
+            <Metric key={key}>
+              <span>{label}</span>
+              <Value>{formatter(node.properties[key] as never)}</Value>
+            </Metric>
+          ) : null,
+        )}
+        <Metric>
+          <span>Follower-to-view Ratio</span>
+          <Value>{followerToViewRatio}</Value>
+        </Metric>
+        <Metric>
+          <span>Sentiment</span>
+          <Value>{getSentimentIcon(node?.properties?.analytics_sentiment_score)}</Value>
+        </Metric>
+      </Grid>
+    </Card>
+  )
+}
 
 const Card = styled.div`
   background: ${colors.ANALYTICS_CARD_BG};
