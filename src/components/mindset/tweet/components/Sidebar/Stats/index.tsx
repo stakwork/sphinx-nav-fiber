@@ -42,7 +42,7 @@ export const Stats = ({ node }: Props) => {
     node?.properties?.impression_count !== undefined &&
     node.properties.impression_count !== 0
       ? (node.properties.followers / node.properties.impression_count).toFixed(2)
-      : 'N/A';
+      : 'N/A'
 
   return (
     <Card>
