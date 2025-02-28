@@ -38,16 +38,26 @@ const _AiSources = ({ sourceIds, question }: Props) => {
   const [showAll, setShowAll] = useState(false)
   const addNewNode = useDataStore((s) => s.addNewNode)
   const { getNode } = useDataStore((s) => s)
+  const nodesNormalized = useDataStore((s) => s.nodesNormalized)
 
   const beenAdded = useRef(false)
 
   const { dataInitial } = useAiSummaryStore((s) => s)
   const { navigateToNode } = useNodeNavigation()
 
-  const currentNodes = useMemo(
-    () => dataInitial?.nodes.filter((i) => sourceIds.includes(i.ref_id)) || [],
-    [dataInitial?.nodes, sourceIds],
-  )
+  const currentNodes = useMemo(() => {
+    const initialNodes = dataInitial?.nodes.filter((i) => sourceIds.includes(i.ref_id)) || []
+
+    const normalizedNodes = sourceIds
+      .map((id) => nodesNormalized.get(id))
+      .filter((node): node is NodeExtended => node !== undefined)
+
+    const allNodes = [...initialNodes, ...normalizedNodes]
+
+    const uniqueNodes = Array.from(new Map(allNodes.map((node) => [node.ref_id, node])).values())
+
+    return uniqueNodes
+  }, [dataInitial?.nodes, sourceIds, nodesNormalized])
 
   useEffect(() => {
     if (!sourceIds.length || beenAdded.current) {
@@ -94,8 +104,6 @@ const _AiSources = ({ sourceIds, question }: Props) => {
 
   const handleLoadMoreClick = () => setShowAll(!showAll)
 
-  const visibleNodes = showAll ? currentNodes : [...currentNodes].slice(0, 3)
-
   const handleNodeClick = useCallback(
     (node: NodeExtended) => {
       navigateToNode(node.ref_id)
@@ -120,9 +128,13 @@ const _AiSources = ({ sourceIds, question }: Props) => {
           </CollapseButton>
         </Heading>
       </Slide>
-      {showAll && visibleNodes.length > 0 && (
+      {showAll && currentNodes.length > 0 && (
         <ScrollView ref={scrollViewRef} id="search-result-list" shrink={1}>
-          {visibleNodes.map((n, index) => {
+          {currentNodes.map((n, index) => {
+            if (!n) {
+              return null
+            }
+
             const adaptedNode = adaptTweetNode(n)
 
             const {
