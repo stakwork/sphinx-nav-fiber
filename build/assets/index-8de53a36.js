@@ -1,1 +1,0 @@
-import{r as o,S as e}from"./index-c4bc7e2e.js";const r=()=>{const t=o.useContext(e);return t==null?void 0:t.socket};export{r as u};
