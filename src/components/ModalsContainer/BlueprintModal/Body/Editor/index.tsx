@@ -691,7 +691,7 @@ export const Editor = ({
             </Flex>
           </form>
         </FormProvider>
-        <ColorPickerPopover isOpen={isPopoverOpen} />
+        <ColorPickerPopover isOpen={isPopoverOpen} onClose={handleColorPickerPopover} />
       </Flex>
     </Flex>
   )
