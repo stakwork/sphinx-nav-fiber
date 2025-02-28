@@ -52,9 +52,7 @@ const _LineComponent = (props: LineComponentProps) => {
       return
     }
 
-    // @todo-useframe
     const { hoveredNode, searchQuery, selectedNodeTypes, selectedLinkTypes, selectedNode } = useGraphStore.getState()
-
     const line = lineRef.current
     const activeNode = hoveredNode || selectedNode
 
@@ -82,7 +80,7 @@ const _LineComponent = (props: LineComponentProps) => {
 
       // Increase line width
       gsap.to(line.material, {
-        linewidth: 6, // Target line width
+        linewidth: 1, // Target line width
         duration: 0.5, // Smooth increase
         ease: 'power1.out',
       })
@@ -90,9 +88,14 @@ const _LineComponent = (props: LineComponentProps) => {
       // Decrease line width back to default
       gsap.to(line.material, {
         linewidth: 1, // Default line width
-        duration: 0.5, // Smooth decrease
+        duration: 0.5,
         ease: 'power1.out',
       })
+    }
+
+    // Animate dashOffset to create a moving dash effect
+    if (line.material) {
+      line.material.dashOffset += 0.55
     }
   })
 
@@ -100,12 +103,18 @@ const _LineComponent = (props: LineComponentProps) => {
     <group ref={groupRef}>
       <Line
         ref={lineRef}
-        color="white"
+        color="white" // Ensure strong contrast
+        dashed
+        dashOffset={1}
+        dashScale={1} // Reduce the gap between dashes for better visibility
+        dashSize={10} // Increase dash length
+        gapSize={10} // Adjust the spacing between dashes
         isLine2
-        lineWidth={2}
+        lineWidth={1} // Increase the thickness
         name="line"
         points={[sourceX, sourceY, sourceZ, targetX, targetY, targetZ]}
       />
+
       <Billboard>
         <Text anchorX="center" anchorY="middle" color="white" {...fontProps} fontSize={10}>
           {label}
