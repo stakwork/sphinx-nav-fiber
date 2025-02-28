@@ -138,7 +138,15 @@ export const Body = ({ Close }: BodyProps) => {
   return (
     <>
       <Flex ml={-20} mr={-20} mt={-20}>
-        <Header activeTab={activeTab} onClose={Close} setActiveTab={setActiveTab} />
+        <Header
+          activeTab={activeTab}
+          onClose={Close}
+          onSchemaSelect={(schemaId) => {
+            setSelectedSchemaId(schemaId)
+          }}
+          schemas={schemas}
+          setActiveTab={setActiveTab}
+        />
       </Flex>
       <Flex align="stretch" direction="row" grow={1}>
         <Flex mb={-20} ml={-20}>
