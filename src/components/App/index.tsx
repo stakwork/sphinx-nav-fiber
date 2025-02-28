@@ -130,6 +130,10 @@ export const App = () => {
     [addNewNode, isFetching],
   )
 
+  const handleNodeUpdated = useCallback((data: FetchDataResponse) => {
+    console.log(data)
+  }, [])
+
   const handleAiSummaryAnswer = useCallback(
     (data: AiSummaryAnswerResponse) => {
       if (data.ref_id) {
@@ -210,6 +214,10 @@ export const App = () => {
         socket.on('new_node_created', handleNewNodeCreated)
       }
 
+      if (realtimeGraphFeatureFlag) {
+        socket.on('node_updated', handleNodeUpdated)
+      }
+
       if (chatInterfaceFeatureFlag) {
         socket.on('answeraudiohook', handleAiSummaryAudio)
       }
@@ -231,6 +239,7 @@ export const App = () => {
     handleAiSources,
     handleExtractedEntities,
     handleAiSummaryAudio,
+    handleNodeUpdated,
   ])
 
   useEffect(() => {

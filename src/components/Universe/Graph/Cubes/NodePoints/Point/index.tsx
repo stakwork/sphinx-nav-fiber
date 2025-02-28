@@ -27,16 +27,45 @@ export const Point = memo(({ color, scale: scaleValue, name, index, node, nodeTy
       return
     }
 
-    const { searchQuery, simulation, selectedNodeTypes, selectedLinkTypes, selectedNode, selectedNodeSiblings } =
-      useGraphStore.getState()
+    const {
+      searchQuery,
+      simulation,
+      selectedNodeTypes,
+      selectedLinkTypes,
+      selectedNode,
+      hoveredNodeSiblings,
+      hoveredNode,
+    } = useGraphStore.getState()
 
     const { nodesNormalized } = useDataStore.getState()
+    const normalizedNode = nodesNormalized.get(node.ref_id)
+
+    const selectedNodeNormalized = selectedNode ? nodesNormalized.get(selectedNode?.ref_id) : null
+
+    const selectedNodeSiblings = selectedNodeNormalized
+      ? [...(selectedNodeNormalized?.targets || []), ...(selectedNodeNormalized.sources || [])]
+      : []
 
     const simulationNode = simulation?.nodes()[index]
 
     if (true || typeof simulationNode?.fx === 'number') {
       nodeRef.current.scale.set(scale, scale, scale)
     }
+
+    const isHovered = node.ref_id === hoveredNode?.ref_id
+    const isSelected = node.ref_id === selectedNode?.ref_id
+    const isHoveredSibling = hoveredNodeSiblings.includes(node.ref_id)
+    const isSelectedSibling = selectedNodeSiblings.includes(node.ref_id)
+
+    const highlight = isHovered || isSelected || isHoveredSibling || isSelectedSibling
+
+    if (highlight) {
+      nodeRef.current.scale.set(scale * 2, scale * 2, scale * 2)
+
+      return
+    }
+
+    nodeRef.current.scale.set(scale, scale, scale)
 
     if (searchQuery) {
       const includesQuery = name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -56,7 +85,6 @@ export const Point = memo(({ color, scale: scaleValue, name, index, node, nodeTy
 
       nodeRef.current.scale.set(dynamicScale, dynamicScale, dynamicScale)
     } else if (selectedLinkTypes.length) {
-      const normalizedNode = nodesNormalized.get(node.ref_id)
       const includesSelectedType = normalizedNode?.edgeTypes?.some((i) => selectedLinkTypes.includes(i))
 
       const dynamicScale = includesSelectedType ? scale : 0.1
