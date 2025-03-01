@@ -12,7 +12,7 @@ import { useModal } from '~/stores/useModalStore'
 import { useSchemaStore } from '~/stores/useSchemaStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { TStats } from '~/types'
-import { formatBudget, formatStatsResponse } from '~/utils'
+import { formatBudget, formatNumberWithCommas, formatStatsResponse } from '~/utils'
 import { colors } from '~/utils/colors'
 import { Flex } from '../common/Flex'
 import { Animation } from './Animation'
@@ -119,7 +119,7 @@ export const Stats = () => {
                 <div className="icon">
                   <Icon />
                 </div>
-                <div className="text">{stats[key as keyof TStats]}</div>
+                <div className="text">{formatNumberWithCommas(stats[key as keyof TStats] ?? 0)}</div>
               </Tooltip>
             </Stat>
           ) : (
