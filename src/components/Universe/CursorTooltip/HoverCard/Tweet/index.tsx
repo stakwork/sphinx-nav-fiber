@@ -3,7 +3,6 @@ import styled from 'styled-components'
 import CheckIcon from '~/components/Icons/CheckIcon'
 import PersonIcon from '~/components/Icons/PersonIcon'
 import { Flex } from '~/components/common/Flex'
-import { useDataStore } from '~/stores/useDataStore'
 import { Node } from '~/types'
 import { colors } from '~/utils/colors'
 
@@ -79,7 +78,6 @@ export const Tweet = ({ node }: Props) => {
 
   const {
     text,
-    author,
     tweet_id: tweetId,
     impression_count: impressions,
     like_count: likes,
@@ -87,9 +85,12 @@ export const Tweet = ({ node }: Props) => {
     retweet_count: retweets,
     quote_count: quotes,
     bookmark_count: bookmarks,
+    image_url: imageUrl,
+    twitter_handle: twitterHandle,
+    alias,
+    verified,
   } = properties as {
     text?: string
-    author?: string
     tweet_id?: string
     impression_count?: number
     like_count?: number
@@ -97,23 +98,9 @@ export const Tweet = ({ node }: Props) => {
     retweet_count?: number
     quote_count?: number
     bookmark_count?: number
-  }
-
-  const dataInitial = useDataStore((s) => s.dataInitial)
-
-  const userNode = dataInitial?.nodes.find((n: Node) => n.node_type === 'User' && n.properties?.author_id === author)
-
-  const userProperties = userNode?.properties || {}
-
-  const {
-    alias,
-    image_url: imageUrl,
-    twitter_handle: twitterHandle,
-    verified,
-  } = userProperties as {
-    alias?: string
     image_url?: string
     twitter_handle?: string
+    alias?: string
     verified?: boolean
   }
 
