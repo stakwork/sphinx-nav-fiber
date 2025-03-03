@@ -44,14 +44,12 @@ const TextWithBackgroundComponent = ({ text, id }: TextWithBackgroundProps, ref:
   const textRef = useRef<Mesh>(null)
   const cubeRef = useRef<Mesh>(null)
 
-  const [bgWidth, setBgWidth] = useState(100)
+  const [bgWidth, setBgWidth] = useState(1)
   const bgHeight = 30
   const bgRadius = 6
   const padding = 10
 
   const updateBgWidth = () => {
-    console.log('update')
-
     if (textRef.current) {
       textRef.current.updateMatrixWorld()
 
@@ -60,6 +58,12 @@ const TextWithBackgroundComponent = ({ text, id }: TextWithBackgroundProps, ref:
 
       box.getSize(size)
       setBgWidth(size.x + padding * 2)
+    }
+  }
+
+  const afterRenderHandler = () => {
+    if (bgWidth <= 20) {
+      updateBgWidth()
     }
   }
 
@@ -80,6 +84,7 @@ const TextWithBackgroundComponent = ({ text, id }: TextWithBackgroundProps, ref:
         anchorX="left"
         fontSize={10}
         name="text"
+        onAfterRender={afterRenderHandler}
         onSync={updateBgWidth}
       >
         {text}
