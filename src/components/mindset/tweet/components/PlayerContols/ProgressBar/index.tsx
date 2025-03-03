@@ -15,13 +15,20 @@ type Props = {
 }
 
 export const ProgressBar = ({ duration, markers, handleProgressChange, playingTime, tweetPlayingTime }: Props) => {
-  const formattedTime = moment(tweetPlayingTime).format('MMM D - h:mma')
+  const dateStr = moment(tweetPlayingTime).format('MMM D')
+  const timeStr = moment(tweetPlayingTime).format('h:mma')
 
   const boundedPlayingTime = Math.min(Math.max(playingTime, 0), 100)
 
   return (
     <ProgressWrapper>
-      {boundedPlayingTime ? <TimeBubble $progress={boundedPlayingTime}>{formattedTime}</TimeBubble> : null}
+      {boundedPlayingTime ? (
+        <TimeBubble $progress={boundedPlayingTime}>
+          <DatePart>{dateStr}</DatePart>
+          <Separator> - </Separator>
+          <TimePart>{timeStr}</TimePart>
+        </TimeBubble>
+      ) : null}
       <ProgressSlider max={duration} onChange={handleProgressChange} value={boundedPlayingTime} width={12} />
       <MarkersWrapper>
         <Markers markers={markers} />
@@ -66,7 +73,7 @@ const TimeBubble = styled.div<{ $progress?: number }>`
   transform: translateX(-50%);
   background: rgba(230, 230, 230, 255);
   color: ${colors.black};
-  padding: 6px 12px;
+  padding: 6px 6px 6px 12px;
   border-radius: 6px;
   font-family: 'Barlow';
   font-size: 13px;
@@ -77,6 +84,11 @@ const TimeBubble = styled.div<{ $progress?: number }>`
   backdrop-filter: blur(8px);
   letter-spacing: 0.2px;
   margin-bottom: 4px;
+  min-width: 100px;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
   left: ${(props) => `${props.$progress}%`};
 
@@ -93,6 +105,23 @@ const TimeBubble = styled.div<{ $progress?: number }>`
 
     return 'translateX(-50%)'
   }};
+`
+
+const DatePart = styled.span`
+  display: inline-block;
+  width: 45px;
+  text-align: right;
+`
+
+const Separator = styled.span`
+  margin: 0 4px;
+`
+
+const TimePart = styled.span`
+  display: inline-block;
+  width: 55px;
+  text-align: left;
+  font-variant-numeric: tabular-nums;
 `
 
 const ProgressSlider = styled(Slider)<{ width: number }>`
