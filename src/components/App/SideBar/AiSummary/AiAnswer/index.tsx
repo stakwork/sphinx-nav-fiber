@@ -280,6 +280,28 @@ export const AiAnswer = ({
     }
   }
 
+  const cleanHtmlResponse = (text: string) => {
+    const htmlContent = text.replace(/^```html\n/, '').replace(/\n```$/, '')
+
+    return htmlContent
+  }
+
+  const isHtmlContent = (text: string): boolean => text.startsWith('```html')
+
+  useEffect(() => {
+    if (displayedText) {
+      if (isHtmlContent(displayedText)) {
+        const cleanedHtml = cleanHtmlResponse(displayedText)
+
+        const event = new CustomEvent('html-content-detected', {
+          detail: { content: cleanedHtml },
+        })
+
+        window.dispatchEvent(event)
+      }
+    }
+  }, [displayedText])
+
   return (
     <Wrapper>
       <StyledAnswer>
