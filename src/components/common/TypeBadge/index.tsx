@@ -2,6 +2,7 @@ import styled from 'styled-components'
 import { useSchemaStore } from '~/stores/useSchemaStore'
 import { colors } from '~/utils/colors'
 import { Flex } from '../Flex'
+import { Icons } from '~/components/Icons'
 
 type Props = {
   type: string
@@ -21,7 +22,9 @@ export const TypeBadge = ({ type }: Props) => {
   const primaryColor = normalizedSchemasByType[type]?.primary_color
   const primaryIcon = normalizedSchemasByType[type]?.icon
 
-  const icon = primaryIcon ? `svg-icons/${primaryIcon}.svg` : null
+  const isIconPresent = primaryIcon && primaryIcon in Icons
+
+  const icon = isIconPresent ? `svg-icons/${primaryIcon}.svg` : 'svg-icons/NodesIcon.svg'
 
   switch (nodeType) {
     case 'video':
@@ -29,7 +32,7 @@ export const TypeBadge = ({ type }: Props) => {
     case 'podcast':
     case 'clip':
       badgeProps = {
-        iconStart: icon ?? 'video_badge.svg',
+        iconStart: icon,
         color: primaryColor ?? colors.CLIP,
       }
 
@@ -37,7 +40,7 @@ export const TypeBadge = ({ type }: Props) => {
 
     case 'show':
       badgeProps = {
-        iconStart: icon ?? 'show_badge.svg',
+        iconStart: icon,
         color: primaryColor ?? colors.SHOW,
       }
 
@@ -45,7 +48,7 @@ export const TypeBadge = ({ type }: Props) => {
 
     case 'tweet':
       badgeProps = {
-        iconStart: icon ?? 'twitter_badge.svg',
+        iconStart: icon,
         color: primaryColor ?? colors.TWEET,
       }
 
@@ -53,7 +56,7 @@ export const TypeBadge = ({ type }: Props) => {
 
     case 'episode':
       badgeProps = {
-        iconStart: icon ?? 'audio_badge.svg',
+        iconStart: icon,
         color: primaryColor ?? colors.EPISODE,
       }
 
@@ -61,7 +64,7 @@ export const TypeBadge = ({ type }: Props) => {
 
     case 'document':
       badgeProps = {
-        iconStart: icon ?? 'notes_badge.svg',
+        iconStart: icon,
         color: primaryColor ?? colors.TEXT,
       }
 
@@ -69,7 +72,7 @@ export const TypeBadge = ({ type }: Props) => {
 
     case primaryIcon ?? 'organization':
       badgeProps = {
-        iconStart: icon ?? 'organization_badge.svg',
+        iconStart: icon,
         color: primaryColor ?? colors.ORGANIZATION,
       }
 
@@ -79,7 +82,7 @@ export const TypeBadge = ({ type }: Props) => {
     case 'guest':
     case 'host':
       badgeProps = {
-        iconStart: icon ?? 'person_badge.svg',
+        iconStart: icon,
         color: primaryColor ?? colors.PERSON,
       }
 
@@ -87,7 +90,7 @@ export const TypeBadge = ({ type }: Props) => {
 
     case 'event':
       badgeProps = {
-        iconStart: icon ?? 'event_badge.svg',
+        iconStart: icon,
         color: primaryColor ?? colors.EVENT,
       }
 
@@ -95,7 +98,7 @@ export const TypeBadge = ({ type }: Props) => {
 
     default:
       badgeProps = {
-        iconStart: icon ?? 'thing_badge.svg',
+        iconStart: icon,
         color: primaryColor ?? colors.THING,
       }
 
