@@ -33,6 +33,10 @@ export type AppStore = {
   setSelectedColor: (color: string) => void
   selectedIcon: string
   setSelectedIcon: (icon: string) => void
+  isHtmlContent: boolean
+  htmlContent: string
+  setHtmlContent: (content: string) => void
+  setIsHtmlContent: (isHtml: boolean) => void
 }
 
 const defaultData = {
@@ -51,6 +55,8 @@ const defaultData = {
   showCollapseButton: true,
   selectedColor: '#962777',
   selectedIcon: 'ConstructionIcon',
+  isHtmlContent: false,
+  htmlContent: '',
 }
 
 export const useAppStore = create<AppStore>((set, get) => ({
@@ -76,4 +82,6 @@ export const useAppStore = create<AppStore>((set, get) => ({
   setShowCollapseButton: (showCollapseButton) => set({ showCollapseButton }),
   setSelectedColor: (selectedColor) => set({ selectedColor }),
   setSelectedIcon: (selectedIcon) => set({ selectedIcon }),
+  setHtmlContent: (htmlContent) => set({ htmlContent }),
+  setIsHtmlContent: (isHtmlContent) => set({ isHtmlContent }),
 }))

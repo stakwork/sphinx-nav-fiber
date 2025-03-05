@@ -15,6 +15,7 @@ import RegenerateIcon from '~/components/Icons/RegenerateIcon'
 import ThumbDownIcon from '~/components/Icons/ThumbDownIcon'
 import ThumbUpIcon from '~/components/Icons/ThumbUpIcon'
 import { postFeedback } from '~/network/fetchSourcesData'
+import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { ExtractedEntity } from '~/types/index'
@@ -176,6 +177,7 @@ export const AiAnswer = ({
   const [isDescriptionComplete, setIsDescriptionComplete] = useState(false)
   const [feedback, setFeedback] = useState<'positive' | 'negative' | null>(null)
   const [isCopied, setIsCopied] = useState(false)
+  const { setIsHtmlContent, setHtmlContent } = useAppStore((s) => s)
 
   useEffect(() => {
     let timeoutId: NodeJS.Timeout
@@ -279,6 +281,17 @@ export const AiAnswer = ({
       console.error('Failed to copy text:', err)
     }
   }
+
+  const isHtmlContent = (text: string): boolean => /<[^>]*>/i.test(text.trim())
+
+  useEffect(() => {
+    if (displayedText) {
+      if (isHtmlContent(displayedText)) {
+        setIsHtmlContent(true)
+        setHtmlContent(displayedText)
+      }
+    }
+  }, [displayedText, setIsHtmlContent, setHtmlContent])
 
   return (
     <Wrapper>
