@@ -15,6 +15,7 @@ import RegenerateIcon from '~/components/Icons/RegenerateIcon'
 import ThumbDownIcon from '~/components/Icons/ThumbDownIcon'
 import ThumbUpIcon from '~/components/Icons/ThumbUpIcon'
 import { postFeedback } from '~/network/fetchSourcesData'
+import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { ExtractedEntity } from '~/types/index'
@@ -176,6 +177,7 @@ export const AiAnswer = ({
   const [isDescriptionComplete, setIsDescriptionComplete] = useState(false)
   const [feedback, setFeedback] = useState<'positive' | 'negative' | null>(null)
   const [isCopied, setIsCopied] = useState(false)
+  const { setIsHtmlContent, setHtmlContent } = useAppStore((s) => s)
 
   useEffect(() => {
     let timeoutId: NodeJS.Timeout
@@ -280,27 +282,16 @@ export const AiAnswer = ({
     }
   }
 
-  const cleanHtmlResponse = (text: string) => {
-    const htmlContent = text.replace(/^```html\n/, '').replace(/\n```$/, '')
-
-    return htmlContent
-  }
-
-  const isHtmlContent = (text: string): boolean => text.startsWith('```html')
+  const isHtmlContent = (text: string): boolean => /<[^>]*>/i.test(text.trim())
 
   useEffect(() => {
     if (displayedText) {
       if (isHtmlContent(displayedText)) {
-        const cleanedHtml = cleanHtmlResponse(displayedText)
-
-        const event = new CustomEvent('html-content-detected', {
-          detail: { content: cleanedHtml },
-        })
-
-        window.dispatchEvent(event)
+        setIsHtmlContent(true)
+        setHtmlContent(displayedText)
       }
     }
-  }, [displayedText])
+  }, [displayedText, setIsHtmlContent, setHtmlContent])
 
   return (
     <Wrapper>

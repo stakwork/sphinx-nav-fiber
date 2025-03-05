@@ -24,6 +24,7 @@ import { initialCameraPosition, selectionGraphCameraPosition } from './Controls/
 import { CursorTooltip } from './CursorTooltip/index'
 import { Graph } from './Graph'
 import { GraphSearch } from './GraphSearch'
+import { HtmlContent } from './HtmlContent'
 import { Lights } from './Lights'
 import { Overlay } from './Overlay'
 import { Preloader } from './Preloader'
@@ -105,6 +106,7 @@ const _Universe = () => {
 
   const isLoading = useDataStore((s) => s.isFetching)
   const universeQuestionIsOpen = useAppStore((s) => s.universeQuestionIsOpen)
+  const { isHtmlContent, htmlContent } = useAppStore((s) => s)
 
   const onWheelHandler = useCallback(
     (e: React.WheelEvent) => {
@@ -146,6 +148,7 @@ const _Universe = () => {
           id="universe-canvas"
           onCreated={onCreatedHandler}
           onWheel={onWheelHandler}
+          style={{ visibility: isHtmlContent ? 'hidden' : 'visible' }}
         >
           {isDevelopment && <Perf position="top-right" style={{ top: '80px' }} />}
           <Suspense fallback={<Fallback />}>
@@ -190,6 +193,7 @@ const _Universe = () => {
           </SelectionWrapper>
         ) : null}
       </Suspense>
+      {isHtmlContent && <HtmlContent content={htmlContent} />}
       {universeQuestionIsOpen && <UniverseQuestion />}
       {isLoading && <Preloader fullSize={false} />}
       <Overlay />

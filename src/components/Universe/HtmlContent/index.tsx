@@ -11,7 +11,11 @@ const HtmlContentWrapper = styled(Flex)`
   background: ${colors.black};
   overflow-y: auto;
   padding: 40px;
-  padding-top: 60px;
+  position: absolute;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `
 
 const ContentContainer = styled.div`
@@ -20,6 +24,10 @@ const ContentContainer = styled.div`
   width: 100%;
   color: ${colors.white};
   font-family: inherit;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 
   header {
     margin-bottom: 2rem;
@@ -65,22 +73,29 @@ const ContentContainer = styled.div`
     color: ${colors.white};
     margin-bottom: 1rem;
   }
+
+  pre {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    code {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
 `
 
-const cleanHtmlContent = (html: string) =>
-  html
-    .replace(/<!DOCTYPE[^>]*>/i, '')
-    .replace(/<html[^>]*>/i, '')
-    .replace(/<\/html>/i, '')
-    .replace(/<head>[\s\S]*?<\/head>/i, '')
-    .replace(/<body[^>]*>/i, '')
-    .replace(/<\/body>/i, '')
-    .replace(/<style>[\s\S]*?<\/style>/i, '')
-    .replace(/<a(.*?)>/gi, '<a$1 target="_blank" rel="noopener noreferrer">')
+const HtmlContents = (html: string) => html.replace(/<a(.*?)>/gi, '<a$1 target="_blank" rel="noopener noreferrer">')
 
 export const HtmlContent = ({ content }: HtmlContentProps) => (
   <HtmlContentWrapper>
-    <ContentContainer dangerouslySetInnerHTML={{ __html: cleanHtmlContent(content) }} />
+    <ContentContainer dangerouslySetInnerHTML={{ __html: HtmlContents(content) }} />
   </HtmlContentWrapper>
 )
 

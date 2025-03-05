@@ -1,4 +1,4 @@
-import { lazy, Suspense, useCallback, useEffect, useRef, useState } from 'react'
+import { lazy, Suspense, useCallback, useEffect, useRef } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useSearchParams } from 'react-router-dom'
 import 'react-toastify/dist/ReactToastify.css'
@@ -50,18 +50,12 @@ const LazyMainToolbar = lazy(() => import('./MainToolbar').then(({ MainToolbar }
 const LazyUniverse = lazy(() => import('~/components/Universe').then(({ Universe }) => ({ default: Universe })))
 const LazySideBar = lazy(() => import('./SideBar').then(({ SideBar }) => ({ default: SideBar })))
 
-const LazyHtmlContent = lazy(() =>
-  import('~/components/Universe/HtmlContent').then(({ HtmlContent }) => ({ default: HtmlContent })),
-)
-
 export const App = () => {
   const [searchParams] = useSearchParams()
   const query = searchParams.get('q')
   const { setNodeCount } = useUserStore((s) => s)
   const queueRef = useRef<FetchDataResponse | null>(null)
   const timerRef = useRef<NodeJS.Timeout | null>(null)
-  const [isHtmlContent, setIsHtmlContent] = useState(false)
-  const [htmlContent, setHtmlContent] = useState<string>('')
 
   useRetrieveData()
 
@@ -300,19 +294,6 @@ export const App = () => {
     }
   }, [runningProjectId, socket])
 
-  useEffect(() => {
-    const handleHtmlContent = (event: CustomEvent<{ content: string }>) => {
-      setIsHtmlContent(true)
-      setHtmlContent(event.detail.content)
-    }
-
-    window.addEventListener('html-content-detected', handleHtmlContent as EventListener)
-
-    return () => {
-      window.removeEventListener('html-content-detected', handleHtmlContent as EventListener)
-    }
-  }, [])
-
   return (
     <>
       <GlobalStyle />
@@ -326,7 +307,7 @@ export const App = () => {
               <LazyMainToolbar />
               {!universeQuestionIsOpen && <LazySideBar />}
               <Suspense fallback={<div>Loading content...</div>}>
-                {isHtmlContent ? <LazyHtmlContent content={htmlContent} /> : <LazyUniverse />}
+                <LazyUniverse />
               </Suspense>
               <Overlay />
               <AppBar />
