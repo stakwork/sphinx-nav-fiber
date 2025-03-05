@@ -1,9 +1,76 @@
+import Button from '@mui/material/Button'
+import { useCallback, useEffect } from 'react'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
+import ArrowBackIcon from '~/components/Icons/ArrowBackIcon'
+import { useAiSummaryStore } from '~/stores/useAiSummaryStore'
+import { useAppStore } from '~/stores/useAppStore'
+import { useDataStore } from '~/stores/useDataStore'
+import { useUserStore } from '~/stores/useUserStore'
 import { colors } from '~/utils/colors'
 
 type HtmlContentProps = {
   content: string
+}
+
+export const HtmlContent = ({ content }: HtmlContentProps) => {
+  const { setAbortRequests } = useDataStore((s) => s)
+  const { setBudget } = useUserStore((s) => s)
+  const { fetchAIData } = useAiSummaryStore((s) => s)
+  const { htmlHistory, addToHtmlHistory, goBackHtmlHistory } = useAppStore((s) => s)
+
+  useEffect(() => {
+    addToHtmlHistory(content)
+  }, [content, addToHtmlHistory])
+
+  const handleClick = useCallback(
+    (e: Event) => {
+      e.preventDefault()
+
+      const target = e.target as HTMLAnchorElement
+
+      if (target.tagName === 'A' && target.href) {
+        fetchAIData(setBudget, setAbortRequests, target.href)
+      }
+    },
+    [fetchAIData, setBudget, setAbortRequests],
+  )
+
+  const handleBack = useCallback(() => {
+    const previousContent = goBackHtmlHistory()
+
+    if (previousContent) {
+      // Update the current HTML content through the app store
+      useAppStore.getState().setHtmlContent(previousContent)
+    }
+  }, [goBackHtmlHistory])
+
+  useEffect(() => {
+    const container = document.querySelector('.html-content-container')
+
+    if (container) {
+      container.addEventListener('click', handleClick as EventListener)
+    }
+
+    return () => {
+      if (container) {
+        container.removeEventListener('click', handleClick as EventListener)
+      }
+    }
+  }, [handleClick])
+
+  return (
+    <HtmlContentWrapper>
+      <Header>
+        {htmlHistory.length > 1 && (
+          <BackButton onClick={handleBack} startIcon={<ArrowBackIcon />}>
+            Back
+          </BackButton>
+        )}
+      </Header>
+      <ContentContainer className="html-content-container" dangerouslySetInnerHTML={{ __html: content }} />
+    </HtmlContentWrapper>
+  )
 }
 
 const HtmlContentWrapper = styled(Flex)`
@@ -14,8 +81,32 @@ const HtmlContentWrapper = styled(Flex)`
   position: absolute;
   inset: 0;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  justify-content: flex-start;
   align-items: center;
+`
+
+const Header = styled.div`
+  width: 100%;
+  max-width: 1200px;
+  margin-top: 60px;
+  padding: 0 0 20px 0;
+`
+
+const BackButton = styled(Button)`
+  && {
+    color: ${colors.white};
+    font-size: 14px;
+    text-transform: none;
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    svg {
+      font-size: 20px;
+    }
+  }
 `
 
 const ContentContainer = styled.div`
@@ -27,7 +118,6 @@ const ContentContainer = styled.div`
   height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: center;
 
   header {
     margin-bottom: 2rem;
@@ -90,13 +180,5 @@ const ContentContainer = styled.div`
     }
   }
 `
-
-const HtmlContents = (html: string) => html.replace(/<a(.*?)>/gi, '<a$1 target="_blank" rel="noopener noreferrer">')
-
-export const HtmlContent = ({ content }: HtmlContentProps) => (
-  <HtmlContentWrapper>
-    <ContentContainer dangerouslySetInnerHTML={{ __html: HtmlContents(content) }} />
-  </HtmlContentWrapper>
-)
 
 export default HtmlContent
