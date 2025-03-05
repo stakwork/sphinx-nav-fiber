@@ -1,1 +1,0 @@
-import"./index-5f66bd69.js";import{c as o}from"./index-0dc2447a.js";const a=()=>{const{simulation:s,simulationHelpers:e}=o(r=>r);return{nodes:(s==null?void 0:s.nodes())||[],links:e.getLinks()}};export{a as u};
