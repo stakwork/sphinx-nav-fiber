@@ -306,9 +306,7 @@ export const App = () => {
             <FormProvider {...form}>
               <LazyMainToolbar />
               {!universeQuestionIsOpen && <LazySideBar />}
-              <Suspense fallback={<div>Loading content...</div>}>
-                <LazyUniverse />
-              </Suspense>
+              <LazyUniverse />
               <Overlay />
               <AppBar />
               <Version>v{version}</Version>
