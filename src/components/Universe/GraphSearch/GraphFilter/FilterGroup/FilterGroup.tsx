@@ -3,11 +3,27 @@ import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { colors } from '~/utils/colors'
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const splitIntoTwoColumns = (items: any[]) => {
-  const half = Math.ceil(items.length / 2)
+const splitIntoColumns = (items: string[]): string[][] => {
+  const maxItemsPerColumn = 8
+  const maxColumns = 3
 
-  return [items.slice(0, half), items.slice(half)]
+  if (items.length <= maxItemsPerColumn) {
+    return [items]
+  }
+
+  if (items.length <= maxItemsPerColumn * 2) {
+    const half = Math.ceil(items.length / 2)
+
+    return [items.slice(0, half), items.slice(half)]
+  }
+
+  const itemsPerColumn = Math.ceil(items.length / maxColumns)
+
+  return [
+    items.slice(0, itemsPerColumn),
+    items.slice(itemsPerColumn, itemsPerColumn * 2),
+    items.slice(itemsPerColumn * 2),
+  ]
 }
 
 type FilterGroupProps = {
@@ -27,35 +43,27 @@ export const FilterGroup: React.FC<FilterGroupProps> = ({
   onResetClick,
   getColor = () => '#ffffff',
 }) => {
-  const [column1, column2] = types.length > 8 ? splitIntoTwoColumns(types) : [types, []]
-  const needsTwoColumns = column2.length > 0
+  const columns = splitIntoColumns(types)
+  const needsSeveralColumns = columns.length > 1
 
   return (
     <FilterColumn>
-      <FilterList needMultipleColumns={needsTwoColumns}>
+      <FilterList needMultipleColumns={needsSeveralColumns}>
         <FilterItem isActive={!selectedTypes.length} onClick={onResetClick}>
           <RadioButton isActive={!selectedTypes.length} />
           <FilterText isActive={!selectedTypes.length}>All {title}</FilterText>
         </FilterItem>
-        <FilterSubSection multipleColumns={needsTwoColumns}>
-          <SubSectionColumn>
-            {column1.map((type: string) => (
-              <FilterItem key={type} isActive={selectedTypes.includes(type)} onClick={() => onTypeClick(type)}>
-                <RadioButton color={getColor(type)} isActive={selectedTypes.includes(type)} />
-                <FilterText isActive={selectedTypes.includes(type)}>{type}</FilterText>
-              </FilterItem>
-            ))}
-          </SubSectionColumn>
-          {needsTwoColumns && (
-            <SubSectionColumn>
-              {column2.map((type: string) => (
+        <FilterSubSection multipleColumns={needsSeveralColumns}>
+          {columns.map((column, index) => (
+            <SubSectionColumn key={column[index]}>
+              {column.map((type: string) => (
                 <FilterItem key={type} isActive={selectedTypes.includes(type)} onClick={() => onTypeClick(type)}>
                   <RadioButton color={getColor(type)} isActive={selectedTypes.includes(type)} />
                   <FilterText isActive={selectedTypes.includes(type)}>{type}</FilterText>
                 </FilterItem>
               ))}
             </SubSectionColumn>
-          )}
+          ))}
         </FilterSubSection>
       </FilterList>
     </FilterColumn>
@@ -95,6 +103,7 @@ const FilterList = styled(Flex)<{ needMultipleColumns?: boolean }>`
 const FilterItem = styled(Flex)<{ isActive: boolean }>`
   flex-direction: row;
   align-items: center;
+  align-self: start;
   cursor: pointer;
   padding: 8px;
   border-radius: 4px;
@@ -119,6 +128,7 @@ const FilterText = styled.span<{ isActive: boolean }>`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  max-width: 150px;
 `
 
 const RadioButton = styled.div<{ isActive: boolean; color?: string }>`

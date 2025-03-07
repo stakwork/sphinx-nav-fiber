@@ -149,6 +149,7 @@ const FilterContent = styled(Box)`
 const FilterSection = styled(Flex)`
   display: flex;
   flex-direction: row;
+  justify-content: center;
   gap: 12px;
   position: relative;
   height: 100%;
