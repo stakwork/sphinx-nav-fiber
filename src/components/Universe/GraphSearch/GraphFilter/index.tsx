@@ -41,6 +41,7 @@ export const GraphFilter = () => {
     <FilterWrapper>
       <FilterButton
         aria-describedby={id}
+        isActive={Boolean(anchorEl)}
         onClick={handleClick}
         startIcon={
           <svg fill="none" height="20" viewBox="0 0 20 20" width="20" xmlns="http://www.w3.org/2000/svg">
@@ -110,10 +111,11 @@ const FilterWrapper = styled(Flex)`
   margin-left: 16px;
 `
 
-const FilterButton = styled(Button)`
+const FilterButton = styled(Button)<{ isActive: boolean }>`
   && {
-    background-color: ${colors.white};
-    color: ${colors.BG1};
+    transition: all 0.2s ease;
+    background-color: ${({ isActive }) => (isActive ? colors.white : '#303342')};
+    color: ${({ isActive }) => (isActive ? '#353a46' : colors.white)};
     border-radius: 200px;
     text-transform: none;
     padding: 6px 16px;
@@ -129,7 +131,8 @@ const FilterButton = styled(Button)`
 
     &:hover {
       background-color: ${colors.white};
-      opacity: 0.5;
+      background: white;
+      color: #353a46;
     }
 
     &:active {
