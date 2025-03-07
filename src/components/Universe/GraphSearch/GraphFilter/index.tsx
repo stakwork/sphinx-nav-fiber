@@ -2,6 +2,7 @@ import { Box, Button, Popover } from '@mui/material'
 import React, { useState } from 'react'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
+import FilterIcon from '~/components/Icons/FilterIcon'
 import { useDataStore, useNodeTypes } from '~/stores/useDataStore'
 import { useGraphStore } from '~/stores/useGraphStore'
 import { useSchemaStore } from '~/stores/useSchemaStore'
@@ -38,23 +39,8 @@ export const GraphFilter = () => {
   const id = open ? 'filter-popover' : undefined
 
   return (
-    <FilterWrapper>
-      <FilterButton
-        aria-describedby={id}
-        isActive={Boolean(anchorEl)}
-        onClick={handleClick}
-        startIcon={
-          <svg fill="none" height="20" viewBox="0 0 20 20" width="20" xmlns="http://www.w3.org/2000/svg">
-            <path
-              d="M5 10H15M2.5 5H17.5M7.5 15H12.5"
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="1.5"
-            />
-          </svg>
-        }
-      >
+    <div>
+      <FilterButton aria-describedby={id} isActive={Boolean(anchorEl)} onClick={handleClick} startIcon={<FilterIcon />}>
         Filter
       </FilterButton>
       <Popover
@@ -103,13 +89,9 @@ export const GraphFilter = () => {
           </FilterSection>
         </FilterContent>
       </Popover>
-    </FilterWrapper>
+    </div>
   )
 }
-
-const FilterWrapper = styled(Flex)`
-  margin-left: 16px;
-`
 
 const FilterButton = styled(Button)<{ isActive: boolean }>`
   && {
@@ -120,14 +102,10 @@ const FilterButton = styled(Button)<{ isActive: boolean }>`
     text-transform: none;
     padding: 6px 16px;
     font-family: Barlow;
-    font-weight: 600;
+    font-weight: 400;
     font-size: 14px;
     line-height: 16px;
     height: 32px;
-
-    .MuiButton-startIcon {
-      margin-right: 8px;
-    }
 
     &:hover {
       background-color: ${colors.white};

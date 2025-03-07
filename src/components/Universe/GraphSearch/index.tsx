@@ -2,6 +2,7 @@ import { useLocation } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import ClearIcon from '~/components/Icons/ClearIcon'
+import SearchIcon from '~/components/Icons/SearchIcon'
 import { useAppStore } from '~/stores/useAppStore'
 import { useGraphStore } from '~/stores/useGraphStore'
 import { colors } from '~/utils'
@@ -22,17 +23,6 @@ export const GraphSearch = () => {
     <Wrapper>
       <TopBarContainer>
         <SearchWrapper>
-          <SearchIconWrapper>
-            <svg fill="none" height="20" viewBox="0 0 20 20" width="20" xmlns="http://www.w3.org/2000/svg">
-              <path
-                d="M17.5 17.5L12.5 12.5M14.1667 8.33333C14.1667 11.555 11.555 14.1667 8.33333 14.1667C5.11167 14.1667 2.5 11.555 2.5 8.33333C2.5 5.11167 5.11167 2.5 8.33333 2.5C11.555 2.5 14.1667 5.11167 14.1667 8.33333Z"
-                stroke="#6E6E7E"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="1.5"
-              />
-            </svg>
-          </SearchIconWrapper>
           <Input
             id="graph-search"
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -40,7 +30,8 @@ export const GraphSearch = () => {
             type="text"
             value={searchQuery}
           />
-          {searchQuery?.trim() && (
+
+          {searchQuery?.trim() ? (
             <InputButton
               data-testid="search_action_icon"
               onClick={() => {
@@ -49,6 +40,10 @@ export const GraphSearch = () => {
             >
               <ClearIcon />
             </InputButton>
+          ) : (
+            <SearchIconWrapper>
+              <SearchIcon />
+            </SearchIconWrapper>
           )}
         </SearchWrapper>
         <GraphFilter />
@@ -83,16 +78,28 @@ const TopBarContainer = styled(Flex)`
 const SearchWrapper = styled(Flex)`
   flex-direction: row;
   position: relative;
-  width: 320px;
+  width: 250px;
 `
 
 const SearchIconWrapper = styled(Flex)`
   position: absolute;
-  left: 16px;
+  right: 2px;
   top: 50%;
   transform: translateY(-50%);
   z-index: 3;
   pointer-events: none;
+
+  width: 28px;
+  height: 28px;
+
+  svg {
+    width: 28px;
+    height: 28px;
+
+    path {
+      fill: #47505e;
+    }
+  }
 `
 
 const Input = styled.input.attrs(() => ({
@@ -100,14 +107,17 @@ const Input = styled.input.attrs(() => ({
   autoComplete: 'off',
 }))<{ loading?: boolean }>`
   pointer-events: auto;
-  height: 48px;
-  padding: 0 40px 0 48px;
+  height: 32px;
+  padding: 11px 16px;
   z-index: 2;
   width: 100%;
-  color: #fff;
   border: none;
   border-radius: 200px;
-  background: ${colors.BG2};
+  background: #16171d;
+
+  font-size: 15px;
+  font-weight: 500;
+  color: #fff;
 
   -webkit-autofill,
   -webkit-autocomplete,
@@ -142,14 +152,13 @@ const Input = styled.input.attrs(() => ({
 const InputButton = styled(Flex).attrs({
   align: 'center',
   justify: 'center',
-  p: 5,
 })`
   font-size: 20px;
   color: ${colors.GRAY7};
   cursor: pointer;
   transition-duration: 0.2s;
   position: absolute;
-  right: 12px;
+  right: 8px;
   top: 50%;
   transform: translateY(-50%);
   z-index: 2;
