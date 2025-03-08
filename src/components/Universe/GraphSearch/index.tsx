@@ -92,7 +92,7 @@ const SearchIconWrapper = styled(Flex)`
     height: 28px;
 
     path {
-      fill: #47505e;
+      fill: ${colors.GRAY8};
     }
   }
 `
@@ -108,11 +108,11 @@ const Input = styled.input.attrs(() => ({
   width: 100%;
   border: none;
   border-radius: 200px;
-  background: #16171d;
+  background: ${colors.BG2};
 
   font-size: 15px;
   font-weight: 500;
-  color: #fff;
+  color: ${colors.white};
 
   -webkit-autofill,
   -webkit-autocomplete,

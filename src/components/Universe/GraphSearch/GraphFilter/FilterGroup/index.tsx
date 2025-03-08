@@ -41,7 +41,7 @@ export const FilterGroup: React.FC<FilterGroupProps> = ({
   selectedTypes,
   onTypeClick,
   onResetClick,
-  getColor = () => '#ffffff',
+  getColor = () => colors.white,
 }) => {
   const columns = splitIntoColumns(types)
   const needsSeveralColumns = columns.length > 1
@@ -49,17 +49,24 @@ export const FilterGroup: React.FC<FilterGroupProps> = ({
   return (
     <FilterColumn>
       <FilterList needMultipleColumns={needsSeveralColumns}>
-        <FilterItem isActive={!selectedTypes.length} onClick={onResetClick}>
-          <RadioButton isActive={!selectedTypes.length} />
-          <FilterText isActive={!selectedTypes.length}>All {title}</FilterText>
+        <FilterItem className={!selectedTypes.length ? 'is-active' : ''} onClick={onResetClick}>
+          <RadioButton className={!selectedTypes.length ? 'is-active' : ''} />
+          <FilterText className={!selectedTypes.length ? 'is-active' : ''}>All {title}</FilterText>
         </FilterItem>
         <FilterSubSection multipleColumns={needsSeveralColumns}>
           {columns.map((column, index) => (
             <SubSectionColumn key={column[index]}>
               {column.map((type: string) => (
-                <FilterItem key={type} isActive={selectedTypes.includes(type)} onClick={() => onTypeClick(type)}>
-                  <RadioButton color={getColor(type)} isActive={selectedTypes.includes(type)} />
-                  <FilterText isActive={selectedTypes.includes(type)}>{type}</FilterText>
+                <FilterItem
+                  key={type}
+                  className={selectedTypes.includes(type) ? 'is-active' : ''}
+                  onClick={() => onTypeClick(type)}
+                >
+                  <RadioButton
+                    className={selectedTypes.includes(type) ? 'is-active' : ''}
+                    style={{ background: selectedTypes.includes(type) ? getColor(type) : '' }}
+                  />
+                  <FilterText className={selectedTypes.includes(type) ? 'is-active' : ''}>{type}</FilterText>
                 </FilterItem>
               ))}
             </SubSectionColumn>
@@ -100,7 +107,7 @@ const FilterList = styled(Flex)<{ needMultipleColumns?: boolean }>`
   overflow-y: auto;
 `
 
-const FilterItem = styled(Flex)<{ isActive: boolean }>`
+const FilterItem = styled(Flex)`
   flex-direction: row;
   align-items: center;
   align-self: start;
@@ -108,34 +115,42 @@ const FilterItem = styled(Flex)<{ isActive: boolean }>`
   padding: 8px;
   border-radius: 4px;
   transition: all 0.2s ease;
-
   font-size: 20px;
 
   &:hover {
-    background-color: rgba(255, 255, 255, 0.05);
+    background-color: ${colors.INPUT_BG};
   }
 
   &:active {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: ${colors.SCROLL_BAR};
   }
 `
 
-const FilterText = styled.span<{ isActive: boolean }>`
-  color: ${({ isActive }) => (isActive ? '#BAC1C6' : '#6B7A8D')};
-  font-weight: ${({ isActive }) => (isActive ? 600 : 500)};
+const FilterText = styled.span`
+  color: ${colors.GRAY7};
+  font-weight: 500;
   font-family: Barlow;
   font-size: 13px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 150px;
+
+  &.is-active {
+    color: ${colors.GRAY3};
+    font-weight: 600;
+  }
 `
 
-const RadioButton = styled.div<{ isActive: boolean; color?: string }>`
+const RadioButton = styled.div`
   width: 12px;
   height: 12px;
-  background: ${({ isActive, color }) => (isActive ? color || colors.white : '#303342')};
+  background: ${colors.BUTTON1};
   border-radius: 50%;
   margin-right: 8px;
   transition: all 0.3s ease;
+
+  &.is-active {
+    background: ${colors.white};
+  }
 `

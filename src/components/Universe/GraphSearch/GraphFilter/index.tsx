@@ -3,12 +3,12 @@ import React, { useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
-import FilterIcon from '~/components/Icons/FilterIcon'
+import SearchFilterIcon from '~/components/Icons/SearchFilterIcon'
 import { useDataStore, useNodeTypes } from '~/stores/useDataStore'
 import { useGraphStore } from '~/stores/useGraphStore'
 import { useSchemaStore } from '~/stores/useSchemaStore'
 import { colors } from '~/utils/colors'
-import { FilterGroup } from './FilterGroup/FilterGroup'
+import { FilterGroup } from './FilterGroup'
 
 const followerRanges = [
   { label: '< 1000', value: 'lt_1000' },
@@ -41,7 +41,7 @@ export const GraphFilter = () => {
   const getNodeTypeColor = (type: string) => {
     const schema = normalizedSchemasByType[type]
 
-    return schema?.primary_color || '#ffffff'
+    return schema?.primary_color || colors.white
   }
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -67,7 +67,12 @@ export const GraphFilter = () => {
 
   return (
     <div>
-      <FilterButton aria-describedby={id} isActive={Boolean(anchorEl)} onClick={handleClick} startIcon={<FilterIcon />}>
+      <FilterButton
+        aria-describedby={id}
+        isActive={Boolean(anchorEl)}
+        onClick={handleClick}
+        startIcon={<SearchFilterIcon />}
+      >
         Filter
       </FilterButton>
       <Popover
@@ -132,8 +137,8 @@ export const GraphFilter = () => {
 const FilterButton = styled(Button)<{ isActive: boolean }>`
   && {
     transition: all 0.2s ease;
-    background-color: ${({ isActive }) => (isActive ? colors.white : '#303342')};
-    color: ${({ isActive }) => (isActive ? '#353a46' : colors.white)};
+    background-color: ${({ isActive }) => (isActive ? colors.white : colors.BUTTON1)};
+    color: ${({ isActive }) => (isActive ? colors.GRAY9 : colors.white)};
     border-radius: 200px;
     text-transform: none;
     padding: 6px 16px;
@@ -143,10 +148,14 @@ const FilterButton = styled(Button)<{ isActive: boolean }>`
     line-height: 16px;
     height: 32px;
 
+    svg {
+      width: 14px;
+      height: 14px;
+    }
+
     &:hover {
       background-color: ${colors.white};
-      background: white;
-      color: #353a46;
+      color: ${colors.GRAY9};
     }
 
     &:active {
@@ -157,10 +166,9 @@ const FilterButton = styled(Button)<{ isActive: boolean }>`
 `
 
 const FilterContent = styled(Box)`
-  min-width: 350px;
   max-height: 420px;
   border-radius: 12px;
-  background: #16171d;
+  background: ${colors.BG2};
 `
 
 const FilterSection = styled(Flex)`
