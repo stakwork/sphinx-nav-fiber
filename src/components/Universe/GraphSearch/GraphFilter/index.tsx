@@ -1,5 +1,6 @@
 import { Box, Button, Popover } from '@mui/material'
 import React, { useState } from 'react'
+import { useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import FilterIcon from '~/components/Icons/FilterIcon'
@@ -8,6 +9,14 @@ import { useGraphStore } from '~/stores/useGraphStore'
 import { useSchemaStore } from '~/stores/useSchemaStore'
 import { colors } from '~/utils/colors'
 import { FilterGroup } from './FilterGroup/FilterGroup'
+
+const followerRanges = [
+  { label: '< 1000', value: 'lt_1000' },
+  { label: '1000 - 10,000', value: '1000_10000' },
+  { label: '> 10,000', value: 'gt_10000' },
+]
+
+const followerRangeTypes = followerRanges.map((range) => range.label)
 
 export const GraphFilter = () => {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
@@ -19,7 +28,15 @@ export const GraphFilter = () => {
   const setSelectedLinkTypes = useGraphStore((s) => s.setSelectedLinkTypes)
   const resetSelectedNodeTypes = useGraphStore((s) => s.resetSelectedNodeTypes)
   const resetSelectedLinkTypes = useGraphStore((s) => s.resetSelectedLinkTypes)
+  const [followersFilter, setFollowersFilter] = useGraphStore((s) => [s.followersFilter, s.setFollowersFilter])
   const { normalizedSchemasByType } = useSchemaStore((s) => s)
+
+  const location = useLocation()
+  const isTweetMindset = location.pathname.includes('/tweet/')
+
+  const selectedFollowersType = followersFilter
+    ? [followerRanges.find((range) => range.value === followersFilter)?.label || '']
+    : []
 
   const getNodeTypeColor = (type: string) => {
     const schema = normalizedSchemasByType[type]
@@ -33,6 +50,16 @@ export const GraphFilter = () => {
 
   const handleClose = () => {
     setAnchorEl(null)
+  }
+
+  const handleFollowersTypeClick = (type: string) => {
+    const selectedRange = followerRanges.find((range) => range.label === type)
+
+    setFollowersFilter(selectedRange ? selectedRange.value : null)
+  }
+
+  const resetFollowersFilter = () => {
+    setFollowersFilter(null)
   }
 
   const open = Boolean(anchorEl)
@@ -58,7 +85,7 @@ export const GraphFilter = () => {
               backgroundColor: 'transparent',
               boxShadow: 'none',
               borderRadius: '12px',
-              marginTop: '16px',
+              marginTop: '8px',
               overflow: 'visible',
             },
             className: 'filter-popover-paper',
@@ -86,6 +113,15 @@ export const GraphFilter = () => {
               title="Edges"
               types={linkTypes}
             />
+            {isTweetMindset && (
+              <FilterGroup
+                onResetClick={resetFollowersFilter}
+                onTypeClick={handleFollowersTypeClick}
+                selectedTypes={selectedFollowersType}
+                title="Followers"
+                types={followerRangeTypes}
+              />
+            )}
           </FilterSection>
         </FilterContent>
       </Popover>
