@@ -45,30 +45,31 @@ export const FilterGroup: React.FC<FilterGroupProps> = ({
 }) => {
   const columns = splitIntoColumns(types)
   const needsSeveralColumns = columns.length > 1
+  const isAllSelected = selectedTypes.length === 0 || selectedTypes.length === types.length
 
   return (
     <FilterColumn>
       <FilterList needMultipleColumns={needsSeveralColumns}>
-        <FilterItem className={!selectedTypes.length ? 'is-active' : ''} onClick={onResetClick}>
-          <RadioButton className={!selectedTypes.length ? 'is-active' : ''} />
-          <FilterText className={!selectedTypes.length ? 'is-active' : ''}>All {title}</FilterText>
+        <FilterItem className={isAllSelected ? 'is-active' : ''} onClick={onResetClick}>
+          <RadioButton className={isAllSelected ? 'is-active' : ''} />
+          <FilterText className={isAllSelected ? 'is-active' : ''}>All {title}</FilterText>
         </FilterItem>
         <FilterSubSection multipleColumns={needsSeveralColumns}>
           {columns.map((column, index) => (
             <SubSectionColumn key={column[index]}>
-              {column.map((type: string) => (
-                <FilterItem
-                  key={type}
-                  className={selectedTypes.includes(type) ? 'is-active' : ''}
-                  onClick={() => onTypeClick(type)}
-                >
-                  <RadioButton
-                    className={selectedTypes.includes(type) ? 'is-active' : ''}
-                    style={{ background: selectedTypes.includes(type) ? getColor(type) : '' }}
-                  />
-                  <FilterText className={selectedTypes.includes(type) ? 'is-active' : ''}>{type}</FilterText>
-                </FilterItem>
-              ))}
+              {column.map((type: string) => {
+                const isTypeActive = selectedTypes.includes(type) || isAllSelected
+
+                return (
+                  <FilterItem key={type} className={isTypeActive ? 'is-active' : ''} onClick={() => onTypeClick(type)}>
+                    <RadioButton
+                      className={isTypeActive ? 'is-active' : ''}
+                      style={{ background: isTypeActive ? getColor(type) : '' }}
+                    />
+                    <FilterText className={isTypeActive ? 'is-active' : ''}>{type}</FilterText>
+                  </FilterItem>
+                )
+              })}
             </SubSectionColumn>
           ))}
         </FilterSubSection>
