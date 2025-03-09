@@ -78,6 +78,8 @@ export const colors = {
   GRAY3: 'rgba(186, 193, 198, 1)',
   GRAY6: '#909BAA',
   GRAY7: 'rgba(107, 122, 141, 1)',
+  GRAY8: '#16171D',
+  GRAY9: '#353a46',
   SECONDARY_BLUE: 'rgba(130, 180, 255, 1)',
   PRIMARY_BLUE: 'rgba(97, 138, 255, 1)',
   BUTTON1: 'rgba(48, 51, 66, 1)',
