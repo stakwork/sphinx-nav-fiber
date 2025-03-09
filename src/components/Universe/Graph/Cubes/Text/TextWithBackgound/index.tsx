@@ -10,6 +10,8 @@ type RoundedRectProps = {
   color: string
 }
 
+const FONT_SIZE = 10
+
 const RoundedRect = forwardRef<Mesh, RoundedRectProps>(({ width, height, radius, color }, ref) => {
   const rectShape = useMemo(() => {
     const shape = new Shape()
@@ -62,7 +64,7 @@ const TextWithBackgroundComponent = ({ text, id }: TextWithBackgroundProps, ref:
   }
 
   const afterRenderHandler = () => {
-    if (bgWidth <= 20) {
+    if (bgWidth <= FONT_SIZE * 0.2 * text.length) {
       updateBgWidth()
     }
   }
@@ -82,7 +84,7 @@ const TextWithBackgroundComponent = ({ text, id }: TextWithBackgroundProps, ref:
         position={[15 + padding, 0, 1]}
         {...fontProps}
         anchorX="left"
-        fontSize={10}
+        fontSize={FONT_SIZE}
         name="text"
         onAfterRender={afterRenderHandler}
         onSync={updateBgWidth}
