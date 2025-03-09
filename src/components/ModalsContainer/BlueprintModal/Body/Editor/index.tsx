@@ -305,6 +305,7 @@ export const Editor = ({
 
   const handleDeleteAttribute = (attributeKey: string) => {
     setDeletedAttributes((prev) => [...prev, attributeKey])
+    setSubmitDisabled(false)
   }
 
   const handleDelete = async () => {
