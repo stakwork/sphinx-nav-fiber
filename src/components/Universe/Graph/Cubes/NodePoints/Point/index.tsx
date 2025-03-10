@@ -4,6 +4,7 @@ import { memo, useRef } from 'react'
 import { Group, Mesh } from 'three'
 import { useDataStore } from '~/stores/useDataStore'
 import { useGraphStore } from '~/stores/useGraphStore'
+import { useSimulationStore } from '~/stores/useSimulationStore'
 import { NodeExtended } from '~/types'
 import { generatePalette } from '~/utils/palleteGenerator'
 import { nodeSize } from '../../constants'
@@ -27,15 +28,10 @@ export const Point = memo(({ color, scale: scaleValue, name, index, node, nodeTy
       return
     }
 
-    const {
-      searchQuery,
-      simulation,
-      selectedNodeTypes,
-      selectedLinkTypes,
-      selectedNode,
-      hoveredNodeSiblings,
-      hoveredNode,
-    } = useGraphStore.getState()
+    const { searchQuery, selectedNodeTypes, selectedLinkTypes, selectedNode, hoveredNodeSiblings, hoveredNode } =
+      useGraphStore.getState()
+
+    const { simulation } = useSimulationStore.getState()
 
     const { nodesNormalized } = useDataStore.getState()
     const normalizedNode = nodesNormalized.get(node.ref_id)

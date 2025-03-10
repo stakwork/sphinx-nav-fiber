@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useDataStore } from '~/stores/useDataStore'
 import { useGraphStore } from '~/stores/useGraphStore'
+import { useSimulationStore } from '~/stores/useSimulationStore'
 
 export const useSelectedNodeFromUrl = () => {
   const [searchParams] = useSearchParams()
@@ -10,7 +11,7 @@ export const useSelectedNodeFromUrl = () => {
   const nodesNormalized = useDataStore((state) => state.nodesNormalized)
   const setSelectedNode = useGraphStore((s) => s.setSelectedNode)
 
-  const simulationVersion = useGraphStore((s) => s.simulationVersion)
+  const simulationVersion = useSimulationStore((s) => s.simulationVersion)
 
   useEffect(() => {
     if (selectedNodeId) {
