@@ -1,10 +1,12 @@
 import { memo, useRef, useState } from 'react'
 import { useGraphStore } from '~/stores/useGraphStore'
+import { useSimulationStore } from '~/stores/useSimulationStore'
 import { NodeExtended } from '~/types'
 import { CandidateWrapper } from './CandidateWrapper'
 
 export const Candidates = memo(() => {
-  const { activeNode, simulation } = useGraphStore((s) => s)
+  const { activeNode } = useGraphStore((s) => s)
+  const simulation = useSimulationStore((s) => s.simulation)
   const candidateIds = useRef<string[]>([''])
   const [updater, setUpdater] = useState(0)
 

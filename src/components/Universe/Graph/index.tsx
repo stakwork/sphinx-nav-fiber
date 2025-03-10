@@ -8,6 +8,7 @@ import { useDataStore } from '~/stores/useDataStore'
 import { useGraphStore } from '~/stores/useGraphStore'
 import { useMindsetStore } from '~/stores/useMindsetStore'
 import { useSchemaStore } from '~/stores/useSchemaStore'
+import { useSimulationStore } from '~/stores/useSimulationStore'
 import { NodeExtended } from '~/types'
 import { useSelectedNodeFromUrl } from '../useSelectedNodeFromUrl'
 import { Connections } from './Connections'
@@ -49,28 +50,29 @@ export const Graph = () => {
   const linksPositionRef = useRef(new Map<string, LinkPosition>())
   const nodesPositionRef = useRef(new Map<string, NodePosition>())
 
+  const { graphStyle, setGraphRadius } = useGraphStore((s) => s)
+
   const {
-    setData,
     simulation,
     simulationCreate,
-    simulationHelpers,
-    graphStyle,
-    setGraphRadius,
+    addClusterForce,
+    addNodesAndLinks,
+    simulationRestart,
     updateSimulationVersion,
-  } = useGraphStore((s) => s)
+    removeSimulation,
+    setForces,
+  } = useSimulationStore((s) => s)
 
   const highlightNodes = useGraphStore((s) => s.highlightNodes)
-
-  const removeSimulation = useGraphStore((s) => s.removeSimulation)
 
   useSelectedNodeFromUrl()
 
   useEffect(() => {
     if (highlightNodes.length) {
-      simulationHelpers?.addClusterForce()
-      simulationHelpers.simulationRestart()
+      addClusterForce()
+      simulationRestart()
     }
-  }, [simulationHelpers, highlightNodes])
+  }, [highlightNodes, addClusterForce, simulationRestart])
 
   useEffect(() => {
     if (!dataNew) {
@@ -86,13 +88,13 @@ export const Graph = () => {
     if (simulation) {
       const replace = isEqual(dataNew, dataInitial)
 
-      simulationHelpers.addNodesAndLinks(nodesClose, linksClone, replace)
+      addNodesAndLinks(nodesClose, linksClone, replace)
     }
 
     if (!simulation) {
       simulationCreate(nodesClose, linksClone)
     }
-  }, [setData, dataNew, simulation, simulationCreate, simulationHelpers, dataInitial])
+  }, [dataNew, simulation, simulationCreate, dataInitial, addNodesAndLinks])
 
   useEffect(() => {
     ;() => removeSimulation()
@@ -103,8 +105,8 @@ export const Graph = () => {
       return
     }
 
-    simulationHelpers.setForces()
-  }, [graphStyle, simulationHelpers, simulation])
+    setForces()
+  }, [graphStyle, setForces, simulation])
 
   useEffect(() => {
     if (!simulation) {

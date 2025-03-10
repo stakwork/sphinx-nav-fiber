@@ -5,6 +5,7 @@ import { Group, Object3D } from 'three'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore, useNodeTypes } from '~/stores/useDataStore'
 import { useGraphStore, useHoveredNode, useSelectedNode } from '~/stores/useGraphStore'
+import { useSimulationStore } from '~/stores/useSimulationStore'
 import { NodeExtended } from '~/types'
 import { colors } from '~/utils'
 import { useNodeNavigation } from '../../useNodeNavigation'
@@ -21,8 +22,10 @@ export const Cubes = memo(() => {
   const nodesWrapperRef = useRef<Group | null>(null)
   const instancesRef = useRef<Group | null>(null)
 
-  const { selectionGraphData, showSelectionGraph, setHoveredNode, setIsHovering, simulation } = useGraphStore((s) => s)
+  const { selectionGraphData, showSelectionGraph, setHoveredNode, setIsHovering } = useGraphStore((s) => s)
   const nodeTypes = useNodeTypes()
+
+  const simulation = useSimulationStore((s) => s.simulation)
 
   const dataInitial = useDataStore((s) => s.dataInitial)
   const nodesNormalized = useDataStore((s) => s.nodesNormalized)

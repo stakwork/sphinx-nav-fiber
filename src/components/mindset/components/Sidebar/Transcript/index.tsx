@@ -4,6 +4,7 @@ import { Flex } from '~/components/common/Flex'
 import { useGraphStore } from '~/stores/useGraphStore'
 import { useMindsetStore } from '~/stores/useMindsetStore'
 import { usePlayerStore } from '~/stores/usePlayerStore'
+import { useSimulationStore } from '~/stores/useSimulationStore'
 import { Node, NodeExtended } from '~/types'
 import { colors } from '~/utils'
 import { Viewer } from './Viewer'
@@ -19,7 +20,8 @@ export const Transcript = ({ name }: Props) => {
   const [activeClip, setActiveClip] = useState<Node | null>(null)
   const [isFirst, setIsFirst] = useState(true)
 
-  const [setActiveNode, activeNode, simulation] = useGraphStore((s) => [s.setActiveNode, s.activeNode, s.simulation])
+  const [setActiveNode, activeNode] = useGraphStore((s) => [s.setActiveNode, s.activeNode])
+  const simulation = useSimulationStore((s) => s.simulation)
 
   useEffect(() => {
     const interval = setInterval(() => {

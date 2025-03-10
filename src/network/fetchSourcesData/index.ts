@@ -341,7 +341,6 @@ export const getNode = async (id: string) => {
 export const getPathway = async (id: string, sortBy: 'followers' | 'impression_count' = 'impression_count') => {
   const response = await api.get<FetchDataResponse>(
     `/graph/pathway?node_type=['Tweet','Person','User']&edge_type=['HAS_REPLY>','HAS_QUOTE>','RETWEETED_BY>','THREAD_NEXT>','POSTED']&include_properties=true&start_node=${id}&depth=10&limit=20&sort_by=${sortBy}`,
-  )
 
   return response
 }
