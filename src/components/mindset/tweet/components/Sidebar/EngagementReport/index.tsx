@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import styled from 'styled-components'
+import { getPathway } from '~/network/fetchSourcesData'
 import { colors } from '~/utils'
 
 const Container = styled.div`
@@ -50,15 +51,14 @@ const CloseButton = styled.button`
   background: none;
   border: none;
   cursor: pointer;
-  padding: 8px;
   transition: background-color 0.2s;
   display: flex;
   align-items: center;
   border-radius: 50%;
+  color: ${colors.white};
 
   &:hover {
-    color: ${colors.white};
-    background-color: ${colors.BG2};
+    color: ${colors.gray100};
   }
 
   img {
@@ -216,198 +216,56 @@ const FooterButton = styled.button`
   }
 `
 
-const tweets = [
-  {
-    id: 1,
-    username: '@designer',
-    image_url: '/avatars/designer.jpg',
-    followers: '265.0K followers',
-    content: 'Redesigned our entire interface. What do you think? Before/after images:',
-    time: 'Mar 6, 02:50 PM',
-    engagement: 4.6,
-  },
-  {
-    id: 2,
-    username: '@product',
-    image_url: '/avatars/product.jpg',
-    followers: '423.0K followers',
-    content: "New feature alert! We've added what you've been asking for. Update your app now.",
-    time: 'Mar 6, 02:15 AM',
-    engagement: 5.4,
-  },
-  {
-    id: 3,
-    username: '@researcher',
-    image_url: '/avatars/researcher.jpg',
-    followers: '198.0K followers',
-    content: "New study findings challenge conventional wisdom. Here's what we discovered:",
-    time: 'Mar 6, 02:50 PM',
-    engagement: 6.2,
-  },
-  {
-    id: 4,
-    username: '@support',
-    image_url: '/avatars/support.jpg',
-    followers: '152.0K followers',
-    content: "We're here to help! New FAQ section added based on your common questions.",
-    time: 'Mar 5, 11:30 AM',
-    engagement: 3.8,
-  },
-  {
-    id: 5,
-    username: '@engineering',
-    image_url: '/avatars/engineering.jpg',
-    followers: '387.0K followers',
-    content: 'Major infrastructure upgrades completed. Expect improved performance!',
-    time: 'Mar 7, 09:15 AM',
-    engagement: 4.9,
-  },
-  {
-    id: 6,
-    username: '@marketing',
-    image_url: '/avatars/marketing.jpg',
-    followers: '512.0K followers',
-    content: 'Big announcement coming next week. Stay tuned! 🚀',
-    time: 'Mar 7, 03:20 PM',
-    engagement: 7.1,
-  },
-  {
-    id: 7,
-    username: '@community',
-    image_url: '/avatars/community.jpg',
-    followers: '234.0K followers',
-    content: 'Join our weekly AMA session - ask us anything!',
-    time: 'Mar 6, 10:00 PM',
-    engagement: 5.2,
-  },
-  {
-    id: 8,
-    username: '@security',
-    image_url: '/avatars/security.jpg',
-    followers: '176.0K followers',
-    content: 'Important security update: Please enable 2FA for added protection',
-    time: 'Mar 5, 04:45 PM',
-    engagement: 6.5,
-  },
-  {
-    id: 9,
-    username: '@data',
-    image_url: '/avatars/data.jpg',
-    followers: '298.0K followers',
-    content: 'New analytics dashboard now available in beta',
-    time: 'Mar 8, 08:30 AM',
-    engagement: 4.3,
-  },
-  {
-    id: 10,
-    username: '@designer',
-    image_url: '/avatars/designer.jpg',
-    followers: '265.0K followers',
-    content: 'Exploring dark mode variations. Which palette do you prefer?',
-    time: 'Mar 7, 01:15 PM',
-    engagement: 5.8,
-  },
-  {
-    id: 11,
-    username: '@mobile',
-    image_url: '/avatars/mobile.jpg',
-    followers: '341.0K followers',
-    content: 'iOS app update now available with bug fixes and improvements',
-    time: 'Mar 8, 10:00 AM',
-    engagement: 4.1,
-  },
-  {
-    id: 12,
-    username: '@web',
-    image_url: '/avatars/web.jpg',
-    followers: '287.0K followers',
-    content: 'New browser compatibility features implemented',
-    time: 'Mar 6, 04:30 PM',
-    engagement: 3.9,
-  },
-  {
-    id: 13,
-    username: '@growth',
-    image_url: '/avatars/growth.jpg',
-    followers: '198.0K followers',
-    content: 'User base milestone reached! 1M active users 🎉',
-    time: 'Mar 7, 12:00 PM',
-    engagement: 6.7,
-  },
-  {
-    id: 14,
-    username: '@devops',
-    image_url: '/avatars/devops.jpg',
-    followers: '154.0K followers',
-    content: 'Scheduled maintenance notice: March 9th 2-4 AM UTC',
-    time: 'Mar 6, 06:00 PM',
-    engagement: 4.4,
-  },
-  {
-    id: 15,
-    username: '@ux',
-    image_url: '/avatars/ux.jpg',
-    followers: '231.0K followers',
-    content: 'User testing session results are in - see what we learned',
-    time: 'Mar 8, 02:15 PM',
-    engagement: 5.1,
-  },
-  {
-    id: 16,
-    username: '@ai',
-    image_url: '/avatars/ai.jpg',
-    followers: '467.0K followers',
-    content: 'New ML model deployed with 15% accuracy improvement',
-    time: 'Mar 7, 11:30 AM',
-    engagement: 7.3,
-  },
-  {
-    id: 17,
-    username: '@backend',
-    image_url: '/avatars/backend.jpg',
-    followers: '189.0K followers',
-    content: 'API rate limits updated for better service stability',
-    time: 'Mar 5, 03:00 PM',
-    engagement: 4.7,
-  },
-  {
-    id: 18,
-    username: '@frontend',
-    image_url: '/avatars/frontend.jpg',
-    followers: '275.0K followers',
-    content: 'Component library v2.0 released with accessibility improvements',
-    time: 'Mar 8, 09:45 AM',
-    engagement: 5.6,
-  },
-  {
-    id: 19,
-    username: '@qa',
-    image_url: '/avatars/qa.jpg',
-    followers: '163.0K followers',
-    content: 'Automated testing coverage now at 85% and climbing',
-    time: 'Mar 6, 10:30 AM',
-    engagement: 4.0,
-  },
-  {
-    id: 20,
-    username: '@founder',
-    image_url: '/avatars/founder.jpg',
-    followers: '689.0K followers',
-    content: 'Reflecting on our 5-year journey - thank you all!',
-    time: 'Mar 9, 08:00 AM',
-    engagement: 8.2,
-  },
-]
+interface TweetData {
+  ref_id: string
+  username: string
+  image_url: string
+  followers: string
+  content: string
+  date: string
+  engagement: number
+}
 
-const EngagementReportOverlay = ({ onClose }: { onClose: () => void }) => {
+const EngagementReportOverlay = ({ onClose, id }: { onClose: () => void; id: string }) => {
   const [sortBy, setSortBy] = useState<'engagement' | 'followers'>('engagement')
+  const [tweets, setTweets] = useState<TweetData[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+
+  useEffect(() => {
+    const fetchTweets = async () => {
+      try {
+        const response = await getPathway(id)
+
+        const transformedData = response.nodes.map((node) => ({
+          ref_id: node.ref_id,
+          username: node.properties?.username || '@unknown',
+          image_url: node.properties?.image_url || '/avatars/default.jpg',
+          followers: node.properties?.followers
+            ? `${Math.round(Number(node.properties.followers) / 1000)}K followers`
+            : '0 followers',
+          content: node.properties?.text || 'No content available',
+          date: node.properties?.date ? new Date(node.properties.date).toLocaleString() : 'Unknown date',
+          engagement: node.properties?.engagement ? Math.round(Number(node.properties.engagement) * 10) / 10 : 0,
+        }))
+
+        setTweets(transformedData)
+      } catch (err) {
+        console.error('Error fetching tweets:', err)
+        setError('Failed to load engagement data')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchTweets()
+  }, [id])
 
   const sortedTweets = [...tweets].sort((a, b) => {
     if (sortBy === 'engagement') {
       return b.engagement - a.engagement
     }
 
-    // Convert follower strings to numbers for comparison
     const aFollowers = parseFloat(a.followers.replace(/[^0-9.]/g, ''))
     const bFollowers = parseFloat(b.followers.replace(/[^0-9.]/g, ''))
 
@@ -437,44 +295,62 @@ const EngagementReportOverlay = ({ onClose }: { onClose: () => void }) => {
         </div>
       </Controls>
 
-      <Table>
-        <HeaderRow>
-          <div>Rank</div>
-          <div>User Profile</div>
-          <div>Tweet</div>
-          <div>{sortBy === 'engagement' ? '% of Total Engagement' : 'Follower Count'}</div>
-        </HeaderRow>
-        {sortedTweets.map((tweet, index) => (
-          <Row key={tweet.id}>
-            <div style={{ color: '#10b981', fontWeight: 500 }}>{index + 1}</div>
-            <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-              <Avatar $imageUrl={tweet.image_url} />
-              <UserInfo>
-                <Username>{tweet.username}</Username>
-                <Followers>{tweet.followers}</Followers>
-              </UserInfo>
-            </div>
-            <Tweet>
-              {tweet.content}
-              <TweetTime>{tweet.time}</TweetTime>
-            </Tweet>
-            <Engagement>
-              {sortBy === 'engagement' ? `${tweet.engagement}%` : tweet.followers}
-              <EngagementBar
-                percentage={
-                  sortBy === 'engagement'
-                    ? tweet.engagement * 10
-                    : (parseFloat(tweet.followers.replace(/[^0-9.]/g, '')) / 500000) * 100
-                }
-              />
-            </Engagement>
-          </Row>
-        ))}
-      </Table>
+      {(() => {
+        if (loading) {
+          return <div style={{ padding: 24, textAlign: 'center' }}>Loading engagement data...</div>
+        }
 
-      <Footer>
-        <FooterButton onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>Scroll to Top</FooterButton>
-      </Footer>
+        if (error) {
+          return <div style={{ padding: 24, color: '#FF4D4F' }}>{error}</div>
+        }
+
+        if (!tweets.length) {
+          return <div style={{ padding: 24, textAlign: 'center' }}>No engagement data available</div>
+        }
+
+        return (
+          <>
+            <Table>
+              <HeaderRow>
+                <div>Rank</div>
+                <div>User Profile</div>
+                <div>Tweet</div>
+                <div>{sortBy === 'engagement' ? '% of Total Engagement' : 'Follower Count'}</div>
+              </HeaderRow>
+              {sortedTweets.map((tweet, index) => (
+                <Row key={tweet.ref_id}>
+                  <div style={{ color: '#10b981', fontWeight: 500 }}>{index + 1}</div>
+                  <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                    <Avatar $imageUrl={tweet.image_url} />
+                    <UserInfo>
+                      <Username>{tweet.username}</Username>
+                      <Followers>{tweet.followers}</Followers>
+                    </UserInfo>
+                  </div>
+                  <Tweet>
+                    {tweet.content}
+                    <TweetTime>{tweet.date}</TweetTime>
+                  </Tweet>
+                  <Engagement>
+                    {sortBy === 'engagement' ? `${tweet.engagement}%` : tweet.followers}
+                    <EngagementBar
+                      percentage={
+                        sortBy === 'engagement'
+                          ? tweet.engagement * 10
+                          : (parseFloat(tweet.followers.replace(/[^0-9.]/g, '')) / 500000) * 100
+                      }
+                    />
+                  </Engagement>
+                </Row>
+              ))}
+            </Table>
+
+            <Footer>
+              <FooterButton onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>Scroll to Top</FooterButton>
+            </Footer>
+          </>
+        )
+      })()}
     </Container>
   )
 }
