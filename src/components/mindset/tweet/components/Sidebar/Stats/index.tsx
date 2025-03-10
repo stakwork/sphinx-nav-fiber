@@ -113,15 +113,16 @@ const Value = styled.span`
 
 const EngagementButton = styled.button`
   width: 100%;
-  background: #2563eb;
+  background: ${colors.PRIMARY_BLUE};
   color: ${colors.white};
   padding: 8px 16px;
   border-radius: 8px;
   margin-top: 16px;
+  cursor: pointer;
   transition: background-color 0.2s;
-  border: 1px solid #2563eb;
+  border: 1px solid ${colors.PRIMARY_BLUE};
 
   &:hover {
-    background: #1d4ed8;
+    background: ${colors.PRIMARY_BLUE_BORDER};
   }
 `
