@@ -65,6 +65,7 @@ export const Stats = ({ node }: Props) => {
           <Value>{getSentimentIcon(node?.properties?.analytics_sentiment_score)}</Value>
         </Metric>
       </Grid>
+      <EngagementButton>Engagement Report</EngagementButton>
     </Card>
   )
 }
@@ -107,5 +108,20 @@ const Value = styled.span`
     width: 14px;
     height: 14px;
     margin-left: 4px;
+  }
+`
+
+const EngagementButton = styled.button`
+  width: 100%;
+  background: #2563eb;
+  color: ${colors.white};
+  padding: 8px 16px;
+  border-radius: 8px;
+  margin-top: 16px;
+  transition: background-color 0.2s;
+  border: 1px solid #2563eb;
+
+  &:hover {
+    background: #1d4ed8;
   }
 `
