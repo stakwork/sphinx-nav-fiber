@@ -56,7 +56,6 @@ const Wrapper = styled(Flex)`
   left: 0;
   flex-direction: column;
   align-items: center;
-  width: 100%;
   z-index: 100;
 `
 
@@ -65,7 +64,6 @@ const TopBarContainer = styled(Flex)`
   align-items: center;
   justify-content: flex-end;
   width: 100%;
-  max-width: 1200px;
   margin: 0 auto;
   gap: 12px;
 `
@@ -101,6 +99,7 @@ const Input = styled.input.attrs(() => ({
   autoCorrect: 'off',
   autoComplete: 'off',
 }))<{ loading?: boolean }>`
+  box-sizing: border-box;
   pointer-events: auto;
   height: 32px;
   padding: 11px 16px;
