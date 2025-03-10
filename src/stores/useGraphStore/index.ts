@@ -1,108 +1,15 @@
-import {
-  forceCenter,
-  forceCollide,
-  forceLink,
-  forceManyBody,
-  forceRadial,
-  forceSimulation,
-  forceX,
-  forceY,
-  forceZ,
-} from 'd3-force-3d'
 import { create } from 'zustand'
-import { ForceSimulation } from '~/transformers/forceSimulation'
-import { GraphData, Link, Node, NodeExtended } from '~/types'
+import { GraphData, Link, NodeExtended } from '~/types'
 import { useDataStore } from '../useDataStore'
-import { useMindsetStore } from '../useMindsetStore'
+import { useSimulationStore } from '../useSimulationStore'
 
-const simulationTicks = 100
-
-type Position = {
+export type Position = {
   x: number
   y: number
   z: number
 }
 
-type NodesToHide = Record<string, boolean>
-
 export type GraphStyle = 'sphere' | 'force' | 'split' | 'earth'
-
-export const distributeNodesOnSphere = (nodes: NodeExtended[], radius = 20) => {
-  const count = nodes.length
-  const goldenRatio = (1 + Math.sqrt(5)) / 2
-
-  return nodes.reduce((acc: Record<string, Position>, node, i) => {
-    const theta = (2 * Math.PI * i) / goldenRatio // Angle for uniform distribution
-    const phi = Math.acos(1 - (2 * (i + 0.5)) / count) // Elevation angle
-
-    acc[node.ref_id] = {
-      x: radius * Math.sin(phi) * Math.cos(theta),
-      y: radius * Math.sin(phi) * Math.sin(theta),
-      z: radius * Math.cos(phi),
-    }
-
-    return acc
-  }, {})
-}
-
-interface SimulationHelpers {
-  addNodesAndLinks: (nodes: Node[], links: Link[], replace: boolean) => void
-  setForces: () => void
-  addRadialForce: () => void
-  addDefaultForce: () => void
-  addSplitForce: () => void
-  addClusterForce: () => void
-  simulationRestart: () => void
-  getLinks: () => Link<NodeExtended>[]
-}
-
-const resetPosition = {
-  fx: null,
-  fy: null,
-  fz: null,
-  x: null,
-  y: null,
-  z: null,
-  vx: null,
-  vy: null,
-  vz: null,
-}
-
-const defaultSimulationHelpers: SimulationHelpers = {
-  addNodesAndLinks: () => {
-    /* do nothing */
-  },
-  setForces: () => {
-    /* do nothing */
-  },
-  addRadialForce: () => {
-    /* do nothing */
-  },
-  addDefaultForce: () => {
-    /* do nothing */
-  },
-  addClusterForce: () => {
-    /* do nothing */
-  },
-
-  addSplitForce: () => {
-    /* do nothing */
-  },
-
-  simulationRestart: () => {
-    /* do nothing */
-  },
-  getLinks: () => [],
-  /* do nothing */
-}
-
-const runSimulationPhase = (simulation: ForceSimulation) => {
-  simulation.stop().alpha(1)
-
-  for (let i = 0; i < simulationTicks; i += 1) {
-    simulation.tick()
-  }
-}
 
 export const graphStyles: GraphStyle[] = ['sphere', 'force', 'split', 'earth']
 
@@ -120,8 +27,6 @@ export type GraphStore = {
   showSelectionGraph: boolean
   disableCameraRotation: boolean
   scrollEventsDisabled: boolean
-  simulation: ForceSimulation | null
-  simulationHelpers: SimulationHelpers
   isHovering: boolean
   activeEdge: Link | null
   activeNode: NodeExtended | null
@@ -130,8 +35,6 @@ export type GraphStore = {
   hoveredNodeSiblings: string[]
   selectedNodeSiblings: string[]
   searchQuery: string
-  simulationVersion: number
-  nodesToHide: NodesToHide
   followersFilter: string | null
 
   setDisableCameraRotation: (rotation: boolean) => void
@@ -148,17 +51,13 @@ export type GraphStore = {
   setCameraFocusTrigger: (_: boolean) => void
   setShowSelectionGraph: (_: boolean) => void
   setSelectionData: (data: GraphData) => void
-  simulationCreate: (nodes: Node[], links: Link[]) => void
   setIsHovering: (isHovering: boolean) => void
-  removeSimulation: () => void
   addToSelectionPath: (id: string) => void
   setSearchQuery: (id: string) => void
   setSelectedNodeTypes: (type: string) => void
   resetSelectedNodeTypes: () => void
   setSelectedLinkTypes: (type: string) => void
   resetSelectedLinkTypes: () => void
-  updateSimulationVersion: () => void
-  setNodesToHide: (nodes: NodesToHide) => void
   setFollowersFilter: (filter: string | null) => void
 }
 
@@ -180,23 +79,17 @@ const defaultData: Omit<
   | 'setShowSelectionGraph'
   | 'setSelectionData'
   | 'setHideNodeDetails'
-  | 'simulationCreate'
   | 'setIsHovering'
-  | 'removeSimulation'
   | 'addToSelectionPath'
   | 'setSearchQuery'
   | 'setSelectedNodeTypes'
   | 'resetSelectedNodeTypes'
   | 'setSelectedLinkTypes'
   | 'resetSelectedLinkTypes'
-  | 'updateSimulationVersion'
   | 'setNodesToHide'
   | 'setFollowersFilter'
 > = {
   data: null,
-  nodesToHide: {},
-  simulationVersion: 0,
-  simulation: null,
   selectionGraphData: { nodes: [], links: [] },
   disableCameraRotation: true,
   scrollEventsDisabled: false,
@@ -210,7 +103,6 @@ const defaultData: Omit<
   activeEdge: null,
   cameraFocusTrigger: false,
   showSelectionGraph: false,
-  simulationHelpers: defaultSimulationHelpers,
   isHovering: false,
   selectionPath: [],
   activeNode: null,
@@ -244,11 +136,6 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
 
     set({ selectedLinkTypes: updatedTypes })
   },
-  updateSimulationVersion: () => {
-    const { simulationVersion } = get()
-
-    set({ simulationVersion: simulationVersion + 1 })
-  },
   resetSelectedNodeTypes: () => set({ selectedNodeTypes: [] }),
   resetSelectedLinkTypes: () => set({ selectedLinkTypes: [] }),
   setSelectionData: (selectionGraphData) => set({ selectionGraphData }),
@@ -258,7 +145,6 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
   setGraphRadius: (graphRadius) => set({ graphRadius }),
   setSelectionGraphRadius: (selectionGraphRadius) => set({ selectionGraphRadius }),
   setGraphStyle: (graphStyle) => set({ graphStyle }),
-  setNodesToHide: (nodesToHide) => set({ nodesToHide }),
   setHoveredNode: (hoveredNode) => {
     const { nodesNormalized } = useDataStore.getState() || {}
 
@@ -299,7 +185,9 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
       })
     }
 
-    const { selectedNode: stateSelectedNode, simulation, selectionPath } = get()
+    const { selectedNode: stateSelectedNode, selectionPath } = get()
+
+    const { simulation } = useSimulationStore.getState()
 
     if (stateSelectedNode?.ref_id !== selectedNode?.ref_id) {
       const selectedNodeWithCoordinates =
@@ -320,232 +208,6 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
   },
   setCameraFocusTrigger: (cameraFocusTrigger) => set({ cameraFocusTrigger }),
   setShowSelectionGraph: (showSelectionGraph) => set({ showSelectionGraph }),
-  simulationHelpers: {
-    addNodesAndLinks: (newNodes, newLinks, replace) => {
-      const { simulation, simulationHelpers } = get()
-
-      simulation.stop()
-
-      const structuredNodes = structuredClone(newNodes)
-      const structuredLinks = structuredClone(newLinks)
-
-      simulation.stop()
-
-      const nodes = replace ? [] : simulation.nodes()
-      const links = replace ? [] : simulation.force('link').links()
-
-      nodes.push(...structuredNodes)
-      links.push(...structuredLinks)
-
-      simulation.nodes(nodes)
-
-      simulation.force('link').links([]).links(links)
-
-      simulationHelpers.simulationRestart()
-
-      try {
-        console.log('try')
-      } catch (error) {
-        console.error(error)
-        // eslint-disable-next-line no-debugger
-      }
-
-      // Add simulation node to reference (so that we can access reference on tick to update position)
-    },
-    addRadialForce: () => {
-      const { simulation } = get()
-
-      simulation
-        .nodes(simulation.nodes().map((n: Node) => ({ ...n, ...resetPosition })))
-        .force('y', null)
-        // .force('radial', forceRadial(200, 0, 0, 0).strength(0.1))
-        // .force('center', forceCenter().strength(1))
-        .force(
-          'charge',
-          forceManyBody().strength((node: NodeExtended) => (node.scale || 1) * -5),
-          // .distanceMax(90),
-        )
-        .force('x', forceX().strength(0))
-        .force('y', forceY().strength(0))
-        .force('z', forceZ().strength(0))
-        .force(
-          'link',
-          forceLink()
-            .links(
-              simulation
-                .force('link')
-                .links()
-                .map((i: Link<NodeExtended>) => ({ ...i, source: i.source.ref_id, target: i.target.ref_id })),
-            )
-            .strength(1)
-            .distance(400)
-            .id((d: Node) => d.ref_id),
-        )
-        .force(
-          'collide',
-          forceCollide()
-            .radius((node: NodeExtended) => (node.scale || 1) * 95)
-            .strength(0.5)
-            .iterations(1),
-        )
-    },
-
-    addClusterForce: () => {
-      const { simulation } = get()
-      const { chapters } = useMindsetStore.getState()
-
-      const neighborhoodCenters = chapters?.length ? distributeNodesOnSphere(chapters, 1000) : null
-
-      simulation
-        .nodes(simulation.nodes().map((n: Node) => ({ ...n, ...resetPosition })))
-        .force(
-          'charge',
-          forceManyBody().strength((node: NodeExtended) => (node.scale || 1) * 0),
-        )
-        .force(
-          'x',
-          forceX((n: NodeExtended) => {
-            const neighborhood = neighborhoodCenters && n.neighbourHood ? neighborhoodCenters[n.neighbourHood] : null
-
-            return neighborhood?.x || 0
-          }).strength(0.1), // Attract to X
-        )
-        .force(
-          'y',
-          forceY((n: NodeExtended) => {
-            const neighborhood = neighborhoodCenters && n.neighbourHood ? neighborhoodCenters[n.neighbourHood] : null
-
-            return neighborhood?.y || 0
-          }).strength(0.1), // Attract to X
-        )
-        .force(
-          'z',
-          forceZ((n: NodeExtended) => {
-            const neighborhood = neighborhoodCenters && n.neighbourHood ? neighborhoodCenters[n.neighbourHood] : null
-
-            return neighborhood?.z || 0
-          }).strength(0.1), // Attract to X
-        )
-        .force(
-          'link',
-          forceLink()
-            .links(
-              simulation
-                .force('link')
-                .links()
-                .map((i: Link<NodeExtended>) => ({ ...i, source: i.source.ref_id, target: i.target.ref_id })),
-            )
-            .strength(0)
-            .distance(400)
-            .id((d: NodeExtended) => d.ref_id),
-        )
-        .force(
-          'collide',
-          forceCollide()
-            .radius((node: NodeExtended) => (node.scale || 1) * 95)
-            .strength(0.5)
-            .iterations(1),
-        )
-    },
-
-    addDefaultForce: () => {
-      const { simulation } = get()
-
-      simulation
-        .nodes(simulation.nodes().map((n: Node) => ({ ...n, ...resetPosition })))
-        .force('y', null)
-        .force('charge', forceManyBody().strength(-20))
-        .force('center', forceCenter().strength(1))
-        .force(
-          'collide',
-          forceCollide()
-            .radius(() => 250)
-            .strength(1)
-            .iterations(1),
-        )
-    },
-
-    addSplitForce: () => {
-      const { simulation } = get()
-      const { nodeTypes } = useDataStore.getState()
-
-      simulation
-        .stop()
-        .nodes(simulation.nodes().map((n: Node) => ({ ...n, ...resetPosition })))
-        .force('radial', forceRadial(200, 0, 0, 0).strength(0.1))
-        .force(
-          'collide',
-          forceCollide()
-            .radius(() => 250)
-            .strength(1)
-            .iterations(1),
-        )
-        .force(
-          'y',
-          forceY()
-            .y((node: NodeExtended) => {
-              const index = nodeTypes.indexOf(node.node_type)
-              const yOffset = Math.floor(index / 2) * 400
-
-              return index % 2 === 0 ? yOffset : -yOffset
-            })
-            .strength(10),
-        )
-    },
-
-    getLinks: () => {
-      const { simulation } = get()
-
-      return simulation ? simulation.force('link').links() : []
-    },
-
-    setForces: () => {
-      const { graphStyle, simulationHelpers } = get()
-
-      if (graphStyle === 'split') {
-        simulationHelpers.addSplitForce()
-      }
-
-      if (graphStyle === 'sphere') {
-        simulationHelpers.addRadialForce()
-      }
-
-      if (graphStyle === 'force') {
-        simulationHelpers.addClusterForce()
-      }
-
-      simulationHelpers.simulationRestart()
-    },
-
-    simulationRestart: () => {
-      const { simulation } = get()
-
-      if (false) {
-        runSimulationPhase(simulation)
-      }
-
-      simulation.alpha(1).restart()
-    },
-  },
-  simulationCreate: (nodes, links) => {
-    const structuredNodes = structuredClone(nodes)
-    const structuredLinks = structuredClone(links)
-
-    const simulation = forceSimulation([])
-      .numDimensions(3)
-      .stop()
-      .nodes(structuredNodes)
-      .force(
-        'link',
-        forceLink()
-          .strength(0)
-          .links(structuredLinks)
-          .id((d: Node) => d.ref_id),
-      )
-
-    set({ simulation })
-  },
-  removeSimulation: () => set({ simulation: null }),
   setSearchQuery: (searchQuery) => set({ searchQuery }),
   setFollowersFilter: (filter) => set({ followersFilter: filter }),
 }))

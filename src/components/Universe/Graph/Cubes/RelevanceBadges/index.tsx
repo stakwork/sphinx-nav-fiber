@@ -10,6 +10,7 @@ import { useNodeNavigation } from '~/components/Universe/useNodeNavigation'
 import { Avatar } from '~/components/common/Avatar'
 import { TypeBadge } from '~/components/common/TypeBadge'
 import { useGraphStore, useSelectedNodeRelativeIds } from '~/stores/useGraphStore'
+import { useSimulationStore } from '~/stores/useSimulationStore'
 import { NodeExtended } from '~/types'
 import { colors } from '~/utils/colors'
 import { truncateText } from '~/utils/truncateText'
@@ -132,7 +133,8 @@ const NodeBadge = ({ position, userData, color }: BadgeProps) => {
 }
 
 export const RelevanceBadges = memo(() => {
-  const { simulation, showSelectionGraph, selectedNode, selectionGraphData } = useGraphStore(useShallow((s) => s))
+  const { showSelectionGraph, selectedNode, selectionGraphData } = useGraphStore(useShallow((s) => s))
+  const simulation = useSimulationStore((s) => s.simulation)
 
   const selectedNodeRelativeIds = useSelectedNodeRelativeIds()
 

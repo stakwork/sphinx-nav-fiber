@@ -1,6 +1,6 @@
 import { Html } from '@react-three/drei'
 import { useMemo } from 'react'
-import { distributeNodesOnSphere } from '~/stores/useGraphStore'
+import { distributeNodesOnSphere } from '~/stores/useSimulationStore/utils/distributeNodesOnSphere'
 import { Node } from '~/types'
 
 type Props = {
