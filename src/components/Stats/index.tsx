@@ -112,20 +112,20 @@ export const Stats = () => {
   return (
     <StatisticsContainer>
       <StatisticsWrapper>
-        {false ||
-          (!stats &&
-            StatsConfig.map(({ name, Icon, key, mediaType, tooltip }) =>
-              stats[key as keyof TStats] !== 0 ? (
-                <Stat key={name} data-testid={mediaType} onClick={() => handleStatClick(mediaType)}>
-                  <Tooltip content={tooltip} margin="13px">
-                    <div className="icon">
-                      <Icon />
-                    </div>
-                    <div className="text">{stats[key as keyof TStats]}</div>
-                  </Tooltip>
-                </Stat>
-              ) : null,
-            ))}
+        {false &&
+          stats &&
+          StatsConfig.map(({ name, Icon, key, mediaType, tooltip }) =>
+            stats && stats[key as keyof TStats] !== 0 ? (
+              <Stat key={name} data-testid={mediaType} onClick={() => handleStatClick(mediaType)}>
+                <Tooltip content={tooltip} margin="13px">
+                  <div className="icon">
+                    <Icon />
+                  </div>
+                  <div className="text">{stats[key as keyof TStats]}</div>
+                </Tooltip>
+              </Stat>
+            ) : null,
+          )}
       </StatisticsWrapper>
       <StatisticsBudget>
         {false || isTotalProcessing ? (
