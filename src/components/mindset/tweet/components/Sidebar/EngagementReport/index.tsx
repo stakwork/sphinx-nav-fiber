@@ -235,7 +235,7 @@ const EngagementReportOverlay = ({ onClose, id }: { onClose: () => void; id: str
   useEffect(() => {
     const fetchTweets = async () => {
       try {
-        const response = await getPathway(id)
+        const response = await getPathway(id, sortBy === 'engagement' ? 'impression_count' : 'followers')
 
         const transformedData = response.nodes.map((node) => ({
           ref_id: node.ref_id,
@@ -246,7 +246,7 @@ const EngagementReportOverlay = ({ onClose, id }: { onClose: () => void; id: str
             : '0 followers',
           content: node.properties?.text || 'No content available',
           date: node.properties?.date ? new Date(node.properties.date).toLocaleString() : 'Unknown date',
-          engagement: node.properties?.engagement ? Math.round(Number(node.properties.engagement) * 10) / 10 : 0,
+          engagement: node.properties?.impression_count ? Math.round(Number(node.properties.impression_count)) : 0,
         }))
 
         setTweets(transformedData)
@@ -259,7 +259,7 @@ const EngagementReportOverlay = ({ onClose, id }: { onClose: () => void; id: str
     }
 
     fetchTweets()
-  }, [id])
+  }, [id, sortBy])
 
   const sortedTweets = [...tweets].sort((a, b) => {
     if (sortBy === 'engagement') {
