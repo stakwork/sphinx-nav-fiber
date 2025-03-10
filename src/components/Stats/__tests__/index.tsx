@@ -9,7 +9,6 @@ import * as network from '../../../network/fetchSourcesData'
 import { useDataStore } from '../../../stores/useDataStore'
 import { useUserStore } from '../../../stores/useUserStore'
 import * as formatBudget from '../../../utils/formatBudget'
-import * as formatStats from '../../../utils/formatStats'
 
 jest.mock('~/network/fetchSourcesData')
 jest.mock('~/components/Icons/AudioIcon', () => jest.fn(() => <div data-testid="AudioIcon" />))
@@ -76,30 +75,13 @@ describe('Component Test Stats', () => {
     expect(container.innerHTML).toBe('')
   })
 
-  it('correctly displays stats upon successful fetching.', () => {
+  it('correctly displays budget upon successful fetching.', () => {
     mockedUseDataStore.mockReturnValue([mockStats, jest.fn()])
 
     const { getByText } = renderWithRouter(<Stats />)
+
     expect(getByText(/SAT/)).toBeInTheDocument()
-  })
-
-  it('test formatting of numbers', () => {
-    const mockedFormatStats = jest.spyOn(formatStats, 'formatNumberWithCommas')
-
-    renderWithRouter(<Stats />)
-    ;(async () => {
-      await waitFor(() => {
-        expect(mockedFormatStats).toHaveBeenCalledTimes(8)
-      })
-    })()
-  })
-
-  it('tests that document stat pill is not displayed when the document count is zero', () => {
-    mockedUseDataStore.mockReturnValue([{ ...mockStats, numDocuments: '0' }, jest.fn()])
-
-    const { queryByTestId } = renderWithRouter(<Stats />)
-
-    expect(queryByTestId('DocumentIcon')).toBeNull()
+    expect(getByText(/20 000/)).toBeInTheDocument()
   })
 
   it('tests the formatting of the budget', () => {
@@ -113,18 +95,14 @@ describe('Component Test Stats', () => {
     expect(mockFormatBudget).toHaveBeenCalledWith(mockBudget)
   })
 
-  it('ensures that each stat is accompanied by its corresponding icon and label', () => {
+  it('ensures that budget is displayed with its corresponding icon and label', () => {
     mockedUseDataStore.mockReturnValue([mockStats, jest.fn()])
 
     const { getByText, getByTestId } = renderWithRouter(<Stats />)
 
     expect(getByText(/SAT/)).toBeInTheDocument()
-
-    expect(getByTestId('Audio')).toBeInTheDocument()
-    expect(getByTestId('Episodes')).toBeInTheDocument()
-    expect(getByTestId('Node')).toBeInTheDocument()
-    expect(getByTestId('Twitter')).toBeInTheDocument()
-    expect(getByTestId('Video')).toBeInTheDocument()
+    expect(getByTestId('BudgetIcon')).toBeInTheDocument()
+    expect(getByText('Budget')).toBeInTheDocument()
   })
 
   it('should render the button only if totalProcessing is present and greater than 0', async () => {
