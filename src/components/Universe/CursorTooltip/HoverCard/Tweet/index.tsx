@@ -104,6 +104,17 @@ export const Tweet = ({ node }: Props) => {
     verified?: boolean
   }
 
+  const displayMetrics = {
+    impressions,
+    likes,
+    replies,
+    retweets,
+    quotes,
+    bookmarks,
+  }
+
+  const hasLargeMetrics = Object.values(displayMetrics).some((value) => value && value > 100000)
+
   let postUrl = ''
 
   if (nodeType === 'Tweet' && tweetId && twitterHandle) {
@@ -114,7 +125,7 @@ export const Tweet = ({ node }: Props) => {
   const displaySubName = twitterHandle || alias || ''
 
   return (
-    <TooltipContainer>
+    <TooltipContainer hasLargeMetrics={hasLargeMetrics}>
       <UserContentWrapper>
         <ContentRow>
           <AvatarColumn>
@@ -161,7 +172,7 @@ export const Tweet = ({ node }: Props) => {
   )
 }
 
-const TooltipContainer = styled(Flex)`
+const TooltipContainer = styled(Flex)<{ hasLargeMetrics: boolean }>`
   width: fit-content;
   background: ${colors.HOVER_CARD_BG};
   flex-direction: column;
@@ -169,7 +180,7 @@ const TooltipContainer = styled(Flex)`
   align-items: flex-start;
   border-radius: 8px;
   overflow: hidden;
-  max-width: 390px;
+  max-width: ${({ hasLargeMetrics }) => (hasLargeMetrics ? '450px' : '390px')};
   border-bottom: 5px solid rgba(0, 0, 0, 0.3);
   padding: 16px 14px;
 `
