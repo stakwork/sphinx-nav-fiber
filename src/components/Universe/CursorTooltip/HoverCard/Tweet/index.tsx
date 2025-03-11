@@ -104,17 +104,6 @@ export const Tweet = ({ node }: Props) => {
     verified?: boolean
   }
 
-  const displayMetrics = {
-    impressions,
-    likes,
-    replies,
-    retweets,
-    quotes,
-    bookmarks,
-  }
-
-  const hasLargeMetrics = Object.values(displayMetrics).some((value) => value && value > 100000)
-
   let postUrl = ''
 
   if (nodeType === 'Tweet' && tweetId && twitterHandle) {
@@ -125,7 +114,7 @@ export const Tweet = ({ node }: Props) => {
   const displaySubName = twitterHandle || alias || ''
 
   return (
-    <TooltipContainer hasLargeMetrics={hasLargeMetrics}>
+    <TooltipContainer>
       <UserContentWrapper>
         <ContentRow>
           <AvatarColumn>
@@ -172,7 +161,7 @@ export const Tweet = ({ node }: Props) => {
   )
 }
 
-const TooltipContainer = styled(Flex)<{ hasLargeMetrics: boolean }>`
+const TooltipContainer = styled(Flex)`
   width: fit-content;
   background: ${colors.HOVER_CARD_BG};
   flex-direction: column;
@@ -180,7 +169,7 @@ const TooltipContainer = styled(Flex)<{ hasLargeMetrics: boolean }>`
   align-items: flex-start;
   border-radius: 8px;
   overflow: hidden;
-  max-width: ${({ hasLargeMetrics }) => (hasLargeMetrics ? '450px' : '390px')};
+  max-width: 390px;
   border-bottom: 5px solid rgba(0, 0, 0, 0.3);
   padding: 16px 14px;
 `
@@ -298,11 +287,13 @@ const VerifiedBadge = styled(Flex)`
 
 const MetricsContainer = styled(Flex)`
   flex-direction: row;
-  gap: 20px;
+  gap: 12px;
   margin-top: 4px;
   width: 100%;
   justify-content: center;
   align-items: center;
+  flex-wrap: wrap;
+  padding: 0 10px;
 `
 
 const MetricItem = styled(Flex)`
@@ -311,17 +302,21 @@ const MetricItem = styled(Flex)`
   gap: 4px;
   color: ${colors.white} !important;
   font-size: 13px;
-  margin-bottom: 10px;
+  margin-bottom: 4px;
+  min-width: 0;
 
   svg {
     width: 16px;
     height: 16px;
     color: rgba(255, 255, 255, 0.6) !important;
+    flex-shrink: 0;
   }
 
   span {
     color: ${colors.white} !important;
     min-width: 8px;
     text-align: right;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 `
