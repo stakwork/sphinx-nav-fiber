@@ -183,7 +183,17 @@ export const AiAnswer = ({
     let timeoutId: NodeJS.Timeout
 
     if (!answer || hasBeenRendered) {
-      return
+      return undefined
+    }
+
+    const isHtmlAnswer = isHtmlContent(answer)
+
+    if (isHtmlAnswer) {
+      setDisplayedText(answer)
+      setIsDescriptionComplete(true)
+      handleLoaded()
+
+      return undefined
     }
 
     if (displayedText.length < answer.length) {
@@ -195,8 +205,11 @@ export const AiAnswer = ({
       handleLoaded()
     }
 
-    // eslint-disable-next-line consistent-return
-    return () => clearTimeout(timeoutId)
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId)
+      }
+    }
   }, [answer, displayedText, handleLoaded, hasBeenRendered])
 
   useEffect(() => {
@@ -282,7 +295,11 @@ export const AiAnswer = ({
     }
   }
 
-  const isHtmlContent = (text: string): boolean => /<[^>]*>/i.test(text.trim())
+  const isHtmlContent = (text: string): boolean => {
+    const trimmedText = text.trim()
+
+    return trimmedText.startsWith('<!DOCTYPE html>') || trimmedText.startsWith('<html') || /^```html/.test(trimmedText)
+  }
 
   useEffect(() => {
     if (displayedText) {

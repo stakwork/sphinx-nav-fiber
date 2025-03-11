@@ -5,6 +5,7 @@ import { Flex } from '~/components/common/Flex'
 import { NodeExtended } from '~/types'
 import { colors } from '~/utils'
 import { Markers } from './Markers'
+import { ProgressChart } from './ProgressChart'
 
 type Props = {
   duration: number
@@ -33,6 +34,9 @@ export const ProgressBar = ({ duration, markers, handleProgressChange, playingTi
       <MarkersWrapper>
         <Markers markers={markers} />
       </MarkersWrapper>
+      <ChartWrapper>
+        <ProgressChart markers={markers} />
+      </ChartWrapper>
     </ProgressWrapper>
   )
 }
@@ -50,6 +54,7 @@ const ProgressWrapper = styled(Flex)`
   position: relative;
   flex: 1 1 100%;
   padding: 0;
+  height: 100%;
   box-sizing: border-box;
   margin-right: 12px;
 
@@ -65,6 +70,13 @@ const MarkersWrapper = styled(Flex)`
   left: 0;
   right: 0;
   top: 50%;
+`
+
+const ChartWrapper = styled(Flex)`
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 23px;
 `
 
 const TimeBubble = styled.div<{ $progress?: number }>`
@@ -130,6 +142,7 @@ const ProgressSlider = styled(Slider)<{ width: number }>`
     color: ${colors.white};
     height: 3px;
     width: 100%;
+    top: 50%;
     box-sizing: border-box;
     padding: 0;
     margin: 0;
