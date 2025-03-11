@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { lazy, useEffect, useRef, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
@@ -12,6 +12,10 @@ import { Header } from '../components/Header'
 import { PlayerControl } from './components/PlayerContols'
 import { SideBar } from './components/Sidebar'
 import { PLAYBACK_DURATION } from './constant'
+
+const LazyTweetAnalyze = lazy(() =>
+  import('~/components/ModalsContainer/TweetAnalyze').then(({ TweetAnalyze }) => ({ default: TweetAnalyze })),
+)
 
 const calculateMarkers = (data: FetchDataResponse): Node[] => {
   // Filter edges that have a defined 'start' property
@@ -172,24 +176,27 @@ export const TweetMindset = () => {
   }, [nodesAndEdgesRef, addNewNode])
 
   return (
-    <MainContainer>
-      <ContentWrapper direction="row">
-        <>
-          <Flex>
-            <Header />
-            <SideBar />
-          </Flex>
-          <ContentContainer>
-            <Flex basis="100%" grow={1} shrink={1}>
-              <Universe />
+    <>
+      <MainContainer>
+        <ContentWrapper direction="row">
+          <>
+            <Flex>
+              <Header />
+              <SideBar />
             </Flex>
-          </ContentContainer>
-        </>
-      </ContentWrapper>
-      <PlayerControlWrapper>
-        <PlayerControl markers={markers} />
-      </PlayerControlWrapper>
-    </MainContainer>
+            <ContentContainer>
+              <Flex basis="100%" grow={1} shrink={1}>
+                <Universe />
+              </Flex>
+            </ContentContainer>
+          </>
+        </ContentWrapper>
+        <PlayerControlWrapper>
+          <PlayerControl markers={markers} />
+        </PlayerControlWrapper>
+      </MainContainer>
+      <LazyTweetAnalyze />
+    </>
   )
 }
 

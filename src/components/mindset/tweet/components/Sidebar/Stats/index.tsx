@@ -1,5 +1,6 @@
 import { FaMeh, FaThumbsDown, FaThumbsUp } from 'react-icons/fa'
 import styled from 'styled-components'
+import { useModal } from '~/stores/useModalStore'
 import { Node } from '~/types'
 import { colors } from '~/utils/colors'
 
@@ -37,6 +38,9 @@ const getSentimentIcon = (score?: number) => {
 
 export const Stats = ({ node }: Props) => {
   // Calculate follower-to-view ratio safely.
+
+  const { open } = useModal('tweetAnalyze')
+
   const viewToFollowerRatio =
     node?.properties?.followers !== undefined &&
     node?.properties?.impression_count !== undefined &&
@@ -65,6 +69,7 @@ export const Stats = ({ node }: Props) => {
           <Value>{getSentimentIcon(node?.properties?.analytics_sentiment_score)}</Value>
         </Metric>
       </Grid>
+      <EngagementButton onClick={open}>Engagement Report</EngagementButton>
     </Card>
   )
 }
@@ -107,5 +112,20 @@ const Value = styled.span`
     width: 14px;
     height: 14px;
     margin-left: 4px;
+  }
+`
+
+const EngagementButton = styled.button`
+  width: 100%;
+  background: ${colors.PRIMARY_BLUE};
+  color: ${colors.white};
+  padding: 8px 16px;
+  border-radius: 8px;
+  margin-top: 16px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  border: 1px solid ${colors.PRIMARY_BLUE};
+  &:hover {
+    background: ${colors.PRIMARY_BLUE_BORDER};
   }
 `

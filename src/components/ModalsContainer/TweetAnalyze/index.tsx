@@ -1,0 +1,25 @@
+import { FC } from 'react'
+import { BaseModal } from '~/components/Modal'
+import { useModal } from '~/stores/useModalStore'
+import { Body } from './Body'
+
+export const TweetAnalyze: FC = () => {
+  const { close } = useModal('tweetAnalyze')
+
+  const handleClose = () => {
+    close()
+  }
+
+  return (
+    <BaseModal
+      data-testid="tweet-analyze-modal"
+      id="tweetAnalyze"
+      kind="large"
+      noWrap
+      onClose={handleClose}
+      preventOutsideClose
+    >
+      <Body />
+    </BaseModal>
+  )
+}
