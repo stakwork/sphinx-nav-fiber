@@ -338,10 +338,21 @@ export const getNode = async (id: string) => {
   return response
 }
 
-export const getPathway = async (id: string) => {
+export const getPathway = async (
+  id: string,
+  nodeTypes: string[] = ['Tweet', 'Person', 'User'],
+  edgeTypes: string[] = ['HAS_REPLY>', 'HAS_QUOTE>', 'RETWEETED_BY>', 'THREAD_NEXT>', '<POSTED'],
+  includeProperties = true,
+  depth = 10,
+  limit = 500,
+) => {
+  const nodeTypeParam = JSON.stringify(nodeTypes)
+  const edgeTypeParam = JSON.stringify(edgeTypes)
+
   const response = await api.get<FetchDataResponse>(
-    `/graph/pathway?node_type=['Tweet', 'Person', 'User']&edge_type=['HAS_REPLY>', 'HAS_QUOTE>', 'RETWEETED_BY>', 'THREAD_NEXT>',
-    '<POSTED']&include_properties=true&start_node=${id}&depth=10&limit=500`,
+    `/graph/pathway?node_type=${encodeURIComponent(nodeTypeParam)}&edge_type=${encodeURIComponent(
+      edgeTypeParam,
+    )}&include_properties=${includeProperties}&start_node=${id}&depth=${depth}&limit=${limit}`,
   )
 
   return response
