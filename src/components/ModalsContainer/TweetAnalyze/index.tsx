@@ -4,7 +4,7 @@ import { useModal } from '~/stores/useModalStore'
 import { Body } from './Body'
 
 export const TweetAnalyze: FC = () => {
-  const { close } = useModal('tweetAnalyze')
+  const { close, visible } = useModal('tweetAnalyze')
 
   const handleClose = () => {
     close()
@@ -19,7 +19,7 @@ export const TweetAnalyze: FC = () => {
       onClose={handleClose}
       preventOutsideClose
     >
-      <Body />
+      {visible && <Body />}
     </BaseModal>
   )
 }
