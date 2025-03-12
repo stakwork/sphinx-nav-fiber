@@ -342,17 +342,19 @@ export const getPathway = async (
   id: string,
   nodeTypes: string[] = ['Tweet', 'Person', 'User'],
   edgeTypes: string[] = ['HAS_REPLY>', 'HAS_QUOTE>', 'RETWEETED_BY>', 'THREAD_NEXT>', '<POSTED'],
+  sortBy = '',
   includeProperties = true,
   depth = 10,
   limit = 800,
 ) => {
   const nodeTypeParam = JSON.stringify(nodeTypes)
   const edgeTypeParam = JSON.stringify(edgeTypes)
+  const sortByParam = sortBy ? `&sort_by=${sortBy}` : ''
 
   const response = await api.get<FetchDataResponse>(
     `/graph/pathway?node_type=${encodeURIComponent(nodeTypeParam)}&edge_type=${encodeURIComponent(
       edgeTypeParam,
-    )}&include_properties=${includeProperties}&start_node=${id}&depth=${depth}&limit=${limit}`,
+    )}&include_properties=${includeProperties}&start_node=${id}&depth=${depth}&limit=${limit}${sortByParam}`,
   )
 
   return response
