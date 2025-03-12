@@ -56,12 +56,12 @@ const SortButton = styled.button<{ active?: boolean }>`
   }
 `
 
-const Avatar = styled.div<{ $imageUrl?: string }>`
+const Avatar = styled.div<{ imageUrl?: string }>`
   width: 32px;
   height: 32px;
   border-radius: 50%;
   background-color: ${colors.BG1};
-  ${({ $imageUrl }) => $imageUrl && `background-image: url(${$imageUrl});`}
+  ${({ imageUrl }) => imageUrl && `background-image: url(${imageUrl});`}
   background-size: cover;
 `
 
@@ -72,11 +72,6 @@ const UserInfo = styled.div`
 
 const Username = styled.span`
   font-size: 14px;
-`
-
-const Followers = styled.span`
-  color: ${colors.GRAY7};
-  font-size: 12px;
 `
 
 const TweetTime = styled.div`
@@ -109,6 +104,13 @@ const EngagementBar = styled.div<{ percentage: number }>`
   }
 `
 
+const Title = styled.h2`
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: ${colors.white};
+`
+
 const ENGAGEMENT = 'impression_count'
 const FOLLOWERS = 'followers'
 
@@ -132,7 +134,7 @@ export const Body = () => {
           selectedTweetId,
           ['Tweet', 'User'],
           ['HAS_REPLY>', 'HAS_QUOTE>', 'THREAD_NEXT>', '<POSTED'],
-          '',
+          'followers',
           true,
           10,
           800,
@@ -146,8 +148,8 @@ export const Body = () => {
           .slice(0, 20)
 
         const tweetNodeIdsByUser = userNodes.map((i) => {
-          const sourceEdge = response.edges.find((edge) => edge.source === i.ref_id)
-          const targetEdge = response.edges.find((edge) => edge.target === i.ref_id)
+          const sourceEdge = response.edges.find((edge) => edge.edge_type === 'POSTED' && edge.source === i.ref_id)
+          const targetEdge = response.edges.find((edge) => edge.edge_type === 'POSTED' && edge.target === i.ref_id)
 
           if (sourceEdge) {
             return sourceEdge.target
@@ -161,16 +163,50 @@ export const Body = () => {
         })
 
         const tweetsByUserCount = tweetNodeIdsByUser
-          .filter((id) => id !== null)
-          .map((id) => {
-            const followersCount = userNodes.find((node) => node.ref_id === id)?.properties?.followers || 0
+          .map((id, index) => {
+            if (!id) {
+              return null
+            }
+
+            const followersCount = userNodes[index]?.properties?.followers || 0
+            const tweetHandle = userNodes[index]?.properties?.twitter_handle || ''
+            const imageUrl = userNodes[index]?.properties?.image_url || ''
             const tweetNode = response.nodes.find((node) => node.ref_id === id)
 
-            return { ...tweetNode, properties: { ...(tweetNode?.properties || {}), followers: followersCount } }
+            return {
+              ...tweetNode,
+              properties: {
+                ...(tweetNode?.properties || {}),
+                followers: followersCount,
+                twitter_handle: tweetHandle,
+                image_url: imageUrl,
+              },
+            }
           })
-          .filter((i) => i !== undefined)
+          .filter((i) => i !== null)
 
-        const tweetsByImpressionCount = [...response.nodes]
+        const tweetsWithUserInfo = response.nodes
+          .filter((node) => node.node_type === 'Tweet' && node.properties?.author !== main?.properties?.author)
+          .map((tweet) => {
+            const relatedUser = response.nodes.find(
+              (node) => node.node_type === 'User' && node.properties?.author_id === tweet.properties?.author,
+            )
+
+            if (relatedUser) {
+              return {
+                ...tweet,
+                properties: {
+                  ...tweet.properties,
+                  twitter_handle: relatedUser.properties?.twitter_handle,
+                  image_url: relatedUser.properties?.image_url,
+                },
+              }
+            }
+
+            return tweet
+          })
+
+        const tweetsByImpressionCount = [...tweetsWithUserInfo]
           .sort((a, b) => {
             const aEngagement = Number(a.properties?.impression_count) || 0
             const bEngagement = Number(b.properties?.impression_count) || 0
@@ -199,7 +235,7 @@ export const Body = () => {
     }
 
     fetchTweets()
-  }, [selectedTweetId])
+  }, [selectedTweetId, sortBy])
 
   console.log(mainTweet)
 
@@ -219,14 +255,14 @@ export const Body = () => {
 
   return (
     <TabPanelWrapper>
-      <Flex>
+      <Flex p={24}>
+        <Title>Engagement Report</Title>
         <Flex direction="row">
           <SortButton active={sortBy === ENGAGEMENT} onClick={() => setSortBy(ENGAGEMENT)}>
             Total Engagement
           </SortButton>
           <SortButton active={sortBy === FOLLOWERS} onClick={() => setSortBy(FOLLOWERS)}>
             Follower Count
-            <img alt="Close" src="/svg-icons/ChevronUpIcon.svg" />
           </SortButton>
         </Flex>
       </Flex>
@@ -246,16 +282,15 @@ export const Body = () => {
               const percentage = (
                 (Number(tweet.properties?.impression_count) / Number(mainTweet?.properties?.impression_count || 1)) *
                 100
-              ).toFixed(1)
+              ).toFixed(2)
 
               return (
                 <TableRow key={tweet.ref_id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                   <TableCell>{index + 1}</TableCell>
                   <TableCell>
-                    <Avatar $imageUrl={tweet.image_url} />
+                    <Avatar imageUrl={tweet.properties?.image_url} />
                     <UserInfo>
                       {tweet?.properties?.twitter_handle && <Username>{tweet.properties.twitter_handle}</Username>}
-                      {tweet?.properties?.followers && <Followers>{tweet.properties.followers}</Followers>}
                     </UserInfo>
                   </TableCell>
                   <TableCell>
