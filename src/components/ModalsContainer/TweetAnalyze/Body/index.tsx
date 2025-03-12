@@ -142,89 +142,93 @@ export const Body = () => {
 
         const main = response.nodes.find((node) => node.ref_id === selectedTweetId)
 
-        const userNodes = response.nodes
-          .filter((node) => node.node_type === 'User')
-          .sort((a, b) => Number(b.properties?.followers) - Number(a.properties?.followers))
-          .slice(0, 20)
-
-        const tweetNodeIdsByUser = userNodes.map((i) => {
-          const sourceEdge = response.edges.find((edge) => edge.edge_type === 'POSTED' && edge.source === i.ref_id)
-          const targetEdge = response.edges.find((edge) => edge.edge_type === 'POSTED' && edge.target === i.ref_id)
-
-          if (sourceEdge) {
-            return sourceEdge.target
-          }
-
-          if (targetEdge) {
-            return targetEdge.source
-          }
-
-          return null
-        })
-
-        const tweetsByUserCount = tweetNodeIdsByUser
-          .map((id, index) => {
-            if (!id) {
-              return null
-            }
-
-            const followersCount = userNodes[index]?.properties?.followers || 0
-            const tweetHandle = userNodes[index]?.properties?.twitter_handle || ''
-            const imageUrl = userNodes[index]?.properties?.image_url || ''
-            const tweetNode = response.nodes.find((node) => node.ref_id === id)
-
-            return {
-              ...tweetNode,
-              properties: {
-                ...(tweetNode?.properties || {}),
-                followers: followersCount,
-                twitter_handle: tweetHandle,
-                image_url: imageUrl,
-              },
-            }
-          })
-          .filter((i) => i !== null)
-
-        const tweetsWithUserInfo = response.nodes
-          .filter((node) => node.node_type === 'Tweet' && node.properties?.author !== main?.properties?.author)
-          .map((tweet) => {
-            const relatedUser = response.nodes.find(
-              (node) => node.node_type === 'User' && node.properties?.author_id === tweet.properties?.author,
-            )
-
-            if (relatedUser) {
-              return {
-                ...tweet,
-                properties: {
-                  ...tweet.properties,
-                  twitter_handle: relatedUser.properties?.twitter_handle,
-                  image_url: relatedUser.properties?.image_url,
-                },
-              }
-            }
-
-            return tweet
-          })
-
-        const tweetsByImpressionCount = [...tweetsWithUserInfo]
-          .sort((a, b) => {
-            const aEngagement = Number(a.properties?.impression_count) || 0
-            const bEngagement = Number(b.properties?.impression_count) || 0
-
-            return bEngagement - aEngagement
-          })
-          .slice(0, 20)
-
         if (main) {
           setMainTweet(main)
         }
 
-        if (tweetsByUserCount) {
-          setTweetsByFollowers(tweetsByUserCount as unknown as Node[])
+        if (sortBy === ENGAGEMENT) {
+          const tweetsWithUserInfo = response.nodes
+            .filter((node) => node.node_type === 'Tweet' && node.properties?.author !== main?.properties?.author)
+            .map((tweet) => {
+              const relatedUser = response.nodes.find(
+                (node) => node.node_type === 'User' && node.properties?.author_id === tweet.properties?.author,
+              )
+
+              if (relatedUser) {
+                return {
+                  ...tweet,
+                  properties: {
+                    ...tweet.properties,
+                    twitter_handle: relatedUser.properties?.twitter_handle,
+                    image_url: relatedUser.properties?.image_url,
+                  },
+                }
+              }
+
+              return tweet
+            })
+
+          const tweetsByImpressionCount = [...tweetsWithUserInfo]
+            .sort((a, b) => {
+              const aEngagement = Number(a.properties?.impression_count) || 0
+              const bEngagement = Number(b.properties?.impression_count) || 0
+
+              return bEngagement - aEngagement
+            })
+            .slice(0, 20)
+
+          if (tweetsByImpressionCount) {
+            setTweetsByEngagement(tweetsByImpressionCount as Node[])
+          }
         }
 
-        if (tweetsByImpressionCount) {
-          setTweetsByEngagement(tweetsByImpressionCount as Node[])
+        if (sortBy === FOLLOWERS) {
+          const userNodes = response.nodes
+            .filter((node) => node.node_type === 'User' && node.properties?.author_id !== main?.properties?.author)
+            .sort((a, b) => Number(b.properties?.followers) - Number(a.properties?.followers))
+            .slice(0, 20)
+
+          const tweetNodeIdsByUser = userNodes.map((i) => {
+            const sourceEdge = response.edges.find((edge) => edge.edge_type === 'POSTED' && edge.source === i.ref_id)
+            const targetEdge = response.edges.find((edge) => edge.edge_type === 'POSTED' && edge.target === i.ref_id)
+
+            if (sourceEdge) {
+              return sourceEdge.target
+            }
+
+            if (targetEdge) {
+              return targetEdge.source
+            }
+
+            return null
+          })
+
+          const tweetsByUserCount = tweetNodeIdsByUser
+            .map((id, index) => {
+              if (!id) {
+                return null
+              }
+
+              const followersCount = userNodes[index]?.properties?.followers || 0
+              const tweetHandle = userNodes[index]?.properties?.twitter_handle || ''
+              const imageUrl = userNodes[index]?.properties?.image_url || ''
+              const tweetNode = response.nodes.find((node) => node.ref_id === id)
+
+              return {
+                ...tweetNode,
+                properties: {
+                  ...(tweetNode?.properties || {}),
+                  followers: followersCount,
+                  twitter_handle: tweetHandle,
+                  image_url: imageUrl,
+                },
+              }
+            })
+            .filter((i) => i !== null)
+
+          if (tweetsByUserCount) {
+            setTweetsByFollowers(tweetsByUserCount as unknown as Node[])
+          }
         }
       } catch (err) {
         console.error('Error fetching tweets:', err)
@@ -236,8 +240,6 @@ export const Body = () => {
 
     fetchTweets()
   }, [selectedTweetId, sortBy])
-
-  console.log(mainTweet)
 
   if (loading) {
     return <div style={{ padding: 24, textAlign: 'center' }}>Loading engagement data...</div>
