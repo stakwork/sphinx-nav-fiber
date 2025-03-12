@@ -201,9 +201,10 @@ export const Body = () => {
           selectedTweetId,
           ['Tweet'],
           ['HAS_REPLY>', 'HAS_QUOTE>', 'RETWEETED_BY>', 'THREAD_NEXT>', '<POSTED'],
+          'impression_count',
           true,
           10,
-          20,
+          21,
         )
 
         const main = response.nodes.find((node) => node.ref_id === selectedTweetId)
@@ -212,7 +213,7 @@ export const Body = () => {
           setMainTweet(main)
         }
 
-        setTweets(response.nodes)
+        setTweets(response.nodes.filter((node) => node.ref_id !== selectedTweetId))
       } catch (err) {
         console.error('Error fetching tweets:', err)
         setError('Failed to load engagement data')
