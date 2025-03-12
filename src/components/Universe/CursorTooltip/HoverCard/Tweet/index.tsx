@@ -287,11 +287,13 @@ const VerifiedBadge = styled(Flex)`
 
 const MetricsContainer = styled(Flex)`
   flex-direction: row;
-  gap: 20px;
+  gap: 12px;
   margin-top: 4px;
   width: 100%;
   justify-content: center;
   align-items: center;
+  flex-wrap: wrap;
+  padding: 0 10px;
 `
 
 const MetricItem = styled(Flex)`
@@ -300,17 +302,21 @@ const MetricItem = styled(Flex)`
   gap: 4px;
   color: ${colors.white} !important;
   font-size: 13px;
-  margin-bottom: 10px;
+  margin-bottom: 4px;
+  min-width: 0;
 
   svg {
     width: 16px;
     height: 16px;
     color: rgba(255, 255, 255, 0.6) !important;
+    flex-shrink: 0;
   }
 
   span {
     color: ${colors.white} !important;
     min-width: 8px;
     text-align: right;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 `

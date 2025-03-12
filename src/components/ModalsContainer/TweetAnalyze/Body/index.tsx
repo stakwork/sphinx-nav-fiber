@@ -134,7 +134,7 @@ export const Body = () => {
           selectedTweetId,
           ['Tweet', 'User'],
           ['HAS_REPLY>', 'HAS_QUOTE>', 'THREAD_NEXT>', '<POSTED'],
-          'followers',
+          sortBy,
           true,
           10,
           800,
