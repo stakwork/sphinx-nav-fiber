@@ -18,7 +18,6 @@ const TabPanelWrapper = styled(Flex)`
   display: flex;
   flex: 1;
   min-height: 572px;
-  max-height: 572px;
   overflow: auto;
 
   @media (max-width: 1024px) {
@@ -309,7 +308,9 @@ export const Body = () => {
                       )}
                     </TableCell>
                   )}
-                  {sortBy === FOLLOWERS && <TableCell>{tweet.properties?.followers}</TableCell>}
+                  {sortBy === FOLLOWERS && (
+                    <TableCell align="right">{Number(tweet.properties?.followers).toLocaleString()}</TableCell>
+                  )}
                 </TableRow>
               )
             })}

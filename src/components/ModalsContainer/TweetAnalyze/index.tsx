@@ -14,7 +14,7 @@ export const TweetAnalyze: FC = () => {
     <BaseModal
       data-testid="tweet-analyze-modal"
       id="tweetAnalyze"
-      kind="large"
+      kind="full"
       noWrap
       onClose={handleClose}
       preventOutsideClose
