@@ -79,9 +79,15 @@ export type FormData = {
   latitude: string
 }
 
-const filterAndSortEpisodes = (data: FetchDataResponse): Node[] =>
+const filterAndSortTweets = (data: FetchDataResponse): Node[] =>
   data.nodes
     .filter((node) => node.node_type.toLowerCase() === 'tweet' && node.properties?.status === 'completed')
+    .sort((a, b) => {
+      const aDate = Number(a.properties?.date) || 0
+      const bDate = Number(b.properties?.date) || 0
+
+      return bDate - aDate
+    })
     .slice(0, 3)
 
 const handleSubmitForm = async (data: FieldValues): Promise<SubmitErrRes> => {
@@ -117,7 +123,7 @@ export const TweetsLandingPage = () => {
       try {
         const res: FetchDataResponse = await getNodes()
 
-        const topTweets = filterAndSortEpisodes(res)
+        const topTweets = filterAndSortTweets(res)
 
         setEpisodes(topTweets.length ? topTweets : (HARDCODE as unknown as Node[]))
       } catch (err) {
