@@ -8,6 +8,7 @@ import TableRow from '@mui/material/TableRow'
 import moment from 'moment'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
+import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { getPathway } from '~/network/fetchSourcesData'
@@ -129,6 +130,8 @@ export const Body = () => {
           return
         }
 
+        setLoading(true)
+
         const response = await getPathway(
           selectedTweetId,
           ['Tweet', 'User'],
@@ -241,7 +244,14 @@ export const Body = () => {
   }, [selectedTweetId, sortBy])
 
   if (loading) {
-    return <div style={{ padding: 24, textAlign: 'center' }}>Loading engagement data...</div>
+    return (
+      <Flex align="center" grow={1} justify="center">
+        <ClipLoader color={colors.white} />
+        <div style={{ padding: 24, fontSize: 16, textAlign: 'center', color: colors.white }}>
+          Loading engagement data...
+        </div>
+      </Flex>
+    )
   }
 
   if (error) {
