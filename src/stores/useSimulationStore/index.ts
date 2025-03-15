@@ -1,18 +1,7 @@
-import {
-  forceCenter,
-  forceCollide,
-  forceLink,
-  forceManyBody,
-  forceRadial,
-  forceSimulation,
-  forceX,
-  forceY,
-  forceZ,
-} from 'd3-force-3d'
+import { forceCollide, forceLink, forceManyBody, forceSimulation, forceX, forceY, forceZ } from 'd3-force-3d'
 import { create } from 'zustand'
 import { ForceSimulation } from '~/transformers/forceSimulation'
 import { Link, Node, NodeExtended } from '~/types'
-import { useDataStore } from '../useDataStore'
 import { useGraphStore } from '../useGraphStore'
 import { useMindsetStore } from '../useMindsetStore'
 import { distributeNodesOnSphere } from './utils/distributeNodesOnSphere'
@@ -32,14 +21,12 @@ const resetPosition = {
 interface SimulationStore {
   simulation: ForceSimulation | null
   simulationVersion: number
-  simulationCreate: (nodes: Node[], links: Link[]) => void
+  simulationCreate: (nodes: Node[]) => void
   removeSimulation: () => void
   addNodesAndLinks: (nodes: Node[], links: Link[], replace: boolean) => void
   setForces: () => void
   addRadialForce: () => void
-  addDefaultForce: () => void
   addClusterForce: () => void
-  addSplitForce: () => void
   simulationRestart: () => void
   getLinks: () => Link<NodeExtended>[]
   updateSimulationVersion: () => void
@@ -49,9 +36,8 @@ export const useSimulationStore = create<SimulationStore>((set, get) => ({
   simulation: null,
   simulationVersion: 0,
 
-  simulationCreate: (nodes, links) => {
+  simulationCreate: (nodes) => {
     const structuredNodes = structuredClone(nodes)
-    const structuredLinks = structuredClone(links)
 
     const simulation = forceSimulation([])
       .numDimensions(3)
@@ -61,7 +47,7 @@ export const useSimulationStore = create<SimulationStore>((set, get) => ({
         'link',
         forceLink()
           .strength(0)
-          .links(structuredLinks)
+          .links([])
           .id((d: Node) => d.ref_id),
       )
 
@@ -80,10 +66,22 @@ export const useSimulationStore = create<SimulationStore>((set, get) => ({
     simulation.stop()
 
     const nodes = replace ? [] : simulation.nodes()
-    const links = replace ? [] : simulation.force('link').links()
+
+    const links = replace
+      ? []
+      : simulation
+          .force('link')
+          .links()
+          .map((i: Link<NodeExtended>) => ({ ...i, source: i.source.ref_id, target: i.target.ref_id }))
 
     nodes.push(...structuredClone(newNodes))
     links.push(...structuredClone(newLinks))
+
+    links.filter(
+      (i: Link) =>
+        nodes.some((n: NodeExtended) => n.ref_id === i.source) &&
+        nodes.some((n: NodeExtended) => n.ref_id === i.target),
+    )
 
     simulation.nodes(nodes)
     simulation.force('link').links([]).links(links)
@@ -92,7 +90,7 @@ export const useSimulationStore = create<SimulationStore>((set, get) => ({
   },
 
   setForces: () => {
-    const { simulationRestart, addRadialForce, addDefaultForce, addClusterForce, addSplitForce } = get()
+    const { simulationRestart, addRadialForce, addClusterForce } = get()
     const { graphStyle } = useGraphStore.getState()
 
     switch (graphStyle) {
@@ -102,11 +100,8 @@ export const useSimulationStore = create<SimulationStore>((set, get) => ({
       case 'force':
         addClusterForce()
         break
-      case 'split':
-        addSplitForce()
-        break
       default:
-        addDefaultForce()
+        addRadialForce()
         break
     }
 
@@ -209,58 +204,6 @@ export const useSimulationStore = create<SimulationStore>((set, get) => ({
       )
   },
 
-  addDefaultForce: () => {
-    const { simulation } = get()
-
-    if (!simulation) {
-      return
-    }
-
-    simulation
-      .nodes(simulation.nodes().map((n: Node) => ({ ...n, ...resetPosition })))
-      .force('charge', forceManyBody().strength(-20))
-      .force('center', forceCenter().strength(1))
-      .force(
-        'collide',
-        forceCollide()
-          .radius(() => 250)
-          .strength(1)
-          .iterations(1),
-      )
-  },
-
-  addSplitForce: () => {
-    const { simulation } = get()
-
-    if (!simulation) {
-      return
-    }
-
-    simulation
-      .stop()
-      .nodes(simulation.nodes().map((n: Node) => ({ ...n, ...resetPosition })))
-      .force('radial', forceRadial(200, 0, 0, 0).strength(0.1))
-      .force(
-        'collide',
-        forceCollide()
-          .radius(() => 250)
-          .strength(1)
-          .iterations(1),
-      )
-      .force(
-        'y',
-        forceY()
-          .y((node: NodeExtended) => {
-            const { nodeTypes } = useDataStore.getState()
-            const index = nodeTypes.indexOf(node.node_type)
-            const yOffset = Math.floor(index / 2) * 400
-
-            return index % 2 === 0 ? yOffset : -yOffset
-          })
-          .strength(10),
-      )
-  },
-
   getLinks: () => {
     const { simulation } = get()
 
@@ -281,3 +224,4 @@ export const useSimulationStore = create<SimulationStore>((set, get) => ({
     set((state) => ({ simulationVersion: state.simulationVersion + 1 }))
   },
 }))
+

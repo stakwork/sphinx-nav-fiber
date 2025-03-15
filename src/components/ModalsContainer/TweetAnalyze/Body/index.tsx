@@ -121,6 +121,7 @@ export const Body = () => {
           ['HAS_REPLY>', 'HAS_QUOTE>', 'THREAD_NEXT>', '<POSTED'],
           sortBy,
           true,
+          0,
           10,
           800,
         )
@@ -184,8 +185,8 @@ export const Body = () => {
             .slice(0, 20)
 
           const tweetNodeIdsByUser = userNodes.map((i) => {
-            const sourceEdge = response.edges.find((edge) => edge.edge_type === 'POSTED' && edge.source === i.ref_id)
-            const targetEdge = response.edges.find((edge) => edge.edge_type === 'POSTED' && edge.target === i.ref_id)
+            const sourceEdge = response.edges.find((edge) => edge.source === i.ref_id)
+            const targetEdge = response.edges.find((edge) => edge.target === i.ref_id)
 
             if (sourceEdge) {
               return sourceEdge.target
