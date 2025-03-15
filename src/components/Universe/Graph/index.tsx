@@ -82,17 +82,17 @@ export const Graph = () => {
     const nodes = dataNew.nodes || []
     const links = dataNew.links || []
 
-    const nodesClose = structuredClone(nodes)
+    const nodesClone = structuredClone(nodes)
     const linksClone = structuredClone(links)
 
     if (simulation) {
       const replace = isEqual(dataNew, dataInitial)
 
-      addNodesAndLinks(nodesClose, linksClone, replace)
+      addNodesAndLinks(nodesClone, linksClone, replace)
     }
 
     if (!simulation) {
-      simulationCreate(nodesClose, linksClone)
+      simulationCreate(nodesClone)
     }
   }, [dataNew, simulation, simulationCreate, dataInitial, addNodesAndLinks])
 

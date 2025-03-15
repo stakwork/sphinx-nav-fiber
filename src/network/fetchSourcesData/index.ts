@@ -344,6 +344,7 @@ export const getPathway = async (
   edgeTypes: string[] = ['HAS_REPLY>', 'HAS_QUOTE>', 'RETWEETED_BY>', 'THREAD_NEXT>', '<POSTED'],
   sortBy = '',
   includeProperties = true,
+  minDepth = 0,
   depth = 10,
   limit = 800,
 ) => {
@@ -354,7 +355,7 @@ export const getPathway = async (
   const response = await api.get<FetchDataResponse>(
     `/graph/pathway?node_type=${encodeURIComponent(nodeTypeParam)}&edge_type=${encodeURIComponent(
       edgeTypeParam,
-    )}&include_properties=${includeProperties}&start_node=${id}&depth=${depth}&limit=${limit}${sortByParam}`,
+    )}&include_properties=${includeProperties}&start_node=${id}&depth=${depth}&min_depth=${minDepth}&limit=${limit}${sortByParam}`,
   )
 
   return response
