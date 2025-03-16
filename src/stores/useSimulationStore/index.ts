@@ -77,14 +77,14 @@ export const useSimulationStore = create<SimulationStore>((set, get) => ({
     nodes.push(...structuredClone(newNodes))
     links.push(...structuredClone(newLinks))
 
-    links.filter(
+    const filteredLinks = links.filter(
       (i: Link) =>
         nodes.some((n: NodeExtended) => n.ref_id === i.source) &&
         nodes.some((n: NodeExtended) => n.ref_id === i.target),
     )
 
     simulation.nodes(nodes)
-    simulation.force('link').links([]).links(links)
+    simulation.force('link').links([]).links(filteredLinks)
 
     simulationRestart()
   },
