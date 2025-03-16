@@ -77,16 +77,20 @@ export const useSimulationStore = create<SimulationStore>((set, get) => ({
     nodes.push(...structuredClone(newNodes))
     links.push(...structuredClone(newLinks))
 
-    links.filter(
+    const filteredLinks = links.filter(
       (i: Link) =>
         nodes.some((n: NodeExtended) => n.ref_id === i.source) &&
         nodes.some((n: NodeExtended) => n.ref_id === i.target),
     )
 
-    simulation.nodes(nodes)
-    simulation.force('link').links([]).links(links)
+    try {
+      simulation.nodes(nodes)
+      simulation.force('link').links(filteredLinks)
 
-    simulationRestart()
+      simulationRestart()
+    } catch (error) {
+      console.error(error)
+    }
   },
 
   setForces: () => {
@@ -118,7 +122,7 @@ export const useSimulationStore = create<SimulationStore>((set, get) => ({
       // .force('center', forceCenter().strength(1))
       .force(
         'charge',
-        forceManyBody().strength((node: NodeExtended) => (node.scale || 1) * -10),
+        forceManyBody().strength((node: NodeExtended) => (node.scale || 1) * -250),
         // .distanceMax(90),
       )
       .force('x', forceX().strength(0))
@@ -140,7 +144,7 @@ export const useSimulationStore = create<SimulationStore>((set, get) => ({
       .force(
         'collide',
         forceCollide()
-          .radius((node: NodeExtended) => (node.scale || 1) * 95)
+          .radius((node: NodeExtended) => (node.scale || 1) * 10)
           .strength(0.5)
           .iterations(1),
       )
