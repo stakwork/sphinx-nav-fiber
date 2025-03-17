@@ -1,11 +1,13 @@
 import { FaMeh, FaThumbsDown, FaThumbsUp } from 'react-icons/fa'
 import styled from 'styled-components'
-import { useModal } from '~/stores/useModalStore'
+import { Flex } from '~/components/common/Flex'
+import SentimentDataIcon from '~/components/Icons/SentimentDataIcon'
 import { Node } from '~/types'
 import { colors } from '~/utils/colors'
 
 type Props = {
   node: Node
+  handleAnalyzeClick: () => void
 }
 
 const analyticsMapper = {
@@ -36,10 +38,8 @@ const getSentimentIcon = (score?: number) => {
   return <FaMeh color={colors.GRAY3} />
 }
 
-export const Stats = ({ node }: Props) => {
+export const Stats = ({ node, handleAnalyzeClick }: Props) => {
   // Calculate follower-to-view ratio safely.
-
-  const { open } = useModal('tweetAnalyze')
 
   const viewToFollowerRatio =
     node?.properties?.followers !== undefined &&
@@ -50,7 +50,17 @@ export const Stats = ({ node }: Props) => {
 
   return (
     <Card>
-      <Title>Analytics</Title>
+      <Flex align="center" direction="row" justify="space-between" mb={16}>
+        <Title>Analytics</Title>
+        <IconButton
+          onClick={(e) => {
+            e.stopPropagation()
+            handleAnalyzeClick()
+          }}
+        >
+          <SentimentDataIcon />
+        </IconButton>
+      </Flex>
       <Grid>
         {Object.entries(analyticsMapper).map(([key, { label, formatter }]) =>
           node?.properties?.[key] !== undefined ? (
@@ -69,7 +79,6 @@ export const Stats = ({ node }: Props) => {
           <Value>{getSentimentIcon(node?.properties?.analytics_sentiment_score)}</Value>
         </Metric>
       </Grid>
-      <EngagementButton onClick={open}>Engagement Report</EngagementButton>
     </Card>
   )
 }
@@ -77,8 +86,7 @@ export const Stats = ({ node }: Props) => {
 const Card = styled.div`
   background: ${colors.ANALYTICS_CARD_BG};
   border-radius: 16px;
-  padding: 16px 20px;
-  width: 100%;
+  padding: 16px 0;
   max-width: 350px;
 `
 
@@ -86,7 +94,6 @@ const Title = styled.h2`
   color: ${colors.white};
   font-size: 16px;
   font-weight: 500;
-  margin: 0 0 16px 0;
 `
 
 const Grid = styled.div`
@@ -115,17 +122,17 @@ const Value = styled.span`
   }
 `
 
-const EngagementButton = styled.button`
-  width: 100%;
-  background: ${colors.PRIMARY_BLUE};
+const IconButton = styled.a`
+  display: flex;
+  align-items: center;
+  justify-content: center;
   color: ${colors.white};
-  padding: 8px 16px;
-  border-radius: 8px;
-  margin-top: 16px;
+  font-size: 24px;
+  flex-shrink: 0;
+  color: ${colors.SOURCE_TABLE_LINK};
+  opacity: 1;
   cursor: pointer;
-  transition: background-color 0.2s;
-  border: 1px solid ${colors.PRIMARY_BLUE};
   &:hover {
-    background: ${colors.PRIMARY_BLUE_BORDER};
+    opacity: 0.6;
   }
 `

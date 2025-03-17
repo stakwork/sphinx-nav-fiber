@@ -1,17 +1,12 @@
+import { Button } from '@mui/material'
 import { useEffect, useState } from 'react'
-import { FieldValues } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
-import { ChevronRight } from '~/components/mindset/components/Icon/ChevronRight'
-import { NODE_ADD_ERROR } from '~/constants'
-import { api } from '~/network/api'
-import { useDataStore } from '~/stores/useDataStore'
-import { FetchDataResponse, Node, SubmitErrRes } from '~/types'
+import { FetchDataResponse, Node } from '~/types'
 import { colors } from '~/utils/colors'
 import { TweetCard } from '../TweetCard'
 import { getNodes } from './fetchNodes'
-import { isValidMediaUrl } from './utils'
 
 const HARDCODE = [
   {
@@ -88,33 +83,10 @@ const filterAndSortTweets = (data: FetchDataResponse): Node[] =>
 
       return bDate - aDate
     })
-    .slice(0, 3)
-
-const handleSubmitForm = async (data: FieldValues): Promise<SubmitErrRes> => {
-  const endPoint = 'add_node'
-
-  const body: { [index: string]: unknown } = {}
-
-  body.media_url = data.source
-  body.content_type = 'audio_video'
-
-  const res: SubmitErrRes = await api.post(`/${endPoint}`, JSON.stringify(body))
-
-  if (res.error) {
-    const { message } = res.error
-
-    throw new Error(message)
-  }
-
-  return res
-}
 
 export const TweetsLandingPage = () => {
-  const [inputValue, setInputValue] = useState('')
-  const [error, setError] = useState(false)
   const [episodes, setEpisodes] = useState<Node[]>([])
-  const [requestError, setRequestError] = useState<string>('')
-  const { setRunningProjectId } = useDataStore((s) => s)
+  const [selectedIds, setSelectedIds] = useState<string[]>([])
 
   const navigate = useNavigate()
 
@@ -134,77 +106,35 @@ export const TweetsLandingPage = () => {
     fetchLatest()
   }, [])
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target
+  const handleSelectCard = (id: string) => {
+    const ids = selectedIds.includes(id) ? selectedIds.filter((i) => i !== id) : [...selectedIds, id]
 
-    setInputValue(value)
-    setError(value !== '' && !isValidMediaUrl(value))
+    setSelectedIds(ids)
   }
 
-  const handleSubmit = async (url?: string) => {
-    const source = url || inputValue
+  const handleNavigateByCard = () => {
+    if (selectedIds.length) {
+      const ids = selectedIds.join('&')
 
-    if (isValidMediaUrl(source)) {
-      try {
-        const res = await handleSubmitForm({ source })
-
-        if (res.data.project_id) {
-          setRunningProjectId(res.data.project_id)
-        }
-
-        if (res.data.ref_id) {
-          navigate(`/tweet/${res.data.ref_id}`)
-        }
-
-        // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-      } catch (err: any) {
-        let errorMessage = NODE_ADD_ERROR
-
-        if (err?.status === 400) {
-          const res = await err.json()
-
-          errorMessage = res.errorCode || res?.status || NODE_ADD_ERROR
-
-          if (res.data.ref_id) {
-            navigate(`/tweet/${res.data.ref_id}`)
-          }
-        } else if (err instanceof Error) {
-          errorMessage = err.message
-        }
-
-        setRequestError(String(errorMessage))
-      }
-    }
-  }
-
-  const handleNavigateByCard = (id: string) => {
-    if (id) {
-      navigate(`/tweet/${id}`)
+      navigate(`/tweet/${ids}`)
     }
   }
 
   return (
     <Wrapper>
       <Title>Ideas have shapes</Title>
-      <InputWrapper>
-        <Input
-          error={error}
-          onChange={handleInputChange}
-          onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
-          placeholder="Paste tweet link"
-          value={inputValue}
-        />
-        <IconWrapper error={error} onClick={!error ? () => handleSubmit() : undefined}>
-          <ChevronRight />
-        </IconWrapper>
-      </InputWrapper>
-      {requestError && <div>{requestError}</div>}
 
       <SeedQuestionsWrapper>
         {episodes.map((node) => (
-          <TweetCard key={node?.ref_id} node={node} onClick={() => handleNavigateByCard(node?.ref_id || '')} />
+          <TweetCard
+            key={node?.ref_id}
+            node={node}
+            onClick={() => handleSelectCard(node?.ref_id || '')}
+            selected={selectedIds.some((i) => i === node.ref_id)}
+          />
         ))}
       </SeedQuestionsWrapper>
+      {selectedIds.length > 0 && <Button onClick={() => handleNavigateByCard()}>Show results</Button>}
     </Wrapper>
   )
 }
@@ -236,53 +166,14 @@ const Title = styled(Flex)`
   text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
 `
 
-const Input = styled.input<{ error?: boolean }>`
-  width: 100%;
-  max-width: 648px;
-  padding: 12px 28px 12px 16px;
-  border-radius: 100px;
-  border: 1px solid ${(props) => (props.error ? 'red' : colors.DIVIDER_4)};
-  background: ${colors.INPUT_BG};
-  color: ${colors.white};
-  font-family: Barlow;
-  font-size: 16px;
-  &::placeholder {
-    color: ${colors.INPUT_PLACEHOLDER};
-  }
-  &:focus {
-    outline: none;
-    border-color: ${(props) => (props.error ? 'red' : colors.primaryBlue)};
-  }
-`
-
-const InputWrapper = styled.div`
-  position: relative;
-  width: 648px;
-  display: flex;
-  align-items: center;
-`
-
-const IconWrapper = styled.div<{ error?: boolean }>`
-  position: absolute;
-  right: 16px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: ${colors.white};
-  font-size: 20px;
-  cursor: ${(props) => (props.error ? 'not-allowed' : 'pointer')};
-  svg {
-    width: 8px;
-    height: 17px;
-    color: ${colors.GRAY6};
-  }
-`
-
 const SeedQuestionsWrapper = styled.div`
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin: 20px 0 20px;
+  max-width: 648px;
   align-items: center;
   justify-content: center;
-  gap: 16px;
-  margin-top: 20px;
-  max-width: 648px;
-  height: 237px;
+  overflow-y: auto;
+  max-height: calc(100vh - 300px); /* Adjust 200px based on other elements' heights */
 `

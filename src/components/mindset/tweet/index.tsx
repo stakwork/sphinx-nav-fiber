@@ -1,21 +1,17 @@
-import { lazy, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { Universe } from '~/components/Universe'
 import { getPathway, getSchemaAll } from '~/network/fetchSourcesData'
 import { useDataStore } from '~/stores/useDataStore'
-import { useMindsetStore } from '~/stores/useMindsetStore'
 import { useSchemaStore } from '~/stores/useSchemaStore'
+import { useTweetMindsetStore } from '~/stores/useTweetMindsetStore'
 import { FetchDataResponse, Link, Node, NodeExtended } from '~/types'
 import { Header } from '../components/Header'
 import { PlayerControl } from './components/PlayerContols'
 import { SideBar } from './components/Sidebar'
 import { PLAYBACK_DURATION } from './constant'
-
-const LazyTweetAnalyze = lazy(() =>
-  import('~/components/ModalsContainer/TweetAnalyze').then(({ TweetAnalyze }) => ({ default: TweetAnalyze })),
-)
 
 const calculateMarkers = (data: FetchDataResponse): Node[] => {
   // Filter edges that have a defined 'start' property
@@ -55,11 +51,13 @@ export const TweetMindset = () => {
   const nodesAndEdgesRef = useRef<FetchDataResponse | null>(null)
   const [markers, setMarkers] = useState<NodeExtended[]>([])
   const { setSchemas } = useSchemaStore((s) => s)
-  const setSelectedTweet = useMindsetStore((s) => s.setSelectedTweet)
+  const setSelectedTweets = useTweetMindsetStore((s) => s.setSelectedTweets)
+  const selectedTweet = useTweetMindsetStore((s) => s.selectedTweet)
+  const setSelectedTweet = useTweetMindsetStore((s) => s.setSelectedTweet)
 
   const navigate = useNavigate()
 
-  const { tweetId: selectedTweetId } = useParams()
+  const { tweetId: selectedTweetIds } = useParams()
 
   useEffect(() => {
     const fetchSchemaData = async () => {
@@ -76,14 +74,24 @@ export const TweetMindset = () => {
   }, [setSchemas])
 
   useEffect(() => {
+    if (!selectedTweet) {
+      const id = selectedTweetIds?.split('&')[0]
+
+      if (id) {
+        setSelectedTweet(id)
+      }
+    }
+  }, [selectedTweet, selectedTweetIds, setSelectedTweet])
+
+  useEffect(() => {
     const init = async (id: string) => {
       try {
         const data = await getPathway(id)
 
-        const initialNode = data.nodes.find((i) => i.ref_id === selectedTweetId)
+        const initialNode = data.nodes.find((i) => i.ref_id === selectedTweet)
 
         if (initialNode) {
-          setSelectedTweet(initialNode)
+          setSelectedTweets([initialNode])
           addNewNode({ nodes: [initialNode], edges: [] })
         }
 
@@ -98,14 +106,14 @@ export const TweetMindset = () => {
       }
     }
 
-    if (selectedTweetId) {
-      init(selectedTweetId)
+    if (selectedTweet) {
+      init(selectedTweet)
     }
-  }, [addNewNode, navigate, selectedTweetId, setSelectedTweet])
+  }, [addNewNode, navigate, selectedTweet, setSelectedTweets])
 
   useEffect(() => {
     const update = (time: number) => {
-      const { tweetPlayingTime, tweetDuration } = useMindsetStore.getState()
+      const { tweetPlayingTime, tweetDuration } = useTweetMindsetStore.getState()
 
       // Convert progressOffset back to real-time equivalent
       const realOffsetTime = (tweetDuration / PLAYBACK_DURATION) * 3000
@@ -195,7 +203,6 @@ export const TweetMindset = () => {
           <PlayerControl markers={markers} />
         </PlayerControlWrapper>
       </MainContainer>
-      <LazyTweetAnalyze />
     </>
   )
 }

@@ -1,18 +1,38 @@
+import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { Avatar } from '~/components/common/Avatar'
 import { Flex } from '~/components/common/Flex'
 import CheckIcon from '~/components/Icons/CheckIcon'
 import LinkIcon from '~/components/Icons/LinkIcon'
 import PersonIcon from '~/components/Icons/PersonIcon'
+import { getNode } from '~/network/fetchSourcesData'
 import { Node } from '~/types'
 import { colors } from '~/utils/colors'
 import { adaptTweetNode } from '~/utils/twitterAdapter'
+import { Stats } from '../Stats'
 
-interface VideoCardProps {
-  node: Node
+interface TweetProps {
+  nodeId: string
+  handleAnalyzeClick: () => void
 }
 
-export const Tweet = ({ node }: VideoCardProps) => {
+export const Tweet = ({ nodeId, handleAnalyzeClick }: TweetProps) => {
+  const [node, setNode] = useState<Node | null>(null)
+
+  useEffect(() => {
+    const fetchNode = async () => {
+      try {
+        const data = await getNode(nodeId)
+
+        setNode(data)
+      } catch (error) {
+        console.error(error)
+      }
+    }
+
+    fetchNode()
+  }, [nodeId])
+
   const adaptedNode = node ? adaptTweetNode(node) : null
 
   const { text, name, verified, image_url: profilePicture, twitter_handle: twitterHandle } = adaptedNode || {}
@@ -54,6 +74,7 @@ export const Tweet = ({ node }: VideoCardProps) => {
           </UserNameRow>
           {twitterHandle && <UserHandle>@{twitterHandle}</UserHandle>}
           <TweetText>{text}</TweetText>
+          {node && <Stats handleAnalyzeClick={handleAnalyzeClick} node={node} />}
         </UserInfoSection>
       </ContentWrapper>
     </Wrapper>

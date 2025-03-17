@@ -122,7 +122,7 @@ export const useSimulationStore = create<SimulationStore>((set, get) => ({
       // .force('center', forceCenter().strength(1))
       .force(
         'charge',
-        forceManyBody().strength((node: NodeExtended) => (node.scale || 1) * -250),
+        forceManyBody().strength((node: NodeExtended) => (node.scale || 1) * -50),
         // .distanceMax(90),
       )
       .force('x', forceX().strength(0))
@@ -144,7 +144,7 @@ export const useSimulationStore = create<SimulationStore>((set, get) => ({
       .force(
         'collide',
         forceCollide()
-          .radius((node: NodeExtended) => (node.scale || 1) * 10)
+          .radius((node: NodeExtended) => (node.scale || 1) * 40)
           .strength(0.5)
           .iterations(1),
       )

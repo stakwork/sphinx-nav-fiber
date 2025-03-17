@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
-import { useMindsetStore } from '~/stores/useMindsetStore'
+import { useTweetMindsetStore } from '~/stores/useTweetMindsetStore'
 import { NodeExtended } from '~/types'
 import { colors } from '~/utils/colors'
 import { PLAYBACK_DURATION } from '../../constant'
@@ -13,12 +13,12 @@ type Props = {
 }
 
 export const PlayerControl = ({ markers }: Props) => {
-  const tweetPlayingTime = useMindsetStore((s) => s.tweetPlayingTime)
-  const setTweetPlayingTime = useMindsetStore((s) => s.setTweetPlayingTime)
-  const setTweetIsPlaying = useMindsetStore((s) => s.setTweetIsPlaying)
-  const setTweetDuration = useMindsetStore((s) => s.setTweetDuration)
-  const duration = useMindsetStore((s) => s.tweetDuration)
-  const tweetIsPlaying = useMindsetStore((s) => s.tweetIsPlaying)
+  const tweetPlayingTime = useTweetMindsetStore((s) => s.tweetPlayingTime)
+  const setTweetPlayingTime = useTweetMindsetStore((s) => s.setTweetPlayingTime)
+  const setTweetIsPlaying = useTweetMindsetStore((s) => s.setTweetIsPlaying)
+  const setTweetDuration = useTweetMindsetStore((s) => s.setTweetDuration)
+  const duration = useTweetMindsetStore((s) => s.tweetDuration)
+  const tweetIsPlaying = useTweetMindsetStore((s) => s.tweetIsPlaying)
   const [minTime, setMinTime] = useState(0)
   const [maxTime, setMaxTime] = useState(0)
   const lastPlayingTimeRef = useRef<number>(0)

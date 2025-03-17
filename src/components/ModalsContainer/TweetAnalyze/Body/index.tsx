@@ -6,7 +6,7 @@ import TableContainer from '@mui/material/TableContainer'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import moment from 'moment'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
@@ -97,145 +97,144 @@ const Title = styled.h2`
 const ENGAGEMENT = 'impression_count'
 const FOLLOWERS = 'followers'
 
-export const Body = () => {
+type Props = {
+  tweetId: string
+}
+
+export const Body = ({ tweetId }: Props) => {
   const [sortBy, setSortBy] = useState<'impression_count' | 'followers'>(ENGAGEMENT)
   const [tweetsByEngagement, setTweetsByEngagement] = useState<Node[]>([])
   const [tweetsByFollowers, setTweetsByFollowers] = useState<Node[]>([])
-  const [mainTweet, setMainTweet] = useState<Node | null>(null)
+  const [mainTweet, setMainTweets] = useState<Node[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
-  const { tweetId: selectedTweetId } = useParams()
+
+  const { tweetId: tweetIds } = useParams()
+
+  const idsToAnalyze = useMemo(() => {
+    const ids = tweetIds?.split('&') || []
+
+    return tweetId === 'summary' ? ids : ids.filter((id) => id === tweetId)
+  }, [tweetIds, tweetId])
 
   useEffect(() => {
     const fetchTweets = async () => {
+      if (idsToAnalyze.length === 0) {
+        return
+      }
+
+      setLoading(true)
+
       try {
-        if (!selectedTweetId) {
-          return
-        }
-
-        setLoading(true)
-
-        const response = await getPathway(
-          selectedTweetId,
-          ['Tweet', 'User'],
-          ['HAS_REPLY>', 'HAS_QUOTE>', 'THREAD_NEXT>', '<POSTED'],
-          sortBy,
-          true,
-          0,
-          10,
-          800,
+        const responses = await Promise.all(
+          idsToAnalyze.map((id) =>
+            getPathway(id, [], ['HAS_REPLY>', 'HAS_QUOTE>', 'THREAD_NEXT>', '<POSTED'], sortBy, true, 0, 10, 800),
+          ),
         )
 
-        const main = response.nodes.find((node) => node.ref_id === selectedTweetId)
+        const allNodes = responses.flatMap((response) => response.nodes)
+        const allEdges = responses.flatMap((response) => response.edges)
 
-        if (main) {
-          setMainTweet(main)
+        const mainTweets = idsToAnalyze
+          .map((id) => allNodes.find((node) => node.ref_id === id))
+          .filter((i) => i !== undefined)
+
+        if (mainTweets.length) {
+          setMainTweets(mainTweets)
         }
 
         if (sortBy === ENGAGEMENT) {
-          const tweetsWithUserInfo = response.nodes
+          const tweetsWithUserInfo = allNodes
             .filter(
               (node) =>
                 node.node_type === 'Tweet' &&
-                node.properties?.author !== main?.properties?.author &&
-                node.properties?.twitter_handle !== main?.properties?.twitter_handle,
+                !mainTweets.some(
+                  (main) =>
+                    node.properties?.author === main.properties?.author &&
+                    node.properties?.twitter_handle === main.properties?.twitter_handle,
+                ),
             )
             .map((tweet) => {
-              const relatedUser = response.nodes.find(
+              const relatedUser = allNodes.find(
                 (node) => node.node_type === 'User' && node.properties?.author_id === tweet.properties?.author,
               )
 
-              if (relatedUser) {
-                return {
-                  ...tweet,
-                  properties: {
-                    ...tweet.properties,
-                    twitter_handle: relatedUser.properties?.twitter_handle,
-                    image_url: relatedUser.properties?.image_url,
-                  },
-                }
-              }
-
-              return tweet
+              return relatedUser
+                ? {
+                    ...tweet,
+                    properties: {
+                      ...tweet.properties,
+                      twitter_handle: relatedUser.properties?.twitter_handle,
+                      image_url: relatedUser.properties?.image_url,
+                    },
+                  }
+                : tweet
             })
 
-          const tweetsByImpressionCount = [...tweetsWithUserInfo]
-            .sort((a, b) => {
-              const aEngagement = Number(a.properties?.impression_count) || 0
-              const bEngagement = Number(b.properties?.impression_count) || 0
-
-              return bEngagement - aEngagement
-            })
+          const tweetsByImpressionCount = tweetsWithUserInfo
+            .sort((a, b) => Number(b.properties?.impression_count || 0) - Number(a.properties?.impression_count || 0))
             .slice(0, 20)
 
-          if (tweetsByImpressionCount) {
-            setTweetsByEngagement(tweetsByImpressionCount as Node[])
-          }
+          setTweetsByEngagement(tweetsByImpressionCount)
         }
 
         if (sortBy === FOLLOWERS) {
-          const userNodes = response.nodes
+          const userNodes = allNodes
             .filter(
               (node) =>
                 node.node_type === 'User' &&
-                node.properties?.author_id !== main?.properties?.author &&
-                node.properties?.twitter_handle !== main?.properties?.twitter_handle,
+                !mainTweets.some((main) => main.properties?.author === node.properties?.author_id),
             )
-            .sort((a, b) => Number(b.properties?.followers) - Number(a.properties?.followers))
+            .sort((a, b) => Number(b.properties?.followers || 0) - Number(a.properties?.followers || 0))
             .slice(0, 20)
 
-          const tweetNodeIdsByUser = userNodes.map((i) => {
-            const sourceEdge = response.edges.find((edge) => edge.source === i.ref_id)
-            const targetEdge = response.edges.find((edge) => edge.target === i.ref_id)
+          const tweetNodeIdsByUser = userNodes
+            .map((user) => {
+              const sourceEdge = allEdges.find((edge) => edge.source === user.ref_id || edge.target === user.ref_id)
+              let connectedNodeId = null
 
-            if (sourceEdge) {
-              return sourceEdge.target
-            }
+              if (sourceEdge) {
+                connectedNodeId = sourceEdge.source === user.ref_id ? sourceEdge.target : sourceEdge.source
+              }
 
-            if (targetEdge) {
-              return targetEdge.source
-            }
-
-            return null
-          })
+              return connectedNodeId
+            })
+            .filter(Boolean)
 
           const tweetsByUserCount = tweetNodeIdsByUser
             .map((id, index) => {
-              if (!id) {
-                return null
-              }
+              const userNode = userNodes[index]
+              const tweetNode = allNodes.find((node) => node.ref_id === id)
 
-              const followersCount = userNodes[index]?.properties?.followers || 0
-              const tweetHandle = userNodes[index]?.properties?.twitter_handle || ''
-              const imageUrl = userNodes[index]?.properties?.image_url || ''
-              const tweetNode = response.nodes.find((node) => node.ref_id === id)
-
-              return {
-                ...tweetNode,
-                properties: {
-                  ...(tweetNode?.properties || {}),
-                  followers: followersCount,
-                  twitter_handle: tweetHandle,
-                  image_url: imageUrl,
-                },
-              }
+              return tweetNode
+                ? {
+                    ...tweetNode,
+                    properties: {
+                      ...tweetNode.properties,
+                      followers: userNode.properties?.followers,
+                      twitter_handle: userNode.properties?.twitter_handle,
+                      image_url: userNode.properties?.image_url,
+                    },
+                  }
+                : null
             })
-            .filter((i) => i !== null)
+            .filter(Boolean) as Node[]
 
-          if (tweetsByUserCount) {
-            setTweetsByFollowers(tweetsByUserCount as unknown as Node[])
-          }
+          setTweetsByFollowers(tweetsByUserCount)
         }
+
+        setLoading(false)
       } catch (err) {
         console.error('Error fetching tweets:', err)
-        setError('Failed to load engagement data')
+        setLoading(false)
+        setError('Error fetching tweets')
       } finally {
         setLoading(false)
       }
     }
 
     fetchTweets()
-  }, [selectedTweetId, sortBy])
+  }, [sortBy, idsToAnalyze])
 
   if (error) {
     return <div style={{ padding: 24, color: '#FF4D4F' }}>{error}</div>
