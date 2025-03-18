@@ -8,15 +8,16 @@ import { adaptTweetNode } from '~/utils/twitterAdapter'
 interface VideoCardProps {
   node: Node
   onClick: () => void
+  selected: boolean
 }
 
-export const TweetCard = ({ node, onClick }: VideoCardProps) => {
+export const TweetCard = ({ node, onClick, selected }: VideoCardProps) => {
   const adaptedNode = node ? adaptTweetNode(node) : null
 
   const { text, name, verified, image_url: profilePicture, twitter_handle: twitterHandle } = adaptedNode || {}
 
   return (
-    <CardWrapper onClick={onClick}>
+    <CardWrapper className={selected ? 'selected' : ''} onClick={onClick}>
       <Flex direction="column">
         <Flex align="center" direction="row" pr={16}>
           <PictureWrapper>
@@ -54,12 +55,17 @@ const CardWrapper = styled(Flex)`
   display: flex;
   flex-direction: column;
   align-items: center;
-  overflow: scroll;
+  overflow: hidden;
+
+  &.selected {
+    background: ${colors.SEEDQUESTION};
+    &:hover {
+      background: ${colors.SEEDQUESTION};
+    }
+  }
+
   &:hover {
     background: ${colors.SEEDQUESTION_HOVER};
-  }
-  &:active {
-    background: ${colors.SEEDQUESTION};
   }
 `
 

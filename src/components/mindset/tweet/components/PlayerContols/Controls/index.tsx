@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import PauseIcon from '~/components/Icons/PauseIcon'
 import PlayIcon from '~/components/Icons/PlayIcon'
 import { Flex } from '~/components/common/Flex'
-import { useMindsetStore } from '~/stores/useMindsetStore'
+import { useTweetMindsetStore } from '~/stores/useTweetMindsetStore'
 import { colors } from '~/utils/colors'
 
 type Props = {
@@ -12,8 +12,8 @@ type Props = {
 }
 
 export const Controls = ({ onPlaybackRestart }: Props) => {
-  const tweetIsPlaying = useMindsetStore((s) => s.tweetIsPlaying)
-  const setTweetIsPlaying = useMindsetStore((s) => s.setTweetIsPlaying)
+  const tweetIsPlaying = useTweetMindsetStore((s) => s.tweetIsPlaying)
+  const setTweetIsPlaying = useTweetMindsetStore((s) => s.setTweetIsPlaying)
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   const handleRewind = () => {}

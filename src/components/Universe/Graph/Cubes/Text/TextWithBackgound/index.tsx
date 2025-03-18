@@ -1,6 +1,7 @@
 import { Text } from '@react-three/drei'
 import { forwardRef, memo, useMemo, useRef, useState } from 'react'
 import { Box3, Group, Mesh, Shape, Vector3 } from 'three'
+import { nodeSize } from '../../constants'
 import { fontProps } from '../constants'
 
 type RoundedRectProps = {
@@ -10,7 +11,7 @@ type RoundedRectProps = {
   color: string
 }
 
-const FONT_SIZE = 10
+const FONT_SIZE = nodeSize / 3
 
 const RoundedRect = forwardRef<Mesh, RoundedRectProps>(({ width, height, radius, color }, ref) => {
   const rectShape = useMemo(() => {
@@ -47,9 +48,10 @@ const TextWithBackgroundComponent = ({ text, id }: TextWithBackgroundProps, ref:
   const cubeRef = useRef<Mesh>(null)
 
   const [bgWidth, setBgWidth] = useState(1)
-  const bgHeight = 30
+  const bgHeight = nodeSize
   const bgRadius = 6
   const padding = 10
+  const sizeHalf = nodeSize / 2
 
   const updateBgWidth = () => {
     if (textRef.current) {
@@ -71,7 +73,7 @@ const TextWithBackgroundComponent = ({ text, id }: TextWithBackgroundProps, ref:
 
   return (
     <group ref={ref}>
-      <mesh name="evt-handle" position={[bgWidth / 2 + 15, 0, 0]}>
+      <mesh name="evt-handle" position={[bgWidth / 2 + sizeHalf, 0, 0]}>
         <mesh position={[0, 0, 2]} userData={{ ref_id: id }}>
           <boxGeometry args={[bgWidth, bgHeight, 1]} />
           <meshBasicMaterial color="yellow" depthWrite={false} opacity={0} transparent />
@@ -81,7 +83,7 @@ const TextWithBackgroundComponent = ({ text, id }: TextWithBackgroundProps, ref:
       <Text
         ref={textRef}
         color="white"
-        position={[15 + padding, 0, 1]}
+        position={[sizeHalf + padding, 0, 1]}
         {...fontProps}
         anchorX="left"
         fontSize={FONT_SIZE}

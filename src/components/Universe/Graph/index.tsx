@@ -128,7 +128,7 @@ export const Graph = () => {
         if (gr && grPoints) {
           const nodes = simulation.nodes()
 
-          const maxLength = Math.max(gr.children.length, grPoints.children[0].children.length)
+          const maxLength = Math.max(gr.children.length)
 
           for (let index = 0; index < maxLength; index += 1) {
             const simulationNode = nodes[index]
@@ -156,12 +156,12 @@ export const Graph = () => {
 
           // Set positions for the link
           linksPositionRef.current.set(link.ref_id, {
-            sx,
-            sy,
-            sz,
-            tx,
-            ty,
-            tz,
+            sx: sx || 0,
+            sy: sy || 0,
+            sz: sz || 0,
+            tx: tx || 0,
+            ty: ty || 0,
+            tz: tz || 0,
           })
         })
 
@@ -190,12 +190,12 @@ export const Graph = () => {
 
                 // Set positions for the link
                 linksPositionRef.current.set(link.ref_id, {
-                  sx,
-                  sy,
-                  sz,
-                  tx,
-                  ty,
-                  tz,
+                  sx: sx || 0,
+                  sy: sy || 0,
+                  sz: sz || 0,
+                  tx: tx || 0,
+                  ty: ty || 0,
+                  tz: tz || 0,
                 })
 
                 text.position.set((sx + tx) / 2, (sy + ty) / 2, (sz + tz) / 2)
@@ -239,8 +239,8 @@ export const Graph = () => {
         // eslint-disable-next-line no-param-reassign
         i.fy = i.y
         // eslint-disable-next-line no-param-reassign
-        i.fz = i.z
-        nodesPositionRef.current.set(i.ref_id, { x: i.x, y: i.y, z: i.z })
+        i.fz = i.z || 0
+        nodesPositionRef.current.set(i.ref_id, { x: i.x, y: i.y, z: i.z || 0 })
       })
 
       if (groupRef?.current) {
@@ -275,12 +275,12 @@ export const Graph = () => {
 
           // Set positions for the link
           linksPositionRef.current.set(link.ref_id, {
-            sx,
-            sy,
-            sz,
-            tx,
-            ty,
-            tz,
+            sx: sx || 0,
+            sy: sy || 0,
+            sz: sz || 0,
+            tx: tx || 0,
+            ty: ty || 0,
+            tz: tz || 0,
           })
         })
 
@@ -309,12 +309,12 @@ export const Graph = () => {
 
                 // Set positions for the link
                 linksPositionRef.current.set(link.ref_id, {
-                  sx,
-                  sy,
-                  sz,
-                  tx,
-                  ty,
-                  tz,
+                  sx: sx || 0,
+                  sy: sy || 0,
+                  sz: sz || 0,
+                  tx: tx || 0,
+                  ty: ty || 0,
+                  tz: tz || 0,
                 })
 
                 text.position.set((sx + tx) / 2, (sy + ty) / 2, (sz + tz) / 2)

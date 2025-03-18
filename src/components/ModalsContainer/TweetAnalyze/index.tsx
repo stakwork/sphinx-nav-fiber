@@ -3,7 +3,11 @@ import { BaseModal } from '~/components/Modal'
 import { useModal } from '~/stores/useModalStore'
 import { Body } from './Body'
 
-export const TweetAnalyze: FC = () => {
+type Props = {
+  tweetId: string
+}
+
+export const TweetAnalyze: FC<Props> = ({ tweetId }) => {
   const { close, visible } = useModal('tweetAnalyze')
 
   const handleClose = () => {
@@ -19,7 +23,7 @@ export const TweetAnalyze: FC = () => {
       onClose={handleClose}
       preventOutsideClose
     >
-      {visible && <Body />}
+      {visible && <Body tweetId={tweetId} />}
     </BaseModal>
   )
 }
