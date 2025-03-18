@@ -183,7 +183,7 @@ export const Body = ({ tweetId }: Props) => {
               .slice(0, 20)
 
             if (tweetsByImpressionCount) {
-              mergedTweetsByImpressionCount.push(...tweetsByImpressionCount)
+              mergedTweetsByImpressionCount.push(...(tweetsByImpressionCount as unknown as Node[]))
             }
           }
 
