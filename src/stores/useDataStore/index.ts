@@ -28,7 +28,7 @@ export const defaultFilters = {
   top_node_count: '50',
   includeContent: 'true',
   node_type: [],
-  search_method: 'vector',
+  search_method: 'hybrid',
 }
 
 export type SidebarFilterWithCount = {
