@@ -120,8 +120,8 @@ export const useAiSummaryStore = create<AiSummaryStore>()(
       }
 
       if (ai.ai_summary === 'true') {
-        updatedParams.top_node_count = '0'
-        updatedParams.limit = '0'
+        updatedParams.top_node_count = '5'
+        updatedParams.limit = '5'
         Reflect.deleteProperty(updatedParams, 'search_method')
       }
 
