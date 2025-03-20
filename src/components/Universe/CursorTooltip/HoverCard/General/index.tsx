@@ -17,10 +17,13 @@ export const General = ({ node }: Props) => {
   const keyProperty = getNodeKeysByType(node.node_type) || ''
 
   let title = ''
-  const description = node?.properties?.description || node.properties?.text
+  let description = node?.properties?.description || node.properties?.text || ''
 
   if (node.node_type === 'Question') {
     title = node.name || ''
+  } else if (node.node_type === 'Claim') {
+    title = ''
+    description = node?.properties?.name || ''
   } else if (node?.properties) {
     title = node.properties[keyProperty] || ''
   }
