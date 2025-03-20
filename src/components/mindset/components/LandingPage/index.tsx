@@ -8,6 +8,7 @@ import { api } from '~/network/api'
 import { useDataStore } from '~/stores/useDataStore'
 import { FetchDataResponse, Node, SubmitErrRes } from '~/types'
 import { colors } from '~/utils/colors'
+import { isSphinx } from '~/utils/isSphinx'
 import { Header } from '../Header'
 import { ChevronRight } from '../Icon/ChevronRight'
 import { VideoCard } from '../VideoCard'
@@ -55,6 +56,7 @@ export const LandingPage = () => {
   const [episodes, setEpisodes] = useState<Node[]>([])
   const [requestError, setRequestError] = useState<string>('')
   const { setRunningProjectId } = useDataStore((s) => s)
+  const sphinxEnabled = isSphinx()
 
   const navigate = useNavigate()
 
@@ -124,19 +126,23 @@ export const LandingPage = () => {
       </Flex>
       <Wrapper>
         <Title>Ideas have shapes</Title>
-        <InputWrapper>
-          <Input
-            error={error}
-            onChange={handleInputChange}
-            onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
-            placeholder="Paste podcast or video link"
-            value={inputValue}
-          />
-          <IconWrapper error={error} onClick={!error ? () => handleSubmit() : undefined}>
-            <ChevronRight />
-          </IconWrapper>
-        </InputWrapper>
-        {requestError && <div>{requestError}</div>}
+        {sphinxEnabled && (
+          <>
+            <InputWrapper>
+              <Input
+                error={error}
+                onChange={handleInputChange}
+                onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
+                placeholder="Paste podcast or video link"
+                value={inputValue}
+              />
+              <IconWrapper error={error} onClick={!error ? () => handleSubmit() : undefined}>
+                <ChevronRight />
+              </IconWrapper>
+            </InputWrapper>
+            {requestError && <div>{requestError}</div>}
+          </>
+        )}
 
         <SeedQuestionsWrapper>
           {episodes.map((episode) => (
