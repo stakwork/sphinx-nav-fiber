@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { FieldValues } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
+import * as sphinx from 'sphinx-bridge'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { NODE_ADD_ERROR } from '~/constants'
@@ -8,7 +9,6 @@ import { api } from '~/network/api'
 import { useDataStore } from '~/stores/useDataStore'
 import { FetchDataResponse, Node, SubmitErrRes } from '~/types'
 import { colors } from '~/utils/colors'
-import { isSphinx } from '~/utils/isSphinx'
 import { Header } from '../Header'
 import { ChevronRight } from '../Icon/ChevronRight'
 import { VideoCard } from '../VideoCard'
@@ -56,7 +56,7 @@ export const LandingPage = () => {
   const [episodes, setEpisodes] = useState<Node[]>([])
   const [requestError, setRequestError] = useState<string>('')
   const { setRunningProjectId } = useDataStore((s) => s)
-  const sphinxEnabled = isSphinx()
+  const [sphinxEnabled, setSphinxEnabled] = useState(false)
 
   const navigate = useNavigate()
 
@@ -74,6 +74,22 @@ export const LandingPage = () => {
     }
 
     fetchLatest()
+  }, [])
+
+  useEffect(() => {
+    const auth = async () => {
+      try {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        const sphinxEnable = await sphinx.enable()
+
+        setSphinxEnabled(sphinxEnable)
+      } catch (err) {
+        console.error('Error enabling sphinx:', err)
+      }
+    }
+
+    auth()
   }, [])
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
