@@ -1,7 +1,6 @@
 import Button from '@mui/material/Button'
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
-import { highlightAiSummary } from '~/components/App/SideBar/AiSummary/utils/AiSummaryHighlight'
 import { StyledMarkdown } from '~/components/App/SideBar/AiSummary/utils/AiSummaryHighlight/markdown'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
@@ -16,8 +15,6 @@ import ThumbDownIcon from '~/components/Icons/ThumbDownIcon'
 import ThumbUpIcon from '~/components/Icons/ThumbUpIcon'
 import { postFeedback } from '~/network/fetchSourcesData'
 import { useAppStore } from '~/stores/useAppStore'
-import { useDataStore } from '~/stores/useDataStore'
-import { useUserStore } from '~/stores/useUserStore'
 import { ExtractedEntity } from '~/types/index'
 import { colors } from '~/utils/colors'
 
@@ -170,8 +167,6 @@ export const AiAnswer = ({
   hasAudio,
   chain,
 }: Props) => {
-  const { fetchData, setAbortRequests } = useDataStore((s) => s)
-  const { setBudget } = useUserStore((s) => s)
   const [displayedText, setDisplayedText] = useState('')
   const [highlightedEntities, setHighlightedEntities] = useState<ExtractedEntity[] | undefined>(entities)
   const [isDescriptionComplete, setIsDescriptionComplete] = useState(false)
@@ -223,22 +218,11 @@ export const AiAnswer = ({
     }
   }, [answer, displayedText, hasBeenRendered])
 
-  const handleSubmit = (search: string) => {
-    fetchData(setBudget, setAbortRequests, search)
-  }
-
   useEffect(() => {
     if (entities && highlightedEntities !== entities) {
       setHighlightedEntities(entities)
     }
   }, [entities, highlightedEntities])
-
-  const responseTextDisplay = highlightAiSummary(
-    displayedText,
-    handleSubmit,
-    highlightedEntities,
-    isDescriptionComplete,
-  )
 
   interface FeedbackResponse {
     status: 'success' | 'error'
@@ -279,8 +263,6 @@ export const AiAnswer = ({
       sendFeedback('unhelpful')
     }
   }
-
-  console.log(responseTextDisplay)
 
   const handleCopy = async () => {
     try {

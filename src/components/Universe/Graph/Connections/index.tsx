@@ -63,7 +63,7 @@ export const Connections = memo(({ linksPosition }: Props) => {
         key={dataInitial?.links.length}
         visible={!searchQuery && !selectedNodeTypes.length && !highlightNodes.length && !hoveredNode}
       >
-        <Segments limit={1000} lineWidth={0.1}>
+        <Segments limit={1000} lineWidth={0.2}>
           {dataInitial?.links.map((l: Link) => {
             const position = linksPosition.get(l.ref_id) || {
               sx: 0,

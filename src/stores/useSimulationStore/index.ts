@@ -1,4 +1,14 @@
-import { forceCollide, forceLink, forceManyBody, forceSimulation, forceX, forceY, forceZ } from 'd3-force-3d'
+import {
+  forceCenter,
+  forceCollide,
+  forceLink,
+  forceManyBody,
+  forceRadial,
+  forceSimulation,
+  forceX,
+  forceY,
+  forceZ,
+} from 'd3-force-3d'
 import { create } from 'zustand'
 import { ForceSimulation } from '~/transformers/forceSimulation'
 import { Link, Node, NodeExtended } from '~/types'
@@ -118,11 +128,11 @@ export const useSimulationStore = create<SimulationStore>((set, get) => ({
     simulation
       .nodes(simulation.nodes().map((n: Node) => ({ ...n, ...resetPosition })))
       .force('y', null)
-      // .force('radial', forceRadial(200, 0, 0, 0).strength(0.1))
-      // .force('center', forceCenter().strength(1))
+      .force('radial', forceRadial(900, 0, 0, 0).strength(0.1))
+      .force('center', forceCenter().strength(1))
       .force(
         'charge',
-        forceManyBody().strength((node: NodeExtended) => (node.scale || 1) * -50),
+        forceManyBody().strength((node: NodeExtended) => (node.scale || 1) * -100),
         // .distanceMax(90),
       )
       .force('x', forceX().strength(0))
@@ -138,13 +148,13 @@ export const useSimulationStore = create<SimulationStore>((set, get) => ({
               .map((i: Link<NodeExtended>) => ({ ...i, source: i.source.ref_id, target: i.target.ref_id })),
           )
           .strength(1)
-          .distance(400)
+          .distance(300)
           .id((d: Node) => d.ref_id),
       )
       .force(
         'collide',
         forceCollide()
-          .radius((node: NodeExtended) => (node.scale || 1) * 40)
+          .radius((node: NodeExtended) => (node.scale || 1) * 80)
           .strength(0.5)
           .iterations(1),
       )

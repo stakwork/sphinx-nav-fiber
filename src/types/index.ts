@@ -3,6 +3,7 @@ import { Mesh, Vector3 } from 'three'
 
 type QueryData = {
   ref_id: string
+  project_id?: string
 }
 
 export type FetchNodeParams = {
