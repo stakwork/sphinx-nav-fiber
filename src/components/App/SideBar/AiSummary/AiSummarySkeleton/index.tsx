@@ -83,6 +83,8 @@ export const AiSummarySkeleton = () => {
         const lastMessage = runningProjectMessages[runningProjectMessages.length - 1]
         const parsedMessage = JSON.parse(lastMessage)
 
+        console.log(parsedMessage)
+
         if (parsedMessage.type === 'on_step_start' || parsedMessage.type === 'on_step_complete') {
           setCurrentMessage(parsedMessage.message || 'Processing...')
 

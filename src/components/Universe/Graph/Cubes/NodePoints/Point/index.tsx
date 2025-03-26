@@ -56,7 +56,7 @@ export const Point = memo(({ color, scale: scaleValue, name, index, node, nodeTy
     const highlight = isHovered || isSelected || isHoveredSibling || isSelectedSibling
 
     if (highlight) {
-      nodeRef.current.scale.set(scale * 2, scale * 2, scale * 2)
+      nodeRef.current.scale.set(scale * 1.1, scale * 1.1, scale * 1.1)
 
       return
     }

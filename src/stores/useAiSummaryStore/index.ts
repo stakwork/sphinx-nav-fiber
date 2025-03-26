@@ -146,6 +146,10 @@ export const useAiSummaryStore = create<AiSummaryStore>()(
           setNewLoading(null)
         }
 
+        if (data.query_data?.project_id) {
+          useDataStore.setState({ runningProjectId: data.query_data.project_id })
+        }
+
         if (data?.nodes) {
           set({ dataInitial: data })
         }

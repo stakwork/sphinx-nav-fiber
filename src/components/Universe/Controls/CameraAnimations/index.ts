@@ -15,9 +15,11 @@ export const useCameraAnimations = (
 ) => {
   const selectedNode = useSelectedNode()
 
+  const cameraFocusTrigger = useGraphStore((s) => s.cameraFocusTrigger)
+
   useAutoNavigate(cameraControlsRef)
 
-  const { graphRadius } = useGraphStore((s) => s)
+  const graphRadius = useGraphStore((s) => s.graphRadius)
 
   useEffect(() => {
     if (!enabled) {
@@ -27,6 +29,8 @@ export const useCameraAnimations = (
   }, [enabled])
 
   useEffect(() => {
+    console.log('updateGraphRadius', graphRadius)
+
     if (!selectedNode && cameraControlsRef.current) {
       cameraControlsRef.current.setLookAt(
         initialCameraPosition.x,
@@ -39,7 +43,7 @@ export const useCameraAnimations = (
       )
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedNode, graphRadius])
+  }, [selectedNode, graphRadius, cameraFocusTrigger])
 
   return null
 }

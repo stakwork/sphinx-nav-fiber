@@ -141,7 +141,7 @@ export const TextNode = memo(
           ;(bg.material as THREE.MeshStandardMaterial).color.set(primaryColor || nodeBackground)
         }
 
-        nodeRef.current.scale.set(scale * 2, scale * 2, scale * 2)
+        nodeRef.current.scale.set(scale * 1.1, scale * 1.1, scale * 1.1)
       } else {
         const bg = backgroundRef.current.getObjectByName('background') as Mesh
 
