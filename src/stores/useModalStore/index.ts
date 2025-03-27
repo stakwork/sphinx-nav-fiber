@@ -24,6 +24,7 @@ export type AvailableModals =
   | 'onboardingFlow'
   | 'nodeAction'
   | 'tweetAnalyze'
+  | 'claim'
 
 type ModalStore = {
   currentModals: Record<AvailableModals, boolean>
@@ -57,6 +58,7 @@ const defaultData = {
     onboardingFlow: false,
     nodeAction: false,
     tweetAnalyze: false,
+    claim: false,
   },
 }
 

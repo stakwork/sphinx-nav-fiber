@@ -353,7 +353,7 @@ export const getPathway = async (
   const sortByParam = sortBy ? `&sort_by=${sortBy}` : ''
 
   const response = await api.get<FetchDataResponse>(
-    `/graph/pathway?node_type=${encodeURIComponent(nodeTypeParam)}&edge_type=${encodeURIComponent(
+    `/graph/subgraph?node_type=${encodeURIComponent(nodeTypeParam)}&edge_type=${encodeURIComponent(
       edgeTypeParam,
     )}&include_properties=${includeProperties}&start_node=${id}&depth=${depth}&min_depth=${minDepth}&limit=${limit}${sortByParam}`,
   )
