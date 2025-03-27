@@ -14,33 +14,40 @@ const getClaims = async (id: string) => {
   const claimsData = await getPathway(id, ['Claim'], [], '', true, 0, 3, 500)
   const supportClaimsData = await getPathway(id, ['Claim'], [], '', true, 1, 3, 500)
 
+  // Filter out duplicate nodes by ref_id
+  const uniqueNodes = [
+    ...new Map([...claimsData.nodes, ...supportClaimsData.nodes].map((node) => [node.ref_id, node])).values(),
+  ]
+
+  // Get all edges
+  const allEdges = [...claimsData.edges, ...supportClaimsData.edges]
+
+  // ✅ Find nodes that are the target of RELATED_TO edges
+  const nodesWithRelatedTo = new Set(
+    allEdges.filter((edge) => edge.edge_type === 'RELATED_TO').map((edge) => edge.target),
+  )
+
+  // ✅ Filter edges - remove HAS_CLAIM if the target has a RELATED_TO
+  const filteredEdges = allEdges.filter((edge) => {
+    if (edge.edge_type === 'HAS_CLAIM' && nodesWithRelatedTo.has(edge.target)) {
+      return false
+    }
+
+    return true
+  })
+
+  // Remove duplicate edges (by source-target)
+  const uniqueEdges = [...new Map(filteredEdges.map((edge) => [`${edge.source}-${edge.target}`, edge])).values()]
+
   return {
-    nodes: [...claimsData.nodes, ...supportClaimsData.nodes],
-    edges: [...claimsData.edges, ...supportClaimsData.edges],
+    nodes: uniqueNodes,
+    edges: uniqueEdges,
   }
 }
-
-const sampleData = {
-  name: 'Root',
-  children: [
-    {
-      name: 'Child 1',
-      children: [{ name: 'Grandchild 1' }, { name: 'Grandchild 2' }],
-    },
-    {
-      name: 'Child 2',
-      children: [{ name: 'Grandchild 3' }, { name: 'Grandchild 4' }],
-    },
-  ],
-}
-
-console.log(sampleData)
 
 export const Body = () => {
   const { selectedEpisode } = useMindsetStore((s) => s)
   const [claims, setClaims] = useState<FetchDataResponse | null>()
-
-  console.log(claims)
 
   const useMemoClaims = useMemo(() => {
     const claimsNormalized = (claims?.nodes || []).reduce((acc: Record<string, Node>, curr) => {
@@ -63,11 +70,7 @@ export const Body = () => {
     }
 
     data.children?.forEach((child: TreeNode) => {
-      console.log(data)
-
       const edgesHasClaim = (claims?.edges || []).filter((edge) => edge.edge_type === 'RELATED_TO')
-
-      console.log(edgesHasClaim)
 
       // eslint-disable-next-line no-param-reassign
       child.children = edgesHasClaim
@@ -87,18 +90,6 @@ export const Body = () => {
       const response = await getClaims(id)
 
       setClaims(response)
-    }
-
-    if (selectedEpisode?.ref_id) {
-      fetchClaims(selectedEpisode.ref_id)
-    }
-  }, [selectedEpisode])
-
-  useEffect(() => {
-    const fetchClaims = async (id: string) => {
-      const claimsData = await getClaims(id)
-
-      setClaims(claimsData)
     }
 
     if (selectedEpisode?.ref_id) {

@@ -9,39 +9,68 @@ type TreeNode = {
 }
 
 type TidyTreeProps = {
-  data: TreeNode
+  data: TreeNode | TreeNode[]
   width?: number
   height?: number
 }
 
-export const Tree: React.FC<TidyTreeProps> = ({ data, width = 1200, height = 1200 }) => {
+function wrapTextFn(textEl: SVGTextElement, textStr: string, wrapWidth = 150) {
+  const text = d3.select(textEl)
+  const words = textStr.split(/\s+/)
+  let line: string[] = []
+  const lineHeight = 1.1
+  const x = text.attr('x')
+  const dy = parseFloat(text.attr('dy')) || 0
+
+  text.text(null)
+
+  let tspan = text.append('tspan').attr('x', x).attr('dy', `${dy}em`)
+
+  words.forEach((word) => {
+    line.push(word)
+    tspan.text(line.join(' '))
+
+    if (tspan.node().getComputedTextLength() > wrapWidth) {
+      line.pop()
+      tspan.text(line.join(' '))
+      line = [word]
+      tspan = text.append('tspan').attr('x', x).attr('dy', `${lineHeight}em`).text(word)
+    }
+  })
+}
+
+export const Tree: React.FC<TidyTreeProps> = ({ data, width = 1400, height = 1200 }) => {
   const svgRef = useRef<SVGSVGElement | null>(null)
+  const gRef = useRef<SVGGElement | null>(null)
 
   useEffect(() => {
-    if (!data || !svgRef.current) {
+    if (!data || !svgRef.current || !gRef.current) {
       return
     }
 
     const svg = d3.select(svgRef.current)
+    const g = d3.select(gRef.current)
 
-    svg.selectAll('*').remove() // Clear previous render
+    svg.selectAll('g.render-group').remove()
 
-    const margin = { top: 20, right: 90, bottom: 30, left: 90 }
+    const margin = { top: 20, right: 160, bottom: 30, left: 160 }
 
-    const root = d3.hierarchy<TreeNode>(data)
+    const wrappedData = Array.isArray(data) ? { name: '__FAKE_ROOT__', children: data } : data
 
-    // Use nodeSize instead of size to avoid clipping
-    const treeLayout = d3.tree<TreeNode>().nodeSize([20, 380])
+    const root = d3.hierarchy<TreeNode>(wrappedData)
+    const treeLayout = d3.tree<TreeNode>().nodeSize([80, 300])
 
     treeLayout(root)
 
-    const g = svg.append('g').attr('transform', `translate(${margin.left},${height / 2})`) // center vertically
+    const contentGroup = g
+      .append('g')
+      .attr('class', 'render-group')
+      .attr('transform', `translate(${margin.left},${margin.top})`)
 
-    // Draw links
-    g.selectAll('.link')
-      .data(root.links())
+    contentGroup
+      .selectAll('.link')
+      .data(root.links().filter((link) => link.source.data.name !== '__FAKE_ROOT__'))
       .join('path')
-      .attr('class', 'link')
       .attr('fill', 'none')
       .attr('stroke', '#555')
       .attr('stroke-opacity', 0.4)
@@ -54,10 +83,11 @@ export const Tree: React.FC<TidyTreeProps> = ({ data, width = 1200, height = 120
           .y((d) => d.x),
       )
 
-    // Draw nodes
-    const node = g
-      .selectAll<SVGGElement, d3.HierarchyPointNode<TreeNode>>('.node')
-      .data(root.descendants())
+    const nodesToRender = root.descendants().filter((d) => d.data.name !== '__FAKE_ROOT__')
+
+    const node = contentGroup
+      .selectAll('.node')
+      .data(nodesToRender)
       .join('g')
       .attr('class', 'node')
       .attr('transform', (d) => `translate(${d.y},${d.x})`)
@@ -67,10 +97,25 @@ export const Tree: React.FC<TidyTreeProps> = ({ data, width = 1200, height = 120
     node
       .append('text')
       .attr('fill', 'white')
-      .attr('dy', 3)
+      .attr('font-size', 6)
       .attr('x', (d) => (d.children ? -10 : 10))
+      .attr('dy', '0.35em')
       .style('text-anchor', (d) => (d.children ? 'end' : 'start'))
-      .text((d) => (d.data.name.length > 30 ? `${d.data.name.slice(0, 30)}…` : d.data.name))
+      .each((d, i, nodes) => {
+        wrapTextFn(nodes[i], d.data.name, 150)
+      })
+
+    // Auto-resize viewBox
+    const bbox = contentGroup.node().getBBox()
+
+    svg.attr('viewBox', `${bbox.x - 100} ${bbox.y - 100} ${bbox.width + 200} ${bbox.height + 200}`)
+
+    // Add zoom behavior
+    const zoom = d3.zoom<SVGSVGElement, unknown>().on('zoom', (event) => {
+      g.attr('transform', event.transform)
+    })
+
+    svg.call(zoom)
   }, [data, width, height])
 
   return (
@@ -78,8 +123,10 @@ export const Tree: React.FC<TidyTreeProps> = ({ data, width = 1200, height = 120
       ref={svgRef}
       height={height}
       preserveAspectRatio="xMinYMin meet"
-      viewBox={`0 0 ${width} ${height}`}
+      style={{ width: '100%', height: '100%', background: '#111' }}
       width={width}
-    />
+    >
+      <g ref={gRef} />
+    </svg>
   )
 }
