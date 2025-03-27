@@ -72,6 +72,12 @@ const height = 8
 
 const fullWidth = 332
 
+interface LogMessage {
+  type: string
+  message?: string
+  skill_type?: string
+}
+
 export const AiSummarySkeleton = () => {
   const [currentMessage, setCurrentMessage] = useState<string>('Generating answer...')
   const [currentTitle, setCurrentTitle] = useState<string>('Answer')
@@ -81,20 +87,32 @@ export const AiSummarySkeleton = () => {
     if (runningProjectMessages.length > 0) {
       try {
         const lastMessage = runningProjectMessages[runningProjectMessages.length - 1]
-        const parsedMessage = JSON.parse(lastMessage)
+        let parsedMessage: LogMessage
 
-        console.log(parsedMessage)
+        try {
+          parsedMessage = JSON.parse(lastMessage)
+
+          console.log(parsedMessage)
+        } catch (e) {
+          setCurrentMessage(lastMessage)
+
+          return
+        }
 
         if (parsedMessage.type === 'on_step_start' || parsedMessage.type === 'on_step_complete') {
-          setCurrentMessage(parsedMessage.message || 'Processing...')
+          if (parsedMessage.message) {
+            setCurrentMessage(parsedMessage.message)
 
-          if (parsedMessage.skill_type) {
-            const skillType = parsedMessage.skill_type.charAt(0).toUpperCase() + parsedMessage.skill_type.slice(1)
+            if (parsedMessage.skill_type) {
+              const skillType = parsedMessage.skill_type.charAt(0).toUpperCase() + parsedMessage.skill_type.slice(1)
 
-            setCurrentTitle(`${skillType} in progress`)
+              setCurrentTitle(`${skillType} in progress`)
+            }
           }
         }
       } catch (error) {
+        console.error('Error processing message:', error)
+
         const lastMessage = runningProjectMessages[runningProjectMessages.length - 1]
 
         if (typeof lastMessage === 'string') {
