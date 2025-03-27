@@ -264,19 +264,19 @@ export const App = () => {
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data)
 
-      console.log(data)
-
       if (data.type === 'ping') {
         return
       }
 
-      const message = data?.message?.message
+      const messageData = data?.message
 
-      if (message) {
-        setRunningProjectMessages(message)
+      if (messageData.type === 'on_step_start' || messageData.type === 'on_step_complete') {
+        const message = data?.message?.message
+
+        if (message) {
+          setRunningProjectMessages(message)
+        }
       }
-
-      // Handle the message from the server here
     }
 
     ws.onerror = (error) => {
