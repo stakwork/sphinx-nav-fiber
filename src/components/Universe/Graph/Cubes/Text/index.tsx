@@ -118,6 +118,13 @@ export const TextNode = memo(
 
         if (nodeRef.current) {
           nodeRef.current.visible = ignoreDistance ? true : nodePosition.distanceTo(camera.position) < 1500
+
+          nodeRef.current.traverse((o) => {
+            if (o.name === 'background') {
+              // eslint-disable-next-line no-param-reassign
+              o.visible = ignoreDistance ? true : nodePosition.distanceTo(camera.position) < 1500
+            }
+          })
         }
       }
 
@@ -125,6 +132,13 @@ export const TextNode = memo(
         checkDistance()
       } else {
         nodeRef.current.visible = false
+
+        nodeRef.current.traverse((o) => {
+          if (o.name === 'background') {
+            // eslint-disable-next-line no-param-reassign
+            o.visible = false
+          }
+        })
       }
 
       const isHovered = node.ref_id === hoveredNode?.ref_id
@@ -164,6 +178,13 @@ export const TextNode = memo(
       if (isActive) {
         if (nodeRef.current && !nodeRef.current.visible) {
           nodeRef.current.visible = true
+
+          nodeRef.current.traverse((o) => {
+            if (o.name === 'background') {
+              // eslint-disable-next-line no-param-reassign
+              o.visible = true
+            }
+          })
         }
       }
     })
