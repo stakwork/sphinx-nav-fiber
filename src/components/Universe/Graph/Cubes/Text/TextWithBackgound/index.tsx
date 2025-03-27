@@ -74,7 +74,7 @@ const TextWithBackgroundComponent = ({ text, id }: TextWithBackgroundProps, ref:
   return (
     <group ref={ref}>
       <mesh name="evt-handle" position={[bgWidth / 2 + sizeHalf, 0, 0]}>
-        <mesh position={[0, 0, 2]} userData={{ ref_id: id }}>
+        <mesh name="background" position={[0, 0, 2]} userData={{ ref_id: id }}>
           <boxGeometry args={[bgWidth, bgHeight, 1]} />
           <meshBasicMaterial color="yellow" depthWrite={false} opacity={0} transparent />
         </mesh>

@@ -14,7 +14,7 @@ import { Candidates } from './Candidates'
 import { NodePoints } from './NodePoints'
 import { NodeWrapper } from './NodeWrapper'
 
-const POINTER_IN_DELAY = 200
+const POINTER_IN_DELAY = 100
 
 export const Cubes = memo(() => {
   const selectedNode = useSelectedNode()
@@ -78,8 +78,10 @@ export const Cubes = memo(() => {
         return
       }
 
-      setIsHovering(false)
-      setHoveredNode(null)
+      hoverTimeoutRef.current = setTimeout(() => {
+        setIsHovering(false)
+        setHoveredNode(null)
+      }, POINTER_IN_DELAY)
     },
     [setIsHovering, setHoveredNode, hoveredNode],
   )
@@ -88,6 +90,10 @@ export const Cubes = memo(() => {
     (e: ThreeEvent<PointerEvent>) => {
       const objects = e.intersections.map((i) => i.object)
       const object = objects[0]
+
+      if (!object.visible) {
+        return
+      }
 
       if (hoverTimeoutRef.current) {
         clearTimeout(hoverTimeoutRef.current)
