@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { getPathway } from '~/network/fetchSourcesData'
 import { useMindsetStore } from '~/stores/useMindsetStore'
 import { FetchDataResponse, Node } from '~/types'
-import { Tree } from './Tree'
+import { Expandable } from './Expandable'
 
 type TreeNode = {
   name: string
@@ -60,6 +60,7 @@ export const Body = () => {
 
     const data = {
       name: selectedEpisode?.properties?.name || '',
+      ref_id: selectedEpisode?.ref_id || '',
       children: claims?.edges
         .filter((edge) => edge.source === selectedEpisode?.ref_id)
         .map((edge) => ({
@@ -99,7 +100,7 @@ export const Body = () => {
 
   return (
     <div style={{ width: '100%', height: '100%', overflow: 'auto' }}>
-      <Tree data={useMemoClaims} />
+      <Expandable data={useMemoClaims} />
     </div>
   )
 }
