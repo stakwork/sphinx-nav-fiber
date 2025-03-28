@@ -15,14 +15,9 @@ type Props = {
 export const Connections = memo(({ linksPosition }: Props) => {
   const [dataInitial, nodesNormalized] = useDataStore((s) => [s.dataInitial, s.nodesNormalized])
 
-  const [showSelectionGraph, searchQuery, selectedNodeTypes, highlightNodes, hoveredNode] = useGraphStore((s) => [
-    s.showSelectionGraph,
-    s.searchQuery,
-    s.selectedNodeTypes,
-    s.highlightNodes,
-    s.hoveredNode,
-    s.selectedNode,
-  ])
+  const [showSelectionGraph, searchQuery, selectedNodeTypes, highlightNodes, hoveredNode, selectedNode] = useGraphStore(
+    (s) => [s.showSelectionGraph, s.searchQuery, s.selectedNodeTypes, s.highlightNodes, s.hoveredNode, s.selectedNode],
+  )
 
   const normalizedSchemasByType = useSchemaStore((s) => s.normalizedSchemasByType)
 
@@ -61,9 +56,9 @@ export const Connections = memo(({ linksPosition }: Props) => {
       </group>
       <group
         key={dataInitial?.links.length}
-        visible={!searchQuery && !selectedNodeTypes.length && !highlightNodes.length && !hoveredNode}
+        visible={!searchQuery && !selectedNodeTypes.length && !highlightNodes.length && !hoveredNode && !selectedNode}
       >
-        <Segments limit={1000} lineWidth={0.2}>
+        <Segments limit={1000} lineWidth={0.1}>
           {dataInitial?.links.map((l: Link) => {
             const position = linksPosition.get(l.ref_id) || {
               sx: 0,

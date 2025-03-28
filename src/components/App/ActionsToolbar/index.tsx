@@ -4,7 +4,6 @@ import { GraphViewControl } from '~/components/common/GraphViewControl'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
 import { useSelectedNode } from '~/stores/useGraphStore'
-import { useMindsetStore } from '~/stores/useMindsetStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { CameraRecenterControl } from './CameraRecenterControl'
 import { GraphClear } from './GraphClear'
@@ -15,7 +14,6 @@ export const ActionsToolbar = () => {
   const isLoading = useDataStore((s) => s.isFetching)
   const universeQuestionIsOpen = useAppStore((s) => s.universeQuestionIsOpen)
   const { isAdmin } = useUserStore((s) => s)
-  const chapters = useMindsetStore((s) => s.chapters)
 
   return (
     <Wrapper align="flex-end" id="actions-toolbar">
@@ -24,7 +22,7 @@ export const ActionsToolbar = () => {
         {!isLoading && !universeQuestionIsOpen && <CameraRecenterControl />}
       </ButtonWrapper>
       <Flex align="center" direction="row" mt={16}>
-        {!isLoading && !universeQuestionIsOpen && chapters?.length && <GraphViewControl />}
+        {!isLoading && !universeQuestionIsOpen && <GraphViewControl />}
       </Flex>
       <PlayerControl key={selectedNode?.ref_id} />
     </Wrapper>
