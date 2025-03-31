@@ -15,12 +15,10 @@ import { FetchDataResponse } from '~/types'
 const getClaims = async (id: string) => {
   const { nodes, edges } = await getPathway(id, ['Claim'], [], '', true, 0, 3, 500)
 
-  // Filter duplicate nodes by ref_id
   const uniqueNodes = [...new Map(nodes.map((node) => [node.ref_id, node])).values()].filter(
     (node) => node.node_type === 'Claim',
   )
 
-  // Filter edges
   const uniqueEdges = [...new Map(edges.map((edge) => [`${edge.source}-${edge.target}`, edge])).values()].filter(
     (edge) => edge.edge_type !== 'HAS_CLAIM',
   )
@@ -32,6 +30,11 @@ export const Body = () => {
   const svgRef = useRef<SVGSVGElement | null>(null)
   const { selectedEpisode } = useMindsetStore((s) => s)
   const [claims, setClaims] = useState<FetchDataResponse | null>(null)
+
+  const nodeRadius = 20
+
+  // Estimate width based on character count
+  const estimateLabelWidth = (text: string) => Math.min(Math.max(text.length * 7 + 20, 60), 200)
 
   useEffect(() => {
     if (!selectedEpisode?.ref_id) {
@@ -79,12 +82,20 @@ export const Body = () => {
       )
       .force('charge', d3.forceManyBody().strength(-50))
       .force('center', d3.forceCenter(width / 2, height / 2))
+      .force(
+        'collide',
+        d3
+          .forceCollide()
+          .radius(() => 100)
+          .strength(0.5)
+          .iterations(1),
+      )
 
     g.append('defs')
       .append('marker')
       .attr('id', 'arrow')
       .attr('viewBox', '0 -5 10 10')
-      .attr('refX', 18)
+      .attr('refX', nodeRadius + 8)
       .attr('refY', 0)
       .attr('markerWidth', 6)
       .attr('markerHeight', 6)
@@ -110,7 +121,7 @@ export const Body = () => {
       .data(claims.nodes)
       .enter()
       .append('circle')
-      .attr('r', 10)
+      .attr('r', nodeRadius)
       .attr('fill', (d) => color(d.node_type))
       .attr('stroke', '#fff')
       .attr('stroke-width', 1.5)
@@ -122,32 +133,34 @@ export const Body = () => {
       .data(claims.nodes)
       .enter()
       .append('foreignObject')
-      .attr('width', 120) // adjust as needed
-      .attr('height', 80) // adjust height for text wrapping
-      .attr('x', -60) // centers the box horizontally around node
-      .attr('y', 15) // places the box just below the node
+      .attr('width', (d) => estimateLabelWidth(d.properties?.name || 'Claim'))
+      .attr('height', 30)
+      .attr('x', (d) => -estimateLabelWidth(d.properties?.name || 'Claim') / 2)
+      .attr('y', nodeRadius + 5)
       .html(
         (d) => `
-    <div style="
-      width: 120px;
-      height: 100%;
-      padding: 4px;
-      font-size: 10px;
-      color: #333;
-      background-color: rgba(255,255,255,0.9);
-      border-radius: 4px;
-      border: 1px solid #ddd;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-      word-wrap: break-word;
-      overflow: hidden;
-      text-align: center;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      <div style="
+        width: 100%;
+        height: 100%;
+        padding: 4px;
+        font-size: 6px;
+        color: #333;
+        background-color: rgba(255,255,255,0.9);
+        border-radius: 4px;
+        border: 1px solid #ddd;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        word-wrap: break-word;
+        overflow: hidden;
+        text-align: center;
+        display: flex;
+        align-items: flex-start;
+        justify-content: flex-start;
+        padding: 2px;
+        box-sizing: border-box;
       ">
         ${d.properties?.name || 'Claim'}
-    </div>
-    `,
+      </div>
+      `,
       )
 
     simulation.on('tick', () => {
@@ -159,7 +172,9 @@ export const Body = () => {
 
       node.attr('cx', (d) => d.x).attr('cy', (d) => d.y)
 
-      nodeLabels.attr('x', (d) => d.x).attr('y', (d) => d.y)
+      nodeLabels
+        .attr('x', (d) => d.x - estimateLabelWidth(d.properties?.name || 'Claim') / 2)
+        .attr('y', (d) => d.y + nodeRadius + 5)
     })
 
     function drag(simulation) {
@@ -192,7 +207,6 @@ export const Body = () => {
 
   return (
     <div className="w-full h-full p-4 bg-white rounded shadow relative">
-      <h2 className="text-xl font-bold mb-4">Claims Graph Visualization</h2>
       <div className="w-full h-96 border border-gray-200 rounded">
         <svg ref={svgRef} className="w-full h-full" />
       </div>
