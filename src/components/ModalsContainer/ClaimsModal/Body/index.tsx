@@ -11,6 +11,7 @@ import { useEffect, useRef, useState } from 'react'
 import { getPathway } from '~/network/fetchSourcesData'
 import { useMindsetStore } from '~/stores/useMindsetStore'
 import { FetchDataResponse } from '~/types'
+import { colors } from '~/utils'
 
 const getClaims = async (id: string) => {
   const { nodes, edges } = await getPathway(id, ['Claim'], [], '', true, 0, 3, 500)
@@ -31,10 +32,8 @@ export const Body = () => {
   const { selectedEpisode } = useMindsetStore((s) => s)
   const [claims, setClaims] = useState<FetchDataResponse | null>(null)
 
-  const nodeRadius = 20
-
-  // Estimate width based on character count
   const estimateLabelWidth = (text: string) => Math.min(Math.max(text.length * 7 + 20, 60), 200)
+  const labelHeight = 30
 
   useEffect(() => {
     if (!selectedEpisode?.ref_id) {
@@ -69,8 +68,6 @@ export const Body = () => {
 
     svg.call(zoom)
 
-    const color = d3.scaleOrdinal().domain(['Claim']).range(['#1f77b4'])
-
     const simulation = d3
       .forceSimulation(claims.nodes)
       .force(
@@ -80,22 +77,22 @@ export const Body = () => {
           .id((d) => d.ref_id)
           .distance(120),
       )
-      .force('charge', d3.forceManyBody().strength(-50))
+      .force('charge', d3.forceManyBody().strength(-250))
       .force('center', d3.forceCenter(width / 2, height / 2))
       .force(
         'collide',
         d3
           .forceCollide()
-          .radius(() => 100)
-          .strength(0.5)
-          .iterations(1),
+          .radius((d) => estimateLabelWidth(d.properties?.name || 'Claim') / 2 + 10)
+          .strength(0.7),
       )
 
+    // Arrow marker
     g.append('defs')
       .append('marker')
       .attr('id', 'arrow')
       .attr('viewBox', '0 -5 10 10')
-      .attr('refX', nodeRadius + 8)
+      .attr('refX', 15)
       .attr('refY', 0)
       .attr('markerWidth', 6)
       .attr('markerHeight', 6)
@@ -115,66 +112,97 @@ export const Body = () => {
       .attr('stroke-width', 2)
       .attr('marker-end', 'url(#arrow)')
 
+    // Add foreignObjects as the "nodes"
     const node = g
-      .append('g')
-      .selectAll('circle')
-      .data(claims.nodes)
-      .enter()
-      .append('circle')
-      .attr('r', nodeRadius)
-      .attr('fill', (d) => color(d.node_type))
-      .attr('stroke', '#fff')
-      .attr('stroke-width', 1.5)
-      .call(drag(simulation))
-
-    const nodeLabels = g
       .append('g')
       .selectAll('foreignObject')
       .data(claims.nodes)
       .enter()
       .append('foreignObject')
       .attr('width', (d) => estimateLabelWidth(d.properties?.name || 'Claim'))
-      .attr('height', 30)
-      .attr('x', (d) => -estimateLabelWidth(d.properties?.name || 'Claim') / 2)
-      .attr('y', nodeRadius + 5)
+      .attr('height', labelHeight)
       .html(
         (d) => `
-      <div style="
-        width: 100%;
-        height: 100%;
-        padding: 4px;
-        font-size: 6px;
-        color: #333;
-        background-color: rgba(255,255,255,0.9);
-        border-radius: 4px;
-        border: 1px solid #ddd;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        word-wrap: break-word;
-        overflow: hidden;
-        text-align: center;
-        display: flex;
-        align-items: flex-start;
-        justify-content: flex-start;
-        padding: 2px;
-        box-sizing: border-box;
-      ">
-        ${d.properties?.name || 'Claim'}
-      </div>
+        <div style="
+          width: 100%;
+          height: 100%;
+          font-size: 6px;
+          color: #333;
+          background-color:  ${colors.BG2};
+          border-radius: 6px;
+          border: 1px solid #999;
+          box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+          word-wrap: break-word;
+          overflow: hidden;
+          text-align: center;
+          display: flex;
+          align-items: flex-start;
+          justify-content: flex-start;
+          padding: 4px;
+          box-sizing: border-box;
+          cursor: move;
+          color: white
+        ">
+          ${d.properties?.name || 'Claim'}
+        </div>
       `,
       )
+      .call(drag(simulation))
+
+    // Lookup for sibling highlighting (optional)
+    const siblingsMap = new Map()
+
+    claims.edges.forEach(({ source, target }) => {
+      if (!siblingsMap.has(source)) {
+        siblingsMap.set(source, new Set())
+      }
+
+      if (!siblingsMap.has(target)) {
+        siblingsMap.set(target, new Set())
+      }
+
+      siblingsMap.get(source).add(target)
+      siblingsMap.get(target).add(source)
+    })
 
     simulation.on('tick', () => {
       link
-        .attr('x1', (d) => d.source.x)
-        .attr('y1', (d) => d.source.y)
-        .attr('x2', (d) => d.target.x)
-        .attr('y2', (d) => d.target.y)
+        .attr('x1', (d) => {
+          const w = estimateLabelWidth(d.source.properties?.name || 'Claim')
 
-      node.attr('cx', (d) => d.x).attr('cy', (d) => d.y)
+          return d.source.x + w / 2
+        })
+        .attr('y1', (d) => d.source.y + labelHeight / 2)
+        .attr('x2', (d) => {
+          const sx = d.source.x + estimateLabelWidth(d.source.properties?.name || 'Claim') / 2
+          const sy = d.source.y + labelHeight / 2
+          const tx = d.target.x + estimateLabelWidth(d.target.properties?.name || 'Claim') / 2
+          const ty = d.target.y + labelHeight / 2
 
-      nodeLabels
-        .attr('x', (d) => d.x - estimateLabelWidth(d.properties?.name || 'Claim') / 2)
-        .attr('y', (d) => d.y + nodeRadius + 5)
+          const dx = tx - sx
+          const dy = ty - sy
+          const len = Math.sqrt(dx * dx + dy * dy)
+
+          const shrinkX = (dx / len) * (estimateLabelWidth(d.target.properties?.name || 'Claim') / 2 + 5)
+
+          return tx - shrinkX
+        })
+        .attr('y2', (d) => {
+          const sx = d.source.x + estimateLabelWidth(d.source.properties?.name || 'Claim') / 2
+          const sy = d.source.y + labelHeight / 2
+          const tx = d.target.x + estimateLabelWidth(d.target.properties?.name || 'Claim') / 2
+          const ty = d.target.y + labelHeight / 2
+
+          const dx = tx - sx
+          const dy = ty - sy
+          const len = Math.sqrt(dx * dx + dy * dy)
+
+          const shrinkY = (dy / len) * (labelHeight / 2 + 5)
+
+          return ty - shrinkY
+        })
+
+      node.attr('x', (d) => d.x).attr('y', (d) => d.y)
     })
 
     function drag(simulation) {
@@ -187,6 +215,16 @@ export const Body = () => {
 
           d.fx = d.x
           d.fy = d.y
+
+          // Optional: Highlight siblings
+          const siblingIds = siblingsMap.get(d.ref_id)
+
+          if (siblingIds) {
+            node
+              .filter((n) => siblingIds.has(n.ref_id))
+              .select('div')
+              .style('border', '2px solid orange')
+          }
         })
         .on('drag', (event, d) => {
           d.fx = event.x
@@ -199,6 +237,9 @@ export const Body = () => {
 
           d.fx = null
           d.fy = null
+
+          // Remove highlight
+          node.select('div').style('border', '1px solid #999')
         })
     }
 
