@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
+import { ClaimsModal } from '~/components/ModalsContainer/ClaimsModal'
 import { Universe } from '~/components/Universe'
 import { getPathway, getSchemaAll } from '~/network/fetchSourcesData'
 import { useDataStore } from '~/stores/useDataStore'
@@ -265,6 +266,7 @@ export const MindSet = () => {
       <PlayerControlWrapper>
         <PlayerControl chapters={chapters} markers={markers} />
       </PlayerControlWrapper>
+      <ClaimsModal />
     </MainContainer>
   )
 }

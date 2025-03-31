@@ -1,15 +1,20 @@
+import { Button } from '@mui/material'
+import { useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import ClearIcon from '~/components/Icons/ClearIcon'
 import SearchIcon from '~/components/Icons/SearchIcon'
 import { useAppStore } from '~/stores/useAppStore'
 import { useGraphStore } from '~/stores/useGraphStore'
+import { useModal } from '~/stores/useModalStore'
 import { colors } from '~/utils'
 import { GraphFilter } from './GraphFilter'
 
 export const GraphSearch = () => {
   const [setSearchQuery, searchQuery] = useGraphStore((s) => [s.setSearchQuery, s.searchQuery])
   const universeQuestionIsOpen = useAppStore((s) => s.universeQuestionIsOpen)
+  const { open } = useModal('claim')
+  const { episodeId } = useParams()
 
   if (universeQuestionIsOpen) {
     return null
@@ -43,6 +48,7 @@ export const GraphSearch = () => {
           )}
         </SearchWrapper>
         <GraphFilter />
+        {episodeId && <Button onClick={() => open()}>Claims</Button>}
       </TopBarContainer>
     </Wrapper>
   )
