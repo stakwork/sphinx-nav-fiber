@@ -12,6 +12,7 @@ import {
 import { create } from 'zustand'
 import { ForceSimulation } from '~/transformers/forceSimulation'
 import { Link, Node, NodeExtended } from '~/types'
+import { useDataStore } from '../useDataStore'
 import { useGraphStore } from '../useGraphStore'
 import { useMindsetStore } from '../useMindsetStore'
 import { distributeNodesOnSphere } from './utils/distributeNodesOnSphere'
@@ -37,6 +38,7 @@ interface SimulationStore {
   setForces: () => void
   addRadialForce: () => void
   addClusterForce: () => void
+  addSplitForce: () => void
   simulationRestart: () => void
   getLinks: () => Link<NodeExtended>[]
   updateSimulationVersion: () => void
@@ -104,7 +106,7 @@ export const useSimulationStore = create<SimulationStore>((set, get) => ({
   },
 
   setForces: () => {
-    const { simulationRestart, addRadialForce, addClusterForce } = get()
+    const { simulationRestart, addRadialForce, addClusterForce, addSplitForce } = get()
     const { graphStyle } = useGraphStore.getState()
 
     switch (graphStyle) {
@@ -113,6 +115,9 @@ export const useSimulationStore = create<SimulationStore>((set, get) => ({
         break
       case 'force':
         addClusterForce()
+        break
+      case 'split':
+        addSplitForce()
         break
       default:
         addRadialForce()
@@ -214,6 +219,35 @@ export const useSimulationStore = create<SimulationStore>((set, get) => ({
         forceCollide()
           .radius((node: NodeExtended) => (node.scale || 1) * 95)
           .strength(0.5)
+          .iterations(1),
+      )
+  },
+
+  addSplitForce: () => {
+    const { simulation } = get()
+    const { nodeTypes } = useDataStore.getState()
+
+    simulation
+      // .stop()
+      .force('cluster', null)
+      .nodes(
+        simulation.nodes().map((n: Node) => {
+          const index = nodeTypes.indexOf(n.node_type) + 1
+          const yOffset = Math.floor(index / 2) * 500
+
+          return {
+            ...n,
+            ...resetPosition,
+            fy: index % 2 === 0 ? yOffset : -yOffset,
+          }
+        }),
+      )
+      .force('radial', forceRadial(2000, 0, 0, 0).strength(1))
+      .force(
+        'collide',
+        forceCollide()
+          .radius(() => 200)
+          .strength(1)
           .iterations(1),
       )
   },
