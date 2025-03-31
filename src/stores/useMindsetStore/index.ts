@@ -33,8 +33,6 @@ export const useMindsetStore = create<MindsetStore>((set) => ({
     const { setPlayingNode } = usePlayerStore.getState()
 
     const data = await getPathway(id, ['Clip', 'Chapter', 'Show', 'Host', 'Guest'], [], '', true, 0, 1, 500)
-    const claimsData = await getPathway(id, ['Claim'], ['HAS_CLAIM'], '', true, 0, 3, 500)
-    const supportClaimsData = await getPathway(id, ['Claim'], [], '', true, 1, 3, 500)
 
     const clips = data.nodes
       .filter((node) => node.node_type === 'Clip')
@@ -72,8 +70,8 @@ export const useMindsetStore = create<MindsetStore>((set) => ({
     )
 
     addNewNode({
-      nodes: [...starterData, ...claimsData.nodes, ...supportClaimsData.nodes],
-      edges: [...data.edges, ...claimsData.edges, ...supportClaimsData.edges],
+      nodes: [...starterData],
+      edges: [...data.edges],
     })
 
     set({ clips, chapters, selectedEpisode, clipEdges })
