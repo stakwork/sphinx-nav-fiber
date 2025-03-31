@@ -11,7 +11,6 @@ import { useSchemaStore } from '~/stores/useSchemaStore'
 import { useSimulationStore } from '~/stores/useSimulationStore'
 import { NodeExtended } from '~/types'
 import { useSelectedNodeFromUrl } from '../useSelectedNodeFromUrl'
-import { Claims } from './Claims'
 import { Connections } from './Connections'
 import { Cubes } from './Cubes'
 import { Earth } from './Earth'
@@ -361,7 +360,6 @@ export const Graph = () => {
     <group ref={groupRef}>
       <Cubes />
       {chapters?.length && graphStyle === 'force' ? <Neighbourhoods chapters={chapters} /> : null}
-      {false && <Claims />}
       <NodeDetailsPanel />
       {graphStyle === 'earth' && <Earth />}
       {(isLoadingNew || isFetching) && <LoadingNodes />}
