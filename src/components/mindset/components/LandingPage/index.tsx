@@ -29,7 +29,7 @@ const filterAndSortEpisodes = (data: FetchDataResponse): Node[] =>
       (node) =>
         node.node_type.toLowerCase() === 'episode' && node.properties?.date && node.properties.status === 'completed',
     )
-    .slice(0, 3)
+    .slice(0, 20)
 
 const handleSubmitForm = async (data: FieldValues): Promise<SubmitErrRes> => {
   const endPoint = 'add_node'
@@ -64,6 +64,8 @@ export const LandingPage = () => {
     const fetchLatest = async () => {
       try {
         const res: FetchDataResponse = await getNodes()
+
+        console.log('res', res)
 
         const topEpisodes = filterAndSortEpisodes(res)
 
@@ -251,5 +253,7 @@ const SeedQuestionsWrapper = styled.div`
   gap: 16px;
   margin-top: 20px;
   max-width: 648px;
-  height: 237px;
+  height: 437px;
+  overflow: scroll;
+  flex-wrap: wrap;
 `
