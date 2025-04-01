@@ -31,16 +31,39 @@ export const Body = () => {
   const svgRef = useRef<SVGSVGElement | null>(null)
   const { selectedEpisode } = useMindsetStore((s) => s)
   const [claims, setClaims] = useState<FetchDataResponse | null>(null)
+  const [isolatedNodes, setIsolatedNodes] = useState([])
 
   const estimateLabelWidth = (text: string) => Math.min(Math.max(text.length * 7 + 20, 60), 200)
   const labelHeight = 30
 
   useEffect(() => {
+    const init = async () => {
+      const data = await getClaims(selectedEpisode.ref_id)
+
+      const isolatedNodes = []
+      const connectedNodes = []
+
+      data.nodes.forEach((node) => {
+        const isConnected = data.edges.some((edge) => edge.source === node.ref_id || edge.target === node.ref_id)
+
+        if (isConnected) {
+          connectedNodes.push(node)
+        } else {
+          isolatedNodes.push(node)
+        }
+      })
+
+      const allNodes = [...connectedNodes, ...isolatedNodes]
+
+      setClaims({ nodes: allNodes, edges: data.edges })
+      setIsolatedNodes(isolatedNodes)
+    }
+
     if (!selectedEpisode?.ref_id) {
       return
     }
 
-    getClaims(selectedEpisode.ref_id).then(setClaims)
+    init()
   }, [selectedEpisode?.ref_id])
 
   useEffect(() => {
@@ -68,6 +91,9 @@ export const Body = () => {
 
     svg.call(zoom)
 
+    // Lookup map for isolation force
+    const isolatedNodeIds = new Set(isolatedNodes.map((n) => n.ref_id))
+
     const simulation = d3
       .forceSimulation(claims.nodes)
       .force(
@@ -77,7 +103,7 @@ export const Body = () => {
           .id((d) => d.ref_id)
           .distance(120),
       )
-      .force('charge', d3.forceManyBody().strength(-250))
+      .force('charge', d3.forceManyBody().strength(-150))
       .force('center', d3.forceCenter(width / 2, height / 2))
       .force(
         'collide',
@@ -86,8 +112,13 @@ export const Body = () => {
           .radius((d) => estimateLabelWidth(d.properties?.name || 'Claim') / 2 + 10)
           .strength(0.7),
       )
+      .force(
+        'isolate',
+        d3
+          .forceY((d) => (isolatedNodeIds.has(d.ref_id) ? height - 100 : height / 2))
+          .strength((d) => (isolatedNodeIds.has(d.ref_id) ? 0.2 : 0)),
+      )
 
-    // Arrow marker
     g.append('defs')
       .append('marker')
       .attr('id', 'arrow')
@@ -112,7 +143,6 @@ export const Body = () => {
       .attr('stroke-width', 2)
       .attr('marker-end', 'url(#arrow)')
 
-    // Add foreignObjects as the "nodes"
     const node = g
       .append('g')
       .selectAll('foreignObject')
@@ -149,7 +179,6 @@ export const Body = () => {
       )
       .call(drag(simulation))
 
-    // Lookup for sibling highlighting (optional)
     const siblingsMap = new Map()
 
     claims.edges.forEach(({ source, target }) => {
@@ -167,39 +196,29 @@ export const Body = () => {
 
     simulation.on('tick', () => {
       link
-        .attr('x1', (d) => {
-          const w = estimateLabelWidth(d.source.properties?.name || 'Claim')
-
-          return d.source.x + w / 2
-        })
+        .attr('x1', (d) => d.source.x + estimateLabelWidth(d.source.properties?.name || 'Claim') / 2)
         .attr('y1', (d) => d.source.y + labelHeight / 2)
         .attr('x2', (d) => {
           const sx = d.source.x + estimateLabelWidth(d.source.properties?.name || 'Claim') / 2
           const sy = d.source.y + labelHeight / 2
           const tx = d.target.x + estimateLabelWidth(d.target.properties?.name || 'Claim') / 2
           const ty = d.target.y + labelHeight / 2
-
           const dx = tx - sx
           const dy = ty - sy
           const len = Math.sqrt(dx * dx + dy * dy)
 
-          const shrinkX = (dx / len) * (estimateLabelWidth(d.target.properties?.name || 'Claim') / 2 + 5)
-
-          return tx - shrinkX
+          return tx - (dx / len) * (estimateLabelWidth(d.target.properties?.name || 'Claim') / 2 + 5)
         })
         .attr('y2', (d) => {
           const sx = d.source.x + estimateLabelWidth(d.source.properties?.name || 'Claim') / 2
           const sy = d.source.y + labelHeight / 2
           const tx = d.target.x + estimateLabelWidth(d.target.properties?.name || 'Claim') / 2
           const ty = d.target.y + labelHeight / 2
-
           const dx = tx - sx
           const dy = ty - sy
           const len = Math.sqrt(dx * dx + dy * dy)
 
-          const shrinkY = (dy / len) * (labelHeight / 2 + 5)
-
-          return ty - shrinkY
+          return ty - (dy / len) * (labelHeight / 2 + 5)
         })
 
       node.attr('x', (d) => d.x).attr('y', (d) => d.y)
@@ -216,7 +235,6 @@ export const Body = () => {
           d.fx = d.x
           d.fy = d.y
 
-          // Optional: Highlight siblings
           const siblingIds = siblingsMap.get(d.ref_id)
 
           if (siblingIds) {
@@ -237,18 +255,16 @@ export const Body = () => {
 
           d.fx = null
           d.fy = null
-
-          // Remove highlight
           node.select('div').style('border', '1px solid #999')
         })
     }
 
     return () => simulation.stop()
-  }, [claims])
+  }, [claims, isolatedNodes])
 
   return (
     <div className="w-full h-full p-4 bg-white rounded shadow relative">
-      <div className="w-full h-96 border border-gray-200 rounded">
+      <div className="w-full h-96 border border-gray-200 rounded mb-4">
         <svg ref={svgRef} className="w-full h-full" />
       </div>
     </div>
