@@ -218,7 +218,7 @@ export const TextNode = memo(
           )}
 
           {sanitizedNodeName && (
-            <TextWithBackground ref={backgroundRef} id={node.ref_id} text={truncateText(sanitizedNodeName, 20)} />
+            <TextWithBackground ref={backgroundRef} id={node.ref_id} text={truncateText(sanitizedNodeName, 150)} />
           )}
         </mesh>
       </Billboard>
