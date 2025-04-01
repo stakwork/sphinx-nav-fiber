@@ -11,7 +11,7 @@ export const SideBar = () => {
   return (
     <Wrapper align="stretch" basis="100%" grow={1} shrink={1}>
       <MediaWrapper>
-        {selectedEpisode?.properties?.source_link && <MediaPlayer mediaUrl={selectedEpisode.properties.source_link} />}
+        {selectedEpisode?.properties?.media_url && <MediaPlayer mediaUrl={selectedEpisode.properties.media_url} />}
       </MediaWrapper>
       <Transcript name={selectedEpisode?.name || ''} />
     </Wrapper>
