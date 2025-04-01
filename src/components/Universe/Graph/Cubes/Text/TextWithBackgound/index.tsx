@@ -11,7 +11,7 @@ type RoundedRectProps = {
   color: string
 }
 
-const FONT_SIZE = nodeSize / 3
+const FONT_SIZE = nodeSize / 10
 
 const RoundedRect = forwardRef<Mesh, RoundedRectProps>(({ width, height, radius, color }, ref) => {
   const rectShape = useMemo(() => {
@@ -47,7 +47,7 @@ const TextWithBackgroundComponent = ({ text, id }: TextWithBackgroundProps, ref:
   const textRef = useRef<Mesh>(null)
   const cubeRef = useRef<Mesh>(null)
 
-  const [bgWidth, setBgWidth] = useState(1)
+  const [bgWidth, setBgWidth] = useState(60)
   const bgHeight = nodeSize
   const bgRadius = 6
   const padding = 10
@@ -61,6 +61,8 @@ const TextWithBackgroundComponent = ({ text, id }: TextWithBackgroundProps, ref:
       const size = new Vector3()
 
       box.getSize(size)
+
+      return
       setBgWidth(size.x + padding * 2)
     }
   }
@@ -87,6 +89,7 @@ const TextWithBackgroundComponent = ({ text, id }: TextWithBackgroundProps, ref:
         {...fontProps}
         anchorX="left"
         fontSize={FONT_SIZE}
+        maxWidth={40}
         name="text"
         onAfterRender={afterRenderHandler}
         onSync={updateBgWidth}
