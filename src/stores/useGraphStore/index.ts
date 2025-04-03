@@ -36,6 +36,7 @@ export type GraphStore = {
   selectedNodeSiblings: string[]
   searchQuery: string
   followersFilter: string | null
+  isolatedView: string
 
   setDisableCameraRotation: (rotation: boolean) => void
   setScrollEventsDisabled: (rotation: boolean) => void
@@ -59,6 +60,7 @@ export type GraphStore = {
   setSelectedLinkTypes: (type: string) => void
   resetSelectedLinkTypes: () => void
   setFollowersFilter: (filter: string | null) => void
+  setIsolatedView: (isolatedView: string) => void
 }
 
 const defaultData: Omit<
@@ -88,6 +90,7 @@ const defaultData: Omit<
   | 'resetSelectedLinkTypes'
   | 'setNodesToHide'
   | 'setFollowersFilter'
+  | 'setIsolatedView'
 > = {
   data: null,
   selectionGraphData: { nodes: [], links: [] },
@@ -111,6 +114,7 @@ const defaultData: Omit<
   selectedNodeTypes: [],
   selectedLinkTypes: [],
   followersFilter: null,
+  isolatedView: '',
 }
 
 export const useGraphStore = create<GraphStore>()((set, get) => ({
@@ -210,6 +214,7 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
   setShowSelectionGraph: (showSelectionGraph) => set({ showSelectionGraph }),
   setSearchQuery: (searchQuery) => set({ searchQuery }),
   setFollowersFilter: (filter) => set({ followersFilter: filter }),
+  setIsolatedView: (isolatedView) => set({ isolatedView }),
 }))
 
 export const useSelectedNode = () => useGraphStore((s) => s.selectedNode)

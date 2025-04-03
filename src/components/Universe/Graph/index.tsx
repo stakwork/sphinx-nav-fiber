@@ -14,6 +14,7 @@ import { useSelectedNodeFromUrl } from '../useSelectedNodeFromUrl'
 import { Connections } from './Connections'
 import { Cubes } from './Cubes'
 import { Earth } from './Earth'
+import { Layers } from './Layers'
 import { LoadingNodes } from './LoadingNodes'
 import { Neighbourhoods } from './Neighborhoods'
 import { NodeDetailsPanel } from './UI'
@@ -64,6 +65,7 @@ export const Graph = () => {
   } = useSimulationStore((s) => s)
 
   const highlightNodes = useGraphStore((s) => s.highlightNodes)
+  const isolatedView = useGraphStore((s) => s.isolatedView)
 
   useSelectedNodeFromUrl()
 
@@ -358,12 +360,16 @@ export const Graph = () => {
 
   return (
     <group ref={groupRef}>
-      <Cubes />
+      <group visible={!isolatedView}>
+        <Cubes />
+
+        {graphStyle !== 'earth' && <Connections linksPosition={linksPositionRef.current} />}
+      </group>
       {chapters?.length && graphStyle === 'force' ? <Neighbourhoods chapters={chapters} /> : null}
       <NodeDetailsPanel />
+      {graphStyle === 'split' && <Layers />}
       {graphStyle === 'earth' && <Earth />}
       {(isLoadingNew || isFetching) && <LoadingNodes />}
-      {graphStyle !== 'earth' && <Connections linksPosition={linksPositionRef.current} />}
     </group>
   )
 }
