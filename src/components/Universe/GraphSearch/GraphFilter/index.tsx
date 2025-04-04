@@ -41,7 +41,7 @@ export const GraphFilter = () => {
   const getNodeTypeColor = (type: string) => {
     const schema = normalizedSchemasByType[type]
 
-    return schema?.primary_color || colors.white
+    return schema?.secondary_color || colors.white
   }
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {

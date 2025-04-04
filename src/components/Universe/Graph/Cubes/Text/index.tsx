@@ -9,7 +9,6 @@ import { useDataStore } from '~/stores/useDataStore'
 import { useGraphStore } from '~/stores/useGraphStore'
 import { useSchemaStore } from '~/stores/useSchemaStore'
 import { NodeExtended } from '~/types'
-import { generatePalette } from '~/utils/palleteGenerator'
 import { removeEmojis } from '~/utils/removeEmojisFromText'
 import { removeLeadingMentions } from '~/utils/removeLeadingMentions'
 import { truncateText } from '~/utils/truncateText'
@@ -18,7 +17,6 @@ import { TextWithBackground } from './TextWithBackgound'
 
 type Props = {
   node: NodeExtended
-  color: string
   hide?: boolean
   ignoreDistance: boolean
   scale: number
@@ -53,7 +51,7 @@ const nodeMatchesFollowerFilter = (targetNode: NodeExtended, value: string | nul
 
 export const TextNode = memo(
   (props: Props) => {
-    const { node, hide, ignoreDistance, color, scale } = props
+    const { node, hide, ignoreDistance, scale } = props
     const svgRef = useRef<Mesh | null>(null)
     const nodeRef = useRef<Mesh | null>(null)
     const nodePositionRef = useRef(new Vector3())
@@ -82,10 +80,8 @@ export const TextNode = memo(
       )
     }, [node?.properties?.image_url])
 
-    const secondaryColor = normalizedSchemasByType[node.node_type]?.secondary_color
     const primaryColor = normalizedSchemasByType[node.node_type]?.primary_color
     const primaryIcon = normalizedSchemasByType[node.node_type]?.icon
-    const nodeColor = secondaryColor ?? color
     const Icon = primaryIcon ? Icons[primaryIcon] : null
     const iconName = Icon ? primaryIcon : 'NodesIcon'
 
@@ -206,12 +202,13 @@ export const TextNode = memo(
                   if (child instanceof Mesh) {
                     // eslint-disable-next-line no-param-reassign
                     child.material = new MeshBasicMaterial({
-                      color: generatePalette(nodeColor, 3, 10)[3],
+                      color: 'rgba(255, 255, 255, 0.5)',
                     })
                   }
                 })
               }}
               position={[-nodeSize / 4, nodeSize / 4, 1]}
+              scale={nodeSize / 30}
               src={`/svg-icons/${iconName}.svg`}
               userData={node}
             />

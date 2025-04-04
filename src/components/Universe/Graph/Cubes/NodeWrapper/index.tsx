@@ -4,19 +4,18 @@ import { TextNode } from '../Text/index'
 
 type Props = {
   node: NodeExtended
-  color: string
   scale: number
   isFixed: boolean
 }
 
 export const NodeWrapper = memo(
   (props: Props) => {
-    const { node, color, isFixed, scale } = props
+    const { node, isFixed, scale } = props
 
     return (
       <mesh key={node.ref_id} name="wr2" userData={node}>
         <mesh name="text-node-wrapper" visible={isFixed}>
-          <TextNode key={node.ref_id} color={color} ignoreDistance={false} node={node} scale={scale} />
+          <TextNode key={node.ref_id} ignoreDistance={false} node={node} scale={scale} />
         </mesh>
       </mesh>
     )

@@ -127,8 +127,8 @@ const _NodePoints = () => {
       >
         <meshBasicMaterial />
         {dataInitial?.nodes.map((node: NodeExtended, index) => {
-          const primaryColor = normalizedSchemasByType[node.node_type]?.primary_color
-          const color = primaryColor ?? (COLORS_MAP[nodeTypes.indexOf(node.node_type)] || colors.white)
+          const secondaryColor = normalizedSchemasByType[node.node_type]?.secondary_color
+          const color = secondaryColor ?? (COLORS_MAP[nodeTypes.indexOf(node.node_type)] || colors.white)
 
           const normalizedNode = nodesNormalized.get(node.ref_id)
           const scale = normalizedNode?.weight || normalizedNode?.properties?.weight || 1

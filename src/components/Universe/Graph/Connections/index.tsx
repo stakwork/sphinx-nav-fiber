@@ -58,7 +58,7 @@ export const Connections = memo(({ linksPosition }: Props) => {
         key={dataInitial?.links.length}
         visible={!searchQuery && !selectedNodeTypes.length && !highlightNodes.length && !hoveredNode && !selectedNode}
       >
-        <Segments limit={1000} lineWidth={0.18}>
+        <Segments limit={1000} lineWidth={0.2}>
           {dataInitial?.links.map((l: Link) => {
             const position = linksPosition.get(l.ref_id) || {
               sx: 0,
@@ -73,7 +73,7 @@ export const Connections = memo(({ linksPosition }: Props) => {
 
             const color = sourceNode ? normalizedSchemasByType[sourceNode.node_type]?.primary_color : 'white'
 
-            const linkColor = '#494C5A' || color || 'white'
+            const linkColor = 'rgba(97, 138, 255, 1)' || '#494C5A' || color || 'white'
 
             return (
               <LineInstance
