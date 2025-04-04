@@ -47,7 +47,7 @@ const TextWithBackgroundComponent = ({ text, id }: TextWithBackgroundProps, ref:
   const textRef = useRef<Mesh>(null)
   const cubeRef = useRef<Mesh>(null)
 
-  const [bgWidth, setBgWidth] = useState(60)
+  const [bgWidth, setBgWidth] = useState(nodeSize * 2)
   const bgHeight = nodeSize
   const bgRadius = 6
   const padding = 10

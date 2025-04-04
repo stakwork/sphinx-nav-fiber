@@ -3,13 +3,11 @@ import { ThreeEvent } from '@react-three/fiber'
 import { memo, useCallback, useRef } from 'react'
 import { Group, Object3D } from 'three'
 import { useAppStore } from '~/stores/useAppStore'
-import { useDataStore, useNodeTypes } from '~/stores/useDataStore'
+import { useDataStore } from '~/stores/useDataStore'
 import { useGraphStore, useHoveredNode, useSelectedNode } from '~/stores/useGraphStore'
 import { useSimulationStore } from '~/stores/useSimulationStore'
 import { NodeExtended } from '~/types'
-import { colors } from '~/utils'
 import { useNodeNavigation } from '../../useNodeNavigation'
-import { COLORS_MAP } from '../constant'
 import { Candidates } from './Candidates'
 import { NodePoints } from './NodePoints'
 import { NodeWrapper } from './NodeWrapper'
@@ -23,7 +21,6 @@ export const Cubes = memo(() => {
   const instancesRef = useRef<Group | null>(null)
 
   const { selectionGraphData, showSelectionGraph, setHoveredNode, setIsHovering } = useGraphStore((s) => s)
-  const nodeTypes = useNodeTypes()
 
   const simulation = useSimulationStore((s) => s.simulation)
 
@@ -128,7 +125,6 @@ export const Cubes = memo(() => {
       >
         <group ref={nodesWrapperRef} name="simulation-3d-group__nodes" visible={!hideUniverse}>
           {dataInitial?.nodes.map((node: NodeExtended, index) => {
-            const color = COLORS_MAP[nodeTypes.indexOf(node.node_type)] || colors.white
             const simulationNode = simulation.nodes()[index]
             const isFixed = true || typeof simulationNode?.fx === 'number'
             const normalizedNode = nodesNormalized.get(node.ref_id)
@@ -137,13 +133,7 @@ export const Cubes = memo(() => {
             const scaleToFixed = Number(scaleNormalized.toFixed(1))
 
             return normalizedNode ? (
-              <NodeWrapper
-                key={node.ref_id}
-                color={color}
-                isFixed={isFixed}
-                node={normalizedNode}
-                scale={scaleToFixed}
-              />
+              <NodeWrapper key={node.ref_id} isFixed={isFixed} node={normalizedNode} scale={scaleToFixed} />
             ) : null
           })}
         </group>
