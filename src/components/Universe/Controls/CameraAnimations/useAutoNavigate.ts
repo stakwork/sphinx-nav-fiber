@@ -1,20 +1,21 @@
 /* eslint-disable no-param-reassign */
-import { type CameraControls } from '@react-three/drei'
-import { RefObject, useEffect } from 'react'
+import { useEffect } from 'react'
 import { Sphere, Vector3 } from 'three'
+import { useControlStore } from '~/stores/useControlStore'
 import { useSelectedNode } from '~/stores/useGraphStore'
 
-export const useAutoNavigate = (cameraControlsRef: RefObject<CameraControls | null>) => {
+export const useAutoNavigate = () => {
   const selectedNode = useSelectedNode()
+  const cameraControlsRef = useControlStore((s) => s.cameraControlsRef)
 
   useEffect(() => {
-    if (selectedNode && cameraControlsRef.current) {
+    if (selectedNode && cameraControlsRef) {
       const center = new Vector3(selectedNode.x, selectedNode.y, selectedNode.z)
       const radius = 500 // or any radius you want
 
       const sphere = new Sphere(center, radius)
 
-      cameraControlsRef.current.fitToSphere(sphere, true)
+      cameraControlsRef.fitToSphere(sphere, true)
     }
   }, [selectedNode, cameraControlsRef])
 

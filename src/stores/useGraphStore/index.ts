@@ -9,12 +9,18 @@ export type Position = {
   z: number
 }
 
+export type Neighbourhood = {
+  name: string
+  ref_id: string
+}
+
 export type GraphStyle = 'sphere' | 'force' | 'split' | 'earth'
 
 export const graphStyles: GraphStyle[] = ['sphere', 'force', 'split', 'earth']
 
 export type GraphStore = {
   graphRadius: number
+  neighbourhoods: Neighbourhood[]
   selectionGraphRadius: number
   data: { nodes: NodeExtended[]; links: Link[] } | null
   selectionGraphData: GraphData
@@ -61,6 +67,7 @@ export type GraphStore = {
   resetSelectedLinkTypes: () => void
   setFollowersFilter: (filter: string | null) => void
   setIsolatedView: (isolatedView: string) => void
+  setNeighbourhoods: (neighbourhoods: Neighbourhood[]) => void
 }
 
 const defaultData: Omit<
@@ -91,6 +98,7 @@ const defaultData: Omit<
   | 'setNodesToHide'
   | 'setFollowersFilter'
   | 'setIsolatedView'
+  | 'setNeighbourhoods'
 > = {
   data: null,
   selectionGraphData: { nodes: [], links: [] },
@@ -115,6 +123,7 @@ const defaultData: Omit<
   selectedLinkTypes: [],
   followersFilter: null,
   isolatedView: '',
+  neighbourhoods: [],
 }
 
 export const useGraphStore = create<GraphStore>()((set, get) => ({
@@ -215,6 +224,7 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
   setSearchQuery: (searchQuery) => set({ searchQuery }),
   setFollowersFilter: (filter) => set({ followersFilter: filter }),
   setIsolatedView: (isolatedView) => set({ isolatedView }),
+  setNeighbourhoods: (neighbourhoods) => set({ neighbourhoods }),
 }))
 
 export const useSelectedNode = () => useGraphStore((s) => s.selectedNode)

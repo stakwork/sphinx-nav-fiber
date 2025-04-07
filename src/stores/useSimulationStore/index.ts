@@ -14,7 +14,6 @@ import { ForceSimulation } from '~/transformers/forceSimulation'
 import { Link, Node, NodeExtended } from '~/types'
 import { useDataStore } from '../useDataStore'
 import { useGraphStore } from '../useGraphStore'
-import { useMindsetStore } from '../useMindsetStore'
 import { distributeNodesOnSphere } from './utils/distributeNodesOnSphere'
 
 const resetPosition = {
@@ -32,6 +31,7 @@ const resetPosition = {
 interface SimulationStore {
   simulation: ForceSimulation | null
   simulationVersion: number
+  simulationInProgress: boolean
   simulationCreate: (nodes: Node[]) => void
   removeSimulation: () => void
   addNodesAndLinks: (nodes: Node[], links: Link[], replace: boolean) => void
@@ -42,12 +42,13 @@ interface SimulationStore {
   simulationRestart: () => void
   getLinks: () => Link<NodeExtended>[]
   updateSimulationVersion: () => void
+  setSimulationInProgress: (simulationInProgress: boolean) => void
 }
 
 export const useSimulationStore = create<SimulationStore>((set, get) => ({
   simulation: null,
   simulationVersion: 0,
-
+  simulationInProgress: false,
   simulationCreate: (nodes) => {
     const structuredNodes = structuredClone(nodes)
 
@@ -167,9 +168,8 @@ export const useSimulationStore = create<SimulationStore>((set, get) => ({
 
   addClusterForce: () => {
     const { simulation } = get()
-    const { chapters } = useMindsetStore.getState()
-
-    const neighborhoodCenters = chapters?.length ? distributeNodesOnSphere(chapters, 1000) : null
+    const { neighbourhoods } = useGraphStore.getState()
+    const neighborhoodCenters = neighbourhoods?.length ? distributeNodesOnSphere(neighbourhoods, 3000) : null
 
     simulation
       .nodes(simulation.nodes().map((n: Node) => ({ ...n, ...resetPosition })))
@@ -242,7 +242,7 @@ export const useSimulationStore = create<SimulationStore>((set, get) => ({
           }
         }),
       )
-      .force('radial', forceRadial(2000, 0, 0, 0).strength(1))
+      // .force('radial', forceRadial(2000, 0, 0, 0).strength(0.1))
       .force(
         'collide',
         forceCollide()
@@ -259,16 +259,22 @@ export const useSimulationStore = create<SimulationStore>((set, get) => ({
   },
 
   simulationRestart: () => {
-    const { simulation } = get()
+    const { simulation, setSimulationInProgress } = get()
 
     if (!simulation) {
       return
     }
 
-    simulation.alpha(1).restart()
+    setSimulationInProgress(true)
+
+    simulation.alpha(0.4).restart()
   },
 
   updateSimulationVersion: () => {
     set((state) => ({ simulationVersion: state.simulationVersion + 1 }))
+  },
+
+  setSimulationInProgress: (simulationInProgress: boolean) => {
+    set({ simulationInProgress })
   },
 }))

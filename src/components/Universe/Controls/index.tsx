@@ -9,19 +9,22 @@ type Props = {
 }
 
 export const Controls = ({ disableAnimations }: Props) => {
-  const cameraControlsRef = useRef<CameraControls | null>(null)
   const { setDisableCameraRotation } = useGraphStore((s) => s)
+
+  const isCameraControlsRefSet = useRef(false)
 
   const [smoothTime] = useState(0.8)
 
-  const [isUserDragging, setIsUserDragging, isUserScrolling, isUserScrollingOnHtmlPanel] = useControlStore((s) => [
-    s.isUserDragging,
-    s.setIsUserDragging,
-    s.isUserScrolling,
-    s.isUserScrollingOnHtmlPanel,
-  ])
+  const [isUserDragging, setIsUserDragging, isUserScrolling, isUserScrollingOnHtmlPanel, setCameraControlsRef] =
+    useControlStore((s) => [
+      s.isUserDragging,
+      s.setIsUserDragging,
+      s.isUserScrolling,
+      s.isUserScrollingOnHtmlPanel,
+      s.setCameraControlsRef,
+    ])
 
-  useCameraAnimations(cameraControlsRef, { enabled: !disableAnimations && !isUserScrolling && !isUserDragging })
+  useCameraAnimations({ enabled: !disableAnimations && !isUserScrolling && !isUserDragging })
 
   useEffect(() => {
     if (isUserDragging) {
@@ -31,7 +34,12 @@ export const Controls = ({ disableAnimations }: Props) => {
 
   return (
     <CameraControls
-      ref={cameraControlsRef}
+      ref={(ref) => {
+        if (ref && !isCameraControlsRefSet.current) {
+          isCameraControlsRefSet.current = true
+          setCameraControlsRef(ref)
+        }
+      }}
       boundaryEnclosesCamera
       dollyToCursor
       enabled={!isUserScrollingOnHtmlPanel}

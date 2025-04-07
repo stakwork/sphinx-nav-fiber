@@ -6,7 +6,6 @@ import { Line2 } from 'three-stdlib'
 import { useRetrieveSelectedNodeData } from '~/hooks/useRetrieveSelectedNodeData'
 import { useDataStore } from '~/stores/useDataStore'
 import { useGraphStore } from '~/stores/useGraphStore'
-import { useMindsetStore } from '~/stores/useMindsetStore'
 import { useSchemaStore } from '~/stores/useSchemaStore'
 import { useSimulationStore } from '~/stores/useSimulationStore'
 import { NodeExtended } from '~/types'
@@ -43,15 +42,13 @@ export const Graph = () => {
 
   useRetrieveSelectedNodeData()
 
-  const chapters = useMindsetStore((s) => s.chapters)
-
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { useClustering } = useControls({ useClustering: false })
 
   const linksPositionRef = useRef(new Map<string, LinkPosition>())
   const nodesPositionRef = useRef(new Map<string, NodePosition>())
 
-  const { graphStyle, setGraphRadius } = useGraphStore((s) => s)
+  const { graphStyle, setGraphRadius, neighbourhoods } = useGraphStore((s) => s)
 
   const {
     simulation,
@@ -62,6 +59,7 @@ export const Graph = () => {
     updateSimulationVersion,
     removeSimulation,
     setForces,
+    setSimulationInProgress,
   } = useSimulationStore((s) => s)
 
   const highlightNodes = useGraphStore((s) => s.highlightNodes)
@@ -349,10 +347,19 @@ export const Graph = () => {
           }
         }
 
+        setSimulationInProgress(false)
         updateSimulationVersion()
       }
     })
-  }, [dataInitial, simulation, setGraphRadius, normalizedSchemasByType, resetDataNew, updateSimulationVersion])
+  }, [
+    dataInitial,
+    simulation,
+    setGraphRadius,
+    normalizedSchemasByType,
+    resetDataNew,
+    updateSimulationVersion,
+    setSimulationInProgress,
+  ])
 
   if (!simulation) {
     return null
@@ -365,7 +372,7 @@ export const Graph = () => {
 
         {graphStyle !== 'earth' && <Connections linksPosition={linksPositionRef.current} />}
       </group>
-      {chapters?.length && graphStyle === 'force' ? <Neighbourhoods chapters={chapters} /> : null}
+      {neighbourhoods?.length && graphStyle === 'force' ? <Neighbourhoods /> : null}
       <NodeDetailsPanel />
       {graphStyle === 'split' && <Layers />}
       {graphStyle === 'earth' && <Earth />}
