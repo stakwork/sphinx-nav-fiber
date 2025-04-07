@@ -22,7 +22,7 @@ const fetchNodes = async (
   setAbortRequests: (status: boolean) => void,
 ): Promise<FetchDataResponse> => {
   const args = new URLSearchParams(params).toString()
-  const url = isLatest ? `/prediction/graph/search/latest?` : `/prediction/graph/search?${args}`
+  const url = isLatest ? `/graph/search/latest?` : `/graph/search?${args}`
 
   const fetchWithLSAT = async (): Promise<FetchDataResponse> => {
     const lsatToken = await getLSat()

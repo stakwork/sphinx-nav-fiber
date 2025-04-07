@@ -49,7 +49,7 @@ Cypress.Commands.add('initialSetup', (username, budget) => {
 
   cy.intercept({
     method: 'GET',
-    url: 'http://localhost:8444/api/prediction/graph/search/latest*',
+    url: 'http://localhost:8444/api/graph/search/latest*',
   }).as('loadLatest')
 
   cy.visit('/', {

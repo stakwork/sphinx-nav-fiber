@@ -2,7 +2,7 @@ describe('test trending topics', () => {
   it('Checking it trending topics exist', () => {
     cy.intercept({
       method: 'GET',
-      url: 'http://localhost:8444/api/prediction/graph/search/latest*',
+      url: 'http://localhost:8444/api/graph/search/latest*',
     }).as('loadLatest')
 
     cy.intercept({
@@ -22,7 +22,7 @@ describe('test trending topics', () => {
 
     cy.intercept({
       method: 'GET',
-      url: 'http://localhost:8444/api/prediction/graph/search*',
+      url: 'http://localhost:8444/api/graph/search*',
     }).as('search')
 
     cy.visit('/', {
@@ -59,7 +59,7 @@ describe('test trending topics', () => {
 
       cy.intercept({
         method: 'GET',
-        url: 'http://localhost:8444/api/prediction/graph/search*',
+        url: 'http://localhost:8444/api/graph/search*',
       }).as('search2')
 
       cy.wait('@search2')

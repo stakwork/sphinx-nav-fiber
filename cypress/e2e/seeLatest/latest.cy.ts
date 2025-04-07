@@ -1,4 +1,4 @@
-//describe('See latest button as new node are added', () => {
+// describe('See latest button as new node are added', () => {
 //  it('See latest as nodes are being added', () => {
 //    cy.initialSetup('carol', 300)
 //
@@ -34,7 +34,7 @@
 //
 //      cy.intercept({
 //        method: 'GET',
-//        url: 'http://localhost:8444/api/prediction/graph/search/latest*',
+//        url: 'http://localhost:8444/api/graph/search/latest*',
 //      }).as('getLatest')
 //
 //      cy.get('[data-testid="see_latest_button"]').should('exist')
@@ -53,4 +53,4 @@
 //      // })
 //    })
 //  })
-//})
+// })
