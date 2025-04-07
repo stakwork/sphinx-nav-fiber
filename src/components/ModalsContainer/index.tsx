@@ -4,6 +4,8 @@ const LazySettingsModal = lazy(() =>
   import('../SettingsModal').then(({ SettingsModal }) => ({ default: SettingsModal })),
 )
 
+const LazyClaimsModal = lazy(() => import('./ClaimsModal').then(({ ClaimsModal }) => ({ default: ClaimsModal })))
+
 const LazyAddContentModal = lazy(() =>
   import('../AddContentModal').then(({ AddContentModal }) => ({ default: AddContentModal })),
 )
@@ -75,5 +77,6 @@ export const ModalsContainer = () => (
     <LazyOnboardingModal />
     <LazyBriefDescriptionModal />
     <LazyNodeActionModal />
+    <LazyClaimsModal />
   </>
 )

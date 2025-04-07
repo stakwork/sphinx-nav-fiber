@@ -1,7 +1,6 @@
-import { Position } from '~/stores/useGraphStore'
-import { NodeExtended } from '~/types'
+import { Neighbourhood, Position } from '~/stores/useGraphStore'
 
-export const distributeNodesOnSphere = (nodes: NodeExtended[], radius = 20) => {
+export const distributeNodesOnSphere = (nodes: Neighbourhood[], radius = 20) => {
   const count = nodes.length
   const goldenRatio = (1 + Math.sqrt(5)) / 2
 

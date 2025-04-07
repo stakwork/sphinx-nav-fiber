@@ -3,6 +3,7 @@ import { memo } from 'react'
 import { useDataStore } from '~/stores/useDataStore'
 import { useGraphStore } from '~/stores/useGraphStore'
 import { useSchemaStore } from '~/stores/useSchemaStore'
+import { useSimulationStore } from '~/stores/useSimulationStore'
 import { Link } from '~/types'
 import { LinkPosition } from '..'
 import { LineComponent } from './LineComponent'
@@ -18,6 +19,8 @@ export const Connections = memo(({ linksPosition }: Props) => {
   const [showSelectionGraph, searchQuery, selectedNodeTypes, highlightNodes, hoveredNode, selectedNode] = useGraphStore(
     (s) => [s.showSelectionGraph, s.searchQuery, s.selectedNodeTypes, s.highlightNodes, s.hoveredNode, s.selectedNode],
   )
+
+  const simulationInProgress = useSimulationStore((s) => s.simulationInProgress)
 
   const normalizedSchemasByType = useSchemaStore((s) => s.normalizedSchemasByType)
 
@@ -56,7 +59,14 @@ export const Connections = memo(({ linksPosition }: Props) => {
       </group>
       <group
         key={dataInitial?.links.length}
-        visible={!searchQuery && !selectedNodeTypes.length && !highlightNodes.length && !hoveredNode && !selectedNode}
+        visible={
+          !simulationInProgress &&
+          !searchQuery &&
+          !selectedNodeTypes.length &&
+          !highlightNodes.length &&
+          !hoveredNode &&
+          !selectedNode
+        }
       >
         <Segments limit={1000} lineWidth={0.2}>
           {dataInitial?.links.map((l: Link) => {

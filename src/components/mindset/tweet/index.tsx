@@ -5,6 +5,7 @@ import { Flex } from '~/components/common/Flex'
 import { Universe } from '~/components/Universe'
 import { getPathway, getSchemaAll } from '~/network/fetchSourcesData'
 import { useDataStore } from '~/stores/useDataStore'
+import { Neighbourhood, useGraphStore } from '~/stores/useGraphStore'
 import { useSchemaStore } from '~/stores/useSchemaStore'
 import { useTweetMindsetStore } from '~/stores/useTweetMindsetStore'
 import { FetchDataResponse, Link, Node, NodeExtended } from '~/types'
@@ -12,6 +13,21 @@ import { Header } from '../components/Header'
 import { PlayerControl } from './components/PlayerContols'
 import { SideBar } from './components/Sidebar'
 import { PLAYBACK_DURATION } from './constant'
+
+const TWEET_NEIGHBOURHOODS: Neighbourhood[] = [
+  {
+    ref_id: 'positive',
+    name: 'Positive',
+  },
+  {
+    ref_id: 'negative',
+    name: 'Negative',
+  },
+  {
+    ref_id: 'neutral',
+    name: 'Neutral',
+  },
+]
 
 const calculateMarkers = (data: FetchDataResponse): Node[] => {
   // Filter edges that have a defined 'start' property
@@ -54,6 +70,7 @@ export const TweetMindset = () => {
   const setSelectedTweets = useTweetMindsetStore((s) => s.setSelectedTweets)
   const selectedTweet = useTweetMindsetStore((s) => s.selectedTweet)
   const setSelectedTweet = useTweetMindsetStore((s) => s.setSelectedTweet)
+  const setNeighbourhoods = useGraphStore((s) => s.setNeighbourhoods)
 
   const navigate = useNavigate()
 
@@ -72,6 +89,10 @@ export const TweetMindset = () => {
 
     fetchSchemaData()
   }, [setSchemas])
+
+  useEffect(() => {
+    setNeighbourhoods(TWEET_NEIGHBOURHOODS)
+  }, [setNeighbourhoods])
 
   useEffect(() => {
     if (!selectedTweet) {
@@ -99,7 +120,32 @@ export const TweetMindset = () => {
 
         setMarkers(markersList)
 
-        nodesAndEdgesRef.current = { nodes: data.nodes, edges: data.edges }
+        const nodesWithNeighbourhood = data.nodes.map((n) => {
+          if (n.node_type === 'Tweet' && n.properties?.impression_count) {
+            if (n.properties?.impression_count < 100) {
+              return {
+                ...n,
+                neighbourHood: 'negative',
+              }
+            }
+
+            if (n.properties?.impression_count > 200) {
+              return {
+                ...n,
+                neighbourHood: 'positive',
+              }
+            }
+
+            return {
+              ...n,
+              neighbourHood: 'neutral',
+            }
+          }
+
+          return n
+        })
+
+        nodesAndEdgesRef.current = { nodes: nodesWithNeighbourhood, edges: data.edges }
       } catch (error) {
         navigate('/')
         console.error(error)

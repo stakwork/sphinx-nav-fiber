@@ -3,6 +3,7 @@ import { getPathway } from '~/network/fetchSourcesData'
 import { Link, Node, NodeExtended } from '~/types'
 import { timeToMilliseconds } from '~/utils'
 import { useDataStore } from '../useDataStore'
+import { useGraphStore } from '../useGraphStore'
 import { usePlayerStore } from '../usePlayerStore'
 
 type MindsetStore = {
@@ -31,6 +32,7 @@ export const useMindsetStore = create<MindsetStore>((set) => ({
   fetchEpisodeData: async (id: string) => {
     const { addNewNode } = useDataStore.getState()
     const { setPlayingNode } = usePlayerStore.getState()
+    const { setNeighbourhoods } = useGraphStore.getState()
 
     const data = await getPathway(id, ['Clip', 'Chapter', 'Show', 'Host', 'Guest'], [], '', true, 0, 1, 500)
 
@@ -54,6 +56,13 @@ export const useMindsetStore = create<MindsetStore>((set) => ({
         (a, b) =>
           timeToMilliseconds(a?.properties?.timestamp || '') - timeToMilliseconds(b?.properties?.timestamp || ''),
       )
+
+    const neighbourhoods = chapters.map((chapter) => ({
+      ref_id: chapter.ref_id,
+      name: chapter.properties?.name || '',
+    }))
+
+    setNeighbourhoods(neighbourhoods)
 
     const selectedEpisode = data.nodes.find((node) => node.node_type === 'Episode')
 
