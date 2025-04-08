@@ -1,20 +1,10 @@
-import Paper from '@mui/material/Paper'
-import MaterialTable from '@mui/material/Table'
-import TableBody from '@mui/material/TableBody'
-import TableCell from '@mui/material/TableCell'
-import TableContainer from '@mui/material/TableContainer'
-import TableHead from '@mui/material/TableHead'
-import TableRow from '@mui/material/TableRow'
-import moment from 'moment'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
-import LinkIcon from '~/components/Icons/LinkIcon'
-import { getPathway } from '~/network/fetchSourcesData'
-import { Node } from '~/types'
 import { colors } from '~/utils'
+import { EngagementTable } from './Engagement'
+import { RetweetsTable } from './Retweets'
 
 const SortButton = styled.button<{ active?: boolean }>`
   background: ${({ active }) => (active ? colors.primaryBlue : 'transparent')};
@@ -32,7 +22,7 @@ const SortButton = styled.button<{ active?: boolean }>`
   }
 `
 
-const Avatar = styled.div<{ imageUrl?: string }>`
+export const Avatar = styled.div<{ imageUrl?: string }>`
   width: 32px;
   height: 32px;
   border-radius: 50%;
@@ -41,21 +31,21 @@ const Avatar = styled.div<{ imageUrl?: string }>`
   background-size: cover;
 `
 
-const UserInfo = styled.div`
+export const UserInfo = styled.div`
   display: flex;
   flex-direction: column;
 `
 
-const Username = styled.span`
+export const Username = styled.span`
   font-size: 14px;
 `
 
-const TweetTime = styled.div`
+export const TweetTime = styled.div`
   color: ${colors.GRAY7};
   font-size: 12px;
 `
 
-const TweetLink = styled.a`
+export const TweetLink = styled.a`
   color: ${colors.SOURCE_TABLE_LINK};
   cursor: pointer;
   font-size: 16px;
@@ -63,13 +53,13 @@ const TweetLink = styled.a`
   margin-left: 8px;
 `
 
-const Engagement = styled.div`
+export const Engagement = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
 `
 
-const EngagementBar = styled.div<{ percentage: number }>`
+export const EngagementBar = styled.div<{ percentage: number }>`
   width: 100px;
   height: 4px;
   background-color: ${colors.BG1};
@@ -87,26 +77,27 @@ const EngagementBar = styled.div<{ percentage: number }>`
   }
 `
 
-const Title = styled.h2`
+export const Title = styled.h2`
   font-size: 24px;
   font-weight: 600;
   margin-bottom: 16px;
   color: ${colors.white};
 `
 
-const ENGAGEMENT = 'impression_count'
-const FOLLOWERS = 'followers'
+export const SORT_OPTIONS: Record<string, string> = {
+  ENGAGEMENT: 'impression_count',
+  FOLLOWERS: 'followers',
+  TOP_REPOSTERS: 'top_reposters',
+} as const
+
+export type SortBy = (typeof SORT_OPTIONS)[keyof typeof SORT_OPTIONS]
 
 type Props = {
   tweetId: string
 }
 
 export const Body = ({ tweetId }: Props) => {
-  const [sortBy, setSortBy] = useState<'impression_count' | 'followers'>(ENGAGEMENT)
-  const [tweetsByEngagement, setTweetsByEngagement] = useState<Node[]>([])
-  const [tweetsByFollowers, setTweetsByFollowers] = useState<Node[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
+  const [sortBy, setSortBy] = useState<SortBy>(SORT_OPTIONS.ENGAGEMENT)
 
   const { tweetId: tweetIds } = useParams()
 
@@ -116,254 +107,27 @@ export const Body = ({ tweetId }: Props) => {
     return tweetId === 'summary' ? ids : ids.filter((id) => id === tweetId)
   }, [tweetIds, tweetId])
 
-  useEffect(() => {
-    const fetchTweets = async () => {
-      if (idsToAnalyze.length === 0) {
-        return
-      }
-
-      setLoading(true)
-
-      try {
-        const responses = await Promise.all(
-          idsToAnalyze.map((id) =>
-            getPathway(id, [], ['HAS_REPLY>', 'HAS_QUOTE>', 'THREAD_NEXT>', '<POSTED'], sortBy, true, 0, 10, 800),
-          ),
-        )
-
-        const mainTweetsArray = []
-        const mergedTweetsByImpressionCount: Node[] = []
-        const mergedTweetsByFollowers: Node[] = []
-
-        responses.forEach((response, responseIndex) => {
-          const main = response.nodes.find((node) => node.ref_id === idsToAnalyze[responseIndex])
-
-          if (main) {
-            mainTweetsArray.push(main)
-          }
-
-          if (sortBy === ENGAGEMENT) {
-            const tweetsWithUserInfo = response.nodes
-              .filter(
-                (node) =>
-                  node.node_type === 'Tweet' &&
-                  node.properties?.author !== main?.properties?.author &&
-                  node.properties?.twitter_handle !== main?.properties?.twitter_handle,
-              )
-              .map((tweet) => {
-                const relatedUser = response.nodes.find(
-                  (node) => node.node_type === 'User' && node.properties?.author_id === tweet.properties?.author,
-                )
-
-                if (relatedUser) {
-                  return {
-                    ...tweet,
-                    properties: {
-                      ...tweet.properties,
-                      twitter_handle: relatedUser.properties?.twitter_handle,
-                      image_url: relatedUser.properties?.image_url,
-                      impression_percentage: (
-                        (Number(tweet.properties?.impression_count) / Number(main?.properties?.impression_count || 1)) *
-                        100
-                      ).toFixed(2),
-                    },
-                  }
-                }
-
-                return tweet
-              })
-
-            const tweetsByImpressionCount = [...tweetsWithUserInfo]
-              .sort((a, b) => {
-                const aEngagement = Number(a.properties?.impression_percentage) || 0
-                const bEngagement = Number(b.properties?.impression_percentage) || 0
-
-                return bEngagement - aEngagement
-              })
-              .slice(0, 20)
-
-            if (tweetsByImpressionCount) {
-              mergedTweetsByImpressionCount.push(...(tweetsByImpressionCount as unknown as Node[]))
-            }
-          }
-
-          if (sortBy === FOLLOWERS) {
-            const userNodes = response.nodes
-              .filter(
-                (node) =>
-                  node.node_type === 'User' &&
-                  node.properties?.author_id !== main?.properties?.author &&
-                  node.properties?.twitter_handle !== main?.properties?.twitter_handle,
-              )
-              .sort((a, b) => Number(b.properties?.followers) - Number(a.properties?.followers))
-              .slice(0, 20)
-
-            const tweetNodeIdsByUser = userNodes.map((i) => {
-              const sourceEdge = response.edges.find((edge) => edge.source === i.ref_id)
-              const targetEdge = response.edges.find((edge) => edge.target === i.ref_id)
-
-              if (sourceEdge) {
-                return sourceEdge.target
-              }
-
-              if (targetEdge) {
-                return targetEdge.source
-              }
-
-              return null
-            })
-
-            const tweetsByUserCount = tweetNodeIdsByUser
-              .map((id, index) => {
-                if (!id) {
-                  return null
-                }
-
-                const followersCount = userNodes[index]?.properties?.followers || 0
-                const tweetHandle = userNodes[index]?.properties?.twitter_handle || ''
-                const imageUrl = userNodes[index]?.properties?.image_url || ''
-                const tweetNode = response.nodes.find((node) => node.ref_id === id)
-
-                return {
-                  ...tweetNode,
-                  properties: {
-                    ...(tweetNode?.properties || {}),
-                    followers: followersCount,
-                    twitter_handle: tweetHandle,
-                    image_url: imageUrl,
-                  },
-                }
-              })
-              .filter((i) => i !== null)
-
-            if (tweetsByUserCount) {
-              mergedTweetsByFollowers.push(...(tweetsByUserCount as unknown as Node[]))
-            }
-          }
-        })
-
-        setTweetsByEngagement(
-          mergedTweetsByImpressionCount
-            .sort((a, b) => Number(b.properties?.impression_percentage) - Number(a.properties?.impression_percentage))
-            .slice(0, 20),
-        )
-
-        setTweetsByFollowers(
-          mergedTweetsByFollowers
-            .sort((a, b) => Number(b.properties?.followers) - Number(a.properties?.followers))
-            .slice(0, 20),
-        )
-
-        setLoading(false)
-      } catch (err) {
-        console.error('Error fetching tweets:', err)
-        setLoading(false)
-        setError('Error fetching tweets')
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchTweets()
-  }, [sortBy, idsToAnalyze])
-
-  if (error) {
-    return <div style={{ padding: 24, color: '#FF4D4F' }}>{error}</div>
-  }
-
-  if (!tweetsByEngagement.length && !tweetsByFollowers.length) {
-    return loading ? (
-      <Flex align="center" grow={1} justify="center">
-        <ClipLoader color={colors.white} />
-        <div style={{ padding: 24, fontSize: 16, textAlign: 'center', color: colors.white }}>
-          Loading engagement data...
-        </div>
-      </Flex>
-    ) : (
-      <div style={{ padding: 24, textAlign: 'center' }}>No engagement data available</div>
-    )
-  }
-
-  const tweetsToRender = sortBy === ENGAGEMENT ? tweetsByEngagement : tweetsByFollowers
-
   return (
     <Wrapper>
       <Flex p={24}>
         <Title>Engagement Report</Title>
         <Flex direction="row">
-          <SortButton active={sortBy === ENGAGEMENT} onClick={() => setSortBy(ENGAGEMENT)}>
-            Total Engagement
-          </SortButton>
-          <SortButton active={sortBy === FOLLOWERS} onClick={() => setSortBy(FOLLOWERS)}>
-            Follower Count
-          </SortButton>
+          {Object.keys(SORT_OPTIONS).map((optionKey) => (
+            <SortButton
+              key={optionKey}
+              active={sortBy === SORT_OPTIONS[optionKey]}
+              onClick={() => setSortBy(SORT_OPTIONS[optionKey as keyof typeof SORT_OPTIONS])}
+            >
+              {optionKey}
+            </SortButton>
+          ))}
         </Flex>
       </Flex>
-      {loading ? (
-        <Flex align="center" grow={1} justify="center">
-          <ClipLoader color={colors.white} />
-          <div style={{ padding: 24, fontSize: 16, textAlign: 'center', color: colors.white }}>
-            Loading engagement data...
-          </div>
-        </Flex>
+
+      {sortBy !== 'top_reposters' ? (
+        <EngagementTable idsToAnalyze={idsToAnalyze} sortBy={sortBy} />
       ) : (
-        <TableContainer component={Paper}>
-          <MaterialTable aria-label="a dense table" size="small" sx={{ minWidth: 650 }}>
-            <TableHead>
-              <TableRow>
-                <TableCell align="left">Rank</TableCell>
-                <TableCell align="left">User Profile</TableCell>
-                <TableCell align="left">Tweet</TableCell>
-                {sortBy === ENGAGEMENT && <TableCell align="left">Engagement</TableCell>}
-                {sortBy === FOLLOWERS && <TableCell align="left">Followers</TableCell>}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {tweetsToRender.map((tweet, index) => (
-                <TableRow key={tweet.ref_id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                  <TableCell>{index + 1}</TableCell>
-                  <TableCell>
-                    <Avatar imageUrl={tweet.properties?.image_url} />
-                    <UserInfo>
-                      {tweet?.properties?.twitter_handle && <Username>{tweet.properties.twitter_handle}</Username>}
-                    </UserInfo>
-                  </TableCell>
-                  <TableCell>
-                    {tweet.properties?.text || ''}
-                    <Flex align="center" direction="row" justify="flex-start" mt={16}>
-                      {tweet?.properties?.date && (
-                        <TweetTime aria-label="Time since tweet">
-                          {moment.unix(tweet.properties.date).fromNow()}
-                        </TweetTime>
-                      )}
-                      <TweetLink
-                        aria-label="View tweet on Twitter"
-                        href={`https://twitter.com/${tweet?.properties?.twitter_handle}/status/${tweet?.properties?.tweet_id}?open=system`}
-                        rel="noopener noreferrer"
-                        target="_blank"
-                      >
-                        <LinkIcon />
-                      </TweetLink>
-                    </Flex>
-                  </TableCell>
-                  {sortBy === ENGAGEMENT && (
-                    <TableCell>
-                      {tweet.properties?.impression_percentage} %
-                      {tweet.properties?.impression_count !== undefined && tweet.properties?.impression_count && (
-                        <Engagement>
-                          <EngagementBar percentage={Number(tweet.properties?.impression_percentage)} />
-                        </Engagement>
-                      )}
-                    </TableCell>
-                  )}
-                  {sortBy === FOLLOWERS && (
-                    <TableCell align="right">{Number(tweet.properties?.followers).toLocaleString()}</TableCell>
-                  )}
-                </TableRow>
-              ))}
-            </TableBody>
-          </MaterialTable>
-        </TableContainer>
+        <RetweetsTable idsToAnalyze={idsToAnalyze} sortBy={sortBy} />
       )}
     </Wrapper>
   )
