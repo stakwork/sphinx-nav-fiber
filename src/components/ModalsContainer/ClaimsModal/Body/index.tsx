@@ -30,15 +30,19 @@ const getClaims = async (id: string) => {
 }
 
 export const Body = () => {
-  const { selectedEpisode } = useMindsetStore((s) => s)
+  const selectedEpisode = useMindsetStore((s) => s.selectedEpisode)
   const setData = useIsolatedGraphStore((s) => s.setData)
   const isolatedView = useGraphStore((s) => s.isolatedView)
 
   useEffect(() => {
-    const data: FetchDataResponse | null = null
-
     const initClaims = async () => {
-      await getClaims(selectedEpisode.ref_id)
+      try {
+        const data: FetchDataResponse = await getClaims(selectedEpisode.ref_id)
+
+        setData(data)
+      } catch (error) {
+        console.error(error)
+      }
     }
 
     if (isolatedView) {
@@ -56,11 +60,7 @@ export const Body = () => {
     } else if (selectedEpisode?.ref_id) {
       initClaims()
     }
-
-    if (data) {
-      setData(data)
-    }
-  }, [selectedEpisode?.ref_id, useDataStore])
+  }, [selectedEpisode?.ref_id])
 
   return (
     <div className="w-full h-full p-4 bg-white rounded shadow relative">
