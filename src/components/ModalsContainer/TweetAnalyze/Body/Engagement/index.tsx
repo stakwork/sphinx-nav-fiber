@@ -36,8 +36,6 @@ export const EngagementTable = ({ sortBy, idsToAnalyze }: Props) => {
           ),
         )
 
-        console.log(responses)
-
         const mainTweetsArray = []
         const mergedTweetsByImpressionCount: Node[] = []
         const mergedTweetsByFollowers: Node[] = []

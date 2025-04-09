@@ -32,8 +32,6 @@ export const RetweetsTable = ({ sortBy, idsToAnalyze }: Props) => {
           idsToAnalyze.map((id) => getPathway(id, ['User'], ['RETWEETED_BY>'], '', true, 0, 1, 20)),
         )
 
-        console.log(responses)
-
         const mergedUsers: Node[] = []
 
         responses.forEach((response) => {
