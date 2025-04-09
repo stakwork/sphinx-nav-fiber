@@ -67,6 +67,7 @@ export const EngagementTable = ({ sortBy, idsToAnalyze }: Props) => {
                     properties: {
                       ...tweet.properties,
                       twitter_handle: relatedUser.properties?.twitter_handle,
+                      followers: relatedUser.properties?.followers,
                       image_url: relatedUser.properties?.image_url,
                       impression_percentage: (
                         (Number(tweet.properties?.impression_count) / Number(main?.properties?.impression_count || 1)) *
@@ -219,7 +220,7 @@ export const EngagementTable = ({ sortBy, idsToAnalyze }: Props) => {
             <TableCell align="left">User Profile</TableCell>
             <TableCell align="left">Tweet</TableCell>
             {sortBy === SORT_OPTIONS.ENGAGEMENT.value && <TableCell align="left">Engagement</TableCell>}
-            {sortBy === SORT_OPTIONS.FOLLOWERS.value && <TableCell align="left">Followers</TableCell>}
+            <TableCell align="left">Followers</TableCell>
             <TableCell align="left">
               <CsvDownloadButton data={tweetsToDownload} filename={`${sortBy}-${moment().format('YYYY-MM-DD')}.csv`} />
             </TableCell>
@@ -252,14 +253,17 @@ export const EngagementTable = ({ sortBy, idsToAnalyze }: Props) => {
                 </Flex>
               </TableCell>
               {sortBy === SORT_OPTIONS.ENGAGEMENT.value && (
-                <TableCell>
-                  {tweet.properties?.impression_percentage} %
-                  {tweet.properties?.impression_count !== undefined && tweet.properties?.impression_count && (
-                    <Engagement>
-                      <EngagementBar percentage={Number(tweet.properties?.impression_percentage)} />
-                    </Engagement>
-                  )}
-                </TableCell>
+                <>
+                  <TableCell>
+                    {tweet.properties?.impression_percentage} %
+                    {tweet.properties?.impression_count !== undefined && tweet.properties?.impression_count && (
+                      <Engagement>
+                        <EngagementBar percentage={Number(tweet.properties?.impression_percentage)} />
+                      </Engagement>
+                    )}
+                  </TableCell>
+                  <TableCell align="right">{Number(tweet.properties?.followers).toLocaleString()}</TableCell>
+                </>
               )}
               {sortBy === SORT_OPTIONS.FOLLOWERS.value && (
                 <TableCell align="right">{Number(tweet.properties?.followers).toLocaleString()}</TableCell>
