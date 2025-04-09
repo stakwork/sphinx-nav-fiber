@@ -65,6 +65,7 @@ export const SentimentTable = ({ sortBy, idsToAnalyze }: Props) => {
                     ...tweet.properties,
                     twitter_handle: relatedUser.properties?.twitter_handle,
                     image_url: relatedUser.properties?.image_url,
+                    followers: relatedUser.properties?.followers,
                   },
                 }
               }
@@ -128,6 +129,7 @@ export const SentimentTable = ({ sortBy, idsToAnalyze }: Props) => {
     'User profile': tweet.properties?.twitter_handle ? tweet.properties?.twitter_handle : '',
     Tweet: tweet.properties?.text || '',
     Sentiment: tweet.properties?.sentiment || '',
+    Followers: tweet.properties?.followers || '',
   }))
 
   return (
@@ -139,6 +141,7 @@ export const SentimentTable = ({ sortBy, idsToAnalyze }: Props) => {
             <TableCell align="left">User Profile</TableCell>
             <TableCell align="left">Tweet</TableCell>
             <TableCell align="left">Sentiment</TableCell>
+            <TableCell align="left">Followers</TableCell>
             <TableCell align="left">
               <CsvDownloadButton data={dataToDownload} filename={`${sortBy}-${moment().format('YYYY-MM-DD')}.csv`} />
             </TableCell>
@@ -172,6 +175,7 @@ export const SentimentTable = ({ sortBy, idsToAnalyze }: Props) => {
               </TableCell>
 
               <TableCell align="right">{tweet.properties?.sentiment}</TableCell>
+              <TableCell align="right">{tweet.properties?.followers}</TableCell>
             </TableRow>
           ))}
         </TableBody>
