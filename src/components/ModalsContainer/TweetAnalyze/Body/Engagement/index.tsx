@@ -3,6 +3,7 @@ import MaterialTable from '@mui/material/Table'
 import moment from 'moment'
 import { useEffect, useState } from 'react'
 import { ClipLoader } from 'react-spinners'
+import { CsvDownloadButton } from '~/components/common/CsvDownloader'
 import { Flex } from '~/components/common/Flex'
 import LinkIcon from '~/components/Icons/LinkIcon'
 import { getPathway } from '~/network/fetchSourcesData'
@@ -174,6 +175,24 @@ export const EngagementTable = ({ sortBy, idsToAnalyze }: Props) => {
 
   const tweetsToRender = sortBy === SORT_OPTIONS.ENGAGEMENT.value ? tweetsByEngagement : tweetsByFollowers
 
+  const tweetsToDownload =
+    sortBy === SORT_OPTIONS.ENGAGEMENT.value
+      ? tweetsByEngagement.map((tweet) => ({
+          'User profile': tweet.properties?.twitter_handle ? tweet.properties?.twitter_handle : '',
+          Date: tweet.properties?.date ? moment.unix(tweet.properties.date).format('YYYY-MM-DD') : '',
+          Tweet: tweet.properties?.text || '',
+          Engagement: tweet.properties?.impression_percentage || '',
+          'Impression count': tweet.properties?.impression_count || '',
+          'Tweet ID': tweet.properties?.tweet_id || '',
+        }))
+      : tweetsByFollowers.map((tweet) => ({
+          'User profile': tweet.properties?.twitter_handle ? tweet.properties?.twitter_handle : '',
+          Date: tweet.properties?.date ? moment.unix(tweet.properties.date).format('YYYY-MM-DD') : '',
+          Tweet: tweet.properties?.text || '',
+          Followers: tweet.properties?.followers || '',
+          'Tweet ID': tweet.properties?.tweet_id || '',
+        }))
+
   if (error) {
     return <div style={{ padding: 24, color: '#FF4D4F' }}>{error}</div>
   }
@@ -201,6 +220,9 @@ export const EngagementTable = ({ sortBy, idsToAnalyze }: Props) => {
             <TableCell align="left">Tweet</TableCell>
             {sortBy === SORT_OPTIONS.ENGAGEMENT.value && <TableCell align="left">Engagement</TableCell>}
             {sortBy === SORT_OPTIONS.FOLLOWERS.value && <TableCell align="left">Followers</TableCell>}
+            <TableCell align="left">
+              <CsvDownloadButton data={tweetsToDownload} filename={`${sortBy}-${moment().format('YYYY-MM-DD')}.csv`} />
+            </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
