@@ -3,6 +3,7 @@ import MaterialTable from '@mui/material/Table'
 import moment from 'moment'
 import { useEffect, useState } from 'react'
 import { ClipLoader } from 'react-spinners'
+import { CsvDownloadButton } from '~/components/common/CsvDownloader'
 import { Flex } from '~/components/common/Flex'
 import LinkIcon from '~/components/Icons/LinkIcon'
 import { getPathway } from '~/network/fetchSourcesData'
@@ -123,6 +124,12 @@ export const SentimentTable = ({ sortBy, idsToAnalyze }: Props) => {
     )
   }
 
+  const dataToDownload = tweetsToRender.map((tweet) => ({
+    'User profile': tweet.properties?.twitter_handle ? tweet.properties?.twitter_handle : '',
+    Tweet: tweet.properties?.text || '',
+    Sentiment: tweet.properties?.sentiment || '',
+  }))
+
   return (
     <TableContainer component={Paper}>
       <MaterialTable aria-label="a dense table" size="small" sx={{ minWidth: 650 }}>
@@ -132,6 +139,9 @@ export const SentimentTable = ({ sortBy, idsToAnalyze }: Props) => {
             <TableCell align="left">User Profile</TableCell>
             <TableCell align="left">Tweet</TableCell>
             <TableCell align="left">Sentiment</TableCell>
+            <TableCell align="left">
+              <CsvDownloadButton data={dataToDownload} filename={`${sortBy}-${moment().format('YYYY-MM-DD')}.csv`} />
+            </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
