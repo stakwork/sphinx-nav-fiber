@@ -175,24 +175,6 @@ export const EngagementTable = ({ sortBy, idsToAnalyze }: Props) => {
 
   const tweetsToRender = sortBy === SORT_OPTIONS.ENGAGEMENT.value ? tweetsByEngagement : tweetsByFollowers
 
-  const tweetsToDownload =
-    sortBy === SORT_OPTIONS.ENGAGEMENT.value
-      ? tweetsByEngagement.map((tweet) => ({
-          'User profile': tweet.properties?.twitter_handle ? tweet.properties?.twitter_handle : '',
-          Date: tweet.properties?.date ? moment.unix(tweet.properties.date).format('YYYY-MM-DD') : '',
-          Tweet: tweet.properties?.text || '',
-          Engagement: tweet.properties?.impression_percentage || '',
-          'Impression count': tweet.properties?.impression_count || '',
-          'Tweet ID': tweet.properties?.tweet_id || '',
-        }))
-      : tweetsByFollowers.map((tweet) => ({
-          'User profile': tweet.properties?.twitter_handle ? tweet.properties?.twitter_handle : '',
-          Date: tweet.properties?.date ? moment.unix(tweet.properties.date).format('YYYY-MM-DD') : '',
-          Tweet: tweet.properties?.text || '',
-          Followers: tweet.properties?.followers || '',
-          'Tweet ID': tweet.properties?.tweet_id || '',
-        }))
-
   if (error) {
     return <div style={{ padding: 24, color: '#FF4D4F' }}>{error}</div>
   }
@@ -209,6 +191,24 @@ export const EngagementTable = ({ sortBy, idsToAnalyze }: Props) => {
       <div style={{ padding: 24, textAlign: 'center' }}>No engagement data available</div>
     )
   }
+
+  const tweetsToDownload =
+    sortBy === SORT_OPTIONS.ENGAGEMENT.value
+      ? tweetsToRender.map((tweet) => ({
+          'User profile': tweet.properties?.twitter_handle ? tweet.properties?.twitter_handle : '',
+          Date: tweet.properties?.date ? moment.unix(tweet.properties.date).format('YYYY-MM-DD') : '',
+          Tweet: tweet.properties?.text || '',
+          Engagement: tweet.properties?.impression_percentage || '',
+          'Impression count': tweet.properties?.impression_count || '',
+          'Tweet ID': tweet.properties?.tweet_id || '',
+        }))
+      : tweetsToRender.map((tweet) => ({
+          'User profile': tweet.properties?.twitter_handle ? tweet.properties?.twitter_handle : '',
+          Date: tweet.properties?.date ? moment.unix(tweet.properties.date).format('YYYY-MM-DD') : '',
+          Tweet: tweet.properties?.text || '',
+          Followers: tweet.properties?.followers || '',
+          'Tweet ID': tweet.properties?.tweet_id || '',
+        }))
 
   return (
     <TableContainer component={Paper}>

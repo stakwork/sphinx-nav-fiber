@@ -1,15 +1,12 @@
 import { Button } from '@mui/material'
 
-type CsvDownloadButtonProps<T extends Record<string, unknown>> = {
-  data: T[]
+type CsvDownloadButtonProps = {
+  data: Record<string, string | number | null | undefined>[]
   filename?: string
 }
 
-export const CsvDownloadButton = <T extends Record<string, unknown>>({
-  data,
-  filename = 'data.csv',
-}: CsvDownloadButtonProps<T>) => {
-  const convertToCSV = (rawData: T[]): string => {
+export const CsvDownloadButton = ({ data, filename = 'data.csv' }: CsvDownloadButtonProps) => {
+  const convertToCSV = (rawData: CsvDownloadButtonProps['data']): string => {
     if (rawData.length === 0) {
       return ''
     }
