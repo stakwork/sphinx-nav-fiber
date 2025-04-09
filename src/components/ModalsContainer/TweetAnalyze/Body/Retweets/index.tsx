@@ -103,7 +103,7 @@ export const RetweetsTable = ({ sortBy, idsToAnalyze }: Props) => {
                   </UserInfo>
                   <TweetLink
                     aria-label="View tweet on Twitter"
-                    href={`https://twitter.com/${tweet?.properties?.twitter_handle}/status/${tweet?.properties?.tweet_id}?open=system`}
+                    href={`https://twitter.com/${tweet?.properties?.twitter_handle}?open=system`}
                     rel="noopener noreferrer"
                     target="_blank"
                   >
