@@ -121,15 +121,15 @@ export const TweetMindset = () => {
         setMarkers(markersList)
 
         const nodesWithNeighbourhood = data.nodes.map((n) => {
-          if (n.node_type === 'Tweet' && n.properties?.impression_count) {
-            if (n.properties?.impression_count < 100) {
+          if (n.node_type === 'Tweet' && n.properties?.sentiment) {
+            if (n.properties?.sentiment < 4) {
               return {
                 ...n,
                 neighbourHood: 'negative',
               }
             }
 
-            if (n.properties?.impression_count > 200) {
+            if (n.properties?.sentiment > 7) {
               return {
                 ...n,
                 neighbourHood: 'positive',

@@ -47,7 +47,7 @@ export const EngagementTable = ({ sortBy, idsToAnalyze }: Props) => {
             mainTweetsArray.push(main)
           }
 
-          if (sortBy === SORT_OPTIONS.ENGAGEMENT) {
+          if (sortBy === SORT_OPTIONS.ENGAGEMENT.value) {
             const tweetsWithUserInfo = response.nodes
               .filter(
                 (node) =>
@@ -92,7 +92,7 @@ export const EngagementTable = ({ sortBy, idsToAnalyze }: Props) => {
             }
           }
 
-          if (sortBy === SORT_OPTIONS.FOLLOWERS) {
+          if (sortBy === SORT_OPTIONS.FOLLOWERS.value) {
             const userNodes = response.nodes
               .filter(
                 (node) =>
@@ -172,7 +172,7 @@ export const EngagementTable = ({ sortBy, idsToAnalyze }: Props) => {
     fetchTweets()
   }, [sortBy, idsToAnalyze])
 
-  const tweetsToRender = sortBy === SORT_OPTIONS.ENGAGEMENT ? tweetsByEngagement : tweetsByFollowers
+  const tweetsToRender = sortBy === SORT_OPTIONS.ENGAGEMENT.value ? tweetsByEngagement : tweetsByFollowers
 
   if (error) {
     return <div style={{ padding: 24, color: '#FF4D4F' }}>{error}</div>
@@ -199,8 +199,8 @@ export const EngagementTable = ({ sortBy, idsToAnalyze }: Props) => {
             <TableCell align="left">Rank</TableCell>
             <TableCell align="left">User Profile</TableCell>
             <TableCell align="left">Tweet</TableCell>
-            {sortBy === SORT_OPTIONS.ENGAGEMENT && <TableCell align="left">Engagement</TableCell>}
-            {sortBy === SORT_OPTIONS.FOLLOWERS && <TableCell align="left">Followers</TableCell>}
+            {sortBy === SORT_OPTIONS.ENGAGEMENT.value && <TableCell align="left">Engagement</TableCell>}
+            {sortBy === SORT_OPTIONS.FOLLOWERS.value && <TableCell align="left">Followers</TableCell>}
           </TableRow>
         </TableHead>
         <TableBody>
@@ -229,7 +229,7 @@ export const EngagementTable = ({ sortBy, idsToAnalyze }: Props) => {
                   </TweetLink>
                 </Flex>
               </TableCell>
-              {sortBy === SORT_OPTIONS.ENGAGEMENT && (
+              {sortBy === SORT_OPTIONS.ENGAGEMENT.value && (
                 <TableCell>
                   {tweet.properties?.impression_percentage} %
                   {tweet.properties?.impression_count !== undefined && tweet.properties?.impression_count && (
@@ -239,7 +239,7 @@ export const EngagementTable = ({ sortBy, idsToAnalyze }: Props) => {
                   )}
                 </TableCell>
               )}
-              {sortBy === SORT_OPTIONS.FOLLOWERS && (
+              {sortBy === SORT_OPTIONS.FOLLOWERS.value && (
                 <TableCell align="right">{Number(tweet.properties?.followers).toLocaleString()}</TableCell>
               )}
             </TableRow>
