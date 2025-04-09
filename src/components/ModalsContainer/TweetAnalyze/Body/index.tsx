@@ -1,10 +1,23 @@
-import { useMemo, useState } from 'react'
+import { ComponentType, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { colors } from '~/utils'
 import { EngagementTable } from './Engagement'
 import { RetweetsTable } from './Retweets'
+import { SentimentTable } from './Sentiment'
+
+const ENGAGEMENT = 'ENGAGEMENT'
+const FOLLOWERS = 'FOLLOWERS'
+const TOP_REPOSTERS = 'TOP_REPOSTERS'
+const SENTIMENT = 'SENTIMENT'
+
+const ComponentsMap: Record<string, ComponentType<{ sortBy: SortBy; idsToAnalyze: string[] }>> = {
+  [ENGAGEMENT]: EngagementTable,
+  [FOLLOWERS]: EngagementTable,
+  [TOP_REPOSTERS]: RetweetsTable,
+  [SENTIMENT]: SentimentTable,
+}
 
 const SortButton = styled.button<{ active?: boolean }>`
   background: ${({ active }) => (active ? colors.primaryBlue : 'transparent')};
@@ -84,20 +97,38 @@ export const Title = styled.h2`
   color: ${colors.white};
 `
 
-export const SORT_OPTIONS: Record<string, string> = {
-  ENGAGEMENT: 'impression_count',
-  FOLLOWERS: 'followers',
-  TOP_REPOSTERS: 'top_reposters',
+type SortOption = {
+  label: string
+  value: string
+}
+
+export const SORT_OPTIONS: Record<string, SortOption> = {
+  [ENGAGEMENT]: {
+    label: 'Engagement',
+    value: 'impression_count',
+  },
+  [FOLLOWERS]: {
+    label: 'Followers',
+    value: 'followers',
+  },
+  [TOP_REPOSTERS]: {
+    label: 'Top Reposters',
+    value: 'top_reposters',
+  },
+  [SENTIMENT]: {
+    label: 'Sentiment',
+    value: 'sentiment',
+  },
 } as const
 
-export type SortBy = (typeof SORT_OPTIONS)[keyof typeof SORT_OPTIONS]
+export type SortBy = (typeof SORT_OPTIONS)[keyof typeof SORT_OPTIONS]['value']
 
 type Props = {
   tweetId: string
 }
 
 export const Body = ({ tweetId }: Props) => {
-  const [sortBy, setSortBy] = useState<SortBy>(SORT_OPTIONS.ENGAGEMENT)
+  const [sortBy, setSortBy] = useState<SortBy>(SORT_OPTIONS.ENGAGEMENT.value)
 
   const { tweetId: tweetIds } = useParams()
 
@@ -107,6 +138,10 @@ export const Body = ({ tweetId }: Props) => {
     return tweetId === 'summary' ? ids : ids.filter((id) => id === tweetId)
   }, [tweetIds, tweetId])
 
+  const ComponentKey = Object.entries(SORT_OPTIONS).find(([, option]) => option.value === sortBy)?.[0]
+
+  const TableComponent = ComponentKey ? ComponentsMap[ComponentKey] : null
+
   return (
     <Wrapper>
       <Flex p={24}>
@@ -115,20 +150,16 @@ export const Body = ({ tweetId }: Props) => {
           {Object.keys(SORT_OPTIONS).map((optionKey) => (
             <SortButton
               key={optionKey}
-              active={sortBy === SORT_OPTIONS[optionKey]}
-              onClick={() => setSortBy(SORT_OPTIONS[optionKey as keyof typeof SORT_OPTIONS])}
+              active={sortBy === SORT_OPTIONS[optionKey as keyof typeof SORT_OPTIONS].value}
+              onClick={() => setSortBy(SORT_OPTIONS[optionKey as keyof typeof SORT_OPTIONS].value)}
             >
-              {optionKey}
+              {SORT_OPTIONS[optionKey as keyof typeof SORT_OPTIONS].label}
             </SortButton>
           ))}
         </Flex>
       </Flex>
 
-      {sortBy !== 'top_reposters' ? (
-        <EngagementTable idsToAnalyze={idsToAnalyze} sortBy={sortBy} />
-      ) : (
-        <RetweetsTable idsToAnalyze={idsToAnalyze} sortBy={sortBy} />
-      )}
+      {TableComponent && <TableComponent idsToAnalyze={idsToAnalyze} sortBy={sortBy} />}
     </Wrapper>
   )
 }
