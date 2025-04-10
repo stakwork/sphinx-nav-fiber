@@ -1,15 +1,16 @@
 import { Slide } from '@mui/material'
 import Button from '@mui/material/Button'
-import { memo, useCallback, useRef, useState } from 'react'
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import styled from 'styled-components'
 import { Episode } from '~/components/App/SideBar/Relevance/Episode'
 import ChevronDownIcon from '~/components/Icons/ChevronDownIcon'
 import ChevronUpIcon from '~/components/Icons/ChevronUpIcon'
 import SourcesIcon from '~/components/Icons/SourcesIcon'
 import { ScrollView } from '~/components/ScrollView'
+import { useNodeNavigation } from '~/components/Universe/useNodeNavigation'
 import { Flex } from '~/components/common/Flex'
+import { useAiSummaryStore } from '~/stores/useAiSummaryStore'
 import { useDataStore } from '~/stores/useDataStore'
-import { useUpdateSelectedNode } from '~/stores/useGraphStore'
 import { NodeExtended } from '~/types'
 import { colors } from '~/utils'
 import { formatDescription } from '~/utils/formatDescription'
@@ -17,28 +18,98 @@ import { adaptTweetNode } from '~/utils/twitterAdapter'
 
 type Props = {
   sourceIds: string[]
+  question: string
+}
+
+const EDGE = {
+  edge_type: 'POSTED',
+  properties: {
+    date_added_to_graph: '1737561660.0435429',
+    weight: 1,
+  },
+  ref_id: '7efabdc1-b494-4d8c-8d55-5062ce1237d3',
+  source: 'efa4819e-a54e-49dd-858f-2aed5cf10940',
+  target: '0ba6ef37-bf92-4094-89a0-893f05d34e6c',
 }
 
 // eslint-disable-next-line no-underscore-dangle
-const _AiSources = ({ sourceIds }: Props) => {
+const _AiSources = ({ sourceIds, question }: Props) => {
   const scrollViewRef = useRef<HTMLDivElement | null>(null)
   const [showAll, setShowAll] = useState(false)
+  const addNewNode = useDataStore((s) => s.addNewNode)
+  const { getNode } = useDataStore((s) => s)
+  const nodesNormalized = useDataStore((s) => s.nodesNormalized)
 
-  const { dataInitial } = useDataStore((s) => s)
-  const setSelectedNode = useUpdateSelectedNode()
+  const beenAdded = useRef(false)
 
-  const handleNodeClick = useCallback(
-    (node: NodeExtended) => {
-      setSelectedNode(node)
-    },
-    [setSelectedNode],
-  )
+  const { dataInitial } = useAiSummaryStore((s) => s)
+  const { navigateToNode } = useNodeNavigation()
+
+  const currentNodes = useMemo(() => {
+    const initialNodes = dataInitial?.nodes.filter((i) => sourceIds.includes(i.ref_id)) || []
+
+    const normalizedNodes = sourceIds
+      .map((id) => nodesNormalized.get(id))
+      .filter((node): node is NodeExtended => node !== undefined)
+
+    const allNodes = [...initialNodes, ...normalizedNodes]
+
+    const uniqueNodes = Array.from(new Map(allNodes.map((node) => [node.ref_id, node])).values())
+
+    return uniqueNodes
+  }, [dataInitial?.nodes, sourceIds, nodesNormalized])
+
+  useEffect(() => {
+    if (!sourceIds.length || beenAdded.current) {
+      return
+    }
+
+    const fetchSourceNodes = async () => {
+      try {
+        const nodePromises = sourceIds.map(async (refId) => {
+          try {
+            return await getNode(refId)
+          } catch (error) {
+            console.error(`Failed to fetch node data for ref_id ${refId}:`, error)
+
+            return null
+          }
+        })
+
+        const nodes = (await Promise.all(nodePromises)).filter((node): node is NodeExtended => node !== null)
+
+        if (nodes.length) {
+          const edges = nodes.map((node, index) => ({
+            ...EDGE,
+            source: question,
+            target: node.ref_id,
+            ref_id: `${String(+new Date())}-${index}`,
+            edge_type: 'IS_SOURCE',
+            properties: {
+              date_added_to_graph: String(new Date()),
+              weight: 1,
+            },
+          }))
+
+          beenAdded.current = true
+          addNewNode({ nodes, edges })
+        }
+      } catch (error) {
+        console.error('Error fetching source nodes:', error)
+      }
+    }
+
+    fetchSourceNodes()
+  }, [sourceIds, addNewNode, question, getNode])
 
   const handleLoadMoreClick = () => setShowAll(!showAll)
 
-  const currentNodes = dataInitial?.nodes.filter((i) => sourceIds.includes(i.ref_id)) || []
-
-  const visibleNodes = showAll ? currentNodes : [...currentNodes].slice(0, 3)
+  const handleNodeClick = useCallback(
+    (node: NodeExtended) => {
+      navigateToNode(node.ref_id)
+    },
+    [navigateToNode],
+  )
 
   return (
     <SectionWrapper>
@@ -57,9 +128,13 @@ const _AiSources = ({ sourceIds }: Props) => {
           </CollapseButton>
         </Heading>
       </Slide>
-      {showAll && visibleNodes.length > 0 && (
+      {showAll && currentNodes.length > 0 && (
         <ScrollView ref={scrollViewRef} id="search-result-list" shrink={1}>
-          {visibleNodes.map((n, index) => {
+          {currentNodes.map((n, index) => {
+            if (!n) {
+              return null
+            }
+
             const adaptedNode = adaptTweetNode(n)
 
             const {

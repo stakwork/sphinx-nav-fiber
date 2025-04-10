@@ -29,7 +29,7 @@ const defaultValues = {
 
 export const FilterSearch = ({ anchorEl, setAnchorEl, onClose }: Props) => {
   const [schemaAll, setSchemaAll] = useSchemaStore((s) => [s.schemas, s.setSchemas])
-  const { abortFetchData, resetGraph, setFilters } = useDataStore((s) => s)
+  const { abortFetchData, resetGraph, setFilters, resetData } = useDataStore((s) => s)
   const [selectedTypes, setSelectedTypes] = useState<string[]>(defaultValues.selectedTypes)
   const [hops, setHops] = useState(defaultValues.hops)
   const [sourceNodes, setSourceNodes] = useState<number>(defaultValues.sourceNodes)
@@ -81,6 +81,8 @@ export const FilterSearch = ({ anchorEl, setAnchorEl, onClose }: Props) => {
       top_node_count: sourceNodes.toString(),
     })
 
+    resetData()
+
     setAnchorEl(null)
     onClose()
   }
@@ -114,8 +116,8 @@ export const FilterSearch = ({ anchorEl, setAnchorEl, onClose }: Props) => {
       <Hops hops={hops} setHops={setHops} />
       <LineBar />
       <MaxResults maxResults={maxResults} setMaxResults={setMaxResults} />
-      <LineBar />
       <PopoverFooter>
+        <LineBar />
         <ButtonsWrapper>
           <ClearButton
             color="secondary"
@@ -130,7 +132,7 @@ export const FilterSearch = ({ anchorEl, setAnchorEl, onClose }: Props) => {
             Clear
           </ClearButton>
           <ShowResultButton color="secondary" onClick={handleFiltersApply} size="large" variant="contained">
-            Show Results
+            Apply
           </ShowResultButton>
         </ButtonsWrapper>
       </PopoverFooter>
@@ -142,34 +144,41 @@ const SearchFilterPopover = styled(Popper)`
   &&.MuiPopper-root {
     background: ${colors.BG2};
     padding: 16px;
-    min-width: 360px;
     max-height: calc(100% - 20%);
     color: ${colors.white};
     box-shadow: 0px 1px 6px 0px rgba(0, 0, 0, 0.2);
     border-radius: 9px;
     max-width: 361px;
     overflow-x: hidden;
+    padding-bottom: 0 !important;
     overflow-y: auto;
     border: 1px solid ${colors.black};
     z-index: 100;
+    position: relative;
     &::-webkit-scrollbar {
       width: 3px;
+      height: auto;
     }
 
     &::-webkit-scrollbar-track {
       background: ${colors.BG2};
       border-radius: 9px;
-      margin: 5px;
+      margin-top: 5px;
+      margin-bottom: 68px;
       overflow-y: hidden;
     }
   }
 `
 
 const PopoverFooter = styled.div`
-  display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-top: 8px;
+  padding: 0px 8px 8px 8px;
+  position: sticky;
+  bottom: 0;
+  background: ${colors.BG2};
+  width: calc(100% + 32px);
+  margin: -16px;
 `
 
 const LineBar = styled.div`
@@ -265,7 +274,7 @@ export const SourceNodesStepWrapper = styled.div`
 
 export const ButtonsWrapper = styled(Flex)`
   flex-direction: row;
-  margin: 0 0 6px 8px;
+  margin: 0 0 6px 3px;
 `
 
 export const PopoverBody = styled.div`

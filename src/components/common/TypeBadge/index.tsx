@@ -1,4 +1,6 @@
+import React from 'react'
 import styled from 'styled-components'
+import { Icons } from '~/components/Icons'
 import { useSchemaStore } from '~/stores/useSchemaStore'
 import { colors } from '~/utils/colors'
 import { Flex } from '../Flex'
@@ -7,128 +9,49 @@ type Props = {
   type: string
 }
 
+export const TypeBadge = ({ type }: Props) => {
+  const [normalizedSchemasByType] = useSchemaStore((s) => [s.normalizedSchemasByType])
+  const schema = normalizedSchemasByType[type]
+
+  const primaryColor = schema?.primary_color ?? colors.THING
+  const secondaryColor = schema?.secondary_color ?? colors.white
+  const primaryIcon = schema?.icon ?? 'NodesIcon'
+
+  return <Badge backgroundColor={primaryColor} iconColor={secondaryColor} iconStart={primaryIcon} label={type} />
+}
+
 type BadgeProps = {
   iconStart: string
-  color: string
+  backgroundColor: string
+  iconColor: string
   label: string
 }
 
-export const TypeBadge = ({ type }: Props) => {
-  let badgeProps: Omit<BadgeProps, 'label'>
-  const [normalizedSchemasByType] = useSchemaStore((s) => [s.normalizedSchemasByType])
-  const nodeType = type
+const IconWrapper = styled.div<{ iconColor: string }>`
+  width: 10px;
+  height: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-  const primaryColor = normalizedSchemasByType[type]?.primary_color
-  const primaryIcon = normalizedSchemasByType[type]?.icon
-
-  const icon = primaryIcon ? `svg-icons/${primaryIcon}.svg` : null
-
-  switch (nodeType) {
-    case 'video':
-    case 'twitter_space':
-    case 'podcast':
-    case 'clip':
-      badgeProps = {
-        iconStart: icon ?? 'video_badge.svg',
-        color: primaryColor ?? colors.CLIP,
-      }
-
-      break
-
-    case 'show':
-      badgeProps = {
-        iconStart: icon ?? 'show_badge.svg',
-        color: primaryColor ?? colors.SHOW,
-      }
-
-      break
-
-    case 'tweet':
-      badgeProps = {
-        iconStart: icon ?? 'twitter_badge.svg',
-        color: primaryColor ?? colors.TWEET,
-      }
-
-      break
-
-    case 'episode':
-      badgeProps = {
-        iconStart: icon ?? 'audio_badge.svg',
-        color: primaryColor ?? colors.EPISODE,
-      }
-
-      break
-
-    case 'document':
-      badgeProps = {
-        iconStart: icon ?? 'notes_badge.svg',
-        color: primaryColor ?? colors.TEXT,
-      }
-
-      break
-
-    case primaryIcon ?? 'organization':
-      badgeProps = {
-        iconStart: icon ?? 'organization_badge.svg',
-        color: primaryColor ?? colors.ORGANIZATION,
-      }
-
-      break
-
-    case 'person':
-    case 'guest':
-    case 'host':
-      badgeProps = {
-        iconStart: icon ?? 'person_badge.svg',
-        color: primaryColor ?? colors.PERSON,
-      }
-
-      break
-
-    case 'event':
-      badgeProps = {
-        iconStart: icon ?? 'event_badge.svg',
-        color: primaryColor ?? colors.EVENT,
-      }
-
-      break
-
-    default:
-      badgeProps = {
-        iconStart: icon ?? 'thing_badge.svg',
-        color: primaryColor ?? colors.THING,
-      }
-
-      break
+  svg {
+    width: 100%;
+    height: 100%;
+    color: ${({ iconColor }) => iconColor};
   }
-
-  return <Badge {...badgeProps} label={type} />
-}
-
-const Badge = ({ iconStart, color, label }: BadgeProps) => (
-  <EpisodeWrapper color={color}>
-    <img alt={label} className="badge__img" src={iconStart} />
-    <div className="badge__label">{label}</div>
-  </EpisodeWrapper>
-)
+`
 
 const EpisodeWrapper = styled(Flex).attrs({
   direction: 'row',
-})<{ color: string }>`
+})<{ backgroundColor: string }>`
   cursor: pointer;
-  background: ${({ color }) => color};
+  background: ${({ backgroundColor }) => backgroundColor};
   border-radius: 3px;
   overflow: hidden;
   justify-content: center;
   align-items: center;
   padding: 0 4px;
   gap: 2px;
-
-  .badge__img {
-    width: 10px;
-    height: 10px;
-    object-fit: contain;
-  }
 
   .badge__label {
     color: ${colors.white};
@@ -138,8 +61,14 @@ const EpisodeWrapper = styled(Flex).attrs({
     font-weight: 800;
     line-height: 14px;
     text-transform: uppercase;
-    line-height: 14px;
     letter-spacing: 0.48px;
     padding: 0 4px;
   }
 `
+
+const Badge = ({ iconStart, backgroundColor, iconColor, label }: BadgeProps) => (
+  <EpisodeWrapper backgroundColor={backgroundColor}>
+    <IconWrapper iconColor={iconColor}>{React.createElement(Icons[iconStart] || Icons.NodesIcon)}</IconWrapper>
+    <div className="badge__label">{label}</div>
+  </EpisodeWrapper>
+)

@@ -28,7 +28,7 @@ export async function saveLsat(invoice: string, macaroon: string, host: string) 
 
     return null
   } catch (error) {
-    console.log(JSON.stringify(error))
+    console.error(JSON.stringify(error))
 
     return null
   }

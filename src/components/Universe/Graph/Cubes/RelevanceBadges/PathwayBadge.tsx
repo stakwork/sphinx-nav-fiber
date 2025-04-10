@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef } from 'react'
 import { MdHub } from 'react-icons/md'
 import { Group } from 'three'
 
+import { useNodeNavigation } from '~/components/Universe/useNodeNavigation'
 import { useGraphStore, useSelectedNode } from '~/stores/useGraphStore'
 import { colors } from '~/utils/colors'
 import { BadgeIconWrapper, Counter, Tag } from './styles'
@@ -12,7 +13,8 @@ export const getPercentageFromWeight = (weight: number | undefined) => ((weight 
 
 export const PathwayBadge = ({ color, position, relativeIds, userData }: BadgeProps) => {
   const selectedNode = useSelectedNode()
-  const { hoveredNode, setHoveredNode, setSelectedNode } = useGraphStore((s) => s)
+  const { hoveredNode, setHoveredNode } = useGraphStore((s) => s)
+  const { navigateToNode } = useNodeNavigation()
   const selected = userData?.ref_id === selectedNode?.ref_id
   const ref = useRef<Group | null>(null)
 
@@ -45,7 +47,7 @@ export const PathwayBadge = ({ color, position, relativeIds, userData }: BadgePr
               e.stopPropagation()
 
               if (userData) {
-                setSelectedNode(userData)
+                navigateToNode(userData.ref_id)
               }
             }}
             onPointerOut={(e) => {

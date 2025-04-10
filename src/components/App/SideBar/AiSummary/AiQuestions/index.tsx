@@ -5,7 +5,7 @@ import styled from 'styled-components'
 import PlusIcon from '~/components/Icons/PlusIcon'
 import StackIcon from '~/components/Icons/StackIcon'
 import { Flex } from '~/components/common/Flex'
-import { useHasAiChatsResponseLoading } from '~/stores/useAiSummaryStore'
+import { useAiSummaryStore, useHasAiChatsResponseLoading } from '~/stores/useAiSummaryStore'
 import { useDataStore } from '~/stores/useDataStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { colors } from '~/utils'
@@ -16,9 +16,11 @@ type Props = {
 
 // eslint-disable-next-line no-underscore-dangle
 const _AiQuestions = ({ questions }: Props) => {
-  const { fetchData, setAbortRequests } = useDataStore((s) => s)
+  const { setAbortRequests } = useDataStore((s) => s)
   const [setBudget] = useUserStore((s) => [s.setBudget])
   const hasLoadingResponse = useHasAiChatsResponseLoading()
+
+  const fetchAIData = useAiSummaryStore((s) => s.fetchAIData)
 
   const handleSubmitQuestion = (question: string) => {
     if (hasLoadingResponse) {
@@ -26,7 +28,7 @@ const _AiQuestions = ({ questions }: Props) => {
     }
 
     if (question) {
-      fetchData(setBudget, setAbortRequests, question)
+      fetchAIData(setBudget, setAbortRequests, question)
     }
   }
 

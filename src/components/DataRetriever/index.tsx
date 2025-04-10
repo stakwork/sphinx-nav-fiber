@@ -1,17 +1,18 @@
 import { useCallback } from 'react'
 import { Vector3 } from 'three'
 import { useGraphStore, useSelectedNode } from '~/stores/useGraphStore'
+import { useSimulationStore } from '~/stores/useSimulationStore'
 import { NodeExtended } from '~/types'
 import { PATHWAY_RANGE } from './constants'
 
 export const useGraphData = () => {
-  const { simulation, simulationHelpers } = useGraphStore((s) => s)
+  const { simulation, getLinks } = useSimulationStore((s) => s)
 
   // invariant(data !== null, 'This hook is meant to be used inside a DataRetriever component')
 
   return {
     nodes: simulation?.nodes() || [],
-    links: simulationHelpers.getLinks(),
+    links: getLinks(),
   }
 }
 

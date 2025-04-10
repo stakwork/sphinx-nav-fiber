@@ -4,10 +4,10 @@ import styled from 'styled-components'
 import { Icons } from '~/components/Icons'
 import BudgetIcon from '~/components/Icons/BudgetIcon'
 import NodesIcon from '~/components/Icons/NodesIcon'
+import { useNodeNavigation } from '~/components/Universe/useNodeNavigation'
 import { Tooltip } from '~/components/common/ToolTip'
 import { getStats, getTotalProcessing } from '~/network/fetchSourcesData'
 import { useDataStore } from '~/stores/useDataStore'
-import { useUpdateSelectedNode } from '~/stores/useGraphStore'
 import { useModal } from '~/stores/useModalStore'
 import { useSchemaStore } from '~/stores/useSchemaStore'
 import { useUserStore } from '~/stores/useUserStore'
@@ -30,7 +30,7 @@ export const Stats = () => {
     s.setAbortRequests,
   ])
 
-  const setSelectedNode = useUpdateSelectedNode()
+  const { navigateToNode } = useNodeNavigation()
 
   const { open: openSourcesModal } = useModal('sourcesTable')
 
@@ -56,7 +56,7 @@ export const Stats = () => {
 
     fetchData(setBudget, setAbortRequests, '', { ...(mediaType ? { media_type: mediaType } : {}), skip_cache: 'true' })
 
-    setSelectedNode(null)
+    navigateToNode(null)
   }
 
   useEffect(() => {
@@ -112,23 +112,23 @@ export const Stats = () => {
   return (
     <StatisticsContainer>
       <StatisticsWrapper>
-        {StatsConfig.map(({ name, Icon, key, mediaType, tooltip }) =>
-          stats[key as keyof TStats] !== 0 ? (
-            <Stat key={name} data-testid={mediaType} onClick={() => handleStatClick(mediaType)}>
-              <Tooltip content={tooltip} margin="13px">
-                <div className="icon">
-                  <Icon />
-                </div>
-                <div className="text">{stats[key as keyof TStats]}</div>
-              </Tooltip>
-            </Stat>
-          ) : (
-            <></>
-          ),
-        )}
+        {false &&
+          stats &&
+          StatsConfig.map(({ name, Icon, key, mediaType, tooltip }) =>
+            stats && stats[key as keyof TStats] !== 0 ? (
+              <Stat key={name} data-testid={mediaType} onClick={() => handleStatClick(mediaType)}>
+                <Tooltip content={tooltip} margin="13px">
+                  <div className="icon">
+                    <Icon />
+                  </div>
+                  <div className="text">{stats[key as keyof TStats]}</div>
+                </Tooltip>
+              </Stat>
+            ) : null,
+          )}
       </StatisticsWrapper>
       <StatisticsBudget>
-        {isTotalProcessing ? (
+        {false || isTotalProcessing ? (
           <ViewContent data-testid="view-content" onClick={openSourcesModal}>
             <div className="icon" style={{ marginLeft: '7px' }}>
               <Animation id="lottie-animation" />
@@ -155,25 +155,14 @@ export const Stats = () => {
   )
 }
 
-const StatisticsWrapper = styled(Flex).attrs({
-  align: 'center',
-  direction: 'row',
-  grow: 1,
-  justify: 'flex-start',
-})``
-
-const StatisticsBudget = styled(Flex).attrs({
-  align: 'center',
-  direction: 'row',
-  grow: 1,
-  justify: 'flex-end',
-})``
+const StatisticsWrapper = styled(Flex).attrs({})``
+const StatisticsBudget = styled(Flex).attrs({})``
 
 const StatisticsContainer = styled(Flex).attrs({
-  align: 'center',
   direction: 'row',
   grow: 1,
 })`
+  margin-left: 10px;
   justify-content: between;
 `
 
@@ -217,7 +206,7 @@ const Budget = styled(Flex).attrs({
   direction: 'row',
 })`
   display: flex;
-  height: 2.5rem;
+  height: 32px;
   padding: 0.75rem 0.9375rem 0.75rem 0.9375rem;
   align-items: center;
   gap: 0.625rem;

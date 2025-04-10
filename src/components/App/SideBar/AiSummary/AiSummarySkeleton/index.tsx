@@ -4,6 +4,7 @@ import { Flex } from '~/components/common/Flex'
 import { FlexboxProps } from '~/components/common/Flex/flexbox'
 import { Text } from '~/components/common/Text'
 import AiSummaryIcon from '~/components/Icons/AiSummaryIcon'
+import { useDataStore } from '~/stores/useDataStore'
 import { colors } from '~/utils/colors'
 
 type EpisodeWrapperProps = FlexboxProps & {
@@ -13,7 +14,7 @@ type EpisodeWrapperProps = FlexboxProps & {
 const EpisodeWrapper = styled(Flex).attrs({
   direction: 'column',
 })<EpisodeWrapperProps>`
-  padding: 24px;
+  padding: 15px 24px 24px 24px;
   cursor: pointer;
   background: ${colors.BG1};
 
@@ -54,29 +55,35 @@ const height = 8
 
 const fullWidth = 332
 
-export const AiSummarySkeleton = () => (
-  <>
-    <EpisodeWrapper>
-      <Flex direction="column">
-        <Flex direction="row">
-          <IconWrapper>
-            <AiSummaryIcon />
-          </IconWrapper>
+export const AiSummarySkeleton = () => {
+  const runningProjectMessages = useDataStore((s) => s.runningProjectMessages)
 
-          <Title>Answer</Title>
+  const title = runningProjectMessages.at(-1) || 'Answer'
+
+  return (
+    <>
+      <EpisodeWrapper>
+        <Flex direction="column">
+          <Flex direction="row">
+            <IconWrapper>
+              <AiSummaryIcon />
+            </IconWrapper>
+
+            <Title>{title}</Title>
+          </Flex>
+          <SkeletonWrapper grow={1} shrink={1}>
+            <StyledSkeleton height={height} variant="rectangular" width={fullWidth} />
+
+            <StyledSkeleton height={height} variant="rectangular" width={fullWidth} />
+
+            <StyledSkeleton height={height} variant="rectangular" width={fullWidth} />
+
+            <StyledSkeleton height={height} variant="rectangular" width={fullWidth} />
+
+            <StyledSkeleton height={height} variant="rectangular" width={180} />
+          </SkeletonWrapper>
         </Flex>
-        <SkeletonWrapper grow={1} shrink={1}>
-          <StyledSkeleton height={height} variant="rectangular" width={fullWidth} />
-
-          <StyledSkeleton height={height} variant="rectangular" width={fullWidth} />
-
-          <StyledSkeleton height={height} variant="rectangular" width={fullWidth} />
-
-          <StyledSkeleton height={height} variant="rectangular" width={fullWidth} />
-
-          <StyledSkeleton height={height} variant="rectangular" width={180} />
-        </SkeletonWrapper>
-      </Flex>
-    </EpisodeWrapper>
-  </>
-)
+      </EpisodeWrapper>
+    </>
+  )
+}

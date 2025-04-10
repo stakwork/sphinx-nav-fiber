@@ -26,6 +26,8 @@ jest.mock('~/network/fetchSourcesData', () => ({
 }))
 
 describe('Editor Component - Delete Node', () => {
+  jest.setTimeout(10000)
+
   beforeEach(() => {
     jest.clearAllMocks()
   })

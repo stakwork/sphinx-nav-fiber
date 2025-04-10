@@ -1,32 +1,40 @@
 import { Select } from '@react-three/drei'
 import { ThreeEvent } from '@react-three/fiber'
 import { memo, useCallback, useRef } from 'react'
-import { Object3D } from 'three'
+import { Group, Object3D } from 'three'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
-import { useGraphStore, useHoveredNode, useSelectedNode, useSelectedNodeRelativeIds } from '~/stores/useGraphStore'
+import { useGraphStore, useHoveredNode, useSelectedNode } from '~/stores/useGraphStore'
+import { useSimulationStore } from '~/stores/useSimulationStore'
 import { NodeExtended } from '~/types'
+import { useNodeNavigation } from '../../useNodeNavigation'
+import { Candidates } from './Candidates'
 import { NodePoints } from './NodePoints'
-import { RelevanceBadges } from './RelevanceBadges'
-import { SelectionDataNodes } from './SelectionDataNodes'
-import { TextNode } from './Text'
+import { NodeWrapper } from './NodeWrapper'
 
-const POINTER_IN_DELAY = 200
+const POINTER_IN_DELAY = 100
 
 export const Cubes = memo(() => {
   const selectedNode = useSelectedNode()
   const hoveredNode = useHoveredNode()
+  const nodesWrapperRef = useRef<Group | null>(null)
+  const instancesRef = useRef<Group | null>(null)
 
-  const relativeIds = useSelectedNodeRelativeIds()
   const { selectionGraphData, showSelectionGraph, setHoveredNode, setIsHovering } = useGraphStore((s) => s)
 
-  const data = useDataStore((s) => s.dataInitial)
+  const simulation = useSimulationStore((s) => s.simulation)
+
+  const dataInitial = useDataStore((s) => s.dataInitial)
+  const nodesNormalized = useDataStore((s) => s.nodesNormalized)
+
   const setTranscriptOpen = useAppStore((s) => s.setTranscriptOpen)
+
+  const { navigateToNode } = useNodeNavigation()
 
   const ignoreNodeEvent = useCallback(
     (node: NodeExtended) => {
       if (showSelectionGraph && !selectionGraphData.nodes.find((n) => n.ref_id === node.ref_id)) {
-        return true
+        return false
       }
 
       return false
@@ -44,12 +52,12 @@ export const Cubes = memo(() => {
 
         if (node.userData) {
           if (!ignoreNodeEvent(node.userData as NodeExtended)) {
-            useGraphStore.getState().setSelectedNode((node?.userData as NodeExtended) || null)
+            navigateToNode(node.userData.ref_id)
           }
         }
       }
     },
-    [setTranscriptOpen, ignoreNodeEvent],
+    [setTranscriptOpen, ignoreNodeEvent, navigateToNode],
   )
 
   const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null)
@@ -67,8 +75,10 @@ export const Cubes = memo(() => {
         return
       }
 
-      setIsHovering(false)
-      setHoveredNode(null)
+      hoverTimeoutRef.current = setTimeout(() => {
+        setIsHovering(false)
+        setHoveredNode(null)
+      }, POINTER_IN_DELAY)
     },
     [setIsHovering, setHoveredNode, hoveredNode],
   )
@@ -78,13 +88,17 @@ export const Cubes = memo(() => {
       const objects = e.intersections.map((i) => i.object)
       const object = objects[0]
 
+      if (!object.visible) {
+        return
+      }
+
       if (hoverTimeoutRef.current) {
         clearTimeout(hoverTimeoutRef.current)
         hoverTimeoutRef.current = null
       }
 
       if (object?.userData?.ref_id) {
-        const node = object.userData as NodeExtended
+        const node = nodesNormalized.get(object.userData.ref_id) as NodeExtended
 
         if (!ignoreNodeEvent(node)) {
           e.stopPropagation()
@@ -96,44 +110,40 @@ export const Cubes = memo(() => {
         }
       }
     },
-    [setHoveredNode, ignoreNodeEvent, setIsHovering],
+    [setHoveredNode, ignoreNodeEvent, setIsHovering, nodesNormalized],
   )
 
-  const hideUniverse = showSelectionGraph && !!selectedNode
+  const hideUniverse = showSelectionGraph && !!selectedNode && false
 
   return (
-    <Select
-      filter={(selected) => selected.filter((f) => !!f.userData?.ref_id)}
-      onChange={handleSelect}
-      onPointerOut={onPointerOut}
-      onPointerOver={onPointerIn}
-    >
-      <RelevanceBadges />
-      <group name="simulation-3d-group__nodes" visible={!hideUniverse}>
-        {data?.nodes.map((node: NodeExtended) => {
-          const hide = !!selectedNode && (relativeIds.includes(node.ref_id) || selectedNode.ref_id === node.ref_id)
+    <>
+      <Select
+        filter={(selected) => selected.filter((f) => !!f.userData?.ref_id)}
+        onChange={handleSelect}
+        onPointerOut={onPointerOut}
+        onPointerOver={onPointerIn}
+      >
+        <group ref={nodesWrapperRef} name="simulation-3d-group__nodes" visible={!hideUniverse}>
+          {dataInitial?.nodes.map((node: NodeExtended, index) => {
+            const simulationNode = simulation.nodes()[index]
+            const isFixed = true || typeof simulationNode?.fx === 'number'
+            const normalizedNode = nodesNormalized.get(node.ref_id)
+            const scale = normalizedNode?.weight || normalizedNode?.properties?.weight || 1
+            const scaleNormalized = Math.sqrt(scale)
+            const scaleToFixed = Number(scaleNormalized.toFixed(1))
 
-          return (
-            <mesh key={node.ref_id} name="wr2" scale={node.scale || 1} userData={node}>
-              <boxGeometry args={[40, 40, 40]} />
-              <meshStandardMaterial opacity={0} transparent />
-              <TextNode
-                key={node.ref_id || node.id}
-                hide={hideUniverse || hide}
-                isHovered={!!hoveredNode && hoveredNode.ref_id === node.ref_id}
-                node={node}
-              />
-            </mesh>
-          )
-        })}
-      </group>
-      {true && (
-        <group name="simulation-3d-group__node-points">
+            return normalizedNode ? (
+              <NodeWrapper key={node.ref_id} isFixed={isFixed} node={normalizedNode} scale={scaleToFixed} />
+            ) : null
+          })}
+        </group>
+
+        <group ref={instancesRef} name="simulation-3d-group__node-points">
           <NodePoints />
         </group>
-      )}
-      {hideUniverse && <SelectionDataNodes />}
-    </Select>
+      </Select>
+      {false && <Candidates />}
+    </>
   )
 })
 

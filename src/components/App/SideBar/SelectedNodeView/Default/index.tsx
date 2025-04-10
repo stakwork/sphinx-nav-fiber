@@ -1,34 +1,83 @@
 import Button from '@mui/material/Button'
 import clsx from 'clsx'
 import moment from 'moment'
-import { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
+import { Components } from 'react-markdown'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { okaidia } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import styled from 'styled-components'
+import { StyledMarkdown } from '~/components/App/SideBar/AiSummary/utils/AiSummaryHighlight/markdown'
 import { Booster } from '~/components/Booster'
 import { Divider } from '~/components/common/Divider'
 import { Flex } from '~/components/common/Flex'
 import { highlightSearchTerm } from '~/components/common/Highlight/Highlight'
-import { Text } from '~/components/common/Text'
+import { Text as MarkdownText, Text } from '~/components/common/Text'
 import { TypeBadge } from '~/components/common/TypeBadge'
 import AiPauseIcon from '~/components/Icons/AiPauseIcon'
 import AiPlayIcon from '~/components/Icons/AiPlayIcon'
 import LinkIcon from '~/components/Icons/LinkIcon'
+import { fetchNodeEdges } from '~/network/fetchGraphData'
 import { useAppStore } from '~/stores/useAppStore'
 import { useSelectedNode } from '~/stores/useGraphStore'
+import { usePlayerStore } from '~/stores/usePlayerStore'
+import { useSchemaStore } from '~/stores/useSchemaStore'
+import { Link, Node } from '~/types'
 import { colors } from '~/utils/colors'
 import { BoostAmt } from '../../../Helper/BoostAmt'
+
+interface EdgeWithTargetNode extends Link<string> {
+  target_node?: Node
+  properties?: {
+    sequence?: number
+    [key: string]: unknown
+  }
+}
 
 export const Default = () => {
   const selectedNode = useSelectedNode()
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const { currentPlayingAudio, setCurrentPlayingAudio } = useAppStore((s) => s)
   const [isPlaying, setIsPlaying] = useState(false)
+  const [sequencedNodes, setSequencedNodes] = useState<Node[]>([])
   const [boostAmount, setBoostAmount] = useState<number>(selectedNode?.properties?.boost || 0)
+
+  const getIndexByType = useSchemaStore((s) => s.getIndexByType)
+  const { playingNode } = usePlayerStore((s) => s)
 
   useEffect(() => {
     setBoostAmount(selectedNode?.properties?.boost || 0)
   }, [selectedNode])
+
+  useEffect(() => {
+    const fetchSequencedNodes = async () => {
+      if (selectedNode?.ref_id) {
+        const response = await fetchNodeEdges(selectedNode.ref_id, 0, 100, {
+          sortBy: 'sequence',
+          includeProperties: true,
+          includeContent: true,
+          depth: 1,
+          useSubGraph: true,
+        })
+
+        if (response) {
+          const nodesWithSequence = response.edges
+            ?.filter((edge: EdgeWithTargetNode) => edge.properties?.sequence !== undefined)
+            .map((edge: EdgeWithTargetNode) => ({
+              node: edge.target,
+              sequence: edge.properties?.sequence as number,
+            }))
+            .sort((a, b) => a.sequence - b.sequence)
+            .map((i) => response.nodes.find((n) => n.ref_id === i.node))
+
+          const filteredNodes = nodesWithSequence.filter((i) => !!i)
+
+          setSequencedNodes(filteredNodes as Node[])
+        }
+      }
+    }
+
+    fetchSequencedNodes()
+  }, [selectedNode?.ref_id])
 
   useEffect(() => {
     const audioElement = audioRef.current
@@ -76,15 +125,21 @@ export const Default = () => {
     return null
   }
 
-  const hasImage = !!selectedNode.properties?.image_url
+  const hasImage = !playingNode?.ref_id && !!selectedNode.properties?.image_url
   const hasAudio = !!selectedNode.properties?.audio_EN
   const customKeys = selectedNode.properties || {}
   const sourceLink = selectedNode.properties?.source_link
   const pubkey = selectedNode.properties?.pubkey
 
+  const getNodeContent = (node: Node) => {
+    const keyProp = getIndexByType(node.node_type)
+
+    return keyProp ? node.properties?.[keyProp] : node.label
+  }
+
   return (
     <StyledContainer>
-      {hasImage ? (
+      {hasImage && (
         <StyledImageWrapper>
           <img
             alt="img_a11y"
@@ -95,7 +150,7 @@ export const Default = () => {
             src={selectedNode.properties?.image_url}
           />
         </StyledImageWrapper>
-      ) : null}
+      )}
 
       <StyledContent grow={1} justify="flex-start" pt={hasImage ? 0 : 8} shrink={1}>
         <Flex ml={24} mt={20} style={{ width: 'fit-content', flexDirection: 'row', alignItems: 'center' }}>
@@ -124,6 +179,17 @@ export const Default = () => {
               />
             ))}
         </StyledWrapper>
+
+        {sequencedNodes.length > 0 && (
+          <StyledSequenceWrapper>
+            {sequencedNodes.map((item, index) => (
+              <React.Fragment key={`${item.ref_id}`}>
+                <Text>{getNodeContent(item)}</Text>
+                {index < sequencedNodes.length - 1 && <StyledLineBreak />}
+              </React.Fragment>
+            ))}
+          </StyledSequenceWrapper>
+        )}
 
         {pubkey && (
           <Flex direction="row" justify="space-between" pt={14} px={24}>
@@ -155,21 +221,31 @@ const NodeDetail = ({ label, value, hasAudio, isPlaying, togglePlay }: Props) =>
   const isLong = (value as string).length > 140
   const searchTerm = useAppStore((s) => s.currentSearch)
 
-  if (!value || label === 'Audio EN' || label === 'Source Link') {
+  const markdownComponents: Components = {
+    text: ({ children }) => (
+      <MarkdownText>{searchTerm ? highlightSearchTerm(String(children), searchTerm) : children}</MarkdownText>
+    ),
+  }
+
+  if (!value || label === 'Audio EN' || label === 'Source Link' || label === 'Image Url') {
     return null
   }
 
+  const isCode = label === 'Frame' || label === 'Code' || label === 'Body'
+
   return (
     <>
-      <StyledDetail className={clsx('node-detail', { 'node-detail__long': isLong })}>
+      <StyledDetail className={clsx('node-detail', { 'node-detail__long': isLong || isCode })}>
         <Text className="node-detail__label">
           {label}
           {label === 'Text' && hasAudio && (
             <AudioButton onClick={togglePlay}>{isPlaying ? <AiPauseIcon /> : <AiPlayIcon />}</AudioButton>
           )}
         </Text>
-        {label !== 'Frame' && label !== 'Code' ? (
-          <Text className="node-detail__value">{highlightSearchTerm(String(value), searchTerm)}</Text>
+        {!isCode ? (
+          <Text className="node-detail__value">
+            <StyledMarkdown components={markdownComponents}>{String(value)}</StyledMarkdown>
+          </Text>
         ) : (
           <SyntaxHighlighter language="javascript" style={okaidia}>
             {String(value)}
@@ -292,4 +368,17 @@ const StyledLinkIcon = styled.a`
     width: 1.3em;
     height: 1.3em;
   }
+`
+
+const StyledSequenceWrapper = styled(Flex)`
+  padding: 16px 24px;
+  flex-direction: column;
+  gap: 4px;
+  overflow-y: auto;
+`
+
+const StyledLineBreak = styled.div`
+  width: 100%;
+  height: 1px;
+  margin: 2px 0;
 `

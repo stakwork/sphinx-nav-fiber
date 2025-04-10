@@ -3,67 +3,15 @@ import { Mesh, Vector3 } from 'three'
 
 type QueryData = {
   ref_id: string
+  project_id?: string
 }
 
-export type FetchDataResponse = {
-  nodes: Node[]
-  edges: Link[]
-  query_data?: QueryData
-}
-
-export type FilterParams = {
-  skip: number
-  limit: number
-  depth: string
-  sort_by: string
-  top_node_count: string
-  include_properties: string
-  node_type: string[] | string
+export type FetchNodeParams = {
+  word?: string
+  skip_cache?: string
   free?: string
-  word?: string // Add other optional filter properties as needed
-}
-
-export type TEdge = {
-  node_type: string
-  ref_id: string
-  search_value: string
-}
-
-export type FetchSentimentResponse = {
-  data: Sentiment[]
-}
-
-export type FetchRadarResponse = {
-  data: Sources[]
-}
-
-export type FetchTopicResponse = {
-  data: Topic[]
-  totalCount: number
-}
-
-export type FetchEdgeTypesResponse = {
-  data: { edge_types: string[] }
-  status: string
-}
-
-export type FetchEdgesResponse = {
-  data: TEdge[]
-  status: string
-}
-
-export type RadarRequest = {
-  source: string
-  source_type: string
-}
-
-export type NodeRequest = {
-  node_data: {
-    name?: string
-    is_muted?: boolean
-    topic?: string
-    image_url?: string
-  }
+  media_type?: string
+  force_regenerate?: boolean
 }
 
 export type Node = {
@@ -107,6 +55,85 @@ export type Node = {
   unique_id?: string
   properties?: { [key: string]: never | undefined }
   media_url?: string
+  start?: number
+  end?: number
+  longitude?: number
+  latitude?: number
+  coordinates?: Coordinates
+  audio?: Audio[]
+  neighbourHood?: string
+}
+
+export type FetchDataResponse = {
+  nodes: Node[]
+  edges: Link[]
+  query_data?: QueryData
+}
+
+export type FilterParams = {
+  skip: number
+  limit: number
+  depth: string
+  includeContent: string
+  sort_by: string
+  top_node_count: string
+  include_properties: string
+  node_type: string[]
+  search_method: string
+  free?: string
+  word?: string // Add other optional filter properties as needed
+}
+
+export type TEdge = {
+  node_type: string
+  ref_id: string
+  search_value: string
+}
+
+export type FetchSentimentResponse = {
+  data: Sentiment[]
+}
+
+export type FetchRadarResponse = {
+  data: Sources[]
+}
+
+export type FetchTopicResponse = {
+  data: Topic[]
+  totalCount: number
+}
+
+export type FetchEdgeTypesResponse = {
+  data: { edge_types: string[] }
+  status: string
+}
+
+export type FetchEdgesResponse = {
+  data: TEdge[]
+  status: string
+}
+
+export type RadarRequest = {
+  source: string
+  source_type: string
+}
+
+export type NodeRequest = {
+  node_type?: string
+  node_data: {
+    name?: string
+    is_muted?: boolean
+    topic?: string
+    image_url?: string
+  }
+}
+
+export type NodeEditRequest = {
+  node_type: string
+  ref_id: string
+  properties: {
+    [key: string]: unknown
+  }
 }
 
 export type DataSeriesNode = {
@@ -141,15 +168,18 @@ export type NodeExtended = Node & {
   x?: number
   y?: number
   z?: number
-  longitude?: number
-  latitude?: number
-  coordinates?: Coordinates
-  audio?: Audio[]
-  properties?: { [key: string]: never | undefined }
+  fx?: number
+  fy?: number
+  fz?: number
+  sources?: string[]
+  targets?: string[]
+  edgeTypes?: string[]
 }
 
 export type Link<T = string> = {
   index?: T extends string ? never : number
+  start?: number
+  end?: number
   source: T
   target: T
   color?: number
@@ -160,6 +190,8 @@ export type Link<T = string> = {
   sourcePosition?: Vector3
   targetPosition?: Vector3
   onlyVisibleOnSelect?: boolean
+  properties?: { [key: string]: unknown }
+  attributes?: { [key: string]: unknown }
 }
 
 export type GraphData<T = string> = {
@@ -328,4 +360,11 @@ export interface ExtractedEntitiesResponse {
 export type AiSummaryAudioResponse = {
   ref_id: string
   audio_EN: string
+}
+
+export type ActionDetail = {
+  bounty: boolean
+  display_name: string
+  name: string
+  workflow_id: string
 }

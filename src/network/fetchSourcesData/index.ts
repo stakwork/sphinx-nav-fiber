@@ -1,9 +1,12 @@
 import { SchemaExtended } from '~/components/ModalsContainer/BlueprintModal/types'
 import {
+  FetchDataResponse,
   FetchEdgesResponse,
   FetchEdgeTypesResponse,
   FetchRadarResponse,
   FetchTopicResponse,
+  NodeEditRequest,
+  NodeExtended,
   NodeRequest,
   RadarRequest,
   SubmitErrRes,
@@ -127,12 +130,15 @@ export interface Schema {
   is_deleted?: boolean
   children?: string[]
   primary_color?: string
+  secondary_color?: string
   node_key?: string
   index?: string
   media_url?: string
   image_url?: string
   source_link?: string
+  type_description?: string
   attributes?: { [key: string]: string | boolean }
+  action?: string[]
 }
 
 export interface SchemaLink {
@@ -176,6 +182,12 @@ export interface UpdateSchemaParams {
   attributes: {
     [key: string | number]: string
   }
+}
+
+export const postFeedback = async (data: { answer: string; chain: string; feedback_type: 'helpful' | 'unhelpful' }) => {
+  const response = await api.post('/answer/feedback', JSON.stringify(data))
+
+  return response
 }
 
 export const editNodeSchemaUpdate = async (ref_id: string, data: UpdateSchemaParams) => {
@@ -296,6 +308,12 @@ export const putNodeData = async (ref_id: string, data: NodeRequest) => {
   return response
 }
 
+export const editNodeData = async (ref_id: string, data: NodeEditRequest) => {
+  const response = await api.put(`/node?ref_id=${ref_id}`, JSON.stringify(data))
+
+  return response
+}
+
 export const approveRadarData = async (id: string, pubkey: string) => {
   const response = await api.put(`/radar/${id}/approve`, JSON.stringify({ approve: 'True', pubkey }))
 
@@ -310,6 +328,35 @@ export const deleteRadarData = async (id: string) => {
 
 export const deleteNode = async (id: string) => {
   const response = await api.delete(`/node/?ref_id=${id}`)
+
+  return response
+}
+
+export const getNode = async (id: string) => {
+  const response = await api.get<NodeExtended>(`/node/${id}`)
+
+  return response
+}
+
+export const getPathway = async (
+  id: string,
+  nodeTypes: string[] = ['Tweet', 'Person', 'User'],
+  edgeTypes: string[] = ['HAS_REPLY>', 'HAS_QUOTE>', 'RETWEETED_BY>', 'THREAD_NEXT>', '<POSTED'],
+  sortBy = '',
+  includeProperties = true,
+  minDepth = 0,
+  depth = 10,
+  limit = 800,
+) => {
+  const nodeTypeParam = JSON.stringify(nodeTypes)
+  const edgeTypeParam = JSON.stringify(edgeTypes)
+  const sortByParam = sortBy ? `&sort_by=${sortBy}` : ''
+
+  const response = await api.get<FetchDataResponse>(
+    `/graph/subgraph?node_type=${encodeURIComponent(nodeTypeParam)}&edge_type=${encodeURIComponent(
+      edgeTypeParam,
+    )}&include_properties=${includeProperties}&start_node=${id}&depth=${depth}&min_depth=${minDepth}&limit=${limit}${sortByParam}`,
+  )
 
   return response
 }

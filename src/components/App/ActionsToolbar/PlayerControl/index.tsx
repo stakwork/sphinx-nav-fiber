@@ -4,10 +4,11 @@ import styled from 'styled-components'
 import ClearIcon from '~/components/Icons/ClearIcon'
 import PauseIcon from '~/components/Icons/PauseIcon'
 import PlayIcon from '~/components/Icons/PlayIcon'
+import { useNodeNavigation } from '~/components/Universe/useNodeNavigation'
 import { Avatar } from '~/components/common/Avatar'
 import { Flex } from '~/components/common/Flex'
 import { useAppStore } from '~/stores/useAppStore'
-import { useSelectedNode, useUpdateSelectedNode } from '~/stores/useGraphStore'
+import { useSelectedNode } from '~/stores/useGraphStore'
 import { usePlayerStore } from '~/stores/usePlayerStore'
 import { videoTimeToSeconds } from '~/utils'
 import { colors } from '~/utils/colors'
@@ -16,7 +17,7 @@ export const PlayerControl = () => {
   const containerRef = useRef<HTMLDivElement>(null)
   const [scrollWidth, setScrollWidth] = useState(0)
   const selectedNode = useSelectedNode()
-  const setSelectedNode = useUpdateSelectedNode()
+  const { navigateToNode } = useNodeNavigation()
   const [sidebarIsOpen, setSidebarOpen] = useAppStore((s) => [s.sidebarIsOpen, s.setSidebarOpen])
 
   const [isPlaying, setIsPlaying, playingTime, playingNode, miniPlayerIsVisible, setMiniPlayerIsVisible] =
@@ -48,13 +49,15 @@ export const PlayerControl = () => {
   }
 
   const openNodeDetails = () => {
-    setSelectedNode(playingNode)
+    navigateToNode(playingNode?.ref_id || null)
     setSidebarOpen(true)
   }
 
   const showPlayer = (sidebarIsOpen && selectedNode?.ref_id !== playingNode?.ref_id) || (playingNode && !sidebarIsOpen)
 
-  return miniPlayerIsVisible && playingNode && showPlayer ? (
+  const isMindset = window.location?.hostname === 'graphmindset.sphinx.chat'
+
+  return miniPlayerIsVisible && playingNode && showPlayer && !isMindset ? (
     <Wrapper onClick={openNodeDetails}>
       <Controls>
         <Avatar src={playingNode?.properties?.image_url || ''} type={playingNode.node_type} />

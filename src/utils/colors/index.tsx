@@ -78,6 +78,8 @@ export const colors = {
   GRAY3: 'rgba(186, 193, 198, 1)',
   GRAY6: '#909BAA',
   GRAY7: 'rgba(107, 122, 141, 1)',
+  GRAY8: '#16171D',
+  GRAY9: '#353a46',
   SECONDARY_BLUE: 'rgba(130, 180, 255, 1)',
   PRIMARY_BLUE: 'rgba(97, 138, 255, 1)',
   BUTTON1: 'rgba(48, 51, 66, 1)',
@@ -109,6 +111,12 @@ export const colors = {
   MESSAGE_BG: 'rgba(22, 22, 29, 0.89)',
   MESSAGE_BG_HOVER: 'rgba(35, 37, 47, 0.3)',
   COMPLETED_STATUS: 'rgba(31, 61, 43, 0.50)',
+  DIVIDER_4: 'rgba(46, 55, 67, 1)',
+  INPUT_BG: 'rgba(255, 255, 255, 0.05)',
+  INPUT_PLACEHOLDER: 'rgba(255, 255, 255, 0.5)',
+  HOVER_CARD_BG: 'rgba(41, 44, 54, 1)',
+  GRAY_FILTER_ICON: 'rgba(70,79,93,255)',
+  ANALYTICS_CARD_BG: 'rgba(21, 22, 28, 1)',
 } as const
 
 export type ColorName = keyof typeof colors

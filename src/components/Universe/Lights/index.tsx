@@ -1,24 +1,17 @@
 import { useFrame } from '@react-three/fiber'
-import { useControls } from 'leva'
 import { useRef } from 'react'
 import { DirectionalLight, PointLight } from 'three'
-import { GRAPH_FOG_COLOR, GRAPH_GROUND_COLOR, GRAPH_LIGHT_INTENSITY } from '~/constants'
-import { useGraphStore } from '~/stores/useGraphStore'
+import { GRAPH_GROUND_COLOR, GRAPH_LIGHT_INTENSITY } from '~/constants'
 import { colors } from '~/utils/colors'
 import { UNIVERSE_SCALE } from '../Graph/constant'
 
 export const Lights = () => {
-  const { fogColor } = useControls('universe', {
-    fogColor: GRAPH_FOG_COLOR,
-  })
-
-  const graphStyle = useGraphStore((s) => s.graphStyle)
-
   const pLightRefAmbient = useRef<PointLight | null>(null)
   const cameraLightRef = useRef<PointLight | null>(null)
   const dLightRef = useRef<DirectionalLight | null>(null)
 
   useFrame(({ camera, clock }) => {
+    // @todo-useframe
     const elapsedTime = clock.getElapsedTime()
 
     if (pLightRefAmbient.current) {
@@ -46,7 +39,6 @@ export const Lights = () => {
     <>
       {/* static lights */}
       <hemisphereLight args={[colors.white, GRAPH_GROUND_COLOR, GRAPH_LIGHT_INTENSITY]} />
-      {graphStyle !== 'earth' && <fog args={[fogColor, 5, 18000]} attach="fog" />}
       <ambientLight color={colors.white} intensity={1} />
 
       {/* moving lights */}

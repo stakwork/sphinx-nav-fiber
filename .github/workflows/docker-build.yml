@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     name: Build and push sphinx-nav-fiber image
     env:
       ACTIONS_ALLOW_UNSECURE_COMMANDS: true
@@ -34,7 +34,7 @@ jobs:
       - name: Show available buildx platforms
         run: echo ${{ steps.buildx.outputs.platforms }}
       - name: Cache Docker layers
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         id: cache
         with:
           path: /tmp/.buildx-cache

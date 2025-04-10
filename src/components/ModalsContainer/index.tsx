@@ -4,6 +4,8 @@ const LazySettingsModal = lazy(() =>
   import('../SettingsModal').then(({ SettingsModal }) => ({ default: SettingsModal })),
 )
 
+const LazyClaimsModal = lazy(() => import('./ClaimsModal').then(({ ClaimsModal }) => ({ default: ClaimsModal })))
+
 const LazyAddContentModal = lazy(() =>
   import('../AddContentModal').then(({ AddContentModal }) => ({ default: AddContentModal })),
 )
@@ -54,6 +56,10 @@ const LazyBriefDescriptionModal = lazy(() =>
   import('./BriefDescriptionModal').then(({ BriefDescription }) => ({ default: BriefDescription })),
 )
 
+const LazyNodeActionModal = lazy(() =>
+  import('./NodeActionModal').then(({ NodeActionModal }) => ({ default: NodeActionModal })),
+)
+
 export const ModalsContainer = () => (
   <>
     <LazyAddItemModal />
@@ -70,5 +76,7 @@ export const ModalsContainer = () => (
     <LazyCreateBountyModal />
     <LazyOnboardingModal />
     <LazyBriefDescriptionModal />
+    <LazyNodeActionModal />
+    <LazyClaimsModal />
   </>
 )

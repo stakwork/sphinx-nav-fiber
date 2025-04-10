@@ -2,8 +2,8 @@ import React from 'react'
 import styled, { css } from 'styled-components'
 import { Icons } from '~/components/Icons'
 import { Flex } from '~/components/common/Flex'
-import { colors } from '~/utils'
 import { useAppStore } from '~/stores/useAppStore'
+import { colors } from '~/utils'
 
 export const IconPicker: React.FC = () => {
   const { selectedIcon, setSelectedIcon } = useAppStore((s) => s)
@@ -127,5 +127,10 @@ const IconBox = styled.div<{ isSelected: boolean }>`
     height: 30px;
     object-fit: contain;
     color: white;
+
+    rect {
+      width: 1.5em;
+      height: 1.5em;
+    }
   }
 `
