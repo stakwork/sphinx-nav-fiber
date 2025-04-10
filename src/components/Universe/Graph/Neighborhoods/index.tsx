@@ -56,8 +56,10 @@ export const Neighbourhoods = () => {
 
   return (
     <group>
-      {Object.entries(neigboorHoodsBoundingBox).map(([neighbourhoodId, positions], index) => {
+      {Object.entries(neigboorHoodsBoundingBox).map(([neighbourhoodId, positions]) => {
         const labelCenter = neighbourhoodsWithPosition[neighbourhoodId]
+
+        const name = neighbourhoods.find((n) => n.ref_id === neighbourhoodId)?.name || neighbourhoodId
 
         if (!labelCenter || positions.length === 0) {
           return null
@@ -107,7 +109,7 @@ export const Neighbourhoods = () => {
                   }}
                   tabIndex={0}
                 >
-                  {neighbourhoods[index]?.name || neighbourhoodId}
+                  {name}
                 </div>
               </Html>
             </mesh>
