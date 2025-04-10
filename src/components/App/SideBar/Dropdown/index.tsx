@@ -8,11 +8,14 @@ import ChevronDownIcon from '~/components/Icons/ChevronDownIcon'
 import ChevronUpIcon from '~/components/Icons/ChevronUpIcon'
 import { Flex } from '~/components/common/Flex'
 import { useDataStore } from '~/stores/useDataStore'
+import { useSchemaStore } from '~/stores/useSchemaStore'
 import { colors } from '~/utils/colors'
 
 export const SelectWithPopover = () => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null)
   const { sidebarFilter, setSidebarFilter, sidebarFilterCounts = [] } = useDataStore((s) => s)
+  const { getSchemaByType } = useSchemaStore()
+
   const currentFilter = (sidebarFilter ?? '').toLowerCase()
   const currentFilterCount = sidebarFilterCounts.find((f) => f.name === currentFilter)?.count || 0
 
@@ -39,12 +42,18 @@ export const SelectWithPopover = () => {
     handleClosePopover()
   }
 
+  const getDisplayName = (type: string) => {
+    const schema = getSchemaByType(type)
+
+    return schema?.index || schema?.node_key || capitalizeFirstLetter(type)
+  }
+
   return (
     <div>
       <Action onClick={handleOpenPopover}>
         <div className="text">Show</div>
         <div className="value" data-testid="value">
-          {`${capitalizeFirstLetter(currentFilter)} (${currentFilterCount})`}
+          {`${getDisplayName(currentFilter)} (${currentFilterCount})`}
         </div>
         {currentFilterCount >= 1 && <div className="icon">{!anchorEl ? <ChevronDownIcon /> : <ChevronUpIcon />}</div>}
       </Action>
@@ -78,7 +87,7 @@ export const SelectWithPopover = () => {
                 }}
               >
                 <span className="icon">{name === sidebarFilter ? <CheckIcon /> : null}</span>
-                <span>{`${capitalizeFirstLetter(name)} (${count})`}</span>
+                <span>{`${getDisplayName(name)} (${count})`}</span>
               </MenuItem>
             ))}
         </FormControl>
