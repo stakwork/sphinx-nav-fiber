@@ -141,7 +141,11 @@ export const AiSummary = ({ question, response, refId }: Props) => {
         <TitleContainer ref={ref}>
           <TitleMarkdown>{`# ${question}`}</TitleMarkdown>
         </TitleContainer>
-        <CollapseButton onClick={toggleCollapse}>{collapsed ? <ChevronDownIcon /> : <ChevronUpIcon />}</CollapseButton>
+        {question && (
+          <CollapseButton onClick={toggleCollapse}>
+            {collapsed ? <ChevronDownIcon /> : <ChevronUpIcon />}
+          </CollapseButton>
+        )}
       </TitleWrapper>
       {!collapsed && (
         <>
