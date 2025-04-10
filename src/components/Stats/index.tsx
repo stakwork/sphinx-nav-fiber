@@ -131,7 +131,7 @@ export const Stats = () => {
         {false || isTotalProcessing ? (
           <ViewContent data-testid="view-content" onClick={openSourcesModal}>
             <div className="icon" style={{ marginLeft: '7px' }}>
-              <Animation />
+              <Animation id="lottie-animation" />
             </div>
             <div className="text">
               <p>{totalProcessing}</p>
