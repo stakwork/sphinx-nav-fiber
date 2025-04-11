@@ -32,6 +32,7 @@ export type FormData = {
   type: string
   parent?: string
   node_key: string
+  type_description?: string
   attributes?: {
     [k: string]: string | boolean
   }
@@ -75,6 +76,7 @@ const handleSubmitForm = async (
   selectedIcon: string,
   mediaOptions: { videoAudio: boolean; image: boolean; sourceLink: boolean },
   initialMediaOptions: { videoAudio: boolean; image: boolean; sourceLink: boolean },
+  nodeKeys: string[],
 ): Promise<string | undefined> => {
   try {
     // eslint-disable-next-line camelcase
@@ -90,10 +92,12 @@ const handleSubmitForm = async (
       index?: string
       primary_color?: string
       icon?: string
+      node_key: string
     } = {
       ...withoutAttributes,
       attributes: updatedAttributes,
       index: selectedIndex,
+      node_key: nodeKeys.join('-') || 'name',
     }
 
     if (selectedColor) {
@@ -121,7 +125,7 @@ const handleSubmitForm = async (
     if (isUpdate) {
       res = await api.put(`/schema/${data.ref_id}`, JSON.stringify(requestData), {})
     } else {
-      res = await api.post(`/schema`, JSON.stringify({ ...requestData, node_key: 'name' }), {})
+      res = await api.post(`/schema`, JSON.stringify(requestData), {})
     }
 
     if (res.status !== 'success') {
@@ -192,6 +196,7 @@ export const Editor = ({
       ? {
           type: selectedSchema.type,
           parent: selectedSchema.parent,
+          type_description: selectedSchema.type_description,
         }
       : defaultValues,
   })
@@ -210,6 +215,7 @@ export const Editor = ({
   const [deletedAttributes, setDeletedAttributes] = useState<string[]>([])
   const [parsedData, setParsedData] = useState<parsedObjProps[]>([])
   const [submitDisabled, setSubmitDisabled] = useState(true)
+  const [selectedNodeKeys, setSelectedNodeKeys] = useState<string[]>(['name'])
 
   const [mediaOptions, setMediaOptions] = useState({
     videoAudio: false,
@@ -299,6 +305,19 @@ export const Editor = ({
 
   const handleClose = () => {
     close()
+  }
+
+  const handleNodeKeySelect = (val: TAutocompleteOption | null) => {
+    if (val) {
+      const newValue = val.value
+
+      const updatedKeys = selectedNodeKeys.includes(newValue)
+        ? selectedNodeKeys.filter((key) => key !== newValue)
+        : [...selectedNodeKeys, newValue]
+
+      setSelectedNodeKeys(updatedKeys)
+      setValue('node_key', updatedKeys.join('-'))
+    }
   }
 
   const handleDeleteAttribute = (attributeKey: string) => {
@@ -395,6 +414,7 @@ export const Editor = ({
           image: !!selectedSchema?.image_url,
           sourceLink: !!selectedSchema?.source_link,
         },
+        selectedNodeKeys,
       )
 
       onSchemaCreate({ type: data.type, parent: parent || '', ref_id: selectedSchema?.ref_id || res || 'new' })
@@ -420,6 +440,10 @@ export const Editor = ({
   })
 
   useEffect(() => {
+    if (selectedColor !== selectedSchema?.primary_color) {
+      setSubmitDisabled(false)
+    }
+
     const subscription = form.watch((values) => {
       const isMatch = compareAttributes(attributes, parsedData)
 
@@ -439,7 +463,7 @@ export const Editor = ({
     })
 
     return () => subscription.unsubscribe()
-  }, [form, attributes, parsedData, selectedSchema, loading, displayParentError])
+  }, [form, attributes, parsedData, selectedSchema, loading, displayParentError, selectedColor])
 
   const resolvedParentValue = () => parentOptions?.find((i) => i.value === parent)
 
@@ -598,6 +622,24 @@ export const Editor = ({
               )}
             </Flex>
 
+            <Flex mb={12}>
+              <Flex mb={12}>
+                <Text>Description</Text>
+              </Flex>
+              <Flex mb={12}>
+                <InputWrapper>
+                  <TextInput
+                    dataTestId="cy-item-description"
+                    defaultValue={selectedSchema?.type_description}
+                    id="cy-item-description"
+                    maxLength={500}
+                    name="type_description"
+                    placeholder="Enter type description"
+                  />
+                </InputWrapper>
+              </Flex>
+            </Flex>
+
             {parentType && (
               <CreateCustomNodeAttribute
                 onDelete={handleDeleteAttribute}
@@ -609,6 +651,36 @@ export const Editor = ({
               setMediaOptions={setMediaOptions}
               setSubmitDisabled={setSubmitDisabled}
             />
+
+            {parentType && (
+              <Flex>
+                <LineBar />
+                <Flex mb={12} mt={12}>
+                  <Text>Node Keys</Text>
+                </Flex>
+                <Grid item mb={2} width="70%">
+                  <AutoComplete
+                    onSelect={handleNodeKeySelect}
+                    options={[
+                      { label: 'name', value: 'name' },
+                      ...attributes
+                        .filter((attr) => attr.key && attr.key !== 'name' && !attr.type?.includes('?'))
+                        .map((attr) => ({ label: attr.key, value: attr.key })),
+                    ]}
+                    selectedValue={
+                      selectedNodeKeys.length > 0
+                        ? {
+                            label: selectedNodeKeys.join(' - '),
+                            value: selectedNodeKeys.join('-'),
+                          }
+                        : { label: 'name', value: 'name' }
+                    }
+                  />
+                </Grid>
+                <LineBar />
+              </Flex>
+            )}
+
             {parentType && (
               <Flex>
                 <LineBar />
@@ -667,7 +739,7 @@ export const Editor = ({
             </Flex>
           </form>
         </FormProvider>
-        <ColorPickerPopover isOpen={isPopoverOpen} />
+        <ColorPickerPopover isOpen={isPopoverOpen} onClose={handleColorPickerPopover} />
       </Flex>
     </Flex>
   )
@@ -774,6 +846,11 @@ const ColorPickerIconWrapper = styled.span<{ selectedColor?: string }>`
     height: 22px;
     object-fit: contain;
     color: white;
+
+    rect {
+      width: 1.5em;
+      height: 1.5em;
+    }
   }
 `
 

@@ -1,4 +1,3 @@
-import { Leva } from 'leva'
 import { lazy, Suspense, useCallback, useEffect, useRef } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useSearchParams } from 'react-router-dom'
@@ -8,13 +7,12 @@ import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { GlobalStyle } from '~/components/GlobalStyle'
 import { Overlay } from '~/components/Universe/Overlay' // Import Overlay directly
-import { isDevelopment } from '~/constants'
+import { useRetrieveData } from '~/hooks/useRetrieveData'
 import { useSocket } from '~/hooks/useSockets'
 import { useAiSummaryStore } from '~/stores/useAiSummaryStore'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
 import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
-import { useUpdateSelectedNode } from '~/stores/useGraphStore'
 import { useTeachStore } from '~/stores/useTeachStore'
 import { useUserStore } from '~/stores/useUserStore'
 import {
@@ -26,7 +24,6 @@ import {
   FetchDataResponse,
 } from '~/types'
 import { colors } from '~/utils/colors'
-import { updateBudget } from '~/utils/setBudget'
 import version from '~/utils/versionHelper'
 import { ModalsContainer } from '../ModalsContainer'
 import { ActionsToolbar } from './ActionsToolbar'
@@ -56,36 +53,20 @@ const LazySideBar = lazy(() => import('./SideBar').then(({ SideBar }) => ({ defa
 export const App = () => {
   const [searchParams] = useSearchParams()
   const query = searchParams.get('q')
-  const { setBudget, setNodeCount } = useUserStore((s) => s)
+  const { setNodeCount } = useUserStore((s) => s)
   const queueRef = useRef<FetchDataResponse | null>(null)
   const timerRef = useRef<NodeJS.Timeout | null>(null)
 
-  const {
-    setSidebarOpen,
-    currentSearch: searchTerm,
-    setCurrentSearch,
-    setRelevanceSelected,
-    setTranscriptOpen,
-    universeQuestionIsOpen,
-    setUniverseQuestionIsOpen,
-  } = useAppStore((s) => s)
+  useRetrieveData()
+
+  const { setCurrentSearch, setRelevanceSelected, setTranscriptOpen, universeQuestionIsOpen } = useAppStore((s) => s)
 
   const setTeachMeAnswer = useTeachStore((s) => s.setTeachMeAnswer)
 
-  const {
-    fetchData,
-    setCategoryFilter,
-    setAbortRequests,
-    addNewNode,
-    splashDataLoading,
-    runningProjectId,
-    setRunningProjectMessages,
-    isFetching,
-  } = useDataStore((s) => s)
+  const { setCategoryFilter, addNewNode, splashDataLoading, runningProjectId, setRunningProjectMessages, isFetching } =
+    useDataStore((s) => s)
 
   const { setAiSummaryAnswer, getKeyExist, aiRefId } = useAiSummaryStore((s) => s)
-
-  const setSelectedNode = useUpdateSelectedNode()
 
   const [realtimeGraphFeatureFlag, chatInterfaceFeatureFlag] = useFeatureFlagStore((s) => [
     s.realtimeGraphFeatureFlag,
@@ -102,36 +83,11 @@ export const App = () => {
     setValue('search', query ?? '')
 
     setTranscriptOpen(false)
-    setSelectedNode(null)
     setRelevanceSelected(false)
     setCurrentSearch(query ?? '')
     setTeachMeAnswer('')
     setCategoryFilter(null)
-  }, [
-    query,
-    setCategoryFilter,
-    setCurrentSearch,
-    setRelevanceSelected,
-    setSelectedNode,
-    setTeachMeAnswer,
-    setTranscriptOpen,
-    setValue,
-  ])
-
-  useEffect(() => {
-    const runSearch = async () => {
-      await fetchData(setBudget, setAbortRequests)
-      setSidebarOpen(true)
-
-      if (searchTerm) {
-        await updateBudget(setBudget)
-      } else {
-        setSelectedNode(null)
-      }
-    }
-
-    runSearch()
-  }, [searchTerm, fetchData, setBudget, setAbortRequests, setSidebarOpen, setSelectedNode])
+  }, [query, setCategoryFilter, setCurrentSearch, setRelevanceSelected, setTeachMeAnswer, setTranscriptOpen, setValue])
 
   const handleNewNode = useCallback(() => {
     setNodeCount('INCREMENT')
@@ -161,14 +117,22 @@ export const App = () => {
 
       timerRef.current = setTimeout(() => {
         // Combine all queued data into a single update
-        const batchedData = { ...queueRef.current }
+        if (queueRef.current) {
+          const { nodes: newNodes, edges: newEdges } = queueRef.current
+          const batchedData = { nodes: newNodes, edges: newEdges }
 
-        queueRef.current = { nodes: [], edges: [] } // Reset the queue
-        addNewNode(batchedData) // Call the original addNewNode function with batched data
+          queueRef.current = { nodes: [], edges: [] }
+
+          addNewNode(batchedData)
+        }
       }, 3000) // Adjust delay as necessary
     },
     [addNewNode, isFetching],
   )
+
+  const handleNodeUpdated = useCallback((data: FetchDataResponse) => {
+    console.log(data)
+  }, [])
 
   const handleAiSummaryAnswer = useCallback(
     (data: AiSummaryAnswerResponse) => {
@@ -250,6 +214,10 @@ export const App = () => {
         socket.on('new_node_created', handleNewNodeCreated)
       }
 
+      if (realtimeGraphFeatureFlag) {
+        socket.on('node_updated', handleNodeUpdated)
+      }
+
       if (chatInterfaceFeatureFlag) {
         socket.on('answeraudiohook', handleAiSummaryAudio)
       }
@@ -271,6 +239,7 @@ export const App = () => {
     handleAiSources,
     handleExtractedEntities,
     handleAiSummaryAudio,
+    handleNodeUpdated,
   ])
 
   useEffect(() => {
@@ -281,9 +250,7 @@ export const App = () => {
     const ws = new WebSocket('wss://jobs.stakwork.com/cable?channel=ProjectLogChannel')
 
     ws.onopen = () => {
-      let id = 'a'
-
-      id = runningProjectId
+      const id = runningProjectId
 
       const command = {
         command: 'subscribe',
@@ -295,45 +262,43 @@ export const App = () => {
     }
 
     ws.onmessage = (event) => {
-      console.log('Message from server:', event.data)
-
       const data = JSON.parse(event.data)
 
       if (data.type === 'ping') {
         return
       }
 
-      const message = data?.message?.message
+      const messageData = data?.message
 
-      if (message) {
-        setRunningProjectMessages(message)
+      if (messageData.type === 'on_step_start' || messageData.type === 'on_step_complete') {
+        const message = data?.message?.message
+
+        if (message) {
+          setRunningProjectMessages(message)
+        }
       }
-
-      // Handle the message from the server here
     }
 
     ws.onerror = (error) => {
       console.error('WebSocket error:', error)
     }
-
-    ws.onclose = () => {
-      console.log('WebSocket connection closed')
-    }
   }, [runningProjectId, setRunningProjectMessages])
 
   useEffect(() => {
-    if (!splashDataLoading) {
-      setUniverseQuestionIsOpen()
+    if (runningProjectId) {
+      try {
+        socket?.emit('update_project_id', { id: runningProjectId })
+      } catch (error) {
+        console.error(error)
+      }
     }
-  }, [setUniverseQuestionIsOpen, splashDataLoading])
+  }, [runningProjectId, socket])
 
   return (
     <>
       <GlobalStyle />
 
       <DeviceCompatibilityNotice />
-
-      <Leva hidden={!isDevelopment || true} isRoot />
 
       <Suspense fallback={<div>Loading...</div>}>
         {!splashDataLoading ? (

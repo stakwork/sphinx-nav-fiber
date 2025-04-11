@@ -4,12 +4,13 @@ import { ColorPickerPopoverView } from './ColorPickerPopoverView'
 
 type Props = {
   isOpen: boolean
+  onClose: () => void
 }
 
-export const ColorPickerPopover = ({ isOpen }: Props) => (
+export const ColorPickerPopover = ({ isOpen, onClose }: Props) => (
   <ModalBackground isOpen={isOpen}>
     <ModalContent>
-      <ColorPickerPopoverView />
+      <ColorPickerPopoverView onClose={onClose} />
     </ModalContent>
   </ModalBackground>
 )

@@ -16,7 +16,7 @@ import { colors } from '~/utils/colors'
 export const UniverseQuestion = () => {
   const [question, setQuestion] = useState('')
   const textAreaRef = useRef<HTMLTextAreaElement>(null)
-  const { fetchData, setAbortRequests, seedQuestions } = useDataStore((s) => s)
+  const { setAbortRequests, seedQuestions, resetData } = useDataStore((s) => s)
   const [setBudget] = useUserStore((s) => [s.setBudget])
 
   const { setUniverseQuestionIsOpen, setSidebarOpen, setShowCollapseButton } = useAppStore((s) => ({
@@ -26,6 +26,7 @@ export const UniverseQuestion = () => {
   }))
 
   const resetAiSummaryAnswer = useAiSummaryStore((s) => s.resetAiSummaryAnswer)
+  const fetchAIData = useAiSummaryStore((s) => s.fetchAIData)
   const [displayedSeedQuestions, setDisplayedSeedQuestions] = useState<string[]>([])
 
   useEffect(() => {
@@ -44,11 +45,11 @@ export const UniverseQuestion = () => {
     if (questionToSubmit) {
       resetAiSummaryAnswer()
       setUniverseQuestionIsOpen()
+      resetData()
       setSidebarOpen(true)
       setShowCollapseButton(true)
+      await fetchAIData(setBudget, setAbortRequests, questionToSubmit)
     }
-
-    await fetchData(setBudget, setAbortRequests, questionToSubmit)
   }
 
   const canSubmit = !!question.trim().length

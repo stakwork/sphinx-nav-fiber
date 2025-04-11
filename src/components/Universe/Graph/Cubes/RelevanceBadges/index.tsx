@@ -6,9 +6,11 @@ import { Group, Vector3 } from 'three'
 import { useShallow } from 'zustand/react/shallow'
 import { getNodeColorByType } from '~/components/Universe/Graph/constant'
 import { maxChildrenDisplayed, nodesAreRelatives } from '~/components/Universe/constants'
+import { useNodeNavigation } from '~/components/Universe/useNodeNavigation'
 import { Avatar } from '~/components/common/Avatar'
 import { TypeBadge } from '~/components/common/TypeBadge'
 import { useGraphStore, useSelectedNodeRelativeIds } from '~/stores/useGraphStore'
+import { useSimulationStore } from '~/stores/useSimulationStore'
 import { NodeExtended } from '~/types'
 import { colors } from '~/utils/colors'
 import { truncateText } from '~/utils/truncateText'
@@ -20,9 +22,8 @@ const variableVector3 = new Vector3()
 const NodeBadge = ({ position, userData, color }: BadgeProps) => {
   const ref = useRef<Group | null>(null)
 
-  const { selectedNode, setSelectedNode, showSelectionGraph, hoveredNode, setHoveredNode } = useGraphStore(
-    useShallow((s) => s),
-  )
+  const { selectedNode, showSelectionGraph, hoveredNode, setHoveredNode } = useGraphStore(useShallow((s) => s))
+  const { navigateToNode } = useNodeNavigation()
 
   const isTopic = (userData?.node_type || '') === 'Topic' || !!userData.name
   const isPerson = (userData?.node_type || '') === 'Guest' || (userData?.node_type || '') === 'Person'
@@ -58,7 +59,7 @@ const NodeBadge = ({ position, userData, color }: BadgeProps) => {
               e.stopPropagation()
 
               if (userData) {
-                setSelectedNode(userData)
+                navigateToNode(userData.ref_id)
               }
             }}
             onPointerOut={(e) => {
@@ -77,7 +78,7 @@ const NodeBadge = ({ position, userData, color }: BadgeProps) => {
             <div className="badge-wrapper">
               <TypeBadge type={userData?.node_type || ''} />
             </div>
-            {truncateText(userData?.name, 20)}
+            {userData?.name ? <span>{truncateText(userData?.name, 20)}</span> : null}
           </TagWrapper>
         ) : (
           <Tag
@@ -89,7 +90,7 @@ const NodeBadge = ({ position, userData, color }: BadgeProps) => {
               e.stopPropagation()
 
               if (userData) {
-                setSelectedNode(userData)
+                navigateToNode(userData.ref_id)
               }
             }}
             onPointerOut={(e) => {
@@ -132,7 +133,8 @@ const NodeBadge = ({ position, userData, color }: BadgeProps) => {
 }
 
 export const RelevanceBadges = memo(() => {
-  const { simulation, showSelectionGraph, selectedNode, selectionGraphData } = useGraphStore(useShallow((s) => s))
+  const { showSelectionGraph, selectedNode, selectionGraphData } = useGraphStore(useShallow((s) => s))
+  const simulation = useSimulationStore((s) => s.simulation)
 
   const selectedNodeRelativeIds = useSelectedNodeRelativeIds()
 

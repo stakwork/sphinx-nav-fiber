@@ -33,6 +33,13 @@ export type AppStore = {
   setSelectedColor: (color: string) => void
   selectedIcon: string
   setSelectedIcon: (icon: string) => void
+  isHtmlContent: boolean
+  htmlContent: string
+  setHtmlContent: (content: string) => void
+  setIsHtmlContent: (isHtml: boolean) => void
+  htmlHistory: string[]
+  addToHtmlHistory: (content: string) => void
+  goBackHtmlHistory: () => string | null
 }
 
 const defaultData = {
@@ -51,6 +58,9 @@ const defaultData = {
   showCollapseButton: true,
   selectedColor: '#962777',
   selectedIcon: 'ConstructionIcon',
+  isHtmlContent: false,
+  htmlContent: '',
+  htmlHistory: [],
 }
 
 export const useAppStore = create<AppStore>((set, get) => ({
@@ -76,4 +86,23 @@ export const useAppStore = create<AppStore>((set, get) => ({
   setShowCollapseButton: (showCollapseButton) => set({ showCollapseButton }),
   setSelectedColor: (selectedColor) => set({ selectedColor }),
   setSelectedIcon: (selectedIcon) => set({ selectedIcon }),
+  setHtmlContent: (htmlContent) => set({ htmlContent }),
+  setIsHtmlContent: (isHtmlContent) => set({ isHtmlContent }),
+  addToHtmlHistory: (content) =>
+    set((state) => ({
+      htmlHistory: [...state.htmlHistory, content],
+    })),
+  goBackHtmlHistory: () => {
+    const { htmlHistory } = get()
+
+    if (htmlHistory.length <= 1) {
+      return null
+    }
+
+    set((state) => ({
+      htmlHistory: state.htmlHistory.slice(0, -1),
+    }))
+
+    return htmlHistory[htmlHistory.length - 2]
+  },
 }))

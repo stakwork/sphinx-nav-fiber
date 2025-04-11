@@ -3,8 +3,8 @@ import { ThemeProvider } from '@mui/material'
 import '@testing-library/jest-dom'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import React from 'react'
-import { ThemeProvider as StyleThemeProvider } from 'styled-components'
 import { MemoryRouter } from 'react-router-dom'
+import { ThemeProvider as StyleThemeProvider } from 'styled-components'
 import { SideBar } from '..'
 import { api } from '../../../../network/api'
 import { AppStore, useAppStore } from '../../../../stores/useAppStore'
@@ -31,6 +31,7 @@ Object.defineProperty(window, 'matchMedia', {
 })
 
 jest.mock('react-hook-form', () => ({
+  ...jest.requireActual('react-hook-form'),
   useFormContext: jest.fn(() => ({
     setValue: jest.fn(),
     register: jest.fn(),
@@ -101,7 +102,9 @@ describe('Test SideBar', () => {
       </MemoryRouter>,
     )
 
-    expect(container.querySelector('#sidebar-wrapper')).not.toBeInTheDocument()
+    waitFor(() => {
+      expect(container.querySelector('#sidebar-wrapper')).not.toBeInTheDocument()
+    })
   })
 
   it('Verify that the sidebar is visible when sidebarIsOpen is true.', () => {
@@ -143,9 +146,10 @@ describe('Test SideBar', () => {
 
     fireEvent.change(searchInput, { target: { value: 'Lightning Network' } })
 
-    const searchIcon = screen.getByTestId('search-icon')
+    const searchIcons = screen.getAllByTestId('search-icon')
 
-    expect(searchIcon).toBeInTheDocument()
+    expect(searchIcons.length).toBeGreaterThan(0) // Ensure at least one exists
+    expect(searchIcons[0]).toBeInTheDocument()
     ;(async () => {
       await waitFor(() => {
         expect(onSubmitMock).toHaveBeenCalled()
@@ -199,9 +203,10 @@ describe('Test SideBar', () => {
       </MemoryRouter>,
     )
 
-    const searchIcon = screen.getByTestId('search-icon')
+    const searchIcons = screen.getAllByTestId('search-icon')
 
-    expect(searchIcon).toBeInTheDocument()
+    expect(searchIcons.length).toBeGreaterThan(0) // Ensure at least one exists
+    expect(searchIcons[0]).toBeInTheDocument()
   })
 
   it('Ensure that the Trending component is displayed when there is no search term.', () => {

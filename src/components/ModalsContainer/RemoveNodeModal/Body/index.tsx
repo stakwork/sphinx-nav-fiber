@@ -3,9 +3,10 @@ import { useEffect, useState } from 'react'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
+import { useNodeNavigation } from '~/components/Universe/useNodeNavigation'
 import { deleteNode, getTopicsData } from '~/network/fetchSourcesData'
 import { useDataStore } from '~/stores/useDataStore'
-import { useGraphStore, useSelectedNode } from '~/stores/useGraphStore'
+import { useSelectedNode } from '~/stores/useGraphStore'
 import { useModal } from '~/stores/useModalStore'
 import { NodeExtended, Topic } from '~/types'
 import { colors } from '~/utils/colors'
@@ -20,7 +21,7 @@ export const Body = () => {
   const { close: closeEditNodeModal } = useModal('editNodeName')
 
   const [loading, setLoading] = useState(false)
-  const [setSelectedNode] = useGraphStore((s) => [s.setSelectedNode])
+  const { navigateToNode } = useNodeNavigation()
   const [removeNode] = useDataStore((s) => [s.removeNode])
 
   const [topicIsLoading, setTopicIsLoading] = useState(false)
@@ -53,7 +54,7 @@ export const Body = () => {
           setActualNode(selectedNode)
         }
       } catch (error) {
-        console.log(error)
+        console.error(error)
       } finally {
         setTopicIsLoading(false)
       }
@@ -66,7 +67,7 @@ export const Body = () => {
     setLoading(true)
 
     try {
-      setSelectedNode(null)
+      navigateToNode(null)
       closeHandler()
       closeEditNodeModal()
     } catch (error) {
@@ -96,7 +97,7 @@ export const Body = () => {
       await deleteNode(refId)
 
       removeNode(selectedNodeId)
-      setSelectedNode(null)
+      navigateToNode(null)
 
       closeHandler()
       closeEditNodeModal()

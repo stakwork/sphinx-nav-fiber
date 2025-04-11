@@ -1,3 +1,4 @@
+import ReactPlayer from 'react-player'
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
 import { NodeExtended } from '~/types'
@@ -10,7 +11,9 @@ type PlayerStore = {
   playingTime: number
   duration: number
   volume: number
+  playbackSpeed: number
   playingNode: NodeExtended | null
+  playerRef: ReactPlayer | null
   setPlayingTime: (time: number) => void
   resetPlayer: () => void
   setVolume: (volume: number) => void
@@ -21,6 +24,8 @@ type PlayerStore = {
   setPlayingNode: (playingNode: NodeExtended | null) => void
   setPlayingNodeLink: (link: string) => void
   setIsSeeking: (isSeeking: boolean) => void
+  setPlayerRef: (playerRef: ReactPlayer) => void
+  setPlaybackSpeed: (speed: number) => void
 }
 
 const defaultData: Omit<
@@ -35,6 +40,8 @@ const defaultData: Omit<
   | 'setMiniPlayerIsVisible'
   | 'setPlayingNodeLink'
   | 'setIsSeeking'
+  | 'setPlayerRef'
+  | 'setPlaybackSpeed'
 > = {
   isPlaying: false,
   miniPlayerIsVisible: false,
@@ -44,6 +51,8 @@ const defaultData: Omit<
   playingNode: null,
   duration: 0,
   volume: 0.5,
+  playbackSpeed: 1,
+  playerRef: null,
 }
 
 export const usePlayerStore = create<PlayerStore>()(
@@ -51,6 +60,7 @@ export const usePlayerStore = create<PlayerStore>()(
     ...defaultData,
     setIsSeeking: (isSeeking) => set({ isSeeking }),
     setIsPlaying: (isPlaying) => set({ isPlaying }),
+    setPlayerRef: (playerRef) => set({ playerRef }),
     setMiniPlayerIsVisible: (miniPlayerIsVisible) => {
       if (!miniPlayerIsVisible) {
         set({ miniPlayerIsVisible, isPlaying: false })
@@ -89,5 +99,6 @@ export const usePlayerStore = create<PlayerStore>()(
       }
     },
     resetPlayer: () => set({ duration: defaultData.duration, hasError: defaultData.hasError }),
+    setPlaybackSpeed: (speed) => set({ playbackSpeed: speed }),
   })),
 )

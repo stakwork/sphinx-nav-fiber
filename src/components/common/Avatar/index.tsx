@@ -2,6 +2,8 @@ import styled from 'styled-components'
 
 type Props = {
   size?: number
+  height?: number
+  width?: number
   src: string
   type: string
   rounded?: boolean
@@ -30,7 +32,7 @@ export const Avatar = styled.div<Props>`
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  width: ${({ size = 45 }) => size}px;
-  height: ${({ size = 45 }) => size}px;
+  width: ${({ size = 45, width }) => width || size}px;
+  height: ${({ size = 45, height }) => height || size}px;
   border-radius: ${({ rounded }) => (rounded ? '50%' : '2px')};
 `

@@ -1,15 +1,15 @@
 import { Button, Skeleton } from '@mui/material'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
 import { validateImageInputType } from '~/components/ModalsContainer/EditNodeNameModal/utils'
 import { Flex } from '~/components/common/Flex'
-import { getTopicsData, putNodeData } from '~/network/fetchSourcesData'
+import { editNodeData, getTopicsData } from '~/network/fetchSourcesData'
 import { useDataStore } from '~/stores/useDataStore'
 import { useSelectedNode } from '~/stores/useGraphStore'
 import { useModal } from '~/stores/useModalStore'
-import { NodeExtended, Topic } from '~/types'
+import { NodeEditRequest, NodeExtended, Topic } from '~/types'
 import { colors } from '~/utils/colors'
 import { TitleEditor } from '../Title'
 
@@ -28,6 +28,7 @@ export const Body = () => {
   const [topicIsLoading, setTopicIsLoading] = useState(false)
   const [actualTopicNode, setActualTopicNode] = useState<null | Topic>()
   const selectedNode = useSelectedNode()
+  const updateNode = useDataStore((s) => s.updateNode)
   const { open: openRemoveNodeModal } = useModal('removeNode')
 
   useEffect(() => {
@@ -61,7 +62,7 @@ export const Body = () => {
 
         setActualTopicNode(node)
       } catch (error) {
-        console.log(error)
+        console.error(error)
       } finally {
         setTopicIsLoading(false)
       }
@@ -84,16 +85,33 @@ export const Body = () => {
   const node = actualTopicNode || selectedNode
 
   const handleSave = async () => {
+    if (!node) {
+      return
+    }
+
     setLoading(true)
 
-    const updatedData = getValues()
+    const formData: FormData = getValues()
+
+    const nodeData = {
+      name: formData.name,
+      image_url: formData.image_url,
+      properties: formData.properties,
+    }
 
     try {
-      await putNodeData(node?.ref_id || '', { node_data: updatedData })
+      const payloadData: NodeEditRequest = {
+        node_type: node.node_type,
+        ref_id: node.ref_id,
+        properties: nodeData.properties as { [key: string]: unknown },
+      }
 
-      const { updateNode } = useDataStore.getState()
+      await editNodeData(node?.ref_id || '', payloadData)
 
-      updateNode({ ...node, ...updatedData } as NodeExtended)
+      updateNode({
+        ...node,
+        ...nodeData,
+      } as NodeExtended)
 
       closeHandler()
     } catch (error) {

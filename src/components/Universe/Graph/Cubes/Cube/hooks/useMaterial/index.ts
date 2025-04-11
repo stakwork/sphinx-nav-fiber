@@ -66,5 +66,5 @@ export const useMaterial = (url: string, transparent: boolean) => {
     [texture, material],
   )
 
-  return material
+  return { material, texture }
 }

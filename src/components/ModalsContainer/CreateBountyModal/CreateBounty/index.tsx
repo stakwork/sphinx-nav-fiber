@@ -1,6 +1,7 @@
-import { Button } from '@mui/material'
+import { Button, FormControlLabel, Switch, SwitchProps } from '@mui/material'
 import { FC, useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
+import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
 import { AutoComplete, TAutocompleteOption } from '~/components/common/AutoComplete'
 import { Flex } from '~/components/common/Flex'
@@ -9,11 +10,13 @@ import { TextInput } from '~/components/common/TextInput'
 import { requiredRule } from '~/constants'
 import { getTribeUserDetails, getWorkspace } from '~/network/postBounty'
 import { useUserStore } from '~/stores/useUserStore'
+import { colors } from '~/utils/colors'
 import { BUDGET_PATTERN, isBudgetValid } from '../constants'
 
 type Props = {
   errMessage: string
   handleClose: () => void
+  loading?: boolean
 }
 
 type NameSpacesOption = {
@@ -21,14 +24,18 @@ type NameSpacesOption = {
   value: string
 }
 
-export const CreateBounty: FC<Props> = ({ errMessage, handleClose }) => {
+export const CreateBounty: FC<Props> = ({ errMessage, handleClose, loading }) => {
   const { setValue, watch } = useFormContext()
   const [options, setOptions] = useState<NameSpacesOption[]>([])
   const { pubKey } = useUserStore()
+  const [loadingOption, setLoadingOption] = useState<boolean>(false)
+  const [isPublic, setIsPublic] = useState<boolean>(false)
 
   useEffect(() => {
     async function handleGetNamesspaces() {
       try {
+        setLoadingOption(true)
+
         const userDetails = await getTribeUserDetails(pubKey)
 
         if (!userDetails.id) {
@@ -52,7 +59,9 @@ export const CreateBounty: FC<Props> = ({ errMessage, handleClose }) => {
           setOptions(newOptions)
         }
       } catch (error) {
-        console.log('Error from get user details: ', error)
+        console.error('Error from get user details: ', error)
+      } finally {
+        setLoadingOption(false)
       }
     }
 
@@ -68,6 +77,20 @@ export const CreateBounty: FC<Props> = ({ errMessage, handleClose }) => {
 
     setValue('nodeType', selectedValue, { shouldValidate: true })
     setValue('workspaceUuid', selectedWorkspaceUuid)
+  }
+
+  const handleToggleOnClick = () => {
+    let isPublicNewValue = false
+
+    setIsPublic((prev) => {
+      const newValue = !prev
+
+      isPublicNewValue = newValue
+
+      return newValue
+    })
+
+    setValue('publicBounty', isPublicNewValue)
   }
 
   const isDisable = isBudgetValid(watchBudget) && !!watchNodeType
@@ -86,7 +109,7 @@ export const CreateBounty: FC<Props> = ({ errMessage, handleClose }) => {
 
       <Flex mb={20}>
         <StyledText>Select Workspace</StyledText>
-        <AutoComplete autoFocus onSelect={onSelect} options={options} />
+        <AutoComplete autoFocus isLoading={loadingOption} onSelect={onSelect} options={options} />
       </Flex>
 
       <Flex mb={20}>
@@ -107,14 +130,33 @@ export const CreateBounty: FC<Props> = ({ errMessage, handleClose }) => {
         />
       </Flex>
 
+      <StyledFormControlLabel
+        control={<CustomSwitch checked={isPublic} onChange={() => handleToggleOnClick()} />}
+        label={<StyledText>Public</StyledText>}
+        labelPlacement="start"
+      />
+
       <Flex direction="row">
         <Flex grow={1}>
-          <Button color="secondary" onClick={() => handleClose()} size="large" variant="contained">
+          <StyledButton color="secondary" onClick={() => handleClose()} size="large" variant="contained">
             Cancel
-          </Button>
+          </StyledButton>
         </Flex>
         <Flex grow={1} ml={20}>
-          <Button color="secondary" disabled={!isDisable} size="large" type="submit" variant="contained">
+          <Button
+            color="secondary"
+            disabled={!isDisable || loading}
+            size="large"
+            startIcon={
+              loading && (
+                <IconWrapper>
+                  <ClipLoader color={colors.lightGray} size={12} />
+                </IconWrapper>
+              )
+            }
+            type="submit"
+            variant="contained"
+          >
             Confirm
           </Button>
         </Flex>
@@ -128,7 +170,7 @@ const StyledText = styled(Text)`
   font-size: 14px;
   font-weight: 600;
   font-family: 'Barlow';
-  margin-bottom: 6px;
+  margin-bottom: 20px;
 `
 
 const StyledHeadingText = styled(Text)`
@@ -145,4 +187,63 @@ const StyledError = styled(Flex)`
   line-height: 0.2px;
   margin-top: 12px;
   padding-top: 20px;
+`
+
+const IconWrapper = styled.span`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2px;
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+`
+
+const StyledButton = styled(Button)`
+  && {
+    background: ${colors.white};
+    color: ${colors.BG2};
+
+    &:active,
+    &:hover,
+    &:focus {
+      background: ${colors.TOPIC};
+      color: ${colors.BG2};
+    }
+  }
+`
+
+const StyledFormControlLabel = styled(FormControlLabel)`
+  justify-content: start;
+  align-items: center;
+  margin-left: 2px !important;
+  margin-bottom: 8px;
+`
+
+const CustomSwitch = styled((props: SwitchProps) => <Switch {...props} />)`
+  &.MuiSwitch-root {
+    width: 58px;
+    height: 42px;
+  }
+  & .MuiSwitch-switchBase {
+    margin-top: 4px;
+    &.Mui-checked {
+      color: ${colors.white};
+      & + .MuiSwitch-track {
+        background-color: ${colors.primaryBlueBorder};
+        opacity: 1;
+      }
+    }
+  }
+  & .MuiSwitch-thumb {
+    width: 16px;
+    height: 16px;
+  }
+  & .MuiSwitch-track {
+    border-radius: 10px;
+    background-color: ${colors.BG2};
+    opacity: 1;
+  }
 `

@@ -9,7 +9,7 @@ export const topicArriveDistance = 600
 export const selectionGraphDistance = 2000
 
 export const selectionGraphCameraPosition = {
-  x: 172.7392402058252,
-  y: -239.04675366094037,
-  z: -2000,
+  x: 0,
+  y: 0,
+  z: 200,
 }

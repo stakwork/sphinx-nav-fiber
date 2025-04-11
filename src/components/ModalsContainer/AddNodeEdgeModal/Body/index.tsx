@@ -76,11 +76,6 @@ export const Body = () => {
           : { to: nodeFrom.ref_id, from: selectedToNode?.ref_id }),
       })
 
-      const { ref_id: id } = nodeFrom
-      const { ref_id: selectedId } = selectedToNode
-
-      console.log(id, selectedId)
-
       closeHandler()
     } catch (error) {
       console.warn(error)

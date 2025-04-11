@@ -67,7 +67,7 @@ export const useTopicsStore = create<TopicsStore>((set, get) => ({
 
       set({ loading: false })
     } catch (error) {
-      console.log(error)
+      console.error(error)
     }
   },
   setFilters: (filters: Partial<TopicFilter>) => set({ filters: { ...get().filters, page: 0, ...filters } }),
