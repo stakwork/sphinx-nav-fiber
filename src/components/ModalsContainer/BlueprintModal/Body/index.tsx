@@ -154,6 +154,7 @@ export const Body = ({ Close }: BodyProps) => {
             <EditorWrapper hasSchema>
               <InnerEditorWrapper>
                 <Editor
+                  key={selectedSchema?.ref_id}
                   graphLoading={graphLoading}
                   onDelete={onSchemaDelete}
                   onSchemaCreate={onSchemaCreate}
