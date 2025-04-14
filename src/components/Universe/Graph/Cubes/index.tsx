@@ -19,14 +19,15 @@ export const Cubes = memo(() => {
   const hoveredNode = useHoveredNode()
   const nodesWrapperRef = useRef<Group | null>(null)
   const instancesRef = useRef<Group | null>(null)
+  const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+
+  const downPosition = useRef<{ x: number; y: number } | null>(null)
+  const upPosition = useRef<{ x: number; y: number } | null>(null)
 
   const { selectionGraphData, showSelectionGraph, setHoveredNode, setIsHovering } = useGraphStore((s) => s)
-
   const simulation = useSimulationStore((s) => s.simulation)
-
   const dataInitial = useDataStore((s) => s.dataInitial)
   const nodesNormalized = useDataStore((s) => s.nodesNormalized)
-
   const setTranscriptOpen = useAppStore((s) => s.setTranscriptOpen)
 
   const { navigateToNode } = useNodeNavigation()
@@ -42,25 +43,43 @@ export const Cubes = memo(() => {
     [showSelectionGraph, selectionGraphData],
   )
 
+  const handlePointerDown = useCallback((e: ThreeEvent<PointerEvent>) => {
+    downPosition.current = { x: e.clientX, y: e.clientY }
+  }, [])
+
+  const handlePointerUp = useCallback((e: ThreeEvent<PointerEvent>) => {
+    upPosition.current = { x: e.clientX, y: e.clientY }
+  }, [])
+
   const handleSelect = useCallback(
     (nodes: Object3D[]) => {
+      if (!nodes.length) {
+        return
+      }
+
+      if (downPosition.current && upPosition.current) {
+        const dx = upPosition.current.x - downPosition.current.x
+        const dy = upPosition.current.y - downPosition.current.y
+        const distance = Math.hypot(dx, dy)
+
+        if (distance > 5) {
+          // Drag happened, not a click
+          return
+        }
+      }
+
       const node = nodes?.[0]
 
       if (node) {
-        // always close transcript when switching nodes
         setTranscriptOpen(false)
 
-        if (node.userData) {
-          if (!ignoreNodeEvent(node.userData as NodeExtended)) {
-            navigateToNode(node.userData.ref_id)
-          }
+        if (node.userData && !ignoreNodeEvent(node.userData as NodeExtended)) {
+          navigateToNode(node.userData.ref_id)
         }
       }
     },
     [setTranscriptOpen, ignoreNodeEvent, navigateToNode],
   )
-
-  const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   const onPointerOut = useCallback(
     (e: ThreeEvent<PointerEvent>) => {
@@ -120,8 +139,10 @@ export const Cubes = memo(() => {
       <Select
         filter={(selected) => selected.filter((f) => !!f.userData?.ref_id)}
         onChange={handleSelect}
+        onPointerDown={handlePointerDown}
         onPointerOut={onPointerOut}
         onPointerOver={onPointerIn}
+        onPointerUp={handlePointerUp}
       >
         <group ref={nodesWrapperRef} name="simulation-3d-group__nodes" visible={!hideUniverse}>
           {dataInitial?.nodes.map((node: NodeExtended, index) => {
