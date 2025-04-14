@@ -7,6 +7,12 @@
 // @ts-nocheck
 
 // Graph.tsx
+// @ts-nocheck
+
+// @ts-nocheck
+
+// @ts-nocheck
+
 import * as d3 from 'd3'
 import { useEffect, useRef } from 'react'
 import { useIsolatedGraphStore } from '~/stores/useIsolatedGraphStore'
@@ -16,8 +22,32 @@ export const Graph = () => {
   const svgRef = useRef<SVGSVGElement | null>(null)
   const { data: claims, isolatedNodeIds } = useIsolatedGraphStore()
 
-  const estimateLabelWidth = (text: string) => Math.min(Math.max(text.length * 7 + 20, 60), 200)
-  const labelHeight = 30
+  const estimateSquareSize = (text: string) => {
+    const base = Math.min(Math.max(text.length * 7 + 20, 60), 200)
+
+    return base // square: width = height = base
+  }
+
+  const estimateFontSize = (text: string) => {
+    const { length } = text
+
+    // Option 1: Bucketed
+    if (length <= 10) {
+      return 14
+    }
+
+    if (length <= 20) {
+      return 10
+    }
+
+    if (length <= 30) {
+      return 8
+    }
+
+    return 6
+    // Option 2: Math-based (alternative):
+    // return Math.max(6, Math.min(boxSize / (length * 0.6), 18))
+  }
 
   useEffect(() => {
     if (!svgRef.current || !claims) {
@@ -51,16 +81,17 @@ export const Graph = () => {
         d3
           .forceLink(claims.edges)
           .id((d) => d.ref_id)
-          .distance(120),
+          .distance(140),
       )
-      .force('charge', d3.forceManyBody().strength(-150))
+      .force('charge', d3.forceManyBody().strength(-200))
       .force('center', d3.forceCenter(width / 2, height / 2))
+      .force('forceRadial', d3.forceRadial(height))
       .force(
         'collide',
         d3
           .forceCollide()
-          .radius((d) => estimateLabelWidth(d.properties?.name || 'Claim') / 2 + 10)
-          .strength(0.7),
+          .radius((d) => (Math.SQRT2 * estimateSquareSize(d.properties?.name || 'Claim')) / 2 + 10)
+          .strength(0.9),
       )
 
     if (isolatedNodeIds.length > 0 && isolatedNodeIds.length !== claims.nodes.length) {
@@ -102,14 +133,18 @@ export const Graph = () => {
       .data(claims.nodes)
       .enter()
       .append('foreignObject')
-      .attr('width', (d) => estimateLabelWidth(d.properties?.name || 'Claim'))
-      .attr('height', labelHeight)
-      .html(
-        (d) => `
+      .attr('width', (d) => estimateSquareSize(d.properties?.name || 'Claim'))
+      .attr('height', (d) => estimateSquareSize(d.properties?.name || 'Claim'))
+      .html((d) => {
+        const text = d.properties?.name || 'Claim'
+        const size = estimateSquareSize(text)
+        const fontSize = 2 * estimateFontSize(text)
+
+        return `
         <div style="
-          width: 100%;
-          height: 100%;
-          font-size: 6px;
+          width: ${size}px;
+          height: ${size}px;
+          font-size: ${fontSize}px;
           background-color: ${colors.BG2};
           border-radius: 6px;
           border: 1px solid #999;
@@ -117,17 +152,19 @@ export const Graph = () => {
           overflow: hidden;
           text-align: center;
           display: flex;
-          align-items: flex-start;
-          justify-content: flex-start;
+          align-items: center;
+          justify-content: center;
           padding: 4px;
           box-sizing: border-box;
           cursor: move;
           color: white;
+          word-break: break-word;
+          text-overflow: ellipsis;
         ">
-          ${d.properties?.name || 'Claim'}
+          ${text}
         </div>
-      `,
-      )
+      `
+      })
       .call(drag(simulation))
 
     const siblingsMap = new Map()
@@ -146,30 +183,33 @@ export const Graph = () => {
     })
 
     simulation.on('tick', () => {
+      const getSize = (d) => estimateSquareSize(d.properties?.name || 'Claim')
+      const getCenter = (d) => getSize(d) / 2
+
       link
-        .attr('x1', (d) => d.source.x + estimateLabelWidth(d.source.properties?.name || 'Claim') / 2)
-        .attr('y1', (d) => d.source.y + labelHeight / 2)
+        .attr('x1', (d) => d.source.x + getCenter(d.source))
+        .attr('y1', (d) => d.source.y + getCenter(d.source))
         .attr('x2', (d) => {
-          const sx = d.source.x + estimateLabelWidth(d.source.properties?.name || 'Claim') / 2
-          const sy = d.source.y + labelHeight / 2
-          const tx = d.target.x + estimateLabelWidth(d.target.properties?.name || 'Claim') / 2
-          const ty = d.target.y + labelHeight / 2
+          const sx = d.source.x + getCenter(d.source)
+          const sy = d.source.y + getCenter(d.source)
+          const tx = d.target.x + getCenter(d.target)
+          const ty = d.target.y + getCenter(d.target)
           const dx = tx - sx
           const dy = ty - sy
           const len = Math.sqrt(dx * dx + dy * dy)
 
-          return tx - (dx / len) * (estimateLabelWidth(d.target.properties?.name || 'Claim') / 2 + 5)
+          return tx - (dx / len) * (getCenter(d.target) + 5)
         })
         .attr('y2', (d) => {
-          const sx = d.source.x + estimateLabelWidth(d.source.properties?.name || 'Claim') / 2
-          const sy = d.source.y + labelHeight / 2
-          const tx = d.target.x + estimateLabelWidth(d.target.properties?.name || 'Claim') / 2
-          const ty = d.target.y + labelHeight / 2
+          const sx = d.source.x + getCenter(d.source)
+          const sy = d.source.y + getCenter(d.source)
+          const tx = d.target.x + getCenter(d.target)
+          const ty = d.target.y + getCenter(d.target)
           const dx = tx - sx
           const dy = ty - sy
           const len = Math.sqrt(dx * dx + dy * dy)
 
-          return ty - (dy / len) * (labelHeight / 2 + 5)
+          return ty - (dy / len) * (getCenter(d.target) + 5)
         })
 
       node.attr('x', (d) => d.x).attr('y', (d) => d.y)
