@@ -1,5 +1,5 @@
 import { Select } from '@react-three/drei'
-import { ThreeEvent } from '@react-three/fiber'
+import { ThreeEvent, useFrame } from '@react-three/fiber'
 import { memo, useCallback, useRef } from 'react'
 import { Group, Object3D } from 'three'
 import { useAppStore } from '~/stores/useAppStore'
@@ -20,6 +20,8 @@ export const Cubes = memo(() => {
   const nodesWrapperRef = useRef<Group | null>(null)
   const instancesRef = useRef<Group | null>(null)
   const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const frameIndex = useRef(0)
+  const chunkSize = 3
 
   const downPosition = useRef<{ x: number; y: number } | null>(null)
   const upPosition = useRef<{ x: number; y: number } | null>(null)
@@ -31,6 +33,29 @@ export const Cubes = memo(() => {
   const setTranscriptOpen = useAppStore((s) => s.setTranscriptOpen)
 
   const { navigateToNode } = useNodeNavigation()
+
+  const gr = nodesWrapperRef.current
+
+  useFrame(({ camera }) => {
+    const nodes = dataInitial?.nodes
+
+    if (!gr || !nodes || nodes.length === 0) {
+      return
+    }
+
+    const start = frameIndex.current * chunkSize
+    const end = Math.min(start + chunkSize, nodes.length)
+
+    for (let i = start; i < end; i += 1) {
+      if (gr.children[i].position.distanceTo(camera.position) < 1500) {
+        gr.children[i].visible = true
+      } else {
+        gr.children[i].visible = false
+      }
+    }
+
+    frameIndex.current = (frameIndex.current + 1) % Math.ceil(nodes.length / chunkSize)
+  })
 
   const ignoreNodeEvent = useCallback(
     (node: NodeExtended) => {

@@ -1,18 +1,16 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-bitwise */
 import { Billboard, Svg } from '@react-three/drei'
-import { useFrame } from '@react-three/fiber'
 import { memo, useEffect, useRef, useState } from 'react'
 import { Group, Mesh, MeshBasicMaterial, Texture, TextureLoader, Vector3 } from 'three'
 import { Icons } from '~/components/Icons'
 import { useTraceUpdate } from '~/hooks/useTraceUpdate'
-import { useDataStore } from '~/stores/useDataStore'
-import { useGraphStore } from '~/stores/useGraphStore'
 import { useSchemaStore } from '~/stores/useSchemaStore'
 import { NodeExtended } from '~/types'
 import { removeEmojis } from '~/utils/removeEmojisFromText'
 import { removeLeadingMentions } from '~/utils/removeLeadingMentions'
 import { truncateText } from '~/utils/truncateText'
-import { nodeBackground, nodeSize } from '../constants'
+import { nodeSize } from '../constants'
 import { TextWithBackground } from './TextWithBackgound'
 
 type Props = {
@@ -84,106 +82,6 @@ export const TextNode = memo(
     const primaryIcon = normalizedSchemasByType[node.node_type]?.icon
     const Icon = primaryIcon ? Icons[primaryIcon] : null
     const iconName = Icon ? primaryIcon : 'NodesIcon'
-
-    useFrame(({ camera }) => {
-      if (!nodeRef.current || !backgroundRef.current) {
-        return
-      }
-
-      const {
-        selectedNode,
-        hoveredNode,
-        activeEdge,
-        searchQuery,
-        selectedNodeTypes,
-        selectedLinkTypes,
-        hoveredNodeSiblings,
-        followersFilter,
-      } = useGraphStore.getState()
-
-      const { nodesNormalized } = useDataStore.getState()
-
-      const selectedNodeNormalized = selectedNode ? nodesNormalized.get(selectedNode?.ref_id) : null
-
-      const selectedNodeSiblings = selectedNodeNormalized
-        ? [...(selectedNodeNormalized?.targets || []), ...(selectedNodeNormalized.sources || [])]
-        : []
-
-      const checkDistance = () => {
-        const nodePosition = nodePositionRef.current.setFromMatrixPosition(nodeRef.current!.matrixWorld)
-
-        if (nodeRef.current) {
-          nodeRef.current.visible = ignoreDistance ? true : nodePosition.distanceTo(camera.position) < 1500
-
-          nodeRef.current.traverse((o) => {
-            if (o.name === 'background') {
-              // eslint-disable-next-line no-param-reassign
-              o.visible = ignoreDistance ? true : nodePosition.distanceTo(camera.position) < 1500
-            }
-          })
-        }
-      }
-
-      if (searchQuery.length < 3 && !selectedNodeTypes.length && !selectedLinkTypes.length && !selectedNode) {
-        checkDistance()
-      } else {
-        nodeRef.current.visible = false
-
-        nodeRef.current.traverse((o) => {
-          if (o.name === 'background') {
-            // eslint-disable-next-line no-param-reassign
-            o.visible = false
-          }
-        })
-      }
-
-      const isHovered = node.ref_id === hoveredNode?.ref_id
-      const isSelected = node.ref_id === selectedNode?.ref_id
-      const isHoveredSibling = hoveredNodeSiblings.includes(node.ref_id)
-      const isSelectedSibling = selectedNodeSiblings.includes(node.ref_id)
-
-      const highlight = isHovered || isSelected || isHoveredSibling || isSelectedSibling
-
-      if (highlight) {
-        const bg = backgroundRef.current.getObjectByName('background') as Mesh
-
-        if (bg) {
-          ;(bg.material as THREE.MeshStandardMaterial).color.set(primaryColor || nodeBackground)
-        }
-
-        nodeRef.current.scale.set(scale * 1.1, scale * 1.1, scale * 1.1)
-      } else {
-        const bg = backgroundRef.current.getObjectByName('background') as Mesh
-
-        if (bg) {
-          ;(bg.material as THREE.MeshStandardMaterial).color.set(nodeBackground)
-        }
-
-        nodeRef.current.scale.set(scale, scale, scale)
-      }
-
-      const isActive =
-        (highlight ||
-          activeEdge?.target === node.ref_id ||
-          activeEdge?.source === node.ref_id ||
-          (searchQuery && sanitizedNodeName.toLowerCase().includes(searchQuery.toLowerCase())) ||
-          selectedNodeTypes.includes(node.node_type) ||
-          node.edgeTypes?.some((i) => selectedLinkTypes.includes(i))) &&
-        nodeMatchesFollowerFilter(node, followersFilter)
-
-      if (isActive) {
-        if (nodeRef.current && !nodeRef.current.visible) {
-          nodeRef.current.visible = true
-
-          nodeRef.current.traverse((o) => {
-            if (o.name === 'background') {
-              // eslint-disable-next-line no-param-reassign
-              o.visible = true
-            }
-          })
-        }
-      }
-    })
 
     return (
       <Billboard follow lockX={false} lockY={false} lockZ={false} name="billboard" userData={node}>
