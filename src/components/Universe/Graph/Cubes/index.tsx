@@ -1,7 +1,7 @@
 import { Select } from '@react-three/drei'
 import { ThreeEvent, useFrame } from '@react-three/fiber'
 import { memo, useCallback, useRef } from 'react'
-import { Group, Object3D } from 'three'
+import { Group, Mesh, MeshStandardMaterial, Object3D } from 'three'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
 import { useGraphStore, useHoveredNode, useSelectedNode } from '~/stores/useGraphStore'
@@ -11,6 +11,7 @@ import { useNodeNavigation } from '../../useNodeNavigation'
 import { Candidates } from './Candidates'
 import { NodePoints } from './NodePoints'
 import { NodeWrapper } from './NodeWrapper'
+import { nodeBackground } from './constants'
 
 const POINTER_IN_DELAY = 100
 
@@ -21,7 +22,7 @@ export const Cubes = memo(() => {
   const instancesRef = useRef<Group | null>(null)
   const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const frameIndex = useRef(0)
-  const chunkSize = 3
+  const chunkSize = 10
 
   const downPosition = useRef<{ x: number; y: number } | null>(null)
   const upPosition = useRef<{ x: number; y: number } | null>(null)
@@ -34,23 +35,84 @@ export const Cubes = memo(() => {
 
   const { navigateToNode } = useNodeNavigation()
 
-  const gr = nodesWrapperRef.current
+  const group = nodesWrapperRef.current
+  const instances = instancesRef.current
+
+  const scaleUp = 1.1
+  const scaleDefault = 1
 
   useFrame(({ camera }) => {
     const nodes = dataInitial?.nodes
 
-    if (!gr || !nodes || nodes.length === 0) {
+    //    const primaryColor = normalizedSchemasByType[node.node_type]?.primary_color
+
+    if (!instances || !group || !nodes || nodes.length === 0) {
       return
     }
+
+    const { searchQuery, selectedLinkTypes, selectedNodeTypes, hoveredNodeSiblings } = useGraphStore.getState()
+
+    const selectedNodeNormalized = selectedNode ? nodesNormalized.get(selectedNode.ref_id) : null
+
+    const selectedSiblings = selectedNodeNormalized
+      ? [...(selectedNodeNormalized?.targets || []), ...(selectedNodeNormalized.sources || [])]
+      : []
 
     const start = frameIndex.current * chunkSize
     const end = Math.min(start + chunkSize, nodes.length)
 
     for (let i = start; i < end; i += 1) {
-      if (gr.children[i].position.distanceTo(camera.position) < 1500) {
-        gr.children[i].visible = true
+      // nodes
+      const object = group.children[i] as Mesh & { userData: NodeExtended }
+      const node = object.userData
+
+      const distance = object.position.distanceTo(camera.position)
+      const visible = distance < 1500
+
+      const isHovered = hoveredNode?.ref_id === node.ref_id
+      const isSelected = selectedNode?.ref_id === node.ref_id
+      const isHoveredSibling = hoveredNodeSiblings.includes(node.ref_id)
+      const isSelectedSibling = selectedSiblings.includes(node.ref_id)
+
+      const highlight = isHovered || isSelected || isHoveredSibling || isSelectedSibling
+
+      const name = node.name?.toLowerCase() || ''
+      const searchMatch = searchQuery && name.includes(searchQuery.toLowerCase())
+      const typeMatch = selectedNodeTypes.includes(node.node_type)
+      const linkMatch = node.edgeTypes?.some((t) => selectedLinkTypes.includes(t))
+
+      const shouldBeVisible = highlight || searchMatch || typeMatch || linkMatch
+
+      if (shouldBeVisible) {
+        object.visible = shouldBeVisible
+        object.scale.setScalar(highlight ? 1.1 : 1)
       } else {
-        gr.children[i].visible = false
+        object.visible = visible
+      }
+
+      const background = object.getObjectByName('background') as Mesh | null
+
+      if (background) {
+        if (shouldBeVisible) {
+          background.visible = shouldBeVisible
+
+          const material = background.material as MeshStandardMaterial
+
+          material.color.set(highlight ? node.primary_color || nodeBackground : nodeBackground)
+        } else {
+          background.visible = visible
+        }
+      }
+
+      // instances
+      const point = instances.children[0].children[i]
+
+      if (point) {
+        if (shouldBeVisible) {
+          point.scale.set(scaleUp, scaleUp, scaleUp)
+        } else {
+          point.scale.set(scaleDefault, scaleDefault, scaleDefault)
+        }
       }
     }
 
@@ -88,19 +150,15 @@ export const Cubes = memo(() => {
         const distance = Math.hypot(dx, dy)
 
         if (distance > 5) {
-          // Drag happened, not a click
           return
         }
       }
 
-      const node = nodes?.[0]
+      const node = nodes[0]
 
-      if (node) {
+      if (node?.userData && !ignoreNodeEvent(node.userData as NodeExtended)) {
         setTranscriptOpen(false)
-
-        if (node.userData && !ignoreNodeEvent(node.userData as NodeExtended)) {
-          navigateToNode(node.userData.ref_id)
-        }
+        navigateToNode(node.userData.ref_id)
       }
     },
     [setTranscriptOpen, ignoreNodeEvent, navigateToNode],
@@ -112,7 +170,6 @@ export const Cubes = memo(() => {
 
       if (hoverTimeoutRef.current) {
         clearTimeout(hoverTimeoutRef.current)
-        hoverTimeoutRef.current = null
       }
 
       if (!hoveredNode) {
@@ -129,30 +186,28 @@ export const Cubes = memo(() => {
 
   const onPointerIn = useCallback(
     (e: ThreeEvent<PointerEvent>) => {
-      const objects = e.intersections.map((i) => i.object)
-      const object = objects[0]
+      const object = e.intersections[0]?.object
 
-      if (!object.visible) {
+      if (!object?.visible || !object.userData?.ref_id) {
         return
       }
 
       if (hoverTimeoutRef.current) {
         clearTimeout(hoverTimeoutRef.current)
-        hoverTimeoutRef.current = null
       }
 
-      if (object?.userData?.ref_id) {
-        const node = nodesNormalized.get(object.userData.ref_id) as NodeExtended
+      const node = nodesNormalized.get(object.userData.ref_id)
 
-        if (!ignoreNodeEvent(node)) {
-          e.stopPropagation()
-
-          hoverTimeoutRef.current = setTimeout(() => {
-            setIsHovering(true)
-            setHoveredNode(node)
-          }, POINTER_IN_DELAY)
-        }
+      if (!node || ignoreNodeEvent(node)) {
+        return
       }
+
+      e.stopPropagation()
+
+      hoverTimeoutRef.current = setTimeout(() => {
+        setIsHovering(true)
+        setHoveredNode(node)
+      }, POINTER_IN_DELAY)
     },
     [setHoveredNode, ignoreNodeEvent, setIsHovering, nodesNormalized],
   )
@@ -183,7 +238,6 @@ export const Cubes = memo(() => {
             ) : null
           })}
         </group>
-
         <group ref={instancesRef} name="simulation-3d-group__node-points">
           <NodePoints />
         </group>

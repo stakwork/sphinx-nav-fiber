@@ -1,8 +1,7 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-bitwise */
 import { Billboard, Svg } from '@react-three/drei'
 import { memo, useEffect, useRef, useState } from 'react'
-import { Group, Mesh, MeshBasicMaterial, Texture, TextureLoader, Vector3 } from 'three'
+import { Group, Mesh, MeshBasicMaterial, Texture, TextureLoader } from 'three'
 import { Icons } from '~/components/Icons'
 import { useTraceUpdate } from '~/hooks/useTraceUpdate'
 import { useSchemaStore } from '~/stores/useSchemaStore'
@@ -16,43 +15,41 @@ import { TextWithBackground } from './TextWithBackgound'
 type Props = {
   node: NodeExtended
   hide?: boolean
-  ignoreDistance: boolean
   scale: number
 }
 
-const nodeMatchesFollowerFilter = (targetNode: NodeExtended, value: string | null): boolean => {
-  if (!value) {
-    return true
-  }
+// const nodeMatchesFollowerFilter = (targetNode: NodeExtended, value: string | null): boolean => {
+//   if (!value) {
+//     return true
+//   }
 
-  if (targetNode.node_type !== 'User') {
-    return true
-  }
+//   if (targetNode.node_type !== 'User') {
+//     return true
+//   }
 
-  const followers = targetNode.properties?.followers
+//   const followers = targetNode.properties?.followers
 
-  if (followers === undefined) {
-    return true
-  }
+//   if (followers === undefined) {
+//     return true
+//   }
 
-  switch (value) {
-    case 'lt_1000':
-      return followers < 1000
-    case '1000_10000':
-      return followers >= 1000 && followers <= 10000
-    case 'gt_10000':
-      return followers > 10000
-    default:
-      return true
-  }
-}
+//   switch (value) {
+//     case 'lt_1000':
+//       return followers < 1000
+//     case '1000_10000':
+//       return followers >= 1000 && followers <= 10000
+//     case 'gt_10000':
+//       return followers > 10000
+//     default:
+//       return true
+//   }
+// }
 
 export const TextNode = memo(
   (props: Props) => {
-    const { node, hide, ignoreDistance, scale } = props
+    const { node, hide, scale } = props
     const svgRef = useRef<Mesh | null>(null)
     const nodeRef = useRef<Mesh | null>(null)
-    const nodePositionRef = useRef(new Vector3())
     const [texture, setTexture] = useState<Texture | null>(null)
     const backgroundRef = useRef<Group | null>(null)
 
@@ -78,7 +75,6 @@ export const TextNode = memo(
       )
     }, [node?.properties?.image_url])
 
-    const primaryColor = normalizedSchemasByType[node.node_type]?.primary_color
     const primaryIcon = normalizedSchemasByType[node.node_type]?.icon
     const Icon = primaryIcon ? Icons[primaryIcon] : null
     const iconName = Icon ? primaryIcon : 'NodesIcon'
@@ -122,7 +118,6 @@ export const TextNode = memo(
   (prevProps, nextProps) =>
     prevProps.hide === nextProps.hide &&
     prevProps.scale === nextProps.scale &&
-    prevProps.ignoreDistance === nextProps.ignoreDistance &&
     prevProps.node.ref_id === nextProps.node.ref_id &&
     prevProps.scale === nextProps.scale,
 )
