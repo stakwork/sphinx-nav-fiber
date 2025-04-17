@@ -11,6 +11,7 @@ export type FeatureFlagStore = {
   userFeedbackFeatureFlag: boolean
   chatInterfaceFeatureFlag: boolean
   fastFiltersFeatureFlag: boolean
+  chatSplashScreenAsDefault: boolean
   setTrendingTopicsFeatureFlag: (val: boolean) => void
   setV2FeatureFlag: (val: boolean) => void
   setQueuedSourcesFeatureFlag: (val: boolean) => void
@@ -21,6 +22,7 @@ export type FeatureFlagStore = {
   setUserFeedbackFeatureFlag: (val: boolean) => void
   setChatInterfaceFeatureFlag: (val: boolean) => void
   setFastFiltersFeatureFlag: (val: boolean) => void
+  setChatSplashScreenAsDefault: (val: boolean) => void
 }
 
 const defaultData: Omit<
@@ -35,6 +37,7 @@ const defaultData: Omit<
   | 'setUserFeedbackFeatureFlag'
   | 'setChatInterfaceFeatureFlag'
   | 'setFastFiltersFeatureFlag'
+  | 'setChatSplashScreenAsDefault'
 > = {
   trendingTopicsFeatureFlag: true,
   queuedSourcesFeatureFlag: false,
@@ -46,6 +49,7 @@ const defaultData: Omit<
   userFeedbackFeatureFlag: false,
   chatInterfaceFeatureFlag: false,
   fastFiltersFeatureFlag: false,
+  chatSplashScreenAsDefault: false,
 }
 
 export const useFeatureFlagStore = create<FeatureFlagStore>((set) => ({
@@ -60,4 +64,5 @@ export const useFeatureFlagStore = create<FeatureFlagStore>((set) => ({
   setUserFeedbackFeatureFlag: (userFeedbackFeatureFlag) => set({ userFeedbackFeatureFlag }),
   setChatInterfaceFeatureFlag: (chatInterfaceFeatureFlag) => set({ chatInterfaceFeatureFlag }),
   setFastFiltersFeatureFlag: (fastFiltersFeatureFlag) => set({ fastFiltersFeatureFlag }),
+  setChatSplashScreenAsDefault: (chatSplashScreenAsDefault) => set({ chatSplashScreenAsDefault }),
 }))

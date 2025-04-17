@@ -272,6 +272,7 @@ export type IsAdminResponse = {
     customSchema: boolean
     realtimeGraph: boolean
     chatInterface: boolean
+    chatSplashScreenAsDefault: boolean
     swarmUiUrl: string
     fastFilters: boolean
     title: string

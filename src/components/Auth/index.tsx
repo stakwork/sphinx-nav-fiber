@@ -28,6 +28,7 @@ export const AuthGuard = ({ children }: PropsWithChildren) => {
     setRealtimeGraphFeatureFlag,
     setChatInterfaceFeatureFlag,
     setFastFiltersFeatureFlag,
+    setChatSplashScreenAsDefault,
   } = useFeatureFlagStore((s) => s)
 
   const handleAuth = useCallback(async () => {
@@ -77,6 +78,7 @@ export const AuthGuard = ({ children }: PropsWithChildren) => {
         setRealtimeGraphFeatureFlag(res.data.realtimeGraph || false)
         setChatInterfaceFeatureFlag(res.data.chatInterface || false)
         setFastFiltersFeatureFlag(res.data.fastFilters || false)
+        setChatSplashScreenAsDefault(res.data.chatSplashScreenAsDefault || false)
 
         if (isAdmin && !res.data.title) {
           setShowOnboarding(true)
@@ -99,6 +101,7 @@ export const AuthGuard = ({ children }: PropsWithChildren) => {
     setChatInterfaceFeatureFlag,
     setFastFiltersFeatureFlag,
     setSwarmUiUrl,
+    setChatSplashScreenAsDefault,
   ])
 
   // auth checker

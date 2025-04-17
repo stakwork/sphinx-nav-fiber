@@ -59,7 +59,13 @@ export const App = () => {
 
   useRetrieveData()
 
-  const { setCurrentSearch, setRelevanceSelected, setTranscriptOpen, universeQuestionIsOpen } = useAppStore((s) => s)
+  const {
+    setCurrentSearch,
+    setRelevanceSelected,
+    setTranscriptOpen,
+    universeQuestionIsOpen,
+    setUniverseQuestionIsOpen,
+  } = useAppStore((s) => s)
 
   const setTeachMeAnswer = useTeachStore((s) => s.setTeachMeAnswer)
 
@@ -68,9 +74,10 @@ export const App = () => {
 
   const { setAiSummaryAnswer, getKeyExist, aiRefId } = useAiSummaryStore((s) => s)
 
-  const [realtimeGraphFeatureFlag, chatInterfaceFeatureFlag] = useFeatureFlagStore((s) => [
+  const [realtimeGraphFeatureFlag, chatInterfaceFeatureFlag, chatSplashScreenAsDefault] = useFeatureFlagStore((s) => [
     s.realtimeGraphFeatureFlag,
     s.chatInterfaceFeatureFlag,
+    s.chatSplashScreenAsDefault,
   ])
 
   const socket: Socket | undefined = useSocket()
@@ -78,6 +85,12 @@ export const App = () => {
   const form = useForm<{ search: string }>({ mode: 'onChange' })
 
   const { setValue } = form
+
+  useEffect(() => {
+    if (chatSplashScreenAsDefault && chatInterfaceFeatureFlag) {
+      setUniverseQuestionIsOpen()
+    }
+  }, [chatInterfaceFeatureFlag, chatSplashScreenAsDefault, setUniverseQuestionIsOpen])
 
   useEffect(() => {
     setValue('search', query ?? '')
