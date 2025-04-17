@@ -9,7 +9,7 @@ import { NodeExtended } from '~/types'
 import { removeEmojis } from '~/utils/removeEmojisFromText'
 import { removeLeadingMentions } from '~/utils/removeLeadingMentions'
 import { truncateText } from '~/utils/truncateText'
-import { nodeSize } from '../constants'
+import { NodeCircleGeometry, nodeSize } from '../constants'
 import { TextWithBackground } from './TextWithBackgound'
 
 type Props = {
@@ -84,8 +84,9 @@ export const TextNode = memo(
         <mesh ref={nodeRef} name={node.ref_id} position={[0, 0, 1]} scale={scale} userData={node} visible={!hide}>
           {node?.properties?.image_url && texture ? (
             <>
-              <planeGeometry args={[nodeSize - 2, nodeSize - 2]} />
-              <meshBasicMaterial map={texture} />
+              <mesh geometry={NodeCircleGeometry}>
+                <meshBasicMaterial map={texture} />
+              </mesh>
             </>
           ) : (
             <Svg

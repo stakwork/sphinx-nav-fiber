@@ -22,7 +22,7 @@ export const Cubes = memo(() => {
   const instancesRef = useRef<Group | null>(null)
   const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const frameIndex = useRef(0)
-  const chunkSize = 10
+  const chunkSize = 50
 
   const downPosition = useRef<{ x: number; y: number } | null>(null)
   const upPosition = useRef<{ x: number; y: number } | null>(null)
@@ -52,6 +52,9 @@ export const Cubes = memo(() => {
 
     const { searchQuery, selectedLinkTypes, selectedNodeTypes, hoveredNodeSiblings } = useGraphStore.getState()
 
+    const dynamicMode =
+      searchQuery || selectedLinkTypes.length > 0 || selectedNodeTypes.length > 0 || hoveredNode || selectedNode
+
     const selectedNodeNormalized = selectedNode ? nodesNormalized.get(selectedNode.ref_id) : null
 
     const selectedSiblings = selectedNodeNormalized
@@ -66,51 +69,59 @@ export const Cubes = memo(() => {
       const object = group.children[i] as Mesh & { userData: NodeExtended }
       const node = object.userData
 
-      const distance = object.position.distanceTo(camera.position)
-      const visible = distance < 1500
-
       const isHovered = hoveredNode?.ref_id === node.ref_id
       const isSelected = selectedNode?.ref_id === node.ref_id
       const isHoveredSibling = hoveredNodeSiblings.includes(node.ref_id)
       const isSelectedSibling = selectedSiblings.includes(node.ref_id)
-
       const highlight = isHovered || isSelected || isHoveredSibling || isSelectedSibling
-
-      const name = node.name?.toLowerCase() || ''
-      const searchMatch = searchQuery && name.includes(searchQuery.toLowerCase())
-      const typeMatch = selectedNodeTypes.includes(node.node_type)
-      const linkMatch = node.edgeTypes?.some((t) => selectedLinkTypes.includes(t))
-
-      const shouldBeVisible = highlight || searchMatch || typeMatch || linkMatch
-
-      if (shouldBeVisible) {
-        object.visible = shouldBeVisible
-        object.scale.setScalar(highlight ? 1.1 : 1)
-      } else {
-        object.visible = visible
-      }
-
       const background = object.getObjectByName('background') as Mesh | null
-
-      if (background) {
-        if (shouldBeVisible) {
-          background.visible = shouldBeVisible
-
-          const material = background.material as MeshStandardMaterial
-
-          material.color.set(highlight ? node.primary_color || nodeBackground : nodeBackground)
-        } else {
-          background.visible = visible
-        }
-      }
-
-      // instances
       const point = instances.children[0].children[i]
 
-      if (point) {
+      if (dynamicMode) {
+        const name = node.name?.toLowerCase() || ''
+        const searchMatch = searchQuery && name.includes(searchQuery.toLowerCase())
+        const typeMatch = selectedNodeTypes.includes(node.node_type)
+        const linkMatch = node.edgeTypes?.some((t) => selectedLinkTypes.includes(t))
+
+        const shouldBeVisible = highlight || searchMatch || typeMatch || linkMatch
+
         if (shouldBeVisible) {
-          point.scale.set(scaleUp, scaleUp, scaleUp)
+          object.visible = true
+          object.scale.setScalar(highlight ? 1.1 : 1)
+
+          if (background) {
+            background.visible = true
+
+            const material = background.material as MeshStandardMaterial
+
+            material.color.set(highlight ? node.primary_color || nodeBackground : nodeBackground)
+          }
+
+          if (point) {
+            point.scale.set(scaleUp, scaleUp, scaleUp)
+          }
         } else {
+          object.visible = false
+
+          if (background) {
+            background.visible = false
+          }
+
+          if (point) {
+            point.scale.set(0, 0, 0)
+          }
+        }
+      } else {
+        const distance = object.position.distanceTo(camera.position)
+        const visible = distance < 1500
+
+        object.visible = visible
+
+        if (background) {
+          background.visible = visible
+        }
+
+        if (point) {
           point.scale.set(scaleDefault, scaleDefault, scaleDefault)
         }
       }
