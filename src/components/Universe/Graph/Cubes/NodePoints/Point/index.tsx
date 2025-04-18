@@ -14,8 +14,6 @@ export const Point = memo(({ color, node }: Props) => {
   const nodeRef = useRef<Group | null>(null)
   const helperRef = useRef<Mesh | null>(null)
 
-  console.log('rerenderPoint')
-
   const newColor = generatePalette(color, 3, 10)
 
   return (
