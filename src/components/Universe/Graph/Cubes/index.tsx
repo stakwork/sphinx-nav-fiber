@@ -17,17 +17,17 @@ const POINTER_IN_DELAY = 100
 
 const nodeMatchesFollowerFilter = (targetNode: NodeExtended, value: string | null): boolean => {
   if (!value) {
-    return true
+    return false
   }
 
   if (targetNode.node_type !== 'User') {
-    return true
+    return false
   }
 
   const followers = targetNode.properties?.followers
 
   if (followers === undefined) {
-    return true
+    return false
   }
 
   switch (value) {
@@ -67,6 +67,7 @@ export const Cubes = memo(() => {
 
   const scaleUp = 1.1
   const scaleDefault = 1
+  const scaleDown = 0.1
 
   useFrame(({ camera }) => {
     const nodes = dataInitial?.nodes
@@ -144,7 +145,7 @@ export const Cubes = memo(() => {
           }
 
           if (point) {
-            point.scale.set(0, 0, 0)
+            point.scale.set(scaleDown, scaleDown, scaleDown)
           }
         }
       } else {
@@ -162,7 +163,7 @@ export const Cubes = memo(() => {
         }
 
         if (object) {
-          object.scale.setScalar(1)
+          object.scale.setScalar(scaleDefault)
         }
       }
     }
