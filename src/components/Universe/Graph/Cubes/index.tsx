@@ -1,7 +1,7 @@
 import { Select } from '@react-three/drei'
-import { ThreeEvent } from '@react-three/fiber'
+import { ThreeEvent, useFrame } from '@react-three/fiber'
 import { memo, useCallback, useRef } from 'react'
-import { Group, Object3D } from 'three'
+import { Group, Mesh, MeshStandardMaterial, Object3D } from 'three'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
 import { useGraphStore, useHoveredNode, useSelectedNode } from '~/stores/useGraphStore'
@@ -11,8 +11,36 @@ import { useNodeNavigation } from '../../useNodeNavigation'
 import { Candidates } from './Candidates'
 import { NodePoints } from './NodePoints'
 import { NodeWrapper } from './NodeWrapper'
+import { nodeBackground } from './constants'
 
 const POINTER_IN_DELAY = 100
+
+const nodeMatchesFollowerFilter = (targetNode: NodeExtended, value: string | null): boolean => {
+  if (!value) {
+    return true
+  }
+
+  if (targetNode.node_type !== 'User') {
+    return true
+  }
+
+  const followers = targetNode.properties?.followers
+
+  if (followers === undefined) {
+    return true
+  }
+
+  switch (value) {
+    case 'lt_1000':
+      return followers < 1000
+    case '1000_10000':
+      return followers >= 1000 && followers <= 10000
+    case 'gt_10000':
+      return followers > 10000
+    default:
+      return true
+  }
+}
 
 export const Cubes = memo(() => {
   const selectedNode = useSelectedNode()
@@ -20,6 +48,8 @@ export const Cubes = memo(() => {
   const nodesWrapperRef = useRef<Group | null>(null)
   const instancesRef = useRef<Group | null>(null)
   const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const frameIndex = useRef(0)
+  const chunkSize = 50
 
   const downPosition = useRef<{ x: number; y: number } | null>(null)
   const upPosition = useRef<{ x: number; y: number } | null>(null)
@@ -31,6 +61,114 @@ export const Cubes = memo(() => {
   const setTranscriptOpen = useAppStore((s) => s.setTranscriptOpen)
 
   const { navigateToNode } = useNodeNavigation()
+
+  const group = nodesWrapperRef.current
+  const instances = instancesRef.current
+
+  const scaleUp = 1.1
+  const scaleDefault = 1
+
+  useFrame(({ camera }) => {
+    const nodes = dataInitial?.nodes
+
+    //    const primaryColor = normalizedSchemasByType[node.node_type]?.primary_color
+
+    if (!instances || !group || !nodes || nodes.length === 0) {
+      return
+    }
+
+    const { searchQuery, selectedLinkTypes, selectedNodeTypes, hoveredNodeSiblings, followersFilter } =
+      useGraphStore.getState()
+
+    const dynamicMode =
+      searchQuery ||
+      selectedLinkTypes.length > 0 ||
+      selectedNodeTypes.length > 0 ||
+      hoveredNode ||
+      selectedNode ||
+      followersFilter
+
+    const selectedNodeNormalized = selectedNode ? nodesNormalized.get(selectedNode.ref_id) : null
+
+    const selectedSiblings = selectedNodeNormalized
+      ? [...(selectedNodeNormalized?.targets || []), ...(selectedNodeNormalized.sources || [])]
+      : []
+
+    const start = frameIndex.current * chunkSize
+    const end = Math.min(start + chunkSize, nodes.length)
+    const points = instances.children[0].children
+    const objects = group.children
+
+    for (let i = start; i < end; i += 1) {
+      // nodes
+      const object = objects[i] as Mesh & { userData: NodeExtended }
+      const background = object.getObjectByName('background') as Mesh | null
+      const node = object.userData
+      const point = points[i]
+
+      const isHovered = hoveredNode?.ref_id === node.ref_id
+      const isSelected = selectedNode?.ref_id === node.ref_id
+      const isHoveredSibling = hoveredNodeSiblings.includes(node.ref_id)
+      const isSelectedSibling = selectedSiblings.includes(node.ref_id)
+      const isFollowersMatch = nodeMatchesFollowerFilter(node, followersFilter)
+      const highlight = isHovered || isSelected || isHoveredSibling || isSelectedSibling || isFollowersMatch
+
+      if (dynamicMode) {
+        const name = node.name?.toLowerCase() || ''
+        const searchMatch = searchQuery && name.includes(searchQuery.toLowerCase())
+        const typeMatch = selectedNodeTypes.includes(node.node_type)
+        const linkMatch = node.edgeTypes?.some((t) => selectedLinkTypes.includes(t))
+
+        const shouldBeVisible = highlight || searchMatch || typeMatch || linkMatch
+
+        if (shouldBeVisible) {
+          object.visible = true
+          object.scale.setScalar(highlight ? 1.1 : 1)
+
+          if (background) {
+            background.visible = true
+
+            const material = background.material as MeshStandardMaterial
+
+            material.color.set(highlight ? node.primary_color || nodeBackground : nodeBackground)
+          }
+
+          if (point) {
+            point.scale.set(scaleUp, scaleUp, scaleUp)
+          }
+        } else {
+          object.visible = false
+
+          if (background) {
+            background.visible = false
+          }
+
+          if (point) {
+            point.scale.set(0, 0, 0)
+          }
+        }
+      } else {
+        const distance = object.position.distanceTo(camera.position)
+        const visible = distance < 1500
+
+        object.visible = visible
+
+        if (background) {
+          background.visible = visible
+        }
+
+        if (point) {
+          point.scale.set(scaleDefault, scaleDefault, scaleDefault)
+        }
+
+        if (object) {
+          object.scale.setScalar(1)
+        }
+      }
+    }
+
+    frameIndex.current = (frameIndex.current + 1) % Math.ceil(nodes.length / chunkSize)
+  })
 
   const ignoreNodeEvent = useCallback(
     (node: NodeExtended) => {
@@ -63,19 +201,15 @@ export const Cubes = memo(() => {
         const distance = Math.hypot(dx, dy)
 
         if (distance > 5) {
-          // Drag happened, not a click
           return
         }
       }
 
-      const node = nodes?.[0]
+      const node = nodes[0]
 
-      if (node) {
+      if (node?.userData && !ignoreNodeEvent(node.userData as NodeExtended)) {
         setTranscriptOpen(false)
-
-        if (node.userData && !ignoreNodeEvent(node.userData as NodeExtended)) {
-          navigateToNode(node.userData.ref_id)
-        }
+        navigateToNode(node.userData.ref_id)
       }
     },
     [setTranscriptOpen, ignoreNodeEvent, navigateToNode],
@@ -87,7 +221,6 @@ export const Cubes = memo(() => {
 
       if (hoverTimeoutRef.current) {
         clearTimeout(hoverTimeoutRef.current)
-        hoverTimeoutRef.current = null
       }
 
       if (!hoveredNode) {
@@ -104,30 +237,28 @@ export const Cubes = memo(() => {
 
   const onPointerIn = useCallback(
     (e: ThreeEvent<PointerEvent>) => {
-      const objects = e.intersections.map((i) => i.object)
-      const object = objects[0]
+      const object = e.intersections[0]?.object
 
-      if (!object.visible) {
+      if (!object?.visible || !object.userData?.ref_id) {
         return
       }
 
       if (hoverTimeoutRef.current) {
         clearTimeout(hoverTimeoutRef.current)
-        hoverTimeoutRef.current = null
       }
 
-      if (object?.userData?.ref_id) {
-        const node = nodesNormalized.get(object.userData.ref_id) as NodeExtended
+      const node = nodesNormalized.get(object.userData.ref_id)
 
-        if (!ignoreNodeEvent(node)) {
-          e.stopPropagation()
-
-          hoverTimeoutRef.current = setTimeout(() => {
-            setIsHovering(true)
-            setHoveredNode(node)
-          }, POINTER_IN_DELAY)
-        }
+      if (!node || ignoreNodeEvent(node)) {
+        return
       }
+
+      e.stopPropagation()
+
+      hoverTimeoutRef.current = setTimeout(() => {
+        setIsHovering(true)
+        setHoveredNode(node)
+      }, POINTER_IN_DELAY)
     },
     [setHoveredNode, ignoreNodeEvent, setIsHovering, nodesNormalized],
   )
@@ -158,7 +289,6 @@ export const Cubes = memo(() => {
             ) : null
           })}
         </group>
-
         <group ref={instancesRef} name="simulation-3d-group__node-points">
           <NodePoints />
         </group>
