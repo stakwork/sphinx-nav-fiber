@@ -1,4 +1,3 @@
-/* eslint-disable no-bitwise */
 import { Billboard, Svg } from '@react-three/drei'
 import { memo, useEffect, useRef, useState } from 'react'
 import { Group, Mesh, MeshBasicMaterial, Texture, TextureLoader } from 'three'
@@ -17,33 +16,6 @@ type Props = {
   hide?: boolean
   scale: number
 }
-
-// const nodeMatchesFollowerFilter = (targetNode: NodeExtended, value: string | null): boolean => {
-//   if (!value) {
-//     return true
-//   }
-
-//   if (targetNode.node_type !== 'User') {
-//     return true
-//   }
-
-//   const followers = targetNode.properties?.followers
-
-//   if (followers === undefined) {
-//     return true
-//   }
-
-//   switch (value) {
-//     case 'lt_1000':
-//       return followers < 1000
-//     case '1000_10000':
-//       return followers >= 1000 && followers <= 10000
-//     case 'gt_10000':
-//       return followers > 10000
-//     default:
-//       return true
-//   }
-// }
 
 export const TextNode = memo(
   (props: Props) => {

@@ -15,6 +15,33 @@ import { nodeBackground } from './constants'
 
 const POINTER_IN_DELAY = 100
 
+const nodeMatchesFollowerFilter = (targetNode: NodeExtended, value: string | null): boolean => {
+  if (!value) {
+    return true
+  }
+
+  if (targetNode.node_type !== 'User') {
+    return true
+  }
+
+  const followers = targetNode.properties?.followers
+
+  if (followers === undefined) {
+    return true
+  }
+
+  switch (value) {
+    case 'lt_1000':
+      return followers < 1000
+    case '1000_10000':
+      return followers >= 1000 && followers <= 10000
+    case 'gt_10000':
+      return followers > 10000
+    default:
+      return true
+  }
+}
+
 export const Cubes = memo(() => {
   const selectedNode = useSelectedNode()
   const hoveredNode = useHoveredNode()
@@ -50,10 +77,16 @@ export const Cubes = memo(() => {
       return
     }
 
-    const { searchQuery, selectedLinkTypes, selectedNodeTypes, hoveredNodeSiblings } = useGraphStore.getState()
+    const { searchQuery, selectedLinkTypes, selectedNodeTypes, hoveredNodeSiblings, followersFilter } =
+      useGraphStore.getState()
 
     const dynamicMode =
-      searchQuery || selectedLinkTypes.length > 0 || selectedNodeTypes.length > 0 || hoveredNode || selectedNode
+      searchQuery ||
+      selectedLinkTypes.length > 0 ||
+      selectedNodeTypes.length > 0 ||
+      hoveredNode ||
+      selectedNode ||
+      followersFilter
 
     const selectedNodeNormalized = selectedNode ? nodesNormalized.get(selectedNode.ref_id) : null
 
@@ -63,19 +96,22 @@ export const Cubes = memo(() => {
 
     const start = frameIndex.current * chunkSize
     const end = Math.min(start + chunkSize, nodes.length)
+    const points = instances.children[0].children
+    const objects = group.children
 
     for (let i = start; i < end; i += 1) {
       // nodes
-      const object = group.children[i] as Mesh & { userData: NodeExtended }
+      const object = objects[i] as Mesh & { userData: NodeExtended }
+      const background = object.getObjectByName('background') as Mesh | null
       const node = object.userData
+      const point = points[i]
 
       const isHovered = hoveredNode?.ref_id === node.ref_id
       const isSelected = selectedNode?.ref_id === node.ref_id
       const isHoveredSibling = hoveredNodeSiblings.includes(node.ref_id)
       const isSelectedSibling = selectedSiblings.includes(node.ref_id)
-      const highlight = isHovered || isSelected || isHoveredSibling || isSelectedSibling
-      const background = object.getObjectByName('background') as Mesh | null
-      const point = instances.children[0].children[i]
+      const isFollowersMatch = nodeMatchesFollowerFilter(node, followersFilter)
+      const highlight = isHovered || isSelected || isHoveredSibling || isSelectedSibling || isFollowersMatch
 
       if (dynamicMode) {
         const name = node.name?.toLowerCase() || ''
@@ -123,6 +159,10 @@ export const Cubes = memo(() => {
 
         if (point) {
           point.scale.set(scaleDefault, scaleDefault, scaleDefault)
+        }
+
+        if (object) {
+          object.scale.setScalar(1)
         }
       }
     }
