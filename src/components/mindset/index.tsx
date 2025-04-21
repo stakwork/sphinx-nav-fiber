@@ -42,6 +42,7 @@ const calculateMarkers = (data: FetchDataResponse): Node[] => {
 export const MindSet = () => {
   const addNewNode = useDataStore((s) => s.addNewNode)
   const clips = useMindsetStore((s) => s.clips)
+  const activeClip = useMindsetStore((s) => s.activeClip)
   const fetchEpisodeData = useMindsetStore((s) => s.fetchEpisodeData)
   const chapters = useMindsetStore((s) => s.chapters)
   const requestRef = useRef<number | null>(null)
@@ -86,7 +87,7 @@ export const MindSet = () => {
   }, [selectedEpisodeId, navigate, fetchEpisodeData])
 
   useEffect(() => {
-    if (!clips || !chapters) {
+    if (!clips || !chapters || true) {
       return
     }
 
@@ -125,7 +126,7 @@ export const MindSet = () => {
 
             const nodesWithNeighbourhoud = setOfMarkers.map((node: NodeExtended) => {
               const chapterId =
-                chapters.find(
+                (chapters || []).find(
                   (chapter) =>
                     node.start && timeToMilliseconds(chapter?.properties?.timestamp || '') >= node.start * 1000,
                 )?.ref_id || ''
@@ -150,7 +151,70 @@ export const MindSet = () => {
     }
 
     processClipNodes()
-  }, [clips, setMarkers, chapters, addNewNode])
+  }, [clips, setMarkers, chapters, addNewNode, activeClip])
+
+  useEffect(() => {
+    const processClipNodes = async () => {
+      try {
+        const computedMarkers = []
+
+        const combinedData: FetchDataResponse = {
+          nodes: nodesAndEdgesRef.current?.nodes || [],
+          edges: nodesAndEdgesRef.current?.edges || [],
+        }
+
+        // eslint-disable-next-line no-restricted-syntax
+        const refId = activeClip?.ref_id
+
+        if (refId) {
+          const data = await getPathway(refId, ['-Clip', '-Episode'], [], '', true, 0, 2, 50)
+
+          // addNewNode(data)
+
+          const claimNodes = data.nodes.filter((node) => node.node_type === 'Claim')
+
+          const claimEdges = data.edges.filter((edge) =>
+            claimNodes.some((i) => i.ref_id === edge.source || i.ref_id === edge.target),
+          )
+
+          claimNodesAndEdgesRef.current = {
+            nodes: [...(claimNodesAndEdgesRef.current?.nodes || []), ...claimNodes],
+            edges: [...(claimNodesAndEdgesRef.current?.edges || []), ...claimEdges],
+          }
+
+          if (data) {
+            const setOfMarkers = calculateMarkers(data)
+
+            const nodesWithNeighbourhoud = setOfMarkers.map((node: NodeExtended) => {
+              const chapterId =
+                (chapters || []).find(
+                  (chapter) =>
+                    node.start && timeToMilliseconds(chapter?.properties?.timestamp || '') >= node.start * 1000,
+                )?.ref_id || ''
+
+              return { ...node, neighbourHood: chapterId }
+            })
+
+            combinedData.nodes.push(...(nodesWithNeighbourhoud || []))
+            combinedData.edges.push(...(data?.edges || []))
+
+            computedMarkers.push(...nodesWithNeighbourhoud)
+            nodesAndEdgesRef.current = combinedData
+          }
+        }
+
+        setMarkers(computedMarkers)
+
+        // Update references and state after all requests complete
+      } catch (error) {
+        console.error('Error processing clip nodes:', error)
+      }
+    }
+
+    if (activeClip && chapters) {
+      processClipNodes()
+    }
+  }, [activeClip, chapters])
 
   useEffect(() => {
     const update = (time: number) => {
