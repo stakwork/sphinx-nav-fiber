@@ -11,17 +11,23 @@ type MindsetStore = {
   chapters: NodeExtended[] | null
   selectedEpisode: NodeExtended | null
   clipEdges: Link[]
+  activeClip: NodeExtended | null
   setSelectedEpisode: (node: NodeExtended) => void
   setClips: (clips: Node[]) => void
   setChapters: (chapters: Node[]) => void
   fetchEpisodeData: (id: string) => void
+  setActiveClip: (clip: NodeExtended) => void
 }
 
-const defaultData: Omit<MindsetStore, 'setSelectedEpisode' | 'setClips' | 'setChapters' | 'fetchEpisodeData'> = {
+const defaultData: Omit<
+  MindsetStore,
+  'setSelectedEpisode' | 'setClips' | 'setChapters' | 'fetchEpisodeData' | 'setActiveClip'
+> = {
   selectedEpisode: null,
   clips: [],
   clipEdges: [],
   chapters: [],
+  activeClip: null,
 }
 
 export const useMindsetStore = create<MindsetStore>((set) => ({
@@ -85,4 +91,5 @@ export const useMindsetStore = create<MindsetStore>((set) => ({
 
     set({ clips, chapters, selectedEpisode, clipEdges })
   },
+  setActiveClip: (clip) => set({ activeClip: clip }),
 }))

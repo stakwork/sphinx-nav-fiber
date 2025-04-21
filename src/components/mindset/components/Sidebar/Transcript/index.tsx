@@ -5,7 +5,7 @@ import { useGraphStore } from '~/stores/useGraphStore'
 import { useMindsetStore } from '~/stores/useMindsetStore'
 import { usePlayerStore } from '~/stores/usePlayerStore'
 import { useSimulationStore } from '~/stores/useSimulationStore'
-import { Node, NodeExtended } from '~/types'
+import { NodeExtended } from '~/types'
 import { colors } from '~/utils'
 import { Viewer } from './Viewer'
 
@@ -15,9 +15,10 @@ type Props = {
 
 export const Transcript = ({ name }: Props) => {
   const clips = useMindsetStore((s) => s.clips)
+  const setActiveClip = useMindsetStore((s) => s.setActiveClip)
+  const activeClip = useMindsetStore((s) => s.activeClip)
   const { playerRef } = usePlayerStore((s) => s)
   const [currentTime, setCurrentTime] = useState(0)
-  const [activeClip, setActiveClip] = useState<Node | null>(null)
   const [isFirst, setIsFirst] = useState(true)
 
   const [setActiveNode, activeNode] = useGraphStore((s) => [s.setActiveNode, s.activeNode])
@@ -55,7 +56,7 @@ export const Transcript = ({ name }: Props) => {
     if (currentTime) {
       calculateActiveClip()
     }
-  }, [currentTime, clips, activeClip])
+  }, [currentTime, clips, activeClip, setActiveClip])
 
   useEffect(() => {
     if (activeClip && (!activeNode || activeClip.ref_id !== activeNode.ref_id)) {
