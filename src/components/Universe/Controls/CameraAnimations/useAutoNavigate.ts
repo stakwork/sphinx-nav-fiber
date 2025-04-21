@@ -11,7 +11,7 @@ export const useAutoNavigate = () => {
   useEffect(() => {
     if (selectedNode && cameraControlsRef) {
       const center = new Vector3(selectedNode.x, selectedNode.y, selectedNode.z)
-      const radius = 500 // or any radius you want
+      const radius = 150
 
       const sphere = new Sphere(center, radius)
 
