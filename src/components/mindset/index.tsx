@@ -126,7 +126,7 @@ export const MindSet = () => {
 
             const nodesWithNeighbourhoud = setOfMarkers.map((node: NodeExtended) => {
               const chapterId =
-                chapters.find(
+                (chapters || []).find(
                   (chapter) =>
                     node.start && timeToMilliseconds(chapter?.properties?.timestamp || '') >= node.start * 1000,
                 )?.ref_id || ''
