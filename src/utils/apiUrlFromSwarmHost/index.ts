@@ -21,6 +21,11 @@ export function apiUrlFromSwarmHost(): string | undefined {
 
       url = `https://${finalHost}`
     }
+  } else if (window.location.host.endsWith('-3000.app.github.dev')) {
+    const arr = window.location.host.split('-3000')
+    const codespaceUrl = arr[0]
+
+    url = `${codespaceUrl}-8444.app.github.dev`
   } else if (origin.includes('localhost')) {
     url = 'https://bitcoin.sphinx.chat'
   }
