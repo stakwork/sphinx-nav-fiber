@@ -5,7 +5,7 @@ import { E2ETests } from '~/utils'
 import { AppProviders } from '../App/Providers'
 import { AuthGuard } from '../Auth'
 import { LandingPage } from '../mindset/components/LandingPage'
-import { TweetsLandingPage } from '../mindset/tweet/components/LandingPage'
+import { AdminTweetsLandingPage } from '../mindset/tweet/components/AdminLandingPage'
 
 // Lazy-loaded components
 const LazyApp = lazy(() => import('../App').then(({ App }) => ({ default: App })))
@@ -28,7 +28,7 @@ export const AppContainer = () => {
               <Route element={<LazyTweetMindSet />} path="/tweet/:tweetId" />
               <Route element={<LazyTweetMindSet />} path="/tweet/:tweetId/node/:selectedNodeId" />
               <Route element={<Navigate replace to="/" />} path="/episode" />
-              <Route element={<TweetsLandingPage />} path="/tweet" />
+              <Route element={<AdminTweetsLandingPage />} path="/tweet" />
             </>
           )}
           <Route
