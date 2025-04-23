@@ -5,16 +5,32 @@ import { colors } from '~/utils/colors'
 
 export const getSentimentIcon = (score?: number): JSX.Element => {
   if (score === undefined || score === null) {
-    return <EmotionMeh color={colors.EMOTION_NORMAL} />
+    return (
+      <span style={{ color: colors.EMOTION_NORMAL }}>
+        <EmotionMeh />
+      </span>
+    )
   }
 
   if (score <= 4) {
-    return <EmotionDown color={colors.EMOTION_DOWN} />
+    return (
+      <span style={{ color: colors.EMOTION_DOWN }}>
+        <EmotionDown />
+      </span>
+    )
   }
 
   if (score >= 7) {
-    return <EmotionUp color={colors.EMOTION_UP} />
+    return (
+      <span style={{ color: colors.EMOTION_UP }}>
+        <EmotionUp />
+      </span>
+    )
   }
 
-  return <EmotionMeh color={colors.EMOTION_NORMAL} />
+  return (
+    <span style={{ color: colors.EMOTION_NORMAL }}>
+      <EmotionMeh />
+    </span>
+  )
 }
