@@ -7,10 +7,10 @@ import { EngagementTable } from './Engagement'
 import { RetweetsTable } from './Retweets'
 import { SentimentTable } from './Sentiment'
 
-const ENGAGEMENT = 'ENGAGEMENT'
-const FOLLOWERS = 'FOLLOWERS'
-const TOP_REPOSTERS = 'TOP_REPOSTERS'
-const SENTIMENT = 'SENTIMENT'
+export const ENGAGEMENT = 'ENGAGEMENT'
+export const FOLLOWERS = 'FOLLOWERS'
+export const TOP_REPOSTERS = 'TOP_REPOSTERS'
+export const SENTIMENT = 'SENTIMENT'
 
 const ComponentsMap: Record<string, ComponentType<{ sortBy: SortBy; idsToAnalyze: string[] }>> = {
   [ENGAGEMENT]: EngagementTable,
