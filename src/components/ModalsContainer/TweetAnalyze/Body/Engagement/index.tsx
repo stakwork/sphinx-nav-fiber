@@ -6,7 +6,7 @@ import { ClipLoader } from 'react-spinners'
 import { CsvDownloadButton } from '~/components/common/CsvDownloader'
 import { Flex } from '~/components/common/Flex'
 import LinkIcon from '~/components/Icons/LinkIcon'
-import { getPathway } from '~/network/fetchSourcesData'
+import { getEngagement, getFollowers } from '~/network/tweetAnalyze'
 import { Node } from '~/types'
 import { colors } from '~/utils'
 import { Avatar, Engagement, EngagementBar, SORT_OPTIONS, SortBy, TweetLink, TweetTime, UserInfo, Username } from '..'
@@ -32,9 +32,7 @@ export const EngagementTable = ({ sortBy, idsToAnalyze }: Props) => {
 
       try {
         const responses = await Promise.all(
-          idsToAnalyze.map((id) =>
-            getPathway(id, [], ['HAS_REPLY>', 'HAS_QUOTE>', 'THREAD_NEXT>', '<POSTED'], sortBy, true, 0, 10, 800),
-          ),
+          idsToAnalyze.map((id) => (sortBy === 'followers' ? getEngagement(id) : getFollowers(id))),
         )
 
         const mainTweetsArray = []
@@ -256,11 +254,12 @@ export const EngagementTable = ({ sortBy, idsToAnalyze }: Props) => {
                 <>
                   <TableCell>
                     {tweet.properties?.impression_percentage} %
-                    {tweet.properties?.impression_count !== undefined && tweet.properties?.impression_count && (
-                      <Engagement>
-                        <EngagementBar percentage={Number(tweet.properties?.impression_percentage)} />
-                      </Engagement>
-                    )}
+                    {tweet.properties?.impression_count !== undefined &&
+                      Boolean(tweet.properties?.impression_count) && (
+                        <Engagement>
+                          <EngagementBar percentage={Number(tweet.properties?.impression_percentage)} />
+                        </Engagement>
+                      )}
                   </TableCell>
                   <TableCell align="right">{Number(tweet.properties?.followers).toLocaleString()}</TableCell>
                 </>
