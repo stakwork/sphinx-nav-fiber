@@ -5,8 +5,23 @@ import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { FetchDataResponse, Node } from '~/types'
 import { colors } from '~/utils/colors'
-import { TweetCard } from '../TweetCard'
-import { getNodes } from './fetchNodes'
+import { getNodes, getTopics } from './fetchNodes'
+import { TopicCard } from './TopicCard'
+import { TweetCard } from './TweetCard'
+
+const HARDCODED_TOPICS = [
+  {
+    date_added_to_graph: 1732620020.3847742,
+    edge_count: 51,
+    node_type: 'Topic',
+    properties: {
+      name: 'Gemini',
+      score: 0,
+    },
+    ref_id: '290c2bd3-a0e0-4c34-bacb-6a8bb128dfdc',
+    score: 0,
+  },
+]
 
 const HARDCODE = [
   {
@@ -86,6 +101,7 @@ const filterAndSortTweets = (data: FetchDataResponse): Node[] =>
 
 export const TweetsLandingPage = () => {
   const [episodes, setEpisodes] = useState<Node[]>([])
+  const [topics, setTopics] = useState<Node[]>([])
   const [selectedIds, setSelectedIds] = useState<string[]>([])
 
   const navigate = useNavigate()
@@ -106,7 +122,21 @@ export const TweetsLandingPage = () => {
     fetchLatest()
   }, [])
 
-  const handleSelectCard = (id: string) => {
+  useEffect(() => {
+    const fetchLatest = async () => {
+      try {
+        const res: FetchDataResponse = await getTopics()
+
+        setTopics(HARDCODED_TOPICS || res.nodes)
+      } catch (err) {
+        console.error('Error fetching schema:', err)
+      }
+    }
+
+    fetchLatest()
+  }, [])
+
+  const handleSelectTweetCard = (id: string) => {
     const ids = selectedIds.includes(id) ? selectedIds.filter((i) => i !== id) : [...selectedIds, id]
 
     setSelectedIds(ids)
@@ -120,20 +150,34 @@ export const TweetsLandingPage = () => {
     }
   }
 
+  const handleSelectTopicCard = (id: string) => {
+    navigate(`/topic/${id}`)
+  }
+
   return (
     <Wrapper>
       <Title>Ideas have shapes</Title>
 
-      <SeedQuestionsWrapper>
+      <TopicsWrapper>
+        {topics.map((topic) => (
+          <TopicCard
+            key={topic?.ref_id}
+            node={topic}
+            onClick={() => handleSelectTopicCard(topic?.ref_id || '')}
+            selected={selectedIds.some((i) => i === topic.ref_id)}
+          />
+        ))}
+      </TopicsWrapper>
+      <TweetsWrapper>
         {episodes.map((node) => (
           <TweetCard
             key={node?.ref_id}
             node={node}
-            onClick={() => handleSelectCard(node?.ref_id || '')}
+            onClick={() => handleSelectTweetCard(node?.ref_id || '')}
             selected={selectedIds.some((i) => i === node.ref_id)}
           />
         ))}
-      </SeedQuestionsWrapper>
+      </TweetsWrapper>
       {selectedIds.length > 0 && <Button onClick={() => handleNavigateByCard()}>Show results</Button>}
     </Wrapper>
   )
@@ -166,7 +210,7 @@ const Title = styled(Flex)`
   text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
 `
 
-const SeedQuestionsWrapper = styled.div`
+const TweetsWrapper = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 16px;
@@ -176,4 +220,16 @@ const SeedQuestionsWrapper = styled.div`
   justify-content: center;
   overflow-y: auto;
   max-height: calc(100vh - 300px); /* Adjust 200px based on other elements' heights */
+`
+
+const TopicsWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  margin: 20px 0 20px;
+  max-width: 648px;
+  overflow-y: auto;
+  padding: 20px 0;
+  justify-content: flex-start;
+  width: 100%;
 `

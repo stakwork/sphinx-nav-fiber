@@ -8,3 +8,11 @@ export const getNodes = async (): Promise<FetchDataResponse> => {
 
   return response
 }
+
+export const getTopics = async (): Promise<FetchDataResponse> => {
+  const url = `/graph/search?node_type=['Topic']&limit=100`
+
+  const response = await api.get<FetchDataResponse>(url)
+
+  return response
+}
