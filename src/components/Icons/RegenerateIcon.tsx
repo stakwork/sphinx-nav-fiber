@@ -1,8 +1,14 @@
 /* eslint-disable */
-import React from 'react'
+import React from 'react';
 
 const RegenerateIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
-  <svg width="1em" height="1em" viewBox="0 0 14 14" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  <svg
+    width="1em"
+    height="1em"
+    viewBox="0 0 14 14"
+    fill="currentColor"
+    xmlns="http://www.w3.org/2000/svg"
+  >
     <path
       d="M12.1202 4.54418C11.1202 2.56043 8.94933 1.28755 6.5718 1.50867C4.38822 1.71176 2.61672 3.1205 1.87502 5.0013"
       stroke="#909BAA"
@@ -24,6 +30,6 @@ const RegenerateIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
       fill="currentColor"
     />
   </svg>
-)
+);
 
-export default RegenerateIcon
+export default RegenerateIcon;

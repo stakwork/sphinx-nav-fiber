@@ -1,9 +1,22 @@
 /* eslint-disable */
-import React from 'react'
+import React from 'react';
 
 const FortIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
-  <svg width="1em" height="1em" viewBox="0 0 14 14" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-    <mask id="mask0_9540_23" maskUnits="userSpaceOnUse" x="0" y="0" width="14" height="14">
+  <svg
+    width="1em"
+    height="1em"
+    viewBox="0 0 14 14"
+    fill="currentColor"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <mask
+      id="mask0_9540_23"
+      maskUnits="userSpaceOnUse"
+      x="0"
+      y="0"
+      width="14"
+      height="14"
+    >
       <rect width="1em" height="1em" fill="currentColor" />
     </mask>
     <g mask="url(#mask0_9540_23)">
@@ -13,6 +26,6 @@ const FortIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
       />
     </g>
   </svg>
-)
+);
 
-export default FortIcon
+export default FortIcon;

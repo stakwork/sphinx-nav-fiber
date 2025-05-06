@@ -1,8 +1,14 @@
 /* eslint-disable */
-import React from 'react'
+import React from 'react';
 
 const ChipIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
-  <svg width="1em" height="1em" viewBox="0 0 14 15" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  <svg
+    width="1em"
+    height="1em"
+    viewBox="0 0 14 15"
+    fill="currentColor"
+    xmlns="http://www.w3.org/2000/svg"
+  >
     <path
       d="M9.16074 4.89288H4.83931C4.73083 4.89288 4.64288 4.98083 4.64288 5.08931V9.41074C4.64288 9.51923 4.73083 9.60717 4.83931 9.60717H9.16074C9.26923 9.60717 9.35717 9.51923 9.35717 9.41074V5.08931C9.35717 4.98083 9.26923 4.89288 9.16074 4.89288Z"
       fill="currentColor"
@@ -12,6 +18,6 @@ const ChipIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
       fill="currentColor"
     />
   </svg>
-)
+);
 
-export default ChipIcon
+export default ChipIcon;

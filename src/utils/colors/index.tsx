@@ -117,6 +117,19 @@ export const colors = {
   HOVER_CARD_BG: 'rgba(41, 44, 54, 1)',
   GRAY_FILTER_ICON: 'rgba(70,79,93,255)',
   ANALYTICS_CARD_BG: 'rgba(21, 22, 28, 1)',
+  EMOTION_DOWN: '#D05A5C',
+  EMOTION_UP: '#4FBB6D',
+  EMOTION_NORMAL: '#C8AF5B',
+  STATUS_BG_SUCCESS: '#293D32',
+  STATUS_BG_REJECTED: '#443C29',
+  STATUS_BG_DEFAULT: 'rgba(120, 120, 120, 0.2)',
+  STATUS_TEXT_DEFAULT: '#bbbbbb',
+  STATUS_TEXT_SUCCESS: '#78D170',
+  STATUS_TEXT_REJECTED: '#DDBD55',
+  TABLE_BORDER: 'rgba(0, 0, 0, 0.5)',
+  TABLE_BORDER_TRANSPARENT: 'rgba(0, 0, 0, 0.5)',
+  TABLE_HEAD_BG: '#23252F',
+  TABLE_ROW_BG: '#20212A',
 } as const
 
 export type ColorName = keyof typeof colors
