@@ -127,7 +127,7 @@ export const TweetsLandingPage = () => {
       try {
         const res: FetchDataResponse = await getTopics()
 
-        setTopics(HARDCODED_TOPICS || res.nodes)
+        setTopics((HARDCODED_TOPICS as unknown as Node[]) || res.nodes)
       } catch (err) {
         console.error('Error fetching schema:', err)
       }
