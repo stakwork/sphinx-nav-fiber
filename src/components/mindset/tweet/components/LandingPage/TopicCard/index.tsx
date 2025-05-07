@@ -1,19 +1,13 @@
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
-import { Node } from '~/types'
 import { colors } from '~/utils/colors'
 
 interface TopicCardProps {
-  node: Node
+  name: string
   onClick: () => void
-  selected: boolean
 }
 
-export const TopicCard = ({ node, onClick, selected }: TopicCardProps) => (
-  <CardWrapper className={selected ? 'selected' : ''} onClick={onClick}>
-    {node?.properties?.name}
-  </CardWrapper>
-)
+export const TopicCard = ({ name, onClick }: TopicCardProps) => <CardWrapper onClick={onClick}>{name}</CardWrapper>
 
 const CardWrapper = styled(Flex)`
   background: ${colors.BG1};

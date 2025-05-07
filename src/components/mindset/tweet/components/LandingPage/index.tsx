@@ -3,23 +3,17 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
-import { FetchDataResponse, Node } from '~/types'
+import { getRadarData } from '~/network/fetchSourcesData'
+import { FetchDataResponse, FetchRadarResponse, Node } from '~/types'
 import { colors } from '~/utils/colors'
-import { getNodes, getTopics } from './fetchNodes'
+import { getNodes } from './fetchNodes'
 import { TopicCard } from './TopicCard'
 import { TweetCard } from './TweetCard'
 
 const HARDCODED_TOPICS = [
   {
-    date_added_to_graph: 1732620020.3847742,
-    edge_count: 51,
-    node_type: 'Topic',
-    properties: {
-      name: 'Gemini',
-      score: 0,
-    },
-    ref_id: '290c2bd3-a0e0-4c34-bacb-6a8bb128dfdc',
-    score: 0,
+    name: 'Black Rifle Coffee',
+    refId: '0243606b-e09b-4ee6-a7be-e6faa1b3f3ae',
   },
 ]
 
@@ -99,9 +93,14 @@ const filterAndSortTweets = (data: FetchDataResponse): Node[] =>
       return bDate - aDate
     })
 
+type Topic = {
+  refId: string
+  name: string
+}
+
 export const TweetsLandingPage = () => {
   const [episodes, setEpisodes] = useState<Node[]>([])
-  const [topics, setTopics] = useState<Node[]>([])
+  const [topics, setTopics] = useState<Topic[]>([])
   const [selectedIds, setSelectedIds] = useState<string[]>([])
 
   const navigate = useNavigate()
@@ -125,9 +124,16 @@ export const TweetsLandingPage = () => {
   useEffect(() => {
     const fetchLatest = async () => {
       try {
-        const res: FetchDataResponse = await getTopics()
+        const res: FetchRadarResponse = await getRadarData()
 
-        setTopics((HARDCODED_TOPICS as unknown as Node[]) || res.nodes)
+        const topicsData = res.data
+          .filter((i) => i.source_type.toLowerCase() === 'topic')
+          .map(({ ref_id: refId, source: name }) => ({
+            refId,
+            name,
+          }))
+
+        setTopics(HARDCODED_TOPICS || topicsData)
       } catch (err) {
         console.error('Error fetching schema:', err)
       }
@@ -160,12 +166,7 @@ export const TweetsLandingPage = () => {
 
       <TopicsWrapper>
         {topics.map((topic) => (
-          <TopicCard
-            key={topic?.ref_id}
-            node={topic}
-            onClick={() => handleSelectTopicCard(topic?.ref_id || '')}
-            selected={selectedIds.some((i) => i === topic.ref_id)}
-          />
+          <TopicCard key={topic?.refId} name={topic?.name} onClick={() => handleSelectTopicCard(topic?.refId || '')} />
         ))}
       </TopicsWrapper>
       <TweetsWrapper>
