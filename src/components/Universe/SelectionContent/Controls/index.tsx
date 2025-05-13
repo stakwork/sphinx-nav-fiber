@@ -10,8 +10,6 @@ export const Controls = () => {
   const [smoothTime] = useState(0.8)
 
   useEffect(() => {
-    console.log(selectionGraphRadius, 'radius')
-
     if (cameraControlsRef.current) {
       const distance = cameraControlsRef.current.getDistanceToFitSphere(50 + 5)
 

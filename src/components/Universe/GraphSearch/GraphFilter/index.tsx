@@ -18,6 +18,15 @@ const followerRanges = [
 
 const followerRangeTypes = followerRanges.map((range) => range.label)
 
+const dateRanges = [
+  { label: 'Last Day', value: 'last_day' },
+  { label: 'Last Week', value: 'last_week' },
+  { label: 'Last Month', value: 'last_month' },
+  { label: 'Last Year', value: 'last_year' },
+]
+
+const dateRangeTypes = dateRanges.map((range) => range.label)
+
 export const GraphFilter = () => {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
   const nodeTypes = useNodeTypes()
@@ -29,6 +38,7 @@ export const GraphFilter = () => {
   const resetSelectedNodeTypes = useGraphStore((s) => s.resetSelectedNodeTypes)
   const resetSelectedLinkTypes = useGraphStore((s) => s.resetSelectedLinkTypes)
   const [followersFilter, setFollowersFilter] = useGraphStore((s) => [s.followersFilter, s.setFollowersFilter])
+  const [dateRangeFilter, setDateRangeFilter] = useGraphStore((s) => [s.dateRangeFilter, s.setDateRangeFilter])
   const { normalizedSchemasByType } = useSchemaStore((s) => s)
 
   const location = useLocation()
@@ -36,6 +46,10 @@ export const GraphFilter = () => {
 
   const selectedFollowersType = followersFilter
     ? [followerRanges.find((range) => range.value === followersFilter)?.label || '']
+    : []
+
+  const selectedDateRangeType = dateRangeFilter
+    ? [dateRanges.find((range) => range.value === dateRangeFilter)?.label || '']
     : []
 
   const getNodeTypeColor = (type: string) => {
@@ -55,11 +69,21 @@ export const GraphFilter = () => {
   const handleFollowersTypeClick = (type: string) => {
     const selectedRange = followerRanges.find((range) => range.label === type)
 
-    setFollowersFilter(selectedRange ? selectedRange.value : null)
+    setFollowersFilter(selectedRange ? selectedRange.value : '')
+  }
+
+  const setSelectedDateRangeType = (type: string) => {
+    const selectedRange = dateRanges.find((range) => range.label === type)
+
+    setDateRangeFilter(selectedRange ? selectedRange.value : '')
+  }
+
+  const resetDateRangeFilter = () => {
+    setDateRangeFilter('')
   }
 
   const resetFollowersFilter = () => {
-    setFollowersFilter(null)
+    setFollowersFilter('')
   }
 
   const open = Boolean(anchorEl)
@@ -103,6 +127,13 @@ export const GraphFilter = () => {
       >
         <FilterContent>
           <FilterSection>
+            <FilterGroup
+              onResetClick={resetDateRangeFilter}
+              onTypeClick={setSelectedDateRangeType}
+              selectedTypes={selectedDateRangeType}
+              title="Range"
+              types={dateRangeTypes}
+            />
             <FilterGroup
               getColor={getNodeTypeColor}
               onResetClick={resetSelectedNodeTypes}
