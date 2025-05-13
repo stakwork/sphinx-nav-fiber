@@ -41,9 +41,9 @@ export type GraphStore = {
   hoveredNodeSiblings: string[]
   selectedNodeSiblings: string[]
   searchQuery: string
-  followersFilter: string | null
+  followersFilter: string
   isolatedView: string
-
+  dateRangeFilter: string
   setDisableCameraRotation: (rotation: boolean) => void
   setScrollEventsDisabled: (rotation: boolean) => void
   setData: (data: GraphData) => void
@@ -65,7 +65,8 @@ export type GraphStore = {
   resetSelectedNodeTypes: () => void
   setSelectedLinkTypes: (type: string) => void
   resetSelectedLinkTypes: () => void
-  setFollowersFilter: (filter: string | null) => void
+  setFollowersFilter: (filter: string) => void
+  setDateRangeFilter: (filter: string) => void
   setIsolatedView: (isolatedView: string) => void
   setNeighbourhoods: (neighbourhoods: Neighbourhood[]) => void
 }
@@ -97,6 +98,7 @@ const defaultData: Omit<
   | 'resetSelectedLinkTypes'
   | 'setNodesToHide'
   | 'setFollowersFilter'
+  | 'setDateRangeFilter'
   | 'setIsolatedView'
   | 'setNeighbourhoods'
 > = {
@@ -121,7 +123,8 @@ const defaultData: Omit<
   searchQuery: '',
   selectedNodeTypes: [],
   selectedLinkTypes: [],
-  followersFilter: null,
+  followersFilter: '',
+  dateRangeFilter: '',
   isolatedView: '',
   neighbourhoods: [],
 }
@@ -223,6 +226,7 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
   setShowSelectionGraph: (showSelectionGraph) => set({ showSelectionGraph }),
   setSearchQuery: (searchQuery) => set({ searchQuery }),
   setFollowersFilter: (filter) => set({ followersFilter: filter }),
+  setDateRangeFilter: (filter) => set({ dateRangeFilter: filter }),
   setIsolatedView: (isolatedView) => set({ isolatedView }),
   setNeighbourhoods: (neighbourhoods) => set({ neighbourhoods }),
 }))

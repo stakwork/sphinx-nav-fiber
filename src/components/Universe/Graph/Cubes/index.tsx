@@ -12,35 +12,10 @@ import { Candidates } from './Candidates'
 import { NodePoints } from './NodePoints'
 import { NodeWrapper } from './NodeWrapper'
 import { nodeBackground } from './constants'
+import { nodesMatchesDateRangeFilter } from './utils/nodesMatchesDateRangeFilter '
+import { nodeMatchesFollowerFilter } from './utils/nodesMatchsFollowesFilter'
 
 const POINTER_IN_DELAY = 100
-
-const nodeMatchesFollowerFilter = (targetNode: NodeExtended, value: string | null): boolean => {
-  if (!value) {
-    return false
-  }
-
-  if (targetNode.node_type !== 'User') {
-    return false
-  }
-
-  const followers = targetNode.properties?.followers
-
-  if (followers === undefined) {
-    return false
-  }
-
-  switch (value) {
-    case 'lt_1000':
-      return followers < 1000
-    case '1000_10000':
-      return followers >= 1000 && followers <= 10000
-    case 'gt_10000':
-      return followers > 10000
-    default:
-      return true
-  }
-}
 
 export const Cubes = memo(() => {
   const selectedNode = useSelectedNode()
@@ -78,7 +53,7 @@ export const Cubes = memo(() => {
       return
     }
 
-    const { searchQuery, selectedLinkTypes, selectedNodeTypes, hoveredNodeSiblings, followersFilter } =
+    const { searchQuery, selectedLinkTypes, selectedNodeTypes, hoveredNodeSiblings, followersFilter, dateRangeFilter } =
       useGraphStore.getState()
 
     const dynamicMode =
@@ -87,7 +62,8 @@ export const Cubes = memo(() => {
       selectedNodeTypes.length > 0 ||
       hoveredNode ||
       selectedNode ||
-      followersFilter
+      followersFilter ||
+      dateRangeFilter
 
     const selectedNodeNormalized = selectedNode ? nodesNormalized.get(selectedNode.ref_id) : null
 
@@ -101,20 +77,22 @@ export const Cubes = memo(() => {
     const objects = group.children
 
     for (let i = start; i < end; i += 1) {
-      // nodes
       const object = objects[i] as Mesh & { userData: NodeExtended }
       const background = object.getObjectByName('background') as Mesh | null
       const node = object.userData
       const point = points[i]
 
-      const isHovered = hoveredNode?.ref_id === node.ref_id
-      const isSelected = selectedNode?.ref_id === node.ref_id
-      const isHoveredSibling = hoveredNodeSiblings.includes(node.ref_id)
-      const isSelectedSibling = selectedSiblings.includes(node.ref_id)
-      const isFollowersMatch = nodeMatchesFollowerFilter(node, followersFilter)
-      const highlight = isHovered || isSelected || isHoveredSibling || isSelectedSibling || isFollowersMatch
-
       if (dynamicMode) {
+        const isHovered = hoveredNode?.ref_id === node.ref_id
+        const isSelected = selectedNode?.ref_id === node.ref_id
+        const isHoveredSibling = hoveredNodeSiblings.includes(node.ref_id)
+        const isSelectedSibling = selectedSiblings.includes(node.ref_id)
+        const isFollowersMatch = nodeMatchesFollowerFilter(node, followersFilter)
+        const isDateRangeMatch = nodesMatchesDateRangeFilter(node, dateRangeFilter)
+
+        const highlight =
+          isHovered || isSelected || isHoveredSibling || isSelectedSibling || isFollowersMatch || isDateRangeMatch
+
         const name = node.name?.toLowerCase() || ''
         const searchMatch = searchQuery && name.includes(searchQuery.toLowerCase())
         const typeMatch = selectedNodeTypes.includes(node.node_type)

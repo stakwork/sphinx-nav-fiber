@@ -24,6 +24,7 @@ export type Node = {
   hidden?: boolean
   colors?: string[]
   date?: number
+  date_added_to_graph?: number
   description?: string
   episode_title?: string
   hosts?: Guests[]
