@@ -32,7 +32,7 @@ export const TopicMindset = () => {
   useEffect(() => {
     const init = async (id: string) => {
       try {
-        const data = await getPathway(id, ['Tweet', 'Person', 'User'], [])
+        const data = await getPathway(id, ['Tweet', 'Person', 'User'], [], '', true, 0, 2, 800)
 
         addNewNode(data)
       } catch (error) {
