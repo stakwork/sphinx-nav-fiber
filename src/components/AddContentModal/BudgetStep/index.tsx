@@ -165,7 +165,6 @@ const StyledErrorText = styled(Flex)`
     display: -webkit-box;
     -webkit-line-clamp: 1;
     -webkit-box-orient: vertical;
-    overflow: hidden;
     white-space: normal;
     letter-spacing: 0.2px;
     cursor: pointer;
