@@ -6,6 +6,7 @@ import styled from 'styled-components'
 import { BoxGeometry, Mesh, Vector3 } from 'three'
 import { SchemaExtended } from '~/components/ModalsContainer/BlueprintModal/types'
 import { fontProps } from '~/components/Universe/Graph/Cubes/Text/constants'
+import { useAppStore } from '~/stores/useAppStore'
 import { useSchemaStore } from '~/stores/useSchemaStore'
 import { truncateText } from '~/utils/truncateText'
 import { NODE_RADIUS } from '../../constants'
@@ -43,6 +44,7 @@ export const Node = memo(({ node, setSelectedNode, onSimulationUpdate, isSelecte
   const meshRef = useRef<Mesh | null>(null)
   const [normalizedSchemasByType] = useSchemaStore((s) => [s.normalizedSchemasByType])
   const [showTooltip, setShowTooltip] = useState(false)
+  const { setSelectedColor } = useAppStore((s) => s)
 
   console.log(isSelected)
 
@@ -124,7 +126,7 @@ export const Node = memo(({ node, setSelectedNode, onSimulationUpdate, isSelecte
       onPointerOver={handleMouseOver}
       position={new Vector3(node.x, node.y, 0)}
     >
-      <Circle args={[NODE_RADIUS, 30, 20]}>
+      <Circle args={[NODE_RADIUS, 30, 20]} onClick={() => setSelectedColor(color)}>
         <meshStandardMaterial attach="material" color={color} />
       </Circle>
 
