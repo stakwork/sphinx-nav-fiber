@@ -1,10 +1,23 @@
 /* eslint-disable */
-import React from 'react'
+import React from 'react';
 
 const ChevronLeftIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
-  <svg width="1em" height="1em" viewBox="0 0 18 18" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  <svg
+    width="1em"
+    height="1em"
+    viewBox="0 0 18 18"
+    fill="currentColor"
+    xmlns="http://www.w3.org/2000/svg"
+  >
     <g id="keyboard_arrow_left">
-      <mask id="mask0_1428_267" maskUnits="userSpaceOnUse" x="0" y="0" width="18" height="18">
+      <mask
+        id="mask0_1428_267"
+        maskUnits="userSpaceOnUse"
+        x="0"
+        y="0"
+        width="18"
+        height="18"
+      >
         <path id="Bounding box" d="M0 0H18V18H0V0Z" fill="currentColor" />
       </mask>
       <g mask="url(#mask0_1428_267)">
@@ -16,6 +29,6 @@ const ChevronLeftIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
       </g>
     </g>
   </svg>
-)
+);
 
-export default ChevronLeftIcon
+export default ChevronLeftIcon;

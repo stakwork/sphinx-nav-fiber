@@ -1,9 +1,9 @@
-import { FaMeh, FaThumbsDown, FaThumbsUp } from 'react-icons/fa'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import SentimentDataIcon from '~/components/Icons/SentimentDataIcon'
 import { Node } from '~/types'
 import { colors } from '~/utils/colors'
+import { getSentimentIcon } from '~/utils/getSentimentIcon'
 
 type Props = {
   node: Node
@@ -20,22 +20,6 @@ const analyticsMapper = {
   analytics_location: { label: 'Location', formatter: (value: string) => value || 'Unknown' },
   analytics_gender: { label: 'Gender', formatter: (value: string) => value || 'Unknown' },
   followers: { label: 'Followers', formatter: (value: number) => value.toLocaleString() },
-}
-
-const getSentimentIcon = (score?: number) => {
-  if (score === undefined || score === null) {
-    return <FaMeh color={colors.GRAY3} />
-  }
-
-  if (score <= 4) {
-    return <FaThumbsDown color="#ef4444" />
-  }
-
-  if (score >= 7) {
-    return <FaThumbsUp color="#22c55e" />
-  }
-
-  return <FaMeh color={colors.GRAY3} />
 }
 
 export const Stats = ({ node, handleAnalyzeClick }: Props) => {

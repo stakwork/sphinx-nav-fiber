@@ -1,127 +1,140 @@
 /* eslint-disable */
-import React from 'react'
+import React from 'react';
 
-import AddCircleIcon from './AddCircleIcon'
-import AddContentIcon from './AddContentIcon'
-import AddLinkIcon from './AddLinkIcon'
-import AddSourceIcon from './AddSourceIcon'
-import AiPauseIcon from './AiPauseIcon'
-import AiPlayIcon from './AiPlayIcon'
-import AiSummaryIcon from './AiSummaryIcon'
-import AndroidIcon from './AndroidIcon'
-import ArrowBackIcon from './ArrowBackIcon'
-import ArrowForwardIcon from './ArrowForwardIcon'
-import ArrowRight from './ArrowRight'
-import AudioIcon from './AudioIcon'
-import BitcoinIcon from './BitcoinIcon'
-import BoostIcon from './BoostIcon'
-import BrowseGalleryIcon from './BrowseGalleryIcon'
-import BubbleChartIcon from './BubbleChartIcon'
-import BudgetIcon from './BudgetIcon'
-import BuildIcon from './BuildIcon'
-import CalendarIcon from './CalendarIcon'
-import CameraCenterIcon from './CameraCenterIcon'
-import CancelIcon from './CancelIcon'
-import CheckIcon from './CheckIcon'
-import CheckedIcon from './CheckedIcon'
-import ChevronDownIcon from './ChevronDownIcon'
-import ChevronLeftIcon from './ChevronLeftIcon'
-import ChevronRightIcon from './ChevronRightIcon'
-import ChevronUpIcon from './ChevronUpIcon'
-import ChipIcon from './ChipIcon'
-import ClearIcon from './ClearIcon'
-import CloseIcon from './CloseIcon'
-import ColorPickerIcon from './ColorPickerIcon'
-import CommunitiesIcon from './CommunitiesIcon'
-import CompassIcon from './CompassIcon'
-import ConstructionIcon from './ConstructionIcon'
-import ContentIcon from './ContentIcon'
-import CopyIcon from './CopyIcon'
-import CorporationIcon from './CorporationIcon'
-import CreateEdgeIcon from './CreateEdgeIcon'
-import DefaultShowIcon from './DefaultShowIcon'
-import DeleteIcon from './DeleteIcon'
-import DeleteNodeIcon from './DeleteNodeIcon'
-import DesignServicesIcon from './DesignServicesIcon'
-import DocumentIcon from './DocumentIcon'
-import DownloadIcon from './DownloadIcon'
-import EditIcon from './EditIcon'
-import EditNodeIcon from './EditNodeIcon'
-import EditTopicIcon from './EditTopicIcon'
-import EpisodeIcon from './EpisodeIcon'
-import EventIcon from './EventIcon'
-import ExitFullScreen from './ExitFullScreen'
-import ExploreIcon from './ExploreIcon'
-import FamilyHistoryIcon from './FamilyHistoryIcon'
-import FeedbackIcon from './FeedbackIcon'
-import FilterOffIcon from './FilterOffIcon'
-import FingerprintIcon from './FingerprintIcon'
-import FlipIcon from './FlipIcon'
-import FortIcon from './FortIcon'
-import FullScreenIcon from './FullScreenIcon'
-import FunctionIcon from './FunctionIcon'
-import GlobeIcon from './GlobeIcon'
-import GrainIcon from './GrainIcon'
-import HandymanIcon from './HandymanIcon'
-import HardwareIcon from './HardwareIcon'
-import HashTag from './HashTag'
-import HashtagIcon from './HashtagIcon'
-import HelpIcon from './HelpIcon'
-import HomeIcon from './HomeIcon'
-import InfoIcon from './InfoIcon'
-import JoystickIcon from './JoystickIcon'
-import LinkIcon from './LinkIcon'
-import MenuIcon from './MenuIcon'
-import MergeIcon from './MergeIcon'
-import MoneyIcon from './MoneyIcon'
-import MuteVolumeIcon from './MuteVolumeIcon'
-import NodeCircleIcon from './NodeCircleIcon'
-import NodesIcon from './NodesIcon'
-import NotesIcon from './NotesIcon'
-import OrganizationIcon from './OrganizationIcon'
-import PauseIcon from './PauseIcon'
-import PersonAdd from './PersonAdd'
-import PersonIcon from './PersonIcon'
-import PhoneIcon from './PhoneIcon'
-import PlaceIcon from './PlaceIcon'
-import PlayIcon from './PlayIcon'
-import PlusIcon from './PlusIcon'
-import PropertyHide from './PropertyHide'
-import PropertyShow from './PropertyShow'
-import PublicIcon from './PublicIcon'
-import QrCodeIcon from './QrCodeIcon'
-import ReloadIcon from './ReloadIcon'
-import RobotIcon from './RobotIcon'
-import SaveIcon from './SaveIcon'
-import ScheduleIcon from './ScheduleIcon'
-import SchoolIcon from './SchoolIcon'
-import SearchFilterCloseIcon from './SearchFilterCloseIcon'
-import SearchFilterIcon from './SearchFilterIcon'
-import SearchIcon from './SearchIcon'
-import SensorsIcon from './SensorsIcon'
-import SentimentDataIcon from './SentimentDataIcon'
-import SettingsIcon from './SettingsIcon'
-import ShieldPersonIcon from './ShieldPersonIcon'
-import SortFilterIcon from './SortFilterIcon'
-import SoundIcon from './SoundIcon'
-import SourcesIcon from './SourcesIcon'
-import SourcesTableIcon from './SourcesTableIcon'
-import StackIcon from './StackIcon'
-import StorageIcon from './StorageIcon'
-import SucessFeedBackIcon from './SucessFeedBackIcon'
-import SumFunctionIcon from './SumFunctionIcon'
-import ThreeDotsIcons from './ThreeDotsIcons'
-import TwitterIcon from './TwitterIcon'
-import VideoIcon from './VideoIcon'
-import VisibilityOff from './VisibilityOff'
-import VisibilityOn from './VisibilityOn'
-import VolumeIcon from './VolumeIcon'
+import AddCircleIcon from './AddCircleIcon';
+import AddContentIcon from './AddContentIcon';
+import AddLinkIcon from './AddLinkIcon';
+import AddSourceIcon from './AddSourceIcon';
+import AiCheckIcon from './AiCheckIcon';
+import AiCopyIcon from './AiCopyIcon';
+import AiPauseIcon from './AiPauseIcon';
+import AiPlayIcon from './AiPlayIcon';
+import AiSummaryIcon from './AiSummaryIcon';
+import AndroidIcon from './AndroidIcon';
+import ArrowBackIcon from './ArrowBackIcon';
+import ArrowForwardIcon from './ArrowForwardIcon';
+import ArrowRight from './ArrowRight';
+import AudioIcon from './AudioIcon';
+import BitcoinIcon from './BitcoinIcon';
+import BoostIcon from './BoostIcon';
+import BrowseGalleryIcon from './BrowseGalleryIcon';
+import BubbleChartIcon from './BubbleChartIcon';
+import BudgetIcon from './BudgetIcon';
+import BuildIcon from './BuildIcon';
+import CalendarIcon from './CalendarIcon';
+import CameraCenterIcon from './CameraCenterIcon';
+import CancelIcon from './CancelIcon';
+import ChatStarsIcon from './ChatStarsIcon';
+import CheckedIcon from './CheckedIcon';
+import CheckIcon from './CheckIcon';
+import ChevronDownIcon from './ChevronDownIcon';
+import ChevronLeftIcon from './ChevronLeftIcon';
+import ChevronRightIcon from './ChevronRightIcon';
+import ChevronUpIcon from './ChevronUpIcon';
+import ChipIcon from './ChipIcon';
+import ClearIcon from './ClearIcon';
+import CloseIcon from './CloseIcon';
+import ColorPickerIcon from './ColorPickerIcon';
+import CommunitiesIcon from './CommunitiesIcon';
+import CompassIcon from './CompassIcon';
+import ConstructionIcon from './ConstructionIcon';
+import ContentIcon from './ContentIcon';
+import CopyIcon from './CopyIcon';
+import CorporationIcon from './CorporationIcon';
+import CreateEdgeIcon from './CreateEdgeIcon';
+import DefaultShowIcon from './DefaultShowIcon';
+import DeleteIcon from './DeleteIcon';
+import DeleteNodeIcon from './DeleteNodeIcon';
+import DesignServicesIcon from './DesignServicesIcon';
+import DocumentIcon from './DocumentIcon';
+import DownloadIcon from './DownloadIcon';
+import EditIcon from './EditIcon';
+import EditNodeIcon from './EditNodeIcon';
+import EditTopicIcon from './EditTopicIcon';
+import EmotionDown from './EmotionDown';
+import EmotionMeh from './EmotionMeh';
+import EmotionUp from './EmotionUp';
+import EpisodeIcon from './EpisodeIcon';
+import EventIcon from './EventIcon';
+import ExitFullScreen from './ExitFullScreen';
+import ExploreIcon from './ExploreIcon';
+import FamilyHistoryIcon from './FamilyHistoryIcon';
+import FeedbackIcon from './FeedbackIcon';
+import FilterOffIcon from './FilterOffIcon';
+import FingerprintIcon from './FingerprintIcon';
+import FlipIcon from './FlipIcon';
+import FortIcon from './FortIcon';
+import FullScreenIcon from './FullScreenIcon';
+import FunctionIcon from './FunctionIcon';
+import GlobeIcon from './GlobeIcon';
+import GrainIcon from './GrainIcon';
+import HandymanIcon from './HandymanIcon';
+import HardwareIcon from './HardwareIcon';
+import HashTag from './HashTag';
+import HashtagIcon from './HashtagIcon';
+import HelpIcon from './HelpIcon';
+import HomeIcon from './HomeIcon';
+import InfoIcon from './InfoIcon';
+import JoystickIcon from './JoystickIcon';
+import LinkIcon from './LinkIcon';
+import MenuIcon from './MenuIcon';
+import MergeIcon from './MergeIcon';
+import MoneyIcon from './MoneyIcon';
+import MuteVolumeIcon from './MuteVolumeIcon';
+import NegativeFeedBackIcon from './NegativeFeedBackIcon';
+import NodeCircleIcon from './NodeCircleIcon';
+import NodesIcon from './NodesIcon';
+import NotesIcon from './NotesIcon';
+import OrganizationIcon from './OrganizationIcon';
+import PauseIcon from './PauseIcon';
+import PersonAdd from './PersonAdd';
+import PersonIcon from './PersonIcon';
+import PhoneIcon from './PhoneIcon';
+import PlaceIcon from './PlaceIcon';
+import PlayIcon from './PlayIcon';
+import PlusIcon from './PlusIcon';
+import PositiveFeedBackIcon from './PositiveFeedBackIcon';
+import PropertyHide from './PropertyHide';
+import PropertyShow from './PropertyShow';
+import PublicIcon from './PublicIcon';
+import QrCodeIcon from './QrCodeIcon';
+import RegenerateIcon from './RegenerateIcon';
+import ReloadIcon from './ReloadIcon';
+import RobotIcon from './RobotIcon';
+import SaveIcon from './SaveIcon';
+import ScheduleIcon from './ScheduleIcon';
+import SchoolIcon from './SchoolIcon';
+import SearchFilterCloseIcon from './SearchFilterCloseIcon';
+import SearchFilterIcon from './SearchFilterIcon';
+import SearchIcon from './SearchIcon';
+import SensorsIcon from './SensorsIcon';
+import SentimentDataIcon from './SentimentDataIcon';
+import SettingsIcon from './SettingsIcon';
+import ShieldPersonIcon from './ShieldPersonIcon';
+import SortFilterIcon from './SortFilterIcon';
+import SoundIcon from './SoundIcon';
+import SourcesIcon from './SourcesIcon';
+import SourcesTableIcon from './SourcesTableIcon';
+import StackIcon from './StackIcon';
+import StorageIcon from './StorageIcon';
+import SucessFeedBackIcon from './SucessFeedBackIcon';
+import SumFunctionIcon from './SumFunctionIcon';
+import ThreeDotsIcons from './ThreeDotsIcons';
+import ThumbDownIcon from './ThumbDownIcon';
+import ThumbUpIcon from './ThumbUpIcon';
+import TwitterIcon from './TwitterIcon';
+import VideoIcon from './VideoIcon';
+import VisibilityOff from './VisibilityOff';
+import VisibilityOn from './VisibilityOn';
+import VolumeIcon from './VolumeIcon';
 
 export const Icons: Record<string, React.FC<React.SVGProps<SVGSVGElement>>> = {
   AddCircleIcon: AddCircleIcon,
   AddContentIcon: AddContentIcon,
   AddLinkIcon: AddLinkIcon,
   AddSourceIcon: AddSourceIcon,
+  AiCheckIcon: AiCheckIcon,
+  AiCopyIcon: AiCopyIcon,
   AiPauseIcon: AiPauseIcon,
   AiPlayIcon: AiPlayIcon,
   AiSummaryIcon: AiSummaryIcon,
@@ -139,8 +152,9 @@ export const Icons: Record<string, React.FC<React.SVGProps<SVGSVGElement>>> = {
   CalendarIcon: CalendarIcon,
   CameraCenterIcon: CameraCenterIcon,
   CancelIcon: CancelIcon,
-  CheckIcon: CheckIcon,
+  ChatStarsIcon: ChatStarsIcon,
   CheckedIcon: CheckedIcon,
+  CheckIcon: CheckIcon,
   ChevronDownIcon: ChevronDownIcon,
   ChevronLeftIcon: ChevronLeftIcon,
   ChevronRightIcon: ChevronRightIcon,
@@ -165,6 +179,9 @@ export const Icons: Record<string, React.FC<React.SVGProps<SVGSVGElement>>> = {
   EditIcon: EditIcon,
   EditNodeIcon: EditNodeIcon,
   EditTopicIcon: EditTopicIcon,
+  EmotionDown: EmotionDown,
+  EmotionMeh: EmotionMeh,
+  EmotionUp: EmotionUp,
   EpisodeIcon: EpisodeIcon,
   EventIcon: EventIcon,
   ExitFullScreen: ExitFullScreen,
@@ -192,6 +209,7 @@ export const Icons: Record<string, React.FC<React.SVGProps<SVGSVGElement>>> = {
   MergeIcon: MergeIcon,
   MoneyIcon: MoneyIcon,
   MuteVolumeIcon: MuteVolumeIcon,
+  NegativeFeedBackIcon: NegativeFeedBackIcon,
   NodeCircleIcon: NodeCircleIcon,
   NodesIcon: NodesIcon,
   NotesIcon: NotesIcon,
@@ -203,10 +221,12 @@ export const Icons: Record<string, React.FC<React.SVGProps<SVGSVGElement>>> = {
   PlaceIcon: PlaceIcon,
   PlayIcon: PlayIcon,
   PlusIcon: PlusIcon,
+  PositiveFeedBackIcon: PositiveFeedBackIcon,
   PropertyHide: PropertyHide,
   PropertyShow: PropertyShow,
   PublicIcon: PublicIcon,
   QrCodeIcon: QrCodeIcon,
+  RegenerateIcon: RegenerateIcon,
   ReloadIcon: ReloadIcon,
   RobotIcon: RobotIcon,
   SaveIcon: SaveIcon,
@@ -228,9 +248,11 @@ export const Icons: Record<string, React.FC<React.SVGProps<SVGSVGElement>>> = {
   SucessFeedBackIcon: SucessFeedBackIcon,
   SumFunctionIcon: SumFunctionIcon,
   ThreeDotsIcons: ThreeDotsIcons,
+  ThumbDownIcon: ThumbDownIcon,
+  ThumbUpIcon: ThumbUpIcon,
   TwitterIcon: TwitterIcon,
   VideoIcon: VideoIcon,
   VisibilityOff: VisibilityOff,
   VisibilityOn: VisibilityOn,
   VolumeIcon: VolumeIcon,
-}
+};
