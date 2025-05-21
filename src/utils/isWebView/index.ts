@@ -7,3 +7,13 @@ export const isWebView = () => {
 }
 
 export const isAndroid = () => navigator.userAgent.includes('Android')
+
+declare global {
+  interface Window {
+    kmpJsBridge?: {
+      callNative: () => void
+    }
+  }
+}
+
+export const isWindow = () => !!window.kmpJsBridge?.callNative
