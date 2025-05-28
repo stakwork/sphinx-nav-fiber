@@ -94,6 +94,11 @@ const Wrapper = styled(Flex).attrs({
   padding: 12px;
   justify-content: space-between;
   box-sizing: border-box;
+
+  @media (max-width: 768px) {
+    width: 100%;
+    margin-right: 0;
+  }
 `
 
 const Action = styled(IconButton)`

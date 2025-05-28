@@ -45,6 +45,10 @@ const ProgressWrapper = styled(Flex)`
   position: relative;
   flex: 1 1 100%;
 
+  @media (max-width: 768px) {
+    display: none;
+  }
+
   &:hover {
     ${ChaptersWrapper} {
       display: block;

@@ -31,6 +31,10 @@ const Wrapper = styled(Flex)(({ theme }) => ({
     width: MENU_WIDTH,
     gap: '10px',
   },
+
+  '@media (max-width: 768px)': {
+    padding: 0,
+  },
 }))
 
 const MediaWrapper = styled(Flex)(({ theme }) => ({
