@@ -102,6 +102,10 @@ const Wrapper = styled(Flex)`
   padding: 24px;
   overflow-y: auto;
   flex: 1 1 100%;
+  @media (max-width: 768px) {
+    max-width: 100vw;
+    padding: 0;
+  }
 `
 
 const TranscriptWrapper = styled(Flex)`
@@ -109,4 +113,7 @@ const TranscriptWrapper = styled(Flex)`
   flex: 1 1 100%;
   margin-left: -24px;
   margin-right: -24px;
+  @media (max-width: 768px) {
+    margin: 0;
+  }
 `
