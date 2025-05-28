@@ -1,19 +1,15 @@
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import ReactPlayer from 'react-player'
-
 import styled from 'styled-components'
 import { Avatar } from '~/components/common/Avatar'
 import { Flex } from '~/components/common/Flex'
-import { usePlayerStore } from '~/stores/usePlayerStore'
-import { colors } from '~/utils'
-
 import { useDataStore } from '~/stores/useDataStore'
 import { useGraphStore } from '~/stores/useGraphStore'
+import { usePlayerStore } from '~/stores/usePlayerStore'
 import { Link } from '~/types'
+import { colors } from '~/utils'
 
 const findCurrentEdge = (sortedEdges: Link[], playerProgress: number): Link | null => {
-  // Sort edges by start (preprocessing step)
-
   let low = 0
   let high = sortedEdges.length - 1
 
@@ -23,17 +19,17 @@ const findCurrentEdge = (sortedEdges: Link[], playerProgress: number): Link | nu
     const { start, end } = edge.properties as { start: number; end: number }
 
     if (playerProgress >= start && playerProgress <= end) {
-      return edge // Found the corresponding edge
+      return edge
     }
 
     if (playerProgress < start) {
-      high = mid - 1 // Search in the left half
+      high = mid - 1
     } else {
-      low = mid + 1 // Search in the right half
+      low = mid + 1
     }
   }
 
-  return null // No matching edge found
+  return null
 }
 
 type FullScreenProps = {
@@ -48,8 +44,9 @@ const MediaPlayerComponent = ({ mediaUrl }: Props) => {
   const wrapperRef = useRef<HTMLDivElement | null>(null)
   const [status, setStatus] = useState<'buffering' | 'error' | 'ready'>('ready')
   const [isReady, setIsReady] = useState(false)
-  const { setActiveEdge } = useGraphStore((s) => s)
+  const [hasSeekedFromURL, setHasSeekedFromURL] = useState(false)
 
+  const { setActiveEdge } = useGraphStore((s) => s)
   const { dataInitial } = useDataStore((s) => s)
 
   const {
@@ -116,30 +113,31 @@ const MediaPlayerComponent = ({ mediaUrl }: Props) => {
   const edges = useMemo(() => {
     const edgesFiltered = dataInitial?.links.filter((link) => link?.properties?.start) || []
 
-    const sortedEdges = edgesFiltered
-      .slice()
-      .sort((a, b) => (a?.properties?.start as number) - (b?.properties?.start as number))
-
-    return sortedEdges
+    return edgesFiltered.slice().sort((a, b) => (a?.properties?.start as number) - (b?.properties?.start as number))
   }, [dataInitial])
 
   const handleProgress = (progress: { playedSeconds: number }) => {
     if (!isSeeking) {
       const currentTime = progress.playedSeconds
-
       const edge = findCurrentEdge(edges, currentTime)
 
-      if (edge) {
-        setActiveEdge(edge)
-      } else {
-        setActiveEdge(null)
-      }
+      setActiveEdge(edge || null)
     }
   }
 
+  const urlStartTime = useMemo(() => {
+    const url = new URL(window.location.href)
+    const startParam = url.searchParams.get('start')
+
+    return startParam ? parseFloat(startParam) : null
+  }, [])
+
   const handleReady = () => {
-    if (playerRef) {
-      setStatus('ready')
+    setStatus('ready')
+
+    if (playerRef && urlStartTime !== null && !hasSeekedFromURL) {
+      playerRef.seekTo(urlStartTime, 'seconds')
+      setHasSeekedFromURL(true)
     }
   }
 
@@ -155,15 +153,10 @@ const MediaPlayerComponent = ({ mediaUrl }: Props) => {
     }
   }, [setIsPlaying, isPlaying])
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handlePlayerClick = (e: any) => {
-    e.stopPropagation() // Prevent click from propagating to the player
-  }
-
   const playerRefCallback = useCallback(
     (player: ReactPlayer) => {
       if (!playerRef && player) {
-        setPlayerRef(player) // Update the store with the player instance
+        setPlayerRef(player)
       }
     },
     [setPlayerRef, playerRef],
@@ -174,7 +167,7 @@ const MediaPlayerComponent = ({ mediaUrl }: Props) => {
       <Cover isFullScreen={false}>
         <Avatar size={120} src={playingNode?.image_url || ''} type="clip" />
       </Cover>
-      <PlayerWrapper isFullScreen={false} onClick={handlePlayerClick}>
+      <PlayerWrapper isFullScreen={false}>
         <ReactPlayer
           ref={playerRefCallback}
           height="219px"
@@ -192,9 +185,7 @@ const MediaPlayerComponent = ({ mediaUrl }: Props) => {
           width="100%"
         />
       </PlayerWrapper>
-      {status === 'error' ? (
-        <ErrorWrapper className="error-wrapper">Error happened, please try later</ErrorWrapper>
-      ) : null}
+      {status === 'error' && <ErrorWrapper className="error-wrapper">Error happened, please try later</ErrorWrapper>}
     </Wrapper>
   ) : null
 }
