@@ -14,5 +14,6 @@ jobs:
       - name: Call Swarm Sync Endpoint
         run: |
           curl -G "https://secondbrain.sphinx.chat/api/git/sync" \
+            --header "x-api-token: ${{ secrets.SWARM_API_KEY }}" \
             --data-urlencode "source_link=https://github.com/stakwork/sphinx-nav-fiber,https://github.com/stakwork/jarvis-backend" \
             --data-urlencode "pat=${{ secrets.GITHUB_PAT }}" 
