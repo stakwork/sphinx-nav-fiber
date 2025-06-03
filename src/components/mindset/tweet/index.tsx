@@ -230,26 +230,24 @@ export const TweetMindset = () => {
   }, [nodesAndEdgesRef, addNewNode])
 
   return (
-    <>
-      <MainContainer>
-        <ContentWrapper direction="row">
-          <>
-            <Flex>
-              <Header />
-              <SideBar />
+    <MainContainer>
+      <ContentWrapper direction="row">
+        <>
+          <Flex>
+            <Header />
+            <SideBar />
+          </Flex>
+          <ContentContainer>
+            <Flex basis="100%" grow={1} shrink={1}>
+              <Universe />
             </Flex>
-            <ContentContainer>
-              <Flex basis="100%" grow={1} shrink={1}>
-                <Universe />
-              </Flex>
-            </ContentContainer>
-          </>
-        </ContentWrapper>
-        <PlayerControlWrapper>
-          <PlayerControl markers={markers} />
-        </PlayerControlWrapper>
-      </MainContainer>
-    </>
+          </ContentContainer>
+        </>
+      </ContentWrapper>
+      <PlayerControlWrapper>
+        <PlayerControl markers={markers} />
+      </PlayerControlWrapper>
+    </MainContainer>
   )
 }
 

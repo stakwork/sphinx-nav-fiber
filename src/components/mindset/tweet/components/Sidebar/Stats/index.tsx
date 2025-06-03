@@ -1,7 +1,9 @@
+import moment from 'moment'
 import { FaMeh, FaThumbsDown, FaThumbsUp } from 'react-icons/fa'
-import styled from 'styled-components'
+import styled, { keyframes } from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import SentimentDataIcon from '~/components/Icons/SentimentDataIcon'
+import { useTweetMindsetStore } from '~/stores/useTweetMindsetStore'
 import { Node } from '~/types'
 import { colors } from '~/utils/colors'
 
@@ -11,15 +13,36 @@ type Props = {
 }
 
 const analyticsMapper = {
-  impression_count: { label: 'Impressions', formatter: (value: number) => value.toLocaleString() },
-  like_count: { label: 'Likes', formatter: (value: number) => value },
-  reply_count: { label: 'Replies', formatter: (value: number) => value },
-  retweet_count: { label: 'Retweets', formatter: (value: number) => value },
-  quote_count: { label: 'Quotes', formatter: (value: number) => value },
-  bookmark_count: { label: 'Bookmarks', formatter: (value: number) => value },
+  impression_count: {
+    label: 'Impressions',
+    formatter: (value: number, index: number) => value.toLocaleString().split(',').at(index),
+  },
+  like_count: {
+    label: 'Likes',
+    formatter: (value: number, index: number) => value.toLocaleString().split(',').at(index),
+  },
+  reply_count: {
+    label: 'Replies',
+    formatter: (value: number, index: number) => value.toLocaleString().split(',').at(index),
+  },
+  retweet_count: {
+    label: 'Retweets',
+    formatter: (value: number, index: number) => value.toLocaleString().split(',').at(index),
+  },
+  quote_count: {
+    label: 'Quotes',
+    formatter: (value: number, index: number) => value.toLocaleString().split(',').at(index),
+  },
+  bookmark_count: {
+    label: 'Bookmarks',
+    formatter: (value: number, index: number) => value.toLocaleString().split(',').at(index),
+  },
   analytics_location: { label: 'Location', formatter: (value: string) => value || 'Unknown' },
   analytics_gender: { label: 'Gender', formatter: (value: string) => value || 'Unknown' },
-  followers: { label: 'Followers', formatter: (value: number) => value.toLocaleString() },
+  followers: {
+    label: 'Followers',
+    formatter: (value: number, index: number) => value.toLocaleString().split(',').at(index),
+  },
 }
 
 const getSentimentIcon = (score?: number) => {
@@ -39,8 +62,6 @@ const getSentimentIcon = (score?: number) => {
 }
 
 export const Stats = ({ node, handleAnalyzeClick }: Props) => {
-  // Calculate follower-to-view ratio safely.
-
   const viewToFollowerRatio =
     node?.properties?.followers !== undefined &&
     node?.properties?.impression_count !== undefined &&
@@ -48,8 +69,40 @@ export const Stats = ({ node, handleAnalyzeClick }: Props) => {
       ? (node.properties.impression_count / node.properties.followers).toFixed(2)
       : 'N/A'
 
+  const tweetPlayingTime = useTweetMindsetStore((s) => s.tweetPlayingTime)
+
+  // Convert to raw timestamps (as numbers)
+  const rawTimestamps = node?.properties?.time_series
+    ? (node?.properties.time_series as string).split(',').map(Number)
+    : []
+
+  // Optional: format for human-readable if needed
+  const humanDates: string[] = rawTimestamps.map((ts) => moment.unix(ts).format('YYYY-MM-DD HH:mm:ss'))
+
+  let index = -1
+
+  if (tweetPlayingTime) {
+    const timeInSeconds = tweetPlayingTime > 1e12 ? tweetPlayingTime / 1000 : tweetPlayingTime
+
+    // Find the last index where the timestamp is <= tweetPlayingTime
+    for (let i = 0; i < rawTimestamps.length; i += 1) {
+      if (timeInSeconds >= rawTimestamps[i]) {
+        index = i
+      } else {
+        break // timestamps must be in ascending order
+      }
+    }
+  }
+
   return (
     <Card>
+      <Flex>
+        {humanDates.map((i) => (
+          <span key={i} style={{ color: 'white' }}>
+            {i}
+          </span>
+        ))}
+      </Flex>
       <Flex align="center" direction="row" justify="space-between" mb={16}>
         <Title>Analytics</Title>
         <IconButton
@@ -66,7 +119,7 @@ export const Stats = ({ node, handleAnalyzeClick }: Props) => {
           node?.properties?.[key] !== undefined ? (
             <Metric key={key}>
               <span>{label}</span>
-              <Value>{formatter(node.properties[key] as never)}</Value>
+              <Value key={index}>{formatter(node.properties[key] as never, index)}</Value>
             </Metric>
           ) : null,
         )}
@@ -111,10 +164,25 @@ const Metric = styled.div`
   padding-right: 4px;
 `
 
+const popIn = keyframes`
+  0% {
+    opacity: 0;
+    transform: translateY(6px) scale(0.95);
+  }
+  60% {
+    transform: translateY(-2px) scale(1.02);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+`
+
 const Value = styled.span`
   color: ${colors.GRAY6};
   display: flex;
   align-items: center;
+  animation: ${popIn} 0.3s ease;
   svg {
     width: 14px;
     height: 14px;
