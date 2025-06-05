@@ -12,6 +12,7 @@ export type FeatureFlagStore = {
   chatInterfaceFeatureFlag: boolean
   fastFiltersFeatureFlag: boolean
   chatSplashScreenAsDefault: boolean
+  scaleFeature: boolean
   setTrendingTopicsFeatureFlag: (val: boolean) => void
   setV2FeatureFlag: (val: boolean) => void
   setQueuedSourcesFeatureFlag: (val: boolean) => void
@@ -50,6 +51,7 @@ const defaultData: Omit<
   chatInterfaceFeatureFlag: false,
   fastFiltersFeatureFlag: false,
   chatSplashScreenAsDefault: false,
+  scaleFeature: false,
 }
 
 export const useFeatureFlagStore = create<FeatureFlagStore>((set) => ({

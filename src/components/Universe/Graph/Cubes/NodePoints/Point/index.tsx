@@ -8,9 +8,10 @@ import { nodeSize } from '../../constants'
 type Props = {
   color: string
   node: NodeExtended
+  scale: number
 }
 
-export const Point = memo(({ color, node }: Props) => {
+export const Point = memo(({ color, node, scale }: Props) => {
   const nodeRef = useRef<Group | null>(null)
   const helperRef = useRef<Mesh | null>(null)
 
@@ -22,7 +23,7 @@ export const Point = memo(({ color, node }: Props) => {
         <sphereGeometry args={[nodeSize / 2, 16, 16]} />
         <meshBasicMaterial color="white" opacity={1} transparent={false} />
       </mesh>
-      <Instance color={newColor.at(3)} name="instance" />
+      <Instance color={newColor.at(3)} name="instance" scale={scale} />
     </Billboard>
   )
 })
