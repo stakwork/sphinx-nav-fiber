@@ -55,11 +55,9 @@ export const TextNode = memo(
       <Billboard follow lockX={false} lockY={false} lockZ={false} name="billboard" userData={node}>
         <mesh ref={nodeRef} name={node.ref_id} position={[0, 0, 1]} scale={scale} userData={node} visible={!hide}>
           {node?.properties?.image_url && texture ? (
-            <>
-              <mesh geometry={NodeCircleGeometry}>
-                <meshBasicMaterial map={texture} />
-              </mesh>
-            </>
+            <mesh geometry={NodeCircleGeometry}>
+              <meshBasicMaterial map={texture} />
+            </mesh>
           ) : (
             <Svg
               ref={svgRef}

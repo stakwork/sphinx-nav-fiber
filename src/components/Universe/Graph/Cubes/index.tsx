@@ -4,6 +4,7 @@ import { memo, useCallback, useRef } from 'react'
 import { Group, Mesh, MeshStandardMaterial, Object3D } from 'three'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
+import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
 import { useGraphStore, useHoveredNode, useSelectedNode } from '~/stores/useGraphStore'
 import { useSimulationStore } from '~/stores/useSimulationStore'
 import { NodeExtended } from '~/types'
@@ -35,6 +36,8 @@ export const Cubes = memo(() => {
   const nodesNormalized = useDataStore((s) => s.nodesNormalized)
   const setTranscriptOpen = useAppStore((s) => s.setTranscriptOpen)
 
+  const scaleFeature = useFeatureFlagStore((s) => s.scaleFeature)
+
   const { navigateToNode } = useNodeNavigation()
 
   const group = nodesWrapperRef.current
@@ -60,7 +63,6 @@ export const Cubes = memo(() => {
       searchQuery ||
       selectedLinkTypes.length > 0 ||
       selectedNodeTypes.length > 0 ||
-      hoveredNode ||
       selectedNode ||
       followersFilter ||
       dateRangeFilter
@@ -259,12 +261,17 @@ export const Cubes = memo(() => {
             const simulationNode = simulation.nodes()[index]
             const isFixed = true || typeof simulationNode?.fx === 'number'
             const normalizedNode = nodesNormalized.get(node.ref_id)
-            const scale = normalizedNode?.weight || normalizedNode?.properties?.weight || 1
-            const scaleNormalized = Math.sqrt(scale)
+            const scale = index || normalizedNode?.weight || normalizedNode?.properties?.weight || 1
+            const scaleNormalized = Math.cbrt(scale)
             const scaleToFixed = Number(scaleNormalized.toFixed(1))
 
             return normalizedNode ? (
-              <NodeWrapper key={node.ref_id} isFixed={isFixed} node={normalizedNode} scale={scaleToFixed} />
+              <NodeWrapper
+                key={node.ref_id}
+                isFixed={isFixed}
+                node={normalizedNode}
+                scale={!scaleFeature ? 1 : scaleToFixed}
+              />
             ) : null
           })}
         </group>
