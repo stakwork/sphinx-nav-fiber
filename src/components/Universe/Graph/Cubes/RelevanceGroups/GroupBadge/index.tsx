@@ -1,15 +1,18 @@
 import { Html } from '@react-three/drei'
+import clsx from 'clsx'
 import { truncateText } from '~/utils/truncateText'
-import { TagWrapper } from '../styles'
+import { Counter, TagWrapper } from '../styles'
 import { BadgeProps } from '../types'
 
-export const GroupBadge = ({ position, name, count }: BadgeProps) => (
+export const GroupBadge = ({ position, name, count, onClick, isActive }: BadgeProps) => (
   <group position={position}>
-    <Html center sprite zIndexRange={[0, 0]}>
+    <Html center distanceFactor={250} sprite transform zIndexRange={[0, 0]}>
       <TagWrapper
+        className={clsx({ 'is-active': isActive })}
         direction="column"
         onClick={(e) => {
           e.stopPropagation()
+          onClick()
         }}
         onPointerOut={(e) => {
           e.stopPropagation()
@@ -19,7 +22,7 @@ export const GroupBadge = ({ position, name, count }: BadgeProps) => (
         }}
       >
         {name ? <span>{truncateText(name, 20)}</span> : null}
-        {count}
+        <Counter>{count}</Counter>
       </TagWrapper>
     </Html>
   </group>

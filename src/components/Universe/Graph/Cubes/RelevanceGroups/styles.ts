@@ -74,7 +74,7 @@ export const TagWrapper = styled(Flex)`
   outline-offset: 0px;
   white-space: nowrap;
   padding: 4px;
-  background: rgba(0, 0, 0, 0.75);
+  background: rgba(0, 0, 0, 1);
   color: ${colors.white};
   border-radius: 6px;
   font-size: 20px;
@@ -83,7 +83,7 @@ export const TagWrapper = styled(Flex)`
   align-items: center;
   justify-content: flex-start;
   font-family: Barlow;
-  font-size: 26px;
+  font-size: 16px;
   font-style: normal;
   font-weight: 700;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
@@ -91,21 +91,15 @@ export const TagWrapper = styled(Flex)`
   max-height: 100px;
   white-space: normal;
   font-size: 16px;
+  position: relative;
 
   &:hover {
     outline-offset: 4px;
   }
 
-  &.selected {
-    .badge-wrapper {
-      top: 0;
-    }
-
-    font-size: 36px;
-
-    &:hover {
-      outline-offset: 0px;
-    }
+  &.is-active {
+    background: #fff;
+    color: black;
   }
 
   &.topic {
@@ -142,14 +136,6 @@ export const Image = styled.img<ImageProps>`
   border-radius: ${(p) => p.borderRadius};
 `
 
-type CounterProps = {
-  color: string
-  top?: number
-  bottom?: number
-  left?: number
-  right?: number
-}
-
 export const BadgeIconWrapper = styled.div`
   display: flex;
   position: absolute;
@@ -160,34 +146,20 @@ export const BadgeIconWrapper = styled.div`
   align-items: center;
 `
 
-export const Counter = styled.div<CounterProps>`
+export const Counter = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
   background: ${colors.transparentBlack};
-  border: 2px solid ${(p) => p.color};
+  border: 1px solid ${(p) => p.color};
+  border-radius: 6px;
   color: #fff;
-  padding: 0 4px;
-  min-width: 30px;
-  height: 26px;
   font-size: 12px;
   font-weight: 500;
-  border-radius: 6px;
-  margin-right: 5px;
-`
-
-export const Percentage = styled.div<CounterProps>`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border: 2px solid ${(p) => p.color}44;
-  background: ${colors.transparentBlack};
-  padding: 0 4px;
-  color: ${(p) => p.color};
-  min-width: 30px;
-  height: 26px;
-  font-size: 12px;
-  font-weight: 500;
-  border-radius: 6px;
-  margin-right: 5px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  transform: translate(50%, -100%);
+  padding: 2px;
+  min-width: 20px;
 `

@@ -27,6 +27,7 @@ export type GraphStore = {
   graphStyle: GraphStyle
   hoveredNode: NodeExtended | null
   selectedNodeTypes: string[]
+  selectedNodeType: string
   selectedLinkTypes: string[]
   selectedNode: NodeExtended | null
   cameraFocusTrigger: boolean
@@ -62,7 +63,9 @@ export type GraphStore = {
   addToSelectionPath: (id: string) => void
   setSearchQuery: (id: string) => void
   setSelectedNodeTypes: (type: string) => void
+  setSelectedNodeType: (type: string) => void
   resetSelectedNodeTypes: () => void
+  resetSelectedNodeType: () => void
   setSelectedLinkTypes: (type: string) => void
   resetSelectedLinkTypes: () => void
   setFollowersFilter: (filter: string) => void
@@ -93,7 +96,9 @@ const defaultData: Omit<
   | 'addToSelectionPath'
   | 'setSearchQuery'
   | 'setSelectedNodeTypes'
+  | 'setSelectedNodeType'
   | 'resetSelectedNodeTypes'
+  | 'resetSelectedNodeType'
   | 'setSelectedLinkTypes'
   | 'resetSelectedLinkTypes'
   | 'setNodesToHide'
@@ -127,6 +132,7 @@ const defaultData: Omit<
   dateRangeFilter: '',
   isolatedView: '',
   neighbourhoods: [],
+  selectedNodeType: '',
 }
 
 export const useGraphStore = create<GraphStore>()((set, get) => ({
@@ -152,6 +158,8 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
 
     set({ selectedLinkTypes: updatedTypes })
   },
+  setSelectedNodeType: (selectedNodeType) => set({ selectedNodeType }),
+  resetSelectedNodeType: () => set({ selectedNodeType: '' }),
   resetSelectedNodeTypes: () => set({ selectedNodeTypes: [] }),
   resetSelectedLinkTypes: () => set({ selectedLinkTypes: [] }),
   setSelectionData: (selectionGraphData) => set({ selectionGraphData }),
@@ -198,6 +206,7 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
         disableCameraRotation: false,
         showSelectionGraph: false,
         selectionPath: [],
+        selectedNodeType: '',
       })
     }
 
@@ -217,6 +226,7 @@ export const useGraphStore = create<GraphStore>()((set, get) => ({
           selectedNode: { ...selectedNodeWithCoordinates, ...(normalizedNode || {}) },
           disableCameraRotation: true,
           selectionPath: [...selectionPath, selectedNodeWithCoordinates.ref_id],
+          selectedNodeType: '',
           selectedNodeSiblings: [...(normalizedNode?.sources || []), ...(normalizedNode?.targets || [])],
         })
       }

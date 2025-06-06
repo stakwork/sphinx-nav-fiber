@@ -12,6 +12,8 @@ import { useNodeNavigation } from '../../useNodeNavigation'
 import { Candidates } from './Candidates'
 import { NodePoints } from './NodePoints'
 import { NodeWrapper } from './NodeWrapper'
+import { RelevanceGroups } from './RelevanceGroups'
+import { RelevanceList } from './RelevanceList/indes'
 import { nodeBackground } from './constants'
 import { nodesMatchesDateRangeFilter } from './utils/nodesMatchesDateRangeFilter '
 import { nodeMatchesFollowerFilter } from './utils/nodesMatchsFollowesFilter'
@@ -280,6 +282,8 @@ export const Cubes = memo(() => {
         </group>
       </Select>
       {false && <Candidates />}
+      {selectedNode && <RelevanceGroups />}
+      {selectedNode && <RelevanceList />}
     </>
   )
 })
