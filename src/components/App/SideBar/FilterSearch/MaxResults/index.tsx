@@ -24,13 +24,13 @@ export const MaxResults = ({ maxResults, setMaxResults }: MaxResultsProps) => {
       <PopoverBody>
         <SourceNodesStepWrapper>
           <span>0</span>
-          <span>300</span>
+          <span>1000</span>
         </SourceNodesStepWrapper>
         <VolumeControl direction="row">
           <CustomSlider
             className="volume-slider"
             data-testid="max-results-slider"
-            max={300}
+            max={1000}
             min={0}
             onChange={MaxResultsChangeHandler}
             size="medium"
