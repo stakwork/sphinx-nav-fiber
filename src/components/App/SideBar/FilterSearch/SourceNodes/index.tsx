@@ -24,13 +24,13 @@ export const SourceNodes = ({ sourceNodes, setSourceNodes }: SourceNodesProps) =
       <PopoverBody>
         <SourceNodesStepWrapper>
           <span>0</span>
-          <span>100</span>
+          <span>1000</span>
         </SourceNodesStepWrapper>
         <VolumeControl direction="row">
           <CustomSlider
             className="volume-slider"
             data-testid="source-nodes-slider"
-            max={100}
+            max={1000}
             min={0}
             onChange={SourceNodesChangeHandler}
             size="medium"

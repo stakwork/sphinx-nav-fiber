@@ -24,6 +24,18 @@ export const Hops = ({ hops, setHops }: HopsProps) => (
           control={<CustomCheckbox checked={hops === 2} onChange={() => setHops(2)} />}
           label="2 hops away"
         />
+        <FormControlLabel
+          control={<CustomCheckbox checked={hops === 3} onChange={() => setHops(3)} />}
+          label="3 hops away"
+        />
+        <FormControlLabel
+          control={<CustomCheckbox checked={hops === 4} onChange={() => setHops(4)} />}
+          label="4 hops away"
+        />
+        <FormControlLabel
+          control={<CustomCheckbox checked={hops === 5} onChange={() => setHops(5)} />}
+          label="5 hops away"
+        />
       </HopsWrapper>
     </PopoverBody>
   </>
