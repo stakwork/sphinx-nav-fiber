@@ -116,7 +116,7 @@ const _LineComponent = (props: LineComponentProps) => {
       />
 
       <Billboard>
-        <Text anchorX="center" anchorY="middle" color="white" {...fontProps} fontSize={10}>
+        <Text anchorX="center" anchorY="middle" color="white" {...fontProps} fontSize={5}>
           {label}
         </Text>
       </Billboard>
