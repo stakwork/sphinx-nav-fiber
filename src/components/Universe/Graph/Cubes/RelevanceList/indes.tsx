@@ -32,9 +32,7 @@ export const RelevanceList = () => {
   const nodes = nodesData
 
   const childNodes = nodes
-    .filter(
-      (f: NodeExtended) => selectedNodeRelativeIds.includes(f?.ref_id || '') || selectedNode?.ref_id === f?.ref_id,
-    )
+    .filter((f: NodeExtended) => selectedNodeRelativeIds.includes(f?.ref_id || ''))
     .filter((i: NodeExtended) => i.node_type === selectedNodeType)
 
   const handleNodeClick = useCallback(
@@ -46,8 +44,6 @@ export const RelevanceList = () => {
     },
     [setSelectedTimestamp, setRelevanceSelected, navigateToNode],
   )
-
-  console.log(centerPos)
 
   return (
     <Billboard position={centerPos}>
@@ -99,7 +95,13 @@ export const RelevanceList = () => {
               })}
             </List>
           ) : (
-            <Wrapper>
+            <Wrapper
+              onScroll={(e) => {
+                console.log(e)
+                e.stopPropagation()
+              }}
+              onWheel={(e) => e.stopPropagation()}
+            >
               <SelectedNodeView />
             </Wrapper>
           )}
@@ -120,7 +122,7 @@ const List = styled.ul`
   list-style: none;
   /* perspective: 800px; */
   backface-visibility: hidden;
-  height: 400px;
+  max-height: 400px;
   overflow: auto;
 `
 
@@ -133,8 +135,7 @@ const Wrapper = styled.div`
   border-radius: 8px;
   border: 2px solid #fff;
   list-style: none;
-  /* perspective: 800px; */
-  backface-visibility: hidden;
   height: 400px;
   overflow: auto;
+  cursor: initial;
 `
