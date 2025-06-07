@@ -38,7 +38,7 @@ export const RelevanceGroups = memo(() => {
 
     const childNodes: NodeExtended[] = selectedNodeRelativeIds
       .map((id: string) => nodesNormalized.get(id))
-      .filter((i) => !!i)
+      .filter((i): i is NodeExtended => !!i)
 
     const edges = selectedNodeRelativeIds.map((id: string) => getLinksBetweenNodes(id, selectedNode?.ref_id))
 
