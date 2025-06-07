@@ -70,11 +70,11 @@ export const Tag = styled(Flex)<TagProps>`
 
 export const TagWrapper = styled(Flex)`
   text-align: center;
-  outline: 1px solid ${colors.white};
-  outline-offset: 0px;
+  /* outline: 1px solid ${colors.white}; */
+  /* outline-offset: 0px; */
   white-space: nowrap;
-  padding: 4px;
-  background: rgba(0, 0, 0, 1);
+  padding: 4px 10px 6px;
+  background: #23252f;
   color: ${colors.white};
   border-radius: 6px;
   font-size: 20px;
@@ -85,39 +85,17 @@ export const TagWrapper = styled(Flex)`
   font-family: Barlow;
   font-size: 16px;
   font-style: normal;
-  font-weight: 700;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  font-weight: 500;
+  /* text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); */
   max-width: auto;
   max-height: 100px;
   white-space: normal;
   font-size: 16px;
   position: relative;
 
-  &:hover {
-    outline-offset: 4px;
-  }
-
   &.is-active {
     background: #fff;
-    color: black;
-  }
-
-  &.topic {
-    outline: none;
-    background: none;
-    &:hover {
-      font-size: 36px;
-    }
-    white-space: nowrap;
-    .badge-wrapper {
-      display: none;
-    }
-  }
-
-  .badge-wrapper {
-    position: absolute;
-    top: -7px;
-    left: -14px;
+    color: #16171d;
   }
 `
 
@@ -150,16 +128,18 @@ export const Counter = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  background: ${colors.transparentBlack};
+  background: #2c3f72;
   border: 1px solid ${(p) => p.color};
   border-radius: 6px;
   color: #fff;
-  font-size: 12px;
+  font-size: 8px;
   font-weight: 500;
   position: absolute;
   top: 0;
   right: 0;
-  transform: translate(50%, -100%);
+  transform: translate(50%, -50%);
   padding: 2px;
-  min-width: 20px;
+  min-width: 15px;
+  height: 16px;
+  border-radius: 50%;
 `

@@ -61,6 +61,7 @@ export type DataStore = {
   runningProjectMessages: string[]
   nodesNormalized: Map<string, NodeExtended>
   linksNormalized: Map<string, Link>
+  nodeLinksNormalized: Record<string, string[]>
 
   setTrendingTopics: (trendingTopics: Trending[]) => void
   resetDataNew: () => void
@@ -152,6 +153,7 @@ const defaultData: Omit<
   linkTypes: [],
   nodesNormalized: new Map<string, NodeExtended>(),
   linksNormalized: new Map<string, Link>(),
+  nodeLinksNormalized: {},
 }
 
 let abortController: AbortController | null = null
@@ -224,20 +226,22 @@ export const useDataStore = create<DataStore>()(
     },
 
     addNewNode: (data) => {
-      const { dataInitial: existingData, nodesNormalized, linksNormalized } = get()
+      const {
+        dataInitial: existingData,
+        nodesNormalized,
+        linksNormalized,
+        nodeLinksNormalized: existingNodeLinksNormalized,
+      } = get()
 
       if (!data?.nodes) {
         return
       }
 
-      // Initialize maps if not already present
       const normalizedNodesMap = nodesNormalized || new Map()
       const normalizedLinksMap = linksNormalized || new Map()
+      const nodeLinksNormalized: Record<string, string[]> = existingNodeLinksNormalized || {}
 
-      // Filter nodes based on filters.node_type
       const nodesFilteredByFilters = data.nodes
-
-      // Add new nodes directly to the Map
       const newNodes: Node[] = []
 
       nodesFilteredByFilters.forEach((node) => {
@@ -247,52 +251,45 @@ export const useDataStore = create<DataStore>()(
         }
       })
 
-      // Get existing nodes and add new nodes
       const currentNodes = existingData?.nodes || []
       const updatedNodes = [...currentNodes, ...newNodes]
 
-      // Filter and add new links
       const newLinks: Link[] = []
-
       const edges = data.edges || []
 
       edges.forEach((link: Link) => {
         if (
-          !normalizedLinksMap.has(link.ref_id) && // Ensure link is unique
-          normalizedNodesMap.has(link.source) && // Ensure source node exists
-          normalizedNodesMap.has(link.target) // Ensure target node exists
+          !normalizedLinksMap.has(link.ref_id) &&
+          normalizedNodesMap.has(link.source) &&
+          normalizedNodesMap.has(link.target)
         ) {
           normalizedLinksMap.set(link.ref_id, link)
           newLinks.push(link)
 
-          // Update sources and targets for the respective nodes
           const sourceNode = normalizedNodesMap.get(link.source)
           const targetNode = normalizedNodesMap.get(link.target)
 
           if (sourceNode && targetNode) {
-            if (sourceNode.targets) {
-              sourceNode.targets.push(link.target)
-            } else {
-              sourceNode.targets = [link.target]
-            }
-
-            if (targetNode.sources) {
-              targetNode.sources.push(link.source)
-            } else {
-              targetNode.sources = [link.source]
-            }
+            sourceNode.targets = [...(sourceNode.targets || []), link.target]
+            targetNode.sources = [...(targetNode.sources || []), link.source]
 
             sourceNode.edgeTypes = [...new Set([...(sourceNode.edgeTypes || []), link.edge_type])]
             targetNode.edgeTypes = [...new Set([...(targetNode.edgeTypes || []), link.edge_type])]
           }
+
+          const pairKey = [link.source, link.target].sort().join('--')
+
+          if (!nodeLinksNormalized[pairKey]) {
+            nodeLinksNormalized[pairKey] = []
+          }
+
+          nodeLinksNormalized[pairKey].push(link.ref_id)
         }
       })
 
-      // Get existing links and add new links
       const currentLinks = existingData?.links || []
       const updatedLinks = [...currentLinks, ...newLinks]
 
-      // Update node types and sidebar filters
       const nodeTypes = [...new Set(updatedNodes.map((node) => node.node_type))]
       const linkTypes = [...new Set(updatedLinks.map((node) => node.edge_type))]
       const sidebarFilters = ['all', ...nodeTypes.map((type) => type.toLowerCase())]
@@ -306,7 +303,6 @@ export const useDataStore = create<DataStore>()(
         return
       }
 
-      // Persist updates
       set({
         dataInitial: { nodes: updatedNodes, links: updatedLinks },
         dataNew: { nodes: newNodes, links: newLinks },
@@ -316,6 +312,7 @@ export const useDataStore = create<DataStore>()(
         sidebarFilterCounts,
         nodesNormalized: normalizedNodesMap,
         linksNormalized: normalizedLinksMap,
+        nodeLinksNormalized, // <- set the new map here
       })
     },
 
@@ -432,4 +429,17 @@ export const useNormalizedNode = (refId: string) => {
   }
 
   return null
+}
+
+export const getLinksBetweenNodes = (nodeA: string, nodeB: string) => {
+  const { linksNormalized, nodeLinksNormalized } = useDataStore.getState()
+
+  if (!nodeA || !nodeB) {
+    return []
+  }
+
+  const pairKey = [nodeA, nodeB].sort().join('--')
+  const refIds = nodeLinksNormalized[pairKey] || []
+
+  return refIds.map((refId) => linksNormalized.get(refId)).filter((link): link is Link => !!link)
 }
