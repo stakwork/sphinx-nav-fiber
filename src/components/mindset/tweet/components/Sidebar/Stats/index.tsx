@@ -1,4 +1,3 @@
-import moment from 'moment'
 import { FaMeh, FaThumbsDown, FaThumbsUp } from 'react-icons/fa'
 import styled, { keyframes } from 'styled-components'
 import { Flex } from '~/components/common/Flex'
@@ -76,9 +75,6 @@ export const Stats = ({ node, handleAnalyzeClick }: Props) => {
     ? (node?.properties.time_series as string).split(',').map(Number)
     : []
 
-  // Optional: format for human-readable if needed
-  const humanDates: string[] = rawTimestamps.map((ts) => moment.unix(ts).format('YYYY-MM-DD HH:mm:ss'))
-
   let index = -1
 
   if (tweetPlayingTime) {
@@ -96,13 +92,6 @@ export const Stats = ({ node, handleAnalyzeClick }: Props) => {
 
   return (
     <Card>
-      <Flex>
-        {humanDates.map((i) => (
-          <span key={i} style={{ color: 'white' }}>
-            {i}
-          </span>
-        ))}
-      </Flex>
       <Flex align="center" direction="row" justify="space-between" mb={16}>
         <Title>Analytics</Title>
         <IconButton

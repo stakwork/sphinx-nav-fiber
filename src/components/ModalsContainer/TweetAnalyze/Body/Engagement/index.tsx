@@ -59,6 +59,14 @@ export const EngagementTable = ({ sortBy, idsToAnalyze }: Props) => {
                   (node) => node.node_type === 'User' && node.properties?.author_id === tweet.properties?.author,
                 )
 
+                const tweetImpression = tweet.properties?.impression_count
+                  ? (tweet.properties?.impression_count as string).split(',').at(-1)
+                  : 0
+
+                const mainTweetImpression = main?.properties?.impression_count
+                  ? (main.properties?.impression_count as string).split(',').at(-1)
+                  : 1
+
                 if (relatedUser) {
                   return {
                     ...tweet,
@@ -67,10 +75,7 @@ export const EngagementTable = ({ sortBy, idsToAnalyze }: Props) => {
                       twitter_handle: relatedUser.properties?.twitter_handle,
                       followers: relatedUser.properties?.followers,
                       image_url: relatedUser.properties?.image_url,
-                      impression_percentage: (
-                        (Number(tweet.properties?.impression_count) / Number(main?.properties?.impression_count || 1)) *
-                        100
-                      ).toFixed(2),
+                      impression_percentage: ((Number(tweetImpression) / Number(mainTweetImpression)) * 100).toFixed(2),
                     },
                   }
                 }
