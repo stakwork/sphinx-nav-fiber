@@ -27,34 +27,28 @@ export const SideBar = () => {
   }
 
   return (
-    <>
-      <Wrapper align="stretch" basis="100%" grow={1} shrink={1}>
-        {ids.length > 1 ? (
-          <EngagementButton
-            onClick={() => {
-              handleAnalyzeClick('summary')
+    <Wrapper align="stretch" basis="100%" grow={1} shrink={1}>
+      {ids.length > 1 ? (
+        <EngagementButton
+          onClick={() => {
+            handleAnalyzeClick('summary')
+          }}
+        >
+          Summary Report
+        </EngagementButton>
+      ) : null}
+      {ids.map((id: string) => (
+        <TweetWrapper key={id} className={selectedTweet === id ? 'selected' : ''} onClick={() => setSelectedTweet(id)}>
+          <Tweet
+            handleAnalyzeClick={() => {
+              handleAnalyzeClick(id)
             }}
-          >
-            Summary Report
-          </EngagementButton>
-        ) : null}
-        {ids.map((id: string) => (
-          <TweetWrapper
-            key={id}
-            className={selectedTweet === id ? 'selected' : ''}
-            onClick={() => setSelectedTweet(id)}
-          >
-            <Tweet
-              handleAnalyzeClick={() => {
-                handleAnalyzeClick(id)
-              }}
-              nodeId={id}
-            />
-          </TweetWrapper>
-        ))}
-        <LazyTweetAnalyze tweetId={analyzeTweetId} />
-      </Wrapper>
-    </>
+            nodeId={id}
+          />
+        </TweetWrapper>
+      ))}
+      <LazyTweetAnalyze tweetId={analyzeTweetId} />
+    </Wrapper>
   )
 }
 

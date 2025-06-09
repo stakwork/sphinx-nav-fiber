@@ -17,6 +17,7 @@ export const PlayerControl = ({ markers }: Props) => {
   const setTweetPlayingTime = useTweetMindsetStore((s) => s.setTweetPlayingTime)
   const setTweetIsPlaying = useTweetMindsetStore((s) => s.setTweetIsPlaying)
   const setTweetDuration = useTweetMindsetStore((s) => s.setTweetDuration)
+  const selectedTweets = useTweetMindsetStore((s) => s.selectedTweets)
   const duration = useTweetMindsetStore((s) => s.tweetDuration)
   const tweetIsPlaying = useTweetMindsetStore((s) => s.tweetIsPlaying)
   const [minTime, setMinTime] = useState(0)
@@ -25,6 +26,15 @@ export const PlayerControl = ({ markers }: Props) => {
 
   useEffect(() => {
     const timestamps = markers.map((event) => (event.start ? new Date(event.start).getTime() : 0))
+
+    if (selectedTweets[0]?.properties?.time_series) {
+      const syncTimestamps = (selectedTweets[0]?.properties?.time_series as string)
+        .split(',')
+        .map((i) => Number(i) * 1000)
+
+      timestamps.push(...syncTimestamps)
+    }
+
     const min = Math.min(...timestamps)
     const max = Math.max(...timestamps)
     const dur = max - min
@@ -32,7 +42,7 @@ export const PlayerControl = ({ markers }: Props) => {
     setMinTime(min)
     setMaxTime(max)
     setTweetDuration(dur)
-  }, [markers, setTweetDuration])
+  }, [markers, setTweetDuration, selectedTweets])
 
   // Track animation frame reference
   const animationFrameRef = useRef<number | null>(null)
