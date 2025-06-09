@@ -270,6 +270,11 @@ export const Editor = ({
         setValue('selectedIndex', selectedSchema.index)
       }
 
+      // ✅ Fix: Initialize selectedNodeKeys from schema.node_key
+      if (selectedSchema.node_key) {
+        setSelectedNodeKeys(selectedSchema.node_key.split('-'))
+      }
+
       setMediaOptions({
         videoAudio: !!selectedSchema.media_url,
         image: !!selectedSchema.image_url,

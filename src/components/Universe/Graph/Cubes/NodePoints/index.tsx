@@ -2,6 +2,7 @@ import { Instances } from '@react-three/drei'
 import { memo, useMemo } from 'react'
 import { BufferGeometry, CircleGeometry } from 'three'
 import { useDataStore, useNodeTypes } from '~/stores/useDataStore'
+import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
 import { useSelectedNode } from '~/stores/useGraphStore'
 import { useSchemaStore } from '~/stores/useSchemaStore'
 import { NodeExtended } from '~/types'
@@ -45,6 +46,9 @@ const _NodePoints = () => {
   const dataInitial = useDataStore((s) => s.dataInitial)
   const { normalizedSchemasByType } = useSchemaStore((s) => s)
   const nodeTypes = useNodeTypes()
+  const nodesNormalized = useDataStore((s) => s.nodesNormalized)
+
+  const scaleFeature = useFeatureFlagStore((s) => s.scaleFeature)
 
   // Create a rounded rectangle geometry
   const roundedRectGeometry = useMemo(
@@ -53,22 +57,25 @@ const _NodePoints = () => {
   )
 
   return (
-    <>
-      <Instances
-        geometry={roundedRectGeometry as BufferGeometry}
-        limit={1000} // Optional: max amount of items (for calculating buffer size)
-        range={1000}
-        visible={!selectedNode || true}
-      >
-        <meshBasicMaterial />
-        {dataInitial?.nodes.map((node: NodeExtended) => {
-          const secondaryColor = normalizedSchemasByType[node.node_type]?.secondary_color
-          const color = secondaryColor ?? (COLORS_MAP[nodeTypes.indexOf(node.node_type)] || colors.white)
+    <Instances
+      geometry={roundedRectGeometry as BufferGeometry}
+      limit={1000} // Optional: max amount of items (for calculating buffer size)
+      range={1000}
+      visible={!selectedNode || true}
+    >
+      <meshBasicMaterial />
+      {dataInitial?.nodes.map((node: NodeExtended, index) => {
+        const normalizedNode = nodesNormalized.get(node.ref_id)
+        const scale = index || normalizedNode?.weight || normalizedNode?.properties?.weight || 1
+        const scaleNormalized = Math.cbrt(scale)
+        const scaleToFixed = Number(scaleNormalized.toFixed(0))
 
-          return <Point key={node.ref_id} color={color} node={node} />
-        })}
-      </Instances>
-    </>
+        const secondaryColor = normalizedSchemasByType[node.node_type]?.secondary_color
+        const color = secondaryColor ?? (COLORS_MAP[nodeTypes.indexOf(node.node_type)] || colors.white)
+
+        return <Point key={node.ref_id} color={color} node={node} scale={!scaleFeature ? 1 : scaleToFixed} />
+      })}
+    </Instances>
   )
 }
 
