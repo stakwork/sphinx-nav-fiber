@@ -113,27 +113,26 @@ export const RelevanceList = () => {
 
 const List = styled.ul`
   color: #fff;
-  opacity: 0.9;
   background: rgba(0, 0, 0, 1);
   width: 390px;
   padding: 12px;
   border-radius: 8px;
-  border: 2px solid #fff;
+  border: 12px solid #15161c;
   list-style: none;
   /* perspective: 800px; */
   backface-visibility: hidden;
   max-height: 400px;
   overflow: auto;
+  padding: 0;
 `
 
 const Wrapper = styled.div`
   color: #fff;
-  opacity: 0.9;
   background: rgba(0, 0, 0, 1);
   width: 390px;
   padding: 12px;
   border-radius: 8px;
-  border: 2px solid #fff;
+  border: 12px solid #15161c;
   list-style: none;
   height: 400px;
   overflow: auto;
