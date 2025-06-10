@@ -29,7 +29,7 @@ const filterAndSortEpisodes = (data: FetchDataResponse): Node[] =>
       (node) =>
         node.node_type.toLowerCase() === 'episode' && node.properties?.date && node.properties.status === 'completed',
     )
-    .slice(0, 20)
+    .slice(0, 50)
 
 const handleSubmitForm = async (data: FieldValues): Promise<SubmitErrRes> => {
   const endPoint = 'add_node'
