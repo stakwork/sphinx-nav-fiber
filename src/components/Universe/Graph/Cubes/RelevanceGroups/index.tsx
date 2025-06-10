@@ -61,7 +61,7 @@ export const RelevanceGroups = memo(() => {
 
     const lines: JSX.Element[] = [
       <group key="line-menu">
-        <Line color="white" lineWidth={2} opacity={1} points={[center, posStatic]} transparent />
+        <Line color="white" lineWidth={2} opacity={0.5} points={[center, posStatic]} transparent />
       </group>,
     ]
 
@@ -81,7 +81,7 @@ export const RelevanceGroups = memo(() => {
 
       lines.push(
         <group key={`line-${groupKey}`}>
-          <Line color="white" lineWidth={2} opacity={1} points={[center, pos]} transparent />
+          <Line color="white" lineWidth={2} opacity={0.5} points={[center, pos]} transparent />
         </group>,
       )
     })
@@ -100,8 +100,8 @@ export const RelevanceGroups = memo(() => {
         {nodeBadges.length ? nodeBadges : null}
         {connectingLines}
         <mesh>
-          <ringGeometry args={[nodeSize / 2 + 2, nodeSize / 2 + 3, 64]} />
-          <meshBasicMaterial color="white" opacity={1} side={2} transparent />
+          <ringGeometry args={[nodeSize / 2 + 1, nodeSize / 2 + 3, 64]} />
+          <meshBasicMaterial color="white" opacity={0.5} side={2} transparent />
         </mesh>
       </Billboard>
     </group>

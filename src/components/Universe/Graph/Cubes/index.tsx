@@ -83,6 +83,12 @@ export const Cubes = memo(() => {
     for (let i = start; i < end; i += 1) {
       const object = objects[i] as Mesh & { userData: NodeExtended }
       const background = object.getObjectByName('background') as Mesh | null
+      const backgroundWrapper = object.getObjectByName('background-wrapper') as Group | null
+
+      if (backgroundWrapper && !backgroundWrapper.visible) {
+        backgroundWrapper.visible = true
+      }
+
       const node = object.userData
       const point = points[i]
 
@@ -129,6 +135,10 @@ export const Cubes = memo(() => {
           if (point) {
             point.scale.set(scaleDown, scaleDown, scaleDown)
           }
+        }
+
+        if (isSelected && backgroundWrapper) {
+          backgroundWrapper.visible = false
         }
       } else {
         const distance = object.position.distanceTo(camera.position)

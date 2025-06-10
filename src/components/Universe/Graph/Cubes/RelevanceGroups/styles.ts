@@ -129,8 +129,6 @@ export const Counter = styled.div`
   justify-content: center;
   align-items: center;
   background: #2c3f72;
-  border: 1px solid ${(p) => p.color};
-  border-radius: 6px;
   color: #fff;
   font-size: 8px;
   font-weight: 500;
@@ -139,7 +137,7 @@ export const Counter = styled.div`
   right: 0;
   transform: translate(50%, -50%);
   padding: 2px;
-  min-width: 15px;
+  min-width: 16px;
   height: 16px;
   border-radius: 50%;
 `

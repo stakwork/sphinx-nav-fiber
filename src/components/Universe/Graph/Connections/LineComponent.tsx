@@ -108,15 +108,15 @@ const _LineComponent = (props: LineComponentProps) => {
         dashOffset={1}
         dashScale={1} // Reduce the gap between dashes for better visibility
         dashSize={10} // Increase dash length
-        gapSize={10} // Adjust the spacing between dashes
+        gapSize={40} // Adjust the spacing between dashes
         isLine2
-        lineWidth={1} // Increase the thickness
+        lineWidth={0.5} // Increase the thickness
         name="line"
         points={[sourceX, sourceY, sourceZ, targetX, targetY, targetZ]}
       />
 
       <Billboard>
-        <Text anchorX="center" anchorY="middle" color="white" {...fontProps} fontSize={5}>
+        <Text anchorX="center" anchorY="middle" color="white" {...fontProps} fontSize={4}>
           {label}
         </Text>
       </Billboard>

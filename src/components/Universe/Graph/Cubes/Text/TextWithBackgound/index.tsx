@@ -33,7 +33,7 @@ const TextWithBackgroundComponent = ({ text, id }: TextWithBackgroundProps, ref:
   const sizeHalf = nodeSize / 2
 
   return (
-    <group ref={ref}>
+    <group ref={ref} name="background-wrapper">
       <mesh name="evt-handle" position={[bgWidth / 2 - 1.5, 0, -2]}>
         <mesh name="background" position={[0, 0, 2]} userData={{ ref_id: id }}>
           <boxGeometry args={[bgWidth, bgHeight, 1]} />
