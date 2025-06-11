@@ -198,7 +198,7 @@ export const useDataStore = create<DataStore>()(
         depth: '0',
         ...ai,
         skip: currentPage === 0 ? String(currentPage * itemsPerPage) : String(currentPage * itemsPerPage + 1),
-        limit: word ? '25' : String(itemsPerPage),
+        limit: word ? String(itemsPerPage) : String(itemsPerPage),
         ...(filterNodeTypes.length > 0 ? { node_type: JSON.stringify(filterNodeTypes) } : {}),
         ...(word ? { word } : {}),
         ...(aiRefId && AISearchQuery ? { previous_search_ref_id: aiRefId } : {}),
