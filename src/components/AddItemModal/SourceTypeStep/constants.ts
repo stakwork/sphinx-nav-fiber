@@ -29,6 +29,22 @@ export const OptionTypes: TOption[] = [
     label: 'boolean',
     value: 'boolean',
   },
+  {
+    label: 'float',
+    value: 'float',
+  },
+  {
+    label: 'complex',
+    value: 'complex',
+  },
+  {
+    label: 'datetime',
+    value: 'datetime',
+  },
+  {
+    label: 'list',
+    value: 'list',
+  },
 ]
 
 export const OPTIONS: TOption[] = [
