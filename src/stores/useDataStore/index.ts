@@ -195,7 +195,7 @@ export const useDataStore = create<DataStore>()(
 
       const updatedParams = {
         ...withoutNodeType,
-        depth: filters.depth || "0",
+        depth: filters.depth || '0',
         ...ai,
         skip: currentPage === 0 ? String(currentPage * itemsPerPage) : String(currentPage * itemsPerPage + 1),
         limit: word ? String(itemsPerPage) : String(itemsPerPage),
