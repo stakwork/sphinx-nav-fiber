@@ -21,11 +21,11 @@ import { useUserStore } from '../useUserStore'
 
 export const defaultFilters = {
   skip: 0,
-  limit: 300,
-  depth: '0',
+  limit: 1000,
+  depth: '3',
   sort_by: 'score',
   include_properties: 'true',
-  top_node_count: '50',
+  top_node_count: '40',
   includeContent: 'true',
   node_type: [],
   search_method: 'hybrid',
@@ -195,7 +195,7 @@ export const useDataStore = create<DataStore>()(
 
       const updatedParams = {
         ...withoutNodeType,
-        depth: '0',
+        depth: filters.depth || "0",
         ...ai,
         skip: currentPage === 0 ? String(currentPage * itemsPerPage) : String(currentPage * itemsPerPage + 1),
         limit: word ? String(itemsPerPage) : String(itemsPerPage),

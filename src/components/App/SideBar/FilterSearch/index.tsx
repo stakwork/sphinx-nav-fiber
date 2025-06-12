@@ -22,9 +22,9 @@ type Props = {
 
 const defaultValues = {
   selectedTypes: [] as string[],
-  hops: 1,
+  hops: 3,
   sourceNodes: 10,
-  maxResults: 30,
+  maxResults: 1000,
 }
 
 export const FilterSearch = ({ anchorEl, setAnchorEl, onClose }: Props) => {

@@ -106,8 +106,8 @@ describe('FilterSearch Component', () => {
     await waitFor(() => {
       expect(mockSetFilters).toHaveBeenCalledWith({
         node_type: ['Type1'],
-        limit: 30,
-        depth: '1',
+        limit: 1000,
+        depth: '3',
         top_node_count: '10',
       })
     })
