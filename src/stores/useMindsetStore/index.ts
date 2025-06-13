@@ -6,28 +6,55 @@ import { useDataStore } from '../useDataStore'
 import { useGraphStore } from '../useGraphStore'
 import { usePlayerStore } from '../usePlayerStore'
 
+type Segment = {
+  title: string
+  description: string
+  startTime: number
+  endTime: number
+  source_link: string
+}
+
+function convertNodeToSegment(input: NodeExtended) {
+  const timestamp = input?.properties?.timestamp
+  const [hours, minutes, seconds] = timestamp ? (timestamp as string).split(':').map(Number) : [0, 0, 0]
+  const startTime = hours * 3600 + minutes * 60 + seconds
+
+  return {
+    title: input?.properties?.name || '',
+    description: '', // You must manually add or generate this
+    startTime,
+    endTime: startTime + 30, // Default to 30s duration if not provided
+    source_link: input?.properties?.source_link || '',
+  }
+}
+
 type MindsetStore = {
   clips: NodeExtended[]
   chapters: NodeExtended[] | null
   selectedEpisode: NodeExtended | null
+  highlights: Segment[]
   clipEdges: Link[]
   activeClip: NodeExtended | null
+  selectedSegment: Segment | null
   setSelectedEpisode: (node: NodeExtended) => void
   setClips: (clips: Node[]) => void
   setChapters: (chapters: Node[]) => void
   fetchEpisodeData: (id: string) => void
   setActiveClip: (clip: NodeExtended) => void
+  setSelectedSegment: (segment: Segment | null) => void
 }
 
 const defaultData: Omit<
   MindsetStore,
-  'setSelectedEpisode' | 'setClips' | 'setChapters' | 'fetchEpisodeData' | 'setActiveClip'
+  'setSelectedEpisode' | 'setClips' | 'setChapters' | 'fetchEpisodeData' | 'setActiveClip' | 'setSelectedSegment'
 > = {
   selectedEpisode: null,
   clips: [],
+  highlights: [],
   clipEdges: [],
   chapters: [],
   activeClip: null,
+  selectedSegment: null,
 }
 
 export const useMindsetStore = create<MindsetStore>((set) => ({
@@ -63,6 +90,8 @@ export const useMindsetStore = create<MindsetStore>((set) => ({
           timeToMilliseconds(a?.properties?.timestamp || '') - timeToMilliseconds(b?.properties?.timestamp || ''),
       )
 
+    const highlights = chapters.map(convertNodeToSegment)
+
     const neighbourhoods = chapters.map((chapter) => ({
       ref_id: chapter.ref_id,
       name: chapter.properties?.name || '',
@@ -89,7 +118,8 @@ export const useMindsetStore = create<MindsetStore>((set) => ({
       edges: [...data.edges],
     })
 
-    set({ clips, chapters, selectedEpisode, clipEdges })
+    set({ clips, chapters, selectedEpisode, clipEdges, highlights })
   },
   setActiveClip: (clip) => set({ activeClip: clip }),
+  setSelectedSegment: (selectedSegment) => set({ selectedSegment }),
 }))
