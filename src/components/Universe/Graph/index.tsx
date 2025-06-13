@@ -1,5 +1,4 @@
 import { Billboard, Html, ScreenSpace, Text } from '@react-three/drei'
-import { useThree } from '@react-three/fiber'
 import { useControls } from 'leva'
 import { isEqual } from 'lodash'
 import { useEffect, useMemo, useRef } from 'react'
@@ -169,10 +168,6 @@ export const Graph = () => {
   const nodesPositionRef = useRef(new Map<string, NodePosition>())
 
   const { graphStyle, setGraphRadius, neighbourhoods } = useGraphStore((s) => s)
-
-  const { size } = useThree()
-
-  console.log(size)
 
   const {
     simulation,
