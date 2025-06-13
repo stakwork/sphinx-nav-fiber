@@ -17,6 +17,7 @@ import { Cubes } from './Cubes'
 import { TextNode } from './Cubes/Text'
 import { Earth } from './Earth'
 import { Groups } from './Groups'
+import { Highlights } from './Highlights'
 import { Layers } from './Layers'
 import { LoadingNodes } from './LoadingNodes'
 import { Neighbourhoods } from './Neighborhoods'
@@ -496,7 +497,8 @@ export const Graph = () => {
         {graphStyle !== 'earth' && <Connections linksPosition={linksPositionRef.current} />}
       </group>
       {neighbourhoods?.length && graphStyle === 'force' ? <Neighbourhoods /> : null}
-      <Groups />
+      {false && <Groups />}
+      {true && <Highlights />}
       <NodeDetailsPanel />
       {graphStyle === 'split' && <Layers />}
       {graphStyle === 'earth' && <Earth />}
@@ -514,6 +516,20 @@ export const Graph = () => {
               ))}
             </ul>
           </Html>
+        </ScreenSpace>
+      )}
+      {false && (
+        <ScreenSpace depth={1}>
+          {segments.map((i, index) => (
+            <group key={i.title} position={[index * 15 * 2, 0, -90]}>
+              <Hexagon color="#50c878" label="some text is here" position={[0, 0, 0]} radius={15} />
+              <Html>
+                <ul style={{ color: '#fff' }}>
+                  <li key={i.title}>{i.title}</li>
+                </ul>
+              </Html>
+            </group>
+          ))}
         </ScreenSpace>
       )}
     </group>
