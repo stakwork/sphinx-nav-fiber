@@ -55,6 +55,10 @@ export const Transcript = ({ name }: Props) => {
 
     if (currentTime) {
       calculateActiveClip()
+    } else {
+      setIsFirst(true)
+
+      setActiveClip(clips[0])
     }
   }, [currentTime, clips, activeClip, setActiveClip])
 

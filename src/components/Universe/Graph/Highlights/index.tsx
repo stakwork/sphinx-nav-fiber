@@ -92,13 +92,13 @@ export const Highlights = () => {
                   background: 'rgba(0, 0, 0, 0.8)',
                   borderRadius: '50%',
                   padding: '6px',
-                  width: '150px',
-                  height: '150px',
+                  width: '100px',
+                  height: '100px',
                   color: 'white',
                   border: selectedId === highlight.title ? '2px solid #ffd700' : '1px solid #2e93b3',
                   textAlign: 'center',
                   fontWeight: 'bold',
-                  fontSize: '12px',
+                  fontSize: '8px',
                 }}
                 type="button"
               >
