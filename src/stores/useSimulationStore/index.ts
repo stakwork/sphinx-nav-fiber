@@ -93,7 +93,8 @@ export const useSimulationStore = create<SimulationStore>((set, get) => ({
     const filteredLinks = links.filter(
       (i: Link) =>
         nodes.some((n: NodeExtended) => n.ref_id === i.source) &&
-        nodes.some((n: NodeExtended) => n.ref_id === i.target),
+        nodes.some((n: NodeExtended) => n.ref_id === i.target) && 
+        i.index !== null,
     )
 
     try {
