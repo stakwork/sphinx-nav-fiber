@@ -6,14 +6,9 @@ import { useMindsetStore } from '~/stores/useMindsetStore'
 import { usePlayerStore } from '~/stores/usePlayerStore'
 import { useSimulationStore } from '~/stores/useSimulationStore'
 import { NodeExtended } from '~/types'
-import { colors } from '~/utils'
 import { Viewer } from './Viewer'
 
-type Props = {
-  name: string
-}
-
-export const Transcript = ({ name }: Props) => {
+export const Transcript = () => {
   const clips = useMindsetStore((s) => s.clips)
   const setActiveClip = useMindsetStore((s) => s.setActiveClip)
   const activeClip = useMindsetStore((s) => s.activeClip)
@@ -81,36 +76,13 @@ export const Transcript = ({ name }: Props) => {
   }
 
   return (
-    <Wrapper>
-      <Flex className="heading">{name}</Flex>
-      {activeClip ? (
-        <TranscriptWrapper direction="row">
-          {activeClip.properties?.transcript && (
-            <Viewer isFirst={isFirst} transcriptString={activeClip.properties.transcript} />
-          )}
-        </TranscriptWrapper>
-      ) : null}
-    </Wrapper>
+    <TranscriptWrapper direction="row">
+      {activeClip?.properties?.transcript && (
+        <Viewer isFirst={isFirst} transcriptString={activeClip.properties.transcript} />
+      )}
+    </TranscriptWrapper>
   )
 }
-
-const Wrapper = styled(Flex)`
-  .heading {
-    font-weight: 700;
-    font-size: 16px;
-    margin-bottom: 16px;
-  }
-  color: ${colors.white};
-  background: ${colors.BG1};
-  border-radius: 8px;
-  padding: 24px;
-  overflow-y: auto;
-  flex: 1 1 100%;
-  @media (max-width: 768px) {
-    max-width: 100vw;
-    padding: 0;
-  }
-`
 
 const TranscriptWrapper = styled(Flex)`
   flex-wrap: wrap;
