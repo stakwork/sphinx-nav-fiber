@@ -493,7 +493,7 @@ export const Graph = () => {
       </group>
       {neighbourhoods?.length && graphStyle === 'force' ? <Neighbourhoods /> : null}
       {false && <Groups />}
-      {true && <Highlights />}
+      {false && <Highlights />}
       <NodeDetailsPanel />
       {graphStyle === 'split' && <Layers />}
       {graphStyle === 'earth' && <Earth />}
