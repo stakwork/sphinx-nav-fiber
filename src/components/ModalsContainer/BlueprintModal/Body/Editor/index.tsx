@@ -445,7 +445,7 @@ export const Editor = ({
   })
 
   useEffect(() => {
-    if (selectedColor !== selectedSchema?.primary_color) {
+    if (isPopoverOpen && selectedColor !== selectedSchema?.primary_color) {
       setSubmitDisabled(false)
     }
 
@@ -468,7 +468,7 @@ export const Editor = ({
     })
 
     return () => subscription.unsubscribe()
-  }, [form, attributes, parsedData, selectedSchema, loading, displayParentError, selectedColor])
+  }, [form, attributes, parsedData, selectedSchema, loading, displayParentError, selectedColor, isPopoverOpen])
 
   const resolvedParentValue = () => parentOptions?.find((i) => i.value === parent)
 
