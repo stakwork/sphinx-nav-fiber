@@ -385,9 +385,7 @@ export const useDataStore = create<DataStore>()(
       set({ nodesNormalized: newNodesNormalized })
     },
 
-    removeNode: (id) => {
-      console.log(id)
-    },
+    removeNode: (id) => id,
 
     setRunningProjectId: (runningProjectId) => set({ runningProjectId, runningProjectMessages: [] }),
     setRunningProjectMessages: (message) => {
