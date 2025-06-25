@@ -1,8 +1,5 @@
 import { create } from 'zustand'
-import { getPathway } from '~/network/fetchSourcesData'
 import { NodeExtended } from '~/types'
-import { useDataStore } from '../useDataStore'
-import { usePlayerStore } from '../usePlayerStore'
 
 type TweetMindsetStore = {
   selectedTweets: NodeExtended[]
@@ -41,14 +38,5 @@ export const useTweetMindsetStore = create<TweetMindsetStore>((set) => ({
   setTweetIsPlaying: (isPlaying: boolean) => set({ tweetIsPlaying: isPlaying }),
   setTweetDuration: (tweetDuration: number) => set({ tweetDuration }),
   setSelectedTweet: (selectedTweet: string) => set({ selectedTweet }),
-  fetchTweetData: async (id: string) => {
-    const { addNewNode } = useDataStore.getState()
-    const { setPlayingNode } = usePlayerStore.getState()
-
-    console.log(addNewNode, setPlayingNode)
-
-    const data = await getPathway(id, [], [], '', true, 0, 1, 500)
-
-    console.log(data)
-  },
+  fetchTweetData: async (id: string) => id,
 }))
