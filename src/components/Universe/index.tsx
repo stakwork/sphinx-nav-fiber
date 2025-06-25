@@ -25,7 +25,6 @@ import { CursorTooltip } from './CursorTooltip/index'
 import { Graph } from './Graph'
 import { GraphSearch } from './GraphSearch'
 import { HtmlContent } from './HtmlContent'
-import { Lights } from './Lights'
 import { Overlay } from './Overlay'
 import { Preloader } from './Preloader'
 import { SelectionContent } from './SelectionContent'
@@ -53,8 +52,6 @@ const Content = () => {
   return (
     <>
       <color args={[colors.BLUE_PRESS_STATE || universeColor]} attach="transparent" />
-
-      <Lights />
 
       <Controls />
 

@@ -67,7 +67,7 @@ export const useMindsetStore = create<MindsetStore>((set) => ({
     const { setPlayingNode } = usePlayerStore.getState()
     const { setNeighbourhoods } = useGraphStore.getState()
 
-    const data = await getPathway(id, ['Clip', 'Chapter', 'Show', 'Host', 'Guest'], [], '', true, 0, 1, 500)
+    const data = await getPathway(id, ['Clip', 'Chapter', 'Show', 'Host', 'Guest', 'Person'], [], '', true, 0, 1, 500)
 
     const clips = data.nodes
       .filter((node) => node.node_type === 'Clip')
@@ -110,7 +110,8 @@ export const useMindsetStore = create<MindsetStore>((set) => ({
         node.node_type === 'Show' ||
         node.node_type === 'Episode' ||
         node.node_type === 'Host' ||
-        node.node_type === 'Guest',
+        node.node_type === 'Guest' ||
+        node.node_type === 'Person',
     )
 
     addNewNode({

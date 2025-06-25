@@ -16,10 +16,10 @@ import { Cubes } from './Cubes'
 import { TextNode } from './Cubes/Text'
 import { Earth } from './Earth'
 import { Groups } from './Groups'
-import { Highlights } from './Highlights'
 import { Layers } from './Layers'
 import { LoadingNodes } from './LoadingNodes'
 import { Neighbourhoods } from './Neighborhoods'
+import { RootNodes } from './RootNodes'
 import { NodeDetailsPanel } from './UI'
 import { calculateRadius } from './utils/calculateGroupRadius'
 
@@ -29,6 +29,361 @@ type HexagonProps = {
   color?: string
   label?: string
 }
+
+const ChapterNodes = [
+  // root
+  {
+    date_added_to_graph: 1750606658, // any timestamp is fine
+    node_type: 'chaptersRoot',
+    properties: { name: 'Chapters', isRoot: true },
+    ref_id: 'chapters-root',
+    x: 0,
+    y: 0,
+    z: 0,
+  },
+  {
+    date_added_to_graph: 1750606659,
+    node_type: 'usersRoot',
+    properties: { name: 'Users', isRoot: true },
+    ref_id: 'users-root',
+    x: 0,
+    y: 0,
+    z: 0,
+  },
+  {
+    date_added_to_graph: 1750606665,
+    node_type: 'controversialViewsRoot',
+    properties: { name: 'Controversial Views Root', isRoot: true },
+    ref_id: 'controversial-views-root',
+    x: 0,
+    y: 0,
+    z: 0,
+  },
+
+  // controversial views
+  {
+    date_added_to_graph: 1750606665,
+    node_type: 'ControversialView',
+    properties: {
+      name: 'Viewpoint A – AI Ethics Skepticism',
+    },
+    ref_id: 'view-skepticism',
+    x: 0,
+    y: 0,
+    z: 0,
+  },
+  {
+    date_added_to_graph: 1750606665,
+    node_type: 'ControversialView',
+    properties: {
+      name: 'Viewpoint B – LLM Over-Regulation Concern',
+    },
+    ref_id: 'view-regulation',
+    x: 0,
+    y: 0,
+    z: 0,
+  },
+  {
+    date_added_to_graph: 1750606665,
+    node_type: 'ControversialView',
+    properties: {
+      name: 'Viewpoint C – Swarm AGI Existential Risk',
+    },
+    ref_id: 'view-existential-risk',
+    x: 0,
+    y: 0,
+    z: 0,
+  },
+
+  // users
+
+  {
+    date_added_to_graph: 1750606660,
+    node_type: 'User',
+    properties: { name: 'alice' },
+    ref_id: 'user-alice',
+    x: 0,
+    y: 0,
+    z: 0,
+  },
+  {
+    date_added_to_graph: 1750606660,
+    node_type: 'User',
+    properties: { name: 'bob' },
+    ref_id: 'user-bob',
+    x: 0,
+    y: 0,
+    z: 0,
+  },
+  {
+    date_added_to_graph: 1750606660,
+    node_type: 'User',
+    properties: { name: 'carol' },
+    ref_id: 'user-carol',
+    x: 0,
+    y: 0,
+    z: 0,
+  },
+  {
+    date_added_to_graph: 1750606660,
+    node_type: 'User',
+    properties: { name: 'dave' },
+    ref_id: 'user-dave',
+    x: 0,
+    y: 0,
+    z: 0,
+  },
+
+  // chapters (unchanged)
+  {
+    date_added_to_graph: 1750606656.4673522,
+    node_type: 'Chapter',
+    properties: {
+      is_ad: 'False',
+      name: 'Introduction to Swarm Agentech: Innovative Multi-Agent System Architectures',
+      source_link: 'https://www.youtube.com/watch?v=3tiAvRcviiY',
+      timestamp: '00:00:00',
+    },
+    ref_id: '5e972f6c-c245-4f9e-81e7-760f921d5d94',
+    x: 0,
+    y: 0,
+    z: 0,
+  },
+  {
+    date_added_to_graph: 1750606656.561675,
+    node_type: 'Chapter',
+    properties: {
+      is_ad: 'False',
+      name: 'Foundations of Particle Swarm Optimization in AI Systems',
+      source_link: 'https://www.youtube.com/watch?v=3tiAvRcviiY',
+      timestamp: '00:01:00',
+    },
+    ref_id: 'd84b38ae-78d8-42d0-bde2-ce13dff3cfc2',
+    x: 0,
+    y: 0,
+    z: 0,
+  },
+  {
+    date_added_to_graph: 1750606656.649143,
+    node_type: 'Chapter',
+    properties: {
+      is_ad: 'False',
+      name: 'Activating the Simulation: Initiating Multi-Agent System Processes',
+      source_link: 'https://www.youtube.com/watch?v=3tiAvRcviiY',
+      timestamp: '00:02:26',
+    },
+    ref_id: '08f9a888-6914-4d68-817d-d543e607eebd',
+    x: 0,
+    y: 0,
+    z: 0,
+  },
+  {
+    date_added_to_graph: 1750606656.7518668,
+    node_type: 'Chapter',
+    properties: {
+      is_ad: 'False',
+      name: 'Experimental Design and Critique: Iterative Multi-Agent Configuration',
+      source_link: 'https://www.youtube.com/watch?v=3tiAvRcviiY',
+      timestamp: '00:04:53',
+    },
+    ref_id: '513c4ec4-0cc2-4d6a-a31e-a918943a89d3',
+    x: 0,
+    y: 0,
+    z: 0,
+  },
+  {
+    date_added_to_graph: 1750606656.8570254,
+    node_type: 'Chapter',
+    properties: {
+      is_ad: 'False',
+      name: 'Velocity Updates and Symbolic Synthesis: Mapping Physics to AI Strategies',
+      source_link: 'https://www.youtube.com/watch?v=3tiAvRcviiY',
+      timestamp: '00:09:03',
+    },
+    ref_id: '1ac01033-ebfa-459e-8266-b1d560d130f1',
+    x: 0,
+    y: 0,
+    z: 0,
+  },
+  {
+    date_added_to_graph: 1750606656.957388,
+    node_type: 'Chapter',
+    properties: {
+      is_ad: 'False',
+      name: 'Case Study: Multi-Agent Travel Planning Task',
+      source_link: 'https://www.youtube.com/watch?v=3tiAvRcviiY',
+      timestamp: '00:13:57',
+    },
+    ref_id: '85efbf4d-a78b-43bb-bc11-b946a8bf12a6',
+    x: 0,
+    y: 0,
+    z: 0,
+  },
+  {
+    date_added_to_graph: 1750606657.0404751,
+    node_type: 'Chapter',
+    properties: {
+      is_ad: 'False',
+      name: 'Enhancing Collaboration with Advanced LLM Reasoning',
+      source_link: 'https://www.youtube.com/watch?v=3tiAvRcviiY',
+      timestamp: '00:30:13',
+    },
+    ref_id: '6b1cbda7-dc90-4ec3-a1b0-b74199ea69cb',
+    x: 0,
+    y: 0,
+    z: 0,
+  },
+  {
+    date_added_to_graph: 1750606657.134932,
+    node_type: 'Chapter',
+    properties: {
+      is_ad: 'False',
+      name: 'Scaling AI Performance: Benchmarking and Comparative Analysis of LLM Configurations',
+      source_link: 'https://www.youtube.com/watch?v=3tiAvRcviiY',
+      timestamp: '00:34:04',
+    },
+    ref_id: 'cfedc0e2-e86c-4f29-b896-fd2ddff8844c',
+    x: 0,
+    y: 0,
+    z: 0,
+  },
+  {
+    date_added_to_graph: 1750606657.2447557,
+    node_type: 'Chapter',
+    properties: {
+      is_ad: 'False',
+      name: 'Concluding Thoughts and Future Directions in Swarm Intelligence',
+      source_link: 'https://www.youtube.com/watch?v=3tiAvRcviiY',
+      timestamp: '00:41:11',
+    },
+    ref_id: 'a85cd540-bc16-43a4-8e09-b5924fbba5c0',
+    x: 0,
+    y: 0,
+    z: 0,
+  },
+]
+
+// ─────────────────────────
+//  LINKS
+// ─────────────────────────
+const ChapterLinks = [
+  {
+    source: 'chapters-root',
+    target: '5e972f6c-c245-4f9e-81e7-760f921d5d94',
+    ref_id: 'chapters-root-5e972f6c-c245-4f9e-81e7-760f921d5d94',
+    weight: 1,
+    edge_type: 'chapter',
+  },
+  {
+    source: 'chapters-root',
+    target: 'd84b38ae-78d8-42d0-bde2-ce13dff3cfc2',
+    ref_id: 'chapters-root-d84b38ae-78d8-42d0-bde2-ce13dff3cfc2',
+    weight: 1,
+    edge_type: 'chapter',
+  },
+  {
+    source: 'chapters-root',
+    target: '08f9a888-6914-4d68-817d-d543e607eebd',
+    ref_id: 'chapters-root-08f9a888-6914-4d68-817d-d543e607eebd',
+    weight: 1,
+    edge_type: 'chapter',
+  },
+  {
+    source: 'chapters-root',
+    target: '513c4ec4-0cc2-4d6a-a31e-a918943a89d3',
+    ref_id: 'chapters-root-513c4ec4-0cc2-4d6a-a31e-a918943a89d3',
+    weight: 1,
+    edge_type: 'chapter',
+  },
+  {
+    source: 'chapters-root',
+    target: '1ac01033-ebfa-459e-8266-b1d560d130f1',
+    ref_id: 'chapters-root-1ac01033-ebfa-459e-8266-b1d560d130f1',
+    weight: 1,
+    edge_type: 'chapter',
+  },
+  {
+    source: 'chapters-root',
+    target: '85efbf4d-a78b-43bb-bc11-b946a8bf12a6',
+    ref_id: 'chapters-root-85efbf4d-a78b-43bb-bc11-b946a8bf12a6',
+    weight: 1,
+    edge_type: 'chapter',
+  },
+  {
+    source: 'chapters-root',
+    target: '6b1cbda7-dc90-4ec3-a1b0-b74199ea69cb',
+    ref_id: 'chapters-root-6b1cbda7-dc90-4ec3-a1b0-b74199ea69cb',
+    weight: 1,
+    edge_type: 'chapter',
+  },
+  {
+    source: 'chapters-root',
+    target: 'cfedc0e2-e86c-4f29-b896-fd2ddff8844c',
+    ref_id: 'chapters-root-cfedc0e2-e86c-4f29-b896-fd2ddff8844c',
+    weight: 1,
+    edge_type: 'chapter',
+  },
+  {
+    source: 'chapters-root',
+    target: 'a85cd540-bc16-43a4-8e09-b5924fbba5c0',
+    ref_id: 'chapters-root-a85cd540-bc16-43a4-8e09-b5924fbba5c0',
+    weight: 1,
+    edge_type: 'chapter',
+  },
+
+  // user edges
+  {
+    source: 'users-root',
+    target: 'user-alice',
+    ref_id: 'users-root-user-alice',
+    weight: 1,
+    edge_type: 'user',
+  },
+  {
+    source: 'users-root',
+    target: 'user-bob',
+    ref_id: 'users-root-user-bob',
+    weight: 1,
+    edge_type: 'user',
+  },
+  {
+    source: 'users-root',
+    target: 'user-carol',
+    ref_id: 'users-root-user-carol',
+    weight: 1,
+    edge_type: 'user',
+  },
+  {
+    source: 'users-root',
+    target: 'user-dave',
+    ref_id: 'users-root-user-dave',
+    weight: 1,
+    edge_type: 'user',
+  },
+
+  // controversial views
+  {
+    source: 'controversial-views-root',
+    target: 'view-skepticism',
+    ref_id: 'controversial-views-root-view-skepticism',
+    weight: 1,
+    edge_type: 'controversial',
+  },
+  {
+    source: 'controversial-views-root',
+    target: 'view-regulation',
+    ref_id: 'controversial-views-root-view-regulation',
+    weight: 1,
+    edge_type: 'controversial',
+  },
+  {
+    source: 'controversial-views-root',
+    target: 'view-existential-risk',
+    ref_id: 'controversial-views-root-view-existential-risk',
+    weight: 1,
+    edge_type: 'controversial',
+  },
+]
 
 const Hexagon = ({ position, radius = 1, color = 'skyblue', label }: HexagonProps) => {
   const shape = useMemo(() => {
@@ -493,8 +848,10 @@ export const Graph = () => {
       </group>
       {neighbourhoods?.length && graphStyle === 'force' ? <Neighbourhoods /> : null}
       {false && <Groups />}
-      {true && <Highlights />}
       <NodeDetailsPanel />
+      <ScreenSpace depth={1000}>
+        <RootNodes edges={ChapterLinks} nodes={ChapterNodes} />
+      </ScreenSpace>
       {graphStyle === 'split' && <Layers />}
       {graphStyle === 'earth' && <Earth />}
       {(isLoadingNew || isFetching) && <LoadingNodes />}
