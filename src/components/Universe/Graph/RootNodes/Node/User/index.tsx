@@ -59,8 +59,5 @@ const IconWrapper = styled(Flex)`
   justify-content: center;
   flex-shrink: 0;
   overflow: hidden;
-  img {
-    width: 100%;
-    height: 100%;
-  }
+  border: 1px solid white;
 `
