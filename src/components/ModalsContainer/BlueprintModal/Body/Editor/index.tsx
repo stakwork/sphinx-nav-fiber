@@ -445,7 +445,7 @@ export const Editor = ({
   })
 
   useEffect(() => {
-    if (selectedColor !== selectedSchema?.primary_color) {
+    if (isPopoverOpen && selectedColor !== selectedSchema?.primary_color) {
       setSubmitDisabled(false)
     }
 
@@ -468,7 +468,7 @@ export const Editor = ({
     })
 
     return () => subscription.unsubscribe()
-  }, [form, attributes, parsedData, selectedSchema, loading, displayParentError, selectedColor])
+  }, [form, attributes, parsedData, selectedSchema, loading, displayParentError, selectedColor, isPopoverOpen])
 
   const resolvedParentValue = () => parentOptions?.find((i) => i.value === parent)
 
@@ -521,6 +521,12 @@ export const Editor = ({
   const IconComponent = Icons[selectedIcon as keyof typeof Icons]
 
   const parentType = selectedSchema ? selectedSchema.type : parent
+
+  const getUniqueAttributes = (attrList: Attribute[]): TAutocompleteOption[] => {
+    const uniqueKeys = new Set(attributes.map((attr) => attr.key))
+
+    return Array.from(uniqueKeys).map((key) => ({ label: key, value: key }))
+  }
 
   return (
     <Flex>
@@ -695,9 +701,7 @@ export const Editor = ({
                 <Grid item mb={2} width="70%">
                   <AutoComplete
                     onSelect={(val) => setValue('selectedIndex', val?.value || '')}
-                    options={attributes
-                      .filter((attr) => attr.key)
-                      .map((attr) => ({ label: attr.key, value: attr.key }))}
+                    options={getUniqueAttributes(attributes)}
                     selectedValue={resolvedSelectedIndexValue}
                   />
                 </Grid>

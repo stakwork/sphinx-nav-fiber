@@ -15,6 +15,7 @@ import { Connections } from './Connections'
 import { Cubes } from './Cubes'
 import { TextNode } from './Cubes/Text'
 import { Earth } from './Earth'
+import { FloatingNodes } from './FloatingNodes'
 import { Groups } from './Groups'
 import { Layers } from './Layers'
 import { LoadingNodes } from './LoadingNodes'
@@ -514,6 +515,7 @@ export const Graph = () => {
           </Html>
         </ScreenSpace>
       )}
+      <FloatingNodes />
       {false && (
         <ScreenSpace depth={1}>
           {segments.map((i, index) => (
