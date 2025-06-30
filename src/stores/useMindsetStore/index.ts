@@ -5,6 +5,7 @@ import { timeToMilliseconds } from '~/utils'
 import { useDataStore } from '../useDataStore'
 import { useGraphStore } from '../useGraphStore'
 import { usePlayerStore } from '../usePlayerStore'
+import { useRootNodesStore } from '../useRootNodesStore'
 
 type Segment = {
   title: string
@@ -12,6 +13,72 @@ type Segment = {
   startTime: number
   endTime: number
   source_link: string
+}
+
+const handleRootNodes = (nodes: Node[]) => {
+  const show = nodes.find((node) => node.node_type === 'Show')
+
+  const typesMap: Record<string, Node[]> = nodes.reduce((acc, node) => {
+    const type = node.node_type
+
+    if (!acc[type]) {
+      acc[type] = [node]
+    } else if (acc[type].length < 15) {
+      acc[type].push(node)
+    }
+
+    return acc
+  }, {} as Record<string, Node[]>)
+
+  const newEdges: Link[] = []
+  const newNodes: Node[] = []
+  const rootNodes: Node[] = []
+
+  Object.keys(typesMap).forEach((type) => {
+    // Add a root node for each type
+    const rootNode: Node = {
+      date_added_to_graph: 1750606658, // any timestamp is fine
+      node_type: `${type}-root`,
+      // @ts-expect-error: properties is typed as {[key: string]: never | undefined}, but we want to allow this
+      properties: { name: type, isRoot: true },
+      ref_id: `${type}-root`,
+      x: 0,
+      y: 0,
+      z: 0,
+      edge_count: 0,
+      label: `${type}-root`,
+      name: type,
+    }
+
+    if (show && false) {
+      newEdges.push({
+        source: `Show-root`,
+        target: rootNode.ref_id,
+        ref_id: `show-root-${type}`,
+        edge_type: 'Show',
+      })
+    }
+
+    nodes.push(rootNode)
+    rootNodes.push(rootNode)
+
+    const typeNodes = typesMap[type]
+
+    newNodes.push(...typeNodes)
+
+    typeNodes.forEach((node) => {
+      const nodeRefId = node.ref_id
+
+      newEdges.push({
+        source: `${type}-root`,
+        target: nodeRefId,
+        ref_id: `${type}-root-${nodeRefId}`,
+        edge_type: type,
+      })
+    })
+  })
+
+  return { nodes: [...newNodes, ...rootNodes], links: newEdges }
 }
 
 function convertNodeToSegment(input: NodeExtended) {
@@ -64,6 +131,7 @@ export const useMindsetStore = create<MindsetStore>((set) => ({
   setChapters: (chapters) => set({ chapters }),
   fetchEpisodeData: async (id: string) => {
     const { addNewNode } = useDataStore.getState()
+    const { setRootStoreData } = useRootNodesStore.getState()
     const { setPlayingNode } = usePlayerStore.getState()
     const { setNeighbourhoods } = useGraphStore.getState()
 
@@ -111,8 +179,15 @@ export const useMindsetStore = create<MindsetStore>((set) => ({
         node.node_type === 'Episode' ||
         node.node_type === 'Host' ||
         node.node_type === 'Guest' ||
-        node.node_type === 'Person',
+        node.node_type === 'Person' ||
+        node.node_type === 'User',
     )
+
+    const rootData = handleRootNodes(
+      data.nodes.filter((node) => node.node_type === 'Chapter' || node.node_type === 'Person'),
+    )
+
+    setRootStoreData(rootData)
 
     addNewNode({
       nodes: [...starterData],

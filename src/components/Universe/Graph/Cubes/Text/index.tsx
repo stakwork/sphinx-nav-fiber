@@ -2,7 +2,6 @@ import { Billboard, Svg } from '@react-three/drei'
 import { memo, useEffect, useRef, useState } from 'react'
 import { Group, Mesh, MeshBasicMaterial, Texture, TextureLoader } from 'three'
 import { Icons } from '~/components/Icons'
-import { useTraceUpdate } from '~/hooks/useTraceUpdate'
 import { useSchemaStore } from '~/stores/useSchemaStore'
 import { NodeExtended } from '~/types'
 import { removeEmojis } from '~/utils/removeEmojisFromText'
@@ -24,8 +23,6 @@ export const TextNode = memo(
     const nodeRef = useRef<Mesh | null>(null)
     const [texture, setTexture] = useState<Texture | null>(null)
     const backgroundRef = useRef<Group | null>(null)
-
-    useTraceUpdate(props)
 
     const { normalizedSchemasByType, getNodeKeysByType } = useSchemaStore((s) => s)
     const keyProperty = getNodeKeysByType(node.node_type) || ''

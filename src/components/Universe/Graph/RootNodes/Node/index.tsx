@@ -73,7 +73,7 @@ export const NodeSphere = memo(
             {['User', 'Person'].includes(nodeType) ? (
               <User imageUrl={imageUrl} name={name} />
             ) : (
-              <Common isRoot={isRoot} name={name} />
+              <Common isRoot={isRoot} name={name} radius={isRoot ? radius / 3 : radius} />
             )}
           </Flex>
         </Html>

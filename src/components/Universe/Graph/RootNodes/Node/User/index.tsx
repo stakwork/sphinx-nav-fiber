@@ -2,7 +2,7 @@ import styled from 'styled-components'
 import { Avatar } from '~/components/common/Avatar'
 import { Flex } from '~/components/common/Flex'
 
-const radius = 90
+const radius = 120
 
 type Props = {
   name: string
@@ -12,7 +12,7 @@ type Props = {
 export const User = ({ name, imageUrl }: Props) => (
   <Wrapper>
     <IconWrapper className="icon">
-      <Avatar rounded src={imageUrl} type="user" />
+      <Avatar rounded size={radius / 3} src={imageUrl} type="user" />
     </IconWrapper>
     <div className="content">
       <span>{name}</span>
@@ -31,8 +31,8 @@ const Wrapper = styled(Flex)`
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    padding: 0 10px;
-    font-size: 12px;
+    padding: 0 4px;
+    font-size: 14px;
     white-space: nowrap;
     text-align: left;
     overflow: hidden;

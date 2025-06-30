@@ -1,14 +1,17 @@
 /* eslint-disable no-param-reassign */
 import { Line, ScreenSpace } from '@react-three/drei'
-import { useFrame } from '@react-three/fiber'
+import { useFrame, useThree } from '@react-three/fiber'
 import { forceCenter, forceCollide, forceLink, forceManyBody, forceSimulation } from 'd3-force-3d'
 import { useEffect, useRef, useState } from 'react'
 import * as THREE from 'three'
 
+import { useGraphStore } from '~/stores/useGraphStore'
 import { useRootNodesStore } from '~/stores/useRootNodesStore'
 import { useSchemaStore } from '~/stores/useSchemaStore'
 import { Link, Node } from '~/types'
+import { useNodeNavigation } from '../../useNodeNavigation'
 import { NodeSphere } from './Node'
+import { SelectionList } from './SelectionList'
 
 export const radius = 90
 
@@ -18,21 +21,30 @@ const nodeRadius = (n: Node) => (n.ref_id.endsWith('-root') ? radius * 2 : radiu
 
 export const RootNodes = () => {
   const rootStoreData = useRootNodesStore((s) => s.rootStoreData)
-
+  const activeView = useRootNodesStore((s) => s.activeView)
+  const setActiveView = useRootNodesStore((s) => s.setActiveView)
   const { nodes, links: edges } = rootStoreData || { nodes: [], links: [] }
-  const [hovered, setHovered] = useState<Node | null>(null)
+
+  const setHoveredNode = useGraphStore((s) => s.setHoveredNode)
+
+  const { navigateToNode } = useNodeNavigation()
+
+  const [selectedGroup, setSelectedGroup] = useState<Node | null>(null)
+  const [connectedNodeIds, setConnectedNodeIds] = useState<Set<string>>(new Set())
+
+  const { size: viewPortSize } = useThree()
+
   const positionsRef = useRef<Map<string, THREE.Vector3>>(new Map())
   const simulationRef = useRef<d3.Simulation<Node, Link> | null>(null)
-  const movingToCenterRef = useRef<string | null>(null)
-  const previousFixedRef = useRef<string | null>(null)
   const nodesGroupRef = useRef<THREE.Group>(null!)
 
   const { getNodeKeysByType } = useSchemaStore((s) => s)
 
-  console.log(hovered)
+  const clamp = (val: number, min: number, max: number) => Math.max(min, Math.min(max, val))
 
+  // Initialize simulation
   useEffect(() => {
-    const simNodes: Node[] = [...nodes].map((n) => ({ ...n }))
+    const simNodes: Node[] = nodes.map((n) => ({ ...n }))
 
     const simEdges: Link[] = edges.map((e) => ({
       ...e,
@@ -42,7 +54,7 @@ export const RootNodes = () => {
 
     const sim = forceSimulation(simNodes)
       .stop()
-      .alphaTarget(0.05) // keep simulation active
+      .alphaTarget(0.05)
       .force('center', forceCenter(0, 0).strength(1))
       .force('charge', forceManyBody().strength(-10))
       .force(
@@ -65,141 +77,145 @@ export const RootNodes = () => {
     simulationRef.current = sim
   }, [nodes, edges])
 
-  const clamp = (val: number, min: number, max: number) => Math.max(min, Math.min(max, val))
-
+  // Regular simulation update (only when no node is selected)
   useFrame(({ size }) => {
     const sim = simulationRef.current
 
-    if (!sim) {
-      return
+    if (!sim || activeView === 'list') {
+      return // Don't update positions when a node is selected
     }
 
-    // sim.tick()
-
     sim.nodes().forEach((node, index) => {
-      // console.log(node.x, node.y)
-
       node.x = clamp(node.x!, -size.width + radius, size.width - radius)
       node.y = clamp(node.y!, -size.height + radius, size.height - radius)
 
-      const id = node.ref_id
       const pos = new THREE.Vector3(node.x!, node.y!, node.z!)
+
+      positionsRef.current.set(node.ref_id, pos)
 
       if (nodesGroupRef.current.children[index]) {
         nodesGroupRef.current.children[index].position.set(pos.x, pos.y, pos.z)
       }
-
-      if (id === movingToCenterRef.current) {
-        const target = new THREE.Vector3(0, 0, 0)
-
-        pos.lerp(target, 0.5) // Lower = smoother
-
-        // Update simulation node position
-        node.x = pos.x
-        node.y = pos.y
-        node.z = pos.z
-
-        // Stop when close
-        if (pos.length() < 1) {
-          node.fx = 0
-          node.fy = 0
-          node.fz = 0
-          movingToCenterRef.current = null
-        }
-      }
-
-      positionsRef.current.set(id, pos)
     })
   })
 
   const handleNodeClick = (node: Node) => {
-    if (!node.ref_id.endsWith('-root') || !simulationRef.current) {
+    if (!simulationRef.current) {
+      return
+    }
+
+    setActiveView('list')
+
+    if (node?.node_type.endsWith('-root')) {
+      setSelectedGroup(node)
+
+      return
+    }
+
+    navigateToNode(node.ref_id)
+  }
+
+  const resetLayout = () => {
+    if (!simulationRef.current || !selectedGroup) {
       return
     }
 
     const sim = simulationRef.current
 
-    // Unfix previously fixed node
-    if (previousFixedRef.current) {
-      const prevNode = sim.nodes().find((n) => n.ref_id === previousFixedRef.current)
+    // Clear selected state
+    setSelectedGroup(null)
+    setConnectedNodeIds(new Set())
 
-      if (prevNode) {
-        // @ts-expect-error: fx, fy, fz are not defined in the Node type
-        prevNode.fx = null
-        // @ts-expect-error: fx, fy, fz are not defined in the Node type
-        prevNode.fy = null
-        // @ts-expect-error: fx, fy, fz are not defined in the Node type
-        prevNode.fz = null
-      }
-    }
-
-    // Set the new one to move
-    movingToCenterRef.current = node.ref_id
-    previousFixedRef.current = node.ref_id
-
-    // sim.alpha(1).restart()
+    // Restart simulation
+    sim.alpha(1).restart()
   }
 
   return (
     <ScreenSpace depth={1000}>
-      <group>
-        <mesh position={[-800, -800, 0]}>
-          <boxGeometry args={[100, 100, 100]} />
-          <meshBasicMaterial color="red" />
-        </mesh>
+      {activeView === 'list' && (
+        <group
+          position={[-viewPortSize.width + 100, viewPortSize.height - 100, 0]}
+          // rotation={[0, THREE.MathUtils.degToRad(90), 0]}
+        >
+          <SelectionList handleNodeClick={handleNodeClick} onClose={resetLayout} selectedGroup={selectedGroup} />
+        </group>
+      )}
+      {activeView === 'graph' && (
         <group>
-          {edges.map((e) => {
-            const s = positionsRef.current.get((e.source as unknown as Node).ref_id)
-            const t = positionsRef.current.get((e.target as unknown as Node).ref_id)
+          <mesh>
+            <planeGeometry args={[viewPortSize.width * 2, viewPortSize.height * 2, 100]} />
+            <meshStandardMaterial color="black" opacity={0.7} transparent />
+          </mesh>
+          <group>
+            {edges.map((e) => {
+              const sourceId = e.source
+              const targetId = e.target
 
-            if (!s || !t) {
-              return null
-            }
+              const shouldRender =
+                !selectedGroup || selectedGroup.ref_id === sourceId || selectedGroup.ref_id === targetId
 
-            return (
-              <Line
-                key={`${e.source}-${e.target}`}
-                color={e.edge_type === 'chapter' ? '#888' : '#fff'}
-                lineWidth={e.edge_type === 'chapter' ? 3.5 : 10}
-                opacity={0.5}
-                points={[s, t]}
-                transparent
-              />
-            )
-          })}
-        </group>
-        <group ref={nodesGroupRef}>
-          {nodes.map((n) => {
-            const keyProperty = getNodeKeysByType(n.node_type) || ''
-            const imageUrl = n?.properties?.image_url || ''
-            const name = keyProperty && n?.properties ? String(n?.properties[keyProperty] || '') : n.name || ''
-            const truncatedName = name.length > 100 ? `${name.slice(0, 100)}...` : name
+              if (!shouldRender) {
+                return null
+              }
 
-            console.log(name, truncatedName)
+              const s = positionsRef.current.get(sourceId)
+              const t = positionsRef.current.get(targetId)
 
-            const p = positionsRef.current.get(n.ref_id)
+              if (!s || !t) {
+                return null
+              }
 
-            if (!p) {
-              return null
-            }
-
-            return (
-              <mesh key={n.ref_id}>
-                <NodeSphere
-                  imageUrl={imageUrl}
-                  isRoot={n.ref_id.endsWith('-root')}
-                  name={truncatedName}
-                  nodeType={n.node_type}
-                  onClick={() => handleNodeClick(n)}
-                  onPointerOut={() => setHovered(null)}
-                  onPointerOver={() => setHovered(n)}
-                  radius={nodeRadius(n)}
+              return (
+                <Line
+                  key={`${sourceId}-${targetId}`}
+                  color={e.edge_type === 'chapter' ? '#888' : '#fff'}
+                  lineWidth={1}
+                  opacity={0.5}
+                  points={[s, t]}
+                  transparent
+                  visible={false}
                 />
-              </mesh>
-            )
-          })}
+              )
+            })}
+          </group>
+
+          <group ref={nodesGroupRef}>
+            {nodes.map((n) => {
+              const isVisible = !selectedGroup || n.ref_id === selectedGroup.ref_id || connectedNodeIds.has(n.ref_id)
+
+              if (!isVisible) {
+                return null
+              }
+
+              const keyProperty = getNodeKeysByType(n.node_type) || ''
+              const imageUrl = n?.properties?.image_url || ''
+              const name = keyProperty && n?.properties ? String(n?.properties[keyProperty] || '') : n.name || ''
+              const truncatedName = name.length > 100 ? `${name.slice(0, 100)}...` : name
+
+              const p = positionsRef.current.get(n.ref_id)
+
+              if (!p) {
+                return null
+              }
+
+              return (
+                <mesh key={n.ref_id} position={p}>
+                  <NodeSphere
+                    imageUrl={imageUrl}
+                    isRoot={n.ref_id.endsWith('-root')}
+                    name={truncatedName}
+                    nodeType={n.node_type}
+                    onClick={() => handleNodeClick(n)}
+                    onPointerOut={() => setHoveredNode(null)}
+                    onPointerOver={() => !n.ref_id.endsWith('-root') && setHoveredNode(n)}
+                    radius={nodeRadius(n)}
+                  />
+                </mesh>
+              )
+            })}
+          </group>
         </group>
-      </group>
+      )}
     </ScreenSpace>
   )
 }

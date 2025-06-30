@@ -55,7 +55,7 @@ export const GraphSearch = () => {
 }
 
 const Wrapper = styled(Flex)`
-  padding: 16px;
+  padding: 16px 16px 0;
   position: absolute;
   top: 0;
   right: 0;
