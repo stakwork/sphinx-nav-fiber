@@ -73,7 +73,6 @@ const MeshInCamera = ({ layer, index }: { layer: string; index: number }) => {
             setIsolatedView('')
           }
 
-          console.log('Text clicked:', layer)
           // You can trigger a state update, show a modal, select a layer, etc.
         }}
       >

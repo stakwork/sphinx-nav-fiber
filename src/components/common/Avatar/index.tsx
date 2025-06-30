@@ -20,6 +20,7 @@ const TypesMapper: TTypeMapper = {
   clip: 'audio',
   tweet: 'twitter',
   person: 'person',
+  user: 'person',
   guest: 'person',
   twitter_space: 'audio',
   show: 'show',

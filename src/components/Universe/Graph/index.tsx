@@ -17,10 +17,10 @@ import { TextNode } from './Cubes/Text'
 import { Earth } from './Earth'
 import { FloatingNodes } from './FloatingNodes'
 import { Groups } from './Groups'
-import { Highlights } from './Highlights'
 import { Layers } from './Layers'
 import { LoadingNodes } from './LoadingNodes'
 import { Neighbourhoods } from './Neighborhoods'
+import { RootNodes } from './RootNodes'
 import { NodeDetailsPanel } from './UI'
 import { calculateRadius } from './utils/calculateGroupRadius'
 
@@ -494,8 +494,9 @@ export const Graph = () => {
       </group>
       {neighbourhoods?.length && graphStyle === 'force' ? <Neighbourhoods /> : null}
       {false && <Groups />}
-      {false && <Highlights />}
       <NodeDetailsPanel />
+
+      <RootNodes />
       {graphStyle === 'split' && <Layers />}
       {graphStyle === 'earth' && <Earth />}
       {(isLoadingNew || isFetching) && <LoadingNodes />}
