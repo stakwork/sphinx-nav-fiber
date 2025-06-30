@@ -57,7 +57,7 @@ const ActionButton = styled(Flex).attrs({
 
   &:active {
     color: ${colors.white};
-    background: ${({ disabled }) => (disabled ? colors.BG1 : colors.black)};
+    background: ${({ disabled }) => (disabled ? colors.BG1 : colors.BG1_NORMAL)};
   }
 
   &.root {
