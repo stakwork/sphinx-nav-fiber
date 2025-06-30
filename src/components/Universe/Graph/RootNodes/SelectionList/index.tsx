@@ -40,7 +40,6 @@ export const SelectionList = ({ onClose, selectedGroup, handleNodeClick }: Props
       <Html>
         <Wrapper
           onScroll={(e) => {
-            console.log(e)
             e.stopPropagation()
           }}
           onWheel={(e) => e.stopPropagation()}
