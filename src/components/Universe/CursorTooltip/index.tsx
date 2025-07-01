@@ -34,13 +34,15 @@ export const CursorTooltip = () => {
       if (target.tagName !== 'CANVAS') {
         tooltip.style.display = 'none'
         cursor.style.display = 'none'
-      } else {
-        if (canvasElement) {
-          canvasElement.style.cursor = 'none'
-        }
 
-        cursor.style.display = 'flex'
+        return
       }
+
+      if (canvasElement) {
+        canvasElement.style.cursor = 'none'
+      }
+
+      cursor.style.display = 'flex'
 
       tooltip.style.display = 'block' // Ensure tooltip is visible if hovering canvas
 
