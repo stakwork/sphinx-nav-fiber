@@ -1,0 +1,19 @@
+{
+  "name": "sphinx-nav-fiber",
+  "dockerComposeFile": "./docker-compose.yml",
+  "workspaceFolder": "/workspaces",
+  "features": {
+    "ghcr.io/devcontainers/features/docker-outside-of-docker": {}
+  },
+  "customizations": {
+    "vscode": {
+        "settings": {
+          "git.autofetch": true,
+          "editor.formatOnSave": true
+        },
+        "extensions": [
+            "stakwork.staklink"
+        ]
+    }
+  }
+}
