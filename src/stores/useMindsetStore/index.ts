@@ -173,18 +173,37 @@ export const useMindsetStore = create<MindsetStore>((set) => ({
       setPlayingNode(selectedEpisode)
     }
 
-    const starterData = data.nodes.filter(
-      (node) =>
-        node.node_type === 'Show' ||
-        node.node_type === 'Episode' ||
-        node.node_type === 'Host' ||
-        node.node_type === 'Guest' ||
-        node.node_type === 'Person' ||
-        node.node_type === 'User',
-    )
+    const starterData = data.nodes
+      .filter(
+        (node) =>
+          node.node_type === 'Show' ||
+          node.node_type === 'Episode' ||
+          node.node_type === 'Host' ||
+          node.node_type === 'Guest' ||
+          node.node_type === 'Person' ||
+          node.node_type === 'User',
+      )
+      .filter((node) => {
+        if (['Host', 'Guest', 'Person', 'User'].includes(node.node_type)) {
+          return data.edges.some(
+            (i) =>
+              ['IS_GUEST', 'IS_HOST'].includes(i.edge_type) && (i.source === node.ref_id || i.target === node.ref_id),
+          )
+        }
+
+        return true
+      })
 
     const rootData = handleRootNodes(
-      data.nodes.filter((node) => node.node_type === 'Chapter' || node.node_type === 'Person'),
+      data.nodes.filter(
+        (node) =>
+          node.node_type === 'Chapter' ||
+          (['Host', 'Guest', 'Person', 'User'].includes(node.node_type) &&
+            data.edges.some(
+              (i) =>
+                ['IS_GUEST', 'IS_HOST'].includes(i.edge_type) && (i.source === node.ref_id || i.target === node.ref_id),
+            )),
+      ),
     )
 
     setRootStoreData(rootData)
