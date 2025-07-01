@@ -17,7 +17,7 @@ const Wrapper = styled(Flex)<{ radius: number }>`
   pointer-events: none;
   font-size: ${(props) => (props.className === 'root' ? '12px' : '8px')};
   font-weight: ${(props) => (props.className === 'root' ? 600 : 400)};
-  border-radius: ${(props) => (props.className === 'root' ? '50%' : '10px')};
+  border-radius: ${(props) => (props.className === 'root' ? '5px' : '10px')};
   border: ${(props) => (props.className === 'root' ? '2px solid #3da9ff' : '1px solid #fff')};
   width: ${(props) => `${props.radius}px`};
   height: ${(props) => `${props.radius}px`};

@@ -1,4 +1,3 @@
-import { useFrame } from '@react-three/fiber'
 import { useRef } from 'react'
 import { Group } from 'three'
 import { useSimulationStore } from '~/stores/useSimulationStore'
@@ -9,10 +8,6 @@ export const FloatingNodes = () => {
   const simulation = useSimulationStore((s) => s.simulation)
 
   const groupRef = useRef<Group>(null!)
-
-  useFrame(() => {
-    console.log(groupRef.current.children)
-  })
 
   return (
     <group ref={groupRef}>

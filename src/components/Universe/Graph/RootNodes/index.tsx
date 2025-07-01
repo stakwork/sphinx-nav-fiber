@@ -2,13 +2,15 @@
 import { Line, ScreenSpace } from '@react-three/drei'
 import { useFrame, useThree } from '@react-three/fiber'
 import { forceCenter, forceCollide, forceLink, forceManyBody, forceSimulation } from 'd3-force-3d'
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import * as THREE from 'three'
 
 import { useGraphStore } from '~/stores/useGraphStore'
+import { usePlayerStore } from '~/stores/usePlayerStore'
 import { useRootNodesStore } from '~/stores/useRootNodesStore'
 import { useSchemaStore } from '~/stores/useSchemaStore'
 import { Link, Node } from '~/types'
+import { videoTimeToSeconds } from '~/utils'
 import { useNodeNavigation } from '../../useNodeNavigation'
 import { NodeSphere } from './Node'
 import { SelectionList } from './SelectionList'
@@ -32,6 +34,7 @@ export const RootNodes = () => {
   const [selectedGroup, setSelectedGroup] = useState<Node | null>(null)
   const [connectedNodeIds, setConnectedNodeIds] = useState<Set<string>>(new Set())
 
+  const { playerRef } = usePlayerStore((s) => s)
   const { size: viewPortSize } = useThree()
 
   const positionsRef = useRef<Map<string, THREE.Vector3>>(new Map())
@@ -99,6 +102,17 @@ export const RootNodes = () => {
     })
   })
 
+  const handleProgressChange = useCallback(
+    (value: number | number[]) => {
+      const newValue = Array.isArray(value) ? value[0] : value
+
+      if (playerRef) {
+        playerRef.seekTo(newValue, 'seconds')
+      }
+    },
+    [playerRef],
+  )
+
   const handleNodeClick = (node: Node) => {
     if (!simulationRef.current) {
       return
@@ -108,6 +122,18 @@ export const RootNodes = () => {
 
     if (node?.node_type.endsWith('-root')) {
       setSelectedGroup(node)
+
+      return
+    }
+
+    if (node.node_type === 'Chapter') {
+      setSelectedGroup(node)
+
+      if (node.properties?.timestamp && playerRef) {
+        const timestamp = videoTimeToSeconds(node.properties?.timestamp)
+
+        handleProgressChange(timestamp)
+      }
 
       return
     }
@@ -133,18 +159,19 @@ export const RootNodes = () => {
   return (
     <ScreenSpace depth={1000}>
       {activeView === 'list' && (
-        <group
-          position={[-viewPortSize.width + 100, viewPortSize.height - 100, 0]}
-          // rotation={[0, THREE.MathUtils.degToRad(90), 0]}
-        >
+        <group position={[-viewPortSize.width - 100, viewPortSize.height - 100, 0]}>
           <SelectionList handleNodeClick={handleNodeClick} onClose={resetLayout} selectedGroup={selectedGroup} />
         </group>
       )}
       {activeView === 'graph' && (
         <group>
-          <mesh>
+          <mesh
+            onWheel={(e) => {
+              e.stopPropagation()
+            }}
+          >
             <planeGeometry args={[viewPortSize.width * 2, viewPortSize.height * 2, 100]} />
-            <meshStandardMaterial color="black" opacity={0.7} transparent />
+            <meshBasicMaterial color="black" opacity={0.1} transparent />
           </mesh>
           <group>
             {edges.map((e) => {
