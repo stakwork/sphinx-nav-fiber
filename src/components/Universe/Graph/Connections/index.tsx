@@ -39,10 +39,12 @@ export const Connections = memo(({ linksPosition }: Props) => {
                 tz: 0,
               }
 
+              const edgeName = l.properties?.type ? `${l.edge_type}-${l.properties.type}` : l.edge_type
+
               return (
                 <LineComponent
                   key={l.ref_id}
-                  label={l.edge_type}
+                  label={edgeName}
                   source={l.source}
                   sourceX={position.sx}
                   sourceY={position.sy}
