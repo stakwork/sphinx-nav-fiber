@@ -13,6 +13,7 @@ import { FetchDataResponse, Link, Node, NodeExtended } from '~/types'
 import { timeToMilliseconds } from '~/utils'
 import { Header } from './components/Header'
 import { PlayerControl } from './components/PlayerContols'
+import { PodcastLayout } from './components/PodcastLayout'
 import { SideBar } from './components/Sidebar'
 
 const calculateMarkers = (data: FetchDataResponse): Node[] => {
@@ -241,6 +242,7 @@ export const MindSet = () => {
           <ContentContainer>
             <Flex basis="100%" grow={1} shrink={1}>
               <Universe />
+              {selectedEpisodeId === 'f6d3e4a8-3c4d-4571-b10f-77d6663f90cc' && <PodcastLayout />}
             </Flex>
           </ContentContainer>
         </>
@@ -270,6 +272,7 @@ const ContentContainer = styled(Flex)`
   flex-shrink: 1;
   flex-grow: 1;
   padding: 16px 16px 16px 0;
+  position: relative;
 
   @media (max-width: 768px) {
     display: none;
