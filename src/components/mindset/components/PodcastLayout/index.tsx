@@ -4,13 +4,18 @@ import { Flex } from '~/components/common/Flex'
 import ChevronLeftIcon from '~/components/Icons/ChevronLeftIcon'
 import ChevronRightIcon from '~/components/Icons/ChevronRightIcon'
 import { usePlayerStore } from '~/stores/usePlayerStore'
-import { Node } from '~/types'
 import { videoTimeToSeconds } from '~/utils'
 import { secondsToMediaTime } from '~/utils/secondsToMediaTime'
 import { Claim } from './Claim'
 import { Speaker } from './Speaker'
 
-const data: Node[] = [
+type NodeType = {
+  node_type: string
+  ref_id: string
+  properties: Record<string, string>
+}
+
+const data: NodeType[] = [
   {
     node_type: 'Speaker',
     ref_id: 'speaker-arthur-hayes',
@@ -40,7 +45,6 @@ const data: Node[] = [
       description: 'Future alt-coin cycles will reward projects with real revenue.',
       timestamp: '00:14:05',
       end: '00:14:35',
-      controversy_score: 0.81,
     },
   },
   {
@@ -145,7 +149,7 @@ export const PodcastLayout = () => {
     [playerRef],
   )
 
-  const handleNodeClick = (node: Node) => {
+  const handleNodeClick = (node: NodeType) => {
     if (node?.properties?.timestamp) {
       if (node.properties?.timestamp && playerRef) {
         const timestamp = videoTimeToSeconds(node.properties?.timestamp)
@@ -181,7 +185,7 @@ export const PodcastLayout = () => {
               return (
                 <div key={speaker.ref_id} className="child">
                   <NodeContainer
-                    onClick={() => handleNodeClick(speaker)}
+                    onClick={() => handleNodeClick(speaker as unknown as NodeType)}
                     onMouseEnter={() => setHoveredNode(speaker.ref_id)}
                     onMouseLeave={() => setHoveredNode(null)}
                   >
