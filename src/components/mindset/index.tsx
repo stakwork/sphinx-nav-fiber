@@ -16,6 +16,8 @@ import { PlayerControl } from './components/PlayerContols'
 import { PodcastLayout } from './components/PodcastLayout'
 import { SideBar } from './components/Sidebar'
 
+const EPISODES_WITH_PODCAST_LAYOUT = ['63a5707b-46a5-4df3-9258-7749aefc7fcd']
+
 const calculateMarkers = (data: FetchDataResponse): Node[] => {
   const edgesWithStart = data.edges
     .filter((e) => e?.properties?.start)
@@ -242,7 +244,7 @@ export const MindSet = () => {
           <ContentContainer>
             <Flex basis="100%" grow={1} shrink={1}>
               <Universe />
-              {selectedEpisodeId === 'f6d3e4a8-3c4d-4571-b10f-77d6663f90cc' && <PodcastLayout />}
+              {EPISODES_WITH_PODCAST_LAYOUT.includes(selectedEpisodeId || '') && <PodcastLayout />}
             </Flex>
           </ContentContainer>
         </>
