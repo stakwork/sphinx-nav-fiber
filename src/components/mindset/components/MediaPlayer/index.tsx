@@ -165,7 +165,7 @@ const MediaPlayerComponent = ({ mediaUrl }: Props) => {
   return mediaUrl ? (
     <Wrapper ref={wrapperRef} tabIndex={0}>
       <Cover isFullScreen={false}>
-        <Avatar size={120} src={playingNode?.image_url || ''} type="clip" />
+        <Avatar size={200} src={playingNode?.properties?.image_url || ''} type="clip" />
       </Cover>
       <PlayerWrapper isFullScreen={false}>
         <ReactPlayer
