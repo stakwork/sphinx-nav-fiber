@@ -13,6 +13,7 @@ import { useSelectedNodeFromUrl } from '../useSelectedNodeFromUrl'
 import { Connections } from './Connections'
 import { Cubes } from './Cubes'
 import { Earth } from './Earth'
+import { FloatingNodes } from './FloatingNodes'
 import { Groups } from './Groups'
 import { Layers } from './Layers'
 import { LoadingNodes } from './LoadingNodes'
@@ -376,10 +377,10 @@ export const Graph = () => {
       {neighbourhoods?.length && graphStyle === 'force' ? <Neighbourhoods /> : null}
       {false && <Groups />}
       <NodeDetailsPanel />
-
       {graphStyle === 'split' && <Layers />}
       {graphStyle === 'earth' && <Earth />}
       {(isLoadingNew || isFetching) && <LoadingNodes />}
+      <FloatingNodes />
     </group>
   )
 }
