@@ -37,15 +37,19 @@ const getModalKindStyles = ({ kind = 'regular' }: Pick<Props, 'kind'>) => {
   }
 }
 
-const ModalContainer = styled(Flex)<Pick<Props, 'kind'>>`
+const ModalContainer = styled(Flex)<Pick<Props, 'kind' | 'id' | 'background'>>`
   z-index: 2000;
   margin: 0 auto;
   animation: ${scaleAnimation} 0.2s ease-in-out;
   position: relative;
   max-width: 100%;
   overflow: visible;
-  box-sizing: border-box;
-  background: ${colors.BG1};
+  ${({ id }) =>
+    id === 'claim' &&
+    css`
+      background: ${colors.BG1};
+      box-sizing: border-box;
+    `}
   ${getModalKindStyles};
 
   @media (max-width: 1024px) {
