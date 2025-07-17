@@ -12,6 +12,8 @@ import { usePlayerStore } from '~/stores/usePlayerStore'
 import { Link } from '~/types'
 import { colors } from '~/utils'
 
+const isVideoFile = (url: string) => /\.(mp4|webm|mov|mkv|avi)(\?.*)?$/i.test(url)
+
 const findCurrentEdge = (sortedEdges: Link[], playerProgress: number): Link | null => {
   let low = 0
   let high = sortedEdges.length - 1
@@ -190,9 +192,11 @@ const MediaPlayerComponent = ({ mediaUrl }: Props) => {
           width="100%"
         />
       </PlayerWrapper>
-      <ExpandButton onClick={() => setIsFullScreen(!isFullScreen)}>
-        {!isFullScreen ? <FullScreenIcon /> : <ExitFullScreen />}
-      </ExpandButton>
+      {isVideoFile(mediaUrl) && (
+        <ExpandButton onClick={() => setIsFullScreen(!isFullScreen)}>
+          {!isFullScreen ? <FullScreenIcon /> : <ExitFullScreen />}
+        </ExpandButton>
+      )}
       {status === 'error' && <ErrorWrapper className="error-wrapper">Error happened, please try later</ErrorWrapper>}
     </Wrapper>
   ) : null
@@ -204,6 +208,7 @@ const Wrapper = styled(Flex)`
   position: relative;
   overflow: hidden;
   height: auto;
+  min-height: 190px;
   &:focus {
     outline: none;
   }
