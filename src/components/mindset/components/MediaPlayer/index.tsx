@@ -3,8 +3,11 @@ import ReactPlayer from 'react-player'
 import styled from 'styled-components'
 import { Avatar } from '~/components/common/Avatar'
 import { Flex } from '~/components/common/Flex'
+import ExitFullScreen from '~/components/Icons/ExitFullScreen'
+import FullScreenIcon from '~/components/Icons/FullScreenIcon'
 import { useDataStore } from '~/stores/useDataStore'
 import { useGraphStore } from '~/stores/useGraphStore'
+import { useMindsetStore } from '~/stores/useMindsetStore'
 import { usePlayerStore } from '~/stores/usePlayerStore'
 import { Link } from '~/types'
 import { colors } from '~/utils'
@@ -45,6 +48,8 @@ const MediaPlayerComponent = ({ mediaUrl }: Props) => {
   const [status, setStatus] = useState<'buffering' | 'error' | 'ready'>('ready')
   const [isReady, setIsReady] = useState(false)
   const [hasSeekedFromURL, setHasSeekedFromURL] = useState(false)
+  const setIsFullScreen = useMindsetStore((s) => s.setIsFullScreen)
+  const isFullScreen = useMindsetStore((s) => s.isFullScreen)
 
   const { setActiveEdge } = useGraphStore((s) => s)
   const { dataInitial } = useDataStore((s) => s)
@@ -167,10 +172,10 @@ const MediaPlayerComponent = ({ mediaUrl }: Props) => {
       <Cover isFullScreen={false}>
         <Avatar size={200} src={playingNode?.properties?.image_url || ''} type="clip" />
       </Cover>
-      <PlayerWrapper isFullScreen={false}>
+      <PlayerWrapper isFullScreen={isFullScreen}>
         <ReactPlayer
           ref={playerRefCallback}
-          height="219px"
+          height="100%"
           onBuffer={() => setStatus('buffering')}
           onBufferEnd={() => setStatus('ready')}
           onError={handleError}
@@ -185,6 +190,9 @@ const MediaPlayerComponent = ({ mediaUrl }: Props) => {
           width="100%"
         />
       </PlayerWrapper>
+      <ExpandButton onClick={() => setIsFullScreen(!isFullScreen)}>
+        {!isFullScreen ? <FullScreenIcon /> : <ExitFullScreen />}
+      </ExpandButton>
       {status === 'error' && <ErrorWrapper className="error-wrapper">Error happened, please try later</ErrorWrapper>}
     </Wrapper>
   ) : null
@@ -216,8 +224,21 @@ const ErrorWrapper = styled(Flex)`
 `
 
 const PlayerWrapper = styled.div<{ isFullScreen: boolean }>`
-  margin: ${(props) => (props.isFullScreen ? '80px auto' : '0')};
+  margin: ${(props) => (props.isFullScreen ? '0' : '0')};
   width: 100%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`
+
+const ExpandButton = styled(Flex)`
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 100;
+  color: ${colors.white};
+  font-size: 32px;
   cursor: pointer;
 `
 

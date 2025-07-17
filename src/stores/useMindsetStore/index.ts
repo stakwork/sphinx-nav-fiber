@@ -103,21 +103,30 @@ type MindsetStore = {
   clipEdges: Link[]
   activeClip: NodeExtended | null
   selectedSegment: Segment | null
+  isFullScreen: boolean
   setSelectedEpisode: (node: NodeExtended) => void
   setClips: (clips: Node[]) => void
   setChapters: (chapters: Node[]) => void
   fetchEpisodeData: (id: string) => void
   setActiveClip: (clip: NodeExtended) => void
   setSelectedSegment: (segment: Segment | null) => void
+  setIsFullScreen: (isFullScreen: boolean) => void
 }
 
 const defaultData: Omit<
   MindsetStore,
-  'setSelectedEpisode' | 'setClips' | 'setChapters' | 'fetchEpisodeData' | 'setActiveClip' | 'setSelectedSegment'
+  | 'setSelectedEpisode'
+  | 'setClips'
+  | 'setChapters'
+  | 'fetchEpisodeData'
+  | 'setActiveClip'
+  | 'setSelectedSegment'
+  | 'setIsFullScreen'
 > = {
   selectedEpisode: null,
   clips: [],
   highlights: [],
+  isFullScreen: false,
   clipEdges: [],
   chapters: [],
   activeClip: null,
@@ -217,4 +226,5 @@ export const useMindsetStore = create<MindsetStore>((set) => ({
   },
   setActiveClip: (clip) => set({ activeClip: clip }),
   setSelectedSegment: (selectedSegment) => set({ selectedSegment }),
+  setIsFullScreen: (isFullScreen) => set({ isFullScreen }),
 }))

@@ -11,6 +11,7 @@ import { usePlayerStore } from '~/stores/usePlayerStore'
 import { useSchemaStore } from '~/stores/useSchemaStore'
 import { FetchDataResponse, Link, Node, NodeExtended } from '~/types'
 import { timeToMilliseconds } from '~/utils'
+import { FloatingPlayer } from './components/FloatingPlayer'
 import { Header } from './components/Header'
 import { PlayerControl } from './components/PlayerContols'
 import { PodcastLayout } from './components/PodcastLayout'
@@ -52,6 +53,8 @@ export const MindSet = () => {
   const { setSchemas } = useSchemaStore((s) => s)
   const navigate = useNavigate()
   const { episodeId: selectedEpisodeId } = useParams()
+
+  const isFullScreen = useMindsetStore((s) => s.isFullScreen)
 
   useEffect(() => {
     const fetchSchemaData = async () => {
@@ -245,6 +248,8 @@ export const MindSet = () => {
             <Flex basis="100%" grow={1} shrink={1}>
               <Universe />
               {EPISODES_WITH_PODCAST_LAYOUT.includes(selectedEpisodeId || '') && <PodcastLayout />}
+              {isFullScreen && <FloatingPlayerWrapper id="floating-player-root" />}
+              <FloatingPlayer />
             </Flex>
           </ContentContainer>
         </>
@@ -262,6 +267,21 @@ const MainContainer = styled.div`
   flex-direction: column;
   height: 100vh;
   width: 100%;
+`
+
+const FloatingPlayerWrapper = styled.div`
+  position: absolute;
+  top: 64px;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #1f293764;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  justify-content: center;
+  align-items: center;
 `
 
 const ContentWrapper = styled(Flex)`

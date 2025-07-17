@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { MENU_WIDTH } from '~/components/App/SideBar'
 import { Flex } from '~/components/common/Flex'
-import { MediaPlayer } from '~/components/mindset/components/MediaPlayer'
 import { useMindsetStore } from '~/stores/useMindsetStore'
 import { usePlayerStore } from '~/stores/usePlayerStore'
 import { colors } from '~/utils'
@@ -15,6 +14,7 @@ const TRANSCRIPT = 'transcript'
 
 export const SideBar = () => {
   const selectedEpisode = useMindsetStore((s) => s.selectedEpisode)
+  const isFullScreen = useMindsetStore((s) => s.isFullScreen)
 
   const isPlaying = usePlayerStore((s) => s.isPlaying)
   const [tabState, setTabState] = useState(CHAPTERS)
@@ -27,8 +27,8 @@ export const SideBar = () => {
 
   return (
     <Wrapper align="stretch" basis="100%" grow={1} shrink={1}>
-      <MediaWrapper>
-        {selectedEpisode?.properties?.media_url && <MediaPlayer mediaUrl={selectedEpisode.properties.media_url} />}
+      <MediaWrapper className={clsx({ fullScreen: isFullScreen })}>
+        <div id="sidebar-player-root" />
       </MediaWrapper>
       <Flex className="heading">{selectedEpisode?.properties?.episode_title}</Flex>
       <TabsWrapper direction="row">
@@ -68,7 +68,6 @@ const ContentWrapper = styled(Flex)`
 `
 
 const Wrapper = styled(Flex)(({ theme }) => ({
-  position: 'relative',
   display: 'flex',
   padding: '0 20px 0 20px',
   background: 'transparent',
