@@ -275,13 +275,17 @@ const FloatingPlayerWrapper = styled.div`
   bottom: 0;
   left: 0;
   right: 0;
-  background: #1f293764;
+  background: rgba(0, 0, 0, 0.9);
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  gap: 24px;
   justify-content: center;
   align-items: center;
+  width: 100%;
+  height: calc(100% - 64px);
+  z-index: 1000;
+  padding: 0;
+  margin: 0;
 `
 
 const ContentWrapper = styled(Flex)`

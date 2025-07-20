@@ -15,7 +15,7 @@ import { NodeWrapper } from './NodeWrapper'
 import { RelevanceGroups } from './RelevanceGroups'
 import { RelevanceList } from './RelevanceList/indes'
 import { nodeBackground } from './constants'
-import { nodesMatchesDateRangeFilter } from './utils/nodesMatchesDateRangeFilter '
+import { nodesMatchesDateRangeFilter } from './utils/nodesMatchesDateRangeFilter'
 import { nodeMatchesFollowerFilter } from './utils/nodesMatchsFollowesFilter'
 
 const POINTER_IN_DELAY = 100
