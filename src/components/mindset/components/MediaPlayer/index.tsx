@@ -170,14 +170,14 @@ const MediaPlayerComponent = ({ mediaUrl }: Props) => {
   )
 
   return mediaUrl ? (
-    <Wrapper ref={wrapperRef} tabIndex={0}>
-      <Cover isFullScreen={false}>
+    <Wrapper ref={wrapperRef} isFullScreen={isFullScreen} tabIndex={0}>
+      <Cover isFullScreen={isFullScreen}>
         <Avatar size={200} src={playingNode?.properties?.image_url || ''} type="clip" />
       </Cover>
       <PlayerWrapper isFullScreen={isFullScreen}>
         <ReactPlayer
           ref={playerRefCallback}
-          height="100%"
+          height={isFullScreen ? '100%' : 'auto'}
           onBuffer={() => setStatus('buffering')}
           onBufferEnd={() => setStatus('ready')}
           onError={handleError}
@@ -187,6 +187,13 @@ const MediaPlayerComponent = ({ mediaUrl }: Props) => {
           onReady={handleReady}
           playbackRate={playbackSpeed}
           playing={isPlaying}
+          style={{
+            maxWidth: isFullScreen ? '100%' : '100%',
+            maxHeight: isFullScreen ? '100vh' : 'auto',
+            width: isFullScreen ? '100%' : 'auto',
+            height: isFullScreen ? '100%' : 'auto',
+            objectFit: 'contain',
+          }}
           url={mediaUrl || ''}
           volume={volume}
           width="100%"
@@ -202,13 +209,14 @@ const MediaPlayerComponent = ({ mediaUrl }: Props) => {
   ) : null
 }
 
-const Wrapper = styled(Flex)`
-  border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+const Wrapper = styled(Flex)<FullScreenProps>`
+  border-bottom: ${(props) => (props.isFullScreen ? 'none' : '1px solid rgba(0, 0, 0, 0.25)')};
   background: rgba(0, 0, 0, 0.2);
   position: relative;
   overflow: hidden;
-  height: auto;
-  min-height: 190px;
+  height: ${(props) => (props.isFullScreen ? '100%' : 'auto')};
+  min-height: ${(props) => (props.isFullScreen ? '100%' : '190px')};
+  width: 100%;
   &:focus {
     outline: none;
   }
@@ -229,22 +237,36 @@ const ErrorWrapper = styled(Flex)`
 `
 
 const PlayerWrapper = styled.div<{ isFullScreen: boolean }>`
-  margin: ${(props) => (props.isFullScreen ? '0' : '0')};
+  margin: 0;
   width: 100%;
+  height: ${(props) => (props.isFullScreen ? '100%' : 'auto')};
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 10;
+  ${(props) =>
+    props.isFullScreen &&
+    `
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  `}
 `
 
 const ExpandButton = styled(Flex)`
   position: absolute;
-  top: 0;
-  right: 0;
+  top: 10px;
+  right: 10px;
   z-index: 100;
   color: ${colors.white};
   font-size: 32px;
   cursor: pointer;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 50%;
+  padding: 5px;
 `
 
 export const MediaPlayer = memo(MediaPlayerComponent)
