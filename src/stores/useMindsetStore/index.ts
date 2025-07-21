@@ -104,6 +104,7 @@ type MindsetStore = {
   activeClip: NodeExtended | null
   selectedSegment: Segment | null
   isFullScreen: boolean
+  skipAds: boolean
   setSelectedEpisode: (node: NodeExtended) => void
   setClips: (clips: Node[]) => void
   setChapters: (chapters: Node[]) => void
@@ -111,6 +112,7 @@ type MindsetStore = {
   setActiveClip: (clip: NodeExtended) => void
   setSelectedSegment: (segment: Segment | null) => void
   setIsFullScreen: (isFullScreen: boolean) => void
+  setSkipAds: (skipAds: boolean) => void
 }
 
 const defaultData: Omit<
@@ -122,6 +124,7 @@ const defaultData: Omit<
   | 'setActiveClip'
   | 'setSelectedSegment'
   | 'setIsFullScreen'
+  | 'setSkipAds'
 > = {
   selectedEpisode: null,
   clips: [],
@@ -131,6 +134,7 @@ const defaultData: Omit<
   chapters: [],
   activeClip: null,
   selectedSegment: null,
+  skipAds: false,
 }
 
 export const useMindsetStore = create<MindsetStore>((set) => ({
@@ -227,4 +231,5 @@ export const useMindsetStore = create<MindsetStore>((set) => ({
   setActiveClip: (clip) => set({ activeClip: clip }),
   setSelectedSegment: (selectedSegment) => set({ selectedSegment }),
   setIsFullScreen: (isFullScreen) => set({ isFullScreen }),
+  setSkipAds: (skipAds) => set({ skipAds }),
 }))
