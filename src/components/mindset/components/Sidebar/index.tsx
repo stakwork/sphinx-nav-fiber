@@ -1,3 +1,4 @@
+import { Checkbox, FormControlLabel } from '@mui/material'
 import clsx from 'clsx'
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
@@ -15,6 +16,8 @@ const TRANSCRIPT = 'transcript'
 export const SideBar = () => {
   const selectedEpisode = useMindsetStore((s) => s.selectedEpisode)
   const isFullScreen = useMindsetStore((s) => s.isFullScreen)
+  const skipAds = useMindsetStore((s) => s.skipAds)
+  const setSkipAds = useMindsetStore((s) => s.setSkipAds)
 
   const isPlaying = usePlayerStore((s) => s.isPlaying)
   const [tabState, setTabState] = useState(CHAPTERS)
@@ -31,6 +34,17 @@ export const SideBar = () => {
         <div id="sidebar-player-root" />
       </MediaWrapper>
       <Flex className="heading">{selectedEpisode?.properties?.episode_title}</Flex>
+
+      <SkipAdsWrapper>
+        <FormControlLabel
+          control={
+            <Checkbox checked={skipAds} onChange={(e) => setSkipAds(e.target.checked)} sx={{ color: colors.white }} />
+          }
+          label="Skip adds"
+          sx={{ color: colors.white }}
+        />
+      </SkipAdsWrapper>
+
       <TabsWrapper direction="row">
         <Tab className={clsx({ selected: tabState === CHAPTERS })} onClick={() => setTabState(CHAPTERS)}>
           Chapters
@@ -46,6 +60,13 @@ export const SideBar = () => {
     </Wrapper>
   )
 }
+
+const SkipAdsWrapper = styled(Flex)`
+  padding: 8px 24px;
+  background: ${colors.BG1};
+  border-radius: 8px;
+  margin-bottom: 8px;
+`
 
 const ContentWrapper = styled(Flex)`
   .heading {

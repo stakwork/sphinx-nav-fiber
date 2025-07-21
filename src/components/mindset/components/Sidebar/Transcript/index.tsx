@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { useGraphStore } from '~/stores/useGraphStore'
@@ -12,12 +12,59 @@ export const Transcript = () => {
   const clips = useMindsetStore((s) => s.clips)
   const setActiveClip = useMindsetStore((s) => s.setActiveClip)
   const activeClip = useMindsetStore((s) => s.activeClip)
+  const chapters = useMindsetStore((s) => s.chapters)
+  const skipAds = useMindsetStore((s) => s.skipAds)
   const { playerRef } = usePlayerStore((s) => s)
   const [currentTime, setCurrentTime] = useState(0)
   const [isFirst, setIsFirst] = useState(true)
 
   const [setActiveNode, activeNode] = useGraphStore((s) => [s.setActiveNode, s.activeNode])
   const simulation = useSimulationStore((s) => s.simulation)
+
+  const isAdChapter = useCallback((clip: NodeExtended) => clip?.properties?.is_ad === 'True', [])
+
+  const findNextNonAdChapter = useCallback(
+    (currentIndex: number) => {
+      if (!chapters) {
+        return null
+      }
+
+      for (let i = currentIndex + 1; i < chapters.length; i += 1) {
+        if (!isAdChapter(chapters[i])) {
+          return chapters[i]
+        }
+      }
+
+      return null
+    },
+    [chapters, isAdChapter],
+  )
+
+  const parseTimestamp = useCallback((timestamp?: string) => {
+    if (!timestamp) {
+      return [0, 0]
+    }
+
+    if (timestamp.includes(':')) {
+      const parts = timestamp.split(':').map(Number)
+
+      if (parts.length === 3) {
+        const [hours, minutes, seconds] = parts
+        const totalSeconds = hours * 3600 + minutes * 60 + seconds
+
+        return [totalSeconds, totalSeconds]
+      }
+
+      if (parts.length === 2) {
+        const [minutes, seconds] = parts
+        const totalSeconds = minutes * 60 + seconds
+
+        return [totalSeconds, totalSeconds]
+      }
+    }
+
+    return timestamp.split('-').map(Number)
+  }, [])
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -33,6 +80,32 @@ export const Transcript = () => {
 
   useEffect(() => {
     const calculateActiveClip = () => {
+      if (skipAds && chapters) {
+        const currentChapterIndex = chapters.findIndex((chapter, index) => {
+          const [start] = parseTimestamp(chapter?.properties?.timestamp)
+          const nextChapter = chapters[index + 1]
+          const end = nextChapter ? parseTimestamp(nextChapter.properties?.timestamp)[0] : Infinity
+
+          return start <= currentTime && currentTime < end
+        })
+
+        if (currentChapterIndex !== -1) {
+          const currentChapter = chapters[currentChapterIndex]
+
+          if (isAdChapter(currentChapter)) {
+            const nextNonAdChapter = findNextNonAdChapter(currentChapterIndex)
+
+            if (nextNonAdChapter && playerRef) {
+              const [nextStart] = parseTimestamp(nextNonAdChapter.properties?.timestamp)
+
+              playerRef.seekTo(nextStart, 'seconds')
+
+              return
+            }
+          }
+        }
+      }
+
       const clip = clips.find((clipNode) => {
         const [start, end] = parseTimestamp(clipNode?.properties?.timestamp)
 
@@ -44,7 +117,6 @@ export const Transcript = () => {
       }
 
       setIsFirst(clip?.ref_id === clips[0]?.ref_id)
-
       setActiveClip(clip || null)
     }
 
@@ -52,10 +124,20 @@ export const Transcript = () => {
       calculateActiveClip()
     } else {
       setIsFirst(true)
-
       setActiveClip(clips[0])
     }
-  }, [currentTime, clips, activeClip, setActiveClip])
+  }, [
+    currentTime,
+    clips,
+    activeClip,
+    setActiveClip,
+    chapters,
+    skipAds,
+    findNextNonAdChapter,
+    isAdChapter,
+    parseTimestamp,
+    playerRef,
+  ])
 
   useEffect(() => {
     if (activeClip && (!activeNode || activeClip.ref_id !== activeNode.ref_id)) {
@@ -66,14 +148,6 @@ export const Transcript = () => {
       }
     }
   }, [activeClip, activeNode, setActiveNode, simulation])
-
-  const parseTimestamp = (timestamp?: string) => {
-    if (!timestamp) {
-      return [0, 0]
-    }
-
-    return timestamp.split('-').map(Number)
-  }
 
   return (
     <TranscriptWrapper direction="row">
