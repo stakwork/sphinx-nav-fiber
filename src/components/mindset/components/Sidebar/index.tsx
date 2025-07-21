@@ -40,7 +40,7 @@ export const SideBar = () => {
           control={
             <Checkbox checked={skipAds} onChange={(e) => setSkipAds(e.target.checked)} sx={{ color: colors.white }} />
           }
-          label="Skip adds"
+          label="Skip ads"
           sx={{ color: colors.white }}
         />
       </SkipAdsWrapper>
