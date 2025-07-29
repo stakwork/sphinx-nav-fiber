@@ -11,7 +11,9 @@ export function apiUrlFromSwarmHost(): string | undefined {
 
   let url = originUrl
 
-  if (host.includes('swarm')) {
+  if (window.location.protocol === 'https:' && window.location.host.endsWith('.sphinx.chat:8000')) {
+    url = `https://${window.location.hostname}:8444`
+  } else if (host.includes('swarm')) {
     if (host.startsWith('nav')) {
       const hostArray = host.split('.')
 
@@ -26,8 +28,6 @@ export function apiUrlFromSwarmHost(): string | undefined {
     const codespaceUrl = arr[0]
 
     url = `https://${codespaceUrl}-8444.app.github.dev`
-  } else if (window.location.protocol === 'https:' && window.location.host.endsWith('.sphinx.chat:8000')) {
-    url = `https://${window.location.hostname}:8444`
   } else if (origin.includes('localhost')) {
     url = 'https://bitcoin.sphinx.chat'
   }
