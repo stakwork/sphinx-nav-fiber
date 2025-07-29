@@ -51,7 +51,7 @@ export const PlayerControl = ({ markers, chapters }: Props) => {
         duration={duration}
         handleProgressChange={handleProgressChange}
         markers={markers}
-        playingTIme={currentTime}
+        playingTime={currentTime}
       />
     </Wrapper>
   ) : null
@@ -65,7 +65,6 @@ const Wrapper = styled(Flex).attrs({
   padding: 20px;
   background: ${colors.BG2};
   height: 96px;
-  /* margin-top: 16px; */
   border-radius: 8px;
   box-sizing: border-box;
   margin-right: 4px;

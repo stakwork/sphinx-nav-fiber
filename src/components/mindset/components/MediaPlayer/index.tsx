@@ -11,6 +11,7 @@ import { useMindsetStore } from '~/stores/useMindsetStore'
 import { usePlayerStore } from '~/stores/usePlayerStore'
 import { Link } from '~/types'
 import { colors } from '~/utils'
+import { secondsToMediaTime } from '~/utils/secondsToMediaTime'
 
 const isVideoFile = (url: string) => /\.(mp4|webm|mov|mkv|avi)(\?.*)?$/i.test(url)
 
@@ -73,6 +74,8 @@ const MediaPlayerComponent = ({ mediaUrl }: Props) => {
     playbackSpeed,
   } = usePlayerStore((s) => s)
 
+  const duration = playerRef?.getDuration() || 0
+
   useEffect(() => () => resetPlayer(), [resetPlayer])
 
   useEffect(() => {
@@ -126,9 +129,27 @@ const MediaPlayerComponent = ({ mediaUrl }: Props) => {
   const handleProgress = (progress: { playedSeconds: number }) => {
     if (!isSeeking) {
       const currentTime = progress.playedSeconds
+
+      setPlayingTime(currentTime)
+
       const edge = findCurrentEdge(edges, currentTime)
 
       setActiveEdge(edge || null)
+    }
+  }
+
+  const handleReady = () => {
+    setStatus('ready')
+
+    if (playerRef) {
+      const videoDuration = playerRef.getDuration()
+
+      setDuration(videoDuration)
+
+      if (urlStartTime !== null && !hasSeekedFromURL) {
+        playerRef.seekTo(urlStartTime, 'seconds')
+        setHasSeekedFromURL(true)
+      }
     }
   }
 
@@ -138,15 +159,6 @@ const MediaPlayerComponent = ({ mediaUrl }: Props) => {
 
     return startParam ? parseFloat(startParam) : null
   }, [])
-
-  const handleReady = () => {
-    setStatus('ready')
-
-    if (playerRef && urlStartTime !== null && !hasSeekedFromURL) {
-      playerRef.seekTo(urlStartTime, 'seconds')
-      setHasSeekedFromURL(true)
-    }
-  }
 
   const handlePlay = useCallback(() => {
     if (!isPlaying) {
@@ -198,6 +210,11 @@ const MediaPlayerComponent = ({ mediaUrl }: Props) => {
           volume={volume}
           width="100%"
         />
+        <Overlay className="time-overlay" isFullScreen={isFullScreen}>
+          <TimeDisplay>
+            {secondsToMediaTime(playingTime)} / {secondsToMediaTime(duration)}
+          </TimeDisplay>
+        </Overlay>
       </PlayerWrapper>
       {isVideoFile(mediaUrl) && (
         <ExpandButton onClick={() => setIsFullScreen(!isFullScreen)}>
@@ -245,6 +262,8 @@ const PlayerWrapper = styled.div<{ isFullScreen: boolean }>`
   align-items: center;
   justify-content: center;
   z-index: 10;
+  position: relative;
+
   ${(props) =>
     props.isFullScreen &&
     `
@@ -254,6 +273,33 @@ const PlayerWrapper = styled.div<{ isFullScreen: boolean }>`
     right: 0;
     bottom: 0;
   `}
+
+  .time-overlay {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  &:hover .time-overlay {
+    opacity: 1;
+  }
+`
+
+const Overlay = styled.div<FullScreenProps>`
+  position: absolute;
+  bottom: ${(props) => (props.isFullScreen ? '-4px' : '0px')};
+  left: 0px;
+  z-index: 50;
+  width: 100%;
+`
+
+const TimeDisplay = styled.div`
+  background: rgba(0, 0, 0, 0.45);
+  color: ${colors.GRAY6};
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  white-space: nowrap;
+  text-align: center;
 `
 
 const ExpandButton = styled(Flex)`
