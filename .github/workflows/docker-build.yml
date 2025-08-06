@@ -98,7 +98,6 @@ jobs:
         run: |
           PLATFORM_TAG=$(echo ${{ matrix.platform }} | tr '/' '-')
           docker buildx build \
-          -f src/bin/stack/Dockerfile \
           --platform ${{ matrix.platform }} \
           --tag "${{ secrets.DOCKER_HUB_USER }}/sphinx-nav-fiber:test-arm64-${{ env.RELEASE_TAG }}-${PLATFORM_TAG}" \
           --cache-from "type=registry,ref=${{ secrets.DOCKER_HUB_USER }}/sphinx-nav-fiber:cache-${PLATFORM_TAG}" \
