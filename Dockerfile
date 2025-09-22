@@ -29,3 +29,8 @@ RUN yarn run build-docker
 FROM nginx:alpine
 COPY --from=build /usr/src/app/build /usr/share/nginx/html
 COPY --from=build /usr/src/app/deploy/nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=build /usr/src/app/deploy/docker-entrypoint.sh /docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh
+
+ENTRYPOINT ["/docker-entrypoint.sh"]
+CMD ["nginx", "-g", "daemon off;"]

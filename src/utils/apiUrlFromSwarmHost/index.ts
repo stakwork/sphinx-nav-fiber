@@ -1,6 +1,16 @@
 const { origin, host } = window.location
 
-const getUrlFormEnv = () => import.meta.env.VITE_APP_API_URL
+const getUrlFormEnv = () => {
+  // Check for runtime environment variable (injected by container)
+  const windowWithEnv = window as Window & { ENV?: { BOLTWALL_URL?: string } }
+
+  if (windowWithEnv.ENV?.BOLTWALL_URL) {
+    return windowWithEnv.ENV.BOLTWALL_URL
+  }
+
+  // Fallback to build-time variable
+  return import.meta.env.VITE_APP_API_URL
+}
 
 export const API_URL = getUrlFormEnv() || apiUrlFromSwarmHost() || 'https://bitcoin.sphinx.chat'
 
