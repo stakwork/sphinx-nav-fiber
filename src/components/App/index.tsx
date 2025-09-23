@@ -261,7 +261,8 @@ export const App = () => {
     }
 
     const windowWithEnv = window as Window & { ENV?: { STAKWORK_WEBSOCKET_URL?: string } }
-    const wsUrl = windowWithEnv.ENV?.STAKWORK_WEBSOCKET_URL || process.env.STAKWORK_WEBSOCKET_URL || 'wss://jobs.stakwork.com'
+    const wsUrl =
+      windowWithEnv.ENV?.STAKWORK_WEBSOCKET_URL || process.env.STAKWORK_WEBSOCKET_URL || 'wss://jobs.stakwork.com'
     const ws = new WebSocket(`${wsUrl}/cable?channel=ProjectLogChannel`)
 
     ws.onopen = () => {
