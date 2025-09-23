@@ -260,7 +260,9 @@ export const App = () => {
       return
     }
 
-    const ws = new WebSocket('wss://jobs.stakwork.com/cable?channel=ProjectLogChannel')
+    const windowWithEnv = window as Window & { ENV?: { STAKWORK_WEBSOCKET_URL?: string } }
+    const wsUrl = windowWithEnv.ENV?.STAKWORK_WEBSOCKET_URL || process.env.STAKWORK_WEBSOCKET_URL || 'wss://jobs.stakwork.com'
+    const ws = new WebSocket(`${wsUrl}/cable?channel=ProjectLogChannel`)
 
     ws.onopen = () => {
       const id = runningProjectId
