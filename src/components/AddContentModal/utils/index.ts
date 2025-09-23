@@ -16,7 +16,8 @@ const youtubeLiveRegex = /(https?:\/\/)?(www\.)?youtube\.com\/live\/([A-Za-z0-9_
 const youtubeShortRegex = /(https?:\/\/)?(www\.)?youtu\.be\/([A-Za-z0-9_-]+)/
 const twitterSpaceRegex = /https:\/\/twitter\.com\/i\/spaces\/([A-Za-z0-9_-]+)/
 const tweetUrlRegex = /https:\/\/(twitter\.com|x\.com)\/[^/]+\/status\/(\d+)/
-const mp3Regex = /(https?:\/\/)?([A-Za-z0-9_-]+)\.mp3/
+const mp3Regex = /(https?:\/\/)?.*\.mp3/
+const mp4Regex = /(https?:\/\/)?.*\.mp4/
 
 const rssRegex = /(https?:\/\/)?(.*\.)?.+\/(feed|rss|rss\.xml|.*\?(feed|format)=rss)(\/.*)?$/
 const youtubeChannelPattern = /https?:\/\/(www\.)?youtube\.com\/(user\/)?(@)?([\w-]+)/
@@ -44,6 +45,7 @@ export async function getInputType(source: string) {
     youtubeShortRegex,
     twitterSpaceRegex,
     mp3Regex,
+    mp4Regex,
   ]
 
   if (linkPatterns.some((pattern) => pattern.test(source))) {
