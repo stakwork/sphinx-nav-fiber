@@ -7,52 +7,6 @@ on:
     types: [published]
 
 jobs:
-  # build:
-  #   runs-on: ubuntu-22.04
-  #   name: Build and push sphinx-nav-fiber image
-  #   env:
-  #     ACTIONS_ALLOW_UNSECURE_COMMANDS: true
-  #   steps:
-  #     - name: Check out from Git
-  #       uses: actions/checkout@v2
-  #     - name: Test env
-  #       run: echo "RELEASE_TAG=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
-  #     - name: Test print env
-  #       run: |
-  #         echo $RELEASE_TAG
-  #         echo ${{ env.RELEASE_TAG }}
-  #     - name: Login to Docker Hub
-  #       run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-  #     - name: Checkout project
-  #       uses: actions/checkout@v2
-  #     - name: Setup Docker buildx action
-  #       uses: crazy-max/ghaction-docker-buildx@v1
-  #       id: buildx
-  #       with:
-  #         buildx-version: latest
-  #         qemu-version: latest
-  #     - name: Show available buildx platforms
-  #       run: echo ${{ steps.buildx.outputs.platforms }}
-  #     - name: Cache Docker layers
-  #       uses: actions/cache@v3
-  #       id: cache
-  #       with:
-  #         path: /tmp/.buildx-cache
-  #         key: ${{ runner.os }}-buildx-${{ github.sha }}
-  #         restore-keys: |
-  #           ${{ runner.os }}-buildx-
-  #     - name: Test print env
-  #       run: |
-  #         echo $RELEASE_TAG
-  #         echo ${{ env.RELEASE_TAG }}
-  #     - name: Run Docker buildx
-  #       run: |
-  #         docker buildx build \
-  #         --cache-to "type=local,dest=/tmp/.buildx-cache" \
-  #         --platform linux/amd64,linux/arm64 \
-  #         --tag "${{ secrets.DOCKER_HUB_USER }}/sphinx-nav-fiber:${{ env.RELEASE_TAG }}" \
-  #         --output "type=registry" ./
-
   push:
     strategy:
       matrix:
@@ -99,7 +53,7 @@ jobs:
           PLATFORM_TAG=$(echo ${{ matrix.platform }} | tr '/' '-')
           docker buildx build \
           --platform ${{ matrix.platform }} \
-          --tag "${{ secrets.DOCKER_HUB_USER }}/sphinx-nav-fiber:test-arm64-${{ env.RELEASE_TAG }}-${PLATFORM_TAG}" \
+          --tag "${{ secrets.DOCKER_HUB_USER }}/sphinx-nav-fiber:${{ env.RELEASE_TAG }}-${PLATFORM_TAG}" \
           --cache-from "type=registry,ref=${{ secrets.DOCKER_HUB_USER }}/sphinx-nav-fiber:cache-${PLATFORM_TAG}" \
           --cache-to "type=registry,image-manifest=true,oci-mediatypes=true,mode=max,ref=${{ secrets.DOCKER_HUB_USER }}/sphinx-nav-fiber:cache-${PLATFORM_TAG}" \
           --output "type=registry" ./
@@ -121,6 +75,7 @@ jobs:
       - name: Create and push multi-platform manifest
         run: |
           docker buildx imagetools create \
-            --tag "${{ secrets.DOCKER_HUB_USER }}/sphinx-nav-fiber:test-arm64-${{ env.RELEASE_TAG }}" \
-            "${{ secrets.DOCKER_HUB_USER }}/sphinx-nav-fiber:test-arm64-${{ env.RELEASE_TAG }}-linux-amd64" \
-            "${{ secrets.DOCKER_HUB_USER }}/sphinx-nav-fiber:test-arm64-${{ env.RELEASE_TAG }}-linux-arm64"
+            --tag "${{ secrets.DOCKER_HUB_USER }}/sphinx-nav-fiber:${{ env.RELEASE_TAG }}" \
+            --tag "${{ secrets.DOCKER_HUB_USER }}/sphinx-nav-fiber:latest" \
+            "${{ secrets.DOCKER_HUB_USER }}/sphinx-nav-fiber:${{ env.RELEASE_TAG }}-linux-amd64" \
+            "${{ secrets.DOCKER_HUB_USER }}/sphinx-nav-fiber:${{ env.RELEASE_TAG }}-linux-arm64"
