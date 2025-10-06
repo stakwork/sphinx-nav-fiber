@@ -10,6 +10,7 @@ import { useAppStore } from '~/stores/useAppStore'
 import { useSchemaStore } from '~/stores/useSchemaStore'
 import { truncateText } from '~/utils/truncateText'
 import { NODE_RADIUS } from '../../constants'
+import { useAppStore } from '~/stores/useAppStore'
 
 export const NODE_TYPE_COLORS = ['#ff13c9', '#5af0ff', '#3233ff', '#c2f0c2', '#ff6666', '#99ccff', '#ffb3b3']
 
@@ -43,6 +44,7 @@ export const boxGeometry = new BoxGeometry(2, 2, 2)
 export const Node = memo(({ node, setSelectedNode, onSimulationUpdate, isSelected }: Props) => {
   const meshRef = useRef<Mesh | null>(null)
   const [normalizedSchemasByType] = useSchemaStore((s) => [s.normalizedSchemasByType])
+  const { setSelectedColor } = useAppStore((s) => s)
   const [showTooltip, setShowTooltip] = useState(false)
   const { setSelectedColor } = useAppStore((s) => s)
 
