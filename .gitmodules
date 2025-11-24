@@ -1,6 +1,6 @@
 [submodule "backend"]
 	path = backend
-	url = git@github.com:stakwork/jarvis-backend.git
+	url = https://github.com/stakwork/jarvis-backend.git
 [submodule "boltwall"]
 	path = boltwall
-	url = git@github.com:stakwork/jarvis-boltwall.git
+	url = https://github.com/stakwork/jarvis-boltwall.git
