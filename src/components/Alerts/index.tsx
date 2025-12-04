@@ -70,7 +70,7 @@ const AlertWrapper = styled(Flex).attrs({
 
 const ContentWrapper = styled(Flex)`
   max-height: 50vh;
-  max-width: 30vw;
+  width: 20vw;
   background: transparent;
   padding-top: 1px !important;
   padding-bottom: 0 !important;
@@ -150,9 +150,8 @@ const Info = styled(Flex).attrs({
 
 const CloseButton = styled.div`
   position: absolute;
-  top: 0;
-  right: 0;
-  transform: translate(50%, -50%);
+  top: 5px;
+  right: 5px;
   cursor: pointer;
   display: none;
   z-index: 1;
@@ -172,12 +171,15 @@ const CloseButton = styled.div`
 
 const StyledPopover = styled(Popover)`
   .MuiPopover-paper {
-    margin-top: 4px;
+    margin-top: 8px;
     background-color: transparent !important;
     box-shadow: none;
     background: ${colors.MESSAGE_BG};
     border-radius: 6px;
     overflow: visible;
+    max-width: 90vw;
+    width: fit-content;
+    padding: 16px;
 
     &:hover {
       ${CloseButton} {
