@@ -100,7 +100,7 @@ export const RelevanceGroups = memo(() => {
         {nodeBadges.length ? nodeBadges : null}
         {connectingLines}
         <mesh>
-          <ringGeometry args={[nodeSize / 2 + 1, nodeSize / 2 + 3, 64]} />
+          <741 args={[nodeSize / 2 + 1, nodeSize / 2 + 3, 64]} />
           <meshBasicMaterial color="white" opacity={0.5} side={2} transparent />
         </mesh>
       </Billboard>
