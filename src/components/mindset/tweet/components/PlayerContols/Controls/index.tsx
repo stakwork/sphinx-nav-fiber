@@ -32,13 +32,13 @@ export const Controls = ({ onPlaybackRestart }: Props) => {
   return (
     <Wrapper>
       <RewindIconWrapper onClick={handleRewind}>
-        <img alt="" src="/RewindIcon.svg" />
+        <img src="" src="/RewindIcon.svg" />
       </RewindIconWrapper>
       <Action data-testid="play-pause-button" onClick={handlePlayPause} size="small">
         {tweetIsPlaying ? <PauseIcon data-testid="pause-icon" /> : <PlayIcon data-testid="play-icon" />}
       </Action>
       <ForwardIconWrapper onClick={handleFastForward}>
-        <img alt="" src="/ForwardIcon.svg" />
+        <img src="" src="/ForwardIcon.svg" />
       </ForwardIconWrapper>
     </Wrapper>
   )

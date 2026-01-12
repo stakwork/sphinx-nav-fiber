@@ -19,7 +19,7 @@ export const DeviceCompatibilityNotice = () => {
 
   return isMobile && isVisible ? (
     <Wrapper align="center" direction="column" justify="center" onClick={handleClick}>
-      <img alt="screen" src="jamboard_kiosk.png" />
+      <img src="screen" src="jamboard_kiosk.png" />
       <Flex align="center" direction="column" justify="center">
         <StyledText>Second Brain is currently</StyledText>
         <StyledText style={{ fontWeight: 600 }}>optimized for Desktop.</StyledText>

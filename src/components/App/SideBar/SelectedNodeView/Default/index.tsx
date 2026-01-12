@@ -142,7 +142,7 @@ export const Default = () => {
       {hasImage && (
         <StyledImageWrapper>
           <img
-            alt="img_a11y"
+            src="img_a11y"
             onError={(e) => {
               e.currentTarget.src = 'generic_placeholder_img.png'
               e.currentTarget.className = 'default-img'

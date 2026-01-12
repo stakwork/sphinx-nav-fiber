@@ -42,7 +42,7 @@ export const SourceTypeStep: FC<Props> = ({ onNextStep, onPrevStep, type, value 
     </Flex>
     <Flex mb={20}>
       <TextWrapper>
-        <img alt={CONTENT_TYPE_MAPPING[type].label} className="badge__img" src={CONTENT_TYPE_MAPPING[type].img} />
+        <img src={CONTENT_TYPE_MAPPING[type].label} className="badge__img" src={CONTENT_TYPE_MAPPING[type].img} />
         <StyledText>{CONTENT_TYPE_MAPPING[type].label}</StyledText>
       </TextWrapper>
       <StyledLink>{extractNameFromLink(value, type) ?? value}</StyledLink>

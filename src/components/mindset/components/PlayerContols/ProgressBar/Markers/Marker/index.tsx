@@ -40,7 +40,7 @@ Marker.displayName = 'Marker'
 
 const Badge = memo(({ iconStart, color, label }: BadgeProps) => (
   <EpisodeWrapper color={color}>
-    {iconStart && <img alt={label} className="badge__img" onError={console.log} src={iconStart} />}
+    {iconStart && <img src={label} className="badge__img" onError={console.log} src={iconStart} />}
   </EpisodeWrapper>
 ))
 

@@ -28,7 +28,7 @@ export const TypeTweet = ({ text, imageUrl, date, twitterHandle, name, verified,
             {name}
             {verified && (
               <div className="verification">
-                <img alt="verified" src="verified_twitter.svg" />
+                <img src="verified" src="verified_twitter.svg" />
               </div>
             )}
           </Name>

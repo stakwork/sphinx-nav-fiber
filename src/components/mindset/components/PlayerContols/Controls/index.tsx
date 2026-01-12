@@ -64,13 +64,13 @@ export const Controls = memo(() => {
     <Wrapper>
       <MuteWrapper onClick={toggleMute}>{isMuted ? <MuteVolumeIcon /> : <VolumeIcon />}</MuteWrapper>
       <RewindIconWrapper onClick={handleRewind}>
-        <img alt="" src="/RewindIcon.svg" />
+        <img src="" src="/RewindIcon.svg" />
       </RewindIconWrapper>
       <Action data-testid="play-pause-button" onClick={togglePlay} size="small">
         {isPlaying ? <PauseIcon data-testid="pause-icon" /> : <PlayIcon data-testid="play-icon" />}
       </Action>
       <ForwardIconWrapper onClick={handleFastForward}>
-        <img alt="" src="/ForwardIcon.svg" />
+        <img src="" src="/ForwardIcon.svg" />
       </ForwardIconWrapper>
       <SpeedButton onClick={cycleSpeed}>{playbackSpeed}x</SpeedButton>
     </Wrapper>

@@ -52,7 +52,7 @@ export const MainToolbar = () => {
   return (
     <Wrapper>
       <LogoButton onClick={handleLogoClick}>
-        <img alt="Second brain" src="logo.svg" />
+        <img src="Second brain" src="logo.svg" />
       </LogoButton>
       {chatInterfaceFeatureFlag ? (
         <ActionButton onClick={handleOpenChatModal}>

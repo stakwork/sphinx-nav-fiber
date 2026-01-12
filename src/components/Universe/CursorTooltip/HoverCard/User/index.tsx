@@ -46,7 +46,7 @@ export const User = ({ node }: Props) => {
       <UserContentWrapper>
         <AvatarSection>
           {imageUrl ? (
-            <Avatar alt={displayName} src={imageUrl} />
+            <Avatar src={displayName} src={imageUrl} />
           ) : (
             <DefaultAvatar>
               <PersonIcon />

@@ -12,7 +12,7 @@ type Props = {
 
 export const Content = ({ name, url, type }: Props) => (
   <Wrapper>
-    {url && <img alt="" className="image" src={url} />}
+    {url && <img src="" className="image" src={url} />}
     <div className="title">{name}</div>
     <div className="badge">
       <TypeBadge type={type} />

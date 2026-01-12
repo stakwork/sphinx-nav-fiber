@@ -28,7 +28,7 @@ export const TweetCard = ({ node, onClick, selected }: VideoCardProps) => {
               {name}
               {verified && (
                 <div className="verification">
-                  <img alt="verified" src="verified_twitter.svg" />
+                  <img src="verified" src="verified_twitter.svg" />
                 </div>
               )}
             </Name>

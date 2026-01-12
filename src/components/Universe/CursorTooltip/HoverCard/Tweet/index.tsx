@@ -119,7 +119,7 @@ export const Tweet = ({ node }: Props) => {
         <ContentRow>
           <AvatarColumn>
             {imageUrl ? (
-              <UserAvatar alt={displayName} src={imageUrl} />
+              <UserAvatar src={displayName} src={imageUrl} />
             ) : (
               <DefaultAvatar>
                 <PersonIcon />
