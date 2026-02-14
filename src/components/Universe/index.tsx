@@ -41,7 +41,7 @@ const Content = () => {
     universeColor: colors.black,
   })
 
-  const backgroundColor = graphStyle === 'earth' ? colors.BG1 : (colors.BLUE_PRESS_STATE || universeColor)
+  const backgroundColor = graphStyle === 'earth' ? colors.BG1 : colors.BLUE_PRESS_STATE || universeColor
 
   const dataInitial = useDataStore((s) => s.dataInitial)
 

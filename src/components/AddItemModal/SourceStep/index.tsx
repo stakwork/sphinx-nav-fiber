@@ -26,9 +26,10 @@ export const SourceStep: FC<Props> = ({ type, skipToStep, name, sourceLink }) =>
 
   const hasNoErrors = Object.keys(errors).length === 0
 
-  const allowNextStep = type === 'Image' 
-    ? isValidInput(watchedName) && isValidInput(watchedSourceLink) && hasNoErrors
-    : isValidInput(watchedName) && hasNoErrors
+  const allowNextStep =
+    type === 'Image'
+      ? isValidInput(watchedName) && isValidInput(watchedSourceLink) && hasNoErrors
+      : isValidInput(watchedName) && hasNoErrors
 
   return (
     <Flex>
