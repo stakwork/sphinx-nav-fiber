@@ -92,3 +92,18 @@ const getPillShapeGeometry = (width: number, height: number) => {
 export const NodePillGeometry = getPillShapeGeometry(nodeSize * 3, nodeSize + 1)
 
 export const NodeCircleGeometry = new THREE.CircleGeometry(nodeSize / 2 + 1, 64)
+
+const getLeftRoundedRectGeometry = (width: number, height: number) => {
+  const r = height / 2
+  const shape = new THREE.Shape()
+
+  shape.moveTo(0, -r)
+  shape.lineTo(width - r, -r)
+  shape.absarc(width - r, 0, r, -Math.PI / 2, Math.PI / 2, false)
+  shape.lineTo(0, r)
+  shape.lineTo(0, -r)
+
+  return new THREE.ShapeGeometry(shape, 64)
+}
+
+export const NodeLeftRoundedRectGeometry = getLeftRoundedRectGeometry(nodeSize * 2, nodeSize)
