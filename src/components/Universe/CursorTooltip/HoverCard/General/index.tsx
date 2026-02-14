@@ -16,8 +16,15 @@ export const General = ({ node }: Props) => {
 
   const keyProperty = getNodeKeysByType(node.node_type) || ''
 
+  const hasImage = !!node?.properties?.image_url
+  const imageUrl = node?.properties?.image_url
+
   let title = ''
   let description = node?.properties?.description || node.properties?.text || ''
+
+  if (description && description.length > 200) {
+    description = description.substring(0, 200) + '...'
+  }
 
   if (node.node_type === 'Question') {
     title = node.name || ''
@@ -30,9 +37,9 @@ export const General = ({ node }: Props) => {
 
   return (
     <TooltipContainer>
-      <ContentWrapper>
-        <Heading>
-          {node?.properties?.image_url && <Avatar src={node.properties.image_url} />}
+      <ContentWrapper $hasImage={hasImage}>
+        <Heading $hasImage={hasImage}>
+          {hasImage && imageUrl && <Avatar src={imageUrl} />}
           <TitleWrapper>
             <TypeBadge type={node.node_type} />
 
@@ -58,11 +65,12 @@ const TooltipContainer = styled(Flex)`
   padding: 16px 14px;
 `
 
-const ContentWrapper = styled(Flex)`
+const ContentWrapper = styled(Flex)<{ $hasImage?: boolean }>`
   margin-top: 0;
   flex-direction: column;
   gap: 4px;
-  align-items: flex-start;
+  align-items: ${props => props.$hasImage ? 'flex-start' : 'flex-start'};
+  width: ${props => props.$hasImage ? 'auto' : '100%'};
 `
 
 export const Avatar = styled.img`
@@ -73,8 +81,9 @@ export const Avatar = styled.img`
   margin-right: 8px;
 `
 
-const Heading = styled(Flex)`
-  flex-direction: row;
+const Heading = styled(Flex)<{ $hasImage?: boolean }>`
+  flex-direction: ${props => props.$hasImage ? 'row' : 'column'};
+  width: 100%;
 `
 
 const TitleWrapper = styled(Flex)`
