@@ -1,6 +1,6 @@
 import { Billboard, Line } from '@react-three/drei'
 import { memo, useCallback, useMemo } from 'react'
-import { Vector3 } from 'three'
+import { Path, Shape, ShapeGeometry, Vector3 } from 'three'
 import { useShallow } from 'zustand/react/shallow'
 import { getLinksBetweenNodes, useDataStore } from '~/stores/useDataStore'
 import { Neighbourhood, useGraphStore, useSelectedNodeRelativeIds } from '~/stores/useGraphStore'
@@ -40,9 +40,7 @@ export const RelevanceGroups = memo(() => {
       .map((id: string) => nodesNormalized.get(id))
       .filter((i): i is NodeExtended => !!i)
 
-    const edges = selectedNodeRelativeIds.map((id: string) => getLinksBetweenNodes(id, selectedNode?.ref_id))
-
-    console.log(edges)
+    selectedNodeRelativeIds.forEach((id: string) => getLinksBetweenNodes(id, selectedNode?.ref_id))
 
     const groupsMap: TGroupsMap = childNodes.reduce((acc: TGroupsMap, curr: NodeExtended) => {
       acc[curr.node_type] = (acc[curr.node_type] || 0) + 1
@@ -94,13 +92,38 @@ export const RelevanceGroups = memo(() => {
     [selectedNode?.x, selectedNode?.y, selectedNode?.z],
   )
 
+  const selectionFrameGeometry = useMemo(() => {
+    const outerSize = nodeSize + 6
+    const innerSize = nodeSize + 2
+    const outerHalf = outerSize / 2
+    const innerHalf = innerSize / 2
+
+    const shape = new Shape()
+
+    shape.moveTo(-outerHalf, -outerHalf)
+    shape.lineTo(outerHalf, -outerHalf)
+    shape.lineTo(outerHalf, outerHalf)
+    shape.lineTo(-outerHalf, outerHalf)
+    shape.lineTo(-outerHalf, -outerHalf)
+
+    const hole = new Path()
+
+    hole.moveTo(-innerHalf, -innerHalf)
+    hole.lineTo(-innerHalf, innerHalf)
+    hole.lineTo(innerHalf, innerHalf)
+    hole.lineTo(innerHalf, -innerHalf)
+    hole.lineTo(-innerHalf, -innerHalf)
+    shape.holes.push(hole)
+
+    return new ShapeGeometry(shape)
+  }, [])
+
   return (
     <group>
       <Billboard key="node-badges" position={centerPos}>
         {nodeBadges.length ? nodeBadges : null}
         {connectingLines}
-        <mesh>
-          <ringGeometry args={[nodeSize / 2 + 1, nodeSize / 2 + 3, 64]} />
+        <mesh geometry={selectionFrameGeometry}>
           <meshBasicMaterial color="white" opacity={0.5} side={2} transparent />
         </mesh>
       </Billboard>
