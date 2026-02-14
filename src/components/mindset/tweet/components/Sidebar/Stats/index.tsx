@@ -121,6 +121,9 @@ export const Stats = ({ node, handleAnalyzeClick }: Props) => {
           <Value>{getSentimentIcon(node?.properties?.analytics_sentiment_score)}</Value>
         </Metric>
       </Grid>
+      <EngagementButton className="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition duration-200">
+        Engagement Report
+      </EngagementButton>
     </Card>
   )
 }
@@ -191,5 +194,20 @@ const IconButton = styled.a`
   cursor: pointer;
   &:hover {
     opacity: 0.6;
+  }
+`
+
+const EngagementButton = styled.button`
+  margin-top: 16px;
+  width: 100%;
+  background-color: #2563eb;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 8px;
+  transition: background-color 0.2s;
+  border: none;
+  cursor: pointer;
+  &:hover {
+    background-color: #1d4ed8;
   }
 `
