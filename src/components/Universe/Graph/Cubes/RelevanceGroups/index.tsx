@@ -6,8 +6,8 @@ import { getLinksBetweenNodes, useDataStore } from '~/stores/useDataStore'
 import { Neighbourhood, useGraphStore, useSelectedNodeRelativeIds } from '~/stores/useGraphStore'
 import { distributeNodesOnCircle } from '~/stores/useSimulationStore/utils/distributeNodesOnCircle/indes'
 import { NodeExtended } from '~/types'
-import { nodeSize } from '../constants'
 import { GroupBadge } from './GroupBadge'
+import { nodeSize, HalfRoundedRectGeometry } from '../constants'
 
 type TGroupsMap = Record<string, number>
 
@@ -99,8 +99,7 @@ export const RelevanceGroups = memo(() => {
       <Billboard key="node-badges" position={centerPos}>
         {nodeBadges.length ? nodeBadges : null}
         {connectingLines}
-        <mesh>
-          <ringGeometry args={[nodeSize / 2 + 1, nodeSize / 2 + 3, 64]} />
+        <mesh geometry={HalfRoundedRectGeometry}>
           <meshBasicMaterial color="white" opacity={0.5} side={2} transparent />
         </mesh>
       </Billboard>
