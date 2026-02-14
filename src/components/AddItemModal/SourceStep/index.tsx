@@ -16,7 +16,7 @@ type Props = {
   skipToStep: (step: AddItemModalStepID) => void
 }
 
-export const SourceStep: FC<Props> = ({ type, skipToStep, name, sourceLink }) => {
+export const SourceStep: FC<Props> = ({ type, skipToStep, name: _name, sourceLink: _sourceLink }) => {
   const { formState, watch } = useFormContext()
   const { errors } = formState
   const watchedName = watch('typeName')

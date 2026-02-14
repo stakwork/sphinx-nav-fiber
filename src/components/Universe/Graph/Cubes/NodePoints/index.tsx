@@ -57,6 +57,7 @@ const _NodePoints = () => {
     const radius = nodeSize / 2 // Full rounding on left side
 
     const shape = new Shape()
+
     // Start at top-left corner (after the rounded part)
     shape.moveTo(-width / 2 + radius, height / 2)
     // Top edge to top-right corner

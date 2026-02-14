@@ -37,6 +37,7 @@ const Fallback = () => (
 
 const Content = () => {
   const graphStyle = useGraphStore((s) => s.graphStyle)
+
   const { universeColor } = useControls('universe', {
     universeColor: colors.black,
   })

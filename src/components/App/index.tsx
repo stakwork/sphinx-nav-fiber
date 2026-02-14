@@ -322,7 +322,7 @@ export const App = () => {
 
       <Suspense fallback={<div>Loading...</div>}>
         {!splashDataLoading ? (
-          <Wrapper direction="row" $graphStyle={graphStyle}>
+          <Wrapper $graphStyle={graphStyle} direction="row">
             <FormProvider {...form}>
               <LazyMainToolbar />
               {!universeQuestionIsOpen && <LazySideBar />}
