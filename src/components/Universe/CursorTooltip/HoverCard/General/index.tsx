@@ -34,7 +34,7 @@ export const General = ({ node }: Props) => {
 
   return (
     <TooltipContainer>
-      <ContentWrapper $hasImage={hasImage} $hasDescription={hasDescription}>
+      <ContentWrapper $hasDescription={hasDescription} $hasImage={hasImage}>
         <Heading $hasImage={hasImage}>
           {hasImage && node.properties && <Avatar src={node.properties.image_url} />}
           <TitleWrapper $fullWidth={!hasImage}>
