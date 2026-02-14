@@ -1,6 +1,6 @@
 import { Instances } from '@react-three/drei'
 import { memo, useMemo } from 'react'
-import { BufferGeometry, CircleGeometry } from 'three'
+import { BufferGeometry, Shape, ShapeGeometry } from 'three'
 import { useDataStore, useNodeTypes } from '~/stores/useDataStore'
 import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
 import { useSelectedNode } from '~/stores/useGraphStore'
@@ -50,15 +50,26 @@ const _NodePoints = () => {
 
   const scaleFeature = useFeatureFlagStore((s) => s.scaleFeature)
 
-  // Create a rounded rectangle geometry
-  const roundedRectGeometry = useMemo(
-    () => new CircleGeometry(nodeSize / 2, 64), // 64 segments = smooth circle
-    [],
-  )
+  // Create a rectangle with rounded left border and sharp right border
+  const roundedLeftRectGeometry = useMemo(() => {
+    const width = nodeSize * 1.5
+    const height = nodeSize * 0.8
+    const radius = height / 2
+
+    const shape = new Shape()
+    shape.moveTo(-width / 2 + radius, -height / 2)
+    shape.lineTo(width / 2, -height / 2)
+    shape.lineTo(width / 2, height / 2)
+    shape.lineTo(-width / 2 + radius, height / 2)
+    shape.absarc(-width / 2 + radius, 0, radius, Math.PI / 2, -Math.PI / 2, true)
+    shape.lineTo(-width / 2 + radius, -height / 2)
+
+    return new ShapeGeometry(shape)
+  }, [])
 
   return (
     <Instances
-      geometry={roundedRectGeometry as BufferGeometry}
+      geometry={roundedLeftRectGeometry as BufferGeometry}
       limit={1000} // Optional: max amount of items (for calculating buffer size)
       range={1000}
       visible={!selectedNode || true}
