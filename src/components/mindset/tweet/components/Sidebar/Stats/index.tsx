@@ -121,7 +121,13 @@ export const Stats = ({ node, handleAnalyzeClick }: Props) => {
           <Value>{getSentimentIcon(node?.properties?.analytics_sentiment_score)}</Value>
         </Metric>
       </Grid>
-      <EngagementButton className="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition duration-200">
+      <EngagementButton
+        className="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition duration-200"
+        onClick={(e) => {
+          e.stopPropagation()
+          handleAnalyzeClick()
+        }}
+      >
         Engagement Report
       </EngagementButton>
     </Card>
