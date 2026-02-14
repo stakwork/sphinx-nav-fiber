@@ -28,6 +28,7 @@ export const defaultFilters = {
   top_node_count: '40',
   includeContent: 'true',
   node_type: [],
+  edge_type: [],
   search_method: 'hybrid',
 }
 
@@ -188,18 +189,19 @@ export const useDataStore = create<DataStore>()(
 
       abortController = controller
 
-      const { node_type: filterNodeTypes, ...withoutNodeType } = filters
+      const { node_type: filterNodeTypes, edge_type: filterEdgeTypes, ...withoutNodeType } = filters
       const word = AISearchQuery || currentSearch
 
       const isLatest = isEqual(filters, defaultData.filters) && !word
 
-      const updatedParams = {
+      const updatedParams: Record<string, string> = {
         ...withoutNodeType,
         depth: filters.depth || '0',
         ...ai,
         skip: currentPage === 0 ? String(currentPage * itemsPerPage) : String(currentPage * itemsPerPage + 1),
         limit: word ? String(itemsPerPage) : String(itemsPerPage),
         ...(filterNodeTypes.length > 0 ? { node_type: JSON.stringify(filterNodeTypes) } : {}),
+        ...(filterEdgeTypes.length > 0 ? { edge_type: JSON.stringify(filterEdgeTypes) } : {}),
         ...(word ? { word } : {}),
         ...(aiRefId && AISearchQuery ? { previous_search_ref_id: aiRefId } : {}),
         ...(!word && !AISearchQuery ? { sort_by: 'date_added_to_graph' } : {}),

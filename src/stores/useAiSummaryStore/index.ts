@@ -102,17 +102,18 @@ export const useAiSummaryStore = create<AiSummaryStore>()(
 
       abortController = controller
 
-      const { node_type: filterNodeTypes, ...withoutNodeType } = filters
+      const { node_type: filterNodeTypes, edge_type: filterEdgeTypes, ...withoutNodeType } = filters
       const word = fullAiSearchQuery || currentSearch
 
       const isLatest = isEqual(filters, defaultFilters) && !word
 
-      const updatedParams = {
+      const updatedParams: Record<string, string> = {
         ...withoutNodeType,
         ...ai,
         skip: currentPage === 0 ? String(currentPage * itemsPerPage) : String(currentPage * itemsPerPage + 1),
         limit: word ? '25' : String(itemsPerPage),
         ...(filterNodeTypes.length > 0 ? { node_type: JSON.stringify(filterNodeTypes) } : {}),
+        ...(filterEdgeTypes.length > 0 ? { edge_type: JSON.stringify(filterEdgeTypes) } : {}),
         ...(word ? { word } : {}),
         ...(aiRefId && AISearchQuery ? { previous_search_ref_id: aiRefId } : {}),
         ...(!word && !AISearchQuery ? { sort_by: 'date_added_to_graph' } : {}),
