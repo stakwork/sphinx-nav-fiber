@@ -1,5 +1,6 @@
 import { Button } from '@mui/material'
 import { FC } from 'react'
+import { useFormContext } from 'react-hook-form'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
@@ -16,9 +17,18 @@ type Props = {
 }
 
 export const SourceStep: FC<Props> = ({ type, skipToStep, name, sourceLink }) => {
+  const { formState, watch } = useFormContext()
+  const { errors } = formState
+  const watchedName = watch('typeName')
+  const watchedSourceLink = watch('sourceLink')
+
   const isValidInput = (input: string | undefined) => noSpacePattern.test(input ?? '')
 
-  const allowNextStep = type === 'Image' ? isValidInput(name) && isValidInput(sourceLink) : isValidInput(name)
+  const hasNoErrors = Object.keys(errors).length === 0
+
+  const allowNextStep = type === 'Image' 
+    ? isValidInput(watchedName) && isValidInput(watchedSourceLink) && hasNoErrors
+    : isValidInput(watchedName) && hasNoErrors
 
   return (
     <Flex>
