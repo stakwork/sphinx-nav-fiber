@@ -14,7 +14,7 @@ import NodesIcon from '~/components/Icons/NodesIcon'
 import PlusIcon from '~/components/Icons/PlusIcon'
 import { useNodeNavigation } from '~/components/Universe/useNodeNavigation'
 import { getActionDetails } from '~/network/actions'
-import { useSelectedNode } from '~/stores/useGraphStore'
+import { useSelectedNode, useGraphStore } from '~/stores/useGraphStore'
 import { useModal } from '~/stores/useModalStore'
 import { useSchemaStore } from '~/stores/useSchemaStore'
 import { useUserStore } from '~/stores/useUserStore'
@@ -52,6 +52,7 @@ export const Node = ({ onClick, node, selected, rounded = true, x, y, z, id }: P
   const { open: createBountyModal } = useModal('createBounty')
   const { open: openNodeActionModal } = useModal('nodeAction')
   const selectedNode = useSelectedNode()
+  const graphStyle = useGraphStore((s) => s.graphStyle)
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
   const [nodeActions, setNodeActions] = useState<ActionDetail[]>()
   const [loadingActions, setLoadingActions] = useState<boolean>(false)
@@ -122,7 +123,7 @@ export const Node = ({ onClick, node, selected, rounded = true, x, y, z, id }: P
   return (
     <mesh ref={nodeRef}>
       <Html center sprite zIndexRange={[0, 0]}>
-        <Wrapper align="center" direction="row" justify="flex-start">
+        <Wrapper align="center" backgroundColor={graphStyle === 'earth' ? colors.BG1 : 'black'} direction="row" justify="flex-start">
           <>
             {selected ? (
               <Selected className={clsx({ 'has-padding': descriptionShortened })} rounded={false}>
@@ -218,8 +219,8 @@ export const Node = ({ onClick, node, selected, rounded = true, x, y, z, id }: P
   )
 }
 
-const Wrapper = styled(Flex)`
-  background: black;
+const Wrapper = styled(Flex)<{ backgroundColor?: string }>`
+  background: ${({ backgroundColor }) => backgroundColor || 'black'};
 `
 
 const ClipLoaderWrapper = styled(Flex)`
