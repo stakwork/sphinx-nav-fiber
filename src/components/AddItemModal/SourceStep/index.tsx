@@ -11,12 +11,10 @@ import { noSpacePattern } from '~/components/AddItemModal/SourceTypeStep/constan
 
 type Props = {
   type: string
-  sourceLink?: string
-  name: string
   skipToStep: (step: AddItemModalStepID) => void
 }
 
-export const SourceStep: FC<Props> = ({ type, skipToStep, name, sourceLink }) => {
+export const SourceStep: FC<Props> = ({ type, skipToStep }) => {
   const { formState, watch } = useFormContext()
   const { errors } = formState
   const watchedName = watch('typeName')
