@@ -13,6 +13,7 @@ import { useAiSummaryStore } from '~/stores/useAiSummaryStore'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
 import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
+import { useGraphStore } from '~/stores/useGraphStore'
 import { useTeachStore } from '~/stores/useTeachStore'
 import { useUserStore } from '~/stores/useUserStore'
 import {
@@ -31,10 +32,10 @@ import { AppBar } from './AppBar'
 import { DeviceCompatibilityNotice } from './DeviceCompatibilityNotification'
 import { Toasts } from './Toasts'
 
-const Wrapper = styled(Flex)`
+const Wrapper = styled(Flex)<{ $graphStyle: string }>`
   height: 100%;
   width: 100%;
-  background-color: ${colors.black};
+  background-color: ${({ $graphStyle }) => ($graphStyle === 'earth' ? colors.BG1 : colors.black)};
 `
 
 const Version = styled(Flex)`
@@ -53,6 +54,7 @@ const LazySideBar = lazy(() => import('./SideBar').then(({ SideBar }) => ({ defa
 export const App = () => {
   const [searchParams] = useSearchParams()
   const query = searchParams.get('q')
+  const graphStyle = useGraphStore((s) => s.graphStyle)
   const { setNodeCount } = useUserStore((s) => s)
   const queueRef = useRef<FetchDataResponse | null>(null)
   const timerRef = useRef<NodeJS.Timeout | null>(null)
@@ -320,7 +322,7 @@ export const App = () => {
 
       <Suspense fallback={<div>Loading...</div>}>
         {!splashDataLoading ? (
-          <Wrapper direction="row">
+          <Wrapper direction="row" $graphStyle={graphStyle}>
             <FormProvider {...form}>
               <LazyMainToolbar />
               {!universeQuestionIsOpen && <LazySideBar />}
