@@ -60,10 +60,10 @@ export const HtmlPanel = ({ speed = 2, intensity = 4, children, withTranscript, 
         sprite
       >
         <HtmlWrap
-          isEarthView={isEarthView}
           className="html-panel"
           dimensions={dimensions}
           id="html-panel"
+          isEarthView={isEarthView}
           onPointerDown={stopPropagationHandler}
           onPointerOut={stopPropagationHandler}
           onPointerOver={stopPropagationHandler}

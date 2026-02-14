@@ -57,6 +57,7 @@ const _NodePoints = () => {
     const radius = height / 2
 
     const shape = new Shape()
+
     shape.moveTo(-width / 2 + radius, -height / 2)
     shape.lineTo(width / 2, -height / 2)
     shape.lineTo(width / 2, height / 2)
