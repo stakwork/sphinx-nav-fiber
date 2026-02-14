@@ -1,6 +1,6 @@
 import { Billboard, Line } from '@react-three/drei'
 import { memo, useCallback, useMemo } from 'react'
-import { Vector3 } from 'three'
+import { Shape, Vector3 } from 'three'
 import { useShallow } from 'zustand/react/shallow'
 import { useDataStore } from '~/stores/useDataStore'
 import { Neighbourhood, useGraphStore, useSelectedNodeRelativeIds } from '~/stores/useGraphStore'
@@ -90,13 +90,30 @@ export const RelevanceGroups = memo(() => {
     [selectedNode?.x, selectedNode?.y, selectedNode?.z],
   )
 
+  const roundedRectShape = useMemo(() => {
+    const shape = new Shape()
+    const width = 3
+    const height = 3
+    const radius = 0.8
+
+    shape.moveTo(-width / 2 + radius, -height / 2)
+    shape.lineTo(width / 2, -height / 2)
+    shape.lineTo(width / 2, height / 2)
+    shape.lineTo(-width / 2 + radius, height / 2)
+    shape.absarc(-width / 2 + radius, height / 2 - radius, radius, Math.PI / 2, Math.PI, false)
+    shape.lineTo(-width / 2, -height / 2 + radius)
+    shape.absarc(-width / 2 + radius, -height / 2 + radius, radius, Math.PI, Math.PI / 2, false)
+
+    return shape
+  }, [])
+
   return (
     <group>
       <Billboard key="node-badges" position={centerPos}>
         {nodeBadges.length ? nodeBadges : null}
         {connectingLines}
         <mesh>
-          <ringGeometry args={[nodeSize / 2 + 1, nodeSize / 2 + 3, 64]} />
+          <extrudeGeometry args={[roundedRectShape, { depth: 0.1, bevelEnabled: false }]} />
           <meshBasicMaterial color="white" opacity={0.5} side={2} transparent />
         </mesh>
       </Billboard>
