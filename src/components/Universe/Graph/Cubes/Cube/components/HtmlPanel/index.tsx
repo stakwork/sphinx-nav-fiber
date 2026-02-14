@@ -3,6 +3,7 @@ import { Float, Html } from '@react-three/drei'
 import { useMemo } from 'react'
 import styled, { css } from 'styled-components'
 import { Vector3 } from 'three'
+import { useGraphStore } from '~/stores/useGraphStore'
 import { colors } from '~/utils/colors'
 import { useIsMatchBreakpoint } from '~/utils/useIsMatchBreakpoint'
 import {
@@ -27,6 +28,8 @@ const floatingRange = [1, 2] as [(number | undefined)?, (number | undefined)?] |
 
 export const HtmlPanel = ({ speed = 2, intensity = 4, children, withTranscript, position, visible }: Props) => {
   const isMobile = useIsMatchBreakpoint('sm', 'down')
+  const graphStyle = useGraphStore((s) => s.graphStyle)
+  const isEarthView = graphStyle === 'earth'
 
   const dimensions = useMemo(() => {
     if (isMobile) {
@@ -57,6 +60,7 @@ export const HtmlPanel = ({ speed = 2, intensity = 4, children, withTranscript, 
         sprite
       >
         <HtmlWrap
+          isEarthView={isEarthView}
           className="html-panel"
           dimensions={dimensions}
           id="html-panel"
@@ -75,7 +79,7 @@ export const HtmlPanel = ({ speed = 2, intensity = 4, children, withTranscript, 
 
 HtmlPanel.displayName = 'HtmlPanel'
 
-const HtmlWrap = styled.div<{ dimensions: [number, number, number, number]; visible: boolean }>`
+const HtmlWrap = styled.div<{ dimensions: [number, number, number, number]; visible: boolean; isEarthView: boolean }>`
   ${({ dimensions: [top, left, width, height] = defaultDimensions }) => css`
     top: ${top}px;
     left: ${left}px;
@@ -92,7 +96,7 @@ const HtmlWrap = styled.div<{ dimensions: [number, number, number, number]; visi
   font-size: 80px;
   color: #fff;
   border: solid 3px #5078f2;
-  background: ${colors.BG1};
+  background: ${({ isEarthView }) => (isEarthView ? colors.BG1 : '#00000099')};
   transition: opacity 0.2s;
   overflow-y: auto;
 `
