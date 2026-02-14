@@ -73,7 +73,8 @@ const Wrapper = styled(Flex)`
 
 const TableWrapper = styled(Flex)`
   min-height: 0;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
   flex: 1;
   width: 100%;
 `
@@ -82,7 +83,10 @@ const PickerContainer = styled.div`
   padding: 0 20px;
   width: 300px;
   height: 350px;
-  overflow: auto;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-y: auto;
+  overflow-x: hidden;
 `
 
 const IconPaletteWrapper = styled.div`

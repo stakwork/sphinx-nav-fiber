@@ -272,6 +272,7 @@ const EditorWrapper = styled(Flex)<EditorWrapperProps>`
 const InnerEditorWrapper = styled.div`
   height: 100%;
   overflow-y: auto;
+  overflow-x: hidden;
   padding: 16px;
   max-height: calc(90vh - 20px);
 
