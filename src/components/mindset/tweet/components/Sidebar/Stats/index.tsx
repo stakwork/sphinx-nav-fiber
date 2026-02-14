@@ -206,14 +206,10 @@ const EngagementReportButton = styled.button`
   margin-top: 16px;
   width: 100%;
   background: ${colors.primaryBlue};
-  hover: {
-    background: ${colors.primaryBlue};
-  }
   color: white;
-  py: 2;
-  px: 4;
+  padding: 8px 16px;
   border-radius: 8px;
-  transition: duration-200;
+  transition: all 0.2s;
   cursor: pointer;
   &:hover {
     background: #2563eb;
