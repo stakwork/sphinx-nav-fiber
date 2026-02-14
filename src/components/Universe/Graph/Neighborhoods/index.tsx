@@ -11,8 +11,6 @@ import { nodeSize } from '../Cubes/constants'
 export const Neighbourhoods = () => {
   const [selectedNeighbourhoodId, setSelectedNeighbourhoodId] = useState<string | null>(null)
 
-  console.log(selectedNeighbourhoodId)
-
   const neighbourhoods = useGraphStore((s) => s.neighbourhoods)
 
   const neighbourhoodsWithPosition = useMemo(() => distributeNodesOnSphere(neighbourhoods, 3000), [neighbourhoods])
