@@ -21,6 +21,10 @@ describe('youtubeRegex', () => {
     await expect(getInputType('https://youtube.com/live/tkdMgjEFNWs')).resolves.toBe(LINK)
   })
 
+  it('should assert we can check for youtube live clip with query params regex', async () => {
+    await expect(getInputType('https://youtube.com/live/tkdMgjEFNWs?feature=share')).resolves.toBe(LINK)
+  })
+
   it('should assert we can check for twitter spaces regex', async () => {
     await expect(getInputType('https://twitter.com/i/spaces/1zqKVqwrVzlxB?s=20')).resolves.toBe(LINK)
   })
