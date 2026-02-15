@@ -233,8 +233,10 @@ export const TweetMindset = () => {
     <MainContainer>
       <ContentWrapper direction="row">
         <>
-          <Flex>
-            <Header />
+          <Flex direction="column">
+            <Flex shrink={0}>
+              <Header />
+            </Flex>
             <SideBar />
           </Flex>
           <ContentContainer>
