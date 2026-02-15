@@ -18,6 +18,8 @@ export const General = ({ node }: Props) => {
 
   let title = ''
   let description = node?.properties?.description || node.properties?.text || ''
+  const hasImage = !!node?.properties?.image_url
+  const hasDescription = !!description
 
   if (node.node_type === 'Question') {
     title = node.name || ''
@@ -28,18 +30,20 @@ export const General = ({ node }: Props) => {
     title = node.properties[keyProperty] || ''
   }
 
+  const truncatedDescription = description ? truncateText(description, 200) : ''
+
   return (
     <TooltipContainer>
-      <ContentWrapper>
-        <Heading>
-          {node?.properties?.image_url && <Avatar src={node.properties.image_url} />}
-          <TitleWrapper>
+      <ContentWrapper $hasDescription={hasDescription} $hasImage={hasImage}>
+        <Heading $hasImage={hasImage}>
+          {hasImage && node.properties && <Avatar src={node.properties.image_url} />}
+          <TitleWrapper $fullWidth={!hasImage}>
             <TypeBadge type={node.node_type} />
 
             {title && <Title>{truncateText(title, 70)}</Title>}
           </TitleWrapper>
         </Heading>
-        {description && <Description>{description}</Description>}
+        {hasDescription && <Description>{truncatedDescription}</Description>}
       </ContentWrapper>
     </TooltipContainer>
   )
@@ -54,15 +58,19 @@ const TooltipContainer = styled(Flex)`
   border-radius: 8px;
   overflow: hidden;
   max-width: 390px;
+  border-top: none;
+  border-left: none;
+  border-right: none;
   border-bottom: 5px solid rgba(0, 0, 0, 0.3);
   padding: 16px 14px;
 `
 
-const ContentWrapper = styled(Flex)`
+const ContentWrapper = styled(Flex)<{ $hasImage: boolean; $hasDescription: boolean }>`
   margin-top: 0;
   flex-direction: column;
-  gap: 4px;
+  gap: ${({ $hasDescription }) => ($hasDescription ? '4px' : '0')};
   align-items: flex-start;
+  width: ${({ $hasImage }) => (!$hasImage ? '100%' : 'fit-content')};
 `
 
 export const Avatar = styled.img`
@@ -73,15 +81,17 @@ export const Avatar = styled.img`
   margin-right: 8px;
 `
 
-const Heading = styled(Flex)`
-  flex-direction: row;
+const Heading = styled(Flex)<{ $hasImage: boolean }>`
+  flex-direction: ${({ $hasImage }) => ($hasImage ? 'row' : 'column')};
+  width: 100%;
 `
 
-const TitleWrapper = styled(Flex)`
+const TitleWrapper = styled(Flex)<{ $fullWidth: boolean }>`
   flex-direction: column;
   align-items: flex-start;
-  min-width: 0; /* 🔥 Allows children (Title) to shrink */
-  max-width: 100%;
+  min-width: 0;
+  max-width: ${({ $fullWidth }) => ($fullWidth ? '100%' : '100%')};
+  width: ${({ $fullWidth }) => ($fullWidth ? '100%' : 'fit-content')};
 `
 
 const Title = styled(Text)`

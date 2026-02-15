@@ -17,6 +17,7 @@ export const Transcript = () => {
   const { playerRef } = usePlayerStore((s) => s)
   const [currentTime, setCurrentTime] = useState(0)
   const [isFirst, setIsFirst] = useState(true)
+  const [lastValidClip, setLastValidClip] = useState<NodeExtended | null>(null)
 
   const [setActiveNode, activeNode] = useGraphStore((s) => [s.setActiveNode, s.activeNode])
   const simulation = useSimulationStore((s) => s.simulation)
@@ -112,7 +113,16 @@ export const Transcript = () => {
         return start <= currentTime && currentTime < end
       })
 
+      if (clip) {
+        setLastValidClip(clip)
+      }
+
       if ((activeClip && clip?.ref_id === activeClip?.ref_id) || !clip) {
+        if (!clip && lastValidClip) {
+          setIsFirst(lastValidClip?.ref_id === clips[0]?.ref_id)
+          setActiveClip(lastValidClip)
+        }
+
         return
       }
 
@@ -137,6 +147,7 @@ export const Transcript = () => {
     isAdChapter,
     parseTimestamp,
     playerRef,
+    lastValidClip,
   ])
 
   useEffect(() => {
