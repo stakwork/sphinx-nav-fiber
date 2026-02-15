@@ -761,7 +761,7 @@ const CustomButton = styled(Button)`
 
 const LineBarWrapper = styled.div`
   border-bottom: 1px solid ${colors.black};
-  width: calc(100% + 32px);
+  width: auto;
   margin: 0 -16px 16px;
   opacity: 0.3;
 `
@@ -811,9 +811,9 @@ const StyledError = styled(Flex)`
 
 const LineBar = styled.div`
   border: 1px solid ${colors.BG2};
-  width: calc(100% + 32px);
+  width: auto;
   opacity: 0.5;
-  margin-left: -16px;
+  margin: 0 -16px;
 `
 
 const HeaderRow = styled(Flex)`
