@@ -84,8 +84,19 @@ const TooltipContainer = styled(Flex)`
   border-radius: 8px;
   overflow: hidden;
   max-width: 390px;
-  border-bottom: 5px solid rgba(0, 0, 0, 0.3);
-  padding: 16px 14px;
+  position: relative;
+  padding: 16px 14px 21px;
+
+  /* Keep the bottom accent without the side "border" artifacts caused by border-radius + border. */
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 5px;
+    background: rgba(0, 0, 0, 0.3);
+  }
 `
 
 const UserContentWrapper = styled(Flex)`
