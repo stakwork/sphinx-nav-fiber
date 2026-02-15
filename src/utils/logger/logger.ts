@@ -1,6 +1,6 @@
 /* eslint-disable func-names */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// import './styles.css';
+import './styles.css'
 
 const getElementsMemoized = () => {
   const cache = {} as { inner: HTMLElement; body: HTMLElement }
@@ -64,7 +64,15 @@ const logMessage = (message: string, variant: Variants) => {
 }
 
 export const overrideConsole = () => {
-  if (!window.location.hostname.includes('local') || true) {
+  // Only enable this in local/dev-like environments.
+  if (
+    !(
+      window.location.hostname.includes('local') ||
+      window.location.hostname.includes('localhost') ||
+      window.location.hostname.endsWith('.github.dev') ||
+      window.location.hostname.includes('workspaces.sphinx.chat')
+    )
+  ) {
     return
   }
 
