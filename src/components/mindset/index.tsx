@@ -238,8 +238,8 @@ export const MindSet = () => {
     <MainContainer>
       <ContentWrapper direction="row">
         <>
-          <Flex>
-            <Flex>
+          <Flex direction="column">
+            <Flex shrink={0}>
               <Header />
             </Flex>
             <SideBar />

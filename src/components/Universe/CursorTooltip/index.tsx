@@ -94,7 +94,6 @@ const TooltipContainer = styled(Flex)`
   overflow: hidden;
   text-overflow: ellipsis;
   display: none; /* Initially hidden */
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Optional shadow for better visibility */
 `
 
 const CustomCursorWrapper = styled(Flex)`
