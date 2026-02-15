@@ -22,11 +22,15 @@ export const PlayerControl = ({ markers, chapters }: Props) => {
     (_: Event, value: number | number[]) => {
       const newValue = Array.isArray(value) ? value[0] : value
 
+      // `react-player` can defer `getCurrentTime()` updates until playback starts in some browsers (Chrome).
+      // Update UI immediately on seek, and let the polling effect keep it in sync afterward.
+      setCurrentTime(newValue)
+
       if (playerRef) {
         playerRef.seekTo(newValue, 'seconds')
       }
     },
-    [playerRef],
+    [playerRef, setCurrentTime],
   )
 
   useEffect(() => {

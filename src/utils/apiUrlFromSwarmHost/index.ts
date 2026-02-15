@@ -41,6 +41,7 @@ export function apiUrlFromSwarmHost(): string | undefined {
   } else if (origin.includes('-3000.workspaces.sphinx.chat')) {
     const arr = window.location.host.split('-3000')
     const codeserverUrl = arr[0]
+
     url = `https://${codeserverUrl}-8445.workspaces.sphinx.chat`
   } else if (origin.includes('localhost')) {
     url = 'https://bitcoin.sphinx.chat'
