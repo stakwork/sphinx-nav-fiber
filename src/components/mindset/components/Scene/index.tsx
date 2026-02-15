@@ -50,8 +50,7 @@ const CanvasZoomHandler = () => {
   return null
 }
 
-export const Scene = memo(() => {
-  return (
+export const Scene = memo(() => (
     <div style={{ width: '100%', height: '100%', position: 'relative' }}>
       <Canvas orthographic>
         <CameraController />
@@ -60,7 +59,6 @@ export const Scene = memo(() => {
         <CanvasZoomHandler />
       </Canvas>
     </div>
-  )
-})
+  ))
 
 Scene.displayName = 'Scene'

@@ -1,14 +1,12 @@
-import { Html, Scroll, ScrollControls, useScroll } from '@react-three/drei'
+import { Html, Scroll, ScrollControls } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 
-/** How many “screens” tall the scroll content is.
+/** How many "screens" tall the scroll content is.
  *  If you have N items stacked one after another, pages = N.
  *  Feel free to tweak (e.g. pages = items.length / 3 for 3 per screen). */
 const PAGE_COUNT = 6
 
 export const ScrollableList = () => {
-  const scroll = useScroll() // gives us .offset, .delta, etc.
-
   /* Example: use scroll offset to drive some animation or state */
   useFrame(() => {
     // scroll.offset is 0 → 1 over the whole scroll range

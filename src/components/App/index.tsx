@@ -143,7 +143,8 @@ export const App = () => {
     [addNewNode, isFetching],
   )
 
-  const handleNodeUpdated = useCallback((data: FetchDataResponse) => {
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  const handleNodeUpdated = useCallback(() => {
   }, [])
 
   const handleAiSummaryAnswer = useCallback(

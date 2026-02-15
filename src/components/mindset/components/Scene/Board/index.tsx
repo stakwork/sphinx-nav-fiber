@@ -6,6 +6,7 @@ import { Link } from '~/types'
 import { Edge } from './Edges'
 import { Node } from './Node'
 
+// eslint-disable-next-line @typescript-eslint/no-empty-function
 const noop = () => {}
 
 const nodeWidth = 144 / 10

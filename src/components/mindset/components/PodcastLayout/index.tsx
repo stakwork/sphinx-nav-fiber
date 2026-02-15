@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import ChevronLeftIcon from '~/components/Icons/ChevronLeftIcon'
@@ -92,20 +92,8 @@ const keyClaims = data
 
 // Main Component
 export const PodcastLayout = () => {
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
   const [isSwapped, setIsSwapped] = useState(false)
-  const [hoveredNode, setHoveredNode] = useState<string | null>(null)
   const { playerRef } = usePlayerStore((s) => s)
-
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      setMousePosition({ x: e.clientX, y: e.clientY })
-    }
-
-    window.addEventListener('mousemove', handleMouseMove)
-
-    return () => window.removeEventListener('mousemove', handleMouseMove)
-  }, [])
 
   const handleHotTakesClick = () => {
     setIsSwapped(!isSwapped)
