@@ -46,8 +46,6 @@ export const Node = memo(({ node, setSelectedNode, onSimulationUpdate, isSelecte
   const [showTooltip, setShowTooltip] = useState(false)
   const { setSelectedColor } = useAppStore((s) => s)
 
-  console.log(isSelected)
-
   const { size, camera } = useThree()
 
   const bind = useDrag((args) => {
@@ -96,6 +94,7 @@ export const Node = memo(({ node, setSelectedNode, onSimulationUpdate, isSelecte
   const primaryColor = normalizedSchemasByType[node.type]?.primary_color
 
   const color = primaryColor ?? (NODE_TYPE_COLORS[node?.children?.length] || 'red')
+  const selectedScale = isSelected ? 1.15 : 1
 
   const handleClick = (e: { stopPropagation: () => void }) => {
     e.stopPropagation()
@@ -126,8 +125,13 @@ export const Node = memo(({ node, setSelectedNode, onSimulationUpdate, isSelecte
       onPointerOver={handleMouseOver}
       position={new Vector3(node.x, node.y, 0)}
     >
-      <Circle args={[NODE_RADIUS, 30, 20]} onClick={() => setSelectedColor(color)}>
-        <meshStandardMaterial attach="material" color={color} />
+      <Circle args={[NODE_RADIUS, 30, 20]} onClick={() => setSelectedColor(color)} scale={selectedScale}>
+        <meshStandardMaterial
+          attach="material"
+          color={color}
+          emissive={isSelected ? '#ffffff' : '#000000'}
+          emissiveIntensity={isSelected ? 0.35 : 0}
+        />
       </Circle>
 
       <Text
