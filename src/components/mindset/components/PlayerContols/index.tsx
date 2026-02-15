@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback } from 'react'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { usePlayerStore } from '~/stores/usePlayerStore'
@@ -13,8 +13,7 @@ type Props = {
 }
 
 export const PlayerControl = ({ markers, chapters }: Props) => {
-  const { playingNode, playerRef } = usePlayerStore((s) => s)
-  const [currentTime, setCurrentTime] = useState(0)
+  const { playingNode, playerRef, playingTime, duration, setPlayingTime, setIsSeeking } = usePlayerStore((s) => s)
 
   const showPlayer = playingNode
 
@@ -22,26 +21,16 @@ export const PlayerControl = ({ markers, chapters }: Props) => {
     (_: Event, value: number | number[]) => {
       const newValue = Array.isArray(value) ? value[0] : value
 
+      // Update UI immediately (Chrome may not reflect getCurrentTime() while paused).
+      setPlayingTime(newValue)
+      setIsSeeking(true)
+
       if (playerRef) {
         playerRef.seekTo(newValue, 'seconds')
       }
     },
-    [playerRef],
+    [playerRef, setIsSeeking, setPlayingTime],
   )
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (playerRef && setCurrentTime) {
-        const time = playerRef.getCurrentTime()
-
-        setCurrentTime(time)
-      }
-    }, 500)
-
-    return () => clearInterval(interval)
-  }, [playerRef, setCurrentTime])
-
-  const duration = playerRef?.getDuration() || 0
 
   return showPlayer ? (
     <Wrapper>
@@ -51,7 +40,7 @@ export const PlayerControl = ({ markers, chapters }: Props) => {
         duration={duration}
         handleProgressChange={handleProgressChange}
         markers={markers}
-        playingTime={currentTime}
+        playingTime={playingTime}
       />
     </Wrapper>
   ) : null
