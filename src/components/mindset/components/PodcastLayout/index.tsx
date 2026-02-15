@@ -93,6 +93,8 @@ const keyClaims = data
 // Main Component
 export const PodcastLayout = () => {
   const [isSwapped, setIsSwapped] = useState(false)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [hoveredNode, setHoveredNode] = useState<string | null>(null)
   const { playerRef } = usePlayerStore((s) => s)
 
   const handleHotTakesClick = () => {

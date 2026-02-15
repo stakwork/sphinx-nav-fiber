@@ -1,5 +1,5 @@
 import { Billboard, Edges, Html } from '@react-three/drei'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import * as THREE from 'three'
 import { useControlStore } from '~/stores/useControlStore'
 import { useGraphStore } from '~/stores/useGraphStore'
@@ -9,6 +9,8 @@ import { NodeExtended } from '~/types'
 import { nodeSize } from '../Cubes/constants'
 
 export const Neighbourhoods = () => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [selectedNeighbourhoodId, setSelectedNeighbourhoodId] = useState<string | null>(null)
 
   const neighbourhoods = useGraphStore((s) => s.neighbourhoods)
 
