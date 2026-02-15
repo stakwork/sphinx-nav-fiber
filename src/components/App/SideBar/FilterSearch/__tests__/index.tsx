@@ -39,6 +39,7 @@ jest.mock('~/stores/useSchemaStore', () => ({
 
 describe('FilterSearch Component', () => {
   const mockSetSchemas = jest.fn()
+  const mockSetSchemaLinks = jest.fn()
   const mockSchemaAll = [{ type: 'Type1' }, { type: 'Type2' }, { type: 'Type3' }]
 
   beforeEach(() => {
@@ -53,13 +54,13 @@ describe('FilterSearch Component', () => {
     })
 
     //
-    ;(useSchemaStore as jest.Mock).mockReturnValue([mockSchemaAll, mockSetSchemas]) // Return an array
+    ;(useSchemaStore as jest.Mock).mockReturnValue([mockSchemaAll, [], mockSetSchemas, mockSetSchemaLinks]) // Return an array
 
     //
     ;(useFeatureFlagStore as jest.Mock).mockReturnValue({ fastFiltersFeatureFlag: true })
 
     //
-    ;(getSchemaAll as jest.Mock).mockResolvedValue({ schemas: mockSchemaAll })
+    ;(getSchemaAll as jest.Mock).mockResolvedValue({ edges: [], schemas: mockSchemaAll })
   })
 
   const renderComponent = () =>
@@ -105,6 +106,7 @@ describe('FilterSearch Component', () => {
 
     await waitFor(() => {
       expect(mockSetFilters).toHaveBeenCalledWith({
+        edge_type: [],
         node_type: ['Type1'],
         limit: 1000,
         depth: '3',
