@@ -16,8 +16,6 @@ type Segment = {
 }
 
 const handleRootNodes = (nodes: Node[]) => {
-  const show = nodes.find((node) => node.node_type === 'Show')
-
   const typesMap: Record<string, Node[]> = nodes.reduce((acc, node) => {
     const type = node.node_type
 
@@ -49,16 +47,7 @@ const handleRootNodes = (nodes: Node[]) => {
       label: `${type}-root`,
       name: type,
     }
-
-    if (show && false) {
-      newEdges.push({
-        source: `Show-root`,
-        target: rootNode.ref_id,
-        ref_id: `show-root-${type}`,
-        edge_type: 'Show',
-      })
-    }
-
+    
     nodes.push(rootNode)
     rootNodes.push(rootNode)
 
