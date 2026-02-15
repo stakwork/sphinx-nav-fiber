@@ -23,7 +23,7 @@ export async function getSignedTimestamp(): Promise<string> {
 
     return signedTimeStamp
   } catch (error) {
-    console.log('error from signing more message: ', error)
+    console.error('error from signing more message: ', error)
 
     return ''
   }

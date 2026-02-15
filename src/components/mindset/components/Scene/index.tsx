@@ -51,8 +51,6 @@ const CanvasZoomHandler = () => {
 }
 
 export const Scene = memo(() => {
-  console.log('rerender')
-
   return (
     <div style={{ width: '100%', height: '100%', position: 'relative' }}>
       <Canvas orthographic>

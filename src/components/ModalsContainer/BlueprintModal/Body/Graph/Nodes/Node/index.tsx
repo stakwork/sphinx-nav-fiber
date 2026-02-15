@@ -46,8 +46,6 @@ export const Node = memo(({ node, setSelectedNode, onSimulationUpdate, isSelecte
   const [showTooltip, setShowTooltip] = useState(false)
   const { setSelectedColor } = useAppStore((s) => s)
 
-  console.log(isSelected)
-
   const { size, camera } = useThree()
 
   const bind = useDrag((args) => {

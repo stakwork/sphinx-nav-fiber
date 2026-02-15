@@ -97,8 +97,6 @@ export const PodcastLayout = () => {
   const [hoveredNode, setHoveredNode] = useState<string | null>(null)
   const { playerRef } = usePlayerStore((s) => s)
 
-  console.log(hoveredNode, mousePosition)
-
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       setMousePosition({ x: e.clientX, y: e.clientY })

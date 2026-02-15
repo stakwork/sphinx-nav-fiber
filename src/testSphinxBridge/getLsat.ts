@@ -40,7 +40,7 @@ export async function getLsatSphinx(host: string) {
 
     return null
   } catch (error) {
-    console.log(JSON.stringify(error))
+    console.error(JSON.stringify(error))
 
     return null
   }

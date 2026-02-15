@@ -144,7 +144,6 @@ export const App = () => {
   )
 
   const handleNodeUpdated = useCallback((data: FetchDataResponse) => {
-    console.log(data)
   }, [])
 
   const handleAiSummaryAnswer = useCallback(
