@@ -120,13 +120,20 @@ const dummyTweets: TweetData[] = [
 ]
 
 const formatFollowers = (count: number): string => {
-  if (count >= 1000000) return (count / 1000000).toFixed(1) + 'M'
-  if (count >= 1000) return (count / 1000).toFixed(1) + 'K'
+  if (count >= 1000000) {
+    return `${(count / 1000000).toFixed(1)}M`
+  }
+
+  if (count >= 1000) {
+    return `${(count / 1000).toFixed(1)}K`
+  }
+
   return count.toString()
 }
 
 const formatDate = (dateString: string): string => {
   const date = new Date(dateString)
+
   return new Intl.DateTimeFormat('en-US', {
     month: 'short',
     day: 'numeric',
@@ -186,8 +193,11 @@ const getSentimentIcon = (score?: number) => {
 
 export const Stats = ({ node, handleAnalyzeClick }: Props) => {
   const [showOverlay, setShowOverlay] = useState(false)
+
   const [sortBy, setSortBy] = useState<'engagement' | 'followers'>('engagement')
+
   const tableRef = useRef<HTMLDivElement>(null)
+
   const viewToFollowerRatio =
     node?.properties?.followers !== undefined &&
     node?.properties?.impression_count !== undefined &&
@@ -221,12 +231,13 @@ export const Stats = ({ node, handleAnalyzeClick }: Props) => {
     if (sortBy === 'engagement') {
       return b.totalEngagement - a.totalEngagement
     }
+
     return b.user.followerCount - a.user.followerCount
   })
 
-  const tweetsWithRanks = sortedTweets.map((tweet, index) => ({
+  const tweetsWithRanks = sortedTweets.map((tweet, tweetIndex) => ({
     ...tweet,
-    rank: index + 1
+    rank: tweetIndex + 1
   }))
 
   const scrollToTop = () => {
@@ -311,7 +322,7 @@ export const Stats = ({ node, handleAnalyzeClick }: Props) => {
                     <TableRow key={tweet.id}>
                       <RankCell>{tweet.rank}</RankCell>
                       <UserCell>
-                        <UserAvatar src={tweet.user.profilePic} alt={tweet.user.id} />
+                        <UserAvatar alt={tweet.user.id} src={tweet.user.profilePic} />
                         <UserInfo>
                           <UserHandle>{tweet.user.id}</UserHandle>
                           <FollowerCount>{formatFollowers(tweet.user.followerCount)} followers</FollowerCount>
