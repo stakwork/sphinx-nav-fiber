@@ -206,6 +206,13 @@ export const App = () => {
 
       socket.on('newnode', handleNewNode)
 
+      // Some environments emit `new_node_created` instead of `newnode`.
+      // When realtime graph updates are disabled, we still want the "See Latest" UI
+      // to reflect that new nodes are available.
+      if (!realtimeGraphFeatureFlag) {
+        socket.on('new_node_created', handleNewNode)
+      }
+
       if (chatInterfaceFeatureFlag) {
         socket.on('extractedentitieshook', handleExtractedEntities)
       }
