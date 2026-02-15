@@ -121,6 +121,17 @@ export const Stats = ({ node, handleAnalyzeClick }: Props) => {
           <Value>{getSentimentIcon(node?.properties?.analytics_sentiment_score)}</Value>
         </Metric>
       </Grid>
+      <ButtonRow>
+        <EngagementReportButton
+          onClick={(e) => {
+            // TODO: wire this up to the engagement report overlay.
+            e.stopPropagation()
+          }}
+          type="button"
+        >
+          Engagement Report
+        </EngagementReportButton>
+      </ButtonRow>
     </Card>
   )
 }
@@ -176,6 +187,30 @@ const Value = styled.span`
     width: 14px;
     height: 14px;
     margin-left: 4px;
+  }
+`
+
+const ButtonRow = styled.div`
+  margin-top: 16px;
+  padding: 0 10px;
+`
+
+const EngagementReportButton = styled.button`
+  width: 100%;
+  background: ${colors.PRIMARY_BLUE};
+  color: ${colors.white};
+  border: none;
+  border-radius: 12px;
+  padding: 10px 12px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+
+  &:hover {
+    background: ${colors.BLUE_PRESS_STATE};
+  }
+
+  &:active {
+    background: ${colors.bluePressState};
   }
 `
 
