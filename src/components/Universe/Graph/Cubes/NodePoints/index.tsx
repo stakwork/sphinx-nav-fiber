@@ -1,13 +1,13 @@
 import { Instances } from '@react-three/drei'
-import { memo, useMemo } from 'react'
-import { BufferGeometry, CircleGeometry } from 'three'
+import { memo } from 'react'
+import { BufferGeometry } from 'three'
 import { useDataStore, useNodeTypes } from '~/stores/useDataStore'
 import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
 import { useSelectedNode } from '~/stores/useGraphStore'
 import { useSchemaStore } from '~/stores/useSchemaStore'
 import { NodeExtended } from '~/types'
 import { colors } from '~/utils'
-import { nodeSize } from '../constants'
+import { NodeLeftRoundedRectGeometry, nodeSize } from '../constants'
 import { Point } from './Point'
 
 const COLORS_MAP = [
@@ -50,15 +50,9 @@ const _NodePoints = () => {
 
   const scaleFeature = useFeatureFlagStore((s) => s.scaleFeature)
 
-  // Create a rounded rectangle geometry
-  const roundedRectGeometry = useMemo(
-    () => new CircleGeometry(nodeSize / 2, 64), // 64 segments = smooth circle
-    [],
-  )
-
   return (
     <Instances
-      geometry={roundedRectGeometry as BufferGeometry}
+      geometry={NodeLeftRoundedRectGeometry as BufferGeometry}
       limit={1000} // Optional: max amount of items (for calculating buffer size)
       range={1000}
       visible={!selectedNode || true}
