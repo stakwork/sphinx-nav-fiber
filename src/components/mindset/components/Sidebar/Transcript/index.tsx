@@ -120,12 +120,18 @@ export const Transcript = () => {
       setActiveClip(clip || null)
     }
 
-    if (currentTime) {
-      calculateActiveClip()
-    } else {
-      setIsFirst(true)
-      setActiveClip(clips[0])
+    // Avoid resetting transcript/clip state to the first clip when playback ends (or is stopped)
+    // and the player reports time as 0. Only initialize to the first clip when nothing is active yet.
+    if (!currentTime) {
+      if (!activeClip) {
+        setIsFirst(true)
+        setActiveClip(clips[0] || null)
+      }
+
+      return
     }
+
+    calculateActiveClip()
   }, [
     currentTime,
     clips,
