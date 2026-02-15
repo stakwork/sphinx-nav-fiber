@@ -20,12 +20,21 @@ export const Nodes = ({ simulation, setSelectedSchemaId, selectedId, setIsAddEdg
     }
   }
 
+  // `schemaAll` ordering can change when schemas are edited/added.
+  // Avoid index-based lookup into simulation nodes to prevent mismatches that can break dragging.
+  const simNodes = simulation.nodes() as unknown as SchemaExtended[]
+  const nodesById = new Map(simNodes.filter((n) => Boolean(n.ref_id)).map((n) => [n.ref_id as string, n] as const))
+
   return (
     <>
-      {schemaAll.map((schema: SchemaExtended, index: number) => {
-        const node = simulation.nodes()[index]
+      {schemaAll.map((schema: SchemaExtended) => {
+        if (!schema.ref_id) {
+          return null
+        }
 
-        return node ? (
+        const node = nodesById.get(schema.ref_id)
+
+        return node?.ref_id ? (
           <Node
             key={node.ref_id}
             isSelected={node.ref_id === selectedId}
@@ -33,7 +42,7 @@ export const Nodes = ({ simulation, setSelectedSchemaId, selectedId, setIsAddEdg
             onSimulationUpdate={onSimulationUpdate}
             setSelectedNode={() => {
               setIsAddEdgeNode(false)
-              setSelectedSchemaId(node.ref_id)
+              setSelectedSchemaId(node.ref_id as string)
             }}
           />
         ) : null
