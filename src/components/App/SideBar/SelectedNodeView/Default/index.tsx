@@ -154,7 +154,9 @@ export const Default = () => {
 
       <StyledContent grow={1} justify="flex-start" pt={hasImage ? 0 : 8} shrink={1}>
         <Flex ml={24} mt={20} style={{ width: 'fit-content', flexDirection: 'row', alignItems: 'center' }}>
-          <TypeBadge type={selectedNode.node_type || ''} />
+          {playingNode?.ref_id !== selectedNode?.ref_id && (
+            <TypeBadge type={selectedNode.node_type || ''} />
+          )}
           {sourceLink && (
             <StyledLinkIcon
               href={`${sourceLink}${(sourceLink as string).includes('?') ? '&' : '?'}open=system`}
