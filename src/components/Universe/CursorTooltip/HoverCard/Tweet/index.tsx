@@ -308,7 +308,7 @@ const MetricItem = styled(Flex)`
   svg {
     width: 16px;
     height: 16px;
-    color: rgba(255, 255, 255, 0.6) !important;
+    color: ${colors.white} !important;
     flex-shrink: 0;
   }
 

@@ -36,9 +36,12 @@ const Fallback = () => (
 )
 
 const Content = () => {
+  const graphStyle = useGraphStore((s) => s.graphStyle)
   const { universeColor } = useControls('universe', {
     universeColor: colors.black,
   })
+
+  const backgroundColor = graphStyle === 'earth' ? colors.BG1 : (colors.BLUE_PRESS_STATE || universeColor)
 
   const dataInitial = useDataStore((s) => s.dataInitial)
 
@@ -51,7 +54,7 @@ const Content = () => {
 
   return (
     <>
-      <color args={[colors.BLUE_PRESS_STATE || universeColor]} attach="transparent" />
+      <color args={[backgroundColor]} attach="transparent" />
 
       <Controls />
 
