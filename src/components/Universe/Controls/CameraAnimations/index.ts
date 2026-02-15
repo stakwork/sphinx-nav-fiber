@@ -27,8 +27,6 @@ export const useCameraAnimations = ({ enabled }: { enabled: boolean }) => {
   }, [enabled])
 
   useEffect(() => {
-    console.log('updateGraphRadius', graphRadius)
-
     if (!selectedNode && cameraControlsRef) {
       cameraControlsRef.setLookAt(initialCameraPosition.x, initialCameraPosition.y, graphRadius + 200, 0, 0, 0, true)
     }
