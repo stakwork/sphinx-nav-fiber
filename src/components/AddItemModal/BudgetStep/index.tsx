@@ -28,7 +28,7 @@ export const BudgetStep: FC<Props> = ({ onClick, loading, error }) => {
 
         setPrice(res.data.price)
       } catch (err) {
-        console.error('cannot fetch', err)
+        console.error('Error fetching price data:', err)
       }
     }
 

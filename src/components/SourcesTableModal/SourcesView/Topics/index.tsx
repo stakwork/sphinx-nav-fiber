@@ -55,8 +55,8 @@ export const TopicSources = () => {
     const init = async () => {
       try {
         await setTopics()
-      } catch {
-        console.error('err')
+      } catch (err) {
+        console.error('Failed to load topics:', err)
       }
     }
 
