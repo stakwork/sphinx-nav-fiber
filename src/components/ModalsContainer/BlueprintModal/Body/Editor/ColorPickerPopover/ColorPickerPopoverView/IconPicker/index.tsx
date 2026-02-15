@@ -62,7 +62,8 @@ const Wrapper = styled(Flex)`
   }
 
   & .filters {
-    overflow-x: auto;
+    overflow-x: hidden;
+    overflow-y: auto;
   }
 
   .load-more {
@@ -82,7 +83,8 @@ const PickerContainer = styled.div`
   padding: 0 20px;
   width: 300px;
   height: 350px;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
 `
 
 const IconPaletteWrapper = styled.div`

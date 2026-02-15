@@ -1,6 +1,6 @@
 import { Instances } from '@react-three/drei'
 import { memo, useMemo } from 'react'
-import { BufferGeometry, CircleGeometry } from 'three'
+import { BufferGeometry, Shape, ShapeGeometry } from 'three'
 import { useDataStore, useNodeTypes } from '~/stores/useDataStore'
 import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
 import { useSelectedNode } from '~/stores/useGraphStore'
@@ -50,11 +50,28 @@ const _NodePoints = () => {
 
   const scaleFeature = useFeatureFlagStore((s) => s.scaleFeature)
 
-  // Create a rounded rectangle geometry
-  const roundedRectGeometry = useMemo(
-    () => new CircleGeometry(nodeSize / 2, 64), // 64 segments = smooth circle
-    [],
-  )
+  // Create a rounded rectangle geometry: rounded left border, sharp right border
+  const roundedRectGeometry = useMemo(() => {
+    const width = nodeSize
+    const height = nodeSize
+    const radius = nodeSize / 2
+
+    const shape = new Shape()
+    // Start at top-center of the left semicircle
+    shape.moveTo(0, -height / 2)
+    // Draw the left semicircle (top half)
+    shape.absarc(0, 0, radius, -Math.PI / 2, Math.PI / 2, false)
+    // Line to top-right corner (sharp)
+    shape.lineTo(width / 2, -height / 2)
+    // Line to bottom-right corner (sharp)
+    shape.lineTo(width / 2, height / 2)
+    // Line back to bottom-center of left semicircle
+    shape.lineTo(0, height / 2)
+    // Close the shape
+    shape.closePath()
+
+    return new ShapeGeometry(shape)
+  }, [])
 
   return (
     <Instances
