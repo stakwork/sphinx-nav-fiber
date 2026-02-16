@@ -20,7 +20,9 @@ const mp3Regex = /(https?:\/\/)?.*\.mp3/
 const mp4Regex = /(https?:\/\/)?.*\.mp4/
 
 const rssRegex = /(https?:\/\/)?(.*\.)?.+\/(feed|rss|rss\.xml|.*\?(feed|format)=rss)(\/.*)?$/
-const youtubeChannelPattern = /https?:\/\/(www\.)?youtube\.com\/(user\/)?(@)?([\w-]+)/
+
+const youtubeChannelPattern =
+  /^https?:\/\/(www\.)?youtube\.com\/(?!live(?:\/|$)|watch(?:\/|\?|$)|shorts(?:\/|$))(user\/)?(@)?([\w-]+)(?:\/)?(?:\?.*)?$/
 
 const genericUrlRegex = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/
 const twitterBroadcastRegex = /https:\/\/twitter\.com\/i\/broadcasts\/([A-Za-z0-9_-]+)/
