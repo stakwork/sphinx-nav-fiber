@@ -62,7 +62,7 @@ const Wrapper = styled(Flex)`
   }
 
   & .filters {
-    overflow-x: auto;
+    overflow-x: hidden;
   }
 
   .load-more {
