@@ -52,6 +52,7 @@ const devConfigOptions: UserConfigExport = {
     {
       server: {
         open: true,
+        allowedHosts: 'all',
       },
       plugins: [
         ...(process.env.VITE_APP_IS_E2E
