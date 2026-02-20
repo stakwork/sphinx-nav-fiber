@@ -99,8 +99,6 @@ export const AddItemModal = () => {
   )
 
   const nodeType = watch('nodeType')
-  const name = watch('typeName')
-  const sourceLink = watch('sourceLink')
   const type = watch('type')
 
   watch('title')
@@ -193,7 +191,7 @@ export const AddItemModal = () => {
         skipToStep={skipToStep}
       />
     ),
-    source: <SourceStep name={name} skipToStep={skipToStep} sourceLink={sourceLink || ''} type={nodeType} />,
+    source: <SourceStep skipToStep={skipToStep} type={nodeType} />,
     setBudget: <BudgetStep error={error} loading={loading} onClick={() => null} />,
     createConfirmation: <CreateConfirmation onclose={handleClose} type={type} />,
     setAttribues: <SetAttributesStep handleSelectType={handleSelectType} nodeType={nodeType} skipToStep={skipToStep} />,

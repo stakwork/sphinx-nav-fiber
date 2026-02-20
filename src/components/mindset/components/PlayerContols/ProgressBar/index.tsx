@@ -1,5 +1,5 @@
 import { Slider } from '@mui/material'
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useRef, useState, useEffect } from 'react'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { NodeExtended } from '~/types'
@@ -22,7 +22,14 @@ export const ProgressBar = ({ duration, markers, handleProgressChange, playingTi
   const [showTooltip, setShowTooltip] = useState(false)
   const [tooltipTime, setTooltipTime] = useState(0)
   const [tooltipPosition, setTooltipPosition] = useState(0)
+  const [pendingTime, setPendingTime] = useState<number | null>(null)
   const sliderRef = useRef<HTMLDivElement>(null)
+
+  const displayTime = pendingTime !== null ? pendingTime : playingTime
+
+  useEffect(() => {
+    setPendingTime(null)
+  }, [playingTime])
 
   const getSliderElement = useCallback(() => {
     if (!sliderRef.current) {
@@ -81,6 +88,7 @@ export const ProgressBar = ({ duration, markers, handleProgressChange, playingTi
       const time = getTimeFromPosition(event.clientX, rect)
       const fakeEvent = new Event('change')
 
+      setPendingTime(time)
       handleProgressChange(fakeEvent, time)
     },
     [duration, getTimeFromPosition, handleProgressChange, getSliderElement],
@@ -107,7 +115,7 @@ export const ProgressBar = ({ duration, markers, handleProgressChange, playingTi
           max={duration}
           onChange={handleProgressChange}
           onMouseDown={(e) => e.preventDefault()}
-          value={playingTime}
+          value={displayTime}
           width={width}
         />
 

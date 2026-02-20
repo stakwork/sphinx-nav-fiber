@@ -34,7 +34,7 @@ import { Toasts } from './Toasts'
 const Wrapper = styled(Flex)`
   height: 100%;
   width: 100%;
-  background-color: ${colors.black};
+  background-color: ${colors.BG1};
 `
 
 const Version = styled(Flex)`
@@ -143,8 +143,8 @@ export const App = () => {
     [addNewNode, isFetching],
   )
 
-  const handleNodeUpdated = useCallback((data: FetchDataResponse) => {
-    console.log(data)
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  const handleNodeUpdated = useCallback(() => {
   }, [])
 
   const handleAiSummaryAnswer = useCallback(

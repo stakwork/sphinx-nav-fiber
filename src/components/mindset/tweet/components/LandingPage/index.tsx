@@ -73,8 +73,6 @@ const HARDCODE = [
   },
 ]
 
-console.log(HARDCODE)
-
 export type FormData = {
   input: string
   inputType: string

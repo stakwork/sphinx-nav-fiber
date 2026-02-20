@@ -40,13 +40,12 @@ const TooltipWrapper = styled(Html)`
 
 export const boxGeometry = new BoxGeometry(2, 2, 2)
 
-export const Node = memo(({ node, setSelectedNode, onSimulationUpdate, isSelected }: Props) => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const Node = memo(({ node, setSelectedNode, onSimulationUpdate, isSelected: _isSelected }: Props) => {
   const meshRef = useRef<Mesh | null>(null)
   const [normalizedSchemasByType] = useSchemaStore((s) => [s.normalizedSchemasByType])
   const [showTooltip, setShowTooltip] = useState(false)
   const { setSelectedColor } = useAppStore((s) => s)
-
-  console.log(isSelected)
 
   const { size, camera } = useThree()
 
