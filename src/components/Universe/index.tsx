@@ -174,8 +174,8 @@ const _Universe = () => {
               }}
               id="selection-canvas"
               onCreated={({ gl }) => {
-                gl.setClearColor('#000000')
-                gl.setClearAlpha(0.8)
+                gl.setClearColor(colors.BG1)
+                gl.setClearAlpha(1)
               }}
             >
               {isDevelopment && <Perf position="top-right" style={{ top: '80px' }} />}
