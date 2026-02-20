@@ -52,8 +52,6 @@ export const Stats = () => {
   }
 
   function handleStatClick(mediaType: string) {
-    return
-
     fetchData(setBudget, setAbortRequests, '', { ...(mediaType ? { media_type: mediaType } : {}), skip_cache: 'true' })
 
     navigateToNode(null)

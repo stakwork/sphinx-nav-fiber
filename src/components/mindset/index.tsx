@@ -239,7 +239,7 @@ export const MindSet = () => {
       <ContentWrapper direction="row">
         <>
           <Flex>
-            <Flex>
+            <Flex style={{ height: '64px', flexShrink: 0 }}>
               <Header />
             </Flex>
             <SideBar />

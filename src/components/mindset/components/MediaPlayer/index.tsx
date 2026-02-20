@@ -104,7 +104,7 @@ const MediaPlayerComponent = ({ mediaUrl }: Props) => {
 
   const handleKeyDown = useCallback(
     (event: KeyboardEvent) => {
-      if (event.code === 'Space' && false) {
+      if (event.code === 'Space') {
         event.preventDefault()
         togglePlay()
       }

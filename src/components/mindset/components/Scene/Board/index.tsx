@@ -6,6 +6,9 @@ import { Link } from '~/types'
 import { Edge } from './Edges'
 import { Node } from './Node'
 
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+const noop = () => {}
+
 const nodeWidth = 144 / 10
 const nodeHeight = 84 / 10
 
@@ -124,7 +127,7 @@ export const Board = () => {
             color="#353A46"
             height={nodeHeight}
             name={node?.properties?.name || ''}
-            onButtonClick={console.log}
+            onButtonClick={noop}
             position={[node.x, node.y, node.z]}
             type={node.node_type}
             url={node?.properties?.image_url || 'logo.png'}
@@ -138,7 +141,7 @@ export const Board = () => {
               color="#353A46"
               height={nodeHeight}
               name={relatedNode?.properties?.name || ''}
-              onButtonClick={console.log}
+              onButtonClick={noop}
               position={[relatedNode.x, relatedNode.y, relatedNode.z]}
               type={relatedNode.node_type}
               url={relatedNode?.properties?.image_url || 'logo.png'}
