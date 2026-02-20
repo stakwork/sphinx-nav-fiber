@@ -3,6 +3,7 @@ import { Flex } from '~/components/common/Flex'
 import { Node } from '~/types'
 import { colors } from '~/utils/colors'
 import { General } from './General'
+import { Post } from './Post'
 import { Tweet } from './Tweet'
 import { User } from './User'
 
@@ -12,6 +13,7 @@ type Props = {
 
 const ComponentsMapper: Record<string, React.FC<{ node: Node }>> = {
   Tweet,
+  Post,
   User,
   General,
 }
