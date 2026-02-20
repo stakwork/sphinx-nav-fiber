@@ -70,7 +70,7 @@ export const Splash = () => {
 
         setSchemas(response.schemas.filter((schema) => !schema.is_deleted))
       } catch (err) {
-        console.error(err)
+        console.error('Error fetching schemas:', err)
       }
     }
 

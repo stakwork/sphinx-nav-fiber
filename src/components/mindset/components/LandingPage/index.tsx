@@ -65,8 +65,6 @@ export const LandingPage = () => {
       try {
         const res: FetchDataResponse = await getNodes()
 
-        console.log('res', res)
-
         const topEpisodes = filterAndSortEpisodes(res)
 
         setEpisodes(topEpisodes)

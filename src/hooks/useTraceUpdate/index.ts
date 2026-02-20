@@ -17,7 +17,7 @@ export function useTraceUpdate(props: { [s: string]: unknown } | ArrayLike<unkno
     }, {})
 
     if (Object.keys(changedProps).length > 0) {
-      console.log('Changed props:', changedProps)
+      // Debug: console.log('Changed props:', changedProps)
     }
 
     prev.current = props

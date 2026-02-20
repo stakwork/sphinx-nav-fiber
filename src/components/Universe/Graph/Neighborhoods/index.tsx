@@ -9,9 +9,8 @@ import { NodeExtended } from '~/types'
 import { nodeSize } from '../Cubes/constants'
 
 export const Neighbourhoods = () => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [selectedNeighbourhoodId, setSelectedNeighbourhoodId] = useState<string | null>(null)
-
-  console.log(selectedNeighbourhoodId)
 
   const neighbourhoods = useGraphStore((s) => s.neighbourhoods)
 
