@@ -34,7 +34,7 @@ import { Toasts } from './Toasts'
 const Wrapper = styled(Flex)`
   height: 100%;
   width: 100%;
-  background-color: ${colors.black};
+  background-color: ${colors.BG1};
 `
 
 const Version = styled(Flex)`
