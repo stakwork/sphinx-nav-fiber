@@ -52,7 +52,6 @@ export const RelevanceList = () => {
           {selectedNodeType ? (
             <List
               onScroll={(e) => {
-                console.log(e)
                 e.stopPropagation()
               }}
               onWheel={(e) => e.stopPropagation()}
@@ -97,7 +96,6 @@ export const RelevanceList = () => {
           ) : (
             <Wrapper
               onScroll={(e) => {
-                console.log(e)
                 e.stopPropagation()
               }}
               onWheel={(e) => e.stopPropagation()}
@@ -113,7 +111,7 @@ export const RelevanceList = () => {
 
 const List = styled.ul`
   color: #fff;
-  background: rgba(0, 0, 0, 1);
+  background: rgba(35, 37, 47, 1);
   width: 390px;
   padding: 12px;
   border-radius: 8px;
@@ -128,7 +126,7 @@ const List = styled.ul`
 
 const Wrapper = styled.div`
   color: #fff;
-  background: rgba(0, 0, 0, 1);
+  background: rgba(35, 37, 47, 1);
   width: 390px;
   padding: 12px;
   border-radius: 8px;
