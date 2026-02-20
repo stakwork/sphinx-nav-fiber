@@ -120,6 +120,8 @@ export const PlayerControl = ({ markers }: Props) => {
     }
   }, [tweetPlayingTime, maxTime, minTime, setTweetPlayingTime])
 
+  const playingTime = duration > 0 ? ((tweetPlayingTime - minTime) / duration) * 100 : 0
+
   return (
     <Wrapper>
       <Controls onPlaybackRestart={handlePlaybackRestart} />
@@ -127,7 +129,7 @@ export const PlayerControl = ({ markers }: Props) => {
         duration={100}
         handleProgressChange={handleProgressChange}
         markers={markers}
-        playingTime={((tweetPlayingTime - minTime) / duration) * 100}
+        playingTime={playingTime}
         tweetPlayingTime={tweetPlayingTime}
       />
     </Wrapper>

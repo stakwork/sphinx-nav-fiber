@@ -4,6 +4,7 @@ import { useMemo } from 'react'
 import styled, { css } from 'styled-components'
 import { Vector3 } from 'three'
 import { useIsMatchBreakpoint } from '~/utils/useIsMatchBreakpoint'
+import { colors } from '~/utils/colors'
 import {
   defaultDimensions,
   defaultDimensionsMobile,
@@ -91,7 +92,7 @@ const HtmlWrap = styled.div<{ dimensions: [number, number, number, number]; visi
   font-size: 80px;
   color: #fff;
   border: solid 3px #5078f2;
-  background: #00000099;
+  background: ${colors.BG1};
   transition: opacity 0.2s;
   overflow-y: auto;
 `

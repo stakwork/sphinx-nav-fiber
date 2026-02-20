@@ -11,9 +11,7 @@ export const ScrollableList = () => {
 
   /* Example: use scroll offset to drive some animation or state */
   useFrame(() => {
-    console.log(scroll?.offset)
     // scroll.offset is 0 → 1 over the whole scroll range
-    // console.log(scroll.offset)
   })
 
   return (
