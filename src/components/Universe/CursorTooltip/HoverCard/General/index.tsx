@@ -28,18 +28,20 @@ export const General = ({ node }: Props) => {
     title = node.properties[keyProperty] || ''
   }
 
+  const hasImage = !!node?.properties?.image_url
+  const hasDescription = !!description
+
   return (
     <TooltipContainer>
-      <ContentWrapper>
+      <ContentWrapper $hasDescription={hasDescription} $hasImage={hasImage}>
         <Heading>
-          {node?.properties?.image_url && <Avatar src={node.properties.image_url} />}
-          <TitleWrapper>
+          {hasImage && node.properties && <Avatar src={node.properties.image_url} />}
+          <TitleWrapper $fullWidth={!hasImage}>
             <TypeBadge type={node.node_type} />
-
             {title && <Title>{truncateText(title, 70)}</Title>}
           </TitleWrapper>
         </Heading>
-        {description && <Description>{description}</Description>}
+        {hasDescription && <Description $hasDescription={hasDescription}>{description}</Description>}
       </ContentWrapper>
     </TooltipContainer>
   )
@@ -58,11 +60,12 @@ const TooltipContainer = styled(Flex)`
   padding: 16px 14px;
 `
 
-const ContentWrapper = styled(Flex)`
+const ContentWrapper = styled(Flex)<{ $hasImage?: boolean; $hasDescription?: boolean }>`
   margin-top: 0;
   flex-direction: column;
   gap: 4px;
-  align-items: flex-start;
+  align-items: ${({ $hasImage }) => ($hasImage ? 'flex-start' : 'flex-start')};
+  width: ${({ $hasImage }) => ($hasImage ? 'auto' : '100%')};
 `
 
 export const Avatar = styled.img`
@@ -77,11 +80,12 @@ const Heading = styled(Flex)`
   flex-direction: row;
 `
 
-const TitleWrapper = styled(Flex)`
+const TitleWrapper = styled(Flex)<{ $fullWidth?: boolean }>`
   flex-direction: column;
   align-items: flex-start;
-  min-width: 0; /* 🔥 Allows children (Title) to shrink */
-  max-width: 100%;
+  min-width: 0;
+  max-width: ${({ $fullWidth }) => ($fullWidth ? '100%' : '100%')};
+  width: ${({ $fullWidth }) => ($fullWidth ? '100%' : 'auto')};
 `
 
 const Title = styled(Text)`
@@ -100,16 +104,16 @@ const Title = styled(Text)`
   -webkit-line-clamp: 3;
 `
 
-const Description = styled(Text)`
+const Description = styled(Text)<{ $hasDescription?: boolean }>`
   font-family: Barlow;
   font-size: 14px;
   font-weight: 400;
   line-height: 20px;
-  margin-top: 16px;
+  margin-top: ${({ $hasDescription }) => ($hasDescription ? '16px' : '0')};
   color: ${colors.white};
   opacity: 0.8;
   white-space: normal;
-  display: -webkit-box;
+  display: ${({ $hasDescription }) => ($hasDescription ? '-webkit-box' : 'none')};
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;

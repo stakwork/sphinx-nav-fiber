@@ -1,6 +1,6 @@
 import { Instances } from '@react-three/drei'
 import { memo, useMemo } from 'react'
-import { BufferGeometry, CircleGeometry } from 'three'
+import { BufferGeometry, Shape, ShapeGeometry } from 'three'
 import { useDataStore, useNodeTypes } from '~/stores/useDataStore'
 import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
 import { useSelectedNode } from '~/stores/useGraphStore'
@@ -50,11 +50,34 @@ const _NodePoints = () => {
 
   const scaleFeature = useFeatureFlagStore((s) => s.scaleFeature)
 
-  // Create a rounded rectangle geometry
-  const roundedRectGeometry = useMemo(
-    () => new CircleGeometry(nodeSize / 2, 64), // 64 segments = smooth circle
-    [],
-  )
+  // Create a rounded rectangle shape (rounded left side, sharp right side)
+  // Centered at origin to match CircleGeometry behavior
+  const roundedRectGeometry = useMemo(() => {
+    const shape = new Shape()
+    const width = nodeSize
+    const height = nodeSize
+    const halfW = width / 2
+    const halfH = height / 2
+    const radius = nodeSize / 2 // Full round on left
+
+    // Start at bottom-left corner (will be rounded)
+    shape.moveTo(-halfW, -halfH)
+    // Line to bottom-right (sharp corner)
+    shape.lineTo(halfW, -halfH)
+    // Line to top-right (sharp corner)
+    shape.lineTo(halfW, halfH)
+    // Line to top-left (start of rounded corner)
+    shape.lineTo(-halfW + radius, halfH)
+    // Arc for rounded top-left corner
+    shape.absarc(-halfW + radius, halfH - radius, radius, Math.PI / 2, Math.PI, false)
+    // Line to bottom-left (after arc)
+    shape.lineTo(-halfW, -halfW + radius)
+    // Arc for rounded bottom-left corner  
+    shape.absarc(-halfW + radius, -halfW + radius, radius, Math.PI, 3 * Math.PI / 2, false)
+    shape.closePath()
+
+    return new ShapeGeometry(shape, 64)
+  }, [])
 
   return (
     <Instances
