@@ -52,7 +52,6 @@ export const RelevanceList = () => {
           {selectedNodeType ? (
             <List
               onScroll={(e) => {
-                console.log(e)
                 e.stopPropagation()
               }}
               onWheel={(e) => e.stopPropagation()}
@@ -97,7 +96,6 @@ export const RelevanceList = () => {
           ) : (
             <Wrapper
               onScroll={(e) => {
-                console.log(e)
                 e.stopPropagation()
               }}
               onWheel={(e) => e.stopPropagation()}
