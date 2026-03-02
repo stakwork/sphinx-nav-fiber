@@ -33,6 +33,9 @@ export const TooltipContainer = styled(Flex)`
   border-radius: 8px;
   overflow: hidden;
   max-width: 390px;
+  border-top: none;
+  border-left: none;
+  border-right: none;
   border-bottom: 5px solid rgba(0, 0, 0, 0.3);
   padding: 16px 14px;
 `

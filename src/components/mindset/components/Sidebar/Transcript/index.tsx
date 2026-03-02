@@ -122,6 +122,7 @@ export const Transcript = () => {
           setIsFirst(lastValidClip?.ref_id === clips[0]?.ref_id)
           setActiveClip(lastValidClip)
         }
+
         return
       }
 
@@ -146,6 +147,7 @@ export const Transcript = () => {
     isAdChapter,
     parseTimestamp,
     playerRef,
+    lastValidClip,
   ])
 
   useEffect(() => {

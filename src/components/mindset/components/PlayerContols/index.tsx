@@ -25,6 +25,7 @@ export const PlayerControl = ({ markers, chapters }: Props) => {
       if (playerRef) {
         playerRef.seekTo(newValue, 'seconds')
       }
+
       setCurrentTime(newValue)
     },
     [playerRef],
