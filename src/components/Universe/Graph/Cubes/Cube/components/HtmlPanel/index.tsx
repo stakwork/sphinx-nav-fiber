@@ -3,6 +3,7 @@ import { Float, Html } from '@react-three/drei'
 import { useMemo } from 'react'
 import styled, { css } from 'styled-components'
 import { Vector3 } from 'three'
+import { colors } from '~/utils/colors'
 import { useIsMatchBreakpoint } from '~/utils/useIsMatchBreakpoint'
 import {
   defaultDimensions,
@@ -91,7 +92,7 @@ const HtmlWrap = styled.div<{ dimensions: [number, number, number, number]; visi
   font-size: 80px;
   color: #fff;
   border: solid 3px #5078f2;
-  background: #00000099;
+  background: ${colors.BG1};
   transition: opacity 0.2s;
   overflow-y: auto;
 `

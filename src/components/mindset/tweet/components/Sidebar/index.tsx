@@ -7,6 +7,7 @@ import { useModal } from '~/stores/useModalStore'
 import { useTweetMindsetStore } from '~/stores/useTweetMindsetStore'
 import { colors } from '~/utils'
 import { Tweet } from './Tweet'
+import { EngagementReportOverlay } from '../EngagementReportOverlay'
 
 const LazyTweetAnalyze = lazy(() =>
   import('~/components/ModalsContainer/TweetAnalyze').then(({ TweetAnalyze }) => ({ default: TweetAnalyze })),
@@ -18,6 +19,7 @@ export const SideBar = () => {
   const { tweetId: selectedTweetIds } = useParams()
   const [analyzeTweetId, setAnalyzeTweetId] = useState<string>('')
   const { open } = useModal('tweetAnalyze')
+  const [showEngagementReport, setShowEngagementReport] = useState(false)
 
   const ids = selectedTweetIds?.split('&') || []
 
@@ -28,15 +30,24 @@ export const SideBar = () => {
 
   return (
     <Wrapper align="stretch" basis="100%" grow={1} shrink={1}>
-      {ids.length > 1 ? (
-        <EngagementButton
-          onClick={() => {
-            handleAnalyzeClick('summary')
-          }}
-        >
-          Summary Report
-        </EngagementButton>
-      ) : null}
+      {ids.length > 1 && (
+        <>
+          <EngagementButton
+            onClick={() => {
+              handleAnalyzeClick('summary')
+            }}
+          >
+            Summary Report
+          </EngagementButton>
+          <EngagementButton
+            onClick={() => {
+              setShowEngagementReport(true)
+            }}
+          >
+            Engagement Report
+          </EngagementButton>
+        </>
+      )}
       {ids.map((id: string) => (
         <TweetWrapper key={id} className={selectedTweet === id ? 'selected' : ''} onClick={() => setSelectedTweet(id)}>
           <Tweet
@@ -48,6 +59,7 @@ export const SideBar = () => {
         </TweetWrapper>
       ))}
       <LazyTweetAnalyze tweetId={analyzeTweetId} />
+      {showEngagementReport && <EngagementReportOverlay />}
     </Wrapper>
   )
 }
