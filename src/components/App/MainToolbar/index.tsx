@@ -4,7 +4,7 @@ import AddContentIcon from '~/components/Icons/AddContentIcon'
 import AddSourceIcon from '~/components/Icons/AddSourceIcon'
 import CommunitiesIcon from '~/components/Icons/CommunitiesIcon'
 import FeedbackIcon from '~/components/Icons/FeedbackIcon'
-import { BalanceChip } from './BalanceChip'
+
 import MenuIcon from '~/components/Icons/MenuIcon'
 import SettingsIcon from '~/components/Icons/SettingsIcon'
 import SourcesTableIcon from '~/components/Icons/SourcesTableIcon'
@@ -97,7 +97,6 @@ export const MainToolbar = () => {
         </IconWrapper>
         <Text>Settings</Text>
       </ActionButton>
-      <BalanceChip />
       {userFeedbackFeatureFlag && sphinxEnabled ? (
         <FeedbackButton data-testid="feedback-modal" onClick={openFeedbackModal}>
           <IconWrapper>

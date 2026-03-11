@@ -24,28 +24,28 @@ export const BalanceChip = () => {
 }
 
 const Wrapper = styled(Flex)`
-  position: absolute;
-  bottom: 80px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 64px;
+  flex-direction: row;
   align-items: center;
   justify-content: center;
+  gap: 4px;
+  margin-left: 5px;
+  padding: 4px 8px;
+  border-radius: 20px;
+  border: 1px solid ${colors.addAttributeBtn};
   color: ${colors.GRAY6};
   cursor: default;
+  white-space: nowrap;
 `
 
 const IconWrapper = styled(Flex)`
   justify-content: center;
   align-items: center;
-  font-size: 20px;
+  font-size: 16px;
 `
 
 const Label = styled(Text)`
-  font-size: 8px;
+  font-size: 11px;
   font-weight: 500;
-  text-align: center;
   white-space: nowrap;
-  margin-top: 2px;
   color: ${colors.GRAY6};
 `
