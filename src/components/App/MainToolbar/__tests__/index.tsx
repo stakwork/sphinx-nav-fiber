@@ -3,7 +3,9 @@ import '@testing-library/jest-dom'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
 import { useModal } from '~/stores/useModalStore'
+import { useUserStore } from '~/stores/useUserStore'
 import { MainToolbar } from '..'
+import { BalanceChip } from '../BalanceChip'
 import { ThemeProvider } from '@mui/material'
 import { appTheme } from '../../Providers'
 import { ThemeProvider as StyleThemeProvider } from 'styled-components'
@@ -22,6 +24,51 @@ jest.mock('~/stores/useFeatureFlagStore', () => ({
   useFeatureFlagStore: jest.fn(),
 }))
 
+jest.mock('~/stores/useUserStore', () => ({
+  useUserStore: jest.fn(),
+}))
+
+const renderWithProviders = (ui: React.ReactElement) =>
+  render(
+    <MemoryRouter>
+      <ThemeProvider theme={appTheme}>
+        <StyleThemeProvider theme={appTheme}>{ui}</StyleThemeProvider>
+      </ThemeProvider>
+    </MemoryRouter>,
+  )
+
+describe('BalanceChip Component Tests', () => {
+  beforeEach(() => {
+    jest.clearAllMocks()
+  })
+
+  it('renders with correct formatted value when budget > 0', () => {
+    ;(useUserStore as unknown as jest.Mock).mockReturnValue(1500)
+
+    renderWithProviders(<BalanceChip />)
+
+    expect(screen.getByTestId('balance-chip')).toBeInTheDocument()
+    expect(screen.getByText('1 500 SAT')).toBeInTheDocument()
+  })
+
+  it('does not render when budget is null', () => {
+    ;(useUserStore as unknown as jest.Mock).mockReturnValue(null)
+
+    renderWithProviders(<BalanceChip />)
+
+    expect(screen.queryByTestId('balance-chip')).not.toBeInTheDocument()
+  })
+
+  it('renders with 0 SAT when budget is 0', () => {
+    ;(useUserStore as unknown as jest.Mock).mockReturnValue(0)
+
+    renderWithProviders(<BalanceChip />)
+
+    expect(screen.getByTestId('balance-chip')).toBeInTheDocument()
+    expect(screen.getByText('0 SAT')).toBeInTheDocument()
+  })
+})
+
 describe('MainToolbar Component Tests', () => {
   beforeEach(() => {
     jest.clearAllMocks()
@@ -32,6 +79,19 @@ describe('MainToolbar Component Tests', () => {
       customSchemaFeatureFlag: true,
       userFeedbackFeatureFlag: true,
     })
+    ;(useUserStore as unknown as jest.Mock).mockImplementation((selector: (s: unknown) => unknown) =>
+      selector({
+        isAdmin: false,
+        isAuthenticated: false,
+        pubKey: '',
+        signedToken: '',
+        budget: null,
+        nodeCount: 0,
+        tribeUuid: '',
+        tribeHost: '',
+        swarmUiUrl: '',
+      }),
+    )
   })
 
   it('calls openSourcesModal when Source table is clicked', () => {

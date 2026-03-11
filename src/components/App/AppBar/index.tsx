@@ -3,7 +3,6 @@ import styled from 'styled-components'
 import { Alerts } from '~/components/Alerts'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
-import { Stats } from '~/components/Stats'
 import { useAiSummaryStore } from '~/stores/useAiSummaryStore'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
@@ -40,7 +39,6 @@ export const AppBar = () => {
         </>
         <Text className="subtitle">Second Brain</Text>
       </TitleWrapper>
-      {false && <Stats />}
       <Alerts />
     </Header>
   )
