@@ -38,7 +38,7 @@ const boostAgainstBudget = async (amount: number) => {
     // @ts-ignore
     res = await sphinx.keysend(sphinxPubkey, amount)
 
-    if (!res) {
+    if (!res?.success) {
       throw new Error('Keysend failed after topup')
     }
 

@@ -2,6 +2,9 @@ import { render, fireEvent, waitFor, waitForElementToBeRemoved } from '@testing-
 import { Booster } from '../index'
 import '@testing-library/jest-dom'
 import * as boostUtil from '~/utils/boost'
+import * as SuccessToast from '~/components/common/SuccessToast'
+import { useDataStore } from '~/stores/useDataStore'
+import { useGraphStore } from '~/stores/useGraphStore'
 
 // @ts-ignore
 window.setImmediate = window.setTimeout
@@ -10,7 +13,25 @@ jest.mock('~/utils/boost', () => ({
   boost: jest.fn(),
 }))
 
+jest.mock('~/components/common/SuccessToast', () => ({
+  SuccessNotify: jest.fn(),
+  ErrorNotify: jest.fn(),
+}))
+
+jest.mock('~/stores/useDataStore', () => ({
+  useDataStore: Object.assign(jest.fn(() => ({})), {
+    getState: jest.fn(() => ({ updateNode: jest.fn() })),
+  }),
+}))
+
+jest.mock('~/stores/useGraphStore', () => ({
+  useGraphStore: Object.assign(jest.fn(() => ({})), {
+    setState: jest.fn(),
+  }),
+}))
+
 const mockedBoost = boostUtil.boost as jest.MockedFunction<typeof boostUtil.boost>
+const mockedErrorNotify = SuccessToast.ErrorNotify as jest.MockedFunction<typeof SuccessToast.ErrorNotify>
 
 describe('Booster Component', () => {
   beforeEach(() => {
@@ -108,4 +129,52 @@ describe('Booster Component', () => {
       timeout: 5000,
     }).catch((e) => console.error('Loader did not disappear as expected', e))
   }, 10000)
+
+  it('calls ErrorNotify and does not call updateCount when boost fails', async () => {
+    mockedBoost.mockRejectedValueOnce(new Error('Keysend failed'))
+
+    const updateCountMock = jest.fn()
+
+    const { getByTestId } = render(<Booster refId="123" updateCount={updateCountMock} />)
+
+    fireEvent.click(getByTestId('booster-pill'))
+
+    await waitFor(() => {
+      expect(mockedErrorNotify).toHaveBeenCalledWith('Boost failed. Please try again.')
+    })
+
+    expect(updateCountMock).not.toHaveBeenCalled()
+  })
+
+  it('calls updateNode and useGraphStore.setState with updated boost value on success', async () => {
+    mockedBoost.mockResolvedValueOnce(undefined)
+
+    const updateNodeMock = jest.fn()
+    ;(useDataStore.getState as jest.Mock).mockReturnValue({ updateNode: updateNodeMock })
+
+    const updateCountMock = jest.fn()
+
+    const mockNode = {
+      ref_id: '123',
+      boost: 0,
+      properties: { boost: 0 },
+    }
+
+    const { getByTestId } = render(
+      // @ts-ignore
+      <Booster refId="123" content={mockNode} updateCount={updateCountMock} />,
+    )
+
+    fireEvent.click(getByTestId('booster-pill'))
+
+    await waitFor(() => {
+      expect(updateNodeMock).toHaveBeenCalledWith(
+        expect.objectContaining({ boost: 5, properties: expect.objectContaining({ boost: 5 }) }),
+      )
+    })
+
+    expect(useGraphStore.setState).toHaveBeenCalledWith(
+      expect.objectContaining({ selectedNode: expect.objectContaining({ boost: 5 }) }),
+    )
+  })
 })

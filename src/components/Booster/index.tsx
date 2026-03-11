@@ -4,7 +4,10 @@ import ClipLoader from 'react-spinners/ClipLoader'
 import BoostIcon from '~/components/Icons/BoostIcon'
 import { Flex } from '~/components/common/Flex'
 import { Pill } from '~/components/common/Pill'
-import { Node } from '~/types'
+import { ErrorNotify } from '~/components/common/SuccessToast'
+import { useDataStore } from '~/stores/useDataStore'
+import { useGraphStore } from '~/stores/useGraphStore'
+import { Node, NodeExtended } from '~/types'
 import { boost } from '~/utils/boost'
 import { colors } from '~/utils/colors'
 
@@ -38,15 +41,28 @@ export const Booster = ({ count = 0, updateCount, content, readOnly, refId }: Pr
 
     setSubmitting(true)
 
-    // eslint-disable-next-line no-useless-catch
     try {
       await boost(refId, defaultBoostAmount)
+
+      const newBoostValue = (content?.boost || 0) + defaultBoostAmount
+
+      const updatedNode = {
+        ...content,
+        boost: newBoostValue,
+        properties: {
+          ...(content?.properties || {}),
+          boost: newBoostValue,
+        },
+      } as unknown as NodeExtended
+
+      useDataStore.getState().updateNode(updatedNode)
+      useGraphStore.setState({ selectedNode: updatedNode })
 
       if (updateCount) {
         updateCount(count + defaultBoostAmount)
       }
     } catch (e) {
-      console.error(e)
+      ErrorNotify('Boost failed. Please try again.')
     }
 
     setSubmitting(false)

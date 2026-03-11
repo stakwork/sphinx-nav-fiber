@@ -1,4 +1,4 @@
-import { MdCheckCircle } from 'react-icons/md'
+import { MdCheckCircle, MdErrorOutline } from 'react-icons/md'
 import { toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import styled from 'styled-components'
@@ -19,6 +19,26 @@ export const SuccessNotify = (message?: string) => {
     toast.success(
       <StyledDiv>
         <MdCheckCircle color={colors.white} fontSize={24} />
+        {toastMessage}
+      </StyledDiv>,
+      {
+        toastId,
+        autoClose: 5000,
+        icon: false,
+        closeButton: false,
+      },
+    )
+  }
+}
+
+export const ErrorNotify = (message?: string) => {
+  const toastMessage = message || 'Error'
+  const toastId = 'uniqueErrorToastId'
+
+  if (!toast.isActive(toastId)) {
+    toast.error(
+      <StyledDiv>
+        <MdErrorOutline color={colors.white} fontSize={24} />
         {toastMessage}
       </StyledDiv>,
       {
