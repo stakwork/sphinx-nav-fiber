@@ -8,6 +8,7 @@ import { useAppStore } from '~/stores/useAppStore'
 import { useGraphStore } from '~/stores/useGraphStore'
 import { useModal } from '~/stores/useModalStore'
 import { colors } from '~/utils'
+import { BalanceChip } from '~/components/App/MainToolbar/BalanceChip'
 import { GraphFilter } from './GraphFilter'
 
 export const GraphSearch = () => {
@@ -48,6 +49,7 @@ export const GraphSearch = () => {
           )}
         </SearchWrapper>
         <GraphFilter />
+        <BalanceChip />
         {episodeId && <Button onClick={() => open()}>Claims</Button>}
       </TopBarContainer>
     </Wrapper>

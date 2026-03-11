@@ -4,6 +4,7 @@ import AddContentIcon from '~/components/Icons/AddContentIcon'
 import AddSourceIcon from '~/components/Icons/AddSourceIcon'
 import CommunitiesIcon from '~/components/Icons/CommunitiesIcon'
 import FeedbackIcon from '~/components/Icons/FeedbackIcon'
+
 import MenuIcon from '~/components/Icons/MenuIcon'
 import SettingsIcon from '~/components/Icons/SettingsIcon'
 import SourcesTableIcon from '~/components/Icons/SourcesTableIcon'
