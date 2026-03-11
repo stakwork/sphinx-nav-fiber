@@ -92,3 +92,37 @@ const getPillShapeGeometry = (width: number, height: number) => {
 export const NodePillGeometry = getPillShapeGeometry(nodeSize * 3, nodeSize + 1)
 
 export const NodeCircleGeometry = new THREE.CircleGeometry(nodeSize / 2 + 1, 64)
+
+/**
+ * Rectangle geometry with rounded left border and sharp right border.
+ * Used by NodePoints component (issue #2661).
+ */
+const getHalfRoundedRectGeometry = (width: number, height: number, radius: number) => {
+  const r = Math.min(radius, height / 2)
+  const shape = new THREE.Shape()
+
+  // Start at bottom-left (just above the rounded corner)
+  shape.moveTo(-width / 2 + r, -height / 2)
+
+  // Bottom edge → right
+  shape.lineTo(width / 2, -height / 2)
+
+  // Right edge (sharp, no arc)
+  shape.lineTo(width / 2, height / 2)
+
+  // Top edge → left
+  shape.lineTo(-width / 2 + r, height / 2)
+
+  // Top-left rounded corner
+  shape.absarc(-width / 2 + r, height / 2 - r, r, Math.PI / 2, Math.PI, false)
+
+  // Left edge
+  shape.lineTo(-width / 2, -height / 2 + r)
+
+  // Bottom-left rounded corner
+  shape.absarc(-width / 2 + r, -height / 2 + r, r, Math.PI, (3 * Math.PI) / 2, false)
+
+  return new THREE.ShapeGeometry(shape, 64)
+}
+
+export const NodeRectGeometry = getHalfRoundedRectGeometry(nodeSize * 2, nodeSize, nodeSize / 3)

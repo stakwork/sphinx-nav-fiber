@@ -1,13 +1,13 @@
 import { Instances } from '@react-three/drei'
 import { memo, useMemo } from 'react'
-import { BufferGeometry, CircleGeometry } from 'three'
+import { BufferGeometry } from 'three'
 import { useDataStore, useNodeTypes } from '~/stores/useDataStore'
 import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
 import { useSelectedNode } from '~/stores/useGraphStore'
 import { useSchemaStore } from '~/stores/useSchemaStore'
 import { NodeExtended } from '~/types'
 import { colors } from '~/utils'
-import { nodeSize } from '../constants'
+import { NodeRectGeometry } from '../constants'
 import { Point } from './Point'
 
 const COLORS_MAP = [
@@ -50,11 +50,8 @@ const _NodePoints = () => {
 
   const scaleFeature = useFeatureFlagStore((s) => s.scaleFeature)
 
-  // Create a rounded rectangle geometry
-  const roundedRectGeometry = useMemo(
-    () => new CircleGeometry(nodeSize / 2, 64), // 64 segments = smooth circle
-    [],
-  )
+  // Half-rounded rectangle: left border rounded, right border sharp (#2661)
+  const roundedRectGeometry = useMemo(() => NodeRectGeometry, [])
 
   return (
     <Instances
