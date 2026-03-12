@@ -75,6 +75,10 @@ export const SourcesView = () => {
     return true
   })
 
+  React.useEffect(() => {
+    setValue((prev) => Math.min(prev, tabs.length - 1))
+  }, [tabs.length])
+
   return (
     <Wrapper data-testid="sources-table" direction="column">
       <StyledTabs aria-label="sources tabs" onChange={handleChange} value={value}>

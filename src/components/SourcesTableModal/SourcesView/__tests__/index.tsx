@@ -1,6 +1,6 @@
 /* eslint-disable padding-line-between-statements */
 import '@testing-library/jest-dom'
-import { fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
 import { SourcesView } from '..'
@@ -211,6 +211,54 @@ describe('Test SourceView', () => {
         expect(tweetStatus).toBeInTheDocument()
         expect(articleStatus).toBeInTheDocument()
       })
+    })
+  })
+
+  describe('tab index clamping', () => {
+    beforeEach(() => {
+      cleanup()
+    })
+
+    it('should clamp value to last valid index when tabs array shrinks', () => {
+      // Start with isAdmin=true and queuedSourcesFeatureFlag=true → 3 tabs (Sources Table, Queued Sources, Topics)
+      useUserStoreMock.mockReturnValue([true] as unknown as ReturnType<typeof useUserStore>)
+      useFeatureFlagStoreMock.mockReturnValue([true] as unknown as ReturnType<typeof useFeatureFlagStore>)
+      isSphinxMock.mockReturnValue(false)
+
+      const { rerender } = render(<SourcesView />)
+
+      // Topics tab is visible at index 2; click it to set value = 2
+      const topicsTab = screen.getByRole('tab', { name: 'Topics' })
+
+      fireEvent.click(topicsTab)
+
+      // Now simulate isAdmin=false → tabs shrink to Sources Table only
+      useUserStoreMock.mockReturnValue([false] as unknown as ReturnType<typeof useUserStore>)
+      useFeatureFlagStoreMock.mockReturnValue([false] as unknown as ReturnType<typeof useFeatureFlagStore>)
+
+      rerender(<SourcesView />)
+
+      // Component should not crash and only the Sources Table tab should be visible
+      expect(screen.getByRole('tab', { name: 'Sources Table' })).toBeInTheDocument()
+      expect(screen.queryByRole('tab', { name: 'Topics' })).not.toBeInTheDocument()
+      expect(screen.queryByRole('tab', { name: 'Queued Sources' })).not.toBeInTheDocument()
+    })
+
+    it('should preserve valid tab index when tabs array does not shrink', () => {
+      // 3 tabs visible: Sources Table, Queued Sources, Topics
+      useUserStoreMock.mockReturnValue([true] as unknown as ReturnType<typeof useUserStore>)
+      useFeatureFlagStoreMock.mockReturnValue([true] as unknown as ReturnType<typeof useFeatureFlagStore>)
+      isSphinxMock.mockReturnValue(false)
+
+      render(<SourcesView />)
+
+      // Click the second tab (index 1 = Queued Sources)
+      const queuedTab = screen.getByRole('tab', { name: 'Queued Sources' })
+
+      fireEvent.click(queuedTab)
+
+      // Tabs array size stays the same — value should remain at index 1
+      expect(screen.getByRole('tab', { name: 'Queued Sources' })).toHaveAttribute('aria-selected', 'true')
     })
   })
 })
