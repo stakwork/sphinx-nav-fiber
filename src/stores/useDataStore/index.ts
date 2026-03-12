@@ -21,7 +21,7 @@ import { useUserStore } from '../useUserStore'
 
 export const defaultFilters = {
   skip: 0,
-  limit: 1000,
+  limit: 100,
   depth: '3',
   sort_by: 'score',
   include_properties: 'true',
