@@ -21,7 +21,6 @@ import { Flex } from '../common/Flex'
 import { outlineEffectColor } from './constants'
 import { Controls } from './Controls'
 import { initialCameraPosition, selectionGraphCameraPosition } from './Controls/CameraAnimations/constants'
-import { CursorTooltip } from './CursorTooltip/index'
 import { Graph } from './Graph'
 import { GraphSearch } from './GraphSearch'
 import { HtmlContent } from './HtmlContent'
@@ -159,7 +158,6 @@ const _Universe = () => {
           </Suspense>
         </Canvas>
         <GraphSearch />
-        <CursorTooltip />
 
         {showSelectionGraph ? (
           <SelectionWrapper>
