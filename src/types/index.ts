@@ -257,7 +257,7 @@ export type TopicFilter = {
 
 export type SubmitErrRes = {
   error?: { message?: string }
-  data: {
+  data?: {
     ref_id: string
     project_id?: string
   }
