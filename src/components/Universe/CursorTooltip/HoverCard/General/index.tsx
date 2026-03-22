@@ -47,14 +47,13 @@ export const General = ({ node }: Props) => {
 
 const TooltipContainer = styled(Flex)`
   width: fit-content;
-  background: ${colors.HOVER_CARD_BG};
   flex-direction: column;
   pointer-events: auto;
   align-items: flex-start;
   border-radius: 8px;
   overflow: hidden;
   max-width: 390px;
-  border-bottom: 5px solid rgba(0, 0, 0, 0.3);
+  border-bottom: 5px solid ${colors.HOVER_CARD_BG};
   padding: 16px 14px;
 `
 
