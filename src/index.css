@@ -65,6 +65,11 @@ body {
 
 #universe-canvas {
   z-index: 0;
+  cursor: default !important;
+}
+
+#selection-canvas {
+  cursor: default !important;
 }
 
 *:root {

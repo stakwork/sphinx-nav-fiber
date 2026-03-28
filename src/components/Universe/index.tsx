@@ -144,7 +144,7 @@ const _Universe = () => {
           id="universe-canvas"
           onCreated={onCreatedHandler}
           onWheel={onWheelHandler}
-          style={{ visibility: isHtmlContent ? 'hidden' : 'visible' }}
+          style={{ visibility: isHtmlContent ? 'hidden' : 'visible', cursor: 'default' }}
         >
           {isDevelopment && <Perf position="top-right" style={{ top: '80px' }} />}
           <Suspense fallback={<Fallback />}>
@@ -175,6 +175,7 @@ const _Universe = () => {
                 gl.setClearColor('#000000')
                 gl.setClearAlpha(0.8)
               }}
+              style={{ cursor: 'default' }}
             >
               {isDevelopment && <Perf position="top-right" style={{ top: '80px' }} />}
               <Suspense fallback={<Fallback />}>
