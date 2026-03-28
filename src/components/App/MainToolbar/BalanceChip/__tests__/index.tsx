@@ -14,8 +14,7 @@ jest.mock('~/stores/useModalStore', () => ({
 }))
 
 jest.mock('~/stores/useUserStore', () => ({
-  useUserStore: (selector: (s: { budget: number | null }) => unknown) =>
-    selector({ budget: 500 }),
+  useUserStore: (selector: (s: { budget: number | null }) => unknown) => selector({ budget: 500 }),
 }))
 
 describe('BalanceChip', () => {
@@ -39,8 +38,7 @@ describe('BalanceChip', () => {
 
   it('returns null when budget is null', () => {
     jest.mock('~/stores/useUserStore', () => ({
-      useUserStore: (selector: (s: { budget: number | null }) => unknown) =>
-        selector({ budget: null }),
+      useUserStore: (selector: (s: { budget: number | null }) => unknown) => selector({ budget: null }),
     }))
 
     // budget null branch — just verify component renders without crash

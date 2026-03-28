@@ -53,9 +53,7 @@ const MOCK_HISTORY = {
     {
       macaroon: 'ddddddddeeeeffff',
       balance: 300,
-      transactions: [
-        { endpoint: '/boost', amount: 50, created_at: '2024-01-12T14:00:00Z' },
-      ],
+      transactions: [{ endpoint: '/boost', amount: 50, created_at: '2024-01-12T14:00:00Z' }],
     },
   ],
 }
