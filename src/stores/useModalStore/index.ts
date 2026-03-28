@@ -25,6 +25,7 @@ export type AvailableModals =
   | 'nodeAction'
   | 'tweetAnalyze'
   | 'claim'
+  | 'transactionHistory'
 
 type ModalStore = {
   currentModals: Record<AvailableModals, boolean>
@@ -59,6 +60,7 @@ const defaultData = {
     nodeAction: false,
     tweetAnalyze: false,
     claim: false,
+    transactionHistory: false,
   },
 }
 

@@ -2,19 +2,21 @@ import styled from 'styled-components'
 import BudgetIcon from '~/components/Icons/BudgetIcon'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
+import { useModal } from '~/stores/useModalStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { colors } from '~/utils/colors'
 import { formatBudget } from '~/utils/formatBudget'
 
 export const BalanceChip = () => {
   const budget = useUserStore((s) => s.budget)
+  const { open } = useModal('transactionHistory')
 
   if (budget === null) {
     return null
   }
 
   return (
-    <Wrapper data-testid="balance-chip" direction="column">
+    <Wrapper data-testid="balance-chip" direction="column" onClick={open}>
       <IconWrapper>
         <BudgetIcon />
       </IconWrapper>
@@ -33,8 +35,14 @@ const Wrapper = styled(Flex)`
   border-radius: 20px;
   border: 1px solid ${colors.addAttributeBtn};
   color: ${colors.GRAY6};
-  cursor: default;
+  cursor: pointer;
   white-space: nowrap;
+  transition: border-color 0.15s ease, color 0.15s ease;
+
+  &:hover {
+    border-color: ${colors.primaryBlue};
+    color: ${colors.white};
+  }
 `
 
 const IconWrapper = styled(Flex)`
