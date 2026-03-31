@@ -32,7 +32,7 @@ const filterAndSortEpisodes = (data: FetchDataResponse): Node[] =>
     .slice(0, 50)
 
 const handleSubmitForm = async (data: FieldValues): Promise<SubmitErrRes> => {
-  const endPoint = 'add_node'
+  const endPoint = 'v2/content'
 
   const body: { [index: string]: unknown } = {}
 
