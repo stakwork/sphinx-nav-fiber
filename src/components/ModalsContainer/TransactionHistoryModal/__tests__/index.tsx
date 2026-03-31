@@ -62,11 +62,13 @@ beforeEach(() => {
   jest.clearAllMocks()
   mockGetLSat.mockResolvedValue(MOCK_LSAT_TOKEN)
   mockGetLsatHistory.mockResolvedValue(MOCK_HISTORY)
+
   mockTopUpLsat.mockResolvedValue({
     success: true,
     payment_request: 'lnbc10000abc123def456ghi789jkl012mno345pqr678stu901vwx',
     payment_hash: 'abc123hash',
   })
+
   mockTopUpConfirm.mockResolvedValue({ success: true, new_balance: 1100 })
   mockGetBalance.mockResolvedValue({ success: true, balance: 1100 })
 })
@@ -74,6 +76,7 @@ beforeEach(() => {
 describe('TransactionHistoryModal', () => {
   it('renders modal title', async () => {
     render(<TransactionHistoryModal />)
+
     await waitFor(() => {
       expect(screen.getByText('Transaction History')).toBeInTheDocument()
     })
@@ -155,12 +158,14 @@ describe('TransactionHistoryModal', () => {
     fireEvent.change(screen.getByTestId('topup-amount-input'), {
       target: { value: '100' },
     })
+
     expect(screen.getByTestId('generate-invoice-btn')).not.toBeDisabled()
 
     // Over limit disables button again
     fireEvent.change(screen.getByTestId('topup-amount-input'), {
       target: { value: '99999' },
     })
+
     expect(screen.getByTestId('generate-invoice-btn')).toBeDisabled()
   })
 
@@ -236,6 +241,7 @@ describe('TransactionHistoryModal', () => {
 
   it('clears polling interval when modal closes', async () => {
     jest.useFakeTimers()
+
     const clearIntervalSpy = jest.spyOn(global, 'clearInterval')
 
     const { unmount } = render(<TransactionHistoryModal />)

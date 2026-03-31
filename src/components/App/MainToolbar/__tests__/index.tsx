@@ -40,6 +40,7 @@ const renderWithProviders = (ui: React.ReactElement) =>
 describe('BalanceChip Component Tests', () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    ;(useModal as jest.Mock).mockReturnValue({ open: jest.fn() })
   })
 
   it('renders with correct formatted value when budget > 0', () => {

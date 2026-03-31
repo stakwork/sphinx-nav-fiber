@@ -56,7 +56,7 @@ describe('AddContentModal', () => {
       fireEvent.click(approveButton)
 
       expect(api.post).toHaveBeenCalledWith(
-        '/add_node',
+        '/v2/content',
         JSON.stringify({
           tweet_id: '1801364934464241783',
           content_type: 'tweet',
@@ -93,7 +93,7 @@ describe('AddContentModal', () => {
       fireEvent.click(approveButton)
 
       expect(api.post).toHaveBeenCalledWith(
-        '/add_node',
+        '/v2/content',
         JSON.stringify({
           tweet_id: '1801364934464241783',
           content_type: 'tweet',

@@ -21,7 +21,7 @@ type Props = {
 export const BudgetStep: FC<Props> = ({ onClick, loading, type, error }) => {
   const budget = useUserStore((s) => s.budget)
   const [price, setPrice] = useState<number>(10)
-  const endPoint = isSource(type) ? 'radar' : 'add_node'
+  const endPoint = isSource(type) ? 'radar' : 'v2/content'
 
   useEffect(() => {
     const run = async () => {
