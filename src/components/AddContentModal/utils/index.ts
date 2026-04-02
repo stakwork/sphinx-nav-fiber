@@ -1,6 +1,5 @@
 import {
   DOCUMENT,
-  GITHUB_REPOSITORY,
   LINK,
   RSS,
   TWITTER_HANDLE,
@@ -24,7 +23,6 @@ const youtubeChannelPattern = /https?:\/\/(www\.)?youtube\.com\/(user\/)?(@)?([\
 
 const genericUrlRegex = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/
 const twitterBroadcastRegex = /https:\/\/twitter\.com\/i\/broadcasts\/([A-Za-z0-9_-]+)/
-const githubRepoPattern = /https:\/\/github\.com\/[\w-]+\/[\w-]+/
 
 export async function checkIfRSS(url: string): Promise<boolean> {
   try {
@@ -68,10 +66,6 @@ export async function getInputType(source: string) {
     return RSS
   }
 
-  if (githubRepoPattern.test(source)) {
-    return GITHUB_REPOSITORY
-  }
-
   if (genericUrlRegex.test(source)) {
     const isRSS = await checkIfRSS(source)
 
@@ -90,4 +84,4 @@ export const extractNameFromLink = (inputString: string, type = ''): string | nu
 }
 
 export const isSource = (type: string): boolean =>
-  !!type && [TWITTER_HANDLE, YOUTUBE_CHANNEL, RSS, GITHUB_REPOSITORY].includes(type)
+  !!type && [TWITTER_HANDLE, YOUTUBE_CHANNEL, RSS].includes(type)

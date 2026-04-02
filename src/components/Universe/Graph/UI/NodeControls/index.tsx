@@ -15,7 +15,6 @@ import NodesIcon from '~/components/Icons/NodesIcon'
 import PlusIcon from '~/components/Icons/PlusIcon'
 import { useNodeNavigation } from '~/components/Universe/useNodeNavigation'
 import { getActionDetails } from '~/network/actions'
-import { analyzeGitHubRepository } from '~/network/analyzeGithubRepo'
 import { fetchNodeEdges } from '~/network/fetchGraphData'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
@@ -201,14 +200,6 @@ export const NodeControls = memo(() => {
     setAnchorEl(null)
   }
 
-  const handleAnalyzeTestCoverage = async (githubName: string) => {
-    try {
-      await analyzeGitHubRepository(githubName)
-    } catch (error) {
-      console.error('error during test coverage analysis:', error)
-    }
-  }
-
   const handleNodeAction = (actionDetails: ActionDetail) => {
     setSelectedActionDetail(actionDetails)
     openNodeAction()
@@ -218,8 +209,6 @@ export const NodeControls = memo(() => {
   const open = Boolean(anchorEl)
 
   const id = open ? 'simple-popover' : undefined
-
-  const isRepository = selectedNode?.node_type?.toLowerCase() === 'repository'
 
   // const isShowCreateTestButton = !!(selectedNode && selectedNode?.node_type?.toLowerCase() === 'function')
 
@@ -273,8 +262,7 @@ export const NodeControls = memo(() => {
           open={open}
           transformOrigin={{ vertical: 'top', horizontal: 'right' }}
         >
-          {!isRepository ? (
-            <>
+          <>
               {action && action.length > 0 ? (
                 <>
                   {nodeActionLoading && (
@@ -320,25 +308,6 @@ export const NodeControls = memo(() => {
                 </>
               )}
             </>
-          ) : (
-            <>
-              <PopoverOption
-                data-testid="generate_tests"
-                onClick={() => {
-                  if (selectedNode?.properties?.name) {
-                    handleAnalyzeTestCoverage(selectedNode?.properties?.name)
-                  }
-
-                  handleClose()
-                }}
-              >
-                <IconWrapper>
-                  <AddCircleIcon data-testid="AddCircleIcon" />
-                </IconWrapper>
-                Analyze Test Coverage
-              </PopoverOption>
-            </>
-          )}
         </PopoverWrapper>
       </Html>
     </group>
@@ -411,17 +380,6 @@ const PopoverWrapper = styled(Popover)`
   }
 `
 
-const IconWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: start;
-
-  svg {
-    margin-top: 1px;
-    width: 12px;
-    height: 12px;
-  }
-`
 
 const ClipLoaderWrapper = styled(Flex)`
   justify-content: center;

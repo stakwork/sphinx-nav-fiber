@@ -1,6 +1,5 @@
 import {
   DOCUMENT,
-  GITHUB_REPOSITORY,
   LINK,
   RSS,
   TWITTER_HANDLE,
@@ -85,9 +84,6 @@ describe('youtubeRegex', () => {
     await expect(getInputType('some plain text')).resolves.toBe(DOCUMENT)
   })
 
-  it('should assert we can check for GitHub repository regex', async () => {
-    await expect(getInputType('https://github.com/stakwork/sphinx-nav-fiber')).resolves.toBe(GITHUB_REPOSITORY)
-  })
 })
 
 describe('extractNameFromLink', () => {
