@@ -11,6 +11,7 @@ import { useModal } from '~/stores/useModalStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { LsatHistoryResponse } from '~/types'
 import { getLSat } from '~/utils/getLSat'
+import { payLsat } from '~/utils/payLsat'
 import { colors } from '~/utils/colors'
 
 type Transaction = {
@@ -162,6 +163,13 @@ export const TransactionHistoryModal = () => {
   }
 
   const handleGenerateInvoice = async () => {
+    if (!activeMacaroon) {
+      await payLsat(setBudget)
+      close()
+
+      return
+    }
+
     const err = validateAmount(topUpAmount)
 
     if (err) {
@@ -251,6 +259,16 @@ export const TransactionHistoryModal = () => {
             </InvoiceBox>
           )}
           <CancelButton onClick={resetTopUp}>Cancel</CancelButton>
+        </Flex>
+      )
+    }
+
+    if (!activeMacaroon) {
+      return (
+        <Flex direction="column">
+          <GenerateButton data-testid="get-started-btn" onClick={handleGenerateInvoice}>
+            Get Started
+          </GenerateButton>
         </Flex>
       )
     }
@@ -596,3 +614,4 @@ const EmptyText = styled(Text)`
   padding: 20px;
   text-align: center;
 `
+
