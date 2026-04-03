@@ -45,7 +45,9 @@ export const TextNode = memo(
       textureLoader.load(
         node.properties.image_url,
         (t) => {
-          if (!cancelled) { setTexture(t) }
+          if (!cancelled) {
+            setTexture(t)
+          }
         },
         undefined,
         () => console.error(`Failed to load texture: ${node?.properties?.image_url}`),
@@ -56,9 +58,12 @@ export const TextNode = memo(
       }
     }, [node?.properties?.image_url])
 
-    useEffect(() => () => {
-      texture?.dispose()
-    }, [texture])
+    useEffect(
+      () => () => {
+        texture?.dispose()
+      },
+      [texture],
+    )
 
     const primaryIcon = normalizedSchemasByType[node.node_type]?.icon
     const Icon = primaryIcon ? Icons[primaryIcon] : null
