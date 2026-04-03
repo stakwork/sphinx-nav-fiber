@@ -80,7 +80,6 @@ export const NODE_RELATIVE_HIGHLIGHT_COLORS_NEW: Record<string, NodeRelativeHigh
 
 export const LINK = 'link'
 export const TWITTER_HANDLE = 'twitter_handle'
-export const GITHUB_REPOSITORY = 'github_repository'
 export const YOUTUBE_CHANNEL = 'youtube_channel'
 export const WEB_PAGE = 'web_page'
 export const RSS = 'rss'

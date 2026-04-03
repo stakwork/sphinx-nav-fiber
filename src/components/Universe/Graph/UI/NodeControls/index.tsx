@@ -15,7 +15,6 @@ import NodesIcon from '~/components/Icons/NodesIcon'
 import PlusIcon from '~/components/Icons/PlusIcon'
 import { useNodeNavigation } from '~/components/Universe/useNodeNavigation'
 import { getActionDetails } from '~/network/actions'
-import { analyzeGitHubRepository } from '~/network/analyzeGithubRepo'
 import { fetchNodeEdges } from '~/network/fetchGraphData'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
@@ -201,14 +200,6 @@ export const NodeControls = memo(() => {
     setAnchorEl(null)
   }
 
-  const handleAnalyzeTestCoverage = async (githubName: string) => {
-    try {
-      await analyzeGitHubRepository(githubName)
-    } catch (error) {
-      console.error('error during test coverage analysis:', error)
-    }
-  }
-
   const handleNodeAction = (actionDetails: ActionDetail) => {
     setSelectedActionDetail(actionDetails)
     openNodeAction()
@@ -218,8 +209,6 @@ export const NodeControls = memo(() => {
   const open = Boolean(anchorEl)
 
   const id = open ? 'simple-popover' : undefined
-
-  const isRepository = selectedNode?.node_type?.toLowerCase() === 'repository'
 
   // const isShowCreateTestButton = !!(selectedNode && selectedNode?.node_type?.toLowerCase() === 'function')
 
@@ -273,72 +262,52 @@ export const NodeControls = memo(() => {
           open={open}
           transformOrigin={{ vertical: 'top', horizontal: 'right' }}
         >
-          {!isRepository ? (
-            <>
-              {action && action.length > 0 ? (
-                <>
-                  {nodeActionLoading && (
-                    <PopoverOption>
-                      <ClipLoaderWrapper mb={10} mt={10}>
-                        <ClipLoader color={colors.lightGray} size={25} />
-                      </ClipLoaderWrapper>
-                    </PopoverOption>
-                  )}
-                  {nodeActions.map((actionDetail) => (
-                    <PopoverOption
-                      key={actionDetail.name}
-                      data-testid={actionDetail.name}
-                      onClick={() => {
-                        handleNodeAction(actionDetail)
-                      }}
-                    >
-                      {actionDetail.display_name}
-                    </PopoverOption>
-                  ))}
-                </>
-              ) : (
-                <>
+          <>
+            {action && action.length > 0 ? (
+              <>
+                {nodeActionLoading && (
+                  <PopoverOption>
+                    <ClipLoaderWrapper mb={10} mt={10}>
+                      <ClipLoader color={colors.lightGray} size={25} />
+                    </ClipLoaderWrapper>
+                  </PopoverOption>
+                )}
+                {nodeActions.map((actionDetail) => (
                   <PopoverOption
-                    data-testid="merge"
+                    key={actionDetail.name}
+                    data-testid={actionDetail.name}
                     onClick={() => {
-                      mergeTopicModal()
-                      handleClose()
+                      handleNodeAction(actionDetail)
                     }}
                   >
-                    <MergeIcon data-testid="MergeIcon" /> Merge
+                    {actionDetail.display_name}
                   </PopoverOption>
-                  <PopoverOption
-                    data-testid="add_edge"
-                    onClick={() => {
-                      addEdgeToNodeModal()
-                      handleClose()
-                    }}
-                  >
-                    <AddCircleIcon data-testid="AddCircleIcon" />
-                    Add edge
-                  </PopoverOption>
-                </>
-              )}
-            </>
-          ) : (
-            <>
-              <PopoverOption
-                data-testid="generate_tests"
-                onClick={() => {
-                  if (selectedNode?.properties?.name) {
-                    handleAnalyzeTestCoverage(selectedNode?.properties?.name)
-                  }
-
-                  handleClose()
-                }}
-              >
-                <IconWrapper>
+                ))}
+              </>
+            ) : (
+              <>
+                <PopoverOption
+                  data-testid="merge"
+                  onClick={() => {
+                    mergeTopicModal()
+                    handleClose()
+                  }}
+                >
+                  <MergeIcon data-testid="MergeIcon" /> Merge
+                </PopoverOption>
+                <PopoverOption
+                  data-testid="add_edge"
+                  onClick={() => {
+                    addEdgeToNodeModal()
+                    handleClose()
+                  }}
+                >
                   <AddCircleIcon data-testid="AddCircleIcon" />
-                </IconWrapper>
-                Analyze Test Coverage
-              </PopoverOption>
-            </>
-          )}
+                  Add edge
+                </PopoverOption>
+              </>
+            )}
+          </>
         </PopoverWrapper>
       </Html>
     </group>
@@ -408,18 +377,6 @@ const PopoverWrapper = styled(Popover)`
     font-weight: 500;
     background-color: transparent !important;
     margin: 2px;
-  }
-`
-
-const IconWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: start;
-
-  svg {
-    margin-top: 1px;
-    width: 12px;
-    height: 12px;
   }
 `
 
