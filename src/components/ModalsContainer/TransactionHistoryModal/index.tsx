@@ -266,7 +266,6 @@ export const TransactionHistoryModal = () => {
     if (!activeMacaroon) {
       return (
         <Flex direction="column">
-          <NoLsatText>No LSAT found. Purchase one to get started.</NoLsatText>
           <GenerateButton data-testid="get-started-btn" onClick={handleGenerateInvoice}>
             Get Started
           </GenerateButton>
