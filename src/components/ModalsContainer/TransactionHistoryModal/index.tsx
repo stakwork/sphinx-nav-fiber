@@ -615,8 +615,3 @@ const EmptyText = styled(Text)`
   text-align: center;
 `
 
-const NoLsatText = styled(Text)`
-  color: ${colors.GRAY6};
-  font-size: 13px;
-  margin-bottom: 10px;
-`
