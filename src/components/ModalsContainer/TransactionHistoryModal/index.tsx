@@ -614,4 +614,3 @@ const EmptyText = styled(Text)`
   padding: 20px;
   text-align: center;
 `
-
