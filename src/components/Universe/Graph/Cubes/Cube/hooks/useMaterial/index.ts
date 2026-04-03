@@ -57,14 +57,5 @@ export const useMaterial = (url: string, transparent: boolean) => {
     )
   }, [url, transparent])
 
-  useEffect(
-    () =>
-      function cleanup() {
-        texture.dispose()
-        material.dispose()
-      },
-    [texture, material],
-  )
-
   return { material, texture }
 }

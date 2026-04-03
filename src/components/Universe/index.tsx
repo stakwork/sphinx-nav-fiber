@@ -159,35 +159,33 @@ const _Universe = () => {
         </Canvas>
         <GraphSearch />
 
-        {showSelectionGraph ? (
-          <SelectionWrapper>
-            <Canvas
-              camera={{
-                ...cameraProps,
-                position: [
-                  selectionGraphCameraPosition.x,
-                  selectionGraphCameraPosition.y,
-                  selectionGraphCameraPosition.z,
-                ],
-              }}
-              id="selection-canvas"
-              onCreated={({ gl }) => {
-                gl.setClearColor('#000000')
-                gl.setClearAlpha(0.8)
-              }}
-              style={{ cursor: 'default' }}
-            >
-              {isDevelopment && <Perf position="top-right" style={{ top: '80px' }} />}
-              <Suspense fallback={<Fallback />}>
-                <AdaptiveDpr />
+        <SelectionWrapper style={{ display: showSelectionGraph ? 'block' : 'none' }}>
+          <Canvas
+            camera={{
+              ...cameraProps,
+              position: [
+                selectionGraphCameraPosition.x,
+                selectionGraphCameraPosition.y,
+                selectionGraphCameraPosition.z,
+              ],
+            }}
+            id="selection-canvas"
+            onCreated={({ gl }) => {
+              gl.setClearColor('#000000')
+              gl.setClearAlpha(0.8)
+            }}
+            style={{ cursor: 'default' }}
+          >
+            {isDevelopment && <Perf position="top-right" style={{ top: '80px' }} />}
+            <Suspense fallback={<Fallback />}>
+              <AdaptiveDpr />
 
-                <AdaptiveEvents />
+              <AdaptiveEvents />
 
-                <SelectionContent />
-              </Suspense>
-            </Canvas>
-          </SelectionWrapper>
-        ) : null}
+              <SelectionContent />
+            </Suspense>
+          </Canvas>
+        </SelectionWrapper>
       </Suspense>
       {isHtmlContent && <HtmlContent content={htmlContent} />}
       {universeQuestionIsOpen && <UniverseQuestion />}
