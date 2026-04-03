@@ -1,12 +1,4 @@
-import {
-  DOCUMENT,
-  LINK,
-  RSS,
-  TWITTER_HANDLE,
-  TWITTER_SOURCE,
-  WEB_PAGE,
-  YOUTUBE_CHANNEL,
-} from '~/constants'
+import { DOCUMENT, LINK, RSS, TWITTER_HANDLE, TWITTER_SOURCE, WEB_PAGE, YOUTUBE_CHANNEL } from '~/constants'
 
 export const twitterHandlePattern = /\b(?:twitter\.com|x\.com)\/(?:@)?([\w_]+)(?:$|\?[^/]*$)/
 
@@ -83,5 +75,4 @@ export const extractNameFromLink = (inputString: string, type = ''): string | nu
   return match ? match[1] : null
 }
 
-export const isSource = (type: string): boolean =>
-  !!type && [TWITTER_HANDLE, YOUTUBE_CHANNEL, RSS].includes(type)
+export const isSource = (type: string): boolean => !!type && [TWITTER_HANDLE, YOUTUBE_CHANNEL, RSS].includes(type)

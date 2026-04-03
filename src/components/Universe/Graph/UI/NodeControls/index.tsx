@@ -263,51 +263,51 @@ export const NodeControls = memo(() => {
           transformOrigin={{ vertical: 'top', horizontal: 'right' }}
         >
           <>
-              {action && action.length > 0 ? (
-                <>
-                  {nodeActionLoading && (
-                    <PopoverOption>
-                      <ClipLoaderWrapper mb={10} mt={10}>
-                        <ClipLoader color={colors.lightGray} size={25} />
-                      </ClipLoaderWrapper>
-                    </PopoverOption>
-                  )}
-                  {nodeActions.map((actionDetail) => (
-                    <PopoverOption
-                      key={actionDetail.name}
-                      data-testid={actionDetail.name}
-                      onClick={() => {
-                        handleNodeAction(actionDetail)
-                      }}
-                    >
-                      {actionDetail.display_name}
-                    </PopoverOption>
-                  ))}
-                </>
-              ) : (
-                <>
+            {action && action.length > 0 ? (
+              <>
+                {nodeActionLoading && (
+                  <PopoverOption>
+                    <ClipLoaderWrapper mb={10} mt={10}>
+                      <ClipLoader color={colors.lightGray} size={25} />
+                    </ClipLoaderWrapper>
+                  </PopoverOption>
+                )}
+                {nodeActions.map((actionDetail) => (
                   <PopoverOption
-                    data-testid="merge"
+                    key={actionDetail.name}
+                    data-testid={actionDetail.name}
                     onClick={() => {
-                      mergeTopicModal()
-                      handleClose()
+                      handleNodeAction(actionDetail)
                     }}
                   >
-                    <MergeIcon data-testid="MergeIcon" /> Merge
+                    {actionDetail.display_name}
                   </PopoverOption>
-                  <PopoverOption
-                    data-testid="add_edge"
-                    onClick={() => {
-                      addEdgeToNodeModal()
-                      handleClose()
-                    }}
-                  >
-                    <AddCircleIcon data-testid="AddCircleIcon" />
-                    Add edge
-                  </PopoverOption>
-                </>
-              )}
-            </>
+                ))}
+              </>
+            ) : (
+              <>
+                <PopoverOption
+                  data-testid="merge"
+                  onClick={() => {
+                    mergeTopicModal()
+                    handleClose()
+                  }}
+                >
+                  <MergeIcon data-testid="MergeIcon" /> Merge
+                </PopoverOption>
+                <PopoverOption
+                  data-testid="add_edge"
+                  onClick={() => {
+                    addEdgeToNodeModal()
+                    handleClose()
+                  }}
+                >
+                  <AddCircleIcon data-testid="AddCircleIcon" />
+                  Add edge
+                </PopoverOption>
+              </>
+            )}
+          </>
         </PopoverWrapper>
       </Html>
     </group>
@@ -379,7 +379,6 @@ const PopoverWrapper = styled(Popover)`
     margin: 2px;
   }
 `
-
 
 const ClipLoaderWrapper = styled(Flex)`
   justify-content: center;

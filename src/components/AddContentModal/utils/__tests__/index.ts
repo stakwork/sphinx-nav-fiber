@@ -1,12 +1,4 @@
-import {
-  DOCUMENT,
-  LINK,
-  RSS,
-  TWITTER_HANDLE,
-  TWITTER_SOURCE,
-  WEB_PAGE,
-  YOUTUBE_CHANNEL,
-} from '~/constants'
+import { DOCUMENT, LINK, RSS, TWITTER_HANDLE, TWITTER_SOURCE, WEB_PAGE, YOUTUBE_CHANNEL } from '~/constants'
 import { checkIfRSS, extractNameFromLink, getInputType } from '..'
 
 describe('youtubeRegex', () => {
@@ -83,7 +75,6 @@ describe('youtubeRegex', () => {
   it('should assert we can check for document regex', async () => {
     await expect(getInputType('some plain text')).resolves.toBe(DOCUMENT)
   })
-
 })
 
 describe('extractNameFromLink', () => {
