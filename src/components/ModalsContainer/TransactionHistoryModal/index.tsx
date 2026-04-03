@@ -11,6 +11,7 @@ import { useModal } from '~/stores/useModalStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { LsatHistoryResponse } from '~/types'
 import { getLSat } from '~/utils/getLSat'
+import { payLsat } from '~/utils/payLsat'
 import { colors } from '~/utils/colors'
 
 type Transaction = {
@@ -162,6 +163,13 @@ export const TransactionHistoryModal = () => {
   }
 
   const handleGenerateInvoice = async () => {
+    if (!activeMacaroon) {
+      await payLsat(setBudget)
+      close()
+
+      return
+    }
+
     const err = validateAmount(topUpAmount)
 
     if (err) {
@@ -251,6 +259,17 @@ export const TransactionHistoryModal = () => {
             </InvoiceBox>
           )}
           <CancelButton onClick={resetTopUp}>Cancel</CancelButton>
+        </Flex>
+      )
+    }
+
+    if (!activeMacaroon) {
+      return (
+        <Flex direction="column">
+          <NoLsatText>No LSAT found. Purchase one to get started.</NoLsatText>
+          <GenerateButton data-testid="get-started-btn" onClick={handleGenerateInvoice}>
+            Get Started
+          </GenerateButton>
         </Flex>
       )
     }
@@ -595,4 +614,10 @@ const EmptyText = styled(Text)`
   font-size: 13px;
   padding: 20px;
   text-align: center;
+`
+
+const NoLsatText = styled(Text)`
+  color: ${colors.GRAY6};
+  font-size: 13px;
+  margin-bottom: 10px;
 `

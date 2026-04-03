@@ -6,6 +6,7 @@ import * as lsatHistoryModule from '~/network/lsatHistory'
 import * as topUpLsatModule from '~/network/topUpLsat'
 import * as topUpConfirmModule from '~/network/topUpConfirm'
 import * as balanceModule from '~/network/balance'
+import * as payLsatModule from '~/utils/payLsat'
 import { TransactionHistoryModal } from '../index'
 
 jest.mock('~/utils/getLSat')
@@ -13,6 +14,7 @@ jest.mock('~/network/lsatHistory')
 jest.mock('~/network/topUpLsat')
 jest.mock('~/network/topUpConfirm')
 jest.mock('~/network/balance')
+jest.mock('~/utils/payLsat')
 
 const mockClose = jest.fn()
 const mockSetBudget = jest.fn()
@@ -35,6 +37,7 @@ const mockGetLsatHistory = lsatHistoryModule.getLsatHistory as jest.Mock
 const mockTopUpLsat = topUpLsatModule.topUpLsat as jest.Mock
 const mockTopUpConfirm = topUpConfirmModule.topUpConfirm as jest.Mock
 const mockGetBalance = balanceModule.getBalance as jest.Mock
+const mockPayLsat = payLsatModule.payLsat as jest.Mock
 
 const MOCK_LSAT_TOKEN = 'LSAT abc12345:preimage'
 const MOCK_MACAROON = 'abc12345'
@@ -62,6 +65,7 @@ beforeEach(() => {
   jest.clearAllMocks()
   mockGetLSat.mockResolvedValue(MOCK_LSAT_TOKEN)
   mockGetLsatHistory.mockResolvedValue(MOCK_HISTORY)
+  mockPayLsat.mockResolvedValue(undefined)
 
   mockTopUpLsat.mockResolvedValue({
     success: true,
@@ -237,6 +241,25 @@ describe('TransactionHistoryModal', () => {
     })
 
     jest.useRealTimers()
+  })
+
+  it('calls payLsat and closes modal when no LSAT exists', async () => {
+    mockGetLSat.mockResolvedValue('')
+    mockGetLsatHistory.mockResolvedValue({ success: true, lsats: [] })
+
+    render(<TransactionHistoryModal />)
+
+    await waitFor(() => {
+      expect(screen.getByTestId('get-started-btn')).toBeInTheDocument()
+    })
+
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('get-started-btn'))
+    })
+
+    expect(mockPayLsat).toHaveBeenCalledWith(mockSetBudget)
+    expect(mockClose).toHaveBeenCalled()
+    expect(mockTopUpLsat).not.toHaveBeenCalled()
   })
 
   it('clears polling interval when modal closes', async () => {
