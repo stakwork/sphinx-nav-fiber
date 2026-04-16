@@ -57,7 +57,7 @@ export const SideBarSubView = ({ open }: Props) => {
 }
 
 const Wrapper = styled(Flex)(({ theme }) => ({
-  position: 'relative',
+  position: 'absolute',
   background: colors.BG1,
   width: '100%',
   margin: '64px auto 20px 10px',
