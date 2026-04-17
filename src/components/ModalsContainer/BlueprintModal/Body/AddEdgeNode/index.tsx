@@ -52,8 +52,7 @@ const HeaderFlex = styled(Flex)`
 
 const LineBar = styled.div`
   border-bottom: 1px solid ${colors.black};
-  width: calc(100% + 32px);
-  margin: 0 -16px 16px;
+  width: 100%;
   opacity: 0.3;
 `
 

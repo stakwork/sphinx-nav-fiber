@@ -124,7 +124,8 @@ const Wrapper = styled(Flex)`
 
 const TableWrapper = styled(Flex)`
   min-height: 0;
-  overflow: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
   flex: 1;
   width: 100%;
 `
@@ -132,6 +133,8 @@ const TableWrapper = styled(Flex)`
 const PickerContainer = styled.div`
   padding: 0 20px;
   width: 315px;
+  max-width: 100%;
+  overflow-x: hidden;
 `
 
 const ColorPalette = styled.div`

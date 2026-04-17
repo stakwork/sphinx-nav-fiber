@@ -755,14 +755,14 @@ export const Editor = ({
 }
 
 const CustomButton = styled(Button)`
-  width: 400px !important;
+  width: 100%;
+  max-width: 320px;
   margin: 0 auto !important;
 `
 
 const LineBarWrapper = styled.div`
   border-bottom: 1px solid ${colors.black};
-  width: calc(100% + 32px);
-  margin: 0 -16px 16px;
+  width: 100%;
   opacity: 0.3;
 `
 
@@ -811,9 +811,8 @@ const StyledError = styled(Flex)`
 
 const LineBar = styled.div`
   border: 1px solid ${colors.BG2};
-  width: calc(100% + 32px);
+  width: 100%;
   opacity: 0.5;
-  margin-left: -16px;
 `
 
 const HeaderRow = styled(Flex)`
