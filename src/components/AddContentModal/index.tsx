@@ -114,7 +114,7 @@ const handleSubmitForm = async (
 
     await updateBudget(setBudget)
 
-    if (res.data.project_id) {
+    if (res.data?.project_id) {
       setRunningProjectId(res.data.project_id)
     }
 

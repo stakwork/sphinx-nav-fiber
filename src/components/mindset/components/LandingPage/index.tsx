@@ -108,11 +108,11 @@ export const LandingPage = () => {
       try {
         const res = await handleSubmitForm({ source })
 
-        if (res.data.project_id) {
+        if (res.data?.project_id) {
           setRunningProjectId(res.data.project_id)
         }
 
-        if (res.data.ref_id) {
+        if (res.data?.ref_id) {
           navigate(`/episode/${res.data.ref_id}`)
         }
 
@@ -125,7 +125,7 @@ export const LandingPage = () => {
 
           errorMessage = res.errorCode || res?.status || NODE_ADD_ERROR
 
-          if (res.data.ref_id) {
+          if (res.data?.ref_id) {
             navigate(`/episode/${res.data.ref_id}`)
           }
         } else if (err instanceof Error) {

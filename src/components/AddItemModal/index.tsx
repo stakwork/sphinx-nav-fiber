@@ -58,7 +58,7 @@ const handleSubmitForm = async (
   try {
     const res = await postNewNodeItem(nodeType, nodeData, sourceLink, typeName, lsatToken, pubkey)
 
-    onAddNewData(data, res?.data?.ref_id)
+    onAddNewData(data, res?.data?.ref_id ?? '')
 
     // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   } catch (err: any) {
