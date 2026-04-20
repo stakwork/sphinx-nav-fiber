@@ -10,6 +10,9 @@ import { truncateText } from '~/utils/truncateText'
 import { NodeCircleGeometry, nodeSize } from '../constants'
 import { TextWithBackground } from './TextWithBackgound'
 
+const textureLoader = new TextureLoader()
+const svgIconMaterial = new MeshBasicMaterial({ color: 'rgba(255, 255, 255, 0.5)' })
+
 type Props = {
   node: NodeExtended
   hide?: boolean
@@ -34,15 +37,33 @@ export const TextNode = memo(
 
     useEffect(() => {
       if (!node?.properties?.image_url) {
-        return
+        return undefined
       }
 
-      const loader = new TextureLoader()
+      let cancelled = false
 
-      loader.load(node.properties.image_url, setTexture, undefined, () =>
-        console.error(`Failed to load texture: ${node?.properties?.image_url}`),
+      textureLoader.load(
+        node.properties.image_url,
+        (t) => {
+          if (!cancelled) {
+            setTexture(t)
+          }
+        },
+        undefined,
+        () => console.error(`Failed to load texture: ${node?.properties?.image_url}`),
       )
+
+      return () => {
+        cancelled = true
+      }
     }, [node?.properties?.image_url])
+
+    useEffect(
+      () => () => {
+        texture?.dispose()
+      },
+      [texture],
+    )
 
     const primaryIcon = normalizedSchemasByType[node.node_type]?.icon
     const Icon = primaryIcon ? Icons[primaryIcon] : null
@@ -63,9 +84,7 @@ export const TextNode = memo(
                 svg.traverse((child) => {
                   if (child instanceof Mesh) {
                     // eslint-disable-next-line no-param-reassign
-                    child.material = new MeshBasicMaterial({
-                      color: 'rgba(255, 255, 255, 0.5)',
-                    })
+                    child.material = svgIconMaterial
                   }
                 })
               }}

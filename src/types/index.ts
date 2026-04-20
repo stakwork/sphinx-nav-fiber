@@ -370,3 +370,18 @@ export type ActionDetail = {
   name: string
   workflow_id: string
 }
+
+export type LsatHistoryResponse = {
+  success: boolean
+  lsats: {
+    macaroon: string
+    balance: number
+    transactions: { endpoint: string; amount: number; created_at?: string }[]
+  }[]
+}
+
+export type TopUpLsatResponse = {
+  success: boolean
+  payment_request: string
+  payment_hash: string
+}

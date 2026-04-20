@@ -78,7 +78,7 @@ describe('AddContentModal', () => {
 
     await waitFor(() =>
       expect(api.post).toHaveBeenCalledWith(
-        '/add_node',
+        '/v2/content',
         JSON.stringify({
           tweet_id: '1801364934464241783',
           content_type: 'tweet',

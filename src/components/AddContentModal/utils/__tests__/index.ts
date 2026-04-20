@@ -1,13 +1,4 @@
-import {
-  DOCUMENT,
-  GITHUB_REPOSITORY,
-  LINK,
-  RSS,
-  TWITTER_HANDLE,
-  TWITTER_SOURCE,
-  WEB_PAGE,
-  YOUTUBE_CHANNEL,
-} from '~/constants'
+import { DOCUMENT, LINK, RSS, TWITTER_HANDLE, TWITTER_SOURCE, WEB_PAGE, YOUTUBE_CHANNEL } from '~/constants'
 import { checkIfRSS, extractNameFromLink, getInputType } from '..'
 
 describe('youtubeRegex', () => {
@@ -83,10 +74,6 @@ describe('youtubeRegex', () => {
 
   it('should assert we can check for document regex', async () => {
     await expect(getInputType('some plain text')).resolves.toBe(DOCUMENT)
-  })
-
-  it('should assert we can check for GitHub repository regex', async () => {
-    await expect(getInputType('https://github.com/stakwork/sphinx-nav-fiber')).resolves.toBe(GITHUB_REPOSITORY)
   })
 })
 

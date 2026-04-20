@@ -4,7 +4,6 @@ import * as sphinx from 'sphinx-bridge'
 import { BaseModal } from '~/components/Modal'
 import {
   DOCUMENT,
-  GITHUB_REPOSITORY,
   isE2E,
   LINK,
   NODE_ADD_ERROR,
@@ -42,7 +41,7 @@ const handleSubmitForm = async (
   setBudget: (value: number | null) => void,
   setRunningProjectId: (value: string) => void,
 ): Promise<void> => {
-  const endPoint = isSource(sourceType) ? 'radar' : 'add_node'
+  const endPoint = isSource(sourceType) ? 'radar' : 'v2/content'
 
   const body: { [index: string]: unknown } = {}
 
@@ -82,7 +81,7 @@ const handleSubmitForm = async (
     } else {
       return
     }
-  } else if (sourceType === YOUTUBE_CHANNEL || sourceType === RSS || sourceType === GITHUB_REPOSITORY) {
+  } else if (sourceType === YOUTUBE_CHANNEL || sourceType === RSS) {
     body.source = data.source
     body.source_type = sourceType
   }

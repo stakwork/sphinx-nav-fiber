@@ -6,6 +6,10 @@ const LazySettingsModal = lazy(() =>
 
 const LazyClaimsModal = lazy(() => import('./ClaimsModal').then(({ ClaimsModal }) => ({ default: ClaimsModal })))
 
+const LazyTransactionHistoryModal = lazy(() =>
+  import('./TransactionHistoryModal').then(({ TransactionHistoryModal }) => ({ default: TransactionHistoryModal })),
+)
+
 const LazyAddContentModal = lazy(() =>
   import('../AddContentModal').then(({ AddContentModal }) => ({ default: AddContentModal })),
 )
@@ -78,5 +82,6 @@ export const ModalsContainer = () => (
     <LazyBriefDescriptionModal />
     <LazyNodeActionModal />
     <LazyClaimsModal />
+    <LazyTransactionHistoryModal />
   </>
 )
