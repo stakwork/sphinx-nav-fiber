@@ -71,6 +71,7 @@ export const Toolbar: FC<Props> = ({
           isFullScreen={isFullScreen}
           max={duration}
           onChange={handleProgressChange}
+          onClick={(e: React.MouseEvent) => e.stopPropagation()}
           size="small"
           value={playingTime}
         />
