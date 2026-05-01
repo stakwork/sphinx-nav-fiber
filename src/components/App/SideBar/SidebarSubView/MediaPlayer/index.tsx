@@ -111,6 +111,10 @@ const MediaPlayerComponent: FC<Props> = ({ hidden }) => {
     }
   }
 
+  const handleProgressClick = (e: React.MouseEvent) => {
+    e.stopPropagation()
+  }
+
   const handleVolumeChange = (_: Event, value: number | number[]) => {
     const newValue = Array.isArray(value) ? value[0] : value
 
