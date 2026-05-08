@@ -12,6 +12,17 @@ describe('youtubeRegex', () => {
     await expect(getInputType('https://youtube.com/live/tkdMgjEFNWs')).resolves.toBe(LINK)
   })
 
+  it('should classify youtube live URLs as LINK, not YOUTUBE_CHANNEL', async () => {
+    await expect(getInputType('https://youtube.com/live/tkdMgjEFNWs')).resolves.toBe(LINK)
+    await expect(getInputType('https://www.youtube.com/live/abc123')).resolves.toBe(LINK)
+    await expect(getInputType('https://m.youtube.com/live/xyz789')).resolves.toBe(LINK)
+  })
+
+  it('should not classify youtube non-channel paths as channels', async () => {
+    await expect(getInputType('https://youtube.com/results?search_query=test')).resolves.not.toBe(YOUTUBE_CHANNEL)
+    await expect(getInputType('https://youtube.com/shorts/abc123')).resolves.toBe(LINK)
+  })
+
   it('should assert we can check for twitter spaces regex', async () => {
     await expect(getInputType('https://twitter.com/i/spaces/1zqKVqwrVzlxB?s=20')).resolves.toBe(LINK)
   })

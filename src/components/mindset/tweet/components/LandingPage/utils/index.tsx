@@ -6,7 +6,7 @@ const path = /(\/[^\s?]*)?/
 const query = /(\?[^\s]*)?/
 
 const youtubeRegex = /(https?:\/\/)?(www\.)?youtube\.com\/watch\?v=([A-Za-z0-9_-]+)/
-const youtubeLiveRegex = /(https?:\/\/)?(www\.)?youtube\.com\/live\/([A-Za-z0-9_-]+)/
+const youtubeLiveRegex = /(https?:\/\/)?(www\.|m\.)?youtube\.com\/live\/([A-Za-z0-9_-]+)/
 const youtubeShortRegex = /(https?:\/\/)?(www\.)?youtu\.be\/([A-Za-z0-9_-]+)/
 const mp3Regex = /(https?:\/\/)?([A-Za-z0-9_-]+)\.mp3/
 
