@@ -3,13 +3,13 @@ import { DOCUMENT, LINK, RSS, TWITTER_HANDLE, TWITTER_SOURCE, WEB_PAGE, YOUTUBE_
 export const twitterHandlePattern = /\btwitter\.com\/(?:@)?([\w_]+)(?:$|\?[^/]*$)/
 
 const youtubeRegex = /(https?:\/\/)?(www\.)?youtube\.com\/watch\?v=([A-Za-z0-9_-]+)/
-const youtubeLiveRegex = /(https?:\/\/)?(www\.)?youtube\.com\/live\/([A-Za-z0-9_-]+)/
+const youtubeLiveRegex = /(https?:\/\/)?(www\.|m\.)?youtube\.com\/live\/([A-Za-z0-9_-]+)/
 const twitterSpaceRegex = /https:\/\/twitter\.com\/i\/spaces\/([A-Za-z0-9_-]+)/
 const tweetUrlRegex = /https:\/\/twitter\.com\/[^/]+\/status\/(\d+)/
 const mp3Regex = /(https?:\/\/)?([A-Za-z0-9_-]+)\.mp3/
 
 const rssRegex = /(https?:\/\/)?(.*\.)?.+\/(feed|rss|rss.xml|.*.rss|.*\?(feed|format)=rss)$/
-const youtubeChannelPattern = /https?:\/\/(www\.)?youtube\.com\/(user\/)?(@)?([\w-]+)/
+const youtubeChannelPattern = /https?:\/\/(www\.|m\.)?youtube\.com\/(?!live\/|watch|shorts\/|embed\/|results|feed|playlist)(user\/|c\/)?(@)?([\w-]+)/
 
 const genericUrlRegex = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/
 const twitterBroadcastRegex = /https:\/\/twitter\.com\/i\/broadcasts\/([A-Za-z0-9_-]+)/
