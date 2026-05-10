@@ -20,6 +20,7 @@ import { useModal } from '~/stores/useModalStore'
 import { Trending as TrendingType } from '~/types'
 import { getTrendingTopic, showPlayButton } from '~/utils'
 import { colors } from '~/utils/colors'
+import { normalizeMediaUrl } from '~/utils/mediaUrl'
 
 const TRENDING_TOPICS = ['Drivechain', 'Ordinals', 'L402', 'Nostr', 'AI']
 
@@ -172,7 +173,11 @@ export const Trending = () => {
               <Button onClick={(e) => handleClick(e)} startIcon={playing ? <PauseIcon /> : <PlayIcon />}>
                 {playing ? 'Pause' : 'Play All'}
               </Button>
-              <StyledAudio ref={audioRef} onEnded={goToNextSong} src={trendingTopics[currentFileIndex]?.audio_EN}>
+              <StyledAudio
+                ref={audioRef}
+                onEnded={goToNextSong}
+                src={normalizeMediaUrl(trendingTopics[currentFileIndex]?.audio_EN)}
+              >
                 <track kind="captions" />
               </StyledAudio>
             </div>

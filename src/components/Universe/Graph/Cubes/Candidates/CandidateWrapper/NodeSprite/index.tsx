@@ -8,6 +8,7 @@ import NodesIcon from '~/components/Icons/NodesIcon'
 import { useSchemaStore } from '~/stores/useSchemaStore'
 import { NodeExtended } from '~/types'
 import { colors } from '~/utils'
+import { getCssMediaUrl } from '~/utils/mediaUrl'
 import { truncateText } from '~/utils/truncateText'
 
 type Props = {
@@ -106,7 +107,7 @@ type AvatarProps = {
 }
 
 const Avatar = styled(Flex)<AvatarProps>`
-  background-image: ${({ src }) => `url(${src})`};
+  background-image: ${({ src }) => getCssMediaUrl(src)};
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

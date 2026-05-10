@@ -3,6 +3,8 @@ import { smoothness } from '../../constants'
 
 export const loader = new TextureLoader()
 
+loader.setCrossOrigin('anonymous')
+
 export const noImageTexture = loader.load('noimage.jpeg')
 
 export const noImageMaterial = new MeshStandardMaterial({

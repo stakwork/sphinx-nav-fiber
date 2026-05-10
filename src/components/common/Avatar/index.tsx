@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { getCssMediaUrl } from '~/utils/mediaUrl'
 
 type Props = {
   size?: number
@@ -29,7 +30,7 @@ const TypesMapper: TTypeMapper = {
 
 export const Avatar = styled.div<Props>`
   background-image: ${({ src, type = 'audio' }) =>
-    `url(${src}), url('/${TypesMapper[type] || 'generic'}_placeholder_img.png')`};
+    `${getCssMediaUrl(src)}, url('/${TypesMapper[type] || 'generic'}_placeholder_img.png')`};
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

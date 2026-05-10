@@ -6,6 +6,7 @@ import { Avatar } from '~/components/common/Avatar'
 import { Flex } from '~/components/common/Flex'
 import { usePlayerStore } from '~/stores/usePlayerStore'
 import { colors, videoTimeToSeconds } from '~/utils'
+import { normalizeMediaUrl } from '~/utils/mediaUrl'
 import { Toolbar } from './ToolBar'
 import { useSelectedNode } from '~/stores/useGraphStore'
 
@@ -56,8 +57,11 @@ const MediaPlayerComponent: FC<Props> = ({ hidden }) => {
     setIsSeeking,
   } = usePlayerStore((s) => s)
 
-  const mediaUrl =
+  const rawMediaUrl =
     playingNode?.media_url || playingNode?.link || playingNode?.properties?.link || playingNode?.properties?.media_url
+
+  const mediaUrl = normalizeMediaUrl(rawMediaUrl)
+  const imageUrl = normalizeMediaUrl(playingNode?.image_url || playingNode?.properties?.image_url)
 
   const isYouTubeVideo = mediaUrl?.includes('youtube') || mediaUrl?.includes('youtu.be')
 
@@ -222,10 +226,11 @@ const MediaPlayerComponent: FC<Props> = ({ hidden }) => {
       tabIndex={0}
     >
       <Cover isFullScreen={isFullScreen}>
-        <Avatar size={120} src={playingNode?.image_url || ''} type="clip" />
+        <Avatar size={120} src={imageUrl} type="clip" />
       </Cover>
       <PlayerWrapper isFullScreen={isFullScreen} onClick={handlePlayerClick}>
         <ReactPlayer
+          key={mediaUrl}
           ref={playerRef}
           controls={false}
           height={!isFullScreen ? '200px' : window.screen.height}

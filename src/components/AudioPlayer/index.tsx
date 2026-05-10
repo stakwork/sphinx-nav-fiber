@@ -4,6 +4,7 @@ import ReactAudioPlayer from 'react-audio-player'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { Text } from '~/components/common/Text'
+import { normalizeMediaUrl } from '~/utils/mediaUrl'
 import { videoTimeToSeconds } from '~/utils/videoTimetoSeconds'
 
 const Audio = styled(ReactAudioPlayer as unknown as ComponentType<typeof ReactAudioPlayer.defaultProps>)`
@@ -31,6 +32,7 @@ const _AudioPlayer = ({
   onPlay = noop,
 }: AudioPlayerProps) => {
   const [loadError, setLoadError] = useState(false)
+  const normalizedMediaUrl = normalizeMediaUrl(mediaUrl)
 
   const [player, setPlayer] = useState<HTMLAudioElement | null>(null)
 
@@ -79,6 +81,10 @@ const _AudioPlayer = ({
   }, [mediaUrl, onPause])
 
   useEffect(() => {
+    setLoadError(false)
+  }, [normalizedMediaUrl])
+
+  useEffect(() => {
     if (player) {
       player.currentTime = timestamp ? videoTimeToSeconds(timestamp) : 0
     }
@@ -102,7 +108,7 @@ const _AudioPlayer = ({
             setLoadError(false)
             onLoaded()
           }}
-          src={mediaUrl}
+          src={normalizedMediaUrl}
           volume={1}
         />
       )}
