@@ -23,6 +23,7 @@ import { usePlayerStore } from '~/stores/usePlayerStore'
 import { useSchemaStore } from '~/stores/useSchemaStore'
 import { Link, Node } from '~/types'
 import { colors } from '~/utils/colors'
+import { normalizeMediaUrl } from '~/utils/mediaUrl'
 import { BoostAmt } from '../../../Helper/BoostAmt'
 
 interface EdgeWithTargetNode extends Link<string> {
@@ -125,8 +126,10 @@ export const Default = () => {
     return null
   }
 
-  const hasImage = !playingNode?.ref_id && !!selectedNode.properties?.image_url
-  const hasAudio = !!selectedNode.properties?.audio_EN
+  const imageUrl = normalizeMediaUrl(selectedNode.properties?.image_url)
+  const audioUrl = normalizeMediaUrl(selectedNode.properties?.audio_EN)
+  const hasImage = !playingNode?.ref_id && !!imageUrl
+  const hasAudio = !!audioUrl
   const customKeys = selectedNode.properties || {}
   const sourceLink = selectedNode.properties?.source_link
   const pubkey = selectedNode.properties?.pubkey
@@ -147,7 +150,7 @@ export const Default = () => {
               e.currentTarget.src = 'generic_placeholder_img.png'
               e.currentTarget.className = 'default-img'
             }}
-            src={selectedNode.properties?.image_url}
+            src={imageUrl}
           />
         </StyledImageWrapper>
       )}
@@ -204,8 +207,8 @@ export const Default = () => {
         )}
       </StyledContent>
 
-      {hasAudio && selectedNode.properties?.audio_EN && (
-        <StyledAudio ref={audioRef} src={selectedNode.properties.audio_EN}>
+      {hasAudio && (
+        <StyledAudio ref={audioRef} src={audioUrl}>
           <track kind="captions" />
         </StyledAudio>
       )}

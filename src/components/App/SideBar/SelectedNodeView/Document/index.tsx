@@ -11,11 +11,13 @@ import { Text } from '~/components/common/Text'
 import { useAppStore } from '~/stores/useAppStore'
 import { useSelectedNode } from '~/stores/useGraphStore'
 import { colors } from '~/utils'
+import { normalizeMediaUrl } from '~/utils/mediaUrl'
 
 export const Document = () => {
   const [playing, setPlaying] = useState(false)
   const selectedNode = useSelectedNode()
   const hasSourceLink = !!selectedNode?.source_link
+  const audioUrl = normalizeMediaUrl(selectedNode?.audio?.[0]?.link)
 
   const audioRef = useRef<HTMLVideoElement>(null)
 
@@ -58,12 +60,12 @@ export const Document = () => {
           </StyledLink>
         </StyledHeader>
       )}
-      {selectedNode?.audio?.length ? (
+      {audioUrl ? (
         <Flex justify="flex-start" p={12}>
           <Button onClick={(e) => handleClick(e)} startIcon={playing ? <PauseIcon /> : <PlayIcon />}>
             {playing ? 'Pause' : 'Play'}
           </Button>
-          <StyledAudio ref={audioRef} src={selectedNode.audio[0]?.link || ''}>
+          <StyledAudio ref={audioRef} src={audioUrl}>
             <track kind="captions" />
           </StyledAudio>
         </Flex>

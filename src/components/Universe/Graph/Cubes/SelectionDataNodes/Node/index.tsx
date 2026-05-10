@@ -20,6 +20,7 @@ import { useSchemaStore } from '~/stores/useSchemaStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { ActionDetail } from '~/types'
 import { colors } from '~/utils'
+import { getCssMediaUrl } from '~/utils/mediaUrl'
 import { truncateText } from '~/utils/truncateText'
 import { PathNode } from '..'
 
@@ -340,7 +341,7 @@ type AvatarProps = {
 }
 
 const Avatar = styled(Flex)<AvatarProps>`
-  background-image: ${({ src }) => `url(${src})`};
+  background-image: ${({ src }) => getCssMediaUrl(src)};
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

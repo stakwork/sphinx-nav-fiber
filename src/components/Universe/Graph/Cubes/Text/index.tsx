@@ -4,6 +4,7 @@ import { Group, Mesh, MeshBasicMaterial, Texture, TextureLoader } from 'three'
 import { Icons } from '~/components/Icons'
 import { useSchemaStore } from '~/stores/useSchemaStore'
 import { NodeExtended } from '~/types'
+import { normalizeMediaUrl } from '~/utils/mediaUrl'
 import { removeEmojis } from '~/utils/removeEmojisFromText'
 import { removeLeadingMentions } from '~/utils/removeLeadingMentions'
 import { truncateText } from '~/utils/truncateText'
@@ -11,6 +12,9 @@ import { NodeCircleGeometry, nodeSize } from '../constants'
 import { TextWithBackground } from './TextWithBackgound'
 
 const textureLoader = new TextureLoader()
+
+textureLoader.setCrossOrigin('anonymous')
+
 const svgIconMaterial = new MeshBasicMaterial({ color: 'rgba(255, 255, 255, 0.5)' })
 
 type Props = {
@@ -41,16 +45,17 @@ export const TextNode = memo(
       }
 
       let cancelled = false
+      const imageUrl = normalizeMediaUrl(node.properties.image_url)
 
       textureLoader.load(
-        node.properties.image_url,
+        imageUrl,
         (t) => {
           if (!cancelled) {
             setTexture(t)
           }
         },
         undefined,
-        () => console.error(`Failed to load texture: ${node?.properties?.image_url}`),
+        () => console.error(`Failed to load texture: ${imageUrl}`),
       )
 
       return () => {

@@ -10,6 +10,7 @@ import { useDataStore } from '~/stores/useDataStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { AIEntity } from '~/types'
 import { colors } from '~/utils/colors'
+import { normalizeMediaUrl } from '~/utils/mediaUrl'
 import { EpisodeSkeleton } from '../Relevance/EpisodeSkeleton'
 import { AiAnswer } from './AiAnswer'
 import { AiQuestions } from './AiQuestions'
@@ -175,7 +176,7 @@ export const AiSummary = ({ question, response, refId }: Props) => {
         </>
       )}
       {response.audio_en && (
-        <StyledAudio ref={audioRef} src={response.audio_en}>
+        <StyledAudio ref={audioRef} src={normalizeMediaUrl(response.audio_en)}>
           <track kind="captions" />
         </StyledAudio>
       )}

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { MeshStandardMaterial } from 'three'
+import { normalizeMediaUrl } from '~/utils/mediaUrl'
 import { smoothness } from '../../constants'
 import { loader, noImageMaterial, noImageTexture, noImageTransparentMaterial, transparentValue } from './constants'
 
@@ -15,7 +16,8 @@ export const useMaterial = (url: string, transparent: boolean) => {
   const [material, setMaterial] = useState(noImageMaterial)
 
   useEffect(() => {
-    const cashPath = `${url}${transparent && '-transparent'}`
+    const mediaUrl = normalizeMediaUrl(url) || 'noimage.jpeg'
+    const cashPath = `${mediaUrl}${transparent ? '-transparent' : ''}`
 
     if (cachedMaterials[cashPath]) {
       setTexture(cachedMaterials[cashPath].texture)
@@ -25,7 +27,7 @@ export const useMaterial = (url: string, transparent: boolean) => {
     }
 
     loader.load(
-      url,
+      mediaUrl,
       (loadedTexture) => {
         // on load
         const newMaterial = new MeshStandardMaterial({

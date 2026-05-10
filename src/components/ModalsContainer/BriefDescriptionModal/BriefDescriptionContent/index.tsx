@@ -14,6 +14,7 @@ import { useModal } from '~/stores/useModalStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { Trending } from '~/types'
 import { colors } from '~/utils'
+import { normalizeMediaUrl } from '~/utils/mediaUrl'
 
 type Props = {
   trend: Trending
@@ -23,6 +24,7 @@ type Props = {
 export const BriefDescriptionContent: FC<Props> = ({ trend, onClose }) => {
   const [isPlaying, setIsPlaying] = useState(false)
   const { close } = useModal('briefDescription')
+  const audioUrl = normalizeMediaUrl(trend.audio_EN)
 
   const { currentPlayingAudio, setCurrentPlayingAudio } = useAppStore((s) => s)
 
@@ -86,11 +88,11 @@ export const BriefDescriptionContent: FC<Props> = ({ trend, onClose }) => {
   }, [setCurrentPlayingAudio])
 
   const showPlayBtn =
-    (currentPlayingAudio?.current?.src === trend.audio_EN && !currentPlayingAudio?.current?.paused) || isPlaying
+    (currentPlayingAudio?.current?.src === audioUrl && !currentPlayingAudio?.current?.paused) || isPlaying
 
   return (
     <>
-      {trend.audio_EN ? (
+      {audioUrl ? (
         <>
           <StyledHeader>
             <StyleButton
@@ -106,7 +108,7 @@ export const BriefDescriptionContent: FC<Props> = ({ trend, onClose }) => {
               Learn More
             </StyleButton>
           </StyledHeader>
-          <StyledAudio ref={audioRef} src={trend.audio_EN}>
+          <StyledAudio ref={audioRef} src={audioUrl}>
             <track kind="captions" />
           </StyledAudio>
         </>

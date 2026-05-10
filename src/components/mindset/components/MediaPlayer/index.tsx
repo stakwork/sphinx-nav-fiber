@@ -11,6 +11,7 @@ import { useMindsetStore } from '~/stores/useMindsetStore'
 import { usePlayerStore } from '~/stores/usePlayerStore'
 import { Link } from '~/types'
 import { colors } from '~/utils'
+import { normalizeMediaUrl } from '~/utils/mediaUrl'
 import { secondsToMediaTime } from '~/utils/secondsToMediaTime'
 
 const isVideoFile = (url: string) => /\.(mp4|webm|mov|mkv|avi)(\?.*)?$/i.test(url)
@@ -48,6 +49,7 @@ type Props = {
 
 const MediaPlayerComponent = ({ mediaUrl }: Props) => {
   const wrapperRef = useRef<HTMLDivElement | null>(null)
+  const normalizedMediaUrl = normalizeMediaUrl(mediaUrl)
   const [status, setStatus] = useState<'buffering' | 'error' | 'ready'>('ready')
   const [isReady, setIsReady] = useState(false)
   const [hasSeekedFromURL, setHasSeekedFromURL] = useState(false)
@@ -181,13 +183,14 @@ const MediaPlayerComponent = ({ mediaUrl }: Props) => {
     [setPlayerRef, playerRef],
   )
 
-  return mediaUrl ? (
+  return normalizedMediaUrl ? (
     <Wrapper ref={wrapperRef} isFullScreen={isFullScreen} tabIndex={0}>
       <Cover isFullScreen={isFullScreen}>
-        <Avatar size={200} src={playingNode?.properties?.image_url || ''} type="clip" />
+        <Avatar size={200} src={normalizeMediaUrl(playingNode?.properties?.image_url)} type="clip" />
       </Cover>
       <PlayerWrapper isFullScreen={isFullScreen}>
         <ReactPlayer
+          key={normalizedMediaUrl}
           ref={playerRefCallback}
           height={isFullScreen ? '100%' : 'auto'}
           onBuffer={() => setStatus('buffering')}
@@ -206,7 +209,7 @@ const MediaPlayerComponent = ({ mediaUrl }: Props) => {
             height: isFullScreen ? '100%' : 'auto',
             objectFit: 'contain',
           }}
-          url={mediaUrl || ''}
+          url={normalizedMediaUrl}
           volume={volume}
           width="100%"
         />
@@ -216,7 +219,7 @@ const MediaPlayerComponent = ({ mediaUrl }: Props) => {
           </TimeDisplay>
         </Overlay>
       </PlayerWrapper>
-      {isVideoFile(mediaUrl) && (
+      {isVideoFile(normalizedMediaUrl) && (
         <ExpandButton onClick={() => setIsFullScreen(!isFullScreen)}>
           {!isFullScreen ? <FullScreenIcon /> : <ExitFullScreen />}
         </ExpandButton>

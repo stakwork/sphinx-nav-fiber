@@ -1,6 +1,7 @@
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { colors } from '~/utils/colors'
+import { getCssMediaUrl } from '~/utils/mediaUrl'
 
 type TagProps = {
   selected: boolean
@@ -134,7 +135,7 @@ type ImageProps = {
 }
 
 export const Image = styled.img<ImageProps>`
-  background-image: ${({ src }) => `url(${src})`};
+  background-image: ${({ src }) => getCssMediaUrl(src)};
   background-size: contain;
   background-repeat: no-repeat;
   width: ${(p) => p.size}px;

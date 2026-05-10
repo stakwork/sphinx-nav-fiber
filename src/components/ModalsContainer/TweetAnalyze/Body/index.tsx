@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { colors } from '~/utils'
+import { getCssMediaUrl } from '~/utils/mediaUrl'
 import { EngagementTable } from './Engagement'
 import { RetweetsTable } from './Retweets'
 import { SentimentTable } from './Sentiment'
@@ -40,7 +41,7 @@ export const Avatar = styled.div<{ imageUrl?: string }>`
   height: 32px;
   border-radius: 50%;
   background-color: ${colors.BG1};
-  ${({ imageUrl }) => imageUrl && `background-image: url(${imageUrl});`}
+  ${({ imageUrl }) => imageUrl && `background-image: ${getCssMediaUrl(imageUrl)};`}
   background-size: cover;
 `
 
