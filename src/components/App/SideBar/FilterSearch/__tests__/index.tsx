@@ -39,7 +39,13 @@ jest.mock('~/stores/useSchemaStore', () => ({
 
 describe('FilterSearch Component', () => {
   const mockSetSchemas = jest.fn()
+  const mockSetSchemaLinks = jest.fn()
   const mockSchemaAll = [{ type: 'Type1' }, { type: 'Type2' }, { type: 'Type3' }]
+  const mockSchemaLinks = [
+    { edge_type: 'HAS', ref_id: 'edge1', source: 'source1', target: 'target1' },
+    { edge_type: 'SOURCE', ref_id: 'edge2', source: 'source2', target: 'target2' },
+    { edge_type: 'CHILD_OF', ref_id: 'edge3', source: 'source3', target: 'target3' },
+  ]
 
   beforeEach(() => {
     jest.clearAllMocks()
@@ -53,13 +59,13 @@ describe('FilterSearch Component', () => {
     })
 
     //
-    ;(useSchemaStore as jest.Mock).mockReturnValue([mockSchemaAll, mockSetSchemas]) // Return an array
+    ;(useSchemaStore as jest.Mock).mockReturnValue([mockSchemaAll, mockSchemaLinks, mockSetSchemas, mockSetSchemaLinks]) // Return an array
 
     //
     ;(useFeatureFlagStore as jest.Mock).mockReturnValue({ fastFiltersFeatureFlag: true })
 
     //
-    ;(getSchemaAll as jest.Mock).mockResolvedValue({ schemas: mockSchemaAll })
+    ;(getSchemaAll as jest.Mock).mockResolvedValue({ schemas: mockSchemaAll, edges: mockSchemaLinks })
   })
 
   const renderComponent = () =>
@@ -79,6 +85,9 @@ describe('FilterSearch Component', () => {
         expect(screen.getByText(schema.type)).toBeInTheDocument()
       })
     })
+
+    expect(screen.getByText('HAS')).toBeInTheDocument()
+    expect(screen.queryByText('CHILD_OF')).not.toBeInTheDocument()
   })
 
   it('should highlight selected schema type when clicked', async () => {
@@ -92,12 +101,25 @@ describe('FilterSearch Component', () => {
     expect(type1Pill).toHaveStyle(`color: ${colors.black}`)
   })
 
+  it('should highlight selected edge type when clicked', async () => {
+    renderComponent()
+
+    const edgePill = screen.getByText('HAS')
+
+    fireEvent.click(edgePill)
+
+    expect(edgePill).toHaveStyle(`background: ${colors.white}`)
+    expect(edgePill).toHaveStyle(`color: ${colors.black}`)
+  })
+
   it('should apply filters when "Apply" is clicked', async () => {
     renderComponent()
 
     const type1Pill = screen.getByText('Type1')
+    const edgePill = screen.getByText('HAS')
 
     fireEvent.click(type1Pill)
+    fireEvent.click(edgePill)
 
     const showResultsButton = screen.getByText('Apply')
 
@@ -106,6 +128,7 @@ describe('FilterSearch Component', () => {
     await waitFor(() => {
       expect(mockSetFilters).toHaveBeenCalledWith({
         node_type: ['Type1'],
+        edge_type: ['HAS'],
         limit: 1000,
         depth: '3',
         top_node_count: '10',
