@@ -121,6 +121,7 @@ export const Stats = ({ node, handleAnalyzeClick }: Props) => {
           <Value>{getSentimentIcon(node?.properties?.analytics_sentiment_score)}</Value>
         </Metric>
       </Grid>
+      <EngagementReportButton type="button">Engagement Report</EngagementReportButton>
     </Card>
   )
 }
@@ -191,5 +192,21 @@ const IconButton = styled.a`
   cursor: pointer;
   &:hover {
     opacity: 0.6;
+  }
+`
+
+const EngagementReportButton = styled.button`
+  margin-top: 16px;
+  width: 100%;
+  border: 0;
+  border-radius: 8px;
+  background: #2563eb;
+  color: ${colors.white};
+  cursor: pointer;
+  padding: 8px 16px;
+  transition: background 0.2s ease;
+
+  &:hover {
+    background: #1d4ed8;
   }
 `
