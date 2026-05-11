@@ -1,6 +1,6 @@
 /* eslint-disable func-names */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// import './styles.css';
+import './styles.css'
 
 const getElementsMemoized = () => {
   const cache = {} as { inner: HTMLElement; body: HTMLElement }
@@ -16,12 +16,12 @@ const getElementsMemoized = () => {
     const close = document.createElement('div')
     const open = document.createElement('div')
 
-    const toggleVisibillity = () => {
+    const toggleVisibility = () => {
       wrapper.classList.toggle('hide')
     }
 
-    close.addEventListener('click', toggleVisibillity)
-    open.addEventListener('click', toggleVisibillity)
+    close.addEventListener('click', toggleVisibility)
+    open.addEventListener('click', toggleVisibility)
 
     wrapper.classList.add('loggerWrapper')
     wrapper.classList.add('hide')
@@ -30,7 +30,9 @@ const getElementsMemoized = () => {
     open.classList.add('open')
 
     close.textContent = 'X'
+    close.setAttribute('aria-label', 'Close log panel')
     open.textContent = 'OPEN LOG'
+    open.setAttribute('aria-label', 'Open log panel')
 
     body?.appendChild(wrapper)
     body?.appendChild(open)
@@ -53,6 +55,14 @@ const variants = ['log', 'info', 'warn', 'error'] as const
 
 type Variants = (typeof variants)[number]
 
+let consoleOverridden = false
+
+const isLocalHost = () => {
+  const { hostname } = window.location
+
+  return hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '0.0.0.0' || hostname.endsWith('.local')
+}
+
 const logMessage = (message: string, variant: Variants) => {
   const { inner } = getElements()
   const messagaWrap = document.createElement('span')
@@ -64,7 +74,7 @@ const logMessage = (message: string, variant: Variants) => {
 }
 
 export const overrideConsole = () => {
-  if (!window.location.hostname.includes('local') || true) {
+  if (!isLocalHost() || consoleOverridden) {
     return
   }
 
@@ -87,4 +97,5 @@ export const overrideConsole = () => {
   })(window.console)
 
   window.console = console
+  consoleOverridden = true
 }
