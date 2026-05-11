@@ -98,10 +98,13 @@ const StyledTab = styled(Tab)`
 const TabPanelWrapper = styled(Flex)`
   display: flex;
   flex: 1;
+  box-sizing: border-box;
+  width: 100%;
   min-height: 572px;
   padding: 20px 0;
   max-height: 572px;
-  overflow: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
 
   @media (max-width: 1024px) {
     width: 100%;
@@ -126,6 +129,7 @@ const Wrapper = styled(Flex)`
   min-height: 0;
   flex: 1;
   overflow: hidden;
+  width: 100%;
 
   @media (max-width: 768px) {
     padding: 3px;
