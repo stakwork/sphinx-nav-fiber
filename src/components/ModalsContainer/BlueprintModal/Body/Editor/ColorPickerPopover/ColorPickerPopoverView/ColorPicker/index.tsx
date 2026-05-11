@@ -124,14 +124,17 @@ const Wrapper = styled(Flex)`
 
 const TableWrapper = styled(Flex)`
   min-height: 0;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
   flex: 1;
   width: 100%;
 `
 
 const PickerContainer = styled.div`
   padding: 0 20px;
-  width: 315px;
+  width: 100%;
+  max-width: 315px;
+  box-sizing: border-box;
 `
 
 const ColorPalette = styled.div`
@@ -169,7 +172,8 @@ const SaturationPickerWrapper = styled.div`
 
 const HuePickerWrapper = styled.div`
   margin-bottom: 15px;
-  width: 224px;
+  width: 100%;
+  max-width: 224px;
   margin-left: 10px;
   display: flex;
   justify-content: center;
