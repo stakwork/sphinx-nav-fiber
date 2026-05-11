@@ -755,7 +755,9 @@ export const Editor = ({
 }
 
 const CustomButton = styled(Button)`
-  width: 400px !important;
+  flex: 1 1 0;
+  min-width: 0 !important;
+  width: auto !important;
   margin: 0 auto !important;
 `
 

@@ -124,14 +124,16 @@ const Wrapper = styled(Flex)`
 
 const TableWrapper = styled(Flex)`
   min-height: 0;
-  overflow: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
   flex: 1;
   width: 100%;
 `
 
 const PickerContainer = styled.div`
+  box-sizing: border-box;
   padding: 0 20px;
-  width: 315px;
+  width: 100%;
 `
 
 const ColorPalette = styled.div`
