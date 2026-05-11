@@ -8,6 +8,7 @@ import { useDataStore } from '~/stores/useDataStore'
 import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
 import { useSchemaStore } from '~/stores/useSchemaStore'
 import { colors } from '~/utils/colors'
+import { EdgeTypes } from './EdgeTypes'
 import { FastFilters } from './FastFilters'
 import { Hops } from './Hops'
 import { MaxResults } from './MaxResults'
@@ -22,19 +23,27 @@ type Props = {
 
 const defaultValues = {
   selectedTypes: [] as string[],
+  selectedEdgeTypes: [] as string[],
   hops: 3,
   sourceNodes: 10,
   maxResults: 1000,
 }
 
 export const FilterSearch = ({ anchorEl, setAnchorEl, onClose }: Props) => {
-  const [schemaAll, setSchemaAll] = useSchemaStore((s) => [s.schemas, s.setSchemas])
+  const [schemaAll, schemaEdges, setSchemaAll, setSchemaLinks] = useSchemaStore((s) => [
+    s.schemas,
+    s.links,
+    s.setSchemas,
+    s.setSchemaLinks,
+  ])
   const { abortFetchData, resetGraph, setFilters, resetData } = useDataStore((s) => s)
   const [selectedTypes, setSelectedTypes] = useState<string[]>(defaultValues.selectedTypes)
+  const [selectedEdgeTypes, setSelectedEdgeTypes] = useState<string[]>(defaultValues.selectedEdgeTypes)
   const [hops, setHops] = useState(defaultValues.hops)
   const [sourceNodes, setSourceNodes] = useState<number>(defaultValues.sourceNodes)
   const [maxResults, setMaxResults] = useState<number>(defaultValues.maxResults)
   const { fastFiltersFeatureFlag } = useFeatureFlagStore((s) => s)
+  const hasVisibleEdgeTypes = schemaEdges.some((edge) => edge.edge_type && edge.edge_type !== 'CHILD_OF')
 
   useEffect(() => {
     const fetchSchemaData = async () => {
@@ -42,13 +51,14 @@ export const FilterSearch = ({ anchorEl, setAnchorEl, onClose }: Props) => {
         const response = await getSchemaAll()
 
         setSchemaAll(response.schemas.filter((schema) => !schema.is_deleted))
+        setSchemaLinks(response.edges || [])
       } catch (error) {
         console.error('Error fetching schema:', error)
       }
     }
 
     fetchSchemaData()
-  }, [setSchemaAll])
+  }, [setSchemaAll, setSchemaLinks])
 
   const handleSchemaTypeClick = (type: string) => {
     setSelectedTypes((prevSelectedTypes) =>
@@ -60,8 +70,15 @@ export const FilterSearch = ({ anchorEl, setAnchorEl, onClose }: Props) => {
     setSelectedTypes(types)
   }
 
+  const handleEdgeTypeClick = (type: string) => {
+    setSelectedEdgeTypes((prevSelectedTypes) =>
+      prevSelectedTypes.includes(type) ? prevSelectedTypes.filter((t) => t !== type) : [...prevSelectedTypes, type],
+    )
+  }
+
   const resetToDefaultValues = () => {
     setSelectedTypes(defaultValues.selectedTypes)
+    setSelectedEdgeTypes(defaultValues.selectedEdgeTypes)
     setHops(defaultValues.hops)
     setSourceNodes(defaultValues.sourceNodes)
     setMaxResults(defaultValues.maxResults)
@@ -76,6 +93,7 @@ export const FilterSearch = ({ anchorEl, setAnchorEl, onClose }: Props) => {
   const handleFiltersApply = async () => {
     setFilters({
       node_type: selectedTypes,
+      edge_type: selectedEdgeTypes,
       limit: maxResults,
       depth: hops.toString(),
       top_node_count: sourceNodes.toString(),
@@ -111,6 +129,12 @@ export const FilterSearch = ({ anchorEl, setAnchorEl, onClose }: Props) => {
 
       <NodeTypes handleSchemaTypeClick={handleSchemaTypeClick} schemaAll={schemaAll} selectedTypes={selectedTypes} />
       <LineBar />
+      <EdgeTypes
+        handleEdgeTypeClick={handleEdgeTypeClick}
+        schemaEdges={schemaEdges}
+        selectedEdgeTypes={selectedEdgeTypes}
+      />
+      {hasVisibleEdgeTypes && <LineBar />}
       <SourceNodes setSourceNodes={setSourceNodes} sourceNodes={sourceNodes} />
       <LineBar />
       <Hops hops={hops} setHops={setHops} />

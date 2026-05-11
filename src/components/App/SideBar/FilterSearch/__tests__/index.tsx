@@ -39,7 +39,14 @@ jest.mock('~/stores/useSchemaStore', () => ({
 
 describe('FilterSearch Component', () => {
   const mockSetSchemas = jest.fn()
+  const mockSetSchemaLinks = jest.fn()
   const mockSchemaAll = [{ type: 'Type1' }, { type: 'Type2' }, { type: 'Type3' }]
+  const mockSchemaEdges = [
+    { edge_type: 'HAS', ref_id: '1', source: 'source-1', target: 'target-1' },
+    { edge_type: 'HAS', ref_id: '2', source: 'source-2', target: 'target-2' },
+    { edge_type: 'SOURCE', ref_id: '3', source: 'source-3', target: 'target-3' },
+    { edge_type: 'CHILD_OF', ref_id: '4', source: 'source-4', target: 'target-4' },
+  ]
 
   beforeEach(() => {
     jest.clearAllMocks()
@@ -53,13 +60,13 @@ describe('FilterSearch Component', () => {
     })
 
     //
-    ;(useSchemaStore as jest.Mock).mockReturnValue([mockSchemaAll, mockSetSchemas]) // Return an array
+    ;(useSchemaStore as jest.Mock).mockReturnValue([mockSchemaAll, mockSchemaEdges, mockSetSchemas, mockSetSchemaLinks])
 
     //
     ;(useFeatureFlagStore as jest.Mock).mockReturnValue({ fastFiltersFeatureFlag: true })
 
     //
-    ;(getSchemaAll as jest.Mock).mockResolvedValue({ schemas: mockSchemaAll })
+    ;(getSchemaAll as jest.Mock).mockResolvedValue({ edges: mockSchemaEdges, schemas: mockSchemaAll })
   })
 
   const renderComponent = () =>
@@ -78,6 +85,16 @@ describe('FilterSearch Component', () => {
       mockSchemaAll.forEach((schema) => {
         expect(screen.getByText(schema.type)).toBeInTheDocument()
       })
+    })
+  })
+
+  it('should fetch and display unique edge types except CHILD_OF', async () => {
+    renderComponent()
+
+    await waitFor(() => {
+      expect(screen.getByText('HAS')).toBeInTheDocument()
+      expect(screen.getByText('SOURCE')).toBeInTheDocument()
+      expect(screen.queryByText('CHILD_OF')).not.toBeInTheDocument()
     })
   })
 
@@ -106,6 +123,24 @@ describe('FilterSearch Component', () => {
     await waitFor(() => {
       expect(mockSetFilters).toHaveBeenCalledWith({
         node_type: ['Type1'],
+        edge_type: [],
+        limit: 1000,
+        depth: '3',
+        top_node_count: '10',
+      })
+    })
+  })
+
+  it('should apply selected edge types when "Apply" is clicked', async () => {
+    renderComponent()
+
+    fireEvent.click(screen.getByText('HAS'))
+    fireEvent.click(screen.getByText('Apply'))
+
+    await waitFor(() => {
+      expect(mockSetFilters).toHaveBeenCalledWith({
+        node_type: [],
+        edge_type: ['HAS'],
         limit: 1000,
         depth: '3',
         top_node_count: '10',
