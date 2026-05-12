@@ -45,7 +45,9 @@ export const PlayerControl = ({ markers, chapters }: Props) => {
 
   return showPlayer ? (
     <Wrapper>
-      <Controls />
+      <ControlsWrapper>
+        <Controls />
+      </ControlsWrapper>
       <ProgressBar
         chapters={chapters}
         duration={duration}
@@ -60,12 +62,27 @@ export const PlayerControl = ({ markers, chapters }: Props) => {
 const Wrapper = styled(Flex).attrs({
   direction: 'row',
   align: 'center',
-  justify: 'space-between',
+  justify: 'center',
 })`
+  position: relative;
   padding: 20px;
   background: ${colors.BG2};
   height: 96px;
   border-radius: 8px;
   box-sizing: border-box;
   margin-right: 4px;
+`
+
+const ControlsWrapper = styled.div`
+  position: absolute;
+  left: 20px;
+  top: 50%;
+  z-index: 30;
+  transform: translateY(-50%);
+
+  @media (max-width: 768px) {
+    position: static;
+    width: 100%;
+    transform: none;
+  }
 `
