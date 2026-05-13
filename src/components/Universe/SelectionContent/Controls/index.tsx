@@ -11,7 +11,7 @@ export const Controls = () => {
 
   useEffect(() => {
     if (cameraControlsRef.current) {
-      const distance = cameraControlsRef.current.getDistanceToFitSphere(50 + 5)
+      const distance = cameraControlsRef.current.getDistanceToFitSphere(selectionGraphRadius + 40)
 
       cameraControlsRef.current.setLookAt(
         selectionGraphCameraPosition.x,
