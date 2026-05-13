@@ -121,6 +121,18 @@ export const Stats = ({ node, handleAnalyzeClick }: Props) => {
           <Value>{getSentimentIcon(node?.properties?.analytics_sentiment_score)}</Value>
         </Metric>
       </Grid>
+      <EngagementButton
+        onClick={(e) => {
+          e.stopPropagation()
+          window.open(
+            `https://analytics.twitter.com/`,
+            '_blank',
+            'noopener,noreferrer'
+          )
+        }}
+      >
+        Engagement Report
+      </EngagementButton>
     </Card>
   )
 }
@@ -191,5 +203,22 @@ const IconButton = styled.a`
   cursor: pointer;
   &:hover {
     opacity: 0.6;
+  }
+`
+
+const EngagementButton = styled.button`
+  margin-top: 16px;
+  width: 100%;
+  background: #2563eb;
+  color: white;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  &:hover {
+    background: #1d4ed8;
   }
 `

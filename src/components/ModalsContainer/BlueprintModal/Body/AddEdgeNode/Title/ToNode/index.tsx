@@ -6,6 +6,7 @@ import { TOption } from '~/components/AddItemModal/SourceTypeStep/types'
 import { FormData } from '~/components/ModalsContainer/BlueprintModal/Body/Editor'
 import { AutoComplete, TAutocompleteOption } from '~/components/common/AutoComplete'
 import { getNodeSchemaTypes } from '~/network/fetchSourcesData'
+import { useSchemaStore } from '~/stores/useSchemaStore'
 import { colors } from '~/utils'
 
 type Props = {
@@ -39,6 +40,14 @@ export const ToNode: FC<Props> = ({ onSelect, dataTestId, edgeLink, hideSelectAl
 
   const capitalizeFirstLetter = (string: string) => string.charAt(0).toUpperCase() + string.slice(1)
 
+  const getNodeLabel = (type: string): string => {
+    const schema = useSchemaStore.getState().getSchemaByType(type)
+    if (!schema) return capitalizeFirstLetter(type)
+    const nodeKey = schema.node_key || schema.index || type
+    const firstKey = nodeKey.split('-')[0]
+    return capitalizeFirstLetter(firstKey)
+  }
+
   useEffect(() => {
     const init = async () => {
       setOptionsIsLoading(true)
@@ -52,7 +61,7 @@ export const ToNode: FC<Props> = ({ onSelect, dataTestId, edgeLink, hideSelectAl
             schema.type === 'thing'
               ? { label: 'No Parent', value: schema.type }
               : {
-                  label: capitalizeFirstLetter(schema.type),
+                  label: getNodeLabel(schema.type),
                   value: schema.type,
                 },
           )
