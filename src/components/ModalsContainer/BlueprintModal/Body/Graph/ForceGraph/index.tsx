@@ -40,11 +40,10 @@ export const ForceGraph = ({
     const links = structuredClone(filteredLinks)
 
     if (simulation2d) {
+      // Update whenever nodes or links change (not just both at once)
       if (
-        prevSchemas &&
-        prevSchemas.length !== schemasWithPositions.length &&
-        prevLinks &&
-        prevLinks.length !== filteredLinks.length
+        (prevSchemas && prevSchemas.length !== schemasWithPositions.length) ||
+        (prevLinks && prevLinks.length !== filteredLinks.length)
       ) {
         simulation2d
           .nodes(nodes)

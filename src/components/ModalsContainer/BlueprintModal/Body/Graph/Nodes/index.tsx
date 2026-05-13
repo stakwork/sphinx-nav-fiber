@@ -22,10 +22,8 @@ export const Nodes = ({ simulation, setSelectedSchemaId, selectedId, setIsAddEdg
 
   return (
     <>
-      {schemaAll.map((schema: SchemaExtended, index: number) => {
-        const node = simulation.nodes()[index]
-
-        return node ? (
+      {simulation.nodes().map((node: SchemaExtended) => {
+        return (
           <Node
             key={node.ref_id}
             isSelected={node.ref_id === selectedId}
@@ -36,7 +34,7 @@ export const Nodes = ({ simulation, setSelectedSchemaId, selectedId, setIsAddEdg
               setSelectedSchemaId(node.ref_id)
             }}
           />
-        ) : null
+        )
       })}
     </>
   )
