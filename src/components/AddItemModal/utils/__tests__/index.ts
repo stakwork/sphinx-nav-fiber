@@ -18,6 +18,12 @@ describe('youtubeRegex', () => {
     expect(getInputType('https://youtube.com/live/tkdMgjEFNWs')).toBe(LINK)
   })
 
+  it('should classify youtube live and shorts URLs as links across subdomains', async () => {
+    expect(getInputType('https://www.youtube.com/live/abc123')).toBe(LINK)
+    expect(getInputType('https://m.youtube.com/live/xyz789?feature=share')).toBe(LINK)
+    expect(getInputType('https://www.youtube.com/shorts/short123')).toBe(LINK)
+  })
+
   it('should assert we can check for twitter spaces regex', async () => {
     expect(getInputType('https://twitter.com/i/spaces/1zqKVqwrVzlxB?s=20')).toBe(LINK)
   })
@@ -48,6 +54,12 @@ describe('youtubeRegex', () => {
 
   it('should assert we can check for youtube live clip regex', async () => {
     expect(getInputType('https://www.youtube.com/@MrBeast')).toBe(YOUTUBE_CHANNEL)
+  })
+
+  it('should not classify non-channel youtube paths as channels', async () => {
+    expect(getInputType('https://youtube.com/results?search_query=test')).not.toBe(YOUTUBE_CHANNEL)
+    expect(getInputType('https://www.youtube.com/feed/subscriptions')).not.toBe(YOUTUBE_CHANNEL)
+    expect(getInputType('https://www.youtube.com/live/tkdMgjEFNWs')).not.toBe(YOUTUBE_CHANNEL)
   })
 
   it('should assert we can check for document regex', async () => {
