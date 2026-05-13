@@ -12,6 +12,12 @@ describe('youtubeRegex', () => {
     await expect(getInputType('https://youtube.com/live/tkdMgjEFNWs')).resolves.toBe(LINK)
   })
 
+  it('should classify youtube live and shorts URLs as links across subdomains', async () => {
+    await expect(getInputType('https://www.youtube.com/live/abc123')).resolves.toBe(LINK)
+    await expect(getInputType('https://m.youtube.com/live/xyz789?feature=share')).resolves.toBe(LINK)
+    await expect(getInputType('https://www.youtube.com/shorts/short123')).resolves.toBe(LINK)
+  })
+
   it('should assert we can check for twitter spaces regex', async () => {
     await expect(getInputType('https://twitter.com/i/spaces/1zqKVqwrVzlxB?s=20')).resolves.toBe(LINK)
   })
@@ -70,6 +76,12 @@ describe('youtubeRegex', () => {
 
   it('should assert we can check for youtube live clip regex', async () => {
     await expect(getInputType('https://www.youtube.com/@MrBeast')).resolves.toBe(YOUTUBE_CHANNEL)
+  })
+
+  it('should not classify non-channel youtube paths as channels', async () => {
+    await expect(getInputType('https://youtube.com/results?search_query=test')).resolves.not.toBe(YOUTUBE_CHANNEL)
+    await expect(getInputType('https://www.youtube.com/feed/subscriptions')).resolves.not.toBe(YOUTUBE_CHANNEL)
+    await expect(getInputType('https://www.youtube.com/live/tkdMgjEFNWs')).resolves.not.toBe(YOUTUBE_CHANNEL)
   })
 
   it('should assert we can check for document regex', async () => {
