@@ -98,7 +98,6 @@ export const ProgressBar = ({ duration, markers, handleProgressChange, playingTi
     <ProgressWrapper>
       <SliderWrapper
         ref={sliderRef}
-        onClick={handleSliderClick}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         onMouseMove={handleMouseMove}
@@ -106,7 +105,6 @@ export const ProgressBar = ({ duration, markers, handleProgressChange, playingTi
         <ProgressSlider
           max={duration}
           onChange={handleProgressChange}
-          onMouseDown={(e) => e.preventDefault()}
           value={playingTime}
           width={width}
         />
@@ -213,7 +211,6 @@ const ProgressSlider = styled(Slider)<{ width: number }>`
     height: 3px;
     width: calc(100% - 12px);
     box-sizing: border-box;
-    pointer-events: none;
 
     .MuiSlider-track {
       border: none;
