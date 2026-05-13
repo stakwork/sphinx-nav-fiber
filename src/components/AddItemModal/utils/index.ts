@@ -9,7 +9,7 @@ const tweetUrlRegex = /https:\/\/twitter\.com\/[^/]+\/status\/(\d+)/
 const mp3Regex = /(https?:\/\/)?([A-Za-z0-9_-]+)\.mp3/
 
 const rssRegex = /(https?:\/\/)?(.*\.)?.+\/(feed|rss|rss.xml|.*.rss|.*\?(feed|format)=rss)$/
-const youtubeChannelPattern = /https?:\/\/(www\.)?youtube\.com\/(user\/)?(@)?([\w-]+)/
+const youtubeChannelPattern = /https?:\/\/(www\.)?youtube\.com\/(?!live\/)(user\/)?(@)?([\w-]+)/
 
 const genericUrlRegex = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/
 const twitterBroadcastRegex = /https:\/\/twitter\.com\/i\/broadcasts\/([A-Za-z0-9_-]+)/
