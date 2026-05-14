@@ -72,6 +72,14 @@ describe('youtubeRegex', () => {
     await expect(getInputType('https://www.youtube.com/@MrBeast')).resolves.toBe(YOUTUBE_CHANNEL)
   })
 
+  it('should not match youtube live URL as channel', async () => {
+    await expect(getInputType('https://youtube.com/live/tkdMgjEFNWs')).resolves.toBe(LINK)
+  })
+
+  it('should not match youtube shorts URL as channel', async () => {
+    await expect(getInputType('https://www.youtube.com/shorts/abc123')).resolves.toBe(LINK)
+  })
+
   it('should assert we can check for document regex', async () => {
     await expect(getInputType('some plain text')).resolves.toBe(DOCUMENT)
   })
