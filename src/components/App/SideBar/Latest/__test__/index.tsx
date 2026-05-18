@@ -24,13 +24,18 @@ Object.defineProperty(window, 'matchMedia', {
 })
 
 describe('LatestView Component', () => {
+  const fetchDataMock = jest.fn()
+  const setAbortRequestsMock = jest.fn()
+  const setNodeCountMock = jest.fn()
+  const setBudgetMock = jest.fn()
+
   beforeEach(() => {
     jest.clearAllMocks()
-    mockedUseDataStore.mockReturnValue({ fetchData: jest.fn() })
-    mockedUseUserStore.mockReturnValue({ nodeCount: 0, setNodeCount: jest.fn(), setBudget: jest.fn() })
+    mockedUseDataStore.mockReturnValue({ fetchData: fetchDataMock, setAbortRequests: setAbortRequestsMock })
+    mockedUseUserStore.mockReturnValue({ nodeCount: 0, setNodeCount: setNodeCountMock, setBudget: setBudgetMock })
   })
 
-  test('renders button correctly when new data added', () => {
+  test('renders latest heading and icon', () => {
     const { getByText } = render(<LatestView />)
     const galleryIcon = document.querySelector('.heading__icon') as Node
 
@@ -39,30 +44,28 @@ describe('LatestView Component', () => {
   })
 
   test('does not show the latest button when there are no nodes', () => {
-    mockedUseUserStore.mockReturnValue({ nodeCount: 0, setNodeCount: jest.fn(), setBudget: jest.fn() })
+    const { queryByTestId } = render(<LatestView />)
 
-    const { queryByText } = render(<LatestView />)
+    expect(queryByTestId('see_latest_button')).toBeNull()
+  })
 
-    expect(queryByText('See Latest (0)')).toBeNull()
+  test('shows the latest button when new nodes are available', () => {
+    mockedUseUserStore.mockReturnValue({ nodeCount: 5, setNodeCount: setNodeCountMock, setBudget: setBudgetMock })
+
+    const { getByTestId } = render(<LatestView />)
+
+    expect(getByTestId('see_latest_button')).toHaveTextContent('See Latest (5)')
   })
 
   test('calls latest endpoint with param on button click', async () => {
-    const fetchDataMock = jest.fn()
-
-    mockedUseDataStore.mockReturnValue({ fetchData: fetchDataMock })
-
-    const setNodeCountMock = jest.fn()
-
-    const setBudgetMock = jest.fn()
-
     mockedUseUserStore.mockReturnValue({ nodeCount: 5, setNodeCount: setNodeCountMock, setBudget: setBudgetMock })
 
-    const { getByText } = render(<LatestView />)
+    const { getByTestId } = render(<LatestView />)
 
-    fireEvent.click(getByText('See Latest (5)'))
+    fireEvent.click(getByTestId('see_latest_button'))
 
     await waitFor(() => {
-      expect(fetchDataMock).toHaveBeenCalledWith(setBudgetMock, { skip_cache: 'true' })
+      expect(fetchDataMock).toHaveBeenCalledWith(setBudgetMock, setAbortRequestsMock, '', { skip_cache: 'true' })
       expect(setNodeCountMock).toHaveBeenCalledWith('CLEAR')
     })
   })
