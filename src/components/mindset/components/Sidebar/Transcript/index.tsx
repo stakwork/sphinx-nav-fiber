@@ -8,6 +8,66 @@ import { useSimulationStore } from '~/stores/useSimulationStore'
 import { NodeExtended } from '~/types'
 import { Viewer } from './Viewer'
 
+export const parseClipTimestamp = (timestamp?: string) => {
+  if (!timestamp) {
+    return [0, 0]
+  }
+
+  if (timestamp.includes(':')) {
+    const parts = timestamp.split(':').map(Number)
+
+    if (parts.length === 3) {
+      const [hours, minutes, seconds] = parts
+      const totalSeconds = hours * 3600 + minutes * 60 + seconds
+
+      return [totalSeconds, totalSeconds]
+    }
+
+    if (parts.length === 2) {
+      const [minutes, seconds] = parts
+      const totalSeconds = minutes * 60 + seconds
+
+      return [totalSeconds, totalSeconds]
+    }
+  }
+
+  return timestamp.split('-').map(Number)
+}
+
+export const getActiveClipForTime = (clips: NodeExtended[], time: number) => {
+  if (!clips.length) {
+    return null
+  }
+
+  const clipsWithTimestamps = clips
+    .map((clipNode) => {
+      const [start, end] = parseClipTimestamp(clipNode?.properties?.timestamp)
+
+      return { clipNode, start, end }
+    })
+    .filter(({ start, end }) => Number.isFinite(start) && Number.isFinite(end))
+    .sort((a, b) => a.start - b.start)
+
+  if (!clipsWithTimestamps.length) {
+    return null
+  }
+
+  const active = clipsWithTimestamps.find(({ start, end }) => start <= time && time < end)
+
+  if (active) {
+    return active.clipNode
+  }
+
+  const firstClip = clipsWithTimestamps[0]
+  const lastClip = clipsWithTimestamps[clipsWithTimestamps.length - 1]
+
+  if (time < firstClip.start) {
+    return firstClip.clipNode
+  }
+
+  return lastClip.clipNode
+}
+
 export const Transcript = () => {
   const clips = useMindsetStore((s) => s.clips)
   const setActiveClip = useMindsetStore((s) => s.setActiveClip)
@@ -40,31 +100,9 @@ export const Transcript = () => {
     [chapters, isAdChapter],
   )
 
-  const parseTimestamp = useCallback((timestamp?: string) => {
-    if (!timestamp) {
-      return [0, 0]
-    }
+  const parseTimestamp = useCallback(parseClipTimestamp, [])
 
-    if (timestamp.includes(':')) {
-      const parts = timestamp.split(':').map(Number)
-
-      if (parts.length === 3) {
-        const [hours, minutes, seconds] = parts
-        const totalSeconds = hours * 3600 + minutes * 60 + seconds
-
-        return [totalSeconds, totalSeconds]
-      }
-
-      if (parts.length === 2) {
-        const [minutes, seconds] = parts
-        const totalSeconds = minutes * 60 + seconds
-
-        return [totalSeconds, totalSeconds]
-      }
-    }
-
-    return timestamp.split('-').map(Number)
-  }, [])
+  const getActiveClip = useCallback((time: number) => getActiveClipForTime(clips, time), [clips])
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -106,11 +144,7 @@ export const Transcript = () => {
         }
       }
 
-      const clip = clips.find((clipNode) => {
-        const [start, end] = parseTimestamp(clipNode?.properties?.timestamp)
-
-        return start <= currentTime && currentTime < end
-      })
+      const clip = getActiveClip(currentTime)
 
       if ((activeClip && clip?.ref_id === activeClip?.ref_id) || !clip) {
         return
@@ -136,6 +170,7 @@ export const Transcript = () => {
     findNextNonAdChapter,
     isAdChapter,
     parseTimestamp,
+    getActiveClip,
     playerRef,
   ])
 
