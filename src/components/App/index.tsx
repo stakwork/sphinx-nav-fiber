@@ -112,6 +112,10 @@ export const App = () => {
         return
       }
 
+      if (data.nodes?.length) {
+        setNodeCount('INCREMENT')
+      }
+
       if (!queueRef.current) {
         queueRef.current = { nodes: [], edges: [] }
       }
@@ -140,7 +144,7 @@ export const App = () => {
         }
       }, 3000) // Adjust delay as necessary
     },
-    [addNewNode, isFetching],
+    [addNewNode, isFetching, setNodeCount],
   )
 
   const handleNodeUpdated = useCallback((data: FetchDataResponse) => {
@@ -204,7 +208,9 @@ export const App = () => {
         console.error('Socket connection error:', error)
       })
 
-      socket.on('newnode', handleNewNode)
+      if (!realtimeGraphFeatureFlag) {
+        socket.on('newnode', handleNewNode)
+      }
 
       if (chatInterfaceFeatureFlag) {
         socket.on('extractedentitieshook', handleExtractedEntities)
