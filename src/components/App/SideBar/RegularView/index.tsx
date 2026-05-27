@@ -33,11 +33,12 @@ export const RegularView = () => {
   )
 }
 
-const ScrollWrapper = styled(Flex)(() => ({
-  overflow: 'auto',
-  flex: 1,
-  width: '100%',
-}))
+const ScrollWrapper = styled(Flex)`
+  overflow-y: auto;
+  overflow-x: hidden;
+  flex: 1;
+  width: 100%;
+`
 
 const TrendingWrapper = styled(Flex)`
   padding: 0;

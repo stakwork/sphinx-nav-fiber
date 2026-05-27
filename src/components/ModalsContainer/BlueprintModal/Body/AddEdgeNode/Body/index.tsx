@@ -158,7 +158,10 @@ export const Body = ({ onCancel, edgeLinkData, setGraphLoading }: Props) => {
 }
 
 const CustomButton = styled(Button)`
-  width: 400px !important;
+  flex: 1 1 auto;
+  min-width: 0 !important;
+  width: auto !important;
+  max-width: 400px !important;
   margin: 0 0 10px auto !important;
 `
 
