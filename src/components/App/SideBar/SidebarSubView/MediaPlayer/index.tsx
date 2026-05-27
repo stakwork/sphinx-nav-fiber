@@ -17,6 +17,8 @@ type FullScreenProps = {
   isFullScreen: boolean
 }
 
+const isYouTubeUrl = (url?: string) => !!url && /(?:youtube\.com|youtu\.be)/i.test(url)
+
 const MediaPlayerComponent: FC<Props> = ({ hidden }) => {
   const playerRef = useRef<ReactPlayer | null>(null)
   const wrapperRef = useRef<HTMLDivElement | null>(null)
@@ -59,7 +61,7 @@ const MediaPlayerComponent: FC<Props> = ({ hidden }) => {
   const mediaUrl =
     playingNode?.media_url || playingNode?.link || playingNode?.properties?.link || playingNode?.properties?.media_url
 
-  const isYouTubeVideo = mediaUrl?.includes('youtube') || mediaUrl?.includes('youtu.be')
+  const isYouTubeVideo = isYouTubeUrl(mediaUrl)
 
   useEffect(() => () => resetPlayer(), [resetPlayer])
 
@@ -241,6 +243,7 @@ const MediaPlayerComponent: FC<Props> = ({ hidden }) => {
           volume={volume}
           width="100%"
         />
+        {isYouTubeVideo && <YouTubeChromeMask isFullScreen={isFullScreen} />}
       </PlayerWrapper>
       {status === 'error' ? (
         <ErrorWrapper className="error-wrapper">Error happened, please try later</ErrorWrapper>
@@ -306,6 +309,34 @@ const PlayerWrapper = styled.div<{ isFullScreen: boolean }>`
   margin: ${(props) => (props.isFullScreen ? '80px auto' : '0')};
   width: 100%;
   cursor: pointer;
+  position: relative;
+  overflow: hidden;
+`
+
+const YouTubeChromeMask = styled.div<FullScreenProps>`
+  pointer-events: none;
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    z-index: 2;
+    background: ${colors.black};
+  }
+
+  &::before {
+    top: 0;
+    left: 0;
+    right: 0;
+    height: ${(props) => (props.isFullScreen ? '72px' : '52px')};
+  }
+
+  &::after {
+    right: 0;
+    bottom: 0;
+    width: ${(props) => (props.isFullScreen ? '190px' : '148px')};
+    height: ${(props) => (props.isFullScreen ? '68px' : '52px')};
+  }
 `
 
 export const MediaPlayer = memo(MediaPlayerComponent)
