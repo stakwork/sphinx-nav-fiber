@@ -6,10 +6,10 @@ import { ClipLoader } from 'react-spinners'
 import { CsvDownloadButton } from '~/components/common/CsvDownloader'
 import { Flex } from '~/components/common/Flex'
 import LinkIcon from '~/components/Icons/LinkIcon'
-import { getEngagement, getFollowers } from '~/network/tweetAnalyze'
 import { Node } from '~/types'
 import { colors } from '~/utils'
 import { Avatar, Engagement, EngagementBar, SORT_OPTIONS, SortBy, TweetLink, TweetTime, UserInfo, Username } from '..'
+import { getTweetAnalyzeRequest } from './utils'
 
 type Props = {
   sortBy: SortBy
@@ -25,15 +25,17 @@ export const EngagementTable = ({ sortBy, idsToAnalyze }: Props) => {
   useEffect(() => {
     const fetchTweets = async () => {
       if (idsToAnalyze.length === 0) {
+        setLoading(false)
+
         return
       }
 
       setLoading(true)
 
       try {
-        const responses = await Promise.all(
-          idsToAnalyze.map((id) => (sortBy === 'followers' ? getEngagement(id) : getFollowers(id))),
-        )
+        const request = getTweetAnalyzeRequest(sortBy)
+
+        const responses = await Promise.all(idsToAnalyze.map((id) => request(id)))
 
         const mainTweetsArray = []
         const mergedTweetsByImpressionCount: Node[] = []
