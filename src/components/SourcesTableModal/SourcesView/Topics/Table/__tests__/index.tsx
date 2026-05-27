@@ -45,7 +45,7 @@ describe('TableRowComponent', () => {
     })
   })
 
-  it('Shows hover state for topics with more than one edge', () => {
+  it('Shows hover state for topics with more than one edge', async () => {
     render(
       <TopicRow
         checkedStates={mockCheckedStates}
@@ -56,12 +56,9 @@ describe('TableRowComponent', () => {
       />,
     )
 
-    waitFor(() => {
-      const cell = screen.getByText(multipleEdgesTopic.topic)
+    fireEvent.mouseOver(screen.getByText(',...'))
 
-      fireEvent.mouseEnter(cell)
-      expect(screen.getByText(multipleEdgesTopic.edgeList.join(', '))).toBeInTheDocument()
-    })
+    expect(await screen.findByRole('tooltip')).toHaveTextContent(multipleEdgesTopic.edgeList.join(', '))
   })
 
   it('Ensures each row is the same size', () => {

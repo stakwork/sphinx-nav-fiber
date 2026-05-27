@@ -1,4 +1,4 @@
-import { IconButton, Popover, Typography } from '@mui/material'
+import { IconButton, Tooltip, Typography } from '@mui/material'
 import React, { FC, memo, useState } from 'react'
 import { ClipLoader } from 'react-spinners'
 import styled from 'styled-components'
@@ -37,7 +37,6 @@ const TableRowComponent: FC<TTableRaw> = ({
 }) => {
   const [ids, total] = useTopicsStore((s) => [s.ids, s.total])
   const [loading, setLoading] = useState(false)
-  const [isPopoverOpen, setIsPopoverOpen] = useState(false)
 
   const date = formatDate(topic.date_added_to_graph)
 
@@ -73,19 +72,7 @@ const TableRowComponent: FC<TTableRaw> = ({
 
   const lettersToShow = topic.edgeList.slice(0, 1)
   const hiddenLettersCount = topic.edgeList.length - lettersToShow.length
-
-  const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null)
-
-  const handlePopoverOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget)
-    setIsPopoverOpen(true)
-  }
-
-  const handlePopoverClose = () => {
-    setIsPopoverOpen(false)
-  }
-
-  const open = Boolean(anchorEl) && isPopoverOpen
+  const edgeListTooltip = topic.edgeList.join(', ')
 
   const checkboxVisibleClass = checkedStates[topic.ref_id] ? 'visible' : ''
 
@@ -110,49 +97,31 @@ const TableRowComponent: FC<TTableRaw> = ({
         <CountEdgeWrapper>{topic.edgeCount}</CountEdgeWrapper>
       </StyledTableCell>
       <StyledTableCell>
-        <Popover
-          anchorEl={anchorEl}
-          anchorOrigin={{
-            vertical: 'top',
-            horizontal: 'center',
-          }}
-          disableRestoreFocus
-          id="mouse-over-popover"
-          onClose={handlePopoverClose}
-          onMouseEnter={() => setIsPopoverOpen(true)}
-          onMouseLeave={handlePopoverClose}
-          open={open}
-          sx={{
-            pointerEvents: 'auto',
-            '& .MuiPaper-root': {
-              backgroundColor: 'rgba(0, 0, 0, 0.9)',
-              borderRadius: '4px',
-              width: '160px',
-              maxHeight: '200px',
-              overflowY: 'scroll',
-            },
-          }}
-          transformOrigin={{
-            vertical: 'bottom',
-            horizontal: 'center',
-          }}
-        >
-          <Typography sx={{ p: 1.5, fontSize: '13px', fontWeight: 400, lineHeight: '1.8', wordWrap: 'break-word' }}>
-            {topic.edgeList.join(', ')}
-          </Typography>
-        </Popover>
         {lettersToShow.join(', ')}
         {hiddenLettersCount > 0 && (
-          <Typography
-            aria-haspopup="true"
-            aria-owns={open ? 'mouse-over-popover' : undefined}
-            component="span"
-            onMouseEnter={handlePopoverOpen}
-            onMouseLeave={handlePopoverClose}
-            sx={{ cursor: 'pointer' }}
+          <Tooltip
+            componentsProps={{
+              tooltip: {
+                sx: {
+                  backgroundColor: 'rgba(0, 0, 0, 0.9)',
+                  borderRadius: '4px',
+                  fontSize: '13px',
+                  fontWeight: 400,
+                  lineHeight: 1.8,
+                  maxHeight: '200px',
+                  overflowY: 'auto',
+                  width: '160px',
+                  wordWrap: 'break-word',
+                },
+              },
+            }}
+            enterDelay={0}
+            title={edgeListTooltip}
           >
-            ,...
-          </Typography>
+            <Typography component="span" sx={{ cursor: 'pointer' }}>
+              ,...
+            </Typography>
+          </Tooltip>
         )}
       </StyledTableCell>
       <StyledTableCell>
