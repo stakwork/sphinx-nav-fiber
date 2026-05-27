@@ -7,16 +7,17 @@ import { colors } from '~/utils/colors'
 type Props = {
   onCreateNew: () => void
   onAddEdgeNode: () => void
+  activeAction?: 'createType' | 'addEdge'
 }
 
-export const Toolbar = ({ onCreateNew, onAddEdgeNode }: Props) => (
+export const Toolbar = ({ onCreateNew, onAddEdgeNode, activeAction }: Props) => (
   <Wrapper>
-    <ActionButton data-testid="add-schema-type" onClick={onCreateNew}>
+    <ActionButton active={activeAction === 'createType'} data-testid="add-schema-type" onClick={onCreateNew}>
       <IconWrapper>
         <PlusIcon />
       </IconWrapper>
     </ActionButton>
-    <ActionButton data-testid="add-edge" onClick={onAddEdgeNode}>
+    <ActionButton active={activeAction === 'addEdge'} data-testid="add-edge" onClick={onAddEdgeNode}>
       <IconWrapper>
         <CreateEdgeIcon />
       </IconWrapper>
@@ -39,14 +40,21 @@ const ActionButton = styled(Flex).attrs({
   justify: 'center',
   p: 0,
 })<{
+  active?: boolean
   disabled?: boolean
 }>`
   position: relative;
   width: 40px;
   height: 40px;
   flex-direction: row;
-  color: ${colors.GRAY6};
-  background: ${({ disabled }) => (disabled ? colors.disableBtn : colors.BG1)};
+  color: ${({ active }) => (active ? colors.white : colors.GRAY6)};
+  background: ${({ active, disabled }) => {
+    if (disabled) {
+      return colors.disableBtn
+    }
+
+    return active ? colors.BUTTON1 : colors.BG1
+  }};
   cursor: pointer;
   border-radius: 6px;
   transition: ${({ theme }) => theme.transitions.create(['opacity', 'box-shadow', 'background-color'])};
@@ -57,7 +65,7 @@ const ActionButton = styled(Flex).attrs({
 
   &:active {
     color: ${colors.white};
-    background: ${({ disabled }) => (disabled ? colors.BG1 : colors.black)};
+    background: ${({ disabled }) => (disabled ? colors.BG1 : colors.BUTTON1_PRESS)};
   }
 
   &.root {
