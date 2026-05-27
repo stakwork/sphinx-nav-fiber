@@ -22,6 +22,8 @@ export const PlayerControl = ({ markers, chapters }: Props) => {
     (_: Event, value: number | number[]) => {
       const newValue = Array.isArray(value) ? value[0] : value
 
+      setCurrentTime(newValue)
+
       if (playerRef) {
         playerRef.seekTo(newValue, 'seconds')
       }
