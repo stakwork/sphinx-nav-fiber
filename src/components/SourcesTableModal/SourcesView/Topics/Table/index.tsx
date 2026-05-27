@@ -179,7 +179,7 @@ export const Table: React.FC<TopicTableProps> = ({
                       Count <SortFilterIcon />
                     </SortedIcon>
                   </StyledTableCell>
-                  <StyledTableCell>Edge list</StyledTableCell>
+                  <StyledTableCell>Edge List</StyledTableCell>
                   <StyledTableCell>
                     <SortedIcon onClick={() => handleChange(DATE)}>
                       Date <SortFilterIcon />

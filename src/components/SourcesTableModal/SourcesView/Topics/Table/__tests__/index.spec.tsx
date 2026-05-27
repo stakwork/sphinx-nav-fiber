@@ -3,6 +3,7 @@ import '@testing-library/jest-dom'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
+import { useTopicsStore } from '~/stores/useTopicsStore'
 import { TopicTableProps } from '../../../types'
 import { Table } from '../index'
 
@@ -41,7 +42,11 @@ const defaultProps: TopicTableProps = {
   setCheckedStates: mockSetCheckedStates,
 }
 
-const renderTable = (props = defaultProps) => render(<Table {...props} checkedStates={{}} />)
+const renderTable = (props = defaultProps) => {
+  useTopicsStore.setState({ data: mockData, ids: mockIds, total: mockIds.length })
+
+  return render(<Table {...props} checkedStates={{}} />)
+}
 
 describe('Table Component', () => {
   beforeEach(() => {
@@ -65,6 +70,12 @@ describe('Table Component', () => {
       expect(getByTestId('MergeIcon')).toBeInTheDocument()
       expect(getByTestId('AddCircleIcon')).toBeInTheDocument()
     })
+  })
+
+  test('renders title case table labels', () => {
+    renderTable()
+
+    expect(screen.getByText('Edge List')).toBeInTheDocument()
   })
 
   test('on click it opens dropdown', async () => {
