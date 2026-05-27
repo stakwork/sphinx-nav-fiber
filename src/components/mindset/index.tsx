@@ -306,6 +306,5 @@ const ContentContainer = styled(Flex)`
 `
 
 const PlayerControlWrapper = styled(Flex)`
-  padding: 16px 16px 16px 0;
-  margin-left: 18px;
+  padding: 16px 16px 16px 20px;
 `
