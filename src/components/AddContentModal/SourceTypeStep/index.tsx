@@ -29,6 +29,14 @@ const CONTENT_TYPE_MAPPING: Record<string, { [k: string]: string }> = {
   },
 }
 
+const getDisplayValue = (value: string, type: string) => {
+  if (type === YOUTUBE_CHANNEL) {
+    return value
+  }
+
+  return extractNameFromLink(value, type) ?? value
+}
+
 export const SourceTypeStep: FC<Props> = ({ onNextStep, onPrevStep, type, value }) => (
   <Flex>
     <Flex align="center" direction="row" justify="space-between" mb={20}>
@@ -41,7 +49,7 @@ export const SourceTypeStep: FC<Props> = ({ onNextStep, onPrevStep, type, value 
         <img alt={CONTENT_TYPE_MAPPING[type].label} className="badge__img" src={CONTENT_TYPE_MAPPING[type].img} />
         <StyledText>{CONTENT_TYPE_MAPPING[type].label}</StyledText>
       </TextWrapper>
-      <StyledLink>{extractNameFromLink(value, type) ?? value}</StyledLink>
+      <StyledLink>{getDisplayValue(value, type)}</StyledLink>
     </Flex>
     <Flex direction="row">
       <Flex grow={1}>
@@ -74,9 +82,8 @@ const StyledLink = styled(Flex)`
   margin-top: 15px;
   color: ${colors.GRAY3};
   max-width: 300px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  word-wrap: break-word;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 `
 
 const StyledHeaderText = styled(Text)`
