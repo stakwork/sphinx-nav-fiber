@@ -9,9 +9,10 @@ import { Link, Node, NodeExtended } from '~/types'
 import { LinkPosition } from '../..'
 import { Connections } from './Connections'
 import { Node as GraphNode } from './Node'
+import { getLinksForNodes, MAX_RELATED_SELECTION_NODES, uniqueNodesByRefId } from './utils'
 
 const RADIUS = 50
-const MAX_LENGTH = 7
+const MAX_LENGTH = MAX_RELATED_SELECTION_NODES
 
 export type PathNode = NodeExtended & {
   isPathNode?: boolean
@@ -100,22 +101,18 @@ export const SelectionDataNodes = memo(() => {
     const init = async () => {
       if (selectedNode?.ref_id && selectedNode.ref_id !== prevSelectedNodeId) {
         try {
-          const data = await fetchNodeEdges(selectedNode.ref_id, 0, 5, { useSubGraph: false })
+          const data = await fetchNodeEdges(selectedNode.ref_id, 0, MAX_RELATED_SELECTION_NODES, { useSubGraph: false })
 
           if (data) {
-            const filteredNodes: Node[] = data.nodes.filter(
-              (node, index) => node.ref_id !== selectedNode.ref_id && index < MAX_LENGTH,
-            )
+            const filteredNodes: Node[] = uniqueNodesByRefId(
+              data.nodes.filter((node) => node.ref_id !== selectedNode.ref_id),
+            ).slice(0, MAX_LENGTH)
 
             const graphNodes = filteredNodes.map((node: Node) => ({ ...node, x: 0, y: 0, z: 0 }))
 
             const nodes: PathNode[] = [...graphNodes, { ...selectedNode, x: 0, y: 0, z: 0, fx: 0, fy: 0, fz: 0 }]
 
-            const links = data.edges.filter(
-              (link: Link) =>
-                nodes.some((node: NodeExtended) => node.ref_id === link.target) &&
-                nodes.some((node: NodeExtended) => node.ref_id === link.source),
-            )
+            const links = getLinksForNodes(data.edges, nodes)
 
             setSelectionData({ nodes, links: links as unknown as GraphData['links'] })
             linksPositionRef.current = new Map()
@@ -144,19 +141,13 @@ export const SelectionDataNodes = memo(() => {
           .map((i) => nodesNormalized.get(i))
           .filter((i) => !!i) as NodeExtended[]
 
-        const siblings: NodeExtended[] = [
-          ...sourceNodes,
-          ...targetNodes,
-          { ...selectedNode, x: 0, y: 0, z: 0, fx: 0, fy: 0, fz: 0 },
-        ]
+        const relatedNodes = uniqueNodesByRefId([...sourceNodes, ...targetNodes])
+          .filter((node) => node.ref_id !== selectedNode.ref_id)
+          .slice(0, MAX_RELATED_SELECTION_NODES)
 
-        const links = (dataInitial?.links || []).filter((l: Link) =>
-          siblings.some(
-            (i: NodeExtended) =>
-              (i.ref_id === l.source && l.target === selectedNode.ref_id) ||
-              (i.ref_id === l.target && l.source === selectedNode.ref_id),
-          ),
-        )
+        const siblings: NodeExtended[] = [...relatedNodes, { ...selectedNode, x: 0, y: 0, z: 0, fx: 0, fy: 0, fz: 0 }]
+
+        const links = getLinksForNodes(dataInitial?.links || [], siblings)
 
         setSelectionData({ nodes: siblings, links: links as unknown as GraphData['links'] })
       } else {
