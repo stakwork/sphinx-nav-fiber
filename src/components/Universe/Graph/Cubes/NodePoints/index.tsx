@@ -1,6 +1,6 @@
 import { Instances } from '@react-three/drei'
 import { memo, useMemo } from 'react'
-import { BufferGeometry, CircleGeometry } from 'three'
+import { BufferGeometry, Shape, ShapeGeometry } from 'three'
 import { useDataStore, useNodeTypes } from '~/stores/useDataStore'
 import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
 import { useSelectedNode } from '~/stores/useGraphStore'
@@ -40,6 +40,21 @@ const COLORS_MAP = [
   '#FFEA60',
 ]
 
+const createNodePointGeometry = () => {
+  const width = nodeSize * 2.4
+  const height = nodeSize
+  const radius = height / 2
+  const shape = new Shape()
+
+  shape.moveTo(-width / 2 + radius, -height / 2)
+  shape.lineTo(width / 2, -height / 2)
+  shape.lineTo(width / 2, height / 2)
+  shape.lineTo(-width / 2 + radius, height / 2)
+  shape.absarc(-width / 2 + radius, 0, radius, Math.PI / 2, -Math.PI / 2, false)
+
+  return new ShapeGeometry(shape, 32)
+}
+
 // eslint-disable-next-line no-underscore-dangle
 const _NodePoints = () => {
   const selectedNode = useSelectedNode()
@@ -50,15 +65,11 @@ const _NodePoints = () => {
 
   const scaleFeature = useFeatureFlagStore((s) => s.scaleFeature)
 
-  // Create a rounded rectangle geometry
-  const roundedRectGeometry = useMemo(
-    () => new CircleGeometry(nodeSize / 2, 64), // 64 segments = smooth circle
-    [],
-  )
+  const nodePointGeometry = useMemo(() => createNodePointGeometry(), [])
 
   return (
     <Instances
-      geometry={roundedRectGeometry as BufferGeometry}
+      geometry={nodePointGeometry as BufferGeometry}
       limit={1000} // Optional: max amount of items (for calculating buffer size)
       range={1000}
       visible={!selectedNode || true}
