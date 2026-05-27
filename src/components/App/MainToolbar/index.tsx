@@ -40,6 +40,7 @@ export const MainToolbar = () => {
     setNewLoading(null)
     abortFetchData()
     resetAiSummaryAnswer()
+    setUniverseQuestionIsOpen(false)
     resetGraph()
     navigate('/')
   }

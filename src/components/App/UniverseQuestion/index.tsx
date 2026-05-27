@@ -44,7 +44,7 @@ export const UniverseQuestion = () => {
   const handleSubmitQuestion = async (questionToSubmit: string) => {
     if (questionToSubmit) {
       resetAiSummaryAnswer()
-      setUniverseQuestionIsOpen()
+      setUniverseQuestionIsOpen(false)
       resetData()
       setSidebarOpen(true)
       setShowCollapseButton(true)
@@ -67,7 +67,7 @@ export const UniverseQuestion = () => {
   }
 
   const handleUniverseQuestionIsOpen = () => {
-    setUniverseQuestionIsOpen()
+    setUniverseQuestionIsOpen(false)
     setSidebarOpen(true)
     setShowCollapseButton(true)
   }
@@ -90,7 +90,9 @@ export const UniverseQuestion = () => {
 
   return (
     <Wrapper>
-      Ideas have shapes
+      <SplashTitle onClick={handleUniverseQuestionIsOpen} type="button">
+        Ideas have shapes
+      </SplashTitle>
       <TextAreaWrapper onKeyDown={onEnterPress} py={12} tabIndex={-1}>
         <StyledTextarea
           ref={textAreaRef}
@@ -199,6 +201,15 @@ const Wrapper = styled(Flex)`
   font-weight: 700;
   line-height: 16px;
   font-family: 'Barlow';
+`
+
+const SplashTitle = styled.button`
+  background: transparent;
+  border: 0;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  padding: 0;
 `
 
 const StyledButton = styled(Button)`

@@ -88,7 +88,7 @@ export const App = () => {
 
   useEffect(() => {
     if (chatSplashScreenAsDefault && chatInterfaceFeatureFlag) {
-      setUniverseQuestionIsOpen()
+      setUniverseQuestionIsOpen(true)
     }
   }, [chatInterfaceFeatureFlag, chatSplashScreenAsDefault, setUniverseQuestionIsOpen])
 
