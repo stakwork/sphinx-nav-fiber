@@ -135,6 +135,9 @@ export const Body = ({ Close }: BodyProps) => {
   const filteredLinks =
     activeTab === 'all' ? linksFiltered : linksFiltered.filter((link) => link.edge_type === 'CHILD_OF')
 
+  const activeToolbarAction = isAddEdgeNode ? 'addEdge' : undefined
+  const activeAction = isCreateNew ? 'createType' : activeToolbarAction
+
   return (
     <>
       <Flex ml={-20} mr={-20} mt={-20}>
@@ -183,6 +186,7 @@ export const Body = ({ Close }: BodyProps) => {
         </Flex>
         <Flex>
           <Toolbar
+            activeAction={activeAction}
             onAddEdgeNode={() => {
               setIsAddEdgeNode(true)
               setIsCreateNew(false)
