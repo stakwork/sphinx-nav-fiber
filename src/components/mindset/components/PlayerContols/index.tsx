@@ -45,27 +45,45 @@ export const PlayerControl = ({ markers, chapters }: Props) => {
 
   return showPlayer ? (
     <Wrapper>
-      <Controls />
-      <ProgressBar
-        chapters={chapters}
-        duration={duration}
-        handleProgressChange={handleProgressChange}
-        markers={markers}
-        playingTime={currentTime}
-      />
+      <ControlsRow>
+        <Controls />
+      </ControlsRow>
+      <TimelineRow>
+        <ProgressBar
+          chapters={chapters}
+          duration={duration}
+          handleProgressChange={handleProgressChange}
+          markers={markers}
+          playingTime={currentTime}
+        />
+      </TimelineRow>
     </Wrapper>
   ) : null
 }
 
 const Wrapper = styled(Flex).attrs({
-  direction: 'row',
-  align: 'center',
-  justify: 'space-between',
+  direction: 'column',
+  align: 'stretch',
+  justify: 'center',
 })`
   padding: 20px;
   background: ${colors.BG2};
-  height: 96px;
+  min-height: 120px;
   border-radius: 8px;
   box-sizing: border-box;
   margin-right: 4px;
+  gap: 14px;
+`
+
+const ControlsRow = styled(Flex).attrs({
+  direction: 'row',
+  align: 'center',
+  justify: 'flex-start',
+})`
+  width: 100%;
+`
+
+const TimelineRow = styled(Flex)`
+  width: 100%;
+  min-height: 24px;
 `
