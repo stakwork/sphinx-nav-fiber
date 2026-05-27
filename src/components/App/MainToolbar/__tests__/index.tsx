@@ -2,6 +2,7 @@
 import '@testing-library/jest-dom'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
+import { useAppStore } from '~/stores/useAppStore'
 import { useModal } from '~/stores/useModalStore'
 import { useUserStore } from '~/stores/useUserStore'
 import { MainToolbar } from '..'
@@ -80,6 +81,10 @@ describe('MainToolbar Component Tests', () => {
       customSchemaFeatureFlag: true,
       userFeedbackFeatureFlag: true,
     })
+    useAppStore.setState({ universeQuestionIsOpen: false })
+    Object.assign(useUserStore, {
+      getState: jest.fn(() => ({ setBudget: jest.fn() })),
+    })
     ;(useUserStore as unknown as jest.Mock).mockImplementation((selector: (s: unknown) => unknown) =>
       selector({
         isAdmin: false,
@@ -114,6 +119,16 @@ describe('MainToolbar Component Tests', () => {
       fireEvent.click(screen.getByTestId('cy-open-soure-table'))
       expect(openMock).toHaveBeenCalled()
     })
+  })
+
+  it('closes the chat splash when the logo is clicked', () => {
+    useAppStore.setState({ universeQuestionIsOpen: true })
+
+    renderWithProviders(<MainToolbar />)
+
+    fireEvent.click(screen.getByAltText('Second brain'))
+
+    expect(useAppStore.getState().universeQuestionIsOpen).toBe(false)
   })
 
   it('renders MainToolbar component with correct elements', () => {

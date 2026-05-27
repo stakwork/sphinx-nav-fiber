@@ -11,6 +11,7 @@ import { media } from '~/utils/media'
 
 export const AppBar = () => {
   const appMetaData = useAppStore((s) => s.appMetaData)
+  const setUniverseQuestionIsOpen = useAppStore((s) => s.setUniverseQuestionIsOpen)
   const { resetAiSummaryAnswer, setNewLoading } = useAiSummaryStore()
   const { abortFetchData, resetGraph } = useDataStore((s) => s)
   const navigate = useNavigate()
@@ -24,6 +25,7 @@ export const AppBar = () => {
     abortFetchData()
     resetGraph()
     resetAiSummaryAnswer()
+    setUniverseQuestionIsOpen(false)
     navigate('/')
   }
 

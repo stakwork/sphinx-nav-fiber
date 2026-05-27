@@ -26,7 +26,7 @@ export type AppStore = {
   setTranscriptOpen: (_: boolean) => void
   setFlagErrorOpen: (_: boolean) => void
   setAppMetaData: (val: TAboutParams) => void
-  setUniverseQuestionIsOpen: () => void
+  setUniverseQuestionIsOpen: (_?: boolean) => void
   setCurrentPlayingAudio: (_: React.MutableRefObject<HTMLAudioElement | null> | null) => void
   setShowCollapseButton: (_: boolean) => void
   selectedColor: string
@@ -81,7 +81,11 @@ export const useAppStore = create<AppStore>((set, get) => ({
       transcriptIsOpen: !sidebarIsOpen ? false : get().transcriptIsOpen,
     }),
   setTranscriptOpen: (transcriptIsOpen) => set({ transcriptIsOpen }),
-  setUniverseQuestionIsOpen: () => set({ universeQuestionIsOpen: !get().universeQuestionIsOpen }),
+  setUniverseQuestionIsOpen: (universeQuestionIsOpen) =>
+    set({
+      universeQuestionIsOpen:
+        typeof universeQuestionIsOpen === 'boolean' ? universeQuestionIsOpen : !get().universeQuestionIsOpen,
+    }),
   setAppMetaData: (appMetaData) => set({ appMetaData }),
   setShowCollapseButton: (showCollapseButton) => set({ showCollapseButton }),
   setSelectedColor: (selectedColor) => set({ selectedColor }),
