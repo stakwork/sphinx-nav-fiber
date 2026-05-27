@@ -9,8 +9,8 @@ import { Link, Node, NodeExtended } from '~/types'
 import { LinkPosition } from '../..'
 import { Connections } from './Connections'
 import { Node as GraphNode } from './Node'
+import { getSelectionNodeRadius, layoutSelectionNodes } from './utils'
 
-const RADIUS = 50
 const MAX_LENGTH = 7
 
 export type PathNode = NodeExtended & {
@@ -64,9 +64,10 @@ export const SelectionDataNodes = memo(() => {
       ...oldNodes,
       ...newNodes.map((node, index) => {
         // Calculate angular position for the new node
+        const radius = getSelectionNodeRadius(totalNodes + 1)
         const theta = startTheta + thetaSpan * (index + 1) // Start adding from startTheta
-        const x = node.ref_id === selectedNode?.ref_id ? 0 : Math.cos(theta) * RADIUS
-        const y = node.ref_id === selectedNode?.ref_id ? 0 : Math.sin(theta) * RADIUS
+        const x = node.ref_id === selectedNode?.ref_id ? 0 : Math.cos(theta) * radius
+        const y = node.ref_id === selectedNode?.ref_id ? 0 : Math.sin(theta) * radius
         const z = node.ref_id === selectedNode?.ref_id ? 0 : 0
 
         return { ...node, x, y, z }
@@ -158,7 +159,10 @@ export const SelectionDataNodes = memo(() => {
           ),
         )
 
-        setSelectionData({ nodes: siblings, links: links as unknown as GraphData['links'] })
+        setSelectionData({
+          nodes: layoutSelectionNodes(siblings, selectedNode.ref_id),
+          links: links as unknown as GraphData['links'],
+        })
       } else {
         init()
       }
@@ -183,8 +187,9 @@ export const SelectionDataNodes = memo(() => {
         ].slice(0, 3)
 
         const angle = Math.atan2(-newSelectedNode.y, -newSelectedNode.x)
-        const x = RADIUS * Math.cos(angle)
-        const y = RADIUS * Math.sin(angle)
+        const radius = getSelectionNodeRadius(graphData.nodes.length)
+        const x = radius * Math.cos(angle)
+        const y = radius * Math.sin(angle)
 
         const updatedPathNodes = newPathNodes.map((node, index) => {
           if (index === 0) {
