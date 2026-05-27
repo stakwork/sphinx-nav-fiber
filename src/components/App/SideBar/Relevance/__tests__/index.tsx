@@ -44,6 +44,17 @@ jest.mock('@mui/material', () => ({
 }))
 
 jest.mock('~/stores/useDataStore', () => ({
+  defaultFilters: {
+    skip: 0,
+    limit: 100,
+    depth: '3',
+    sort_by: 'score',
+    include_properties: 'true',
+    top_node_count: '40',
+    includeContent: 'true',
+    node_type: [],
+    search_method: 'hybrid',
+  },
   useDataStore: jest.fn(),
   useFilteredNodes: jest.fn(),
 }))
@@ -62,6 +73,22 @@ const mockedUseDataStore = useDataStore as jest.MockedFunction<typeof useDataSto
 const mockedUseAppStore = useAppStore as jest.MockedFunction<typeof useAppStore>
 
 const mockedUseFilterNodes = useFilteredNodes as jest.MockedFunction<typeof useFilteredNodes>
+const createStoreState = () => ({
+  dataInitial: { nodes: mockedFilterNodes, links: [] },
+  filters: {
+    skip: 0,
+    limit: 100,
+    depth: '3',
+    sort_by: 'score',
+    include_properties: 'true',
+    top_node_count: '40',
+    includeContent: 'true',
+    node_type: [],
+    search_method: 'hybrid',
+  },
+  nextPage: jest.fn(),
+  setSelectedTimestamp: jest.fn(),
+})
 // const mockedSaveConsumedContent = jest.spyOn(relayHelper, 'saveConsumedContent')
 // const mockedUseIsMatchBreakpoint = jest.spyOn(utils, 'useIsMatchBreakpoint')
 
@@ -75,7 +102,7 @@ describe('test Relevance Component', () => {
       setRelevanceSelected: jest.fn(),
     }))
 
-    mockedUseDataStore.mockImplementation(() => [false, jest.fn().mockImplementation((relevance) => relevance)])
+    mockedUseDataStore.mockImplementation((selector) => selector(createStoreState()))
   })
 
   const renderWithRouter = (component: React.ReactElement) => {
@@ -109,6 +136,22 @@ describe('test Relevance Component', () => {
     const { getByText } = renderWithRouter(<Relevance isSearchResult={false} />)
 
     expect(getByText('Load More')).toBeInTheDocument()
+  })
+
+  it('renders no results state for empty filter results', () => {
+    mockedUseFilterNodes.mockReturnValue([])
+    mockedUseDataStore.mockImplementation((selector) =>
+      selector({
+        ...createStoreState(),
+        dataInitial: { nodes: [], links: [] },
+        filters: { ...createStoreState().filters, node_type: ['Bounty'] },
+      }),
+    )
+
+    const { getByTestId, getByText } = renderWithRouter(<Relevance isSearchResult={false} />)
+
+    expect(getByTestId('no-filter-results')).toBeInTheDocument()
+    expect(getByText('No Results')).toBeInTheDocument()
   })
 
   it.skip('asserts that 10 nodes are initial rendered', () => {
