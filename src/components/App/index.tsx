@@ -13,6 +13,7 @@ import { useAiSummaryStore } from '~/stores/useAiSummaryStore'
 import { useAppStore } from '~/stores/useAppStore'
 import { useDataStore } from '~/stores/useDataStore'
 import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
+import { useGraphStore } from '~/stores/useGraphStore'
 import { useTeachStore } from '~/stores/useTeachStore'
 import { useUserStore } from '~/stores/useUserStore'
 import {
@@ -34,7 +35,8 @@ import { Toasts } from './Toasts'
 const Wrapper = styled(Flex)`
   height: 100%;
   width: 100%;
-  background-color: ${colors.black};
+  background-color: ${({ $isWorldMapView }: { $isWorldMapView: boolean }) =>
+    $isWorldMapView ? colors.BLUE_PRESS_STATE : colors.black};
 `
 
 const Version = styled(Flex)`
@@ -79,6 +81,8 @@ export const App = () => {
     s.chatInterfaceFeatureFlag,
     s.chatSplashScreenAsDefault,
   ])
+
+  const isWorldMapView = useGraphStore((s) => s.graphStyle === 'earth')
 
   const socket: Socket | undefined = useSocket()
 
@@ -320,7 +324,7 @@ export const App = () => {
 
       <Suspense fallback={<div>Loading...</div>}>
         {!splashDataLoading ? (
-          <Wrapper direction="row">
+          <Wrapper $isWorldMapView={isWorldMapView} direction="row">
             <FormProvider {...form}>
               <LazyMainToolbar />
               {!universeQuestionIsOpen && <LazySideBar />}
