@@ -17,6 +17,29 @@ import { colors } from '~/utils/colors'
 import { Flex } from '../common/Flex'
 import { Animation } from './Animation'
 
+const pluralStatLabels: Record<string, string> = {
+  Audio: 'Audio Files',
+  Contributor: 'Contributors',
+  Daily: 'Dailies',
+  Document: 'Documents',
+  Episode: 'Episodes',
+  Node: 'Nodes',
+  Twitter: 'Twitter Spaces',
+  Video: 'Videos',
+}
+
+const normalizeStatValue = (value: number | string) => Number(String(value).replace(/,/g, ''))
+
+export const getStatTooltip = (name: string, value: number | string) => {
+  const count = normalizeStatValue(value)
+
+  if (count === 1) {
+    return name
+  }
+
+  return pluralStatLabels[name] || `${name}s`
+}
+
 export const Stats = () => {
   const [isTotalProcessing, setIsTotalProcessing] = useState(false)
   const [totalProcessing, setTotalProcessing] = useState(0)
@@ -93,7 +116,7 @@ export const Stats = () => {
 
   const generateStatConfigItem = (key: string) => {
     const name = convertToTitleCase(key.split('_')[0])
-    const tooltip = name
+    const tooltip = getStatTooltip(name, stats[key as keyof TStats])
     const primaryIcon = normalizedSchemasByType[name]?.icon
     const Icon = Icons[primaryIcon as string] || NodesIcon
 

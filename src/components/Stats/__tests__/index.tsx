@@ -4,7 +4,7 @@ import { render, screen, waitFor } from '@testing-library/react'
 import React from 'react'
 import { MemoryRouter } from 'react-router-dom'
 import { ProcessingResponse, getTotalProcessing } from '~/network/fetchSourcesData'
-import { Stats } from '..'
+import { Stats, getStatTooltip } from '..'
 import * as network from '../../../network/fetchSourcesData'
 import { useDataStore } from '../../../stores/useDataStore'
 import { useUserStore } from '../../../stores/useUserStore'
@@ -141,5 +141,12 @@ describe('Component Test Stats', () => {
     // The button should be visible since totalProcessing is present and greater than 0
     const button = screen.getByText('100')
     expect(button).toBeInTheDocument()
+  })
+
+  it('pluralizes stat tooltips when the stat count is plural', () => {
+    expect(getStatTooltip('Node', 1)).toBe('Node')
+    expect(getStatTooltip('Node', 5000)).toBe('Nodes')
+    expect(getStatTooltip('Video', '800')).toBe('Videos')
+    expect(getStatTooltip('Document', '1,483')).toBe('Documents')
   })
 })
