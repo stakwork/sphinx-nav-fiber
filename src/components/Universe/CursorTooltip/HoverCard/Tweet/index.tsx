@@ -12,62 +12,47 @@ type Props = {
 
 type MetricsProps = {
   metrics: {
-    impressions?: number
-    likes?: number
-    replies?: number
-    retweets?: number
-    quotes?: number
-    bookmarks?: number
+    impressions?: number | string
+    likes?: number | string
+    replies?: number | string
+    retweets?: number | string
+    quotes?: number | string
+    bookmarks?: number | string
   }
 }
 
 const MetricsBar = ({ metrics }: MetricsProps) => {
-  const formatNumber = (num?: number) => {
-    if (!num) {
-      return '0'
+  const metricEntries = [
+    { key: 'replies', value: metrics.replies, icon: <FaComment /> },
+    { key: 'retweets', value: metrics.retweets, icon: <FaRetweet /> },
+    { key: 'quotes', value: metrics.quotes, icon: <FaQuoteRight /> },
+    { key: 'likes', value: metrics.likes, icon: <FaHeart /> },
+    { key: 'bookmarks', value: metrics.bookmarks, icon: <FaBookmark /> },
+    { key: 'impressions', value: metrics.impressions, icon: <FaChartBar /> },
+  ].filter(({ value }) => value !== undefined && value !== null && value !== '')
+
+  const formatNumber = (num?: number | string) => {
+    if (typeof num === 'number') {
+      return num.toLocaleString()
     }
 
-    return num.toLocaleString()
+    const normalized = Number(String(num).replaceAll(',', ''))
+
+    return Number.isNaN(normalized) ? String(num) : normalized.toLocaleString()
+  }
+
+  if (!metricEntries.length) {
+    return null
   }
 
   return (
     <MetricsContainer>
-      {metrics.replies !== undefined && (
-        <MetricItem>
-          <span>{formatNumber(metrics.replies)}</span>
-          <FaComment />
+      {metricEntries.map(({ key, value, icon }) => (
+        <MetricItem key={key}>
+          <span>{formatNumber(value)}</span>
+          {icon}
         </MetricItem>
-      )}
-      {metrics.retweets !== undefined && (
-        <MetricItem>
-          <span>{formatNumber(metrics.retweets)}</span>
-          <FaRetweet />
-        </MetricItem>
-      )}
-      {metrics.quotes !== undefined && (
-        <MetricItem>
-          <span>{formatNumber(metrics.quotes)}</span>
-          <FaQuoteRight />
-        </MetricItem>
-      )}
-      {metrics.likes !== undefined && (
-        <MetricItem>
-          <span>{formatNumber(metrics.likes)}</span>
-          <FaHeart />
-        </MetricItem>
-      )}
-      {metrics.bookmarks !== undefined && (
-        <MetricItem>
-          <span>{formatNumber(metrics.bookmarks)}</span>
-          <FaBookmark />
-        </MetricItem>
-      )}
-      {metrics.impressions !== undefined && (
-        <MetricItem>
-          <span>{formatNumber(metrics.impressions)}</span>
-          <FaChartBar />
-        </MetricItem>
-      )}
+      ))}
     </MetricsContainer>
   )
 }
@@ -78,6 +63,7 @@ export const Tweet = ({ node }: Props) => {
 
   const {
     text,
+    name,
     tweet_id: tweetId,
     impression_count: impressions,
     like_count: likes,
@@ -89,29 +75,34 @@ export const Tweet = ({ node }: Props) => {
     twitter_handle: twitterHandle,
     alias,
     verified,
+    url,
+    link,
+    source_url: sourceUrl,
   } = properties as {
     text?: string
+    name?: string
     tweet_id?: string
-    impression_count?: number
-    like_count?: number
-    reply_count?: number
-    retweet_count?: number
-    quote_count?: number
-    bookmark_count?: number
+    impression_count?: number | string
+    like_count?: number | string
+    reply_count?: number | string
+    retweet_count?: number | string
+    quote_count?: number | string
+    bookmark_count?: number | string
     image_url?: string
     twitter_handle?: string
     alias?: string
     verified?: boolean
+    url?: string
+    link?: string
+    source_url?: string
   }
 
-  let postUrl = ''
+  const postUrl =
+    url || link || sourceUrl || (tweetId && twitterHandle ? `https://x.com/${twitterHandle}/status/${tweetId}` : '')
 
-  if (nodeType === 'Tweet' && tweetId && twitterHandle) {
-    postUrl = `https://x.com/${twitterHandle}/status/${tweetId}`
-  }
-
-  const displayName = alias || twitterHandle || ''
+  const displayName = alias || twitterHandle || name || node.name || nodeType
   const displaySubName = twitterHandle || alias || ''
+  const postText = text || name || node.name || ''
 
   return (
     <TooltipContainer>
@@ -119,7 +110,7 @@ export const Tweet = ({ node }: Props) => {
         <ContentRow>
           <AvatarColumn>
             {imageUrl ? (
-              <UserAvatar alt={displayName} src={imageUrl} />
+              <UserAvatar alt={displayName} loading="lazy" src={imageUrl} />
             ) : (
               <DefaultAvatar>
                 <PersonIcon />
@@ -129,20 +120,29 @@ export const Tweet = ({ node }: Props) => {
 
           <MainColumn>
             <UserNameRow>
-              <UserDisplayName href={postUrl} target="_blank">
-                {displayName}
-              </UserDisplayName>
+              {postUrl ? (
+                <UserDisplayName href={postUrl} rel="noreferrer" target="_blank">
+                  {displayName}
+                </UserDisplayName>
+              ) : (
+                <UserDisplayName as="span">{displayName}</UserDisplayName>
+              )}
               {verified && (
                 <VerifiedBadge>
                   <CheckIcon />
                 </VerifiedBadge>
               )}
-              <UserDisplaySubName href={postUrl} target="_blank">
-                @{displaySubName}
-              </UserDisplaySubName>
+              {displaySubName &&
+                (postUrl ? (
+                  <UserDisplaySubName href={postUrl} rel="noreferrer" target="_blank">
+                    @{displaySubName}
+                  </UserDisplaySubName>
+                ) : (
+                  <UserDisplaySubName as="span">@{displaySubName}</UserDisplaySubName>
+                ))}
             </UserNameRow>
 
-            {text && <PostText>{text}</PostText>}
+            {postText && <PostText>{postText}</PostText>}
           </MainColumn>
         </ContentRow>
 
