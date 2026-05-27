@@ -31,6 +31,8 @@ const ModalContent = styled.div`
   background: ${colors.BG1};
   width: 300px;
   height: 460px;
+  box-sizing: border-box;
+  overflow: hidden;
   z-index: 1001;
   border-radius: 8px;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);

@@ -755,7 +755,10 @@ export const Editor = ({
 }
 
 const CustomButton = styled(Button)`
-  width: 400px !important;
+  flex: 1 1 auto;
+  min-width: 0 !important;
+  width: auto !important;
+  max-width: 400px !important;
   margin: 0 auto !important;
 `
 
@@ -868,8 +871,11 @@ const InputIconWrapper = styled(Flex)`
   flex-direction: row;
   position: relative;
   display: flex;
+  width: 100%;
+  min-width: 0;
 `
 
 const InputWrapper = styled(Flex)`
-  width: 320px;
+  flex: 1 1 auto;
+  min-width: 0;
 `

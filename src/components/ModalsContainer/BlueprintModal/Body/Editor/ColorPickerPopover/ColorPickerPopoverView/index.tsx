@@ -101,7 +101,10 @@ const TabPanelWrapper = styled(Flex)`
   min-height: 572px;
   padding: 20px 0;
   max-height: 572px;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
+  width: 100%;
+  box-sizing: border-box;
 
   @media (max-width: 1024px) {
     width: 100%;
@@ -125,6 +128,7 @@ const TabPanelWrapper = styled(Flex)`
 const Wrapper = styled(Flex)`
   min-height: 0;
   flex: 1;
+  width: 100%;
   overflow: hidden;
 
   @media (max-width: 768px) {
