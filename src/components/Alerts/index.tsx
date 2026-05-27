@@ -70,11 +70,13 @@ const AlertWrapper = styled(Flex).attrs({
 
 const ContentWrapper = styled(Flex)`
   max-height: 50vh;
-  max-width: 30vw;
+  width: min(360px, calc(100vw - 32px));
   background: transparent;
   padding-top: 1px !important;
   padding-bottom: 0 !important;
+  padding-right: 20px !important;
   overflow-y: auto;
+  overflow-x: hidden;
 
   &::-webkit-scrollbar {
     width: 3px;
@@ -150,23 +152,25 @@ const Info = styled(Flex).attrs({
 
 const CloseButton = styled.div`
   position: absolute;
-  top: 0;
-  right: 0;
-  transform: translate(50%, -50%);
+  top: 8px;
+  right: 8px;
   cursor: pointer;
-  display: none;
+  display: flex;
+  opacity: 0;
+  pointer-events: none;
   z-index: 1;
-  width: 2em;
-  height: 2em;
+  width: 24px;
+  height: 24px;
   background-color: ${colors.BUTTON1};
   border-radius: 50%;
   align-items: center;
   justify-content: center;
+  transition: opacity 0.2s ease;
 
   svg {
     fill: ${colors.white} !important;
-    width: 1.5em;
-    height: 1.5em;
+    width: 18px;
+    height: 18px;
   }
 `
 
@@ -177,11 +181,14 @@ const StyledPopover = styled(Popover)`
     box-shadow: none;
     background: ${colors.MESSAGE_BG};
     border-radius: 6px;
-    overflow: visible;
+    max-width: calc(100vw - 32px);
+    max-height: calc(100vh - 32px);
+    overflow: hidden;
 
     &:hover {
       ${CloseButton} {
-        display: flex;
+        opacity: 1;
+        pointer-events: auto;
       }
     }
   }
