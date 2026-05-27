@@ -1,8 +1,9 @@
 import { useRef } from 'react'
+import { isEqual } from 'lodash'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { useAppStore } from '~/stores/useAppStore'
-import { useDataStore } from '~/stores/useDataStore'
+import { defaultFilters, useDataStore } from '~/stores/useDataStore'
 import { useFeatureFlagStore } from '~/stores/useFeatureFlagStore'
 import { LatestView } from '../Latest'
 import { Relevance } from '../Relevance'
@@ -12,22 +13,23 @@ import { Trending } from '../Trending'
 export const MENU_WIDTH = 390
 
 export const RegularView = () => {
-  const { isFetching: isLoading } = useDataStore((s) => s)
+  const { filters, isFetching: isLoading } = useDataStore((s) => s)
 
   const { currentSearch: searchTerm } = useAppStore((s) => s)
 
   const [trendingTopicsFeatureFlag] = useFeatureFlagStore((s) => [s.trendingTopicsFeatureFlag])
 
   const componentRef = useRef<HTMLDivElement | null>(null)
+  const hasActiveFilters = !isEqual(filters, defaultFilters)
 
   return (
     <ScrollWrapper ref={componentRef}>
-      {!searchTerm && trendingTopicsFeatureFlag && (
+      {!searchTerm && !hasActiveFilters && trendingTopicsFeatureFlag && (
         <TrendingWrapper>
           <Trending />
         </TrendingWrapper>
       )}
-      {!searchTerm && <LatestView />}
+      {!searchTerm && !hasActiveFilters && <LatestView />}
       {isLoading ? <EpisodeSkeleton /> : <Relevance isSearchResult={!!searchTerm} />}
     </ScrollWrapper>
   )

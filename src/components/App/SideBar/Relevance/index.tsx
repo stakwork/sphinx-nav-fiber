@@ -1,11 +1,14 @@
 import { Button } from '@mui/material'
+import { isEqual } from 'lodash'
 import { memo, useCallback, useMemo, useState } from 'react'
 import styled from 'styled-components'
+import NoFilterResultIcon from '~/components/Icons/NoFilterResultIcon'
 import { Flex } from '~/components/common/Flex'
 import { useNodeNavigation } from '~/components/Universe/useNodeNavigation'
 import { useAppStore } from '~/stores/useAppStore'
-import { useDataStore, useFilteredNodes } from '~/stores/useDataStore'
+import { defaultFilters, useDataStore, useFilteredNodes } from '~/stores/useDataStore'
 import { NodeExtended } from '~/types'
+import { colors } from '~/utils/colors'
 import { formatDescription } from '~/utils/formatDescription'
 import { saveConsumedContent } from '~/utils/relayHelper'
 import { adaptTweetNode } from '~/utils/twitterAdapter'
@@ -20,7 +23,7 @@ type Props = {
 const _Relevance = ({ isSearchResult }: Props) => {
   const pageSize = !isSearchResult ? 10 : 80
 
-  const { setSelectedTimestamp, nextPage } = useDataStore((s) => s)
+  const { dataInitial, filters, setSelectedTimestamp, nextPage } = useDataStore((s) => s)
   const { navigateToNode } = useNodeNavigation()
 
   const { currentSearch, setSidebarOpen, setRelevanceSelected } = useAppStore((s) => s)
@@ -76,8 +79,21 @@ const _Relevance = ({ isSearchResult }: Props) => {
     return []
   }, [filteredNodes, currentSearch, endSlice])
 
+  const hasActiveFilters = !isEqual(filters, defaultFilters)
+  const shouldShowNoResults = (isSearchResult || hasActiveFilters) && dataInitial?.nodes.length === 0
+
   return (
     <>
+      {shouldShowNoResults && (
+        <NoResultsWrapper data-testid="no-filter-results">
+          <NoResultsIconWrapper>
+            <NoFilterResultIcon />
+          </NoResultsIconWrapper>
+          <NoResultsTitle>No Results</NoResultsTitle>
+          <NoResultsDescription>Try changing your search or filter criteria.</NoResultsDescription>
+        </NoResultsWrapper>
+      )}
+
       {(currentNodes ?? []).map((n) => {
         const adaptedNode = adaptTweetNode(n)
 
@@ -130,4 +146,50 @@ export const Relevance = memo(_Relevance)
 
 const LoadMoreWrapper = styled(Flex)`
   flex: 0 0 86px;
+`
+
+const NoResultsWrapper = styled(Flex).attrs({
+  align: 'center',
+  direction: 'column',
+  justify: 'center',
+})`
+  flex: 1 0 auto;
+  min-height: 220px;
+  padding: 42px 32px;
+  text-align: center;
+`
+
+const NoResultsIconWrapper = styled(Flex).attrs({
+  align: 'center',
+  justify: 'center',
+})`
+  width: 48px;
+  height: 48px;
+  margin-bottom: 16px;
+  border-radius: 50%;
+  background: ${colors.BUTTON1};
+  color: ${colors.GRAY6};
+
+  svg {
+    width: 24px;
+    height: 24px;
+  }
+`
+
+const NoResultsTitle = styled.div`
+  color: ${colors.white};
+  font-family: Barlow;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 20px;
+`
+
+const NoResultsDescription = styled.div`
+  max-width: 240px;
+  margin-top: 8px;
+  color: ${colors.GRAY6};
+  font-family: Barlow;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 18px;
 `

@@ -245,6 +245,19 @@ export const useDataStore = create<DataStore>()(
       const nodesFilteredByFilters = data.nodes
       const newNodes: Node[] = []
 
+      if (!existingData && nodesFilteredByFilters.length === 0) {
+        set({
+          dataInitial: { nodes: [], links: [] },
+          dataNew: { nodes: [], links: [] },
+          nodeTypes: [],
+          linkTypes: [],
+          sidebarFilters: ['all'],
+          sidebarFilterCounts: [{ name: 'all', count: 0 }],
+        })
+
+        return
+      }
+
       nodesFilteredByFilters.forEach((node) => {
         if (!normalizedNodesMap.has(node.ref_id)) {
           normalizedNodesMap.set(node.ref_id, { ...node, sources: [], targets: [] })
