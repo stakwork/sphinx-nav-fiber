@@ -60,6 +60,14 @@ describe('Table Component Tests', () => {
     expect(sourceCell).toBeInTheDocument()
   })
 
+  it('should use title case for multi-word source type labels', () => {
+    render(<Table canEdit={false} data={mockData} />)
+
+    expect(screen.getByText('Twitter Handle')).toBeInTheDocument()
+    expect(screen.getByText('Youtube Channel')).toBeInTheDocument()
+    expect(screen.getByText('RSS Link')).toBeInTheDocument()
+  })
+
   it('should display loader when clicking on delete icon', async () => {
     const isEdit = true
 
