@@ -39,7 +39,12 @@ jest.mock('~/stores/useSchemaStore', () => ({
 
 describe('FilterSearch Component', () => {
   const mockSetSchemas = jest.fn()
+  const mockSetSchemaLinks = jest.fn()
   const mockSchemaAll = [{ type: 'Type1' }, { type: 'Type2' }, { type: 'Type3' }]
+  const mockSchemaLinks = [
+    { edge_type: 'HAS', ref_id: 'edge-1', source: 'Type1', target: 'Type2' },
+    { edge_type: 'SOURCE', ref_id: 'edge-2', source: 'Type2', target: 'Type3' },
+  ]
 
   beforeEach(() => {
     jest.clearAllMocks()
@@ -53,13 +58,13 @@ describe('FilterSearch Component', () => {
     })
 
     //
-    ;(useSchemaStore as jest.Mock).mockReturnValue([mockSchemaAll, mockSetSchemas]) // Return an array
+    ;(useSchemaStore as jest.Mock).mockReturnValue([mockSchemaAll, mockSchemaLinks, mockSetSchemas, mockSetSchemaLinks]) // Return an array
 
     //
     ;(useFeatureFlagStore as jest.Mock).mockReturnValue({ fastFiltersFeatureFlag: true })
 
     //
-    ;(getSchemaAll as jest.Mock).mockResolvedValue({ schemas: mockSchemaAll })
+    ;(getSchemaAll as jest.Mock).mockResolvedValue({ edges: mockSchemaLinks, schemas: mockSchemaAll })
   })
 
   const renderComponent = () =>
@@ -106,6 +111,26 @@ describe('FilterSearch Component', () => {
     await waitFor(() => {
       expect(mockSetFilters).toHaveBeenCalledWith({
         node_type: ['Type1'],
+        edge_type: [],
+        limit: 1000,
+        depth: '3',
+        top_node_count: '10',
+      })
+    })
+  })
+
+  it('should apply selected edge filters', async () => {
+    renderComponent()
+
+    const edgePill = await screen.findByText('HAS')
+
+    fireEvent.click(edgePill)
+    fireEvent.click(screen.getByText('Apply'))
+
+    await waitFor(() => {
+      expect(mockSetFilters).toHaveBeenCalledWith({
+        node_type: [],
+        edge_type: ['HAS'],
         limit: 1000,
         depth: '3',
         top_node_count: '10',
