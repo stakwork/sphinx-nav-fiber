@@ -15,6 +15,7 @@ export const General = ({ node }: Props) => {
   const { getNodeKeysByType } = useSchemaStore((s) => s)
 
   const keyProperty = getNodeKeysByType(node.node_type) || ''
+  const imageUrl = node?.properties?.image_url
 
   let title = ''
   let description = node?.properties?.description || node.properties?.text || ''
@@ -25,28 +26,28 @@ export const General = ({ node }: Props) => {
     title = ''
     description = node?.properties?.name || ''
   } else if (node?.properties) {
-    title = node.properties[keyProperty] || ''
+    title = node.properties[keyProperty] || node.name || ''
   }
 
   return (
-    <TooltipContainer>
+    <TooltipContainer $hasImage={!!imageUrl}>
       <ContentWrapper>
         <Heading>
-          {node?.properties?.image_url && <Avatar src={node.properties.image_url} />}
+          {imageUrl && <Avatar alt={title || node.node_type} loading="lazy" src={imageUrl} />}
           <TitleWrapper>
             <TypeBadge type={node.node_type} />
 
             {title && <Title>{truncateText(title, 70)}</Title>}
           </TitleWrapper>
         </Heading>
-        {description && <Description>{description}</Description>}
+        {description && <Description>{truncateText(description, 200)}</Description>}
       </ContentWrapper>
     </TooltipContainer>
   )
 }
 
-const TooltipContainer = styled(Flex)`
-  width: fit-content;
+const TooltipContainer = styled(Flex)<{ $hasImage: boolean }>`
+  width: ${({ $hasImage }) => ($hasImage ? '390px' : 'fit-content')};
   background: ${colors.HOVER_CARD_BG};
   flex-direction: column;
   pointer-events: auto;
@@ -54,6 +55,7 @@ const TooltipContainer = styled(Flex)`
   border-radius: 8px;
   overflow: hidden;
   max-width: 390px;
+  min-width: ${({ $hasImage }) => ($hasImage ? '320px' : '220px')};
   border-bottom: 5px solid rgba(0, 0, 0, 0.3);
   padding: 16px 14px;
 `
@@ -66,15 +68,19 @@ const ContentWrapper = styled(Flex)`
 `
 
 export const Avatar = styled.img`
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
+  width: 72px;
+  height: 72px;
+  border-radius: 6px;
   object-fit: cover;
-  margin-right: 8px;
+  margin-right: 12px;
+  flex-shrink: 0;
+  background: ${colors.BG1};
 `
 
 const Heading = styled(Flex)`
   flex-direction: row;
+  align-items: flex-start;
+  width: 100%;
 `
 
 const TitleWrapper = styled(Flex)`
@@ -106,6 +112,7 @@ const Description = styled(Text)`
   font-weight: 400;
   line-height: 20px;
   margin-top: 16px;
+  max-width: 100%;
   color: ${colors.white};
   opacity: 0.8;
   white-space: normal;
