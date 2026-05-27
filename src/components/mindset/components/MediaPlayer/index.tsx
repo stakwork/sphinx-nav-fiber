@@ -14,6 +14,7 @@ import { colors } from '~/utils'
 import { secondsToMediaTime } from '~/utils/secondsToMediaTime'
 
 const isVideoFile = (url: string) => /\.(mp4|webm|mov|mkv|avi)(\?.*)?$/i.test(url)
+const isYouTubeUrl = (url?: string) => !!url && /(?:youtube\.com|youtu\.be)/i.test(url)
 
 const findCurrentEdge = (sortedEdges: Link[], playerProgress: number): Link | null => {
   let low = 0
@@ -75,6 +76,7 @@ const MediaPlayerComponent = ({ mediaUrl }: Props) => {
   } = usePlayerStore((s) => s)
 
   const duration = playerRef?.getDuration() || 0
+  const isYouTubeVideo = isYouTubeUrl(mediaUrl)
 
   useEffect(() => () => resetPlayer(), [resetPlayer])
 
@@ -210,6 +212,7 @@ const MediaPlayerComponent = ({ mediaUrl }: Props) => {
           volume={volume}
           width="100%"
         />
+        {isYouTubeVideo && <YouTubeChromeMask isFullScreen={isFullScreen} />}
         <Overlay className="time-overlay" isFullScreen={isFullScreen}>
           <TimeDisplay>
             {secondsToMediaTime(playingTime)} / {secondsToMediaTime(duration)}
@@ -263,6 +266,7 @@ const PlayerWrapper = styled.div<{ isFullScreen: boolean }>`
   justify-content: center;
   z-index: 10;
   position: relative;
+  overflow: hidden;
 
   ${(props) =>
     props.isFullScreen &&
@@ -281,6 +285,32 @@ const PlayerWrapper = styled.div<{ isFullScreen: boolean }>`
 
   &:hover .time-overlay {
     opacity: 1;
+  }
+`
+
+const YouTubeChromeMask = styled.div<FullScreenProps>`
+  pointer-events: none;
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    z-index: 20;
+    background: ${colors.black};
+  }
+
+  &::before {
+    top: 0;
+    left: 0;
+    right: 0;
+    height: ${(props) => (props.isFullScreen ? '72px' : '52px')};
+  }
+
+  &::after {
+    right: 0;
+    bottom: 0;
+    width: ${(props) => (props.isFullScreen ? '190px' : '148px')};
+    height: ${(props) => (props.isFullScreen ? '68px' : '52px')};
   }
 `
 
