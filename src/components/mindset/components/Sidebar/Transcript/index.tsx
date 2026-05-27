@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { Flex } from '~/components/common/Flex'
 import { useGraphStore } from '~/stores/useGraphStore'
@@ -66,6 +66,31 @@ export const Transcript = () => {
     return timestamp.split('-').map(Number)
   }, [])
 
+  const clipsByStart = useMemo(
+    () =>
+      [...clips].sort((a, b) => {
+        const [aStart] = parseTimestamp(a?.properties?.timestamp)
+        const [bStart] = parseTimestamp(b?.properties?.timestamp)
+
+        return aStart - bStart
+      }),
+    [clips, parseTimestamp],
+  )
+
+  const findActiveClip = useCallback(
+    (time: number) =>
+      clipsByStart.reduce<NodeExtended | null>((lastStartedClip, clipNode) => {
+        const [start, end] = parseTimestamp(clipNode?.properties?.timestamp)
+
+        if (start <= time && time < end) {
+          return clipNode
+        }
+
+        return start <= time ? clipNode : lastStartedClip
+      }, null),
+    [clipsByStart, parseTimestamp],
+  )
+
   useEffect(() => {
     const interval = setInterval(() => {
       if (playerRef && setCurrentTime) {
@@ -106,29 +131,25 @@ export const Transcript = () => {
         }
       }
 
-      const clip = clips.find((clipNode) => {
-        const [start, end] = parseTimestamp(clipNode?.properties?.timestamp)
-
-        return start <= currentTime && currentTime < end
-      })
+      const clip = findActiveClip(currentTime)
 
       if ((activeClip && clip?.ref_id === activeClip?.ref_id) || !clip) {
         return
       }
 
-      setIsFirst(clip?.ref_id === clips[0]?.ref_id)
-      setActiveClip(clip || null)
+      setIsFirst(clip?.ref_id === clipsByStart[0]?.ref_id)
+      setActiveClip(clip)
     }
 
     if (currentTime) {
       calculateActiveClip()
     } else {
       setIsFirst(true)
-      setActiveClip(clips[0])
+      setActiveClip(clipsByStart[0])
     }
   }, [
     currentTime,
-    clips,
+    clipsByStart,
     activeClip,
     setActiveClip,
     chapters,
@@ -136,6 +157,7 @@ export const Transcript = () => {
     findNextNonAdChapter,
     isAdChapter,
     parseTimestamp,
+    findActiveClip,
     playerRef,
   ])
 
