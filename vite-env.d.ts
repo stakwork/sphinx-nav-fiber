@@ -10,3 +10,12 @@ interface ImportMetaEnv {
 interface ImportMeta {
   readonly env: ImportMetaEnv
 }
+
+interface Window {
+  ENV?: {
+    API_URL?: string
+    BOLTWALL_URL?: string
+    STAKWORK_WEBSOCKET_URL?: string
+    VITE_APP_API_URL?: string
+  }
+}

@@ -1,28 +1,38 @@
-const { origin, host } = window.location
+const DEFAULT_API_URL = 'https://bitcoin.sphinx.chat/api'
 
-const getUrlFormEnv = () => {
-  // Check for runtime environment variable (injected by container)
-  const windowWithEnv = window as Window & { ENV?: { BOLTWALL_URL?: string } }
+export function normalizeApiUrl(apiUrl?: string): string | undefined {
+  const trimmedUrl = apiUrl?.trim()
 
-  if (windowWithEnv.ENV?.BOLTWALL_URL) {
-    return windowWithEnv.ENV.BOLTWALL_URL
+  if (!trimmedUrl) {
+    return undefined
   }
 
-  // Fallback to build-time variable
-  return import.meta.env.VITE_APP_API_URL
+  const urlWithoutTrailingSlash = trimmedUrl.replace(/\/+$/, '')
+
+  if (urlWithoutTrailingSlash.endsWith('/api')) {
+    return urlWithoutTrailingSlash
+  }
+
+  return `${urlWithoutTrailingSlash}/api`
 }
 
-export const API_URL = getUrlFormEnv() || apiUrlFromSwarmHost() || 'https://bitcoin.sphinx.chat'
+export const getUrlFromEnv = () => {
+  const runtimeEnv = window.ENV
+
+  return normalizeApiUrl(
+    runtimeEnv?.VITE_APP_API_URL || runtimeEnv?.API_URL || runtimeEnv?.BOLTWALL_URL || import.meta.env.VITE_APP_API_URL,
+  )
+}
+
+export const API_URL = getUrlFromEnv() || apiUrlFromSwarmHost() || DEFAULT_API_URL
 
 export function apiUrlFromSwarmHost(): string | undefined {
-  // for swarm deployments, always point to "boltwall"
-  // for now, only if the URL contains "swarm"
-  const originUrl = window.location.origin
+  const { origin, host, hostname, protocol } = window.location
 
-  let url = originUrl
+  let url = origin
 
-  if (window.location.protocol === 'https:' && window.location.host.endsWith('.sphinx.chat:8000')) {
-    url = `https://${window.location.hostname}:8444`
+  if (protocol === 'https:' && host.endsWith('.sphinx.chat:8000')) {
+    url = `https://${hostname}:8444`
   } else if (host.includes('swarm')) {
     if (host.startsWith('nav')) {
       const hostArray = host.split('.')
@@ -47,11 +57,11 @@ export function apiUrlFromSwarmHost(): string | undefined {
     url = 'https://bitcoin.sphinx.chat'
   }
 
-  return `${url}/api`
+  return normalizeApiUrl(url)
 }
 
 export function removeApi(url: string) {
-  const regex = /\/api$/
+  const regex = /\/api\/?$/
 
   return url.replace(regex, '')
 }
