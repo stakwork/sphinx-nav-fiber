@@ -61,11 +61,13 @@ See the section about [deployment](https://facebook.github.io/create-react-app/d
 For run the docker build locally use the commands bellow
 
 build docker image
-`docker build --build-arg REACT_APP_API_URL={{custom_api_irl}}  -t sphinx_nav_fiber .`
+`docker build -t sphinx_nav_fiber .`
 
-run the image on localhost
+run the image on localhost with a runtime API host
 
-`docker run -p 3004:80 sphinx_nav_fiber`
+`docker run -p 3004:80 -e VITE_APP_API_URL=https://custom-api.example.com/api sphinx_nav_fiber`
+
+`API_URL` and `BOLTWALL_URL` are also accepted as runtime API host aliases for older deployments.
 
 ### Generate icons for latest layout
 
