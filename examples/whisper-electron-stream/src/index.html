@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self'; media-src 'self' blob:"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Whisper Stream</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <section class="toolbar">
+        <button id="startButton" type="button">Start</button>
+        <button id="stopButton" type="button" disabled>Stop</button>
+        <span id="status">Idle</span>
+      </section>
+
+      <section class="meter" aria-label="Audio level">
+        <div id="levelBar"></div>
+      </section>
+
+      <section class="transcript">
+        <ol id="transcriptList"></ol>
+      </section>
+    </main>
+
+    <script src="./renderer.js"></script>
+  </body>
+</html>
+

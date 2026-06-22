@@ -1,0 +1,20 @@
+{
+  "name": "sphinx-whisper-electron-stream",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Standalone Electron microphone streaming demo using whisper.cpp Node addon chunks.",
+  "main": "src/main.cjs",
+  "scripts": {
+    "start": "electron .",
+    "smoke": "node scripts/smoke.cjs",
+    "build": "npm run smoke",
+    "download:model": "node scripts/download-model.cjs"
+  },
+  "dependencies": {
+    "whisper-node-addon": "^1.0.2"
+  },
+  "devDependencies": {
+    "electron": "^42.4.1"
+  }
+}
+
