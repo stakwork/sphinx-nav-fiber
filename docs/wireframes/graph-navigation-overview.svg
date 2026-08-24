@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="900" viewBox="0 0 1440 900" role="img" aria-labelledby="title desc">
+  <title id="title">3D graph overview wireframe</title>
+  <desc id="desc">A left filter rail, central clustered graph, breadcrumb, legend, and mini-map.</desc>
+  <rect width="1440" height="900" fill="#111827"/>
+  <rect x="0" y="0" width="300" height="900" fill="#f8fafc"/>
+  <text x="28" y="48" font-family="sans-serif" font-size="24" font-weight="700" fill="#0f172a">Graph explorer</text>
+  <rect x="24" y="76" width="252" height="48" rx="8" fill="#fff" stroke="#94a3b8"/>
+  <text x="44" y="107" font-family="sans-serif" font-size="16" fill="#64748b">Search name, path, tag…  /</text>
+  <text x="28" y="164" font-family="sans-serif" font-size="14" font-weight="700" fill="#334155">NODE TYPES</text>
+  <g font-family="sans-serif" font-size="15" fill="#334155">
+    <text x="50" y="202">☑ Modules</text><text x="50" y="236">☑ Classes</text>
+    <text x="50" y="270">☑ Functions</text><text x="50" y="304">☐ Tests</text>
+  </g>
+  <text x="28" y="354" font-family="sans-serif" font-size="14" font-weight="700" fill="#334155">RELATIONSHIPS</text>
+  <g font-family="sans-serif" font-size="15" fill="#334155">
+    <text x="50" y="392">☑ Imports</text><text x="50" y="426">☑ Calls</text><text x="50" y="460">☐ References</text>
+  </g>
+  <text x="28" y="510" font-family="sans-serif" font-size="14" font-weight="700" fill="#334155">VISIBLE DEPTH  1</text>
+  <line x1="36" y1="544" x2="260" y2="544" stroke="#cbd5e1" stroke-width="6" stroke-linecap="round"/>
+  <circle cx="112" cy="544" r="11" fill="#2563eb"/>
+  <rect x="24" y="590" width="252" height="44" rx="8" fill="#e2e8f0"/>
+  <text x="48" y="618" font-family="sans-serif" font-size="15" fill="#334155">＋ Save this view</text>
+
+  <text x="336" y="46" font-family="sans-serif" font-size="16" fill="#cbd5e1">All code  /  Overview</text>
+  <text x="336" y="78" font-family="sans-serif" font-size="14" fill="#94a3b8">12 clusters · 8,426 nodes · aggregated relationships</text>
+
+  <g stroke="#64748b" stroke-width="3" opacity=".65">
+    <line x1="590" y1="320" x2="840" y2="220"/><line x1="590" y1="320" x2="790" y2="520"/>
+    <line x1="840" y1="220" x2="1110" y2="350"/><line x1="790" y1="520" x2="1110" y2="350"/>
+    <line x1="790" y1="520" x2="1040" y2="680"/><line x1="590" y1="320" x2="470" y2="650"/>
+  </g>
+  <g font-family="sans-serif" text-anchor="middle" fill="#fff">
+    <circle cx="590" cy="320" r="105" fill="#2563eb"/><text x="590" y="316" font-size="22" font-weight="700">Core</text><text x="590" y="345" font-size="15">1,902 nodes</text>
+    <circle cx="840" cy="220" r="76" fill="#7c3aed"/><text x="840" y="218" font-size="18" font-weight="700">API</text><text x="840" y="244" font-size="14">846</text>
+    <circle cx="1110" cy="350" r="88" fill="#059669"/><text x="1110" y="346" font-size="18" font-weight="700">UI</text><text x="1110" y="372" font-size="14">1,203</text>
+    <circle cx="790" cy="520" r="68" fill="#d97706"/><text x="790" y="518" font-size="18" font-weight="700">Data</text><text x="790" y="544" font-size="14">684</text>
+    <circle cx="1040" cy="680" r="61" fill="#db2777"/><text x="1040" y="678" font-size="18" font-weight="700">Tests</text><text x="1040" y="704" font-size="14">492</text>
+    <circle cx="470" cy="650" r="54" fill="#0891b2"/><text x="470" y="648" font-size="17" font-weight="700">Tools</text><text x="470" y="672" font-size="14">311</text>
+  </g>
+  <g transform="translate(1180 690)">
+    <rect width="224" height="170" rx="12" fill="#1e293b" stroke="#475569"/>
+    <text x="16" y="28" font-family="sans-serif" font-size="13" fill="#cbd5e1">MINI-MAP</text>
+    <circle cx="72" cy="85" r="25" fill="#2563eb"/><circle cx="133" cy="65" r="17" fill="#7c3aed"/><circle cx="158" cy="116" r="20" fill="#059669"/>
+    <path d="M45 49 L182 42 L196 134 L58 145 Z" fill="none" stroke="#fff" stroke-width="2" stroke-dasharray="5 4"/>
+  </g>
+  <rect x="328" y="824" width="486" height="48" rx="8" fill="#1e293b"/>
+  <text x="350" y="854" font-family="sans-serif" font-size="14" fill="#cbd5e1">Scroll: zoom · Drag: rotate · Shift + drag: pan · Enter: focus</text>
+</svg>
+
