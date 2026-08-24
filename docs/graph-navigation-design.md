@@ -142,6 +142,24 @@ view that exposes the same current neighborhood.
 - Deleted or unavailable breadcrumb nodes remain readable and allow navigation to the nearest
   valid ancestor.
 
+## Fit to the current codebase
+
+This model can be introduced through existing seams instead of replacing the graph renderer:
+
+| Concern | Existing seam | First change |
+| --- | --- | --- |
+| Shareable selection | `useNodeNavigation` and `useSelectedNodeFromUrl` already round-trip the `node` query parameter | Keep `node` backward-compatible; add only navigation state that must survive reloads, such as depth and active filters |
+| Search and filters | `GraphSearch`, `GraphFilter`, and `useGraphStore.searchQuery` | Turn a result into an explicit jump/focus action while retaining the current filter controls |
+| Breadcrumb | `useGraphStore.selectionPath` records selected node IDs | Replace append-only history with entries that also capture the label and camera pose; trim the path when navigating to an ancestor |
+| Bounded neighborhood | `useRetrieveData` and `fetchNodeEdges(id, skip, limit)` already load a node neighborhood | Make `skip`, `limit`, and the visible-node budget explicit in expansion state; retain an aggregate `+N more` affordance when a page is not loaded |
+| Stable node identity | `useDataStore.nodesNormalized` is keyed by `ref_id` | Store navigation state by `ref_id`, not by transient Three.js objects or simulation coordinates |
+| Camera interruption | `Controls`, `useControlStore`, and `useCameraAnimations` already distinguish programmatic motion from user dragging and scrolling | Save camera pose on a focus transition and cancel restoration as soon as those existing user-interaction flags activate |
+
+The first implementation slice should remain deliberately narrow: focus a searched node, show a
+one-hop bounded neighborhood, serialize the focus in the URL, and restore the previous focus and
+camera pose. Clustering, mini-map rendering, and multi-hop expansion can then build on a tested
+navigation contract rather than landing in the first change.
+
 ## Delivery sequence
 
 1. Separate navigation state from rendering state and add URL serialization.
@@ -163,4 +181,3 @@ Test with graphs of 100, 1,000, and 10,000 nodes. A release is successful when:
 - expanding and collapsing a branch produces the same visible graph after a round trip;
 - every canvas navigation action has a keyboard-accessible list equivalent;
 - usability testing shows no unresolved “I do not know where I am” event in 5 consecutive tasks.
-
