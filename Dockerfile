@@ -32,7 +32,7 @@ ENV NODE_OPTIONS=--max_old_space_size=4096
 
 RUN yarn run build-docker
 
-FROM nginx:alpine
+FROM nginx:1.30.6-alpine
 COPY --from=build /usr/src/app/build /usr/share/nginx/html
 COPY --from=build /usr/src/app/deploy/nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=build /usr/src/app/deploy/docker-entrypoint.sh /docker-entrypoint.sh
