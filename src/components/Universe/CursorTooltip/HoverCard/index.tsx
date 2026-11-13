@@ -11,6 +11,7 @@ type Props = {
 }
 
 const ComponentsMapper: Record<string, React.FC<{ node: Node }>> = {
+  Post: Tweet,
   Tweet,
   User,
   General,

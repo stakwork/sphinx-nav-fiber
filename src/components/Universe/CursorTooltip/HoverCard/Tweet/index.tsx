@@ -21,13 +21,67 @@ type MetricsProps = {
   }
 }
 
+type SocialProperties = {
+  alias?: string
+  author?: string
+  author_image_url?: string
+  avatar_url?: string
+  bookmark_count?: number | string
+  image_url?: string
+  impression_count?: number | string
+  impressions?: number | string
+  like_count?: number | string
+  link?: string
+  media_url?: string
+  name?: string
+  posted_by?: string
+  profile_image_url?: string
+  profile_picture?: string
+  quote_count?: number | string
+  reply_count?: number | string
+  retweet_count?: number | string
+  source_link?: string
+  text?: string
+  title?: string
+  tweet_id?: string
+  twitter_handle?: string
+  url?: string
+  verified?: boolean
+}
+
+const toOptionalNumber = (value?: number | string) => {
+  if (value === undefined || value === null || value === '') {
+    return undefined
+  }
+
+  const parsed = typeof value === 'number' ? value : Number(value)
+
+  return Number.isFinite(parsed) ? parsed : undefined
+}
+
+const buildPostUrl = (nodeType: string, properties: SocialProperties) => {
+  const { tweet_id: tweetId, twitter_handle: twitterHandle, source_link: sourceLink, link, url } = properties
+
+  if (nodeType === 'Tweet' && tweetId && twitterHandle) {
+    return `https://x.com/${twitterHandle.replace(/^@/, '')}/status/${tweetId}`
+  }
+
+  return sourceLink || link || url || ''
+}
+
 const MetricsBar = ({ metrics }: MetricsProps) => {
   const formatNumber = (num?: number) => {
-    if (!num) {
+    if (num === undefined) {
       return '0'
     }
 
     return num.toLocaleString()
+  }
+
+  const hasMetrics = Object.values(metrics).some((metric) => metric !== undefined)
+
+  if (!hasMetrics) {
+    return null
   }
 
   return (
@@ -78,48 +132,49 @@ export const Tweet = ({ node }: Props) => {
 
   const {
     text,
-    tweet_id: tweetId,
-    impression_count: impressions,
-    like_count: likes,
-    reply_count: replies,
-    retweet_count: retweets,
-    quote_count: quotes,
-    bookmark_count: bookmarks,
-    image_url: imageUrl,
     twitter_handle: twitterHandle,
     alias,
+    author,
+    posted_by: postedBy,
+    name,
+    title,
     verified,
-  } = properties as {
-    text?: string
-    tweet_id?: string
-    impression_count?: number
-    like_count?: number
-    reply_count?: number
-    retweet_count?: number
-    quote_count?: number
-    bookmark_count?: number
-    image_url?: string
-    twitter_handle?: string
-    alias?: string
-    verified?: boolean
+    image_url: imageUrl,
+    media_url: mediaUrl,
+    profile_picture: profilePicture,
+    profile_image_url: profileImageUrl,
+    avatar_url: avatarImageUrl,
+    author_image_url: authorImageUrl,
+  } = properties as unknown as SocialProperties
+
+  const socialProperties = properties as unknown as SocialProperties
+  const postUrl = buildPostUrl(nodeType, socialProperties)
+
+  const displayName =
+    alias || author || postedBy || twitterHandle || name || title || node.name || node.label || nodeType
+
+  const displaySubName = twitterHandle || alias || author || postedBy || ''
+  const avatarUrl = profilePicture || profileImageUrl || avatarImageUrl || authorImageUrl
+  const contentImageUrl = mediaUrl || imageUrl
+
+  const metrics = {
+    impressions: toOptionalNumber(socialProperties.impression_count ?? socialProperties.impressions),
+    likes: toOptionalNumber(socialProperties.like_count),
+    replies: toOptionalNumber(socialProperties.reply_count),
+    retweets: toOptionalNumber(socialProperties.retweet_count),
+    quotes: toOptionalNumber(socialProperties.quote_count),
+    bookmarks: toOptionalNumber(socialProperties.bookmark_count),
   }
 
-  let postUrl = ''
-
-  if (nodeType === 'Tweet' && tweetId && twitterHandle) {
-    postUrl = `https://x.com/${twitterHandle}/status/${tweetId}`
-  }
-
-  const displayName = alias || twitterHandle || ''
-  const displaySubName = twitterHandle || alias || ''
+  const contentImageAlt = text || title || displayName
 
   return (
     <TooltipContainer>
       <UserContentWrapper>
         <ContentRow>
           <AvatarColumn>
-            {imageUrl ? (
-              <UserAvatar alt={displayName} src={imageUrl} />
+            {avatarUrl ? (
+              <UserAvatar alt={displayName} src={avatarUrl} />
             ) : (
               <DefaultAvatar>
                 <PersonIcon />
@@ -129,33 +184,35 @@ export const Tweet = ({ node }: Props) => {
 
           <MainColumn>
             <UserNameRow>
-              <UserDisplayName href={postUrl} target="_blank">
-                {displayName}
-              </UserDisplayName>
+              {postUrl ? (
+                <UserDisplayName href={postUrl} rel="noreferrer" target="_blank">
+                  {displayName}
+                </UserDisplayName>
+              ) : (
+                <UserDisplayNameText>{displayName}</UserDisplayNameText>
+              )}
               {verified && (
                 <VerifiedBadge>
                   <CheckIcon />
                 </VerifiedBadge>
               )}
-              <UserDisplaySubName href={postUrl} target="_blank">
-                @{displaySubName}
-              </UserDisplaySubName>
+              {displaySubName &&
+                (postUrl ? (
+                  <UserDisplaySubName href={postUrl} rel="noreferrer" target="_blank">
+                    @{displaySubName.replace(/^@/, '')}
+                  </UserDisplaySubName>
+                ) : (
+                  <UserDisplaySubNameText>@{displaySubName.replace(/^@/, '')}</UserDisplaySubNameText>
+                ))}
             </UserNameRow>
 
             {text && <PostText>{text}</PostText>}
           </MainColumn>
         </ContentRow>
 
-        <MetricsBar
-          metrics={{
-            impressions,
-            likes,
-            replies,
-            retweets,
-            quotes,
-            bookmarks,
-          }}
-        />
+        {contentImageUrl && <PostImage alt={contentImageAlt} src={contentImageUrl} />}
+
+        <MetricsBar metrics={metrics} />
       </UserContentWrapper>
     </TooltipContainer>
   )
@@ -218,6 +275,14 @@ const UserAvatar = styled.img`
   object-fit: cover;
 `
 
+const PostImage = styled.img`
+  width: 100%;
+  max-height: 220px;
+  border-radius: 6px;
+  object-fit: cover;
+  display: block;
+`
+
 const PostText = styled.div`
   font-family: 'Barlow';
   font-size: 15px;
@@ -255,6 +320,16 @@ const UserDisplayName = styled.a`
   }
 `
 
+const UserDisplayNameText = styled.span`
+  font-family: 'Barlow';
+  font-size: 15px;
+  font-weight: 600;
+  color: ${colors.white};
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+`
+
 const UserDisplaySubName = styled.a`
   font-family: 'Barlow';
   font-size: 15px;
@@ -266,6 +341,15 @@ const UserDisplaySubName = styled.a`
   &:hover {
     text-decoration: underline;
   }
+`
+
+const UserDisplaySubNameText = styled.span`
+  font-family: 'Barlow';
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.6);
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 `
 
 const VerifiedBadge = styled(Flex)`
@@ -308,7 +392,7 @@ const MetricItem = styled(Flex)`
   svg {
     width: 16px;
     height: 16px;
-    color: rgba(255, 255, 255, 0.6) !important;
+    color: ${colors.white} !important;
     flex-shrink: 0;
   }
 

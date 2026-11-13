@@ -67,8 +67,8 @@ const TooltipContainer = styled(Flex)`
   padding: 0;
   pointer-events: none;
   z-index: 1000;
-  white-space: nowrap;
-  overflow: hidden;
+  white-space: normal;
+  overflow: visible;
   text-overflow: ellipsis;
   display: none;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
